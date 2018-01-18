@@ -1,4 +1,4 @@
-package com.fasten.executor_driver.entity.login;
+package com.fasten.executor_driver.entity;
 
 import org.junit.Test;
 
