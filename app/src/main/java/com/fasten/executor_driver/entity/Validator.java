@@ -8,9 +8,9 @@ import io.reactivex.annotations.Nullable;
  * @param <T> тип для валидации.
  */
 public interface Validator<T> {
-    /**
-     * @param data входные данные
-     * @return результат валидации
-     */
-    boolean validate(@Nullable T data);
+	/**
+	 * @param data входные данные
+	 * @return результат валидации
+	 */
+	boolean validate(@Nullable T data);
 }

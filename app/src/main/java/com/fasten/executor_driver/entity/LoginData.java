@@ -30,15 +30,15 @@ class LoginData {
 		return password;
 	}
 
-    LoginData setLogin(@NonNull String login) {
-        return new LoginData(login, password);
-    }
+	LoginData setLogin(@NonNull String login) {
+		return new LoginData(login, password);
+	}
 
-    LoginData setPassword(@NonNull String password) {
-        return new LoginData(login, password);
-    }
+	LoginData setPassword(@NonNull String password) {
+		return new LoginData(login, password);
+	}
 
-    @Override
+	@Override
 	public String toString() {
 		return "LoginData{" +
 				"login='" + login + '\'' +
