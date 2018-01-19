@@ -9,7 +9,6 @@ import okhttp3.Response;
 /**
  * Перехватчик для подстановки полученного токена в заголовки
  */
-@SuppressWarnings("unused")
 class SendTokenInterceptor implements Interceptor {
 
 	private final static String HEADER_NAME = "Authorization";
