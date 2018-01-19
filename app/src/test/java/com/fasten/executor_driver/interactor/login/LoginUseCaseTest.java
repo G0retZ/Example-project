@@ -35,6 +35,7 @@ public class LoginUseCaseTest {
 
 	@Before
 	public void setUp() throws Exception {
+		loginUseCase = new LoginUseCaseImpl(gateway, loginValidator, passwordValidator);
 		when(gateway.login(nullable(LoginData.class))).thenReturn(Completable.never());
 		when(loginValidator.validate("login")).thenReturn(true);
 		when(passwordValidator.validate("password")).thenReturn(true);
