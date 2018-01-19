@@ -1,5 +1,7 @@
 package com.fasten.executor_driver.backend.web;
 
+import android.support.annotation.NonNull;
+
 import com.fasten.executor_driver.backend.web.model.ApiLogin;
 
 import io.reactivex.Completable;
@@ -15,6 +17,6 @@ public interface ApiService {
 	 *  Авторизация
 	 */
 	@POST("drivers/auth")
-	Completable authorize(@Body ApiLogin apiLogin);
+	Completable authorize(@NonNull @Body ApiLogin apiLogin);
 
 }
