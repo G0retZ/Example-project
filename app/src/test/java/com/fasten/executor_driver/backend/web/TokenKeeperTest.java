@@ -31,6 +31,7 @@ public class TokenKeeperTest {
 
 	@Before
 	public void setUp() throws Exception {
+		tokenKeeper = new TokenKeeperImpl(appSettings);
 	}
 
 	/**
