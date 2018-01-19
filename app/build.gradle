@@ -10,6 +10,7 @@ android {
 		versionCode 1
 		versionName "1.0"
 		testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+		buildConfigField 'String', 'BASE_URL', '"http://localhost:8080/executor/api/public/v1/"'
 		vectorDrawables.useSupportLibrary = true
 	}
 	buildTypes {
@@ -35,6 +36,12 @@ dependencies {
 	// Reactive Extensions
 	implementation 'io.reactivex.rxjava2:rxjava:2.1.7'
 	implementation 'com.jakewharton.rxbinding2:rxbinding:2.0.0'
+
+	// Network
+	implementation 'com.squareup.retrofit2:retrofit:2.3.0'
+	implementation 'com.squareup.retrofit2:converter-gson:2.3.0'
+	implementation 'com.squareup.retrofit2:adapter-rxjava2:2.3.0'
+	implementation 'com.squareup.okhttp3:logging-interceptor:3.9.0'
 
 	// Testing
 	testImplementation 'junit:junit:4.12'
