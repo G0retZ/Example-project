@@ -8,33 +8,33 @@ import android.support.annotation.NonNull;
  * Любой сеттер возвращает новую сущность с заданными полями
  */
 
-class LoginData {
+public class LoginData {
 
 	@NonNull
-	private String login;
+	private final String login;
 	@NonNull
-	private String password;
+	private final String password;
 
-	LoginData(@NonNull String login, @NonNull String password) {
+	public LoginData(@NonNull String login, @NonNull String password) {
 		this.login = login;
 		this.password = password;
 	}
 
 	@NonNull
-	String getLogin() {
+	public String getLogin() {
 		return login;
 	}
 
 	@NonNull
-	String getPassword() {
+	public String getPassword() {
 		return password;
 	}
 
-	LoginData setLogin(@NonNull String login) {
+	public LoginData setLogin(@NonNull String login) {
 		return new LoginData(login, password);
 	}
 
-	LoginData setPassword(@NonNull String password) {
+	public LoginData setPassword(@NonNull String password) {
 		return new LoginData(login, password);
 	}
 

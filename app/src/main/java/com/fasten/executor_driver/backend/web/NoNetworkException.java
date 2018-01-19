@@ -6,22 +6,24 @@ import java.io.IOException;
  * Исключение об отсутствии сети.
  */
 
-@SuppressWarnings("unused")
-class NoNetworkException extends IOException {
+public class NoNetworkException extends IOException {
 
-	NoNetworkException() {
+	public NoNetworkException() {
 		super();
 	}
 
-	NoNetworkException(String message) {
+	@SuppressWarnings("unused")
+	public NoNetworkException(String message) {
 		super(message);
 	}
 
-	NoNetworkException(String message, Throwable cause) {
+	@SuppressWarnings("unused")
+	public NoNetworkException(String message, Throwable cause) {
 		super(message, cause);
 	}
 
-	NoNetworkException(Throwable cause) {
+	@SuppressWarnings("unused")
+	public NoNetworkException(Throwable cause) {
 		super(cause);
 	}
 
