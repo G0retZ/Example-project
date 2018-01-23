@@ -16,6 +16,12 @@ public interface ApiService {
 	/*
 	 *  Авторизация
 	 */
+	@POST("drivers/checkLogin")
+	Completable checkLogin(@NonNull @Body ApiLogin apiLogin);
+
+	/*
+	 *  Авторизация
+	 */
 	@POST("drivers/auth")
 	Completable authorize(@NonNull @Body ApiLogin apiLogin);
 

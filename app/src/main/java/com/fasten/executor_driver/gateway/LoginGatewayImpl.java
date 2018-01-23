@@ -4,8 +4,7 @@ import android.support.annotation.NonNull;
 
 import com.fasten.executor_driver.backend.web.ApiService;
 import com.fasten.executor_driver.backend.web.model.ApiLogin;
-import com.fasten.executor_driver.entity.LoginData;
-import com.fasten.executor_driver.interactor.login.LoginGateway;
+import com.fasten.executor_driver.interactor.auth.LoginGateway;
 
 import io.reactivex.Completable;
 import io.reactivex.schedulers.Schedulers;
@@ -20,9 +19,10 @@ public class LoginGatewayImpl implements LoginGateway {
 
 	@NonNull
 	@Override
-	public Completable login(@NonNull LoginData loginData) {
-		return api.authorize(new ApiLogin(loginData.getLogin(), loginData.getPassword()))
+	public Completable checkLogin(@NonNull String login) {
+		return api.checkLogin(new ApiLogin(login, ""))
 				.subscribeOn(Schedulers.io())
 				.observeOn(Schedulers.single());
 	}
+
 }
