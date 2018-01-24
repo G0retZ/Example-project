@@ -4,6 +4,7 @@ import com.fasten.executor_driver.backend.web.ApiService;
 import com.fasten.executor_driver.backend.web.NoNetworkException;
 import com.fasten.executor_driver.backend.web.model.ApiLogin;
 import com.fasten.executor_driver.entity.LoginData;
+import com.fasten.executor_driver.gateway.PasswordGatewayImpl;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -32,6 +33,7 @@ public class PasswordGatewayTest {
 	public void setUp() throws Exception {
 		RxJavaPlugins.setIoSchedulerHandler(scheduler -> Schedulers.trampoline());
 		RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
+		passwordGateway = new PasswordGatewayImpl(api);
 		when(api.authorize(any(ApiLogin.class))).thenReturn(Completable.never());
 	}
 
