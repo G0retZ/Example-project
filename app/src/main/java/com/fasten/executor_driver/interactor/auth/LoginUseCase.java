@@ -6,12 +6,12 @@ import android.support.annotation.Nullable;
 import io.reactivex.Single;
 
 /**
- * Юзкейс входа
+ * Юзкейс проверки имени для входа
  */
 public interface LoginUseCase {
 
 	/**
-	 * Проверяет номер телефона.
+	 * Проверяет имя входа.
 	 */
 	@NonNull
 	Single<String> checkLogin(@Nullable String login);
