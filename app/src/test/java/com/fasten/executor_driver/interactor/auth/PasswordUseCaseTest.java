@@ -66,6 +66,7 @@ public class PasswordUseCaseTest {
 		passwordUseCase.authorize(new LoginData("", ""))
 				.test().assertError(IllegalArgumentException.class);
 	}
+
 	/**
 	 * Не должно быть ошибок, если пароль соответствует формату
 	 *
