@@ -32,6 +32,7 @@ public class PasswordUseCaseTest {
 
 	@Before
 	public void setUp() throws Exception {
+		passwordUseCase = new PasswordUseCaseImpl(gateway, passwordValidator);
 		when(gateway.authorize(nullable(LoginData.class))).thenReturn(Completable.never());
 		when(passwordValidator.validate("password")).thenReturn(true);
 	}
