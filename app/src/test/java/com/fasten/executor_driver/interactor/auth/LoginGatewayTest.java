@@ -1,9 +1,8 @@
-package com.fasten.executor_driver.interactor.login;
+package com.fasten.executor_driver.interactor.auth;
 
 import com.fasten.executor_driver.backend.web.ApiService;
 import com.fasten.executor_driver.backend.web.NoNetworkException;
 import com.fasten.executor_driver.backend.web.model.ApiLogin;
-import com.fasten.executor_driver.entity.LoginData;
 import com.fasten.executor_driver.gateway.LoginGatewayImpl;
 
 import org.junit.Before;
@@ -34,7 +33,7 @@ public class LoginGatewayTest {
 		RxJavaPlugins.setIoSchedulerHandler(scheduler -> Schedulers.trampoline());
 		RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
 		loginGateway = new LoginGatewayImpl(api);
-		when(api.authorize(any(ApiLogin.class))).thenReturn(Completable.never());
+		when(api.checkLogin(any(ApiLogin.class))).thenReturn(Completable.never());
 	}
 
 	/* Проверяем работу с АПИ */
@@ -47,10 +46,10 @@ public class LoginGatewayTest {
 	@Test
 	public void authCompletableRequested() throws Throwable {
 		// when:
-		loginGateway.login(new LoginData("Login", "Password"));
+		loginGateway.checkLogin("Login");
 
 		// then:
-		verify(api, only()).authorize(new ApiLogin("Login", "Password"));
+		verify(api, only()).checkLogin(new ApiLogin("Login", ""));
 	}
 
 	/* Проверяем правильность потоков (добавить) */
@@ -65,11 +64,10 @@ public class LoginGatewayTest {
 	@Test
 	public void answerNoNetworkError() throws Throwable {
 		// when:
-		when(api.authorize(any(ApiLogin.class))).thenReturn(Completable.error(new NoNetworkException()));
+		when(api.checkLogin(any(ApiLogin.class))).thenReturn(Completable.error(new NoNetworkException()));
 
 		// then:
-		loginGateway.login(new LoginData("Login", "Password"))
-				.test().assertError(NoNetworkException.class);
+		loginGateway.checkLogin("Login").test().assertError(NoNetworkException.class);
 	}
 
 	/**
@@ -80,11 +78,10 @@ public class LoginGatewayTest {
 	@Test
 	public void answerLoginSuccessful() throws Throwable {
 		// when:
-		when(api.authorize(any(ApiLogin.class))).thenReturn(Completable.complete());
+		when(api.checkLogin(any(ApiLogin.class))).thenReturn(Completable.complete());
 
 		// then:
-		loginGateway.login(new LoginData("Login", "Password"))
-				.test().assertComplete();
+		loginGateway.checkLogin("Login").test().assertComplete();
 	}
 
 }
