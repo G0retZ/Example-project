@@ -9,10 +9,12 @@ import io.reactivex.Completable;
 
 public class PasswordUseCaseImpl implements PasswordUseCase {
 
+	@NonNull
 	private final PasswordGateway gateway;
+	@NonNull
 	private final Validator<String> passwordValidator;
 
-	PasswordUseCaseImpl(PasswordGateway gateway, Validator<String> passwordValidator) {
+	PasswordUseCaseImpl(@NonNull PasswordGateway gateway, @NonNull Validator<String> passwordValidator) {
 		this.gateway = gateway;
 		this.passwordValidator = passwordValidator;
 	}

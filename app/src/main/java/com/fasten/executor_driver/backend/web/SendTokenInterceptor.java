@@ -1,5 +1,7 @@
 package com.fasten.executor_driver.backend.web;
 
+import android.support.annotation.NonNull;
+
 import java.io.IOException;
 
 import okhttp3.Interceptor;
@@ -13,9 +15,10 @@ class SendTokenInterceptor implements Interceptor {
 
 	private final static String HEADER_NAME = "Authorization";
 
+	@NonNull
 	private final TokenKeeper tokenKeeper;
 
-	SendTokenInterceptor(TokenKeeper tokenKeeper) {
+	SendTokenInterceptor(@NonNull TokenKeeper tokenKeeper) {
 		this.tokenKeeper = tokenKeeper;
 	}
 

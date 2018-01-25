@@ -36,10 +36,10 @@ public class ReceiveTokenInterceptorTest {
 	/**
 	 * Должен не трогать хранителя токенов
 	 *
-	 * @throws Throwable error
+	 * @throws Exception error
 	 */
 	@Test
-	public void doNotTouchTokenKeeper() throws Throwable {
+	public void doNotTouchTokenKeeper() throws Exception {
 		// given:
 		when(chain.proceed(nullable(Request.class))).thenReturn(
 				new Response.Builder()
@@ -63,10 +63,10 @@ public class ReceiveTokenInterceptorTest {
 	/**
 	 * Должен запросить у хранителя токенов сохранение полученного токена
 	 *
-	 * @throws Throwable error
+	 * @throws Exception error
 	 */
 	@Test
-	public void askTokenKeeperToSaveToken() throws Throwable {
+	public void askTokenKeeperToSaveToken() throws Exception {
 		// given:
 		when(chain.proceed(nullable(Request.class))).thenReturn(
 				new Response.Builder()

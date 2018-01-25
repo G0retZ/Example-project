@@ -1,5 +1,7 @@
 package com.fasten.executor_driver.backend.web;
 
+import android.support.annotation.NonNull;
+
 import java.io.IOException;
 import java.util.List;
 
@@ -13,9 +15,10 @@ class ReceiveTokenInterceptor implements Interceptor {
 
 	private final static String HEADER_NAME = "Authorization";
 
+	@NonNull
 	private final TokenKeeper tokenKeeper;
 
-	ReceiveTokenInterceptor(TokenKeeper tokenKeeper) {
+	ReceiveTokenInterceptor(@NonNull TokenKeeper tokenKeeper) {
 		this.tokenKeeper = tokenKeeper;
 	}
 

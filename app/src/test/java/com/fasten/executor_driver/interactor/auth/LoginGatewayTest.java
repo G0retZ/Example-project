@@ -41,10 +41,10 @@ public class LoginGatewayTest {
 	/**
 	 * Должен запросить у АПИ completable на вход с заданными параметрами
 	 *
-	 * @throws Throwable error
+	 * @throws Exception error
 	 */
 	@Test
-	public void authCompletableRequested() throws Throwable {
+	public void authCompletableRequested() throws Exception {
 		// when:
 		loginGateway.checkLogin("Login");
 
@@ -59,10 +59,10 @@ public class LoginGatewayTest {
 	/**
 	 * Должен ответить ошибкой сети
 	 *
-	 * @throws Throwable error
+	 * @throws Exception error
 	 */
 	@Test
-	public void answerNoNetworkError() throws Throwable {
+	public void answerNoNetworkError() throws Exception {
 		// when:
 		when(api.checkLogin(any(ApiLogin.class))).thenReturn(Completable.error(new NoNetworkException()));
 
@@ -73,10 +73,10 @@ public class LoginGatewayTest {
 	/**
 	 * Должен ответить успехом
 	 *
-	 * @throws Throwable error
+	 * @throws Exception error
 	 */
 	@Test
-	public void answerLoginSuccessful() throws Throwable {
+	public void answerLoginSuccessful() throws Exception {
 		// when:
 		when(api.checkLogin(any(ApiLogin.class))).thenReturn(Completable.complete());
 

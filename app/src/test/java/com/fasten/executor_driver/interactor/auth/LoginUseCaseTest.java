@@ -33,7 +33,6 @@ public class LoginUseCaseTest {
 	public void setUp() throws Exception {
 		loginUseCase = new LoginUseCaseImpl(gateway, loginValidator);
 		when(gateway.checkLogin(nullable(String.class))).thenReturn(Completable.never());
-		when(loginValidator.validate("checkLogin")).thenReturn(true);
 	}
 
 	/* Проверяем работу с валидаторами */
@@ -41,12 +40,12 @@ public class LoginUseCaseTest {
 	/**
 	 * Должен запросить у валидатора логина проверку
 	 *
-	 * @throws Throwable error
+	 * @throws Exception error
 	 */
 	@Test
-	public void askLoginValidatorForResult() throws Throwable {
+	public void askLoginValidatorForResult() throws Exception {
 		// when:
-		loginUseCase.checkLogin("").test();
+		loginUseCase.validateLogin("").test();
 
 		// then:
 		verify(loginValidator, only()).validate("");
@@ -57,37 +56,37 @@ public class LoginUseCaseTest {
 	/**
 	 * Должен ответить ошибкой, если логин не соответствует формату
 	 *
-	 * @throws Throwable error
+	 * @throws Exception error
 	 */
 	@Test
-	public void answerErrorIfLoginInvalid() throws Throwable {
+	public void answerErrorIfLoginInvalid() throws Exception {
 		// then:
-		loginUseCase.checkLogin("").test().assertError(IllegalArgumentException.class);
+		loginUseCase.validateLogin("12").test().assertError(IllegalArgumentException.class);
 	}
 
 	/**
 	 * Не должно быть ошибок, если логин соответствует формату
 	 *
-	 * @throws Throwable error
+	 * @throws Exception error
 	 */
 	@Test
-	public void answerSuccessIfLoginValid() throws Throwable {
+	public void answerSuccessIfLoginValid() throws Exception {
 		// when:
 		when(loginValidator.validate(anyString())).thenReturn(true);
 
 		// then:
-		loginUseCase.checkLogin("").test().assertNoErrors();
+		loginUseCase.validateLogin("").test().assertComplete();
 	}
 
 	/* Проверяем работу с гейтвеем */
 
 	/**
-	 * Должен запросить у гейтвея completable входа
+	 * Должен запросить у гейтвея проверку логина
 	 *
-	 * @throws Throwable error
+	 * @throws Exception error
 	 */
 	@Test
-	public void askGatewayForLogin() throws Throwable {
+	public void askGatewayForLoginCheck() throws Exception {
 		// when:
 		loginUseCase.checkLogin("checkLogin").test();
 
@@ -98,29 +97,40 @@ public class LoginUseCaseTest {
 	/* Проверяем ответы на проверку логина */
 
 	/**
-	 * Должен ответить ошибкой сети
+	 * Должен ответить ошибкой аргумента
 	 *
-	 * @throws Throwable error
+	 * @throws Exception error
 	 */
 	@Test
-	public void answerNoNetworkError() throws Throwable {
+	public void answerArgumentError() throws Exception {
+		// then:
+		loginUseCase.checkLogin(null).test().assertError(IllegalArgumentException.class);
+	}
+
+	/**
+	 * Должен ответить ошибкой сети
+	 *
+	 * @throws Exception error
+	 */
+	@Test
+	public void answerNoNetworkError() throws Exception {
 		// when:
 		when(gateway.checkLogin(any(String.class))).thenReturn(Completable.error(new NoNetworkException()));
 
 		// then:
-		loginUseCase.checkLogin("checkLogin").test().assertError(NoNetworkException.class);
+		loginUseCase.checkLogin("").test().assertError(NoNetworkException.class);
 	}
 
 	/**
 	 * Должен ответить успехом
 	 *
-	 * @throws Throwable error
+	 * @throws Exception error
 	 */
 	@Test
-	public void answerLoginSuccessful() throws Throwable {
+	public void answerLoginSuccessful() throws Exception {
 		// when:
 		when(gateway.checkLogin(any(String.class))).thenReturn(Completable.complete());
-		loginUseCase.checkLogin("checkLogin").test().assertComplete();
+		loginUseCase.checkLogin("").test().assertComplete();
 	}
 
 }

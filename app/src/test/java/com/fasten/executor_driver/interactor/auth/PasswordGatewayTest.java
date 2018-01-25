@@ -42,10 +42,10 @@ public class PasswordGatewayTest {
 	/**
 	 * Должен запросить у АПИ completable на вход с заданными параметрами
 	 *
-	 * @throws Throwable error
+	 * @throws Exception error
 	 */
 	@Test
-	public void authCompletableRequested() throws Throwable {
+	public void authCompletableRequested() throws Exception {
 		// when:
 		passwordGateway.authorize(new LoginData("Login", "Password"));
 
@@ -60,10 +60,10 @@ public class PasswordGatewayTest {
 	/**
 	 * Должен ответить ошибкой сети
 	 *
-	 * @throws Throwable error
+	 * @throws Exception error
 	 */
 	@Test
-	public void answerNoNetworkError() throws Throwable {
+	public void answerNoNetworkError() throws Exception {
 		// when:
 		when(api.authorize(any(ApiLogin.class))).thenReturn(Completable.error(new NoNetworkException()));
 
@@ -75,10 +75,10 @@ public class PasswordGatewayTest {
 	/**
 	 * Должен ответить успехом
 	 *
-	 * @throws Throwable error
+	 * @throws Exception error
 	 */
 	@Test
-	public void answerAuthSuccessful() throws Throwable {
+	public void answerAuthSuccessful() throws Exception {
 		// when:
 		when(api.authorize(any(ApiLogin.class))).thenReturn(Completable.complete());
 
