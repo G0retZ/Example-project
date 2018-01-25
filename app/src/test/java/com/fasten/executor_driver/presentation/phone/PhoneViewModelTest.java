@@ -215,7 +215,7 @@ public class PhoneViewModelTest {
 
 		// when:
 		phoneViewModel.phoneNumberChanged("1245");
-		when(useCase.validateLogin(anyString())).thenReturn(Completable.never());
+		when(useCase.validateLogin(anyString())).thenReturn(Completable.error(new IllegalArgumentException()));
 		phoneViewModel.phoneNumberChanged("124");
 
 		// then:
