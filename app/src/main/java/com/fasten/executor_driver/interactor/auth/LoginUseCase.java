@@ -3,7 +3,7 @@ package com.fasten.executor_driver.interactor.auth;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import io.reactivex.Single;
+import io.reactivex.Completable;
 
 /**
  * Юзкейс проверки имени для входа
@@ -11,9 +11,15 @@ import io.reactivex.Single;
 public interface LoginUseCase {
 
 	/**
-	 * Проверяет имя входа.
+	 * Проверяет формат логина.
 	 */
 	@NonNull
-	Single<String> checkLogin(@Nullable String login);
+	Completable validateLogin(@Nullable String login);
+
+	/**
+	 * Проверяет логин на существование.
+	 */
+	@NonNull
+	Completable checkLogin(@Nullable String login);
 
 }

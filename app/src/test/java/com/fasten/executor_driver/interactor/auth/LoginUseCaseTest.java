@@ -33,7 +33,6 @@ public class LoginUseCaseTest {
 	public void setUp() throws Exception {
 		loginUseCase = new LoginUseCaseImpl(gateway, loginValidator);
 		when(gateway.checkLogin(nullable(String.class))).thenReturn(Completable.never());
-		when(loginValidator.validate("checkLogin")).thenReturn(true);
 	}
 
 	/* Проверяем работу с валидаторами */
@@ -46,7 +45,7 @@ public class LoginUseCaseTest {
 	@Test
 	public void askLoginValidatorForResult() throws Throwable {
 		// when:
-		loginUseCase.checkLogin("").test();
+		loginUseCase.validateLogin("").test();
 
 		// then:
 		verify(loginValidator, only()).validate("");
@@ -62,7 +61,7 @@ public class LoginUseCaseTest {
 	@Test
 	public void answerErrorIfLoginInvalid() throws Throwable {
 		// then:
-		loginUseCase.checkLogin("").test().assertError(IllegalArgumentException.class);
+		loginUseCase.validateLogin("12").test().assertError(IllegalArgumentException.class);
 	}
 
 	/**
@@ -76,18 +75,18 @@ public class LoginUseCaseTest {
 		when(loginValidator.validate(anyString())).thenReturn(true);
 
 		// then:
-		loginUseCase.checkLogin("").test().assertNoErrors();
+		loginUseCase.validateLogin("").test().assertComplete();
 	}
 
 	/* Проверяем работу с гейтвеем */
 
 	/**
-	 * Должен запросить у гейтвея completable входа
+	 * Должен запросить у гейтвея проверку логина
 	 *
 	 * @throws Throwable error
 	 */
 	@Test
-	public void askGatewayForLogin() throws Throwable {
+	public void askGatewayForLoginCheck() throws Throwable {
 		// when:
 		loginUseCase.checkLogin("checkLogin").test();
 
@@ -108,7 +107,7 @@ public class LoginUseCaseTest {
 		when(gateway.checkLogin(any(String.class))).thenReturn(Completable.error(new NoNetworkException()));
 
 		// then:
-		loginUseCase.checkLogin("checkLogin").test().assertError(NoNetworkException.class);
+		loginUseCase.checkLogin("").test().assertError(NoNetworkException.class);
 	}
 
 	/**
@@ -120,7 +119,7 @@ public class LoginUseCaseTest {
 	public void answerLoginSuccessful() throws Throwable {
 		// when:
 		when(gateway.checkLogin(any(String.class))).thenReturn(Completable.complete());
-		loginUseCase.checkLogin("checkLogin").test().assertComplete();
+		loginUseCase.checkLogin("").test().assertComplete();
 	}
 
 }
