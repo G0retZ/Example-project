@@ -51,7 +51,7 @@ dependencies {
 	// Testing
 	testImplementation 'junit:junit:4.12'
 	testImplementation 'org.mockito:mockito-core:2.13.0'
-	androidTestCompile 'com.android.support:support-annotations:27.0.2'
+	testImplementation 'android.arch.core:core-testing:1.0.0'
+	androidTestImplementation 'com.android.support:support-annotations:27.0.2'
 	androidTestImplementation 'com.android.support.test:runner:1.0.1'
-	androidTestImplementation "android.arch.core:core-testing:1.0.0"
 }
