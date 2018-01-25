@@ -3,6 +3,7 @@ package com.fasten.executor_driver.backend.web;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.support.annotation.NonNull;
 
 import java.io.IOException;
 
@@ -16,9 +17,10 @@ import okhttp3.Response;
 @SuppressWarnings("unused")
 class ConnectivityInterceptor implements Interceptor {
 
+	@NonNull
 	private final Context context;
 
-	ConnectivityInterceptor(Context context) {
+	ConnectivityInterceptor(@NonNull Context context) {
 		this.context = context;
 	}
 

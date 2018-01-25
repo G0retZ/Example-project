@@ -9,10 +9,12 @@ import io.reactivex.Completable;
 
 public class LoginUseCaseImpl implements LoginUseCase {
 
+	@NonNull
 	private final LoginGateway gateway;
+	@NonNull
 	private final Validator<String> loginValidator;
 
-	LoginUseCaseImpl(LoginGateway gateway, Validator<String> loginValidator) {
+	LoginUseCaseImpl(@NonNull LoginGateway gateway, @NonNull Validator<String> loginValidator) {
 		this.gateway = gateway;
 		this.loginValidator = loginValidator;
 	}
@@ -31,7 +33,8 @@ public class LoginUseCaseImpl implements LoginUseCase {
 
 	@NonNull
 	@Override
-	public Completable checkLogin(String login) {
+	public Completable checkLogin(@Nullable String login) {
+		if (login == null) return Completable.error(new IllegalArgumentException());
 		return gateway.checkLogin(login);
 	}
 

@@ -97,6 +97,17 @@ public class LoginUseCaseTest {
 	/* Проверяем ответы на проверку логина */
 
 	/**
+	 * Должен ответить ошибкой аргумента
+	 *
+	 * @throws Exception error
+	 */
+	@Test
+	public void answerArgumentError() throws Exception {
+		// then:
+		loginUseCase.checkLogin(null).test().assertError(IllegalArgumentException.class);
+	}
+
+	/**
 	 * Должен ответить ошибкой сети
 	 *
 	 * @throws Exception error

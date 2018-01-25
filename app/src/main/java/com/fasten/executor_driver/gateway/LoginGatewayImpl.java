@@ -11,9 +11,10 @@ import io.reactivex.schedulers.Schedulers;
 
 public class LoginGatewayImpl implements LoginGateway {
 
+	@NonNull
 	private final ApiService api;
 
-	public LoginGatewayImpl(ApiService api) {
+	public LoginGatewayImpl(@NonNull ApiService api) {
 		this.api = api;
 	}
 

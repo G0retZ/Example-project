@@ -12,9 +12,10 @@ import io.reactivex.schedulers.Schedulers;
 
 public class PasswordGatewayImpl implements PasswordGateway {
 
+	@NonNull
 	private final ApiService api;
 
-	public PasswordGatewayImpl(ApiService api) {
+	public PasswordGatewayImpl(@NonNull ApiService api) {
 		this.api = api;
 	}
 
