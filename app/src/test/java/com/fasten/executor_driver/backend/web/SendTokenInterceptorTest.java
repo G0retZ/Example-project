@@ -38,10 +38,10 @@ public class SendTokenInterceptorTest {
 	/**
 	 * Должен запросить у хранителя токенов сохраненный токен
 	 *
-	 * @throws Throwable error
+	 * @throws Exception error
 	 */
 	@Test
-	public void askTokenKeeperToSaveToken() throws Throwable {
+	public void askTokenKeeperToSaveToken() throws Exception {
 		// given:
 		when(chain.request()).thenReturn(
 				new Request.Builder()
@@ -59,10 +59,10 @@ public class SendTokenInterceptorTest {
 	/**
 	 * Должен не подсовывать нулевой токен
 	 *
-	 * @throws Throwable error
+	 * @throws Exception error
 	 */
 	@Test
-	public void doNotInjectTokenIfNull() throws Throwable {
+	public void doNotInjectTokenIfNull() throws Exception {
 		// given:
 		when(chain.request()).thenReturn(new Request.Builder().url("http://www.fasten.com").build());
 
@@ -77,10 +77,10 @@ public class SendTokenInterceptorTest {
 	/**
 	 * Должен не подсунуть токен
 	 *
-	 * @throws Throwable error
+	 * @throws Exception error
 	 */
 	@Test
-	public void injectToken() throws Throwable {
+	public void injectToken() throws Exception {
 		// given:
 		when(chain.request()).thenReturn(new Request.Builder().url("http://www.fasten.com").build());
 		when(tokenKeeper.getToken()).thenReturn("token");

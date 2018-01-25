@@ -37,10 +37,10 @@ public class TokenKeeperTest {
 	/**
 	 * Должен запросить у настроек данные по ключу "token"
 	 *
-	 * @throws Throwable error
+	 * @throws Exception error
 	 */
 	@Test
-	public void askSettingsForToken() throws Throwable {
+	public void askSettingsForToken() throws Exception {
 		// when:
 		tokenKeeper.getToken();
 
@@ -51,10 +51,10 @@ public class TokenKeeperTest {
 	/**
 	 * Должен запросить у настроек сохранить данные без изменений по ключу "token"
 	 *
-	 * @throws Throwable error
+	 * @throws Exception error
 	 */
 	@Test
-	public void askSettingsForSaveToken() throws Throwable {
+	public void askSettingsForSaveToken() throws Exception {
 		// when:
 		tokenKeeper.saveToken("123456");
 
@@ -65,10 +65,10 @@ public class TokenKeeperTest {
 	/**
 	 * Должен использовать один и тот же массив байтов шифрования для чтения и записи
 	 *
-	 * @throws Throwable error
+	 * @throws Exception error
 	 */
 	@Test
-	public void sameBytesForEncryption() throws Throwable {
+	public void sameBytesForEncryption() throws Exception {
 		// when:
 		tokenKeeper.saveToken("123456");
 		tokenKeeper.getToken();
@@ -82,10 +82,10 @@ public class TokenKeeperTest {
 	/**
 	 * Должен получить значение без изменений
 	 *
-	 * @throws Throwable error
+	 * @throws Exception error
 	 */
 	@Test
-	public void valueUnchangedForRead() throws Throwable {
+	public void valueUnchangedForRead() throws Exception {
 		// when:
 		when(appSettings.getEncryptedData(any(byte[].class), eq("token"))).thenReturn("654321");
 

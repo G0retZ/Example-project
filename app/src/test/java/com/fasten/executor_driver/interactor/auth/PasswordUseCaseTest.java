@@ -42,10 +42,10 @@ public class PasswordUseCaseTest {
 	/**
 	 * Должен запросить у валидатора пароля проверку
 	 *
-	 * @throws Throwable error
+	 * @throws Exception error
 	 */
 	@Test
-	public void askPasswordValidatorForResult() throws Throwable {
+	public void askPasswordValidatorForResult() throws Exception {
 		// when:
 		passwordUseCase.authorize(new LoginData("", "")).test();
 
@@ -58,10 +58,10 @@ public class PasswordUseCaseTest {
 	/**
 	 * Должен ответить ошибкой, если пароль неверный
 	 *
-	 * @throws Throwable error
+	 * @throws Exception error
 	 */
 	@Test
-	public void answerErrorIfPasswordInvalid() throws Throwable {
+	public void answerErrorIfPasswordInvalid() throws Exception {
 		// then:
 		passwordUseCase.authorize(new LoginData("", ""))
 				.test().assertError(IllegalArgumentException.class);
@@ -70,10 +70,10 @@ public class PasswordUseCaseTest {
 	/**
 	 * Не должно быть ошибок, если пароль соответствует формату
 	 *
-	 * @throws Throwable error
+	 * @throws Exception error
 	 */
 	@Test
-	public void answerSuccessIfPasswordValid() throws Throwable {
+	public void answerSuccessIfPasswordValid() throws Exception {
 		// when:
 		when(passwordValidator.validate(anyString())).thenReturn(true);
 
@@ -87,10 +87,10 @@ public class PasswordUseCaseTest {
 	/**
 	 * Должен запросить у гейтвея completable входа
 	 *
-	 * @throws Throwable error
+	 * @throws Exception error
 	 */
 	@Test
-	public void askGatewayForAuth() throws Throwable {
+	public void askGatewayForAuth() throws Exception {
 		// when:
 		passwordUseCase.authorize(new LoginData("login", "password")).test();
 
@@ -103,10 +103,10 @@ public class PasswordUseCaseTest {
 	/**
 	 * Должен ответить ошибкой сети
 	 *
-	 * @throws Throwable error
+	 * @throws Exception error
 	 */
 	@Test
-	public void answerNoNetworkError() throws Throwable {
+	public void answerNoNetworkError() throws Exception {
 		// when:
 		when(gateway.authorize(any(LoginData.class))).thenReturn(Completable.error(new NoNetworkException()));
 
@@ -117,10 +117,10 @@ public class PasswordUseCaseTest {
 	/**
 	 * Должен ответить успехом
 	 *
-	 * @throws Throwable error
+	 * @throws Exception error
 	 */
 	@Test
-	public void answerAuthSuccessful() throws Throwable {
+	public void answerAuthSuccessful() throws Exception {
 		// when:
 		when(gateway.authorize(any(LoginData.class))).thenReturn(Completable.complete());
 
