@@ -37,7 +37,7 @@ class PhoneViewModelImpl extends ViewModel implements PhoneViewModel {
 	}
 
 	@Override
-	public void phoneNumberChanged(String phoneNumber) {
+	public void phoneNumberChanged(@NonNull String phoneNumber) {
 		lastLogin = phoneNumber.replaceAll("[^\\d]","");
 		if (disposable != null) return;
 		if (viewStateLiveData.getValue() instanceof PhoneViewStateError) {
