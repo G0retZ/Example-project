@@ -1,15 +1,20 @@
 package com.fasten.executor_driver.presentation.phone;
 
+import com.fasten.executor_driver.utils.ThrowableUtils;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
-import static org.mockito.ArgumentMatchers.any;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PhoneViewStateErrorTest {
@@ -18,6 +23,9 @@ public class PhoneViewStateErrorTest {
 
 	@Mock
 	private PhoneViewActions phoneViewActions;
+
+	@Captor
+	private ArgumentCaptor<Throwable> throwableCaptor;
 
 	@Before
 	public void setUp() throws Exception {
@@ -32,8 +40,14 @@ public class PhoneViewStateErrorTest {
 		// then:
 		verify(phoneViewActions).showPending(false);
 		verify(phoneViewActions).enableButton(false);
-		verify(phoneViewActions).showError(any(Exception.class));
-		assertEquals(viewState, new PhoneViewStateError(new IllegalArgumentException("mess")));
+		verify(phoneViewActions).showError(throwableCaptor.capture());
+		verifyNoMoreInteractions(phoneViewActions);
+		assertTrue(
+				ThrowableUtils.throwableEquals(
+						throwableCaptor.getValue(),
+						new IllegalArgumentException("mess")
+				)
+		);
 	}
 
 	@Test
@@ -42,5 +56,4 @@ public class PhoneViewStateErrorTest {
 		assertNotEquals(viewState, new PhoneViewStateError(new IllegalArgumentException("mes")));
 		assertNotEquals(viewState, new PhoneViewStateError(new NullPointerException("mess")));
 	}
-
 }
