@@ -1,6 +1,19 @@
 package com.fasten.executor_driver.entity;
 
+import android.support.annotation.Nullable;
+
 /**
- * Валидатор логина
+ * Валидатор пароля
  */
-class PasswordValidator extends PhoneNumberValidator {}
+class PasswordValidator implements Validator<String> {
+
+	@SuppressWarnings("RedundantIfStatement")
+	@Override
+	public boolean validate(@Nullable String password) {
+		if (password == null) return false;
+		if (password.length() != 4) return false;
+		if (!password.matches("\\d*")) return false;
+		return true;
+	}
+
+}

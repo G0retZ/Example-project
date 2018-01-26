@@ -2,7 +2,7 @@ package com.fasten.executor_driver.interactor.auth;
 
 import com.fasten.executor_driver.backend.web.ApiService;
 import com.fasten.executor_driver.backend.web.NoNetworkException;
-import com.fasten.executor_driver.gateway.PhoneCallGatewayImpl;
+import com.fasten.executor_driver.gateway.SmsGatewayImpl;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -20,9 +20,9 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class PhoneCallGatewayTest {
+public class SmsGatewayTest {
 
-	private PhoneCallGateway phoneCallGateway;
+	private SmsGateway phoneCallGateway;
 
 	@Mock
 	private ApiService api;
@@ -31,24 +31,24 @@ public class PhoneCallGatewayTest {
 	public void setUp() throws Exception {
 		RxJavaPlugins.setIoSchedulerHandler(scheduler -> Schedulers.trampoline());
 		RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
-		phoneCallGateway = new PhoneCallGatewayImpl(api);
-		when(api.callMeCode(anyString())).thenReturn(Completable.never());
+		phoneCallGateway = new SmsGatewayImpl(api);
+		when(api.sendMeCode(anyString())).thenReturn(Completable.never());
 	}
 
 	/* Проверяем работу с АПИ */
 
 	/**
-	 * Должен запросить у АПИ completable на запрос входящего звонка с кодом
+	 * Должен запросить у АПИ completable на запрос входящего СМС с кодом
 	 *
 	 * @throws Exception error
 	 */
 	@Test
-	public void callMeCompletableRequested() throws Exception {
+	public void smsMeCompletableRequested() throws Exception {
 		// when:
-		phoneCallGateway.callMe("012345");
+		phoneCallGateway.sendMeCode("012345");
 
 		// then:
-		verify(api, only()).callMeCode("012345");
+		verify(api, only()).sendMeCode("012345");
 	}
 
 	/* Проверяем правильность потоков (добавить) */
@@ -63,10 +63,10 @@ public class PhoneCallGatewayTest {
 	@Test
 	public void answerNoNetworkError() throws Exception {
 		// when:
-		when(api.callMeCode(anyString())).thenReturn(Completable.error(new NoNetworkException()));
+		when(api.sendMeCode(anyString())).thenReturn(Completable.error(new NoNetworkException()));
 
 		// then:
-		phoneCallGateway.callMe("01234").test().assertError(NoNetworkException.class);
+		phoneCallGateway.sendMeCode("01234").test().assertError(NoNetworkException.class);
 	}
 
 	/**
@@ -75,11 +75,11 @@ public class PhoneCallGatewayTest {
 	 * @throws Exception error
 	 */
 	@Test
-	public void answerCallSuccessful() throws Exception {
+	public void answerSmsSuccessful() throws Exception {
 		// when:
-		when(api.callMeCode(anyString())).thenReturn(Completable.complete());
+		when(api.sendMeCode(anyString())).thenReturn(Completable.complete());
 
 		// then:
-		phoneCallGateway.callMe("012345").test().assertComplete();
+		phoneCallGateway.sendMeCode("012345").test().assertComplete();
 	}
 }
