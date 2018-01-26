@@ -38,12 +38,12 @@ public class SmsGatewayTest {
 	/* Проверяем работу с АПИ */
 
 	/**
-	 * Должен запросить у АПИ completable на запрос входящего звонка с кодом
+	 * Должен запросить у АПИ completable на запрос входящего СМС с кодом
 	 *
 	 * @throws Exception error
 	 */
 	@Test
-	public void callMeCompletableRequested() throws Exception {
+	public void smsMeCompletableRequested() throws Exception {
 		// when:
 		phoneCallGateway.sendMeCode("012345");
 
@@ -75,7 +75,7 @@ public class SmsGatewayTest {
 	 * @throws Exception error
 	 */
 	@Test
-	public void answerLoginSuccessful() throws Exception {
+	public void answerSmsSuccessful() throws Exception {
 		// when:
 		when(api.sendMeCode(anyString())).thenReturn(Completable.complete());
 

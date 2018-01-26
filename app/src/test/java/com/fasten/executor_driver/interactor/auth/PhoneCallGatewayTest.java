@@ -75,7 +75,7 @@ public class PhoneCallGatewayTest {
 	 * @throws Exception error
 	 */
 	@Test
-	public void answerLoginSuccessful() throws Exception {
+	public void answerCallSuccessful() throws Exception {
 		// when:
 		when(api.callMeCode(anyString())).thenReturn(Completable.complete());
 
