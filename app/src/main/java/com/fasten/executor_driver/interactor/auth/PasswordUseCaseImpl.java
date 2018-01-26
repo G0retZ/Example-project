@@ -24,11 +24,11 @@ public class PasswordUseCaseImpl implements PasswordUseCase {
 	public Completable authorize(@NonNull LoginData loginData) {
 		return Completable.create(e -> {
 			if (passwordValidator.validate(loginData.getPassword())) {
-				e.onComplete();
+				gateway.authorize(loginData).subscribe(e::onComplete, e::onError);
 			} else {
 				e.onError(new IllegalArgumentException());
 			}
-		}).andThen(gateway.authorize(loginData));
+		});
 	}
 
 }

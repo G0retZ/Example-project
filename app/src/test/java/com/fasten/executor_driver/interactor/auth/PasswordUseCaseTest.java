@@ -17,6 +17,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.nullable;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -53,7 +54,7 @@ public class PasswordUseCaseTest {
 		verify(passwordValidator, only()).validate("");
 	}
 
-	/* Проверяем ошибки с валидатором */
+	/* Проверяем ответы валидатора */
 
 	/**
 	 * Должен ответить ошибкой, если пароль неверный
@@ -85,7 +86,21 @@ public class PasswordUseCaseTest {
 	/* Проверяем работу с гейтвеем */
 
 	/**
-	 * Должен запросить у гейтвея completable входа
+	 * Не должен запрашивать у гейтвея входа, если валидация не прошла
+	 *
+	 * @throws Exception error
+	 */
+	@Test
+	public void doNotAskGatewayForAuth() throws Exception {
+		// when:
+		passwordUseCase.authorize(new LoginData("login", "passwor")).test();
+
+		// then:
+		verifyZeroInteractions(gateway);
+	}
+
+	/**
+	 * Должен запросить у гейтвея вход
 	 *
 	 * @throws Exception error
 	 */
