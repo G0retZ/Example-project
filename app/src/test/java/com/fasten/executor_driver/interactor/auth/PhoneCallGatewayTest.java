@@ -2,6 +2,7 @@ package com.fasten.executor_driver.interactor.auth;
 
 import com.fasten.executor_driver.backend.web.ApiService;
 import com.fasten.executor_driver.backend.web.NoNetworkException;
+import com.fasten.executor_driver.gateway.PhoneCallGatewayImpl;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -30,6 +31,7 @@ public class PhoneCallGatewayTest {
 	public void setUp() throws Exception {
 		RxJavaPlugins.setIoSchedulerHandler(scheduler -> Schedulers.trampoline());
 		RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
+		phoneCallGateway = new PhoneCallGatewayImpl(api);
 		when(api.callMeCode(anyString())).thenReturn(Completable.never());
 	}
 
