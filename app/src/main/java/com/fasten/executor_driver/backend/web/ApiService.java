@@ -16,6 +16,12 @@ import retrofit2.http.Query;
 public interface ApiService {
 
 	/*
+	 *  Запрос входящего звонка
+	 */
+	@GET("drivers/call_me_code")
+	Completable callMeCode(@NonNull @Query("pn") String phoneNumber);
+
+	/*
 	 *  Проверка логина
 	 */
 	@GET("drivers/checkLogin")
