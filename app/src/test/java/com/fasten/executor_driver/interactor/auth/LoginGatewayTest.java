@@ -2,7 +2,6 @@ package com.fasten.executor_driver.interactor.auth;
 
 import com.fasten.executor_driver.backend.web.ApiService;
 import com.fasten.executor_driver.backend.web.NoNetworkException;
-import com.fasten.executor_driver.backend.web.model.ApiLogin;
 import com.fasten.executor_driver.gateway.LoginGatewayImpl;
 
 import org.junit.Before;
@@ -15,7 +14,7 @@ import io.reactivex.Completable;
 import io.reactivex.plugins.RxJavaPlugins;
 import io.reactivex.schedulers.Schedulers;
 
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -33,7 +32,7 @@ public class LoginGatewayTest {
 		RxJavaPlugins.setIoSchedulerHandler(scheduler -> Schedulers.trampoline());
 		RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
 		loginGateway = new LoginGatewayImpl(api);
-		when(api.checkLogin(any(ApiLogin.class))).thenReturn(Completable.never());
+		when(api.checkLogin(anyString())).thenReturn(Completable.never());
 	}
 
 	/* Проверяем работу с АПИ */
@@ -49,7 +48,7 @@ public class LoginGatewayTest {
 		loginGateway.checkLogin("Login");
 
 		// then:
-		verify(api, only()).checkLogin(new ApiLogin("Login", ""));
+		verify(api, only()).checkLogin("Login");
 	}
 
 	/* Проверяем правильность потоков (добавить) */
@@ -64,7 +63,7 @@ public class LoginGatewayTest {
 	@Test
 	public void answerNoNetworkError() throws Exception {
 		// when:
-		when(api.checkLogin(any(ApiLogin.class))).thenReturn(Completable.error(new NoNetworkException()));
+		when(api.checkLogin(anyString())).thenReturn(Completable.error(new NoNetworkException()));
 
 		// then:
 		loginGateway.checkLogin("Login").test().assertError(NoNetworkException.class);
@@ -78,7 +77,7 @@ public class LoginGatewayTest {
 	@Test
 	public void answerLoginSuccessful() throws Exception {
 		// when:
-		when(api.checkLogin(any(ApiLogin.class))).thenReturn(Completable.complete());
+		when(api.checkLogin(anyString())).thenReturn(Completable.complete());
 
 		// then:
 		loginGateway.checkLogin("Login").test().assertComplete();
