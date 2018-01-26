@@ -30,6 +30,7 @@ public class PhoneCallUseCaseTest {
 
 	@Before
 	public void setUp() throws Exception {
+		phoneCallUseCase = new PhoneCallUseCaseImpl(gateway, phoneNumberValidator);
 		when(gateway.callMe(anyString())).thenReturn(Completable.never());
 		when(phoneNumberValidator.validate("0123456")).thenReturn(true);
 	}
