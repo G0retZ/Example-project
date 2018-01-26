@@ -6,7 +6,9 @@ import com.fasten.executor_driver.backend.web.model.ApiLogin;
 
 import io.reactivex.Completable;
 import retrofit2.http.Body;
+import retrofit2.http.GET;
 import retrofit2.http.POST;
+import retrofit2.http.Query;
 
 /**
  * Общение с сервером API
@@ -14,10 +16,16 @@ import retrofit2.http.POST;
 public interface ApiService {
 
 	/*
-	 *  Авторизация
+	 *  Запрос входящего звонка
 	 */
-	@POST("drivers/checkLogin")
-	Completable checkLogin(@NonNull @Body ApiLogin apiLogin);
+	@GET("drivers/call_me_code")
+	Completable callMeCode(@NonNull @Query("pn") String phoneNumber);
+
+	/*
+	 *  Проверка логина
+	 */
+	@GET("drivers/checkLogin")
+	Completable checkLogin(@NonNull @Query("pn") String phoneNumber);
 
 	/*
 	 *  Авторизация

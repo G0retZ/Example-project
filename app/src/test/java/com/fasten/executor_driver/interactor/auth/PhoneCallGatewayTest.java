@@ -2,7 +2,7 @@ package com.fasten.executor_driver.interactor.auth;
 
 import com.fasten.executor_driver.backend.web.ApiService;
 import com.fasten.executor_driver.backend.web.NoNetworkException;
-import com.fasten.executor_driver.gateway.LoginGatewayImpl;
+import com.fasten.executor_driver.gateway.PhoneCallGatewayImpl;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -20,9 +20,9 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class LoginGatewayTest {
+public class PhoneCallGatewayTest {
 
-	private LoginGateway loginGateway;
+	private PhoneCallGateway phoneCallGateway;
 
 	@Mock
 	private ApiService api;
@@ -31,24 +31,24 @@ public class LoginGatewayTest {
 	public void setUp() throws Exception {
 		RxJavaPlugins.setIoSchedulerHandler(scheduler -> Schedulers.trampoline());
 		RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
-		loginGateway = new LoginGatewayImpl(api);
-		when(api.checkLogin(anyString())).thenReturn(Completable.never());
+		phoneCallGateway = new PhoneCallGatewayImpl(api);
+		when(api.callMeCode(anyString())).thenReturn(Completable.never());
 	}
 
 	/* Проверяем работу с АПИ */
 
 	/**
-	 * Должен запросить у АПИ completable на вход с заданными параметрами
+	 * Должен запросить у АПИ completable на запрос входящего звонка с кодом
 	 *
 	 * @throws Exception error
 	 */
 	@Test
-	public void authCompletableRequested() throws Exception {
+	public void callMeCompletableRequested() throws Exception {
 		// when:
-		loginGateway.checkLogin("Login");
+		phoneCallGateway.callMe("012345");
 
 		// then:
-		verify(api, only()).checkLogin("Login");
+		verify(api, only()).callMeCode("012345");
 	}
 
 	/* Проверяем правильность потоков (добавить) */
@@ -63,10 +63,10 @@ public class LoginGatewayTest {
 	@Test
 	public void answerNoNetworkError() throws Exception {
 		// when:
-		when(api.checkLogin(anyString())).thenReturn(Completable.error(new NoNetworkException()));
+		when(api.callMeCode(anyString())).thenReturn(Completable.error(new NoNetworkException()));
 
 		// then:
-		loginGateway.checkLogin("Login").test().assertError(NoNetworkException.class);
+		phoneCallGateway.callMe("01234").test().assertError(NoNetworkException.class);
 	}
 
 	/**
@@ -77,10 +77,9 @@ public class LoginGatewayTest {
 	@Test
 	public void answerLoginSuccessful() throws Exception {
 		// when:
-		when(api.checkLogin(anyString())).thenReturn(Completable.complete());
+		when(api.callMeCode(anyString())).thenReturn(Completable.complete());
 
 		// then:
-		loginGateway.checkLogin("Login").test().assertComplete();
+		phoneCallGateway.callMe("012345").test().assertComplete();
 	}
-
 }

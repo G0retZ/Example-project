@@ -12,14 +12,17 @@ public interface LoginUseCase {
 
 	/**
 	 * Проверяет формат логина.
+	 * @param login {@link String} логин
+	 * @return {@link Completable} результат проверки
 	 */
 	@NonNull
 	Completable validateLogin(@Nullable String login);
 
 	/**
 	 * Проверяет логин на существование.
+	 * @param login {@link String} логин
+	 * @return {@link Completable} результат проверки
 	 */
 	@NonNull
 	Completable checkLogin(@Nullable String login);
-
 }
