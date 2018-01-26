@@ -9,6 +9,7 @@ import com.fasten.executor_driver.presentation.ViewState;
  * ViewModel окна ввода номера телефона
  */
 public interface PhoneViewModel {
+
 	/**
 	 * Возвращает состояние вида для применения
 	 * @return - {@link ViewState} состояние вида
