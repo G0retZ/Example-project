@@ -43,7 +43,7 @@ public class PhoneCallGatewayTest {
 	 * @throws Exception error
 	 */
 	@Test
-	public void authCompletableRequested() throws Exception {
+	public void callMeCompletableRequested() throws Exception {
 		// when:
 		phoneCallGateway.callMe("012345");
 
