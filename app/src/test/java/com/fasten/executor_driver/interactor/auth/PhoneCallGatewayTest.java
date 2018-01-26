@@ -38,7 +38,7 @@ public class PhoneCallGatewayTest {
 	/* Проверяем работу с АПИ */
 
 	/**
-	 * Должен запросить у АПИ completable на вход с заданными параметрами
+	 * Должен запросить у АПИ completable на запрос входящего звонка с кодом
 	 *
 	 * @throws Exception error
 	 */
