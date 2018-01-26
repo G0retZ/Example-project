@@ -12,9 +12,10 @@ import io.reactivex.Completable;
 public interface PasswordUseCase {
 
 	/**
-	 * Проверяет формат пароля, и совершает вход.
+	 * Проверяет формат пароля, и запрашивает авторизацию.
+	 * @param loginData {@link LoginData} данные для входа.
+	 * @return {@link Completable} результат проверки или входа.
 	 */
 	@NonNull
 	Completable authorize(@NonNull LoginData loginData);
-
 }
