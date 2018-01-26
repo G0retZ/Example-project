@@ -1,0 +1,18 @@
+package com.fasten.executor_driver.entity;
+
+import android.support.annotation.Nullable;
+
+/**
+ * Валидатор номера телефона
+ */
+class PhoneNumberValidator implements Validator<String> {
+
+	@SuppressWarnings("RedundantIfStatement")
+	@Override
+	public boolean validate(@Nullable String phoneNumber) {
+		if (phoneNumber == null) return false;
+		if (phoneNumber.length() != 10) return false;
+		if (!phoneNumber.matches("\\d*")) return false;
+		return true;
+	}
+}
