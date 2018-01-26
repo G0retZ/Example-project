@@ -6,6 +6,8 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
@@ -31,5 +33,12 @@ public class TimeoutButtonViewStateHoldTest {
 		verify(timeoutButtonViewActions).showTimer(12L);
 		verify(timeoutButtonViewActions).setResponsive(false);
 		verifyNoMoreInteractions(timeoutButtonViewActions);
+	}
+
+	@Test
+	public void testEquals() throws Exception {
+		assertEquals(viewState, new TimeoutButtonViewStateHold(12));
+		assertNotEquals(viewState, new TimeoutButtonViewStateHold(13));
+		assertNotEquals(viewState, new TimeoutButtonViewStateHold(11));
 	}
 }
