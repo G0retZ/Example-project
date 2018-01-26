@@ -14,7 +14,7 @@ import retrofit2.http.POST;
 public interface ApiService {
 
 	/*
-	 *  Авторизация
+	 *  Проверка логина
 	 */
 	@POST("drivers/checkLogin")
 	Completable checkLogin(@NonNull @Body ApiLogin apiLogin);
