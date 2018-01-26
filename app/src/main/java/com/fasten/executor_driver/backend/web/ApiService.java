@@ -16,6 +16,12 @@ import retrofit2.http.Query;
 public interface ApiService {
 
 	/*
+	 *  Запрос СМС с кодом
+	 */
+	@GET("drivers/send_me_code")
+	Completable sendMeCode(@NonNull @Query("pn") String phoneNumber);
+
+	/*
 	 *  Запрос входящего звонка
 	 */
 	@GET("drivers/call_me_code")
