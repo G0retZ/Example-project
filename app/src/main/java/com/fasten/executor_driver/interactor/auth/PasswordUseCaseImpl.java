@@ -23,17 +23,13 @@ public class PasswordUseCaseImpl implements PasswordUseCase {
 
 	@NonNull
 	@Override
-	public Completable authorize(@NonNull LoginData loginData, @Nullable Completable afterValidation) {
+	public Completable authorize(@NonNull LoginData loginData, @NonNull Completable afterValidation) {
 		return Completable.create(e -> {
 			if (passwordValidator.validate(loginData.getPassword())) {
-				if (afterValidation == null) {
-					gateway.authorize(loginData).subscribe(e::onComplete, e::onError);
-				} else {
-					afterValidation.subscribe(
-							() -> gateway.authorize(loginData).subscribe(e::onComplete, e::onError),
-							throwable -> e.onComplete()
-					);
-				}
+				afterValidation.subscribe(
+						() -> gateway.authorize(loginData).subscribe(e::onComplete, e::onError),
+						throwable -> e.onComplete()
+				);
 			} else {
 				e.onError(new ValidationException());
 			}

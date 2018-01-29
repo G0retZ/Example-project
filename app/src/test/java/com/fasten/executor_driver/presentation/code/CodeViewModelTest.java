@@ -341,7 +341,7 @@ public class CodeViewModelTest {
 	 * @throws Exception error
 	 */
 	@Test
-	public void setReadyViewStateToLiveData() throws Exception {
+	public void setPendingViewStateToLiveDataAfterValidationSucces() throws Exception {
 		// Дано:
 		InOrder inOrder = Mockito.inOrder(viewStateObserver);
 		codeViewModel.getViewStateLiveData().observeForever(viewStateObserver);

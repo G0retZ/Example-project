@@ -5,7 +5,7 @@ import android.support.annotation.NonNull;
 import com.fasten.executor_driver.presentation.ViewState;
 
 /**
- * Состояние процесса при вводе кода.
+ * Состояние ожидание при проверке введенного кода.
  */
 final class CodeViewStatePending implements ViewState<CodeViewActions> {
 
