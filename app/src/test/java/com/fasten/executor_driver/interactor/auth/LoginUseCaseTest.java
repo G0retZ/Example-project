@@ -44,10 +44,10 @@ public class LoginUseCaseTest {
 	 */
 	@Test
 	public void askLoginValidatorForResult() throws Exception {
-		// when:
+		// Действие:
 		loginUseCase.validateLogin("").test();
 
-		// then:
+		// Результат:
 		verify(loginValidator, only()).validate("");
 	}
 
@@ -60,7 +60,7 @@ public class LoginUseCaseTest {
 	 */
 	@Test
 	public void answerErrorIfLoginInvalid() throws Exception {
-		// then:
+		// Результат:
 		loginUseCase.validateLogin("12").test().assertError(IllegalArgumentException.class);
 	}
 
@@ -71,10 +71,10 @@ public class LoginUseCaseTest {
 	 */
 	@Test
 	public void answerSuccessIfLoginValid() throws Exception {
-		// when:
+		// Действие:
 		when(loginValidator.validate(anyString())).thenReturn(true);
 
-		// then:
+		// Результат:
 		loginUseCase.validateLogin("").test().assertComplete();
 	}
 
@@ -87,10 +87,10 @@ public class LoginUseCaseTest {
 	 */
 	@Test
 	public void askGatewayForLoginCheck() throws Exception {
-		// when:
+		// Действие:
 		loginUseCase.checkLogin("checkLogin").test();
 
-		// then:
+		// Результат:
 		verify(gateway, only()).checkLogin("checkLogin");
 	}
 
@@ -103,7 +103,7 @@ public class LoginUseCaseTest {
 	 */
 	@Test
 	public void answerArgumentError() throws Exception {
-		// then:
+		// Результат:
 		loginUseCase.checkLogin(null).test().assertError(IllegalArgumentException.class);
 	}
 
@@ -114,10 +114,10 @@ public class LoginUseCaseTest {
 	 */
 	@Test
 	public void answerNoNetworkError() throws Exception {
-		// when:
+		// Действие:
 		when(gateway.checkLogin(any(String.class))).thenReturn(Completable.error(new NoNetworkException()));
 
-		// then:
+		// Результат:
 		loginUseCase.checkLogin("").test().assertError(NoNetworkException.class);
 	}
 
@@ -128,7 +128,7 @@ public class LoginUseCaseTest {
 	 */
 	@Test
 	public void answerLoginSuccessful() throws Exception {
-		// when:
+		// Действие:
 		when(gateway.checkLogin(any(String.class))).thenReturn(Completable.complete());
 		loginUseCase.checkLogin("").test().assertComplete();
 	}

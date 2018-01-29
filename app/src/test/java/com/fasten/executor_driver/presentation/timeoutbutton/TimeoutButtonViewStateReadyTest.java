@@ -24,10 +24,10 @@ public class TimeoutButtonViewStateReadyTest {
 
 	@Test
 	public void testActions() throws Exception {
-		// when:
+		// Действие:
 		viewState.apply(timeoutButtonViewActions);
 
-		// then:
+		// Результат:
 		verify(timeoutButtonViewActions).showTimer(null);
 		verify(timeoutButtonViewActions).setResponsive(true);
 		verifyNoMoreInteractions(timeoutButtonViewActions);

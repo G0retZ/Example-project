@@ -26,10 +26,10 @@ public class PhoneViewStateProceedTest {
 
 	@Test
 	public void testActions() throws Exception {
-		// when:
+		// Действие:
 		viewState.apply(phoneViewActions);
 
-		// then:
+		// Результат:
 		verify(phoneViewActions).showPending(false);
 		verify(phoneViewActions).showError(null);
 		verify(phoneViewActions).enableButton(false);

@@ -44,10 +44,10 @@ public class PhoneCallUseCaseTest {
 	 */
 	@Test
 	public void askPhoneNumberValidatorForResult() throws Exception {
-		// when:
+		// Действие:
 		phoneCallUseCase.callMe("").test();
 
-		// then:
+		// Результат:
 		verify(phoneNumberValidator, only()).validate("");
 	}
 
@@ -60,7 +60,7 @@ public class PhoneCallUseCaseTest {
 	 */
 	@Test
 	public void answerErrorIfPhoneNumberInvalid() throws Exception {
-		// then:
+		// Результат:
 		phoneCallUseCase.callMe("").test().assertError(IllegalArgumentException.class);
 	}
 
@@ -71,10 +71,10 @@ public class PhoneCallUseCaseTest {
 	 */
 	@Test
 	public void answerSuccessIfPhoneNumberValid() throws Exception {
-		// when:
+		// Действие:
 		when(phoneNumberValidator.validate(anyString())).thenReturn(true);
 
-		// then:
+		// Результат:
 		phoneCallUseCase.callMe("").test().assertNoErrors();
 	}
 
@@ -87,10 +87,10 @@ public class PhoneCallUseCaseTest {
 	 */
 	@Test
 	public void doNotAskGatewayForCall() throws Exception {
-		// when:
+		// Действие:
 		phoneCallUseCase.callMe("012345").test();
 
-		// then:
+		// Результат:
 		verifyZeroInteractions(gateway);
 	}
 
@@ -101,10 +101,10 @@ public class PhoneCallUseCaseTest {
 	 */
 	@Test
 	public void askGatewayForCall() throws Exception {
-		// when:
+		// Действие:
 		phoneCallUseCase.callMe("0123456").test();
 
-		// then:
+		// Результат:
 		verify(gateway, only()).callMe("0123456");
 	}
 
@@ -117,10 +117,10 @@ public class PhoneCallUseCaseTest {
 	 */
 	@Test
 	public void answerNoNetworkError() throws Exception {
-		// when:
+		// Действие:
 		when(gateway.callMe(anyString())).thenReturn(Completable.error(new NoNetworkException()));
 
-		// then:
+		// Результат:
 		phoneCallUseCase.callMe("0123456").test().assertError(NoNetworkException.class);
 	}
 
@@ -131,10 +131,10 @@ public class PhoneCallUseCaseTest {
 	 */
 	@Test
 	public void answerCallSuccessful() throws Exception {
-		// when:
+		// Действие:
 		when(gateway.callMe(anyString())).thenReturn(Completable.complete());
 
-		// then:
+		// Результат:
 		phoneCallUseCase.callMe("0123456").test().assertComplete();
 	}
 }

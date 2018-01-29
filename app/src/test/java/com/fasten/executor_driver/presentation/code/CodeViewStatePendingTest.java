@@ -26,10 +26,10 @@ public class CodeViewStatePendingTest {
 
 	@Test
 	public void testActions() throws Exception {
-		// when:
+		// Действие:
 		viewState.apply(codeViewActions);
 
-		// then:
+		// Результат:
 		verify(codeViewActions).setInputMessage(12);
 		verify(codeViewActions).showPending(true);
 		verify(codeViewActions).showError(null);

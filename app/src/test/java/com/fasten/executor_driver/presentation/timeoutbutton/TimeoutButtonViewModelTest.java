@@ -57,10 +57,10 @@ public class TimeoutButtonViewModelTest {
 	 */
 	@Test
 	public void setReadyViewStateToLiveData() throws Exception {
-		// when:
+		// Действие:
 		timeoutButtonViewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
-		// then:
+		// Результат:
 		verify(viewStateObserver, only()).onChanged(any(TimeoutButtonViewStateReady.class));
 	}
 
@@ -72,15 +72,15 @@ public class TimeoutButtonViewModelTest {
 	 */
 	@Test
 	public void setHoldViewStateToLiveData() throws Exception {
-		// given:
+		// Дано:
 		InOrder inOrder = Mockito.inOrder(viewStateObserver);
 		timeoutButtonViewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
-		// when:
+		// Действие:
 		timeoutButtonViewModel.buttonClicked();
 		testScheduler.advanceTimeBy(10, TimeUnit.SECONDS);
 
-		// then:
+		// Результат:
 		inOrder.verify(viewStateObserver).onChanged(any(TimeoutButtonViewStateReady.class));
 		inOrder.verify(viewStateObserver).onChanged(new TimeoutButtonViewStateHold(10));
 		inOrder.verify(viewStateObserver).onChanged(new TimeoutButtonViewStateHold(9));

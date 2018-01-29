@@ -42,17 +42,17 @@ public class SendTokenInterceptorTest {
 	 */
 	@Test
 	public void askTokenKeeperToSaveToken() throws Exception {
-		// given:
+		// Дано:
 		when(chain.request()).thenReturn(
 				new Request.Builder()
 						.url("http://www.fasten.com")
 						.build()
 		);
 
-		// when:
+		// Действие:
 		sendTokenInterceptor.intercept(chain);
 
-		// then:
+		// Результат:
 		verify(tokenKeeper, only()).getToken();
 	}
 
@@ -63,13 +63,13 @@ public class SendTokenInterceptorTest {
 	 */
 	@Test
 	public void doNotInjectTokenIfNull() throws Exception {
-		// given:
+		// Дано:
 		when(chain.request()).thenReturn(new Request.Builder().url("http://www.fasten.com").build());
 
-		// when:
+		// Действие:
 		sendTokenInterceptor.intercept(chain);
 
-		// then:
+		// Результат:
 		verify(chain).proceed(request.capture());
 		assertEquals(request.getValue().headers("Authorization").size(), 0);
 	}
@@ -81,14 +81,14 @@ public class SendTokenInterceptorTest {
 	 */
 	@Test
 	public void injectToken() throws Exception {
-		// given:
+		// Дано:
 		when(chain.request()).thenReturn(new Request.Builder().url("http://www.fasten.com").build());
 		when(tokenKeeper.getToken()).thenReturn("token");
 
-		// when:
+		// Действие:
 		sendTokenInterceptor.intercept(chain);
 
-		// then:
+		// Результат:
 		verify(chain).proceed(request.capture());
 		assertEquals(request.getValue().headers("Authorization").size(), 1);
 		assertEquals(request.getValue().headers("Authorization").get(0), "token");

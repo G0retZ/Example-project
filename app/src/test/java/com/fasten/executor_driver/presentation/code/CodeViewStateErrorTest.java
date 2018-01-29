@@ -34,10 +34,10 @@ public class CodeViewStateErrorTest {
 
 	@Test
 	public void testActions() throws Exception {
-		// when:
+		// Действие:
 		viewState.apply(codeViewActions);
 
-		// then:
+		// Результат:
 		verify(codeViewActions).setInputMessage(12);
 		verify(codeViewActions).showPending(false);
 		verify(codeViewActions).showError(throwableCaptor.capture());

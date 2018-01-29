@@ -46,10 +46,10 @@ public class PasswordGatewayTest {
 	 */
 	@Test
 	public void authCompletableRequested() throws Exception {
-		// when:
+		// Действие:
 		passwordGateway.authorize(new LoginData("Login", "Password"));
 
-		// then:
+		// Результат:
 		verify(api, only()).authorize(new ApiLogin("Login", "Password"));
 	}
 
@@ -64,10 +64,10 @@ public class PasswordGatewayTest {
 	 */
 	@Test
 	public void answerNoNetworkError() throws Exception {
-		// when:
+		// Действие:
 		when(api.authorize(any(ApiLogin.class))).thenReturn(Completable.error(new NoNetworkException()));
 
-		// then:
+		// Результат:
 		passwordGateway.authorize(new LoginData("Login", "Password"))
 				.test().assertError(NoNetworkException.class);
 	}
@@ -79,10 +79,10 @@ public class PasswordGatewayTest {
 	 */
 	@Test
 	public void answerAuthSuccessful() throws Exception {
-		// when:
+		// Действие:
 		when(api.authorize(any(ApiLogin.class))).thenReturn(Completable.complete());
 
-		// then:
+		// Результат:
 		passwordGateway.authorize(new LoginData("Login", "Password"))
 				.test().assertComplete();
 	}

@@ -47,10 +47,10 @@ public class PasswordUseCaseTest {
 	 */
 	@Test
 	public void askPasswordValidatorForResult() throws Exception {
-		// when:
+		// Действие:
 		passwordUseCase.authorize(new LoginData("", "")).test();
 
-		// then:
+		// Результат:
 		verify(passwordValidator, only()).validate("");
 	}
 
@@ -63,7 +63,7 @@ public class PasswordUseCaseTest {
 	 */
 	@Test
 	public void answerErrorIfPasswordInvalid() throws Exception {
-		// then:
+		// Результат:
 		passwordUseCase.authorize(new LoginData("", ""))
 				.test().assertError(IllegalArgumentException.class);
 	}
@@ -75,10 +75,10 @@ public class PasswordUseCaseTest {
 	 */
 	@Test
 	public void answerSuccessIfPasswordValid() throws Exception {
-		// when:
+		// Действие:
 		when(passwordValidator.validate(anyString())).thenReturn(true);
 
-		// then:
+		// Результат:
 		passwordUseCase.authorize(new LoginData("", ""))
 				.test().assertNoErrors();
 	}
@@ -92,10 +92,10 @@ public class PasswordUseCaseTest {
 	 */
 	@Test
 	public void doNotAskGatewayForAuth() throws Exception {
-		// when:
+		// Действие:
 		passwordUseCase.authorize(new LoginData("login", "passwor")).test();
 
-		// then:
+		// Результат:
 		verifyZeroInteractions(gateway);
 	}
 
@@ -106,10 +106,10 @@ public class PasswordUseCaseTest {
 	 */
 	@Test
 	public void askGatewayForAuth() throws Exception {
-		// when:
+		// Действие:
 		passwordUseCase.authorize(new LoginData("login", "password")).test();
 
-		// then:
+		// Результат:
 		verify(gateway, only()).authorize(new LoginData("login", "password"));
 	}
 
@@ -122,10 +122,10 @@ public class PasswordUseCaseTest {
 	 */
 	@Test
 	public void answerNoNetworkError() throws Exception {
-		// when:
+		// Действие:
 		when(gateway.authorize(any(LoginData.class))).thenReturn(Completable.error(new NoNetworkException()));
 
-		// then:
+		// Результат:
 		passwordUseCase.authorize(new LoginData("login", "password")).test().assertError(NoNetworkException.class);
 	}
 
@@ -136,10 +136,10 @@ public class PasswordUseCaseTest {
 	 */
 	@Test
 	public void answerAuthSuccessful() throws Exception {
-		// when:
+		// Действие:
 		when(gateway.authorize(any(LoginData.class))).thenReturn(Completable.complete());
 
-		// then:
+		// Результат:
 		passwordUseCase.authorize(new LoginData("login", "password")).test().assertComplete();
 	}
 }

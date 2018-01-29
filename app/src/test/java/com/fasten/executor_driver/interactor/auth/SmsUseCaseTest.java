@@ -44,10 +44,10 @@ public class SmsUseCaseTest {
 	 */
 	@Test
 	public void askPhoneNumberValidatorForResult() throws Exception {
-		// when:
+		// Действие:
 		smsUseCase.sendMeCode("").test();
 
-		// then:
+		// Результат:
 		verify(phoneNumberValidator, only()).validate("");
 	}
 
@@ -60,7 +60,7 @@ public class SmsUseCaseTest {
 	 */
 	@Test
 	public void answerErrorIfPhoneNumberInvalid() throws Exception {
-		// then:
+		// Результат:
 		smsUseCase.sendMeCode("").test().assertError(IllegalArgumentException.class);
 	}
 
@@ -71,10 +71,10 @@ public class SmsUseCaseTest {
 	 */
 	@Test
 	public void answerSuccessIfPhoneNumberValid() throws Exception {
-		// when:
+		// Действие:
 		when(phoneNumberValidator.validate(anyString())).thenReturn(true);
 
-		// then:
+		// Результат:
 		smsUseCase.sendMeCode("").test().assertNoErrors();
 	}
 
@@ -87,10 +87,10 @@ public class SmsUseCaseTest {
 	 */
 	@Test
 	public void doNotAskGatewayForSms() throws Exception {
-		// when:
+		// Действие:
 		smsUseCase.sendMeCode("012345").test();
 
-		// then:
+		// Результат:
 		verifyZeroInteractions(gateway);
 	}
 
@@ -101,10 +101,10 @@ public class SmsUseCaseTest {
 	 */
 	@Test
 	public void askGatewayForSms() throws Exception {
-		// when:
+		// Действие:
 		smsUseCase.sendMeCode("0123456").test();
 
-		// then:
+		// Результат:
 		verify(gateway, only()).sendMeCode("0123456");
 	}
 
@@ -117,10 +117,10 @@ public class SmsUseCaseTest {
 	 */
 	@Test
 	public void answerNoNetworkError() throws Exception {
-		// when:
+		// Действие:
 		when(gateway.sendMeCode(anyString())).thenReturn(Completable.error(new NoNetworkException()));
 
-		// then:
+		// Результат:
 		smsUseCase.sendMeCode("0123456").test().assertError(NoNetworkException.class);
 	}
 
@@ -131,10 +131,10 @@ public class SmsUseCaseTest {
 	 */
 	@Test
 	public void answerSmsSendSuccessful() throws Exception {
-		// when:
+		// Действие:
 		when(gateway.sendMeCode(anyString())).thenReturn(Completable.complete());
 
-		// then:
+		// Результат:
 		smsUseCase.sendMeCode("0123456").test().assertComplete();
 	}
 }
