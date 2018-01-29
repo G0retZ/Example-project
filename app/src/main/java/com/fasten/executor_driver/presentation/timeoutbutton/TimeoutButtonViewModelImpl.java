@@ -13,7 +13,7 @@ import io.reactivex.Observable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
-class TimeoutButtonViewModelImpl extends ViewModel implements TimeoutButtonViewModel {
+public class TimeoutButtonViewModelImpl extends ViewModel implements TimeoutButtonViewModel {
 
 	private final int duration;
 	private Disposable disposable;
@@ -21,7 +21,8 @@ class TimeoutButtonViewModelImpl extends ViewModel implements TimeoutButtonViewM
 	@NonNull
 	private final MutableLiveData<ViewState<TimeoutButtonViewActions>> viewStateLiveData;
 
-	TimeoutButtonViewModelImpl(int duration) {
+	@SuppressWarnings("WeakerAccess")
+	public TimeoutButtonViewModelImpl(int duration) {
 		this.duration = duration;
 		viewStateLiveData = new MutableLiveData<>();
 		viewStateLiveData.postValue(new TimeoutButtonViewStateReady());

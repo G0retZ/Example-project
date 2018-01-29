@@ -12,7 +12,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
-class PhoneViewModelImpl extends ViewModel implements PhoneViewModel {
+public class PhoneViewModelImpl extends ViewModel implements PhoneViewModel {
 
 	@NonNull
 	private final LoginUseCase loginUseCase;
@@ -24,7 +24,8 @@ class PhoneViewModelImpl extends ViewModel implements PhoneViewModel {
 
 	private String lastLogin;
 
-	PhoneViewModelImpl(@NonNull LoginUseCase loginUseCase) {
+	@SuppressWarnings("WeakerAccess")
+	public PhoneViewModelImpl(@NonNull LoginUseCase loginUseCase) {
 		this.loginUseCase = loginUseCase;
 		viewStateLiveData = new MutableLiveData<>();
 		viewStateLiveData.postValue(new PhoneViewStateInitial());
