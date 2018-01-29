@@ -15,5 +15,4 @@ public final class PhoneViewStateInitial implements ViewState<PhoneViewActions> 
 		stateActions.showError(null);
 		stateActions.enableButton(false);
 	}
-
 }

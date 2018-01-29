@@ -15,5 +15,4 @@ public final class PhoneViewStatePending implements ViewState<PhoneViewActions> 
 		stateActions.showError(null);
 		stateActions.enableButton(false);
 	}
-
 }

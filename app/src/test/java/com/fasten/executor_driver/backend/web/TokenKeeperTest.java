@@ -92,5 +92,4 @@ public class TokenKeeperTest {
 		// then:
 		assertEquals(tokenKeeper.getToken(), "654321");
 	}
-
 }

@@ -14,5 +14,4 @@ public final class TimeoutButtonViewStateReady implements ViewState<TimeoutButto
 		stateActions.setResponsive(true);
 		stateActions.showTimer(null);
 	}
-
 }

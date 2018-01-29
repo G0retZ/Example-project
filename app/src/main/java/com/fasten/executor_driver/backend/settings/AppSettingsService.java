@@ -38,5 +38,4 @@ public interface AppSettingsService {
 	 * @param data - сами данные
 	 */
 	void saveEncryptedData(@NonNull byte[] raw, @NonNull String key, @Nullable String data);
-
 }

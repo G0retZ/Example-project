@@ -33,5 +33,4 @@ public class PhoneViewStatePendingTest {
 		verify(phoneViewActions).enableButton(false);
 		verifyNoMoreInteractions(phoneViewActions);
 	}
-
 }

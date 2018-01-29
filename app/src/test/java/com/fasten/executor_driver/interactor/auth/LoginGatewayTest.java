@@ -82,5 +82,4 @@ public class LoginGatewayTest {
 		// then:
 		loginGateway.checkLogin("Login").test().assertComplete();
 	}
-
 }

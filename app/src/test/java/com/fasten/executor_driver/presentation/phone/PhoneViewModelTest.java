@@ -273,5 +273,4 @@ public class PhoneViewModelTest {
 		inOrder.verify(viewStateObserver).onChanged(new PhoneViewStateProceed("1245"));
 		verifyNoMoreInteractions(viewStateObserver);
 	}
-
 }

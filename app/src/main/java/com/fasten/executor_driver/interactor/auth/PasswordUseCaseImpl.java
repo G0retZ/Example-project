@@ -30,5 +30,4 @@ public class PasswordUseCaseImpl implements PasswordUseCase {
 			}
 		});
 	}
-
 }

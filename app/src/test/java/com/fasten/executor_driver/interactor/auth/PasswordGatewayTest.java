@@ -86,5 +86,4 @@ public class PasswordGatewayTest {
 		passwordGateway.authorize(new LoginData("Login", "Password"))
 				.test().assertComplete();
 	}
-
 }

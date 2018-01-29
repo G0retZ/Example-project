@@ -42,5 +42,4 @@ public class PhoneViewStateProceedTest {
 		assertEquals(viewState, new PhoneViewStateProceed("login"));
 		assertNotEquals(viewState, new PhoneViewStateProceed("logi"));
 	}
-
 }

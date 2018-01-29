@@ -37,5 +37,4 @@ public class LoginUseCaseImpl implements LoginUseCase {
 		if (login == null) return Completable.error(new IllegalArgumentException());
 		return gateway.checkLogin(login);
 	}
-
 }

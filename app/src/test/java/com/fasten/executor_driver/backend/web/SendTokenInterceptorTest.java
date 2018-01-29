@@ -93,5 +93,4 @@ public class SendTokenInterceptorTest {
 		assertEquals(request.getValue().headers("Authorization").size(), 1);
 		assertEquals(request.getValue().headers("Authorization").get(0), "token");
 	}
-
 }

@@ -40,12 +40,12 @@ public class AppSettingsServiceTest {
 	@Test
 	public void saveAndReadNullValue() throws Exception {
 		// given:
-		appSettingsService.saveData("key", "value");
+		appSettingsService.saveData("key1", "value1");
 
 		// then:
-		assertEquals(appSettingsService.getData("key"), "value");
-		appSettingsService.saveData("key", null);
-		assertNull(appSettingsService.getData("key"));
+		assertEquals(appSettingsService.getData("key1"), "value1");
+		appSettingsService.saveData("key1", null);
+		assertNull(appSettingsService.getData("key1"));
 	}
 
 	@Test
@@ -72,5 +72,4 @@ public class AppSettingsServiceTest {
 		appSettingsService.saveEncryptedData(raw, "key", null);
 		assertNull(appSettingsService.getEncryptedData(raw, "key"));
 	}
-
 }

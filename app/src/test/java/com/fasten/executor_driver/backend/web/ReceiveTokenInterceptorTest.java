@@ -86,5 +86,4 @@ public class ReceiveTokenInterceptorTest {
 		// then:
 		verify(tokenKeeper, only()).saveToken("123456");
 	}
-
 }

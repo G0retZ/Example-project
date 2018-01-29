@@ -45,5 +45,4 @@ public final class PhoneViewStateProceed implements ViewState<PhoneViewActions> 
 	public int hashCode() {
 		return login.hashCode();
 	}
-
 }

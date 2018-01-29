@@ -26,5 +26,4 @@ public class NoNetworkException extends IOException {
 	public NoNetworkException(Throwable cause) {
 		super(cause);
 	}
-
 }

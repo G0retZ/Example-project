@@ -24,5 +24,4 @@ public class LoginGatewayImpl implements LoginGateway {
 				.subscribeOn(Schedulers.io())
 				.observeOn(Schedulers.single());
 	}
-
 }

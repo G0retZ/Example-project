@@ -80,5 +80,4 @@ public class AppPreferences implements AppSettingsService{
 		}
 		return null;
 	}
-
 }

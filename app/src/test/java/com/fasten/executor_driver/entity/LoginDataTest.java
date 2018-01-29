@@ -37,5 +37,4 @@ public class LoginDataTest {
         assertNotEquals(loginData, loginData.setLogin("namee"));
         assertNotEquals(loginData, loginData.setPassword("passwordd"));
     }
-
 }

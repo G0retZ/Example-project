@@ -65,5 +65,4 @@ public class LoginData {
 		result = 31 * result + password.hashCode();
 		return result;
 	}
-
 }

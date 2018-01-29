@@ -87,5 +87,4 @@ class PhoneViewModelImpl extends ViewModel implements PhoneViewModel {
 		disposable = null;
 		viewStateLiveData.postValue(new PhoneViewStateError(throwable));
 	}
-
 }

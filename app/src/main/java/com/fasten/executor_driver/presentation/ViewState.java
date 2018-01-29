@@ -9,6 +9,7 @@ import android.support.annotation.NonNull;
  * @param <A> тип, предоставляющий действия над View.
  */
 public interface ViewState<A> {
+
 	/**
 	 * Применяет определенное состояние ко View используя предоставленные действия.
 	 *

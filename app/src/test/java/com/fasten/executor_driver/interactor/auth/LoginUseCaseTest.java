@@ -132,5 +132,4 @@ public class LoginUseCaseTest {
 		when(gateway.checkLogin(any(String.class))).thenReturn(Completable.complete());
 		loginUseCase.checkLogin("").test().assertComplete();
 	}
-
 }

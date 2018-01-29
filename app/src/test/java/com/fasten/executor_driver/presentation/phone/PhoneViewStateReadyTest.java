@@ -33,5 +33,4 @@ public class PhoneViewStateReadyTest {
 		verify(phoneViewActions).enableButton(true);
 		verifyNoMoreInteractions(phoneViewActions);
 	}
-
 }

@@ -142,5 +142,4 @@ public class PasswordUseCaseTest {
 		// then:
 		passwordUseCase.authorize(new LoginData("login", "password")).test().assertComplete();
 	}
-
 }
