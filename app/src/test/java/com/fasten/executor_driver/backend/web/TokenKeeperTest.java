@@ -41,10 +41,10 @@ public class TokenKeeperTest {
 	 */
 	@Test
 	public void askSettingsForToken() throws Exception {
-		// when:
+		// Действие:
 		tokenKeeper.getToken();
 
-		// then:
+		// Результат:
 		verify(appSettings, only()).getEncryptedData(any(byte[].class), eq("token"));
 	}
 
@@ -55,10 +55,10 @@ public class TokenKeeperTest {
 	 */
 	@Test
 	public void askSettingsForSaveToken() throws Exception {
-		// when:
+		// Действие:
 		tokenKeeper.saveToken("123456");
 
-		// then:
+		// Результат:
 		verify(appSettings, only()).saveEncryptedData(any(byte[].class), eq("token"), eq("123456"));
 	}
 
@@ -69,11 +69,11 @@ public class TokenKeeperTest {
 	 */
 	@Test
 	public void sameBytesForEncryption() throws Exception {
-		// when:
+		// Действие:
 		tokenKeeper.saveToken("123456");
 		tokenKeeper.getToken();
 
-		// then:
+		// Результат:
 		verify(appSettings).saveEncryptedData(rawCaptor.capture(), eq("token"), eq("123456"));
 		verify(appSettings).getEncryptedData(rawCaptor.capture(), eq("token"));
 		assertEquals(rawCaptor.getAllValues().get(0), rawCaptor.getAllValues().get(1));
@@ -86,11 +86,10 @@ public class TokenKeeperTest {
 	 */
 	@Test
 	public void valueUnchangedForRead() throws Exception {
-		// when:
+		// Действие:
 		when(appSettings.getEncryptedData(any(byte[].class), eq("token"))).thenReturn("654321");
 
-		// then:
+		// Результат:
 		assertEquals(tokenKeeper.getToken(), "654321");
 	}
-
 }

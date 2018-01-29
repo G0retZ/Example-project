@@ -32,5 +32,4 @@ class SendTokenInterceptor implements Interceptor {
 		}
 		return chain.proceed(builder.build());
 	}
-
 }

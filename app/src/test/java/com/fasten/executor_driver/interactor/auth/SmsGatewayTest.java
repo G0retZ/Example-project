@@ -44,10 +44,10 @@ public class SmsGatewayTest {
 	 */
 	@Test
 	public void smsMeCompletableRequested() throws Exception {
-		// when:
+		// Действие:
 		phoneCallGateway.sendMeCode("012345");
 
-		// then:
+		// Результат:
 		verify(api, only()).sendMeCode("012345");
 	}
 
@@ -62,10 +62,10 @@ public class SmsGatewayTest {
 	 */
 	@Test
 	public void answerNoNetworkError() throws Exception {
-		// when:
+		// Действие:
 		when(api.sendMeCode(anyString())).thenReturn(Completable.error(new NoNetworkException()));
 
-		// then:
+		// Результат:
 		phoneCallGateway.sendMeCode("01234").test().assertError(NoNetworkException.class);
 	}
 
@@ -76,10 +76,10 @@ public class SmsGatewayTest {
 	 */
 	@Test
 	public void answerSmsSuccessful() throws Exception {
-		// when:
+		// Действие:
 		when(api.sendMeCode(anyString())).thenReturn(Completable.complete());
 
-		// then:
+		// Результат:
 		phoneCallGateway.sendMeCode("012345").test().assertComplete();
 	}
 }

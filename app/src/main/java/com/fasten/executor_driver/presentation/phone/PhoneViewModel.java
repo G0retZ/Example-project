@@ -9,6 +9,7 @@ import com.fasten.executor_driver.presentation.ViewState;
  * ViewModel окна ввода номера телефона
  */
 public interface PhoneViewModel {
+
 	/**
 	 * Возвращает состояние вида для применения
 	 * @return - {@link ViewState} состояние вида
@@ -20,7 +21,7 @@ public interface PhoneViewModel {
 	 * Передает введенный/измененный номер для валидации
 	 * @param phoneNumber - номер телефона
 	 */
-	void phoneNumberChanged(String phoneNumber);
+	void phoneNumberChanged(@NonNull String phoneNumber);
 
 	/**
 	 * Событие нажатия кнопки "Далее"

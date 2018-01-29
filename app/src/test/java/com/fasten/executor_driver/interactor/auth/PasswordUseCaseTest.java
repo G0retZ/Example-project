@@ -1,6 +1,7 @@
 package com.fasten.executor_driver.interactor.auth;
 
 import com.fasten.executor_driver.backend.web.NoNetworkException;
+import com.fasten.executor_driver.backend.web.ValidationException;
 import com.fasten.executor_driver.entity.LoginData;
 import com.fasten.executor_driver.entity.Validator;
 
@@ -47,10 +48,10 @@ public class PasswordUseCaseTest {
 	 */
 	@Test
 	public void askPasswordValidatorForResult() throws Exception {
-		// when:
-		passwordUseCase.authorize(new LoginData("", "")).test();
+		// Действие:
+		passwordUseCase.authorize(new LoginData("", ""), Completable.complete()).test();
 
-		// then:
+		// Результат:
 		verify(passwordValidator, only()).validate("");
 	}
 
@@ -63,9 +64,9 @@ public class PasswordUseCaseTest {
 	 */
 	@Test
 	public void answerErrorIfPasswordInvalid() throws Exception {
-		// then:
-		passwordUseCase.authorize(new LoginData("", ""))
-				.test().assertError(IllegalArgumentException.class);
+		// Результат:
+		passwordUseCase.authorize(new LoginData("", ""), Completable.complete())
+				.test().assertError(ValidationException.class);
 	}
 
 	/**
@@ -75,11 +76,11 @@ public class PasswordUseCaseTest {
 	 */
 	@Test
 	public void answerSuccessIfPasswordValid() throws Exception {
-		// when:
+		// Действие:
 		when(passwordValidator.validate(anyString())).thenReturn(true);
 
-		// then:
-		passwordUseCase.authorize(new LoginData("", ""))
+		// Результат:
+		passwordUseCase.authorize(new LoginData("", ""), Completable.complete())
 				.test().assertNoErrors();
 	}
 
@@ -92,10 +93,47 @@ public class PasswordUseCaseTest {
 	 */
 	@Test
 	public void doNotAskGatewayForAuth() throws Exception {
-		// when:
-		passwordUseCase.authorize(new LoginData("login", "passwor")).test();
+		// Действие:
+		passwordUseCase.authorize(
+				new LoginData("login", "passwor"),
+				Completable.complete()
+		).test();
 
-		// then:
+		// Результат:
+		verifyZeroInteractions(gateway);
+	}
+
+	/**
+	 * Не должен запрашивать у гейтвея входа, если валидация прошла, но действие после валидации не выполнено
+	 *
+	 * @throws Exception error
+	 */
+	@Test
+	public void doNotAskGatewayForAuthIfAfterValidationNotComplete() throws Exception {
+		// Действие:
+		passwordUseCase.authorize(
+				new LoginData("login", "password"),
+				Completable.never()
+		).test();
+
+		// Результат:
+		verifyZeroInteractions(gateway);
+	}
+
+	/**
+	 * Не должен запрашивать у гейтвея входа, если валидация прошла, но действие после валидации отменено
+	 *
+	 * @throws Exception error
+	 */
+	@Test
+	public void doNotAskGatewayForAuthIfAfterValidationFailed() throws Exception {
+		// Действие:
+		passwordUseCase.authorize(
+				new LoginData("login", "password"),
+				Completable.error(new Exception())
+		).test();
+
+		// Результат:
 		verifyZeroInteractions(gateway);
 	}
 
@@ -106,10 +144,13 @@ public class PasswordUseCaseTest {
 	 */
 	@Test
 	public void askGatewayForAuth() throws Exception {
-		// when:
-		passwordUseCase.authorize(new LoginData("login", "password")).test();
+		// Действие:
+		passwordUseCase.authorize(
+				new LoginData("login", "password"),
+				Completable.complete()
+		).test();
 
-		// then:
+		// Результат:
 		verify(gateway, only()).authorize(new LoginData("login", "password"));
 	}
 
@@ -122,11 +163,28 @@ public class PasswordUseCaseTest {
 	 */
 	@Test
 	public void answerNoNetworkError() throws Exception {
-		// when:
+		// Действие:
 		when(gateway.authorize(any(LoginData.class))).thenReturn(Completable.error(new NoNetworkException()));
 
-		// then:
-		passwordUseCase.authorize(new LoginData("login", "password")).test().assertError(NoNetworkException.class);
+		// Результат:
+		passwordUseCase.authorize(
+				new LoginData("login", "password"),
+				Completable.complete()
+		).test().assertError(NoNetworkException.class);
+	}
+
+	/**
+	 * Должен успехом, если действие после валиации отменено
+	 *
+	 * @throws Exception error
+	 */
+	@Test
+	public void answerValidationSuccessful() throws Exception {
+		// Результат:
+		passwordUseCase.authorize(
+				new LoginData("login", "password"),
+				Completable.error(new Exception())
+		).test().assertComplete();
 	}
 
 	/**
@@ -136,11 +194,13 @@ public class PasswordUseCaseTest {
 	 */
 	@Test
 	public void answerAuthSuccessful() throws Exception {
-		// when:
+		// Действие:
 		when(gateway.authorize(any(LoginData.class))).thenReturn(Completable.complete());
 
-		// then:
-		passwordUseCase.authorize(new LoginData("login", "password")).test().assertComplete();
+		// Результат:
+		passwordUseCase.authorize(
+				new LoginData("login", "password"),
+				Completable.complete()
+		).test().assertComplete();
 	}
-
 }

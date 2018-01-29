@@ -24,14 +24,13 @@ public class PhoneViewStatePendingTest {
 
 	@Test
 	public void testActions() throws Exception {
-		// when:
+		// Действие:
 		viewState.apply(phoneViewActions);
 
-		// then:
+		// Результат:
 		verify(phoneViewActions).showPending(true);
 		verify(phoneViewActions).showError(null);
 		verify(phoneViewActions).enableButton(false);
 		verifyNoMoreInteractions(phoneViewActions);
 	}
-
 }

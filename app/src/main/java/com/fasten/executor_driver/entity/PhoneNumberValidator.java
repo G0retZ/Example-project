@@ -7,12 +7,11 @@ import android.support.annotation.Nullable;
  */
 class PhoneNumberValidator implements Validator<String> {
 
-	@SuppressWarnings("RedundantIfStatement")
+	@SuppressWarnings("SimplifiableIfStatement")
 	@Override
 	public boolean validate(@Nullable String phoneNumber) {
 		if (phoneNumber == null) return false;
 		if (phoneNumber.length() != 10) return false;
-		if (!phoneNumber.matches("\\d*")) return false;
-		return true;
+		return phoneNumber.matches("\\d*");
 	}
 }

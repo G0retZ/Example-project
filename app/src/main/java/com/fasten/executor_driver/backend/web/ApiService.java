@@ -38,5 +38,4 @@ public interface ApiService {
 	 */
 	@POST("drivers/auth")
 	Completable authorize(@NonNull @Body ApiLogin apiLogin);
-
 }

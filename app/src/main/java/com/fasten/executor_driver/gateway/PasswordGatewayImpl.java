@@ -26,5 +26,4 @@ public class PasswordGatewayImpl implements PasswordGateway {
 				.subscribeOn(Schedulers.io())
 				.observeOn(Schedulers.single());
 	}
-
 }

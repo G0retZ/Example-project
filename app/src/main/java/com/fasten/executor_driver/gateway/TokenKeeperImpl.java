@@ -28,5 +28,4 @@ public class TokenKeeperImpl implements TokenKeeper {
 	public String getToken() {
 		return appSettingsService.getEncryptedData(key, TOKEN);
 	}
-
 }

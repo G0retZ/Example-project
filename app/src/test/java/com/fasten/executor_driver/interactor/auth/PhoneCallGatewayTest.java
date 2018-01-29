@@ -44,10 +44,10 @@ public class PhoneCallGatewayTest {
 	 */
 	@Test
 	public void callMeCompletableRequested() throws Exception {
-		// when:
+		// Действие:
 		phoneCallGateway.callMe("012345");
 
-		// then:
+		// Результат:
 		verify(api, only()).callMeCode("012345");
 	}
 
@@ -62,10 +62,10 @@ public class PhoneCallGatewayTest {
 	 */
 	@Test
 	public void answerNoNetworkError() throws Exception {
-		// when:
+		// Действие:
 		when(api.callMeCode(anyString())).thenReturn(Completable.error(new NoNetworkException()));
 
-		// then:
+		// Результат:
 		phoneCallGateway.callMe("01234").test().assertError(NoNetworkException.class);
 	}
 
@@ -76,10 +76,10 @@ public class PhoneCallGatewayTest {
 	 */
 	@Test
 	public void answerCallSuccessful() throws Exception {
-		// when:
+		// Действие:
 		when(api.callMeCode(anyString())).thenReturn(Completable.complete());
 
-		// then:
+		// Результат:
 		phoneCallGateway.callMe("012345").test().assertComplete();
 	}
 }

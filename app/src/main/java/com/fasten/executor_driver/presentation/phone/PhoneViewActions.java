@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
  * Действия для смены состояния вида окна входа
  */
 public interface PhoneViewActions {
+
 	/**
 	 * Перейти на следующий шаг. Передает проверенный логин, чтобы сохранился в бандле, и переживал
 	 * прибитие апп

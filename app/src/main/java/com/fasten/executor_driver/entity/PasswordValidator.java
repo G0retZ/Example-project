@@ -7,13 +7,11 @@ import android.support.annotation.Nullable;
  */
 class PasswordValidator implements Validator<String> {
 
-	@SuppressWarnings("RedundantIfStatement")
+	@SuppressWarnings("SimplifiableIfStatement")
 	@Override
 	public boolean validate(@Nullable String password) {
 		if (password == null) return false;
 		if (password.length() != 4) return false;
-		if (!password.matches("\\d*")) return false;
-		return true;
+		return password.matches("\\d*");
 	}
-
 }

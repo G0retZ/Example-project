@@ -36,5 +36,4 @@ public class LoginValidatorTest {
     public void loginCorrect() throws Exception {
         assertTrue(new LoginValidator().validate("0902832921"));
     }
-
 }

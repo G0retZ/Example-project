@@ -36,5 +36,4 @@ public class PasswordValidatorTest {
     public void passwordCorrect() throws Exception {
         assertTrue(new PasswordValidator().validate("0903"));
     }
-
 }

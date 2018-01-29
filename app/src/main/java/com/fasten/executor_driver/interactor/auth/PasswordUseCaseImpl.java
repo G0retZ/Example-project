@@ -1,7 +1,9 @@
 package com.fasten.executor_driver.interactor.auth;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
+import com.fasten.executor_driver.backend.web.ValidationException;
 import com.fasten.executor_driver.entity.LoginData;
 import com.fasten.executor_driver.entity.Validator;
 
@@ -21,14 +23,16 @@ public class PasswordUseCaseImpl implements PasswordUseCase {
 
 	@NonNull
 	@Override
-	public Completable authorize(@NonNull LoginData loginData) {
+	public Completable authorize(@NonNull LoginData loginData, @NonNull Completable afterValidation) {
 		return Completable.create(e -> {
 			if (passwordValidator.validate(loginData.getPassword())) {
-				gateway.authorize(loginData).subscribe(e::onComplete, e::onError);
+				afterValidation.subscribe(
+						() -> gateway.authorize(loginData).subscribe(e::onComplete, e::onError),
+						throwable -> e.onComplete()
+				);
 			} else {
-				e.onError(new IllegalArgumentException());
+				e.onError(new ValidationException());
 			}
 		});
 	}
-
 }

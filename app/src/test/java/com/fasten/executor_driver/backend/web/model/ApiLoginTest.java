@@ -27,5 +27,4 @@ public class ApiLoginTest {
 		assertNotEquals(apiLogin, new ApiLogin("nam", "password"));
 		assertNotEquals(apiLogin, new ApiLogin("name", "passwor"));
 	}
-
 }

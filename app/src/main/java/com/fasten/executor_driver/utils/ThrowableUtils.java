@@ -3,7 +3,7 @@ package com.fasten.executor_driver.utils;
 import android.support.annotation.Nullable;
 
 /**
- * Общие утилитки.
+ * Утилиты для Throwable.
  */
 
 public final class ThrowableUtils {
@@ -32,5 +32,4 @@ public final class ThrowableUtils {
 		if (t1.getMessage() == null || t2.getMessage() == null) return false;
 		return t1.getMessage().equals(t2.getMessage());
 	}
-
 }

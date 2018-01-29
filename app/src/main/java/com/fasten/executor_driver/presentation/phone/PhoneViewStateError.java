@@ -38,5 +38,4 @@ public final class PhoneViewStateError implements ViewState<PhoneViewActions> {
 	public int hashCode() {
 		return error.hashCode();
 	}
-
 }

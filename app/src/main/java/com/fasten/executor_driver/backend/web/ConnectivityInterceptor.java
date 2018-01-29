@@ -40,5 +40,4 @@ class ConnectivityInterceptor implements Interceptor {
 		NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
 		return networkInfo != null && networkInfo.isConnected();
 	}
-
 }

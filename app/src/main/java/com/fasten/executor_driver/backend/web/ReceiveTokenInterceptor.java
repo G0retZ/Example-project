@@ -31,5 +31,4 @@ class ReceiveTokenInterceptor implements Interceptor {
 		}
 		return originalResponse;
 	}
-
 }

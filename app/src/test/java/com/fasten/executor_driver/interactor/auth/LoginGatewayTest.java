@@ -44,10 +44,10 @@ public class LoginGatewayTest {
 	 */
 	@Test
 	public void authCompletableRequested() throws Exception {
-		// when:
+		// Действие:
 		loginGateway.checkLogin("Login");
 
-		// then:
+		// Результат:
 		verify(api, only()).checkLogin("Login");
 	}
 
@@ -62,10 +62,10 @@ public class LoginGatewayTest {
 	 */
 	@Test
 	public void answerNoNetworkError() throws Exception {
-		// when:
+		// Действие:
 		when(api.checkLogin(anyString())).thenReturn(Completable.error(new NoNetworkException()));
 
-		// then:
+		// Результат:
 		loginGateway.checkLogin("Login").test().assertError(NoNetworkException.class);
 	}
 
@@ -76,11 +76,10 @@ public class LoginGatewayTest {
 	 */
 	@Test
 	public void answerLoginSuccessful() throws Exception {
-		// when:
+		// Действие:
 		when(api.checkLogin(anyString())).thenReturn(Completable.complete());
 
-		// then:
+		// Результат:
 		loginGateway.checkLogin("Login").test().assertComplete();
 	}
-
 }
