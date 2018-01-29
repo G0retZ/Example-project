@@ -3,6 +3,7 @@ package com.fasten.executor_driver.interactor.auth;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import com.fasten.executor_driver.backend.web.ValidationException;
 import com.fasten.executor_driver.entity.Validator;
 
 import io.reactivex.Completable;
@@ -26,7 +27,7 @@ public class LoginUseCaseImpl implements LoginUseCase {
 			if (loginValidator.validate(login)) {
 				e.onComplete();
 			} else {
-				e.onError(new IllegalArgumentException());
+				e.onError(new ValidationException());
 			}
 		});
 	}
@@ -34,7 +35,7 @@ public class LoginUseCaseImpl implements LoginUseCase {
 	@NonNull
 	@Override
 	public Completable checkLogin(@Nullable String login) {
-		if (login == null) return Completable.error(new IllegalArgumentException());
+		if (login == null) return Completable.error(new ValidationException());
 		return gateway.checkLogin(login);
 	}
 }

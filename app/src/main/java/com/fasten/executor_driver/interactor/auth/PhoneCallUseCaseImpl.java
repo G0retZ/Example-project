@@ -3,6 +3,7 @@ package com.fasten.executor_driver.interactor.auth;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import com.fasten.executor_driver.backend.web.ValidationException;
 import com.fasten.executor_driver.entity.Validator;
 
 import io.reactivex.Completable;
@@ -26,7 +27,7 @@ public class PhoneCallUseCaseImpl implements PhoneCallUseCase {
 			if (phoneNumber != null && phoneNumberValidator.validate(phoneNumber)) {
 				gateway.callMe(phoneNumber).subscribe(e::onComplete, e::onError);
 			} else {
-				e.onError(new IllegalArgumentException());
+				e.onError(new ValidationException());
 			}
 		});
 	}

@@ -1,6 +1,7 @@
 package com.fasten.executor_driver.interactor.auth;
 
 import com.fasten.executor_driver.backend.web.NoNetworkException;
+import com.fasten.executor_driver.backend.web.ValidationException;
 import com.fasten.executor_driver.entity.LoginData;
 import com.fasten.executor_driver.entity.Validator;
 
@@ -65,7 +66,7 @@ public class PasswordUseCaseTest {
 	public void answerErrorIfPasswordInvalid() throws Exception {
 		// Результат:
 		passwordUseCase.authorize(new LoginData("", ""), Completable.complete())
-				.test().assertError(IllegalArgumentException.class);
+				.test().assertError(ValidationException.class);
 	}
 
 	/**

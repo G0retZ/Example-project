@@ -1,6 +1,7 @@
 package com.fasten.executor_driver.interactor.auth;
 
 import com.fasten.executor_driver.backend.web.NoNetworkException;
+import com.fasten.executor_driver.backend.web.ValidationException;
 import com.fasten.executor_driver.entity.Validator;
 
 import org.junit.Before;
@@ -61,7 +62,7 @@ public class LoginUseCaseTest {
 	@Test
 	public void answerErrorIfLoginInvalid() throws Exception {
 		// Результат:
-		loginUseCase.validateLogin("12").test().assertError(IllegalArgumentException.class);
+		loginUseCase.validateLogin("12").test().assertError(ValidationException.class);
 	}
 
 	/**
@@ -104,7 +105,7 @@ public class LoginUseCaseTest {
 	@Test
 	public void answerArgumentError() throws Exception {
 		// Результат:
-		loginUseCase.checkLogin(null).test().assertError(IllegalArgumentException.class);
+		loginUseCase.checkLogin(null).test().assertError(ValidationException.class);
 	}
 
 	/**

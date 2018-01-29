@@ -1,6 +1,7 @@
 package com.fasten.executor_driver.interactor.auth;
 
 import com.fasten.executor_driver.backend.web.NoNetworkException;
+import com.fasten.executor_driver.backend.web.ValidationException;
 import com.fasten.executor_driver.entity.Validator;
 
 import org.junit.Before;
@@ -61,7 +62,7 @@ public class PhoneCallUseCaseTest {
 	@Test
 	public void answerErrorIfPhoneNumberInvalid() throws Exception {
 		// Результат:
-		phoneCallUseCase.callMe("").test().assertError(IllegalArgumentException.class);
+		phoneCallUseCase.callMe("").test().assertError(ValidationException.class);
 	}
 
 	/**
