@@ -21,7 +21,7 @@ public class CodeViewStatePendingTest {
 
 	@Before
 	public void setUp() throws Exception {
-		viewState = new CodeViewStatePending(12);
+		viewState = new CodeViewStatePending();
 	}
 
 	@Test
@@ -30,17 +30,8 @@ public class CodeViewStatePendingTest {
 		viewState.apply(codeViewActions);
 
 		// Результат:
-		verify(codeViewActions).setInputMessage(12);
 		verify(codeViewActions).showPending(true);
 		verify(codeViewActions).showError(null);
 		verifyNoMoreInteractions(codeViewActions);
-	}
-
-	@Test
-	public void testEquals() throws Exception {
-		assertEquals(viewState, new CodeViewStatePending(12));
-		assertEquals(viewState, new CodeViewStatePending(new CodeViewStateCommon(12)));
-		assertEquals(new CodeViewStatePending(viewState), new CodeViewStatePending(12));
-		assertNotEquals(viewState, new CodeViewStatePending(11));
 	}
 }

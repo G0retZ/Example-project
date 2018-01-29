@@ -21,7 +21,7 @@ public class CodeViewStateInitialTest {
 
 	@Before
 	public void setUp() throws Exception {
-		viewState = new CodeViewStateInitial(12);
+		viewState = new CodeViewStateInitial();
 	}
 
 	@Test
@@ -30,17 +30,8 @@ public class CodeViewStateInitialTest {
 		viewState.apply(codeViewActions);
 
 		// Результат:
-		verify(codeViewActions).setInputMessage(12);
 		verify(codeViewActions).showPending(false);
 		verify(codeViewActions).showError(null);
 		verifyNoMoreInteractions(codeViewActions);
-	}
-
-	@Test
-	public void testEquals() throws Exception {
-		assertEquals(viewState, new CodeViewStateInitial(12));
-		assertEquals(viewState, new CodeViewStateInitial(new CodeViewStateCommon(12)));
-		assertEquals(new CodeViewStateInitial(viewState), new CodeViewStateInitial(12));
-		assertNotEquals(viewState, new CodeViewStateInitial(11));
 	}
 }

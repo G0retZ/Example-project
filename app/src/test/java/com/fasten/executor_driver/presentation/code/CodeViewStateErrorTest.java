@@ -29,7 +29,7 @@ public class CodeViewStateErrorTest {
 
 	@Before
 	public void setUp() throws Exception {
-		viewState = new CodeViewStateError(12, new IllegalArgumentException("mess"));
+		viewState = new CodeViewStateError(new IllegalArgumentException("mess"));
 	}
 
 	@Test
@@ -38,7 +38,6 @@ public class CodeViewStateErrorTest {
 		viewState.apply(codeViewActions);
 
 		// Результат:
-		verify(codeViewActions).setInputMessage(12);
 		verify(codeViewActions).showPending(false);
 		verify(codeViewActions).showError(throwableCaptor.capture());
 		verifyNoMoreInteractions(codeViewActions);
@@ -52,11 +51,8 @@ public class CodeViewStateErrorTest {
 
 	@Test
 	public void testEquals() throws Exception {
-		assertEquals(viewState, new CodeViewStateError(12, new IllegalArgumentException("mess")));
-		assertEquals(viewState, new CodeViewStateError(new CodeViewStateCommon(12), new IllegalArgumentException("mess")));
-		assertEquals(new CodeViewStateError(viewState, new IllegalArgumentException("mess")), new CodeViewStateError(12, new IllegalArgumentException("mess")));
-		assertNotEquals(viewState, new CodeViewStateError(11, new IllegalArgumentException("mess")));
-		assertNotEquals(viewState, new CodeViewStateError(12, new IllegalArgumentException("mes")));
-		assertNotEquals(viewState, new CodeViewStateError(12, new NullPointerException("mess")));
+		assertEquals(viewState, new CodeViewStateError(new IllegalArgumentException("mess")));
+		assertNotEquals(viewState, new CodeViewStateError(new IllegalArgumentException("mes")));
+		assertNotEquals(viewState, new CodeViewStateError(new NullPointerException("mess")));
 	}
 }
