@@ -6,6 +6,8 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
@@ -19,7 +21,7 @@ public class CodeViewStateSuccessTest {
 
 	@Before
 	public void setUp() throws Exception {
-		viewState = new CodeViewStateSuccess();
+		viewState = new CodeViewStateSuccess(12);
 	}
 
 	@Test
@@ -28,9 +30,18 @@ public class CodeViewStateSuccessTest {
 		viewState.apply(codeViewActions);
 
 		// then:
+		verify(codeViewActions).setInputMessage(12);
 		verify(codeViewActions).showPending(false);
 		verify(codeViewActions).showError(null);
 		verify(codeViewActions).letIn();
 		verifyNoMoreInteractions(codeViewActions);
+	}
+
+	@Test
+	public void testEquals() throws Exception {
+		assertEquals(viewState, new CodeViewStateSuccess(12));
+		assertEquals(viewState, new CodeViewStateSuccess(new CodeViewStateCommon(12)));
+		assertEquals(new CodeViewStateSuccess(viewState), new CodeViewStateSuccess(12));
+		assertNotEquals(viewState, new CodeViewStateSuccess(11));
 	}
 }

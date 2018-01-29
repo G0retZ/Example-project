@@ -12,16 +12,16 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 @RunWith(MockitoJUnitRunner.class)
-public class CodeViewStateInitialTest {
+public class CodeViewStateCommonTest {
 
-	private CodeViewStateInitial viewState;
+	private CodeViewStateCommon viewState;
 
 	@Mock
 	private CodeViewActions codeViewActions;
 
 	@Before
 	public void setUp() throws Exception {
-		viewState = new CodeViewStateInitial(12);
+		viewState = new CodeViewStateCommon(12);
 	}
 
 	@Test
@@ -31,16 +31,14 @@ public class CodeViewStateInitialTest {
 
 		// then:
 		verify(codeViewActions).setInputMessage(12);
-		verify(codeViewActions).showPending(false);
-		verify(codeViewActions).showError(null);
 		verifyNoMoreInteractions(codeViewActions);
 	}
 
 	@Test
 	public void testEquals() throws Exception {
-		assertEquals(viewState, new CodeViewStateInitial(12));
-		assertEquals(viewState, new CodeViewStateInitial(new CodeViewStateCommon(12)));
-		assertEquals(new CodeViewStateInitial(viewState), new CodeViewStateInitial(12));
-		assertNotEquals(viewState, new CodeViewStateInitial(11));
+		assertEquals(viewState, new CodeViewStateCommon(12));
+		assertEquals(viewState, new CodeViewStateCommon(new CodeViewStateCommon(12)));
+		assertEquals(new CodeViewStateCommon(viewState), new CodeViewStateCommon(12));
+		assertNotEquals(viewState, new CodeViewStateCommon(11));
 	}
 }

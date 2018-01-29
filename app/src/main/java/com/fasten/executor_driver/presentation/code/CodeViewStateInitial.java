@@ -2,17 +2,23 @@ package com.fasten.executor_driver.presentation.code;
 
 import android.support.annotation.NonNull;
 
-import com.fasten.executor_driver.presentation.ViewState;
-
 /**
  * Начальное состояние ввода кода.
  */
-public final class CodeViewStateInitial implements ViewState<CodeViewActions> {
+final class CodeViewStateInitial extends CodeViewStateCommon {
+
+	CodeViewStateInitial(int inputMessageId) {
+		super(inputMessageId);
+	}
+
+	CodeViewStateInitial(@NonNull CodeViewStateCommon codeViewStateCommon) {
+		super(codeViewStateCommon);
+	}
 
 	@Override
 	public void apply(@NonNull CodeViewActions stateActions) {
+		super.apply(stateActions);
 		stateActions.showPending(false);
 		stateActions.showError(null);
 	}
-
 }
