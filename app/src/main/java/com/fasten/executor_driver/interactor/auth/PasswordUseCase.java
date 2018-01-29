@@ -14,8 +14,9 @@ public interface PasswordUseCase {
 	/**
 	 * Проверяет формат пароля, и запрашивает авторизацию.
 	 * @param loginData {@link LoginData} данные для входа.
+	 * @param afterValidation {@link Completable} продолжать ли после успешной валидации?
 	 * @return {@link Completable} результат проверки или входа.
 	 */
 	@NonNull
-	Completable authorize(@NonNull LoginData loginData);
+	Completable authorize(@NonNull LoginData loginData, @NonNull Completable afterValidation);
 }

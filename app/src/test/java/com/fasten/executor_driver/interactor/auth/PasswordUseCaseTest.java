@@ -48,7 +48,7 @@ public class PasswordUseCaseTest {
 	@Test
 	public void askPasswordValidatorForResult() throws Exception {
 		// Действие:
-		passwordUseCase.authorize(new LoginData("", "")).test();
+		passwordUseCase.authorize(new LoginData("", ""), Completable.complete()).test();
 
 		// Результат:
 		verify(passwordValidator, only()).validate("");
@@ -64,7 +64,7 @@ public class PasswordUseCaseTest {
 	@Test
 	public void answerErrorIfPasswordInvalid() throws Exception {
 		// Результат:
-		passwordUseCase.authorize(new LoginData("", ""))
+		passwordUseCase.authorize(new LoginData("", ""), Completable.complete())
 				.test().assertError(IllegalArgumentException.class);
 	}
 
@@ -79,7 +79,7 @@ public class PasswordUseCaseTest {
 		when(passwordValidator.validate(anyString())).thenReturn(true);
 
 		// Результат:
-		passwordUseCase.authorize(new LoginData("", ""))
+		passwordUseCase.authorize(new LoginData("", ""), Completable.complete())
 				.test().assertNoErrors();
 	}
 
@@ -93,7 +93,44 @@ public class PasswordUseCaseTest {
 	@Test
 	public void doNotAskGatewayForAuth() throws Exception {
 		// Действие:
-		passwordUseCase.authorize(new LoginData("login", "passwor")).test();
+		passwordUseCase.authorize(
+				new LoginData("login", "passwor"),
+				Completable.complete()
+		).test();
+
+		// Результат:
+		verifyZeroInteractions(gateway);
+	}
+
+	/**
+	 * Не должен запрашивать у гейтвея входа, если валидация прошла, но действие после валидации не выполнено
+	 *
+	 * @throws Exception error
+	 */
+	@Test
+	public void doNotAskGatewayForAuthIfAfterValidationNotComplete() throws Exception {
+		// Действие:
+		passwordUseCase.authorize(
+				new LoginData("login", "password"),
+				Completable.never()
+		).test();
+
+		// Результат:
+		verifyZeroInteractions(gateway);
+	}
+
+	/**
+	 * Не должен запрашивать у гейтвея входа, если валидация прошла, но действие после валидации отменено
+	 *
+	 * @throws Exception error
+	 */
+	@Test
+	public void doNotAskGatewayForAuthIfAfterValidationFailed() throws Exception {
+		// Действие:
+		passwordUseCase.authorize(
+				new LoginData("login", "password"),
+				Completable.error(new Exception())
+		).test();
 
 		// Результат:
 		verifyZeroInteractions(gateway);
@@ -107,7 +144,10 @@ public class PasswordUseCaseTest {
 	@Test
 	public void askGatewayForAuth() throws Exception {
 		// Действие:
-		passwordUseCase.authorize(new LoginData("login", "password")).test();
+		passwordUseCase.authorize(
+				new LoginData("login", "password"),
+				Completable.complete()
+		).test();
 
 		// Результат:
 		verify(gateway, only()).authorize(new LoginData("login", "password"));
@@ -126,7 +166,24 @@ public class PasswordUseCaseTest {
 		when(gateway.authorize(any(LoginData.class))).thenReturn(Completable.error(new NoNetworkException()));
 
 		// Результат:
-		passwordUseCase.authorize(new LoginData("login", "password")).test().assertError(NoNetworkException.class);
+		passwordUseCase.authorize(
+				new LoginData("login", "password"),
+				Completable.complete()
+		).test().assertError(NoNetworkException.class);
+	}
+
+	/**
+	 * Должен успехом, если действие после валиации отменено
+	 *
+	 * @throws Exception error
+	 */
+	@Test
+	public void answerValidationSuccessful() throws Exception {
+		// Результат:
+		passwordUseCase.authorize(
+				new LoginData("login", "password"),
+				Completable.error(new Exception())
+		).test().assertComplete();
 	}
 
 	/**
@@ -140,6 +197,9 @@ public class PasswordUseCaseTest {
 		when(gateway.authorize(any(LoginData.class))).thenReturn(Completable.complete());
 
 		// Результат:
-		passwordUseCase.authorize(new LoginData("login", "password")).test().assertComplete();
+		passwordUseCase.authorize(
+				new LoginData("login", "password"),
+				Completable.complete()
+		).test().assertComplete();
 	}
 }
