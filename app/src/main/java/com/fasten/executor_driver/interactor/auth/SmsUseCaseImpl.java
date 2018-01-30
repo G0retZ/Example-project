@@ -6,6 +6,8 @@ import android.support.annotation.Nullable;
 import com.fasten.executor_driver.backend.web.ValidationException;
 import com.fasten.executor_driver.entity.Validator;
 
+import javax.inject.Inject;
+
 import io.reactivex.Completable;
 
 public class SmsUseCaseImpl implements SmsUseCase {
@@ -15,6 +17,7 @@ public class SmsUseCaseImpl implements SmsUseCase {
 	@NonNull
 	private final Validator<String> phoneNumberValidator;
 
+	@Inject
 	SmsUseCaseImpl(@NonNull SmsGateway gateway, @NonNull Validator<String> phoneNumberValidator) {
 		this.gateway = gateway;
 		this.phoneNumberValidator = phoneNumberValidator;

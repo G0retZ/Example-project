@@ -5,7 +5,7 @@ import android.support.annotation.Nullable;
 /**
  * Валидатор пароля
  */
-class PasswordValidator implements Validator<String> {
+public class PasswordValidator implements Validator<String> {
 
 	@SuppressWarnings("SimplifiableIfStatement")
 	@Override

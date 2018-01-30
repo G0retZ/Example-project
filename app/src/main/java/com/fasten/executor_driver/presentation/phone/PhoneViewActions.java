@@ -13,6 +13,7 @@ public interface PhoneViewActions {
 	 * прибитие апп
 	 * @param login - логин для входа
 	 */
+	@SuppressWarnings("unused")
 	void proceedNext(@NonNull String login);
 
 	/**

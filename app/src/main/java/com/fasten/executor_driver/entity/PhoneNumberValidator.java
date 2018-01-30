@@ -5,7 +5,7 @@ import android.support.annotation.Nullable;
 /**
  * Валидатор номера телефона
  */
-class PhoneNumberValidator implements Validator<String> {
+public class PhoneNumberValidator implements Validator<String> {
 
 	@SuppressWarnings("SimplifiableIfStatement")
 	@Override

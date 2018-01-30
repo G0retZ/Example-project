@@ -5,19 +5,22 @@ import android.support.annotation.NonNull;
 import java.io.IOException;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import okhttp3.Interceptor;
 import okhttp3.Response;
 
 /**
  * Перехватчик для сохранения полученного токена из заголовка
  */
-class ReceiveTokenInterceptor implements Interceptor {
+public class ReceiveTokenInterceptor implements Interceptor {
 
 	private final static String HEADER_NAME = "Authorization";
 
 	@NonNull
 	private final TokenKeeper tokenKeeper;
 
+	@Inject
 	ReceiveTokenInterceptor(@NonNull TokenKeeper tokenKeeper) {
 		this.tokenKeeper = tokenKeeper;
 	}

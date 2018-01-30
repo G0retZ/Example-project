@@ -34,7 +34,6 @@ public class LoginData {
 		return new LoginData(login, password);
 	}
 
-	@SuppressWarnings("WeakerAccess")
 	public LoginData setPassword(@NonNull String password) {
 		return new LoginData(login, password);
 	}

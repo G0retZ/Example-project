@@ -12,12 +12,14 @@ import com.fasten.executor_driver.interactor.auth.PhoneCallUseCase;
 import com.fasten.executor_driver.interactor.auth.SmsUseCase;
 import com.fasten.executor_driver.presentation.ViewState;
 
+import javax.inject.Inject;
+
 import io.reactivex.Completable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
-class CodeViewModelImpl extends ViewModel implements CodeViewModel {
+public class CodeViewModelImpl extends ViewModel implements CodeViewModel {
 
 	@NonNull
 	private final PasswordUseCase passwordUseCase;
@@ -31,11 +33,11 @@ class CodeViewModelImpl extends ViewModel implements CodeViewModel {
 	private final LoginData loginData;
 	private Disposable disposable;
 
-	@SuppressWarnings("WeakerAccess")
-	public CodeViewModelImpl(@NonNull String login,
-	                         @NonNull PasswordUseCase passwordUseCase,
-	                         @NonNull SmsUseCase smsUseCase,
-	                         @NonNull PhoneCallUseCase phoneCallUseCase) {
+	@Inject
+	CodeViewModelImpl(@NonNull String login,
+	                  @NonNull PasswordUseCase passwordUseCase,
+	                  @NonNull SmsUseCase smsUseCase,
+	                  @NonNull PhoneCallUseCase phoneCallUseCase) {
 		loginData = new LoginData(login, "");
 		this.passwordUseCase = passwordUseCase;
 		this.smsUseCase = smsUseCase;

@@ -8,6 +8,8 @@ import android.support.annotation.NonNull;
 import com.fasten.executor_driver.interactor.auth.LoginUseCase;
 import com.fasten.executor_driver.presentation.ViewState;
 
+import javax.inject.Inject;
+
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
@@ -24,7 +26,7 @@ public class PhoneViewModelImpl extends ViewModel implements PhoneViewModel {
 
 	private String lastLogin;
 
-	@SuppressWarnings("WeakerAccess")
+	@Inject
 	public PhoneViewModelImpl(@NonNull LoginUseCase loginUseCase) {
 		this.loginUseCase = loginUseCase;
 		viewStateLiveData = new MutableLiveData<>();

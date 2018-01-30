@@ -7,6 +7,8 @@ import android.support.annotation.NonNull;
 
 import java.io.IOException;
 
+import javax.inject.Inject;
+
 import okhttp3.Interceptor;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -14,12 +16,12 @@ import okhttp3.Response;
 /**
  * Перехватчик для проверки соединения с сетью. Если соединения нет, то кидает соответствующее исключение
  */
-@SuppressWarnings("unused")
-class ConnectivityInterceptor implements Interceptor {
+public class ConnectivityInterceptor implements Interceptor {
 
 	@NonNull
 	private final Context context;
 
+	@Inject
 	ConnectivityInterceptor(@NonNull Context context) {
 		this.context = context;
 	}

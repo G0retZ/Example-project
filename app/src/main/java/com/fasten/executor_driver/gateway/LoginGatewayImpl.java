@@ -5,6 +5,8 @@ import android.support.annotation.NonNull;
 import com.fasten.executor_driver.backend.web.ApiService;
 import com.fasten.executor_driver.interactor.auth.LoginGateway;
 
+import javax.inject.Inject;
+
 import io.reactivex.Completable;
 import io.reactivex.schedulers.Schedulers;
 
@@ -13,6 +15,7 @@ public class LoginGatewayImpl implements LoginGateway {
 	@NonNull
 	private final ApiService api;
 
+	@Inject
 	public LoginGatewayImpl(@NonNull ApiService api) {
 		this.api = api;
 	}
