@@ -1,6 +1,7 @@
 package com.fasten.executor_driver.application;
 
 import android.app.Application;
+import android.support.annotation.NonNull;
 
 import com.fasten.executor_driver.di.AppComponent;
 import com.fasten.executor_driver.di.AppModule;
@@ -20,6 +21,7 @@ public class MainApplication extends Application {
 		mAppComponent = DaggerAppComponent.builder().appModule(new AppModule(this)).build();
 	}
 
+	@NonNull
 	public AppComponent getAppComponent() {
 		return mAppComponent;
 	}
