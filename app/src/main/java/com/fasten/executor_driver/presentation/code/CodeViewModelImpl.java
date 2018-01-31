@@ -21,94 +21,100 @@ import io.reactivex.schedulers.Schedulers;
 
 public class CodeViewModelImpl extends ViewModel implements CodeViewModel {
 
-	@NonNull
-	private final PasswordUseCase passwordUseCase;
-	@NonNull
-	private final SmsUseCase smsUseCase;
-	@NonNull
-	private final PhoneCallUseCase phoneCallUseCase;
-	@NonNull
-	private final MutableLiveData<ViewState<CodeViewActions>> viewStateLiveData;
-	@NonNull
-	private final LoginData loginData;
-	private Disposable disposable;
+  @NonNull
+  private final PasswordUseCase passwordUseCase;
+  @NonNull
+  private final SmsUseCase smsUseCase;
+  @NonNull
+  private final PhoneCallUseCase phoneCallUseCase;
+  @NonNull
+  private final MutableLiveData<ViewState<CodeViewActions>> viewStateLiveData;
+  @NonNull
+  private final LoginData loginData;
+  private Disposable disposable;
 
-	@Inject
-	CodeViewModelImpl(@NonNull String login,
-	                  @NonNull PasswordUseCase passwordUseCase,
-	                  @NonNull SmsUseCase smsUseCase,
-	                  @NonNull PhoneCallUseCase phoneCallUseCase) {
-		loginData = new LoginData(login, "");
-		this.passwordUseCase = passwordUseCase;
-		this.smsUseCase = smsUseCase;
-		this.phoneCallUseCase = phoneCallUseCase;
-		viewStateLiveData = new MutableLiveData<>();
-		viewStateLiveData.postValue(new CodeViewStatePending());
-		callMe();
-	}
+  @Inject
+  CodeViewModelImpl(@NonNull String login,
+      @NonNull PasswordUseCase passwordUseCase,
+      @NonNull SmsUseCase smsUseCase,
+      @NonNull PhoneCallUseCase phoneCallUseCase) {
+    loginData = new LoginData(login, "");
+    this.passwordUseCase = passwordUseCase;
+    this.smsUseCase = smsUseCase;
+    this.phoneCallUseCase = phoneCallUseCase;
+    viewStateLiveData = new MutableLiveData<>();
+    viewStateLiveData.postValue(new CodeViewStatePending());
+    callMe();
+  }
 
-	@NonNull
-	@Override
-	public LiveData<ViewState<CodeViewActions>> getViewStateLiveData() {
-		return viewStateLiveData;
-	}
+  @NonNull
+  @Override
+  public LiveData<ViewState<CodeViewActions>> getViewStateLiveData() {
+    return viewStateLiveData;
+  }
 
-	@Override
-	public void setCode(@NonNull String code) {
-		if (disposable != null && !disposable.isDisposed()) return;
-		disposable = passwordUseCase.authorize(
-				loginData.setPassword(code),
-				Completable.create(e -> {
-					viewStateLiveData.postValue(new CodeViewStatePending());
-					e.onComplete();
-				}).subscribeOn(AndroidSchedulers.mainThread()).observeOn(Schedulers.single()))
-				.subscribeOn(Schedulers.single())
-				.observeOn(AndroidSchedulers.mainThread())
-				.subscribe(
-						() -> viewStateLiveData.postValue(new CodeViewStateSuccess()),
-						throwable -> {
-							if (throwable instanceof ValidationException) {
-								if (!(viewStateLiveData.getValue() instanceof CodeViewStateInitial)) {
-									viewStateLiveData.postValue(new CodeViewStateInitial());
-								}
-							} else {
-								viewStateLiveData.postValue(new CodeViewStateError(throwable));
-							}
-						}
-				);
-	}
+  @Override
+  public void setCode(@NonNull String code) {
+    if (disposable != null && !disposable.isDisposed()) {
+      return;
+    }
+    disposable = passwordUseCase.authorize(
+        loginData.setPassword(code),
+        Completable.create(e -> {
+          viewStateLiveData.postValue(new CodeViewStatePending());
+          e.onComplete();
+        }).subscribeOn(AndroidSchedulers.mainThread()).observeOn(Schedulers.single()))
+        .subscribeOn(Schedulers.single())
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe(
+            () -> viewStateLiveData.postValue(new CodeViewStateSuccess()),
+            throwable -> {
+              if (throwable instanceof ValidationException) {
+                if (!(viewStateLiveData.getValue() instanceof CodeViewStateInitial)) {
+                  viewStateLiveData.postValue(new CodeViewStateInitial());
+                }
+              } else {
+                viewStateLiveData.postValue(new CodeViewStateError(throwable));
+              }
+            }
+        );
+  }
 
-	@Override
-	public void sendMeSms() {
-		if (disposable != null && !disposable.isDisposed()) return;
-		viewStateLiveData.postValue(new CodeViewStatePending());
-		disposable = smsUseCase.sendMeCode(loginData.getLogin())
-				.subscribeOn(Schedulers.single())
-				.observeOn(AndroidSchedulers.mainThread())
-				.subscribe(
-						() -> viewStateLiveData.postValue(new CodeViewStateInitial()),
-						throwable -> viewStateLiveData.postValue(new CodeViewStateError(throwable)
-						)
-				);
-	}
+  @Override
+  public void sendMeSms() {
+    if (disposable != null && !disposable.isDisposed()) {
+      return;
+    }
+    viewStateLiveData.postValue(new CodeViewStatePending());
+    disposable = smsUseCase.sendMeCode(loginData.getLogin())
+        .subscribeOn(Schedulers.single())
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe(
+            () -> viewStateLiveData.postValue(new CodeViewStateInitial()),
+            throwable -> viewStateLiveData.postValue(new CodeViewStateError(throwable)
+            )
+        );
+  }
 
-	private void callMe() {
-		if (disposable != null && !disposable.isDisposed()) return;
-		disposable = phoneCallUseCase.callMe(loginData.getLogin())
-				.subscribeOn(Schedulers.single())
-				.observeOn(AndroidSchedulers.mainThread())
-				.subscribe(
-						() -> viewStateLiveData.postValue(new CodeViewStateInitial()),
-						throwable -> viewStateLiveData.postValue(new CodeViewStateError(throwable))
-				);
-	}
+  private void callMe() {
+    if (disposable != null && !disposable.isDisposed()) {
+      return;
+    }
+    disposable = phoneCallUseCase.callMe(loginData.getLogin())
+        .subscribeOn(Schedulers.single())
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe(
+            () -> viewStateLiveData.postValue(new CodeViewStateInitial()),
+            throwable -> viewStateLiveData.postValue(new CodeViewStateError(throwable))
+        );
+  }
 
-	@Override
-	protected void onCleared() {
-		super.onCleared();
-		if (disposable != null && !disposable.isDisposed()) {
-			disposable.dispose();
-			disposable = null;
-		}
-	}
+  @Override
+  protected void onCleared() {
+    super.onCleared();
+    if (disposable != null && !disposable.isDisposed()) {
+      disposable.dispose();
+      disposable = null;
+    }
+  }
 }

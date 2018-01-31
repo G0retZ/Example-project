@@ -9,11 +9,11 @@ import com.fasten.executor_driver.presentation.ViewState;
  */
 public final class PhoneViewStateReady implements ViewState<PhoneViewActions> {
 
-	@Override
-	public void apply(@NonNull PhoneViewActions stateActions) {
-		stateActions.showPending(false);
-		stateActions.showError(null);
-		stateActions.setInputEditable(true);
-		stateActions.enableButton(true);
-	}
+  @Override
+  public void apply(@NonNull PhoneViewActions stateActions) {
+    stateActions.showPending(false);
+    stateActions.showError(null);
+    stateActions.setInputEditable(true);
+    stateActions.enableButton(true);
+  }
 }

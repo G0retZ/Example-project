@@ -9,26 +9,26 @@ import javax.inject.Inject;
 
 public class TokenKeeperImpl implements TokenKeeper {
 
-	private static final String TOKEN = "token";
-	private static final byte[] key = {
-			14, -55, -48, 7, -65, -87, -23, 113, -69, -22, -68, -24, -96, 103, 16, 114
-	};
+  private static final String TOKEN = "token";
+  private static final byte[] key = {
+      14, -55, -48, 7, -65, -87, -23, 113, -69, -22, -68, -24, -96, 103, 16, 114
+  };
 
-	@NonNull
-	private final AppSettingsService appSettingsService;
+  @NonNull
+  private final AppSettingsService appSettingsService;
 
-	@Inject
-	public TokenKeeperImpl(@NonNull AppSettingsService appSettingsService) {
-		this.appSettingsService = appSettingsService;
-	}
+  @Inject
+  public TokenKeeperImpl(@NonNull AppSettingsService appSettingsService) {
+    this.appSettingsService = appSettingsService;
+  }
 
-	@Override
-	public void saveToken(String token) {
-		appSettingsService.saveEncryptedData(key, TOKEN, token);
-	}
+  @Override
+  public void saveToken(String token) {
+    appSettingsService.saveEncryptedData(key, TOKEN, token);
+  }
 
-	@Override
-	public String getToken() {
-		return appSettingsService.getEncryptedData(key, TOKEN);
-	}
+  @Override
+  public String getToken() {
+    return appSettingsService.getEncryptedData(key, TOKEN);
+  }
 }

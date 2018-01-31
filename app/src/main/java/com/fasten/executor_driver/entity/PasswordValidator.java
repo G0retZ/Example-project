@@ -9,15 +9,19 @@ import javax.inject.Inject;
  */
 public class PasswordValidator implements Validator<String> {
 
-	@Inject
-	PasswordValidator() {
-	}
+  @Inject
+  PasswordValidator() {
+  }
 
-	@SuppressWarnings("SimplifiableIfStatement")
-	@Override
-	public boolean validate(@Nullable String password) {
-		if (password == null) return false;
-		if (password.length() != 4) return false;
-		return password.matches("\\d*");
-	}
+  @SuppressWarnings("SimplifiableIfStatement")
+  @Override
+  public boolean validate(@Nullable String password) {
+    if (password == null) {
+      return false;
+    }
+    if (password.length() != 4) {
+      return false;
+    }
+    return password.matches("\\d*");
+  }
 }

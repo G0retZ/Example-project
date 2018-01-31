@@ -13,31 +13,30 @@ import io.reactivex.Completable;
 
 public class PasswordUseCaseImpl implements PasswordUseCase {
 
-	@NonNull
-	private final PasswordGateway gateway;
-	@NonNull
-	private final Validator<String> passwordValidator;
+  @NonNull
+  private final PasswordGateway gateway;
+  @NonNull
+  private final Validator<String> passwordValidator;
 
-	@Inject
-	PasswordUseCaseImpl(@NonNull PasswordGateway gateway,
-	                    @Named("passwordValidator")
-	                    @NonNull Validator<String> passwordValidator) {
-		this.gateway = gateway;
-		this.passwordValidator = passwordValidator;
-	}
+  @Inject
+  PasswordUseCaseImpl(@NonNull PasswordGateway gateway,
+      @Named("passwordValidator") @NonNull Validator<String> passwordValidator) {
+    this.gateway = gateway;
+    this.passwordValidator = passwordValidator;
+  }
 
-	@NonNull
-	@Override
-	public Completable authorize(@NonNull LoginData loginData, @NonNull Completable afterValidation) {
-		return Completable.create(e -> {
-			if (passwordValidator.validate(loginData.getPassword())) {
-				afterValidation.subscribe(
-						() -> gateway.authorize(loginData).subscribe(e::onComplete, e::onError),
-						throwable -> e.onComplete()
-				);
-			} else {
-				e.onError(new ValidationException());
-			}
-		});
-	}
+  @NonNull
+  @Override
+  public Completable authorize(@NonNull LoginData loginData, @NonNull Completable afterValidation) {
+    return Completable.create(e -> {
+      if (passwordValidator.validate(loginData.getPassword())) {
+        afterValidation.subscribe(
+            () -> gateway.authorize(loginData).subscribe(e::onComplete, e::onError),
+            throwable -> e.onComplete()
+        );
+      } else {
+        e.onError(new ValidationException());
+      }
+    });
+  }
 }

@@ -17,44 +17,47 @@ import io.reactivex.schedulers.Schedulers;
 
 public class TimeoutButtonViewModelImpl extends ViewModel implements TimeoutButtonViewModel {
 
-	private final int duration;
-	private Disposable disposable;
+  private final int duration;
+  private Disposable disposable;
 
-	@NonNull
-	private final MutableLiveData<ViewState<TimeoutButtonViewActions>> viewStateLiveData;
+  @NonNull
+  private final MutableLiveData<ViewState<TimeoutButtonViewActions>> viewStateLiveData;
 
-	@Inject
-	TimeoutButtonViewModelImpl(int duration) {
-		this.duration = duration;
-		viewStateLiveData = new MutableLiveData<>();
-		viewStateLiveData.postValue(new TimeoutButtonViewStateReady());
-	}
+  @Inject
+  TimeoutButtonViewModelImpl(int duration) {
+    this.duration = duration;
+    viewStateLiveData = new MutableLiveData<>();
+    viewStateLiveData.postValue(new TimeoutButtonViewStateReady());
+  }
 
-	@NonNull
-	@Override
-	public LiveData<ViewState<TimeoutButtonViewActions>> getViewStateLiveData() {
-		return viewStateLiveData;
-	}
+  @NonNull
+  @Override
+  public LiveData<ViewState<TimeoutButtonViewActions>> getViewStateLiveData() {
+    return viewStateLiveData;
+  }
 
-	@Override
-	public boolean buttonClicked() {
-		if (disposable != null && !disposable.isDisposed()) return false;
-		disposable = Observable.interval(1, TimeUnit.SECONDS, Schedulers.io())
-				.take(duration)
-				.map(count -> duration - count)
-				.subscribe(
-						count -> viewStateLiveData.postValue(new TimeoutButtonViewStateHold(count)),
-						throwable -> {},
-						() -> viewStateLiveData.postValue(new TimeoutButtonViewStateReady())
-				);
-		return true;
-	}
+  @Override
+  public boolean buttonClicked() {
+    if (disposable != null && !disposable.isDisposed()) {
+      return false;
+    }
+    disposable = Observable.interval(1, TimeUnit.SECONDS, Schedulers.io())
+        .take(duration)
+        .map(count -> duration - count)
+        .subscribe(
+            count -> viewStateLiveData.postValue(new TimeoutButtonViewStateHold(count)),
+            throwable -> {
+            },
+            () -> viewStateLiveData.postValue(new TimeoutButtonViewStateReady())
+        );
+    return true;
+  }
 
-	@Override
-	protected void onCleared() {
-		super.onCleared();
-		if (disposable != null) {
-			disposable.dispose();
-		}
-	}
+  @Override
+  protected void onCleared() {
+    super.onCleared();
+    if (disposable != null) {
+      disposable.dispose();
+    }
+  }
 }

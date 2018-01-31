@@ -9,11 +9,12 @@ import io.reactivex.Completable;
  */
 public interface PhoneCallGateway {
 
-	/**
-	 * Запрашивает у системы звонок с кодом на номер телефона.
-	 * @param phoneNumber {@link String} номер телефона
-	 * @return {@link Completable} результат запроса.
-	 */
-	@NonNull
-	Completable callMe(@NonNull String phoneNumber);
+  /**
+   * Запрашивает у системы звонок с кодом на номер телефона.
+   *
+   * @param phoneNumber {@link String} номер телефона
+   * @return {@link Completable} результат запроса.
+   */
+  @NonNull
+  Completable callMe(@NonNull String phoneNumber);
 }

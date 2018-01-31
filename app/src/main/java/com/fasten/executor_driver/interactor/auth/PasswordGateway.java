@@ -11,11 +11,12 @@ import io.reactivex.Completable;
  */
 public interface PasswordGateway {
 
-	/**
-	 * Запрашивает авторизацию в общей системе.
-	 * @param loginData {@link LoginData} данные для входа.
-	 * @return {@link Completable} результат входа.
-	 */
-	@NonNull
-	Completable authorize(@NonNull LoginData loginData);
+  /**
+   * Запрашивает авторизацию в общей системе.
+   *
+   * @param loginData {@link LoginData} данные для входа.
+   * @return {@link Completable} результат входа.
+   */
+  @NonNull
+  Completable authorize(@NonNull LoginData loginData);
 }

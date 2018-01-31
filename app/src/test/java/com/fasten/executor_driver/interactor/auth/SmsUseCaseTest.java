@@ -21,121 +21,121 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class SmsUseCaseTest {
 
-	private SmsUseCase smsUseCase;
+  private SmsUseCase smsUseCase;
 
-	@Mock
-	private SmsGateway gateway;
+  @Mock
+  private SmsGateway gateway;
 
-	@Mock
-	private Validator<String> phoneNumberValidator;
+  @Mock
+  private Validator<String> phoneNumberValidator;
 
-	@Before
-	public void setUp() throws Exception {
-		smsUseCase = new SmsUseCaseImpl(gateway, phoneNumberValidator);
-		when(gateway.sendMeCode(anyString())).thenReturn(Completable.never());
-		when(phoneNumberValidator.validate("0123456")).thenReturn(true);
-	}
+  @Before
+  public void setUp() throws Exception {
+    smsUseCase = new SmsUseCaseImpl(gateway, phoneNumberValidator);
+    when(gateway.sendMeCode(anyString())).thenReturn(Completable.never());
+    when(phoneNumberValidator.validate("0123456")).thenReturn(true);
+  }
 
 	/* Проверяем работу с валидаторами */
 
-	/**
-	 * Должен запросить у валидатора номера телефона проверку.
-	 *
-	 * @throws Exception error.
-	 */
-	@Test
-	public void askPhoneNumberValidatorForResult() throws Exception {
-		// Действие:
-		smsUseCase.sendMeCode("").test();
+  /**
+   * Должен запросить у валидатора номера телефона проверку.
+   *
+   * @throws Exception error.
+   */
+  @Test
+  public void askPhoneNumberValidatorForResult() throws Exception {
+    // Действие:
+    smsUseCase.sendMeCode("").test();
 
-		// Результат:
-		verify(phoneNumberValidator, only()).validate("");
-	}
+    // Результат:
+    verify(phoneNumberValidator, only()).validate("");
+  }
 
 	/* Проверяем ответы валидатора */
 
-	/**
-	 * Должен ответить ошибкой, если номер телефона неверный.
-	 *
-	 * @throws Exception error.
-	 */
-	@Test
-	public void answerErrorIfPhoneNumberInvalid() throws Exception {
-		// Результат:
-		smsUseCase.sendMeCode("").test().assertError(ValidationException.class);
-	}
+  /**
+   * Должен ответить ошибкой, если номер телефона неверный.
+   *
+   * @throws Exception error.
+   */
+  @Test
+  public void answerErrorIfPhoneNumberInvalid() throws Exception {
+    // Результат:
+    smsUseCase.sendMeCode("").test().assertError(ValidationException.class);
+  }
 
-	/**
-	 * Не должно быть ошибок, если номер телефона соответствует формату.
-	 *
-	 * @throws Exception error.
-	 */
-	@Test
-	public void answerSuccessIfPhoneNumberValid() throws Exception {
-		// Действие:
-		when(phoneNumberValidator.validate(anyString())).thenReturn(true);
+  /**
+   * Не должно быть ошибок, если номер телефона соответствует формату.
+   *
+   * @throws Exception error.
+   */
+  @Test
+  public void answerSuccessIfPhoneNumberValid() throws Exception {
+    // Действие:
+    when(phoneNumberValidator.validate(anyString())).thenReturn(true);
 
-		// Результат:
-		smsUseCase.sendMeCode("").test().assertNoErrors();
-	}
+    // Результат:
+    smsUseCase.sendMeCode("").test().assertNoErrors();
+  }
 
 	/* Проверяем работу с гейтвеем */
 
-	/**
-	 * Не должен запрашивать у гейтвея СМС, если валидация не прошла.
-	 *
-	 * @throws Exception error.
-	 */
-	@Test
-	public void doNotAskGatewayForSms() throws Exception {
-		// Действие:
-		smsUseCase.sendMeCode("012345").test();
+  /**
+   * Не должен запрашивать у гейтвея СМС, если валидация не прошла.
+   *
+   * @throws Exception error.
+   */
+  @Test
+  public void doNotAskGatewayForSms() throws Exception {
+    // Действие:
+    smsUseCase.sendMeCode("012345").test();
 
-		// Результат:
-		verifyZeroInteractions(gateway);
-	}
+    // Результат:
+    verifyZeroInteractions(gateway);
+  }
 
-	/**
-	 * Должен запросить у гейтвея СМС.
-	 *
-	 * @throws Exception error.
-	 */
-	@Test
-	public void askGatewayForSms() throws Exception {
-		// Действие:
-		smsUseCase.sendMeCode("0123456").test();
+  /**
+   * Должен запросить у гейтвея СМС.
+   *
+   * @throws Exception error.
+   */
+  @Test
+  public void askGatewayForSms() throws Exception {
+    // Действие:
+    smsUseCase.sendMeCode("0123456").test();
 
-		// Результат:
-		verify(gateway, only()).sendMeCode("0123456");
-	}
+    // Результат:
+    verify(gateway, only()).sendMeCode("0123456");
+  }
 
 	/* Проверяем ответы на запрос СМС */
 
-	/**
-	 * Должен ответить ошибкой сети.
-	 *
-	 * @throws Exception error.
-	 */
-	@Test
-	public void answerNoNetworkError() throws Exception {
-		// Действие:
-		when(gateway.sendMeCode(anyString())).thenReturn(Completable.error(new NoNetworkException()));
+  /**
+   * Должен ответить ошибкой сети.
+   *
+   * @throws Exception error.
+   */
+  @Test
+  public void answerNoNetworkError() throws Exception {
+    // Действие:
+    when(gateway.sendMeCode(anyString())).thenReturn(Completable.error(new NoNetworkException()));
 
-		// Результат:
-		smsUseCase.sendMeCode("0123456").test().assertError(NoNetworkException.class);
-	}
+    // Результат:
+    smsUseCase.sendMeCode("0123456").test().assertError(NoNetworkException.class);
+  }
 
-	/**
-	 * Должен ответить успехом.
-	 *
-	 * @throws Exception error.
-	 */
-	@Test
-	public void answerSmsSendSuccessful() throws Exception {
-		// Действие:
-		when(gateway.sendMeCode(anyString())).thenReturn(Completable.complete());
+  /**
+   * Должен ответить успехом.
+   *
+   * @throws Exception error.
+   */
+  @Test
+  public void answerSmsSendSuccessful() throws Exception {
+    // Действие:
+    when(gateway.sendMeCode(anyString())).thenReturn(Completable.complete());
 
-		// Результат:
-		smsUseCase.sendMeCode("0123456").test().assertComplete();
-	}
+    // Результат:
+    smsUseCase.sendMeCode("0123456").test().assertComplete();
+  }
 }

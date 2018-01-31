@@ -12,19 +12,19 @@ import io.reactivex.schedulers.Schedulers;
 
 public class SmsGatewayImpl implements SmsGateway {
 
-	@NonNull
-	private final ApiService api;
+  @NonNull
+  private final ApiService api;
 
-	@Inject
-	public SmsGatewayImpl(@NonNull ApiService api) {
-		this.api = api;
-	}
+  @Inject
+  public SmsGatewayImpl(@NonNull ApiService api) {
+    this.api = api;
+  }
 
-	@NonNull
-	@Override
-	public Completable sendMeCode(@NonNull String phoneNumber) {
-		return api.sendMeCode(phoneNumber)
-				.subscribeOn(Schedulers.io())
-				.observeOn(Schedulers.single());
-	}
+  @NonNull
+  @Override
+  public Completable sendMeCode(@NonNull String phoneNumber) {
+    return api.sendMeCode(phoneNumber)
+        .subscribeOn(Schedulers.io())
+        .observeOn(Schedulers.single());
+  }
 }

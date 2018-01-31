@@ -14,33 +14,33 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 @RunWith(MockitoJUnitRunner.class)
 public class PhoneViewStateProceedTest {
 
-	private PhoneViewStateProceed viewState;
+  private PhoneViewStateProceed viewState;
 
-	@Mock
-	private PhoneViewActions phoneViewActions;
+  @Mock
+  private PhoneViewActions phoneViewActions;
 
-	@Before
-	public void setUp() throws Exception {
-		viewState = new PhoneViewStateProceed("login");
-	}
+  @Before
+  public void setUp() throws Exception {
+    viewState = new PhoneViewStateProceed("login");
+  }
 
-	@Test
-	public void testActions() throws Exception {
-		// Действие:
-		viewState.apply(phoneViewActions);
+  @Test
+  public void testActions() throws Exception {
+    // Действие:
+    viewState.apply(phoneViewActions);
 
-		// Результат:
-		verify(phoneViewActions).showPending(false);
-		verify(phoneViewActions).showError(null);
-		verify(phoneViewActions).setInputEditable(false);
-		verify(phoneViewActions).enableButton(false);
-		verify(phoneViewActions).proceedNext("login");
-		verifyNoMoreInteractions(phoneViewActions);
-	}
+    // Результат:
+    verify(phoneViewActions).showPending(false);
+    verify(phoneViewActions).showError(null);
+    verify(phoneViewActions).setInputEditable(false);
+    verify(phoneViewActions).enableButton(false);
+    verify(phoneViewActions).proceedNext("login");
+    verifyNoMoreInteractions(phoneViewActions);
+  }
 
-	@Test
-	public void testEquals() throws Exception {
-		assertEquals(viewState, new PhoneViewStateProceed("login"));
-		assertNotEquals(viewState, new PhoneViewStateProceed("logi"));
-	}
+  @Test
+  public void testEquals() throws Exception {
+    assertEquals(viewState, new PhoneViewStateProceed("login"));
+    assertNotEquals(viewState, new PhoneViewStateProceed("logi"));
+  }
 }

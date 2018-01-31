@@ -12,26 +12,26 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 @RunWith(MockitoJUnitRunner.class)
 public class PhoneViewStatePendingTest {
 
-	private PhoneViewStatePending viewState;
+  private PhoneViewStatePending viewState;
 
-	@Mock
-	private PhoneViewActions phoneViewActions;
+  @Mock
+  private PhoneViewActions phoneViewActions;
 
-	@Before
-	public void setUp() throws Exception {
-		viewState = new PhoneViewStatePending();
-	}
+  @Before
+  public void setUp() throws Exception {
+    viewState = new PhoneViewStatePending();
+  }
 
-	@Test
-	public void testActions() throws Exception {
-		// Действие:
-		viewState.apply(phoneViewActions);
+  @Test
+  public void testActions() throws Exception {
+    // Действие:
+    viewState.apply(phoneViewActions);
 
-		// Результат:
-		verify(phoneViewActions).showPending(true);
-		verify(phoneViewActions).showError(null);
-		verify(phoneViewActions).setInputEditable(false);
-		verify(phoneViewActions).enableButton(false);
-		verifyNoMoreInteractions(phoneViewActions);
-	}
+    // Результат:
+    verify(phoneViewActions).showPending(true);
+    verify(phoneViewActions).showError(null);
+    verify(phoneViewActions).setInputEditable(false);
+    verify(phoneViewActions).enableButton(false);
+    verifyNoMoreInteractions(phoneViewActions);
+  }
 }

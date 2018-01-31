@@ -20,70 +20,70 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class ReceiveTokenInterceptorTest {
 
-	private Interceptor receiveTokenInterceptor;
+  private Interceptor receiveTokenInterceptor;
 
-	@Mock
-	private TokenKeeper tokenKeeper;
+  @Mock
+  private TokenKeeper tokenKeeper;
 
-	@Mock
-	private Interceptor.Chain chain;
+  @Mock
+  private Interceptor.Chain chain;
 
-	@Before
-	public void setUp() throws Exception {
-		receiveTokenInterceptor = new ReceiveTokenInterceptor(tokenKeeper);
-	}
+  @Before
+  public void setUp() throws Exception {
+    receiveTokenInterceptor = new ReceiveTokenInterceptor(tokenKeeper);
+  }
 
-	/**
-	 * Должен не трогать хранителя токенов
-	 *
-	 * @throws Exception error
-	 */
-	@Test
-	public void doNotTouchTokenKeeper() throws Exception {
-		// Дано:
-		when(chain.proceed(nullable(Request.class))).thenReturn(
-				new Response.Builder()
-						.code(200)
-						.protocol(Protocol.HTTP_1_1)
-						.message("")
-						.request(new Request.Builder()
-								.url("http://www.fasten.com")
-								.build()
-						).build()
-		);
+  /**
+   * Должен не трогать хранителя токенов
+   *
+   * @throws Exception error
+   */
+  @Test
+  public void doNotTouchTokenKeeper() throws Exception {
+    // Дано:
+    when(chain.proceed(nullable(Request.class))).thenReturn(
+        new Response.Builder()
+            .code(200)
+            .protocol(Protocol.HTTP_1_1)
+            .message("")
+            .request(new Request.Builder()
+                .url("http://www.fasten.com")
+                .build()
+            ).build()
+    );
 
-		// Действие:
-		receiveTokenInterceptor.intercept(chain);
+    // Действие:
+    receiveTokenInterceptor.intercept(chain);
 
-		// Результат:
-		verifyZeroInteractions(tokenKeeper);
-	}
+    // Результат:
+    verifyZeroInteractions(tokenKeeper);
+  }
 
 
-	/**
-	 * Должен запросить у хранителя токенов сохранение полученного токена
-	 *
-	 * @throws Exception error
-	 */
-	@Test
-	public void askTokenKeeperToSaveToken() throws Exception {
-		// Дано:
-		when(chain.proceed(nullable(Request.class))).thenReturn(
-				new Response.Builder()
-						.code(200)
-						.header("Authorization", "123456")
-						.protocol(Protocol.HTTP_1_1)
-						.message("")
-						.request(new Request.Builder()
-								.url("http://www.fasten.com")
-								.build()
-						).build()
-		);
+  /**
+   * Должен запросить у хранителя токенов сохранение полученного токена
+   *
+   * @throws Exception error
+   */
+  @Test
+  public void askTokenKeeperToSaveToken() throws Exception {
+    // Дано:
+    when(chain.proceed(nullable(Request.class))).thenReturn(
+        new Response.Builder()
+            .code(200)
+            .header("Authorization", "123456")
+            .protocol(Protocol.HTTP_1_1)
+            .message("")
+            .request(new Request.Builder()
+                .url("http://www.fasten.com")
+                .build()
+            ).build()
+    );
 
-		// Действие:
-		receiveTokenInterceptor.intercept(chain);
+    // Действие:
+    receiveTokenInterceptor.intercept(chain);
 
-		// Результат:
-		verify(tokenKeeper, only()).saveToken("123456");
-	}
+    // Результат:
+    verify(tokenKeeper, only()).saveToken("123456");
+  }
 }

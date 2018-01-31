@@ -8,23 +8,23 @@ import static org.junit.Assert.assertNotEquals;
 
 public class ApiLoginTest {
 
-	private ApiLogin apiLogin;
+  private ApiLogin apiLogin;
 
-	@Before
-	public void setUp() throws Exception {
-		apiLogin = new ApiLogin("name", "password");
-	}
+  @Before
+  public void setUp() throws Exception {
+    apiLogin = new ApiLogin("name", "password");
+  }
 
-	@Test
-	public void testConstructor() throws Exception {
-		assertEquals(apiLogin.getName(), "name");
-		assertEquals(apiLogin.getPassword(), "password");
-	}
+  @Test
+  public void testConstructor() throws Exception {
+    assertEquals(apiLogin.getName(), "name");
+    assertEquals(apiLogin.getPassword(), "password");
+  }
 
-	@Test
-	public void testEquals() throws Exception {
-		assertEquals(apiLogin, new ApiLogin("name", "password"));
-		assertNotEquals(apiLogin, new ApiLogin("nam", "password"));
-		assertNotEquals(apiLogin, new ApiLogin("name", "passwor"));
-	}
+  @Test
+  public void testEquals() throws Exception {
+    assertEquals(apiLogin, new ApiLogin("name", "password"));
+    assertNotEquals(apiLogin, new ApiLogin("nam", "password"));
+    assertNotEquals(apiLogin, new ApiLogin("name", "passwor"));
+  }
 }

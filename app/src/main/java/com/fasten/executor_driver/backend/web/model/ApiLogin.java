@@ -11,54 +11,60 @@ import com.google.gson.annotations.SerializedName;
 
 public class ApiLogin {
 
-	@NonNull
-	@SerializedName("username")
-	@Expose
-	private final String name;
-	@NonNull
-	@SerializedName("password")
-	@Expose
-	private final String password;
+  @NonNull
+  @SerializedName("username")
+  @Expose
+  private final String name;
+  @NonNull
+  @SerializedName("password")
+  @Expose
+  private final String password;
 
-	public ApiLogin(@NonNull String name, @NonNull String password) {
-		this.name = name;
-		this.password = password;
-	}
+  public ApiLogin(@NonNull String name, @NonNull String password) {
+    this.name = name;
+    this.password = password;
+  }
 
-	@NonNull
-	String getName() {
-		return name;
-	}
+  @NonNull
+  String getName() {
+    return name;
+  }
 
-	@NonNull
-	String getPassword() {
-		return password;
-	}
+  @NonNull
+  String getPassword() {
+    return password;
+  }
 
-	@Override
-	public String toString() {
-		return "ApiLogin{" +
-				"name='" + name + '\'' +
-				", password='" + password + '\'' +
-				'}';
-	}
+  @Override
+  public String toString() {
+    return "ApiLogin{" +
+        "name='" + name + '\'' +
+        ", password='" + password + '\'' +
+        '}';
+  }
 
-	@SuppressWarnings("SimplifiableIfStatement")
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
+  @SuppressWarnings("SimplifiableIfStatement")
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
 
-		ApiLogin apiLogin = (ApiLogin) o;
+    ApiLogin apiLogin = (ApiLogin) o;
 
-		if (!name.equals(apiLogin.name)) return false;
-		return password.equals(apiLogin.password);
-	}
+    if (!name.equals(apiLogin.name)) {
+      return false;
+    }
+    return password.equals(apiLogin.password);
+  }
 
-	@Override
-	public int hashCode() {
-		int result = name.hashCode();
-		result = 31 * result + password.hashCode();
-		return result;
-	}
+  @Override
+  public int hashCode() {
+    int result = name.hashCode();
+    result = 31 * result + password.hashCode();
+    return result;
+  }
 }

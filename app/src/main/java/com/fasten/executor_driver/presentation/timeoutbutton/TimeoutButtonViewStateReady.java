@@ -9,9 +9,9 @@ import com.fasten.executor_driver.presentation.ViewState;
  */
 public final class TimeoutButtonViewStateReady implements ViewState<TimeoutButtonViewActions> {
 
-	@Override
-	public void apply(@NonNull TimeoutButtonViewActions stateActions) {
-		stateActions.setResponsive(true);
-		stateActions.showTimer(null);
-	}
+  @Override
+  public void apply(@NonNull TimeoutButtonViewActions stateActions) {
+    stateActions.setResponsive(true);
+    stateActions.showTimer(null);
+  }
 }

@@ -13,16 +13,16 @@ import com.fasten.executor_driver.di.DaggerAppComponent;
 
 public class MainApplication extends Application {
 
-	private AppComponent mAppComponent;
+  private AppComponent mAppComponent;
 
-	@Override
-	public void onCreate() {
-		super.onCreate();
-		mAppComponent = DaggerAppComponent.builder().appModule(new AppModule(this)).build();
-	}
+  @Override
+  public void onCreate() {
+    super.onCreate();
+    mAppComponent = DaggerAppComponent.builder().appModule(new AppModule(this)).build();
+  }
 
-	@NonNull
-	public AppComponent getAppComponent() {
-		return mAppComponent;
-	}
+  @NonNull
+  public AppComponent getAppComponent() {
+    return mAppComponent;
+  }
 }

@@ -57,138 +57,138 @@ import retrofit2.converter.gson.GsonConverterFactory;
 @Module
 public class AppModule {
 
-	@NonNull
-	private final Context appContext;
+  @NonNull
+  private final Context appContext;
 
-	public AppModule(@NonNull Context context) {
-		this.appContext = context.getApplicationContext();
-	}
+  public AppModule(@NonNull Context context) {
+    this.appContext = context.getApplicationContext();
+  }
 
-	@Provides
-	@NonNull
-	@Singleton
-	Context provideAppContext() {
-		return appContext;
-	}
+  @Provides
+  @NonNull
+  @Singleton
+  Context provideAppContext() {
+    return appContext;
+  }
 
-	@Provides
-	@NonNull
-	@Singleton
-	AppSettingsService provideAppSettingsService(@NonNull AppPreferences appPreferences) {
-		return appPreferences;
-	}
+  @Provides
+  @NonNull
+  @Singleton
+  AppSettingsService provideAppSettingsService(@NonNull AppPreferences appPreferences) {
+    return appPreferences;
+  }
 
-	@Provides
-	@NonNull
-	TokenKeeper provideTokenKeeper(@NonNull TokenKeeperImpl tokenKeeper) {
-		return tokenKeeper;
-	}
+  @Provides
+  @NonNull
+  TokenKeeper provideTokenKeeper(@NonNull TokenKeeperImpl tokenKeeper) {
+    return tokenKeeper;
+  }
 
-	@Provides
-	@NonNull
-	@Singleton
-	ApiService provideApiService(@NonNull ConnectivityInterceptor connectivityInterceptor,
-	                             @NonNull SendTokenInterceptor sendTokenInterceptor,
-	                             @NonNull ReceiveTokenInterceptor receiveTokenInterceptor) {
-		// build OkHttpClient builder
-		OkHttpClient.Builder builder = new OkHttpClient.Builder();
-		builder.readTimeout(10, TimeUnit.SECONDS)
-				.connectTimeout(10, TimeUnit.SECONDS)
-				.writeTimeout(10, TimeUnit.SECONDS)
-				.addInterceptor(connectivityInterceptor)
-				.addInterceptor(receiveTokenInterceptor)
-				.addInterceptor(sendTokenInterceptor);
-		// Add logging interceptor for debug build only
-		if (BuildConfig.DEBUG) {
-			HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
-			logging.setLevel(HttpLoggingInterceptor.Level.BODY);
-			builder.addInterceptor(logging);
-		}
-		return new Retrofit.Builder()
-				.baseUrl(BuildConfig.BASE_URL)
-				.client(builder.build())
-				.addConverterFactory(GsonConverterFactory.create())
-				.addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-				.build()
-				.create(ApiService.class);
-	}
+  @Provides
+  @NonNull
+  @Singleton
+  ApiService provideApiService(@NonNull ConnectivityInterceptor connectivityInterceptor,
+      @NonNull SendTokenInterceptor sendTokenInterceptor,
+      @NonNull ReceiveTokenInterceptor receiveTokenInterceptor) {
+    // build OkHttpClient builder
+    OkHttpClient.Builder builder = new OkHttpClient.Builder();
+    builder.readTimeout(10, TimeUnit.SECONDS)
+        .connectTimeout(10, TimeUnit.SECONDS)
+        .writeTimeout(10, TimeUnit.SECONDS)
+        .addInterceptor(connectivityInterceptor)
+        .addInterceptor(receiveTokenInterceptor)
+        .addInterceptor(sendTokenInterceptor);
+    // Add logging interceptor for debug build only
+    if (BuildConfig.DEBUG) {
+      HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
+      logging.setLevel(HttpLoggingInterceptor.Level.BODY);
+      builder.addInterceptor(logging);
+    }
+    return new Retrofit.Builder()
+        .baseUrl(BuildConfig.BASE_URL)
+        .client(builder.build())
+        .addConverterFactory(GsonConverterFactory.create())
+        .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+        .build()
+        .create(ApiService.class);
+  }
 
-	@Provides
-	LoginGateway provideLoginGateway(LoginGatewayImpl loginGateway) {
-		return loginGateway;
-	}
+  @Provides
+  LoginGateway provideLoginGateway(LoginGatewayImpl loginGateway) {
+    return loginGateway;
+  }
 
-	@Provides
-	PasswordGateway providePasswordGateway(PasswordGatewayImpl passwordGateway) {
-		return passwordGateway;
-	}
+  @Provides
+  PasswordGateway providePasswordGateway(PasswordGatewayImpl passwordGateway) {
+    return passwordGateway;
+  }
 
-	@Provides
-	PhoneCallGateway providePhoneCallGateway(PhoneCallGatewayImpl phoneCallGateway) {
-		return phoneCallGateway;
-	}
+  @Provides
+  PhoneCallGateway providePhoneCallGateway(PhoneCallGatewayImpl phoneCallGateway) {
+    return phoneCallGateway;
+  }
 
-	@Provides
-	SmsGateway provideSmsGateway(SmsGatewayImpl smsGateway) {
-		return smsGateway;
-	}
+  @Provides
+  SmsGateway provideSmsGateway(SmsGatewayImpl smsGateway) {
+    return smsGateway;
+  }
 
-	@Provides
-	@Named("loginValidator")
-	Validator<String> provideLoginValidator(LoginValidator loginValidator) {
-		return loginValidator;
-	}
+  @Provides
+  @Named("loginValidator")
+  Validator<String> provideLoginValidator(LoginValidator loginValidator) {
+    return loginValidator;
+  }
 
-	@Provides
-	@Named("passwordValidator")
-	Validator<String> providePasswordValidator(PasswordValidator passwordValidator) {
-		return passwordValidator;
-	}
+  @Provides
+  @Named("passwordValidator")
+  Validator<String> providePasswordValidator(PasswordValidator passwordValidator) {
+    return passwordValidator;
+  }
 
-	@Provides
-	@Named("phoneNumberValidator")
-	Validator<String> providePhoneNumberValidator(PhoneNumberValidator phoneNumberValidator) {
-		return phoneNumberValidator;
-	}
+  @Provides
+  @Named("phoneNumberValidator")
+  Validator<String> providePhoneNumberValidator(PhoneNumberValidator phoneNumberValidator) {
+    return phoneNumberValidator;
+  }
 
-	@Provides
-	LoginUseCase provideLoginUseCase(LoginUseCaseImpl loginUseCase) {
-		return loginUseCase;
-	}
+  @Provides
+  LoginUseCase provideLoginUseCase(LoginUseCaseImpl loginUseCase) {
+    return loginUseCase;
+  }
 
-	@Provides
-	PasswordUseCase providePasswordUseCase(PasswordUseCaseImpl passwordUseCase) {
-		return passwordUseCase;
-	}
+  @Provides
+  PasswordUseCase providePasswordUseCase(PasswordUseCaseImpl passwordUseCase) {
+    return passwordUseCase;
+  }
 
-	@Provides
-	PhoneCallUseCase providePhoneCallUseCase(PhoneCallUseCaseImpl phoneCallUseCase) {
-		return phoneCallUseCase;
-	}
+  @Provides
+  PhoneCallUseCase providePhoneCallUseCase(PhoneCallUseCaseImpl phoneCallUseCase) {
+    return phoneCallUseCase;
+  }
 
-	@Provides
-	SmsUseCase provideSmsUseCase(SmsUseCaseImpl smsUseCase) {
-		return smsUseCase;
-	}
+  @Provides
+  SmsUseCase provideSmsUseCase(SmsUseCaseImpl smsUseCase) {
+    return smsUseCase;
+  }
 
-	@Provides
-	CodeViewModel provideCodeViewModel(CodeViewModelImpl codeViewModel) {
-		return codeViewModel;
-	}
+  @Provides
+  CodeViewModel provideCodeViewModel(CodeViewModelImpl codeViewModel) {
+    return codeViewModel;
+  }
 
-	@Provides
-	PhoneViewModel providePhoneViewModel(PhoneViewModelImpl codeViewModel) {
-		return codeViewModel;
-	}
+  @Provides
+  PhoneViewModel providePhoneViewModel(PhoneViewModelImpl codeViewModel) {
+    return codeViewModel;
+  }
 
-	@Provides
-	TimeoutButtonViewModel provideTimeoutButtonViewModel(TimeoutButtonViewModelImpl timeoutButtonViewModel) {
-		return timeoutButtonViewModel;
-	}
+  @Provides
+  TimeoutButtonViewModel provideTimeoutButtonViewModel(TimeoutButtonViewModelImpl buttonViewModel) {
+    return buttonViewModel;
+  }
 
-	@Provides
-	@Named("phone")
-	ViewModelProvider.Factory providePhoneViewModelFactory(ViewModelFactory<PhoneViewModel> factory) {
-		return factory;
-	}
+  @Provides
+  @Named("phone")
+  ViewModelProvider.Factory providePhoneViewModelFactory(ViewModelFactory<PhoneViewModel> factory) {
+    return factory;
+  }
 }

@@ -10,21 +10,23 @@ import com.fasten.executor_driver.presentation.ViewState;
  */
 public interface PhoneViewModel {
 
-	/**
-	 * Возвращает состояние вида для применения
-	 * @return - {@link ViewState} состояние вида
-	 */
-	@NonNull
-	LiveData<ViewState<PhoneViewActions>> getViewStateLiveData();
+  /**
+   * Возвращает состояние вида для применения
+   *
+   * @return - {@link ViewState} состояние вида
+   */
+  @NonNull
+  LiveData<ViewState<PhoneViewActions>> getViewStateLiveData();
 
-	/**
-	 * Передает введенный/измененный номер для валидации
-	 * @param phoneNumber - номер телефона
-	 */
-	void phoneNumberChanged(@NonNull String phoneNumber);
+  /**
+   * Передает введенный/измененный номер для валидации
+   *
+   * @param phoneNumber - номер телефона
+   */
+  void phoneNumberChanged(@NonNull String phoneNumber);
 
-	/**
-	 * Событие нажатия кнопки "Далее"
-	 */
-	void nextClicked();
+  /**
+   * Событие нажатия кнопки "Далее"
+   */
+  void nextClicked();
 }

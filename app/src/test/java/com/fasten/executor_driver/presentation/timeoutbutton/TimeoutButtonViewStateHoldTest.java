@@ -14,31 +14,31 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 @RunWith(MockitoJUnitRunner.class)
 public class TimeoutButtonViewStateHoldTest {
 
-	private TimeoutButtonViewStateHold viewState;
+  private TimeoutButtonViewStateHold viewState;
 
-	@Mock
-	private TimeoutButtonViewActions timeoutButtonViewActions;
+  @Mock
+  private TimeoutButtonViewActions timeoutButtonViewActions;
 
-	@Before
-	public void setUp() throws Exception {
-		viewState = new TimeoutButtonViewStateHold(12);
-	}
+  @Before
+  public void setUp() throws Exception {
+    viewState = new TimeoutButtonViewStateHold(12);
+  }
 
-	@Test
-	public void testActions() throws Exception {
-		// Действие:
-		viewState.apply(timeoutButtonViewActions);
+  @Test
+  public void testActions() throws Exception {
+    // Действие:
+    viewState.apply(timeoutButtonViewActions);
 
-		// Результат:
-		verify(timeoutButtonViewActions).showTimer(12L);
-		verify(timeoutButtonViewActions).setResponsive(false);
-		verifyNoMoreInteractions(timeoutButtonViewActions);
-	}
+    // Результат:
+    verify(timeoutButtonViewActions).showTimer(12L);
+    verify(timeoutButtonViewActions).setResponsive(false);
+    verifyNoMoreInteractions(timeoutButtonViewActions);
+  }
 
-	@Test
-	public void testEquals() throws Exception {
-		assertEquals(viewState, new TimeoutButtonViewStateHold(12));
-		assertNotEquals(viewState, new TimeoutButtonViewStateHold(13));
-		assertNotEquals(viewState, new TimeoutButtonViewStateHold(11));
-	}
+  @Test
+  public void testEquals() throws Exception {
+    assertEquals(viewState, new TimeoutButtonViewStateHold(12));
+    assertNotEquals(viewState, new TimeoutButtonViewStateHold(13));
+    assertNotEquals(viewState, new TimeoutButtonViewStateHold(11));
+  }
 }

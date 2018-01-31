@@ -8,22 +8,22 @@ import java.io.IOException;
 
 public class ValidationException extends IOException {
 
-	public ValidationException() {
-		super();
-	}
+  public ValidationException() {
+    super();
+  }
 
-	@SuppressWarnings("unused")
-	public ValidationException(String message) {
-		super(message);
-	}
+  @SuppressWarnings("unused")
+  public ValidationException(String message) {
+    super(message);
+  }
 
-	@SuppressWarnings("unused")
-	public ValidationException(String message, Throwable cause) {
-		super(message, cause);
-	}
+  @SuppressWarnings("unused")
+  public ValidationException(String message, Throwable cause) {
+    super(message, cause);
+  }
 
-	@SuppressWarnings("unused")
-	public ValidationException(Throwable cause) {
-		super(cause);
-	}
+  @SuppressWarnings("unused")
+  public ValidationException(Throwable cause) {
+    super(cause);
+  }
 }

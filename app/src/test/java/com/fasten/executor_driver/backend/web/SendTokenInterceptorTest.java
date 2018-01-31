@@ -19,78 +19,78 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class SendTokenInterceptorTest {
 
-	private Interceptor sendTokenInterceptor;
+  private Interceptor sendTokenInterceptor;
 
-	@Mock
-	private TokenKeeper tokenKeeper;
+  @Mock
+  private TokenKeeper tokenKeeper;
 
-	@Mock
-	private Interceptor.Chain chain;
+  @Mock
+  private Interceptor.Chain chain;
 
-	@Captor
-	private ArgumentCaptor<Request> request;
+  @Captor
+  private ArgumentCaptor<Request> request;
 
-	@Before
-	public void setUp() throws Exception {
-		sendTokenInterceptor = new SendTokenInterceptor(tokenKeeper);
-	}
+  @Before
+  public void setUp() throws Exception {
+    sendTokenInterceptor = new SendTokenInterceptor(tokenKeeper);
+  }
 
-	/**
-	 * Должен запросить у хранителя токенов сохраненный токен
-	 *
-	 * @throws Exception error
-	 */
-	@Test
-	public void askTokenKeeperToSaveToken() throws Exception {
-		// Дано:
-		when(chain.request()).thenReturn(
-				new Request.Builder()
-						.url("http://www.fasten.com")
-						.build()
-		);
+  /**
+   * Должен запросить у хранителя токенов сохраненный токен
+   *
+   * @throws Exception error
+   */
+  @Test
+  public void askTokenKeeperToSaveToken() throws Exception {
+    // Дано:
+    when(chain.request()).thenReturn(
+        new Request.Builder()
+            .url("http://www.fasten.com")
+            .build()
+    );
 
-		// Действие:
-		sendTokenInterceptor.intercept(chain);
+    // Действие:
+    sendTokenInterceptor.intercept(chain);
 
-		// Результат:
-		verify(tokenKeeper, only()).getToken();
-	}
+    // Результат:
+    verify(tokenKeeper, only()).getToken();
+  }
 
-	/**
-	 * Должен не подсовывать нулевой токен
-	 *
-	 * @throws Exception error
-	 */
-	@Test
-	public void doNotInjectTokenIfNull() throws Exception {
-		// Дано:
-		when(chain.request()).thenReturn(new Request.Builder().url("http://www.fasten.com").build());
+  /**
+   * Должен не подсовывать нулевой токен
+   *
+   * @throws Exception error
+   */
+  @Test
+  public void doNotInjectTokenIfNull() throws Exception {
+    // Дано:
+    when(chain.request()).thenReturn(new Request.Builder().url("http://www.fasten.com").build());
 
-		// Действие:
-		sendTokenInterceptor.intercept(chain);
+    // Действие:
+    sendTokenInterceptor.intercept(chain);
 
-		// Результат:
-		verify(chain).proceed(request.capture());
-		assertEquals(request.getValue().headers("Authorization").size(), 0);
-	}
+    // Результат:
+    verify(chain).proceed(request.capture());
+    assertEquals(request.getValue().headers("Authorization").size(), 0);
+  }
 
-	/**
-	 * Должен не подсунуть токен
-	 *
-	 * @throws Exception error
-	 */
-	@Test
-	public void injectToken() throws Exception {
-		// Дано:
-		when(chain.request()).thenReturn(new Request.Builder().url("http://www.fasten.com").build());
-		when(tokenKeeper.getToken()).thenReturn("token");
+  /**
+   * Должен не подсунуть токен
+   *
+   * @throws Exception error
+   */
+  @Test
+  public void injectToken() throws Exception {
+    // Дано:
+    when(chain.request()).thenReturn(new Request.Builder().url("http://www.fasten.com").build());
+    when(tokenKeeper.getToken()).thenReturn("token");
 
-		// Действие:
-		sendTokenInterceptor.intercept(chain);
+    // Действие:
+    sendTokenInterceptor.intercept(chain);
 
-		// Результат:
-		verify(chain).proceed(request.capture());
-		assertEquals(request.getValue().headers("Authorization").size(), 1);
-		assertEquals(request.getValue().headers("Authorization").get(0), "token");
-	}
+    // Результат:
+    verify(chain).proceed(request.capture());
+    assertEquals(request.getValue().headers("Authorization").size(), 1);
+    assertEquals(request.getValue().headers("Authorization").get(0), "token");
+  }
 }
