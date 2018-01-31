@@ -33,7 +33,12 @@ public class LoginValidatorTest {
   }
 
   @Test
+  public void loginStartsNotWith7() throws Exception {
+    assertFalse(new PhoneNumberValidator().validate("80902832921"));
+  }
+
+  @Test
   public void loginCorrect() throws Exception {
-    assertTrue(new LoginValidator().validate("0902832921"));
+    assertTrue(new LoginValidator().validate("70902832921"));
   }
 }
