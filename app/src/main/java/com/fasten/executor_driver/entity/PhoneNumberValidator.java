@@ -11,7 +11,7 @@ public class PhoneNumberValidator implements Validator<String> {
 	@Override
 	public boolean validate(@Nullable String phoneNumber) {
 		if (phoneNumber == null) return false;
-		if (phoneNumber.length() != 10) return false;
-		return phoneNumber.matches("\\d*");
+		if (phoneNumber.length() != 11) return false;
+		return phoneNumber.matches("7\\d*");
 	}
 }
