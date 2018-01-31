@@ -2,6 +2,7 @@ package com.fasten.executor_driver.view.auth;
 
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -12,6 +13,7 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.ProgressBar;
 
@@ -37,12 +39,19 @@ public class LoginFragment extends BaseFragment implements PhoneViewActions {
 	private TextInputEditText phoneInput;
 	private Button goNext;
 	private ProgressBar pendingIndicator;
+	private Context context;
 
 	private ViewModelProvider.Factory viewModelFactory;
 
 	@Inject
 	public void setViewModelFactory(@Named("phone") ViewModelProvider.Factory viewModelFactory) {
 		this.viewModelFactory = viewModelFactory;
+	}
+
+	@Override
+	public void onAttach(Context context) {
+		super.onAttach(context);
+		this.context = context;
 	}
 
 	@Override
@@ -77,6 +86,12 @@ public class LoginFragment extends BaseFragment implements PhoneViewActions {
 	}
 
 	@Override
+	public void onDetach() {
+		super.onDetach();
+		context = null;
+	}
+
+	@Override
 	public void enableButton(boolean enable) {
 		goNext.setEnabled(enable);
 	}
@@ -89,6 +104,11 @@ public class LoginFragment extends BaseFragment implements PhoneViewActions {
 	@Override
 	public void setInputEditable(boolean editable) {
 		phoneInput.setEnabled(editable);
+		if (!editable) {
+			phoneInput.requestFocus();
+			InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+			if (imm != null) imm.showSoftInput(phoneInput, InputMethodManager.SHOW_IMPLICIT);
+		}
 	}
 
 	@Override
