@@ -33,4 +33,10 @@ public interface PhoneViewActions {
 	 * @param pending - показать или нет?
 	 */
 	void showPending(boolean pending);
+
+	/**
+	 * Сделать поле ввода редактируемым
+	 * @param editable - редактируемое или нет?
+	 */
+	void setInputEditable(boolean editable);
 }

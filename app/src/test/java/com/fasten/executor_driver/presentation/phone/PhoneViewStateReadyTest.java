@@ -30,6 +30,7 @@ public class PhoneViewStateReadyTest {
 		// Результат:
 		verify(phoneViewActions).showPending(false);
 		verify(phoneViewActions).showError(null);
+		verify(phoneViewActions).setInputEditable(true);
 		verify(phoneViewActions).enableButton(true);
 		verifyNoMoreInteractions(phoneViewActions);
 	}

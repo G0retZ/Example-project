@@ -87,6 +87,11 @@ public class LoginFragment extends BaseFragment implements PhoneViewActions {
 	}
 
 	@Override
+	public void setInputEditable(boolean editable) {
+		phoneInput.setEnabled(editable);
+	}
+
+	@Override
 	public void showError(@Nullable Throwable error) {
 		if (error == null) {
 			phoneInputLayout.setError(null);
