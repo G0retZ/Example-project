@@ -14,19 +14,19 @@ import io.reactivex.schedulers.Schedulers;
 
 public class PasswordGatewayImpl implements PasswordGateway {
 
-	@NonNull
-	private final ApiService api;
+  @NonNull
+  private final ApiService api;
 
-	@Inject
-	public PasswordGatewayImpl(@NonNull ApiService api) {
-		this.api = api;
-	}
+  @Inject
+  public PasswordGatewayImpl(@NonNull ApiService api) {
+    this.api = api;
+  }
 
-	@NonNull
-	@Override
-	public Completable authorize(@NonNull LoginData loginData) {
-		return api.authorize(new ApiLogin(loginData.getLogin(), loginData.getPassword()))
-				.subscribeOn(Schedulers.io())
-				.observeOn(Schedulers.single());
-	}
+  @NonNull
+  @Override
+  public Completable authorize(@NonNull LoginData loginData) {
+    return api.authorize(new ApiLogin(loginData.getLogin(), loginData.getPassword()))
+        .subscribeOn(Schedulers.io())
+        .observeOn(Schedulers.single());
+  }
 }

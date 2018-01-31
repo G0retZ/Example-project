@@ -21,121 +21,121 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class PhoneCallUseCaseTest {
 
-	private PhoneCallUseCase phoneCallUseCase;
+  private PhoneCallUseCase phoneCallUseCase;
 
-	@Mock
-	private PhoneCallGateway gateway;
+  @Mock
+  private PhoneCallGateway gateway;
 
-	@Mock
-	private Validator<String> phoneNumberValidator;
+  @Mock
+  private Validator<String> phoneNumberValidator;
 
-	@Before
-	public void setUp() throws Exception {
-		phoneCallUseCase = new PhoneCallUseCaseImpl(gateway, phoneNumberValidator);
-		when(gateway.callMe(anyString())).thenReturn(Completable.never());
-		when(phoneNumberValidator.validate("0123456")).thenReturn(true);
-	}
+  @Before
+  public void setUp() throws Exception {
+    phoneCallUseCase = new PhoneCallUseCaseImpl(gateway, phoneNumberValidator);
+    when(gateway.callMe(anyString())).thenReturn(Completable.never());
+    when(phoneNumberValidator.validate("0123456")).thenReturn(true);
+  }
 
 	/* Проверяем работу с валидаторами */
 
-	/**
-	 * Должен запросить у валидатора номера телефона проверку.
-	 *
-	 * @throws Exception error.
-	 */
-	@Test
-	public void askPhoneNumberValidatorForResult() throws Exception {
-		// Действие:
-		phoneCallUseCase.callMe("").test();
+  /**
+   * Должен запросить у валидатора номера телефона проверку.
+   *
+   * @throws Exception error.
+   */
+  @Test
+  public void askPhoneNumberValidatorForResult() throws Exception {
+    // Действие:
+    phoneCallUseCase.callMe("").test();
 
-		// Результат:
-		verify(phoneNumberValidator, only()).validate("");
-	}
+    // Результат:
+    verify(phoneNumberValidator, only()).validate("");
+  }
 
 	/* Проверяем ответы валидатора */
 
-	/**
-	 * Должен ответить ошибкой, если номер телефона неверный.
-	 *
-	 * @throws Exception error.
-	 */
-	@Test
-	public void answerErrorIfPhoneNumberInvalid() throws Exception {
-		// Результат:
-		phoneCallUseCase.callMe("").test().assertError(ValidationException.class);
-	}
+  /**
+   * Должен ответить ошибкой, если номер телефона неверный.
+   *
+   * @throws Exception error.
+   */
+  @Test
+  public void answerErrorIfPhoneNumberInvalid() throws Exception {
+    // Результат:
+    phoneCallUseCase.callMe("").test().assertError(ValidationException.class);
+  }
 
-	/**
-	 * Не должно быть ошибок, если номер телефона соответствует формату.
-	 *
-	 * @throws Exception error.
-	 */
-	@Test
-	public void answerSuccessIfPhoneNumberValid() throws Exception {
-		// Действие:
-		when(phoneNumberValidator.validate(anyString())).thenReturn(true);
+  /**
+   * Не должно быть ошибок, если номер телефона соответствует формату.
+   *
+   * @throws Exception error.
+   */
+  @Test
+  public void answerSuccessIfPhoneNumberValid() throws Exception {
+    // Действие:
+    when(phoneNumberValidator.validate(anyString())).thenReturn(true);
 
-		// Результат:
-		phoneCallUseCase.callMe("").test().assertNoErrors();
-	}
+    // Результат:
+    phoneCallUseCase.callMe("").test().assertNoErrors();
+  }
 
 	/* Проверяем работу с гейтвеем */
 
-	/**
-	 * Не должен запрашивать у гейтвея звонок, если валидация не прошла.
-	 *
-	 * @throws Exception error.
-	 */
-	@Test
-	public void doNotAskGatewayForCall() throws Exception {
-		// Действие:
-		phoneCallUseCase.callMe("012345").test();
+  /**
+   * Не должен запрашивать у гейтвея звонок, если валидация не прошла.
+   *
+   * @throws Exception error.
+   */
+  @Test
+  public void doNotAskGatewayForCall() throws Exception {
+    // Действие:
+    phoneCallUseCase.callMe("012345").test();
 
-		// Результат:
-		verifyZeroInteractions(gateway);
-	}
+    // Результат:
+    verifyZeroInteractions(gateway);
+  }
 
-	/**
-	 * Должен запросить у гейтвея звонок.
-	 *
-	 * @throws Exception error.
-	 */
-	@Test
-	public void askGatewayForCall() throws Exception {
-		// Действие:
-		phoneCallUseCase.callMe("0123456").test();
+  /**
+   * Должен запросить у гейтвея звонок.
+   *
+   * @throws Exception error.
+   */
+  @Test
+  public void askGatewayForCall() throws Exception {
+    // Действие:
+    phoneCallUseCase.callMe("0123456").test();
 
-		// Результат:
-		verify(gateway, only()).callMe("0123456");
-	}
+    // Результат:
+    verify(gateway, only()).callMe("0123456");
+  }
 
 	/* Проверяем ответы на запрос звонка */
 
-	/**
-	 * Должен ответить ошибкой сети.
-	 *
-	 * @throws Exception error.
-	 */
-	@Test
-	public void answerNoNetworkError() throws Exception {
-		// Действие:
-		when(gateway.callMe(anyString())).thenReturn(Completable.error(new NoNetworkException()));
+  /**
+   * Должен ответить ошибкой сети.
+   *
+   * @throws Exception error.
+   */
+  @Test
+  public void answerNoNetworkError() throws Exception {
+    // Действие:
+    when(gateway.callMe(anyString())).thenReturn(Completable.error(new NoNetworkException()));
 
-		// Результат:
-		phoneCallUseCase.callMe("0123456").test().assertError(NoNetworkException.class);
-	}
+    // Результат:
+    phoneCallUseCase.callMe("0123456").test().assertError(NoNetworkException.class);
+  }
 
-	/**
-	 * Должен ответить успехом.
-	 *
-	 * @throws Exception error.
-	 */
-	@Test
-	public void answerCallSuccessful() throws Exception {
-		// Действие:
-		when(gateway.callMe(anyString())).thenReturn(Completable.complete());
+  /**
+   * Должен ответить успехом.
+   *
+   * @throws Exception error.
+   */
+  @Test
+  public void answerCallSuccessful() throws Exception {
+    // Действие:
+    when(gateway.callMe(anyString())).thenReturn(Completable.complete());
 
-		// Результат:
-		phoneCallUseCase.callMe("0123456").test().assertComplete();
-	}
+    // Результат:
+    phoneCallUseCase.callMe("0123456").test().assertComplete();
+  }
 }

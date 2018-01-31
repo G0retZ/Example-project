@@ -12,19 +12,19 @@ import io.reactivex.schedulers.Schedulers;
 
 public class LoginGatewayImpl implements LoginGateway {
 
-	@NonNull
-	private final ApiService api;
+  @NonNull
+  private final ApiService api;
 
-	@Inject
-	public LoginGatewayImpl(@NonNull ApiService api) {
-		this.api = api;
-	}
+  @Inject
+  public LoginGatewayImpl(@NonNull ApiService api) {
+    this.api = api;
+  }
 
-	@NonNull
-	@Override
-	public Completable checkLogin(@NonNull String login) {
-		return api.checkLogin(login)
-				.subscribeOn(Schedulers.io())
-				.observeOn(Schedulers.single());
-	}
+  @NonNull
+  @Override
+  public Completable checkLogin(@NonNull String login) {
+    return api.checkLogin(login)
+        .subscribeOn(Schedulers.io())
+        .observeOn(Schedulers.single());
+  }
 }

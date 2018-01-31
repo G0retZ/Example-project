@@ -7,20 +7,22 @@ import android.support.annotation.Nullable;
  */
 public interface CodeViewActions {
 
-	/**
-	 * Войти в приложение (завершить авторизацию, и перейти далее).
-	 */
-	void letIn();
+  /**
+   * Войти в приложение (завершить авторизацию, и перейти далее).
+   */
+  void letIn();
 
-	/**
-	 * Показать ошибку.
-	 * @param error - ошибка.
-	 */
-	void showError(@Nullable Throwable error);
+  /**
+   * Показать ошибку.
+   *
+   * @param error - ошибка.
+   */
+  void showError(@Nullable Throwable error);
 
-	/**
-	 * Показать индикатор процесса.
-	 * @param pending - показать или нет?
-	 */
-	void showPending(boolean pending);
+  /**
+   * Показать индикатор процесса.
+   *
+   * @param pending - показать или нет?
+   */
+  void showPending(boolean pending);
 }

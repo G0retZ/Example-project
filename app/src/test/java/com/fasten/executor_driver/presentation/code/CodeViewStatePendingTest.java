@@ -14,24 +14,24 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 @RunWith(MockitoJUnitRunner.class)
 public class CodeViewStatePendingTest {
 
-	private CodeViewStatePending viewState;
+  private CodeViewStatePending viewState;
 
-	@Mock
-	private CodeViewActions codeViewActions;
+  @Mock
+  private CodeViewActions codeViewActions;
 
-	@Before
-	public void setUp() throws Exception {
-		viewState = new CodeViewStatePending();
-	}
+  @Before
+  public void setUp() throws Exception {
+    viewState = new CodeViewStatePending();
+  }
 
-	@Test
-	public void testActions() throws Exception {
-		// Действие:
-		viewState.apply(codeViewActions);
+  @Test
+  public void testActions() throws Exception {
+    // Действие:
+    viewState.apply(codeViewActions);
 
-		// Результат:
-		verify(codeViewActions).showPending(true);
-		verify(codeViewActions).showError(null);
-		verifyNoMoreInteractions(codeViewActions);
-	}
+    // Результат:
+    verify(codeViewActions).showPending(true);
+    verify(codeViewActions).showError(null);
+    verifyNoMoreInteractions(codeViewActions);
+  }
 }

@@ -24,66 +24,67 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class PasswordGatewayTest {
 
-	private PasswordGateway passwordGateway;
+  private PasswordGateway passwordGateway;
 
-	@Mock
-	private ApiService api;
+  @Mock
+  private ApiService api;
 
-	@Before
-	public void setUp() throws Exception {
-		RxJavaPlugins.setIoSchedulerHandler(scheduler -> Schedulers.trampoline());
-		RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
-		passwordGateway = new PasswordGatewayImpl(api);
-		when(api.authorize(any(ApiLogin.class))).thenReturn(Completable.never());
-	}
+  @Before
+  public void setUp() throws Exception {
+    RxJavaPlugins.setIoSchedulerHandler(scheduler -> Schedulers.trampoline());
+    RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
+    passwordGateway = new PasswordGatewayImpl(api);
+    when(api.authorize(any(ApiLogin.class))).thenReturn(Completable.never());
+  }
 
 	/* Проверяем работу с АПИ */
 
-	/**
-	 * Должен запросить у АПИ completable на вход с заданными параметрами
-	 *
-	 * @throws Exception error
-	 */
-	@Test
-	public void authCompletableRequested() throws Exception {
-		// Действие:
-		passwordGateway.authorize(new LoginData("Login", "Password"));
+  /**
+   * Должен запросить у АПИ completable на вход с заданными параметрами
+   *
+   * @throws Exception error
+   */
+  @Test
+  public void authCompletableRequested() throws Exception {
+    // Действие:
+    passwordGateway.authorize(new LoginData("Login", "Password"));
 
-		// Результат:
-		verify(api, only()).authorize(new ApiLogin("Login", "Password"));
-	}
+    // Результат:
+    verify(api, only()).authorize(new ApiLogin("Login", "Password"));
+  }
 
 	/* Проверяем правильность потоков (добавить) */
 
 	/* Проверяем ответы на АПИ */
 
-	/**
-	 * Должен ответить ошибкой сети
-	 *
-	 * @throws Exception error
-	 */
-	@Test
-	public void answerNoNetworkError() throws Exception {
-		// Действие:
-		when(api.authorize(any(ApiLogin.class))).thenReturn(Completable.error(new NoNetworkException()));
+  /**
+   * Должен ответить ошибкой сети
+   *
+   * @throws Exception error
+   */
+  @Test
+  public void answerNoNetworkError() throws Exception {
+    // Действие:
+    when(api.authorize(any(ApiLogin.class)))
+        .thenReturn(Completable.error(new NoNetworkException()));
 
-		// Результат:
-		passwordGateway.authorize(new LoginData("Login", "Password"))
-				.test().assertError(NoNetworkException.class);
-	}
+    // Результат:
+    passwordGateway.authorize(new LoginData("Login", "Password"))
+        .test().assertError(NoNetworkException.class);
+  }
 
-	/**
-	 * Должен ответить успехом
-	 *
-	 * @throws Exception error
-	 */
-	@Test
-	public void answerAuthSuccessful() throws Exception {
-		// Действие:
-		when(api.authorize(any(ApiLogin.class))).thenReturn(Completable.complete());
+  /**
+   * Должен ответить успехом
+   *
+   * @throws Exception error
+   */
+  @Test
+  public void answerAuthSuccessful() throws Exception {
+    // Действие:
+    when(api.authorize(any(ApiLogin.class))).thenReturn(Completable.complete());
 
-		// Результат:
-		passwordGateway.authorize(new LoginData("Login", "Password"))
-				.test().assertComplete();
-	}
+    // Результат:
+    passwordGateway.authorize(new LoginData("Login", "Password"))
+        .test().assertComplete();
+  }
 }

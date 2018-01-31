@@ -10,11 +10,12 @@ import io.reactivex.Completable;
  */
 public interface SmsUseCase {
 
-	/**
-	 * Валидирует номер телефона, и запрашивает на него СМС с кодом.
-	 * @param phoneNumber {@link String} номер телефона.
-	 * @return {@link Completable} результат валидации или запроса.
-	 */
-	@NonNull
-	Completable sendMeCode(@Nullable String phoneNumber);
+  /**
+   * Валидирует номер телефона, и запрашивает на него СМС с кодом.
+   *
+   * @param phoneNumber {@link String} номер телефона.
+   * @return {@link Completable} результат валидации или запроса.
+   */
+  @NonNull
+  Completable sendMeCode(@Nullable String phoneNumber);
 }

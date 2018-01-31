@@ -9,10 +9,10 @@ import com.fasten.executor_driver.presentation.ViewState;
  */
 final class CodeViewStateSuccess implements ViewState<CodeViewActions> {
 
-	@Override
-	public void apply(@NonNull CodeViewActions stateActions) {
-		stateActions.showPending(false);
-		stateActions.showError(null);
-		stateActions.letIn();
-	}
+  @Override
+  public void apply(@NonNull CodeViewActions stateActions) {
+    stateActions.showPending(false);
+    stateActions.showError(null);
+    stateActions.letIn();
+  }
 }

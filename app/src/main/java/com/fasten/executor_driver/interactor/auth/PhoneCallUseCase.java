@@ -10,11 +10,12 @@ import io.reactivex.Completable;
  */
 public interface PhoneCallUseCase {
 
-	/**
-	 * Валидирует номер телефона, и запрашивает на него звонок с кодом.
-	 * @param phoneNumber {@link String} номер телефона.
-	 * @return {@link Completable} результат валидации или запроса.
-	 */
-	@NonNull
-	Completable callMe(@Nullable String phoneNumber);
+  /**
+   * Валидирует номер телефона, и запрашивает на него звонок с кодом.
+   *
+   * @param phoneNumber {@link String} номер телефона.
+   * @return {@link Completable} результат валидации или запроса.
+   */
+  @NonNull
+  Completable callMe(@Nullable String phoneNumber);
 }

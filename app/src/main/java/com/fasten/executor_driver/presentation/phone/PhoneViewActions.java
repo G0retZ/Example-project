@@ -8,35 +8,40 @@ import android.support.annotation.Nullable;
  */
 public interface PhoneViewActions {
 
-	/**
-	 * Перейти на следующий шаг. Передает проверенный логин, чтобы сохранился в бандле, и переживал
-	 * прибитие апп
-	 * @param login - логин для входа
-	 */
-	@SuppressWarnings("unused")
-	void proceedNext(@NonNull String login);
+  /**
+   * Перейти на следующий шаг. Передает проверенный логин, чтобы сохранился в бандле, и переживал
+   * прибитие апп
+   *
+   * @param login - логин для входа
+   */
+  @SuppressWarnings("unused")
+  void proceedNext(@NonNull String login);
 
-	/**
-	 * Сделать кнопку "Далее" нажимаемой
-	 * @param enable - нажимаема или нет?
-	 */
-	void enableButton(boolean enable);
+  /**
+   * Сделать кнопку "Далее" нажимаемой
+   *
+   * @param enable - нажимаема или нет?
+   */
+  void enableButton(boolean enable);
 
-	/**
-	 * Показать ошибку
-	 * @param error - ошибка
-	 */
-	void showError(@Nullable Throwable error);
+  /**
+   * Показать ошибку
+   *
+   * @param error - ошибка
+   */
+  void showError(@Nullable Throwable error);
 
-	/**
-	 * Показать инликатор процесса
-	 * @param pending - показать или нет?
-	 */
-	void showPending(boolean pending);
+  /**
+   * Показать инликатор процесса
+   *
+   * @param pending - показать или нет?
+   */
+  void showPending(boolean pending);
 
-	/**
-	 * Сделать поле ввода редактируемым
-	 * @param editable - редактируемое или нет?
-	 */
-	void setInputEditable(boolean editable);
+  /**
+   * Сделать поле ввода редактируемым
+   *
+   * @param editable - редактируемое или нет?
+   */
+  void setInputEditable(boolean editable);
 }

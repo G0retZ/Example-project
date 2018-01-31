@@ -7,11 +7,11 @@ import com.fasten.executor_driver.R;
 
 public class AuthActivity extends BaseActivity {
 
-	@Override
-	public void onCreate(@Nullable Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_auth);
-		setTitle(R.string.authorization);
-	}
+  @Override
+  public void onCreate(@Nullable Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    setContentView(R.layout.activity_auth);
+    setTitle(R.string.authorization);
+  }
 
 }

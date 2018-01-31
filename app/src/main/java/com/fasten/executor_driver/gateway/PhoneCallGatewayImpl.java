@@ -12,19 +12,19 @@ import io.reactivex.schedulers.Schedulers;
 
 public class PhoneCallGatewayImpl implements PhoneCallGateway {
 
-	@NonNull
-	private final ApiService api;
+  @NonNull
+  private final ApiService api;
 
-	@Inject
-	public PhoneCallGatewayImpl(@NonNull ApiService api) {
-		this.api = api;
-	}
+  @Inject
+  public PhoneCallGatewayImpl(@NonNull ApiService api) {
+    this.api = api;
+  }
 
-	@NonNull
-	@Override
-	public Completable callMe(@NonNull String phoneNumber) {
-		return api.callMeCode(phoneNumber)
-				.subscribeOn(Schedulers.io())
-				.observeOn(Schedulers.single());
-	}
+  @NonNull
+  @Override
+  public Completable callMe(@NonNull String phoneNumber) {
+    return api.callMeCode(phoneNumber)
+        .subscribeOn(Schedulers.io())
+        .observeOn(Schedulers.single());
+  }
 }

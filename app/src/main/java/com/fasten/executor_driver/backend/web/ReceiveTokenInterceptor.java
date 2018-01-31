@@ -15,23 +15,23 @@ import okhttp3.Response;
  */
 public class ReceiveTokenInterceptor implements Interceptor {
 
-	private final static String HEADER_NAME = "Authorization";
+  private final static String HEADER_NAME = "Authorization";
 
-	@NonNull
-	private final TokenKeeper tokenKeeper;
+  @NonNull
+  private final TokenKeeper tokenKeeper;
 
-	@Inject
-	ReceiveTokenInterceptor(@NonNull TokenKeeper tokenKeeper) {
-		this.tokenKeeper = tokenKeeper;
-	}
+  @Inject
+  ReceiveTokenInterceptor(@NonNull TokenKeeper tokenKeeper) {
+    this.tokenKeeper = tokenKeeper;
+  }
 
-	@Override
-	public Response intercept(Chain chain) throws IOException {
-		Response originalResponse = chain.proceed(chain.request());
-		List<String> headers = originalResponse.headers(HEADER_NAME);
-		if (!headers.isEmpty()) {
-			tokenKeeper.saveToken(headers.get(0));
-		}
-		return originalResponse;
-	}
+  @Override
+  public Response intercept(Chain chain) throws IOException {
+    Response originalResponse = chain.proceed(chain.request());
+    List<String> headers = originalResponse.headers(HEADER_NAME);
+    if (!headers.isEmpty()) {
+      tokenKeeper.saveToken(headers.get(0));
+    }
+    return originalResponse;
+  }
 }

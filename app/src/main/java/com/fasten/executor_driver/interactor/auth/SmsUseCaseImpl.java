@@ -9,29 +9,31 @@ import com.fasten.executor_driver.entity.Validator;
 import javax.inject.Inject;
 
 import io.reactivex.Completable;
+import javax.inject.Named;
 
 public class SmsUseCaseImpl implements SmsUseCase {
 
-	@NonNull
-	private final SmsGateway gateway;
-	@NonNull
-	private final Validator<String> phoneNumberValidator;
+  @NonNull
+  private final SmsGateway gateway;
+  @NonNull
+  private final Validator<String> phoneNumberValidator;
 
-	@Inject
-	SmsUseCaseImpl(@NonNull SmsGateway gateway, @NonNull Validator<String> phoneNumberValidator) {
-		this.gateway = gateway;
-		this.phoneNumberValidator = phoneNumberValidator;
-	}
+  @Inject
+  SmsUseCaseImpl(@NonNull SmsGateway gateway,
+      @Named("phoneNumberValidator") @NonNull Validator<String> phoneNumberValidator) {
+    this.gateway = gateway;
+    this.phoneNumberValidator = phoneNumberValidator;
+  }
 
-	@NonNull
-	@Override
-	public Completable sendMeCode(@Nullable String phoneNumber) {
-		return Completable.create(e -> {
-			if (phoneNumber != null && phoneNumberValidator.validate(phoneNumber)) {
-				gateway.sendMeCode(phoneNumber).subscribe(e::onComplete, e::onError);
-			} else {
-				e.onError(new ValidationException());
-			}
-		});
-	}
+  @NonNull
+  @Override
+  public Completable sendMeCode(@Nullable String phoneNumber) {
+    return Completable.create(e -> {
+      if (phoneNumber != null && phoneNumberValidator.validate(phoneNumber)) {
+        gateway.sendMeCode(phoneNumber).subscribe(e::onComplete, e::onError);
+      } else {
+        e.onError(new ValidationException());
+      }
+    });
+  }
 }

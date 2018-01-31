@@ -10,21 +10,23 @@ import com.fasten.executor_driver.presentation.ViewState;
  */
 public interface CodeViewModel {
 
-	/**
-	 * Возвращает состояние вида для применения.
-	 * @return - {@link ViewState} состояние вида
-	 */
-	@NonNull
-	LiveData<ViewState<CodeViewActions>> getViewStateLiveData();
+  /**
+   * Возвращает состояние вида для применения.
+   *
+   * @return - {@link ViewState} состояние вида
+   */
+  @NonNull
+  LiveData<ViewState<CodeViewActions>> getViewStateLiveData();
 
-	/**
-	 * Передает введенный/измененный код для валидации и проверки.
-	 * @param code - код из звонка или смс.
-	 */
-	void setCode(@NonNull String code);
+  /**
+   * Передает введенный/измененный код для валидации и проверки.
+   *
+   * @param code - код из звонка или смс.
+   */
+  void setCode(@NonNull String code);
 
-	/**
-	 * Запрашивает отправку СМС с кодом.
-	 */
-	void sendMeSms();
+  /**
+   * Запрашивает отправку СМС с кодом.
+   */
+  void sendMeSms();
 }
