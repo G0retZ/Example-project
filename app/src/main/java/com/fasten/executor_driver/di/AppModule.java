@@ -12,7 +12,7 @@ import com.fasten.executor_driver.backend.web.ConnectivityInterceptor;
 import com.fasten.executor_driver.backend.web.ReceiveTokenInterceptor;
 import com.fasten.executor_driver.backend.web.SendTokenInterceptor;
 import com.fasten.executor_driver.backend.web.TokenKeeper;
-import com.fasten.executor_driver.di.auth.PhoneViewModelFactory;
+import com.fasten.executor_driver.presentation.ViewModelFactory;
 import com.fasten.executor_driver.entity.LoginValidator;
 import com.fasten.executor_driver.entity.PasswordValidator;
 import com.fasten.executor_driver.entity.PhoneNumberValidator;
@@ -188,7 +188,7 @@ public class AppModule {
 
 	@Provides
 	@Named("phone")
-	ViewModelProvider.Factory providePhoneViewModelFactory(PhoneViewModelFactory factory) {
+	ViewModelProvider.Factory providePhoneViewModelFactory(ViewModelFactory<PhoneViewModel> factory) {
 		return factory;
 	}
 }
