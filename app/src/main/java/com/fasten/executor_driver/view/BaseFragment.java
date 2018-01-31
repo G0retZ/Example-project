@@ -71,5 +71,4 @@ public class BaseFragment extends Fragment implements OnBackPressedInterceptor {
 	public void showNoNetworkError() {
 		if (getView() != null) Snackbar.make(getView(), "", Snackbar.LENGTH_SHORT).show();
 	}
-
 }

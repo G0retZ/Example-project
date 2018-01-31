@@ -63,5 +63,4 @@ public class BaseActivity extends AppCompatActivity {
 	public AppComponent getDiComponent() {
 		return ((MainApplication) getApplication()).getAppComponent();
 	}
-
 }
