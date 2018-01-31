@@ -20,9 +20,10 @@
             android:id="@+id/phoneInput"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:digits="0123456789+"
             android:hint="@string/phone_number"
             android:inputType="phone"
-            android:digits="0123456789+"
+            android:maxLength="18"
             android:visibility="visible" />
     </android.support.design.widget.TextInputLayout>
 
