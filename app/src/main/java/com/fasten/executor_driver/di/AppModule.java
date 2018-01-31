@@ -134,36 +134,36 @@ public class AppModule {
 	}
 
 	@Provides
-	@Named("vLogin")
+	@Named("loginValidator")
 	Validator<String> provideLoginValidator(LoginValidator loginValidator) {
 		return loginValidator;
 	}
 
 	@Provides
-	@Named("vPassword")
+	@Named("passwordValidator")
 	Validator<String> providePasswordValidator(PasswordValidator passwordValidator) {
 		return passwordValidator;
 	}
 
 	@Provides
-	@Named("vPhoneNumber")
+	@Named("phoneNumberValidator")
 	Validator<String> providePhoneNumberValidator(PhoneNumberValidator phoneNumberValidator) {
 		return phoneNumberValidator;
 	}
 
 	@Provides
-	LoginUseCase provideLoginUseCase(LoginGateway loginGateway, @Named("vLogin") Validator<String> validator) {
-		return new LoginUseCaseImpl(loginGateway, validator);
+	LoginUseCase provideLoginUseCase(LoginUseCaseImpl loginUseCase) {
+		return loginUseCase;
 	}
 
 	@Provides
-	PasswordUseCase providePasswordUseCase(PasswordGateway passwordGateway, @Named("vPassword") Validator<String> validator) {
-		return new PasswordUseCaseImpl(passwordGateway, validator);
+	PasswordUseCase providePasswordUseCase(PasswordUseCaseImpl passwordUseCase) {
+		return passwordUseCase;
 	}
 
 	@Provides
-	PhoneCallUseCase providePhoneCallUseCase(PhoneCallGateway phoneCallGateway, @Named("vPhoneNumber") Validator<String> validator) {
-		return new PhoneCallUseCaseImpl(phoneCallGateway, validator);
+	PhoneCallUseCase providePhoneCallUseCase(PhoneCallUseCaseImpl phoneCallUseCase) {
+		return phoneCallUseCase;
 	}
 
 	@Provides

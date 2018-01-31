@@ -7,6 +7,7 @@ import com.fasten.executor_driver.entity.LoginData;
 import com.fasten.executor_driver.entity.Validator;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import io.reactivex.Completable;
 
@@ -18,7 +19,9 @@ public class PasswordUseCaseImpl implements PasswordUseCase {
 	private final Validator<String> passwordValidator;
 
 	@Inject
-	public PasswordUseCaseImpl(@NonNull PasswordGateway gateway, @NonNull Validator<String> passwordValidator) {
+	PasswordUseCaseImpl(@NonNull PasswordGateway gateway,
+	                    @Named("passwordValidator")
+	                    @NonNull Validator<String> passwordValidator) {
 		this.gateway = gateway;
 		this.passwordValidator = passwordValidator;
 	}

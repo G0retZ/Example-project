@@ -7,6 +7,7 @@ import com.fasten.executor_driver.backend.web.ValidationException;
 import com.fasten.executor_driver.entity.Validator;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import io.reactivex.Completable;
 
@@ -18,7 +19,9 @@ public class LoginUseCaseImpl implements LoginUseCase {
 	private final Validator<String> loginValidator;
 
 	@Inject
-	public LoginUseCaseImpl(@NonNull LoginGateway gateway, @NonNull Validator<String> loginValidator) {
+	LoginUseCaseImpl(@NonNull LoginGateway gateway,
+	                 @Named("loginValidator")
+	                 @NonNull Validator<String> loginValidator) {
 		this.gateway = gateway;
 		this.loginValidator = loginValidator;
 	}

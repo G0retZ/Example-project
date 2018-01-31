@@ -7,6 +7,7 @@ import com.fasten.executor_driver.backend.web.ValidationException;
 import com.fasten.executor_driver.entity.Validator;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import io.reactivex.Completable;
 
@@ -18,7 +19,9 @@ public class PhoneCallUseCaseImpl implements PhoneCallUseCase {
 	private final Validator<String> phoneNumberValidator;
 
 	@Inject
-	public PhoneCallUseCaseImpl(@NonNull PhoneCallGateway gateway, @NonNull Validator<String> phoneNumberValidator) {
+	PhoneCallUseCaseImpl(@NonNull PhoneCallGateway gateway,
+	                     @Named("phoneNumberValidator")
+	                     @NonNull Validator<String> phoneNumberValidator) {
 		this.gateway = gateway;
 		this.phoneNumberValidator = phoneNumberValidator;
 	}
