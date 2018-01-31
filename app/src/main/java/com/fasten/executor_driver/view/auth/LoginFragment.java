@@ -77,11 +77,6 @@ public class LoginFragment extends BaseFragment implements PhoneViewActions {
 	}
 
 	@Override
-	public void onDestroyView() {
-		super.onDestroyView();
-	}
-
-	@Override
 	public void enableButton(boolean enable) {
 		goNext.setEnabled(enable);
 	}
