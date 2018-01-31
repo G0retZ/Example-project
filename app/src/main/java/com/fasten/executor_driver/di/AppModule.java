@@ -16,6 +16,7 @@ import com.fasten.executor_driver.di.auth.PhoneViewModelFactory;
 import com.fasten.executor_driver.entity.LoginValidator;
 import com.fasten.executor_driver.entity.PasswordValidator;
 import com.fasten.executor_driver.entity.PhoneNumberValidator;
+import com.fasten.executor_driver.entity.Validator;
 import com.fasten.executor_driver.gateway.LoginGatewayImpl;
 import com.fasten.executor_driver.gateway.PasswordGatewayImpl;
 import com.fasten.executor_driver.gateway.PhoneCallGatewayImpl;
@@ -133,18 +134,36 @@ public class AppModule {
 	}
 
 	@Provides
-	LoginUseCase provideLoginUseCase(LoginGateway loginGateway) {
-		return new LoginUseCaseImpl(loginGateway, new LoginValidator());
+	@Named("vLogin")
+	Validator<String> provideLoginValidator(LoginValidator loginValidator) {
+		return loginValidator;
 	}
 
 	@Provides
-	PasswordUseCase providePasswordUseCase(PasswordGateway passwordGateway) {
-		return new PasswordUseCaseImpl(passwordGateway, new PasswordValidator());
+	@Named("vPassword")
+	Validator<String> providePasswordValidator(PasswordValidator passwordValidator) {
+		return passwordValidator;
 	}
 
 	@Provides
-	PhoneCallUseCase providePhoneCallUseCase(PhoneCallGateway phoneCallGateway) {
-		return new PhoneCallUseCaseImpl(phoneCallGateway, new PhoneNumberValidator());
+	@Named("vPhoneNumber")
+	Validator<String> providePhoneNumberValidator(PhoneNumberValidator phoneNumberValidator) {
+		return phoneNumberValidator;
+	}
+
+	@Provides
+	LoginUseCase provideLoginUseCase(LoginGateway loginGateway, @Named("vLogin") Validator<String> validator) {
+		return new LoginUseCaseImpl(loginGateway, validator);
+	}
+
+	@Provides
+	PasswordUseCase providePasswordUseCase(PasswordGateway passwordGateway, @Named("vPassword") Validator<String> validator) {
+		return new PasswordUseCaseImpl(passwordGateway, validator);
+	}
+
+	@Provides
+	PhoneCallUseCase providePhoneCallUseCase(PhoneCallGateway phoneCallGateway, @Named("vPhoneNumber") Validator<String> validator) {
+		return new PhoneCallUseCaseImpl(phoneCallGateway, validator);
 	}
 
 	@Provides
