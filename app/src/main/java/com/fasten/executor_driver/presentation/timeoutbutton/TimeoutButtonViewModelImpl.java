@@ -9,6 +9,8 @@ import com.fasten.executor_driver.presentation.ViewState;
 
 import java.util.concurrent.TimeUnit;
 
+import javax.inject.Inject;
+
 import io.reactivex.Observable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
@@ -21,8 +23,8 @@ public class TimeoutButtonViewModelImpl extends ViewModel implements TimeoutButt
 	@NonNull
 	private final MutableLiveData<ViewState<TimeoutButtonViewActions>> viewStateLiveData;
 
-	@SuppressWarnings("WeakerAccess")
-	public TimeoutButtonViewModelImpl(int duration) {
+	@Inject
+	TimeoutButtonViewModelImpl(int duration) {
 		this.duration = duration;
 		viewStateLiveData = new MutableLiveData<>();
 		viewStateLiveData.postValue(new TimeoutButtonViewStateReady());

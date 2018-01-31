@@ -1,11 +1,13 @@
 package com.fasten.executor_driver.interactor.auth;
 
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 
 import com.fasten.executor_driver.backend.web.ValidationException;
 import com.fasten.executor_driver.entity.LoginData;
 import com.fasten.executor_driver.entity.Validator;
+
+import javax.inject.Inject;
+import javax.inject.Named;
 
 import io.reactivex.Completable;
 
@@ -16,7 +18,10 @@ public class PasswordUseCaseImpl implements PasswordUseCase {
 	@NonNull
 	private final Validator<String> passwordValidator;
 
-	PasswordUseCaseImpl(@NonNull PasswordGateway gateway, @NonNull Validator<String> passwordValidator) {
+	@Inject
+	PasswordUseCaseImpl(@NonNull PasswordGateway gateway,
+	                    @Named("passwordValidator")
+	                    @NonNull Validator<String> passwordValidator) {
 		this.gateway = gateway;
 		this.passwordValidator = passwordValidator;
 	}

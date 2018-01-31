@@ -21,6 +21,7 @@ public final class PhoneViewStateError implements ViewState<PhoneViewActions> {
 	public void apply(@NonNull PhoneViewActions stateActions) {
 		stateActions.showPending(false);
 		stateActions.showError(error);
+		stateActions.setInputEditable(true);
 		stateActions.enableButton(false);
 	}
 

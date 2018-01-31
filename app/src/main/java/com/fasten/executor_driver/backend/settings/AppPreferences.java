@@ -9,6 +9,7 @@ import android.util.Base64;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
+import javax.inject.Inject;
 
 public class AppPreferences implements AppSettingsService{
 
@@ -17,7 +18,7 @@ public class AppPreferences implements AppSettingsService{
 	@NonNull
 	private final SharedPreferences preferences;
 
-	@SuppressWarnings("unused")
+	@Inject
 	AppPreferences(@NonNull Context context) {
 		this.preferences = context.getSharedPreferences(PREFERENCE_FILE_NAME, Context.MODE_PRIVATE);
 	}

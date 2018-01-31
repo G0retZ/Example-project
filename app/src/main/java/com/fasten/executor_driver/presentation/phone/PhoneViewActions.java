@@ -13,6 +13,7 @@ public interface PhoneViewActions {
 	 * прибитие апп
 	 * @param login - логин для входа
 	 */
+	@SuppressWarnings("unused")
 	void proceedNext(@NonNull String login);
 
 	/**
@@ -32,4 +33,10 @@ public interface PhoneViewActions {
 	 * @param pending - показать или нет?
 	 */
 	void showPending(boolean pending);
+
+	/**
+	 * Сделать поле ввода редактируемым
+	 * @param editable - редактируемое или нет?
+	 */
+	void setInputEditable(boolean editable);
 }

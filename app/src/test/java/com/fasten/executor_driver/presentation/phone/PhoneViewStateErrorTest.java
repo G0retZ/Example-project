@@ -39,6 +39,7 @@ public class PhoneViewStateErrorTest {
 
 		// Результат:
 		verify(phoneViewActions).showPending(false);
+		verify(phoneViewActions).setInputEditable(true);
 		verify(phoneViewActions).enableButton(false);
 		verify(phoneViewActions).showError(throwableCaptor.capture());
 		verifyNoMoreInteractions(phoneViewActions);

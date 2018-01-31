@@ -4,6 +4,8 @@ import android.support.annotation.NonNull;
 
 import java.io.IOException;
 
+import javax.inject.Inject;
+
 import okhttp3.Interceptor;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -11,13 +13,14 @@ import okhttp3.Response;
 /**
  * Перехватчик для подстановки полученного токена в заголовки
  */
-class SendTokenInterceptor implements Interceptor {
+public class SendTokenInterceptor implements Interceptor {
 
 	private final static String HEADER_NAME = "Authorization";
 
 	@NonNull
 	private final TokenKeeper tokenKeeper;
 
+	@Inject
 	SendTokenInterceptor(@NonNull TokenKeeper tokenKeeper) {
 		this.tokenKeeper = tokenKeeper;
 	}

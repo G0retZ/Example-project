@@ -32,6 +32,7 @@ public class PhoneViewStateProceedTest {
 		// Результат:
 		verify(phoneViewActions).showPending(false);
 		verify(phoneViewActions).showError(null);
+		verify(phoneViewActions).setInputEditable(false);
 		verify(phoneViewActions).enableButton(false);
 		verify(phoneViewActions).proceedNext("login");
 		verifyNoMoreInteractions(phoneViewActions);

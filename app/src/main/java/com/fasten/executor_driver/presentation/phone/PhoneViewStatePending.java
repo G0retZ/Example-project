@@ -13,6 +13,7 @@ public final class PhoneViewStatePending implements ViewState<PhoneViewActions> 
 	public void apply(@NonNull PhoneViewActions stateActions) {
 		stateActions.showPending(true);
 		stateActions.showError(null);
+		stateActions.setInputEditable(false);
 		stateActions.enableButton(false);
 	}
 }

@@ -2,10 +2,16 @@ package com.fasten.executor_driver.entity;
 
 import android.support.annotation.Nullable;
 
+import javax.inject.Inject;
+
 /**
  * Валидатор пароля
  */
-class PasswordValidator implements Validator<String> {
+public class PasswordValidator implements Validator<String> {
+
+	@Inject
+	PasswordValidator() {
+	}
 
 	@SuppressWarnings("SimplifiableIfStatement")
 	@Override

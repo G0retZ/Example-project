@@ -7,6 +7,8 @@ import com.fasten.executor_driver.backend.web.model.ApiLogin;
 import com.fasten.executor_driver.entity.LoginData;
 import com.fasten.executor_driver.interactor.auth.PasswordGateway;
 
+import javax.inject.Inject;
+
 import io.reactivex.Completable;
 import io.reactivex.schedulers.Schedulers;
 
@@ -15,6 +17,7 @@ public class PasswordGatewayImpl implements PasswordGateway {
 	@NonNull
 	private final ApiService api;
 
+	@Inject
 	public PasswordGatewayImpl(@NonNull ApiService api) {
 		this.api = api;
 	}
