@@ -5,7 +5,6 @@ import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
 import com.fasten.executor_driver.backend.web.ValidationException;
-import com.fasten.executor_driver.entity.LoginData;
 import com.fasten.executor_driver.interactor.auth.PasswordUseCase;
 import com.fasten.executor_driver.interactor.auth.SmsUseCase;
 import com.fasten.executor_driver.presentation.ViewState;
@@ -14,7 +13,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import javax.inject.Inject;
-import javax.inject.Named;
 
 public class CodeViewModelImpl extends ViewModel implements CodeViewModel {
 
@@ -24,15 +22,10 @@ public class CodeViewModelImpl extends ViewModel implements CodeViewModel {
   private final SmsUseCase smsUseCase;
   @NonNull
   private final MutableLiveData<ViewState<CodeViewActions>> viewStateLiveData;
-  @NonNull
-  private final LoginData loginData;
   private Disposable disposable;
 
   @Inject
-  CodeViewModelImpl(@Named("loginData") @NonNull String login,
-      @NonNull PasswordUseCase passwordUseCase,
-      @NonNull SmsUseCase smsUseCase) {
-    loginData = new LoginData(login, "");
+  CodeViewModelImpl(@NonNull PasswordUseCase passwordUseCase, @NonNull SmsUseCase smsUseCase) {
     this.passwordUseCase = passwordUseCase;
     this.smsUseCase = smsUseCase;
     viewStateLiveData = new MutableLiveData<>();
@@ -51,7 +44,7 @@ public class CodeViewModelImpl extends ViewModel implements CodeViewModel {
       return;
     }
     disposable = passwordUseCase.authorize(
-        loginData.setPassword(code),
+        code,
         Completable.create(e -> {
           viewStateLiveData.postValue(new CodeViewStatePending());
           e.onComplete();
@@ -78,7 +71,7 @@ public class CodeViewModelImpl extends ViewModel implements CodeViewModel {
       return;
     }
     viewStateLiveData.postValue(new CodeViewStatePending());
-    disposable = smsUseCase.sendMeCode(loginData.getLogin())
+    disposable = smsUseCase.sendMeCode()
         .subscribeOn(Schedulers.single())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(

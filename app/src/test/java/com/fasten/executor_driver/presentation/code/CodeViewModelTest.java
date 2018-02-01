@@ -5,7 +5,6 @@ import android.arch.lifecycle.Observer;
 
 import com.fasten.executor_driver.backend.web.NoNetworkException;
 import com.fasten.executor_driver.backend.web.ValidationException;
-import com.fasten.executor_driver.entity.LoginData;
 import com.fasten.executor_driver.interactor.auth.PasswordUseCase;
 import com.fasten.executor_driver.interactor.auth.SmsUseCase;
 import com.fasten.executor_driver.presentation.ViewState;
@@ -62,10 +61,10 @@ public class CodeViewModelTest {
   public void setUp() throws Exception {
     RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
     RxAndroidPlugins.setInitMainThreadSchedulerHandler(scheduler -> Schedulers.trampoline());
-    when(passwordUseCase.authorize(any(LoginData.class), any(Completable.class)))
+    when(passwordUseCase.authorize(anyString(), any(Completable.class)))
         .thenReturn(Completable.never());
-    when(smsUseCase.sendMeCode(anyString())).thenReturn(CompletableSubject.never());
-    codeViewModel = new CodeViewModelImpl("1234567890", passwordUseCase, smsUseCase);
+    when(smsUseCase.sendMeCode()).thenReturn(CompletableSubject.never());
+    codeViewModel = new CodeViewModelImpl(passwordUseCase, smsUseCase);
   }
 
 	/* Тетсируем работу с юзкейсом СМС. */
@@ -84,7 +83,7 @@ public class CodeViewModelTest {
     codeViewModel.sendMeSms();
 
     // Результат:
-    verify(smsUseCase, only()).sendMeCode("1234567890");
+    verify(smsUseCase, only()).sendMeCode();
   }
 
   /**
@@ -95,8 +94,7 @@ public class CodeViewModelTest {
   @Test
   public void askSmsUseCaseToSendMeCode() throws Exception {
     // Дано:
-    when(smsUseCase.sendMeCode(anyString()))
-        .thenReturn(Completable.error(new NoNetworkException()));
+    when(smsUseCase.sendMeCode()).thenReturn(Completable.error(new NoNetworkException()));
 
     // Действие:
     codeViewModel.sendMeSms();
@@ -104,7 +102,7 @@ public class CodeViewModelTest {
     codeViewModel.sendMeSms();
 
     // Результат:
-    verify(smsUseCase, times(3)).sendMeCode("1234567890");
+    verify(smsUseCase, times(3)).sendMeCode();
     verifyNoMoreInteractions(smsUseCase);
   }
 
@@ -124,7 +122,7 @@ public class CodeViewModelTest {
     codeViewModel.setCode("152");
 
     // Результат:
-    verify(smsUseCase, only()).sendMeCode("1234567890");
+    verify(smsUseCase, only()).sendMeCode();
     verifyZeroInteractions(passwordUseCase);
   }
 
@@ -143,10 +141,7 @@ public class CodeViewModelTest {
     codeViewModel.setCode("1234");
 
     // Результат:
-    verify(passwordUseCase, only()).authorize(
-        eq(new LoginData("1234567890", "12")),
-        afterValidationCaptor.capture()
-    );
+    verify(passwordUseCase, only()).authorize(eq("12"), afterValidationCaptor.capture());
   }
 
   /**
@@ -157,7 +152,7 @@ public class CodeViewModelTest {
   @Test
   public void askPasswordUseCaseToAuthorize() throws Exception {
     // Дано:
-    when(passwordUseCase.authorize(any(LoginData.class), any(Completable.class)))
+    when(passwordUseCase.authorize(anyString(), any(Completable.class)))
         .thenReturn(Completable.error(new ValidationException()));
 
     // Действие:
@@ -166,15 +161,9 @@ public class CodeViewModelTest {
     codeViewModel.setCode("1234");
 
     // Результат:
-    verify(passwordUseCase).authorize(
-        eq(new LoginData("1234567890", "12")), afterValidationCaptor.capture()
-    );
-    verify(passwordUseCase).authorize(
-        eq(new LoginData("1234567890", "123")), afterValidationCaptor.capture()
-    );
-    verify(passwordUseCase).authorize(
-        eq(new LoginData("1234567890", "1234")), afterValidationCaptor.capture()
-    );
+    verify(passwordUseCase).authorize(eq("12"), afterValidationCaptor.capture());
+    verify(passwordUseCase).authorize(eq("123"), afterValidationCaptor.capture());
+    verify(passwordUseCase).authorize(eq("1234"), afterValidationCaptor.capture());
     verifyNoMoreInteractions(passwordUseCase);
   }
 
@@ -194,9 +183,7 @@ public class CodeViewModelTest {
     codeViewModel.sendMeSms();
 
     // Результат:
-    verify(passwordUseCase, only()).authorize(
-        eq(new LoginData("1234567890", "12")), afterValidationCaptor.capture()
-    );
+    verify(passwordUseCase, only()).authorize(eq("12"), afterValidationCaptor.capture());
     verifyZeroInteractions(smsUseCase);
   }
 
@@ -230,7 +217,7 @@ public class CodeViewModelTest {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     codeViewModel.getViewStateLiveData().observeForever(viewStateObserver);
-    when(passwordUseCase.authorize(any(LoginData.class), any(Completable.class)))
+    when(passwordUseCase.authorize(anyString(), any(Completable.class)))
         .thenReturn(Completable.error(new ValidationException()));
 
     // Действие:
@@ -254,11 +241,10 @@ public class CodeViewModelTest {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     codeViewModel.getViewStateLiveData().observeForever(viewStateObserver);
-    when(passwordUseCase.authorize(any(LoginData.class), any(Completable.class)))
+    when(passwordUseCase.authorize(anyString(), any(Completable.class)))
         .thenReturn(Completable.error(new ValidationException()));
-    when(passwordUseCase.authorize(
-        eq(new LoginData("1234567890", "12457")), any(Completable.class))
-    ).thenReturn(Completable.never());
+    when(passwordUseCase.authorize(eq("12457"), any(Completable.class)))
+        .thenReturn(Completable.never());
 
     // Действие:
     codeViewModel.setCode("");
@@ -267,9 +253,7 @@ public class CodeViewModelTest {
     codeViewModel.setCode("12457");
 
     // Результат:
-    verify(passwordUseCase).authorize(
-        eq(new LoginData("1234567890", "12457")), afterValidationCaptor.capture()
-    );
+    verify(passwordUseCase).authorize(eq("12457"), afterValidationCaptor.capture());
     afterValidationCaptor.getValue().test();
     inOrder.verify(viewStateObserver).onChanged(any(CodeViewStateInitial.class));
     inOrder.verify(viewStateObserver).onChanged(any(CodeViewStatePending.class));
@@ -287,16 +271,14 @@ public class CodeViewModelTest {
     CompletableSubject completableSubject = CompletableSubject.create();
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     codeViewModel.getViewStateLiveData().observeForever(viewStateObserver);
-    when(passwordUseCase.authorize(any(LoginData.class), any(Completable.class)))
+    when(passwordUseCase.authorize(anyString(), any(Completable.class)))
         .thenReturn(completableSubject);
 
     // Действие:
     codeViewModel.setCode("1245");
 
     // Результат:
-    verify(passwordUseCase).authorize(
-        eq(new LoginData("1234567890", "1245")), afterValidationCaptor.capture()
-    );
+    verify(passwordUseCase).authorize(eq("1245"), afterValidationCaptor.capture());
     afterValidationCaptor.getValue().subscribe(
         () -> completableSubject.onError(new NoNetworkException()),
         e -> completableSubject.onComplete()
@@ -318,19 +300,17 @@ public class CodeViewModelTest {
     CompletableSubject completableSubject = CompletableSubject.create();
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     codeViewModel.getViewStateLiveData().observeForever(viewStateObserver);
-    when(passwordUseCase.authorize(any(LoginData.class), any(Completable.class)))
+    when(passwordUseCase.authorize(anyString(), any(Completable.class)))
         .thenReturn(completableSubject);
 
     // Действие:
     codeViewModel.setCode("1245");
-    verify(passwordUseCase).authorize(
-        eq(new LoginData("1234567890", "1245")), afterValidationCaptor.capture()
-    );
+    verify(passwordUseCase).authorize(eq("1245"), afterValidationCaptor.capture());
     afterValidationCaptor.getValue().subscribe(
         () -> completableSubject.onError(new NoNetworkException()),
         e -> completableSubject.onComplete()
     );
-    when(passwordUseCase.authorize(any(LoginData.class), any(Completable.class)))
+    when(passwordUseCase.authorize(anyString(), any(Completable.class)))
         .thenReturn(Completable.error(new ValidationException()));
     codeViewModel.setCode("124");
 
@@ -353,16 +333,14 @@ public class CodeViewModelTest {
     CompletableSubject completableSubject = CompletableSubject.create();
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     codeViewModel.getViewStateLiveData().observeForever(viewStateObserver);
-    when(passwordUseCase.authorize(any(LoginData.class), any(Completable.class)))
+    when(passwordUseCase.authorize(anyString(), any(Completable.class)))
         .thenReturn(completableSubject);
 
     // Действие:
     codeViewModel.setCode("1245");
 
     // Результат:
-    verify(passwordUseCase).authorize(
-        eq(new LoginData("1234567890", "1245")), afterValidationCaptor.capture()
-    );
+    verify(passwordUseCase).authorize(eq("1245"), afterValidationCaptor.capture());
     afterValidationCaptor.getValue().subscribe(
         completableSubject::onComplete,
         e -> completableSubject.onComplete()
