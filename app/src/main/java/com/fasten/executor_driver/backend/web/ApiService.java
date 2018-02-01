@@ -30,8 +30,8 @@ public interface ApiService {
   /*
    *  Проверка логина
    */
-  @GET("drivers/checkLogin")
-  Completable checkLogin(@NonNull @Query("pn") String phoneNumber);
+  @GET("phoneCheck")
+  Completable checkLogin(@NonNull @Query("phoneNumber") String phoneNumber);
 
   /*
    *  Авторизация
