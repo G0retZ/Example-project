@@ -27,6 +27,9 @@
     <activity
       android:name=".application.LoginActivity"
       android:windowSoftInputMode="stateVisible|adjustResize"/>
+    <activity
+      android:name=".application.PasswordActivity"
+      android:windowSoftInputMode="stateVisible|adjustResize"/>
   </application>
 
 </manifest>
