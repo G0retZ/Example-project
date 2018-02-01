@@ -4,6 +4,7 @@ import com.fasten.executor_driver.backend.web.NoNetworkException;
 import com.fasten.executor_driver.backend.web.ValidationException;
 import com.fasten.executor_driver.entity.Validator;
 
+import com.fasten.executor_driver.interactor.DataSharer;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,6 +18,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.nullable;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -30,9 +32,12 @@ public class LoginUseCaseTest {
   @Mock
   private Validator<String> loginValidator;
 
+  @Mock
+  private DataSharer<String> loginSharer;
+
   @Before
   public void setUp() throws Exception {
-    loginUseCase = new LoginUseCaseImpl(gateway, loginValidator);
+    loginUseCase = new LoginUseCaseImpl(gateway, loginSharer, loginValidator);
     when(gateway.checkLogin(nullable(String.class))).thenReturn(Completable.never());
   }
 
@@ -93,6 +98,43 @@ public class LoginUseCaseTest {
 
     // Результат:
     verify(gateway, only()).checkLogin("checkLogin");
+  }
+
+	/* Проверяем работу с публикатором логина */
+
+  /**
+   * Не должен трогать публикатор.
+   *
+   * @throws Exception error
+   */
+  @Test
+  public void doNotTouchDataSharer() throws Exception {
+    // Действие:
+    loginUseCase.validateLogin("checkLogin").test();
+    when(loginValidator.validate(any(String.class))).thenReturn(true);
+    loginUseCase.validateLogin("checkLogin").test();
+    loginUseCase.checkLogin("checkLogin").test();
+    when(gateway.checkLogin(any(String.class)))
+        .thenReturn(Completable.error(new NoNetworkException()));
+    loginUseCase.checkLogin("checkLogin").test();
+
+    // Результат:
+    verifyZeroInteractions(loginSharer);
+  }
+
+  /**
+   * Должен опубликовать логин после успешной проверки на сервере.
+   *
+   * @throws Exception error
+   */
+  @Test
+  public void askDataSharerToShareLogin() throws Exception {
+    // Действие:
+    when(gateway.checkLogin(any(String.class))).thenReturn(Completable.complete());
+    loginUseCase.checkLogin("checkLogin").test();
+
+    // Результат:
+    verify(loginSharer, only()).share("checkLogin");
   }
 
 	/* Проверяем ответы на проверку логина */
