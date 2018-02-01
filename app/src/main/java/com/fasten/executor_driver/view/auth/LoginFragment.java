@@ -131,7 +131,7 @@ public class LoginFragment extends BaseFragment implements PhoneViewActions {
 
   @Override
   public void proceedNext(@NonNull String login) {
-    System.out.println(login);
+    navigate("next");
   }
 
   // Замудренная логика форматировния ввода номера телефона в режиме реального времени
