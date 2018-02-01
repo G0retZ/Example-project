@@ -88,7 +88,7 @@ public class BaseFragment extends Fragment implements OnBackPressedInterceptor {
    *
    * @param destination пункт назначения.
    */
-  public void navigate(@NonNull String destination) {
+  protected void navigate(@NonNull String destination) {
     if (baseActivity != null) {
       baseActivity.navigate(destination);
     }

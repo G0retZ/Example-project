@@ -1,13 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<fragment xmlns:android="http://schemas.android.com/apk/res/android"
   xmlns:tools="http://schemas.android.com/tools"
+  android:id="@+id/fragment_auth_login"
+  android:name="com.fasten.executor_driver.view.auth.LoginFragment"
   android:layout_width="match_parent"
-  android:layout_height="match_parent">
-
-  <fragment
-    android:id="@+id/fragment_auth_login"
-    android:name="com.fasten.executor_driver.view.auth.LoginFragment"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:layout="@layout/fragment_auth_login"/>
-</FrameLayout>
+  android:layout_height="match_parent"
+  tools:layout="@layout/fragment_auth_login"/>

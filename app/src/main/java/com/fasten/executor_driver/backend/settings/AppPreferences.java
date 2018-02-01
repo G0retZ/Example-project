@@ -24,6 +24,7 @@ public class AppPreferences implements AppSettingsService {
   }
 
   // Конструктор для тестов
+  @SuppressWarnings("SameParameterValue")
   AppPreferences(@NonNull Context context, boolean clear) {
     this.preferences = context.getSharedPreferences(PREFERENCE_FILE_NAME, Context.MODE_PRIVATE);
     if (clear) {

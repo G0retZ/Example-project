@@ -11,6 +11,7 @@ import com.fasten.executor_driver.di.DaggerAppComponent;
  * Application.
  */
 
+@SuppressWarnings("WeakerAccess")
 public class MainApplication extends Application {
 
   private AppComponent mAppComponent;

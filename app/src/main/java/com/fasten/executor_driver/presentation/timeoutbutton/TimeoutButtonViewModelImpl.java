@@ -20,6 +20,7 @@ public class TimeoutButtonViewModelImpl extends ViewModel implements TimeoutButt
   @NonNull
   private final MutableLiveData<ViewState<TimeoutButtonViewActions>> viewStateLiveData;
 
+  @SuppressWarnings("SameParameterValue")
   @Inject
   TimeoutButtonViewModelImpl(@Named("timeoutDuration") int duration) {
     this.duration = duration;
