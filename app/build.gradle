@@ -10,7 +10,7 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-        buildConfigField 'String', 'BASE_URL', '"http://10.77.97.197:8080/api/private/v1/"'
+        buildConfigField 'String', 'BASE_URL', '"http://10.77.97.197:8080/executor/api/private/v1/"'
         vectorDrawables.useSupportLibrary = true
     }
     buildTypes {
