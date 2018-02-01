@@ -1,5 +1,8 @@
 package com.fasten.executor_driver.di;
 
+import android.support.annotation.NonNull;
+import com.fasten.executor_driver.interactor.DataSharer;
+import com.fasten.executor_driver.interactor.auth.LoginSharer;
 import com.fasten.executor_driver.interactor.auth.LoginUseCase;
 import com.fasten.executor_driver.interactor.auth.LoginUseCaseImpl;
 import com.fasten.executor_driver.interactor.auth.PasswordUseCase;
@@ -8,6 +11,7 @@ import com.fasten.executor_driver.interactor.auth.SmsUseCase;
 import com.fasten.executor_driver.interactor.auth.SmsUseCaseImpl;
 import dagger.Module;
 import dagger.Provides;
+import javax.inject.Named;
 
 @Module
 class UseCaseModule {
@@ -25,5 +29,13 @@ class UseCaseModule {
   @Provides
   SmsUseCase provideSmsUseCase(SmsUseCaseImpl smsUseCase) {
     return smsUseCase;
+  }
+
+  /* Обмен данными между юзкейсами */
+
+  @Provides
+  @Named("loginSharer")
+  DataSharer<String> provideLoginSharer(@NonNull LoginSharer loginSharer) {
+    return loginSharer;
   }
 }
