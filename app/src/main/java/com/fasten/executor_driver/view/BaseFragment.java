@@ -1,7 +1,9 @@
 package com.fasten.executor_driver.view;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -77,6 +79,18 @@ public class BaseFragment extends Fragment implements OnBackPressedInterceptor {
   public void showNoNetworkError() {
     if (getView() != null) {
       Snackbar.make(getView(), "", Snackbar.LENGTH_SHORT).show();
+    }
+  }
+
+  /**
+   * Метод перехода куда либо.
+   * Позволяет отвязать {@link android.app.Fragment} от конкретных {@link Activity}
+   *
+   * @param destination пункт назначения.
+   */
+  public void navigate(@NonNull String destination) {
+    if (baseActivity != null) {
+      baseActivity.navigate(destination);
     }
   }
 }

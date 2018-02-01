@@ -66,4 +66,13 @@ public class BaseActivity extends AppCompatActivity {
   public AppComponent getDiComponent() {
     return ((MainApplication) getApplication()).getAppComponent();
   }
+
+  /**
+   * Метод перехода куда либо.
+   * Позволяет отвязать {@link android.app.Fragment} от конкретных {@link Activity}
+   *
+   * @param destination пункт назначения.
+   */
+  public void navigate(@NonNull String destination) {
+  }
 }
