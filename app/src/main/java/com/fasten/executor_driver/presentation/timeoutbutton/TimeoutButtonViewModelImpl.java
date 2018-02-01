@@ -4,16 +4,13 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
-
 import com.fasten.executor_driver.presentation.ViewState;
-
-import java.util.concurrent.TimeUnit;
-
-import javax.inject.Inject;
-
 import io.reactivex.Observable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
+import java.util.concurrent.TimeUnit;
+import javax.inject.Inject;
+import javax.inject.Named;
 
 public class TimeoutButtonViewModelImpl extends ViewModel implements TimeoutButtonViewModel {
 
@@ -24,7 +21,7 @@ public class TimeoutButtonViewModelImpl extends ViewModel implements TimeoutButt
   private final MutableLiveData<ViewState<TimeoutButtonViewActions>> viewStateLiveData;
 
   @Inject
-  TimeoutButtonViewModelImpl(int duration) {
+  TimeoutButtonViewModelImpl(@Named("timeoutDuration") int duration) {
     this.duration = duration;
     viewStateLiveData = new MutableLiveData<>();
     viewStateLiveData.postValue(new TimeoutButtonViewStateReady());

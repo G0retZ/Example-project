@@ -7,7 +7,6 @@ import com.fasten.executor_driver.backend.web.NoNetworkException;
 import com.fasten.executor_driver.backend.web.ValidationException;
 import com.fasten.executor_driver.entity.LoginData;
 import com.fasten.executor_driver.interactor.auth.PasswordUseCase;
-import com.fasten.executor_driver.interactor.auth.PhoneCallUseCase;
 import com.fasten.executor_driver.interactor.auth.SmsUseCase;
 import com.fasten.executor_driver.presentation.ViewState;
 
@@ -51,9 +50,6 @@ public class CodeViewModelTest {
   private PasswordUseCase passwordUseCase;
 
   @Mock
-  private PhoneCallUseCase phoneCallUseCase;
-
-  @Mock
   private SmsUseCase smsUseCase;
 
   @Mock
@@ -62,52 +58,14 @@ public class CodeViewModelTest {
   @Captor
   private ArgumentCaptor<Completable> afterValidationCaptor;
 
-  private CompletableSubject callRequestSubject;
-
   @Before
   public void setUp() throws Exception {
     RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
     RxAndroidPlugins.setInitMainThreadSchedulerHandler(scheduler -> Schedulers.trampoline());
     when(passwordUseCase.authorize(any(LoginData.class), any(Completable.class)))
         .thenReturn(Completable.never());
-    when(phoneCallUseCase.callMe(anyString()))
-        .thenReturn(callRequestSubject = CompletableSubject.create());
-    when(smsUseCase.sendMeCode(anyString())).thenReturn(Completable.never());
-    codeViewModel = new CodeViewModelImpl("1234567890", passwordUseCase, smsUseCase,
-        phoneCallUseCase);
-  }
-
-	/* Тетсируем работу с юзкейсом звонка. */
-
-  /**
-   * Должен попросить юзкейс совершить входящий вызов на номер сразу же при создании вьюмодели.
-   *
-   * @throws Exception error.
-   */
-  @Test
-  public void askPhoneCallUseCaseToCallMe() throws Exception {
-    // Результат:
-    verify(phoneCallUseCase, only()).callMe("1234567890");
-  }
-
-  /**
-   * Не должен трогать другие юзкейсы, пока запрос входящего звонка не завершен.
-   *
-   * @throws Exception error.
-   */
-  @Test
-  public void doNotTouchOtherUseCasesUntilCallRequestFinished() throws Exception {
-    // Действие:
-    codeViewModel.sendMeSms();
-    codeViewModel.setCode("12");
-    codeViewModel.sendMeSms();
-    codeViewModel.sendMeSms();
-    codeViewModel.setCode("132");
-    codeViewModel.setCode("152");
-
-    // Результат:
-    verify(phoneCallUseCase, only()).callMe("1234567890");
-    verifyZeroInteractions(smsUseCase, passwordUseCase);
+    when(smsUseCase.sendMeCode(anyString())).thenReturn(CompletableSubject.never());
+    codeViewModel = new CodeViewModelImpl("1234567890", passwordUseCase, smsUseCase);
   }
 
 	/* Тетсируем работу с юзкейсом СМС. */
@@ -120,9 +78,6 @@ public class CodeViewModelTest {
    */
   @Test
   public void DoNotAskSmsUseCaseToSendMeCode() throws Exception {
-    // Дано:
-    callRequestSubject.onComplete();
-
     // Действие:
     codeViewModel.sendMeSms();
     codeViewModel.sendMeSms();
@@ -140,7 +95,6 @@ public class CodeViewModelTest {
   @Test
   public void askSmsUseCaseToSendMeCode() throws Exception {
     // Дано:
-    callRequestSubject.onComplete();
     when(smsUseCase.sendMeCode(anyString()))
         .thenReturn(Completable.error(new NoNetworkException()));
 
@@ -161,9 +115,6 @@ public class CodeViewModelTest {
    */
   @Test
   public void doNotTouchOtherUseCasesUntilSmsRequestFinished() throws Exception {
-    // Дано:
-    callRequestSubject.onComplete();
-
     // Действие:
     codeViewModel.sendMeSms();
     codeViewModel.setCode("12");
@@ -173,7 +124,6 @@ public class CodeViewModelTest {
     codeViewModel.setCode("152");
 
     // Результат:
-    verify(phoneCallUseCase, only()).callMe("1234567890");
     verify(smsUseCase, only()).sendMeCode("1234567890");
     verifyZeroInteractions(passwordUseCase);
   }
@@ -187,9 +137,6 @@ public class CodeViewModelTest {
    */
   @Test
   public void DoNotAskPasswordUseCaseToAuthorize() throws Exception {
-    // Дано:
-    callRequestSubject.onComplete();
-
     // Действие:
     codeViewModel.setCode("12");
     codeViewModel.setCode("123");
@@ -210,7 +157,6 @@ public class CodeViewModelTest {
   @Test
   public void askPasswordUseCaseToAuthorize() throws Exception {
     // Дано:
-    callRequestSubject.onComplete();
     when(passwordUseCase.authorize(any(LoginData.class), any(Completable.class)))
         .thenReturn(Completable.error(new ValidationException()));
 
@@ -239,9 +185,6 @@ public class CodeViewModelTest {
    */
   @Test
   public void doNotTouchOtherUseCasesUntilAuthRequestFinished() throws Exception {
-    // Дано:
-    callRequestSubject.onComplete();
-
     // Действие:
     codeViewModel.setCode("12");
     codeViewModel.sendMeSms();
@@ -251,7 +194,6 @@ public class CodeViewModelTest {
     codeViewModel.sendMeSms();
 
     // Результат:
-    verify(phoneCallUseCase, only()).callMe("1234567890");
     verify(passwordUseCase, only()).authorize(
         eq(new LoginData("1234567890", "12")), afterValidationCaptor.capture()
     );
@@ -261,55 +203,19 @@ public class CodeViewModelTest {
 	/* Тетсируем переключение состояний. */
 
   /**
-   * Должен вернуть состояние вида "Ожидание" изначально по причине запроса входящего звонка.
+   * Должен вернуть состояние вида "Начало" изначально.
    *
    * @throws Exception error.
    */
   @Test
-  public void setPendingViewStateToLiveDataInitially() throws Exception {
-    // Действие:
-    codeViewModel.getViewStateLiveData().observeForever(viewStateObserver);
-
-    // Результат:
-    verify(viewStateObserver, only()).onChanged(any(CodeViewStatePending.class));
-  }
-
-  /**
-   * Должен вернуть состояние вида "Ошибка", если начальный запрос входящего звонка обломался.
-   *
-   * @throws Exception error.
-   */
-  @Test
-  public void setErrorViewStateToLiveDataIfCallRequestFailed() throws Exception {
+  public void setInitialViewStateToLiveData() throws Exception {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
 
     // Действие:
     codeViewModel.getViewStateLiveData().observeForever(viewStateObserver);
-    callRequestSubject.onError(new NoNetworkException());
 
     // Результат:
-    inOrder.verify(viewStateObserver).onChanged(any(CodeViewStatePending.class));
-    inOrder.verify(viewStateObserver).onChanged(new CodeViewStateError(new NoNetworkException()));
-    verifyNoMoreInteractions(viewStateObserver);
-  }
-
-  /**
-   * Должен вернуть состояние вида "Начало", если начальный запрос входящего звонка прошел успешно.
-   *
-   * @throws Exception error.
-   */
-  @Test
-  public void setInitialViewStateToLiveDataIfCallRequestSuccess() throws Exception {
-    // Дано:
-    InOrder inOrder = Mockito.inOrder(viewStateObserver);
-
-    // Действие:
-    codeViewModel.getViewStateLiveData().observeForever(viewStateObserver);
-    callRequestSubject.onComplete();
-
-    // Результат:
-    inOrder.verify(viewStateObserver).onChanged(any(CodeViewStatePending.class));
     inOrder.verify(viewStateObserver).onChanged(any(CodeViewStateInitial.class));
     verifyNoMoreInteractions(viewStateObserver);
   }
@@ -326,7 +232,6 @@ public class CodeViewModelTest {
     codeViewModel.getViewStateLiveData().observeForever(viewStateObserver);
     when(passwordUseCase.authorize(any(LoginData.class), any(Completable.class)))
         .thenReturn(Completable.error(new ValidationException()));
-    callRequestSubject.onComplete();
 
     // Действие:
     codeViewModel.setCode("");
@@ -335,7 +240,6 @@ public class CodeViewModelTest {
     codeViewModel.setCode("12457");
 
     // Результат:
-    inOrder.verify(viewStateObserver).onChanged(any(CodeViewStatePending.class));
     inOrder.verify(viewStateObserver).onChanged(any(CodeViewStateInitial.class));
     verifyNoMoreInteractions(viewStateObserver);
   }
@@ -350,7 +254,6 @@ public class CodeViewModelTest {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     codeViewModel.getViewStateLiveData().observeForever(viewStateObserver);
-    callRequestSubject.onComplete();
     when(passwordUseCase.authorize(any(LoginData.class), any(Completable.class)))
         .thenReturn(Completable.error(new ValidationException()));
     when(passwordUseCase.authorize(
@@ -368,7 +271,6 @@ public class CodeViewModelTest {
         eq(new LoginData("1234567890", "12457")), afterValidationCaptor.capture()
     );
     afterValidationCaptor.getValue().test();
-    inOrder.verify(viewStateObserver).onChanged(any(CodeViewStatePending.class));
     inOrder.verify(viewStateObserver).onChanged(any(CodeViewStateInitial.class));
     inOrder.verify(viewStateObserver).onChanged(any(CodeViewStatePending.class));
     verifyNoMoreInteractions(viewStateObserver);
@@ -385,7 +287,6 @@ public class CodeViewModelTest {
     CompletableSubject completableSubject = CompletableSubject.create();
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     codeViewModel.getViewStateLiveData().observeForever(viewStateObserver);
-    callRequestSubject.onComplete();
     when(passwordUseCase.authorize(any(LoginData.class), any(Completable.class)))
         .thenReturn(completableSubject);
 
@@ -400,7 +301,6 @@ public class CodeViewModelTest {
         () -> completableSubject.onError(new NoNetworkException()),
         e -> completableSubject.onComplete()
     );
-    inOrder.verify(viewStateObserver).onChanged(any(CodeViewStatePending.class));
     inOrder.verify(viewStateObserver).onChanged(any(CodeViewStateInitial.class));
     inOrder.verify(viewStateObserver).onChanged(any(CodeViewStatePending.class));
     inOrder.verify(viewStateObserver).onChanged(new CodeViewStateError(new NoNetworkException()));
@@ -418,7 +318,6 @@ public class CodeViewModelTest {
     CompletableSubject completableSubject = CompletableSubject.create();
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     codeViewModel.getViewStateLiveData().observeForever(viewStateObserver);
-    callRequestSubject.onComplete();
     when(passwordUseCase.authorize(any(LoginData.class), any(Completable.class)))
         .thenReturn(completableSubject);
 
@@ -436,7 +335,6 @@ public class CodeViewModelTest {
     codeViewModel.setCode("124");
 
     // Результат:
-    inOrder.verify(viewStateObserver).onChanged(any(CodeViewStatePending.class));
     inOrder.verify(viewStateObserver).onChanged(any(CodeViewStateInitial.class));
     inOrder.verify(viewStateObserver).onChanged(any(CodeViewStatePending.class));
     inOrder.verify(viewStateObserver).onChanged(new CodeViewStateError(new NoNetworkException()));
@@ -455,7 +353,6 @@ public class CodeViewModelTest {
     CompletableSubject completableSubject = CompletableSubject.create();
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     codeViewModel.getViewStateLiveData().observeForever(viewStateObserver);
-    callRequestSubject.onComplete();
     when(passwordUseCase.authorize(any(LoginData.class), any(Completable.class)))
         .thenReturn(completableSubject);
 
@@ -470,7 +367,6 @@ public class CodeViewModelTest {
         completableSubject::onComplete,
         e -> completableSubject.onComplete()
     );
-    inOrder.verify(viewStateObserver).onChanged(any(CodeViewStatePending.class));
     inOrder.verify(viewStateObserver).onChanged(any(CodeViewStateInitial.class));
     inOrder.verify(viewStateObserver).onChanged(any(CodeViewStatePending.class));
     inOrder.verify(viewStateObserver).onChanged(any(CodeViewStateSuccess.class));

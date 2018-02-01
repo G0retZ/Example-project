@@ -5,7 +5,7 @@ import android.support.annotation.Nullable;
 
 import com.fasten.executor_driver.R;
 
-public class AuthActivity extends BaseActivity {
+public class LoginActivity extends BaseActivity {
 
   @Override
   public void onCreate(@Nullable Bundle savedInstanceState) {

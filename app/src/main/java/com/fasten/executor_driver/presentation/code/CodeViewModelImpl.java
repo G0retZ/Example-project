@@ -4,20 +4,17 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
-
 import com.fasten.executor_driver.backend.web.ValidationException;
 import com.fasten.executor_driver.entity.LoginData;
 import com.fasten.executor_driver.interactor.auth.PasswordUseCase;
-import com.fasten.executor_driver.interactor.auth.PhoneCallUseCase;
 import com.fasten.executor_driver.interactor.auth.SmsUseCase;
 import com.fasten.executor_driver.presentation.ViewState;
-
-import javax.inject.Inject;
-
 import io.reactivex.Completable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
+import javax.inject.Inject;
+import javax.inject.Named;
 
 public class CodeViewModelImpl extends ViewModel implements CodeViewModel {
 
@@ -26,25 +23,20 @@ public class CodeViewModelImpl extends ViewModel implements CodeViewModel {
   @NonNull
   private final SmsUseCase smsUseCase;
   @NonNull
-  private final PhoneCallUseCase phoneCallUseCase;
-  @NonNull
   private final MutableLiveData<ViewState<CodeViewActions>> viewStateLiveData;
   @NonNull
   private final LoginData loginData;
   private Disposable disposable;
 
   @Inject
-  CodeViewModelImpl(@NonNull String login,
+  CodeViewModelImpl(@Named("loginData") @NonNull String login,
       @NonNull PasswordUseCase passwordUseCase,
-      @NonNull SmsUseCase smsUseCase,
-      @NonNull PhoneCallUseCase phoneCallUseCase) {
+      @NonNull SmsUseCase smsUseCase) {
     loginData = new LoginData(login, "");
     this.passwordUseCase = passwordUseCase;
     this.smsUseCase = smsUseCase;
-    this.phoneCallUseCase = phoneCallUseCase;
     viewStateLiveData = new MutableLiveData<>();
-    viewStateLiveData.postValue(new CodeViewStatePending());
-    callMe();
+    viewStateLiveData.postValue(new CodeViewStateInitial());
   }
 
   @NonNull
@@ -93,19 +85,6 @@ public class CodeViewModelImpl extends ViewModel implements CodeViewModel {
             () -> viewStateLiveData.postValue(new CodeViewStateInitial()),
             throwable -> viewStateLiveData.postValue(new CodeViewStateError(throwable)
             )
-        );
-  }
-
-  private void callMe() {
-    if (disposable != null && !disposable.isDisposed()) {
-      return;
-    }
-    disposable = phoneCallUseCase.callMe(loginData.getLogin())
-        .subscribeOn(Schedulers.single())
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribe(
-            () -> viewStateLiveData.postValue(new CodeViewStateInitial()),
-            throwable -> viewStateLiveData.postValue(new CodeViewStateError(throwable))
         );
   }
 

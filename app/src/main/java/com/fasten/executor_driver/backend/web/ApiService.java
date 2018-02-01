@@ -22,16 +22,10 @@ public interface ApiService {
   Completable sendMeCode(@NonNull @Query("pn") String phoneNumber);
 
   /*
-   *  Запрос входящего звонка
-   */
-  @GET("drivers/call_me_code")
-  Completable callMeCode(@NonNull @Query("pn") String phoneNumber);
-
-  /*
    *  Проверка логина
    */
-  @GET("drivers/checkLogin")
-  Completable checkLogin(@NonNull @Query("pn") String phoneNumber);
+  @GET("phoneCheck")
+  Completable checkLogin(@NonNull @Query("phoneNumber") String phoneNumber);
 
   /*
    *  Авторизация

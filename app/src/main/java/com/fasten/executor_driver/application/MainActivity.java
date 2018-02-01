@@ -24,7 +24,7 @@ public class MainActivity extends BaseActivity {
     setContentView(R.layout.activity_auth);
     getDiComponent().inject(this);
     if (tokenKeeper.getToken() == null) {
-      startActivity(new Intent(this, AuthActivity.class));
+      startActivity(new Intent(this, LoginActivity.class));
       finish();
     }
   }
