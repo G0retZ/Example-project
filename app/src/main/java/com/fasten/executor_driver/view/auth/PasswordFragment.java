@@ -85,6 +85,11 @@ public class PasswordFragment extends BaseFragment implements CodeViewActions,
         viewState.apply(this);
       }
     });
+    timeoutButtonViewModel.getViewStateLiveData().observe(this, viewState -> {
+      if (viewState != null) {
+        viewState.apply(this);
+      }
+    });
     setTextListener();
     if (savedInstanceState == null) {
       sendSms.performClick();
