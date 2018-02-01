@@ -24,7 +24,7 @@ public interface ApiService {
   /*
    *  Проверка логина
    */
-  @GET("phoneCheck")
+  @GET("login/phoneCheck")
   Completable checkLogin(@NonNull @Query("phoneNumber") String phoneNumber);
 
   /*
