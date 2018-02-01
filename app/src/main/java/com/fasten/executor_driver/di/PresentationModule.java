@@ -44,16 +44,12 @@ class PresentationModule {
 
   @Provides
   @Named("button")
-  ViewModelProvider.Factory provideTimeoutButtonViewModelFactory(ViewModelFactory<TimeoutButtonViewModel> factory) {
+  ViewModelProvider.Factory provideTimeoutButtonViewModelFactory(
+      ViewModelFactory<TimeoutButtonViewModel> factory) {
     return factory;
   }
 
-  @Provides
-  @Named("loginData")
-  String provideLogin() {
-    return "79992221133";
-  }
-
+  @SuppressWarnings("SameReturnValue")
   @Provides
   @Named("timeoutDuration")
   int provideTimeoutButtonDuration() {

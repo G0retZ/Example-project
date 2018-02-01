@@ -47,6 +47,7 @@ public abstract class PersistentDataSharer<D> extends MemoryDataSharer<D> {
 
   /**
    * Сериализует данные в строку
+   *
    * @param data данные
    * @return сериализованные данные строкой
    */
@@ -55,6 +56,7 @@ public abstract class PersistentDataSharer<D> extends MemoryDataSharer<D> {
 
   /**
    * Десериализует строку в данные
+   *
    * @param string строка
    * @return данные десериализованные из строки
    */
