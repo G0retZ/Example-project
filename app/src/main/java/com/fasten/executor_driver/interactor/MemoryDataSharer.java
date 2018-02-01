@@ -22,7 +22,9 @@ public abstract class MemoryDataSharer<D> implements DataSharer<D> {
 
   @Override
   public void share(@Nullable D data) {
-    subject.onNext(data);
+    if (data != null) {
+      subject.onNext(data);
+    }
   }
 
   @NonNull
