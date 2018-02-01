@@ -18,6 +18,7 @@ import io.reactivex.Completable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
+import javax.inject.Named;
 
 public class CodeViewModelImpl extends ViewModel implements CodeViewModel {
 
@@ -34,7 +35,7 @@ public class CodeViewModelImpl extends ViewModel implements CodeViewModel {
   private Disposable disposable;
 
   @Inject
-  CodeViewModelImpl(@NonNull String login,
+  CodeViewModelImpl(@Named("loginData") @NonNull String login,
       @NonNull PasswordUseCase passwordUseCase,
       @NonNull SmsUseCase smsUseCase,
       @NonNull PhoneCallUseCase phoneCallUseCase) {
