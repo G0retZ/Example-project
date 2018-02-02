@@ -1,9 +1,7 @@
 package com.fasten.executor_driver.interactor.auth;
 
 import android.support.annotation.NonNull;
-
-import com.fasten.executor_driver.entity.LoginData;
-
+import android.support.annotation.Nullable;
 import io.reactivex.Completable;
 
 /**
@@ -14,10 +12,10 @@ public interface PasswordUseCase {
   /**
    * Проверяет формат пароля, и запрашивает авторизацию.
    *
-   * @param loginData {@link LoginData} данные для входа.
+   * @param password {@link String} пароль для входа.
    * @param afterValidation {@link Completable} продолжать ли после успешной валидации?
    * @return {@link Completable} результат проверки или входа.
    */
   @NonNull
-  Completable authorize(@NonNull LoginData loginData, @NonNull Completable afterValidation);
+  Completable authorize(@Nullable String password, @NonNull Completable afterValidation);
 }

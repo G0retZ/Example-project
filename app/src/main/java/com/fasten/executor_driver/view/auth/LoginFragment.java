@@ -16,7 +16,6 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.ProgressBar;
-
 import com.fasten.executor_driver.R;
 import com.fasten.executor_driver.backend.web.NoNetworkException;
 import com.fasten.executor_driver.di.AppComponent;
@@ -24,7 +23,6 @@ import com.fasten.executor_driver.presentation.phone.PhoneViewActions;
 import com.fasten.executor_driver.presentation.phone.PhoneViewModel;
 import com.fasten.executor_driver.presentation.phone.PhoneViewModelImpl;
 import com.fasten.executor_driver.view.BaseFragment;
-
 import javax.inject.Inject;
 import javax.inject.Named;
 

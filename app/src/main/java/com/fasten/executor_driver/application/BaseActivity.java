@@ -4,12 +4,9 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-
 import com.fasten.executor_driver.di.AppComponent;
-
-import java.util.LinkedList;
-
 import dagger.Component;
+import java.util.LinkedList;
 
 /**
  * Базовая {@link Activity} с поддержкой:

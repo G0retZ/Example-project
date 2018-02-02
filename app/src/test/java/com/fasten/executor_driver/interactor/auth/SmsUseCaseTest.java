@@ -1,22 +1,23 @@
 package com.fasten.executor_driver.interactor.auth;
 
-import com.fasten.executor_driver.backend.web.NoNetworkException;
-import com.fasten.executor_driver.backend.web.ValidationException;
-import com.fasten.executor_driver.entity.Validator;
-
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
-
-import io.reactivex.Completable;
-
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
+
+import com.fasten.executor_driver.backend.web.NoNetworkException;
+import com.fasten.executor_driver.backend.web.ValidationException;
+import com.fasten.executor_driver.entity.Validator;
+import com.fasten.executor_driver.interactor.DataSharer;
+import io.reactivex.Completable;
+import io.reactivex.subjects.PublishSubject;
+import io.reactivex.subjects.Subject;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SmsUseCaseTest {
@@ -29,14 +30,47 @@ public class SmsUseCaseTest {
   @Mock
   private Validator<String> phoneNumberValidator;
 
+  @Mock
+  private DataSharer<String> phoneNumberSharer;
+
+  private Subject<String> subject;
+
   @Before
   public void setUp() throws Exception {
-    smsUseCase = new SmsUseCaseImpl(gateway, phoneNumberValidator);
     when(gateway.sendMeCode(anyString())).thenReturn(Completable.never());
     when(phoneNumberValidator.validate("0123456")).thenReturn(true);
+    when(phoneNumberSharer.get()).thenReturn(subject = PublishSubject.create());
+    smsUseCase = new SmsUseCaseImpl(gateway, phoneNumberSharer, phoneNumberValidator);
   }
 
-	/* Проверяем работу с валидаторами */
+  /* Проверяем работу с публикатором номера телефона */
+
+  /**
+   * Должен подписаться при создании сразу же.
+   *
+   * @throws Exception error
+   */
+  @Test
+  public void getFromDataSharerImmediately() throws Exception {
+    // Результат:
+    verify(phoneNumberSharer, only()).get();
+  }
+
+  /**
+   * Не должен взаимодействовать с публиктором в любых иных случаях.
+   *
+   * @throws Exception error
+   */
+  @Test
+  public void doNotTouchDataSharer() throws Exception {
+    // Действие:
+    smsUseCase.sendMeCode().test();
+
+    // Результат:
+    verify(phoneNumberSharer, only()).get();
+  }
+
+  /* Проверяем работу с валидаторами */
 
   /**
    * Должен запросить у валидатора номера телефона проверку.
@@ -45,8 +79,11 @@ public class SmsUseCaseTest {
    */
   @Test
   public void askPhoneNumberValidatorForResult() throws Exception {
+    // Дано:
+    subject.onNext("");
+
     // Действие:
-    smsUseCase.sendMeCode("").test();
+    smsUseCase.sendMeCode().test();
 
     // Результат:
     verify(phoneNumberValidator, only()).validate("");
@@ -61,8 +98,11 @@ public class SmsUseCaseTest {
    */
   @Test
   public void answerErrorIfPhoneNumberInvalid() throws Exception {
+    // Дано:
+    subject.onNext("");
+
     // Результат:
-    smsUseCase.sendMeCode("").test().assertError(ValidationException.class);
+    smsUseCase.sendMeCode().test().assertError(ValidationException.class);
   }
 
   /**
@@ -72,11 +112,14 @@ public class SmsUseCaseTest {
    */
   @Test
   public void answerSuccessIfPhoneNumberValid() throws Exception {
+    // Дано:
+    subject.onNext("");
+
     // Действие:
     when(phoneNumberValidator.validate(anyString())).thenReturn(true);
 
     // Результат:
-    smsUseCase.sendMeCode("").test().assertNoErrors();
+    smsUseCase.sendMeCode().test().assertNoErrors();
   }
 
 	/* Проверяем работу с гейтвеем */
@@ -88,8 +131,11 @@ public class SmsUseCaseTest {
    */
   @Test
   public void doNotAskGatewayForSms() throws Exception {
+    // Дано:
+    subject.onNext("012345");
+
     // Действие:
-    smsUseCase.sendMeCode("012345").test();
+    smsUseCase.sendMeCode().test();
 
     // Результат:
     verifyZeroInteractions(gateway);
@@ -102,8 +148,11 @@ public class SmsUseCaseTest {
    */
   @Test
   public void askGatewayForSms() throws Exception {
+    // Дано:
+    subject.onNext("0123456");
+
     // Действие:
-    smsUseCase.sendMeCode("0123456").test();
+    smsUseCase.sendMeCode().test();
 
     // Результат:
     verify(gateway, only()).sendMeCode("0123456");
@@ -118,11 +167,14 @@ public class SmsUseCaseTest {
    */
   @Test
   public void answerNoNetworkError() throws Exception {
+    // Дано:
+    subject.onNext("0123456");
+
     // Действие:
     when(gateway.sendMeCode(anyString())).thenReturn(Completable.error(new NoNetworkException()));
 
     // Результат:
-    smsUseCase.sendMeCode("0123456").test().assertError(NoNetworkException.class);
+    smsUseCase.sendMeCode().test().assertError(NoNetworkException.class);
   }
 
   /**
@@ -132,10 +184,13 @@ public class SmsUseCaseTest {
    */
   @Test
   public void answerSmsSendSuccessful() throws Exception {
+    // Дано:
+    subject.onNext("0123456");
+
     // Действие:
     when(gateway.sendMeCode(anyString())).thenReturn(Completable.complete());
 
     // Результат:
-    smsUseCase.sendMeCode("0123456").test().assertComplete();
+    smsUseCase.sendMeCode().test().assertComplete();
   }
 }

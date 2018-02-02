@@ -1,10 +1,8 @@
 package com.fasten.executor_driver.gateway;
 
 import android.support.annotation.NonNull;
-
 import com.fasten.executor_driver.backend.settings.AppSettingsService;
 import com.fasten.executor_driver.backend.web.TokenKeeper;
-
 import javax.inject.Inject;
 
 public class TokenKeeperImpl implements TokenKeeper {

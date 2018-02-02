@@ -1,7 +1,6 @@
 package com.fasten.executor_driver.presentation.code;
 
 import android.support.annotation.NonNull;
-
 import com.fasten.executor_driver.presentation.ViewState;
 import com.fasten.executor_driver.utils.ThrowableUtils;
 
@@ -19,8 +18,8 @@ final class CodeViewStateError implements ViewState<CodeViewActions> {
 
   @Override
   public void apply(@NonNull CodeViewActions stateActions) {
-    stateActions.showPending(false);
-    stateActions.showError(error);
+    stateActions.showCodeCheckPending(false);
+    stateActions.showCodeCheckError(error);
   }
 
   @Override

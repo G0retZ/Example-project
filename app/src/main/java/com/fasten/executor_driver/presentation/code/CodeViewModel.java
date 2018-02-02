@@ -2,7 +2,6 @@ package com.fasten.executor_driver.presentation.code;
 
 import android.arch.lifecycle.LiveData;
 import android.support.annotation.NonNull;
-
 import com.fasten.executor_driver.presentation.ViewState;
 
 /**
@@ -24,9 +23,4 @@ public interface CodeViewModel {
    * @param code - код из звонка или смс.
    */
   void setCode(@NonNull String code);
-
-  /**
-   * Запрашивает отправку СМС с кодом.
-   */
-  void sendMeSms();
 }

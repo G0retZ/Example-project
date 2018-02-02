@@ -1,7 +1,6 @@
 package com.fasten.executor_driver.presentation.phone;
 
 import android.support.annotation.NonNull;
-
 import com.fasten.executor_driver.presentation.ViewState;
 
 /**
@@ -27,7 +26,7 @@ public final class PhoneViewStateProceed implements ViewState<PhoneViewActions> 
   public void apply(@NonNull PhoneViewActions stateActions) {
     stateActions.showPending(false);
     stateActions.showError(null);
-    stateActions.setInputEditable(false);
+    stateActions.setInputEditable(true);
     stateActions.enableButton(false);
     stateActions.proceedNext(login);
   }

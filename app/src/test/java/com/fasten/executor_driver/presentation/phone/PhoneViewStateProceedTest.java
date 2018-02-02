@@ -1,15 +1,15 @@
 package com.fasten.executor_driver.presentation.phone;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PhoneViewStateProceedTest {
@@ -32,7 +32,7 @@ public class PhoneViewStateProceedTest {
     // Результат:
     verify(phoneViewActions).showPending(false);
     verify(phoneViewActions).showError(null);
-    verify(phoneViewActions).setInputEditable(false);
+    verify(phoneViewActions).setInputEditable(true);
     verify(phoneViewActions).enableButton(false);
     verify(phoneViewActions).proceedNext("login");
     verifyNoMoreInteractions(phoneViewActions);

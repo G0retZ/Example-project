@@ -2,11 +2,9 @@ package com.fasten.executor_driver.di;
 
 import com.fasten.executor_driver.application.MainActivity;
 import com.fasten.executor_driver.view.auth.LoginFragment;
-
 import com.fasten.executor_driver.view.auth.PasswordFragment;
-import javax.inject.Singleton;
-
 import dagger.Component;
+import javax.inject.Singleton;
 
 @Singleton
 @Component(modules = {

@@ -8,7 +8,6 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.util.Log;
-
 import com.fasten.executor_driver.application.BaseActivity;
 import com.fasten.executor_driver.application.OnBackPressedInterceptor;
 import com.fasten.executor_driver.di.AppComponent;
@@ -88,7 +87,7 @@ public class BaseFragment extends Fragment implements OnBackPressedInterceptor {
    *
    * @param destination пункт назначения.
    */
-  public void navigate(@NonNull String destination) {
+  protected void navigate(@NonNull String destination) {
     if (baseActivity != null) {
       baseActivity.navigate(destination);
     }

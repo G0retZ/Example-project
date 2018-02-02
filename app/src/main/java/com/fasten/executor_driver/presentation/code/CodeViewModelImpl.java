@@ -5,36 +5,25 @@ import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
 import com.fasten.executor_driver.backend.web.ValidationException;
-import com.fasten.executor_driver.entity.LoginData;
 import com.fasten.executor_driver.interactor.auth.PasswordUseCase;
-import com.fasten.executor_driver.interactor.auth.SmsUseCase;
 import com.fasten.executor_driver.presentation.ViewState;
 import io.reactivex.Completable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import javax.inject.Inject;
-import javax.inject.Named;
 
 public class CodeViewModelImpl extends ViewModel implements CodeViewModel {
 
   @NonNull
   private final PasswordUseCase passwordUseCase;
   @NonNull
-  private final SmsUseCase smsUseCase;
-  @NonNull
   private final MutableLiveData<ViewState<CodeViewActions>> viewStateLiveData;
-  @NonNull
-  private final LoginData loginData;
   private Disposable disposable;
 
   @Inject
-  CodeViewModelImpl(@Named("loginData") @NonNull String login,
-      @NonNull PasswordUseCase passwordUseCase,
-      @NonNull SmsUseCase smsUseCase) {
-    loginData = new LoginData(login, "");
+  CodeViewModelImpl(@NonNull PasswordUseCase passwordUseCase) {
     this.passwordUseCase = passwordUseCase;
-    this.smsUseCase = smsUseCase;
     viewStateLiveData = new MutableLiveData<>();
     viewStateLiveData.postValue(new CodeViewStateInitial());
   }
@@ -51,7 +40,7 @@ public class CodeViewModelImpl extends ViewModel implements CodeViewModel {
       return;
     }
     disposable = passwordUseCase.authorize(
-        loginData.setPassword(code),
+        code,
         Completable.create(e -> {
           viewStateLiveData.postValue(new CodeViewStatePending());
           e.onComplete();
@@ -69,22 +58,6 @@ public class CodeViewModelImpl extends ViewModel implements CodeViewModel {
                 viewStateLiveData.postValue(new CodeViewStateError(throwable));
               }
             }
-        );
-  }
-
-  @Override
-  public void sendMeSms() {
-    if (disposable != null && !disposable.isDisposed()) {
-      return;
-    }
-    viewStateLiveData.postValue(new CodeViewStatePending());
-    disposable = smsUseCase.sendMeCode(loginData.getLogin())
-        .subscribeOn(Schedulers.single())
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribe(
-            () -> viewStateLiveData.postValue(new CodeViewStateInitial()),
-            throwable -> viewStateLiveData.postValue(new CodeViewStateError(throwable)
-            )
         );
   }
 

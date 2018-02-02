@@ -1,12 +1,9 @@
 package com.fasten.executor_driver.backend.web;
 
 import android.support.annotation.NonNull;
-
 import java.io.IOException;
 import java.util.List;
-
 import javax.inject.Inject;
-
 import okhttp3.Interceptor;
 import okhttp3.Response;
 

@@ -1,11 +1,11 @@
-package com.fasten.executor_driver.presentation.timeoutbutton;
+package com.fasten.executor_driver.presentation.smsbutton;
 
 import android.support.annotation.Nullable;
 
 /**
- * Действия для смены состояния вида кнопки с таймаутом.
+ * Действия для смены состояния вида кнопки отправки СМС с таймаутом.
  */
-public interface TimeoutButtonViewActions {
+public interface SmsButtonViewActions {
 
   /**
    * Задать оставшееся время до активации.
@@ -13,7 +13,7 @@ public interface TimeoutButtonViewActions {
    * @param secondsLeft {@link Integer} сколько секунд осталось. Для выключения счетчика передай
    * null.
    */
-  void showTimer(@Nullable Long secondsLeft);
+  void showSmsButtonTimer(@Nullable Long secondsLeft);
 
   /**
    * Сделать кнопку "отзывчивой". "Отзывчивая" кнопка обрабатывает нажатия, "Неотзывчатая" - нет.
@@ -21,5 +21,19 @@ public interface TimeoutButtonViewActions {
    *
    * @param responsive - "отзывчивость"
    */
-  void setResponsive(boolean responsive);
+  void setSmsButtonResponsive(boolean responsive);
+
+  /**
+   * Показать ошибку.
+   *
+   * @param error - ошибка.
+   */
+  void showSmsSendError(@Nullable Throwable error);
+
+  /**
+   * Показать индикатор процесса.
+   *
+   * @param pending - показать или нет?
+   */
+  void showSmsSendPending(boolean pending);
 }

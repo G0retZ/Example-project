@@ -1,14 +1,11 @@
 package com.fasten.executor_driver.gateway;
 
 import android.support.annotation.NonNull;
-
 import com.fasten.executor_driver.backend.web.ApiService;
 import com.fasten.executor_driver.interactor.auth.SmsGateway;
-
-import javax.inject.Inject;
-
 import io.reactivex.Completable;
 import io.reactivex.schedulers.Schedulers;
+import javax.inject.Inject;
 
 public class SmsGatewayImpl implements SmsGateway {
 

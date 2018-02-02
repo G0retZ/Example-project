@@ -4,15 +4,12 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
-
 import com.fasten.executor_driver.interactor.auth.LoginUseCase;
 import com.fasten.executor_driver.presentation.ViewState;
-
-import javax.inject.Inject;
-
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
+import javax.inject.Inject;
 
 public class PhoneViewModelImpl extends ViewModel implements PhoneViewModel {
 
@@ -42,7 +39,7 @@ public class PhoneViewModelImpl extends ViewModel implements PhoneViewModel {
   @Override
   public void phoneNumberChanged(@NonNull String phoneNumber) {
     lastLogin = phoneNumber.replaceAll("[^\\d]", "");
-    if (disposable != null) {
+    if (disposable != null && !disposable.isDisposed()) {
       return;
     }
     if (viewStateLiveData.getValue() instanceof PhoneViewStateError) {
@@ -51,7 +48,11 @@ public class PhoneViewModelImpl extends ViewModel implements PhoneViewModel {
     disposable = loginUseCase.validateLogin(lastLogin)
         .subscribeOn(Schedulers.single())
         .observeOn(AndroidSchedulers.mainThread())
-        .subscribe(this::checkNumber, throwable -> disposable = null);
+        .subscribe(this::checkNumber, throwable -> {
+          if (!(viewStateLiveData.getValue() instanceof PhoneViewStateInitial)) {
+            viewStateLiveData.setValue(new PhoneViewStateInitial());
+          }
+        });
     if (disposable.isDisposed()) {
       disposable = null;
     }
@@ -65,7 +66,7 @@ public class PhoneViewModelImpl extends ViewModel implements PhoneViewModel {
   @Override
   protected void onCleared() {
     super.onCleared();
-    if (disposable != null) {
+    if (disposable != null && !disposable.isDisposed()) {
       disposable.dispose();
       disposable = null;
     }

@@ -1,15 +1,13 @@
 package com.fasten.executor_driver.presentation.code;
 
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CodeViewStateInitialTest {
@@ -30,8 +28,8 @@ public class CodeViewStateInitialTest {
     viewState.apply(codeViewActions);
 
     // Результат:
-    verify(codeViewActions).showPending(false);
-    verify(codeViewActions).showError(null);
+    verify(codeViewActions).showCodeCheckPending(false);
+    verify(codeViewActions).showCodeCheckError(null);
     verifyNoMoreInteractions(codeViewActions);
   }
 }
