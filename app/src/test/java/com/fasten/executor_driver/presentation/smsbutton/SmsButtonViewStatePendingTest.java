@@ -1,27 +1,25 @@
 package com.fasten.executor_driver.presentation.smsbutton;
 
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-
 @RunWith(MockitoJUnitRunner.class)
-public class SmsButtonViewStateHoldTest {
+public class SmsButtonViewStatePendingTest {
 
-  private SmsButtonViewStateHold viewState;
+  private SmsButtonViewStatePending viewState;
 
   @Mock
   private SmsButtonViewActions smsButtonViewActions;
 
   @Before
   public void setUp() throws Exception {
-    viewState = new SmsButtonViewStateHold(12);
+    viewState = new SmsButtonViewStatePending();
   }
 
   @Test
@@ -30,17 +28,10 @@ public class SmsButtonViewStateHoldTest {
     viewState.apply(smsButtonViewActions);
 
     // Результат:
-    verify(smsButtonViewActions).showSmsButtonTimer(12L);
+    verify(smsButtonViewActions).showSmsButtonTimer(null);
     verify(smsButtonViewActions).setSmsButtonResponsive(false);
     verify(smsButtonViewActions).showSmsSendError(null);
-    verify(smsButtonViewActions).showSmsSendPending(false);
+    verify(smsButtonViewActions).showSmsSendPending(true);
     verifyNoMoreInteractions(smsButtonViewActions);
-  }
-
-  @Test
-  public void testEquals() throws Exception {
-    assertEquals(viewState, new SmsButtonViewStateHold(12));
-    assertNotEquals(viewState, new SmsButtonViewStateHold(13));
-    assertNotEquals(viewState, new SmsButtonViewStateHold(11));
   }
 }

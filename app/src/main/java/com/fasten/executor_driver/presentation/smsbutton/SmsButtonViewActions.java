@@ -22,4 +22,18 @@ public interface SmsButtonViewActions {
    * @param responsive - "отзывчивость"
    */
   void setSmsButtonResponsive(boolean responsive);
+
+  /**
+   * Показать ошибку.
+   *
+   * @param error - ошибка.
+   */
+  void showSmsSendError(@Nullable Throwable error);
+
+  /**
+   * Показать индикатор процесса.
+   *
+   * @param pending - показать или нет?
+   */
+  void showSmsSendPending(boolean pending);
 }

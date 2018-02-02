@@ -13,5 +13,7 @@ public final class SmsButtonViewStateReady implements ViewState<SmsButtonViewAct
   public void apply(@NonNull SmsButtonViewActions stateActions) {
     stateActions.setSmsButtonResponsive(true);
     stateActions.showSmsButtonTimer(null);
+    stateActions.showSmsSendError(null);
+    stateActions.showSmsSendPending(false);
   }
 }

@@ -5,7 +5,7 @@ import android.support.annotation.NonNull;
 import com.fasten.executor_driver.presentation.ViewState;
 
 /**
- * Состояние ожидания таймаута.
+ * Состояние ожидания таймаута после отправки СМС.
  */
 public final class SmsButtonViewStateHold implements ViewState<SmsButtonViewActions> {
 
@@ -19,6 +19,8 @@ public final class SmsButtonViewStateHold implements ViewState<SmsButtonViewActi
   public void apply(@NonNull SmsButtonViewActions stateActions) {
     stateActions.setSmsButtonResponsive(false);
     stateActions.showSmsButtonTimer(secondsLeft);
+    stateActions.showSmsSendError(null);
+    stateActions.showSmsSendPending(false);
   }
 
   @Override

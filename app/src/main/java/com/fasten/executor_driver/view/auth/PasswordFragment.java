@@ -138,4 +138,22 @@ public class PasswordFragment extends BaseFragment implements CodeViewActions,
   public void setSmsButtonResponsive(boolean responsive) {
     sendSms.setOnClickListener(responsive ? sendSmsClickListener : null);
   }
+
+  @Override
+  public void showSmsSendError(@Nullable Throwable error) {
+    if (error == null) {
+      codeInputLayout.setError(null);
+    } else {
+      if (error instanceof NoNetworkException) {
+        codeInputLayout.setError(getString(R.string.no_network_connection));
+      } else {
+        codeInputLayout.setError(getString(R.string.server_fail));
+      }
+    }
+  }
+
+  @Override
+  public void showSmsSendPending(boolean pending) {
+    sendSms.setEnabled(!pending);
+  }
 }
