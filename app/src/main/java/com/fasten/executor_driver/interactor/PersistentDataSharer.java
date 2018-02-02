@@ -3,7 +3,6 @@ package com.fasten.executor_driver.interactor;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.fasten.executor_driver.backend.settings.AppSettingsService;
-import io.reactivex.Observable;
 
 /**
  * Для обмена данными типа {@link D} в слое ЮзКейсов с сохранением их независимо от жизни процесса.
@@ -26,12 +25,6 @@ public abstract class PersistentDataSharer<D> extends MemoryDataSharer<D> {
   public void share(@Nullable D data) {
     appSettingsService.saveData(getKey(), serialize(data));
     super.share(data);
-  }
-
-  @NonNull
-  @Override
-  public Observable<D> get() {
-    return super.get();
   }
 
   /**
