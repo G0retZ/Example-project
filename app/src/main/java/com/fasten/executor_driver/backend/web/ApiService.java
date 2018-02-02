@@ -16,7 +16,7 @@ public interface ApiService {
   /*
    *  Запрос СМС с кодом
    */
-  @GET("drivers/send_me_code")
+  @GET("login/password/sms")
   Completable sendMeCode(@NonNull @Query("pn") String phoneNumber);
 
   /*

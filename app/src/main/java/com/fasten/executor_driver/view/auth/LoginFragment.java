@@ -17,6 +17,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import com.fasten.executor_driver.R;
+import com.fasten.executor_driver.backend.settings.AppSettingsService;
 import com.fasten.executor_driver.backend.web.NoNetworkException;
 import com.fasten.executor_driver.di.AppComponent;
 import com.fasten.executor_driver.presentation.phone.PhoneViewActions;
@@ -40,10 +41,16 @@ public class LoginFragment extends BaseFragment implements PhoneViewActions {
   private Context context;
 
   private ViewModelProvider.Factory viewModelFactory;
+  private AppSettingsService appSettings;
 
   @Inject
   public void setViewModelFactory(@Named("phone") ViewModelProvider.Factory viewModelFactory) {
     this.viewModelFactory = viewModelFactory;
+  }
+
+  @Inject
+  public void setAppSettings(AppSettingsService appSettings) {
+    this.appSettings = appSettings;
   }
 
   @Override
@@ -78,8 +85,16 @@ public class LoginFragment extends BaseFragment implements PhoneViewActions {
     });
     // Если не было сохраненного состояния (первый запуск)
     if (savedInstanceState == null) {
-      phoneInput.setText("+7 (");
-      phoneInput.setSelection(4);
+      String lastPhoneNumber = appSettings.getData("authorizationLogin");
+      if (lastPhoneNumber == null) {
+        phoneInput.setText("+7 (");
+        phoneInput.setSelection(4);
+      } else {
+        lastPhoneNumber = formatNumbersToPhone(lastPhoneNumber);
+        phoneInput.setText(lastPhoneNumber);
+        phoneInput.setSelection(lastPhoneNumber.length());
+        phoneViewModel.phoneNumberChanged(lastPhoneNumber);
+      }
     }
     setTextListener();
     return view;
@@ -181,10 +196,7 @@ public class LoginFragment extends BaseFragment implements PhoneViewActions {
             numbers = new StringBuilder(numbers).deleteCharAt(1).insert(0, "7").toString();
           }
           // Форматируем ввод в виде +7 (XXX) XXX-XX-XX.
-          numbers = numbers.replaceFirst("(\\d)", "+$1 (")
-              .replaceFirst("(\\(\\d{3})", "$1) ")
-              .replaceFirst("( \\d{3})", "$1-")
-              .replaceFirst("(-\\d{2})", "$1-");
+          numbers = formatNumbersToPhone(numbers);
           // Если курсор оказался перед открывающей скобкой, то помещаем его после нее.
           if (selection < 5) {
             selection = 5;
@@ -221,5 +233,12 @@ public class LoginFragment extends BaseFragment implements PhoneViewActions {
         }
       }
     });
+  }
+
+  private String formatNumbersToPhone(String numbers) {
+    return numbers.replaceFirst("(\\d)", "+$1 (")
+        .replaceFirst("(\\(\\d{3})", "$1) ")
+        .replaceFirst("( \\d{3})", "$1-")
+        .replaceFirst("(-\\d{2})", "$1-");
   }
 }
