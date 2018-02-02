@@ -41,6 +41,7 @@ public class PasswordFragment extends BaseFragment implements CodeViewActions,
   private TextInputEditText codeInput;
   private Button sendSms;
   private ProgressBar pendingIndicator;
+  private ProgressBar sendingIndicator;
   private final OnClickListener sendSmsClickListener = v -> smsButtonViewModel.sendMeSms();
 
   private ViewModelProvider.Factory codeViewModelFactory;
@@ -75,6 +76,7 @@ public class PasswordFragment extends BaseFragment implements CodeViewActions,
     codeInput = view.findViewById(R.id.codeInput);
     sendSms = view.findViewById(R.id.sendSms);
     pendingIndicator = view.findViewById(R.id.pending);
+    sendingIndicator = view.findViewById(R.id.sending);
 
     codeViewModel.getViewStateLiveData().observe(this, viewState -> {
       if (viewState != null) {
@@ -148,6 +150,7 @@ public class PasswordFragment extends BaseFragment implements CodeViewActions,
 
   @Override
   public void showSmsSendPending(boolean pending) {
-    sendSms.setEnabled(!pending);
+    sendSms.setVisibility(pending ? View.INVISIBLE : View.VISIBLE);
+    sendingIndicator.setVisibility(pending ? View.VISIBLE : View.GONE);
   }
 }
