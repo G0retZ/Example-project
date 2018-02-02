@@ -11,7 +11,7 @@ final class CodeViewStateInitial implements ViewState<CodeViewActions> {
 
   @Override
   public void apply(@NonNull CodeViewActions stateActions) {
-    stateActions.showPending(false);
-    stateActions.showError(null);
+    stateActions.showCodeCheckPending(false);
+    stateActions.showCodeCheckError(null);
   }
 }

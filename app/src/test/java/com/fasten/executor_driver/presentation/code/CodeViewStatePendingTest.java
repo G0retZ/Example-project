@@ -28,8 +28,8 @@ public class CodeViewStatePendingTest {
     viewState.apply(codeViewActions);
 
     // Результат:
-    verify(codeViewActions).showPending(true);
-    verify(codeViewActions).showError(null);
+    verify(codeViewActions).showCodeCheckPending(true);
+    verify(codeViewActions).showCodeCheckError(null);
     verifyNoMoreInteractions(codeViewActions);
   }
 }

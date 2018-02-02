@@ -11,7 +11,7 @@ final class CodeViewStatePending implements ViewState<CodeViewActions> {
 
   @Override
   public void apply(@NonNull CodeViewActions stateActions) {
-    stateActions.showPending(true);
-    stateActions.showError(null);
+    stateActions.showCodeCheckPending(true);
+    stateActions.showCodeCheckError(null);
   }
 }

@@ -19,8 +19,8 @@ final class CodeViewStateError implements ViewState<CodeViewActions> {
 
   @Override
   public void apply(@NonNull CodeViewActions stateActions) {
-    stateActions.showPending(false);
-    stateActions.showError(error);
+    stateActions.showCodeCheckPending(false);
+    stateActions.showCodeCheckError(error);
   }
 
   @Override

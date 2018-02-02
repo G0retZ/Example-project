@@ -30,8 +30,8 @@ public class SmsButtonViewStateHoldTest {
     viewState.apply(smsButtonViewActions);
 
     // Результат:
-    verify(smsButtonViewActions).showTimer(12L);
-    verify(smsButtonViewActions).setResponsive(false);
+    verify(smsButtonViewActions).showSmsButtonTimer(12L);
+    verify(smsButtonViewActions).setSmsButtonResponsive(false);
     verifyNoMoreInteractions(smsButtonViewActions);
   }
 

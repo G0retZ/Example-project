@@ -17,12 +17,12 @@ public interface CodeViewActions {
    *
    * @param error - ошибка.
    */
-  void showError(@Nullable Throwable error);
+  void showCodeCheckError(@Nullable Throwable error);
 
   /**
    * Показать индикатор процесса.
    *
    * @param pending - показать или нет?
    */
-  void showPending(boolean pending);
+  void showCodeCheckPending(boolean pending);
 }

@@ -17,8 +17,8 @@ public final class SmsButtonViewStateHold implements ViewState<SmsButtonViewActi
 
   @Override
   public void apply(@NonNull SmsButtonViewActions stateActions) {
-    stateActions.setResponsive(false);
-    stateActions.showTimer(secondsLeft);
+    stateActions.setSmsButtonResponsive(false);
+    stateActions.showSmsButtonTimer(secondsLeft);
   }
 
   @Override

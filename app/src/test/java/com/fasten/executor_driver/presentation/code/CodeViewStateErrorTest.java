@@ -38,8 +38,8 @@ public class CodeViewStateErrorTest {
     viewState.apply(codeViewActions);
 
     // Результат:
-    verify(codeViewActions).showPending(false);
-    verify(codeViewActions).showError(throwableCaptor.capture());
+    verify(codeViewActions).showCodeCheckPending(false);
+    verify(codeViewActions).showCodeCheckError(throwableCaptor.capture());
     verifyNoMoreInteractions(codeViewActions);
     assertTrue(
         ThrowableUtils.throwableEquals(

@@ -98,7 +98,7 @@ public class PasswordFragment extends BaseFragment implements CodeViewActions,
   }
 
   @Override
-  public void showPending(boolean pending) {
+  public void showCodeCheckPending(boolean pending) {
     pendingIndicator.setVisibility(pending ? View.VISIBLE : View.GONE);
   }
 
@@ -108,7 +108,7 @@ public class PasswordFragment extends BaseFragment implements CodeViewActions,
   }
 
   @Override
-  public void showError(@Nullable Throwable error) {
+  public void showCodeCheckError(@Nullable Throwable error) {
     if (error == null) {
       codeInputLayout.setError(null);
     } else {
@@ -126,7 +126,7 @@ public class PasswordFragment extends BaseFragment implements CodeViewActions,
   }
 
   @Override
-  public void showTimer(@Nullable Long secondsLeft) {
+  public void showSmsButtonTimer(@Nullable Long secondsLeft) {
     if (secondsLeft == null) {
       sendSms.setText(R.string.get_code_from_sms);
     } else {
@@ -135,7 +135,7 @@ public class PasswordFragment extends BaseFragment implements CodeViewActions,
   }
 
   @Override
-  public void setResponsive(boolean responsive) {
+  public void setSmsButtonResponsive(boolean responsive) {
     sendSms.setOnClickListener(responsive ? sendSmsClickListener : null);
   }
 }
