@@ -43,7 +43,7 @@ public class SmsUseCaseTest {
     smsUseCase = new SmsUseCaseImpl(gateway, phoneNumberSharer, phoneNumberValidator);
   }
 
-	/* Проверяем работу с публикатором номера телефона */
+  /* Проверяем работу с публикатором номера телефона */
 
   /**
    * Должен подписаться при создании сразу же.
@@ -70,7 +70,7 @@ public class SmsUseCaseTest {
     verify(phoneNumberSharer, only()).get();
   }
 
-	/* Проверяем работу с валидаторами */
+  /* Проверяем работу с валидаторами */
 
   /**
    * Должен запросить у валидатора номера телефона проверку.
