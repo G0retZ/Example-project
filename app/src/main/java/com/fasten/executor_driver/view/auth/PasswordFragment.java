@@ -20,9 +20,9 @@ import com.fasten.executor_driver.di.AppComponent;
 import com.fasten.executor_driver.presentation.code.CodeViewActions;
 import com.fasten.executor_driver.presentation.code.CodeViewModel;
 import com.fasten.executor_driver.presentation.code.CodeViewModelImpl;
-import com.fasten.executor_driver.presentation.timeoutbutton.TimeoutButtonViewActions;
-import com.fasten.executor_driver.presentation.timeoutbutton.TimeoutButtonViewModel;
-import com.fasten.executor_driver.presentation.timeoutbutton.TimeoutButtonViewModelImpl;
+import com.fasten.executor_driver.presentation.smsbutton.SmsButtonViewActions;
+import com.fasten.executor_driver.presentation.smsbutton.SmsButtonViewModel;
+import com.fasten.executor_driver.presentation.smsbutton.SmsButtonViewModelImpl;
 import com.fasten.executor_driver.view.BaseFragment;
 import com.jakewharton.rxbinding2.widget.RxTextView;
 import javax.inject.Inject;
@@ -33,16 +33,16 @@ import javax.inject.Named;
  */
 
 public class PasswordFragment extends BaseFragment implements CodeViewActions,
-    TimeoutButtonViewActions {
+    SmsButtonViewActions {
 
   private CodeViewModel codeViewModel;
-  private TimeoutButtonViewModel timeoutButtonViewModel;
+  private SmsButtonViewModel smsButtonViewModel;
   private TextInputLayout codeInputLayout;
   private TextInputEditText codeInput;
   private Button sendSms;
   private ProgressBar pendingIndicator;
   private final OnClickListener sendSmsClickListener = v -> {
-    if (timeoutButtonViewModel.buttonClicked()) {
+    if (smsButtonViewModel.buttonClicked()) {
       codeViewModel.sendMeSms();
     }
   };
@@ -65,8 +65,8 @@ public class PasswordFragment extends BaseFragment implements CodeViewActions,
     // Required by Dagger2 for field injection
     appComponent.inject(this);
     codeViewModel = ViewModelProviders.of(this, codeViewModelFactory).get(CodeViewModelImpl.class);
-    timeoutButtonViewModel = ViewModelProviders.of(this, buttonViewModelFactory)
-        .get(TimeoutButtonViewModelImpl.class);
+    smsButtonViewModel = ViewModelProviders.of(this, buttonViewModelFactory)
+        .get(SmsButtonViewModelImpl.class);
   }
 
   @Nullable
@@ -85,14 +85,14 @@ public class PasswordFragment extends BaseFragment implements CodeViewActions,
         viewState.apply(this);
       }
     });
-    timeoutButtonViewModel.getViewStateLiveData().observe(this, viewState -> {
+    smsButtonViewModel.getViewStateLiveData().observe(this, viewState -> {
       if (viewState != null) {
         viewState.apply(this);
       }
     });
     setTextListener();
     if (savedInstanceState == null) {
-      sendSms.performClick();
+      sendSms.post(sendSms::performClick);
     }
     return view;
   }

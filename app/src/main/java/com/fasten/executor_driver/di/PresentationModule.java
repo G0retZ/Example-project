@@ -6,8 +6,8 @@ import com.fasten.executor_driver.presentation.code.CodeViewModel;
 import com.fasten.executor_driver.presentation.code.CodeViewModelImpl;
 import com.fasten.executor_driver.presentation.phone.PhoneViewModel;
 import com.fasten.executor_driver.presentation.phone.PhoneViewModelImpl;
-import com.fasten.executor_driver.presentation.timeoutbutton.TimeoutButtonViewModel;
-import com.fasten.executor_driver.presentation.timeoutbutton.TimeoutButtonViewModelImpl;
+import com.fasten.executor_driver.presentation.smsbutton.SmsButtonViewModel;
+import com.fasten.executor_driver.presentation.smsbutton.SmsButtonViewModelImpl;
 import dagger.Module;
 import dagger.Provides;
 import javax.inject.Named;
@@ -26,7 +26,7 @@ class PresentationModule {
   }
 
   @Provides
-  TimeoutButtonViewModel provideTimeoutButtonViewModel(TimeoutButtonViewModelImpl buttonViewModel) {
+  SmsButtonViewModel provideTimeoutButtonViewModel(SmsButtonViewModelImpl buttonViewModel) {
     return buttonViewModel;
   }
 
@@ -44,8 +44,8 @@ class PresentationModule {
 
   @Provides
   @Named("button")
-  ViewModelProvider.Factory provideTimeoutButtonViewModelFactory(
-      ViewModelFactory<TimeoutButtonViewModel> factory) {
+  ViewModelProvider.Factory provideSmsButtonViewModelFactory(
+      ViewModelFactory<SmsButtonViewModel> factory) {
     return factory;
   }
 

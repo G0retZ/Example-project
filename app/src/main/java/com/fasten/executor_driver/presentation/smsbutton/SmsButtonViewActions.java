@@ -1,11 +1,11 @@
-package com.fasten.executor_driver.presentation.timeoutbutton;
+package com.fasten.executor_driver.presentation.smsbutton;
 
 import android.support.annotation.Nullable;
 
 /**
  * Действия для смены состояния вида кнопки с таймаутом.
  */
-public interface TimeoutButtonViewActions {
+public interface SmsButtonViewActions {
 
   /**
    * Задать оставшееся время до активации.

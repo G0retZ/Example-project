@@ -1,4 +1,4 @@
-package com.fasten.executor_driver.presentation.timeoutbutton;
+package com.fasten.executor_driver.presentation.smsbutton;
 
 import android.support.annotation.NonNull;
 
@@ -7,23 +7,23 @@ import com.fasten.executor_driver.presentation.ViewState;
 /**
  * Состояние ожидания таймаута.
  */
-public final class TimeoutButtonViewStateHold implements ViewState<TimeoutButtonViewActions> {
+public final class SmsButtonViewStateHold implements ViewState<SmsButtonViewActions> {
 
   private final long secondsLeft;
 
-  TimeoutButtonViewStateHold(long secondsLeft) {
+  SmsButtonViewStateHold(long secondsLeft) {
     this.secondsLeft = secondsLeft;
   }
 
   @Override
-  public void apply(@NonNull TimeoutButtonViewActions stateActions) {
+  public void apply(@NonNull SmsButtonViewActions stateActions) {
     stateActions.setResponsive(false);
     stateActions.showTimer(secondsLeft);
   }
 
   @Override
   public String toString() {
-    return "TimeoutButtonViewStateHold{" +
+    return "SmsButtonViewStateHold{" +
         "secondsLeft=" + secondsLeft +
         '}';
   }
@@ -37,7 +37,7 @@ public final class TimeoutButtonViewStateHold implements ViewState<TimeoutButton
       return false;
     }
 
-    TimeoutButtonViewStateHold that = (TimeoutButtonViewStateHold) o;
+    SmsButtonViewStateHold that = (SmsButtonViewStateHold) o;
 
     return secondsLeft == that.secondsLeft;
   }

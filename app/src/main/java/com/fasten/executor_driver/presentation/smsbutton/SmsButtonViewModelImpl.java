@@ -1,4 +1,4 @@
-package com.fasten.executor_driver.presentation.timeoutbutton;
+package com.fasten.executor_driver.presentation.smsbutton;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
@@ -12,25 +12,25 @@ import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-public class TimeoutButtonViewModelImpl extends ViewModel implements TimeoutButtonViewModel {
+public class SmsButtonViewModelImpl extends ViewModel implements SmsButtonViewModel {
 
   private final int duration;
   private Disposable disposable;
 
   @NonNull
-  private final MutableLiveData<ViewState<TimeoutButtonViewActions>> viewStateLiveData;
+  private final MutableLiveData<ViewState<SmsButtonViewActions>> viewStateLiveData;
 
   @SuppressWarnings("SameParameterValue")
   @Inject
-  TimeoutButtonViewModelImpl(@Named("timeoutDuration") int duration) {
+  SmsButtonViewModelImpl(@Named("timeoutDuration") int duration) {
     this.duration = duration;
     viewStateLiveData = new MutableLiveData<>();
-    viewStateLiveData.postValue(new TimeoutButtonViewStateReady());
+    viewStateLiveData.postValue(new SmsButtonViewStateReady());
   }
 
   @NonNull
   @Override
-  public LiveData<ViewState<TimeoutButtonViewActions>> getViewStateLiveData() {
+  public LiveData<ViewState<SmsButtonViewActions>> getViewStateLiveData() {
     return viewStateLiveData;
   }
 
@@ -39,14 +39,14 @@ public class TimeoutButtonViewModelImpl extends ViewModel implements TimeoutButt
     if (disposable != null && !disposable.isDisposed()) {
       return false;
     }
-    disposable = Observable.interval(1, TimeUnit.SECONDS, Schedulers.io())
+    disposable = Observable.interval(0, 1, TimeUnit.SECONDS, Schedulers.io())
         .take(duration)
         .map(count -> duration - count)
         .subscribe(
-            count -> viewStateLiveData.postValue(new TimeoutButtonViewStateHold(count)),
+            count -> viewStateLiveData.postValue(new SmsButtonViewStateHold(count)),
             throwable -> {
             },
-            () -> viewStateLiveData.postValue(new TimeoutButtonViewStateReady())
+            () -> viewStateLiveData.postValue(new SmsButtonViewStateReady())
         );
     return true;
   }

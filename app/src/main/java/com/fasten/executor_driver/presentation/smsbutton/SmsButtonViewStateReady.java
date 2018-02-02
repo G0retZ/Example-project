@@ -1,4 +1,4 @@
-package com.fasten.executor_driver.presentation.timeoutbutton;
+package com.fasten.executor_driver.presentation.smsbutton;
 
 import android.support.annotation.NonNull;
 
@@ -7,10 +7,10 @@ import com.fasten.executor_driver.presentation.ViewState;
 /**
  * Начальное состояние готовой кнопки.
  */
-public final class TimeoutButtonViewStateReady implements ViewState<TimeoutButtonViewActions> {
+public final class SmsButtonViewStateReady implements ViewState<SmsButtonViewActions> {
 
   @Override
-  public void apply(@NonNull TimeoutButtonViewActions stateActions) {
+  public void apply(@NonNull SmsButtonViewActions stateActions) {
     stateActions.setResponsive(true);
     stateActions.showTimer(null);
   }

@@ -1,4 +1,4 @@
-package com.fasten.executor_driver.presentation.timeoutbutton;
+package com.fasten.executor_driver.presentation.smsbutton;
 
 import android.arch.core.executor.testing.InstantTaskExecutorRule;
 import android.arch.lifecycle.Observer;
@@ -28,9 +28,9 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 @RunWith(MockitoJUnitRunner.class)
-public class TimeoutButtonViewModelTest {
+public class SmsButtonViewModelTest {
 
-  private TimeoutButtonViewModel timeoutButtonViewModel;
+  private SmsButtonViewModel smsButtonViewModel;
 
   private TestScheduler testScheduler;
 
@@ -39,13 +39,13 @@ public class TimeoutButtonViewModelTest {
   public TestRule rule = new InstantTaskExecutorRule();
 
   @Mock
-  private Observer<ViewState<TimeoutButtonViewActions>> viewStateObserver;
+  private Observer<ViewState<SmsButtonViewActions>> viewStateObserver;
 
   @Before
   public void setUp() throws Exception {
     testScheduler = new TestScheduler();
     RxJavaPlugins.setIoSchedulerHandler(scheduler -> testScheduler);
-    timeoutButtonViewModel = new TimeoutButtonViewModelImpl(10);
+    smsButtonViewModel = new SmsButtonViewModelImpl(10);
   }
 
 	/* Тетсируем переключение состояний */
@@ -58,10 +58,10 @@ public class TimeoutButtonViewModelTest {
   @Test
   public void setReadyViewStateToLiveData() throws Exception {
     // Действие:
-    timeoutButtonViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    smsButtonViewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Результат:
-    verify(viewStateObserver, only()).onChanged(any(TimeoutButtonViewStateReady.class));
+    verify(viewStateObserver, only()).onChanged(any(SmsButtonViewStateReady.class));
   }
 
   /**
@@ -74,25 +74,25 @@ public class TimeoutButtonViewModelTest {
   public void setHoldViewStateToLiveData() throws Exception {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    timeoutButtonViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    smsButtonViewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    timeoutButtonViewModel.buttonClicked();
+    smsButtonViewModel.buttonClicked();
     testScheduler.advanceTimeBy(10, TimeUnit.SECONDS);
 
     // Результат:
-    inOrder.verify(viewStateObserver).onChanged(any(TimeoutButtonViewStateReady.class));
-    inOrder.verify(viewStateObserver).onChanged(new TimeoutButtonViewStateHold(10));
-    inOrder.verify(viewStateObserver).onChanged(new TimeoutButtonViewStateHold(9));
-    inOrder.verify(viewStateObserver).onChanged(new TimeoutButtonViewStateHold(8));
-    inOrder.verify(viewStateObserver).onChanged(new TimeoutButtonViewStateHold(7));
-    inOrder.verify(viewStateObserver).onChanged(new TimeoutButtonViewStateHold(6));
-    inOrder.verify(viewStateObserver).onChanged(new TimeoutButtonViewStateHold(5));
-    inOrder.verify(viewStateObserver).onChanged(new TimeoutButtonViewStateHold(4));
-    inOrder.verify(viewStateObserver).onChanged(new TimeoutButtonViewStateHold(3));
-    inOrder.verify(viewStateObserver).onChanged(new TimeoutButtonViewStateHold(2));
-    inOrder.verify(viewStateObserver).onChanged(new TimeoutButtonViewStateHold(1));
-    inOrder.verify(viewStateObserver).onChanged(any(TimeoutButtonViewStateReady.class));
+    inOrder.verify(viewStateObserver).onChanged(any(SmsButtonViewStateReady.class));
+    inOrder.verify(viewStateObserver).onChanged(new SmsButtonViewStateHold(10));
+    inOrder.verify(viewStateObserver).onChanged(new SmsButtonViewStateHold(9));
+    inOrder.verify(viewStateObserver).onChanged(new SmsButtonViewStateHold(8));
+    inOrder.verify(viewStateObserver).onChanged(new SmsButtonViewStateHold(7));
+    inOrder.verify(viewStateObserver).onChanged(new SmsButtonViewStateHold(6));
+    inOrder.verify(viewStateObserver).onChanged(new SmsButtonViewStateHold(5));
+    inOrder.verify(viewStateObserver).onChanged(new SmsButtonViewStateHold(4));
+    inOrder.verify(viewStateObserver).onChanged(new SmsButtonViewStateHold(3));
+    inOrder.verify(viewStateObserver).onChanged(new SmsButtonViewStateHold(2));
+    inOrder.verify(viewStateObserver).onChanged(new SmsButtonViewStateHold(1));
+    inOrder.verify(viewStateObserver).onChanged(any(SmsButtonViewStateReady.class));
     verifyNoMoreInteractions(viewStateObserver);
   }
 
@@ -105,7 +105,7 @@ public class TimeoutButtonViewModelTest {
    */
   @Test
   public void returnTrueForLegalClick() throws Exception {
-    assertTrue(timeoutButtonViewModel.buttonClicked());
+    assertTrue(smsButtonViewModel.buttonClicked());
   }
 
   /**
@@ -115,8 +115,8 @@ public class TimeoutButtonViewModelTest {
    */
   @Test
   public void returnFalseAfterLegalClick() throws Exception {
-    assertTrue(timeoutButtonViewModel.buttonClicked());
-    assertFalse(timeoutButtonViewModel.buttonClicked());
+    assertTrue(smsButtonViewModel.buttonClicked());
+    assertFalse(smsButtonViewModel.buttonClicked());
   }
 
   /**
@@ -126,13 +126,13 @@ public class TimeoutButtonViewModelTest {
    */
   @Test
   public void returnTrueForLegalClickAfterTimeout() throws Exception {
-    assertTrue(timeoutButtonViewModel.buttonClicked());
-    assertFalse(timeoutButtonViewModel.buttonClicked());
+    assertTrue(smsButtonViewModel.buttonClicked());
+    assertFalse(smsButtonViewModel.buttonClicked());
     testScheduler.advanceTimeBy(5, TimeUnit.SECONDS);
-    assertFalse(timeoutButtonViewModel.buttonClicked());
+    assertFalse(smsButtonViewModel.buttonClicked());
     testScheduler.advanceTimeBy(4, TimeUnit.SECONDS);
-    assertFalse(timeoutButtonViewModel.buttonClicked());
+    assertFalse(smsButtonViewModel.buttonClicked());
     testScheduler.advanceTimeBy(1, TimeUnit.SECONDS);
-    assertTrue(timeoutButtonViewModel.buttonClicked());
+    assertTrue(smsButtonViewModel.buttonClicked());
   }
 }
