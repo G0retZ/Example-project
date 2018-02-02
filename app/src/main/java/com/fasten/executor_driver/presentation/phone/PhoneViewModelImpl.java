@@ -39,7 +39,7 @@ public class PhoneViewModelImpl extends ViewModel implements PhoneViewModel {
   @Override
   public void phoneNumberChanged(@NonNull String phoneNumber) {
     lastLogin = phoneNumber.replaceAll("[^\\d]", "");
-    if (disposable != null) {
+    if (disposable != null && !disposable.isDisposed()) {
       return;
     }
     if (viewStateLiveData.getValue() instanceof PhoneViewStateError) {
@@ -48,7 +48,11 @@ public class PhoneViewModelImpl extends ViewModel implements PhoneViewModel {
     disposable = loginUseCase.validateLogin(lastLogin)
         .subscribeOn(Schedulers.single())
         .observeOn(AndroidSchedulers.mainThread())
-        .subscribe(this::checkNumber, throwable -> disposable = null);
+        .subscribe(this::checkNumber, throwable -> {
+          if (!(viewStateLiveData.getValue() instanceof PhoneViewStateInitial)) {
+            viewStateLiveData.setValue(new PhoneViewStateInitial());
+          }
+        });
     if (disposable.isDisposed()) {
       disposable = null;
     }
@@ -62,7 +66,7 @@ public class PhoneViewModelImpl extends ViewModel implements PhoneViewModel {
   @Override
   protected void onCleared() {
     super.onCleared();
-    if (disposable != null) {
+    if (disposable != null && !disposable.isDisposed()) {
       disposable.dispose();
       disposable = null;
     }
