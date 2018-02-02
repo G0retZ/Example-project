@@ -1,7 +1,6 @@
 package com.fasten.executor_driver.presentation.phone;
 
 import android.support.annotation.NonNull;
-
 import com.fasten.executor_driver.presentation.ViewState;
 import com.fasten.executor_driver.utils.ThrowableUtils;
 

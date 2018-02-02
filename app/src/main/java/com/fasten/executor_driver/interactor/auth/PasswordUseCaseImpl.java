@@ -1,17 +1,14 @@
 package com.fasten.executor_driver.interactor.auth;
 
 import android.support.annotation.NonNull;
-
 import android.support.annotation.Nullable;
 import com.fasten.executor_driver.backend.web.ValidationException;
 import com.fasten.executor_driver.entity.LoginData;
 import com.fasten.executor_driver.entity.Validator;
-
 import com.fasten.executor_driver.interactor.DataSharer;
+import io.reactivex.Completable;
 import javax.inject.Inject;
 import javax.inject.Named;
-
-import io.reactivex.Completable;
 
 public class PasswordUseCaseImpl implements PasswordUseCase {
 

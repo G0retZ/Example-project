@@ -8,7 +8,6 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.util.Log;
-
 import com.fasten.executor_driver.application.BaseActivity;
 import com.fasten.executor_driver.application.OnBackPressedInterceptor;
 import com.fasten.executor_driver.di.AppComponent;

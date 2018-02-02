@@ -1,18 +1,5 @@
 package com.fasten.executor_driver.interactor.auth;
 
-import com.fasten.executor_driver.backend.web.NoNetworkException;
-import com.fasten.executor_driver.backend.web.ValidationException;
-import com.fasten.executor_driver.entity.Validator;
-
-import com.fasten.executor_driver.interactor.DataSharer;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
-
-import io.reactivex.Completable;
-
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.nullable;
@@ -20,6 +7,17 @@ import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
+
+import com.fasten.executor_driver.backend.web.NoNetworkException;
+import com.fasten.executor_driver.backend.web.ValidationException;
+import com.fasten.executor_driver.entity.Validator;
+import com.fasten.executor_driver.interactor.DataSharer;
+import io.reactivex.Completable;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
 public class LoginUseCaseTest {

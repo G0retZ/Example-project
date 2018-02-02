@@ -2,7 +2,6 @@ package com.fasten.executor_driver.presentation.phone;
 
 import android.arch.lifecycle.LiveData;
 import android.support.annotation.NonNull;
-
 import com.fasten.executor_driver.presentation.ViewState;
 
 /**

@@ -3,10 +3,8 @@ package com.fasten.executor_driver.application;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-
 import com.fasten.executor_driver.R;
 import com.fasten.executor_driver.backend.web.TokenKeeper;
-
 import javax.inject.Inject;
 
 public class MainActivity extends BaseActivity {

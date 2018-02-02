@@ -1,7 +1,6 @@
 package com.fasten.executor_driver.entity;
 
 import android.support.annotation.Nullable;
-
 import javax.inject.Inject;
 
 /**

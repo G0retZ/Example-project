@@ -1,7 +1,6 @@
 package com.fasten.executor_driver.backend.web.model;
 
 import android.support.annotation.NonNull;
-
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
