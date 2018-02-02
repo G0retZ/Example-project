@@ -48,11 +48,4 @@ class PresentationModule {
       ViewModelFactory<SmsButtonViewModel> factory) {
     return factory;
   }
-
-  @SuppressWarnings("SameReturnValue")
-  @Provides
-  @Named("timeoutDuration")
-  int provideTimeoutButtonDuration() {
-    return 30;
-  }
 }

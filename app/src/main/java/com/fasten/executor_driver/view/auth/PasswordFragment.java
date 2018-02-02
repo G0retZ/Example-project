@@ -41,11 +41,7 @@ public class PasswordFragment extends BaseFragment implements CodeViewActions,
   private TextInputEditText codeInput;
   private Button sendSms;
   private ProgressBar pendingIndicator;
-  private final OnClickListener sendSmsClickListener = v -> {
-    if (smsButtonViewModel.buttonClicked()) {
-      codeViewModel.sendMeSms();
-    }
-  };
+  private final OnClickListener sendSmsClickListener = v -> smsButtonViewModel.sendMeSms();
 
   private ViewModelProvider.Factory codeViewModelFactory;
   private ViewModelProvider.Factory buttonViewModelFactory;
@@ -141,9 +137,7 @@ public class PasswordFragment extends BaseFragment implements CodeViewActions,
 
   @Override
   public void showSmsSendError(@Nullable Throwable error) {
-    if (error == null) {
-      codeInputLayout.setError(null);
-    } else {
+    if (error != null) {
       if (error instanceof NoNetworkException) {
         codeInputLayout.setError(getString(R.string.no_network_connection));
       } else {

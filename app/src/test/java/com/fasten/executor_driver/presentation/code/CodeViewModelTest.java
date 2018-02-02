@@ -1,14 +1,24 @@
 package com.fasten.executor_driver.presentation.code;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.only;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
+
 import android.arch.core.executor.testing.InstantTaskExecutorRule;
 import android.arch.lifecycle.Observer;
-
 import com.fasten.executor_driver.backend.web.NoNetworkException;
 import com.fasten.executor_driver.backend.web.ValidationException;
 import com.fasten.executor_driver.interactor.auth.PasswordUseCase;
-import com.fasten.executor_driver.interactor.auth.SmsUseCase;
 import com.fasten.executor_driver.presentation.ViewState;
-
+import io.reactivex.Completable;
+import io.reactivex.android.plugins.RxAndroidPlugins;
+import io.reactivex.plugins.RxJavaPlugins;
+import io.reactivex.schedulers.Schedulers;
+import io.reactivex.subjects.CompletableSubject;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -20,22 +30,6 @@ import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
-
-import io.reactivex.Completable;
-import io.reactivex.android.plugins.RxAndroidPlugins;
-import io.reactivex.plugins.RxJavaPlugins;
-import io.reactivex.schedulers.Schedulers;
-import io.reactivex.subjects.CompletableSubject;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.only;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.verifyZeroInteractions;
-import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CodeViewModelTest {
@@ -49,9 +43,6 @@ public class CodeViewModelTest {
   private PasswordUseCase passwordUseCase;
 
   @Mock
-  private SmsUseCase smsUseCase;
-
-  @Mock
   private Observer<ViewState<CodeViewActions>> viewStateObserver;
 
   @Captor
@@ -63,67 +54,7 @@ public class CodeViewModelTest {
     RxAndroidPlugins.setInitMainThreadSchedulerHandler(scheduler -> Schedulers.trampoline());
     when(passwordUseCase.authorize(anyString(), any(Completable.class)))
         .thenReturn(Completable.never());
-    when(smsUseCase.sendMeCode()).thenReturn(CompletableSubject.never());
-    codeViewModel = new CodeViewModelImpl(passwordUseCase, smsUseCase);
-  }
-
-	/* Тетсируем работу с юзкейсом СМС. */
-
-  /**
-   * Не должен просить юзкейс отправить СМС с кодом на номер, если предыдущий запрос еще не
-   * завершился.
-   *
-   * @throws Exception error.
-   */
-  @Test
-  public void DoNotAskSmsUseCaseToSendMeCode() throws Exception {
-    // Действие:
-    codeViewModel.sendMeSms();
-    codeViewModel.sendMeSms();
-    codeViewModel.sendMeSms();
-
-    // Результат:
-    verify(smsUseCase, only()).sendMeCode();
-  }
-
-  /**
-   * Должен попросить юзкейс отправить СМС с кодом на номер.
-   *
-   * @throws Exception error.
-   */
-  @Test
-  public void askSmsUseCaseToSendMeCode() throws Exception {
-    // Дано:
-    when(smsUseCase.sendMeCode()).thenReturn(Completable.error(new NoNetworkException()));
-
-    // Действие:
-    codeViewModel.sendMeSms();
-    codeViewModel.sendMeSms();
-    codeViewModel.sendMeSms();
-
-    // Результат:
-    verify(smsUseCase, times(3)).sendMeCode();
-    verifyNoMoreInteractions(smsUseCase);
-  }
-
-  /**
-   * Не должен трогать другие юзкейсы, пока запрос СМС еще не завершился.
-   *
-   * @throws Exception error.
-   */
-  @Test
-  public void doNotTouchOtherUseCasesUntilSmsRequestFinished() throws Exception {
-    // Действие:
-    codeViewModel.sendMeSms();
-    codeViewModel.setCode("12");
-    codeViewModel.sendMeSms();
-    codeViewModel.sendMeSms();
-    codeViewModel.setCode("132");
-    codeViewModel.setCode("152");
-
-    // Результат:
-    verify(smsUseCase, only()).sendMeCode();
-    verifyZeroInteractions(passwordUseCase);
+    codeViewModel = new CodeViewModelImpl(passwordUseCase);
   }
 
 	/* Тетсируем работу с юзкейсом кода. */
@@ -165,26 +96,6 @@ public class CodeViewModelTest {
     verify(passwordUseCase).authorize(eq("123"), afterValidationCaptor.capture());
     verify(passwordUseCase).authorize(eq("1234"), afterValidationCaptor.capture());
     verifyNoMoreInteractions(passwordUseCase);
-  }
-
-  /**
-   * Не должен трогать другие юзкейсы, пока запрос авторизации еще не завершился.
-   *
-   * @throws Exception error.
-   */
-  @Test
-  public void doNotTouchOtherUseCasesUntilAuthRequestFinished() throws Exception {
-    // Действие:
-    codeViewModel.setCode("12");
-    codeViewModel.sendMeSms();
-    codeViewModel.setCode("132");
-    codeViewModel.setCode("152");
-    codeViewModel.sendMeSms();
-    codeViewModel.sendMeSms();
-
-    // Результат:
-    verify(passwordUseCase, only()).authorize(eq("12"), afterValidationCaptor.capture());
-    verifyZeroInteractions(smsUseCase);
   }
 
 	/* Тетсируем переключение состояний. */

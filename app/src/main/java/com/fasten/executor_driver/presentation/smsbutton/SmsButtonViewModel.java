@@ -2,11 +2,10 @@ package com.fasten.executor_driver.presentation.smsbutton;
 
 import android.arch.lifecycle.LiveData;
 import android.support.annotation.NonNull;
-
 import com.fasten.executor_driver.presentation.ViewState;
 
 /**
- * ViewModel кнопки с таймером.
+ * ViewModel кнопки отправки СМС с таймером.
  */
 public interface SmsButtonViewModel {
 
@@ -19,9 +18,7 @@ public interface SmsButtonViewModel {
   LiveData<ViewState<SmsButtonViewActions>> getViewStateLiveData();
 
   /**
-   * Передает событие нажатия кнопки.
-   *
-   * @return возвращает, если нажатие было легальным и на него можно реагировать.
+   * Запрашивает отправку СМС с кодом.
    */
-  boolean buttonClicked();
+  void sendMeSms();
 }
