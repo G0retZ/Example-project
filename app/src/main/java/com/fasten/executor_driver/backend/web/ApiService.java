@@ -17,7 +17,7 @@ public interface ApiService {
    *  Запрос СМС с кодом
    */
   @GET("login/password/sms")
-  Completable sendMeCode(@NonNull @Query("pn") String phoneNumber);
+  Completable sendMeCode(@NonNull @Query("phoneNumber") String phoneNumber);
 
   /*
    *  Проверка логина
@@ -28,6 +28,6 @@ public interface ApiService {
   /*
    *  Авторизация
    */
-  @POST("drivers/auth")
+  @POST("login")
   Completable authorize(@NonNull @Body ApiLogin apiLogin);
 }
