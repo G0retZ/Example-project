@@ -3,6 +3,8 @@ package com.fasten.executor_driver.view.auth;
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProvider.Factory;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -25,6 +27,7 @@ import com.fasten.executor_driver.presentation.smsbutton.SmsButtonViewModel;
 import com.fasten.executor_driver.presentation.smsbutton.SmsButtonViewModelImpl;
 import com.fasten.executor_driver.view.BaseFragment;
 import com.jakewharton.rxbinding2.widget.RxTextView;
+import io.reactivex.disposables.Disposable;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -43,9 +46,12 @@ public class PasswordFragment extends BaseFragment implements CodeViewActions,
   private ProgressBar pendingIndicator;
   private ProgressBar sendingIndicator;
   private final OnClickListener sendSmsClickListener = v -> smsButtonViewModel.sendMeSms();
+  private Context context;
 
   private ViewModelProvider.Factory codeViewModelFactory;
   private ViewModelProvider.Factory buttonViewModelFactory;
+  private SMSReceiver smsReceiver;
+  private Disposable smsCodeDisposable;
 
   @Inject
   public void setCodeViewModelFactory(@Named("code") Factory codeViewModelFactory) {
@@ -57,6 +63,17 @@ public class PasswordFragment extends BaseFragment implements CodeViewActions,
     this.buttonViewModelFactory = buttonViewModelFactory;
   }
 
+  @Inject
+  public void setSmsReceiver(SMSReceiver smsReceiver) {
+    this.smsReceiver = smsReceiver;
+  }
+
+  @Override
+  public void onAttach(Context context) {
+    super.onAttach(context);
+    this.context = context;
+  }
+
   @Override
   protected void onDependencyInject(AppComponent appComponent) {
     // Required by Dagger2 for field injection
@@ -64,6 +81,15 @@ public class PasswordFragment extends BaseFragment implements CodeViewActions,
     codeViewModel = ViewModelProviders.of(this, codeViewModelFactory).get(CodeViewModelImpl.class);
     smsButtonViewModel = ViewModelProviders.of(this, buttonViewModelFactory)
         .get(SmsButtonViewModelImpl.class);
+  }
+
+  @Override
+  public void onCreate(@Nullable Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    IntentFilter intentFilter = new IntentFilter();
+    intentFilter.addAction("android.provider.Telephony.SMS_RECEIVED");
+    intentFilter.setPriority(999);
+    context.registerReceiver(smsReceiver, intentFilter);
   }
 
   @Nullable
@@ -93,6 +119,30 @@ public class PasswordFragment extends BaseFragment implements CodeViewActions,
       sendSms.post(sendSms::performClick);
     }
     return view;
+  }
+
+  @Override
+  public void onResume() {
+    super.onResume();
+    smsCodeDisposable = smsReceiver.getCodeFromSms().subscribe(codeViewModel::setCode);
+  }
+
+  @Override
+  public void onPause() {
+    super.onPause();
+    smsCodeDisposable.dispose();
+  }
+
+  @Override
+  public void onDestroy() {
+    super.onDestroy();
+    context.unregisterReceiver(smsReceiver);
+  }
+
+  @Override
+  public void onDetach() {
+    super.onDetach();
+    context = null;
   }
 
   @Override
