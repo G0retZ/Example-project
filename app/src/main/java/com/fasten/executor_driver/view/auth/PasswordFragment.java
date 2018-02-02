@@ -5,11 +5,13 @@ import android.arch.lifecycle.ViewModelProvider.Factory;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -38,20 +40,26 @@ import javax.inject.Named;
 public class PasswordFragment extends BaseFragment implements CodeViewActions,
     SmsButtonViewActions {
 
+  private static final String[] PERMISSIONS = new String[]{"android.permission.RECEIVE_SMS"};
+
   private CodeViewModel codeViewModel;
   private SmsButtonViewModel smsButtonViewModel;
   private TextInputLayout codeInputLayout;
   private TextInputEditText codeInput;
-  private Button sendSms;
+  private Button sendSmsRequest;
   private ProgressBar pendingIndicator;
   private ProgressBar sendingIndicator;
-  private final OnClickListener sendSmsClickListener = v -> smsButtonViewModel.sendMeSms();
+  private final OnClickListener sendSmsClickListener = v -> {
+    smsSent = true;
+    smsButtonViewModel.sendMeSms();
+  };
   private Context context;
 
   private ViewModelProvider.Factory codeViewModelFactory;
   private ViewModelProvider.Factory buttonViewModelFactory;
-  private SMSReceiver smsReceiver;
+  private SmsReceiver smsReceiver;
   private Disposable smsCodeDisposable;
+  private boolean smsSent;
 
   @Inject
   public void setCodeViewModelFactory(@Named("code") Factory codeViewModelFactory) {
@@ -64,7 +72,7 @@ public class PasswordFragment extends BaseFragment implements CodeViewActions,
   }
 
   @Inject
-  public void setSmsReceiver(SMSReceiver smsReceiver) {
+  public void setSmsReceiver(SmsReceiver smsReceiver) {
     this.smsReceiver = smsReceiver;
   }
 
@@ -86,8 +94,9 @@ public class PasswordFragment extends BaseFragment implements CodeViewActions,
   @Override
   public void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+    smsSent = savedInstanceState != null;
     IntentFilter intentFilter = new IntentFilter();
-    intentFilter.addAction("android.provider.Telephony.SMS_RECEIVED");
+    intentFilter.addAction(SmsReceiver.ACTION);
     intentFilter.setPriority(999);
     context.registerReceiver(smsReceiver, intentFilter);
   }
@@ -100,7 +109,7 @@ public class PasswordFragment extends BaseFragment implements CodeViewActions,
     View view = inflater.inflate(R.layout.fragment_auth_password, container, false);
     codeInputLayout = view.findViewById(R.id.codeInputLayout);
     codeInput = view.findViewById(R.id.codeInput);
-    sendSms = view.findViewById(R.id.sendSms);
+    sendSmsRequest = view.findViewById(R.id.sendSms);
     pendingIndicator = view.findViewById(R.id.pending);
     sendingIndicator = view.findViewById(R.id.sending);
 
@@ -115,16 +124,17 @@ public class PasswordFragment extends BaseFragment implements CodeViewActions,
       }
     });
     setTextListener();
-    if (savedInstanceState == null) {
-      sendSms.post(sendSms::performClick);
-    }
+    checkPermissions();
     return view;
   }
 
   @Override
   public void onResume() {
     super.onResume();
-    smsCodeDisposable = smsReceiver.getCodeFromSms().subscribe(codeViewModel::setCode);
+    smsCodeDisposable = smsReceiver.getCodeFromSms().subscribe(text -> {
+      codeInput.setText(text);
+      codeInput.setSelection(text.length());
+    });
   }
 
   @Override
@@ -176,15 +186,15 @@ public class PasswordFragment extends BaseFragment implements CodeViewActions,
   @Override
   public void showSmsButtonTimer(@Nullable Long secondsLeft) {
     if (secondsLeft == null) {
-      sendSms.setText(R.string.get_code_from_sms);
+      sendSmsRequest.setText(R.string.get_code_from_sms);
     } else {
-      sendSms.setText(getString(R.string.repeat_code_from_sms, secondsLeft));
+      sendSmsRequest.setText(getString(R.string.repeat_code_from_sms, secondsLeft));
     }
   }
 
   @Override
   public void setSmsButtonResponsive(boolean responsive) {
-    sendSms.setOnClickListener(responsive ? sendSmsClickListener : null);
+    sendSmsRequest.setOnClickListener(responsive ? sendSmsClickListener : null);
   }
 
   @Override
@@ -200,7 +210,54 @@ public class PasswordFragment extends BaseFragment implements CodeViewActions,
 
   @Override
   public void showSmsSendPending(boolean pending) {
-    sendSms.setVisibility(pending ? View.INVISIBLE : View.VISIBLE);
+    sendSmsRequest.setVisibility(pending ? View.INVISIBLE : View.VISIBLE);
     sendingIndicator.setVisibility(pending ? View.VISIBLE : View.GONE);
+  }
+
+  @Override
+  public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+      @NonNull int[] grantResults) {
+    if (permissions.length == 0 || grantResults.length == 0) {
+      return;
+    }
+    if (requestCode == 1337) {
+      boolean allowed = true;
+      for (int result : grantResults) {
+        allowed = allowed & result == PackageManager.PERMISSION_GRANTED;
+      }
+      if (allowed) {
+        autoSendSmsRequest();
+      } else {
+        autoSendSmsRequest();
+      }
+    }
+  }
+
+  private void autoSendSmsRequest() {
+    if (!smsSent) {
+      sendSmsRequest.post(sendSmsRequest::performClick);
+    }
+  }
+
+  private void checkPermissions() {
+    boolean allowed = true;
+    for (String permission : PERMISSIONS) {
+      allowed = allowed & ContextCompat.checkSelfPermission(context, permission)
+          == PackageManager.PERMISSION_GRANTED;
+    }
+    if (allowed) {
+      autoSendSmsRequest();
+      return;
+    }
+    // Небходимо ли показывать разъяснение?
+    if (shouldShowRequestPermissionRationale(PERMISSIONS[0])) {
+      // Заяснить пользователю необходимость *асинхронно* -- не блокировать
+      // этот поток в ожидании ответа пользователя! После того как пользователь
+      // увидел пояснения, Попробуй снова запросить разрешение.
+      requestPermissions(PERMISSIONS, 1337);
+    } else {
+      // Заяснять не нужно, мы можем запросить разрешения.
+      requestPermissions(PERMISSIONS, 1337);
+    }
   }
 }

@@ -15,14 +15,14 @@ import javax.inject.Named;
 /**
  * Перехватываем входящие сообщения
  */
-public class SMSReceiver extends BroadcastReceiver {
+public class SmsReceiver extends BroadcastReceiver {
 
   public static final String ACTION = "android.provider.Telephony.SMS_RECEIVED";
-  private Subject<String> subject = PublishSubject.create();
+  private final Subject<String> subject = PublishSubject.create();
   private final CodeExtractor smsCodeExtractor;
 
   @Inject
-  public SMSReceiver(@Named("smsExtractor") CodeExtractor smsCodeExtractor) {
+  public SmsReceiver(@Named("smsExtractor") CodeExtractor smsCodeExtractor) {
     this.smsCodeExtractor = smsCodeExtractor;
   }
 
