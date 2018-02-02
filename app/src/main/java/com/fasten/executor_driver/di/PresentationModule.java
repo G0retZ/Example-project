@@ -26,7 +26,7 @@ class PresentationModule {
   }
 
   @Provides
-  SmsButtonViewModel provideTimeoutButtonViewModel(SmsButtonViewModelImpl buttonViewModel) {
+  SmsButtonViewModel provideSmsButtonViewModel(SmsButtonViewModelImpl buttonViewModel) {
     return buttonViewModel;
   }
 
