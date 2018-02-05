@@ -11,7 +11,7 @@ import com.google.gson.annotations.SerializedName;
 public class ApiLogin {
 
   @NonNull
-  @SerializedName("username")
+  @SerializedName("login")
   @Expose
   private final String name;
   @NonNull

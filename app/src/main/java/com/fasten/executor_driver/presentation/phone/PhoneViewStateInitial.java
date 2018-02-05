@@ -10,9 +10,6 @@ public final class PhoneViewStateInitial implements ViewState<PhoneViewActions> 
 
   @Override
   public void apply(@NonNull PhoneViewActions stateActions) {
-    stateActions.showPending(false);
-    stateActions.showError(null);
-    stateActions.setInputEditable(true);
     stateActions.enableButton(false);
   }
 }

@@ -2,17 +2,14 @@ package com.fasten.executor_driver.interactor.auth;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.nullable;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
-import com.fasten.executor_driver.backend.web.NoNetworkException;
 import com.fasten.executor_driver.backend.web.ValidationException;
 import com.fasten.executor_driver.entity.Validator;
 import com.fasten.executor_driver.interactor.DataSharer;
-import io.reactivex.Completable;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,9 +22,6 @@ public class LoginUseCaseTest {
   private LoginUseCase loginUseCase;
 
   @Mock
-  private LoginGateway gateway;
-
-  @Mock
   private Validator<String> loginValidator;
 
   @Mock
@@ -35,8 +29,7 @@ public class LoginUseCaseTest {
 
   @Before
   public void setUp() throws Exception {
-    loginUseCase = new LoginUseCaseImpl(gateway, loginSharer, loginValidator);
-    when(gateway.checkLogin(nullable(String.class))).thenReturn(Completable.never());
+    loginUseCase = new LoginUseCaseImpl(loginSharer, loginValidator);
   }
 
 	/* Проверяем работу с валидаторами */
@@ -55,7 +48,7 @@ public class LoginUseCaseTest {
     verify(loginValidator, only()).validate("");
   }
 
-	/* Проверяем работу с валидатором */
+	/* Проверяем ответы на валидацию */
 
   /**
    * Должен ответить ошибкой, если логин не соответствует формату
@@ -64,7 +57,7 @@ public class LoginUseCaseTest {
    */
   @Test
   public void answerErrorIfLoginInvalid() throws Exception {
-    // Результат:
+    // Действие и Результат:
     loginUseCase.validateLogin("12").test().assertError(ValidationException.class);
   }
 
@@ -75,27 +68,11 @@ public class LoginUseCaseTest {
    */
   @Test
   public void answerSuccessIfLoginValid() throws Exception {
-    // Действие:
+    // Дано:
     when(loginValidator.validate(anyString())).thenReturn(true);
 
-    // Результат:
+    // Действие и Результат:
     loginUseCase.validateLogin("").test().assertComplete();
-  }
-
-	/* Проверяем работу с гейтвеем */
-
-  /**
-   * Должен запросить у гейтвея проверку логина
-   *
-   * @throws Exception error
-   */
-  @Test
-  public void askGatewayForLoginCheck() throws Exception {
-    // Действие:
-    loginUseCase.checkLogin("checkLogin").test();
-
-    // Результат:
-    verify(gateway, only()).checkLogin("checkLogin");
   }
 
 	/* Проверяем работу с публикатором логина */
@@ -109,69 +86,25 @@ public class LoginUseCaseTest {
   public void doNotTouchDataSharer() throws Exception {
     // Действие:
     loginUseCase.validateLogin("checkLogin").test();
-    when(loginValidator.validate(any(String.class))).thenReturn(true);
-    loginUseCase.validateLogin("checkLogin").test();
-    loginUseCase.checkLogin("checkLogin").test();
-    when(gateway.checkLogin(any(String.class)))
-        .thenReturn(Completable.error(new NoNetworkException()));
-    loginUseCase.checkLogin("checkLogin").test();
 
     // Результат:
     verifyZeroInteractions(loginSharer);
   }
 
   /**
-   * Должен опубликовать логин после успешной проверки на сервере.
+   * Должен опубликовать логин после успешной валидации.
    *
    * @throws Exception error
    */
   @Test
   public void askDataSharerToShareLogin() throws Exception {
+    // Дано:
+    when(loginValidator.validate(any(String.class))).thenReturn(true);
+
     // Действие:
-    when(gateway.checkLogin(any(String.class))).thenReturn(Completable.complete());
-    loginUseCase.checkLogin("checkLogin").test();
+    loginUseCase.validateLogin("checkLogin").test();
 
     // Результат:
     verify(loginSharer, only()).share("checkLogin");
-  }
-
-	/* Проверяем ответы на проверку логина */
-
-  /**
-   * Должен ответить ошибкой аргумента
-   *
-   * @throws Exception error
-   */
-  @Test
-  public void answerArgumentError() throws Exception {
-    // Результат:
-    loginUseCase.checkLogin(null).test().assertError(ValidationException.class);
-  }
-
-  /**
-   * Должен ответить ошибкой сети
-   *
-   * @throws Exception error
-   */
-  @Test
-  public void answerNoNetworkError() throws Exception {
-    // Действие:
-    when(gateway.checkLogin(any(String.class)))
-        .thenReturn(Completable.error(new NoNetworkException()));
-
-    // Результат:
-    loginUseCase.checkLogin("").test().assertError(NoNetworkException.class);
-  }
-
-  /**
-   * Должен ответить успехом
-   *
-   * @throws Exception error
-   */
-  @Test
-  public void answerLoginSuccessful() throws Exception {
-    // Действие:
-    when(gateway.checkLogin(any(String.class))).thenReturn(Completable.complete());
-    loginUseCase.checkLogin("").test().assertComplete();
   }
 }

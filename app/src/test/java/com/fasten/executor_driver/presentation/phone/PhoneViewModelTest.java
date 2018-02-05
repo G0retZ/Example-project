@@ -2,7 +2,6 @@ package com.fasten.executor_driver.presentation.phone;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -10,7 +9,6 @@ import static org.mockito.Mockito.when;
 
 import android.arch.core.executor.testing.InstantTaskExecutorRule;
 import android.arch.lifecycle.Observer;
-import com.fasten.executor_driver.backend.web.NoNetworkException;
 import com.fasten.executor_driver.backend.web.ValidationException;
 import com.fasten.executor_driver.interactor.auth.LoginUseCase;
 import com.fasten.executor_driver.presentation.ViewState;
@@ -48,7 +46,6 @@ public class PhoneViewModelTest {
     RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
     RxAndroidPlugins.setInitMainThreadSchedulerHandler(scheduler -> Schedulers.trampoline());
     when(useCase.validateLogin(anyString())).thenReturn(Completable.never());
-    when(useCase.checkLogin(anyString())).thenReturn(Completable.never());
   }
 
 	/* Тетсируем работу с юзкейсом */
@@ -71,47 +68,6 @@ public class PhoneViewModelTest {
     verify(useCase).validateLogin("12");
     verify(useCase).validateLogin("123");
     verify(useCase).validateLogin("1234");
-    verifyNoMoreInteractions(useCase);
-  }
-
-  /**
-   * Не должен попросить юзкейс проверить логин, если он не валидирован
-   *
-   * @throws Exception error
-   */
-  @Test
-  public void DoNotAskUseCaseToCheckLogin() throws Exception {
-    // Действие:
-    phoneViewModel.phoneNumberChanged("12");
-    phoneViewModel.phoneNumberChanged("123");
-    phoneViewModel.phoneNumberChanged("1234");
-
-    // Результат:
-    verify(useCase, never()).checkLogin(anyString());
-  }
-
-  /**
-   * Должен попросить юзкейс проверить логин
-   *
-   * @throws Exception error
-   */
-  @Test
-  public void askUseCaseToCheckLogin() throws Exception {
-    // Дано:
-    when(useCase.validateLogin(anyString()))
-        .thenReturn(Completable.error(new IllegalArgumentException()));
-    when(useCase.validateLogin("1234")).thenReturn(Completable.complete());
-
-    // Действие:
-    phoneViewModel.phoneNumberChanged("12");
-    phoneViewModel.phoneNumberChanged("123");
-    phoneViewModel.phoneNumberChanged("1234");
-
-    // Результат:
-    verify(useCase).validateLogin("12");
-    verify(useCase).validateLogin("123");
-    verify(useCase).validateLogin("1234");
-    verify(useCase).checkLogin("1234");
     verifyNoMoreInteractions(useCase);
   }
 
@@ -141,7 +97,7 @@ public class PhoneViewModelTest {
     // Дано:
     phoneViewModel.getViewStateLiveData().observeForever(viewStateObserver);
     when(useCase.validateLogin(anyString()))
-        .thenReturn(Completable.error(new IllegalArgumentException()));
+        .thenReturn(Completable.error(new ValidationException()));
 
     // Действие:
     phoneViewModel.phoneNumberChanged("");
@@ -154,17 +110,17 @@ public class PhoneViewModelTest {
   }
 
   /**
-   * Должен вернуть состояние вида "В процессе"
+   * Должен вернуть состояние вида "Готов"
    *
    * @throws Exception error
    */
   @Test
-  public void setPendingViewStateToLiveData() throws Exception {
+  public void setReadyViewStateToLiveData() throws Exception {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     phoneViewModel.getViewStateLiveData().observeForever(viewStateObserver);
     when(useCase.validateLogin(anyString()))
-        .thenReturn(Completable.error(new IllegalArgumentException()));
+        .thenReturn(Completable.error(new ValidationException()));
     when(useCase.validateLogin("12457")).thenReturn(Completable.complete());
 
     // Действие:
@@ -175,79 +131,6 @@ public class PhoneViewModelTest {
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(any(PhoneViewStateInitial.class));
-    inOrder.verify(viewStateObserver).onChanged(any(PhoneViewStatePending.class));
-    verifyNoMoreInteractions(viewStateObserver);
-  }
-
-  /**
-   * Должен вернуть состояние вида "Ошибка"
-   *
-   * @throws Exception error
-   */
-  @Test
-  public void setErrorViewStateToLiveData() throws Exception {
-    // Дано:
-    InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    phoneViewModel.getViewStateLiveData().observeForever(viewStateObserver);
-    when(useCase.validateLogin(anyString())).thenReturn(Completable.complete());
-    when(useCase.checkLogin(anyString())).thenReturn(Completable.error(new NoNetworkException()));
-
-    // Действие:
-    phoneViewModel.phoneNumberChanged("1245");
-
-    // Результат:
-    inOrder.verify(viewStateObserver).onChanged(any(PhoneViewStateInitial.class));
-    inOrder.verify(viewStateObserver).onChanged(any(PhoneViewStatePending.class));
-    inOrder.verify(viewStateObserver).onChanged(new PhoneViewStateError(new NoNetworkException()));
-    verifyNoMoreInteractions(viewStateObserver);
-  }
-
-  /**
-   * Должен вернуть вернуть начальное состояние вида после "Ошибка"
-   *
-   * @throws Exception error
-   */
-  @Test
-  public void setInitialViewStateToLiveDataAfterError() throws Exception {
-    // Дано:
-    InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    phoneViewModel.getViewStateLiveData().observeForever(viewStateObserver);
-    when(useCase.validateLogin(anyString())).thenReturn(Completable.complete());
-    when(useCase.checkLogin(anyString())).thenReturn(Completable.error(new NoNetworkException()));
-
-    // Действие:
-    phoneViewModel.phoneNumberChanged("1245");
-    when(useCase.validateLogin(anyString()))
-        .thenReturn(Completable.error(new IllegalArgumentException()));
-    phoneViewModel.phoneNumberChanged("124");
-
-    // Результат:
-    inOrder.verify(viewStateObserver).onChanged(any(PhoneViewStateInitial.class));
-    inOrder.verify(viewStateObserver).onChanged(any(PhoneViewStatePending.class));
-    inOrder.verify(viewStateObserver).onChanged(new PhoneViewStateError(new NoNetworkException()));
-    inOrder.verify(viewStateObserver).onChanged(any(PhoneViewStateInitial.class));
-    verifyNoMoreInteractions(viewStateObserver);
-  }
-
-  /**
-   * Должен вернуть состояние вида "Готов"
-   *
-   * @throws Exception error
-   */
-  @Test
-  public void setReadyViewStateToLiveData() throws Exception {
-    // Дано:
-    InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    phoneViewModel.getViewStateLiveData().observeForever(viewStateObserver);
-    when(useCase.validateLogin(anyString())).thenReturn(Completable.complete());
-    when(useCase.checkLogin(anyString())).thenReturn(Completable.complete());
-
-    // Действие:
-    phoneViewModel.phoneNumberChanged("1245");
-
-    // Результат:
-    inOrder.verify(viewStateObserver).onChanged(any(PhoneViewStateInitial.class));
-    inOrder.verify(viewStateObserver).onChanged(any(PhoneViewStatePending.class));
     inOrder.verify(viewStateObserver).onChanged(any(PhoneViewStateReady.class));
     verifyNoMoreInteractions(viewStateObserver);
   }
@@ -263,9 +146,9 @@ public class PhoneViewModelTest {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     phoneViewModel.getViewStateLiveData().observeForever(viewStateObserver);
-    when(useCase.validateLogin(anyString())).thenReturn(Completable.error(new ValidationException()));
+    when(useCase.validateLogin(anyString()))
+        .thenReturn(Completable.error(new ValidationException()));
     when(useCase.validateLogin("1245")).thenReturn(Completable.complete());
-    when(useCase.checkLogin(anyString())).thenReturn(Completable.complete());
 
     // Действие:
     phoneViewModel.phoneNumberChanged("1245");
@@ -276,8 +159,26 @@ public class PhoneViewModelTest {
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(any(PhoneViewStateInitial.class));
-    inOrder.verify(viewStateObserver).onChanged(any(PhoneViewStatePending.class));
     inOrder.verify(viewStateObserver).onChanged(any(PhoneViewStateReady.class));
+    inOrder.verify(viewStateObserver).onChanged(any(PhoneViewStateInitial.class));
+    verifyNoMoreInteractions(viewStateObserver);
+  }
+
+  /**
+   * Не должен возвращать состояние вида "Продолжай" если не "Готов"
+   *
+   * @throws Exception error
+   */
+  @Test
+  public void doNotSetProceedViewStateToLiveDataPending() throws Exception {
+    // Дано:
+    InOrder inOrder = Mockito.inOrder(viewStateObserver);
+    phoneViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+
+    // Действие:
+    phoneViewModel.nextClicked();
+
+    // Результат:
     inOrder.verify(viewStateObserver).onChanged(any(PhoneViewStateInitial.class));
     verifyNoMoreInteractions(viewStateObserver);
   }
@@ -293,7 +194,6 @@ public class PhoneViewModelTest {
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     phoneViewModel.getViewStateLiveData().observeForever(viewStateObserver);
     when(useCase.validateLogin(anyString())).thenReturn(Completable.complete());
-    when(useCase.checkLogin(anyString())).thenReturn(Completable.complete());
 
     // Действие:
     phoneViewModel.phoneNumberChanged("(124)5");
@@ -301,9 +201,8 @@ public class PhoneViewModelTest {
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(any(PhoneViewStateInitial.class));
-    inOrder.verify(viewStateObserver).onChanged(any(PhoneViewStatePending.class));
     inOrder.verify(viewStateObserver).onChanged(any(PhoneViewStateReady.class));
-    inOrder.verify(viewStateObserver).onChanged(new PhoneViewStateProceed("1245"));
+    inOrder.verify(viewStateObserver).onChanged(any(PhoneViewStateProceed.class));
     verifyNoMoreInteractions(viewStateObserver);
   }
 }

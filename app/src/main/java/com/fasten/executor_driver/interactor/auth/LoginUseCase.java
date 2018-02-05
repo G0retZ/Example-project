@@ -17,13 +17,4 @@ public interface LoginUseCase {
    */
   @NonNull
   Completable validateLogin(@Nullable String login);
-
-  /**
-   * Проверяет логин на существование.
-   *
-   * @param login {@link String} логин
-   * @return {@link Completable} результат проверки
-   */
-  @NonNull
-  Completable checkLogin(@Nullable String login);
 }
