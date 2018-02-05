@@ -51,7 +51,10 @@ public class PhoneViewModelImpl extends ViewModel implements PhoneViewModel {
   @Override
   public void nextClicked() {
     if (viewStateLiveData.getValue() instanceof PhoneViewStateReady) {
-      viewStateLiveData.postValue(new PhoneViewStateProceed());
+      loginUseCase.rememberLogin()
+          .subscribeOn(Schedulers.single())
+          .observeOn(AndroidSchedulers.mainThread())
+          .subscribe(() -> viewStateLiveData.postValue(new PhoneViewStateProceed()));
     }
   }
 

@@ -4,6 +4,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
@@ -86,13 +87,15 @@ public class LoginUseCaseTest {
   public void doNotTouchDataSharer() throws Exception {
     // Действие:
     loginUseCase.validateLogin("checkLogin").test();
+    when(loginValidator.validate(anyString())).thenReturn(true);
+    loginUseCase.validateLogin("checkLogin").test();
 
     // Результат:
     verifyZeroInteractions(loginSharer);
   }
 
   /**
-   * Должен опубликовать логин после успешной валидации.
+   * Должен опубликовать логин.
    *
    * @throws Exception error
    */
@@ -102,9 +105,13 @@ public class LoginUseCaseTest {
     when(loginValidator.validate(any(String.class))).thenReturn(true);
 
     // Действие:
+    loginUseCase.rememberLogin().test().assertComplete();
     loginUseCase.validateLogin("checkLogin").test();
+    loginUseCase.rememberLogin().test().assertComplete();
 
     // Результат:
-    verify(loginSharer, only()).share("checkLogin");
+    verify(loginSharer).share(null);
+    verify(loginSharer).share("checkLogin");
+    verifyNoMoreInteractions(loginSharer);
   }
 }

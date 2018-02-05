@@ -46,6 +46,7 @@ public class PhoneViewModelTest {
     RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
     RxAndroidPlugins.setInitMainThreadSchedulerHandler(scheduler -> Schedulers.trampoline());
     when(useCase.validateLogin(anyString())).thenReturn(Completable.never());
+    when(useCase.rememberLogin()).thenReturn(Completable.complete());
   }
 
 	/* Тетсируем работу с юзкейсом */
@@ -68,6 +69,24 @@ public class PhoneViewModelTest {
     verify(useCase).validateLogin("12");
     verify(useCase).validateLogin("123");
     verify(useCase).validateLogin("1234");
+    verifyNoMoreInteractions(useCase);
+  }
+
+  /**
+   * Должен попросить юзкейс запонмнить логин
+   *
+   * @throws Exception error
+   */
+  @Test
+  public void askUseCaseToRememberLogin() throws Exception {
+    when(useCase.validateLogin(anyString())).thenReturn(Completable.complete());
+    // Действие:
+    phoneViewModel.phoneNumberChanged("1234");
+    phoneViewModel.nextClicked();
+
+    // Результат:
+    verify(useCase).validateLogin("1234");
+    verify(useCase).rememberLogin();
     verifyNoMoreInteractions(useCase);
   }
 

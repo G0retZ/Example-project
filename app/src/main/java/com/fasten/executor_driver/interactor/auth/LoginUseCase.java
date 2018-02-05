@@ -17,4 +17,12 @@ public interface LoginUseCase {
    */
   @NonNull
   Completable validateLogin(@Nullable String login);
+
+  /**
+   * Запоминает последний валидированный пароль или null (т.е. забывает), для его восстановления
+   * после поворота или реинкарнации
+   *
+   * @return {@link Completable} результат запоминания
+   */
+  Completable rememberLogin();
 }

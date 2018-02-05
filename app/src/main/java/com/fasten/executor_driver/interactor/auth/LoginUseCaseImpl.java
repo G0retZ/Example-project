@@ -15,6 +15,8 @@ public class LoginUseCaseImpl implements LoginUseCase {
   private final Validator<String> loginValidator;
   @NonNull
   private final DataSharer<String> loginSharer;
+  @Nullable
+  private String lastLogin;
 
   @Inject
   LoginUseCaseImpl(
@@ -29,11 +31,19 @@ public class LoginUseCaseImpl implements LoginUseCase {
   public Completable validateLogin(@Nullable String login) {
     return Completable.create(e -> {
       if (loginValidator.validate(login)) {
-        loginSharer.share(login);
+        lastLogin = login;
         e.onComplete();
       } else {
         e.onError(new ValidationException());
       }
+    });
+  }
+
+  @Override
+  public Completable rememberLogin() {
+    return Completable.create(e -> {
+      loginSharer.share(lastLogin);
+      e.onComplete();
     });
   }
 }
