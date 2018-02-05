@@ -60,7 +60,6 @@ public class LoginFragment extends BaseFragment implements PhoneViewActions {
     View view = inflater.inflate(R.layout.fragment_auth_login, container, false);
     phoneInput = view.findViewById(R.id.phoneInput);
     goNext = view.findViewById(R.id.goNext);
-    view.findViewById(R.id.restoreAccess).setOnClickListener(v -> navigate("map"));
 
     goNext.setOnClickListener(v -> phoneViewModel.nextClicked());
     phoneViewModel.getViewStateLiveData().observe(this, viewState -> {
