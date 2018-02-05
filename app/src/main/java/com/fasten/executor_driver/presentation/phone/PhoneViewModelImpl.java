@@ -21,8 +21,6 @@ public class PhoneViewModelImpl extends ViewModel implements PhoneViewModel {
 
   private Disposable disposable;
 
-  private String lastLogin;
-
   @Inject
   public PhoneViewModelImpl(@NonNull LoginUseCase loginUseCase) {
     this.loginUseCase = loginUseCase;
@@ -38,21 +36,13 @@ public class PhoneViewModelImpl extends ViewModel implements PhoneViewModel {
 
   @Override
   public void phoneNumberChanged(@NonNull String phoneNumber) {
-    lastLogin = phoneNumber.replaceAll("[^\\d]", "");
     if (disposable != null && !disposable.isDisposed()) {
       return;
     }
-    if (viewStateLiveData.getValue() instanceof PhoneViewStateError) {
-      viewStateLiveData.postValue(new PhoneViewStateInitial());
-    }
-    disposable = loginUseCase.validateLogin(lastLogin)
+    disposable = loginUseCase.validateLogin(phoneNumber.replaceAll("[^\\d]", ""))
         .subscribeOn(Schedulers.single())
         .observeOn(AndroidSchedulers.mainThread())
-        .subscribe(this::checkNumber, throwable -> {
-          if (!(viewStateLiveData.getValue() instanceof PhoneViewStateInitial)) {
-            viewStateLiveData.setValue(new PhoneViewStateInitial());
-          }
-        });
+        .subscribe(this::switchToSuccess, this::switchToError);
     if (disposable.isDisposed()) {
       disposable = null;
     }
@@ -60,7 +50,12 @@ public class PhoneViewModelImpl extends ViewModel implements PhoneViewModel {
 
   @Override
   public void nextClicked() {
-    viewStateLiveData.postValue(new PhoneViewStateProceed(lastLogin));
+    if (viewStateLiveData.getValue() instanceof PhoneViewStateReady) {
+      loginUseCase.rememberLogin()
+          .subscribeOn(Schedulers.single())
+          .observeOn(AndroidSchedulers.mainThread())
+          .subscribe(() -> viewStateLiveData.postValue(new PhoneViewStateProceed()));
+    }
   }
 
   @Override
@@ -72,24 +67,15 @@ public class PhoneViewModelImpl extends ViewModel implements PhoneViewModel {
     }
   }
 
-  private void checkNumber() {
-    viewStateLiveData.postValue(new PhoneViewStatePending());
-    disposable = loginUseCase.checkLogin(lastLogin)
-        .subscribeOn(Schedulers.single())
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribe(this::switchToSuccess, this::switchToError);
-    if (disposable.isDisposed()) {
-      disposable = null;
-    }
-  }
-
   private void switchToSuccess() {
     disposable = null;
     viewStateLiveData.postValue(new PhoneViewStateReady());
   }
 
-  private void switchToError(Throwable throwable) {
+  private void switchToError(@SuppressWarnings("unused") Throwable throwable) {
     disposable = null;
-    viewStateLiveData.postValue(new PhoneViewStateError(throwable));
+    if (!(viewStateLiveData.getValue() instanceof PhoneViewStateInitial)) {
+      viewStateLiveData.setValue(new PhoneViewStateInitial());
+    }
   }
 }

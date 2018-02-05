@@ -9,8 +9,10 @@ public interface CodeExtractor {
 
   /**
    * Извлечь код из тела сообщения
+   *
    * @param message {@link String} сообщения
    * @return извлеченный код строкой
    */
-  @Nullable String extractCode(@Nullable String message);
+  @Nullable
+  String extractCode(@Nullable String message);
 }

@@ -16,18 +16,12 @@ public interface ApiService {
   /*
    *  Запрос СМС с кодом
    */
-  @GET("login/password/sms")
-  Completable sendMeCode(@NonNull @Query("phoneNumber") String phoneNumber);
-
-  /*
-   *  Проверка логина
-   */
-  @GET("login/phoneCheck")
-  Completable checkLogin(@NonNull @Query("phoneNumber") String phoneNumber);
+  @GET("public/v1/login/password/sms")
+  Completable sendMeCode(@NonNull @Query("login") String phoneNumber);
 
   /*
    *  Авторизация
    */
-  @POST("login")
+  @POST("public/v1/login")
   Completable authorize(@NonNull @Body ApiLogin apiLogin);
 }

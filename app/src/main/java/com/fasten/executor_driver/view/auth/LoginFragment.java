@@ -2,23 +2,18 @@ package com.fasten.executor_driver.view.auth;
 
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputEditText;
-import android.support.design.widget.TextInputLayout;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
-import android.widget.ProgressBar;
 import com.fasten.executor_driver.R;
 import com.fasten.executor_driver.backend.settings.AppSettingsService;
-import com.fasten.executor_driver.backend.web.NoNetworkException;
 import com.fasten.executor_driver.di.AppComponent;
 import com.fasten.executor_driver.presentation.phone.PhoneViewActions;
 import com.fasten.executor_driver.presentation.phone.PhoneViewModel;
@@ -34,11 +29,8 @@ import javax.inject.Named;
 public class LoginFragment extends BaseFragment implements PhoneViewActions {
 
   private PhoneViewModel phoneViewModel;
-  private TextInputLayout phoneInputLayout;
   private TextInputEditText phoneInput;
   private Button goNext;
-  private ProgressBar pendingIndicator;
-  private Context context;
 
   private ViewModelProvider.Factory viewModelFactory;
   private AppSettingsService appSettings;
@@ -54,12 +46,6 @@ public class LoginFragment extends BaseFragment implements PhoneViewActions {
   }
 
   @Override
-  public void onAttach(Context context) {
-    super.onAttach(context);
-    this.context = context;
-  }
-
-  @Override
   protected void onDependencyInject(AppComponent appComponent) {
     // Required by Dagger2 for field injection
     appComponent.inject(this);
@@ -72,10 +58,8 @@ public class LoginFragment extends BaseFragment implements PhoneViewActions {
       @Nullable ViewGroup container,
       @Nullable Bundle savedInstanceState) {
     View view = inflater.inflate(R.layout.fragment_auth_login, container, false);
-    phoneInputLayout = view.findViewById(R.id.phoneInputLayout);
     phoneInput = view.findViewById(R.id.phoneInput);
     goNext = view.findViewById(R.id.goNext);
-    pendingIndicator = view.findViewById(R.id.pending);
 
     goNext.setOnClickListener(v -> phoneViewModel.nextClicked());
     phoneViewModel.getViewStateLiveData().observe(this, viewState -> {
@@ -101,49 +85,12 @@ public class LoginFragment extends BaseFragment implements PhoneViewActions {
   }
 
   @Override
-  public void onDetach() {
-    super.onDetach();
-    context = null;
-  }
-
-  @Override
   public void enableButton(boolean enable) {
     goNext.setEnabled(enable);
   }
 
   @Override
-  public void showPending(boolean pending) {
-    pendingIndicator.setVisibility(pending ? View.VISIBLE : View.GONE);
-  }
-
-  @Override
-  public void setInputEditable(boolean editable) {
-    phoneInput.setEnabled(editable);
-    if (!editable) {
-      phoneInput.requestFocus();
-      InputMethodManager imm = (InputMethodManager) context
-          .getSystemService(Context.INPUT_METHOD_SERVICE);
-      if (imm != null) {
-        imm.showSoftInput(phoneInput, InputMethodManager.SHOW_IMPLICIT);
-      }
-    }
-  }
-
-  @Override
-  public void showError(@Nullable Throwable error) {
-    if (error == null) {
-      phoneInputLayout.setError(null);
-    } else {
-      if (error instanceof NoNetworkException) {
-        phoneInputLayout.setError(getString(R.string.no_network_connection));
-      } else {
-        phoneInputLayout.setError(getString(R.string.phone_not_found));
-      }
-    }
-  }
-
-  @Override
-  public void proceedNext(@NonNull String login) {
+  public void proceedNext() {
     navigate("next");
   }
 

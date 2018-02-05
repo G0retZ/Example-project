@@ -19,11 +19,10 @@ public interface LoginUseCase {
   Completable validateLogin(@Nullable String login);
 
   /**
-   * Проверяет логин на существование.
+   * Запоминает последний валидированный пароль или null (т.е. забывает), для его восстановления
+   * после поворота или реинкарнации
    *
-   * @param login {@link String} логин
-   * @return {@link Completable} результат проверки
+   * @return {@link Completable} результат запоминания
    */
-  @NonNull
-  Completable checkLogin(@Nullable String login);
+  Completable rememberLogin();
 }

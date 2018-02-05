@@ -12,17 +12,16 @@ import javax.inject.Named;
 public class LoginUseCaseImpl implements LoginUseCase {
 
   @NonNull
-  private final LoginGateway gateway;
-  @NonNull
   private final Validator<String> loginValidator;
   @NonNull
   private final DataSharer<String> loginSharer;
+  @Nullable
+  private String lastLogin;
 
   @Inject
-  LoginUseCaseImpl(@NonNull LoginGateway gateway,
+  LoginUseCaseImpl(
       @Named("loginSharer") @NonNull DataSharer<String> loginSharer,
       @Named("loginValidator") @NonNull Validator<String> loginValidator) {
-    this.gateway = gateway;
     this.loginValidator = loginValidator;
     this.loginSharer = loginSharer;
   }
@@ -32,6 +31,7 @@ public class LoginUseCaseImpl implements LoginUseCase {
   public Completable validateLogin(@Nullable String login) {
     return Completable.create(e -> {
       if (loginValidator.validate(login)) {
+        lastLogin = login;
         e.onComplete();
       } else {
         e.onError(new ValidationException());
@@ -39,15 +39,11 @@ public class LoginUseCaseImpl implements LoginUseCase {
     });
   }
 
-  @NonNull
   @Override
-  public Completable checkLogin(@Nullable String login) {
-    if (login == null) {
-      return Completable.error(new ValidationException());
-    }
-    return gateway.checkLogin(login).andThen(Completable.create(e -> {
-      loginSharer.share(login);
+  public Completable rememberLogin() {
+    return Completable.create(e -> {
+      loginSharer.share(lastLogin);
       e.onComplete();
-    }));
+    });
   }
 }

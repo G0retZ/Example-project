@@ -28,9 +28,6 @@ public class PhoneViewStateInitialTest {
     viewState.apply(phoneViewActions);
 
     // Результат:
-    verify(phoneViewActions).showPending(false);
-    verify(phoneViewActions).showError(null);
-    verify(phoneViewActions).setInputEditable(true);
     verify(phoneViewActions).enableButton(false);
     verifyNoMoreInteractions(phoneViewActions);
   }
