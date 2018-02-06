@@ -24,7 +24,6 @@ public class SmsButtonViewModelImpl extends ViewModel implements SmsButtonViewMo
   @NonNull
   private final MutableLiveData<ViewState<SmsButtonViewActions>> viewStateLiveData;
 
-  @SuppressWarnings("SameParameterValue")
   @Inject
   SmsButtonViewModelImpl(@NonNull SmsUseCase smsUseCase) {
     this.smsUseCase = smsUseCase;

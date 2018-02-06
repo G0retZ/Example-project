@@ -42,7 +42,6 @@ public class ApiLogin {
         '}';
   }
 
-  @SuppressWarnings("SimplifiableIfStatement")
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -54,10 +53,7 @@ public class ApiLogin {
 
     ApiLogin apiLogin = (ApiLogin) o;
 
-    if (!name.equals(apiLogin.name)) {
-      return false;
-    }
-    return password.equals(apiLogin.password);
+    return name.equals(apiLogin.name) && password.equals(apiLogin.password);
   }
 
   @Override
