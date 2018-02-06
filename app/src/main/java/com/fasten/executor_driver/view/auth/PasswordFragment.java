@@ -1,17 +1,16 @@
 package com.fasten.executor_driver.view.auth;
 
+import android.Manifest;
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProvider.Factory;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.IntentFilter;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
-import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -28,6 +27,7 @@ import com.fasten.executor_driver.presentation.smsbutton.SmsButtonViewActions;
 import com.fasten.executor_driver.presentation.smsbutton.SmsButtonViewModel;
 import com.fasten.executor_driver.presentation.smsbutton.SmsButtonViewModelImpl;
 import com.fasten.executor_driver.view.BaseFragment;
+import com.fasten.executor_driver.view.PermissionChecker;
 import com.jakewharton.rxbinding2.widget.RxTextView;
 import io.reactivex.disposables.Disposable;
 import javax.inject.Inject;
@@ -40,7 +40,9 @@ import javax.inject.Named;
 public class PasswordFragment extends BaseFragment implements CodeViewActions,
     SmsButtonViewActions {
 
-  private static final String[] PERMISSIONS = new String[]{"android.permission.RECEIVE_SMS"};
+  private static final String[] PERMISSIONS = new String[]{Manifest.permission.RECEIVE_SMS};
+
+  private PermissionChecker permissionChecker;
 
   private CodeViewModel codeViewModel;
   private SmsButtonViewModel smsButtonViewModel;
@@ -217,20 +219,7 @@ public class PasswordFragment extends BaseFragment implements CodeViewActions,
   @Override
   public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
       @NonNull int[] grantResults) {
-    if (permissions.length == 0 || grantResults.length == 0) {
-      return;
-    }
-    if (requestCode == 1337) {
-      boolean allowed = true;
-      for (int result : grantResults) {
-        allowed = allowed & result == PackageManager.PERMISSION_GRANTED;
-      }
-      if (allowed) {
-        autoSendSmsRequest();
-      } else {
-        autoSendSmsRequest();
-      }
-    }
+    permissionChecker.onResult(requestCode, permissions, grantResults);
   }
 
   private void autoSendSmsRequest() {
@@ -240,24 +229,9 @@ public class PasswordFragment extends BaseFragment implements CodeViewActions,
   }
 
   private void checkPermissions() {
-    boolean allowed = true;
-    for (String permission : PERMISSIONS) {
-      allowed = allowed & ContextCompat.checkSelfPermission(context, permission)
-          == PackageManager.PERMISSION_GRANTED;
-    }
-    if (allowed) {
-      autoSendSmsRequest();
-      return;
-    }
-    // Небходимо ли показывать разъяснение?
-    if (shouldShowRequestPermissionRationale(PERMISSIONS[0])) {
-      // Заяснить пользователю необходимость *асинхронно* -- не блокировать
-      // этот поток в ожидании ответа пользователя! После того как пользователь
-      // увидел пояснения, Попробуй снова запросить разрешение.
-      requestPermissions(PERMISSIONS, 1337);
-    } else {
-      // Заяснять не нужно, мы можем запросить разрешения.
-      requestPermissions(PERMISSIONS, 1337);
-    }
+    permissionChecker = new PermissionChecker(1337);
+    permissionChecker.check(this, context, PERMISSIONS)
+        .doFinally(() -> permissionChecker = null)
+        .subscribe(this::autoSendSmsRequest, t -> autoSendSmsRequest());
   }
 }
