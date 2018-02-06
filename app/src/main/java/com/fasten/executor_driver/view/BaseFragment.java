@@ -44,6 +44,12 @@ public class BaseFragment extends Fragment implements OnBackPressedInterceptor {
     }
   }
 
+  @Override
+  public void onDetach() {
+    super.onDetach();
+    baseActivity = null;
+  }
+
   /**
    * Колбэк для внедрения зависимостей. Вызывается сразу после завершения {@link #onCreate(Bundle)}
    * здесь
