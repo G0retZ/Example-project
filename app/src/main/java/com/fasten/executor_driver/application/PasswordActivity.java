@@ -18,7 +18,7 @@ public class PasswordActivity extends BaseActivity {
   @Override
   public void navigate(@NonNull String destination) {
     if (destination.equals("enter")) {
-      Intent intent = new Intent(this, MainActivity.class);
+      Intent intent = new Intent(this, MapActivity.class);
       intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
       startActivity(intent);
       finish();

@@ -6,22 +6,23 @@
   <uses-permission android:name="android.permission.INTERNET"/>
   <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
   <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-  <uses-permission android:name="android.permission.RECEIVE_SMS" />
+  <uses-permission android:name="android.permission.RECEIVE_SMS"/>
+  <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+  <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
 
   <application
-    android:name=".application.MainApplication"
     android:allowBackup="true"
     android:fullBackupContent="@xml/backup_descriptor"
     android:icon="@mipmap/ic_launcher"
     android:label="@string/app_name"
+    android:name=".application.MainApplication"
     android:roundIcon="@mipmap/ic_launcher_round"
     android:supportsRtl="true"
     android:theme="@style/AppTheme"
     tools:ignore="GoogleAppIndexingWarning">
-    <activity android:name="com.fasten.executor_driver.application.MainActivity">
+    <activity android:name="com.fasten.executor_driver.application.MapActivity">
       <intent-filter>
         <action android:name="android.intent.action.MAIN"/>
-
         <category android:name="android.intent.category.LAUNCHER"/>
       </intent-filter>
     </activity>
@@ -30,7 +31,12 @@
       android:windowSoftInputMode="stateVisible|adjustResize"/>
     <activity
       android:name=".application.PasswordActivity"
+      android:parentActivityName=".application.LoginActivity"
       android:windowSoftInputMode="stateVisible|adjustResize"/>
+
+    <meta-data
+      android:name="com.google.android.geo.API_KEY"
+      android:value="@string/google_maps_key"/>
   </application>
 
 </manifest>
