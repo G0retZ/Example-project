@@ -42,7 +42,10 @@ public class PasswordFragment extends BaseFragment implements CodeViewActions,
 
   private static final String[] PERMISSIONS = new String[]{Manifest.permission.RECEIVE_SMS};
 
+  @Nullable
   private PermissionChecker permissionChecker;
+  @Nullable
+  private Disposable permissionDisposable;
 
   private CodeViewModel codeViewModel;
   private SmsButtonViewModel smsButtonViewModel;
@@ -96,7 +99,6 @@ public class PasswordFragment extends BaseFragment implements CodeViewActions,
   @Override
   public void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    smsSent = savedInstanceState != null;
     IntentFilter intentFilter = new IntentFilter();
     intentFilter.addAction(SmsReceiver.ACTION);
     intentFilter.setPriority(999);
@@ -149,6 +151,9 @@ public class PasswordFragment extends BaseFragment implements CodeViewActions,
   public void onDestroy() {
     super.onDestroy();
     context.unregisterReceiver(smsReceiver);
+    if (permissionDisposable != null) {
+      permissionDisposable.dispose();
+    }
   }
 
   @Override
@@ -219,7 +224,9 @@ public class PasswordFragment extends BaseFragment implements CodeViewActions,
   @Override
   public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
       @NonNull int[] grantResults) {
-    permissionChecker.onResult(requestCode, permissions, grantResults);
+    if (permissionChecker != null) {
+      permissionChecker.onResult(requestCode, permissions, grantResults);
+    }
   }
 
   private void autoSendSmsRequest() {
@@ -230,7 +237,7 @@ public class PasswordFragment extends BaseFragment implements CodeViewActions,
 
   private void checkPermissions() {
     permissionChecker = new PermissionChecker(1337);
-    permissionChecker.check(this, context, PERMISSIONS)
+    permissionDisposable = permissionChecker.check(this, context, PERMISSIONS)
         .doFinally(() -> permissionChecker = null)
         .subscribe(this::autoSendSmsRequest, t -> autoSendSmsRequest());
   }

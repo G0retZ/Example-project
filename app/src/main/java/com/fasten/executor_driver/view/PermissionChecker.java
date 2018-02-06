@@ -92,7 +92,7 @@ public class PermissionChecker {
   }
 
   /**
-   *
+   * Публикуем результат запроса
    * @param requestCode ИД запроса разрешений, если не соответствует {@link #uuid}, то выходим.
    * @param permissions список разрешений.
    * @param grantResults результаты для соответствующих разрешений,
@@ -100,11 +100,7 @@ public class PermissionChecker {
    *      или {@link android.content.pm.PackageManager#PERMISSION_DENIED}.
    */
   public void onResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-    if (requestCode != uuid) {
-      return;
-    }
-    if (permissions.length == 0 || grantResults.length == 0) {
-      completableSubject.onError(new SecurityException("Access denied."));
+    if (requestCode != uuid || permissions.length == 0 || grantResults.length == 0) {
       return;
     }
     boolean allowed = true;

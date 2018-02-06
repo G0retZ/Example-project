@@ -8,6 +8,7 @@ import android.content.res.Resources;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import com.fasten.executor_driver.R;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -17,6 +18,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
+import io.reactivex.disposables.Disposable;
 
 public class MapFragment extends SupportMapFragment implements OnMapReadyCallback,
     OnMyLocationButtonClickListener {
@@ -24,7 +26,10 @@ public class MapFragment extends SupportMapFragment implements OnMapReadyCallbac
   private static final String[] PERMISSIONS = new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
       Manifest.permission.ACCESS_COARSE_LOCATION};
 
+  @Nullable
   private PermissionChecker permissionChecker;
+  @Nullable
+  private Disposable permissionDisposable;
 
   @Override
   public void onCreate(Bundle bundle) {
@@ -40,12 +45,6 @@ public class MapFragment extends SupportMapFragment implements OnMapReadyCallbac
   public void onAttach(Activity activity) {
     super.onAttach(activity);
     this.activity = activity;
-  }
-
-  @Override
-  public void onDetach() {
-    super.onDetach();
-    activity = null;
   }
 
   @Override
@@ -70,9 +69,24 @@ public class MapFragment extends SupportMapFragment implements OnMapReadyCallbac
     resolvePermissions();
   }
 
+  @Override
+  public void onDestroy() {
+    super.onDestroy();
+    if (permissionDisposable != null) {
+      permissionDisposable.dispose();
+    }
+  }
+
+  @Override
+  public void onDetach() {
+    super.onDetach();
+    activity = null;
+  }
+
   private void resolvePermissions() {
     permissionChecker = new PermissionChecker(1002);
-    permissionChecker.check(this, activity, PERMISSIONS)
+    permissionDisposable = permissionChecker.check(this, activity, PERMISSIONS)
+        .doFinally(() -> permissionChecker = null)
         .subscribe(this::initLocation, throwable -> new Builder(activity)
             .setTitle(R.string.warning)
             .setMessage(getString(R.string.permissions_required))
@@ -87,8 +101,9 @@ public class MapFragment extends SupportMapFragment implements OnMapReadyCallbac
   @Override
   public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
       @NonNull int[] grantResults) {
-    permissionChecker.onResult(requestCode, permissions, grantResults);
-    permissionChecker = null;
+    if (permissionChecker != null) {
+      permissionChecker.onResult(requestCode, permissions, grantResults);
+    }
   }
 
   @SuppressLint("MissingPermission")
