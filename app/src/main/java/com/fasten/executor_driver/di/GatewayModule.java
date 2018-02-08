@@ -3,12 +3,14 @@ package com.fasten.executor_driver.di;
 import android.support.annotation.NonNull;
 import com.fasten.executor_driver.backend.web.TokenKeeper;
 import com.fasten.executor_driver.gateway.HeatMapGatewayImpl;
+import com.fasten.executor_driver.gateway.OnlineGatewayImpl;
 import com.fasten.executor_driver.gateway.PasswordGatewayImpl;
 import com.fasten.executor_driver.gateway.SmsGatewayImpl;
 import com.fasten.executor_driver.gateway.TokenKeeperImpl;
 import com.fasten.executor_driver.interactor.auth.PasswordGateway;
 import com.fasten.executor_driver.interactor.auth.SmsGateway;
 import com.fasten.executor_driver.interactor.map.HeatMapGateway;
+import com.fasten.executor_driver.interactor.online.OnlineGateway;
 import dagger.Module;
 import dagger.Provides;
 
@@ -34,5 +36,10 @@ class GatewayModule {
   @Provides
   HeatMapGateway provideHeatMapGateway(HeatMapGatewayImpl heatMapGateway) {
     return heatMapGateway;
+  }
+
+  @Provides
+  OnlineGateway provideOnlineGateway(OnlineGatewayImpl onlineGateway) {
+    return onlineGateway;
   }
 }
