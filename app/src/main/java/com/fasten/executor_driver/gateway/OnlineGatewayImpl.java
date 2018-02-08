@@ -22,10 +22,10 @@ public class OnlineGatewayImpl implements OnlineGateway {
     Completable completable;
     switch (count % 3) {
       case 0:
-        completable = Completable.error(new InsufficientCreditsException());
+        completable = Completable.error(new InsufficientCreditsException("Мало бабок, подкинь чутка."));
         break;
       case 1:
-        completable = Completable.error(new DriverBlockedException());
+        completable = Completable.error(new DriverBlockedException("Тебя забанил модератор."));
         break;
       case 2:
         completable = Completable.complete();
