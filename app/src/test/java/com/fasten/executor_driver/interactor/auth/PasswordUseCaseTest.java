@@ -9,7 +9,7 @@ import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 import com.fasten.executor_driver.backend.web.NoNetworkException;
-import com.fasten.executor_driver.backend.web.ValidationException;
+import com.fasten.executor_driver.entity.ValidationException;
 import com.fasten.executor_driver.entity.LoginData;
 import com.fasten.executor_driver.entity.Validator;
 import com.fasten.executor_driver.interactor.DataSharer;

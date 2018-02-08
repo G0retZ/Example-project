@@ -9,7 +9,7 @@ import static org.mockito.Mockito.when;
 
 import android.arch.core.executor.testing.InstantTaskExecutorRule;
 import android.arch.lifecycle.Observer;
-import com.fasten.executor_driver.backend.web.ValidationException;
+import com.fasten.executor_driver.entity.ValidationException;
 import com.fasten.executor_driver.interactor.auth.LoginUseCase;
 import com.fasten.executor_driver.presentation.ViewState;
 import io.reactivex.Completable;

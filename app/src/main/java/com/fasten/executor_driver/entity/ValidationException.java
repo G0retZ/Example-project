@@ -1,4 +1,4 @@
-package com.fasten.executor_driver.backend.web;
+package com.fasten.executor_driver.entity;
 
 import java.io.IOException;
 

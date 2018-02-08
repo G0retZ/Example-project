@@ -4,7 +4,7 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
-import com.fasten.executor_driver.backend.web.ValidationException;
+import com.fasten.executor_driver.entity.ValidationException;
 import com.fasten.executor_driver.interactor.auth.PasswordUseCase;
 import com.fasten.executor_driver.presentation.ViewState;
 import io.reactivex.Completable;

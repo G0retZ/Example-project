@@ -8,7 +8,7 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
-import com.fasten.executor_driver.backend.web.ValidationException;
+import com.fasten.executor_driver.entity.ValidationException;
 import com.fasten.executor_driver.entity.Validator;
 import com.fasten.executor_driver.interactor.DataSharer;
 import org.junit.Before;
