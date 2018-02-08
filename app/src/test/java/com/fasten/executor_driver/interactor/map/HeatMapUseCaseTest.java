@@ -33,7 +33,7 @@ public class HeatMapUseCaseTest {
   private HeatMapGateway gateway;
 
   @Mock
-  Callable<String> testCallable;
+  private Callable<String> testCallable;
 
   @Before
   public void setUp() throws Exception {
