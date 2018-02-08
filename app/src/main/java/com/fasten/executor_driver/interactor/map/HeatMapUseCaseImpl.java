@@ -1,6 +1,7 @@
 package com.fasten.executor_driver.interactor.map;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import io.reactivex.Flowable;
 import io.reactivex.schedulers.Schedulers;
 import java.util.concurrent.TimeUnit;
@@ -10,11 +11,13 @@ public class HeatMapUseCaseImpl implements HeatMapUseCase {
 
   private final static int POLLING_INTERVAL = 5;
 
+  @NonNull
   private final HeatMapGateway gateway;
+  @Nullable
   private Flowable<String> heatMapEmitter;
 
   @Inject
-  HeatMapUseCaseImpl(HeatMapGateway gateway) {
+  HeatMapUseCaseImpl(@NonNull HeatMapGateway gateway) {
     this.gateway = gateway;
   }
 
