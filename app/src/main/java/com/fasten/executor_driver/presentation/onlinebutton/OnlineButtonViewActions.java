@@ -8,6 +8,11 @@ import android.support.annotation.Nullable;
 public interface OnlineButtonViewActions {
 
   /**
+   * Перейти к выбору автомобиля.
+   */
+  void goChooseVehicle();
+
+  /**
    * Сделать кнопку "отзывчивой". "Отзывчивая" кнопка обрабатывает нажатия, "Неотзывчатая" - нет.
    * При этом анимация нажатия должна присутствовать в любом случае.
    *
