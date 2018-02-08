@@ -36,13 +36,13 @@ class UseCaseModule {
   }
 
   @Provides
-  HeatMapUseCase provideHeatMapUseCase(HeatMapUseCaseImpl smsUseCase) {
-    return smsUseCase;
+  HeatMapUseCase provideHeatMapUseCase(HeatMapUseCaseImpl heatMapUseCase) {
+    return heatMapUseCase;
   }
 
   @Provides
-  OnlineUseCase provideOnlineUseCase(OnlineUseCaseImpl smsUseCase) {
-    return smsUseCase;
+  OnlineUseCase provideOnlineUseCase(OnlineUseCaseImpl onlineUseCase) {
+    return onlineUseCase;
   }
 
   /* Обмен данными между юзкейсами */
