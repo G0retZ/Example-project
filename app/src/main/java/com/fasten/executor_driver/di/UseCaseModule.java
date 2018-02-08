@@ -11,6 +11,8 @@ import com.fasten.executor_driver.interactor.auth.SmsUseCase;
 import com.fasten.executor_driver.interactor.auth.SmsUseCaseImpl;
 import com.fasten.executor_driver.interactor.map.HeatMapUseCase;
 import com.fasten.executor_driver.interactor.map.HeatMapUseCaseImpl;
+import com.fasten.executor_driver.interactor.online.OnlineUseCase;
+import com.fasten.executor_driver.interactor.online.OnlineUseCaseImpl;
 import dagger.Module;
 import dagger.Provides;
 import javax.inject.Named;
@@ -34,8 +36,13 @@ class UseCaseModule {
   }
 
   @Provides
-  HeatMapUseCase provideSHeatMapUseCase(HeatMapUseCaseImpl smsUseCase) {
-    return smsUseCase;
+  HeatMapUseCase provideHeatMapUseCase(HeatMapUseCaseImpl heatMapUseCase) {
+    return heatMapUseCase;
+  }
+
+  @Provides
+  OnlineUseCase provideOnlineUseCase(OnlineUseCaseImpl onlineUseCase) {
+    return onlineUseCase;
   }
 
   /* Обмен данными между юзкейсами */

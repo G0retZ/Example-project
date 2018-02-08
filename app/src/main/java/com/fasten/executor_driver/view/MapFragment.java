@@ -192,7 +192,9 @@ public class MapFragment extends SupportMapFragment implements OnMapReadyCallbac
 
   @Override
   public void updateHeatMap(@Nullable String geoJson) {
-    if (geoJson == null) return;
+    if (geoJson == null) {
+      return;
+    }
     try {
       JSONObject jsonObject = new JSONObject(geoJson);
       if (layer != null) {
