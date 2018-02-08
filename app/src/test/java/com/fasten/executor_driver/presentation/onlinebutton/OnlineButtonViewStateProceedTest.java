@@ -28,7 +28,7 @@ public class OnlineButtonViewStateProceedTest {
     viewState.apply(phoneViewActions);
 
     // Результат:
-    verify(phoneViewActions).setOnlineButtonResponsive(true);
+    verify(phoneViewActions).enableGoOnlineButton(true);
     verify(phoneViewActions).showGoOnlineError(null);
     verify(phoneViewActions).goChooseVehicle();
     verifyNoMoreInteractions(phoneViewActions);

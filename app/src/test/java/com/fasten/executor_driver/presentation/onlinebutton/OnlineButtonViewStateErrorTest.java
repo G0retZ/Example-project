@@ -38,7 +38,7 @@ public class OnlineButtonViewStateErrorTest {
 
     // Результат:
     verify(codeViewActions).showGoOnlineError(throwableCaptor.capture());
-    verify(codeViewActions).setOnlineButtonResponsive(false);
+    verify(codeViewActions).enableGoOnlineButton(false);
     verifyNoMoreInteractions(codeViewActions);
     assertTrue(
         ThrowableUtils.throwableEquals(

@@ -13,12 +13,11 @@ public interface OnlineButtonViewActions {
   void goChooseVehicle();
 
   /**
-   * Сделать кнопку "отзывчивой". "Отзывчивая" кнопка обрабатывает нажатия, "Неотзывчатая" - нет.
-   * При этом анимация нажатия должна присутствовать в любом случае.
+   * Сделать кнопку "Выйти на линию" нажимаемой
    *
-   * @param responsive - "отзывчивость"
+   * @param enable - нажимаема или нет?
    */
-  void setOnlineButtonResponsive(boolean responsive);
+  void enableGoOnlineButton(boolean enable);
 
   /**
    * Показать ошибку.

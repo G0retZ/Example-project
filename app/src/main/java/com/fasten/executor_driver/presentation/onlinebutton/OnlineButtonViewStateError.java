@@ -18,7 +18,7 @@ final class OnlineButtonViewStateError implements ViewState<OnlineButtonViewActi
 
   @Override
   public void apply(@NonNull OnlineButtonViewActions stateActions) {
-    stateActions.setOnlineButtonResponsive(false);
+    stateActions.enableGoOnlineButton(false);
     stateActions.showGoOnlineError(error);
   }
 

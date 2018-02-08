@@ -28,7 +28,7 @@ public class OnlineButtonViewStateHoldTest {
     viewState.apply(smsButtonViewActions);
 
     // Результат:
-    verify(smsButtonViewActions).setOnlineButtonResponsive(false);
+    verify(smsButtonViewActions).enableGoOnlineButton(false);
     verify(smsButtonViewActions).showGoOnlineError(null);
     verifyNoMoreInteractions(smsButtonViewActions);
   }

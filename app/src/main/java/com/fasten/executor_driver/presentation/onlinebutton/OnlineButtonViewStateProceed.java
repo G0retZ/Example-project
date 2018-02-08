@@ -10,7 +10,7 @@ final class OnlineButtonViewStateProceed implements ViewState<OnlineButtonViewAc
 
   @Override
   public void apply(@NonNull OnlineButtonViewActions stateActions) {
-    stateActions.setOnlineButtonResponsive(true);
+    stateActions.enableGoOnlineButton(true);
     stateActions.showGoOnlineError(null);
     stateActions.goChooseVehicle();
   }

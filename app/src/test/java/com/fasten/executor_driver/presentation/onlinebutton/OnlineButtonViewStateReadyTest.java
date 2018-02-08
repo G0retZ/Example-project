@@ -28,7 +28,7 @@ public class OnlineButtonViewStateReadyTest {
     viewState.apply(onlineButtonViewActions);
 
     // Результат:
-    verify(onlineButtonViewActions).setOnlineButtonResponsive(true);
+    verify(onlineButtonViewActions).enableGoOnlineButton(true);
     verify(onlineButtonViewActions).showGoOnlineError(null);
     verifyNoMoreInteractions(onlineButtonViewActions);
   }

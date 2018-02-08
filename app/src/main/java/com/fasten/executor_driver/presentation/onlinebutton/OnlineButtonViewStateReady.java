@@ -10,7 +10,7 @@ public final class OnlineButtonViewStateReady implements ViewState<OnlineButtonV
 
   @Override
   public void apply(@NonNull OnlineButtonViewActions stateActions) {
-    stateActions.setOnlineButtonResponsive(true);
+    stateActions.enableGoOnlineButton(true);
     stateActions.showGoOnlineError(null);
   }
 }
