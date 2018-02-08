@@ -9,6 +9,8 @@ import com.fasten.executor_driver.interactor.auth.PasswordUseCase;
 import com.fasten.executor_driver.interactor.auth.PasswordUseCaseImpl;
 import com.fasten.executor_driver.interactor.auth.SmsUseCase;
 import com.fasten.executor_driver.interactor.auth.SmsUseCaseImpl;
+import com.fasten.executor_driver.interactor.map.HeatMapUseCase;
+import com.fasten.executor_driver.interactor.map.HeatMapUseCaseImpl;
 import dagger.Module;
 import dagger.Provides;
 import javax.inject.Named;
@@ -28,6 +30,11 @@ class UseCaseModule {
 
   @Provides
   SmsUseCase provideSmsUseCase(SmsUseCaseImpl smsUseCase) {
+    return smsUseCase;
+  }
+
+  @Provides
+  HeatMapUseCase provideSHeatMapUseCase(HeatMapUseCaseImpl smsUseCase) {
     return smsUseCase;
   }
 

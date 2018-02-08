@@ -21,6 +21,7 @@ public class ApiLoginTest {
     assertEquals(apiLogin.getPassword(), "password");
   }
 
+  @SuppressWarnings("SpellCheckingInspection")
   @Test
   public void testEquals() throws Exception {
     assertEquals(apiLogin, new ApiLogin("name", "password"));

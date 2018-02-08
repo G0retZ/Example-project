@@ -4,6 +4,8 @@ import android.arch.lifecycle.ViewModelProvider;
 import com.fasten.executor_driver.presentation.ViewModelFactory;
 import com.fasten.executor_driver.presentation.code.CodeViewModel;
 import com.fasten.executor_driver.presentation.code.CodeViewModelImpl;
+import com.fasten.executor_driver.presentation.map.MapViewModel;
+import com.fasten.executor_driver.presentation.map.MapViewModelImpl;
 import com.fasten.executor_driver.presentation.phone.PhoneViewModel;
 import com.fasten.executor_driver.presentation.phone.PhoneViewModelImpl;
 import com.fasten.executor_driver.presentation.smsbutton.SmsButtonViewModel;
@@ -31,6 +33,11 @@ class PresentationModule {
   }
 
   @Provides
+  MapViewModel provideMapViewModel(MapViewModelImpl mapViewModel) {
+    return mapViewModel;
+  }
+
+  @Provides
   @Named("phone")
   ViewModelProvider.Factory providePhoneViewModelFactory(ViewModelFactory<PhoneViewModel> factory) {
     return factory;
@@ -46,6 +53,13 @@ class PresentationModule {
   @Named("button")
   ViewModelProvider.Factory provideSmsButtonViewModelFactory(
       ViewModelFactory<SmsButtonViewModel> factory) {
+    return factory;
+  }
+
+  @Provides
+  @Named("map")
+  ViewModelProvider.Factory provideMapViewModelFactory(
+      ViewModelFactory<MapViewModel> factory) {
     return factory;
   }
 }

@@ -4,12 +4,21 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog.Builder;
+import android.arch.lifecycle.ViewModelProvider;
+import android.arch.lifecycle.ViewModelProvider.Factory;
+import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
 import android.content.res.Resources;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import com.fasten.executor_driver.R;
+import com.fasten.executor_driver.application.BaseActivity;
+import com.fasten.executor_driver.presentation.map.MapViewActions;
+import com.fasten.executor_driver.presentation.map.MapViewModel;
+import com.fasten.executor_driver.presentation.map.MapViewModelImpl;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnMyLocationButtonClickListener;
@@ -18,10 +27,17 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
+import com.google.maps.android.data.geojson.GeoJsonFeature;
+import com.google.maps.android.data.geojson.GeoJsonLayer;
+import com.google.maps.android.data.geojson.GeoJsonPolygonStyle;
 import io.reactivex.disposables.Disposable;
+import javax.inject.Inject;
+import javax.inject.Named;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class MapFragment extends SupportMapFragment implements OnMapReadyCallback,
-    OnMyLocationButtonClickListener {
+    OnMyLocationButtonClickListener, MapViewActions {
 
   private static final String[] PERMISSIONS = new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
       Manifest.permission.ACCESS_COARSE_LOCATION};
@@ -31,9 +47,36 @@ public class MapFragment extends SupportMapFragment implements OnMapReadyCallbac
   @Nullable
   private Disposable permissionDisposable;
 
+  @Nullable
+  private BaseActivity baseActivity;
+  private MapViewModel mapViewModel;
+  private ViewModelProvider.Factory mapViewModelFactory;
+
+  private GeoJsonLayer layer;
+
+  @Inject
+  public void setMapViewModelFactory(@Named("map") Factory mapViewModelFactory) {
+    this.mapViewModelFactory = mapViewModelFactory;
+  }
+
+  @Override
+  public void onAttach(Context context) {
+    super.onAttach(context);
+    try {
+      baseActivity = (BaseActivity) context;
+    } catch (ClassCastException e) {
+      Log.w(this.getClass().getName(), context.getClass().getName() +
+          " не наследует BaseActivity. OnBackPressed никогда не будет вызван.");
+    }
+  }
+
   @Override
   public void onCreate(Bundle bundle) {
     super.onCreate(bundle);
+    if (baseActivity != null) {
+      baseActivity.getDiComponent().inject(this);
+      mapViewModel = ViewModelProviders.of(this, mapViewModelFactory).get(MapViewModelImpl.class);
+    }
     getMapAsync(this);
   }
 
@@ -66,6 +109,11 @@ public class MapFragment extends SupportMapFragment implements OnMapReadyCallbac
     googleMap.setMinZoomPreference(10.0f);
     googleMap.setMaxZoomPreference(18.0f);
     googleMap.setOnMyLocationButtonClickListener(this);
+    mapViewModel.getViewStateLiveData().observe(this, viewState -> {
+      if (viewState != null) {
+        viewState.apply(this);
+      }
+    });
     resolvePermissions();
   }
 
@@ -87,15 +135,17 @@ public class MapFragment extends SupportMapFragment implements OnMapReadyCallbac
     permissionChecker = new PermissionChecker(1002);
     permissionDisposable = permissionChecker.check(this, activity, PERMISSIONS)
         .doFinally(() -> permissionChecker = null)
-        .subscribe(this::initLocation, throwable -> new Builder(activity)
-            .setTitle(R.string.warning)
-            .setMessage(getString(R.string.permissions_required))
-            .setPositiveButton(getString(android.R.string.ok),
-                (dialog, which) -> activity.runOnUiThread(this::resolvePermissions))
-            .setNegativeButton(getString(android.R.string.cancel),
-                ((dialog, which) -> initNoLocation()))
-            .create()
-            .show());
+        .subscribe(() -> initLocation(true),
+            throwable -> new Builder(activity)
+                .setTitle(R.string.warning)
+                .setMessage(getString(R.string.permissions_required))
+                .setPositiveButton(getString(android.R.string.ok),
+                    (dialog, which) -> activity.runOnUiThread(this::resolvePermissions))
+                .setNegativeButton(getString(android.R.string.cancel),
+                    ((dialog, which) -> initLocation(false)))
+                .create()
+                .show()
+        );
   }
 
   @Override
@@ -107,25 +157,24 @@ public class MapFragment extends SupportMapFragment implements OnMapReadyCallbac
   }
 
   @SuppressLint("MissingPermission")
-  private void initLocation() {
+  private void initLocation(boolean locationTrackingAllowed) {
     if (googleMap == null) {
       return;
     }
-    googleMap.setMyLocationEnabled(true);
-    // Отправляем в Москву.
-    CameraPosition cameraPosition = new CameraPosition.Builder()
-        .target(new LatLng(55.75583, 37.61778)).zoom(10)
-        .build();
-    googleMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-  }
-
-  @SuppressLint("MissingPermission")
-  private void initNoLocation() {
-    // Отправляем в Москву.
-    CameraPosition cameraPosition = new CameraPosition.Builder()
-        .target(new LatLng(55.75583, 37.61778)).zoom(10)
-        .build();
-    googleMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+    if (locationTrackingAllowed) {
+      googleMap.setMyLocationEnabled(true);
+      // Отправляем в Москву.
+      CameraPosition cameraPosition = new CameraPosition.Builder()
+          .target(new LatLng(55.75583, 37.61778)).zoom(10)
+          .build();
+      googleMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+    } else {
+      // Отправляем в Москву.
+      CameraPosition cameraPosition = new CameraPosition.Builder()
+          .target(new LatLng(55.75583, 37.61778)).zoom(10)
+          .build();
+      googleMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+    }
   }
 
   @Override
@@ -139,5 +188,26 @@ public class MapFragment extends SupportMapFragment implements OnMapReadyCallbac
         .build();
     googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
     return true;
+  }
+
+  @Override
+  public void updateHeatMap(@Nullable String geoJson) {
+    if (geoJson == null) return;
+    try {
+      JSONObject jsonObject = new JSONObject(geoJson);
+      if (layer != null) {
+        layer.removeLayerFromMap();
+      }
+      layer = new GeoJsonLayer(googleMap, jsonObject);
+      GeoJsonPolygonStyle polygonStyle = new GeoJsonPolygonStyle();
+      polygonStyle.setFillColor(0x2000FF00);
+      polygonStyle.setStrokeColor(0x80FF8080);
+      for (GeoJsonFeature feature : layer.getFeatures()) {
+        feature.setPolygonStyle(polygonStyle);
+      }
+      layer.addLayerToMap();
+    } catch (JSONException e) {
+      e.printStackTrace();
+    }
   }
 }
