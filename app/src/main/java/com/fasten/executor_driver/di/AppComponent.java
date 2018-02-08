@@ -1,6 +1,5 @@
 package com.fasten.executor_driver.di;
 
-import com.fasten.executor_driver.application.MapActivity;
 import com.fasten.executor_driver.view.MapFragment;
 import com.fasten.executor_driver.view.auth.LoginFragment;
 import com.fasten.executor_driver.view.auth.PasswordFragment;
@@ -16,8 +15,6 @@ import javax.inject.Singleton;
     PresentationModule.class
 })
 public interface AppComponent {
-
-  void inject(MapActivity mapActivity);
 
   void inject(LoginFragment loginFragment);
 
