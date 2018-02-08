@@ -5,14 +5,14 @@ import android.support.annotation.Nullable;
 import com.fasten.executor_driver.presentation.ViewState;
 
 /**
- * Начальное состояние карты
+ * Состояние вида карты с тепловой картой
  */
 public final class MapViewState implements ViewState<MapViewActions> {
 
   @Nullable
   private final String geoJson;
 
-  public MapViewState(@Nullable String geoJson) {
+  MapViewState(@Nullable String geoJson) {
     this.geoJson = geoJson;
   }
 
