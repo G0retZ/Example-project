@@ -1,6 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<fragment xmlns:android="http://schemas.android.com/apk/res/android"
-  android:id="@+id/fragment_map"
+<android.support.constraint.ConstraintLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  xmlns:tools="http://schemas.android.com/tools"
   android:layout_width="match_parent"
   android:layout_height="match_parent"
-  android:name="com.fasten.executor_driver.view.MapFragment"/>
+  >
+  <fragment
+    android:id="@+id/fragment_map"
+    android:layout_width="0dp"
+    android:layout_height="0dp"
+    android:name="com.fasten.executor_driver.view.MapFragment"
+    app:layout_constraintBottom_toTopOf="@+id/fragment_go_online"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent"/>
+  <fragment
+    android:id="@+id/fragment_go_online"
+    android:layout_width="0dp"
+    android:layout_height="wrap_content"
+    android:name="com.fasten.executor_driver.view.GoOnlineFragment"
+    tools:layout="@layout/fragment_go_online"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    />
+</android.support.constraint.ConstraintLayout>
