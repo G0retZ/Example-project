@@ -32,7 +32,7 @@ class GatewayModule {
   }
 
   @Provides
-  HeatMapGateway provideHeatMapGateway(HeatMapGatewayImpl smsGateway) {
-    return smsGateway;
+  HeatMapGateway provideHeatMapGateway(HeatMapGatewayImpl heatMapGateway) {
+    return heatMapGateway;
   }
 }
