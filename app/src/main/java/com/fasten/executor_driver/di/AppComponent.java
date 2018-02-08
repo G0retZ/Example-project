@@ -1,6 +1,7 @@
 package com.fasten.executor_driver.di;
 
 import com.fasten.executor_driver.application.MapActivity;
+import com.fasten.executor_driver.view.MapFragment;
 import com.fasten.executor_driver.view.auth.LoginFragment;
 import com.fasten.executor_driver.view.auth.PasswordFragment;
 import dagger.Component;
@@ -21,4 +22,6 @@ public interface AppComponent {
   void inject(LoginFragment loginFragment);
 
   void inject(PasswordFragment loginFragment);
+
+  void inject(MapFragment mapFragment);
 }
