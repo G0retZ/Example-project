@@ -93,13 +93,15 @@ public class PermissionChecker {
 
   /**
    * Публикуем результат запроса
+   *
    * @param requestCode ИД запроса разрешений, если не соответствует {@link #uuid}, то выходим.
    * @param permissions список разрешений.
-   * @param grantResults результаты для соответствующих разрешений,
-   *      которые или {@link android.content.pm.PackageManager#PERMISSION_GRANTED}
-   *      или {@link android.content.pm.PackageManager#PERMISSION_DENIED}.
+   * @param grantResults результаты для соответствующих разрешений, которые или {@link
+   * android.content.pm.PackageManager#PERMISSION_GRANTED} или {@link
+   * android.content.pm.PackageManager#PERMISSION_DENIED}.
    */
-  public void onResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+  public void onResult(int requestCode, @NonNull String[] permissions,
+      @NonNull int[] grantResults) {
     if (requestCode != uuid || permissions.length == 0 || grantResults.length == 0) {
       return;
     }
