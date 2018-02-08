@@ -35,6 +35,7 @@ public class SmsReceiver extends BroadcastReceiver {
     return subject;
   }
 
+  @SuppressWarnings("SpellCheckingInspection")
   @Override
   public void onReceive(Context context, Intent intent) {
     if (intent != null && intent.getAction() != null

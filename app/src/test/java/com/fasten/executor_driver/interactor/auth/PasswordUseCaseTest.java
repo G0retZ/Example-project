@@ -61,6 +61,7 @@ public class PasswordUseCaseTest {
    *
    * @throws Exception error
    */
+  @SuppressWarnings("SpellCheckingInspection")
   @Test
   public void doNotTouchDataSharer() throws Exception {
     passwordUseCase.authorize("passwor", Completable.complete()).test();
@@ -128,6 +129,7 @@ public class PasswordUseCaseTest {
    *
    * @throws Exception error
    */
+  @SuppressWarnings("SpellCheckingInspection")
   @Test
   public void doNotAskGatewayForAuth() throws Exception {
     // Действие:

@@ -29,6 +29,7 @@ public class LoginDataTest {
     assertEquals(loginData.setPassword("pass").getPassword(), "pass");
   }
 
+  @SuppressWarnings("SpellCheckingInspection")
   @Test
   public void testEquals() throws Exception {
     assertEquals(loginData, new LoginData("name", "password"));
