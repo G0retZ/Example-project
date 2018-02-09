@@ -5,7 +5,6 @@ import java.io.IOException;
 /**
  * Ошибка: водитель заблокирован.
  */
-
 public class DriverBlockedException extends IOException {
 
   public DriverBlockedException() {

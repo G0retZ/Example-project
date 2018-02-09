@@ -7,7 +7,6 @@ import android.support.annotation.NonNull;
  * Создается через конструктор с не нулевыми полями.
  * Любой сеттер возвращает новую сущность с заданными полями
  */
-
 public class LoginData {
 
   @NonNull
