@@ -40,7 +40,7 @@ public class HeatMapGatewayTest {
    * @throws Exception error
    */
   @Test
-  public void authCompletableRequested() throws Exception {
+  public void askGatewayForHeatMap() throws Exception {
     // Действие:
     heatMapGateway.getHeatMap();
 
@@ -72,7 +72,7 @@ public class HeatMapGatewayTest {
    * @throws Exception error
    */
   @Test
-  public void answerAuthSuccessful() throws Exception {
+  public void answerWithHeatMapData() throws Exception {
     // Действие:
     when(api.getHeatMap()).thenReturn(Single.just("12"));
 
