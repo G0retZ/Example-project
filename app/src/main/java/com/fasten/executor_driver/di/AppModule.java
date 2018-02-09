@@ -6,11 +6,13 @@ import com.fasten.executor_driver.BuildConfig;
 import com.fasten.executor_driver.backend.settings.AppPreferences;
 import com.fasten.executor_driver.backend.settings.AppSettingsService;
 import com.fasten.executor_driver.backend.web.ApiService;
+import com.fasten.executor_driver.backend.web.AuthorizationInterceptor;
 import com.fasten.executor_driver.backend.web.ConnectivityInterceptor;
 import com.fasten.executor_driver.backend.web.ReceiveTokenInterceptor;
 import com.fasten.executor_driver.backend.web.SendTokenInterceptor;
 import dagger.Module;
 import dagger.Provides;
+import io.reactivex.subjects.Subject;
 import java.util.concurrent.TimeUnit;
 import javax.inject.Singleton;
 import okhttp3.OkHttpClient;
@@ -24,9 +26,12 @@ public class AppModule {
 
   @NonNull
   private final Context appContext;
+  @NonNull
+  private final Subject<String> logoutEventSubject;
 
-  public AppModule(@NonNull Context context) {
+  public AppModule(@NonNull Context context, @NonNull Subject<String> logoutEventSubject) {
     this.appContext = context.getApplicationContext();
+    this.logoutEventSubject = logoutEventSubject;
   }
 
   @Provides
@@ -34,6 +39,13 @@ public class AppModule {
   @Singleton
   Context provideAppContext() {
     return appContext;
+  }
+
+  @Provides
+  @NonNull
+  @Singleton
+  Subject<String> provideLogoutSubject() {
+    return logoutEventSubject;
   }
 
   @Provides
@@ -47,6 +59,7 @@ public class AppModule {
   @NonNull
   @Singleton
   ApiService provideApiService(@NonNull ConnectivityInterceptor connectivityInterceptor,
+      @NonNull AuthorizationInterceptor authorizationInterceptor,
       @NonNull SendTokenInterceptor sendTokenInterceptor,
       @NonNull ReceiveTokenInterceptor receiveTokenInterceptor) {
     // build OkHttpClient builder
@@ -55,6 +68,7 @@ public class AppModule {
         .connectTimeout(10, TimeUnit.SECONDS)
         .writeTimeout(10, TimeUnit.SECONDS)
         .addInterceptor(connectivityInterceptor)
+        .addInterceptor(authorizationInterceptor)
         .addInterceptor(receiveTokenInterceptor)
         .addInterceptor(sendTokenInterceptor);
     // Add logging interceptor for debug build only
