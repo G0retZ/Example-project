@@ -27,9 +27,9 @@ public class HeatMapUseCaseImpl implements HeatMapUseCase {
     if (heatMapEmitter == null) {
       heatMapEmitter = gateway.getHeatMap()
           .repeatWhen(completed -> completed
-              .concatMap(v -> Flowable.timer(POLLING_INTERVAL, TimeUnit.SECONDS, Schedulers.io())))
+              .concatMap(v -> Flowable.timer(POLLING_INTERVAL, TimeUnit.MINUTES, Schedulers.io())))
           .retryWhen(failed -> failed
-              .concatMap(v -> Flowable.timer(POLLING_INTERVAL, TimeUnit.SECONDS, Schedulers.io())))
+              .concatMap(v -> Flowable.timer(POLLING_INTERVAL, TimeUnit.MINUTES, Schedulers.io())))
           .share();
     }
     return heatMapEmitter;

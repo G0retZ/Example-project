@@ -88,9 +88,9 @@ public class HeatMapUseCaseTest {
 
     // Действие:
     TestSubscriber<String> testObserver = heatMapUseCase.loadHeatMap().test();
-    testScheduler.advanceTimeBy(REQUIRED_INTERVAL, TimeUnit.SECONDS);
-    testScheduler.advanceTimeBy(REQUIRED_INTERVAL, TimeUnit.SECONDS);
-    testScheduler.advanceTimeBy(REQUIRED_INTERVAL, TimeUnit.SECONDS);
+    testScheduler.advanceTimeBy(REQUIRED_INTERVAL, TimeUnit.MINUTES);
+    testScheduler.advanceTimeBy(REQUIRED_INTERVAL, TimeUnit.MINUTES);
+    testScheduler.advanceTimeBy(REQUIRED_INTERVAL, TimeUnit.MINUTES);
 
     // Результат:
     testObserver.assertNoErrors();
@@ -128,7 +128,7 @@ public class HeatMapUseCaseTest {
 
     // Действие:
     TestSubscriber<String> testObserver = heatMapUseCase.loadHeatMap().test();
-    testScheduler.advanceTimeBy(REQUIRED_INTERVAL * 9, TimeUnit.SECONDS);
+    testScheduler.advanceTimeBy(REQUIRED_INTERVAL * 9, TimeUnit.MINUTES);
 
     // Результат:
     testObserver.assertNoErrors();
@@ -152,16 +152,16 @@ public class HeatMapUseCaseTest {
     Disposable disposable1 = heatMapUseCase.loadHeatMap().subscribe(System.out::println); // +1 вызов
     Disposable disposable2 = heatMapUseCase.loadHeatMap().subscribe(System.out::println); // +1 вызов
     Disposable disposable3 = heatMapUseCase.loadHeatMap().subscribe(System.out::println); // +1 вызов
-    testScheduler.advanceTimeBy(REQUIRED_INTERVAL, TimeUnit.SECONDS); // +3 вызова на всех подписчиков
+    testScheduler.advanceTimeBy(REQUIRED_INTERVAL, TimeUnit.MINUTES); // +3 вызова на всех подписчиков
     disposable1.dispose();
-    testScheduler.advanceTimeBy(REQUIRED_INTERVAL, TimeUnit.SECONDS); // +2 вызова на оставшихся подписчиков
+    testScheduler.advanceTimeBy(REQUIRED_INTERVAL, TimeUnit.MINUTES); // +2 вызова на оставшихся подписчиков
     disposable2.dispose();
-    testScheduler.advanceTimeBy(REQUIRED_INTERVAL, TimeUnit.SECONDS); // +1 вызов на последнего подписчика
+    testScheduler.advanceTimeBy(REQUIRED_INTERVAL, TimeUnit.MINUTES); // +1 вызов на последнего подписчика
     disposable3.dispose();
 
     // Результат:
     verify(testCallable, times(4)).call();
-    testScheduler.advanceTimeBy(REQUIRED_INTERVAL * 10, TimeUnit.SECONDS);
+    testScheduler.advanceTimeBy(REQUIRED_INTERVAL * 10, TimeUnit.MINUTES);
     verifyNoMoreInteractions(testCallable);
   }
 }
