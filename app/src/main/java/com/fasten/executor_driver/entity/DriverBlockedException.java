@@ -8,11 +8,12 @@ import java.io.IOException;
 
 public class DriverBlockedException extends IOException {
 
+  @SuppressWarnings("unused")
   public DriverBlockedException() {
     super();
   }
 
-  @SuppressWarnings("unused")
+  @SuppressWarnings("SameParameterValue")
   public DriverBlockedException(String message) {
     super(message);
   }

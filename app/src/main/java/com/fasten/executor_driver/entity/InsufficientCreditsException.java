@@ -8,11 +8,12 @@ import java.io.IOException;
 
 public class InsufficientCreditsException extends IOException {
 
+  @SuppressWarnings("unused")
   public InsufficientCreditsException() {
     super();
   }
 
-  @SuppressWarnings("unused")
+  @SuppressWarnings("SameParameterValue")
   public InsufficientCreditsException(String message) {
     super(message);
   }
