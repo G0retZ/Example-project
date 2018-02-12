@@ -10,7 +10,7 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-        buildConfigField 'String', 'BASE_URL', '"http://10.77.97.197:8080/executor/api/"'
+        buildConfigField 'String', 'BASE_URL', '"http://dev.capsrv.xyz:8080/executor/"'
         vectorDrawables.useSupportLibrary = true
     }
     buildTypes {
@@ -44,6 +44,7 @@ dependencies {
 
     // Network
     implementation 'com.squareup.retrofit2:retrofit:2.3.0'
+    implementation 'com.squareup.retrofit2:converter-scalars:2.3.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.3.0'
     implementation 'com.squareup.retrofit2:adapter-rxjava2:2.3.0'
     implementation 'com.squareup.okhttp3:logging-interceptor:3.9.0'

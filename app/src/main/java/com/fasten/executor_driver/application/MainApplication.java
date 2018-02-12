@@ -1,10 +1,15 @@
 package com.fasten.executor_driver.application;
 
 import android.app.Application;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import com.fasten.executor_driver.di.AppComponent;
 import com.fasten.executor_driver.di.AppModule;
 import com.fasten.executor_driver.di.DaggerAppComponent;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
+import io.reactivex.subjects.PublishSubject;
+import io.reactivex.subjects.Subject;
 
 /**
  * Application.
@@ -18,7 +23,18 @@ public class MainApplication extends Application {
   @Override
   public void onCreate() {
     super.onCreate();
-    mAppComponent = DaggerAppComponent.builder().appModule(new AppModule(this)).build();
+    Subject<String> logoutEventSubject = PublishSubject.create();
+    logoutEventSubject
+        .subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe(message -> {
+          Intent intent = new Intent(this, LoginActivity.class);
+          intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+          startActivity(intent);
+        });
+
+    mAppComponent = DaggerAppComponent.builder().appModule(new AppModule(this, logoutEventSubject))
+        .build();
   }
 
   @NonNull
