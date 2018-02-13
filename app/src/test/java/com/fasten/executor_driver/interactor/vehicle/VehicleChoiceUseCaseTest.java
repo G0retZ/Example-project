@@ -53,7 +53,7 @@ public class VehicleChoiceUseCaseTest {
     verify(gateway, only()).getExecutorVehicles();
   }
 
-	/* Проверяем ответы на запрос списка ТС */
+  /* Проверяем ответы на запрос списка ТС */
 
   /**
    * Должен ответить ошибкой сети.
@@ -99,7 +99,7 @@ public class VehicleChoiceUseCaseTest {
   }
 
   /**
-   * Должен ответить ошибкой отсутствия доступных ТС.
+   * Должен ответить ошибкой об отсутствия доступных ТС.
    *
    * @throws Exception error.
    */
@@ -135,7 +135,7 @@ public class VehicleChoiceUseCaseTest {
   }
 
   /**
-   * Должен ответить ошибкой доступности только одного свободного ТС.
+   * Должен ответить ошибкой о доступности только одного свободного ТС.
    *
    * @throws Exception error.
    */
