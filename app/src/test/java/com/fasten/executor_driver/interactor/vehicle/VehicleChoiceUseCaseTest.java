@@ -152,7 +152,7 @@ public class VehicleChoiceUseCaseTest {
     vehicleChoiceUseCase.getVehicles().test().assertError(OnlyOneVehicleAvailableException.class);
   }
 
-	/* Проверяем работу с публикатором ТС */
+  /* Проверяем работу с публикатором ТС */
 
   /**
    * Не должен трогать публикатор.
@@ -265,7 +265,7 @@ public class VehicleChoiceUseCaseTest {
   /* Проверяем ответы на публикацию */
 
   /**
-   * Должен ответить ошибкой аргумента.
+   * Должен ответить ошибкой, если выбрана позиция за пределами текущего дипазона.
    *
    * @throws Exception error.
    */
