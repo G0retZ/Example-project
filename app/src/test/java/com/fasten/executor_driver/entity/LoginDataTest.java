@@ -24,8 +24,6 @@ public class LoginDataTest {
   @Test
   public void testSetters() throws Exception {
     assertEquals(loginData.setLogin("nam").getLogin(), "nam");
-    assertEquals(loginData.setLogin("nam").getLogin(), "nam");
-    assertEquals(loginData.setPassword("pass").getPassword(), "pass");
     assertEquals(loginData.setPassword("pass").getPassword(), "pass");
   }
 

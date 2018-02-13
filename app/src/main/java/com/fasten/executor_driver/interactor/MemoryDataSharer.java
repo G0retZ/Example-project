@@ -16,7 +16,7 @@ public abstract class MemoryDataSharer<D> implements DataSharer<D> {
   @NonNull
   private final Subject<D> subject;
 
-  MemoryDataSharer() {
+  protected MemoryDataSharer() {
     subject = BehaviorSubject.create();
   }
 
