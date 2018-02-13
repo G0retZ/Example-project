@@ -1,6 +1,7 @@
 package com.fasten.executor_driver.di;
 
 import android.support.annotation.NonNull;
+import com.fasten.executor_driver.entity.Vehicle;
 import com.fasten.executor_driver.interactor.DataSharer;
 import com.fasten.executor_driver.interactor.auth.LoginSharer;
 import com.fasten.executor_driver.interactor.auth.LoginUseCase;
@@ -13,6 +14,9 @@ import com.fasten.executor_driver.interactor.map.HeatMapUseCase;
 import com.fasten.executor_driver.interactor.map.HeatMapUseCaseImpl;
 import com.fasten.executor_driver.interactor.online.OnlineUseCase;
 import com.fasten.executor_driver.interactor.online.OnlineUseCaseImpl;
+import com.fasten.executor_driver.interactor.vehicle.VehicleChoiceUseCase;
+import com.fasten.executor_driver.interactor.vehicle.VehicleChoiceUseCaseImpl;
+import com.fasten.executor_driver.interactor.vehicle.VehicleSharer;
 import dagger.Module;
 import dagger.Provides;
 import javax.inject.Named;
@@ -45,11 +49,22 @@ class UseCaseModule {
     return onlineUseCase;
   }
 
+  @Provides
+  VehicleChoiceUseCase provideVehicleChoiceUseCase(VehicleChoiceUseCaseImpl vehicleChoiceUseCase) {
+    return vehicleChoiceUseCase;
+  }
+
   /* Обмен данными между юзкейсами */
 
   @Provides
   @Named("loginSharer")
   DataSharer<String> provideLoginSharer(@NonNull LoginSharer loginSharer) {
     return loginSharer;
+  }
+
+  @Provides
+  @Named("vehicleSharer")
+  DataSharer<Vehicle> provideVehicleSharer(@NonNull VehicleSharer vehicleSharer) {
+    return vehicleSharer;
   }
 }
