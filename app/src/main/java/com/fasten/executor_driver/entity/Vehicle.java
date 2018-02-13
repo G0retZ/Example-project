@@ -10,7 +10,7 @@ import java.util.List;
  * Создается через конструктор с не нулевыми полями.
  * Список опций неизменен, но его содержимое может изменяться - дополняться или заменяться.
  */
-class Vehicle {
+public class Vehicle {
 
   private final int id;
   @NonNull
@@ -25,7 +25,7 @@ class Vehicle {
   @NonNull
   private final List<VehicleOption> vehicleOptions = new ArrayList<>();
 
-  Vehicle(int id, @NonNull String manufacturer, @NonNull String model, @NonNull String color,
+  public Vehicle(int id, @NonNull String manufacturer, @NonNull String model, @NonNull String color,
       @NonNull String licensePlate, boolean busy) {
     this.id = id;
     this.manufacturer = manufacturer;
@@ -59,7 +59,7 @@ class Vehicle {
     return licensePlate;
   }
 
-  boolean isBusy() {
+  public boolean isBusy() {
     return busy;
   }
 
