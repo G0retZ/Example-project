@@ -12,7 +12,7 @@ import java.util.List;
  */
 public class Vehicle {
 
-  private final int id;
+  private final long id;
   @NonNull
   private final String manufacturer;
   @NonNull
@@ -25,7 +25,7 @@ public class Vehicle {
   @NonNull
   private final List<VehicleOption> vehicleOptions = new ArrayList<>();
 
-  public Vehicle(int id, @NonNull String manufacturer, @NonNull String model, @NonNull String color,
+  public Vehicle(long id, @NonNull String manufacturer, @NonNull String model, @NonNull String color,
       @NonNull String licensePlate, boolean busy) {
     this.id = id;
     this.manufacturer = manufacturer;
@@ -35,7 +35,7 @@ public class Vehicle {
     this.busy = busy;
   }
 
-  int getId() {
+  long getId() {
     return id;
   }
 
@@ -125,7 +125,7 @@ public class Vehicle {
 
   @Override
   public int hashCode() {
-    int result = id;
+    int result = (int) (id ^ (id >>> 32));
     result = 31 * result + manufacturer.hashCode();
     result = 31 * result + model.hashCode();
     result = 31 * result + color.hashCode();

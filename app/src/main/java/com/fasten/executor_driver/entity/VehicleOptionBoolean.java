@@ -7,7 +7,7 @@ import android.support.annotation.NonNull;
  */
 class VehicleOptionBoolean extends VehicleOption<Boolean> {
 
-  VehicleOptionBoolean(int id, @NonNull String name, @NonNull Boolean value) {
+  VehicleOptionBoolean(long id, @NonNull String name, @NonNull Boolean value) {
     super(id, name, value);
   }
 

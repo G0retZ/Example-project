@@ -9,19 +9,19 @@ import android.support.annotation.NonNull;
  */
 class VehicleOption<V> {
 
-  private final int id;
+  private final long id;
   @NonNull
   private final String name;
   @NonNull
   private final V value;
 
-  VehicleOption(int id, @NonNull String name, @NonNull V value) {
+  VehicleOption(long id, @NonNull String name, @NonNull V value) {
     this.id = id;
     this.name = name;
     this.value = value;
   }
 
-  int getId() {
+  long getId() {
     return id;
   }
 
@@ -67,7 +67,7 @@ class VehicleOption<V> {
 
   @Override
   public int hashCode() {
-    int result = id;
+    int result = (int) (id ^ (id >>> 32));
     result = 31 * result + name.hashCode();
     result = 31 * result + value.hashCode();
     return result;
