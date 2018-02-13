@@ -31,18 +31,12 @@ public class VehicleOptionNumericTest {
 
   @Test
   public void testEquals() throws Exception {
-    assertEquals(vehicleOptionNumeric, new VehicleOptionNumeric(12, "name", 30, 5,
-        31));
-    assertNotEquals(vehicleOptionNumeric, new VehicleOptionNumeric(11, "name", 30, 5,
-        31));
-    assertNotEquals(vehicleOptionNumeric, new VehicleOptionNumeric(12, "names", 30, 5,
-        31));
-    assertNotEquals(vehicleOptionNumeric, new VehicleOptionNumeric(12, "name", 23, 5,
-        31));
-    assertNotEquals(vehicleOptionNumeric, new VehicleOptionNumeric(11, "name", 30, 8,
-        31));
-    assertNotEquals(vehicleOptionNumeric, new VehicleOptionNumeric(11, "name", 30, 5,
-        50));
+    assertEquals(vehicleOptionNumeric, new VehicleOptionNumeric(12, "name", 30, 5, 31));
+    assertNotEquals(vehicleOptionNumeric, new VehicleOptionNumeric(11, "name", 30, 5, 31));
+    assertNotEquals(vehicleOptionNumeric, new VehicleOptionNumeric(12, "names", 30, 5, 31));
+    assertNotEquals(vehicleOptionNumeric, new VehicleOptionNumeric(12, "name", 23, 5, 31));
+    assertNotEquals(vehicleOptionNumeric, new VehicleOptionNumeric(11, "name", 30, 8, 31));
+    assertNotEquals(vehicleOptionNumeric, new VehicleOptionNumeric(11, "name", 30, 5, 50));
     assertNotEquals(vehicleOptionNumeric, vehicleOptionNumeric.setValue(23));
   }
 }
