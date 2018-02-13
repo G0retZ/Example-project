@@ -1,4 +1,4 @@
-package com.fasten.executor_driver.backend.web.model;
+package com.fasten.executor_driver.backend.web.outgoing;
 
 import static junit.framework.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;

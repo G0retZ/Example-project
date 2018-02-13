@@ -1,4 +1,4 @@
-package com.fasten.executor_driver.backend.web.model;
+package com.fasten.executor_driver.backend.web.outgoing;
 
 import android.support.annotation.NonNull;
 import com.google.gson.annotations.Expose;
@@ -25,12 +25,12 @@ public class ApiLogin {
   }
 
   @NonNull
-  String getName() {
+  public String getName() {
     return name;
   }
 
   @NonNull
-  String getPassword() {
+  public String getPassword() {
     return password;
   }
 

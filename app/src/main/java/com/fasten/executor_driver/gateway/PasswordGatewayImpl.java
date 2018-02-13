@@ -2,7 +2,7 @@ package com.fasten.executor_driver.gateway;
 
 import android.support.annotation.NonNull;
 import com.fasten.executor_driver.backend.web.ApiService;
-import com.fasten.executor_driver.backend.web.model.ApiLogin;
+import com.fasten.executor_driver.backend.web.outgoing.ApiLogin;
 import com.fasten.executor_driver.entity.LoginData;
 import com.fasten.executor_driver.interactor.auth.PasswordGateway;
 import io.reactivex.Completable;

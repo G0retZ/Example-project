@@ -1,7 +1,7 @@
 package com.fasten.executor_driver.backend.web;
 
 import android.support.annotation.NonNull;
-import com.fasten.executor_driver.backend.web.model.ApiLogin;
+import com.fasten.executor_driver.backend.web.outgoing.ApiLogin;
 import io.reactivex.Completable;
 import io.reactivex.Single;
 import retrofit2.http.Body;
