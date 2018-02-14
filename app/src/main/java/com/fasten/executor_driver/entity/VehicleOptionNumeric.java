@@ -11,8 +11,7 @@ public class VehicleOptionNumeric extends VehicleOption<Integer> {
   private final int maxValue;
 
   public VehicleOptionNumeric(long id, @NonNull String name, boolean variable,
-      @NonNull Integer value, int minValue,
-      int maxValue) {
+      @NonNull Integer value, int minValue, int maxValue) {
     super(id, name, variable, value);
     this.minValue = minValue;
     this.maxValue = maxValue;
