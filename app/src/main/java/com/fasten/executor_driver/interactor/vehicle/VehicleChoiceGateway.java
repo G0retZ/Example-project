@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * Гейтвей выбора ТС исполнителя
  */
-interface VehicleChoiceGateway {
+public interface VehicleChoiceGateway {
 
   /**
    * Запрашивает у сервера список ТС, достпуных исполнителю. Сервер должен вернуть либо список, либо

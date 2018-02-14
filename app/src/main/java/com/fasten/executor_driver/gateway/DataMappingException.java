@@ -5,10 +5,9 @@ import java.io.IOException;
 /**
  * Исключение об ошибке преобразования данных.
  */
-class DataMappingException extends IOException {
+public class DataMappingException extends IOException {
 
-  @SuppressWarnings("unused")
-  DataMappingException() {
+  public DataMappingException() {
     super();
   }
 
