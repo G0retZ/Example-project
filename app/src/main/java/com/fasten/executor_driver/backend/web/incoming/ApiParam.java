@@ -6,7 +6,7 @@ import com.google.gson.annotations.SerializedName;
 /**
  * ответ от API содержащий имя какого-либо параметра.
  */
-class ApiParam {
+public class ApiParam {
 
   @Nullable
   @SerializedName("name")
@@ -16,15 +16,15 @@ class ApiParam {
    * Конструктор без параметров желателен для безопасной работы Gson.
    */
   @SuppressWarnings({"unused", "SpellCheckingInspection"})
-  ApiParam() {
+  public ApiParam() {
   }
 
-  ApiParam(@Nullable String name) {
+  public ApiParam(@Nullable String name) {
     this.name = name;
   }
 
   @Nullable
-  String getName() {
+  public String getName() {
     return name;
   }
 

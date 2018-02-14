@@ -36,7 +36,7 @@ public class ApiVehicle {
   public ApiVehicle() {
   }
 
-  ApiVehicle(long id, @Nullable ApiParam mark,
+  public ApiVehicle(long id, @Nullable ApiParam mark,
       @Nullable ApiParam model, @Nullable String licensePlate,
       @Nullable ApiParam color, boolean busy,
       List<ApiVehicleOptionItem> vehicleOptionItems) {
@@ -49,35 +49,35 @@ public class ApiVehicle {
     this.vehicleOptionItems = vehicleOptionItems;
   }
 
-  long getId() {
+  public long getId() {
     return id;
   }
 
   @Nullable
-  ApiParam getMark() {
+  public ApiParam getMark() {
     return mark;
   }
 
   @Nullable
-  ApiParam getModel() {
+  public ApiParam getModel() {
     return model;
   }
 
   @Nullable
-  String getLicensePlate() {
+  public String getLicensePlate() {
     return licensePlate;
   }
 
   @Nullable
-  ApiParam getColor() {
+  public ApiParam getColor() {
     return color;
   }
 
-  boolean isBusy() {
+  public boolean isBusy() {
     return busy;
   }
 
-  List<ApiVehicleOptionItem> getVehicleOptionItems() {
+  public List<ApiVehicleOptionItem> getVehicleOptionItems() {
     return vehicleOptionItems;
   }
 
