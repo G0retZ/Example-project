@@ -10,9 +10,9 @@ class VehicleOptionNumeric extends VehicleOption<Integer>{
   private final int minValue;
   private final int maxValue;
 
-  VehicleOptionNumeric(long id, @NonNull String name, @NonNull Integer value, int minValue,
+  VehicleOptionNumeric(long id, @NonNull String name, boolean variable, @NonNull Integer value, int minValue,
       int maxValue) {
-    super(id, name, value);
+    super(id, name, variable, value);
     this.minValue = minValue;
     this.maxValue = maxValue;
   }
@@ -31,7 +31,7 @@ class VehicleOptionNumeric extends VehicleOption<Integer>{
    * @param value значение
    */
   VehicleOptionNumeric setValue(@NonNull Integer value) {
-    return new VehicleOptionNumeric(getId(), getName(), value, minValue, maxValue);
+    return new VehicleOptionNumeric(getId(), getName(), isVariable(), value, minValue, maxValue);
   }
 
   @Override
