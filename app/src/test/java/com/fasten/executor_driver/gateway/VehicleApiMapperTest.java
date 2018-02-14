@@ -32,7 +32,7 @@ public class VehicleApiMapperTest {
 
   @Before
   public void setUp() throws Exception {
-    when(vehicleOptionMapper.map(any()))
+    when(vehicleOptionMapper.map(any(ApiVehicleOptionItem.class)))
         .thenReturn(new VehicleOptionBoolean(0, "n", false, false));
     mapper = new VehicleApiMapper(vehicleOptionMapper);
   }
