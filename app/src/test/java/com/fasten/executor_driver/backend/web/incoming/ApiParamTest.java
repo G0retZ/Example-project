@@ -8,22 +8,22 @@ import org.junit.Test;
 
 public class ApiParamTest {
 
-  private ApiParam apiVehicleOptionItem;
+  private ApiParam apiParam;
 
   @Before
   public void setUp() throws Exception {
-    apiVehicleOptionItem = new ApiParam("name");
+    apiParam = new ApiParam("name");
   }
 
   @Test
   public void testConstructor() throws Exception {
-    assertEquals(apiVehicleOptionItem.getName(), "name");
+    assertEquals(apiParam.getName(), "name");
   }
 
   @SuppressWarnings("SpellCheckingInspection")
   @Test
   public void testEquals() throws Exception {
-    assertEquals(apiVehicleOptionItem, new ApiParam("name"));
-    assertNotEquals(apiVehicleOptionItem, new ApiParam("names"));
+    assertEquals(apiParam, new ApiParam("name"));
+    assertNotEquals(apiParam, new ApiParam("names"));
   }
 }

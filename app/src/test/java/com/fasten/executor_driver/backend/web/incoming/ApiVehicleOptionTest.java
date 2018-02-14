@@ -10,26 +10,26 @@ import org.junit.Test;
 
 public class ApiVehicleOptionTest {
 
-  private ApiVehicleOption apiVehicleOptionItem;
+  private ApiVehicleOption apiVehicleOption;
 
   @Before
   public void setUp() throws Exception {
-    apiVehicleOptionItem = new ApiVehicleOption("option", false, true);
+    apiVehicleOption = new ApiVehicleOption("option", false, true);
   }
 
   @Test
   public void testConstructor() throws Exception {
-    assertEquals(apiVehicleOptionItem.getName(), "option");
-    assertFalse(apiVehicleOptionItem.isDynamic());
-    assertTrue(apiVehicleOptionItem.isNumeric());
+    assertEquals(apiVehicleOption.getName(), "option");
+    assertFalse(apiVehicleOption.isDynamic());
+    assertTrue(apiVehicleOption.isNumeric());
   }
 
   @SuppressWarnings("SpellCheckingInspection")
   @Test
   public void testEquals() throws Exception {
-    assertEquals(apiVehicleOptionItem, new ApiVehicleOption("option", false, true));
-    assertNotEquals(apiVehicleOptionItem, new ApiVehicleOption("options", false, true));
-    assertNotEquals(apiVehicleOptionItem, new ApiVehicleOption("option", true, true));
-    assertNotEquals(apiVehicleOptionItem, new ApiVehicleOption("option", false, false));
+    assertEquals(apiVehicleOption, new ApiVehicleOption("option", false, true));
+    assertNotEquals(apiVehicleOption, new ApiVehicleOption("options", false, true));
+    assertNotEquals(apiVehicleOption, new ApiVehicleOption("option", true, true));
+    assertNotEquals(apiVehicleOption, new ApiVehicleOption("option", false, false));
   }
 }

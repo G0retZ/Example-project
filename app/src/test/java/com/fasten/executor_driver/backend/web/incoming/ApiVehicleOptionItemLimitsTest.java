@@ -8,24 +8,24 @@ import org.junit.Test;
 
 public class ApiVehicleOptionItemLimitsTest {
 
-  private ApiVehicleOptionItemLimits apiVehicleOptionItem;
+  private ApiVehicleOptionItemLimits apiVehicleOptionItemLimits;
 
   @Before
   public void setUp() throws Exception {
-    apiVehicleOptionItem = new ApiVehicleOptionItemLimits(-1, 10);
+    apiVehicleOptionItemLimits = new ApiVehicleOptionItemLimits(-1, 10);
   }
 
   @Test
   public void testConstructor() throws Exception {
-    assertEquals(apiVehicleOptionItem.getMinValue(), -1);
-    assertEquals(apiVehicleOptionItem.getMaxValue(), 10);
+    assertEquals(apiVehicleOptionItemLimits.getMinValue(), -1);
+    assertEquals(apiVehicleOptionItemLimits.getMaxValue(), 10);
   }
 
   @SuppressWarnings("SpellCheckingInspection")
   @Test
   public void testEquals() throws Exception {
-    assertEquals(apiVehicleOptionItem, new ApiVehicleOptionItemLimits(-1, 10));
-    assertNotEquals(apiVehicleOptionItem, new ApiVehicleOptionItemLimits(0, 10));
-    assertNotEquals(apiVehicleOptionItem, new ApiVehicleOptionItemLimits(-1, 5));
+    assertEquals(apiVehicleOptionItemLimits, new ApiVehicleOptionItemLimits(-1, 10));
+    assertNotEquals(apiVehicleOptionItemLimits, new ApiVehicleOptionItemLimits(0, 10));
+    assertNotEquals(apiVehicleOptionItemLimits, new ApiVehicleOptionItemLimits(-1, 5));
   }
 }

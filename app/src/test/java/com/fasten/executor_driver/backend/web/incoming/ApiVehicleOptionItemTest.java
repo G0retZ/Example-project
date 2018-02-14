@@ -8,45 +8,45 @@ import org.junit.Test;
 
 public class ApiVehicleOptionItemTest {
 
-  private ApiVehicleOptionItem apiVehicleOptionItem;
+  private ApiVehicleOptionItem vehicleOptionItem;
 
   @Before
   public void setUp() throws Exception {
-    apiVehicleOptionItem = new ApiVehicleOptionItem(324, "value",
+    vehicleOptionItem = new ApiVehicleOptionItem(324, "value",
         new ApiVehicleOptionItemLimits(-5, 123),
         new ApiVehicleOption("option", false, true));
   }
 
   @Test
   public void testConstructor() throws Exception {
-    assertEquals(apiVehicleOptionItem.getId(), 324);
-    assertEquals(apiVehicleOptionItem.getValue(), "value");
-    assertEquals(apiVehicleOptionItem.getLimits(), new ApiVehicleOptionItemLimits(-5, 123));
-    assertEquals(apiVehicleOptionItem.getOption(), new ApiVehicleOption("option", false, true));
+    assertEquals(vehicleOptionItem.getId(), 324);
+    assertEquals(vehicleOptionItem.getValue(), "value");
+    assertEquals(vehicleOptionItem.getLimits(), new ApiVehicleOptionItemLimits(-5, 123));
+    assertEquals(vehicleOptionItem.getOption(), new ApiVehicleOption("option", false, true));
   }
 
   @SuppressWarnings("SpellCheckingInspection")
   @Test
   public void testEquals() throws Exception {
-    assertEquals(apiVehicleOptionItem,
+    assertEquals(vehicleOptionItem,
         new ApiVehicleOptionItem(324, "value", new ApiVehicleOptionItemLimits(-5, 123),
             new ApiVehicleOption("option", false, true)));
-    assertNotEquals(apiVehicleOptionItem,
+    assertNotEquals(vehicleOptionItem,
         new ApiVehicleOptionItem(32, "value", new ApiVehicleOptionItemLimits(-5, 123),
             new ApiVehicleOption("option", false, true)));
-    assertNotEquals(apiVehicleOptionItem,
+    assertNotEquals(vehicleOptionItem,
         new ApiVehicleOptionItem(324, "values", new ApiVehicleOptionItemLimits(-5, 123),
             new ApiVehicleOption("option", false, true)));
-    assertNotEquals(apiVehicleOptionItem,
+    assertNotEquals(vehicleOptionItem,
         new ApiVehicleOptionItem(324, "value", new ApiVehicleOptionItemLimits(-5, 43),
             new ApiVehicleOption("option", false, true)));
-    assertNotEquals(apiVehicleOptionItem,
+    assertNotEquals(vehicleOptionItem,
         new ApiVehicleOptionItem(324, "value", null,
             new ApiVehicleOption("option", false, true)));
-    assertNotEquals(apiVehicleOptionItem,
+    assertNotEquals(vehicleOptionItem,
         new ApiVehicleOptionItem(324, "value", new ApiVehicleOptionItemLimits(-5, 123),
             new ApiVehicleOption("option", true, true)));
-    assertNotEquals(apiVehicleOptionItem,
+    assertNotEquals(vehicleOptionItem,
         new ApiVehicleOptionItem(324, "value", new ApiVehicleOptionItemLimits(-5, 123),
             null));
   }

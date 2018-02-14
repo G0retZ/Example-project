@@ -11,11 +11,11 @@ import org.junit.Test;
 
 public class ApiVehicleTest {
 
-  private ApiVehicle apiVehicleOptionItem;
+  private ApiVehicle apiVehicle;
 
   @Before
   public void setUp() throws Exception {
-    apiVehicleOptionItem = new ApiVehicle(
+    apiVehicle = new ApiVehicle(
         2190,
         new ApiParam("mark"),
         new ApiParam("model"),
@@ -41,13 +41,13 @@ public class ApiVehicleTest {
 
   @Test
   public void testConstructor() throws Exception {
-    assertEquals(apiVehicleOptionItem.getId(), 2190);
-    assertEquals(apiVehicleOptionItem.getMark(), new ApiParam("mark"));
-    assertEquals(apiVehicleOptionItem.getModel(), new ApiParam("model"));
-    assertEquals(apiVehicleOptionItem.getLicensePlate(), "plate");
-    assertEquals(apiVehicleOptionItem.getColor(), new ApiParam("color"));
-    assertFalse(apiVehicleOptionItem.isBusy());
-    assertEquals(apiVehicleOptionItem.getVehicleOptionItems(), Arrays.asList(
+    assertEquals(apiVehicle.getId(), 2190);
+    assertEquals(apiVehicle.getMark(), new ApiParam("mark"));
+    assertEquals(apiVehicle.getModel(), new ApiParam("model"));
+    assertEquals(apiVehicle.getLicensePlate(), "plate");
+    assertEquals(apiVehicle.getColor(), new ApiParam("color"));
+    assertFalse(apiVehicle.isBusy());
+    assertEquals(apiVehicle.getVehicleOptionItems(), Arrays.asList(
         new ApiVehicleOptionItem(324, "value1",
             new ApiVehicleOptionItemLimits(-5, 123),
             new ApiVehicleOption("option1", false, true)),
@@ -66,7 +66,7 @@ public class ApiVehicleTest {
   @SuppressWarnings("SpellCheckingInspection")
   @Test
   public void testEquals() throws Exception {
-    assertEquals(apiVehicleOptionItem,
+    assertEquals(apiVehicle,
         new ApiVehicle(
             2190,
             new ApiParam("mark"),
@@ -90,7 +90,7 @@ public class ApiVehicleTest {
             )
         )
     );
-    assertNotEquals(apiVehicleOptionItem,
+    assertNotEquals(apiVehicle,
         new ApiVehicle(
             210,
             new ApiParam("mark"),
@@ -114,7 +114,7 @@ public class ApiVehicleTest {
             )
         )
     );
-    assertNotEquals(apiVehicleOptionItem,
+    assertNotEquals(apiVehicle,
         new ApiVehicle(
             2190,
             null,
@@ -138,7 +138,7 @@ public class ApiVehicleTest {
             )
         )
     );
-    assertNotEquals(apiVehicleOptionItem,
+    assertNotEquals(apiVehicle,
         new ApiVehicle(
             2190,
             new ApiParam("marks"),
@@ -162,7 +162,7 @@ public class ApiVehicleTest {
             )
         )
     );
-    assertNotEquals(apiVehicleOptionItem,
+    assertNotEquals(apiVehicle,
         new ApiVehicle(
             2190,
             new ApiParam("mark"),
@@ -186,7 +186,7 @@ public class ApiVehicleTest {
             )
         )
     );
-    assertNotEquals(apiVehicleOptionItem,
+    assertNotEquals(apiVehicle,
         new ApiVehicle(
             2190,
             new ApiParam("mark"),
@@ -210,7 +210,7 @@ public class ApiVehicleTest {
             )
         )
     );
-    assertNotEquals(apiVehicleOptionItem,
+    assertNotEquals(apiVehicle,
         new ApiVehicle(
             2190,
             new ApiParam("mark"),
@@ -234,7 +234,7 @@ public class ApiVehicleTest {
             )
         )
     );
-    assertNotEquals(apiVehicleOptionItem,
+    assertNotEquals(apiVehicle,
         new ApiVehicle(
             2190,
             new ApiParam("mark"),
@@ -258,7 +258,7 @@ public class ApiVehicleTest {
             )
         )
     );
-    assertNotEquals(apiVehicleOptionItem,
+    assertNotEquals(apiVehicle,
         new ApiVehicle(
             2190,
             new ApiParam("mark"),
@@ -282,7 +282,7 @@ public class ApiVehicleTest {
             )
         )
     );
-    assertNotEquals(apiVehicleOptionItem,
+    assertNotEquals(apiVehicle,
         new ApiVehicle(
             2190,
             new ApiParam("mark"),
@@ -306,7 +306,7 @@ public class ApiVehicleTest {
             )
         )
     );
-    assertNotEquals(apiVehicleOptionItem,
+    assertNotEquals(apiVehicle,
         new ApiVehicle(
             2190,
             new ApiParam("mark"),
@@ -317,7 +317,7 @@ public class ApiVehicleTest {
             null
         )
     );
-    assertNotEquals(apiVehicleOptionItem,
+    assertNotEquals(apiVehicle,
         new ApiVehicle(
             2190,
             new ApiParam("mark"),
@@ -328,7 +328,7 @@ public class ApiVehicleTest {
             Collections.emptyList()
         )
     );
-    assertNotEquals(apiVehicleOptionItem,
+    assertNotEquals(apiVehicle,
         new ApiVehicle(
             2190,
             new ApiParam("mark"),
@@ -349,7 +349,7 @@ public class ApiVehicleTest {
             )
         )
     );
-    assertNotEquals(apiVehicleOptionItem,
+    assertNotEquals(apiVehicle,
         new ApiVehicle(
             2190,
             new ApiParam("mark"),
