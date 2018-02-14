@@ -4,7 +4,7 @@ import android.support.annotation.Nullable;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * ответ от API содержащий данные о типе параметра ТС
+ * ответ от API содержащий данные о типе параметра ТС.
  */
 class ApiVehicleOption {
 

@@ -4,7 +4,7 @@ import android.support.annotation.Nullable;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * ответ от API содержащий имя какого-либо параметра
+ * ответ от API содержащий имя какого-либо параметра.
  */
 class ApiParam {
 

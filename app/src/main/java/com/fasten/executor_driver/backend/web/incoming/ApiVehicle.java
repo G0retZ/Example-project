@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName;
 import java.util.List;
 
 /**
- * ответ от API содержащий данные о ТС
+ * ответ от API содержащий данные о ТС.
  */
 public class ApiVehicle {
 

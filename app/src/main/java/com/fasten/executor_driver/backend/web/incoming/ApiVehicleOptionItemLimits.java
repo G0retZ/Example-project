@@ -3,7 +3,7 @@ package com.fasten.executor_driver.backend.web.incoming;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * ответ от API содержащий данные об ограничениях параметра ТС
+ * ответ от API содержащий данные об ограничениях параметра ТС.
  */
 class ApiVehicleOptionItemLimits {
 
