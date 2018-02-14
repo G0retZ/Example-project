@@ -12,9 +12,10 @@ public class ApiVehicleOptionItemTest {
 
   @Before
   public void setUp() throws Exception {
-    vehicleOptionItem = new ApiVehicleOptionItem(324, "value",
-        new ApiVehicleOptionItemLimits(-5, 123),
-        new ApiVehicleOption("option", false, true));
+    vehicleOptionItem = new ApiVehicleOptionItem(
+        324, "value", new ApiVehicleOptionItemLimits(-5, 123),
+        new ApiVehicleOption("option", false, true)
+    );
   }
 
   @Test
