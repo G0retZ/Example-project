@@ -19,9 +19,4 @@ public class DataMappingException extends IOException {
   DataMappingException(String message, Throwable cause) {
     super(message, cause);
   }
-
-  @SuppressWarnings("unused")
-  DataMappingException(Throwable cause) {
-    super(cause);
-  }
 }
