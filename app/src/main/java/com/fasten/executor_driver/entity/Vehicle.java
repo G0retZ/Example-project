@@ -12,7 +12,7 @@ import java.util.List;
  */
 public class Vehicle {
 
-  private final int id;
+  private final long id;
   @NonNull
   private final String manufacturer;
   @NonNull
@@ -25,8 +25,8 @@ public class Vehicle {
   @NonNull
   private final List<VehicleOption> vehicleOptions = new ArrayList<>();
 
-  public Vehicle(int id, @NonNull String manufacturer, @NonNull String model, @NonNull String color,
-      @NonNull String licensePlate, boolean busy) {
+  public Vehicle(long id, @NonNull String manufacturer, @NonNull String model,
+      @NonNull String color, @NonNull String licensePlate, boolean busy) {
     this.id = id;
     this.manufacturer = manufacturer;
     this.model = model;
@@ -35,27 +35,27 @@ public class Vehicle {
     this.busy = busy;
   }
 
-  int getId() {
+  public long getId() {
     return id;
   }
 
   @NonNull
-  String getManufacturer() {
+  public String getManufacturer() {
     return manufacturer;
   }
 
   @NonNull
-  String getModel() {
+  public String getModel() {
     return model;
   }
 
   @NonNull
-  String getColor() {
+  public String getColor() {
     return color;
   }
 
   @NonNull
-  String getLicensePlate() {
+  public String getLicensePlate() {
     return licensePlate;
   }
 
@@ -64,7 +64,7 @@ public class Vehicle {
   }
 
   @NonNull
-  List<VehicleOption> getVehicleOptions() {
+  public List<VehicleOption> getVehicleOptions() {
     return vehicleOptions;
   }
 
@@ -73,7 +73,7 @@ public class Vehicle {
     addVehicleOptions(vehicleOptions);
   }
 
-  void addVehicleOptions(@NonNull VehicleOption... vehicleOptions) {
+  public void addVehicleOptions(@NonNull VehicleOption... vehicleOptions) {
     this.vehicleOptions.addAll(Arrays.asList(vehicleOptions));
   }
 
@@ -125,7 +125,7 @@ public class Vehicle {
 
   @Override
   public int hashCode() {
-    int result = id;
+    int result = (int) (id ^ (id >>> 32));
     result = 31 * result + manufacturer.hashCode();
     result = 31 * result + model.hashCode();
     result = 31 * result + color.hashCode();

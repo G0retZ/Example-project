@@ -7,31 +7,37 @@ import android.support.annotation.NonNull;
  *
  * @param <V> тип значения.
  */
-class VehicleOption<V> {
+public class VehicleOption<V> {
 
-  private final int id;
+  private final long id;
   @NonNull
   private final String name;
+  private final boolean variable;
   @NonNull
   private final V value;
 
-  VehicleOption(int id, @NonNull String name, @NonNull V value) {
+  VehicleOption(long id, @NonNull String name, boolean variable, @NonNull V value) {
     this.id = id;
     this.name = name;
+    this.variable = variable;
     this.value = value;
   }
 
-  int getId() {
+  public long getId() {
     return id;
   }
 
   @NonNull
-  String getName() {
+  public String getName() {
     return name;
   }
 
+  public boolean isVariable() {
+    return variable;
+  }
+
   @NonNull
-  V getValue() {
+  public V getValue() {
     return value;
   }
 
@@ -40,6 +46,7 @@ class VehicleOption<V> {
     return "VehicleOption{" +
         "id=" + id +
         ", name='" + name + '\'' +
+        ", variable=" + variable +
         ", value=" + value +
         '}';
   }
@@ -59,6 +66,9 @@ class VehicleOption<V> {
     if (id != that.id) {
       return false;
     }
+    if (variable != that.variable) {
+      return false;
+    }
     if (!name.equals(that.name)) {
       return false;
     }
@@ -67,8 +77,9 @@ class VehicleOption<V> {
 
   @Override
   public int hashCode() {
-    int result = id;
+    int result = (int) (id ^ (id >>> 32));
     result = 31 * result + name.hashCode();
+    result = 31 * result + (variable ? 1 : 0);
     result = 31 * result + value.hashCode();
     return result;
   }

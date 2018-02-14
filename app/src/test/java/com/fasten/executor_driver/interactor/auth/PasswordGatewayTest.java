@@ -7,7 +7,7 @@ import static org.mockito.Mockito.when;
 
 import com.fasten.executor_driver.backend.web.ApiService;
 import com.fasten.executor_driver.backend.web.NoNetworkException;
-import com.fasten.executor_driver.backend.web.model.ApiLogin;
+import com.fasten.executor_driver.backend.web.outgoing.ApiLogin;
 import com.fasten.executor_driver.entity.LoginData;
 import com.fasten.executor_driver.gateway.PasswordGatewayImpl;
 import io.reactivex.Completable;

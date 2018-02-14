@@ -5,10 +5,11 @@ import android.support.annotation.NonNull;
 /**
  * Бизнес сущность двоичного параметра автомобиля.
  */
-class VehicleOptionBoolean extends VehicleOption<Boolean> {
+public class VehicleOptionBoolean extends VehicleOption<Boolean> {
 
-  VehicleOptionBoolean(int id, @NonNull String name, @NonNull Boolean value) {
-    super(id, name, value);
+  public VehicleOptionBoolean(long id, @NonNull String name, boolean variable,
+      @NonNull Boolean value) {
+    super(id, name, variable, value);
   }
 
   /**
@@ -17,6 +18,6 @@ class VehicleOptionBoolean extends VehicleOption<Boolean> {
    * @param value значение
    */
   VehicleOptionBoolean setValue(@NonNull Boolean value) {
-    return new VehicleOptionBoolean(getId(), getName(), value);
+    return new VehicleOptionBoolean(getId(), getName(), isVariable(), value);
   }
 }
