@@ -13,11 +13,13 @@ import com.fasten.executor_driver.gateway.PasswordGatewayImpl;
 import com.fasten.executor_driver.gateway.SmsGatewayImpl;
 import com.fasten.executor_driver.gateway.TokenKeeperImpl;
 import com.fasten.executor_driver.gateway.VehicleApiMapper;
+import com.fasten.executor_driver.gateway.VehicleChoiceGatewayImpl;
 import com.fasten.executor_driver.gateway.VehicleOptionApiMapper;
 import com.fasten.executor_driver.interactor.auth.PasswordGateway;
 import com.fasten.executor_driver.interactor.auth.SmsGateway;
 import com.fasten.executor_driver.interactor.map.HeatMapGateway;
 import com.fasten.executor_driver.interactor.online.OnlineGateway;
+import com.fasten.executor_driver.interactor.vehicle.VehicleChoiceGateway;
 import dagger.Module;
 import dagger.Provides;
 import javax.inject.Named;
@@ -51,11 +53,17 @@ class GatewayModule {
     return onlineGateway;
   }
 
+  @Provides
+  VehicleChoiceGateway provideVehicleChoiceGateway(VehicleChoiceGatewayImpl vehicleChoiceGateway) {
+    return vehicleChoiceGateway;
+  }
+
   /* Преобразователи */
 
   @Provides
   @Named("vehicleOptionMapper")
-  Mapper<ApiVehicleOptionItem, VehicleOption> provideVehicleOptionApiMapper(VehicleOptionApiMapper vehicleOptionApiMapper) {
+  Mapper<ApiVehicleOptionItem, VehicleOption> provideVehicleOptionApiMapper(
+      VehicleOptionApiMapper vehicleOptionApiMapper) {
     return vehicleOptionApiMapper;
   }
 
