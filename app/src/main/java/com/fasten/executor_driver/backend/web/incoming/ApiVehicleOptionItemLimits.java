@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName;
 /**
  * ответ от API содержащий данные об ограничениях параметра ТС.
  */
-class ApiVehicleOptionItemLimits {
+public class ApiVehicleOptionItemLimits {
 
   @SerializedName("minValue")
   private int minValue;
@@ -19,16 +19,16 @@ class ApiVehicleOptionItemLimits {
   public ApiVehicleOptionItemLimits() {
   }
 
-  ApiVehicleOptionItemLimits(int minValue, int maxValue) {
+  public ApiVehicleOptionItemLimits(int minValue, int maxValue) {
     this.minValue = minValue;
     this.maxValue = maxValue;
   }
 
-  int getMinValue() {
+  public int getMinValue() {
     return minValue;
   }
 
-  int getMaxValue() {
+  public int getMaxValue() {
     return maxValue;
   }
 

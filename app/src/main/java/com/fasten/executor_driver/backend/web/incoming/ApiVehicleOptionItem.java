@@ -6,7 +6,7 @@ import com.google.gson.annotations.SerializedName;
 /**
  * ответ от API содержащий данные о параметре ТС.
  */
-class ApiVehicleOptionItem {
+public class ApiVehicleOptionItem {
 
   @SerializedName("id")
   private long id;
@@ -27,7 +27,7 @@ class ApiVehicleOptionItem {
   public ApiVehicleOptionItem() {
   }
 
-  ApiVehicleOptionItem(long id, @Nullable String value,
+  public ApiVehicleOptionItem(long id, @Nullable String value,
       @Nullable ApiVehicleOptionItemLimits limits,
       @Nullable ApiVehicleOption option) {
     this.id = id;
@@ -36,22 +36,22 @@ class ApiVehicleOptionItem {
     this.option = option;
   }
 
-  long getId() {
+  public long getId() {
     return id;
   }
 
   @Nullable
-  String getValue() {
+  public String getValue() {
     return value;
   }
 
   @Nullable
-  ApiVehicleOptionItemLimits getLimits() {
+  public ApiVehicleOptionItemLimits getLimits() {
     return limits;
   }
 
   @Nullable
-  ApiVehicleOption getOption() {
+  public ApiVehicleOption getOption() {
     return option;
   }
 

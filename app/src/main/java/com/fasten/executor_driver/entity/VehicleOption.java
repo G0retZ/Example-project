@@ -7,7 +7,7 @@ import android.support.annotation.NonNull;
  *
  * @param <V> тип значения.
  */
-class VehicleOption<V> {
+public class VehicleOption<V> {
 
   private final long id;
   @NonNull
@@ -23,21 +23,21 @@ class VehicleOption<V> {
     this.value = value;
   }
 
-  long getId() {
+  public long getId() {
     return id;
   }
 
   @NonNull
-  String getName() {
+  public String getName() {
     return name;
   }
 
-  boolean isVariable() {
+  public boolean isVariable() {
     return variable;
   }
 
   @NonNull
-  V getValue() {
+  public V getValue() {
     return value;
   }
 

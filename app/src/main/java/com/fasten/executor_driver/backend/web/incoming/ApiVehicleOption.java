@@ -6,7 +6,7 @@ import com.google.gson.annotations.SerializedName;
 /**
  * ответ от API содержащий данные о типе параметра ТС.
  */
-class ApiVehicleOption {
+public class ApiVehicleOption {
 
   @Nullable
   @SerializedName("name")
@@ -23,22 +23,22 @@ class ApiVehicleOption {
   public ApiVehicleOption() {
   }
 
-  ApiVehicleOption(@Nullable String name, boolean dynamic, boolean numeric) {
+  public ApiVehicleOption(@Nullable String name, boolean dynamic, boolean numeric) {
     this.name = name;
     this.dynamic = dynamic;
     this.numeric = numeric;
   }
 
   @Nullable
-  String getName() {
+  public String getName() {
     return name;
   }
 
-  boolean isDynamic() {
+  public boolean isDynamic() {
     return dynamic;
   }
 
-  boolean isNumeric() {
+  public boolean isNumeric() {
     return numeric;
   }
 

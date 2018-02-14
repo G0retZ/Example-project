@@ -28,6 +28,7 @@ public class VehicleOptionBooleanTest {
   @Test
   public void testSetters() throws Exception {
     assertTrue(vehicleOptionBoolean.setValue(true).getValue());
+    assertFalse(vehicleOptionBoolean.setValue(false).getValue());
   }
 
   @Test

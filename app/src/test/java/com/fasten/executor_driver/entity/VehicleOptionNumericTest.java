@@ -40,6 +40,6 @@ public class VehicleOptionNumericTest {
     assertNotEquals(vehicleOptionNumeric, new VehicleOptionNumeric(12, "name", true, 23, 5, 31));
     assertNotEquals(vehicleOptionNumeric, new VehicleOptionNumeric(11, "name", true, 30, 8, 31));
     assertNotEquals(vehicleOptionNumeric, new VehicleOptionNumeric(11, "name", true, 0, 5, 50));
-    assertNotEquals(vehicleOptionNumeric, vehicleOptionNumeric.setValue(23));
+    assertNotEquals(vehicleOptionNumeric, vehicleOptionNumeric.setValue(24));
   }
 }

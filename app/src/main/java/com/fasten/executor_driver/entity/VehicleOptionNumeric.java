@@ -5,23 +5,24 @@ import android.support.annotation.NonNull;
 /**
  * Бизнес сущность числового параметра автомобиля.
  */
-class VehicleOptionNumeric extends VehicleOption<Integer>{
+public class VehicleOptionNumeric extends VehicleOption<Integer> {
 
   private final int minValue;
   private final int maxValue;
 
-  VehicleOptionNumeric(long id, @NonNull String name, boolean variable, @NonNull Integer value, int minValue,
+  public VehicleOptionNumeric(long id, @NonNull String name, boolean variable,
+      @NonNull Integer value, int minValue,
       int maxValue) {
     super(id, name, variable, value);
     this.minValue = minValue;
     this.maxValue = maxValue;
   }
 
-  int getMinValue() {
+  public int getMinValue() {
     return minValue;
   }
 
-  int getMaxValue() {
+  public int getMaxValue() {
     return maxValue;
   }
 
