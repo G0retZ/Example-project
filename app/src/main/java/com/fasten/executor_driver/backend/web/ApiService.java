@@ -1,9 +1,11 @@
 package com.fasten.executor_driver.backend.web;
 
 import android.support.annotation.NonNull;
+import com.fasten.executor_driver.backend.web.incoming.ApiVehicle;
 import com.fasten.executor_driver.backend.web.outgoing.ApiLogin;
 import io.reactivex.Completable;
 import io.reactivex.Single;
+import java.util.List;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
@@ -31,4 +33,10 @@ public interface ApiService {
    */
   @GET("geoMap")
   Single<String> getHeatMap();
+
+  /*
+   *  Запрос ТС текущего исполнителя
+   */
+  @GET("api/public/v1/cars")
+  Single<List<ApiVehicle>> getCars();
 }
