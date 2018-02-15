@@ -68,7 +68,7 @@ public class Vehicle {
     return vehicleOptions;
   }
 
-  void setVehicleOptions(@NonNull VehicleOption... vehicleOptions) {
+  public void setVehicleOptions(@NonNull VehicleOption... vehicleOptions) {
     this.vehicleOptions.clear();
     addVehicleOptions(vehicleOptions);
   }
