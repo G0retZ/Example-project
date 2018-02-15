@@ -15,11 +15,13 @@ import com.fasten.executor_driver.gateway.TokenKeeperImpl;
 import com.fasten.executor_driver.gateway.VehicleApiMapper;
 import com.fasten.executor_driver.gateway.VehicleChoiceGatewayImpl;
 import com.fasten.executor_driver.gateway.VehicleOptionApiMapper;
+import com.fasten.executor_driver.gateway.VehicleOptionsGatewayImpl;
 import com.fasten.executor_driver.interactor.auth.PasswordGateway;
 import com.fasten.executor_driver.interactor.auth.SmsGateway;
 import com.fasten.executor_driver.interactor.map.HeatMapGateway;
 import com.fasten.executor_driver.interactor.online.OnlineGateway;
 import com.fasten.executor_driver.interactor.vehicle.VehicleChoiceGateway;
+import com.fasten.executor_driver.interactor.vehicle.VehicleOptionsGateway;
 import dagger.Module;
 import dagger.Provides;
 import javax.inject.Named;
@@ -56,6 +58,12 @@ class GatewayModule {
   @Provides
   VehicleChoiceGateway provideVehicleChoiceGateway(VehicleChoiceGatewayImpl vehicleChoiceGateway) {
     return vehicleChoiceGateway;
+  }
+
+  @Provides
+  VehicleOptionsGateway provideVehicleOptionsGateway(
+      VehicleOptionsGatewayImpl vehicleOptionsGateway) {
+    return vehicleOptionsGateway;
   }
 
   /* Преобразователи */
