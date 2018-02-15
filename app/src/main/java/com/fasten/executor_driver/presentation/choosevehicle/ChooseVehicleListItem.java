@@ -8,7 +8,7 @@ import com.fasten.executor_driver.entity.Vehicle;
 /**
  * Модель для отображения ТС в списке ТС исполнителя. Тестируемое форматирование.
  */
-class ChooseVehicleListItem {
+public class ChooseVehicleListItem {
 
   @NonNull
   private final Vehicle vehicle;
@@ -18,17 +18,17 @@ class ChooseVehicleListItem {
   }
 
   @NonNull
-  String getName() {
+  public String getName() {
     return vehicle.getManufacturer() + " " + vehicle.getModel()
         + " (" + vehicle.getLicensePlate() + ")";
   }
 
-  boolean isSelectable() {
+  public boolean isSelectable() {
     return !vehicle.isBusy();
   }
 
   @StringRes
-  int getLabel() {
+  public int getLabel() {
     return vehicle.isBusy() ? R.string.busy : R.string.free;
   }
 

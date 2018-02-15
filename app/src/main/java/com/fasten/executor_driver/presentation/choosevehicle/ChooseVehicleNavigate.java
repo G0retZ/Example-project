@@ -12,7 +12,7 @@ import java.lang.annotation.RetentionPolicy;
     ChooseVehicleNavigate.AUTO_VEHICLE_OPTIONS
 })
 @Retention(RetentionPolicy.SOURCE)
-@interface ChooseVehicleNavigate {
+public @interface ChooseVehicleNavigate {
 
   /**
    * Переход к настройке ТС исполнителя.

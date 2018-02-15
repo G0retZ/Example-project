@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * Действия для смены состояния вида окна списка ТС исполнителя.
  */
-interface ChooseVehicleViewActions {
+public interface ChooseVehicleViewActions {
 
   /**
    * Показать индикатор процесса.
