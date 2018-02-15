@@ -15,4 +15,6 @@
   <string name="permissions_required">Приложению необходим доступ к геолокации для определения вашего местоположения.</string>
   <string name="go_online">Выйти на линию</string>
   <string name="error">Ошибка</string>
+  <string name="free">Свободна</string>
+  <string name="busy">Занята</string>
 </resources>
