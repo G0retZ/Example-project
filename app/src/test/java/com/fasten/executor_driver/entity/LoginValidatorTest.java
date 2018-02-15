@@ -1,44 +1,41 @@
 package com.fasten.executor_driver.entity;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 import org.junit.Test;
 
 public class LoginValidatorTest {
 
-  @Test
+  @Test(expected = ValidationException.class)
   public void loginIsNull() throws Exception {
-    assertFalse(new LoginValidator().validate(null));
+    new LoginValidator().validate(null);
   }
 
-  @Test
+  @Test(expected = ValidationException.class)
   public void loginIsEmpty() throws Exception {
-    assertFalse(new LoginValidator().validate(""));
+    new LoginValidator().validate("");
   }
 
-  @Test
+  @Test(expected = ValidationException.class)
   public void loginIsShort() throws Exception {
-    assertFalse(new LoginValidator().validate("sd09sd"));
+    new LoginValidator().validate("sd09sd");
   }
 
-  @Test
+  @Test(expected = ValidationException.class)
   public void loginIsLong() throws Exception {
-    assertFalse(new LoginValidator().validate("sd09sdd09s009s0ss0"));
+    new LoginValidator().validate("sd09sdd09s009s0ss0");
   }
 
-  @Test
+  @Test(expected = ValidationException.class)
   public void loginHasNotOnlyNumbers() throws Exception {
-    assertFalse(new LoginValidator().validate("d09sdd09s0"));
+    new LoginValidator().validate("d09sdd09s0");
   }
 
-  @Test
+  @Test(expected = ValidationException.class)
   public void loginStartsNotWith7() throws Exception {
-    assertFalse(new PhoneNumberValidator().validate("80902832921"));
+    new PhoneNumberValidator().validate("80902832921");
   }
 
   @Test
   public void loginCorrect() throws Exception {
-    assertTrue(new LoginValidator().validate("70902832921"));
+    new LoginValidator().validate("70902832921");
   }
 }

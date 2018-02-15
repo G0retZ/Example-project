@@ -3,6 +3,8 @@ package com.fasten.executor_driver.interactor.auth;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.nullable;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
@@ -38,7 +40,8 @@ public class PasswordUseCaseTest {
   @Before
   public void setUp() throws Exception {
     when(gateway.authorize(nullable(LoginData.class))).thenReturn(Completable.never());
-    when(passwordValidator.validate("password")).thenReturn(true);
+    doThrow(new ValidationException()).when(passwordValidator).validate(anyString());
+    doNothing().when(passwordValidator).validate("password");
     when(loginSharer.get()).thenReturn(Observable.just("login"));
     passwordUseCase = new PasswordUseCaseImpl(gateway, loginSharer, passwordValidator);
   }
@@ -115,7 +118,7 @@ public class PasswordUseCaseTest {
   @Test
   public void answerSuccessIfPasswordValid() throws Exception {
     // Действие:
-    when(passwordValidator.validate(anyString())).thenReturn(true);
+    doNothing().when(passwordValidator).validate(anyString());
 
     // Результат:
     passwordUseCase.authorize("password", Completable.complete())

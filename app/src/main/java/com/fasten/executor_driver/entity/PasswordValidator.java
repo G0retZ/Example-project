@@ -12,15 +12,10 @@ public class PasswordValidator implements Validator<String> {
   PasswordValidator() {
   }
 
-  @SuppressWarnings("SimplifiableIfStatement")
   @Override
-  public boolean validate(@Nullable String password) {
-    if (password == null) {
-      return false;
+  public void validate(@Nullable String password) throws Exception {
+    if (password == null || password.length() != 4 || !password.matches("\\d*")) {
+      throw new ValidationException();
     }
-    if (password.length() != 4) {
-      return false;
-    }
-    return password.matches("\\d*");
   }
 }

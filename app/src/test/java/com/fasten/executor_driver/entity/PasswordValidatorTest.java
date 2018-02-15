@@ -1,39 +1,36 @@
 package com.fasten.executor_driver.entity;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 import org.junit.Test;
 
 public class PasswordValidatorTest {
 
-  @Test
+  @Test(expected = ValidationException.class)
   public void passwordIsNull() throws Exception {
-    assertFalse(new PasswordValidator().validate(null));
+    new PasswordValidator().validate(null);
   }
 
-  @Test
+  @Test(expected = ValidationException.class)
   public void passwordIsEmpty() throws Exception {
-    assertFalse(new PasswordValidator().validate(""));
+    new PasswordValidator().validate("");
   }
 
-  @Test
+  @Test(expected = ValidationException.class)
   public void passwordIsShort() throws Exception {
-    assertFalse(new PasswordValidator().validate("sow"));
+    new PasswordValidator().validate("sow");
   }
 
-  @Test
+  @Test(expected = ValidationException.class)
   public void passwordIsLong() throws Exception {
-    assertFalse(new PasswordValidator().validate("sd09sdd09s009s0ss0"));
+    new PasswordValidator().validate("sd09sdd09s009s0ss0");
   }
 
-  @Test
+  @Test(expected = ValidationException.class)
   public void passwordHasNotOnlyNumbers() throws Exception {
-    assertFalse(new PasswordValidator().validate("d09sdd09s0"));
+    new PasswordValidator().validate("d09sdd09s0");
   }
 
   @Test
   public void passwordCorrect() throws Exception {
-    assertTrue(new PasswordValidator().validate("0903"));
+    new PasswordValidator().validate("0903");
   }
 }

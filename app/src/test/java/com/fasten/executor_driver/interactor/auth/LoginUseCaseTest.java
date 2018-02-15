@@ -1,12 +1,12 @@
 package com.fasten.executor_driver.interactor.auth;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.verifyZeroInteractions;
-import static org.mockito.Mockito.when;
 
 import com.fasten.executor_driver.entity.ValidationException;
 import com.fasten.executor_driver.entity.Validator;
@@ -30,6 +30,7 @@ public class LoginUseCaseTest {
 
   @Before
   public void setUp() throws Exception {
+    doThrow(new ValidationException()).when(loginValidator).validate(anyString());
     loginUseCase = new LoginUseCaseImpl(loginSharer, loginValidator);
   }
 
@@ -70,7 +71,7 @@ public class LoginUseCaseTest {
   @Test
   public void answerSuccessIfLoginValid() throws Exception {
     // Дано:
-    when(loginValidator.validate(anyString())).thenReturn(true);
+    doNothing().when(loginValidator).validate(anyString());
 
     // Действие и Результат:
     loginUseCase.validateLogin("").test().assertComplete();
@@ -87,7 +88,7 @@ public class LoginUseCaseTest {
   public void doNotTouchDataSharer() throws Exception {
     // Действие:
     loginUseCase.validateLogin("checkLogin").test();
-    when(loginValidator.validate(anyString())).thenReturn(true);
+    doNothing().when(loginValidator).validate(anyString());
     loginUseCase.validateLogin("checkLogin").test();
 
     // Результат:
@@ -102,7 +103,7 @@ public class LoginUseCaseTest {
   @Test
   public void askDataSharerToShareLogin() throws Exception {
     // Дано:
-    when(loginValidator.validate(any(String.class))).thenReturn(true);
+    doNothing().when(loginValidator).validate(anyString());
 
     // Действие:
     loginUseCase.rememberLogin().test().assertComplete();
