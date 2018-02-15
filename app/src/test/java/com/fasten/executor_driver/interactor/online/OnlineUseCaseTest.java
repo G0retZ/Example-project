@@ -26,7 +26,7 @@ public class OnlineUseCaseTest {
     loginUseCase = new OnlineUseCaseImpl(gateway);
   }
 
-	/* Проверяем работу с гейтвеем */
+  /* Проверяем работу с гейтвеем */
 
   /**
    * Должен запросить у гейтвея выход на линию
@@ -42,7 +42,7 @@ public class OnlineUseCaseTest {
     verify(gateway, only()).goOnline();
   }
 
-	/* Проверяем ответы на запрос выхода на линию */
+  /* Проверяем ответы на запрос выхода на линию */
 
   /**
    * Должен ответить ошибкой сети

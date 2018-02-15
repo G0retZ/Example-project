@@ -49,7 +49,7 @@ public class PhoneViewModelTest {
     when(useCase.rememberLogin()).thenReturn(Completable.complete());
   }
 
-	/* Тетсируем работу с юзкейсом */
+  /* Тетсируем работу с юзкейсом */
 
   /**
    * Должен попросить юзкейс валидировать логин
@@ -90,7 +90,7 @@ public class PhoneViewModelTest {
     verifyNoMoreInteractions(useCase);
   }
 
-	/* Тетсируем переключение состояний */
+  /* Тетсируем переключение состояний */
 
   /**
    * Должен вернуть начальное состояние вида

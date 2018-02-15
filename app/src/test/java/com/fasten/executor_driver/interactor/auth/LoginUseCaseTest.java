@@ -34,7 +34,7 @@ public class LoginUseCaseTest {
     loginUseCase = new LoginUseCaseImpl(loginSharer, loginValidator);
   }
 
-	/* Проверяем работу с валидаторами */
+  /* Проверяем работу с валидаторами */
 
   /**
    * Должен запросить у валидатора логина проверку
@@ -50,7 +50,7 @@ public class LoginUseCaseTest {
     verify(loginValidator, only()).validate("");
   }
 
-	/* Проверяем ответы на валидацию */
+  /* Проверяем ответы на валидацию */
 
   /**
    * Должен ответить ошибкой, если логин не соответствует формату
@@ -77,7 +77,7 @@ public class LoginUseCaseTest {
     loginUseCase.validateLogin("").test().assertComplete();
   }
 
-	/* Проверяем работу с публикатором логина */
+  /* Проверяем работу с публикатором логина */
 
   /**
    * Не должен трогать публикатор.

@@ -92,7 +92,7 @@ public class SmsUseCaseTest {
     verify(phoneNumberValidator, only()).validate("");
   }
 
-	/* Проверяем ответы валидатора */
+  /* Проверяем ответы валидатора */
 
   /**
    * Должен ответить ошибкой, если номер телефона неверный.
@@ -125,7 +125,7 @@ public class SmsUseCaseTest {
     smsUseCase.sendMeCode().test().assertNoErrors();
   }
 
-	/* Проверяем работу с гейтвеем */
+  /* Проверяем работу с гейтвеем */
 
   /**
    * Не должен запрашивать у гейтвея СМС, если валидация не прошла.
@@ -161,7 +161,7 @@ public class SmsUseCaseTest {
     verify(gateway, only()).sendMeCode("0123456");
   }
 
-	/* Проверяем ответы на запрос СМС */
+  /* Проверяем ответы на запрос СМС */
 
   /**
    * Должен ответить ошибкой сети.

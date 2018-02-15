@@ -35,7 +35,7 @@ public class PasswordGatewayTest {
     when(api.authorize(any(ApiLogin.class))).thenReturn(Completable.never());
   }
 
-	/* Проверяем работу с АПИ */
+  /* Проверяем работу с АПИ */
 
   /**
    * Должен запросить у АПИ completable на вход с заданными параметрами
@@ -51,9 +51,9 @@ public class PasswordGatewayTest {
     verify(api, only()).authorize(new ApiLogin("Login", "Password"));
   }
 
-	/* Проверяем правильность потоков (добавить) */
+  /* Проверяем правильность потоков (добавить) */
 
-	/* Проверяем ответы на АПИ */
+  /* Проверяем ответы на АПИ */
 
   /**
    * Должен ответить ошибкой сети

@@ -43,7 +43,7 @@ public class HeatMapUseCaseTest {
     heatMapUseCase = new HeatMapUseCaseImpl(gateway);
   }
 
-	/* Проверяем работу с гейтвеем */
+  /* Проверяем работу с гейтвеем */
 
   /**
    * Должен запросить у гейтвея тепловую карту
@@ -74,7 +74,7 @@ public class HeatMapUseCaseTest {
     verify(gateway, only()).getHeatMap();
   }
 
-	/* Проверяем ответы на запрос тепловой карты */
+  /* Проверяем ответы на запрос тепловой карты */
 
   /**
    * Должен пропустить ошибки сети

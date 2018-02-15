@@ -54,7 +54,7 @@ public class OnlineButtonViewModelTest {
     onlineButtonViewModel = new OnlineButtonViewModelImpl(onlineUseCase);
   }
 
-	/* Тетсируем работу с юзкейсом выхода на линию. */
+  /* Тетсируем работу с юзкейсом выхода на линию. */
 
   /**
    * Не должен просить юзкейс выйти на линию, если предыдущий запрос еще не завершился.
@@ -123,7 +123,7 @@ public class OnlineButtonViewModelTest {
     verifyNoMoreInteractions(onlineUseCase);
   }
 
-	/* Тетсируем переключение состояний */
+  /* Тетсируем переключение состояний */
 
   /**
    * Должен вернуть рабочее состояние вида.

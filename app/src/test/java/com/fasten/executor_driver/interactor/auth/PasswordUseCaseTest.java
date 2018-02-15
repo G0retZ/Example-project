@@ -46,7 +46,7 @@ public class PasswordUseCaseTest {
     passwordUseCase = new PasswordUseCaseImpl(gateway, loginSharer, passwordValidator);
   }
 
-	/* Проверяем работу с публикатором логина */
+  /* Проверяем работу с публикатором логина */
 
   /**
    * Должен подписаться при создании сразу же.
@@ -80,7 +80,7 @@ public class PasswordUseCaseTest {
     verify(loginSharer, only()).get();
   }
 
-	/* Проверяем работу с валидаторами */
+  /* Проверяем работу с валидаторами */
 
   /**
    * Должен запросить у валидатора пароля проверку
@@ -96,7 +96,7 @@ public class PasswordUseCaseTest {
     verify(passwordValidator, only()).validate("");
   }
 
-	/* Проверяем ответы валидатора */
+  /* Проверяем ответы валидатора */
 
   /**
    * Должен ответить ошибкой, если пароль неверный
@@ -125,7 +125,7 @@ public class PasswordUseCaseTest {
         .test().assertNoErrors();
   }
 
-	/* Проверяем работу с гейтвеем */
+  /* Проверяем работу с гейтвеем */
 
   /**
    * Не должен запрашивать у гейтвея входа, если валидация не прошла
@@ -186,7 +186,7 @@ public class PasswordUseCaseTest {
     verify(gateway, only()).authorize(new LoginData("login", "password"));
   }
 
-	/* Проверяем ответы на авторизацию */
+  /* Проверяем ответы на авторизацию */
 
   /**
    * Должен ответить ошибкой сети
