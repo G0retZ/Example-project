@@ -2,6 +2,8 @@ package com.fasten.executor_driver.di;
 
 import android.arch.lifecycle.ViewModelProvider;
 import com.fasten.executor_driver.presentation.ViewModelFactory;
+import com.fasten.executor_driver.presentation.choosevehicle.ChooseVehicleViewModel;
+import com.fasten.executor_driver.presentation.choosevehicle.ChooseVehicleViewModelImpl;
 import com.fasten.executor_driver.presentation.code.CodeViewModel;
 import com.fasten.executor_driver.presentation.code.CodeViewModelImpl;
 import com.fasten.executor_driver.presentation.map.MapViewModel;
@@ -46,6 +48,12 @@ class PresentationModule {
   }
 
   @Provides
+  ChooseVehicleViewModel provideChooseVehicleViewModel(
+      ChooseVehicleViewModelImpl chooseVehicleViewModel) {
+    return chooseVehicleViewModel;
+  }
+
+  @Provides
   @Named("phone")
   ViewModelProvider.Factory providePhoneViewModelFactory(ViewModelFactory<PhoneViewModel> factory) {
     return factory;
@@ -75,6 +83,13 @@ class PresentationModule {
   @Named("goOnline")
   ViewModelProvider.Factory provideOnlineButtonViewModelFactory(
       ViewModelFactory<OnlineButtonViewModel> factory) {
+    return factory;
+  }
+
+  @Provides
+  @Named("chooseVehicle")
+  ViewModelProvider.Factory provideChooseVehicleViewModelFactory(
+      ViewModelFactory<ChooseVehicleViewModel> factory) {
     return factory;
   }
 }
