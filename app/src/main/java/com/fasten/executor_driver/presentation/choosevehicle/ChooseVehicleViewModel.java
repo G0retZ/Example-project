@@ -7,7 +7,7 @@ import com.fasten.executor_driver.presentation.ViewState;
 /**
  * ViewModel окна выбора ТС исполнителя.
  */
-interface ChooseVehicleViewModel {
+public interface ChooseVehicleViewModel {
 
   /**
    * Возвращает состояние вида для применения.

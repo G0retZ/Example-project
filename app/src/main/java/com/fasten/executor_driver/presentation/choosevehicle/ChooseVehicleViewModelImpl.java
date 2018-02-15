@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
 
-class ChooseVehicleViewModelImpl extends ViewModel implements ChooseVehicleViewModel {
+public class ChooseVehicleViewModelImpl extends ViewModel implements ChooseVehicleViewModel {
 
   @NonNull
   private final VehicleChoiceUseCase vehicleChoiceUseCase;
