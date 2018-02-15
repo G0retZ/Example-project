@@ -33,6 +33,9 @@
       android:name=".application.PasswordActivity"
       android:parentActivityName=".application.LoginActivity"
       android:windowSoftInputMode="stateVisible|adjustResize"/>
+    <activity
+      android:parentActivityName=".application.MapActivity"
+      android:name=".application.ChooseVehicleActivity"/>
 
     <meta-data
       android:name="com.google.android.geo.API_KEY"

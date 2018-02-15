@@ -10,6 +10,7 @@ import io.reactivex.Completable;
 import io.reactivex.Single;
 import java.util.List;
 import javax.inject.Inject;
+import javax.inject.Named;
 
 public class VehicleChoiceUseCaseImpl implements VehicleChoiceUseCase {
 
@@ -23,7 +24,7 @@ public class VehicleChoiceUseCaseImpl implements VehicleChoiceUseCase {
   @Inject
   VehicleChoiceUseCaseImpl(
       @NonNull VehicleChoiceGateway vehicleChoiceGateway,
-      @NonNull DataSharer<Vehicle> vehicleSharer) {
+      @Named("vehicleSharer") @NonNull DataSharer<Vehicle> vehicleSharer) {
     this.vehicleChoiceGateway = vehicleChoiceGateway;
     this.vehicleSharer = vehicleSharer;
   }
