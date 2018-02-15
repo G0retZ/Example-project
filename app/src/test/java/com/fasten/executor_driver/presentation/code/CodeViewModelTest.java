@@ -57,7 +57,7 @@ public class CodeViewModelTest {
     codeViewModel = new CodeViewModelImpl(passwordUseCase);
   }
 
-	/* Тетсируем работу с юзкейсом кода. */
+  /* Тетсируем работу с юзкейсом кода. */
 
   /**
    * Не должен просить юзкейс авторизироваться, если предыдущий запрос еще не завершился.
@@ -98,7 +98,7 @@ public class CodeViewModelTest {
     verifyNoMoreInteractions(passwordUseCase);
   }
 
-	/* Тетсируем переключение состояний. */
+  /* Тетсируем переключение состояний. */
 
   /**
    * Должен вернуть состояние вида "Начало" изначально.

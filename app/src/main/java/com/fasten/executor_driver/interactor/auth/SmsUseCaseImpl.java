@@ -2,7 +2,6 @@ package com.fasten.executor_driver.interactor.auth;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import com.fasten.executor_driver.entity.ValidationException;
 import com.fasten.executor_driver.entity.Validator;
 import com.fasten.executor_driver.interactor.DataSharer;
 import io.reactivex.Completable;
@@ -31,11 +30,9 @@ public class SmsUseCaseImpl implements SmsUseCase {
   @Override
   public Completable sendMeCode() {
     return Completable.create(e -> {
-      if (phoneNumber != null && phoneNumberValidator.validate(phoneNumber)) {
-        gateway.sendMeCode(phoneNumber).subscribe(e::onComplete, e::onError);
-      } else {
-        e.onError(new ValidationException());
-      }
+      phoneNumberValidator.validate(phoneNumber);
+      gateway.sendMeCode(phoneNumber == null ? "" : phoneNumber)
+          .subscribe(e::onComplete, e::onError);
     });
   }
 }

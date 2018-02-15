@@ -54,7 +54,7 @@ public class SmsButtonViewModelTest {
     smsButtonViewModel = new SmsButtonViewModelImpl(smsUseCase);
   }
 
-	/* Тетсируем работу с юзкейсом СМС. */
+  /* Тетсируем работу с юзкейсом СМС. */
 
   /**
    * Не должен просить юзкейс отправить СМС с кодом на номер, если предыдущий запрос еще не
@@ -125,7 +125,7 @@ public class SmsButtonViewModelTest {
     verifyNoMoreInteractions(smsUseCase);
   }
 
-	/* Тетсируем переключение состояний */
+  /* Тетсируем переключение состояний */
 
   /**
    * Должен вернуть рабочее состояние вида.

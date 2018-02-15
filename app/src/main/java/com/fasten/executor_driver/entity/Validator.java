@@ -11,7 +11,7 @@ public interface Validator<T> {
 
   /**
    * @param data входные данные
-   * @return результат валидации
+   * @throws ValidationException исключение валидации
    */
-  boolean validate(@Nullable T data);
+  void validate(@Nullable T data) throws Exception;
 }

@@ -12,15 +12,10 @@ public class PhoneNumberValidator implements Validator<String> {
   PhoneNumberValidator() {
   }
 
-  @SuppressWarnings("SimplifiableIfStatement")
   @Override
-  public boolean validate(@Nullable String phoneNumber) {
-    if (phoneNumber == null) {
-      return false;
+  public void validate(@Nullable String phoneNumber) throws Exception {
+    if (phoneNumber == null || phoneNumber.length() != 11 || !phoneNumber.matches("7\\d*")) {
+      throw new ValidationException();
     }
-    if (phoneNumber.length() != 11) {
-      return false;
-    }
-    return phoneNumber.matches("7\\d*");
   }
 }

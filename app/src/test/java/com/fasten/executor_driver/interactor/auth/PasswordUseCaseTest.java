@@ -3,6 +3,8 @@ package com.fasten.executor_driver.interactor.auth;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.nullable;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
@@ -38,12 +40,13 @@ public class PasswordUseCaseTest {
   @Before
   public void setUp() throws Exception {
     when(gateway.authorize(nullable(LoginData.class))).thenReturn(Completable.never());
-    when(passwordValidator.validate("password")).thenReturn(true);
+    doThrow(new ValidationException()).when(passwordValidator).validate(anyString());
+    doNothing().when(passwordValidator).validate("password");
     when(loginSharer.get()).thenReturn(Observable.just("login"));
     passwordUseCase = new PasswordUseCaseImpl(gateway, loginSharer, passwordValidator);
   }
 
-	/* Проверяем работу с публикатором логина */
+  /* Проверяем работу с публикатором логина */
 
   /**
    * Должен подписаться при создании сразу же.
@@ -77,7 +80,7 @@ public class PasswordUseCaseTest {
     verify(loginSharer, only()).get();
   }
 
-	/* Проверяем работу с валидаторами */
+  /* Проверяем работу с валидаторами */
 
   /**
    * Должен запросить у валидатора пароля проверку
@@ -93,7 +96,7 @@ public class PasswordUseCaseTest {
     verify(passwordValidator, only()).validate("");
   }
 
-	/* Проверяем ответы валидатора */
+  /* Проверяем ответы валидатора */
 
   /**
    * Должен ответить ошибкой, если пароль неверный
@@ -115,14 +118,14 @@ public class PasswordUseCaseTest {
   @Test
   public void answerSuccessIfPasswordValid() throws Exception {
     // Действие:
-    when(passwordValidator.validate(anyString())).thenReturn(true);
+    doNothing().when(passwordValidator).validate(anyString());
 
     // Результат:
     passwordUseCase.authorize("password", Completable.complete())
         .test().assertNoErrors();
   }
 
-	/* Проверяем работу с гейтвеем */
+  /* Проверяем работу с гейтвеем */
 
   /**
    * Не должен запрашивать у гейтвея входа, если валидация не прошла
@@ -183,7 +186,7 @@ public class PasswordUseCaseTest {
     verify(gateway, only()).authorize(new LoginData("login", "password"));
   }
 
-	/* Проверяем ответы на авторизацию */
+  /* Проверяем ответы на авторизацию */
 
   /**
    * Должен ответить ошибкой сети

@@ -1,6 +1,8 @@
 package com.fasten.executor_driver.interactor.auth;
 
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
@@ -38,7 +40,8 @@ public class SmsUseCaseTest {
   @Before
   public void setUp() throws Exception {
     when(gateway.sendMeCode(anyString())).thenReturn(Completable.never());
-    when(phoneNumberValidator.validate("0123456")).thenReturn(true);
+    doThrow(new ValidationException()).when(phoneNumberValidator).validate(anyString());
+    doNothing().when(phoneNumberValidator).validate("0123456");
     when(phoneNumberSharer.get()).thenReturn(subject = PublishSubject.create());
     smsUseCase = new SmsUseCaseImpl(gateway, phoneNumberSharer, phoneNumberValidator);
   }
@@ -89,7 +92,7 @@ public class SmsUseCaseTest {
     verify(phoneNumberValidator, only()).validate("");
   }
 
-	/* Проверяем ответы валидатора */
+  /* Проверяем ответы валидатора */
 
   /**
    * Должен ответить ошибкой, если номер телефона неверный.
@@ -116,13 +119,13 @@ public class SmsUseCaseTest {
     subject.onNext("");
 
     // Действие:
-    when(phoneNumberValidator.validate(anyString())).thenReturn(true);
+    doNothing().when(phoneNumberValidator).validate(anyString());
 
     // Результат:
     smsUseCase.sendMeCode().test().assertNoErrors();
   }
 
-	/* Проверяем работу с гейтвеем */
+  /* Проверяем работу с гейтвеем */
 
   /**
    * Не должен запрашивать у гейтвея СМС, если валидация не прошла.
@@ -158,7 +161,7 @@ public class SmsUseCaseTest {
     verify(gateway, only()).sendMeCode("0123456");
   }
 
-	/* Проверяем ответы на запрос СМС */
+  /* Проверяем ответы на запрос СМС */
 
   /**
    * Должен ответить ошибкой сети.

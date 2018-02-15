@@ -3,7 +3,6 @@ package com.fasten.executor_driver.interactor.auth;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.fasten.executor_driver.entity.LoginData;
-import com.fasten.executor_driver.entity.ValidationException;
 import com.fasten.executor_driver.entity.Validator;
 import com.fasten.executor_driver.interactor.DataSharer;
 import io.reactivex.Completable;
@@ -32,15 +31,12 @@ public class PasswordUseCaseImpl implements PasswordUseCase {
   @Override
   public Completable authorize(@Nullable String password, @NonNull Completable afterValidation) {
     return Completable.create(e -> {
-      if (password != null && passwordValidator.validate(password)) {
-        loginData = loginData.setPassword(password);
-        afterValidation.subscribe(
-            () -> gateway.authorize(loginData).subscribe(e::onComplete, e::onError),
-            throwable -> e.onComplete()
-        );
-      } else {
-        e.onError(new ValidationException());
-      }
+      passwordValidator.validate(password);
+      loginData = loginData.setPassword(password == null ? "" : password);
+      afterValidation.subscribe(
+          () -> gateway.authorize(loginData).subscribe(e::onComplete, e::onError),
+          throwable -> e.onComplete()
+      );
     });
   }
 }

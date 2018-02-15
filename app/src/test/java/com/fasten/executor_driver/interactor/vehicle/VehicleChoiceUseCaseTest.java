@@ -37,7 +37,7 @@ public class VehicleChoiceUseCaseTest {
     when(gateway.getExecutorVehicles()).thenReturn(Single.never());
   }
 
-	/* Проверяем работу с гейтвеем */
+  /* Проверяем работу с гейтвеем */
 
   /**
    * Должен запросить у гейтвея список ТС.
