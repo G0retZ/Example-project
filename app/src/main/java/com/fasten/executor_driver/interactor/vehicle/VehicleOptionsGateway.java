@@ -7,7 +7,7 @@ import io.reactivex.Completable;
 /**
  * Гейтвей настройки опций ТС исполнителя
  */
-interface VehicleOptionsGateway {
+public interface VehicleOptionsGateway {
 
   /**
    * Запрашивает у сервера задать опции ТС исполнителя для выхода на линию. Сервер должен вернуть
@@ -18,5 +18,5 @@ interface VehicleOptionsGateway {
    * @return результат запроса.
    */
   @NonNull
-  Completable sendVehicleOptions(Vehicle vehicle);
+  Completable sendVehicleOptions(@NonNull Vehicle vehicle);
 }
