@@ -16,6 +16,8 @@ import com.fasten.executor_driver.interactor.online.OnlineUseCase;
 import com.fasten.executor_driver.interactor.online.OnlineUseCaseImpl;
 import com.fasten.executor_driver.interactor.vehicle.VehicleChoiceUseCase;
 import com.fasten.executor_driver.interactor.vehicle.VehicleChoiceUseCaseImpl;
+import com.fasten.executor_driver.interactor.vehicle.VehicleOptionsUseCase;
+import com.fasten.executor_driver.interactor.vehicle.VehicleOptionsUseCaseImpl;
 import com.fasten.executor_driver.interactor.vehicle.VehicleSharer;
 import dagger.Module;
 import dagger.Provides;
@@ -52,6 +54,12 @@ class UseCaseModule {
   @Provides
   VehicleChoiceUseCase provideVehicleChoiceUseCase(VehicleChoiceUseCaseImpl vehicleChoiceUseCase) {
     return vehicleChoiceUseCase;
+  }
+
+  @Provides
+  VehicleOptionsUseCase provideVehicleOptionsUseCase(
+      VehicleOptionsUseCaseImpl vehicleOptionsUseCase) {
+    return vehicleOptionsUseCase;
   }
 
   /* Обмен данными между юзкейсами */

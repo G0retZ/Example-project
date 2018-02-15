@@ -10,7 +10,7 @@ import io.reactivex.Completable;
 import io.reactivex.Observable;
 import java.util.List;
 
-class VehicleOptionsUseCaseImpl implements VehicleOptionsUseCase {
+public class VehicleOptionsUseCaseImpl implements VehicleOptionsUseCase {
 
   @NonNull
   private final VehicleOptionsGateway gateway;

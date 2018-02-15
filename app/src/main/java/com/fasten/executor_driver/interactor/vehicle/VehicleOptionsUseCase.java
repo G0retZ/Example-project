@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * Юзкейс выбора ТС исполнителя
  */
-interface VehicleOptionsUseCase {
+public interface VehicleOptionsUseCase {
 
   /**
    * Запрашивает список опций выбранной ТС, доступных для изменения исполнителем.
