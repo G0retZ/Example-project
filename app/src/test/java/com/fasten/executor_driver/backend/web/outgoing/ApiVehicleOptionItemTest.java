@@ -21,7 +21,6 @@ public class ApiVehicleOptionItemTest {
     assertEquals(apiVehicleOptionItem.getValue(), "value");
   }
 
-  @SuppressWarnings("SpellCheckingInspection")
   @Test
   public void testEquals() throws Exception {
     assertEquals(apiVehicleOptionItem, new ApiVehicleOptionItem(29, "value"));
