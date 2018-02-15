@@ -30,7 +30,7 @@ import javax.inject.Named;
 
 public class ChooseVehicleFragment extends BaseFragment implements ChooseVehicleViewActions {
 
-  private ChooseVehicleViewModel phoneViewModel;
+  private ChooseVehicleViewModel chooseVehicleViewModel;
   private RecyclerView recyclerView;
   private ProgressBar pendingIndicator;
   private TextView errorText;
@@ -49,7 +49,7 @@ public class ChooseVehicleFragment extends BaseFragment implements ChooseVehicle
   protected void onDependencyInject(AppComponent appComponent) {
     // Required by Dagger2 for field injection
     appComponent.inject(this);
-    phoneViewModel = ViewModelProviders.of(this, viewModelFactory)
+    chooseVehicleViewModel = ViewModelProviders.of(this, viewModelFactory)
         .get(ChooseVehicleViewModelImpl.class);
   }
 
@@ -65,12 +65,12 @@ public class ChooseVehicleFragment extends BaseFragment implements ChooseVehicle
     recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
     recyclerView.setAdapter(new ChooseVehicleAdapter(new ArrayList<>()));
 
-    phoneViewModel.getNavigationLiveData().observe(this, destination -> {
+    chooseVehicleViewModel.getNavigationLiveData().observe(this, destination -> {
       if (destination != null) {
         navigate(destination);
       }
     });
-    phoneViewModel.getViewStateLiveData().observe(this, viewState -> {
+    chooseVehicleViewModel.getViewStateLiveData().observe(this, viewState -> {
       if (viewState != null) {
         viewState.apply(this);
       }
@@ -102,7 +102,7 @@ public class ChooseVehicleFragment extends BaseFragment implements ChooseVehicle
     if (disposable != null) {
       disposable.dispose();
     }
-    disposable = adapter.getSelectionCallbacks().subscribe(this::consumeSelection);
+    disposable = adapter.getSelectionCallbacks().subscribe(chooseVehicleViewModel::setSelection);
     recyclerView.setAdapter(adapter);
   }
 
@@ -114,9 +114,5 @@ public class ChooseVehicleFragment extends BaseFragment implements ChooseVehicle
   @Override
   public void setVehicleListErrorMessage(int messageId) {
     errorText.setText(messageId);
-  }
-
-  private void consumeSelection(@NonNull Integer index) {
-    phoneViewModel.setSelection(index);
   }
 }
