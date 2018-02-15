@@ -17,4 +17,5 @@
   <string name="error">Ошибка</string>
   <string name="free">Свободна</string>
   <string name="busy">Занята</string>
+  <string name="no_vehicles_available">Нет доступных ТС</string>
 </resources>
