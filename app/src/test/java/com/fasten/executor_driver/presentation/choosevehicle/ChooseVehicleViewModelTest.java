@@ -61,10 +61,10 @@ public class ChooseVehicleViewModelTest {
     chooseVehicleViewModel = new ChooseVehicleViewModelImpl(vehicleChoiceUseCase);
   }
 
-	/* Тетсируем работу с юзкейсом кода. */
+  /* Тетсируем работу с юзкейсом выбора ТС. */
 
   /**
-   * Не должен просить юзкейс получить список ТС, при первой и только при первой подписке.
+   * Должен просить юзкейс получить список ТС, при первой и только при первой подписке.
    *
    * @throws Exception error.
    */
@@ -139,7 +139,7 @@ public class ChooseVehicleViewModelTest {
     verify(vehicleChoiceUseCase, only()).setSelectedVehicle(12);
   }
 
-	/* Тетсируем переключение состояний. */
+  /* Тетсируем переключение состояний. */
 
   /**
    * Должен вернуть состояние вида "В процессе" изначально.
@@ -206,7 +206,7 @@ public class ChooseVehicleViewModelTest {
   }
 
   /**
-   * Должен вернуть состояние вида "Готово"
+   * Должен вернуть состояние вида "Готово" со списком ТС для выбора
    *
    * @throws Exception error
    */
@@ -245,7 +245,7 @@ public class ChooseVehicleViewModelTest {
     verifyNoMoreInteractions(viewStateObserver);
   }
 
-	/* Тетсируем навигацию. */
+  /* Тетсируем навигацию. */
 
   /**
    * Должен вернуть "перейти к опциям автоматически" если была ошибка "только одно авто"
@@ -268,7 +268,7 @@ public class ChooseVehicleViewModelTest {
   }
 
   /**
-   * Должен вернуть "перейти к опциям" если выбор был успешным
+   * Должен игнорировать неуспешниые выборы
    *
    * @throws Exception error
    */
@@ -287,7 +287,7 @@ public class ChooseVehicleViewModelTest {
   }
 
   /**
-   * Должен игнорировать неуспешниые выборы
+   * Должен вернуть "перейти к опциям" если выбор был успешным
    *
    * @throws Exception error
    */
