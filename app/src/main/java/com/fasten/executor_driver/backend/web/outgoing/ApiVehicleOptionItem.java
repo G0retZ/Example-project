@@ -11,18 +11,18 @@ public class ApiVehicleOptionItem {
 
   @SerializedName("id")
   @Expose
-  private final int id;
+  private final long id;
   @NonNull
   @SerializedName("value")
   @Expose
   private final String value;
 
-  public ApiVehicleOptionItem(int id, @NonNull String value) {
+  public ApiVehicleOptionItem(long id, @NonNull String value) {
     this.id = id;
     this.value = value;
   }
 
-  public int getId() {
+  public long getId() {
     return id;
   }
 
@@ -55,7 +55,7 @@ public class ApiVehicleOptionItem {
 
   @Override
   public int hashCode() {
-    int result = id;
+    int result = (int) (id ^ (id >>> 32));
     result = 31 * result + value.hashCode();
     return result;
   }

@@ -48,7 +48,7 @@ public interface ApiService {
    */
   @PUT("api/private/v1/car/{carId}/vehicleOptionItem")
   Completable selectCarWithOptions(
-      @Path("carId") int carId,
-      @NonNull @Body ApiVehicleOptionItem... vehicleOptionItems
+      @Path("carId") long carId,
+      @NonNull @Body List<ApiVehicleOptionItem> vehicleOptionItems
   );
 }
