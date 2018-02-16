@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
 
-class VehicleOptionsViewModelImpl extends ViewModel implements VehicleOptionsViewModel {
+public class VehicleOptionsViewModelImpl extends ViewModel implements VehicleOptionsViewModel {
 
   private final VehicleOptionsUseCase vehicleOptionsUseCase;
   @NonNull
@@ -33,8 +33,7 @@ class VehicleOptionsViewModelImpl extends ViewModel implements VehicleOptionsVie
   private Disposable occupyDisposable;
 
   @Inject
-  VehicleOptionsViewModelImpl(
-      VehicleOptionsUseCase vehicleOptionsUseCase) {
+  VehicleOptionsViewModelImpl(VehicleOptionsUseCase vehicleOptionsUseCase) {
     this.vehicleOptionsUseCase = vehicleOptionsUseCase;
     viewStateLiveData = new MutableLiveData<>();
     viewStateLiveData.postValue(new VehicleOptionsViewStateInitial());

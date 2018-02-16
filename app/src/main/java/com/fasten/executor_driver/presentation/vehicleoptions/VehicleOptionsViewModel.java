@@ -6,7 +6,7 @@ import java.util.List;
 /**
  * ViewModel окна настройки опций ТС исполнителя.
  */
-interface VehicleOptionsViewModel extends ViewModel<VehicleOptionsViewActions> {
+public interface VehicleOptionsViewModel extends ViewModel<VehicleOptionsViewActions> {
 
   /**
    * Передает список настроенных исполнителем опций ТС для занятия ТС.

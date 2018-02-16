@@ -14,6 +14,8 @@ import com.fasten.executor_driver.presentation.phone.PhoneViewModel;
 import com.fasten.executor_driver.presentation.phone.PhoneViewModelImpl;
 import com.fasten.executor_driver.presentation.smsbutton.SmsButtonViewModel;
 import com.fasten.executor_driver.presentation.smsbutton.SmsButtonViewModelImpl;
+import com.fasten.executor_driver.presentation.vehicleoptions.VehicleOptionsViewModel;
+import com.fasten.executor_driver.presentation.vehicleoptions.VehicleOptionsViewModelImpl;
 import dagger.Module;
 import dagger.Provides;
 import javax.inject.Named;
@@ -54,6 +56,12 @@ class PresentationModule {
   }
 
   @Provides
+  VehicleOptionsViewModel provideVehicleOptionsViewModel(
+      VehicleOptionsViewModelImpl vehicleOptionsViewModel) {
+    return vehicleOptionsViewModel;
+  }
+
+  @Provides
   @Named("phone")
   ViewModelProvider.Factory providePhoneViewModelFactory(ViewModelFactory<PhoneViewModel> factory) {
     return factory;
@@ -90,6 +98,13 @@ class PresentationModule {
   @Named("chooseVehicle")
   ViewModelProvider.Factory provideChooseVehicleViewModelFactory(
       ViewModelFactory<ChooseVehicleViewModel> factory) {
+    return factory;
+  }
+
+  @Provides
+  @Named("vehicleOptions")
+  ViewModelProvider.Factory provideVehicleOptionsViewModelFactory(
+      ViewModelFactory<VehicleOptionsViewModel> factory) {
     return factory;
   }
 }
