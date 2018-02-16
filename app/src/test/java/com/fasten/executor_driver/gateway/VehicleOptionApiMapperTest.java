@@ -140,8 +140,8 @@ public class VehicleOptionApiMapperTest {
     assertEquals(vehicleOption.getName(), "name");
     assertFalse(vehicleOption.isVariable());
     assertEquals(vehicleOption.getValue(), 34);
-    assertEquals(((VehicleOptionNumeric) vehicleOption).getMinValue(), -5);
-    assertEquals(((VehicleOptionNumeric) vehicleOption).getMaxValue(), 123);
+    assertEquals(((VehicleOptionNumeric) vehicleOption).getMinValue(), new Integer(-5));
+    assertEquals(((VehicleOptionNumeric) vehicleOption).getMaxValue(), new Integer(123));
   }
 
   /**
@@ -166,8 +166,8 @@ public class VehicleOptionApiMapperTest {
     assertEquals(vehicleOption.getName(), "name");
     assertTrue(vehicleOption.isVariable());
     assertEquals(vehicleOption.getValue(), 54);
-    assertEquals(((VehicleOptionNumeric) vehicleOption).getMinValue(), 50);
-    assertEquals(((VehicleOptionNumeric) vehicleOption).getMaxValue(), 300);
+    assertEquals(((VehicleOptionNumeric) vehicleOption).getMinValue(), new Integer(50));
+    assertEquals(((VehicleOptionNumeric) vehicleOption).getMaxValue(), new Integer(300));
   }
 
   /**
@@ -192,8 +192,8 @@ public class VehicleOptionApiMapperTest {
     assertEquals(vehicleOption.getName(), "name");
     assertFalse(vehicleOption.isVariable());
     assertEquals(vehicleOption.getValue(), -345);
-    assertEquals(((VehicleOptionNumeric) vehicleOption).getMaxValue(), 0);
-    assertEquals(((VehicleOptionNumeric) vehicleOption).getMinValue(), 0);
+    assertEquals(((VehicleOptionNumeric) vehicleOption).getMaxValue(), new Integer(0));
+    assertEquals(((VehicleOptionNumeric) vehicleOption).getMinValue(), new Integer(0));
   }
 
   /**
