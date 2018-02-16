@@ -1,8 +1,5 @@
 image: gradle:alpine
 
-before_script:
-  - chmod +x gradlew
-  - ./gradlew --version
 
 stages:
   - version
@@ -13,13 +10,13 @@ stages:
 unitTests:
   stage: test
   script:
-    - ./gradlew test
+    - ./gradle test
   tags:
     - docker-dev
 
 Test:
   stage: version
   script:
-    - ./gradlew --version
+    - ./gradle --version
   tags:
     - docker-dev
