@@ -1,5 +1,9 @@
 image: gradle:alpine
 
+before_script:
+  - chmod +x gradlew
+  - ./gradlew --version
+
 stages:
   - version
   - test
