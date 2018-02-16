@@ -10,6 +10,8 @@ stages:
   - build
 
 before_script:
+  - apt-get --quiet update --yes
+  - apt-get --quiet install --yes unzip
   - echo "/----------Get tools version of project----------------/"
   - export ANDROID_COMPILE_SDK=`egrep '^[[:blank:]]+compileSdkVersion'  app/build.gradle | awk '{print $2}'`
   - export ANDROID_BUILD_TOOLS=`egrep '^[[:blank:]]+buildToolsVersion'  app/build.gradle | sed "s/'//g" | awk '{print $2}'`
