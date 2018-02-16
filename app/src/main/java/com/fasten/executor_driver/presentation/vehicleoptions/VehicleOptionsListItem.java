@@ -25,6 +25,11 @@ class VehicleOptionsListItem<V> {
   }
 
   @NonNull
+  VehicleOption<V> getVehicleOption() {
+    return vehicleOption;
+  }
+
+  @NonNull
   String getName() {
     return vehicleOption.getName();
   }
