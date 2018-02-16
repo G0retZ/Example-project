@@ -1,0 +1,28 @@
+image: gradle:alpine
+
+stages:
+  - version
+  - test
+
+build:
+  stage: build
+  script:
+    - ./gradlew assembleDebug
+  artifacts:
+    paths:
+    - app/build/outputs/
+    expire_in: 1 week
+
+unitTests:
+  stage: test
+  script:
+    - gradlew test
+  tags:
+    - docker-dev
+
+Test:
+  stage: version
+  script:
+    - gradlew --version
+  tags:
+    - docker-dev
