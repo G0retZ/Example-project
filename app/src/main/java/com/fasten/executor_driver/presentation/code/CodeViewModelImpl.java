@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.fasten.executor_driver.entity.ValidationException;
 import com.fasten.executor_driver.interactor.auth.PasswordUseCase;
+import com.fasten.executor_driver.presentation.SingleLiveEvent;
 import com.fasten.executor_driver.presentation.ViewState;
 import io.reactivex.Completable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -34,6 +35,12 @@ public class CodeViewModelImpl extends ViewModel implements CodeViewModel {
   @Override
   public LiveData<ViewState<CodeViewActions>> getViewStateLiveData() {
     return viewStateLiveData;
+  }
+
+  @NonNull
+  @Override
+  public LiveData<String> getNavigationLiveData() {
+    return new SingleLiveEvent<>();
   }
 
   @Override
