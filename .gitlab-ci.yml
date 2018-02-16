@@ -9,13 +9,13 @@ stages:
 unitTests:
   stage: test
   script:
-    - gradlew test
+    - ./gradlew test
   tags:
     - docker-dev
 
 Test:
   stage: version
   script:
-    - gradlew --version
+    - ./gradlew --version
   tags:
     - docker-dev
