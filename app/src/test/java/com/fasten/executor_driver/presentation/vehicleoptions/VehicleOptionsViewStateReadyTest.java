@@ -49,6 +49,7 @@ public class VehicleOptionsViewStateReadyTest {
     // Результат:
     verify(codeViewActions).showVehicleOptionsList(true);
     verify(codeViewActions).showVehicleOptionsPending(false);
+    verify(codeViewActions).showVehicleOptionsListErrorMessage(false);
     verify(codeViewActions).setVehicleOptionsListItems(Arrays.asList(
         new VehicleOptionsListItem<>(
             new VehicleOptionBoolean(1, "name", true, false)

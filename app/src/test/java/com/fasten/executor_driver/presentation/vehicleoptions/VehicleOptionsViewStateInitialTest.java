@@ -31,6 +31,7 @@ public class VehicleOptionsViewStateInitialTest {
     // Результат:
     verify(codeViewActions).showVehicleOptionsList(true);
     verify(codeViewActions).showVehicleOptionsPending(false);
+    verify(codeViewActions).showVehicleOptionsListErrorMessage(false);
     verify(codeViewActions).setVehicleOptionsListItems(new ArrayList<>());
     verifyNoMoreInteractions(codeViewActions);
   }

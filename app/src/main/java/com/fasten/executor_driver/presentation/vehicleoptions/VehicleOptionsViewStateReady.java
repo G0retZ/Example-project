@@ -20,6 +20,7 @@ final class VehicleOptionsViewStateReady implements ViewState<VehicleOptionsView
   public void apply(@NonNull VehicleOptionsViewActions stateActions) {
     stateActions.showVehicleOptionsList(true);
     stateActions.showVehicleOptionsPending(false);
+    stateActions.showVehicleOptionsListErrorMessage(false);
     stateActions.setVehicleOptionsListItems(chooseVehicleListItems);
   }
 

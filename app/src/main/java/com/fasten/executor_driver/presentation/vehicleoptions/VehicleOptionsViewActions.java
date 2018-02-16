@@ -1,6 +1,7 @@
 package com.fasten.executor_driver.presentation.vehicleoptions;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.StringRes;
 import java.util.List;
 
 /**
@@ -28,4 +29,18 @@ interface VehicleOptionsViewActions {
    * @param chooseVehicleListItems - список ТС.
    */
   void setVehicleOptionsListItems(@NonNull List<VehicleOptionsListItem<?>> chooseVehicleListItems);
+
+  /**
+   * Показать сообщение об ошибке.
+   *
+   * @param show - показать или нет?
+   */
+  void showVehicleOptionsListErrorMessage(boolean show);
+
+  /**
+   * Задать сообщение об ошибке.
+   *
+   * @param messageId - ИД ресурса сообщения об ошибке.
+   */
+  void setVehicleOptionsListErrorMessage(@StringRes int messageId);
 }

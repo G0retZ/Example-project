@@ -12,5 +12,6 @@ final class VehicleOptionsViewStatePending implements ViewState<VehicleOptionsVi
   public void apply(@NonNull VehicleOptionsViewActions stateActions) {
     stateActions.showVehicleOptionsList(false);
     stateActions.showVehicleOptionsPending(true);
+    stateActions.showVehicleOptionsListErrorMessage(false);
   }
 }
