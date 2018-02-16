@@ -10,13 +10,13 @@ stages:
 unitTests:
   stage: test
   script:
-    - ./gradle test
+    - gradle test
   tags:
     - docker-dev
 
 Test:
   stage: version
   script:
-    - ./gradle --version
+    - gradle --version
   tags:
     - docker-dev
