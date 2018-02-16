@@ -32,6 +32,7 @@ before_script:
   - echo y | sdkmanager "extras;google;m2repository"
   - echo y | sdkmanager "extras;android;m2repository"
   - echo y | sdkmanager "extras;google;google_play_services"
+  - echo y | sdkmanager "extras;m2repository;com;android;support;constraint;constraint-layout;1.0.2"
   - echo y | sdkmanager --update
   - echo y | sdkmanager --licenses > android-licences.log
   - chmod +x ./gradlew
