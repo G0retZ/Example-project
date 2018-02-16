@@ -12,7 +12,7 @@ stages:
 before_script:
   - echo "/----------Get tools version of project----------------/"
   - export ANDROID_COMPILE_SDK=`egrep '^[[:blank:]]+compileSdkVersion'  app/build.gradle | awk '{print $2}'`
-  - export ANDROID_BUILD_TOOLS=`egrep '^[[:blank:]]+buildToolsVersion'  app/build.gradle | sed s/\"//g | awk '{print $2}'`
+  - export ANDROID_BUILD_TOOLS=`egrep '^[[:blank:]]+buildToolsVersion'  app/build.gradle | sed "s/\'//g" | awk '{print $2}'`
   - echo "ANDROID_COMPILE_SDK ${ANDROID_COMPILE_SDK}"
   - echo "ANDROID_BUILD_TOOLS ${ANDROID_BUILD_TOOLS}"
   - echo "/----------------Done!----------------------------------/"
