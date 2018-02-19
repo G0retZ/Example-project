@@ -1,72 +1,21 @@
-image: cogniteev/oracle-java:java8
-
-variables:
-  ANDROID_SDK_TOOLS_VERSION: "https://dl.google.com/android/repository/sdk-tools-linux-3859397.zip"
-  ANDROID_HOME: "./android-sdk-linux"
+image: gitlab.capsrv.xyz:5000/android-ci:latest
 
 stages:
-  - test
-  - quality
-  - build
+- build
 
 before_script:
-  - apt-get --quiet update --yes
-  - apt-get --quiet install --yes unzip
-  - echo "/----------Get tools version of project----------------/"
-  - export ANDROID_COMPILE_SDK=`egrep '^[[:blank:]]+compileSdkVersion'  app/build.gradle | awk '{print $2}'`
-  - export ANDROID_BUILD_TOOLS=`egrep '^[[:blank:]]+buildToolsVersion'  app/build.gradle | sed "s/'//g" | awk '{print $2}'`
-  - echo "ANDROID_COMPILE_SDK ${ANDROID_COMPILE_SDK}"
-  - echo "ANDROID_BUILD_TOOLS ${ANDROID_BUILD_TOOLS}"
-  - echo "/----------------Done!----------------------------------/"
-  - echo "/----------------Install SDK Tools----------------------/"
-  - echo "create ${ANDROID_HOME} folder path"
-  - mkdir -p "${ANDROID_HOME}"
-  - echo "download SDK Tools and save to ${ANDROID_HOME}.zip"
-  - wget -q -O "${ANDROID_HOME}.zip" "${ANDROID_SDK_TOOLS_VERSION}"
-  - echo "unzip SDK Tools to ${ANDROID_HOME}"
-  - unzip -q "${ANDROID_HOME}.zip" -d "${ANDROID_HOME}"
-  - export PATH=$PATH:$ANDROID_HOME/tools/bin/
-  - echo "/----------------Done!----------------------------------/"
-  - echo "/----------Install and update android tools-------------/"
-  - echo y | sdkmanager "platform-tools"
-  - echo y | sdkmanager "platforms;android-${ANDROID_COMPILE_SDK}"
-  - echo y | sdkmanager "build-tools;${ANDROID_BUILD_TOOLS}"
-  - echo y | sdkmanager "extras;google;m2repository"
-  - echo y | sdkmanager "extras;android;m2repository"
-  - echo y | sdkmanager "extras;google;google_play_services"
-  - echo y | sdkmanager "extras;m2repository;com;android;support;constraint;constraint-layout;1.0.2"
-  - echo y | sdkmanager --update
-  - echo y | sdkmanager --licenses > android-licences.log
-  - chmod +x ./gradlew
-  - ./gradlew --version
-  - java -version
+- export GRADLE_USER_HOME=$(pwd)/.gradle
+- chmod +x ./gradlew
 
+cache:
+  key: ${CI_PROJECT_ID}
+  paths:
+  - .gradle/
 
-
-
-gradlew_lint:
-  stage: quality
-  tags:
-    - docker-dev
-  script:
-    - ./gradlew lint
-  artifacts:
-    name: "reports_${CI_PROJECT_NAME}_${CI_BUILD_REF_NAME}_${CI_JOB_NAME}_${CI_JOB_ID}"
-    when: always
-    paths:
-      - app/build/reports/
-    expire_in: 1 day
-
-android_build:
+build:
   stage: build
-  tags:
-    - docker-dev
   script:
-    - ./gradlew clean assembleRelease
+  - ./gradlew assembleDebug
   artifacts:
-    name: "build_${CI_PROJECT_NAME}_${CI_BUILD_REF_NAME}_${CI_JOB_NAME}_${CI_JOB_ID}"
-    when: always
     paths:
-      - app/build/outputs/apk/
-      - app/build/outputs/mapping/
-    expire_in: 1 day
+    - app/build/outputs/apk/app-debug.apk
