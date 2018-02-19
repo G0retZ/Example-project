@@ -22,6 +22,7 @@ import com.fasten.executor_driver.interactor.vehicle.VehicleSharer;
 import dagger.Module;
 import dagger.Provides;
 import javax.inject.Named;
+import javax.inject.Singleton;
 
 @Module
 class UseCaseModule {
@@ -65,12 +66,14 @@ class UseCaseModule {
   /* Обмен данными между юзкейсами */
 
   @Provides
+  @Singleton
   @Named("loginSharer")
   DataSharer<String> provideLoginSharer(@NonNull LoginSharer loginSharer) {
     return loginSharer;
   }
 
   @Provides
+  @Singleton
   @Named("vehicleSharer")
   DataSharer<Vehicle> provideVehicleSharer(@NonNull VehicleSharer vehicleSharer) {
     return vehicleSharer;
