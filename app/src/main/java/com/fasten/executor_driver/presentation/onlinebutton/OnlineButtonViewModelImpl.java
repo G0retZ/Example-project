@@ -5,6 +5,7 @@ import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
 import com.fasten.executor_driver.interactor.online.OnlineUseCase;
+import com.fasten.executor_driver.presentation.SingleLiveEvent;
 import com.fasten.executor_driver.presentation.ViewState;
 import io.reactivex.Completable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -35,6 +36,12 @@ public class OnlineButtonViewModelImpl extends ViewModel implements OnlineButton
   @Override
   public LiveData<ViewState<OnlineButtonViewActions>> getViewStateLiveData() {
     return viewStateLiveData;
+  }
+
+  @NonNull
+  @Override
+  public LiveData<String> getNavigationLiveData() {
+    return new SingleLiveEvent<>();
   }
 
   @Override

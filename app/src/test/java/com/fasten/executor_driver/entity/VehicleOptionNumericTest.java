@@ -22,8 +22,8 @@ public class VehicleOptionNumericTest {
     assertEquals(vehicleOptionNumeric.getName(), "name");
     assertEquals(vehicleOptionNumeric.getValue(), new Integer(30));
     assertTrue(vehicleOptionNumeric.isVariable());
-    assertEquals(vehicleOptionNumeric.getMinValue(), 5);
-    assertEquals(vehicleOptionNumeric.getMaxValue(), 31);
+    assertEquals(vehicleOptionNumeric.getMinValue(), new Integer(5));
+    assertEquals(vehicleOptionNumeric.getMaxValue(), new Integer(31));
   }
 
   @Test

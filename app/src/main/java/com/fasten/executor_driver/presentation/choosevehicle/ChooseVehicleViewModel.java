@@ -1,29 +1,11 @@
 package com.fasten.executor_driver.presentation.choosevehicle;
 
-import android.arch.lifecycle.LiveData;
-import android.support.annotation.NonNull;
-import com.fasten.executor_driver.presentation.ViewState;
+import com.fasten.executor_driver.presentation.ViewModel;
 
 /**
  * ViewModel окна выбора ТС исполнителя.
  */
-public interface ChooseVehicleViewModel {
-
-  /**
-   * Возвращает состояние вида для применения.
-   *
-   * @return - {@link ViewState} состояние вида.
-   */
-  @NonNull
-  LiveData<ViewState<ChooseVehicleViewActions>> getViewStateLiveData();
-
-  /**
-   * Возвращает событие навигации для перехода.
-   *
-   * @return - {@link ChooseVehicleNavigate} событие навигации.
-   */
-  @NonNull
-  LiveData<String> getNavigationLiveData();
+public interface ChooseVehicleViewModel extends ViewModel<ChooseVehicleViewActions> {
 
   /**
    * Передает позицию выбранного исполнителем ТС в списке отображенных ТС.

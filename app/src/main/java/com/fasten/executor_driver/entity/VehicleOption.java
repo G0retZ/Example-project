@@ -15,12 +15,19 @@ public class VehicleOption<V> {
   private final boolean variable;
   @NonNull
   private final V value;
+  @NonNull
+  private final V minValue;
+  @NonNull
+  private final V maxValue;
 
-  VehicleOption(long id, @NonNull String name, boolean variable, @NonNull V value) {
+  VehicleOption(long id, @NonNull String name, boolean variable, @NonNull V value,
+      @NonNull V minValue, @NonNull V maxValue) {
     this.id = id;
     this.name = name;
     this.variable = variable;
     this.value = value;
+    this.minValue = minValue;
+    this.maxValue = maxValue;
   }
 
   public long getId() {
@@ -41,6 +48,26 @@ public class VehicleOption<V> {
     return value;
   }
 
+  @NonNull
+  public V getMinValue() {
+    return minValue;
+  }
+
+  @NonNull
+  public V getMaxValue() {
+    return maxValue;
+  }
+
+  /**
+   * Возвращает новый объект с заданным значением.
+   *
+   * @param value значение
+   */
+  @NonNull
+  public VehicleOption<V> setValue(@NonNull V value) {
+    return new VehicleOption<>(id, name, variable, value, minValue, maxValue);
+  }
+
   @Override
   public String toString() {
     return "VehicleOption{" +
@@ -48,6 +75,8 @@ public class VehicleOption<V> {
         ", name='" + name + '\'' +
         ", variable=" + variable +
         ", value=" + value +
+        ", minValue=" + minValue +
+        ", maxValue=" + maxValue +
         '}';
   }
 
@@ -72,7 +101,13 @@ public class VehicleOption<V> {
     if (!name.equals(that.name)) {
       return false;
     }
-    return value.equals(that.value);
+    if (!value.equals(that.value)) {
+      return false;
+    }
+    if (!minValue.equals(that.minValue)) {
+      return false;
+    }
+    return maxValue.equals(that.maxValue);
   }
 
   @Override
@@ -81,6 +116,8 @@ public class VehicleOption<V> {
     result = 31 * result + name.hashCode();
     result = 31 * result + (variable ? 1 : 0);
     result = 31 * result + value.hashCode();
+    result = 31 * result + minValue.hashCode();
+    result = 31 * result + maxValue.hashCode();
     return result;
   }
 }

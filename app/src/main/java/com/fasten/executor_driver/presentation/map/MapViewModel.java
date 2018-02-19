@@ -1,19 +1,10 @@
 package com.fasten.executor_driver.presentation.map;
 
-import android.arch.lifecycle.LiveData;
-import android.support.annotation.NonNull;
-import com.fasten.executor_driver.presentation.ViewState;
+import com.fasten.executor_driver.presentation.ViewModel;
 
 /**
  * ViewModel окна карты
  */
-public interface MapViewModel {
+public interface MapViewModel extends ViewModel<MapViewActions> {
 
-  /**
-   * Возвращает состояние вида для применения
-   *
-   * @return - {@link ViewState} состояние вида
-   */
-  @NonNull
-  LiveData<ViewState<MapViewActions>> getViewStateLiveData();
 }

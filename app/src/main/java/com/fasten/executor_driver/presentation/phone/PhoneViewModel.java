@@ -1,21 +1,12 @@
 package com.fasten.executor_driver.presentation.phone;
 
-import android.arch.lifecycle.LiveData;
 import android.support.annotation.NonNull;
-import com.fasten.executor_driver.presentation.ViewState;
+import com.fasten.executor_driver.presentation.ViewModel;
 
 /**
  * ViewModel окна ввода номера телефона
  */
-public interface PhoneViewModel {
-
-  /**
-   * Возвращает состояние вида для применения
-   *
-   * @return - {@link ViewState} состояние вида
-   */
-  @NonNull
-  LiveData<ViewState<PhoneViewActions>> getViewStateLiveData();
+public interface PhoneViewModel extends ViewModel<PhoneViewActions> {
 
   /**
    * Передает введенный/измененный номер для валидации

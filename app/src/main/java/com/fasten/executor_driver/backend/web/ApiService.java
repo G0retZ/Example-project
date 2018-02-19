@@ -46,7 +46,7 @@ public interface ApiService {
   /*
    *  Запрос занятия выборанной ТС с перечисленными опциями.
    */
-  @PUT("api/private/v1/car/{carId}/vehicleOptionItem")
+  @PUT("api/public/v1/car/{carId}/vehicleOptionItem")
   Completable selectCarWithOptions(
       @Path("carId") long carId,
       @NonNull @Body List<ApiVehicleOptionItem> vehicleOptionItems
