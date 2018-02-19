@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * Действия для смены состояния вида окна списка опций ТС исполнителя.
  */
-interface VehicleOptionsViewActions {
+public interface VehicleOptionsViewActions {
 
   /**
    * Показать индикатор процесса.

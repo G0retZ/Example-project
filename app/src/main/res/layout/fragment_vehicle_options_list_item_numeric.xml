@@ -6,7 +6,7 @@
   android:layout_height="88dp"
   android:background="?selectableItemBackground">
   <TextView
-    android:id="@+id/descriptionText"
+    android:id="@+id/optionName"
     android:layout_width="0dp"
     android:layout_height="18dp"
     android:layout_marginBottom="8dp"
@@ -31,7 +31,7 @@
     app:layout_constraintBottom_toBottomOf="parent"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toBottomOf="@+id/descriptionText"/>
+    app:layout_constraintTop_toBottomOf="@+id/optionName"/>
   <View
     android:id="@+id/view"
     android:layout_width="0dp"
