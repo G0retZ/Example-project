@@ -10,6 +10,8 @@ import com.fasten.executor_driver.interactor.DataSharer;
 import io.reactivex.Completable;
 import io.reactivex.Observable;
 import java.util.List;
+import javax.inject.Inject;
+import javax.inject.Named;
 
 public class VehicleOptionsUseCaseImpl implements VehicleOptionsUseCase {
 
@@ -20,9 +22,10 @@ public class VehicleOptionsUseCaseImpl implements VehicleOptionsUseCase {
   @Nullable
   private Vehicle vehicle;
 
+  @Inject
   VehicleOptionsUseCaseImpl(
       @NonNull VehicleOptionsGateway gateway,
-      @NonNull DataSharer<Vehicle> vehicleSharer) {
+      @Named("vehicleSharer") @NonNull DataSharer<Vehicle> vehicleSharer) {
     this.gateway = gateway;
     this.vehicleSharer = vehicleSharer;
   }
