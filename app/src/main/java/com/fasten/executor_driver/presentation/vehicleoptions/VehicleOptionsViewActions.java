@@ -10,6 +10,13 @@ import java.util.List;
 public interface VehicleOptionsViewActions {
 
   /**
+   * Активировать кнопку готовности.
+   *
+   * @param enable - активировать или нет?
+   */
+  void enableReadyButton(boolean enable);
+
+  /**
    * Показать индикатор процесса.
    *
    * @param pending - показать или нет?

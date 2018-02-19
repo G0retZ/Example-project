@@ -11,6 +11,7 @@ final class VehicleOptionsViewStateInitial implements ViewState<VehicleOptionsVi
 
   @Override
   public void apply(@NonNull VehicleOptionsViewActions stateActions) {
+    stateActions.enableReadyButton(false);
     stateActions.showVehicleOptionsList(true);
     stateActions.showVehicleOptionsPending(false);
     stateActions.showVehicleOptionsListErrorMessage(false);

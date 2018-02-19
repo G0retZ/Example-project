@@ -18,6 +18,7 @@ final class VehicleOptionsViewStateError implements ViewState<VehicleOptionsView
 
   @Override
   public void apply(@NonNull VehicleOptionsViewActions stateActions) {
+    stateActions.enableReadyButton(false);
     stateActions.showVehicleOptionsList(false);
     stateActions.showVehicleOptionsPending(false);
     stateActions.showVehicleOptionsListErrorMessage(true);

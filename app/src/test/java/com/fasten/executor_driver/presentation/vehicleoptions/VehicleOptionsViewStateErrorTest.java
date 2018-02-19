@@ -30,6 +30,7 @@ public class VehicleOptionsViewStateErrorTest {
     viewState.apply(codeViewActions);
 
     // Результат:
+    verify(codeViewActions).enableReadyButton(false);
     verify(codeViewActions).showVehicleOptionsList(false);
     verify(codeViewActions).showVehicleOptionsPending(false);
     verify(codeViewActions).showVehicleOptionsListErrorMessage(true);

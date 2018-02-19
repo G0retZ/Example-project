@@ -82,9 +82,13 @@ public class VehicleOptionsFragment extends BaseFragment implements VehicleOptio
   }
 
   @Override
+  public void enableReadyButton(boolean enable) {
+    readyButton.setEnabled(enable);
+  }
+
+  @Override
   public void showVehicleOptionsPending(boolean pending) {
     pendingIndicator.setVisibility(pending ? View.VISIBLE : View.GONE);
-    readyButton.setEnabled(!pending);
   }
 
   @Override
