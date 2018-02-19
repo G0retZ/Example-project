@@ -36,6 +36,9 @@
     <activity
       android:parentActivityName=".application.MapActivity"
       android:name=".application.ChooseVehicleActivity"/>
+    <activity
+      android:parentActivityName=".application.ChooseVehicleActivity"
+      android:name=".application.VehicleOptionsActivity"/>
 
     <meta-data
       android:name="com.google.android.geo.API_KEY"
