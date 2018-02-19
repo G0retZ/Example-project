@@ -11,7 +11,7 @@ import java.lang.annotation.RetentionPolicy;
     VehicleOptionsNavigate.READY_FOR_ORDERS
 })
 @Retention(RetentionPolicy.SOURCE)
-@interface VehicleOptionsNavigate {
+public @interface VehicleOptionsNavigate {
 
   /**
    * Переход к настройке к режиму ожидания заказа.

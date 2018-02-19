@@ -18,6 +18,7 @@ final class VehicleOptionsViewStateReady implements ViewState<VehicleOptionsView
 
   @Override
   public void apply(@NonNull VehicleOptionsViewActions stateActions) {
+    stateActions.enableReadyButton(true);
     stateActions.showVehicleOptionsList(true);
     stateActions.showVehicleOptionsPending(false);
     stateActions.showVehicleOptionsListErrorMessage(false);

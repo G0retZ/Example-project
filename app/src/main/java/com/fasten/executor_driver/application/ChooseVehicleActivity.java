@@ -20,9 +20,10 @@ public class ChooseVehicleActivity extends BaseActivity {
   public void navigate(@NonNull String destination) {
     switch (destination) {
       case ChooseVehicleNavigate.VEHICLE_OPTIONS:
-        startActivity(new Intent(this, MapActivity.class));
+        startActivity(new Intent(this, VehicleOptionsActivity.class));
         break;
       case ChooseVehicleNavigate.AUTO_VEHICLE_OPTIONS:
+        startActivity(new Intent(this, VehicleOptionsActivity.class));
         finish();
         break;
     }

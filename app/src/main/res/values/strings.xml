@@ -19,4 +19,6 @@
   <string name="busy">Занята</string>
   <string name="no_vehicles_available">Нет доступных ТС</string>
   <string name="choose_vehicle">Выбор ТС</string>
+  <string name="vehicle_options">Настройка ТС</string>
+  <string name="ready">Готово</string>
 </resources>

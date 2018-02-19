@@ -7,7 +7,14 @@ import java.util.List;
 /**
  * Действия для смены состояния вида окна списка опций ТС исполнителя.
  */
-interface VehicleOptionsViewActions {
+public interface VehicleOptionsViewActions {
+
+  /**
+   * Активировать кнопку готовности.
+   *
+   * @param enable - активировать или нет?
+   */
+  void enableReadyButton(boolean enable);
 
   /**
    * Показать индикатор процесса.

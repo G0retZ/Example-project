@@ -10,7 +10,7 @@ import com.fasten.executor_driver.entity.VehicleOptionNumeric;
 /**
  * Модель для отображения опции ТС в списке опций ТС исполнителя. Тестируемое форматирование.
  */
-class VehicleOptionsListItem<V> {
+public class VehicleOptionsListItem<V> {
 
   @LayoutRes
   private static final int TYPE_SWITCH = R.layout.fragment_vehicle_options_list_item_boolean;
@@ -30,12 +30,12 @@ class VehicleOptionsListItem<V> {
   }
 
   @NonNull
-  String getName() {
+  public String getName() {
     return vehicleOption.getName();
   }
 
   @LayoutRes
-  int getLayoutType() {
+  public int getLayoutType() {
     if (vehicleOption instanceof VehicleOptionNumeric) {
       return TYPE_SLIDER;
     } else if (vehicleOption instanceof VehicleOptionBoolean) {
@@ -45,21 +45,21 @@ class VehicleOptionsListItem<V> {
   }
 
   @NonNull
-  V getValue() {
+  public V getValue() {
     return vehicleOption.getValue();
   }
 
   @NonNull
-  V getMinValue() {
+  public V getMinValue() {
     return vehicleOption.getMinValue();
   }
 
   @NonNull
-  V getMaxValue() {
+  public V getMaxValue() {
     return vehicleOption.getMaxValue();
   }
 
-  <VA extends V> void setValue(@NonNull VA value) {
+  public <VA extends V> void setValue(@NonNull VA value) {
     vehicleOption = vehicleOption.setValue(value);
   }
 

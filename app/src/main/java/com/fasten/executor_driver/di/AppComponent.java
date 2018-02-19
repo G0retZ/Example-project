@@ -3,6 +3,7 @@ package com.fasten.executor_driver.di;
 import com.fasten.executor_driver.view.ChooseVehicleFragment;
 import com.fasten.executor_driver.view.GoOnlineFragment;
 import com.fasten.executor_driver.view.MapFragment;
+import com.fasten.executor_driver.view.VehicleOptionsFragment;
 import com.fasten.executor_driver.view.auth.LoginFragment;
 import com.fasten.executor_driver.view.auth.PasswordFragment;
 import dagger.Component;
@@ -27,4 +28,6 @@ public interface AppComponent {
   void inject(GoOnlineFragment mapFragment);
 
   void inject(ChooseVehicleFragment mapFragment);
+
+  void inject(VehicleOptionsFragment mapFragment);
 }
