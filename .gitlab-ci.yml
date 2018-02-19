@@ -39,6 +39,7 @@ before_script:
   - echo y | sdkmanager --licenses > android-licences.log
   - chmod +x ./gradlew
   - ./gradlew --version
+  - java -version
 
 
 
