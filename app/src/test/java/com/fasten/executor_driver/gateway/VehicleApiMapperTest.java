@@ -6,11 +6,8 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-import com.fasten.executor_driver.backend.web.incoming.ApiParam;
 import com.fasten.executor_driver.backend.web.incoming.ApiVehicle;
-import com.fasten.executor_driver.backend.web.incoming.ApiVehicleOption;
 import com.fasten.executor_driver.backend.web.incoming.ApiVehicleOptionItem;
-import com.fasten.executor_driver.backend.web.incoming.ApiVehicleOptionItemLimits;
 import com.fasten.executor_driver.entity.Vehicle;
 import com.fasten.executor_driver.entity.VehicleOption;
 import com.fasten.executor_driver.entity.VehicleOptionBoolean;
@@ -47,27 +44,17 @@ public class VehicleApiMapperTest {
     // Дано:
     ApiVehicle apiVehicle = new ApiVehicle(
         2190,
-        new ApiParam("mark"),
-        new ApiParam("model"),
+        "mark",
+        "model",
         "plate",
-        new ApiParam("color"),
+        "color",
         false,
         Arrays.asList(
-            new ApiVehicleOptionItem(324, "345",
-                new ApiVehicleOptionItemLimits(-5, 123),
-                new ApiVehicleOption("option0", false, true)),
-            new ApiVehicleOptionItem(32, "34",
-                null,
-                new ApiVehicleOption("option1", false, true)),
-            new ApiVehicleOptionItem(31, "1",
-                new ApiVehicleOptionItemLimits(50, 2100),
-                new ApiVehicleOption("option2", true, true)),
-            new ApiVehicleOptionItem(523, "false",
-                null,
-                new ApiVehicleOption("option3", true, false)),
-            new ApiVehicleOptionItem(42, "true",
-                null,
-                new ApiVehicleOption("option4", false, false))
+            new ApiVehicleOptionItem(324, "option0", true, false, "345", -5, 123),
+            new ApiVehicleOptionItem(32, "option1", true, false, "34", null, null),
+            new ApiVehicleOptionItem(31, "option2", true, true, "1", 50, 2100),
+            new ApiVehicleOptionItem(523, "option3", false, true, "false", null, null),
+            new ApiVehicleOptionItem(42, "option4", false, false, "true", null, null)
         )
     );
 
@@ -100,10 +87,10 @@ public class VehicleApiMapperTest {
     // Дано:
     ApiVehicle apiVehicle = new ApiVehicle(
         2190,
-        new ApiParam("mark"),
-        new ApiParam("model"),
+        "mark",
+        "model",
         "plate",
-        new ApiParam("color"),
+        "color",
         true,
         new ArrayList<>()
     );
@@ -122,28 +109,6 @@ public class VehicleApiMapperTest {
   }
 
   /**
-   * Должен дать ошибку, если марка - нуль
-   *
-   * @throws Exception ошибка
-   */
-  @Test(expected = DataMappingException.class)
-  public void mappingWithoutMarkFail() throws Exception {
-    // Дано:
-    ApiVehicle apiVehicle = new ApiVehicle(
-        2190,
-        null,
-        new ApiParam("model"),
-        "plate",
-        new ApiParam("color"),
-        false,
-        new ArrayList<>()
-    );
-
-    // Действие:
-    mapper.map(apiVehicle);
-  }
-
-  /**
    * Должен дать ошибку, если имя марки - нуль
    *
    * @throws Exception ошибка
@@ -153,32 +118,10 @@ public class VehicleApiMapperTest {
     // Дано:
     ApiVehicle apiVehicle = new ApiVehicle(
         2190,
-        new ApiParam(null),
-        new ApiParam("model"),
-        "plate",
-        new ApiParam("color"),
-        false,
-        new ArrayList<>()
-    );
-
-    // Действие:
-    mapper.map(apiVehicle);
-  }
-
-  /**
-   * Должен дать ошибку, если модель - нуль
-   *
-   * @throws Exception ошибка
-   */
-  @Test(expected = DataMappingException.class)
-  public void mappingWithoutModelFail() throws Exception {
-    // Дано:
-    ApiVehicle apiVehicle = new ApiVehicle(
-        2190,
-        new ApiParam("mark"),
         null,
+        "model",
         "plate",
-        new ApiParam("color"),
+        "color",
         false,
         new ArrayList<>()
     );
@@ -197,10 +140,10 @@ public class VehicleApiMapperTest {
     // Дано:
     ApiVehicle apiVehicle = new ApiVehicle(
         2190,
-        new ApiParam("mark"),
-        new ApiParam(null),
+        "mark",
+        null,
         "plate",
-        new ApiParam("color"),
+        "color",
         false,
         new ArrayList<>()
     );
@@ -219,10 +162,10 @@ public class VehicleApiMapperTest {
     // Дано:
     ApiVehicle apiVehicle = new ApiVehicle(
         2190,
-        new ApiParam("mark"),
-        new ApiParam("model"),
+        "mark",
+        "model",
         null,
-        new ApiParam("color"),
+        "color",
         false,
         new ArrayList<>()
     );
@@ -241,32 +184,10 @@ public class VehicleApiMapperTest {
     // Дано:
     ApiVehicle apiVehicle = new ApiVehicle(
         2190,
-        new ApiParam("mark"),
-        new ApiParam("model"),
+        "mark",
+        "model",
         "plate",
         null,
-        false,
-        new ArrayList<>()
-    );
-
-    // Действие:
-    mapper.map(apiVehicle);
-  }
-
-  /**
-   * Должен дать ошибку, если имя цвета - нуль
-   *
-   * @throws Exception ошибка
-   */
-  @Test(expected = DataMappingException.class)
-  public void mappingWithoutColorNameFail() throws Exception {
-    // Дано:
-    ApiVehicle apiVehicle = new ApiVehicle(
-        2190,
-        new ApiParam("mark"),
-        new ApiParam("model"),
-        "plate",
-        new ApiParam(null),
         false,
         new ArrayList<>()
     );
@@ -285,10 +206,10 @@ public class VehicleApiMapperTest {
     // Дано:
     ApiVehicle apiVehicle = new ApiVehicle(
         2190,
-        new ApiParam("mark"),
-        new ApiParam("model"),
+        "mark",
+        "model",
         "plate",
-        new ApiParam("color"),
+        "color",
         false,
         null
     );
