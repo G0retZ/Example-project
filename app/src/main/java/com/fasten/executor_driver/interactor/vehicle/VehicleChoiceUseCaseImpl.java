@@ -15,30 +15,30 @@ import javax.inject.Named;
 public class VehicleChoiceUseCaseImpl implements VehicleChoiceUseCase {
 
   @NonNull
-  private final VehicleChoiceGateway vehicleChoiceGateway;
+  private final VehiclesGateway vehiclesGateway;
   @NonNull
-  private final DataSharer<Vehicle> vehicleSharer;
+  private final DataSharer<Vehicle> vehicleChoiceSharer;
   @Nullable
   private List<Vehicle> vehicles;
 
   @Inject
   VehicleChoiceUseCaseImpl(
-      @NonNull VehicleChoiceGateway vehicleChoiceGateway,
-      @Named("vehicleSharer") @NonNull DataSharer<Vehicle> vehicleSharer) {
-    this.vehicleChoiceGateway = vehicleChoiceGateway;
-    this.vehicleSharer = vehicleSharer;
+      @NonNull VehiclesGateway vehiclesGateway,
+      @Named("vehicleChoiceSharer") @NonNull DataSharer<Vehicle> vehicleChoiceSharer) {
+    this.vehiclesGateway = vehiclesGateway;
+    this.vehicleChoiceSharer = vehicleChoiceSharer;
   }
 
   @NonNull
   @Override
   public Single<List<Vehicle>> getVehicles() {
-    return vehicleChoiceGateway.getExecutorVehicles()
+    return vehiclesGateway.getExecutorVehicles()
         .map(list -> {
           if (list.isEmpty()) {
             throw new NoVehiclesAvailableException();
           }
           if (list.size() == 1 && !list.get(0).isBusy()) {
-            vehicleSharer.share(list.get(0));
+            vehicleChoiceSharer.share(list.get(0));
             throw new OnlyOneVehicleAvailableException();
           }
           vehicles = list;
@@ -55,7 +55,7 @@ public class VehicleChoiceUseCaseImpl implements VehicleChoiceUseCase {
       if (vehicles.get(index).isBusy()) {
         throw new IndexOutOfBoundsException();
       }
-      vehicleSharer.share(vehicles.get(index));
+      vehicleChoiceSharer.share(vehicles.get(index));
       return null;
     });
   }

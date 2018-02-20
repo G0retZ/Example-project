@@ -7,13 +7,13 @@ import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
-public class VehicleSharerTest {
+public class VehicleChoiceSharerTest {
 
-  private VehicleSharer vehicleSharer;
+  private VehicleChoiceSharer vehicleChoiceSharer;
 
   @Before
   public void setUp() throws Exception {
-    vehicleSharer = new VehicleSharer();
+    vehicleChoiceSharer = new VehicleChoiceSharer();
   }
 
   /**
@@ -24,9 +24,9 @@ public class VehicleSharerTest {
   @Test
   public void valueUnchangedForRead() throws Exception {
     // Дано:
-    vehicleSharer.share(new Vehicle(1, "man", "mod", "col", "pla", false));
+    vehicleChoiceSharer.share(new Vehicle(1, "man", "mod", "col", "pla", false));
 
     // Действие и Результат:
-    vehicleSharer.get().test().assertValue(new Vehicle(1, "man", "mod", "col", "pla", false));
+    vehicleChoiceSharer.get().test().assertValue(new Vehicle(1, "man", "mod", "col", "pla", false));
   }
 }

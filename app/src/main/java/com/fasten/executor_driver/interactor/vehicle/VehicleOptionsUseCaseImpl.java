@@ -18,22 +18,22 @@ public class VehicleOptionsUseCaseImpl implements VehicleOptionsUseCase {
   @NonNull
   private final VehicleOptionsGateway gateway;
   @NonNull
-  private final DataSharer<Vehicle> vehicleSharer;
+  private final DataSharer<Vehicle> vehicleChoiceSharer;
   @Nullable
   private Vehicle vehicle;
 
   @Inject
   VehicleOptionsUseCaseImpl(
       @NonNull VehicleOptionsGateway gateway,
-      @Named("vehicleSharer") @NonNull DataSharer<Vehicle> vehicleSharer) {
+      @Named("vehicleChoiceSharer") @NonNull DataSharer<Vehicle> vehicleChoiceSharer) {
     this.gateway = gateway;
-    this.vehicleSharer = vehicleSharer;
+    this.vehicleChoiceSharer = vehicleChoiceSharer;
   }
 
   @NonNull
   @Override
   public Observable<List<VehicleOption>> getVehicleOptions() {
-    return vehicleSharer.get()
+    return vehicleChoiceSharer.get()
         .concatMap(vehicle -> {
           this.vehicle = vehicle;
           return Observable.fromIterable(vehicle.getVehicleOptions())

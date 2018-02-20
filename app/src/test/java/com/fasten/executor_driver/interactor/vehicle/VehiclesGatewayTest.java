@@ -13,7 +13,7 @@ import com.fasten.executor_driver.backend.web.incoming.ApiVehicle;
 import com.fasten.executor_driver.entity.Vehicle;
 import com.fasten.executor_driver.gateway.DataMappingException;
 import com.fasten.executor_driver.gateway.Mapper;
-import com.fasten.executor_driver.gateway.VehicleChoiceGatewayImpl;
+import com.fasten.executor_driver.gateway.VehiclesGatewayImpl;
 import io.reactivex.Single;
 import io.reactivex.plugins.RxJavaPlugins;
 import io.reactivex.schedulers.Schedulers;
@@ -25,9 +25,9 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
-public class VehicleChoiceGatewayTest {
+public class VehiclesGatewayTest {
 
-  private VehicleChoiceGateway vehicleChoiceGateway;
+  private VehiclesGateway vehiclesGateway;
 
   @Mock
   private ApiService api;
@@ -39,7 +39,7 @@ public class VehicleChoiceGatewayTest {
   public void setUp() throws Exception {
     RxJavaPlugins.setIoSchedulerHandler(scheduler -> Schedulers.trampoline());
     RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
-    vehicleChoiceGateway = new VehicleChoiceGatewayImpl(api, mapper);
+    vehiclesGateway = new VehiclesGatewayImpl(api, mapper);
     when(api.getCars()).thenReturn(Single.never());
     when(mapper.map(any(ApiVehicle.class))).thenReturn(
         new Vehicle(1, "m", "m", "c", "l", false)
@@ -56,7 +56,7 @@ public class VehicleChoiceGatewayTest {
   @Test
   public void askGatewayForHeatMap() throws Exception {
     // Действие:
-    vehicleChoiceGateway.getExecutorVehicles();
+    vehiclesGateway.getExecutorVehicles();
 
     // Результат:
     verify(api, only()).getCars();
@@ -79,7 +79,7 @@ public class VehicleChoiceGatewayTest {
     )));
 
     // Действие:
-    vehicleChoiceGateway.getExecutorVehicles().test();
+    vehiclesGateway.getExecutorVehicles().test();
 
     // Результат:
     verify(mapper, times(3)).map(new ApiVehicle());
@@ -102,7 +102,7 @@ public class VehicleChoiceGatewayTest {
     )));
 
     // Действие:
-    vehicleChoiceGateway.getExecutorVehicles().test();
+    vehiclesGateway.getExecutorVehicles().test();
 
     // Результат:
     verify(mapper, only()).map(new ApiVehicle());
@@ -123,7 +123,7 @@ public class VehicleChoiceGatewayTest {
     when(api.getCars()).thenReturn(Single.error(new NoNetworkException()));
 
     // Действие и Результат:
-    vehicleChoiceGateway.getExecutorVehicles().test().assertError(NoNetworkException.class);
+    vehiclesGateway.getExecutorVehicles().test().assertError(NoNetworkException.class);
   }
 
   /**
@@ -142,7 +142,7 @@ public class VehicleChoiceGatewayTest {
     )));
 
     // Действие и Результат:
-    vehicleChoiceGateway.getExecutorVehicles().test().assertError(DataMappingException.class);
+    vehiclesGateway.getExecutorVehicles().test().assertError(DataMappingException.class);
   }
 
   /**
@@ -160,8 +160,8 @@ public class VehicleChoiceGatewayTest {
     )));
 
     // Действие и Результат:
-    vehicleChoiceGateway.getExecutorVehicles().test().assertComplete();
-    vehicleChoiceGateway.getExecutorVehicles().test().assertValue(Arrays.asList(
+    vehiclesGateway.getExecutorVehicles().test().assertComplete();
+    vehiclesGateway.getExecutorVehicles().test().assertValue(Arrays.asList(
         new Vehicle(1, "m", "m", "c", "l", false),
         new Vehicle(1, "m", "m", "c", "l", false),
         new Vehicle(1, "m", "m", "c", "l", false)

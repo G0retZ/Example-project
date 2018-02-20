@@ -14,11 +14,11 @@ import com.fasten.executor_driver.interactor.map.HeatMapUseCase;
 import com.fasten.executor_driver.interactor.map.HeatMapUseCaseImpl;
 import com.fasten.executor_driver.interactor.online.OnlineUseCase;
 import com.fasten.executor_driver.interactor.online.OnlineUseCaseImpl;
+import com.fasten.executor_driver.interactor.vehicle.VehicleChoiceSharer;
 import com.fasten.executor_driver.interactor.vehicle.VehicleChoiceUseCase;
 import com.fasten.executor_driver.interactor.vehicle.VehicleChoiceUseCaseImpl;
 import com.fasten.executor_driver.interactor.vehicle.VehicleOptionsUseCase;
 import com.fasten.executor_driver.interactor.vehicle.VehicleOptionsUseCaseImpl;
-import com.fasten.executor_driver.interactor.vehicle.VehicleSharer;
 import dagger.Module;
 import dagger.Provides;
 import javax.inject.Named;
@@ -74,8 +74,8 @@ class UseCaseModule {
 
   @Provides
   @Singleton
-  @Named("vehicleSharer")
-  DataSharer<Vehicle> provideVehicleSharer(@NonNull VehicleSharer vehicleSharer) {
-    return vehicleSharer;
+  @Named("vehicleChoiceSharer")
+  DataSharer<Vehicle> provideVehicleSharer(@NonNull VehicleChoiceSharer vehicleChoiceSharer) {
+    return vehicleChoiceSharer;
   }
 }

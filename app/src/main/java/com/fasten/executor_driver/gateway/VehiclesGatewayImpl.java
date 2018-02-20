@@ -4,7 +4,7 @@ import android.support.annotation.NonNull;
 import com.fasten.executor_driver.backend.web.ApiService;
 import com.fasten.executor_driver.backend.web.incoming.ApiVehicle;
 import com.fasten.executor_driver.entity.Vehicle;
-import com.fasten.executor_driver.interactor.vehicle.VehicleChoiceGateway;
+import com.fasten.executor_driver.interactor.vehicle.VehiclesGateway;
 import io.reactivex.Single;
 import io.reactivex.schedulers.Schedulers;
 import java.util.ArrayList;
@@ -12,13 +12,13 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-public class VehicleChoiceGatewayImpl implements VehicleChoiceGateway {
+public class VehiclesGatewayImpl implements VehiclesGateway {
 
   private final ApiService api;
   private final Mapper<ApiVehicle, Vehicle> mapper;
 
   @Inject
-  public VehicleChoiceGatewayImpl(ApiService api,
+  public VehiclesGatewayImpl(ApiService api,
       @Named("vehicleMapper") Mapper<ApiVehicle, Vehicle> mapper) {
     this.api = api;
     this.mapper = mapper;

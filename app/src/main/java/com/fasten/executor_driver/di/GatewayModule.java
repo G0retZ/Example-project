@@ -13,14 +13,14 @@ import com.fasten.executor_driver.gateway.PasswordGatewayImpl;
 import com.fasten.executor_driver.gateway.SmsGatewayImpl;
 import com.fasten.executor_driver.gateway.TokenKeeperImpl;
 import com.fasten.executor_driver.gateway.VehicleApiMapper;
-import com.fasten.executor_driver.gateway.VehicleChoiceGatewayImpl;
+import com.fasten.executor_driver.gateway.VehiclesGatewayImpl;
 import com.fasten.executor_driver.gateway.VehicleOptionApiMapper;
 import com.fasten.executor_driver.gateway.VehicleOptionsGatewayImpl;
 import com.fasten.executor_driver.interactor.auth.PasswordGateway;
 import com.fasten.executor_driver.interactor.auth.SmsGateway;
 import com.fasten.executor_driver.interactor.map.HeatMapGateway;
 import com.fasten.executor_driver.interactor.online.OnlineGateway;
-import com.fasten.executor_driver.interactor.vehicle.VehicleChoiceGateway;
+import com.fasten.executor_driver.interactor.vehicle.VehiclesGateway;
 import com.fasten.executor_driver.interactor.vehicle.VehicleOptionsGateway;
 import dagger.Module;
 import dagger.Provides;
@@ -56,7 +56,7 @@ class GatewayModule {
   }
 
   @Provides
-  VehicleChoiceGateway provideVehicleChoiceGateway(VehicleChoiceGatewayImpl vehicleChoiceGateway) {
+  VehiclesGateway provideVehicleChoiceGateway(VehiclesGatewayImpl vehicleChoiceGateway) {
     return vehicleChoiceGateway;
   }
 

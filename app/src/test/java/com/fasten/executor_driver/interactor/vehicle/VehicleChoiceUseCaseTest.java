@@ -26,14 +26,14 @@ public class VehicleChoiceUseCaseTest {
   private VehicleChoiceUseCase vehicleChoiceUseCase;
 
   @Mock
-  private VehicleChoiceGateway gateway;
+  private VehiclesGateway gateway;
 
   @Mock
-  private DataSharer<Vehicle> vehicleSharer;
+  private DataSharer<Vehicle> vehicleChoiceSharer;
 
   @Before
   public void setUp() throws Exception {
-    vehicleChoiceUseCase = new VehicleChoiceUseCaseImpl(gateway, vehicleSharer);
+    vehicleChoiceUseCase = new VehicleChoiceUseCaseImpl(gateway, vehicleChoiceSharer);
     when(gateway.getExecutorVehicles()).thenReturn(Single.never());
   }
 
@@ -183,7 +183,7 @@ public class VehicleChoiceUseCaseTest {
     vehicleChoiceUseCase.getVehicles().test();
 
     // Результат:
-    verifyZeroInteractions(vehicleSharer);
+    verifyZeroInteractions(vehicleChoiceSharer);
   }
 
   /**
@@ -204,7 +204,7 @@ public class VehicleChoiceUseCaseTest {
     vehicleChoiceUseCase.getVehicles().test();
 
     // Результат:
-    verify(vehicleSharer, only())
+    verify(vehicleChoiceSharer, only())
         .share(new Vehicle(12, "manufacturer", "model", "color", "license", false));
   }
 
@@ -231,7 +231,7 @@ public class VehicleChoiceUseCaseTest {
     vehicleChoiceUseCase.setSelectedVehicle(2).test();
 
     // Результат:
-    verify(vehicleSharer, only())
+    verify(vehicleChoiceSharer, only())
         .share(new Vehicle(14, "manufactur", "modelsa", "color", "licens", false));
   }
 
@@ -259,7 +259,7 @@ public class VehicleChoiceUseCaseTest {
     vehicleChoiceUseCase.setSelectedVehicle(5).test();
 
     // Результат:
-    verifyZeroInteractions(vehicleSharer);
+    verifyZeroInteractions(vehicleChoiceSharer);
   }
 
   /* Проверяем ответы на публикацию */
