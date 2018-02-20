@@ -73,11 +73,6 @@ public class GoOnlineFragment extends BaseFragment implements OnlineButtonViewAc
   }
 
   @Override
-  public void goChooseVehicle() {
-    navigate("chooseVehicle");
-  }
-
-  @Override
   public void enableGoOnlineButton(boolean enable) {
     goOnlineRequest.setEnabled(enable);
   }

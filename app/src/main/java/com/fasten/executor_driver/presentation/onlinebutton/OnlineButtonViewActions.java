@@ -8,11 +8,6 @@ import android.support.annotation.Nullable;
 public interface OnlineButtonViewActions {
 
   /**
-   * Перейти к выбору автомобиля.
-   */
-  void goChooseVehicle();
-
-  /**
    * Сделать кнопку "Выйти на линию" нажимаемой
    *
    * @param enable - нажимаема или нет?

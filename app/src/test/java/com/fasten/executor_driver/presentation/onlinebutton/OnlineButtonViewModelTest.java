@@ -10,6 +10,11 @@ import static org.mockito.Mockito.when;
 import android.arch.core.executor.testing.InstantTaskExecutorRule;
 import android.arch.lifecycle.Observer;
 import com.fasten.executor_driver.backend.web.NoNetworkException;
+import com.fasten.executor_driver.entity.DriverBlockedException;
+import com.fasten.executor_driver.entity.InsufficientCreditsException;
+import com.fasten.executor_driver.entity.NoFreeVehiclesException;
+import com.fasten.executor_driver.entity.NoVehiclesAvailableException;
+import com.fasten.executor_driver.entity.OnlyOneVehicleAvailableException;
 import com.fasten.executor_driver.interactor.vehicle.VehiclesUseCase;
 import com.fasten.executor_driver.presentation.ViewState;
 import io.reactivex.Completable;
@@ -160,13 +165,292 @@ public class OnlineButtonViewModelTest {
   }
 
   /**
-   * Должен вернуть состояние вида "Ожидайте" с возвратом обратно в состояние готовности после
-   * ошибки запроса выхода на линию.
+   * Не должен переходить в состояние вида "Ошибка", если водитель заблокирован.
    *
    * @throws Exception error
    */
   @Test
-  public void setHoldViewStateToLiveDataAfterFail() throws Exception {
+  public void doNotSetErrorViewStateToLiveDataAfterFailForBlockedDriver() throws Exception {
+    // Дано:
+    when(vehiclesUseCase.loadVehicles())
+        .thenReturn(Completable.error(new DriverBlockedException()));
+    InOrder inOrder = Mockito.inOrder(viewStateObserver);
+    onlineButtonViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+
+    // Действие:
+    onlineButtonViewModel.goOnline();
+
+    // Результат:
+    inOrder.verify(viewStateObserver).onChanged(any(OnlineButtonViewStateReady.class));
+    inOrder.verify(viewStateObserver).onChanged(any(OnlineButtonViewStateHold.class));
+    verifyNoMoreInteractions(viewStateObserver);
+  }
+
+  /**
+   * Должен вернуть рабочее состояние после таймера, если водитель заблокирован.
+   *
+   * @throws Exception error
+   */
+  @Test
+  public void setReadyViewStateToLiveDataAfterFailForBlockedDriver() throws Exception {
+    // Дано:
+    when(vehiclesUseCase.loadVehicles())
+        .thenReturn(Completable.error(new DriverBlockedException()));
+    InOrder inOrder = Mockito.inOrder(viewStateObserver);
+    onlineButtonViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+
+    // Действие:
+    onlineButtonViewModel.goOnline();
+    testScheduler.advanceTimeBy(5, TimeUnit.SECONDS);
+
+    // Результат:
+    inOrder.verify(viewStateObserver).onChanged(any(OnlineButtonViewStateReady.class));
+    inOrder.verify(viewStateObserver).onChanged(any(OnlineButtonViewStateHold.class));
+    inOrder.verify(viewStateObserver).onChanged(any(OnlineButtonViewStateReady.class));
+    verifyNoMoreInteractions(viewStateObserver);
+  }
+
+  /**
+   * Не должен переходить в состояние вида "Ошибка", если недостаточно средств.
+   *
+   * @throws Exception error
+   */
+  @Test
+  public void doNotSetErrorViewStateToLiveDataAfterFailForInsufficientCredits() throws Exception {
+    // Дано:
+    when(vehiclesUseCase.loadVehicles())
+        .thenReturn(Completable.error(new InsufficientCreditsException()));
+    InOrder inOrder = Mockito.inOrder(viewStateObserver);
+    onlineButtonViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+
+    // Действие:
+    onlineButtonViewModel.goOnline();
+
+    // Результат:
+    inOrder.verify(viewStateObserver).onChanged(any(OnlineButtonViewStateReady.class));
+    inOrder.verify(viewStateObserver).onChanged(any(OnlineButtonViewStateHold.class));
+    verifyNoMoreInteractions(viewStateObserver);
+  }
+
+  /**
+   * Должен вернуть рабочее состояние после таймера, если недостаточно средств.
+   *
+   * @throws Exception error
+   */
+  @Test
+  public void setReadyViewStateToLiveDataAfterFailForInsufficientCredits() throws Exception {
+    // Дано:
+    when(vehiclesUseCase.loadVehicles())
+        .thenReturn(Completable.error(new InsufficientCreditsException()));
+    InOrder inOrder = Mockito.inOrder(viewStateObserver);
+    onlineButtonViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+
+    // Действие:
+    onlineButtonViewModel.goOnline();
+    testScheduler.advanceTimeBy(5, TimeUnit.SECONDS);
+
+    // Результат:
+    inOrder.verify(viewStateObserver).onChanged(any(OnlineButtonViewStateReady.class));
+    inOrder.verify(viewStateObserver).onChanged(any(OnlineButtonViewStateHold.class));
+    inOrder.verify(viewStateObserver).onChanged(any(OnlineButtonViewStateReady.class));
+    verifyNoMoreInteractions(viewStateObserver);
+  }
+
+  /**
+   * Не должен переходить в состояние вида "Ошибка", если нет ТС.
+   *
+   * @throws Exception error
+   */
+  @Test
+  public void doNotSetErrorViewStateToLiveDataAfterFailForNoVehicles() throws Exception {
+    // Дано:
+    when(vehiclesUseCase.loadVehicles())
+        .thenReturn(Completable.error(new NoVehiclesAvailableException()));
+    InOrder inOrder = Mockito.inOrder(viewStateObserver);
+    onlineButtonViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+
+    // Действие:
+    onlineButtonViewModel.goOnline();
+
+    // Результат:
+    inOrder.verify(viewStateObserver).onChanged(any(OnlineButtonViewStateReady.class));
+    inOrder.verify(viewStateObserver).onChanged(any(OnlineButtonViewStateHold.class));
+    verifyNoMoreInteractions(viewStateObserver);
+  }
+
+  /**
+   * Должен вернуть рабочее состояние после таймера, если нет ТС.
+   *
+   * @throws Exception error
+   */
+  @Test
+  public void setReadyViewStateToLiveDataAfterFailForNoVehicles() throws Exception {
+    // Дано:
+    when(vehiclesUseCase.loadVehicles())
+        .thenReturn(Completable.error(new NoVehiclesAvailableException()));
+    InOrder inOrder = Mockito.inOrder(viewStateObserver);
+    onlineButtonViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+
+    // Действие:
+    onlineButtonViewModel.goOnline();
+    testScheduler.advanceTimeBy(5, TimeUnit.SECONDS);
+
+    // Результат:
+    inOrder.verify(viewStateObserver).onChanged(any(OnlineButtonViewStateReady.class));
+    inOrder.verify(viewStateObserver).onChanged(any(OnlineButtonViewStateHold.class));
+    inOrder.verify(viewStateObserver).onChanged(any(OnlineButtonViewStateReady.class));
+    verifyNoMoreInteractions(viewStateObserver);
+  }
+
+  /**
+   * Не должен переходить в состояние вида "Ошибка", если нет свободных ТС.
+   *
+   * @throws Exception error
+   */
+  @Test
+  public void doNotSetErrorViewStateToLiveDataAfterFailForNoFreeVehicles() throws Exception {
+    // Дано:
+    when(vehiclesUseCase.loadVehicles())
+        .thenReturn(Completable.error(new NoFreeVehiclesException()));
+    InOrder inOrder = Mockito.inOrder(viewStateObserver);
+    onlineButtonViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+
+    // Действие:
+    onlineButtonViewModel.goOnline();
+
+    // Результат:
+    inOrder.verify(viewStateObserver).onChanged(any(OnlineButtonViewStateReady.class));
+    inOrder.verify(viewStateObserver).onChanged(any(OnlineButtonViewStateHold.class));
+    verifyNoMoreInteractions(viewStateObserver);
+  }
+
+  /**
+   * Должен вернуть рабочее состояние после таймера, если нет свободных ТС.
+   *
+   * @throws Exception error
+   */
+  @Test
+  public void setReadyViewStateToLiveDataAfterFailForNoFreeVehicles() throws Exception {
+    // Дано:
+    when(vehiclesUseCase.loadVehicles())
+        .thenReturn(Completable.error(new NoFreeVehiclesException()));
+    InOrder inOrder = Mockito.inOrder(viewStateObserver);
+    onlineButtonViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+
+    // Действие:
+    onlineButtonViewModel.goOnline();
+    testScheduler.advanceTimeBy(5, TimeUnit.SECONDS);
+
+    // Результат:
+    inOrder.verify(viewStateObserver).onChanged(any(OnlineButtonViewStateReady.class));
+    inOrder.verify(viewStateObserver).onChanged(any(OnlineButtonViewStateHold.class));
+    inOrder.verify(viewStateObserver).onChanged(any(OnlineButtonViewStateReady.class));
+    verifyNoMoreInteractions(viewStateObserver);
+  }
+
+  /**
+   * Не должен переходить в состояние вида "Ошибка", если нет свободных ТС.
+   *
+   * @throws Exception error
+   */
+  @Test
+  public void doNotSetErrorViewStateToLiveDataAfterFailForOnlyOneVehicle() throws Exception {
+    // Дано:
+    when(vehiclesUseCase.loadVehicles())
+        .thenReturn(Completable.error(new OnlyOneVehicleAvailableException()));
+    InOrder inOrder = Mockito.inOrder(viewStateObserver);
+    onlineButtonViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+
+    // Действие:
+    onlineButtonViewModel.goOnline();
+
+    // Результат:
+    inOrder.verify(viewStateObserver).onChanged(any(OnlineButtonViewStateReady.class));
+    inOrder.verify(viewStateObserver).onChanged(any(OnlineButtonViewStateHold.class));
+    verifyNoMoreInteractions(viewStateObserver);
+  }
+
+  /**
+   * Должен вернуть рабочее состояние после таймера, если нет свободных ТС.
+   *
+   * @throws Exception error
+   */
+  @Test
+  public void setReadyViewStateToLiveDataAfterFailForOnlyOneVehicle() throws Exception {
+    // Дано:
+    when(vehiclesUseCase.loadVehicles())
+        .thenReturn(Completable.error(new OnlyOneVehicleAvailableException()));
+    InOrder inOrder = Mockito.inOrder(viewStateObserver);
+    onlineButtonViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+
+    // Действие:
+    onlineButtonViewModel.goOnline();
+    testScheduler.advanceTimeBy(5, TimeUnit.SECONDS);
+
+    // Результат:
+    inOrder.verify(viewStateObserver).onChanged(any(OnlineButtonViewStateReady.class));
+    inOrder.verify(viewStateObserver).onChanged(any(OnlineButtonViewStateHold.class));
+    inOrder.verify(viewStateObserver).onChanged(any(OnlineButtonViewStateReady.class));
+    verifyNoMoreInteractions(viewStateObserver);
+  }
+
+  /**
+   * Должен вернуть состояние вида "Ошибка" после ошибки запроса выхода на линию.
+   *
+   * @throws Exception error
+   */
+  @Test
+  public void setErrorViewStateToLiveDataAfterFail() throws Exception {
+    // Дано:
+    when(vehiclesUseCase.loadVehicles()).thenReturn(Completable.error(new NoNetworkException()));
+    InOrder inOrder = Mockito.inOrder(viewStateObserver);
+    onlineButtonViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+
+    // Действие:
+    onlineButtonViewModel.goOnline();
+
+    // Результат:
+    inOrder.verify(viewStateObserver).onChanged(any(OnlineButtonViewStateReady.class));
+    inOrder.verify(viewStateObserver).onChanged(any(OnlineButtonViewStateHold.class));
+    inOrder.verify(viewStateObserver)
+        .onChanged(new OnlineButtonViewStateError(new NoNetworkException()));
+    verifyNoMoreInteractions(viewStateObserver);
+  }
+
+  /**
+   * Должен вернуть состояние вида "Ожидайте" после ошибки запроса выхода на линию, если ошибка была
+   * потреблена до истечения таймера.
+   *
+   * @throws Exception error
+   */
+  @Test
+  public void setHoldViewStateToLiveDataAfterFailConsumedBeforeTimeout() throws Exception {
+    // Дано:
+    when(vehiclesUseCase.loadVehicles()).thenReturn(Completable.error(new NoNetworkException()));
+    InOrder inOrder = Mockito.inOrder(viewStateObserver);
+    onlineButtonViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+
+    // Действие:
+    onlineButtonViewModel.goOnline();
+    onlineButtonViewModel.consumeError();
+
+    // Результат:
+    inOrder.verify(viewStateObserver).onChanged(any(OnlineButtonViewStateReady.class));
+    inOrder.verify(viewStateObserver).onChanged(any(OnlineButtonViewStateHold.class));
+    inOrder.verify(viewStateObserver)
+        .onChanged(new OnlineButtonViewStateError(new NoNetworkException()));
+    inOrder.verify(viewStateObserver).onChanged(any(OnlineButtonViewStateHold.class));
+    verifyNoMoreInteractions(viewStateObserver);
+  }
+
+  /**
+   * Должен оставить состояние вида "Ошибка", если она не была потреблена после истечения таймера.
+   *
+   * @throws Exception error
+   */
+  @Test
+  public void doNotUnsetErrorViewStateToLiveDataAfterFailNotConsumedAfterTimeout()
+      throws Exception {
     // Дано:
     when(vehiclesUseCase.loadVehicles()).thenReturn(Completable.error(new NoNetworkException()));
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
@@ -175,6 +459,60 @@ public class OnlineButtonViewModelTest {
     // Действие:
     onlineButtonViewModel.goOnline();
     testScheduler.advanceTimeBy(5, TimeUnit.SECONDS);
+
+    // Результат:
+    inOrder.verify(viewStateObserver).onChanged(any(OnlineButtonViewStateReady.class));
+    inOrder.verify(viewStateObserver).onChanged(any(OnlineButtonViewStateHold.class));
+    inOrder.verify(viewStateObserver)
+        .onChanged(new OnlineButtonViewStateError(new NoNetworkException()));
+    verifyNoMoreInteractions(viewStateObserver);
+  }
+
+  /**
+   * Должен вернуть состояние вида "Ожидайте" с возвратом обратно в состояние готовности после
+   * ошибки запроса выхода на линию и ее потребления.
+   *
+   * @throws Exception error
+   */
+  @Test
+  public void setHoldViewStateToLiveDataAfterFailConsumedAfterTimeout() throws Exception {
+    // Дано:
+    when(vehiclesUseCase.loadVehicles()).thenReturn(Completable.error(new NoNetworkException()));
+    InOrder inOrder = Mockito.inOrder(viewStateObserver);
+    onlineButtonViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+
+    // Действие:
+    onlineButtonViewModel.goOnline();
+    onlineButtonViewModel.consumeError();
+    testScheduler.advanceTimeBy(5, TimeUnit.SECONDS);
+
+    // Результат:
+    inOrder.verify(viewStateObserver).onChanged(any(OnlineButtonViewStateReady.class));
+    inOrder.verify(viewStateObserver).onChanged(any(OnlineButtonViewStateHold.class));
+    inOrder.verify(viewStateObserver)
+        .onChanged(new OnlineButtonViewStateError(new NoNetworkException()));
+    inOrder.verify(viewStateObserver).onChanged(any(OnlineButtonViewStateHold.class));
+    inOrder.verify(viewStateObserver).onChanged(any(OnlineButtonViewStateReady.class));
+    verifyNoMoreInteractions(viewStateObserver);
+  }
+
+  /**
+   * Должен вернуть состояние рабочее вида после ошибки запроса выхода на линию, если она была
+   * потреблена после истечения таймера.
+   *
+   * @throws Exception error
+   */
+  @Test
+  public void setReadyViewStateToLiveDataAfterFailAfterTimeout() throws Exception {
+    // Дано:
+    when(vehiclesUseCase.loadVehicles()).thenReturn(Completable.error(new NoNetworkException()));
+    InOrder inOrder = Mockito.inOrder(viewStateObserver);
+    onlineButtonViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+
+    // Действие:
+    onlineButtonViewModel.goOnline();
+    testScheduler.advanceTimeBy(5, TimeUnit.SECONDS);
+    onlineButtonViewModel.consumeError();
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(any(OnlineButtonViewStateReady.class));
@@ -200,12 +538,12 @@ public class OnlineButtonViewModelTest {
 
     // Действие:
     onlineButtonViewModel.goOnline();
-    testScheduler.advanceTimeBy(30, TimeUnit.SECONDS);
+    testScheduler.advanceTimeBy(5, TimeUnit.SECONDS);
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(any(OnlineButtonViewStateReady.class));
     inOrder.verify(viewStateObserver).onChanged(any(OnlineButtonViewStateHold.class));
-    inOrder.verify(viewStateObserver).onChanged(any(OnlineButtonViewStateProceed.class));
+    inOrder.verify(viewStateObserver).onChanged(any(OnlineButtonViewStateReady.class));
     verifyNoMoreInteractions(viewStateObserver);
   }
 }

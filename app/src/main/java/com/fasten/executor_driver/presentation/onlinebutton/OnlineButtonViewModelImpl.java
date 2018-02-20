@@ -4,6 +4,12 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import com.fasten.executor_driver.entity.DriverBlockedException;
+import com.fasten.executor_driver.entity.InsufficientCreditsException;
+import com.fasten.executor_driver.entity.NoFreeVehiclesException;
+import com.fasten.executor_driver.entity.NoVehiclesAvailableException;
+import com.fasten.executor_driver.entity.OnlyOneVehicleAvailableException;
 import com.fasten.executor_driver.interactor.vehicle.VehiclesUseCase;
 import com.fasten.executor_driver.presentation.SingleLiveEvent;
 import com.fasten.executor_driver.presentation.ViewState;
@@ -18,18 +24,24 @@ public class OnlineButtonViewModelImpl extends ViewModel implements OnlineButton
 
   private static final int DURATION_AFTER_SUCCESS = 5;
   private static final int DURATION_AFTER_FAIL = 5;
-  private Disposable disposable;
+  @Nullable
+  private Disposable loadDisposable;
+  @Nullable
+  private Disposable timerDisposable;
 
   @NonNull
   private final VehiclesUseCase vehiclesUseCase;
   @NonNull
   private final MutableLiveData<ViewState<OnlineButtonViewActions>> viewStateLiveData;
+  @NonNull
+  private final SingleLiveEvent<String> navigateLiveData;
 
   @Inject
   public OnlineButtonViewModelImpl(@NonNull VehiclesUseCase vehiclesUseCase) {
     this.vehiclesUseCase = vehiclesUseCase;
     viewStateLiveData = new MutableLiveData<>();
     viewStateLiveData.postValue(new OnlineButtonViewStateReady());
+    navigateLiveData = new SingleLiveEvent<>();
   }
 
   @NonNull
@@ -41,12 +53,13 @@ public class OnlineButtonViewModelImpl extends ViewModel implements OnlineButton
   @NonNull
   @Override
   public LiveData<String> getNavigationLiveData() {
-    return new SingleLiveEvent<>();
+    return navigateLiveData;
   }
 
   @Override
   public void goOnline() {
-    if (disposable != null && !disposable.isDisposed()) {
+    if ((loadDisposable != null && !loadDisposable.isDisposed())
+        || timerDisposable != null && !timerDisposable.isDisposed()) {
       return;
     }
     viewStateLiveData.postValue(new OnlineButtonViewStateHold());
@@ -54,30 +67,57 @@ public class OnlineButtonViewModelImpl extends ViewModel implements OnlineButton
         .subscribeOn(Schedulers.single())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(
-            () -> holdButton(DURATION_AFTER_SUCCESS, true),
+            () -> holdButton(DURATION_AFTER_SUCCESS),
             throwable -> {
-              viewStateLiveData.postValue(new OnlineButtonViewStateError(throwable));
-              holdButton(DURATION_AFTER_FAIL, false);
+              if (throwable instanceof DriverBlockedException) {
+                throwable.printStackTrace();
+              } else if (throwable instanceof InsufficientCreditsException) {
+                throwable.printStackTrace();
+              } else if (throwable instanceof NoFreeVehiclesException) {
+                throwable.printStackTrace();
+              } else if (throwable instanceof NoVehiclesAvailableException) {
+                throwable.printStackTrace();
+              } else if (throwable instanceof OnlyOneVehicleAvailableException) {
+                throwable.printStackTrace();
+              } else {
+                viewStateLiveData.postValue(new OnlineButtonViewStateError(throwable));
+              }
+              holdButton(DURATION_AFTER_FAIL);
             }
         );
-    if (this.disposable == null || this.disposable.isDisposed()) {
-      this.disposable = disposable;
+    if (this.loadDisposable == null || this.loadDisposable.isDisposed()) {
+      this.loadDisposable = disposable;
     }
   }
 
-  private void holdButton(int duration, boolean succeed) {
-    disposable = Completable.complete()
+  @Override
+  public void consumeError() {
+    if ((loadDisposable != null && !loadDisposable.isDisposed())
+        || timerDisposable != null && !timerDisposable.isDisposed()) {
+      viewStateLiveData.postValue(new OnlineButtonViewStateHold());
+    } else {
+      viewStateLiveData.postValue(new OnlineButtonViewStateReady());
+    }
+  }
+
+  private void holdButton(int duration) {
+    timerDisposable = Completable.complete()
         .delay(duration, TimeUnit.SECONDS, Schedulers.io())
-        .subscribe(() -> viewStateLiveData.postValue(
-            succeed ? new OnlineButtonViewStateProceed() : new OnlineButtonViewStateReady()
-        ));
+        .subscribe(() -> {
+          if (viewStateLiveData.getValue() instanceof OnlineButtonViewStateHold) {
+            viewStateLiveData.postValue(new OnlineButtonViewStateReady());
+          }
+        });
   }
 
   @Override
   protected void onCleared() {
     super.onCleared();
-    if (disposable != null) {
-      disposable.dispose();
+    if (timerDisposable != null) {
+      timerDisposable.dispose();
+    }
+    if (loadDisposable != null) {
+      loadDisposable.dispose();
     }
   }
 }
