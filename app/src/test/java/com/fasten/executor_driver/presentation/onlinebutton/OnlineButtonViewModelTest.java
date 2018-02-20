@@ -10,7 +10,7 @@ import static org.mockito.Mockito.when;
 import android.arch.core.executor.testing.InstantTaskExecutorRule;
 import android.arch.lifecycle.Observer;
 import com.fasten.executor_driver.backend.web.NoNetworkException;
-import com.fasten.executor_driver.interactor.online.OnlineUseCase;
+import com.fasten.executor_driver.interactor.vehicle.VehiclesUseCase;
 import com.fasten.executor_driver.presentation.ViewState;
 import io.reactivex.Completable;
 import io.reactivex.android.plugins.RxAndroidPlugins;
@@ -42,7 +42,7 @@ public class OnlineButtonViewModelTest {
   private Observer<ViewState<OnlineButtonViewActions>> viewStateObserver;
 
   @Mock
-  private OnlineUseCase onlineUseCase;
+  private VehiclesUseCase vehiclesUseCase;
 
   @Before
   public void setUp() throws Exception {
@@ -50,8 +50,8 @@ public class OnlineButtonViewModelTest {
     RxJavaPlugins.setIoSchedulerHandler(scheduler -> testScheduler);
     RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
     RxAndroidPlugins.setInitMainThreadSchedulerHandler(scheduler -> Schedulers.trampoline());
-    when(onlineUseCase.goOnline()).thenReturn(Completable.never());
-    onlineButtonViewModel = new OnlineButtonViewModelImpl(onlineUseCase);
+    when(vehiclesUseCase.loadVehicles()).thenReturn(Completable.never());
+    onlineButtonViewModel = new OnlineButtonViewModelImpl(vehiclesUseCase);
   }
 
   /* Тетсируем работу с юзкейсом выхода на линию. */
@@ -69,7 +69,7 @@ public class OnlineButtonViewModelTest {
     onlineButtonViewModel.goOnline();
 
     // Результат:
-    verify(onlineUseCase, only()).goOnline();
+    verify(vehiclesUseCase, only()).loadVehicles();
   }
 
   /**
@@ -80,8 +80,8 @@ public class OnlineButtonViewModelTest {
   @Test
   public void DoNotTouchOnlineUseCaseToGoOnlineUntilTimeout() throws Exception {
     // Дано:
-    when(onlineUseCase.goOnline()).thenReturn(Completable.complete());
-    InOrder inOrder = Mockito.inOrder(onlineUseCase);
+    when(vehiclesUseCase.loadVehicles()).thenReturn(Completable.complete());
+    InOrder inOrder = Mockito.inOrder(vehiclesUseCase);
 
     // Действие:
     onlineButtonViewModel.goOnline();
@@ -91,12 +91,12 @@ public class OnlineButtonViewModelTest {
     onlineButtonViewModel.goOnline();
 
     // Результат:
-    inOrder.verify(onlineUseCase).goOnline();
+    inOrder.verify(vehiclesUseCase).loadVehicles();
     inOrder.verifyNoMoreInteractions();
     testScheduler.advanceTimeBy(3, TimeUnit.SECONDS);
     onlineButtonViewModel.goOnline();
-    inOrder.verify(onlineUseCase).goOnline();
-    verifyNoMoreInteractions(onlineUseCase);
+    inOrder.verify(vehiclesUseCase).loadVehicles();
+    verifyNoMoreInteractions(vehiclesUseCase);
 
   }
 
@@ -108,7 +108,7 @@ public class OnlineButtonViewModelTest {
   @Test
   public void askOnlineUseCaseToGoOnline() throws Exception {
     // Дано:
-    when(onlineUseCase.goOnline()).thenReturn(Completable.error(new NoNetworkException()));
+    when(vehiclesUseCase.loadVehicles()).thenReturn(Completable.error(new NoNetworkException()));
 
     // Действие:
     onlineButtonViewModel.goOnline();
@@ -119,8 +119,8 @@ public class OnlineButtonViewModelTest {
     testScheduler.advanceTimeBy(5, TimeUnit.SECONDS);
 
     // Результат:
-    verify(onlineUseCase, times(3)).goOnline();
-    verifyNoMoreInteractions(onlineUseCase);
+    verify(vehiclesUseCase, times(3)).loadVehicles();
+    verifyNoMoreInteractions(vehiclesUseCase);
   }
 
   /* Тетсируем переключение состояний */
@@ -168,7 +168,7 @@ public class OnlineButtonViewModelTest {
   @Test
   public void setHoldViewStateToLiveDataAfterFail() throws Exception {
     // Дано:
-    when(onlineUseCase.goOnline()).thenReturn(Completable.error(new NoNetworkException()));
+    when(vehiclesUseCase.loadVehicles()).thenReturn(Completable.error(new NoNetworkException()));
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     onlineButtonViewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
@@ -194,7 +194,7 @@ public class OnlineButtonViewModelTest {
   @Test
   public void setHoldViewStateToLiveData() throws Exception {
     // Дано:
-    when(onlineUseCase.goOnline()).thenReturn(Completable.complete());
+    when(vehiclesUseCase.loadVehicles()).thenReturn(Completable.complete());
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     onlineButtonViewModel.getViewStateLiveData().observeForever(viewStateObserver);
 

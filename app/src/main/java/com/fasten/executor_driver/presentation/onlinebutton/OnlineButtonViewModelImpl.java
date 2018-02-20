@@ -4,7 +4,7 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
-import com.fasten.executor_driver.interactor.online.OnlineUseCase;
+import com.fasten.executor_driver.interactor.vehicle.VehiclesUseCase;
 import com.fasten.executor_driver.presentation.SingleLiveEvent;
 import com.fasten.executor_driver.presentation.ViewState;
 import io.reactivex.Completable;
@@ -21,13 +21,13 @@ public class OnlineButtonViewModelImpl extends ViewModel implements OnlineButton
   private Disposable disposable;
 
   @NonNull
-  private final OnlineUseCase onlineUseCase;
+  private final VehiclesUseCase vehiclesUseCase;
   @NonNull
   private final MutableLiveData<ViewState<OnlineButtonViewActions>> viewStateLiveData;
 
   @Inject
-  public OnlineButtonViewModelImpl(@NonNull OnlineUseCase onlineUseCase) {
-    this.onlineUseCase = onlineUseCase;
+  public OnlineButtonViewModelImpl(@NonNull VehiclesUseCase vehiclesUseCase) {
+    this.vehiclesUseCase = vehiclesUseCase;
     viewStateLiveData = new MutableLiveData<>();
     viewStateLiveData.postValue(new OnlineButtonViewStateReady());
   }
@@ -50,7 +50,7 @@ public class OnlineButtonViewModelImpl extends ViewModel implements OnlineButton
       return;
     }
     viewStateLiveData.postValue(new OnlineButtonViewStateHold());
-    Disposable disposable = onlineUseCase.goOnline()
+    Disposable disposable = vehiclesUseCase.loadVehicles()
         .subscribeOn(Schedulers.single())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(

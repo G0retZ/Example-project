@@ -7,6 +7,10 @@ import java.io.IOException;
  */
 public class DriverBlockedException extends IOException {
 
+  public DriverBlockedException() {
+    super();
+  }
+
   @SuppressWarnings("SameParameterValue")
   public DriverBlockedException(String message) {
     super(message);
