@@ -6,6 +6,7 @@ import com.fasten.executor_driver.backend.web.incoming.ApiVehicle;
 import com.fasten.executor_driver.backend.web.incoming.ApiVehicleOptionItem;
 import com.fasten.executor_driver.entity.Vehicle;
 import com.fasten.executor_driver.entity.VehicleOption;
+import com.fasten.executor_driver.gateway.ErrorMapper;
 import com.fasten.executor_driver.gateway.HeatMapGatewayImpl;
 import com.fasten.executor_driver.gateway.Mapper;
 import com.fasten.executor_driver.gateway.PasswordGatewayImpl;
@@ -72,5 +73,11 @@ class GatewayModule {
   @Named("vehicleMapper")
   Mapper<ApiVehicle, Vehicle> provideVehicleApiMapper(VehicleApiMapper vehicleApiMapper) {
     return vehicleApiMapper;
+  }
+
+  @Provides
+  @Named("errorMapper")
+  Mapper<Throwable, Throwable> provideErrorMapper(ErrorMapper errorMapper) {
+    return errorMapper;
   }
 }
