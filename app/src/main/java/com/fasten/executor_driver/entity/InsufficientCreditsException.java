@@ -10,9 +10,4 @@ public class InsufficientCreditsException extends IOException {
   public InsufficientCreditsException() {
     super();
   }
-
-  @SuppressWarnings("SameParameterValue")
-  public InsufficientCreditsException(String message) {
-    super(message);
-  }
 }

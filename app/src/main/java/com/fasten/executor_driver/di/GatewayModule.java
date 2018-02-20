@@ -8,20 +8,18 @@ import com.fasten.executor_driver.entity.Vehicle;
 import com.fasten.executor_driver.entity.VehicleOption;
 import com.fasten.executor_driver.gateway.HeatMapGatewayImpl;
 import com.fasten.executor_driver.gateway.Mapper;
-import com.fasten.executor_driver.gateway.OnlineGatewayImpl;
 import com.fasten.executor_driver.gateway.PasswordGatewayImpl;
 import com.fasten.executor_driver.gateway.SmsGatewayImpl;
 import com.fasten.executor_driver.gateway.TokenKeeperImpl;
 import com.fasten.executor_driver.gateway.VehicleApiMapper;
-import com.fasten.executor_driver.gateway.VehiclesGatewayImpl;
 import com.fasten.executor_driver.gateway.VehicleOptionApiMapper;
 import com.fasten.executor_driver.gateway.VehicleOptionsGatewayImpl;
+import com.fasten.executor_driver.gateway.VehiclesGatewayImpl;
 import com.fasten.executor_driver.interactor.auth.PasswordGateway;
 import com.fasten.executor_driver.interactor.auth.SmsGateway;
 import com.fasten.executor_driver.interactor.map.HeatMapGateway;
-import com.fasten.executor_driver.interactor.online.OnlineGateway;
-import com.fasten.executor_driver.interactor.vehicle.VehiclesGateway;
 import com.fasten.executor_driver.interactor.vehicle.VehicleOptionsGateway;
+import com.fasten.executor_driver.interactor.vehicle.VehiclesGateway;
 import dagger.Module;
 import dagger.Provides;
 import javax.inject.Named;
@@ -48,11 +46,6 @@ class GatewayModule {
   @Provides
   HeatMapGateway provideHeatMapGateway(HeatMapGatewayImpl heatMapGateway) {
     return heatMapGateway;
-  }
-
-  @Provides
-  OnlineGateway provideOnlineGateway(OnlineGatewayImpl onlineGateway) {
-    return onlineGateway;
   }
 
   @Provides
