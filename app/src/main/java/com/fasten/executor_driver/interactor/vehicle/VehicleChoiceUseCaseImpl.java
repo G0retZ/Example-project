@@ -3,11 +3,10 @@ package com.fasten.executor_driver.interactor.vehicle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.fasten.executor_driver.entity.NoVehiclesAvailableException;
-import com.fasten.executor_driver.entity.OnlyOneVehicleAvailableException;
 import com.fasten.executor_driver.entity.Vehicle;
 import com.fasten.executor_driver.interactor.DataSharer;
 import io.reactivex.Completable;
-import io.reactivex.Single;
+import io.reactivex.Observable;
 import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -15,7 +14,7 @@ import javax.inject.Named;
 public class VehicleChoiceUseCaseImpl implements VehicleChoiceUseCase {
 
   @NonNull
-  private final VehiclesGateway vehiclesGateway;
+  private final DataSharer<List<Vehicle>> vehiclesSharer;
   @NonNull
   private final DataSharer<Vehicle> vehicleChoiceSharer;
   @Nullable
@@ -23,23 +22,19 @@ public class VehicleChoiceUseCaseImpl implements VehicleChoiceUseCase {
 
   @Inject
   VehicleChoiceUseCaseImpl(
-      @NonNull VehiclesGateway vehiclesGateway,
+      @Named("vehiclesSharer") @NonNull DataSharer<List<Vehicle>> vehiclesSharer,
       @Named("vehicleChoiceSharer") @NonNull DataSharer<Vehicle> vehicleChoiceSharer) {
-    this.vehiclesGateway = vehiclesGateway;
+    this.vehiclesSharer = vehiclesSharer;
     this.vehicleChoiceSharer = vehicleChoiceSharer;
   }
 
   @NonNull
   @Override
-  public Single<List<Vehicle>> getVehicles() {
-    return vehiclesGateway.getExecutorVehicles()
+  public Observable<List<Vehicle>> getVehicles() {
+    return vehiclesSharer.get()
         .map(list -> {
           if (list.isEmpty()) {
             throw new NoVehiclesAvailableException();
-          }
-          if (list.size() == 1 && !list.get(0).isBusy()) {
-            vehicleChoiceSharer.share(list.get(0));
-            throw new OnlyOneVehicleAvailableException();
           }
           vehicles = list;
           return list;

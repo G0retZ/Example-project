@@ -6,14 +6,15 @@ import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 import com.fasten.executor_driver.backend.web.NoNetworkException;
+import com.fasten.executor_driver.entity.InsufficientCreditsException;
 import com.fasten.executor_driver.entity.NoVehiclesAvailableException;
-import com.fasten.executor_driver.entity.OnlyOneVehicleAvailableException;
 import com.fasten.executor_driver.entity.Vehicle;
 import com.fasten.executor_driver.interactor.DataSharer;
-import io.reactivex.Single;
+import io.reactivex.Observable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,21 +27,21 @@ public class VehicleChoiceUseCaseTest {
   private VehicleChoiceUseCase vehicleChoiceUseCase;
 
   @Mock
-  private VehiclesGateway gateway;
+  private DataSharer<List<Vehicle>> vehiclesSharer;
 
   @Mock
   private DataSharer<Vehicle> vehicleChoiceSharer;
 
   @Before
   public void setUp() throws Exception {
-    vehicleChoiceUseCase = new VehicleChoiceUseCaseImpl(gateway, vehicleChoiceSharer);
-    when(gateway.getExecutorVehicles()).thenReturn(Single.never());
+    vehicleChoiceUseCase = new VehicleChoiceUseCaseImpl(vehiclesSharer, vehicleChoiceSharer);
+    when(vehiclesSharer.get()).thenReturn(Observable.never());
   }
 
-  /* Проверяем работу с гейтвеем */
+  /* Проверяем работу с публикатором списка ТС */
 
   /**
-   * Должен запросить у гейтвея список ТС.
+   * Должен запросить у публикатора список ТС.
    *
    * @throws Exception error.
    */
@@ -50,23 +51,23 @@ public class VehicleChoiceUseCaseTest {
     vehicleChoiceUseCase.getVehicles().test();
 
     // Результат:
-    verify(gateway, only()).getExecutorVehicles();
+    verify(vehiclesSharer, only()).get();
   }
 
   /* Проверяем ответы на запрос списка ТС */
 
   /**
-   * Должен ответить ошибкой сети.
+   * Должен ответить ошибкой недостаточности средств.
    *
    * @throws Exception error.
    */
   @Test
   public void answerNoNetworkError() throws Exception {
     // Дано:
-    when(gateway.getExecutorVehicles()).thenReturn(Single.error(new NoNetworkException()));
+    when(vehiclesSharer.get()).thenReturn(Observable.error(new InsufficientCreditsException()));
 
     // Действие и Результат:
-    vehicleChoiceUseCase.getVehicles().test().assertError(NoNetworkException.class);
+    vehicleChoiceUseCase.getVehicles().test().assertError(InsufficientCreditsException.class);
   }
 
   /**
@@ -78,7 +79,7 @@ public class VehicleChoiceUseCaseTest {
   @Test
   public void answerWithVehiclesList() throws Exception {
     // Дано:
-    when(gateway.getExecutorVehicles()).thenReturn(Single.just(
+    when(vehiclesSharer.get()).thenReturn(Observable.just(
         new ArrayList<>(Arrays.asList(
             new Vehicle(12, "manufacturer", "model", "color", "license", false),
             new Vehicle(13, "manufacture", "models", "colo", "licenses", true),
@@ -106,50 +107,10 @@ public class VehicleChoiceUseCaseTest {
   @Test
   public void answerNoVehiclesAvailableError() throws Exception {
     // Дано:
-    when(gateway.getExecutorVehicles()).thenReturn(Single.just(new ArrayList<>()));
+    when(vehiclesSharer.get()).thenReturn(Observable.just(new ArrayList<>()));
 
     // Действие и Результат:
     vehicleChoiceUseCase.getVehicles().test().assertError(NoVehiclesAvailableException.class);
-  }
-
-  /**
-   * Должен ответить успехом и без искажений.
-   *
-   * @throws Exception error.
-   */
-  @Test
-  public void answerOnlyOneBusyVehicleAvailableError() throws Exception {
-    // Дано:
-    when(gateway.getExecutorVehicles()).thenReturn(Single.just(
-        new ArrayList<>(Collections.singletonList(
-            new Vehicle(12, "manufacturer", "model", "color", "license", true)
-        ))
-    ));
-
-    // Действие и Результат:
-    vehicleChoiceUseCase.getVehicles().test().assertValue(
-        new ArrayList<>(Collections.singletonList(
-            new Vehicle(12, "manufacturer", "model", "color", "license", true)
-        ))
-    );
-  }
-
-  /**
-   * Должен ответить ошибкой о доступности только одного свободного ТС.
-   *
-   * @throws Exception error.
-   */
-  @Test
-  public void answerOnlyOneFreeVehicleAvailableError() throws Exception {
-    // Дано:
-    when(gateway.getExecutorVehicles()).thenReturn(Single.just(
-        new ArrayList<>(Collections.singletonList(
-            new Vehicle(12, "manufacturer", "model", "color", "license", false)
-        ))
-    ));
-
-    // Действие и Результат:
-    vehicleChoiceUseCase.getVehicles().test().assertError(OnlyOneVehicleAvailableException.class);
   }
 
   /* Проверяем работу с публикатором ТС */
@@ -164,9 +125,9 @@ public class VehicleChoiceUseCaseTest {
   public void doNotTouchDataSharer() throws Exception {
     // Действие:
     vehicleChoiceUseCase.getVehicles().test();
-    when(gateway.getExecutorVehicles()).thenReturn(Single.error(new NoNetworkException()));
+    when(vehiclesSharer.get()).thenReturn(Observable.error(new NoNetworkException()));
     vehicleChoiceUseCase.getVehicles().test();
-    when(gateway.getExecutorVehicles()).thenReturn(Single.just(
+    when(vehiclesSharer.get()).thenReturn(Observable.just(
         new ArrayList<>(Arrays.asList(
             new Vehicle(12, "manufacturer", "model", "color", "license", false),
             new Vehicle(13, "manufacture", "models", "colo", "licenses", true),
@@ -175,7 +136,7 @@ public class VehicleChoiceUseCaseTest {
         ))
     ));
     vehicleChoiceUseCase.getVehicles().test();
-    when(gateway.getExecutorVehicles()).thenReturn(Single.just(
+    when(vehiclesSharer.get()).thenReturn(Observable.just(
         new ArrayList<>(Collections.singletonList(
             new Vehicle(12, "manufacturer", "model", "color", "license", true)
         ))
@@ -187,28 +148,6 @@ public class VehicleChoiceUseCaseTest {
   }
 
   /**
-   * Должен опубликовать единственную ТС автоматом.
-   *
-   * @throws Exception error
-   */
-  @Test
-  public void askDataSharerToShareTheOnlyVehicle() throws Exception {
-    // Дано:
-    when(gateway.getExecutorVehicles()).thenReturn(Single.just(
-        new ArrayList<>(Collections.singletonList(
-            new Vehicle(12, "manufacturer", "model", "color", "license", false)
-        ))
-    ));
-
-    // Действие:
-    vehicleChoiceUseCase.getVehicles().test();
-
-    // Результат:
-    verify(vehicleChoiceSharer, only())
-        .share(new Vehicle(12, "manufacturer", "model", "color", "license", false));
-  }
-
-  /**
    * Должен опубликовать выбранную ТС.
    *
    * @throws Exception error
@@ -217,7 +156,7 @@ public class VehicleChoiceUseCaseTest {
   @Test
   public void askDataSharerToShareTheSelectedVehicle() throws Exception {
     // Дано:
-    when(gateway.getExecutorVehicles()).thenReturn(Single.just(
+    when(vehiclesSharer.get()).thenReturn(Observable.just(
         new ArrayList<>(Arrays.asList(
             new Vehicle(12, "manufacturer", "model", "color", "license", false),
             new Vehicle(13, "manufacture", "models", "colo", "licenses", true),
@@ -244,7 +183,7 @@ public class VehicleChoiceUseCaseTest {
   @Test
   public void doNotTouchDataSharerIfSelectionInvalid() throws Exception {
     // Дано:
-    when(gateway.getExecutorVehicles()).thenReturn(Single.just(
+    when(vehiclesSharer.get()).thenReturn(Observable.just(
         new ArrayList<>(Arrays.asList(
             new Vehicle(12, "manufacturer", "model", "color", "license", false),
             new Vehicle(13, "manufacture", "models", "colo", "licenses", true),
@@ -273,7 +212,7 @@ public class VehicleChoiceUseCaseTest {
   @Test
   public void answerArgumentError() throws Exception {
     // Дано:
-    when(gateway.getExecutorVehicles()).thenReturn(Single.just(
+    when(vehiclesSharer.get()).thenReturn(Observable.just(
         new ArrayList<>(Arrays.asList(
             new Vehicle(12, "manufacturer", "model", "color", "license", false),
             new Vehicle(13, "manufacture", "models", "colo", "licenses", true),
@@ -299,7 +238,7 @@ public class VehicleChoiceUseCaseTest {
   @Test
   public void answerSuccess() throws Exception {
     // Дано:
-    when(gateway.getExecutorVehicles()).thenReturn(Single.just(
+    when(vehiclesSharer.get()).thenReturn(Observable.just(
         new ArrayList<>(Arrays.asList(
             new Vehicle(12, "manufacturer", "model", "color", "license", false),
             new Vehicle(13, "manufacture", "models", "colo", "licenses", true),

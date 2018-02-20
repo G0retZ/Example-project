@@ -84,7 +84,7 @@ class UseCaseModule {
   @Provides
   @Singleton
   @Named("vehicleChoiceSharer")
-  DataSharer<Vehicle> provideVehicleSharer(@NonNull VehicleChoiceSharer vehicleChoiceSharer) {
+  DataSharer<Vehicle> provideVehicleChoiceSharer(@NonNull VehicleChoiceSharer vehicleChoiceSharer) {
     return vehicleChoiceSharer;
   }
 }

@@ -18,11 +18,11 @@ import com.fasten.executor_driver.entity.Vehicle;
 import com.fasten.executor_driver.interactor.vehicle.VehicleChoiceUseCase;
 import com.fasten.executor_driver.presentation.ViewState;
 import io.reactivex.Completable;
-import io.reactivex.Single;
+import io.reactivex.Observable;
 import io.reactivex.android.plugins.RxAndroidPlugins;
 import io.reactivex.plugins.RxJavaPlugins;
 import io.reactivex.schedulers.Schedulers;
-import io.reactivex.subjects.SingleSubject;
+import io.reactivex.subjects.PublishSubject;
 import java.util.Arrays;
 import java.util.List;
 import org.junit.Before;
@@ -56,7 +56,7 @@ public class ChooseVehicleViewModelTest {
   public void setUp() throws Exception {
     RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
     RxAndroidPlugins.setInitMainThreadSchedulerHandler(scheduler -> Schedulers.trampoline());
-    when(vehicleChoiceUseCase.getVehicles()).thenReturn(Single.never());
+    when(vehicleChoiceUseCase.getVehicles()).thenReturn(Observable.never());
     when(vehicleChoiceUseCase.setSelectedVehicle(anyInt())).thenReturn(Completable.never());
     chooseVehicleViewModel = new ChooseVehicleViewModelImpl(vehicleChoiceUseCase);
   }
@@ -167,13 +167,13 @@ public class ChooseVehicleViewModelTest {
   @Test
   public void setNetworkErrorViewStateToLiveData() throws Exception {
     // Дано:
-    SingleSubject<List<Vehicle>> singleSubject = SingleSubject.create();
+    PublishSubject<List<Vehicle>> publishSubject = PublishSubject.create();
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    when(vehicleChoiceUseCase.getVehicles()).thenReturn(singleSubject);
+    when(vehicleChoiceUseCase.getVehicles()).thenReturn(publishSubject);
     chooseVehicleViewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    singleSubject.onError(new NoNetworkException());
+    publishSubject.onError(new NoNetworkException());
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(any(ChooseVehicleViewStatePending.class));
@@ -190,13 +190,13 @@ public class ChooseVehicleViewModelTest {
   @Test
   public void setEmptyErrorViewStateToLiveData() throws Exception {
     // Дано:
-    SingleSubject<List<Vehicle>> singleSubject = SingleSubject.create();
+    PublishSubject<List<Vehicle>> publishSubject = PublishSubject.create();
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    when(vehicleChoiceUseCase.getVehicles()).thenReturn(singleSubject);
+    when(vehicleChoiceUseCase.getVehicles()).thenReturn(publishSubject);
     chooseVehicleViewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    singleSubject.onError(new NoVehiclesAvailableException());
+    publishSubject.onError(new NoVehiclesAvailableException());
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(any(ChooseVehicleViewStatePending.class));
@@ -213,13 +213,13 @@ public class ChooseVehicleViewModelTest {
   @Test
   public void setSuccessViewStateToLiveDataPending() throws Exception {
     // Дано:
-    SingleSubject<List<Vehicle>> singleSubject = SingleSubject.create();
+    PublishSubject<List<Vehicle>> publishSubject = PublishSubject.create();
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    when(vehicleChoiceUseCase.getVehicles()).thenReturn(singleSubject);
+    when(vehicleChoiceUseCase.getVehicles()).thenReturn(publishSubject);
     chooseVehicleViewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    singleSubject.onSuccess(Arrays.asList(
+    publishSubject.onNext(Arrays.asList(
         new Vehicle(1, "m", "m", "c", "l", false),
         new Vehicle(2, "ma", "m", "co", "l", true),
         new Vehicle(3, "m", "m", "co", "l", false),
@@ -255,13 +255,13 @@ public class ChooseVehicleViewModelTest {
   @Test
   public void setNavigateAutoSetVehicleOptionsToLiveData() throws Exception {
     // Дано:
-    SingleSubject<List<Vehicle>> singleSubject = SingleSubject.create();
-    when(vehicleChoiceUseCase.getVehicles()).thenReturn(singleSubject);
+    PublishSubject<List<Vehicle>> publishSubject = PublishSubject.create();
+    when(vehicleChoiceUseCase.getVehicles()).thenReturn(publishSubject);
     chooseVehicleViewModel.getViewStateLiveData();
     chooseVehicleViewModel.getNavigationLiveData().observeForever(navigateObserver);
 
     // Действие:
-    singleSubject.onError(new OnlyOneVehicleAvailableException());
+    publishSubject.onError(new OnlyOneVehicleAvailableException());
 
     // Результат:
     verify(navigateObserver, only()).onChanged(ChooseVehicleNavigate.AUTO_VEHICLE_OPTIONS);
