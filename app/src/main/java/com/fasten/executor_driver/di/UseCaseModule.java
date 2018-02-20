@@ -19,8 +19,10 @@ import com.fasten.executor_driver.interactor.vehicle.VehicleChoiceUseCase;
 import com.fasten.executor_driver.interactor.vehicle.VehicleChoiceUseCaseImpl;
 import com.fasten.executor_driver.interactor.vehicle.VehicleOptionsUseCase;
 import com.fasten.executor_driver.interactor.vehicle.VehicleOptionsUseCaseImpl;
+import com.fasten.executor_driver.interactor.vehicle.VehiclesSharer;
 import dagger.Module;
 import dagger.Provides;
+import java.util.List;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
@@ -70,6 +72,13 @@ class UseCaseModule {
   @Named("loginSharer")
   DataSharer<String> provideLoginSharer(@NonNull LoginSharer loginSharer) {
     return loginSharer;
+  }
+
+  @Provides
+  @Singleton
+  @Named("vehiclesSharer")
+  DataSharer<List<Vehicle>> provideVehiclesSharer(@NonNull VehiclesSharer vehiclesSharer) {
+    return vehiclesSharer;
   }
 
   @Provides

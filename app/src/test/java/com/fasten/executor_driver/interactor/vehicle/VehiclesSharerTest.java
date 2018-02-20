@@ -1,0 +1,47 @@
+package com.fasten.executor_driver.interactor.vehicle;
+
+import com.fasten.executor_driver.entity.Vehicle;
+import java.util.Arrays;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.junit.MockitoJUnitRunner;
+
+@RunWith(MockitoJUnitRunner.class)
+public class VehiclesSharerTest {
+
+  private VehiclesSharer vehiclesSharer;
+
+  @Before
+  public void setUp() throws Exception {
+    vehiclesSharer = new VehiclesSharer();
+  }
+
+  /**
+   * Должен получить значение без изменений
+   *
+   * @throws Exception error
+   */
+  @Test
+  public void valueUnchangedForRead() throws Exception {
+    // Дано:
+    vehiclesSharer.share(
+        Arrays.asList(
+            new Vehicle(12, "manufacturer", "model", "color", "license", false),
+            new Vehicle(13, "manufacture", "models", "colo", "licenses", true),
+            new Vehicle(14, "manufactur", "modelsa", "color", "licens", false),
+            new Vehicle(15, "manufactu", "modelsan", "colo", "licensee", true)
+        )
+    );
+
+    // Действие и Результат:
+    vehiclesSharer.get().test().assertValue(
+        Arrays.asList(
+            new Vehicle(12, "manufacturer", "model", "color", "license", false),
+            new Vehicle(13, "manufacture", "models", "colo", "licenses", true),
+            new Vehicle(14, "manufactur", "modelsa", "color", "licens", false),
+            new Vehicle(15, "manufactu", "modelsan", "colo", "licensee", true)
+        )
+    );
+  }
+}
