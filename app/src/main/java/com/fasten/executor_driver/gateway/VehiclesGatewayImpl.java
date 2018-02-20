@@ -14,14 +14,20 @@ import javax.inject.Named;
 
 public class VehiclesGatewayImpl implements VehiclesGateway {
 
+  @NonNull
   private final ApiService api;
-  private final Mapper<ApiVehicle, Vehicle> mapper;
+  @NonNull
+  private final Mapper<ApiVehicle, Vehicle> vehicleMapper;
+  @NonNull
+  private final Mapper<Throwable, Throwable> errorMapper;
 
   @Inject
-  public VehiclesGatewayImpl(ApiService api,
-      @Named("vehicleMapper") Mapper<ApiVehicle, Vehicle> mapper) {
+  public VehiclesGatewayImpl(@NonNull ApiService api,
+      @Named("vehicleMapper") @NonNull Mapper<ApiVehicle, Vehicle> vehicleMapper,
+      @Named("errorMapper") @NonNull Mapper<Throwable, Throwable> errorMapper) {
     this.api = api;
-    this.mapper = mapper;
+    this.vehicleMapper = vehicleMapper;
+    this.errorMapper = errorMapper;
   }
 
   @NonNull
@@ -30,13 +36,14 @@ public class VehiclesGatewayImpl implements VehiclesGateway {
     return api.getCars()
         .subscribeOn(Schedulers.io())
         .observeOn(Schedulers.single())
-        .map(this::map);
+        .map(this::map)
+        .onErrorResumeNext(e -> Single.error(errorMapper.map(e)));
   }
 
   private List<Vehicle> map(List<ApiVehicle> apiVehicles) throws Exception {
     ArrayList<Vehicle> vehicles = new ArrayList<>();
     for (ApiVehicle apiVehicle : apiVehicles) {
-      vehicles.add(mapper.map(apiVehicle));
+      vehicles.add(vehicleMapper.map(apiVehicle));
     }
     return vehicles;
   }
