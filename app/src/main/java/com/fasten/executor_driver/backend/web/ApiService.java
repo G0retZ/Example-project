@@ -40,7 +40,7 @@ public interface ApiService {
   /*
    *  Запрос ТС текущего исполнителя.
    */
-  @GET("api/public/v1/cars")
+  @GET("api/public/v1/car")
   Single<List<ApiVehicle>> getCars();
 
   /*
