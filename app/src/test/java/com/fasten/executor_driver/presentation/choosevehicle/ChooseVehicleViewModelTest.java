@@ -11,9 +11,7 @@ import static org.mockito.Mockito.when;
 import android.arch.core.executor.testing.InstantTaskExecutorRule;
 import android.arch.lifecycle.Observer;
 import com.fasten.executor_driver.R;
-import com.fasten.executor_driver.backend.web.NoNetworkException;
 import com.fasten.executor_driver.entity.NoVehiclesAvailableException;
-import com.fasten.executor_driver.entity.OnlyOneVehicleAvailableException;
 import com.fasten.executor_driver.entity.Vehicle;
 import com.fasten.executor_driver.interactor.vehicle.VehicleChoiceUseCase;
 import com.fasten.executor_driver.presentation.ViewState;
@@ -173,12 +171,12 @@ public class ChooseVehicleViewModelTest {
     chooseVehicleViewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    publishSubject.onError(new NoNetworkException());
+    publishSubject.onError(new Exception());
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(any(ChooseVehicleViewStatePending.class));
     inOrder.verify(viewStateObserver)
-        .onChanged(new ChooseVehicleViewStateError(R.string.no_network_connection));
+        .onChanged(new ChooseVehicleViewStateError(R.string.error));
     verifyNoMoreInteractions(viewStateObserver);
   }
 
@@ -246,26 +244,6 @@ public class ChooseVehicleViewModelTest {
   }
 
   /* Тетсируем навигацию. */
-
-  /**
-   * Должен вернуть "перейти к опциям автоматически" если была ошибка "только одно авто"
-   *
-   * @throws Exception error
-   */
-  @Test
-  public void setNavigateAutoSetVehicleOptionsToLiveData() throws Exception {
-    // Дано:
-    PublishSubject<List<Vehicle>> publishSubject = PublishSubject.create();
-    when(vehicleChoiceUseCase.getVehicles()).thenReturn(publishSubject);
-    chooseVehicleViewModel.getViewStateLiveData();
-    chooseVehicleViewModel.getNavigationLiveData().observeForever(navigateObserver);
-
-    // Действие:
-    publishSubject.onError(new OnlyOneVehicleAvailableException());
-
-    // Результат:
-    verify(navigateObserver, only()).onChanged(ChooseVehicleNavigate.AUTO_VEHICLE_OPTIONS);
-  }
 
   /**
    * Должен игнорировать неуспешниые выборы

@@ -6,11 +6,8 @@ import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.fasten.executor_driver.R;
-import com.fasten.executor_driver.backend.web.NoNetworkException;
 import com.fasten.executor_driver.entity.NoVehiclesAvailableException;
-import com.fasten.executor_driver.entity.OnlyOneVehicleAvailableException;
 import com.fasten.executor_driver.entity.Vehicle;
-import com.fasten.executor_driver.gateway.DataMappingException;
 import com.fasten.executor_driver.interactor.vehicle.VehicleChoiceUseCase;
 import com.fasten.executor_driver.presentation.SingleLiveEvent;
 import com.fasten.executor_driver.presentation.ViewState;
@@ -92,12 +89,6 @@ public class ChooseVehicleViewModelImpl extends ViewModel implements ChooseVehic
   private void consumeError(Throwable error) {
     if (error.getClass() == NoVehiclesAvailableException.class) {
       viewStateLiveData.postValue(new ChooseVehicleViewStateError(R.string.no_vehicles_available));
-    } else if (error.getClass() == OnlyOneVehicleAvailableException.class) {
-      navigateLiveData.postValue(ChooseVehicleNavigate.AUTO_VEHICLE_OPTIONS);
-    } else if (error.getClass() == NoNetworkException.class) {
-      viewStateLiveData.postValue(new ChooseVehicleViewStateError(R.string.no_network_connection));
-    } else if (error.getClass() == DataMappingException.class) {
-      viewStateLiveData.postValue(new ChooseVehicleViewStateError(R.string.error));
     } else {
       viewStateLiveData.postValue(new ChooseVehicleViewStateError(R.string.error));
     }
