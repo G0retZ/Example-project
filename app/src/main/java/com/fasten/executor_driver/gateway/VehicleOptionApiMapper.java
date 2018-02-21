@@ -23,7 +23,7 @@ public class VehicleOptionApiMapper implements Mapper<ApiVehicleOptionItem, Vehi
       throw new DataMappingException("Ошибка маппинга: значение опции не должно быть null!");
     }
     if (from.getName() == null) {
-      throw new DataMappingException("Ошибка маппинга: тип опции и его имя не должны быть null!");
+      throw new DataMappingException("Ошибка маппинга: имя опции не должно быть null!");
     }
     VehicleOption vehicleOption;
     if (from.isNumeric()) {
