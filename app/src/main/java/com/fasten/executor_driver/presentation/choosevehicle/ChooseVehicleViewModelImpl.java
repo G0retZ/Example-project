@@ -27,7 +27,9 @@ public class ChooseVehicleViewModelImpl extends ViewModel implements ChooseVehic
   @NonNull
   private final SingleLiveEvent<String> navigateLiveData;
   @Nullable
-  private Disposable disposable;
+  private Disposable vehiclesDisposable;
+  @Nullable
+  private Disposable choiceDisposable;
 
   @Inject
   ChooseVehicleViewModelImpl(@NonNull VehicleChoiceUseCase vehicleChoiceUseCase) {
@@ -41,9 +43,7 @@ public class ChooseVehicleViewModelImpl extends ViewModel implements ChooseVehic
   @NonNull
   @Override
   public LiveData<ViewState<ChooseVehicleViewActions>> getViewStateLiveData() {
-    if (disposable == null) {
-      loadVehicles();
-    }
+    loadVehicles();
     return viewStateLiveData;
   }
 
@@ -54,11 +54,11 @@ public class ChooseVehicleViewModelImpl extends ViewModel implements ChooseVehic
   }
 
   @Override
-  public void setSelection(int index) {
-    if (disposable != null && !disposable.isDisposed()) {
+  public void selectItem(ChooseVehicleListItem chooseVehicleListItem) {
+    if (choiceDisposable != null && !choiceDisposable.isDisposed()) {
       return;
     }
-    disposable = vehicleChoiceUseCase.setSelectedVehicle(index)
+    choiceDisposable = vehicleChoiceUseCase.selectVehicle(chooseVehicleListItem.getVehicle())
         .subscribeOn(Schedulers.single())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(
@@ -69,10 +69,10 @@ public class ChooseVehicleViewModelImpl extends ViewModel implements ChooseVehic
   }
 
   private void loadVehicles() {
-    if (disposable != null && !disposable.isDisposed()) {
+    if (vehiclesDisposable != null && !vehiclesDisposable.isDisposed()) {
       return;
     }
-    disposable = vehicleChoiceUseCase.getVehicles()
+    vehiclesDisposable = vehicleChoiceUseCase.getVehicles()
         .subscribeOn(Schedulers.single())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(this::consumeVehicles, this::consumeError);
@@ -97,8 +97,11 @@ public class ChooseVehicleViewModelImpl extends ViewModel implements ChooseVehic
   @Override
   protected void onCleared() {
     super.onCleared();
-    if (disposable != null) {
-      disposable.dispose();
+    if (vehiclesDisposable != null) {
+      vehiclesDisposable.dispose();
+    }
+    if (choiceDisposable != null) {
+      choiceDisposable.dispose();
     }
   }
 }

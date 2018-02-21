@@ -75,7 +75,6 @@ public class VehicleChoiceUseCaseTest {
    *
    * @throws Exception error
    */
-  @SuppressWarnings("SpellCheckingInspection")
   @Test
   public void answerWithVehiclesList() throws Exception {
     // Дано:
@@ -83,8 +82,8 @@ public class VehicleChoiceUseCaseTest {
         new ArrayList<>(Arrays.asList(
             new Vehicle(12, "manufacturer", "model", "color", "license", false),
             new Vehicle(13, "manufacture", "models", "colo", "licenses", true),
-            new Vehicle(14, "manufactur", "modelsa", "color", "licens", false),
-            new Vehicle(15, "manufactu", "modelsan", "colo", "licensee", true)
+            new Vehicle(14, "manufacturers", "modeler", "color", "licensees", false),
+            new Vehicle(15, "manufactures", "modelers", "colo", "licensee", true)
         ))
     ));
 
@@ -93,8 +92,8 @@ public class VehicleChoiceUseCaseTest {
         new ArrayList<>(Arrays.asList(
             new Vehicle(12, "manufacturer", "model", "color", "license", false),
             new Vehicle(13, "manufacture", "models", "colo", "licenses", true),
-            new Vehicle(14, "manufactur", "modelsa", "color", "licens", false),
-            new Vehicle(15, "manufactu", "modelsan", "colo", "licensee", true)
+            new Vehicle(14, "manufacturers", "modeler", "color", "licensees", false),
+            new Vehicle(15, "manufactures", "modelers", "colo", "licensee", true)
         ))
     );
   }
@@ -120,7 +119,6 @@ public class VehicleChoiceUseCaseTest {
    *
    * @throws Exception error
    */
-  @SuppressWarnings("SpellCheckingInspection")
   @Test
   public void doNotTouchDataSharer() throws Exception {
     // Действие:
@@ -131,8 +129,8 @@ public class VehicleChoiceUseCaseTest {
         new ArrayList<>(Arrays.asList(
             new Vehicle(12, "manufacturer", "model", "color", "license", false),
             new Vehicle(13, "manufacture", "models", "colo", "licenses", true),
-            new Vehicle(14, "manufactur", "modelsa", "color", "licens", false),
-            new Vehicle(15, "manufactu", "modelsan", "colo", "licensee", true)
+            new Vehicle(14, "manufacturers", "modeler", "color", "licensees", false),
+            new Vehicle(15, "manufactures", "modelers", "colo", "licensee", true)
         ))
     ));
     vehicleChoiceUseCase.getVehicles().test();
@@ -152,7 +150,6 @@ public class VehicleChoiceUseCaseTest {
    *
    * @throws Exception error
    */
-  @SuppressWarnings("SpellCheckingInspection")
   @Test
   public void askDataSharerToShareTheSelectedVehicle() throws Exception {
     // Дано:
@@ -160,18 +157,20 @@ public class VehicleChoiceUseCaseTest {
         new ArrayList<>(Arrays.asList(
             new Vehicle(12, "manufacturer", "model", "color", "license", false),
             new Vehicle(13, "manufacture", "models", "colo", "licenses", true),
-            new Vehicle(14, "manufactur", "modelsa", "color", "licens", false),
-            new Vehicle(15, "manufactu", "modelsan", "colo", "licensee", true)
+            new Vehicle(14, "manufacturers", "modeler", "color", "licensees", false),
+            new Vehicle(15, "manufactures", "modelers", "colo", "licensee", true)
         ))
     ));
 
     // Действие:
     vehicleChoiceUseCase.getVehicles().test();
-    vehicleChoiceUseCase.setSelectedVehicle(2).test();
+    vehicleChoiceUseCase.selectVehicle(
+        new Vehicle(14, "manufacturers", "modeler", "color", "licensees", false)
+    ).test();
 
     // Результат:
     verify(vehicleChoiceSharer, only())
-        .share(new Vehicle(14, "manufactur", "modelsa", "color", "licens", false));
+        .share(new Vehicle(14, "manufacturers", "modeler", "color", "licensees", false));
   }
 
   /**
@@ -179,7 +178,6 @@ public class VehicleChoiceUseCaseTest {
    *
    * @throws Exception error
    */
-  @SuppressWarnings("SpellCheckingInspection")
   @Test
   public void doNotTouchDataSharerIfSelectionInvalid() throws Exception {
     // Дано:
@@ -187,15 +185,22 @@ public class VehicleChoiceUseCaseTest {
         new ArrayList<>(Arrays.asList(
             new Vehicle(12, "manufacturer", "model", "color", "license", false),
             new Vehicle(13, "manufacture", "models", "colo", "licenses", true),
-            new Vehicle(14, "manufactur", "modelsa", "color", "licens", false),
-            new Vehicle(15, "manufactu", "modelsan", "colo", "licensee", true)
+            new Vehicle(14, "manufacturers", "modeler", "color", "licensees", false),
+            new Vehicle(15, "manufactures", "modelers", "colo", "licensee", true)
         ))
     ));
 
     // Действие:
     vehicleChoiceUseCase.getVehicles().test();
-    vehicleChoiceUseCase.setSelectedVehicle(-1).test();
-    vehicleChoiceUseCase.setSelectedVehicle(5).test();
+    vehicleChoiceUseCase.selectVehicle(
+        new Vehicle(11, "manufacturer", "model", "color", "license", false)
+    ).test();
+    vehicleChoiceUseCase.selectVehicle(
+        new Vehicle(13, "manufacture", "models", "colo", "licenses", true)
+    ).test();
+    vehicleChoiceUseCase.selectVehicle(
+        new Vehicle(15, "manufactures", "modelers", "colo", "licensee", true)
+    ).test();
 
     // Результат:
     verifyZeroInteractions(vehicleChoiceSharer);
@@ -204,11 +209,34 @@ public class VehicleChoiceUseCaseTest {
   /* Проверяем ответы на публикацию */
 
   /**
-   * Должен ответить ошибкой, если выбрана позиция за пределами текущего дипазона.
+   * Должен ответить ошибкой, если выбраного ТС нет в списке.
    *
    * @throws Exception error
    */
-  @SuppressWarnings("SpellCheckingInspection")
+  @Test
+  public void answerOutOfBoundsError() throws Exception {
+    // Дано:
+    when(vehiclesSharer.get()).thenReturn(Observable.just(
+        new ArrayList<>(Arrays.asList(
+            new Vehicle(12, "manufacturer", "model", "color", "license", false),
+            new Vehicle(13, "manufacture", "models", "colo", "licenses", true),
+            new Vehicle(14, "manufacturers", "modeler", "color", "licensees", false),
+            new Vehicle(15, "manufactures", "modelers", "colo", "licensee", true)
+        ))
+    ));
+
+    // Действие и Результат:
+    vehicleChoiceUseCase.getVehicles().test();
+    vehicleChoiceUseCase.selectVehicle(
+        new Vehicle(11, "manufacturer", "model", "color", "license", false)
+    ).test().assertError(IndexOutOfBoundsException.class);
+  }
+
+  /**
+   * Должен ответить ошибкой, если выбрано занятое ТС или его нет в списке.
+   *
+   * @throws Exception error
+   */
   @Test
   public void answerArgumentError() throws Exception {
     // Дано:
@@ -216,17 +244,19 @@ public class VehicleChoiceUseCaseTest {
         new ArrayList<>(Arrays.asList(
             new Vehicle(12, "manufacturer", "model", "color", "license", false),
             new Vehicle(13, "manufacture", "models", "colo", "licenses", true),
-            new Vehicle(14, "manufactur", "modelsa", "color", "licens", false),
-            new Vehicle(15, "manufactu", "modelsan", "colo", "licensee", true)
+            new Vehicle(14, "manufacturers", "modeler", "color", "licensees", false),
+            new Vehicle(15, "manufactures", "modelers", "colo", "licensee", true)
         ))
     ));
 
     // Действие и Результат:
     vehicleChoiceUseCase.getVehicles().test();
-    vehicleChoiceUseCase.setSelectedVehicle(-1).test().assertError(IndexOutOfBoundsException.class);
-    vehicleChoiceUseCase.setSelectedVehicle(1).test().assertError(IndexOutOfBoundsException.class);
-    vehicleChoiceUseCase.setSelectedVehicle(3).test().assertError(IndexOutOfBoundsException.class);
-    vehicleChoiceUseCase.setSelectedVehicle(5).test().assertError(IndexOutOfBoundsException.class);
+    vehicleChoiceUseCase.selectVehicle(
+        new Vehicle(13, "manufacture", "models", "colo", "licenses", true)
+    ).test().assertError(IllegalArgumentException.class);
+    vehicleChoiceUseCase.selectVehicle(
+        new Vehicle(15, "manufactures", "modelers", "colo", "licensee", true)
+    ).test().assertError(IllegalArgumentException.class);
   }
 
   /**
@@ -234,7 +264,6 @@ public class VehicleChoiceUseCaseTest {
    *
    * @throws Exception error
    */
-  @SuppressWarnings("SpellCheckingInspection")
   @Test
   public void answerSuccess() throws Exception {
     // Дано:
@@ -242,14 +271,18 @@ public class VehicleChoiceUseCaseTest {
         new ArrayList<>(Arrays.asList(
             new Vehicle(12, "manufacturer", "model", "color", "license", false),
             new Vehicle(13, "manufacture", "models", "colo", "licenses", true),
-            new Vehicle(14, "manufactur", "modelsa", "color", "licens", false),
-            new Vehicle(15, "manufactu", "modelsan", "colo", "licensee", true)
+            new Vehicle(14, "manufacturers", "modeler", "color", "licensees", false),
+            new Vehicle(15, "manufactures", "modelers", "colo", "licensee", true)
         ))
     ));
 
     // Действие и Результат:
     vehicleChoiceUseCase.getVehicles().test();
-    vehicleChoiceUseCase.setSelectedVehicle(0).test().assertComplete();
-    vehicleChoiceUseCase.setSelectedVehicle(2).test().assertComplete();
+    vehicleChoiceUseCase.selectVehicle(
+        new Vehicle(12, "manufacturer", "model", "color", "license", false)
+    ).test().assertComplete();
+    vehicleChoiceUseCase.selectVehicle(
+        new Vehicle(14, "manufacturers", "modeler", "color", "licensees", false)
+    ).test().assertComplete();
   }
 }

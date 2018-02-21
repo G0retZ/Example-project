@@ -23,8 +23,8 @@ public interface VehicleChoiceUseCase {
   /**
    * Задает выбранное ТС для запоминания и сохранения.
    *
-   * @param index позиция выбранного ТС в списке полученных ТС
+   * @param vehicle выбранное ТС из списка полученных ТС
    * @return {@link Completable} результат выбора
    */
-  Completable setSelectedVehicle(int index);
+  Completable selectVehicle(Vehicle vehicle);
 }

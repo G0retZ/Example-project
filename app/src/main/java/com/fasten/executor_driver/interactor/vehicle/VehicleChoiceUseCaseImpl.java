@@ -42,15 +42,15 @@ public class VehicleChoiceUseCaseImpl implements VehicleChoiceUseCase {
   }
 
   @Override
-  public Completable setSelectedVehicle(int index) {
+  public Completable selectVehicle(Vehicle vehicle) {
     return Completable.fromCallable(() -> {
-      if (vehicles == null) {
+      if (vehicles == null || !vehicles.contains(vehicle)) {
         throw new IndexOutOfBoundsException();
       }
-      if (vehicles.get(index).isBusy()) {
-        throw new IndexOutOfBoundsException();
+      if (vehicle.isBusy()) {
+        throw new IllegalArgumentException();
       }
-      vehicleChoiceSharer.share(vehicles.get(index));
+      vehicleChoiceSharer.share(vehicle);
       return null;
     });
   }
