@@ -26,7 +26,7 @@ public class ApiVehicle {
   @SuppressWarnings("SpellCheckingInspection")
   @SerializedName("busy")
   private boolean busy;
-  @SerializedName("vehicleOptionItems")
+  @SerializedName("options")
   private List<ApiVehicleOptionItem> vehicleOptionItems;
 
   /**
