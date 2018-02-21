@@ -90,8 +90,10 @@ public class GoOnlineFragment extends BaseFragment implements OnlineButtonViewAc
     new Builder(context)
         .setTitle(R.string.error)
         .setMessage(error.getMessage())
-        .setPositiveButton(getString(android.R.string.ok), null)
-        .setNegativeButton(getString(android.R.string.cancel), null)
+        .setPositiveButton(getString(android.R.string.ok),
+            (dialog, which) -> onlineButtonViewModel.consumeError())
+        .setNegativeButton(getString(android.R.string.cancel),
+            (dialog, which) -> onlineButtonViewModel.consumeError())
         .create()
         .show();
   }
