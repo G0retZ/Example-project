@@ -12,14 +12,16 @@ import com.fasten.executor_driver.interactor.auth.SmsUseCase;
 import com.fasten.executor_driver.interactor.auth.SmsUseCaseImpl;
 import com.fasten.executor_driver.interactor.map.HeatMapUseCase;
 import com.fasten.executor_driver.interactor.map.HeatMapUseCaseImpl;
-import com.fasten.executor_driver.interactor.vehicle.VehiclesUseCase;
-import com.fasten.executor_driver.interactor.vehicle.VehiclesUseCaseImpl;
+import com.fasten.executor_driver.interactor.vehicle.SelectedVehicleUseCase;
+import com.fasten.executor_driver.interactor.vehicle.SelectedVehicleUseCaseImpl;
 import com.fasten.executor_driver.interactor.vehicle.VehicleChoiceSharer;
 import com.fasten.executor_driver.interactor.vehicle.VehicleChoiceUseCase;
 import com.fasten.executor_driver.interactor.vehicle.VehicleChoiceUseCaseImpl;
 import com.fasten.executor_driver.interactor.vehicle.VehicleOptionsUseCase;
 import com.fasten.executor_driver.interactor.vehicle.VehicleOptionsUseCaseImpl;
 import com.fasten.executor_driver.interactor.vehicle.VehiclesSharer;
+import com.fasten.executor_driver.interactor.vehicle.VehiclesUseCase;
+import com.fasten.executor_driver.interactor.vehicle.VehiclesUseCaseImpl;
 import dagger.Module;
 import dagger.Provides;
 import java.util.List;
@@ -63,6 +65,12 @@ class UseCaseModule {
   VehicleOptionsUseCase provideVehicleOptionsUseCase(
       VehicleOptionsUseCaseImpl vehicleOptionsUseCase) {
     return vehicleOptionsUseCase;
+  }
+
+  @Provides
+  SelectedVehicleUseCase provideSelectedVehicleUseCase(
+      SelectedVehicleUseCaseImpl selectedVehicleUseCase) {
+    return selectedVehicleUseCase;
   }
 
   /* Обмен данными между юзкейсами */

@@ -7,6 +7,7 @@ import com.fasten.executor_driver.entity.Vehicle;
 import com.fasten.executor_driver.entity.VehicleOption;
 import com.fasten.executor_driver.interactor.vehicle.VehicleOptionsGateway;
 import io.reactivex.Completable;
+import io.reactivex.schedulers.Schedulers;
 import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
@@ -24,7 +25,9 @@ public class VehicleOptionsGatewayImpl implements VehicleOptionsGateway {
   @NonNull
   @Override
   public Completable sendVehicleOptions(@NonNull Vehicle vehicle) {
-    return api.selectCarWithOptions(vehicle.getId(), map(vehicle.getVehicleOptions()));
+    return api.selectCarWithOptions(vehicle.getId(), map(vehicle.getVehicleOptions()))
+        .subscribeOn(Schedulers.io())
+        .observeOn(Schedulers.single());
   }
 
   private List<ApiVehicleOptionItem> map(List<VehicleOption> vehicleOptions) {
