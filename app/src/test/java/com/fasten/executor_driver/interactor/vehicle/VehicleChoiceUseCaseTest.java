@@ -46,7 +46,7 @@ public class VehicleChoiceUseCaseTest {
    * @throws Exception error
    */
   @Test
-  public void askGatewayForVehicles() throws Exception {
+  public void askVehicleDataSharerForVehicles() throws Exception {
     // Действие:
     vehicleChoiceUseCase.getVehicles().test();
 
@@ -120,7 +120,7 @@ public class VehicleChoiceUseCaseTest {
    * @throws Exception error
    */
   @Test
-  public void doNotTouchDataSharer() throws Exception {
+  public void doNotTouchVehicleChoiceDataSharer() throws Exception {
     // Действие:
     vehicleChoiceUseCase.getVehicles().test();
     when(vehiclesSharer.get()).thenReturn(Observable.error(new NoNetworkException()));
@@ -151,7 +151,7 @@ public class VehicleChoiceUseCaseTest {
    * @throws Exception error
    */
   @Test
-  public void askDataSharerToShareTheSelectedVehicle() throws Exception {
+  public void askVehicleChoiceDataSharerToShareTheSelectedVehicle() throws Exception {
     // Дано:
     when(vehiclesSharer.get()).thenReturn(Observable.just(
         new ArrayList<>(Arrays.asList(
@@ -179,7 +179,7 @@ public class VehicleChoiceUseCaseTest {
    * @throws Exception error
    */
   @Test
-  public void doNotTouchDataSharerIfSelectionInvalid() throws Exception {
+  public void doNotTouchVehicleChoiceDataSharerIfSelectionInvalid() throws Exception {
     // Дано:
     when(vehiclesSharer.get()).thenReturn(Observable.just(
         new ArrayList<>(Arrays.asList(
