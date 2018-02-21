@@ -52,7 +52,7 @@ public class MapViewModelTest {
   /**
    * Должен попросить у юзкейса подписку на обновления тепловой карты.
    *
-   * @throws Exception error.
+   * @throws Exception error
    */
   @Test
   public void askUseCaseToSubscribeToHeatMapUpdates() throws Exception {
@@ -66,7 +66,7 @@ public class MapViewModelTest {
   /**
    * Не должен просить у юзкейс подписку (после поворотов), если подписка уже была.
    *
-   * @throws Exception error.
+   * @throws Exception error
    */
   @Test
   public void DoNotTouchUseCaseAfterFirstSubscription() throws Exception {

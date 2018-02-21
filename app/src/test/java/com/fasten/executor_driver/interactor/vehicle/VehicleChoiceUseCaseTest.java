@@ -43,7 +43,7 @@ public class VehicleChoiceUseCaseTest {
   /**
    * Должен запросить у публикатора список ТС.
    *
-   * @throws Exception error.
+   * @throws Exception error
    */
   @Test
   public void askGatewayForVehicles() throws Exception {
@@ -59,7 +59,7 @@ public class VehicleChoiceUseCaseTest {
   /**
    * Должен ответить ошибкой недостаточности средств.
    *
-   * @throws Exception error.
+   * @throws Exception error
    */
   @Test
   public void answerNoNetworkError() throws Exception {
@@ -73,7 +73,7 @@ public class VehicleChoiceUseCaseTest {
   /**
    * Должен ответить успехом и без искажений.
    *
-   * @throws Exception error.
+   * @throws Exception error
    */
   @SuppressWarnings("SpellCheckingInspection")
   @Test
@@ -102,7 +102,7 @@ public class VehicleChoiceUseCaseTest {
   /**
    * Должен ответить ошибкой об отсутствия доступных ТС.
    *
-   * @throws Exception error.
+   * @throws Exception error
    */
   @Test
   public void answerNoVehiclesAvailableError() throws Exception {
@@ -206,7 +206,7 @@ public class VehicleChoiceUseCaseTest {
   /**
    * Должен ответить ошибкой, если выбрана позиция за пределами текущего дипазона.
    *
-   * @throws Exception error.
+   * @throws Exception error
    */
   @SuppressWarnings("SpellCheckingInspection")
   @Test
@@ -232,7 +232,7 @@ public class VehicleChoiceUseCaseTest {
   /**
    * Должен ответить успехом.
    *
-   * @throws Exception error.
+   * @throws Exception error
    */
   @SuppressWarnings("SpellCheckingInspection")
   @Test

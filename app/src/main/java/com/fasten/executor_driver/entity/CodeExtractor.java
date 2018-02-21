@@ -3,7 +3,7 @@ package com.fasten.executor_driver.entity;
 import android.support.annotation.Nullable;
 
 /**
- * Извлекатель кода из тела сообщения
+ * Извлекатель кода из тела сообщения.
  */
 public interface CodeExtractor {
 

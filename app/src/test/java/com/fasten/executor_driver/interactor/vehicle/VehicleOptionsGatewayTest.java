@@ -42,7 +42,7 @@ public class VehicleOptionsGatewayTest {
   /* Проверяем работу с АПИ */
 
   /**
-   * Должен запросить у АПИ completable на запрос входящего СМС с кодом
+   * Должен запросить у АПИ completable на запрос входящего СМС с кодом.
    *
    * @throws Exception error
    */

@@ -49,7 +49,7 @@ public class VehicleOptionsUseCaseTest {
   /**
    * Должен запросить у публикатора выбранную ТС.
    *
-   * @throws Exception error.
+   * @throws Exception error
    */
   @Test
   public void askDataSharerForSelectedVehicle() throws Exception {
@@ -65,7 +65,7 @@ public class VehicleOptionsUseCaseTest {
   /**
    * Должен отвечать успехом и только динамическими опциями.
    *
-   * @throws Exception error.
+   * @throws Exception error
    */
   @SuppressWarnings({"unchecked"})
   @Test
@@ -117,7 +117,7 @@ public class VehicleOptionsUseCaseTest {
   /**
    * Должен отвеетить ошибкой отсутствия доступных для изменений опций ТС.
    *
-   * @throws Exception error.
+   * @throws Exception error
    */
   @SuppressWarnings({"unchecked"})
   @Test

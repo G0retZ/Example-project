@@ -34,7 +34,7 @@ public class TokenKeeperTest {
   }
 
   /**
-   * Должен запросить у настроек данные по ключу "token"
+   * Должен запросить у настроек данные по ключу "token".
    *
    * @throws Exception error
    */
@@ -48,7 +48,7 @@ public class TokenKeeperTest {
   }
 
   /**
-   * Должен запросить у настроек сохранить данные без изменений по ключу "token"
+   * Должен запросить у настроек сохранить данные без изменений по ключу "token".
    *
    * @throws Exception error
    */

@@ -64,7 +64,7 @@ public class ChooseVehicleViewModelTest {
   /**
    * Должен просить юзкейс получить список ТС, при первой и только при первой подписке.
    *
-   * @throws Exception error.
+   * @throws Exception error
    */
   @Test
   public void askChooseVehicleUseCaseForVehiclesInitially() throws Exception {
@@ -80,7 +80,7 @@ public class ChooseVehicleViewModelTest {
   /**
    * Должен попросить юзкейс выбрать ТС по указанному индексу.
    *
-   * @throws Exception error.
+   * @throws Exception error
    */
   @Test
   public void askChooseVehicleUseCaseToSelectVehicle() throws Exception {
@@ -102,7 +102,7 @@ public class ChooseVehicleViewModelTest {
   /**
    * Не должен трогать юзкейс, если предыдущий запрос списка ТС еще не завершился.
    *
-   * @throws Exception error.
+   * @throws Exception error
    */
   @Test
   public void DoNotTouchChooseVehicleUseCaseDuringVehicleGetting() throws Exception {
@@ -121,7 +121,7 @@ public class ChooseVehicleViewModelTest {
   /**
    * Не должен трогать юзкейс, если предыдущий запрос выбора ТС еще не завершился.
    *
-   * @throws Exception error.
+   * @throws Exception error
    */
   @Test
   public void DoNotTouchChooseVehicleUseCaseDuringVehicleChoosing() throws Exception {
@@ -142,7 +142,7 @@ public class ChooseVehicleViewModelTest {
   /**
    * Должен вернуть состояние вида "В процессе" изначально.
    *
-   * @throws Exception error.
+   * @throws Exception error
    */
   @Test
   public void setInitialViewStateToLiveData() throws Exception {
@@ -158,7 +158,7 @@ public class ChooseVehicleViewModelTest {
   }
 
   /**
-   * Должен вернуть состояние вида "Ошибка" сети
+   * Должен вернуть состояние вида "Ошибка" сети.
    *
    * @throws Exception error
    */
@@ -181,7 +181,7 @@ public class ChooseVehicleViewModelTest {
   }
 
   /**
-   * Должен вернуть состояние вида "Ошибка" нет доступных ТС
+   * Должен вернуть состояние вида "Ошибка" нет доступных ТС.
    *
    * @throws Exception error
    */
@@ -204,7 +204,7 @@ public class ChooseVehicleViewModelTest {
   }
 
   /**
-   * Должен вернуть состояние вида "Готово" со списком ТС для выбора
+   * Должен вернуть состояние вида "Готово" со списком ТС для выбора.
    *
    * @throws Exception error
    */
@@ -265,7 +265,7 @@ public class ChooseVehicleViewModelTest {
   }
 
   /**
-   * Должен вернуть "перейти к опциям" если выбор был успешным
+   * Должен вернуть "перейти к опциям" если выбор был успешным.
    *
    * @throws Exception error
    */

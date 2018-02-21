@@ -8,14 +8,14 @@ import io.reactivex.Single;
 import java.util.List;
 
 /**
- * Юзкейс выбора ТС исполнителя
+ * Юзкейс выбора ТС исполнителя.
  */
 public interface VehicleOptionsUseCase {
 
   /**
    * Запрашивает список опций выбранной ТС, доступных для изменения исполнителем.
    *
-   * @return {@link Single} результат запроса.
+   * @return {@link Single} результат запроса
    */
   @NonNull
   Observable<List<VehicleOption>> getVehicleOptions();
@@ -23,8 +23,8 @@ public interface VehicleOptionsUseCase {
   /**
    * Задает опции выбранного ТС для сохранения и выхода на линию.
    *
-   * @param vehicleOptions список опций выбранного ТС.
-   * @return {@link Completable} результат сохранения и выхода на линию.
+   * @param vehicleOptions список опций выбранного ТС
+   * @return {@link Completable} результат сохранения и выхода на линию
    */
   Completable setSelectedVehicleOptions(List<VehicleOption> vehicleOptions);
 }

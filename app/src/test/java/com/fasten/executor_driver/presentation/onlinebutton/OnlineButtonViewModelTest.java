@@ -68,7 +68,7 @@ public class OnlineButtonViewModelTest {
   /**
    * Не должен просить юзкейс выйти на линию, если предыдущий запрос еще не завершился.
    *
-   * @throws Exception error.
+   * @throws Exception error
    */
   @Test
   public void DoNotTouchOnlineUseCaseUntilRequestFinished() throws Exception {
@@ -84,7 +84,7 @@ public class OnlineButtonViewModelTest {
   /**
    * Не должен просить юзкейс выйти на линию, если предыдущий запрос еще не завершился.
    *
-   * @throws Exception error.
+   * @throws Exception error
    */
   @Test
   public void DoNotTouchOnlineUseCaseToGoOnlineUntilTimeout() throws Exception {
@@ -112,7 +112,7 @@ public class OnlineButtonViewModelTest {
   /**
    * Должен попросить юзкейс отправить выйти на линию.
    *
-   * @throws Exception error.
+   * @throws Exception error
    */
   @Test
   public void askOnlineUseCaseToGoOnline() throws Exception {
@@ -572,7 +572,7 @@ public class OnlineButtonViewModelTest {
   }
 
   /**
-   * Должен вернуть "перейти к списку ТС" если загрузка была успешной
+   * Должен вернуть "перейти к списку ТС" если загрузка была успешной.
    *
    * @throws Exception error
    */
@@ -590,7 +590,7 @@ public class OnlineButtonViewModelTest {
   }
 
   /**
-   * Должен вернуть "перейти к к решению блокировки водителя" если водитель заблокирован
+   * Должен вернуть "перейти к к решению блокировки водителя" если водитель заблокирован.
    *
    * @throws Exception error
    */

@@ -4,7 +4,7 @@ import android.support.annotation.Nullable;
 import javax.inject.Inject;
 
 /**
- * Валидатор пароля
+ * Валидатор пароля.
  */
 public class PasswordValidator implements Validator<String> {
 

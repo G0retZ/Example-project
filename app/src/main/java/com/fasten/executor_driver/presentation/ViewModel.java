@@ -11,7 +11,7 @@ public interface ViewModel<A> {
   /**
    * Возвращает состояние вида для применения.
    *
-   * @return - {@link ViewState} состояние вида.
+   * @return - {@link ViewState} состояние вида
    */
   @NonNull
   LiveData<ViewState<A>> getViewStateLiveData();
@@ -19,7 +19,7 @@ public interface ViewModel<A> {
   /**
    * Возвращает событие навигации для перехода.
    *
-   * @return - {@link String} событие и направление навигации.
+   * @return - {@link String} событие и направление навигации
    */
   @NonNull
   LiveData<String> getNavigationLiveData();

@@ -12,7 +12,7 @@ import okhttp3.Response;
 
 /**
  * Перехватчик для проверки соединения с сетью. Если соединения нет, то кидает соответствующее
- * исключение
+ * исключение.
  */
 public class ConnectivityInterceptor implements Interceptor {
 

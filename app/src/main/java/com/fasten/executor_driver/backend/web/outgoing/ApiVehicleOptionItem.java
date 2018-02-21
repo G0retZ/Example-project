@@ -5,7 +5,7 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * Объект опции ТС для сериализации в JSON для отправки в АПИ
+ * Объект опции ТС для сериализации в JSON для отправки в АПИ.
  */
 public class ApiVehicleOptionItem {
 

@@ -109,7 +109,7 @@ public class VehicleApiMapperTest {
   }
 
   /**
-   * Должен дать ошибку, если имя марки - нуль
+   * Должен дать ошибку, если имя марки - нуль.
    *
    * @throws Exception ошибка
    */
@@ -131,7 +131,7 @@ public class VehicleApiMapperTest {
   }
 
   /**
-   * Должен дать ошибку, если имя модели - нуль
+   * Должен дать ошибку, если имя модели - нуль.
    *
    * @throws Exception ошибка
    */
@@ -153,7 +153,7 @@ public class VehicleApiMapperTest {
   }
 
   /**
-   * Должен дать ошибку, если гос номер - нуль
+   * Должен дать ошибку, если гос номер - нуль.
    *
    * @throws Exception ошибка
    */
@@ -175,7 +175,7 @@ public class VehicleApiMapperTest {
   }
 
   /**
-   * Должен дать ошибку, если цвет - нуль
+   * Должен дать ошибку, если цвет - нуль.
    *
    * @throws Exception ошибка
    */
@@ -197,7 +197,7 @@ public class VehicleApiMapperTest {
   }
 
   /**
-   * Должен дать ошибку, если опции - нуль
+   * Должен дать ошибку, если опции - нуль.
    *
    * @throws Exception ошибка
    */

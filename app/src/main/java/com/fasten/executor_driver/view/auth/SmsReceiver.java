@@ -13,7 +13,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 /**
- * Перехватываем входящие сообщения
+ * Перехватываем входящие сообщения.
  */
 public class SmsReceiver extends BroadcastReceiver {
 
@@ -29,7 +29,7 @@ public class SmsReceiver extends BroadcastReceiver {
   /**
    * Получаем коды из входящих СМС.
    *
-   * @return {@link Observable<String>} публикует коды.
+   * @return {@link Observable<String>} публикует коды
    */
   public Observable<String> getCodeFromSms() {
     return subject;

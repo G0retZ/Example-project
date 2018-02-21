@@ -5,7 +5,7 @@ import android.support.annotation.Nullable;
 import io.reactivex.Completable;
 
 /**
- * Юзкейс проверки имени для входа
+ * Юзкейс проверки имени для входа.
  */
 public interface LoginUseCase {
 

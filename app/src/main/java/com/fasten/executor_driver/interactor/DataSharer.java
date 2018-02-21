@@ -5,7 +5,7 @@ import android.support.annotation.Nullable;
 import io.reactivex.Observable;
 
 /**
- * Для обмена данными типа {@link D} в слое ЮзКейсов
+ * Для обмена данными типа {@link D} в слое ЮзКейсов.
  *
  * @param <D> - тип данных
  */
@@ -22,7 +22,7 @@ public interface DataSharer<D> {
    * Возвращает {@link Observable<D>} для подписки на расшаренные данные. При первой подписке
    * возвращает последнее сохраненное значение.
    *
-   * @return объект для подписки.
+   * @return объект для подписки
    */
   @NonNull
   Observable<D> get();

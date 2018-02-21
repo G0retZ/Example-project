@@ -3,7 +3,7 @@ package com.fasten.executor_driver.presentation.map;
 import android.support.annotation.Nullable;
 
 /**
- * Действия для смены состояния вида карты
+ * Действия для смены состояния вида карты.
  */
 public interface MapViewActions {
 

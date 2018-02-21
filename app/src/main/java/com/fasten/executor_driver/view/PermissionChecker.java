@@ -10,7 +10,7 @@ import io.reactivex.Completable;
 import io.reactivex.subjects.CompletableSubject;
 
 /**
- * DRY класс проверки разрешений
+ * DRY класс проверки разрешений.
  */
 public class PermissionChecker {
 
@@ -94,8 +94,8 @@ public class PermissionChecker {
   /**
    * Публикуем результат запроса.
    *
-   * @param requestCode ИД запроса разрешений, если не соответствует {@link #uuid}, то выходим.
-   * @param permissions список разрешений.
+   * @param requestCode ИД запроса разрешений, если не соответствует {@link #uuid}, то выходим
+   * @param permissions список разрешений
    * @param grantResults результаты для соответствующих разрешений, которые или {@link
    * android.content.pm.PackageManager#PERMISSION_GRANTED} или {@link
    * android.content.pm.PackageManager#PERMISSION_DENIED}.

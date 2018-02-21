@@ -11,7 +11,7 @@ public interface VehiclesUseCase {
   /**
    * Загружает список ТС.
    *
-   * @return {@link Completable} результат запроса.
+   * @return {@link Completable} результат запроса
    */
   @NonNull
   Completable loadVehicles();

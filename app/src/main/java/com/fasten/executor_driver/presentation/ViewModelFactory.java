@@ -24,7 +24,7 @@ public class ViewModelFactory<V> implements ViewModelProvider.Factory {
   /**
    * Сеттер видимый для Dagger'а для внедрения {@link V} зависимости
    *
-   * @param viewModel класс либо интерфейс, наследник от {@link ViewModel}
+   * @param viewModel класс либо интерфейс, наследник от {@link ViewModel}.
    */
   @Inject
   void setViewModel(V viewModel) {

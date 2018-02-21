@@ -60,7 +60,7 @@ public class AuthorizationInterceptorTest {
   }
 
   /**
-   * Должен не трогать предмет выхода из системы если есть хедер Code
+   * Должен не трогать предмет выхода из системы если есть хедер Code.
    *
    * @throws Exception error
    */
