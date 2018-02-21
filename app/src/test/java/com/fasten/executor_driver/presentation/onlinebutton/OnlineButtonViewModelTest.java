@@ -5,6 +5,7 @@ import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 import android.arch.core.executor.testing.InstantTaskExecutorRule;
@@ -48,6 +49,9 @@ public class OnlineButtonViewModelTest {
 
   @Mock
   private VehiclesUseCase vehiclesUseCase;
+
+  @Mock
+  private Observer<String> navigateObserver;
 
   @Before
   public void setUp() throws Exception {
@@ -545,5 +549,138 @@ public class OnlineButtonViewModelTest {
     inOrder.verify(viewStateObserver).onChanged(any(OnlineButtonViewStateHold.class));
     inOrder.verify(viewStateObserver).onChanged(any(OnlineButtonViewStateReady.class));
     verifyNoMoreInteractions(viewStateObserver);
+  }
+
+  /* Тетсируем навигацию. */
+
+  /**
+   * Должен игнорировать прочие ошибки
+   *
+   * @throws Exception error
+   */
+  @Test
+  public void setNothingToLiveData() throws Exception {
+    // Дано:
+    when(vehiclesUseCase.loadVehicles()).thenReturn(Completable.error(new NoNetworkException()));
+    onlineButtonViewModel.getNavigationLiveData().observeForever(navigateObserver);
+
+    // Действие:
+    onlineButtonViewModel.goOnline();
+
+    // Результат:
+    verifyZeroInteractions(navigateObserver);
+  }
+
+  /**
+   * Должен вернуть "перейти к списку ТС" если загрузка была успешной
+   *
+   * @throws Exception error
+   */
+  @Test
+  public void setNavigateToVehiclesToLiveData() throws Exception {
+    // Дано:
+    when(vehiclesUseCase.loadVehicles()).thenReturn(Completable.complete());
+    onlineButtonViewModel.getNavigationLiveData().observeForever(navigateObserver);
+
+    // Действие:
+    onlineButtonViewModel.goOnline();
+
+    // Результат:
+    verify(navigateObserver, only()).onChanged(OnlineButtonNavigate.VEHICLES);
+  }
+
+  /**
+   * Должен вернуть "перейти к к решению блокировки водителя" если водитель заблокирован
+   *
+   * @throws Exception error
+   */
+  @Test
+  public void setNavigateToDriverBlockedToLiveData() throws Exception {
+    // Дано:
+    when(vehiclesUseCase.loadVehicles())
+        .thenReturn(Completable.error(new DriverBlockedException()));
+    onlineButtonViewModel.getNavigationLiveData().observeForever(navigateObserver);
+
+    // Действие:
+    onlineButtonViewModel.goOnline();
+
+    // Результат:
+    verify(navigateObserver, only()).onChanged(OnlineButtonNavigate.DRIVER_BLOCKED);
+  }
+
+  /**
+   * Должен вернуть "перейти к решению недостатка средств" если недостаточно средств.
+   *
+   * @throws Exception error
+   */
+  @Test
+  public void setNavigateToInsufficientCreditsToLiveData() throws Exception {
+    // Дано:
+    when(vehiclesUseCase.loadVehicles())
+        .thenReturn(Completable.error(new InsufficientCreditsException()));
+    onlineButtonViewModel.getNavigationLiveData().observeForever(navigateObserver);
+
+    // Действие:
+    onlineButtonViewModel.goOnline();
+
+    // Результат:
+    verify(navigateObserver, only()).onChanged(OnlineButtonNavigate.INSUFFICIENT_CREDITS);
+  }
+
+  /**
+   * Должен вернуть "перейти к решению отсутствия свободных ТС" если недостаточно средств.
+   *
+   * @throws Exception error
+   */
+  @Test
+  public void setNavigateToNoFreeVehiclesToLiveData() throws Exception {
+    // Дано:
+    when(vehiclesUseCase.loadVehicles())
+        .thenReturn(Completable.error(new NoFreeVehiclesException()));
+    onlineButtonViewModel.getNavigationLiveData().observeForever(navigateObserver);
+
+    // Действие:
+    onlineButtonViewModel.goOnline();
+
+    // Результат:
+    verify(navigateObserver, only()).onChanged(OnlineButtonNavigate.NO_FREE_VEHICLES);
+  }
+
+  /**
+   * Должен вернуть "перейти к решению отсутствия свободных ТС" если недостаточно средств.
+   *
+   * @throws Exception error
+   */
+  @Test
+  public void setNavigateToNoVehiclesToLiveData() throws Exception {
+    // Дано:
+    when(vehiclesUseCase.loadVehicles())
+        .thenReturn(Completable.error(new NoVehiclesAvailableException()));
+    onlineButtonViewModel.getNavigationLiveData().observeForever(navigateObserver);
+
+    // Действие:
+    onlineButtonViewModel.goOnline();
+
+    // Результат:
+    verify(navigateObserver, only()).onChanged(OnlineButtonNavigate.NO_VEHICLES);
+  }
+
+  /**
+   * Должен вернуть "перейти к решению отсутствия свободных ТС" если недостаточно средств.
+   *
+   * @throws Exception error
+   */
+  @Test
+  public void setNavigateToVehicleOptionsToLiveData() throws Exception {
+    // Дано:
+    when(vehiclesUseCase.loadVehicles())
+        .thenReturn(Completable.error(new OnlyOneVehicleAvailableException()));
+    onlineButtonViewModel.getNavigationLiveData().observeForever(navigateObserver);
+
+    // Действие:
+    onlineButtonViewModel.goOnline();
+
+    // Результат:
+    verify(navigateObserver, only()).onChanged(OnlineButtonNavigate.VEHICLE_OPTIONS);
   }
 }

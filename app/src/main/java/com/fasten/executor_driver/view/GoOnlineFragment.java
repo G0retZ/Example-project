@@ -58,6 +58,11 @@ public class GoOnlineFragment extends BaseFragment implements OnlineButtonViewAc
     View view = inflater.inflate(R.layout.fragment_go_online, container, false);
     goOnlineRequest = view.findViewById(R.id.goOnline);
     goOnlineRequest.setOnClickListener(v -> onlineButtonViewModel.goOnline());
+    onlineButtonViewModel.getNavigationLiveData().observe(this, destination -> {
+      if (destination != null) {
+        navigate(destination);
+      }
+    });
     onlineButtonViewModel.getViewStateLiveData().observe(this, viewState -> {
       if (viewState != null) {
         viewState.apply(this);

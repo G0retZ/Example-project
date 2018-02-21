@@ -67,18 +67,21 @@ public class OnlineButtonViewModelImpl extends ViewModel implements OnlineButton
         .subscribeOn(Schedulers.single())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(
-            () -> holdButton(DURATION_AFTER_SUCCESS),
+            () -> {
+              navigateLiveData.setValue(OnlineButtonNavigate.VEHICLES);
+              holdButton(DURATION_AFTER_SUCCESS);
+            },
             throwable -> {
               if (throwable instanceof DriverBlockedException) {
-                throwable.printStackTrace();
+                navigateLiveData.setValue(OnlineButtonNavigate.DRIVER_BLOCKED);
               } else if (throwable instanceof InsufficientCreditsException) {
-                throwable.printStackTrace();
+                navigateLiveData.setValue(OnlineButtonNavigate.INSUFFICIENT_CREDITS);
               } else if (throwable instanceof NoFreeVehiclesException) {
-                throwable.printStackTrace();
+                navigateLiveData.setValue(OnlineButtonNavigate.NO_FREE_VEHICLES);
               } else if (throwable instanceof NoVehiclesAvailableException) {
-                throwable.printStackTrace();
+                navigateLiveData.setValue(OnlineButtonNavigate.NO_VEHICLES);
               } else if (throwable instanceof OnlyOneVehicleAvailableException) {
-                throwable.printStackTrace();
+                navigateLiveData.setValue(OnlineButtonNavigate.VEHICLE_OPTIONS);
               } else {
                 viewStateLiveData.postValue(new OnlineButtonViewStateError(throwable));
               }
