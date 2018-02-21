@@ -60,7 +60,7 @@ public class VehiclesGatewayTest {
   /* Проверяем работу с АПИ */
 
   /**
-   * Должен запросить у АПИ список ТС исполнителя
+   * Должен запросить у АПИ список ТС исполнителя.
    *
    * @throws Exception error
    */
@@ -76,7 +76,7 @@ public class VehiclesGatewayTest {
   /* Проверяем работу с преобразователем данных */
 
   /**
-   * Должен запросить все преобразования
+   * Должен запросить все преобразования.
    *
    * @throws Exception error
    */
@@ -98,7 +98,7 @@ public class VehiclesGatewayTest {
   }
 
   /**
-   * Должен запросить только первое преобразование
+   * Должен запросить только первое преобразование.
    *
    * @throws Exception error
    */
@@ -122,7 +122,7 @@ public class VehiclesGatewayTest {
   /* Проверяем работу с преобразователем ошибок */
 
   /**
-   * Должен запросить преобразование
+   * Должен запросить преобразование.
    *
    * @throws Exception error
    */
@@ -144,7 +144,7 @@ public class VehiclesGatewayTest {
   /* Проверяем ответы на АПИ */
 
   /**
-   * Должен ответить ошибкой сети
+   * Должен ответить ошибкой сети.
    *
    * @throws Exception error
    */
@@ -159,7 +159,7 @@ public class VehiclesGatewayTest {
   }
 
   /**
-   * Должен ответить преобразованной ошибкой аргумента
+   * Должен ответить преобразованной ошибкой аргумента.
    *
    * @throws Exception error
    */
@@ -174,7 +174,7 @@ public class VehiclesGatewayTest {
   }
 
   /**
-   * Должен ответить ошибкой преобразования
+   * Должен ответить ошибкой преобразования.
    *
    * @throws Exception error
    */
@@ -198,7 +198,7 @@ public class VehiclesGatewayTest {
   }
 
   /**
-   * Должен вернуть список бизнес ТС
+   * Должен вернуть список бизнес ТС.
    *
    * @throws Exception error
    */

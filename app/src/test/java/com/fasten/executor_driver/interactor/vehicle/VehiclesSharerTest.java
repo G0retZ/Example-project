@@ -18,7 +18,7 @@ public class VehiclesSharerTest {
   }
 
   /**
-   * Должен получить значение без изменений
+   * Должен получить значение без изменений.
    *
    * @throws Exception error
    */

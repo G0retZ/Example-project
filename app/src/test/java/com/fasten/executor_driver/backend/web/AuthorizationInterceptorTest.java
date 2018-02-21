@@ -34,7 +34,7 @@ public class AuthorizationInterceptorTest {
   }
 
   /**
-   * Должен не трогать предмет выхода из системы
+   * Должен не трогать предмет выхода из системы.
    *
    * @throws Exception error
    */
@@ -87,7 +87,7 @@ public class AuthorizationInterceptorTest {
   }
 
   /**
-   * Должен сообщить предмету о выходе из системы
+   * Должен сообщить предмету о выходе из системы.
    *
    * @throws Exception error
    */

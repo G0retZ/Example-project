@@ -83,7 +83,7 @@ public class PasswordUseCaseTest {
   /* Проверяем работу с валидаторами */
 
   /**
-   * Должен запросить у валидатора пароля проверку
+   * Должен запросить у валидатора пароля проверку.
    *
    * @throws Exception error
    */
@@ -144,7 +144,7 @@ public class PasswordUseCaseTest {
 
   /**
    * Не должен запрашивать у гейтвея входа, если валидация прошла, но действие после валидации не
-   * выполнено
+   * выполнено.
    *
    * @throws Exception error
    */
@@ -159,7 +159,7 @@ public class PasswordUseCaseTest {
 
   /**
    * Не должен запрашивать у гейтвея входа, если валидация прошла, но действие после валидации
-   * отменено
+   * отменено.
    *
    * @throws Exception error
    */
@@ -173,7 +173,7 @@ public class PasswordUseCaseTest {
   }
 
   /**
-   * Должен запросить у гейтвея вход
+   * Должен запросить у гейтвея вход.
    *
    * @throws Exception error
    */
@@ -189,7 +189,7 @@ public class PasswordUseCaseTest {
   /* Проверяем ответы на авторизацию */
 
   /**
-   * Должен ответить ошибкой сети
+   * Должен ответить ошибкой сети.
    *
    * @throws Exception error
    */
@@ -217,7 +217,7 @@ public class PasswordUseCaseTest {
   }
 
   /**
-   * Должен ответить успехом
+   * Должен ответить успехом.
    *
    * @throws Exception error
    */

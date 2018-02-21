@@ -554,7 +554,7 @@ public class OnlineButtonViewModelTest {
   /* Тетсируем навигацию. */
 
   /**
-   * Должен игнорировать прочие ошибки
+   * Должен игнорировать прочие ошибки.
    *
    * @throws Exception error
    */

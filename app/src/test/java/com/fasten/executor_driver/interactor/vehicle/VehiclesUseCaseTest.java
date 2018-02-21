@@ -47,7 +47,7 @@ public class VehiclesUseCaseTest {
   /* Проверяем работу с гейтвеем */
 
   /**
-   * Должен запросить у гейтвея выход на линию
+   * Должен запросить у гейтвея выход на линию.
    *
    * @throws Exception error
    */
@@ -423,7 +423,7 @@ public class VehiclesUseCaseTest {
   }
 
   /**
-   * Должен ответить успехом
+   * Должен ответить успехом.
    *
    * @throws Exception error
    */

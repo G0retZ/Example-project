@@ -246,7 +246,7 @@ public class ChooseVehicleViewModelTest {
   /* Тетсируем навигацию. */
 
   /**
-   * Должен игнорировать неуспешниые выборы
+   * Должен игнорировать неуспешниые выборы.
    *
    * @throws Exception error
    */

@@ -74,7 +74,7 @@ public class VehicleOptionsGatewayTest {
   /* Проверяем ответы на АПИ */
 
   /**
-   * Должен ответить ошибкой сети
+   * Должен ответить ошибкой сети.
    *
    * @throws Exception error
    */
@@ -96,7 +96,7 @@ public class VehicleOptionsGatewayTest {
   }
 
   /**
-   * Должен ответить успехом
+   * Должен ответить успехом.
    *
    * @throws Exception error
    */

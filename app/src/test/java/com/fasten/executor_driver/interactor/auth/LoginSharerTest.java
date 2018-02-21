@@ -73,7 +73,7 @@ public class LoginSharerTest {
   }
 
   /**
-   * Должен получить значение без изменений
+   * Должен получить значение без изменений.
    *
    * @throws Exception error
    */
