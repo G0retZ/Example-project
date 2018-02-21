@@ -52,7 +52,7 @@ public class SelectedVehicleUseCaseTest {
    * @throws Exception error
    */
   @Test
-  public void answerWithVehiclesList() throws Exception {
+  public void answerWithVehicleSelections() throws Exception {
     // Дано:
     when(vehicleChoiceSharer.get()).thenReturn(Observable.fromArray(
         new Vehicle(12, "manufacturer", "model", "color", "license", false),

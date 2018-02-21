@@ -46,7 +46,7 @@ public class VehicleChoiceUseCaseTest {
    * @throws Exception error
    */
   @Test
-  public void askVehicleDataSharerForVehicles() throws Exception {
+  public void askVehiclesDataSharerForVehicles() throws Exception {
     // Действие:
     vehicleChoiceUseCase.getVehicles().test();
 
