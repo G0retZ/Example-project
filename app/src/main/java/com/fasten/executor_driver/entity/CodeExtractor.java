@@ -8,7 +8,7 @@ import android.support.annotation.Nullable;
 public interface CodeExtractor {
 
   /**
-   * Извлечь код из тела сообщения
+   * Извлечь код из тела сообщения.
    *
    * @param message {@link String} сообщения
    * @return извлеченный код строкой

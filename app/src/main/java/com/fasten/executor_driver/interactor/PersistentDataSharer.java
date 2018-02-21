@@ -28,7 +28,7 @@ public abstract class PersistentDataSharer<D> extends MemoryDataSharer<D> {
   }
 
   /**
-   * везвращает ключ для данных в настройках
+   * везвращает ключ для данных в настройках.
    *
    * @return ключ
    */
@@ -37,7 +37,7 @@ public abstract class PersistentDataSharer<D> extends MemoryDataSharer<D> {
   protected abstract String getKey();
 
   /**
-   * Сериализует данные в строку
+   * Сериализует данные в строку.
    *
    * @param data данные
    * @return сериализованные данные строкой
@@ -46,7 +46,7 @@ public abstract class PersistentDataSharer<D> extends MemoryDataSharer<D> {
   protected abstract String serialize(D data);
 
   /**
-   * Десериализует строку в данные
+   * Десериализует строку в данные.
    *
    * @param string строка
    * @return данные десериализованные из строки

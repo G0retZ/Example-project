@@ -10,7 +10,7 @@ public interface TokenKeeper {
   void saveToken(String token);
 
   /**
-   * Берет токен из постоянного хранилища
+   * Берет токен из постоянного хранилища.
    *
    * @return {@link String} сожержащую только токен
    */

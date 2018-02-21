@@ -19,7 +19,7 @@ public class PermissionChecker {
   private final CompletableSubject completableSubject = CompletableSubject.create();
 
   /**
-   * Конструктор
+   * Конструктор.
    *
    * @param uuid - ИД запроса разрешений
    */
@@ -57,7 +57,7 @@ public class PermissionChecker {
   }
 
   /**
-   * Запрос проверки разрешений
+   * Запрос проверки разрешений.
    *
    * @param fragment - {@link Fragment}, для которого идет запрос
    * @param context - {@link Context} запроса
@@ -92,7 +92,7 @@ public class PermissionChecker {
   }
 
   /**
-   * Публикуем результат запроса
+   * Публикуем результат запроса.
    *
    * @param requestCode ИД запроса разрешений, если не соответствует {@link #uuid}, то выходим.
    * @param permissions список разрешений.

@@ -3,7 +3,7 @@ package com.fasten.executor_driver.entity;
 import io.reactivex.annotations.Nullable;
 
 /**
- * Валидатор входных данных
+ * Валидатор входных данных.
  *
  * @param <T> тип для валидации.
  */

@@ -8,7 +8,7 @@ import android.support.annotation.Nullable;
 public interface MapViewActions {
 
   /**
-   * Обновить отображение тепловой карты
+   * Обновить отображение тепловой карты.
    *
    * @param geoJson - данные тепловой карты в виде GeoJSON. Если null, значит данных нет -
    * использовать последние имеющиеся данные.

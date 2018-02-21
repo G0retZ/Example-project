@@ -52,7 +52,7 @@ public class BaseFragment extends Fragment implements OnBackPressedInterceptor {
 
   /**
    * Колбэк для внедрения зависимостей. Вызывается сразу после завершения {@link #onCreate(Bundle)}
-   * здесь
+   * здесь.
    *
    * @param appComponent - компонент, который может произвести внедрение
    */
