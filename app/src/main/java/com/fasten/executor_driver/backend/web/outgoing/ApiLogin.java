@@ -5,7 +5,7 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * Объект Логина для сериализации в JSON для отправки в АПИ
+ * Объект Логина для сериализации в JSON для отправки в АПИ.
  */
 public class ApiLogin {
 

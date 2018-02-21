@@ -8,12 +8,7 @@ import android.support.annotation.Nullable;
 public interface OnlineButtonViewActions {
 
   /**
-   * Перейти к выбору автомобиля.
-   */
-  void goChooseVehicle();
-
-  /**
-   * Сделать кнопку "Выйти на линию" нажимаемой
+   * Сделать кнопку "Выйти на линию" нажимаемой.
    *
    * @param enable - нажимаема или нет?
    */
@@ -22,7 +17,7 @@ public interface OnlineButtonViewActions {
   /**
    * Показать ошибку.
    *
-   * @param error - ошибка.
+   * @param error - ошибка
    */
   void showGoOnlineError(@Nullable Throwable error);
 }

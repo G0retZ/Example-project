@@ -27,23 +27,23 @@ public class VehicleApiMapper implements Mapper<ApiVehicle, Vehicle> {
     if (from.getLicensePlate() == null) {
       throw new DataMappingException("Ошибка маппинга: гос номер не должен быть null!");
     }
-    if (from.getMark() == null || from.getMark().getName() == null) {
-      throw new DataMappingException("Ошибка маппинга: марка и ее имя не должны быть null!");
+    if (from.getMarkName() == null) {
+      throw new DataMappingException("Ошибка маппинга: имя марки не должно быть null!");
     }
-    if (from.getModel() == null || from.getModel().getName() == null) {
-      throw new DataMappingException("Ошибка маппинга: модель и ее имя не должны быть null!");
+    if (from.getModelName() == null) {
+      throw new DataMappingException("Ошибка маппинга: имя модели не должно быть null!");
     }
-    if (from.getColor() == null || from.getColor().getName() == null) {
-      throw new DataMappingException("Ошибка маппинга: цвет и его имя не должны быть null!");
+    if (from.getColor() == null) {
+      throw new DataMappingException("Ошибка маппинга: имя цвета не должно быть null!");
     }
     if (from.getVehicleOptionItems() == null) {
       throw new DataMappingException("Ошибка маппинга: список опций не должен быть null!");
     }
     Vehicle vehicle = new Vehicle(
         from.getId(),
-        from.getMark().getName(),
-        from.getModel().getName(),
-        from.getColor().getName(),
+        from.getMarkName(),
+        from.getModelName(),
+        from.getColor(),
         from.getLicensePlate(),
         from.isBusy()
     );

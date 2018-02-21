@@ -18,14 +18,14 @@ class ChooseVehicleAdapter extends RecyclerView.Adapter<ChooseVehicleViewHolder>
   @NonNull
   private final List<ChooseVehicleListItem> list;
   @NonNull
-  private final PublishSubject<Integer> publishSubject = PublishSubject.create();
+  private final PublishSubject<ChooseVehicleListItem> publishSubject = PublishSubject.create();
 
   ChooseVehicleAdapter(@NonNull List<ChooseVehicleListItem> list) {
     this.list = list;
   }
 
   @NonNull
-  Observable<Integer> getSelectionCallbacks() {
+  Observable<ChooseVehicleListItem> getSelectionCallbacks() {
     return publishSubject;
   }
 
@@ -48,7 +48,7 @@ class ChooseVehicleAdapter extends RecyclerView.Adapter<ChooseVehicleViewHolder>
     holder.labelText.setText(chooseVehicleListItem.getLabel());
     holder.itemView.setOnClickListener(
         chooseVehicleListItem.isSelectable() ?
-            v -> publishSubject.onNext(list.indexOf(chooseVehicleListItem)) : null
+            v -> publishSubject.onNext(chooseVehicleListItem) : null
     );
   }
 

@@ -11,14 +11,21 @@ public class ApiVehicleOptionItem {
   @SerializedName("id")
   private long id;
   @Nullable
+  @SerializedName("name")
+  private String name;
+  @SerializedName("numeric")
+  private boolean numeric;
+  @SerializedName("dynamic")
+  private boolean dynamic;
+  @Nullable
   @SerializedName("value")
   private String value;
   @Nullable
-  @SerializedName("dictionary")
-  private ApiVehicleOptionItemLimits limits;
+  @SerializedName("min")
+  private Integer minValue;
   @Nullable
-  @SerializedName("vehicleOption")
-  private ApiVehicleOption option;
+  @SerializedName("max")
+  private Integer maxValue;
 
   /**
    * Конструктор без параметров желателен для безопасной работы Gson.
@@ -27,17 +34,32 @@ public class ApiVehicleOptionItem {
   public ApiVehicleOptionItem() {
   }
 
-  public ApiVehicleOptionItem(long id, @Nullable String value,
-      @Nullable ApiVehicleOptionItemLimits limits,
-      @Nullable ApiVehicleOption option) {
+  public ApiVehicleOptionItem(long id, @Nullable String name, boolean numeric, boolean dynamic,
+      @Nullable String value, @Nullable Integer minValue, @Nullable Integer maxValue) {
     this.id = id;
+    this.name = name;
+    this.numeric = numeric;
+    this.dynamic = dynamic;
     this.value = value;
-    this.limits = limits;
-    this.option = option;
+    this.minValue = minValue;
+    this.maxValue = maxValue;
   }
 
   public long getId() {
     return id;
+  }
+
+  @Nullable
+  public String getName() {
+    return name;
+  }
+
+  public boolean isNumeric() {
+    return numeric;
+  }
+
+  public boolean isDynamic() {
+    return dynamic;
   }
 
   @Nullable
@@ -46,22 +68,25 @@ public class ApiVehicleOptionItem {
   }
 
   @Nullable
-  public ApiVehicleOptionItemLimits getLimits() {
-    return limits;
+  public Integer getMinValue() {
+    return minValue;
   }
 
   @Nullable
-  public ApiVehicleOption getOption() {
-    return option;
+  public Integer getMaxValue() {
+    return maxValue;
   }
 
   @Override
   public String toString() {
     return "ApiVehicleOptionItem{" +
         "id=" + id +
+        ", name='" + name + '\'' +
+        ", numeric=" + numeric +
+        ", dynamic=" + dynamic +
         ", value='" + value + '\'' +
-        ", limits=" + limits +
-        ", option=" + option +
+        ", minValue=" + minValue +
+        ", maxValue=" + maxValue +
         '}';
   }
 
@@ -80,21 +105,33 @@ public class ApiVehicleOptionItem {
     if (id != that.id) {
       return false;
     }
+    if (numeric != that.numeric) {
+      return false;
+    }
+    if (dynamic != that.dynamic) {
+      return false;
+    }
+    if (name != null ? !name.equals(that.name) : that.name != null) {
+      return false;
+    }
     if (value != null ? !value.equals(that.value) : that.value != null) {
       return false;
     }
-    if (limits != null ? !limits.equals(that.limits) : that.limits != null) {
+    if (minValue != null ? !minValue.equals(that.minValue) : that.minValue != null) {
       return false;
     }
-    return option != null ? option.equals(that.option) : that.option == null;
+    return maxValue != null ? maxValue.equals(that.maxValue) : that.maxValue == null;
   }
 
   @Override
   public int hashCode() {
     int result = (int) (id ^ (id >>> 32));
+    result = 31 * result + (name != null ? name.hashCode() : 0);
+    result = 31 * result + (numeric ? 1 : 0);
+    result = 31 * result + (dynamic ? 1 : 0);
     result = 31 * result + (value != null ? value.hashCode() : 0);
-    result = 31 * result + (limits != null ? limits.hashCode() : 0);
-    result = 31 * result + (option != null ? option.hashCode() : 0);
+    result = 31 * result + (minValue != null ? minValue.hashCode() : 0);
+    result = 31 * result + (maxValue != null ? maxValue.hashCode() : 0);
     return result;
   }
 }

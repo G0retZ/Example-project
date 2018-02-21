@@ -12,15 +12,17 @@ import com.fasten.executor_driver.interactor.auth.SmsUseCase;
 import com.fasten.executor_driver.interactor.auth.SmsUseCaseImpl;
 import com.fasten.executor_driver.interactor.map.HeatMapUseCase;
 import com.fasten.executor_driver.interactor.map.HeatMapUseCaseImpl;
-import com.fasten.executor_driver.interactor.online.OnlineUseCase;
-import com.fasten.executor_driver.interactor.online.OnlineUseCaseImpl;
+import com.fasten.executor_driver.interactor.vehicle.VehiclesUseCase;
+import com.fasten.executor_driver.interactor.vehicle.VehiclesUseCaseImpl;
+import com.fasten.executor_driver.interactor.vehicle.VehicleChoiceSharer;
 import com.fasten.executor_driver.interactor.vehicle.VehicleChoiceUseCase;
 import com.fasten.executor_driver.interactor.vehicle.VehicleChoiceUseCaseImpl;
 import com.fasten.executor_driver.interactor.vehicle.VehicleOptionsUseCase;
 import com.fasten.executor_driver.interactor.vehicle.VehicleOptionsUseCaseImpl;
-import com.fasten.executor_driver.interactor.vehicle.VehicleSharer;
+import com.fasten.executor_driver.interactor.vehicle.VehiclesSharer;
 import dagger.Module;
 import dagger.Provides;
+import java.util.List;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
@@ -48,7 +50,7 @@ class UseCaseModule {
   }
 
   @Provides
-  OnlineUseCase provideOnlineUseCase(OnlineUseCaseImpl onlineUseCase) {
+  VehiclesUseCase provideOnlineUseCase(VehiclesUseCaseImpl onlineUseCase) {
     return onlineUseCase;
   }
 
@@ -74,8 +76,15 @@ class UseCaseModule {
 
   @Provides
   @Singleton
-  @Named("vehicleSharer")
-  DataSharer<Vehicle> provideVehicleSharer(@NonNull VehicleSharer vehicleSharer) {
-    return vehicleSharer;
+  @Named("vehiclesSharer")
+  DataSharer<List<Vehicle>> provideVehiclesSharer(@NonNull VehiclesSharer vehiclesSharer) {
+    return vehiclesSharer;
+  }
+
+  @Provides
+  @Singleton
+  @Named("vehicleChoiceSharer")
+  DataSharer<Vehicle> provideVehicleChoiceSharer(@NonNull VehicleChoiceSharer vehicleChoiceSharer) {
+    return vehicleChoiceSharer;
   }
 }

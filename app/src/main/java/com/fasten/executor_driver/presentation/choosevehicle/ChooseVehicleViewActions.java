@@ -26,7 +26,7 @@ public interface ChooseVehicleViewActions {
   /**
    * Передать список ТС.
    *
-   * @param chooseVehicleListItems - список ТС.
+   * @param chooseVehicleListItems - список ТС
    */
   void setVehicleListItems(@NonNull List<ChooseVehicleListItem> chooseVehicleListItems);
 
@@ -40,7 +40,7 @@ public interface ChooseVehicleViewActions {
   /**
    * Задать сообщение об ошибке.
    *
-   * @param messageId - ИД ресурса сообщения об ошибке.
+   * @param messageId - ИД ресурса сообщения об ошибке
    */
   void setVehicleListErrorMessage(@StringRes int messageId);
 }

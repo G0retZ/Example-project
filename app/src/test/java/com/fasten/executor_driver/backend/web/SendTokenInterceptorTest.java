@@ -35,7 +35,7 @@ public class SendTokenInterceptorTest {
   }
 
   /**
-   * Должен запросить у хранителя токенов сохраненный токен
+   * Должен запросить у хранителя токенов сохраненный токен.
    *
    * @throws Exception error
    */
@@ -56,7 +56,7 @@ public class SendTokenInterceptorTest {
   }
 
   /**
-   * Должен не подсовывать нулевой токен
+   * Должен не подсовывать нулевой токен.
    *
    * @throws Exception error
    */
@@ -74,7 +74,7 @@ public class SendTokenInterceptorTest {
   }
 
   /**
-   * Должен не подсунуть токен
+   * Должен не подсунуть токен.
    *
    * @throws Exception error
    */

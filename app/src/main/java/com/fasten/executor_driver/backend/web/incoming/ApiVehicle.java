@@ -12,21 +12,21 @@ public class ApiVehicle {
   @SerializedName("id")
   private long id;
   @Nullable
-  @SerializedName("mark")
-  private ApiParam mark;
+  @SerializedName("markName")
+  private String markName;
   @Nullable
-  @SerializedName("model")
-  private ApiParam model;
+  @SerializedName("modelName")
+  private String modelName;
   @Nullable
   @SerializedName("licensePlate")
   private String licensePlate;
   @Nullable
   @SerializedName("color")
-  private ApiParam color;
+  private String color;
   @SuppressWarnings("SpellCheckingInspection")
-  @SerializedName("buzy")
+  @SerializedName("busy")
   private boolean busy;
-  @SerializedName("vehicleOptionItems")
+  @SerializedName("options")
   private List<ApiVehicleOptionItem> vehicleOptionItems;
 
   /**
@@ -36,13 +36,13 @@ public class ApiVehicle {
   public ApiVehicle() {
   }
 
-  public ApiVehicle(long id, @Nullable ApiParam mark,
-      @Nullable ApiParam model, @Nullable String licensePlate,
-      @Nullable ApiParam color, boolean busy,
+  public ApiVehicle(long id, @Nullable String markName,
+      @Nullable String modelName, @Nullable String licensePlate,
+      @Nullable String color, boolean busy,
       List<ApiVehicleOptionItem> vehicleOptionItems) {
     this.id = id;
-    this.mark = mark;
-    this.model = model;
+    this.markName = markName;
+    this.modelName = modelName;
     this.licensePlate = licensePlate;
     this.color = color;
     this.busy = busy;
@@ -54,13 +54,13 @@ public class ApiVehicle {
   }
 
   @Nullable
-  public ApiParam getMark() {
-    return mark;
+  public String getMarkName() {
+    return markName;
   }
 
   @Nullable
-  public ApiParam getModel() {
-    return model;
+  public String getModelName() {
+    return modelName;
   }
 
   @Nullable
@@ -69,7 +69,7 @@ public class ApiVehicle {
   }
 
   @Nullable
-  public ApiParam getColor() {
+  public String getColor() {
     return color;
   }
 
@@ -85,10 +85,10 @@ public class ApiVehicle {
   public String toString() {
     return "ApiVehicle{" +
         "id=" + id +
-        ", mark=" + mark +
-        ", model=" + model +
+        ", markName='" + markName + '\'' +
+        ", modelName='" + modelName + '\'' +
         ", licensePlate='" + licensePlate + '\'' +
-        ", color=" + color +
+        ", color='" + color + '\'' +
         ", busy=" + busy +
         ", vehicleOptionItems=" + vehicleOptionItems +
         '}';
@@ -112,10 +112,10 @@ public class ApiVehicle {
     if (busy != that.busy) {
       return false;
     }
-    if (mark != null ? !mark.equals(that.mark) : that.mark != null) {
+    if (markName != null ? !markName.equals(that.markName) : that.markName != null) {
       return false;
     }
-    if (model != null ? !model.equals(that.model) : that.model != null) {
+    if (modelName != null ? !modelName.equals(that.modelName) : that.modelName != null) {
       return false;
     }
     if (licensePlate != null ? !licensePlate.equals(that.licensePlate)
@@ -132,8 +132,8 @@ public class ApiVehicle {
   @Override
   public int hashCode() {
     int result = (int) (id ^ (id >>> 32));
-    result = 31 * result + (mark != null ? mark.hashCode() : 0);
-    result = 31 * result + (model != null ? model.hashCode() : 0);
+    result = 31 * result + (markName != null ? markName.hashCode() : 0);
+    result = 31 * result + (modelName != null ? modelName.hashCode() : 0);
     result = 31 * result + (licensePlate != null ? licensePlate.hashCode() : 0);
     result = 31 * result + (color != null ? color.hashCode() : 0);
     result = 31 * result + (busy ? 1 : 0);

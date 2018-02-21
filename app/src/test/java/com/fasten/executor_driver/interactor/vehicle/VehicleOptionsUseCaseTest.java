@@ -35,13 +35,13 @@ public class VehicleOptionsUseCaseTest {
   private VehicleOptionsGateway gateway;
 
   @Mock
-  private DataSharer<Vehicle> vehicleSharer;
+  private DataSharer<Vehicle> vehicleChoiceSharer;
 
   @Before
   public void setUp() throws Exception {
-    vehicleOptionsUseCase = new VehicleOptionsUseCaseImpl(gateway, vehicleSharer);
+    vehicleOptionsUseCase = new VehicleOptionsUseCaseImpl(gateway, vehicleChoiceSharer);
     when(gateway.sendVehicleOptions(any(Vehicle.class))).thenReturn(Completable.never());
-    when(vehicleSharer.get()).thenReturn(Observable.never());
+    when(vehicleChoiceSharer.get()).thenReturn(Observable.never());
   }
 
   /* Проверяем работу с публикатором ТС */
@@ -49,7 +49,7 @@ public class VehicleOptionsUseCaseTest {
   /**
    * Должен запросить у публикатора выбранную ТС.
    *
-   * @throws Exception error.
+   * @throws Exception error
    */
   @Test
   public void askDataSharerForSelectedVehicle() throws Exception {
@@ -57,7 +57,7 @@ public class VehicleOptionsUseCaseTest {
     vehicleOptionsUseCase.getVehicleOptions().test();
 
     // Результат:
-    verify(vehicleSharer, only()).get();
+    verify(vehicleChoiceSharer, only()).get();
   }
 
   /* Проверяем ответы на запрос выбранного ТС */
@@ -65,7 +65,7 @@ public class VehicleOptionsUseCaseTest {
   /**
    * Должен отвечать успехом и только динамическими опциями.
    *
-   * @throws Exception error.
+   * @throws Exception error
    */
   @SuppressWarnings({"unchecked"})
   @Test
@@ -93,7 +93,7 @@ public class VehicleOptionsUseCaseTest {
         new VehicleOptionBoolean(2, "name2", true, false),
         new VehicleOptionBoolean(3, "name3", false, true)
     );
-    when(vehicleSharer.get()).thenReturn(Observable.fromIterable(vehicles));
+    when(vehicleChoiceSharer.get()).thenReturn(Observable.fromIterable(vehicles));
 
     // Действие и Результат:
     vehicleOptionsUseCase.getVehicleOptions().test().assertValues(
@@ -117,7 +117,7 @@ public class VehicleOptionsUseCaseTest {
   /**
    * Должен отвеетить ошибкой отсутствия доступных для изменений опций ТС.
    *
-   * @throws Exception error.
+   * @throws Exception error
    */
   @SuppressWarnings({"unchecked"})
   @Test
@@ -145,7 +145,7 @@ public class VehicleOptionsUseCaseTest {
         new VehicleOptionBoolean(2, "name2", true, false),
         new VehicleOptionBoolean(3, "name3", false, true)
     );
-    when(vehicleSharer.get()).thenReturn(Observable.fromIterable(vehicles));
+    when(vehicleChoiceSharer.get()).thenReturn(Observable.fromIterable(vehicles));
 
     // Действие
     TestObserver<List<VehicleOption>> testObserver =
@@ -185,7 +185,7 @@ public class VehicleOptionsUseCaseTest {
     ).test();
 
     // Результат:
-    verifyZeroInteractions(vehicleSharer);
+    verifyZeroInteractions(vehicleChoiceSharer);
   }
 
   /**
@@ -203,7 +203,7 @@ public class VehicleOptionsUseCaseTest {
         new VehicleOptionBoolean(2, "name2", true, false),
         new VehicleOptionBoolean(3, "name3", false, true)
     );
-    when(vehicleSharer.get()).thenReturn(Observable.just(vehicle));
+    when(vehicleChoiceSharer.get()).thenReturn(Observable.just(vehicle));
 
     // Действие:
     vehicleOptionsUseCase.getVehicleOptions().test();
@@ -258,7 +258,7 @@ public class VehicleOptionsUseCaseTest {
         new VehicleOptionBoolean(2, "name2", true, false),
         new VehicleOptionBoolean(3, "name3", false, true)
     );
-    when(vehicleSharer.get()).thenReturn(Observable.just(vehicle));
+    when(vehicleChoiceSharer.get()).thenReturn(Observable.just(vehicle));
     when(gateway.sendVehicleOptions(any(Vehicle.class)))
         .thenReturn(Completable.error(NoNetworkException::new));
 
@@ -290,7 +290,7 @@ public class VehicleOptionsUseCaseTest {
         new VehicleOptionBoolean(2, "name2", true, false),
         new VehicleOptionBoolean(3, "name3", false, true)
     );
-    when(vehicleSharer.get()).thenReturn(Observable.just(vehicle));
+    when(vehicleChoiceSharer.get()).thenReturn(Observable.just(vehicle));
     when(gateway.sendVehicleOptions(any(Vehicle.class))).thenReturn(Completable.complete());
 
     // Действие:

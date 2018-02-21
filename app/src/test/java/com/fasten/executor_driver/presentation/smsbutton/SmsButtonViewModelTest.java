@@ -60,7 +60,7 @@ public class SmsButtonViewModelTest {
    * Не должен просить юзкейс отправить СМС с кодом на номер, если предыдущий запрос еще не
    * завершился.
    *
-   * @throws Exception error.
+   * @throws Exception error
    */
   @Test
   public void DoNotTouchSmsUseCaseToSendMeCodeUntilRequestFinished() throws Exception {
@@ -77,7 +77,7 @@ public class SmsButtonViewModelTest {
    * Не должен просить юзкейс отправить СМС с кодом на номер, если предыдущий запрос еще не
    * завершился.
    *
-   * @throws Exception error.
+   * @throws Exception error
    */
   @Test
   public void DoNotTouchSmsUseCaseToSendMeCodeUntilTimeout() throws Exception {
@@ -105,7 +105,7 @@ public class SmsButtonViewModelTest {
   /**
    * Должен попросить юзкейс отправить СМС с кодом на номер.
    *
-   * @throws Exception error.
+   * @throws Exception error
    */
   @Test
   public void askSmsUseCaseToSendMeCode() throws Exception {

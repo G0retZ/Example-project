@@ -5,7 +5,7 @@ import android.support.annotation.Nullable;
 import com.fasten.executor_driver.presentation.ViewState;
 
 /**
- * Состояние вида карты с тепловой картой
+ * Состояние вида карты с тепловой картой.
  */
 public final class MapViewState implements ViewState<MapViewActions> {
 

@@ -10,7 +10,7 @@ public interface ChooseVehicleViewModel extends ViewModel<ChooseVehicleViewActio
   /**
    * Передает позицию выбранного исполнителем ТС в списке отображенных ТС.
    *
-   * @param index - позиция ТС в списке.
+   * @param chooseVehicleListItem - эелемент списка ТС
    */
-  void setSelection(int index);
+  void selectItem(ChooseVehicleListItem chooseVehicleListItem);
 }

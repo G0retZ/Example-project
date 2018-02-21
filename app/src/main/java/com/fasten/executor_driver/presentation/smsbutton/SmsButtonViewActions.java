@@ -26,7 +26,7 @@ public interface SmsButtonViewActions {
   /**
    * Показать ошибку.
    *
-   * @param error - ошибка.
+   * @param error - ошибка
    */
   void showSmsSendError(@Nullable Throwable error);
 

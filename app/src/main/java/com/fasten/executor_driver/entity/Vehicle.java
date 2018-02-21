@@ -38,7 +38,7 @@ public class Vehicle {
   /**
    * Создает копию ТС но без опций.
    *
-   * @param vehicle исходный объект ТС.
+   * @param vehicle исходный объект ТС
    */
   public Vehicle(Vehicle vehicle) {
     this(vehicle.id, vehicle.manufacturer, vehicle.model, vehicle.color, vehicle.licensePlate,

@@ -8,7 +8,7 @@ import okhttp3.Interceptor;
 import okhttp3.Response;
 
 /**
- * Перехватчик для сохранения полученного токена из заголовка
+ * Перехватчик для сохранения полученного токена из заголовка.
  */
 public class ReceiveTokenInterceptor implements Interceptor {
 

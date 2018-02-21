@@ -1,14 +1,11 @@
 package com.fasten.executor_driver.entity;
 
-import java.io.IOException;
-
 /**
  * Ошибка: водитель заблокирован.
  */
-public class DriverBlockedException extends IOException {
+public class DriverBlockedException extends Exception {
 
-  @SuppressWarnings("SameParameterValue")
-  public DriverBlockedException(String message) {
-    super(message);
+  public DriverBlockedException() {
+    super();
   }
 }

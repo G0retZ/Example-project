@@ -102,7 +102,7 @@ public class ChooseVehicleFragment extends BaseFragment implements ChooseVehicle
     if (disposable != null) {
       disposable.dispose();
     }
-    disposable = adapter.getSelectionCallbacks().subscribe(chooseVehicleViewModel::setSelection);
+    disposable = adapter.getSelectionCallbacks().subscribe(chooseVehicleViewModel::selectItem);
     recyclerView.setAdapter(adapter);
   }
 

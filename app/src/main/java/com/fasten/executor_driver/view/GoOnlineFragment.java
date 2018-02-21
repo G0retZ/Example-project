@@ -58,6 +58,11 @@ public class GoOnlineFragment extends BaseFragment implements OnlineButtonViewAc
     View view = inflater.inflate(R.layout.fragment_go_online, container, false);
     goOnlineRequest = view.findViewById(R.id.goOnline);
     goOnlineRequest.setOnClickListener(v -> onlineButtonViewModel.goOnline());
+    onlineButtonViewModel.getNavigationLiveData().observe(this, destination -> {
+      if (destination != null) {
+        navigate(destination);
+      }
+    });
     onlineButtonViewModel.getViewStateLiveData().observe(this, viewState -> {
       if (viewState != null) {
         viewState.apply(this);
@@ -73,11 +78,6 @@ public class GoOnlineFragment extends BaseFragment implements OnlineButtonViewAc
   }
 
   @Override
-  public void goChooseVehicle() {
-    navigate("chooseVehicle");
-  }
-
-  @Override
   public void enableGoOnlineButton(boolean enable) {
     goOnlineRequest.setEnabled(enable);
   }
@@ -90,8 +90,10 @@ public class GoOnlineFragment extends BaseFragment implements OnlineButtonViewAc
     new Builder(context)
         .setTitle(R.string.error)
         .setMessage(error.getMessage())
-        .setPositiveButton(getString(android.R.string.ok), null)
-        .setNegativeButton(getString(android.R.string.cancel), null)
+        .setPositiveButton(getString(android.R.string.ok),
+            (dialog, which) -> onlineButtonViewModel.consumeError())
+        .setNegativeButton(getString(android.R.string.cancel),
+            (dialog, which) -> onlineButtonViewModel.consumeError())
         .create()
         .show();
   }

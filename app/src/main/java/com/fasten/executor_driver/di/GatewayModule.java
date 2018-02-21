@@ -6,22 +6,21 @@ import com.fasten.executor_driver.backend.web.incoming.ApiVehicle;
 import com.fasten.executor_driver.backend.web.incoming.ApiVehicleOptionItem;
 import com.fasten.executor_driver.entity.Vehicle;
 import com.fasten.executor_driver.entity.VehicleOption;
+import com.fasten.executor_driver.gateway.ErrorMapper;
 import com.fasten.executor_driver.gateway.HeatMapGatewayImpl;
 import com.fasten.executor_driver.gateway.Mapper;
-import com.fasten.executor_driver.gateway.OnlineGatewayImpl;
 import com.fasten.executor_driver.gateway.PasswordGatewayImpl;
 import com.fasten.executor_driver.gateway.SmsGatewayImpl;
 import com.fasten.executor_driver.gateway.TokenKeeperImpl;
 import com.fasten.executor_driver.gateway.VehicleApiMapper;
-import com.fasten.executor_driver.gateway.VehicleChoiceGatewayImpl;
 import com.fasten.executor_driver.gateway.VehicleOptionApiMapper;
 import com.fasten.executor_driver.gateway.VehicleOptionsGatewayImpl;
+import com.fasten.executor_driver.gateway.VehiclesGatewayImpl;
 import com.fasten.executor_driver.interactor.auth.PasswordGateway;
 import com.fasten.executor_driver.interactor.auth.SmsGateway;
 import com.fasten.executor_driver.interactor.map.HeatMapGateway;
-import com.fasten.executor_driver.interactor.online.OnlineGateway;
-import com.fasten.executor_driver.interactor.vehicle.VehicleChoiceGateway;
 import com.fasten.executor_driver.interactor.vehicle.VehicleOptionsGateway;
+import com.fasten.executor_driver.interactor.vehicle.VehiclesGateway;
 import dagger.Module;
 import dagger.Provides;
 import javax.inject.Named;
@@ -51,12 +50,7 @@ class GatewayModule {
   }
 
   @Provides
-  OnlineGateway provideOnlineGateway(OnlineGatewayImpl onlineGateway) {
-    return onlineGateway;
-  }
-
-  @Provides
-  VehicleChoiceGateway provideVehicleChoiceGateway(VehicleChoiceGatewayImpl vehicleChoiceGateway) {
+  VehiclesGateway provideVehicleChoiceGateway(VehiclesGatewayImpl vehicleChoiceGateway) {
     return vehicleChoiceGateway;
   }
 
@@ -79,5 +73,11 @@ class GatewayModule {
   @Named("vehicleMapper")
   Mapper<ApiVehicle, Vehicle> provideVehicleApiMapper(VehicleApiMapper vehicleApiMapper) {
     return vehicleApiMapper;
+  }
+
+  @Provides
+  @Named("errorMapper")
+  Mapper<Throwable, Throwable> provideErrorMapper(ErrorMapper errorMapper) {
+    return errorMapper;
   }
 }

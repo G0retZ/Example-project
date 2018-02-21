@@ -62,7 +62,7 @@ public class CodeViewModelTest {
   /**
    * Не должен просить юзкейс авторизироваться, если предыдущий запрос еще не завершился.
    *
-   * @throws Exception error.
+   * @throws Exception error
    */
   @Test
   public void DoNotAskPasswordUseCaseToAuthorize() throws Exception {
@@ -78,7 +78,7 @@ public class CodeViewModelTest {
   /**
    * Должен попросить юзкейс авторизироваться.
    *
-   * @throws Exception error.
+   * @throws Exception error
    */
   @Test
   public void askPasswordUseCaseToAuthorize() throws Exception {
@@ -103,7 +103,7 @@ public class CodeViewModelTest {
   /**
    * Должен вернуть состояние вида "Начало" изначально.
    *
-   * @throws Exception error.
+   * @throws Exception error
    */
   @Test
   public void setInitialViewStateToLiveData() throws Exception {
@@ -119,7 +119,7 @@ public class CodeViewModelTest {
   }
 
   /**
-   * Не должен менять состояние вида, если код не валидируется
+   * Не должен менять состояние вида, если код не валидируется.
    *
    * @throws Exception error
    */
@@ -143,7 +143,7 @@ public class CodeViewModelTest {
   }
 
   /**
-   * Должен вернуть состояние вида "В процессе" после валидации
+   * Должен вернуть состояние вида "В процессе" после валидации.
    *
    * @throws Exception error
    */
@@ -172,7 +172,7 @@ public class CodeViewModelTest {
   }
 
   /**
-   * Должен вернуть состояние вида "Ошибка"
+   * Должен вернуть состояние вида "Ошибка".
    *
    * @throws Exception error
    */
@@ -201,7 +201,7 @@ public class CodeViewModelTest {
   }
 
   /**
-   * Должен вернуть вернуть начальное состояние вида после "Ошибка"
+   * Должен вернуть вернуть начальное состояние вида после "Ошибка".
    *
    * @throws Exception error
    */
@@ -234,7 +234,7 @@ public class CodeViewModelTest {
   }
 
   /**
-   * Должен вернуть состояние вида "Успешно"
+   * Должен вернуть состояние вида "Успешно".
    *
    * @throws Exception error
    */

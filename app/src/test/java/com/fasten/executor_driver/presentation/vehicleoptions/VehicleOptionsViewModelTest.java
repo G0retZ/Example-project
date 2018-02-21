@@ -69,7 +69,7 @@ public class VehicleOptionsViewModelTest {
   /**
    * Должен просить юзкейс получить список опций ТС, при первой и только при первой подписке.
    *
-   * @throws Exception error.
+   * @throws Exception error
    */
   @Test
   public void askVehicleOptionsUseCaseForOptionsInitially() throws Exception {
@@ -85,7 +85,7 @@ public class VehicleOptionsViewModelTest {
   /**
    * Должен попросить юзкейс занять ТС с указанными настройкам.
    *
-   * @throws Exception error.
+   * @throws Exception error
    */
   @Test
   public void askVehicleOptionsUseCaseToOccupyVehicleWithOptions() throws Exception {
@@ -150,7 +150,7 @@ public class VehicleOptionsViewModelTest {
   /**
    * Должен автоматом попросить юзкейс занять ТС по без настроек.
    *
-   * @throws Exception error.
+   * @throws Exception error
    */
   @Test
   public void askVehicleOptionsUseCaseToOccupyVehicleWithoutOptions() throws Exception {
@@ -170,7 +170,7 @@ public class VehicleOptionsViewModelTest {
   /**
    * Не должен трогать юзкейс, если предыдущий запрос занятия ТС еще не завершился.
    *
-   * @throws Exception error.
+   * @throws Exception error
    */
   @Test
   public void DoNotTouchVehicleOptionsUseCaseDuringVehicleOccupying() throws Exception {
@@ -221,7 +221,7 @@ public class VehicleOptionsViewModelTest {
   /**
    * Должен вернуть исходное состояние вида изначально.
    *
-   * @throws Exception error.
+   * @throws Exception error
    */
   @Test
   public void setInitialViewStateToLiveData() throws Exception {
@@ -364,7 +364,7 @@ public class VehicleOptionsViewModelTest {
   }
 
   /**
-   * Должен вернуть состояние вида "Ошибка" сети
+   * Должен вернуть состояние вида "Ошибка" сети.
    *
    * @throws Exception error
    */
@@ -413,7 +413,7 @@ public class VehicleOptionsViewModelTest {
 
   /**
    * Должен вернуть "перейти к ожиданию заказов автоматически" если была ошибка "нет опций для
-   * изменений"
+   * изменений".
    *
    * @throws Exception error
    */

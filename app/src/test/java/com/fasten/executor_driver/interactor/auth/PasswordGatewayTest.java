@@ -38,7 +38,7 @@ public class PasswordGatewayTest {
   /* Проверяем работу с АПИ */
 
   /**
-   * Должен запросить у АПИ completable на вход с заданными параметрами
+   * Должен запросить у АПИ completable на вход с заданными параметрами.
    *
    * @throws Exception error
    */
@@ -56,7 +56,7 @@ public class PasswordGatewayTest {
   /* Проверяем ответы на АПИ */
 
   /**
-   * Должен ответить ошибкой сети
+   * Должен ответить ошибкой сети.
    *
    * @throws Exception error
    */
@@ -72,7 +72,7 @@ public class PasswordGatewayTest {
   }
 
   /**
-   * Должен ответить успехом
+   * Должен ответить успехом.
    *
    * @throws Exception error
    */

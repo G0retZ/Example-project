@@ -15,7 +15,7 @@ public interface CodeViewActions {
   /**
    * Показать ошибку.
    *
-   * @param error - ошибка.
+   * @param error - ошибка
    */
   void showCodeCheckError(@Nullable Throwable error);
 

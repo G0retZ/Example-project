@@ -17,24 +17,16 @@ public class ApiVehicleTest {
   public void setUp() throws Exception {
     apiVehicle = new ApiVehicle(
         2190,
-        new ApiParam("mark"),
-        new ApiParam("model"),
+        "mark",
+        "model",
         "plate",
-        new ApiParam("color"),
+        "color",
         false,
         Arrays.asList(
-            new ApiVehicleOptionItem(324, "value1",
-                new ApiVehicleOptionItemLimits(-5, 123),
-                new ApiVehicleOption("option1", false, true)),
-            new ApiVehicleOptionItem(31, "value2",
-                new ApiVehicleOptionItemLimits(50, 2100),
-                new ApiVehicleOption("option2", true, true)),
-            new ApiVehicleOptionItem(523, "value3",
-                null,
-                new ApiVehicleOption("option3", true, false)),
-            new ApiVehicleOptionItem(42, "value4",
-                null,
-                new ApiVehicleOption("option4", false, false))
+            new ApiVehicleOptionItem(324, "option1", true, false, "value1", -5, 123),
+            new ApiVehicleOptionItem(31, "option2", true, true, "value2", 50, 2100),
+            new ApiVehicleOptionItem(523, "option3", false, true, "value3", null, null),
+            new ApiVehicleOptionItem(42, "option4", false, false, "value4", null, null)
         )
     );
   }
@@ -42,24 +34,16 @@ public class ApiVehicleTest {
   @Test
   public void testConstructor() throws Exception {
     assertEquals(apiVehicle.getId(), 2190);
-    assertEquals(apiVehicle.getMark(), new ApiParam("mark"));
-    assertEquals(apiVehicle.getModel(), new ApiParam("model"));
+    assertEquals(apiVehicle.getMarkName(), "mark");
+    assertEquals(apiVehicle.getModelName(), "model");
     assertEquals(apiVehicle.getLicensePlate(), "plate");
-    assertEquals(apiVehicle.getColor(), new ApiParam("color"));
+    assertEquals(apiVehicle.getColor(), "color");
     assertFalse(apiVehicle.isBusy());
     assertEquals(apiVehicle.getVehicleOptionItems(), Arrays.asList(
-        new ApiVehicleOptionItem(324, "value1",
-            new ApiVehicleOptionItemLimits(-5, 123),
-            new ApiVehicleOption("option1", false, true)),
-        new ApiVehicleOptionItem(31, "value2",
-            new ApiVehicleOptionItemLimits(50, 2100),
-            new ApiVehicleOption("option2", true, true)),
-        new ApiVehicleOptionItem(523, "value3",
-            null,
-            new ApiVehicleOption("option3", true, false)),
-        new ApiVehicleOptionItem(42, "value4",
-            null,
-            new ApiVehicleOption("option4", false, false))
+        new ApiVehicleOptionItem(324, "option1", true, false, "value1", -5, 123),
+        new ApiVehicleOptionItem(31, "option2", true, true, "value2", 50, 2100),
+        new ApiVehicleOptionItem(523, "option3", false, true, "value3", null, null),
+        new ApiVehicleOptionItem(42, "option4", false, false, "value4", null, null)
     ));
   }
 
@@ -69,48 +53,32 @@ public class ApiVehicleTest {
     assertEquals(apiVehicle,
         new ApiVehicle(
             2190,
-            new ApiParam("mark"),
-            new ApiParam("model"),
+            "mark",
+            "model",
             "plate",
-            new ApiParam("color"),
+            "color",
             false,
             Arrays.asList(
-                new ApiVehicleOptionItem(324, "value1",
-                    new ApiVehicleOptionItemLimits(-5, 123),
-                    new ApiVehicleOption("option1", false, true)),
-                new ApiVehicleOptionItem(31, "value2",
-                    new ApiVehicleOptionItemLimits(50, 2100),
-                    new ApiVehicleOption("option2", true, true)),
-                new ApiVehicleOptionItem(523, "value3",
-                    null,
-                    new ApiVehicleOption("option3", true, false)),
-                new ApiVehicleOptionItem(42, "value4",
-                    null,
-                    new ApiVehicleOption("option4", false, false))
+                new ApiVehicleOptionItem(324, "option1", true, false, "value1", -5, 123),
+                new ApiVehicleOptionItem(31, "option2", true, true, "value2", 50, 2100),
+                new ApiVehicleOptionItem(523, "option3", false, true, "value3", null, null),
+                new ApiVehicleOptionItem(42, "option4", false, false, "value4", null, null)
             )
         )
     );
     assertNotEquals(apiVehicle,
         new ApiVehicle(
             210,
-            new ApiParam("mark"),
-            new ApiParam("model"),
+            "mark",
+            "model",
             "plate",
-            new ApiParam("color"),
+            "color",
             false,
             Arrays.asList(
-                new ApiVehicleOptionItem(324, "value1",
-                    new ApiVehicleOptionItemLimits(-5, 123),
-                    new ApiVehicleOption("option1", false, true)),
-                new ApiVehicleOptionItem(31, "value2",
-                    new ApiVehicleOptionItemLimits(50, 2100),
-                    new ApiVehicleOption("option2", true, true)),
-                new ApiVehicleOptionItem(523, "value3",
-                    null,
-                    new ApiVehicleOption("option3", true, false)),
-                new ApiVehicleOptionItem(42, "value4",
-                    null,
-                    new ApiVehicleOption("option4", false, false))
+                new ApiVehicleOptionItem(324, "option1", true, false, "value1", -5, 123),
+                new ApiVehicleOptionItem(31, "option2", true, true, "value2", 50, 2100),
+                new ApiVehicleOptionItem(523, "option3", false, true, "value3", null, null),
+                new ApiVehicleOptionItem(42, "option4", false, false, "value4", null, null)
             )
         )
     );
@@ -118,201 +86,153 @@ public class ApiVehicleTest {
         new ApiVehicle(
             2190,
             null,
-            new ApiParam("model"),
+            "model",
             "plate",
-            new ApiParam("color"),
+            "color",
             false,
             Arrays.asList(
-                new ApiVehicleOptionItem(324, "value1",
-                    new ApiVehicleOptionItemLimits(-5, 123),
-                    new ApiVehicleOption("option1", false, true)),
-                new ApiVehicleOptionItem(31, "value2",
-                    new ApiVehicleOptionItemLimits(50, 2100),
-                    new ApiVehicleOption("option2", true, true)),
-                new ApiVehicleOptionItem(523, "value3",
-                    null,
-                    new ApiVehicleOption("option3", true, false)),
-                new ApiVehicleOptionItem(42, "value4",
-                    null,
-                    new ApiVehicleOption("option4", false, false))
+                new ApiVehicleOptionItem(324, "option1", true, false, "value1", -5, 123),
+                new ApiVehicleOptionItem(31, "option2", true, true, "value2", 50, 2100),
+                new ApiVehicleOptionItem(523, "option3", false, true, "value3", null, null),
+                new ApiVehicleOptionItem(42, "option4", false, false, "value4", null, null)
             )
         )
     );
     assertNotEquals(apiVehicle,
         new ApiVehicle(
             2190,
-            new ApiParam("marks"),
-            new ApiParam("model"),
+            "marks",
+            "model",
             "plate",
-            new ApiParam("color"),
+            "color",
             false,
             Arrays.asList(
-                new ApiVehicleOptionItem(324, "value1",
-                    new ApiVehicleOptionItemLimits(-5, 123),
-                    new ApiVehicleOption("option1", false, true)),
-                new ApiVehicleOptionItem(31, "value2",
-                    new ApiVehicleOptionItemLimits(50, 2100),
-                    new ApiVehicleOption("option2", true, true)),
-                new ApiVehicleOptionItem(523, "value3",
-                    null,
-                    new ApiVehicleOption("option3", true, false)),
-                new ApiVehicleOptionItem(42, "value4",
-                    null,
-                    new ApiVehicleOption("option4", false, false))
+                new ApiVehicleOptionItem(324, "option1", true, false, "value1", -5, 123),
+                new ApiVehicleOptionItem(31, "option2", true, true, "value2", 50, 2100),
+                new ApiVehicleOptionItem(523, "option3", false, true, "value3", null, null),
+                new ApiVehicleOptionItem(42, "option4", false, false, "value4", null, null)
             )
         )
     );
     assertNotEquals(apiVehicle,
         new ApiVehicle(
             2190,
-            new ApiParam("mark"),
+            "mark",
             null,
             "plate",
-            new ApiParam("color"),
+            "color",
             false,
             Arrays.asList(
-                new ApiVehicleOptionItem(324, "value1",
-                    new ApiVehicleOptionItemLimits(-5, 123),
-                    new ApiVehicleOption("option1", false, true)),
-                new ApiVehicleOptionItem(31, "value2",
-                    new ApiVehicleOptionItemLimits(50, 2100),
-                    new ApiVehicleOption("option2", true, true)),
-                new ApiVehicleOptionItem(523, "value3",
-                    null,
-                    new ApiVehicleOption("option3", true, false)),
-                new ApiVehicleOptionItem(42, "value4",
-                    null,
-                    new ApiVehicleOption("option4", false, false))
+                new ApiVehicleOptionItem(324, "option1", true, false, "value1", -5, 123),
+                new ApiVehicleOptionItem(31, "option2", true, true, "value2", 50, 2100),
+                new ApiVehicleOptionItem(523, "option3", false, true, "value3", null, null),
+                new ApiVehicleOptionItem(42, "option4", false, false, "value4", null, null)
             )
         )
     );
     assertNotEquals(apiVehicle,
         new ApiVehicle(
             2190,
-            new ApiParam("mark"),
-            new ApiParam("models"),
+            "mark",
+            "models",
             "plate",
-            new ApiParam("color"),
+            "color",
             false,
             Arrays.asList(
-                new ApiVehicleOptionItem(324, "value1",
-                    new ApiVehicleOptionItemLimits(-5, 123),
-                    new ApiVehicleOption("option1", false, true)),
-                new ApiVehicleOptionItem(31, "value2",
-                    new ApiVehicleOptionItemLimits(50, 2100),
-                    new ApiVehicleOption("option2", true, true)),
-                new ApiVehicleOptionItem(523, "value3",
-                    null,
-                    new ApiVehicleOption("option3", true, false)),
-                new ApiVehicleOptionItem(42, "value4",
-                    null,
-                    new ApiVehicleOption("option4", false, false))
+                new ApiVehicleOptionItem(324, "option1", true, false, "value1", -5, 123),
+                new ApiVehicleOptionItem(31, "option2", true, true, "value2", 50, 2100),
+                new ApiVehicleOptionItem(523, "option3", false, true, "value3", null, null),
+                new ApiVehicleOptionItem(42, "option4", false, false, "value4", null, null)
             )
         )
     );
     assertNotEquals(apiVehicle,
         new ApiVehicle(
             2190,
-            new ApiParam("mark"),
-            new ApiParam("model"),
+            "mark",
+            "model",
+            null,
+            "color",
+            false,
+            Arrays.asList(
+                new ApiVehicleOptionItem(324, "option1", true, false, "value1", -5, 123),
+                new ApiVehicleOptionItem(31, "option2", true, true, "value2", 50, 2100),
+                new ApiVehicleOptionItem(523, "option3", false, true, "value3", null, null),
+                new ApiVehicleOptionItem(42, "option4", false, false, "value4", null, null)
+            )
+        )
+    );
+    assertNotEquals(apiVehicle,
+        new ApiVehicle(
+            2190,
+            "mark",
+            "model",
             "plates",
-            new ApiParam("color"),
+            "color",
             false,
             Arrays.asList(
-                new ApiVehicleOptionItem(324, "value1",
-                    new ApiVehicleOptionItemLimits(-5, 123),
-                    new ApiVehicleOption("option1", false, true)),
-                new ApiVehicleOptionItem(31, "value2",
-                    new ApiVehicleOptionItemLimits(50, 2100),
-                    new ApiVehicleOption("option2", true, true)),
-                new ApiVehicleOptionItem(523, "value3",
-                    null,
-                    new ApiVehicleOption("option3", true, false)),
-                new ApiVehicleOptionItem(42, "value4",
-                    null,
-                    new ApiVehicleOption("option4", false, false))
+                new ApiVehicleOptionItem(324, "option1", true, false, "value1", -5, 123),
+                new ApiVehicleOptionItem(31, "option2", true, true, "value2", 50, 2100),
+                new ApiVehicleOptionItem(523, "option3", false, true, "value3", null, null),
+                new ApiVehicleOptionItem(42, "option4", false, false, "value4", null, null)
             )
         )
     );
     assertNotEquals(apiVehicle,
         new ApiVehicle(
             2190,
-            new ApiParam("mark"),
-            new ApiParam("model"),
+            "mark",
+            "model",
             "plate",
             null,
             false,
             Arrays.asList(
-                new ApiVehicleOptionItem(324, "value1",
-                    new ApiVehicleOptionItemLimits(-5, 123),
-                    new ApiVehicleOption("option1", false, true)),
-                new ApiVehicleOptionItem(31, "value2",
-                    new ApiVehicleOptionItemLimits(50, 2100),
-                    new ApiVehicleOption("option2", true, true)),
-                new ApiVehicleOptionItem(523, "value3",
-                    null,
-                    new ApiVehicleOption("option3", true, false)),
-                new ApiVehicleOptionItem(42, "value4",
-                    null,
-                    new ApiVehicleOption("option4", false, false))
+                new ApiVehicleOptionItem(324, "option1", true, false, "value1", -5, 123),
+                new ApiVehicleOptionItem(31, "option2", true, true, "value2", 50, 2100),
+                new ApiVehicleOptionItem(523, "option3", false, true, "value3", null, null),
+                new ApiVehicleOptionItem(42, "option4", false, false, "value4", null, null)
             )
         )
     );
     assertNotEquals(apiVehicle,
         new ApiVehicle(
             2190,
-            new ApiParam("mark"),
-            new ApiParam("model"),
+            "mark",
+            "model",
             "plate",
-            new ApiParam("colors"),
+            "colors",
             false,
             Arrays.asList(
-                new ApiVehicleOptionItem(324, "value1",
-                    new ApiVehicleOptionItemLimits(-5, 123),
-                    new ApiVehicleOption("option1", false, true)),
-                new ApiVehicleOptionItem(31, "value2",
-                    new ApiVehicleOptionItemLimits(50, 2100),
-                    new ApiVehicleOption("option2", true, true)),
-                new ApiVehicleOptionItem(523, "value3",
-                    null,
-                    new ApiVehicleOption("option3", true, false)),
-                new ApiVehicleOptionItem(42, "value4",
-                    null,
-                    new ApiVehicleOption("option4", false, false))
+                new ApiVehicleOptionItem(324, "option1", true, false, "value1", -5, 123),
+                new ApiVehicleOptionItem(31, "option2", true, true, "value2", 50, 2100),
+                new ApiVehicleOptionItem(523, "option3", false, true, "value3", null, null),
+                new ApiVehicleOptionItem(42, "option4", false, false, "value4", null, null)
             )
         )
     );
     assertNotEquals(apiVehicle,
         new ApiVehicle(
             2190,
-            new ApiParam("mark"),
-            new ApiParam("model"),
+            "mark",
+            "model",
             "plate",
-            new ApiParam("color"),
+            "color",
             true,
             Arrays.asList(
-                new ApiVehicleOptionItem(324, "value1",
-                    new ApiVehicleOptionItemLimits(-5, 123),
-                    new ApiVehicleOption("option1", false, true)),
-                new ApiVehicleOptionItem(31, "value2",
-                    new ApiVehicleOptionItemLimits(50, 2100),
-                    new ApiVehicleOption("option2", true, true)),
-                new ApiVehicleOptionItem(523, "value3",
-                    null,
-                    new ApiVehicleOption("option3", true, false)),
-                new ApiVehicleOptionItem(42, "value4",
-                    null,
-                    new ApiVehicleOption("option4", false, false))
+                new ApiVehicleOptionItem(324, "option1", true, false, "value1", -5, 123),
+                new ApiVehicleOptionItem(31, "option2", true, true, "value2", 50, 2100),
+                new ApiVehicleOptionItem(523, "option3", false, true, "value3", null, null),
+                new ApiVehicleOptionItem(42, "option4", false, false, "value4", null, null)
             )
         )
     );
     assertNotEquals(apiVehicle,
         new ApiVehicle(
             2190,
-            new ApiParam("mark"),
-            new ApiParam("model"),
+            "mark",
+            "model",
             "plate",
-            new ApiParam("color"),
+            "color",
             false,
             null
         )
@@ -320,10 +240,10 @@ public class ApiVehicleTest {
     assertNotEquals(apiVehicle,
         new ApiVehicle(
             2190,
-            new ApiParam("mark"),
-            new ApiParam("model"),
+            "mark",
+            "model",
             "plate",
-            new ApiParam("color"),
+            "color",
             false,
             Collections.emptyList()
         )
@@ -331,45 +251,31 @@ public class ApiVehicleTest {
     assertNotEquals(apiVehicle,
         new ApiVehicle(
             2190,
-            new ApiParam("mark"),
-            new ApiParam("model"),
+            "mark",
+            "model",
             "plate",
-            new ApiParam("color"),
+            "color",
             false,
             Arrays.asList(
-                new ApiVehicleOptionItem(31, "value2",
-                    new ApiVehicleOptionItemLimits(50, 2100),
-                    new ApiVehicleOption("option2", true, true)),
-                new ApiVehicleOptionItem(523, "value3",
-                    null,
-                    new ApiVehicleOption("option3", true, false)),
-                new ApiVehicleOptionItem(42, "value4",
-                    null,
-                    new ApiVehicleOption("option4", false, false))
+                new ApiVehicleOptionItem(31, "option2", true, true, "value2", 50, 2100),
+                new ApiVehicleOptionItem(523, "option3", false, true, "value3", null, null),
+                new ApiVehicleOptionItem(42, "option4", false, false, "value4", null, null)
             )
         )
     );
     assertNotEquals(apiVehicle,
         new ApiVehicle(
             2190,
-            new ApiParam("mark"),
-            new ApiParam("model"),
+            "mark",
+            "model",
             "plate",
-            new ApiParam("color"),
+            "color",
             false,
             Arrays.asList(
-                new ApiVehicleOptionItem(324, "value1",
-                    new ApiVehicleOptionItemLimits(-5, 123),
-                    new ApiVehicleOption("option1", false, true)),
-                new ApiVehicleOptionItem(31, "value2",
-                    new ApiVehicleOptionItemLimits(50, 210),
-                    new ApiVehicleOption("option2", true, true)),
-                new ApiVehicleOptionItem(523, "value3",
-                    null,
-                    new ApiVehicleOption("option3", true, false)),
-                new ApiVehicleOptionItem(42, "value4",
-                    null,
-                    new ApiVehicleOption("option4", false, false))
+                new ApiVehicleOptionItem(324, "option1", true, false, "value1", -5, 123),
+                new ApiVehicleOptionItem(31, "option2", true, true, "value2", 50, 210),
+                new ApiVehicleOptionItem(523, "option3", false, true, "value3", null, null),
+                new ApiVehicleOptionItem(42, "option4", false, false, "value4", null, null)
             )
         )
     );

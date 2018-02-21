@@ -25,7 +25,7 @@ public class BaseActivity extends AppCompatActivity {
   /**
    * Добавляет {@link OnBackPressedInterceptor} в реестр перехватчиков.
    *
-   * @param interceptor перехватчик нажатия кнопки "назад".
+   * @param interceptor перехватчик нажатия кнопки "назад"
    */
   public void registerOnBackPressedInterceptor(@NonNull OnBackPressedInterceptor interceptor) {
     onBackPressedInterceptors.add(interceptor);
@@ -55,7 +55,7 @@ public class BaseActivity extends AppCompatActivity {
   }
 
   /**
-   * Возвращает {@link Component} для внедрения зависимостей
+   * Возвращает {@link Component} для внедрения зависимостей.
    *
    * @return DI компонент
    */
@@ -66,9 +66,9 @@ public class BaseActivity extends AppCompatActivity {
 
   /**
    * Метод перехода куда либо.
-   * Позволяет отвязать {@link android.app.Fragment} от конкретных {@link Activity}
+   * Позволяет отвязать {@link android.app.Fragment} от конкретных {@link Activity}.
    *
-   * @param destination пункт назначения.
+   * @param destination пункт назначения
    */
   public void navigate(@NonNull String destination) {
   }

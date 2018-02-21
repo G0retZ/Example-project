@@ -1,11 +1,9 @@
 package com.fasten.executor_driver.entity;
 
-import java.io.IOException;
-
 /**
  * Исключение об ошибке валидации данных.
  */
-public class ValidationException extends IOException {
+public class ValidationException extends Exception {
 
   public ValidationException() {
     super();

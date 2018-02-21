@@ -52,7 +52,7 @@ public class BaseFragment extends Fragment implements OnBackPressedInterceptor {
 
   /**
    * Колбэк для внедрения зависимостей. Вызывается сразу после завершения {@link #onCreate(Bundle)}
-   * здесь
+   * здесь.
    *
    * @param appComponent - компонент, который может произвести внедрение
    */
@@ -89,9 +89,9 @@ public class BaseFragment extends Fragment implements OnBackPressedInterceptor {
 
   /**
    * Метод перехода куда либо.
-   * Позволяет отвязать {@link android.app.Fragment} от конкретных {@link Activity}
+   * Позволяет отвязать {@link android.app.Fragment} от конкретных {@link Activity}.
    *
-   * @param destination пункт назначения.
+   * @param destination пункт назначения
    */
   protected void navigate(@NonNull String destination) {
     if (baseActivity != null) {

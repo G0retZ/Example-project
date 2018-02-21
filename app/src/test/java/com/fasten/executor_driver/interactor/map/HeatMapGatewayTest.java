@@ -35,7 +35,7 @@ public class HeatMapGatewayTest {
   /* Проверяем работу с АПИ */
 
   /**
-   * Должен запросить у АПИ тепловую карту
+   * Должен запросить у АПИ тепловую карту.
    *
    * @throws Exception error
    */
@@ -53,7 +53,7 @@ public class HeatMapGatewayTest {
   /* Проверяем ответы на АПИ */
 
   /**
-   * Должен ответить ошибкой сети
+   * Должен ответить ошибкой сети.
    *
    * @throws Exception error
    */
@@ -67,7 +67,7 @@ public class HeatMapGatewayTest {
   }
 
   /**
-   * Должен вернуть строку тепловой карты
+   * Должен вернуть строку тепловой карты.
    *
    * @throws Exception error
    */

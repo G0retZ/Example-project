@@ -11,7 +11,7 @@ public interface VehicleOptionsViewModel extends ViewModel<VehicleOptionsViewAct
   /**
    * Передает список настроенных исполнителем опций ТС для занятия ТС.
    *
-   * @param index - позиция ТС в списке.
+   * @param index - позиция ТС в списке
    */
   void setVehicleOptions(List<VehicleOptionsListItem<?>> index);
 }

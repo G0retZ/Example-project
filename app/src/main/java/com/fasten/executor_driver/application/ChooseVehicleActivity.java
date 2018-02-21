@@ -22,10 +22,6 @@ public class ChooseVehicleActivity extends BaseActivity {
       case ChooseVehicleNavigate.VEHICLE_OPTIONS:
         startActivity(new Intent(this, VehicleOptionsActivity.class));
         break;
-      case ChooseVehicleNavigate.AUTO_VEHICLE_OPTIONS:
-        startActivity(new Intent(this, VehicleOptionsActivity.class));
-        finish();
-        break;
     }
   }
 }

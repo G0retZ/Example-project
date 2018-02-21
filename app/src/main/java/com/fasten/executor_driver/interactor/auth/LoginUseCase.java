@@ -5,7 +5,7 @@ import android.support.annotation.Nullable;
 import io.reactivex.Completable;
 
 /**
- * Юзкейс проверки имени для входа
+ * Юзкейс проверки имени для входа.
  */
 public interface LoginUseCase {
 
@@ -20,7 +20,7 @@ public interface LoginUseCase {
 
   /**
    * Запоминает последний валидированный пароль или null (т.е. забывает), для его восстановления
-   * после поворота или реинкарнации
+   * после поворота или реинкарнации.
    *
    * @return {@link Completable} результат запоминания
    */

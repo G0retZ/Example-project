@@ -4,9 +4,9 @@ import com.fasten.executor_driver.entity.Vehicle;
 import com.fasten.executor_driver.interactor.MemoryDataSharer;
 import javax.inject.Inject;
 
-public class VehicleSharer extends MemoryDataSharer<Vehicle> {
+public class VehicleChoiceSharer extends MemoryDataSharer<Vehicle> {
 
   @Inject
-  VehicleSharer() {
+  VehicleChoiceSharer() {
   }
 }

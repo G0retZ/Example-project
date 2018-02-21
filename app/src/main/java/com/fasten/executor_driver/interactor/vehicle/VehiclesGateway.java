@@ -6,15 +6,15 @@ import io.reactivex.Single;
 import java.util.List;
 
 /**
- * Гейтвей выбора ТС исполнителя
+ * Гейтвей выбора ТС исполнителя.
  */
-public interface VehicleChoiceGateway {
+public interface VehiclesGateway {
 
   /**
    * Запрашивает у сервера список ТС, достпуных исполнителю. Сервер должен вернуть либо список, либо
    * ошибку с причиной отказа.
    *
-   * @return {@link Single} результат запроса списка ТС.
+   * @return {@link Single} результат запроса списка ТС
    */
   @NonNull
   Single<List<Vehicle>> getExecutorVehicles();

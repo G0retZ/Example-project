@@ -52,6 +52,7 @@ class VehicleOptionsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
   public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
     if (holder instanceof VehicleBooleanOptionViewHolder) {
       VehicleOptionsListItem<Boolean> item = (VehicleOptionsListItem<Boolean>) list.get(position);
+      ((VehicleBooleanOptionViewHolder) holder).switchCompat.setText(item.getName());
       ((VehicleBooleanOptionViewHolder) holder).switchCompat.setOnCheckedChangeListener(null);
       ((VehicleBooleanOptionViewHolder) holder).switchCompat.setChecked(item.getValue());
       ((VehicleBooleanOptionViewHolder) holder).switchCompat

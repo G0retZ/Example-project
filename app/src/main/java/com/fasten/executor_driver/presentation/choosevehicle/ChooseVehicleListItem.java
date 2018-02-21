@@ -18,6 +18,11 @@ public class ChooseVehicleListItem {
   }
 
   @NonNull
+  public Vehicle getVehicle() {
+    return vehicle;
+  }
+
+  @NonNull
   public String getName() {
     return vehicle.getManufacturer() + " " + vehicle.getModel()
         + " (" + vehicle.getLicensePlate() + ")";

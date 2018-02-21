@@ -5,7 +5,7 @@ import android.support.annotation.NonNull;
 /**
  * Неизменная бизнес сущность обобщенного параметра автомобиля. Содержит в себе ID, имя и значение.
  *
- * @param <V> тип значения.
+ * @param <V> тип значения
  */
 public class VehicleOption<V> {
 

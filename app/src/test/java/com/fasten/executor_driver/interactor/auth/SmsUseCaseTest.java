@@ -78,7 +78,7 @@ public class SmsUseCaseTest {
   /**
    * Должен запросить у валидатора номера телефона проверку.
    *
-   * @throws Exception error.
+   * @throws Exception error
    */
   @Test
   public void askPhoneNumberValidatorForResult() throws Exception {
@@ -97,7 +97,7 @@ public class SmsUseCaseTest {
   /**
    * Должен ответить ошибкой, если номер телефона неверный.
    *
-   * @throws Exception error.
+   * @throws Exception error
    */
   @Test
   public void answerErrorIfPhoneNumberInvalid() throws Exception {
@@ -111,7 +111,7 @@ public class SmsUseCaseTest {
   /**
    * Не должно быть ошибок, если номер телефона соответствует формату.
    *
-   * @throws Exception error.
+   * @throws Exception error
    */
   @Test
   public void answerSuccessIfPhoneNumberValid() throws Exception {
@@ -130,7 +130,7 @@ public class SmsUseCaseTest {
   /**
    * Не должен запрашивать у гейтвея СМС, если валидация не прошла.
    *
-   * @throws Exception error.
+   * @throws Exception error
    */
   @Test
   public void doNotAskGatewayForSms() throws Exception {
@@ -147,7 +147,7 @@ public class SmsUseCaseTest {
   /**
    * Должен запросить у гейтвея СМС.
    *
-   * @throws Exception error.
+   * @throws Exception error
    */
   @Test
   public void askGatewayForSms() throws Exception {
@@ -166,7 +166,7 @@ public class SmsUseCaseTest {
   /**
    * Должен ответить ошибкой сети.
    *
-   * @throws Exception error.
+   * @throws Exception error
    */
   @Test
   public void answerNoNetworkError() throws Exception {
@@ -183,7 +183,7 @@ public class SmsUseCaseTest {
   /**
    * Должен ответить успехом.
    *
-   * @throws Exception error.
+   * @throws Exception error
    */
   @Test
   public void answerSmsSendSuccessful() throws Exception {

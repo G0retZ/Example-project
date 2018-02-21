@@ -13,8 +13,6 @@ import java.lang.annotation.RetentionPolicy;
 @Retention(RetentionPolicy.SOURCE)
 public @interface VehicleOptionsNavigate {
 
-  /**
-   * Переход к настройке к режиму ожидания заказа.
-   */
+  // Переход к режиму ожидания заказа.
   String READY_FOR_ORDERS = "VehicleOptions.to.ReadyForOrders";
 }

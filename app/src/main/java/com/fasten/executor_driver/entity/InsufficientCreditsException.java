@@ -1,14 +1,11 @@
 package com.fasten.executor_driver.entity;
 
-import java.io.IOException;
-
 /**
  * Ошибка: недостаточно средств.
  */
-public class InsufficientCreditsException extends IOException {
+public class InsufficientCreditsException extends Exception {
 
-  @SuppressWarnings("SameParameterValue")
-  public InsufficientCreditsException(String message) {
-    super(message);
+  public InsufficientCreditsException() {
+    super();
   }
 }

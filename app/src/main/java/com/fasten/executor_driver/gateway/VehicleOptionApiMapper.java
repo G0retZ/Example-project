@@ -22,32 +22,32 @@ public class VehicleOptionApiMapper implements Mapper<ApiVehicleOptionItem, Vehi
     if (from.getValue() == null) {
       throw new DataMappingException("Ошибка маппинга: значение опции не должно быть null!");
     }
-    if (from.getOption() == null || from.getOption().getName() == null) {
-      throw new DataMappingException("Ошибка маппинга: тип опции и его имя не должны быть null!");
+    if (from.getName() == null) {
+      throw new DataMappingException("Ошибка маппинга: имя опции не должно быть null!");
     }
     VehicleOption vehicleOption;
-    if (from.getOption().isNumeric()) {
+    if (from.isNumeric()) {
       int minValue = 0;
       int maxValue = 0;
-      if (from.getOption().isDynamic()) {
-        if (from.getLimits() == null) {
+      if (from.isDynamic()) {
+        if (from.getMinValue() == null || from.getMaxValue() == null) {
           throw new DataMappingException("Ошибка маппинга: пределы не должны быть null!");
         }
-        if (from.getLimits().getMinValue() >= from.getLimits().getMaxValue()) {
+        if (from.getMinValue() >= from.getMaxValue()) {
           throw new DataMappingException(
               "Ошибка маппинга: минимальное значение должно быть меньше максимального!");
         }
-        minValue = from.getLimits().getMinValue();
-        maxValue = from.getLimits().getMaxValue();
-      } else if (from.getLimits() != null) {
-        minValue = from.getLimits().getMinValue();
-        maxValue = from.getLimits().getMaxValue();
+        minValue = from.getMinValue();
+        maxValue = from.getMaxValue();
+      } else if (from.getMinValue() != null && from.getMaxValue() != null) {
+        minValue = from.getMinValue();
+        maxValue = from.getMaxValue();
       }
       try {
         vehicleOption = new VehicleOptionNumeric(
             from.getId(),
-            from.getOption().getName(),
-            from.getOption().isDynamic(),
+            from.getName(),
+            from.isDynamic(),
             Integer.valueOf(from.getValue()),
             minValue,
             maxValue
@@ -61,8 +61,8 @@ public class VehicleOptionApiMapper implements Mapper<ApiVehicleOptionItem, Vehi
       }
       vehicleOption = new VehicleOptionBoolean(
           from.getId(),
-          from.getOption().getName(),
-          from.getOption().isDynamic(),
+          from.getName(),
+          from.isDynamic(),
           Boolean.valueOf(from.getValue())
       );
     }

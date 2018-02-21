@@ -18,9 +18,9 @@ public final class ThrowableUtils {
    * Сравнивает 2 {@link Throwable}. Сравнивает по ссылкам, классам, сообщениям и причинам
    * рекурсивно.
    *
-   * @param t1 {@link Throwable}.
-   * @param t2 {@link Throwable}.
-   * @return boolean, верно если оба {@link Throwable} одинаковые.
+   * @param t1 {@link Throwable}
+   * @param t2 {@link Throwable}
+   * @return boolean, верно если оба {@link Throwable} одинаковые
    */
   @SuppressWarnings("SimplifiableIfStatement")
   public static boolean throwableEquals(@Nullable Throwable t1, @Nullable Throwable t2) {

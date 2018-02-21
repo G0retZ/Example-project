@@ -33,7 +33,7 @@ public class ReceiveTokenInterceptorTest {
   }
 
   /**
-   * Должен не трогать хранителя токенов
+   * Должен не трогать хранителя токенов.
    *
    * @throws Exception error
    */
@@ -60,7 +60,7 @@ public class ReceiveTokenInterceptorTest {
 
 
   /**
-   * Должен запросить у хранителя токенов сохранение полученного токена
+   * Должен запросить у хранителя токенов сохранение полученного токена.
    *
    * @throws Exception error
    */

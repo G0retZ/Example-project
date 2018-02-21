@@ -4,7 +4,7 @@ import android.support.annotation.Nullable;
 import javax.inject.Inject;
 
 /**
- * Валидатор номера телефона
+ * Валидатор номера телефона.
  */
 public class PhoneNumberValidator implements Validator<String> {
 

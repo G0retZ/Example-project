@@ -1,7 +1,7 @@
 package com.fasten.executor_driver.presentation.phone;
 
 /**
- * Действия для смены состояния вида окна входа
+ * Действия для смены состояния вида окна входа.
  */
 public interface PhoneViewActions {
 
@@ -11,7 +11,7 @@ public interface PhoneViewActions {
   void proceedNext();
 
   /**
-   * Сделать кнопку "Далее" нажимаемой
+   * Сделать кнопку "Далее" нажимаемой.
    *
    * @param enable - нажимаема или нет?
    */
