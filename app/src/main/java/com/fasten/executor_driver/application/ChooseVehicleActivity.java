@@ -18,9 +18,12 @@ public class ChooseVehicleActivity extends BaseActivity {
 
   @Override
   public void navigate(@NonNull String destination) {
+    Intent intent;
     switch (destination) {
       case ChooseVehicleNavigate.VEHICLE_OPTIONS:
-        startActivity(new Intent(this, VehicleOptionsActivity.class));
+        intent = new Intent(this, VehicleOptionsActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        startActivity(intent);
         break;
     }
   }

@@ -21,4 +21,5 @@
   <string name="choose_vehicle">Выбор ТС</string>
   <string name="vehicle_options">Настройка ТС</string>
   <string name="ready">Готово</string>
+  <string name="change">Сменить</string>
 </resources>
