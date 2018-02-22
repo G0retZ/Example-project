@@ -19,15 +19,19 @@ public class VehicleOptionsUseCaseImpl implements VehicleOptionsUseCase {
   private final VehicleOptionsGateway gateway;
   @NonNull
   private final DataSharer<Vehicle> vehicleChoiceSharer;
+  @NonNull
+  private final DataSharer<Vehicle> lastUsedVehicleSharer;
   @Nullable
   private Vehicle vehicle;
 
   @Inject
   VehicleOptionsUseCaseImpl(
       @NonNull VehicleOptionsGateway gateway,
-      @Named("vehicleChoiceSharer") @NonNull DataSharer<Vehicle> vehicleChoiceSharer) {
+      @Named("vehicleChoiceSharer") @NonNull DataSharer<Vehicle> vehicleChoiceSharer,
+      @Named("lastUsedVehicleSharer") @NonNull DataSharer<Vehicle> lastUsedVehicleSharer) {
     this.gateway = gateway;
     this.vehicleChoiceSharer = vehicleChoiceSharer;
+    this.lastUsedVehicleSharer = lastUsedVehicleSharer;
   }
 
   @NonNull
@@ -56,6 +60,7 @@ public class VehicleOptionsUseCaseImpl implements VehicleOptionsUseCase {
       return Completable.error(new DataMappingException());
     }
     vehicle.setVehicleOptions(vehicleOptions.toArray(new VehicleOption[vehicleOptions.size()]));
-    return gateway.sendVehicleOptions(vehicle);
+    return gateway.sendVehicleOptions(vehicle)
+        .doOnComplete(() -> lastUsedVehicleSharer.share(vehicle));
   }
 }
