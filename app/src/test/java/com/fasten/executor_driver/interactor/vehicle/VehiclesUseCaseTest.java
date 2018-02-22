@@ -14,6 +14,7 @@ import com.fasten.executor_driver.entity.OnlyOneVehicleAvailableException;
 import com.fasten.executor_driver.entity.Vehicle;
 import com.fasten.executor_driver.interactor.DataSharer;
 import io.reactivex.Single;
+import io.reactivex.subjects.PublishSubject;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -38,10 +39,31 @@ public class VehiclesUseCaseTest {
   @Mock
   private DataSharer<Vehicle> vehicleChoiceSharer;
 
+  @Mock
+  private DataSharer<Vehicle> lastUsedVehicleSharer;
+
+  private PublishSubject<Vehicle> publishSubject;
+
   @Before
   public void setUp() throws Exception {
+    publishSubject = PublishSubject.create();
     when(gateway.getExecutorVehicles()).thenReturn(Single.never());
-    vehiclesUseCase = new VehiclesUseCaseImpl(gateway, vehiclesSharer, vehicleChoiceSharer);
+    when(lastUsedVehicleSharer.get()).thenReturn(publishSubject);
+    vehiclesUseCase = new VehiclesUseCaseImpl(gateway, vehiclesSharer, vehicleChoiceSharer,
+        lastUsedVehicleSharer);
+  }
+
+  /* Проверяем работу с публикатором последнего использованного ТС */
+
+  /**
+   * Должен запросить у публикатора последнее использованное ТС при создании и сразу.
+   *
+   * @throws Exception error
+   */
+  @Test
+  public void askLastUsedVehiclesDataSharerForLastUsedVehicleInitially() throws Exception {
+    // Результат:
+    verify(lastUsedVehicleSharer, only()).get();
   }
 
   /* Проверяем работу с гейтвеем */
@@ -218,7 +240,7 @@ public class VehiclesUseCaseTest {
     verify(vehiclesSharer, only()).share(new ArrayList<>());
   }
 
-   /* Проверяем работу с публикатором ТС */
+  /* Проверяем работу с публикатором ТС */
 
   /**
    * Не должен трогать публикатор.
@@ -237,15 +259,6 @@ public class VehiclesUseCaseTest {
     when(gateway.getExecutorVehicles()).thenReturn(Single.error(new DriverBlockedException()));
     vehiclesUseCase.loadVehicles().test();
     when(gateway.getExecutorVehicles()).thenReturn(Single.just(
-        new ArrayList<>(Arrays.asList(
-            new Vehicle(12, "manufacturer", "model", "color", "license", false),
-            new Vehicle(13, "manufacture", "models", "colo", "licenses", true),
-            new Vehicle(14, "manufacturers", "modeler", "color", "licensing", false),
-            new Vehicle(15, "man fact", "modelers", "colo", "licensee", true)
-        ))
-    ));
-    vehiclesUseCase.loadVehicles().test();
-    when(gateway.getExecutorVehicles()).thenReturn(Single.just(
         new ArrayList<>(Collections.singletonList(
             new Vehicle(12, "manufacturer", "model", "color", "license", true)
         ))
@@ -256,6 +269,136 @@ public class VehiclesUseCaseTest {
 
     // Результат:
     verifyZeroInteractions(vehicleChoiceSharer);
+  }
+
+  /**
+   * Должен опубликовать первую свободную ТС из списка.
+   *
+   * @throws Exception error
+   */
+  @Test
+  public void askVehicleChoiceSharerToShareTheFirstFreeVehicle() throws Exception {
+    // Действие:
+    when(gateway.getExecutorVehicles()).thenReturn(Single.just(
+        new ArrayList<>(Arrays.asList(
+            new Vehicle(12, "manufacturer", "model", "color", "license", false),
+            new Vehicle(13, "manufacture", "models", "colo", "licenses", true),
+            new Vehicle(14, "manufacturers", "modeler", "color", "licensing", false),
+            new Vehicle(15, "man fact", "modelers", "colo", "licensee", true)
+        ))
+    ));
+    vehiclesUseCase.loadVehicles().test();
+
+    // Результат:
+    verify(vehicleChoiceSharer, only())
+        .share(new Vehicle(12, "manufacturer", "model", "color", "license", false));
+  }
+
+  /**
+   * Должен опубликовать первую свободную ТС из списка, если последняя использовавшаяся возвращает
+   * ошибку.
+   *
+   * @throws Exception error
+   */
+  @Test
+  public void askVehicleChoiceSharerToShareTheFirstFreeVehicleIfLastUsedIsError() throws Exception {
+    // Действие:
+    when(gateway.getExecutorVehicles()).thenReturn(Single.just(
+        new ArrayList<>(Arrays.asList(
+            new Vehicle(12, "manufacturer", "model", "color", "license", false),
+            new Vehicle(13, "manufacture", "models", "colo", "licenses", true),
+            new Vehicle(14, "manufacturers", "modeler", "color", "licensing", false),
+            new Vehicle(15, "man fact", "modelers", "colo", "licensee", true)
+        ))
+    ));
+    publishSubject.onError(new IllegalArgumentException());
+    vehiclesUseCase.loadVehicles().test();
+
+    // Результат:
+    verify(vehicleChoiceSharer, only())
+        .share(new Vehicle(12, "manufacturer", "model", "color", "license", false));
+  }
+
+  /**
+   * Должен опубликовать первую свободную ТС из списка, если последняя использовавшаяся больше не в
+   * списке.
+   *
+   * @throws Exception error
+   */
+  @Test
+  public void askVehicleChoiceSharerToShareTheFirstFreeVehicleIfLastUsedIsOutOfRange()
+      throws Exception {
+    // Действие:
+    when(gateway.getExecutorVehicles()).thenReturn(Single.just(
+        new ArrayList<>(Arrays.asList(
+            new Vehicle(12, "manufacturer", "model", "color", "license", false),
+            new Vehicle(13, "manufacture", "models", "colo", "licenses", true),
+            new Vehicle(14, "manufacturers", "modeler", "color", "licensing", false),
+            new Vehicle(15, "man fact", "modelers", "colo", "licensee", true)
+        ))
+    ));
+    publishSubject.onNext(
+        new Vehicle(105, "m", "m", "c", "l", false)
+    );
+    vehiclesUseCase.loadVehicles().test();
+
+    // Результат:
+    verify(vehicleChoiceSharer, only())
+        .share(new Vehicle(12, "manufacturer", "model", "color", "license", false));
+  }
+
+  /**
+   * Должен опубликовать первую свободную ТС из списка, если последняя использовавшаяся занята.
+   *
+   * @throws Exception error
+   */
+  @Test
+  public void askVehicleChoiceSharerToShareTheFirstFreeVehicleIfLastUsedIsBusy()
+      throws Exception {
+    // Действие:
+    when(gateway.getExecutorVehicles()).thenReturn(Single.just(
+        new ArrayList<>(Arrays.asList(
+            new Vehicle(12, "manufacturer", "model", "color", "license", false),
+            new Vehicle(13, "manufacture", "models", "colo", "licenses", true),
+            new Vehicle(14, "manufacturers", "modeler", "color", "licensing", false),
+            new Vehicle(15, "man fact", "modelers", "colo", "licensee", true)
+        ))
+    ));
+    publishSubject.onNext(
+        new Vehicle(15, "m", "m", "c", "l", false)
+    );
+    vehiclesUseCase.loadVehicles().test();
+
+    // Результат:
+    verify(vehicleChoiceSharer, only())
+        .share(new Vehicle(12, "manufacturer", "model", "color", "license", false));
+  }
+
+  /**
+   * Должен опубликовать последнее использовавшееся ТС, если оно свободно и есть в списке.
+   *
+   * @throws Exception error
+   */
+  @Test
+  public void askVehicleChoiceSharerToShareTheLastUsedVehicle()
+      throws Exception {
+    // Действие:
+    when(gateway.getExecutorVehicles()).thenReturn(Single.just(
+        new ArrayList<>(Arrays.asList(
+            new Vehicle(12, "manufacturer", "model", "color", "license", false),
+            new Vehicle(13, "manufacture", "models", "colo", "licenses", true),
+            new Vehicle(14, "manufacturers", "modeler", "color", "licensing", false),
+            new Vehicle(15, "man fact", "modelers", "colo", "licensee", true)
+        ))
+    ));
+    publishSubject.onNext(
+        new Vehicle(14, "manufacturers", "modeler", "color", "licensing", false)
+    );
+    vehiclesUseCase.loadVehicles().test();
+
+    // Результат:
+    verify(vehicleChoiceSharer, only())
+        .share(new Vehicle(14, "manufacturers", "modeler", "color", "licensing", false));
   }
 
   /**

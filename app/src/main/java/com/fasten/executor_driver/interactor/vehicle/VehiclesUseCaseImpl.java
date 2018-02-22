@@ -1,6 +1,7 @@
 package com.fasten.executor_driver.interactor.vehicle;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import com.fasten.executor_driver.entity.NoFreeVehiclesException;
 import com.fasten.executor_driver.entity.NoVehiclesAvailableException;
 import com.fasten.executor_driver.entity.OnlyOneVehicleAvailableException;
@@ -19,14 +20,18 @@ public class VehiclesUseCaseImpl implements VehiclesUseCase {
   private final DataSharer<List<Vehicle>> vehiclesSharer;
   @NonNull
   private final DataSharer<Vehicle> vehicleChoiceSharer;
+  @Nullable
+  private Vehicle lastUsedVehicle;
 
   @Inject
   VehiclesUseCaseImpl(@NonNull VehiclesGateway gateway,
       @Named("vehiclesSharer") @NonNull DataSharer<List<Vehicle>> vehiclesSharer,
-      @Named("vehicleChoiceSharer") @NonNull DataSharer<Vehicle> vehicleChoiceSharer) {
+      @Named("vehicleChoiceSharer") @NonNull DataSharer<Vehicle> vehicleChoiceSharer,
+      @Named("lastUsedVehicleSharer") @NonNull DataSharer<Vehicle> lastUsedVehicleSharer) {
     this.gateway = gateway;
     this.vehiclesSharer = vehiclesSharer;
     this.vehicleChoiceSharer = vehicleChoiceSharer;
+    lastUsedVehicleSharer.get().subscribe(vehicle -> lastUsedVehicle = vehicle);
   }
 
   @NonNull
@@ -38,20 +43,27 @@ public class VehiclesUseCaseImpl implements VehiclesUseCase {
           if (list.isEmpty()) {
             throw new NoVehiclesAvailableException();
           }
-          int lastFreeIndex = -1;
+          int firstFreeIndex = -1;
           int freeVehiclesCount = 0;
-          for (int i = 0; i < list.size(); i++) {
+          for (int i = list.size() - 1; i >= 0; i--) {
             if (!list.get(i).isBusy()) {
-              lastFreeIndex = i;
+              if (lastUsedVehicle != null && list.get(i).getId() == lastUsedVehicle.getId()) {
+                vehicleChoiceSharer.share(list.get(i));
+                return list;
+              }
+              firstFreeIndex = i;
               freeVehiclesCount++;
             }
           }
           if (freeVehiclesCount == 0) {
             throw new NoFreeVehiclesException();
           } else if (freeVehiclesCount == 1) {
-            vehicleChoiceSharer.share(list.get(lastFreeIndex));
+            vehicleChoiceSharer.share(list.get(firstFreeIndex));
             throw new OnlyOneVehicleAvailableException();
+          } else {
+            vehicleChoiceSharer.share(list.get(firstFreeIndex));
           }
+
           return list;
         })
         .toCompletable();
