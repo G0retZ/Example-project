@@ -4,7 +4,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.fasten.executor_driver.entity.NoFreeVehiclesException;
 import com.fasten.executor_driver.entity.NoVehiclesAvailableException;
-import com.fasten.executor_driver.entity.OnlyOneVehicleAvailableException;
 import com.fasten.executor_driver.entity.Vehicle;
 import com.fasten.executor_driver.interactor.DataSharer;
 import io.reactivex.Completable;
@@ -31,7 +30,10 @@ public class VehiclesUseCaseImpl implements VehiclesUseCase {
     this.gateway = gateway;
     this.vehiclesSharer = vehiclesSharer;
     this.vehicleChoiceSharer = vehicleChoiceSharer;
-    lastUsedVehicleSharer.get().subscribe(vehicle -> lastUsedVehicle = vehicle);
+    lastUsedVehicleSharer.get().subscribe(
+        vehicle -> lastUsedVehicle = vehicle,
+        Throwable::printStackTrace
+    );
   }
 
   @NonNull
@@ -57,13 +59,8 @@ public class VehiclesUseCaseImpl implements VehiclesUseCase {
           }
           if (freeVehiclesCount == 0) {
             throw new NoFreeVehiclesException();
-          } else if (freeVehiclesCount == 1) {
-            vehicleChoiceSharer.share(list.get(firstFreeIndex));
-            throw new OnlyOneVehicleAvailableException();
-          } else {
-            vehicleChoiceSharer.share(list.get(firstFreeIndex));
           }
-
+          vehicleChoiceSharer.share(list.get(firstFreeIndex));
           return list;
         })
         .toCompletable();

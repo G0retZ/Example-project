@@ -15,7 +15,6 @@ import com.fasten.executor_driver.entity.DriverBlockedException;
 import com.fasten.executor_driver.entity.InsufficientCreditsException;
 import com.fasten.executor_driver.entity.NoFreeVehiclesException;
 import com.fasten.executor_driver.entity.NoVehiclesAvailableException;
-import com.fasten.executor_driver.entity.OnlyOneVehicleAvailableException;
 import com.fasten.executor_driver.interactor.vehicle.VehiclesUseCase;
 import com.fasten.executor_driver.presentation.ViewState;
 import io.reactivex.Completable;
@@ -353,52 +352,6 @@ public class OnlineButtonViewModelTest {
   }
 
   /**
-   * Не должен переходить в состояние вида "Ошибка", если нет свободных ТС.
-   *
-   * @throws Exception error
-   */
-  @Test
-  public void doNotSetErrorViewStateToLiveDataAfterFailForOnlyOneVehicle() throws Exception {
-    // Дано:
-    when(vehiclesUseCase.loadVehicles())
-        .thenReturn(Completable.error(new OnlyOneVehicleAvailableException()));
-    InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    onlineButtonViewModel.getViewStateLiveData().observeForever(viewStateObserver);
-
-    // Действие:
-    onlineButtonViewModel.goOnline();
-
-    // Результат:
-    inOrder.verify(viewStateObserver).onChanged(any(OnlineButtonViewStateReady.class));
-    inOrder.verify(viewStateObserver).onChanged(any(OnlineButtonViewStateHold.class));
-    verifyNoMoreInteractions(viewStateObserver);
-  }
-
-  /**
-   * Должен вернуть рабочее состояние после таймера, если нет свободных ТС.
-   *
-   * @throws Exception error
-   */
-  @Test
-  public void setReadyViewStateToLiveDataAfterFailForOnlyOneVehicle() throws Exception {
-    // Дано:
-    when(vehiclesUseCase.loadVehicles())
-        .thenReturn(Completable.error(new OnlyOneVehicleAvailableException()));
-    InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    onlineButtonViewModel.getViewStateLiveData().observeForever(viewStateObserver);
-
-    // Действие:
-    onlineButtonViewModel.goOnline();
-    testScheduler.advanceTimeBy(5, TimeUnit.SECONDS);
-
-    // Результат:
-    inOrder.verify(viewStateObserver).onChanged(any(OnlineButtonViewStateReady.class));
-    inOrder.verify(viewStateObserver).onChanged(any(OnlineButtonViewStateHold.class));
-    inOrder.verify(viewStateObserver).onChanged(any(OnlineButtonViewStateReady.class));
-    verifyNoMoreInteractions(viewStateObserver);
-  }
-
-  /**
    * Должен вернуть состояние вида "Ошибка" после ошибки запроса выхода на линию.
    *
    * @throws Exception error
@@ -586,7 +539,7 @@ public class OnlineButtonViewModelTest {
     onlineButtonViewModel.goOnline();
 
     // Результат:
-    verify(navigateObserver, only()).onChanged(OnlineButtonNavigate.VEHICLES);
+    verify(navigateObserver, only()).onChanged(OnlineButtonNavigate.VEHICLE_OPTIONS);
   }
 
   /**
@@ -628,7 +581,7 @@ public class OnlineButtonViewModelTest {
   }
 
   /**
-   * Должен вернуть "перейти к решению отсутствия свободных ТС" если недостаточно средств.
+   * Должен вернуть "перейти к решению отсутствия свободных ТС" если нет свободных ТС.
    *
    * @throws Exception error
    */
@@ -647,7 +600,7 @@ public class OnlineButtonViewModelTest {
   }
 
   /**
-   * Должен вернуть "перейти к решению отсутствия свободных ТС" если недостаточно средств.
+   * Должен вернуть "перейти к решению отсутствия любых ТС" если не никаких ТС.
    *
    * @throws Exception error
    */
@@ -663,24 +616,5 @@ public class OnlineButtonViewModelTest {
 
     // Результат:
     verify(navigateObserver, only()).onChanged(OnlineButtonNavigate.NO_VEHICLES);
-  }
-
-  /**
-   * Должен вернуть "перейти к решению отсутствия свободных ТС" если недостаточно средств.
-   *
-   * @throws Exception error
-   */
-  @Test
-  public void setNavigateToVehicleOptionsToLiveData() throws Exception {
-    // Дано:
-    when(vehiclesUseCase.loadVehicles())
-        .thenReturn(Completable.error(new OnlyOneVehicleAvailableException()));
-    onlineButtonViewModel.getNavigationLiveData().observeForever(navigateObserver);
-
-    // Действие:
-    onlineButtonViewModel.goOnline();
-
-    // Результат:
-    verify(navigateObserver, only()).onChanged(OnlineButtonNavigate.VEHICLE_OPTIONS);
   }
 }

@@ -9,7 +9,6 @@ import com.fasten.executor_driver.entity.DriverBlockedException;
 import com.fasten.executor_driver.entity.InsufficientCreditsException;
 import com.fasten.executor_driver.entity.NoFreeVehiclesException;
 import com.fasten.executor_driver.entity.NoVehiclesAvailableException;
-import com.fasten.executor_driver.entity.OnlyOneVehicleAvailableException;
 import com.fasten.executor_driver.interactor.vehicle.VehiclesUseCase;
 import com.fasten.executor_driver.presentation.SingleLiveEvent;
 import com.fasten.executor_driver.presentation.ViewState;
@@ -68,7 +67,7 @@ public class OnlineButtonViewModelImpl extends ViewModel implements OnlineButton
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(
             () -> {
-              navigateLiveData.setValue(OnlineButtonNavigate.VEHICLES);
+              navigateLiveData.setValue(OnlineButtonNavigate.VEHICLE_OPTIONS);
               holdButton(DURATION_AFTER_SUCCESS);
             },
             throwable -> {
@@ -80,8 +79,6 @@ public class OnlineButtonViewModelImpl extends ViewModel implements OnlineButton
                 navigateLiveData.setValue(OnlineButtonNavigate.NO_FREE_VEHICLES);
               } else if (throwable instanceof NoVehiclesAvailableException) {
                 navigateLiveData.setValue(OnlineButtonNavigate.NO_VEHICLES);
-              } else if (throwable instanceof OnlyOneVehicleAvailableException) {
-                navigateLiveData.setValue(OnlineButtonNavigate.VEHICLE_OPTIONS);
               } else {
                 viewStateLiveData.postValue(new OnlineButtonViewStateError(throwable));
               }
@@ -110,7 +107,7 @@ public class OnlineButtonViewModelImpl extends ViewModel implements OnlineButton
           if (viewStateLiveData.getValue() instanceof OnlineButtonViewStateHold) {
             viewStateLiveData.postValue(new OnlineButtonViewStateReady());
           }
-        });
+        }, Throwable::printStackTrace);
   }
 
   @Override

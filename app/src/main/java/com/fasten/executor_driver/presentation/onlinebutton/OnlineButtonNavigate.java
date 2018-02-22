@@ -8,7 +8,6 @@ import java.lang.annotation.RetentionPolicy;
  * Направления навигации по кнопке выхода на линию.
  */
 @StringDef({
-    OnlineButtonNavigate.VEHICLES,
     OnlineButtonNavigate.VEHICLE_OPTIONS,
     OnlineButtonNavigate.DRIVER_BLOCKED,
     OnlineButtonNavigate.INSUFFICIENT_CREDITS,
@@ -17,9 +16,6 @@ import java.lang.annotation.RetentionPolicy;
 })
 @Retention(RetentionPolicy.SOURCE)
 public @interface OnlineButtonNavigate {
-
-  // Переход к выбору ТС.
-  String VEHICLES = "OnlineButton.to.Vehicles";
 
   // Переход к выбору опций ТС.
   String VEHICLE_OPTIONS = "OnlineButton.to.VehicleOptions";

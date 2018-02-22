@@ -10,7 +10,6 @@ import com.fasten.executor_driver.entity.DriverBlockedException;
 import com.fasten.executor_driver.entity.InsufficientCreditsException;
 import com.fasten.executor_driver.entity.NoFreeVehiclesException;
 import com.fasten.executor_driver.entity.NoVehiclesAvailableException;
-import com.fasten.executor_driver.entity.OnlyOneVehicleAvailableException;
 import com.fasten.executor_driver.entity.Vehicle;
 import com.fasten.executor_driver.interactor.DataSharer;
 import io.reactivex.Single;
@@ -527,12 +526,12 @@ public class VehiclesUseCaseTest {
   }
 
   /**
-   * Должен ответить ошибкой единственной свободной ТС.
+   * Должен ответить успехом.
    *
    * @throws Exception error
    */
   @Test
-  public void answerOnlyOneFreeVehicleAvailableError() throws Exception {
+  public void answerSuccessIfOnlyOneFreeVehicleAvailableAndFree() throws Exception {
     // Дано:
     when(gateway.getExecutorVehicles()).thenReturn(Single.just(
         new ArrayList<>(Arrays.asList(
@@ -544,16 +543,16 @@ public class VehiclesUseCaseTest {
     ));
 
     // Действие и Результат:
-    vehiclesUseCase.loadVehicles().test().assertError(OnlyOneVehicleAvailableException.class);
+    vehiclesUseCase.loadVehicles().test().assertComplete();
   }
 
   /**
-   * Должен ответить ошибкой единственной и свободной ТС.
+   * Должен ответить успехом.
    *
    * @throws Exception error
    */
   @Test
-  public void answerOnlyOneVehicleAvailableFreeError() throws Exception {
+  public void answerSuccessIfOnlyOneVehicleAvailableFree() throws Exception {
     // Дано:
     when(gateway.getExecutorVehicles()).thenReturn(Single.just(
         new ArrayList<>(Collections.singletonList(
@@ -562,7 +561,7 @@ public class VehiclesUseCaseTest {
     ));
 
     // Действие и Результат:
-    vehiclesUseCase.loadVehicles().test().assertError(OnlyOneVehicleAvailableException.class);
+    vehiclesUseCase.loadVehicles().test().assertComplete();
   }
 
   /**
