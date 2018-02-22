@@ -21,13 +21,13 @@ public class LoginSharer extends PersistentDataSharer<String> {
 
   @Nullable
   @Override
-  protected String serialize(String data) {
+  protected String serialize(@Nullable String data) {
     return data;
   }
 
-  @Nullable
+  @NonNull
   @Override
-  protected String deserialize(String string) {
+  protected String deserialize(@NonNull String string) {
     return string;
   }
 }

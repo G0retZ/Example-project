@@ -7,10 +7,10 @@ import com.fasten.executor_driver.entity.Vehicle;
 import com.fasten.executor_driver.interactor.PersistentDataSharer;
 import javax.inject.Inject;
 
-public class LastVehicleSharer extends PersistentDataSharer<Vehicle> {
+public class LastUsedVehicleSharer extends PersistentDataSharer<Vehicle> {
 
   @Inject
-  LastVehicleSharer(@NonNull AppSettingsService appSettingsService) {
+  LastUsedVehicleSharer(@NonNull AppSettingsService appSettingsService) {
     super(appSettingsService);
   }
 
@@ -26,9 +26,9 @@ public class LastVehicleSharer extends PersistentDataSharer<Vehicle> {
     return String.valueOf(data.getId());
   }
 
-  @Nullable
+  @NonNull
   @Override
-  protected Vehicle deserialize(@Nullable String string) {
+  protected Vehicle deserialize(@NonNull String string) {
     return new Vehicle(Long.parseLong(string), "m", "m", "c", "l", false);
   }
 }

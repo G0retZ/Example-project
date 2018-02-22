@@ -23,7 +23,6 @@ public class LoginSharerTest {
 
   @Before
   public void setUp() throws Exception {
-    when(appSettings.getData("authorizationLogin")).thenReturn("654321");
     loginSharer = new LoginSharer(appSettings);
   }
 
@@ -79,6 +78,10 @@ public class LoginSharerTest {
    */
   @Test
   public void valueUnchangedForRead() throws Exception {
+    // Дано:
+    when(appSettings.getData("authorizationLogin")).thenReturn("654321");
+    loginSharer = new LoginSharer(appSettings);
+
     // Результат:
     loginSharer.get().test().assertValue("654321");
   }

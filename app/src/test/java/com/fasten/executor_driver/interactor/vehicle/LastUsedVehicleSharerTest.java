@@ -15,17 +15,16 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
-public class LastVehicleSharerTest {
+public class LastUsedVehicleSharerTest {
 
-  private LastVehicleSharer lastVehicleSharer;
+  private LastUsedVehicleSharer lastUsedVehicleSharer;
 
   @Mock
   private AppSettingsService appSettings;
 
   @Before
   public void setUp() throws Exception {
-    when(appSettings.getData("lastUsedVehicle")).thenReturn("654321");
-    lastVehicleSharer = new LastVehicleSharer(appSettings);
+    lastUsedVehicleSharer = new LastUsedVehicleSharer(appSettings);
   }
 
   /**
@@ -47,11 +46,11 @@ public class LastVehicleSharerTest {
   @Test
   public void doNotAskSettingsForLogin() throws Exception {
     // Действие:
-    lastVehicleSharer.get().test();
-    lastVehicleSharer.get().test();
-    lastVehicleSharer.get().test();
-    lastVehicleSharer.get().test();
-    lastVehicleSharer.get().test();
+    lastUsedVehicleSharer.get().test();
+    lastUsedVehicleSharer.get().test();
+    lastUsedVehicleSharer.get().test();
+    lastUsedVehicleSharer.get().test();
+    lastUsedVehicleSharer.get().test();
 
     // Результат:
     verify(appSettings, only()).getData("lastUsedVehicle");
@@ -65,7 +64,7 @@ public class LastVehicleSharerTest {
   @Test
   public void askSettingsForSaveLogin() throws Exception {
     // Действие:
-    lastVehicleSharer.share(
+    lastUsedVehicleSharer.share(
         new Vehicle(123456, "manufacturer", "model", "color", "license", false)
     );
 
@@ -82,8 +81,12 @@ public class LastVehicleSharerTest {
    */
   @Test
   public void valueUnchangedForRead() throws Exception {
+    // Дано:
+    when(appSettings.getData("lastUsedVehicle")).thenReturn("654321");
+    lastUsedVehicleSharer = new LastUsedVehicleSharer(appSettings);
+
     // Результат:
-    lastVehicleSharer.get().test().assertValue(
+    lastUsedVehicleSharer.get().test().assertValue(
         new Vehicle(654321, "m", "m", "c", "l", false)
     );
   }
