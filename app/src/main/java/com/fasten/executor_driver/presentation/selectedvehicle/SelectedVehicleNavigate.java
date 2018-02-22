@@ -5,7 +5,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 /**
- * Направления навигации из окна выбора ТС исполнителя.
+ * Направления навигации из окна информации о выбранном ТС.
  */
 @StringDef({
     SelectedVehicleNavigate.VEHICLES
