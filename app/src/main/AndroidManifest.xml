@@ -34,11 +34,11 @@
       android:parentActivityName=".application.LoginActivity"
       android:windowSoftInputMode="stateVisible|adjustResize"/>
     <activity
-      android:parentActivityName=".application.MapActivity"
-      android:name=".application.ChooseVehicleActivity"/>
+      android:name=".application.VehicleOptionsActivity"
+      android:parentActivityName=".application.MapActivity"/>
     <activity
-      android:parentActivityName=".application.ChooseVehicleActivity"
-      android:name=".application.VehicleOptionsActivity"/>
+      android:name=".application.ChooseVehicleActivity"
+      android:parentActivityName=".application.VehicleOptionsActivity"/>
 
     <meta-data
       android:name="com.google.android.geo.API_KEY"

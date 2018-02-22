@@ -1,4 +1,4 @@
-package com.fasten.executor_driver.interactor.auth;
+package com.fasten.executor_driver.interactor.vehicle;
 
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.only;
@@ -7,6 +7,7 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import com.fasten.executor_driver.backend.settings.AppSettingsService;
+import com.fasten.executor_driver.entity.Vehicle;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -14,27 +15,27 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
-public class LoginSharerTest {
+public class LastUsedVehicleSharerTest {
 
-  private LoginSharer loginSharer;
+  private LastUsedVehicleSharer lastUsedVehicleSharer;
 
   @Mock
   private AppSettingsService appSettings;
 
   @Before
   public void setUp() throws Exception {
-    loginSharer = new LoginSharer(appSettings);
+    lastUsedVehicleSharer = new LastUsedVehicleSharer(appSettings);
   }
 
   /**
-   * Должен запросить у настроек данные по ключу "authorizationLogin" сразу же после создания.
+   * Должен запросить у настроек данные по ключу "lastUsedVehicle" сразу же после создания.
    *
    * @throws Exception error
    */
   @Test
   public void askSettingsForLogin() throws Exception {
     // Результат:
-    verify(appSettings, only()).getData("authorizationLogin");
+    verify(appSettings, only()).getData("lastUsedVehicle");
   }
 
   /**
@@ -45,14 +46,14 @@ public class LoginSharerTest {
   @Test
   public void doNotAskSettingsForLogin() throws Exception {
     // Действие:
-    loginSharer.get().test();
-    loginSharer.get().test();
-    loginSharer.get().test();
-    loginSharer.get().test();
-    loginSharer.get().test();
+    lastUsedVehicleSharer.get().test();
+    lastUsedVehicleSharer.get().test();
+    lastUsedVehicleSharer.get().test();
+    lastUsedVehicleSharer.get().test();
+    lastUsedVehicleSharer.get().test();
 
     // Результат:
-    verify(appSettings, only()).getData("authorizationLogin");
+    verify(appSettings, only()).getData("lastUsedVehicle");
   }
 
   /**
@@ -63,11 +64,13 @@ public class LoginSharerTest {
   @Test
   public void askSettingsForSaveLogin() throws Exception {
     // Действие:
-    loginSharer.share("123456");
+    lastUsedVehicleSharer.share(
+        new Vehicle(123456, "manufacturer", "model", "color", "license", false)
+    );
 
     // Результат:
-    verify(appSettings).getData("authorizationLogin");
-    verify(appSettings).saveData(eq("authorizationLogin"), eq("123456"));
+    verify(appSettings).getData("lastUsedVehicle");
+    verify(appSettings).saveData(eq("lastUsedVehicle"), eq("123456"));
     verifyNoMoreInteractions(appSettings);
   }
 
@@ -79,10 +82,12 @@ public class LoginSharerTest {
   @Test
   public void valueUnchangedForRead() throws Exception {
     // Дано:
-    when(appSettings.getData("authorizationLogin")).thenReturn("654321");
-    loginSharer = new LoginSharer(appSettings);
+    when(appSettings.getData("lastUsedVehicle")).thenReturn("654321");
+    lastUsedVehicleSharer = new LastUsedVehicleSharer(appSettings);
 
     // Результат:
-    loginSharer.get().test().assertValue("654321");
+    lastUsedVehicleSharer.get().test().assertValue(
+        new Vehicle(654321, "m", "m", "c", "l", false)
+    );
   }
 }

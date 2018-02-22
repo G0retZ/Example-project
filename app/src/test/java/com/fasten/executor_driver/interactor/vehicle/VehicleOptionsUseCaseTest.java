@@ -7,7 +7,6 @@ import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 import com.fasten.executor_driver.backend.web.NoNetworkException;
-import com.fasten.executor_driver.entity.NoVehicleOptionsAvailableException;
 import com.fasten.executor_driver.entity.Vehicle;
 import com.fasten.executor_driver.entity.VehicleOption;
 import com.fasten.executor_driver.entity.VehicleOptionBoolean;
@@ -37,9 +36,13 @@ public class VehicleOptionsUseCaseTest {
   @Mock
   private DataSharer<Vehicle> vehicleChoiceSharer;
 
+  @Mock
+  private DataSharer<Vehicle> lastUsedVehicleSharer;
+
   @Before
   public void setUp() throws Exception {
-    vehicleOptionsUseCase = new VehicleOptionsUseCaseImpl(gateway, vehicleChoiceSharer);
+    vehicleOptionsUseCase = new VehicleOptionsUseCaseImpl(gateway, vehicleChoiceSharer,
+        lastUsedVehicleSharer);
     when(gateway.sendVehicleOptions(any(Vehicle.class))).thenReturn(Completable.never());
     when(vehicleChoiceSharer.get()).thenReturn(Observable.never());
   }
@@ -115,7 +118,7 @@ public class VehicleOptionsUseCaseTest {
   }
 
   /**
-   * Должен отвеетить ошибкой отсутствия доступных для изменений опций ТС.
+   * Должен ответить пустым списком доступных для изменений опций ТС.
    *
    * @throws Exception error
    */
@@ -152,7 +155,6 @@ public class VehicleOptionsUseCaseTest {
         vehicleOptionsUseCase.getVehicleOptions().test();
 
     // Результат:
-    testObserver.assertError(NoVehicleOptionsAvailableException.class);
     testObserver.assertValues(
         new ArrayList<>(Arrays.asList(
             new VehicleOptionNumeric(1, "name1", true, -5, -18, 0),
@@ -163,7 +165,8 @@ public class VehicleOptionsUseCaseTest {
             new VehicleOptionNumeric(1, "name1", true, -5, -18, 0),
             new VehicleOptionBoolean(2, "name2", true, false),
             new VehicleOptionBoolean(3, "name3", true, true)
-        ))
+        )),
+        new ArrayList<>()
     );
   }
 
@@ -304,5 +307,82 @@ public class VehicleOptionsUseCaseTest {
             new VehicleOptionBoolean(2, "name2", true, false)
         ))
     ).test().assertComplete();
+  }
+
+  /* Проверяем работу с публикатором последней использованной ТС */
+
+  /**
+   * Не должен трогать публикатор.
+   *
+   * @throws Exception error
+   */
+  @Test
+  public void doNotTouchLastUseVehicleDataSharer() throws Exception {
+    // Действие:
+    vehicleOptionsUseCase.setSelectedVehicleOptions(
+        new ArrayList<>(Arrays.asList(
+            new VehicleOptionNumeric(1, "name1", true, -5, -18, 0),
+            new VehicleOptionBoolean(2, "name2", true, false)
+        ))
+    ).test();
+    Vehicle vehicle = new Vehicle(12, "manufacturer", "model", "color", "license", false);
+    vehicle.addVehicleOptions(
+        new VehicleOptionNumeric(0, "name0", false, 10, 0, 20),
+        new VehicleOptionNumeric(1, "name1", true, -5, -18, 0),
+        new VehicleOptionBoolean(2, "name2", true, false),
+        new VehicleOptionBoolean(3, "name3", false, true)
+    );
+    when(vehicleChoiceSharer.get()).thenReturn(Observable.just(vehicle));
+    when(gateway.sendVehicleOptions(any(Vehicle.class)))
+        .thenReturn(Completable.error(NoNetworkException::new));
+    vehicleOptionsUseCase.getVehicleOptions().test();
+    vehicleOptionsUseCase.setSelectedVehicleOptions(
+        new ArrayList<>(Arrays.asList(
+            new VehicleOptionNumeric(0, "name0", true, 40, 0, 120),
+            new VehicleOptionNumeric(1, "name1", true, -50, 20, 30),
+            new VehicleOptionBoolean(2, "name2", true, false)
+        ))
+    ).test().assertError(NoNetworkException.class);
+
+    // Результат:
+    verifyZeroInteractions(lastUsedVehicleSharer);
+  }
+
+  /**
+   * Должен опубликовать выбранную ТС как последнюю использованную.
+   *
+   * @throws Exception error
+   */
+  @Test
+  public void askLastUseVehicleDataSharerToShareTheOccupiedVehicle() throws Exception {
+    // Дано:
+    Vehicle vehicle = new Vehicle(12, "manufacturer", "model", "color", "license", false);
+    vehicle.addVehicleOptions(
+        new VehicleOptionNumeric(0, "name0", false, 10, 0, 20),
+        new VehicleOptionNumeric(1, "name1", true, -5, -18, 0),
+        new VehicleOptionBoolean(2, "name2", true, false),
+        new VehicleOptionBoolean(3, "name3", false, true)
+    );
+    when(vehicleChoiceSharer.get()).thenReturn(Observable.just(vehicle));
+    when(gateway.sendVehicleOptions(any(Vehicle.class))).thenReturn(Completable.complete());
+
+    // Действие:
+    vehicleOptionsUseCase.getVehicleOptions().test();
+    vehicleOptionsUseCase.setSelectedVehicleOptions(
+        new ArrayList<>(Arrays.asList(
+            new VehicleOptionNumeric(0, "name0", true, 40, 0, 120),
+            new VehicleOptionNumeric(1, "name1", true, -50, 20, 30),
+            new VehicleOptionBoolean(2, "name2", true, false)
+        ))
+    ).test();
+
+    // Результат:
+    vehicle = new Vehicle(12, "manufacturer", "model", "color", "license", false);
+    vehicle.addVehicleOptions(
+        new VehicleOptionNumeric(0, "name0", true, 40, 0, 120),
+        new VehicleOptionNumeric(1, "name1", true, -50, 20, 30),
+        new VehicleOptionBoolean(2, "name2", true, false)
+    );
+    verify(lastUsedVehicleSharer, only()).share(vehicle);
   }
 }

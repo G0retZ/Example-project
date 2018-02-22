@@ -12,6 +12,7 @@ import com.fasten.executor_driver.interactor.auth.SmsUseCase;
 import com.fasten.executor_driver.interactor.auth.SmsUseCaseImpl;
 import com.fasten.executor_driver.interactor.map.HeatMapUseCase;
 import com.fasten.executor_driver.interactor.map.HeatMapUseCaseImpl;
+import com.fasten.executor_driver.interactor.vehicle.LastUsedVehicleSharer;
 import com.fasten.executor_driver.interactor.vehicle.SelectedVehicleUseCase;
 import com.fasten.executor_driver.interactor.vehicle.SelectedVehicleUseCaseImpl;
 import com.fasten.executor_driver.interactor.vehicle.VehicleChoiceSharer;
@@ -94,5 +95,13 @@ class UseCaseModule {
   @Named("vehicleChoiceSharer")
   DataSharer<Vehicle> provideVehicleChoiceSharer(@NonNull VehicleChoiceSharer vehicleChoiceSharer) {
     return vehicleChoiceSharer;
+  }
+
+  @Provides
+  @Singleton
+  @Named("lastUsedVehicleSharer")
+  DataSharer<Vehicle> provideLastUsedVehiclesSharer(
+      @NonNull LastUsedVehicleSharer lastUsedVehicleSharer) {
+    return lastUsedVehicleSharer;
   }
 }

@@ -2,7 +2,6 @@ package com.fasten.executor_driver.interactor.vehicle;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import com.fasten.executor_driver.entity.NoVehicleOptionsAvailableException;
 import com.fasten.executor_driver.entity.Vehicle;
 import com.fasten.executor_driver.entity.VehicleOption;
 import com.fasten.executor_driver.gateway.DataMappingException;
@@ -19,15 +18,19 @@ public class VehicleOptionsUseCaseImpl implements VehicleOptionsUseCase {
   private final VehicleOptionsGateway gateway;
   @NonNull
   private final DataSharer<Vehicle> vehicleChoiceSharer;
+  @NonNull
+  private final DataSharer<Vehicle> lastUsedVehicleSharer;
   @Nullable
   private Vehicle vehicle;
 
   @Inject
   VehicleOptionsUseCaseImpl(
       @NonNull VehicleOptionsGateway gateway,
-      @Named("vehicleChoiceSharer") @NonNull DataSharer<Vehicle> vehicleChoiceSharer) {
+      @Named("vehicleChoiceSharer") @NonNull DataSharer<Vehicle> vehicleChoiceSharer,
+      @Named("lastUsedVehicleSharer") @NonNull DataSharer<Vehicle> lastUsedVehicleSharer) {
     this.gateway = gateway;
     this.vehicleChoiceSharer = vehicleChoiceSharer;
+    this.lastUsedVehicleSharer = lastUsedVehicleSharer;
   }
 
   @NonNull
@@ -39,14 +42,7 @@ public class VehicleOptionsUseCaseImpl implements VehicleOptionsUseCase {
           return Observable.fromIterable(vehicle.getVehicleOptions())
               .filter(VehicleOption::isVariable)
               .toList()
-              .toObservable()
-              .map(list -> {
-                if (list.isEmpty()) {
-                  throw new NoVehicleOptionsAvailableException();
-                } else {
-                  return list;
-                }
-              });
+              .toObservable();
         });
   }
 
@@ -56,6 +52,7 @@ public class VehicleOptionsUseCaseImpl implements VehicleOptionsUseCase {
       return Completable.error(new DataMappingException());
     }
     vehicle.setVehicleOptions(vehicleOptions.toArray(new VehicleOption[vehicleOptions.size()]));
-    return gateway.sendVehicleOptions(vehicle);
+    return gateway.sendVehicleOptions(vehicle)
+        .doOnComplete(() -> lastUsedVehicleSharer.share(vehicle));
   }
 }

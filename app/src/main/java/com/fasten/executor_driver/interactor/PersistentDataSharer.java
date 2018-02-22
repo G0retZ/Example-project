@@ -17,8 +17,10 @@ public abstract class PersistentDataSharer<D> extends MemoryDataSharer<D> {
   protected PersistentDataSharer(@NonNull AppSettingsService appSettingsService) {
     super();
     this.appSettingsService = appSettingsService;
-    D data = deserialize(appSettingsService.getData(getKey()));
-    super.share(data);
+    String value = appSettingsService.getData(getKey());
+    if (value != null) {
+      super.share(deserialize(value));
+    }
   }
 
   @Override
@@ -51,6 +53,6 @@ public abstract class PersistentDataSharer<D> extends MemoryDataSharer<D> {
    * @param string строка
    * @return данные десериализованные из строки
    */
-  @Nullable
-  protected abstract D deserialize(@Nullable String string);
+  @NonNull
+  protected abstract D deserialize(@NonNull String string);
 }

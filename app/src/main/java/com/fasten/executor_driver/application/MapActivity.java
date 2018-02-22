@@ -58,9 +58,6 @@ public class MapActivity extends BaseActivity {
       case OnlineButtonNavigate.VEHICLE_OPTIONS:
         startActivity(new Intent(this, VehicleOptionsActivity.class));
         break;
-      case OnlineButtonNavigate.VEHICLES:
-        startActivity(new Intent(this, ChooseVehicleActivity.class));
-        break;
     }
   }
 }
