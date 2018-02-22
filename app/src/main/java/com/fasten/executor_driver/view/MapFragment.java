@@ -182,6 +182,7 @@ public class MapFragment extends SupportMapFragment implements OnMapReadyCallbac
     //Временно
     @SuppressWarnings("deprecation")
     Location location = googleMap.getMyLocation();
+    if (location == null) return false;
     // Показываем, где он есть.
     CameraPosition cameraPosition = new CameraPosition.Builder()
         .target(new LatLng(location.getLatitude(), location.getLongitude())).zoom(17)
