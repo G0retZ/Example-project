@@ -2,7 +2,6 @@ package com.fasten.executor_driver.interactor.vehicle;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import com.fasten.executor_driver.entity.NoVehicleOptionsAvailableException;
 import com.fasten.executor_driver.entity.Vehicle;
 import com.fasten.executor_driver.entity.VehicleOption;
 import com.fasten.executor_driver.gateway.DataMappingException;
@@ -43,14 +42,7 @@ public class VehicleOptionsUseCaseImpl implements VehicleOptionsUseCase {
           return Observable.fromIterable(vehicle.getVehicleOptions())
               .filter(VehicleOption::isVariable)
               .toList()
-              .toObservable()
-              .map(list -> {
-                if (list.isEmpty()) {
-                  throw new NoVehicleOptionsAvailableException();
-                } else {
-                  return list;
-                }
-              });
+              .toObservable();
         });
   }
 

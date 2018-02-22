@@ -7,7 +7,6 @@ import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 import com.fasten.executor_driver.backend.web.NoNetworkException;
-import com.fasten.executor_driver.entity.NoVehicleOptionsAvailableException;
 import com.fasten.executor_driver.entity.Vehicle;
 import com.fasten.executor_driver.entity.VehicleOption;
 import com.fasten.executor_driver.entity.VehicleOptionBoolean;
@@ -119,7 +118,7 @@ public class VehicleOptionsUseCaseTest {
   }
 
   /**
-   * Должен ответить ошибкой отсутствия доступных для изменений опций ТС.
+   * Должен ответить пустым списком доступных для изменений опций ТС.
    *
    * @throws Exception error
    */
@@ -156,7 +155,6 @@ public class VehicleOptionsUseCaseTest {
         vehicleOptionsUseCase.getVehicleOptions().test();
 
     // Результат:
-    testObserver.assertError(NoVehicleOptionsAvailableException.class);
     testObserver.assertValues(
         new ArrayList<>(Arrays.asList(
             new VehicleOptionNumeric(1, "name1", true, -5, -18, 0),
@@ -167,7 +165,8 @@ public class VehicleOptionsUseCaseTest {
             new VehicleOptionNumeric(1, "name1", true, -5, -18, 0),
             new VehicleOptionBoolean(2, "name2", true, false),
             new VehicleOptionBoolean(3, "name3", true, true)
-        ))
+        )),
+        new ArrayList<>()
     );
   }
 

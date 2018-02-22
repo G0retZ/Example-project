@@ -12,7 +12,6 @@ import android.arch.core.executor.testing.InstantTaskExecutorRule;
 import android.arch.lifecycle.Observer;
 import com.fasten.executor_driver.R;
 import com.fasten.executor_driver.backend.web.NoNetworkException;
-import com.fasten.executor_driver.entity.NoVehicleOptionsAvailableException;
 import com.fasten.executor_driver.entity.VehicleOption;
 import com.fasten.executor_driver.entity.VehicleOptionBoolean;
 import com.fasten.executor_driver.entity.VehicleOptionNumeric;
@@ -148,26 +147,6 @@ public class VehicleOptionsViewModelTest {
   }
 
   /**
-   * Должен автоматом попросить юзкейс занять ТС по без настроек.
-   *
-   * @throws Exception error
-   */
-  @Test
-  public void askVehicleOptionsUseCaseToOccupyVehicleWithoutOptions() throws Exception {
-    // Дано:
-    when(vehicleOptionsUseCase.getVehicleOptions())
-        .thenReturn(Observable.error(NoVehicleOptionsAvailableException::new));
-
-    // Действие:
-    vehicleOptionsViewModel.getViewStateLiveData();
-
-    // Результат:
-    verify(vehicleOptionsUseCase).getVehicleOptions();
-    verify(vehicleOptionsUseCase).setSelectedVehicleOptions(new ArrayList<>());
-    verifyNoMoreInteractions(vehicleOptionsUseCase);
-  }
-
-  /**
    * Не должен трогать юзкейс, если предыдущий запрос занятия ТС еще не завершился.
    *
    * @throws Exception error
@@ -277,49 +256,6 @@ public class VehicleOptionsViewModelTest {
   }
 
   /**
-   * Должен вернуть состояние вида "В процессе" автоматом, если не было опций для изменений.
-   *
-   * @throws Exception error
-   */
-  @Test
-  public void setPendingViewStateToLiveDataAutomatically() throws Exception {
-    // Дано:
-    PublishSubject<List<VehicleOption>> publishSubject = PublishSubject.create();
-    InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    when(vehicleOptionsUseCase.getVehicleOptions()).thenReturn(publishSubject);
-    vehicleOptionsViewModel.getViewStateLiveData().observeForever(viewStateObserver);
-
-    // Действие:
-    publishSubject.onError(new NoVehicleOptionsAvailableException());
-
-    // Результат:
-    inOrder.verify(viewStateObserver).onChanged(any(VehicleOptionsViewStateInitial.class));
-    inOrder.verify(viewStateObserver).onChanged(any(VehicleOptionsViewStatePending.class));
-    verifyNoMoreInteractions(viewStateObserver);
-  }
-
-  /**
-   * Должен вернуть состояние вида "В процессе" автоматом без начального состояния, если не было
-   * опций для изменений, и ответ был синхронным.
-   *
-   * @throws Exception error
-   */
-  @Test
-  public void setSyncPendingViewStateToLiveDataAutomatically() throws Exception {
-    // Дано:
-    InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    when(vehicleOptionsUseCase.getVehicleOptions())
-        .thenReturn(Observable.error(NoVehicleOptionsAvailableException::new));
-
-    // Действие:
-    vehicleOptionsViewModel.getViewStateLiveData().observeForever(viewStateObserver);
-
-    // Результат:
-    inOrder.verify(viewStateObserver).onChanged(any(VehicleOptionsViewStatePending.class));
-    verifyNoMoreInteractions(viewStateObserver);
-  }
-
-  /**
    * Должен вернуть состояние вида "В процессе".
    *
    * @throws Exception error
@@ -410,29 +346,6 @@ public class VehicleOptionsViewModelTest {
   }
 
   /* Тетсируем навигацию. */
-
-  /**
-   * Должен вернуть "перейти к ожиданию заказов автоматически" если была ошибка "нет опций для
-   * изменений".
-   *
-   * @throws Exception error
-   */
-  @Test
-  public void setNavigateAutoReadyForOrdersToLiveData() throws Exception {
-    // Дано:
-    PublishSubject<List<VehicleOption>> publishSubject = PublishSubject.create();
-    when(vehicleOptionsUseCase.getVehicleOptions()).thenReturn(publishSubject);
-    when(vehicleOptionsUseCase.setSelectedVehicleOptions(anyList()))
-        .thenReturn(Completable.complete());
-    vehicleOptionsViewModel.getViewStateLiveData();
-    vehicleOptionsViewModel.getNavigationLiveData().observeForever(navigateObserver);
-
-    // Действие:
-    publishSubject.onError(new NoVehicleOptionsAvailableException());
-
-    // Результат:
-    verify(navigateObserver, only()).onChanged(VehicleOptionsNavigate.READY_FOR_ORDERS);
-  }
 
   /**
    * Должен игнорировать ошибки.

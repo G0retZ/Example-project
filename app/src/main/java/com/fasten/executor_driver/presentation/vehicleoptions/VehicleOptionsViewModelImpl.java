@@ -6,7 +6,6 @@ import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.fasten.executor_driver.R;
-import com.fasten.executor_driver.entity.NoVehicleOptionsAvailableException;
 import com.fasten.executor_driver.entity.VehicleOption;
 import com.fasten.executor_driver.entity.VehicleOptionBoolean;
 import com.fasten.executor_driver.entity.VehicleOptionNumeric;
@@ -73,11 +72,7 @@ public class VehicleOptionsViewModelImpl extends ViewModel implements VehicleOpt
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(
             list -> viewStateLiveData.postValue(new VehicleOptionsViewStateReady(map(list))),
-            throwable -> {
-              if (throwable instanceof NoVehicleOptionsAvailableException) {
-                occupyVehicle(new ArrayList<>());
-              }
-            }
+            Throwable::printStackTrace
         );
   }
 
