@@ -12,6 +12,8 @@ import com.fasten.executor_driver.presentation.onlinebutton.OnlineButtonViewMode
 import com.fasten.executor_driver.presentation.onlinebutton.OnlineButtonViewModelImpl;
 import com.fasten.executor_driver.presentation.phone.PhoneViewModel;
 import com.fasten.executor_driver.presentation.phone.PhoneViewModelImpl;
+import com.fasten.executor_driver.presentation.selectedvehicle.SelectedVehicleViewModel;
+import com.fasten.executor_driver.presentation.selectedvehicle.SelectedVehicleViewModelImpl;
 import com.fasten.executor_driver.presentation.smsbutton.SmsButtonViewModel;
 import com.fasten.executor_driver.presentation.smsbutton.SmsButtonViewModelImpl;
 import com.fasten.executor_driver.presentation.vehicleoptions.VehicleOptionsViewModel;
@@ -62,6 +64,12 @@ class PresentationModule {
   }
 
   @Provides
+  SelectedVehicleViewModel provideSelectedVehicleViewModel(
+      SelectedVehicleViewModelImpl selectedVehicleViewModel) {
+    return selectedVehicleViewModel;
+  }
+
+  @Provides
   @Named("phone")
   ViewModelProvider.Factory providePhoneViewModelFactory(ViewModelFactory<PhoneViewModel> factory) {
     return factory;
@@ -105,6 +113,13 @@ class PresentationModule {
   @Named("vehicleOptions")
   ViewModelProvider.Factory provideVehicleOptionsViewModelFactory(
       ViewModelFactory<VehicleOptionsViewModel> factory) {
+    return factory;
+  }
+
+  @Provides
+  @Named("selectedVehicle")
+  ViewModelProvider.Factory provideSelectedVehicleViewModelFactory(
+      ViewModelFactory<SelectedVehicleViewModel> factory) {
     return factory;
   }
 }
