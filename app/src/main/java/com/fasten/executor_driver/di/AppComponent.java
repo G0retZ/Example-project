@@ -3,6 +3,7 @@ package com.fasten.executor_driver.di;
 import com.fasten.executor_driver.view.ChooseVehicleFragment;
 import com.fasten.executor_driver.view.GoOnlineFragment;
 import com.fasten.executor_driver.view.MapFragment;
+import com.fasten.executor_driver.view.SelectedVehicleFragment;
 import com.fasten.executor_driver.view.VehicleOptionsFragment;
 import com.fasten.executor_driver.view.auth.LoginFragment;
 import com.fasten.executor_driver.view.auth.PasswordFragment;
@@ -21,13 +22,15 @@ public interface AppComponent {
 
   void inject(LoginFragment loginFragment);
 
-  void inject(PasswordFragment loginFragment);
+  void inject(PasswordFragment passwordFragment);
 
   void inject(MapFragment mapFragment);
 
-  void inject(GoOnlineFragment mapFragment);
+  void inject(GoOnlineFragment goOnlineFragment);
 
-  void inject(ChooseVehicleFragment mapFragment);
+  void inject(ChooseVehicleFragment chooseVehicleFragment);
 
-  void inject(VehicleOptionsFragment mapFragment);
+  void inject(VehicleOptionsFragment vehicleOptionsFragment);
+
+  void inject(SelectedVehicleFragment selectedVehicleFragment);
 }

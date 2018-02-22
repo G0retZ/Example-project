@@ -1,8 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<fragment xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
   xmlns:tools="http://schemas.android.com/tools"
-  android:id="@+id/fragment_vehicle_options"
-  android:name="com.fasten.executor_driver.view.VehicleOptionsFragment"
   android:layout_width="match_parent"
-  android:layout_height="match_parent"
-  tools:layout="@layout/fragment_vehicle_options"/>
+  android:layout_height="match_parent">
+  <fragment
+    android:id="@+id/fragment_selected_vehicle"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:name="com.fasten.executor_driver.view.SelectedVehicleFragment"
+    tools:layout="@layout/fragment_selected_vehicle"/>
+  <fragment
+    android:id="@+id/fragment_vehicle_options"
+    android:layout_width="0dp"
+    android:layout_height="0dp"
+    android:name="com.fasten.executor_driver.view.VehicleOptionsFragment"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@+id/fragment_selected_vehicle"
+    tools:layout="@layout/fragment_vehicle_options"/>
+</android.support.constraint.ConstraintLayout>
