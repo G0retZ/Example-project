@@ -6,6 +6,7 @@
     <item name="colorPrimary">@color/colorPrimary</item>
     <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
     <item name="colorAccent">@color/colorAccent</item>
+    <item name="android:windowBackground">@color/colorWindowBackground</item>
   </style>
 
   <!-- Button styles -->
@@ -23,8 +24,18 @@
   <style name="AppTheme.Button.Borderless" parent="Widget.AppCompat.Button.Borderless"/>
 
   <style name="AppTheme.Button.Borderless.Filled">
-    <item name="android:textSize">19dp</item>
+    <item name="android:textSize">19sp</item>
     <item name="android:background">@drawable/ic_button_background</item>
+  </style>
+
+  <style name="AppTheme.CompoundButton.Switch" parent="AppTheme.CompoundButton.Switch">
+    <item name="android:textSize">16sp</item>
+    <item name="android:thumb">@drawable/ic_thumb_big</item>
+  </style>
+
+  <style name="AppTheme.SeekBar.Discrete" parent="Widget.AppCompat.SeekBar.Discrete">
+    <item name="android:thumb">@drawable/ic_thumb</item>
+    <item name="tickMark">@drawable/ic_tick_mark</item>
   </style>
 
 </resources>
