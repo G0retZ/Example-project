@@ -12,6 +12,7 @@ import android.widget.TextView;
 import com.fasten.executor_driver.R;
 import com.fasten.executor_driver.presentation.vehicleoptions.VehicleOptionsListItem;
 import java.util.List;
+import java.util.Locale;
 
 class VehicleOptionsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
@@ -65,12 +66,16 @@ class VehicleOptionsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
           .setMax(item.getMaxValue() - item.getMinValue());
       ((VehicleNumericOptionViewHolder) holder).seekBar
           .setProgress(item.getValue() + item.getMinValue());
+      ((VehicleNumericOptionViewHolder) holder).amountText.setText(
+          String.format(Locale.getDefault(), "%d", (item.getValue() + item.getMinValue())));
       ((VehicleNumericOptionViewHolder) holder).seekBar
           .setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
               if (fromUser) {
                 item.setValue(item.getMinValue() + progress);
+                ((VehicleNumericOptionViewHolder) holder).amountText.setText(String
+                    .format(Locale.getDefault(), "%d", (item.getValue() + item.getMinValue())));
               }
             }
 
@@ -92,12 +97,15 @@ class VehicleOptionsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     @NonNull
     private final TextView nameText;
     @NonNull
+    private final TextView amountText;
+    @NonNull
     private final SeekBar seekBar;
 
     VehicleNumericOptionViewHolder(@NonNull View itemView) {
       super(itemView);
       nameText = itemView.findViewById(R.id.optionName);
       seekBar = itemView.findViewById(R.id.optionSeekBar);
+      amountText = itemView.findViewById(R.id.optionAmount);
     }
   }
 
