@@ -165,13 +165,13 @@ public class MapFragment extends SupportMapFragment implements OnMapReadyCallbac
       googleMap.setMyLocationEnabled(true);
       // Отправляем в Москву.
       CameraPosition cameraPosition = new CameraPosition.Builder()
-          .target(new LatLng(55.75583, 37.61778)).zoom(10)
+          .target(new LatLng(55.737199, 37.628161)).zoom(15.2f)
           .build();
       googleMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
     } else {
       // Отправляем в Москву.
       CameraPosition cameraPosition = new CameraPosition.Builder()
-          .target(new LatLng(55.75583, 37.61778)).zoom(10)
+          .target(new LatLng(55.737199, 37.628161)).zoom(15.2f)
           .build();
       googleMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
     }
@@ -185,7 +185,7 @@ public class MapFragment extends SupportMapFragment implements OnMapReadyCallbac
     if (location == null) return false;
     // Показываем, где он есть.
     CameraPosition cameraPosition = new CameraPosition.Builder()
-        .target(new LatLng(location.getLatitude(), location.getLongitude())).zoom(17)
+        .target(new LatLng(location.getLatitude(), location.getLongitude())).zoom(15.2f)
         .build();
     googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
     return true;
