@@ -14,7 +14,7 @@ public class VehicleOptionsActivity extends BaseActivity {
   public void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_vehicle_options);
-    setTitle(R.string.vehicle_options);
+    setTitle(R.string.check_list);
   }
 
   @Override
