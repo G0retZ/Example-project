@@ -18,7 +18,7 @@
   <string name="free">Свободна</string>
   <string name="busy">Занята</string>
   <string name="no_vehicles_available">Нет доступных ТС</string>
-  <string name="choose_vehicle">Выбор ТС</string>
+  <string name="choose_vehicle">Гараж</string>
   <string name="check_list">Чек лист</string>
   <string name="ready">Готово</string>
   <string name="change">Сменить</string>
