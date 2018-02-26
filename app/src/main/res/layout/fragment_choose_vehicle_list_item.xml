@@ -12,6 +12,7 @@
     android:layout_marginBottom="16dp"
     android:layout_marginStart="16dp"
     android:layout_marginEnd="16dp"
+    style="@style/TextAppearance.AppCompat.Subhead"
     app:layout_constraintBottom_toBottomOf="parent"
     app:layout_constraintEnd_toStartOf="@+id/vehicleStatusText"
     app:layout_constraintStart_toStartOf="parent"
@@ -24,9 +25,21 @@
     android:layout_marginBottom="16dp"
     android:layout_marginStart="16dp"
     android:layout_marginEnd="16dp"
+    style="@style/TextAppearance.AppCompat.Subhead"
     app:layout_constraintBottom_toBottomOf="parent"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toEndOf="@+id/vehicleNameText"
     app:layout_constraintTop_toTopOf="parent"
     app:layout_constraintVertical_bias="0.0"/>
+  <View
+    android:id="@+id/view"
+    android:layout_width="0dp"
+    android:layout_height="1dp"
+    android:layout_marginStart="12dp"
+    android:layout_marginEnd="12dp"
+    android:background="@color/colorDivider"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    />
 </android.support.constraint.ConstraintLayout>

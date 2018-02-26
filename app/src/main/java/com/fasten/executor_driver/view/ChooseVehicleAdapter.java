@@ -50,6 +50,8 @@ class ChooseVehicleAdapter extends RecyclerView.Adapter<ChooseVehicleViewHolder>
         chooseVehicleListItem.isSelectable() ?
             v -> publishSubject.onNext(chooseVehicleListItem) : null
     );
+    holder.nameText.setEnabled(chooseVehicleListItem.isSelectable());
+    holder.labelText.setEnabled(chooseVehicleListItem.isSelectable());
   }
 
   final class ChooseVehicleViewHolder extends RecyclerView.ViewHolder {
