@@ -7,4 +7,5 @@
   <color name="colorDisabled">#1FFFFFFF</color>
   <color name="colorDivider">#FF212D3A</color>
   <color name="colorWindowBackground">#131A22</color>
+  <color name="colorError">#FFDA1447</color>
 </resources>
