@@ -33,5 +33,4 @@ public class AuthorizationInterceptor implements Interceptor {
     }
     return response;
   }
-
 }
