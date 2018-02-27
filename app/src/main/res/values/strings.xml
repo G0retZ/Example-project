@@ -4,9 +4,9 @@
   <string name="phone_number">Номер телефона</string>
   <string name="no_network_connection">Отсуствует подключение к сети</string>
   <string name="server_fail">Ошибка взаимодействия с сервером</string>
-  <string name="next">Далее</string>
   <string name="no_access_to_phone">Нет доступа к номеру?</string>
-  <string name="enter">Вход</string>
+  <string name="become_driver">Стать водителем</string>
+  <string name="enter">Войти</string>
   <string name="sms_code_message">Код из СМС</string>
   <string name="invalid_code">Введен неверный код</string>
   <string name="get_code_from_sms">Получить код с помощью СМС</string>

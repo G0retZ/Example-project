@@ -2,6 +2,8 @@ package com.fasten.executor_driver.view.auth;
 
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -60,6 +62,11 @@ public class LoginFragment extends BaseFragment implements PhoneViewActions {
     View view = inflater.inflate(R.layout.fragment_auth_login, container, false);
     phoneInput = view.findViewById(R.id.phoneInput);
     goNext = view.findViewById(R.id.goNext);
+    view.findViewById(R.id.becomeDriver).setOnClickListener(v -> {
+      Intent intent = new Intent(Intent.ACTION_VIEW);
+      intent.setData(Uri.parse("https://vezetdobro.ru/drivers"));
+      startActivity(intent);
+    });
 
     goNext.setOnClickListener(v -> phoneViewModel.nextClicked());
     phoneViewModel.getViewStateLiveData().observe(this, viewState -> {
