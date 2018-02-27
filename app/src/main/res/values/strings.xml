@@ -7,6 +7,7 @@
   <string name="no_access_to_phone">Нет доступа к номеру?</string>
   <string name="become_driver">Стать водителем</string>
   <string name="enter">Войти</string>
+  <string name="code">Код</string>
   <string name="sms_code_message">Введите код подтверждения,\nполученный по SMS</string>
   <string name="invalid_code">Введен неверный код</string>
   <string name="get_code_from_sms">Получить код с помощью СМС</string>

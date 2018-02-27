@@ -12,7 +12,7 @@ public class PasswordActivity extends BaseActivity {
   public void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_passwrod);
-    setTitle(R.string.enter);
+    setTitle(R.string.code);
   }
 
   @Override
