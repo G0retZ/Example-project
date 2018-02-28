@@ -27,7 +27,7 @@ public class CodeHeaderViewModelImpl extends ViewModel implements CodeHeaderView
   CodeHeaderViewModelImpl(@Named("loginSharer") @NonNull DataSharer<String> loginSharer) {
     this.loginSharer = loginSharer;
     viewStateLiveData = new MutableLiveData<>();
-    consumePhoneNumber("00000000000");
+    consumeCode("00000000000");
   }
 
   @NonNull
@@ -37,7 +37,7 @@ public class CodeHeaderViewModelImpl extends ViewModel implements CodeHeaderView
       disposable = loginSharer.get()
           .subscribeOn(Schedulers.single())
           .observeOn(AndroidSchedulers.mainThread())
-          .subscribe(this::consumePhoneNumber, throwable -> {
+          .subscribe(this::consumeCode, throwable -> {
           });
     }
     return viewStateLiveData;
@@ -49,7 +49,7 @@ public class CodeHeaderViewModelImpl extends ViewModel implements CodeHeaderView
     return new SingleLiveEvent<>();
   }
 
-  private void consumePhoneNumber(@NonNull String phoneNumber) {
+  private void consumeCode(@NonNull String phoneNumber) {
     viewStateLiveData.postValue(
         new CodeHeaderViewState(
             phoneNumber.replaceFirst("(\\d)", "+$1 (")
