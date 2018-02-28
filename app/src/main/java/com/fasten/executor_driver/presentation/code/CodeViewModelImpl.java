@@ -53,7 +53,7 @@ public class CodeViewModelImpl extends ViewModel implements CodeViewModel {
       return;
     }
     disposable = passwordUseCase.authorize(
-        code,
+        code.replaceAll("[^\\d]", ""),
         Completable.create(e -> {
           viewStateLiveData.postValue(new CodeViewStatePending());
           e.onComplete();

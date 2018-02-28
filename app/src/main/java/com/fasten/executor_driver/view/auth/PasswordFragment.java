@@ -241,6 +241,65 @@ public class PasswordFragment extends BaseFragment implements CodeViewActions,
     networkErrorText.setVisibility(codeNetworkError || smsNetworkError ? View.VISIBLE : View.GONE);
   }
 
+  @Override
+  public void setSmsButtonText(@StringRes int res, @Nullable Long secondsLeft) {
+    if (secondsLeft == null) {
+      sendSmsRequest.setText(res);
+    } else {
+      sendSmsRequest.setText(getString(res, secondsLeft));
+    }
+  }
+
+  @Override
+  public void enableSmsButton(boolean enable) {
+    sendSmsRequest.setOnClickListener(enable ? sendSmsClickListener : null);
+  }
+
+  @Override
+  public void showSmsSendNetworkErrorMessage(boolean show) {
+    smsNetworkError = show;
+    if (show) {
+      networkErrorText.setText(R.string.sms_network_error);
+      // TODO: костылек временный
+      codeInputCaption.setVisibility(View.GONE);
+      codeInput.setVisibility(View.GONE);
+      codeInputUnderline.setVisibility(View.GONE);
+    }
+    networkErrorText.setVisibility(codeNetworkError || smsNetworkError ? View.VISIBLE : View.GONE);
+  }
+
+  @Override
+  public void showSmsSendPending(boolean pending) {
+    smsPending = pending;
+    pendingIndicator.setVisibility(smsPending || codePending ? View.VISIBLE : View.GONE);
+  }
+
+  @Override
+  public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+      @NonNull int[] grantResults) {
+    if (permissionChecker != null) {
+      permissionChecker.onResult(requestCode, permissions, grantResults);
+    }
+  }
+
+  private void autoSendSmsRequest() {
+    if (!smsSent) {
+      sendSmsRequest.post(sendSmsRequest::performClick);
+    }
+  }
+
+  private void checkPermissions() {
+    permissionChecker = new PermissionChecker(1337);
+    permissionDisposable = permissionChecker.check(this, context, PERMISSIONS)
+        .doFinally(() -> permissionChecker = null)
+        .subscribe(this::autoSendSmsRequest, t -> autoSendSmsRequest());
+  }
+
+  @Override
+  public void setDescriptiveHeaderText(int textId, @NonNull String phoneNumber) {
+    codeInputCaption.setText(getString(R.string.sms_code_message, phoneNumber));
+  }
+
   // Замудренная логика форматировния ввода кода из СМС в режиме реального времени
   private void setTextListener() {
     codeInput.addTextChangedListener(new TextWatcher() {
@@ -308,64 +367,5 @@ public class PasswordFragment extends BaseFragment implements CodeViewActions,
       numbers = numbers.substring(0, 13);
     }
     return numbers;
-  }
-
-  @Override
-  public void setSmsButtonText(@StringRes int res, @Nullable Long secondsLeft) {
-    if (secondsLeft == null) {
-      sendSmsRequest.setText(res);
-    } else {
-      sendSmsRequest.setText(getString(res, secondsLeft));
-    }
-  }
-
-  @Override
-  public void enableSmsButton(boolean enable) {
-    sendSmsRequest.setOnClickListener(enable ? sendSmsClickListener : null);
-  }
-
-  @Override
-  public void showSmsSendNetworkErrorMessage(boolean show) {
-    smsNetworkError = show;
-    if (show) {
-      networkErrorText.setText(R.string.sms_network_error);
-      // TODO: костылек временный. Требует рефакторинга...
-      codeInputCaption.setVisibility(View.GONE);
-      codeInput.setVisibility(View.GONE);
-      codeInputUnderline.setVisibility(View.GONE);
-    }
-    networkErrorText.setVisibility(codeNetworkError || smsNetworkError ? View.VISIBLE : View.GONE);
-  }
-
-  @Override
-  public void showSmsSendPending(boolean pending) {
-    smsPending = pending;
-    pendingIndicator.setVisibility(smsPending || codePending ? View.VISIBLE : View.GONE);
-  }
-
-  @Override
-  public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-      @NonNull int[] grantResults) {
-    if (permissionChecker != null) {
-      permissionChecker.onResult(requestCode, permissions, grantResults);
-    }
-  }
-
-  private void autoSendSmsRequest() {
-    if (!smsSent) {
-      sendSmsRequest.post(sendSmsRequest::performClick);
-    }
-  }
-
-  private void checkPermissions() {
-    permissionChecker = new PermissionChecker(1337);
-    permissionDisposable = permissionChecker.check(this, context, PERMISSIONS)
-        .doFinally(() -> permissionChecker = null)
-        .subscribe(this::autoSendSmsRequest, t -> autoSendSmsRequest());
-  }
-
-  @Override
-  public void setDescriptiveHeaderText(int textId, @NonNull String phoneNumber) {
-    codeInputCaption.setText(getString(R.string.sms_code_message, phoneNumber));
   }
 }

@@ -68,9 +68,9 @@ public class CodeViewModelTest {
   @Test
   public void DoNotAskPasswordUseCaseToAuthorize() throws Exception {
     // Действие:
-    codeViewModel.setCode("12");
-    codeViewModel.setCode("123");
-    codeViewModel.setCode("1234");
+    codeViewModel.setCode("1   2   ");
+    codeViewModel.setCode("1   2   3   ");
+    codeViewModel.setCode("1   2   3   4");
 
     // Результат:
     verify(passwordUseCase, only()).authorize(eq("12"), afterValidationCaptor.capture());
@@ -88,9 +88,9 @@ public class CodeViewModelTest {
         .thenReturn(Completable.error(new ValidationException()));
 
     // Действие:
-    codeViewModel.setCode("12");
-    codeViewModel.setCode("123");
-    codeViewModel.setCode("1234");
+    codeViewModel.setCode("1   2   ");
+    codeViewModel.setCode("1   2   3   ");
+    codeViewModel.setCode("1   2   3   4");
 
     // Результат:
     verify(passwordUseCase).authorize(eq("12"), afterValidationCaptor.capture());
@@ -134,9 +134,9 @@ public class CodeViewModelTest {
 
     // Действие:
     codeViewModel.setCode("");
-    codeViewModel.setCode("12");
-    codeViewModel.setCode("1245");
-    codeViewModel.setCode("12457");
+    codeViewModel.setCode("1   2   ");
+    codeViewModel.setCode("1   2   3   ");
+    codeViewModel.setCode("1   2   3   4");
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(any(CodeViewStateInitial.class));
@@ -160,9 +160,9 @@ public class CodeViewModelTest {
 
     // Действие:
     codeViewModel.setCode("");
-    codeViewModel.setCode("12");
-    codeViewModel.setCode("1245");
-    codeViewModel.setCode("12457");
+    codeViewModel.setCode("1   2   ");
+    codeViewModel.setCode("1   2   4   5   ");
+    codeViewModel.setCode("1   2   4   5   7   ");
 
     // Результат:
     verify(passwordUseCase).authorize(eq("12457"), afterValidationCaptor.capture());
@@ -187,7 +187,7 @@ public class CodeViewModelTest {
         .thenReturn(completableSubject);
 
     // Действие:
-    codeViewModel.setCode("1245");
+    codeViewModel.setCode("1   2   4   5");
 
     // Результат:
     verify(passwordUseCase).authorize(eq("1245"), afterValidationCaptor.capture());
@@ -216,7 +216,7 @@ public class CodeViewModelTest {
         .thenReturn(completableSubject);
 
     // Действие:
-    codeViewModel.setCode("1245");
+    codeViewModel.setCode("1   2   4   5");
     verify(passwordUseCase).authorize(eq("1245"), afterValidationCaptor.capture());
     afterValidationCaptor.getValue().subscribe(
         () -> completableSubject.onError(new IllegalArgumentException()),
@@ -224,7 +224,7 @@ public class CodeViewModelTest {
     );
     when(passwordUseCase.authorize(anyString(), any(Completable.class)))
         .thenReturn(Completable.error(new ValidationException()));
-    codeViewModel.setCode("124");
+    codeViewModel.setCode("1   2   4   ");
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(any(CodeViewStateInitial.class));
@@ -249,7 +249,7 @@ public class CodeViewModelTest {
         .thenReturn(completableSubject);
 
     // Действие:
-    codeViewModel.setCode("1245");
+    codeViewModel.setCode("1   2   4   5");
 
     // Результат:
     verify(passwordUseCase).authorize(eq("1245"), afterValidationCaptor.capture());
@@ -279,7 +279,7 @@ public class CodeViewModelTest {
         .thenReturn(completableSubject);
 
     // Действие:
-    codeViewModel.setCode("1245");
+    codeViewModel.setCode("1   2   4   5");
 
     // Результат:
     verify(passwordUseCase).authorize(eq("1245"), afterValidationCaptor.capture());
