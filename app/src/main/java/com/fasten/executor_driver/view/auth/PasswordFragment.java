@@ -323,36 +323,21 @@ public class PasswordFragment extends BaseFragment implements CodeViewActions,
         if (!mFormatting) {
           mFormatting = true;
           // Берем текущую позицию курсора после изменения текста.
-          int selection = codeInput.getSelectionStart();
           // Берем текущую строку после изменения текста.
           String numbers = s.toString();
-          // Если был удален не-цифровой символ, то удаляем цифровой символ слева,
-          // и сдвигаем курсор влево.
-          if (mAfter == 0) {
-            if (selection == 15 || selection == 12) {
-              numbers = new StringBuilder(numbers).deleteCharAt(--selection).toString();
-            }
-            if (selection == 8) {
-              numbers = new StringBuilder(numbers).deleteCharAt(--selection).toString();
-            }
-            if (selection == 7) {
-              numbers = new StringBuilder(numbers).deleteCharAt(--selection).toString();
-            }
-          }
           // Удаляем все нецифровые символы.
           numbers = numbers.replaceAll("[^\\d]", "");
+          // Если был удален не-цифровой символ, то удаляем цифровой символ слева,
+          // и сдвигаем курсор влево.
+          if (mAfter == 0 && numbers.length() > 0 && codeInput.getSelectionStart() % 4 != 0) {
+            numbers = new StringBuilder(numbers).deleteCharAt(numbers.length() - 1).toString();
+          }
           // Форматируем ввод в виде X   X   X   X.
           numbers = formatNumbersToCode(numbers);
-          // Если курсор оказался перед открывающей скобкой, то помещаем его после нее.
-          if (selection % 4 != 0 && selection < 12) {
-            selection = selection - selection % 4;
-          }
-          // Защищаемся от {@link IndexOutOfBoundsException}
-          selection = Math.min(selection, numbers.length());
           // Закидываем отформатированную строку в поле ввода
           codeInput.setText(numbers);
-          // Сдвигаем курсор на нужную позицию
-          codeInput.setSelection(selection);
+          // Устанавливаем курсор в конце
+          codeInput.setSelection(numbers.length());
 
           mFormatting = false;
           codeViewModel.setCode(numbers);
