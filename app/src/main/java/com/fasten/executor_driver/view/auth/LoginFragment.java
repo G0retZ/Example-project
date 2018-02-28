@@ -7,13 +7,13 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.TextInputEditText;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import com.fasten.executor_driver.R;
 import com.fasten.executor_driver.backend.settings.AppSettingsService;
 import com.fasten.executor_driver.di.AppComponent;
@@ -31,7 +31,7 @@ import javax.inject.Named;
 public class LoginFragment extends BaseFragment implements PhoneViewActions {
 
   private PhoneViewModel phoneViewModel;
-  private TextInputEditText phoneInput;
+  private EditText phoneInput;
   private Button goNext;
 
   private ViewModelProvider.Factory viewModelFactory;
