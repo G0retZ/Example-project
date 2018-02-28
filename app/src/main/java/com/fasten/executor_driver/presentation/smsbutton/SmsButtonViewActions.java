@@ -28,7 +28,7 @@ public interface SmsButtonViewActions {
    *
    * @param show - показать или нет?
    */
-  void setSmsSendNetworkErrorMessage(boolean show);
+  void showSmsSendNetworkErrorMessage(boolean show);
 
   /**
    * Показать индикатор процесса.

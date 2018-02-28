@@ -31,7 +31,7 @@ public class SmsButtonViewStateReadyTest {
     // Результат:
     verify(smsButtonViewActions).setSmsButtonText(R.string.repeat_code_from_sms, null);
     verify(smsButtonViewActions).enableSmsButton(true);
-    verify(smsButtonViewActions).setSmsSendNetworkErrorMessage(false);
+    verify(smsButtonViewActions).showSmsSendNetworkErrorMessage(false);
     verify(smsButtonViewActions).showSmsSendPending(false);
     verifyNoMoreInteractions(smsButtonViewActions);
   }

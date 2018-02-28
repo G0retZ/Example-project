@@ -30,7 +30,7 @@ public class SmsButtonViewStateErrorTest {
 
     // Результат:
     verify(codeViewActions).showSmsSendPending(false);
-    verify(codeViewActions).setSmsSendNetworkErrorMessage(true);
+    verify(codeViewActions).showSmsSendNetworkErrorMessage(true);
     verify(codeViewActions).enableSmsButton(true);
     verify(codeViewActions).setSmsButtonText(R.string.repeat_code_from_sms, null);
     verifyNoMoreInteractions(codeViewActions);

@@ -19,7 +19,7 @@ public final class SmsButtonViewStateHold implements ViewState<SmsButtonViewActi
   public void apply(@NonNull SmsButtonViewActions stateActions) {
     stateActions.enableSmsButton(false);
     stateActions.setSmsButtonText(R.string.repeat_code_from_sms_delayed, secondsLeft);
-    stateActions.setSmsSendNetworkErrorMessage(false);
+    stateActions.showSmsSendNetworkErrorMessage(false);
     stateActions.showSmsSendPending(false);
   }
 

@@ -13,7 +13,7 @@ public final class SmsButtonViewStatePending implements ViewState<SmsButtonViewA
   public void apply(@NonNull SmsButtonViewActions stateActions) {
     stateActions.enableSmsButton(false);
     stateActions.setSmsButtonText(R.string.repeat_code_from_sms, null);
-    stateActions.setSmsSendNetworkErrorMessage(false);
+    stateActions.showSmsSendNetworkErrorMessage(false);
     stateActions.showSmsSendPending(true);
   }
 }

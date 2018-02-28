@@ -273,7 +273,7 @@ public class PasswordFragment extends BaseFragment implements CodeViewActions,
   }
 
   @Override
-  public void setSmsSendNetworkErrorMessage(boolean show) {
+  public void showSmsSendNetworkErrorMessage(boolean show) {
 //    if (error != null) {
 //      codeInputUnderline.setImageResource(R.drawable.ic_code_input_activated);
 //      if (error instanceof NoNetworkException) {

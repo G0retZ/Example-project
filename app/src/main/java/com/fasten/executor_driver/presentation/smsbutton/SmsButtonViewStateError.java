@@ -14,6 +14,6 @@ final class SmsButtonViewStateError implements ViewState<SmsButtonViewActions> {
     stateActions.setSmsButtonText(R.string.repeat_code_from_sms, null);
     stateActions.enableSmsButton(true);
     stateActions.showSmsSendPending(false);
-    stateActions.setSmsSendNetworkErrorMessage(true);
+    stateActions.showSmsSendNetworkErrorMessage(true);
   }
 }

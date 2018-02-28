@@ -33,7 +33,7 @@ public class SmsButtonViewStateHoldTest {
     // Результат:
     verify(smsButtonViewActions).setSmsButtonText(R.string.repeat_code_from_sms_delayed, 12L);
     verify(smsButtonViewActions).enableSmsButton(false);
-    verify(smsButtonViewActions).setSmsSendNetworkErrorMessage(false);
+    verify(smsButtonViewActions).showSmsSendNetworkErrorMessage(false);
     verify(smsButtonViewActions).showSmsSendPending(false);
     verifyNoMoreInteractions(smsButtonViewActions);
   }
