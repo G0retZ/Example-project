@@ -21,6 +21,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.TextView;
 import com.fasten.executor_driver.R;
 import com.fasten.executor_driver.di.AppComponent;
 import com.fasten.executor_driver.presentation.code.CodeViewActions;
@@ -51,6 +52,9 @@ public class PasswordFragment extends BaseFragment implements CodeViewActions,
 
   private CodeViewModel codeViewModel;
   private SmsButtonViewModel smsButtonViewModel;
+  private TextView networkErrorText;
+  private TextView codeErrorText;
+  private TextView codeInputCaption;
   private ImageView codeInputUnderline;
   private EditText codeInput;
   private Button sendSmsRequest;
@@ -68,6 +72,8 @@ public class PasswordFragment extends BaseFragment implements CodeViewActions,
   private boolean smsSent;
   private boolean smsPending;
   private boolean codePending;
+  private boolean smsNetworkError;
+  private boolean codeNetworkError;
 
   @Inject
   public void setCodeViewModelFactory(@Named("code") Factory codeViewModelFactory) {
@@ -114,6 +120,9 @@ public class PasswordFragment extends BaseFragment implements CodeViewActions,
       @Nullable ViewGroup container,
       @Nullable Bundle savedInstanceState) {
     View view = inflater.inflate(R.layout.fragment_auth_password, container, false);
+    networkErrorText = view.findViewById(R.id.networkErrorText);
+    codeErrorText = view.findViewById(R.id.codeErrorText);
+    codeInputCaption = view.findViewById(R.id.codeInputCaption);
     codeInputUnderline = view.findViewById(R.id.codeInputUnderline);
     codeInput = view.findViewById(R.id.codeInput);
     sendSmsRequest = view.findViewById(R.id.sendSms);
@@ -192,7 +201,7 @@ public class PasswordFragment extends BaseFragment implements CodeViewActions,
 
   @Override
   public void showDescriptiveHeader(boolean show) {
-
+    codeInputCaption.setVisibility(show ? View.VISIBLE : View.GONE);
   }
 
   @Override
@@ -202,12 +211,16 @@ public class PasswordFragment extends BaseFragment implements CodeViewActions,
 
   @Override
   public void showCodeCheckError(boolean show) {
-//        codeInputUnderline.setError(getString(R.string.no_network_connection));
+    codeErrorText.setVisibility(show ? View.VISIBLE : View.GONE);
   }
 
   @Override
   public void showCodeCheckNetworkErrorMessage(boolean show) {
-
+    codeNetworkError = show;
+    if (show) {
+      networkErrorText.setText(R.string.code_network_error);
+    }
+    networkErrorText.setVisibility(codeNetworkError || smsNetworkError ? View.VISIBLE : View.GONE);
   }
 
   // Замудренная логика форматировния ввода кода из СМС в режиме реального времени
@@ -295,14 +308,11 @@ public class PasswordFragment extends BaseFragment implements CodeViewActions,
 
   @Override
   public void showSmsSendNetworkErrorMessage(boolean show) {
-//    if (error != null) {
-//      codeInputUnderline.setImageResource(R.drawable.ic_code_input_activated);
-//      if (error instanceof NoNetworkException) {
-//        codeInputUnderline.setError(getString(R.string.no_network_connection));
-//      } else {
-//        codeInputUnderline.setError(getString(R.string.server_fail));
-//      }
-//    }
+    smsNetworkError = show;
+    if (show) {
+      networkErrorText.setText(R.string.sms_network_error);
+    }
+    networkErrorText.setVisibility(codeNetworkError || smsNetworkError ? View.VISIBLE : View.GONE);
   }
 
   @Override
