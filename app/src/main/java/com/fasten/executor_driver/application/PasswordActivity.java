@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.fasten.executor_driver.R;
+import com.fasten.executor_driver.presentation.code.CodeNavigate;
 
 public class PasswordActivity extends BaseActivity {
 
@@ -17,7 +18,7 @@ public class PasswordActivity extends BaseActivity {
 
   @Override
   public void navigate(@NonNull String destination) {
-    if (destination.equals("enter")) {
+    if (destination.equals(CodeNavigate.MAP)) {
       Intent intent = new Intent(this, MapActivity.class);
       intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
       startActivity(intent);
