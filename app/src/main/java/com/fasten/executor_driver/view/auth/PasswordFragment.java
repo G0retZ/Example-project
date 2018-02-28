@@ -9,16 +9,18 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.TextInputEditText;
-import android.support.design.widget.TextInputLayout;
+import android.support.annotation.StringRes;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ProgressBar;
+import android.widget.EditText;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
 import com.fasten.executor_driver.R;
-import com.fasten.executor_driver.backend.web.NoNetworkException;
 import com.fasten.executor_driver.di.AppComponent;
 import com.fasten.executor_driver.presentation.code.CodeViewActions;
 import com.fasten.executor_driver.presentation.code.CodeViewModel;
@@ -28,7 +30,6 @@ import com.fasten.executor_driver.presentation.smsbutton.SmsButtonViewModel;
 import com.fasten.executor_driver.presentation.smsbutton.SmsButtonViewModelImpl;
 import com.fasten.executor_driver.view.BaseFragment;
 import com.fasten.executor_driver.view.PermissionChecker;
-import com.jakewharton.rxbinding2.widget.RxTextView;
 import io.reactivex.disposables.Disposable;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -49,11 +50,10 @@ public class PasswordFragment extends BaseFragment implements CodeViewActions,
 
   private CodeViewModel codeViewModel;
   private SmsButtonViewModel smsButtonViewModel;
-  private TextInputLayout codeInputLayout;
-  private TextInputEditText codeInput;
+  private ImageView codeInputUnderline;
+  private EditText codeInput;
   private Button sendSmsRequest;
-  private ProgressBar pendingIndicator;
-  private ProgressBar sendingIndicator;
+  private FrameLayout pendingIndicator;
   private final OnClickListener sendSmsClickListener = v -> {
     smsSent = true;
     smsButtonViewModel.sendMeSms();
@@ -65,6 +65,8 @@ public class PasswordFragment extends BaseFragment implements CodeViewActions,
   private SmsReceiver smsReceiver;
   private Disposable smsCodeDisposable;
   private boolean smsSent;
+  private boolean smsPending;
+  private boolean codePending;
 
   @Inject
   public void setCodeViewModelFactory(@Named("code") Factory codeViewModelFactory) {
@@ -111,11 +113,10 @@ public class PasswordFragment extends BaseFragment implements CodeViewActions,
       @Nullable ViewGroup container,
       @Nullable Bundle savedInstanceState) {
     View view = inflater.inflate(R.layout.fragment_auth_password, container, false);
-    codeInputLayout = view.findViewById(R.id.codeInputLayout);
+    codeInputUnderline = view.findViewById(R.id.codeInputUnderline);
     codeInput = view.findViewById(R.id.codeInput);
     sendSmsRequest = view.findViewById(R.id.sendSms);
     pendingIndicator = view.findViewById(R.id.pending);
-    sendingIndicator = view.findViewById(R.id.sending);
 
     codeViewModel.getViewStateLiveData().observe(this, viewState -> {
       if (viewState != null) {
@@ -164,7 +165,8 @@ public class PasswordFragment extends BaseFragment implements CodeViewActions,
 
   @Override
   public void showCodeCheckPending(boolean pending) {
-    pendingIndicator.setVisibility(pending ? View.VISIBLE : View.GONE);
+    codePending = pending;
+    pendingIndicator.setVisibility(smsPending || codePending ? View.VISIBLE : View.GONE);
   }
 
   @Override
@@ -175,50 +177,117 @@ public class PasswordFragment extends BaseFragment implements CodeViewActions,
   @Override
   public void showCodeCheckError(@Nullable Throwable error) {
     if (error == null) {
-      codeInputLayout.setError(null);
+//      codeInputUnderline.setError(null);
+      codeInputUnderline.setImageResource(R.drawable.ic_code_input_activated);
     } else {
-      if (error instanceof NoNetworkException) {
-        codeInputLayout.setError(getString(R.string.no_network_connection));
-      } else {
-        codeInputLayout.setError(getString(R.string.invalid_code));
-      }
+      codeInputUnderline.setImageResource(R.drawable.ic_code_input_error);
+//      if (error instanceof NoNetworkException) {
+//        codeInputUnderline.setError(getString(R.string.no_network_connection));
+//      } else {
+//        codeInputUnderline.setError(getString(R.string.invalid_code));
+//      }
     }
   }
 
-  // Замудренная логика форматировния ввода номера телефона в режиме реального времени
+  // Замудренная логика форматировния ввода кода из СМС в режиме реального времени
   private void setTextListener() {
-    RxTextView.textChanges(codeInput).subscribe(code -> codeViewModel.setCode(code.toString()));
-  }
+    codeInput.addTextChangedListener(new TextWatcher() {
+      // Флаг, предотвращающий переолнение стека. Разделяет ручной ввод и форматирование.
+      private boolean mFormatting;
+      private int mAfter;
 
-  @Override
-  public void showSmsButtonTimer(@Nullable Long secondsLeft) {
-    if (secondsLeft == null) {
-      sendSmsRequest.setText(R.string.get_code_from_sms);
-    } else {
-      sendSmsRequest.setText(getString(R.string.repeat_code_from_sms, secondsLeft));
-    }
-  }
-
-  @Override
-  public void setSmsButtonResponsive(boolean responsive) {
-    sendSmsRequest.setOnClickListener(responsive ? sendSmsClickListener : null);
-  }
-
-  @Override
-  public void showSmsSendError(@Nullable Throwable error) {
-    if (error != null) {
-      if (error instanceof NoNetworkException) {
-        codeInputLayout.setError(getString(R.string.no_network_connection));
-      } else {
-        codeInputLayout.setError(getString(R.string.server_fail));
+      @Override
+      public void onTextChanged(CharSequence s, int start, int before, int count) {
       }
+
+      //called before the text is changed...
+      @Override
+      public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+        mAfter = after; // флаг определения backspace.
+      }
+
+      @Override
+      public void afterTextChanged(Editable s) {
+        // Игнорируем изменения, произведенные ниже (фильтруем действия нашего алгоритма).
+        if (!mFormatting) {
+          mFormatting = true;
+          // Берем текущую позицию курсора после изменения текста.
+          int selection = codeInput.getSelectionStart();
+          // Берем текущую строку после изменения текста.
+          String numbers = s.toString();
+          // Если был удален не-цифровой символ, то удаляем цифровой символ слева,
+          // и сдвигаем курсор влево.
+          if (mAfter == 0) {
+            if (selection == 15 || selection == 12) {
+              numbers = new StringBuilder(numbers).deleteCharAt(--selection).toString();
+            }
+            if (selection == 8) {
+              numbers = new StringBuilder(numbers).deleteCharAt(--selection).toString();
+            }
+            if (selection == 7) {
+              numbers = new StringBuilder(numbers).deleteCharAt(--selection).toString();
+            }
+          }
+          // Удаляем все нецифровые символы.
+          numbers = numbers.replaceAll("[^\\d]", "");
+          // Форматируем ввод в виде X   X   X   X.
+          numbers = formatNumbersToCode(numbers);
+          // Если курсор оказался перед открывающей скобкой, то помещаем его после нее.
+          if (selection % 4 != 0 && selection < 12) {
+            selection = selection - selection % 4;
+          }
+          // Защищаемся от {@link IndexOutOfBoundsException}
+          selection = Math.min(selection, numbers.length());
+          // Закидываем отформатированную строку в поле ввода
+          codeInput.setText(numbers);
+          // Сдвигаем курсор на нужную позицию
+          codeInput.setSelection(selection);
+
+          mFormatting = false;
+          codeViewModel.setCode(numbers);
+        }
+      }
+    });
+  }
+
+  private String formatNumbersToCode(String numbers) {
+    numbers = numbers.replaceAll("(\\d)", "$1   ");
+    if (numbers.length() > 13) {
+      numbers = numbers.substring(0, 13);
     }
+    return numbers;
+  }
+
+  @Override
+  public void setSmsButtonText(@StringRes int res, @Nullable Long secondsLeft) {
+    if (secondsLeft == null) {
+      sendSmsRequest.setText(res);
+    } else {
+      sendSmsRequest.setText(getString(res, secondsLeft));
+    }
+  }
+
+  @Override
+  public void enableSmsButton(boolean enable) {
+    sendSmsRequest.setOnClickListener(enable ? sendSmsClickListener : null);
+  }
+
+  @Override
+  public void setSmsSendNetworkErrorMessage(boolean show) {
+//    if (error != null) {
+//      codeInputUnderline.setImageResource(R.drawable.ic_code_input_activated);
+//      if (error instanceof NoNetworkException) {
+//        codeInputUnderline.setError(getString(R.string.no_network_connection));
+//      } else {
+//        codeInputUnderline.setError(getString(R.string.server_fail));
+//      }
+//    }
   }
 
   @Override
   public void showSmsSendPending(boolean pending) {
-    sendSmsRequest.setVisibility(pending ? View.INVISIBLE : View.VISIBLE);
-    sendingIndicator.setVisibility(pending ? View.VISIBLE : View.GONE);
+    smsPending = pending;
+    pendingIndicator.setVisibility(smsPending || codePending ? View.VISIBLE : View.GONE);
   }
 
   @Override

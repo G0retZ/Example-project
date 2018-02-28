@@ -3,6 +3,7 @@ package com.fasten.executor_driver.presentation.smsbutton;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
+import com.fasten.executor_driver.R;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -28,9 +29,9 @@ public class SmsButtonViewStatePendingTest {
     viewState.apply(smsButtonViewActions);
 
     // Результат:
-    verify(smsButtonViewActions).showSmsButtonTimer(null);
-    verify(smsButtonViewActions).setSmsButtonResponsive(false);
-    verify(smsButtonViewActions).showSmsSendError(null);
+    verify(smsButtonViewActions).setSmsButtonText(R.string.repeat_code_from_sms, null);
+    verify(smsButtonViewActions).enableSmsButton(false);
+    verify(smsButtonViewActions).setSmsSendNetworkErrorMessage(false);
     verify(smsButtonViewActions).showSmsSendPending(true);
     verifyNoMoreInteractions(smsButtonViewActions);
   }
