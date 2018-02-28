@@ -27,6 +27,7 @@ public class CodeHeaderViewModelImpl extends ViewModel implements CodeHeaderView
   CodeHeaderViewModelImpl(@Named("loginSharer") @NonNull DataSharer<String> loginSharer) {
     this.loginSharer = loginSharer;
     viewStateLiveData = new MutableLiveData<>();
+    consumePhoneNumber("00000000000");
   }
 
   @NonNull

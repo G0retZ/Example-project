@@ -81,7 +81,7 @@ public class CodeHeaderViewModelTest {
     codeHeaderViewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Результат:
-    inOrder.verify(viewStateObserver).onChanged(new CodeHeaderViewState("+X (XXX) XXX-XX-XX"));
+    inOrder.verify(viewStateObserver).onChanged(new CodeHeaderViewState("+0 (000) 000-00-00"));
     verifyNoMoreInteractions(viewStateObserver);
   }
 
@@ -103,9 +103,9 @@ public class CodeHeaderViewModelTest {
     publishSubject.onNext("70123456789");
 
     // Результат:
-    inOrder.verify(viewStateObserver).onChanged(new CodeHeaderViewState("+X (XXX) XXX-XX-XX"));
+    inOrder.verify(viewStateObserver).onChanged(new CodeHeaderViewState("+0 (000) 000-00-00"));
     inOrder.verify(viewStateObserver).onChanged(new CodeHeaderViewState("+7 (999) 700-44-50"));
-    inOrder.verify(viewStateObserver).onChanged(new CodeHeaderViewState("+7 (999) 800-77-66"));
+    inOrder.verify(viewStateObserver).onChanged(new CodeHeaderViewState("+7 (999) 888-77-66"));
     inOrder.verify(viewStateObserver).onChanged(new CodeHeaderViewState("+7 (987) 654-32-10"));
     inOrder.verify(viewStateObserver).onChanged(new CodeHeaderViewState("+7 (012) 345-67-89"));
     verifyNoMoreInteractions(viewStateObserver);
@@ -117,16 +117,14 @@ public class CodeHeaderViewModelTest {
    * @throws Exception error
    */
   @Test
-  public void setViewStateWithoutNameToLiveDataOnError() throws Exception {
+  public void ignoreErrors() throws Exception {
     // Дано:
-    InOrder inOrder = Mockito.inOrder(viewStateObserver);
     codeHeaderViewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
     publishSubject.onError(new IllegalArgumentException());
 
     // Результат:
-    inOrder.verify(viewStateObserver, only())
-        .onChanged(new CodeHeaderViewState("+X (XXX) XXX-XX-XX"));
+    verify(viewStateObserver, only()).onChanged(new CodeHeaderViewState("+0 (000) 000-00-00"));
   }
 }

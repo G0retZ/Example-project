@@ -22,7 +22,7 @@ public class CodeHeaderViewStateTest {
 
   @Before
   public void setUp() throws Exception {
-    viewState = new CodeHeaderViewState("79997004450");
+    viewState = new CodeHeaderViewState("+7 (999) 700-44-50");
   }
 
   @Test
@@ -37,7 +37,7 @@ public class CodeHeaderViewStateTest {
 
   @Test
   public void testEquals() throws Exception {
-    assertEquals(viewState, new CodeHeaderViewState("79997004450"));
-    assertNotEquals(viewState, new CodeHeaderViewState("79997004451"));
+    assertEquals(viewState, new CodeHeaderViewState("+7 (999) 700-44-50"));
+    assertNotEquals(viewState, new CodeHeaderViewState("+7 (999) 700-44-51"));
   }
 }
