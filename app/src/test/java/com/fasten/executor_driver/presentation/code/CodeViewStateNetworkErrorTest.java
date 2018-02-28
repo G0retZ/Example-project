@@ -34,7 +34,7 @@ public class CodeViewStateNetworkErrorTest {
     verify(codeViewActions).showCodeCheckPending(false);
     verify(codeViewActions).showCodeCheckError(false);
     verify(codeViewActions).showCodeCheckNetworkErrorMessage(true);
-    verify(codeViewActions).setUnderlineImage(R.drawable.ic_code_input_default);
+    verify(codeViewActions).setUnderlineImage(R.drawable.ic_code_input_activated);
     verifyNoMoreInteractions(codeViewActions);
   }
 }
