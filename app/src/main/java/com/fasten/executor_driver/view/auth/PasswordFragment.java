@@ -27,6 +27,9 @@ import com.fasten.executor_driver.di.AppComponent;
 import com.fasten.executor_driver.presentation.code.CodeViewActions;
 import com.fasten.executor_driver.presentation.code.CodeViewModel;
 import com.fasten.executor_driver.presentation.code.CodeViewModelImpl;
+import com.fasten.executor_driver.presentation.codeHeader.CodeHeaderViewActions;
+import com.fasten.executor_driver.presentation.codeHeader.CodeHeaderViewModel;
+import com.fasten.executor_driver.presentation.codeHeader.CodeHeaderViewModelImpl;
 import com.fasten.executor_driver.presentation.smsbutton.SmsButtonViewActions;
 import com.fasten.executor_driver.presentation.smsbutton.SmsButtonViewModel;
 import com.fasten.executor_driver.presentation.smsbutton.SmsButtonViewModelImpl;
@@ -41,7 +44,7 @@ import javax.inject.Named;
  */
 
 public class PasswordFragment extends BaseFragment implements CodeViewActions,
-    SmsButtonViewActions {
+    CodeHeaderViewActions, SmsButtonViewActions {
 
   private static final String[] PERMISSIONS = new String[]{Manifest.permission.RECEIVE_SMS};
 
@@ -51,6 +54,7 @@ public class PasswordFragment extends BaseFragment implements CodeViewActions,
   private Disposable permissionDisposable;
 
   private CodeViewModel codeViewModel;
+  private CodeHeaderViewModel codeHeaderViewModel;
   private SmsButtonViewModel smsButtonViewModel;
   private TextView networkErrorText;
   private TextView codeErrorText;
@@ -66,6 +70,7 @@ public class PasswordFragment extends BaseFragment implements CodeViewActions,
   private Context context;
 
   private ViewModelProvider.Factory codeViewModelFactory;
+  private ViewModelProvider.Factory codeHeaderViewModelFactory;
   private ViewModelProvider.Factory buttonViewModelFactory;
   private SmsReceiver smsReceiver;
   private Disposable smsCodeDisposable;
@@ -78,6 +83,12 @@ public class PasswordFragment extends BaseFragment implements CodeViewActions,
   @Inject
   public void setCodeViewModelFactory(@Named("code") Factory codeViewModelFactory) {
     this.codeViewModelFactory = codeViewModelFactory;
+  }
+
+  @Inject
+  public void setCodeHeaderViewModelFactory(
+      @Named("codeHeader") Factory codeHeaderViewModelFactory) {
+    this.codeHeaderViewModelFactory = codeHeaderViewModelFactory;
   }
 
   @Inject
@@ -101,6 +112,8 @@ public class PasswordFragment extends BaseFragment implements CodeViewActions,
     // Required by Dagger2 for field injection
     appComponent.inject(this);
     codeViewModel = ViewModelProviders.of(this, codeViewModelFactory).get(CodeViewModelImpl.class);
+    codeHeaderViewModel = ViewModelProviders.of(this, codeHeaderViewModelFactory).get(
+        CodeHeaderViewModelImpl.class);
     smsButtonViewModel = ViewModelProviders.of(this, buttonViewModelFactory)
         .get(SmsButtonViewModelImpl.class);
   }
@@ -134,6 +147,11 @@ public class PasswordFragment extends BaseFragment implements CodeViewActions,
       }
     });
     codeViewModel.getViewStateLiveData().observe(this, viewState -> {
+      if (viewState != null) {
+        viewState.apply(this);
+      }
+    });
+    codeHeaderViewModel.getViewStateLiveData().observe(this, viewState -> {
       if (viewState != null) {
         viewState.apply(this);
       }
@@ -340,5 +358,10 @@ public class PasswordFragment extends BaseFragment implements CodeViewActions,
     permissionDisposable = permissionChecker.check(this, context, PERMISSIONS)
         .doFinally(() -> permissionChecker = null)
         .subscribe(this::autoSendSmsRequest, t -> autoSendSmsRequest());
+  }
+
+  @Override
+  public void setDescriptiveHeaderText(int textId, @NonNull String phoneNumber) {
+    codeInputCaption.setText(getString(R.string.sms_code_message, phoneNumber));
   }
 }
