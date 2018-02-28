@@ -7,28 +7,33 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.TextInputEditText;
-import android.support.design.widget.TextInputLayout;
+import android.support.annotation.StringRes;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ProgressBar;
+import android.widget.EditText;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.TextView;
 import com.fasten.executor_driver.R;
-import com.fasten.executor_driver.backend.web.NoNetworkException;
 import com.fasten.executor_driver.di.AppComponent;
 import com.fasten.executor_driver.presentation.code.CodeViewActions;
 import com.fasten.executor_driver.presentation.code.CodeViewModel;
 import com.fasten.executor_driver.presentation.code.CodeViewModelImpl;
+import com.fasten.executor_driver.presentation.codeHeader.CodeHeaderViewActions;
+import com.fasten.executor_driver.presentation.codeHeader.CodeHeaderViewModel;
+import com.fasten.executor_driver.presentation.codeHeader.CodeHeaderViewModelImpl;
 import com.fasten.executor_driver.presentation.smsbutton.SmsButtonViewActions;
 import com.fasten.executor_driver.presentation.smsbutton.SmsButtonViewModel;
 import com.fasten.executor_driver.presentation.smsbutton.SmsButtonViewModelImpl;
 import com.fasten.executor_driver.view.BaseFragment;
 import com.fasten.executor_driver.view.PermissionChecker;
-import com.jakewharton.rxbinding2.widget.RxTextView;
 import io.reactivex.disposables.Disposable;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -38,7 +43,7 @@ import javax.inject.Named;
  */
 
 public class PasswordFragment extends BaseFragment implements CodeViewActions,
-    SmsButtonViewActions {
+    CodeHeaderViewActions, SmsButtonViewActions {
 
   private static final String[] PERMISSIONS = new String[]{Manifest.permission.RECEIVE_SMS};
 
@@ -48,27 +53,38 @@ public class PasswordFragment extends BaseFragment implements CodeViewActions,
   private Disposable permissionDisposable;
 
   private CodeViewModel codeViewModel;
+  private CodeHeaderViewModel codeHeaderViewModel;
   private SmsButtonViewModel smsButtonViewModel;
-  private TextInputLayout codeInputLayout;
-  private TextInputEditText codeInput;
+  private TextView networkErrorText;
+  private TextView codeErrorText;
+  private TextView codeInputCaption;
+  private ImageView codeInputUnderline;
+  private EditText codeInput;
   private Button sendSmsRequest;
-  private ProgressBar pendingIndicator;
-  private ProgressBar sendingIndicator;
-  private final OnClickListener sendSmsClickListener = v -> {
-    smsSent = true;
-    smsButtonViewModel.sendMeSms();
-  };
+  private FrameLayout pendingIndicator;
   private Context context;
 
   private ViewModelProvider.Factory codeViewModelFactory;
+  private ViewModelProvider.Factory codeHeaderViewModelFactory;
   private ViewModelProvider.Factory buttonViewModelFactory;
   private SmsReceiver smsReceiver;
   private Disposable smsCodeDisposable;
   private boolean smsSent;
+  private boolean smsPending;
+  private boolean codePending;
+  private boolean smsNetworkError;
+  private boolean codeNetworkError;
+  private boolean codeError;
 
   @Inject
   public void setCodeViewModelFactory(@Named("code") Factory codeViewModelFactory) {
     this.codeViewModelFactory = codeViewModelFactory;
+  }
+
+  @Inject
+  public void setCodeHeaderViewModelFactory(
+      @Named("codeHeader") Factory codeHeaderViewModelFactory) {
+    this.codeHeaderViewModelFactory = codeHeaderViewModelFactory;
   }
 
   @Inject
@@ -92,6 +108,8 @@ public class PasswordFragment extends BaseFragment implements CodeViewActions,
     // Required by Dagger2 for field injection
     appComponent.inject(this);
     codeViewModel = ViewModelProviders.of(this, codeViewModelFactory).get(CodeViewModelImpl.class);
+    codeHeaderViewModel = ViewModelProviders.of(this, codeHeaderViewModelFactory).get(
+        CodeHeaderViewModelImpl.class);
     smsButtonViewModel = ViewModelProviders.of(this, buttonViewModelFactory)
         .get(SmsButtonViewModelImpl.class);
   }
@@ -111,13 +129,29 @@ public class PasswordFragment extends BaseFragment implements CodeViewActions,
       @Nullable ViewGroup container,
       @Nullable Bundle savedInstanceState) {
     View view = inflater.inflate(R.layout.fragment_auth_password, container, false);
-    codeInputLayout = view.findViewById(R.id.codeInputLayout);
+    networkErrorText = view.findViewById(R.id.networkErrorText);
+    codeErrorText = view.findViewById(R.id.codeErrorText);
+    codeInputCaption = view.findViewById(R.id.codeInputCaption);
+    codeInputUnderline = view.findViewById(R.id.codeInputUnderline);
     codeInput = view.findViewById(R.id.codeInput);
     sendSmsRequest = view.findViewById(R.id.sendSms);
     pendingIndicator = view.findViewById(R.id.pending);
-    sendingIndicator = view.findViewById(R.id.sending);
+    sendSmsRequest.setOnClickListener(v -> {
+      smsSent = true;
+      smsButtonViewModel.sendMeSms();
+    });
 
+    codeViewModel.getNavigationLiveData().observe(this, destination -> {
+      if (destination != null) {
+        navigate(destination);
+      }
+    });
     codeViewModel.getViewStateLiveData().observe(this, viewState -> {
+      if (viewState != null) {
+        viewState.apply(this);
+      }
+    });
+    codeHeaderViewModel.getViewStateLiveData().observe(this, viewState -> {
       if (viewState != null) {
         viewState.apply(this);
       }
@@ -128,13 +162,21 @@ public class PasswordFragment extends BaseFragment implements CodeViewActions,
       }
     });
     setTextListener();
-    checkPermissions();
     return view;
+  }
+
+  @Override
+  public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+    super.onViewStateRestored(savedInstanceState);
+    if (savedInstanceState != null) {
+      smsSent = savedInstanceState.getBoolean("smsSent", false);
+    }
   }
 
   @Override
   public void onResume() {
     super.onResume();
+    checkPermissions();
     smsCodeDisposable = smsReceiver.getCodeFromSms().subscribe(text -> {
       codeInput.setText(text);
       codeInput.setSelection(text.length());
@@ -145,6 +187,12 @@ public class PasswordFragment extends BaseFragment implements CodeViewActions,
   public void onPause() {
     super.onPause();
     smsCodeDisposable.dispose();
+  }
+
+  @Override
+  public void onSaveInstanceState(@NonNull Bundle outState) {
+    super.onSaveInstanceState(outState);
+    outState.putBoolean("smsSent", smsSent);
   }
 
   @Override
@@ -163,62 +211,69 @@ public class PasswordFragment extends BaseFragment implements CodeViewActions,
   }
 
   @Override
+  public void enableInputField(boolean enable) {
+    codeInput.setEnabled(enable);
+  }
+
+  @Override
+  public void setUnderlineImage(@DrawableRes int resId) {
+    codeInputUnderline.setImageResource(resId);
+  }
+
+  @Override
   public void showCodeCheckPending(boolean pending) {
-    pendingIndicator.setVisibility(pending ? View.VISIBLE : View.GONE);
+    codePending = pending;
+    pendingIndicator.setVisibility(smsPending || codePending ? View.VISIBLE : View.GONE);
   }
 
   @Override
-  public void letIn() {
-    navigate("enter");
+  public void showCodeCheckError(boolean show) {
+    codeError = show;
+    codeErrorText.setVisibility(show ? View.VISIBLE : View.GONE);
   }
 
   @Override
-  public void showCodeCheckError(@Nullable Throwable error) {
-    if (error == null) {
-      codeInputLayout.setError(null);
-    } else {
-      if (error instanceof NoNetworkException) {
-        codeInputLayout.setError(getString(R.string.no_network_connection));
-      } else {
-        codeInputLayout.setError(getString(R.string.invalid_code));
-      }
+  public void showCodeCheckNetworkErrorMessage(boolean show) {
+    codeNetworkError = show;
+    if (show) {
+      networkErrorText.setText(R.string.code_network_error);
     }
-  }
-
-  // Замудренная логика форматировния ввода номера телефона в режиме реального времени
-  private void setTextListener() {
-    RxTextView.textChanges(codeInput).subscribe(code -> codeViewModel.setCode(code.toString()));
+    networkErrorText.setVisibility(codeNetworkError || smsNetworkError ? View.VISIBLE : View.GONE);
   }
 
   @Override
-  public void showSmsButtonTimer(@Nullable Long secondsLeft) {
+  public void setSmsButtonText(@StringRes int res, @Nullable Long secondsLeft) {
     if (secondsLeft == null) {
-      sendSmsRequest.setText(R.string.get_code_from_sms);
+      sendSmsRequest.setText(res);
     } else {
-      sendSmsRequest.setText(getString(R.string.repeat_code_from_sms, secondsLeft));
+      sendSmsRequest.setText(getString(res, secondsLeft));
     }
   }
 
   @Override
-  public void setSmsButtonResponsive(boolean responsive) {
-    sendSmsRequest.setOnClickListener(responsive ? sendSmsClickListener : null);
+  public void enableSmsButton(boolean enable) {
+    sendSmsRequest.setEnabled(enable);
   }
 
   @Override
-  public void showSmsSendError(@Nullable Throwable error) {
-    if (error != null) {
-      if (error instanceof NoNetworkException) {
-        codeInputLayout.setError(getString(R.string.no_network_connection));
-      } else {
-        codeInputLayout.setError(getString(R.string.server_fail));
-      }
+  public void showSmsSendNetworkErrorMessage(boolean show) {
+    smsNetworkError = show;
+    if (show) {
+      networkErrorText.setText(R.string.sms_network_error);
     }
+    // TODO: далее костылек временный
+    codeInputCaption.setVisibility(show ? View.GONE : View.VISIBLE);
+    codeInput.setVisibility(show ? View.GONE : View.VISIBLE);
+    codeInputUnderline.setVisibility(show ? View.GONE : View.VISIBLE);
+    codeErrorText.setVisibility(codeError && !show ? View.VISIBLE : View.GONE);
+
+    networkErrorText.setVisibility(codeNetworkError || smsNetworkError ? View.VISIBLE : View.GONE);
   }
 
   @Override
   public void showSmsSendPending(boolean pending) {
-    sendSmsRequest.setVisibility(pending ? View.INVISIBLE : View.VISIBLE);
-    sendingIndicator.setVisibility(pending ? View.VISIBLE : View.GONE);
+    smsPending = pending;
+    pendingIndicator.setVisibility(smsPending || codePending ? View.VISIBLE : View.GONE);
   }
 
   @Override
@@ -240,5 +295,64 @@ public class PasswordFragment extends BaseFragment implements CodeViewActions,
     permissionDisposable = permissionChecker.check(this, context, PERMISSIONS)
         .doFinally(() -> permissionChecker = null)
         .subscribe(this::autoSendSmsRequest, t -> autoSendSmsRequest());
+  }
+
+  @Override
+  public void setDescriptiveHeaderText(int textId, @NonNull String phoneNumber) {
+    codeInputCaption.setText(getString(R.string.sms_code_message, phoneNumber));
+  }
+
+  // Замудренная логика форматировния ввода кода из СМС в режиме реального времени
+  private void setTextListener() {
+    codeInput.addTextChangedListener(new TextWatcher() {
+      // Флаг, предотвращающий переолнение стека. Разделяет ручной ввод и форматирование.
+      private boolean mFormatting;
+      private int mAfter;
+
+      @Override
+      public void onTextChanged(CharSequence s, int start, int before, int count) {
+      }
+
+      //called before the text is changed...
+      @Override
+      public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+        mAfter = after; // флаг определения backspace.
+      }
+
+      @Override
+      public void afterTextChanged(Editable s) {
+        // Игнорируем изменения, произведенные ниже (фильтруем действия нашего алгоритма).
+        if (!mFormatting) {
+          mFormatting = true;
+          // Берем текущую позицию курсора после изменения текста.
+          // Берем текущую строку после изменения текста.
+          String numbers = s.toString();
+          // Удаляем все нецифровые символы.
+          numbers = numbers.replaceAll("[^\\d]", "");
+          // Если был удален не-цифровой символ, то удаляем цифровой символ слева,
+          // и сдвигаем курсор влево.
+          if (mAfter == 0 && numbers.length() > 0 && codeInput.getSelectionStart() % 4 != 0) {
+            numbers = new StringBuilder(numbers).deleteCharAt(numbers.length() - 1).toString();
+          }
+          // Форматируем ввод в виде X   X   X   X.
+          numbers = formatNumbersToCode(numbers);
+          // Закидываем отформатированную строку в поле ввода
+          codeInput.setText(numbers);
+          // Устанавливаем курсор в конце
+          codeInput.setSelection(numbers.length());
+
+          mFormatting = false;
+          codeViewModel.setCode(numbers);
+        }
+      }
+    });
+  }
+
+  private String formatNumbersToCode(String numbers) {
+    numbers = numbers.replaceAll("(\\d)", "$1   ");
+    if (numbers.length() > 13) {
+      numbers = numbers.substring(0, 13);
+    }
+    return numbers;
   }
 }

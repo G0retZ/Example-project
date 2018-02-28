@@ -1,6 +1,7 @@
 package com.fasten.executor_driver.presentation.smsbutton;
 
 import android.support.annotation.NonNull;
+import com.fasten.executor_driver.R;
 import com.fasten.executor_driver.presentation.ViewState;
 
 /**
@@ -16,9 +17,9 @@ public final class SmsButtonViewStateHold implements ViewState<SmsButtonViewActi
 
   @Override
   public void apply(@NonNull SmsButtonViewActions stateActions) {
-    stateActions.setSmsButtonResponsive(false);
-    stateActions.showSmsButtonTimer(secondsLeft);
-    stateActions.showSmsSendError(null);
+    stateActions.enableSmsButton(false);
+    stateActions.setSmsButtonText(R.string.repeat_code_from_sms_delayed, secondsLeft);
+    stateActions.showSmsSendNetworkErrorMessage(false);
     stateActions.showSmsSendPending(false);
   }
 

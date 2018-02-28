@@ -7,14 +7,14 @@ import com.fasten.executor_driver.presentation.ViewState;
 /**
  * Состояние ошибки при вводе кода.
  */
-final class CodeViewStateError implements ViewState<CodeViewActions> {
+final class CodeViewStateNetworkError implements ViewState<CodeViewActions> {
 
   @Override
   public void apply(@NonNull CodeViewActions stateActions) {
     stateActions.enableInputField(true);
     stateActions.showCodeCheckPending(false);
-    stateActions.showCodeCheckError(true);
-    stateActions.showCodeCheckNetworkErrorMessage(false);
-    stateActions.setUnderlineImage(R.drawable.ic_code_input_error);
+    stateActions.showCodeCheckError(false);
+    stateActions.showCodeCheckNetworkErrorMessage(true);
+    stateActions.setUnderlineImage(R.drawable.ic_code_input_activated);
   }
 }

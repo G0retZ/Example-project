@@ -9,7 +9,9 @@ import com.fasten.executor_driver.entity.Vehicle;
 import com.fasten.executor_driver.interactor.vehicle.SelectedVehicleUseCase;
 import com.fasten.executor_driver.presentation.SingleLiveEvent;
 import com.fasten.executor_driver.presentation.ViewState;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 import javax.inject.Inject;
 
 public class SelectedVehicleViewModelImpl extends ViewModel implements SelectedVehicleViewModel {
@@ -42,6 +44,8 @@ public class SelectedVehicleViewModelImpl extends ViewModel implements SelectedV
   public LiveData<ViewState<SelectedVehicleViewActions>> getViewStateLiveData() {
     if (disposable == null || disposable.isDisposed()) {
       disposable = vehiclesUseCase.getSelectedVehicle()
+          .subscribeOn(Schedulers.single())
+          .observeOn(AndroidSchedulers.mainThread())
           .subscribe(this::consumeVehicle, throwable -> consumeError());
     }
     return viewStateLiveData;

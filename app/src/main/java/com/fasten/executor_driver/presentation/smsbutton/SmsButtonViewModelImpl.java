@@ -4,6 +4,7 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
+import com.fasten.executor_driver.backend.web.NoNetworkException;
 import com.fasten.executor_driver.interactor.auth.SmsUseCase;
 import com.fasten.executor_driver.presentation.SingleLiveEvent;
 import com.fasten.executor_driver.presentation.ViewState;
@@ -17,13 +18,11 @@ import javax.inject.Inject;
 public class SmsButtonViewModelImpl extends ViewModel implements SmsButtonViewModel {
 
   private static final int DURATION_AFTER_SUCCESS = 30;
-  private static final int DURATION_AFTER_FAIL = 5;
-  private Disposable disposable;
-
   @NonNull
   private final SmsUseCase smsUseCase;
   @NonNull
   private final MutableLiveData<ViewState<SmsButtonViewActions>> viewStateLiveData;
+  private Disposable disposable;
 
   @Inject
   SmsButtonViewModelImpl(@NonNull SmsUseCase smsUseCase) {
@@ -44,10 +43,10 @@ public class SmsButtonViewModelImpl extends ViewModel implements SmsButtonViewMo
     return new SingleLiveEvent<>();
   }
 
-  private void holdButton(int duration) {
+  private void holdButton() {
     disposable = Observable.interval(0, 1, TimeUnit.SECONDS, Schedulers.io())
-        .take(duration)
-        .map(count -> duration - count)
+        .take(DURATION_AFTER_SUCCESS)
+        .map(count -> DURATION_AFTER_SUCCESS - count)
         .subscribe(
             count -> viewStateLiveData.postValue(new SmsButtonViewStateHold(count)),
             throwable -> {
@@ -66,10 +65,13 @@ public class SmsButtonViewModelImpl extends ViewModel implements SmsButtonViewMo
         .subscribeOn(Schedulers.single())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(
-            () -> holdButton(DURATION_AFTER_SUCCESS),
+            this::holdButton,
             throwable -> {
-              viewStateLiveData.postValue(new SmsButtonViewStateError(throwable));
-              holdButton(DURATION_AFTER_FAIL);
+              if (throwable instanceof NoNetworkException) {
+                viewStateLiveData.postValue(new SmsButtonViewStateError());
+              } else {
+                holdButton();
+              }
             }
         );
     if (this.disposable == null || this.disposable.isDisposed()) {

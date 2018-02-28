@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNotEquals;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
+import com.fasten.executor_driver.R;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -30,9 +31,9 @@ public class SmsButtonViewStateHoldTest {
     viewState.apply(smsButtonViewActions);
 
     // Результат:
-    verify(smsButtonViewActions).showSmsButtonTimer(12L);
-    verify(smsButtonViewActions).setSmsButtonResponsive(false);
-    verify(smsButtonViewActions).showSmsSendError(null);
+    verify(smsButtonViewActions).setSmsButtonText(R.string.repeat_code_from_sms_delayed, 12L);
+    verify(smsButtonViewActions).enableSmsButton(false);
+    verify(smsButtonViewActions).showSmsSendNetworkErrorMessage(false);
     verify(smsButtonViewActions).showSmsSendPending(false);
     verifyNoMoreInteractions(smsButtonViewActions);
   }

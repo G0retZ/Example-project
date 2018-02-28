@@ -17,6 +17,7 @@ import io.reactivex.android.plugins.RxAndroidPlugins;
 import io.reactivex.plugins.RxJavaPlugins;
 import io.reactivex.schedulers.Schedulers;
 import io.reactivex.schedulers.TestScheduler;
+import io.reactivex.subjects.CompletableSubject;
 import java.util.concurrent.TimeUnit;
 import org.junit.Before;
 import org.junit.Rule;
@@ -31,13 +32,10 @@ import org.mockito.junit.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class SmsButtonViewModelTest {
 
-  private SmsButtonViewModel smsButtonViewModel;
-
-  private TestScheduler testScheduler;
-
   @Rule
   public TestRule rule = new InstantTaskExecutorRule();
-
+  private SmsButtonViewModel smsButtonViewModel;
+  private TestScheduler testScheduler;
   @Mock
   private Observer<ViewState<SmsButtonViewActions>> viewStateObserver;
 
@@ -162,27 +160,79 @@ public class SmsButtonViewModelTest {
   }
 
   /**
-   * Должен вернуть состояния вида "Ожидайте" с отсчетом всего таймаута и возвратом обратно в
-   * состояние готовности после ошибки запроса СМС.
+   * Должен вернуть состояния вида "Ошибка" без отсчета таймаута и после ошибки запроса СМС, если
+   * нет сети.
    *
    * @throws Exception error
    */
   @Test
-  public void setHoldViewStateToLiveDataAfterFail() throws Exception {
+  public void setErrorViewStateToLiveDataAfterFail() throws Exception {
     // Дано:
-    when(smsUseCase.sendMeCode()).thenReturn(Completable.error(new NoNetworkException()));
+    CompletableSubject completableSubject = CompletableSubject.create();
+    when(smsUseCase.sendMeCode()).thenReturn(completableSubject);
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     smsButtonViewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
     smsButtonViewModel.sendMeSms();
     testScheduler.advanceTimeBy(5, TimeUnit.SECONDS);
+    completableSubject.onError(new NoNetworkException());
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(any(SmsButtonViewStateReady.class));
     inOrder.verify(viewStateObserver).onChanged(any(SmsButtonViewStatePending.class));
-    inOrder.verify(viewStateObserver)
-        .onChanged(new SmsButtonViewStateError(new NoNetworkException()));
+    inOrder.verify(viewStateObserver).onChanged(any(SmsButtonViewStateError.class));
+    verifyNoMoreInteractions(viewStateObserver);
+  }
+
+  /**
+   * Должен вернуть состояния вида "Ожидайте" с отсчетом всего таймаута и возвратом обратно в
+   * состояние готовности после ошибки запроса СМС, не связанного с состоянием сети.
+   *
+   * @throws Exception error
+   */
+  @Test
+  public void setHoldViewStateToLiveDataAfterOtherError() throws Exception {
+    // Дано:
+    CompletableSubject completableSubject = CompletableSubject.create();
+    when(smsUseCase.sendMeCode()).thenReturn(completableSubject);
+    InOrder inOrder = Mockito.inOrder(viewStateObserver);
+    smsButtonViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+
+    // Действие:
+    smsButtonViewModel.sendMeSms();
+    testScheduler.advanceTimeBy(10, TimeUnit.SECONDS);
+    completableSubject.onError(new IllegalArgumentException());
+    testScheduler.advanceTimeBy(30, TimeUnit.SECONDS);
+
+    // Результат:
+    inOrder.verify(viewStateObserver).onChanged(any(SmsButtonViewStateReady.class));
+    inOrder.verify(viewStateObserver).onChanged(any(SmsButtonViewStatePending.class));
+    inOrder.verify(viewStateObserver).onChanged(new SmsButtonViewStateHold(30));
+    inOrder.verify(viewStateObserver).onChanged(new SmsButtonViewStateHold(29));
+    inOrder.verify(viewStateObserver).onChanged(new SmsButtonViewStateHold(28));
+    inOrder.verify(viewStateObserver).onChanged(new SmsButtonViewStateHold(27));
+    inOrder.verify(viewStateObserver).onChanged(new SmsButtonViewStateHold(26));
+    inOrder.verify(viewStateObserver).onChanged(new SmsButtonViewStateHold(25));
+    inOrder.verify(viewStateObserver).onChanged(new SmsButtonViewStateHold(24));
+    inOrder.verify(viewStateObserver).onChanged(new SmsButtonViewStateHold(23));
+    inOrder.verify(viewStateObserver).onChanged(new SmsButtonViewStateHold(22));
+    inOrder.verify(viewStateObserver).onChanged(new SmsButtonViewStateHold(21));
+    inOrder.verify(viewStateObserver).onChanged(new SmsButtonViewStateHold(20));
+    inOrder.verify(viewStateObserver).onChanged(new SmsButtonViewStateHold(19));
+    inOrder.verify(viewStateObserver).onChanged(new SmsButtonViewStateHold(18));
+    inOrder.verify(viewStateObserver).onChanged(new SmsButtonViewStateHold(17));
+    inOrder.verify(viewStateObserver).onChanged(new SmsButtonViewStateHold(16));
+    inOrder.verify(viewStateObserver).onChanged(new SmsButtonViewStateHold(15));
+    inOrder.verify(viewStateObserver).onChanged(new SmsButtonViewStateHold(14));
+    inOrder.verify(viewStateObserver).onChanged(new SmsButtonViewStateHold(13));
+    inOrder.verify(viewStateObserver).onChanged(new SmsButtonViewStateHold(12));
+    inOrder.verify(viewStateObserver).onChanged(new SmsButtonViewStateHold(11));
+    inOrder.verify(viewStateObserver).onChanged(new SmsButtonViewStateHold(10));
+    inOrder.verify(viewStateObserver).onChanged(new SmsButtonViewStateHold(9));
+    inOrder.verify(viewStateObserver).onChanged(new SmsButtonViewStateHold(8));
+    inOrder.verify(viewStateObserver).onChanged(new SmsButtonViewStateHold(7));
+    inOrder.verify(viewStateObserver).onChanged(new SmsButtonViewStateHold(6));
     inOrder.verify(viewStateObserver).onChanged(new SmsButtonViewStateHold(5));
     inOrder.verify(viewStateObserver).onChanged(new SmsButtonViewStateHold(4));
     inOrder.verify(viewStateObserver).onChanged(new SmsButtonViewStateHold(3));
@@ -201,12 +251,15 @@ public class SmsButtonViewModelTest {
   @Test
   public void setHoldViewStateToLiveData() throws Exception {
     // Дано:
-    when(smsUseCase.sendMeCode()).thenReturn(Completable.complete());
+    CompletableSubject completableSubject = CompletableSubject.create();
+    when(smsUseCase.sendMeCode()).thenReturn(completableSubject);
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     smsButtonViewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
     smsButtonViewModel.sendMeSms();
+    testScheduler.advanceTimeBy(10, TimeUnit.SECONDS);
+    completableSubject.onComplete();
     testScheduler.advanceTimeBy(30, TimeUnit.SECONDS);
 
     // Результат:

@@ -1,6 +1,7 @@
 package com.fasten.executor_driver.presentation.code;
 
 import android.support.annotation.NonNull;
+import com.fasten.executor_driver.R;
 import com.fasten.executor_driver.presentation.ViewState;
 
 /**
@@ -10,7 +11,10 @@ final class CodeViewStateInitial implements ViewState<CodeViewActions> {
 
   @Override
   public void apply(@NonNull CodeViewActions stateActions) {
+    stateActions.enableInputField(true);
     stateActions.showCodeCheckPending(false);
-    stateActions.showCodeCheckError(null);
+    stateActions.showCodeCheckError(false);
+    stateActions.showCodeCheckNetworkErrorMessage(false);
+    stateActions.setUnderlineImage(R.drawable.ic_code_input_activated);
   }
 }

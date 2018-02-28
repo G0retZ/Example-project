@@ -5,6 +5,7 @@ import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import com.fasten.executor_driver.backend.web.NoNetworkException;
 import com.fasten.executor_driver.entity.ValidationException;
 import com.fasten.executor_driver.interactor.auth.PasswordUseCase;
 import com.fasten.executor_driver.presentation.SingleLiveEvent;
@@ -21,6 +22,8 @@ public class CodeViewModelImpl extends ViewModel implements CodeViewModel {
   private final PasswordUseCase passwordUseCase;
   @NonNull
   private final MutableLiveData<ViewState<CodeViewActions>> viewStateLiveData;
+  @NonNull
+  private final SingleLiveEvent<String> navigateLiveData;
   @Nullable
   private Disposable disposable;
 
@@ -29,6 +32,7 @@ public class CodeViewModelImpl extends ViewModel implements CodeViewModel {
     this.passwordUseCase = passwordUseCase;
     viewStateLiveData = new MutableLiveData<>();
     viewStateLiveData.postValue(new CodeViewStateInitial());
+    navigateLiveData = new SingleLiveEvent<>();
   }
 
   @NonNull
@@ -40,7 +44,7 @@ public class CodeViewModelImpl extends ViewModel implements CodeViewModel {
   @NonNull
   @Override
   public LiveData<String> getNavigationLiveData() {
-    return new SingleLiveEvent<>();
+    return navigateLiveData;
   }
 
   @Override
@@ -49,7 +53,7 @@ public class CodeViewModelImpl extends ViewModel implements CodeViewModel {
       return;
     }
     disposable = passwordUseCase.authorize(
-        code,
+        code.replaceAll("[^\\d]", ""),
         Completable.create(e -> {
           viewStateLiveData.postValue(new CodeViewStatePending());
           e.onComplete();
@@ -58,14 +62,16 @@ public class CodeViewModelImpl extends ViewModel implements CodeViewModel {
         .subscribeOn(Schedulers.single())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(
-            () -> viewStateLiveData.postValue(new CodeViewStateSuccess()),
+            () -> navigateLiveData.postValue(CodeNavigate.MAP),
             throwable -> {
-              if (throwable instanceof ValidationException) {
+              if (throwable instanceof NoNetworkException) {
+                viewStateLiveData.postValue(new CodeViewStateNetworkError());
+              } else if (throwable instanceof ValidationException) {
                 if (!(viewStateLiveData.getValue() instanceof CodeViewStateInitial)) {
                   viewStateLiveData.postValue(new CodeViewStateInitial());
                 }
               } else {
-                viewStateLiveData.postValue(new CodeViewStateError(throwable));
+                viewStateLiveData.postValue(new CodeViewStateError());
               }
             }
         );

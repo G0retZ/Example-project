@@ -34,16 +34,17 @@ import org.mockito.junit.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class CodeViewModelTest {
 
-  private CodeViewModel codeViewModel;
-
   @Rule
   public TestRule rule = new InstantTaskExecutorRule();
-
+  private CodeViewModel codeViewModel;
   @Mock
   private PasswordUseCase passwordUseCase;
 
   @Mock
   private Observer<ViewState<CodeViewActions>> viewStateObserver;
+
+  @Mock
+  private Observer<String> navigateObserver;
 
   @Captor
   private ArgumentCaptor<Completable> afterValidationCaptor;
@@ -67,9 +68,9 @@ public class CodeViewModelTest {
   @Test
   public void DoNotAskPasswordUseCaseToAuthorize() throws Exception {
     // Действие:
-    codeViewModel.setCode("12");
-    codeViewModel.setCode("123");
-    codeViewModel.setCode("1234");
+    codeViewModel.setCode("1   2   ");
+    codeViewModel.setCode("1   2   3   ");
+    codeViewModel.setCode("1   2   3   4");
 
     // Результат:
     verify(passwordUseCase, only()).authorize(eq("12"), afterValidationCaptor.capture());
@@ -87,9 +88,9 @@ public class CodeViewModelTest {
         .thenReturn(Completable.error(new ValidationException()));
 
     // Действие:
-    codeViewModel.setCode("12");
-    codeViewModel.setCode("123");
-    codeViewModel.setCode("1234");
+    codeViewModel.setCode("1   2   ");
+    codeViewModel.setCode("1   2   3   ");
+    codeViewModel.setCode("1   2   3   4");
 
     // Результат:
     verify(passwordUseCase).authorize(eq("12"), afterValidationCaptor.capture());
@@ -133,9 +134,9 @@ public class CodeViewModelTest {
 
     // Действие:
     codeViewModel.setCode("");
-    codeViewModel.setCode("12");
-    codeViewModel.setCode("1245");
-    codeViewModel.setCode("12457");
+    codeViewModel.setCode("1   2   ");
+    codeViewModel.setCode("1   2   3   ");
+    codeViewModel.setCode("1   2   3   4");
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(any(CodeViewStateInitial.class));
@@ -159,9 +160,9 @@ public class CodeViewModelTest {
 
     // Действие:
     codeViewModel.setCode("");
-    codeViewModel.setCode("12");
-    codeViewModel.setCode("1245");
-    codeViewModel.setCode("12457");
+    codeViewModel.setCode("1   2   ");
+    codeViewModel.setCode("1   2   4   5   ");
+    codeViewModel.setCode("1   2   4   5   7   ");
 
     // Результат:
     verify(passwordUseCase).authorize(eq("12457"), afterValidationCaptor.capture());
@@ -172,7 +173,7 @@ public class CodeViewModelTest {
   }
 
   /**
-   * Должен вернуть состояние вида "Ошибка".
+   * Должен вернуть состояние вида "Ошибка кода".
    *
    * @throws Exception error
    */
@@ -186,22 +187,22 @@ public class CodeViewModelTest {
         .thenReturn(completableSubject);
 
     // Действие:
-    codeViewModel.setCode("1245");
+    codeViewModel.setCode("1   2   4   5");
 
     // Результат:
     verify(passwordUseCase).authorize(eq("1245"), afterValidationCaptor.capture());
     afterValidationCaptor.getValue().subscribe(
-        () -> completableSubject.onError(new NoNetworkException()),
+        () -> completableSubject.onError(new IllegalArgumentException()),
         e -> completableSubject.onComplete()
     );
     inOrder.verify(viewStateObserver).onChanged(any(CodeViewStateInitial.class));
     inOrder.verify(viewStateObserver).onChanged(any(CodeViewStatePending.class));
-    inOrder.verify(viewStateObserver).onChanged(new CodeViewStateError(new NoNetworkException()));
+    inOrder.verify(viewStateObserver).onChanged(any(CodeViewStateError.class));
     verifyNoMoreInteractions(viewStateObserver);
   }
 
   /**
-   * Должен вернуть вернуть начальное состояние вида после "Ошибка".
+   * Должен вернуть вернуть начальное состояние вида после "Ошибка кода".
    *
    * @throws Exception error
    */
@@ -215,31 +216,31 @@ public class CodeViewModelTest {
         .thenReturn(completableSubject);
 
     // Действие:
-    codeViewModel.setCode("1245");
+    codeViewModel.setCode("1   2   4   5");
     verify(passwordUseCase).authorize(eq("1245"), afterValidationCaptor.capture());
     afterValidationCaptor.getValue().subscribe(
-        () -> completableSubject.onError(new NoNetworkException()),
+        () -> completableSubject.onError(new IllegalArgumentException()),
         e -> completableSubject.onComplete()
     );
     when(passwordUseCase.authorize(anyString(), any(Completable.class)))
         .thenReturn(Completable.error(new ValidationException()));
-    codeViewModel.setCode("124");
+    codeViewModel.setCode("1   2   4   ");
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(any(CodeViewStateInitial.class));
     inOrder.verify(viewStateObserver).onChanged(any(CodeViewStatePending.class));
-    inOrder.verify(viewStateObserver).onChanged(new CodeViewStateError(new NoNetworkException()));
+    inOrder.verify(viewStateObserver).onChanged(any(CodeViewStateError.class));
     inOrder.verify(viewStateObserver).onChanged(any(CodeViewStateInitial.class));
     verifyNoMoreInteractions(viewStateObserver);
   }
 
   /**
-   * Должен вернуть состояние вида "Успешно".
+   * Должен вернуть состояние вида "Ошибка сети".
    *
    * @throws Exception error
    */
   @Test
-  public void setSuccessViewStateToLiveDataPending() throws Exception {
+  public void setNetworkErrorViewStateToLiveData() throws Exception {
     // Дано:
     CompletableSubject completableSubject = CompletableSubject.create();
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
@@ -248,7 +249,37 @@ public class CodeViewModelTest {
         .thenReturn(completableSubject);
 
     // Действие:
-    codeViewModel.setCode("1245");
+    codeViewModel.setCode("1   2   4   5");
+
+    // Результат:
+    verify(passwordUseCase).authorize(eq("1245"), afterValidationCaptor.capture());
+    afterValidationCaptor.getValue().subscribe(
+        () -> completableSubject.onError(new NoNetworkException()),
+        e -> completableSubject.onComplete()
+    );
+    inOrder.verify(viewStateObserver).onChanged(any(CodeViewStateInitial.class));
+    inOrder.verify(viewStateObserver).onChanged(any(CodeViewStatePending.class));
+    inOrder.verify(viewStateObserver).onChanged(any(CodeViewStateNetworkError.class));
+    verifyNoMoreInteractions(viewStateObserver);
+  }
+
+  /* Тетсируем навигацию. */
+
+  /**
+   * Должен вернуть "перейти к карте" если проверка была успешной.
+   *
+   * @throws Exception error
+   */
+  @Test
+  public void setNavigateToMapToLiveData() throws Exception {
+    // Дано:
+    CompletableSubject completableSubject = CompletableSubject.create();
+    codeViewModel.getNavigationLiveData().observeForever(navigateObserver);
+    when(passwordUseCase.authorize(anyString(), any(Completable.class)))
+        .thenReturn(completableSubject);
+
+    // Действие:
+    codeViewModel.setCode("1   2   4   5");
 
     // Результат:
     verify(passwordUseCase).authorize(eq("1245"), afterValidationCaptor.capture());
@@ -256,9 +287,6 @@ public class CodeViewModelTest {
         completableSubject::onComplete,
         e -> completableSubject.onComplete()
     );
-    inOrder.verify(viewStateObserver).onChanged(any(CodeViewStateInitial.class));
-    inOrder.verify(viewStateObserver).onChanged(any(CodeViewStatePending.class));
-    inOrder.verify(viewStateObserver).onChanged(any(CodeViewStateSuccess.class));
-    verifyNoMoreInteractions(viewStateObserver);
+    verify(navigateObserver, only()).onChanged(CodeNavigate.MAP);
   }
 }

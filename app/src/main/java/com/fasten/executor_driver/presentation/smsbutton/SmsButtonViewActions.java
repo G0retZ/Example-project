@@ -1,6 +1,7 @@
 package com.fasten.executor_driver.presentation.smsbutton;
 
 import android.support.annotation.Nullable;
+import android.support.annotation.StringRes;
 
 /**
  * Действия для смены состояния вида кнопки отправки СМС с таймаутом.
@@ -8,27 +9,26 @@ import android.support.annotation.Nullable;
 public interface SmsButtonViewActions {
 
   /**
-   * Задать оставшееся время до активации.
+   * Задать текст на кнопке.
    *
-   * @param secondsLeft {@link Integer} сколько секунд осталось. Для выключения счетчика передай
-   * null.
+   * @param textId - ИД ресурса текста
+   * @param secondsLeft {@link Integer} сколько секунд осталось. null не отображается.
    */
-  void showSmsButtonTimer(@Nullable Long secondsLeft);
+  void setSmsButtonText(@StringRes int textId, @Nullable Long secondsLeft);
 
   /**
-   * Сделать кнопку "отзывчивой". "Отзывчивая" кнопка обрабатывает нажатия, "Неотзывчатая" - нет.
-   * При этом анимация нажатия должна присутствовать в любом случае.
+   * Сделать кнопку отправки СМС нажимаемой.
    *
-   * @param responsive - "отзывчивость"
+   * @param enable - нажимаема или нет?
    */
-  void setSmsButtonResponsive(boolean responsive);
+  void enableSmsButton(boolean enable);
 
   /**
-   * Показать ошибку.
+   * Показать сообщение об ошибке сети.
    *
-   * @param error - ошибка
+   * @param show - показать или нет?
    */
-  void showSmsSendError(@Nullable Throwable error);
+  void showSmsSendNetworkErrorMessage(boolean show);
 
   /**
    * Показать индикатор процесса.
