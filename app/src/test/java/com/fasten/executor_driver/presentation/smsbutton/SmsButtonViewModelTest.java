@@ -166,7 +166,7 @@ public class SmsButtonViewModelTest {
    * @throws Exception error
    */
   @Test
-  public void setHoldViewStateToLiveDataAfterFail() throws Exception {
+  public void setErrorViewStateToLiveDataAfterFail() throws Exception {
     // Дано:
     CompletableSubject completableSubject = CompletableSubject.create();
     when(smsUseCase.sendMeCode()).thenReturn(completableSubject);
