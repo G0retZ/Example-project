@@ -11,13 +11,10 @@ final class CodeViewStateNetworkError implements ViewState<CodeViewActions> {
 
   @Override
   public void apply(@NonNull CodeViewActions stateActions) {
-    stateActions.enableInputField(false);
+    stateActions.enableInputField(true);
     stateActions.showCodeCheckPending(false);
     stateActions.showCodeCheckError(false);
     stateActions.showCodeCheckNetworkErrorMessage(true);
-    stateActions.showDescriptiveHeader(false);
-    stateActions.showInputField(false);
-    stateActions.showUnderlineImage(false);
     stateActions.setUnderlineImage(R.drawable.ic_code_input_default);
   }
 }

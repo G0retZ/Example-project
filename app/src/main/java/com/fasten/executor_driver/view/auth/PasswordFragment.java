@@ -79,6 +79,7 @@ public class PasswordFragment extends BaseFragment implements CodeViewActions,
   private boolean codePending;
   private boolean smsNetworkError;
   private boolean codeNetworkError;
+  private boolean codeError;
 
   @Inject
   public void setCodeViewModelFactory(@Named("code") Factory codeViewModelFactory) {
@@ -213,22 +214,8 @@ public class PasswordFragment extends BaseFragment implements CodeViewActions,
   }
 
   @Override
-  public void showInputField(boolean show) {
-    codeInput.setVisibility(show ? View.VISIBLE : View.GONE);
-  }
-
-  @Override
-  public void showDescriptiveHeader(boolean show) {
-    codeInputCaption.setVisibility(show ? View.VISIBLE : View.GONE);
-  }
-
-  @Override
-  public void showUnderlineImage(boolean show) {
-    codeInputUnderline.setVisibility(show ? View.VISIBLE : View.GONE);
-  }
-
-  @Override
   public void showCodeCheckError(boolean show) {
+    codeError = show;
     codeErrorText.setVisibility(show ? View.VISIBLE : View.GONE);
   }
 
@@ -260,11 +247,13 @@ public class PasswordFragment extends BaseFragment implements CodeViewActions,
     smsNetworkError = show;
     if (show) {
       networkErrorText.setText(R.string.sms_network_error);
-      // TODO: костылек временный
-      codeInputCaption.setVisibility(View.GONE);
-      codeInput.setVisibility(View.GONE);
-      codeInputUnderline.setVisibility(View.GONE);
     }
+    // TODO: далее костылек временный
+    codeInputCaption.setVisibility(show ? View.GONE : View.VISIBLE);
+    codeInput.setVisibility(show ? View.GONE : View.VISIBLE);
+    codeInputUnderline.setVisibility(show ? View.GONE : View.VISIBLE);
+    codeErrorText.setVisibility(codeError && !show ? View.VISIBLE : View.GONE);
+
     networkErrorText.setVisibility(codeNetworkError || smsNetworkError ? View.VISIBLE : View.GONE);
   }
 

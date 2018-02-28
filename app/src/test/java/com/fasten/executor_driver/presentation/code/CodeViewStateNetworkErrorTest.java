@@ -30,13 +30,10 @@ public class CodeViewStateNetworkErrorTest {
     viewState.apply(codeViewActions);
 
     // Результат:
-    verify(codeViewActions).enableInputField(false);
+    verify(codeViewActions).enableInputField(true);
     verify(codeViewActions).showCodeCheckPending(false);
     verify(codeViewActions).showCodeCheckError(false);
     verify(codeViewActions).showCodeCheckNetworkErrorMessage(true);
-    verify(codeViewActions).showDescriptiveHeader(false);
-    verify(codeViewActions).showInputField(false);
-    verify(codeViewActions).showUnderlineImage(false);
     verify(codeViewActions).setUnderlineImage(R.drawable.ic_code_input_default);
     verifyNoMoreInteractions(codeViewActions);
   }

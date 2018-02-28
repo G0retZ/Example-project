@@ -29,27 +29,6 @@ public interface CodeViewActions {
   void showCodeCheckPending(boolean pending);
 
   /**
-   * Показать поле ввода.
-   *
-   * @param show - показать или нет?
-   */
-  void showInputField(boolean show);
-
-  /**
-   * Показать объясняющий заголовок.
-   *
-   * @param show - показать или нет?
-   */
-  void showDescriptiveHeader(boolean show);
-
-  /**
-   * Показать картинку подчеркивания.
-   *
-   * @param show - показать или нет?
-   */
-  void showUnderlineImage(boolean show);
-
-  /**
    * Показать ошибку проверки кода.
    *
    * @param show - показать или нет?

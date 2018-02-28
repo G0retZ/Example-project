@@ -15,9 +15,6 @@ final class CodeViewStateError implements ViewState<CodeViewActions> {
     stateActions.showCodeCheckPending(false);
     stateActions.showCodeCheckError(true);
     stateActions.showCodeCheckNetworkErrorMessage(false);
-    stateActions.showDescriptiveHeader(true);
-    stateActions.showInputField(true);
-    stateActions.showUnderlineImage(true);
     stateActions.setUnderlineImage(R.drawable.ic_code_input_error);
   }
 }

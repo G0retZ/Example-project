@@ -33,9 +33,6 @@ public class CodeViewStatePendingTest {
     verify(codeViewActions).showCodeCheckPending(true);
     verify(codeViewActions).showCodeCheckError(false);
     verify(codeViewActions).showCodeCheckNetworkErrorMessage(false);
-    verify(codeViewActions).showDescriptiveHeader(true);
-    verify(codeViewActions).showInputField(true);
-    verify(codeViewActions).showUnderlineImage(true);
     verify(codeViewActions).setUnderlineImage(R.drawable.ic_code_input_default);
     verifyNoMoreInteractions(codeViewActions);
   }

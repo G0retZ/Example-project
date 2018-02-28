@@ -15,9 +15,6 @@ final class CodeViewStatePending implements ViewState<CodeViewActions> {
     stateActions.showCodeCheckPending(true);
     stateActions.showCodeCheckError(false);
     stateActions.showCodeCheckNetworkErrorMessage(false);
-    stateActions.showDescriptiveHeader(true);
-    stateActions.showInputField(true);
-    stateActions.showUnderlineImage(true);
     stateActions.setUnderlineImage(R.drawable.ic_code_input_default);
   }
 }
