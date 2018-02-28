@@ -15,7 +15,6 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
@@ -63,10 +62,6 @@ public class PasswordFragment extends BaseFragment implements CodeViewActions,
   private EditText codeInput;
   private Button sendSmsRequest;
   private FrameLayout pendingIndicator;
-  private final OnClickListener sendSmsClickListener = v -> {
-    smsSent = true;
-    smsButtonViewModel.sendMeSms();
-  };
   private Context context;
 
   private ViewModelProvider.Factory codeViewModelFactory;
@@ -141,6 +136,10 @@ public class PasswordFragment extends BaseFragment implements CodeViewActions,
     codeInput = view.findViewById(R.id.codeInput);
     sendSmsRequest = view.findViewById(R.id.sendSms);
     pendingIndicator = view.findViewById(R.id.pending);
+    sendSmsRequest.setOnClickListener(v -> {
+      smsSent = true;
+      smsButtonViewModel.sendMeSms();
+    });
 
     codeViewModel.getNavigationLiveData().observe(this, destination -> {
       if (destination != null) {
@@ -163,13 +162,21 @@ public class PasswordFragment extends BaseFragment implements CodeViewActions,
       }
     });
     setTextListener();
-    checkPermissions();
     return view;
+  }
+
+  @Override
+  public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+    super.onViewStateRestored(savedInstanceState);
+    if (savedInstanceState != null) {
+      smsSent = savedInstanceState.getBoolean("smsSent", false);
+    }
   }
 
   @Override
   public void onResume() {
     super.onResume();
+    checkPermissions();
     smsCodeDisposable = smsReceiver.getCodeFromSms().subscribe(text -> {
       codeInput.setText(text);
       codeInput.setSelection(text.length());
@@ -180,6 +187,12 @@ public class PasswordFragment extends BaseFragment implements CodeViewActions,
   public void onPause() {
     super.onPause();
     smsCodeDisposable.dispose();
+  }
+
+  @Override
+  public void onSaveInstanceState(@NonNull Bundle outState) {
+    super.onSaveInstanceState(outState);
+    outState.putBoolean("smsSent", smsSent);
   }
 
   @Override
@@ -239,7 +252,7 @@ public class PasswordFragment extends BaseFragment implements CodeViewActions,
 
   @Override
   public void enableSmsButton(boolean enable) {
-    sendSmsRequest.setOnClickListener(enable ? sendSmsClickListener : null);
+    sendSmsRequest.setEnabled(enable);
   }
 
   @Override
