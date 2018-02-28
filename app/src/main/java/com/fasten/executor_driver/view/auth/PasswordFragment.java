@@ -329,6 +329,10 @@ public class PasswordFragment extends BaseFragment implements CodeViewActions,
     smsNetworkError = show;
     if (show) {
       networkErrorText.setText(R.string.sms_network_error);
+      // TODO: костылек временный. Требует рефакторинга...
+      codeInputCaption.setVisibility(View.GONE);
+      codeInput.setVisibility(View.GONE);
+      codeInputUnderline.setVisibility(View.GONE);
     }
     networkErrorText.setVisibility(codeNetworkError || smsNetworkError ? View.VISIBLE : View.GONE);
   }

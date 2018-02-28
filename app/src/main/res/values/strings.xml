@@ -3,8 +3,8 @@
   <string name="authorization">Авторизация</string>
   <string name="phone_number">Номер телефона</string>
   <string name="no_network_connection">Отсуствует подключение к сети</string>
-  <string name="sms_network_error">Ошибка соединения, повторите еще раз</string>
-  <string name="code_network_error">Ошибка соединения, введите код еще раз</string>
+  <string name="sms_network_error">Ошибка соединения,\nповторите попытку</string>
+  <string name="code_network_error">Ошибка соединения,\nвведите код еще раз</string>
   <string name="server_fail">Ошибка взаимодействия с сервером</string>
   <string name="no_access_to_phone">Нет доступа к номеру?</string>
   <string name="become_driver">Стать водителем</string>
