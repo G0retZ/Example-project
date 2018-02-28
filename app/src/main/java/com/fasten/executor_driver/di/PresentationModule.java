@@ -6,6 +6,8 @@ import com.fasten.executor_driver.presentation.choosevehicle.ChooseVehicleViewMo
 import com.fasten.executor_driver.presentation.choosevehicle.ChooseVehicleViewModelImpl;
 import com.fasten.executor_driver.presentation.code.CodeViewModel;
 import com.fasten.executor_driver.presentation.code.CodeViewModelImpl;
+import com.fasten.executor_driver.presentation.codeHeader.CodeHeaderViewModel;
+import com.fasten.executor_driver.presentation.codeHeader.CodeHeaderViewModelImpl;
 import com.fasten.executor_driver.presentation.map.MapViewModel;
 import com.fasten.executor_driver.presentation.map.MapViewModelImpl;
 import com.fasten.executor_driver.presentation.onlinebutton.OnlineButtonViewModel;
@@ -26,13 +28,18 @@ import javax.inject.Named;
 class PresentationModule {
 
   @Provides
+  PhoneViewModel providePhoneViewModel(PhoneViewModelImpl codeViewModel) {
+    return codeViewModel;
+  }
+
+  @Provides
   CodeViewModel provideCodeViewModel(CodeViewModelImpl codeViewModel) {
     return codeViewModel;
   }
 
   @Provides
-  PhoneViewModel providePhoneViewModel(PhoneViewModelImpl codeViewModel) {
-    return codeViewModel;
+  CodeHeaderViewModel provideCodeHeaderViewModel(CodeHeaderViewModelImpl codeHeaderViewModel) {
+    return codeHeaderViewModel;
   }
 
   @Provides
@@ -78,6 +85,13 @@ class PresentationModule {
   @Provides
   @Named("code")
   ViewModelProvider.Factory provideCodeViewModelFactory(ViewModelFactory<CodeViewModel> factory) {
+    return factory;
+  }
+
+  @Provides
+  @Named("codeHeader")
+  ViewModelProvider.Factory provideCodeHeaderViewModelFactory(
+      ViewModelFactory<CodeHeaderViewModel> factory) {
     return factory;
   }
 
