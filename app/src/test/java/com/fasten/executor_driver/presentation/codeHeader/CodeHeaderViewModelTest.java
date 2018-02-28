@@ -55,7 +55,7 @@ public class CodeHeaderViewModelTest {
    * @throws Exception error
    */
   @Test
-  public void askSelectedVehicleUseCaseForVehiclesInitially() throws Exception {
+  public void askSelectedDataSharerForLoginInitially() throws Exception {
     // Действие:
     codeHeaderViewModel.getViewStateLiveData();
     codeHeaderViewModel.getViewStateLiveData();
@@ -73,7 +73,7 @@ public class CodeHeaderViewModelTest {
    * @throws Exception error
    */
   @Test
-  public void setViewStateWithoutNameToLiveData() throws Exception {
+  public void setViewStateWithZerosToLiveData() throws Exception {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
 
@@ -91,7 +91,7 @@ public class CodeHeaderViewModelTest {
    * @throws Exception error
    */
   @Test
-  public void setViewStateWithNameToLiveData() throws Exception {
+  public void setViewStateWithNumbersToLiveData() throws Exception {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     codeHeaderViewModel.getViewStateLiveData().observeForever(viewStateObserver);
