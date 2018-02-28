@@ -3,6 +3,7 @@ package com.fasten.executor_driver.presentation.code;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
+import com.fasten.executor_driver.R;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -28,8 +29,14 @@ public class CodeViewStatePendingTest {
     viewState.apply(codeViewActions);
 
     // Результат:
+    verify(codeViewActions).enableInputField(false);
     verify(codeViewActions).showCodeCheckPending(true);
-    verify(codeViewActions).showCodeCheckError(null);
+    verify(codeViewActions).showCodeCheckError(false);
+    verify(codeViewActions).showCodeCheckNetworkErrorMessage(false);
+    verify(codeViewActions).showDescriptiveHeader(true);
+    verify(codeViewActions).showInputField(true);
+    verify(codeViewActions).showUnderlineImage(true);
+    verify(codeViewActions).setUnderlineImage(R.drawable.ic_code_input_default);
     verifyNoMoreInteractions(codeViewActions);
   }
 }

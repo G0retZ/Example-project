@@ -5,19 +5,19 @@ import com.fasten.executor_driver.R;
 import com.fasten.executor_driver.presentation.ViewState;
 
 /**
- * Состояние ожидание при проверке введенного кода.
+ * Состояние ошибки при вводе кода.
  */
-final class CodeViewStatePending implements ViewState<CodeViewActions> {
+final class CodeViewStateNetworkError implements ViewState<CodeViewActions> {
 
   @Override
   public void apply(@NonNull CodeViewActions stateActions) {
     stateActions.enableInputField(false);
-    stateActions.showCodeCheckPending(true);
+    stateActions.showCodeCheckPending(false);
     stateActions.showCodeCheckError(false);
-    stateActions.showCodeCheckNetworkErrorMessage(false);
-    stateActions.showDescriptiveHeader(true);
-    stateActions.showInputField(true);
-    stateActions.showUnderlineImage(true);
+    stateActions.showCodeCheckNetworkErrorMessage(true);
+    stateActions.showDescriptiveHeader(false);
+    stateActions.showInputField(false);
+    stateActions.showUnderlineImage(false);
     stateActions.setUnderlineImage(R.drawable.ic_code_input_default);
   }
 }

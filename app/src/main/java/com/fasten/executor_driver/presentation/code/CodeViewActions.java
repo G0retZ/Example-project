@@ -1,6 +1,6 @@
 package com.fasten.executor_driver.presentation.code;
 
-import android.support.annotation.Nullable;
+import android.support.annotation.DrawableRes;
 
 /**
  * Действия для смены состояния вида окна ввода кода.
@@ -8,16 +8,18 @@ import android.support.annotation.Nullable;
 public interface CodeViewActions {
 
   /**
-   * Войти в приложение (завершить авторизацию, и перейти далее).
+   * Сделать поле ввода редактируемым.
+   *
+   * @param enable - редактируемое или нет?
    */
-  void letIn();
+  void enableInputField(boolean enable);
 
   /**
-   * Показать ошибку.
+   * Задать картинку подчеркивания.
    *
-   * @param error - ошибка
+   * @param resId реусрс картинки подчеркивания
    */
-  void showCodeCheckError(@Nullable Throwable error);
+  void setUnderlineImage(@DrawableRes int resId);
 
   /**
    * Показать индикатор процесса.
@@ -25,4 +27,39 @@ public interface CodeViewActions {
    * @param pending - показать или нет?
    */
   void showCodeCheckPending(boolean pending);
+
+  /**
+   * Показать поле ввода.
+   *
+   * @param show - показать или нет?
+   */
+  void showInputField(boolean show);
+
+  /**
+   * Показать объясняющий заголовок.
+   *
+   * @param show - показать или нет?
+   */
+  void showDescriptiveHeader(boolean show);
+
+  /**
+   * Показать картинку подчеркивания.
+   *
+   * @param show - показать или нет?
+   */
+  void showUnderlineImage(boolean show);
+
+  /**
+   * Показать ошибку проверки кода.
+   *
+   * @param show - показать или нет?
+   */
+  void showCodeCheckError(boolean show);
+
+  /**
+   * Показать сообщение об ошибке сети.
+   *
+   * @param show - показать или нет?
+   */
+  void showCodeCheckNetworkErrorMessage(boolean show);
 }

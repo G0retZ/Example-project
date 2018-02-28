@@ -1,17 +1,12 @@
 package com.fasten.executor_driver.presentation.code;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
-import com.fasten.executor_driver.utils.ThrowableUtils;
+import com.fasten.executor_driver.R;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
@@ -23,12 +18,9 @@ public class CodeViewStateErrorTest {
   @Mock
   private CodeViewActions codeViewActions;
 
-  @Captor
-  private ArgumentCaptor<Throwable> throwableCaptor;
-
   @Before
   public void setUp() throws Exception {
-    viewState = new CodeViewStateError(new IllegalArgumentException("mess"));
+    viewState = new CodeViewStateError();
   }
 
   @Test
@@ -37,21 +29,14 @@ public class CodeViewStateErrorTest {
     viewState.apply(codeViewActions);
 
     // Результат:
+    verify(codeViewActions).enableInputField(true);
     verify(codeViewActions).showCodeCheckPending(false);
-    verify(codeViewActions).showCodeCheckError(throwableCaptor.capture());
+    verify(codeViewActions).showCodeCheckError(true);
+    verify(codeViewActions).showCodeCheckNetworkErrorMessage(false);
+    verify(codeViewActions).showDescriptiveHeader(true);
+    verify(codeViewActions).showInputField(true);
+    verify(codeViewActions).showUnderlineImage(true);
+    verify(codeViewActions).setUnderlineImage(R.drawable.ic_code_input_error);
     verifyNoMoreInteractions(codeViewActions);
-    assertTrue(
-        ThrowableUtils.throwableEquals(
-            throwableCaptor.getValue(),
-            new IllegalArgumentException("mess")
-        )
-    );
-  }
-
-  @Test
-  public void testEquals() throws Exception {
-    assertEquals(viewState, new CodeViewStateError(new IllegalArgumentException("mess")));
-    assertNotEquals(viewState, new CodeViewStateError(new IllegalArgumentException("mes")));
-    assertNotEquals(viewState, new CodeViewStateError(new NullPointerException("mess")));
   }
 }

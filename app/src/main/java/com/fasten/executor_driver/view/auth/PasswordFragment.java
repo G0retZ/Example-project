@@ -7,6 +7,7 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
@@ -118,6 +119,11 @@ public class PasswordFragment extends BaseFragment implements CodeViewActions,
     sendSmsRequest = view.findViewById(R.id.sendSms);
     pendingIndicator = view.findViewById(R.id.pending);
 
+    codeViewModel.getNavigationLiveData().observe(this, destination -> {
+      if (destination != null) {
+        navigate(destination);
+      }
+    });
     codeViewModel.getViewStateLiveData().observe(this, viewState -> {
       if (viewState != null) {
         viewState.apply(this);
@@ -164,29 +170,44 @@ public class PasswordFragment extends BaseFragment implements CodeViewActions,
   }
 
   @Override
+  public void enableInputField(boolean enable) {
+    codeInput.setEnabled(enable);
+  }
+
+  @Override
+  public void setUnderlineImage(@DrawableRes int resId) {
+    codeInputUnderline.setImageResource(resId);
+  }
+
+  @Override
   public void showCodeCheckPending(boolean pending) {
     codePending = pending;
     pendingIndicator.setVisibility(smsPending || codePending ? View.VISIBLE : View.GONE);
   }
 
   @Override
-  public void letIn() {
-    navigate("enter");
+  public void showInputField(boolean show) {
+    codeInput.setVisibility(show ? View.VISIBLE : View.GONE);
   }
 
   @Override
-  public void showCodeCheckError(@Nullable Throwable error) {
-    if (error == null) {
-//      codeInputUnderline.setError(null);
-      codeInputUnderline.setImageResource(R.drawable.ic_code_input_activated);
-    } else {
-      codeInputUnderline.setImageResource(R.drawable.ic_code_input_error);
-//      if (error instanceof NoNetworkException) {
+  public void showDescriptiveHeader(boolean show) {
+
+  }
+
+  @Override
+  public void showUnderlineImage(boolean show) {
+    codeInputUnderline.setVisibility(show ? View.VISIBLE : View.GONE);
+  }
+
+  @Override
+  public void showCodeCheckError(boolean show) {
 //        codeInputUnderline.setError(getString(R.string.no_network_connection));
-//      } else {
-//        codeInputUnderline.setError(getString(R.string.invalid_code));
-//      }
-    }
+  }
+
+  @Override
+  public void showCodeCheckNetworkErrorMessage(boolean show) {
+
   }
 
   // Замудренная логика форматировния ввода кода из СМС в режиме реального времени
