@@ -11,11 +11,11 @@ import java.util.List;
 public class ApiOptionItems {
 
   @NonNull
-  @SerializedName("vehicleOptions")
+  @SerializedName("vehicleOptionItems")
   @Expose
   private final List<ApiOptionItem> vehicleOptions;
   @NonNull
-  @SerializedName("driverOptions")
+  @SerializedName("driverOptionItems")
   @Expose
   private final List<ApiOptionItem> driverOptions;
 
