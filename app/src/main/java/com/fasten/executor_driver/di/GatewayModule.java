@@ -3,13 +3,17 @@ package com.fasten.executor_driver.di;
 import android.support.annotation.NonNull;
 import com.fasten.executor_driver.backend.web.TokenKeeper;
 import com.fasten.executor_driver.backend.web.incoming.ApiOptionItem;
+import com.fasten.executor_driver.backend.web.incoming.ApiServiceItem;
 import com.fasten.executor_driver.backend.web.incoming.ApiVehicle;
 import com.fasten.executor_driver.entity.Option;
+import com.fasten.executor_driver.entity.Service;
 import com.fasten.executor_driver.entity.Vehicle;
 import com.fasten.executor_driver.gateway.ErrorMapper;
 import com.fasten.executor_driver.gateway.HeatMapGatewayImpl;
 import com.fasten.executor_driver.gateway.Mapper;
 import com.fasten.executor_driver.gateway.PasswordGatewayImpl;
+import com.fasten.executor_driver.gateway.ServiceApiMapper;
+import com.fasten.executor_driver.gateway.ServicesGatewayImpl;
 import com.fasten.executor_driver.gateway.SmsGatewayImpl;
 import com.fasten.executor_driver.gateway.TokenKeeperImpl;
 import com.fasten.executor_driver.gateway.VehicleApiMapper;
@@ -19,6 +23,7 @@ import com.fasten.executor_driver.gateway.VehiclesAndOptionsGatewayImpl;
 import com.fasten.executor_driver.interactor.auth.PasswordGateway;
 import com.fasten.executor_driver.interactor.auth.SmsGateway;
 import com.fasten.executor_driver.interactor.map.HeatMapGateway;
+import com.fasten.executor_driver.interactor.services.ServicesGateway;
 import com.fasten.executor_driver.interactor.vehicle.VehicleOptionsGateway;
 import com.fasten.executor_driver.interactor.vehicle.VehiclesAndOptionsGateway;
 import dagger.Module;
@@ -61,6 +66,11 @@ class GatewayModule {
     return vehicleOptionsGateway;
   }
 
+  @Provides
+  ServicesGateway provideServicesGateway(ServicesGatewayImpl servicesGateway) {
+    return servicesGateway;
+  }
+
   /* Преобразователи */
 
   @Provides
@@ -80,5 +90,11 @@ class GatewayModule {
   @Named("errorMapper")
   Mapper<Throwable, Throwable> provideErrorMapper(ErrorMapper errorMapper) {
     return errorMapper;
+  }
+
+  @Provides
+  @Named("serviceMapper")
+  Mapper<ApiServiceItem, Service> provideServiceApiMapper(ServiceApiMapper serviceApiMapper) {
+    return serviceApiMapper;
   }
 }
