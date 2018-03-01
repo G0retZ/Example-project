@@ -75,7 +75,7 @@ public class VehicleOptionsFragment extends BaseFragment implements OptionsViewA
       }
     });
     readyButton.setOnClickListener(v -> vehicleOptionsViewModel.setOptions(
-        ((VehicleOptionsAdapter) recyclerView.getAdapter()).getOptionsListItems())
+        ((OptionsAdapter) recyclerView.getAdapter()).getOptionsListItems())
     );
     return view;
   }
@@ -98,7 +98,7 @@ public class VehicleOptionsFragment extends BaseFragment implements OptionsViewA
   @Override
   public void setVehicleOptionsListItems(
       @NonNull OptionsListItems optionsListItems) {
-    VehicleOptionsAdapter adapter = new VehicleOptionsAdapter(optionsListItems);
+    OptionsAdapter adapter = new OptionsAdapter(optionsListItems);
     recyclerView.setAdapter(adapter);
   }
 

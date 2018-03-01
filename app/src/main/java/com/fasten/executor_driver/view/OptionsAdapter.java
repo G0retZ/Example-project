@@ -14,12 +14,12 @@ import com.fasten.executor_driver.presentation.options.OptionsListItem;
 import com.fasten.executor_driver.presentation.options.OptionsListItems;
 import java.util.Locale;
 
-class VehicleOptionsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+class OptionsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
   @NonNull
   private final OptionsListItems optionsListItems;
 
-  VehicleOptionsAdapter(@NonNull OptionsListItems optionsListItems) {
+  OptionsAdapter(@NonNull OptionsListItems optionsListItems) {
     this.optionsListItems = optionsListItems;
   }
 
