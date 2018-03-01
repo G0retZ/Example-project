@@ -2,10 +2,10 @@ package com.fasten.executor_driver.di;
 
 import android.support.annotation.NonNull;
 import com.fasten.executor_driver.backend.web.TokenKeeper;
+import com.fasten.executor_driver.backend.web.incoming.ApiOptionItem;
 import com.fasten.executor_driver.backend.web.incoming.ApiVehicle;
-import com.fasten.executor_driver.backend.web.incoming.ApiVehicleOptionItem;
+import com.fasten.executor_driver.entity.Option;
 import com.fasten.executor_driver.entity.Vehicle;
-import com.fasten.executor_driver.entity.VehicleOption;
 import com.fasten.executor_driver.gateway.ErrorMapper;
 import com.fasten.executor_driver.gateway.HeatMapGatewayImpl;
 import com.fasten.executor_driver.gateway.Mapper;
@@ -15,12 +15,12 @@ import com.fasten.executor_driver.gateway.TokenKeeperImpl;
 import com.fasten.executor_driver.gateway.VehicleApiMapper;
 import com.fasten.executor_driver.gateway.VehicleOptionApiMapper;
 import com.fasten.executor_driver.gateway.VehicleOptionsGatewayImpl;
-import com.fasten.executor_driver.gateway.VehiclesGatewayImpl;
+import com.fasten.executor_driver.gateway.VehiclesAndOptionsGatewayImpl;
 import com.fasten.executor_driver.interactor.auth.PasswordGateway;
 import com.fasten.executor_driver.interactor.auth.SmsGateway;
 import com.fasten.executor_driver.interactor.map.HeatMapGateway;
 import com.fasten.executor_driver.interactor.vehicle.VehicleOptionsGateway;
-import com.fasten.executor_driver.interactor.vehicle.VehiclesGateway;
+import com.fasten.executor_driver.interactor.vehicle.VehiclesAndOptionsGateway;
 import dagger.Module;
 import dagger.Provides;
 import javax.inject.Named;
@@ -50,7 +50,8 @@ class GatewayModule {
   }
 
   @Provides
-  VehiclesGateway provideVehicleChoiceGateway(VehiclesGatewayImpl vehicleChoiceGateway) {
+  VehiclesAndOptionsGateway provideVehicleChoiceGateway(
+      VehiclesAndOptionsGatewayImpl vehicleChoiceGateway) {
     return vehicleChoiceGateway;
   }
 
@@ -63,8 +64,8 @@ class GatewayModule {
   /* Преобразователи */
 
   @Provides
-  @Named("vehicleOptionMapper")
-  Mapper<ApiVehicleOptionItem, VehicleOption> provideVehicleOptionApiMapper(
+  @Named("apiOptionMapper")
+  Mapper<ApiOptionItem, Option> provideVehicleOptionApiMapper(
       VehicleOptionApiMapper vehicleOptionApiMapper) {
     return vehicleOptionApiMapper;
   }

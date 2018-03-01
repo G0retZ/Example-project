@@ -6,11 +6,11 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
+import com.fasten.executor_driver.backend.web.incoming.ApiOptionItem;
 import com.fasten.executor_driver.backend.web.incoming.ApiVehicle;
-import com.fasten.executor_driver.backend.web.incoming.ApiVehicleOptionItem;
+import com.fasten.executor_driver.entity.Option;
+import com.fasten.executor_driver.entity.OptionBoolean;
 import com.fasten.executor_driver.entity.Vehicle;
-import com.fasten.executor_driver.entity.VehicleOption;
-import com.fasten.executor_driver.entity.VehicleOptionBoolean;
 import java.util.ArrayList;
 import java.util.Arrays;
 import org.junit.Before;
@@ -25,13 +25,13 @@ public class VehicleApiMapperTest {
   private Mapper<ApiVehicle, Vehicle> mapper;
 
   @Mock
-  private Mapper<ApiVehicleOptionItem, VehicleOption> vehicleOptionMapper;
+  private Mapper<ApiOptionItem, Option> apiOptionMapper;
 
   @Before
   public void setUp() throws Exception {
-    when(vehicleOptionMapper.map(any(ApiVehicleOptionItem.class)))
-        .thenReturn(new VehicleOptionBoolean(0, "n", false, false));
-    mapper = new VehicleApiMapper(vehicleOptionMapper);
+    when(apiOptionMapper.map(any(ApiOptionItem.class)))
+        .thenReturn(new OptionBoolean(0, "n", "d", false, false));
+    mapper = new VehicleApiMapper(apiOptionMapper);
   }
 
   /**
@@ -50,11 +50,11 @@ public class VehicleApiMapperTest {
         "color",
         false,
         Arrays.asList(
-            new ApiVehicleOptionItem(324, "option0", true, false, "345", -5, 123),
-            new ApiVehicleOptionItem(32, "option1", true, false, "34", null, null),
-            new ApiVehicleOptionItem(31, "option2", true, true, "1", 50, 2100),
-            new ApiVehicleOptionItem(523, "option3", false, true, "false", null, null),
-            new ApiVehicleOptionItem(42, "option4", false, false, "true", null, null)
+            new ApiOptionItem(324, "option0", "description0", true, false, "345", -5, 123),
+            new ApiOptionItem(32, "option1", "description1", true, false, "34", null, null),
+            new ApiOptionItem(31, "option2", "description2", true, true, "1", 50, 2100),
+            new ApiOptionItem(523, "option3", "description3", false, true, "false", null, null),
+            new ApiOptionItem(42, "option4", "description4", false, false, "true", null, null)
         )
     );
 
@@ -68,12 +68,12 @@ public class VehicleApiMapperTest {
     assertEquals(vehicle.getLicensePlate(), "plate");
     assertEquals(vehicle.getColor(), "color");
     assertFalse(vehicle.isBusy());
-    assertEquals(vehicle.getVehicleOptions(), Arrays.<VehicleOption>asList(
-        new VehicleOptionBoolean(0, "n", false, false),
-        new VehicleOptionBoolean(0, "n", false, false),
-        new VehicleOptionBoolean(0, "n", false, false),
-        new VehicleOptionBoolean(0, "n", false, false),
-        new VehicleOptionBoolean(0, "n", false, false)
+    assertEquals(vehicle.getOptions(), Arrays.<Option>asList(
+        new OptionBoolean(0, "n", "d", false, false),
+        new OptionBoolean(0, "n", "d", false, false),
+        new OptionBoolean(0, "n", "d", false, false),
+        new OptionBoolean(0, "n", "d", false, false),
+        new OptionBoolean(0, "n", "d", false, false)
     ));
   }
 
@@ -105,7 +105,7 @@ public class VehicleApiMapperTest {
     assertEquals(vehicle.getLicensePlate(), "plate");
     assertEquals(vehicle.getColor(), "color");
     assertTrue(vehicle.isBusy());
-    assertEquals(vehicle.getVehicleOptions(), new ArrayList<>());
+    assertEquals(vehicle.getOptions(), new ArrayList<>());
   }
 
   /**

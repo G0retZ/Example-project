@@ -8,13 +8,13 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.Test;
 
-public class VehicleOptionBooleanTest {
+public class OptionBooleanTest {
 
-  private VehicleOptionBoolean vehicleOptionBoolean;
+  private OptionBoolean vehicleOptionBoolean;
 
   @Before
   public void setUp() throws Exception {
-    vehicleOptionBoolean = new VehicleOptionBoolean(12, "name", true, false);
+    vehicleOptionBoolean = new OptionBoolean(12, "name", "description", true, false);
   }
 
   @Test
@@ -33,11 +33,16 @@ public class VehicleOptionBooleanTest {
 
   @Test
   public void testEquals() throws Exception {
-    assertEquals(vehicleOptionBoolean, new VehicleOptionBoolean(12, "name", true, false));
-    assertNotEquals(vehicleOptionBoolean, new VehicleOptionBoolean(11, "name", true, false));
-    assertNotEquals(vehicleOptionBoolean, new VehicleOptionBoolean(12, "names", true, false));
-    assertNotEquals(vehicleOptionBoolean, new VehicleOptionBoolean(12, "name", false, false));
-    assertNotEquals(vehicleOptionBoolean, new VehicleOptionBoolean(12, "name", true, true));
+    assertEquals(vehicleOptionBoolean, new OptionBoolean(12, "name", "description", true, false));
+    assertNotEquals(vehicleOptionBoolean,
+        new OptionBoolean(11, "name", "description", true, false));
+    assertNotEquals(vehicleOptionBoolean,
+        new OptionBoolean(12, "names", "description", true, false));
+    assertNotEquals(vehicleOptionBoolean,
+        new OptionBoolean(12, "name", "descriptions", true, false));
+    assertNotEquals(vehicleOptionBoolean,
+        new OptionBoolean(12, "name", "description", false, false));
+    assertNotEquals(vehicleOptionBoolean, new OptionBoolean(12, "name", "description", true, true));
     assertNotEquals(vehicleOptionBoolean, vehicleOptionBoolean.setValue(true));
   }
 }

@@ -1,10 +1,10 @@
 package com.fasten.executor_driver.gateway;
 
 import android.support.annotation.NonNull;
+import com.fasten.executor_driver.backend.web.incoming.ApiOptionItem;
 import com.fasten.executor_driver.backend.web.incoming.ApiVehicle;
-import com.fasten.executor_driver.backend.web.incoming.ApiVehicleOptionItem;
+import com.fasten.executor_driver.entity.Option;
 import com.fasten.executor_driver.entity.Vehicle;
-import com.fasten.executor_driver.entity.VehicleOption;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -13,12 +13,12 @@ import javax.inject.Named;
  */
 public class VehicleApiMapper implements Mapper<ApiVehicle, Vehicle> {
 
-  private final Mapper<ApiVehicleOptionItem, VehicleOption> vehicleOptionMapper;
+  private final Mapper<ApiOptionItem, Option> apiOptionMapper;
 
   @Inject
   VehicleApiMapper(
-      @Named("vehicleOptionMapper") Mapper<ApiVehicleOptionItem, VehicleOption> vehicleOptionMapper) {
-    this.vehicleOptionMapper = vehicleOptionMapper;
+      @Named("apiOptionMapper") Mapper<ApiOptionItem, Option> apiOptionMapper) {
+    this.apiOptionMapper = apiOptionMapper;
   }
 
   @NonNull
@@ -47,8 +47,8 @@ public class VehicleApiMapper implements Mapper<ApiVehicle, Vehicle> {
         from.getLicensePlate(),
         from.isBusy()
     );
-    for (ApiVehicleOptionItem vehicleOptionItem : from.getVehicleOptionItems()) {
-      vehicle.addVehicleOptions(vehicleOptionMapper.map(vehicleOptionItem));
+    for (ApiOptionItem vehicleOptionItem : from.getVehicleOptionItems()) {
+      vehicle.addVehicleOptions(apiOptionMapper.map(vehicleOptionItem));
     }
     return vehicle;
   }

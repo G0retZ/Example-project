@@ -10,6 +10,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
+// TODO: написать недостающие тесты.
 @RunWith(MockitoJUnitRunner.class)
 public class VehicleOptionsViewStateInitialTest {
 
@@ -33,7 +34,9 @@ public class VehicleOptionsViewStateInitialTest {
     verify(codeViewActions).showVehicleOptionsList(true);
     verify(codeViewActions).showVehicleOptionsPending(false);
     verify(codeViewActions).showVehicleOptionsListErrorMessage(false);
-    verify(codeViewActions).setVehicleOptionsListItems(new ArrayList<>());
+    verify(codeViewActions).setVehicleOptionsListItems(
+        new OptionsListItems(new ArrayList<>(), new ArrayList<>())
+    );
     verifyNoMoreInteractions(codeViewActions);
   }
 }

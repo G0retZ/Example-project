@@ -6,7 +6,7 @@ import io.reactivex.Completable;
 /**
  * Юзкейс получения списка ТС с проверками блокировки, баланса и пр.
  */
-public interface VehiclesUseCase {
+public interface VehiclesAndOptionsUseCase {
 
   /**
    * Загружает список ТС.
@@ -14,5 +14,5 @@ public interface VehiclesUseCase {
    * @return {@link Completable} результат запроса
    */
   @NonNull
-  Completable loadVehicles();
+  Completable loadVehiclesAndOptions();
 }

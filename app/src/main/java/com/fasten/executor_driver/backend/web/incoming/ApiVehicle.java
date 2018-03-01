@@ -27,7 +27,7 @@ public class ApiVehicle {
   @SerializedName("busy")
   private boolean busy;
   @SerializedName("options")
-  private List<ApiVehicleOptionItem> vehicleOptionItems;
+  private List<ApiOptionItem> vehicleOptionItems;
 
   /**
    * Конструктор без параметров желателен для безопасной работы Gson.
@@ -36,10 +36,9 @@ public class ApiVehicle {
   public ApiVehicle() {
   }
 
-  public ApiVehicle(long id, @Nullable String markName,
-      @Nullable String modelName, @Nullable String licensePlate,
-      @Nullable String color, boolean busy,
-      List<ApiVehicleOptionItem> vehicleOptionItems) {
+  public ApiVehicle(long id, @Nullable String markName, @Nullable String modelName,
+      @Nullable String licensePlate, @Nullable String color, boolean busy,
+      List<ApiOptionItem> vehicleOptionItems) {
     this.id = id;
     this.markName = markName;
     this.modelName = modelName;
@@ -77,7 +76,7 @@ public class ApiVehicle {
     return busy;
   }
 
-  public List<ApiVehicleOptionItem> getVehicleOptionItems() {
+  public List<ApiOptionItem> getVehicleOptionItems() {
     return vehicleOptionItems;
   }
 

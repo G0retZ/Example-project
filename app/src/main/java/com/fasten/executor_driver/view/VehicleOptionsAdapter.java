@@ -10,32 +10,32 @@ import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 import com.fasten.executor_driver.R;
-import com.fasten.executor_driver.presentation.vehicleoptions.VehicleOptionsListItem;
-import java.util.List;
+import com.fasten.executor_driver.presentation.vehicleoptions.OptionsListItem;
+import com.fasten.executor_driver.presentation.vehicleoptions.OptionsListItems;
 import java.util.Locale;
 
 class VehicleOptionsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
   @NonNull
-  private final List<VehicleOptionsListItem<?>> list;
+  private final OptionsListItems optionsListItems;
 
-  VehicleOptionsAdapter(@NonNull List<VehicleOptionsListItem<?>> list) {
-    this.list = list;
+  VehicleOptionsAdapter(@NonNull OptionsListItems optionsListItems) {
+    this.optionsListItems = optionsListItems;
   }
 
   @NonNull
-  public List<VehicleOptionsListItem<?>> getList() {
-    return list;
+  OptionsListItems getOptionsListItems() {
+    return optionsListItems;
   }
 
   @Override
   public int getItemCount() {
-    return list.size();
+    return optionsListItems.size();
   }
 
   @Override
   public int getItemViewType(int position) {
-    return list.get(position).getLayoutType();
+    return optionsListItems.get(position).getLayoutType();
   }
 
   @Override
@@ -52,15 +52,21 @@ class VehicleOptionsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
   @Override
   public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
     if (holder instanceof VehicleBooleanOptionViewHolder) {
-      VehicleOptionsListItem<Boolean> item = (VehicleOptionsListItem<Boolean>) list.get(position);
-      ((VehicleBooleanOptionViewHolder) holder).switchCompat.setText(item.getName());
+      OptionsListItem<Boolean> item = (OptionsListItem<Boolean>) optionsListItems.get(position);
+      holder.itemView.setOnClickListener(null);
+      ((VehicleBooleanOptionViewHolder) holder).nameText.setText(item.getName());
+      ((VehicleBooleanOptionViewHolder) holder).descriptionText.setText(item.getDescription());
       ((VehicleBooleanOptionViewHolder) holder).switchCompat.setOnCheckedChangeListener(null);
       ((VehicleBooleanOptionViewHolder) holder).switchCompat.setChecked(item.getValue());
       ((VehicleBooleanOptionViewHolder) holder).switchCompat
           .setOnCheckedChangeListener((v, b) -> item.setValue(b));
+      holder.itemView.setOnClickListener(v ->
+          ((VehicleBooleanOptionViewHolder) holder).switchCompat.performClick()
+      );
     } else if (holder instanceof VehicleNumericOptionViewHolder) {
-      VehicleOptionsListItem<Integer> item = (VehicleOptionsListItem<Integer>) list.get(position);
+      OptionsListItem<Integer> item = (OptionsListItem<Integer>) optionsListItems.get(position);
       ((VehicleNumericOptionViewHolder) holder).nameText.setText(item.getName());
+      ((VehicleNumericOptionViewHolder) holder).descriptionText.setText(item.getDescription());
       ((VehicleNumericOptionViewHolder) holder).seekBar.setOnSeekBarChangeListener(null);
       ((VehicleNumericOptionViewHolder) holder).seekBar
           .setMax(item.getMaxValue() - item.getMinValue());
@@ -97,6 +103,8 @@ class VehicleOptionsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     @NonNull
     private final TextView nameText;
     @NonNull
+    private final TextView descriptionText;
+    @NonNull
     private final TextView amountText;
     @NonNull
     private final SeekBar seekBar;
@@ -104,6 +112,7 @@ class VehicleOptionsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     VehicleNumericOptionViewHolder(@NonNull View itemView) {
       super(itemView);
       nameText = itemView.findViewById(R.id.optionName);
+      descriptionText = itemView.findViewById(R.id.optionDescription);
       seekBar = itemView.findViewById(R.id.optionSeekBar);
       amountText = itemView.findViewById(R.id.optionAmount);
     }
@@ -112,10 +121,16 @@ class VehicleOptionsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
   final class VehicleBooleanOptionViewHolder extends RecyclerView.ViewHolder {
 
     @NonNull
+    private final TextView nameText;
+    @NonNull
+    private final TextView descriptionText;
+    @NonNull
     private final SwitchCompat switchCompat;
 
     VehicleBooleanOptionViewHolder(@NonNull View itemView) {
       super(itemView);
+      nameText = itemView.findViewById(R.id.optionName);
+      descriptionText = itemView.findViewById(R.id.optionDescription);
       switchCompat = itemView.findViewById(R.id.optionSwitch);
     }
   }

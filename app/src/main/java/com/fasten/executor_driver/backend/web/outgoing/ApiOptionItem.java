@@ -7,7 +7,7 @@ import com.google.gson.annotations.SerializedName;
 /**
  * Объект опции ТС для сериализации в JSON для отправки в АПИ.
  */
-public class ApiVehicleOptionItem {
+public class ApiOptionItem {
 
   @SerializedName("id")
   @Expose
@@ -17,23 +17,23 @@ public class ApiVehicleOptionItem {
   @Expose
   private final String value;
 
-  public ApiVehicleOptionItem(long id, @NonNull String value) {
+  public ApiOptionItem(long id, @NonNull String value) {
     this.id = id;
     this.value = value;
   }
 
-  public long getId() {
+  long getId() {
     return id;
   }
 
   @NonNull
-  public String getValue() {
+  String getValue() {
     return value;
   }
 
   @Override
   public String toString() {
-    return "ApiVehicleOptionItem{" +
+    return "ApiOptionItem{" +
         "id=" + id +
         ", value='" + value + '\'' +
         '}';
@@ -48,7 +48,7 @@ public class ApiVehicleOptionItem {
       return false;
     }
 
-    ApiVehicleOptionItem that = (ApiVehicleOptionItem) o;
+    ApiOptionItem that = (ApiOptionItem) o;
 
     return id == that.id && value.equals(that.value);
   }

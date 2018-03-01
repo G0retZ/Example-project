@@ -1,16 +1,17 @@
 package com.fasten.executor_driver.interactor.vehicle;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 import com.fasten.executor_driver.backend.web.NoNetworkException;
+import com.fasten.executor_driver.entity.Option;
+import com.fasten.executor_driver.entity.OptionBoolean;
+import com.fasten.executor_driver.entity.OptionNumeric;
 import com.fasten.executor_driver.entity.Vehicle;
-import com.fasten.executor_driver.entity.VehicleOption;
-import com.fasten.executor_driver.entity.VehicleOptionBoolean;
-import com.fasten.executor_driver.entity.VehicleOptionNumeric;
 import com.fasten.executor_driver.gateway.DataMappingException;
 import com.fasten.executor_driver.interactor.DataSharer;
 import io.reactivex.Completable;
@@ -25,6 +26,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
+// TODO: написать недостающие тесты.
 @RunWith(MockitoJUnitRunner.class)
 public class VehicleOptionsUseCaseTest {
 
@@ -39,11 +41,14 @@ public class VehicleOptionsUseCaseTest {
   @Mock
   private DataSharer<Vehicle> lastUsedVehicleSharer;
 
+  @Mock
+  private DataSharer<List<Option>> driverOptionsSharer;
+
   @Before
   public void setUp() throws Exception {
     vehicleOptionsUseCase = new VehicleOptionsUseCaseImpl(gateway, vehicleChoiceSharer,
-        lastUsedVehicleSharer);
-    when(gateway.sendVehicleOptions(any(Vehicle.class))).thenReturn(Completable.never());
+        lastUsedVehicleSharer, driverOptionsSharer);
+    when(gateway.sendVehicleOptions(any(Vehicle.class), anyList())).thenReturn(Completable.never());
     when(vehicleChoiceSharer.get()).thenReturn(Observable.never());
   }
 
@@ -77,42 +82,42 @@ public class VehicleOptionsUseCaseTest {
     ArrayList<Vehicle> vehicles = new ArrayList<>();
     vehicles.add(0, new Vehicle(13, "manufacturers", "model4", "carrots", "licensee", false));
     vehicles.get(0).addVehicleOptions(
-        new VehicleOptionNumeric(0, "name0", true, 10, 0, 20),
-        new VehicleOptionNumeric(1, "name1", false, -5, -18, 0),
-        new VehicleOptionBoolean(2, "name2", false, false),
-        new VehicleOptionBoolean(3, "name3", true, true)
+        new OptionNumeric(0, "name0", "desc0", true, 10, 0, 20),
+        new OptionNumeric(1, "name1", "desc1", false, -5, -18, 0),
+        new OptionBoolean(2, "name2", "desc2", false, false),
+        new OptionBoolean(3, "name3", "desc3", true, true)
     );
     vehicles.add(0, new Vehicle(11, "manufacturer2", "models", "colors", "lic", true));
     vehicles.get(0).addVehicleOptions(
-        new VehicleOptionNumeric(0, "name0", true, 10, 0, 20),
-        new VehicleOptionNumeric(1, "name1", true, -5, -18, 0),
-        new VehicleOptionBoolean(2, "name2", true, false),
-        new VehicleOptionBoolean(3, "name3", true, true)
+        new OptionNumeric(0, "name0", "desc0", true, 10, 0, 20),
+        new OptionNumeric(1, "name1", "desc1", true, -5, -18, 0),
+        new OptionBoolean(2, "name2", "desc2", true, false),
+        new OptionBoolean(3, "name3", "desc3", true, true)
     );
     vehicles.add(0, new Vehicle(12, "manufacturer", "model", "color", "license", false));
     vehicles.get(0).addVehicleOptions(
-        new VehicleOptionNumeric(0, "name0", false, 10, 0, 20),
-        new VehicleOptionNumeric(1, "name1", true, -5, -18, 0),
-        new VehicleOptionBoolean(2, "name2", true, false),
-        new VehicleOptionBoolean(3, "name3", false, true)
+        new OptionNumeric(0, "name0", "desc0", false, 10, 0, 20),
+        new OptionNumeric(1, "name1", "desc1", true, -5, -18, 0),
+        new OptionBoolean(2, "name2", "desc2", true, false),
+        new OptionBoolean(3, "name3", "desc3", false, true)
     );
     when(vehicleChoiceSharer.get()).thenReturn(Observable.fromIterable(vehicles));
 
     // Действие и Результат:
     vehicleOptionsUseCase.getVehicleOptions().test().assertValues(
         new ArrayList<>(Arrays.asList(
-            new VehicleOptionNumeric(1, "name1", true, -5, -18, 0),
-            new VehicleOptionBoolean(2, "name2", true, false)
+            new OptionNumeric(1, "name1", "desc1", true, -5, -18, 0),
+            new OptionBoolean(2, "name2", "desc2", true, false)
         )),
         new ArrayList<>(Arrays.asList(
-            new VehicleOptionNumeric(0, "name0", true, 10, 0, 20),
-            new VehicleOptionNumeric(1, "name1", true, -5, -18, 0),
-            new VehicleOptionBoolean(2, "name2", true, false),
-            new VehicleOptionBoolean(3, "name3", true, true)
+            new OptionNumeric(0, "name0", "desc0", true, 10, 0, 20),
+            new OptionNumeric(1, "name1", "desc1", true, -5, -18, 0),
+            new OptionBoolean(2, "name2", "desc2", true, false),
+            new OptionBoolean(3, "name3", "desc3", true, true)
         )),
         new ArrayList<>(Arrays.asList(
-            new VehicleOptionNumeric(0, "name0", true, 10, 0, 20),
-            new VehicleOptionBoolean(3, "name3", true, true)
+            new OptionNumeric(0, "name0", "desc0", true, 10, 0, 20),
+            new OptionBoolean(3, "name3", "desc3", true, true)
         ))
     );
   }
@@ -129,42 +134,42 @@ public class VehicleOptionsUseCaseTest {
     ArrayList<Vehicle> vehicles = new ArrayList<>();
     vehicles.add(0, new Vehicle(13, "manufacturers", "model4", "carrots", "licensee", false));
     vehicles.get(0).addVehicleOptions(
-        new VehicleOptionNumeric(0, "name0", false, 10, 0, 20),
-        new VehicleOptionNumeric(1, "name1", false, -5, -18, 0),
-        new VehicleOptionBoolean(2, "name2", false, false),
-        new VehicleOptionBoolean(3, "name3", false, true)
+        new OptionNumeric(0, "name0", "desc0", false, 10, 0, 20),
+        new OptionNumeric(1, "name1", "desc1", false, -5, -18, 0),
+        new OptionBoolean(2, "name2", "desc2", false, false),
+        new OptionBoolean(3, "name3", "desc3", false, true)
     );
     vehicles.add(0, new Vehicle(11, "manufacturer2", "models", "colors", "lic", true));
     vehicles.get(0).addVehicleOptions(
-        new VehicleOptionNumeric(0, "name0", true, 10, 0, 20),
-        new VehicleOptionNumeric(1, "name1", true, -5, -18, 0),
-        new VehicleOptionBoolean(2, "name2", true, false),
-        new VehicleOptionBoolean(3, "name3", true, true)
+        new OptionNumeric(0, "name0", "desc0", true, 10, 0, 20),
+        new OptionNumeric(1, "name1", "desc1", true, -5, -18, 0),
+        new OptionBoolean(2, "name2", "desc2", true, false),
+        new OptionBoolean(3, "name3", "desc3", true, true)
     );
     vehicles.add(0, new Vehicle(12, "manufacturer", "model", "color", "license", false));
     vehicles.get(0).addVehicleOptions(
-        new VehicleOptionNumeric(0, "name0", false, 10, 0, 20),
-        new VehicleOptionNumeric(1, "name1", true, -5, -18, 0),
-        new VehicleOptionBoolean(2, "name2", true, false),
-        new VehicleOptionBoolean(3, "name3", false, true)
+        new OptionNumeric(0, "name0", "desc0", false, 10, 0, 20),
+        new OptionNumeric(1, "name1", "desc1", true, -5, -18, 0),
+        new OptionBoolean(2, "name2", "desc2", true, false),
+        new OptionBoolean(3, "name3", "desc3", false, true)
     );
     when(vehicleChoiceSharer.get()).thenReturn(Observable.fromIterable(vehicles));
 
     // Действие
-    TestObserver<List<VehicleOption>> testObserver =
+    TestObserver<List<Option>> testObserver =
         vehicleOptionsUseCase.getVehicleOptions().test();
 
     // Результат:
     testObserver.assertValues(
         new ArrayList<>(Arrays.asList(
-            new VehicleOptionNumeric(1, "name1", true, -5, -18, 0),
-            new VehicleOptionBoolean(2, "name2", true, false)
+            new OptionNumeric(1, "name1", "desc1", true, -5, -18, 0),
+            new OptionBoolean(2, "name2", "desc2", true, false)
         )),
         new ArrayList<>(Arrays.asList(
-            new VehicleOptionNumeric(0, "name0", true, 10, 0, 20),
-            new VehicleOptionNumeric(1, "name1", true, -5, -18, 0),
-            new VehicleOptionBoolean(2, "name2", true, false),
-            new VehicleOptionBoolean(3, "name3", true, true)
+            new OptionNumeric(0, "name0", "desc0", true, 10, 0, 20),
+            new OptionNumeric(1, "name1", "desc1", true, -5, -18, 0),
+            new OptionBoolean(2, "name2", "desc2", true, false),
+            new OptionBoolean(3, "name3", "desc3", true, true)
         )),
         new ArrayList<>()
     );
@@ -180,11 +185,11 @@ public class VehicleOptionsUseCaseTest {
   @Test
   public void doNotTouchGateway() throws Exception {
     // Действие:
-    vehicleOptionsUseCase.setSelectedVehicleOptions(
+    vehicleOptionsUseCase.setSelectedVehicleAndOptions(
         new ArrayList<>(Arrays.asList(
-            new VehicleOptionNumeric(1, "name1", true, -5, -18, 0),
-            new VehicleOptionBoolean(2, "name2", true, false)
-        ))
+            new OptionNumeric(1, "name1", "desc1", true, -5, -18, 0),
+            new OptionBoolean(2, "name2", "desc2", true, false)
+        )), new ArrayList<>()
     ).test();
 
     // Результат:
@@ -201,31 +206,31 @@ public class VehicleOptionsUseCaseTest {
     // Дано:
     Vehicle vehicle = new Vehicle(12, "manufacturer", "model", "color", "license", false);
     vehicle.addVehicleOptions(
-        new VehicleOptionNumeric(0, "name0", false, 10, 0, 20),
-        new VehicleOptionNumeric(1, "name1", true, -5, -18, 0),
-        new VehicleOptionBoolean(2, "name2", true, false),
-        new VehicleOptionBoolean(3, "name3", false, true)
+        new OptionNumeric(0, "name0", "desc0", false, 10, 0, 20),
+        new OptionNumeric(1, "name1", "desc1", true, -5, -18, 0),
+        new OptionBoolean(2, "name2", "desc2", true, false),
+        new OptionBoolean(3, "name3", "desc3", false, true)
     );
     when(vehicleChoiceSharer.get()).thenReturn(Observable.just(vehicle));
 
     // Действие:
     vehicleOptionsUseCase.getVehicleOptions().test();
-    vehicleOptionsUseCase.setSelectedVehicleOptions(
+    vehicleOptionsUseCase.setSelectedVehicleAndOptions(
         new ArrayList<>(Arrays.asList(
-            new VehicleOptionNumeric(0, "name0", true, 40, 0, 120),
-            new VehicleOptionNumeric(1, "name1", true, -50, 20, 30),
-            new VehicleOptionBoolean(2, "name2", true, false)
-        ))
+            new OptionNumeric(0, "name0", "desc0", true, 40, 0, 120),
+            new OptionNumeric(1, "name1", "desc1", true, -50, 20, 30),
+            new OptionBoolean(2, "name2", "desc2", true, false)
+        )), new ArrayList<>()
     ).test();
 
     // Результат:
     vehicle = new Vehicle(12, "manufacturer", "model", "color", "license", false);
-    vehicle.setVehicleOptions(
-        new VehicleOptionNumeric(0, "name0", true, 40, 0, 120),
-        new VehicleOptionNumeric(1, "name1", true, -50, 20, 30),
-        new VehicleOptionBoolean(2, "name2", true, false)
+    vehicle.setOptions(
+        new OptionNumeric(0, "name0", "desc0", true, 40, 0, 120),
+        new OptionNumeric(1, "name1", "desc1", true, -50, 20, 30),
+        new OptionBoolean(2, "name2", "desc2", true, false)
     );
-    verify(gateway, only()).sendVehicleOptions(vehicle);
+    verify(gateway, only()).sendVehicleOptions(vehicle, new ArrayList<>());
   }
 
   /* Проверяем ответы на передачу опций ТС для выхода на линию */
@@ -238,11 +243,11 @@ public class VehicleOptionsUseCaseTest {
   @Test
   public void answerDataMappingError() throws Exception {
     // Действие и Результат:
-    vehicleOptionsUseCase.setSelectedVehicleOptions(
+    vehicleOptionsUseCase.setSelectedVehicleAndOptions(
         new ArrayList<>(Arrays.asList(
-            new VehicleOptionNumeric(1, "name1", true, -5, -18, 0),
-            new VehicleOptionBoolean(2, "name2", true, false)
-        ))
+            new OptionNumeric(1, "name1", "desc1", true, -5, -18, 0),
+            new OptionBoolean(2, "name2", "desc2", true, false)
+        )), new ArrayList<>()
     ).test().assertError(DataMappingException.class);
   }
 
@@ -256,25 +261,25 @@ public class VehicleOptionsUseCaseTest {
     // Дано:
     Vehicle vehicle = new Vehicle(12, "manufacturer", "model", "color", "license", false);
     vehicle.addVehicleOptions(
-        new VehicleOptionNumeric(0, "name0", false, 10, 0, 20),
-        new VehicleOptionNumeric(1, "name1", true, -5, -18, 0),
-        new VehicleOptionBoolean(2, "name2", true, false),
-        new VehicleOptionBoolean(3, "name3", false, true)
+        new OptionNumeric(0, "name0", "desc0", false, 10, 0, 20),
+        new OptionNumeric(1, "name1", "desc1", true, -5, -18, 0),
+        new OptionBoolean(2, "name2", "desc2", true, false),
+        new OptionBoolean(3, "name3", "desc3", false, true)
     );
     when(vehicleChoiceSharer.get()).thenReturn(Observable.just(vehicle));
-    when(gateway.sendVehicleOptions(any(Vehicle.class)))
+    when(gateway.sendVehicleOptions(any(Vehicle.class), anyList()))
         .thenReturn(Completable.error(NoNetworkException::new));
 
     // Действие:
     vehicleOptionsUseCase.getVehicleOptions().test();
 
     // Результат:
-    vehicleOptionsUseCase.setSelectedVehicleOptions(
+    vehicleOptionsUseCase.setSelectedVehicleAndOptions(
         new ArrayList<>(Arrays.asList(
-            new VehicleOptionNumeric(0, "name0", true, 40, 0, 120),
-            new VehicleOptionNumeric(1, "name1", true, -50, 20, 30),
-            new VehicleOptionBoolean(2, "name2", true, false)
-        ))
+            new OptionNumeric(0, "name0", "desc0", true, 40, 0, 120),
+            new OptionNumeric(1, "name1", "desc1", true, -50, 20, 30),
+            new OptionBoolean(2, "name2", "desc2", true, false)
+        )), new ArrayList<>()
     ).test().assertError(NoNetworkException.class);
   }
 
@@ -288,24 +293,25 @@ public class VehicleOptionsUseCaseTest {
     // Дано:
     Vehicle vehicle = new Vehicle(12, "manufacturer", "model", "color", "license", false);
     vehicle.addVehicleOptions(
-        new VehicleOptionNumeric(0, "name0", false, 10, 0, 20),
-        new VehicleOptionNumeric(1, "name1", true, -5, -18, 0),
-        new VehicleOptionBoolean(2, "name2", true, false),
-        new VehicleOptionBoolean(3, "name3", false, true)
+        new OptionNumeric(0, "name0", "desc0", false, 10, 0, 20),
+        new OptionNumeric(1, "name1", "desc1", true, -5, -18, 0),
+        new OptionBoolean(2, "name2", "desc2", true, false),
+        new OptionBoolean(3, "name3", "desc3", false, true)
     );
     when(vehicleChoiceSharer.get()).thenReturn(Observable.just(vehicle));
-    when(gateway.sendVehicleOptions(any(Vehicle.class))).thenReturn(Completable.complete());
+    when(gateway.sendVehicleOptions(any(Vehicle.class), anyList()))
+        .thenReturn(Completable.complete());
 
     // Действие:
     vehicleOptionsUseCase.getVehicleOptions().test();
 
     // Результат:
-    vehicleOptionsUseCase.setSelectedVehicleOptions(
+    vehicleOptionsUseCase.setSelectedVehicleAndOptions(
         new ArrayList<>(Arrays.asList(
-            new VehicleOptionNumeric(0, "name0", true, 40, 0, 120),
-            new VehicleOptionNumeric(1, "name1", true, -50, 20, 30),
-            new VehicleOptionBoolean(2, "name2", true, false)
-        ))
+            new OptionNumeric(0, "name0", "desc0", true, 40, 0, 120),
+            new OptionNumeric(1, "name1", "desc1", true, -50, 20, 30),
+            new OptionBoolean(2, "name2", "desc2", true, false)
+        )), new ArrayList<>()
     ).test().assertComplete();
   }
 
@@ -319,29 +325,29 @@ public class VehicleOptionsUseCaseTest {
   @Test
   public void doNotTouchLastUseVehicleDataSharer() throws Exception {
     // Действие:
-    vehicleOptionsUseCase.setSelectedVehicleOptions(
+    vehicleOptionsUseCase.setSelectedVehicleAndOptions(
         new ArrayList<>(Arrays.asList(
-            new VehicleOptionNumeric(1, "name1", true, -5, -18, 0),
-            new VehicleOptionBoolean(2, "name2", true, false)
-        ))
+            new OptionNumeric(1, "name1", "desc1", true, -5, -18, 0),
+            new OptionBoolean(2, "name2", "desc2", true, false)
+        )), new ArrayList<>()
     ).test();
     Vehicle vehicle = new Vehicle(12, "manufacturer", "model", "color", "license", false);
     vehicle.addVehicleOptions(
-        new VehicleOptionNumeric(0, "name0", false, 10, 0, 20),
-        new VehicleOptionNumeric(1, "name1", true, -5, -18, 0),
-        new VehicleOptionBoolean(2, "name2", true, false),
-        new VehicleOptionBoolean(3, "name3", false, true)
+        new OptionNumeric(0, "name0", "desc0", false, 10, 0, 20),
+        new OptionNumeric(1, "name1", "desc1", true, -5, -18, 0),
+        new OptionBoolean(2, "name2", "desc2", true, false),
+        new OptionBoolean(3, "name3", "desc3", false, true)
     );
     when(vehicleChoiceSharer.get()).thenReturn(Observable.just(vehicle));
-    when(gateway.sendVehicleOptions(any(Vehicle.class)))
+    when(gateway.sendVehicleOptions(any(Vehicle.class), anyList()))
         .thenReturn(Completable.error(NoNetworkException::new));
     vehicleOptionsUseCase.getVehicleOptions().test();
-    vehicleOptionsUseCase.setSelectedVehicleOptions(
+    vehicleOptionsUseCase.setSelectedVehicleAndOptions(
         new ArrayList<>(Arrays.asList(
-            new VehicleOptionNumeric(0, "name0", true, 40, 0, 120),
-            new VehicleOptionNumeric(1, "name1", true, -50, 20, 30),
-            new VehicleOptionBoolean(2, "name2", true, false)
-        ))
+            new OptionNumeric(0, "name0", "desc0", true, 40, 0, 120),
+            new OptionNumeric(1, "name1", "desc1", true, -50, 20, 30),
+            new OptionBoolean(2, "name2", "desc2", true, false)
+        )), new ArrayList<>()
     ).test().assertError(NoNetworkException.class);
 
     // Результат:
@@ -358,30 +364,31 @@ public class VehicleOptionsUseCaseTest {
     // Дано:
     Vehicle vehicle = new Vehicle(12, "manufacturer", "model", "color", "license", false);
     vehicle.addVehicleOptions(
-        new VehicleOptionNumeric(0, "name0", false, 10, 0, 20),
-        new VehicleOptionNumeric(1, "name1", true, -5, -18, 0),
-        new VehicleOptionBoolean(2, "name2", true, false),
-        new VehicleOptionBoolean(3, "name3", false, true)
+        new OptionNumeric(0, "name0", "desc0", false, 10, 0, 20),
+        new OptionNumeric(1, "name1", "desc1", true, -5, -18, 0),
+        new OptionBoolean(2, "name2", "desc2", true, false),
+        new OptionBoolean(3, "name3", "desc3", false, true)
     );
     when(vehicleChoiceSharer.get()).thenReturn(Observable.just(vehicle));
-    when(gateway.sendVehicleOptions(any(Vehicle.class))).thenReturn(Completable.complete());
+    when(gateway.sendVehicleOptions(any(Vehicle.class), anyList()))
+        .thenReturn(Completable.complete());
 
     // Действие:
     vehicleOptionsUseCase.getVehicleOptions().test();
-    vehicleOptionsUseCase.setSelectedVehicleOptions(
+    vehicleOptionsUseCase.setSelectedVehicleAndOptions(
         new ArrayList<>(Arrays.asList(
-            new VehicleOptionNumeric(0, "name0", true, 40, 0, 120),
-            new VehicleOptionNumeric(1, "name1", true, -50, 20, 30),
-            new VehicleOptionBoolean(2, "name2", true, false)
-        ))
+            new OptionNumeric(0, "name0", "desc0", true, 40, 0, 120),
+            new OptionNumeric(1, "name1", "desc1", true, -50, 20, 30),
+            new OptionBoolean(2, "name2", "desc2", true, false)
+        )), new ArrayList<>()
     ).test();
 
     // Результат:
     vehicle = new Vehicle(12, "manufacturer", "model", "color", "license", false);
     vehicle.addVehicleOptions(
-        new VehicleOptionNumeric(0, "name0", true, 40, 0, 120),
-        new VehicleOptionNumeric(1, "name1", true, -50, 20, 30),
-        new VehicleOptionBoolean(2, "name2", true, false)
+        new OptionNumeric(0, "name0", "desc0", true, 40, 0, 120),
+        new OptionNumeric(1, "name1", "desc1", true, -50, 20, 30),
+        new OptionBoolean(2, "name2", "desc2", true, false)
     );
     verify(lastUsedVehicleSharer, only()).share(vehicle);
   }

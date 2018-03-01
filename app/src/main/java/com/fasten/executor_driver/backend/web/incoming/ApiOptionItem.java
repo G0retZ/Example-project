@@ -6,13 +6,17 @@ import com.google.gson.annotations.SerializedName;
 /**
  * ответ от API содержащий данные о параметре ТС.
  */
-public class ApiVehicleOptionItem {
+public class ApiOptionItem {
 
   @SerializedName("id")
   private long id;
   @Nullable
   @SerializedName("name")
   private String name;
+  @SuppressWarnings("CanBeFinal")
+  @Nullable
+  @SerializedName("description")
+  private String description;
   @SerializedName("numeric")
   private boolean numeric;
   @SerializedName("dynamic")
@@ -31,13 +35,16 @@ public class ApiVehicleOptionItem {
    * Конструктор без параметров желателен для безопасной работы Gson.
    */
   @SuppressWarnings({"unused", "SpellCheckingInspection"})
-  public ApiVehicleOptionItem() {
+  public ApiOptionItem() {
+    description = "Детальное описание";
   }
 
-  public ApiVehicleOptionItem(long id, @Nullable String name, boolean numeric, boolean dynamic,
-      @Nullable String value, @Nullable Integer minValue, @Nullable Integer maxValue) {
+  public ApiOptionItem(long id, @Nullable String name, @Nullable String description,
+      boolean numeric, boolean dynamic, @Nullable String value, @Nullable Integer minValue,
+      @Nullable Integer maxValue) {
     this.id = id;
     this.name = name;
+    this.description = description;
     this.numeric = numeric;
     this.dynamic = dynamic;
     this.value = value;
@@ -52,6 +59,11 @@ public class ApiVehicleOptionItem {
   @Nullable
   public String getName() {
     return name;
+  }
+
+  @Nullable
+  public String getDescription() {
+    return description;
   }
 
   public boolean isNumeric() {
@@ -79,9 +91,10 @@ public class ApiVehicleOptionItem {
 
   @Override
   public String toString() {
-    return "ApiVehicleOptionItem{" +
+    return "ApiOptionItem{" +
         "id=" + id +
         ", name='" + name + '\'' +
+        ", description='" + description + '\'' +
         ", numeric=" + numeric +
         ", dynamic=" + dynamic +
         ", value='" + value + '\'' +
@@ -100,7 +113,7 @@ public class ApiVehicleOptionItem {
       return false;
     }
 
-    ApiVehicleOptionItem that = (ApiVehicleOptionItem) o;
+    ApiOptionItem that = (ApiOptionItem) o;
 
     if (id != that.id) {
       return false;
@@ -112,6 +125,9 @@ public class ApiVehicleOptionItem {
       return false;
     }
     if (name != null ? !name.equals(that.name) : that.name != null) {
+      return false;
+    }
+    if (description != null ? !description.equals(that.description) : that.description != null) {
       return false;
     }
     if (value != null ? !value.equals(that.value) : that.value != null) {
@@ -127,6 +143,7 @@ public class ApiVehicleOptionItem {
   public int hashCode() {
     int result = (int) (id ^ (id >>> 32));
     result = 31 * result + (name != null ? name.hashCode() : 0);
+    result = 31 * result + (description != null ? description.hashCode() : 0);
     result = 31 * result + (numeric ? 1 : 0);
     result = 31 * result + (dynamic ? 1 : 0);
     result = 31 * result + (value != null ? value.hashCode() : 0);

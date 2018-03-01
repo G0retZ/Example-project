@@ -1,6 +1,7 @@
 package com.fasten.executor_driver.di;
 
 import android.support.annotation.NonNull;
+import com.fasten.executor_driver.entity.Option;
 import com.fasten.executor_driver.entity.Vehicle;
 import com.fasten.executor_driver.interactor.DataSharer;
 import com.fasten.executor_driver.interactor.auth.LoginSharer;
@@ -14,6 +15,7 @@ import com.fasten.executor_driver.interactor.map.HeatMapUseCase;
 import com.fasten.executor_driver.interactor.map.HeatMapUseCaseImpl;
 import com.fasten.executor_driver.interactor.services.ServicesUseCase;
 import com.fasten.executor_driver.interactor.services.ServicesUseCaseImpl;
+import com.fasten.executor_driver.interactor.vehicle.DriverOptionsSharer;
 import com.fasten.executor_driver.interactor.vehicle.LastUsedVehicleSharer;
 import com.fasten.executor_driver.interactor.vehicle.SelectedVehicleUseCase;
 import com.fasten.executor_driver.interactor.vehicle.SelectedVehicleUseCaseImpl;
@@ -22,9 +24,9 @@ import com.fasten.executor_driver.interactor.vehicle.VehicleChoiceUseCase;
 import com.fasten.executor_driver.interactor.vehicle.VehicleChoiceUseCaseImpl;
 import com.fasten.executor_driver.interactor.vehicle.VehicleOptionsUseCase;
 import com.fasten.executor_driver.interactor.vehicle.VehicleOptionsUseCaseImpl;
+import com.fasten.executor_driver.interactor.vehicle.VehiclesAndOptionsUseCase;
+import com.fasten.executor_driver.interactor.vehicle.VehiclesAndOptionsUseCaseImpl;
 import com.fasten.executor_driver.interactor.vehicle.VehiclesSharer;
-import com.fasten.executor_driver.interactor.vehicle.VehiclesUseCase;
-import com.fasten.executor_driver.interactor.vehicle.VehiclesUseCaseImpl;
 import dagger.Module;
 import dagger.Provides;
 import java.util.List;
@@ -55,8 +57,9 @@ class UseCaseModule {
   }
 
   @Provides
-  VehiclesUseCase provideOnlineUseCase(VehiclesUseCaseImpl onlineUseCase) {
-    return onlineUseCase;
+  VehiclesAndOptionsUseCase provideOnlineUseCase(
+      VehiclesAndOptionsUseCaseImpl vehiclesAndOptionsUseCase) {
+    return vehiclesAndOptionsUseCase;
   }
 
   @Provides
@@ -95,6 +98,14 @@ class UseCaseModule {
   @Named("vehiclesSharer")
   DataSharer<List<Vehicle>> provideVehiclesSharer(@NonNull VehiclesSharer vehiclesSharer) {
     return vehiclesSharer;
+  }
+
+  @Provides
+  @Singleton
+  @Named("driverOptionsSharer")
+  DataSharer<List<Option>> provideDriverOptionsSharer(
+      @NonNull DriverOptionsSharer driverOptionsSharer) {
+    return driverOptionsSharer;
   }
 
   @Provides
