@@ -15,9 +15,9 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import com.fasten.executor_driver.R;
 import com.fasten.executor_driver.di.AppComponent;
-import com.fasten.executor_driver.presentation.vehicleoptions.OptionsListItems;
-import com.fasten.executor_driver.presentation.vehicleoptions.VehicleOptionsViewActions;
-import com.fasten.executor_driver.presentation.vehicleoptions.VehicleOptionsViewModel;
+import com.fasten.executor_driver.presentation.options.OptionsListItems;
+import com.fasten.executor_driver.presentation.options.OptionsViewActions;
+import com.fasten.executor_driver.presentation.options.OptionsViewModel;
 import com.fasten.executor_driver.presentation.vehicleoptions.VehicleOptionsViewModelImpl;
 import java.util.ArrayList;
 import javax.inject.Inject;
@@ -27,9 +27,9 @@ import javax.inject.Named;
  * Отображает список ТС для выбора при выходе на линию.
  */
 
-public class VehicleOptionsFragment extends BaseFragment implements VehicleOptionsViewActions {
+public class VehicleOptionsFragment extends BaseFragment implements OptionsViewActions {
 
-  private VehicleOptionsViewModel vehicleOptionsViewModel;
+  private OptionsViewModel vehicleOptionsViewModel;
   private RecyclerView recyclerView;
   private ProgressBar pendingIndicator;
   private TextView errorText;

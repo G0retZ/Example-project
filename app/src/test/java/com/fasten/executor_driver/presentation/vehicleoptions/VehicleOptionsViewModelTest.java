@@ -17,6 +17,14 @@ import com.fasten.executor_driver.entity.OptionBoolean;
 import com.fasten.executor_driver.entity.OptionNumeric;
 import com.fasten.executor_driver.interactor.vehicle.VehicleOptionsUseCase;
 import com.fasten.executor_driver.presentation.ViewState;
+import com.fasten.executor_driver.presentation.options.OptionsListItem;
+import com.fasten.executor_driver.presentation.options.OptionsListItems;
+import com.fasten.executor_driver.presentation.options.OptionsViewActions;
+import com.fasten.executor_driver.presentation.options.OptionsViewModel;
+import com.fasten.executor_driver.presentation.options.OptionsViewStateError;
+import com.fasten.executor_driver.presentation.options.OptionsViewStateInitial;
+import com.fasten.executor_driver.presentation.options.OptionsViewStatePending;
+import com.fasten.executor_driver.presentation.options.OptionsViewStateReady;
 import io.reactivex.Completable;
 import io.reactivex.Observable;
 import io.reactivex.android.plugins.RxAndroidPlugins;
@@ -43,12 +51,12 @@ public class VehicleOptionsViewModelTest {
 
   @Rule
   public TestRule rule = new InstantTaskExecutorRule();
-  private VehicleOptionsViewModel vehicleOptionsViewModel;
+  private OptionsViewModel vehicleOptionsViewModel;
   @Mock
   private VehicleOptionsUseCase vehicleOptionsUseCase;
 
   @Mock
-  private Observer<ViewState<VehicleOptionsViewActions>> viewStateObserver;
+  private Observer<ViewState<OptionsViewActions>> viewStateObserver;
 
   @Mock
   private Observer<String> navigateObserver;
@@ -226,7 +234,7 @@ public class VehicleOptionsViewModelTest {
     vehicleOptionsViewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Результат:
-    inOrder.verify(viewStateObserver).onChanged(any(VehicleOptionsViewStateInitial.class));
+    inOrder.verify(viewStateObserver).onChanged(any(OptionsViewStateInitial.class));
     verifyNoMoreInteractions(viewStateObserver);
   }
 
@@ -256,8 +264,8 @@ public class VehicleOptionsViewModelTest {
     ));
 
     // Результат:
-    inOrder.verify(viewStateObserver).onChanged(any(VehicleOptionsViewStateInitial.class));
-    inOrder.verify(viewStateObserver).onChanged(new VehicleOptionsViewStateReady(
+    inOrder.verify(viewStateObserver).onChanged(any(OptionsViewStateInitial.class));
+    inOrder.verify(viewStateObserver).onChanged(new OptionsViewStateReady(
         new OptionsListItems(Arrays.asList(
             new OptionsListItem<>(
                 new OptionBoolean(1, "name", "description", true, false)
@@ -308,8 +316,8 @@ public class VehicleOptionsViewModelTest {
     );
 
     // Результат:
-    inOrder.verify(viewStateObserver).onChanged(any(VehicleOptionsViewStateInitial.class));
-    inOrder.verify(viewStateObserver).onChanged(new VehicleOptionsViewStateReady(
+    inOrder.verify(viewStateObserver).onChanged(any(OptionsViewStateInitial.class));
+    inOrder.verify(viewStateObserver).onChanged(new OptionsViewStateReady(
         new OptionsListItems(Arrays.asList(
             new OptionsListItem<>(
                 new OptionBoolean(1, "name", "description", true, false)
@@ -326,7 +334,7 @@ public class VehicleOptionsViewModelTest {
             )
         ))
     ));
-    inOrder.verify(viewStateObserver).onChanged(any(VehicleOptionsViewStatePending.class));
+    inOrder.verify(viewStateObserver).onChanged(any(OptionsViewStatePending.class));
     verifyNoMoreInteractions(viewStateObserver);
   }
 
@@ -361,8 +369,8 @@ public class VehicleOptionsViewModelTest {
     );
 
     // Результат:
-    inOrder.verify(viewStateObserver).onChanged(any(VehicleOptionsViewStateInitial.class));
-    inOrder.verify(viewStateObserver).onChanged(new VehicleOptionsViewStateReady(
+    inOrder.verify(viewStateObserver).onChanged(any(OptionsViewStateInitial.class));
+    inOrder.verify(viewStateObserver).onChanged(new OptionsViewStateReady(
         new OptionsListItems(Arrays.asList(
             new OptionsListItem<>(
                 new OptionBoolean(1, "name", "description", true, false)
@@ -379,9 +387,9 @@ public class VehicleOptionsViewModelTest {
             )
         ))
     ));
-    inOrder.verify(viewStateObserver).onChanged(any(VehicleOptionsViewStatePending.class));
+    inOrder.verify(viewStateObserver).onChanged(any(OptionsViewStatePending.class));
     inOrder.verify(viewStateObserver)
-        .onChanged(new VehicleOptionsViewStateError(R.string.no_network_connection));
+        .onChanged(new OptionsViewStateError(R.string.no_network_connection));
     verifyNoMoreInteractions(viewStateObserver);
   }
 
@@ -426,6 +434,6 @@ public class VehicleOptionsViewModelTest {
     );
 
     // Результат:
-    verify(navigateObserver, only()).onChanged(VehicleOptionsNavigate.READY_FOR_ORDERS);
+    verify(navigateObserver, only()).onChanged(VehicleOptionsNavigate.SERVICES);
   }
 }

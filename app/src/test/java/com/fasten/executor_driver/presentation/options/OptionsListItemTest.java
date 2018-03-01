@@ -1,4 +1,4 @@
-package com.fasten.executor_driver.presentation.vehicleoptions;
+package com.fasten.executor_driver.presentation.options;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;

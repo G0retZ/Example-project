@@ -10,8 +10,8 @@ import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 import com.fasten.executor_driver.R;
-import com.fasten.executor_driver.presentation.vehicleoptions.OptionsListItem;
-import com.fasten.executor_driver.presentation.vehicleoptions.OptionsListItems;
+import com.fasten.executor_driver.presentation.options.OptionsListItem;
+import com.fasten.executor_driver.presentation.options.OptionsListItems;
 import java.util.Locale;
 
 class VehicleOptionsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {

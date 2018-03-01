@@ -1,4 +1,4 @@
-package com.fasten.executor_driver.presentation.vehicleoptions;
+package com.fasten.executor_driver.presentation.options;
 
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
@@ -20,12 +20,12 @@ public class OptionsListItem<V> {
   @NonNull
   private Option<V> option;
 
-  OptionsListItem(@NonNull Option<V> option) {
+  public OptionsListItem(@NonNull Option<V> option) {
     this.option = option;
   }
 
   @NonNull
-  Option<V> getOption() {
+  public Option<V> getOption() {
     return option;
   }
 

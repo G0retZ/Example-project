@@ -21,7 +21,7 @@ public class VehicleOptionsActivity extends BaseActivity {
   public void navigate(@NonNull String destination) {
     Intent intent;
     switch (destination) {
-      case VehicleOptionsNavigate.READY_FOR_ORDERS:
+      case VehicleOptionsNavigate.SERVICES:
         intent = new Intent(this, MapActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         startActivity(intent);

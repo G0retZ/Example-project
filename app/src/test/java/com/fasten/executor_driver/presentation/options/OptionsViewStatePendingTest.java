@@ -1,4 +1,4 @@
-package com.fasten.executor_driver.presentation.vehicleoptions;
+package com.fasten.executor_driver.presentation.options;
 
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -10,16 +10,16 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
-public class VehicleOptionsViewStatePendingTest {
+public class OptionsViewStatePendingTest {
 
-  private VehicleOptionsViewStatePending viewState;
+  private OptionsViewStatePending viewState;
 
   @Mock
-  private VehicleOptionsViewActions codeViewActions;
+  private OptionsViewActions codeViewActions;
 
   @Before
   public void setUp() throws Exception {
-    viewState = new VehicleOptionsViewStatePending();
+    viewState = new OptionsViewStatePending();
   }
 
   @Test

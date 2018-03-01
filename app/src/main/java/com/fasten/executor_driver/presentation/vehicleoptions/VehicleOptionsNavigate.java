@@ -8,11 +8,11 @@ import java.lang.annotation.RetentionPolicy;
  * Направления навигации из окна настройки опций ТС исполнителя.
  */
 @StringDef({
-    VehicleOptionsNavigate.READY_FOR_ORDERS
+    VehicleOptionsNavigate.SERVICES
 })
 @Retention(RetentionPolicy.SOURCE)
 public @interface VehicleOptionsNavigate {
 
   // Переход к режиму ожидания заказа.
-  String READY_FOR_ORDERS = "VehicleOptions.to.ReadyForOrders";
+  String SERVICES = "VehicleOptions.to.Services";
 }

@@ -1,4 +1,4 @@
-package com.fasten.executor_driver.presentation.vehicleoptions;
+package com.fasten.executor_driver.presentation.options;
 
 import android.support.annotation.NonNull;
 import com.fasten.executor_driver.presentation.ViewState;
@@ -7,10 +7,10 @@ import java.util.ArrayList;
 /**
  * Начальное состояние списка опций ТС.
  */
-final class VehicleOptionsViewStateInitial implements ViewState<VehicleOptionsViewActions> {
+public final class OptionsViewStateInitial implements ViewState<OptionsViewActions> {
 
   @Override
-  public void apply(@NonNull VehicleOptionsViewActions stateActions) {
+  public void apply(@NonNull OptionsViewActions stateActions) {
     stateActions.enableReadyButton(false);
     stateActions.showVehicleOptionsList(true);
     stateActions.showVehicleOptionsPending(false);

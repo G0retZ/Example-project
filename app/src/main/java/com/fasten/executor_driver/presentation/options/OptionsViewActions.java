@@ -1,4 +1,4 @@
-package com.fasten.executor_driver.presentation.vehicleoptions;
+package com.fasten.executor_driver.presentation.options;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
@@ -6,7 +6,7 @@ import android.support.annotation.StringRes;
 /**
  * Действия для смены состояния вида окна списка опций ТС исполнителя.
  */
-public interface VehicleOptionsViewActions {
+public interface OptionsViewActions {
 
   /**
    * Активировать кнопку готовности.

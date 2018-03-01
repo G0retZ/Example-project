@@ -1,4 +1,4 @@
-package com.fasten.executor_driver.presentation.vehicleoptions;
+package com.fasten.executor_driver.presentation.options;
 
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -12,16 +12,16 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 // TODO: написать недостающие тесты.
 @RunWith(MockitoJUnitRunner.class)
-public class VehicleOptionsViewStateInitialTest {
+public class OptionsViewStateInitialTest {
 
-  private VehicleOptionsViewStateInitial viewState;
+  private OptionsViewStateInitial viewState;
 
   @Mock
-  private VehicleOptionsViewActions codeViewActions;
+  private OptionsViewActions codeViewActions;
 
   @Before
   public void setUp() throws Exception {
-    viewState = new VehicleOptionsViewStateInitial();
+    viewState = new OptionsViewStateInitial();
   }
 
   @Test
