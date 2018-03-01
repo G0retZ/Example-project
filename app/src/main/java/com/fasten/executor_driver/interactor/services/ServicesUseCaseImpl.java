@@ -19,12 +19,12 @@ public class ServicesUseCaseImpl implements ServicesUseCase {
 
   @NonNull
   @Override
-  public Observable<List<Service>> getVehicleOptions() {
+  public Observable<List<Service>> loadServices() {
     return gateway.getServices().toObservable();
   }
 
   @Override
-  public Completable setSelectedVehicleOptions(List<Service> services) {
+  public Completable setSelectedServices(List<Service> services) {
     return gateway.sendSelectedServices(services);
   }
 }

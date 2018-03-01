@@ -18,13 +18,13 @@ public interface ServicesUseCase {
    * @return {@link Observable} результат запроса
    */
   @NonNull
-  Observable<List<Service>> getVehicleOptions();
+  Observable<List<Service>> loadServices();
 
   /**
-   * Задает опции выбранного ТС для сохранения и выхода на линию.
+   * Задает услуги выбранные исполнителем для выхода на линию.
    *
    * @param services список услуг
    * @return {@link Completable} результат сохранения и выхода на линию
    */
-  Completable setSelectedVehicleOptions(List<Service> services);
+  Completable setSelectedServices(List<Service> services);
 }
