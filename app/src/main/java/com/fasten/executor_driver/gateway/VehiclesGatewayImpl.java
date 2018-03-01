@@ -33,7 +33,7 @@ public class VehiclesGatewayImpl implements VehiclesGateway {
   @NonNull
   @Override
   public Single<List<Vehicle>> getExecutorVehicles() {
-    return api.getCars()
+    return api.getOptionsForOnline()
         .subscribeOn(Schedulers.io())
         .observeOn(Schedulers.single())
         .map(this::map)

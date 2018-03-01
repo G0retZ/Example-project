@@ -10,11 +10,11 @@ import org.junit.Test;
 
 public class ApiOptionItemTest {
 
-  private ApiVehicleOptionItem vehicleOptionItem;
+  private ApiOptionItem vehicleOptionItem;
 
   @Before
   public void setUp() throws Exception {
-    vehicleOptionItem = new ApiVehicleOptionItem(324, "option", true, false, "value", -5, 123);
+    vehicleOptionItem = new ApiOptionItem(324, "option", true, false, "value", -5, 123);
   }
 
   @Test
@@ -32,28 +32,28 @@ public class ApiOptionItemTest {
   @Test
   public void testEquals() throws Exception {
     assertEquals(vehicleOptionItem,
-        new ApiVehicleOptionItem(324, "option", true, false, "value", -5, 123));
+        new ApiOptionItem(324, "option", true, false, "value", -5, 123));
     assertNotEquals(vehicleOptionItem,
-        new ApiVehicleOptionItem(32, "option", true, false, "value", -5, 123));
+        new ApiOptionItem(32, "option", true, false, "value", -5, 123));
     assertNotEquals(vehicleOptionItem,
-        new ApiVehicleOptionItem(324, "options", true, false, "value", -5, 123));
+        new ApiOptionItem(324, "options", true, false, "value", -5, 123));
     assertNotEquals(vehicleOptionItem,
-        new ApiVehicleOptionItem(324, null, true, false, "value", -5, 123));
+        new ApiOptionItem(324, null, true, false, "value", -5, 123));
     assertNotEquals(vehicleOptionItem,
-        new ApiVehicleOptionItem(324, "option", false, false, "value", -5, 123));
+        new ApiOptionItem(324, "option", false, false, "value", -5, 123));
     assertNotEquals(vehicleOptionItem,
-        new ApiVehicleOptionItem(324, "option", true, true, "value", -5, 123));
+        new ApiOptionItem(324, "option", true, true, "value", -5, 123));
     assertNotEquals(vehicleOptionItem,
-        new ApiVehicleOptionItem(324, "option", true, false, "values", -5, 123));
+        new ApiOptionItem(324, "option", true, false, "values", -5, 123));
     assertNotEquals(vehicleOptionItem,
-        new ApiVehicleOptionItem(324, "option", true, false, null, -5, 123));
+        new ApiOptionItem(324, "option", true, false, null, -5, 123));
     assertNotEquals(vehicleOptionItem,
-        new ApiVehicleOptionItem(324, "option", true, false, "value", 0, 123));
+        new ApiOptionItem(324, "option", true, false, "value", 0, 123));
     assertNotEquals(vehicleOptionItem,
-        new ApiVehicleOptionItem(324, "option", true, false, "value", null, 123));
+        new ApiOptionItem(324, "option", true, false, "value", null, 123));
     assertNotEquals(vehicleOptionItem,
-        new ApiVehicleOptionItem(324, "option", true, false, "value", -5, 0));
+        new ApiOptionItem(324, "option", true, false, "value", -5, 0));
     assertNotEquals(vehicleOptionItem,
-        new ApiVehicleOptionItem(324, "option", true, false, "value", -5, null));
+        new ApiOptionItem(324, "option", true, false, "value", -5, null));
   }
 }

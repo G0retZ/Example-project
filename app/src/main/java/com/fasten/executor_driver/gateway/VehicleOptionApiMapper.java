@@ -1,7 +1,7 @@
 package com.fasten.executor_driver.gateway;
 
 import android.support.annotation.NonNull;
-import com.fasten.executor_driver.backend.web.incoming.ApiVehicleOptionItem;
+import com.fasten.executor_driver.backend.web.incoming.ApiOptionItem;
 import com.fasten.executor_driver.entity.Option;
 import com.fasten.executor_driver.entity.OptionNumeric;
 import com.fasten.executor_driver.entity.OptionBoolean;
@@ -10,7 +10,7 @@ import javax.inject.Inject;
 /**
  * Преобразуем опцию ТС из ответа сервера в бизнес объект опции ТС.
  */
-public class VehicleOptionApiMapper implements Mapper<ApiVehicleOptionItem, Option> {
+public class VehicleOptionApiMapper implements Mapper<ApiOptionItem, Option> {
 
   @Inject
   VehicleOptionApiMapper() {
@@ -18,7 +18,7 @@ public class VehicleOptionApiMapper implements Mapper<ApiVehicleOptionItem, Opti
 
   @NonNull
   @Override
-  public Option map(@NonNull ApiVehicleOptionItem from) throws Exception {
+  public Option map(@NonNull ApiOptionItem from) throws Exception {
     if (from.getValue() == null) {
       throw new DataMappingException("Ошибка маппинга: значение опции не должно быть null!");
     }

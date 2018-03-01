@@ -3,7 +3,7 @@ package com.fasten.executor_driver.backend.web;
 import android.support.annotation.NonNull;
 import com.fasten.executor_driver.backend.web.incoming.ApiVehicle;
 import com.fasten.executor_driver.backend.web.outgoing.ApiLogin;
-import com.fasten.executor_driver.backend.web.outgoing.ApiVehicleOptionItem;
+import com.fasten.executor_driver.backend.web.outgoing.ApiOptionItem;
 import io.reactivex.Completable;
 import io.reactivex.Single;
 import java.util.List;
@@ -41,14 +41,14 @@ public interface ApiService {
    *  Запрос ТС текущего исполнителя.
    */
   @GET("api/public/v1/car")
-  Single<List<ApiVehicle>> getCars();
+  Single<List<ApiVehicle>> getOptionsForOnline();
 
   /*
    *  Запрос занятия выборанной ТС с перечисленными опциями.
    */
   @PUT("api/public/v1/car/{carId}/vehicleOptionItem")
-  Completable selectCarWithOptions(
+  Completable occupyCarWithOptions(
       @Path("carId") long carId,
-      @NonNull @Body List<ApiVehicleOptionItem> vehicleOptionItems
+      @NonNull @Body List<ApiOptionItem> vehicleOptionItems
   );
 }

@@ -2,8 +2,8 @@ package com.fasten.executor_driver.di;
 
 import android.support.annotation.NonNull;
 import com.fasten.executor_driver.backend.web.TokenKeeper;
+import com.fasten.executor_driver.backend.web.incoming.ApiOptionItem;
 import com.fasten.executor_driver.backend.web.incoming.ApiVehicle;
-import com.fasten.executor_driver.backend.web.incoming.ApiVehicleOptionItem;
 import com.fasten.executor_driver.entity.Vehicle;
 import com.fasten.executor_driver.entity.Option;
 import com.fasten.executor_driver.gateway.ErrorMapper;
@@ -64,7 +64,7 @@ class GatewayModule {
 
   @Provides
   @Named("vehicleOptionMapper")
-  Mapper<ApiVehicleOptionItem, Option> provideVehicleOptionApiMapper(
+  Mapper<ApiOptionItem, Option> provideVehicleOptionApiMapper(
       VehicleOptionApiMapper vehicleOptionApiMapper) {
     return vehicleOptionApiMapper;
   }

@@ -51,7 +51,7 @@ public class VehiclesGatewayTest {
     RxJavaPlugins.setIoSchedulerHandler(scheduler -> Schedulers.trampoline());
     RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
     vehiclesGateway = new VehiclesGatewayImpl(api, vehicleMapper, errorMapper);
-    when(api.getCars()).thenReturn(Single.never());
+    when(api.getOptionsForOnline()).thenReturn(Single.never());
     when(vehicleMapper.map(any(ApiVehicle.class))).thenReturn(
         new Vehicle(1, "m", "m", "c", "l", false)
     );
@@ -70,7 +70,7 @@ public class VehiclesGatewayTest {
     vehiclesGateway.getExecutorVehicles();
 
     // Результат:
-    verify(api, only()).getCars();
+    verify(api, only()).getOptionsForOnline();
   }
 
   /* Проверяем работу с преобразователем данных */
@@ -83,7 +83,7 @@ public class VehiclesGatewayTest {
   @Test
   public void askVehicleMapperForMapping() throws Exception {
     // Дано:
-    when(api.getCars()).thenReturn(Single.just(Arrays.asList(
+    when(api.getOptionsForOnline()).thenReturn(Single.just(Arrays.asList(
         new ApiVehicle(),
         new ApiVehicle(),
         new ApiVehicle()
@@ -106,7 +106,7 @@ public class VehiclesGatewayTest {
   public void askVehicleMapperForFirstMappingOnly() throws Exception {
     // Дано:
     when(vehicleMapper.map(any(ApiVehicle.class))).thenThrow(new DataMappingException());
-    when(api.getCars()).thenReturn(Single.just(Arrays.asList(
+    when(api.getOptionsForOnline()).thenReturn(Single.just(Arrays.asList(
         new ApiVehicle(),
         new ApiVehicle(),
         new ApiVehicle()
@@ -129,7 +129,7 @@ public class VehiclesGatewayTest {
   @Test
   public void askErrorMapperForMapping() throws Exception {
     // Дано:
-    when(api.getCars()).thenReturn(Single.error(new NoNetworkException()));
+    when(api.getOptionsForOnline()).thenReturn(Single.error(new NoNetworkException()));
 
     // Действие:
     vehiclesGateway.getExecutorVehicles().test();
@@ -151,7 +151,7 @@ public class VehiclesGatewayTest {
   @Test
   public void answerNoNetworkError() throws Exception {
     // Дано:
-    when(api.getCars()).thenReturn(Single.error(new NoNetworkException()));
+    when(api.getOptionsForOnline()).thenReturn(Single.error(new NoNetworkException()));
     when(errorMapper.map(any())).thenReturn(new NoNetworkException());
 
     // Действие и Результат:
@@ -166,7 +166,7 @@ public class VehiclesGatewayTest {
   @Test
   public void answerIllegalArgumentError() throws Exception {
     // Дано:
-    when(api.getCars()).thenReturn(Single.error(new NoNetworkException()));
+    when(api.getOptionsForOnline()).thenReturn(Single.error(new NoNetworkException()));
     when(errorMapper.map(any())).thenReturn(new IllegalArgumentException());
 
     // Действие и Результат:
@@ -183,7 +183,7 @@ public class VehiclesGatewayTest {
     // Дано:
     when(vehicleMapper.map(any(ApiVehicle.class))).thenThrow(new DataMappingException());
     when(errorMapper.map(any())).thenReturn(new DataMappingException());
-    when(api.getCars()).thenReturn(Single.just(Arrays.asList(
+    when(api.getOptionsForOnline()).thenReturn(Single.just(Arrays.asList(
         new ApiVehicle(),
         new ApiVehicle(),
         new ApiVehicle()
@@ -205,7 +205,7 @@ public class VehiclesGatewayTest {
   @Test
   public void answerWithHeatMapData() throws Exception {
     // Дано:
-    when(api.getCars()).thenReturn(Single.just(Arrays.asList(
+    when(api.getOptionsForOnline()).thenReturn(Single.just(Arrays.asList(
         new ApiVehicle(),
         new ApiVehicle(),
         new ApiVehicle()

@@ -6,8 +6,8 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
+import com.fasten.executor_driver.backend.web.incoming.ApiOptionItem;
 import com.fasten.executor_driver.backend.web.incoming.ApiVehicle;
-import com.fasten.executor_driver.backend.web.incoming.ApiVehicleOptionItem;
 import com.fasten.executor_driver.entity.OptionBoolean;
 import com.fasten.executor_driver.entity.Vehicle;
 import com.fasten.executor_driver.entity.Option;
@@ -25,11 +25,11 @@ public class VehicleApiMapperTest {
   private Mapper<ApiVehicle, Vehicle> mapper;
 
   @Mock
-  private Mapper<ApiVehicleOptionItem, Option> vehicleOptionMapper;
+  private Mapper<ApiOptionItem, Option> vehicleOptionMapper;
 
   @Before
   public void setUp() throws Exception {
-    when(vehicleOptionMapper.map(any(ApiVehicleOptionItem.class)))
+    when(vehicleOptionMapper.map(any(ApiOptionItem.class)))
         .thenReturn(new OptionBoolean(0, "n", false, false));
     mapper = new VehicleApiMapper(vehicleOptionMapper);
   }
@@ -50,11 +50,11 @@ public class VehicleApiMapperTest {
         "color",
         false,
         Arrays.asList(
-            new ApiVehicleOptionItem(324, "option0", true, false, "345", -5, 123),
-            new ApiVehicleOptionItem(32, "option1", true, false, "34", null, null),
-            new ApiVehicleOptionItem(31, "option2", true, true, "1", 50, 2100),
-            new ApiVehicleOptionItem(523, "option3", false, true, "false", null, null),
-            new ApiVehicleOptionItem(42, "option4", false, false, "true", null, null)
+            new ApiOptionItem(324, "option0", true, false, "345", -5, 123),
+            new ApiOptionItem(32, "option1", true, false, "34", null, null),
+            new ApiOptionItem(31, "option2", true, true, "1", 50, 2100),
+            new ApiOptionItem(523, "option3", false, true, "false", null, null),
+            new ApiOptionItem(42, "option4", false, false, "true", null, null)
         )
     );
 

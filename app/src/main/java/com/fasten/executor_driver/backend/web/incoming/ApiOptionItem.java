@@ -6,7 +6,7 @@ import com.google.gson.annotations.SerializedName;
 /**
  * ответ от API содержащий данные о параметре ТС.
  */
-public class ApiVehicleOptionItem {
+public class ApiOptionItem {
 
   @SerializedName("id")
   private long id;
@@ -31,10 +31,10 @@ public class ApiVehicleOptionItem {
    * Конструктор без параметров желателен для безопасной работы Gson.
    */
   @SuppressWarnings({"unused", "SpellCheckingInspection"})
-  public ApiVehicleOptionItem() {
+  public ApiOptionItem() {
   }
 
-  public ApiVehicleOptionItem(long id, @Nullable String name, boolean numeric, boolean dynamic,
+  public ApiOptionItem(long id, @Nullable String name, boolean numeric, boolean dynamic,
       @Nullable String value, @Nullable Integer minValue, @Nullable Integer maxValue) {
     this.id = id;
     this.name = name;
@@ -79,7 +79,7 @@ public class ApiVehicleOptionItem {
 
   @Override
   public String toString() {
-    return "ApiVehicleOptionItem{" +
+    return "ApiOptionItem{" +
         "id=" + id +
         ", name='" + name + '\'' +
         ", numeric=" + numeric +
@@ -100,7 +100,7 @@ public class ApiVehicleOptionItem {
       return false;
     }
 
-    ApiVehicleOptionItem that = (ApiVehicleOptionItem) o;
+    ApiOptionItem that = (ApiOptionItem) o;
 
     if (id != that.id) {
       return false;

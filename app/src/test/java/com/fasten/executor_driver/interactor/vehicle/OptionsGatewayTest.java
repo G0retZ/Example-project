@@ -8,7 +8,7 @@ import static org.mockito.Mockito.when;
 
 import com.fasten.executor_driver.backend.web.ApiService;
 import com.fasten.executor_driver.backend.web.NoNetworkException;
-import com.fasten.executor_driver.backend.web.outgoing.ApiVehicleOptionItem;
+import com.fasten.executor_driver.backend.web.outgoing.ApiOptionItem;
 import com.fasten.executor_driver.entity.OptionBoolean;
 import com.fasten.executor_driver.entity.OptionNumeric;
 import com.fasten.executor_driver.entity.Vehicle;
@@ -36,7 +36,7 @@ public class OptionsGatewayTest {
     RxJavaPlugins.setIoSchedulerHandler(scheduler -> Schedulers.trampoline());
     RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
     vehicleOptionsGateway = new VehicleOptionsGatewayImpl(api);
-    when(api.selectCarWithOptions(anyLong(), anyList())).thenReturn(Completable.never());
+    when(api.occupyCarWithOptions(anyLong(), anyList())).thenReturn(Completable.never());
   }
 
   /* Проверяем работу с АПИ */
@@ -61,11 +61,11 @@ public class OptionsGatewayTest {
     vehicleOptionsGateway.sendVehicleOptions(vehicle);
 
     // Результат:
-    verify(api, only()).selectCarWithOptions(11, Arrays.asList(
-        new ApiVehicleOptionItem(0, "10"),
-        new ApiVehicleOptionItem(1, "-5"),
-        new ApiVehicleOptionItem(2, "false"),
-        new ApiVehicleOptionItem(3, "true")
+    verify(api, only()).occupyCarWithOptions(11, Arrays.asList(
+        new ApiOptionItem(0, "10"),
+        new ApiOptionItem(1, "-5"),
+        new ApiOptionItem(2, "false"),
+        new ApiOptionItem(3, "true")
     ));
   }
 
@@ -88,7 +88,7 @@ public class OptionsGatewayTest {
         new OptionBoolean(2, "name2", true, false),
         new OptionBoolean(3, "name3", true, true)
     );
-    when(api.selectCarWithOptions(anyLong(), anyList()))
+    when(api.occupyCarWithOptions(anyLong(), anyList()))
         .thenReturn(Completable.error(NoNetworkException::new));
 
     // Действие и Результат:
@@ -110,7 +110,7 @@ public class OptionsGatewayTest {
         new OptionBoolean(2, "name2", true, false),
         new OptionBoolean(3, "name3", true, true)
     );
-    when(api.selectCarWithOptions(anyLong(), anyList())).thenReturn(Completable.complete());
+    when(api.occupyCarWithOptions(anyLong(), anyList())).thenReturn(Completable.complete());
 
     // Действие и Результат:
     vehicleOptionsGateway.sendVehicleOptions(vehicle).test().assertComplete();

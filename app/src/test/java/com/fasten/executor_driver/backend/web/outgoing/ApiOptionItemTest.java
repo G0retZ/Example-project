@@ -8,23 +8,23 @@ import org.junit.Test;
 
 public class ApiOptionItemTest {
 
-  private ApiVehicleOptionItem apiVehicleOptionItem;
+  private ApiOptionItem apiOptionItem;
 
   @Before
   public void setUp() throws Exception {
-    apiVehicleOptionItem = new ApiVehicleOptionItem(29, "value");
+    apiOptionItem = new ApiOptionItem(29, "value");
   }
 
   @Test
   public void testConstructor() throws Exception {
-    assertEquals(apiVehicleOptionItem.getId(), 29);
-    assertEquals(apiVehicleOptionItem.getValue(), "value");
+    assertEquals(apiOptionItem.getId(), 29);
+    assertEquals(apiOptionItem.getValue(), "value");
   }
 
   @Test
   public void testEquals() throws Exception {
-    assertEquals(apiVehicleOptionItem, new ApiVehicleOptionItem(29, "value"));
-    assertNotEquals(apiVehicleOptionItem, new ApiVehicleOptionItem(18, "value"));
-    assertNotEquals(apiVehicleOptionItem, new ApiVehicleOptionItem(29, "val"));
+    assertEquals(apiOptionItem, new ApiOptionItem(29, "value"));
+    assertNotEquals(apiOptionItem, new ApiOptionItem(18, "value"));
+    assertNotEquals(apiOptionItem, new ApiOptionItem(29, "val"));
   }
 }
