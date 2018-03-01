@@ -15,6 +15,7 @@ final class VehicleOptionsViewStateInitial implements ViewState<VehicleOptionsVi
     stateActions.showVehicleOptionsList(true);
     stateActions.showVehicleOptionsPending(false);
     stateActions.showVehicleOptionsListErrorMessage(false);
-    stateActions.setVehicleOptionsListItems(new ArrayList<>());
+    stateActions
+        .setVehicleOptionsListItems(new OptionsListItems(new ArrayList<>(), new ArrayList<>()));
   }
 }

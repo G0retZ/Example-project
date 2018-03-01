@@ -10,7 +10,7 @@ import com.fasten.executor_driver.entity.OptionNumeric;
 /**
  * Модель для отображения опции ТС в списке опций ТС исполнителя. Тестируемое форматирование.
  */
-public class VehicleOptionsListItem<V> {
+public class OptionsListItem<V> {
 
   @LayoutRes
   private static final int TYPE_SWITCH = R.layout.fragment_vehicle_options_list_item_boolean;
@@ -20,7 +20,7 @@ public class VehicleOptionsListItem<V> {
   @NonNull
   private Option<V> option;
 
-  VehicleOptionsListItem(@NonNull Option<V> option) {
+  OptionsListItem(@NonNull Option<V> option) {
     this.option = option;
   }
 
@@ -54,6 +54,10 @@ public class VehicleOptionsListItem<V> {
     return option.getValue();
   }
 
+  public <VA extends V> void setValue(@NonNull VA value) {
+    option = option.setValue(value);
+  }
+
   @NonNull
   public V getMinValue() {
     return option.getMinValue();
@@ -62,10 +66,6 @@ public class VehicleOptionsListItem<V> {
   @NonNull
   public V getMaxValue() {
     return option.getMaxValue();
-  }
-
-  public <VA extends V> void setValue(@NonNull VA value) {
-    option = option.setValue(value);
   }
 
   @Override
@@ -84,7 +84,7 @@ public class VehicleOptionsListItem<V> {
       return false;
     }
 
-    VehicleOptionsListItem that = (VehicleOptionsListItem) o;
+    OptionsListItem that = (OptionsListItem) o;
 
     return option.equals(that.option);
   }

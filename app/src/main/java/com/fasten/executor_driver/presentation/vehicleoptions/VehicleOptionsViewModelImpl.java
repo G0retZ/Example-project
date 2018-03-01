@@ -12,6 +12,7 @@ import com.fasten.executor_driver.entity.OptionNumeric;
 import com.fasten.executor_driver.interactor.vehicle.VehicleOptionsUseCase;
 import com.fasten.executor_driver.presentation.SingleLiveEvent;
 import com.fasten.executor_driver.presentation.ViewState;
+import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
@@ -55,33 +56,46 @@ public class VehicleOptionsViewModelImpl extends ViewModel implements VehicleOpt
   }
 
   @Override
-  public void setVehicleOptions(List<VehicleOptionsListItem<?>> index) {
-    ArrayList<Option> options = new ArrayList<>();
-    for (VehicleOptionsListItem vehicleOptionsListItem : index) {
-      options.add(vehicleOptionsListItem.getOption());
+  public void setVehicleAndDriverOptions(OptionsListItems optionsListItems) {
+    ArrayList<Option> vehicleOptions = new ArrayList<>();
+    for (OptionsListItem optionsListItem : optionsListItems.getVehicleOptions()) {
+      vehicleOptions.add(optionsListItem.getOption());
     }
-    occupyVehicle(options);
+    ArrayList<Option> driverOptions = new ArrayList<>();
+    for (OptionsListItem optionsListItem : optionsListItems.getDriverOptions()) {
+      driverOptions.add(optionsListItem.getOption());
+    }
+    occupyVehicle(vehicleOptions, driverOptions);
   }
 
   private void loadOptions() {
     if (optionsDisposable != null && !optionsDisposable.isDisposed()) {
       return;
     }
-    optionsDisposable = vehicleOptionsUseCase.getVehicleOptions()
-        .subscribeOn(Schedulers.single())
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribe(
-            list -> viewStateLiveData.postValue(new VehicleOptionsViewStateReady(map(list))),
-            Throwable::printStackTrace
-        );
+    optionsDisposable = Observable.combineLatest(
+        vehicleOptionsUseCase.getVehicleOptions()
+            .subscribeOn(Schedulers.single())
+            .observeOn(AndroidSchedulers.mainThread())
+            .map(this::map),
+        vehicleOptionsUseCase.getDriverOptions()
+            .subscribeOn(Schedulers.single())
+            .observeOn(AndroidSchedulers.mainThread())
+            .map(this::map),
+        OptionsListItems::new
+    ).subscribe(
+        items -> viewStateLiveData.postValue(new VehicleOptionsViewStateReady(items)),
+        Throwable::printStackTrace
+    );
+
   }
 
-  private void occupyVehicle(List<Option> options) {
+  private void occupyVehicle(List<Option> vehicleOptions, List<Option> driverOptions) {
     if (occupyDisposable != null && !occupyDisposable.isDisposed()) {
       return;
     }
     viewStateLiveData.postValue(new VehicleOptionsViewStatePending());
-    occupyDisposable = vehicleOptionsUseCase.setSelectedVehicleOptions(options, new ArrayList<>())
+    occupyDisposable = vehicleOptionsUseCase
+        .setSelectedVehicleAndOptions(vehicleOptions, driverOptions)
         .subscribeOn(Schedulers.single())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(
@@ -91,18 +105,18 @@ public class VehicleOptionsViewModelImpl extends ViewModel implements VehicleOpt
         );
   }
 
-  private List<VehicleOptionsListItem<?>> map(List<Option> options) {
-    ArrayList<VehicleOptionsListItem<?>> vehicleOptionsListItems = new ArrayList<>();
+  private List<OptionsListItem<?>> map(List<Option> options) {
+    ArrayList<OptionsListItem<?>> optionsListItems = new ArrayList<>();
     for (Option option : options) {
       if (option instanceof OptionBoolean) {
-        vehicleOptionsListItems
-            .add(new VehicleOptionsListItem<>((OptionBoolean) option));
+        optionsListItems
+            .add(new OptionsListItem<>((OptionBoolean) option));
       } else if (option instanceof OptionNumeric) {
-        vehicleOptionsListItems
-            .add(new VehicleOptionsListItem<>((OptionNumeric) option));
+        optionsListItems
+            .add(new OptionsListItem<>((OptionNumeric) option));
       }
     }
-    return vehicleOptionsListItems;
+    return optionsListItems;
   }
 
   @Override

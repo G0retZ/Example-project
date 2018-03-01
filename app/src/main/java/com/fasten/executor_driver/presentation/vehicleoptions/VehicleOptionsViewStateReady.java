@@ -2,7 +2,6 @@ package com.fasten.executor_driver.presentation.vehicleoptions;
 
 import android.support.annotation.NonNull;
 import com.fasten.executor_driver.presentation.ViewState;
-import java.util.List;
 
 /**
  * Состояние гоновности списка опций ТС.
@@ -10,10 +9,10 @@ import java.util.List;
 final class VehicleOptionsViewStateReady implements ViewState<VehicleOptionsViewActions> {
 
   @NonNull
-  private final List<VehicleOptionsListItem<?>> chooseVehicleListItems;
+  private final OptionsListItems optionsListItems;
 
-  VehicleOptionsViewStateReady(@NonNull List<VehicleOptionsListItem<?>> chooseVehicleListItems) {
-    this.chooseVehicleListItems = chooseVehicleListItems;
+  VehicleOptionsViewStateReady(@NonNull OptionsListItems optionsListItems) {
+    this.optionsListItems = optionsListItems;
   }
 
   @Override
@@ -22,13 +21,13 @@ final class VehicleOptionsViewStateReady implements ViewState<VehicleOptionsView
     stateActions.showVehicleOptionsList(true);
     stateActions.showVehicleOptionsPending(false);
     stateActions.showVehicleOptionsListErrorMessage(false);
-    stateActions.setVehicleOptionsListItems(chooseVehicleListItems);
+    stateActions.setVehicleOptionsListItems(optionsListItems);
   }
 
   @Override
   public String toString() {
     return "VehicleOptionsViewStateInitial{" +
-        "chooseVehicleListItems=" + chooseVehicleListItems +
+        "optionsListItems=" + optionsListItems +
         '}';
   }
 
@@ -43,11 +42,11 @@ final class VehicleOptionsViewStateReady implements ViewState<VehicleOptionsView
 
     VehicleOptionsViewStateReady that = (VehicleOptionsViewStateReady) o;
 
-    return chooseVehicleListItems.equals(that.chooseVehicleListItems);
+    return optionsListItems.equals(that.optionsListItems);
   }
 
   @Override
   public int hashCode() {
-    return chooseVehicleListItems.hashCode();
+    return optionsListItems.hashCode();
   }
 }

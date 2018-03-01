@@ -1,7 +1,6 @@
 package com.fasten.executor_driver.presentation.vehicleoptions;
 
 import com.fasten.executor_driver.presentation.ViewModel;
-import java.util.List;
 
 /**
  * ViewModel окна настройки опций ТС исполнителя.
@@ -9,9 +8,9 @@ import java.util.List;
 public interface VehicleOptionsViewModel extends ViewModel<VehicleOptionsViewActions> {
 
   /**
-   * Передает список настроенных исполнителем опций ТС для занятия ТС.
+   * Передает список настроенных исполнителем опций ТС и исполнителя для занятия ТС.
    *
-   * @param index - позиция ТС в списке
+   * @param optionsListItems - позиция ТС в списке
    */
-  void setVehicleOptions(List<VehicleOptionsListItem<?>> index);
+  void setVehicleAndDriverOptions(OptionsListItems optionsListItems);
 }

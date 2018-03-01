@@ -185,7 +185,7 @@ public class VehicleOptionsUseCaseTest {
   @Test
   public void doNotTouchGateway() throws Exception {
     // Действие:
-    vehicleOptionsUseCase.setSelectedVehicleOptions(
+    vehicleOptionsUseCase.setSelectedVehicleAndOptions(
         new ArrayList<>(Arrays.asList(
             new OptionNumeric(1, "name1", "desc1", true, -5, -18, 0),
             new OptionBoolean(2, "name2", "desc2", true, false)
@@ -215,7 +215,7 @@ public class VehicleOptionsUseCaseTest {
 
     // Действие:
     vehicleOptionsUseCase.getVehicleOptions().test();
-    vehicleOptionsUseCase.setSelectedVehicleOptions(
+    vehicleOptionsUseCase.setSelectedVehicleAndOptions(
         new ArrayList<>(Arrays.asList(
             new OptionNumeric(0, "name0", "desc0", true, 40, 0, 120),
             new OptionNumeric(1, "name1", "desc1", true, -50, 20, 30),
@@ -243,7 +243,7 @@ public class VehicleOptionsUseCaseTest {
   @Test
   public void answerDataMappingError() throws Exception {
     // Действие и Результат:
-    vehicleOptionsUseCase.setSelectedVehicleOptions(
+    vehicleOptionsUseCase.setSelectedVehicleAndOptions(
         new ArrayList<>(Arrays.asList(
             new OptionNumeric(1, "name1", "desc1", true, -5, -18, 0),
             new OptionBoolean(2, "name2", "desc2", true, false)
@@ -274,7 +274,7 @@ public class VehicleOptionsUseCaseTest {
     vehicleOptionsUseCase.getVehicleOptions().test();
 
     // Результат:
-    vehicleOptionsUseCase.setSelectedVehicleOptions(
+    vehicleOptionsUseCase.setSelectedVehicleAndOptions(
         new ArrayList<>(Arrays.asList(
             new OptionNumeric(0, "name0", "desc0", true, 40, 0, 120),
             new OptionNumeric(1, "name1", "desc1", true, -50, 20, 30),
@@ -306,7 +306,7 @@ public class VehicleOptionsUseCaseTest {
     vehicleOptionsUseCase.getVehicleOptions().test();
 
     // Результат:
-    vehicleOptionsUseCase.setSelectedVehicleOptions(
+    vehicleOptionsUseCase.setSelectedVehicleAndOptions(
         new ArrayList<>(Arrays.asList(
             new OptionNumeric(0, "name0", "desc0", true, 40, 0, 120),
             new OptionNumeric(1, "name1", "desc1", true, -50, 20, 30),
@@ -325,7 +325,7 @@ public class VehicleOptionsUseCaseTest {
   @Test
   public void doNotTouchLastUseVehicleDataSharer() throws Exception {
     // Действие:
-    vehicleOptionsUseCase.setSelectedVehicleOptions(
+    vehicleOptionsUseCase.setSelectedVehicleAndOptions(
         new ArrayList<>(Arrays.asList(
             new OptionNumeric(1, "name1", "desc1", true, -5, -18, 0),
             new OptionBoolean(2, "name2", "desc2", true, false)
@@ -342,7 +342,7 @@ public class VehicleOptionsUseCaseTest {
     when(gateway.sendVehicleOptions(any(Vehicle.class), anyList()))
         .thenReturn(Completable.error(NoNetworkException::new));
     vehicleOptionsUseCase.getVehicleOptions().test();
-    vehicleOptionsUseCase.setSelectedVehicleOptions(
+    vehicleOptionsUseCase.setSelectedVehicleAndOptions(
         new ArrayList<>(Arrays.asList(
             new OptionNumeric(0, "name0", "desc0", true, 40, 0, 120),
             new OptionNumeric(1, "name1", "desc1", true, -50, 20, 30),
@@ -375,7 +375,7 @@ public class VehicleOptionsUseCaseTest {
 
     // Действие:
     vehicleOptionsUseCase.getVehicleOptions().test();
-    vehicleOptionsUseCase.setSelectedVehicleOptions(
+    vehicleOptionsUseCase.setSelectedVehicleAndOptions(
         new ArrayList<>(Arrays.asList(
             new OptionNumeric(0, "name0", "desc0", true, 40, 0, 120),
             new OptionNumeric(1, "name1", "desc1", true, -50, 20, 30),

@@ -15,12 +15,11 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import com.fasten.executor_driver.R;
 import com.fasten.executor_driver.di.AppComponent;
-import com.fasten.executor_driver.presentation.vehicleoptions.VehicleOptionsListItem;
+import com.fasten.executor_driver.presentation.vehicleoptions.OptionsListItems;
 import com.fasten.executor_driver.presentation.vehicleoptions.VehicleOptionsViewActions;
 import com.fasten.executor_driver.presentation.vehicleoptions.VehicleOptionsViewModel;
 import com.fasten.executor_driver.presentation.vehicleoptions.VehicleOptionsViewModelImpl;
 import java.util.ArrayList;
-import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -76,7 +75,8 @@ public class VehicleOptionsFragment extends BaseFragment implements VehicleOptio
       }
     });
     readyButton.setOnClickListener(v -> vehicleOptionsViewModel
-        .setVehicleOptions(((VehicleOptionsAdapter) recyclerView.getAdapter()).getList())
+        .setVehicleAndDriverOptions(
+            ((VehicleOptionsAdapter) recyclerView.getAdapter()).getOptionsListItems())
     );
     return view;
   }
@@ -98,8 +98,8 @@ public class VehicleOptionsFragment extends BaseFragment implements VehicleOptio
 
   @Override
   public void setVehicleOptionsListItems(
-      @NonNull List<VehicleOptionsListItem<?>> chooseVehicleListItems) {
-    VehicleOptionsAdapter adapter = new VehicleOptionsAdapter(chooseVehicleListItems);
+      @NonNull OptionsListItems optionsListItems) {
+    VehicleOptionsAdapter adapter = new VehicleOptionsAdapter(optionsListItems);
     recyclerView.setAdapter(adapter);
   }
 

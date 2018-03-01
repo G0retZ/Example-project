@@ -2,7 +2,6 @@ package com.fasten.executor_driver.presentation.vehicleoptions;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
-import java.util.List;
 
 /**
  * Действия для смены состояния вида окна списка опций ТС исполнителя.
@@ -31,11 +30,11 @@ public interface VehicleOptionsViewActions {
   void showVehicleOptionsList(boolean show);
 
   /**
-   * Передать список опций ТС.
+   * Передать список опций ТС и исполнителя.
    *
-   * @param chooseVehicleListItems - список ТС
+   * @param optionsListItems - список опций ТС и исполнителя.
    */
-  void setVehicleOptionsListItems(@NonNull List<VehicleOptionsListItem<?>> chooseVehicleListItems);
+  void setVehicleOptionsListItems(@NonNull OptionsListItems optionsListItems);
 
   /**
    * Показать сообщение об ошибке.
