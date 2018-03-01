@@ -41,4 +41,36 @@ public class OptionsListItems {
     return vehicleOptions.size() + driverOptions.size();
   }
 
+  @Override
+  public String toString() {
+    return "OptionsListItems{" +
+        "vehicleOptions=" + vehicleOptions +
+        ", driverOptions=" + driverOptions +
+        '}';
+  }
+
+  @SuppressWarnings("SimplifiableIfStatement")
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+
+    OptionsListItems that = (OptionsListItems) o;
+
+    if (!vehicleOptions.equals(that.vehicleOptions)) {
+      return false;
+    }
+    return driverOptions.equals(that.driverOptions);
+  }
+
+  @Override
+  public int hashCode() {
+    int result = vehicleOptions.hashCode();
+    result = 31 * result + driverOptions.hashCode();
+    return result;
+  }
 }
