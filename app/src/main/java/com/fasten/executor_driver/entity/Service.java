@@ -13,7 +13,7 @@ public class Service {
   private final long price;
   private final boolean value;
 
-  private Service(long id, @NonNull String name, long price, boolean value) {
+  public Service(long id, @NonNull String name, long price, boolean value) {
     this.id = id;
     this.name = name;
     this.price = price;
@@ -35,16 +35,6 @@ public class Service {
 
   public boolean getValue() {
     return value;
-  }
-
-  /**
-   * Возвращает новый объект с заданным значением.
-   *
-   * @param value значение
-   */
-  @NonNull
-  public Service setValue(boolean value) {
-    return new Service(id, name, price, value);
   }
 
   @Override

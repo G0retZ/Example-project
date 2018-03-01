@@ -17,6 +17,7 @@ import com.fasten.executor_driver.presentation.phone.PhoneViewModel;
 import com.fasten.executor_driver.presentation.phone.PhoneViewModelImpl;
 import com.fasten.executor_driver.presentation.selectedvehicle.SelectedVehicleViewModel;
 import com.fasten.executor_driver.presentation.selectedvehicle.SelectedVehicleViewModelImpl;
+import com.fasten.executor_driver.presentation.services.ServicesOptionsViewModelImpl;
 import com.fasten.executor_driver.presentation.smsbutton.SmsButtonViewModel;
 import com.fasten.executor_driver.presentation.smsbutton.SmsButtonViewModelImpl;
 import com.fasten.executor_driver.presentation.vehicleoptions.VehicleOptionsViewModelImpl;
@@ -65,6 +66,7 @@ class PresentationModule {
   }
 
   @Provides
+  @Named("vehicleOptionsVM")
   OptionsViewModel provideVehicleOptionsViewModel(
       VehicleOptionsViewModelImpl vehicleOptionsViewModel) {
     return vehicleOptionsViewModel;
@@ -74,6 +76,13 @@ class PresentationModule {
   SelectedVehicleViewModel provideSelectedVehicleViewModel(
       SelectedVehicleViewModelImpl selectedVehicleViewModel) {
     return selectedVehicleViewModel;
+  }
+
+  @Provides
+  @Named("servicesVM")
+  OptionsViewModel provideServicesOptionsViewModel(
+      ServicesOptionsViewModelImpl servicesOptionsViewModel) {
+    return servicesOptionsViewModel;
   }
 
   @Provides
@@ -126,7 +135,9 @@ class PresentationModule {
   @Provides
   @Named("vehicleOptions")
   ViewModelProvider.Factory provideVehicleOptionsViewModelFactory(
-      ViewModelFactory<OptionsViewModel> factory) {
+      @Named("vehicleOptionsVM") OptionsViewModel optionsViewModel) {
+    ViewModelFactory<OptionsViewModel> factory = new ViewModelFactory<>();
+    factory.setViewModel(optionsViewModel);
     return factory;
   }
 
@@ -134,6 +145,15 @@ class PresentationModule {
   @Named("selectedVehicle")
   ViewModelProvider.Factory provideSelectedVehicleViewModelFactory(
       ViewModelFactory<SelectedVehicleViewModel> factory) {
+    return factory;
+  }
+
+  @Provides
+  @Named("selectedServices")
+  ViewModelProvider.Factory provideServicesOptionsViewModelFactory(
+      @Named("servicesVM") OptionsViewModel optionsViewModel) {
+    ViewModelFactory<OptionsViewModel> factory = new ViewModelFactory<>();
+    factory.setViewModel(optionsViewModel);
     return factory;
   }
 }
