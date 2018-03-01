@@ -1,4 +1,4 @@
-package com.fasten.executor_driver.presentation.vehicleoptions;
+package com.fasten.executor_driver.presentation.options;
 
 import android.support.annotation.NonNull;
 import java.util.List;
@@ -13,7 +13,7 @@ public class OptionsListItems {
   @NonNull
   private final List<OptionsListItem<?>> driverOptions;
 
-  OptionsListItems(
+  public OptionsListItems(
       @NonNull List<OptionsListItem<?>> vehicleOptions,
       @NonNull List<OptionsListItem<?>> driverOptions) {
     this.vehicleOptions = vehicleOptions;
@@ -21,12 +21,12 @@ public class OptionsListItems {
   }
 
   @NonNull
-  List<OptionsListItem<?>> getVehicleOptions() {
+  public List<OptionsListItem<?>> getVehicleOptions() {
     return vehicleOptions;
   }
 
   @NonNull
-  List<OptionsListItem<?>> getDriverOptions() {
+  public List<OptionsListItem<?>> getDriverOptions() {
     return driverOptions;
   }
 

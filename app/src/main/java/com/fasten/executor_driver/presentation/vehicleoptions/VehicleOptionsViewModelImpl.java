@@ -12,6 +12,14 @@ import com.fasten.executor_driver.entity.OptionNumeric;
 import com.fasten.executor_driver.interactor.vehicle.VehicleOptionsUseCase;
 import com.fasten.executor_driver.presentation.SingleLiveEvent;
 import com.fasten.executor_driver.presentation.ViewState;
+import com.fasten.executor_driver.presentation.options.OptionsListItem;
+import com.fasten.executor_driver.presentation.options.OptionsListItems;
+import com.fasten.executor_driver.presentation.options.OptionsViewActions;
+import com.fasten.executor_driver.presentation.options.OptionsViewModel;
+import com.fasten.executor_driver.presentation.options.OptionsViewStateError;
+import com.fasten.executor_driver.presentation.options.OptionsViewStateInitial;
+import com.fasten.executor_driver.presentation.options.OptionsViewStatePending;
+import com.fasten.executor_driver.presentation.options.OptionsViewStateReady;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
@@ -20,11 +28,11 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
 
-public class VehicleOptionsViewModelImpl extends ViewModel implements VehicleOptionsViewModel {
+public class VehicleOptionsViewModelImpl extends ViewModel implements OptionsViewModel {
 
   private final VehicleOptionsUseCase vehicleOptionsUseCase;
   @NonNull
-  private final MutableLiveData<ViewState<VehicleOptionsViewActions>> viewStateLiveData;
+  private final MutableLiveData<ViewState<OptionsViewActions>> viewStateLiveData;
   @NonNull
   private final SingleLiveEvent<String> navigateLiveData;
   @Nullable
@@ -36,13 +44,13 @@ public class VehicleOptionsViewModelImpl extends ViewModel implements VehicleOpt
   VehicleOptionsViewModelImpl(VehicleOptionsUseCase vehicleOptionsUseCase) {
     this.vehicleOptionsUseCase = vehicleOptionsUseCase;
     viewStateLiveData = new MutableLiveData<>();
-    viewStateLiveData.postValue(new VehicleOptionsViewStateInitial());
+    viewStateLiveData.postValue(new OptionsViewStateInitial());
     navigateLiveData = new SingleLiveEvent<>();
   }
 
   @NonNull
   @Override
-  public LiveData<ViewState<VehicleOptionsViewActions>> getViewStateLiveData() {
+  public LiveData<ViewState<OptionsViewActions>> getViewStateLiveData() {
     if (optionsDisposable == null) {
       loadOptions();
     }
@@ -56,7 +64,7 @@ public class VehicleOptionsViewModelImpl extends ViewModel implements VehicleOpt
   }
 
   @Override
-  public void setVehicleAndDriverOptions(OptionsListItems optionsListItems) {
+  public void setOptions(OptionsListItems optionsListItems) {
     ArrayList<Option> vehicleOptions = new ArrayList<>();
     for (OptionsListItem optionsListItem : optionsListItems.getVehicleOptions()) {
       vehicleOptions.add(optionsListItem.getOption());
@@ -83,7 +91,7 @@ public class VehicleOptionsViewModelImpl extends ViewModel implements VehicleOpt
             .map(this::map),
         OptionsListItems::new
     ).subscribe(
-        items -> viewStateLiveData.postValue(new VehicleOptionsViewStateReady(items)),
+        items -> viewStateLiveData.postValue(new OptionsViewStateReady(items)),
         Throwable::printStackTrace
     );
 
@@ -93,15 +101,15 @@ public class VehicleOptionsViewModelImpl extends ViewModel implements VehicleOpt
     if (occupyDisposable != null && !occupyDisposable.isDisposed()) {
       return;
     }
-    viewStateLiveData.postValue(new VehicleOptionsViewStatePending());
+    viewStateLiveData.postValue(new OptionsViewStatePending());
     occupyDisposable = vehicleOptionsUseCase
         .setSelectedVehicleAndOptions(vehicleOptions, driverOptions)
         .subscribeOn(Schedulers.single())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(
-            () -> navigateLiveData.postValue(VehicleOptionsNavigate.READY_FOR_ORDERS),
+            () -> navigateLiveData.postValue(VehicleOptionsNavigate.SERVICES),
             throwable -> viewStateLiveData
-                .postValue(new VehicleOptionsViewStateError(R.string.no_network_connection))
+                .postValue(new OptionsViewStateError(R.string.no_network_connection))
         );
   }
 

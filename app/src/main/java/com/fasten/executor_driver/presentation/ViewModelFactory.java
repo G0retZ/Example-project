@@ -18,7 +18,7 @@ public class ViewModelFactory<V> implements ViewModelProvider.Factory {
    * Конструктор видимый для Dagger'а
    */
   @Inject
-  ViewModelFactory() {
+  public ViewModelFactory() {
   }
 
   /**
@@ -27,7 +27,7 @@ public class ViewModelFactory<V> implements ViewModelProvider.Factory {
    * @param viewModel класс либо интерфейс, наследник от {@link ViewModel}.
    */
   @Inject
-  void setViewModel(V viewModel) {
+  public void setViewModel(V viewModel) {
     this.viewModel = viewModel;
   }
 

@@ -1,4 +1,4 @@
-package com.fasten.executor_driver.presentation.vehicleoptions;
+package com.fasten.executor_driver.presentation.options;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
@@ -17,16 +17,16 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
-public class VehicleOptionsViewStateReadyTest {
+public class OptionsViewStateReadyTest {
 
-  private VehicleOptionsViewStateReady viewState;
+  private OptionsViewStateReady viewState;
 
   @Mock
-  private VehicleOptionsViewActions codeViewActions;
+  private OptionsViewActions codeViewActions;
 
   @Before
   public void setUp() throws Exception {
-    viewState = new VehicleOptionsViewStateReady(new OptionsListItems(Arrays.asList(
+    viewState = new OptionsViewStateReady(new OptionsListItems(Arrays.asList(
         new OptionsListItem<>(
             new OptionBoolean(1, "name", "description", true, false)
         ),
@@ -73,7 +73,7 @@ public class VehicleOptionsViewStateReadyTest {
 
   @Test
   public void testEquals() throws Exception {
-    assertEquals(viewState, new VehicleOptionsViewStateReady(new OptionsListItems(Arrays.asList(
+    assertEquals(viewState, new OptionsViewStateReady(new OptionsListItems(Arrays.asList(
         new OptionsListItem<>(
             new OptionBoolean(1, "name", "description", true, false)
         ),
@@ -88,7 +88,7 @@ public class VehicleOptionsViewStateReadyTest {
             new OptionNumeric(4, "nam", "description", false, 1, -1, 2)
         )
     ))));
-    assertNotEquals(viewState, new VehicleOptionsViewStateReady(new OptionsListItems(
+    assertNotEquals(viewState, new OptionsViewStateReady(new OptionsListItems(
         Collections.singletonList(
             new OptionsListItem<>(
                 new OptionBoolean(2, "emacs", "description", true, true)
@@ -101,7 +101,7 @@ public class VehicleOptionsViewStateReadyTest {
             new OptionNumeric(4, "nam", "description", false, 1, -1, 2)
         )
     ))));
-    assertNotEquals(viewState, new VehicleOptionsViewStateReady(new OptionsListItems(Arrays.asList(
+    assertNotEquals(viewState, new OptionsViewStateReady(new OptionsListItems(Arrays.asList(
         new OptionsListItem<>(
             new OptionBoolean(1, "name", "description", true, false)
         ),
@@ -116,9 +116,9 @@ public class VehicleOptionsViewStateReadyTest {
             new OptionNumeric(4, "humus", "description", false, 1, -1, 2)
         )
     ))));
-    assertNotEquals(viewState, new VehicleOptionsViewStateReady(
+    assertNotEquals(viewState, new OptionsViewStateReady(
         new OptionsListItems(new ArrayList<>(), new ArrayList<>())));
-    assertNotEquals(viewState, new VehicleOptionsViewStateReady(new OptionsListItems(
+    assertNotEquals(viewState, new OptionsViewStateReady(new OptionsListItems(
         new ArrayList<>(), Arrays.asList(
         new OptionsListItem<>(
             new OptionNumeric(3, "names", "description", true, 5, 0, 10)
@@ -127,7 +127,7 @@ public class VehicleOptionsViewStateReadyTest {
             new OptionNumeric(4, "nam", "description", false, 1, -1, 2)
         )
     ))));
-    assertNotEquals(viewState, new VehicleOptionsViewStateReady(new OptionsListItems(
+    assertNotEquals(viewState, new OptionsViewStateReady(new OptionsListItems(
         Arrays.asList(
             new OptionsListItem<>(
                 new OptionBoolean(1, "name", "description", true, false)

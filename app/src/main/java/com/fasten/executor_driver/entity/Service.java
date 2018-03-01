@@ -5,7 +5,6 @@ import android.support.annotation.NonNull;
 /**
  * Неизменная бизнес сущность услуги. Содержит в себе ID, имя, цену и значение.
  */
-@SuppressWarnings("unused")
 public class Service {
 
   private final long id;
@@ -14,7 +13,7 @@ public class Service {
   private final long price;
   private final boolean value;
 
-  private Service(long id, @NonNull String name, long price, boolean value) {
+  public Service(long id, @NonNull String name, long price, boolean value) {
     this.id = id;
     this.name = name;
     this.price = price;
@@ -34,18 +33,8 @@ public class Service {
     return price;
   }
 
-  public boolean isValue() {
+  public boolean getValue() {
     return value;
-  }
-
-  /**
-   * Возвращает новый объект с заданным значением.
-   *
-   * @param value значение
-   */
-  @NonNull
-  public Service setValue(boolean value) {
-    return new Service(id, name, price, value);
   }
 
   @Override
