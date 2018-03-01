@@ -5,7 +5,7 @@ import com.fasten.executor_driver.backend.web.TokenKeeper;
 import com.fasten.executor_driver.backend.web.incoming.ApiVehicle;
 import com.fasten.executor_driver.backend.web.incoming.ApiVehicleOptionItem;
 import com.fasten.executor_driver.entity.Vehicle;
-import com.fasten.executor_driver.entity.VehicleOption;
+import com.fasten.executor_driver.entity.Option;
 import com.fasten.executor_driver.gateway.ErrorMapper;
 import com.fasten.executor_driver.gateway.HeatMapGatewayImpl;
 import com.fasten.executor_driver.gateway.Mapper;
@@ -64,7 +64,7 @@ class GatewayModule {
 
   @Provides
   @Named("vehicleOptionMapper")
-  Mapper<ApiVehicleOptionItem, VehicleOption> provideVehicleOptionApiMapper(
+  Mapper<ApiVehicleOptionItem, Option> provideVehicleOptionApiMapper(
       VehicleOptionApiMapper vehicleOptionApiMapper) {
     return vehicleOptionApiMapper;
   }

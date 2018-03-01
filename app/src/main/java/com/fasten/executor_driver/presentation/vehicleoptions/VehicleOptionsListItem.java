@@ -3,9 +3,9 @@ package com.fasten.executor_driver.presentation.vehicleoptions;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import com.fasten.executor_driver.R;
-import com.fasten.executor_driver.entity.VehicleOption;
-import com.fasten.executor_driver.entity.VehicleOptionBoolean;
-import com.fasten.executor_driver.entity.VehicleOptionNumeric;
+import com.fasten.executor_driver.entity.Option;
+import com.fasten.executor_driver.entity.OptionBoolean;
+import com.fasten.executor_driver.entity.OptionNumeric;
 
 /**
  * Модель для отображения опции ТС в списке опций ТС исполнителя. Тестируемое форматирование.
@@ -18,27 +18,27 @@ public class VehicleOptionsListItem<V> {
   private static final int TYPE_SLIDER = R.layout.fragment_vehicle_options_list_item_numeric;
 
   @NonNull
-  private VehicleOption<V> vehicleOption;
+  private Option<V> option;
 
-  VehicleOptionsListItem(@NonNull VehicleOption<V> vehicleOption) {
-    this.vehicleOption = vehicleOption;
+  VehicleOptionsListItem(@NonNull Option<V> option) {
+    this.option = option;
   }
 
   @NonNull
-  VehicleOption<V> getVehicleOption() {
-    return vehicleOption;
+  Option<V> getOption() {
+    return option;
   }
 
   @NonNull
   public String getName() {
-    return vehicleOption.getName();
+    return option.getName();
   }
 
   @LayoutRes
   public int getLayoutType() {
-    if (vehicleOption instanceof VehicleOptionNumeric) {
+    if (option instanceof OptionNumeric) {
       return TYPE_SLIDER;
-    } else if (vehicleOption instanceof VehicleOptionBoolean) {
+    } else if (option instanceof OptionBoolean) {
       return TYPE_SWITCH;
     }
     return TYPE_SWITCH;
@@ -46,27 +46,27 @@ public class VehicleOptionsListItem<V> {
 
   @NonNull
   public V getValue() {
-    return vehicleOption.getValue();
+    return option.getValue();
   }
 
   @NonNull
   public V getMinValue() {
-    return vehicleOption.getMinValue();
+    return option.getMinValue();
   }
 
   @NonNull
   public V getMaxValue() {
-    return vehicleOption.getMaxValue();
+    return option.getMaxValue();
   }
 
   public <VA extends V> void setValue(@NonNull VA value) {
-    vehicleOption = vehicleOption.setValue(value);
+    option = option.setValue(value);
   }
 
   @Override
   public String toString() {
     return "ChooseVehicleListItem{" +
-        "vehicleOption=" + vehicleOption +
+        "option=" + option +
         '}';
   }
 
@@ -81,11 +81,11 @@ public class VehicleOptionsListItem<V> {
 
     VehicleOptionsListItem that = (VehicleOptionsListItem) o;
 
-    return vehicleOption.equals(that.vehicleOption);
+    return option.equals(that.option);
   }
 
   @Override
   public int hashCode() {
-    return vehicleOption.hashCode();
+    return option.hashCode();
   }
 }

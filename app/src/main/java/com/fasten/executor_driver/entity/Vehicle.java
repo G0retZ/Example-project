@@ -23,7 +23,7 @@ public class Vehicle {
   private final String licensePlate;
   private final boolean busy;
   @NonNull
-  private final List<VehicleOption> vehicleOptions = new ArrayList<>();
+  private final List<Option> options = new ArrayList<>();
 
   public Vehicle(long id, @NonNull String manufacturer, @NonNull String model,
       @NonNull String color, @NonNull String licensePlate, boolean busy) {
@@ -74,17 +74,17 @@ public class Vehicle {
   }
 
   @NonNull
-  public List<VehicleOption> getVehicleOptions() {
-    return vehicleOptions;
+  public List<Option> getOptions() {
+    return options;
   }
 
-  public void setVehicleOptions(@NonNull VehicleOption... vehicleOptions) {
-    this.vehicleOptions.clear();
-    addVehicleOptions(vehicleOptions);
+  public void setOptions(@NonNull Option... options) {
+    this.options.clear();
+    addVehicleOptions(options);
   }
 
-  public void addVehicleOptions(@NonNull VehicleOption... vehicleOptions) {
-    this.vehicleOptions.addAll(Arrays.asList(vehicleOptions));
+  public void addVehicleOptions(@NonNull Option... options) {
+    this.options.addAll(Arrays.asList(options));
   }
 
   @Override
@@ -96,7 +96,7 @@ public class Vehicle {
         ", color='" + color + '\'' +
         ", licensePlate='" + licensePlate + '\'' +
         ", busy=" + busy +
-        ", vehicleOptions=" + vehicleOptions +
+        ", options=" + options +
         '}';
   }
 
@@ -130,7 +130,7 @@ public class Vehicle {
     if (!licensePlate.equals(vehicle.licensePlate)) {
       return false;
     }
-    return vehicleOptions.equals(vehicle.vehicleOptions);
+    return options.equals(vehicle.options);
   }
 
   @Override
@@ -141,7 +141,7 @@ public class Vehicle {
     result = 31 * result + color.hashCode();
     result = 31 * result + licensePlate.hashCode();
     result = 31 * result + (busy ? 1 : 0);
-    result = 31 * result + vehicleOptions.hashCode();
+    result = 31 * result + options.hashCode();
     return result;
   }
 }

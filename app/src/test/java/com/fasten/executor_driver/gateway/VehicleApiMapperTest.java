@@ -8,9 +8,9 @@ import static org.mockito.Mockito.when;
 
 import com.fasten.executor_driver.backend.web.incoming.ApiVehicle;
 import com.fasten.executor_driver.backend.web.incoming.ApiVehicleOptionItem;
+import com.fasten.executor_driver.entity.OptionBoolean;
 import com.fasten.executor_driver.entity.Vehicle;
-import com.fasten.executor_driver.entity.VehicleOption;
-import com.fasten.executor_driver.entity.VehicleOptionBoolean;
+import com.fasten.executor_driver.entity.Option;
 import java.util.ArrayList;
 import java.util.Arrays;
 import org.junit.Before;
@@ -25,12 +25,12 @@ public class VehicleApiMapperTest {
   private Mapper<ApiVehicle, Vehicle> mapper;
 
   @Mock
-  private Mapper<ApiVehicleOptionItem, VehicleOption> vehicleOptionMapper;
+  private Mapper<ApiVehicleOptionItem, Option> vehicleOptionMapper;
 
   @Before
   public void setUp() throws Exception {
     when(vehicleOptionMapper.map(any(ApiVehicleOptionItem.class)))
-        .thenReturn(new VehicleOptionBoolean(0, "n", false, false));
+        .thenReturn(new OptionBoolean(0, "n", false, false));
     mapper = new VehicleApiMapper(vehicleOptionMapper);
   }
 
@@ -68,12 +68,12 @@ public class VehicleApiMapperTest {
     assertEquals(vehicle.getLicensePlate(), "plate");
     assertEquals(vehicle.getColor(), "color");
     assertFalse(vehicle.isBusy());
-    assertEquals(vehicle.getVehicleOptions(), Arrays.<VehicleOption>asList(
-        new VehicleOptionBoolean(0, "n", false, false),
-        new VehicleOptionBoolean(0, "n", false, false),
-        new VehicleOptionBoolean(0, "n", false, false),
-        new VehicleOptionBoolean(0, "n", false, false),
-        new VehicleOptionBoolean(0, "n", false, false)
+    assertEquals(vehicle.getOptions(), Arrays.<Option>asList(
+        new OptionBoolean(0, "n", false, false),
+        new OptionBoolean(0, "n", false, false),
+        new OptionBoolean(0, "n", false, false),
+        new OptionBoolean(0, "n", false, false),
+        new OptionBoolean(0, "n", false, false)
     ));
   }
 
@@ -105,7 +105,7 @@ public class VehicleApiMapperTest {
     assertEquals(vehicle.getLicensePlate(), "plate");
     assertEquals(vehicle.getColor(), "color");
     assertTrue(vehicle.isBusy());
-    assertEquals(vehicle.getVehicleOptions(), new ArrayList<>());
+    assertEquals(vehicle.getOptions(), new ArrayList<>());
   }
 
   /**

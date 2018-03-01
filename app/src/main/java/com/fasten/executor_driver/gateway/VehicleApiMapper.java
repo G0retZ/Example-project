@@ -3,8 +3,8 @@ package com.fasten.executor_driver.gateway;
 import android.support.annotation.NonNull;
 import com.fasten.executor_driver.backend.web.incoming.ApiVehicle;
 import com.fasten.executor_driver.backend.web.incoming.ApiVehicleOptionItem;
+import com.fasten.executor_driver.entity.Option;
 import com.fasten.executor_driver.entity.Vehicle;
-import com.fasten.executor_driver.entity.VehicleOption;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -13,11 +13,11 @@ import javax.inject.Named;
  */
 public class VehicleApiMapper implements Mapper<ApiVehicle, Vehicle> {
 
-  private final Mapper<ApiVehicleOptionItem, VehicleOption> vehicleOptionMapper;
+  private final Mapper<ApiVehicleOptionItem, Option> vehicleOptionMapper;
 
   @Inject
   VehicleApiMapper(
-      @Named("vehicleOptionMapper") Mapper<ApiVehicleOptionItem, VehicleOption> vehicleOptionMapper) {
+      @Named("vehicleOptionMapper") Mapper<ApiVehicleOptionItem, Option> vehicleOptionMapper) {
     this.vehicleOptionMapper = vehicleOptionMapper;
   }
 

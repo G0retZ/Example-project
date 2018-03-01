@@ -9,9 +9,9 @@ import static org.mockito.Mockito.when;
 import com.fasten.executor_driver.backend.web.ApiService;
 import com.fasten.executor_driver.backend.web.NoNetworkException;
 import com.fasten.executor_driver.backend.web.outgoing.ApiVehicleOptionItem;
+import com.fasten.executor_driver.entity.OptionBoolean;
+import com.fasten.executor_driver.entity.OptionNumeric;
 import com.fasten.executor_driver.entity.Vehicle;
-import com.fasten.executor_driver.entity.VehicleOptionBoolean;
-import com.fasten.executor_driver.entity.VehicleOptionNumeric;
 import com.fasten.executor_driver.gateway.VehicleOptionsGatewayImpl;
 import io.reactivex.Completable;
 import io.reactivex.plugins.RxJavaPlugins;
@@ -24,7 +24,7 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
-public class VehicleOptionsGatewayTest {
+public class OptionsGatewayTest {
 
   private VehicleOptionsGateway vehicleOptionsGateway;
 
@@ -51,10 +51,10 @@ public class VehicleOptionsGatewayTest {
     // Дано:
     Vehicle vehicle = new Vehicle(11, "manufacturer2", "models", "colors", "lic", true);
     vehicle.addVehicleOptions(
-        new VehicleOptionNumeric(0, "name0", true, 10, 0, 20),
-        new VehicleOptionNumeric(1, "name1", true, -5, -18, 0),
-        new VehicleOptionBoolean(2, "name2", true, false),
-        new VehicleOptionBoolean(3, "name3", true, true)
+        new OptionNumeric(0, "name0", true, 10, 0, 20),
+        new OptionNumeric(1, "name1", true, -5, -18, 0),
+        new OptionBoolean(2, "name2", true, false),
+        new OptionBoolean(3, "name3", true, true)
     );
 
     // Действие:
@@ -83,10 +83,10 @@ public class VehicleOptionsGatewayTest {
     // Дано:
     Vehicle vehicle = new Vehicle(11, "manufacturer2", "models", "colors", "lic", true);
     vehicle.addVehicleOptions(
-        new VehicleOptionNumeric(0, "name0", true, 10, 0, 20),
-        new VehicleOptionNumeric(1, "name1", true, -5, -18, 0),
-        new VehicleOptionBoolean(2, "name2", true, false),
-        new VehicleOptionBoolean(3, "name3", true, true)
+        new OptionNumeric(0, "name0", true, 10, 0, 20),
+        new OptionNumeric(1, "name1", true, -5, -18, 0),
+        new OptionBoolean(2, "name2", true, false),
+        new OptionBoolean(3, "name3", true, true)
     );
     when(api.selectCarWithOptions(anyLong(), anyList()))
         .thenReturn(Completable.error(NoNetworkException::new));
@@ -105,10 +105,10 @@ public class VehicleOptionsGatewayTest {
     // Дано:
     Vehicle vehicle = new Vehicle(11, "manufacturer2", "models", "colors", "lic", true);
     vehicle.addVehicleOptions(
-        new VehicleOptionNumeric(0, "name0", true, 10, 0, 20),
-        new VehicleOptionNumeric(1, "name1", true, -5, -18, 0),
-        new VehicleOptionBoolean(2, "name2", true, false),
-        new VehicleOptionBoolean(3, "name3", true, true)
+        new OptionNumeric(0, "name0", true, 10, 0, 20),
+        new OptionNumeric(1, "name1", true, -5, -18, 0),
+        new OptionBoolean(2, "name2", true, false),
+        new OptionBoolean(3, "name3", true, true)
     );
     when(api.selectCarWithOptions(anyLong(), anyList())).thenReturn(Completable.complete());
 

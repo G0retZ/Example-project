@@ -6,9 +6,9 @@ import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.fasten.executor_driver.R;
-import com.fasten.executor_driver.entity.VehicleOption;
-import com.fasten.executor_driver.entity.VehicleOptionBoolean;
-import com.fasten.executor_driver.entity.VehicleOptionNumeric;
+import com.fasten.executor_driver.entity.Option;
+import com.fasten.executor_driver.entity.OptionBoolean;
+import com.fasten.executor_driver.entity.OptionNumeric;
 import com.fasten.executor_driver.interactor.vehicle.VehicleOptionsUseCase;
 import com.fasten.executor_driver.presentation.SingleLiveEvent;
 import com.fasten.executor_driver.presentation.ViewState;
@@ -56,11 +56,11 @@ public class VehicleOptionsViewModelImpl extends ViewModel implements VehicleOpt
 
   @Override
   public void setVehicleOptions(List<VehicleOptionsListItem<?>> index) {
-    ArrayList<VehicleOption> vehicleOptions = new ArrayList<>();
+    ArrayList<Option> options = new ArrayList<>();
     for (VehicleOptionsListItem vehicleOptionsListItem : index) {
-      vehicleOptions.add(vehicleOptionsListItem.getVehicleOption());
+      options.add(vehicleOptionsListItem.getOption());
     }
-    occupyVehicle(vehicleOptions);
+    occupyVehicle(options);
   }
 
   private void loadOptions() {
@@ -76,12 +76,12 @@ public class VehicleOptionsViewModelImpl extends ViewModel implements VehicleOpt
         );
   }
 
-  private void occupyVehicle(List<VehicleOption> vehicleOptions) {
+  private void occupyVehicle(List<Option> options) {
     if (occupyDisposable != null && !occupyDisposable.isDisposed()) {
       return;
     }
     viewStateLiveData.postValue(new VehicleOptionsViewStatePending());
-    occupyDisposable = vehicleOptionsUseCase.setSelectedVehicleOptions(vehicleOptions)
+    occupyDisposable = vehicleOptionsUseCase.setSelectedVehicleOptions(options)
         .subscribeOn(Schedulers.single())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(
@@ -91,15 +91,15 @@ public class VehicleOptionsViewModelImpl extends ViewModel implements VehicleOpt
         );
   }
 
-  private List<VehicleOptionsListItem<?>> map(List<VehicleOption> vehicleOptions) {
+  private List<VehicleOptionsListItem<?>> map(List<Option> options) {
     ArrayList<VehicleOptionsListItem<?>> vehicleOptionsListItems = new ArrayList<>();
-    for (VehicleOption vehicleOption : vehicleOptions) {
-      if (vehicleOption instanceof VehicleOptionBoolean) {
+    for (Option option : options) {
+      if (option instanceof OptionBoolean) {
         vehicleOptionsListItems
-            .add(new VehicleOptionsListItem<>((VehicleOptionBoolean) vehicleOption));
-      } else if (vehicleOption instanceof VehicleOptionNumeric) {
+            .add(new VehicleOptionsListItem<>((OptionBoolean) option));
+      } else if (option instanceof OptionNumeric) {
         vehicleOptionsListItems
-            .add(new VehicleOptionsListItem<>((VehicleOptionNumeric) vehicleOption));
+            .add(new VehicleOptionsListItem<>((OptionNumeric) option));
       }
     }
     return vehicleOptionsListItems;

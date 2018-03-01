@@ -6,7 +6,7 @@ import static org.junit.Assert.assertNotEquals;
 import org.junit.Before;
 import org.junit.Test;
 
-public class ApiVehicleOptionItemTest {
+public class ApiOptionItemTest {
 
   private ApiVehicleOptionItem apiVehicleOptionItem;
 

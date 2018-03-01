@@ -3,25 +3,23 @@ package com.fasten.executor_driver.entity;
 import android.support.annotation.NonNull;
 
 /**
- * Неизменная бизнес сущность обобщенного параметра автомобиля. Содержит в себе ID, имя и значение.
- *
- * @param <V> тип значения
+ * Бизнес сущность числового параметра автомобиля.
  */
-public class VehicleOption<V> {
+public class OptionNumeric implements Option<Integer> {
 
   private final long id;
   @NonNull
   private final String name;
   private final boolean variable;
   @NonNull
-  private final V value;
+  private final Integer value;
   @NonNull
-  private final V minValue;
+  private final Integer minValue;
   @NonNull
-  private final V maxValue;
+  private final Integer maxValue;
 
-  VehicleOption(long id, @NonNull String name, boolean variable, @NonNull V value,
-      @NonNull V minValue, @NonNull V maxValue) {
+  public OptionNumeric(long id, @NonNull String name, boolean variable, @NonNull Integer value,
+      int minValue, int maxValue) {
     this.id = id;
     this.name = name;
     this.variable = variable;
@@ -30,47 +28,49 @@ public class VehicleOption<V> {
     this.maxValue = maxValue;
   }
 
+  @Override
+  @NonNull
+  public OptionNumeric setValue(@NonNull Integer value) {
+    return new OptionNumeric(getId(), getName(), isVariable(), value, getMinValue(), getMaxValue());
+  }
+
+  @Override
   public long getId() {
     return id;
   }
 
   @NonNull
+  @Override
   public String getName() {
     return name;
   }
 
+  @Override
   public boolean isVariable() {
     return variable;
   }
 
   @NonNull
-  public V getValue() {
+  @Override
+  public Integer getValue() {
     return value;
   }
 
   @NonNull
-  public V getMinValue() {
+  @Override
+  public Integer getMinValue() {
     return minValue;
   }
 
   @NonNull
-  public V getMaxValue() {
+  @Override
+  public Integer getMaxValue() {
     return maxValue;
-  }
-
-  /**
-   * Возвращает новый объект с заданным значением.
-   *
-   * @param value значение
-   */
-  @NonNull
-  public VehicleOption<V> setValue(@NonNull V value) {
-    return new VehicleOption<>(id, name, variable, value, minValue, maxValue);
   }
 
   @Override
   public String toString() {
-    return "VehicleOption{" +
+    return "OptionNumeric{" +
         "id=" + id +
         ", name='" + name + '\'' +
         ", variable=" + variable +
@@ -90,7 +90,7 @@ public class VehicleOption<V> {
       return false;
     }
 
-    VehicleOption<?> that = (VehicleOption<?>) o;
+    OptionNumeric that = (OptionNumeric) o;
 
     if (id != that.id) {
       return false;

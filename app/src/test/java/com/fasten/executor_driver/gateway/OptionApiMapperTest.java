@@ -5,15 +5,15 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import com.fasten.executor_driver.backend.web.incoming.ApiVehicleOptionItem;
-import com.fasten.executor_driver.entity.VehicleOption;
-import com.fasten.executor_driver.entity.VehicleOptionBoolean;
-import com.fasten.executor_driver.entity.VehicleOptionNumeric;
+import com.fasten.executor_driver.entity.Option;
+import com.fasten.executor_driver.entity.OptionBoolean;
+import com.fasten.executor_driver.entity.OptionNumeric;
 import org.junit.Before;
 import org.junit.Test;
 
-public class VehicleOptionApiMapperTest {
+public class OptionApiMapperTest {
 
-  private Mapper<ApiVehicleOptionItem, VehicleOption> mapper;
+  private Mapper<ApiVehicleOptionItem, Option> mapper;
 
   @Before
   public void setUp() throws Exception {
@@ -33,16 +33,16 @@ public class VehicleOptionApiMapperTest {
         "true", -5, 123);
 
     // Действие:
-    VehicleOption vehicleOption = mapper.map(apiVehicleOptionItem);
+    Option option = mapper.map(apiVehicleOptionItem);
 
     // Результат:
-    assertTrue(vehicleOption instanceof VehicleOptionBoolean);
-    assertEquals(vehicleOption.getId(), 324);
-    assertEquals(vehicleOption.getName(), "name");
-    assertFalse(vehicleOption.isVariable());
-    assertEquals(vehicleOption.getValue(), true);
-    assertEquals(vehicleOption.getMinValue(), false);
-    assertEquals(vehicleOption.getMaxValue(), true);
+    assertTrue(option instanceof OptionBoolean);
+    assertEquals(option.getId(), 324);
+    assertEquals(option.getName(), "name");
+    assertFalse(option.isVariable());
+    assertEquals(option.getValue(), true);
+    assertEquals(option.getMinValue(), false);
+    assertEquals(option.getMaxValue(), true);
   }
 
   /**
@@ -58,16 +58,16 @@ public class VehicleOptionApiMapperTest {
         "false", null, null);
 
     // Действие:
-    VehicleOption vehicleOption = mapper.map(apiVehicleOptionItem);
+    Option option = mapper.map(apiVehicleOptionItem);
 
     // Результат:
-    assertTrue(vehicleOption instanceof VehicleOptionBoolean);
-    assertEquals(vehicleOption.getId(), 454);
-    assertEquals(vehicleOption.getName(), "name");
-    assertFalse(vehicleOption.isVariable());
-    assertEquals(vehicleOption.getValue(), false);
-    assertEquals(vehicleOption.getMinValue(), false);
-    assertEquals(vehicleOption.getMaxValue(), true);
+    assertTrue(option instanceof OptionBoolean);
+    assertEquals(option.getId(), 454);
+    assertEquals(option.getName(), "name");
+    assertFalse(option.isVariable());
+    assertEquals(option.getValue(), false);
+    assertEquals(option.getMinValue(), false);
+    assertEquals(option.getMaxValue(), true);
   }
 
   /**
@@ -83,16 +83,16 @@ public class VehicleOptionApiMapperTest {
         "false", 50, 300);
 
     // Действие:
-    VehicleOption vehicleOption = mapper.map(apiVehicleOptionItem);
+    Option option = mapper.map(apiVehicleOptionItem);
 
     // Результат:
-    assertTrue(vehicleOption instanceof VehicleOptionBoolean);
-    assertEquals(vehicleOption.getId(), 1);
-    assertEquals(vehicleOption.getName(), "name");
-    assertTrue(vehicleOption.isVariable());
-    assertEquals(vehicleOption.getValue(), false);
-    assertEquals(vehicleOption.getMinValue(), false);
-    assertEquals(vehicleOption.getMaxValue(), true);
+    assertTrue(option instanceof OptionBoolean);
+    assertEquals(option.getId(), 1);
+    assertEquals(option.getName(), "name");
+    assertTrue(option.isVariable());
+    assertEquals(option.getValue(), false);
+    assertEquals(option.getMinValue(), false);
+    assertEquals(option.getMaxValue(), true);
   }
 
   /**
@@ -108,16 +108,16 @@ public class VehicleOptionApiMapperTest {
         "true", null, null);
 
     // Действие:
-    VehicleOption vehicleOption = mapper.map(apiVehicleOptionItem);
+    Option option = mapper.map(apiVehicleOptionItem);
 
     // Результат:
-    assertTrue(vehicleOption instanceof VehicleOptionBoolean);
-    assertEquals(vehicleOption.getId(), 1);
-    assertEquals(vehicleOption.getName(), "name");
-    assertTrue(vehicleOption.isVariable());
-    assertEquals(vehicleOption.getValue(), true);
-    assertEquals(vehicleOption.getMinValue(), false);
-    assertEquals(vehicleOption.getMaxValue(), true);
+    assertTrue(option instanceof OptionBoolean);
+    assertEquals(option.getId(), 1);
+    assertEquals(option.getName(), "name");
+    assertTrue(option.isVariable());
+    assertEquals(option.getValue(), true);
+    assertEquals(option.getMinValue(), false);
+    assertEquals(option.getMaxValue(), true);
   }
 
   /**
@@ -133,16 +133,16 @@ public class VehicleOptionApiMapperTest {
         "34", -5, 123);
 
     // Действие:
-    VehicleOption vehicleOption = mapper.map(apiVehicleOptionItem);
+    Option option = mapper.map(apiVehicleOptionItem);
 
     // Результат:
-    assertTrue(vehicleOption instanceof VehicleOptionNumeric);
-    assertEquals(vehicleOption.getId(), 324);
-    assertEquals(vehicleOption.getName(), "name");
-    assertFalse(vehicleOption.isVariable());
-    assertEquals(vehicleOption.getValue(), 34);
-    assertEquals(vehicleOption.getMinValue(), -5);
-    assertEquals(vehicleOption.getMaxValue(), 123);
+    assertTrue(option instanceof OptionNumeric);
+    assertEquals(option.getId(), 324);
+    assertEquals(option.getName(), "name");
+    assertFalse(option.isVariable());
+    assertEquals(option.getValue(), 34);
+    assertEquals(option.getMinValue(), -5);
+    assertEquals(option.getMaxValue(), 123);
   }
 
   /**
@@ -158,16 +158,16 @@ public class VehicleOptionApiMapperTest {
         "54", 50, 300);
 
     // Действие:
-    VehicleOption vehicleOption = mapper.map(apiVehicleOptionItem);
+    Option option = mapper.map(apiVehicleOptionItem);
 
     // Результат:
-    assertTrue(vehicleOption instanceof VehicleOptionNumeric);
-    assertEquals(vehicleOption.getId(), 1);
-    assertEquals(vehicleOption.getName(), "name");
-    assertTrue(vehicleOption.isVariable());
-    assertEquals(vehicleOption.getValue(), 54);
-    assertEquals(vehicleOption.getMinValue(), 50);
-    assertEquals(vehicleOption.getMaxValue(), 300);
+    assertTrue(option instanceof OptionNumeric);
+    assertEquals(option.getId(), 1);
+    assertEquals(option.getName(), "name");
+    assertTrue(option.isVariable());
+    assertEquals(option.getValue(), 54);
+    assertEquals(option.getMinValue(), 50);
+    assertEquals(option.getMaxValue(), 300);
   }
 
   /**
@@ -183,16 +183,16 @@ public class VehicleOptionApiMapperTest {
         "-345", null, null);
 
     // Действие:
-    VehicleOption vehicleOption = mapper.map(apiVehicleOptionItem);
+    Option option = mapper.map(apiVehicleOptionItem);
 
     // Результат:
-    assertTrue(vehicleOption instanceof VehicleOptionNumeric);
-    assertEquals(vehicleOption.getId(), 454);
-    assertEquals(vehicleOption.getName(), "name");
-    assertFalse(vehicleOption.isVariable());
-    assertEquals(vehicleOption.getValue(), -345);
-    assertEquals(vehicleOption.getMaxValue(), 0);
-    assertEquals(vehicleOption.getMinValue(), 0);
+    assertTrue(option instanceof OptionNumeric);
+    assertEquals(option.getId(), 454);
+    assertEquals(option.getName(), "name");
+    assertFalse(option.isVariable());
+    assertEquals(option.getValue(), -345);
+    assertEquals(option.getMaxValue(), 0);
+    assertEquals(option.getMinValue(), 0);
   }
 
   /**
