@@ -1,7 +1,7 @@
 package com.fasten.executor_driver.backend.web;
 
 import android.support.annotation.NonNull;
-import com.fasten.executor_driver.backend.web.incoming.ApiVehicle;
+import com.fasten.executor_driver.backend.web.incoming.ApiOptionsForOnline;
 import com.fasten.executor_driver.backend.web.outgoing.ApiLogin;
 import com.fasten.executor_driver.backend.web.outgoing.ApiOptionItem;
 import io.reactivex.Completable;
@@ -41,7 +41,7 @@ public interface ApiService {
    *  Запрос ТС текущего исполнителя.
    */
   @GET("api/public/v1/car")
-  Single<List<ApiVehicle>> getOptionsForOnline();
+  Single<ApiOptionsForOnline> getOptionsForOnline();
 
   /*
    *  Запрос занятия выборанной ТС с перечисленными опциями.

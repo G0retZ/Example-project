@@ -25,13 +25,13 @@ public class VehicleApiMapperTest {
   private Mapper<ApiVehicle, Vehicle> mapper;
 
   @Mock
-  private Mapper<ApiOptionItem, Option> vehicleOptionMapper;
+  private Mapper<ApiOptionItem, Option> apiOptionMapper;
 
   @Before
   public void setUp() throws Exception {
-    when(vehicleOptionMapper.map(any(ApiOptionItem.class)))
+    when(apiOptionMapper.map(any(ApiOptionItem.class)))
         .thenReturn(new OptionBoolean(0, "n", "d", false, false));
-    mapper = new VehicleApiMapper(vehicleOptionMapper);
+    mapper = new VehicleApiMapper(apiOptionMapper);
   }
 
   /**

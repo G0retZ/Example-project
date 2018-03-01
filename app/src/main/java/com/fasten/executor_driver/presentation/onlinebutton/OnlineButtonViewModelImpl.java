@@ -9,7 +9,7 @@ import com.fasten.executor_driver.entity.DriverBlockedException;
 import com.fasten.executor_driver.entity.InsufficientCreditsException;
 import com.fasten.executor_driver.entity.NoFreeVehiclesException;
 import com.fasten.executor_driver.entity.NoVehiclesAvailableException;
-import com.fasten.executor_driver.interactor.vehicle.VehiclesUseCase;
+import com.fasten.executor_driver.interactor.vehicle.VehiclesAndOptionsUseCase;
 import com.fasten.executor_driver.presentation.SingleLiveEvent;
 import com.fasten.executor_driver.presentation.ViewState;
 import io.reactivex.Completable;
@@ -29,15 +29,15 @@ public class OnlineButtonViewModelImpl extends ViewModel implements OnlineButton
   private Disposable timerDisposable;
 
   @NonNull
-  private final VehiclesUseCase vehiclesUseCase;
+  private final VehiclesAndOptionsUseCase vehiclesAndOptionsUseCase;
   @NonNull
   private final MutableLiveData<ViewState<OnlineButtonViewActions>> viewStateLiveData;
   @NonNull
   private final SingleLiveEvent<String> navigateLiveData;
 
   @Inject
-  public OnlineButtonViewModelImpl(@NonNull VehiclesUseCase vehiclesUseCase) {
-    this.vehiclesUseCase = vehiclesUseCase;
+  public OnlineButtonViewModelImpl(@NonNull VehiclesAndOptionsUseCase vehiclesAndOptionsUseCase) {
+    this.vehiclesAndOptionsUseCase = vehiclesAndOptionsUseCase;
     viewStateLiveData = new MutableLiveData<>();
     viewStateLiveData.postValue(new OnlineButtonViewStateReady());
     navigateLiveData = new SingleLiveEvent<>();
@@ -62,7 +62,7 @@ public class OnlineButtonViewModelImpl extends ViewModel implements OnlineButton
       return;
     }
     viewStateLiveData.postValue(new OnlineButtonViewStateHold());
-    Disposable disposable = vehiclesUseCase.loadVehicles()
+    Disposable disposable = vehiclesAndOptionsUseCase.loadVehicles()
         .subscribeOn(Schedulers.single())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(

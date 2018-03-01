@@ -13,12 +13,12 @@ import javax.inject.Named;
  */
 public class VehicleApiMapper implements Mapper<ApiVehicle, Vehicle> {
 
-  private final Mapper<ApiOptionItem, Option> vehicleOptionMapper;
+  private final Mapper<ApiOptionItem, Option> apiOptionMapper;
 
   @Inject
   VehicleApiMapper(
-      @Named("vehicleOptionMapper") Mapper<ApiOptionItem, Option> vehicleOptionMapper) {
-    this.vehicleOptionMapper = vehicleOptionMapper;
+      @Named("apiOptionMapper") Mapper<ApiOptionItem, Option> apiOptionMapper) {
+    this.apiOptionMapper = apiOptionMapper;
   }
 
   @NonNull
@@ -48,7 +48,7 @@ public class VehicleApiMapper implements Mapper<ApiVehicle, Vehicle> {
         from.isBusy()
     );
     for (ApiOptionItem vehicleOptionItem : from.getVehicleOptionItems()) {
-      vehicle.addVehicleOptions(vehicleOptionMapper.map(vehicleOptionItem));
+      vehicle.addVehicleOptions(apiOptionMapper.map(vehicleOptionItem));
     }
     return vehicle;
   }

@@ -6,7 +6,7 @@ import io.reactivex.Completable;
 /**
  * Юзкейс получения списка ТС с проверками блокировки, баланса и пр.
  */
-public interface VehiclesUseCase {
+public interface VehiclesAndOptionsUseCase {
 
   /**
    * Загружает список ТС.

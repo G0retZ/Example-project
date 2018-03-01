@@ -11,10 +11,10 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-public class VehiclesUseCaseImpl implements VehiclesUseCase {
+public class VehiclesAndOptionsUseCaseImpl implements VehiclesAndOptionsUseCase {
 
   @NonNull
-  private final VehiclesGateway gateway;
+  private final VehiclesAndOptionsGateway gateway;
   @NonNull
   private final DataSharer<List<Vehicle>> vehiclesSharer;
   @NonNull
@@ -23,7 +23,7 @@ public class VehiclesUseCaseImpl implements VehiclesUseCase {
   private Vehicle lastUsedVehicle;
 
   @Inject
-  VehiclesUseCaseImpl(@NonNull VehiclesGateway gateway,
+  VehiclesAndOptionsUseCaseImpl(@NonNull VehiclesAndOptionsGateway gateway,
       @Named("vehiclesSharer") @NonNull DataSharer<List<Vehicle>> vehiclesSharer,
       @Named("vehicleChoiceSharer") @NonNull DataSharer<Vehicle> vehicleChoiceSharer,
       @Named("lastUsedVehicleSharer") @NonNull DataSharer<Vehicle> lastUsedVehicleSharer) {

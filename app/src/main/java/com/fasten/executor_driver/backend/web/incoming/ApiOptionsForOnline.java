@@ -20,16 +20,16 @@ public class ApiOptionsForOnline {
   public ApiOptionsForOnline() {
   }
 
-  ApiOptionsForOnline(List<ApiVehicle> cars, List<ApiOptionItem> driverOptions) {
+  public ApiOptionsForOnline(List<ApiVehicle> cars, List<ApiOptionItem> driverOptions) {
     this.cars = cars;
     this.driverOptions = driverOptions;
   }
 
-  List<ApiVehicle> getCars() {
+  public List<ApiVehicle> getCars() {
     return cars;
   }
 
-  List<ApiOptionItem> getDriverOptions() {
+  public List<ApiOptionItem> getDriverOptions() {
     return driverOptions;
   }
 

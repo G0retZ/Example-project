@@ -20,9 +20,9 @@ import com.fasten.executor_driver.interactor.vehicle.VehicleChoiceUseCase;
 import com.fasten.executor_driver.interactor.vehicle.VehicleChoiceUseCaseImpl;
 import com.fasten.executor_driver.interactor.vehicle.VehicleOptionsUseCase;
 import com.fasten.executor_driver.interactor.vehicle.VehicleOptionsUseCaseImpl;
+import com.fasten.executor_driver.interactor.vehicle.VehiclesAndOptionsUseCase;
+import com.fasten.executor_driver.interactor.vehicle.VehiclesAndOptionsUseCaseImpl;
 import com.fasten.executor_driver.interactor.vehicle.VehiclesSharer;
-import com.fasten.executor_driver.interactor.vehicle.VehiclesUseCase;
-import com.fasten.executor_driver.interactor.vehicle.VehiclesUseCaseImpl;
 import dagger.Module;
 import dagger.Provides;
 import java.util.List;
@@ -53,7 +53,7 @@ class UseCaseModule {
   }
 
   @Provides
-  VehiclesUseCase provideOnlineUseCase(VehiclesUseCaseImpl onlineUseCase) {
+  VehiclesAndOptionsUseCase provideOnlineUseCase(VehiclesAndOptionsUseCaseImpl onlineUseCase) {
     return onlineUseCase;
   }
 
