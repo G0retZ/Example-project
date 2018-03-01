@@ -16,6 +16,7 @@ import com.fasten.executor_driver.gateway.VehicleOptionsGatewayImpl;
 import io.reactivex.Completable;
 import io.reactivex.plugins.RxJavaPlugins;
 import io.reactivex.schedulers.Schedulers;
+import java.util.ArrayList;
 import java.util.Arrays;
 import org.junit.Before;
 import org.junit.Test;
@@ -23,6 +24,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
+// TODO: написать недостающие тесты.
 @RunWith(MockitoJUnitRunner.class)
 public class VehicleOptionsGatewayTest {
 
@@ -58,7 +60,7 @@ public class VehicleOptionsGatewayTest {
     );
 
     // Действие:
-    vehicleOptionsGateway.sendVehicleOptions(vehicle);
+    vehicleOptionsGateway.sendVehicleOptions(vehicle, new ArrayList<>());
 
     // Результат:
     verify(api, only()).occupyCarWithOptions(11, Arrays.asList(
@@ -92,7 +94,8 @@ public class VehicleOptionsGatewayTest {
         .thenReturn(Completable.error(NoNetworkException::new));
 
     // Действие и Результат:
-    vehicleOptionsGateway.sendVehicleOptions(vehicle).test().assertError(NoNetworkException.class);
+    vehicleOptionsGateway.sendVehicleOptions(vehicle, new ArrayList<>()).test()
+        .assertError(NoNetworkException.class);
   }
 
   /**
@@ -113,6 +116,6 @@ public class VehicleOptionsGatewayTest {
     when(api.occupyCarWithOptions(anyLong(), anyList())).thenReturn(Completable.complete());
 
     // Действие и Результат:
-    vehicleOptionsGateway.sendVehicleOptions(vehicle).test().assertComplete();
+    vehicleOptionsGateway.sendVehicleOptions(vehicle, new ArrayList<>()).test().assertComplete();
   }
 }

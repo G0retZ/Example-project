@@ -81,7 +81,7 @@ public class VehicleOptionsViewModelImpl extends ViewModel implements VehicleOpt
       return;
     }
     viewStateLiveData.postValue(new VehicleOptionsViewStatePending());
-    occupyDisposable = vehicleOptionsUseCase.setSelectedVehicleOptions(options)
+    occupyDisposable = vehicleOptionsUseCase.setSelectedVehicleOptions(options, new ArrayList<>())
         .subscribeOn(Schedulers.single())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(

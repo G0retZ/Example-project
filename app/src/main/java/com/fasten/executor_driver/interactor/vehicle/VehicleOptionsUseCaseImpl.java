@@ -20,6 +20,8 @@ public class VehicleOptionsUseCaseImpl implements VehicleOptionsUseCase {
   private final DataSharer<Vehicle> vehicleChoiceSharer;
   @NonNull
   private final DataSharer<Vehicle> lastUsedVehicleSharer;
+  @NonNull
+  private final DataSharer<List<Option>> driverOptionsSharer;
   @Nullable
   private Vehicle vehicle;
 
@@ -27,10 +29,12 @@ public class VehicleOptionsUseCaseImpl implements VehicleOptionsUseCase {
   VehicleOptionsUseCaseImpl(
       @NonNull VehicleOptionsGateway gateway,
       @Named("vehicleChoiceSharer") @NonNull DataSharer<Vehicle> vehicleChoiceSharer,
-      @Named("lastUsedVehicleSharer") @NonNull DataSharer<Vehicle> lastUsedVehicleSharer) {
+      @Named("lastUsedVehicleSharer") @NonNull DataSharer<Vehicle> lastUsedVehicleSharer,
+      @Named("driverOptionsSharer") @NonNull DataSharer<List<Option>> driverOptionsSharer) {
     this.gateway = gateway;
     this.vehicleChoiceSharer = vehicleChoiceSharer;
     this.lastUsedVehicleSharer = lastUsedVehicleSharer;
+    this.driverOptionsSharer = driverOptionsSharer;
   }
 
   @NonNull
@@ -46,13 +50,23 @@ public class VehicleOptionsUseCaseImpl implements VehicleOptionsUseCase {
         });
   }
 
+  @NonNull
   @Override
-  public Completable setSelectedVehicleOptions(List<Option> options) {
+  public Observable<List<Option>> getDriverOptions() {
+    return driverOptionsSharer.get()
+        .concatMap(options -> Observable.fromIterable(options)
+            .filter(Option::isVariable)
+            .toList()
+            .toObservable());
+  }
+
+  @Override
+  public Completable setSelectedVehicleOptions(List<Option> options, List<Option> driverOptions) {
     if (vehicle == null) {
       return Completable.error(new DataMappingException());
     }
     vehicle.setOptions(options.toArray(new Option[options.size()]));
-    return gateway.sendVehicleOptions(vehicle)
+    return gateway.sendVehicleOptions(vehicle, driverOptions)
         .doOnComplete(() -> lastUsedVehicleSharer.share(vehicle));
   }
 }

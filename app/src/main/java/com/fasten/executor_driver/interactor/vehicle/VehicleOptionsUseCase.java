@@ -20,10 +20,20 @@ public interface VehicleOptionsUseCase {
   Observable<List<Option>> getVehicleOptions();
 
   /**
+   * Запрашивает список опций выбранной ТС, доступных для изменения исполнителем.
+   *
+   * @return {@link Observable} результат запроса
+   */
+  @SuppressWarnings("unused")
+  @NonNull
+  Observable<List<Option>> getDriverOptions();
+
+  /**
    * Задает опции выбранного ТС для сохранения и выхода на линию.
    *
-   * @param options список опций выбранного ТС
+   * @param vehicleOptions список опций выбранного ТС
+   * @param driverOptions список опций исполнителя
    * @return {@link Completable} результат сохранения и выхода на линию
    */
-  Completable setSelectedVehicleOptions(List<Option> options);
+  Completable setSelectedVehicleOptions(List<Option> vehicleOptions, List<Option> driverOptions);
 }

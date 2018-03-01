@@ -36,6 +36,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
+// TODO: написать недостающие тесты.
 @RunWith(MockitoJUnitRunner.class)
 public class VehicleOptionsViewModelTest {
 
@@ -56,7 +57,7 @@ public class VehicleOptionsViewModelTest {
     RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
     RxAndroidPlugins.setInitMainThreadSchedulerHandler(scheduler -> Schedulers.trampoline());
     when(vehicleOptionsUseCase.getVehicleOptions()).thenReturn(Observable.never());
-    when(vehicleOptionsUseCase.setSelectedVehicleOptions(anyList()))
+    when(vehicleOptionsUseCase.setSelectedVehicleOptions(anyList(), anyList()))
         .thenReturn(Completable.never());
     vehicleOptionsViewModel = new VehicleOptionsViewModelImpl(vehicleOptionsUseCase);
   }
@@ -87,7 +88,7 @@ public class VehicleOptionsViewModelTest {
   @Test
   public void askVehicleOptionsUseCaseToOccupyVehicleWithOptions() throws Exception {
     // Дано:
-    when(vehicleOptionsUseCase.setSelectedVehicleOptions(anyList()))
+    when(vehicleOptionsUseCase.setSelectedVehicleOptions(anyList(), anyList()))
         .thenReturn(Completable.complete());
 
     // Действие:
@@ -129,18 +130,18 @@ public class VehicleOptionsViewModelTest {
     verify(vehicleOptionsUseCase).setSelectedVehicleOptions(Arrays.asList(
         new OptionBoolean(1, "name", "description", true, false),
         new OptionBoolean(2, "emacs", "descriptions", true, true)
-    ));
+    ), new ArrayList<>());
     verify(vehicleOptionsUseCase).setSelectedVehicleOptions(Arrays.asList(
         new OptionBoolean(1, "name", "description", true, false),
         new OptionBoolean(2, "emacs", "descriptions", true, true),
         new OptionNumeric(3, "names", "desc", true, 5, 0, 10)
-    ));
+    ), new ArrayList<>());
     verify(vehicleOptionsUseCase).setSelectedVehicleOptions(Arrays.asList(
         new OptionBoolean(1, "name", "description", true, false),
         new OptionBoolean(2, "emacs", "descriptions", true, true),
         new OptionNumeric(3, "names", "desc", true, 5, 0, 10),
         new OptionNumeric(4, "nam", "script", false, 1, -1, 2)
-    ));
+    ), new ArrayList<>());
     verifyNoMoreInteractions(vehicleOptionsUseCase);
   }
 
@@ -190,7 +191,7 @@ public class VehicleOptionsViewModelTest {
     verify(vehicleOptionsUseCase, only()).setSelectedVehicleOptions(Arrays.asList(
         new OptionBoolean(1, "name", "description", true, false),
         new OptionBoolean(2, "emacs", "descriptions", true, true)
-    ));
+    ), new ArrayList<>());
   }
 
   /* Тетсируем переключение состояний. */
@@ -264,7 +265,7 @@ public class VehicleOptionsViewModelTest {
     PublishSubject<List<Option>> publishSubject = PublishSubject.create();
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     when(vehicleOptionsUseCase.getVehicleOptions()).thenReturn(publishSubject);
-    when(vehicleOptionsUseCase.setSelectedVehicleOptions(anyList()))
+    when(vehicleOptionsUseCase.setSelectedVehicleOptions(anyList(), anyList()))
         .thenReturn(Completable.complete());
     vehicleOptionsViewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
@@ -308,7 +309,7 @@ public class VehicleOptionsViewModelTest {
     PublishSubject<List<Option>> publishSubject = PublishSubject.create();
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     when(vehicleOptionsUseCase.getVehicleOptions()).thenReturn(publishSubject);
-    when(vehicleOptionsUseCase.setSelectedVehicleOptions(anyList()))
+    when(vehicleOptionsUseCase.setSelectedVehicleOptions(anyList(), anyList()))
         .thenReturn(Completable.error(NoNetworkException::new));
     vehicleOptionsViewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
@@ -353,7 +354,7 @@ public class VehicleOptionsViewModelTest {
   @Test
   public void setNothingToLiveData() throws Exception {
     // Дано:
-    when(vehicleOptionsUseCase.setSelectedVehicleOptions(anyList()))
+    when(vehicleOptionsUseCase.setSelectedVehicleOptions(anyList(), anyList()))
         .thenReturn(Completable.error(new NoNetworkException()));
     vehicleOptionsViewModel.getNavigationLiveData().observeForever(navigateObserver);
 
@@ -372,7 +373,7 @@ public class VehicleOptionsViewModelTest {
   @Test
   public void setNavigateToReadyForOrdersToLiveData() throws Exception {
     // Дано:
-    when(vehicleOptionsUseCase.setSelectedVehicleOptions(anyList()))
+    when(vehicleOptionsUseCase.setSelectedVehicleOptions(anyList(), anyList()))
         .thenReturn(Completable.complete());
     vehicleOptionsViewModel.getNavigationLiveData().observeForever(navigateObserver);
 

@@ -1,6 +1,7 @@
 package com.fasten.executor_driver.interactor.vehicle;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
@@ -25,6 +26,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
+// TODO: написать недостающие тесты.
 @RunWith(MockitoJUnitRunner.class)
 public class VehicleOptionsUseCaseTest {
 
@@ -39,11 +41,14 @@ public class VehicleOptionsUseCaseTest {
   @Mock
   private DataSharer<Vehicle> lastUsedVehicleSharer;
 
+  @Mock
+  private DataSharer<List<Option>> driverOptionsSharer;
+
   @Before
   public void setUp() throws Exception {
     vehicleOptionsUseCase = new VehicleOptionsUseCaseImpl(gateway, vehicleChoiceSharer,
-        lastUsedVehicleSharer);
-    when(gateway.sendVehicleOptions(any(Vehicle.class))).thenReturn(Completable.never());
+        lastUsedVehicleSharer, driverOptionsSharer);
+    when(gateway.sendVehicleOptions(any(Vehicle.class), anyList())).thenReturn(Completable.never());
     when(vehicleChoiceSharer.get()).thenReturn(Observable.never());
   }
 
@@ -184,7 +189,7 @@ public class VehicleOptionsUseCaseTest {
         new ArrayList<>(Arrays.asList(
             new OptionNumeric(1, "name1", "desc1", true, -5, -18, 0),
             new OptionBoolean(2, "name2", "desc2", true, false)
-        ))
+        )), new ArrayList<>()
     ).test();
 
     // Результат:
@@ -215,7 +220,7 @@ public class VehicleOptionsUseCaseTest {
             new OptionNumeric(0, "name0", "desc0", true, 40, 0, 120),
             new OptionNumeric(1, "name1", "desc1", true, -50, 20, 30),
             new OptionBoolean(2, "name2", "desc2", true, false)
-        ))
+        )), new ArrayList<>()
     ).test();
 
     // Результат:
@@ -225,7 +230,7 @@ public class VehicleOptionsUseCaseTest {
         new OptionNumeric(1, "name1", "desc1", true, -50, 20, 30),
         new OptionBoolean(2, "name2", "desc2", true, false)
     );
-    verify(gateway, only()).sendVehicleOptions(vehicle);
+    verify(gateway, only()).sendVehicleOptions(vehicle, new ArrayList<>());
   }
 
   /* Проверяем ответы на передачу опций ТС для выхода на линию */
@@ -242,7 +247,7 @@ public class VehicleOptionsUseCaseTest {
         new ArrayList<>(Arrays.asList(
             new OptionNumeric(1, "name1", "desc1", true, -5, -18, 0),
             new OptionBoolean(2, "name2", "desc2", true, false)
-        ))
+        )), new ArrayList<>()
     ).test().assertError(DataMappingException.class);
   }
 
@@ -262,7 +267,7 @@ public class VehicleOptionsUseCaseTest {
         new OptionBoolean(3, "name3", "desc3", false, true)
     );
     when(vehicleChoiceSharer.get()).thenReturn(Observable.just(vehicle));
-    when(gateway.sendVehicleOptions(any(Vehicle.class)))
+    when(gateway.sendVehicleOptions(any(Vehicle.class), anyList()))
         .thenReturn(Completable.error(NoNetworkException::new));
 
     // Действие:
@@ -274,7 +279,7 @@ public class VehicleOptionsUseCaseTest {
             new OptionNumeric(0, "name0", "desc0", true, 40, 0, 120),
             new OptionNumeric(1, "name1", "desc1", true, -50, 20, 30),
             new OptionBoolean(2, "name2", "desc2", true, false)
-        ))
+        )), new ArrayList<>()
     ).test().assertError(NoNetworkException.class);
   }
 
@@ -294,7 +299,8 @@ public class VehicleOptionsUseCaseTest {
         new OptionBoolean(3, "name3", "desc3", false, true)
     );
     when(vehicleChoiceSharer.get()).thenReturn(Observable.just(vehicle));
-    when(gateway.sendVehicleOptions(any(Vehicle.class))).thenReturn(Completable.complete());
+    when(gateway.sendVehicleOptions(any(Vehicle.class), anyList()))
+        .thenReturn(Completable.complete());
 
     // Действие:
     vehicleOptionsUseCase.getVehicleOptions().test();
@@ -305,7 +311,7 @@ public class VehicleOptionsUseCaseTest {
             new OptionNumeric(0, "name0", "desc0", true, 40, 0, 120),
             new OptionNumeric(1, "name1", "desc1", true, -50, 20, 30),
             new OptionBoolean(2, "name2", "desc2", true, false)
-        ))
+        )), new ArrayList<>()
     ).test().assertComplete();
   }
 
@@ -323,7 +329,7 @@ public class VehicleOptionsUseCaseTest {
         new ArrayList<>(Arrays.asList(
             new OptionNumeric(1, "name1", "desc1", true, -5, -18, 0),
             new OptionBoolean(2, "name2", "desc2", true, false)
-        ))
+        )), new ArrayList<>()
     ).test();
     Vehicle vehicle = new Vehicle(12, "manufacturer", "model", "color", "license", false);
     vehicle.addVehicleOptions(
@@ -333,7 +339,7 @@ public class VehicleOptionsUseCaseTest {
         new OptionBoolean(3, "name3", "desc3", false, true)
     );
     when(vehicleChoiceSharer.get()).thenReturn(Observable.just(vehicle));
-    when(gateway.sendVehicleOptions(any(Vehicle.class)))
+    when(gateway.sendVehicleOptions(any(Vehicle.class), anyList()))
         .thenReturn(Completable.error(NoNetworkException::new));
     vehicleOptionsUseCase.getVehicleOptions().test();
     vehicleOptionsUseCase.setSelectedVehicleOptions(
@@ -341,7 +347,7 @@ public class VehicleOptionsUseCaseTest {
             new OptionNumeric(0, "name0", "desc0", true, 40, 0, 120),
             new OptionNumeric(1, "name1", "desc1", true, -50, 20, 30),
             new OptionBoolean(2, "name2", "desc2", true, false)
-        ))
+        )), new ArrayList<>()
     ).test().assertError(NoNetworkException.class);
 
     // Результат:
@@ -364,7 +370,8 @@ public class VehicleOptionsUseCaseTest {
         new OptionBoolean(3, "name3", "desc3", false, true)
     );
     when(vehicleChoiceSharer.get()).thenReturn(Observable.just(vehicle));
-    when(gateway.sendVehicleOptions(any(Vehicle.class))).thenReturn(Completable.complete());
+    when(gateway.sendVehicleOptions(any(Vehicle.class), anyList()))
+        .thenReturn(Completable.complete());
 
     // Действие:
     vehicleOptionsUseCase.getVehicleOptions().test();
@@ -373,7 +380,7 @@ public class VehicleOptionsUseCaseTest {
             new OptionNumeric(0, "name0", "desc0", true, 40, 0, 120),
             new OptionNumeric(1, "name1", "desc1", true, -50, 20, 30),
             new OptionBoolean(2, "name2", "desc2", true, false)
-        ))
+        )), new ArrayList<>()
     ).test();
 
     // Результат:
