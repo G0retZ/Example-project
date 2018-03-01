@@ -19,7 +19,7 @@ public class ApiOptionItems {
   @Expose
   private final List<ApiOptionItem> driverOptions;
 
-  ApiOptionItems(
+  public ApiOptionItems(
       @NonNull List<ApiOptionItem> vehicleOptions,
       @NonNull List<ApiOptionItem> driverOptions) {
     this.vehicleOptions = vehicleOptions;

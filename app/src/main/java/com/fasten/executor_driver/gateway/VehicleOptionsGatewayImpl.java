@@ -3,6 +3,7 @@ package com.fasten.executor_driver.gateway;
 import android.support.annotation.NonNull;
 import com.fasten.executor_driver.backend.web.ApiService;
 import com.fasten.executor_driver.backend.web.outgoing.ApiOptionItem;
+import com.fasten.executor_driver.backend.web.outgoing.ApiOptionItems;
 import com.fasten.executor_driver.entity.Option;
 import com.fasten.executor_driver.entity.Vehicle;
 import com.fasten.executor_driver.interactor.vehicle.VehicleOptionsGateway;
@@ -26,18 +27,24 @@ public class VehicleOptionsGatewayImpl implements VehicleOptionsGateway {
   @Override
   public Completable sendVehicleOptions(@NonNull Vehicle vehicle,
       @NonNull List<Option> driverOptions) {
-    return api.occupyCarWithOptions(vehicle.getId(), map(vehicle.getOptions()))
+    return api.occupyCarWithOptions(vehicle.getId(), map(vehicle.getOptions(), driverOptions))
         .subscribeOn(Schedulers.io())
         .observeOn(Schedulers.single());
   }
 
-  private List<ApiOptionItem> map(List<Option> options) {
-    ArrayList<ApiOptionItem> apiOptionItems = new ArrayList<>();
-    for (Option option : options) {
-      apiOptionItems.add(
+  private ApiOptionItems map(List<Option> vehicleOptions, List<Option> driverOptions) {
+    ArrayList<ApiOptionItem> apiOptionItems1 = new ArrayList<>();
+    ArrayList<ApiOptionItem> apiOptionItems2 = new ArrayList<>();
+    for (Option option : vehicleOptions) {
+      apiOptionItems1.add(
           new ApiOptionItem(option.getId(), option.getValue().toString())
       );
     }
-    return apiOptionItems;
+    for (Option option : driverOptions) {
+      apiOptionItems2.add(
+          new ApiOptionItem(option.getId(), option.getValue().toString())
+      );
+    }
+    return new ApiOptionItems(apiOptionItems1, apiOptionItems2);
   }
 }

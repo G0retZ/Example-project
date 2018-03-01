@@ -22,12 +22,12 @@ public class ApiOptionItem {
     this.value = value;
   }
 
-  public long getId() {
+  long getId() {
     return id;
   }
 
   @NonNull
-  public String getValue() {
+  String getValue() {
     return value;
   }
 
