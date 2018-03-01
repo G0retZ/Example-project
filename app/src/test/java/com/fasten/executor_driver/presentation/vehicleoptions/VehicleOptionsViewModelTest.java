@@ -37,7 +37,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
-public class OptionsViewModelTest {
+public class VehicleOptionsViewModelTest {
 
   @Rule
   public TestRule rule = new InstantTaskExecutorRule();

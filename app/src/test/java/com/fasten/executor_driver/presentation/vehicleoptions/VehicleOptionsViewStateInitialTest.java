@@ -1,10 +1,9 @@
 package com.fasten.executor_driver.presentation.vehicleoptions;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
+import java.util.ArrayList;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,16 +11,16 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
-public class OptionsViewStateErrorTest {
+public class VehicleOptionsViewStateInitialTest {
 
-  private VehicleOptionsViewStateError viewState;
+  private VehicleOptionsViewStateInitial viewState;
 
   @Mock
   private VehicleOptionsViewActions codeViewActions;
 
   @Before
   public void setUp() throws Exception {
-    viewState = new VehicleOptionsViewStateError(123);
+    viewState = new VehicleOptionsViewStateInitial();
   }
 
   @Test
@@ -31,16 +30,10 @@ public class OptionsViewStateErrorTest {
 
     // Результат:
     verify(codeViewActions).enableReadyButton(false);
-    verify(codeViewActions).showVehicleOptionsList(false);
+    verify(codeViewActions).showVehicleOptionsList(true);
     verify(codeViewActions).showVehicleOptionsPending(false);
-    verify(codeViewActions).showVehicleOptionsListErrorMessage(true);
-    verify(codeViewActions).setVehicleOptionsListErrorMessage(123);
+    verify(codeViewActions).showVehicleOptionsListErrorMessage(false);
+    verify(codeViewActions).setVehicleOptionsListItems(new ArrayList<>());
     verifyNoMoreInteractions(codeViewActions);
-  }
-
-  @Test
-  public void testEquals() throws Exception {
-    assertEquals(viewState, new VehicleOptionsViewStateError(123));
-    assertNotEquals(viewState, new VehicleOptionsViewStateError(0));
   }
 }

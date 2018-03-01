@@ -16,7 +16,7 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
-public class OptionsViewStateReadyTest {
+public class VehicleOptionsViewStateReadyTest {
 
   private VehicleOptionsViewStateReady viewState;
 

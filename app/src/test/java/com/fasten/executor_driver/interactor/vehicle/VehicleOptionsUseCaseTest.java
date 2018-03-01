@@ -26,7 +26,7 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
-public class OptionsUseCaseTest {
+public class VehicleOptionsUseCaseTest {
 
   private VehicleOptionsUseCase vehicleOptionsUseCase;
 

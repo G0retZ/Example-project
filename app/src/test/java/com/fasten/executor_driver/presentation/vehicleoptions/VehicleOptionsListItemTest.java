@@ -9,7 +9,7 @@ import com.fasten.executor_driver.entity.OptionNumeric;
 import org.junit.Before;
 import org.junit.Test;
 
-public class OptionsListItemTest {
+public class VehicleOptionsListItemTest {
 
   private VehicleOptionsListItem vehicleOptionsListItem;
 
