@@ -62,7 +62,7 @@ public class OnlineButtonViewModelImpl extends ViewModel implements OnlineButton
       return;
     }
     viewStateLiveData.postValue(new OnlineButtonViewStateHold());
-    Disposable disposable = vehiclesAndOptionsUseCase.loadVehicles()
+    Disposable disposable = vehiclesAndOptionsUseCase.loadVehiclesAndOptions()
         .subscribeOn(Schedulers.single())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(

@@ -1,6 +1,7 @@
 package com.fasten.executor_driver.di;
 
 import android.support.annotation.NonNull;
+import com.fasten.executor_driver.entity.Option;
 import com.fasten.executor_driver.entity.Vehicle;
 import com.fasten.executor_driver.interactor.DataSharer;
 import com.fasten.executor_driver.interactor.auth.LoginSharer;
@@ -12,6 +13,7 @@ import com.fasten.executor_driver.interactor.auth.SmsUseCase;
 import com.fasten.executor_driver.interactor.auth.SmsUseCaseImpl;
 import com.fasten.executor_driver.interactor.map.HeatMapUseCase;
 import com.fasten.executor_driver.interactor.map.HeatMapUseCaseImpl;
+import com.fasten.executor_driver.interactor.vehicle.DriverOptionsSharer;
 import com.fasten.executor_driver.interactor.vehicle.LastUsedVehicleSharer;
 import com.fasten.executor_driver.interactor.vehicle.SelectedVehicleUseCase;
 import com.fasten.executor_driver.interactor.vehicle.SelectedVehicleUseCaseImpl;
@@ -88,6 +90,14 @@ class UseCaseModule {
   @Named("vehiclesSharer")
   DataSharer<List<Vehicle>> provideVehiclesSharer(@NonNull VehiclesSharer vehiclesSharer) {
     return vehiclesSharer;
+  }
+
+  @Provides
+  @Singleton
+  @Named("driverOptionsSharer")
+  DataSharer<List<Option>> provideDriverOptionsSharer(
+      @NonNull DriverOptionsSharer driverOptionsSharer) {
+    return driverOptionsSharer;
   }
 
   @Provides

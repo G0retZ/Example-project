@@ -14,5 +14,5 @@ public interface VehiclesAndOptionsUseCase {
    * @return {@link Completable} результат запроса
    */
   @NonNull
-  Completable loadVehicles();
+  Completable loadVehiclesAndOptions();
 }
