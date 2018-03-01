@@ -13,9 +13,9 @@ import com.fasten.executor_driver.interactor.auth.SmsUseCase;
 import com.fasten.executor_driver.interactor.auth.SmsUseCaseImpl;
 import com.fasten.executor_driver.interactor.map.HeatMapUseCase;
 import com.fasten.executor_driver.interactor.map.HeatMapUseCaseImpl;
-import com.fasten.executor_driver.interactor.vehicle.DriverOptionsSharer;
 import com.fasten.executor_driver.interactor.services.ServicesUseCase;
 import com.fasten.executor_driver.interactor.services.ServicesUseCaseImpl;
+import com.fasten.executor_driver.interactor.vehicle.DriverOptionsSharer;
 import com.fasten.executor_driver.interactor.vehicle.LastUsedVehicleSharer;
 import com.fasten.executor_driver.interactor.vehicle.SelectedVehicleUseCase;
 import com.fasten.executor_driver.interactor.vehicle.SelectedVehicleUseCaseImpl;
@@ -57,8 +57,9 @@ class UseCaseModule {
   }
 
   @Provides
-  VehiclesAndOptionsUseCase provideOnlineUseCase(VehiclesAndOptionsUseCaseImpl onlineUseCase) {
-    return onlineUseCase;
+  VehiclesAndOptionsUseCase provideOnlineUseCase(
+      VehiclesAndOptionsUseCaseImpl vehiclesAndOptionsUseCase) {
+    return vehiclesAndOptionsUseCase;
   }
 
   @Provides
