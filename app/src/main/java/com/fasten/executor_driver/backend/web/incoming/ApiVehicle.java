@@ -36,9 +36,8 @@ public class ApiVehicle {
   public ApiVehicle() {
   }
 
-  public ApiVehicle(long id, @Nullable String markName,
-      @Nullable String modelName, @Nullable String licensePlate,
-      @Nullable String color, boolean busy,
+  public ApiVehicle(long id, @Nullable String markName, @Nullable String modelName,
+      @Nullable String licensePlate, @Nullable String color, boolean busy,
       List<ApiOptionItem> vehicleOptionItems) {
     this.id = id;
     this.markName = markName;

@@ -33,6 +33,14 @@ public interface Option<V> {
   String getName();
 
   /**
+   * Возвращает детальное описание опции.
+   *
+   * @return детальное описание опции.
+   */
+  @NonNull
+  String getDescription();
+
+  /**
    * Возвращает изменяемость опции.
    *
    * @return true если опция доступна для изменения, false в иных случаях.

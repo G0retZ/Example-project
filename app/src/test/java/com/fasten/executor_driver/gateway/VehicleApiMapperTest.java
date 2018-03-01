@@ -8,9 +8,9 @@ import static org.mockito.Mockito.when;
 
 import com.fasten.executor_driver.backend.web.incoming.ApiOptionItem;
 import com.fasten.executor_driver.backend.web.incoming.ApiVehicle;
+import com.fasten.executor_driver.entity.Option;
 import com.fasten.executor_driver.entity.OptionBoolean;
 import com.fasten.executor_driver.entity.Vehicle;
-import com.fasten.executor_driver.entity.Option;
 import java.util.ArrayList;
 import java.util.Arrays;
 import org.junit.Before;
@@ -30,7 +30,7 @@ public class VehicleApiMapperTest {
   @Before
   public void setUp() throws Exception {
     when(vehicleOptionMapper.map(any(ApiOptionItem.class)))
-        .thenReturn(new OptionBoolean(0, "n", false, false));
+        .thenReturn(new OptionBoolean(0, "n", "d", false, false));
     mapper = new VehicleApiMapper(vehicleOptionMapper);
   }
 
@@ -50,11 +50,11 @@ public class VehicleApiMapperTest {
         "color",
         false,
         Arrays.asList(
-            new ApiOptionItem(324, "option0", true, false, "345", -5, 123),
-            new ApiOptionItem(32, "option1", true, false, "34", null, null),
-            new ApiOptionItem(31, "option2", true, true, "1", 50, 2100),
-            new ApiOptionItem(523, "option3", false, true, "false", null, null),
-            new ApiOptionItem(42, "option4", false, false, "true", null, null)
+            new ApiOptionItem(324, "option0", "description0", true, false, "345", -5, 123),
+            new ApiOptionItem(32, "option1", "description1", true, false, "34", null, null),
+            new ApiOptionItem(31, "option2", "description2", true, true, "1", 50, 2100),
+            new ApiOptionItem(523, "option3", "description3", false, true, "false", null, null),
+            new ApiOptionItem(42, "option4", "description4", false, false, "true", null, null)
         )
     );
 
@@ -69,11 +69,11 @@ public class VehicleApiMapperTest {
     assertEquals(vehicle.getColor(), "color");
     assertFalse(vehicle.isBusy());
     assertEquals(vehicle.getOptions(), Arrays.<Option>asList(
-        new OptionBoolean(0, "n", false, false),
-        new OptionBoolean(0, "n", false, false),
-        new OptionBoolean(0, "n", false, false),
-        new OptionBoolean(0, "n", false, false),
-        new OptionBoolean(0, "n", false, false)
+        new OptionBoolean(0, "n", "d", false, false),
+        new OptionBoolean(0, "n", "d", false, false),
+        new OptionBoolean(0, "n", "d", false, false),
+        new OptionBoolean(0, "n", "d", false, false),
+        new OptionBoolean(0, "n", "d", false, false)
     ));
   }
 

@@ -23,10 +23,10 @@ public class ApiVehicleTest {
         "color",
         false,
         Arrays.asList(
-            new ApiOptionItem(324, "option1", true, false, "value1", -5, 123),
-            new ApiOptionItem(31, "option2", true, true, "value2", 50, 2100),
-            new ApiOptionItem(523, "option3", false, true, "value3", null, null),
-            new ApiOptionItem(42, "option4", false, false, "value4", null, null)
+            new ApiOptionItem(324, "option1", "description1", true, false, "value1", -5, 123),
+            new ApiOptionItem(31, "option2", "description2", true, true, "value2", 50, 2100),
+            new ApiOptionItem(523, "option3", "description3", false, true, "value3", null, null),
+            new ApiOptionItem(42, "option4", "description4", false, false, "value4", null, null)
         )
     );
   }
@@ -40,10 +40,10 @@ public class ApiVehicleTest {
     assertEquals(apiVehicle.getColor(), "color");
     assertFalse(apiVehicle.isBusy());
     assertEquals(apiVehicle.getVehicleOptionItems(), Arrays.asList(
-        new ApiOptionItem(324, "option1", true, false, "value1", -5, 123),
-        new ApiOptionItem(31, "option2", true, true, "value2", 50, 2100),
-        new ApiOptionItem(523, "option3", false, true, "value3", null, null),
-        new ApiOptionItem(42, "option4", false, false, "value4", null, null)
+        new ApiOptionItem(324, "option1", "description1", true, false, "value1", -5, 123),
+        new ApiOptionItem(31, "option2", "description2", true, true, "value2", 50, 2100),
+        new ApiOptionItem(523, "option3", "description3", false, true, "value3", null, null),
+        new ApiOptionItem(42, "option4", "description4", false, false, "value4", null, null)
     ));
   }
 
@@ -59,10 +59,11 @@ public class ApiVehicleTest {
             "color",
             false,
             Arrays.asList(
-                new ApiOptionItem(324, "option1", true, false, "value1", -5, 123),
-                new ApiOptionItem(31, "option2", true, true, "value2", 50, 2100),
-                new ApiOptionItem(523, "option3", false, true, "value3", null, null),
-                new ApiOptionItem(42, "option4", false, false, "value4", null, null)
+                new ApiOptionItem(324, "option1", "description1", true, false, "value1", -5, 123),
+                new ApiOptionItem(31, "option2", "description2", true, true, "value2", 50, 2100),
+                new ApiOptionItem(523, "option3", "description3", false, true, "value3", null,
+                    null),
+                new ApiOptionItem(42, "option4", "description4", false, false, "value4", null, null)
             )
         )
     );
@@ -75,10 +76,11 @@ public class ApiVehicleTest {
             "color",
             false,
             Arrays.asList(
-                new ApiOptionItem(324, "option1", true, false, "value1", -5, 123),
-                new ApiOptionItem(31, "option2", true, true, "value2", 50, 2100),
-                new ApiOptionItem(523, "option3", false, true, "value3", null, null),
-                new ApiOptionItem(42, "option4", false, false, "value4", null, null)
+                new ApiOptionItem(324, "option1", "description1", true, false, "value1", -5, 123),
+                new ApiOptionItem(31, "option2", "description2", true, true, "value2", 50, 2100),
+                new ApiOptionItem(523, "option3", "description3", false, true, "value3", null,
+                    null),
+                new ApiOptionItem(42, "option4", "description4", false, false, "value4", null, null)
             )
         )
     );
@@ -91,10 +93,11 @@ public class ApiVehicleTest {
             "color",
             false,
             Arrays.asList(
-                new ApiOptionItem(324, "option1", true, false, "value1", -5, 123),
-                new ApiOptionItem(31, "option2", true, true, "value2", 50, 2100),
-                new ApiOptionItem(523, "option3", false, true, "value3", null, null),
-                new ApiOptionItem(42, "option4", false, false, "value4", null, null)
+                new ApiOptionItem(324, "option1", "description1", true, false, "value1", -5, 123),
+                new ApiOptionItem(31, "option2", "description2", true, true, "value2", 50, 2100),
+                new ApiOptionItem(523, "option3", "description3", false, true, "value3", null,
+                    null),
+                new ApiOptionItem(42, "option4", "description4", false, false, "value4", null, null)
             )
         )
     );
@@ -107,10 +110,11 @@ public class ApiVehicleTest {
             "color",
             false,
             Arrays.asList(
-                new ApiOptionItem(324, "option1", true, false, "value1", -5, 123),
-                new ApiOptionItem(31, "option2", true, true, "value2", 50, 2100),
-                new ApiOptionItem(523, "option3", false, true, "value3", null, null),
-                new ApiOptionItem(42, "option4", false, false, "value4", null, null)
+                new ApiOptionItem(324, "option1", "description1", true, false, "value1", -5, 123),
+                new ApiOptionItem(31, "option2", "description2", true, true, "value2", 50, 2100),
+                new ApiOptionItem(523, "option3", "description3", false, true, "value3", null,
+                    null),
+                new ApiOptionItem(42, "option4", "description4", false, false, "value4", null, null)
             )
         )
     );
@@ -123,10 +127,11 @@ public class ApiVehicleTest {
             "color",
             false,
             Arrays.asList(
-                new ApiOptionItem(324, "option1", true, false, "value1", -5, 123),
-                new ApiOptionItem(31, "option2", true, true, "value2", 50, 2100),
-                new ApiOptionItem(523, "option3", false, true, "value3", null, null),
-                new ApiOptionItem(42, "option4", false, false, "value4", null, null)
+                new ApiOptionItem(324, "option1", "description1", true, false, "value1", -5, 123),
+                new ApiOptionItem(31, "option2", "description2", true, true, "value2", 50, 2100),
+                new ApiOptionItem(523, "option3", "description3", false, true, "value3", null,
+                    null),
+                new ApiOptionItem(42, "option4", "description4", false, false, "value4", null, null)
             )
         )
     );
@@ -139,10 +144,11 @@ public class ApiVehicleTest {
             "color",
             false,
             Arrays.asList(
-                new ApiOptionItem(324, "option1", true, false, "value1", -5, 123),
-                new ApiOptionItem(31, "option2", true, true, "value2", 50, 2100),
-                new ApiOptionItem(523, "option3", false, true, "value3", null, null),
-                new ApiOptionItem(42, "option4", false, false, "value4", null, null)
+                new ApiOptionItem(324, "option1", "description1", true, false, "value1", -5, 123),
+                new ApiOptionItem(31, "option2", "description2", true, true, "value2", 50, 2100),
+                new ApiOptionItem(523, "option3", "description3", false, true, "value3", null,
+                    null),
+                new ApiOptionItem(42, "option4", "description4", false, false, "value4", null, null)
             )
         )
     );
@@ -155,10 +161,11 @@ public class ApiVehicleTest {
             "color",
             false,
             Arrays.asList(
-                new ApiOptionItem(324, "option1", true, false, "value1", -5, 123),
-                new ApiOptionItem(31, "option2", true, true, "value2", 50, 2100),
-                new ApiOptionItem(523, "option3", false, true, "value3", null, null),
-                new ApiOptionItem(42, "option4", false, false, "value4", null, null)
+                new ApiOptionItem(324, "option1", "description1", true, false, "value1", -5, 123),
+                new ApiOptionItem(31, "option2", "description2", true, true, "value2", 50, 2100),
+                new ApiOptionItem(523, "option3", "description3", false, true, "value3", null,
+                    null),
+                new ApiOptionItem(42, "option4", "description4", false, false, "value4", null, null)
             )
         )
     );
@@ -171,10 +178,11 @@ public class ApiVehicleTest {
             "color",
             false,
             Arrays.asList(
-                new ApiOptionItem(324, "option1", true, false, "value1", -5, 123),
-                new ApiOptionItem(31, "option2", true, true, "value2", 50, 2100),
-                new ApiOptionItem(523, "option3", false, true, "value3", null, null),
-                new ApiOptionItem(42, "option4", false, false, "value4", null, null)
+                new ApiOptionItem(324, "option1", "description1", true, false, "value1", -5, 123),
+                new ApiOptionItem(31, "option2", "description2", true, true, "value2", 50, 2100),
+                new ApiOptionItem(523, "option3", "description3", false, true, "value3", null,
+                    null),
+                new ApiOptionItem(42, "option4", "description4", false, false, "value4", null, null)
             )
         )
     );
@@ -187,10 +195,11 @@ public class ApiVehicleTest {
             null,
             false,
             Arrays.asList(
-                new ApiOptionItem(324, "option1", true, false, "value1", -5, 123),
-                new ApiOptionItem(31, "option2", true, true, "value2", 50, 2100),
-                new ApiOptionItem(523, "option3", false, true, "value3", null, null),
-                new ApiOptionItem(42, "option4", false, false, "value4", null, null)
+                new ApiOptionItem(324, "option1", "description1", true, false, "value1", -5, 123),
+                new ApiOptionItem(31, "option2", "description2", true, true, "value2", 50, 2100),
+                new ApiOptionItem(523, "option3", "description3", false, true, "value3", null,
+                    null),
+                new ApiOptionItem(42, "option4", "description4", false, false, "value4", null, null)
             )
         )
     );
@@ -203,10 +212,11 @@ public class ApiVehicleTest {
             "colors",
             false,
             Arrays.asList(
-                new ApiOptionItem(324, "option1", true, false, "value1", -5, 123),
-                new ApiOptionItem(31, "option2", true, true, "value2", 50, 2100),
-                new ApiOptionItem(523, "option3", false, true, "value3", null, null),
-                new ApiOptionItem(42, "option4", false, false, "value4", null, null)
+                new ApiOptionItem(324, "option1", "description1", true, false, "value1", -5, 123),
+                new ApiOptionItem(31, "option2", "description2", true, true, "value2", 50, 2100),
+                new ApiOptionItem(523, "option3", "description3", false, true, "value3", null,
+                    null),
+                new ApiOptionItem(42, "option4", "description4", false, false, "value4", null, null)
             )
         )
     );
@@ -219,10 +229,11 @@ public class ApiVehicleTest {
             "color",
             true,
             Arrays.asList(
-                new ApiOptionItem(324, "option1", true, false, "value1", -5, 123),
-                new ApiOptionItem(31, "option2", true, true, "value2", 50, 2100),
-                new ApiOptionItem(523, "option3", false, true, "value3", null, null),
-                new ApiOptionItem(42, "option4", false, false, "value4", null, null)
+                new ApiOptionItem(324, "option1", "description1", true, false, "value1", -5, 123),
+                new ApiOptionItem(31, "option2", "description2", true, true, "value2", 50, 2100),
+                new ApiOptionItem(523, "option3", "description3", false, true, "value3", null,
+                    null),
+                new ApiOptionItem(42, "option4", "description4", false, false, "value4", null, null)
             )
         )
     );
@@ -257,9 +268,10 @@ public class ApiVehicleTest {
             "color",
             false,
             Arrays.asList(
-                new ApiOptionItem(31, "option2", true, true, "value2", 50, 2100),
-                new ApiOptionItem(523, "option3", false, true, "value3", null, null),
-                new ApiOptionItem(42, "option4", false, false, "value4", null, null)
+                new ApiOptionItem(31, "option2", "description2", true, true, "value2", 50, 2100),
+                new ApiOptionItem(523, "option3", "description3", false, true, "value3", null,
+                    null),
+                new ApiOptionItem(42, "option4", "description4", false, false, "value4", null, null)
             )
         )
     );
@@ -272,10 +284,11 @@ public class ApiVehicleTest {
             "color",
             false,
             Arrays.asList(
-                new ApiOptionItem(324, "option1", true, false, "value1", -5, 123),
-                new ApiOptionItem(31, "option2", true, true, "value2", 50, 210),
-                new ApiOptionItem(523, "option3", false, true, "value3", null, null),
-                new ApiOptionItem(42, "option4", false, false, "value4", null, null)
+                new ApiOptionItem(324, "option1", "description1", true, false, "value1", -5, 123),
+                new ApiOptionItem(31, "option2", "description2", true, true, "value2", 50, 210),
+                new ApiOptionItem(523, "option3", "description3", false, true, "value3", null,
+                    null),
+                new ApiOptionItem(42, "option4", "description4", false, false, "value4", null, null)
             )
         )
     );

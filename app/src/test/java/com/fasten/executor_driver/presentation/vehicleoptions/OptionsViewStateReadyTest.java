@@ -27,16 +27,16 @@ public class OptionsViewStateReadyTest {
   public void setUp() throws Exception {
     viewState = new VehicleOptionsViewStateReady(Arrays.asList(
         new VehicleOptionsListItem<>(
-            new OptionBoolean(1, "name", true, false)
+            new OptionBoolean(1, "name", "description", true, false)
         ),
         new VehicleOptionsListItem<>(
-            new OptionBoolean(2, "emacs", true, true)
+            new OptionBoolean(2, "emacs", "description", true, true)
         ),
         new VehicleOptionsListItem<>(
-            new OptionNumeric(3, "names", true, 5, 0, 10)
+            new OptionNumeric(3, "names", "description", true, 5, 0, 10)
         ),
         new VehicleOptionsListItem<>(
-            new OptionNumeric(4, "nam", false, 1, -1, 2)
+            new OptionNumeric(4, "nam", "description", false, 1, -1, 2)
         )
     ));
   }
@@ -53,16 +53,16 @@ public class OptionsViewStateReadyTest {
     verify(codeViewActions).showVehicleOptionsListErrorMessage(false);
     verify(codeViewActions).setVehicleOptionsListItems(Arrays.asList(
         new VehicleOptionsListItem<>(
-            new OptionBoolean(1, "name", true, false)
+            new OptionBoolean(1, "name", "description", true, false)
         ),
         new VehicleOptionsListItem<>(
-            new OptionBoolean(2, "emacs", true, true)
+            new OptionBoolean(2, "emacs", "description", true, true)
         ),
         new VehicleOptionsListItem<>(
-            new OptionNumeric(3, "names", true, 5, 0, 10)
+            new OptionNumeric(3, "names", "description", true, 5, 0, 10)
         ),
         new VehicleOptionsListItem<>(
-            new OptionNumeric(4, "nam", false, 1, -1, 2)
+            new OptionNumeric(4, "nam", "description", false, 1, -1, 2)
         )
     ));
     verifyNoMoreInteractions(codeViewActions);
@@ -72,41 +72,41 @@ public class OptionsViewStateReadyTest {
   public void testEquals() throws Exception {
     assertEquals(viewState, new VehicleOptionsViewStateReady(Arrays.asList(
         new VehicleOptionsListItem<>(
-            new OptionBoolean(1, "name", true, false)
+            new OptionBoolean(1, "name", "description", true, false)
         ),
         new VehicleOptionsListItem<>(
-            new OptionBoolean(2, "emacs", true, true)
+            new OptionBoolean(2, "emacs", "description", true, true)
         ),
         new VehicleOptionsListItem<>(
-            new OptionNumeric(3, "names", true, 5, 0, 10)
+            new OptionNumeric(3, "names", "description", true, 5, 0, 10)
         ),
         new VehicleOptionsListItem<>(
-            new OptionNumeric(4, "nam", false, 1, -1, 2)
+            new OptionNumeric(4, "nam", "description", false, 1, -1, 2)
         )
     )));
     assertNotEquals(viewState, new VehicleOptionsViewStateReady(Arrays.asList(
         new VehicleOptionsListItem<>(
-            new OptionBoolean(2, "emacs", true, true)
+            new OptionBoolean(2, "emacs", "description", true, true)
         ),
         new VehicleOptionsListItem<>(
-            new OptionNumeric(3, "names", true, 5, 0, 10)
+            new OptionNumeric(3, "names", "description", true, 5, 0, 10)
         ),
         new VehicleOptionsListItem<>(
-            new OptionNumeric(4, "nam", false, 1, -1, 2)
+            new OptionNumeric(4, "nam", "description", false, 1, -1, 2)
         )
     )));
     assertNotEquals(viewState, new VehicleOptionsViewStateReady(Arrays.asList(
         new VehicleOptionsListItem<>(
-            new OptionBoolean(1, "name", true, false)
+            new OptionBoolean(1, "name", "description", true, false)
         ),
         new VehicleOptionsListItem<>(
-            new OptionBoolean(2, "emacs", true, true)
+            new OptionBoolean(2, "emacs", "description", true, true)
         ),
         new VehicleOptionsListItem<>(
-            new OptionNumeric(3, "names", true, 5, 0, 10)
+            new OptionNumeric(3, "names", "description", true, 5, 0, 10)
         ),
         new VehicleOptionsListItem<>(
-            new OptionNumeric(4, "humus", false, 1, -1, 2)
+            new OptionNumeric(4, "humus", "description", false, 1, -1, 2)
         )
     )));
     assertNotEquals(viewState, new VehicleOptionsViewStateReady(new ArrayList<>()));

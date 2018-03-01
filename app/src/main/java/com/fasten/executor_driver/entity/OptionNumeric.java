@@ -10,6 +10,8 @@ public class OptionNumeric implements Option<Integer> {
   private final long id;
   @NonNull
   private final String name;
+  @NonNull
+  private final String description;
   private final boolean variable;
   @NonNull
   private final Integer value;
@@ -18,10 +20,12 @@ public class OptionNumeric implements Option<Integer> {
   @NonNull
   private final Integer maxValue;
 
-  public OptionNumeric(long id, @NonNull String name, boolean variable, @NonNull Integer value,
+  public OptionNumeric(long id, @NonNull String name, @NonNull String description,
+      boolean variable, @NonNull Integer value,
       int minValue, int maxValue) {
     this.id = id;
     this.name = name;
+    this.description = description;
     this.variable = variable;
     this.value = value;
     this.minValue = minValue;
@@ -31,7 +35,7 @@ public class OptionNumeric implements Option<Integer> {
   @Override
   @NonNull
   public OptionNumeric setValue(@NonNull Integer value) {
-    return new OptionNumeric(getId(), getName(), isVariable(), value, getMinValue(), getMaxValue());
+    return new OptionNumeric(id, name, description, variable, value, minValue, maxValue);
   }
 
   @Override
@@ -43,6 +47,12 @@ public class OptionNumeric implements Option<Integer> {
   @Override
   public String getName() {
     return name;
+  }
+
+  @NonNull
+  @Override
+  public String getDescription() {
+    return description;
   }
 
   @Override
@@ -73,6 +83,7 @@ public class OptionNumeric implements Option<Integer> {
     return "OptionNumeric{" +
         "id=" + id +
         ", name='" + name + '\'' +
+        ", description='" + description + '\'' +
         ", variable=" + variable +
         ", value=" + value +
         ", minValue=" + minValue +
@@ -101,6 +112,9 @@ public class OptionNumeric implements Option<Integer> {
     if (!name.equals(that.name)) {
       return false;
     }
+    if (!description.equals(that.description)) {
+      return false;
+    }
     if (!value.equals(that.value)) {
       return false;
     }
@@ -114,6 +128,7 @@ public class OptionNumeric implements Option<Integer> {
   public int hashCode() {
     int result = (int) (id ^ (id >>> 32));
     result = 31 * result + name.hashCode();
+    result = 31 * result + description.hashCode();
     result = 31 * result + (variable ? 1 : 0);
     result = 31 * result + value.hashCode();
     result = 31 * result + minValue.hashCode();

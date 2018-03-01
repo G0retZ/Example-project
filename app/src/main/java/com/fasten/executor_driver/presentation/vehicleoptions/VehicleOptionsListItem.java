@@ -34,6 +34,11 @@ public class VehicleOptionsListItem<V> {
     return option.getName();
   }
 
+  @NonNull
+  public String getDescription() {
+    return option.getDescription();
+  }
+
   @LayoutRes
   public int getLayoutType() {
     if (option instanceof OptionNumeric) {

@@ -29,7 +29,7 @@ public class OptionApiMapperTest {
   @Test
   public void mappingStaticBooleanWithLimitsSuccess() throws Exception {
     // Дано:
-    ApiOptionItem apiOptionItem = new ApiOptionItem(324, "name", false, false,
+    ApiOptionItem apiOptionItem = new ApiOptionItem(324, "name", "description", false, false,
         "true", -5, 123);
 
     // Действие:
@@ -39,6 +39,7 @@ public class OptionApiMapperTest {
     assertTrue(option instanceof OptionBoolean);
     assertEquals(option.getId(), 324);
     assertEquals(option.getName(), "name");
+    assertEquals(option.getDescription(), "description");
     assertFalse(option.isVariable());
     assertEquals(option.getValue(), true);
     assertEquals(option.getMinValue(), false);
@@ -54,7 +55,7 @@ public class OptionApiMapperTest {
   @Test
   public void mappingStaticBooleanWithoutLimitsSuccess() throws Exception {
     // Дано:
-    ApiOptionItem apiOptionItem = new ApiOptionItem(454, "name", false, false,
+    ApiOptionItem apiOptionItem = new ApiOptionItem(454, "name", "description", false, false,
         "false", null, null);
 
     // Действие:
@@ -64,6 +65,7 @@ public class OptionApiMapperTest {
     assertTrue(option instanceof OptionBoolean);
     assertEquals(option.getId(), 454);
     assertEquals(option.getName(), "name");
+    assertEquals(option.getDescription(), "description");
     assertFalse(option.isVariable());
     assertEquals(option.getValue(), false);
     assertEquals(option.getMinValue(), false);
@@ -79,7 +81,7 @@ public class OptionApiMapperTest {
   @Test
   public void mappingDynamicBooleanWithLimitsSuccess() throws Exception {
     // Дано:
-    ApiOptionItem apiOptionItem = new ApiOptionItem(1, "name", false, true,
+    ApiOptionItem apiOptionItem = new ApiOptionItem(1, "name", "description", false, true,
         "false", 50, 300);
 
     // Действие:
@@ -89,6 +91,7 @@ public class OptionApiMapperTest {
     assertTrue(option instanceof OptionBoolean);
     assertEquals(option.getId(), 1);
     assertEquals(option.getName(), "name");
+    assertEquals(option.getDescription(), "description");
     assertTrue(option.isVariable());
     assertEquals(option.getValue(), false);
     assertEquals(option.getMinValue(), false);
@@ -104,7 +107,7 @@ public class OptionApiMapperTest {
   @Test
   public void mappingDynamicBooleanWithoutLimitsSuccess() throws Exception {
     // Дано:
-    ApiOptionItem apiOptionItem = new ApiOptionItem(1, "name", false, true,
+    ApiOptionItem apiOptionItem = new ApiOptionItem(1, "name", "description", false, true,
         "true", null, null);
 
     // Действие:
@@ -114,6 +117,7 @@ public class OptionApiMapperTest {
     assertTrue(option instanceof OptionBoolean);
     assertEquals(option.getId(), 1);
     assertEquals(option.getName(), "name");
+    assertEquals(option.getDescription(), "description");
     assertTrue(option.isVariable());
     assertEquals(option.getValue(), true);
     assertEquals(option.getMinValue(), false);
@@ -129,7 +133,7 @@ public class OptionApiMapperTest {
   @Test
   public void mappingStaticNumericWithLimitsSuccess() throws Exception {
     // Дано:
-    ApiOptionItem apiOptionItem = new ApiOptionItem(324, "name", true, false,
+    ApiOptionItem apiOptionItem = new ApiOptionItem(324, "name", "description", true, false,
         "34", -5, 123);
 
     // Действие:
@@ -139,6 +143,7 @@ public class OptionApiMapperTest {
     assertTrue(option instanceof OptionNumeric);
     assertEquals(option.getId(), 324);
     assertEquals(option.getName(), "name");
+    assertEquals(option.getDescription(), "description");
     assertFalse(option.isVariable());
     assertEquals(option.getValue(), 34);
     assertEquals(option.getMinValue(), -5);
@@ -154,7 +159,7 @@ public class OptionApiMapperTest {
   @Test
   public void mappingDynamicNumericWithLimitsSuccess() throws Exception {
     // Дано:
-    ApiOptionItem apiOptionItem = new ApiOptionItem(1, "name", true, true,
+    ApiOptionItem apiOptionItem = new ApiOptionItem(1, "name", "description", true, true,
         "54", 50, 300);
 
     // Действие:
@@ -164,6 +169,7 @@ public class OptionApiMapperTest {
     assertTrue(option instanceof OptionNumeric);
     assertEquals(option.getId(), 1);
     assertEquals(option.getName(), "name");
+    assertEquals(option.getDescription(), "description");
     assertTrue(option.isVariable());
     assertEquals(option.getValue(), 54);
     assertEquals(option.getMinValue(), 50);
@@ -179,7 +185,7 @@ public class OptionApiMapperTest {
   @Test
   public void mappingStaticNumericWithoutLimitsSuccess() throws Exception {
     // Дано:
-    ApiOptionItem apiOptionItem = new ApiOptionItem(454, "name", true, false,
+    ApiOptionItem apiOptionItem = new ApiOptionItem(454, "name", "description", true, false,
         "-345", null, null);
 
     // Действие:
@@ -189,6 +195,7 @@ public class OptionApiMapperTest {
     assertTrue(option instanceof OptionNumeric);
     assertEquals(option.getId(), 454);
     assertEquals(option.getName(), "name");
+    assertEquals(option.getDescription(), "description");
     assertFalse(option.isVariable());
     assertEquals(option.getValue(), -345);
     assertEquals(option.getMaxValue(), 0);
@@ -203,7 +210,7 @@ public class OptionApiMapperTest {
   @Test(expected = DataMappingException.class)
   public void mappingDynamicNumericWithWrongLimitsFail() throws Exception {
     // Дано:
-    ApiOptionItem apiOptionItem = new ApiOptionItem(324, "name", true, true,
+    ApiOptionItem apiOptionItem = new ApiOptionItem(324, "name", "description", true, true,
         "-345", 50, -300);
 
     // Действие:
@@ -218,7 +225,7 @@ public class OptionApiMapperTest {
   @Test(expected = DataMappingException.class)
   public void mappingDynamicNumericWithoutMinLimitFail() throws Exception {
     // Дано:
-    ApiOptionItem apiOptionItem = new ApiOptionItem(324, "name", true, true,
+    ApiOptionItem apiOptionItem = new ApiOptionItem(324, "name", "description", true, true,
         "-345", null, 200);
 
     // Действие:
@@ -233,7 +240,7 @@ public class OptionApiMapperTest {
   @Test(expected = DataMappingException.class)
   public void mappingDynamicNumericWithoutMaxLimitFail() throws Exception {
     // Дано:
-    ApiOptionItem apiOptionItem = new ApiOptionItem(324, "name", true, true,
+    ApiOptionItem apiOptionItem = new ApiOptionItem(324, "name", "description", true, true,
         "-345", 5, null);
 
     // Действие:
@@ -248,7 +255,7 @@ public class OptionApiMapperTest {
   @Test(expected = DataMappingException.class)
   public void mappingDynamicNumericWithoutLimitsFail() throws Exception {
     // Дано:
-    ApiOptionItem apiOptionItem = new ApiOptionItem(324, "name", true, true,
+    ApiOptionItem apiOptionItem = new ApiOptionItem(324, "name", "description", true, true,
         "-345", null, null);
 
     // Действие:
@@ -256,14 +263,15 @@ public class OptionApiMapperTest {
   }
 
   /**
-   * Должен дать ошибку, если неизменяемый двоичный входной объект содержит не распознаваемые данные.
+   * Должен дать ошибку, если неизменяемый двоичный входной объект содержит не распознаваемые
+   * данные.
    *
    * @throws Exception ошибка
    */
   @Test(expected = DataMappingException.class)
   public void mappingStaticBooleanWithJunkFail() throws Exception {
     // Дано:
-    ApiOptionItem apiOptionItem = new ApiOptionItem(324, "name", false, false,
+    ApiOptionItem apiOptionItem = new ApiOptionItem(324, "name", "description", false, false,
         "3k2i", 50, 300);
 
     // Действие:
@@ -278,7 +286,7 @@ public class OptionApiMapperTest {
   @Test(expected = DataMappingException.class)
   public void mappingDynamicBooleanWithJunkFail() throws Exception {
     // Дано:
-    ApiOptionItem apiOptionItem = new ApiOptionItem(324, "name", false, true,
+    ApiOptionItem apiOptionItem = new ApiOptionItem(324, "name", "description", false, true,
         "3k2i", 50, 300);
 
     // Действие:
@@ -286,14 +294,15 @@ public class OptionApiMapperTest {
   }
 
   /**
-   * Должен дать ошибку, если неизменяемый числовой входной объект содержит не распознаваемые данные.
+   * Должен дать ошибку, если неизменяемый числовой входной объект содержит не распознаваемые
+   * данные.
    *
    * @throws Exception ошибка
    */
   @Test(expected = DataMappingException.class)
   public void mappingStaticNumericWithJunkFail() throws Exception {
     // Дано:
-    ApiOptionItem apiOptionItem = new ApiOptionItem(324, "name", true, false,
+    ApiOptionItem apiOptionItem = new ApiOptionItem(324, "name", "description", true, false,
         "3k2i", 50, 300);
 
     // Действие:
@@ -308,7 +317,7 @@ public class OptionApiMapperTest {
   @Test(expected = DataMappingException.class)
   public void mappingDynamicNumericWithJunkFail() throws Exception {
     // Дано:
-    ApiOptionItem apiOptionItem = new ApiOptionItem(324, "name", true, true,
+    ApiOptionItem apiOptionItem = new ApiOptionItem(324, "name", "description", true, true,
         "3k2i", 50, 300);
 
     // Действие:
@@ -323,7 +332,7 @@ public class OptionApiMapperTest {
   @Test(expected = DataMappingException.class)
   public void mappingStaticNumericWithFloatFail() throws Exception {
     // Дано:
-    ApiOptionItem apiOptionItem = new ApiOptionItem(324, "name", true, false,
+    ApiOptionItem apiOptionItem = new ApiOptionItem(324, "name", "description", true, false,
         "3.2", 50, 300);
 
     // Действие:
@@ -338,7 +347,7 @@ public class OptionApiMapperTest {
   @Test(expected = DataMappingException.class)
   public void mappingDynamicNumericWithFloatFail() throws Exception {
     // Дано:
-    ApiOptionItem apiOptionItem = new ApiOptionItem(324, "name", true, true,
+    ApiOptionItem apiOptionItem = new ApiOptionItem(324, "name", "description", true, true,
         "3.2", 50, 300);
 
     // Действие:
@@ -353,7 +362,22 @@ public class OptionApiMapperTest {
   @Test(expected = DataMappingException.class)
   public void mappingWithoutOptionNameFail() throws Exception {
     // Дано:
-    ApiOptionItem apiOptionItem = new ApiOptionItem(324, null, true, false,
+    ApiOptionItem apiOptionItem = new ApiOptionItem(324, null, "description", true, false,
+        "34s5", -5, 123);
+
+    // Действие:
+    mapper.map(apiOptionItem);
+  }
+
+  /**
+   * Должен дать ошибку, если описание опции - нуль.
+   *
+   * @throws Exception ошибка
+   */
+  @Test(expected = DataMappingException.class)
+  public void mappingWithoutOptionDescriptionFail() throws Exception {
+    // Дано:
+    ApiOptionItem apiOptionItem = new ApiOptionItem(324, "name", null, true, false,
         "34s5", -5, 123);
 
     // Действие:
@@ -368,7 +392,7 @@ public class OptionApiMapperTest {
   @Test(expected = DataMappingException.class)
   public void mappingWithoutValueFail() throws Exception {
     // Дано:
-    ApiOptionItem apiOptionItem = new ApiOptionItem(324, "name", true, false,
+    ApiOptionItem apiOptionItem = new ApiOptionItem(324, "name", "description", true, false,
         null, -5, 123);
 
     // Действие:

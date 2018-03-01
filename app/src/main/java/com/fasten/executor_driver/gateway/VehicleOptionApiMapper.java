@@ -3,8 +3,8 @@ package com.fasten.executor_driver.gateway;
 import android.support.annotation.NonNull;
 import com.fasten.executor_driver.backend.web.incoming.ApiOptionItem;
 import com.fasten.executor_driver.entity.Option;
-import com.fasten.executor_driver.entity.OptionNumeric;
 import com.fasten.executor_driver.entity.OptionBoolean;
+import com.fasten.executor_driver.entity.OptionNumeric;
 import javax.inject.Inject;
 
 /**
@@ -24,6 +24,10 @@ public class VehicleOptionApiMapper implements Mapper<ApiOptionItem, Option> {
     }
     if (from.getName() == null) {
       throw new DataMappingException("Ошибка маппинга: имя опции не должно быть null!");
+    }
+    if (from.getDescription() == null) {
+      throw new DataMappingException(
+          "Ошибка маппинга: детальное описание опции не должно быть null!");
     }
     Option option;
     if (from.isNumeric()) {
@@ -47,6 +51,7 @@ public class VehicleOptionApiMapper implements Mapper<ApiOptionItem, Option> {
         option = new OptionNumeric(
             from.getId(),
             from.getName(),
+            from.getDescription(),
             from.isDynamic(),
             Integer.valueOf(from.getValue()),
             minValue,
@@ -62,6 +67,7 @@ public class VehicleOptionApiMapper implements Mapper<ApiOptionItem, Option> {
       option = new OptionBoolean(
           from.getId(),
           from.getName(),
+          from.getDescription(),
           from.isDynamic(),
           Boolean.valueOf(from.getValue())
       );

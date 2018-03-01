@@ -39,11 +39,9 @@ import org.mockito.junit.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class OptionsViewModelTest {
 
-  private VehicleOptionsViewModel vehicleOptionsViewModel;
-
   @Rule
   public TestRule rule = new InstantTaskExecutorRule();
-
+  private VehicleOptionsViewModel vehicleOptionsViewModel;
   @Mock
   private VehicleOptionsUseCase vehicleOptionsUseCase;
 
@@ -95,53 +93,53 @@ public class OptionsViewModelTest {
     // Действие:
     vehicleOptionsViewModel.setVehicleOptions(Arrays.asList(
         new VehicleOptionsListItem<>(
-            new OptionBoolean(1, "name", true, false)
+            new OptionBoolean(1, "name", "description", true, false)
         ),
         new VehicleOptionsListItem<>(
-            new OptionBoolean(2, "emacs", true, true)
+            new OptionBoolean(2, "emacs", "descriptions", true, true)
         )
     ));
     vehicleOptionsViewModel.setVehicleOptions(Arrays.asList(
         new VehicleOptionsListItem<>(
-            new OptionBoolean(1, "name", true, false)
+            new OptionBoolean(1, "name", "description", true, false)
         ),
         new VehicleOptionsListItem<>(
-            new OptionBoolean(2, "emacs", true, true)
+            new OptionBoolean(2, "emacs", "descriptions", true, true)
         ),
         new VehicleOptionsListItem<>(
-            new OptionNumeric(3, "names", true, 5, 0, 10)
+            new OptionNumeric(3, "names", "desc", true, 5, 0, 10)
         )
     ));
     vehicleOptionsViewModel.setVehicleOptions(Arrays.asList(
         new VehicleOptionsListItem<>(
-            new OptionBoolean(1, "name", true, false)
+            new OptionBoolean(1, "name", "description", true, false)
         ),
         new VehicleOptionsListItem<>(
-            new OptionBoolean(2, "emacs", true, true)
+            new OptionBoolean(2, "emacs", "descriptions", true, true)
         ),
         new VehicleOptionsListItem<>(
-            new OptionNumeric(3, "names", true, 5, 0, 10)
+            new OptionNumeric(3, "names", "desc", true, 5, 0, 10)
         ),
         new VehicleOptionsListItem<>(
-            new OptionNumeric(4, "nam", false, 1, -1, 2)
+            new OptionNumeric(4, "nam", "script", false, 1, -1, 2)
         )
     ));
 
     // Результат:
     verify(vehicleOptionsUseCase).setSelectedVehicleOptions(Arrays.asList(
-        new OptionBoolean(1, "name", true, false),
-        new OptionBoolean(2, "emacs", true, true)
+        new OptionBoolean(1, "name", "description", true, false),
+        new OptionBoolean(2, "emacs", "descriptions", true, true)
     ));
     verify(vehicleOptionsUseCase).setSelectedVehicleOptions(Arrays.asList(
-        new OptionBoolean(1, "name", true, false),
-        new OptionBoolean(2, "emacs", true, true),
-        new OptionNumeric(3, "names", true, 5, 0, 10)
+        new OptionBoolean(1, "name", "description", true, false),
+        new OptionBoolean(2, "emacs", "descriptions", true, true),
+        new OptionNumeric(3, "names", "desc", true, 5, 0, 10)
     ));
     verify(vehicleOptionsUseCase).setSelectedVehicleOptions(Arrays.asList(
-        new OptionBoolean(1, "name", true, false),
-        new OptionBoolean(2, "emacs", true, true),
-        new OptionNumeric(3, "names", true, 5, 0, 10),
-        new OptionNumeric(4, "nam", false, 1, -1, 2)
+        new OptionBoolean(1, "name", "description", true, false),
+        new OptionBoolean(2, "emacs", "descriptions", true, true),
+        new OptionNumeric(3, "names", "desc", true, 5, 0, 10),
+        new OptionNumeric(4, "nam", "script", false, 1, -1, 2)
     ));
     verifyNoMoreInteractions(vehicleOptionsUseCase);
   }
@@ -156,42 +154,42 @@ public class OptionsViewModelTest {
     // Действие:
     vehicleOptionsViewModel.setVehicleOptions(Arrays.asList(
         new VehicleOptionsListItem<>(
-            new OptionBoolean(1, "name", true, false)
+            new OptionBoolean(1, "name", "description", true, false)
         ),
         new VehicleOptionsListItem<>(
-            new OptionBoolean(2, "emacs", true, true)
+            new OptionBoolean(2, "emacs", "descriptions", true, true)
         )
     ));
     vehicleOptionsViewModel.setVehicleOptions(Arrays.asList(
         new VehicleOptionsListItem<>(
-            new OptionBoolean(1, "name", true, false)
+            new OptionBoolean(1, "name", "description", true, false)
         ),
         new VehicleOptionsListItem<>(
-            new OptionBoolean(2, "emacs", true, true)
+            new OptionBoolean(2, "emacs", "descriptions", true, true)
         ),
         new VehicleOptionsListItem<>(
-            new OptionNumeric(3, "names", true, 5, 0, 10)
+            new OptionNumeric(3, "names", "desc", true, 5, 0, 10)
         )
     ));
     vehicleOptionsViewModel.setVehicleOptions(Arrays.asList(
         new VehicleOptionsListItem<>(
-            new OptionBoolean(1, "name", true, false)
+            new OptionBoolean(1, "name", "description", true, false)
         ),
         new VehicleOptionsListItem<>(
-            new OptionBoolean(2, "emacs", true, true)
+            new OptionBoolean(2, "emacs", "description", true, true)
         ),
         new VehicleOptionsListItem<>(
-            new OptionNumeric(3, "names", true, 5, 0, 10)
+            new OptionNumeric(3, "names", "desc", true, 5, 0, 10)
         ),
         new VehicleOptionsListItem<>(
-            new OptionNumeric(4, "nam", false, 1, -1, 2)
+            new OptionNumeric(4, "nam", "script", false, 1, -1, 2)
         )
     ));
 
     // Результат:
     verify(vehicleOptionsUseCase, only()).setSelectedVehicleOptions(Arrays.asList(
-        new OptionBoolean(1, "name", true, false),
-        new OptionBoolean(2, "emacs", true, true)
+        new OptionBoolean(1, "name", "description", true, false),
+        new OptionBoolean(2, "emacs", "descriptions", true, true)
     ));
   }
 
@@ -230,26 +228,26 @@ public class OptionsViewModelTest {
 
     // Действие:
     publishSubject.onNext(Arrays.asList(
-        new OptionBoolean(1, "name", true, false),
-        new OptionBoolean(2, "emacs", true, true),
-        new OptionNumeric(3, "names", true, 5, 0, 10),
-        new OptionNumeric(4, "nam", true, 1, -1, 2)
+        new OptionBoolean(1, "name", "description", true, false),
+        new OptionBoolean(2, "emacs", "descriptions", true, true),
+        new OptionNumeric(3, "names", "desc", true, 5, 0, 10),
+        new OptionNumeric(4, "nam", "script", true, 1, -1, 2)
     ));
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(any(VehicleOptionsViewStateInitial.class));
     inOrder.verify(viewStateObserver).onChanged(new VehicleOptionsViewStateReady(Arrays.asList(
         new VehicleOptionsListItem<>(
-            new OptionBoolean(1, "name", true, false)
+            new OptionBoolean(1, "name", "description", true, false)
         ),
         new VehicleOptionsListItem<>(
-            new OptionBoolean(2, "emacs", true, true)
+            new OptionBoolean(2, "emacs", "descriptions", true, true)
         ),
         new VehicleOptionsListItem<>(
-            new OptionNumeric(3, "names", true, 5, 0, 10)
+            new OptionNumeric(3, "names", "desc", true, 5, 0, 10)
         ),
         new VehicleOptionsListItem<>(
-            new OptionNumeric(4, "nam", true, 1, -1, 2)
+            new OptionNumeric(4, "nam", "script", true, 1, -1, 2)
         )
     )));
     verifyNoMoreInteractions(viewStateObserver);
@@ -272,10 +270,10 @@ public class OptionsViewModelTest {
 
     // Действие:
     publishSubject.onNext(Arrays.asList(
-        new OptionBoolean(1, "name", true, false),
-        new OptionBoolean(2, "emacs", true, true),
-        new OptionNumeric(3, "names", true, 5, 0, 10),
-        new OptionNumeric(4, "nam", false, 1, -1, 2)
+        new OptionBoolean(1, "name", "description", true, false),
+        new OptionBoolean(2, "emacs", "descriptions", true, true),
+        new OptionNumeric(3, "names", "desc", true, 5, 0, 10),
+        new OptionNumeric(4, "nam", "script", true, 1, -1, 2)
     ));
     vehicleOptionsViewModel.setVehicleOptions(new ArrayList<>());
 
@@ -283,16 +281,16 @@ public class OptionsViewModelTest {
     inOrder.verify(viewStateObserver).onChanged(any(VehicleOptionsViewStateInitial.class));
     inOrder.verify(viewStateObserver).onChanged(new VehicleOptionsViewStateReady(Arrays.asList(
         new VehicleOptionsListItem<>(
-            new OptionBoolean(1, "name", true, false)
+            new OptionBoolean(1, "name", "description", true, false)
         ),
         new VehicleOptionsListItem<>(
-            new OptionBoolean(2, "emacs", true, true)
+            new OptionBoolean(2, "emacs", "descriptions", true, true)
         ),
         new VehicleOptionsListItem<>(
-            new OptionNumeric(3, "names", true, 5, 0, 10)
+            new OptionNumeric(3, "names", "desc", true, 5, 0, 10)
         ),
         new VehicleOptionsListItem<>(
-            new OptionNumeric(4, "nam", false, 1, -1, 2)
+            new OptionNumeric(4, "nam", "script", true, 1, -1, 2)
         )
     )));
     inOrder.verify(viewStateObserver).onChanged(any(VehicleOptionsViewStatePending.class));
@@ -316,10 +314,10 @@ public class OptionsViewModelTest {
 
     // Действие:
     publishSubject.onNext(Arrays.asList(
-        new OptionBoolean(1, "name", true, false),
-        new OptionBoolean(2, "emacs", true, true),
-        new OptionNumeric(3, "names", true, 5, 0, 10),
-        new OptionNumeric(4, "nam", false, 1, -1, 2)
+        new OptionBoolean(1, "name", "description", true, false),
+        new OptionBoolean(2, "emacs", "descriptions", true, true),
+        new OptionNumeric(3, "names", "desc", true, 5, 0, 10),
+        new OptionNumeric(4, "nam", "script", true, 1, -1, 2)
     ));
     vehicleOptionsViewModel.setVehicleOptions(new ArrayList<>());
 
@@ -327,16 +325,16 @@ public class OptionsViewModelTest {
     inOrder.verify(viewStateObserver).onChanged(any(VehicleOptionsViewStateInitial.class));
     inOrder.verify(viewStateObserver).onChanged(new VehicleOptionsViewStateReady(Arrays.asList(
         new VehicleOptionsListItem<>(
-            new OptionBoolean(1, "name", true, false)
+            new OptionBoolean(1, "name", "description", true, false)
         ),
         new VehicleOptionsListItem<>(
-            new OptionBoolean(2, "emacs", true, true)
+            new OptionBoolean(2, "emacs", "descriptions", true, true)
         ),
         new VehicleOptionsListItem<>(
-            new OptionNumeric(3, "names", true, 5, 0, 10)
+            new OptionNumeric(3, "names", "desc", true, 5, 0, 10)
         ),
         new VehicleOptionsListItem<>(
-            new OptionNumeric(4, "nam", false, 1, -1, 2)
+            new OptionNumeric(4, "nam", "script", true, 1, -1, 2)
         )
     )));
     inOrder.verify(viewStateObserver).onChanged(any(VehicleOptionsViewStatePending.class));

@@ -13,7 +13,7 @@ public class OptionNumericTest {
 
   @Before
   public void setUp() throws Exception {
-    vehicleOptionNumeric = new OptionNumeric(12, "name", true, 30, 5, 31);
+    vehicleOptionNumeric = new OptionNumeric(12, "name", "description", true, 30, 5, 31);
   }
 
   @Test
@@ -33,13 +33,22 @@ public class OptionNumericTest {
 
   @Test
   public void testEquals() throws Exception {
-    assertEquals(vehicleOptionNumeric, new OptionNumeric(12, "name", true, 30, 5, 31));
-    assertNotEquals(vehicleOptionNumeric, new OptionNumeric(11, "name", true, 30, 5, 31));
-    assertNotEquals(vehicleOptionNumeric, new OptionNumeric(12, "names", true, 30, 5, 31));
-    assertNotEquals(vehicleOptionNumeric, new OptionNumeric(12, "name", false, 30, 5, 31));
-    assertNotEquals(vehicleOptionNumeric, new OptionNumeric(12, "name", true, 23, 5, 31));
-    assertNotEquals(vehicleOptionNumeric, new OptionNumeric(11, "name", true, 30, 8, 31));
-    assertNotEquals(vehicleOptionNumeric, new OptionNumeric(11, "name", true, 0, 5, 50));
+    assertEquals(vehicleOptionNumeric,
+        new OptionNumeric(12, "name", "description", true, 30, 5, 31));
+    assertNotEquals(vehicleOptionNumeric,
+        new OptionNumeric(11, "name", "description", true, 30, 5, 31));
+    assertNotEquals(vehicleOptionNumeric,
+        new OptionNumeric(12, "names", "description", true, 30, 5, 31));
+    assertNotEquals(vehicleOptionNumeric,
+        new OptionNumeric(12, "name", "descriptions", true, 30, 5, 31));
+    assertNotEquals(vehicleOptionNumeric,
+        new OptionNumeric(12, "name", "description", false, 30, 5, 31));
+    assertNotEquals(vehicleOptionNumeric,
+        new OptionNumeric(12, "name", "description", true, 23, 5, 31));
+    assertNotEquals(vehicleOptionNumeric,
+        new OptionNumeric(12, "name", "description", true, 30, 8, 31));
+    assertNotEquals(vehicleOptionNumeric,
+        new OptionNumeric(12, "name", "description", true, 0, 5, 50));
     assertNotEquals(vehicleOptionNumeric, vehicleOptionNumeric.setValue(24));
   }
 }
