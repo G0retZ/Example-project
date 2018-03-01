@@ -18,7 +18,7 @@ import com.fasten.executor_driver.di.AppComponent;
 import com.fasten.executor_driver.presentation.options.OptionsListItems;
 import com.fasten.executor_driver.presentation.options.OptionsViewActions;
 import com.fasten.executor_driver.presentation.options.OptionsViewModel;
-import com.fasten.executor_driver.presentation.vehicleoptions.VehicleOptionsViewModelImpl;
+import com.fasten.executor_driver.presentation.services.ServicesOptionsViewModelImpl;
 import java.util.ArrayList;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -27,9 +27,9 @@ import javax.inject.Named;
  * Отображает список ТС для выбора при выходе на линию.
  */
 
-public class VehicleOptionsFragment extends BaseFragment implements OptionsViewActions {
+public class ServicesFragment extends BaseFragment implements OptionsViewActions {
 
-  private OptionsViewModel vehicleOptionsViewModel;
+  private OptionsViewModel servicesViewModel;
   private RecyclerView recyclerView;
   private FrameLayout pendingIndicator;
   private TextView errorText;
@@ -39,7 +39,7 @@ public class VehicleOptionsFragment extends BaseFragment implements OptionsViewA
 
   @Inject
   public void setViewModelFactory(
-      @Named("vehicleOptions") ViewModelProvider.Factory viewModelFactory) {
+      @Named("selectedServices") ViewModelProvider.Factory viewModelFactory) {
     this.viewModelFactory = viewModelFactory;
   }
 
@@ -47,8 +47,8 @@ public class VehicleOptionsFragment extends BaseFragment implements OptionsViewA
   protected void onDependencyInject(AppComponent appComponent) {
     // Required by Dagger2 for field injection
     appComponent.inject(this);
-    vehicleOptionsViewModel = ViewModelProviders.of(this, viewModelFactory)
-        .get(VehicleOptionsViewModelImpl.class);
+    servicesViewModel = ViewModelProviders.of(this, viewModelFactory)
+        .get(ServicesOptionsViewModelImpl.class);
   }
 
   @Nullable
@@ -64,17 +64,17 @@ public class VehicleOptionsFragment extends BaseFragment implements OptionsViewA
     recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
     recyclerView.setAdapter(new ChooseVehicleAdapter(new ArrayList<>()));
 
-    vehicleOptionsViewModel.getNavigationLiveData().observe(this, destination -> {
+    servicesViewModel.getNavigationLiveData().observe(this, destination -> {
       if (destination != null) {
         navigate(destination);
       }
     });
-    vehicleOptionsViewModel.getViewStateLiveData().observe(this, viewState -> {
+    servicesViewModel.getViewStateLiveData().observe(this, viewState -> {
       if (viewState != null) {
         viewState.apply(this);
       }
     });
-    readyButton.setOnClickListener(v -> vehicleOptionsViewModel.setOptions(
+    readyButton.setOnClickListener(v -> servicesViewModel.setOptions(
         ((OptionsAdapter) recyclerView.getAdapter()).getOptionsListItems())
     );
     return view;
