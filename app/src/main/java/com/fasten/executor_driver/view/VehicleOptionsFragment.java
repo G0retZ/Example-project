@@ -74,9 +74,8 @@ public class VehicleOptionsFragment extends BaseFragment implements OptionsViewA
         viewState.apply(this);
       }
     });
-    readyButton.setOnClickListener(v -> vehicleOptionsViewModel
-        .setVehicleAndDriverOptions(
-            ((VehicleOptionsAdapter) recyclerView.getAdapter()).getOptionsListItems())
+    readyButton.setOnClickListener(v -> vehicleOptionsViewModel.setOptions(
+        ((VehicleOptionsAdapter) recyclerView.getAdapter()).getOptionsListItems())
     );
     return view;
   }

@@ -64,7 +64,7 @@ public class VehicleOptionsViewModelImpl extends ViewModel implements OptionsVie
   }
 
   @Override
-  public void setVehicleAndDriverOptions(OptionsListItems optionsListItems) {
+  public void setOptions(OptionsListItems optionsListItems) {
     ArrayList<Option> vehicleOptions = new ArrayList<>();
     for (OptionsListItem optionsListItem : optionsListItems.getVehicleOptions()) {
       vehicleOptions.add(optionsListItem.getOption());

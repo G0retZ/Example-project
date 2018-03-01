@@ -12,5 +12,5 @@ public interface OptionsViewModel extends ViewModel<OptionsViewActions> {
    *
    * @param optionsListItems - позиция ТС в списке
    */
-  void setVehicleAndDriverOptions(OptionsListItems optionsListItems);
+  void setOptions(OptionsListItems optionsListItems);
 }

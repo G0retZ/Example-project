@@ -104,7 +104,7 @@ public class VehicleOptionsViewModelTest {
         .thenReturn(Completable.complete());
 
     // Действие:
-    vehicleOptionsViewModel.setVehicleAndDriverOptions(new OptionsListItems(
+    vehicleOptionsViewModel.setOptions(new OptionsListItems(
         Collections.singletonList(
             new OptionsListItem<>(
                 new OptionBoolean(1, "name", "description", true, false)
@@ -114,7 +114,7 @@ public class VehicleOptionsViewModelTest {
             new OptionNumeric(3, "names", "description", true, 5, 0, 10)
         )
     )));
-    vehicleOptionsViewModel.setVehicleAndDriverOptions(new OptionsListItems(Arrays.asList(
+    vehicleOptionsViewModel.setOptions(new OptionsListItems(Arrays.asList(
         new OptionsListItem<>(
             new OptionBoolean(1, "name", "description", true, false)
         ),
@@ -126,7 +126,7 @@ public class VehicleOptionsViewModelTest {
             new OptionNumeric(3, "names", "description", true, 5, 0, 10)
         )
     )));
-    vehicleOptionsViewModel.setVehicleAndDriverOptions(new OptionsListItems(Arrays.asList(
+    vehicleOptionsViewModel.setOptions(new OptionsListItems(Arrays.asList(
         new OptionsListItem<>(
             new OptionBoolean(1, "name", "description", true, false)
         ),
@@ -172,7 +172,7 @@ public class VehicleOptionsViewModelTest {
   @Test
   public void DoNotTouchVehicleOptionsUseCaseDuringVehicleOccupying() throws Exception {
     // Действие:
-    vehicleOptionsViewModel.setVehicleAndDriverOptions(new OptionsListItems(
+    vehicleOptionsViewModel.setOptions(new OptionsListItems(
         Collections.singletonList(
             new OptionsListItem<>(
                 new OptionBoolean(1, "name", "description", true, false)
@@ -182,7 +182,7 @@ public class VehicleOptionsViewModelTest {
             new OptionNumeric(3, "names", "description", true, 5, 0, 10)
         )
     )));
-    vehicleOptionsViewModel.setVehicleAndDriverOptions(new OptionsListItems(Arrays.asList(
+    vehicleOptionsViewModel.setOptions(new OptionsListItems(Arrays.asList(
         new OptionsListItem<>(
             new OptionBoolean(1, "name", "description", true, false)
         ),
@@ -194,7 +194,7 @@ public class VehicleOptionsViewModelTest {
             new OptionNumeric(3, "names", "description", true, 5, 0, 10)
         )
     )));
-    vehicleOptionsViewModel.setVehicleAndDriverOptions(new OptionsListItems(Arrays.asList(
+    vehicleOptionsViewModel.setOptions(new OptionsListItems(Arrays.asList(
         new OptionsListItem<>(
             new OptionBoolean(1, "name", "description", true, false)
         ),
@@ -311,7 +311,7 @@ public class VehicleOptionsViewModelTest {
         new OptionNumeric(3, "names", "desc", true, 5, 0, 10),
         new OptionNumeric(4, "nam", "script", true, 1, -1, 2)
     ));
-    vehicleOptionsViewModel.setVehicleAndDriverOptions(
+    vehicleOptionsViewModel.setOptions(
         new OptionsListItems(new ArrayList<>(), new ArrayList<>())
     );
 
@@ -364,7 +364,7 @@ public class VehicleOptionsViewModelTest {
         new OptionNumeric(3, "names", "desc", true, 5, 0, 10),
         new OptionNumeric(4, "nam", "script", true, 1, -1, 2)
     ));
-    vehicleOptionsViewModel.setVehicleAndDriverOptions(
+    vehicleOptionsViewModel.setOptions(
         new OptionsListItems(new ArrayList<>(), new ArrayList<>())
     );
 
@@ -408,7 +408,7 @@ public class VehicleOptionsViewModelTest {
     vehicleOptionsViewModel.getNavigationLiveData().observeForever(navigateObserver);
 
     // Действие:
-    vehicleOptionsViewModel.setVehicleAndDriverOptions(
+    vehicleOptionsViewModel.setOptions(
         new OptionsListItems(new ArrayList<>(), new ArrayList<>())
     );
 
@@ -429,7 +429,7 @@ public class VehicleOptionsViewModelTest {
     vehicleOptionsViewModel.getNavigationLiveData().observeForever(navigateObserver);
 
     // Действие:
-    vehicleOptionsViewModel.setVehicleAndDriverOptions(
+    vehicleOptionsViewModel.setOptions(
         new OptionsListItems(new ArrayList<>(), new ArrayList<>())
     );
 
