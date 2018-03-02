@@ -44,7 +44,8 @@ public class ServicesGatewayImpl implements ServicesGateway {
         servicesIds.append("").append(service.getId()).append(",");
       }
     }
-    return api.setMyServices(servicesIds.subSequence(0, servicesIds.length() - 1).toString())
+    return api.setMyServices(servicesIds.length() <= 0 ? ""
+        : servicesIds.subSequence(0, servicesIds.length() - 1).toString())
         .subscribeOn(Schedulers.io())
         .observeOn(Schedulers.single());
   }
