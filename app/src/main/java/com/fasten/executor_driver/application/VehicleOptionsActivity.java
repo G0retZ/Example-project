@@ -22,8 +22,7 @@ public class VehicleOptionsActivity extends BaseActivity {
     Intent intent;
     switch (destination) {
       case VehicleOptionsNavigate.SERVICES:
-        intent = new Intent(this, MapActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        intent = new Intent(this, ServicesActivity.class);
         startActivity(intent);
         finish();
         break;

@@ -26,4 +26,5 @@
   <string name="check_list">Чек лист</string>
   <string name="ready">Готово</string>
   <string name="change">Сменить</string>
+  <string name="select_services">Выберите услуги</string>
 </resources>
