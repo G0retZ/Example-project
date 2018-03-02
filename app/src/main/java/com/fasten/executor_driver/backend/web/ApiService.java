@@ -64,6 +64,6 @@ public interface ApiService {
    */
   @PUT("api/public/v1/car/mobile")
   Completable setMyServices(
-      @NonNull @Query("ids[]") List<Long> servicesIds
+      @NonNull @Query("ids") String servicesIds
   );
 }

@@ -38,13 +38,13 @@ public class ServicesGatewayImpl implements ServicesGateway {
   @NonNull
   @Override
   public Completable sendSelectedServices(@NonNull List<Service> services) {
-    List<Long> servicesIds = new ArrayList<>();
+    StringBuilder servicesIds = new StringBuilder();
     for (Service service : services) {
       if (service.getValue()) {
-        servicesIds.add(service.getId());
+        servicesIds.append("").append(service.getId()).append(",");
       }
     }
-    return api.setMyServices(servicesIds)
+    return api.setMyServices(servicesIds.subSequence(0, servicesIds.length() - 1).toString())
         .subscribeOn(Schedulers.io())
         .observeOn(Schedulers.single());
   }
