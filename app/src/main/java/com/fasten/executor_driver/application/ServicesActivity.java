@@ -12,7 +12,7 @@ public class ServicesActivity extends BaseActivity {
   @Override
   public void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_vehicle_options);
+    setContentView(R.layout.activity_services);
     setTitle(R.string.select_services);
   }
 
