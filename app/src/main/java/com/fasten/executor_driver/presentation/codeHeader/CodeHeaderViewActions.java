@@ -14,5 +14,6 @@ public interface CodeHeaderViewActions {
    * @param textId - ИД ресурса текста
    * @param phoneNumber {@link String} номер телефона в отформатированном виде.
    */
+  @SuppressWarnings({"SameParameterValue", "unused"})
   void setDescriptiveHeaderText(@StringRes int textId, @NonNull String phoneNumber);
 }

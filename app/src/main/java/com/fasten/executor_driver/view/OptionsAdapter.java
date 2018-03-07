@@ -38,8 +38,9 @@ class OptionsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     return optionsListItems.get(position).getLayoutType();
   }
 
+  @NonNull
   @Override
-  public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+  public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
     View view = LayoutInflater.from(parent.getContext()).inflate(viewType, parent, false);
     if (viewType == R.layout.fragment_vehicle_options_list_item_boolean) {
       return new VehicleBooleanOptionViewHolder(view);
@@ -50,11 +51,13 @@ class OptionsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
   @SuppressWarnings("unchecked")
   @Override
-  public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+  public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
     if (holder instanceof VehicleBooleanOptionViewHolder) {
       OptionsListItem<Boolean> item = (OptionsListItem<Boolean>) optionsListItems.get(position);
       holder.itemView.setOnClickListener(null);
       ((VehicleBooleanOptionViewHolder) holder).nameText.setText(item.getName());
+      ((VehicleBooleanOptionViewHolder) holder).descriptionText
+          .setVisibility(item.getDescription() == null ? View.GONE : View.VISIBLE);
       ((VehicleBooleanOptionViewHolder) holder).descriptionText.setText(item.getDescription());
       ((VehicleBooleanOptionViewHolder) holder).switchCompat.setOnCheckedChangeListener(null);
       ((VehicleBooleanOptionViewHolder) holder).switchCompat.setChecked(item.getValue());

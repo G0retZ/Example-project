@@ -2,6 +2,7 @@ package com.fasten.executor_driver.presentation.options;
 
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import com.fasten.executor_driver.R;
 import com.fasten.executor_driver.entity.Option;
 import com.fasten.executor_driver.entity.OptionBoolean;
@@ -34,7 +35,7 @@ public class OptionsListItem<V> {
     return option.getName();
   }
 
-  @NonNull
+  @Nullable
   public String getDescription() {
     return option.getDescription();
   }

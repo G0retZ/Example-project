@@ -1,6 +1,7 @@
 package com.fasten.executor_driver.entity;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 /**
  * Бизнес сущность числового параметра автомобиля.
@@ -10,7 +11,7 @@ public class OptionNumeric implements Option<Integer> {
   private final long id;
   @NonNull
   private final String name;
-  @NonNull
+  @Nullable
   private final String description;
   private final boolean variable;
   @NonNull
@@ -20,7 +21,7 @@ public class OptionNumeric implements Option<Integer> {
   @NonNull
   private final Integer maxValue;
 
-  public OptionNumeric(long id, @NonNull String name, @NonNull String description,
+  public OptionNumeric(long id, @NonNull String name, @Nullable String description,
       boolean variable, @NonNull Integer value,
       int minValue, int maxValue) {
     this.id = id;
@@ -30,12 +31,6 @@ public class OptionNumeric implements Option<Integer> {
     this.value = value;
     this.minValue = minValue;
     this.maxValue = maxValue;
-  }
-
-  @Override
-  @NonNull
-  public OptionNumeric setValue(@NonNull Integer value) {
-    return new OptionNumeric(id, name, description, variable, value, minValue, maxValue);
   }
 
   @Override
@@ -49,7 +44,7 @@ public class OptionNumeric implements Option<Integer> {
     return name;
   }
 
-  @NonNull
+  @Nullable
   @Override
   public String getDescription() {
     return description;
@@ -64,6 +59,12 @@ public class OptionNumeric implements Option<Integer> {
   @Override
   public Integer getValue() {
     return value;
+  }
+
+  @Override
+  @NonNull
+  public OptionNumeric setValue(@NonNull Integer value) {
+    return new OptionNumeric(id, name, description, variable, value, minValue, maxValue);
   }
 
   @NonNull
@@ -112,23 +113,20 @@ public class OptionNumeric implements Option<Integer> {
     if (!name.equals(that.name)) {
       return false;
     }
-    if (!description.equals(that.description)) {
+    if (description != null ? !description.equals(that.description) : that.description != null) {
       return false;
     }
     if (!value.equals(that.value)) {
       return false;
     }
-    if (!minValue.equals(that.minValue)) {
-      return false;
-    }
-    return maxValue.equals(that.maxValue);
+    return minValue.equals(that.minValue) && maxValue.equals(that.maxValue);
   }
 
   @Override
   public int hashCode() {
     int result = (int) (id ^ (id >>> 32));
     result = 31 * result + name.hashCode();
-    result = 31 * result + description.hashCode();
+    result = 31 * result + (description != null ? description.hashCode() : 0);
     result = 31 * result + (variable ? 1 : 0);
     result = 31 * result + value.hashCode();
     result = 31 * result + minValue.hashCode();
