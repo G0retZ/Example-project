@@ -1,8 +1,6 @@
 package com.fasten.executor_driver.view;
 
 import android.app.AlertDialog.Builder;
-import android.arch.lifecycle.ViewModelProvider;
-import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -15,9 +13,7 @@ import com.fasten.executor_driver.R;
 import com.fasten.executor_driver.di.AppComponent;
 import com.fasten.executor_driver.presentation.onlinebutton.OnlineButtonViewActions;
 import com.fasten.executor_driver.presentation.onlinebutton.OnlineButtonViewModel;
-import com.fasten.executor_driver.presentation.onlinebutton.OnlineButtonViewModelImpl;
 import javax.inject.Inject;
-import javax.inject.Named;
 
 /**
  * Отображает кнопку выхода на линию.
@@ -29,11 +25,9 @@ public class GoOnlineFragment extends BaseFragment implements OnlineButtonViewAc
   private Button goOnlineRequest;
   private Context context;
 
-  private ViewModelProvider.Factory viewModelFactory;
-
   @Inject
-  public void setViewModelFactory(@Named("goOnline") ViewModelProvider.Factory viewModelFactory) {
-    this.viewModelFactory = viewModelFactory;
+  public void setOnlineButtonViewModel(@NonNull OnlineButtonViewModel onlineButtonViewModel) {
+    this.onlineButtonViewModel = onlineButtonViewModel;
   }
 
   @Override
@@ -46,8 +40,6 @@ public class GoOnlineFragment extends BaseFragment implements OnlineButtonViewAc
   protected void onDependencyInject(AppComponent appComponent) {
     // Required by Dagger2 for injection
     appComponent.inject(this);
-    onlineButtonViewModel = ViewModelProviders.of(this, viewModelFactory)
-        .get(OnlineButtonViewModelImpl.class);
   }
 
   @Nullable

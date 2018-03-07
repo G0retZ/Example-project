@@ -24,13 +24,13 @@ public class LoginData {
     return login;
   }
 
+  public LoginData setLogin(@NonNull String login) {
+    return new LoginData(login, password);
+  }
+
   @NonNull
   public String getPassword() {
     return password;
-  }
-
-  public LoginData setLogin(@NonNull String login) {
-    return new LoginData(login, password);
   }
 
   public LoginData setPassword(@NonNull String password) {

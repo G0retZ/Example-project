@@ -26,8 +26,7 @@ public class SelectedVehicleViewModelImpl extends ViewModel implements SelectedV
   private Disposable disposable;
 
   @Inject
-  SelectedVehicleViewModelImpl(
-      @NonNull SelectedVehicleUseCase vehiclesUseCase) {
+  public SelectedVehicleViewModelImpl(@NonNull SelectedVehicleUseCase vehiclesUseCase) {
     this.vehiclesUseCase = vehiclesUseCase;
     viewStateLiveData = new MutableLiveData<>();
     viewStateLiveData.postValue(new SelectedVehicleViewState(""));

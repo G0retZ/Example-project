@@ -13,7 +13,7 @@ public class ServicesUseCaseImpl implements ServicesUseCase {
   private final ServicesGateway gateway;
 
   @Inject
-  ServicesUseCaseImpl(@NonNull ServicesGateway gateway) {
+  public ServicesUseCaseImpl(@NonNull ServicesGateway gateway) {
     this.gateway = gateway;
   }
 

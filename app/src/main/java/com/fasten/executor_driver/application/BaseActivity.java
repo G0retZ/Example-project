@@ -5,7 +5,6 @@ import android.app.Activity;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import com.fasten.executor_driver.di.AppComponent;
-import dagger.Component;
 import java.util.LinkedList;
 
 /**
@@ -55,7 +54,7 @@ public class BaseActivity extends AppCompatActivity {
   }
 
   /**
-   * Возвращает {@link Component} для внедрения зависимостей.
+   * Возвращает {@link AppComponent} для внедрения зависимостей.
    *
    * @return DI компонент
    */

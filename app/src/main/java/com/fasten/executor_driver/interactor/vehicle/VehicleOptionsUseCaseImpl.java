@@ -10,7 +10,6 @@ import io.reactivex.Completable;
 import io.reactivex.Observable;
 import java.util.List;
 import javax.inject.Inject;
-import javax.inject.Named;
 
 public class VehicleOptionsUseCaseImpl implements VehicleOptionsUseCase {
 
@@ -26,11 +25,11 @@ public class VehicleOptionsUseCaseImpl implements VehicleOptionsUseCase {
   private Vehicle vehicle;
 
   @Inject
-  VehicleOptionsUseCaseImpl(
+  public VehicleOptionsUseCaseImpl(
       @NonNull VehicleOptionsGateway gateway,
-      @Named("vehicleChoiceSharer") @NonNull DataSharer<Vehicle> vehicleChoiceSharer,
-      @Named("lastUsedVehicleSharer") @NonNull DataSharer<Vehicle> lastUsedVehicleSharer,
-      @Named("driverOptionsSharer") @NonNull DataSharer<List<Option>> driverOptionsSharer) {
+      @NonNull DataSharer<Vehicle> vehicleChoiceSharer,
+      @NonNull DataSharer<Vehicle> lastUsedVehicleSharer,
+      @NonNull DataSharer<List<Option>> driverOptionsSharer) {
     this.gateway = gateway;
     this.vehicleChoiceSharer = vehicleChoiceSharer;
     this.lastUsedVehicleSharer = lastUsedVehicleSharer;

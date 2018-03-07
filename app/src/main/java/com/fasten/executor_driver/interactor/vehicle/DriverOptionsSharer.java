@@ -8,6 +8,6 @@ import javax.inject.Inject;
 public class DriverOptionsSharer extends MemoryDataSharer<List<Option>> {
 
   @Inject
-  DriverOptionsSharer() {
+  public DriverOptionsSharer() {
   }
 }

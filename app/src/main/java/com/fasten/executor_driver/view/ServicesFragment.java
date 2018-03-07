@@ -1,7 +1,5 @@
 package com.fasten.executor_driver.view;
 
-import android.arch.lifecycle.ViewModelProvider;
-import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -18,10 +16,8 @@ import com.fasten.executor_driver.di.AppComponent;
 import com.fasten.executor_driver.presentation.options.OptionsListItems;
 import com.fasten.executor_driver.presentation.options.OptionsViewActions;
 import com.fasten.executor_driver.presentation.options.OptionsViewModel;
-import com.fasten.executor_driver.presentation.services.ServicesOptionsViewModelImpl;
 import java.util.ArrayList;
 import javax.inject.Inject;
-import javax.inject.Named;
 
 /**
  * Отображает список ТС для выбора при выходе на линию.
@@ -35,20 +31,15 @@ public class ServicesFragment extends BaseFragment implements OptionsViewActions
   private TextView errorText;
   private Button readyButton;
 
-  private ViewModelProvider.Factory viewModelFactory;
-
   @Inject
-  public void setViewModelFactory(
-      @Named("selectedServices") ViewModelProvider.Factory viewModelFactory) {
-    this.viewModelFactory = viewModelFactory;
+  public void setServicesViewModel(@NonNull OptionsViewModel servicesViewModel) {
+    this.servicesViewModel = servicesViewModel;
   }
 
   @Override
   protected void onDependencyInject(AppComponent appComponent) {
     // Required by Dagger2 for field injection
     appComponent.inject(this);
-    servicesViewModel = ViewModelProviders.of(this, viewModelFactory)
-        .get(ServicesOptionsViewModelImpl.class);
   }
 
   @Nullable

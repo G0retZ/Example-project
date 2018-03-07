@@ -41,7 +41,7 @@ public class VehicleOptionsViewModelImpl extends ViewModel implements OptionsVie
   private Disposable occupyDisposable;
 
   @Inject
-  VehicleOptionsViewModelImpl(VehicleOptionsUseCase vehicleOptionsUseCase) {
+  public VehicleOptionsViewModelImpl(VehicleOptionsUseCase vehicleOptionsUseCase) {
     this.vehicleOptionsUseCase = vehicleOptionsUseCase;
     viewStateLiveData = new MutableLiveData<>();
     viewStateLiveData.postValue(new OptionsViewStateInitial());

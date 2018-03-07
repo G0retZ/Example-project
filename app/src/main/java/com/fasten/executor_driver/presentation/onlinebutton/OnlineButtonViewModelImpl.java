@@ -23,17 +23,16 @@ public class OnlineButtonViewModelImpl extends ViewModel implements OnlineButton
 
   private static final int DURATION_AFTER_SUCCESS = 5;
   private static final int DURATION_AFTER_FAIL = 5;
-  @Nullable
-  private Disposable loadDisposable;
-  @Nullable
-  private Disposable timerDisposable;
-
   @NonNull
   private final VehiclesAndOptionsUseCase vehiclesAndOptionsUseCase;
   @NonNull
   private final MutableLiveData<ViewState<OnlineButtonViewActions>> viewStateLiveData;
   @NonNull
   private final SingleLiveEvent<String> navigateLiveData;
+  @Nullable
+  private Disposable loadDisposable;
+  @Nullable
+  private Disposable timerDisposable;
 
   @Inject
   public OnlineButtonViewModelImpl(@NonNull VehiclesAndOptionsUseCase vehiclesAndOptionsUseCase) {

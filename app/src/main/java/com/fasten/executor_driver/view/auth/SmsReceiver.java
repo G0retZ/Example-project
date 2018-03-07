@@ -4,13 +4,13 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.telephony.SmsMessage;
 import com.fasten.executor_driver.entity.CodeExtractor;
 import io.reactivex.Observable;
 import io.reactivex.subjects.PublishSubject;
 import io.reactivex.subjects.Subject;
 import javax.inject.Inject;
-import javax.inject.Named;
 
 /**
  * Перехватываем входящие сообщения.
@@ -22,7 +22,7 @@ public class SmsReceiver extends BroadcastReceiver {
   private final CodeExtractor smsCodeExtractor;
 
   @Inject
-  public SmsReceiver(@Named("smsExtractor") CodeExtractor smsCodeExtractor) {
+  public SmsReceiver(@NonNull CodeExtractor smsCodeExtractor) {
     this.smsCodeExtractor = smsCodeExtractor;
   }
 

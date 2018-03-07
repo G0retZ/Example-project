@@ -14,7 +14,6 @@ import io.reactivex.schedulers.Schedulers;
 import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
-import javax.inject.Named;
 
 public class VehiclesAndOptionsGatewayImpl implements VehiclesAndOptionsGateway {
 
@@ -33,9 +32,9 @@ public class VehiclesAndOptionsGatewayImpl implements VehiclesAndOptionsGateway 
 
   @Inject
   public VehiclesAndOptionsGatewayImpl(@NonNull ApiService api,
-      @Named("apiOptionMapper") @NonNull Mapper<ApiOptionItem, Option> optionMapper,
-      @Named("vehicleMapper") @NonNull Mapper<ApiVehicle, Vehicle> vehicleMapper,
-      @Named("errorMapper") @NonNull Mapper<Throwable, Throwable> errorMapper) {
+      @NonNull Mapper<ApiOptionItem, Option> optionMapper,
+      @NonNull Mapper<ApiVehicle, Vehicle> vehicleMapper,
+      @NonNull Mapper<Throwable, Throwable> errorMapper) {
     this.api = api;
     this.optionMapper = optionMapper;
     this.vehicleMapper = vehicleMapper;

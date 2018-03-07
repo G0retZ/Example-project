@@ -12,22 +12,16 @@ import javax.inject.Inject;
  */
 public class ViewModelFactory<V> implements ViewModelProvider.Factory {
 
-  private V viewModel;
+  @NonNull
+  private final V viewModel;
 
   /**
-   * Конструктор видимый для Dagger'а
-   */
-  @Inject
-  public ViewModelFactory() {
-  }
-
-  /**
-   * Сеттер видимый для Dagger'а для внедрения {@link V} зависимости
+   * Конструктор видимый для внедрения {@link V} зависимости
    *
    * @param viewModel класс либо интерфейс, наследник от {@link ViewModel}.
    */
   @Inject
-  public void setViewModel(V viewModel) {
+  public ViewModelFactory(@NonNull V viewModel) {
     this.viewModel = viewModel;
   }
 

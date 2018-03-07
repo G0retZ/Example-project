@@ -9,7 +9,7 @@ import javax.inject.Inject;
 public class PasswordValidator implements Validator<String> {
 
   @Inject
-  PasswordValidator() {
+  public PasswordValidator() {
   }
 
   @Override

@@ -6,7 +6,6 @@ import com.fasten.executor_driver.entity.Validator;
 import com.fasten.executor_driver.interactor.DataSharer;
 import io.reactivex.Completable;
 import javax.inject.Inject;
-import javax.inject.Named;
 
 public class SmsUseCaseImpl implements SmsUseCase {
 
@@ -18,9 +17,9 @@ public class SmsUseCaseImpl implements SmsUseCase {
   private String phoneNumber;
 
   @Inject
-  SmsUseCaseImpl(@NonNull SmsGateway gateway,
-      @Named("loginSharer") @NonNull DataSharer<String> phoneNumberSharer,
-      @Named("phoneNumberValidator") @NonNull Validator<String> phoneNumberValidator) {
+  public SmsUseCaseImpl(@NonNull SmsGateway gateway,
+      @NonNull DataSharer<String> phoneNumberSharer,
+      @NonNull Validator<String> phoneNumberValidator) {
     this.gateway = gateway;
     this.phoneNumberValidator = phoneNumberValidator;
     phoneNumberSharer.get().subscribe(phoneNumber -> this.phoneNumber = phoneNumber);

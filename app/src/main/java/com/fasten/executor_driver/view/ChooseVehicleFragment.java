@@ -1,7 +1,5 @@
 package com.fasten.executor_driver.view;
 
-import android.arch.lifecycle.ViewModelProvider;
-import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -17,12 +15,10 @@ import com.fasten.executor_driver.di.AppComponent;
 import com.fasten.executor_driver.presentation.choosevehicle.ChooseVehicleListItem;
 import com.fasten.executor_driver.presentation.choosevehicle.ChooseVehicleViewActions;
 import com.fasten.executor_driver.presentation.choosevehicle.ChooseVehicleViewModel;
-import com.fasten.executor_driver.presentation.choosevehicle.ChooseVehicleViewModelImpl;
 import io.reactivex.disposables.Disposable;
 import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
-import javax.inject.Named;
 
 /**
  * Отображает список ТС для выбора при выходе на линию.
@@ -37,20 +33,15 @@ public class ChooseVehicleFragment extends BaseFragment implements ChooseVehicle
   @Nullable
   private Disposable disposable;
 
-  private ViewModelProvider.Factory viewModelFactory;
-
   @Inject
-  public void setViewModelFactory(
-      @Named("chooseVehicle") ViewModelProvider.Factory viewModelFactory) {
-    this.viewModelFactory = viewModelFactory;
+  public void setChooseVehicleViewModel(@NonNull ChooseVehicleViewModel chooseVehicleViewModel) {
+    this.chooseVehicleViewModel = chooseVehicleViewModel;
   }
 
   @Override
   protected void onDependencyInject(AppComponent appComponent) {
     // Required by Dagger2 for field injection
     appComponent.inject(this);
-    chooseVehicleViewModel = ViewModelProviders.of(this, viewModelFactory)
-        .get(ChooseVehicleViewModelImpl.class);
   }
 
   @Nullable

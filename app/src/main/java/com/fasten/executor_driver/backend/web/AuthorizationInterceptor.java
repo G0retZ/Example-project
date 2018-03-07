@@ -19,7 +19,7 @@ public class AuthorizationInterceptor implements Interceptor {
   private final Subject<String> logoutEventSubject;
 
   @Inject
-  AuthorizationInterceptor(@NonNull Subject<String> logoutEventSubject) {
+  public AuthorizationInterceptor(@NonNull Subject<String> logoutEventSubject) {
     this.logoutEventSubject = logoutEventSubject;
   }
 

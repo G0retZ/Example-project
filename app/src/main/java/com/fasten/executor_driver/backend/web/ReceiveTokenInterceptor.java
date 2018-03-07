@@ -18,7 +18,7 @@ public class ReceiveTokenInterceptor implements Interceptor {
   private final TokenKeeper tokenKeeper;
 
   @Inject
-  ReceiveTokenInterceptor(@NonNull TokenKeeper tokenKeeper) {
+  public ReceiveTokenInterceptor(@NonNull TokenKeeper tokenKeeper) {
     this.tokenKeeper = tokenKeeper;
   }
 

@@ -10,7 +10,7 @@ import javax.inject.Inject;
 public class LastUsedVehicleSharer extends PersistentDataSharer<Vehicle> {
 
   @Inject
-  LastUsedVehicleSharer(@NonNull AppSettingsService appSettingsService) {
+  public LastUsedVehicleSharer(@NonNull AppSettingsService appSettingsService) {
     super(appSettingsService);
   }
 

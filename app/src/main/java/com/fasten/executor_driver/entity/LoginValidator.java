@@ -8,7 +8,7 @@ import javax.inject.Inject;
 public class LoginValidator extends PhoneNumberValidator {
 
   @Inject
-  LoginValidator() {
+  public LoginValidator() {
     super();
   }
 }

@@ -25,7 +25,7 @@ public class SmsButtonViewModelImpl extends ViewModel implements SmsButtonViewMo
   private Disposable disposable;
 
   @Inject
-  SmsButtonViewModelImpl(@NonNull SmsUseCase smsUseCase) {
+  public SmsButtonViewModelImpl(@NonNull SmsUseCase smsUseCase) {
     this.smsUseCase = smsUseCase;
     viewStateLiveData = new MutableLiveData<>();
     viewStateLiveData.postValue(new SmsButtonViewStateReady());

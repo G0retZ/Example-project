@@ -13,7 +13,7 @@ import javax.inject.Inject;
 public class VehicleOptionApiMapper implements Mapper<ApiOptionItem, Option> {
 
   @Inject
-  VehicleOptionApiMapper() {
+  public VehicleOptionApiMapper() {
   }
 
   @NonNull

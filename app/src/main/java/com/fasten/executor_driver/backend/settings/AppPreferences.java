@@ -18,7 +18,7 @@ public class AppPreferences implements AppSettingsService {
   private final SharedPreferences preferences;
 
   @Inject
-  AppPreferences(@NonNull Context context) {
+  public AppPreferences(@NonNull Context context) {
     this.preferences = context.getSharedPreferences(PREFERENCE_FILE_NAME, Context.MODE_PRIVATE);
   }
 

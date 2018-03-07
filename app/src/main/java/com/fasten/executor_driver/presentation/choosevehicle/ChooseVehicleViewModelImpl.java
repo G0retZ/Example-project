@@ -32,7 +32,7 @@ public class ChooseVehicleViewModelImpl extends ViewModel implements ChooseVehic
   private Disposable choiceDisposable;
 
   @Inject
-  ChooseVehicleViewModelImpl(@NonNull VehicleChoiceUseCase vehicleChoiceUseCase) {
+  public ChooseVehicleViewModelImpl(@NonNull VehicleChoiceUseCase vehicleChoiceUseCase) {
     this.vehicleChoiceUseCase = vehicleChoiceUseCase;
     viewStateLiveData = new MutableLiveData<>();
     viewStateLiveData.postValue(new ChooseVehicleViewStatePending());
