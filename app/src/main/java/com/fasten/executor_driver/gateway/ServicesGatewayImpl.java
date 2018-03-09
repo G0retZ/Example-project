@@ -11,7 +11,6 @@ import io.reactivex.schedulers.Schedulers;
 import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
-import javax.inject.Named;
 
 public class ServicesGatewayImpl implements ServicesGateway {
 
@@ -21,8 +20,8 @@ public class ServicesGatewayImpl implements ServicesGateway {
   private final Mapper<ApiServiceItem, Service> serviceMapper;
 
   @Inject
-  ServicesGatewayImpl(@NonNull ApiService api,
-      @Named("serviceMapper") @NonNull Mapper<ApiServiceItem, Service> serviceMapper) {
+  public ServicesGatewayImpl(@NonNull ApiService api,
+      @NonNull Mapper<ApiServiceItem, Service> serviceMapper) {
     this.api = api;
     this.serviceMapper = serviceMapper;
   }

@@ -1,6 +1,7 @@
 package com.fasten.executor_driver.entity;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 /**
  * Бизнес сущность обобщенного параметра.
@@ -8,14 +9,6 @@ import android.support.annotation.NonNull;
  * @param <V> тип значения
  */
 public interface Option<V> {
-
-  /**
-   * Возвращает новый объект с заданным значением.
-   *
-   * @param value значение
-   */
-  @NonNull
-  Option<V> setValue(@NonNull V value);
 
   /**
    * Возвращает ID опции.
@@ -37,7 +30,7 @@ public interface Option<V> {
    *
    * @return детальное описание опции.
    */
-  @NonNull
+  @Nullable
   String getDescription();
 
   /**
@@ -54,6 +47,14 @@ public interface Option<V> {
    */
   @NonNull
   V getValue();
+
+  /**
+   * Возвращает новый объект с заданным значением.
+   *
+   * @param value значение
+   */
+  @NonNull
+  Option<V> setValue(@NonNull V value);
 
   /**
    * Возвращает минимальное значение опции.

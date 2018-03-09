@@ -1,7 +1,5 @@
 package com.fasten.executor_driver.view;
 
-import android.arch.lifecycle.ViewModelProvider;
-import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -14,9 +12,7 @@ import com.fasten.executor_driver.R;
 import com.fasten.executor_driver.di.AppComponent;
 import com.fasten.executor_driver.presentation.selectedvehicle.SelectedVehicleViewActions;
 import com.fasten.executor_driver.presentation.selectedvehicle.SelectedVehicleViewModel;
-import com.fasten.executor_driver.presentation.selectedvehicle.SelectedVehicleViewModelImpl;
 import javax.inject.Inject;
-import javax.inject.Named;
 
 /**
  * Отображает выбранную ТС.
@@ -28,20 +24,16 @@ public class SelectedVehicleFragment extends BaseFragment implements SelectedVeh
   private Button changeButton;
   private TextView nameText;
 
-  private ViewModelProvider.Factory viewModelFactory;
-
   @Inject
-  public void setViewModelFactory(
-      @Named("selectedVehicle") ViewModelProvider.Factory viewModelFactory) {
-    this.viewModelFactory = viewModelFactory;
+  public void setSelectedVehicleViewModel(
+      @NonNull SelectedVehicleViewModel selectedVehicleViewModel) {
+    this.selectedVehicleViewModel = selectedVehicleViewModel;
   }
 
   @Override
   protected void onDependencyInject(AppComponent appComponent) {
     // Required by Dagger2 for field injection
     appComponent.inject(this);
-    selectedVehicleViewModel = ViewModelProviders.of(this, viewModelFactory)
-        .get(SelectedVehicleViewModelImpl.class);
   }
 
   @Nullable

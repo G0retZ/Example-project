@@ -7,6 +7,6 @@ import javax.inject.Inject;
 public class VehicleChoiceSharer extends MemoryDataSharer<Vehicle> {
 
   @Inject
-  VehicleChoiceSharer() {
+  public VehicleChoiceSharer() {
   }
 }

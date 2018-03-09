@@ -1,9 +1,6 @@
 package com.fasten.executor_driver.view.auth;
 
 import android.Manifest;
-import android.arch.lifecycle.ViewModelProvider;
-import android.arch.lifecycle.ViewModelProvider.Factory;
-import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.IntentFilter;
 import android.os.Bundle;
@@ -25,18 +22,14 @@ import com.fasten.executor_driver.R;
 import com.fasten.executor_driver.di.AppComponent;
 import com.fasten.executor_driver.presentation.code.CodeViewActions;
 import com.fasten.executor_driver.presentation.code.CodeViewModel;
-import com.fasten.executor_driver.presentation.code.CodeViewModelImpl;
 import com.fasten.executor_driver.presentation.codeHeader.CodeHeaderViewActions;
 import com.fasten.executor_driver.presentation.codeHeader.CodeHeaderViewModel;
-import com.fasten.executor_driver.presentation.codeHeader.CodeHeaderViewModelImpl;
 import com.fasten.executor_driver.presentation.smsbutton.SmsButtonViewActions;
 import com.fasten.executor_driver.presentation.smsbutton.SmsButtonViewModel;
-import com.fasten.executor_driver.presentation.smsbutton.SmsButtonViewModelImpl;
 import com.fasten.executor_driver.view.BaseFragment;
 import com.fasten.executor_driver.view.PermissionChecker;
 import io.reactivex.disposables.Disposable;
 import javax.inject.Inject;
-import javax.inject.Named;
 
 /**
  * Отображает поле для ввода логина.
@@ -64,9 +57,6 @@ public class PasswordFragment extends BaseFragment implements CodeViewActions,
   private FrameLayout pendingIndicator;
   private Context context;
 
-  private ViewModelProvider.Factory codeViewModelFactory;
-  private ViewModelProvider.Factory codeHeaderViewModelFactory;
-  private ViewModelProvider.Factory buttonViewModelFactory;
   private SmsReceiver smsReceiver;
   private Disposable smsCodeDisposable;
   private boolean smsSent;
@@ -77,23 +67,22 @@ public class PasswordFragment extends BaseFragment implements CodeViewActions,
   private boolean codeError;
 
   @Inject
-  public void setCodeViewModelFactory(@Named("code") Factory codeViewModelFactory) {
-    this.codeViewModelFactory = codeViewModelFactory;
+  public void setCodeViewModel(@NonNull CodeViewModel codeViewModel) {
+    this.codeViewModel = codeViewModel;
   }
 
   @Inject
-  public void setCodeHeaderViewModelFactory(
-      @Named("codeHeader") Factory codeHeaderViewModelFactory) {
-    this.codeHeaderViewModelFactory = codeHeaderViewModelFactory;
+  public void setCodeHeaderViewModel(@NonNull CodeHeaderViewModel codeHeaderViewModel) {
+    this.codeHeaderViewModel = codeHeaderViewModel;
   }
 
   @Inject
-  public void setButtonViewModelFactory(@Named("button") Factory buttonViewModelFactory) {
-    this.buttonViewModelFactory = buttonViewModelFactory;
+  public void setSmsButtonViewModel(@NonNull SmsButtonViewModel smsButtonViewModel) {
+    this.smsButtonViewModel = smsButtonViewModel;
   }
 
   @Inject
-  public void setSmsReceiver(SmsReceiver smsReceiver) {
+  public void setSmsReceiver(@NonNull SmsReceiver smsReceiver) {
     this.smsReceiver = smsReceiver;
   }
 
@@ -107,11 +96,6 @@ public class PasswordFragment extends BaseFragment implements CodeViewActions,
   protected void onDependencyInject(AppComponent appComponent) {
     // Required by Dagger2 for field injection
     appComponent.inject(this);
-    codeViewModel = ViewModelProviders.of(this, codeViewModelFactory).get(CodeViewModelImpl.class);
-    codeHeaderViewModel = ViewModelProviders.of(this, codeHeaderViewModelFactory).get(
-        CodeHeaderViewModelImpl.class);
-    smsButtonViewModel = ViewModelProviders.of(this, buttonViewModelFactory)
-        .get(SmsButtonViewModelImpl.class);
   }
 
   @Override

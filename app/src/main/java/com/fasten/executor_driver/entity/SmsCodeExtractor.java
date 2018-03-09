@@ -6,7 +6,7 @@ import javax.inject.Inject;
 public class SmsCodeExtractor implements CodeExtractor {
 
   @Inject
-  SmsCodeExtractor() {
+  public SmsCodeExtractor() {
   }
 
   @Nullable

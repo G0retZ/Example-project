@@ -11,7 +11,7 @@ import javax.inject.Inject;
 public class ServiceApiMapper implements Mapper<ApiServiceItem, Service> {
 
   @Inject
-  ServiceApiMapper() {
+  public ServiceApiMapper() {
   }
 
   @NonNull

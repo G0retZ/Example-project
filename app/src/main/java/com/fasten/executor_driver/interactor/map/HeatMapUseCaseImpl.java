@@ -17,7 +17,7 @@ public class HeatMapUseCaseImpl implements HeatMapUseCase {
   private Flowable<String> heatMapEmitter;
 
   @Inject
-  HeatMapUseCaseImpl(@NonNull HeatMapGateway gateway) {
+  public HeatMapUseCaseImpl(@NonNull HeatMapGateway gateway) {
     this.gateway = gateway;
   }
 

@@ -6,7 +6,6 @@ import com.fasten.executor_driver.backend.web.incoming.ApiVehicle;
 import com.fasten.executor_driver.entity.Option;
 import com.fasten.executor_driver.entity.Vehicle;
 import javax.inject.Inject;
-import javax.inject.Named;
 
 /**
  * Преобразуем ТС из ответа сервера в бизнес объект ТС.
@@ -16,8 +15,7 @@ public class VehicleApiMapper implements Mapper<ApiVehicle, Vehicle> {
   private final Mapper<ApiOptionItem, Option> apiOptionMapper;
 
   @Inject
-  VehicleApiMapper(
-      @Named("apiOptionMapper") Mapper<ApiOptionItem, Option> apiOptionMapper) {
+  public VehicleApiMapper(Mapper<ApiOptionItem, Option> apiOptionMapper) {
     this.apiOptionMapper = apiOptionMapper;
   }
 

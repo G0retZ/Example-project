@@ -20,7 +20,7 @@ public class ConnectivityInterceptor implements Interceptor {
   private final Context context;
 
   @Inject
-  ConnectivityInterceptor(@NonNull Context context) {
+  public ConnectivityInterceptor(@NonNull Context context) {
     this.context = context;
   }
 

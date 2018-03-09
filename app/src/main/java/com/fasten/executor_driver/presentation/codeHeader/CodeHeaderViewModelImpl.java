@@ -12,7 +12,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import javax.inject.Inject;
-import javax.inject.Named;
 
 public class CodeHeaderViewModelImpl extends ViewModel implements CodeHeaderViewModel {
 
@@ -24,10 +23,10 @@ public class CodeHeaderViewModelImpl extends ViewModel implements CodeHeaderView
   private Disposable disposable;
 
   @Inject
-  CodeHeaderViewModelImpl(@Named("loginSharer") @NonNull DataSharer<String> loginSharer) {
+  public CodeHeaderViewModelImpl(@NonNull DataSharer<String> loginSharer) {
     this.loginSharer = loginSharer;
     viewStateLiveData = new MutableLiveData<>();
-    consumeCode("00000000000");
+    consumePhoneNumber("00000000000");
   }
 
   @NonNull
@@ -37,7 +36,7 @@ public class CodeHeaderViewModelImpl extends ViewModel implements CodeHeaderView
       disposable = loginSharer.get()
           .subscribeOn(Schedulers.single())
           .observeOn(AndroidSchedulers.mainThread())
-          .subscribe(this::consumeCode, throwable -> {
+          .subscribe(this::consumePhoneNumber, throwable -> {
           });
     }
     return viewStateLiveData;
@@ -49,7 +48,8 @@ public class CodeHeaderViewModelImpl extends ViewModel implements CodeHeaderView
     return new SingleLiveEvent<>();
   }
 
-  private void consumeCode(@NonNull String phoneNumber) {
+  @SuppressWarnings("SameParameterValue")
+  private void consumePhoneNumber(@NonNull String phoneNumber) {
     viewStateLiveData.postValue(
         new CodeHeaderViewState(
             phoneNumber.replaceFirst("(\\d)", "+$1 (")

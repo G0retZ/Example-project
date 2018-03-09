@@ -8,6 +8,6 @@ import javax.inject.Inject;
 public class VehiclesSharer extends MemoryDataSharer<List<Vehicle>> {
 
   @Inject
-  VehiclesSharer() {
+  public VehiclesSharer() {
   }
 }

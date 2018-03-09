@@ -28,7 +28,7 @@ public class CodeViewModelImpl extends ViewModel implements CodeViewModel {
   private Disposable disposable;
 
   @Inject
-  CodeViewModelImpl(@NonNull PasswordUseCase passwordUseCase) {
+  public CodeViewModelImpl(@NonNull PasswordUseCase passwordUseCase) {
     this.passwordUseCase = passwordUseCase;
     viewStateLiveData = new MutableLiveData<>();
     viewStateLiveData.postValue(new CodeViewStateInitial());

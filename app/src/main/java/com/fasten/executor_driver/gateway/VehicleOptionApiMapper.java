@@ -13,7 +13,7 @@ import javax.inject.Inject;
 public class VehicleOptionApiMapper implements Mapper<ApiOptionItem, Option> {
 
   @Inject
-  VehicleOptionApiMapper() {
+  public VehicleOptionApiMapper() {
   }
 
   @NonNull
@@ -24,10 +24,6 @@ public class VehicleOptionApiMapper implements Mapper<ApiOptionItem, Option> {
     }
     if (from.getName() == null) {
       throw new DataMappingException("Ошибка маппинга: имя опции не должно быть null!");
-    }
-    if (from.getDescription() == null) {
-      throw new DataMappingException(
-          "Ошибка маппинга: детальное описание опции не должно быть null!");
     }
     Option option;
     if (from.isNumeric()) {

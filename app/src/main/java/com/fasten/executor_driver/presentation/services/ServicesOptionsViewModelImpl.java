@@ -39,7 +39,7 @@ public class ServicesOptionsViewModelImpl extends ViewModel implements OptionsVi
   private Disposable setServicesDisposable;
 
   @Inject
-  ServicesOptionsViewModelImpl(ServicesUseCase servicesUseCase) {
+  public ServicesOptionsViewModelImpl(ServicesUseCase servicesUseCase) {
     this.servicesUseCase = servicesUseCase;
     viewStateLiveData = new MutableLiveData<>();
     viewStateLiveData.postValue(new OptionsViewStateInitial());

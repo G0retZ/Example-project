@@ -1,7 +1,5 @@
 package com.fasten.executor_driver.view.auth;
 
-import android.arch.lifecycle.ViewModelProvider;
-import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -19,10 +17,8 @@ import com.fasten.executor_driver.backend.settings.AppSettingsService;
 import com.fasten.executor_driver.di.AppComponent;
 import com.fasten.executor_driver.presentation.phone.PhoneViewActions;
 import com.fasten.executor_driver.presentation.phone.PhoneViewModel;
-import com.fasten.executor_driver.presentation.phone.PhoneViewModelImpl;
 import com.fasten.executor_driver.view.BaseFragment;
 import javax.inject.Inject;
-import javax.inject.Named;
 
 /**
  * Отображает поле для ввода логина.
@@ -34,24 +30,22 @@ public class LoginFragment extends BaseFragment implements PhoneViewActions {
   private EditText phoneInput;
   private Button goNext;
 
-  private ViewModelProvider.Factory viewModelFactory;
   private AppSettingsService appSettings;
 
   @Inject
-  public void setViewModelFactory(@Named("phone") ViewModelProvider.Factory viewModelFactory) {
-    this.viewModelFactory = viewModelFactory;
+  public void setAppSettings(@NonNull AppSettingsService appSettings) {
+    this.appSettings = appSettings;
   }
 
   @Inject
-  public void setAppSettings(AppSettingsService appSettings) {
-    this.appSettings = appSettings;
+  public void setPhoneViewModel(@NonNull PhoneViewModel phoneViewModel) {
+    this.phoneViewModel = phoneViewModel;
   }
 
   @Override
   protected void onDependencyInject(AppComponent appComponent) {
     // Required by Dagger2 for field injection
     appComponent.inject(this);
-    phoneViewModel = ViewModelProviders.of(this, viewModelFactory).get(PhoneViewModelImpl.class);
   }
 
   @Nullable

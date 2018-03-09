@@ -7,7 +7,6 @@ import com.fasten.executor_driver.entity.Validator;
 import com.fasten.executor_driver.interactor.DataSharer;
 import io.reactivex.Completable;
 import javax.inject.Inject;
-import javax.inject.Named;
 
 public class PasswordUseCaseImpl implements PasswordUseCase {
 
@@ -19,9 +18,9 @@ public class PasswordUseCaseImpl implements PasswordUseCase {
   private LoginData loginData = new LoginData("", "");
 
   @Inject
-  PasswordUseCaseImpl(@NonNull PasswordGateway gateway,
-      @Named("loginSharer") @NonNull DataSharer<String> loginSharer,
-      @Named("passwordValidator") @NonNull Validator<String> passwordValidator) {
+  public PasswordUseCaseImpl(@NonNull PasswordGateway gateway,
+      @NonNull DataSharer<String> loginSharer,
+      @NonNull Validator<String> passwordValidator) {
     this.gateway = gateway;
     this.passwordValidator = passwordValidator;
     loginSharer.get().subscribe(login -> loginData = loginData.setLogin(login));

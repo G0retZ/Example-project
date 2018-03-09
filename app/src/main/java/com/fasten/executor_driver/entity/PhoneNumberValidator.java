@@ -9,7 +9,7 @@ import javax.inject.Inject;
 public class PhoneNumberValidator implements Validator<String> {
 
   @Inject
-  PhoneNumberValidator() {
+  public PhoneNumberValidator() {
   }
 
   @Override

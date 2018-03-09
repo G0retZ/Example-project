@@ -1,7 +1,5 @@
 package com.fasten.executor_driver.view;
 
-import android.arch.lifecycle.ViewModelProvider;
-import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -18,10 +16,8 @@ import com.fasten.executor_driver.di.AppComponent;
 import com.fasten.executor_driver.presentation.options.OptionsListItems;
 import com.fasten.executor_driver.presentation.options.OptionsViewActions;
 import com.fasten.executor_driver.presentation.options.OptionsViewModel;
-import com.fasten.executor_driver.presentation.vehicleoptions.VehicleOptionsViewModelImpl;
 import java.util.ArrayList;
 import javax.inject.Inject;
-import javax.inject.Named;
 
 /**
  * Отображает список ТС для выбора при выходе на линию.
@@ -35,20 +31,15 @@ public class VehicleOptionsFragment extends BaseFragment implements OptionsViewA
   private TextView errorText;
   private Button readyButton;
 
-  private ViewModelProvider.Factory viewModelFactory;
-
   @Inject
-  public void setViewModelFactory(
-      @Named("vehicleOptions") ViewModelProvider.Factory viewModelFactory) {
-    this.viewModelFactory = viewModelFactory;
+  public void setVehicleOptionsViewModel(@NonNull OptionsViewModel vehicleOptionsViewModel) {
+    this.vehicleOptionsViewModel = vehicleOptionsViewModel;
   }
 
   @Override
   protected void onDependencyInject(AppComponent appComponent) {
     // Required by Dagger2 for field injection
     appComponent.inject(this);
-    vehicleOptionsViewModel = ViewModelProviders.of(this, viewModelFactory)
-        .get(VehicleOptionsViewModelImpl.class);
   }
 
   @Nullable

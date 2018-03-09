@@ -4,8 +4,7 @@ import android.app.Application;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import com.fasten.executor_driver.di.AppComponent;
-import com.fasten.executor_driver.di.AppModule;
-import com.fasten.executor_driver.di.DaggerAppComponent;
+import com.fasten.executor_driver.di.AppComponentImpl;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.PublishSubject;
@@ -33,8 +32,7 @@ public class MainApplication extends Application {
           startActivity(intent);
         });
 
-    mAppComponent = DaggerAppComponent.builder().appModule(new AppModule(this, logoutEventSubject))
-        .build();
+    mAppComponent = new AppComponentImpl(this, logoutEventSubject);
   }
 
   @NonNull

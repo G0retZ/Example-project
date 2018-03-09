@@ -14,7 +14,7 @@ public class ErrorMapper implements Mapper<Throwable, Throwable> {
   private static final String ERROR_CODE_HEADER_NAME = "Code";
 
   @Inject
-  ErrorMapper() {
+  public ErrorMapper() {
   }
 
   @NonNull

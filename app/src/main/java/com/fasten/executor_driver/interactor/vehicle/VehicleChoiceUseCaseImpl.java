@@ -9,7 +9,6 @@ import io.reactivex.Completable;
 import io.reactivex.Observable;
 import java.util.List;
 import javax.inject.Inject;
-import javax.inject.Named;
 
 public class VehicleChoiceUseCaseImpl implements VehicleChoiceUseCase {
 
@@ -21,9 +20,9 @@ public class VehicleChoiceUseCaseImpl implements VehicleChoiceUseCase {
   private List<Vehicle> vehicles;
 
   @Inject
-  VehicleChoiceUseCaseImpl(
-      @Named("vehiclesSharer") @NonNull DataSharer<List<Vehicle>> vehiclesSharer,
-      @Named("vehicleChoiceSharer") @NonNull DataSharer<Vehicle> vehicleChoiceSharer) {
+  public VehicleChoiceUseCaseImpl(
+      @NonNull DataSharer<List<Vehicle>> vehiclesSharer,
+      @NonNull DataSharer<Vehicle> vehicleChoiceSharer) {
     this.vehiclesSharer = vehiclesSharer;
     this.vehicleChoiceSharer = vehicleChoiceSharer;
   }

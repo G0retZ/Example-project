@@ -2,6 +2,7 @@ package com.fasten.executor_driver.gateway;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import com.fasten.executor_driver.backend.web.incoming.ApiOptionItem;
@@ -40,6 +41,32 @@ public class OptionApiMapperTest {
     assertEquals(option.getId(), 324);
     assertEquals(option.getName(), "name");
     assertEquals(option.getDescription(), "description");
+    assertFalse(option.isVariable());
+    assertEquals(option.getValue(), true);
+    assertEquals(option.getMinValue(), false);
+    assertEquals(option.getMaxValue(), true);
+  }
+
+  /**
+   * Должен успешно преобразовать неизменяемый двоичный входной объект без опсания в неизменяемый
+   * двоичный параметр.
+   *
+   * @throws Exception ошибка
+   */
+  @Test
+  public void mappingStaticBooleanWithoutDescriptionSuccess() throws Exception {
+    // Дано:
+    ApiOptionItem apiOptionItem = new ApiOptionItem(324, "name", null, false, false,
+        "true", -5, 123);
+
+    // Действие:
+    Option option = mapper.map(apiOptionItem);
+
+    // Результат:
+    assertTrue(option instanceof OptionBoolean);
+    assertEquals(option.getId(), 324);
+    assertEquals(option.getName(), "name");
+    assertNull(option.getDescription());
     assertFalse(option.isVariable());
     assertEquals(option.getValue(), true);
     assertEquals(option.getMinValue(), false);
@@ -99,6 +126,32 @@ public class OptionApiMapperTest {
   }
 
   /**
+   * Должен успешно преобразовать изменяемый двоичный входной объект без описания в изменяемый
+   * двоичный параметр.
+   *
+   * @throws Exception ошибка
+   */
+  @Test
+  public void mappingDynamicBooleanWithoutDescriptionSuccess() throws Exception {
+    // Дано:
+    ApiOptionItem apiOptionItem = new ApiOptionItem(1, "name", null, false, true,
+        "false", 50, 300);
+
+    // Действие:
+    Option option = mapper.map(apiOptionItem);
+
+    // Результат:
+    assertTrue(option instanceof OptionBoolean);
+    assertEquals(option.getId(), 1);
+    assertEquals(option.getName(), "name");
+    assertNull(option.getDescription());
+    assertTrue(option.isVariable());
+    assertEquals(option.getValue(), false);
+    assertEquals(option.getMinValue(), false);
+    assertEquals(option.getMaxValue(), true);
+  }
+
+  /**
    * Должен успешно преобразовать изменяемый двоичный входной объект без пределов в изменяемый
    * двоичный параметр.
    *
@@ -151,6 +204,32 @@ public class OptionApiMapperTest {
   }
 
   /**
+   * Должен успешно преобразовать неизменяемый числовой входной объект без описания в неизменяемый
+   * числовой параметр.
+   *
+   * @throws Exception ошибка
+   */
+  @Test
+  public void mappingStaticNumericWithoutDescriptionSuccess() throws Exception {
+    // Дано:
+    ApiOptionItem apiOptionItem = new ApiOptionItem(324, "name", null, true, false,
+        "34", -5, 123);
+
+    // Действие:
+    Option option = mapper.map(apiOptionItem);
+
+    // Результат:
+    assertTrue(option instanceof OptionNumeric);
+    assertEquals(option.getId(), 324);
+    assertEquals(option.getName(), "name");
+    assertNull(option.getDescription());
+    assertFalse(option.isVariable());
+    assertEquals(option.getValue(), 34);
+    assertEquals(option.getMinValue(), -5);
+    assertEquals(option.getMaxValue(), 123);
+  }
+
+  /**
    * Должен успешно преобразовать изменяемый числовой входной объект с пределами в изменяемый
    * числовой параметр.
    *
@@ -170,6 +249,32 @@ public class OptionApiMapperTest {
     assertEquals(option.getId(), 1);
     assertEquals(option.getName(), "name");
     assertEquals(option.getDescription(), "description");
+    assertTrue(option.isVariable());
+    assertEquals(option.getValue(), 54);
+    assertEquals(option.getMinValue(), 50);
+    assertEquals(option.getMaxValue(), 300);
+  }
+
+  /**
+   * Должен успешно преобразовать изменяемый числовой входной объект без описания в изменяемый
+   * числовой параметр.
+   *
+   * @throws Exception ошибка
+   */
+  @Test
+  public void mappingDynamicNumericWithoutDescriptionSuccess() throws Exception {
+    // Дано:
+    ApiOptionItem apiOptionItem = new ApiOptionItem(1, "name", null, true, true,
+        "54", 50, 300);
+
+    // Действие:
+    Option option = mapper.map(apiOptionItem);
+
+    // Результат:
+    assertTrue(option instanceof OptionNumeric);
+    assertEquals(option.getId(), 1);
+    assertEquals(option.getName(), "name");
+    assertNull(option.getDescription());
     assertTrue(option.isVariable());
     assertEquals(option.getValue(), 54);
     assertEquals(option.getMinValue(), 50);
@@ -363,21 +468,6 @@ public class OptionApiMapperTest {
   public void mappingWithoutOptionNameFail() throws Exception {
     // Дано:
     ApiOptionItem apiOptionItem = new ApiOptionItem(324, null, "description", true, false,
-        "34s5", -5, 123);
-
-    // Действие:
-    mapper.map(apiOptionItem);
-  }
-
-  /**
-   * Должен дать ошибку, если описание опции - нуль.
-   *
-   * @throws Exception ошибка
-   */
-  @Test(expected = DataMappingException.class)
-  public void mappingWithoutOptionDescriptionFail() throws Exception {
-    // Дано:
-    ApiOptionItem apiOptionItem = new ApiOptionItem(324, "name", null, true, false,
         "34s5", -5, 123);
 
     // Действие:

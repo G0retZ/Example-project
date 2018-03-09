@@ -4,9 +4,6 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog.Builder;
-import android.arch.lifecycle.ViewModelProvider;
-import android.arch.lifecycle.ViewModelProvider.Factory;
-import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.res.Resources;
 import android.location.Location;
@@ -18,7 +15,6 @@ import com.fasten.executor_driver.R;
 import com.fasten.executor_driver.application.BaseActivity;
 import com.fasten.executor_driver.presentation.map.MapViewActions;
 import com.fasten.executor_driver.presentation.map.MapViewModel;
-import com.fasten.executor_driver.presentation.map.MapViewModelImpl;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnMyLocationButtonClickListener;
@@ -32,7 +28,6 @@ import com.google.maps.android.data.geojson.GeoJsonLayer;
 import com.google.maps.android.data.geojson.GeoJsonPolygonStyle;
 import io.reactivex.disposables.Disposable;
 import javax.inject.Inject;
-import javax.inject.Named;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -50,13 +45,14 @@ public class MapFragment extends SupportMapFragment implements OnMapReadyCallbac
   @Nullable
   private BaseActivity baseActivity;
   private MapViewModel mapViewModel;
-  private ViewModelProvider.Factory mapViewModelFactory;
 
   private GeoJsonLayer layer;
+  private GoogleMap googleMap;
+  private Activity activity;
 
   @Inject
-  public void setMapViewModelFactory(@Named("map") Factory mapViewModelFactory) {
-    this.mapViewModelFactory = mapViewModelFactory;
+  public void setMapViewModel(@NonNull MapViewModel mapViewModel) {
+    this.mapViewModel = mapViewModel;
   }
 
   @Override
@@ -75,14 +71,9 @@ public class MapFragment extends SupportMapFragment implements OnMapReadyCallbac
     super.onCreate(bundle);
     if (baseActivity != null) {
       baseActivity.getDiComponent().inject(this);
-      mapViewModel = ViewModelProviders.of(this, mapViewModelFactory).get(MapViewModelImpl.class);
     }
     getMapAsync(this);
   }
-
-  private GoogleMap googleMap;
-
-  private Activity activity;
 
   @Override
   public void onAttach(Activity activity) {
@@ -182,7 +173,9 @@ public class MapFragment extends SupportMapFragment implements OnMapReadyCallbac
     //Временно
     @SuppressWarnings("deprecation")
     Location location = googleMap.getMyLocation();
-    if (location == null) return false;
+    if (location == null) {
+      return false;
+    }
     // Показываем, где он есть.
     CameraPosition cameraPosition = new CameraPosition.Builder()
         .target(new LatLng(location.getLatitude(), location.getLongitude())).zoom(15.2f)

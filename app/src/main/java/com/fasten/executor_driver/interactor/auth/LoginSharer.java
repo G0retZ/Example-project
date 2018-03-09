@@ -9,7 +9,7 @@ import javax.inject.Inject;
 public class LoginSharer extends PersistentDataSharer<String> {
 
   @Inject
-  LoginSharer(@NonNull AppSettingsService appSettingsService) {
+  public LoginSharer(@NonNull AppSettingsService appSettingsService) {
     super(appSettingsService);
   }
 

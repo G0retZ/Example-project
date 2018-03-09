@@ -34,15 +34,16 @@ class ChooseVehicleAdapter extends RecyclerView.Adapter<ChooseVehicleViewHolder>
     return list.size();
   }
 
+  @NonNull
   @Override
-  public ChooseVehicleViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+  public ChooseVehicleViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
     View view = LayoutInflater.from(parent.getContext())
         .inflate(R.layout.fragment_choose_vehicle_list_item, parent, false);
     return new ChooseVehicleViewHolder(view);
   }
 
   @Override
-  public void onBindViewHolder(ChooseVehicleViewHolder holder, int position) {
+  public void onBindViewHolder(@NonNull ChooseVehicleViewHolder holder, int position) {
     ChooseVehicleListItem chooseVehicleListItem = list.get(position);
     holder.nameText.setText(chooseVehicleListItem.getName());
     holder.labelText.setText(chooseVehicleListItem.getLabel());
