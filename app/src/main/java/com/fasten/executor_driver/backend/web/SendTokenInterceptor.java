@@ -25,10 +25,12 @@ public class SendTokenInterceptor implements Interceptor {
   @Override
   public Response intercept(Chain chain) throws IOException {
     Request.Builder builder = chain.request().newBuilder();
-    String token = tokenKeeper.getToken();
-    if (token != null) {
-      System.out.println("OkHttp Adding Header: " + token);
-      builder.addHeader(HEADER_NAME, token);
+    if (!chain.request().url().encodedPath().contains("/login")) {
+      String token = tokenKeeper.getToken();
+      if (token != null) {
+        System.out.println("OkHttp Adding Header: " + token);
+        builder.addHeader(HEADER_NAME, token);
+      }
     }
     return chain.proceed(builder.build());
   }

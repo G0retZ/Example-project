@@ -37,10 +37,10 @@ public class ApiOptionsForOnlineTest {
         new ApiVehicle(2, "mark3", "model3", "lic3", "col3", false, new ArrayList<>())
     ));
     assertEquals(apiOptionsForOnline.getDriverOptions(), Arrays.asList(
-            new ApiOptionItem(324, "opt1", "desc1", true, false, "val1", -5, 3),
-            new ApiOptionItem(31, "opt2", "desc2", true, true, "val2", 5, 20),
-            new ApiOptionItem(523, "opt3", "desc3", false, true, "val3", null, null),
-            new ApiOptionItem(42, "opt4", "desc4", false, false, "val4", null, null)
+        new ApiOptionItem(324, "opt1", "desc1", true, false, "val1", -5, 3),
+        new ApiOptionItem(31, "opt2", "desc2", true, true, "val2", 5, 20),
+        new ApiOptionItem(523, "opt3", "desc3", false, true, "val3", null, null),
+        new ApiOptionItem(42, "opt4", "desc4", false, false, "val4", null, null)
     ));
   }
 

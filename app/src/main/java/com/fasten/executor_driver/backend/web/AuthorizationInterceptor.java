@@ -28,7 +28,7 @@ public class AuthorizationInterceptor implements Interceptor {
     // Проверить
     Response response = chain.proceed(chain.request());
     List<String> headers = response.headers(HEADER_NAME);
-    if (response.code() == 401 && headers.isEmpty()) {
+    if (response.code() == 401 && !headers.isEmpty()) {
       logoutEventSubject.onNext("");
     }
     return response;
