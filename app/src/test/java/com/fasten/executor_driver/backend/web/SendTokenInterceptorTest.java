@@ -74,7 +74,26 @@ public class SendTokenInterceptorTest {
   }
 
   /**
-   * Должен не подсунуть токен.
+   * Должен не подсовывать токен, если в пути есть "login".
+   *
+   * @throws Exception error
+   */
+  @Test
+  public void doNotInjectTokenIfLogin() throws Exception {
+    // Дано:
+    when(chain.request())
+        .thenReturn(new Request.Builder().url("http://www.fasten.com/login").build());
+
+    // Действие:
+    sendTokenInterceptor.intercept(chain);
+
+    // Результат:
+    verify(chain).proceed(request.capture());
+    assertEquals(request.getValue().headers("Authorization").size(), 0);
+  }
+
+  /**
+   * Должен подсунуть токен.
    *
    * @throws Exception error
    */
