@@ -60,16 +60,17 @@ public class AuthorizationInterceptorTest {
   }
 
   /**
-   * Должен не трогать предмет выхода из системы если нет хедера Code.
+   * Должен не трогать предмет выхода из системы если есть хедер Code = 401.0.
    *
    * @throws Exception error
    */
   @Test
-  public void doNotTouchLogoutSubjectWithoutCodeHeader() throws Exception {
+  public void doNotTouchLogoutSubjectWithCodeHeader401_0() throws Exception {
     // Дано:
     when(chain.proceed(nullable(Request.class))).thenReturn(
         new Response.Builder()
             .code(401)
+            .header("Code", "401.0")
             .protocol(Protocol.HTTP_1_1)
             .message("")
             .request(new Request.Builder()
@@ -91,12 +92,38 @@ public class AuthorizationInterceptorTest {
    * @throws Exception error
    */
   @Test
-  public void askLogoutSubjectForLogoutWithCodeHeader() throws Exception {
+  public void askLogoutSubjectForLogoutWithAnyOtherCodeHeader() throws Exception {
     // Дано:
     when(chain.proceed(nullable(Request.class))).thenReturn(
         new Response.Builder()
             .code(401)
-            .header("Code", "401.0")
+            .header("Code", "any value")
+            .protocol(Protocol.HTTP_1_1)
+            .message("")
+            .request(new Request.Builder()
+                .url("http://www.fasten.com")
+                .build()
+            ).build()
+    );
+
+    // Действие:
+    authorizationInterceptor.intercept(chain);
+
+    // Результат:
+    verify(testSubscriber, only()).onNext("");
+  }
+
+  /**
+   * Должен сообщить предмету о выходе из системы.
+   *
+   * @throws Exception error
+   */
+  @Test
+  public void askLogoutSubjectForLogoutWithoutCodeHeader() throws Exception {
+    // Дано:
+    when(chain.proceed(nullable(Request.class))).thenReturn(
+        new Response.Builder()
+            .code(401)
             .protocol(Protocol.HTTP_1_1)
             .message("")
             .request(new Request.Builder()
