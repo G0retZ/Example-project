@@ -60,17 +60,16 @@ public class AuthorizationInterceptorTest {
   }
 
   /**
-   * Должен не трогать предмет выхода из системы если есть хедер Code.
+   * Должен не трогать предмет выхода из системы если нет хедера Code.
    *
    * @throws Exception error
    */
   @Test
-  public void doNotTouchLogoutSubjectWithCodeHeader() throws Exception {
+  public void doNotTouchLogoutSubjectWithoutCodeHeader() throws Exception {
     // Дано:
     when(chain.proceed(nullable(Request.class))).thenReturn(
         new Response.Builder()
             .code(401)
-            .header("Code", "401.0")
             .protocol(Protocol.HTTP_1_1)
             .message("")
             .request(new Request.Builder()
@@ -92,11 +91,12 @@ public class AuthorizationInterceptorTest {
    * @throws Exception error
    */
   @Test
-  public void askLogoutSubjectForLogout() throws Exception {
+  public void askLogoutSubjectForLogoutWithCodeHeader() throws Exception {
     // Дано:
     when(chain.proceed(nullable(Request.class))).thenReturn(
         new Response.Builder()
             .code(401)
+            .header("Code", "401.0")
             .protocol(Protocol.HTTP_1_1)
             .message("")
             .request(new Request.Builder()
