@@ -9,7 +9,7 @@ public class GeoLocation {
   private final double longitude;
   private final long timestamp;
 
-  GeoLocation(double latitude, double longitude, long timestamp) {
+  public GeoLocation(double latitude, double longitude, long timestamp) {
     this.latitude = latitude;
     this.longitude = longitude;
     this.timestamp = timestamp;
