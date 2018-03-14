@@ -29,8 +29,8 @@ public class VehiclesSharerTest {
         Arrays.asList(
             new Vehicle(12, "manufacturer", "model", "color", "license", false),
             new Vehicle(13, "manufacture", "models", "colo", "licenses", true),
-            new Vehicle(14, "manufactur", "modelsa", "color", "licens", false),
-            new Vehicle(15, "manufactu", "modelsan", "colo", "licensee", true)
+            new Vehicle(14, "manufactures", "modeler", "color", "licensees", false),
+            new Vehicle(15, "manufacturers", "modelers", "colo", "licensee", true)
         )
     );
 
@@ -39,8 +39,8 @@ public class VehiclesSharerTest {
         Arrays.asList(
             new Vehicle(12, "manufacturer", "model", "color", "license", false),
             new Vehicle(13, "manufacture", "models", "colo", "licenses", true),
-            new Vehicle(14, "manufactur", "modelsa", "color", "licens", false),
-            new Vehicle(15, "manufactu", "modelsan", "colo", "licensee", true)
+            new Vehicle(14, "manufactures", "modeler", "color", "licensees", false),
+            new Vehicle(15, "manufacturers", "modelers", "colo", "licensee", true)
         )
     );
   }
