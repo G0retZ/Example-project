@@ -20,9 +20,9 @@
     android:layout_width="0dp"
     android:layout_height="wrap_content"
     android:name="com.fasten.executor_driver.view.GoOnlineFragment"
-    tools:layout="@layout/fragment_go_online"
     app:layout_constraintBottom_toBottomOf="parent"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
+    tools:layout="@layout/fragment_go_online"
     />
 </android.support.constraint.ConstraintLayout>
