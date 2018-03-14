@@ -43,6 +43,11 @@
       android:name=".application.ServicesActivity"
       android:parentActivityName=".application.VehicleOptionsActivity"/>
 
+    <service
+      android:enabled="true"
+      android:exported="false"
+      android:name=".application.PersistenceService"/>
+
     <meta-data
       android:name="com.google.android.geo.API_KEY"
       android:value="@string/google_maps_key"/>

@@ -27,4 +27,13 @@
   <string name="ready">Готово</string>
   <string name="change">Сменить</string>
   <string name="select_services">Выберите услуги</string>
+  <string name="online">На линии</string>
+  <string name="executing">Выполнение</string>
+  <string name="to_app">В приложение</string>
+  <string name="no_orders">Не получать заказы</string>
+  <string name="wait_for_orders">Ожидание заказа</string>
+  <string name="to_loading_point">В пути к месту погрузки</string>
+  <string name="to_unloading_point">В пути к месту разгрузки</string>
+  <string name="loading">Погрузка</string>
+  <string name="unloading">Разгрузка</string>
 </resources>
