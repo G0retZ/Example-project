@@ -26,13 +26,13 @@ public enum ExecutorState {
    */
   APPROACHING_LOADING_POINT,
   /**
-   * Водитель движется к месту разгрузки.
-   */
-  APPROACHING_UNLOADING_POINT,
-  /**
    * Водитель в процессе погрузки.
    */
   LOADING,
+  /**
+   * Водитель движется к месту разгрузки.
+   */
+  APPROACHING_UNLOADING_POINT,
   /**
    * Водитель в процессе разгрузки.
    */

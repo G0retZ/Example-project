@@ -61,6 +61,7 @@ import com.fasten.executor_driver.presentation.map.MapViewModelImpl;
 import com.fasten.executor_driver.presentation.onlinebutton.OnlineButtonViewModel;
 import com.fasten.executor_driver.presentation.onlinebutton.OnlineButtonViewModelImpl;
 import com.fasten.executor_driver.presentation.options.OptionsViewModel;
+import com.fasten.executor_driver.presentation.persistence.PersistenceViewModelImpl;
 import com.fasten.executor_driver.presentation.phone.PhoneViewModel;
 import com.fasten.executor_driver.presentation.phone.PhoneViewModelImpl;
 import com.fasten.executor_driver.presentation.selectedvehicle.SelectedVehicleViewModel;
@@ -166,9 +167,8 @@ public class AppComponentImpl implements AppComponent {
 
   @Override
   public void inject(MainApplication mainApplication) {
-    mainApplication.setUnAuthUseCase(
-        new UnAuthUseCaseImpl(unAuthGateway, executorStateSharer)
-    );
+    mainApplication.setUnAuthUseCase(new UnAuthUseCaseImpl(unAuthGateway, executorStateSharer));
+    mainApplication.setPersistenceViewModel(new PersistenceViewModelImpl(executorStateSharer));
   }
 
   @Override

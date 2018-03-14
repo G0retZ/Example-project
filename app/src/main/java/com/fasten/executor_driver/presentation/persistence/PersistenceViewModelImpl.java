@@ -12,8 +12,9 @@ import com.fasten.executor_driver.presentation.ViewState;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
+import javax.inject.Inject;
 
-class PersistenceViewModelImpl implements PersistenceViewModel {
+public class PersistenceViewModelImpl implements PersistenceViewModel {
 
   @NonNull
   private final DataSharer<ExecutorState> executorStateSharer;
@@ -24,7 +25,8 @@ class PersistenceViewModelImpl implements PersistenceViewModel {
   @Nullable
   private Disposable disposable;
 
-  PersistenceViewModelImpl(@NonNull DataSharer<ExecutorState> executorStateSharer) {
+  @Inject
+  public PersistenceViewModelImpl(@NonNull DataSharer<ExecutorState> executorStateSharer) {
     this.executorStateSharer = executorStateSharer;
     viewStateLiveData = new MutableLiveData<>();
   }
