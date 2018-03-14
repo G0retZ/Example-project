@@ -15,6 +15,7 @@ import javax.inject.Inject;
 
 public class MapViewModelImpl extends ViewModel implements MapViewModel {
 
+  @NonNull
   private final HeatMapUseCase heatMapUseCase;
 
   @NonNull
@@ -23,7 +24,7 @@ public class MapViewModelImpl extends ViewModel implements MapViewModel {
   private Disposable disposable;
 
   @Inject
-  public MapViewModelImpl(HeatMapUseCase heatMapUseCase) {
+  public MapViewModelImpl(@NonNull HeatMapUseCase heatMapUseCase) {
     this.heatMapUseCase = heatMapUseCase;
     viewStateLiveData = new MutableLiveData<>();
     viewStateLiveData.postValue(new MapViewState(null));

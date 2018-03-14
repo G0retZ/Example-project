@@ -12,21 +12,29 @@ public enum ExecutorState {
   /**
    * Смена закрыта. В этом состоянии водитель не получает заказов, и не занимает никакой ТС.
    */
-  @SuppressWarnings("unused")CLOSED_SHIFT,
+  CLOSED_SHIFT,
   /**
    * Смена открыта. В этом состоянии водитель не получает заказов, занимает одну из доступных ТС.
    */
-  @SuppressWarnings("unused")OPENED_SHIFT,
+  OPENED_SHIFT,
   /**
    * Водитель "на линии". В этом состоянии водитель получает заказы для занимаемого ТС.
    */
-  @SuppressWarnings("unused")READY_FOR_ORDERS,
+  READY_FOR_ORDERS,
   /**
    * Водитель движется к месту погрузки.
    */
   APPROACHING_LOADING_POINT,
   /**
+   * Водитель в процессе погрузки.
+   */
+  LOADING,
+  /**
    * Водитель движется к месту разгрузки.
    */
-  @SuppressWarnings("unused")APPROACHING_UNLOADING_POINT
+  APPROACHING_UNLOADING_POINT,
+  /**
+   * Водитель в процессе разгрузки.
+   */
+  UNLOADING
 }
