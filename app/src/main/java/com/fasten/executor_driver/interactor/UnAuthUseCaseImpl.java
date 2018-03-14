@@ -4,7 +4,7 @@ import android.support.annotation.NonNull;
 import com.fasten.executor_driver.entity.ExecutorState;
 import io.reactivex.Completable;
 
-class UnAuthUseCaseImpl implements UnAuthUseCase {
+public class UnAuthUseCaseImpl implements UnAuthUseCase {
 
   @NonNull
   private final UnAuthGateway gateway;

@@ -4,6 +4,7 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import com.fasten.executor_driver.BuildConfig;
+import com.fasten.executor_driver.application.MainApplication;
 import com.fasten.executor_driver.backend.settings.AppPreferences;
 import com.fasten.executor_driver.backend.settings.AppSettingsService;
 import com.fasten.executor_driver.backend.web.ApiService;
@@ -12,6 +13,7 @@ import com.fasten.executor_driver.backend.web.ConnectivityInterceptor;
 import com.fasten.executor_driver.backend.web.ReceiveTokenInterceptor;
 import com.fasten.executor_driver.backend.web.SendTokenInterceptor;
 import com.fasten.executor_driver.backend.web.TokenKeeper;
+import com.fasten.executor_driver.entity.ExecutorState;
 import com.fasten.executor_driver.entity.LoginValidator;
 import com.fasten.executor_driver.entity.Option;
 import com.fasten.executor_driver.entity.PasswordValidator;
@@ -30,6 +32,9 @@ import com.fasten.executor_driver.gateway.VehicleOptionApiMapper;
 import com.fasten.executor_driver.gateway.VehicleOptionsGatewayImpl;
 import com.fasten.executor_driver.gateway.VehiclesAndOptionsGatewayImpl;
 import com.fasten.executor_driver.interactor.DataSharer;
+import com.fasten.executor_driver.interactor.ExecutorStateSharer;
+import com.fasten.executor_driver.interactor.UnAuthGateway;
+import com.fasten.executor_driver.interactor.UnAuthUseCaseImpl;
 import com.fasten.executor_driver.interactor.auth.LoginSharer;
 import com.fasten.executor_driver.interactor.auth.LoginUseCaseImpl;
 import com.fasten.executor_driver.interactor.auth.PasswordUseCaseImpl;
@@ -73,7 +78,6 @@ import com.fasten.executor_driver.view.VehicleOptionsFragment;
 import com.fasten.executor_driver.view.auth.LoginFragment;
 import com.fasten.executor_driver.view.auth.PasswordFragment;
 import com.fasten.executor_driver.view.auth.SmsReceiver;
-import io.reactivex.subjects.Subject;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import okhttp3.Interceptor;
@@ -100,16 +104,20 @@ public class AppComponentImpl implements AppComponent {
   private final DataSharer<Vehicle> vehicleChoiceSharer;
   @NonNull
   private final DataSharer<Vehicle> lastUsedVehiclesSharer;
+  @NonNull
+  private final DataSharer<ExecutorState> executorStateSharer;
+  @NonNull
+  private final UnAuthGateway unAuthGateway;
 
-  @SuppressWarnings("unused")
-  public AppComponentImpl(@NonNull Context appContext,
-      @NonNull Subject<String> logoutEventSubject) {
+  public AppComponentImpl(@NonNull Context appContext) {
     appSettingsService = new AppPreferences(appContext);
     TokenKeeper tokenKeeper = new TokenKeeperImpl(appSettingsService);
+    AuthorizationInterceptor authorizationInterceptor = new AuthorizationInterceptor();
+    unAuthGateway = authorizationInterceptor;
     apiService = initApiService(
         initHttpClient(
             new ConnectivityInterceptor(appContext),
-            new AuthorizationInterceptor(),
+            authorizationInterceptor,
             new SendTokenInterceptor(tokenKeeper),
             new ReceiveTokenInterceptor(tokenKeeper)
         )
@@ -119,6 +127,7 @@ public class AppComponentImpl implements AppComponent {
     driverOptionsSharer = new DriverOptionsSharer();
     vehicleChoiceSharer = new VehicleChoiceSharer();
     lastUsedVehiclesSharer = new LastUsedVehicleSharer(appSettingsService);
+    executorStateSharer = new ExecutorStateSharer();
   }
 
   private OkHttpClient initHttpClient(
@@ -153,6 +162,13 @@ public class AppComponentImpl implements AppComponent {
         .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
         .build()
         .create(ApiService.class);
+  }
+
+  @Override
+  public void inject(MainApplication mainApplication) {
+    mainApplication.setUnAuthUseCase(
+        new UnAuthUseCaseImpl(unAuthGateway, executorStateSharer)
+    );
   }
 
   @Override
