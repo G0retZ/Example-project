@@ -101,6 +101,7 @@ public class AppComponentImpl implements AppComponent {
   @NonNull
   private final DataSharer<Vehicle> lastUsedVehiclesSharer;
 
+  @SuppressWarnings("unused")
   public AppComponentImpl(@NonNull Context appContext,
       @NonNull Subject<String> logoutEventSubject) {
     appSettingsService = new AppPreferences(appContext);
@@ -108,7 +109,7 @@ public class AppComponentImpl implements AppComponent {
     apiService = initApiService(
         initHttpClient(
             new ConnectivityInterceptor(appContext),
-            new AuthorizationInterceptor(logoutEventSubject),
+            new AuthorizationInterceptor(),
             new SendTokenInterceptor(tokenKeeper),
             new ReceiveTokenInterceptor(tokenKeeper)
         )

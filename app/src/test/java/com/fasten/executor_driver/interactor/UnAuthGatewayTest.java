@@ -1,8 +1,9 @@
-package com.fasten.executor_driver.backend.web;
+package com.fasten.executor_driver.interactor;
 
 import static org.mockito.ArgumentMatchers.nullable;
 import static org.mockito.Mockito.when;
 
+import com.fasten.executor_driver.backend.web.AuthorizationInterceptor;
 import io.reactivex.observers.TestObserver;
 import io.reactivex.plugins.RxJavaPlugins;
 import io.reactivex.schedulers.Schedulers;
@@ -17,7 +18,7 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
-public class AuthorizationInterceptorTest {
+public class UnAuthGatewayTest {
 
   private AuthorizationInterceptor authorizationInterceptor;
 
