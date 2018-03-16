@@ -1,17 +1,23 @@
 package com.fasten.executor_driver.application;
 
+import android.app.Activity;
 import android.app.Application;
 import android.content.Intent;
 import android.os.Build;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
 import com.fasten.executor_driver.di.AppComponent;
 import com.fasten.executor_driver.di.AppComponentImpl;
+import com.fasten.executor_driver.entity.GeoLocation;
+import com.fasten.executor_driver.interactor.DataReceiver;
+import com.fasten.executor_driver.interactor.GeoLocationUseCase;
 import com.fasten.executor_driver.interactor.UnAuthUseCase;
 import com.fasten.executor_driver.presentation.persistence.PersistenceViewActions;
 import com.fasten.executor_driver.presentation.persistence.PersistenceViewModel;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
+import javax.inject.Inject;
 
 /**
  * Application.
@@ -23,14 +29,65 @@ public class MainApplication extends Application implements PersistenceViewActio
 
   private UnAuthUseCase unAuthUseCase;
   private PersistenceViewModel persistenceViewModel;
+  private GeoLocationUseCase geoLocationUseCase;
+  private DataReceiver<GeoLocation> geoLocationDataReceiver;
 
+  private ActivityLifecycleCallbacks problemsActivityLifecycleCallbacks = new ActivityLifecycleCallbacks() {
+    private boolean onScreen;
+
+    @Override
+    public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
+    }
+
+    @Override
+    public void onActivityStarted(Activity activity) {
+    }
+
+    @Override
+    public void onActivityResumed(Activity activity) {
+      onScreen = true;
+    }
+
+    @Override
+    public void onActivityPaused(Activity activity) {
+      onScreen = false;
+    }
+
+    @Override
+    public void onActivityStopped(Activity activity) {
+    }
+
+    @Override
+    public void onActivitySaveInstanceState(Activity activity, Bundle outState) {
+    }
+
+    @Override
+    public void onActivityDestroyed(Activity activity) {
+      if (onScreen && activity instanceof GeolocationResolutionActivity) {
+        reloadGeoLocations();
+      }
+    }
+  };
+
+  @Inject
   public void setUnAuthUseCase(@NonNull UnAuthUseCase unAuthUseCase) {
     this.unAuthUseCase = unAuthUseCase;
   }
 
+  @Inject
   public void setPersistenceViewModel(
       PersistenceViewModel persistenceViewModel) {
     this.persistenceViewModel = persistenceViewModel;
+  }
+
+  @Inject
+  public void setGeoLocationUseCase(GeoLocationUseCase geoLocationUseCase) {
+    this.geoLocationUseCase = geoLocationUseCase;
+  }
+
+  @Inject
+  public void setGeoLocationDataReceiver(DataReceiver<GeoLocation> geoLocationDataReceiver) {
+    this.geoLocationDataReceiver = geoLocationDataReceiver;
   }
 
   @Override
@@ -44,6 +101,9 @@ public class MainApplication extends Application implements PersistenceViewActio
         viewState.apply(this);
       }
     });
+    listenForGeoLocations();
+    reloadGeoLocations();
+    registerActivityLifecycleCallbacks(problemsActivityLifecycleCallbacks);
   }
 
   @NonNull
@@ -84,5 +144,21 @@ public class MainApplication extends Application implements PersistenceViewActio
             }, throwable -> {
             }
         );
+  }
+
+  private void reloadGeoLocations() {
+    geoLocationUseCase.reload().subscribeOn(Schedulers.single())
+        .observeOn(AndroidSchedulers.mainThread()).subscribe();
+  }
+
+  private void listenForGeoLocations() {
+    geoLocationDataReceiver.get()
+        .subscribeOn(Schedulers.single())
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe(geoLocation -> {
+        }, throwable -> {
+          startActivity(new Intent(this, GeolocationResolutionActivity.class));
+          listenForGeoLocations();
+        }, this::listenForGeoLocations);
   }
 }

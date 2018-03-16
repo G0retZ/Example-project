@@ -5,6 +5,8 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import com.fasten.executor_driver.BuildConfig;
 import com.fasten.executor_driver.application.MainApplication;
+import com.fasten.executor_driver.backend.geolocation.GeolocationCenter;
+import com.fasten.executor_driver.backend.geolocation.GeolocationCenterImpl;
 import com.fasten.executor_driver.backend.settings.AppPreferences;
 import com.fasten.executor_driver.backend.settings.AppSettingsService;
 import com.fasten.executor_driver.backend.web.ApiService;
@@ -14,6 +16,7 @@ import com.fasten.executor_driver.backend.web.ReceiveTokenInterceptor;
 import com.fasten.executor_driver.backend.web.SendTokenInterceptor;
 import com.fasten.executor_driver.backend.web.TokenKeeper;
 import com.fasten.executor_driver.entity.ExecutorState;
+import com.fasten.executor_driver.entity.GeoLocation;
 import com.fasten.executor_driver.entity.LoginValidator;
 import com.fasten.executor_driver.entity.Option;
 import com.fasten.executor_driver.entity.PasswordValidator;
@@ -21,6 +24,7 @@ import com.fasten.executor_driver.entity.PhoneNumberValidator;
 import com.fasten.executor_driver.entity.SmsCodeExtractor;
 import com.fasten.executor_driver.entity.Vehicle;
 import com.fasten.executor_driver.gateway.ErrorMapper;
+import com.fasten.executor_driver.gateway.GeoLocationGatewayImpl;
 import com.fasten.executor_driver.gateway.HeatMapGatewayImpl;
 import com.fasten.executor_driver.gateway.PasswordGatewayImpl;
 import com.fasten.executor_driver.gateway.ServiceApiMapper;
@@ -32,6 +36,8 @@ import com.fasten.executor_driver.gateway.VehicleOptionApiMapper;
 import com.fasten.executor_driver.gateway.VehicleOptionsGatewayImpl;
 import com.fasten.executor_driver.gateway.VehiclesAndOptionsGatewayImpl;
 import com.fasten.executor_driver.interactor.ExecutorStateSharer;
+import com.fasten.executor_driver.interactor.GeoLocationSharer;
+import com.fasten.executor_driver.interactor.GeoLocationUseCaseImpl;
 import com.fasten.executor_driver.interactor.MemoryDataSharer;
 import com.fasten.executor_driver.interactor.UnAuthGateway;
 import com.fasten.executor_driver.interactor.UnAuthUseCaseImpl;
@@ -96,6 +102,8 @@ public class AppComponentImpl implements AppComponent {
   @NonNull
   private final ApiService apiService;
   @NonNull
+  private final GeolocationCenter geolocationCenter;
+  @NonNull
   private final MemoryDataSharer<String> loginSharer;
   @NonNull
   private final MemoryDataSharer<List<Vehicle>> vehiclesSharer;
@@ -108,9 +116,12 @@ public class AppComponentImpl implements AppComponent {
   @NonNull
   private final MemoryDataSharer<ExecutorState> executorStateSharer;
   @NonNull
+  private final MemoryDataSharer<GeoLocation> geoLocationSharer;
+  @NonNull
   private final UnAuthGateway unAuthGateway;
 
   public AppComponentImpl(@NonNull Context appContext) {
+    appContext = appContext.getApplicationContext();
     appSettingsService = new AppPreferences(appContext);
     TokenKeeper tokenKeeper = new TokenKeeperImpl(appSettingsService);
     AuthorizationInterceptor authorizationInterceptor = new AuthorizationInterceptor();
@@ -123,12 +134,14 @@ public class AppComponentImpl implements AppComponent {
             new ReceiveTokenInterceptor(tokenKeeper)
         )
     );
+    geolocationCenter = new GeolocationCenterImpl(appContext);
     loginSharer = new LoginSharer(appSettingsService);
     vehiclesSharer = new VehiclesSharer();
     driverOptionsSharer = new DriverOptionsSharer();
     vehicleChoiceSharer = new VehicleChoiceSharer();
     lastUsedVehiclesSharer = new LastUsedVehicleSharer(appSettingsService);
     executorStateSharer = new ExecutorStateSharer();
+    geoLocationSharer = new GeoLocationSharer();
   }
 
   private OkHttpClient initHttpClient(
@@ -169,6 +182,10 @@ public class AppComponentImpl implements AppComponent {
   public void inject(MainApplication mainApplication) {
     mainApplication.setUnAuthUseCase(new UnAuthUseCaseImpl(unAuthGateway, executorStateSharer));
     mainApplication.setPersistenceViewModel(new PersistenceViewModelImpl(executorStateSharer));
+    mainApplication.setGeoLocationDataReceiver(geoLocationSharer);
+    mainApplication.setGeoLocationUseCase(new GeoLocationUseCaseImpl(
+        new GeoLocationGatewayImpl(geolocationCenter), executorStateSharer, geoLocationSharer
+    ));
   }
 
   @Override
