@@ -42,6 +42,7 @@
     <activity
       android:name=".application.ServicesActivity"
       android:parentActivityName=".application.VehicleOptionsActivity"/>
+    <activity android:name=".application.GeolocationResolutionActivity"/>
 
     <service
       android:enabled="true"
