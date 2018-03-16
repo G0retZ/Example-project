@@ -45,7 +45,7 @@ public class GeoLocationViewModelTest {
     mapViewModel = new GeoLocationViewModelImpl(geoLocationReceiver);
   }
 
-  /* Тетсируем работу с юзкейсом тепловой карты. */
+  /* Тетсируем работу с публикатором местоположения. */
 
   /**
    * Должен попросить у публикатора подписку на обновления местоположения.
@@ -53,7 +53,7 @@ public class GeoLocationViewModelTest {
    * @throws Exception error
    */
   @Test
-  public void askUseCaseToSubscribeToHeatMapUpdates() throws Exception {
+  public void askDataReceiverToSubscribeToLocationUpdates() throws Exception {
     // Действие:
     mapViewModel.getViewStateLiveData();
 
@@ -67,7 +67,7 @@ public class GeoLocationViewModelTest {
    * @throws Exception error
    */
   @Test
-  public void DoNotTouchUseCaseAfterFirstSubscription() throws Exception {
+  public void DoNotTouchDataReceiverAfterFirstSubscription() throws Exception {
     // Действие:
     mapViewModel.getViewStateLiveData();
     mapViewModel.getViewStateLiveData();
