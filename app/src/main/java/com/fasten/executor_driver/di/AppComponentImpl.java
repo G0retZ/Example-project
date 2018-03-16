@@ -225,7 +225,8 @@ public class AppComponentImpl implements AppComponent {
                     new PasswordUseCaseImpl(
                         new PasswordGatewayImpl(apiService),
                         loginSharer,
-                        new PasswordValidator()
+                        new PasswordValidator(),
+                        executorStateSharer
                     )
                 )
             )
