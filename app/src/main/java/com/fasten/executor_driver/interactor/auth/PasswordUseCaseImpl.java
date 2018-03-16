@@ -2,10 +2,12 @@ package com.fasten.executor_driver.interactor.auth;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import com.fasten.executor_driver.entity.ExecutorState;
 import com.fasten.executor_driver.entity.LoginData;
 import com.fasten.executor_driver.entity.Validator;
 import com.fasten.executor_driver.interactor.DataReceiver;
 import io.reactivex.Completable;
+import io.reactivex.Observer;
 import javax.inject.Inject;
 
 public class PasswordUseCaseImpl implements PasswordUseCase {
@@ -15,14 +17,18 @@ public class PasswordUseCaseImpl implements PasswordUseCase {
   @NonNull
   private final Validator<String> passwordValidator;
   @NonNull
+  private final Observer<ExecutorState> executorStateObserver;
+  @NonNull
   private LoginData loginData = new LoginData("", "");
 
   @Inject
   public PasswordUseCaseImpl(@NonNull PasswordGateway gateway,
       @NonNull DataReceiver<String> loginReceiver,
-      @NonNull Validator<String> passwordValidator) {
+      @NonNull Validator<String> passwordValidator,
+      @NonNull Observer<ExecutorState> executorStateObserver) {
     this.gateway = gateway;
     this.passwordValidator = passwordValidator;
+    this.executorStateObserver = executorStateObserver;
     loadLogin(loginReceiver);
   }
 
@@ -38,7 +44,12 @@ public class PasswordUseCaseImpl implements PasswordUseCase {
       passwordValidator.validate(password);
       loginData = loginData.setPassword(password == null ? "" : password);
       afterValidation.subscribe(
-          () -> gateway.authorize(loginData).subscribe(e::onComplete, e::onError),
+          () -> gateway.authorize(loginData).subscribe(
+              () -> {
+                executorStateObserver.onNext(ExecutorState.CLOSED_SHIFT);
+                e.onComplete();
+              }, e::onError
+          ),
           throwable -> e.onComplete()
       );
     });
