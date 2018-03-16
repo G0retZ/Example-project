@@ -75,7 +75,7 @@ public class ChooseVehicleViewModelImpl extends ViewModel implements ChooseVehic
     vehiclesDisposable = vehicleChoiceUseCase.getVehicles()
         .subscribeOn(Schedulers.single())
         .observeOn(AndroidSchedulers.mainThread())
-        .subscribe(this::consumeVehicles, this::consumeError);
+        .subscribe(this::consumeVehicles, this::consumeError, this::loadVehicles);
   }
 
   private void consumeVehicles(List<Vehicle> vehicles) {
@@ -92,6 +92,7 @@ public class ChooseVehicleViewModelImpl extends ViewModel implements ChooseVehic
     } else {
       viewStateLiveData.postValue(new ChooseVehicleViewStateError(R.string.error));
     }
+    loadVehicles();
   }
 
   @Override

@@ -15,7 +15,8 @@ import com.fasten.executor_driver.entity.Option;
 import com.fasten.executor_driver.entity.OptionBoolean;
 import com.fasten.executor_driver.entity.OptionNumeric;
 import com.fasten.executor_driver.entity.Vehicle;
-import com.fasten.executor_driver.interactor.DataSharer;
+import com.fasten.executor_driver.interactor.DataReceiver;
+import io.reactivex.Observer;
 import io.reactivex.Single;
 import io.reactivex.subjects.PublishSubject;
 import java.util.ArrayList;
@@ -38,16 +39,16 @@ public class VehiclesAndOptionsUseCaseTest {
   private VehiclesAndOptionsGateway gateway;
 
   @Mock
-  private DataSharer<List<Vehicle>> vehiclesSharer;
+  private Observer<List<Vehicle>> vehiclesObserver;
 
   @Mock
-  private DataSharer<List<Option>> driverOptionsSharer;
+  private Observer<List<Option>> driverOptionsObserver;
 
   @Mock
-  private DataSharer<Vehicle> vehicleChoiceSharer;
+  private Observer<Vehicle> vehicleChoiceObserver;
 
   @Mock
-  private DataSharer<Vehicle> lastUsedVehicleSharer;
+  private DataReceiver<Vehicle> lastUsedVehicleReceiver;
 
   private PublishSubject<Vehicle> publishSubject;
 
@@ -56,9 +57,9 @@ public class VehiclesAndOptionsUseCaseTest {
     publishSubject = PublishSubject.create();
     when(gateway.getExecutorVehicles()).thenReturn(Single.never());
     when(gateway.getExecutorOptions()).thenReturn(Single.never());
-    when(lastUsedVehicleSharer.get()).thenReturn(publishSubject);
-    vehiclesAndOptionsUseCase = new VehiclesAndOptionsUseCaseImpl(gateway, vehiclesSharer,
-        driverOptionsSharer, vehicleChoiceSharer, lastUsedVehicleSharer);
+    when(lastUsedVehicleReceiver.get()).thenReturn(publishSubject);
+    vehiclesAndOptionsUseCase = new VehiclesAndOptionsUseCaseImpl(gateway, vehiclesObserver,
+        driverOptionsObserver, vehicleChoiceObserver, lastUsedVehicleReceiver);
   }
 
   /* Проверяем работу с публикатором последнего использованного ТС */
@@ -71,7 +72,7 @@ public class VehiclesAndOptionsUseCaseTest {
   @Test
   public void askLastUsedVehiclesDataSharerForLastUsedVehicleInitially() throws Exception {
     // Результат:
-    verify(lastUsedVehicleSharer, only()).get();
+    verify(lastUsedVehicleReceiver, only()).get();
   }
 
   /* Проверяем работу с гейтвеем */
@@ -122,7 +123,7 @@ public class VehiclesAndOptionsUseCaseTest {
     vehiclesAndOptionsUseCase.loadVehiclesAndOptions().test();
 
     // Результат:
-    verifyZeroInteractions(vehiclesSharer);
+    verifyZeroInteractions(vehiclesObserver);
   }
 
   /**
@@ -146,8 +147,8 @@ public class VehiclesAndOptionsUseCaseTest {
     vehiclesAndOptionsUseCase.loadVehiclesAndOptions().test();
 
     // Результат:
-    verify(vehiclesSharer, only())
-        .share(
+    verify(vehiclesObserver, only())
+        .onNext(
             new ArrayList<>(Arrays.asList(
                 new Vehicle(12, "manufacturer", "model", "color", "license", false),
                 new Vehicle(13, "manufacture", "models", "colo", "licenses", true),
@@ -178,8 +179,8 @@ public class VehiclesAndOptionsUseCaseTest {
     vehiclesAndOptionsUseCase.loadVehiclesAndOptions().test();
 
     // Результат:
-    verify(vehiclesSharer, only())
-        .share(
+    verify(vehiclesObserver, only())
+        .onNext(
             new ArrayList<>(Arrays.asList(
                 new Vehicle(12, "manufacturer", "model", "color", "license", true),
                 new Vehicle(13, "manufacture", "models", "colo", "licenses", true),
@@ -208,8 +209,8 @@ public class VehiclesAndOptionsUseCaseTest {
     vehiclesAndOptionsUseCase.loadVehiclesAndOptions().test();
 
     // Результат:
-    verify(vehiclesSharer, only())
-        .share(
+    verify(vehiclesObserver, only())
+        .onNext(
             new ArrayList<>(Arrays.asList(
                 new Vehicle(12, "manufacturer", "model", "color", "license", true),
                 new Vehicle(15, "man fact", "modelers", "colo", "licensee", true)
@@ -235,8 +236,8 @@ public class VehiclesAndOptionsUseCaseTest {
     vehiclesAndOptionsUseCase.loadVehiclesAndOptions().test();
 
     // Результат:
-    verify(vehiclesSharer, only())
-        .share(
+    verify(vehiclesObserver, only())
+        .onNext(
             new ArrayList<>(Collections.singletonList(
                 new Vehicle(14, "manufacturers", "modeler", "color", "licensing", false)
             ))
@@ -257,7 +258,7 @@ public class VehiclesAndOptionsUseCaseTest {
     vehiclesAndOptionsUseCase.loadVehiclesAndOptions().test();
 
     // Результат:
-    verify(vehiclesSharer, only()).share(new ArrayList<>());
+    verify(vehiclesObserver, only()).onNext(new ArrayList<>());
   }
 
   /* Проверяем работу с публикатором ТС */
@@ -288,7 +289,7 @@ public class VehiclesAndOptionsUseCaseTest {
     vehiclesAndOptionsUseCase.loadVehiclesAndOptions().test();
 
     // Результат:
-    verifyZeroInteractions(vehicleChoiceSharer);
+    verifyZeroInteractions(vehicleChoiceObserver);
   }
 
   /**
@@ -310,8 +311,8 @@ public class VehiclesAndOptionsUseCaseTest {
     vehiclesAndOptionsUseCase.loadVehiclesAndOptions().test();
 
     // Результат:
-    verify(vehicleChoiceSharer, only())
-        .share(new Vehicle(12, "manufacturer", "model", "color", "license", false));
+    verify(vehicleChoiceObserver, only())
+        .onNext(new Vehicle(12, "manufacturer", "model", "color", "license", false));
   }
 
   /**
@@ -320,8 +321,14 @@ public class VehiclesAndOptionsUseCaseTest {
    *
    * @throws Exception error
    */
+  @SuppressWarnings("unchecked")
   @Test
   public void askVehicleChoiceSharerToShareTheFirstFreeVehicleIfLastUsedIsError() throws Exception {
+    // Дано:
+    when(lastUsedVehicleReceiver.get()).thenReturn(publishSubject, PublishSubject.never());
+    vehiclesAndOptionsUseCase = new VehiclesAndOptionsUseCaseImpl(gateway, vehiclesObserver,
+        driverOptionsObserver, vehicleChoiceObserver, lastUsedVehicleReceiver);
+
     // Действие:
     when(gateway.getExecutorVehicles()).thenReturn(Single.just(
         new ArrayList<>(Arrays.asList(
@@ -335,8 +342,8 @@ public class VehiclesAndOptionsUseCaseTest {
     vehiclesAndOptionsUseCase.loadVehiclesAndOptions().test();
 
     // Результат:
-    verify(vehicleChoiceSharer, only())
-        .share(new Vehicle(12, "manufacturer", "model", "color", "license", false));
+    verify(vehicleChoiceObserver, only())
+        .onNext(new Vehicle(12, "manufacturer", "model", "color", "license", false));
   }
 
   /**
@@ -363,8 +370,8 @@ public class VehiclesAndOptionsUseCaseTest {
     vehiclesAndOptionsUseCase.loadVehiclesAndOptions().test();
 
     // Результат:
-    verify(vehicleChoiceSharer, only())
-        .share(new Vehicle(12, "manufacturer", "model", "color", "license", false));
+    verify(vehicleChoiceObserver, only())
+        .onNext(new Vehicle(12, "manufacturer", "model", "color", "license", false));
   }
 
   /**
@@ -390,8 +397,8 @@ public class VehiclesAndOptionsUseCaseTest {
     vehiclesAndOptionsUseCase.loadVehiclesAndOptions().test();
 
     // Результат:
-    verify(vehicleChoiceSharer, only())
-        .share(new Vehicle(12, "manufacturer", "model", "color", "license", false));
+    verify(vehicleChoiceObserver, only())
+        .onNext(new Vehicle(12, "manufacturer", "model", "color", "license", false));
   }
 
   /**
@@ -417,8 +424,8 @@ public class VehiclesAndOptionsUseCaseTest {
     vehiclesAndOptionsUseCase.loadVehiclesAndOptions().test();
 
     // Результат:
-    verify(vehicleChoiceSharer, only())
-        .share(new Vehicle(14, "manufacturers", "modeler", "color", "licensing", false));
+    verify(vehicleChoiceObserver, only())
+        .onNext(new Vehicle(14, "manufacturers", "modeler", "color", "licensing", false));
   }
 
   /**
@@ -442,8 +449,8 @@ public class VehiclesAndOptionsUseCaseTest {
     vehiclesAndOptionsUseCase.loadVehiclesAndOptions().test();
 
     // Результат:
-    verify(vehicleChoiceSharer, only())
-        .share(new Vehicle(14, "manufacturers", "modeler", "color", "licensing", false));
+    verify(vehicleChoiceObserver, only())
+        .onNext(new Vehicle(14, "manufacturers", "modeler", "color", "licensing", false));
   }
 
   /**
@@ -464,8 +471,8 @@ public class VehiclesAndOptionsUseCaseTest {
     vehiclesAndOptionsUseCase.loadVehiclesAndOptions().test();
 
     // Результат:
-    verify(vehicleChoiceSharer, only())
-        .share(new Vehicle(14, "manufacturers", "modeler", "color", "licensing", false));
+    verify(vehicleChoiceObserver, only())
+        .onNext(new Vehicle(14, "manufacturers", "modeler", "color", "licensing", false));
   }
 
   /* Проверяем ответы на запрос загрузки списка ТС */

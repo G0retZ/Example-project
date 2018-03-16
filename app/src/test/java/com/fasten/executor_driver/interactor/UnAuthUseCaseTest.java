@@ -7,6 +7,7 @@ import static org.mockito.Mockito.when;
 
 import com.fasten.executor_driver.entity.ExecutorState;
 import io.reactivex.Completable;
+import io.reactivex.Observer;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -22,12 +23,12 @@ public class UnAuthUseCaseTest {
   private UnAuthGateway gateway;
 
   @Mock
-  private DataSharer<ExecutorState> executorStateSharer;
+  private Observer<ExecutorState> executorStateObserver;
 
   @Before
   public void setUp() throws Exception {
     when(gateway.waitForUnauthorized()).thenReturn(Completable.never());
-    unAuthUseCase = new UnAuthUseCaseImpl(gateway, executorStateSharer);
+    unAuthUseCase = new UnAuthUseCaseImpl(gateway, executorStateObserver);
   }
 
   /* Проверяем работу с гейтвеем */
@@ -78,7 +79,7 @@ public class UnAuthUseCaseTest {
     unAuthUseCase.getUnauthorized().test();
 
     // Результат:
-    verify(executorStateSharer, only()).share(ExecutorState.UNAUTHORIZED);
+    verify(executorStateObserver, only()).onNext(ExecutorState.UNAUTHORIZED);
   }
 
   /**
@@ -92,6 +93,6 @@ public class UnAuthUseCaseTest {
     unAuthUseCase.getUnauthorized().test();
 
     // Результат:
-    verifyZeroInteractions(executorStateSharer);
+    verifyZeroInteractions(executorStateObserver);
   }
 }

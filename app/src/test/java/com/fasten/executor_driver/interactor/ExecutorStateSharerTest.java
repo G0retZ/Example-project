@@ -9,11 +9,11 @@ import org.mockito.junit.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class ExecutorStateSharerTest {
 
-  private ExecutorStateSharer vehicleChoiceSharer;
+  private ExecutorStateSharer executorStateSharer;
 
   @Before
   public void setUp() throws Exception {
-    vehicleChoiceSharer = new ExecutorStateSharer();
+    executorStateSharer = new ExecutorStateSharer();
   }
 
   /**
@@ -24,9 +24,9 @@ public class ExecutorStateSharerTest {
   @Test
   public void valueUnchangedForRead() throws Exception {
     // Дано:
-    vehicleChoiceSharer.share(ExecutorState.APPROACHING_LOADING_POINT);
+    executorStateSharer.onNext(ExecutorState.APPROACHING_LOADING_POINT);
 
     // Действие и Результат:
-    vehicleChoiceSharer.get().test().assertValue(ExecutorState.APPROACHING_LOADING_POINT);
+    executorStateSharer.get().test().assertValue(ExecutorState.APPROACHING_LOADING_POINT);
   }
 }

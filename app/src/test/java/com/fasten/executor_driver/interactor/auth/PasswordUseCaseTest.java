@@ -11,10 +11,10 @@ import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 import com.fasten.executor_driver.backend.web.NoNetworkException;
-import com.fasten.executor_driver.entity.ValidationException;
 import com.fasten.executor_driver.entity.LoginData;
+import com.fasten.executor_driver.entity.ValidationException;
 import com.fasten.executor_driver.entity.Validator;
-import com.fasten.executor_driver.interactor.DataSharer;
+import com.fasten.executor_driver.interactor.DataReceiver;
 import io.reactivex.Completable;
 import io.reactivex.Observable;
 import org.junit.Before;
@@ -35,15 +35,15 @@ public class PasswordUseCaseTest {
   private Validator<String> passwordValidator;
 
   @Mock
-  private DataSharer<String> loginSharer;
+  private DataReceiver<String> loginReceiver;
 
   @Before
   public void setUp() throws Exception {
     when(gateway.authorize(nullable(LoginData.class))).thenReturn(Completable.never());
     doThrow(new ValidationException()).when(passwordValidator).validate(anyString());
     doNothing().when(passwordValidator).validate("password");
-    when(loginSharer.get()).thenReturn(Observable.just("login"));
-    passwordUseCase = new PasswordUseCaseImpl(gateway, loginSharer, passwordValidator);
+    when(loginReceiver.get()).thenReturn(Observable.never());
+    passwordUseCase = new PasswordUseCaseImpl(gateway, loginReceiver, passwordValidator);
   }
 
   /* Проверяем работу с публикатором логина */
@@ -56,7 +56,7 @@ public class PasswordUseCaseTest {
   @Test
   public void getFromDataSharerImmediately() throws Exception {
     // Результат:
-    verify(loginSharer, only()).get();
+    verify(loginReceiver, only()).get();
   }
 
   /**
@@ -77,7 +77,7 @@ public class PasswordUseCaseTest {
     passwordUseCase.authorize("password", Completable.complete()).test();
 
     // Результат:
-    verify(loginSharer, only()).get();
+    verify(loginReceiver, only()).get();
   }
 
   /* Проверяем работу с валидаторами */
@@ -177,8 +177,13 @@ public class PasswordUseCaseTest {
    *
    * @throws Exception error
    */
+  @SuppressWarnings("unchecked")
   @Test
   public void askGatewayForAuth() throws Exception {
+    // Дано:
+    when(loginReceiver.get()).thenReturn(Observable.just("login"), Observable.never());
+    passwordUseCase = new PasswordUseCaseImpl(gateway, loginReceiver, passwordValidator);
+
     // Действие:
     passwordUseCase.authorize("password", Completable.complete()).test();
 

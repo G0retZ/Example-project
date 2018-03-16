@@ -31,8 +31,8 @@ import com.fasten.executor_driver.gateway.VehicleApiMapper;
 import com.fasten.executor_driver.gateway.VehicleOptionApiMapper;
 import com.fasten.executor_driver.gateway.VehicleOptionsGatewayImpl;
 import com.fasten.executor_driver.gateway.VehiclesAndOptionsGatewayImpl;
-import com.fasten.executor_driver.interactor.DataSharer;
 import com.fasten.executor_driver.interactor.ExecutorStateSharer;
+import com.fasten.executor_driver.interactor.MemoryDataSharer;
 import com.fasten.executor_driver.interactor.UnAuthGateway;
 import com.fasten.executor_driver.interactor.UnAuthUseCaseImpl;
 import com.fasten.executor_driver.interactor.auth.LoginSharer;
@@ -96,17 +96,17 @@ public class AppComponentImpl implements AppComponent {
   @NonNull
   private final ApiService apiService;
   @NonNull
-  private final DataSharer<String> loginSharer;
+  private final MemoryDataSharer<String> loginSharer;
   @NonNull
-  private final DataSharer<List<Vehicle>> vehiclesSharer;
+  private final MemoryDataSharer<List<Vehicle>> vehiclesSharer;
   @NonNull
-  private final DataSharer<List<Option>> driverOptionsSharer;
+  private final MemoryDataSharer<List<Option>> driverOptionsSharer;
   @NonNull
-  private final DataSharer<Vehicle> vehicleChoiceSharer;
+  private final MemoryDataSharer<Vehicle> vehicleChoiceSharer;
   @NonNull
-  private final DataSharer<Vehicle> lastUsedVehiclesSharer;
+  private final MemoryDataSharer<Vehicle> lastUsedVehiclesSharer;
   @NonNull
-  private final DataSharer<ExecutorState> executorStateSharer;
+  private final MemoryDataSharer<ExecutorState> executorStateSharer;
   @NonNull
   private final UnAuthGateway unAuthGateway;
 

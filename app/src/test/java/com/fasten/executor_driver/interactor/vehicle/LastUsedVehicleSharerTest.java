@@ -64,7 +64,7 @@ public class LastUsedVehicleSharerTest {
   @Test
   public void askSettingsForSaveLogin() throws Exception {
     // Действие:
-    lastUsedVehicleSharer.share(
+    lastUsedVehicleSharer.onNext(
         new Vehicle(123456, "manufacturer", "model", "color", "license", false)
     );
 

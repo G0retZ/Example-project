@@ -30,13 +30,10 @@ import org.mockito.junit.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class SelectedVehicleViewModelTest {
 
-  private SelectedVehicleViewModel selectedVehicleViewModel;
-
-  private TestScheduler testScheduler;
-
   @Rule
   public TestRule rule = new InstantTaskExecutorRule();
-
+  private SelectedVehicleViewModel selectedVehicleViewModel;
+  private TestScheduler testScheduler;
   @Mock
   private Observer<ViewState<SelectedVehicleViewActions>> viewStateObserver;
 
@@ -144,12 +141,14 @@ public class SelectedVehicleViewModelTest {
    *
    * @throws Exception error
    */
+  @SuppressWarnings("unchecked")
   @Test
   public void setViewStateWithoutNameToLiveDataOnError() throws Exception {
     // Дано:
     PublishSubject<Vehicle> publishSubject = PublishSubject.create();
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    when(selectedVehicleUseCase.getSelectedVehicle()).thenReturn(publishSubject);
+    when(selectedVehicleUseCase.getSelectedVehicle())
+        .thenReturn(publishSubject, PublishSubject.never());
     selectedVehicleViewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:

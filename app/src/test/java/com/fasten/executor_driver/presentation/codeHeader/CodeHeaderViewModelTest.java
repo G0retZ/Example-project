@@ -7,7 +7,7 @@ import static org.mockito.Mockito.when;
 
 import android.arch.core.executor.testing.InstantTaskExecutorRule;
 import android.arch.lifecycle.Observer;
-import com.fasten.executor_driver.interactor.DataSharer;
+import com.fasten.executor_driver.interactor.DataReceiver;
 import com.fasten.executor_driver.presentation.ViewState;
 import io.reactivex.android.plugins.RxAndroidPlugins;
 import io.reactivex.plugins.RxJavaPlugins;
@@ -30,9 +30,7 @@ public class CodeHeaderViewModelTest {
   public TestRule rule = new InstantTaskExecutorRule();
   private CodeHeaderViewModel codeHeaderViewModel;
   @Mock
-  private DataSharer<String> loginSharer;
-
-  private PublishSubject<String> publishSubject;
+  private DataReceiver<String> loginReceiver;
 
   @Mock
   private Observer<ViewState<CodeHeaderViewActions>> viewStateObserver;
@@ -41,9 +39,8 @@ public class CodeHeaderViewModelTest {
   public void setUp() throws Exception {
     RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
     RxAndroidPlugins.setInitMainThreadSchedulerHandler(scheduler -> Schedulers.trampoline());
-    publishSubject = PublishSubject.create();
-    when(loginSharer.get()).thenReturn(publishSubject);
-    codeHeaderViewModel = new CodeHeaderViewModelImpl(loginSharer);
+    when(loginReceiver.get()).thenReturn(PublishSubject.never());
+    codeHeaderViewModel = new CodeHeaderViewModelImpl(loginReceiver);
   }
 
   /* Тетсируем работу с публикатором номера телефона. */
@@ -62,7 +59,7 @@ public class CodeHeaderViewModelTest {
     codeHeaderViewModel.getViewStateLiveData();
 
     // Результат:
-    verify(loginSharer, only()).get();
+    verify(loginReceiver, only()).get();
   }
 
   /* Тетсируем переключение состояний. */
@@ -94,6 +91,8 @@ public class CodeHeaderViewModelTest {
   public void setViewStateWithNumbersToLiveData() throws Exception {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
+    PublishSubject<String> publishSubject = PublishSubject.create();
+    when(loginReceiver.get()).thenReturn(publishSubject);
     codeHeaderViewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
@@ -116,9 +115,12 @@ public class CodeHeaderViewModelTest {
    *
    * @throws Exception error
    */
+  @SuppressWarnings("unchecked")
   @Test
   public void ignoreErrors() throws Exception {
     // Дано:
+    PublishSubject<String> publishSubject = PublishSubject.create();
+    when(loginReceiver.get()).thenReturn(publishSubject, PublishSubject.never());
     codeHeaderViewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:

@@ -1,7 +1,6 @@
 package com.fasten.executor_driver.interactor;
 
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import io.reactivex.Observable;
 
 /**
@@ -9,14 +8,7 @@ import io.reactivex.Observable;
  *
  * @param <D> - тип данных
  */
-public interface DataSharer<D> {
-
-  /**
-   * Шарит данные типа {@link D}.
-   *
-   * @param data данные
-   */
-  void share(@Nullable D data);
+public interface DataReceiver<D> {
 
   /**
    * Возвращает {@link Observable<D>} для подписки на расшаренные данные. При первой подписке
