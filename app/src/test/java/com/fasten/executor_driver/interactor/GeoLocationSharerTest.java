@@ -24,7 +24,7 @@ public class GeoLocationSharerTest {
   @Test
   public void valueUnchangedForRead() throws Exception {
     // Дано:
-    geoLocationSharer.share(new GeoLocation(0.1231, 123.1231, 239823901));
+    geoLocationSharer.onNext(new GeoLocation(0.1231, 123.1231, 239823901));
 
     // Действие и Результат:
     geoLocationSharer.get().test().assertValue(new GeoLocation(0.1231, 123.1231, 239823901));
