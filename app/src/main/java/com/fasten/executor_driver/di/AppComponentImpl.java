@@ -62,6 +62,7 @@ import com.fasten.executor_driver.presentation.code.CodeViewModel;
 import com.fasten.executor_driver.presentation.code.CodeViewModelImpl;
 import com.fasten.executor_driver.presentation.codeHeader.CodeHeaderViewModel;
 import com.fasten.executor_driver.presentation.codeHeader.CodeHeaderViewModelImpl;
+import com.fasten.executor_driver.presentation.geolocation.GeoLocationViewModelImpl;
 import com.fasten.executor_driver.presentation.map.MapViewModel;
 import com.fasten.executor_driver.presentation.map.MapViewModelImpl;
 import com.fasten.executor_driver.presentation.onlinebutton.OnlineButtonViewModel;
@@ -268,6 +269,11 @@ public class AppComponentImpl implements AppComponent {
                     )
                 )
             )).get(MapViewModelImpl.class)
+    );
+    mapFragment.setGeoLocationViewModel(
+        new GeoLocationViewModelImpl(
+            geoLocationSharer
+        )
     );
   }
 
