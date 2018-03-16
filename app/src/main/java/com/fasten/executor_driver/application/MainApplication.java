@@ -7,7 +7,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
-import com.fasten.executor_driver.backend.geolocation.GeoApiException;
 import com.fasten.executor_driver.di.AppComponent;
 import com.fasten.executor_driver.di.AppComponentImpl;
 import com.fasten.executor_driver.entity.GeoLocation;
@@ -32,7 +31,6 @@ public class MainApplication extends Application implements PersistenceViewActio
   private PersistenceViewModel persistenceViewModel;
   private GeoLocationUseCase geoLocationUseCase;
   private DataReceiver<GeoLocation> geoLocationDataReceiver;
-
 
   private ActivityLifecycleCallbacks problemsActivityLifecycleCallbacks = new ActivityLifecycleCallbacks() {
     private boolean onScreen;
@@ -159,11 +157,7 @@ public class MainApplication extends Application implements PersistenceViewActio
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(geoLocation -> {
         }, throwable -> {
-          Intent intent = new Intent(this, GeolocationResolutionActivity.class);
-          if (throwable instanceof GeoApiException) {
-            intent.putExtra("resolution", ((GeoApiException) throwable).getPendingIntent());
-          }
-          startActivity(intent);
+          startActivity(new Intent(this, GeolocationResolutionActivity.class));
           listenForGeoLocations();
         }, this::listenForGeoLocations);
   }

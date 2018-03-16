@@ -2,10 +2,8 @@ package com.fasten.executor_driver.view;
 
 import android.Manifest;
 import android.app.Activity;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentSender;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -41,21 +39,7 @@ public class GeolocationResolutionFragment extends BaseFragment {
       @Nullable ViewGroup container,
       @Nullable Bundle savedInstanceState) {
     View view = inflater.inflate(R.layout.fragment_geo_resolution, container, false);
-    PendingIntent pendingIntent = activity.getIntent().getParcelableExtra("resolution");
-    if (pendingIntent != null) {
-      view.findViewById(R.id.resolve).setOnClickListener(v -> {
-        try {
-          // показать диалог через вызов startResolutionForResult(),
-          // и проверить результат в onActivityResult().
-          startIntentSenderForResult(pendingIntent.getIntentSender(), 1002, null, 0, 0, 0, null);
-        } catch (IntentSender.SendIntentException e) {
-          // Была ошибка с определением intent. Попробовать снова.
-          activity.finish();
-        }
-      });
-    } else {
-      view.findViewById(R.id.resolve).setOnClickListener(v -> resolvePermissions());
-    }
+    view.findViewById(R.id.resolve).setOnClickListener(v -> resolvePermissions());
     return view;
   }
 
@@ -86,16 +70,6 @@ public class GeolocationResolutionFragment extends BaseFragment {
         if (permissionChecker != null) {
           permissionChecker.onResult(requestCode, permissions, grantResults);
         }
-        break;
-    }
-  }
-
-  @Override
-  public void onActivityResult(int requestCode, int resultCode, Intent data) {
-    super.onActivityResult(requestCode, resultCode, data);
-    switch (requestCode) {
-      case 1002:
-        activity.finish();
         break;
     }
   }
