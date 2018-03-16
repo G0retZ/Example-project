@@ -57,7 +57,7 @@ public class GeoLocationUseCaseTest {
   @Test
   public void getExecutorStates() throws Exception {
     // Действие:
-    geoLocationUseCase.reload();
+    geoLocationUseCase.reload().test();
 
     // Результат:
     verify(executorStateReceiver, only()).get();
@@ -75,8 +75,8 @@ public class GeoLocationUseCaseTest {
         .thenReturn(Observable.<ExecutorState>never().doOnDispose(action));
 
     // Действие:
-    geoLocationUseCase.reload();
-    geoLocationUseCase.reload();
+    geoLocationUseCase.reload().test();
+    geoLocationUseCase.reload().test();
 
     // Результат:
     verify(executorStateReceiver, times(2)).get();
@@ -99,7 +99,7 @@ public class GeoLocationUseCaseTest {
         .thenReturn(Observable.just(ExecutorState.UNAUTHORIZED), Observable.never());
 
     // Действие:
-    geoLocationUseCase.reload();
+    geoLocationUseCase.reload().test();
 
     // Результат:
     verifyZeroInteractions(gateway);
@@ -118,7 +118,7 @@ public class GeoLocationUseCaseTest {
         .thenReturn(Observable.just(ExecutorState.CLOSED_SHIFT), Observable.never());
 
     // Действие:
-    geoLocationUseCase.reload();
+    geoLocationUseCase.reload().test();
 
     // Результат:
     verifyZeroInteractions(gateway);
@@ -138,7 +138,7 @@ public class GeoLocationUseCaseTest {
         .thenReturn(Observable.just(ExecutorState.OPENED_SHIFT), Observable.never());
 
     // Действие:
-    geoLocationUseCase.reload();
+    geoLocationUseCase.reload().test();
 
     // Результат:
     verify(gateway, only()).getGeoLocations(180000);
@@ -158,7 +158,7 @@ public class GeoLocationUseCaseTest {
         .thenReturn(Observable.just(ExecutorState.READY_FOR_ORDERS), Observable.never());
 
     // Действие:
-    geoLocationUseCase.reload();
+    geoLocationUseCase.reload().test();
 
     // Результат:
     verify(gateway, only()).getGeoLocations(15000);
@@ -183,8 +183,8 @@ public class GeoLocationUseCaseTest {
     );
 
     // Действие:
-    geoLocationUseCase.reload();
-    geoLocationUseCase.reload();
+    geoLocationUseCase.reload().test();
+    geoLocationUseCase.reload().test();
 
     // Результат:
     verify(action, only()).run();
@@ -209,8 +209,8 @@ public class GeoLocationUseCaseTest {
     );
 
     // Действие:
-    geoLocationUseCase.reload();
-    geoLocationUseCase.reload();
+    geoLocationUseCase.reload().test();
+    geoLocationUseCase.reload().test();
 
     // Результат:
     verify(action, only()).run();
@@ -232,7 +232,7 @@ public class GeoLocationUseCaseTest {
     when(gateway.getGeoLocations(anyLong())).thenReturn(Flowable.just(new GeoLocation(1, 2, 3)));
 
     // Действие:
-    geoLocationUseCase.reload();
+    geoLocationUseCase.reload().test();
 
     // Результат:
     verify(geoLocationObserver, only()).onNext(new GeoLocation(1, 2, 3));
@@ -252,7 +252,7 @@ public class GeoLocationUseCaseTest {
     when(gateway.getGeoLocations(anyLong())).thenReturn(Flowable.error(new Exception()));
 
     // Действие:
-    geoLocationUseCase.reload();
+    geoLocationUseCase.reload().test();
 
     // Результат:
     verify(geoLocationObserver, only()).onError(any(Exception.class));
