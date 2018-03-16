@@ -15,11 +15,11 @@ public class GeoLocation {
     this.timestamp = timestamp;
   }
 
-  double getLatitude() {
+  public double getLatitude() {
     return latitude;
   }
 
-  double getLongitude() {
+  public double getLongitude() {
     return longitude;
   }
 

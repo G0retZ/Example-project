@@ -1,5 +1,6 @@
 package com.fasten.executor_driver.view;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
@@ -9,6 +10,9 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 import com.fasten.executor_driver.R;
 import com.fasten.executor_driver.application.BaseActivity;
+import com.fasten.executor_driver.entity.GeoLocation;
+import com.fasten.executor_driver.presentation.geolocation.GeoLocationViewActions;
+import com.fasten.executor_driver.presentation.geolocation.GeoLocationViewModel;
 import com.fasten.executor_driver.presentation.map.MapViewActions;
 import com.fasten.executor_driver.presentation.map.MapViewModel;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -27,11 +31,14 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class MapFragment extends SupportMapFragment implements OnMapReadyCallback,
-    OnMyLocationButtonClickListener, MapViewActions {
+    OnMyLocationButtonClickListener, MapViewActions, GeoLocationViewActions {
 
   @Nullable
   private BaseActivity baseActivity;
+  @Nullable
+  private GeoLocation lastLocation;
   private MapViewModel mapViewModel;
+  private GeoLocationViewModel geoLocationViewModel;
 
   private GeoJsonLayer layer;
   private GoogleMap googleMap;
@@ -40,6 +47,11 @@ public class MapFragment extends SupportMapFragment implements OnMapReadyCallbac
   @Inject
   public void setMapViewModel(@NonNull MapViewModel mapViewModel) {
     this.mapViewModel = mapViewModel;
+  }
+
+  @Inject
+  public void setGeoLocationViewModel(GeoLocationViewModel geoLocationViewModel) {
+    this.geoLocationViewModel = geoLocationViewModel;
   }
 
   @Override
@@ -92,7 +104,11 @@ public class MapFragment extends SupportMapFragment implements OnMapReadyCallbac
         viewState.apply(this);
       }
     });
-    initLocation();
+    geoLocationViewModel.getViewStateLiveData().observe(this, viewState -> {
+      if (viewState != null) {
+        viewState.apply(this);
+      }
+    });
   }
 
   @Override
@@ -101,24 +117,20 @@ public class MapFragment extends SupportMapFragment implements OnMapReadyCallbac
     activity = null;
   }
 
-  private void initLocation() {
-    if (googleMap == null) {
-      return;
-    }
-//    googleMap.setMyLocationEnabled(true);
-    CameraPosition cameraPosition = new CameraPosition.Builder()
-        .target(new LatLng(55.737199, 37.628161)).zoom(15.2f)
-        .build();
-    googleMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-  }
-
   @Override
   public boolean onMyLocationButtonClick() {
+    if (googleMap == null || lastLocation == null) {
+      return false;
+    }
     // Показываем, где он есть.
-//    CameraPosition cameraPosition = new CameraPosition.Builder()
-//        .target(new LatLng(location.getLatitude(), location.getLongitude())).zoom(15.2f)
-//        .build();
-//    googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+    googleMap.animateCamera(
+        CameraUpdateFactory.newCameraPosition(
+            new CameraPosition.Builder()
+                .target(new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude()))
+                .zoom(15.2f)
+                .build()
+        )
+    );
     return true;
   }
 
@@ -142,6 +154,26 @@ public class MapFragment extends SupportMapFragment implements OnMapReadyCallbac
       layer.addLayerToMap();
     } catch (JSONException e) {
       e.printStackTrace();
+    }
+  }
+
+  @SuppressLint("MissingPermission")
+  @Override
+  public void updateLocation(@NonNull GeoLocation geoLocation) {
+    lastLocation = geoLocation;
+    if (googleMap == null) {
+      return;
+    }
+    if (!googleMap.isMyLocationEnabled()) {
+      googleMap.setMyLocationEnabled(true);
+      googleMap.animateCamera(
+          CameraUpdateFactory.newCameraPosition(
+              new CameraPosition.Builder()
+                  .target(new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude()))
+                  .zoom(15.2f)
+                  .build()
+          )
+      );
     }
   }
 }

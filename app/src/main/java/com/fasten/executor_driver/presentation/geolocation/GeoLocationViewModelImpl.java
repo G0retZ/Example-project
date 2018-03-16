@@ -14,7 +14,7 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import javax.inject.Inject;
 
-class GeoLocationViewModelImpl extends ViewModel implements GeoLocationViewModel {
+public class GeoLocationViewModelImpl extends ViewModel implements GeoLocationViewModel {
 
   @NonNull
   private final DataReceiver<GeoLocation> geoLocationReceiver;
@@ -25,7 +25,7 @@ class GeoLocationViewModelImpl extends ViewModel implements GeoLocationViewModel
   private Disposable disposable;
 
   @Inject
-  GeoLocationViewModelImpl(@NonNull DataReceiver<GeoLocation> geoLocationReceiver) {
+  public GeoLocationViewModelImpl(@NonNull DataReceiver<GeoLocation> geoLocationReceiver) {
     this.geoLocationReceiver = geoLocationReceiver;
     viewStateLiveData = new MutableLiveData<>();
   }
