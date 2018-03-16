@@ -106,7 +106,8 @@ public class GeoLocationUseCaseTest {
   }
 
   /**
-   * Не должен трогать гейтвей, при переходе в состояние "Смена закрыта".
+   * Должен запросить гейтвей получать локации с интервалом 1 час,
+   * при переходе в состояние "Смена закрыта".
    *
    * @throws Exception error
    */
@@ -121,7 +122,7 @@ public class GeoLocationUseCaseTest {
     geoLocationUseCase.reload().test();
 
     // Результат:
-    verifyZeroInteractions(gateway);
+    verify(gateway, only()).getGeoLocations(3600000);
   }
 
   /**
@@ -165,6 +166,32 @@ public class GeoLocationUseCaseTest {
   }
 
   /**
+   * Должен отписаться от прошлого запроса к гейтвею, при переходе в состояние "Смена открыта" из
+   * состояния "Смена закрыта".
+   *
+   * @throws Exception error
+   */
+  @SuppressWarnings("unchecked")
+  @Test
+  public void disposePreviousGatewayQueryIfGoToShiftOpenedFromShiftClosed() throws Exception {
+    // Дано:
+    when(gateway.getGeoLocations(anyLong()))
+        .thenReturn(Flowable.<GeoLocation>never().doOnCancel(action));
+    when(executorStateReceiver.get()).thenReturn(
+        Observable.just(ExecutorState.CLOSED_SHIFT),
+        Observable.just(ExecutorState.OPENED_SHIFT),
+        Observable.never()
+    );
+
+    // Действие:
+    geoLocationUseCase.reload().test();
+    geoLocationUseCase.reload().test();
+
+    // Результат:
+    verify(action, only()).run();
+  }
+
+  /**
    * Должен отписаться от прошлого запроса к гейтвею, при переходе в состояние "На линии" из
    * состояния "Смена открыта".
    *
@@ -177,8 +204,8 @@ public class GeoLocationUseCaseTest {
     when(gateway.getGeoLocations(anyLong()))
         .thenReturn(Flowable.<GeoLocation>never().doOnCancel(action));
     when(executorStateReceiver.get()).thenReturn(
-        Observable.just(ExecutorState.READY_FOR_ORDERS),
         Observable.just(ExecutorState.OPENED_SHIFT),
+        Observable.just(ExecutorState.READY_FOR_ORDERS),
         Observable.never()
     );
 
@@ -203,8 +230,34 @@ public class GeoLocationUseCaseTest {
     when(gateway.getGeoLocations(anyLong()))
         .thenReturn(Flowable.<GeoLocation>never().doOnCancel(action));
     when(executorStateReceiver.get()).thenReturn(
-        Observable.just(ExecutorState.OPENED_SHIFT),
         Observable.just(ExecutorState.READY_FOR_ORDERS),
+        Observable.just(ExecutorState.OPENED_SHIFT),
+        Observable.never()
+    );
+
+    // Действие:
+    geoLocationUseCase.reload().test();
+    geoLocationUseCase.reload().test();
+
+    // Результат:
+    verify(action, only()).run();
+  }
+
+  /**
+   * Должен отписаться от прошлого запроса к гейтвею, при переходе в состояние "Смена закрыта" из
+   * состояния "Смена открыта".
+   *
+   * @throws Exception error
+   */
+  @SuppressWarnings("unchecked")
+  @Test
+  public void disposePreviousGatewayQueryIfGoToShiftClosedFromShiftOpened() throws Exception {
+    // Дано:
+    when(gateway.getGeoLocations(anyLong()))
+        .thenReturn(Flowable.<GeoLocation>never().doOnCancel(action));
+    when(executorStateReceiver.get()).thenReturn(
+        Observable.just(ExecutorState.OPENED_SHIFT),
+        Observable.just(ExecutorState.CLOSED_SHIFT),
         Observable.never()
     );
 

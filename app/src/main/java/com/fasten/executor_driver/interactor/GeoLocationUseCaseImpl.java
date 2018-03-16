@@ -53,6 +53,8 @@ public class GeoLocationUseCaseImpl implements GeoLocationUseCase {
         if (geoLocationDisposable != null && !geoLocationDisposable.isDisposed()) {
           geoLocationDisposable.dispose();
         }
+        geoLocationDisposable = gateway.getGeoLocations(3600000)
+            .subscribe(geoLocationObserver::onNext, geoLocationObserver::onError);
         break;
       case OPENED_SHIFT:
         if (geoLocationDisposable != null && !geoLocationDisposable.isDisposed()) {
