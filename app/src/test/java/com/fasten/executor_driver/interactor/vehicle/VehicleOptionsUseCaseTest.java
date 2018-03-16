@@ -13,9 +13,10 @@ import com.fasten.executor_driver.entity.OptionBoolean;
 import com.fasten.executor_driver.entity.OptionNumeric;
 import com.fasten.executor_driver.entity.Vehicle;
 import com.fasten.executor_driver.gateway.DataMappingException;
-import com.fasten.executor_driver.interactor.DataSharer;
+import com.fasten.executor_driver.interactor.DataReceiver;
 import io.reactivex.Completable;
 import io.reactivex.Observable;
+import io.reactivex.Observer;
 import io.reactivex.observers.TestObserver;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -36,20 +37,20 @@ public class VehicleOptionsUseCaseTest {
   private VehicleOptionsGateway gateway;
 
   @Mock
-  private DataSharer<Vehicle> vehicleChoiceSharer;
+  private DataReceiver<Vehicle> vehicleChoiceReceiver;
 
   @Mock
-  private DataSharer<Vehicle> lastUsedVehicleSharer;
+  private Observer<Vehicle> lastUsedVehicleObserver;
 
   @Mock
-  private DataSharer<List<Option>> driverOptionsSharer;
+  private DataReceiver<List<Option>> driverOptionsReceiver;
 
   @Before
   public void setUp() throws Exception {
-    vehicleOptionsUseCase = new VehicleOptionsUseCaseImpl(gateway, vehicleChoiceSharer,
-        lastUsedVehicleSharer, driverOptionsSharer);
+    vehicleOptionsUseCase = new VehicleOptionsUseCaseImpl(gateway, vehicleChoiceReceiver,
+        lastUsedVehicleObserver, driverOptionsReceiver);
     when(gateway.sendVehicleOptions(any(Vehicle.class), anyList())).thenReturn(Completable.never());
-    when(vehicleChoiceSharer.get()).thenReturn(Observable.never());
+    when(vehicleChoiceReceiver.get()).thenReturn(Observable.never());
   }
 
   /* Проверяем работу с публикатором ТС */
@@ -65,7 +66,7 @@ public class VehicleOptionsUseCaseTest {
     vehicleOptionsUseCase.getVehicleOptions().test();
 
     // Результат:
-    verify(vehicleChoiceSharer, only()).get();
+    verify(vehicleChoiceReceiver, only()).get();
   }
 
   /* Проверяем ответы на запрос выбранного ТС */
@@ -101,7 +102,7 @@ public class VehicleOptionsUseCaseTest {
         new OptionBoolean(2, "name2", "desc2", true, false),
         new OptionBoolean(3, "name3", "desc3", false, true)
     );
-    when(vehicleChoiceSharer.get()).thenReturn(Observable.fromIterable(vehicles));
+    when(vehicleChoiceReceiver.get()).thenReturn(Observable.fromIterable(vehicles));
 
     // Действие и Результат:
     vehicleOptionsUseCase.getVehicleOptions().test().assertValues(
@@ -153,7 +154,7 @@ public class VehicleOptionsUseCaseTest {
         new OptionBoolean(2, "name2", "desc2", true, false),
         new OptionBoolean(3, "name3", "desc3", false, true)
     );
-    when(vehicleChoiceSharer.get()).thenReturn(Observable.fromIterable(vehicles));
+    when(vehicleChoiceReceiver.get()).thenReturn(Observable.fromIterable(vehicles));
 
     // Действие
     TestObserver<List<Option>> testObserver =
@@ -193,7 +194,7 @@ public class VehicleOptionsUseCaseTest {
     ).test();
 
     // Результат:
-    verifyZeroInteractions(vehicleChoiceSharer);
+    verifyZeroInteractions(vehicleChoiceReceiver);
   }
 
   /**
@@ -211,7 +212,7 @@ public class VehicleOptionsUseCaseTest {
         new OptionBoolean(2, "name2", "desc2", true, false),
         new OptionBoolean(3, "name3", "desc3", false, true)
     );
-    when(vehicleChoiceSharer.get()).thenReturn(Observable.just(vehicle));
+    when(vehicleChoiceReceiver.get()).thenReturn(Observable.just(vehicle));
 
     // Действие:
     vehicleOptionsUseCase.getVehicleOptions().test();
@@ -266,7 +267,7 @@ public class VehicleOptionsUseCaseTest {
         new OptionBoolean(2, "name2", "desc2", true, false),
         new OptionBoolean(3, "name3", "desc3", false, true)
     );
-    when(vehicleChoiceSharer.get()).thenReturn(Observable.just(vehicle));
+    when(vehicleChoiceReceiver.get()).thenReturn(Observable.just(vehicle));
     when(gateway.sendVehicleOptions(any(Vehicle.class), anyList()))
         .thenReturn(Completable.error(NoNetworkException::new));
 
@@ -298,7 +299,7 @@ public class VehicleOptionsUseCaseTest {
         new OptionBoolean(2, "name2", "desc2", true, false),
         new OptionBoolean(3, "name3", "desc3", false, true)
     );
-    when(vehicleChoiceSharer.get()).thenReturn(Observable.just(vehicle));
+    when(vehicleChoiceReceiver.get()).thenReturn(Observable.just(vehicle));
     when(gateway.sendVehicleOptions(any(Vehicle.class), anyList()))
         .thenReturn(Completable.complete());
 
@@ -338,7 +339,7 @@ public class VehicleOptionsUseCaseTest {
         new OptionBoolean(2, "name2", "desc2", true, false),
         new OptionBoolean(3, "name3", "desc3", false, true)
     );
-    when(vehicleChoiceSharer.get()).thenReturn(Observable.just(vehicle));
+    when(vehicleChoiceReceiver.get()).thenReturn(Observable.just(vehicle));
     when(gateway.sendVehicleOptions(any(Vehicle.class), anyList()))
         .thenReturn(Completable.error(NoNetworkException::new));
     vehicleOptionsUseCase.getVehicleOptions().test();
@@ -351,7 +352,7 @@ public class VehicleOptionsUseCaseTest {
     ).test().assertError(NoNetworkException.class);
 
     // Результат:
-    verifyZeroInteractions(lastUsedVehicleSharer);
+    verifyZeroInteractions(lastUsedVehicleObserver);
   }
 
   /**
@@ -369,7 +370,7 @@ public class VehicleOptionsUseCaseTest {
         new OptionBoolean(2, "name2", "desc2", true, false),
         new OptionBoolean(3, "name3", "desc3", false, true)
     );
-    when(vehicleChoiceSharer.get()).thenReturn(Observable.just(vehicle));
+    when(vehicleChoiceReceiver.get()).thenReturn(Observable.just(vehicle));
     when(gateway.sendVehicleOptions(any(Vehicle.class), anyList()))
         .thenReturn(Completable.complete());
 
@@ -390,6 +391,6 @@ public class VehicleOptionsUseCaseTest {
         new OptionNumeric(1, "name1", "desc1", true, -50, 20, 30),
         new OptionBoolean(2, "name2", "desc2", true, false)
     );
-    verify(lastUsedVehicleSharer, only()).share(vehicle);
+    verify(lastUsedVehicleObserver, only()).onNext(vehicle);
   }
 }

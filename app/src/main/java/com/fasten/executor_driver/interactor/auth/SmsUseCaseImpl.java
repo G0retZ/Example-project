@@ -3,7 +3,7 @@ package com.fasten.executor_driver.interactor.auth;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.fasten.executor_driver.entity.Validator;
-import com.fasten.executor_driver.interactor.DataSharer;
+import com.fasten.executor_driver.interactor.DataReceiver;
 import io.reactivex.Completable;
 import javax.inject.Inject;
 
@@ -18,11 +18,18 @@ public class SmsUseCaseImpl implements SmsUseCase {
 
   @Inject
   public SmsUseCaseImpl(@NonNull SmsGateway gateway,
-      @NonNull DataSharer<String> phoneNumberSharer,
+      @NonNull DataReceiver<String> phoneNumberReceiver,
       @NonNull Validator<String> phoneNumberValidator) {
     this.gateway = gateway;
     this.phoneNumberValidator = phoneNumberValidator;
-    phoneNumberSharer.get().subscribe(phoneNumber -> this.phoneNumber = phoneNumber);
+    loadPhoneNumber(phoneNumberReceiver);
+  }
+
+  private void loadPhoneNumber(@NonNull DataReceiver<String> phoneNumberReceiver) {
+    phoneNumberReceiver.get().subscribe(phoneNumber -> this.phoneNumber = phoneNumber,
+        throwable -> loadPhoneNumber(phoneNumberReceiver),
+        () -> loadPhoneNumber(phoneNumberReceiver)
+    );
   }
 
   @NonNull

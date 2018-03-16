@@ -6,7 +6,7 @@ import static org.mockito.Mockito.when;
 
 import com.fasten.executor_driver.entity.NoFreeVehiclesException;
 import com.fasten.executor_driver.entity.Vehicle;
-import com.fasten.executor_driver.interactor.DataSharer;
+import com.fasten.executor_driver.interactor.DataReceiver;
 import io.reactivex.Observable;
 import org.junit.Before;
 import org.junit.Test;
@@ -20,12 +20,12 @@ public class SelectedVehicleUseCaseTest {
   private SelectedVehicleUseCase selectedVehicleUseCase;
 
   @Mock
-  private DataSharer<Vehicle> vehicleChoiceSharer;
+  private DataReceiver<Vehicle> vehicleChoiceReceiver;
 
   @Before
   public void setUp() throws Exception {
-    selectedVehicleUseCase = new SelectedVehicleUseCaseImpl(vehicleChoiceSharer);
-    when(vehicleChoiceSharer.get()).thenReturn(Observable.never());
+    selectedVehicleUseCase = new SelectedVehicleUseCaseImpl(vehicleChoiceReceiver);
+    when(vehicleChoiceReceiver.get()).thenReturn(Observable.never());
   }
 
   /* Проверяем работу с публикатором выбранного ТС */
@@ -41,7 +41,7 @@ public class SelectedVehicleUseCaseTest {
     selectedVehicleUseCase.getSelectedVehicle().test();
 
     // Результат:
-    verify(vehicleChoiceSharer, only()).get();
+    verify(vehicleChoiceReceiver, only()).get();
   }
 
   /* Проверяем ответы на запрос выбранного ТС */
@@ -54,7 +54,7 @@ public class SelectedVehicleUseCaseTest {
   @Test
   public void answerWithVehicleSelections() throws Exception {
     // Дано:
-    when(vehicleChoiceSharer.get()).thenReturn(Observable.fromArray(
+    when(vehicleChoiceReceiver.get()).thenReturn(Observable.fromArray(
         new Vehicle(12, "manufacturer", "model", "color", "license", false),
         new Vehicle(13, "manufacture", "models", "colo", "licenses", true),
         new Vehicle(14, "manufacturers", "modeler", "color", "licensees", false),
@@ -78,7 +78,7 @@ public class SelectedVehicleUseCaseTest {
   @Test
   public void answerWithError() throws Exception {
     // Дано:
-    when(vehicleChoiceSharer.get()).thenReturn(Observable.error(new NoFreeVehiclesException()));
+    when(vehicleChoiceReceiver.get()).thenReturn(Observable.error(new NoFreeVehiclesException()));
 
     // Действие и Результат:
     selectedVehicleUseCase.getSelectedVehicle().test().assertError(NoFreeVehiclesException.class);

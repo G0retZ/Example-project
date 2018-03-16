@@ -92,7 +92,7 @@ public class VehicleOptionsViewModelImpl extends ViewModel implements OptionsVie
         OptionsListItems::new
     ).subscribe(
         items -> viewStateLiveData.postValue(new OptionsViewStateReady(items)),
-        Throwable::printStackTrace
+        throwable -> loadOptions(), this::loadOptions
     );
 
   }

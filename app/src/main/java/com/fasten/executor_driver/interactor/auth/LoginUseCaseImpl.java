@@ -3,8 +3,8 @@ package com.fasten.executor_driver.interactor.auth;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.fasten.executor_driver.entity.Validator;
-import com.fasten.executor_driver.interactor.DataSharer;
 import io.reactivex.Completable;
+import io.reactivex.Observer;
 import javax.inject.Inject;
 
 public class LoginUseCaseImpl implements LoginUseCase {
@@ -12,16 +12,16 @@ public class LoginUseCaseImpl implements LoginUseCase {
   @NonNull
   private final Validator<String> loginValidator;
   @NonNull
-  private final DataSharer<String> loginSharer;
+  private final Observer<String> loginObserver;
   @Nullable
   private String lastLogin;
 
   @Inject
   public LoginUseCaseImpl(
-      @NonNull DataSharer<String> loginSharer,
+      @NonNull Observer<String> loginObserver,
       @NonNull Validator<String> loginValidator) {
     this.loginValidator = loginValidator;
-    this.loginSharer = loginSharer;
+    this.loginObserver = loginObserver;
   }
 
   @NonNull
@@ -37,7 +37,11 @@ public class LoginUseCaseImpl implements LoginUseCase {
   @Override
   public Completable rememberLogin() {
     return Completable.create(e -> {
-      loginSharer.share(lastLogin);
+      if (lastLogin == null) {
+        loginObserver.onComplete();
+      } else {
+        loginObserver.onNext(lastLogin);
+      }
       e.onComplete();
     });
   }

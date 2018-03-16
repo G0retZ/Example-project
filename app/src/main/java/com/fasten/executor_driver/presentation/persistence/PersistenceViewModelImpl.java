@@ -6,7 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.fasten.executor_driver.R;
 import com.fasten.executor_driver.entity.ExecutorState;
-import com.fasten.executor_driver.interactor.DataSharer;
+import com.fasten.executor_driver.interactor.DataReceiver;
 import com.fasten.executor_driver.presentation.SingleLiveEvent;
 import com.fasten.executor_driver.presentation.ViewState;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -17,7 +17,7 @@ import javax.inject.Inject;
 public class PersistenceViewModelImpl implements PersistenceViewModel {
 
   @NonNull
-  private final DataSharer<ExecutorState> executorStateSharer;
+  private final DataReceiver<ExecutorState> executorStateReceiver;
 
   @NonNull
   private final MutableLiveData<ViewState<PersistenceViewActions>> viewStateLiveData;
@@ -26,22 +26,27 @@ public class PersistenceViewModelImpl implements PersistenceViewModel {
   private Disposable disposable;
 
   @Inject
-  public PersistenceViewModelImpl(@NonNull DataSharer<ExecutorState> executorStateSharer) {
-    this.executorStateSharer = executorStateSharer;
+  public PersistenceViewModelImpl(@NonNull DataReceiver<ExecutorState> executorStateReceiver) {
+    this.executorStateReceiver = executorStateReceiver;
     viewStateLiveData = new MutableLiveData<>();
   }
 
   @NonNull
   @Override
   public LiveData<ViewState<PersistenceViewActions>> getViewStateLiveData() {
+    loadExecutorState();
+    return viewStateLiveData;
+  }
+
+  private void loadExecutorState() {
     if (disposable == null || disposable.isDisposed()) {
-      disposable = executorStateSharer.get()
+      disposable = executorStateReceiver.get()
           .subscribeOn(Schedulers.single())
           .observeOn(AndroidSchedulers.mainThread())
-          .subscribe(this::consumeExecutorState, throwable -> {
-          });
+          .subscribe(
+              this::consumeExecutorState, throwable -> loadExecutorState(), this::loadExecutorState
+          );
     }
-    return viewStateLiveData;
   }
 
   private void consumeExecutorState(ExecutorState executorState) {

@@ -149,14 +149,20 @@ public class HeatMapUseCaseTest {
     when(gateway.getHeatMap()).thenReturn(Single.fromCallable(testCallable));
 
     // Действие:
-    Disposable disposable1 = heatMapUseCase.loadHeatMap().subscribe(System.out::println); // +1 вызов
-    Disposable disposable2 = heatMapUseCase.loadHeatMap().subscribe(System.out::println); // +1 вызов
-    Disposable disposable3 = heatMapUseCase.loadHeatMap().subscribe(System.out::println); // +1 вызов
-    testScheduler.advanceTimeBy(REQUIRED_INTERVAL, TimeUnit.MINUTES); // +3 вызова на всех подписчиков
+    Disposable disposable1 = heatMapUseCase.loadHeatMap()
+        .subscribe(System.out::println); // +1 вызов
+    Disposable disposable2 = heatMapUseCase.loadHeatMap()
+        .subscribe(System.out::println); // +1 вызов
+    Disposable disposable3 = heatMapUseCase.loadHeatMap()
+        .subscribe(System.out::println); // +1 вызов
+    testScheduler
+        .advanceTimeBy(REQUIRED_INTERVAL, TimeUnit.MINUTES); // +3 вызова на всех подписчиков
     disposable1.dispose();
-    testScheduler.advanceTimeBy(REQUIRED_INTERVAL, TimeUnit.MINUTES); // +2 вызова на оставшихся подписчиков
+    testScheduler
+        .advanceTimeBy(REQUIRED_INTERVAL, TimeUnit.MINUTES); // +2 вызова на оставшихся подписчиков
     disposable2.dispose();
-    testScheduler.advanceTimeBy(REQUIRED_INTERVAL, TimeUnit.MINUTES); // +1 вызов на последнего подписчика
+    testScheduler
+        .advanceTimeBy(REQUIRED_INTERVAL, TimeUnit.MINUTES); // +1 вызов на последнего подписчика
     disposable3.dispose();
 
     // Результат:

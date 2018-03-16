@@ -4,33 +4,34 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.fasten.executor_driver.entity.NoVehiclesAvailableException;
 import com.fasten.executor_driver.entity.Vehicle;
-import com.fasten.executor_driver.interactor.DataSharer;
+import com.fasten.executor_driver.interactor.DataReceiver;
 import io.reactivex.Completable;
 import io.reactivex.Observable;
+import io.reactivex.Observer;
 import java.util.List;
 import javax.inject.Inject;
 
 public class VehicleChoiceUseCaseImpl implements VehicleChoiceUseCase {
 
   @NonNull
-  private final DataSharer<List<Vehicle>> vehiclesSharer;
+  private final DataReceiver<List<Vehicle>> vehiclesReceiver;
   @NonNull
-  private final DataSharer<Vehicle> vehicleChoiceSharer;
+  private final Observer<Vehicle> vehicleChoiceObserver;
   @Nullable
   private List<Vehicle> vehicles;
 
   @Inject
   public VehicleChoiceUseCaseImpl(
-      @NonNull DataSharer<List<Vehicle>> vehiclesSharer,
-      @NonNull DataSharer<Vehicle> vehicleChoiceSharer) {
-    this.vehiclesSharer = vehiclesSharer;
-    this.vehicleChoiceSharer = vehicleChoiceSharer;
+      @NonNull DataReceiver<List<Vehicle>> vehiclesReceiver,
+      @NonNull Observer<Vehicle> vehicleChoiceObserver) {
+    this.vehiclesReceiver = vehiclesReceiver;
+    this.vehicleChoiceObserver = vehicleChoiceObserver;
   }
 
   @NonNull
   @Override
   public Observable<List<Vehicle>> getVehicles() {
-    return vehiclesSharer.get()
+    return vehiclesReceiver.get()
         .map(list -> {
           if (list.isEmpty()) {
             throw new NoVehiclesAvailableException();
@@ -49,7 +50,7 @@ public class VehicleChoiceUseCaseImpl implements VehicleChoiceUseCase {
       if (vehicle.isBusy()) {
         throw new IllegalArgumentException();
       }
-      vehicleChoiceSharer.share(vehicle);
+      vehicleChoiceObserver.onNext(vehicle);
       return null;
     });
   }

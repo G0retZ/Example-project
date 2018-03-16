@@ -35,11 +35,9 @@ import org.mockito.junit.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class ChooseVehicleViewModelTest {
 
-  private ChooseVehicleViewModel chooseVehicleViewModel;
-
   @Rule
   public TestRule rule = new InstantTaskExecutorRule();
-
+  private ChooseVehicleViewModel chooseVehicleViewModel;
   @Mock
   private VehicleChoiceUseCase vehicleChoiceUseCase;
 
@@ -145,12 +143,13 @@ public class ChooseVehicleViewModelTest {
    *
    * @throws Exception error
    */
+  @SuppressWarnings("unchecked")
   @Test
   public void setNetworkErrorViewStateToLiveData() throws Exception {
     // Дано:
     PublishSubject<List<Vehicle>> publishSubject = PublishSubject.create();
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    when(vehicleChoiceUseCase.getVehicles()).thenReturn(publishSubject);
+    when(vehicleChoiceUseCase.getVehicles()).thenReturn(publishSubject, PublishSubject.never());
     chooseVehicleViewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
@@ -168,12 +167,13 @@ public class ChooseVehicleViewModelTest {
    *
    * @throws Exception error
    */
+  @SuppressWarnings("unchecked")
   @Test
   public void setEmptyErrorViewStateToLiveData() throws Exception {
     // Дано:
     PublishSubject<List<Vehicle>> publishSubject = PublishSubject.create();
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    when(vehicleChoiceUseCase.getVehicles()).thenReturn(publishSubject);
+    when(vehicleChoiceUseCase.getVehicles()).thenReturn(publishSubject, PublishSubject.never());
     chooseVehicleViewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:

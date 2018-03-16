@@ -25,7 +25,7 @@ public class VehiclesSharerTest {
   @Test
   public void valueUnchangedForRead() throws Exception {
     // Дано:
-    vehiclesSharer.share(
+    vehiclesSharer.onNext(
         Arrays.asList(
             new Vehicle(12, "manufacturer", "model", "color", "license", false),
             new Vehicle(13, "manufacture", "models", "colo", "licenses", true),

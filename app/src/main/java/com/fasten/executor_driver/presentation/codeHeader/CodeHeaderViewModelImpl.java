@@ -5,7 +5,7 @@ import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import com.fasten.executor_driver.interactor.DataSharer;
+import com.fasten.executor_driver.interactor.DataReceiver;
 import com.fasten.executor_driver.presentation.SingleLiveEvent;
 import com.fasten.executor_driver.presentation.ViewState;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -16,15 +16,15 @@ import javax.inject.Inject;
 public class CodeHeaderViewModelImpl extends ViewModel implements CodeHeaderViewModel {
 
   @NonNull
-  private final DataSharer<String> loginSharer;
+  private final DataReceiver<String> loginReceiver;
   @NonNull
   private final MutableLiveData<ViewState<CodeHeaderViewActions>> viewStateLiveData;
   @Nullable
   private Disposable disposable;
 
   @Inject
-  public CodeHeaderViewModelImpl(@NonNull DataSharer<String> loginSharer) {
-    this.loginSharer = loginSharer;
+  public CodeHeaderViewModelImpl(@NonNull DataReceiver<String> loginReceiver) {
+    this.loginReceiver = loginReceiver;
     viewStateLiveData = new MutableLiveData<>();
     consumePhoneNumber("00000000000");
   }
@@ -32,14 +32,17 @@ public class CodeHeaderViewModelImpl extends ViewModel implements CodeHeaderView
   @NonNull
   @Override
   public LiveData<ViewState<CodeHeaderViewActions>> getViewStateLiveData() {
+    loadLogin();
+    return viewStateLiveData;
+  }
+
+  private void loadLogin() {
     if (disposable == null || disposable.isDisposed()) {
-      disposable = loginSharer.get()
+      disposable = loginReceiver.get()
           .subscribeOn(Schedulers.single())
           .observeOn(AndroidSchedulers.mainThread())
-          .subscribe(this::consumePhoneNumber, throwable -> {
-          });
+          .subscribe(this::consumePhoneNumber, throwable -> loadLogin(), this::loadLogin);
     }
-    return viewStateLiveData;
   }
 
   @NonNull
