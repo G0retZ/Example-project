@@ -6,8 +6,9 @@ import com.fasten.executor_driver.entity.NoFreeVehiclesException;
 import com.fasten.executor_driver.entity.NoVehiclesAvailableException;
 import com.fasten.executor_driver.entity.Option;
 import com.fasten.executor_driver.entity.Vehicle;
-import com.fasten.executor_driver.interactor.DataSharer;
+import com.fasten.executor_driver.interactor.DataReceiver;
 import io.reactivex.Completable;
+import io.reactivex.Observer;
 import java.util.List;
 import javax.inject.Inject;
 
@@ -16,27 +17,32 @@ public class VehiclesAndOptionsUseCaseImpl implements VehiclesAndOptionsUseCase 
   @NonNull
   private final VehiclesAndOptionsGateway gateway;
   @NonNull
-  private final DataSharer<List<Vehicle>> vehiclesSharer;
+  private final Observer<List<Vehicle>> vehiclesObserver;
   @NonNull
-  private final DataSharer<List<Option>> driverOptionsSharer;
+  private final Observer<List<Option>> driverOptionsObserver;
   @NonNull
-  private final DataSharer<Vehicle> vehicleChoiceSharer;
+  private final Observer<Vehicle> vehicleChoiceObserver;
   @Nullable
   private Vehicle lastUsedVehicle;
 
   @Inject
   public VehiclesAndOptionsUseCaseImpl(@NonNull VehiclesAndOptionsGateway gateway,
-      @NonNull DataSharer<List<Vehicle>> vehiclesSharer,
-      @NonNull DataSharer<List<Option>> driverOptionsSharer,
-      @NonNull DataSharer<Vehicle> vehicleChoiceSharer,
-      @NonNull DataSharer<Vehicle> lastUsedVehicleSharer) {
+      @NonNull Observer<List<Vehicle>> vehiclesObserver,
+      @NonNull Observer<List<Option>> driverOptionsObserver,
+      @NonNull Observer<Vehicle> vehicleChoiceObserver,
+      @NonNull DataReceiver<Vehicle> lastUsedVehicleReceiver) {
     this.gateway = gateway;
-    this.vehiclesSharer = vehiclesSharer;
-    this.driverOptionsSharer = driverOptionsSharer;
-    this.vehicleChoiceSharer = vehicleChoiceSharer;
-    lastUsedVehicleSharer.get().subscribe(
+    this.vehiclesObserver = vehiclesObserver;
+    this.driverOptionsObserver = driverOptionsObserver;
+    this.vehicleChoiceObserver = vehicleChoiceObserver;
+    loadLastUsedVehicle(lastUsedVehicleReceiver);
+  }
+
+  private void loadLastUsedVehicle(@NonNull DataReceiver<Vehicle> lastUsedVehicleReceiver) {
+    lastUsedVehicleReceiver.get().subscribe(
         vehicle -> lastUsedVehicle = vehicle,
-        Throwable::printStackTrace
+        throwable -> loadLastUsedVehicle(lastUsedVehicleReceiver),
+        () -> loadLastUsedVehicle(lastUsedVehicleReceiver)
     );
   }
 
@@ -45,7 +51,7 @@ public class VehiclesAndOptionsUseCaseImpl implements VehiclesAndOptionsUseCase 
   public Completable loadVehiclesAndOptions() {
     return gateway.getExecutorVehicles()
         .map(list -> {
-          vehiclesSharer.share(list);
+          vehiclesObserver.onNext(list);
           if (list.isEmpty()) {
             throw new NoVehiclesAvailableException();
           }
@@ -54,7 +60,7 @@ public class VehiclesAndOptionsUseCaseImpl implements VehiclesAndOptionsUseCase 
           for (int i = list.size() - 1; i >= 0; i--) {
             if (!list.get(i).isBusy()) {
               if (lastUsedVehicle != null && list.get(i).getId() == lastUsedVehicle.getId()) {
-                vehicleChoiceSharer.share(list.get(i));
+                vehicleChoiceObserver.onNext(list.get(i));
                 return list;
               }
               firstFreeIndex = i;
@@ -64,14 +70,14 @@ public class VehiclesAndOptionsUseCaseImpl implements VehiclesAndOptionsUseCase 
           if (freeVehiclesCount == 0) {
             throw new NoFreeVehiclesException();
           }
-          vehicleChoiceSharer.share(list.get(firstFreeIndex));
+          vehicleChoiceObserver.onNext(list.get(firstFreeIndex));
           return list;
         })
         .toCompletable()
         .andThen(
             gateway.getExecutorOptions()
                 .map(list -> {
-                  driverOptionsSharer.share(list);
+                  driverOptionsObserver.onNext(list);
                   return list;
                 })
                 .toCompletable()

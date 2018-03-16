@@ -10,7 +10,7 @@ import static org.mockito.Mockito.verifyZeroInteractions;
 
 import com.fasten.executor_driver.entity.ValidationException;
 import com.fasten.executor_driver.entity.Validator;
-import com.fasten.executor_driver.interactor.DataSharer;
+import io.reactivex.Observer;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,12 +26,12 @@ public class LoginUseCaseTest {
   private Validator<String> loginValidator;
 
   @Mock
-  private DataSharer<String> loginSharer;
+  private Observer<String> loginObserver;
 
   @Before
   public void setUp() throws Exception {
     doThrow(new ValidationException()).when(loginValidator).validate(anyString());
-    loginUseCase = new LoginUseCaseImpl(loginSharer, loginValidator);
+    loginUseCase = new LoginUseCaseImpl(loginObserver, loginValidator);
   }
 
   /* Проверяем работу с валидаторами */
@@ -92,7 +92,7 @@ public class LoginUseCaseTest {
     loginUseCase.validateLogin("checkLogin").test();
 
     // Результат:
-    verifyZeroInteractions(loginSharer);
+    verifyZeroInteractions(loginObserver);
   }
 
   /**
@@ -111,8 +111,8 @@ public class LoginUseCaseTest {
     loginUseCase.rememberLogin().test().assertComplete();
 
     // Результат:
-    verify(loginSharer).share(null);
-    verify(loginSharer).share("checkLogin");
-    verifyNoMoreInteractions(loginSharer);
+    verify(loginObserver).onComplete();
+    verify(loginObserver).onNext("checkLogin");
+    verifyNoMoreInteractions(loginObserver);
   }
 }

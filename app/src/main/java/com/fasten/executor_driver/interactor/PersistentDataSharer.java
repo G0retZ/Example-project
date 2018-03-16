@@ -19,14 +19,14 @@ public abstract class PersistentDataSharer<D> extends MemoryDataSharer<D> {
     this.appSettingsService = appSettingsService;
     String value = appSettingsService.getData(getKey());
     if (value != null) {
-      super.share(deserialize(value));
+      super.onNext(deserialize(value));
     }
   }
 
   @Override
-  public void share(@Nullable D data) {
+  public void onNext(@NonNull D data) {
     appSettingsService.saveData(getKey(), serialize(data));
-    super.share(data);
+    super.onNext(data);
   }
 
   /**

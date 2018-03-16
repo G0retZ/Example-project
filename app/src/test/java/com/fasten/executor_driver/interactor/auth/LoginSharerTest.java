@@ -63,7 +63,7 @@ public class LoginSharerTest {
   @Test
   public void askSettingsForSaveLogin() throws Exception {
     // Действие:
-    loginSharer.share("123456");
+    loginSharer.onNext("123456");
 
     // Результат:
     verify(appSettings).getData("authorizationLogin");

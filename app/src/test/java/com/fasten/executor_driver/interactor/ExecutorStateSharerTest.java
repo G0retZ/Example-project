@@ -24,7 +24,7 @@ public class ExecutorStateSharerTest {
   @Test
   public void valueUnchangedForRead() throws Exception {
     // Дано:
-    executorStateSharer.share(ExecutorState.APPROACHING_LOADING_POINT);
+    executorStateSharer.onNext(ExecutorState.APPROACHING_LOADING_POINT);
 
     // Действие и Результат:
     executorStateSharer.get().test().assertValue(ExecutorState.APPROACHING_LOADING_POINT);

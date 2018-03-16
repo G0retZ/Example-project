@@ -36,13 +36,10 @@ import org.mockito.junit.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class OnlineButtonViewModelTest {
 
-  private OnlineButtonViewModel onlineButtonViewModel;
-
-  private TestScheduler testScheduler;
-
   @Rule
   public TestRule rule = new InstantTaskExecutorRule();
-
+  private OnlineButtonViewModel onlineButtonViewModel;
+  private TestScheduler testScheduler;
   @Mock
   private Observer<ViewState<OnlineButtonViewActions>> viewStateObserver;
 

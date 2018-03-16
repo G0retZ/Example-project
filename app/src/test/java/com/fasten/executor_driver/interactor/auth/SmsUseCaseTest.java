@@ -11,7 +11,7 @@ import static org.mockito.Mockito.when;
 import com.fasten.executor_driver.backend.web.NoNetworkException;
 import com.fasten.executor_driver.entity.ValidationException;
 import com.fasten.executor_driver.entity.Validator;
-import com.fasten.executor_driver.interactor.DataSharer;
+import com.fasten.executor_driver.interactor.DataReceiver;
 import io.reactivex.Completable;
 import io.reactivex.subjects.PublishSubject;
 import io.reactivex.subjects.Subject;
@@ -33,7 +33,7 @@ public class SmsUseCaseTest {
   private Validator<String> phoneNumberValidator;
 
   @Mock
-  private DataSharer<String> phoneNumberSharer;
+  private DataReceiver<String> phoneNumberReceiver;
 
   private Subject<String> subject;
 
@@ -42,8 +42,8 @@ public class SmsUseCaseTest {
     when(gateway.sendMeCode(anyString())).thenReturn(Completable.never());
     doThrow(new ValidationException()).when(phoneNumberValidator).validate(anyString());
     doNothing().when(phoneNumberValidator).validate("0123456");
-    when(phoneNumberSharer.get()).thenReturn(subject = PublishSubject.create());
-    smsUseCase = new SmsUseCaseImpl(gateway, phoneNumberSharer, phoneNumberValidator);
+    when(phoneNumberReceiver.get()).thenReturn(subject = PublishSubject.create());
+    smsUseCase = new SmsUseCaseImpl(gateway, phoneNumberReceiver, phoneNumberValidator);
   }
 
   /* Проверяем работу с публикатором номера телефона */
@@ -56,7 +56,7 @@ public class SmsUseCaseTest {
   @Test
   public void getFromDataSharerImmediately() throws Exception {
     // Результат:
-    verify(phoneNumberSharer, only()).get();
+    verify(phoneNumberReceiver, only()).get();
   }
 
   /**
@@ -70,7 +70,7 @@ public class SmsUseCaseTest {
     smsUseCase.sendMeCode().test();
 
     // Результат:
-    verify(phoneNumberSharer, only()).get();
+    verify(phoneNumberReceiver, only()).get();
   }
 
   /* Проверяем работу с валидаторами */

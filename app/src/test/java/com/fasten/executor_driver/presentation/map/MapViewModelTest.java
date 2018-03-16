@@ -28,11 +28,9 @@ import org.mockito.junit.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class MapViewModelTest {
 
-  private MapViewModel mapViewModel;
-
   @Rule
   public TestRule rule = new InstantTaskExecutorRule();
-
+  private MapViewModel mapViewModel;
   @Mock
   private Observer<ViewState<MapViewActions>> viewStateObserver;
 

@@ -5,9 +5,10 @@ import android.support.annotation.Nullable;
 import com.fasten.executor_driver.entity.Option;
 import com.fasten.executor_driver.entity.Vehicle;
 import com.fasten.executor_driver.gateway.DataMappingException;
-import com.fasten.executor_driver.interactor.DataSharer;
+import com.fasten.executor_driver.interactor.DataReceiver;
 import io.reactivex.Completable;
 import io.reactivex.Observable;
+import io.reactivex.Observer;
 import java.util.List;
 import javax.inject.Inject;
 
@@ -16,30 +17,30 @@ public class VehicleOptionsUseCaseImpl implements VehicleOptionsUseCase {
   @NonNull
   private final VehicleOptionsGateway gateway;
   @NonNull
-  private final DataSharer<Vehicle> vehicleChoiceSharer;
+  private final DataReceiver<Vehicle> vehicleChoiceReceiver;
   @NonNull
-  private final DataSharer<Vehicle> lastUsedVehicleSharer;
+  private final Observer<Vehicle> lastUsedVehicleObserver;
   @NonNull
-  private final DataSharer<List<Option>> driverOptionsSharer;
+  private final DataReceiver<List<Option>> driverOptionsReceiver;
   @Nullable
   private Vehicle vehicle;
 
   @Inject
   public VehicleOptionsUseCaseImpl(
       @NonNull VehicleOptionsGateway gateway,
-      @NonNull DataSharer<Vehicle> vehicleChoiceSharer,
-      @NonNull DataSharer<Vehicle> lastUsedVehicleSharer,
-      @NonNull DataSharer<List<Option>> driverOptionsSharer) {
+      @NonNull DataReceiver<Vehicle> vehicleChoiceReceiver,
+      @NonNull Observer<Vehicle> lastUsedVehicleObserver,
+      @NonNull DataReceiver<List<Option>> driverOptionsReceiver) {
     this.gateway = gateway;
-    this.vehicleChoiceSharer = vehicleChoiceSharer;
-    this.lastUsedVehicleSharer = lastUsedVehicleSharer;
-    this.driverOptionsSharer = driverOptionsSharer;
+    this.vehicleChoiceReceiver = vehicleChoiceReceiver;
+    this.lastUsedVehicleObserver = lastUsedVehicleObserver;
+    this.driverOptionsReceiver = driverOptionsReceiver;
   }
 
   @NonNull
   @Override
   public Observable<List<Option>> getVehicleOptions() {
-    return vehicleChoiceSharer.get()
+    return vehicleChoiceReceiver.get()
         .concatMap(vehicle -> {
           this.vehicle = vehicle;
           return Observable.fromIterable(vehicle.getOptions())
@@ -52,7 +53,7 @@ public class VehicleOptionsUseCaseImpl implements VehicleOptionsUseCase {
   @NonNull
   @Override
   public Observable<List<Option>> getDriverOptions() {
-    return driverOptionsSharer.get()
+    return driverOptionsReceiver.get()
         .concatMap(options -> Observable.fromIterable(options)
             .filter(Option::isVariable)
             .toList()
@@ -67,6 +68,6 @@ public class VehicleOptionsUseCaseImpl implements VehicleOptionsUseCase {
     }
     vehicle.setOptions(options.toArray(new Option[options.size()]));
     return gateway.sendVehicleOptions(vehicle, driverOptions)
-        .doOnComplete(() -> lastUsedVehicleSharer.share(vehicle));
+        .doOnComplete(() -> lastUsedVehicleObserver.onNext(vehicle));
   }
 }

@@ -3,6 +3,7 @@ package com.fasten.executor_driver.interactor;
 import android.support.annotation.NonNull;
 import com.fasten.executor_driver.entity.ExecutorState;
 import io.reactivex.Completable;
+import io.reactivex.Observer;
 import javax.inject.Inject;
 
 public class UnAuthUseCaseImpl implements UnAuthUseCase {
@@ -10,19 +11,19 @@ public class UnAuthUseCaseImpl implements UnAuthUseCase {
   @NonNull
   private final UnAuthGateway gateway;
   @NonNull
-  private final DataSharer<ExecutorState> executorStateSharer;
+  private final Observer<ExecutorState> executorStateObserver;
 
   @Inject
   public UnAuthUseCaseImpl(@NonNull UnAuthGateway gateway,
-      @NonNull DataSharer<ExecutorState> executorStateSharer) {
+      @NonNull Observer<ExecutorState> executorStateObserver) {
     this.gateway = gateway;
-    this.executorStateSharer = executorStateSharer;
+    this.executorStateObserver = executorStateObserver;
   }
 
   @NonNull
   @Override
   public Completable getUnauthorized() {
     return gateway.waitForUnauthorized()
-        .doOnComplete(() -> executorStateSharer.share(ExecutorState.UNAUTHORIZED));
+        .doOnComplete(() -> executorStateObserver.onNext(ExecutorState.UNAUTHORIZED));
   }
 }

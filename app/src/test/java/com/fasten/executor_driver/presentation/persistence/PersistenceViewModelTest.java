@@ -12,7 +12,7 @@ import android.arch.core.executor.testing.InstantTaskExecutorRule;
 import android.arch.lifecycle.Observer;
 import com.fasten.executor_driver.R;
 import com.fasten.executor_driver.entity.ExecutorState;
-import com.fasten.executor_driver.interactor.DataSharer;
+import com.fasten.executor_driver.interactor.DataReceiver;
 import com.fasten.executor_driver.presentation.ViewState;
 import io.reactivex.android.plugins.RxAndroidPlugins;
 import io.reactivex.plugins.RxJavaPlugins;
@@ -35,9 +35,7 @@ public class PersistenceViewModelTest {
   public TestRule rule = new InstantTaskExecutorRule();
   private PersistenceViewModel persistenceViewModel;
   @Mock
-  private DataSharer<ExecutorState> executorStateSharer;
-
-  private PublishSubject<ExecutorState> publishSubject;
+  private DataReceiver<ExecutorState> executorStateReceiver;
 
   @Mock
   private Observer<ViewState<PersistenceViewActions>> viewStateObserver;
@@ -46,9 +44,8 @@ public class PersistenceViewModelTest {
   public void setUp() throws Exception {
     RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
     RxAndroidPlugins.setInitMainThreadSchedulerHandler(scheduler -> Schedulers.trampoline());
-    publishSubject = PublishSubject.create();
-    when(executorStateSharer.get()).thenReturn(publishSubject);
-    persistenceViewModel = new PersistenceViewModelImpl(executorStateSharer);
+    when(executorStateReceiver.get()).thenReturn(PublishSubject.never());
+    persistenceViewModel = new PersistenceViewModelImpl(executorStateReceiver);
   }
 
   /* Тетсируем работу с публикатором номера телефона. */
@@ -66,7 +63,7 @@ public class PersistenceViewModelTest {
     persistenceViewModel.getViewStateLiveData();
 
     // Результат:
-    verify(executorStateSharer, only()).get();
+    verify(executorStateReceiver, only()).get();
   }
 
   /* Тетсируем переключение состояний. */
@@ -93,6 +90,8 @@ public class PersistenceViewModelTest {
   @Test
   public void setStartedViewStateToLiveData() throws Exception {
     // Дано:
+    PublishSubject<ExecutorState> publishSubject = PublishSubject.create();
+    when(executorStateReceiver.get()).thenReturn(publishSubject);
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     persistenceViewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
@@ -131,6 +130,8 @@ public class PersistenceViewModelTest {
   @Test
   public void setStoppedViewStateToLiveData() throws Exception {
     // Дано:
+    PublishSubject<ExecutorState> publishSubject = PublishSubject.create();
+    when(executorStateReceiver.get()).thenReturn(publishSubject);
     persistenceViewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
@@ -147,9 +148,12 @@ public class PersistenceViewModelTest {
    *
    * @throws Exception error
    */
+  @SuppressWarnings("unchecked")
   @Test
   public void ignoreErrors() throws Exception {
     // Дано:
+    PublishSubject<ExecutorState> publishSubject = PublishSubject.create();
+    when(executorStateReceiver.get()).thenReturn(publishSubject, PublishSubject.never());
     persistenceViewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:

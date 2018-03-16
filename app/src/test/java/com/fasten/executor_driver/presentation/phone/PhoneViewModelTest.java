@@ -29,11 +29,9 @@ import org.mockito.junit.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class PhoneViewModelTest {
 
-  private PhoneViewModel phoneViewModel;
-
   @Rule
   public TestRule rule = new InstantTaskExecutorRule();
-
+  private PhoneViewModel phoneViewModel;
   @Mock
   private LoginUseCase useCase;
 
