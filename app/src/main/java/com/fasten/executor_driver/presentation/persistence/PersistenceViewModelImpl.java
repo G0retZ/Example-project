@@ -43,8 +43,10 @@ public class PersistenceViewModelImpl implements PersistenceViewModel {
       disposable = executorStateReceiver.get()
           .subscribeOn(Schedulers.single())
           .observeOn(AndroidSchedulers.mainThread())
+          .doAfterTerminate(this::loadExecutorState)
           .subscribe(
-              this::consumeExecutorState, throwable -> loadExecutorState(), this::loadExecutorState
+              this::consumeExecutorState, throwable -> {
+              }
           );
     }
   }

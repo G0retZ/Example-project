@@ -33,8 +33,11 @@ public class PasswordUseCaseImpl implements PasswordUseCase {
   }
 
   private void loadLogin(@NonNull DataReceiver<String> loginReceiver) {
-    loginReceiver.get().subscribe(login -> loginData = loginData.setLogin(login),
-        throwable -> loadLogin(loginReceiver), () -> loadLogin(loginReceiver));
+    loginReceiver.get()
+        .doAfterTerminate(() -> loadLogin(loginReceiver))
+        .subscribe(login -> loginData = loginData.setLogin(login),
+            throwable -> {
+            });
   }
 
   @NonNull

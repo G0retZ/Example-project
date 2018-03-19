@@ -33,7 +33,7 @@ public class GeoLocationViewModelImpl extends ViewModel implements GeoLocationVi
   @NonNull
   @Override
   public LiveData<ViewState<GeoLocationViewActions>> getViewStateLiveData() {
-    subscribeToLocationUpdates();
+    getLocationUpdates();
     return viewStateLiveData;
   }
 
@@ -43,15 +43,17 @@ public class GeoLocationViewModelImpl extends ViewModel implements GeoLocationVi
     return new SingleLiveEvent<>();
   }
 
-  private void subscribeToLocationUpdates() {
+  private void getLocationUpdates() {
     if (disposable != null && !disposable.isDisposed()) {
       return;
     }
     disposable = geoLocationReceiver.get()
         .subscribeOn(Schedulers.single())
         .observeOn(AndroidSchedulers.mainThread())
+        .doAfterTerminate(this::getLocationUpdates)
         .subscribe(location -> viewStateLiveData.postValue(new GeoLocationViewState(location)),
-            throwable -> subscribeToLocationUpdates(), this::subscribeToLocationUpdates);
+            throwable -> {
+            });
   }
 
   @Override

@@ -37,7 +37,8 @@ public class GeoLocationUseCaseImpl implements GeoLocationUseCase {
         executorStateDisposable.dispose();
       }
       executorStateDisposable = executorStateReceiver.get()
-          .subscribe(this::consumeExecutorState, throwable -> reload(), this::reload);
+          .subscribe(this::consumeExecutorState, throwable -> {
+          });
       return 0;
     });
   }

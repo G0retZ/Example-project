@@ -39,11 +39,13 @@ public class VehiclesAndOptionsUseCaseImpl implements VehiclesAndOptionsUseCase 
   }
 
   private void loadLastUsedVehicle(@NonNull DataReceiver<Vehicle> lastUsedVehicleReceiver) {
-    lastUsedVehicleReceiver.get().subscribe(
-        vehicle -> lastUsedVehicle = vehicle,
-        throwable -> loadLastUsedVehicle(lastUsedVehicleReceiver),
-        () -> loadLastUsedVehicle(lastUsedVehicleReceiver)
-    );
+    lastUsedVehicleReceiver.get()
+        .doAfterTerminate(() -> loadLastUsedVehicle(lastUsedVehicleReceiver))
+        .subscribe(
+            vehicle -> lastUsedVehicle = vehicle,
+            throwable -> {
+            }
+        );
   }
 
   @NonNull
