@@ -35,16 +35,6 @@ public class Vehicle {
     this.busy = busy;
   }
 
-  /**
-   * Создает копию ТС но без опций.
-   *
-   * @param vehicle исходный объект ТС
-   */
-  public Vehicle(Vehicle vehicle) {
-    this(vehicle.id, vehicle.manufacturer, vehicle.model, vehicle.color, vehicle.licensePlate,
-        vehicle.busy);
-  }
-
   public long getId() {
     return id;
   }
