@@ -41,7 +41,9 @@ public class CodeHeaderViewModelImpl extends ViewModel implements CodeHeaderView
       disposable = loginReceiver.get()
           .subscribeOn(Schedulers.single())
           .observeOn(AndroidSchedulers.mainThread())
-          .subscribe(this::consumePhoneNumber, throwable -> loadLogin(), this::loadLogin);
+          .doAfterTerminate(this::loadLogin)
+          .subscribe(this::consumePhoneNumber, throwable -> {
+          });
     }
   }
 

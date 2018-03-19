@@ -30,9 +30,7 @@ public class MainApplication extends Application implements PersistenceViewActio
   private UnAuthUseCase unAuthUseCase;
   private PersistenceViewModel persistenceViewModel;
   private GeoLocationUseCase geoLocationUseCase;
-  private DataReceiver<GeoLocation> geoLocationDataReceiver;
-
-  private ActivityLifecycleCallbacks problemsActivityLifecycleCallbacks = new ActivityLifecycleCallbacks() {
+  private final ActivityLifecycleCallbacks problemsActivityLifecycleCallbacks = new ActivityLifecycleCallbacks() {
     private boolean onScreen;
 
     @Override
@@ -68,6 +66,7 @@ public class MainApplication extends Application implements PersistenceViewActio
       }
     }
   };
+  private DataReceiver<GeoLocation> geoLocationDataReceiver;
 
   @Inject
   public void setUnAuthUseCase(@NonNull UnAuthUseCase unAuthUseCase) {
@@ -101,9 +100,9 @@ public class MainApplication extends Application implements PersistenceViewActio
         viewState.apply(this);
       }
     });
+    registerActivityLifecycleCallbacks(problemsActivityLifecycleCallbacks);
     listenForGeoLocations();
     reloadGeoLocations();
-    registerActivityLifecycleCallbacks(problemsActivityLifecycleCallbacks);
   }
 
   @NonNull
@@ -147,18 +146,22 @@ public class MainApplication extends Application implements PersistenceViewActio
   }
 
   private void reloadGeoLocations() {
-    geoLocationUseCase.reload().subscribeOn(Schedulers.single())
-        .observeOn(AndroidSchedulers.mainThread()).subscribe();
+    geoLocationUseCase.reload()
+        .subscribeOn(Schedulers.single())
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe(
+            () -> {
+            }, throwable -> {
+            }
+        );
   }
 
   private void listenForGeoLocations() {
     geoLocationDataReceiver.get()
         .subscribeOn(Schedulers.single())
         .observeOn(AndroidSchedulers.mainThread())
+        .doAfterTerminate(this::listenForGeoLocations)
         .subscribe(geoLocation -> {
-        }, throwable -> {
-          startActivity(new Intent(this, GeolocationResolutionActivity.class));
-          listenForGeoLocations();
-        }, this::listenForGeoLocations);
+        }, throwable -> startActivity(new Intent(this, GeolocationResolutionActivity.class)));
   }
 }

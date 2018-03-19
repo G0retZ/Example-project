@@ -26,10 +26,12 @@ public class SmsUseCaseImpl implements SmsUseCase {
   }
 
   private void loadPhoneNumber(@NonNull DataReceiver<String> phoneNumberReceiver) {
-    phoneNumberReceiver.get().subscribe(phoneNumber -> this.phoneNumber = phoneNumber,
-        throwable -> loadPhoneNumber(phoneNumberReceiver),
-        () -> loadPhoneNumber(phoneNumberReceiver)
-    );
+    phoneNumberReceiver.get()
+        .doAfterTerminate(() -> loadPhoneNumber(phoneNumberReceiver))
+        .subscribe(phoneNumber -> this.phoneNumber = phoneNumber,
+            throwable -> {
+            }
+        );
   }
 
   @NonNull

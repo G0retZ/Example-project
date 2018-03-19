@@ -90,9 +90,12 @@ public class VehicleOptionsViewModelImpl extends ViewModel implements OptionsVie
             .observeOn(AndroidSchedulers.mainThread())
             .map(this::map),
         OptionsListItems::new
+    ).doAfterTerminate(
+        this::loadOptions
     ).subscribe(
         items -> viewStateLiveData.postValue(new OptionsViewStateReady(items)),
-        throwable -> loadOptions(), this::loadOptions
+        throwable -> {
+        }
     );
 
   }
