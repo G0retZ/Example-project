@@ -52,9 +52,8 @@ public class GeolocationCenterImpl implements GeolocationCenter {
         emitter.onError(new SecurityException());
         return;
       }
-      mFusedLocationClient.requestLocationUpdates(
-          mLocationRequest, locationCallback.setEmitter(emitter), Looper.getMainLooper()
-      );
+      mFusedLocationClient.requestLocationUpdates(mLocationRequest.setInterval(maxInterval),
+          locationCallback.setEmitter(emitter), Looper.getMainLooper());
     }, BackpressureStrategy.BUFFER)
         .doOnCancel(() -> mFusedLocationClient.removeLocationUpdates(locationCallback)
             .addOnCompleteListener(command -> new Thread(command).start(), task -> {
