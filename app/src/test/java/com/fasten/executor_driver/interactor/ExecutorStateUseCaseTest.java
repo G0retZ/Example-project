@@ -131,7 +131,7 @@ public class ExecutorStateUseCaseTest {
   }
 
   /**
-   * Должен опубликовать статус "на пути с к точке погрузки".
+   * Должен опубликовать статус "на пути к точке погрузки".
    *
    * @throws Exception error
    */
@@ -165,7 +165,7 @@ public class ExecutorStateUseCaseTest {
   }
 
   /**
-   * Должен опубликовать статус "на пути с к точке разгрузки".
+   * Должен опубликовать статус "на пути к точке разгрузки".
    *
    * @throws Exception error
    */
