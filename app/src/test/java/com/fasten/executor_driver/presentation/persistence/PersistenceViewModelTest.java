@@ -96,13 +96,13 @@ public class PersistenceViewModelTest {
     persistenceViewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    publishSubject.onNext(ExecutorState.OPENED_SHIFT);
-    publishSubject.onNext(ExecutorState.READY_FOR_ORDERS);
+    publishSubject.onNext(ExecutorState.SHIFT_OPENED);
+    publishSubject.onNext(ExecutorState.ONLINE);
     publishSubject.onNext(ExecutorState.APPROACHING_LOADING_POINT);
     publishSubject.onNext(ExecutorState.LOADING);
     publishSubject.onNext(ExecutorState.APPROACHING_UNLOADING_POINT);
     publishSubject.onNext(ExecutorState.UNLOADING);
-    publishSubject.onNext(ExecutorState.READY_FOR_ORDERS);
+    publishSubject.onNext(ExecutorState.ONLINE);
 
     // Результат:
     inOrder.verify(viewStateObserver)
@@ -135,7 +135,7 @@ public class PersistenceViewModelTest {
     persistenceViewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    publishSubject.onNext(ExecutorState.CLOSED_SHIFT);
+    publishSubject.onNext(ExecutorState.SHIFT_CLOSED);
     publishSubject.onNext(ExecutorState.UNAUTHORIZED);
 
     // Результат:

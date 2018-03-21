@@ -50,21 +50,21 @@ public class GeoLocationUseCaseImpl implements GeoLocationUseCase {
           geoLocationDisposable.dispose();
         }
         break;
-      case CLOSED_SHIFT:
+      case SHIFT_CLOSED:
         if (geoLocationDisposable != null && !geoLocationDisposable.isDisposed()) {
           geoLocationDisposable.dispose();
         }
         geoLocationDisposable = gateway.getGeoLocations(3600000)
             .subscribe(geoLocationObserver::onNext, geoLocationObserver::onError);
         break;
-      case OPENED_SHIFT:
+      case SHIFT_OPENED:
         if (geoLocationDisposable != null && !geoLocationDisposable.isDisposed()) {
           geoLocationDisposable.dispose();
         }
         geoLocationDisposable = gateway.getGeoLocations(180000)
             .subscribe(geoLocationObserver::onNext, geoLocationObserver::onError);
         break;
-      case READY_FOR_ORDERS:
+      case ONLINE:
         if (geoLocationDisposable != null && !geoLocationDisposable.isDisposed()) {
           geoLocationDisposable.dispose();
         }
