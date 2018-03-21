@@ -129,7 +129,7 @@ public class AppComponentImpl implements AppComponent {
   @NonNull
   private final UnAuthGateway unAuthGateway;
   /**
-   * Это будет висеть в памяти постоянно. Запускает при инжекте в Application.
+   * Это будет висеть в памяти постоянно. Запускается при инжекте в Application.
    */
   @NonNull
   private final GeoTrackingUseCase geoTrackingUseCase;
