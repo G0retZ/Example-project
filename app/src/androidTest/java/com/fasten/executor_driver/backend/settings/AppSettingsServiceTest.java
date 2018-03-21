@@ -12,10 +12,10 @@ import org.junit.runner.RunWith;
 @RunWith(AndroidJUnit4.class)
 public class AppSettingsServiceTest {
 
-  private AppSettingsService appSettingsService;
   private final byte[] raw = new byte[]{
       -124, -13, -49, -125, -18, -50, 29, 57, 91, 47, 117, 61, -61, 68, -11, -46
   };
+  private AppSettingsService appSettingsService;
 
   @Before
   public void createService() {

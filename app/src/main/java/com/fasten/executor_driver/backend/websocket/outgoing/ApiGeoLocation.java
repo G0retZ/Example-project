@@ -1,38 +1,47 @@
-package com.fasten.executor_driver.entity;
+package com.fasten.executor_driver.backend.websocket.outgoing;
+
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
 /**
- * Неизменная бизнес геопозиции. Содержит в себе долготу, широту и временной штамп своего получения.
+ * Объект геолокации для сериализации в JSON для отправки в сокет.
  */
-public class GeoLocation {
+public class ApiGeoLocation {
 
+  @SerializedName("latitude")
+  @Expose
   private final double latitude;
+  @SerializedName("longitude")
+  @Expose
   private final double longitude;
-  private final long timestamp;
+  @SerializedName("regDate")
+  @Expose
+  private final long regDate;
 
-  public GeoLocation(double latitude, double longitude, long timestamp) {
+  public ApiGeoLocation(double latitude, double longitude, long regDate) {
     this.latitude = latitude;
     this.longitude = longitude;
-    this.timestamp = timestamp;
+    this.regDate = regDate;
   }
 
-  public double getLatitude() {
+  double getLatitude() {
     return latitude;
   }
 
-  public double getLongitude() {
+  double getLongitude() {
     return longitude;
   }
 
-  public long getTimestamp() {
-    return timestamp;
+  long getRegDate() {
+    return regDate;
   }
 
   @Override
   public String toString() {
-    return "GeoLocation{" +
+    return "ApiGeoLocation{" +
         "latitude=" + latitude +
         ", longitude=" + longitude +
-        ", timestamp=" + timestamp +
+        ", regDate=" + regDate +
         '}';
   }
 
@@ -46,7 +55,7 @@ public class GeoLocation {
       return false;
     }
 
-    GeoLocation that = (GeoLocation) o;
+    ApiGeoLocation that = (ApiGeoLocation) o;
 
     if (Double.compare(that.latitude, latitude) != 0) {
       return false;
@@ -54,7 +63,7 @@ public class GeoLocation {
     if (Double.compare(that.longitude, longitude) != 0) {
       return false;
     }
-    return timestamp == that.timestamp;
+    return regDate == that.regDate;
   }
 
   @Override
@@ -65,7 +74,7 @@ public class GeoLocation {
     result = (int) (temp ^ (temp >>> 32));
     temp = Double.doubleToLongBits(longitude);
     result = 31 * result + (int) (temp ^ (temp >>> 32));
-    result = 31 * result + (int) (timestamp ^ (timestamp >>> 32));
+    result = 31 * result + (int) (regDate ^ (regDate >>> 32));
     return result;
   }
 }

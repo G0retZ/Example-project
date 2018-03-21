@@ -11,6 +11,8 @@ android {
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         buildConfigField 'String', 'BASE_URL', '"http://dev.capsrv.xyz:8080/executor/"'
+        buildConfigField 'String', 'SOCKET_URL', '"ws://dev.capsrv.xyz:8080/executor/ws"'
+        buildConfigField 'String', 'GOLOCATION_DESTINATION', '"/mobile/online"'
         vectorDrawables.useSupportLibrary = true
     }
     buildTypes {
@@ -51,6 +53,11 @@ dependencies {
     implementation 'com.squareup.retrofit2:converter-gson:2.3.0'
     implementation 'com.squareup.retrofit2:adapter-rxjava2:2.3.0'
     implementation 'com.squareup.okhttp3:logging-interceptor:3.9.0'
+
+    // WebSocket STOMP
+    implementation 'com.github.G0retZ:StompProtocolAndroid:18.0.1'
+    implementation 'net.sourceforge.streamsupport:streamsupport:1.5.5'
+    implementation 'net.sourceforge.streamsupport:streamsupport-cfuture:1.5.5'
 
     // Dependency injection
     implementation 'javax.inject:javax.inject:1'
