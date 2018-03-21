@@ -25,6 +25,7 @@ import com.fasten.executor_driver.entity.SmsCodeExtractor;
 import com.fasten.executor_driver.entity.Vehicle;
 import com.fasten.executor_driver.gateway.ErrorMapper;
 import com.fasten.executor_driver.gateway.GeoLocationGatewayImpl;
+import com.fasten.executor_driver.gateway.GeoTrackingGatewayImpl;
 import com.fasten.executor_driver.gateway.HeatMapGatewayImpl;
 import com.fasten.executor_driver.gateway.PasswordGatewayImpl;
 import com.fasten.executor_driver.gateway.ServiceApiMapper;
@@ -38,6 +39,8 @@ import com.fasten.executor_driver.gateway.VehiclesAndOptionsGatewayImpl;
 import com.fasten.executor_driver.interactor.ExecutorStateSharer;
 import com.fasten.executor_driver.interactor.GeoLocationSharer;
 import com.fasten.executor_driver.interactor.GeoLocationUseCaseImpl;
+import com.fasten.executor_driver.interactor.GeoTrackingUseCase;
+import com.fasten.executor_driver.interactor.GeoTrackingUseCaseImpl;
 import com.fasten.executor_driver.interactor.MemoryDataSharer;
 import com.fasten.executor_driver.interactor.UnAuthGateway;
 import com.fasten.executor_driver.interactor.UnAuthUseCaseImpl;
@@ -95,6 +98,8 @@ import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.converter.scalars.ScalarsConverterFactory;
+import ua.naiksoftware.stomp.Stomp;
+import ua.naiksoftware.stomp.client.StompClient;
 
 public class AppComponentImpl implements AppComponent {
 
@@ -102,6 +107,9 @@ public class AppComponentImpl implements AppComponent {
   private final AppSettingsService appSettingsService;
   @NonNull
   private final ApiService apiService;
+  @SuppressWarnings("FieldCanBeLocal")
+  @NonNull
+  private final StompClient stompClient;
   @NonNull
   private final GeolocationCenter geolocationCenter;
   @NonNull
@@ -120,6 +128,11 @@ public class AppComponentImpl implements AppComponent {
   private final MemoryDataSharer<GeoLocation> geoLocationSharer;
   @NonNull
   private final UnAuthGateway unAuthGateway;
+  /**
+   * Это будет висеть в памяти постоянно. Запускается при инжекте в Application.
+   */
+  @NonNull
+  private final GeoTrackingUseCase geoTrackingUseCase;
 
   public AppComponentImpl(@NonNull Context appContext) {
     appContext = appContext.getApplicationContext();
@@ -127,14 +140,14 @@ public class AppComponentImpl implements AppComponent {
     TokenKeeper tokenKeeper = new TokenKeeperImpl(appSettingsService);
     AuthorizationInterceptor authorizationInterceptor = new AuthorizationInterceptor();
     unAuthGateway = authorizationInterceptor;
-    apiService = initApiService(
-        initHttpClient(
-            new ConnectivityInterceptor(appContext),
-            authorizationInterceptor,
-            new SendTokenInterceptor(tokenKeeper),
-            new ReceiveTokenInterceptor(tokenKeeper)
-        )
+    OkHttpClient okHttpClient = initHttpClient(
+        new ConnectivityInterceptor(appContext),
+        authorizationInterceptor,
+        new SendTokenInterceptor(tokenKeeper),
+        new ReceiveTokenInterceptor(tokenKeeper)
     );
+    apiService = initApiService(okHttpClient);
+    stompClient = initStompClient(okHttpClient);
     geolocationCenter = new GeolocationCenterImpl(appContext);
     loginSharer = new LoginSharer(appSettingsService);
     vehiclesSharer = new VehiclesSharer();
@@ -143,6 +156,12 @@ public class AppComponentImpl implements AppComponent {
     lastUsedVehiclesSharer = new LastUsedVehicleSharer(appSettingsService);
     executorStateSharer = new ExecutorStateSharer();
     geoLocationSharer = new GeoLocationSharer();
+    geoTrackingUseCase = new GeoTrackingUseCaseImpl(
+        new GeoTrackingGatewayImpl(
+            stompClient
+        ),
+        geoLocationSharer
+    );
   }
 
   private OkHttpClient initHttpClient(
@@ -179,6 +198,10 @@ public class AppComponentImpl implements AppComponent {
         .create(ApiService.class);
   }
 
+  private StompClient initStompClient(OkHttpClient okHttpClient) {
+    return Stomp.over(Stomp.ConnectionProvider.OKHTTP, BuildConfig.SOCKET_URL, null, okHttpClient);
+  }
+
   @Override
   public void inject(MainApplication mainApplication) {
     mainApplication.setUnAuthUseCase(new UnAuthUseCaseImpl(unAuthGateway, executorStateSharer));
@@ -187,6 +210,9 @@ public class AppComponentImpl implements AppComponent {
     mainApplication.setGeoLocationUseCase(new GeoLocationUseCaseImpl(
         new GeoLocationGatewayImpl(geolocationCenter), executorStateSharer, geoLocationSharer
     ));
+    geoTrackingUseCase.reload().subscribe(() -> {
+    }, throwable -> {
+    });
   }
 
   @Override
