@@ -23,7 +23,7 @@ public class GeoLocation {
     return longitude;
   }
 
-  long getTimestamp() {
+  public long getTimestamp() {
     return timestamp;
   }
 

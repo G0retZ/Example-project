@@ -6,7 +6,7 @@ import com.google.gson.annotations.SerializedName;
 /**
  * Объект геолокации для сериализации в JSON для отправки в сокет.
  */
-class ApiGeoLocation {
+public class ApiGeoLocation {
 
   @SerializedName("latitude")
   @Expose
@@ -18,7 +18,7 @@ class ApiGeoLocation {
   @Expose
   private final long regDate;
 
-  ApiGeoLocation(double latitude, double longitude, long regDate) {
+  public ApiGeoLocation(double latitude, double longitude, long regDate) {
     this.latitude = latitude;
     this.longitude = longitude;
     this.regDate = regDate;

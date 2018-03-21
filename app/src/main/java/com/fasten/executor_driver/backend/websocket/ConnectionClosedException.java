@@ -6,10 +6,9 @@ import java.io.IOException;
  * Исключение о закрытом соединении.
  */
 
-@SuppressWarnings("unused")
-class ConnectionClosedException extends IOException {
+public class ConnectionClosedException extends IOException {
 
-  ConnectionClosedException() {
+  public ConnectionClosedException() {
     super();
   }
 }
