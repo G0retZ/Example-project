@@ -6,7 +6,7 @@ import com.fasten.executor_driver.entity.GeoLocation;
 import io.reactivex.Completable;
 import io.reactivex.disposables.Disposable;
 
-class GeoTrackingUseCaseImpl implements GeoTrackingUseCase {
+public class GeoTrackingUseCaseImpl implements GeoTrackingUseCase {
 
   @NonNull
   private final GeoTrackingGateway gateway;
@@ -15,7 +15,7 @@ class GeoTrackingUseCaseImpl implements GeoTrackingUseCase {
   @Nullable
   private Disposable disposable;
 
-  GeoTrackingUseCaseImpl(@NonNull GeoTrackingGateway gateway,
+  public GeoTrackingUseCaseImpl(@NonNull GeoTrackingGateway gateway,
       @NonNull DataReceiver<GeoLocation> geoLocationReceiver) {
     this.gateway = gateway;
     this.geoLocationReceiver = geoLocationReceiver;
