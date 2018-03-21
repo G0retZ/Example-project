@@ -121,7 +121,7 @@ public class GeoTrackingUseCaseTest {
     geoTrackingUseCase.reload().test();
 
     // Результат:
-    verify(geoLocationReceiver, times(2)).get();
+    verify(gateway, only()).sendGeoLocation(new GeoLocation(1, 2, 3));
   }
 
   /**
