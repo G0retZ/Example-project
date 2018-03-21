@@ -14,7 +14,7 @@ class ApiGeoLocation {
   @SerializedName("longitude")
   @Expose
   private final double longitude;
-  @SerializedName("longitude")
+  @SerializedName("regDate")
   @Expose
   private final long regDate;
 
