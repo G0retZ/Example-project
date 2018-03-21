@@ -259,6 +259,6 @@ public class PasswordUseCaseTest {
     passwordUseCase.authorize("password", Completable.complete()).test().assertComplete();
 
     // Результат:
-    verify(executorStateObserver, only()).onNext(ExecutorState.CLOSED_SHIFT);
+    verify(executorStateObserver, only()).onNext(ExecutorState.SHIFT_CLOSED);
   }
 }

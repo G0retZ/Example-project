@@ -64,14 +64,14 @@ public class PersistenceViewModelImpl implements PersistenceViewModel {
       case UNAUTHORIZED:
         viewStateLiveData.postValue(new PersistenceViewStateStop());
         break;
-      case CLOSED_SHIFT:
+      case SHIFT_CLOSED:
         viewStateLiveData.postValue(new PersistenceViewStateStop());
         break;
-      case OPENED_SHIFT:
+      case SHIFT_OPENED:
         viewStateLiveData
             .postValue(new PersistenceViewStateStart(R.string.online, R.string.no_orders));
         break;
-      case READY_FOR_ORDERS:
+      case ONLINE:
         viewStateLiveData
             .postValue(new PersistenceViewStateStart(R.string.online, R.string.wait_for_orders));
         break;

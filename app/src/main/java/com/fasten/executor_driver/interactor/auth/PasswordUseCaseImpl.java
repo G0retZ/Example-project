@@ -49,7 +49,7 @@ public class PasswordUseCaseImpl implements PasswordUseCase {
       afterValidation.subscribe(
           () -> gateway.authorize(loginData).subscribe(
               () -> {
-                executorStateObserver.onNext(ExecutorState.CLOSED_SHIFT);
+                executorStateObserver.onNext(ExecutorState.SHIFT_CLOSED);
                 e.onComplete();
               }, e::onError
           ),

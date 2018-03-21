@@ -116,7 +116,7 @@ public class GeoLocationUseCaseTest {
   public void doNotTouchGatewayIfGoToShiftClosed() throws Exception {
     // Дано:
     when(executorStateReceiver.get())
-        .thenReturn(Observable.just(ExecutorState.CLOSED_SHIFT), Observable.never());
+        .thenReturn(Observable.just(ExecutorState.SHIFT_CLOSED), Observable.never());
 
     // Действие:
     geoLocationUseCase.reload().test();
@@ -136,7 +136,7 @@ public class GeoLocationUseCaseTest {
   public void askGatewayForLocationsEvery180secIfGoToShiftOpened() throws Exception {
     // Дано:
     when(executorStateReceiver.get())
-        .thenReturn(Observable.just(ExecutorState.OPENED_SHIFT), Observable.never());
+        .thenReturn(Observable.just(ExecutorState.SHIFT_OPENED), Observable.never());
 
     // Действие:
     geoLocationUseCase.reload().test();
@@ -156,7 +156,7 @@ public class GeoLocationUseCaseTest {
   public void askGatewayForLocationsEvery15secIfGoToOnline() throws Exception {
     // Дано:
     when(executorStateReceiver.get())
-        .thenReturn(Observable.just(ExecutorState.READY_FOR_ORDERS), Observable.never());
+        .thenReturn(Observable.just(ExecutorState.ONLINE), Observable.never());
 
     // Действие:
     geoLocationUseCase.reload().test();
@@ -178,8 +178,8 @@ public class GeoLocationUseCaseTest {
     when(gateway.getGeoLocations(anyLong()))
         .thenReturn(Flowable.<GeoLocation>never().doOnCancel(action));
     when(executorStateReceiver.get()).thenReturn(
-        Observable.just(ExecutorState.CLOSED_SHIFT),
-        Observable.just(ExecutorState.OPENED_SHIFT),
+        Observable.just(ExecutorState.SHIFT_CLOSED),
+        Observable.just(ExecutorState.SHIFT_OPENED),
         Observable.never()
     );
 
@@ -204,8 +204,8 @@ public class GeoLocationUseCaseTest {
     when(gateway.getGeoLocations(anyLong()))
         .thenReturn(Flowable.<GeoLocation>never().doOnCancel(action));
     when(executorStateReceiver.get()).thenReturn(
-        Observable.just(ExecutorState.OPENED_SHIFT),
-        Observable.just(ExecutorState.READY_FOR_ORDERS),
+        Observable.just(ExecutorState.SHIFT_OPENED),
+        Observable.just(ExecutorState.ONLINE),
         Observable.never()
     );
 
@@ -230,8 +230,8 @@ public class GeoLocationUseCaseTest {
     when(gateway.getGeoLocations(anyLong()))
         .thenReturn(Flowable.<GeoLocation>never().doOnCancel(action));
     when(executorStateReceiver.get()).thenReturn(
-        Observable.just(ExecutorState.READY_FOR_ORDERS),
-        Observable.just(ExecutorState.OPENED_SHIFT),
+        Observable.just(ExecutorState.ONLINE),
+        Observable.just(ExecutorState.SHIFT_OPENED),
         Observable.never()
     );
 
@@ -256,8 +256,8 @@ public class GeoLocationUseCaseTest {
     when(gateway.getGeoLocations(anyLong()))
         .thenReturn(Flowable.<GeoLocation>never().doOnCancel(action));
     when(executorStateReceiver.get()).thenReturn(
-        Observable.just(ExecutorState.OPENED_SHIFT),
-        Observable.just(ExecutorState.CLOSED_SHIFT),
+        Observable.just(ExecutorState.SHIFT_OPENED),
+        Observable.just(ExecutorState.SHIFT_CLOSED),
         Observable.never()
     );
 
@@ -281,7 +281,7 @@ public class GeoLocationUseCaseTest {
   public void publishNewGeoLocation() throws Exception {
     // Дано:
     when(executorStateReceiver.get())
-        .thenReturn(Observable.just(ExecutorState.READY_FOR_ORDERS), Observable.never());
+        .thenReturn(Observable.just(ExecutorState.ONLINE), Observable.never());
     when(gateway.getGeoLocations(anyLong())).thenReturn(Flowable.just(new GeoLocation(1, 2, 3)));
 
     // Действие:
@@ -301,7 +301,7 @@ public class GeoLocationUseCaseTest {
   public void publishError() throws Exception {
     // Дано:
     when(executorStateReceiver.get())
-        .thenReturn(Observable.just(ExecutorState.READY_FOR_ORDERS), Observable.never());
+        .thenReturn(Observable.just(ExecutorState.ONLINE), Observable.never());
     when(gateway.getGeoLocations(anyLong())).thenReturn(Flowable.error(new Exception()));
 
     // Действие:
