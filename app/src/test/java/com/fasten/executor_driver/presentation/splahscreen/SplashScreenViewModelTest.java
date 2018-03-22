@@ -83,7 +83,7 @@ public class SplashScreenViewModelTest {
   /* Тетсируем переключение состояний */
 
   /**
-   * Должен вернуть состояние загрузки изначально в случае успеха.
+   * Должен вернуть состояние загрузки изначально.
    *
    * @throws Exception error
    */
@@ -119,12 +119,12 @@ public class SplashScreenViewModelTest {
   }
 
   /**
-   * Должен вернуть состояние ошибки сети в отсутствия сети.
+   * Должен вернуть состояние ошибки сети при отсутствии сети.
    *
    * @throws Exception error
    */
   @Test
-  public void setErrorViewStateForSuccess() throws Exception {
+  public void setErrorViewStateForNoNetworkError() throws Exception {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     CompletableSubject completableSubject = CompletableSubject.create();

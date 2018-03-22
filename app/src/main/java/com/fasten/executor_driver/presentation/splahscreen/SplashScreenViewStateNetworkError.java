@@ -4,7 +4,7 @@ import android.support.annotation.NonNull;
 import com.fasten.executor_driver.presentation.ViewState;
 
 /**
- * Состояние ожидания на экране заставки.
+ * Состояние ошибки сети на экране заставки.
  */
 final class SplashScreenViewStateNetworkError implements ViewState<SplashScreenViewActions> {
 
