@@ -12,9 +12,10 @@ import com.fasten.executor_driver.presentation.ViewState;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
+import java.net.SocketTimeoutException;
 import javax.inject.Inject;
 
-class SplashScreenViewModelImpl extends ViewModel implements SplashScreenViewModel {
+public class SplashScreenViewModelImpl extends ViewModel implements SplashScreenViewModel {
 
   @NonNull
   private final ExecutorStateUseCase executorStateUseCase;
@@ -26,7 +27,7 @@ class SplashScreenViewModelImpl extends ViewModel implements SplashScreenViewMod
   private Disposable disposable;
 
   @Inject
-  SplashScreenViewModelImpl(@NonNull ExecutorStateUseCase executorStateUseCase) {
+  public SplashScreenViewModelImpl(@NonNull ExecutorStateUseCase executorStateUseCase) {
     this.executorStateUseCase = executorStateUseCase;
     viewStateLiveData = new MutableLiveData<>();
     viewStateLiveData.postValue(new SplashScreenViewStatePending());
@@ -49,6 +50,8 @@ class SplashScreenViewModelImpl extends ViewModel implements SplashScreenViewMod
               () -> viewStateLiveData.postValue(new SplashScreenViewStateDone()),
               throwable -> {
                 if (throwable instanceof NoNetworkException) {
+                  viewStateLiveData.postValue(new SplashScreenViewStateNetworkError());
+                } else if (throwable instanceof SocketTimeoutException) {
                   viewStateLiveData.postValue(new SplashScreenViewStateNetworkError());
                 } else {
                   throw new RuntimeException(throwable);

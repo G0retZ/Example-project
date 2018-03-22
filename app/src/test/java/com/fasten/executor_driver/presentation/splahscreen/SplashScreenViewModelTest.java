@@ -17,6 +17,7 @@ import io.reactivex.android.plugins.RxAndroidPlugins;
 import io.reactivex.plugins.RxJavaPlugins;
 import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.CompletableSubject;
+import java.net.SocketTimeoutException;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -133,6 +134,28 @@ public class SplashScreenViewModelTest {
     // Действие:
     mapViewModel.getViewStateLiveData().observeForever(viewStateObserver);
     completableSubject.onError(new NoNetworkException());
+
+    // Результат:
+    inOrder.verify(viewStateObserver).onChanged(any(SplashScreenViewStatePending.class));
+    inOrder.verify(viewStateObserver).onChanged(any(SplashScreenViewStateNetworkError.class));
+    verifyNoMoreInteractions(viewStateObserver);
+  }
+
+  /**
+   * Должен вернуть состояние ошибки сети при таймауте сети.
+   *
+   * @throws Exception error
+   */
+  @Test
+  public void setErrorViewStateForSocketTimeoutError() throws Exception {
+    // Дано:
+    InOrder inOrder = Mockito.inOrder(viewStateObserver);
+    CompletableSubject completableSubject = CompletableSubject.create();
+    when(executorStateUseCase.loadStatus()).thenReturn(completableSubject);
+
+    // Действие:
+    mapViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    completableSubject.onError(new SocketTimeoutException());
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(any(SplashScreenViewStatePending.class));
