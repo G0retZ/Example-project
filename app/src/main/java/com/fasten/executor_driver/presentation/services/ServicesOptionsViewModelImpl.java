@@ -24,6 +24,7 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import javax.inject.Inject;
 
 public class ServicesOptionsViewModelImpl extends ViewModel implements OptionsViewModel {
@@ -111,7 +112,8 @@ public class ServicesOptionsViewModelImpl extends ViewModel implements OptionsVi
       optionsListItems
           .add(new OptionsListItem<>(
               new OptionBoolean(service.getId(), service.getName(),
-                  String.valueOf(service.getPrice()), true, service.getValue())
+                  String.format(Locale.getDefault(), "%d рублей за первый час", service.getPrice()),
+                  true, service.getValue())
           ));
     }
     return new OptionsListItems(optionsListItems, new ArrayList<>());
