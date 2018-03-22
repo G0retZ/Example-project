@@ -90,7 +90,7 @@ public class ExecutorStateGatewayTest {
   @Test
   public void answerWithShiftClosed() throws Exception {
     // Действие:
-    when(api.getMyStatus()).thenReturn(Single.just("SHIFT_CLOSED"));
+    when(api.getMyStatus()).thenReturn(Single.just("\"SHIFT_CLOSED\""));
 
     // Результат:
     executorStateGateway.getState().test().assertValue(ExecutorState.SHIFT_CLOSED);
@@ -104,7 +104,7 @@ public class ExecutorStateGatewayTest {
   @Test
   public void answerWithShiftOpened() throws Exception {
     // Действие:
-    when(api.getMyStatus()).thenReturn(Single.just("SHIFT_OPENED"));
+    when(api.getMyStatus()).thenReturn(Single.just("\"SHIFT_OPENED\""));
 
     // Результат:
     executorStateGateway.getState().test().assertValue(ExecutorState.SHIFT_OPENED);
@@ -118,7 +118,7 @@ public class ExecutorStateGatewayTest {
   @Test
   public void answerWithOnline() throws Exception {
     // Действие:
-    when(api.getMyStatus()).thenReturn(Single.just("ONLINE"));
+    when(api.getMyStatus()).thenReturn(Single.just("\"ONLINE\""));
 
     // Результат:
     executorStateGateway.getState().test().assertValue(ExecutorState.ONLINE);
