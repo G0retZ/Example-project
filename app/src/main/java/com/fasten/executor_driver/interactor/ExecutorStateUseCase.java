@@ -5,7 +5,7 @@ import io.reactivex.Completable;
 /**
  * Юзкейс запроса статуса исполнителя.
  */
-interface ExecutorStateUseCase {
+public interface ExecutorStateUseCase {
 
   /**
    * Загружает статус пользователя.
