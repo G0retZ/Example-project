@@ -1,12 +1,14 @@
 package com.fasten.executor_driver.application;
 
 import android.app.Activity;
+import android.app.AlertDialog.Builder;
 import android.app.Application;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
+import com.fasten.executor_driver.R;
 import com.fasten.executor_driver.di.AppComponent;
 import com.fasten.executor_driver.di.AppComponentImpl;
 import com.fasten.executor_driver.entity.GeoLocation;
@@ -15,6 +17,8 @@ import com.fasten.executor_driver.interactor.GeoLocationUseCase;
 import com.fasten.executor_driver.interactor.UnAuthUseCase;
 import com.fasten.executor_driver.presentation.persistence.PersistenceViewActions;
 import com.fasten.executor_driver.presentation.persistence.PersistenceViewModel;
+import com.fasten.executor_driver.presentation.splahscreen.SplashScreenViewActions;
+import com.fasten.executor_driver.presentation.splahscreen.SplashScreenViewModel;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 import javax.inject.Inject;
@@ -23,15 +27,17 @@ import javax.inject.Inject;
  * Application.
  */
 
-public class MainApplication extends Application implements PersistenceViewActions {
+public class MainApplication extends Application implements PersistenceViewActions,
+    SplashScreenViewActions {
 
+  boolean showError = false;
   private AppComponent mAppComponent;
-
   private UnAuthUseCase unAuthUseCase;
   private PersistenceViewModel persistenceViewModel;
+  private SplashScreenViewModel splashScreenViewModel;
   private GeoLocationUseCase geoLocationUseCase;
+  private Activity currentActivity;
   private final ActivityLifecycleCallbacks problemsActivityLifecycleCallbacks = new ActivityLifecycleCallbacks() {
-    private boolean onScreen;
 
     @Override
     public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
@@ -43,12 +49,13 @@ public class MainApplication extends Application implements PersistenceViewActio
 
     @Override
     public void onActivityResumed(Activity activity) {
-      onScreen = true;
+      currentActivity = activity;
+      showNetworkError(currentActivity);
     }
 
     @Override
     public void onActivityPaused(Activity activity) {
-      onScreen = false;
+      currentActivity = null;
     }
 
     @Override
@@ -61,7 +68,7 @@ public class MainApplication extends Application implements PersistenceViewActio
 
     @Override
     public void onActivityDestroyed(Activity activity) {
-      if (onScreen && activity instanceof GeolocationResolutionActivity) {
+      if (currentActivity != null && activity instanceof GeolocationResolutionActivity) {
         reloadGeoLocations();
       }
     }
@@ -77,6 +84,11 @@ public class MainApplication extends Application implements PersistenceViewActio
   public void setPersistenceViewModel(
       PersistenceViewModel persistenceViewModel) {
     this.persistenceViewModel = persistenceViewModel;
+  }
+
+  @Inject
+  public void setSplashScreenViewModel(SplashScreenViewModel splashScreenViewModel) {
+    this.splashScreenViewModel = splashScreenViewModel;
   }
 
   @Inject
@@ -96,6 +108,11 @@ public class MainApplication extends Application implements PersistenceViewActio
     mAppComponent.inject(this);
     listenForUnAuth();
     persistenceViewModel.getViewStateLiveData().observeForever(viewState -> {
+      if (viewState != null) {
+        viewState.apply(this);
+      }
+    });
+    splashScreenViewModel.getViewStateLiveData().observeForever(viewState -> {
       if (viewState != null) {
         viewState.apply(this);
       }
@@ -163,5 +180,31 @@ public class MainApplication extends Application implements PersistenceViewActio
         .doAfterTerminate(this::listenForGeoLocations)
         .subscribe(geoLocation -> {
         }, throwable -> startActivity(new Intent(this, GeolocationResolutionActivity.class)));
+  }
+
+  @Override
+  public void showPending(boolean pending) {
+
+  }
+
+  @Override
+  public void showNetworkErrorMessage(boolean show) {
+    showError = show;
+    showNetworkError(currentActivity);
+  }
+
+  private void showNetworkError(Activity activity) {
+    if (activity != null && showError) {
+      new Builder(activity)
+          .setTitle(R.string.error)
+          .setMessage("Без сети не работаем!")
+          .setCancelable(false)
+          .setPositiveButton(
+              getString(android.R.string.ok),
+              (a, b) -> android.os.Process.killProcess(android.os.Process.myPid())
+          )
+          .create()
+          .show();
+    }
   }
 }

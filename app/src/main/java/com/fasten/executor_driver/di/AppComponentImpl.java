@@ -24,6 +24,7 @@ import com.fasten.executor_driver.entity.PhoneNumberValidator;
 import com.fasten.executor_driver.entity.SmsCodeExtractor;
 import com.fasten.executor_driver.entity.Vehicle;
 import com.fasten.executor_driver.gateway.ErrorMapper;
+import com.fasten.executor_driver.gateway.ExecutorStateGatewayImpl;
 import com.fasten.executor_driver.gateway.GeoLocationGatewayImpl;
 import com.fasten.executor_driver.gateway.GeoTrackingGatewayImpl;
 import com.fasten.executor_driver.gateway.HeatMapGatewayImpl;
@@ -37,6 +38,7 @@ import com.fasten.executor_driver.gateway.VehicleOptionApiMapper;
 import com.fasten.executor_driver.gateway.VehicleOptionsGatewayImpl;
 import com.fasten.executor_driver.gateway.VehiclesAndOptionsGatewayImpl;
 import com.fasten.executor_driver.interactor.ExecutorStateSharer;
+import com.fasten.executor_driver.interactor.ExecutorStateUseCaseImpl;
 import com.fasten.executor_driver.interactor.GeoLocationSharer;
 import com.fasten.executor_driver.interactor.GeoLocationUseCaseImpl;
 import com.fasten.executor_driver.interactor.GeoTrackingUseCase;
@@ -79,6 +81,7 @@ import com.fasten.executor_driver.presentation.selectedvehicle.SelectedVehicleVi
 import com.fasten.executor_driver.presentation.services.ServicesOptionsViewModelImpl;
 import com.fasten.executor_driver.presentation.smsbutton.SmsButtonViewModel;
 import com.fasten.executor_driver.presentation.smsbutton.SmsButtonViewModelImpl;
+import com.fasten.executor_driver.presentation.splahscreen.SplashScreenViewModelImpl;
 import com.fasten.executor_driver.presentation.vehicleoptions.VehicleOptionsViewModelImpl;
 import com.fasten.executor_driver.view.ChooseVehicleFragment;
 import com.fasten.executor_driver.view.GoOnlineFragment;
@@ -206,6 +209,16 @@ public class AppComponentImpl implements AppComponent {
   public void inject(MainApplication mainApplication) {
     mainApplication.setUnAuthUseCase(new UnAuthUseCaseImpl(unAuthGateway, executorStateSharer));
     mainApplication.setPersistenceViewModel(new PersistenceViewModelImpl(executorStateSharer));
+    mainApplication.setSplashScreenViewModel(
+        new SplashScreenViewModelImpl(
+            new ExecutorStateUseCaseImpl(
+                new ExecutorStateGatewayImpl(
+                    apiService
+                ),
+                executorStateSharer
+            )
+        )
+    );
     mainApplication.setGeoLocationDataReceiver(geoLocationSharer);
     mainApplication.setGeoLocationUseCase(new GeoLocationUseCaseImpl(
         new GeoLocationGatewayImpl(geolocationCenter), executorStateSharer, geoLocationSharer

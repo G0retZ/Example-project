@@ -21,7 +21,7 @@ public class ServicesActivity extends BaseActivity {
     Intent intent;
     switch (destination) {
       case ServicesOptionsNavigate.READY_FOR_ORDERS:
-        intent = new Intent(this, MapActivity.class);
+        intent = new Intent(this, OnlineActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         startActivity(intent);
         finish();
