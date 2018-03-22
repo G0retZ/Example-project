@@ -6,8 +6,8 @@ import static org.mockito.Mockito.when;
 
 import com.fasten.executor_driver.backend.web.NoNetworkException;
 import com.fasten.executor_driver.entity.ExecutorState;
+import io.reactivex.Flowable;
 import io.reactivex.Observer;
-import io.reactivex.Single;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,7 +27,7 @@ public class ExecutorStateUseCaseTest {
 
   @Before
   public void setUp() throws Exception {
-    when(gateway.getState()).thenReturn(Single.never());
+    when(gateway.getState()).thenReturn(Flowable.never());
     executorStateUseCase = new ExecutorStateUseCaseImpl(gateway, executorStateObserver);
   }
 
@@ -57,7 +57,7 @@ public class ExecutorStateUseCaseTest {
   @Test
   public void answerNoNetworkError() throws Exception {
     // Действие:
-    when(gateway.getState()).thenReturn(Single.error(new NoNetworkException()));
+    when(gateway.getState()).thenReturn(Flowable.error(new NoNetworkException()));
 
     // Результат:
     executorStateUseCase.loadStatus().test().assertError(NoNetworkException.class);
@@ -71,7 +71,7 @@ public class ExecutorStateUseCaseTest {
   @Test
   public void answerComplete() throws Exception {
     // Действие:
-    when(gateway.getState()).thenReturn(Single.just(ExecutorState.ONLINE));
+    when(gateway.getState()).thenReturn(Flowable.just(ExecutorState.ONLINE));
 
     // Результат:
     executorStateUseCase.loadStatus().test().assertComplete();
@@ -87,7 +87,7 @@ public class ExecutorStateUseCaseTest {
   @Test
   public void publishShiftClosed() throws Exception {
     // Дано:
-    when(gateway.getState()).thenReturn(Single.just(ExecutorState.SHIFT_CLOSED));
+    when(gateway.getState()).thenReturn(Flowable.just(ExecutorState.SHIFT_CLOSED));
 
     // Действие:
     executorStateUseCase.loadStatus().test();
@@ -104,7 +104,7 @@ public class ExecutorStateUseCaseTest {
   @Test
   public void publishShiftOpened() throws Exception {
     // Дано:
-    when(gateway.getState()).thenReturn(Single.just(ExecutorState.SHIFT_OPENED));
+    when(gateway.getState()).thenReturn(Flowable.just(ExecutorState.SHIFT_OPENED));
 
     // Действие:
     executorStateUseCase.loadStatus().test();
@@ -121,7 +121,7 @@ public class ExecutorStateUseCaseTest {
   @Test
   public void publishOnline() throws Exception {
     // Дано:
-    when(gateway.getState()).thenReturn(Single.just(ExecutorState.ONLINE));
+    when(gateway.getState()).thenReturn(Flowable.just(ExecutorState.ONLINE));
 
     // Действие:
     executorStateUseCase.loadStatus().test();

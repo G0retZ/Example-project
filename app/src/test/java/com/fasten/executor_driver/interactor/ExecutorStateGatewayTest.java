@@ -8,7 +8,7 @@ import com.fasten.executor_driver.backend.web.ApiService;
 import com.fasten.executor_driver.backend.web.NoNetworkException;
 import com.fasten.executor_driver.entity.ExecutorState;
 import com.fasten.executor_driver.gateway.DataMappingException;
-import com.fasten.executor_driver.gateway.ExecutorStateGatewayImpl;
+import com.fasten.executor_driver.gateway.ExecutorStateApiGatewayImpl;
 import io.reactivex.Single;
 import io.reactivex.plugins.RxJavaPlugins;
 import io.reactivex.schedulers.Schedulers;
@@ -30,7 +30,7 @@ public class ExecutorStateGatewayTest {
   public void setUp() throws Exception {
     RxJavaPlugins.setIoSchedulerHandler(scheduler -> Schedulers.trampoline());
     RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
-    executorStateGateway = new ExecutorStateGatewayImpl(api);
+    executorStateGateway = new ExecutorStateApiGatewayImpl(api);
     when(api.getMyStatus()).thenReturn(Single.never());
   }
 

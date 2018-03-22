@@ -2,12 +2,9 @@ package com.fasten.executor_driver.interactor;
 
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
-import com.fasten.executor_driver.entity.ExecutorState;
 import io.reactivex.Completable;
-import io.reactivex.Observer;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -22,13 +19,10 @@ public class UnAuthUseCaseTest {
   @Mock
   private UnAuthGateway gateway;
 
-  @Mock
-  private Observer<ExecutorState> executorStateObserver;
-
   @Before
   public void setUp() throws Exception {
     when(gateway.waitForUnauthorized()).thenReturn(Completable.never());
-    unAuthUseCase = new UnAuthUseCaseImpl(gateway, executorStateObserver);
+    unAuthUseCase = new UnAuthUseCaseImpl(gateway);
   }
 
   /* Проверяем работу с гейтвеем */
@@ -61,38 +55,5 @@ public class UnAuthUseCaseTest {
 
     // Действие и Результат:
     unAuthUseCase.getUnauthorized().test().assertComplete();
-  }
-
-  /* Проверяем работу с публикатором состояния */
-
-  /**
-   * Должен сменить состояние на "не авторизован" при получении такого события.
-   *
-   * @throws Exception error
-   */
-  @Test
-  public void setUnauthorizedState() throws Exception {
-    // Дано:
-    when(gateway.waitForUnauthorized()).thenReturn(Completable.complete());
-
-    // Действие:
-    unAuthUseCase.getUnauthorized().test();
-
-    // Результат:
-    verify(executorStateObserver, only()).onNext(ExecutorState.UNAUTHORIZED);
-  }
-
-  /**
-   * Не должен взаимодействовать с публиктором до получения события потери авторизации.
-   *
-   * @throws Exception error
-   */
-  @Test
-  public void doNotTouchDataSharer() throws Exception {
-    // Действие:
-    unAuthUseCase.getUnauthorized().test();
-
-    // Результат:
-    verifyZeroInteractions(executorStateObserver);
   }
 }

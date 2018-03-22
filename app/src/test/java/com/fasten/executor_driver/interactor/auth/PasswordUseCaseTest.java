@@ -11,14 +11,12 @@ import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 import com.fasten.executor_driver.backend.web.NoNetworkException;
-import com.fasten.executor_driver.entity.ExecutorState;
 import com.fasten.executor_driver.entity.LoginData;
 import com.fasten.executor_driver.entity.ValidationException;
 import com.fasten.executor_driver.entity.Validator;
 import com.fasten.executor_driver.interactor.DataReceiver;
 import io.reactivex.Completable;
 import io.reactivex.Observable;
-import io.reactivex.Observer;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -39,18 +37,13 @@ public class PasswordUseCaseTest {
   @Mock
   private DataReceiver<String> loginReceiver;
 
-  @Mock
-  private Observer<ExecutorState> executorStateObserver;
-
   @Before
   public void setUp() throws Exception {
     when(gateway.authorize(nullable(LoginData.class))).thenReturn(Completable.never());
     doThrow(new ValidationException()).when(passwordValidator).validate(anyString());
     doNothing().when(passwordValidator).validate("password");
     when(loginReceiver.get()).thenReturn(Observable.never());
-    passwordUseCase = new PasswordUseCaseImpl(
-        gateway, loginReceiver, passwordValidator, executorStateObserver
-    );
+    passwordUseCase = new PasswordUseCaseImpl(gateway, loginReceiver, passwordValidator);
   }
 
   /* Проверяем работу с публикатором логина */
@@ -189,8 +182,7 @@ public class PasswordUseCaseTest {
   public void askGatewayForAuth() throws Exception {
     // Дано:
     when(loginReceiver.get()).thenReturn(Observable.just("login"), Observable.never());
-    passwordUseCase = new PasswordUseCaseImpl(gateway, loginReceiver, passwordValidator,
-        executorStateObserver);
+    passwordUseCase = new PasswordUseCaseImpl(gateway, loginReceiver, passwordValidator);
 
     // Действие:
     passwordUseCase.authorize("password", Completable.complete()).test();
@@ -241,24 +233,5 @@ public class PasswordUseCaseTest {
 
     // Результат:
     passwordUseCase.authorize("password", Completable.complete()).test().assertComplete();
-  }
-
-  /* Проверяем работу с публикатором состояния исполнителя */
-
-  /**
-   * Должен опубликовать статус "Смена закрыта".
-   *
-   * @throws Exception error
-   */
-  @Test
-  public void publishShiftClosed() throws Exception {
-    // Дано:
-    when(gateway.authorize(any(LoginData.class))).thenReturn(Completable.complete());
-
-    // Действие:
-    passwordUseCase.authorize("password", Completable.complete()).test().assertComplete();
-
-    // Результат:
-    verify(executorStateObserver, only()).onNext(ExecutorState.SHIFT_CLOSED);
   }
 }

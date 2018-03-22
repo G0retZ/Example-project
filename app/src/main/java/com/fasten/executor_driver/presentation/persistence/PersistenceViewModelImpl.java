@@ -53,9 +53,6 @@ public class PersistenceViewModelImpl implements PersistenceViewModel {
 
   private void consumeExecutorState(ExecutorState executorState) {
     switch (executorState) {
-      case UNAUTHORIZED:
-        viewStateLiveData.postValue(new PersistenceViewStateStop());
-        break;
       case SHIFT_CLOSED:
         viewStateLiveData.postValue(new PersistenceViewStateStop());
         break;

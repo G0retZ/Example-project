@@ -2,7 +2,7 @@ package com.fasten.executor_driver.interactor;
 
 import android.support.annotation.NonNull;
 import com.fasten.executor_driver.entity.ExecutorState;
-import io.reactivex.Single;
+import io.reactivex.Flowable;
 
 /**
  * Гейтвей получения статуса пользователя.
@@ -12,8 +12,8 @@ public interface ExecutorStateGateway {
   /**
    * Запрашивает статус исполнителя у АПИ.
    *
-   * @return {@link Single<ExecutorState>} актуальный статус исполнителя.
+   * @return {@link Flowable<ExecutorState>} актуальный статус исполнителя.
    */
   @NonNull
-  Single<ExecutorState> getState();
+  Flowable<ExecutorState> getState();
 }

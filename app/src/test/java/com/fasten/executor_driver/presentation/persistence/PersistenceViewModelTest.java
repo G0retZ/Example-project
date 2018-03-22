@@ -2,7 +2,6 @@ package com.fasten.executor_driver.presentation.persistence;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.only;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.verifyZeroInteractions;
@@ -124,11 +123,9 @@ public class PersistenceViewModelTest {
 
     // Действие:
     publishSubject.onNext(ExecutorState.SHIFT_CLOSED);
-    publishSubject.onNext(ExecutorState.UNAUTHORIZED);
 
     // Результат:
-    verify(viewStateObserver, times(2)).onChanged(any(PersistenceViewStateStop.class));
-    verifyNoMoreInteractions(viewStateObserver);
+    verify(viewStateObserver, only()).onChanged(any(PersistenceViewStateStop.class));
   }
 
   /**
