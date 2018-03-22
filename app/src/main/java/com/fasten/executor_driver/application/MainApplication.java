@@ -11,6 +11,7 @@ import android.support.annotation.StringRes;
 import com.fasten.executor_driver.R;
 import com.fasten.executor_driver.di.AppComponent;
 import com.fasten.executor_driver.di.AppComponentImpl;
+import com.fasten.executor_driver.entity.ExecutorState;
 import com.fasten.executor_driver.entity.GeoLocation;
 import com.fasten.executor_driver.interactor.DataReceiver;
 import com.fasten.executor_driver.interactor.GeoLocationUseCase;
@@ -30,7 +31,7 @@ import javax.inject.Inject;
 public class MainApplication extends Application implements PersistenceViewActions,
     SplashScreenViewActions {
 
-  boolean showError = false;
+  private boolean showError = false;
   private AppComponent mAppComponent;
   private UnAuthUseCase unAuthUseCase;
   private PersistenceViewModel persistenceViewModel;
@@ -74,6 +75,7 @@ public class MainApplication extends Application implements PersistenceViewActio
     }
   };
   private DataReceiver<GeoLocation> geoLocationDataReceiver;
+  private DataReceiver<ExecutorState> executorStateDataReceiver;
 
   @Inject
   public void setUnAuthUseCase(@NonNull UnAuthUseCase unAuthUseCase) {
@@ -101,6 +103,10 @@ public class MainApplication extends Application implements PersistenceViewActio
     this.geoLocationDataReceiver = geoLocationDataReceiver;
   }
 
+  public void setExecutorStateDataReceiver(DataReceiver<ExecutorState> executorStateDataReceiver) {
+    this.executorStateDataReceiver = executorStateDataReceiver;
+  }
+
   @Override
   public void onCreate() {
     super.onCreate();
@@ -120,6 +126,7 @@ public class MainApplication extends Application implements PersistenceViewActio
     registerActivityLifecycleCallbacks(problemsActivityLifecycleCallbacks);
     listenForGeoLocations();
     reloadGeoLocations();
+    listenForExecutorState();
   }
 
   @NonNull
@@ -151,12 +158,21 @@ public class MainApplication extends Application implements PersistenceViewActio
     unAuthUseCase.getUnauthorized()
         .subscribeOn(Schedulers.single())
         .observeOn(AndroidSchedulers.mainThread())
+        .doAfterTerminate(this::listenForUnAuth)
         .subscribe(
             () -> {
+              geoLocationUseCase.stop()
+                  .subscribeOn(Schedulers.single())
+                  .observeOn(AndroidSchedulers.mainThread())
+                  .subscribe(
+                      () -> {
+                      }, throwable -> {
+                      }
+                  );
+              stopService();
               Intent intent = new Intent(this, LoginActivity.class);
               intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
               startActivity(intent);
-              listenForUnAuth();
             }, throwable -> {
             }
         );
@@ -182,9 +198,32 @@ public class MainApplication extends Application implements PersistenceViewActio
         }, throwable -> startActivity(new Intent(this, GeolocationResolutionActivity.class)));
   }
 
+  private void listenForExecutorState() {
+    executorStateDataReceiver.get()
+        .subscribeOn(Schedulers.single())
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe(executorState -> {
+          Intent intent = null;
+          switch (executorState) {
+            case SHIFT_CLOSED:
+              intent = new Intent(this, MapActivity.class);
+              break;
+            case SHIFT_OPENED:
+              intent = new Intent(this, MapActivity.class);
+              break;
+            case ONLINE:
+              intent = new Intent(this, OnlineActivity.class);
+              break;
+          }
+          intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+          startActivity(intent);
+        }, throwable -> {
+        });
+  }
+
   @Override
   public void showPending(boolean pending) {
-
+    System.out.println(pending);
   }
 
   @Override

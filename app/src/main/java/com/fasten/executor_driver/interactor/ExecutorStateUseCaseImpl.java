@@ -20,6 +20,6 @@ public class ExecutorStateUseCaseImpl implements ExecutorStateUseCase {
 
   @Override
   public Completable loadStatus() {
-    return gateway.getState().doOnSuccess(executorStateObserver::onNext).toCompletable();
+    return gateway.getState().doOnNext(executorStateObserver::onNext).ignoreElements();
   }
 }

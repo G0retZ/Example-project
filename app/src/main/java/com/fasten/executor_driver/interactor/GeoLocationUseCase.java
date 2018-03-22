@@ -12,4 +12,9 @@ public interface GeoLocationUseCase {
    * Переинициирует сбор данных о местоположении.
    */
   Completable reload();
+
+  /**
+   * Прекращает сбор данных о местоположении.
+   */
+  Completable stop();
 }

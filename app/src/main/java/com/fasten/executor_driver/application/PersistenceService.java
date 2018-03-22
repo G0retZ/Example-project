@@ -84,7 +84,7 @@ public class PersistenceService extends Service {
   private Notification getNotification(@StringRes int title, @StringRes int text) {
     // PendingIntent для запуска Activity.
     PendingIntent activityPendingIntent = PendingIntent.getActivity(this, 0,
-        new Intent(this, MapActivity.class), 0);
+        new Intent(this, OnlineActivity.class), 0);
 
     NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
         .addAction(R.mipmap.ic_launcher, getString(R.string.to_app), activityPendingIntent)

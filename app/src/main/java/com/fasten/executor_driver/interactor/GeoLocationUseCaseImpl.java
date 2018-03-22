@@ -43,13 +43,18 @@ public class GeoLocationUseCaseImpl implements GeoLocationUseCase {
     });
   }
 
+  @Override
+  public Completable stop() {
+    return Completable.fromCallable(() -> {
+      if (geoLocationDisposable != null && !geoLocationDisposable.isDisposed()) {
+        geoLocationDisposable.dispose();
+      }
+      return 0;
+    });
+  }
+
   private void consumeExecutorState(@NonNull ExecutorState executorState) {
     switch (executorState) {
-      case UNAUTHORIZED:
-        if (geoLocationDisposable != null && !geoLocationDisposable.isDisposed()) {
-          geoLocationDisposable.dispose();
-        }
-        break;
       case SHIFT_CLOSED:
         if (geoLocationDisposable != null && !geoLocationDisposable.isDisposed()) {
           geoLocationDisposable.dispose();

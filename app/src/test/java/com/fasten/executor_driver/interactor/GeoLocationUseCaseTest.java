@@ -84,26 +84,21 @@ public class GeoLocationUseCaseTest {
     verify(action, only()).run();
   }
 
-  /* Проверяем работу с гейтвеем в ответ на смену состояний */
-
   /**
-   * Не должен трогать гейтвей, при переходе в состояние "Не авторизован".
+   * Не должен трогать гейтвей, при отказе получения локаций.
    *
    * @throws Exception error
    */
-  @SuppressWarnings("unchecked")
   @Test
-  public void doNotTouchGatewayIfGoToNotAuth() throws Exception {
-    // Дано:
-    when(executorStateReceiver.get())
-        .thenReturn(Observable.just(ExecutorState.UNAUTHORIZED), Observable.never());
-
+  public void doNotTouchGatewayIfStop() throws Exception {
     // Действие:
-    geoLocationUseCase.reload().test();
+    geoLocationUseCase.stop().test();
 
     // Результат:
     verifyZeroInteractions(gateway);
   }
+
+  /* Проверяем работу с гейтвеем в ответ на смену состояний */
 
   /**
    * Должен запросить гейтвей получать локации с интервалом 1 час,

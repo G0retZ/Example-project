@@ -24,7 +24,7 @@ import com.fasten.executor_driver.entity.PhoneNumberValidator;
 import com.fasten.executor_driver.entity.SmsCodeExtractor;
 import com.fasten.executor_driver.entity.Vehicle;
 import com.fasten.executor_driver.gateway.ErrorMapper;
-import com.fasten.executor_driver.gateway.ExecutorStateGatewayImpl;
+import com.fasten.executor_driver.gateway.ExecutorStateApiGatewayImpl;
 import com.fasten.executor_driver.gateway.GeoLocationGatewayImpl;
 import com.fasten.executor_driver.gateway.GeoTrackingGatewayImpl;
 import com.fasten.executor_driver.gateway.HeatMapGatewayImpl;
@@ -207,12 +207,12 @@ public class AppComponentImpl implements AppComponent {
 
   @Override
   public void inject(MainApplication mainApplication) {
-    mainApplication.setUnAuthUseCase(new UnAuthUseCaseImpl(unAuthGateway, executorStateSharer));
+    mainApplication.setUnAuthUseCase(new UnAuthUseCaseImpl(unAuthGateway));
     mainApplication.setPersistenceViewModel(new PersistenceViewModelImpl(executorStateSharer));
     mainApplication.setSplashScreenViewModel(
         new SplashScreenViewModelImpl(
             new ExecutorStateUseCaseImpl(
-                new ExecutorStateGatewayImpl(
+                new ExecutorStateApiGatewayImpl(
                     apiService
                 ),
                 executorStateSharer
@@ -220,6 +220,7 @@ public class AppComponentImpl implements AppComponent {
         )
     );
     mainApplication.setGeoLocationDataReceiver(geoLocationSharer);
+    mainApplication.setExecutorStateDataReceiver(executorStateSharer);
     mainApplication.setGeoLocationUseCase(new GeoLocationUseCaseImpl(
         new GeoLocationGatewayImpl(geolocationCenter), executorStateSharer, geoLocationSharer
     ));
@@ -282,8 +283,7 @@ public class AppComponentImpl implements AppComponent {
                     new PasswordUseCaseImpl(
                         new PasswordGatewayImpl(apiService),
                         loginSharer,
-                        new PasswordValidator(),
-                        executorStateSharer
+                        new PasswordValidator()
                     )
                 )
             )
