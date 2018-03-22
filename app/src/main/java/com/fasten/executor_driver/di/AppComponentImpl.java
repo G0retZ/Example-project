@@ -220,6 +220,7 @@ public class AppComponentImpl implements AppComponent {
         )
     );
     mainApplication.setGeoLocationDataReceiver(geoLocationSharer);
+    mainApplication.setExecutorStateDataReceiver(executorStateSharer);
     mainApplication.setGeoLocationUseCase(new GeoLocationUseCaseImpl(
         new GeoLocationGatewayImpl(geolocationCenter), executorStateSharer, geoLocationSharer
     ));
