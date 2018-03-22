@@ -19,7 +19,7 @@ public class ChooseVehicleActivity extends BaseActivity {
   public void navigate(@NonNull String destination) {
     switch (destination) {
       case ChooseVehicleNavigate.VEHICLE_OPTIONS:
-        onBackPressed();
+        System.out.println(destination);
     }
   }
 }
