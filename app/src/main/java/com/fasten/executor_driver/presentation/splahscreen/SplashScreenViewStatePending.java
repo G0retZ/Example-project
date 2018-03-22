@@ -11,5 +11,6 @@ final class SplashScreenViewStatePending implements ViewState<SplashScreenViewAc
   @Override
   public void apply(@NonNull SplashScreenViewActions stateActions) {
     stateActions.showPending(true);
+    stateActions.showNetworkErrorMessage(false);
   }
 }

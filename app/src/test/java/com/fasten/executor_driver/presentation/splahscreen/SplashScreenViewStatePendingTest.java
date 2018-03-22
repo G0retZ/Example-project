@@ -1,7 +1,7 @@
 package com.fasten.executor_driver.presentation.splahscreen;
 
-import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -28,6 +28,8 @@ public class SplashScreenViewStatePendingTest {
     viewState.apply(codeViewActions);
 
     // Результат:
-    verify(codeViewActions, only()).showPending(true);
+    verify(codeViewActions).showPending(true);
+    verify(codeViewActions).showNetworkErrorMessage(false);
+    verifyNoMoreInteractions(codeViewActions);
   }
 }

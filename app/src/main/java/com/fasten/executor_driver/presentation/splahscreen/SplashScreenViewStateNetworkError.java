@@ -4,13 +4,13 @@ import android.support.annotation.NonNull;
 import com.fasten.executor_driver.presentation.ViewState;
 
 /**
- * Состояние окончания загрузки на экране заставки.
+ * Состояние ожидания на экране заставки.
  */
-final class SplashScreenViewStateDone implements ViewState<SplashScreenViewActions> {
+final class SplashScreenViewStateNetworkError implements ViewState<SplashScreenViewActions> {
 
   @Override
   public void apply(@NonNull SplashScreenViewActions stateActions) {
     stateActions.showPending(false);
-    stateActions.showNetworkErrorMessage(false);
+    stateActions.showNetworkErrorMessage(true);
   }
 }

@@ -5,6 +5,6 @@ import com.fasten.executor_driver.presentation.ViewModel;
 /**
  * ViewModel окна заставки.
  */
-interface SplashScreenViewModel extends ViewModel<SplashScreenViewActions> {
+public interface SplashScreenViewModel extends ViewModel<SplashScreenViewActions> {
 
 }

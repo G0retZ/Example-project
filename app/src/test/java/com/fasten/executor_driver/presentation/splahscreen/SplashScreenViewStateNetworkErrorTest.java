@@ -10,16 +10,16 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
-public class SplashScreenViewStateDoneTest {
+public class SplashScreenViewStateNetworkErrorTest {
 
-  private SplashScreenViewStateDone viewState;
+  private SplashScreenViewStateNetworkError viewState;
 
   @Mock
   private SplashScreenViewActions codeViewActions;
 
   @Before
   public void setUp() throws Exception {
-    viewState = new SplashScreenViewStateDone();
+    viewState = new SplashScreenViewStateNetworkError();
   }
 
   @Test
@@ -29,7 +29,7 @@ public class SplashScreenViewStateDoneTest {
 
     // Результат:
     verify(codeViewActions).showPending(false);
-    verify(codeViewActions).showNetworkErrorMessage(false);
+    verify(codeViewActions).showNetworkErrorMessage(true);
     verifyNoMoreInteractions(codeViewActions);
   }
 }
