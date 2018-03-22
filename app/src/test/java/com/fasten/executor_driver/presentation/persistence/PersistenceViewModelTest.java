@@ -98,11 +98,7 @@ public class PersistenceViewModelTest {
     // Действие:
     publishSubject.onNext(ExecutorState.SHIFT_OPENED);
     publishSubject.onNext(ExecutorState.ONLINE);
-    publishSubject.onNext(ExecutorState.APPROACHING_LOADING_POINT);
-    publishSubject.onNext(ExecutorState.LOADING);
-    publishSubject.onNext(ExecutorState.APPROACHING_UNLOADING_POINT);
-    publishSubject.onNext(ExecutorState.UNLOADING);
-    publishSubject.onNext(ExecutorState.ONLINE);
+    publishSubject.onNext(ExecutorState.SHIFT_OPENED);
 
     // Результат:
     inOrder.verify(viewStateObserver)
@@ -110,15 +106,7 @@ public class PersistenceViewModelTest {
     inOrder.verify(viewStateObserver)
         .onChanged(new PersistenceViewStateStart(R.string.online, R.string.wait_for_orders));
     inOrder.verify(viewStateObserver)
-        .onChanged(new PersistenceViewStateStart(R.string.executing, R.string.to_loading_point));
-    inOrder.verify(viewStateObserver)
-        .onChanged(new PersistenceViewStateStart(R.string.executing, R.string.loading));
-    inOrder.verify(viewStateObserver)
-        .onChanged(new PersistenceViewStateStart(R.string.executing, R.string.to_unloading_point));
-    inOrder.verify(viewStateObserver)
-        .onChanged(new PersistenceViewStateStart(R.string.executing, R.string.unloading));
-    inOrder.verify(viewStateObserver)
-        .onChanged(new PersistenceViewStateStart(R.string.online, R.string.wait_for_orders));
+        .onChanged(new PersistenceViewStateStart(R.string.online, R.string.no_orders));
     verifyNoMoreInteractions(viewStateObserver);
   }
 

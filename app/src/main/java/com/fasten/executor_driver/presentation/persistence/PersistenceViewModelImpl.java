@@ -53,14 +53,6 @@ public class PersistenceViewModelImpl implements PersistenceViewModel {
 
   private void consumeExecutorState(ExecutorState executorState) {
     switch (executorState) {
-      case APPROACHING_LOADING_POINT:
-        viewStateLiveData.postValue(
-            new PersistenceViewStateStart(R.string.executing, R.string.to_loading_point));
-        break;
-      case APPROACHING_UNLOADING_POINT:
-        viewStateLiveData.postValue(
-            new PersistenceViewStateStart(R.string.executing, R.string.to_unloading_point));
-        break;
       case UNAUTHORIZED:
         viewStateLiveData.postValue(new PersistenceViewStateStop());
         break;
@@ -74,14 +66,6 @@ public class PersistenceViewModelImpl implements PersistenceViewModel {
       case ONLINE:
         viewStateLiveData
             .postValue(new PersistenceViewStateStart(R.string.online, R.string.wait_for_orders));
-        break;
-      case LOADING:
-        viewStateLiveData
-            .postValue(new PersistenceViewStateStart(R.string.executing, R.string.loading));
-        break;
-      case UNLOADING:
-        viewStateLiveData
-            .postValue(new PersistenceViewStateStart(R.string.executing, R.string.unloading));
         break;
     }
   }

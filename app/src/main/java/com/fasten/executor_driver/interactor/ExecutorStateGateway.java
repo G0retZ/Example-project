@@ -7,7 +7,7 @@ import io.reactivex.Single;
 /**
  * Гейтвей получения статуса пользователя.
  */
-interface ExecutorStateGateway {
+public interface ExecutorStateGateway {
 
   /**
    * Запрашивает статус исполнителя у АПИ.

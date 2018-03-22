@@ -66,4 +66,10 @@ public interface ApiService {
   Completable setMyServices(
       @NonNull @Query("ids") String servicesIds
   );
+
+  /*
+   *  Запрос актуального статуса исполнителя.
+   */
+  @GET("api/public/v1/mobile/driver/status")
+  Single<String> getMyStatus();
 }

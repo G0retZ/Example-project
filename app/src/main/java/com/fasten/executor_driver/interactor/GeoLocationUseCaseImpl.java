@@ -71,14 +71,6 @@ public class GeoLocationUseCaseImpl implements GeoLocationUseCase {
         geoLocationDisposable = gateway.getGeoLocations(15000)
             .subscribe(geoLocationObserver::onNext, geoLocationObserver::onError);
         break;
-      case APPROACHING_LOADING_POINT:
-        break;
-      case LOADING:
-        break;
-      case APPROACHING_UNLOADING_POINT:
-        break;
-      case UNLOADING:
-        break;
     }
   }
 }

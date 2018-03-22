@@ -15,7 +15,6 @@ public class DataMappingException extends IOException {
     super(message);
   }
 
-  @SuppressWarnings("SameParameterValue")
   DataMappingException(String message, Throwable cause) {
     super(message, cause);
   }
