@@ -8,6 +8,7 @@ import static org.mockito.Mockito.when;
 
 import android.arch.core.executor.testing.InstantTaskExecutorRule;
 import android.arch.lifecycle.Observer;
+import com.fasten.executor_driver.backend.web.AuthorizationException;
 import com.fasten.executor_driver.backend.web.NoNetworkException;
 import com.fasten.executor_driver.gateway.DataMappingException;
 import com.fasten.executor_driver.interactor.ExecutorStateUseCase;
@@ -161,6 +162,25 @@ public class SplashScreenViewModelTest {
     inOrder.verify(viewStateObserver).onChanged(any(SplashScreenViewStatePending.class));
     inOrder.verify(viewStateObserver).onChanged(any(SplashScreenViewStateNetworkError.class));
     verifyNoMoreInteractions(viewStateObserver);
+  }
+
+  /**
+   * Должен игнорировать ошибки авторизации.
+   *
+   * @throws Exception error
+   */
+  @Test
+  public void ignoreAuthorizationError() throws Exception {
+    // Дано:
+    CompletableSubject completableSubject = CompletableSubject.create();
+    when(executorStateUseCase.loadStatus()).thenReturn(completableSubject);
+
+    // Действие:
+    mapViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    completableSubject.onError(new AuthorizationException());
+
+    // Результат:
+    verify(viewStateObserver, only()).onChanged(any(SplashScreenViewStatePending.class));
   }
 
   /**
