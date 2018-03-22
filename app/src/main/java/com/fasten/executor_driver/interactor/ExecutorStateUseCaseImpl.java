@@ -5,14 +5,14 @@ import com.fasten.executor_driver.entity.ExecutorState;
 import io.reactivex.Completable;
 import io.reactivex.Observer;
 
-class ExecutorStateUseCaseImpl implements ExecutorStateUseCase {
+public class ExecutorStateUseCaseImpl implements ExecutorStateUseCase {
 
   @NonNull
   private final ExecutorStateGateway gateway;
   @NonNull
   private final Observer<ExecutorState> executorStateObserver;
 
-  ExecutorStateUseCaseImpl(@NonNull ExecutorStateGateway gateway,
+  public ExecutorStateUseCaseImpl(@NonNull ExecutorStateGateway gateway,
       @NonNull Observer<ExecutorState> executorStateObserver) {
     this.gateway = gateway;
     this.executorStateObserver = executorStateObserver;

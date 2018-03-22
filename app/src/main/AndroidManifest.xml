@@ -20,14 +20,18 @@
     android:supportsRtl="true"
     android:theme="@style/AppTheme"
     tools:ignore="GoogleAppIndexingWarning">
-    <activity android:name="com.fasten.executor_driver.application.MapActivity">
+    <activity android:name="com.fasten.executor_driver.application.SplashScreenActivity">
       <intent-filter>
         <action android:name="android.intent.action.MAIN"/>
         <category android:name="android.intent.category.LAUNCHER"/>
       </intent-filter>
     </activity>
     <activity
+      android:name="com.fasten.executor_driver.application.MapActivity"
+      android:parentActivityName=".application.SplashScreenActivity"/>
+    <activity
       android:name=".application.LoginActivity"
+      android:parentActivityName=".application.SplashScreenActivity"
       android:windowSoftInputMode="stateVisible|adjustResize"/>
     <activity
       android:name=".application.PasswordActivity"
@@ -43,6 +47,9 @@
       android:name=".application.ServicesActivity"
       android:parentActivityName=".application.VehicleOptionsActivity"/>
     <activity android:name=".application.GeolocationResolutionActivity"/>
+    <activity
+      android:name="com.fasten.executor_driver.application.OnlineActivity"
+      android:parentActivityName=".application.SplashScreenActivity"/>
 
     <service
       android:enabled="true"

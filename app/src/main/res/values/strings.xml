@@ -36,4 +36,5 @@
   <string name="to_unloading_point">В пути к месту разгрузки</string>
   <string name="loading">Погрузка</string>
   <string name="unloading">Разгрузка</string>
+  <string name="navigator">Навигатор</string>
 </resources>

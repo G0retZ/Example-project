@@ -35,6 +35,7 @@ public class AuthorizationInterceptor implements Interceptor, UnAuthGateway {
     if (response.code() == 401 && !headers.contains("401.0")) {
       logoutEventSubject.onComplete();
       logoutEventSubject = CompletableSubject.create();
+      throw new AuthorizationException();
     }
     return response;
   }

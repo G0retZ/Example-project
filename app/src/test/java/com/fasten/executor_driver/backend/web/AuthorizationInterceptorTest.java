@@ -108,7 +108,11 @@ public class AuthorizationInterceptorTest {
 
     // Действие:
     TestObserver testObserver = authorizationInterceptor.waitForUnauthorized().test();
-    authorizationInterceptor.intercept(chain);
+    try {
+      authorizationInterceptor.intercept(chain);
+    } catch (AuthorizationException ae) {
+      // whatever
+    }
 
     // Результат:
     testObserver.assertComplete();
@@ -135,7 +139,11 @@ public class AuthorizationInterceptorTest {
 
     // Действие:
     TestObserver testObserver = authorizationInterceptor.waitForUnauthorized().test();
-    authorizationInterceptor.intercept(chain);
+    try {
+      authorizationInterceptor.intercept(chain);
+    } catch (AuthorizationException ae) {
+      // whatever
+    }
 
     // Результат:
     testObserver.assertComplete();

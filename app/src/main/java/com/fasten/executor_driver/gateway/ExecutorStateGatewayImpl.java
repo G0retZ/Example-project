@@ -26,7 +26,7 @@ public class ExecutorStateGatewayImpl implements ExecutorStateGateway {
         .observeOn(Schedulers.single())
         .map(string -> {
           try {
-            return ExecutorState.valueOf(string);
+            return ExecutorState.valueOf(string.replace("\"", ""));
           } catch (Exception e) {
             throw new DataMappingException("Ошибка маппинга: неверный формат статуса!", e);
           }

@@ -3,6 +3,7 @@ package com.fasten.executor_driver.interactor;
 import static org.mockito.ArgumentMatchers.nullable;
 import static org.mockito.Mockito.when;
 
+import com.fasten.executor_driver.backend.web.AuthorizationException;
 import com.fasten.executor_driver.backend.web.AuthorizationInterceptor;
 import io.reactivex.observers.TestObserver;
 import io.reactivex.plugins.RxJavaPlugins;
@@ -109,7 +110,11 @@ public class UnAuthGatewayTest {
 
     // Действие:
     TestObserver testObserver = authorizationInterceptor.waitForUnauthorized().test();
-    authorizationInterceptor.intercept(chain);
+    try {
+      authorizationInterceptor.intercept(chain);
+    } catch (AuthorizationException ae) {
+      // whatever
+    }
 
     // Результат:
     testObserver.assertComplete();
@@ -136,7 +141,11 @@ public class UnAuthGatewayTest {
 
     // Действие:
     TestObserver testObserver = authorizationInterceptor.waitForUnauthorized().test();
-    authorizationInterceptor.intercept(chain);
+    try {
+      authorizationInterceptor.intercept(chain);
+    } catch (AuthorizationException ae) {
+      // whatever
+    }
 
     // Результат:
     testObserver.assertComplete();
