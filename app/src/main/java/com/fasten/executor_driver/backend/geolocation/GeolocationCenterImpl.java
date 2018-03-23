@@ -26,12 +26,15 @@ public class GeolocationCenterImpl implements GeolocationCenter {
   private final FusedLocationProviderClient mFusedLocationClient;
   @NonNull
   private final LocationRequest mLocationRequest;
+  @NonNull
+  private final Context appContext;
 
   // Создаем тут клиента для либы короче
   public GeolocationCenterImpl(Context context) {
     mFusedLocationClient = LocationServices.getFusedLocationProviderClient(context);
-    mLocationRequest = new LocationRequest();
+    mLocationRequest = LocationRequest.create();
     mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+    appContext = context.getApplicationContext();
   }
 
   // А тут короче плод двухдневных мозговых штурмов:
@@ -42,12 +45,10 @@ public class GeolocationCenterImpl implements GeolocationCenter {
     GeoLocationCallback locationCallback = new GeoLocationCallback();
     return Flowable.<Location>create(emitter -> {
       // Begin by checking if the device has the necessary location settings.
-      if (ActivityCompat.checkSelfPermission(
-          mFusedLocationClient.getApplicationContext(), permission.ACCESS_FINE_LOCATION)
+      if (ActivityCompat.checkSelfPermission(appContext, permission.ACCESS_FINE_LOCATION)
           != PackageManager.PERMISSION_GRANTED
           ||
-          ActivityCompat.checkSelfPermission(
-              mFusedLocationClient.getApplicationContext(), permission.ACCESS_COARSE_LOCATION)
+          ActivityCompat.checkSelfPermission(appContext, permission.ACCESS_COARSE_LOCATION)
               != PackageManager.PERMISSION_GRANTED) {
         emitter.onError(new SecurityException());
         return;
