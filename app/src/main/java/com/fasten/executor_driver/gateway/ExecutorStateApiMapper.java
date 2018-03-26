@@ -18,7 +18,7 @@ public class ExecutorStateApiMapper implements Mapper<String, ExecutorState> {
   public ExecutorState map(@NonNull String from) throws Exception {
     ExecutorState executorState;
     try {
-      executorState = ExecutorState.valueOf(from.replace("\"", ""));
+      executorState = ExecutorState.valueOf(from.trim().replace("\"", ""));
     } catch (Exception e) {
       throw new DataMappingException("Ошибка маппинга: неверный формат статуса!", e);
     }

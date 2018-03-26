@@ -44,6 +44,20 @@ public class ExecutorStateApiMapperTest {
   }
 
   /**
+   * Должен успешно преобразовать строку с кавычками и переносами в статус "смена закрыта".
+   *
+   * @throws Exception ошибка
+   */
+  @Test
+  public void mappingNewLineQuotedStringToShiftOpened() throws Exception {
+    // Дано и Действие:
+    ExecutorState executorState = mapper.map("\n\"SHIFT_CLOSED\"");
+
+    // Результат:
+    assertEquals(executorState, ExecutorState.SHIFT_CLOSED);
+  }
+
+  /**
    * Должен успешно преобразовать строку в статус "смена открыта".
    *
    * @throws Exception ошибка
@@ -72,6 +86,20 @@ public class ExecutorStateApiMapperTest {
   }
 
   /**
+   * Должен успешно преобразовать строку с кавычками и переносами в статус "смена открыта".
+   *
+   * @throws Exception ошибка
+   */
+  @Test
+  public void mappingNewLineQuotedStringToShiftClosed() throws Exception {
+    // Дано и Действие:
+    ExecutorState executorState = mapper.map("\n\"SHIFT_OPENED\"");
+
+    // Результат:
+    assertEquals(executorState, ExecutorState.SHIFT_OPENED);
+  }
+
+  /**
    * Должен успешно преобразовать строку в статус "онлайн".
    *
    * @throws Exception ошибка
@@ -94,6 +122,20 @@ public class ExecutorStateApiMapperTest {
   public void mappingQuotedStringToOnline() throws Exception {
     // Дано и Действие:
     ExecutorState executorState = mapper.map("\"ONLINE\"");
+
+    // Результат:
+    assertEquals(executorState, ExecutorState.ONLINE);
+  }
+
+  /**
+   * Должен успешно преобразовать строку с кавычками и переносами в статус "онлайн".
+   *
+   * @throws Exception ошибка
+   */
+  @Test
+  public void mappingNewLineQuotedStringToOnline() throws Exception {
+    // Дано и Действие:
+    ExecutorState executorState = mapper.map("\n\"ONLINE\"");
 
     // Результат:
     assertEquals(executorState, ExecutorState.ONLINE);
