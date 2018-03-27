@@ -41,13 +41,13 @@ public interface ApiService {
   /*
    *  Запрос ТС текущего исполнителя.
    */
-  @GET("api/public/v1/car")
+  @GET("api/public/v1/mobile/car")
   Single<ApiOptionsForOnline> getOptionsForOnline();
 
   /*
    *  Запрос занятия выборанной ТС с перечисленными опциями ТС и исполнителя.
    */
-  @PUT("api/public/v1/car/{carId}/vehicleOptionItem")
+  @PUT("api/public/v1/mobile/car/{carId}/vehicleOptionItem")
   Completable occupyCarWithOptions(
       @Path("carId") long carId,
       @NonNull @Body ApiOptionItems apiOptionItems
@@ -56,13 +56,13 @@ public interface ApiService {
   /*
    *  Запрос услуг текущего исполнителя.
    */
-  @GET("api/public/v1/car/mobile")
+  @GET("api/public/v1/mobile/car/carSearchRequest")
   Single<List<ApiServiceItem>> getMyServices();
 
   /*
    *  Запрос закрепления выбора услуг исполнителя.
    */
-  @PUT("api/public/v1/car/mobile")
+  @PUT("api/public/v1/mobile/car/carSearchRequest")
   Completable setMyServices(
       @NonNull @Query("ids") String servicesIds
   );
