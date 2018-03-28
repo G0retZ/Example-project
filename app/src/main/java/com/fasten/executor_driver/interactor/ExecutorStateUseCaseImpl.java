@@ -2,24 +2,31 @@ package com.fasten.executor_driver.interactor;
 
 import android.support.annotation.NonNull;
 import com.fasten.executor_driver.entity.ExecutorState;
-import io.reactivex.Completable;
-import io.reactivex.Observer;
+import io.reactivex.BackpressureStrategy;
+import io.reactivex.Flowable;
 
 public class ExecutorStateUseCaseImpl implements ExecutorStateUseCase {
 
   @NonNull
   private final ExecutorStateGateway gateway;
   @NonNull
-  private final Observer<ExecutorState> executorStateObserver;
+  private final SocketGateway socketGateway;
+  @NonNull
+  private final DataReceiver<String> loginReceiver;
 
   public ExecutorStateUseCaseImpl(@NonNull ExecutorStateGateway gateway,
-      @NonNull Observer<ExecutorState> executorStateObserver) {
+      @NonNull SocketGateway socketGateway,
+      @NonNull DataReceiver<String> loginReceiver) {
     this.gateway = gateway;
-    this.executorStateObserver = executorStateObserver;
+    this.socketGateway = socketGateway;
+    this.loginReceiver = loginReceiver;
   }
 
   @Override
-  public Completable loadStatus() {
-    return gateway.getState().doOnNext(executorStateObserver::onNext).ignoreElements();
+  public Flowable<ExecutorState> getExecutorStates() {
+    return loginReceiver.get()
+        .toFlowable(BackpressureStrategy.BUFFER)
+        .startWith(socketGateway.openSocket().toFlowable())
+        .switchMap(gateway::getState);
   }
 }

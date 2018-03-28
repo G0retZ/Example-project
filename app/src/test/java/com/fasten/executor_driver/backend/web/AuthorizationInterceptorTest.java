@@ -1,9 +1,9 @@
 package com.fasten.executor_driver.backend.web;
 
+import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.nullable;
 import static org.mockito.Mockito.when;
 
-import io.reactivex.observers.TestObserver;
 import io.reactivex.plugins.RxJavaPlugins;
 import io.reactivex.schedulers.Schedulers;
 import okhttp3.Interceptor;
@@ -32,12 +32,12 @@ public class AuthorizationInterceptorTest {
   }
 
   /**
-   * Не должен сообщать о выходе из системы.
+   * Не должен кидать исключение.
    *
    * @throws Exception error
    */
   @Test
-  public void doNotInformAboutUnauthorized() throws Exception {
+  public void doNotThrowUnauthorizedError() throws Exception {
     // Дано:
     when(chain.proceed(nullable(Request.class))).thenReturn(
         new Response.Builder()
@@ -51,20 +51,19 @@ public class AuthorizationInterceptorTest {
     );
 
     // Действие:
-    TestObserver testObserver = authorizationInterceptor.waitForUnauthorized().test();
-    authorizationInterceptor.intercept(chain);
+    Response response = authorizationInterceptor.intercept(chain);
 
     // Результат:
-    testObserver.assertNotComplete();
+    assertEquals(response, chain.proceed(chain.request()));
   }
 
   /**
-   * Не должен сообщать о выходе из системы если есть хедер Code = 401.0.
+   * Не должен кидать исключение если есть хедер Code = 401.0.
    *
    * @throws Exception error
    */
   @Test
-  public void doNotInformAboutUnauthorizedWithCodeHeader401_0() throws Exception {
+  public void doNotThrowUnauthorizedErrorWithCodeHeader401_0() throws Exception {
     // Дано:
     when(chain.proceed(nullable(Request.class))).thenReturn(
         new Response.Builder()
@@ -79,20 +78,19 @@ public class AuthorizationInterceptorTest {
     );
 
     // Действие:
-    TestObserver testObserver = authorizationInterceptor.waitForUnauthorized().test();
-    authorizationInterceptor.intercept(chain);
+    Response response = authorizationInterceptor.intercept(chain);
 
     // Результат:
-    testObserver.assertNotComplete();
+    assertEquals(response, chain.proceed(chain.request()));
   }
 
   /**
-   * Должен сообщить о выходе из системы.
+   * Должен кинуть исключение авторизации.
    *
    * @throws Exception error
    */
-  @Test
-  public void informAboutUnauthorizedWithAnyOtherCodeHeader() throws Exception {
+  @Test(expected = AuthorizationException.class)
+  public void throwUnauthorizedErrorWithAnyOtherCodeHeader() throws Exception {
     // Дано:
     when(chain.proceed(nullable(Request.class))).thenReturn(
         new Response.Builder()
@@ -106,25 +104,17 @@ public class AuthorizationInterceptorTest {
             ).build()
     );
 
-    // Действие:
-    TestObserver testObserver = authorizationInterceptor.waitForUnauthorized().test();
-    try {
-      authorizationInterceptor.intercept(chain);
-    } catch (AuthorizationException ae) {
-      // whatever
-    }
-
-    // Результат:
-    testObserver.assertComplete();
+    // Действие и Результат:
+    authorizationInterceptor.intercept(chain);
   }
 
   /**
-   * Должен сообщить о выходе из системы.
+   * Должен кинуть исключение авторизации.
    *
    * @throws Exception error
    */
-  @Test
-  public void informAboutUnauthorizedWithoutCodeHeader() throws Exception {
+  @Test(expected = AuthorizationException.class)
+  public void throwUnauthorizedErrorWithoutCodeHeader() throws Exception {
     // Дано:
     when(chain.proceed(nullable(Request.class))).thenReturn(
         new Response.Builder()
@@ -137,15 +127,7 @@ public class AuthorizationInterceptorTest {
             ).build()
     );
 
-    // Действие:
-    TestObserver testObserver = authorizationInterceptor.waitForUnauthorized().test();
-    try {
-      authorizationInterceptor.intercept(chain);
-    } catch (AuthorizationException ae) {
-      // whatever
-    }
-
-    // Результат:
-    testObserver.assertComplete();
+    // Действие и Результат:
+    authorizationInterceptor.intercept(chain);
   }
 }

@@ -10,7 +10,6 @@ import com.fasten.executor_driver.entity.InsufficientCreditsException;
 import com.fasten.executor_driver.entity.NoFreeVehiclesException;
 import com.fasten.executor_driver.entity.NoVehiclesAvailableException;
 import com.fasten.executor_driver.interactor.vehicle.VehiclesAndOptionsUseCase;
-import com.fasten.executor_driver.presentation.SingleLiveEvent;
 import com.fasten.executor_driver.presentation.ViewState;
 import io.reactivex.Completable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -28,7 +27,7 @@ public class OnlineButtonViewModelImpl extends ViewModel implements OnlineButton
   @NonNull
   private final MutableLiveData<ViewState<OnlineButtonViewActions>> viewStateLiveData;
   @NonNull
-  private final SingleLiveEvent<String> navigateLiveData;
+  private final MutableLiveData<String> navigateLiveData;
   @Nullable
   private Disposable loadDisposable;
   @Nullable
@@ -39,7 +38,7 @@ public class OnlineButtonViewModelImpl extends ViewModel implements OnlineButton
     this.vehiclesAndOptionsUseCase = vehiclesAndOptionsUseCase;
     viewStateLiveData = new MutableLiveData<>();
     viewStateLiveData.postValue(new OnlineButtonViewStateReady());
-    navigateLiveData = new SingleLiveEvent<>();
+    navigateLiveData = new MutableLiveData<>();
   }
 
   @NonNull

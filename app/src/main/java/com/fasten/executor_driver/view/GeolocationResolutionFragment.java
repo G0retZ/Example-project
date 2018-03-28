@@ -3,10 +3,7 @@ package com.fasten.executor_driver.view;
 import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -16,6 +13,9 @@ import com.fasten.executor_driver.R;
 import io.reactivex.disposables.Disposable;
 
 public class GeolocationResolutionFragment extends BaseFragment {
+
+  public static final String NAVIGATE_TO_SETTINGS = "to.App.Permissions.Settings";
+  public static final String NAVIGATE_TO_RESOLVED = "to.App.Permissions.Resolved";
 
   private static final String[] PERMISSIONS = new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
       Manifest.permission.ACCESS_COARSE_LOCATION};
@@ -83,7 +83,7 @@ public class GeolocationResolutionFragment extends BaseFragment {
     boolean showRationaleBefore = bool;
     permissionDisposable = permissionChecker.check(this, activity, PERMISSIONS)
         .doFinally(() -> permissionChecker = null)
-        .subscribe(() -> activity.finish(),
+        .subscribe(() -> navigate(NAVIGATE_TO_RESOLVED),
             throwable -> {
               // user rejected the permission
               boolean showRationale = true;
@@ -97,12 +97,7 @@ public class GeolocationResolutionFragment extends BaseFragment {
                 // or open another dialog explaining
                 // again the permission and directing to
                 // the app setting
-                startActivity(
-                    new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
-                        .setData(
-                            Uri.fromParts("package", activity.getPackageName(), null)
-                        )
-                );
+                navigate(NAVIGATE_TO_SETTINGS);
               }
             }
         );

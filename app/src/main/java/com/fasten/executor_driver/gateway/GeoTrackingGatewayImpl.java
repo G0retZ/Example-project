@@ -26,7 +26,7 @@ public class GeoTrackingGatewayImpl implements GeoTrackingGateway {
   @NonNull
   @Override
   public Completable sendGeoLocation(GeoLocation geoLocation) {
-    if (stompClient.isConnected()) {
+    if (stompClient.isConnected() || stompClient.isConnecting()) {
       return stompClient.send(BuildConfig.GOLOCATION_DESTINATION, gson.toJson(
           new ApiGeoLocation(
               geoLocation.getLatitude(), geoLocation.getLongitude(), geoLocation.getTimestamp()
@@ -35,29 +35,6 @@ public class GeoTrackingGatewayImpl implements GeoTrackingGateway {
           .subscribeOn(Schedulers.io())
           .observeOn(Schedulers.single());
     }
-    Completable completable = stompClient.lifecycle()
-        .subscribeOn(Schedulers.io())
-        .observeOn(Schedulers.single())
-        .firstElement()
-        .flatMapCompletable(lifecycleEvent -> {
-          switch (lifecycleEvent.getType()) {
-            case OPENED:
-              return stompClient.send(BuildConfig.GOLOCATION_DESTINATION, gson.toJson(
-                  new ApiGeoLocation(
-                      geoLocation.getLatitude(), geoLocation.getLongitude(),
-                      geoLocation.getTimestamp()
-                  )
-              ));
-            case ERROR:
-              return Completable.error(lifecycleEvent.getException());
-            case CLOSED:
-              return Completable.error(new ConnectionClosedException());
-          }
-          return Completable.complete();
-        });
-    if (!stompClient.isConnecting()) {
-      stompClient.connect();
-    }
-    return completable;
+    return Completable.error(new ConnectionClosedException());
   }
 }

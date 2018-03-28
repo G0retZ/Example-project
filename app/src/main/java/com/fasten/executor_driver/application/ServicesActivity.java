@@ -17,9 +17,10 @@ public class ServicesActivity extends BaseActivity {
 
   @Override
   public void navigate(@NonNull String destination) {
-    switch (destination) {
-      case ServicesOptionsNavigate.READY_FOR_ORDERS:
-        System.out.println(destination);
+    if (destination.equals(ServicesOptionsNavigate.READY_FOR_ORDERS)) {
+      System.out.println(destination);
+    } else {
+      super.navigate(destination);
     }
   }
 }

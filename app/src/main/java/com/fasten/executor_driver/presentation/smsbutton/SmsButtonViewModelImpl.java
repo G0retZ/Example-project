@@ -6,7 +6,6 @@ import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
 import com.fasten.executor_driver.backend.web.NoNetworkException;
 import com.fasten.executor_driver.interactor.auth.SmsUseCase;
-import com.fasten.executor_driver.presentation.SingleLiveEvent;
 import com.fasten.executor_driver.presentation.ViewState;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -40,7 +39,7 @@ public class SmsButtonViewModelImpl extends ViewModel implements SmsButtonViewMo
   @NonNull
   @Override
   public LiveData<String> getNavigationLiveData() {
-    return new SingleLiveEvent<>();
+    return new MutableLiveData<>();
   }
 
   private void holdButton() {

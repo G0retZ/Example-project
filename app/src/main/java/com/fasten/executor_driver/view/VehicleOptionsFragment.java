@@ -36,12 +36,6 @@ public class VehicleOptionsFragment extends BaseFragment implements OptionsViewA
     this.vehicleOptionsViewModel = vehicleOptionsViewModel;
   }
 
-  @Override
-  protected void onDependencyInject(AppComponent appComponent) {
-    // Required by Dagger2 for field injection
-    appComponent.inject(this);
-  }
-
   @Nullable
   @Override
   public View onCreateView(@NonNull LayoutInflater inflater,
@@ -54,7 +48,21 @@ public class VehicleOptionsFragment extends BaseFragment implements OptionsViewA
     readyButton = view.findViewById(R.id.readyButton);
     recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
     recyclerView.setAdapter(new ChooseVehicleAdapter(new ArrayList<>()));
+    readyButton.setOnClickListener(v -> vehicleOptionsViewModel.setOptions(
+        ((OptionsAdapter) recyclerView.getAdapter()).getOptionsListItems())
+    );
+    return view;
+  }
 
+  @Override
+  protected void onDependencyInject(AppComponent appComponent) {
+    // Required by Dagger2 for field injection
+    appComponent.inject(this);
+  }
+
+  @Override
+  public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+    super.onActivityCreated(savedInstanceState);
     vehicleOptionsViewModel.getNavigationLiveData().observe(this, destination -> {
       if (destination != null) {
         navigate(destination);
@@ -65,10 +73,6 @@ public class VehicleOptionsFragment extends BaseFragment implements OptionsViewA
         viewState.apply(this);
       }
     });
-    readyButton.setOnClickListener(v -> vehicleOptionsViewModel.setOptions(
-        ((OptionsAdapter) recyclerView.getAdapter()).getOptionsListItems())
-    );
-    return view;
   }
 
   @Override

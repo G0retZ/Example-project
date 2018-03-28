@@ -287,6 +287,6 @@ public class CodeViewModelTest {
         completableSubject::onComplete,
         e -> completableSubject.onComplete()
     );
-    verify(navigateObserver, only()).onChanged(CodeNavigate.MAP);
+    verify(navigateObserver, only()).onChanged(CodeNavigate.ENTER_APP);
   }
 }

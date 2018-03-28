@@ -1,20 +1,18 @@
 package com.fasten.executor_driver.interactor;
 
-import io.reactivex.Completable;
+import com.fasten.executor_driver.entity.GeoLocation;
+import io.reactivex.Flowable;
 
 /**
- * Юзкейс запросов местоположений. Слушает местопложения из гейтвея, и публикует получаемые
- * значения.
+ * Юзкейс запросов местоположений. Слушает местопложения из гейтвея, и публикует получаемые значения
+ * на сервер.
  */
 public interface GeoLocationUseCase {
 
   /**
-   * Переинициирует сбор данных о местоположении.
+   * Запрашивает сбор данных о местоположении.
+   *
+   * @return {@link Flowable<GeoLocation>} результат запроса.
    */
-  Completable reload();
-
-  /**
-   * Прекращает сбор данных о местоположении.
-   */
-  Completable stop();
+  Flowable<GeoLocation> getGeoLocations();
 }

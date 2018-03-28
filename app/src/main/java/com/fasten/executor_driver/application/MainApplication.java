@@ -1,141 +1,92 @@
 package com.fasten.executor_driver.application;
 
-import android.app.Activity;
-import android.app.AlertDialog.Builder;
 import android.app.Application;
 import android.content.Intent;
 import android.os.Build;
-import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import com.fasten.executor_driver.R;
 import com.fasten.executor_driver.di.AppComponent;
 import com.fasten.executor_driver.di.AppComponentImpl;
-import com.fasten.executor_driver.entity.ExecutorState;
-import com.fasten.executor_driver.entity.GeoLocation;
-import com.fasten.executor_driver.interactor.DataReceiver;
-import com.fasten.executor_driver.interactor.GeoLocationUseCase;
-import com.fasten.executor_driver.interactor.UnAuthUseCase;
-import com.fasten.executor_driver.presentation.persistence.PersistenceViewActions;
-import com.fasten.executor_driver.presentation.persistence.PersistenceViewModel;
-import com.fasten.executor_driver.presentation.splahscreen.SplashScreenViewActions;
-import com.fasten.executor_driver.presentation.splahscreen.SplashScreenViewModel;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.schedulers.Schedulers;
+import com.fasten.executor_driver.presentation.executorstate.ExecutorStateNavigate;
+import com.fasten.executor_driver.presentation.executorstate.ExecutorStateViewModel;
+import com.fasten.executor_driver.presentation.geolocation.GeoLocationNavigate;
+import com.fasten.executor_driver.presentation.geolocation.GeoLocationViewModel;
 import javax.inject.Inject;
 
 /**
  * Application.
  */
 
-public class MainApplication extends Application implements PersistenceViewActions,
-    SplashScreenViewActions {
+public class MainApplication extends Application {
 
-  private boolean showError = false;
-  private AppComponent mAppComponent;
-  private UnAuthUseCase unAuthUseCase;
-  private PersistenceViewModel persistenceViewModel;
-  private SplashScreenViewModel splashScreenViewModel;
-  private GeoLocationUseCase geoLocationUseCase;
-  private Activity currentActivity;
-  private final ActivityLifecycleCallbacks problemsActivityLifecycleCallbacks = new ActivityLifecycleCallbacks() {
-
-    @Override
-    public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
-    }
-
-    @Override
-    public void onActivityStarted(Activity activity) {
-    }
-
-    @Override
-    public void onActivityResumed(Activity activity) {
-      currentActivity = activity;
-      showNetworkError(currentActivity);
-    }
-
-    @Override
-    public void onActivityPaused(Activity activity) {
-      currentActivity = null;
-    }
-
-    @Override
-    public void onActivityStopped(Activity activity) {
-    }
-
-    @Override
-    public void onActivitySaveInstanceState(Activity activity, Bundle outState) {
-    }
-
-    @Override
-    public void onActivityDestroyed(Activity activity) {
-      if (currentActivity != null && activity instanceof GeolocationResolutionActivity) {
-        reloadGeoLocations();
-      }
-    }
-  };
-  private DataReceiver<GeoLocation> geoLocationDataReceiver;
-  private DataReceiver<ExecutorState> executorStateDataReceiver;
+  @Nullable
+  private AppComponent appComponent;
+  @Nullable
+  private ExecutorStateViewModel executorStateViewModel;
+  @Nullable
+  private GeoLocationViewModel geoLocationViewModel;
 
   @Inject
-  public void setUnAuthUseCase(@NonNull UnAuthUseCase unAuthUseCase) {
-    this.unAuthUseCase = unAuthUseCase;
+  public void setExecutorStateViewModel(@NonNull ExecutorStateViewModel executorStateViewModel) {
+    this.executorStateViewModel = executorStateViewModel;
   }
 
   @Inject
-  public void setPersistenceViewModel(
-      PersistenceViewModel persistenceViewModel) {
-    this.persistenceViewModel = persistenceViewModel;
-  }
-
-  @Inject
-  public void setSplashScreenViewModel(SplashScreenViewModel splashScreenViewModel) {
-    this.splashScreenViewModel = splashScreenViewModel;
-  }
-
-  @Inject
-  public void setGeoLocationUseCase(GeoLocationUseCase geoLocationUseCase) {
-    this.geoLocationUseCase = geoLocationUseCase;
-  }
-
-  @Inject
-  public void setGeoLocationDataReceiver(DataReceiver<GeoLocation> geoLocationDataReceiver) {
-    this.geoLocationDataReceiver = geoLocationDataReceiver;
-  }
-
-  public void setExecutorStateDataReceiver(DataReceiver<ExecutorState> executorStateDataReceiver) {
-    this.executorStateDataReceiver = executorStateDataReceiver;
+  public void setGeoLocationViewModel(@NonNull GeoLocationViewModel geoLocationViewModel) {
+    this.geoLocationViewModel = geoLocationViewModel;
   }
 
   @Override
   public void onCreate() {
     super.onCreate();
-    mAppComponent = new AppComponentImpl(this.getApplicationContext());
-    mAppComponent.inject(this);
-    listenForUnAuth();
-    persistenceViewModel.getViewStateLiveData().observeForever(viewState -> {
-      if (viewState != null) {
-        viewState.apply(this);
+    appComponent = new AppComponentImpl(this.getApplicationContext());
+    appComponent.inject(this);
+    if (executorStateViewModel == null || geoLocationViewModel == null) {
+      throw new RuntimeException("Shit! WTF?!");
+    }
+    executorStateViewModel.getNavigationLiveData().observeForever(this::navigate);
+    geoLocationViewModel.getNavigationLiveData().observeForever(this::navigate);
+    executorStateViewModel.initializeExecutorState();
+    geoLocationViewModel.updateGeoLocations();
+  }
+
+  private void navigate(@Nullable String direction) {
+    if (direction != null) {
+      switch (direction) {
+        case GeoLocationNavigate.RESOLVE_GEO_PROBLEM:
+          stopService();
+          break;
+        case ExecutorStateNavigate.NO_NETWORK:
+          stopService();
+          break;
+        case ExecutorStateNavigate.AUTHORIZE:
+          stopService();
+          break;
+        case ExecutorStateNavigate.MAP_SHIFT_CLOSED:
+          stopService();
+          break;
+        case ExecutorStateNavigate.MAP_SHIFT_OPENED:
+          startService(R.string.online, R.string.no_orders);
+          break;
+        case ExecutorStateNavigate.MAP_ONLINE:
+          startService(R.string.online, R.string.wait_for_orders);
+          break;
       }
-    });
-    splashScreenViewModel.getViewStateLiveData().observeForever(viewState -> {
-      if (viewState != null) {
-        viewState.apply(this);
-      }
-    });
-    registerActivityLifecycleCallbacks(problemsActivityLifecycleCallbacks);
-    listenForGeoLocations();
-    reloadGeoLocations();
-    listenForExecutorState();
+    }
   }
 
   @NonNull
   public AppComponent getAppComponent() {
-    return mAppComponent;
+    if (appComponent == null) {
+      throw new RuntimeException("Shit! WTF?!");
+    }
+    return appComponent;
   }
 
-  @Override
-  public void startService(@StringRes int title, @StringRes int text) {
+  @SuppressWarnings("SameParameterValue")
+  private void startService(@StringRes int title, @StringRes int text) {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
       startForegroundService(new Intent(this, PersistenceService.class)
           .putExtra(Intent.EXTRA_TITLE, title)
@@ -149,101 +100,7 @@ public class MainApplication extends Application implements PersistenceViewActio
     }
   }
 
-  @Override
-  public void stopService() {
+  private void stopService() {
     stopService(new Intent(this, PersistenceService.class));
-  }
-
-  private void listenForUnAuth() {
-    unAuthUseCase.getUnauthorized()
-        .subscribeOn(Schedulers.single())
-        .observeOn(AndroidSchedulers.mainThread())
-        .doAfterTerminate(this::listenForUnAuth)
-        .subscribe(
-            () -> {
-              geoLocationUseCase.stop()
-                  .subscribeOn(Schedulers.single())
-                  .observeOn(AndroidSchedulers.mainThread())
-                  .subscribe(
-                      () -> {
-                      }, throwable -> {
-                      }
-                  );
-              stopService();
-              Intent intent = new Intent(this, LoginActivity.class);
-              intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-              startActivity(intent);
-            }, throwable -> {
-            }
-        );
-  }
-
-  private void reloadGeoLocations() {
-    geoLocationUseCase.reload()
-        .subscribeOn(Schedulers.single())
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribe(
-            () -> {
-            }, throwable -> {
-            }
-        );
-  }
-
-  private void listenForGeoLocations() {
-    geoLocationDataReceiver.get()
-        .subscribeOn(Schedulers.single())
-        .observeOn(AndroidSchedulers.mainThread())
-        .doAfterTerminate(this::listenForGeoLocations)
-        .subscribe(geoLocation -> {
-        }, throwable -> startActivity(new Intent(this, GeolocationResolutionActivity.class)));
-  }
-
-  private void listenForExecutorState() {
-    executorStateDataReceiver.get()
-        .subscribeOn(Schedulers.single())
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribe(executorState -> {
-          Intent intent = null;
-          switch (executorState) {
-            case SHIFT_CLOSED:
-              intent = new Intent(this, MapActivity.class);
-              break;
-            case SHIFT_OPENED:
-              intent = new Intent(this, MapActivity.class);
-              break;
-            case ONLINE:
-              intent = new Intent(this, OnlineActivity.class);
-              break;
-          }
-          intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-          startActivity(intent);
-        }, throwable -> {
-        });
-  }
-
-  @Override
-  public void showPending(boolean pending) {
-    System.out.println(pending);
-  }
-
-  @Override
-  public void showNetworkErrorMessage(boolean show) {
-    showError = show;
-    showNetworkError(currentActivity);
-  }
-
-  private void showNetworkError(Activity activity) {
-    if (activity != null && showError) {
-      new Builder(activity)
-          .setTitle(R.string.error)
-          .setMessage("Без сети не работаем!")
-          .setCancelable(false)
-          .setPositiveButton(
-              getString(android.R.string.ok),
-              (a, b) -> android.os.Process.killProcess(android.os.Process.myPid())
-          )
-          .create()
-          .show();
-    }
   }
 }

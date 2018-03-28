@@ -17,9 +17,10 @@ public class ChooseVehicleActivity extends BaseActivity {
 
   @Override
   public void navigate(@NonNull String destination) {
-    switch (destination) {
-      case ChooseVehicleNavigate.VEHICLE_OPTIONS:
-        System.out.println(destination);
+    if (destination.equals(ChooseVehicleNavigate.VEHICLE_OPTIONS)) {
+      System.out.println(destination);
+    } else {
+      super.navigate(destination);
     }
   }
 }

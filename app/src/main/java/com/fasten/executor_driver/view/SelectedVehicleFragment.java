@@ -30,12 +30,6 @@ public class SelectedVehicleFragment extends BaseFragment implements SelectedVeh
     this.selectedVehicleViewModel = selectedVehicleViewModel;
   }
 
-  @Override
-  protected void onDependencyInject(AppComponent appComponent) {
-    // Required by Dagger2 for field injection
-    appComponent.inject(this);
-  }
-
   @Nullable
   @Override
   public View onCreateView(@NonNull LayoutInflater inflater,
@@ -44,9 +38,19 @@ public class SelectedVehicleFragment extends BaseFragment implements SelectedVeh
     View view = inflater.inflate(R.layout.fragment_selected_vehicle, container, false);
     changeButton = view.findViewById(R.id.changeButton);
     nameText = view.findViewById(R.id.vehicleNameText);
-
     changeButton.setOnClickListener(v -> selectedVehicleViewModel.changeVehicle());
+    return view;
+  }
 
+  @Override
+  protected void onDependencyInject(AppComponent appComponent) {
+    // Required by Dagger2 for field injection
+    appComponent.inject(this);
+  }
+
+  @Override
+  public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+    super.onActivityCreated(savedInstanceState);
     selectedVehicleViewModel.getNavigationLiveData().observe(this, destination -> {
       if (destination != null) {
         navigate(destination);
@@ -57,7 +61,6 @@ public class SelectedVehicleFragment extends BaseFragment implements SelectedVeh
         viewState.apply(this);
       }
     });
-    return view;
   }
 
   @Override

@@ -7,7 +7,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.fasten.executor_driver.entity.Vehicle;
 import com.fasten.executor_driver.interactor.vehicle.SelectedVehicleUseCase;
-import com.fasten.executor_driver.presentation.SingleLiveEvent;
 import com.fasten.executor_driver.presentation.ViewState;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
@@ -21,7 +20,7 @@ public class SelectedVehicleViewModelImpl extends ViewModel implements SelectedV
   @NonNull
   private final MutableLiveData<ViewState<SelectedVehicleViewActions>> viewStateLiveData;
   @NonNull
-  private final SingleLiveEvent<String> navigateLiveData;
+  private final MutableLiveData<String> navigateLiveData;
   @Nullable
   private Disposable disposable;
 
@@ -30,7 +29,7 @@ public class SelectedVehicleViewModelImpl extends ViewModel implements SelectedV
     this.vehiclesUseCase = vehiclesUseCase;
     viewStateLiveData = new MutableLiveData<>();
     viewStateLiveData.postValue(new SelectedVehicleViewState(""));
-    navigateLiveData = new SingleLiveEvent<>();
+    navigateLiveData = new MutableLiveData<>();
   }
 
   @Override

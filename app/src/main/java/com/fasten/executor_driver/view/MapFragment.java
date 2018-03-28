@@ -66,8 +66,8 @@ public class MapFragment extends SupportMapFragment implements OnMapReadyCallbac
   }
 
   @Override
-  public void onCreate(Bundle bundle) {
-    super.onCreate(bundle);
+  public void onActivityCreated(Bundle bundle) {
+    super.onActivityCreated(bundle);
     if (baseActivity != null) {
       baseActivity.getDiComponent().inject(this);
     }

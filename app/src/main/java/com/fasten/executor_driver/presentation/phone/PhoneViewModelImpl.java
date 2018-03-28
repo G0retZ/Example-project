@@ -5,7 +5,6 @@ import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
 import com.fasten.executor_driver.interactor.auth.LoginUseCase;
-import com.fasten.executor_driver.presentation.SingleLiveEvent;
 import com.fasten.executor_driver.presentation.ViewState;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
@@ -38,7 +37,7 @@ public class PhoneViewModelImpl extends ViewModel implements PhoneViewModel {
   @NonNull
   @Override
   public LiveData<String> getNavigationLiveData() {
-    return new SingleLiveEvent<>();
+    return new MutableLiveData<>();
   }
 
   @Override

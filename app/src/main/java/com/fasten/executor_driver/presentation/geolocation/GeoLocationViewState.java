@@ -5,14 +5,14 @@ import com.fasten.executor_driver.entity.GeoLocation;
 import com.fasten.executor_driver.presentation.ViewState;
 
 /**
- * Состояние вида карты с тепловой картой.
+ * Состояние вида местоположения.
  */
 public final class GeoLocationViewState implements ViewState<GeoLocationViewActions> {
 
   @NonNull
   private final GeoLocation geoLocation;
 
-  public GeoLocationViewState(@NonNull GeoLocation geoLocation) {
+  GeoLocationViewState(@NonNull GeoLocation geoLocation) {
     this.geoLocation = geoLocation;
   }
 

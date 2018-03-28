@@ -13,6 +13,7 @@ android {
         buildConfigField 'String', 'BASE_URL', '"http://dev.capsrv.xyz:8080/executor/"'
         buildConfigField 'String', 'SOCKET_URL', '"ws://dev.capsrv.xyz:8080/executor/ws"'
         buildConfigField 'String', 'GOLOCATION_DESTINATION', '"/mobile/online"'
+        buildConfigField 'String', 'STATS_DESTINATION', '"/queue/%s"'
         vectorDrawables.useSupportLibrary = true
     }
     buildTypes {
@@ -55,7 +56,7 @@ dependencies {
     implementation 'com.squareup.okhttp3:logging-interceptor:3.9.0'
 
     // WebSocket STOMP
-    implementation 'com.github.G0retZ:StompProtocolAndroid:18.0.1'
+    implementation 'com.github.G0retZ:StompProtocolAndroid:18.0.4'
     implementation 'net.sourceforge.streamsupport:streamsupport:1.5.5'
     implementation 'net.sourceforge.streamsupport:streamsupport-cfuture:1.5.5'
 
@@ -63,8 +64,8 @@ dependencies {
     implementation 'javax.inject:javax.inject:1'
 
     // Google Play Services
-    implementation 'com.google.android.gms:play-services-location:11.8.0'
-    implementation 'com.google.android.gms:play-services-maps:11.8.0'
+    implementation 'com.google.android.gms:play-services-location:12.0.0'
+    implementation 'com.google.android.gms:play-services-maps:12.0.0'
     implementation 'com.google.maps.android:android-maps-utils:0.5'
 
     // Testing
