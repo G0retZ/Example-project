@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.fasten.executor_driver.R;
 import com.fasten.executor_driver.presentation.selectedvehicle.SelectedVehicleNavigate;
+import com.fasten.executor_driver.presentation.splahscreen.SplashScreenNavigate;
 import com.fasten.executor_driver.presentation.vehicleoptions.VehicleOptionsNavigate;
 
 public class VehicleOptionsActivity extends BaseActivity {
@@ -21,15 +22,18 @@ public class VehicleOptionsActivity extends BaseActivity {
   public void navigate(@NonNull String destination) {
     Intent intent;
     switch (destination) {
+      case SplashScreenNavigate.MAP_SHIFT_OPENED:
+        return;
       case VehicleOptionsNavigate.SERVICES:
         intent = new Intent(this, ServicesActivity.class);
         startActivity(intent);
         finish();
-        break;
+        return;
       case SelectedVehicleNavigate.VEHICLES:
         intent = new Intent(this, ChooseVehicleActivity.class);
         startActivity(intent);
-        break;
+        return;
     }
+    super.navigate(destination);
   }
 }

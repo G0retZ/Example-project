@@ -4,6 +4,7 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import com.fasten.executor_driver.BuildConfig;
+import com.fasten.executor_driver.application.BaseActivity;
 import com.fasten.executor_driver.application.MainApplication;
 import com.fasten.executor_driver.backend.geolocation.GeolocationCenterImpl;
 import com.fasten.executor_driver.backend.settings.AppPreferences;
@@ -201,6 +202,20 @@ public class AppComponentImpl implements AppComponent {
         )
     );
     mainApplication.setGeoLocationViewModel(
+        new GeoLocationViewModelImpl(
+            geoLocationUseCase
+        )
+    );
+  }
+
+  @Override
+  public void inject(BaseActivity baseActivity) {
+    baseActivity.setSplashScreenViewModel(
+        new SplashScreenViewModelImpl(
+            executorStateUseCase
+        )
+    );
+    baseActivity.setGeoLocationViewModel(
         new GeoLocationViewModelImpl(
             geoLocationUseCase
         )

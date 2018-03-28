@@ -19,6 +19,8 @@ public class PasswordActivity extends BaseActivity {
   public void navigate(@NonNull String destination) {
     if (destination.equals(CodeNavigate.ENTER_APP)) {
       ((MainApplication) getApplication()).reInit();
+    } else {
+      super.navigate(destination);
     }
   }
 }

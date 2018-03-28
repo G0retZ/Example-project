@@ -34,7 +34,7 @@ public class MapActivity extends BaseActivity {
             .setNegativeButton(getString(android.R.string.cancel), null)
             .create()
             .show();
-        break;
+        return;
       case OnlineButtonNavigate.INSUFFICIENT_CREDITS:
         new Builder(this)
             .setTitle(R.string.error)
@@ -43,7 +43,7 @@ public class MapActivity extends BaseActivity {
             .setNegativeButton(getString(android.R.string.cancel), null)
             .create()
             .show();
-        break;
+        return;
       case OnlineButtonNavigate.NO_FREE_VEHICLES:
         new Builder(this)
             .setTitle(R.string.error)
@@ -52,7 +52,7 @@ public class MapActivity extends BaseActivity {
             .setNegativeButton(getString(android.R.string.cancel), null)
             .create()
             .show();
-        break;
+        return;
       case OnlineButtonNavigate.NO_VEHICLES:
         new Builder(this)
             .setTitle(R.string.error)
@@ -61,10 +61,11 @@ public class MapActivity extends BaseActivity {
             .setNegativeButton(getString(android.R.string.cancel), null)
             .create()
             .show();
-        break;
+        return;
       case OnlineButtonNavigate.VEHICLE_OPTIONS:
         startActivity(new Intent(this, VehicleOptionsActivity.class));
-        break;
+        return;
     }
+    super.navigate(destination);
   }
 }

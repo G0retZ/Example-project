@@ -19,6 +19,8 @@ public class LoginActivity extends BaseActivity {
   public void navigate(@NonNull String destination) {
     if (destination.equals("next")) {
       startActivity(new Intent(this, PasswordActivity.class));
+    } else {
+      super.navigate(destination);
     }
   }
 }
