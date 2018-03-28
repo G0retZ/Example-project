@@ -8,11 +8,11 @@ import java.lang.annotation.RetentionPolicy;
  * Направления навигации из окна ввода кода-пароля.
  */
 @StringDef({
-    CodeNavigate.MAP
+    CodeNavigate.ENTER_APP
 })
 @Retention(RetentionPolicy.SOURCE)
 public @interface CodeNavigate {
 
   // Переход к карте для выхода на линию.
-  String MAP = "ChooseVehicle.to.Map";
+  String ENTER_APP = "Code.enter.application";
 }

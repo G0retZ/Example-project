@@ -7,4 +7,8 @@ import com.fasten.executor_driver.presentation.ViewModel;
  */
 public interface GeoLocationViewModel extends ViewModel<GeoLocationViewActions> {
 
+  /**
+   * Начать получть геопозиции.
+   */
+  void updateGeoLocations();
 }

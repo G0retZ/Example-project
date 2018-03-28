@@ -1,5 +1,6 @@
 package com.fasten.executor_driver.presentation.geolocation;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -7,14 +8,14 @@ import static org.mockito.Mockito.when;
 
 import android.arch.core.executor.testing.InstantTaskExecutorRule;
 import android.arch.lifecycle.Observer;
+import com.fasten.executor_driver.backend.web.NoNetworkException;
 import com.fasten.executor_driver.entity.GeoLocation;
-import com.fasten.executor_driver.interactor.DataReceiver;
+import com.fasten.executor_driver.interactor.GeoLocationUseCase;
 import com.fasten.executor_driver.presentation.ViewState;
-import io.reactivex.Observable;
+import io.reactivex.Flowable;
 import io.reactivex.android.plugins.RxAndroidPlugins;
 import io.reactivex.plugins.RxJavaPlugins;
 import io.reactivex.schedulers.Schedulers;
-import io.reactivex.subjects.PublishSubject;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -35,14 +36,14 @@ public class GeoLocationViewModelTest {
   private Observer<ViewState<GeoLocationViewActions>> viewStateObserver;
 
   @Mock
-  private DataReceiver<GeoLocation> geoLocationReceiver;
+  private GeoLocationUseCase geoLocationUseCase;
 
   @Before
   public void setUp() throws Exception {
     RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
     RxAndroidPlugins.setInitMainThreadSchedulerHandler(scheduler -> Schedulers.trampoline());
-    when(geoLocationReceiver.get()).thenReturn(Observable.never());
-    mapViewModel = new GeoLocationViewModelImpl(geoLocationReceiver);
+    when(geoLocationUseCase.getGeoLocations()).thenReturn(Flowable.never());
+    mapViewModel = new GeoLocationViewModelImpl(geoLocationUseCase);
   }
 
   /* Тетсируем работу с публикатором местоположения. */
@@ -55,10 +56,10 @@ public class GeoLocationViewModelTest {
   @Test
   public void askDataReceiverToSubscribeToLocationUpdates() throws Exception {
     // Действие:
-    mapViewModel.getViewStateLiveData();
+    mapViewModel.updateGeoLocations();
 
     // Результат:
-    verify(geoLocationReceiver, only()).get();
+    verify(geoLocationUseCase, only()).getGeoLocations();
   }
 
   /**
@@ -69,12 +70,12 @@ public class GeoLocationViewModelTest {
   @Test
   public void DoNotTouchDataReceiverAfterFirstSubscription() throws Exception {
     // Действие:
-    mapViewModel.getViewStateLiveData();
-    mapViewModel.getViewStateLiveData();
-    mapViewModel.getViewStateLiveData();
+    mapViewModel.updateGeoLocations();
+    mapViewModel.updateGeoLocations();
+    mapViewModel.updateGeoLocations();
 
     // Результат:
-    verify(geoLocationReceiver, only()).get();
+    verify(geoLocationUseCase, only()).getGeoLocations();
   }
 
   /* Тетсируем переключение состояний */
@@ -88,15 +89,16 @@ public class GeoLocationViewModelTest {
   public void setViewStatesWithDataToLiveData() throws Exception {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    PublishSubject<GeoLocation> publishSubject = PublishSubject.create();
-    when(geoLocationReceiver.get()).thenReturn(publishSubject);
+    when(geoLocationUseCase.getGeoLocations()).thenReturn(Flowable.just(
+        new GeoLocation(1, 2, 3),
+        new GeoLocation(4, 5, 6),
+        new GeoLocation(7, 8, 9),
+        new GeoLocation(11, 22, 33)
+    ));
 
     // Действие:
     mapViewModel.getViewStateLiveData().observeForever(viewStateObserver);
-    publishSubject.onNext(new GeoLocation(1, 2, 3));
-    publishSubject.onNext(new GeoLocation(4, 5, 6));
-    publishSubject.onNext(new GeoLocation(7, 8, 9));
-    publishSubject.onNext(new GeoLocation(11, 22, 33));
+    mapViewModel.updateGeoLocations();
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(
@@ -112,5 +114,23 @@ public class GeoLocationViewModelTest {
         new GeoLocationViewState(new GeoLocation(11, 22, 33))
     );
     verifyNoMoreInteractions(viewStateObserver);
+  }
+
+  /**
+   * Должен вернуть состояния с ошибкой получения местоположения.
+   *
+   * @throws Exception error
+   */
+  @Test
+  public void setViewStateWithErrorToLiveData() throws Exception {
+    // Дано:
+    when(geoLocationUseCase.getGeoLocations()).thenReturn(Flowable.error(NoNetworkException::new));
+
+    // Действие:
+    mapViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    mapViewModel.updateGeoLocations();
+
+    // Результат:
+    verify(viewStateObserver, only()).onChanged(any(GeoLocationViewStateError.class));
   }
 }

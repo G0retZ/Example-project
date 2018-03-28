@@ -74,7 +74,7 @@ public class ServicesOptionsViewModelImpl extends ViewModel implements OptionsVi
           new Service(
               optionBoolean.getId(),
               optionBoolean.getName(),
-              Long.parseLong(optionBoolean.getDescription()),
+              0,//Long.parseLong(optionBoolean.getDescription()),
               optionBoolean.getValue()
           )
       );

@@ -7,4 +7,8 @@ import com.fasten.executor_driver.presentation.ViewModel;
  */
 public interface SplashScreenViewModel extends ViewModel<SplashScreenViewActions> {
 
+  /**
+   * Запрашивает инициализацию приложения.
+   */
+  void initializeApp();
 }

@@ -9,16 +9,20 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
+import com.fasten.executor_driver.backend.websocket.ConnectionClosedException;
 import com.fasten.executor_driver.entity.ExecutorState;
 import com.fasten.executor_driver.entity.GeoLocation;
+import io.reactivex.Completable;
 import io.reactivex.Flowable;
-import io.reactivex.Observable;
-import io.reactivex.Observer;
 import io.reactivex.functions.Action;
+import io.reactivex.subscribers.TestSubscriber;
+import java.net.ConnectException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InOrder;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -27,78 +31,147 @@ public class GeoLocationUseCaseTest {
   private GeoLocationUseCase geoLocationUseCase;
 
   @Mock
-  private GeoLocationGateway gateway;
+  private GeoLocationGateway geoLocationGateway;
 
   @Mock
-  private DataReceiver<ExecutorState> executorStateReceiver;
+  private GeoTrackingGateway geoTrackingGateway;
 
   @Mock
-  private Observer<GeoLocation> geoLocationObserver;
+  private ExecutorStateUseCase executorStateUseCase;
 
   @Mock
   private Action action;
 
   @Before
   public void setUp() throws Exception {
-    when(gateway.getGeoLocations(anyLong())).thenReturn(Flowable.never());
-    when(executorStateReceiver.get()).thenReturn(Observable.never());
+    when(geoLocationGateway.getGeoLocations(anyLong())).thenReturn(Flowable.never());
+    when(geoTrackingGateway.sendGeoLocation(any())).thenReturn(Completable.complete());
+    when(executorStateUseCase.getExecutorStates()).thenReturn(Flowable.never());
     geoLocationUseCase = new GeoLocationUseCaseImpl(
-        gateway, executorStateReceiver, geoLocationObserver
+        geoLocationGateway, geoTrackingGateway, executorStateUseCase
     );
   }
 
-  /* Проверяем работу с публикатором состояний */
+  /* Проверяем работу с юзкейсом состояний */
 
   /**
-   * Должен получить смену состояний исполнителя.
+   * Должен запросить получение смены состояний исполнителя.
    *
    * @throws Exception error
    */
   @Test
   public void getExecutorStates() throws Exception {
     // Действие:
-    geoLocationUseCase.reload().test();
+    geoLocationUseCase.getGeoLocations().test();
 
     // Результат:
-    verify(executorStateReceiver, only()).get();
+    verify(executorStateUseCase, only()).getExecutorStates();
   }
 
   /**
-   * Должен получить смену состояний исполнителя вновь, отписавшись от прошлого запроса.
+   * Не должен запрашивать получение смены состояний исполнителя вновь, если ошибок не было.
    *
    * @throws Exception error
    */
   @Test
-  public void getExecutorStatesDisposingFromThePrevious() throws Exception {
+  public void getExecutorStatesAgainAfterReload() throws Exception {
+    // Действие:
+    geoLocationUseCase.getGeoLocations().test();
+    geoLocationUseCase.getGeoLocations().test();
+
+    // Результат:
+    verify(executorStateUseCase, only()).getExecutorStates();
+  }
+
+  /**
+   * Должен запросить получение смены состояний исполнителя вновь, после ошибки.
+   *
+   * @throws Exception error
+   */
+  @Test
+  public void getExecutorStatesAgainAfterError() throws Exception {
     // Дано:
-    when(executorStateReceiver.get())
-        .thenReturn(Observable.<ExecutorState>never().doOnDispose(action));
+    when(executorStateUseCase.getExecutorStates())
+        .thenReturn(Flowable.error(new ConnectionClosedException()));
 
     // Действие:
-    geoLocationUseCase.reload().test();
-    geoLocationUseCase.reload().test();
+    geoLocationUseCase.getGeoLocations().test();
+    geoLocationUseCase.getGeoLocations().test();
 
     // Результат:
-    verify(executorStateReceiver, times(2)).get();
-    verifyNoMoreInteractions(executorStateReceiver);
-    verify(action, only()).run();
+    verify(executorStateUseCase, times(2)).getExecutorStates();
+    verifyNoMoreInteractions(executorStateUseCase);
   }
 
   /**
-   * Не должен трогать гейтвей, при отказе получения локаций.
+   * Должен запросить получение смены состояний исполнителя вновь, после окончания.
    *
    * @throws Exception error
    */
   @Test
-  public void doNotTouchGatewayIfStop() throws Exception {
+  public void getExecutorStatesAgainAfterComplete() throws Exception {
+    // Дано:
+    when(executorStateUseCase.getExecutorStates()).thenReturn(Flowable.empty());
+
     // Действие:
-    geoLocationUseCase.stop().test();
+    geoLocationUseCase.getGeoLocations().test();
+    geoLocationUseCase.getGeoLocations().test();
 
     // Результат:
-    verifyZeroInteractions(gateway);
+    verify(executorStateUseCase, times(2)).getExecutorStates();
+    verifyNoMoreInteractions(executorStateUseCase);
   }
 
-  /* Проверяем работу с гейтвеем в ответ на смену состояний */
+  /* Проверяем работу с гейтвеем геолокации в ответ на смену состояний */
+
+  /**
+   * Не должен трогать гейтвей, до получения статуса.
+   *
+   * @throws Exception error
+   */
+  @Test
+  public void doNotTouchGatewayIfNoStatus() throws Exception {
+    // Действие:
+    geoLocationUseCase.getGeoLocations().test();
+
+    // Результат:
+    verifyZeroInteractions(geoLocationGateway);
+  }
+
+  /**
+   * Не должен трогать гейтвей, при ошибке в статусах.
+   *
+   * @throws Exception error
+   */
+  @Test
+  public void doNotTouchGatewayIfStatusError() throws Exception {
+    // Дано:
+    when(executorStateUseCase.getExecutorStates())
+        .thenReturn(Flowable.error(new ConnectionClosedException()));
+
+    // Действие:
+    geoLocationUseCase.getGeoLocations().test();
+
+    // Результат:
+    verifyZeroInteractions(geoLocationGateway);
+  }
+
+  /**
+   * Не должен трогать гейтвей, при завершении в статусах.
+   *
+   * @throws Exception error
+   */
+  @Test
+  public void doNotTouchGatewayIfStatusComplete() throws Exception {
+    // Дано:
+    when(executorStateUseCase.getExecutorStates()).thenReturn(Flowable.empty());
+
+    // Действие:
+    geoLocationUseCase.getGeoLocations().test();
+
+    // Результат:
+    verifyZeroInteractions(geoLocationGateway);
+  }
 
   /**
    * Должен запросить гейтвей получать локации с интервалом 1 час,
@@ -106,18 +179,17 @@ public class GeoLocationUseCaseTest {
    *
    * @throws Exception error
    */
-  @SuppressWarnings("unchecked")
   @Test
-  public void doNotTouchGatewayIfGoToShiftClosed() throws Exception {
+  public void askGatewayForLocationsEvery1HourIfGoToShiftClosed() throws Exception {
     // Дано:
-    when(executorStateReceiver.get())
-        .thenReturn(Observable.just(ExecutorState.SHIFT_CLOSED), Observable.never());
+    when(executorStateUseCase.getExecutorStates())
+        .thenReturn(Flowable.just(ExecutorState.SHIFT_CLOSED));
 
     // Действие:
-    geoLocationUseCase.reload().test();
+    geoLocationUseCase.getGeoLocations().test();
 
     // Результат:
-    verify(gateway, only()).getGeoLocations(3600000);
+    verify(geoLocationGateway, only()).getGeoLocations(3600000);
   }
 
   /**
@@ -126,18 +198,17 @@ public class GeoLocationUseCaseTest {
    *
    * @throws Exception error
    */
-  @SuppressWarnings("unchecked")
   @Test
   public void askGatewayForLocationsEvery180secIfGoToShiftOpened() throws Exception {
     // Дано:
-    when(executorStateReceiver.get())
-        .thenReturn(Observable.just(ExecutorState.SHIFT_OPENED), Observable.never());
+    when(executorStateUseCase.getExecutorStates())
+        .thenReturn(Flowable.just(ExecutorState.SHIFT_OPENED));
 
     // Действие:
-    geoLocationUseCase.reload().test();
+    geoLocationUseCase.getGeoLocations().test();
 
     // Результат:
-    verify(gateway, only()).getGeoLocations(180000);
+    verify(geoLocationGateway, only()).getGeoLocations(180000);
   }
 
   /**
@@ -146,163 +217,229 @@ public class GeoLocationUseCaseTest {
    *
    * @throws Exception error
    */
-  @SuppressWarnings("unchecked")
   @Test
   public void askGatewayForLocationsEvery15secIfGoToOnline() throws Exception {
     // Дано:
-    when(executorStateReceiver.get())
-        .thenReturn(Observable.just(ExecutorState.ONLINE), Observable.never());
+    when(executorStateUseCase.getExecutorStates()).thenReturn(Flowable.just(ExecutorState.ONLINE));
 
     // Действие:
-    geoLocationUseCase.reload().test();
+    geoLocationUseCase.getGeoLocations().test();
 
     // Результат:
-    verify(gateway, only()).getGeoLocations(15000);
+    verify(geoLocationGateway, only()).getGeoLocations(15000);
   }
 
   /**
-   * Должен отписаться от прошлого запроса к гейтвею, при переходе в состояние "Смена открыта" из
-   * состояния "Смена закрыта".
+   * Должен запросить гейтвей получать локации с различным интервалом, при смене состояний.
    *
    * @throws Exception error
    */
-  @SuppressWarnings("unchecked")
   @Test
-  public void disposePreviousGatewayQueryIfGoToShiftOpenedFromShiftClosed() throws Exception {
+  public void askGatewayForLocationsDependingOnNewStatesArrival() throws Exception {
     // Дано:
-    when(gateway.getGeoLocations(anyLong()))
+    InOrder inOrder = Mockito.inOrder(geoLocationGateway);
+    when(executorStateUseCase.getExecutorStates()).thenReturn(Flowable.just(
+        ExecutorState.SHIFT_CLOSED, ExecutorState.SHIFT_OPENED, ExecutorState.ONLINE,
+        ExecutorState.SHIFT_OPENED, ExecutorState.SHIFT_CLOSED
+    ));
+
+    // Действие:
+    geoLocationUseCase.getGeoLocations().test();
+
+    // Результат:
+    inOrder.verify(geoLocationGateway).getGeoLocations(3600000);
+    inOrder.verify(geoLocationGateway).getGeoLocations(180000);
+    inOrder.verify(geoLocationGateway).getGeoLocations(15000);
+    inOrder.verify(geoLocationGateway).getGeoLocations(180000);
+    inOrder.verify(geoLocationGateway).getGeoLocations(3600000);
+    verifyNoMoreInteractions(geoLocationGateway);
+  }
+
+  /**
+   * Должен запросить гейтвей получать локации с различным интервалом, при смене состояний.
+   *
+   * @throws Exception error
+   */
+  @Test
+  public void disposePreviousGatewayQueriesOnNewStatesArrival() throws Exception {
+    // Дано:
+    when(executorStateUseCase.getExecutorStates()).thenReturn(Flowable.just(
+        ExecutorState.SHIFT_CLOSED, ExecutorState.SHIFT_OPENED, ExecutorState.ONLINE,
+        ExecutorState.SHIFT_OPENED, ExecutorState.SHIFT_CLOSED
+    ));
+    when(geoLocationGateway.getGeoLocations(anyLong()))
         .thenReturn(Flowable.<GeoLocation>never().doOnCancel(action));
-    when(executorStateReceiver.get()).thenReturn(
-        Observable.just(ExecutorState.SHIFT_CLOSED),
-        Observable.just(ExecutorState.SHIFT_OPENED),
-        Observable.never()
+
+    // Действие:
+    geoLocationUseCase.getGeoLocations().test();
+
+    // Результат:
+    verify(action, times(4)).run();
+  }
+
+  /* Проверяем работу с гейтвеем отправки геопозиции в ответ на ответы гейтвея геопозиции */
+
+  /**
+   * Не должен трогать гейтвей передачи геолокаций до получения геолокаций.
+   *
+   * @throws Exception error
+   */
+  @Test
+  public void doNotTouchTrackingGatewayOnEmptyStates() throws Exception {
+    // Дано:
+    when(executorStateUseCase.getExecutorStates()).thenReturn(Flowable.empty());
+
+    // Действие:
+    geoLocationUseCase.getGeoLocations().test();
+
+    // Результат:
+    verifyZeroInteractions(geoTrackingGateway);
+  }
+
+  /**
+   * Должен отправить полученную геопозицию через гейтвей передачи геолокаций.
+   *
+   * @throws Exception error
+   */
+  @Test
+  public void askTrackingGatewayToSendNewGeoLocation() throws Exception {
+    // Дано:
+    when(executorStateUseCase.getExecutorStates())
+        .thenReturn(Flowable.just(ExecutorState.SHIFT_CLOSED));
+    when(geoLocationGateway.getGeoLocations(anyLong()))
+        .thenReturn(Flowable.just(new GeoLocation(1, 2, 3)));
+
+    // Действие:
+    geoLocationUseCase.getGeoLocations().test();
+
+    // Результат:
+    verify(geoTrackingGateway, only()).sendGeoLocation(new GeoLocation(1, 2, 3));
+  }
+
+  /**
+   * Не должен трогать гейтвей передачи геолокаций при ошибке получения статусов.
+   *
+   * @throws Exception error
+   */
+  @Test
+  public void doNotTouchTrackingGatewayOnGetStateError() throws Exception {
+    // Дано:
+    when(executorStateUseCase.getExecutorStates())
+        .thenReturn(Flowable.error(ConnectException::new));
+
+    // Действие:
+    geoLocationUseCase.getGeoLocations().test();
+
+    // Результат:
+    verifyZeroInteractions(geoTrackingGateway);
+  }
+
+  /**
+   * Не должен трогать гейтвей передачи геолокаций при ошибке получения геолокаций.
+   *
+   * @throws Exception error
+   */
+  @Test
+  public void doNotTouchTrackingGatewayOnGetGeolocationError() throws Exception {
+    // Дано:
+    when(executorStateUseCase.getExecutorStates())
+        .thenReturn(Flowable.just(ExecutorState.SHIFT_CLOSED));
+    when(geoLocationGateway.getGeoLocations(anyLong())).thenReturn(Flowable.error(new Exception()));
+
+    // Действие:
+    geoLocationUseCase.getGeoLocations().test();
+
+    // Результат:
+    verifyZeroInteractions(geoTrackingGateway);
+  }
+
+  /* Проверяем ответы гейтвея геопозиции */
+
+  /**
+   * Должен вернуть полученные геопозиции.
+   *
+   * @throws Exception error
+   */
+  @Test
+  public void answerWithNewGeoLocations() throws Exception {
+    // Дано:
+    when(executorStateUseCase.getExecutorStates())
+        .thenReturn(Flowable.just(ExecutorState.SHIFT_CLOSED));
+    when(geoLocationGateway.getGeoLocations(anyLong())).thenReturn(Flowable.just(
+        new GeoLocation(1, 2, 3),
+        new GeoLocation(4, 5, 6),
+        new GeoLocation(7, 8, 9)
+    ));
+
+    // Действие:
+    TestSubscriber<GeoLocation> testSubscriber = geoLocationUseCase.getGeoLocations().test();
+
+    // Результат:
+    testSubscriber.assertValues(
+        new GeoLocation(1, 2, 3),
+        new GeoLocation(4, 5, 6),
+        new GeoLocation(7, 8, 9)
     );
-
-    // Действие:
-    geoLocationUseCase.reload().test();
-    geoLocationUseCase.reload().test();
-
-    // Результат:
-    verify(action, only()).run();
+    testSubscriber.assertNoErrors();
+    testSubscriber.assertComplete();
   }
 
   /**
-   * Должен отписаться от прошлого запроса к гейтвею, при переходе в состояние "На линии" из
-   * состояния "Смена открыта".
+   * Должен вернуть ошибку при ошибке получения статусов.
    *
    * @throws Exception error
    */
-  @SuppressWarnings("unchecked")
   @Test
-  public void disposePreviousGatewayQueryIfGoToOnlineFromShiftOpened() throws Exception {
+  public void answerWithErrorOnGetStateError() throws Exception {
     // Дано:
-    when(gateway.getGeoLocations(anyLong()))
-        .thenReturn(Flowable.<GeoLocation>never().doOnCancel(action));
-    when(executorStateReceiver.get()).thenReturn(
-        Observable.just(ExecutorState.SHIFT_OPENED),
-        Observable.just(ExecutorState.ONLINE),
-        Observable.never()
-    );
+    when(executorStateUseCase.getExecutorStates())
+        .thenReturn(Flowable.error(ConnectException::new));
 
     // Действие:
-    geoLocationUseCase.reload().test();
-    geoLocationUseCase.reload().test();
+    TestSubscriber<GeoLocation> testSubscriber = geoLocationUseCase.getGeoLocations().test();
 
     // Результат:
-    verify(action, only()).run();
+    testSubscriber.assertNoValues();
+    testSubscriber.assertNoErrors();
+    testSubscriber.assertComplete();
   }
 
   /**
-   * Должен отписаться от прошлого запроса к гейтвею, при переходе в состояние "Смена открыта" из
-   * состояния "На линии".
+   * Должен вернуть ошибку при ошибке получения местоположений.
    *
    * @throws Exception error
    */
-  @SuppressWarnings("unchecked")
   @Test
-  public void disposePreviousGatewayQueryIfGoToShiftOpenedFromOnline() throws Exception {
+  public void answerWithErrorOnGetGeolocationError() throws Exception {
     // Дано:
-    when(gateway.getGeoLocations(anyLong()))
-        .thenReturn(Flowable.<GeoLocation>never().doOnCancel(action));
-    when(executorStateReceiver.get()).thenReturn(
-        Observable.just(ExecutorState.ONLINE),
-        Observable.just(ExecutorState.SHIFT_OPENED),
-        Observable.never()
-    );
+    when(executorStateUseCase.getExecutorStates())
+        .thenReturn(Flowable.just(ExecutorState.SHIFT_CLOSED));
+    when(geoLocationGateway.getGeoLocations(anyLong())).thenReturn(Flowable.error(new Exception()));
 
     // Действие:
-    geoLocationUseCase.reload().test();
-    geoLocationUseCase.reload().test();
+    TestSubscriber<GeoLocation> testSubscriber = geoLocationUseCase.getGeoLocations().test();
 
     // Результат:
-    verify(action, only()).run();
+    testSubscriber.assertNoValues();
+    testSubscriber.assertError(Exception.class);
   }
 
   /**
-   * Должен отписаться от прошлого запроса к гейтвею, при переходе в состояние "Смена закрыта" из
-   * состояния "Смена открыта".
+   * Должен ответить завершением.
    *
    * @throws Exception error
    */
-  @SuppressWarnings("unchecked")
   @Test
-  public void disposePreviousGatewayQueryIfGoToShiftClosedFromShiftOpened() throws Exception {
+  public void answerWithComplete() throws Exception {
     // Дано:
-    when(gateway.getGeoLocations(anyLong()))
-        .thenReturn(Flowable.<GeoLocation>never().doOnCancel(action));
-    when(executorStateReceiver.get()).thenReturn(
-        Observable.just(ExecutorState.SHIFT_OPENED),
-        Observable.just(ExecutorState.SHIFT_CLOSED),
-        Observable.never()
-    );
+    when(executorStateUseCase.getExecutorStates()).thenReturn(Flowable.empty());
 
     // Действие:
-    geoLocationUseCase.reload().test();
-    geoLocationUseCase.reload().test();
+    TestSubscriber<GeoLocation> testSubscriber = geoLocationUseCase.getGeoLocations().test();
 
     // Результат:
-    verify(action, only()).run();
-  }
-
-  /* Проверяем работу с публикатором геопозиции в ответ на ответы гейтвея */
-
-  /**
-   * Должен опубликовать полученную геопозицию.
-   *
-   * @throws Exception error
-   */
-  @SuppressWarnings("unchecked")
-  @Test
-  public void publishNewGeoLocation() throws Exception {
-    // Дано:
-    when(executorStateReceiver.get())
-        .thenReturn(Observable.just(ExecutorState.ONLINE), Observable.never());
-    when(gateway.getGeoLocations(anyLong())).thenReturn(Flowable.just(new GeoLocation(1, 2, 3)));
-
-    // Действие:
-    geoLocationUseCase.reload().test();
-
-    // Результат:
-    verify(geoLocationObserver, only()).onNext(new GeoLocation(1, 2, 3));
-  }
-
-  /**
-   * Должен опубликовать ошибку.
-   *
-   * @throws Exception error
-   */
-  @SuppressWarnings("unchecked")
-  @Test
-  public void publishError() throws Exception {
-    // Дано:
-    when(executorStateReceiver.get())
-        .thenReturn(Observable.just(ExecutorState.ONLINE), Observable.never());
-    when(gateway.getGeoLocations(anyLong())).thenReturn(Flowable.error(new Exception()));
-
-    // Действие:
-    geoLocationUseCase.reload().test();
-
-    // Результат:
-    verify(geoLocationObserver, only()).onError(any(Exception.class));
+    testSubscriber.assertNoValues();
+    testSubscriber.assertNoErrors();
+    testSubscriber.assertComplete();
   }
 }

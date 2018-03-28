@@ -176,4 +176,8 @@ public class MapFragment extends SupportMapFragment implements OnMapReadyCallbac
       );
     }
   }
+
+  @Override
+  public void showGeoLocationError(boolean show) {
+  }
 }

@@ -1,14 +1,18 @@
 package com.fasten.executor_driver.interactor;
 
-import io.reactivex.Completable;
+import com.fasten.executor_driver.entity.ExecutorState;
+import io.reactivex.Flowable;
 
 /**
- * Юзкейс запроса статуса исполнителя.
+ * Юзкейс статусов исполнителя.
  */
 public interface ExecutorStateUseCase {
 
+
   /**
-   * Загружает статус пользователя.
+   * Запрашивает статусы исполнителя.
+   *
+   * @return {@link Flowable<ExecutorState>} результат запроса.
    */
-  Completable loadStatus();
+  Flowable<ExecutorState> getExecutorStates();
 }

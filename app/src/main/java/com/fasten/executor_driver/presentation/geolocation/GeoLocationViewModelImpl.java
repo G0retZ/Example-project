@@ -5,8 +5,7 @@ import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import com.fasten.executor_driver.entity.GeoLocation;
-import com.fasten.executor_driver.interactor.DataReceiver;
+import com.fasten.executor_driver.interactor.GeoLocationUseCase;
 import com.fasten.executor_driver.presentation.SingleLiveEvent;
 import com.fasten.executor_driver.presentation.ViewState;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -17,7 +16,7 @@ import javax.inject.Inject;
 public class GeoLocationViewModelImpl extends ViewModel implements GeoLocationViewModel {
 
   @NonNull
-  private final DataReceiver<GeoLocation> geoLocationReceiver;
+  private final GeoLocationUseCase geoLocationUseCase;
 
   @NonNull
   private final MutableLiveData<ViewState<GeoLocationViewActions>> viewStateLiveData;
@@ -25,15 +24,14 @@ public class GeoLocationViewModelImpl extends ViewModel implements GeoLocationVi
   private Disposable disposable;
 
   @Inject
-  public GeoLocationViewModelImpl(@NonNull DataReceiver<GeoLocation> geoLocationReceiver) {
-    this.geoLocationReceiver = geoLocationReceiver;
+  public GeoLocationViewModelImpl(@NonNull GeoLocationUseCase geoLocationUseCase) {
+    this.geoLocationUseCase = geoLocationUseCase;
     viewStateLiveData = new MutableLiveData<>();
   }
 
   @NonNull
   @Override
   public LiveData<ViewState<GeoLocationViewActions>> getViewStateLiveData() {
-    getLocationUpdates();
     return viewStateLiveData;
   }
 
@@ -43,17 +41,18 @@ public class GeoLocationViewModelImpl extends ViewModel implements GeoLocationVi
     return new SingleLiveEvent<>();
   }
 
-  private void getLocationUpdates() {
+  @Override
+  public void updateGeoLocations() {
     if (disposable != null && !disposable.isDisposed()) {
       return;
     }
-    disposable = geoLocationReceiver.get()
+    disposable = geoLocationUseCase.getGeoLocations()
         .subscribeOn(Schedulers.single())
         .observeOn(AndroidSchedulers.mainThread())
-        .doAfterTerminate(this::getLocationUpdates)
-        .subscribe(location -> viewStateLiveData.postValue(new GeoLocationViewState(location)),
-            throwable -> {
-            });
+        .subscribe(
+            location -> viewStateLiveData.postValue(new GeoLocationViewState(location)),
+            throwable -> viewStateLiveData.postValue(new GeoLocationViewStateError())
+        );
   }
 
   @Override

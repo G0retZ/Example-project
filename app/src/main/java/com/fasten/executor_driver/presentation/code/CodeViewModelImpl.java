@@ -62,7 +62,7 @@ public class CodeViewModelImpl extends ViewModel implements CodeViewModel {
         .subscribeOn(Schedulers.single())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(
-            () -> navigateLiveData.postValue(CodeNavigate.MAP),
+            () -> navigateLiveData.postValue(CodeNavigate.ENTER_APP),
             throwable -> {
               if (throwable instanceof NoNetworkException) {
                 viewStateLiveData.postValue(new CodeViewStateNetworkError());

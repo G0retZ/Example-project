@@ -1,4 +1,4 @@
-package com.fasten.executor_driver.presentation.splahscreen;
+package com.fasten.executor_driver.presentation.geolocation;
 
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -10,26 +10,25 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
-public class SplashScreenViewStateDoneTest {
+public class GeoLocationViewStateErrorTest {
 
-  private SplashScreenViewStateDone viewState;
+  private GeoLocationViewStateError viewState;
 
   @Mock
-  private SplashScreenViewActions codeViewActions;
+  private GeoLocationViewActions mapViewActions;
 
   @Before
   public void setUp() throws Exception {
-    viewState = new SplashScreenViewStateDone();
+    viewState = new GeoLocationViewStateError();
   }
 
   @Test
   public void testActions() throws Exception {
     // Действие:
-    viewState.apply(codeViewActions);
+    viewState.apply(mapViewActions);
 
     // Результат:
-    verify(codeViewActions).showPending(false);
-    verify(codeViewActions).showNetworkErrorMessage(false);
-    verifyNoMoreInteractions(codeViewActions);
+    verify(mapViewActions).showGeoLocationError(true);
+    verifyNoMoreInteractions(mapViewActions);
   }
 }

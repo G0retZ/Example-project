@@ -1,17 +1,27 @@
 package com.fasten.executor_driver.interactor;
 
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.only;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 import com.fasten.executor_driver.backend.web.NoNetworkException;
 import com.fasten.executor_driver.entity.ExecutorState;
+import io.reactivex.Completable;
 import io.reactivex.Flowable;
-import io.reactivex.Observer;
+import io.reactivex.Observable;
+import io.reactivex.functions.Action;
+import io.reactivex.subscribers.TestSubscriber;
+import java.net.ConnectException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InOrder;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -23,12 +33,55 @@ public class ExecutorStateUseCaseTest {
   private ExecutorStateGateway gateway;
 
   @Mock
-  private Observer<ExecutorState> executorStateObserver;
+  private SocketGateway socketGateway;
+
+  @Mock
+  private DataReceiver<String> loginReceiver;
+
+  @Mock
+  private Action action;
 
   @Before
   public void setUp() throws Exception {
-    when(gateway.getState()).thenReturn(Flowable.never());
-    executorStateUseCase = new ExecutorStateUseCaseImpl(gateway, executorStateObserver);
+    when(gateway.getState(anyString())).thenReturn(Flowable.never());
+    when(loginReceiver.get()).thenReturn(Observable.never());
+    when(socketGateway.openSocket()).thenReturn(Completable.never());
+    executorStateUseCase = new ExecutorStateUseCaseImpl(gateway, socketGateway, loginReceiver);
+  }
+
+  /* Проверяем работу с гейтвеем сокета */
+
+  /**
+   * Должен запросить у гейтвея соединение.
+   *
+   * @throws Exception error
+   */
+  @Test
+  public void askSocketGatewayForConnection() throws Exception {
+    // Действие:
+    executorStateUseCase.getExecutorStates().test();
+
+    // Результат:
+    verify(socketGateway, only()).openSocket();
+  }
+
+  /* Проверяем работу с публикатором логина */
+
+  /**
+   * Должен запросить у публикатора логин исполнителя.
+   *
+   * @throws Exception error
+   */
+  @Test
+  public void askLoginPublisherForLogin() throws Exception {
+    // Дано:
+    when(socketGateway.openSocket()).thenReturn(Completable.complete());
+
+    // Действие:
+    executorStateUseCase.getExecutorStates().test();
+
+    // Результат:
+    verify(loginReceiver, only()).get();
   }
 
   /* Проверяем работу с гейтвеем */
@@ -39,94 +92,165 @@ public class ExecutorStateUseCaseTest {
    * @throws Exception error
    */
   @Test
-  public void askGatewayForAuth() throws Exception {
+  public void askGatewayForStatus() throws Exception {
+    // Дано:
+    InOrder inOrder = Mockito.inOrder(gateway);
+    when(socketGateway.openSocket()).thenReturn(Completable.complete());
+    when(loginReceiver.get()).thenReturn(Observable.just(
+        "1234567890", "0987654321", "123454321", "09876567890"
+    ));
+
     // Действие:
-    executorStateUseCase.loadStatus().test();
+    executorStateUseCase.getExecutorStates().test();
 
     // Результат:
-    verify(gateway, only()).getState();
+    inOrder.verify(gateway).getState("1234567890");
+    inOrder.verify(gateway).getState("0987654321");
+    inOrder.verify(gateway).getState("123454321");
+    inOrder.verify(gateway).getState("09876567890");
+    verifyNoMoreInteractions(gateway);
   }
 
-  /* Проверяем ответы на авторизацию */
-
   /**
-   * Должен ответить ошибкой сети.
+   * Должен отписаться от предыдущих запросов статусов исполнителя.
    *
    * @throws Exception error
    */
   @Test
-  public void answerNoNetworkError() throws Exception {
+  public void ubSubscribeFromPreviousRequestsToGateway() throws Exception {
+    // Дано:
+    when(socketGateway.openSocket()).thenReturn(Completable.complete());
+    when(loginReceiver.get()).thenReturn(Observable.just(
+        "1234567890", "0987654321", "123454321", "09876567890"
+    ));
+    when(gateway.getState(anyString()))
+        .thenReturn(Flowable.<ExecutorState>never().doOnCancel(action));
+
     // Действие:
-    when(gateway.getState()).thenReturn(Flowable.error(new NoNetworkException()));
+    executorStateUseCase.getExecutorStates().test();
 
     // Результат:
-    executorStateUseCase.loadStatus().test().assertError(NoNetworkException.class);
+    verify(action, times(3)).run();
   }
 
   /**
-   * Должен ответить успехом.
+   * Не должен запрпрашивать у гейтвея статус исполнителя.
+   *
+   * @throws Exception error
+   */
+  @Test
+  public void doNotAskGatewayForStatus() throws Exception {
+    // Дано:
+    when(socketGateway.openSocket()).thenReturn(Completable.complete());
+    when(loginReceiver.get()).thenReturn(Observable.error(NoNetworkException::new));
+
+    // Действие:
+    executorStateUseCase.getExecutorStates().test();
+
+    // Результат:
+    verifyZeroInteractions(gateway);
+  }
+
+  /* Проверяем ответы */
+
+  /**
+   * Должен вернуть статусы.
+   *
+   * @throws Exception error
+   */
+  @Test
+  public void answerWithStatuses() throws Exception {
+    // Дано:
+    when(socketGateway.openSocket()).thenReturn(Completable.complete());
+    when(loginReceiver.get()).thenReturn(Observable.just("1234567890"));
+    when(gateway.getState("1234567890")).thenReturn(
+        Flowable.just(ExecutorState.SHIFT_CLOSED, ExecutorState.SHIFT_OPENED, ExecutorState.ONLINE)
+    );
+
+    // Действие:
+    TestSubscriber<ExecutorState> testSubscriber = executorStateUseCase.getExecutorStates().test();
+
+    // Результат:
+    testSubscriber
+        .assertValues(ExecutorState.SHIFT_CLOSED, ExecutorState.SHIFT_OPENED, ExecutorState.ONLINE);
+    testSubscriber.assertNoErrors();
+  }
+
+  /**
+   * Должен вернуть ошибку, если открытие сокета обломалось.
+   *
+   * @throws Exception error
+   */
+  @Test
+  public void answerWithErrorIfSocketConnectionFailed() throws Exception {
+    // Дано:
+    when(socketGateway.openSocket()).thenReturn(Completable.error(ConnectException::new));
+
+    // Действие:
+    TestSubscriber<ExecutorState> testSubscriber = executorStateUseCase.getExecutorStates().test();
+
+    // Результат:
+    testSubscriber.assertError(ConnectException.class);
+    testSubscriber.assertNoValues();
+  }
+
+  /**
+   * Должен вернуть ошибку, если была ошибка получения логина.
+   *
+   * @throws Exception error
+   */
+  @Test
+  public void answerWithErrorIfGetLoginFailed() throws Exception {
+    // Дано:
+    when(socketGateway.openSocket()).thenReturn(Completable.complete());
+    when(loginReceiver.get()).thenReturn(Observable.error(ConnectException::new));
+
+    // Действие:
+    TestSubscriber<ExecutorState> testSubscriber = executorStateUseCase.getExecutorStates().test();
+
+    // Результат:
+    testSubscriber.assertError(ConnectException.class);
+    testSubscriber.assertNoValues();
+  }
+
+  /**
+   * Должен вернуть ошибку, если подписка обломалась.
+   *
+   * @throws Exception error
+   */
+  @Test
+  public void answerWithErrorIfSubscriptionFailed() throws Exception {
+    // Дано:
+    when(socketGateway.openSocket()).thenReturn(Completable.complete());
+    when(loginReceiver.get()).thenReturn(Observable.just("1234567890"));
+    when(gateway.getState("1234567890")).thenReturn(Flowable.error(ConnectException::new));
+
+    // Действие:
+    TestSubscriber<ExecutorState> testSubscriber = executorStateUseCase.getExecutorStates().test();
+
+    // Результат:
+    testSubscriber.assertError(ConnectException.class);
+    testSubscriber.assertNoValues();
+  }
+
+  /**
+   * Должен завершить получение статусов.
    *
    * @throws Exception error
    */
   @Test
   public void answerComplete() throws Exception {
-    // Действие:
-    when(gateway.getState()).thenReturn(Flowable.just(ExecutorState.ONLINE));
-
-    // Результат:
-    executorStateUseCase.loadStatus().test().assertComplete();
-  }
-
-  /* Проверяем работу с публикатором состояния исполнителя */
-
-  /**
-   * Должен опубликовать статус "Смена закрыта".
-   *
-   * @throws Exception error
-   */
-  @Test
-  public void publishShiftClosed() throws Exception {
     // Дано:
-    when(gateway.getState()).thenReturn(Flowable.just(ExecutorState.SHIFT_CLOSED));
+    when(socketGateway.openSocket()).thenReturn(Completable.complete());
+    when(loginReceiver.get()).thenReturn(Observable.just("1234567890"));
+    when(gateway.getState("1234567890")).thenReturn(Flowable.empty());
 
     // Действие:
-    executorStateUseCase.loadStatus().test();
+    TestSubscriber<ExecutorState> testSubscriber = executorStateUseCase.getExecutorStates().test();
 
     // Результат:
-    verify(executorStateObserver, only()).onNext(ExecutorState.SHIFT_CLOSED);
-  }
-
-  /**
-   * Должен опубликовать статус "Смена открыта".
-   *
-   * @throws Exception error
-   */
-  @Test
-  public void publishShiftOpened() throws Exception {
-    // Дано:
-    when(gateway.getState()).thenReturn(Flowable.just(ExecutorState.SHIFT_OPENED));
-
-    // Действие:
-    executorStateUseCase.loadStatus().test();
-
-    // Результат:
-    verify(executorStateObserver, only()).onNext(ExecutorState.SHIFT_OPENED);
-  }
-
-  /**
-   * Должен опубликовать статус "онлайн".
-   *
-   * @throws Exception error
-   */
-  @Test
-  public void publishOnline() throws Exception {
-    // Дано:
-    when(gateway.getState()).thenReturn(Flowable.just(ExecutorState.ONLINE));
-
-    // Действие:
-    executorStateUseCase.loadStatus().test();
-
-    // Результат:
-    verify(executorStateObserver, only()).onNext(ExecutorState.ONLINE);
+    testSubscriber.assertComplete();
+    testSubscriber.assertNoValues();
+    testSubscriber.assertNoErrors();
   }
 }

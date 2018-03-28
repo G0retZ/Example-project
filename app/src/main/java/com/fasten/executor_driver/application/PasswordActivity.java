@@ -17,8 +17,8 @@ public class PasswordActivity extends BaseActivity {
 
   @Override
   public void navigate(@NonNull String destination) {
-    if (destination.equals(CodeNavigate.MAP)) {
-      System.out.println(destination);
+    if (destination.equals(CodeNavigate.ENTER_APP)) {
+      ((MainApplication) getApplication()).reInit();
     }
   }
 }

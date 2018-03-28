@@ -6,14 +6,12 @@ import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.fasten.executor_driver.backend.web.AuthorizationException;
-import com.fasten.executor_driver.backend.web.NoNetworkException;
 import com.fasten.executor_driver.interactor.ExecutorStateUseCase;
 import com.fasten.executor_driver.presentation.SingleLiveEvent;
 import com.fasten.executor_driver.presentation.ViewState;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
-import java.net.SocketTimeoutException;
 import javax.inject.Inject;
 
 public class SplashScreenViewModelImpl extends ViewModel implements SplashScreenViewModel {
@@ -31,40 +29,49 @@ public class SplashScreenViewModelImpl extends ViewModel implements SplashScreen
   public SplashScreenViewModelImpl(@NonNull ExecutorStateUseCase executorStateUseCase) {
     this.executorStateUseCase = executorStateUseCase;
     viewStateLiveData = new MutableLiveData<>();
-    viewStateLiveData.postValue(new SplashScreenViewStatePending());
     navigateLiveData = new SingleLiveEvent<>();
   }
 
   @NonNull
   @Override
   public LiveData<ViewState<SplashScreenViewActions>> getViewStateLiveData() {
-    loadState();
     return viewStateLiveData;
-  }
-
-  private void loadState() {
-    if (disposable == null || disposable.isDisposed()) {
-      disposable = executorStateUseCase.loadStatus()
-          .subscribeOn(Schedulers.single())
-          .observeOn(AndroidSchedulers.mainThread())
-          .subscribe(
-              () -> viewStateLiveData.postValue(new SplashScreenViewStateDone()),
-              throwable -> {
-                if (throwable instanceof NoNetworkException) {
-                  viewStateLiveData.postValue(new SplashScreenViewStateNetworkError());
-                } else if (throwable instanceof SocketTimeoutException) {
-                  viewStateLiveData.postValue(new SplashScreenViewStateNetworkError());
-                } else if (!(throwable instanceof AuthorizationException)) {
-                  throw new RuntimeException(throwable);
-                }
-              });
-    }
   }
 
   @NonNull
   @Override
   public LiveData<String> getNavigationLiveData() {
     return navigateLiveData;
+  }
+
+  @Override
+  public void initializeApp() {
+    if (disposable == null || disposable.isDisposed()) {
+      disposable = executorStateUseCase.getExecutorStates()
+          .subscribeOn(Schedulers.single())
+          .observeOn(AndroidSchedulers.mainThread())
+          .subscribe(
+              executorState -> {
+                switch (executorState) {
+                  case SHIFT_CLOSED:
+                    navigateLiveData.postValue(SplashScreenNavigate.MAP_SHIFT_CLOSED);
+                    break;
+                  case SHIFT_OPENED:
+                    navigateLiveData.postValue(SplashScreenNavigate.MAP_SHIFT_OPENED);
+                    break;
+                  case ONLINE:
+                    navigateLiveData.postValue(SplashScreenNavigate.MAP_ONLINE);
+                    break;
+                }
+              },
+              throwable -> {
+                if ((throwable instanceof AuthorizationException)) {
+                  navigateLiveData.postValue(SplashScreenNavigate.AUTHORIZE);
+                } else {
+                  navigateLiveData.postValue(SplashScreenNavigate.NO_NETWORK);
+                }
+              });
+    }
   }
 
   @Override

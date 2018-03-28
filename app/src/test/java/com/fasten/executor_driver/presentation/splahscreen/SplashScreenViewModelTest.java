@@ -1,32 +1,25 @@
 package com.fasten.executor_driver.presentation.splahscreen;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
+import android.accounts.AuthenticatorException;
 import android.arch.core.executor.testing.InstantTaskExecutorRule;
 import android.arch.lifecycle.Observer;
-import com.fasten.executor_driver.backend.web.AuthorizationException;
 import com.fasten.executor_driver.backend.web.NoNetworkException;
-import com.fasten.executor_driver.gateway.DataMappingException;
+import com.fasten.executor_driver.entity.ExecutorState;
 import com.fasten.executor_driver.interactor.ExecutorStateUseCase;
-import com.fasten.executor_driver.presentation.ViewState;
-import io.reactivex.Completable;
+import io.reactivex.Flowable;
 import io.reactivex.android.plugins.RxAndroidPlugins;
 import io.reactivex.plugins.RxJavaPlugins;
 import io.reactivex.schedulers.Schedulers;
-import io.reactivex.subjects.CompletableSubject;
-import java.net.SocketTimeoutException;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestRule;
 import org.junit.runner.RunWith;
-import org.mockito.InOrder;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -34,9 +27,9 @@ public class SplashScreenViewModelTest {
 
   @Rule
   public TestRule rule = new InstantTaskExecutorRule();
-  private SplashScreenViewModel mapViewModel;
+  private SplashScreenViewModel splashScreenViewModel;
   @Mock
-  private Observer<ViewState<SplashScreenViewActions>> viewStateObserver;
+  private Observer<String> navigationObserver;
 
   @Mock
   private ExecutorStateUseCase executorStateUseCase;
@@ -45,160 +38,135 @@ public class SplashScreenViewModelTest {
   public void setUp() throws Exception {
     RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
     RxAndroidPlugins.setInitMainThreadSchedulerHandler(scheduler -> Schedulers.trampoline());
-    when(executorStateUseCase.loadStatus()).thenReturn(Completable.never());
-    mapViewModel = new SplashScreenViewModelImpl(executorStateUseCase);
+    when(executorStateUseCase.getExecutorStates()).thenReturn(Flowable.never());
+    splashScreenViewModel = new SplashScreenViewModelImpl(executorStateUseCase);
   }
 
   /* Тетсируем работу с юзкейсом. */
 
   /**
-   * Должен попросить у юзкейса загрузить статус исполнителя.
+   * Должен попросить у юзкейса статусы исполнителя.
    *
    * @throws Exception error
    */
   @Test
   public void askDataReceiverToSubscribeToLocationUpdates() throws Exception {
     // Действие:
-    mapViewModel.getViewStateLiveData();
+    splashScreenViewModel.initializeApp();
 
     // Результат:
-    verify(executorStateUseCase, only()).loadStatus();
+    verify(executorStateUseCase, only()).getExecutorStates();
   }
 
   /**
-   * Не должен просить у юзкейса загрузить статус исполнителя (после поворотов), если запрос уже
-   * выполняется.
+   * Не должен просить у юзкейса загрузить статусы исполнителя, если запрос уже выполняется.
    *
    * @throws Exception error
    */
   @Test
-  public void DoNotTouchDataReceiverAfterFirstSubscription() throws Exception {
+  public void doNotTouchUseCaseBeforeAfterFirstRequestComplete() throws Exception {
     // Действие:
-    mapViewModel.getViewStateLiveData();
-    mapViewModel.getViewStateLiveData();
-    mapViewModel.getViewStateLiveData();
+    splashScreenViewModel.initializeApp();
+    splashScreenViewModel.initializeApp();
+    splashScreenViewModel.initializeApp();
 
     // Результат:
-    verify(executorStateUseCase, only()).loadStatus();
+    verify(executorStateUseCase, only()).getExecutorStates();
   }
 
-  /* Тетсируем переключение состояний */
+  /* Тетсируем навигацию. */
 
   /**
-   * Должен вернуть состояние загрузки изначально.
+   * Должен вернуть "перейти к отсутствию сети".
    *
    * @throws Exception error
    */
   @Test
-  public void setPendingViewInitially() throws Exception {
-    // Действие:
-    mapViewModel.getViewStateLiveData().observeForever(viewStateObserver);
-
-    // Результат:
-    verify(viewStateObserver, only()).onChanged(any(SplashScreenViewStatePending.class));
-  }
-
-  /**
-   * Должен вернуть состояние готово в случае успеха.
-   *
-   * @throws Exception error
-   */
-  @Test
-  public void setDoneViewStateForSuccess() throws Exception {
+  public void navigateToNoNetwork() throws Exception {
     // Дано:
-    InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    CompletableSubject completableSubject = CompletableSubject.create();
-    when(executorStateUseCase.loadStatus()).thenReturn(completableSubject);
+    when(executorStateUseCase.getExecutorStates())
+        .thenReturn(Flowable.error(NoNetworkException::new));
 
     // Действие:
-    mapViewModel.getViewStateLiveData().observeForever(viewStateObserver);
-    completableSubject.onComplete();
+    splashScreenViewModel.getNavigationLiveData().observeForever(navigationObserver);
+    splashScreenViewModel.initializeApp();
 
     // Результат:
-    inOrder.verify(viewStateObserver).onChanged(any(SplashScreenViewStatePending.class));
-    inOrder.verify(viewStateObserver).onChanged(any(SplashScreenViewStateDone.class));
-    verifyNoMoreInteractions(viewStateObserver);
+    verify(navigationObserver, only()).onChanged(SplashScreenNavigate.NO_NETWORK);
   }
 
   /**
-   * Должен вернуть состояние ошибки сети при отсутствии сети.
+   * Должен вернуть "перейти к авторизации".
    *
    * @throws Exception error
    */
   @Test
-  public void setErrorViewStateForNoNetworkError() throws Exception {
+  public void navigateToAuthorize() throws Exception {
     // Дано:
-    InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    CompletableSubject completableSubject = CompletableSubject.create();
-    when(executorStateUseCase.loadStatus()).thenReturn(completableSubject);
+    when(executorStateUseCase.getExecutorStates())
+        .thenReturn(Flowable.error(AuthenticatorException::new));
 
     // Действие:
-    mapViewModel.getViewStateLiveData().observeForever(viewStateObserver);
-    completableSubject.onError(new NoNetworkException());
+    splashScreenViewModel.getNavigationLiveData().observeForever(navigationObserver);
+    splashScreenViewModel.initializeApp();
 
     // Результат:
-    inOrder.verify(viewStateObserver).onChanged(any(SplashScreenViewStatePending.class));
-    inOrder.verify(viewStateObserver).onChanged(any(SplashScreenViewStateNetworkError.class));
-    verifyNoMoreInteractions(viewStateObserver);
+    verify(navigationObserver, only()).onChanged(SplashScreenNavigate.NO_NETWORK);
   }
 
   /**
-   * Должен вернуть состояние ошибки сети при таймауте сети.
+   * Должен вернуть "перейти к карте".
    *
    * @throws Exception error
    */
   @Test
-  public void setErrorViewStateForSocketTimeoutError() throws Exception {
+  public void navigateToShiftClosed() throws Exception {
     // Дано:
-    InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    CompletableSubject completableSubject = CompletableSubject.create();
-    when(executorStateUseCase.loadStatus()).thenReturn(completableSubject);
+    when(executorStateUseCase.getExecutorStates())
+        .thenReturn(Flowable.just(ExecutorState.SHIFT_CLOSED));
 
     // Действие:
-    mapViewModel.getViewStateLiveData().observeForever(viewStateObserver);
-    completableSubject.onError(new SocketTimeoutException());
+    splashScreenViewModel.getNavigationLiveData().observeForever(navigationObserver);
+    splashScreenViewModel.initializeApp();
 
     // Результат:
-    inOrder.verify(viewStateObserver).onChanged(any(SplashScreenViewStatePending.class));
-    inOrder.verify(viewStateObserver).onChanged(any(SplashScreenViewStateNetworkError.class));
-    verifyNoMoreInteractions(viewStateObserver);
+    verify(navigationObserver, only()).onChanged(SplashScreenNavigate.MAP_SHIFT_CLOSED);
   }
 
   /**
-   * Должен игнорировать ошибки авторизации.
+   * Должен вернуть "перейти к получению заказа".
    *
    * @throws Exception error
    */
   @Test
-  public void ignoreAuthorizationError() throws Exception {
+  public void navigateToShiftOpened() throws Exception {
     // Дано:
-    CompletableSubject completableSubject = CompletableSubject.create();
-    when(executorStateUseCase.loadStatus()).thenReturn(completableSubject);
+    when(executorStateUseCase.getExecutorStates())
+        .thenReturn(Flowable.just(ExecutorState.SHIFT_OPENED));
 
     // Действие:
-    mapViewModel.getViewStateLiveData().observeForever(viewStateObserver);
-    completableSubject.onError(new AuthorizationException());
+    splashScreenViewModel.getNavigationLiveData().observeForever(navigationObserver);
+    splashScreenViewModel.initializeApp();
 
     // Результат:
-    verify(viewStateObserver, only()).onChanged(any(SplashScreenViewStatePending.class));
+    verify(navigationObserver, only()).onChanged(SplashScreenNavigate.MAP_SHIFT_OPENED);
   }
 
   /**
-   * Должен кинуть исключение в случае неуспеха.
+   * Должен вернуть "перейти к получению заказа".
    *
    * @throws Exception error
    */
-  @Test(expected = RuntimeException.class)
-  public void throwExceptionForError() throws Exception {
+  @Test
+  public void navigateToOnline() throws Exception {
     // Дано:
-    InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    when(executorStateUseCase.loadStatus())
-        .thenReturn(Completable.error(DataMappingException::new));
+    when(executorStateUseCase.getExecutorStates()).thenReturn(Flowable.just(ExecutorState.ONLINE));
 
     // Действие:
-    mapViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    splashScreenViewModel.getNavigationLiveData().observeForever(navigationObserver);
+    splashScreenViewModel.initializeApp();
 
     // Результат:
-    inOrder.verify(viewStateObserver, only()).onChanged(any(SplashScreenViewStatePending.class));
+    verify(navigationObserver, only()).onChanged(SplashScreenNavigate.MAP_ONLINE);
   }
 }
