@@ -1,6 +1,5 @@
 package com.fasten.executor_driver.presentation.geolocation;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -34,6 +33,8 @@ public class GeoLocationViewModelTest {
   private GeoLocationViewModel mapViewModel;
   @Mock
   private Observer<ViewState<GeoLocationViewActions>> viewStateObserver;
+  @Mock
+  private Observer<String> navigationObserver;
 
   @Mock
   private GeoLocationUseCase geoLocationUseCase;
@@ -116,21 +117,23 @@ public class GeoLocationViewModelTest {
     verifyNoMoreInteractions(viewStateObserver);
   }
 
+  /* Тетсируем навигацию. */
+
   /**
-   * Должен вернуть состояния с ошибкой получения местоположения.
+   * Должен вернуть "перейти к решению проблемы с геолокацией".
    *
    * @throws Exception error
    */
   @Test
-  public void setViewStateWithErrorToLiveData() throws Exception {
+  public void navigateToResolveGoeLocationProblem() throws Exception {
     // Дано:
     when(geoLocationUseCase.getGeoLocations()).thenReturn(Flowable.error(NoNetworkException::new));
 
     // Действие:
-    mapViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    mapViewModel.getNavigationLiveData().observeForever(navigationObserver);
     mapViewModel.updateGeoLocations();
 
     // Результат:
-    verify(viewStateObserver, only()).onChanged(any(GeoLocationViewStateError.class));
+    verify(navigationObserver, only()).onChanged(GeoLocationNavigate.RESOLVE_GEO_PROBLEM);
   }
 }

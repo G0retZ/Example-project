@@ -13,8 +13,7 @@ import android.support.annotation.StringRes;
 import com.fasten.executor_driver.R;
 import com.fasten.executor_driver.di.AppComponent;
 import com.fasten.executor_driver.di.AppComponentImpl;
-import com.fasten.executor_driver.entity.GeoLocation;
-import com.fasten.executor_driver.presentation.geolocation.GeoLocationViewActions;
+import com.fasten.executor_driver.presentation.geolocation.GeoLocationNavigate;
 import com.fasten.executor_driver.presentation.geolocation.GeoLocationViewModel;
 import com.fasten.executor_driver.presentation.splahscreen.SplashScreenNavigate;
 import com.fasten.executor_driver.presentation.splahscreen.SplashScreenViewModel;
@@ -24,7 +23,7 @@ import javax.inject.Inject;
  * Application.
  */
 
-public class MainApplication extends Application implements GeoLocationViewActions {
+public class MainApplication extends Application {
 
   private boolean showError = false;
   @Nullable
@@ -101,9 +100,11 @@ public class MainApplication extends Application implements GeoLocationViewActio
         navigate(direction);
       }
     });
-    geoLocationViewModel.getViewStateLiveData().observeForever(viewState -> {
-      if (viewState != null) {
-        viewState.apply(this);
+    geoLocationViewModel.getNavigationLiveData().observeForever(viewState -> {
+      if (GeoLocationNavigate.RESOLVE_GEO_PROBLEM.equals(viewState)) {
+        routeIntent = new Intent(this, GeolocationResolutionActivity.class);
+        routeIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        route();
       }
     });
     new Handler().postDelayed(
@@ -201,19 +202,6 @@ public class MainApplication extends Application implements GeoLocationViewActio
           )
           .create()
           .show();
-    }
-  }
-
-  @Override
-  public void updateLocation(@NonNull GeoLocation geoLocation) {
-  }
-
-  @Override
-  public void showGeoLocationError(boolean show) {
-    if (show) {
-      routeIntent = new Intent(this, GeolocationResolutionActivity.class);
-      routeIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-      route();
     }
   }
 }

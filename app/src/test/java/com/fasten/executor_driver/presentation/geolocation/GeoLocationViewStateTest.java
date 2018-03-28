@@ -32,7 +32,6 @@ public class GeoLocationViewStateTest {
 
     // Результат:
     verify(mapViewActions).updateLocation(new GeoLocation(1, 2, 3));
-    verify(mapViewActions).showGeoLocationError(false);
     verifyNoMoreInteractions(mapViewActions);
   }
 

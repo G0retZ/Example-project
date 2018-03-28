@@ -19,7 +19,6 @@ public final class GeoLocationViewState implements ViewState<GeoLocationViewActi
   @Override
   public void apply(@NonNull GeoLocationViewActions stateActions) {
     stateActions.updateLocation(geoLocation);
-    stateActions.showGeoLocationError(false);
   }
 
   @Override
