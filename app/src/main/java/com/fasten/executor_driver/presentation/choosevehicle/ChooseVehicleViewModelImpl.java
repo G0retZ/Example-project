@@ -9,7 +9,6 @@ import com.fasten.executor_driver.R;
 import com.fasten.executor_driver.entity.NoVehiclesAvailableException;
 import com.fasten.executor_driver.entity.Vehicle;
 import com.fasten.executor_driver.interactor.vehicle.VehicleChoiceUseCase;
-import com.fasten.executor_driver.presentation.SingleLiveEvent;
 import com.fasten.executor_driver.presentation.ViewState;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
@@ -25,7 +24,7 @@ public class ChooseVehicleViewModelImpl extends ViewModel implements ChooseVehic
   @NonNull
   private final MutableLiveData<ViewState<ChooseVehicleViewActions>> viewStateLiveData;
   @NonNull
-  private final SingleLiveEvent<String> navigateLiveData;
+  private final MutableLiveData<String> navigateLiveData;
   @Nullable
   private Disposable vehiclesDisposable;
   @Nullable
@@ -36,7 +35,7 @@ public class ChooseVehicleViewModelImpl extends ViewModel implements ChooseVehic
     this.vehicleChoiceUseCase = vehicleChoiceUseCase;
     viewStateLiveData = new MutableLiveData<>();
     viewStateLiveData.postValue(new ChooseVehicleViewStatePending());
-    navigateLiveData = new SingleLiveEvent<>();
+    navigateLiveData = new MutableLiveData<>();
   }
 
 

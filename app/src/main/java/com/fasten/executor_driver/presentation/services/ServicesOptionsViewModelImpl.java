@@ -9,7 +9,6 @@ import com.fasten.executor_driver.R;
 import com.fasten.executor_driver.entity.OptionBoolean;
 import com.fasten.executor_driver.entity.Service;
 import com.fasten.executor_driver.interactor.services.ServicesUseCase;
-import com.fasten.executor_driver.presentation.SingleLiveEvent;
 import com.fasten.executor_driver.presentation.ViewState;
 import com.fasten.executor_driver.presentation.options.OptionsListItem;
 import com.fasten.executor_driver.presentation.options.OptionsListItems;
@@ -33,7 +32,7 @@ public class ServicesOptionsViewModelImpl extends ViewModel implements OptionsVi
   @NonNull
   private final MutableLiveData<ViewState<OptionsViewActions>> viewStateLiveData;
   @NonNull
-  private final SingleLiveEvent<String> navigateLiveData;
+  private final MutableLiveData<String> navigateLiveData;
   @Nullable
   private Disposable servicesDisposable;
   @Nullable
@@ -44,7 +43,7 @@ public class ServicesOptionsViewModelImpl extends ViewModel implements OptionsVi
     this.servicesUseCase = servicesUseCase;
     viewStateLiveData = new MutableLiveData<>();
     viewStateLiveData.postValue(new OptionsViewStateInitial());
-    navigateLiveData = new SingleLiveEvent<>();
+    navigateLiveData = new MutableLiveData<>();
   }
 
   @NonNull

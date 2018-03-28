@@ -6,7 +6,6 @@ import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.fasten.executor_driver.interactor.DataReceiver;
-import com.fasten.executor_driver.presentation.SingleLiveEvent;
 import com.fasten.executor_driver.presentation.ViewState;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
@@ -50,7 +49,7 @@ public class CodeHeaderViewModelImpl extends ViewModel implements CodeHeaderView
   @NonNull
   @Override
   public LiveData<String> getNavigationLiveData() {
-    return new SingleLiveEvent<>();
+    return new MutableLiveData<>();
   }
 
   @SuppressWarnings("SameParameterValue")

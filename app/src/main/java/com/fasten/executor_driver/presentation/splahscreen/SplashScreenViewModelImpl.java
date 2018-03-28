@@ -7,7 +7,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.fasten.executor_driver.backend.web.AuthorizationException;
 import com.fasten.executor_driver.interactor.ExecutorStateUseCase;
-import com.fasten.executor_driver.presentation.SingleLiveEvent;
 import com.fasten.executor_driver.presentation.ViewState;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
@@ -21,7 +20,7 @@ public class SplashScreenViewModelImpl extends ViewModel implements SplashScreen
   @NonNull
   private final MutableLiveData<ViewState<SplashScreenViewActions>> viewStateLiveData;
   @NonNull
-  private final SingleLiveEvent<String> navigateLiveData;
+  private final MutableLiveData<String> navigateLiveData;
   @Nullable
   private Disposable disposable;
 
@@ -29,7 +28,7 @@ public class SplashScreenViewModelImpl extends ViewModel implements SplashScreen
   public SplashScreenViewModelImpl(@NonNull ExecutorStateUseCase executorStateUseCase) {
     this.executorStateUseCase = executorStateUseCase;
     viewStateLiveData = new MutableLiveData<>();
-    navigateLiveData = new SingleLiveEvent<>();
+    navigateLiveData = new MutableLiveData<>();
   }
 
   @NonNull

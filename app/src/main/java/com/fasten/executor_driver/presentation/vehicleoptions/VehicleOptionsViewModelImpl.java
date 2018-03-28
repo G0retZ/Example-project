@@ -10,7 +10,6 @@ import com.fasten.executor_driver.entity.Option;
 import com.fasten.executor_driver.entity.OptionBoolean;
 import com.fasten.executor_driver.entity.OptionNumeric;
 import com.fasten.executor_driver.interactor.vehicle.VehicleOptionsUseCase;
-import com.fasten.executor_driver.presentation.SingleLiveEvent;
 import com.fasten.executor_driver.presentation.ViewState;
 import com.fasten.executor_driver.presentation.options.OptionsListItem;
 import com.fasten.executor_driver.presentation.options.OptionsListItems;
@@ -34,7 +33,7 @@ public class VehicleOptionsViewModelImpl extends ViewModel implements OptionsVie
   @NonNull
   private final MutableLiveData<ViewState<OptionsViewActions>> viewStateLiveData;
   @NonNull
-  private final SingleLiveEvent<String> navigateLiveData;
+  private final MutableLiveData<String> navigateLiveData;
   @Nullable
   private Disposable optionsDisposable;
   @Nullable
@@ -45,7 +44,7 @@ public class VehicleOptionsViewModelImpl extends ViewModel implements OptionsVie
     this.vehicleOptionsUseCase = vehicleOptionsUseCase;
     viewStateLiveData = new MutableLiveData<>();
     viewStateLiveData.postValue(new OptionsViewStateInitial());
-    navigateLiveData = new SingleLiveEvent<>();
+    navigateLiveData = new MutableLiveData<>();
   }
 
   @NonNull

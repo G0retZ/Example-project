@@ -6,7 +6,6 @@ import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.fasten.executor_driver.interactor.GeoLocationUseCase;
-import com.fasten.executor_driver.presentation.SingleLiveEvent;
 import com.fasten.executor_driver.presentation.ViewState;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
@@ -20,6 +19,8 @@ public class GeoLocationViewModelImpl extends ViewModel implements GeoLocationVi
 
   @NonNull
   private final MutableLiveData<ViewState<GeoLocationViewActions>> viewStateLiveData;
+  @NonNull
+  private final MutableLiveData<String> navigateLiveData;
   @Nullable
   private Disposable disposable;
 
@@ -27,6 +28,7 @@ public class GeoLocationViewModelImpl extends ViewModel implements GeoLocationVi
   public GeoLocationViewModelImpl(@NonNull GeoLocationUseCase geoLocationUseCase) {
     this.geoLocationUseCase = geoLocationUseCase;
     viewStateLiveData = new MutableLiveData<>();
+    navigateLiveData = new MutableLiveData<>();
   }
 
   @NonNull
@@ -38,7 +40,7 @@ public class GeoLocationViewModelImpl extends ViewModel implements GeoLocationVi
   @NonNull
   @Override
   public LiveData<String> getNavigationLiveData() {
-    return new SingleLiveEvent<>();
+    return navigateLiveData;
   }
 
   @Override
