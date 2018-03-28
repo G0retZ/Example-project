@@ -159,4 +159,16 @@ public class BaseActivity extends AppCompatActivity {
         break;
     }
   }
+
+  void initExecutorStates() {
+    if (executorStateViewModel != null) {
+      executorStateViewModel.initializeExecutorState();
+    }
+  }
+
+  void initGeoLocations() {
+    if (geoLocationViewModel != null) {
+      geoLocationViewModel.updateGeoLocations();
+    }
+  }
 }

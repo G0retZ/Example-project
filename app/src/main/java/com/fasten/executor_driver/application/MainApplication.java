@@ -48,13 +48,6 @@ public class MainApplication extends Application {
     }
     executorStateViewModel.getNavigationLiveData().observeForever(this::navigate);
     geoLocationViewModel.getNavigationLiveData().observeForever(this::navigate);
-    reInit();
-  }
-
-  public void reInit() {
-    if (executorStateViewModel == null || geoLocationViewModel == null) {
-      throw new RuntimeException("Shit! WTF?!");
-    }
     executorStateViewModel.initializeExecutorState();
     geoLocationViewModel.updateGeoLocations();
   }

@@ -1,8 +1,13 @@
 package com.fasten.executor_driver.application;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.fasten.executor_driver.R;
+import com.fasten.executor_driver.view.GeolocationResolutionFragment;
 
 public class GeolocationResolutionActivity extends BaseActivity {
 
@@ -10,5 +15,23 @@ public class GeolocationResolutionActivity extends BaseActivity {
   protected void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_geo_resolution);
+  }
+
+  @Override
+  public void navigate(@NonNull String destination) {
+    switch (destination) {
+      case GeolocationResolutionFragment.NAVIGATE_TO_SETTINGS:
+        startActivity(
+            new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+                .setData(
+                    Uri.fromParts("package", getPackageName(), null)
+                )
+        );
+        return;
+      case GeolocationResolutionFragment.NAVIGATE_TO_RESOLVED:
+        initGeoLocations();
+        return;
+    }
+    super.navigate(destination);
   }
 }
