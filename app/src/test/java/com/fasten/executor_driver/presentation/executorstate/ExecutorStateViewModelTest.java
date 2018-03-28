@@ -1,4 +1,4 @@
-package com.fasten.executor_driver.presentation.splahscreen;
+package com.fasten.executor_driver.presentation.executorstate;
 
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
@@ -23,11 +23,11 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
-public class SplashScreenViewModelTest {
+public class ExecutorStateViewModelTest {
 
   @Rule
   public TestRule rule = new InstantTaskExecutorRule();
-  private SplashScreenViewModel splashScreenViewModel;
+  private ExecutorStateViewModel executorStateViewModel;
   @Mock
   private Observer<String> navigationObserver;
 
@@ -39,7 +39,7 @@ public class SplashScreenViewModelTest {
     RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
     RxAndroidPlugins.setInitMainThreadSchedulerHandler(scheduler -> Schedulers.trampoline());
     when(executorStateUseCase.getExecutorStates()).thenReturn(Flowable.never());
-    splashScreenViewModel = new SplashScreenViewModelImpl(executorStateUseCase);
+    executorStateViewModel = new ExecutorStateViewModelImpl(executorStateUseCase);
   }
 
   /* Тетсируем работу с юзкейсом. */
@@ -52,7 +52,7 @@ public class SplashScreenViewModelTest {
   @Test
   public void askDataReceiverToSubscribeToLocationUpdates() throws Exception {
     // Действие:
-    splashScreenViewModel.initializeApp();
+    executorStateViewModel.initializeExecutorState();
 
     // Результат:
     verify(executorStateUseCase, only()).getExecutorStates();
@@ -66,9 +66,9 @@ public class SplashScreenViewModelTest {
   @Test
   public void doNotTouchUseCaseBeforeAfterFirstRequestComplete() throws Exception {
     // Действие:
-    splashScreenViewModel.initializeApp();
-    splashScreenViewModel.initializeApp();
-    splashScreenViewModel.initializeApp();
+    executorStateViewModel.initializeExecutorState();
+    executorStateViewModel.initializeExecutorState();
+    executorStateViewModel.initializeExecutorState();
 
     // Результат:
     verify(executorStateUseCase, only()).getExecutorStates();
@@ -88,11 +88,11 @@ public class SplashScreenViewModelTest {
         .thenReturn(Flowable.error(NoNetworkException::new));
 
     // Действие:
-    splashScreenViewModel.getNavigationLiveData().observeForever(navigationObserver);
-    splashScreenViewModel.initializeApp();
+    executorStateViewModel.getNavigationLiveData().observeForever(navigationObserver);
+    executorStateViewModel.initializeExecutorState();
 
     // Результат:
-    verify(navigationObserver, only()).onChanged(SplashScreenNavigate.NO_NETWORK);
+    verify(navigationObserver, only()).onChanged(ExecutorStateNavigate.NO_NETWORK);
   }
 
   /**
@@ -107,11 +107,11 @@ public class SplashScreenViewModelTest {
         .thenReturn(Flowable.error(AuthenticatorException::new));
 
     // Действие:
-    splashScreenViewModel.getNavigationLiveData().observeForever(navigationObserver);
-    splashScreenViewModel.initializeApp();
+    executorStateViewModel.getNavigationLiveData().observeForever(navigationObserver);
+    executorStateViewModel.initializeExecutorState();
 
     // Результат:
-    verify(navigationObserver, only()).onChanged(SplashScreenNavigate.NO_NETWORK);
+    verify(navigationObserver, only()).onChanged(ExecutorStateNavigate.NO_NETWORK);
   }
 
   /**
@@ -126,11 +126,11 @@ public class SplashScreenViewModelTest {
         .thenReturn(Flowable.just(ExecutorState.SHIFT_CLOSED));
 
     // Действие:
-    splashScreenViewModel.getNavigationLiveData().observeForever(navigationObserver);
-    splashScreenViewModel.initializeApp();
+    executorStateViewModel.getNavigationLiveData().observeForever(navigationObserver);
+    executorStateViewModel.initializeExecutorState();
 
     // Результат:
-    verify(navigationObserver, only()).onChanged(SplashScreenNavigate.MAP_SHIFT_CLOSED);
+    verify(navigationObserver, only()).onChanged(ExecutorStateNavigate.MAP_SHIFT_CLOSED);
   }
 
   /**
@@ -145,11 +145,11 @@ public class SplashScreenViewModelTest {
         .thenReturn(Flowable.just(ExecutorState.SHIFT_OPENED));
 
     // Действие:
-    splashScreenViewModel.getNavigationLiveData().observeForever(navigationObserver);
-    splashScreenViewModel.initializeApp();
+    executorStateViewModel.getNavigationLiveData().observeForever(navigationObserver);
+    executorStateViewModel.initializeExecutorState();
 
     // Результат:
-    verify(navigationObserver, only()).onChanged(SplashScreenNavigate.MAP_SHIFT_OPENED);
+    verify(navigationObserver, only()).onChanged(ExecutorStateNavigate.MAP_SHIFT_OPENED);
   }
 
   /**
@@ -163,10 +163,10 @@ public class SplashScreenViewModelTest {
     when(executorStateUseCase.getExecutorStates()).thenReturn(Flowable.just(ExecutorState.ONLINE));
 
     // Действие:
-    splashScreenViewModel.getNavigationLiveData().observeForever(navigationObserver);
-    splashScreenViewModel.initializeApp();
+    executorStateViewModel.getNavigationLiveData().observeForever(navigationObserver);
+    executorStateViewModel.initializeExecutorState();
 
     // Результат:
-    verify(navigationObserver, only()).onChanged(SplashScreenNavigate.MAP_ONLINE);
+    verify(navigationObserver, only()).onChanged(ExecutorStateNavigate.MAP_ONLINE);
   }
 }

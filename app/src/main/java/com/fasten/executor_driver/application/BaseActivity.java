@@ -10,10 +10,10 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import com.fasten.executor_driver.R;
 import com.fasten.executor_driver.di.AppComponent;
+import com.fasten.executor_driver.presentation.executorstate.ExecutorStateNavigate;
+import com.fasten.executor_driver.presentation.executorstate.ExecutorStateViewModel;
 import com.fasten.executor_driver.presentation.geolocation.GeoLocationNavigate;
 import com.fasten.executor_driver.presentation.geolocation.GeoLocationViewModel;
-import com.fasten.executor_driver.presentation.splahscreen.SplashScreenNavigate;
-import com.fasten.executor_driver.presentation.splahscreen.SplashScreenViewModel;
 import java.util.LinkedList;
 import javax.inject.Inject;
 
@@ -32,13 +32,13 @@ public class BaseActivity extends AppCompatActivity {
   @NonNull
   private final LinkedList<OnBackPressedInterceptor> onBackPressedInterceptors = new LinkedList<>();
   @Nullable
-  private SplashScreenViewModel splashScreenViewModel;
+  private ExecutorStateViewModel executorStateViewModel;
   @Nullable
   private GeoLocationViewModel geoLocationViewModel;
 
   @Inject
-  public void setSplashScreenViewModel(@NonNull SplashScreenViewModel splashScreenViewModel) {
-    this.splashScreenViewModel = splashScreenViewModel;
+  public void setExecutorStateViewModel(@NonNull ExecutorStateViewModel executorStateViewModel) {
+    this.executorStateViewModel = executorStateViewModel;
   }
 
   @Inject
@@ -50,10 +50,10 @@ public class BaseActivity extends AppCompatActivity {
   protected void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     getDiComponent().inject(this);
-    if (splashScreenViewModel == null || geoLocationViewModel == null) {
+    if (executorStateViewModel == null || geoLocationViewModel == null) {
       throw new RuntimeException("Shit! WTF?!");
     }
-    splashScreenViewModel.getNavigationLiveData().observeForever(destination -> {
+    executorStateViewModel.getNavigationLiveData().observeForever(destination -> {
       if (destination != null) {
         navigate(destination);
       }
@@ -121,7 +121,7 @@ public class BaseActivity extends AppCompatActivity {
                 .setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
         );
         break;
-      case SplashScreenNavigate.NO_NETWORK:
+      case ExecutorStateNavigate.NO_NETWORK:
         new Builder(this)
             .setTitle(R.string.error)
             .setMessage("Без сети не работаем!")
@@ -133,25 +133,25 @@ public class BaseActivity extends AppCompatActivity {
             .create()
             .show();
         break;
-      case SplashScreenNavigate.AUTHORIZE:
+      case ExecutorStateNavigate.AUTHORIZE:
         startActivity(
             new Intent(this, LoginActivity.class)
                 .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK)
         );
         break;
-      case SplashScreenNavigate.MAP_SHIFT_CLOSED:
+      case ExecutorStateNavigate.MAP_SHIFT_CLOSED:
         startActivity(
             new Intent(this, MapActivity.class)
                 .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK)
         );
         break;
-      case SplashScreenNavigate.MAP_SHIFT_OPENED:
+      case ExecutorStateNavigate.MAP_SHIFT_OPENED:
         startActivity(
             new Intent(this, MapActivity.class)
                 .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK)
         );
         break;
-      case SplashScreenNavigate.MAP_ONLINE:
+      case ExecutorStateNavigate.MAP_ONLINE:
         startActivity(
             new Intent(this, OnlineActivity.class)
                 .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK)

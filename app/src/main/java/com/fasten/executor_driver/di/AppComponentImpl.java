@@ -63,6 +63,7 @@ import com.fasten.executor_driver.presentation.code.CodeViewModel;
 import com.fasten.executor_driver.presentation.code.CodeViewModelImpl;
 import com.fasten.executor_driver.presentation.codeHeader.CodeHeaderViewModel;
 import com.fasten.executor_driver.presentation.codeHeader.CodeHeaderViewModelImpl;
+import com.fasten.executor_driver.presentation.executorstate.ExecutorStateViewModelImpl;
 import com.fasten.executor_driver.presentation.geolocation.GeoLocationViewModelImpl;
 import com.fasten.executor_driver.presentation.map.MapViewModel;
 import com.fasten.executor_driver.presentation.map.MapViewModelImpl;
@@ -76,7 +77,6 @@ import com.fasten.executor_driver.presentation.selectedvehicle.SelectedVehicleVi
 import com.fasten.executor_driver.presentation.services.ServicesOptionsViewModelImpl;
 import com.fasten.executor_driver.presentation.smsbutton.SmsButtonViewModel;
 import com.fasten.executor_driver.presentation.smsbutton.SmsButtonViewModelImpl;
-import com.fasten.executor_driver.presentation.splahscreen.SplashScreenViewModelImpl;
 import com.fasten.executor_driver.presentation.vehicleoptions.VehicleOptionsViewModelImpl;
 import com.fasten.executor_driver.view.ChooseVehicleFragment;
 import com.fasten.executor_driver.view.GoOnlineFragment;
@@ -196,8 +196,8 @@ public class AppComponentImpl implements AppComponent {
 
   @Override
   public void inject(MainApplication mainApplication) {
-    mainApplication.setSplashScreenViewModel(
-        new SplashScreenViewModelImpl(
+    mainApplication.setExecutorStateViewModel(
+        new ExecutorStateViewModelImpl(
             executorStateUseCase
         )
     );
@@ -210,8 +210,8 @@ public class AppComponentImpl implements AppComponent {
 
   @Override
   public void inject(BaseActivity baseActivity) {
-    baseActivity.setSplashScreenViewModel(
-        new SplashScreenViewModelImpl(
+    baseActivity.setExecutorStateViewModel(
+        new ExecutorStateViewModelImpl(
             executorStateUseCase
         )
     );

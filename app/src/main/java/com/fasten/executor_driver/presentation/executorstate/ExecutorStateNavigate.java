@@ -1,4 +1,4 @@
-package com.fasten.executor_driver.presentation.splahscreen;
+package com.fasten.executor_driver.presentation.executorstate;
 
 import android.support.annotation.StringDef;
 import java.lang.annotation.Retention;
@@ -8,14 +8,14 @@ import java.lang.annotation.RetentionPolicy;
  * Направления навигации при старте приложения.
  */
 @StringDef({
-    SplashScreenNavigate.NO_NETWORK,
-    SplashScreenNavigate.AUTHORIZE,
-    SplashScreenNavigate.MAP_SHIFT_CLOSED,
-    SplashScreenNavigate.MAP_SHIFT_OPENED,
-    SplashScreenNavigate.MAP_ONLINE
+    ExecutorStateNavigate.NO_NETWORK,
+    ExecutorStateNavigate.AUTHORIZE,
+    ExecutorStateNavigate.MAP_SHIFT_CLOSED,
+    ExecutorStateNavigate.MAP_SHIFT_OPENED,
+    ExecutorStateNavigate.MAP_ONLINE
 })
 @Retention(RetentionPolicy.SOURCE)
-public @interface SplashScreenNavigate {
+public @interface ExecutorStateNavigate {
 
   // Переход к решению проблем сети.
   String NO_NETWORK = "to.NoNetwork";

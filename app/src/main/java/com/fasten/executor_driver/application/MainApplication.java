@@ -9,10 +9,10 @@ import android.support.annotation.StringRes;
 import com.fasten.executor_driver.R;
 import com.fasten.executor_driver.di.AppComponent;
 import com.fasten.executor_driver.di.AppComponentImpl;
+import com.fasten.executor_driver.presentation.executorstate.ExecutorStateNavigate;
+import com.fasten.executor_driver.presentation.executorstate.ExecutorStateViewModel;
 import com.fasten.executor_driver.presentation.geolocation.GeoLocationNavigate;
 import com.fasten.executor_driver.presentation.geolocation.GeoLocationViewModel;
-import com.fasten.executor_driver.presentation.splahscreen.SplashScreenNavigate;
-import com.fasten.executor_driver.presentation.splahscreen.SplashScreenViewModel;
 import javax.inject.Inject;
 
 /**
@@ -24,13 +24,13 @@ public class MainApplication extends Application {
   @Nullable
   private AppComponent appComponent;
   @Nullable
-  private SplashScreenViewModel splashScreenViewModel;
+  private ExecutorStateViewModel executorStateViewModel;
   @Nullable
   private GeoLocationViewModel geoLocationViewModel;
 
   @Inject
-  public void setSplashScreenViewModel(@NonNull SplashScreenViewModel splashScreenViewModel) {
-    this.splashScreenViewModel = splashScreenViewModel;
+  public void setExecutorStateViewModel(@NonNull ExecutorStateViewModel executorStateViewModel) {
+    this.executorStateViewModel = executorStateViewModel;
   }
 
   @Inject
@@ -43,19 +43,19 @@ public class MainApplication extends Application {
     super.onCreate();
     appComponent = new AppComponentImpl(this.getApplicationContext());
     appComponent.inject(this);
-    if (splashScreenViewModel == null || geoLocationViewModel == null) {
+    if (executorStateViewModel == null || geoLocationViewModel == null) {
       throw new RuntimeException("Shit! WTF?!");
     }
-    splashScreenViewModel.getNavigationLiveData().observeForever(this::navigate);
+    executorStateViewModel.getNavigationLiveData().observeForever(this::navigate);
     geoLocationViewModel.getNavigationLiveData().observeForever(this::navigate);
     reInit();
   }
 
   public void reInit() {
-    if (splashScreenViewModel == null || geoLocationViewModel == null) {
+    if (executorStateViewModel == null || geoLocationViewModel == null) {
       throw new RuntimeException("Shit! WTF?!");
     }
-    splashScreenViewModel.initializeApp();
+    executorStateViewModel.initializeExecutorState();
     geoLocationViewModel.updateGeoLocations();
   }
 
@@ -65,19 +65,19 @@ public class MainApplication extends Application {
         case GeoLocationNavigate.RESOLVE_GEO_PROBLEM:
           stopService();
           break;
-        case SplashScreenNavigate.NO_NETWORK:
+        case ExecutorStateNavigate.NO_NETWORK:
           stopService();
           break;
-        case SplashScreenNavigate.AUTHORIZE:
+        case ExecutorStateNavigate.AUTHORIZE:
           stopService();
           break;
-        case SplashScreenNavigate.MAP_SHIFT_CLOSED:
+        case ExecutorStateNavigate.MAP_SHIFT_CLOSED:
           stopService();
           break;
-        case SplashScreenNavigate.MAP_SHIFT_OPENED:
+        case ExecutorStateNavigate.MAP_SHIFT_OPENED:
           startService(R.string.online, R.string.no_orders);
           break;
-        case SplashScreenNavigate.MAP_ONLINE:
+        case ExecutorStateNavigate.MAP_ONLINE:
           startService(R.string.online, R.string.wait_for_orders);
           break;
       }

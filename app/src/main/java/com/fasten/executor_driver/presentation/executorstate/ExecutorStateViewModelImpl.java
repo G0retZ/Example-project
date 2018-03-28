@@ -1,4 +1,4 @@
-package com.fasten.executor_driver.presentation.splahscreen;
+package com.fasten.executor_driver.presentation.executorstate;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
@@ -13,19 +13,19 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import javax.inject.Inject;
 
-public class SplashScreenViewModelImpl extends ViewModel implements SplashScreenViewModel {
+public class ExecutorStateViewModelImpl extends ViewModel implements ExecutorStateViewModel {
 
   @NonNull
   private final ExecutorStateUseCase executorStateUseCase;
   @NonNull
-  private final MutableLiveData<ViewState<SplashScreenViewActions>> viewStateLiveData;
+  private final MutableLiveData<ViewState<ExecutorStateViewActions>> viewStateLiveData;
   @NonNull
   private final MutableLiveData<String> navigateLiveData;
   @Nullable
   private Disposable disposable;
 
   @Inject
-  public SplashScreenViewModelImpl(@NonNull ExecutorStateUseCase executorStateUseCase) {
+  public ExecutorStateViewModelImpl(@NonNull ExecutorStateUseCase executorStateUseCase) {
     this.executorStateUseCase = executorStateUseCase;
     viewStateLiveData = new MutableLiveData<>();
     navigateLiveData = new MutableLiveData<>();
@@ -33,7 +33,7 @@ public class SplashScreenViewModelImpl extends ViewModel implements SplashScreen
 
   @NonNull
   @Override
-  public LiveData<ViewState<SplashScreenViewActions>> getViewStateLiveData() {
+  public LiveData<ViewState<ExecutorStateViewActions>> getViewStateLiveData() {
     return viewStateLiveData;
   }
 
@@ -44,7 +44,7 @@ public class SplashScreenViewModelImpl extends ViewModel implements SplashScreen
   }
 
   @Override
-  public void initializeApp() {
+  public void initializeExecutorState() {
     if (disposable == null || disposable.isDisposed()) {
       disposable = executorStateUseCase.getExecutorStates()
           .subscribeOn(Schedulers.single())
@@ -53,21 +53,21 @@ public class SplashScreenViewModelImpl extends ViewModel implements SplashScreen
               executorState -> {
                 switch (executorState) {
                   case SHIFT_CLOSED:
-                    navigateLiveData.postValue(SplashScreenNavigate.MAP_SHIFT_CLOSED);
+                    navigateLiveData.postValue(ExecutorStateNavigate.MAP_SHIFT_CLOSED);
                     break;
                   case SHIFT_OPENED:
-                    navigateLiveData.postValue(SplashScreenNavigate.MAP_SHIFT_OPENED);
+                    navigateLiveData.postValue(ExecutorStateNavigate.MAP_SHIFT_OPENED);
                     break;
                   case ONLINE:
-                    navigateLiveData.postValue(SplashScreenNavigate.MAP_ONLINE);
+                    navigateLiveData.postValue(ExecutorStateNavigate.MAP_ONLINE);
                     break;
                 }
               },
               throwable -> {
                 if ((throwable instanceof AuthorizationException)) {
-                  navigateLiveData.postValue(SplashScreenNavigate.AUTHORIZE);
+                  navigateLiveData.postValue(ExecutorStateNavigate.AUTHORIZE);
                 } else {
-                  navigateLiveData.postValue(SplashScreenNavigate.NO_NETWORK);
+                  navigateLiveData.postValue(ExecutorStateNavigate.NO_NETWORK);
                 }
               });
     }
