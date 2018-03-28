@@ -36,12 +36,6 @@ public class GoOnlineFragment extends BaseFragment implements OnlineButtonViewAc
     this.context = context;
   }
 
-  @Override
-  protected void onDependencyInject(AppComponent appComponent) {
-    // Required by Dagger2 for injection
-    appComponent.inject(this);
-  }
-
   @Nullable
   @Override
   public View onCreateView(@NonNull LayoutInflater inflater,
@@ -50,6 +44,18 @@ public class GoOnlineFragment extends BaseFragment implements OnlineButtonViewAc
     View view = inflater.inflate(R.layout.fragment_go_online, container, false);
     goOnlineRequest = view.findViewById(R.id.goOnline);
     goOnlineRequest.setOnClickListener(v -> onlineButtonViewModel.goOnline());
+    return view;
+  }
+
+  @Override
+  protected void onDependencyInject(AppComponent appComponent) {
+    // Required by Dagger2 for injection
+    appComponent.inject(this);
+  }
+
+  @Override
+  public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+    super.onActivityCreated(savedInstanceState);
     onlineButtonViewModel.getNavigationLiveData().observe(this, destination -> {
       if (destination != null) {
         navigate(destination);
@@ -60,7 +66,6 @@ public class GoOnlineFragment extends BaseFragment implements OnlineButtonViewAc
         viewState.apply(this);
       }
     });
-    return view;
   }
 
   @Override

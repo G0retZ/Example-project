@@ -38,12 +38,6 @@ public class ChooseVehicleFragment extends BaseFragment implements ChooseVehicle
     this.chooseVehicleViewModel = chooseVehicleViewModel;
   }
 
-  @Override
-  protected void onDependencyInject(AppComponent appComponent) {
-    // Required by Dagger2 for field injection
-    appComponent.inject(this);
-  }
-
   @Nullable
   @Override
   public View onCreateView(@NonNull LayoutInflater inflater,
@@ -55,7 +49,18 @@ public class ChooseVehicleFragment extends BaseFragment implements ChooseVehicle
     errorText = view.findViewById(R.id.errorText);
     recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
     recyclerView.setAdapter(new ChooseVehicleAdapter(new ArrayList<>()));
+    return view;
+  }
 
+  @Override
+  protected void onDependencyInject(AppComponent appComponent) {
+    // Required by Dagger2 for field injection
+    appComponent.inject(this);
+  }
+
+  @Override
+  public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+    super.onActivityCreated(savedInstanceState);
     chooseVehicleViewModel.getNavigationLiveData().observe(this, destination -> {
       if (destination != null) {
         navigate(destination);
@@ -66,7 +71,6 @@ public class ChooseVehicleFragment extends BaseFragment implements ChooseVehicle
         viewState.apply(this);
       }
     });
-    return view;
   }
 
   @Override
