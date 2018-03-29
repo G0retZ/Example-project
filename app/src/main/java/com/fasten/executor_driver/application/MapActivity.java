@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import com.fasten.executor_driver.R;
+import com.fasten.executor_driver.presentation.executorstate.ExecutorStateNavigate;
 import com.fasten.executor_driver.presentation.onlinebutton.OnlineButtonNavigate;
 
 public class MapActivity extends BaseActivity {
@@ -26,6 +27,10 @@ public class MapActivity extends BaseActivity {
   @Override
   public void navigate(@NonNull String destination) {
     switch (destination) {
+      case ExecutorStateNavigate.MAP_SHIFT_CLOSED:
+        break;
+      case ExecutorStateNavigate.MAP_SHIFT_OPENED:
+        break;
       case OnlineButtonNavigate.DRIVER_BLOCKED:
         new Builder(this)
             .setTitle(R.string.error)
@@ -34,7 +39,7 @@ public class MapActivity extends BaseActivity {
             .setNegativeButton(getString(android.R.string.cancel), null)
             .create()
             .show();
-        return;
+        break;
       case OnlineButtonNavigate.INSUFFICIENT_CREDITS:
         new Builder(this)
             .setTitle(R.string.error)
@@ -43,7 +48,7 @@ public class MapActivity extends BaseActivity {
             .setNegativeButton(getString(android.R.string.cancel), null)
             .create()
             .show();
-        return;
+        break;
       case OnlineButtonNavigate.NO_FREE_VEHICLES:
         new Builder(this)
             .setTitle(R.string.error)
@@ -52,7 +57,7 @@ public class MapActivity extends BaseActivity {
             .setNegativeButton(getString(android.R.string.cancel), null)
             .create()
             .show();
-        return;
+        break;
       case OnlineButtonNavigate.NO_VEHICLES:
         new Builder(this)
             .setTitle(R.string.error)
@@ -61,11 +66,12 @@ public class MapActivity extends BaseActivity {
             .setNegativeButton(getString(android.R.string.cancel), null)
             .create()
             .show();
-        return;
+        break;
       case OnlineButtonNavigate.VEHICLE_OPTIONS:
         startActivity(new Intent(this, VehicleOptionsActivity.class));
-        return;
+        break;
+      default:
+        super.navigate(destination);
     }
-    super.navigate(destination);
   }
 }

@@ -23,17 +23,18 @@ public class VehicleOptionsActivity extends BaseActivity {
     Intent intent;
     switch (destination) {
       case ExecutorStateNavigate.MAP_SHIFT_OPENED:
-        return;
+        break;
       case VehicleOptionsNavigate.SERVICES:
         intent = new Intent(this, ServicesActivity.class);
         startActivity(intent);
         finish();
-        return;
+        break;
       case SelectedVehicleNavigate.VEHICLES:
         intent = new Intent(this, ChooseVehicleActivity.class);
         startActivity(intent);
-        return;
+        break;
+      default:
+        super.navigate(destination);
     }
-    super.navigate(destination);
   }
 }

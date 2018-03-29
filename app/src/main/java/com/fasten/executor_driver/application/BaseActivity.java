@@ -63,6 +63,8 @@ public class BaseActivity extends AppCompatActivity {
         navigate(destination);
       }
     });
+    initGeoLocations();
+    initExecutorStates();
   }
 
   /**
@@ -134,28 +136,20 @@ public class BaseActivity extends AppCompatActivity {
             .show();
         break;
       case ExecutorStateNavigate.AUTHORIZE:
-        startActivity(
-            new Intent(this, LoginActivity.class)
-                .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK)
-        );
+        startActivity(new Intent(this, LoginActivity.class));
+        finish();
         break;
       case ExecutorStateNavigate.MAP_SHIFT_CLOSED:
-        startActivity(
-            new Intent(this, MapActivity.class)
-                .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK)
-        );
+        startActivity(new Intent(this, MapActivity.class));
+        finish();
         break;
       case ExecutorStateNavigate.MAP_SHIFT_OPENED:
-        startActivity(
-            new Intent(this, MapActivity.class)
-                .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK)
-        );
+        startActivity(new Intent(this, MapActivity.class));
+        finish();
         break;
       case ExecutorStateNavigate.MAP_ONLINE:
-        startActivity(
-            new Intent(this, OnlineActivity.class)
-                .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK)
-        );
+        startActivity(new Intent(this, OnlineActivity.class));
+        finish();
         break;
     }
   }

@@ -18,20 +18,12 @@ public class SplashScreenActivity extends BaseActivity {
   @Override
   public void navigate(@NonNull String destination) {
     switch (destination) {
-      case ExecutorStateNavigate.AUTHORIZE:
-        navigateDelayed(destination);
-        break;
-      case ExecutorStateNavigate.MAP_SHIFT_CLOSED:
-        navigateDelayed(destination);
-        break;
-      case ExecutorStateNavigate.MAP_SHIFT_OPENED:
-        navigateDelayed(destination);
-        break;
-      case ExecutorStateNavigate.MAP_ONLINE:
-        navigateDelayed(destination);
+      case ExecutorStateNavigate.NO_NETWORK:
+        super.navigate(destination);
         break;
       default:
-        super.navigate(destination);
+        navigateDelayed(destination);
+
     }
   }
 

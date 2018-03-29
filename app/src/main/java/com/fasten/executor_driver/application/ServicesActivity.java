@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.fasten.executor_driver.R;
+import com.fasten.executor_driver.presentation.executorstate.ExecutorStateNavigate;
 import com.fasten.executor_driver.presentation.services.ServicesOptionsNavigate;
 
 public class ServicesActivity extends BaseActivity {
@@ -17,10 +18,15 @@ public class ServicesActivity extends BaseActivity {
 
   @Override
   public void navigate(@NonNull String destination) {
-    if (destination.equals(ServicesOptionsNavigate.READY_FOR_ORDERS)) {
-      System.out.println(destination);
-    } else {
-      super.navigate(destination);
+    switch (destination) {
+      case ExecutorStateNavigate.MAP_SHIFT_OPENED:
+        break;
+      case ServicesOptionsNavigate.READY_FOR_ORDERS:
+        System.out.println(destination);
+        break;
+      default:
+        super.navigate(destination);
+        break;
     }
   }
 }
