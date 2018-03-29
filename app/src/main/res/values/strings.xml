@@ -16,7 +16,7 @@
   <string name="repeat_code_from_sms_delayed">Отправить повтороно %1$d сек</string>
   <string name="repeat_code_from_sms">Отправить повтороно</string>
   <string name="warning">Внимание</string>
-  <string name="permissions_required">Приложению необходим доступ к геолокации для определения вашего местоположения.</string>
+  <string name="permissions_required">Нам нужно определять ваше местоположение с максимальной точностью, чтобы наилучшим образом подбирать вам заказы.</string>
   <string name="go_online">Выйти на линию</string>
   <string name="error">Ошибка</string>
   <string name="free">Свободна</string>
@@ -37,4 +37,6 @@
   <string name="loading">Погрузка</string>
   <string name="unloading">Разгрузка</string>
   <string name="navigator">Навигатор</string>
+  <string name="turn_on_geolocation">Включите определение местоположения</string>
+  <string name="good">Хорошо</string>
 </resources>

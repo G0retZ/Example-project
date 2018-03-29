@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.fasten.executor_driver.R;
+import com.fasten.executor_driver.presentation.executorstate.ExecutorStateNavigate;
 
 public class LoginActivity extends BaseActivity {
 
@@ -17,10 +18,15 @@ public class LoginActivity extends BaseActivity {
 
   @Override
   public void navigate(@NonNull String destination) {
-    if (destination.equals("next")) {
-      startActivity(new Intent(this, PasswordActivity.class));
-    } else {
-      super.navigate(destination);
+    switch (destination) {
+      case ExecutorStateNavigate.AUTHORIZE:
+        break;
+      case "next":
+        startActivity(new Intent(this, PasswordActivity.class));
+        break;
+      default:
+        super.navigate(destination);
+        break;
     }
   }
 }

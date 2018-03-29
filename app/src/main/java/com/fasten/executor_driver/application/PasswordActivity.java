@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.fasten.executor_driver.R;
 import com.fasten.executor_driver.presentation.code.CodeNavigate;
+import com.fasten.executor_driver.presentation.executorstate.ExecutorStateNavigate;
 
 public class PasswordActivity extends BaseActivity {
 
@@ -17,11 +18,16 @@ public class PasswordActivity extends BaseActivity {
 
   @Override
   public void navigate(@NonNull String destination) {
-    if (destination.equals(CodeNavigate.ENTER_APP)) {
-      initExecutorStates();
-      initGeoLocations();
-    } else {
-      super.navigate(destination);
+    switch (destination) {
+      case CodeNavigate.ENTER_APP:
+        initExecutorStates();
+        initGeoLocations();
+        break;
+      case ExecutorStateNavigate.AUTHORIZE:
+        break;
+      default:
+        super.navigate(destination);
+        break;
     }
   }
 }
