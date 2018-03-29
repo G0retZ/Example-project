@@ -42,12 +42,6 @@ public class LoginFragment extends BaseFragment implements PhoneViewActions {
     this.phoneViewModel = phoneViewModel;
   }
 
-  @Override
-  protected void onDependencyInject(AppComponent appComponent) {
-    // Required by Dagger2 for field injection
-    appComponent.inject(this);
-  }
-
   @Nullable
   @Override
   public View onCreateView(@NonNull LayoutInflater inflater,
@@ -63,6 +57,19 @@ public class LoginFragment extends BaseFragment implements PhoneViewActions {
     });
 
     goNext.setOnClickListener(v -> phoneViewModel.nextClicked());
+    setTextListener();
+    return view;
+  }
+
+  @Override
+  protected void onDependencyInject(AppComponent appComponent) {
+    // Required by Dagger2 for field injection
+    appComponent.inject(this);
+  }
+
+  @Override
+  public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+    super.onActivityCreated(savedInstanceState);
     phoneViewModel.getViewStateLiveData().observe(this, viewState -> {
       if (viewState != null) {
         viewState.apply(this);
@@ -81,8 +88,6 @@ public class LoginFragment extends BaseFragment implements PhoneViewActions {
         phoneViewModel.phoneNumberChanged(lastPhoneNumber);
       }
     }
-    setTextListener();
-    return view;
   }
 
   @Override

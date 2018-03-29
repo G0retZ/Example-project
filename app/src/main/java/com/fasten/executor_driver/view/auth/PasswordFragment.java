@@ -92,21 +92,6 @@ public class PasswordFragment extends BaseFragment implements CodeViewActions,
     this.context = context;
   }
 
-  @Override
-  protected void onDependencyInject(AppComponent appComponent) {
-    // Required by Dagger2 for field injection
-    appComponent.inject(this);
-  }
-
-  @Override
-  public void onCreate(@Nullable Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-    IntentFilter intentFilter = new IntentFilter();
-    intentFilter.addAction(SmsReceiver.ACTION);
-    intentFilter.setPriority(999);
-    context.registerReceiver(smsReceiver, intentFilter);
-  }
-
   @Nullable
   @Override
   public View onCreateView(@NonNull LayoutInflater inflater,
@@ -120,11 +105,24 @@ public class PasswordFragment extends BaseFragment implements CodeViewActions,
     codeInput = view.findViewById(R.id.codeInput);
     sendSmsRequest = view.findViewById(R.id.sendSms);
     pendingIndicator = view.findViewById(R.id.pending);
-    sendSmsRequest.setOnClickListener(v -> {
-      smsSent = true;
-      smsButtonViewModel.sendMeSms();
-    });
+    sendSmsRequest.setOnClickListener(this::sendSmsRequest);
+    setTextListener();
+    return view;
+  }
 
+  @Override
+  protected void onDependencyInject(AppComponent appComponent) {
+    // Required by Dagger2 for field injection
+    appComponent.inject(this);
+  }
+
+  @Override
+  public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+    super.onActivityCreated(savedInstanceState);
+    IntentFilter intentFilter = new IntentFilter();
+    intentFilter.addAction(SmsReceiver.ACTION);
+    intentFilter.setPriority(999);
+    context.registerReceiver(smsReceiver, intentFilter);
     codeViewModel.getNavigationLiveData().observe(this, destination -> {
       if (destination != null) {
         navigate(destination);
@@ -145,8 +143,6 @@ public class PasswordFragment extends BaseFragment implements CodeViewActions,
         viewState.apply(this);
       }
     });
-    setTextListener();
-    return view;
   }
 
   @Override
@@ -268,9 +264,15 @@ public class PasswordFragment extends BaseFragment implements CodeViewActions,
     }
   }
 
+  @SuppressWarnings("unused")
+  private void sendSmsRequest(View view) {
+    smsSent = true;
+    smsButtonViewModel.sendMeSms();
+  }
+
   private void autoSendSmsRequest() {
     if (!smsSent) {
-      sendSmsRequest.post(sendSmsRequest::performClick);
+      sendSmsRequest(null);
     }
   }
 
