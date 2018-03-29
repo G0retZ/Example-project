@@ -48,7 +48,8 @@ public class GeoLocationUseCaseImpl implements GeoLocationUseCase {
                   .subscribe(() -> {
                   }, throwable -> {
                   })
-          ).share();
+          ).replay(1)
+          .refCount();
     }
     return geoLocationFlowable;
   }
