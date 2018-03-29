@@ -20,7 +20,9 @@
     android:supportsRtl="true"
     android:theme="@style/AppTheme"
     tools:ignore="GoogleAppIndexingWarning">
-    <activity android:name="com.fasten.executor_driver.application.SplashScreenActivity">
+    <activity
+      android:name="com.fasten.executor_driver.application.SplashScreenActivity"
+      android:theme="@style/AppTheme.NoActionBar">
       <intent-filter>
         <action android:name="android.intent.action.MAIN"/>
         <category android:name="android.intent.category.LAUNCHER"/>
@@ -48,7 +50,7 @@
       android:parentActivityName=".application.VehicleOptionsActivity"/>
     <activity android:name=".application.GeolocationResolutionActivity"/>
     <activity
-      android:name="com.fasten.executor_driver.application.OnlineActivity"
+      android:name=".application.OnlineActivity"
       android:parentActivityName=".application.SplashScreenActivity"/>
 
     <service
