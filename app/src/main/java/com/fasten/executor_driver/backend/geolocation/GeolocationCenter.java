@@ -4,7 +4,7 @@ import android.location.Location;
 import io.reactivex.Flowable;
 
 /**
- * Центр геолокации
+ * Центр геолокации.
  */
 public interface GeolocationCenter {
 
