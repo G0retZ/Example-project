@@ -20,18 +20,17 @@ public class VehicleOptionsActivity extends BaseActivity {
 
   @Override
   public void navigate(@NonNull String destination) {
-    Intent intent;
     switch (destination) {
+      case ExecutorStateNavigate.MAP_SHIFT_CLOSED:
+        break;
       case ExecutorStateNavigate.MAP_SHIFT_OPENED:
         break;
       case VehicleOptionsNavigate.SERVICES:
-        intent = new Intent(this, ServicesActivity.class);
-        startActivity(intent);
+        startActivity(new Intent(this, ServicesActivity.class));
         finish();
         break;
       case SelectedVehicleNavigate.VEHICLES:
-        intent = new Intent(this, ChooseVehicleActivity.class);
-        startActivity(intent);
+        startActivity(new Intent(this, ChooseVehicleActivity.class));
         break;
       default:
         super.navigate(destination);

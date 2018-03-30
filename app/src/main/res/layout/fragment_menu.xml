@@ -14,12 +14,12 @@
     android:background="?selectableItemBackground"
     android:gravity="center_vertical"
     android:text="Профиль"
-    app:layout_constraintBottom_toTopOf="@id/profile_line"
+    app:layout_constraintBottom_toTopOf="@id/profileLine"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toTopOf="parent"/>
   <View
-    android:id="@+id/profile_line"
+    android:id="@+id/profileLine"
     android:layout_width="0dp"
     android:layout_height="1dp"
     android:background="@color/colorDivider"
@@ -37,10 +37,10 @@
     android:background="?selectableItemBackground"
     android:gravity="center_vertical"
     android:text="Баланс"
-    app:layout_constraintBottom_toTopOf="@id/balance_line"
+    app:layout_constraintBottom_toTopOf="@id/balanceLine"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toBottomOf="@id/profile_line"/>
+    app:layout_constraintTop_toBottomOf="@id/profileLine"/>
   <TextView
     android:id="@+id/money"
     style="@style/TextAppearance.AppCompat.Subhead"
@@ -52,13 +52,13 @@
     android:gravity="center_vertical"
     android:text="10 225 ₽"
     android:textColor="#47FF60"
-    app:layout_constraintBottom_toTopOf="@id/balance_line"
+    app:layout_constraintBottom_toTopOf="@id/balanceLine"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintHorizontal_bias="1.0"
     app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toBottomOf="@id/profile_line"/>
+    app:layout_constraintTop_toBottomOf="@id/profileLine"/>
   <View
-    android:id="@+id/balance_line"
+    android:id="@+id/balanceLine"
     android:layout_width="0dp"
     android:layout_height="1dp"
     android:background="@color/colorDivider"
@@ -76,12 +76,12 @@
     android:background="?selectableItemBackground"
     android:gravity="center_vertical"
     android:text="Сообщения"
-    app:layout_constraintBottom_toTopOf="@id/messages_line"
+    app:layout_constraintBottom_toTopOf="@id/messagesLine"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toBottomOf="@id/balance_line"/>
+    app:layout_constraintTop_toBottomOf="@id/balanceLine"/>
   <TextView
-    android:id="@+id/messages_count"
+    android:id="@+id/messagesCount"
     style="@style/TextAppearance.AppCompat.Subhead"
     android:layout_width="wrap_content"
     android:layout_height="56dp"
@@ -90,13 +90,13 @@
     android:background="?selectableItemBackground"
     android:gravity="center_vertical"
     android:text="2"
-    app:layout_constraintBottom_toTopOf="@id/messages_line"
+    app:layout_constraintBottom_toTopOf="@id/messagesLine"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintHorizontal_bias="1.0"
     app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toBottomOf="@id/balance_line"/>
+    app:layout_constraintTop_toBottomOf="@id/balanceLine"/>
   <View
-    android:id="@+id/messages_line"
+    android:id="@+id/messagesLine"
     android:layout_width="0dp"
     android:layout_height="1dp"
     android:background="@color/colorDivider"
@@ -114,12 +114,12 @@
     android:background="?selectableItemBackground"
     android:gravity="center_vertical"
     android:text="История заказов"
-    app:layout_constraintBottom_toTopOf="@id/history_line"
+    app:layout_constraintBottom_toTopOf="@id/historyLine"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toBottomOf="@id/messages_line"/>
+    app:layout_constraintTop_toBottomOf="@id/messagesLine"/>
   <View
-    android:id="@+id/history_line"
+    android:id="@+id/historyLine"
     android:layout_width="0dp"
     android:layout_height="1dp"
     android:background="@color/colorDivider"
@@ -137,12 +137,12 @@
     android:background="?selectableItemBackground"
     android:gravity="center_vertical"
     android:text="Оператор"
-    app:layout_constraintBottom_toTopOf="@id/operator_line"
+    app:layout_constraintBottom_toTopOf="@id/operatorLine"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toBottomOf="@id/history_line"/>
+    app:layout_constraintTop_toBottomOf="@id/historyLine"/>
   <View
-    android:id="@+id/operator_line"
+    android:id="@+id/operatorLine"
     android:layout_width="0dp"
     android:layout_height="1dp"
     android:background="@color/colorDivider"
@@ -160,12 +160,12 @@
     android:background="?selectableItemBackground"
     android:gravity="center_vertical"
     android:text="Список ТС"
-    app:layout_constraintBottom_toTopOf="@id/vehicles_line"
+    app:layout_constraintBottom_toTopOf="@id/vehiclesLine"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toBottomOf="@id/operator_line"/>
+    app:layout_constraintTop_toBottomOf="@id/operatorLine"/>
   <View
-    android:id="@+id/vehicles_line"
+    android:id="@+id/vehiclesLine"
     android:layout_width="0dp"
     android:layout_height="1dp"
     android:background="@color/colorDivider"

@@ -21,6 +21,8 @@ public class ServicesActivity extends BaseActivity {
     switch (destination) {
       case ExecutorStateNavigate.MAP_SHIFT_OPENED:
         break;
+      case ExecutorStateNavigate.MAP_SHIFT_CLOSED:
+        break;
       case ServicesOptionsNavigate.READY_FOR_ORDERS:
         System.out.println(destination);
         break;

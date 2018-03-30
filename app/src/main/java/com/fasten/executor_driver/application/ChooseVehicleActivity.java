@@ -21,6 +21,8 @@ public class ChooseVehicleActivity extends BaseActivity {
     switch (destination) {
       case ExecutorStateNavigate.MAP_SHIFT_OPENED:
         break;
+      case ExecutorStateNavigate.MAP_SHIFT_CLOSED:
+        break;
       case ChooseVehicleNavigate.VEHICLE_OPTIONS:
         finish();
         break;
