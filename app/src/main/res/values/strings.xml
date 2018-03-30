@@ -39,4 +39,5 @@
   <string name="navigator">Навигатор</string>
   <string name="turn_on_geolocation">Включите определение местоположения</string>
   <string name="good">Хорошо</string>
+  <string name="menu">Меню</string>
 </resources>
