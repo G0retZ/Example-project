@@ -32,6 +32,8 @@
       android:name="com.fasten.executor_driver.application.MapActivity"
       android:parentActivityName=".application.SplashScreenActivity"/>
     <activity
+      android:name="com.fasten.executor_driver.application.MenuActivity"/>
+    <activity
       android:name=".application.LoginActivity"
       android:parentActivityName=".application.SplashScreenActivity"
       android:windowSoftInputMode="stateVisible|adjustResize"/>
