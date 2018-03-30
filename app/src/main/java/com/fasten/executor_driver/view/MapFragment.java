@@ -109,6 +109,7 @@ public class MapFragment extends SupportMapFragment implements OnMapReadyCallbac
         viewState.apply(this);
       }
     });
+    geoLocationViewModel.updateGeoLocations();
   }
 
   @Override

@@ -17,7 +17,7 @@
   <string name="repeat_code_from_sms">Отправить повтороно</string>
   <string name="warning">Внимание</string>
   <string name="permissions_required">Нам нужно определять ваше местоположение с максимальной точностью, чтобы наилучшим образом подбирать вам заказы.</string>
-  <string name="go_online">Выйти на линию</string>
+  <string name="go_on_shift">Выйти на смену</string>
   <string name="error">Ошибка</string>
   <string name="free">Свободна</string>
   <string name="busy">Занята</string>
