@@ -23,7 +23,6 @@ public class SplashScreenActivity extends BaseActivity {
         break;
       default:
         navigateDelayed(destination);
-
     }
   }
 

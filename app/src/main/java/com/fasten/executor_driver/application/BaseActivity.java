@@ -53,12 +53,12 @@ public class BaseActivity extends AppCompatActivity {
     if (executorStateViewModel == null || geoLocationViewModel == null) {
       throw new RuntimeException("Shit! WTF?!");
     }
-    executorStateViewModel.getNavigationLiveData().observeForever(destination -> {
+    executorStateViewModel.getNavigationLiveData().observe(this, destination -> {
       if (destination != null) {
         navigate(destination);
       }
     });
-    geoLocationViewModel.getNavigationLiveData().observeForever(destination -> {
+    geoLocationViewModel.getNavigationLiveData().observe(this, destination -> {
       if (destination != null) {
         navigate(destination);
       }
