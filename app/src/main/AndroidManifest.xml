@@ -21,7 +21,8 @@
     android:theme="@style/AppTheme"
     tools:ignore="GoogleAppIndexingWarning">
     <activity
-      android:name="com.fasten.executor_driver.application.SplashScreenActivity"
+      android:launchMode="singleTop"
+      android:name=".application.SplashScreenActivity"
       android:theme="@style/AppTheme.NoActionBar">
       <intent-filter>
         <action android:name="android.intent.action.MAIN"/>
@@ -29,29 +30,40 @@
       </intent-filter>
     </activity>
     <activity
-      android:name="com.fasten.executor_driver.application.MapActivity"
+      android:launchMode="singleTop"
+      android:name=".application.MapActivity"
       android:parentActivityName=".application.SplashScreenActivity"/>
     <activity
-      android:name="com.fasten.executor_driver.application.MenuActivity"/>
+      android:launchMode="singleTop"
+      android:name=".application.MenuActivity"/>
     <activity
+      android:launchMode="singleTop"
       android:name=".application.LoginActivity"
       android:parentActivityName=".application.SplashScreenActivity"
       android:windowSoftInputMode="stateVisible|adjustResize"/>
     <activity
+      android:launchMode="singleTop"
       android:name=".application.PasswordActivity"
       android:parentActivityName=".application.LoginActivity"
       android:windowSoftInputMode="stateVisible|adjustResize"/>
     <activity
+      android:launchMode="singleTop"
       android:name=".application.VehicleOptionsActivity"
       android:parentActivityName=".application.MapActivity"/>
     <activity
+      android:launchMode="singleTop"
       android:name=".application.ChooseVehicleActivity"
       android:parentActivityName=".application.VehicleOptionsActivity"/>
     <activity
+      android:launchMode="singleTop"
       android:name=".application.ServicesActivity"
       android:parentActivityName=".application.VehicleOptionsActivity"/>
-    <activity android:name=".application.GeolocationResolutionActivity"/>
     <activity
+      android:launchMode="singleTop"
+      android:name=".application.GeolocationResolutionActivity"
+      />
+    <activity
+      android:launchMode="singleTop"
       android:name=".application.OnlineActivity"
       android:parentActivityName=".application.SplashScreenActivity"/>
 
