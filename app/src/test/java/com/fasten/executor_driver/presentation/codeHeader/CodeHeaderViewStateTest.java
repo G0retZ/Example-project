@@ -21,12 +21,12 @@ public class CodeHeaderViewStateTest {
   private CodeHeaderViewActions codeViewActions;
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     viewState = new CodeHeaderViewState("+7 (999) 700-44-50");
   }
 
   @Test
-  public void testActions() throws Exception {
+  public void testActions() {
     // Действие:
     viewState.apply(codeViewActions);
 
@@ -36,7 +36,7 @@ public class CodeHeaderViewStateTest {
   }
 
   @Test
-  public void testEquals() throws Exception {
+  public void testEquals() {
     assertEquals(viewState, new CodeHeaderViewState("+7 (999) 700-44-50"));
     assertNotEquals(viewState, new CodeHeaderViewState("+7 (999) 700-44-51"));
   }

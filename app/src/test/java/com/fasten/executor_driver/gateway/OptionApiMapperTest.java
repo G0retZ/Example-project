@@ -17,7 +17,7 @@ public class OptionApiMapperTest {
   private Mapper<ApiOptionItem, Option> mapper;
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     mapper = new VehicleOptionApiMapper();
   }
 

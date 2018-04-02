@@ -44,7 +44,7 @@ public class SelectedVehicleViewModelTest {
   private Observer<String> navigateObserver;
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     testScheduler = new TestScheduler();
     RxJavaPlugins.setIoSchedulerHandler(scheduler -> testScheduler);
     RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
@@ -58,11 +58,9 @@ public class SelectedVehicleViewModelTest {
 
   /**
    * Должен просить юзкейс получить список ТС, при первой и только при первой подписке.
-   *
-   * @throws Exception error
    */
   @Test
-  public void askSelectedVehicleUseCaseForVehiclesInitially() throws Exception {
+  public void askSelectedVehicleUseCaseForVehiclesInitially() {
     // Действие:
     selectedVehicleViewModel.getViewStateLiveData();
     selectedVehicleViewModel.getViewStateLiveData();
@@ -74,11 +72,9 @@ public class SelectedVehicleViewModelTest {
 
   /**
    * Не должен трогать юзкейс.
-   *
-   * @throws Exception error
    */
   @Test
-  public void DoNotTouchSelectedVehicleUseCaseDuringVehicleChoosing() throws Exception {
+  public void DoNotTouchSelectedVehicleUseCaseDuringVehicleChoosing() {
     // Действие:
     selectedVehicleViewModel.changeVehicle();
     selectedVehicleViewModel.getNavigationLiveData();
@@ -92,11 +88,9 @@ public class SelectedVehicleViewModelTest {
 
   /**
    * Должен вернуть состояние вида без имени изначально.
-   *
-   * @throws Exception error
    */
   @Test
-  public void setViewStateWithoutNameToLiveData() throws Exception {
+  public void setViewStateWithoutNameToLiveData() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
 
@@ -110,11 +104,9 @@ public class SelectedVehicleViewModelTest {
 
   /**
    * Должен вернуть состояние вида с именем.
-   *
-   * @throws Exception error
    */
   @Test
-  public void setViewStateWithNameToLiveData() throws Exception {
+  public void setViewStateWithNameToLiveData() {
     // Дано:
     PublishSubject<Vehicle> publishSubject = PublishSubject.create();
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
@@ -138,12 +130,10 @@ public class SelectedVehicleViewModelTest {
 
   /**
    * Должен вернуть состояние вида без имени после ошибки.
-   *
-   * @throws Exception error
    */
   @SuppressWarnings("unchecked")
   @Test
-  public void setViewStateWithoutNameToLiveDataOnError() throws Exception {
+  public void setViewStateWithoutNameToLiveDataOnError() {
     // Дано:
     PublishSubject<Vehicle> publishSubject = PublishSubject.create();
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
@@ -172,11 +162,9 @@ public class SelectedVehicleViewModelTest {
 
   /**
    * Должен вернуть "перейти к списку ТС".
-   *
-   * @throws Exception error
    */
   @Test
-  public void setNavigateToVehiclesToLiveData() throws Exception {
+  public void setNavigateToVehiclesToLiveData() {
     // Дано:
     selectedVehicleViewModel.getNavigationLiveData().observeForever(navigateObserver);
 

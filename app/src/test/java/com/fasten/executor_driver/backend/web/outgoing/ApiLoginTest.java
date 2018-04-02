@@ -11,19 +11,19 @@ public class ApiLoginTest {
   private ApiLogin apiLogin;
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     apiLogin = new ApiLogin("name", "password");
   }
 
   @Test
-  public void testConstructor() throws Exception {
+  public void testConstructor() {
     assertEquals(apiLogin.getName(), "name");
     assertEquals(apiLogin.getPassword(), "password");
   }
 
   @SuppressWarnings("SpellCheckingInspection")
   @Test
-  public void testEquals() throws Exception {
+  public void testEquals() {
     assertEquals(apiLogin, new ApiLogin("name", "password"));
     assertNotEquals(apiLogin, new ApiLogin("nam", "password"));
     assertNotEquals(apiLogin, new ApiLogin("name", "passwor"));

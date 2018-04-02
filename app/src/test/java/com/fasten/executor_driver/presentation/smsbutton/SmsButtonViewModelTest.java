@@ -43,7 +43,7 @@ public class SmsButtonViewModelTest {
   private SmsUseCase smsUseCase;
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     testScheduler = new TestScheduler();
     RxJavaPlugins.setIoSchedulerHandler(scheduler -> testScheduler);
     RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
@@ -57,11 +57,9 @@ public class SmsButtonViewModelTest {
   /**
    * Не должен просить юзкейс отправить СМС с кодом на номер, если предыдущий запрос еще не
    * завершился.
-   *
-   * @throws Exception error
    */
   @Test
-  public void DoNotTouchSmsUseCaseToSendMeCodeUntilRequestFinished() throws Exception {
+  public void DoNotTouchSmsUseCaseToSendMeCodeUntilRequestFinished() {
     // Действие:
     smsButtonViewModel.sendMeSms();
     smsButtonViewModel.sendMeSms();
@@ -74,11 +72,9 @@ public class SmsButtonViewModelTest {
   /**
    * Не должен просить юзкейс отправить СМС с кодом на номер, если предыдущий запрос еще не
    * завершился.
-   *
-   * @throws Exception error
    */
   @Test
-  public void DoNotTouchSmsUseCaseToSendMeCodeUntilTimeout() throws Exception {
+  public void DoNotTouchSmsUseCaseToSendMeCodeUntilTimeout() {
     // Дано:
     when(smsUseCase.sendMeCode()).thenReturn(Completable.complete());
     InOrder inOrder = Mockito.inOrder(smsUseCase);
@@ -102,11 +98,9 @@ public class SmsButtonViewModelTest {
 
   /**
    * Должен попросить юзкейс отправить СМС с кодом на номер.
-   *
-   * @throws Exception error
    */
   @Test
-  public void askSmsUseCaseToSendMeCode() throws Exception {
+  public void askSmsUseCaseToSendMeCode() {
     // Дано:
     when(smsUseCase.sendMeCode()).thenReturn(Completable.error(new NoNetworkException()));
 
@@ -127,11 +121,9 @@ public class SmsButtonViewModelTest {
 
   /**
    * Должен вернуть рабочее состояние вида.
-   *
-   * @throws Exception error
    */
   @Test
-  public void setReadyViewStateToLiveData() throws Exception {
+  public void setReadyViewStateToLiveData() {
     // Действие:
     smsButtonViewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
@@ -141,11 +133,9 @@ public class SmsButtonViewModelTest {
 
   /**
    * Должен вернуть состояния вида "В процессе" для запроса СМС.
-   *
-   * @throws Exception error
    */
   @Test
-  public void setPendingViewStateToLiveData() throws Exception {
+  public void setPendingViewStateToLiveData() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     smsButtonViewModel.getViewStateLiveData().observeForever(viewStateObserver);
@@ -162,11 +152,9 @@ public class SmsButtonViewModelTest {
   /**
    * Должен вернуть состояния вида "Ошибка" без отсчета таймаута и после ошибки запроса СМС, если
    * нет сети.
-   *
-   * @throws Exception error
    */
   @Test
-  public void setErrorViewStateToLiveDataAfterFail() throws Exception {
+  public void setErrorViewStateToLiveDataAfterFail() {
     // Дано:
     CompletableSubject completableSubject = CompletableSubject.create();
     when(smsUseCase.sendMeCode()).thenReturn(completableSubject);
@@ -188,11 +176,9 @@ public class SmsButtonViewModelTest {
   /**
    * Должен вернуть состояния вида "Ожидайте" с отсчетом всего таймаута и возвратом обратно в
    * состояние готовности после ошибки запроса СМС, не связанного с состоянием сети.
-   *
-   * @throws Exception error
    */
   @Test
-  public void setHoldViewStateToLiveDataAfterOtherError() throws Exception {
+  public void setHoldViewStateToLiveDataAfterOtherError() {
     // Дано:
     CompletableSubject completableSubject = CompletableSubject.create();
     when(smsUseCase.sendMeCode()).thenReturn(completableSubject);
@@ -245,11 +231,9 @@ public class SmsButtonViewModelTest {
   /**
    * Должен вернуть состояния вида "Ожидайте" с отсчетом всего таймаута и возвратом обратно в
    * состояние готовности после успешного запроса СМС.
-   *
-   * @throws Exception error
    */
   @Test
-  public void setHoldViewStateToLiveData() throws Exception {
+  public void setHoldViewStateToLiveData() {
     // Дано:
     CompletableSubject completableSubject = CompletableSubject.create();
     when(smsUseCase.sendMeCode()).thenReturn(completableSubject);

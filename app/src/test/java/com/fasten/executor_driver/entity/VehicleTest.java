@@ -14,7 +14,7 @@ public class VehicleTest {
   private Vehicle vehicle;
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     vehicle = new Vehicle(12, "manufacturer", "model", "color", "license", false);
     vehicle.addVehicleOptions(
         new OptionNumeric(0, "name0", "description0", false, 10, 0, 20),
@@ -25,7 +25,7 @@ public class VehicleTest {
   }
 
   @Test
-  public void testConstructor() throws Exception {
+  public void testConstructor() {
     assertEquals(vehicle.getId(), 12);
     assertEquals(vehicle.getManufacturer(), "manufacturer");
     assertEquals(vehicle.getModel(), "model");
@@ -43,7 +43,7 @@ public class VehicleTest {
   }
 
   @Test
-  public void testEquals() throws Exception {
+  public void testEquals() {
     Vehicle vehicle1 = new Vehicle(12, "manufacturer", "model", "color", "license", false);
     vehicle1.setOptions(
         new OptionNumeric(0, "name0", "description0", false, 10, 0, 20),

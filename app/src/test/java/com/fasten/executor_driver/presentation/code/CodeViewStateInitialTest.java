@@ -19,12 +19,12 @@ public class CodeViewStateInitialTest {
   private CodeViewActions codeViewActions;
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     viewState = new CodeViewStateInitial();
   }
 
   @Test
-  public void testActions() throws Exception {
+  public void testActions() {
     // Действие:
     viewState.apply(codeViewActions);
 

@@ -20,12 +20,12 @@ public class ChooseVehicleViewStateErrorTest {
   private ChooseVehicleViewActions codeViewActions;
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     viewState = new ChooseVehicleViewStateError(123);
   }
 
   @Test
-  public void testActions() throws Exception {
+  public void testActions() {
     // Действие:
     viewState.apply(codeViewActions);
 
@@ -38,7 +38,7 @@ public class ChooseVehicleViewStateErrorTest {
   }
 
   @Test
-  public void testEquals() throws Exception {
+  public void testEquals() {
     assertEquals(viewState, new ChooseVehicleViewStateError(123));
     assertNotEquals(viewState, new ChooseVehicleViewStateError(0));
   }

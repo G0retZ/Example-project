@@ -36,7 +36,7 @@ public class HeatMapUseCaseTest {
   private Callable<String> testCallable;
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     testScheduler = new TestScheduler();
     RxJavaPlugins.setIoSchedulerHandler(scheduler -> testScheduler);
     when(gateway.getHeatMap()).thenReturn(Single.never());
@@ -47,11 +47,9 @@ public class HeatMapUseCaseTest {
 
   /**
    * Должен запросить у гейтвея тепловую карту.
-   *
-   * @throws Exception error
    */
   @Test
-  public void askGatewayForHeatMap() throws Exception {
+  public void askGatewayForHeatMap() {
     // Действие:
     heatMapUseCase.loadHeatMap().test();
 
@@ -61,11 +59,9 @@ public class HeatMapUseCaseTest {
 
   /**
    * Не должен запрашивать у гейтвея тепловую карту при повторном запросе.
-   *
-   * @throws Exception error
    */
   @Test
-  public void doNotAskGatewayForHeatMap() throws Exception {
+  public void doNotAskGatewayForHeatMap() {
     // Действие:
     heatMapUseCase.loadHeatMap().test();
     heatMapUseCase.loadHeatMap().test();
@@ -78,11 +74,9 @@ public class HeatMapUseCaseTest {
 
   /**
    * Должен пропустить ошибки сети.
-   *
-   * @throws Exception error
    */
   @Test
-  public void answerNoNetworkError() throws Exception {
+  public void answerNoNetworkError() {
     // Дано:
     when(gateway.getHeatMap()).thenReturn(Single.error(new NoNetworkException()));
 
@@ -101,11 +95,9 @@ public class HeatMapUseCaseTest {
 
   /**
    * Должен вернуть полученные мапы.
-   *
-   * @throws Exception error
    */
   @Test
-  public void answerWithValues() throws Exception {
+  public void answerWithValues() {
     // Дано:
     when(gateway.getHeatMap()).thenReturn(Single.fromCallable(new Callable<String>() {
       private int count;

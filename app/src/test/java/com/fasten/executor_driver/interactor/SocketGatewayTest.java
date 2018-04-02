@@ -33,7 +33,7 @@ public class SocketGatewayTest {
   private StompClient stompClient;
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     RxJavaPlugins.setIoSchedulerHandler(scheduler -> Schedulers.trampoline());
     RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
     socketGateway = new SocketGatewayImpl(stompClient);
@@ -44,11 +44,9 @@ public class SocketGatewayTest {
 
   /**
    * Не должен просить у клиента STOMP соединения, если он соединен и не соединяется.
-   *
-   * @throws Exception error
    */
   @Test
-  public void doNotAskStompClientToConnect() throws Exception {
+  public void doNotAskStompClientToConnect() {
     // Дано:
     when(stompClient.isConnected()).thenReturn(true);
 
@@ -63,11 +61,9 @@ public class SocketGatewayTest {
   /**
    * Должен запросить у клиента STOMP соединение, если он не соединен и не соединяется, и
    * подписаться на событие соединения.
-   *
-   * @throws Exception error
    */
   @Test
-  public void askStompClientToConnectAndSubscribeForLifecycle() throws Exception {
+  public void askStompClientToConnectAndSubscribeForLifecycle() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(stompClient);
 
@@ -85,11 +81,9 @@ public class SocketGatewayTest {
   /**
    * Должен отписаться у клиента STOMP от событий соединения, если он не соединен и не соединяется,
    * и после соединения.
-   *
-   * @throws Exception error
    */
   @Test
-  public void unSubscribeFromStompClientLifeCycleAfterConnect() throws Exception {
+  public void unSubscribeFromStompClientLifeCycleAfterConnect() {
     // Дано:
     PublishSubject<LifecycleEvent> publishSubject = PublishSubject.create();
     when(stompClient.lifecycle()).thenReturn(publishSubject);
@@ -105,11 +99,9 @@ public class SocketGatewayTest {
   /**
    * Должен отписаться у клиента STOMP от событий соединения, если он не соединен и не соединяется,
    * и соединение было закрыто.
-   *
-   * @throws Exception error
    */
   @Test
-  public void unSubscribeStompClientLifeCycleAfterDisconnect() throws Exception {
+  public void unSubscribeStompClientLifeCycleAfterDisconnect() {
     // Дано:
     PublishSubject<LifecycleEvent> publishSubject = PublishSubject.create();
     when(stompClient.lifecycle()).thenReturn(publishSubject);
@@ -125,11 +117,9 @@ public class SocketGatewayTest {
   /**
    * Должен отписаться у клиента STOMP от событий соединения, если он не соединен и не соединяется,
    * и соединение провалилось.
-   *
-   * @throws Exception error
    */
   @Test
-  public void unSubscribeStompClientLifeCycleAfterFailed() throws Exception {
+  public void unSubscribeStompClientLifeCycleAfterFailed() {
     // Дано:
     PublishSubject<LifecycleEvent> publishSubject = PublishSubject.create();
     when(stompClient.lifecycle()).thenReturn(publishSubject);
@@ -145,11 +135,9 @@ public class SocketGatewayTest {
   /**
    * Должен запросить у клиента STOMP подписку на событие соединения, если он не соединен и
    * соединяется.
-   *
-   * @throws Exception error
    */
   @Test
-  public void askStompClientToSubscribeForLifecycle() throws Exception {
+  public void askStompClientToSubscribeForLifecycle() {
     // Дано:
     when(stompClient.isConnecting()).thenReturn(true);
 
@@ -166,11 +154,9 @@ public class SocketGatewayTest {
   /**
    * Должен отписаться у клиента STOMP от событий соединения, если он не соединен и соединяется,
    * и после соединения.
-   *
-   * @throws Exception error
    */
   @Test
-  public void unSubscribeConnectingStompClientLifeCycleAfterConnect() throws Exception {
+  public void unSubscribeConnectingStompClientLifeCycleAfterConnect() {
     // Дано:
     PublishSubject<LifecycleEvent> publishSubject = PublishSubject.create();
     when(stompClient.lifecycle()).thenReturn(publishSubject);
@@ -187,11 +173,9 @@ public class SocketGatewayTest {
   /**
    * Должен отписаться у клиента STOMP от событий соединения, если он не соединен и соединяется,
    * и соединение было закрыто.
-   *
-   * @throws Exception error
    */
   @Test
-  public void unSubscribeConnectingStompClientLifeCycleAfterDisconnect() throws Exception {
+  public void unSubscribeConnectingStompClientLifeCycleAfterDisconnect() {
     // Дано:
     PublishSubject<LifecycleEvent> publishSubject = PublishSubject.create();
     when(stompClient.lifecycle()).thenReturn(publishSubject);
@@ -208,11 +192,9 @@ public class SocketGatewayTest {
   /**
    * Должен отписаться у клиента STOMP от событий соединения, если он не соединен и соединяется,
    * и соединение провалилось.
-   *
-   * @throws Exception error
    */
   @Test
-  public void unSubscribeConnectingStompClientLifeCycleAfterFailed() throws Exception {
+  public void unSubscribeConnectingStompClientLifeCycleAfterFailed() {
     // Дано:
     PublishSubject<LifecycleEvent> publishSubject = PublishSubject.create();
     when(stompClient.lifecycle()).thenReturn(publishSubject);
@@ -228,11 +210,9 @@ public class SocketGatewayTest {
 
   /**
    * Должен просить у клиента STOMP разединения, если он соединен и не соединяется.
-   *
-   * @throws Exception error
    */
   @Test
-  public void askStompClientToDisconnectIfConnected() throws Exception {
+  public void askStompClientToDisconnectIfConnected() {
     // Дано:
     when(stompClient.isConnected()).thenReturn(true);
 
@@ -247,11 +227,9 @@ public class SocketGatewayTest {
 
   /**
    * Не Должен запросить у клиента STOMP разединения, если он не соединен и соединяется.
-   *
-   * @throws Exception error
    */
   @Test
-  public void askStompClientToDisconnectIfConnecting() throws Exception {
+  public void askStompClientToDisconnectIfConnecting() {
     // Дано:
     when(stompClient.isConnecting()).thenReturn(true);
 
@@ -267,11 +245,9 @@ public class SocketGatewayTest {
 
   /**
    * Не должен просить у клиента STOMP разединения, если он не соединен и не соединяется.
-   *
-   * @throws Exception error
    */
   @Test
-  public void doNotAskStompClientToDisconnect() throws Exception {
+  public void doNotAskStompClientToDisconnect() {
     // Действие:
     socketGateway.closeSocket();
 
@@ -287,11 +263,9 @@ public class SocketGatewayTest {
 
   /**
    * Должен ответить успехом, если он соединен и не соединяется.
-   *
-   * @throws Exception error
    */
   @Test
-  public void answerOpenSuccessIfConnected() throws Exception {
+  public void answerOpenSuccessIfConnected() {
     // Дано:
     when(stompClient.isConnected()).thenReturn(true);
 
@@ -304,11 +278,9 @@ public class SocketGatewayTest {
 
   /**
    * Должен ответить успехом, если он не соединен и не соединяется, после соединения.
-   *
-   * @throws Exception error
    */
   @Test
-  public void answerOpenSuccessAfterConnected() throws Exception {
+  public void answerOpenSuccessAfterConnected() {
     // Дано:
     when(stompClient.lifecycle()).thenReturn(Observable.just((new LifecycleEvent(Type.OPENED))));
 
@@ -321,11 +293,9 @@ public class SocketGatewayTest {
 
   /**
    * Должен ответить ошибкой, если он не соединен и не соединяется, если соединение было закрыто.
-   *
-   * @throws Exception error
    */
   @Test
-  public void answerOpenErrorAfterDisconnected() throws Exception {
+  public void answerOpenErrorAfterDisconnected() {
     // Дано:
     when(stompClient.lifecycle()).thenReturn(Observable.just((new LifecycleEvent(Type.CLOSED))));
 
@@ -338,11 +308,9 @@ public class SocketGatewayTest {
 
   /**
    * Должен ответить ошибкой, если он не соединен и не соединяется, если соединение провалилось.
-   *
-   * @throws Exception error
    */
   @Test
-  public void answerOpenErrorAfterFailed() throws Exception {
+  public void answerOpenErrorAfterFailed() {
     // Дано:
     when(stompClient.lifecycle())
         .thenReturn(Observable.just((new LifecycleEvent(Type.ERROR, new NoNetworkException()))));
@@ -356,11 +324,9 @@ public class SocketGatewayTest {
 
   /**
    * Должен ответить успехом, если он не соединен и соединяется, после соединения.
-   *
-   * @throws Exception error
    */
   @Test
-  public void ifConnectingAnswerOpenSuccessAfterConnected() throws Exception {
+  public void ifConnectingAnswerOpenSuccessAfterConnected() {
     // Дано:
     when(stompClient.isConnecting()).thenReturn(true);
     when(stompClient.lifecycle()).thenReturn(Observable.just((new LifecycleEvent(Type.OPENED))));
@@ -374,11 +340,9 @@ public class SocketGatewayTest {
 
   /**
    * Должен ответить ошибкой, если он не соединен и соединяется, если соединение было закрыто.
-   *
-   * @throws Exception error
    */
   @Test
-  public void ifConnectingAnswerOpenErrorAfterDisconnected() throws Exception {
+  public void ifConnectingAnswerOpenErrorAfterDisconnected() {
     // Дано:
     when(stompClient.isConnecting()).thenReturn(true);
     when(stompClient.lifecycle()).thenReturn(Observable.just((new LifecycleEvent(Type.CLOSED))));
@@ -392,11 +356,9 @@ public class SocketGatewayTest {
 
   /**
    * Должен ответить ошибкой, если он не соединен и соединяется, если соединение провалилось.
-   *
-   * @throws Exception error
    */
   @Test
-  public void ifConnectingAnswerOpenErrorAfterFailed() throws Exception {
+  public void ifConnectingAnswerOpenErrorAfterFailed() {
     // Дано:
     when(stompClient.isConnecting()).thenReturn(true);
     when(stompClient.lifecycle())

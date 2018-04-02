@@ -26,7 +26,7 @@ public class SmsGatewayTest {
   private ApiService api;
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     RxJavaPlugins.setIoSchedulerHandler(scheduler -> Schedulers.trampoline());
     RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
     phoneCallGateway = new SmsGatewayImpl(api);
@@ -37,11 +37,9 @@ public class SmsGatewayTest {
 
   /**
    * Должен запросить у АПИ completable на запрос входящего СМС с кодом.
-   *
-   * @throws Exception error
    */
   @Test
-  public void smsMeCompletableRequested() throws Exception {
+  public void smsMeCompletableRequested() {
     // Действие:
     phoneCallGateway.sendMeCode("012345");
 
@@ -55,11 +53,9 @@ public class SmsGatewayTest {
 
   /**
    * Должен ответить ошибкой сети.
-   *
-   * @throws Exception error
    */
   @Test
-  public void answerNoNetworkError() throws Exception {
+  public void answerNoNetworkError() {
     // Действие:
     when(api.sendMeCode(anyString())).thenReturn(Completable.error(new NoNetworkException()));
 
@@ -69,11 +65,9 @@ public class SmsGatewayTest {
 
   /**
    * Должен ответить успехом.
-   *
-   * @throws Exception error
    */
   @Test
-  public void answerSmsSuccessful() throws Exception {
+  public void answerSmsSuccessful() {
     // Действие:
     when(api.sendMeCode(anyString())).thenReturn(Completable.complete());
 

@@ -13,12 +13,12 @@ public class OptionBooleanTest {
   private OptionBoolean vehicleOptionBoolean;
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     vehicleOptionBoolean = new OptionBoolean(12, "name", "description", true, false);
   }
 
   @Test
-  public void testConstructor() throws Exception {
+  public void testConstructor() {
     assertEquals(vehicleOptionBoolean.getId(), 12);
     assertEquals(vehicleOptionBoolean.getName(), "name");
     assertTrue(vehicleOptionBoolean.isVariable());
@@ -26,13 +26,13 @@ public class OptionBooleanTest {
   }
 
   @Test
-  public void testSetters() throws Exception {
+  public void testSetters() {
     assertTrue(vehicleOptionBoolean.setValue(true).getValue());
     assertFalse(vehicleOptionBoolean.setValue(false).getValue());
   }
 
   @Test
-  public void testEquals() throws Exception {
+  public void testEquals() {
     assertEquals(vehicleOptionBoolean, new OptionBoolean(12, "name", "description", true, false));
     assertNotEquals(vehicleOptionBoolean,
         new OptionBoolean(11, "name", "description", true, false));

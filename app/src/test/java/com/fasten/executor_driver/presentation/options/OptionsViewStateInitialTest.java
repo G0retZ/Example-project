@@ -20,12 +20,12 @@ public class OptionsViewStateInitialTest {
   private OptionsViewActions codeViewActions;
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     viewState = new OptionsViewStateInitial();
   }
 
   @Test
-  public void testActions() throws Exception {
+  public void testActions() {
     // Действие:
     viewState.apply(codeViewActions);
 

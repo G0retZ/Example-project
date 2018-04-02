@@ -21,12 +21,12 @@ public class GeoLocationViewStateTest {
   private GeoLocationViewActions mapViewActions;
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     viewState = new GeoLocationViewState(new GeoLocation(1, 2, 3));
   }
 
   @Test
-  public void testActions() throws Exception {
+  public void testActions() {
     // Действие:
     viewState.apply(mapViewActions);
 
@@ -36,7 +36,7 @@ public class GeoLocationViewStateTest {
   }
 
   @Test
-  public void testEquals() throws Exception {
+  public void testEquals() {
     assertEquals(viewState, new GeoLocationViewState(
         new GeoLocation(1, 2, 3))
     );

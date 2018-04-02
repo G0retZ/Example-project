@@ -18,12 +18,12 @@ public class OptionsViewStatePendingTest {
   private OptionsViewActions codeViewActions;
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     viewState = new OptionsViewStatePending();
   }
 
   @Test
-  public void testActions() throws Exception {
+  public void testActions() {
     // Действие:
     viewState.apply(codeViewActions);
 

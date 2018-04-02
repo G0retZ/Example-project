@@ -38,7 +38,7 @@ public class MapViewModelTest {
   private HeatMapUseCase heatMapUseCase;
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
     RxAndroidPlugins.setInitMainThreadSchedulerHandler(scheduler -> Schedulers.trampoline());
     when(heatMapUseCase.loadHeatMap()).thenReturn(Flowable.never());
@@ -49,11 +49,9 @@ public class MapViewModelTest {
 
   /**
    * Должен попросить у юзкейса подписку на обновления тепловой карты.
-   *
-   * @throws Exception error
    */
   @Test
-  public void askUseCaseToSubscribeToHeatMapUpdates() throws Exception {
+  public void askUseCaseToSubscribeToHeatMapUpdates() {
     // Действие:
     mapViewModel.getViewStateLiveData();
 
@@ -63,11 +61,9 @@ public class MapViewModelTest {
 
   /**
    * Не должен просить у юзкейс подписку (после поворотов), если подписка уже была.
-   *
-   * @throws Exception error
    */
   @Test
-  public void DoNotTouchUseCaseAfterFirstSubscription() throws Exception {
+  public void DoNotTouchUseCaseAfterFirstSubscription() {
     // Действие:
     mapViewModel.getViewStateLiveData();
     mapViewModel.getViewStateLiveData();
@@ -81,11 +77,9 @@ public class MapViewModelTest {
 
   /**
    * Должен вернуть начально состояние вида без тепловой карты.
-   *
-   * @throws Exception error
    */
   @Test
-  public void setViewStateWithNullToLiveData() throws Exception {
+  public void setViewStateWithNullToLiveData() {
     // Действие:
     mapViewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
@@ -95,11 +89,9 @@ public class MapViewModelTest {
 
   /**
    * Должен вернуть состояния с обновлениями тепловой карты.
-   *
-   * @throws Exception error
    */
   @Test
-  public void setViewStatesWithDataToLiveData() throws Exception {
+  public void setViewStatesWithDataToLiveData() {
     // Дано:
     PublishSubject<String> publishSubject = PublishSubject.create();
     when(heatMapUseCase.loadHeatMap())

@@ -50,23 +50,19 @@ public class PasswordUseCaseTest {
 
   /**
    * Должен подписаться при создании сразу же.
-   *
-   * @throws Exception error
    */
   @Test
-  public void getFromDataSharerImmediately() throws Exception {
+  public void getFromDataSharerImmediately() {
     // Результат:
     verify(loginReceiver, only()).get();
   }
 
   /**
    * Не должен взаимодействовать с публиктором в любых иных случаях.
-   *
-   * @throws Exception error
    */
   @SuppressWarnings("SpellCheckingInspection")
   @Test
-  public void doNotTouchDataSharer() throws Exception {
+  public void doNotTouchDataSharer() {
     passwordUseCase.authorize("passwor", Completable.complete()).test();
     passwordUseCase.authorize("password", Completable.never()).test();
     passwordUseCase.authorize("password", Completable.complete()).test();
@@ -100,11 +96,9 @@ public class PasswordUseCaseTest {
 
   /**
    * Должен ответить ошибкой, если пароль неверный.
-   *
-   * @throws Exception error
    */
   @Test
-  public void answerErrorIfPasswordInvalid() throws Exception {
+  public void answerErrorIfPasswordInvalid() {
     // Результат:
     passwordUseCase.authorize("", Completable.complete())
         .test().assertError(ValidationException.class);
@@ -129,12 +123,10 @@ public class PasswordUseCaseTest {
 
   /**
    * Не должен запрашивать у гейтвея входа, если валидация не прошла.
-   *
-   * @throws Exception error
    */
   @SuppressWarnings("SpellCheckingInspection")
   @Test
-  public void doNotAskGatewayForAuth() throws Exception {
+  public void doNotAskGatewayForAuth() {
     // Действие:
     passwordUseCase.authorize("passwor", Completable.complete()).test();
 
@@ -145,11 +137,9 @@ public class PasswordUseCaseTest {
   /**
    * Не должен запрашивать у гейтвея входа, если валидация прошла, но действие после валидации не
    * выполнено.
-   *
-   * @throws Exception error
    */
   @Test
-  public void doNotAskGatewayForAuthIfAfterValidationNotComplete() throws Exception {
+  public void doNotAskGatewayForAuthIfAfterValidationNotComplete() {
     // Действие:
     passwordUseCase.authorize("password", Completable.never()).test();
 
@@ -160,11 +150,9 @@ public class PasswordUseCaseTest {
   /**
    * Не должен запрашивать у гейтвея входа, если валидация прошла, но действие после валидации
    * отменено.
-   *
-   * @throws Exception error
    */
   @Test
-  public void doNotAskGatewayForAuthIfAfterValidationFailed() throws Exception {
+  public void doNotAskGatewayForAuthIfAfterValidationFailed() {
     // Действие:
     passwordUseCase.authorize("password", Completable.error(new Exception())).test();
 
@@ -174,12 +162,10 @@ public class PasswordUseCaseTest {
 
   /**
    * Должен запросить у гейтвея вход.
-   *
-   * @throws Exception error
    */
   @SuppressWarnings("unchecked")
   @Test
-  public void askGatewayForAuth() throws Exception {
+  public void askGatewayForAuth() {
     // Дано:
     when(loginReceiver.get()).thenReturn(Observable.just("login"), Observable.never());
     passwordUseCase = new PasswordUseCaseImpl(gateway, loginReceiver, passwordValidator);
@@ -195,11 +181,9 @@ public class PasswordUseCaseTest {
 
   /**
    * Должен ответить ошибкой сети.
-   *
-   * @throws Exception error
    */
   @Test
-  public void answerNoNetworkError() throws Exception {
+  public void answerNoNetworkError() {
     // Действие:
     when(gateway.authorize(any(LoginData.class)))
         .thenReturn(Completable.error(new NoNetworkException()));
@@ -211,11 +195,9 @@ public class PasswordUseCaseTest {
 
   /**
    * Должен успехом, если действие после валиации отменено.
-   *
-   * @throws Exception error
    */
   @Test
-  public void answerValidationSuccessful() throws Exception {
+  public void answerValidationSuccessful() {
     // Результат:
     passwordUseCase.authorize("password", Completable.error(new Exception()))
         .test().assertComplete();
@@ -223,11 +205,9 @@ public class PasswordUseCaseTest {
 
   /**
    * Должен ответить успехом.
-   *
-   * @throws Exception error
    */
   @Test
-  public void answerAuthSuccessful() throws Exception {
+  public void answerAuthSuccessful() {
     // Действие:
     when(gateway.authorize(any(LoginData.class))).thenReturn(Completable.complete());
 

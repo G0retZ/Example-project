@@ -19,7 +19,7 @@ public class ErrorMapperTest {
   private Mapper<Throwable, Throwable> mapper;
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     mapper = new ErrorMapper();
   }
 

@@ -40,7 +40,7 @@ public class GeoLocationViewModelTest {
   private GeoLocationUseCase geoLocationUseCase;
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
     RxAndroidPlugins.setInitMainThreadSchedulerHandler(scheduler -> Schedulers.trampoline());
     when(geoLocationUseCase.getGeoLocations()).thenReturn(Flowable.never());
@@ -51,11 +51,9 @@ public class GeoLocationViewModelTest {
 
   /**
    * Должен попросить у публикатора подписку на обновления местоположения.
-   *
-   * @throws Exception error
    */
   @Test
-  public void askDataReceiverToSubscribeToLocationUpdates() throws Exception {
+  public void askDataReceiverToSubscribeToLocationUpdates() {
     // Действие:
     mapViewModel.updateGeoLocations();
 
@@ -65,11 +63,9 @@ public class GeoLocationViewModelTest {
 
   /**
    * Не должен просить у юзкейс подписку (после поворотов), если подписка уже была.
-   *
-   * @throws Exception error
    */
   @Test
-  public void DoNotTouchDataReceiverAfterFirstSubscription() throws Exception {
+  public void DoNotTouchDataReceiverAfterFirstSubscription() {
     // Действие:
     mapViewModel.updateGeoLocations();
     mapViewModel.updateGeoLocations();
@@ -83,11 +79,9 @@ public class GeoLocationViewModelTest {
 
   /**
    * Должен вернуть состояния с обновлениями местоположения.
-   *
-   * @throws Exception error
    */
   @Test
-  public void setViewStatesWithDataToLiveData() throws Exception {
+  public void setViewStatesWithDataToLiveData() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     when(geoLocationUseCase.getGeoLocations()).thenReturn(Flowable.just(
@@ -121,11 +115,9 @@ public class GeoLocationViewModelTest {
 
   /**
    * Должен вернуть "перейти к решению проблемы с геолокацией".
-   *
-   * @throws Exception error
    */
   @Test
-  public void navigateToResolveGoeLocationProblem() throws Exception {
+  public void navigateToResolveGoeLocationProblem() {
     // Дано:
     when(geoLocationUseCase.getGeoLocations()).thenReturn(Flowable.error(NoNetworkException::new));
 

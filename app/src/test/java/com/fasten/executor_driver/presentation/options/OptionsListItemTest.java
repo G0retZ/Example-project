@@ -15,14 +15,14 @@ public class OptionsListItemTest {
   private OptionsListItem optionsListItem;
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     optionsListItem = new OptionsListItem<>(
         new OptionBoolean(11, "name", "description", false, false)
     );
   }
 
   @Test
-  public void testGetters() throws Exception {
+  public void testGetters() {
     assertEquals(optionsListItem.getName(), "name");
     assertEquals(optionsListItem.getDescription(), "description");
     assertEquals(optionsListItem.getLayoutType(),
@@ -43,7 +43,7 @@ public class OptionsListItemTest {
   }
 
   @Test
-  public void testSetters() throws Exception {
+  public void testSetters() {
     optionsListItem.setValue(true);
     assertEquals(optionsListItem.getName(), "name");
     assertEquals(optionsListItem.getDescription(), "description");
@@ -66,7 +66,7 @@ public class OptionsListItemTest {
   }
 
   @Test
-  public void testEquals() throws Exception {
+  public void testEquals() {
     assertEquals(optionsListItem,
         new OptionsListItem<>(
             new OptionBoolean(11, "name", "description", false, false)

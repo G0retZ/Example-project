@@ -50,7 +50,7 @@ public class CodeViewModelTest {
   private ArgumentCaptor<Completable> afterValidationCaptor;
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
     RxAndroidPlugins.setInitMainThreadSchedulerHandler(scheduler -> Schedulers.trampoline());
     when(passwordUseCase.authorize(anyString(), any(Completable.class)))
@@ -62,11 +62,9 @@ public class CodeViewModelTest {
 
   /**
    * Не должен просить юзкейс авторизироваться, если предыдущий запрос еще не завершился.
-   *
-   * @throws Exception error
    */
   @Test
-  public void DoNotAskPasswordUseCaseToAuthorize() throws Exception {
+  public void DoNotAskPasswordUseCaseToAuthorize() {
     // Действие:
     codeViewModel.setCode("1   2   ");
     codeViewModel.setCode("1   2   3   ");
@@ -78,11 +76,9 @@ public class CodeViewModelTest {
 
   /**
    * Должен попросить юзкейс авторизироваться.
-   *
-   * @throws Exception error
    */
   @Test
-  public void askPasswordUseCaseToAuthorize() throws Exception {
+  public void askPasswordUseCaseToAuthorize() {
     // Дано:
     when(passwordUseCase.authorize(anyString(), any(Completable.class)))
         .thenReturn(Completable.error(new ValidationException()));
@@ -103,11 +99,9 @@ public class CodeViewModelTest {
 
   /**
    * Должен вернуть состояние вида "Начало" изначально.
-   *
-   * @throws Exception error
    */
   @Test
-  public void setInitialViewStateToLiveData() throws Exception {
+  public void setInitialViewStateToLiveData() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
 
@@ -121,11 +115,9 @@ public class CodeViewModelTest {
 
   /**
    * Не должен менять состояние вида, если код не валидируется.
-   *
-   * @throws Exception error
    */
   @Test
-  public void setNoNewViewStateToLiveData() throws Exception {
+  public void setNoNewViewStateToLiveData() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     codeViewModel.getViewStateLiveData().observeForever(viewStateObserver);
@@ -145,11 +137,9 @@ public class CodeViewModelTest {
 
   /**
    * Должен вернуть состояние вида "В процессе" после валидации.
-   *
-   * @throws Exception error
    */
   @Test
-  public void setPendingViewStateToLiveDataAfterValidationSuccess() throws Exception {
+  public void setPendingViewStateToLiveDataAfterValidationSuccess() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     codeViewModel.getViewStateLiveData().observeForever(viewStateObserver);
@@ -174,11 +164,9 @@ public class CodeViewModelTest {
 
   /**
    * Должен вернуть состояние вида "Ошибка кода".
-   *
-   * @throws Exception error
    */
   @Test
-  public void setErrorViewStateToLiveData() throws Exception {
+  public void setErrorViewStateToLiveData() {
     // Дано:
     CompletableSubject completableSubject = CompletableSubject.create();
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
@@ -203,11 +191,9 @@ public class CodeViewModelTest {
 
   /**
    * Должен вернуть вернуть начальное состояние вида после "Ошибка кода".
-   *
-   * @throws Exception error
    */
   @Test
-  public void setInitialViewStateToLiveDataAfterError() throws Exception {
+  public void setInitialViewStateToLiveDataAfterError() {
     // Дано:
     CompletableSubject completableSubject = CompletableSubject.create();
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
@@ -236,11 +222,9 @@ public class CodeViewModelTest {
 
   /**
    * Должен вернуть состояние вида "Ошибка сети".
-   *
-   * @throws Exception error
    */
   @Test
-  public void setNetworkErrorViewStateToLiveData() throws Exception {
+  public void setNetworkErrorViewStateToLiveData() {
     // Дано:
     CompletableSubject completableSubject = CompletableSubject.create();
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
@@ -267,11 +251,9 @@ public class CodeViewModelTest {
 
   /**
    * Должен вернуть "перейти к карте" если проверка была успешной.
-   *
-   * @throws Exception error
    */
   @Test
-  public void setNavigateToMapToLiveData() throws Exception {
+  public void setNavigateToMapToLiveData() {
     // Дано:
     CompletableSubject completableSubject = CompletableSubject.create();
     codeViewModel.getNavigationLiveData().observeForever(navigateObserver);

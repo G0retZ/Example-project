@@ -11,12 +11,12 @@ public class ApiGeoLocationTest {
   private ApiGeoLocation apiGeoLocation;
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     apiGeoLocation = new ApiGeoLocation(1, 2, 3);
   }
 
   @Test
-  public void testConstructor() throws Exception {
+  public void testConstructor() {
     assertEquals(apiGeoLocation.getLatitude(), 1, Double.MIN_VALUE);
     assertEquals(apiGeoLocation.getLongitude(), 2, Double.MIN_VALUE);
     assertEquals(apiGeoLocation.getRegDate(), 3);
@@ -24,7 +24,7 @@ public class ApiGeoLocationTest {
 
   @SuppressWarnings("SpellCheckingInspection")
   @Test
-  public void testEquals() throws Exception {
+  public void testEquals() {
     assertEquals(apiGeoLocation, new ApiGeoLocation(1, 2, 3));
     assertNotEquals(apiGeoLocation, new ApiGeoLocation(0, 2, 3));
     assertNotEquals(apiGeoLocation, new ApiGeoLocation(1, 1, 3));

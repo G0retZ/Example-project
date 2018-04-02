@@ -25,7 +25,7 @@ public class AuthorizationInterceptorTest {
   private Interceptor.Chain chain;
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     RxJavaPlugins.setIoSchedulerHandler(scheduler -> Schedulers.trampoline());
     RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
     authorizationInterceptor = new AuthorizationInterceptor();

@@ -23,7 +23,7 @@ public class ChooseVehicleViewStateReadyTest {
   private ChooseVehicleViewActions codeViewActions;
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     viewState = new ChooseVehicleViewStateReady(Arrays.asList(
         new ChooseVehicleListItem(
             new Vehicle(1, "m", "m", "c", "l", false)
@@ -41,7 +41,7 @@ public class ChooseVehicleViewStateReadyTest {
   }
 
   @Test
-  public void testActions() throws Exception {
+  public void testActions() {
     // Действие:
     viewState.apply(codeViewActions);
 
@@ -67,7 +67,7 @@ public class ChooseVehicleViewStateReadyTest {
   }
 
   @Test
-  public void testEquals() throws Exception {
+  public void testEquals() {
     assertEquals(viewState, new ChooseVehicleViewStateReady(Arrays.asList(
         new ChooseVehicleListItem(
             new Vehicle(1, "m", "m", "c", "l", false)

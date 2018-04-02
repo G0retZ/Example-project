@@ -28,7 +28,7 @@ public class PasswordGatewayTest {
   private ApiService api;
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     RxJavaPlugins.setIoSchedulerHandler(scheduler -> Schedulers.trampoline());
     RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
     passwordGateway = new PasswordGatewayImpl(api);
@@ -39,11 +39,9 @@ public class PasswordGatewayTest {
 
   /**
    * Должен запросить у АПИ completable на вход с заданными параметрами.
-   *
-   * @throws Exception error
    */
   @Test
-  public void authCompletableRequested() throws Exception {
+  public void authCompletableRequested() {
     // Действие:
     passwordGateway.authorize(new LoginData("Login", "Password"));
 
@@ -57,11 +55,9 @@ public class PasswordGatewayTest {
 
   /**
    * Должен ответить ошибкой сети.
-   *
-   * @throws Exception error
    */
   @Test
-  public void answerNoNetworkError() throws Exception {
+  public void answerNoNetworkError() {
     // Действие:
     when(api.authorize(any(ApiLogin.class)))
         .thenReturn(Completable.error(new NoNetworkException()));
@@ -73,11 +69,9 @@ public class PasswordGatewayTest {
 
   /**
    * Должен ответить успехом.
-   *
-   * @throws Exception error
    */
   @Test
-  public void answerAuthSuccessful() throws Exception {
+  public void answerAuthSuccessful() {
     // Действие:
     when(api.authorize(any(ApiLogin.class))).thenReturn(Completable.complete());
 

@@ -50,7 +50,7 @@ public class OnlineButtonViewModelTest {
   private Observer<String> navigateObserver;
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     testScheduler = new TestScheduler();
     RxJavaPlugins.setIoSchedulerHandler(scheduler -> testScheduler);
     RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
@@ -63,11 +63,9 @@ public class OnlineButtonViewModelTest {
 
   /**
    * Не должен просить юзкейс выйти на линию, если предыдущий запрос еще не завершился.
-   *
-   * @throws Exception error
    */
   @Test
-  public void DoNotTouchOnlineUseCaseUntilRequestFinished() throws Exception {
+  public void DoNotTouchOnlineUseCaseUntilRequestFinished() {
     // Действие:
     onlineButtonViewModel.goOnline();
     onlineButtonViewModel.goOnline();
@@ -79,11 +77,9 @@ public class OnlineButtonViewModelTest {
 
   /**
    * Не должен просить юзкейс выйти на линию, если предыдущий запрос еще не завершился.
-   *
-   * @throws Exception error
    */
   @Test
-  public void DoNotTouchOnlineUseCaseToGoOnlineUntilTimeout() throws Exception {
+  public void DoNotTouchOnlineUseCaseToGoOnlineUntilTimeout() {
     // Дано:
     when(vehiclesAndOptionsUseCase.loadVehiclesAndOptions()).thenReturn(Completable.complete());
     InOrder inOrder = Mockito.inOrder(vehiclesAndOptionsUseCase);
@@ -107,11 +103,9 @@ public class OnlineButtonViewModelTest {
 
   /**
    * Должен попросить юзкейс отправить выйти на линию.
-   *
-   * @throws Exception error
    */
   @Test
-  public void askOnlineUseCaseToGoOnline() throws Exception {
+  public void askOnlineUseCaseToGoOnline() {
     // Дано:
     when(vehiclesAndOptionsUseCase.loadVehiclesAndOptions())
         .thenReturn(Completable.error(new NoNetworkException()));
@@ -133,11 +127,9 @@ public class OnlineButtonViewModelTest {
 
   /**
    * Должен вернуть рабочее состояние вида.
-   *
-   * @throws Exception error
    */
   @Test
-  public void setReadyViewStateToLiveData() throws Exception {
+  public void setReadyViewStateToLiveData() {
     // Действие:
     onlineButtonViewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
@@ -147,11 +139,9 @@ public class OnlineButtonViewModelTest {
 
   /**
    * Должен вернуть состояния вида "Ожидайте" для запроса выхода на линию.
-   *
-   * @throws Exception error
    */
   @Test
-  public void setPendingViewStateToLiveData() throws Exception {
+  public void setPendingViewStateToLiveData() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     onlineButtonViewModel.getViewStateLiveData().observeForever(viewStateObserver);
@@ -167,11 +157,9 @@ public class OnlineButtonViewModelTest {
 
   /**
    * Не должен переходить в состояние вида "Ошибка", если водитель заблокирован.
-   *
-   * @throws Exception error
    */
   @Test
-  public void doNotSetErrorViewStateToLiveDataAfterFailForBlockedDriver() throws Exception {
+  public void doNotSetErrorViewStateToLiveDataAfterFailForBlockedDriver() {
     // Дано:
     when(vehiclesAndOptionsUseCase.loadVehiclesAndOptions())
         .thenReturn(Completable.error(new DriverBlockedException()));
@@ -189,11 +177,9 @@ public class OnlineButtonViewModelTest {
 
   /**
    * Должен вернуть рабочее состояние после таймера, если водитель заблокирован.
-   *
-   * @throws Exception error
    */
   @Test
-  public void setReadyViewStateToLiveDataAfterFailForBlockedDriver() throws Exception {
+  public void setReadyViewStateToLiveDataAfterFailForBlockedDriver() {
     // Дано:
     when(vehiclesAndOptionsUseCase.loadVehiclesAndOptions())
         .thenReturn(Completable.error(new DriverBlockedException()));
@@ -213,11 +199,9 @@ public class OnlineButtonViewModelTest {
 
   /**
    * Не должен переходить в состояние вида "Ошибка", если недостаточно средств.
-   *
-   * @throws Exception error
    */
   @Test
-  public void doNotSetErrorViewStateToLiveDataAfterFailForInsufficientCredits() throws Exception {
+  public void doNotSetErrorViewStateToLiveDataAfterFailForInsufficientCredits() {
     // Дано:
     when(vehiclesAndOptionsUseCase.loadVehiclesAndOptions())
         .thenReturn(Completable.error(new InsufficientCreditsException()));
@@ -235,11 +219,9 @@ public class OnlineButtonViewModelTest {
 
   /**
    * Должен вернуть рабочее состояние после таймера, если недостаточно средств.
-   *
-   * @throws Exception error
    */
   @Test
-  public void setReadyViewStateToLiveDataAfterFailForInsufficientCredits() throws Exception {
+  public void setReadyViewStateToLiveDataAfterFailForInsufficientCredits() {
     // Дано:
     when(vehiclesAndOptionsUseCase.loadVehiclesAndOptions())
         .thenReturn(Completable.error(new InsufficientCreditsException()));
@@ -259,11 +241,9 @@ public class OnlineButtonViewModelTest {
 
   /**
    * Не должен переходить в состояние вида "Ошибка", если нет ТС.
-   *
-   * @throws Exception error
    */
   @Test
-  public void doNotSetErrorViewStateToLiveDataAfterFailForNoVehicles() throws Exception {
+  public void doNotSetErrorViewStateToLiveDataAfterFailForNoVehicles() {
     // Дано:
     when(vehiclesAndOptionsUseCase.loadVehiclesAndOptions())
         .thenReturn(Completable.error(new NoVehiclesAvailableException()));
@@ -281,11 +261,9 @@ public class OnlineButtonViewModelTest {
 
   /**
    * Должен вернуть рабочее состояние после таймера, если нет ТС.
-   *
-   * @throws Exception error
    */
   @Test
-  public void setReadyViewStateToLiveDataAfterFailForNoVehicles() throws Exception {
+  public void setReadyViewStateToLiveDataAfterFailForNoVehicles() {
     // Дано:
     when(vehiclesAndOptionsUseCase.loadVehiclesAndOptions())
         .thenReturn(Completable.error(new NoVehiclesAvailableException()));
@@ -305,11 +283,9 @@ public class OnlineButtonViewModelTest {
 
   /**
    * Не должен переходить в состояние вида "Ошибка", если нет свободных ТС.
-   *
-   * @throws Exception error
    */
   @Test
-  public void doNotSetErrorViewStateToLiveDataAfterFailForNoFreeVehicles() throws Exception {
+  public void doNotSetErrorViewStateToLiveDataAfterFailForNoFreeVehicles() {
     // Дано:
     when(vehiclesAndOptionsUseCase.loadVehiclesAndOptions())
         .thenReturn(Completable.error(new NoFreeVehiclesException()));
@@ -327,11 +303,9 @@ public class OnlineButtonViewModelTest {
 
   /**
    * Должен вернуть рабочее состояние после таймера, если нет свободных ТС.
-   *
-   * @throws Exception error
    */
   @Test
-  public void setReadyViewStateToLiveDataAfterFailForNoFreeVehicles() throws Exception {
+  public void setReadyViewStateToLiveDataAfterFailForNoFreeVehicles() {
     // Дано:
     when(vehiclesAndOptionsUseCase.loadVehiclesAndOptions())
         .thenReturn(Completable.error(new NoFreeVehiclesException()));
@@ -351,11 +325,9 @@ public class OnlineButtonViewModelTest {
 
   /**
    * Должен вернуть состояние вида "Ошибка" после ошибки запроса выхода на линию.
-   *
-   * @throws Exception error
    */
   @Test
-  public void setErrorViewStateToLiveDataAfterFail() throws Exception {
+  public void setErrorViewStateToLiveDataAfterFail() {
     // Дано:
     when(vehiclesAndOptionsUseCase.loadVehiclesAndOptions())
         .thenReturn(Completable.error(new NoNetworkException()));
@@ -376,11 +348,9 @@ public class OnlineButtonViewModelTest {
   /**
    * Должен вернуть состояние вида "Ожидайте" после ошибки запроса выхода на линию, если ошибка была
    * потреблена до истечения таймера.
-   *
-   * @throws Exception error
    */
   @Test
-  public void setHoldViewStateToLiveDataAfterFailConsumedBeforeTimeout() throws Exception {
+  public void setHoldViewStateToLiveDataAfterFailConsumedBeforeTimeout() {
     // Дано:
     when(vehiclesAndOptionsUseCase.loadVehiclesAndOptions())
         .thenReturn(Completable.error(new NoNetworkException()));
@@ -402,12 +372,9 @@ public class OnlineButtonViewModelTest {
 
   /**
    * Должен оставить состояние вида "Ошибка", если она не была потреблена после истечения таймера.
-   *
-   * @throws Exception error
    */
   @Test
-  public void doNotUnsetErrorViewStateToLiveDataAfterFailNotConsumedAfterTimeout()
-      throws Exception {
+  public void doNotUnsetErrorViewStateToLiveDataAfterFailNotConsumedAfterTimeout() {
     // Дано:
     when(vehiclesAndOptionsUseCase.loadVehiclesAndOptions())
         .thenReturn(Completable.error(new NoNetworkException()));
@@ -429,11 +396,9 @@ public class OnlineButtonViewModelTest {
   /**
    * Должен вернуть состояние вида "Ожидайте" с возвратом обратно в состояние готовности после
    * ошибки запроса выхода на линию и ее потребления.
-   *
-   * @throws Exception error
    */
   @Test
-  public void setHoldViewStateToLiveDataAfterFailConsumedAfterTimeout() throws Exception {
+  public void setHoldViewStateToLiveDataAfterFailConsumedAfterTimeout() {
     // Дано:
     when(vehiclesAndOptionsUseCase.loadVehiclesAndOptions())
         .thenReturn(Completable.error(new NoNetworkException()));
@@ -458,11 +423,9 @@ public class OnlineButtonViewModelTest {
   /**
    * Должен вернуть состояние рабочее вида после ошибки запроса выхода на линию, если она была
    * потреблена после истечения таймера.
-   *
-   * @throws Exception error
    */
   @Test
-  public void setReadyViewStateToLiveDataAfterFailAfterTimeout() throws Exception {
+  public void setReadyViewStateToLiveDataAfterFailAfterTimeout() {
     // Дано:
     when(vehiclesAndOptionsUseCase.loadVehiclesAndOptions())
         .thenReturn(Completable.error(new NoNetworkException()));
@@ -486,11 +449,9 @@ public class OnlineButtonViewModelTest {
   /**
    * Должен вернуть состояния вида "Ожидайте" с возвратом обратно в состояние готовности после
    * успешного запроса выхода на линию.
-   *
-   * @throws Exception error
    */
   @Test
-  public void setHoldViewStateToLiveData() throws Exception {
+  public void setHoldViewStateToLiveData() {
     // Дано:
     when(vehiclesAndOptionsUseCase.loadVehiclesAndOptions()).thenReturn(Completable.complete());
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
@@ -511,11 +472,9 @@ public class OnlineButtonViewModelTest {
 
   /**
    * Должен игнорировать прочие ошибки.
-   *
-   * @throws Exception error
    */
   @Test
-  public void setNothingToLiveData() throws Exception {
+  public void setNothingToLiveData() {
     // Дано:
     when(vehiclesAndOptionsUseCase.loadVehiclesAndOptions())
         .thenReturn(Completable.error(new NoNetworkException()));
@@ -530,11 +489,9 @@ public class OnlineButtonViewModelTest {
 
   /**
    * Должен вернуть "перейти к списку ТС" если загрузка была успешной.
-   *
-   * @throws Exception error
    */
   @Test
-  public void setNavigateToVehiclesToLiveData() throws Exception {
+  public void setNavigateToVehiclesToLiveData() {
     // Дано:
     when(vehiclesAndOptionsUseCase.loadVehiclesAndOptions()).thenReturn(Completable.complete());
     onlineButtonViewModel.getNavigationLiveData().observeForever(navigateObserver);
@@ -548,11 +505,9 @@ public class OnlineButtonViewModelTest {
 
   /**
    * Должен вернуть "перейти к к решению блокировки водителя" если водитель заблокирован.
-   *
-   * @throws Exception error
    */
   @Test
-  public void setNavigateToDriverBlockedToLiveData() throws Exception {
+  public void setNavigateToDriverBlockedToLiveData() {
     // Дано:
     when(vehiclesAndOptionsUseCase.loadVehiclesAndOptions())
         .thenReturn(Completable.error(new DriverBlockedException()));
@@ -567,11 +522,9 @@ public class OnlineButtonViewModelTest {
 
   /**
    * Должен вернуть "перейти к решению недостатка средств" если недостаточно средств.
-   *
-   * @throws Exception error
    */
   @Test
-  public void setNavigateToInsufficientCreditsToLiveData() throws Exception {
+  public void setNavigateToInsufficientCreditsToLiveData() {
     // Дано:
     when(vehiclesAndOptionsUseCase.loadVehiclesAndOptions())
         .thenReturn(Completable.error(new InsufficientCreditsException()));
@@ -586,11 +539,9 @@ public class OnlineButtonViewModelTest {
 
   /**
    * Должен вернуть "перейти к решению отсутствия свободных ТС" если нет свободных ТС.
-   *
-   * @throws Exception error
    */
   @Test
-  public void setNavigateToNoFreeVehiclesToLiveData() throws Exception {
+  public void setNavigateToNoFreeVehiclesToLiveData() {
     // Дано:
     when(vehiclesAndOptionsUseCase.loadVehiclesAndOptions())
         .thenReturn(Completable.error(new NoFreeVehiclesException()));
@@ -605,11 +556,9 @@ public class OnlineButtonViewModelTest {
 
   /**
    * Должен вернуть "перейти к решению отсутствия любых ТС" если не никаких ТС.
-   *
-   * @throws Exception error
    */
   @Test
-  public void setNavigateToNoVehiclesToLiveData() throws Exception {
+  public void setNavigateToNoVehiclesToLiveData() {
     // Дано:
     when(vehiclesAndOptionsUseCase.loadVehiclesAndOptions())
         .thenReturn(Completable.error(new NoVehiclesAvailableException()));

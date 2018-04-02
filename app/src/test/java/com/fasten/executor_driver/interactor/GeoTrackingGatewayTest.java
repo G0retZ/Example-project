@@ -31,7 +31,7 @@ public class GeoTrackingGatewayTest {
   private StompClient stompClient;
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     RxJavaPlugins.setIoSchedulerHandler(scheduler -> Schedulers.trampoline());
     RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
     geoTrackingGateway = new GeoTrackingGatewayImpl(stompClient);
@@ -42,11 +42,9 @@ public class GeoTrackingGatewayTest {
 
   /**
    * Должен запросить у клиента STOMP отправку, если он соединен и не соединяется.
-   *
-   * @throws Exception error
    */
   @Test
-  public void askStompClientToSendMessage() throws Exception {
+  public void askStompClientToSendMessage() {
     // Дано:
     when(stompClient.isConnected()).thenReturn(true);
 
@@ -62,11 +60,9 @@ public class GeoTrackingGatewayTest {
 
   /**
    * Не должен просить у клиента STOMP соединение, если он не соединен и не соединяется.
-   *
-   * @throws Exception error
    */
   @Test
-  public void doNotAskStompClientToConnectOrSendIfNotConnected() throws Exception {
+  public void doNotAskStompClientToConnectOrSendIfNotConnected() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(stompClient);
 
@@ -81,11 +77,9 @@ public class GeoTrackingGatewayTest {
 
   /**
    * Должен запросить у клиента STOMP отправку, если он не соединен и соединяется.
-   *
-   * @throws Exception error
    */
   @Test
-  public void askStompClientToSendMessageIfConnecting() throws Exception {
+  public void askStompClientToSendMessageIfConnecting() {
     // Дано:
     when(stompClient.isConnecting()).thenReturn(true);
 
@@ -106,11 +100,9 @@ public class GeoTrackingGatewayTest {
 
   /**
    * Должен ответить успехом, если он соединен и не соединяется.
-   *
-   * @throws Exception error
    */
   @Test
-  public void answerSuccessIfConnected() throws Exception {
+  public void answerSuccessIfConnected() {
     // Дано:
     when(stompClient.isConnected()).thenReturn(true);
     when(stompClient.send(anyString(), anyString())).thenReturn(Completable.complete());
@@ -125,11 +117,9 @@ public class GeoTrackingGatewayTest {
 
   /**
    * Должен ответить ошибкой, если он соединен и не соединяется.
-   *
-   * @throws Exception error
    */
   @Test
-  public void answerErrorIfConnected() throws Exception {
+  public void answerErrorIfConnected() {
     // Дано:
     when(stompClient.isConnected()).thenReturn(true);
     when(stompClient.send(anyString(), anyString()))
@@ -145,11 +135,9 @@ public class GeoTrackingGatewayTest {
 
   /**
    * Должен ответить ошибкой, если он не соединен и не соединяется.
-   *
-   * @throws Exception error
    */
   @Test
-  public void answerErrorIfNotConnectedAndNotConnecting() throws Exception {
+  public void answerErrorIfNotConnectedAndNotConnecting() {
     // Действие:
     TestObserver<Void> testObserver =
         geoTrackingGateway.sendGeoLocation(new GeoLocation(1, 2, 3)).test();
@@ -160,11 +148,9 @@ public class GeoTrackingGatewayTest {
 
   /**
    * Должен ответить успехом, если он не соединен и соединяется.
-   *
-   * @throws Exception error
    */
   @Test
-  public void answerSuccessIfConnecting() throws Exception {
+  public void answerSuccessIfConnecting() {
     // Дано:
     when(stompClient.isConnecting()).thenReturn(true);
     when(stompClient.send(anyString(), anyString())).thenReturn(Completable.complete());
@@ -179,11 +165,9 @@ public class GeoTrackingGatewayTest {
 
   /**
    * Должен ответить ошибкой, если он не соединен и соединяется.
-   *
-   * @throws Exception error
    */
   @Test
-  public void answerErrorIfConnecting() throws Exception {
+  public void answerErrorIfConnecting() {
     // Дано:
     when(stompClient.isConnecting()).thenReturn(true);
     when(stompClient.send(anyString(), anyString()))

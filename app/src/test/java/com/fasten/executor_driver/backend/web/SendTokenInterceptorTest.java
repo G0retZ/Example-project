@@ -30,7 +30,7 @@ public class SendTokenInterceptorTest {
   private ArgumentCaptor<Request> request;
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     sendTokenInterceptor = new SendTokenInterceptor(tokenKeeper);
   }
 

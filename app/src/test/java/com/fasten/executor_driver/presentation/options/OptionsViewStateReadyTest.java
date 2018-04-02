@@ -25,7 +25,7 @@ public class OptionsViewStateReadyTest {
   private OptionsViewActions codeViewActions;
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     viewState = new OptionsViewStateReady(new OptionsListItems(Arrays.asList(
         new OptionsListItem<>(
             new OptionBoolean(1, "name", "description", true, false)
@@ -44,7 +44,7 @@ public class OptionsViewStateReadyTest {
   }
 
   @Test
-  public void testActions() throws Exception {
+  public void testActions() {
     // Действие:
     viewState.apply(codeViewActions);
 
@@ -72,7 +72,7 @@ public class OptionsViewStateReadyTest {
   }
 
   @Test
-  public void testEquals() throws Exception {
+  public void testEquals() {
     assertEquals(viewState, new OptionsViewStateReady(new OptionsListItems(Arrays.asList(
         new OptionsListItem<>(
             new OptionBoolean(1, "name", "description", true, false)

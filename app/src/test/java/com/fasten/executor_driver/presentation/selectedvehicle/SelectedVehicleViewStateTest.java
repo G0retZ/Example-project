@@ -20,12 +20,12 @@ public class SelectedVehicleViewStateTest {
   private SelectedVehicleViewActions codeViewActions;
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     viewState = new SelectedVehicleViewState("");
   }
 
   @Test
-  public void testEmptyNameActions() throws Exception {
+  public void testEmptyNameActions() {
     // Действие:
     new SelectedVehicleViewState("").apply(codeViewActions);
 
@@ -36,7 +36,7 @@ public class SelectedVehicleViewStateTest {
   }
 
   @Test
-  public void testNameActions() throws Exception {
+  public void testNameActions() {
     // Действие:
     new SelectedVehicleViewState("name").apply(codeViewActions);
 
@@ -47,7 +47,7 @@ public class SelectedVehicleViewStateTest {
   }
 
   @Test
-  public void testEquals() throws Exception {
+  public void testEquals() {
     assertEquals(viewState, new SelectedVehicleViewState(""));
     assertNotEquals(viewState, new SelectedVehicleViewState("1"));
   }
