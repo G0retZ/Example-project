@@ -41,6 +41,7 @@ public class GeolocationResolutionActivity extends BaseActivity {
         break;
       case GeolocationResolutionFragment.NAVIGATE_TO_RESOLVED:
         startActivity(new Intent(this, SplashScreenActivity.class));
+        finish();
         break;
     }
   }
