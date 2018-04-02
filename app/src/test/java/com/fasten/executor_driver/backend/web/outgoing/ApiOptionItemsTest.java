@@ -13,7 +13,7 @@ public class ApiOptionItemsTest {
   private ApiOptionItems apiOptionItems;
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     apiOptionItems = new ApiOptionItems(
         Arrays.asList(
             new ApiOptionItem(0, "10"),
@@ -31,7 +31,7 @@ public class ApiOptionItemsTest {
   }
 
   @Test
-  public void testConstructor() throws Exception {
+  public void testConstructor() {
     assertEquals(apiOptionItems.getVehicleOptions(),
         Arrays.asList(
             new ApiOptionItem(0, "10"),
@@ -51,7 +51,7 @@ public class ApiOptionItemsTest {
   }
 
   @Test
-  public void testEquals() throws Exception {
+  public void testEquals() {
     assertEquals(apiOptionItems, new ApiOptionItems(
         Arrays.asList(
             new ApiOptionItem(0, "10"),

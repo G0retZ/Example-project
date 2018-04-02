@@ -28,7 +28,7 @@ public class ReceiveTokenInterceptorTest {
   private Interceptor.Chain chain;
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     receiveTokenInterceptor = new ReceiveTokenInterceptor(tokenKeeper);
   }
 

@@ -20,7 +20,7 @@ public class GeolocationResolutionActivity extends BaseActivity {
     ActionBar actionBar = getSupportActionBar();
     if (actionBar != null) {
       actionBar.setTitle("");
-      actionBar.setHomeAsUpIndicator(R.drawable.ic_menu_24dp);
+      actionBar.setHomeAsUpIndicator(R.drawable.ic_back_24dp);
       actionBar.setDisplayHomeAsUpEnabled(true);
     }
   }
@@ -40,6 +40,7 @@ public class GeolocationResolutionActivity extends BaseActivity {
         super.navigate(destination);
         break;
       case GeolocationResolutionFragment.NAVIGATE_TO_RESOLVED:
+        startActivity(new Intent(this, SplashScreenActivity.class));
         finish();
         break;
     }

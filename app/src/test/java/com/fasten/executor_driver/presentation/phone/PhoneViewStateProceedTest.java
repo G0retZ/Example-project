@@ -18,12 +18,12 @@ public class PhoneViewStateProceedTest {
   private PhoneViewActions phoneViewActions;
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     viewState = new PhoneViewStateProceed();
   }
 
   @Test
-  public void testActions() throws Exception {
+  public void testActions() {
     // Действие:
     viewState.apply(phoneViewActions);
 

@@ -14,7 +14,7 @@ public class ApiVehicleTest {
   private ApiVehicle apiVehicle;
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     apiVehicle = new ApiVehicle(
         2190,
         "mark",
@@ -32,7 +32,7 @@ public class ApiVehicleTest {
   }
 
   @Test
-  public void testConstructor() throws Exception {
+  public void testConstructor() {
     assertEquals(apiVehicle.getId(), 2190);
     assertEquals(apiVehicle.getMarkName(), "mark");
     assertEquals(apiVehicle.getModelName(), "model");
@@ -49,7 +49,7 @@ public class ApiVehicleTest {
 
   @SuppressWarnings("SpellCheckingInspection")
   @Test
-  public void testEquals() throws Exception {
+  public void testEquals() {
     assertEquals(apiVehicle,
         new ApiVehicle(
             2190,

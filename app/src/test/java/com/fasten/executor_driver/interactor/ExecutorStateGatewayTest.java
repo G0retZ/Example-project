@@ -38,7 +38,7 @@ public class ExecutorStateGatewayTest {
   private Mapper<String, ExecutorState> mapper;
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     RxJavaPlugins.setIoSchedulerHandler(scheduler -> Schedulers.trampoline());
     RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
     executorStateGateway = new ExecutorStateGatewayImpl(stompClient, mapper);
@@ -49,11 +49,9 @@ public class ExecutorStateGatewayTest {
 
   /**
    * Должен запросить у клиента STOMP статусы, если он соединен и не соединяется.
-   *
-   * @throws Exception error
    */
   @Test
-  public void askStompClientForStatus() throws Exception {
+  public void askStompClientForStatus() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(stompClient);
     when(stompClient.isConnected()).thenReturn(true);
@@ -69,11 +67,9 @@ public class ExecutorStateGatewayTest {
 
   /**
    * Не должен просить у клиента STOMP соединение, если он не соединен и не соединяется.
-   *
-   * @throws Exception error
    */
   @Test
-  public void doNotAskStompClientToConnectOrForStatus() throws Exception {
+  public void doNotAskStompClientToConnectOrForStatus() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(stompClient);
 
@@ -88,11 +84,9 @@ public class ExecutorStateGatewayTest {
 
   /**
    * Должен запросить у клиента STOMP статусы, если он не соединен и соединяется.
-   *
-   * @throws Exception error
    */
   @Test
-  public void askStompClientForStatusIfConnecting() throws Exception {
+  public void askStompClientForStatusIfConnecting() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(stompClient);
     when(stompClient.isConnecting()).thenReturn(true);
@@ -113,11 +107,9 @@ public class ExecutorStateGatewayTest {
 
   /**
    * Должен игнорировать сообщение с неверным заголовком, если он соединен и не соединяется.
-   *
-   * @throws Exception error
    */
   @Test
-  public void ignoreWrongHeaderIfConnected() throws Exception {
+  public void ignoreWrongHeaderIfConnected() {
     // Дано:
     when(stompClient.isConnected()).thenReturn(true);
     when(stompClient.topic(anyString())).thenReturn(Observable.just(
@@ -192,11 +184,9 @@ public class ExecutorStateGatewayTest {
 
   /**
    * Должен ответить ошибкой, если он соединен и не соединяется.
-   *
-   * @throws Exception error
    */
   @Test
-  public void answerErrorIfConnected() throws Exception {
+  public void answerErrorIfConnected() {
     // Дано:
     when(stompClient.isConnected()).thenReturn(true);
     when(stompClient.topic(anyString())).thenReturn(Observable.error(new NoNetworkException()));
@@ -211,11 +201,9 @@ public class ExecutorStateGatewayTest {
 
   /**
    * Должен ответить ошибкой, если он не соединен и не соединяется.
-   *
-   * @throws Exception error
    */
   @Test
-  public void answerConnectionErrorIfNotConnectingAfterConnected() throws Exception {
+  public void answerConnectionErrorIfNotConnectingAfterConnected() {
     // Действие:
     TestSubscriber<ExecutorState> testSubscriber =
         executorStateGateway.getState("1234567890").test();
@@ -226,11 +214,9 @@ public class ExecutorStateGatewayTest {
 
   /**
    * Должен игнорировать сообщение с неверным заголовком, если он не соединен и соединяется.
-   *
-   * @throws Exception error
    */
   @Test
-  public void ignoreWrongHeaderIfConnectingAfterConnected() throws Exception {
+  public void ignoreWrongHeaderIfConnectingAfterConnected() {
     // Дано:
     when(stompClient.isConnecting()).thenReturn(true);
     when(stompClient.topic(anyString())).thenReturn(Observable.just(
@@ -308,11 +294,9 @@ public class ExecutorStateGatewayTest {
 
   /**
    * Должен ответить ошибкой, если он не соединен и соединяется.
-   *
-   * @throws Exception error
    */
   @Test
-  public void answerErrorIfConnecting() throws Exception {
+  public void answerErrorIfConnecting() {
     // Дано:
     when(stompClient.isConnecting()).thenReturn(true);
     when(stompClient.topic(anyString()))

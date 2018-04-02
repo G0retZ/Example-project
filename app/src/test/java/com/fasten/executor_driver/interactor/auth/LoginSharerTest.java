@@ -22,28 +22,24 @@ public class LoginSharerTest {
   private AppSettingsService appSettings;
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     loginSharer = new LoginSharer(appSettings);
   }
 
   /**
    * Должен запросить у настроек данные по ключу "authorizationLogin" сразу же после создания.
-   *
-   * @throws Exception error
    */
   @Test
-  public void askSettingsForLogin() throws Exception {
+  public void askSettingsForLogin() {
     // Результат:
     verify(appSettings, only()).getData("authorizationLogin");
   }
 
   /**
    * Не должен запрашивать у настроек данных при подписказ.
-   *
-   * @throws Exception error
    */
   @Test
-  public void doNotAskSettingsForLogin() throws Exception {
+  public void doNotAskSettingsForLogin() {
     // Действие:
     loginSharer.get().test();
     loginSharer.get().test();
@@ -57,11 +53,9 @@ public class LoginSharerTest {
 
   /**
    * Должен запросить у настроек сохранить данные без изменений по ключу "authorizationLogin".
-   *
-   * @throws Exception error
    */
   @Test
-  public void askSettingsForSaveLogin() throws Exception {
+  public void askSettingsForSaveLogin() {
     // Действие:
     loginSharer.onNext("123456");
 
@@ -73,11 +67,9 @@ public class LoginSharerTest {
 
   /**
    * Должен получить значение без изменений.
-   *
-   * @throws Exception error
    */
   @Test
-  public void valueUnchangedForRead() throws Exception {
+  public void valueUnchangedForRead() {
     // Дано:
     when(appSettings.getData("authorizationLogin")).thenReturn("654321");
     loginSharer = new LoginSharer(appSettings);

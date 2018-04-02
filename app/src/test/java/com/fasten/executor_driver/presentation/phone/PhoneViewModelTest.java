@@ -39,7 +39,7 @@ public class PhoneViewModelTest {
   private Observer<ViewState<PhoneViewActions>> viewStateObserver;
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     phoneViewModel = new PhoneViewModelImpl(useCase);
     RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
     RxAndroidPlugins.setInitMainThreadSchedulerHandler(scheduler -> Schedulers.trampoline());
@@ -51,11 +51,9 @@ public class PhoneViewModelTest {
 
   /**
    * Должен попросить юзкейс валидировать логин.
-   *
-   * @throws Exception error
    */
   @Test
-  public void askUseCaseToValidateLogin() throws Exception {
+  public void askUseCaseToValidateLogin() {
     when(useCase.validateLogin(anyString()))
         .thenReturn(Completable.error(new IllegalArgumentException()));
     // Действие:
@@ -72,11 +70,9 @@ public class PhoneViewModelTest {
 
   /**
    * Должен попросить юзкейс запонмнить логин.
-   *
-   * @throws Exception error
    */
   @Test
-  public void askUseCaseToRememberLogin() throws Exception {
+  public void askUseCaseToRememberLogin() {
     when(useCase.validateLogin(anyString())).thenReturn(Completable.complete());
     // Действие:
     phoneViewModel.phoneNumberChanged("1234");
@@ -92,11 +88,9 @@ public class PhoneViewModelTest {
 
   /**
    * Должен вернуть начальное состояние вида.
-   *
-   * @throws Exception error
    */
   @Test
-  public void setInitialViewStateToLiveData() throws Exception {
+  public void setInitialViewStateToLiveData() {
     // Действие:
     phoneViewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
@@ -106,11 +100,9 @@ public class PhoneViewModelTest {
 
   /**
    * Не должен менять состояние вида, если логин не валидируется.
-   *
-   * @throws Exception error
    */
   @Test
-  public void setNoNewViewStateToLiveData() throws Exception {
+  public void setNoNewViewStateToLiveData() {
     // Дано:
     phoneViewModel.getViewStateLiveData().observeForever(viewStateObserver);
     when(useCase.validateLogin(anyString()))
@@ -128,11 +120,9 @@ public class PhoneViewModelTest {
 
   /**
    * Должен вернуть состояние вида "Готов".
-   *
-   * @throws Exception error
    */
   @Test
-  public void setReadyViewStateToLiveData() throws Exception {
+  public void setReadyViewStateToLiveData() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     phoneViewModel.getViewStateLiveData().observeForever(viewStateObserver);
@@ -155,11 +145,9 @@ public class PhoneViewModelTest {
   /**
    * Должен вернуть начальное состояние вида после состояния "Готов", если номер изменился и не
    * валидировался.
-   *
-   * @throws Exception error
    */
   @Test
-  public void setInitialViewStateToLiveDataAfterReady() throws Exception {
+  public void setInitialViewStateToLiveDataAfterReady() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     phoneViewModel.getViewStateLiveData().observeForever(viewStateObserver);
@@ -183,11 +171,9 @@ public class PhoneViewModelTest {
 
   /**
    * Не должен возвращать состояние вида "Продолжай" если не "Готов".
-   *
-   * @throws Exception error
    */
   @Test
-  public void doNotSetProceedViewStateToLiveDataPending() throws Exception {
+  public void doNotSetProceedViewStateToLiveDataPending() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     phoneViewModel.getViewStateLiveData().observeForever(viewStateObserver);
@@ -202,11 +188,9 @@ public class PhoneViewModelTest {
 
   /**
    * Должен вернуть состояние вида "Продолжай" после "Готов".
-   *
-   * @throws Exception error
    */
   @Test
-  public void setProceedViewStateToLiveDataPending() throws Exception {
+  public void setProceedViewStateToLiveDataPending() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     phoneViewModel.getViewStateLiveData().observeForever(viewStateObserver);

@@ -73,11 +73,9 @@ public class VehiclesAndOptionsGatewayTest {
 
   /**
    * Должен запросить у АПИ список ТС исполнителя.
-   *
-   * @throws Exception error
    */
   @Test
-  public void askGatewayForHeatMap() throws Exception {
+  public void askGatewayForHeatMap() {
     // Действие:
     vehiclesAndOptionsGateway.getExecutorVehicles();
 
@@ -224,11 +222,9 @@ public class VehiclesAndOptionsGatewayTest {
 
   /**
    * Должен вернуть список бизнес ТС.
-   *
-   * @throws Exception error
    */
   @Test
-  public void answerWithHeatMapData() throws Exception {
+  public void answerWithHeatMapData() {
     // Дано:
     when(api.getOptionsForOnline()).thenReturn(Single.just(new ApiOptionsForOnline(Arrays.asList(
         new ApiVehicle(),

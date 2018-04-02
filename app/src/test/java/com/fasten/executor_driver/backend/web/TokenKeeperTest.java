@@ -29,17 +29,15 @@ public class TokenKeeperTest {
   private ArgumentCaptor<byte[]> rawCaptor;
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     tokenKeeper = new TokenKeeperImpl(appSettings);
   }
 
   /**
    * Должен запросить у настроек данные по ключу "token".
-   *
-   * @throws Exception error
    */
   @Test
-  public void askSettingsForToken() throws Exception {
+  public void askSettingsForToken() {
     // Действие:
     tokenKeeper.getToken();
 
@@ -49,11 +47,9 @@ public class TokenKeeperTest {
 
   /**
    * Должен запросить у настроек сохранить данные без изменений по ключу "token".
-   *
-   * @throws Exception error
    */
   @Test
-  public void askSettingsForSaveToken() throws Exception {
+  public void askSettingsForSaveToken() {
     // Действие:
     tokenKeeper.saveToken("123456");
 
@@ -63,11 +59,9 @@ public class TokenKeeperTest {
 
   /**
    * Должен использовать один и тот же массив байтов шифрования для чтения и записи.
-   *
-   * @throws Exception error
    */
   @Test
-  public void sameBytesForEncryption() throws Exception {
+  public void sameBytesForEncryption() {
     // Действие:
     tokenKeeper.saveToken("123456");
     tokenKeeper.getToken();
@@ -80,11 +74,9 @@ public class TokenKeeperTest {
 
   /**
    * Должен получить значение без изменений.
-   *
-   * @throws Exception error
    */
   @Test
-  public void valueUnchangedForRead() throws Exception {
+  public void valueUnchangedForRead() {
     // Действие:
     when(appSettings.getEncryptedData(any(byte[].class), eq("token"))).thenReturn("654321");
 

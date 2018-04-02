@@ -29,7 +29,7 @@ public class GeoLocationGatewayTest {
   private GeolocationCenter geolocationCenter;
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     RxJavaPlugins.setIoSchedulerHandler(scheduler -> Schedulers.trampoline());
     RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
     geoLocationGateway = new GeoLocationGatewayImpl(geolocationCenter);
@@ -40,11 +40,9 @@ public class GeoLocationGatewayTest {
 
   /**
    * Должен запросить у АПИ тепловую карту.
-   *
-   * @throws Exception error
    */
   @Test
-  public void askGeolocationCenterForLocations() throws Exception {
+  public void askGeolocationCenterForLocations() {
     // Действие:
     geoLocationGateway.getGeoLocations(140);
 
@@ -58,11 +56,9 @@ public class GeoLocationGatewayTest {
 
   /**
    * Должен ответить ошибкой сети.
-   *
-   * @throws Exception error
    */
   @Test
-  public void answerNoNetworkError() throws Exception {
+  public void answerNoNetworkError() {
     // Действие:
     when(geolocationCenter.getLocations(anyLong()))
         .thenReturn(Flowable.error(new NoNetworkException()));
@@ -73,11 +69,9 @@ public class GeoLocationGatewayTest {
 
   /**
    * Должен вернуть строку тепловой карты.
-   *
-   * @throws Exception error
    */
   @Test
-  public void answerWithGeoLocationData() throws Exception {
+  public void answerWithGeoLocationData() {
     // Дано:
     Location location = new Location("flp") {
       double latitude, longitude;

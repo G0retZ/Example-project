@@ -15,14 +15,14 @@ public class ChooseVehicleListItemTest {
   private ChooseVehicleListItem chooseVehicleListItem;
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     chooseVehicleListItem = new ChooseVehicleListItem(
         new Vehicle(11, "manufacturer", "model", "color", "lic plate", false)
     );
   }
 
   @Test
-  public void testGetters() throws Exception {
+  public void testGetters() {
     assertEquals(chooseVehicleListItem.getName(), "manufacturer model (lic plate)");
     assertTrue(chooseVehicleListItem.isSelectable());
     assertEquals(chooseVehicleListItem.getLabel(), R.string.free);
@@ -34,7 +34,7 @@ public class ChooseVehicleListItemTest {
   }
 
   @Test
-  public void testEquals() throws Exception {
+  public void testEquals() {
     assertEquals(chooseVehicleListItem,
         new ChooseVehicleListItem(
             new Vehicle(11, "manufacturer", "model", "color", "lic plate", false)

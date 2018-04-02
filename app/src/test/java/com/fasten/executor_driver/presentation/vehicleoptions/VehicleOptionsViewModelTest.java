@@ -62,7 +62,7 @@ public class VehicleOptionsViewModelTest {
   private Observer<String> navigateObserver;
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
     RxAndroidPlugins.setInitMainThreadSchedulerHandler(scheduler -> Schedulers.trampoline());
     when(vehicleOptionsUseCase.getVehicleOptions()).thenReturn(Observable.never());
@@ -76,11 +76,9 @@ public class VehicleOptionsViewModelTest {
 
   /**
    * Должен просить юзкейс получить список опций ТС, при первой и только при первой подписке.
-   *
-   * @throws Exception error
    */
   @Test
-  public void askVehicleOptionsUseCaseForOptionsInitially() throws Exception {
+  public void askVehicleOptionsUseCaseForOptionsInitially() {
     // Действие:
     vehicleOptionsViewModel.getViewStateLiveData();
     vehicleOptionsViewModel.getViewStateLiveData();
@@ -94,11 +92,9 @@ public class VehicleOptionsViewModelTest {
 
   /**
    * Должен попросить юзкейс занять ТС с указанными настройкам.
-   *
-   * @throws Exception error
    */
   @Test
-  public void askVehicleOptionsUseCaseToOccupyVehicleWithOptions() throws Exception {
+  public void askVehicleOptionsUseCaseToOccupyVehicleWithOptions() {
     // Дано:
     when(vehicleOptionsUseCase.setSelectedVehicleAndOptions(anyList(), anyList()))
         .thenReturn(Completable.complete());
@@ -166,11 +162,9 @@ public class VehicleOptionsViewModelTest {
 
   /**
    * Не должен трогать юзкейс, если предыдущий запрос занятия ТС еще не завершился.
-   *
-   * @throws Exception error
    */
   @Test
-  public void DoNotTouchVehicleOptionsUseCaseDuringVehicleOccupying() throws Exception {
+  public void DoNotTouchVehicleOptionsUseCaseDuringVehicleOccupying() {
     // Действие:
     vehicleOptionsViewModel.setOptions(new OptionsListItems(
         Collections.singletonList(
@@ -222,11 +216,9 @@ public class VehicleOptionsViewModelTest {
 
   /**
    * Должен вернуть исходное состояние вида изначально.
-   *
-   * @throws Exception error
    */
   @Test
-  public void setInitialViewStateToLiveData() throws Exception {
+  public void setInitialViewStateToLiveData() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
 
@@ -240,11 +232,9 @@ public class VehicleOptionsViewModelTest {
 
   /**
    * Должен вернуть состояние вида "Готово" со списком опций ТС.
-   *
-   * @throws Exception error
    */
   @Test
-  public void setReadyViewStateToLiveData() throws Exception {
+  public void setReadyViewStateToLiveData() {
     // Дано:
     PublishSubject<List<Option>> publishSubject1 = PublishSubject.create();
     PublishSubject<List<Option>> publishSubject2 = PublishSubject.create();
@@ -287,11 +277,9 @@ public class VehicleOptionsViewModelTest {
 
   /**
    * Должен вернуть состояние вида "В процессе".
-   *
-   * @throws Exception error
    */
   @Test
-  public void setPendingViewStateToLiveData() throws Exception {
+  public void setPendingViewStateToLiveData() {
     // Дано:
     PublishSubject<List<Option>> publishSubject1 = PublishSubject.create();
     PublishSubject<List<Option>> publishSubject2 = PublishSubject.create();
@@ -340,11 +328,9 @@ public class VehicleOptionsViewModelTest {
 
   /**
    * Должен вернуть состояние вида "Ошибка" сети.
-   *
-   * @throws Exception error
    */
   @Test
-  public void setNetworkErrorViewStateToLiveData() throws Exception {
+  public void setNetworkErrorViewStateToLiveData() {
     // Дано:
     PublishSubject<List<Option>> publishSubject1 = PublishSubject.create();
     PublishSubject<List<Option>> publishSubject2 = PublishSubject.create();
@@ -397,11 +383,9 @@ public class VehicleOptionsViewModelTest {
 
   /**
    * Должен игнорировать ошибки.
-   *
-   * @throws Exception error
    */
   @Test
-  public void setNothingToLiveData() throws Exception {
+  public void setNothingToLiveData() {
     // Дано:
     when(vehicleOptionsUseCase.setSelectedVehicleAndOptions(anyList(), anyList()))
         .thenReturn(Completable.error(new NoNetworkException()));
@@ -418,11 +402,9 @@ public class VehicleOptionsViewModelTest {
 
   /**
    * Должен вернуть "перейти к ожиданию заказов" если занятие ТС было успешным.
-   *
-   * @throws Exception error
    */
   @Test
-  public void setNavigateToReadyForOrdersToLiveData() throws Exception {
+  public void setNavigateToReadyForOrdersToLiveData() {
     // Дано:
     when(vehicleOptionsUseCase.setSelectedVehicleAndOptions(anyList(), anyList()))
         .thenReturn(Completable.complete());

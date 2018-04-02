@@ -27,12 +27,12 @@ public class OnlineButtonViewStateErrorTest {
   private ArgumentCaptor<Throwable> throwableCaptor;
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     viewState = new OnlineButtonViewStateError(new IllegalArgumentException("mess"));
   }
 
   @Test
-  public void testActions() throws Exception {
+  public void testActions() {
     // Действие:
     viewState.apply(codeViewActions);
 
@@ -49,7 +49,7 @@ public class OnlineButtonViewStateErrorTest {
   }
 
   @Test
-  public void testEquals() throws Exception {
+  public void testEquals() {
     assertEquals(viewState, new OnlineButtonViewStateError(new IllegalArgumentException("mess")));
     assertNotEquals(viewState, new OnlineButtonViewStateError(new IllegalArgumentException("mes")));
     assertNotEquals(viewState, new OnlineButtonViewStateError(new NullPointerException("mess")));

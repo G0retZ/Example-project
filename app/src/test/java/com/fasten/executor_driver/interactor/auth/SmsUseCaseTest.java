@@ -50,22 +50,18 @@ public class SmsUseCaseTest {
 
   /**
    * Должен подписаться при создании сразу же.
-   *
-   * @throws Exception error
    */
   @Test
-  public void getFromDataSharerImmediately() throws Exception {
+  public void getFromDataSharerImmediately() {
     // Результат:
     verify(phoneNumberReceiver, only()).get();
   }
 
   /**
    * Не должен взаимодействовать с публиктором в любых иных случаях.
-   *
-   * @throws Exception error
    */
   @Test
-  public void doNotTouchDataSharer() throws Exception {
+  public void doNotTouchDataSharer() {
     // Действие:
     smsUseCase.sendMeCode().test();
 
@@ -96,11 +92,9 @@ public class SmsUseCaseTest {
 
   /**
    * Должен ответить ошибкой, если номер телефона неверный.
-   *
-   * @throws Exception error
    */
   @Test
-  public void answerErrorIfPhoneNumberInvalid() throws Exception {
+  public void answerErrorIfPhoneNumberInvalid() {
     // Дано:
     subject.onNext("");
 
@@ -129,11 +123,9 @@ public class SmsUseCaseTest {
 
   /**
    * Не должен запрашивать у гейтвея СМС, если валидация не прошла.
-   *
-   * @throws Exception error
    */
   @Test
-  public void doNotAskGatewayForSms() throws Exception {
+  public void doNotAskGatewayForSms() {
     // Дано:
     subject.onNext("012345");
 
@@ -146,11 +138,9 @@ public class SmsUseCaseTest {
 
   /**
    * Должен запросить у гейтвея СМС.
-   *
-   * @throws Exception error
    */
   @Test
-  public void askGatewayForSms() throws Exception {
+  public void askGatewayForSms() {
     // Дано:
     subject.onNext("0123456");
 
@@ -165,11 +155,9 @@ public class SmsUseCaseTest {
 
   /**
    * Должен ответить ошибкой сети.
-   *
-   * @throws Exception error
    */
   @Test
-  public void answerNoNetworkError() throws Exception {
+  public void answerNoNetworkError() {
     // Дано:
     subject.onNext("0123456");
 
@@ -182,11 +170,9 @@ public class SmsUseCaseTest {
 
   /**
    * Должен ответить успехом.
-   *
-   * @throws Exception error
    */
   @Test
-  public void answerSmsSendSuccessful() throws Exception {
+  public void answerSmsSendSuccessful() {
     // Дано:
     subject.onNext("0123456");
 

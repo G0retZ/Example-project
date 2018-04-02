@@ -43,7 +43,7 @@ public class GeoLocationUseCaseTest {
   private Action action;
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     when(geoLocationGateway.getGeoLocations(anyLong())).thenReturn(Flowable.never());
     when(geoTrackingGateway.sendGeoLocation(any())).thenReturn(Completable.complete());
     when(executorStateUseCase.getExecutorStates()).thenReturn(Flowable.never());
@@ -56,11 +56,9 @@ public class GeoLocationUseCaseTest {
 
   /**
    * Должен запросить получение смены состояний исполнителя.
-   *
-   * @throws Exception error
    */
   @Test
-  public void getExecutorStates() throws Exception {
+  public void getExecutorStates() {
     // Действие:
     geoLocationUseCase.getGeoLocations().test();
 
@@ -70,11 +68,9 @@ public class GeoLocationUseCaseTest {
 
   /**
    * Не должен запрашивать получение смены состояний исполнителя вновь, если ошибок не было.
-   *
-   * @throws Exception error
    */
   @Test
-  public void getExecutorStatesAgainAfterReload() throws Exception {
+  public void getExecutorStatesAgainAfterReload() {
     // Действие:
     geoLocationUseCase.getGeoLocations().test();
     geoLocationUseCase.getGeoLocations().test();
@@ -85,11 +81,9 @@ public class GeoLocationUseCaseTest {
 
   /**
    * Должен запросить получение смены состояний исполнителя вновь, после ошибки.
-   *
-   * @throws Exception error
    */
   @Test
-  public void getExecutorStatesAgainAfterError() throws Exception {
+  public void getExecutorStatesAgainAfterError() {
     // Дано:
     when(executorStateUseCase.getExecutorStates())
         .thenReturn(Flowable.error(new ConnectionClosedException()));
@@ -105,11 +99,9 @@ public class GeoLocationUseCaseTest {
 
   /**
    * Должен запросить получение смены состояний исполнителя вновь, после окончания.
-   *
-   * @throws Exception error
    */
   @Test
-  public void getExecutorStatesAgainAfterComplete() throws Exception {
+  public void getExecutorStatesAgainAfterComplete() {
     // Дано:
     when(executorStateUseCase.getExecutorStates()).thenReturn(Flowable.empty());
 
@@ -126,11 +118,9 @@ public class GeoLocationUseCaseTest {
 
   /**
    * Не должен трогать гейтвей, до получения статуса.
-   *
-   * @throws Exception error
    */
   @Test
-  public void doNotTouchGatewayIfNoStatus() throws Exception {
+  public void doNotTouchGatewayIfNoStatus() {
     // Действие:
     geoLocationUseCase.getGeoLocations().test();
 
@@ -140,11 +130,9 @@ public class GeoLocationUseCaseTest {
 
   /**
    * Не должен трогать гейтвей, при ошибке в статусах.
-   *
-   * @throws Exception error
    */
   @Test
-  public void doNotTouchGatewayIfStatusError() throws Exception {
+  public void doNotTouchGatewayIfStatusError() {
     // Дано:
     when(executorStateUseCase.getExecutorStates())
         .thenReturn(Flowable.error(new ConnectionClosedException()));
@@ -158,11 +146,9 @@ public class GeoLocationUseCaseTest {
 
   /**
    * Не должен трогать гейтвей, при завершении в статусах.
-   *
-   * @throws Exception error
    */
   @Test
-  public void doNotTouchGatewayIfStatusComplete() throws Exception {
+  public void doNotTouchGatewayIfStatusComplete() {
     // Дано:
     when(executorStateUseCase.getExecutorStates()).thenReturn(Flowable.empty());
 
@@ -176,11 +162,9 @@ public class GeoLocationUseCaseTest {
   /**
    * Должен запросить гейтвей получать локации с интервалом 1 час,
    * при переходе в состояние "Смена закрыта".
-   *
-   * @throws Exception error
    */
   @Test
-  public void askGatewayForLocationsEvery1HourIfGoToShiftClosed() throws Exception {
+  public void askGatewayForLocationsEvery1HourIfGoToShiftClosed() {
     // Дано:
     when(executorStateUseCase.getExecutorStates())
         .thenReturn(Flowable.just(ExecutorState.SHIFT_CLOSED));
@@ -195,11 +179,9 @@ public class GeoLocationUseCaseTest {
   /**
    * Должен запросить гейтвей получать локации с интервалом 180 сек,
    * при переходе в состояние "Смена открыта".
-   *
-   * @throws Exception error
    */
   @Test
-  public void askGatewayForLocationsEvery180secIfGoToShiftOpened() throws Exception {
+  public void askGatewayForLocationsEvery180secIfGoToShiftOpened() {
     // Дано:
     when(executorStateUseCase.getExecutorStates())
         .thenReturn(Flowable.just(ExecutorState.SHIFT_OPENED));
@@ -214,11 +196,9 @@ public class GeoLocationUseCaseTest {
   /**
    * Должен запросить гейтвей получать локации с интервалом 15 сек,
    * при переходе в состояние "На линии".
-   *
-   * @throws Exception error
    */
   @Test
-  public void askGatewayForLocationsEvery15secIfGoToOnline() throws Exception {
+  public void askGatewayForLocationsEvery15secIfGoToOnline() {
     // Дано:
     when(executorStateUseCase.getExecutorStates()).thenReturn(Flowable.just(ExecutorState.ONLINE));
 
@@ -231,11 +211,9 @@ public class GeoLocationUseCaseTest {
 
   /**
    * Должен запросить гейтвей получать локации с различным интервалом, при смене состояний.
-   *
-   * @throws Exception error
    */
   @Test
-  public void askGatewayForLocationsDependingOnNewStatesArrival() throws Exception {
+  public void askGatewayForLocationsDependingOnNewStatesArrival() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(geoLocationGateway);
     when(executorStateUseCase.getExecutorStates()).thenReturn(Flowable.just(
@@ -281,11 +259,9 @@ public class GeoLocationUseCaseTest {
 
   /**
    * Не должен трогать гейтвей передачи геолокаций до получения геолокаций.
-   *
-   * @throws Exception error
    */
   @Test
-  public void doNotTouchTrackingGatewayOnEmptyStates() throws Exception {
+  public void doNotTouchTrackingGatewayOnEmptyStates() {
     // Дано:
     when(executorStateUseCase.getExecutorStates()).thenReturn(Flowable.empty());
 
@@ -298,11 +274,9 @@ public class GeoLocationUseCaseTest {
 
   /**
    * Должен отправить полученную геопозицию через гейтвей передачи геолокаций.
-   *
-   * @throws Exception error
    */
   @Test
-  public void askTrackingGatewayToSendNewGeoLocation() throws Exception {
+  public void askTrackingGatewayToSendNewGeoLocation() {
     // Дано:
     when(executorStateUseCase.getExecutorStates())
         .thenReturn(Flowable.just(ExecutorState.SHIFT_CLOSED));
@@ -318,11 +292,9 @@ public class GeoLocationUseCaseTest {
 
   /**
    * Не должен трогать гейтвей передачи геолокаций при ошибке получения статусов.
-   *
-   * @throws Exception error
    */
   @Test
-  public void doNotTouchTrackingGatewayOnGetStateError() throws Exception {
+  public void doNotTouchTrackingGatewayOnGetStateError() {
     // Дано:
     when(executorStateUseCase.getExecutorStates())
         .thenReturn(Flowable.error(ConnectException::new));
@@ -336,11 +308,9 @@ public class GeoLocationUseCaseTest {
 
   /**
    * Не должен трогать гейтвей передачи геолокаций при ошибке получения геолокаций.
-   *
-   * @throws Exception error
    */
   @Test
-  public void doNotTouchTrackingGatewayOnGetGeolocationError() throws Exception {
+  public void doNotTouchTrackingGatewayOnGetGeolocationError() {
     // Дано:
     when(executorStateUseCase.getExecutorStates())
         .thenReturn(Flowable.just(ExecutorState.SHIFT_CLOSED));
@@ -357,11 +327,9 @@ public class GeoLocationUseCaseTest {
 
   /**
    * Должен вернуть полученные геопозиции.
-   *
-   * @throws Exception error
    */
   @Test
-  public void answerWithNewGeoLocations() throws Exception {
+  public void answerWithNewGeoLocations() {
     // Дано:
     when(executorStateUseCase.getExecutorStates())
         .thenReturn(Flowable.just(ExecutorState.SHIFT_CLOSED));
@@ -386,11 +354,9 @@ public class GeoLocationUseCaseTest {
 
   /**
    * Должен вернуть ошибку при ошибке получения статусов.
-   *
-   * @throws Exception error
    */
   @Test
-  public void answerWithErrorOnGetStateError() throws Exception {
+  public void answerWithErrorOnGetStateError() {
     // Дано:
     when(executorStateUseCase.getExecutorStates())
         .thenReturn(Flowable.error(ConnectException::new));
@@ -406,11 +372,9 @@ public class GeoLocationUseCaseTest {
 
   /**
    * Должен вернуть ошибку при ошибке получения местоположений.
-   *
-   * @throws Exception error
    */
   @Test
-  public void answerWithErrorOnGetGeolocationError() throws Exception {
+  public void answerWithErrorOnGetGeolocationError() {
     // Дано:
     when(executorStateUseCase.getExecutorStates())
         .thenReturn(Flowable.just(ExecutorState.SHIFT_CLOSED));
@@ -426,11 +390,9 @@ public class GeoLocationUseCaseTest {
 
   /**
    * Должен ответить завершением.
-   *
-   * @throws Exception error
    */
   @Test
-  public void answerWithComplete() throws Exception {
+  public void answerWithComplete() {
     // Дано:
     when(executorStateUseCase.getExecutorStates()).thenReturn(Flowable.empty());
 

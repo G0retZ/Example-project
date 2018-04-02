@@ -13,17 +13,15 @@ public class VehiclesSharerTest {
   private VehiclesSharer vehiclesSharer;
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     vehiclesSharer = new VehiclesSharer();
   }
 
   /**
    * Должен получить значение без изменений.
-   *
-   * @throws Exception error
    */
   @Test
-  public void valueUnchangedForRead() throws Exception {
+  public void valueUnchangedForRead() {
     // Дано:
     vehiclesSharer.onNext(
         Arrays.asList(

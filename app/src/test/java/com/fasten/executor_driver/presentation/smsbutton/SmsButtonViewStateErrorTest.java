@@ -19,12 +19,12 @@ public class SmsButtonViewStateErrorTest {
   private SmsButtonViewActions codeViewActions;
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     viewState = new SmsButtonViewStateError();
   }
 
   @Test
-  public void testActions() throws Exception {
+  public void testActions() {
     // Действие:
     viewState.apply(codeViewActions);
 

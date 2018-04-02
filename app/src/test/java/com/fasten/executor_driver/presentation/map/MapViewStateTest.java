@@ -20,12 +20,12 @@ public class MapViewStateTest {
   private MapViewActions mapViewActions;
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     viewState = new MapViewState("geoData");
   }
 
   @Test
-  public void testActions() throws Exception {
+  public void testActions() {
     // Действие:
     viewState.apply(mapViewActions);
 
@@ -35,7 +35,7 @@ public class MapViewStateTest {
   }
 
   @Test
-  public void testEquals() throws Exception {
+  public void testEquals() {
     assertEquals(viewState, new MapViewState("geoData"));
     assertNotEquals(viewState, new MapViewState(null));
     assertNotEquals(viewState, new MapViewState("geoDat"));

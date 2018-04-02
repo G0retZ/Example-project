@@ -46,7 +46,7 @@ public class VehicleOptionsUseCaseTest {
   private DataReceiver<List<Option>> driverOptionsReceiver;
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     vehicleOptionsUseCase = new VehicleOptionsUseCaseImpl(gateway, vehicleChoiceReceiver,
         lastUsedVehicleObserver, driverOptionsReceiver);
     when(gateway.sendVehicleOptions(any(Vehicle.class), anyList())).thenReturn(Completable.never());
@@ -57,11 +57,9 @@ public class VehicleOptionsUseCaseTest {
 
   /**
    * Должен запросить у публикатора выбранную ТС.
-   *
-   * @throws Exception error
    */
   @Test
-  public void askDataSharerForSelectedVehicle() throws Exception {
+  public void askDataSharerForSelectedVehicle() {
     // Действие:
     vehicleOptionsUseCase.getVehicleOptions().test();
 
@@ -73,12 +71,10 @@ public class VehicleOptionsUseCaseTest {
 
   /**
    * Должен отвечать успехом и только динамическими опциями.
-   *
-   * @throws Exception error
    */
   @SuppressWarnings({"unchecked"})
   @Test
-  public void answerWithVehiclesList() throws Exception {
+  public void answerWithVehiclesList() {
     // Дано:
     ArrayList<Vehicle> vehicles = new ArrayList<>();
     vehicles.add(0, new Vehicle(13, "manufacturers", "model4", "carrots", "licensee", false));
@@ -125,12 +121,10 @@ public class VehicleOptionsUseCaseTest {
 
   /**
    * Должен ответить пустым списком доступных для изменений опций ТС.
-   *
-   * @throws Exception error
    */
   @SuppressWarnings({"unchecked"})
   @Test
-  public void answerNoVehicleOptionsAvailableError() throws Exception {
+  public void answerNoVehicleOptionsAvailableError() {
     // Дано:
     ArrayList<Vehicle> vehicles = new ArrayList<>();
     vehicles.add(0, new Vehicle(13, "manufacturers", "model4", "carrots", "licensee", false));
@@ -180,11 +174,9 @@ public class VehicleOptionsUseCaseTest {
 
   /**
    * Не должен трогать гейтвей.
-   *
-   * @throws Exception error
    */
   @Test
-  public void doNotTouchGateway() throws Exception {
+  public void doNotTouchGateway() {
     // Действие:
     vehicleOptionsUseCase.setSelectedVehicleAndOptions(
         new ArrayList<>(Arrays.asList(
@@ -199,11 +191,9 @@ public class VehicleOptionsUseCaseTest {
 
   /**
    * Должен передать гейтвею ТС с установленными опциями.
-   *
-   * @throws Exception error
    */
   @Test
-  public void askGatewayToSetVehicleOptions() throws Exception {
+  public void askGatewayToSetVehicleOptions() {
     // Дано:
     Vehicle vehicle = new Vehicle(12, "manufacturer", "model", "color", "license", false);
     vehicle.addVehicleOptions(
@@ -238,11 +228,9 @@ public class VehicleOptionsUseCaseTest {
 
   /**
    * Должет ответить ошибкой преобразования данных.
-   *
-   * @throws Exception error
    */
   @Test
-  public void answerDataMappingError() throws Exception {
+  public void answerDataMappingError() {
     // Действие и Результат:
     vehicleOptionsUseCase.setSelectedVehicleAndOptions(
         new ArrayList<>(Arrays.asList(
@@ -254,11 +242,9 @@ public class VehicleOptionsUseCaseTest {
 
   /**
    * Должен ответить ошибкой сети.
-   *
-   * @throws Exception error
    */
   @Test
-  public void answerNoNetworkError() throws Exception {
+  public void answerNoNetworkError() {
     // Дано:
     Vehicle vehicle = new Vehicle(12, "manufacturer", "model", "color", "license", false);
     vehicle.addVehicleOptions(
@@ -286,11 +272,9 @@ public class VehicleOptionsUseCaseTest {
 
   /**
    * Должен ответить успехом.
-   *
-   * @throws Exception error
    */
   @Test
-  public void answerSetSelectedVehicleOptionsSuccessful() throws Exception {
+  public void answerSetSelectedVehicleOptionsSuccessful() {
     // Дано:
     Vehicle vehicle = new Vehicle(12, "manufacturer", "model", "color", "license", false);
     vehicle.addVehicleOptions(
@@ -320,11 +304,9 @@ public class VehicleOptionsUseCaseTest {
 
   /**
    * Не должен трогать публикатор.
-   *
-   * @throws Exception error
    */
   @Test
-  public void doNotTouchLastUseVehicleDataSharer() throws Exception {
+  public void doNotTouchLastUseVehicleDataSharer() {
     // Действие:
     vehicleOptionsUseCase.setSelectedVehicleAndOptions(
         new ArrayList<>(Arrays.asList(
@@ -357,11 +339,9 @@ public class VehicleOptionsUseCaseTest {
 
   /**
    * Должен опубликовать выбранную ТС как последнюю использованную.
-   *
-   * @throws Exception error
    */
   @Test
-  public void askLastUseVehicleDataSharerToShareTheOccupiedVehicle() throws Exception {
+  public void askLastUseVehicleDataSharerToShareTheOccupiedVehicle() {
     // Дано:
     Vehicle vehicle = new Vehicle(12, "manufacturer", "model", "color", "license", false);
     vehicle.addVehicleOptions(

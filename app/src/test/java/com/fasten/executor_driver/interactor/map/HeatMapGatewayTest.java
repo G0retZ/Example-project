@@ -25,7 +25,7 @@ public class HeatMapGatewayTest {
   private ApiService api;
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     RxJavaPlugins.setIoSchedulerHandler(scheduler -> Schedulers.trampoline());
     RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
     heatMapGateway = new HeatMapGatewayImpl(api);
@@ -36,11 +36,9 @@ public class HeatMapGatewayTest {
 
   /**
    * Должен запросить у АПИ тепловую карту.
-   *
-   * @throws Exception error
    */
   @Test
-  public void askGatewayForHeatMap() throws Exception {
+  public void askGatewayForHeatMap() {
     // Действие:
     heatMapGateway.getHeatMap();
 
@@ -54,11 +52,9 @@ public class HeatMapGatewayTest {
 
   /**
    * Должен ответить ошибкой сети.
-   *
-   * @throws Exception error
    */
   @Test
-  public void answerNoNetworkError() throws Exception {
+  public void answerNoNetworkError() {
     // Действие:
     when(api.getHeatMap()).thenReturn(Single.error(new NoNetworkException()));
 
@@ -68,11 +64,9 @@ public class HeatMapGatewayTest {
 
   /**
    * Должен вернуть строку тепловой карты.
-   *
-   * @throws Exception error
    */
   @Test
-  public void answerWithHeatMapData() throws Exception {
+  public void answerWithHeatMapData() {
     // Действие:
     when(api.getHeatMap()).thenReturn(Single.just("12"));
 

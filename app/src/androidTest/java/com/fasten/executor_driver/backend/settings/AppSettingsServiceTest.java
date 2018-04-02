@@ -23,12 +23,12 @@ public class AppSettingsServiceTest {
   }
 
   @Test
-  public void returnNullValueByDefault() throws Exception {
+  public void returnNullValueByDefault() {
     assertNull(appSettingsService.getData("key"));
   }
 
   @Test
-  public void saveAndReadValue() throws Exception {
+  public void saveAndReadValue() {
     // given:
     appSettingsService.saveData("key", "value");
 
@@ -37,7 +37,7 @@ public class AppSettingsServiceTest {
   }
 
   @Test
-  public void saveAndReadNullValue() throws Exception {
+  public void saveAndReadNullValue() {
     // given:
     appSettingsService.saveData("key1", "value1");
 
@@ -48,12 +48,12 @@ public class AppSettingsServiceTest {
   }
 
   @Test
-  public void returnNullEncryptedValueByDefault() throws Exception {
+  public void returnNullEncryptedValueByDefault() {
     assertNull(appSettingsService.getEncryptedData(raw, "key"));
   }
 
   @Test
-  public void saveAndReadEncryptedValue() throws Exception {
+  public void saveAndReadEncryptedValue() {
     // given:
     appSettingsService.saveEncryptedData(raw, "key", "value");
 
@@ -62,7 +62,7 @@ public class AppSettingsServiceTest {
   }
 
   @Test
-  public void saveAndReadEncryptedNullValue() throws Exception {
+  public void saveAndReadEncryptedNullValue() {
     // given:
     appSettingsService.saveEncryptedData(raw, "key", "value");
 

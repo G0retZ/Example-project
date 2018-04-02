@@ -13,7 +13,7 @@ public class ApiOptionsForOnlineTest {
   private ApiOptionsForOnline apiOptionsForOnline;
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     apiOptionsForOnline = new ApiOptionsForOnline(
         Arrays.asList(
             new ApiVehicle(0, "mark1", "model1", "lic1", "col1", false, new ArrayList<>()),
@@ -30,7 +30,7 @@ public class ApiOptionsForOnlineTest {
   }
 
   @Test
-  public void testConstructor() throws Exception {
+  public void testConstructor() {
     assertEquals(apiOptionsForOnline.getCars(), Arrays.asList(
         new ApiVehicle(0, "mark1", "model1", "lic1", "col1", false, new ArrayList<>()),
         new ApiVehicle(1, "mark2", "model2", "lic2", "col2", false, new ArrayList<>()),
@@ -46,7 +46,7 @@ public class ApiOptionsForOnlineTest {
 
   @SuppressWarnings("SpellCheckingInspection")
   @Test
-  public void testEquals() throws Exception {
+  public void testEquals() {
     assertEquals(apiOptionsForOnline,
         new ApiOptionsForOnline(
             Arrays.asList(

@@ -23,28 +23,24 @@ public class LastUsedVehicleSharerTest {
   private AppSettingsService appSettings;
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     lastUsedVehicleSharer = new LastUsedVehicleSharer(appSettings);
   }
 
   /**
    * Должен запросить у настроек данные по ключу "lastUsedVehicle" сразу же после создания.
-   *
-   * @throws Exception error
    */
   @Test
-  public void askSettingsForLogin() throws Exception {
+  public void askSettingsForLogin() {
     // Результат:
     verify(appSettings, only()).getData("lastUsedVehicle");
   }
 
   /**
    * Не должен запрашивать у настроек данных при подписказ.
-   *
-   * @throws Exception error
    */
   @Test
-  public void doNotAskSettingsForLogin() throws Exception {
+  public void doNotAskSettingsForLogin() {
     // Действие:
     lastUsedVehicleSharer.get().test();
     lastUsedVehicleSharer.get().test();
@@ -58,11 +54,9 @@ public class LastUsedVehicleSharerTest {
 
   /**
    * Должен запросить у настроек сохранить данные без изменений по ключу "authorizationLogin".
-   *
-   * @throws Exception error
    */
   @Test
-  public void askSettingsForSaveLogin() throws Exception {
+  public void askSettingsForSaveLogin() {
     // Действие:
     lastUsedVehicleSharer.onNext(
         new Vehicle(123456, "manufacturer", "model", "color", "license", false)
@@ -76,11 +70,9 @@ public class LastUsedVehicleSharerTest {
 
   /**
    * Должен получить значение без изменений.
-   *
-   * @throws Exception error
    */
   @Test
-  public void valueUnchangedForRead() throws Exception {
+  public void valueUnchangedForRead() {
     // Дано:
     when(appSettings.getData("lastUsedVehicle")).thenReturn("654321");
     lastUsedVehicleSharer = new LastUsedVehicleSharer(appSettings);

@@ -19,12 +19,12 @@ public class SmsButtonViewStatePendingTest {
   private SmsButtonViewActions smsButtonViewActions;
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     viewState = new SmsButtonViewStatePending();
   }
 
   @Test
-  public void testActions() throws Exception {
+  public void testActions() {
     // Действие:
     viewState.apply(smsButtonViewActions);
 

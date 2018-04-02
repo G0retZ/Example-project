@@ -11,25 +11,25 @@ public class LoginDataTest {
   private LoginData loginData;
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     loginData = new LoginData("name", "password");
   }
 
   @Test
-  public void testConstructor() throws Exception {
+  public void testConstructor() {
     assertEquals(loginData.getLogin(), "name");
     assertEquals(loginData.getPassword(), "password");
   }
 
   @Test
-  public void testSetters() throws Exception {
+  public void testSetters() {
     assertEquals(loginData.setLogin("nam").getLogin(), "nam");
     assertEquals(loginData.setPassword("pass").getPassword(), "pass");
   }
 
   @SuppressWarnings("SpellCheckingInspection")
   @Test
-  public void testEquals() throws Exception {
+  public void testEquals() {
     assertEquals(loginData, new LoginData("name", "password"));
     assertNotEquals(loginData, new LoginData("nam", "password"));
     assertNotEquals(loginData, new LoginData("name", "passwor"));

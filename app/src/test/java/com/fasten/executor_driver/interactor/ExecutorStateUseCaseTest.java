@@ -42,7 +42,7 @@ public class ExecutorStateUseCaseTest {
   private Action action;
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     when(gateway.getState(anyString())).thenReturn(Flowable.never());
     when(loginReceiver.get()).thenReturn(Observable.never());
     when(socketGateway.openSocket()).thenReturn(Completable.never());
@@ -53,11 +53,9 @@ public class ExecutorStateUseCaseTest {
 
   /**
    * Должен запросить у гейтвея соединение.
-   *
-   * @throws Exception error
    */
   @Test
-  public void askSocketGatewayForConnection() throws Exception {
+  public void askSocketGatewayForConnection() {
     // Действие:
     executorStateUseCase.getExecutorStates().test();
 
@@ -69,11 +67,9 @@ public class ExecutorStateUseCaseTest {
 
   /**
    * Должен запросить у публикатора логин исполнителя.
-   *
-   * @throws Exception error
    */
   @Test
-  public void askLoginPublisherForLogin() throws Exception {
+  public void askLoginPublisherForLogin() {
     // Дано:
     when(socketGateway.openSocket()).thenReturn(Completable.complete());
 
@@ -88,11 +84,9 @@ public class ExecutorStateUseCaseTest {
 
   /**
    * Должен запросить у гейтвея статус исполнителя.
-   *
-   * @throws Exception error
    */
   @Test
-  public void askGatewayForStatus() throws Exception {
+  public void askGatewayForStatus() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(gateway);
     when(socketGateway.openSocket()).thenReturn(Completable.complete());
@@ -135,11 +129,9 @@ public class ExecutorStateUseCaseTest {
 
   /**
    * Не должен запрпрашивать у гейтвея статус исполнителя.
-   *
-   * @throws Exception error
    */
   @Test
-  public void doNotAskGatewayForStatus() throws Exception {
+  public void doNotAskGatewayForStatus() {
     // Дано:
     when(socketGateway.openSocket()).thenReturn(Completable.complete());
     when(loginReceiver.get()).thenReturn(Observable.error(NoNetworkException::new));
@@ -155,11 +147,9 @@ public class ExecutorStateUseCaseTest {
 
   /**
    * Должен вернуть статусы.
-   *
-   * @throws Exception error
    */
   @Test
-  public void answerWithStatuses() throws Exception {
+  public void answerWithStatuses() {
     // Дано:
     when(socketGateway.openSocket()).thenReturn(Completable.complete());
     when(loginReceiver.get()).thenReturn(Observable.just("1234567890"));
@@ -178,11 +168,9 @@ public class ExecutorStateUseCaseTest {
 
   /**
    * Должен вернуть ошибку, если открытие сокета обломалось.
-   *
-   * @throws Exception error
    */
   @Test
-  public void answerWithErrorIfSocketConnectionFailed() throws Exception {
+  public void answerWithErrorIfSocketConnectionFailed() {
     // Дано:
     when(socketGateway.openSocket()).thenReturn(Completable.error(ConnectException::new));
 
@@ -196,11 +184,9 @@ public class ExecutorStateUseCaseTest {
 
   /**
    * Должен вернуть ошибку, если была ошибка получения логина.
-   *
-   * @throws Exception error
    */
   @Test
-  public void answerWithErrorIfGetLoginFailed() throws Exception {
+  public void answerWithErrorIfGetLoginFailed() {
     // Дано:
     when(socketGateway.openSocket()).thenReturn(Completable.complete());
     when(loginReceiver.get()).thenReturn(Observable.error(ConnectException::new));
@@ -215,11 +201,9 @@ public class ExecutorStateUseCaseTest {
 
   /**
    * Должен вернуть ошибку, если подписка обломалась.
-   *
-   * @throws Exception error
    */
   @Test
-  public void answerWithErrorIfSubscriptionFailed() throws Exception {
+  public void answerWithErrorIfSubscriptionFailed() {
     // Дано:
     when(socketGateway.openSocket()).thenReturn(Completable.complete());
     when(loginReceiver.get()).thenReturn(Observable.just("1234567890"));
@@ -235,11 +219,9 @@ public class ExecutorStateUseCaseTest {
 
   /**
    * Должен завершить получение статусов.
-   *
-   * @throws Exception error
    */
   @Test
-  public void answerComplete() throws Exception {
+  public void answerComplete() {
     // Дано:
     when(socketGateway.openSocket()).thenReturn(Completable.complete());
     when(loginReceiver.get()).thenReturn(Observable.just("1234567890"));

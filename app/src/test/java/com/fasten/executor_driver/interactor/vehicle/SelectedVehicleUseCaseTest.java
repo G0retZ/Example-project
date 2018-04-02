@@ -23,7 +23,7 @@ public class SelectedVehicleUseCaseTest {
   private DataReceiver<Vehicle> vehicleChoiceReceiver;
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     selectedVehicleUseCase = new SelectedVehicleUseCaseImpl(vehicleChoiceReceiver);
     when(vehicleChoiceReceiver.get()).thenReturn(Observable.never());
   }
@@ -32,11 +32,9 @@ public class SelectedVehicleUseCaseTest {
 
   /**
    * Должен запросить у публикатора выбранное ТС.
-   *
-   * @throws Exception error
    */
   @Test
-  public void askVehicleDataSharerForVehicles() throws Exception {
+  public void askVehicleDataSharerForVehicles() {
     // Действие:
     selectedVehicleUseCase.getSelectedVehicle().test();
 
@@ -48,11 +46,9 @@ public class SelectedVehicleUseCaseTest {
 
   /**
    * Должен ответить успехом и без искажений.
-   *
-   * @throws Exception error
    */
   @Test
-  public void answerWithVehicleSelections() throws Exception {
+  public void answerWithVehicleSelections() {
     // Дано:
     when(vehicleChoiceReceiver.get()).thenReturn(Observable.fromArray(
         new Vehicle(12, "manufacturer", "model", "color", "license", false),
@@ -72,11 +68,9 @@ public class SelectedVehicleUseCaseTest {
 
   /**
    * Должен ответить ошибкой.
-   *
-   * @throws Exception error
    */
   @Test
-  public void answerWithError() throws Exception {
+  public void answerWithError() {
     // Дано:
     when(vehicleChoiceReceiver.get()).thenReturn(Observable.error(new NoFreeVehiclesException()));
 

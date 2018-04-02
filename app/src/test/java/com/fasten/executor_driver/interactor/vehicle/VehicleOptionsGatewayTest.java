@@ -35,7 +35,7 @@ public class VehicleOptionsGatewayTest {
   private ApiService api;
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     RxJavaPlugins.setIoSchedulerHandler(scheduler -> Schedulers.trampoline());
     RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
     vehicleOptionsGateway = new VehicleOptionsGatewayImpl(api);
@@ -46,11 +46,9 @@ public class VehicleOptionsGatewayTest {
 
   /**
    * Должен запросить у АПИ completable на запрос входящего СМС с кодом.
-   *
-   * @throws Exception error
    */
   @Test
-  public void smsMeCompletableRequested() throws Exception {
+  public void smsMeCompletableRequested() {
     // Дано:
     Vehicle vehicle = new Vehicle(11, "manufacturer2", "models", "colors", "lic", true);
     vehicle.addVehicleOptions(
@@ -91,11 +89,9 @@ public class VehicleOptionsGatewayTest {
 
   /**
    * Должен ответить ошибкой сети.
-   *
-   * @throws Exception error
    */
   @Test
-  public void answerNoNetworkError() throws Exception {
+  public void answerNoNetworkError() {
     // Дано:
     Vehicle vehicle = new Vehicle(11, "manufacturer2", "models", "colors", "lic", true);
     vehicle.addVehicleOptions(
@@ -132,11 +128,9 @@ public class VehicleOptionsGatewayTest {
 
   /**
    * Должен ответить успехом.
-   *
-   * @throws Exception error
    */
   @Test
-  public void answerSmsSuccessful() throws Exception {
+  public void answerSmsSuccessful() {
     // Дано:
     Vehicle vehicle = new Vehicle(11, "manufacturer2", "models", "colors", "lic", true);
     vehicle.addVehicleOptions(

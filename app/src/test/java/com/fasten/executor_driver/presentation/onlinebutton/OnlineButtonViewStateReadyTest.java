@@ -18,12 +18,12 @@ public class OnlineButtonViewStateReadyTest {
   private OnlineButtonViewActions onlineButtonViewActions;
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     viewState = new OnlineButtonViewStateReady();
   }
 
   @Test
-  public void testActions() throws Exception {
+  public void testActions() {
     // Действие:
     viewState.apply(onlineButtonViewActions);
 

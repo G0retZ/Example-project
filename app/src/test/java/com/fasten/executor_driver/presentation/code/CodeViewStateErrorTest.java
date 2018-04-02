@@ -19,12 +19,12 @@ public class CodeViewStateErrorTest {
   private CodeViewActions codeViewActions;
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     viewState = new CodeViewStateError();
   }
 
   @Test
-  public void testActions() throws Exception {
+  public void testActions() {
     // Действие:
     viewState.apply(codeViewActions);
 

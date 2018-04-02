@@ -13,13 +13,13 @@ public class ApiOptionItemTest {
   private ApiOptionItem vehicleOptionItem;
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     vehicleOptionItem = new ApiOptionItem(324, "option", "description", true, false, "value", -5,
         123);
   }
 
   @Test
-  public void testConstructor() throws Exception {
+  public void testConstructor() {
     assertEquals(vehicleOptionItem.getId(), 324);
     assertEquals(vehicleOptionItem.getName(), "option");
     assertTrue(vehicleOptionItem.isNumeric());
@@ -31,7 +31,7 @@ public class ApiOptionItemTest {
 
   @SuppressWarnings("SpellCheckingInspection")
   @Test
-  public void testEquals() throws Exception {
+  public void testEquals() {
     assertEquals(vehicleOptionItem,
         new ApiOptionItem(324, "option", "description", true, false, "value", -5, 123));
     assertNotEquals(vehicleOptionItem,

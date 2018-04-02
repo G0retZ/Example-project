@@ -36,7 +36,7 @@ public class CodeHeaderViewModelTest {
   private Observer<ViewState<CodeHeaderViewActions>> viewStateObserver;
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
     RxAndroidPlugins.setInitMainThreadSchedulerHandler(scheduler -> Schedulers.trampoline());
     when(loginReceiver.get()).thenReturn(PublishSubject.never());
@@ -48,11 +48,9 @@ public class CodeHeaderViewModelTest {
 
   /**
    * Должен просить юзкейс получить список ТС, при первой и только при первой подписке.
-   *
-   * @throws Exception error
    */
   @Test
-  public void askSelectedDataSharerForLoginInitially() throws Exception {
+  public void askSelectedDataSharerForLoginInitially() {
     // Действие:
     codeHeaderViewModel.getViewStateLiveData();
     codeHeaderViewModel.getViewStateLiveData();
@@ -66,11 +64,9 @@ public class CodeHeaderViewModelTest {
 
   /**
    * Должен вернуть состояние вида без номера изначально.
-   *
-   * @throws Exception error
    */
   @Test
-  public void setViewStateWithZerosToLiveData() throws Exception {
+  public void setViewStateWithZerosToLiveData() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
 
@@ -84,11 +80,9 @@ public class CodeHeaderViewModelTest {
 
   /**
    * Должен вернуть состояние вида с именем.
-   *
-   * @throws Exception error
    */
   @Test
-  public void setViewStateWithNumbersToLiveData() throws Exception {
+  public void setViewStateWithNumbersToLiveData() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     PublishSubject<String> publishSubject = PublishSubject.create();
@@ -112,12 +106,10 @@ public class CodeHeaderViewModelTest {
 
   /**
    * Должен игнорировать ошибки.
-   *
-   * @throws Exception error
    */
   @SuppressWarnings("unchecked")
   @Test
-  public void ignoreErrors() throws Exception {
+  public void ignoreErrors() {
     // Дано:
     PublishSubject<String> publishSubject = PublishSubject.create();
     when(loginReceiver.get()).thenReturn(publishSubject, PublishSubject.never());

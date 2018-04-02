@@ -20,12 +20,12 @@ public class OptionsViewStateErrorTest {
   private OptionsViewActions codeViewActions;
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     viewState = new OptionsViewStateError(123);
   }
 
   @Test
-  public void testActions() throws Exception {
+  public void testActions() {
     // Действие:
     viewState.apply(codeViewActions);
 
@@ -39,7 +39,7 @@ public class OptionsViewStateErrorTest {
   }
 
   @Test
-  public void testEquals() throws Exception {
+  public void testEquals() {
     assertEquals(viewState, new OptionsViewStateError(123));
     assertNotEquals(viewState, new OptionsViewStateError(0));
   }

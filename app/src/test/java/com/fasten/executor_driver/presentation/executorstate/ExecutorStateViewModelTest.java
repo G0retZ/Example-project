@@ -35,7 +35,7 @@ public class ExecutorStateViewModelTest {
   private ExecutorStateUseCase executorStateUseCase;
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
     RxAndroidPlugins.setInitMainThreadSchedulerHandler(scheduler -> Schedulers.trampoline());
     when(executorStateUseCase.getExecutorStates()).thenReturn(Flowable.never());
@@ -46,11 +46,9 @@ public class ExecutorStateViewModelTest {
 
   /**
    * Должен попросить у юзкейса статусы исполнителя.
-   *
-   * @throws Exception error
    */
   @Test
-  public void askDataReceiverToSubscribeToLocationUpdates() throws Exception {
+  public void askDataReceiverToSubscribeToLocationUpdates() {
     // Действие:
     executorStateViewModel.initializeExecutorState();
 
@@ -60,11 +58,9 @@ public class ExecutorStateViewModelTest {
 
   /**
    * Не должен просить у юзкейса загрузить статусы исполнителя, если запрос уже выполняется.
-   *
-   * @throws Exception error
    */
   @Test
-  public void doNotTouchUseCaseBeforeAfterFirstRequestComplete() throws Exception {
+  public void doNotTouchUseCaseBeforeAfterFirstRequestComplete() {
     // Действие:
     executorStateViewModel.initializeExecutorState();
     executorStateViewModel.initializeExecutorState();
@@ -78,11 +74,9 @@ public class ExecutorStateViewModelTest {
 
   /**
    * Должен вернуть "перейти к отсутствию сети".
-   *
-   * @throws Exception error
    */
   @Test
-  public void navigateToNoNetwork() throws Exception {
+  public void navigateToNoNetwork() {
     // Дано:
     when(executorStateUseCase.getExecutorStates())
         .thenReturn(Flowable.error(NoNetworkException::new));
@@ -97,11 +91,9 @@ public class ExecutorStateViewModelTest {
 
   /**
    * Должен вернуть "перейти к авторизации".
-   *
-   * @throws Exception error
    */
   @Test
-  public void navigateToAuthorize() throws Exception {
+  public void navigateToAuthorize() {
     // Дано:
     when(executorStateUseCase.getExecutorStates())
         .thenReturn(Flowable.error(AuthenticatorException::new));
@@ -116,11 +108,9 @@ public class ExecutorStateViewModelTest {
 
   /**
    * Должен вернуть "перейти к карте".
-   *
-   * @throws Exception error
    */
   @Test
-  public void navigateToShiftClosed() throws Exception {
+  public void navigateToShiftClosed() {
     // Дано:
     when(executorStateUseCase.getExecutorStates())
         .thenReturn(Flowable.just(ExecutorState.SHIFT_CLOSED));
@@ -135,11 +125,9 @@ public class ExecutorStateViewModelTest {
 
   /**
    * Должен вернуть "перейти к получению заказа".
-   *
-   * @throws Exception error
    */
   @Test
-  public void navigateToShiftOpened() throws Exception {
+  public void navigateToShiftOpened() {
     // Дано:
     when(executorStateUseCase.getExecutorStates())
         .thenReturn(Flowable.just(ExecutorState.SHIFT_OPENED));
@@ -154,11 +142,9 @@ public class ExecutorStateViewModelTest {
 
   /**
    * Должен вернуть "перейти к получению заказа".
-   *
-   * @throws Exception error
    */
   @Test
-  public void navigateToOnline() throws Exception {
+  public void navigateToOnline() {
     // Дано:
     when(executorStateUseCase.getExecutorStates()).thenReturn(Flowable.just(ExecutorState.ONLINE));
 

@@ -34,7 +34,7 @@ public class VehicleChoiceUseCaseTest {
   private Observer<Vehicle> vehicleChoiceObserver;
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     vehicleChoiceUseCase = new VehicleChoiceUseCaseImpl(listDataReceiver, vehicleChoiceObserver);
     when(listDataReceiver.get()).thenReturn(Observable.never());
   }
@@ -43,11 +43,9 @@ public class VehicleChoiceUseCaseTest {
 
   /**
    * Должен запросить у публикатора список ТС.
-   *
-   * @throws Exception error
    */
   @Test
-  public void askVehiclesDataSharerForVehicles() throws Exception {
+  public void askVehiclesDataSharerForVehicles() {
     // Действие:
     vehicleChoiceUseCase.getVehicles().test();
 
@@ -59,11 +57,9 @@ public class VehicleChoiceUseCaseTest {
 
   /**
    * Должен ответить ошибкой недостаточности средств.
-   *
-   * @throws Exception error
    */
   @Test
-  public void answerNoNetworkError() throws Exception {
+  public void answerNoNetworkError() {
     // Дано:
     when(listDataReceiver.get()).thenReturn(Observable.error(new InsufficientCreditsException()));
 
@@ -73,11 +69,9 @@ public class VehicleChoiceUseCaseTest {
 
   /**
    * Должен ответить успехом и без искажений.
-   *
-   * @throws Exception error
    */
   @Test
-  public void answerWithVehiclesList() throws Exception {
+  public void answerWithVehiclesList() {
     // Дано:
     when(listDataReceiver.get()).thenReturn(Observable.just(
         new ArrayList<>(Arrays.asList(
@@ -101,11 +95,9 @@ public class VehicleChoiceUseCaseTest {
 
   /**
    * Должен ответить ошибкой об отсутствия доступных ТС.
-   *
-   * @throws Exception error
    */
   @Test
-  public void answerNoVehiclesAvailableError() throws Exception {
+  public void answerNoVehiclesAvailableError() {
     // Дано:
     when(listDataReceiver.get()).thenReturn(Observable.just(new ArrayList<>()));
 
@@ -117,11 +109,9 @@ public class VehicleChoiceUseCaseTest {
 
   /**
    * Не должен трогать публикатор.
-   *
-   * @throws Exception error
    */
   @Test
-  public void doNotTouchVehicleChoiceDataSharer() throws Exception {
+  public void doNotTouchVehicleChoiceDataSharer() {
     // Действие:
     vehicleChoiceUseCase.getVehicles().test();
     when(listDataReceiver.get()).thenReturn(Observable.error(new NoNetworkException()));
@@ -148,11 +138,9 @@ public class VehicleChoiceUseCaseTest {
 
   /**
    * Должен опубликовать выбранную ТС.
-   *
-   * @throws Exception error
    */
   @Test
-  public void askVehicleChoiceDataSharerToShareTheSelectedVehicle() throws Exception {
+  public void askVehicleChoiceDataSharerToShareTheSelectedVehicle() {
     // Дано:
     when(listDataReceiver.get()).thenReturn(Observable.just(
         new ArrayList<>(Arrays.asList(
@@ -176,11 +164,9 @@ public class VehicleChoiceUseCaseTest {
 
   /**
    * Не должен трогать публикатор, если выбор неверный.
-   *
-   * @throws Exception error
    */
   @Test
-  public void doNotTouchVehicleChoiceDataSharerIfSelectionInvalid() throws Exception {
+  public void doNotTouchVehicleChoiceDataSharerIfSelectionInvalid() {
     // Дано:
     when(listDataReceiver.get()).thenReturn(Observable.just(
         new ArrayList<>(Arrays.asList(
@@ -211,11 +197,9 @@ public class VehicleChoiceUseCaseTest {
 
   /**
    * Должен ответить ошибкой, если выбраного ТС нет в списке.
-   *
-   * @throws Exception error
    */
   @Test
-  public void answerOutOfBoundsError() throws Exception {
+  public void answerOutOfBoundsError() {
     // Дано:
     when(listDataReceiver.get()).thenReturn(Observable.just(
         new ArrayList<>(Arrays.asList(
@@ -235,11 +219,9 @@ public class VehicleChoiceUseCaseTest {
 
   /**
    * Должен ответить ошибкой, если выбрано занятое ТС или его нет в списке.
-   *
-   * @throws Exception error
    */
   @Test
-  public void answerArgumentError() throws Exception {
+  public void answerArgumentError() {
     // Дано:
     when(listDataReceiver.get()).thenReturn(Observable.just(
         new ArrayList<>(Arrays.asList(
@@ -262,11 +244,9 @@ public class VehicleChoiceUseCaseTest {
 
   /**
    * Должен ответить успехом.
-   *
-   * @throws Exception error
    */
   @Test
-  public void answerSuccess() throws Exception {
+  public void answerSuccess() {
     // Дано:
     when(listDataReceiver.get()).thenReturn(Observable.just(
         new ArrayList<>(Arrays.asList(

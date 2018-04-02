@@ -53,7 +53,7 @@ public class VehiclesAndOptionsUseCaseTest {
   private PublishSubject<Vehicle> publishSubject;
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     publishSubject = PublishSubject.create();
     when(gateway.getExecutorVehicles()).thenReturn(Single.never());
     when(gateway.getExecutorOptions()).thenReturn(Single.never());
@@ -66,11 +66,9 @@ public class VehiclesAndOptionsUseCaseTest {
 
   /**
    * Должен запросить у публикатора последнее использованное ТС при создании и сразу.
-   *
-   * @throws Exception error
    */
   @Test
-  public void askLastUsedVehiclesDataSharerForLastUsedVehicleInitially() throws Exception {
+  public void askLastUsedVehiclesDataSharerForLastUsedVehicleInitially() {
     // Результат:
     verify(lastUsedVehicleReceiver, only()).get();
   }
@@ -79,11 +77,9 @@ public class VehiclesAndOptionsUseCaseTest {
 
   /**
    * Должен запросить у гейтвея выход на линию.
-   *
-   * @throws Exception error
    */
   @Test
-  public void askGatewayForAuth() throws Exception {
+  public void askGatewayForAuth() {
     // Дано:
     when(gateway.getExecutorOptions()).thenReturn(Single.just(
         new ArrayList<>(Arrays.asList(
@@ -107,11 +103,9 @@ public class VehiclesAndOptionsUseCaseTest {
 
   /**
    * Не должен трогать публикатор.
-   *
-   * @throws Exception error
    */
   @Test
-  public void doNotTouchVehiclesSharer() throws Exception {
+  public void doNotTouchVehiclesSharer() {
     // Действие:
     vehiclesAndOptionsUseCase.loadVehiclesAndOptions().test();
     when(gateway.getExecutorVehicles()).thenReturn(Single.error(new NoNetworkException()));
@@ -128,11 +122,9 @@ public class VehiclesAndOptionsUseCaseTest {
 
   /**
    * Должен опубликовать список полученных ТС.
-   *
-   * @throws Exception error
    */
   @Test
-  public void askVehiclesSharerToShareLoadedVehicles() throws Exception {
+  public void askVehiclesSharerToShareLoadedVehicles() {
     // Дано:
     when(gateway.getExecutorVehicles()).thenReturn(Single.just(
         new ArrayList<>(Arrays.asList(
@@ -160,11 +152,9 @@ public class VehiclesAndOptionsUseCaseTest {
 
   /**
    * Должен опубликовать список полученных ТС с одной свободной.
-   *
-   * @throws Exception error
    */
   @Test
-  public void askVehiclesSharerToShareLoadedVehiclesWith1FreeVehicle() throws Exception {
+  public void askVehiclesSharerToShareLoadedVehiclesWith1FreeVehicle() {
     // Дано:
     when(gateway.getExecutorVehicles()).thenReturn(Single.just(
         new ArrayList<>(Arrays.asList(
@@ -192,11 +182,9 @@ public class VehiclesAndOptionsUseCaseTest {
 
   /**
    * Должен опубликовать список полученных ТС без свободных.
-   *
-   * @throws Exception error
    */
   @Test
-  public void askVehiclesSharerToShareLoadedVehiclesWithoutFree() throws Exception {
+  public void askVehiclesSharerToShareLoadedVehiclesWithoutFree() {
     // Дано:
     when(gateway.getExecutorVehicles()).thenReturn(Single.just(
         new ArrayList<>(Arrays.asList(
@@ -220,11 +208,9 @@ public class VehiclesAndOptionsUseCaseTest {
 
   /**
    * Должен опубликовать список полученных ТС с из одной свободной тачки.
-   *
-   * @throws Exception error
    */
   @Test
-  public void askVehiclesSharerToShareLoadedVehiclesOfTheOnlyFreeVehicle() throws Exception {
+  public void askVehiclesSharerToShareLoadedVehiclesOfTheOnlyFreeVehicle() {
     // Дано:
     when(gateway.getExecutorVehicles()).thenReturn(Single.just(
         new ArrayList<>(Collections.singletonList(
@@ -246,11 +232,9 @@ public class VehiclesAndOptionsUseCaseTest {
 
   /**
    * Должен опубликовать пустой список полученных ТС.
-   *
-   * @throws Exception error
    */
   @Test
-  public void askVehiclesSharerToShareLoadedVehiclesEmpty() throws Exception {
+  public void askVehiclesSharerToShareLoadedVehiclesEmpty() {
     // Дано:
     when(gateway.getExecutorVehicles()).thenReturn(Single.just(new ArrayList<>()));
 
@@ -265,11 +249,9 @@ public class VehiclesAndOptionsUseCaseTest {
 
   /**
    * Не должен трогать публикатор.
-   *
-   * @throws Exception error
    */
   @Test
-  public void doNotTouchVehicleChoiceSharer() throws Exception {
+  public void doNotTouchVehicleChoiceSharer() {
     // Действие:
     vehiclesAndOptionsUseCase.loadVehiclesAndOptions().test();
     when(gateway.getExecutorVehicles()).thenReturn(Single.error(new NoNetworkException()));
@@ -294,11 +276,9 @@ public class VehiclesAndOptionsUseCaseTest {
 
   /**
    * Должен опубликовать первую свободную ТС из списка.
-   *
-   * @throws Exception error
    */
   @Test
-  public void askVehicleChoiceSharerToShareTheFirstFreeVehicle() throws Exception {
+  public void askVehicleChoiceSharerToShareTheFirstFreeVehicle() {
     // Действие:
     when(gateway.getExecutorVehicles()).thenReturn(Single.just(
         new ArrayList<>(Arrays.asList(
@@ -318,12 +298,10 @@ public class VehiclesAndOptionsUseCaseTest {
   /**
    * Должен опубликовать первую свободную ТС из списка, если последняя использовавшаяся возвращает
    * ошибку.
-   *
-   * @throws Exception error
    */
   @SuppressWarnings("unchecked")
   @Test
-  public void askVehicleChoiceSharerToShareTheFirstFreeVehicleIfLastUsedIsError() throws Exception {
+  public void askVehicleChoiceSharerToShareTheFirstFreeVehicleIfLastUsedIsError() {
     // Дано:
     when(lastUsedVehicleReceiver.get()).thenReturn(publishSubject, PublishSubject.never());
     vehiclesAndOptionsUseCase = new VehiclesAndOptionsUseCaseImpl(gateway, vehiclesObserver,
@@ -349,12 +327,9 @@ public class VehiclesAndOptionsUseCaseTest {
   /**
    * Должен опубликовать первую свободную ТС из списка, если последняя использовавшаяся больше не в
    * списке.
-   *
-   * @throws Exception error
    */
   @Test
-  public void askVehicleChoiceSharerToShareTheFirstFreeVehicleIfLastUsedIsOutOfRange()
-      throws Exception {
+  public void askVehicleChoiceSharerToShareTheFirstFreeVehicleIfLastUsedIsOutOfRange() {
     // Действие:
     when(gateway.getExecutorVehicles()).thenReturn(Single.just(
         new ArrayList<>(Arrays.asList(
@@ -376,12 +351,9 @@ public class VehiclesAndOptionsUseCaseTest {
 
   /**
    * Должен опубликовать первую свободную ТС из списка, если последняя использовавшаяся занята.
-   *
-   * @throws Exception error
    */
   @Test
-  public void askVehicleChoiceSharerToShareTheFirstFreeVehicleIfLastUsedIsBusy()
-      throws Exception {
+  public void askVehicleChoiceSharerToShareTheFirstFreeVehicleIfLastUsedIsBusy() {
     // Действие:
     when(gateway.getExecutorVehicles()).thenReturn(Single.just(
         new ArrayList<>(Arrays.asList(
@@ -403,12 +375,9 @@ public class VehiclesAndOptionsUseCaseTest {
 
   /**
    * Должен опубликовать последнее использовавшееся ТС, если оно свободно и есть в списке.
-   *
-   * @throws Exception error
    */
   @Test
-  public void askVehicleChoiceSharerToShareTheLastUsedVehicle()
-      throws Exception {
+  public void askVehicleChoiceSharerToShareTheLastUsedVehicle() {
     // Действие:
     when(gateway.getExecutorVehicles()).thenReturn(Single.just(
         new ArrayList<>(Arrays.asList(
@@ -430,11 +399,9 @@ public class VehiclesAndOptionsUseCaseTest {
 
   /**
    * Должен опубликовать единственную свободную ТС из списка.
-   *
-   * @throws Exception error
    */
   @Test
-  public void askVehicleChoiceSharerToShareTheOnlyFreeVehicle() throws Exception {
+  public void askVehicleChoiceSharerToShareTheOnlyFreeVehicle() {
     // Дано:
     when(gateway.getExecutorVehicles()).thenReturn(Single.just(
         new ArrayList<>(Arrays.asList(
@@ -455,11 +422,9 @@ public class VehiclesAndOptionsUseCaseTest {
 
   /**
    * Должен опубликовать единственную ТС, если она свободна.
-   *
-   * @throws Exception error
    */
   @Test
-  public void askVehicleChoiceSharerToShareTheVehicleIfItsFree() throws Exception {
+  public void askVehicleChoiceSharerToShareTheVehicleIfItsFree() {
     // Дано:
     when(gateway.getExecutorVehicles()).thenReturn(Single.just(
         new ArrayList<>(Collections.singletonList(
@@ -479,11 +444,9 @@ public class VehiclesAndOptionsUseCaseTest {
 
   /**
    * Должен ответить ошибкой сети.
-   *
-   * @throws Exception error
    */
   @Test
-  public void answerNoNetworkError() throws Exception {
+  public void answerNoNetworkError() {
     // Дано:
     when(gateway.getExecutorVehicles()).thenReturn(Single.error(new NoNetworkException()));
 
@@ -493,11 +456,9 @@ public class VehiclesAndOptionsUseCaseTest {
 
   /**
    * Должен ответить ошибкой блокировки.
-   *
-   * @throws Exception error
    */
   @Test
-  public void answerDriverBlockedError() throws Exception {
+  public void answerDriverBlockedError() {
     // Дано:
     when(gateway.getExecutorVehicles()).thenReturn(Single.error(new DriverBlockedException()));
 
@@ -508,11 +469,9 @@ public class VehiclesAndOptionsUseCaseTest {
 
   /**
    * Должен ответить ошибкой недостаточности средств.
-   *
-   * @throws Exception error
    */
   @Test
-  public void answerInsufficientCreditsError() throws Exception {
+  public void answerInsufficientCreditsError() {
     // Дано:
     when(gateway.getExecutorVehicles())
         .thenReturn(Single.error(new InsufficientCreditsException()));
@@ -524,11 +483,9 @@ public class VehiclesAndOptionsUseCaseTest {
 
   /**
    * Должен ответить ошибкой отсуствствия доступных ТС.
-   *
-   * @throws Exception error
    */
   @Test
-  public void answerNoVehiclesAvailableError() throws Exception {
+  public void answerNoVehiclesAvailableError() {
     // Дано:
     when(gateway.getExecutorVehicles()).thenReturn(Single.just(new ArrayList<>()));
 
@@ -539,11 +496,9 @@ public class VehiclesAndOptionsUseCaseTest {
 
   /**
    * Должен ответить ошибкой отсуствствия свободных ТС.
-   *
-   * @throws Exception error
    */
   @Test
-  public void answerNoFreeVehiclesError() throws Exception {
+  public void answerNoFreeVehiclesError() {
     // Дано:
     when(gateway.getExecutorVehicles()).thenReturn(Single.just(
         new ArrayList<>(Arrays.asList(
@@ -559,11 +514,9 @@ public class VehiclesAndOptionsUseCaseTest {
 
   /**
    * Должен ответить успехом.
-   *
-   * @throws Exception error
    */
   @Test
-  public void answerSuccessIfOnlyOneFreeVehicleAvailableAndFree() throws Exception {
+  public void answerSuccessIfOnlyOneFreeVehicleAvailableAndFree() {
     // Дано:
     when(gateway.getExecutorVehicles()).thenReturn(Single.just(
         new ArrayList<>(Arrays.asList(
@@ -588,11 +541,9 @@ public class VehiclesAndOptionsUseCaseTest {
 
   /**
    * Должен ответить успехом.
-   *
-   * @throws Exception error
    */
   @Test
-  public void answerSuccessIfOnlyOneVehicleAvailableFree() throws Exception {
+  public void answerSuccessIfOnlyOneVehicleAvailableFree() {
     // Дано:
     when(gateway.getExecutorVehicles()).thenReturn(Single.just(
         new ArrayList<>(Collections.singletonList(
@@ -614,11 +565,9 @@ public class VehiclesAndOptionsUseCaseTest {
 
   /**
    * Должен ответить успехом.
-   *
-   * @throws Exception error
    */
   @Test
-  public void answerLoadSuccessful() throws Exception {
+  public void answerLoadSuccessful() {
     // Дано:
     when(gateway.getExecutorVehicles()).thenReturn(Single.just(
         new ArrayList<>(Arrays.asList(

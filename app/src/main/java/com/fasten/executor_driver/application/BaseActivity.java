@@ -120,8 +120,8 @@ public class BaseActivity extends AppCompatActivity {
       case GeoLocationNavigate.RESOLVE_GEO_PROBLEM:
         startActivity(
             new Intent(this, GeolocationResolutionActivity.class)
-                .setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
         );
+        finish();
         break;
       case ExecutorStateNavigate.NO_NETWORK:
         new Builder(this)

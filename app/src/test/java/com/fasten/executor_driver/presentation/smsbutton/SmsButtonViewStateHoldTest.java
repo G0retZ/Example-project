@@ -21,12 +21,12 @@ public class SmsButtonViewStateHoldTest {
   private SmsButtonViewActions smsButtonViewActions;
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     viewState = new SmsButtonViewStateHold(12);
   }
 
   @Test
-  public void testActions() throws Exception {
+  public void testActions() {
     // Действие:
     viewState.apply(smsButtonViewActions);
 
@@ -39,7 +39,7 @@ public class SmsButtonViewStateHoldTest {
   }
 
   @Test
-  public void testEquals() throws Exception {
+  public void testEquals() {
     assertEquals(viewState, new SmsButtonViewStateHold(12));
     assertNotEquals(viewState, new SmsButtonViewStateHold(13));
     assertNotEquals(viewState, new SmsButtonViewStateHold(11));

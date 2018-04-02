@@ -12,12 +12,12 @@ public class OptionNumericTest {
   private OptionNumeric vehicleOptionNumeric;
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     vehicleOptionNumeric = new OptionNumeric(12, "name", "description", true, 30, 5, 31);
   }
 
   @Test
-  public void testConstructor() throws Exception {
+  public void testConstructor() {
     assertEquals(vehicleOptionNumeric.getId(), 12);
     assertEquals(vehicleOptionNumeric.getName(), "name");
     assertEquals(vehicleOptionNumeric.getValue(), new Integer(30));
@@ -27,12 +27,12 @@ public class OptionNumericTest {
   }
 
   @Test
-  public void testSetters() throws Exception {
+  public void testSetters() {
     assertEquals(vehicleOptionNumeric.setValue(23).getValue(), new Integer(23));
   }
 
   @Test
-  public void testEquals() throws Exception {
+  public void testEquals() {
     assertEquals(vehicleOptionNumeric,
         new OptionNumeric(12, "name", "description", true, 30, 5, 31));
     assertNotEquals(vehicleOptionNumeric,

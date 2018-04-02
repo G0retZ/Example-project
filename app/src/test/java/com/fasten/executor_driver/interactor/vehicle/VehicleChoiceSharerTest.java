@@ -12,17 +12,15 @@ public class VehicleChoiceSharerTest {
   private VehicleChoiceSharer vehicleChoiceSharer;
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     vehicleChoiceSharer = new VehicleChoiceSharer();
   }
 
   /**
    * Должен получить значение без изменений.
-   *
-   * @throws Exception error
    */
   @Test
-  public void valueUnchangedForRead() throws Exception {
+  public void valueUnchangedForRead() {
     // Дано:
     vehicleChoiceSharer.onNext(new Vehicle(1, "man", "mod", "col", "pla", false));
 

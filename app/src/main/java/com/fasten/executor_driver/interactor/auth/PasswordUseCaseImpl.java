@@ -1,5 +1,6 @@
 package com.fasten.executor_driver.interactor.auth;
 
+import android.annotation.SuppressLint;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.fasten.executor_driver.entity.LoginData;
@@ -26,6 +27,7 @@ public class PasswordUseCaseImpl implements PasswordUseCase {
     loadLogin(loginReceiver);
   }
 
+  @SuppressLint("CheckResult")
   private void loadLogin(@NonNull DataReceiver<String> loginReceiver) {
     loginReceiver.get()
         .doAfterTerminate(() -> loadLogin(loginReceiver))

@@ -11,7 +11,7 @@ public class ExecutorStateApiMapperTest {
   private Mapper<String, ExecutorState> mapper;
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     mapper = new ExecutorStateApiMapper();
   }
 

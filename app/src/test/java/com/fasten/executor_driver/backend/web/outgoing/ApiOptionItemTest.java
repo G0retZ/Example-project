@@ -11,18 +11,18 @@ public class ApiOptionItemTest {
   private ApiOptionItem apiOptionItem;
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     apiOptionItem = new ApiOptionItem(29, "value");
   }
 
   @Test
-  public void testConstructor() throws Exception {
+  public void testConstructor() {
     assertEquals(apiOptionItem.getId(), 29);
     assertEquals(apiOptionItem.getValue(), "value");
   }
 
   @Test
-  public void testEquals() throws Exception {
+  public void testEquals() {
     assertEquals(apiOptionItem, new ApiOptionItem(29, "value"));
     assertNotEquals(apiOptionItem, new ApiOptionItem(18, "value"));
     assertNotEquals(apiOptionItem, new ApiOptionItem(29, "val"));

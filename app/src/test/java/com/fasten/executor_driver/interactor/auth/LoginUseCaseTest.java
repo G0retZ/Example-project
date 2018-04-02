@@ -54,11 +54,9 @@ public class LoginUseCaseTest {
 
   /**
    * Должен ответить ошибкой, если логин не соответствует формату.
-   *
-   * @throws Exception error
    */
   @Test
-  public void answerErrorIfLoginInvalid() throws Exception {
+  public void answerErrorIfLoginInvalid() {
     // Действие и Результат:
     loginUseCase.validateLogin("12").test().assertError(ValidationException.class);
   }
