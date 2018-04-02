@@ -52,13 +52,8 @@ public class MapActivity extends BaseActivity {
             .show();
         break;
       case OnlineButtonNavigate.INSUFFICIENT_CREDITS:
-        new Builder(this)
-            .setTitle(R.string.error)
-            .setMessage("Мало бабок на счету!")
-            .setPositiveButton(getString(android.R.string.ok), null)
-            .setNegativeButton(getString(android.R.string.cancel), null)
-            .create()
-            .show();
+        startActivity(new Intent(this, BalanceActivity.class).putExtra("error", 1));
+        finish();
         break;
       case OnlineButtonNavigate.NO_FREE_VEHICLES:
         new Builder(this)

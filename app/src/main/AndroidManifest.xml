@@ -38,6 +38,12 @@
       android:name=".application.MenuActivity"/>
     <activity
       android:launchMode="singleTop"
+      android:name=".application.BalanceActivity"/>
+    <activity
+      android:launchMode="singleTop"
+      android:name=".application.PaymentOptionsActivity"/>
+    <activity
+      android:launchMode="singleTop"
       android:name=".application.LoginActivity"
       android:parentActivityName=".application.SplashScreenActivity"
       android:windowSoftInputMode="stateVisible|adjustResize"/>
