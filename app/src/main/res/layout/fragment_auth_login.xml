@@ -29,6 +29,7 @@
     android:inputType="phone"
     android:maxLength="18"
     android:textSize="28sp"
+    android:hint="@null"
     app:layout_constraintBottom_toTopOf="@+id/goNext"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"

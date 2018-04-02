@@ -19,7 +19,7 @@ public class ErrorMapper implements Mapper<Throwable, Throwable> {
 
   @NonNull
   @Override
-  public Throwable map(@NonNull Throwable from) throws Exception {
+  public Throwable map(@NonNull Throwable from) {
     if (from instanceof HttpException) {
       if (((HttpException) from).code() == 422) {
         String code = ((HttpException) from).response().headers().get(ERROR_CODE_HEADER_NAME);
