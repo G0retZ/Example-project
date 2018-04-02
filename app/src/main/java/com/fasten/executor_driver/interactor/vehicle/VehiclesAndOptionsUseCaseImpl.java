@@ -1,5 +1,6 @@
 package com.fasten.executor_driver.interactor.vehicle;
 
+import android.annotation.SuppressLint;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.fasten.executor_driver.entity.NoFreeVehiclesException;
@@ -38,6 +39,7 @@ public class VehiclesAndOptionsUseCaseImpl implements VehiclesAndOptionsUseCase 
     loadLastUsedVehicle(lastUsedVehicleReceiver);
   }
 
+  @SuppressLint("CheckResult")
   private void loadLastUsedVehicle(@NonNull DataReceiver<Vehicle> lastUsedVehicleReceiver) {
     lastUsedVehicleReceiver.get()
         .doAfterTerminate(() -> loadLastUsedVehicle(lastUsedVehicleReceiver))

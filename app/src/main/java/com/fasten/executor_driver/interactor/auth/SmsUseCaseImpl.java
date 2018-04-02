@@ -1,5 +1,6 @@
 package com.fasten.executor_driver.interactor.auth;
 
+import android.annotation.SuppressLint;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.fasten.executor_driver.entity.Validator;
@@ -25,6 +26,7 @@ public class SmsUseCaseImpl implements SmsUseCase {
     loadPhoneNumber(phoneNumberReceiver);
   }
 
+  @SuppressLint("CheckResult")
   private void loadPhoneNumber(@NonNull DataReceiver<String> phoneNumberReceiver) {
     phoneNumberReceiver.get()
         .doAfterTerminate(() -> loadPhoneNumber(phoneNumberReceiver))

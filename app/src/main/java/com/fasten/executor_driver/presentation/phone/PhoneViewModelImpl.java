@@ -1,5 +1,6 @@
 package com.fasten.executor_driver.presentation.phone;
 
+import android.annotation.SuppressLint;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
@@ -54,6 +55,7 @@ public class PhoneViewModelImpl extends ViewModel implements PhoneViewModel {
     }
   }
 
+  @SuppressLint("CheckResult")
   @Override
   public void nextClicked() {
     if (viewStateLiveData.getValue() instanceof PhoneViewStateReady) {
