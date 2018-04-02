@@ -5,7 +5,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 /**
- * Направления навигации из меню.
+ * Направления навигации из баланса.
  */
 @StringDef({
     BalanceNavigate.PAYMENT_OPTIONS
