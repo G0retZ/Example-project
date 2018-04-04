@@ -13,26 +13,26 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 import com.fasten.executor_driver.R;
 import com.fasten.executor_driver.di.AppComponent;
-import com.fasten.executor_driver.presentation.options.OptionsListItems;
-import com.fasten.executor_driver.presentation.options.OptionsViewActions;
-import com.fasten.executor_driver.presentation.options.OptionsViewModel;
-import java.util.ArrayList;
+import com.fasten.executor_driver.presentation.services.ServicesListItem;
+import com.fasten.executor_driver.presentation.services.ServicesViewActions;
+import com.fasten.executor_driver.presentation.services.ServicesViewModel;
+import java.util.List;
 import javax.inject.Inject;
 
 /**
  * Отображает список ТС для выбора при выходе на линию.
  */
 
-public class ServicesFragment extends BaseFragment implements OptionsViewActions {
+public class ServicesFragment extends BaseFragment implements ServicesViewActions {
 
-  private OptionsViewModel servicesViewModel;
+  private ServicesViewModel servicesViewModel;
   private RecyclerView recyclerView;
   private FrameLayout pendingIndicator;
   private TextView errorText;
   private Button readyButton;
 
   @Inject
-  public void setServicesViewModel(@NonNull OptionsViewModel servicesViewModel) {
+  public void setServicesViewModel(@NonNull ServicesViewModel servicesViewModel) {
     this.servicesViewModel = servicesViewModel;
   }
 
@@ -41,15 +41,15 @@ public class ServicesFragment extends BaseFragment implements OptionsViewActions
   public View onCreateView(@NonNull LayoutInflater inflater,
       @Nullable ViewGroup container,
       @Nullable Bundle savedInstanceState) {
-    View view = inflater.inflate(R.layout.fragment_options, container, false);
+    View view = inflater.inflate(R.layout.fragment_vehicle_options, container, false);
     recyclerView = view.findViewById(R.id.recyclerView);
     pendingIndicator = view.findViewById(R.id.pending);
     errorText = view.findViewById(R.id.errorText);
     readyButton = view.findViewById(R.id.readyButton);
     recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-    recyclerView.setAdapter(new ChooseVehicleAdapter(new ArrayList<>()));
-    readyButton.setOnClickListener(v -> servicesViewModel.setOptions(
-        ((OptionsAdapter) recyclerView.getAdapter()).getOptionsListItems())
+    recyclerView.setAdapter(new ServicesAdapter());
+    readyButton.setOnClickListener(v -> servicesViewModel.setServices(
+        ((ServicesAdapter) recyclerView.getAdapter()).getServicesListItems())
     );
     return view;
   }
@@ -63,11 +63,6 @@ public class ServicesFragment extends BaseFragment implements OptionsViewActions
   @Override
   public void onActivityCreated(@Nullable Bundle savedInstanceState) {
     super.onActivityCreated(savedInstanceState);
-    servicesViewModel.getNavigationLiveData().observe(this, destination -> {
-      if (destination != null) {
-        navigate(destination);
-      }
-    });
     servicesViewModel.getViewStateLiveData().observe(this, viewState -> {
       if (viewState != null) {
         viewState.apply(this);
@@ -81,29 +76,27 @@ public class ServicesFragment extends BaseFragment implements OptionsViewActions
   }
 
   @Override
-  public void showVehicleOptionsPending(boolean pending) {
+  public void showServicesPending(boolean pending) {
     pendingIndicator.setVisibility(pending ? View.VISIBLE : View.GONE);
   }
 
   @Override
-  public void showVehicleOptionsList(boolean show) {
+  public void showServicesList(boolean show) {
     recyclerView.setVisibility(show ? View.VISIBLE : View.GONE);
   }
 
   @Override
-  public void setVehicleOptionsListItems(
-      @NonNull OptionsListItems optionsListItems) {
-    OptionsAdapter adapter = new OptionsAdapter(optionsListItems);
-    recyclerView.setAdapter(adapter);
+  public void setServicesListItems(@NonNull List<ServicesListItem> servicesListItems) {
+    ((ServicesAdapter) recyclerView.getAdapter()).submitList(servicesListItems);
   }
 
   @Override
-  public void showVehicleOptionsListErrorMessage(boolean show) {
+  public void showServicesListErrorMessage(boolean show) {
     errorText.setVisibility(show ? View.VISIBLE : View.GONE);
   }
 
   @Override
-  public void setVehicleOptionsListErrorMessage(int messageId) {
+  public void setServicesListErrorMessage(int messageId) {
     errorText.setText(messageId);
   }
 }

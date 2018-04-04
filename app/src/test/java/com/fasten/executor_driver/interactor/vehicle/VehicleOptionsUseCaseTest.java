@@ -70,7 +70,7 @@ public class VehicleOptionsUseCaseTest {
   /* Проверяем ответы на запрос выбранного ТС */
 
   /**
-   * Должен отвечать успехом и только динамическими опциями.
+   * Должен отвечать успехом и только динамическими опциями по первому варианту.
    */
   @SuppressWarnings({"unchecked"})
   @Test
@@ -105,16 +105,6 @@ public class VehicleOptionsUseCaseTest {
         new ArrayList<>(Arrays.asList(
             new OptionNumeric(1, "name1", "desc1", true, -5, -18, 0),
             new OptionBoolean(2, "name2", "desc2", true, false)
-        )),
-        new ArrayList<>(Arrays.asList(
-            new OptionNumeric(0, "name0", "desc0", true, 10, 0, 20),
-            new OptionNumeric(1, "name1", "desc1", true, -5, -18, 0),
-            new OptionBoolean(2, "name2", "desc2", true, false),
-            new OptionBoolean(3, "name3", "desc3", true, true)
-        )),
-        new ArrayList<>(Arrays.asList(
-            new OptionNumeric(0, "name0", "desc0", true, 10, 0, 20),
-            new OptionBoolean(3, "name3", "desc3", true, true)
         ))
     );
   }
@@ -127,13 +117,6 @@ public class VehicleOptionsUseCaseTest {
   public void answerNoVehicleOptionsAvailableError() {
     // Дано:
     ArrayList<Vehicle> vehicles = new ArrayList<>();
-    vehicles.add(0, new Vehicle(13, "manufacturers", "model4", "carrots", "licensee", false));
-    vehicles.get(0).addVehicleOptions(
-        new OptionNumeric(0, "name0", "desc0", false, 10, 0, 20),
-        new OptionNumeric(1, "name1", "desc1", false, -5, -18, 0),
-        new OptionBoolean(2, "name2", "desc2", false, false),
-        new OptionBoolean(3, "name3", "desc3", false, true)
-    );
     vehicles.add(0, new Vehicle(11, "manufacturer2", "models", "colors", "lic", true));
     vehicles.get(0).addVehicleOptions(
         new OptionNumeric(0, "name0", "desc0", true, 10, 0, 20),
@@ -148,6 +131,13 @@ public class VehicleOptionsUseCaseTest {
         new OptionBoolean(2, "name2", "desc2", true, false),
         new OptionBoolean(3, "name3", "desc3", false, true)
     );
+    vehicles.add(0, new Vehicle(13, "manufacturers", "model4", "carrots", "licensee", false));
+    vehicles.get(0).addVehicleOptions(
+        new OptionNumeric(0, "name0", "desc0", false, 10, 0, 20),
+        new OptionNumeric(1, "name1", "desc1", false, -5, -18, 0),
+        new OptionBoolean(2, "name2", "desc2", false, false),
+        new OptionBoolean(3, "name3", "desc3", false, true)
+    );
     when(vehicleChoiceReceiver.get()).thenReturn(Observable.fromIterable(vehicles));
 
     // Действие
@@ -156,16 +146,6 @@ public class VehicleOptionsUseCaseTest {
 
     // Результат:
     testObserver.assertValues(
-        new ArrayList<>(Arrays.asList(
-            new OptionNumeric(1, "name1", "desc1", true, -5, -18, 0),
-            new OptionBoolean(2, "name2", "desc2", true, false)
-        )),
-        new ArrayList<>(Arrays.asList(
-            new OptionNumeric(0, "name0", "desc0", true, 10, 0, 20),
-            new OptionNumeric(1, "name1", "desc1", true, -5, -18, 0),
-            new OptionBoolean(2, "name2", "desc2", true, false),
-            new OptionBoolean(3, "name3", "desc3", true, true)
-        )),
         new ArrayList<>()
     );
   }

@@ -11,7 +11,6 @@ import com.fasten.executor_driver.entity.Vehicle;
 import com.fasten.executor_driver.interactor.vehicle.VehiclesAndOptionsGateway;
 import io.reactivex.Single;
 import io.reactivex.schedulers.Schedulers;
-import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
 
@@ -26,9 +25,7 @@ public class VehiclesAndOptionsGatewayImpl implements VehiclesAndOptionsGateway 
   @NonNull
   private final Mapper<Throwable, Throwable> errorMapper;
   @Nullable
-  private List<Vehicle> vehicles;
-  @Nullable
-  private List<Option> driverOptions;
+  private Single<ApiOptionsForOnline> apiOptionsForOnlineSingle;
 
   @Inject
   public VehiclesAndOptionsGatewayImpl(@NonNull ApiService api,
@@ -44,50 +41,34 @@ public class VehiclesAndOptionsGatewayImpl implements VehiclesAndOptionsGateway 
   @NonNull
   @Override
   public Single<List<Vehicle>> getExecutorVehicles() {
-    if (vehicles != null) {
-      return Single.just(vehicles);
+    if (apiOptionsForOnlineSingle == null) {
+      apiOptionsForOnlineSingle = api.getOptionsForOnline()
+          .subscribeOn(Schedulers.io())
+          .observeOn(Schedulers.single())
+          .doOnError(throwable -> apiOptionsForOnlineSingle = null)
+          .cache();
     }
-    return api.getOptionsForOnline()
-        .subscribeOn(Schedulers.io())
-        .observeOn(Schedulers.single())
-        .map(this::mapVehicles)
+    return apiOptionsForOnlineSingle
+        .flattenAsObservable(ApiOptionsForOnline::getCars)
+        .map(vehicleMapper::map)
+        .toList()
         .onErrorResumeNext(e -> Single.error(errorMapper.map(e)));
   }
 
   @NonNull
   @Override
   public Single<List<Option>> getExecutorOptions() {
-    if (driverOptions != null) {
-      return Single.just(driverOptions);
+    if (apiOptionsForOnlineSingle == null) {
+      apiOptionsForOnlineSingle = api.getOptionsForOnline()
+          .subscribeOn(Schedulers.io())
+          .observeOn(Schedulers.single())
+          .doOnError(throwable -> apiOptionsForOnlineSingle = null)
+          .cache();
     }
-    return api.getOptionsForOnline()
-        .subscribeOn(Schedulers.io())
-        .observeOn(Schedulers.single())
-        .map(this::mapDriverOptions)
+    return apiOptionsForOnlineSingle
+        .flattenAsObservable(ApiOptionsForOnline::getDriverOptions)
+        .map(optionMapper::map)
+        .toList()
         .onErrorResumeNext(e -> Single.error(errorMapper.map(e)));
-  }
-
-  private List<Vehicle> mapVehicles(ApiOptionsForOnline apiOptionsForOnline) throws Exception {
-    driverOptions = new ArrayList<>();
-    for (ApiOptionItem apiOptionItem : apiOptionsForOnline.getDriverOptions()) {
-      driverOptions.add(optionMapper.map(apiOptionItem));
-    }
-    vehicles = new ArrayList<>();
-    for (ApiVehicle apiVehicle : apiOptionsForOnline.getCars()) {
-      vehicles.add(vehicleMapper.map(apiVehicle));
-    }
-    return vehicles;
-  }
-
-  private List<Option> mapDriverOptions(ApiOptionsForOnline apiOptionsForOnline) throws Exception {
-    vehicles = new ArrayList<>();
-    for (ApiVehicle apiVehicle : apiOptionsForOnline.getCars()) {
-      vehicles.add(vehicleMapper.map(apiVehicle));
-    }
-    driverOptions = new ArrayList<>();
-    for (ApiOptionItem apiOptionItem : apiOptionsForOnline.getDriverOptions()) {
-      driverOptions.add(optionMapper.map(apiOptionItem));
-    }
-    return driverOptions;
   }
 }

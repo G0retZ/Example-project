@@ -1,9 +1,11 @@
 package com.fasten.executor_driver.interactor.services;
 
 import android.support.annotation.NonNull;
+import com.fasten.executor_driver.entity.NoServicesAvailableException;
 import com.fasten.executor_driver.entity.Service;
 import io.reactivex.Completable;
-import io.reactivex.Observable;
+import io.reactivex.Single;
+import java.util.Iterator;
 import java.util.List;
 import javax.inject.Inject;
 
@@ -19,12 +21,26 @@ public class ServicesUseCaseImpl implements ServicesUseCase {
 
   @NonNull
   @Override
-  public Observable<List<Service>> loadServices() {
-    return gateway.getServices().toObservable();
+  public Single<List<Service>> loadServices() {
+    return gateway.getServices().map(services -> {
+      if (services.isEmpty()) {
+        throw new NoServicesAvailableException();
+      }
+      return services;
+    });
   }
 
   @Override
   public Completable setSelectedServices(List<Service> services) {
+    Iterator<Service> serviceIterator = services.iterator();
+    while (serviceIterator.hasNext()) {
+      if (!serviceIterator.next().isSelected()) {
+        serviceIterator.remove();
+      }
+    }
+    if (services.isEmpty()) {
+      return Completable.error(new NoServicesAvailableException());
+    }
     return gateway.sendSelectedServices(services);
   }
 }

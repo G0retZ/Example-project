@@ -6,7 +6,6 @@ import com.google.gson.annotations.SerializedName;
 /**
  * ответ от API содержащий данные об услуге.
  */
-@SuppressWarnings("unused")
 public class ApiServiceItem {
 
   @SerializedName("id")
@@ -16,9 +15,7 @@ public class ApiServiceItem {
   private String name;
   @Nullable
   @SerializedName("price")
-  private Long price;
-  @SerializedName("value")
-  private boolean value;
+  private Integer price;
 
   /**
    * Конструктор без параметров желателен для безопасной работы Gson.
@@ -27,11 +24,11 @@ public class ApiServiceItem {
   public ApiServiceItem() {
   }
 
-  public ApiServiceItem(long id, @Nullable String name, @Nullable Long price, boolean value) {
+  @SuppressWarnings("unused")
+  public ApiServiceItem(long id, @Nullable String name, @Nullable Integer price) {
     this.id = id;
     this.name = name;
     this.price = price;
-    this.value = value;
   }
 
   public long getId() {
@@ -44,12 +41,8 @@ public class ApiServiceItem {
   }
 
   @Nullable
-  public Long getPrice() {
+  public Integer getPrice() {
     return price;
-  }
-
-  public boolean getValue() {
-    return value;
   }
 
   @SuppressWarnings("SimplifiableIfStatement")
@@ -67,9 +60,6 @@ public class ApiServiceItem {
     if (id != that.id) {
       return false;
     }
-    if (value != that.value) {
-      return false;
-    }
     if (name != null ? !name.equals(that.name) : that.name != null) {
       return false;
     }
@@ -81,7 +71,6 @@ public class ApiServiceItem {
     int result = (int) (id ^ (id >>> 32));
     result = 31 * result + (name != null ? name.hashCode() : 0);
     result = 31 * result + (price != null ? price.hashCode() : 0);
-    result = 31 * result + (value ? 1 : 0);
     return result;
   }
 }

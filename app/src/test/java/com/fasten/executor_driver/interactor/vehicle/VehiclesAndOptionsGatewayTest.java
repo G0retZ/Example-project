@@ -137,6 +137,60 @@ public class VehiclesAndOptionsGatewayTest {
     verify(vehicleMapper, only()).map(new ApiVehicle());
   }
 
+  /* Проверяем работу с преобразователем опций исполнителя */
+
+  /**
+   * Должен запросить все преобразования.
+   *
+   * @throws Exception error
+   */
+  @Test
+  public void askOptionsMapperForMapping() throws Exception {
+    // Дано:
+    when(api.getOptionsForOnline()).thenReturn(Single.just(new ApiOptionsForOnline(Arrays.asList(
+        new ApiVehicle(),
+        new ApiVehicle(),
+        new ApiVehicle()
+    ), Arrays.asList(
+        new ApiOptionItem(),
+        new ApiOptionItem(),
+        new ApiOptionItem()
+    ))));
+
+    // Действие:
+    vehiclesAndOptionsGateway.getExecutorOptions().test();
+
+    // Результат:
+    verify(apiOptionMapper, times(3)).map(new ApiOptionItem());
+    verifyNoMoreInteractions(apiOptionMapper);
+  }
+
+  /**
+   * Должен запросить только первое преобразование.
+   *
+   * @throws Exception error
+   */
+  @Test
+  public void askOptionsMapperForFirstMappingOnly() throws Exception {
+    // Дано:
+    when(apiOptionMapper.map(any(ApiOptionItem.class))).thenThrow(new DataMappingException());
+    when(api.getOptionsForOnline()).thenReturn(Single.just(new ApiOptionsForOnline(Arrays.asList(
+        new ApiVehicle(),
+        new ApiVehicle(),
+        new ApiVehicle()
+    ), Arrays.asList(
+        new ApiOptionItem(),
+        new ApiOptionItem(),
+        new ApiOptionItem()
+    ))));
+
+    // Действие:
+    vehiclesAndOptionsGateway.getExecutorOptions().test();
+
+    // Результат:
+    verify(apiOptionMapper, only()).map(new ApiOptionItem());
+  }
+
   /* Проверяем работу с преобразователем ошибок */
 
   /**
