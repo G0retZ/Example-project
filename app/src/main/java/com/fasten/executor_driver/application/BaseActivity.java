@@ -144,7 +144,7 @@ public class BaseActivity extends AppCompatActivity {
         finish();
         break;
       case ExecutorStateNavigate.MAP_SHIFT_OPENED:
-        startActivity(new Intent(this, MapActivity.class));
+        startActivity(new Intent(this, OnlineActivity.class));
         finish();
         break;
       case ExecutorStateNavigate.MAP_ONLINE:
