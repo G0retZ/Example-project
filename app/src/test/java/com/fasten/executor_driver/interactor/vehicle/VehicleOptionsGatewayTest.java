@@ -25,7 +25,6 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-// TODO: написать недостающие тесты.
 @RunWith(MockitoJUnitRunner.class)
 public class VehicleOptionsGatewayTest {
 
@@ -45,10 +44,10 @@ public class VehicleOptionsGatewayTest {
   /* Проверяем работу с АПИ */
 
   /**
-   * Должен запросить у АПИ completable на запрос входящего СМС с кодом.
+   * Должен запросить у АПИ занять ТС с указанными опциями.
    */
   @Test
-  public void smsMeCompletableRequested() {
+  public void askApiToOccupyVehicleWithOptions() {
     // Дано:
     Vehicle vehicle = new Vehicle(11, "manufacturer2", "models", "colors", "lic", true);
     vehicle.addVehicleOptions(
@@ -130,7 +129,7 @@ public class VehicleOptionsGatewayTest {
    * Должен ответить успехом.
    */
   @Test
-  public void answerSmsSuccessful() {
+  public void answerVehicleOccupiedSuccessfully() {
     // Дано:
     Vehicle vehicle = new Vehicle(11, "manufacturer2", "models", "colors", "lic", true);
     vehicle.addVehicleOptions(
