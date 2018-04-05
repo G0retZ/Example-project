@@ -334,7 +334,7 @@ public class AppComponentImpl implements AppComponent {
   @Override
   public void inject(ChooseVehicleFragment chooseVehicleFragment) {
     if (vehiclesAndOptionsGateway == null) {
-      throw new IllegalStateException();
+      throw new IllegalStateException("Граф зависимостей поломан!");
     }
     chooseVehicleFragment.setChooseVehicleViewModel(
         ViewModelProviders.of(
@@ -351,7 +351,7 @@ public class AppComponentImpl implements AppComponent {
   @Override
   public void inject(VehicleOptionsFragment vehicleOptionsFragment) {
     if (vehiclesAndOptionsGateway == null) {
-      throw new IllegalStateException();
+      throw new IllegalStateException("Граф зависимостей поломан!");
     }
     vehicleOptionsFragment.setVehicleOptionsViewModel(
         ViewModelProviders.of(

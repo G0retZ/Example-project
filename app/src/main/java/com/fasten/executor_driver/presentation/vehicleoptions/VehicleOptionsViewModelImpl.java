@@ -11,7 +11,7 @@ import com.fasten.executor_driver.entity.OptionBoolean;
 import com.fasten.executor_driver.entity.OptionNumeric;
 import com.fasten.executor_driver.interactor.vehicle.VehicleOptionsUseCase;
 import com.fasten.executor_driver.presentation.ViewState;
-import io.reactivex.Single;
+import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
@@ -74,19 +74,23 @@ public class VehicleOptionsViewModelImpl extends ViewModel implements
     if (optionsDisposable != null && !optionsDisposable.isDisposed()) {
       return;
     }
-    optionsDisposable = Single.zip(
+    optionsDisposable = Observable.combineLatest(
         vehicleOptionsUseCase.getVehicleOptions()
             .subscribeOn(Schedulers.single())
             .observeOn(AndroidSchedulers.mainThread())
-            .flattenAsObservable(options -> options)
-            .<VehicleOptionsListItem<?>>map(this::map)
-            .toList(),
+            .flatMap(options -> Observable
+                .fromIterable(options)
+                .<VehicleOptionsListItem<?>>map(this::map)
+                .toList()
+                .toObservable()
+            ),
         vehicleOptionsUseCase.getDriverOptions()
             .subscribeOn(Schedulers.single())
             .observeOn(AndroidSchedulers.mainThread())
             .flattenAsObservable(options -> options)
             .<VehicleOptionsListItem<?>>map(this::map)
-            .toList(),
+            .toList()
+            .toObservable(),
         VehicleOptionsListItems::new
     ).subscribe(
         items -> viewStateLiveData.postValue(new VehicleOptionsViewStateReady(items)),

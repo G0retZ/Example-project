@@ -33,7 +33,8 @@ public class VehicleChoiceUseCaseTest {
 
   @Before
   public void setUp() {
-    vehicleChoiceUseCase = new VehicleChoiceUseCaseImpl(vehiclesAndOptionsGateway, vehicleChoiceObserver);
+    vehicleChoiceUseCase = new VehicleChoiceUseCaseImpl(vehiclesAndOptionsGateway,
+        vehicleChoiceObserver);
     when(vehiclesAndOptionsGateway.getExecutorVehicles()).thenReturn(Single.never());
   }
 
@@ -59,7 +60,8 @@ public class VehicleChoiceUseCaseTest {
   @Test
   public void answerNoNetworkError() {
     // Дано:
-    when(vehiclesAndOptionsGateway.getExecutorVehicles()).thenReturn(Single.error(new InsufficientCreditsException()));
+    when(vehiclesAndOptionsGateway.getExecutorVehicles())
+        .thenReturn(Single.error(new InsufficientCreditsException()));
 
     // Действие и Результат:
     vehicleChoiceUseCase.getVehicles().test().assertError(InsufficientCreditsException.class);
@@ -97,7 +99,8 @@ public class VehicleChoiceUseCaseTest {
   @Test
   public void answerNoVehiclesAvailableError() {
     // Дано:
-    when(vehiclesAndOptionsGateway.getExecutorVehicles()).thenReturn(Single.just(new ArrayList<>()));
+    when(vehiclesAndOptionsGateway.getExecutorVehicles())
+        .thenReturn(Single.just(new ArrayList<>()));
 
     // Действие и Результат:
     vehicleChoiceUseCase.getVehicles().test().assertError(NoVehiclesAvailableException.class);
@@ -112,7 +115,8 @@ public class VehicleChoiceUseCaseTest {
   public void doNotTouchVehicleChoiceDataSharer() {
     // Действие:
     vehicleChoiceUseCase.getVehicles().test();
-    when(vehiclesAndOptionsGateway.getExecutorVehicles()).thenReturn(Single.error(new NoNetworkException()));
+    when(vehiclesAndOptionsGateway.getExecutorVehicles())
+        .thenReturn(Single.error(new NoNetworkException()));
     vehicleChoiceUseCase.getVehicles().test();
     when(vehiclesAndOptionsGateway.getExecutorVehicles()).thenReturn(Single.just(
         new ArrayList<>(Arrays.asList(

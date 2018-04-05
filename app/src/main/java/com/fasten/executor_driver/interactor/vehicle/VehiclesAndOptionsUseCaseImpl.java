@@ -33,27 +33,27 @@ public class VehiclesAndOptionsUseCaseImpl implements VehiclesAndOptionsUseCase 
     return lastUsedVehicleGateway.getLastUsedVehicleId()
         .onErrorResumeNext(Single.just(-1L))
         .flatMapCompletable(
-        vehicleId -> gateway
-            .getExecutorVehicles()
-            .doOnSuccess(list -> {
-              if (list.isEmpty()) {
-                throw new NoVehiclesAvailableException();
-              }
-              Vehicle freeVehicle = null;
-              for (Vehicle vehicle : list) {
-                if (vehicle.isBusy()) {
-                  continue;
-                }
-                if (freeVehicle == null || vehicle.getId() == vehicleId) {
-                  freeVehicle = vehicle;
-                }
-              }
-              if (freeVehicle == null) {
-                throw new NoFreeVehiclesException();
-              } else {
-                vehicleChoiceObserver.onNext(freeVehicle);
-              }
-            }).toCompletable()
-    );
+            vehicleId -> gateway
+                .getExecutorVehicles()
+                .doOnSuccess(list -> {
+                  if (list.isEmpty()) {
+                    throw new NoVehiclesAvailableException();
+                  }
+                  Vehicle freeVehicle = null;
+                  for (Vehicle vehicle : list) {
+                    if (vehicle.isBusy()) {
+                      continue;
+                    }
+                    if (freeVehicle == null || vehicle.getId() == vehicleId) {
+                      freeVehicle = vehicle;
+                    }
+                  }
+                  if (freeVehicle == null) {
+                    throw new NoFreeVehiclesException();
+                  } else {
+                    vehicleChoiceObserver.onNext(freeVehicle);
+                  }
+                }).toCompletable()
+        );
   }
 }

@@ -119,7 +119,7 @@ public class VehicleOptionsUseCaseTest {
   /* Проверяем ответы на запрос выбранного ТС */
 
   /**
-   * Должен ответить успехом и только динамическими опциями по первому варианту.
+   * Должен ответить успехом и только динамическими опциями по первому варианту сначала.
    */
   @SuppressWarnings({"unchecked"})
   @Test
@@ -154,12 +154,22 @@ public class VehicleOptionsUseCaseTest {
         new ArrayList<>(Arrays.asList(
             new OptionNumeric(1, "name1", "desc1", true, -5, -18, 0),
             new OptionBoolean(2, "name2", "desc2", true, false)
+        )),
+        new ArrayList<>(Arrays.asList(
+            new OptionNumeric(0, "name0", "desc0", true, 10, 0, 20),
+            new OptionNumeric(1, "name1", "desc1", true, -5, -18, 0),
+            new OptionBoolean(2, "name2", "desc2", true, false),
+            new OptionBoolean(3, "name3", "desc3", true, true)
+        )),
+        new ArrayList<>(Arrays.asList(
+            new OptionNumeric(0, "name0", "desc0", true, 10, 0, 20),
+            new OptionBoolean(3, "name3", "desc3", true, true)
         ))
     );
   }
 
   /**
-   * Должен ответить пустым списком доступных для изменений опций ТС.
+   * Должен ответить пустым списком доступных для изменений опций ТС сначала.
    */
   @SuppressWarnings({"unchecked"})
   @Test
@@ -195,7 +205,17 @@ public class VehicleOptionsUseCaseTest {
 
     // Результат:
     testObserver.assertValues(
-        new ArrayList<>()
+        new ArrayList<>(),
+        new ArrayList<>(Arrays.asList(
+            new OptionNumeric(1, "name1", "desc1", true, -5, -18, 0),
+            new OptionBoolean(2, "name2", "desc2", true, false)
+        )),
+        new ArrayList<>(Arrays.asList(
+            new OptionNumeric(0, "name0", "desc0", true, 10, 0, 20),
+            new OptionNumeric(1, "name1", "desc1", true, -5, -18, 0),
+            new OptionBoolean(2, "name2", "desc2", true, false),
+            new OptionBoolean(3, "name3", "desc3", true, true)
+        ))
     );
   }
 
