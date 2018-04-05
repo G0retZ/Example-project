@@ -3,6 +3,7 @@ package com.fasten.executor_driver.di;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import com.fasten.executor_driver.BuildConfig;
 import com.fasten.executor_driver.application.BaseActivity;
 import com.fasten.executor_driver.application.MainApplication;
@@ -16,7 +17,6 @@ import com.fasten.executor_driver.backend.web.ReceiveTokenInterceptor;
 import com.fasten.executor_driver.backend.web.SendTokenInterceptor;
 import com.fasten.executor_driver.backend.web.TokenKeeper;
 import com.fasten.executor_driver.entity.LoginValidator;
-import com.fasten.executor_driver.entity.Option;
 import com.fasten.executor_driver.entity.PasswordValidator;
 import com.fasten.executor_driver.entity.PhoneNumberValidator;
 import com.fasten.executor_driver.entity.SmsCodeExtractor;
@@ -27,6 +27,7 @@ import com.fasten.executor_driver.gateway.ExecutorStateGatewayImpl;
 import com.fasten.executor_driver.gateway.GeoLocationGatewayImpl;
 import com.fasten.executor_driver.gateway.GeoTrackingGatewayImpl;
 import com.fasten.executor_driver.gateway.HeatMapGatewayImpl;
+import com.fasten.executor_driver.gateway.LastUsedVehicleGatewayImpl;
 import com.fasten.executor_driver.gateway.PasswordGatewayImpl;
 import com.fasten.executor_driver.gateway.ServiceApiMapper;
 import com.fasten.executor_driver.gateway.ServicesGatewayImpl;
@@ -48,14 +49,13 @@ import com.fasten.executor_driver.interactor.auth.PasswordUseCaseImpl;
 import com.fasten.executor_driver.interactor.auth.SmsUseCaseImpl;
 import com.fasten.executor_driver.interactor.map.HeatMapUseCaseImpl;
 import com.fasten.executor_driver.interactor.services.ServicesUseCaseImpl;
-import com.fasten.executor_driver.interactor.vehicle.DriverOptionsSharer;
-import com.fasten.executor_driver.interactor.vehicle.LastUsedVehicleSharer;
+import com.fasten.executor_driver.interactor.vehicle.LastUsedVehicleGateway;
 import com.fasten.executor_driver.interactor.vehicle.SelectedVehicleUseCaseImpl;
 import com.fasten.executor_driver.interactor.vehicle.VehicleChoiceSharer;
 import com.fasten.executor_driver.interactor.vehicle.VehicleChoiceUseCaseImpl;
 import com.fasten.executor_driver.interactor.vehicle.VehicleOptionsUseCaseImpl;
+import com.fasten.executor_driver.interactor.vehicle.VehiclesAndOptionsGateway;
 import com.fasten.executor_driver.interactor.vehicle.VehiclesAndOptionsUseCaseImpl;
-import com.fasten.executor_driver.interactor.vehicle.VehiclesSharer;
 import com.fasten.executor_driver.presentation.ViewModelFactory;
 import com.fasten.executor_driver.presentation.choosevehicle.ChooseVehicleViewModel;
 import com.fasten.executor_driver.presentation.choosevehicle.ChooseVehicleViewModelImpl;
@@ -87,7 +87,6 @@ import com.fasten.executor_driver.view.VehicleOptionsFragment;
 import com.fasten.executor_driver.view.auth.LoginFragment;
 import com.fasten.executor_driver.view.auth.PasswordFragment;
 import com.fasten.executor_driver.view.auth.SmsReceiver;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
@@ -112,13 +111,12 @@ public class AppComponentImpl implements AppComponent {
   @NonNull
   private final MemoryDataSharer<String> loginSharer;
   @NonNull
-  private final MemoryDataSharer<List<Vehicle>> vehiclesSharer;
-  @NonNull
-  private final MemoryDataSharer<List<Option>> driverOptionsSharer;
-  @NonNull
   private final MemoryDataSharer<Vehicle> vehicleChoiceSharer;
   @NonNull
-  private final MemoryDataSharer<Vehicle> lastUsedVehiclesSharer;
+  private final LastUsedVehicleGateway lastUsedVehicleGateway;
+  // Типа кастомный скоуп.
+  @Nullable
+  private VehiclesAndOptionsGateway vehiclesAndOptionsGateway;
 
   public AppComponentImpl(@NonNull Context appContext) {
     appContext = appContext.getApplicationContext();
@@ -133,10 +131,8 @@ public class AppComponentImpl implements AppComponent {
     apiService = initApiService(okHttpClient);
     StompClient stompClient = initStompClient(okHttpClient);
     loginSharer = new LoginSharer(appSettingsService);
-    vehiclesSharer = new VehiclesSharer();
-    driverOptionsSharer = new DriverOptionsSharer();
     vehicleChoiceSharer = new VehicleChoiceSharer();
-    lastUsedVehiclesSharer = new LastUsedVehicleSharer(appSettingsService);
+    lastUsedVehicleGateway = new LastUsedVehicleGatewayImpl(appSettingsService);
     executorStateUseCase = new ExecutorStateUseCaseImpl(
         new ExecutorStateGatewayImpl(stompClient, new ExecutorStateApiMapper()),
         new SocketGatewayImpl(
@@ -311,24 +307,23 @@ public class AppComponentImpl implements AppComponent {
 
   @Override
   public void inject(GoOnlineFragment goOnlineFragment) {
+    vehiclesAndOptionsGateway = new VehiclesAndOptionsGatewayImpl(
+        apiService,
+        new VehicleOptionApiMapper(),
+        new VehicleApiMapper(
+            new VehicleOptionApiMapper()
+        ),
+        new ErrorMapper()
+    );
     goOnlineFragment.setOnlineButtonViewModel(
         ViewModelProviders.of(
             goOnlineFragment,
             new ViewModelFactory<OnlineButtonViewModel>(
                 new OnlineButtonViewModelImpl(
                     new VehiclesAndOptionsUseCaseImpl(
-                        new VehiclesAndOptionsGatewayImpl(
-                            apiService,
-                            new VehicleOptionApiMapper(),
-                            new VehicleApiMapper(
-                                new VehicleOptionApiMapper()
-                            ),
-                            new ErrorMapper()
-                        ),
-                        vehiclesSharer,
-                        driverOptionsSharer,
+                        vehiclesAndOptionsGateway,
                         vehicleChoiceSharer,
-                        lastUsedVehiclesSharer
+                        lastUsedVehicleGateway
                     )
                 )
             )
@@ -338,12 +333,15 @@ public class AppComponentImpl implements AppComponent {
 
   @Override
   public void inject(ChooseVehicleFragment chooseVehicleFragment) {
+    if (vehiclesAndOptionsGateway == null) {
+      throw new IllegalStateException("Граф зависимостей поломан!");
+    }
     chooseVehicleFragment.setChooseVehicleViewModel(
         ViewModelProviders.of(
             chooseVehicleFragment,
             new ViewModelFactory<ChooseVehicleViewModel>(
                 new ChooseVehicleViewModelImpl(
-                    new VehicleChoiceUseCaseImpl(vehiclesSharer, vehicleChoiceSharer)
+                    new VehicleChoiceUseCaseImpl(vehiclesAndOptionsGateway, vehicleChoiceSharer)
                 )
             )
         ).get(ChooseVehicleViewModelImpl.class)
@@ -352,6 +350,9 @@ public class AppComponentImpl implements AppComponent {
 
   @Override
   public void inject(VehicleOptionsFragment vehicleOptionsFragment) {
+    if (vehiclesAndOptionsGateway == null) {
+      throw new IllegalStateException("Граф зависимостей поломан!");
+    }
     vehicleOptionsFragment.setVehicleOptionsViewModel(
         ViewModelProviders.of(
             vehicleOptionsFragment,
@@ -362,8 +363,8 @@ public class AppComponentImpl implements AppComponent {
                             apiService
                         ),
                         vehicleChoiceSharer,
-                        lastUsedVehiclesSharer,
-                        driverOptionsSharer
+                        lastUsedVehicleGateway,
+                        vehiclesAndOptionsGateway
                     )
                 )
             )

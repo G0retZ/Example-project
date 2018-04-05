@@ -18,7 +18,7 @@ public interface VehicleOptionsUseCase {
    * @return {@link Observable} результат запроса
    */
   @NonNull
-  Single<List<Option>> getVehicleOptions();
+  Observable<List<Option>> getVehicleOptions();
 
   /**
    * Запрашивает список опций выбранной ТС, доступных для изменения исполнителем.

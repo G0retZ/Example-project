@@ -10,7 +10,6 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-// TODO: написать недостающие тесты.
 @RunWith(MockitoJUnitRunner.class)
 public class VehicleOptionsViewStateInitialTest {
 

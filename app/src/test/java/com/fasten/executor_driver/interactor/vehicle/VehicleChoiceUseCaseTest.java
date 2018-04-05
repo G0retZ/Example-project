@@ -9,13 +9,11 @@ import com.fasten.executor_driver.backend.web.NoNetworkException;
 import com.fasten.executor_driver.entity.InsufficientCreditsException;
 import com.fasten.executor_driver.entity.NoVehiclesAvailableException;
 import com.fasten.executor_driver.entity.Vehicle;
-import com.fasten.executor_driver.interactor.DataReceiver;
-import io.reactivex.Observable;
 import io.reactivex.Observer;
+import io.reactivex.Single;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -28,15 +26,16 @@ public class VehicleChoiceUseCaseTest {
   private VehicleChoiceUseCase vehicleChoiceUseCase;
 
   @Mock
-  private DataReceiver<List<Vehicle>> listDataReceiver;
+  private VehiclesAndOptionsGateway vehiclesAndOptionsGateway;
 
   @Mock
   private Observer<Vehicle> vehicleChoiceObserver;
 
   @Before
   public void setUp() {
-    vehicleChoiceUseCase = new VehicleChoiceUseCaseImpl(listDataReceiver, vehicleChoiceObserver);
-    when(listDataReceiver.get()).thenReturn(Observable.never());
+    vehicleChoiceUseCase = new VehicleChoiceUseCaseImpl(vehiclesAndOptionsGateway,
+        vehicleChoiceObserver);
+    when(vehiclesAndOptionsGateway.getExecutorVehicles()).thenReturn(Single.never());
   }
 
   /* Проверяем работу с публикатором списка ТС */
@@ -50,7 +49,7 @@ public class VehicleChoiceUseCaseTest {
     vehicleChoiceUseCase.getVehicles().test();
 
     // Результат:
-    verify(listDataReceiver, only()).get();
+    verify(vehiclesAndOptionsGateway, only()).getExecutorVehicles();
   }
 
   /* Проверяем ответы на запрос списка ТС */
@@ -61,7 +60,8 @@ public class VehicleChoiceUseCaseTest {
   @Test
   public void answerNoNetworkError() {
     // Дано:
-    when(listDataReceiver.get()).thenReturn(Observable.error(new InsufficientCreditsException()));
+    when(vehiclesAndOptionsGateway.getExecutorVehicles())
+        .thenReturn(Single.error(new InsufficientCreditsException()));
 
     // Действие и Результат:
     vehicleChoiceUseCase.getVehicles().test().assertError(InsufficientCreditsException.class);
@@ -73,7 +73,7 @@ public class VehicleChoiceUseCaseTest {
   @Test
   public void answerWithVehiclesList() {
     // Дано:
-    when(listDataReceiver.get()).thenReturn(Observable.just(
+    when(vehiclesAndOptionsGateway.getExecutorVehicles()).thenReturn(Single.just(
         new ArrayList<>(Arrays.asList(
             new Vehicle(12, "manufacturer", "model", "color", "license", false),
             new Vehicle(13, "manufacture", "models", "colo", "licenses", true),
@@ -99,7 +99,8 @@ public class VehicleChoiceUseCaseTest {
   @Test
   public void answerNoVehiclesAvailableError() {
     // Дано:
-    when(listDataReceiver.get()).thenReturn(Observable.just(new ArrayList<>()));
+    when(vehiclesAndOptionsGateway.getExecutorVehicles())
+        .thenReturn(Single.just(new ArrayList<>()));
 
     // Действие и Результат:
     vehicleChoiceUseCase.getVehicles().test().assertError(NoVehiclesAvailableException.class);
@@ -114,9 +115,10 @@ public class VehicleChoiceUseCaseTest {
   public void doNotTouchVehicleChoiceDataSharer() {
     // Действие:
     vehicleChoiceUseCase.getVehicles().test();
-    when(listDataReceiver.get()).thenReturn(Observable.error(new NoNetworkException()));
+    when(vehiclesAndOptionsGateway.getExecutorVehicles())
+        .thenReturn(Single.error(new NoNetworkException()));
     vehicleChoiceUseCase.getVehicles().test();
-    when(listDataReceiver.get()).thenReturn(Observable.just(
+    when(vehiclesAndOptionsGateway.getExecutorVehicles()).thenReturn(Single.just(
         new ArrayList<>(Arrays.asList(
             new Vehicle(12, "manufacturer", "model", "color", "license", false),
             new Vehicle(13, "manufacture", "models", "colo", "licenses", true),
@@ -125,7 +127,7 @@ public class VehicleChoiceUseCaseTest {
         ))
     ));
     vehicleChoiceUseCase.getVehicles().test();
-    when(listDataReceiver.get()).thenReturn(Observable.just(
+    when(vehiclesAndOptionsGateway.getExecutorVehicles()).thenReturn(Single.just(
         new ArrayList<>(Collections.singletonList(
             new Vehicle(12, "manufacturer", "model", "color", "license", true)
         ))
@@ -142,7 +144,7 @@ public class VehicleChoiceUseCaseTest {
   @Test
   public void askVehicleChoiceDataSharerToShareTheSelectedVehicle() {
     // Дано:
-    when(listDataReceiver.get()).thenReturn(Observable.just(
+    when(vehiclesAndOptionsGateway.getExecutorVehicles()).thenReturn(Single.just(
         new ArrayList<>(Arrays.asList(
             new Vehicle(12, "manufacturer", "model", "color", "license", false),
             new Vehicle(13, "manufacture", "models", "colo", "licenses", true),
@@ -168,7 +170,7 @@ public class VehicleChoiceUseCaseTest {
   @Test
   public void doNotTouchVehicleChoiceDataSharerIfSelectionInvalid() {
     // Дано:
-    when(listDataReceiver.get()).thenReturn(Observable.just(
+    when(vehiclesAndOptionsGateway.getExecutorVehicles()).thenReturn(Single.just(
         new ArrayList<>(Arrays.asList(
             new Vehicle(12, "manufacturer", "model", "color", "license", false),
             new Vehicle(13, "manufacture", "models", "colo", "licenses", true),
@@ -201,7 +203,7 @@ public class VehicleChoiceUseCaseTest {
   @Test
   public void answerOutOfBoundsError() {
     // Дано:
-    when(listDataReceiver.get()).thenReturn(Observable.just(
+    when(vehiclesAndOptionsGateway.getExecutorVehicles()).thenReturn(Single.just(
         new ArrayList<>(Arrays.asList(
             new Vehicle(12, "manufacturer", "model", "color", "license", false),
             new Vehicle(13, "manufacture", "models", "colo", "licenses", true),
@@ -223,7 +225,7 @@ public class VehicleChoiceUseCaseTest {
   @Test
   public void answerArgumentError() {
     // Дано:
-    when(listDataReceiver.get()).thenReturn(Observable.just(
+    when(vehiclesAndOptionsGateway.getExecutorVehicles()).thenReturn(Single.just(
         new ArrayList<>(Arrays.asList(
             new Vehicle(12, "manufacturer", "model", "color", "license", false),
             new Vehicle(13, "manufacture", "models", "colo", "licenses", true),
@@ -248,7 +250,7 @@ public class VehicleChoiceUseCaseTest {
   @Test
   public void answerSuccess() {
     // Дано:
-    when(listDataReceiver.get()).thenReturn(Observable.just(
+    when(vehiclesAndOptionsGateway.getExecutorVehicles()).thenReturn(Single.just(
         new ArrayList<>(Arrays.asList(
             new Vehicle(12, "manufacturer", "model", "color", "license", false),
             new Vehicle(13, "manufacture", "models", "colo", "licenses", true),
