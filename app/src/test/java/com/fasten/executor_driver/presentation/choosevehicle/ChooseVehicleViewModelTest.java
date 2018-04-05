@@ -2,6 +2,7 @@ package com.fasten.executor_driver.presentation.choosevehicle;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.only;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.verifyZeroInteractions;
@@ -15,11 +16,11 @@ import com.fasten.executor_driver.entity.Vehicle;
 import com.fasten.executor_driver.interactor.vehicle.VehicleChoiceUseCase;
 import com.fasten.executor_driver.presentation.ViewState;
 import io.reactivex.Completable;
-import io.reactivex.Observable;
+import io.reactivex.Single;
 import io.reactivex.android.plugins.RxAndroidPlugins;
 import io.reactivex.plugins.RxJavaPlugins;
 import io.reactivex.schedulers.Schedulers;
-import io.reactivex.subjects.PublishSubject;
+import io.reactivex.subjects.SingleSubject;
 import java.util.Arrays;
 import java.util.List;
 import org.junit.Before;
@@ -51,7 +52,7 @@ public class ChooseVehicleViewModelTest {
   public void setUp() {
     RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
     RxAndroidPlugins.setInitMainThreadSchedulerHandler(scheduler -> Schedulers.trampoline());
-    when(vehicleChoiceUseCase.getVehicles()).thenReturn(Observable.never());
+    when(vehicleChoiceUseCase.getVehicles()).thenReturn(Single.never());
     when(vehicleChoiceUseCase.selectVehicle(any())).thenReturn(Completable.never());
     chooseVehicleViewModel = new ChooseVehicleViewModelImpl(vehicleChoiceUseCase);
   }
@@ -59,10 +60,32 @@ public class ChooseVehicleViewModelTest {
   /* Тетсируем работу с юзкейсом выбора ТС. */
 
   /**
-   * Должен просить юзкейс получить список ТС, при первой и только при первой подписке.
+   * Должен просить юзкейс получить список ТС, при первой и только при первой подписке, пока она не отработала.
    */
   @Test
-  public void askChooseVehicleUseCaseForVehiclesInitially() {
+  public void askChooseVehicleUseCaseForVehicles() {
+    // Дано:
+    when(vehicleChoiceUseCase.getVehicles()).thenReturn(Single.just(Arrays.asList(
+        new Vehicle(1, "m", "m", "c", "l", false),
+        new Vehicle(2, "ma", "m", "co", "l", true),
+        new Vehicle(3, "m", "m", "co", "l", false),
+        new Vehicle(4, "ma", "m", "c", "l", true)
+    )));
+
+    // Действие:
+    chooseVehicleViewModel.getViewStateLiveData();
+    chooseVehicleViewModel.getViewStateLiveData();
+    chooseVehicleViewModel.getViewStateLiveData();
+
+    // Результат:
+    verify(vehicleChoiceUseCase, times(3)).getVehicles();
+  }
+
+  /**
+   * Не должен трогать юзкейс, если предыдущий запрос ТС еще не завершился.
+   */
+  @Test
+  public void DoNotTouchChooseVehicleUseCaseDuringLoadingVehicles() {
     // Действие:
     chooseVehicleViewModel.getViewStateLiveData();
     chooseVehicleViewModel.getViewStateLiveData();
@@ -133,13 +156,12 @@ public class ChooseVehicleViewModelTest {
   /**
    * Должен вернуть состояние вида "Ошибка" сети.
    */
-  @SuppressWarnings("unchecked")
   @Test
   public void setNetworkErrorViewStateToLiveData() {
     // Дано:
-    PublishSubject<List<Vehicle>> publishSubject = PublishSubject.create();
+    SingleSubject<List<Vehicle>> publishSubject = SingleSubject.create();
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    when(vehicleChoiceUseCase.getVehicles()).thenReturn(publishSubject, PublishSubject.never());
+    when(vehicleChoiceUseCase.getVehicles()).thenReturn(publishSubject);
     chooseVehicleViewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
@@ -155,13 +177,12 @@ public class ChooseVehicleViewModelTest {
   /**
    * Должен вернуть состояние вида "Ошибка" нет доступных ТС.
    */
-  @SuppressWarnings("unchecked")
   @Test
   public void setEmptyErrorViewStateToLiveData() {
     // Дано:
-    PublishSubject<List<Vehicle>> publishSubject = PublishSubject.create();
+    SingleSubject<List<Vehicle>> publishSubject = SingleSubject.create();
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    when(vehicleChoiceUseCase.getVehicles()).thenReturn(publishSubject, PublishSubject.never());
+    when(vehicleChoiceUseCase.getVehicles()).thenReturn(publishSubject);
     chooseVehicleViewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
@@ -180,13 +201,13 @@ public class ChooseVehicleViewModelTest {
   @Test
   public void setSuccessViewStateToLiveDataPending() {
     // Дано:
-    PublishSubject<List<Vehicle>> publishSubject = PublishSubject.create();
+    SingleSubject<List<Vehicle>> publishSubject = SingleSubject.create();
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     when(vehicleChoiceUseCase.getVehicles()).thenReturn(publishSubject);
     chooseVehicleViewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    publishSubject.onNext(Arrays.asList(
+    publishSubject.onSuccess(Arrays.asList(
         new Vehicle(1, "m", "m", "c", "l", false),
         new Vehicle(2, "ma", "m", "co", "l", true),
         new Vehicle(3, "m", "m", "co", "l", false),

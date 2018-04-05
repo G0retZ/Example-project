@@ -7,7 +7,6 @@ import com.fasten.executor_driver.entity.Vehicle;
 import com.fasten.executor_driver.gateway.DataMappingException;
 import com.fasten.executor_driver.interactor.DataReceiver;
 import io.reactivex.Completable;
-import io.reactivex.Observer;
 import io.reactivex.Single;
 import java.util.List;
 import javax.inject.Inject;
@@ -19,9 +18,9 @@ public class VehicleOptionsUseCaseImpl implements VehicleOptionsUseCase {
   @NonNull
   private final DataReceiver<Vehicle> vehicleChoiceReceiver;
   @NonNull
-  private final Observer<Vehicle> lastUsedVehicleObserver;
+  private final LastUsedVehicleGateway lastUsedVehicleGateway;
   @NonNull
-  private final DataReceiver<List<Option>> driverOptionsReceiver;
+  private final VehiclesAndOptionsGateway vehiclesAndOptionsGateway;
   @Nullable
   private Vehicle vehicle;
 
@@ -29,12 +28,12 @@ public class VehicleOptionsUseCaseImpl implements VehicleOptionsUseCase {
   public VehicleOptionsUseCaseImpl(
       @NonNull VehicleOptionsGateway gateway,
       @NonNull DataReceiver<Vehicle> vehicleChoiceReceiver,
-      @NonNull Observer<Vehicle> lastUsedVehicleObserver,
-      @NonNull DataReceiver<List<Option>> driverOptionsReceiver) {
+      @NonNull LastUsedVehicleGateway lastUsedVehicleGateway,
+      @NonNull VehiclesAndOptionsGateway vehiclesAndOptionsGateway) {
     this.gateway = gateway;
     this.vehicleChoiceReceiver = vehicleChoiceReceiver;
-    this.lastUsedVehicleObserver = lastUsedVehicleObserver;
-    this.driverOptionsReceiver = driverOptionsReceiver;
+    this.lastUsedVehicleGateway = lastUsedVehicleGateway;
+    this.vehiclesAndOptionsGateway = vehiclesAndOptionsGateway;
   }
 
   @NonNull
@@ -53,8 +52,7 @@ public class VehicleOptionsUseCaseImpl implements VehicleOptionsUseCase {
   @NonNull
   @Override
   public Single<List<Option>> getDriverOptions() {
-    return driverOptionsReceiver.get()
-        .firstOrError()
+    return vehiclesAndOptionsGateway.getExecutorOptions()
         .flattenAsObservable(options -> options)
         .filter(Option::isVariable)
         .toList();
@@ -68,6 +66,6 @@ public class VehicleOptionsUseCaseImpl implements VehicleOptionsUseCase {
     }
     vehicle.setOptions(options.toArray(new Option[options.size()]));
     return gateway.sendVehicleOptions(vehicle, driverOptions)
-        .doOnComplete(() -> lastUsedVehicleObserver.onNext(vehicle));
+        .concatWith(lastUsedVehicleGateway.saveLastUsedVehicleId(vehicle));
   }
 }

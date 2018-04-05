@@ -11,25 +11,18 @@ import com.fasten.executor_driver.entity.DriverBlockedException;
 import com.fasten.executor_driver.entity.InsufficientCreditsException;
 import com.fasten.executor_driver.entity.NoFreeVehiclesException;
 import com.fasten.executor_driver.entity.NoVehiclesAvailableException;
-import com.fasten.executor_driver.entity.Option;
-import com.fasten.executor_driver.entity.OptionBoolean;
-import com.fasten.executor_driver.entity.OptionNumeric;
 import com.fasten.executor_driver.entity.Vehicle;
-import com.fasten.executor_driver.interactor.DataReceiver;
 import io.reactivex.Observer;
 import io.reactivex.Single;
-import io.reactivex.subjects.PublishSubject;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-// TODO: дописать тесты
 @RunWith(MockitoJUnitRunner.class)
 public class VehiclesAndOptionsUseCaseTest {
 
@@ -39,27 +32,17 @@ public class VehiclesAndOptionsUseCaseTest {
   private VehiclesAndOptionsGateway gateway;
 
   @Mock
-  private Observer<List<Vehicle>> vehiclesObserver;
-
-  @Mock
-  private Observer<List<Option>> driverOptionsObserver;
-
-  @Mock
   private Observer<Vehicle> vehicleChoiceObserver;
 
   @Mock
-  private DataReceiver<Vehicle> lastUsedVehicleReceiver;
-
-  private PublishSubject<Vehicle> publishSubject;
+  private LastUsedVehicleGateway lastUsedVehicleGateway;
 
   @Before
   public void setUp() {
-    publishSubject = PublishSubject.create();
     when(gateway.getExecutorVehicles()).thenReturn(Single.never());
-    when(gateway.getExecutorOptions()).thenReturn(Single.never());
-    when(lastUsedVehicleReceiver.get()).thenReturn(publishSubject);
-    vehiclesAndOptionsUseCase = new VehiclesAndOptionsUseCaseImpl(gateway, vehiclesObserver,
-        driverOptionsObserver, vehicleChoiceObserver, lastUsedVehicleReceiver);
+    when(lastUsedVehicleGateway.getLastUsedVehicleId()).thenReturn(Single.never());
+    vehiclesAndOptionsUseCase = new VehiclesAndOptionsUseCaseImpl(gateway, vehicleChoiceObserver,
+        lastUsedVehicleGateway);
   }
 
   /* Проверяем работу с публикатором последнего использованного ТС */
@@ -69,180 +52,29 @@ public class VehiclesAndOptionsUseCaseTest {
    */
   @Test
   public void askLastUsedVehiclesDataSharerForLastUsedVehicleInitially() {
+    // Действие:
+    vehiclesAndOptionsUseCase.loadVehiclesAndOptions().test();
+
     // Результат:
-    verify(lastUsedVehicleReceiver, only()).get();
+    verify(lastUsedVehicleGateway, only()).getLastUsedVehicleId();
   }
 
   /* Проверяем работу с гейтвеем */
 
   /**
-   * Должен запросить у гейтвея выход на линию.
+   * Должен запросить у гейтвея попытку загрузить список ТС.
    */
   @Test
-  public void askGatewayForAuth() {
+  public void askGatewayForVehicles() {
     // Дано:
-    when(gateway.getExecutorOptions()).thenReturn(Single.just(
-        new ArrayList<>(Arrays.asList(
-            new OptionBoolean(12, "name", "desc", false, true),
-            new OptionBoolean(13, "names", "descriptions", true, false),
-            new OptionNumeric(14, "nam", "script", true, 5, 0, 10),
-            new OptionNumeric(15, "man fact", "sky", false, 0, 3, 6)
-        ))
-    ));
+    when(lastUsedVehicleGateway.getLastUsedVehicleId()).thenReturn(Single.just(10L));
 
     // Действие:
     vehiclesAndOptionsUseCase.loadVehiclesAndOptions().test();
 
     // Результат:
     verify(gateway).getExecutorVehicles();
-    verify(gateway).getExecutorOptions();
     verifyNoMoreInteractions(gateway);
-  }
-
-  /* Проверяем работу с публикатором списка ТС */
-
-  /**
-   * Не должен трогать публикатор.
-   */
-  @Test
-  public void doNotTouchVehiclesSharer() {
-    // Действие:
-    vehiclesAndOptionsUseCase.loadVehiclesAndOptions().test();
-    when(gateway.getExecutorVehicles()).thenReturn(Single.error(new NoNetworkException()));
-    vehiclesAndOptionsUseCase.loadVehiclesAndOptions().test();
-    when(gateway.getExecutorVehicles())
-        .thenReturn(Single.error(new InsufficientCreditsException()));
-    vehiclesAndOptionsUseCase.loadVehiclesAndOptions().test();
-    when(gateway.getExecutorVehicles()).thenReturn(Single.error(new DriverBlockedException()));
-    vehiclesAndOptionsUseCase.loadVehiclesAndOptions().test();
-
-    // Результат:
-    verifyZeroInteractions(vehiclesObserver);
-  }
-
-  /**
-   * Должен опубликовать список полученных ТС.
-   */
-  @Test
-  public void askVehiclesSharerToShareLoadedVehicles() {
-    // Дано:
-    when(gateway.getExecutorVehicles()).thenReturn(Single.just(
-        new ArrayList<>(Arrays.asList(
-            new Vehicle(12, "manufacturer", "model", "color", "license", false),
-            new Vehicle(13, "manufacture", "models", "colo", "licenses", true),
-            new Vehicle(14, "manufacturers", "modeler", "color", "licensing", false),
-            new Vehicle(15, "man fact", "modelers", "colo", "licensee", true)
-        ))
-    ));
-
-    // Действие:
-    vehiclesAndOptionsUseCase.loadVehiclesAndOptions().test();
-
-    // Результат:
-    verify(vehiclesObserver, only())
-        .onNext(
-            new ArrayList<>(Arrays.asList(
-                new Vehicle(12, "manufacturer", "model", "color", "license", false),
-                new Vehicle(13, "manufacture", "models", "colo", "licenses", true),
-                new Vehicle(14, "manufacturers", "modeler", "color", "licensing", false),
-                new Vehicle(15, "man fact", "modelers", "colo", "licensee", true)
-            ))
-        );
-  }
-
-  /**
-   * Должен опубликовать список полученных ТС с одной свободной.
-   */
-  @Test
-  public void askVehiclesSharerToShareLoadedVehiclesWith1FreeVehicle() {
-    // Дано:
-    when(gateway.getExecutorVehicles()).thenReturn(Single.just(
-        new ArrayList<>(Arrays.asList(
-            new Vehicle(12, "manufacturer", "model", "color", "license", true),
-            new Vehicle(13, "manufacture", "models", "colo", "licenses", true),
-            new Vehicle(14, "manufacturers", "modeler", "color", "licensing", false),
-            new Vehicle(15, "man fact", "modelers", "colo", "licensee", true)
-        ))
-    ));
-
-    // Действие:
-    vehiclesAndOptionsUseCase.loadVehiclesAndOptions().test();
-
-    // Результат:
-    verify(vehiclesObserver, only())
-        .onNext(
-            new ArrayList<>(Arrays.asList(
-                new Vehicle(12, "manufacturer", "model", "color", "license", true),
-                new Vehicle(13, "manufacture", "models", "colo", "licenses", true),
-                new Vehicle(14, "manufacturers", "modeler", "color", "licensing", false),
-                new Vehicle(15, "man fact", "modelers", "colo", "licensee", true)
-            ))
-        );
-  }
-
-  /**
-   * Должен опубликовать список полученных ТС без свободных.
-   */
-  @Test
-  public void askVehiclesSharerToShareLoadedVehiclesWithoutFree() {
-    // Дано:
-    when(gateway.getExecutorVehicles()).thenReturn(Single.just(
-        new ArrayList<>(Arrays.asList(
-            new Vehicle(12, "manufacturer", "model", "color", "license", true),
-            new Vehicle(15, "man fact", "modelers", "colo", "licensee", true)
-        ))
-    ));
-
-    // Действие:
-    vehiclesAndOptionsUseCase.loadVehiclesAndOptions().test();
-
-    // Результат:
-    verify(vehiclesObserver, only())
-        .onNext(
-            new ArrayList<>(Arrays.asList(
-                new Vehicle(12, "manufacturer", "model", "color", "license", true),
-                new Vehicle(15, "man fact", "modelers", "colo", "licensee", true)
-            ))
-        );
-  }
-
-  /**
-   * Должен опубликовать список полученных ТС с из одной свободной тачки.
-   */
-  @Test
-  public void askVehiclesSharerToShareLoadedVehiclesOfTheOnlyFreeVehicle() {
-    // Дано:
-    when(gateway.getExecutorVehicles()).thenReturn(Single.just(
-        new ArrayList<>(Collections.singletonList(
-            new Vehicle(14, "manufacturers", "modeler", "color", "licensing", false)
-        ))
-    ));
-
-    // Действие:
-    vehiclesAndOptionsUseCase.loadVehiclesAndOptions().test();
-
-    // Результат:
-    verify(vehiclesObserver, only())
-        .onNext(
-            new ArrayList<>(Collections.singletonList(
-                new Vehicle(14, "manufacturers", "modeler", "color", "licensing", false)
-            ))
-        );
-  }
-
-  /**
-   * Должен опубликовать пустой список полученных ТС.
-   */
-  @Test
-  public void askVehiclesSharerToShareLoadedVehiclesEmpty() {
-    // Дано:
-    when(gateway.getExecutorVehicles()).thenReturn(Single.just(new ArrayList<>()));
-
-    // Действие:
-    vehiclesAndOptionsUseCase.loadVehiclesAndOptions().test();
-
-    // Результат:
-    verify(vehiclesObserver, only()).onNext(new ArrayList<>());
   }
 
   /* Проверяем работу с публикатором ТС */
@@ -253,6 +85,7 @@ public class VehiclesAndOptionsUseCaseTest {
   @Test
   public void doNotTouchVehicleChoiceSharer() {
     // Действие:
+    when(lastUsedVehicleGateway.getLastUsedVehicleId()).thenReturn(Single.just(10L));
     vehiclesAndOptionsUseCase.loadVehiclesAndOptions().test();
     when(gateway.getExecutorVehicles()).thenReturn(Single.error(new NoNetworkException()));
     vehiclesAndOptionsUseCase.loadVehiclesAndOptions().test();
@@ -275,11 +108,12 @@ public class VehiclesAndOptionsUseCaseTest {
   }
 
   /**
-   * Должен опубликовать первую свободную ТС из списка.
+   * Должен опубликовать первое свободное ТС из списка.
    */
   @Test
   public void askVehicleChoiceSharerToShareTheFirstFreeVehicle() {
-    // Действие:
+    // Дано:
+    when(lastUsedVehicleGateway.getLastUsedVehicleId()).thenReturn(Single.just(-1L));
     when(gateway.getExecutorVehicles()).thenReturn(Single.just(
         new ArrayList<>(Arrays.asList(
             new Vehicle(12, "manufacturer", "model", "color", "license", false),
@@ -288,6 +122,8 @@ public class VehiclesAndOptionsUseCaseTest {
             new Vehicle(15, "man fact", "modelers", "colo", "licensee", true)
         ))
     ));
+
+    // Действие:
     vehiclesAndOptionsUseCase.loadVehiclesAndOptions().test();
 
     // Результат:
@@ -296,18 +132,14 @@ public class VehiclesAndOptionsUseCaseTest {
   }
 
   /**
-   * Должен опубликовать первую свободную ТС из списка, если последняя использовавшаяся возвращает
+   * Должен опубликовать первое свободное ТС из списка, если последняя использовавшаяся возвращает
    * ошибку.
    */
-  @SuppressWarnings("unchecked")
   @Test
   public void askVehicleChoiceSharerToShareTheFirstFreeVehicleIfLastUsedIsError() {
     // Дано:
-    when(lastUsedVehicleReceiver.get()).thenReturn(publishSubject, PublishSubject.never());
-    vehiclesAndOptionsUseCase = new VehiclesAndOptionsUseCaseImpl(gateway, vehiclesObserver,
-        driverOptionsObserver, vehicleChoiceObserver, lastUsedVehicleReceiver);
-
-    // Действие:
+    when(lastUsedVehicleGateway.getLastUsedVehicleId())
+        .thenReturn(Single.error(new IllegalArgumentException()));
     when(gateway.getExecutorVehicles()).thenReturn(Single.just(
         new ArrayList<>(Arrays.asList(
             new Vehicle(12, "manufacturer", "model", "color", "license", false),
@@ -316,7 +148,8 @@ public class VehiclesAndOptionsUseCaseTest {
             new Vehicle(15, "man fact", "modelers", "colo", "licensee", true)
         ))
     ));
-    publishSubject.onError(new IllegalArgumentException());
+
+    // Действие:
     vehiclesAndOptionsUseCase.loadVehiclesAndOptions().test();
 
     // Результат:
@@ -325,12 +158,13 @@ public class VehiclesAndOptionsUseCaseTest {
   }
 
   /**
-   * Должен опубликовать первую свободную ТС из списка, если последняя использовавшаяся больше не в
+   * Должен опубликовать первое свободное ТС из списка, если последняя использовавшаяся больше не в
    * списке.
    */
   @Test
   public void askVehicleChoiceSharerToShareTheFirstFreeVehicleIfLastUsedIsOutOfRange() {
-    // Действие:
+    // Дано:
+    when(lastUsedVehicleGateway.getLastUsedVehicleId()).thenReturn(Single.just(105L));
     when(gateway.getExecutorVehicles()).thenReturn(Single.just(
         new ArrayList<>(Arrays.asList(
             new Vehicle(12, "manufacturer", "model", "color", "license", false),
@@ -339,9 +173,8 @@ public class VehiclesAndOptionsUseCaseTest {
             new Vehicle(15, "man fact", "modelers", "colo", "licensee", true)
         ))
     ));
-    publishSubject.onNext(
-        new Vehicle(105, "m", "m", "c", "l", false)
-    );
+
+    // Действие:
     vehiclesAndOptionsUseCase.loadVehiclesAndOptions().test();
 
     // Результат:
@@ -350,11 +183,12 @@ public class VehiclesAndOptionsUseCaseTest {
   }
 
   /**
-   * Должен опубликовать первую свободную ТС из списка, если последняя использовавшаяся занята.
+   * Должен опубликовать первое свободное ТС из списка, если последняя использовавшаяся занята.
    */
   @Test
   public void askVehicleChoiceSharerToShareTheFirstFreeVehicleIfLastUsedIsBusy() {
-    // Действие:
+    // Дано:
+    when(lastUsedVehicleGateway.getLastUsedVehicleId()).thenReturn(Single.just(15L));
     when(gateway.getExecutorVehicles()).thenReturn(Single.just(
         new ArrayList<>(Arrays.asList(
             new Vehicle(12, "manufacturer", "model", "color", "license", false),
@@ -363,9 +197,8 @@ public class VehiclesAndOptionsUseCaseTest {
             new Vehicle(15, "man fact", "modelers", "colo", "licensee", true)
         ))
     ));
-    publishSubject.onNext(
-        new Vehicle(15, "m", "m", "c", "l", false)
-    );
+
+    // Действие:
     vehiclesAndOptionsUseCase.loadVehiclesAndOptions().test();
 
     // Результат:
@@ -378,7 +211,8 @@ public class VehiclesAndOptionsUseCaseTest {
    */
   @Test
   public void askVehicleChoiceSharerToShareTheLastUsedVehicle() {
-    // Действие:
+    // Дано:
+    when(lastUsedVehicleGateway.getLastUsedVehicleId()).thenReturn(Single.just(14L));
     when(gateway.getExecutorVehicles()).thenReturn(Single.just(
         new ArrayList<>(Arrays.asList(
             new Vehicle(12, "manufacturer", "model", "color", "license", false),
@@ -387,9 +221,8 @@ public class VehiclesAndOptionsUseCaseTest {
             new Vehicle(15, "man fact", "modelers", "colo", "licensee", true)
         ))
     ));
-    publishSubject.onNext(
-        new Vehicle(14, "manufacturers", "modeler", "color", "licensing", false)
-    );
+
+    // Действие:
     vehiclesAndOptionsUseCase.loadVehiclesAndOptions().test();
 
     // Результат:
@@ -403,6 +236,7 @@ public class VehiclesAndOptionsUseCaseTest {
   @Test
   public void askVehicleChoiceSharerToShareTheOnlyFreeVehicle() {
     // Дано:
+    when(lastUsedVehicleGateway.getLastUsedVehicleId()).thenReturn(Single.just(-1L));
     when(gateway.getExecutorVehicles()).thenReturn(Single.just(
         new ArrayList<>(Arrays.asList(
             new Vehicle(12, "manufacturer", "model", "color", "license", true),
@@ -426,6 +260,7 @@ public class VehiclesAndOptionsUseCaseTest {
   @Test
   public void askVehicleChoiceSharerToShareTheVehicleIfItsFree() {
     // Дано:
+    when(lastUsedVehicleGateway.getLastUsedVehicleId()).thenReturn(Single.just(-1L));
     when(gateway.getExecutorVehicles()).thenReturn(Single.just(
         new ArrayList<>(Collections.singletonList(
             new Vehicle(14, "manufacturers", "modeler", "color", "licensing", false)
@@ -448,6 +283,7 @@ public class VehiclesAndOptionsUseCaseTest {
   @Test
   public void answerNoNetworkError() {
     // Дано:
+    when(lastUsedVehicleGateway.getLastUsedVehicleId()).thenReturn(Single.just(-1L));
     when(gateway.getExecutorVehicles()).thenReturn(Single.error(new NoNetworkException()));
 
     // Действие и Результат:
@@ -460,6 +296,7 @@ public class VehiclesAndOptionsUseCaseTest {
   @Test
   public void answerDriverBlockedError() {
     // Дано:
+    when(lastUsedVehicleGateway.getLastUsedVehicleId()).thenReturn(Single.just(-1L));
     when(gateway.getExecutorVehicles()).thenReturn(Single.error(new DriverBlockedException()));
 
     // Действие и Результат:
@@ -473,6 +310,7 @@ public class VehiclesAndOptionsUseCaseTest {
   @Test
   public void answerInsufficientCreditsError() {
     // Дано:
+    when(lastUsedVehicleGateway.getLastUsedVehicleId()).thenReturn(Single.just(-1L));
     when(gateway.getExecutorVehicles())
         .thenReturn(Single.error(new InsufficientCreditsException()));
 
@@ -487,6 +325,7 @@ public class VehiclesAndOptionsUseCaseTest {
   @Test
   public void answerNoVehiclesAvailableError() {
     // Дано:
+    when(lastUsedVehicleGateway.getLastUsedVehicleId()).thenReturn(Single.just(-1L));
     when(gateway.getExecutorVehicles()).thenReturn(Single.just(new ArrayList<>()));
 
     // Действие и Результат:
@@ -500,6 +339,7 @@ public class VehiclesAndOptionsUseCaseTest {
   @Test
   public void answerNoFreeVehiclesError() {
     // Дано:
+    when(lastUsedVehicleGateway.getLastUsedVehicleId()).thenReturn(Single.just(-1L));
     when(gateway.getExecutorVehicles()).thenReturn(Single.just(
         new ArrayList<>(Arrays.asList(
             new Vehicle(12, "manufacturer", "model", "color", "license", true),
@@ -516,22 +356,15 @@ public class VehiclesAndOptionsUseCaseTest {
    * Должен ответить успехом.
    */
   @Test
-  public void answerSuccessIfOnlyOneFreeVehicleAvailableAndFree() {
+  public void answerSuccessIfOnlyOneFreeVehicleAvailable() {
     // Дано:
+    when(lastUsedVehicleGateway.getLastUsedVehicleId()).thenReturn(Single.just(-1L));
     when(gateway.getExecutorVehicles()).thenReturn(Single.just(
         new ArrayList<>(Arrays.asList(
             new Vehicle(12, "manufacturer", "model", "color", "license", true),
             new Vehicle(13, "manufacture", "models", "colo", "licenses", true),
             new Vehicle(14, "manufacturers", "modeler", "color", "licensing", false),
             new Vehicle(15, "man fact", "modelers", "colo", "licensee", true)
-        ))
-    ));
-    when(gateway.getExecutorOptions()).thenReturn(Single.just(
-        new ArrayList<>(Arrays.asList(
-            new OptionBoolean(12, "name", "desc", false, true),
-            new OptionBoolean(13, "names", "descriptions", true, false),
-            new OptionNumeric(14, "nam", "script", true, 5, 0, 10),
-            new OptionNumeric(15, "man fact", "sky", false, 0, 3, 6)
         ))
     ));
 
@@ -543,19 +376,12 @@ public class VehiclesAndOptionsUseCaseTest {
    * Должен ответить успехом.
    */
   @Test
-  public void answerSuccessIfOnlyOneVehicleAvailableFree() {
+  public void answerSuccessIfOnlyOneVehicleAvailableAndFree() {
     // Дано:
+    when(lastUsedVehicleGateway.getLastUsedVehicleId()).thenReturn(Single.just(-1L));
     when(gateway.getExecutorVehicles()).thenReturn(Single.just(
         new ArrayList<>(Collections.singletonList(
             new Vehicle(14, "manufacturers", "modeler", "color", "licensing", false)
-        ))
-    ));
-    when(gateway.getExecutorOptions()).thenReturn(Single.just(
-        new ArrayList<>(Arrays.asList(
-            new OptionBoolean(12, "name", "desc", false, true),
-            new OptionBoolean(13, "names", "descriptions", true, false),
-            new OptionNumeric(14, "nam", "script", true, 5, 0, 10),
-            new OptionNumeric(15, "man fact", "sky", false, 0, 3, 6)
         ))
     ));
 
@@ -569,20 +395,13 @@ public class VehiclesAndOptionsUseCaseTest {
   @Test
   public void answerLoadSuccessful() {
     // Дано:
+    when(lastUsedVehicleGateway.getLastUsedVehicleId()).thenReturn(Single.just(-1L));
     when(gateway.getExecutorVehicles()).thenReturn(Single.just(
         new ArrayList<>(Arrays.asList(
             new Vehicle(12, "manufacturer", "model", "color", "license", false),
             new Vehicle(13, "manufacture", "models", "colo", "licenses", true),
             new Vehicle(14, "manufacturers", "modeler", "color", "licensing", false),
             new Vehicle(15, "man fact", "modelers", "colo", "licensee", true)
-        ))
-    ));
-    when(gateway.getExecutorOptions()).thenReturn(Single.just(
-        new ArrayList<>(Arrays.asList(
-            new OptionBoolean(12, "name", "desc", false, true),
-            new OptionBoolean(13, "names", "descriptions", true, false),
-            new OptionNumeric(14, "nam", "script", true, 5, 0, 10),
-            new OptionNumeric(15, "man fact", "sky", false, 0, 3, 6)
         ))
     ));
 

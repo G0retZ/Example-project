@@ -97,7 +97,7 @@ public class LastUsedVehicleGatewayTest {
     when(appSettings.getData("lastUsedVehicle")).thenReturn("654321");
 
     // Действие и Результат:
-    lastUsedVehicleGateway.getLastUsedVehicleId().test().assertValue(new Long(654321));
+    lastUsedVehicleGateway.getLastUsedVehicleId().test().assertValue(654321L);
   }
 
   /**
@@ -106,7 +106,7 @@ public class LastUsedVehicleGatewayTest {
   @Test
   public void returnDefaultValueIfNoSuch() {
     // Действие и Результат:
-    lastUsedVehicleGateway.getLastUsedVehicleId().test().assertValue(new Long(-1));
+    lastUsedVehicleGateway.getLastUsedVehicleId().test().assertValue(-1L);
   }
 
   /**
@@ -118,7 +118,7 @@ public class LastUsedVehicleGatewayTest {
     when(appSettings.getData("lastUsedVehicle")).thenReturn("");
 
     // Действие и Результат:
-    lastUsedVehicleGateway.getLastUsedVehicleId().test().assertValue(new Long(-1));
+    lastUsedVehicleGateway.getLastUsedVehicleId().test().assertValue(-1L);
   }
 
   /**
@@ -130,7 +130,7 @@ public class LastUsedVehicleGatewayTest {
     when(appSettings.getData("lastUsedVehicle")).thenReturn("as32as");
 
     // Действие и Результат:
-    lastUsedVehicleGateway.getLastUsedVehicleId().test().assertValue(new Long(-1));
+    lastUsedVehicleGateway.getLastUsedVehicleId().test().assertValue(-1L);
   }
 
   /**

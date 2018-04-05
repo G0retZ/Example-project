@@ -42,7 +42,12 @@ public class ChooseVehicleViewModelImpl extends ViewModel implements ChooseVehic
   @NonNull
   @Override
   public LiveData<ViewState<ChooseVehicleViewActions>> getViewStateLiveData() {
-    loadVehicles();
+    if (vehiclesDisposable == null || vehiclesDisposable.isDisposed()) {
+      vehiclesDisposable = vehicleChoiceUseCase.getVehicles()
+          .subscribeOn(Schedulers.single())
+          .observeOn(AndroidSchedulers.mainThread())
+          .subscribe(this::consumeVehicles, this::consumeError);
+    }
     return viewStateLiveData;
   }
 
@@ -65,17 +70,6 @@ public class ChooseVehicleViewModelImpl extends ViewModel implements ChooseVehic
             throwable -> {
             }
         );
-  }
-
-  private void loadVehicles() {
-    if (vehiclesDisposable != null && !vehiclesDisposable.isDisposed()) {
-      return;
-    }
-    vehiclesDisposable = vehicleChoiceUseCase.getVehicles()
-        .subscribeOn(Schedulers.single())
-        .observeOn(AndroidSchedulers.mainThread())
-        .doAfterTerminate(this::loadVehicles)
-        .subscribe(this::consumeVehicles, this::consumeError);
   }
 
   private void consumeVehicles(List<Vehicle> vehicles) {

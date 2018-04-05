@@ -3,7 +3,7 @@ package com.fasten.executor_driver.interactor.vehicle;
 import android.support.annotation.NonNull;
 import com.fasten.executor_driver.entity.Vehicle;
 import io.reactivex.Completable;
-import io.reactivex.Observable;
+import io.reactivex.Single;
 import java.util.List;
 
 /**
@@ -14,10 +14,10 @@ public interface VehicleChoiceUseCase {
   /**
    * Запрашивает список ТС, доступных исполнителю.
    *
-   * @return {@link Observable} результат запроса
+   * @return {@link Single} результат запроса
    */
   @NonNull
-  Observable<List<Vehicle>> getVehicles();
+  Single<List<Vehicle>> getVehicles();
 
   /**
    * Задает выбранное ТС для запоминания и сохранения.

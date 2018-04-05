@@ -4,17 +4,16 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.fasten.executor_driver.entity.NoVehiclesAvailableException;
 import com.fasten.executor_driver.entity.Vehicle;
-import com.fasten.executor_driver.interactor.DataReceiver;
 import io.reactivex.Completable;
-import io.reactivex.Observable;
 import io.reactivex.Observer;
+import io.reactivex.Single;
 import java.util.List;
 import javax.inject.Inject;
 
 public class VehicleChoiceUseCaseImpl implements VehicleChoiceUseCase {
 
   @NonNull
-  private final DataReceiver<List<Vehicle>> vehiclesReceiver;
+  private final VehiclesAndOptionsGateway vehiclesAndOptionsGateway;
   @NonNull
   private final Observer<Vehicle> vehicleChoiceObserver;
   @Nullable
@@ -22,16 +21,16 @@ public class VehicleChoiceUseCaseImpl implements VehicleChoiceUseCase {
 
   @Inject
   public VehicleChoiceUseCaseImpl(
-      @NonNull DataReceiver<List<Vehicle>> vehiclesReceiver,
+      @NonNull VehiclesAndOptionsGateway vehiclesAndOptionsGateway,
       @NonNull Observer<Vehicle> vehicleChoiceObserver) {
-    this.vehiclesReceiver = vehiclesReceiver;
+    this.vehiclesAndOptionsGateway = vehiclesAndOptionsGateway;
     this.vehicleChoiceObserver = vehicleChoiceObserver;
   }
 
   @NonNull
   @Override
-  public Observable<List<Vehicle>> getVehicles() {
-    return vehiclesReceiver.get()
+  public Single<List<Vehicle>> getVehicles() {
+    return vehiclesAndOptionsGateway.getExecutorVehicles()
         .map(list -> {
           if (list.isEmpty()) {
             throw new NoVehiclesAvailableException();
