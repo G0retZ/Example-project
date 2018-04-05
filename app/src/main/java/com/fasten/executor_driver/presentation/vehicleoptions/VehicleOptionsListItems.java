@@ -1,4 +1,4 @@
-package com.fasten.executor_driver.presentation.options;
+package com.fasten.executor_driver.presentation.vehicleoptions;
 
 import android.support.annotation.NonNull;
 import java.util.List;
@@ -6,31 +6,31 @@ import java.util.List;
 /**
  * Модель для отображения осписка опций ТС и исполнителя. Контейнер для моделей опций.
  */
-public class OptionsListItems {
+public class VehicleOptionsListItems {
 
   @NonNull
-  private final List<OptionsListItem<?>> vehicleOptions;
+  private final List<VehicleOptionsListItem<?>> vehicleOptions;
   @NonNull
-  private final List<OptionsListItem<?>> driverOptions;
+  private final List<VehicleOptionsListItem<?>> driverOptions;
 
-  public OptionsListItems(
-      @NonNull List<OptionsListItem<?>> vehicleOptions,
-      @NonNull List<OptionsListItem<?>> driverOptions) {
+  public VehicleOptionsListItems(
+      @NonNull List<VehicleOptionsListItem<?>> vehicleOptions,
+      @NonNull List<VehicleOptionsListItem<?>> driverOptions) {
     this.vehicleOptions = vehicleOptions;
     this.driverOptions = driverOptions;
   }
 
   @NonNull
-  public List<OptionsListItem<?>> getVehicleOptions() {
+  public List<VehicleOptionsListItem<?>> getVehicleOptions() {
     return vehicleOptions;
   }
 
   @NonNull
-  public List<OptionsListItem<?>> getDriverOptions() {
+  public List<VehicleOptionsListItem<?>> getDriverOptions() {
     return driverOptions;
   }
 
-  public OptionsListItem<?> get(int index) {
+  public VehicleOptionsListItem<?> get(int index) {
     if (index < vehicleOptions.size()) {
       return vehicleOptions.get(index);
     }
@@ -43,7 +43,7 @@ public class OptionsListItems {
 
   @Override
   public String toString() {
-    return "OptionsListItems{" +
+    return "VehicleOptionsListItems{" +
         "vehicleOptions=" + vehicleOptions +
         ", driverOptions=" + driverOptions +
         '}';
@@ -59,7 +59,7 @@ public class OptionsListItems {
       return false;
     }
 
-    OptionsListItems that = (OptionsListItems) o;
+    VehicleOptionsListItems that = (VehicleOptionsListItems) o;
 
     if (!vehicleOptions.equals(that.vehicleOptions)) {
       return false;

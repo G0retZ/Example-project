@@ -7,8 +7,8 @@ import com.fasten.executor_driver.entity.Vehicle;
 import com.fasten.executor_driver.gateway.DataMappingException;
 import com.fasten.executor_driver.interactor.DataReceiver;
 import io.reactivex.Completable;
-import io.reactivex.Observable;
 import io.reactivex.Observer;
+import io.reactivex.Single;
 import java.util.List;
 import javax.inject.Inject;
 
@@ -39,25 +39,25 @@ public class VehicleOptionsUseCaseImpl implements VehicleOptionsUseCase {
 
   @NonNull
   @Override
-  public Observable<List<Option>> getVehicleOptions() {
+  public Single<List<Option>> getVehicleOptions() {
     return vehicleChoiceReceiver.get()
-        .concatMap(vehicle -> {
+        .firstOrError()
+        .flattenAsObservable(vehicle -> {
           this.vehicle = vehicle;
-          return Observable.fromIterable(vehicle.getOptions())
-              .filter(Option::isVariable)
-              .toList()
-              .toObservable();
-        });
+          return vehicle.getOptions();
+        })
+        .filter(Option::isVariable)
+        .toList();
   }
 
   @NonNull
   @Override
-  public Observable<List<Option>> getDriverOptions() {
+  public Single<List<Option>> getDriverOptions() {
     return driverOptionsReceiver.get()
-        .concatMap(options -> Observable.fromIterable(options)
-            .filter(Option::isVariable)
-            .toList()
-            .toObservable());
+        .firstOrError()
+        .flattenAsObservable(options -> options)
+        .filter(Option::isVariable)
+        .toList();
   }
 
   @Override

@@ -1,4 +1,4 @@
-package com.fasten.executor_driver.presentation.options;
+package com.fasten.executor_driver.presentation.vehicleoptions;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
@@ -12,16 +12,16 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
-public class OptionsViewStateErrorTest {
+public class VehicleOptionsViewStateErrorTest {
 
-  private OptionsViewStateError viewState;
+  private VehicleOptionsViewStateError viewState;
 
   @Mock
-  private OptionsViewActions codeViewActions;
+  private VehicleOptionsViewActions codeViewActions;
 
   @Before
   public void setUp() {
-    viewState = new OptionsViewStateError(123);
+    viewState = new VehicleOptionsViewStateError(123);
   }
 
   @Test
@@ -40,7 +40,7 @@ public class OptionsViewStateErrorTest {
 
   @Test
   public void testEquals() {
-    assertEquals(viewState, new OptionsViewStateError(123));
-    assertNotEquals(viewState, new OptionsViewStateError(0));
+    assertEquals(viewState, new VehicleOptionsViewStateError(123));
+    assertNotEquals(viewState, new VehicleOptionsViewStateError(0));
   }
 }

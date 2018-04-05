@@ -6,4 +6,4 @@
   android:layout_width="match_parent"
   android:layout_height="match_parent"
   android:name="com.fasten.executor_driver.view.ServicesFragment"
-  tools:layout="@layout/fragment_options"/>
+  tools:layout="@layout/fragment_vehicle_options"/>

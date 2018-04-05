@@ -1,12 +1,13 @@
-package com.fasten.executor_driver.presentation.options;
+package com.fasten.executor_driver.presentation.services;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
+import java.util.List;
 
 /**
- * Действия для смены состояния вида окна списка опций ТС исполнителя.
+ * Действия для смены состояния вида окна списка услуг исполнителя.
  */
-public interface OptionsViewActions {
+public interface ServicesViewActions {
 
   /**
    * Активировать кнопку готовности.
@@ -20,33 +21,33 @@ public interface OptionsViewActions {
    *
    * @param pending - показать или нет?
    */
-  void showVehicleOptionsPending(boolean pending);
+  void showServicesPending(boolean pending);
 
   /**
-   * Показать список опций ТС.
+   * Показать список услуг исполнителя.
    *
    * @param show - показать или нет?
    */
-  void showVehicleOptionsList(boolean show);
+  void showServicesList(boolean show);
 
   /**
-   * Передать список опций ТС и исполнителя.
+   * Передать список услуг исполнителя.
    *
-   * @param optionsListItems - список опций ТС и исполнителя.
+   * @param servicesListItems - список услуг исполнителя.
    */
-  void setVehicleOptionsListItems(@NonNull OptionsListItems optionsListItems);
+  void setServicesListItems(@NonNull List<ServicesListItem> servicesListItems);
 
   /**
    * Показать сообщение об ошибке.
    *
    * @param show - показать или нет?
    */
-  void showVehicleOptionsListErrorMessage(boolean show);
+  void showServicesListErrorMessage(boolean show);
 
   /**
    * Задать сообщение об ошибке.
    *
    * @param messageId - ИД ресурса сообщения об ошибке
    */
-  void setVehicleOptionsListErrorMessage(@StringRes int messageId);
+  void setServicesListErrorMessage(@StringRes int messageId);
 }

@@ -3,22 +3,21 @@ package com.fasten.executor_driver.interactor.services;
 import android.support.annotation.NonNull;
 import com.fasten.executor_driver.entity.Service;
 import io.reactivex.Completable;
-import io.reactivex.Observable;
+import io.reactivex.Single;
 import java.util.List;
 
 /**
  * Юзкейс выбора услуг исполнителя.
  */
-@SuppressWarnings("unused")
 public interface ServicesUseCase {
 
   /**
    * Запрашивает список услуг, доступных для изменения исполнителем.
    *
-   * @return {@link Observable} результат запроса
+   * @return {@link Single} результат запроса
    */
   @NonNull
-  Observable<List<Service>> loadServices();
+  Single<List<Service>> loadServices();
 
   /**
    * Задает услуги выбранные исполнителем для выхода на линию.

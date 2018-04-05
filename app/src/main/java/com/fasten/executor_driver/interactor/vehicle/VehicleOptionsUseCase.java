@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 import com.fasten.executor_driver.entity.Option;
 import io.reactivex.Completable;
 import io.reactivex.Observable;
+import io.reactivex.Single;
 import java.util.List;
 
 /**
@@ -17,7 +18,7 @@ public interface VehicleOptionsUseCase {
    * @return {@link Observable} результат запроса
    */
   @NonNull
-  Observable<List<Option>> getVehicleOptions();
+  Single<List<Option>> getVehicleOptions();
 
   /**
    * Запрашивает список опций выбранной ТС, доступных для изменения исполнителем.
@@ -26,7 +27,7 @@ public interface VehicleOptionsUseCase {
    */
   @SuppressWarnings("unused")
   @NonNull
-  Observable<List<Option>> getDriverOptions();
+  Single<List<Option>> getDriverOptions();
 
   /**
    * Задает опции выбранного ТС для сохранения и выхода на линию.

@@ -13,9 +13,9 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 import com.fasten.executor_driver.R;
 import com.fasten.executor_driver.di.AppComponent;
-import com.fasten.executor_driver.presentation.options.OptionsListItems;
-import com.fasten.executor_driver.presentation.options.OptionsViewActions;
-import com.fasten.executor_driver.presentation.options.OptionsViewModel;
+import com.fasten.executor_driver.presentation.vehicleoptions.VehicleOptionsListItems;
+import com.fasten.executor_driver.presentation.vehicleoptions.VehicleOptionsViewActions;
+import com.fasten.executor_driver.presentation.vehicleoptions.VehicleOptionsViewModel;
 import java.util.ArrayList;
 import javax.inject.Inject;
 
@@ -23,16 +23,16 @@ import javax.inject.Inject;
  * Отображает список ТС для выбора при выходе на линию.
  */
 
-public class VehicleOptionsFragment extends BaseFragment implements OptionsViewActions {
+public class VehicleOptionsFragment extends BaseFragment implements VehicleOptionsViewActions {
 
-  private OptionsViewModel vehicleOptionsViewModel;
+  private VehicleOptionsViewModel vehicleOptionsViewModel;
   private RecyclerView recyclerView;
   private FrameLayout pendingIndicator;
   private TextView errorText;
   private Button readyButton;
 
   @Inject
-  public void setVehicleOptionsViewModel(@NonNull OptionsViewModel vehicleOptionsViewModel) {
+  public void setVehicleOptionsViewModel(@NonNull VehicleOptionsViewModel vehicleOptionsViewModel) {
     this.vehicleOptionsViewModel = vehicleOptionsViewModel;
   }
 
@@ -41,7 +41,7 @@ public class VehicleOptionsFragment extends BaseFragment implements OptionsViewA
   public View onCreateView(@NonNull LayoutInflater inflater,
       @Nullable ViewGroup container,
       @Nullable Bundle savedInstanceState) {
-    View view = inflater.inflate(R.layout.fragment_options, container, false);
+    View view = inflater.inflate(R.layout.fragment_vehicle_options, container, false);
     recyclerView = view.findViewById(R.id.recyclerView);
     pendingIndicator = view.findViewById(R.id.pending);
     errorText = view.findViewById(R.id.errorText);
@@ -49,7 +49,7 @@ public class VehicleOptionsFragment extends BaseFragment implements OptionsViewA
     recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
     recyclerView.setAdapter(new ChooseVehicleAdapter(new ArrayList<>()));
     readyButton.setOnClickListener(v -> vehicleOptionsViewModel.setOptions(
-        ((OptionsAdapter) recyclerView.getAdapter()).getOptionsListItems())
+        ((VehicleOptionsAdapter) recyclerView.getAdapter()).getVehicleOptionsListItems())
     );
     return view;
   }
@@ -91,9 +91,8 @@ public class VehicleOptionsFragment extends BaseFragment implements OptionsViewA
   }
 
   @Override
-  public void setVehicleOptionsListItems(
-      @NonNull OptionsListItems optionsListItems) {
-    OptionsAdapter adapter = new OptionsAdapter(optionsListItems);
+  public void setVehicleOptionsListItems(@NonNull VehicleOptionsListItems vehicleOptionsListItems) {
+    VehicleOptionsAdapter adapter = new VehicleOptionsAdapter(vehicleOptionsListItems);
     recyclerView.setAdapter(adapter);
   }
 

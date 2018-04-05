@@ -40,8 +40,6 @@ public class MapActivity extends BaseActivity {
     switch (destination) {
       case ExecutorStateNavigate.MAP_SHIFT_CLOSED:
         break;
-      case ExecutorStateNavigate.MAP_SHIFT_OPENED:
-        break;
       case OnlineButtonNavigate.DRIVER_BLOCKED:
         new Builder(this)
             .setTitle(R.string.error)

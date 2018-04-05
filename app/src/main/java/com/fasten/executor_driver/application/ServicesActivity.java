@@ -5,7 +5,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.fasten.executor_driver.R;
 import com.fasten.executor_driver.presentation.executorstate.ExecutorStateNavigate;
-import com.fasten.executor_driver.presentation.services.ServicesOptionsNavigate;
 
 public class ServicesActivity extends BaseActivity {
 
@@ -22,9 +21,6 @@ public class ServicesActivity extends BaseActivity {
       case ExecutorStateNavigate.MAP_SHIFT_OPENED:
         break;
       case ExecutorStateNavigate.MAP_SHIFT_CLOSED:
-        break;
-      case ServicesOptionsNavigate.READY_FOR_ORDERS:
-        System.out.println(destination);
         break;
       default:
         super.navigate(destination);

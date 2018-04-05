@@ -28,6 +28,8 @@
   <string name="ready">Готово</string>
   <string name="change">Сменить</string>
   <string name="select_services">Выберите услуги</string>
+  <string name="no_services_available">Нет доступных услуг</string>
+  <string name="no_services_selected">Не выбрано ни одной услуги</string>
   <string name="online">На линии</string>
   <string name="executing">Выполнение</string>
   <string name="to_app">В приложение</string>

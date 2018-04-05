@@ -1,4 +1,4 @@
-package com.fasten.executor_driver.presentation.options;
+package com.fasten.executor_driver.presentation.vehicleoptions;
 
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -10,16 +10,16 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
-public class OptionsViewStatePendingTest {
+public class VehicleOptionsViewStatePendingTest {
 
-  private OptionsViewStatePending viewState;
+  private VehicleOptionsViewStatePending viewState;
 
   @Mock
-  private OptionsViewActions codeViewActions;
+  private VehicleOptionsViewActions codeViewActions;
 
   @Before
   public void setUp() {
-    viewState = new OptionsViewStatePending();
+    viewState = new VehicleOptionsViewStatePending();
   }
 
   @Test
@@ -29,7 +29,7 @@ public class OptionsViewStatePendingTest {
 
     // Результат:
     verify(codeViewActions).enableReadyButton(false);
-    verify(codeViewActions).showVehicleOptionsList(false);
+    verify(codeViewActions).showVehicleOptionsList(true);
     verify(codeViewActions).showVehicleOptionsPending(true);
     verify(codeViewActions).showVehicleOptionsListErrorMessage(false);
     verifyNoMoreInteractions(codeViewActions);

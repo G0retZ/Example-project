@@ -1,4 +1,4 @@
-package com.fasten.executor_driver.presentation.options;
+package com.fasten.executor_driver.presentation.vehicleoptions;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
@@ -7,17 +7,17 @@ import com.fasten.executor_driver.presentation.ViewState;
 /**
  * Состояние ошибки при занятии ТС с опциями.
  */
-public final class OptionsViewStateError implements ViewState<OptionsViewActions> {
+public final class VehicleOptionsViewStateError implements ViewState<VehicleOptionsViewActions> {
 
   @StringRes
   private final int errorMessage;
 
-  public OptionsViewStateError(@StringRes int errorMessage) {
+  VehicleOptionsViewStateError(@StringRes int errorMessage) {
     this.errorMessage = errorMessage;
   }
 
   @Override
-  public void apply(@NonNull OptionsViewActions stateActions) {
+  public void apply(@NonNull VehicleOptionsViewActions stateActions) {
     stateActions.enableReadyButton(false);
     stateActions.showVehicleOptionsList(false);
     stateActions.showVehicleOptionsPending(false);
@@ -41,7 +41,7 @@ public final class OptionsViewStateError implements ViewState<OptionsViewActions
       return false;
     }
 
-    OptionsViewStateError that = (OptionsViewStateError) o;
+    VehicleOptionsViewStateError that = (VehicleOptionsViewStateError) o;
 
     return errorMessage == that.errorMessage;
   }

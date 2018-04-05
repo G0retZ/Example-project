@@ -3,21 +3,21 @@ package com.fasten.executor_driver.entity;
 import android.support.annotation.NonNull;
 
 /**
- * Неизменная бизнес сущность услуги. Содержит в себе ID, имя, цену и значение.
+ * Неизменная бизнес сущность услуги. Содержит в себе ID, имя, цену и выбор пользователя.
  */
 public class Service {
 
   private final long id;
   @NonNull
   private final String name;
-  private final long price;
-  private final boolean value;
+  private final int price;
+  private final boolean selected;
 
-  public Service(long id, @NonNull String name, long price, boolean value) {
+  public Service(long id, @NonNull String name, int price, boolean selected) {
     this.id = id;
     this.name = name;
     this.price = price;
-    this.value = value;
+    this.selected = selected;
   }
 
   public long getId() {
@@ -29,12 +29,16 @@ public class Service {
     return name;
   }
 
-  public long getPrice() {
+  public int getPrice() {
     return price;
   }
 
-  public boolean getValue() {
-    return value;
+  public boolean isSelected() {
+    return selected;
+  }
+
+  public Service setSelected(boolean selected) {
+    return new Service(id, name, price, selected);
   }
 
   @Override
@@ -43,7 +47,7 @@ public class Service {
         "id=" + id +
         ", name='" + name + '\'' +
         ", price=" + price +
-        ", value=" + value +
+        ", selected=" + selected +
         '}';
   }
 
@@ -65,7 +69,7 @@ public class Service {
     if (price != service.price) {
       return false;
     }
-    if (value != service.value) {
+    if (selected != service.selected) {
       return false;
     }
     return name.equals(service.name);
@@ -75,8 +79,8 @@ public class Service {
   public int hashCode() {
     int result = (int) (id ^ (id >>> 32));
     result = 31 * result + name.hashCode();
-    result = 31 * result + (int) (price ^ (price >>> 32));
-    result = 31 * result + (value ? 1 : 0);
+    result = 31 * result + price;
+    result = 31 * result + (selected ? 1 : 0);
     return result;
   }
 }

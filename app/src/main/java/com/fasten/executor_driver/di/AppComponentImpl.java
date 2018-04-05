@@ -69,14 +69,14 @@ import com.fasten.executor_driver.presentation.map.MapViewModel;
 import com.fasten.executor_driver.presentation.map.MapViewModelImpl;
 import com.fasten.executor_driver.presentation.onlinebutton.OnlineButtonViewModel;
 import com.fasten.executor_driver.presentation.onlinebutton.OnlineButtonViewModelImpl;
-import com.fasten.executor_driver.presentation.options.OptionsViewModel;
 import com.fasten.executor_driver.presentation.phone.PhoneViewModel;
 import com.fasten.executor_driver.presentation.phone.PhoneViewModelImpl;
 import com.fasten.executor_driver.presentation.selectedvehicle.SelectedVehicleViewModel;
 import com.fasten.executor_driver.presentation.selectedvehicle.SelectedVehicleViewModelImpl;
-import com.fasten.executor_driver.presentation.services.ServicesOptionsViewModelImpl;
+import com.fasten.executor_driver.presentation.services.ServicesViewModelImpl;
 import com.fasten.executor_driver.presentation.smsbutton.SmsButtonViewModel;
 import com.fasten.executor_driver.presentation.smsbutton.SmsButtonViewModelImpl;
+import com.fasten.executor_driver.presentation.vehicleoptions.VehicleOptionsViewModel;
 import com.fasten.executor_driver.presentation.vehicleoptions.VehicleOptionsViewModelImpl;
 import com.fasten.executor_driver.view.ChooseVehicleFragment;
 import com.fasten.executor_driver.view.GoOnlineFragment;
@@ -355,7 +355,7 @@ public class AppComponentImpl implements AppComponent {
     vehicleOptionsFragment.setVehicleOptionsViewModel(
         ViewModelProviders.of(
             vehicleOptionsFragment,
-            new ViewModelFactory<OptionsViewModel>(
+            new ViewModelFactory<VehicleOptionsViewModel>(
                 new VehicleOptionsViewModelImpl(
                     new VehicleOptionsUseCaseImpl(
                         new VehicleOptionsGatewayImpl(
@@ -393,7 +393,7 @@ public class AppComponentImpl implements AppComponent {
         ViewModelProviders.of(
             servicesFragment,
             new ViewModelFactory<>(
-                new ServicesOptionsViewModelImpl(
+                new ServicesViewModelImpl(
                     new ServicesUseCaseImpl(
                         new ServicesGatewayImpl(
                             apiService,
@@ -402,7 +402,7 @@ public class AppComponentImpl implements AppComponent {
                     )
                 )
             )
-        ).get(ServicesOptionsViewModelImpl.class)
+        ).get(ServicesViewModelImpl.class)
 
     );
   }

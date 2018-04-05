@@ -1,4 +1,4 @@
-package com.fasten.executor_driver.presentation.options;
+package com.fasten.executor_driver.presentation.vehicleoptions;
 
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
@@ -11,7 +11,7 @@ import com.fasten.executor_driver.entity.OptionNumeric;
 /**
  * Модель для отображения опции ТС в списке опций ТС исполнителя. Тестируемое форматирование.
  */
-public class OptionsListItem<V> {
+public class VehicleOptionsListItem<V> {
 
   @LayoutRes
   private static final int TYPE_SWITCH = R.layout.fragment_vehicle_options_list_item_boolean;
@@ -21,7 +21,7 @@ public class OptionsListItem<V> {
   @NonNull
   private Option<V> option;
 
-  public OptionsListItem(@NonNull Option<V> option) {
+  VehicleOptionsListItem(@NonNull Option<V> option) {
     this.option = option;
   }
 
@@ -85,7 +85,7 @@ public class OptionsListItem<V> {
       return false;
     }
 
-    OptionsListItem that = (OptionsListItem) o;
+    VehicleOptionsListItem that = (VehicleOptionsListItem) o;
 
     return option.equals(that.option);
   }

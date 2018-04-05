@@ -10,32 +10,32 @@ import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 import com.fasten.executor_driver.R;
-import com.fasten.executor_driver.presentation.options.OptionsListItem;
-import com.fasten.executor_driver.presentation.options.OptionsListItems;
+import com.fasten.executor_driver.presentation.vehicleoptions.VehicleOptionsListItem;
+import com.fasten.executor_driver.presentation.vehicleoptions.VehicleOptionsListItems;
 import java.util.Locale;
 
-class OptionsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+class VehicleOptionsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
   @NonNull
-  private final OptionsListItems optionsListItems;
+  private final VehicleOptionsListItems vehicleOptionsListItems;
 
-  OptionsAdapter(@NonNull OptionsListItems optionsListItems) {
-    this.optionsListItems = optionsListItems;
+  VehicleOptionsAdapter(@NonNull VehicleOptionsListItems vehicleOptionsListItems) {
+    this.vehicleOptionsListItems = vehicleOptionsListItems;
   }
 
   @NonNull
-  OptionsListItems getOptionsListItems() {
-    return optionsListItems;
+  VehicleOptionsListItems getVehicleOptionsListItems() {
+    return vehicleOptionsListItems;
   }
 
   @Override
   public int getItemCount() {
-    return optionsListItems.size();
+    return vehicleOptionsListItems.size();
   }
 
   @Override
   public int getItemViewType(int position) {
-    return optionsListItems.get(position).getLayoutType();
+    return vehicleOptionsListItems.get(position).getLayoutType();
   }
 
   @NonNull
@@ -53,7 +53,8 @@ class OptionsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
   @Override
   public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
     if (holder instanceof VehicleBooleanOptionViewHolder) {
-      OptionsListItem<Boolean> item = (OptionsListItem<Boolean>) optionsListItems.get(position);
+      VehicleOptionsListItem<Boolean> item = (VehicleOptionsListItem<Boolean>) vehicleOptionsListItems
+          .get(position);
       holder.itemView.setOnClickListener(null);
       ((VehicleBooleanOptionViewHolder) holder).nameText.setText(item.getName());
       ((VehicleBooleanOptionViewHolder) holder).descriptionText
@@ -67,7 +68,8 @@ class OptionsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
           ((VehicleBooleanOptionViewHolder) holder).switchCompat.performClick()
       );
     } else if (holder instanceof VehicleNumericOptionViewHolder) {
-      OptionsListItem<Integer> item = (OptionsListItem<Integer>) optionsListItems.get(position);
+      VehicleOptionsListItem<Integer> item = (VehicleOptionsListItem<Integer>) vehicleOptionsListItems
+          .get(position);
       ((VehicleNumericOptionViewHolder) holder).nameText.setText(item.getName());
       ((VehicleNumericOptionViewHolder) holder).descriptionText.setText(item.getDescription());
       ((VehicleNumericOptionViewHolder) holder).seekBar.setOnSeekBarChangeListener(null);

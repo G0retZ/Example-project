@@ -17,20 +17,12 @@ import com.fasten.executor_driver.entity.OptionBoolean;
 import com.fasten.executor_driver.entity.OptionNumeric;
 import com.fasten.executor_driver.interactor.vehicle.VehicleOptionsUseCase;
 import com.fasten.executor_driver.presentation.ViewState;
-import com.fasten.executor_driver.presentation.options.OptionsListItem;
-import com.fasten.executor_driver.presentation.options.OptionsListItems;
-import com.fasten.executor_driver.presentation.options.OptionsViewActions;
-import com.fasten.executor_driver.presentation.options.OptionsViewModel;
-import com.fasten.executor_driver.presentation.options.OptionsViewStateError;
-import com.fasten.executor_driver.presentation.options.OptionsViewStateInitial;
-import com.fasten.executor_driver.presentation.options.OptionsViewStatePending;
-import com.fasten.executor_driver.presentation.options.OptionsViewStateReady;
 import io.reactivex.Completable;
-import io.reactivex.Observable;
+import io.reactivex.Single;
 import io.reactivex.android.plugins.RxAndroidPlugins;
 import io.reactivex.plugins.RxJavaPlugins;
 import io.reactivex.schedulers.Schedulers;
-import io.reactivex.subjects.PublishSubject;
+import io.reactivex.subjects.SingleSubject;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -47,16 +39,16 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 // TODO: написать недостающие тесты.
 @RunWith(MockitoJUnitRunner.class)
-public class VehicleOptionsViewModelTest {
+public class VehicleVehicleOptionsViewModelTest {
 
   @Rule
   public TestRule rule = new InstantTaskExecutorRule();
-  private OptionsViewModel vehicleOptionsViewModel;
+  private VehicleOptionsViewModel vehicleVehicleOptionsViewModel;
   @Mock
   private VehicleOptionsUseCase vehicleOptionsUseCase;
 
   @Mock
-  private Observer<ViewState<OptionsViewActions>> viewStateObserver;
+  private Observer<ViewState<VehicleOptionsViewActions>> viewStateObserver;
 
   @Mock
   private Observer<String> navigateObserver;
@@ -65,11 +57,11 @@ public class VehicleOptionsViewModelTest {
   public void setUp() {
     RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
     RxAndroidPlugins.setInitMainThreadSchedulerHandler(scheduler -> Schedulers.trampoline());
-    when(vehicleOptionsUseCase.getVehicleOptions()).thenReturn(Observable.never());
-    when(vehicleOptionsUseCase.getDriverOptions()).thenReturn(Observable.never());
+    when(vehicleOptionsUseCase.getVehicleOptions()).thenReturn(Single.never());
+    when(vehicleOptionsUseCase.getDriverOptions()).thenReturn(Single.never());
     when(vehicleOptionsUseCase.setSelectedVehicleAndOptions(anyList(), anyList()))
         .thenReturn(Completable.never());
-    vehicleOptionsViewModel = new VehicleOptionsViewModelImpl(vehicleOptionsUseCase);
+    vehicleVehicleOptionsViewModel = new VehicleOptionsViewModelImpl(vehicleOptionsUseCase);
   }
 
   /* Тетсируем работу с юзкейсом выбора опций ТС. */
@@ -80,9 +72,9 @@ public class VehicleOptionsViewModelTest {
   @Test
   public void askVehicleOptionsUseCaseForOptionsInitially() {
     // Действие:
-    vehicleOptionsViewModel.getViewStateLiveData();
-    vehicleOptionsViewModel.getViewStateLiveData();
-    vehicleOptionsViewModel.getViewStateLiveData();
+    vehicleVehicleOptionsViewModel.getViewStateLiveData();
+    vehicleVehicleOptionsViewModel.getViewStateLiveData();
+    vehicleVehicleOptionsViewModel.getViewStateLiveData();
 
     // Результат:
     verify(vehicleOptionsUseCase).getVehicleOptions();
@@ -100,40 +92,40 @@ public class VehicleOptionsViewModelTest {
         .thenReturn(Completable.complete());
 
     // Действие:
-    vehicleOptionsViewModel.setOptions(new OptionsListItems(
+    vehicleVehicleOptionsViewModel.setOptions(new VehicleOptionsListItems(
         Collections.singletonList(
-            new OptionsListItem<>(
+            new VehicleOptionsListItem<>(
                 new OptionBoolean(1, "name", "description", true, false)
             )
         ), Collections.singletonList(
-        new OptionsListItem<>(
+        new VehicleOptionsListItem<>(
             new OptionNumeric(3, "names", "description", true, 5, 0, 10)
         )
     )));
-    vehicleOptionsViewModel.setOptions(new OptionsListItems(Arrays.asList(
-        new OptionsListItem<>(
+    vehicleVehicleOptionsViewModel.setOptions(new VehicleOptionsListItems(Arrays.asList(
+        new VehicleOptionsListItem<>(
             new OptionBoolean(1, "name", "description", true, false)
         ),
-        new OptionsListItem<>(
+        new VehicleOptionsListItem<>(
             new OptionBoolean(2, "emacs", "description", true, true)
         )
     ), Collections.singletonList(
-        new OptionsListItem<>(
+        new VehicleOptionsListItem<>(
             new OptionNumeric(3, "names", "description", true, 5, 0, 10)
         )
     )));
-    vehicleOptionsViewModel.setOptions(new OptionsListItems(Arrays.asList(
-        new OptionsListItem<>(
+    vehicleVehicleOptionsViewModel.setOptions(new VehicleOptionsListItems(Arrays.asList(
+        new VehicleOptionsListItem<>(
             new OptionBoolean(1, "name", "description", true, false)
         ),
-        new OptionsListItem<>(
+        new VehicleOptionsListItem<>(
             new OptionBoolean(2, "emacs", "description", true, true)
         )
     ), Arrays.asList(
-        new OptionsListItem<>(
+        new VehicleOptionsListItem<>(
             new OptionNumeric(3, "names", "description", true, 5, 0, 10)
         ),
-        new OptionsListItem<>(
+        new VehicleOptionsListItem<>(
             new OptionNumeric(4, "nam", "description", false, 1, -1, 2)
         )
     )));
@@ -166,40 +158,40 @@ public class VehicleOptionsViewModelTest {
   @Test
   public void DoNotTouchVehicleOptionsUseCaseDuringVehicleOccupying() {
     // Действие:
-    vehicleOptionsViewModel.setOptions(new OptionsListItems(
+    vehicleVehicleOptionsViewModel.setOptions(new VehicleOptionsListItems(
         Collections.singletonList(
-            new OptionsListItem<>(
+            new VehicleOptionsListItem<>(
                 new OptionBoolean(1, "name", "description", true, false)
             )
         ), Collections.singletonList(
-        new OptionsListItem<>(
+        new VehicleOptionsListItem<>(
             new OptionNumeric(3, "names", "description", true, 5, 0, 10)
         )
     )));
-    vehicleOptionsViewModel.setOptions(new OptionsListItems(Arrays.asList(
-        new OptionsListItem<>(
+    vehicleVehicleOptionsViewModel.setOptions(new VehicleOptionsListItems(Arrays.asList(
+        new VehicleOptionsListItem<>(
             new OptionBoolean(1, "name", "description", true, false)
         ),
-        new OptionsListItem<>(
+        new VehicleOptionsListItem<>(
             new OptionBoolean(2, "emacs", "description", true, true)
         )
     ), Collections.singletonList(
-        new OptionsListItem<>(
+        new VehicleOptionsListItem<>(
             new OptionNumeric(3, "names", "description", true, 5, 0, 10)
         )
     )));
-    vehicleOptionsViewModel.setOptions(new OptionsListItems(Arrays.asList(
-        new OptionsListItem<>(
+    vehicleVehicleOptionsViewModel.setOptions(new VehicleOptionsListItems(Arrays.asList(
+        new VehicleOptionsListItem<>(
             new OptionBoolean(1, "name", "description", true, false)
         ),
-        new OptionsListItem<>(
+        new VehicleOptionsListItem<>(
             new OptionBoolean(2, "emacs", "description", true, true)
         )
     ), Arrays.asList(
-        new OptionsListItem<>(
+        new VehicleOptionsListItem<>(
             new OptionNumeric(3, "names", "description", true, 5, 0, 10)
         ),
-        new OptionsListItem<>(
+        new VehicleOptionsListItem<>(
             new OptionNumeric(4, "nam", "description", false, 1, -1, 2)
         )
     )));
@@ -223,10 +215,10 @@ public class VehicleOptionsViewModelTest {
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
 
     // Действие:
-    vehicleOptionsViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    vehicleVehicleOptionsViewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Результат:
-    inOrder.verify(viewStateObserver).onChanged(any(OptionsViewStateInitial.class));
+    inOrder.verify(viewStateObserver).onChanged(any(VehicleOptionsViewStateInitial.class));
     verifyNoMoreInteractions(viewStateObserver);
   }
 
@@ -236,38 +228,38 @@ public class VehicleOptionsViewModelTest {
   @Test
   public void setReadyViewStateToLiveData() {
     // Дано:
-    PublishSubject<List<Option>> publishSubject1 = PublishSubject.create();
-    PublishSubject<List<Option>> publishSubject2 = PublishSubject.create();
+    SingleSubject<List<Option>> singleSubject1 = SingleSubject.create();
+    SingleSubject<List<Option>> singleSubject2 = SingleSubject.create();
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    when(vehicleOptionsUseCase.getVehicleOptions()).thenReturn(publishSubject1);
-    when(vehicleOptionsUseCase.getDriverOptions()).thenReturn(publishSubject2);
-    vehicleOptionsViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    when(vehicleOptionsUseCase.getVehicleOptions()).thenReturn(singleSubject1);
+    when(vehicleOptionsUseCase.getDriverOptions()).thenReturn(singleSubject2);
+    vehicleVehicleOptionsViewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    publishSubject1.onNext(Arrays.asList(
+    singleSubject1.onSuccess(Arrays.asList(
         new OptionBoolean(1, "name", "description", true, false),
         new OptionBoolean(2, "emacs", "descriptions", true, true)
     ));
-    publishSubject2.onNext(Arrays.asList(
+    singleSubject2.onSuccess(Arrays.asList(
         new OptionNumeric(3, "names", "desc", true, 5, 0, 10),
         new OptionNumeric(4, "nam", "script", true, 1, -1, 2)
     ));
 
     // Результат:
-    inOrder.verify(viewStateObserver).onChanged(any(OptionsViewStateInitial.class));
-    inOrder.verify(viewStateObserver).onChanged(new OptionsViewStateReady(
-        new OptionsListItems(Arrays.asList(
-            new OptionsListItem<>(
+    inOrder.verify(viewStateObserver).onChanged(any(VehicleOptionsViewStateInitial.class));
+    inOrder.verify(viewStateObserver).onChanged(new VehicleOptionsViewStateReady(
+        new VehicleOptionsListItems(Arrays.asList(
+            new VehicleOptionsListItem<>(
                 new OptionBoolean(1, "name", "description", true, false)
             ),
-            new OptionsListItem<>(
+            new VehicleOptionsListItem<>(
                 new OptionBoolean(2, "emacs", "descriptions", true, true)
             )
         ), Arrays.asList(
-            new OptionsListItem<>(
+            new VehicleOptionsListItem<>(
                 new OptionNumeric(3, "names", "desc", true, 5, 0, 10)
             ),
-            new OptionsListItem<>(
+            new VehicleOptionsListItem<>(
                 new OptionNumeric(4, "nam", "script", true, 1, -1, 2)
             )
         ))
@@ -281,48 +273,48 @@ public class VehicleOptionsViewModelTest {
   @Test
   public void setPendingViewStateToLiveData() {
     // Дано:
-    PublishSubject<List<Option>> publishSubject1 = PublishSubject.create();
-    PublishSubject<List<Option>> publishSubject2 = PublishSubject.create();
+    SingleSubject<List<Option>> singleSubject1 = SingleSubject.create();
+    SingleSubject<List<Option>> singleSubject2 = SingleSubject.create();
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    when(vehicleOptionsUseCase.getVehicleOptions()).thenReturn(publishSubject1);
-    when(vehicleOptionsUseCase.getDriverOptions()).thenReturn(publishSubject2);
+    when(vehicleOptionsUseCase.getVehicleOptions()).thenReturn(singleSubject1);
+    when(vehicleOptionsUseCase.getDriverOptions()).thenReturn(singleSubject2);
     when(vehicleOptionsUseCase.setSelectedVehicleAndOptions(anyList(), anyList()))
         .thenReturn(Completable.complete());
-    vehicleOptionsViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    vehicleVehicleOptionsViewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    publishSubject1.onNext(Arrays.asList(
+    singleSubject1.onSuccess(Arrays.asList(
         new OptionBoolean(1, "name", "description", true, false),
         new OptionBoolean(2, "emacs", "descriptions", true, true)
     ));
-    publishSubject2.onNext(Arrays.asList(
+    singleSubject2.onSuccess(Arrays.asList(
         new OptionNumeric(3, "names", "desc", true, 5, 0, 10),
         new OptionNumeric(4, "nam", "script", true, 1, -1, 2)
     ));
-    vehicleOptionsViewModel.setOptions(
-        new OptionsListItems(new ArrayList<>(), new ArrayList<>())
+    vehicleVehicleOptionsViewModel.setOptions(
+        new VehicleOptionsListItems(new ArrayList<>(), new ArrayList<>())
     );
 
     // Результат:
-    inOrder.verify(viewStateObserver).onChanged(any(OptionsViewStateInitial.class));
-    inOrder.verify(viewStateObserver).onChanged(new OptionsViewStateReady(
-        new OptionsListItems(Arrays.asList(
-            new OptionsListItem<>(
+    inOrder.verify(viewStateObserver).onChanged(any(VehicleOptionsViewStateInitial.class));
+    inOrder.verify(viewStateObserver).onChanged(new VehicleOptionsViewStateReady(
+        new VehicleOptionsListItems(Arrays.asList(
+            new VehicleOptionsListItem<>(
                 new OptionBoolean(1, "name", "description", true, false)
             ),
-            new OptionsListItem<>(
+            new VehicleOptionsListItem<>(
                 new OptionBoolean(2, "emacs", "descriptions", true, true)
             )
         ), Arrays.asList(
-            new OptionsListItem<>(
+            new VehicleOptionsListItem<>(
                 new OptionNumeric(3, "names", "desc", true, 5, 0, 10)
             ),
-            new OptionsListItem<>(
+            new VehicleOptionsListItem<>(
                 new OptionNumeric(4, "nam", "script", true, 1, -1, 2)
             )
         ))
     ));
-    inOrder.verify(viewStateObserver).onChanged(any(OptionsViewStatePending.class));
+    inOrder.verify(viewStateObserver).onChanged(any(VehicleOptionsViewStatePending.class));
     verifyNoMoreInteractions(viewStateObserver);
   }
 
@@ -332,50 +324,50 @@ public class VehicleOptionsViewModelTest {
   @Test
   public void setNetworkErrorViewStateToLiveData() {
     // Дано:
-    PublishSubject<List<Option>> publishSubject1 = PublishSubject.create();
-    PublishSubject<List<Option>> publishSubject2 = PublishSubject.create();
+    SingleSubject<List<Option>> singleSubject1 = SingleSubject.create();
+    SingleSubject<List<Option>> singleSubject2 = SingleSubject.create();
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    when(vehicleOptionsUseCase.getVehicleOptions()).thenReturn(publishSubject1);
-    when(vehicleOptionsUseCase.getDriverOptions()).thenReturn(publishSubject2);
+    when(vehicleOptionsUseCase.getVehicleOptions()).thenReturn(singleSubject1);
+    when(vehicleOptionsUseCase.getDriverOptions()).thenReturn(singleSubject2);
     when(vehicleOptionsUseCase.setSelectedVehicleAndOptions(anyList(), anyList()))
         .thenReturn(Completable.error(NoNetworkException::new));
-    vehicleOptionsViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    vehicleVehicleOptionsViewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    publishSubject1.onNext(Arrays.asList(
+    singleSubject1.onSuccess(Arrays.asList(
         new OptionBoolean(1, "name", "description", true, false),
         new OptionBoolean(2, "emacs", "descriptions", true, true)
     ));
-    publishSubject2.onNext(Arrays.asList(
+    singleSubject2.onSuccess(Arrays.asList(
         new OptionNumeric(3, "names", "desc", true, 5, 0, 10),
         new OptionNumeric(4, "nam", "script", true, 1, -1, 2)
     ));
-    vehicleOptionsViewModel.setOptions(
-        new OptionsListItems(new ArrayList<>(), new ArrayList<>())
+    vehicleVehicleOptionsViewModel.setOptions(
+        new VehicleOptionsListItems(new ArrayList<>(), new ArrayList<>())
     );
 
     // Результат:
-    inOrder.verify(viewStateObserver).onChanged(any(OptionsViewStateInitial.class));
-    inOrder.verify(viewStateObserver).onChanged(new OptionsViewStateReady(
-        new OptionsListItems(Arrays.asList(
-            new OptionsListItem<>(
+    inOrder.verify(viewStateObserver).onChanged(any(VehicleOptionsViewStateInitial.class));
+    inOrder.verify(viewStateObserver).onChanged(new VehicleOptionsViewStateReady(
+        new VehicleOptionsListItems(Arrays.asList(
+            new VehicleOptionsListItem<>(
                 new OptionBoolean(1, "name", "description", true, false)
             ),
-            new OptionsListItem<>(
+            new VehicleOptionsListItem<>(
                 new OptionBoolean(2, "emacs", "descriptions", true, true)
             )
         ), Arrays.asList(
-            new OptionsListItem<>(
+            new VehicleOptionsListItem<>(
                 new OptionNumeric(3, "names", "desc", true, 5, 0, 10)
             ),
-            new OptionsListItem<>(
+            new VehicleOptionsListItem<>(
                 new OptionNumeric(4, "nam", "script", true, 1, -1, 2)
             )
         ))
     ));
-    inOrder.verify(viewStateObserver).onChanged(any(OptionsViewStatePending.class));
+    inOrder.verify(viewStateObserver).onChanged(any(VehicleOptionsViewStatePending.class));
     inOrder.verify(viewStateObserver)
-        .onChanged(new OptionsViewStateError(R.string.no_network_connection));
+        .onChanged(new VehicleOptionsViewStateError(R.string.no_network_connection));
     verifyNoMoreInteractions(viewStateObserver);
   }
 
@@ -389,11 +381,11 @@ public class VehicleOptionsViewModelTest {
     // Дано:
     when(vehicleOptionsUseCase.setSelectedVehicleAndOptions(anyList(), anyList()))
         .thenReturn(Completable.error(new NoNetworkException()));
-    vehicleOptionsViewModel.getNavigationLiveData().observeForever(navigateObserver);
+    vehicleVehicleOptionsViewModel.getNavigationLiveData().observeForever(navigateObserver);
 
     // Действие:
-    vehicleOptionsViewModel.setOptions(
-        new OptionsListItems(new ArrayList<>(), new ArrayList<>())
+    vehicleVehicleOptionsViewModel.setOptions(
+        new VehicleOptionsListItems(new ArrayList<>(), new ArrayList<>())
     );
 
     // Результат:
@@ -408,11 +400,11 @@ public class VehicleOptionsViewModelTest {
     // Дано:
     when(vehicleOptionsUseCase.setSelectedVehicleAndOptions(anyList(), anyList()))
         .thenReturn(Completable.complete());
-    vehicleOptionsViewModel.getNavigationLiveData().observeForever(navigateObserver);
+    vehicleVehicleOptionsViewModel.getNavigationLiveData().observeForever(navigateObserver);
 
     // Действие:
-    vehicleOptionsViewModel.setOptions(
-        new OptionsListItems(new ArrayList<>(), new ArrayList<>())
+    vehicleVehicleOptionsViewModel.setOptions(
+        new VehicleOptionsListItems(new ArrayList<>(), new ArrayList<>())
     );
 
     // Результат:

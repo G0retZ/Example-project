@@ -11,15 +11,7 @@ import com.fasten.executor_driver.entity.OptionBoolean;
 import com.fasten.executor_driver.entity.OptionNumeric;
 import com.fasten.executor_driver.interactor.vehicle.VehicleOptionsUseCase;
 import com.fasten.executor_driver.presentation.ViewState;
-import com.fasten.executor_driver.presentation.options.OptionsListItem;
-import com.fasten.executor_driver.presentation.options.OptionsListItems;
-import com.fasten.executor_driver.presentation.options.OptionsViewActions;
-import com.fasten.executor_driver.presentation.options.OptionsViewModel;
-import com.fasten.executor_driver.presentation.options.OptionsViewStateError;
-import com.fasten.executor_driver.presentation.options.OptionsViewStateInitial;
-import com.fasten.executor_driver.presentation.options.OptionsViewStatePending;
-import com.fasten.executor_driver.presentation.options.OptionsViewStateReady;
-import io.reactivex.Observable;
+import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
@@ -27,11 +19,12 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
 
-public class VehicleOptionsViewModelImpl extends ViewModel implements OptionsViewModel {
+public class VehicleOptionsViewModelImpl extends ViewModel implements
+    VehicleOptionsViewModel {
 
   private final VehicleOptionsUseCase vehicleOptionsUseCase;
   @NonNull
-  private final MutableLiveData<ViewState<OptionsViewActions>> viewStateLiveData;
+  private final MutableLiveData<ViewState<VehicleOptionsViewActions>> viewStateLiveData;
   @NonNull
   private final MutableLiveData<String> navigateLiveData;
   @Nullable
@@ -43,13 +36,13 @@ public class VehicleOptionsViewModelImpl extends ViewModel implements OptionsVie
   public VehicleOptionsViewModelImpl(VehicleOptionsUseCase vehicleOptionsUseCase) {
     this.vehicleOptionsUseCase = vehicleOptionsUseCase;
     viewStateLiveData = new MutableLiveData<>();
-    viewStateLiveData.postValue(new OptionsViewStateInitial());
+    viewStateLiveData.postValue(new VehicleOptionsViewStateInitial());
     navigateLiveData = new MutableLiveData<>();
   }
 
   @NonNull
   @Override
-  public LiveData<ViewState<OptionsViewActions>> getViewStateLiveData() {
+  public LiveData<ViewState<VehicleOptionsViewActions>> getViewStateLiveData() {
     if (optionsDisposable == null) {
       loadOptions();
     }
@@ -63,14 +56,16 @@ public class VehicleOptionsViewModelImpl extends ViewModel implements OptionsVie
   }
 
   @Override
-  public void setOptions(OptionsListItems optionsListItems) {
+  public void setOptions(VehicleOptionsListItems vehicleOptionsListItems) {
     ArrayList<Option> vehicleOptions = new ArrayList<>();
-    for (OptionsListItem optionsListItem : optionsListItems.getVehicleOptions()) {
-      vehicleOptions.add(optionsListItem.getOption());
+    for (VehicleOptionsListItem vehicleOptionsListItem : vehicleOptionsListItems
+        .getVehicleOptions()) {
+      vehicleOptions.add(vehicleOptionsListItem.getOption());
     }
     ArrayList<Option> driverOptions = new ArrayList<>();
-    for (OptionsListItem optionsListItem : optionsListItems.getDriverOptions()) {
-      driverOptions.add(optionsListItem.getOption());
+    for (VehicleOptionsListItem vehicleOptionsListItem : vehicleOptionsListItems
+        .getDriverOptions()) {
+      driverOptions.add(vehicleOptionsListItem.getOption());
     }
     occupyVehicle(vehicleOptions, driverOptions);
   }
@@ -79,20 +74,22 @@ public class VehicleOptionsViewModelImpl extends ViewModel implements OptionsVie
     if (optionsDisposable != null && !optionsDisposable.isDisposed()) {
       return;
     }
-    optionsDisposable = Observable.combineLatest(
+    optionsDisposable = Single.zip(
         vehicleOptionsUseCase.getVehicleOptions()
             .subscribeOn(Schedulers.single())
             .observeOn(AndroidSchedulers.mainThread())
-            .map(this::map),
+            .flattenAsObservable(options -> options)
+            .<VehicleOptionsListItem<?>>map(this::map)
+            .toList(),
         vehicleOptionsUseCase.getDriverOptions()
             .subscribeOn(Schedulers.single())
             .observeOn(AndroidSchedulers.mainThread())
-            .map(this::map),
-        OptionsListItems::new
-    ).doAfterTerminate(
-        this::loadOptions
+            .flattenAsObservable(options -> options)
+            .<VehicleOptionsListItem<?>>map(this::map)
+            .toList(),
+        VehicleOptionsListItems::new
     ).subscribe(
-        items -> viewStateLiveData.postValue(new OptionsViewStateReady(items)),
+        items -> viewStateLiveData.postValue(new VehicleOptionsViewStateReady(items)),
         throwable -> {
         }
     );
@@ -103,7 +100,7 @@ public class VehicleOptionsViewModelImpl extends ViewModel implements OptionsVie
     if (occupyDisposable != null && !occupyDisposable.isDisposed()) {
       return;
     }
-    viewStateLiveData.postValue(new OptionsViewStatePending());
+    viewStateLiveData.postValue(new VehicleOptionsViewStatePending());
     occupyDisposable = vehicleOptionsUseCase
         .setSelectedVehicleAndOptions(vehicleOptions, driverOptions)
         .subscribeOn(Schedulers.single())
@@ -111,22 +108,17 @@ public class VehicleOptionsViewModelImpl extends ViewModel implements OptionsVie
         .subscribe(
             () -> navigateLiveData.postValue(VehicleOptionsNavigate.SERVICES),
             throwable -> viewStateLiveData
-                .postValue(new OptionsViewStateError(R.string.no_network_connection))
+                .postValue(new VehicleOptionsViewStateError(R.string.no_network_connection))
         );
   }
 
-  private List<OptionsListItem<?>> map(List<Option> options) {
-    ArrayList<OptionsListItem<?>> optionsListItems = new ArrayList<>();
-    for (Option option : options) {
-      if (option instanceof OptionBoolean) {
-        optionsListItems
-            .add(new OptionsListItem<>((OptionBoolean) option));
-      } else if (option instanceof OptionNumeric) {
-        optionsListItems
-            .add(new OptionsListItem<>((OptionNumeric) option));
-      }
+  private VehicleOptionsListItem<?> map(Option option) {
+    if (option instanceof OptionBoolean) {
+      return new VehicleOptionsListItem<>((OptionBoolean) option);
+    } else if (option instanceof OptionNumeric) {
+      return new VehicleOptionsListItem<>((OptionNumeric) option);
     }
-    return optionsListItems;
+    return null;
   }
 
   @Override
