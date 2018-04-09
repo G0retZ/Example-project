@@ -11,7 +11,7 @@ public final class ServicesViewStatePending implements ViewState<ServicesViewAct
   @Override
   public void apply(@NonNull ServicesViewActions stateActions) {
     stateActions.enableReadyButton(false);
-    stateActions.showServicesList(false);
+    stateActions.showServicesList(true);
     stateActions.showServicesPending(true);
     stateActions.showServicesListErrorMessage(false);
   }
