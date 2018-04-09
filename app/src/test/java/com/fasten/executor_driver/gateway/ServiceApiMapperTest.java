@@ -51,7 +51,7 @@ public class ServiceApiMapperTest {
    * @throws Exception ошибка
    */
   @Test(expected = DataMappingException.class)
-  public void mappingEmptyStringFail() throws Exception {
+  public void mappingNullNameFail() throws Exception {
     // Дано и Действие:
     mapper.map(new ApiServiceItem(1, null, 300));
   }
@@ -62,7 +62,7 @@ public class ServiceApiMapperTest {
    * @throws Exception ошибка
    */
   @Test(expected = DataMappingException.class)
-  public void mappingNonexistentFail() throws Exception {
+  public void mappingNullPriceFail() throws Exception {
     // Дано и Действие:
     mapper.map(new ApiServiceItem(1, "a", null));
   }
