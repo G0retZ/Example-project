@@ -63,7 +63,7 @@ public class ServicesViewModelTest {
    * Должен просить юзкейс получить список услуг, при первой и только при первой подписке.
    */
   @Test
-  public void askVehicleOptionsUseCaseForOptionsInitially() {
+  public void askServicesUseCaseForOptionsInitially() {
     // Дано:
     when(servicesUseCase.loadServices()).thenReturn(Single.just(
         Arrays.asList(
@@ -86,7 +86,7 @@ public class ServicesViewModelTest {
    * Должен попросить юзкейс запомнить указанные услуги.
    */
   @Test
-  public void askVehicleOptionsUseCaseToOccupyVehicleWithOptions() {
+  public void askServicesUseCaseToOccupyVehicleWithOptions() {
     // Дано:
     when(servicesUseCase.setSelectedServices(anyList())).thenReturn(Completable.complete());
 
@@ -124,7 +124,7 @@ public class ServicesViewModelTest {
    * Не должен трогать юзкейс, если предыдущий запрос запоминания указанных услуг еще не завершился.
    */
   @Test
-  public void DoNotTouchVehicleOptionsUseCaseDuringVehicleOccupying() {
+  public void DoNotTouchServicesUseCaseDuringVehicleOccupying() {
     // Действие:
     servicesViewModel.setServices(Collections.singletonList(
         new ServicesListItem(new Service(0, "n1", 100, false))
