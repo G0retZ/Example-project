@@ -5,7 +5,7 @@ import com.fasten.executor_driver.entity.NoServicesAvailableException;
 import com.fasten.executor_driver.entity.Service;
 import io.reactivex.Completable;
 import io.reactivex.Single;
-import java.util.Iterator;
+import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
 
@@ -32,15 +32,15 @@ public class ServicesUseCaseImpl implements ServicesUseCase {
 
   @Override
   public Completable setSelectedServices(List<Service> services) {
-    Iterator<Service> serviceIterator = services.iterator();
-    while (serviceIterator.hasNext()) {
-      if (!serviceIterator.next().isSelected()) {
-        serviceIterator.remove();
+    List<Service> selectedServices = new ArrayList<>();
+    for (Service service : services) {
+      if (service.isSelected()) {
+        selectedServices.add(service);
       }
     }
-    if (services.isEmpty()) {
+    if (selectedServices.isEmpty()) {
       return Completable.error(new NoServicesAvailableException());
     }
-    return gateway.sendSelectedServices(services);
+    return gateway.sendSelectedServices(selectedServices);
   }
 }
