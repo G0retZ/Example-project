@@ -1,13 +1,9 @@
 package com.fasten.executor_driver.presentation.services;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
-import com.fasten.executor_driver.entity.Service;
 import java.util.ArrayList;
-import java.util.Arrays;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,11 +20,7 @@ public class ServicesViewStateReadyTest {
 
   @Before
   public void setUp() {
-    viewState = new ServicesViewStateReady(Arrays.asList(
-        new ServicesListItem(new Service(0, "n1", 100, true)),
-        new ServicesListItem(new Service(1, "n2", 10, false)),
-        new ServicesListItem(new Service(2, "n3", 130, true))
-    ));
+    viewState = new ServicesViewStateReady(new ArrayList<>());
   }
 
   @Test
@@ -40,31 +32,9 @@ public class ServicesViewStateReadyTest {
     verify(codeViewActions).enableReadyButton(true);
     verify(codeViewActions).showServicesList(true);
     verify(codeViewActions).showServicesPending(false);
-    verify(codeViewActions).showServicesListErrorMessage(false);
-    verify(codeViewActions).setServicesListItems(Arrays.asList(
-        new ServicesListItem(new Service(0, "n1", 100, true)),
-        new ServicesListItem(new Service(1, "n2", 10, false)),
-        new ServicesListItem(new Service(2, "n3", 130, true))
-    ));
+    verify(codeViewActions).showServicesListErrorMessage(false, 0);
+    verify(codeViewActions).showServicesListResolvableErrorMessage(false, 0);
+    verify(codeViewActions).setServicesListItems(new ArrayList<>());
     verifyNoMoreInteractions(codeViewActions);
-  }
-
-  @Test
-  public void testEquals() {
-    assertEquals(viewState, new ServicesViewStateReady(Arrays.asList(
-        new ServicesListItem(new Service(0, "n1", 100, true)),
-        new ServicesListItem(new Service(1, "n2", 10, false)),
-        new ServicesListItem(new Service(2, "n3", 130, true))
-    )));
-    assertNotEquals(viewState, new ServicesViewStateReady(new ArrayList<>()));
-    assertNotEquals(viewState, new ServicesViewStateReady(Arrays.asList(
-        new ServicesListItem(new Service(0, "n1", 100, true)),
-        new ServicesListItem(new Service(2, "n3", 130, true))
-    )));
-    assertNotEquals(viewState, new ServicesViewStateReady(Arrays.asList(
-        new ServicesListItem(new Service(-1, "n1", 100, true)),
-        new ServicesListItem(new Service(1, "n2", 10, false)),
-        new ServicesListItem(new Service(2, "n3", 130, true))
-    )));
   }
 }

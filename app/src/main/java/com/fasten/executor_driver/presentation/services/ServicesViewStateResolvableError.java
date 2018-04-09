@@ -2,18 +2,18 @@ package com.fasten.executor_driver.presentation.services;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
-import java.util.ArrayList;
 
 /**
- * Состояние непоправимой ошибки при загрузке услуг.
+ * Состояние поправимой ошибки при отправки услуг.
  */
-public final class ServicesViewStateError extends ServicesViewState {
+public final class ServicesViewStateResolvableError extends ServicesViewState {
 
   @StringRes
   private final int errorMessage;
 
-  ServicesViewStateError(@StringRes int errorMessage) {
-    super(new ArrayList<>());
+  ServicesViewStateResolvableError(@StringRes int errorMessage,
+      ServicesViewState servicesViewState) {
+    super(servicesViewState);
     this.errorMessage = errorMessage;
   }
 
@@ -21,15 +21,15 @@ public final class ServicesViewStateError extends ServicesViewState {
   public void apply(@NonNull ServicesViewActions stateActions) {
     super.apply(stateActions);
     stateActions.enableReadyButton(false);
-    stateActions.showServicesList(false);
+    stateActions.showServicesList(true);
     stateActions.showServicesPending(false);
-    stateActions.showServicesListErrorMessage(true, errorMessage);
-    stateActions.showServicesListResolvableErrorMessage(false, 0);
+    stateActions.showServicesListErrorMessage(false, 0);
+    stateActions.showServicesListResolvableErrorMessage(true, errorMessage);
   }
 
   @Override
   public String toString() {
-    return "ServicesViewStateError{" +
+    return "ServicesViewStateResolvableError{" +
         "errorMessage=" + errorMessage +
         '}';
   }
@@ -46,7 +46,7 @@ public final class ServicesViewStateError extends ServicesViewState {
       return false;
     }
 
-    ServicesViewStateError that = (ServicesViewStateError) o;
+    ServicesViewStateResolvableError that = (ServicesViewStateResolvableError) o;
 
     return errorMessage == that.errorMessage;
   }

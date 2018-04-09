@@ -1,53 +1,28 @@
 package com.fasten.executor_driver.presentation.services;
 
 import android.support.annotation.NonNull;
-import com.fasten.executor_driver.presentation.ViewState;
 import java.util.List;
 
 /**
  * Состояние гоновности списка услуг.
  */
-public final class ServicesViewStateReady implements ViewState<ServicesViewActions> {
+public final class ServicesViewStateReady extends ServicesViewState {
 
-  @NonNull
-  private final List<ServicesListItem> servicesListItems;
+  ServicesViewStateReady(ServicesViewState servicesViewState) {
+    super(servicesViewState);
+  }
 
   ServicesViewStateReady(@NonNull List<ServicesListItem> servicesListItems) {
-    this.servicesListItems = servicesListItems;
+    super(servicesListItems);
   }
 
   @Override
   public void apply(@NonNull ServicesViewActions stateActions) {
+    super.apply(stateActions);
     stateActions.enableReadyButton(true);
     stateActions.showServicesList(true);
     stateActions.showServicesPending(false);
-    stateActions.showServicesListErrorMessage(false);
-    stateActions.setServicesListItems(servicesListItems);
-  }
-
-  @Override
-  public String toString() {
-    return "ServicesViewStateReady{" +
-        "servicesListItems=" + servicesListItems +
-        '}';
-  }
-
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
-    }
-
-    ServicesViewStateReady that = (ServicesViewStateReady) o;
-
-    return servicesListItems.equals(that.servicesListItems);
-  }
-
-  @Override
-  public int hashCode() {
-    return servicesListItems.hashCode();
+    stateActions.showServicesListErrorMessage(false, 0);
+    stateActions.showServicesListResolvableErrorMessage(false, 0);
   }
 }

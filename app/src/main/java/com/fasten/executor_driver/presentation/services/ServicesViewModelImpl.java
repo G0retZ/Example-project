@@ -33,7 +33,8 @@ public class ServicesViewModelImpl extends ViewModel implements ServicesViewMode
   public ServicesViewModelImpl(ServicesUseCase servicesUseCase) {
     this.servicesUseCase = servicesUseCase;
     viewStateLiveData = new MutableLiveData<>();
-    viewStateLiveData.postValue(new ServicesViewStateInitial());
+    viewStateLiveData
+        .postValue(new ServicesViewStatePending(new ServicesViewState(new ArrayList<>())));
     navigateLiveData = new MutableLiveData<>();
   }
 
@@ -61,7 +62,9 @@ public class ServicesViewModelImpl extends ViewModel implements ServicesViewMode
     for (ServicesListItem servicesListItem : servicesListItems) {
       services.add(servicesListItem.getService());
     }
-    viewStateLiveData.postValue(new ServicesViewStatePending());
+    viewStateLiveData.postValue(new ServicesViewStatePending(
+        (ServicesViewState) viewStateLiveData.getValue()
+    ));
     setServicesDisposable = servicesUseCase
         .setSelectedServices(services)
         .subscribeOn(Schedulers.single())
@@ -70,15 +73,28 @@ public class ServicesViewModelImpl extends ViewModel implements ServicesViewMode
             () -> {
             },
             throwable -> {
-              ServicesViewStateError servicesViewStateError;
+              ServicesViewStateResolvableError servicesViewStateError;
               if (throwable instanceof NoServicesAvailableException) {
-                servicesViewStateError = new ServicesViewStateError(R.string.no_services_selected);
+                servicesViewStateError = new ServicesViewStateResolvableError(
+                    R.string.no_services_selected,
+                    (ServicesViewState) viewStateLiveData.getValue()
+                );
               } else {
-                servicesViewStateError = new ServicesViewStateError(R.string.no_network_connection);
+                servicesViewStateError = new ServicesViewStateResolvableError(
+                    R.string.no_network_connection,
+                    (ServicesViewState) viewStateLiveData.getValue()
+                );
               }
               viewStateLiveData.postValue(servicesViewStateError);
             }
         );
+  }
+
+  @Override
+  public void errorConsumed() {
+    viewStateLiveData.postValue(new ServicesViewStateReady(
+        (ServicesViewState) viewStateLiveData.getValue())
+    );
   }
 
   private void loadServices() {
@@ -93,7 +109,15 @@ public class ServicesViewModelImpl extends ViewModel implements ServicesViewMode
         .toList()
         .subscribe(
             items -> viewStateLiveData.postValue(new ServicesViewStateReady(items)),
-            Throwable::printStackTrace
+            throwable -> {
+              ServicesViewStateError servicesViewStateError;
+              if (throwable instanceof NoServicesAvailableException) {
+                servicesViewStateError = new ServicesViewStateError(R.string.no_services_available);
+              } else {
+                servicesViewStateError = new ServicesViewStateError(R.string.no_network_connection);
+              }
+              viewStateLiveData.postValue(servicesViewStateError);
+            }
         );
 
   }

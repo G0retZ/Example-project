@@ -14,4 +14,9 @@ public interface ServicesViewModel extends ViewModel<ServicesViewActions> {
    * @param servicesListItems - список сервисов
    */
   void setServices(List<ServicesListItem> servicesListItems);
+
+  /**
+   * Передает событие отработки ошибки.
+   */
+  void errorConsumed();
 }

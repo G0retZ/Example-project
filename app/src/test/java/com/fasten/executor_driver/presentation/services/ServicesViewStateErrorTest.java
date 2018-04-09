@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNotEquals;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
+import java.util.ArrayList;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -33,8 +34,9 @@ public class ServicesViewStateErrorTest {
     verify(codeViewActions).enableReadyButton(false);
     verify(codeViewActions).showServicesList(false);
     verify(codeViewActions).showServicesPending(false);
-    verify(codeViewActions).showServicesListErrorMessage(true);
-    verify(codeViewActions).setServicesListErrorMessage(123);
+    verify(codeViewActions).showServicesListErrorMessage(true, 123);
+    verify(codeViewActions).showServicesListResolvableErrorMessage(false, 0);
+    verify(codeViewActions).setServicesListItems(new ArrayList<>());
     verifyNoMoreInteractions(codeViewActions);
   }
 
