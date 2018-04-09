@@ -53,7 +53,7 @@ public class ServicesGatewayTest {
    * Должен запросить у АПИ список услуг.
    */
   @Test
-  public void askGatewayForHeatMap() {
+  public void askGatewayForServices() {
     // Действие:
     servicesGateway.getServices();
 
@@ -65,7 +65,7 @@ public class ServicesGatewayTest {
    * Должен запросить у АПИ completable на вход с заданными параметрами.
    */
   @Test
-  public void authCompletableRequested() {
+  public void setServicesCompletableRequested() {
     // Действие:
     servicesGateway.sendSelectedServices(
         Arrays.asList(
@@ -111,7 +111,7 @@ public class ServicesGatewayTest {
    * @throws Exception error
    */
   @Test
-  public void askVehicleMapperForFirstMappingOnly() throws Exception {
+  public void askMapperForFirstMappingOnly() throws Exception {
     // Дано:
     when(mapper.map(any())).thenThrow(new DataMappingException());
     when(api.getMyServices()).thenReturn(Single.just(Arrays.asList(
@@ -211,7 +211,7 @@ public class ServicesGatewayTest {
    * Должен ответить успехом.
    */
   @Test
-  public void answerAuthSuccessful() {
+  public void answerServicesSetSuccessful() {
     // Дано:
     when(api.setMyServices(anyString())).thenReturn(Completable.complete());
 
