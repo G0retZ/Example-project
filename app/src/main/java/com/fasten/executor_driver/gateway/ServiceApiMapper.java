@@ -23,6 +23,6 @@ public class ServiceApiMapper implements Mapper<ApiServiceItem, Service> {
     if (from.getPrice() == null) {
       throw new DataMappingException("Ошибка маппинга: значение цены не должно быть null!");
     }
-    return new Service(from.getId(), from.getName(), from.getPrice(), true);
+    return new Service(from.getId(), from.getName(), from.getPrice(), from.isSelected());
   }
 }

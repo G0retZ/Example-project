@@ -40,7 +40,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
-public class VehicleVehicleOptionsViewModelTest {
+public class VehicleOptionsViewModelTest {
 
   @Rule
   public TestRule rule = new InstantTaskExecutorRule();
@@ -212,7 +212,7 @@ public class VehicleVehicleOptionsViewModelTest {
     )));
 
     // Результат:
-    verify(vehicleOptionsUseCase).setSelectedVehicleAndOptions(Collections.singletonList(
+    verify(vehicleOptionsUseCase, only()).setSelectedVehicleAndOptions(Collections.singletonList(
         new OptionBoolean(1, "name", "description", true, false)
     ), Collections.singletonList(
         new OptionNumeric(3, "names", "description", true, 5, 0, 10)

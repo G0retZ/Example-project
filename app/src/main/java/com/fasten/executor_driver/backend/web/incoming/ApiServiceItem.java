@@ -16,6 +16,7 @@ public class ApiServiceItem {
   @Nullable
   @SerializedName("price")
   private Integer price;
+  private boolean selected;
 
   /**
    * Конструктор без параметров желателен для безопасной работы Gson.
@@ -24,7 +25,6 @@ public class ApiServiceItem {
   public ApiServiceItem() {
   }
 
-  @SuppressWarnings("unused")
   public ApiServiceItem(long id, @Nullable String name, @Nullable Integer price) {
     this.id = id;
     this.name = name;
@@ -45,6 +45,15 @@ public class ApiServiceItem {
     return price;
   }
 
+  public boolean isSelected() {
+    return selected;
+  }
+
+  public ApiServiceItem setSelected(boolean selected) {
+    this.selected = selected;
+    return this;
+  }
+
   @SuppressWarnings("SimplifiableIfStatement")
   @Override
   public boolean equals(Object o) {
@@ -60,6 +69,9 @@ public class ApiServiceItem {
     if (id != that.id) {
       return false;
     }
+    if (selected != that.selected) {
+      return false;
+    }
     if (name != null ? !name.equals(that.name) : that.name != null) {
       return false;
     }
@@ -71,6 +83,7 @@ public class ApiServiceItem {
     int result = (int) (id ^ (id >>> 32));
     result = 31 * result + (name != null ? name.hashCode() : 0);
     result = 31 * result + (price != null ? price.hashCode() : 0);
+    result = 31 * result + (selected ? 1 : 0);
     return result;
   }
 }

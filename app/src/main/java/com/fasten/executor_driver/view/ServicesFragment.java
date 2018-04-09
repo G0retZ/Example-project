@@ -1,5 +1,7 @@
 package com.fasten.executor_driver.view;
 
+import android.app.AlertDialog.Builder;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -30,6 +32,13 @@ public class ServicesFragment extends BaseFragment implements ServicesViewAction
   private FrameLayout pendingIndicator;
   private TextView errorText;
   private Button readyButton;
+  private Context context;
+
+  @Override
+  public void onAttach(Context context) {
+    super.onAttach(context);
+    this.context = context;
+  }
 
   @Inject
   public void setServicesViewModel(@NonNull ServicesViewModel servicesViewModel) {
@@ -71,6 +80,12 @@ public class ServicesFragment extends BaseFragment implements ServicesViewAction
   }
 
   @Override
+  public void onDetach() {
+    super.onDetach();
+    context = null;
+  }
+
+  @Override
   public void enableReadyButton(boolean enable) {
     readyButton.setEnabled(enable);
   }
@@ -91,12 +106,23 @@ public class ServicesFragment extends BaseFragment implements ServicesViewAction
   }
 
   @Override
-  public void showServicesListErrorMessage(boolean show) {
+  public void showServicesListErrorMessage(boolean show, int messageId) {
     errorText.setVisibility(show ? View.VISIBLE : View.GONE);
+    if (show) {
+      errorText.setText(messageId);
+    }
   }
 
   @Override
-  public void setServicesListErrorMessage(int messageId) {
-    errorText.setText(messageId);
+  public void showServicesListResolvableErrorMessage(boolean show, int messageId) {
+    if (show) {
+      new Builder(context)
+          .setTitle(R.string.error)
+          .setMessage(messageId)
+          .setPositiveButton(getString(android.R.string.ok),
+              (dialog, which) -> servicesViewModel.errorConsumed())
+          .create()
+          .show();
+    }
   }
 }

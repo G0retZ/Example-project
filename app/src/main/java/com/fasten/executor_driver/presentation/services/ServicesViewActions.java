@@ -41,13 +41,15 @@ public interface ServicesViewActions {
    * Показать сообщение об ошибке.
    *
    * @param show - показать или нет?
-   */
-  void showServicesListErrorMessage(boolean show);
-
-  /**
-   * Задать сообщение об ошибке.
-   *
    * @param messageId - ИД ресурса сообщения об ошибке
    */
-  void setServicesListErrorMessage(@StringRes int messageId);
+  void showServicesListErrorMessage(boolean show, @StringRes int messageId);
+
+  /**
+   * Показать решаемое сообщение об ошибке.
+   *
+   * @param show - показать или нет?
+   * @param messageId - ИД ресурса сообщения об ошибке
+   */
+  void showServicesListResolvableErrorMessage(boolean show, @StringRes int messageId);
 }
