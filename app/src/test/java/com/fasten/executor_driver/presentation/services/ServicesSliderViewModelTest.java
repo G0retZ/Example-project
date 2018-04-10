@@ -91,8 +91,8 @@ public class ServicesSliderViewModelTest {
    * Должен вернуть свое состояние вида.
    */
   @Test
-  public void setNoNetworkErrorViewStateToLiveData() {
-    // Дано и Действие:
+  public void setViewStateToLiveData() {
+    // Дано:
     servicesViewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:

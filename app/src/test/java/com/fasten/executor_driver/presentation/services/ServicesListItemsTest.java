@@ -31,7 +31,7 @@ public class ServicesListItemsTest {
    * Проверяем правильность рассчитанной позиции ползунка.
    */
   @Test
-  public void initPosition() {
+  public void autoPosition() {
     assertEquals(servicesListItems.getCurrentPosition(), 57);
   }
 
@@ -71,7 +71,7 @@ public class ServicesListItemsTest {
    */
   @Test
   public void listSame() {
-    assertEquals(servicesListItems.getServicesListItems(57),
+    assertEquals(servicesListItems.getServicesListItems(55),
         Arrays.asList(
             new ServicesListItem(new Service(0, "n1", 100, true)),
             new ServicesListItem(new Service(2, "n3", 130, false)),
@@ -82,8 +82,8 @@ public class ServicesListItemsTest {
   }
 
   /**
-   * Должен верно отобразить список для такого новго положения ползунка. При расширении диапазона
-   * вновь попадающие в него элементы должны быть автоматически выбраны.
+   * Должен верно отобразить список для новго положения ползунка. При расширении диапазона вновь по-
+   * падающие в него элементы должны быть автоматически выбраны.
    */
   @Test
   public void listExpanding() {
