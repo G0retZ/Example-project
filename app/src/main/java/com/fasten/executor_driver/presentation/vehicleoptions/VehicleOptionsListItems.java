@@ -4,7 +4,7 @@ import android.support.annotation.NonNull;
 import java.util.List;
 
 /**
- * Модель для отображения осписка опций ТС и исполнителя. Контейнер для моделей опций.
+ * Модель для отображения списка опций ТС и исполнителя. Контейнер для моделей опций.
  */
 public class VehicleOptionsListItems {
 
