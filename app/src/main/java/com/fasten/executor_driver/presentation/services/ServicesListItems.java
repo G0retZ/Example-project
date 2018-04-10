@@ -20,10 +20,8 @@ public class ServicesListItems {
    * Задаем список элементов услуг.
    *
    * @param servicesListItems - список элементов услуг
-   * @return - процентное соотношение минимальной цены среди выбранных услуг к диапазону цен всех услуг.
    */
-  @IntRange(from = 0, to = 100)
-  public int setServicesListItems(@NonNull List<ServicesListItem> servicesListItems) {
+  public void setServicesListItems(@NonNull List<ServicesListItem> servicesListItems) {
     minPrice = Integer.MAX_VALUE;
     maxPrice = 0;
     minSelectedPrice = Integer.MAX_VALUE;
@@ -41,7 +39,6 @@ public class ServicesListItems {
     if (minSelectedPrice == Integer.MAX_VALUE) {
       minSelectedPrice = maxPrice;
     }
-    return (int) ((minSelectedPrice - minPrice) * 100f / (maxPrice - minPrice));
   }
 
   /**
@@ -78,5 +75,21 @@ public class ServicesListItems {
       result.get(0).setChecked(true);
     }
     return result;
+  }
+
+  public int getMaxPrice() {
+    return maxPrice;
+  }
+
+  public int getMinPrice() {
+    return minPrice;
+  }
+
+  /**
+   * текущее положение ползунка.
+   */
+  @IntRange(from = 0, to = 100)
+  public int getCurrentPosition() {
+    return (int) ((minSelectedPrice - minPrice) * 100f / (maxPrice - minPrice));
   }
 }

@@ -11,12 +11,11 @@ import org.junit.Test;
 public class ServicesListItemsTest {
 
   private ServicesListItems servicesListItems;
-  private int position;
 
   @Before
   public void setUp() {
     servicesListItems = new ServicesListItems();
-    position = servicesListItems.setServicesListItems(
+    servicesListItems.setServicesListItems(
         Arrays.asList(
             new ServicesListItem(new Service(0, "n1", 100, true)),
             new ServicesListItem(new Service(1, "n2", 10, false)),
@@ -33,7 +32,23 @@ public class ServicesListItemsTest {
    */
   @Test
   public void initPosition() {
-    assertEquals(position, 57);
+    assertEquals(servicesListItems.getCurrentPosition(), 57);
+  }
+
+  /**
+   * Проверяем правильность минимальной позиции ползунка.
+   */
+  @Test
+  public void minPrice() {
+    assertEquals(servicesListItems.getMinPrice(), 10);
+  }
+
+  /**
+   * Проверяем правильность максимальной позиции ползунка.
+   */
+  @Test
+  public void maxPrice() {
+    assertEquals(servicesListItems.getMaxPrice(), 150);
   }
 
   /**
@@ -103,7 +118,7 @@ public class ServicesListItemsTest {
    */
   @Test
   public void nothingSelected() {
-    position = servicesListItems.setServicesListItems(
+    servicesListItems.setServicesListItems(
         Arrays.asList(
             new ServicesListItem(new Service(0, "n1", 100, false)),
             new ServicesListItem(new Service(1, "n2", 10, false)),
@@ -113,7 +128,7 @@ public class ServicesListItemsTest {
             new ServicesListItem(new Service(5, "n6", 150, false))
         )
     );
-    assertEquals(position, 100);
+    assertEquals(servicesListItems.getCurrentPosition(), 100);
     assertEquals(servicesListItems.getServicesListItems(),
         Collections.singletonList(
             new ServicesListItem(new Service(5, "n6", 150, true))
@@ -126,7 +141,7 @@ public class ServicesListItemsTest {
    */
   @Test
   public void allSelected() {
-    position = servicesListItems.setServicesListItems(
+    servicesListItems.setServicesListItems(
         Arrays.asList(
             new ServicesListItem(new Service(0, "n1", 100, true)),
             new ServicesListItem(new Service(1, "n2", 10, true)),
@@ -136,7 +151,7 @@ public class ServicesListItemsTest {
             new ServicesListItem(new Service(5, "n6", 150, true))
         )
     );
-    assertEquals(position, 0);
+    assertEquals(servicesListItems.getCurrentPosition(), 0);
     assertEquals(servicesListItems.getServicesListItems(),
         Arrays.asList(
             new ServicesListItem(new Service(0, "n1", 100, true)),
