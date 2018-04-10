@@ -3,7 +3,6 @@ package com.fasten.executor_driver.interactor.services;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.only;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
@@ -44,21 +43,40 @@ public class ServicesGatewayTest {
     RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
     servicesGateway = new ServicesGatewayImpl(api, mapper);
     when(api.getMyServices()).thenReturn(Single.never());
+    when(api.getMySelectedServices()).thenReturn(Single.never());
     when(api.setMyServices(anyString())).thenReturn(Completable.never());
   }
 
   /* Проверяем работу с АПИ */
 
   /**
+   * Должен запросить у АПИ список выбранных услуг.
+   */
+  @Test
+  public void askGatewayForSelectedServices() {
+    // Действие:
+    servicesGateway.getServices().test();
+
+    // Результат:
+    verify(api).getMySelectedServices();
+    verifyNoMoreInteractions(api);
+  }
+
+  /**
    * Должен запросить у АПИ список услуг.
    */
   @Test
   public void askGatewayForServices() {
+    // Дано:
+    when(api.getMySelectedServices()).thenReturn(Single.just("5,6"));
+
     // Действие:
-    servicesGateway.getServices();
+    servicesGateway.getServices().test();
 
     // Результат:
-    verify(api, only()).getMyServices();
+    verify(api).getMySelectedServices();
+    verify(api).getMyServices();
+    verifyNoMoreInteractions(api);
   }
 
   /**
@@ -91,17 +109,20 @@ public class ServicesGatewayTest {
   public void askMapperForMapping() throws Exception {
     // Дано:
     when(mapper.map(any())).thenReturn(new Service(0, "n1", 100, false));
+    when(api.getMySelectedServices()).thenReturn(Single.just("0,2"));
     when(api.getMyServices()).thenReturn(Single.just(Arrays.asList(
-        new ApiServiceItem(),
-        new ApiServiceItem(),
-        new ApiServiceItem()
+        new ApiServiceItem(0, "n1", 100),
+        new ApiServiceItem(1, "n2", 10),
+        new ApiServiceItem(2, "n3", 130)
     )));
 
     // Действие:
     servicesGateway.getServices().test();
 
     // Результат:
-    verify(mapper, times(3)).map(new ApiServiceItem());
+    verify(mapper).map(new ApiServiceItem(0, "n1", 100).setSelected(true));
+    verify(mapper).map(new ApiServiceItem(1, "n2", 10).setSelected(false));
+    verify(mapper).map(new ApiServiceItem(2, "n3", 130).setSelected(true));
     verifyNoMoreInteractions(mapper);
   }
 
@@ -114,17 +135,18 @@ public class ServicesGatewayTest {
   public void askMapperForFirstMappingOnly() throws Exception {
     // Дано:
     when(mapper.map(any())).thenThrow(new DataMappingException());
+    when(api.getMySelectedServices()).thenReturn(Single.just("0,1"));
     when(api.getMyServices()).thenReturn(Single.just(Arrays.asList(
-        new ApiServiceItem(),
-        new ApiServiceItem(),
-        new ApiServiceItem()
+        new ApiServiceItem(0, "n1", 100),
+        new ApiServiceItem(1, "n2", 10),
+        new ApiServiceItem(2, "n3", 130)
     )));
 
     // Действие:
     servicesGateway.getServices().test();
 
     // Результат:
-    verify(mapper, only()).map(new ApiServiceItem());
+    verify(mapper, only()).map(new ApiServiceItem(0, "n1", 100).setSelected(true));
   }
 
   /* Проверяем правильность потоков (добавить) */
@@ -135,8 +157,21 @@ public class ServicesGatewayTest {
    * Должен ответить ошибкой сети.
    */
   @Test
+  public void answerNoNetworkErrorForSelectedServices() {
+    // Действие:
+    when(api.getMySelectedServices()).thenReturn(Single.error(new NoNetworkException()));
+
+    // Результат:
+    servicesGateway.getServices().test().assertError(NoNetworkException.class);
+  }
+
+  /**
+   * Должен ответить ошибкой сети.
+   */
+  @Test
   public void answerNoNetworkErrorForServices() {
     // Действие:
+    when(api.getMySelectedServices()).thenReturn(Single.just("0,1"));
     when(api.getMyServices()).thenReturn(Single.error(new NoNetworkException()));
 
     // Результат:
@@ -150,6 +185,7 @@ public class ServicesGatewayTest {
   public void answerDataMappingErrorForServices() throws Exception {
     // Действие:
     when(mapper.map(any())).thenThrow(new DataMappingException());
+    when(api.getMySelectedServices()).thenReturn(Single.just("0,1"));
     when(api.getMyServices()).thenReturn(Single.just(Arrays.asList(
         new ApiServiceItem(),
         new ApiServiceItem(),
@@ -171,6 +207,7 @@ public class ServicesGatewayTest {
         new Service(1, "n2", 10, true),
         new Service(2, "n3", 130, false)
     );
+    when(api.getMySelectedServices()).thenReturn(Single.just("5,6"));
     when(api.getMyServices()).thenReturn(Single.just(Arrays.asList(
         new ApiServiceItem(),
         new ApiServiceItem(),

@@ -68,4 +68,13 @@
     <item name="tickMark">@drawable/ic_tick_mark</item>
   </style>
 
+  <style name="AppTheme.SeekBar.Theme.Green" parent="AppTheme">
+    <item name="colorAccent">@color/colorAccentGreen</item>
+  </style>
+
+  <style name="AppTheme.SeekBar.Green" parent="Widget.AppCompat.SeekBar">
+    <item name="android:thumb">@drawable/ic_thumb</item>
+    <item name="android:theme">@style/AppTheme.SeekBar.Theme.Green</item>
+  </style>
+
 </resources>

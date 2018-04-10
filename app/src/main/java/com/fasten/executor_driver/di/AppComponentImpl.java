@@ -73,6 +73,9 @@ import com.fasten.executor_driver.presentation.phone.PhoneViewModel;
 import com.fasten.executor_driver.presentation.phone.PhoneViewModelImpl;
 import com.fasten.executor_driver.presentation.selectedvehicle.SelectedVehicleViewModel;
 import com.fasten.executor_driver.presentation.selectedvehicle.SelectedVehicleViewModelImpl;
+import com.fasten.executor_driver.presentation.services.ServicesListItems;
+import com.fasten.executor_driver.presentation.services.ServicesSliderViewModel;
+import com.fasten.executor_driver.presentation.services.ServicesSliderViewModelImpl;
 import com.fasten.executor_driver.presentation.services.ServicesViewModelImpl;
 import com.fasten.executor_driver.presentation.smsbutton.SmsButtonViewModel;
 import com.fasten.executor_driver.presentation.smsbutton.SmsButtonViewModelImpl;
@@ -390,6 +393,11 @@ public class AppComponentImpl implements AppComponent {
 
   @Override
   public void inject(ServicesFragment servicesFragment) {
+    ServicesListItems servicesListItems = new ServicesListItems();
+    ServicesSliderViewModel servicesSliderViewModel = new ServicesSliderViewModelImpl(
+        servicesListItems
+    );
+    servicesFragment.setServicesSliderViewModel(servicesSliderViewModel);
     servicesFragment.setServicesViewModel(
         ViewModelProviders.of(
             servicesFragment,
@@ -400,8 +408,9 @@ public class AppComponentImpl implements AppComponent {
                             apiService,
                             new ServiceApiMapper()
                         )
-                    )
-                )
+                    ),
+                    servicesSliderViewModel,
+                    servicesListItems)
             )
         ).get(ServicesViewModelImpl.class)
 

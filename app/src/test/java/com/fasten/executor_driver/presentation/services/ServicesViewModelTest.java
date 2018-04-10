@@ -3,8 +3,10 @@ package com.fasten.executor_driver.presentation.services;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.only;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 import android.arch.core.executor.testing.InstantTaskExecutorRule;
@@ -44,6 +46,10 @@ public class ServicesViewModelTest {
   private ServicesViewModel servicesViewModel;
   @Mock
   private ServicesUseCase servicesUseCase;
+  @Mock
+  private ServicesSliderViewModel servicesSliderViewModel;
+  @Mock
+  private ServicesListItems servicesListItems;
 
   @Mock
   private Observer<ViewState<ServicesViewActions>> viewStateObserver;
@@ -54,7 +60,14 @@ public class ServicesViewModelTest {
     RxAndroidPlugins.setInitMainThreadSchedulerHandler(scheduler -> Schedulers.trampoline());
     when(servicesUseCase.loadServices()).thenReturn(Single.never());
     when(servicesUseCase.setSelectedServices(anyList())).thenReturn(Completable.never());
-    servicesViewModel = new ServicesViewModelImpl(servicesUseCase);
+    when(servicesListItems.getServicesListItems()).thenReturn(
+        Arrays.asList(
+            new ServicesListItem(new Service(0, "n1", 100, false)),
+            new ServicesListItem(new Service(2, "n3", 130, false))
+        )
+    );
+    servicesViewModel = new ServicesViewModelImpl(servicesUseCase, servicesSliderViewModel,
+        servicesListItems);
   }
 
   /* Тетсируем работу с юзкейсом выбора услуг. */
@@ -63,7 +76,7 @@ public class ServicesViewModelTest {
    * Должен просить юзкейс получить список услуг, при первой и только при первой подписке.
    */
   @Test
-  public void askServicesUseCaseForOptionsInitially() {
+  public void askServicesUseCaseForServicesInitially() {
     // Дано:
     when(servicesUseCase.loadServices()).thenReturn(Single.just(
         Arrays.asList(
@@ -86,7 +99,7 @@ public class ServicesViewModelTest {
    * Должен попросить юзкейс запомнить указанные услуги.
    */
   @Test
-  public void askServicesUseCaseToOccupyVehicleWithOptions() {
+  public void askServicesUseCaseToSaveSelectedServices() {
     // Дано:
     when(servicesUseCase.setSelectedServices(anyList())).thenReturn(Completable.complete());
 
@@ -124,7 +137,7 @@ public class ServicesViewModelTest {
    * Не должен трогать юзкейс, если предыдущий запрос запоминания указанных услуг еще не завершился.
    */
   @Test
-  public void DoNotTouchServicesUseCaseDuringVehicleOccupying() {
+  public void DoNotTouchServicesUseCaseDuringServicesSetting() {
     // Действие:
     servicesViewModel.setServices(Collections.singletonList(
         new ServicesListItem(new Service(0, "n1", 100, false))
@@ -143,6 +156,168 @@ public class ServicesViewModelTest {
     verify(servicesUseCase, only()).setSelectedServices(Collections.singletonList(
         new Service(0, "n1", 100, false)
     ));
+  }
+
+  /* Тетсируем работу с фильтром услуг. */
+
+  /**
+   * Должен передать фильтру список услуг и запросить фильтрованный по-умолчанию список, при первой
+   * и только при первой подписке.
+   */
+  @Test
+  public void askServicesFilterInitially() {
+    // Дано:
+    when(servicesUseCase.loadServices()).thenReturn(Single.just(
+        Arrays.asList(
+            new Service(0, "n1", 100, false),
+            new Service(1, "n2", 10, false),
+            new Service(2, "n3", 130, false)
+        )
+    ));
+
+    // Действие:
+    servicesViewModel.getViewStateLiveData();
+    servicesViewModel.getViewStateLiveData();
+    servicesViewModel.getViewStateLiveData();
+
+    // Результат:
+    verify(servicesListItems).setServicesListItems(
+        Arrays.asList(
+            new ServicesListItem(new Service(0, "n1", 100, false)),
+            new ServicesListItem(new Service(1, "n2", 10, false)),
+            new ServicesListItem(new Service(2, "n3", 130, false))
+        )
+    );
+    verify(servicesListItems).getServicesListItems();
+    verifyNoMoreInteractions(servicesListItems);
+  }
+
+  /**
+   * Не должен трогать фильтр, если была ошибка получения списка услуг.
+   */
+  @Test
+  public void doNotTouchServicesFilter() {
+    // Дано:
+    when(servicesUseCase.loadServices()).thenReturn(Single.error(new Exception()));
+
+    // Действие:
+    servicesViewModel.getViewStateLiveData();
+    servicesViewModel.getViewStateLiveData();
+    servicesViewModel.getViewStateLiveData();
+
+    // Результат:
+    verifyZeroInteractions(servicesListItems);
+  }
+
+  /**
+   * Должен запросить фильтрованный список услуг с заданным положением ползунка.
+   */
+  @Test
+  public void askServicesFilterWithProgress() {
+    // Действие:
+    servicesViewModel.setSliderPosition(50);
+    servicesViewModel.setSliderPosition(40);
+    servicesViewModel.setSliderPosition(30);
+
+    // Результат:
+    verify(servicesListItems).getServicesListItems(50);
+    verify(servicesListItems).getServicesListItems(40);
+    verify(servicesListItems).getServicesListItems(30);
+    verifyNoMoreInteractions(servicesListItems);
+  }
+
+  /**
+   * Должен запросить фильтрованный список услуг при потреблении ошибки.
+   */
+  @Test
+  public void askServicesFilterOnErrorConsume() {
+    // Действие:
+    servicesViewModel.errorConsumed();
+    servicesViewModel.errorConsumed();
+    servicesViewModel.errorConsumed();
+
+    // Результат:
+    verify(servicesListItems, times(3)).getServicesListItems();
+    verifyNoMoreInteractions(servicesListItems);
+  }
+
+  /**
+   * Должен запросить фильтрованный список услуг при ошибке установки услуг.
+   */
+  @Test
+  public void askServicesFilterOnSetServices() {
+    // Дано
+    when(servicesUseCase.setSelectedServices(anyList()))
+        .thenReturn(Completable.error(NoNetworkException::new));
+
+    // Действие:
+    servicesViewModel.setServices(new ArrayList<>());
+
+    // Результат:
+    verify(servicesListItems, only()).getServicesListItems();
+  }
+
+  /* Тетсируем работу с моделью вида ползунка. */
+
+  /**
+   * Должен дернуть обновление модели вида ползунка после получения списка услуг.
+   */
+  @Test
+  public void askServicesSliderViewModelToRefresh() {
+    // Дано:
+    when(servicesUseCase.loadServices()).thenReturn(Single.just(
+        Arrays.asList(
+            new Service(0, "n1", 100, false),
+            new Service(1, "n2", 10, false),
+            new Service(2, "n3", 130, false)
+        )
+    ));
+
+    // Действие:
+    servicesViewModel.getViewStateLiveData();
+    servicesViewModel.getViewStateLiveData();
+    servicesViewModel.getViewStateLiveData();
+
+    // Результат:
+    verify(servicesSliderViewModel, only()).refresh();
+  }
+
+  /**
+   * Не должен трогать модель вида ползунка, если была ошибка получения списка услуг.
+   */
+  @Test
+  public void doNotTouchServicesSliderViewModel() {
+    // Дано:
+    when(servicesUseCase.loadServices()).thenReturn(Single.error(new Exception()));
+
+    // Действие:
+    servicesViewModel.getViewStateLiveData();
+    servicesViewModel.getViewStateLiveData();
+    servicesViewModel.getViewStateLiveData();
+
+    // Результат:
+    verifyZeroInteractions(servicesSliderViewModel);
+  }
+
+  /**
+   * Не должен трогать модель вида ползунка, при работе с установкой выбранных услуг.
+   */
+  @Test
+  public void doNotTouchServicesSliderViewModelForSetServices() {
+    // Дано:
+    when(servicesUseCase.setSelectedServices(anyList())).thenReturn(
+        Completable.complete(),
+        Completable.error(NoNetworkException::new),
+        Completable.error(NoServicesAvailableException::new)
+    );
+
+    // Действие:
+    servicesViewModel.setServices(new ArrayList<>());
+    servicesViewModel.setServices(new ArrayList<>());
+    servicesViewModel.setServices(new ArrayList<>());
+
+    // Результат:
+    verifyZeroInteractions(servicesSliderViewModel);
   }
 
   /* Тетсируем переключение состояний. */
@@ -249,7 +424,6 @@ public class ServicesViewModelTest {
     inOrder.verify(viewStateObserver).onChanged(new ServicesViewStateReady(
         Arrays.asList(
             new ServicesListItem(new Service(0, "n1", 100, false)),
-            new ServicesListItem(new Service(1, "n2", 10, false)),
             new ServicesListItem(new Service(2, "n3", 130, false))
         )
     ));
@@ -274,16 +448,13 @@ public class ServicesViewModelTest {
         new Service(1, "n2", 10, false),
         new Service(2, "n3", 130, false)
     ));
-    servicesViewModel.setServices(
-        new ArrayList<>()
-    );
+    servicesViewModel.setServices(new ArrayList<>());
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(any(ServicesViewStatePending.class));
     inOrder.verify(viewStateObserver).onChanged(new ServicesViewStateReady(
         Arrays.asList(
             new ServicesListItem(new Service(0, "n1", 100, false)),
-            new ServicesListItem(new Service(1, "n2", 10, false)),
             new ServicesListItem(new Service(2, "n3", 130, false))
         )
     ));
@@ -317,19 +488,15 @@ public class ServicesViewModelTest {
     inOrder.verify(viewStateObserver).onChanged(new ServicesViewStateReady(
         Arrays.asList(
             new ServicesListItem(new Service(0, "n1", 100, false)),
-            new ServicesListItem(new Service(1, "n2", 10, false)),
             new ServicesListItem(new Service(2, "n3", 130, false))
         )
     ));
     inOrder.verify(viewStateObserver).onChanged(any(ServicesViewStatePending.class));
     inOrder.verify(viewStateObserver)
         .onChanged(new ServicesViewStateResolvableError(R.string.no_network_connection,
-            new ServicesViewStateReady(
-                Arrays.asList(
-                    new ServicesListItem(new Service(0, "n1", 100, false)),
-                    new ServicesListItem(new Service(1, "n2", 10, false)),
-                    new ServicesListItem(new Service(2, "n3", 130, false))
-                )
+            Arrays.asList(
+                new ServicesListItem(new Service(0, "n1", 100, false)),
+                new ServicesListItem(new Service(2, "n3", 130, false))
             )
         ));
     verifyNoMoreInteractions(viewStateObserver);
@@ -361,19 +528,15 @@ public class ServicesViewModelTest {
     inOrder.verify(viewStateObserver).onChanged(new ServicesViewStateReady(
         Arrays.asList(
             new ServicesListItem(new Service(0, "n1", 100, false)),
-            new ServicesListItem(new Service(1, "n2", 10, false)),
             new ServicesListItem(new Service(2, "n3", 130, false))
         )
     ));
     inOrder.verify(viewStateObserver).onChanged(any(ServicesViewStatePending.class));
     inOrder.verify(viewStateObserver)
         .onChanged(new ServicesViewStateResolvableError(R.string.no_services_selected,
-            new ServicesViewStateReady(
-                Arrays.asList(
-                    new ServicesListItem(new Service(0, "n1", 100, false)),
-                    new ServicesListItem(new Service(1, "n2", 10, false)),
-                    new ServicesListItem(new Service(2, "n3", 130, false))
-                )
+            Arrays.asList(
+                new ServicesListItem(new Service(0, "n1", 100, false)),
+                new ServicesListItem(new Service(2, "n3", 130, false))
             )
         ));
     verifyNoMoreInteractions(viewStateObserver);
@@ -406,25 +569,20 @@ public class ServicesViewModelTest {
     inOrder.verify(viewStateObserver).onChanged(new ServicesViewStateReady(
         Arrays.asList(
             new ServicesListItem(new Service(0, "n1", 100, false)),
-            new ServicesListItem(new Service(1, "n2", 10, false)),
             new ServicesListItem(new Service(2, "n3", 130, false))
         )
     ));
     inOrder.verify(viewStateObserver).onChanged(any(ServicesViewStatePending.class));
     inOrder.verify(viewStateObserver)
         .onChanged(new ServicesViewStateResolvableError(R.string.no_services_selected,
-            new ServicesViewStateReady(
-                Arrays.asList(
-                    new ServicesListItem(new Service(0, "n1", 100, false)),
-                    new ServicesListItem(new Service(1, "n2", 10, false)),
-                    new ServicesListItem(new Service(2, "n3", 130, false))
-                )
+            Arrays.asList(
+                new ServicesListItem(new Service(0, "n1", 100, false)),
+                new ServicesListItem(new Service(2, "n3", 130, false))
             )
         ));
     inOrder.verify(viewStateObserver).onChanged(new ServicesViewStateReady(
         Arrays.asList(
             new ServicesListItem(new Service(0, "n1", 100, false)),
-            new ServicesListItem(new Service(1, "n2", 10, false)),
             new ServicesListItem(new Service(2, "n3", 130, false))
         )
     ));

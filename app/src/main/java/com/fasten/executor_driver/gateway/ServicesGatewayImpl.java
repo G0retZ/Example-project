@@ -8,6 +8,7 @@ import com.fasten.executor_driver.interactor.services.ServicesGateway;
 import io.reactivex.Completable;
 import io.reactivex.Single;
 import io.reactivex.schedulers.Schedulers;
+import java.util.Arrays;
 import java.util.List;
 import javax.inject.Inject;
 
@@ -27,10 +28,22 @@ public class ServicesGatewayImpl implements ServicesGateway {
 
   @Override
   public Single<List<Service>> getServices() {
-    return api.getMyServices()
+    return api.getMySelectedServices()
         .subscribeOn(Schedulers.io())
         .observeOn(Schedulers.single())
-        .flattenAsObservable(apiServiceItems -> apiServiceItems)
+        .flatMapObservable(selected -> {
+          List<String> selectedIds = Arrays.asList(selected.split(","));
+          return api.getMyServices()
+              .subscribeOn(Schedulers.io())
+              .observeOn(Schedulers.single())
+              .flattenAsObservable(apiServiceItems -> apiServiceItems)
+              .map(apiServiceItem -> {
+                if (selectedIds.contains(String.valueOf(apiServiceItem.getId()))) {
+                  apiServiceItem.setSelected(true);
+                }
+                return apiServiceItem;
+              });
+        })
         .map(serviceMapper::map)
         .toList();
   }

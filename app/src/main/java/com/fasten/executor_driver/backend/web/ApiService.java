@@ -60,6 +60,12 @@ public interface ApiService {
   Single<List<ApiServiceItem>> getMyServices();
 
   /*
+   *  Запрос выбранных услуг текущего исполнителя.
+   */
+  @GET("api/public/v1/mobile/car/carSearchRequest/assigned")
+  Single<String> getMySelectedServices();
+
+  /*
    *  Запрос закрепления выбора услуг исполнителя.
    */
   @PUT("api/public/v1/mobile/car/carSearchRequest")

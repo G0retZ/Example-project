@@ -13,10 +13,6 @@ public class ServicesViewState implements ViewState<ServicesViewActions> {
   @NonNull
   private final List<ServicesListItem> servicesListItems;
 
-  ServicesViewState(ServicesViewState servicesViewState) {
-    servicesListItems = servicesViewState.servicesListItems;
-  }
-
   ServicesViewState(@NonNull List<ServicesListItem> servicesListItems) {
     this.servicesListItems = servicesListItems;
   }

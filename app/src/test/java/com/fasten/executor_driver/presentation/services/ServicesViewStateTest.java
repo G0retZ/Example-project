@@ -52,11 +52,6 @@ public class ServicesViewStateTest {
         new ServicesListItem(new Service(1, "n2", 10, false)),
         new ServicesListItem(new Service(2, "n3", 130, true))
     )));
-    assertEquals(viewState, new ServicesViewState(new ServicesViewState(Arrays.asList(
-        new ServicesListItem(new Service(0, "n1", 100, true)),
-        new ServicesListItem(new Service(1, "n2", 10, false)),
-        new ServicesListItem(new Service(2, "n3", 130, true))
-    ))));
     assertNotEquals(viewState, new ServicesViewState(new ArrayList<>()));
     assertNotEquals(viewState, new ServicesViewState(Arrays.asList(
         new ServicesListItem(new Service(0, "n1", 100, true)),
