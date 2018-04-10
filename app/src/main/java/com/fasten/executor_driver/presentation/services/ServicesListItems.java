@@ -17,6 +17,17 @@ public class ServicesListItems {
   private int minSelectedPrice = Integer.MAX_VALUE;
 
   /**
+   * Выдает список элементов услуг учитывая текущее положение ползунка.
+   *
+   * @return - список элементов услуг.
+   */
+  @NonNull
+  public List<ServicesListItem> getServicesListItems() {
+    return getServicesListItems(
+        (int) ((minSelectedPrice - minPrice) * 100f / (maxPrice - minPrice)));
+  }
+
+  /**
    * Задаем список элементов услуг.
    *
    * @param servicesListItems - список элементов услуг
@@ -39,17 +50,6 @@ public class ServicesListItems {
     if (minSelectedPrice == Integer.MAX_VALUE) {
       minSelectedPrice = maxPrice;
     }
-  }
-
-  /**
-   * Выдает список элементов услуг учитывая текущее положение ползунка.
-   *
-   * @return - список элементов услуг.
-   */
-  @NonNull
-  public List<ServicesListItem> getServicesListItems() {
-    return getServicesListItems(
-        (int) ((minSelectedPrice - minPrice) * 100f / (maxPrice - minPrice)));
   }
 
   /**

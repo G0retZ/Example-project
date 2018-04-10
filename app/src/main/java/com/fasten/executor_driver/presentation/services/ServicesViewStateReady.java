@@ -8,10 +8,6 @@ import java.util.List;
  */
 public final class ServicesViewStateReady extends ServicesViewState {
 
-  ServicesViewStateReady(ServicesViewState servicesViewState) {
-    super(servicesViewState);
-  }
-
   ServicesViewStateReady(@NonNull List<ServicesListItem> servicesListItems) {
     super(servicesListItems);
   }

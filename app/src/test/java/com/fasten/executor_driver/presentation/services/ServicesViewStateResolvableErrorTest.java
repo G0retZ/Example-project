@@ -24,12 +24,10 @@ public class ServicesViewStateResolvableErrorTest {
 
   @Before
   public void setUp() {
-    viewState = new ServicesViewStateResolvableError(123, new ServicesViewStateReady(
-        Arrays.asList(
-            new ServicesListItem(new Service(0, "n1", 100, true)),
-            new ServicesListItem(new Service(1, "n2", 10, false)),
-            new ServicesListItem(new Service(2, "n3", 130, true))
-        )
+    viewState = new ServicesViewStateResolvableError(123, Arrays.asList(
+        new ServicesListItem(new Service(0, "n1", 100, true)),
+        new ServicesListItem(new Service(1, "n2", 10, false)),
+        new ServicesListItem(new Service(2, "n3", 130, true))
     ));
   }
 
@@ -54,35 +52,25 @@ public class ServicesViewStateResolvableErrorTest {
 
   @Test
   public void testEquals() {
-    assertEquals(viewState, new ServicesViewStateResolvableError(123, new ServicesViewState(
-        Arrays.asList(
-            new ServicesListItem(new Service(0, "n1", 100, true)),
-            new ServicesListItem(new Service(1, "n2", 10, false)),
-            new ServicesListItem(new Service(2, "n3", 130, true))
-        )
+    assertEquals(viewState, new ServicesViewStateResolvableError(123, Arrays.asList(
+        new ServicesListItem(new Service(0, "n1", 100, true)),
+        new ServicesListItem(new Service(1, "n2", 10, false)),
+        new ServicesListItem(new Service(2, "n3", 130, true))
     )));
-    assertNotEquals(viewState, new ServicesViewStateResolvableError(0, new ServicesViewState(
-        Arrays.asList(
-            new ServicesListItem(new Service(0, "n1", 100, true)),
-            new ServicesListItem(new Service(1, "n2", 10, false)),
-            new ServicesListItem(new Service(2, "n3", 130, true))
-        )
+    assertNotEquals(viewState, new ServicesViewStateResolvableError(0, Arrays.asList(
+        new ServicesListItem(new Service(0, "n1", 100, true)),
+        new ServicesListItem(new Service(1, "n2", 10, false)),
+        new ServicesListItem(new Service(2, "n3", 130, true))
     )));
-    assertNotEquals(viewState, new ServicesViewStateResolvableError(123, new ServicesViewState(
-        new ArrayList<>()
+    assertNotEquals(viewState, new ServicesViewStateResolvableError(123, new ArrayList<>()));
+    assertNotEquals(viewState, new ServicesViewStateResolvableError(123, Arrays.asList(
+        new ServicesListItem(new Service(0, "n1", 100, true)),
+        new ServicesListItem(new Service(2, "n3", 130, true))
     )));
-    assertNotEquals(viewState, new ServicesViewStateResolvableError(123, new ServicesViewState(
-        Arrays.asList(
-            new ServicesListItem(new Service(0, "n1", 100, true)),
-            new ServicesListItem(new Service(2, "n3", 130, true))
-        )
-    )));
-    assertNotEquals(viewState, new ServicesViewStateResolvableError(123, new ServicesViewState(
-        Arrays.asList(
-            new ServicesListItem(new Service(0, "n1", 100, true)),
-            new ServicesListItem(new Service(1, "n2", 10, false)),
-            new ServicesListItem(new Service(3, "n3", 130, true))
-        )
+    assertNotEquals(viewState, new ServicesViewStateResolvableError(123, Arrays.asList(
+        new ServicesListItem(new Service(0, "n1", 100, true)),
+        new ServicesListItem(new Service(1, "n2", 10, false)),
+        new ServicesListItem(new Service(3, "n3", 130, true))
     )));
   }
 }

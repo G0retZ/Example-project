@@ -2,6 +2,7 @@ package com.fasten.executor_driver.presentation.services;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
+import java.util.List;
 
 /**
  * Состояние поправимой ошибки при отправки услуг.
@@ -12,8 +13,8 @@ public final class ServicesViewStateResolvableError extends ServicesViewState {
   private final int errorMessage;
 
   ServicesViewStateResolvableError(@StringRes int errorMessage,
-      ServicesViewState servicesViewState) {
-    super(servicesViewState);
+      @NonNull List<ServicesListItem> servicesListItems) {
+    super(servicesListItems);
     this.errorMessage = errorMessage;
   }
 

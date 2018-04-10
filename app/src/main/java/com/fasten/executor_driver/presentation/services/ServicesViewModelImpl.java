@@ -24,17 +24,24 @@ public class ServicesViewModelImpl extends ViewModel implements ServicesViewMode
   private final MutableLiveData<ViewState<ServicesViewActions>> viewStateLiveData;
   @NonNull
   private final MutableLiveData<String> navigateLiveData;
+  @NonNull
+  private final ServicesSliderViewModel servicesSliderViewModel;
+  @NonNull
+  private final ServicesListItems servicesListItems;
   @Nullable
   private Disposable servicesDisposable;
   @Nullable
   private Disposable setServicesDisposable;
 
   @Inject
-  public ServicesViewModelImpl(ServicesUseCase servicesUseCase) {
+  public ServicesViewModelImpl(ServicesUseCase servicesUseCase,
+      @NonNull ServicesSliderViewModel servicesSliderViewModel,
+      @NonNull ServicesListItems servicesListItems) {
     this.servicesUseCase = servicesUseCase;
+    this.servicesSliderViewModel = servicesSliderViewModel;
+    this.servicesListItems = servicesListItems;
     viewStateLiveData = new MutableLiveData<>();
-    viewStateLiveData
-        .postValue(new ServicesViewStatePending(new ServicesViewState(new ArrayList<>())));
+    viewStateLiveData.postValue(new ServicesViewStatePending());
     navigateLiveData = new MutableLiveData<>();
   }
 
@@ -62,9 +69,7 @@ public class ServicesViewModelImpl extends ViewModel implements ServicesViewMode
     for (ServicesListItem servicesListItem : servicesListItems) {
       services.add(servicesListItem.getService());
     }
-    viewStateLiveData.postValue(new ServicesViewStatePending(
-        (ServicesViewState) viewStateLiveData.getValue()
-    ));
+    viewStateLiveData.postValue(new ServicesViewStatePending());
     setServicesDisposable = servicesUseCase
         .setSelectedServices(services)
         .subscribeOn(Schedulers.single())
@@ -77,12 +82,12 @@ public class ServicesViewModelImpl extends ViewModel implements ServicesViewMode
               if (throwable instanceof NoServicesAvailableException) {
                 servicesViewStateError = new ServicesViewStateResolvableError(
                     R.string.no_services_selected,
-                    (ServicesViewState) viewStateLiveData.getValue()
+                    this.servicesListItems.getServicesListItems()
                 );
               } else {
                 servicesViewStateError = new ServicesViewStateResolvableError(
                     R.string.no_network_connection,
-                    (ServicesViewState) viewStateLiveData.getValue()
+                    this.servicesListItems.getServicesListItems()
                 );
               }
               viewStateLiveData.postValue(servicesViewStateError);
@@ -91,10 +96,17 @@ public class ServicesViewModelImpl extends ViewModel implements ServicesViewMode
   }
 
   @Override
+  public void setSliderPosition(int position) {
+    viewStateLiveData.postValue(new ServicesViewStateReady(
+        servicesListItems.getServicesListItems(position)
+    ));
+  }
+
+  @Override
   public void errorConsumed() {
     viewStateLiveData.postValue(new ServicesViewStateReady(
-        (ServicesViewState) viewStateLiveData.getValue())
-    );
+        this.servicesListItems.getServicesListItems()
+    ));
   }
 
   private void loadServices() {
@@ -108,7 +120,13 @@ public class ServicesViewModelImpl extends ViewModel implements ServicesViewMode
         .map(ServicesListItem::new)
         .toList()
         .subscribe(
-            items -> viewStateLiveData.postValue(new ServicesViewStateReady(items)),
+            items -> {
+              servicesListItems.setServicesListItems(items);
+              servicesSliderViewModel.refresh();
+              viewStateLiveData.postValue(new ServicesViewStateReady(
+                  servicesListItems.getServicesListItems()
+              ));
+            },
             throwable -> {
               ServicesViewStateError servicesViewStateError;
               if (throwable instanceof NoServicesAvailableException) {
