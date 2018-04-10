@@ -1,7 +1,6 @@
 package com.fasten.executor_driver.presentation.services;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
@@ -52,13 +51,13 @@ public class ServicesSliderViewModelTest {
    */
   @SuppressWarnings("ResultOfMethodCallIgnored")
   @Test
-  public void askServicesFilterInitially() {
+  public void askServicesFilter() {
     // Дано:
     servicesViewModel.getViewStateLiveData().observeForever(viewStateObserver);
-    verify(viewStateObserver).onChanged(viewStateCaptor.capture());
 
     // Действие:
     servicesViewModel.refresh();
+    verify(viewStateObserver).onChanged(viewStateCaptor.capture());
     viewStateCaptor.getValue().apply(servicesSliderViewActions);
 
     // Результат:
@@ -73,9 +72,10 @@ public class ServicesSliderViewModelTest {
   public void stateApply() {
     // Дано:
     servicesViewModel.getViewStateLiveData().observeForever(viewStateObserver);
-    verify(viewStateObserver).onChanged(viewStateCaptor.capture());
 
     // Действие:
+    servicesViewModel.refresh();
+    verify(viewStateObserver).onChanged(viewStateCaptor.capture());
     viewStateCaptor.getValue().apply(servicesSliderViewActions);
 
     // Результат:
@@ -88,21 +88,7 @@ public class ServicesSliderViewModelTest {
   /* Тетсируем переключение состояний. */
 
   /**
-   * Должен вернуть свое состояние вида изначально.
-   */
-  @Test
-  public void setPendingViewStateToLiveDataInitially() {
-
-    // Действие:
-    servicesViewModel.getViewStateLiveData().observeForever(viewStateObserver);
-
-    // Результат:
-    verify(viewStateObserver).onChanged(any(ServicesSliderViewModelImpl.class));
-    verifyNoMoreInteractions(viewStateObserver);
-  }
-
-  /**
-   * Должен вернуть свое состояние вида повторно.
+   * Должен вернуть свое состояние вида.
    */
   @Test
   public void setNoNetworkErrorViewStateToLiveData() {
@@ -113,7 +99,7 @@ public class ServicesSliderViewModelTest {
     servicesViewModel.refresh();
 
     // Результат:
-    verify(viewStateObserver, times(2)).onChanged(any(ServicesSliderViewModelImpl.class));
+    verify(viewStateObserver).onChanged(any(ServicesSliderViewModelImpl.class));
     verifyNoMoreInteractions(viewStateObserver);
   }
 

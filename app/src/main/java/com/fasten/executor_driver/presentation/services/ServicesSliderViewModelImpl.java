@@ -18,7 +18,6 @@ public class ServicesSliderViewModelImpl implements ServicesSliderViewModel,
   public ServicesSliderViewModelImpl(@NonNull ServicesListItems servicesListItems) {
     this.servicesListItems = servicesListItems;
     viewStateLiveData = new MutableLiveData<>();
-    viewStateLiveData.postValue(this);
     navigateLiveData = new MutableLiveData<>();
   }
 
