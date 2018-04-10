@@ -16,22 +16,51 @@ public class ServicesListItems {
   private int maxPrice = 0;
   private int minSelectedPrice = Integer.MAX_VALUE;
 
+  /**
+   * Задаем список элементов услуг.
+   *
+   * @param servicesListItems - список элементов услуг
+   * @return - процентное соотношение минимальной цены среди выбранных услуг к диапазону цен всех услуг.
+   */
   @IntRange(from = 0, to = 100)
   public int setServicesListItems(@NonNull List<ServicesListItem> servicesListItems) {
+    minPrice = Integer.MAX_VALUE;
+    maxPrice = 0;
+    minSelectedPrice = Integer.MAX_VALUE;
     this.servicesListItems.clear();
     this.servicesListItems.addAll(servicesListItems);
     for (ServicesListItem servicesListItem : servicesListItems) {
       minPrice =
           minPrice > servicesListItem.getPriceValue() ? servicesListItem.getPriceValue() : minPrice;
       minSelectedPrice =
-          minSelectedPrice > servicesListItem.getPriceValue() && servicesListItem.isChecked()
+          minSelectedPrice >= servicesListItem.getPriceValue() && servicesListItem.isChecked()
               ? servicesListItem.getPriceValue() : minSelectedPrice;
       maxPrice =
           maxPrice < servicesListItem.getPriceValue() ? servicesListItem.getPriceValue() : maxPrice;
     }
+    if (minSelectedPrice == Integer.MAX_VALUE) {
+      minSelectedPrice = maxPrice;
+    }
     return (int) ((minSelectedPrice - minPrice) * 100f / (maxPrice - minPrice));
   }
 
+  /**
+   * Выдает список элементов услуг учитывая текущее положение ползунка.
+   *
+   * @return - список элементов услуг.
+   */
+  @NonNull
+  public List<ServicesListItem> getServicesListItems() {
+    return getServicesListItems(
+        (int) ((minSelectedPrice - minPrice) * 100f / (maxPrice - minPrice)));
+  }
+
+  /**
+   * Выдает список элементов услуг учитывая заданное новое положение ползунка.
+   *
+   * @param position - новое положение ползунка.
+   * @return - список элементов услуг.
+   */
   @NonNull
   public List<ServicesListItem> getServicesListItems(@IntRange(from = 0, to = 100) int position) {
     int newMinSelectedPrice = minPrice + (int) ((maxPrice - minPrice) * position / 100f);
@@ -45,6 +74,9 @@ public class ServicesListItems {
       }
     }
     minSelectedPrice = newMinSelectedPrice;
+    if (result.size() == 1) {
+      result.get(0).setChecked(true);
+    }
     return result;
   }
 }
