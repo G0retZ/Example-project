@@ -1,14 +1,18 @@
 package com.fasten.executor_driver.gateway;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import com.fasten.executor_driver.entity.ExecutorState;
+import java.util.Collections;
 import org.junit.Before;
 import org.junit.Test;
+import ua.naiksoftware.stomp.StompHeader;
+import ua.naiksoftware.stomp.client.StompMessage;
 
 public class ExecutorStateApiMapperTest {
 
-  private Mapper<String, ExecutorState> mapper;
+  private Mapper<StompMessage, ExecutorState> mapper;
 
   @Before
   public void setUp() {
@@ -16,161 +20,535 @@ public class ExecutorStateApiMapperTest {
   }
 
   /**
-   * Должен успешно преобразовать строку в статус "смена закрыта".
+   * Должен успешно преобразовать тело в статус "смена закрыта".
    *
    * @throws Exception ошибка
    */
   @Test
-  public void mappingStringToShiftClosed() throws Exception {
+  public void mappingPayloadToShiftClosed() throws Exception {
     // Дано и Действие:
-    ExecutorState executorState = mapper.map("SHIFT_CLOSED");
+    ExecutorState executorState = mapper.map(new StompMessage(
+        "MESSAGE",
+        Collections.singletonList(
+            new StompHeader("Type", "Status")
+        ),
+        "\nSHIFT_CLOSED"
+    ));
 
     // Результат:
     assertEquals(executorState, ExecutorState.SHIFT_CLOSED);
+    assertNull(executorState.getData());
   }
 
   /**
-   * Должен успешно преобразовать строку с кавычками в статус "смена закрыта".
+   * Должен успешно преобразовать тело с кавычками в статус "смена закрыта".
    *
    * @throws Exception ошибка
    */
   @Test
-  public void mappingQuotedStringToShiftOpened() throws Exception {
+  public void mappingQuotedPayloadToShiftClosed() throws Exception {
     // Дано и Действие:
-    ExecutorState executorState = mapper.map("\"SHIFT_CLOSED\"");
+    ExecutorState executorState = mapper.map(new StompMessage(
+        "MESSAGE",
+        Collections.singletonList(
+            new StompHeader("Type", "Status")
+        ),
+        "\n\"SHIFT_CLOSED\""
+    ));
 
     // Результат:
     assertEquals(executorState, ExecutorState.SHIFT_CLOSED);
+    assertNull(executorState.getData());
   }
 
   /**
-   * Должен успешно преобразовать строку с кавычками и переносами в статус "смена закрыта".
+   * Должен успешно преобразовать строку из хедера в статус "смена закрыта".
    *
    * @throws Exception ошибка
    */
   @Test
-  public void mappingNewLineQuotedStringToShiftOpened() throws Exception {
+  public void mappingHeaderToShiftClosed() throws Exception {
     // Дано и Действие:
-    ExecutorState executorState = mapper.map("\n\"SHIFT_CLOSED\"");
+    ExecutorState executorState = mapper.map(new StompMessage(
+        "MESSAGE",
+        Collections.singletonList(
+            new StompHeader("Status", "SHIFT_CLOSED")
+        ),
+        null
+    ));
 
     // Результат:
     assertEquals(executorState, ExecutorState.SHIFT_CLOSED);
+    assertNull(executorState.getData());
   }
 
   /**
-   * Должен успешно преобразовать строку в статус "смена открыта".
+   * Должен успешно преобразовать строку из хедера и тело в статус "смена закрыта" с данными.
    *
    * @throws Exception ошибка
    */
   @Test
-  public void mappingStringToShiftOpened() throws Exception {
+  public void mappingHeaderWithPayloadToShiftClosedWithData() throws Exception {
     // Дано и Действие:
-    ExecutorState executorState = mapper.map("SHIFT_OPENED");
+    ExecutorState executorState = mapper.map(new StompMessage(
+        "MESSAGE",
+        Collections.singletonList(
+            new StompHeader("Status", "SHIFT_CLOSED")
+        ),
+        "\npayload"
+    ));
+
+    // Результат:
+    assertEquals(executorState, ExecutorState.SHIFT_CLOSED);
+    assertEquals(executorState.getData(), "\npayload");
+  }
+
+  /**
+   * Должен успешно преобразовать тело в статус "смена открыта".
+   *
+   * @throws Exception ошибка
+   */
+  @Test
+  public void mappingPayloadToShiftOpened() throws Exception {
+    // Дано и Действие:
+    ExecutorState executorState = mapper.map(new StompMessage(
+        "MESSAGE",
+        Collections.singletonList(
+            new StompHeader("Type", "Status")
+        ),
+        "\nSHIFT_OPENED"
+    ));
 
     // Результат:
     assertEquals(executorState, ExecutorState.SHIFT_OPENED);
+    assertNull(executorState.getData());
   }
 
   /**
-   * Должен успешно преобразовать строку с кавычками в статус "смена открыта".
+   * Должен успешно преобразовать тело с кавычками в статус "смена открыта".
    *
    * @throws Exception ошибка
    */
   @Test
-  public void mappingQuotedStringToShiftClosed() throws Exception {
+  public void mappingQuotedPayloadToShiftOpened() throws Exception {
     // Дано и Действие:
-    ExecutorState executorState = mapper.map("\"SHIFT_OPENED\"");
+    ExecutorState executorState = mapper.map(new StompMessage(
+        "MESSAGE",
+        Collections.singletonList(
+            new StompHeader("Type", "Status")
+        ),
+        "\n\"SHIFT_OPENED\""
+    ));
 
     // Результат:
     assertEquals(executorState, ExecutorState.SHIFT_OPENED);
+    assertNull(executorState.getData());
   }
 
   /**
-   * Должен успешно преобразовать строку с кавычками и переносами в статус "смена открыта".
+   * Должен успешно преобразовать строку из хедера в статус "смена открыта".
    *
    * @throws Exception ошибка
    */
   @Test
-  public void mappingNewLineQuotedStringToShiftClosed() throws Exception {
+  public void mappingHeaderToShiftOpened() throws Exception {
     // Дано и Действие:
-    ExecutorState executorState = mapper.map("\n\"SHIFT_OPENED\"");
+    ExecutorState executorState = mapper.map(new StompMessage(
+        "MESSAGE",
+        Collections.singletonList(
+            new StompHeader("Status", "SHIFT_OPENED")
+        ),
+        null
+    ));
 
     // Результат:
     assertEquals(executorState, ExecutorState.SHIFT_OPENED);
+    assertNull(executorState.getData());
   }
 
   /**
-   * Должен успешно преобразовать строку в статус "онлайн".
+   * Должен успешно преобразовать строку из хедера и тело в статус "смена открыта" с данными.
    *
    * @throws Exception ошибка
    */
   @Test
-  public void mappingStringToOnline() throws Exception {
+  public void mappingHeaderWithPayloadToShiftOpenedWithData() throws Exception {
     // Дано и Действие:
-    ExecutorState executorState = mapper.map("ONLINE");
+    ExecutorState executorState = mapper.map(new StompMessage(
+        "MESSAGE",
+        Collections.singletonList(
+            new StompHeader("Status", "SHIFT_OPENED")
+        ),
+        "\npayload"
+    ));
 
     // Результат:
-    assertEquals(executorState, ExecutorState.ONLINE);
+    assertEquals(executorState, ExecutorState.SHIFT_OPENED);
+    assertEquals(executorState.getData(), "\npayload");
   }
 
   /**
-   * Должен успешно преобразовать строку с кавычками в статус "онлайн".
+   * Должен успешно преобразовать тело в статус "онлайн".
    *
    * @throws Exception ошибка
    */
   @Test
-  public void mappingQuotedStringToOnline() throws Exception {
+  public void mappingPayloadToOnline() throws Exception {
     // Дано и Действие:
-    ExecutorState executorState = mapper.map("\"ONLINE\"");
+    ExecutorState executorState = mapper.map(new StompMessage(
+        "MESSAGE",
+        Collections.singletonList(
+            new StompHeader("Type", "Status")
+        ),
+        "\nONLINE"
+    ));
 
     // Результат:
     assertEquals(executorState, ExecutorState.ONLINE);
+    assertNull(executorState.getData());
   }
 
   /**
-   * Должен успешно преобразовать строку с кавычками и переносами в статус "онлайн".
+   * Должен успешно преобразовать тело с кавычками в статус "онлайн".
    *
    * @throws Exception ошибка
    */
   @Test
-  public void mappingNewLineQuotedStringToOnline() throws Exception {
+  public void mappingQuotedPayloadToOnline() throws Exception {
     // Дано и Действие:
-    ExecutorState executorState = mapper.map("\n\"ONLINE\"");
+    ExecutorState executorState = mapper.map(new StompMessage(
+        "MESSAGE",
+        Collections.singletonList(
+            new StompHeader("Type", "Status")
+        ),
+        "\n\"ONLINE\""
+    ));
 
     // Результат:
     assertEquals(executorState, ExecutorState.ONLINE);
+    assertNull(executorState.getData());
   }
 
   /**
-   * Должен дать ошибку, если строка пустая.
+   * Должен успешно преобразовать строку из хедера в статус "онлайн".
+   *
+   * @throws Exception ошибка
+   */
+  @Test
+  public void mappingHeaderToOnline() throws Exception {
+    // Дано и Действие:
+    ExecutorState executorState = mapper.map(new StompMessage(
+        "MESSAGE",
+        Collections.singletonList(
+            new StompHeader("Status", "ONLINE")
+        ),
+        null
+    ));
+
+    // Результат:
+    assertEquals(executorState, ExecutorState.ONLINE);
+    assertNull(executorState.getData());
+  }
+
+  /**
+   * Должен успешно преобразовать строку из хедера и тело в статус "онлайн" с данными.
+   *
+   * @throws Exception ошибка
+   */
+  @Test
+  public void mappingHeaderWithPayloadToOnlineWithData() throws Exception {
+    // Дано и Действие:
+    ExecutorState executorState = mapper.map(new StompMessage(
+        "MESSAGE",
+        Collections.singletonList(
+            new StompHeader("Status", "ONLINE")
+        ),
+        "\npayload"
+    ));
+
+    // Результат:
+    assertEquals(executorState, ExecutorState.ONLINE);
+    assertEquals(executorState.getData(), "\npayload");
+  }
+
+  /**
+   * Должен успешно преобразовать тело в статус "подтверждение заказа".
+   *
+   * @throws Exception ошибка
+   */
+  @Test
+  public void mappingPayloadToOrderConfirmation() throws Exception {
+    // Дано и Действие:
+    ExecutorState executorState = mapper.map(new StompMessage(
+        "MESSAGE",
+        Collections.singletonList(
+            new StompHeader("Type", "Status")
+        ),
+        "\nORDER_CONFIRMATION"
+    ));
+
+    // Результат:
+    assertEquals(executorState, ExecutorState.ORDER_CONFIRMATION);
+    assertNull(executorState.getData());
+  }
+
+  /**
+   * Должен успешно преобразовать тело с кавычками в статус "подтверждение заказа".
+   *
+   * @throws Exception ошибка
+   */
+  @Test
+  public void mappingQuotedPayloadToOrderConfirmation() throws Exception {
+    // Дано и Действие:
+    ExecutorState executorState = mapper.map(new StompMessage(
+        "MESSAGE",
+        Collections.singletonList(
+            new StompHeader("Type", "Status")
+        ),
+        "\n\"ORDER_CONFIRMATION\""
+    ));
+
+    // Результат:
+    assertEquals(executorState, ExecutorState.ORDER_CONFIRMATION);
+    assertNull(executorState.getData());
+  }
+
+  /**
+   * Должен успешно преобразовать строку из хедера в статус "подтверждение заказа".
+   *
+   * @throws Exception ошибка
+   */
+  @Test
+  public void mappingHeaderToOrderConfirmation() throws Exception {
+    // Дано и Действие:
+    ExecutorState executorState = mapper.map(new StompMessage(
+        "MESSAGE",
+        Collections.singletonList(
+            new StompHeader("Status", "ORDER_CONFIRMATION")
+        ),
+        null
+    ));
+
+    // Результат:
+    assertEquals(executorState, ExecutorState.ORDER_CONFIRMATION);
+    assertNull(executorState.getData());
+  }
+
+  /**
+   * Должен успешно преобразовать строку из хедера и тело в статус "подтверждение заказа" с данными.
+   *
+   * @throws Exception ошибка
+   */
+  @Test
+  public void mappingHeaderWithPayloadToOrderConfirmationWithData() throws Exception {
+    // Дано и Действие:
+    ExecutorState executorState = mapper.map(new StompMessage(
+        "MESSAGE",
+        Collections.singletonList(
+            new StompHeader("Status", "ORDER_CONFIRMATION")
+        ),
+        "\npayload"
+    ));
+
+    // Результат:
+    assertEquals(executorState, ExecutorState.ORDER_CONFIRMATION);
+    assertEquals(executorState.getData(), "\npayload");
+  }
+
+  /**
+   * Должен успешно преобразовать тело в статус "на пути к точке погрузки".
+   *
+   * @throws Exception ошибка
+   */
+  @Test
+  public void mappingPayloadToApproachingLoadPoint() throws Exception {
+    // Дано и Действие:
+    ExecutorState executorState = mapper.map(new StompMessage(
+        "MESSAGE",
+        Collections.singletonList(
+            new StompHeader("Type", "Status")
+        ),
+        "\nIN_PROGRESS"
+    ));
+
+    // Результат:
+    assertEquals(executorState, ExecutorState.IN_PROGRESS);
+    assertNull(executorState.getData());
+  }
+
+  /**
+   * Должен успешно преобразовать тело с кавычками в статус "на пути к точке погрузки".
+   *
+   * @throws Exception ошибка
+   */
+  @Test
+  public void mappingQuotedPayloadToApproachingLoadPoint() throws Exception {
+    // Дано и Действие:
+    ExecutorState executorState = mapper.map(new StompMessage(
+        "MESSAGE",
+        Collections.singletonList(
+            new StompHeader("Type", "Status")
+        ),
+        "\n\"IN_PROGRESS\""
+    ));
+
+    // Результат:
+    assertEquals(executorState, ExecutorState.IN_PROGRESS);
+    assertNull(executorState.getData());
+  }
+
+  /**
+   * Должен успешно преобразовать строку из хедера в статус "на пути к точке погрузки".
+   *
+   * @throws Exception ошибка
+   */
+  @Test
+  public void mappingHeaderToApproachingLoadPoint() throws Exception {
+    // Дано и Действие:
+    ExecutorState executorState = mapper.map(new StompMessage(
+        "MESSAGE",
+        Collections.singletonList(
+            new StompHeader("Status", "IN_PROGRESS")
+        ),
+        null
+    ));
+
+    // Результат:
+    assertEquals(executorState, ExecutorState.IN_PROGRESS);
+    assertNull(executorState.getData());
+  }
+
+  /**
+   * Должен успешно преобразовать строку из хедера и тело в статус "на пути к точке погрузки" с данными.
+   *
+   * @throws Exception ошибка
+   */
+  @Test
+  public void mappingHeaderWithPayloadToApproachingLoadPointWithData() throws Exception {
+    // Дано и Действие:
+    ExecutorState executorState = mapper.map(new StompMessage(
+        "MESSAGE",
+        Collections.singletonList(
+            new StompHeader("Status", "IN_PROGRESS")
+        ),
+        "\npayload"
+    ));
+
+    // Результат:
+    assertEquals(executorState, ExecutorState.IN_PROGRESS);
+    assertEquals(executorState.getData(), "\npayload");
+  }
+
+  /**
+   * Должен дать ошибку, если нужных хедеров нет.
    *
    * @throws Exception ошибка
    */
   @Test(expected = DataMappingException.class)
-  public void mappingEmptyStringFail() throws Exception {
+  public void mappingEmptyHeaderFail() throws Exception {
     // Дано и Действие:
-    mapper.map("");
+    mapper.map(new StompMessage("MESSAGE", null, null));
   }
 
   /**
-   * Должен дать ошибку, если значение неверное.
+   * Должен дать ошибку, если сообщение null при заголовке Type.
    *
    * @throws Exception ошибка
    */
   @Test(expected = DataMappingException.class)
-  public void mappingNonexistentFail() throws Exception {
+  public void mappingNullMessageForTypeHeaderFail() throws Exception {
     // Дано и Действие:
-    mapper.map("SHIFT");
+    mapper.map(new StompMessage(
+        "MESSAGE",
+        Collections.singletonList(
+            new StompHeader("Type", "Status")
+        ),
+        null
+    ));
   }
 
   /**
-   * Должен дать ошибку, если значение с кавычками неверное.
+   * Должен дать ошибку, если сообщение пустое при заголовке Type.
    *
    * @throws Exception ошибка
    */
   @Test(expected = DataMappingException.class)
-  public void mappingQuotedNonexistentFail() throws Exception {
+  public void mappingEmptyMessageForTypeHeaderFail() throws Exception {
     // Дано и Действие:
-    mapper.map("\"SHIFT\"");
+    mapper.map(new StompMessage(
+        "MESSAGE",
+        Collections.singletonList(
+            new StompHeader("Type", "Status")
+        ),
+        ""
+    ));
+  }
+
+  /**
+   * Должен дать ошибку, если значение неверное при заголовке Type.
+   *
+   * @throws Exception ошибка
+   */
+  @Test(expected = DataMappingException.class)
+  public void mappingNonexistentForTypeHeaderFail() throws Exception {
+    // Дано и Действие:
+    mapper.map(new StompMessage(
+        "MESSAGE",
+        Collections.singletonList(
+            new StompHeader("Type", "Status")
+        ),
+        "SHIFT"
+    ));
+  }
+
+  /**
+   * Должен дать ошибку, если заголовок Status null.
+   *
+   * @throws Exception ошибка
+   */
+  @Test(expected = DataMappingException.class)
+  public void mappingNullStatusHeaderFail() throws Exception {
+    // Дано и Действие:
+    mapper.map(new StompMessage(
+        "MESSAGE",
+        Collections.singletonList(
+            new StompHeader("Status", null)
+        ),
+        null
+    ));
+  }
+
+  /**
+   * Должен дать ошибку, если заголовок Status пустой.
+   *
+   * @throws Exception ошибка
+   */
+  @Test(expected = DataMappingException.class)
+  public void mappingEmptyStatusHeaderFail() throws Exception {
+    // Дано и Действие:
+    mapper.map(new StompMessage(
+        "MESSAGE",
+        Collections.singletonList(
+            new StompHeader("Status", "")
+        ),
+        ""
+    ));
+  }
+
+  /**
+   * Должен дать ошибку, если значение заголовка Status неверное.
+   *
+   * @throws Exception ошибка
+   */
+  @Test(expected = DataMappingException.class)
+  public void mappingNonexistentForStatusHeaderFail() throws Exception {
+    // Дано и Действие:
+    mapper.map(new StompMessage(
+        "MESSAGE",
+        Collections.singletonList(
+            new StompHeader("Status", "SHIFT")
+        ),
+        null
+    ));
   }
 }

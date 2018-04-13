@@ -1,8 +1,12 @@
 package com.fasten.executor_driver.interactor;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.only;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 import com.fasten.executor_driver.backend.web.NoNetworkException;
@@ -35,7 +39,7 @@ public class ExecutorStateGatewayTest {
   @Mock
   private StompClient stompClient;
   @Mock
-  private Mapper<String, ExecutorState> mapper;
+  private Mapper<StompMessage, ExecutorState> mapper;
 
   @Before
   public void setUp() {
@@ -101,39 +105,62 @@ public class ExecutorStateGatewayTest {
     verifyNoMoreInteractions(stompClient);
   }
 
-  /* Проверяем правильность потоков (добавить) */
-
-  /* Проверяем ответы на попытку отправки сообщения */
+  /* Проверяем работу с маппером */
 
   /**
-   * Должен игнорировать сообщение с неверным заголовком, если он соединен и не соединяется.
+   * Не должен трогать маппер, если сообщение без нужных заголовков, если он соединен и не соединяется.
    */
   @Test
-  public void ignoreWrongHeaderIfConnected() {
+  public void doNotTouchMapperIfWrongHeaderIfConnected() {
     // Дано:
     when(stompClient.isConnected()).thenReturn(true);
     when(stompClient.topic(anyString())).thenReturn(Observable.just(
-        new StompMessage("MESSAGE", null, "SHIFT")
+        new StompMessage("MESSAGE", null, "SHIFT"),
+        new StompMessage(
+            "MESSAGE",
+            Collections.singletonList(new StompHeader("Type", "State")),
+            "SHIFT"
+        )
     ));
 
     // Действие:
-    TestSubscriber<ExecutorState> testSubscriber =
-        executorStateGateway.getState("1234567890").test();
+    executorStateGateway.getState("1234567890").test();
 
     // Результат:
-    testSubscriber.assertNoValues();
+    verifyZeroInteractions(mapper);
   }
 
   /**
-   * Должен ответить ошибкой если сообщение с верным заголовком, но тело неверное, если он
-   * соединен и не соединяется.
+   * Не должен трогать маппер, если сообщение без нужных заголовков, если он не соединен и соединяется.
+   */
+  @Test
+  public void doNotTouchMapperIfWrongHeaderIfConnectingAfterConnected() {
+    // Дано:
+    when(stompClient.isConnecting()).thenReturn(true);
+    when(stompClient.topic(anyString())).thenReturn(Observable.just(
+        new StompMessage("MESSAGE", null, "SHIFT"),
+        new StompMessage(
+            "MESSAGE",
+            Collections.singletonList(new StompHeader("Type", "State")),
+            "SHIFT"
+        )
+    ));
+
+    // Действие:
+    executorStateGateway.getState("1234567890").test();
+
+    // Результат:
+    verifyZeroInteractions(mapper);
+  }
+
+  /**
+   * Должен запросить маппинг если сообщение с заголовком Type="Status", если он соединен и не соединяется.
    *
    * @throws Exception error
    */
   @Test
-  public void answerDataMappingErrorIfConnected() throws Exception {
+  public void askForMappingForTypeHeaderIfConnected() throws Exception {
     // Дано:
-    doThrow(new DataMappingException()).when(mapper).map("payload");
     when(stompClient.isConnected()).thenReturn(true);
     when(stompClient.topic(anyString())).thenReturn(Observable.just(
         new StompMessage(
@@ -146,6 +173,140 @@ public class ExecutorStateGatewayTest {
     ));
 
     // Действие:
+    executorStateGateway.getState("1234567890").test();
+
+    // Результат:
+    verify(mapper, only()).map(any());
+  }
+
+  /**
+   * Должен запросить маппинг если сообщение с заголовком Status, если он соединен и не соединяется.
+   *
+   * @throws Exception error
+   */
+  @Test
+  public void askForMappingForStatusHeaderIfConnected() throws Exception {
+    // Дано:
+    when(stompClient.isConnected()).thenReturn(true);
+    when(stompClient.topic(anyString())).thenReturn(Observable.just(
+        new StompMessage(
+            "MESSAGE",
+            Collections.singletonList(
+                new StompHeader("Status", "payload")
+            ),
+            "\n"
+        )
+    ));
+
+    // Действие:
+    executorStateGateway.getState("1234567890").test();
+
+    // Результат:
+    verify(mapper, only()).map(any());
+  }
+
+  /**
+   * Должен запросить маппинг после соединения если сообщение с заголовком Type = "Status" и верным
+   * телом, если он не соединен и соединяется.
+   *
+   * @throws Exception error
+   */
+  @Test
+  public void askForMappingForTypeHeaderIfConnectingAfterConnected() throws Exception {
+    // Дано:
+    when(stompClient.isConnecting()).thenReturn(true);
+    when(stompClient.topic(anyString())).thenReturn(Observable.just(
+        new StompMessage(
+            "MESSAGE",
+            Collections.singletonList(
+                new StompHeader("Type", "Status")
+            ),
+            "payload"
+        )
+    ));
+
+    // Действие:
+    executorStateGateway.getState("1234567890").test();
+
+    // Результат:
+    verify(mapper, only()).map(any());
+  }
+
+  /**
+   * Должен запросить маппинг после соединения если сообщение с верным заголовком Status, если он не
+   * соединен и соединяется.
+   *
+   * @throws Exception error
+   */
+  @Test
+  public void askForMappingForStatusHeaderIfConnectingAfterConnected() throws Exception {
+    // Дано:
+    when(stompClient.isConnecting()).thenReturn(true);
+    when(stompClient.topic(anyString())).thenReturn(Observable.just(
+        new StompMessage(
+            "MESSAGE",
+            Collections.singletonList(
+                new StompHeader("Status", "payload")
+            ),
+            "\n"
+        )
+    ));
+
+    // Действие:
+    executorStateGateway.getState("1234567890").test();
+
+    // Результат:
+    verify(mapper, only()).map(any());
+  }
+
+  /* Проверяем правильность потоков (добавить) */
+
+  /* Проверяем результаты обработки сообщений от сервера по статусам */
+
+  /**
+   * Должен игнорировать сообщение без нужных заголовков, если он соединен и не соединяется.
+   */
+  @Test
+  public void ignoreWrongHeaderIfConnected() {
+    // Дано:
+    when(stompClient.isConnected()).thenReturn(true);
+    when(stompClient.topic(anyString())).thenReturn(Observable.just(
+        new StompMessage("MESSAGE", null, "SHIFT"),
+        new StompMessage(
+            "MESSAGE",
+            Collections.singletonList(new StompHeader("Type", "State")),
+            "SHIFT"
+        )
+    ));
+
+    // Действие:
+    TestSubscriber<ExecutorState> testSubscriber =
+        executorStateGateway.getState("1234567890").test();
+
+    // Результат:
+    testSubscriber.assertNoValues();
+  }
+
+  /**
+   * Должен ответить ошибкой для сообщения с заголовком Type="Status", если он соединен и не
+   * соединяется.
+   *
+   * @throws Exception error
+   */
+  @Test
+  public void answerDataMappingErrorForTypeHeaderIfConnected() throws Exception {
+    // Дано:
+    doThrow(new DataMappingException()).when(mapper).map(any());
+    when(stompClient.isConnected()).thenReturn(true);
+    when(stompClient.topic(anyString())).thenReturn(Observable.just(
+        new StompMessage(
+            "MESSAGE",
+            Collections.singletonList(new StompHeader("Type", "Status")),
+            null
+        )
+    ));
+
+    // Действие:
     TestSubscriber<ExecutorState> testSubscriber =
         executorStateGateway.getState("1234567890").test();
 
@@ -154,23 +315,73 @@ public class ExecutorStateGatewayTest {
   }
 
   /**
-   * Должен вернуть статус если сообщение с верным заголовком c верным телом, если он соединен и не
+   * Должен ответить ошибкой для сообщение с заголовком Status, если он соединен и не соединяется.
+   *
+   * @throws Exception error
+   */
+  @Test
+  public void answerDataMappingErrorForStatusHeaderIfConnected() throws Exception {
+    // Дано:
+    doThrow(new DataMappingException()).when(mapper).map(any());
+    when(stompClient.isConnected()).thenReturn(true);
+    when(stompClient.topic(anyString())).thenReturn(Observable.just(
+        new StompMessage(
+            "MESSAGE",
+            Collections.singletonList(new StompHeader("Status", "payload")),
+            null
+        )
+    ));
+
+    // Действие:
+    TestSubscriber<ExecutorState> testSubscriber =
+        executorStateGateway.getState("1234567890").test();
+
+    // Результат:
+    testSubscriber.assertError(DataMappingException.class);
+  }
+
+  /**
+   * Должен вернуть статус для сообщения с заголовком Type = "Status", если он соединен и не
    * соединяется.
    *
    * @throws Exception error
    */
   @Test
-  public void answerShiftOpenedIfConnected() throws Exception {
+  public void answerShiftOpenedForTypeHeaderIfConnected() throws Exception {
     // Дано:
-    when(mapper.map("payload")).thenReturn(ExecutorState.SHIFT_OPENED);
+    when(mapper.map(any())).thenReturn(ExecutorState.SHIFT_OPENED);
     when(stompClient.isConnected()).thenReturn(true);
     when(stompClient.topic(anyString())).thenReturn(Observable.just(
         new StompMessage(
             "MESSAGE",
-            Collections.singletonList(
-                new StompHeader("Type", "Status")
-            ),
-            "payload"
+            Collections.singletonList(new StompHeader("Type", "Status")),
+            null
+        )
+    ));
+
+    // Действие:
+    TestSubscriber<ExecutorState> testSubscriber =
+        executorStateGateway.getState("1234567890").test();
+
+    // Результат:
+    testSubscriber.assertValue(ExecutorState.SHIFT_OPENED);
+  }
+
+  /**
+   * Должен вернуть статус для сообщение с заголовком Status, если он соединен и не соединяется.
+   *
+   * @throws Exception error
+   */
+  @Test
+  public void answerShiftOpenedForStatusHeaderIfConnected() throws Exception {
+    // Дано:
+    when(mapper.map(any())).thenReturn(ExecutorState.SHIFT_OPENED);
+    when(stompClient.isConnected()).thenReturn(true);
+    when(stompClient.topic(anyString())).thenReturn(Observable.just(
+        new StompMessage(
+            "MESSAGE",
+            Collections.singletonList(new StompHeader("Status", "payload")),
+            "\n"
         )
     ));
 
@@ -213,14 +424,19 @@ public class ExecutorStateGatewayTest {
   }
 
   /**
-   * Должен игнорировать сообщение с неверным заголовком, если он не соединен и соединяется.
+   * Должен игнорировать сообщение без нужных заголовков, если он не соединен и соединяется.
    */
   @Test
   public void ignoreWrongHeaderIfConnectingAfterConnected() {
     // Дано:
     when(stompClient.isConnecting()).thenReturn(true);
     when(stompClient.topic(anyString())).thenReturn(Observable.just(
-        new StompMessage("MESSAGE", null, "SHIFT")
+        new StompMessage("MESSAGE", null, "SHIFT"),
+        new StompMessage(
+            "MESSAGE",
+            Collections.singletonList(new StompHeader("Type", "State")),
+            "SHIFT"
+        )
     ));
 
     // Действие:
@@ -233,23 +449,21 @@ public class ExecutorStateGatewayTest {
   }
 
   /**
-   * Должен ответить ошибкой если сообщение с верным заголовком, но тело неверное, если он не
-   * соединен и соединяется.
+   * Должен ответить ошибкой для сообщения с заголовком Type = "Status", если он не соединен и
+   * соединяется.
    *
    * @throws Exception error
    */
   @Test
-  public void answerDataMappingErrorIfConnectingAfterConnected() throws Exception {
+  public void answerDataMappingErrorForTypeHeaderIfConnectingAfterConnected() throws Exception {
     // Дано:
-    doThrow(new DataMappingException()).when(mapper).map("payload");
+    doThrow(new DataMappingException()).when(mapper).map(any());
     when(stompClient.isConnecting()).thenReturn(true);
     when(stompClient.topic(anyString())).thenReturn(Observable.just(
         new StompMessage(
             "MESSAGE",
-            Collections.singletonList(
-                new StompHeader("Type", "Status")
-            ),
-            "payload"
+            Collections.singletonList(new StompHeader("Type", "Status")),
+            null
         )
     ));
 
@@ -263,23 +477,76 @@ public class ExecutorStateGatewayTest {
   }
 
   /**
-   * Должен вернуть статус если сообщение с верным заголовком и верным телом, если он не соединен и
+   * Должен ответить ошибкой для сообщения с заголовком Status, если он не соединен и соединяется.
+   *
+   * @throws Exception error
+   */
+  @Test
+  public void answerDataMappingErrorForStatusHeaderIfConnectingAfterConnected() throws Exception {
+    // Дано:
+    doThrow(new DataMappingException()).when(mapper).map(any());
+    when(stompClient.isConnecting()).thenReturn(true);
+    when(stompClient.topic(anyString())).thenReturn(Observable.just(
+        new StompMessage(
+            "MESSAGE",
+            Collections.singletonList(new StompHeader("Status", "")),
+            "\n"
+        )
+    ));
+
+    // Действие:
+    TestSubscriber<ExecutorState> testSubscriber =
+        executorStateGateway.getState("1234567890").test();
+
+    // Результат:
+    testSubscriber.assertError(DataMappingException.class);
+    testSubscriber.assertNoValues();
+  }
+
+  /**
+   * Должен вернуть статус для сообщения с заголовком Type = "Status", если он не соединен и
    * соединяется.
    *
    * @throws Exception error
    */
   @Test
-  public void answerShiftOpenedIfConnectingAfterConnected() throws Exception {
+  public void answerShiftOpenedForTypeHeaderIfConnectingAfterConnected() throws Exception {
     // Дано:
-    when(mapper.map("payload")).thenReturn(ExecutorState.SHIFT_OPENED);
+    when(mapper.map(any())).thenReturn(ExecutorState.SHIFT_OPENED);
     when(stompClient.isConnecting()).thenReturn(true);
     when(stompClient.topic(anyString())).thenReturn(Observable.just(
         new StompMessage(
             "MESSAGE",
-            Collections.singletonList(
-                new StompHeader("Type", "Status")
-            ),
+            Collections.singletonList(new StompHeader("Type", "Status")),
             "payload"
+        )
+    ));
+
+    // Действие:
+    TestSubscriber<ExecutorState> testSubscriber =
+        executorStateGateway.getState("1234567890").test();
+
+    // Результат:
+    testSubscriber.assertValue(ExecutorState.SHIFT_OPENED);
+    testSubscriber.assertNoErrors();
+  }
+
+  /**
+   * Должен вернуть статус для сообщения с верным заголовком Status, если он не соединен и
+   * соединяется.
+   *
+   * @throws Exception error
+   */
+  @Test
+  public void answerShiftOpenedForStatusHeaderIfConnectingAfterConnected() throws Exception {
+    // Дано:
+    when(mapper.map(any())).thenReturn(ExecutorState.SHIFT_OPENED);
+    when(stompClient.isConnecting()).thenReturn(true);
+    when(stompClient.topic(anyString())).thenReturn(Observable.just(
+        new StompMessage(
+            "MESSAGE",
+            Collections.singletonList(new StompHeader("Status", "")),
+            "\n"
         )
     ));
 

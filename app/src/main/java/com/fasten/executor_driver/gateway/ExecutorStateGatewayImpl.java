@@ -11,17 +11,18 @@ import io.reactivex.Flowable;
 import io.reactivex.schedulers.Schedulers;
 import javax.inject.Inject;
 import ua.naiksoftware.stomp.client.StompClient;
+import ua.naiksoftware.stomp.client.StompMessage;
 
 public class ExecutorStateGatewayImpl implements ExecutorStateGateway {
 
   @NonNull
   private final StompClient stompClient;
   @NonNull
-  private final Mapper<String, ExecutorState> mapper;
+  private final Mapper<StompMessage, ExecutorState> mapper;
 
   @Inject
   public ExecutorStateGatewayImpl(@NonNull StompClient stompClient,
-      @NonNull Mapper<String, ExecutorState> mapper) {
+      @NonNull Mapper<StompMessage, ExecutorState> mapper) {
     this.stompClient = stompClient;
     this.mapper = mapper;
   }
@@ -33,9 +34,10 @@ public class ExecutorStateGatewayImpl implements ExecutorStateGateway {
       return stompClient.topic(String.format(BuildConfig.STATS_DESTINATION, channelId))
           .subscribeOn(Schedulers.io())
           .observeOn(Schedulers.single())
-          .filter(stompMessage -> stompMessage.findHeader("Type") != null
-              && stompMessage.findHeader("Type").equals("Status"))
-          .map(stompMessage -> mapper.map(stompMessage.getPayload()))
+          .filter(stompMessage -> stompMessage.findHeader("Status") != null || (
+              stompMessage.findHeader("Type") != null
+                  && stompMessage.findHeader("Type").equals("Status")))
+          .map(mapper::map)
           .toFlowable(BackpressureStrategy.BUFFER);
     }
     return Flowable.error(new ConnectionClosedException());

@@ -61,6 +61,12 @@ public class ExecutorStateViewModelImpl extends ViewModel implements ExecutorSta
                   case ONLINE:
                     navigateLiveData.postValue(ExecutorStateNavigate.MAP_ONLINE);
                     break;
+                  case ORDER_CONFIRMATION:
+                    navigateLiveData.postValue(ExecutorStateNavigate.ORDER_CONFIRMATION);
+                    break;
+                  case IN_PROGRESS:
+                    navigateLiveData.postValue(ExecutorStateNavigate.APPROACHING_LOAD_POINT);
+                    break;
                 }
               },
               throwable -> {
