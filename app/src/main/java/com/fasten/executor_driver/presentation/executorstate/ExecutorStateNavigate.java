@@ -12,7 +12,9 @@ import java.lang.annotation.RetentionPolicy;
     ExecutorStateNavigate.AUTHORIZE,
     ExecutorStateNavigate.MAP_SHIFT_CLOSED,
     ExecutorStateNavigate.MAP_SHIFT_OPENED,
-    ExecutorStateNavigate.MAP_ONLINE
+    ExecutorStateNavigate.MAP_ONLINE,
+    ExecutorStateNavigate.ORDER_CONFIRMATION,
+    ExecutorStateNavigate.APPROACHING_LOAD_POINT
 })
 @Retention(RetentionPolicy.SOURCE)
 public @interface ExecutorStateNavigate {
@@ -27,4 +29,8 @@ public @interface ExecutorStateNavigate {
   String MAP_SHIFT_OPENED = "to.Map.Shift.Opened";
   // Переход к получению заказов.
   String MAP_ONLINE = "to.Map.Online";
+  // Переход к исполнению заказа.
+  String ORDER_CONFIRMATION = "to.Order.Confirmation";
+  // Переход к движению к точке погрузки.
+  String APPROACHING_LOAD_POINT = "to.Approaching.Load.Point";
 }

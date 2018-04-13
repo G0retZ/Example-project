@@ -155,4 +155,38 @@ public class ExecutorStateViewModelTest {
     // Результат:
     verify(navigationObserver, only()).onChanged(ExecutorStateNavigate.MAP_ONLINE);
   }
+
+  /**
+   * Должен вернуть "перейти к подтверждению заказа".
+   */
+  @Test
+  public void navigateToOrderConfirmation() {
+    // Дано:
+    when(executorStateUseCase.getExecutorStates())
+        .thenReturn(Flowable.just(ExecutorState.ORDER_CONFIRMATION));
+
+    // Действие:
+    executorStateViewModel.getNavigationLiveData().observeForever(navigationObserver);
+    executorStateViewModel.initializeExecutorState();
+
+    // Результат:
+    verify(navigationObserver, only()).onChanged(ExecutorStateNavigate.ORDER_CONFIRMATION);
+  }
+
+  /**
+   * Должен вернуть "перейти к движению к точке погрузки".
+   */
+  @Test
+  public void navigateToApproachingLoadPoint() {
+    // Дано:
+    when(executorStateUseCase.getExecutorStates())
+        .thenReturn(Flowable.just(ExecutorState.IN_PROGRESS));
+
+    // Действие:
+    executorStateViewModel.getNavigationLiveData().observeForever(navigationObserver);
+    executorStateViewModel.initializeExecutorState();
+
+    // Результат:
+    verify(navigationObserver, only()).onChanged(ExecutorStateNavigate.APPROACHING_LOAD_POINT);
+  }
 }
