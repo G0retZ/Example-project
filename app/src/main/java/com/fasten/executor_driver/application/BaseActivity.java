@@ -151,6 +151,30 @@ public class BaseActivity extends AppCompatActivity {
         startActivity(new Intent(this, OnlineActivity.class));
         finish();
         break;
+      case ExecutorStateNavigate.ORDER_CONFIRMATION:
+        new Builder(this)
+            .setTitle(R.string.error)
+            .setMessage("Подтверждаем заказ!")
+            .setCancelable(false)
+            .setPositiveButton(
+                getString(android.R.string.ok),
+                (a, b) -> android.os.Process.killProcess(android.os.Process.myPid())
+            )
+            .create()
+            .show();
+        break;
+      case ExecutorStateNavigate.APPROACHING_LOAD_POINT:
+        new Builder(this)
+            .setTitle(R.string.error)
+            .setMessage("На пути к клиенту!")
+            .setCancelable(false)
+            .setPositiveButton(
+                getString(android.R.string.ok),
+                (a, b) -> android.os.Process.killProcess(android.os.Process.myPid())
+            )
+            .create()
+            .show();
+        break;
     }
   }
 
