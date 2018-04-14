@@ -160,7 +160,7 @@ public class ExecutorStateViewModelTest {
    * Должен вернуть "перейти к подтверждению заказа".
    */
   @Test
-  public void navigateToOrderConfirmation() {
+  public void navigateToOfferConfirmation() {
     // Дано:
     when(executorStateUseCase.getExecutorStates())
         .thenReturn(Flowable.just(ExecutorState.ORDER_CONFIRMATION));
@@ -170,7 +170,7 @@ public class ExecutorStateViewModelTest {
     executorStateViewModel.initializeExecutorState();
 
     // Результат:
-    verify(navigationObserver, only()).onChanged(ExecutorStateNavigate.ORDER_CONFIRMATION);
+    verify(navigationObserver, only()).onChanged(ExecutorStateNavigate.OFFER_CONFIRMATION);
   }
 
   /**

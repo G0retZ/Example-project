@@ -6,7 +6,7 @@ import android.support.annotation.NonNull;
  * Неизменная бизнес сущность заказа. Содержит в себе ID, комментарий, расстояние до клиента,
  * предполагаемую цену, количество пассажиров/грузчиков и таймуат предложения.
  */
-public class Order {
+public class Offer {
 
   private final long id;
   @NonNull
@@ -19,7 +19,7 @@ public class Order {
   @NonNull
   private final RoutePoint routePoint;
 
-  public Order(long id, @NonNull String comment, long distance, long estimatedPrice, int passengers,
+  public Offer(long id, @NonNull String comment, long distance, long estimatedPrice, int passengers,
       int porters, int timeout, @NonNull RoutePoint routePoint) {
     this.id = id;
     this.comment = comment;
@@ -67,7 +67,7 @@ public class Order {
 
   @Override
   public String toString() {
-    return "Order{" +
+    return "Offer{" +
         "id=" + id +
         ", comment='" + comment + '\'' +
         ", distance=" + distance +
@@ -89,30 +89,30 @@ public class Order {
       return false;
     }
 
-    Order order = (Order) o;
+    Offer offer = (Offer) o;
 
-    if (id != order.id) {
+    if (id != offer.id) {
       return false;
     }
-    if (distance != order.distance) {
+    if (distance != offer.distance) {
       return false;
     }
-    if (estimatedPrice != order.estimatedPrice) {
+    if (estimatedPrice != offer.estimatedPrice) {
       return false;
     }
-    if (passengers != order.passengers) {
+    if (passengers != offer.passengers) {
       return false;
     }
-    if (porters != order.porters) {
+    if (porters != offer.porters) {
       return false;
     }
-    if (timeout != order.timeout) {
+    if (timeout != offer.timeout) {
       return false;
     }
-    if (!comment.equals(order.comment)) {
+    if (!comment.equals(offer.comment)) {
       return false;
     }
-    return routePoint.equals(order.routePoint);
+    return routePoint.equals(offer.routePoint);
   }
 
   @Override

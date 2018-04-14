@@ -73,7 +73,7 @@ public class MainApplication extends Application {
         case ExecutorStateNavigate.MAP_ONLINE:
           startService(R.string.online, R.string.wait_for_orders);
           break;
-        case ExecutorStateNavigate.ORDER_CONFIRMATION:
+        case ExecutorStateNavigate.OFFER_CONFIRMATION:
           startService(R.string.online, R.string.executing);
           break;
         case ExecutorStateNavigate.APPROACHING_LOAD_POINT:

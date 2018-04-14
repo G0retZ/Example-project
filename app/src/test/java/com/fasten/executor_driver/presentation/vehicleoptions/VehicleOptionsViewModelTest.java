@@ -453,7 +453,7 @@ public class VehicleOptionsViewModelTest {
    * Должен вернуть "перейти к ожиданию заказов" если занятие ТС было успешным.
    */
   @Test
-  public void setNavigateToReadyForOrdersToLiveData() {
+  public void setNavigateToReadyForOffersToLiveData() {
     // Дано:
     when(vehicleOptionsUseCase.setSelectedVehicleAndOptions(anyList(), anyList()))
         .thenReturn(Completable.complete());
