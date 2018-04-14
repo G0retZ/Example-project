@@ -13,6 +13,7 @@ android {
         buildConfigField 'String', 'BASE_URL', '"http://dev.capsrv.xyz:8080/executor/"'
         buildConfigField 'String', 'SOCKET_URL', '"ws://dev.capsrv.xyz:8080/executor/ws"'
         buildConfigField 'String', 'GOLOCATION_DESTINATION', '"/mobile/online"'
+        buildConfigField 'String', 'CONFIRM_OFFER_DESTINATION', '"/mobile/order"'
         buildConfigField 'String', 'STATS_DESTINATION', '"/queue/%s"'
         vectorDrawables.useSupportLibrary = true
     }

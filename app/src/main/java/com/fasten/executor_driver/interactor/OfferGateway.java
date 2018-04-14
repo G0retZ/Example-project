@@ -8,7 +8,7 @@ import io.reactivex.Flowable;
 /**
  * Гейтвей работы с заказами.
  */
-interface OfferGateway {
+public interface OfferGateway {
 
   /**
    * Ожидает заказы для исполнителя у сокета.
@@ -22,9 +22,9 @@ interface OfferGateway {
    * Передает решение исполнителя по принятию заказа.
    *
    * @param offer заказа, к которому относится это решение.
-   * @param confirmed согласие исполнителя на прием заказа.
+   * @param accepted согласие исполнителя на прием заказа.
    * @return {@link Completable} результат - успех либо ошибка таймаута ожидания решения на сервере.
    */
   @NonNull
-  Completable sendDecision(@NonNull Offer offer, boolean confirmed);
+  Completable sendDecision(@NonNull Offer offer, boolean accepted);
 }
