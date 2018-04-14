@@ -66,11 +66,13 @@ public class OfferApiMapper implements Mapper<String, Offer> {
     );
   }
 
+  @SuppressWarnings("unused")
   private class DriverDistancePair {
 
     int distance;
   }
 
+  @SuppressWarnings("unused")
   private class RPoint {
 
     double longitude;
@@ -81,6 +83,7 @@ public class OfferApiMapper implements Mapper<String, Offer> {
     String address;
   }
 
+  @SuppressWarnings("unused")
   private class OrderDto {
 
     long id;

@@ -10,7 +10,7 @@ import org.junit.Test;
 public class OfferApiMapperTest {
 
   private Mapper<String, Offer> mapper;
-  private Offer offer = new Offer(7, "com", 1200239, 7000, 2, 1, 20,
+  private final Offer offer = new Offer(7, "com", 1200239, 7000, 2, 1, 20,
       new RoutePoint(123, 456, "com", "add"));
 
   @Before
@@ -70,7 +70,7 @@ public class OfferApiMapperTest {
   @Test(expected = DataMappingException.class)
   public void mappingStringFail() throws Exception {
     // Дано и Действие:
-    mapper.map("dasd");
+    mapper.map("dasie");
   }
 
   /**
