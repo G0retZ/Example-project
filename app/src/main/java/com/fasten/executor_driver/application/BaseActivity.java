@@ -151,7 +151,7 @@ public class BaseActivity extends AppCompatActivity {
         startActivity(new Intent(this, OnlineActivity.class));
         finish();
         break;
-      case ExecutorStateNavigate.ORDER_CONFIRMATION:
+      case ExecutorStateNavigate.OFFER_CONFIRMATION:
         new Builder(this)
             .setTitle(R.string.error)
             .setMessage("Подтверждаем заказ!")

@@ -277,7 +277,7 @@ public class ExecutorStateApiMapperTest {
    * @throws Exception ошибка
    */
   @Test
-  public void mappingPayloadToOrderConfirmation() throws Exception {
+  public void mappingPayloadToOfferConfirmation() throws Exception {
     // Дано и Действие:
     ExecutorState executorState = mapper.map(new StompMessage(
         "MESSAGE",
@@ -298,7 +298,7 @@ public class ExecutorStateApiMapperTest {
    * @throws Exception ошибка
    */
   @Test
-  public void mappingQuotedPayloadToOrderConfirmation() throws Exception {
+  public void mappingQuotedPayloadToOfferConfirmation() throws Exception {
     // Дано и Действие:
     ExecutorState executorState = mapper.map(new StompMessage(
         "MESSAGE",
@@ -319,7 +319,7 @@ public class ExecutorStateApiMapperTest {
    * @throws Exception ошибка
    */
   @Test
-  public void mappingHeaderToOrderConfirmation() throws Exception {
+  public void mappingHeaderToOfferConfirmation() throws Exception {
     // Дано и Действие:
     ExecutorState executorState = mapper.map(new StompMessage(
         "MESSAGE",
@@ -340,7 +340,7 @@ public class ExecutorStateApiMapperTest {
    * @throws Exception ошибка
    */
   @Test
-  public void mappingHeaderWithPayloadToOrderConfirmationWithData() throws Exception {
+  public void mappingHeaderWithPayloadToOfferConfirmationWithData() throws Exception {
     // Дано и Действие:
     ExecutorState executorState = mapper.map(new StompMessage(
         "MESSAGE",
