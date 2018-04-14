@@ -52,6 +52,50 @@ public class OfferApiMapperTest {
   }
 
   /**
+   * Должен дать ошибку, если строка пустая.
+   *
+   * @throws Exception ошибка
+   */
+  @Test(expected = DataMappingException.class)
+  public void mappingEmptyFail() throws Exception {
+    // Дано и Действие:
+    mapper.map("");
+  }
+
+  /**
+   * Должен дать ошибку, если пришла просто строка.
+   *
+   * @throws Exception ошибка
+   */
+  @Test(expected = DataMappingException.class)
+  public void mappingStringFail() throws Exception {
+    // Дано и Действие:
+    mapper.map("dasd");
+  }
+
+  /**
+   * Должен дать ошибку, если пришло просто число.
+   *
+   * @throws Exception ошибка
+   */
+  @Test(expected = DataMappingException.class)
+  public void mappingNumberFail() throws Exception {
+    // Дано и Действие:
+    mapper.map("12");
+  }
+
+  /**
+   * Должен дать ошибку, если пришел массив.
+   *
+   * @throws Exception ошибка
+   */
+  @Test(expected = DataMappingException.class)
+  public void mappingArrayFail() throws Exception {
+    // Дано и Действие:
+    mapper.map("[]");
+  }
+
+  /**
    * Должен дать ошибку, если маршрута нет.
    *
    * @throws Exception ошибка

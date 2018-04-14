@@ -20,8 +20,16 @@ public class OfferApiMapper implements Mapper<String, Offer> {
   @NonNull
   @Override
   public Offer map(@NonNull String from) throws Exception {
+    if (from.isEmpty()) {
+      throw new DataMappingException("Ошибка маппинга: данные не должны быть пустыми!");
+    }
     Gson gson = new Gson();
-    OrderDto orderDto = gson.fromJson(from, OrderDto.class);
+    OrderDto orderDto;
+    try {
+      orderDto = gson.fromJson(from, OrderDto.class);
+    } catch (Exception e) {
+      throw new DataMappingException("Ошибка маппинга: не удалось распарсить JSON!", e);
+    }
     if (orderDto.route == null) {
       throw new DataMappingException("Ошибка маппинга: маршрут не должен быть null!");
     }
