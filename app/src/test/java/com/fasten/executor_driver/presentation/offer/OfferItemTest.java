@@ -58,8 +58,8 @@ public class OfferItemTest {
     } catch (InterruptedException e) {
       e.printStackTrace();
     }
-    assertEquals(offerItem.getProgressLeft()[0] * 1d, 15000d, 100);
-    assertEquals(offerItem.getProgressLeft()[1] * 1d, 75d, 1);
+    assertEquals(offerItem.getProgressLeft()[0] * 1d, 75d, 1);
+    assertEquals(offerItem.getProgressLeft()[1] * 1d, 15000d, 100);
   }
 
   @Test

@@ -62,9 +62,9 @@ public class OfferItem {
 
   public long[] getProgressLeft() {
     long[] res = new long[2];
-    res[0] = System.currentTimeMillis() - timestamp;
-    res[0] = offer.getTimeout() * 1000 - res[0];
-    res[1] = res[0] / (10L * offer.getTimeout());
+    res[1] = System.currentTimeMillis() - timestamp;
+    res[1] = offer.getTimeout() * 1000 - res[1];
+    res[0] = res[1] / (10L * offer.getTimeout());
     return res;
   }
 
