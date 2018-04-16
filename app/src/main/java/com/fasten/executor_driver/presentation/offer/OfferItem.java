@@ -9,7 +9,7 @@ import java.util.Locale;
 /**
  * Модель для отображения предложения заказа. Тестируемое форматирование.
  */
-public class OfferItem {
+class OfferItem {
 
   @NonNull
   private final Offer offer;
