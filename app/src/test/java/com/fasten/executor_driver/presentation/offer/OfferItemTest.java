@@ -39,6 +39,7 @@ public class OfferItemTest {
     when(offer.getEstimatedPrice()).thenReturn(7000L);
     when(offer.getPorters()).thenReturn(2);
     when(offer.getPassengers()).thenReturn(3);
+    when(offer.getTimeout()).thenReturn(20);
     when(routePoint.getAddress()).thenReturn("add");
     when(routePoint.getLatitude()).thenReturn(10.2341);
     when(routePoint.getLongitude()).thenReturn(5.421);
@@ -52,6 +53,13 @@ public class OfferItemTest {
     assertEquals(offerItem.getOfferComment(), "com");
     assertEquals(offerItem.getPortersCount(), 2);
     assertEquals(offerItem.getPassengersCount(), 3);
+    try {
+      Thread.sleep(5000);
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
+    assertEquals(offerItem.getProgressLeft()[0] * 1d, 15000d, 100);
+    assertEquals(offerItem.getProgressLeft()[1] * 1d, 75d, 1);
   }
 
   @Test

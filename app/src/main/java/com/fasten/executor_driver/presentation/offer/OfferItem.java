@@ -12,9 +12,11 @@ public class OfferItem {
 
   @NonNull
   private final Offer offer;
+  private final long timestamp;
 
   OfferItem(@NonNull Offer offer) {
     this.offer = offer;
+    timestamp = System.currentTimeMillis();
   }
 
   @SuppressWarnings("SpellCheckingInspection")
@@ -22,9 +24,9 @@ public class OfferItem {
   public String getLoadPointMapUrl() {
     return "https://maps.googleapis.com/maps/api/staticmap?"
         + "center="
-          + offer.getRoutePoint().getLongitude()
-          + ","
-          + offer.getRoutePoint().getLatitude()
+        + offer.getRoutePoint().getLongitude()
+        + ","
+        + offer.getRoutePoint().getLatitude()
         + "&zoom=16"
         + "&size=288x352"
         + "&maptype=roadmap"
@@ -40,11 +42,11 @@ public class OfferItem {
     return offer.getRoutePoint().getAddress();
   }
 
-  public long getPortersCount() {
+  public int getPortersCount() {
     return offer.getPorters();
   }
 
-  public long getPassengersCount() {
+  public int getPassengersCount() {
     return offer.getPassengers();
   }
 
@@ -56,6 +58,14 @@ public class OfferItem {
   @NonNull
   public String getPrice() {
     return String.format(Locale.getDefault(), "от %d рублей", offer.getEstimatedPrice());
+  }
+
+  public long[] getProgressLeft() {
+    long[] res = new long[2];
+    res[0] = System.currentTimeMillis() - timestamp;
+    res[0] = offer.getTimeout() * 1000 - res[0];
+    res[1] = res[0] / (10L * offer.getTimeout());
+    return res;
   }
 
   @Override
