@@ -3,6 +3,7 @@ package com.fasten.executor_driver.presentation.offer;
 import android.support.annotation.NonNull;
 import com.fasten.executor_driver.BuildConfig;
 import com.fasten.executor_driver.entity.Offer;
+import com.fasten.executor_driver.utils.TimeUtils;
 import java.util.Locale;
 
 /**
@@ -12,11 +13,14 @@ public class OfferItem {
 
   @NonNull
   private final Offer offer;
+  @NonNull
+  private final TimeUtils timeUtils;
   private final long timestamp;
 
-  OfferItem(@NonNull Offer offer) {
+  OfferItem(@NonNull Offer offer, TimeUtils timeUtils) {
     this.offer = offer;
-    timestamp = System.currentTimeMillis();
+    this.timeUtils = timeUtils;
+    timestamp = timeUtils.currentTimeMillis();
   }
 
   @SuppressWarnings("SpellCheckingInspection")
@@ -62,7 +66,7 @@ public class OfferItem {
 
   public long[] getProgressLeft() {
     long[] res = new long[2];
-    res[1] = System.currentTimeMillis() - timestamp;
+    res[1] = timeUtils.currentTimeMillis() - timestamp;
     res[1] = offer.getTimeout() * 1000 - res[1];
     res[0] = res[1] / (10L * offer.getTimeout());
     return res;

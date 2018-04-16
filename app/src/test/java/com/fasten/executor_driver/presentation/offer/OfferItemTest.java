@@ -6,6 +6,7 @@ import static org.mockito.Mockito.when;
 
 import com.fasten.executor_driver.entity.Offer;
 import com.fasten.executor_driver.entity.RoutePoint;
+import com.fasten.executor_driver.utils.TimeUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -21,13 +22,17 @@ public class OfferItemTest {
   private Offer offer;
   @Mock
   private Offer offer2;
-
   @Mock
   private RoutePoint routePoint;
+  @Mock
+  private TimeUtils timeUtils;
+  @Mock
+  private TimeUtils timeUtils2;
 
   @Before
   public void setUp() {
-    offerItem = new OfferItem(offer);
+    when(timeUtils.currentTimeMillis()).thenReturn(12390182L, 12395182L);
+    offerItem = new OfferItem(offer, timeUtils);
   }
 
   @Test
@@ -53,18 +58,14 @@ public class OfferItemTest {
     assertEquals(offerItem.getOfferComment(), "com");
     assertEquals(offerItem.getPortersCount(), 2);
     assertEquals(offerItem.getPassengersCount(), 3);
-    try {
-      Thread.sleep(5000);
-    } catch (InterruptedException e) {
-      e.printStackTrace();
-    }
-    assertEquals(offerItem.getProgressLeft()[0] * 1d, 75d, 1);
-    assertEquals(offerItem.getProgressLeft()[1] * 1d, 15000d, 100);
+    assertEquals(offerItem.getProgressLeft()[0], 75);
+    assertEquals(offerItem.getProgressLeft()[1], 15000);
   }
 
   @Test
   public void testEquals() {
-    assertEquals(offerItem, new OfferItem(offer));
-    assertNotEquals(offerItem, new OfferItem(offer2));
+    assertEquals(offerItem, new OfferItem(offer, timeUtils));
+    assertEquals(offerItem, new OfferItem(offer, timeUtils2));
+    assertNotEquals(offerItem, new OfferItem(offer2, timeUtils));
   }
 }
