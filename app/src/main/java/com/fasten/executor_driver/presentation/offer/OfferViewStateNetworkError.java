@@ -16,6 +16,8 @@ final class OfferViewStateNetworkError extends OfferViewState {
   public void apply(@NonNull OfferViewActions stateActions) {
     super.apply(stateActions);
     stateActions.showOfferPending(false);
+    stateActions.enableAcceptButton(false);
+    stateActions.enableDeclineButton(false);
     stateActions.showOfferAvailabilityError(false);
     stateActions.showOfferNetworkErrorMessage(true);
   }

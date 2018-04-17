@@ -5,7 +5,7 @@ import android.support.annotation.NonNull;
 /**
  * Действия для смены состояния вида окна заказа.
  */
-interface OfferViewActions {
+public interface OfferViewActions {
 
   /**
    * Показать индикатор процесса.
@@ -77,4 +77,18 @@ interface OfferViewActions {
    * @param show - показать или нет?
    */
   void showOfferNetworkErrorMessage(boolean show);
+
+  /**
+   * Задействовать кнопку отказа.
+   *
+   * @param enable - задействовать или нет?
+   */
+  void enableDeclineButton(boolean enable);
+
+  /**
+   * Задействовать кнопку приема.
+   *
+   * @param enable - задействовать или нет?
+   */
+  void enableAcceptButton(boolean enable);
 }

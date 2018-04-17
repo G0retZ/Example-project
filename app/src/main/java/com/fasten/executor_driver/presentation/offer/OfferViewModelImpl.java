@@ -33,7 +33,7 @@ public class OfferViewModelImpl extends ViewModel implements OfferViewModel {
   private OfferItem offerItem;
 
   @Inject
-  OfferViewModelImpl(@NonNull OfferUseCase offerUseCase,
+  public OfferViewModelImpl(@NonNull OfferUseCase offerUseCase,
       @NonNull TimeUtils timeUtils) {
     this.offerUseCase = offerUseCase;
     this.timeUtils = timeUtils;

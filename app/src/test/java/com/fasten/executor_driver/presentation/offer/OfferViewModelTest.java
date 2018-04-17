@@ -83,7 +83,7 @@ public class OfferViewModelTest {
    * Должен попросить юзкейс передать отказ от заказа.
    */
   @Test
-  public void askOfferUseCaseToSendOfferAccpeted() {
+  public void askOfferUseCaseToSendOfferAccepted() {
     // Дано:
     when(offerUseCase.sendDecision(anyBoolean())).thenReturn(Completable.complete());
 

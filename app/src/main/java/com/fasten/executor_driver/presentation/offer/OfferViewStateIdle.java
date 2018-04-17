@@ -16,6 +16,8 @@ final class OfferViewStateIdle extends OfferViewState {
   public void apply(@NonNull OfferViewActions stateActions) {
     super.apply(stateActions);
     stateActions.showOfferPending(false);
+    stateActions.enableAcceptButton(true);
+    stateActions.enableDeclineButton(true);
     stateActions.showOfferAvailabilityError(false);
     stateActions.showOfferNetworkErrorMessage(false);
   }

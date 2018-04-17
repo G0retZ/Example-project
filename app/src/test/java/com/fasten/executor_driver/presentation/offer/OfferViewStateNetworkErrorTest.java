@@ -50,6 +50,8 @@ public class OfferViewStateNetworkErrorTest {
     verify(offerViewActions).showOfferComment("comm");
     verify(offerViewActions).showTimeout(123, 4532);
     verify(offerViewActions).showOfferPending(false);
+    verify(offerViewActions).enableAcceptButton(false);
+    verify(offerViewActions).enableDeclineButton(false);
     verify(offerViewActions).showOfferAvailabilityError(false);
     verify(offerViewActions).showOfferNetworkErrorMessage(true);
     verifyNoMoreInteractions(offerViewActions);
@@ -65,6 +67,8 @@ public class OfferViewStateNetworkErrorTest {
 
     // Результат:
     verify(offerViewActions).showOfferPending(false);
+    verify(offerViewActions).enableAcceptButton(false);
+    verify(offerViewActions).enableDeclineButton(false);
     verify(offerViewActions).showOfferAvailabilityError(false);
     verify(offerViewActions).showOfferNetworkErrorMessage(true);
     verifyNoMoreInteractions(offerViewActions);

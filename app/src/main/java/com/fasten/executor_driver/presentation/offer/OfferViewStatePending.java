@@ -16,6 +16,8 @@ final class OfferViewStatePending extends OfferViewState {
   public void apply(@NonNull OfferViewActions stateActions) {
     super.apply(stateActions);
     stateActions.showOfferPending(true);
+    stateActions.enableAcceptButton(false);
+    stateActions.enableDeclineButton(false);
     stateActions.showOfferAvailabilityError(false);
     stateActions.showOfferNetworkErrorMessage(false);
   }

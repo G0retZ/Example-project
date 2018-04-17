@@ -50,6 +50,8 @@ public class OfferViewStatePendingTest {
     verify(offerViewActions).showOfferComment("comm");
     verify(offerViewActions).showTimeout(123, 4532);
     verify(offerViewActions).showOfferPending(true);
+    verify(offerViewActions).enableAcceptButton(false);
+    verify(offerViewActions).enableDeclineButton(false);
     verify(offerViewActions).showOfferAvailabilityError(false);
     verify(offerViewActions).showOfferNetworkErrorMessage(false);
     verifyNoMoreInteractions(offerViewActions);
@@ -65,6 +67,8 @@ public class OfferViewStatePendingTest {
 
     // Результат:
     verify(offerViewActions).showOfferPending(true);
+    verify(offerViewActions).enableAcceptButton(false);
+    verify(offerViewActions).enableDeclineButton(false);
     verify(offerViewActions).showOfferAvailabilityError(false);
     verify(offerViewActions).showOfferNetworkErrorMessage(false);
     verifyNoMoreInteractions(offerViewActions);
