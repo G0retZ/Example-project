@@ -9,9 +9,9 @@ import org.junit.Test;
 
 public class OfferApiMapperTest {
 
-  private Mapper<String, Offer> mapper;
   private final Offer offer = new Offer(7, "com", 1200239, 7000, 2, 1, 20,
       new RoutePoint(123, 456, "com", "add"));
+  private Mapper<String, Offer> mapper;
 
   @Before
   public void setUp() {

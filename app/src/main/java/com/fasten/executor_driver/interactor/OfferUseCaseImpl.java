@@ -7,14 +7,14 @@ import com.fasten.executor_driver.entity.Offer;
 import io.reactivex.Completable;
 import io.reactivex.Flowable;
 
-class OfferUseCaseImpl implements OfferUseCase {
+public class OfferUseCaseImpl implements OfferUseCase {
 
   @NonNull
   private final OfferGateway offerGateway;
   @Nullable
   private Offer lastOffer;
 
-  OfferUseCaseImpl(@NonNull OfferGateway offerGateway) {
+  public OfferUseCaseImpl(@NonNull OfferGateway offerGateway) {
     this.offerGateway = offerGateway;
   }
 

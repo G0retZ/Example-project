@@ -14,7 +14,7 @@ import javax.inject.Inject;
 public class OfferApiMapper implements Mapper<String, Offer> {
 
   @Inject
-  OfferApiMapper() {
+  public OfferApiMapper() {
   }
 
   @NonNull

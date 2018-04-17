@@ -28,6 +28,8 @@ import com.fasten.executor_driver.gateway.GeoLocationGatewayImpl;
 import com.fasten.executor_driver.gateway.GeoTrackingGatewayImpl;
 import com.fasten.executor_driver.gateway.HeatMapGatewayImpl;
 import com.fasten.executor_driver.gateway.LastUsedVehicleGatewayImpl;
+import com.fasten.executor_driver.gateway.OfferApiMapper;
+import com.fasten.executor_driver.gateway.OfferGatewayImpl;
 import com.fasten.executor_driver.gateway.PasswordGatewayImpl;
 import com.fasten.executor_driver.gateway.ServiceApiMapper;
 import com.fasten.executor_driver.gateway.ServicesGatewayImpl;
@@ -43,6 +45,7 @@ import com.fasten.executor_driver.interactor.ExecutorStateUseCaseImpl;
 import com.fasten.executor_driver.interactor.GeoLocationUseCase;
 import com.fasten.executor_driver.interactor.GeoLocationUseCaseImpl;
 import com.fasten.executor_driver.interactor.MemoryDataSharer;
+import com.fasten.executor_driver.interactor.OfferUseCaseImpl;
 import com.fasten.executor_driver.interactor.auth.LoginSharer;
 import com.fasten.executor_driver.interactor.auth.LoginUseCaseImpl;
 import com.fasten.executor_driver.interactor.auth.PasswordUseCaseImpl;
@@ -67,6 +70,7 @@ import com.fasten.executor_driver.presentation.executorstate.ExecutorStateViewMo
 import com.fasten.executor_driver.presentation.geolocation.GeoLocationViewModelImpl;
 import com.fasten.executor_driver.presentation.map.MapViewModel;
 import com.fasten.executor_driver.presentation.map.MapViewModelImpl;
+import com.fasten.executor_driver.presentation.offer.OfferViewModelImpl;
 import com.fasten.executor_driver.presentation.onlinebutton.OnlineButtonViewModel;
 import com.fasten.executor_driver.presentation.onlinebutton.OnlineButtonViewModelImpl;
 import com.fasten.executor_driver.presentation.phone.PhoneViewModel;
@@ -81,9 +85,11 @@ import com.fasten.executor_driver.presentation.smsbutton.SmsButtonViewModel;
 import com.fasten.executor_driver.presentation.smsbutton.SmsButtonViewModelImpl;
 import com.fasten.executor_driver.presentation.vehicleoptions.VehicleOptionsViewModel;
 import com.fasten.executor_driver.presentation.vehicleoptions.VehicleOptionsViewModelImpl;
+import com.fasten.executor_driver.utils.TimeUtilsImpl;
 import com.fasten.executor_driver.view.ChooseVehicleFragment;
 import com.fasten.executor_driver.view.GoOnlineFragment;
 import com.fasten.executor_driver.view.MapFragment;
+import com.fasten.executor_driver.view.OfferFragment;
 import com.fasten.executor_driver.view.SelectedVehicleFragment;
 import com.fasten.executor_driver.view.ServicesFragment;
 import com.fasten.executor_driver.view.VehicleOptionsFragment;
@@ -107,6 +113,8 @@ public class AppComponentImpl implements AppComponent {
   private final AppSettingsService appSettingsService;
   @NonNull
   private final ApiService apiService;
+  @NonNull
+  private final StompClient stompClient;
   @NonNull
   private final ExecutorStateUseCase executorStateUseCase;
   @NonNull
@@ -132,7 +140,7 @@ public class AppComponentImpl implements AppComponent {
         new ReceiveTokenInterceptor(tokenKeeper)
     );
     apiService = initApiService(okHttpClient);
-    StompClient stompClient = initStompClient(okHttpClient);
+    stompClient = initStompClient(okHttpClient);
     loginSharer = new LoginSharer(appSettingsService);
     vehicleChoiceSharer = new VehicleChoiceSharer();
     lastUsedVehicleGateway = new LastUsedVehicleGatewayImpl(appSettingsService);
@@ -414,6 +422,20 @@ public class AppComponentImpl implements AppComponent {
             )
         ).get(ServicesViewModelImpl.class)
 
+    );
+  }
+
+  @Override
+  public void inject(OfferFragment offerFragment) {
+    offerFragment.setOfferViewModel(
+        new OfferViewModelImpl(
+            new OfferUseCaseImpl(
+                new OfferGatewayImpl(
+                    executorStateUseCase, stompClient, new OfferApiMapper()
+                )
+            ),
+            new TimeUtilsImpl()
+        )
     );
   }
 }

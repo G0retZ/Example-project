@@ -35,16 +35,15 @@ import ua.naiksoftware.stomp.client.StompClient;
 @RunWith(MockitoJUnitRunner.class)
 public class OfferGatewayTest {
 
+  private final Offer offer = new Offer(7, "com", 1200239, 7000, 2, 1, 20,
+      new RoutePoint(123, 456, "com", "add"));
   private OfferGateway executorStateGateway;
-
   @Mock
   private StompClient stompClient;
   @Mock
   private ExecutorStateUseCase executorStateUseCase;
   @Mock
   private Mapper<String, Offer> mapper;
-  private final Offer offer = new Offer(7, "com", 1200239, 7000, 2, 1, 20,
-      new RoutePoint(123, 456, "com", "add"));
 
   @Before
   public void setUp() {

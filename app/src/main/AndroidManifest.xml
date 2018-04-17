@@ -72,6 +72,10 @@
       android:launchMode="singleTop"
       android:name=".application.OnlineActivity"
       android:parentActivityName=".application.SplashScreenActivity"/>
+    <activity
+      android:launchMode="singleTop"
+      android:theme="@style/AppTheme.NoActionBar"
+      android:name=".application.OfferActivity"/>
 
     <service
       android:enabled="true"
