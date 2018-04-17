@@ -72,7 +72,7 @@
     android:layout_marginEnd="16dp"
     android:layout_marginLeft="16dp"
     android:layout_marginRight="16dp"
-    android:text="@string/unselect_unwanted_services"
+    android:text="@string/deselect_unwanted_services"
     app:layout_constraintBottom_toTopOf="@+id/recyclerView"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
