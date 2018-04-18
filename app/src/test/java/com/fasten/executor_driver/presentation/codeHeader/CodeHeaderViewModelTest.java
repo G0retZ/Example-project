@@ -3,6 +3,7 @@ package com.fasten.executor_driver.presentation.codeHeader;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 import android.arch.core.executor.testing.InstantTaskExecutorRule;
@@ -63,22 +64,6 @@ public class CodeHeaderViewModelTest {
   /* Тетсируем переключение состояний. */
 
   /**
-   * Должен вернуть состояние вида без номера изначально.
-   */
-  @Test
-  public void setViewStateWithZerosToLiveData() {
-    // Дано:
-    InOrder inOrder = Mockito.inOrder(viewStateObserver);
-
-    // Действие:
-    codeHeaderViewModel.getViewStateLiveData().observeForever(viewStateObserver);
-
-    // Результат:
-    inOrder.verify(viewStateObserver).onChanged(new CodeHeaderViewState("+0 (000) 000-00-00"));
-    verifyNoMoreInteractions(viewStateObserver);
-  }
-
-  /**
    * Должен вернуть состояние вида с именем.
    */
   @Test
@@ -96,7 +81,6 @@ public class CodeHeaderViewModelTest {
     publishSubject.onNext("70123456789");
 
     // Результат:
-    inOrder.verify(viewStateObserver).onChanged(new CodeHeaderViewState("+0 (000) 000-00-00"));
     inOrder.verify(viewStateObserver).onChanged(new CodeHeaderViewState("+7 (999) 700-44-50"));
     inOrder.verify(viewStateObserver).onChanged(new CodeHeaderViewState("+7 (999) 888-77-66"));
     inOrder.verify(viewStateObserver).onChanged(new CodeHeaderViewState("+7 (987) 654-32-10"));
@@ -119,6 +103,6 @@ public class CodeHeaderViewModelTest {
     publishSubject.onError(new IllegalArgumentException());
 
     // Результат:
-    verify(viewStateObserver, only()).onChanged(new CodeHeaderViewState("+0 (000) 000-00-00"));
+    verifyZeroInteractions(viewStateObserver);
   }
 }
