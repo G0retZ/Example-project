@@ -1,8 +1,6 @@
 package com.fasten.executor_driver.interactor.auth;
 
-import android.annotation.SuppressLint;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import com.fasten.executor_driver.entity.Validator;
 import com.fasten.executor_driver.interactor.DataReceiver;
 import io.reactivex.Completable;
@@ -14,8 +12,8 @@ public class SmsUseCaseImpl implements SmsUseCase {
   private final SmsGateway gateway;
   @NonNull
   private final Validator<String> phoneNumberValidator;
-  @Nullable
-  private String phoneNumber;
+  @NonNull
+  private final DataReceiver<String> phoneNumberReceiver;
 
   @Inject
   public SmsUseCaseImpl(@NonNull SmsGateway gateway,
@@ -23,26 +21,19 @@ public class SmsUseCaseImpl implements SmsUseCase {
       @NonNull Validator<String> phoneNumberValidator) {
     this.gateway = gateway;
     this.phoneNumberValidator = phoneNumberValidator;
-    loadPhoneNumber(phoneNumberReceiver);
-  }
-
-  @SuppressLint("CheckResult")
-  private void loadPhoneNumber(@NonNull DataReceiver<String> phoneNumberReceiver) {
-    phoneNumberReceiver.get()
-        .doAfterTerminate(() -> loadPhoneNumber(phoneNumberReceiver))
-        .subscribe(phoneNumber -> this.phoneNumber = phoneNumber,
-            throwable -> {
-            }
-        );
+    this.phoneNumberReceiver = phoneNumberReceiver;
   }
 
   @NonNull
   @Override
   public Completable sendMeCode() {
-    return Completable.create(e -> {
-      phoneNumberValidator.validate(phoneNumber);
-      gateway.sendMeCode(phoneNumber == null ? "" : phoneNumber)
-          .subscribe(e::onComplete, e::onError);
-    });
+    return phoneNumberReceiver.get()
+        .firstOrError()
+        .map(phoneNumber -> {
+          phoneNumberValidator.validate(phoneNumber);
+          return phoneNumber;
+        }).flatMapCompletable(phoneNumber ->
+            gateway.sendMeCode(phoneNumber == null ? "" : phoneNumber)
+        );
   }
 }

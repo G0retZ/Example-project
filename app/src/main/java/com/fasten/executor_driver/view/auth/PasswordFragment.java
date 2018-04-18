@@ -285,7 +285,7 @@ public class PasswordFragment extends BaseFragment implements CodeViewActions,
 
   @Override
   public void setDescriptiveHeaderText(int textId, @NonNull String phoneNumber) {
-    codeInputCaption.setText(getString(R.string.sms_code_message, phoneNumber));
+    codeInputCaption.setText(getString(textId, phoneNumber));
   }
 
   // Замудренная логика форматировния ввода кода из СМС в режиме реального времени

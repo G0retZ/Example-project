@@ -13,8 +13,8 @@ import com.fasten.executor_driver.entity.ValidationException;
 import com.fasten.executor_driver.entity.Validator;
 import com.fasten.executor_driver.interactor.DataReceiver;
 import io.reactivex.Completable;
-import io.reactivex.subjects.PublishSubject;
-import io.reactivex.subjects.Subject;
+import io.reactivex.Observable;
+import io.reactivex.observers.TestObserver;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -35,27 +35,16 @@ public class SmsUseCaseTest {
   @Mock
   private DataReceiver<String> phoneNumberReceiver;
 
-  private Subject<String> subject;
-
   @Before
   public void setUp() throws Exception {
     when(gateway.sendMeCode(anyString())).thenReturn(Completable.never());
     doThrow(new ValidationException()).when(phoneNumberValidator).validate(anyString());
     doNothing().when(phoneNumberValidator).validate("0123456");
-    when(phoneNumberReceiver.get()).thenReturn(subject = PublishSubject.create());
+    when(phoneNumberReceiver.get()).thenReturn(Observable.never());
     smsUseCase = new SmsUseCaseImpl(gateway, phoneNumberReceiver, phoneNumberValidator);
   }
 
   /* Проверяем работу с публикатором номера телефона */
-
-  /**
-   * Должен подписаться при создании сразу же.
-   */
-  @Test
-  public void getFromDataSharerImmediately() {
-    // Результат:
-    verify(phoneNumberReceiver, only()).get();
-  }
 
   /**
    * Не должен взаимодействовать с публиктором в любых иных случаях.
@@ -79,13 +68,13 @@ public class SmsUseCaseTest {
   @Test
   public void askPhoneNumberValidatorForResult() throws Exception {
     // Дано:
-    subject.onNext("");
+    when(phoneNumberReceiver.get()).thenReturn(Observable.just("1", "2", "3"));
 
     // Действие:
     smsUseCase.sendMeCode().test();
 
     // Результат:
-    verify(phoneNumberValidator, only()).validate("");
+    verify(phoneNumberValidator, only()).validate("1");
   }
 
   /* Проверяем ответы валидатора */
@@ -96,10 +85,15 @@ public class SmsUseCaseTest {
   @Test
   public void answerErrorIfPhoneNumberInvalid() {
     // Дано:
-    subject.onNext("");
+    when(phoneNumberReceiver.get()).thenReturn(Observable.just("1", "2", "3"));
+
+    // Действие:
+    TestObserver<Void> testObserver = smsUseCase.sendMeCode().test();
 
     // Результат:
-    smsUseCase.sendMeCode().test().assertError(ValidationException.class);
+    testObserver.assertNoValues();
+    testObserver.assertNotComplete();
+    testObserver.assertError(ValidationException.class);
   }
 
   /**
@@ -110,13 +104,16 @@ public class SmsUseCaseTest {
   @Test
   public void answerSuccessIfPhoneNumberValid() throws Exception {
     // Дано:
-    subject.onNext("");
-
-    // Действие:
+    when(phoneNumberReceiver.get()).thenReturn(Observable.just("1", "2", "3"));
     doNothing().when(phoneNumberValidator).validate(anyString());
 
+    // Действие:
+    TestObserver<Void> testObserver = smsUseCase.sendMeCode().test();
+
     // Результат:
-    smsUseCase.sendMeCode().test().assertNoErrors();
+    testObserver.assertNoValues();
+    testObserver.assertNotComplete();
+    testObserver.assertNoErrors();
   }
 
   /* Проверяем работу с гейтвеем */
@@ -127,7 +124,7 @@ public class SmsUseCaseTest {
   @Test
   public void doNotAskGatewayForSms() {
     // Дано:
-    subject.onNext("012345");
+    when(phoneNumberReceiver.get()).thenReturn(Observable.just("012345", "2", "3"));
 
     // Действие:
     smsUseCase.sendMeCode().test();
@@ -142,7 +139,7 @@ public class SmsUseCaseTest {
   @Test
   public void askGatewayForSms() {
     // Дано:
-    subject.onNext("0123456");
+    when(phoneNumberReceiver.get()).thenReturn(Observable.just("0123456", "2", "3"));
 
     // Действие:
     smsUseCase.sendMeCode().test();
@@ -159,13 +156,16 @@ public class SmsUseCaseTest {
   @Test
   public void answerNoNetworkError() {
     // Дано:
-    subject.onNext("0123456");
-
-    // Действие:
+    when(phoneNumberReceiver.get()).thenReturn(Observable.just("0123456", "2", "3"));
     when(gateway.sendMeCode(anyString())).thenReturn(Completable.error(new NoNetworkException()));
 
+    // Действие:
+    TestObserver<Void> testObserver = smsUseCase.sendMeCode().test();
+
     // Результат:
-    smsUseCase.sendMeCode().test().assertError(NoNetworkException.class);
+    testObserver.assertNoValues();
+    testObserver.assertNotComplete();
+    testObserver.assertError(NoNetworkException.class);
   }
 
   /**
@@ -174,12 +174,15 @@ public class SmsUseCaseTest {
   @Test
   public void answerSmsSendSuccessful() {
     // Дано:
-    subject.onNext("0123456");
-
-    // Действие:
+    when(phoneNumberReceiver.get()).thenReturn(Observable.just("0123456", "2", "3"));
     when(gateway.sendMeCode(anyString())).thenReturn(Completable.complete());
 
+    // Действие:
+    TestObserver<Void> testObserver = smsUseCase.sendMeCode().test();
+
     // Результат:
-    smsUseCase.sendMeCode().test().assertComplete();
+    testObserver.assertNoValues();
+    testObserver.assertNoErrors();
+    testObserver.assertComplete();
   }
 }
