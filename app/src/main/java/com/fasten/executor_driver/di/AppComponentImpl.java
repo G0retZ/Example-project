@@ -60,30 +60,20 @@ import com.fasten.executor_driver.interactor.vehicle.VehicleOptionsUseCaseImpl;
 import com.fasten.executor_driver.interactor.vehicle.VehiclesAndOptionsGateway;
 import com.fasten.executor_driver.interactor.vehicle.VehiclesAndOptionsUseCaseImpl;
 import com.fasten.executor_driver.presentation.ViewModelFactory;
-import com.fasten.executor_driver.presentation.choosevehicle.ChooseVehicleViewModel;
 import com.fasten.executor_driver.presentation.choosevehicle.ChooseVehicleViewModelImpl;
-import com.fasten.executor_driver.presentation.code.CodeViewModel;
 import com.fasten.executor_driver.presentation.code.CodeViewModelImpl;
-import com.fasten.executor_driver.presentation.codeHeader.CodeHeaderViewModel;
 import com.fasten.executor_driver.presentation.codeHeader.CodeHeaderViewModelImpl;
 import com.fasten.executor_driver.presentation.executorstate.ExecutorStateViewModelImpl;
 import com.fasten.executor_driver.presentation.geolocation.GeoLocationViewModelImpl;
-import com.fasten.executor_driver.presentation.map.MapViewModel;
 import com.fasten.executor_driver.presentation.map.MapViewModelImpl;
 import com.fasten.executor_driver.presentation.offer.OfferViewModelImpl;
-import com.fasten.executor_driver.presentation.onlinebutton.OnlineButtonViewModel;
 import com.fasten.executor_driver.presentation.onlinebutton.OnlineButtonViewModelImpl;
-import com.fasten.executor_driver.presentation.phone.PhoneViewModel;
 import com.fasten.executor_driver.presentation.phone.PhoneViewModelImpl;
-import com.fasten.executor_driver.presentation.selectedvehicle.SelectedVehicleViewModel;
 import com.fasten.executor_driver.presentation.selectedvehicle.SelectedVehicleViewModelImpl;
 import com.fasten.executor_driver.presentation.services.ServicesListItems;
-import com.fasten.executor_driver.presentation.services.ServicesSliderViewModel;
 import com.fasten.executor_driver.presentation.services.ServicesSliderViewModelImpl;
 import com.fasten.executor_driver.presentation.services.ServicesViewModelImpl;
-import com.fasten.executor_driver.presentation.smsbutton.SmsButtonViewModel;
 import com.fasten.executor_driver.presentation.smsbutton.SmsButtonViewModelImpl;
-import com.fasten.executor_driver.presentation.vehicleoptions.VehicleOptionsViewModel;
 import com.fasten.executor_driver.presentation.vehicleoptions.VehicleOptionsViewModelImpl;
 import com.fasten.executor_driver.utils.TimeUtilsImpl;
 import com.fasten.executor_driver.view.ChooseVehicleFragment;
@@ -218,14 +208,24 @@ public class AppComponentImpl implements AppComponent {
   @Override
   public void inject(BaseActivity baseActivity) {
     baseActivity.setExecutorStateViewModel(
-        new ExecutorStateViewModelImpl(
-            executorStateUseCase
-        )
+        ViewModelProviders.of(
+            baseActivity,
+            new ViewModelFactory<>(
+                new ExecutorStateViewModelImpl(
+                    executorStateUseCase
+                )
+            )
+        ).get(ExecutorStateViewModelImpl.class)
     );
     baseActivity.setGeoLocationViewModel(
-        new GeoLocationViewModelImpl(
-            geoLocationUseCase
-        )
+        ViewModelProviders.of(
+            baseActivity,
+            new ViewModelFactory<>(
+                new GeoLocationViewModelImpl(
+                    geoLocationUseCase
+                )
+            )
+        ).get(GeoLocationViewModelImpl.class)
     );
   }
 
@@ -235,7 +235,7 @@ public class AppComponentImpl implements AppComponent {
     loginFragment.setPhoneViewModel(
         ViewModelProviders.of(
             loginFragment,
-            new ViewModelFactory<PhoneViewModel>(
+            new ViewModelFactory<>(
                 new PhoneViewModelImpl(
                     new LoginUseCaseImpl(
                         loginSharer,
@@ -252,7 +252,7 @@ public class AppComponentImpl implements AppComponent {
     passwordFragment.setSmsButtonViewModel(
         ViewModelProviders.of(
             passwordFragment,
-            new ViewModelFactory<SmsButtonViewModel>(
+            new ViewModelFactory<>(
                 new SmsButtonViewModelImpl(
                     new SmsUseCaseImpl(
                         new SmsGatewayImpl(apiService),
@@ -266,7 +266,7 @@ public class AppComponentImpl implements AppComponent {
     passwordFragment.setCodeHeaderViewModel(
         ViewModelProviders.of(
             passwordFragment,
-            new ViewModelFactory<CodeHeaderViewModel>(
+            new ViewModelFactory<>(
                 new CodeHeaderViewModelImpl(
                     new LoginSharer(
                         appSettingsService
@@ -278,7 +278,7 @@ public class AppComponentImpl implements AppComponent {
     passwordFragment.setCodeViewModel(
         ViewModelProviders.of(
             passwordFragment,
-            new ViewModelFactory<CodeViewModel>(
+            new ViewModelFactory<>(
                 new CodeViewModelImpl(
                     new PasswordUseCaseImpl(
                         new PasswordGatewayImpl(apiService),
@@ -301,7 +301,7 @@ public class AppComponentImpl implements AppComponent {
     mapFragment.setMapViewModel(
         ViewModelProviders.of(
             mapFragment,
-            new ViewModelFactory<MapViewModel>(
+            new ViewModelFactory<>(
                 new MapViewModelImpl(
                     new HeatMapUseCaseImpl(
                         new HeatMapGatewayImpl(apiService)
@@ -310,9 +310,14 @@ public class AppComponentImpl implements AppComponent {
             )).get(MapViewModelImpl.class)
     );
     mapFragment.setGeoLocationViewModel(
-        new GeoLocationViewModelImpl(
-            geoLocationUseCase
-        )
+        ViewModelProviders.of(
+            mapFragment,
+            new ViewModelFactory<>(
+                new GeoLocationViewModelImpl(
+                    geoLocationUseCase
+                )
+            )
+        ).get(GeoLocationViewModelImpl.class)
     );
   }
 
@@ -329,7 +334,7 @@ public class AppComponentImpl implements AppComponent {
     goOnlineFragment.setOnlineButtonViewModel(
         ViewModelProviders.of(
             goOnlineFragment,
-            new ViewModelFactory<OnlineButtonViewModel>(
+            new ViewModelFactory<>(
                 new OnlineButtonViewModelImpl(
                     new VehiclesAndOptionsUseCaseImpl(
                         vehiclesAndOptionsGateway,
@@ -350,7 +355,7 @@ public class AppComponentImpl implements AppComponent {
     chooseVehicleFragment.setChooseVehicleViewModel(
         ViewModelProviders.of(
             chooseVehicleFragment,
-            new ViewModelFactory<ChooseVehicleViewModel>(
+            new ViewModelFactory<>(
                 new ChooseVehicleViewModelImpl(
                     new VehicleChoiceUseCaseImpl(vehiclesAndOptionsGateway, vehicleChoiceSharer)
                 )
@@ -367,7 +372,7 @@ public class AppComponentImpl implements AppComponent {
     vehicleOptionsFragment.setVehicleOptionsViewModel(
         ViewModelProviders.of(
             vehicleOptionsFragment,
-            new ViewModelFactory<VehicleOptionsViewModel>(
+            new ViewModelFactory<>(
                 new VehicleOptionsViewModelImpl(
                     new VehicleOptionsUseCaseImpl(
                         new VehicleOptionsGatewayImpl(
@@ -388,7 +393,7 @@ public class AppComponentImpl implements AppComponent {
     selectedVehicleFragment.setSelectedVehicleViewModel(
         ViewModelProviders.of(
             selectedVehicleFragment,
-            new ViewModelFactory<SelectedVehicleViewModel>(
+            new ViewModelFactory<>(
                 new SelectedVehicleViewModelImpl(
                     new SelectedVehicleUseCaseImpl(
                         vehicleChoiceSharer
@@ -402,9 +407,14 @@ public class AppComponentImpl implements AppComponent {
   @Override
   public void inject(ServicesFragment servicesFragment) {
     ServicesListItems servicesListItems = new ServicesListItems();
-    ServicesSliderViewModel servicesSliderViewModel = new ServicesSliderViewModelImpl(
-        servicesListItems
-    );
+    ServicesSliderViewModelImpl servicesSliderViewModel = ViewModelProviders.of(
+        servicesFragment,
+        new ViewModelFactory<>(
+            new ServicesSliderViewModelImpl(
+                servicesListItems
+            )
+        )
+    ).get(ServicesSliderViewModelImpl.class);
     servicesFragment.setServicesSliderViewModel(servicesSliderViewModel);
     servicesFragment.setServicesViewModel(
         ViewModelProviders.of(
@@ -421,21 +431,25 @@ public class AppComponentImpl implements AppComponent {
                     servicesListItems)
             )
         ).get(ServicesViewModelImpl.class)
-
     );
   }
 
   @Override
   public void inject(OfferFragment offerFragment) {
     offerFragment.setOfferViewModel(
-        new OfferViewModelImpl(
-            new OfferUseCaseImpl(
-                new OfferGatewayImpl(
-                    executorStateUseCase, stompClient, new OfferApiMapper()
+        ViewModelProviders.of(
+            offerFragment,
+            new ViewModelFactory<>(
+                new OfferViewModelImpl(
+                    new OfferUseCaseImpl(
+                        new OfferGatewayImpl(
+                            executorStateUseCase, stompClient, new OfferApiMapper()
+                        )
+                    ),
+                    new TimeUtilsImpl()
                 )
-            ),
-            new TimeUtilsImpl()
-        )
+            )
+        ).get(OfferViewModelImpl.class)
     );
   }
 }
