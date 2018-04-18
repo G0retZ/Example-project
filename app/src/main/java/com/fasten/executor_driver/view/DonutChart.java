@@ -88,9 +88,9 @@ public class DonutChart extends View {
     if (chartElements == null) {
       mChartElements = null;
     } else {
-        if (mChartElements == null) {
-            mChartElements = new ArrayList<>();
-        }
+      if (mChartElements == null) {
+        mChartElements = new ArrayList<>();
+      }
       mChartElements.clear();
       mChartElements.addAll(chartElements);
     }
