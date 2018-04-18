@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.fasten.executor_driver.R;
 import com.fasten.executor_driver.presentation.executorstate.ExecutorStateNavigate;
+import com.fasten.executor_driver.presentation.phone.PhoneNavigate;
 
 public class LoginActivity extends BaseActivity {
 
@@ -20,8 +21,9 @@ public class LoginActivity extends BaseActivity {
   public void navigate(@NonNull String destination) {
     switch (destination) {
       case ExecutorStateNavigate.AUTHORIZE:
+        // никуда не переходим
         break;
-      case "next":
+      case PhoneNavigate.PASSWORD:
         startActivity(new Intent(this, PasswordActivity.class));
         break;
       default:
