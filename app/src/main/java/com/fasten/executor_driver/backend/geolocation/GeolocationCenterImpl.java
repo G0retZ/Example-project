@@ -16,6 +16,7 @@ import com.google.android.gms.location.LocationServices;
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Emitter;
 import io.reactivex.Flowable;
+import javax.inject.Inject;
 
 /**
  * Подключается к Fused Location Api и подписывается на обновления геопозиции.
@@ -30,6 +31,7 @@ public class GeolocationCenterImpl implements GeolocationCenter {
   private final Context appContext;
 
   // Создаем тут клиента для либы короче
+  @Inject
   public GeolocationCenterImpl(Context context) {
     mFusedLocationClient = LocationServices.getFusedLocationProviderClient(context);
     mLocationRequest = LocationRequest.create();

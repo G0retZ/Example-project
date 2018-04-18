@@ -5,6 +5,7 @@ import com.fasten.executor_driver.backend.websocket.ConnectionClosedException;
 import com.fasten.executor_driver.interactor.SocketGateway;
 import io.reactivex.Completable;
 import io.reactivex.schedulers.Schedulers;
+import javax.inject.Inject;
 import ua.naiksoftware.stomp.client.StompClient;
 
 public class SocketGatewayImpl implements SocketGateway {
@@ -12,6 +13,7 @@ public class SocketGatewayImpl implements SocketGateway {
   @NonNull
   private final StompClient stompClient;
 
+  @Inject
   public SocketGatewayImpl(@NonNull StompClient stompClient) {
     this.stompClient = stompClient;
   }

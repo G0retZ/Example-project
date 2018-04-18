@@ -7,6 +7,7 @@ import com.fasten.executor_driver.entity.Vehicle;
 import com.fasten.executor_driver.interactor.vehicle.LastUsedVehicleGateway;
 import io.reactivex.Completable;
 import io.reactivex.Single;
+import javax.inject.Inject;
 
 public class LastUsedVehicleGatewayImpl implements LastUsedVehicleGateway {
 
@@ -15,6 +16,7 @@ public class LastUsedVehicleGatewayImpl implements LastUsedVehicleGateway {
   @Nullable
   private Long lastUsedVehicleId;
 
+  @Inject
   public LastUsedVehicleGatewayImpl(@NonNull AppSettingsService appSettingsService) {
     this.appSettingsService = appSettingsService;
   }

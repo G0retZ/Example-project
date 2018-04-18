@@ -6,12 +6,14 @@ import com.fasten.executor_driver.entity.GeoLocation;
 import com.fasten.executor_driver.interactor.GeoLocationGateway;
 import io.reactivex.Flowable;
 import io.reactivex.schedulers.Schedulers;
+import javax.inject.Inject;
 
 public class GeoLocationGatewayImpl implements GeoLocationGateway {
 
   @NonNull
   private final GeolocationCenter geolocationCenter;
 
+  @Inject
   public GeoLocationGatewayImpl(@NonNull GeolocationCenter geolocationCenter) {
     this.geolocationCenter = geolocationCenter;
   }

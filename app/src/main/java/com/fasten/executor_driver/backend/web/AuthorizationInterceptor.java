@@ -3,6 +3,7 @@ package com.fasten.executor_driver.backend.web;
 import android.support.annotation.NonNull;
 import java.io.IOException;
 import java.util.List;
+import javax.inject.Inject;
 import okhttp3.Interceptor;
 import okhttp3.Response;
 
@@ -13,6 +14,10 @@ import okhttp3.Response;
 public class AuthorizationInterceptor implements Interceptor {
 
   private final static String HEADER_NAME = "Code";
+
+  @Inject
+  public AuthorizationInterceptor() {
+  }
 
   @Override
   public Response intercept(@NonNull Chain chain) throws IOException {

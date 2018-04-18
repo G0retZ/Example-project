@@ -5,6 +5,7 @@ import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
 import com.fasten.executor_driver.presentation.ViewState;
+import javax.inject.Inject;
 
 public class ServicesSliderViewModelImpl extends ViewModel implements ServicesSliderViewModel,
     ViewState<ServicesSliderViewActions> {
@@ -16,6 +17,7 @@ public class ServicesSliderViewModelImpl extends ViewModel implements ServicesSl
   @NonNull
   private final MutableLiveData<String> navigateLiveData;
 
+  @Inject
   public ServicesSliderViewModelImpl(@NonNull ServicesListItems servicesListItems) {
     this.servicesListItems = servicesListItems;
     viewStateLiveData = new MutableLiveData<>();
