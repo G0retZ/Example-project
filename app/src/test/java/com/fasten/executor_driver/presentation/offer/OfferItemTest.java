@@ -46,8 +46,8 @@ public class OfferItemTest {
     when(offer.getPassengers()).thenReturn(3);
     when(offer.getTimeout()).thenReturn(20);
     when(routePoint.getAddress()).thenReturn("add");
-    when(routePoint.getLatitude()).thenReturn(10.2341);
-    when(routePoint.getLongitude()).thenReturn(5.421);
+    when(routePoint.getLatitude()).thenReturn(5.421);
+    when(routePoint.getLongitude()).thenReturn(10.2341);
 
     // Результат:
     assertEquals(offerItem.getLoadPointMapUrl(),
