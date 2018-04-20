@@ -1,5 +1,6 @@
 package com.fasten.executor_driver.presentation.offer;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.mockito.Mockito.when;
@@ -31,7 +32,7 @@ public class OfferItemTest {
 
   @Before
   public void setUp() {
-    when(timeUtils.currentTimeMillis()).thenReturn(12390182L, 12395182L);
+    when(timeUtils.currentTimeMillis()).thenReturn(12390182L, 12395182L, 12400182L);
     offerItem = new OfferItem(offer, timeUtils);
   }
 
@@ -58,8 +59,8 @@ public class OfferItemTest {
     assertEquals(offerItem.getOfferComment(), "com");
     assertEquals(offerItem.getPortersCount(), 2);
     assertEquals(offerItem.getPassengersCount(), 3);
-    assertEquals(offerItem.getProgressLeft()[0], 75);
-    assertEquals(offerItem.getProgressLeft()[1], 15000);
+    assertArrayEquals(offerItem.getProgressLeft(), new long[] {75, 15000});
+    assertArrayEquals(offerItem.getProgressLeft(), new long[] {50, 10000});
   }
 
   @Test
