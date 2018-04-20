@@ -66,4 +66,7 @@
   <string name="passengers">Пассажиры</string>
   <string name="comment">Коментарий</string>
   <string name="accept">Принять</string>
+  <string name="offer">Предложение</string>
+  <string name="new_offer">Новый заказ доступен для принятия!</string>
+  <string name="consider">Рассмотреть</string>
 </resources>

@@ -62,7 +62,9 @@ public class PersistenceService extends Service {
     }
     startForeground(NOTIFICATION_ID, getNotification(
         intent.getIntExtra(Intent.EXTRA_TITLE, 0),
-        intent.getIntExtra(Intent.EXTRA_TEXT, 0)
+        intent.getIntExtra(Intent.EXTRA_TEXT, 0),
+        intent.getIntExtra(Intent.EXTRA_HTML_TEXT, 0),
+        intent.getParcelableExtra(Intent.EXTRA_INTENT)
     ));
     return START_NOT_STICKY;
   }
@@ -81,14 +83,13 @@ public class PersistenceService extends Service {
   /**
    * Returns the {@link NotificationCompat} used as part of the foreground service.
    */
-  private Notification getNotification(@StringRes int title, @StringRes int text) {
-    // PendingIntent для запуска Activity.
-    PendingIntent activityPendingIntent = PendingIntent.getActivity(this, 0,
-        new Intent(this, OnlineActivity.class), 0);
-
-    NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
-        .addAction(R.mipmap.ic_launcher, getString(R.string.to_app), activityPendingIntent)
-        .setContentText(getString(text))
+  private Notification getNotification(@StringRes int title, @StringRes int text,
+      @StringRes int actionText, @Nullable PendingIntent activityPendingIntent) {
+    NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID);
+    if (activityPendingIntent != null) {
+      builder.addAction(R.mipmap.ic_launcher, getString(actionText), activityPendingIntent);
+    }
+    builder.setContentText(getString(text))
         .setContentTitle(getString(title))
         .setOngoing(true)
         .setPriority(Notification.PRIORITY_HIGH)

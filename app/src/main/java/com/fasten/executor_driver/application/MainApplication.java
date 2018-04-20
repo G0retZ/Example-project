@@ -1,6 +1,7 @@
 package com.fasten.executor_driver.application;
 
 import android.app.Application;
+import android.app.PendingIntent;
 import android.content.Intent;
 import android.os.Build;
 import android.support.annotation.NonNull;
@@ -68,16 +69,20 @@ public class MainApplication extends Application {
           stopService();
           break;
         case ExecutorStateNavigate.MAP_SHIFT_OPENED:
-          startService(R.string.online, R.string.no_orders);
+          startService(R.string.online, R.string.no_orders, R.string.to_app,
+              PendingIntent.getActivity(this, 0, new Intent(this, OnlineActivity.class), 0));
           break;
         case ExecutorStateNavigate.MAP_ONLINE:
-          startService(R.string.online, R.string.wait_for_orders);
+          startService(R.string.online, R.string.wait_for_orders, R.string.to_app,
+              PendingIntent.getActivity(this, 0, new Intent(this, OnlineActivity.class), 0));
           break;
         case ExecutorStateNavigate.OFFER_CONFIRMATION:
-          startService(R.string.online, R.string.executing);
+          startService(R.string.offer, R.string.new_offer, R.string.consider,
+              PendingIntent.getActivity(this, 0, new Intent(this, OfferActivity.class), 0));
           break;
         case ExecutorStateNavigate.APPROACHING_LOAD_POINT:
-          startService(R.string.online, R.string.executing);
+          startService(R.string.online, R.string.executing, R.string.to_app,
+              PendingIntent.getActivity(this, 0, new Intent(this, OnlineActivity.class), 0));
           break;
       }
     }
@@ -91,17 +96,21 @@ public class MainApplication extends Application {
     return appComponent;
   }
 
-  @SuppressWarnings("SameParameterValue")
-  private void startService(@StringRes int title, @StringRes int text) {
+  private void startService(@StringRes int title, @StringRes int text, @StringRes int actionText,
+      PendingIntent activityPendingIntent) {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
       startForegroundService(new Intent(this, PersistenceService.class)
           .putExtra(Intent.EXTRA_TITLE, title)
           .putExtra(Intent.EXTRA_TEXT, text)
+          .putExtra(Intent.EXTRA_HTML_TEXT, actionText)
+          .putExtra(Intent.EXTRA_INTENT, activityPendingIntent)
       );
     } else {
       startService(new Intent(this, PersistenceService.class)
           .putExtra(Intent.EXTRA_TITLE, title)
           .putExtra(Intent.EXTRA_TEXT, text)
+          .putExtra(Intent.EXTRA_HTML_TEXT, actionText)
+          .putExtra(Intent.EXTRA_INTENT, activityPendingIntent)
       );
     }
   }
