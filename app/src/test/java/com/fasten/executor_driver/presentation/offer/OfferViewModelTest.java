@@ -440,6 +440,35 @@ public class OfferViewModelTest {
   }
 
   /**
+   * Должен вернуть состояние вида "В процессе", и только 1 раз.
+   */
+  @Test
+  public void setPendingViewStateToLiveDataForTimeout() {
+    // Дано:
+    PublishSubject<Offer> publishSubject = PublishSubject.create();
+    InOrder inOrder = Mockito.inOrder(viewStateObserver);
+    when(offerUseCase.getOffers())
+        .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
+    offerViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+
+    // Действие:
+    publishSubject.onNext(offer);
+    offerViewModel.counterTimeOut();
+    offerViewModel.counterTimeOut();
+    offerViewModel.counterTimeOut();
+
+    // Результат:
+    inOrder.verify(viewStateObserver).onChanged(new OfferViewStatePending(null));
+    inOrder.verify(viewStateObserver).onChanged(new OfferViewStateIdle(
+        new OfferItem(offer, timeUtils)
+    ));
+    inOrder.verify(viewStateObserver).onChanged(new OfferViewStatePending(
+        new OfferItem(offer, timeUtils)
+    ));
+    verifyNoMoreInteractions(viewStateObserver);
+  }
+
+  /**
    * Должен вернуть состояние вида "Ошибка" сети.
    */
   @Test

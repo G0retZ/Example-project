@@ -28,9 +28,9 @@ class OfferItem {
   public String getLoadPointMapUrl() {
     return "https://maps.googleapis.com/maps/api/staticmap?"
         + "center="
-        + offer.getRoutePoint().getLongitude()
-        + ","
         + offer.getRoutePoint().getLatitude()
+        + ","
+        + offer.getRoutePoint().getLongitude()
         + "&zoom=16"
         + "&size=288x352"
         + "&maptype=roadmap"

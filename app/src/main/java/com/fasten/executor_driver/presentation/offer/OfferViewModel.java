@@ -16,4 +16,9 @@ public interface OfferViewModel extends ViewModel<OfferViewActions> {
    * Отказывается от заказа.
    */
   void declineOffer();
+
+  /**
+   * Сообщает, что таймер закончился.
+   */
+  void counterTimeOut();
 }

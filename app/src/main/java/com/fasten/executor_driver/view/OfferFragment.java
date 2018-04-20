@@ -1,5 +1,7 @@
 package com.fasten.executor_driver.view;
 
+import android.animation.Animator;
+import android.animation.Animator.AnimatorListener;
 import android.animation.ObjectAnimator;
 import android.app.AlertDialog.Builder;
 import android.content.Context;
@@ -114,9 +116,31 @@ public class OfferFragment extends BaseFragment implements OfferViewActions {
 
   @Override
   public void showTimeout(long progress, long timeout) {
-    ObjectAnimator animation = ObjectAnimator.ofFloat(timeoutChart, "value", progress / 100f, 0);
-    animation.setDuration(timeout);
-    animation.start();
+    if (timeout > 0) {
+      ObjectAnimator animation = ObjectAnimator.ofFloat(timeoutChart, "value", progress, 0);
+      animation.setDuration(timeout);
+      animation.addListener(new AnimatorListener() {
+        @Override
+        public void onAnimationStart(Animator animation) {
+        }
+
+        @Override
+        public void onAnimationEnd(Animator animation) {
+          offerViewModel.counterTimeOut();
+        }
+
+        @Override
+        public void onAnimationCancel(Animator animation) {
+        }
+
+        @Override
+        public void onAnimationRepeat(Animator animation) {
+        }
+      });
+      animation.start();
+    } else {
+      offerViewModel.counterTimeOut();
+    }
   }
 
   @Override
