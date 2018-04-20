@@ -50,6 +50,8 @@ public class OfferViewStateIdleTest {
     verify(offerViewActions).showOfferComment("comm");
     verify(offerViewActions).showTimeout(123, 4532);
     verify(offerViewActions).showOfferPending(false);
+    verify(offerViewActions).enableAcceptButton(true);
+    verify(offerViewActions).enableDeclineButton(true);
     verify(offerViewActions).showOfferAvailabilityError(false);
     verify(offerViewActions).showOfferNetworkErrorMessage(false);
     verifyNoMoreInteractions(offerViewActions);
@@ -65,6 +67,8 @@ public class OfferViewStateIdleTest {
 
     // Результат:
     verify(offerViewActions).showOfferPending(false);
+    verify(offerViewActions).enableAcceptButton(true);
+    verify(offerViewActions).enableDeclineButton(true);
     verify(offerViewActions).showOfferAvailabilityError(false);
     verify(offerViewActions).showOfferNetworkErrorMessage(false);
     verifyNoMoreInteractions(offerViewActions);

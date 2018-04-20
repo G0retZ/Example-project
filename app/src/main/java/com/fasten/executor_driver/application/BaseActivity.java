@@ -152,16 +152,8 @@ public class BaseActivity extends AppCompatActivity {
         finish();
         break;
       case ExecutorStateNavigate.OFFER_CONFIRMATION:
-        new Builder(this)
-            .setTitle(R.string.error)
-            .setMessage("Подтверждаем заказ!")
-            .setCancelable(false)
-            .setPositiveButton(
-                getString(android.R.string.ok),
-                (a, b) -> android.os.Process.killProcess(android.os.Process.myPid())
-            )
-            .create()
-            .show();
+        startActivity(new Intent(this, OfferActivity.class));
+        finish();
         break;
       case ExecutorStateNavigate.APPROACHING_LOAD_POINT:
         new Builder(this)

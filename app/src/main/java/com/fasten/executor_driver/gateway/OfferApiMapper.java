@@ -14,7 +14,7 @@ import javax.inject.Inject;
 public class OfferApiMapper implements Mapper<String, Offer> {
 
   @Inject
-  OfferApiMapper() {
+  public OfferApiMapper() {
   }
 
   @NonNull
@@ -56,7 +56,8 @@ public class OfferApiMapper implements Mapper<String, Offer> {
         orderDto.estimatedAmount,
         orderDto.passengers,
         orderDto.porters,
-        orderDto.timeout,
+        // TODO: это костыль, который подменяет таймаут 0 на 20
+        orderDto.timeout == 0 ? 20 : orderDto.timeout,
         new RoutePoint(
             orderDto.route.get(0).latitude,
             orderDto.route.get(0).longitude,
