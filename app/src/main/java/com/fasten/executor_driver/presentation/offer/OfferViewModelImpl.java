@@ -110,6 +110,13 @@ public class OfferViewModelImpl extends ViewModel implements OfferViewModel {
   }
 
   @Override
+  public void counterTimeOut() {
+    if (!(viewStateLiveData.getValue() instanceof OfferViewStatePending)) {
+      viewStateLiveData.postValue(new OfferViewStatePending(offerItem));
+    }
+  }
+
+  @Override
   protected void onCleared() {
     super.onCleared();
     offerItem = null;

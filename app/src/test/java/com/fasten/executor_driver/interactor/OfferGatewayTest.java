@@ -248,7 +248,7 @@ public class OfferGatewayTest {
    * Должен ответить ошибкой отсутствия заказов для статуса "смена закрыта".
    */
   @Test
-  public void answerNoOffersAvailableForShiftClosed() {
+  public void ignoreForShiftClosed() {
     // Дано:
     when(executorStateUseCase.getExecutorStates())
         .thenReturn(Flowable.just(ExecutorState.SHIFT_CLOSED));
@@ -258,15 +258,15 @@ public class OfferGatewayTest {
 
     // Результат:
     testSubscriber.assertNoValues();
-    testSubscriber.assertNotComplete();
-    testSubscriber.assertError(NoOffersAvailableException.class);
+    testSubscriber.assertComplete();
+    testSubscriber.assertNoErrors();
   }
 
   /**
    * Должен ответить ошибкой отсутствия заказов для статуса "смена открыта".
    */
   @Test
-  public void answerNoOffersAvailableForShiftOpened() {
+  public void ignoreForShiftOpened() {
     // Дано:
     when(executorStateUseCase.getExecutorStates())
         .thenReturn(Flowable.just(ExecutorState.SHIFT_OPENED));
@@ -276,15 +276,15 @@ public class OfferGatewayTest {
 
     // Результат:
     testSubscriber.assertNoValues();
-    testSubscriber.assertNotComplete();
-    testSubscriber.assertError(NoOffersAvailableException.class);
+    testSubscriber.assertComplete();
+    testSubscriber.assertNoErrors();
   }
 
   /**
    * Должен ответить ошибкой отсутствия заказов для статуса "онлайн".
    */
   @Test
-  public void answerNoOffersAvailableForOnline() {
+  public void ignoreForOnline() {
     // Дано:
     when(executorStateUseCase.getExecutorStates()).thenReturn(Flowable.just(ExecutorState.ONLINE));
 
@@ -293,15 +293,15 @@ public class OfferGatewayTest {
 
     // Результат:
     testSubscriber.assertNoValues();
-    testSubscriber.assertNotComplete();
-    testSubscriber.assertError(NoOffersAvailableException.class);
+    testSubscriber.assertComplete();
+    testSubscriber.assertNoErrors();
   }
 
   /**
    * Должен ответить ошибкой отсутствия заказов для статуса "на пути к точке погрузки".
    */
   @Test
-  public void answerNoOffersAvailableForApproachingLoadPoint() {
+  public void ignoreForApproachingLoadPoint() {
     // Дано:
     when(executorStateUseCase.getExecutorStates())
         .thenReturn(Flowable.just(ExecutorState.IN_PROGRESS));
@@ -311,8 +311,8 @@ public class OfferGatewayTest {
 
     // Результат:
     testSubscriber.assertNoValues();
-    testSubscriber.assertNotComplete();
-    testSubscriber.assertError(NoOffersAvailableException.class);
+    testSubscriber.assertComplete();
+    testSubscriber.assertNoErrors();
   }
 
   /**

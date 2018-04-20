@@ -9,7 +9,7 @@ import org.junit.Test;
 
 public class OfferApiMapperTest {
 
-  private final Offer offer = new Offer(7, "com", 1200239, 7000, 2, 1, 20,
+  private final Offer offer = new Offer(7, "com", 1200239, 7000, 2, 1, 25,
       new RoutePoint(123, 456, "com", "add"));
   private Mapper<String, Offer> mapper;
 
@@ -19,12 +19,12 @@ public class OfferApiMapperTest {
   }
 
   /**
-   * Должен успешно преобразовать JSON в статус "смена закрыта".
+   * Должен успешно преобразовать JSON в предложение заказа.
    *
    * @throws Exception ошибка
    */
   @Test
-  public void mappingStringToOffer() throws Exception {
+  public void mappingJsonStringToOffer() throws Exception {
     // Дано и Действие:
     Offer offer1 = mapper.map("{\n"
         + "    \"id\": \"7\",\n"
@@ -32,7 +32,7 @@ public class OfferApiMapperTest {
         + "    \"estimatedAmount\": \"7000\",\n"
         + "    \"passengers\": \"2\",\n"
         + "    \"porters\": \"1\",\n"
-        + "    \"timeout\": \"20\",\n"
+        + "    \"timeout\": \"25\",\n"
         + "    \"executorDistance\": {\n"
         + "        \"executorId\": \"5\",\n"
         + "        \"distance\": \"1200239\"\n"
@@ -49,6 +49,40 @@ public class OfferApiMapperTest {
 
     // Результат:
     assertEquals(offer1, offer);
+  }
+
+  /**
+   * Должен успешно преобразовать JSON без таймаута в предложение заказа с таймаутом 20.
+   *
+   * @throws Exception ошибка
+   */
+  // TODO: это костыль, который подменяет таймаут 0 на 20
+  @Test
+  public void mappingJsonStringWithoutTimeoutToOffer() throws Exception {
+    // Дано и Действие:
+    Offer offer1 = mapper.map("{\n"
+        + "    \"id\": \"7\",\n"
+        + "    \"comment\": \"com\",\n"
+        + "    \"estimatedAmount\": \"7000\",\n"
+        + "    \"passengers\": \"2\",\n"
+        + "    \"porters\": \"1\",\n"
+        + "    \"executorDistance\": {\n"
+        + "        \"executorId\": \"5\",\n"
+        + "        \"distance\": \"1200239\"\n"
+        + "    },\n"
+        + "    \"route\": [\n"
+        + "        {\n"
+        + "            \"longitude\":\"456\",\n"
+        + "            \"latitude\":\"123\",\n"
+        + "            \"comment\":\"com\",\n"
+        + "            \"address\":\"add\"\n"
+        + "        }\n"
+        + "    ]\n"
+        + "}");
+
+    // Результат:
+    assertEquals(offer1, new Offer(7, "com", 1200239, 7000, 2, 1, 20,
+        new RoutePoint(123, 456, "com", "add")));
   }
 
   /**
@@ -109,7 +143,7 @@ public class OfferApiMapperTest {
         + "    \"estimatedAmount\": \"7000\",\n"
         + "    \"passengers\": \"2\",\n"
         + "    \"porters\": \"1\",\n"
-        + "    \"timeout\": \"20\",\n"
+        + "    \"timeout\": \"25\",\n"
         + "    \"executorDistance\": {\n"
         + "        \"executorId\": \"5\",\n"
         + "        \"distance\": \"1200239\"\n"
@@ -131,7 +165,7 @@ public class OfferApiMapperTest {
         + "    \"estimatedAmount\": \"7000\",\n"
         + "    \"passengers\": \"2\",\n"
         + "    \"porters\": \"1\",\n"
-        + "    \"timeout\": \"20\",\n"
+        + "    \"timeout\": \"25\",\n"
         + "    \"executorDistance\": {\n"
         + "        \"executorId\": \"5\",\n"
         + "        \"distance\": \"1200239\"\n"
@@ -155,7 +189,7 @@ public class OfferApiMapperTest {
         + "    \"estimatedAmount\": \"7000\",\n"
         + "    \"passengers\": \"2\",\n"
         + "    \"porters\": \"1\",\n"
-        + "    \"timeout\": \"20\",\n"
+        + "    \"timeout\": \"25\",\n"
         + "    \"executorDistance\": {\n"
         + "        \"executorId\": \"5\",\n"
         + "        \"distance\": \"1200239\"\n"
@@ -184,7 +218,7 @@ public class OfferApiMapperTest {
         + "    \"estimatedAmount\": \"7000\",\n"
         + "    \"passengers\": \"2\",\n"
         + "    \"porters\": \"1\",\n"
-        + "    \"timeout\": \"20\",\n"
+        + "    \"timeout\": \"25\",\n"
         + "    \"executorDistance\": {\n"
         + "        \"executorId\": \"5\",\n"
         + "        \"distance\": \"1200239\"\n"
@@ -214,7 +248,7 @@ public class OfferApiMapperTest {
         + "    \"estimatedAmount\": \"7000\",\n"
         + "    \"passengers\": \"2\",\n"
         + "    \"porters\": \"1\",\n"
-        + "    \"timeout\": \"20\",\n"
+        + "    \"timeout\": \"25\",\n"
         + "    \"route\": [\n"
         + "        {\n"
         + "            \"longitude\":\"456\",\n"
