@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.fasten.executor_driver.entity.GeoLocation;
 import io.reactivex.Flowable;
+import javax.inject.Inject;
 
 public class GeoLocationUseCaseImpl implements GeoLocationUseCase {
 
@@ -17,6 +18,7 @@ public class GeoLocationUseCaseImpl implements GeoLocationUseCase {
   @Nullable
   private Flowable<GeoLocation> geoLocationFlowable;
 
+  @Inject
   public GeoLocationUseCaseImpl(@NonNull GeoLocationGateway geoLocationGateway,
       @NonNull GeoTrackingGateway geoTrackingGateway,
       @NonNull ExecutorStateUseCase executorStateUseCase) {

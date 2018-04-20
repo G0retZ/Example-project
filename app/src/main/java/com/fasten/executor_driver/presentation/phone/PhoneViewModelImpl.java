@@ -19,6 +19,8 @@ public class PhoneViewModelImpl extends ViewModel implements PhoneViewModel {
 
   @NonNull
   private final MutableLiveData<ViewState<PhoneViewActions>> viewStateLiveData;
+  @NonNull
+  private final MutableLiveData<String> navigateLiveData;
 
   private Disposable disposable;
 
@@ -27,6 +29,7 @@ public class PhoneViewModelImpl extends ViewModel implements PhoneViewModel {
     this.loginUseCase = loginUseCase;
     viewStateLiveData = new MutableLiveData<>();
     viewStateLiveData.postValue(new PhoneViewStateInitial());
+    navigateLiveData = new MutableLiveData<>();
   }
 
   @NonNull
@@ -38,7 +41,7 @@ public class PhoneViewModelImpl extends ViewModel implements PhoneViewModel {
   @NonNull
   @Override
   public LiveData<String> getNavigationLiveData() {
-    return new MutableLiveData<>();
+    return navigateLiveData;
   }
 
   @Override
@@ -63,7 +66,7 @@ public class PhoneViewModelImpl extends ViewModel implements PhoneViewModel {
           .subscribeOn(Schedulers.single())
           .observeOn(AndroidSchedulers.mainThread())
           .subscribe(
-              () -> viewStateLiveData.postValue(new PhoneViewStateProceed()),
+              () -> navigateLiveData.postValue(PhoneNavigate.PASSWORD),
               Throwable::printStackTrace
           );
     }

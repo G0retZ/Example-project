@@ -25,7 +25,6 @@ public class CodeHeaderViewModelImpl extends ViewModel implements CodeHeaderView
   public CodeHeaderViewModelImpl(@NonNull DataReceiver<String> loginReceiver) {
     this.loginReceiver = loginReceiver;
     viewStateLiveData = new MutableLiveData<>();
-    consumePhoneNumber("00000000000");
   }
 
   @NonNull
@@ -52,7 +51,6 @@ public class CodeHeaderViewModelImpl extends ViewModel implements CodeHeaderView
     return new MutableLiveData<>();
   }
 
-  @SuppressWarnings("SameParameterValue")
   private void consumePhoneNumber(@NonNull String phoneNumber) {
     viewStateLiveData.postValue(
         new CodeHeaderViewState(

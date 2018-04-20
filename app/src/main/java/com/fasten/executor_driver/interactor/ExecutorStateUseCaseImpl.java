@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 import com.fasten.executor_driver.entity.ExecutorState;
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
+import javax.inject.Inject;
 
 public class ExecutorStateUseCaseImpl implements ExecutorStateUseCase {
 
@@ -18,6 +19,7 @@ public class ExecutorStateUseCaseImpl implements ExecutorStateUseCase {
   @Nullable
   private Flowable<ExecutorState> executorStateFlowable;
 
+  @Inject
   public ExecutorStateUseCaseImpl(@NonNull ExecutorStateGateway gateway,
       @NonNull SocketGateway socketGateway,
       @NonNull DataReceiver<String> loginReceiver) {

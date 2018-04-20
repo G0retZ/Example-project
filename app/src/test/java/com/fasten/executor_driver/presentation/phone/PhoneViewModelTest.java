@@ -38,6 +38,9 @@ public class PhoneViewModelTest {
   @Mock
   private Observer<ViewState<PhoneViewActions>> viewStateObserver;
 
+  @Mock
+  private Observer<String> navigateObserver;
+
   @Before
   public void setUp() {
     phoneViewModel = new PhoneViewModelImpl(useCase);
@@ -187,7 +190,7 @@ public class PhoneViewModelTest {
   }
 
   /**
-   * Должен вернуть состояние вида "Продолжай" после "Готов".
+   * Не должен возвращать состояний после "Готов".
    */
   @Test
   public void setProceedViewStateToLiveDataPending() {
@@ -203,7 +206,25 @@ public class PhoneViewModelTest {
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(any(PhoneViewStateInitial.class));
     inOrder.verify(viewStateObserver).onChanged(any(PhoneViewStateReady.class));
-    inOrder.verify(viewStateObserver).onChanged(any(PhoneViewStateProceed.class));
     verifyNoMoreInteractions(viewStateObserver);
+  }
+
+  /* Тетсируем навигацию. */
+
+  /**
+   * Должен вернуть "перейти к вводу пароля".
+   */
+  @Test
+  public void setNavigateToPasswordToLiveData() {
+    // Дано:
+    phoneViewModel.getNavigationLiveData().observeForever(navigateObserver);
+    when(useCase.validateLogin(anyString())).thenReturn(Completable.complete());
+
+    // Действие:
+    phoneViewModel.phoneNumberChanged("(124)5");
+    phoneViewModel.nextClicked();
+
+    // Результат:
+    verify(navigateObserver, only()).onChanged(PhoneNavigate.PASSWORD);
   }
 }

@@ -9,6 +9,5 @@ public class LoginValidator extends PhoneNumberValidator {
 
   @Inject
   public LoginValidator() {
-    super();
   }
 }

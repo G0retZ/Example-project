@@ -11,6 +11,7 @@ import com.fasten.executor_driver.interactor.OfferGateway;
 import io.reactivex.Completable;
 import io.reactivex.Flowable;
 import io.reactivex.schedulers.Schedulers;
+import javax.inject.Inject;
 import ua.naiksoftware.stomp.client.StompClient;
 
 public class OfferGatewayImpl implements OfferGateway {
@@ -22,6 +23,7 @@ public class OfferGatewayImpl implements OfferGateway {
   @NonNull
   private final Mapper<String, Offer> mapper;
 
+  @Inject
   public OfferGatewayImpl(
       @NonNull ExecutorStateUseCase executorStateUseCase,
       @NonNull StompClient stompClient,

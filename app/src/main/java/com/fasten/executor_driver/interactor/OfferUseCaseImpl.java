@@ -6,6 +6,7 @@ import com.fasten.executor_driver.entity.NoOffersAvailableException;
 import com.fasten.executor_driver.entity.Offer;
 import io.reactivex.Completable;
 import io.reactivex.Flowable;
+import javax.inject.Inject;
 
 public class OfferUseCaseImpl implements OfferUseCase {
 
@@ -14,6 +15,7 @@ public class OfferUseCaseImpl implements OfferUseCase {
   @Nullable
   private Offer lastOffer;
 
+  @Inject
   public OfferUseCaseImpl(@NonNull OfferGateway offerGateway) {
     this.offerGateway = offerGateway;
   }

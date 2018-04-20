@@ -6,6 +6,7 @@ import static org.mockito.ArgumentMatchers.nullable;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.only;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
@@ -17,6 +18,7 @@ import com.fasten.executor_driver.entity.Validator;
 import com.fasten.executor_driver.interactor.DataReceiver;
 import io.reactivex.Completable;
 import io.reactivex.Observable;
+import io.reactivex.observers.TestObserver;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -49,20 +51,15 @@ public class PasswordUseCaseTest {
   /* Проверяем работу с публикатором логина */
 
   /**
-   * Должен подписаться при создании сразу же.
-   */
-  @Test
-  public void getFromDataSharerImmediately() {
-    // Результат:
-    verify(loginReceiver, only()).get();
-  }
-
-  /**
-   * Не должен взаимодействовать с публиктором в любых иных случаях.
+   * Должен подписываться на данные публиктора.
    */
   @SuppressWarnings("SpellCheckingInspection")
   @Test
   public void doNotTouchDataSharer() {
+    // Дано:
+    when(loginReceiver.get()).thenReturn(Observable.just(""));
+
+    // Действие:
     passwordUseCase.authorize("passwor", Completable.complete()).test();
     passwordUseCase.authorize("password", Completable.never()).test();
     passwordUseCase.authorize("password", Completable.complete()).test();
@@ -73,7 +70,7 @@ public class PasswordUseCaseTest {
     passwordUseCase.authorize("password", Completable.complete()).test();
 
     // Результат:
-    verify(loginReceiver, only()).get();
+    verify(loginReceiver, times(5)).get();
   }
 
   /* Проверяем работу с валидаторами */
@@ -85,6 +82,9 @@ public class PasswordUseCaseTest {
    */
   @Test
   public void askPasswordValidatorForResult() throws Exception {
+    // Дано:
+    when(loginReceiver.get()).thenReturn(Observable.just(""));
+
     // Действие:
     passwordUseCase.authorize("", Completable.complete()).test();
 
@@ -99,24 +99,29 @@ public class PasswordUseCaseTest {
    */
   @Test
   public void answerErrorIfPasswordInvalid() {
+    // Дано:
+    when(loginReceiver.get()).thenReturn(Observable.just(""));
+
+    // Действие:
+    TestObserver<Void> testObserver =
+        passwordUseCase.authorize("", Completable.complete()).test();
+
     // Результат:
-    passwordUseCase.authorize("", Completable.complete())
-        .test().assertError(ValidationException.class);
+    testObserver.assertError(ValidationException.class);
   }
 
   /**
    * Не должно быть ошибок, если пароль соответствует формату.
-   *
-   * @throws Exception error
    */
   @Test
-  public void answerSuccessIfPasswordValid() throws Exception {
+  public void answerSuccessIfPasswordValid() {
     // Действие:
-    doNothing().when(passwordValidator).validate(anyString());
+    TestObserver<Void> testObserver =
+        passwordUseCase.authorize("password", Completable.complete()).test();
 
     // Результат:
-    passwordUseCase.authorize("password", Completable.complete())
-        .test().assertNoErrors();
+    testObserver.assertNoErrors();
+    testObserver.assertNotComplete();
   }
 
   /* Проверяем работу с гейтвеем */
@@ -184,23 +189,36 @@ public class PasswordUseCaseTest {
    */
   @Test
   public void answerNoNetworkError() {
-    // Действие:
+    // Дано:
+    when(loginReceiver.get()).thenReturn(Observable.just(""));
     when(gateway.authorize(any(LoginData.class)))
         .thenReturn(Completable.error(new NoNetworkException()));
 
+    // Действие:
+    TestObserver<Void> testObserver =
+        passwordUseCase.authorize("password", Completable.complete()).test();
+
     // Результат:
-    passwordUseCase.authorize("password", Completable.complete())
-        .test().assertError(NoNetworkException.class);
+    testObserver.assertNotComplete();
+    testObserver.assertError(NoNetworkException.class);
   }
 
   /**
-   * Должен успехом, если действие после валиации отменено.
+   * Должен ошибкой, если действие после валиации отменено.
    */
   @Test
-  public void answerValidationSuccessful() {
+  public void answerAfterValidationFailed() {
+    // Дано:
+    when(loginReceiver.get()).thenReturn(Observable.just(""));
+    when(gateway.authorize(any(LoginData.class))).thenReturn(Completable.complete());
+
+    // Действие:
+    TestObserver<Void> testObserver =
+        passwordUseCase.authorize("password", Completable.error(new Exception())).test();
+
     // Результат:
-    passwordUseCase.authorize("password", Completable.error(new Exception()))
-        .test().assertComplete();
+    testObserver.assertNotComplete();
+    testObserver.assertError(Exception.class);
   }
 
   /**
@@ -208,10 +226,16 @@ public class PasswordUseCaseTest {
    */
   @Test
   public void answerAuthSuccessful() {
-    // Действие:
+    // Дано:
+    when(loginReceiver.get()).thenReturn(Observable.just(""));
     when(gateway.authorize(any(LoginData.class))).thenReturn(Completable.complete());
 
+    // Действие:
+    TestObserver<Void> testObserver =
+        passwordUseCase.authorize("password", Completable.complete()).test();
+
     // Результат:
-    passwordUseCase.authorize("password", Completable.complete()).test().assertComplete();
+    testObserver.assertComplete();
+    testObserver.assertNoErrors();
   }
 }

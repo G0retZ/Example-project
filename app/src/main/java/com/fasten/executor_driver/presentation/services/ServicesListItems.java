@@ -4,6 +4,7 @@ import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
 import java.util.ArrayList;
 import java.util.List;
+import javax.inject.Inject;
 
 /**
  * Модель для фильтрации списка услуг исполнителя по ползунку.
@@ -15,6 +16,10 @@ public class ServicesListItems {
   private int minPrice = Integer.MAX_VALUE;
   private int maxPrice = 0;
   private int minSelectedPrice = Integer.MAX_VALUE;
+
+  @Inject
+  public ServicesListItems() {
+  }
 
   /**
    * Выдает список элементов услуг учитывая текущее положение ползунка.

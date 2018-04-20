@@ -9,6 +9,7 @@ import com.fasten.executor_driver.interactor.GeoTrackingGateway;
 import com.google.gson.Gson;
 import io.reactivex.Completable;
 import io.reactivex.schedulers.Schedulers;
+import javax.inject.Inject;
 import ua.naiksoftware.stomp.client.StompClient;
 
 public class GeoTrackingGatewayImpl implements GeoTrackingGateway {
@@ -18,6 +19,7 @@ public class GeoTrackingGatewayImpl implements GeoTrackingGateway {
   @NonNull
   private final Gson gson;
 
+  @Inject
   public GeoTrackingGatewayImpl(@NonNull StompClient stompClient) {
     this.stompClient = stompClient;
     gson = new Gson();

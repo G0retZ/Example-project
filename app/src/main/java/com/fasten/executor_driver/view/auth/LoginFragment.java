@@ -70,6 +70,11 @@ public class LoginFragment extends BaseFragment implements PhoneViewActions {
   @Override
   public void onActivityCreated(@Nullable Bundle savedInstanceState) {
     super.onActivityCreated(savedInstanceState);
+    phoneViewModel.getNavigationLiveData().observe(this, destination -> {
+      if (destination != null) {
+        navigate(destination);
+      }
+    });
     phoneViewModel.getViewStateLiveData().observe(this, viewState -> {
       if (viewState != null) {
         viewState.apply(this);
@@ -93,11 +98,6 @@ public class LoginFragment extends BaseFragment implements PhoneViewActions {
   @Override
   public void enableButton(boolean enable) {
     goNext.setEnabled(enable);
-  }
-
-  @Override
-  public void proceedNext() {
-    navigate("next");
   }
 
   // Замудренная логика форматировния ввода номера телефона в режиме реального времени

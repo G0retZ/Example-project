@@ -16,6 +16,7 @@ public class CropTransformation implements Transformation {
   private final float mAspectRatio;
   @Gravity
   private final int mGravity;
+
   /**
    * Crops to the largest image that will fit the given aspectRatio.
    * This will effectively chop off either the top/bottom or left/right of the source image.
