@@ -114,7 +114,7 @@ public class OfferFragment extends BaseFragment implements OfferViewActions {
 
   @Override
   public void showTimeout(long progress, long timeout) {
-    ObjectAnimator animation = ObjectAnimator.ofFloat(timeoutChart, "value", progress / 100f, 0);
+    ObjectAnimator animation = ObjectAnimator.ofFloat(timeoutChart, "value", progress, 0);
     animation.setDuration(timeout);
     animation.start();
   }
