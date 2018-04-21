@@ -1,87 +1,74 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-  xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:tools="http://schemas.android.com/tools"
   android:layout_width="match_parent"
-  android:layout_height="match_parent">
+  android:layout_height="match_parent"
+  android:orientation="vertical">
   <android.support.v7.widget.Toolbar
     android:id="@+id/appBar"
-    android:layout_width="0dp"
-    android:layout_height="?actionBarSize"
     style="@style/AppTheme.AppBar"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toTopOf="parent">
+    android:layout_width="match_parent"
+    android:layout_height="?actionBarSize">
     <TextView
       style="@style/TextAppearance.AppCompat.Title"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:text="@string/authorization"/>
   </android.support.v7.widget.Toolbar>
+  <Space
+    android:layout_width="match_parent"
+    android:layout_height="0dp"
+    android:layout_weight="1"/>
   <TextView
     android:id="@+id/phoneInputCaption"
-    android:layout_width="0dp"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginStart="16dp"
     android:layout_marginEnd="16dp"
     android:text="@string/phone_number"
-    android:textColor="@color/colorAccentSecond"
-    app:layout_constraintBottom_toTopOf="@+id/phoneInput"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toBottomOf="@id/appBar"
-    app:layout_constraintVertical_chainStyle="packed"/>
+    android:textColor="@color/colorAccentSecond"/>
   <EditText
     android:id="@+id/phoneInput"
-    android:layout_width="0dp"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="16dp"
     android:layout_marginStart="16dp"
     android:layout_marginEnd="16dp"
     android:digits="0123456789+"
+    android:hint="@null"
     android:inputType="phone"
     android:maxLength="18"
     android:textSize="28sp"
-    android:hint="@null"
-    app:layout_constraintBottom_toTopOf="@+id/goNext"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toBottomOf="@id/phoneInputCaption"/>
+    tools:text="+7 (000) 000-00-00"/>
   <Button
     android:id="@+id/goNext"
     style="@style/AppTheme.Button.Colored"
-    android:layout_width="0dp"
+    android:layout_width="match_parent"
     android:layout_height="55dp"
     android:layout_marginBottom="16dp"
     android:layout_marginStart="16dp"
     android:layout_marginEnd="16dp"
     android:enabled="false"
-    android:text="@string/enter"
-    app:layout_constraintBottom_toTopOf="@+id/restoreAccess"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toBottomOf="@+id/phoneInput"/>
+    android:text="@string/enter"/>
   <Button
     android:id="@+id/restoreAccess"
     style="@style/AppTheme.Button.Borderless.Colored"
-    android:layout_width="0dp"
+    android:layout_width="match_parent"
     android:layout_height="56dp"
     android:layout_marginStart="16dp"
     android:layout_marginEnd="16dp"
-    android:text="@string/no_access_to_phone"
-    app:layout_constraintBottom_toTopOf="@id/becomeDriver"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toBottomOf="@+id/goNext"/>
+    android:text="@string/no_access_to_phone"/>
   <Button
     android:id="@+id/becomeDriver"
     style="@style/AppTheme.Button.Borderless.Colored"
-    android:layout_width="0dp"
+    android:layout_width="match_parent"
     android:layout_height="56dp"
     android:layout_marginStart="16dp"
     android:layout_marginEnd="16dp"
-    android:text="@string/become_driver"
-    app:layout_constraintBottom_toBottomOf="parent"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toBottomOf="@+id/restoreAccess"/>
-</android.support.constraint.ConstraintLayout>
+    android:text="@string/become_driver"/>
+  <Space
+    android:layout_width="match_parent"
+    android:layout_height="0dp"
+    android:layout_weight="1"/>
+</LinearLayout>
