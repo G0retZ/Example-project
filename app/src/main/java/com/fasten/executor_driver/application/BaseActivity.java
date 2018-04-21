@@ -29,6 +29,8 @@ import javax.inject.Inject;
 @SuppressLint("Registered")
 public class BaseActivity extends AppCompatActivity {
 
+  public static final String NAVIGATION_UP = "Base.Go.Back";
+  static final String INIT_APPLICATION = "Base.Init.Application";
   @NonNull
   private final LinkedList<OnBackPressedInterceptor> onBackPressedInterceptors = new LinkedList<>();
   @Nullable
@@ -117,9 +119,18 @@ public class BaseActivity extends AppCompatActivity {
    */
   public void navigate(@NonNull String destination) {
     switch (destination) {
+      case INIT_APPLICATION:
+        ((MainApplication) getApplication()).initApplication();
+        initExecutorStates();
+        initGeoLocations();
+        break;
+      case NAVIGATION_UP:
+        onBackPressed();
+        break;
       case GeoLocationNavigate.RESOLVE_GEO_PROBLEM:
         startActivity(
             new Intent(this, GeolocationResolutionActivity.class)
+                .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK)
         );
         finish();
         break;
@@ -136,23 +147,38 @@ public class BaseActivity extends AppCompatActivity {
             .show();
         break;
       case ExecutorStateNavigate.AUTHORIZE:
-        startActivity(new Intent(this, LoginActivity.class));
+        startActivity(
+            new Intent(this, LoginActivity.class)
+                .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK)
+        );
         finish();
         break;
       case ExecutorStateNavigate.MAP_SHIFT_CLOSED:
-        startActivity(new Intent(this, MapActivity.class));
+        startActivity(
+            new Intent(this, MapActivity.class)
+                .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK)
+        );
         finish();
         break;
       case ExecutorStateNavigate.MAP_SHIFT_OPENED:
-        startActivity(new Intent(this, OnlineActivity.class));
+        startActivity(
+            new Intent(this, OnlineActivity.class)
+                .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK)
+        );
         finish();
         break;
       case ExecutorStateNavigate.MAP_ONLINE:
-        startActivity(new Intent(this, OnlineActivity.class));
+        startActivity(
+            new Intent(this, OnlineActivity.class)
+                .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK)
+        );
         finish();
         break;
       case ExecutorStateNavigate.OFFER_CONFIRMATION:
-        startActivity(new Intent(this, OfferActivity.class));
+        startActivity(
+            new Intent(this, OfferActivity.class)
+                .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK)
+        );
         finish();
         break;
       case ExecutorStateNavigate.APPROACHING_LOAD_POINT:
@@ -170,13 +196,13 @@ public class BaseActivity extends AppCompatActivity {
     }
   }
 
-  void initExecutorStates() {
+  private void initExecutorStates() {
     if (executorStateViewModel != null) {
-      executorStateViewModel.initializeExecutorState();
+      executorStateViewModel.initializeExecutorState(false);
     }
   }
 
-  void initGeoLocations() {
+  private void initGeoLocations() {
     if (geoLocationViewModel != null) {
       geoLocationViewModel.updateGeoLocations();
     }

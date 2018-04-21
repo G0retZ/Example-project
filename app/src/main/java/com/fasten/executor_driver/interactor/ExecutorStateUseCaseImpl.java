@@ -29,8 +29,8 @@ public class ExecutorStateUseCaseImpl implements ExecutorStateUseCase {
   }
 
   @Override
-  public Flowable<ExecutorState> getExecutorStates() {
-    if (executorStateFlowable == null) {
+  public Flowable<ExecutorState> getExecutorStates(boolean reset) {
+    if (executorStateFlowable == null || reset) {
       executorStateFlowable = loginReceiver.get()
           .toFlowable(BackpressureStrategy.BUFFER)
           .startWith(socketGateway.openSocket().toFlowable())

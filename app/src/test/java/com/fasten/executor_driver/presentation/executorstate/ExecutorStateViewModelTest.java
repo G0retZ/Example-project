@@ -1,5 +1,6 @@
 package com.fasten.executor_driver.presentation.executorstate;
 
+import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -38,22 +39,34 @@ public class ExecutorStateViewModelTest {
   public void setUp() {
     RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
     RxAndroidPlugins.setInitMainThreadSchedulerHandler(scheduler -> Schedulers.trampoline());
-    when(executorStateUseCase.getExecutorStates()).thenReturn(Flowable.never());
+    when(executorStateUseCase.getExecutorStates(anyBoolean())).thenReturn(Flowable.never());
     executorStateViewModel = new ExecutorStateViewModelImpl(executorStateUseCase);
   }
 
   /* Тетсируем работу с юзкейсом. */
 
   /**
-   * Должен попросить у юзкейса статусы исполнителя.
+   * Должен попросить у юзкейса статусы исполнителя без сброса кеша.
    */
   @Test
   public void askDataReceiverToSubscribeToLocationUpdates() {
     // Действие:
-    executorStateViewModel.initializeExecutorState();
+    executorStateViewModel.initializeExecutorState(false);
 
     // Результат:
-    verify(executorStateUseCase, only()).getExecutorStates();
+    verify(executorStateUseCase, only()).getExecutorStates(false);
+  }
+
+  /**
+   * Должен попросить у юзкейса статусы исполнителя со сбросом кеша.
+   */
+  @Test
+  public void askDataReceiverToSubscribeToLocationUpdatesWithCacheReset() {
+    // Действие:
+    executorStateViewModel.initializeExecutorState(true);
+
+    // Результат:
+    verify(executorStateUseCase, only()).getExecutorStates(true);
   }
 
   /**
@@ -62,12 +75,12 @@ public class ExecutorStateViewModelTest {
   @Test
   public void doNotTouchUseCaseBeforeAfterFirstRequestComplete() {
     // Действие:
-    executorStateViewModel.initializeExecutorState();
-    executorStateViewModel.initializeExecutorState();
-    executorStateViewModel.initializeExecutorState();
+    executorStateViewModel.initializeExecutorState(false);
+    executorStateViewModel.initializeExecutorState(true);
+    executorStateViewModel.initializeExecutorState(false);
 
     // Результат:
-    verify(executorStateUseCase, only()).getExecutorStates();
+    verify(executorStateUseCase, only()).getExecutorStates(false);
   }
 
   /* Тетсируем навигацию. */
@@ -78,12 +91,12 @@ public class ExecutorStateViewModelTest {
   @Test
   public void navigateToNoNetwork() {
     // Дано:
-    when(executorStateUseCase.getExecutorStates())
+    when(executorStateUseCase.getExecutorStates(anyBoolean()))
         .thenReturn(Flowable.error(NoNetworkException::new));
 
     // Действие:
     executorStateViewModel.getNavigationLiveData().observeForever(navigationObserver);
-    executorStateViewModel.initializeExecutorState();
+    executorStateViewModel.initializeExecutorState(false);
 
     // Результат:
     verify(navigationObserver, only()).onChanged(ExecutorStateNavigate.NO_NETWORK);
@@ -95,12 +108,12 @@ public class ExecutorStateViewModelTest {
   @Test
   public void navigateToAuthorize() {
     // Дано:
-    when(executorStateUseCase.getExecutorStates())
+    when(executorStateUseCase.getExecutorStates(anyBoolean()))
         .thenReturn(Flowable.error(AuthenticatorException::new));
 
     // Действие:
     executorStateViewModel.getNavigationLiveData().observeForever(navigationObserver);
-    executorStateViewModel.initializeExecutorState();
+    executorStateViewModel.initializeExecutorState(true);
 
     // Результат:
     verify(navigationObserver, only()).onChanged(ExecutorStateNavigate.NO_NETWORK);
@@ -112,12 +125,12 @@ public class ExecutorStateViewModelTest {
   @Test
   public void navigateToShiftClosed() {
     // Дано:
-    when(executorStateUseCase.getExecutorStates())
+    when(executorStateUseCase.getExecutorStates(anyBoolean()))
         .thenReturn(Flowable.just(ExecutorState.SHIFT_CLOSED));
 
     // Действие:
     executorStateViewModel.getNavigationLiveData().observeForever(navigationObserver);
-    executorStateViewModel.initializeExecutorState();
+    executorStateViewModel.initializeExecutorState(false);
 
     // Результат:
     verify(navigationObserver, only()).onChanged(ExecutorStateNavigate.MAP_SHIFT_CLOSED);
@@ -129,12 +142,12 @@ public class ExecutorStateViewModelTest {
   @Test
   public void navigateToShiftOpened() {
     // Дано:
-    when(executorStateUseCase.getExecutorStates())
+    when(executorStateUseCase.getExecutorStates(anyBoolean()))
         .thenReturn(Flowable.just(ExecutorState.SHIFT_OPENED));
 
     // Действие:
     executorStateViewModel.getNavigationLiveData().observeForever(navigationObserver);
-    executorStateViewModel.initializeExecutorState();
+    executorStateViewModel.initializeExecutorState(true);
 
     // Результат:
     verify(navigationObserver, only()).onChanged(ExecutorStateNavigate.MAP_SHIFT_OPENED);
@@ -146,11 +159,12 @@ public class ExecutorStateViewModelTest {
   @Test
   public void navigateToOnline() {
     // Дано:
-    when(executorStateUseCase.getExecutorStates()).thenReturn(Flowable.just(ExecutorState.ONLINE));
+    when(executorStateUseCase.getExecutorStates(anyBoolean()))
+        .thenReturn(Flowable.just(ExecutorState.ONLINE));
 
     // Действие:
     executorStateViewModel.getNavigationLiveData().observeForever(navigationObserver);
-    executorStateViewModel.initializeExecutorState();
+    executorStateViewModel.initializeExecutorState(false);
 
     // Результат:
     verify(navigationObserver, only()).onChanged(ExecutorStateNavigate.MAP_ONLINE);
@@ -162,12 +176,12 @@ public class ExecutorStateViewModelTest {
   @Test
   public void navigateToOfferConfirmation() {
     // Дано:
-    when(executorStateUseCase.getExecutorStates())
+    when(executorStateUseCase.getExecutorStates(anyBoolean()))
         .thenReturn(Flowable.just(ExecutorState.ORDER_CONFIRMATION));
 
     // Действие:
     executorStateViewModel.getNavigationLiveData().observeForever(navigationObserver);
-    executorStateViewModel.initializeExecutorState();
+    executorStateViewModel.initializeExecutorState(true);
 
     // Результат:
     verify(navigationObserver, only()).onChanged(ExecutorStateNavigate.OFFER_CONFIRMATION);
@@ -179,12 +193,12 @@ public class ExecutorStateViewModelTest {
   @Test
   public void navigateToApproachingLoadPoint() {
     // Дано:
-    when(executorStateUseCase.getExecutorStates())
+    when(executorStateUseCase.getExecutorStates(anyBoolean()))
         .thenReturn(Flowable.just(ExecutorState.IN_PROGRESS));
 
     // Действие:
     executorStateViewModel.getNavigationLiveData().observeForever(navigationObserver);
-    executorStateViewModel.initializeExecutorState();
+    executorStateViewModel.initializeExecutorState(false);
 
     // Результат:
     verify(navigationObserver, only()).onChanged(ExecutorStateNavigate.APPROACHING_LOAD_POINT);

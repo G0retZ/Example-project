@@ -8,11 +8,11 @@ import io.reactivex.Flowable;
  */
 public interface ExecutorStateUseCase {
 
-
   /**
-   * Запрашивает статусы исполнителя.
+   * Запрашивает статусы исполнителя, выдает последний закешированный результат, если не сброшен.
    *
+   * @param reset - сбросить ли кеш? Сбрасывает кеш для всех последующих запросов к юзкейсу.
    * @return {@link Flowable<ExecutorState>} результат запроса.
    */
-  Flowable<ExecutorState> getExecutorStates();
+  Flowable<ExecutorState> getExecutorStates(boolean reset);
 }

@@ -8,7 +8,9 @@ import com.fasten.executor_driver.presentation.ViewModel;
 public interface ExecutorStateViewModel extends ViewModel<ExecutorStateViewActions> {
 
   /**
-   * Запрашивает инициализацию приложения.
+   * Запрашивает инициализацию приложения со сбросом кеша или без.
+   *
+   * @param reset - сбросить ли кеш?
    */
-  void initializeExecutorState();
+  void initializeExecutorState(boolean reset);
 }

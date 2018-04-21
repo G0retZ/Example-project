@@ -44,9 +44,9 @@ public class ExecutorStateViewModelImpl extends ViewModel implements ExecutorSta
   }
 
   @Override
-  public void initializeExecutorState() {
+  public void initializeExecutorState(boolean reset) {
     if (disposable == null || disposable.isDisposed()) {
-      disposable = executorStateUseCase.getExecutorStates()
+      disposable = executorStateUseCase.getExecutorStates(reset)
           .subscribeOn(Schedulers.single())
           .observeOn(AndroidSchedulers.mainThread())
           .subscribe(

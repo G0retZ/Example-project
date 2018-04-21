@@ -49,7 +49,14 @@ public class MainApplication extends Application {
     }
     executorStateViewModel.getNavigationLiveData().observeForever(this::navigate);
     geoLocationViewModel.getNavigationLiveData().observeForever(this::navigate);
-    executorStateViewModel.initializeExecutorState();
+    initApplication();
+  }
+
+  public void initApplication() {
+    if (executorStateViewModel == null || geoLocationViewModel == null) {
+      throw new IllegalStateException("Граф зависимостей поломан!");
+    }
+    executorStateViewModel.initializeExecutorState(true);
     geoLocationViewModel.updateGeoLocations();
   }
 
