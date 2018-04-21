@@ -13,17 +13,16 @@ public class PasswordActivity extends BaseActivity {
   public void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_passwrod);
-    setTitle(R.string.code);
   }
 
   @Override
   public void navigate(@NonNull String destination) {
     switch (destination) {
       case CodeNavigate.ENTER_APP:
-        initExecutorStates();
-        initGeoLocations();
+        super.navigate(INIT_APPLICATION);
         break;
       case ExecutorStateNavigate.AUTHORIZE:
+        // никуда не переходим
         break;
       default:
         super.navigate(destination);

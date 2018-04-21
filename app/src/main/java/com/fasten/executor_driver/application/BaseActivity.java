@@ -65,6 +65,10 @@ public class BaseActivity extends AppCompatActivity {
         navigate(destination);
       }
     });
+    init();
+  }
+
+  void init() {
     initGeoLocations();
     initExecutorStates();
   }
@@ -128,11 +132,7 @@ public class BaseActivity extends AppCompatActivity {
         onBackPressed();
         break;
       case GeoLocationNavigate.RESOLVE_GEO_PROBLEM:
-        startActivity(
-            new Intent(this, GeolocationResolutionActivity.class)
-                .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK)
-        );
-        finish();
+        startActivity(new Intent(this, GeolocationResolutionActivity.class));
         break;
       case ExecutorStateNavigate.NO_NETWORK:
         new Builder(this)

@@ -15,15 +15,16 @@ public class VehicleOptionsActivity extends BaseActivity {
   public void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_vehicle_options);
-    setTitle(R.string.check_list);
   }
 
   @Override
   public void navigate(@NonNull String destination) {
     switch (destination) {
       case ExecutorStateNavigate.MAP_SHIFT_CLOSED:
+        // никуда не переходим
         break;
       case ExecutorStateNavigate.MAP_SHIFT_OPENED:
+        // никуда не переходим
         break;
       case VehicleOptionsNavigate.SERVICES:
         startActivity(new Intent(this, ServicesActivity.class));

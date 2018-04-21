@@ -4,6 +4,21 @@
   xmlns:tools="http://schemas.android.com/tools"
   android:layout_width="match_parent"
   android:layout_height="match_parent">
+  <android.support.v7.widget.Toolbar
+    android:id="@+id/appBar"
+    android:layout_width="0dp"
+    android:layout_height="?actionBarSize"
+    style="@style/AppTheme.AppBar"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent"
+    app:navigationIcon="@drawable/ic_back_24dp">
+    <TextView
+      style="@style/TextAppearance.AppCompat.Title"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:text="@string/select_services"/>
+  </android.support.v7.widget.Toolbar>
   <TextView
     android:id="@+id/sliderText"
     style="@style/Base.TextAppearance.AppCompat.Subhead"
@@ -17,7 +32,7 @@
     android:text="@string/tariff_range"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toTopOf="parent"/>
+    app:layout_constraintTop_toBottomOf="@id/appBar"/>
   <TextView
     android:id="@+id/minPriceText"
     style="@style/Base.TextAppearance.AppCompat.Subhead"
@@ -107,19 +122,5 @@
     app:layout_constraintBottom_toBottomOf="parent"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"/>
-  <FrameLayout
-    android:id="@+id/pending"
-    android:layout_width="0dp"
-    android:layout_height="0dp"
-    android:background="@color/colorSmoke"
-    android:visibility="gone"
-    app:layout_constraintBottom_toBottomOf="parent"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toTopOf="parent">
-    <ProgressBar
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_gravity="center"/>
-  </FrameLayout>
+  <include layout="@layout/pending_layout"/>
 </android.support.constraint.ConstraintLayout>

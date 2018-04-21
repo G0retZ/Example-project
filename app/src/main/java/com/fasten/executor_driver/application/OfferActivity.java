@@ -18,6 +18,7 @@ public class OfferActivity extends BaseActivity {
   public void navigate(@NonNull String destination) {
     switch (destination) {
       case ExecutorStateNavigate.OFFER_CONFIRMATION:
+        // никуда не переходим
         break;
       default:
         super.navigate(destination);

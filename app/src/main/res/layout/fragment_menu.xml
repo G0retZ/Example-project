@@ -1,9 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
   xmlns:app="http://schemas.android.com/apk/res-auto"
+  xmlns:tools="http://schemas.android.com/tools"
   android:layout_width="match_parent"
   android:layout_height="match_parent"
   android:orientation="vertical">
+  <android.support.v7.widget.Toolbar
+    android:id="@+id/appBar"
+    android:layout_width="0dp"
+    android:layout_height="?actionBarSize"
+    style="@style/AppTheme.AppBar"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent"
+    app:navigationIcon="@drawable/ic_back_24dp">
+    <TextView
+      style="@style/TextAppearance.AppCompat.Title"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:text="@string/menu"/>
+  </android.support.v7.widget.Toolbar>
   <TextView
     android:id="@+id/profile"
     style="@style/TextAppearance.AppCompat.Subhead"
@@ -14,16 +30,15 @@
     android:background="?selectableItemBackground"
     android:gravity="center_vertical"
     android:text="@string/profile"
-    app:layout_constraintBottom_toTopOf="@id/profileLine"
     app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintHorizontal_bias="0.0"
     app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toTopOf="parent"/>
+    app:layout_constraintTop_toBottomOf="@+id/appBar"/>
   <View
     android:id="@+id/profileLine"
     android:layout_width="0dp"
     android:layout_height="1dp"
     android:background="@color/colorDivider"
-    app:layout_constraintBottom_toTopOf="@id/balance"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toBottomOf="@+id/profile"/>
@@ -37,7 +52,6 @@
     android:background="?selectableItemBackground"
     android:gravity="center_vertical"
     android:text="@string/balance"
-    app:layout_constraintBottom_toTopOf="@id/balanceLine"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toBottomOf="@id/profileLine"/>
@@ -50,19 +64,17 @@
     android:paddingEnd="16dp"
     android:background="?selectableItemBackground"
     android:gravity="center_vertical"
-    android:text="10 225 ₽"
     android:textColor="#47FF60"
-    app:layout_constraintBottom_toTopOf="@id/balanceLine"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintHorizontal_bias="1.0"
     app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toBottomOf="@id/profileLine"/>
+    app:layout_constraintTop_toBottomOf="@id/profileLine"
+    tools:text="10 225 ₽"/>
   <View
     android:id="@+id/balanceLine"
     android:layout_width="0dp"
     android:layout_height="1dp"
     android:background="@color/colorDivider"
-    app:layout_constraintBottom_toTopOf="@id/messages"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toBottomOf="@id/balance"/>
@@ -76,7 +88,6 @@
     android:background="?selectableItemBackground"
     android:gravity="center_vertical"
     android:text="@string/messages"
-    app:layout_constraintBottom_toTopOf="@id/messagesLine"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toBottomOf="@id/balanceLine"/>
@@ -89,18 +100,16 @@
     android:paddingEnd="16dp"
     android:background="?selectableItemBackground"
     android:gravity="center_vertical"
-    android:text="2"
-    app:layout_constraintBottom_toTopOf="@id/messagesLine"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintHorizontal_bias="1.0"
     app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toBottomOf="@id/balanceLine"/>
+    app:layout_constraintTop_toBottomOf="@id/balanceLine"
+    tools:text="2"/>
   <View
     android:id="@+id/messagesLine"
     android:layout_width="0dp"
     android:layout_height="1dp"
     android:background="@color/colorDivider"
-    app:layout_constraintBottom_toTopOf="@id/history"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toBottomOf="@id/messages"/>
@@ -114,7 +123,6 @@
     android:background="?selectableItemBackground"
     android:gravity="center_vertical"
     android:text="@string/order_history"
-    app:layout_constraintBottom_toTopOf="@id/historyLine"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toBottomOf="@id/messagesLine"/>
@@ -123,7 +131,6 @@
     android:layout_width="0dp"
     android:layout_height="1dp"
     android:background="@color/colorDivider"
-    app:layout_constraintBottom_toTopOf="@id/operator"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toBottomOf="@id/history"/>
@@ -137,7 +144,6 @@
     android:background="?selectableItemBackground"
     android:gravity="center_vertical"
     android:text="@string/operator"
-    app:layout_constraintBottom_toTopOf="@id/operatorLine"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toBottomOf="@id/historyLine"/>
@@ -146,7 +152,6 @@
     android:layout_width="0dp"
     android:layout_height="1dp"
     android:background="@color/colorDivider"
-    app:layout_constraintBottom_toTopOf="@id/vehicles"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toBottomOf="@id/operator"/>
@@ -160,7 +165,6 @@
     android:background="?selectableItemBackground"
     android:gravity="center_vertical"
     android:text="@string/vehicles_list"
-    app:layout_constraintBottom_toTopOf="@id/vehiclesLine"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toBottomOf="@id/operatorLine"/>

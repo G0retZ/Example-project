@@ -3,7 +3,20 @@
   xmlns:app="http://schemas.android.com/apk/res-auto"
   android:layout_width="match_parent"
   android:layout_height="match_parent">
-
+  <android.support.v7.widget.Toolbar
+    android:id="@+id/appBar"
+    android:layout_width="0dp"
+    android:layout_height="?actionBarSize"
+    style="@style/AppTheme.AppBar"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent">
+    <TextView
+      style="@style/TextAppearance.AppCompat.Title"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:text="@string/authorization"/>
+  </android.support.v7.widget.Toolbar>
   <TextView
     android:id="@+id/phoneInputCaption"
     android:layout_width="0dp"
@@ -15,9 +28,8 @@
     app:layout_constraintBottom_toTopOf="@+id/phoneInput"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toTopOf="parent"
+    app:layout_constraintTop_toBottomOf="@id/appBar"
     app:layout_constraintVertical_chainStyle="packed"/>
-
   <EditText
     android:id="@+id/phoneInput"
     android:layout_width="0dp"
@@ -34,7 +46,6 @@
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toBottomOf="@id/phoneInputCaption"/>
-
   <Button
     android:id="@+id/goNext"
     style="@style/AppTheme.Button.Colored"
@@ -49,7 +60,6 @@
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toBottomOf="@+id/phoneInput"/>
-
   <Button
     android:id="@+id/restoreAccess"
     style="@style/AppTheme.Button.Borderless.Colored"
@@ -62,7 +72,6 @@
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toBottomOf="@+id/goNext"/>
-
   <Button
     android:id="@+id/becomeDriver"
     style="@style/AppTheme.Button.Borderless.Colored"
@@ -75,5 +84,4 @@
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toBottomOf="@+id/restoreAccess"/>
-
 </android.support.constraint.ConstraintLayout>

@@ -8,7 +8,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 import com.fasten.executor_driver.R;
 import com.fasten.executor_driver.di.AppComponent;
@@ -28,7 +28,7 @@ public class ChooseVehicleFragment extends BaseFragment implements ChooseVehicle
 
   private ChooseVehicleViewModel chooseVehicleViewModel;
   private RecyclerView recyclerView;
-  private ProgressBar pendingIndicator;
+  private FrameLayout pendingIndicator;
   private TextView errorText;
   @Nullable
   private Disposable disposable;

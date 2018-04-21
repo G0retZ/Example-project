@@ -14,7 +14,6 @@ public class LoginActivity extends BaseActivity {
   public void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_auth);
-    setTitle(R.string.authorization);
   }
 
   @Override

@@ -14,7 +14,8 @@
     app:layout_constraintBottom_toTopOf="@+id/fragment_go_online"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toTopOf="parent"/>
+    app:layout_constraintTop_toTopOf="parent"
+    tools:layout="@layout/fragment_map"/>
   <fragment
     android:id="@+id/fragment_go_online"
     android:layout_width="0dp"

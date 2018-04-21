@@ -13,6 +13,6 @@ import java.lang.annotation.RetentionPolicy;
 @Retention(RetentionPolicy.SOURCE)
 public @interface VehicleOptionsNavigate {
 
-  // Переход к режиму ожидания заказа.
+  // Переход к выбору услуг.
   String SERVICES = "VehicleOptions.to.Services";
 }

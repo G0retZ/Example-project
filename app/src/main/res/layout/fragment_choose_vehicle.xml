@@ -4,6 +4,21 @@
   xmlns:tools="http://schemas.android.com/tools"
   android:layout_width="match_parent"
   android:layout_height="match_parent">
+  <android.support.v7.widget.Toolbar
+    android:id="@+id/appBar"
+    android:layout_width="0dp"
+    android:layout_height="?actionBarSize"
+    style="@style/AppTheme.AppBar"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent"
+    app:navigationIcon="@drawable/ic_back_24dp">
+    <TextView
+      style="@style/TextAppearance.AppCompat.Title"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:text="@string/choose_vehicle"/>
+  </android.support.v7.widget.Toolbar>
   <android.support.v7.widget.RecyclerView
     android:id="@+id/recyclerView"
     android:layout_width="0dp"
@@ -12,7 +27,7 @@
     app:layout_constraintBottom_toBottomOf="parent"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toTopOf="parent"
+    app:layout_constraintTop_toBottomOf="@id/appBar"
     tools:listitem="@layout/fragment_choose_vehicle_list_item"/>
   <TextView
     android:id="@+id/errorText"
@@ -24,13 +39,5 @@
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toBottomOf="parent"/>
-  <ProgressBar
-    android:id="@+id/pending"
-    style="?android:attr/progressBarStyle"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    app:layout_constraintBottom_toBottomOf="parent"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toBottomOf="parent"/>
+  <include layout="@layout/pending_layout"/>
 </android.support.constraint.ConstraintLayout>
