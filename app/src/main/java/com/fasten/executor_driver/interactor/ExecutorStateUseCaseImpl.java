@@ -16,6 +16,10 @@ public class ExecutorStateUseCaseImpl implements ExecutorStateUseCase {
   @NonNull
   private final DataReceiver<String> loginReceiver;
 
+  // TODO: тут костыль о непонятном баге. На девайсах после ошибки новые подписчики не получают вообще ничего. Поэтому приходится подобным образо кешировать ошибку.
+  @Nullable
+  private Throwable error;
+
   @Nullable
   private Flowable<ExecutorState> executorStateFlowable;
 
@@ -31,12 +35,17 @@ public class ExecutorStateUseCaseImpl implements ExecutorStateUseCase {
   @Override
   public Flowable<ExecutorState> getExecutorStates(boolean reset) {
     if (executorStateFlowable == null || reset) {
+      error = null;
       executorStateFlowable = loginReceiver.get()
           .toFlowable(BackpressureStrategy.BUFFER)
           .startWith(socketGateway.openSocket().toFlowable())
           .switchMap(gateway::getState)
           .replay(1)
-          .refCount();
+          .refCount()
+          .doOnError(throwable -> error = throwable);
+    }
+    if (error != null) {
+      return Flowable.error(error);
     }
     return executorStateFlowable;
   }
