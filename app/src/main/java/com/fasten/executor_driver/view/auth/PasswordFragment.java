@@ -166,6 +166,11 @@ public class PasswordFragment extends BaseFragment implements CodeViewActions,
   }
 
   @Override
+  public boolean onBackPressed() {
+    return smsPending || codePending;
+  }
+
+  @Override
   public void onPause() {
     super.onPause();
     smsCodeDisposable.dispose();
