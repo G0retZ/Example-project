@@ -82,6 +82,11 @@ public class ChooseVehicleFragment extends BaseFragment implements ChooseVehicle
   }
 
   @Override
+  public boolean onBackPressed() {
+    return pendingIndicator.getVisibility() == View.VISIBLE;
+  }
+
+  @Override
   public void showVehicleListPending(boolean pending) {
     pendingIndicator.setVisibility(pending ? View.VISIBLE : View.GONE);
   }
