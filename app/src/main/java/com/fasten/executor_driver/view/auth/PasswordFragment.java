@@ -151,12 +151,14 @@ public class PasswordFragment extends BaseFragment implements CodeViewActions,
     if (savedInstanceState != null) {
       smsSent = savedInstanceState.getBoolean("smsSent", false);
     }
+    if (savedInstanceState == null) {
+      checkPermissions();
+    }
   }
 
   @Override
   public void onResume() {
     super.onResume();
-    checkPermissions();
     smsCodeDisposable = smsReceiver.getCodeFromSms().subscribe(text -> {
       codeInput.setText(text);
       codeInput.setSelection(text.length());
