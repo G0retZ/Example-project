@@ -76,6 +76,11 @@ public class VehicleOptionsFragment extends BaseFragment implements VehicleOptio
   }
 
   @Override
+  public boolean onBackPressed() {
+    return pendingIndicator.getVisibility() == View.VISIBLE;
+  }
+
+  @Override
   public void enableReadyButton(boolean enable) {
     readyButton.setEnabled(enable);
   }
