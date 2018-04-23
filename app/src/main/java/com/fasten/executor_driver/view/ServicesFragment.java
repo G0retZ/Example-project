@@ -119,6 +119,11 @@ public class ServicesFragment extends BaseFragment implements ServicesViewAction
   }
 
   @Override
+  public boolean onBackPressed() {
+    return pendingIndicator.getVisibility() == View.VISIBLE;
+  }
+
+  @Override
   public void onDetach() {
     super.onDetach();
     context = null;
