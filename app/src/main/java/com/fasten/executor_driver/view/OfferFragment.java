@@ -91,6 +91,11 @@ public class OfferFragment extends BaseFragment implements OfferViewActions {
   }
 
   @Override
+  public boolean onBackPressed() {
+    return pendingIndicator.getVisibility() == View.VISIBLE;
+  }
+
+  @Override
   public void onDetach() {
     super.onDetach();
     context = null;
