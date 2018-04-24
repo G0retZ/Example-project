@@ -15,6 +15,7 @@ import com.fasten.executor_driver.di.AppComponent;
 import com.fasten.executor_driver.presentation.choosevehicle.ChooseVehicleListItem;
 import com.fasten.executor_driver.presentation.choosevehicle.ChooseVehicleViewActions;
 import com.fasten.executor_driver.presentation.choosevehicle.ChooseVehicleViewModel;
+import io.reactivex.Completable;
 import io.reactivex.disposables.Disposable;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,8 +31,8 @@ public class ChooseVehicleFragment extends BaseFragment implements ChooseVehicle
   private RecyclerView recyclerView;
   private FrameLayout pendingIndicator;
   private TextView errorText;
-  @Nullable
-  private Disposable disposable;
+  @NonNull
+  private Disposable disposable = Completable.complete().subscribe();
 
   @Inject
   public void setChooseVehicleViewModel(@NonNull ChooseVehicleViewModel chooseVehicleViewModel) {
@@ -76,9 +77,7 @@ public class ChooseVehicleFragment extends BaseFragment implements ChooseVehicle
   @Override
   public void onDestroyView() {
     super.onDestroyView();
-    if (disposable != null) {
-      disposable.dispose();
-    }
+    disposable.dispose();
   }
 
   @Override
@@ -99,9 +98,7 @@ public class ChooseVehicleFragment extends BaseFragment implements ChooseVehicle
   @Override
   public void setVehicleListItems(@NonNull List<ChooseVehicleListItem> chooseVehicleListItems) {
     ChooseVehicleAdapter adapter = new ChooseVehicleAdapter(chooseVehicleListItems);
-    if (disposable != null) {
-      disposable.dispose();
-    }
+    disposable.dispose();
     disposable = adapter.getSelectionCallbacks().subscribe(chooseVehicleViewModel::selectItem);
     recyclerView.setAdapter(adapter);
   }

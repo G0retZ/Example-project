@@ -4,12 +4,12 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import com.fasten.executor_driver.R;
 import com.fasten.executor_driver.entity.NoVehiclesAvailableException;
 import com.fasten.executor_driver.entity.Vehicle;
 import com.fasten.executor_driver.interactor.vehicle.VehicleChoiceUseCase;
 import com.fasten.executor_driver.presentation.ViewState;
+import io.reactivex.Completable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
@@ -25,29 +25,23 @@ public class ChooseVehicleViewModelImpl extends ViewModel implements ChooseVehic
   private final MutableLiveData<ViewState<ChooseVehicleViewActions>> viewStateLiveData;
   @NonNull
   private final MutableLiveData<String> navigateLiveData;
-  @Nullable
-  private Disposable vehiclesDisposable;
-  @Nullable
-  private Disposable choiceDisposable;
+  @NonNull
+  private Disposable vehiclesDisposable = Completable.complete().subscribe();
+  @NonNull
+  private Disposable choiceDisposable = Completable.complete().subscribe();
 
   @Inject
   public ChooseVehicleViewModelImpl(@NonNull VehicleChoiceUseCase vehicleChoiceUseCase) {
     this.vehicleChoiceUseCase = vehicleChoiceUseCase;
     viewStateLiveData = new MutableLiveData<>();
-    viewStateLiveData.postValue(new ChooseVehicleViewStatePending());
     navigateLiveData = new MutableLiveData<>();
+    loadVehicles();
   }
 
 
   @NonNull
   @Override
   public LiveData<ViewState<ChooseVehicleViewActions>> getViewStateLiveData() {
-    if (vehiclesDisposable == null || vehiclesDisposable.isDisposed()) {
-      vehiclesDisposable = vehicleChoiceUseCase.getVehicles()
-          .subscribeOn(Schedulers.single())
-          .observeOn(AndroidSchedulers.mainThread())
-          .subscribe(this::consumeVehicles, this::consumeError);
-    }
     return viewStateLiveData;
   }
 
@@ -59,7 +53,7 @@ public class ChooseVehicleViewModelImpl extends ViewModel implements ChooseVehic
 
   @Override
   public void selectItem(ChooseVehicleListItem chooseVehicleListItem) {
-    if (choiceDisposable != null && !choiceDisposable.isDisposed()) {
+    if (!choiceDisposable.isDisposed()) {
       return;
     }
     choiceDisposable = vehicleChoiceUseCase.selectVehicle(chooseVehicleListItem.getVehicle())
@@ -70,6 +64,17 @@ public class ChooseVehicleViewModelImpl extends ViewModel implements ChooseVehic
             throwable -> {
             }
         );
+  }
+
+  private void loadVehicles() {
+    if (!vehiclesDisposable.isDisposed()) {
+      return;
+    }
+    viewStateLiveData.postValue(new ChooseVehicleViewStatePending());
+    vehiclesDisposable = vehicleChoiceUseCase.getVehicles()
+        .subscribeOn(Schedulers.single())
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe(this::consumeVehicles, this::consumeError);
   }
 
   private void consumeVehicles(List<Vehicle> vehicles) {
@@ -91,11 +96,7 @@ public class ChooseVehicleViewModelImpl extends ViewModel implements ChooseVehic
   @Override
   protected void onCleared() {
     super.onCleared();
-    if (vehiclesDisposable != null) {
-      vehiclesDisposable.dispose();
-    }
-    if (choiceDisposable != null) {
-      choiceDisposable.dispose();
-    }
+    vehiclesDisposable.dispose();
+    choiceDisposable.dispose();
   }
 }

@@ -4,9 +4,9 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import com.fasten.executor_driver.interactor.DataReceiver;
 import com.fasten.executor_driver.presentation.ViewState;
+import io.reactivex.Completable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
@@ -18,8 +18,8 @@ public class CodeHeaderViewModelImpl extends ViewModel implements CodeHeaderView
   private final DataReceiver<String> loginReceiver;
   @NonNull
   private final MutableLiveData<ViewState<CodeHeaderViewActions>> viewStateLiveData;
-  @Nullable
-  private Disposable disposable;
+  @NonNull
+  private Disposable disposable = Completable.complete().subscribe();
 
   @Inject
   public CodeHeaderViewModelImpl(@NonNull DataReceiver<String> loginReceiver) {
@@ -35,7 +35,7 @@ public class CodeHeaderViewModelImpl extends ViewModel implements CodeHeaderView
   }
 
   private void loadLogin() {
-    if (disposable == null || disposable.isDisposed()) {
+    if (disposable.isDisposed()) {
       disposable = loginReceiver.get()
           .subscribeOn(Schedulers.single())
           .observeOn(AndroidSchedulers.mainThread())
@@ -65,8 +65,6 @@ public class CodeHeaderViewModelImpl extends ViewModel implements CodeHeaderView
   @Override
   protected void onCleared() {
     super.onCleared();
-    if (disposable != null) {
-      disposable.dispose();
-    }
+    disposable.dispose();
   }
 }

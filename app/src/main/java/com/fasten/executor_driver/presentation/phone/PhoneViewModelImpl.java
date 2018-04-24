@@ -7,6 +7,7 @@ import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
 import com.fasten.executor_driver.interactor.auth.LoginUseCase;
 import com.fasten.executor_driver.presentation.ViewState;
+import io.reactivex.Completable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
@@ -21,8 +22,8 @@ public class PhoneViewModelImpl extends ViewModel implements PhoneViewModel {
   private final MutableLiveData<ViewState<PhoneViewActions>> viewStateLiveData;
   @NonNull
   private final MutableLiveData<String> navigateLiveData;
-
-  private Disposable disposable;
+  @NonNull
+  private Disposable disposable = Completable.complete().subscribe();
 
   @Inject
   public PhoneViewModelImpl(@NonNull LoginUseCase loginUseCase) {
@@ -46,16 +47,13 @@ public class PhoneViewModelImpl extends ViewModel implements PhoneViewModel {
 
   @Override
   public void phoneNumberChanged(@NonNull String phoneNumber) {
-    if (disposable != null && !disposable.isDisposed()) {
+    if (!disposable.isDisposed()) {
       return;
     }
     disposable = loginUseCase.validateLogin(phoneNumber.replaceAll("[^\\d]", ""))
         .subscribeOn(Schedulers.single())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(this::switchToSuccess, throwable -> switchToError());
-    if (disposable.isDisposed()) {
-      disposable = null;
-    }
   }
 
   @SuppressLint("CheckResult")
@@ -75,19 +73,14 @@ public class PhoneViewModelImpl extends ViewModel implements PhoneViewModel {
   @Override
   protected void onCleared() {
     super.onCleared();
-    if (disposable != null && !disposable.isDisposed()) {
-      disposable.dispose();
-      disposable = null;
-    }
+    disposable.dispose();
   }
 
   private void switchToSuccess() {
-    disposable = null;
     viewStateLiveData.postValue(new PhoneViewStateReady());
   }
 
   private void switchToError() {
-    disposable = null;
     if (!(viewStateLiveData.getValue() instanceof PhoneViewStateInitial)) {
       viewStateLiveData.setValue(new PhoneViewStateInitial());
     }

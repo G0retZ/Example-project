@@ -2,7 +2,6 @@ package com.fasten.executor_driver.presentation.choosevehicle;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.only;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.verifyZeroInteractions;
@@ -16,7 +15,6 @@ import com.fasten.executor_driver.entity.Vehicle;
 import com.fasten.executor_driver.interactor.vehicle.VehicleChoiceUseCase;
 import com.fasten.executor_driver.presentation.ViewState;
 import io.reactivex.Completable;
-import io.reactivex.Single;
 import io.reactivex.android.plugins.RxAndroidPlugins;
 import io.reactivex.plugins.RxJavaPlugins;
 import io.reactivex.schedulers.Schedulers;
@@ -48,11 +46,14 @@ public class ChooseVehicleViewModelTest {
   @Mock
   private Observer<String> navigateObserver;
 
+  private SingleSubject<List<Vehicle>> vehicleSingleSubject;
+
   @Before
   public void setUp() {
     RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
     RxAndroidPlugins.setInitMainThreadSchedulerHandler(scheduler -> Schedulers.trampoline());
-    when(vehicleChoiceUseCase.getVehicles()).thenReturn(Single.never());
+    vehicleSingleSubject = SingleSubject.create();
+    when(vehicleChoiceUseCase.getVehicles()).thenReturn(vehicleSingleSubject);
     when(vehicleChoiceUseCase.selectVehicle(any())).thenReturn(Completable.never());
     chooseVehicleViewModel = new ChooseVehicleViewModelImpl(vehicleChoiceUseCase);
   }
@@ -60,35 +61,29 @@ public class ChooseVehicleViewModelTest {
   /* Тетсируем работу с юзкейсом выбора ТС. */
 
   /**
-   * Должен просить юзкейс получить список ТС, при первой и только при первой подписке, пока она не отработала.
+   * Должен просить юзкейс получить список ТС изначально.
    */
   @Test
   public void askChooseVehicleUseCaseForVehicles() {
-    // Дано:
-    when(vehicleChoiceUseCase.getVehicles()).thenReturn(Single.just(Arrays.asList(
-        new Vehicle(1, "m", "m", "c", "l", false),
-        new Vehicle(2, "ma", "m", "co", "l", true),
-        new Vehicle(3, "m", "m", "co", "l", false),
-        new Vehicle(4, "ma", "m", "c", "l", true)
-    )));
-
-    // Действие:
-    chooseVehicleViewModel.getViewStateLiveData();
-    chooseVehicleViewModel.getViewStateLiveData();
-    chooseVehicleViewModel.getViewStateLiveData();
-
     // Результат:
-    verify(vehicleChoiceUseCase, times(3)).getVehicles();
+    verify(vehicleChoiceUseCase, only()).getVehicles();
   }
 
   /**
-   * Не должен трогать юзкейс, если предыдущий запрос ТС еще не завершился.
+   * Не должен трогать юзкейс на подписках.
    */
   @Test
   public void DoNotTouchChooseVehicleUseCaseDuringLoadingVehicles() {
     // Действие:
+    vehicleSingleSubject.onSuccess(Arrays.asList(
+        new Vehicle(1, "m", "m", "c", "l", false),
+        new Vehicle(2, "ma", "m", "co", "l", true),
+        new Vehicle(3, "m", "m", "co", "l", false),
+        new Vehicle(4, "ma", "m", "c", "l", true)
+    ));
     chooseVehicleViewModel.getViewStateLiveData();
     chooseVehicleViewModel.getViewStateLiveData();
+    chooseVehicleViewModel.getNavigationLiveData();
     chooseVehicleViewModel.getViewStateLiveData();
 
     // Результат:
@@ -112,6 +107,7 @@ public class ChooseVehicleViewModelTest {
         .selectItem(new ChooseVehicleListItem(new Vehicle(3, "m", "m", "co", "l", false)));
 
     // Результат:
+    verify(vehicleChoiceUseCase).getVehicles();
     verify(vehicleChoiceUseCase).selectVehicle(new Vehicle(1, "m", "m", "c", "l", false));
     verify(vehicleChoiceUseCase).selectVehicle(new Vehicle(2, "ma", "m", "co", "l", true));
     verify(vehicleChoiceUseCase).selectVehicle(new Vehicle(3, "m", "m", "co", "l", false));
@@ -132,7 +128,9 @@ public class ChooseVehicleViewModelTest {
         .selectItem(new ChooseVehicleListItem(new Vehicle(3, "m", "m", "co", "l", false)));
 
     // Результат:
-    verify(vehicleChoiceUseCase, only()).selectVehicle(new Vehicle(1, "m", "m", "c", "l", false));
+    verify(vehicleChoiceUseCase).getVehicles();
+    verify(vehicleChoiceUseCase).selectVehicle(new Vehicle(1, "m", "m", "c", "l", false));
+    verifyNoMoreInteractions(vehicleChoiceUseCase);
   }
 
   /* Тетсируем переключение состояний. */
@@ -159,13 +157,11 @@ public class ChooseVehicleViewModelTest {
   @Test
   public void setNetworkErrorViewStateToLiveData() {
     // Дано:
-    SingleSubject<List<Vehicle>> publishSubject = SingleSubject.create();
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    when(vehicleChoiceUseCase.getVehicles()).thenReturn(publishSubject);
     chooseVehicleViewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    publishSubject.onError(new Exception());
+    vehicleSingleSubject.onError(new Exception());
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(any(ChooseVehicleViewStatePending.class));
@@ -180,13 +176,11 @@ public class ChooseVehicleViewModelTest {
   @Test
   public void setEmptyErrorViewStateToLiveData() {
     // Дано:
-    SingleSubject<List<Vehicle>> publishSubject = SingleSubject.create();
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    when(vehicleChoiceUseCase.getVehicles()).thenReturn(publishSubject);
     chooseVehicleViewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    publishSubject.onError(new NoVehiclesAvailableException());
+    vehicleSingleSubject.onError(new NoVehiclesAvailableException());
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(any(ChooseVehicleViewStatePending.class));
@@ -201,13 +195,11 @@ public class ChooseVehicleViewModelTest {
   @Test
   public void setSuccessViewStateToLiveDataPending() {
     // Дано:
-    SingleSubject<List<Vehicle>> publishSubject = SingleSubject.create();
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    when(vehicleChoiceUseCase.getVehicles()).thenReturn(publishSubject);
     chooseVehicleViewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    publishSubject.onSuccess(Arrays.asList(
+    vehicleSingleSubject.onSuccess(Arrays.asList(
         new Vehicle(1, "m", "m", "c", "l", false),
         new Vehicle(2, "ma", "m", "co", "l", true),
         new Vehicle(3, "m", "m", "co", "l", false),

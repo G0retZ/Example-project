@@ -28,6 +28,7 @@ import com.fasten.executor_driver.presentation.smsbutton.SmsButtonViewActions;
 import com.fasten.executor_driver.presentation.smsbutton.SmsButtonViewModel;
 import com.fasten.executor_driver.view.BaseFragment;
 import com.fasten.executor_driver.view.PermissionChecker;
+import io.reactivex.Completable;
 import io.reactivex.disposables.Disposable;
 import javax.inject.Inject;
 
@@ -42,8 +43,8 @@ public class PasswordFragment extends BaseFragment implements CodeViewActions,
 
   @Nullable
   private PermissionChecker permissionChecker;
-  @Nullable
-  private Disposable permissionDisposable;
+  @NonNull
+  private Disposable permissionDisposable = Completable.complete().subscribe();
 
   private CodeViewModel codeViewModel;
   private CodeHeaderViewModel codeHeaderViewModel;
@@ -58,7 +59,8 @@ public class PasswordFragment extends BaseFragment implements CodeViewActions,
   private Context context;
 
   private SmsReceiver smsReceiver;
-  private Disposable smsCodeDisposable;
+  @NonNull
+  private Disposable smsCodeDisposable = Completable.complete().subscribe();
   private boolean smsSent;
   private boolean smsPending;
   private boolean codePending;
@@ -186,9 +188,7 @@ public class PasswordFragment extends BaseFragment implements CodeViewActions,
   public void onDestroy() {
     super.onDestroy();
     context.unregisterReceiver(smsReceiver);
-    if (permissionDisposable != null) {
-      permissionDisposable.dispose();
-    }
+    permissionDisposable.dispose();
   }
 
   @Override

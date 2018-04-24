@@ -5,7 +5,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 /**
- * Направления навигации при старте приложения.
+ * Направления навигации при изменении статуса исполнителя.
  */
 @StringDef({
     ExecutorStateNavigate.NO_NETWORK,
