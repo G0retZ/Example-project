@@ -28,6 +28,8 @@ public class MainApplication extends Application {
   private ExecutorStateViewModel executorStateViewModel;
   @Nullable
   private GeoLocationViewModel geoLocationViewModel;
+  @Nullable
+  private AutoRouter autoRouter;
 
   @Inject
   public void setExecutorStateViewModel(@NonNull ExecutorStateViewModel executorStateViewModel) {
@@ -37,6 +39,17 @@ public class MainApplication extends Application {
   @Inject
   public void setGeoLocationViewModel(@NonNull GeoLocationViewModel geoLocationViewModel) {
     this.geoLocationViewModel = geoLocationViewModel;
+  }
+
+  @Inject
+  public void setAutoRouter(@NonNull AutoRouter autoRouter) {
+    this.autoRouter = autoRouter;
+  }
+
+  @Inject
+  public void setLifeCycleCallbacks(
+      @Nullable ActivityLifecycleCallbacks activityLifecycleCallbacks) {
+    registerActivityLifecycleCallbacks(activityLifecycleCallbacks);
   }
 
   @Override
@@ -60,39 +73,52 @@ public class MainApplication extends Application {
     geoLocationViewModel.updateGeoLocations();
   }
 
-  private void navigate(@Nullable String direction) {
-    if (direction != null) {
-      switch (direction) {
-        case GeoLocationNavigate.RESOLVE_GEO_PROBLEM:
-          stopService();
-          break;
-        case ExecutorStateNavigate.NO_NETWORK:
-          stopService();
-          break;
-        case ExecutorStateNavigate.AUTHORIZE:
-          stopService();
-          break;
-        case ExecutorStateNavigate.MAP_SHIFT_CLOSED:
-          stopService();
-          break;
-        case ExecutorStateNavigate.MAP_SHIFT_OPENED:
-          startService(R.string.online, R.string.no_orders, R.string.to_app,
-              PendingIntent.getActivity(this, 0, new Intent(this, OnlineActivity.class), 0));
-          break;
-        case ExecutorStateNavigate.MAP_ONLINE:
-          startService(R.string.online, R.string.wait_for_orders, R.string.to_app,
-              PendingIntent.getActivity(this, 0, new Intent(this, OnlineActivity.class), 0));
-          break;
-        case ExecutorStateNavigate.OFFER_CONFIRMATION:
-          startService(R.string.offer, R.string.new_offer, R.string.consider,
-              PendingIntent.getActivity(this, 0, new Intent(this, OfferActivity.class), 0));
-          break;
-        case ExecutorStateNavigate.APPROACHING_LOAD_POINT:
-          startService(R.string.online, R.string.executing, R.string.to_app,
-              PendingIntent.getActivity(this, 0, new Intent(this, OnlineActivity.class), 0));
-          break;
-      }
+  public void loadApplication() {
+    if (executorStateViewModel == null || geoLocationViewModel == null) {
+      throw new IllegalStateException("Граф зависимостей поломан!");
     }
+    executorStateViewModel.initializeExecutorState(false);
+    geoLocationViewModel.updateGeoLocations();
+  }
+
+  private void navigate(@Nullable String destination) {
+    if (autoRouter == null) {
+      throw new IllegalStateException("Граф зависимостей поломан!");
+    }
+    if (destination == null) {
+      return;
+    }
+    switch (destination) {
+      case GeoLocationNavigate.RESOLVE_GEO_PROBLEM:
+        stopService();
+        break;
+      case ExecutorStateNavigate.NO_NETWORK:
+        stopService();
+        break;
+      case ExecutorStateNavigate.AUTHORIZE:
+        stopService();
+        break;
+      case ExecutorStateNavigate.MAP_SHIFT_CLOSED:
+        stopService();
+        break;
+      case ExecutorStateNavigate.MAP_SHIFT_OPENED:
+        startService(R.string.online, R.string.no_orders, R.string.to_app,
+            PendingIntent.getActivity(this, 0, new Intent(this, OnlineActivity.class), 0));
+        break;
+      case ExecutorStateNavigate.MAP_ONLINE:
+        startService(R.string.online, R.string.wait_for_orders, R.string.to_app,
+            PendingIntent.getActivity(this, 0, new Intent(this, OnlineActivity.class), 0));
+        break;
+      case ExecutorStateNavigate.OFFER_CONFIRMATION:
+        startService(R.string.offer, R.string.new_offer, R.string.consider,
+            PendingIntent.getActivity(this, 0, new Intent(this, OfferActivity.class), 0));
+        break;
+      case ExecutorStateNavigate.APPROACHING_LOAD_POINT:
+        startService(R.string.online, R.string.executing, R.string.to_app,
+            PendingIntent.getActivity(this, 0, new Intent(this, OnlineActivity.class), 0));
+        break;
+    }
+    autoRouter.navigateTo(destination);
   }
 
   @NonNull

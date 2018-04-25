@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.fasten.executor_driver.R;
-import com.fasten.executor_driver.presentation.executorstate.ExecutorStateNavigate;
 import com.fasten.executor_driver.presentation.onlinebutton.OnlineButtonNavigate;
 
 public class MapActivity extends BaseActivity {
@@ -22,9 +21,6 @@ public class MapActivity extends BaseActivity {
     switch (destination) {
       case NAVIGATION_UP:
         startActivity(new Intent(this, MenuActivity.class));
-        break;
-      case ExecutorStateNavigate.MAP_SHIFT_CLOSED:
-        // никуда не переходим
         break;
       case OnlineButtonNavigate.DRIVER_BLOCKED:
         new Builder(this)

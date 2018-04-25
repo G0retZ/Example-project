@@ -1,7 +1,6 @@
 package com.fasten.executor_driver.application;
 
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.Nullable;
 import com.fasten.executor_driver.R;
 
@@ -14,7 +13,8 @@ public class SplashScreenActivity extends BaseActivity {
   }
 
   @Override
-  void init() {
-    new Handler().postDelayed(super::init, 1000);
+  protected void onResume() {
+    super.onResume();
+    ((MainApplication) getApplication()).loadApplication();
   }
 }

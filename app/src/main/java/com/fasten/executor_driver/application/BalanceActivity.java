@@ -7,7 +7,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import com.fasten.executor_driver.R;
 import com.fasten.executor_driver.presentation.balance.BalanceNavigate;
-import com.fasten.executor_driver.presentation.executorstate.ExecutorStateNavigate;
 import com.fasten.executor_driver.view.BalanceFragment;
 
 public class BalanceActivity extends BaseActivity {
@@ -36,15 +35,6 @@ public class BalanceActivity extends BaseActivity {
     switch (destination) {
       case BalanceNavigate.PAYMENT_OPTIONS:
         startActivity(new Intent(this, PaymentOptionsActivity.class));
-        break;
-      case ExecutorStateNavigate.MAP_SHIFT_CLOSED:
-        // никуда не переходим
-        break;
-      case ExecutorStateNavigate.MAP_SHIFT_OPENED:
-        // никуда не переходим
-        break;
-      case ExecutorStateNavigate.MAP_ONLINE:
-        // никуда не переходим
         break;
       default:
         super.navigate(destination);

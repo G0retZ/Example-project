@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.fasten.executor_driver.R;
-import com.fasten.executor_driver.presentation.executorstate.ExecutorStateNavigate;
 import com.fasten.executor_driver.presentation.menu.MenuNavigate;
 
 public class MenuActivity extends BaseActivity {
@@ -37,15 +36,6 @@ public class MenuActivity extends BaseActivity {
         break;
       case MenuNavigate.VEHICLES:
         onBackPressed();
-        break;
-      case ExecutorStateNavigate.MAP_SHIFT_CLOSED:
-        // никуда не переходим
-        break;
-      case ExecutorStateNavigate.MAP_SHIFT_OPENED:
-        // никуда не переходим
-        break;
-      case ExecutorStateNavigate.MAP_ONLINE:
-        // никуда не переходим
         break;
       default:
         super.navigate(destination);

@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.fasten.executor_driver.R;
-import com.fasten.executor_driver.presentation.executorstate.ExecutorStateNavigate;
 import com.fasten.executor_driver.presentation.paymentoptions.PaymentOptionsNavigate;
 
 public class PaymentOptionsActivity extends BaseActivity {
@@ -23,15 +22,6 @@ public class PaymentOptionsActivity extends BaseActivity {
         break;
       case PaymentOptionsNavigate.SBERBANK_ONLINE:
         onBackPressed();
-        break;
-      case ExecutorStateNavigate.MAP_SHIFT_CLOSED:
-        // никуда не переходим
-        break;
-      case ExecutorStateNavigate.MAP_SHIFT_OPENED:
-        // никуда не переходим
-        break;
-      case ExecutorStateNavigate.MAP_ONLINE:
-        // никуда не переходим
         break;
       default:
         super.navigate(destination);

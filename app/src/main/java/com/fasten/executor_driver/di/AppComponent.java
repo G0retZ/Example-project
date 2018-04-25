@@ -1,6 +1,5 @@
 package com.fasten.executor_driver.di;
 
-import com.fasten.executor_driver.application.BaseActivity;
 import com.fasten.executor_driver.application.MainApplication;
 import com.fasten.executor_driver.view.ChooseVehicleFragment;
 import com.fasten.executor_driver.view.GoOnlineFragment;
@@ -15,8 +14,6 @@ import com.fasten.executor_driver.view.auth.PasswordFragment;
 public interface AppComponent {
 
   void inject(MainApplication mainApplication);
-
-  void inject(BaseActivity baseActivity);
 
   void inject(LoginFragment loginFragment);
 

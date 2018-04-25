@@ -5,7 +5,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.fasten.executor_driver.R;
 import com.fasten.executor_driver.presentation.code.CodeNavigate;
-import com.fasten.executor_driver.presentation.executorstate.ExecutorStateNavigate;
 
 public class PasswordActivity extends BaseActivity {
 
@@ -19,10 +18,7 @@ public class PasswordActivity extends BaseActivity {
   public void navigate(@NonNull String destination) {
     switch (destination) {
       case CodeNavigate.ENTER_APP:
-        super.navigate(INIT_APPLICATION);
-        break;
-      case ExecutorStateNavigate.AUTHORIZE:
-        // никуда не переходим
+        ((MainApplication) getApplication()).initApplication();
         break;
       default:
         super.navigate(destination);

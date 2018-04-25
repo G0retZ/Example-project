@@ -5,7 +5,7 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.fasten.executor_driver.BuildConfig;
-import com.fasten.executor_driver.application.BaseActivity;
+import com.fasten.executor_driver.application.AutoRouterImpl;
 import com.fasten.executor_driver.application.MainApplication;
 import com.fasten.executor_driver.backend.geolocation.GeolocationCenterImpl;
 import com.fasten.executor_driver.backend.settings.AppPreferences;
@@ -203,30 +203,9 @@ public class AppComponentImpl implements AppComponent {
             geoLocationUseCase
         )
     );
-  }
-
-  @Override
-  public void inject(BaseActivity baseActivity) {
-    baseActivity.setExecutorStateViewModel(
-        ViewModelProviders.of(
-            baseActivity,
-            new ViewModelFactory<>(
-                new ExecutorStateViewModelImpl(
-                    executorStateUseCase
-                )
-            )
-        ).get(ExecutorStateViewModelImpl.class)
-    );
-    baseActivity.setGeoLocationViewModel(
-        ViewModelProviders.of(
-            baseActivity,
-            new ViewModelFactory<>(
-                new GeoLocationViewModelImpl(
-                    geoLocationUseCase
-                )
-            )
-        ).get(GeoLocationViewModelImpl.class)
-    );
+    AutoRouterImpl autoRouter = new AutoRouterImpl();
+    mainApplication.setAutoRouter(autoRouter);
+    mainApplication.setLifeCycleCallbacks(autoRouter);
   }
 
   @Override

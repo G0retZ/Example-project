@@ -29,7 +29,7 @@ public class GeolocationResolutionActivity extends BaseActivity {
         );
         break;
       case GeolocationResolutionFragment.NAVIGATE_TO_RESOLVED:
-        super.navigate(INIT_APPLICATION);
+        ((MainApplication) getApplication()).loadApplication();
         super.onBackPressed();
         break;
     }

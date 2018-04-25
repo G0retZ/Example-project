@@ -5,7 +5,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.fasten.executor_driver.R;
 import com.fasten.executor_driver.presentation.choosevehicle.ChooseVehicleNavigate;
-import com.fasten.executor_driver.presentation.executorstate.ExecutorStateNavigate;
 
 public class ChooseVehicleActivity extends BaseActivity {
 
@@ -18,12 +17,6 @@ public class ChooseVehicleActivity extends BaseActivity {
   @Override
   public void navigate(@NonNull String destination) {
     switch (destination) {
-      case ExecutorStateNavigate.MAP_SHIFT_OPENED:
-        // никуда не переходим
-        break;
-      case ExecutorStateNavigate.MAP_SHIFT_CLOSED:
-        // никуда не переходим
-        break;
       case ChooseVehicleNavigate.VEHICLE_OPTIONS:
         onBackPressed();
         break;
