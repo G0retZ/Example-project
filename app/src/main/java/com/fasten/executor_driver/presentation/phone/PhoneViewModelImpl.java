@@ -65,7 +65,10 @@ public class PhoneViewModelImpl extends ViewModel implements PhoneViewModel {
           .subscribeOn(Schedulers.single())
           .observeOn(AndroidSchedulers.mainThread())
           .subscribe(
-              () -> navigateLiveData.postValue(PhoneNavigate.PASSWORD),
+              () -> {
+                viewStateLiveData.postValue(new PhoneViewStateInitial());
+                navigateLiveData.postValue(PhoneNavigate.PASSWORD);
+              },
               Throwable::printStackTrace
           );
     }
