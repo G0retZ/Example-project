@@ -10,10 +10,10 @@ import com.fasten.executor_driver.entity.OptionBoolean;
 import com.fasten.executor_driver.entity.OptionNumeric;
 import com.fasten.executor_driver.interactor.vehicle.VehicleOptionsUseCase;
 import com.fasten.executor_driver.presentation.ViewState;
-import io.reactivex.Completable;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.internal.disposables.EmptyDisposable;
 import io.reactivex.schedulers.Schedulers;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,9 +28,9 @@ public class VehicleOptionsViewModelImpl extends ViewModel implements
   @NonNull
   private final MutableLiveData<String> navigateLiveData;
   @NonNull
-  private Disposable optionsDisposable = Completable.complete().subscribe();
+  private Disposable optionsDisposable = EmptyDisposable.INSTANCE;
   @NonNull
-  private Disposable occupyDisposable = Completable.complete().subscribe();
+  private Disposable occupyDisposable = EmptyDisposable.INSTANCE;
 
   @Inject
   public VehicleOptionsViewModelImpl(VehicleOptionsUseCase vehicleOptionsUseCase) {

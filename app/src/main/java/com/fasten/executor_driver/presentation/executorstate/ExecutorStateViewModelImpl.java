@@ -7,9 +7,9 @@ import android.support.annotation.NonNull;
 import com.fasten.executor_driver.backend.web.AuthorizationException;
 import com.fasten.executor_driver.interactor.ExecutorStateUseCase;
 import com.fasten.executor_driver.presentation.ViewState;
-import io.reactivex.Completable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.internal.disposables.EmptyDisposable;
 import io.reactivex.schedulers.Schedulers;
 import javax.inject.Inject;
 
@@ -22,7 +22,7 @@ public class ExecutorStateViewModelImpl extends ViewModel implements ExecutorSta
   @NonNull
   private final MutableLiveData<String> navigateLiveData;
   @NonNull
-  private Disposable disposable = Completable.complete().subscribe();
+  private Disposable disposable = EmptyDisposable.INSTANCE;
 
   @Inject
   public ExecutorStateViewModelImpl(@NonNull ExecutorStateUseCase executorStateUseCase) {

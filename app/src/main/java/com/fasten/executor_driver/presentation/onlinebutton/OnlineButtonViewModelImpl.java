@@ -13,6 +13,7 @@ import com.fasten.executor_driver.presentation.ViewState;
 import io.reactivex.Completable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.internal.disposables.EmptyDisposable;
 import io.reactivex.schedulers.Schedulers;
 import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
@@ -28,9 +29,9 @@ public class OnlineButtonViewModelImpl extends ViewModel implements OnlineButton
   @NonNull
   private final MutableLiveData<String> navigateLiveData;
   @NonNull
-  private Disposable loadDisposable = Completable.complete().subscribe();
+  private Disposable loadDisposable = EmptyDisposable.INSTANCE;
   @NonNull
-  private Disposable timerDisposable = Completable.complete().subscribe();
+  private Disposable timerDisposable = EmptyDisposable.INSTANCE;
 
   @Inject
   public OnlineButtonViewModelImpl(@NonNull VehiclesAndOptionsUseCase vehiclesAndOptionsUseCase) {

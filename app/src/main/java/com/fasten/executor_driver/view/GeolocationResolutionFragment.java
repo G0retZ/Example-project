@@ -10,8 +10,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import com.fasten.executor_driver.R;
-import io.reactivex.Completable;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.internal.disposables.EmptyDisposable;
 
 public class GeolocationResolutionFragment extends BaseFragment {
 
@@ -24,7 +24,7 @@ public class GeolocationResolutionFragment extends BaseFragment {
   @Nullable
   private PermissionChecker permissionChecker;
   @NonNull
-  private Disposable permissionDisposable = Completable.complete().subscribe();
+  private Disposable permissionDisposable = EmptyDisposable.INSTANCE;
 
   private Activity activity;
 

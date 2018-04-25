@@ -15,8 +15,8 @@ import com.fasten.executor_driver.di.AppComponent;
 import com.fasten.executor_driver.presentation.choosevehicle.ChooseVehicleListItem;
 import com.fasten.executor_driver.presentation.choosevehicle.ChooseVehicleViewActions;
 import com.fasten.executor_driver.presentation.choosevehicle.ChooseVehicleViewModel;
-import io.reactivex.Completable;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.internal.disposables.EmptyDisposable;
 import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
@@ -32,7 +32,7 @@ public class ChooseVehicleFragment extends BaseFragment implements ChooseVehicle
   private FrameLayout pendingIndicator;
   private TextView errorText;
   @NonNull
-  private Disposable disposable = Completable.complete().subscribe();
+  private Disposable disposable = EmptyDisposable.INSTANCE;
 
   @Inject
   public void setChooseVehicleViewModel(@NonNull ChooseVehicleViewModel chooseVehicleViewModel) {

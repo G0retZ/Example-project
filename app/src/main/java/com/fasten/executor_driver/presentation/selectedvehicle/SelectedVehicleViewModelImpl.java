@@ -8,9 +8,9 @@ import com.fasten.executor_driver.entity.Vehicle;
 import com.fasten.executor_driver.interactor.vehicle.SelectedVehicleUseCase;
 import com.fasten.executor_driver.presentation.SingleLiveEvent;
 import com.fasten.executor_driver.presentation.ViewState;
-import io.reactivex.Completable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.internal.disposables.EmptyDisposable;
 import io.reactivex.schedulers.Schedulers;
 import javax.inject.Inject;
 
@@ -23,7 +23,7 @@ public class SelectedVehicleViewModelImpl extends ViewModel implements SelectedV
   @NonNull
   private final SingleLiveEvent<String> navigateLiveData;
   @NonNull
-  private Disposable disposable = Completable.complete().subscribe();
+  private Disposable disposable = EmptyDisposable.INSTANCE;
 
   @Inject
   public SelectedVehicleViewModelImpl(@NonNull SelectedVehicleUseCase vehiclesUseCase) {

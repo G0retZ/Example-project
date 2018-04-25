@@ -9,9 +9,9 @@ import com.fasten.executor_driver.entity.NoServicesAvailableException;
 import com.fasten.executor_driver.entity.Service;
 import com.fasten.executor_driver.interactor.services.ServicesUseCase;
 import com.fasten.executor_driver.presentation.ViewState;
-import io.reactivex.Completable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.internal.disposables.EmptyDisposable;
 import io.reactivex.schedulers.Schedulers;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,9 +29,9 @@ public class ServicesViewModelImpl extends ViewModel implements ServicesViewMode
   @NonNull
   private final ServicesListItems servicesListItems;
   @NonNull
-  private Disposable servicesDisposable = Completable.complete().subscribe();
+  private Disposable servicesDisposable = EmptyDisposable.INSTANCE;
   @NonNull
-  private Disposable setServicesDisposable = Completable.complete().subscribe();
+  private Disposable setServicesDisposable = EmptyDisposable.INSTANCE;
 
   @Inject
   public ServicesViewModelImpl(ServicesUseCase servicesUseCase,

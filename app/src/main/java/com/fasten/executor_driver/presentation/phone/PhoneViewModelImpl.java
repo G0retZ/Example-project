@@ -7,9 +7,9 @@ import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
 import com.fasten.executor_driver.interactor.auth.LoginUseCase;
 import com.fasten.executor_driver.presentation.ViewState;
-import io.reactivex.Completable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.internal.disposables.EmptyDisposable;
 import io.reactivex.schedulers.Schedulers;
 import javax.inject.Inject;
 
@@ -23,7 +23,7 @@ public class PhoneViewModelImpl extends ViewModel implements PhoneViewModel {
   @NonNull
   private final MutableLiveData<String> navigateLiveData;
   @NonNull
-  private Disposable disposable = Completable.complete().subscribe();
+  private Disposable disposable = EmptyDisposable.INSTANCE;
 
   @Inject
   public PhoneViewModelImpl(@NonNull LoginUseCase loginUseCase) {

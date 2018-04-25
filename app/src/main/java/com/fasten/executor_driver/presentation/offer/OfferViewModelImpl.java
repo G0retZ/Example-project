@@ -10,9 +10,9 @@ import com.fasten.executor_driver.entity.Offer;
 import com.fasten.executor_driver.interactor.OfferUseCase;
 import com.fasten.executor_driver.presentation.ViewState;
 import com.fasten.executor_driver.utils.TimeUtils;
-import io.reactivex.Completable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.internal.disposables.EmptyDisposable;
 import io.reactivex.schedulers.Schedulers;
 import javax.inject.Inject;
 
@@ -27,9 +27,9 @@ public class OfferViewModelImpl extends ViewModel implements OfferViewModel {
   @NonNull
   private final TimeUtils timeUtils;
   @NonNull
-  private Disposable offersDisposable = Completable.complete().subscribe();
+  private Disposable offersDisposable = EmptyDisposable.INSTANCE;
   @NonNull
-  private Disposable decisionDisposable = Completable.complete().subscribe();
+  private Disposable decisionDisposable = EmptyDisposable.INSTANCE;
   @Nullable
   private OfferItem offerItem;
 

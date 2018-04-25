@@ -9,9 +9,9 @@ import com.fasten.executor_driver.entity.NoVehiclesAvailableException;
 import com.fasten.executor_driver.entity.Vehicle;
 import com.fasten.executor_driver.interactor.vehicle.VehicleChoiceUseCase;
 import com.fasten.executor_driver.presentation.ViewState;
-import io.reactivex.Completable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.internal.disposables.EmptyDisposable;
 import io.reactivex.schedulers.Schedulers;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,9 +26,9 @@ public class ChooseVehicleViewModelImpl extends ViewModel implements ChooseVehic
   @NonNull
   private final MutableLiveData<String> navigateLiveData;
   @NonNull
-  private Disposable vehiclesDisposable = Completable.complete().subscribe();
+  private Disposable vehiclesDisposable = EmptyDisposable.INSTANCE;
   @NonNull
-  private Disposable choiceDisposable = Completable.complete().subscribe();
+  private Disposable choiceDisposable = EmptyDisposable.INSTANCE;
 
   @Inject
   public ChooseVehicleViewModelImpl(@NonNull VehicleChoiceUseCase vehicleChoiceUseCase) {
