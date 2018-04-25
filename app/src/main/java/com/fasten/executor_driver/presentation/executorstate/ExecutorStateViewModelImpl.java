@@ -45,9 +45,7 @@ public class ExecutorStateViewModelImpl extends ViewModel implements ExecutorSta
 
   @Override
   public void initializeExecutorState(boolean reset) {
-    if (!disposable.isDisposed()) {
-      return;
-    }
+    Disposable disposable2 = disposable;
     disposable = executorStateUseCase.getExecutorStates(reset)
         .subscribeOn(Schedulers.single())
         .observeOn(AndroidSchedulers.mainThread())
@@ -78,6 +76,7 @@ public class ExecutorStateViewModelImpl extends ViewModel implements ExecutorSta
                 navigateLiveData.postValue(ExecutorStateNavigate.NO_NETWORK);
               }
             });
+    disposable2.dispose();
   }
 
   @Override

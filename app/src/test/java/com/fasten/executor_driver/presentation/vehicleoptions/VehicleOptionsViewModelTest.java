@@ -82,7 +82,7 @@ public class VehicleOptionsViewModelTest {
   }
 
   /**
-   *  Не должен трогать юзкейс при подписках.
+   * Не должен трогать юзкейс при подписках.
    */
   @Test
   public void doNotTouchUseCaseOnSubscriptions() {

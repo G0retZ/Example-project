@@ -3,6 +3,7 @@ package com.fasten.executor_driver.presentation.executorstate;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import android.accounts.AuthenticatorException;
@@ -20,7 +21,9 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestRule;
 import org.junit.runner.RunWith;
+import org.mockito.InOrder;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -70,17 +73,24 @@ public class ExecutorStateViewModelTest {
   }
 
   /**
-   * Не должен просить у юзкейса загрузить статусы исполнителя, если запрос уже выполняется.
+   * Не должен просить у юзкейса загрузить статусы исполнителя, без сброса кеша, даже если уже
+   * подписан.
    */
   @Test
   public void doNotTouchUseCaseBeforeAfterFirstRequestComplete() {
+    // Дано:
+    InOrder inOrder = Mockito.inOrder(executorStateUseCase);
+
     // Действие:
     executorStateViewModel.initializeExecutorState(false);
     executorStateViewModel.initializeExecutorState(true);
     executorStateViewModel.initializeExecutorState(false);
 
     // Результат:
-    verify(executorStateUseCase, only()).getExecutorStates(false);
+    inOrder.verify(executorStateUseCase).getExecutorStates(false);
+    inOrder.verify(executorStateUseCase).getExecutorStates(true);
+    inOrder.verify(executorStateUseCase).getExecutorStates(false);
+    verifyNoMoreInteractions(executorStateUseCase);
   }
 
   /* Тетсируем навигацию. */

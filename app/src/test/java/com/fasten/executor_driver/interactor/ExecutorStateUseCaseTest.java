@@ -57,14 +57,14 @@ public class ExecutorStateUseCaseTest {
   @Test
   public void askSocketGatewayForConnection() {
     // Действие:
-    executorStateUseCase.getExecutorStates(false).test();
+    executorStateUseCase.getExecutorStates(true).test();
 
     // Результат:
     verify(socketGateway, only()).openSocket();
   }
 
   /**
-   * Не должен запрашивать у гейтвея повторных соединений, если ошибок не было.
+   * Не должен запрашивать у гейтвея соединений, если не было сброса.
    */
   @Test
   public void doNotAskSocketGatewayForConnectionAgain() {
@@ -74,7 +74,7 @@ public class ExecutorStateUseCaseTest {
     executorStateUseCase.getExecutorStates(false).test();
 
     // Результат:
-    verify(socketGateway, only()).openSocket();
+    verifyZeroInteractions(socketGateway);
   }
 
   /**
@@ -84,7 +84,7 @@ public class ExecutorStateUseCaseTest {
   public void askSocketGatewayForConnectionAgainAfterReset() {
     // Действие:
     executorStateUseCase.getExecutorStates(false).test();
-    executorStateUseCase.getExecutorStates(false).test();
+    executorStateUseCase.getExecutorStates(true).test();
     executorStateUseCase.getExecutorStates(false).test();
     executorStateUseCase.getExecutorStates(true).test();
 
@@ -103,10 +103,24 @@ public class ExecutorStateUseCaseTest {
     when(socketGateway.openSocket()).thenReturn(Completable.complete());
 
     // Действие:
-    executorStateUseCase.getExecutorStates(false).test();
+    executorStateUseCase.getExecutorStates(true).test();
 
     // Результат:
     verify(loginReceiver, only()).get();
+  }
+
+  /**
+   * Не должен запрашивать у публикатора логин исполнителя, если не было сброса.
+   */
+  @Test
+  public void doNotTouchLoginPublisherWithoutReset() {
+    // Действие:
+    executorStateUseCase.getExecutorStates(false).test();
+    executorStateUseCase.getExecutorStates(false).test();
+    executorStateUseCase.getExecutorStates(false).test();
+
+    // Результат:
+    verifyZeroInteractions(loginReceiver);
   }
 
   /* Проверяем работу с гейтвеем */
@@ -124,7 +138,7 @@ public class ExecutorStateUseCaseTest {
     ));
 
     // Действие:
-    executorStateUseCase.getExecutorStates(false).test();
+    executorStateUseCase.getExecutorStates(true).test();
 
     // Результат:
     inOrder.verify(gateway).getState("1234567890");
@@ -150,7 +164,7 @@ public class ExecutorStateUseCaseTest {
         .thenReturn(Flowable.<ExecutorState>never().doOnCancel(action));
 
     // Действие:
-    executorStateUseCase.getExecutorStates(false).test();
+    executorStateUseCase.getExecutorStates(true).test();
 
     // Результат:
     verify(action, times(3)).run();
@@ -166,6 +180,20 @@ public class ExecutorStateUseCaseTest {
     when(loginReceiver.get()).thenReturn(Observable.error(NoNetworkException::new));
 
     // Действие:
+    executorStateUseCase.getExecutorStates(true).test();
+
+    // Результат:
+    verifyZeroInteractions(gateway);
+  }
+
+  /**
+   * Не должен трогать гейтвей без сброса.
+   */
+  @Test
+  public void doNotTouchGatewayWithoutReset() {
+    // Действие:
+    executorStateUseCase.getExecutorStates(false).test();
+    executorStateUseCase.getExecutorStates(false).test();
     executorStateUseCase.getExecutorStates(false).test();
 
     // Результат:
@@ -188,7 +216,7 @@ public class ExecutorStateUseCaseTest {
 
     // Действие:
     TestSubscriber<ExecutorState> testSubscriber =
-        executorStateUseCase.getExecutorStates(false).test();
+        executorStateUseCase.getExecutorStates(true).test();
 
     // Результат:
     testSubscriber
@@ -206,7 +234,7 @@ public class ExecutorStateUseCaseTest {
 
     // Действие:
     TestSubscriber<ExecutorState> testSubscriber =
-        executorStateUseCase.getExecutorStates(false).test();
+        executorStateUseCase.getExecutorStates(true).test();
 
     // Результат:
     testSubscriber.assertError(ConnectException.class);
@@ -224,7 +252,7 @@ public class ExecutorStateUseCaseTest {
 
     // Действие:
     TestSubscriber<ExecutorState> testSubscriber =
-        executorStateUseCase.getExecutorStates(false).test();
+        executorStateUseCase.getExecutorStates(true).test();
 
     // Результат:
     testSubscriber.assertError(ConnectException.class);
@@ -243,7 +271,7 @@ public class ExecutorStateUseCaseTest {
 
     // Действие:
     TestSubscriber<ExecutorState> testSubscriber =
-        executorStateUseCase.getExecutorStates(false).test();
+        executorStateUseCase.getExecutorStates(true).test();
 
     // Результат:
     testSubscriber.assertError(ConnectException.class);
@@ -260,6 +288,21 @@ public class ExecutorStateUseCaseTest {
     when(loginReceiver.get()).thenReturn(Observable.just("1234567890"));
     when(gateway.getState("1234567890")).thenReturn(Flowable.empty());
 
+    // Действие:
+    TestSubscriber<ExecutorState> testSubscriber =
+        executorStateUseCase.getExecutorStates(true).test();
+
+    // Результат:
+    testSubscriber.assertComplete();
+    testSubscriber.assertNoValues();
+    testSubscriber.assertNoErrors();
+  }
+
+  /**
+   * Должен ответить завершением без сброса.
+   */
+  @Test
+  public void answerCompleteWithoutReset() {
     // Действие:
     TestSubscriber<ExecutorState> testSubscriber =
         executorStateUseCase.getExecutorStates(false).test();
