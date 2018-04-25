@@ -23,8 +23,6 @@ public class OfferViewModelImpl extends ViewModel implements OfferViewModel {
   @NonNull
   private final MutableLiveData<ViewState<OfferViewActions>> viewStateLiveData;
   @NonNull
-  private final MutableLiveData<String> navigateLiveData;
-  @NonNull
   private final TimeUtils timeUtils;
   @NonNull
   private Disposable offersDisposable = EmptyDisposable.INSTANCE;
@@ -40,7 +38,6 @@ public class OfferViewModelImpl extends ViewModel implements OfferViewModel {
     this.timeUtils = timeUtils;
     viewStateLiveData = new MutableLiveData<>();
     viewStateLiveData.postValue(new OfferViewStatePending(offerItem));
-    navigateLiveData = new MutableLiveData<>();
   }
 
   @NonNull
@@ -53,7 +50,7 @@ public class OfferViewModelImpl extends ViewModel implements OfferViewModel {
   @NonNull
   @Override
   public LiveData<String> getNavigationLiveData() {
-    return navigateLiveData;
+    return new MutableLiveData<>();
   }
 
 

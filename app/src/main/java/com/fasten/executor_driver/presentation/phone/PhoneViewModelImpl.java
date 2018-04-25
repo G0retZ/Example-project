@@ -6,6 +6,7 @@ import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
 import com.fasten.executor_driver.interactor.auth.LoginUseCase;
+import com.fasten.executor_driver.presentation.SingleLiveEvent;
 import com.fasten.executor_driver.presentation.ViewState;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
@@ -21,7 +22,7 @@ public class PhoneViewModelImpl extends ViewModel implements PhoneViewModel {
   @NonNull
   private final MutableLiveData<ViewState<PhoneViewActions>> viewStateLiveData;
   @NonNull
-  private final MutableLiveData<String> navigateLiveData;
+  private final SingleLiveEvent<String> navigateLiveData;
   @NonNull
   private Disposable disposable = EmptyDisposable.INSTANCE;
 
@@ -30,7 +31,7 @@ public class PhoneViewModelImpl extends ViewModel implements PhoneViewModel {
     this.loginUseCase = loginUseCase;
     viewStateLiveData = new MutableLiveData<>();
     viewStateLiveData.postValue(new PhoneViewStateInitial());
-    navigateLiveData = new MutableLiveData<>();
+    navigateLiveData = new SingleLiveEvent<>();
   }
 
   @NonNull

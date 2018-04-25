@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import com.fasten.executor_driver.backend.web.NoNetworkException;
 import com.fasten.executor_driver.entity.ValidationException;
 import com.fasten.executor_driver.interactor.auth.PasswordUseCase;
+import com.fasten.executor_driver.presentation.SingleLiveEvent;
 import com.fasten.executor_driver.presentation.ViewState;
 import io.reactivex.Completable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -22,7 +23,7 @@ public class CodeViewModelImpl extends ViewModel implements CodeViewModel {
   @NonNull
   private final MutableLiveData<ViewState<CodeViewActions>> viewStateLiveData;
   @NonNull
-  private final MutableLiveData<String> navigateLiveData;
+  private final SingleLiveEvent<String> navigateLiveData;
   @NonNull
   private Disposable disposable = EmptyDisposable.INSTANCE;
 
@@ -31,7 +32,7 @@ public class CodeViewModelImpl extends ViewModel implements CodeViewModel {
     this.passwordUseCase = passwordUseCase;
     viewStateLiveData = new MutableLiveData<>();
     viewStateLiveData.postValue(new CodeViewStateInitial());
-    navigateLiveData = new MutableLiveData<>();
+    navigateLiveData = new SingleLiveEvent<>();
   }
 
   @NonNull

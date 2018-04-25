@@ -9,6 +9,7 @@ import com.fasten.executor_driver.entity.Option;
 import com.fasten.executor_driver.entity.OptionBoolean;
 import com.fasten.executor_driver.entity.OptionNumeric;
 import com.fasten.executor_driver.interactor.vehicle.VehicleOptionsUseCase;
+import com.fasten.executor_driver.presentation.SingleLiveEvent;
 import com.fasten.executor_driver.presentation.ViewState;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -26,7 +27,7 @@ public class VehicleOptionsViewModelImpl extends ViewModel implements
   @NonNull
   private final MutableLiveData<ViewState<VehicleOptionsViewActions>> viewStateLiveData;
   @NonNull
-  private final MutableLiveData<String> navigateLiveData;
+  private final SingleLiveEvent<String> navigateLiveData;
   @NonNull
   private Disposable optionsDisposable = EmptyDisposable.INSTANCE;
   @NonNull
@@ -37,7 +38,7 @@ public class VehicleOptionsViewModelImpl extends ViewModel implements
     this.vehicleOptionsUseCase = vehicleOptionsUseCase;
     viewStateLiveData = new MutableLiveData<>();
     viewStateLiveData.postValue(new VehicleOptionsViewStateInitial());
-    navigateLiveData = new MutableLiveData<>();
+    navigateLiveData = new SingleLiveEvent<>();
     loadOptions();
   }
 

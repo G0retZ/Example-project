@@ -23,8 +23,6 @@ public class ServicesViewModelImpl extends ViewModel implements ServicesViewMode
   @NonNull
   private final MutableLiveData<ViewState<ServicesViewActions>> viewStateLiveData;
   @NonNull
-  private final MutableLiveData<String> navigateLiveData;
-  @NonNull
   private final ServicesSliderViewModel servicesSliderViewModel;
   @NonNull
   private final ServicesListItems servicesListItems;
@@ -41,7 +39,6 @@ public class ServicesViewModelImpl extends ViewModel implements ServicesViewMode
     this.servicesSliderViewModel = servicesSliderViewModel;
     this.servicesListItems = servicesListItems;
     viewStateLiveData = new MutableLiveData<>();
-    navigateLiveData = new MutableLiveData<>();
     loadServices();
   }
 
@@ -54,7 +51,7 @@ public class ServicesViewModelImpl extends ViewModel implements ServicesViewMode
   @NonNull
   @Override
   public LiveData<String> getNavigationLiveData() {
-    return navigateLiveData;
+    return new MutableLiveData<>();
   }
 
   @Override
