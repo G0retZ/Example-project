@@ -48,8 +48,7 @@ public class GeoLocationUseCaseImpl implements GeoLocationUseCase {
           ).doOnNext(
               geoLocation -> geoTrackingGateway.sendGeoLocation(geoLocation)
                   .subscribe(() -> {
-                  }, throwable -> {
-                  })
+                  }, Throwable::printStackTrace)
           ).replay(1)
           .refCount();
     }

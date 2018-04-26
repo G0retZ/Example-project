@@ -62,8 +62,7 @@ public class ChooseVehicleViewModelImpl extends ViewModel implements ChooseVehic
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(
             () -> navigateLiveData.postValue(ChooseVehicleNavigate.VEHICLE_OPTIONS),
-            throwable -> {
-            }
+            Throwable::printStackTrace
         );
   }
 

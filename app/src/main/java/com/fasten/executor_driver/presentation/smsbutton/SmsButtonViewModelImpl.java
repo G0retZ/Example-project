@@ -73,8 +73,7 @@ public class SmsButtonViewModelImpl extends ViewModel implements SmsButtonViewMo
         .map(count -> DURATION_AFTER_SUCCESS - count)
         .subscribe(
             count -> viewStateLiveData.postValue(new SmsButtonViewStateHold(count)),
-            throwable -> {
-            },
+            Throwable::printStackTrace,
             () -> viewStateLiveData.postValue(new SmsButtonViewStateReady())
         );
   }

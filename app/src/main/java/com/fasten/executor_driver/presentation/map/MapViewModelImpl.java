@@ -49,7 +49,10 @@ public class MapViewModelImpl extends ViewModel implements MapViewModel {
     disposable = heatMapUseCase.loadHeatMap()
         .subscribeOn(Schedulers.single())
         .observeOn(AndroidSchedulers.mainThread())
-        .subscribe(geoJson -> viewStateLiveData.postValue(new MapViewState(geoJson)));
+        .subscribe(
+            geoJson -> viewStateLiveData.postValue(new MapViewState(geoJson)),
+            Throwable::printStackTrace
+        );
   }
 
   @Override
