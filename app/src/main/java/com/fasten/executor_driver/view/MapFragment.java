@@ -106,6 +106,9 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback,
   public void onResume() {
     super.onResume();
     mapView.onResume();
+    if (googleMap != null) {
+      geoLocationViewModel.updateGeoLocations();
+    }
   }
 
   @Override

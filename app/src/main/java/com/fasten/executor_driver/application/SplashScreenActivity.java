@@ -15,6 +15,7 @@ public class SplashScreenActivity extends BaseActivity {
   @Override
   protected void onResume() {
     super.onResume();
-    ((MainApplication) getApplication()).loadApplication();
+    ((MainApplication) getApplication()).initExecutorStates(false);
+    ((MainApplication) getApplication()).initGeoLocation();
   }
 }

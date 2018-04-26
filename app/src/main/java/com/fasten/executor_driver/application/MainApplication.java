@@ -12,7 +12,6 @@ import com.fasten.executor_driver.di.AppComponent;
 import com.fasten.executor_driver.di.AppComponentImpl;
 import com.fasten.executor_driver.presentation.executorstate.ExecutorStateNavigate;
 import com.fasten.executor_driver.presentation.executorstate.ExecutorStateViewModel;
-import com.fasten.executor_driver.presentation.geolocation.GeoLocationNavigate;
 import com.fasten.executor_driver.presentation.geolocation.GeoLocationViewModel;
 import javax.inject.Inject;
 
@@ -62,22 +61,21 @@ public class MainApplication extends Application {
     }
     executorStateViewModel.getNavigationLiveData().observeForever(this::navigate);
     geoLocationViewModel.getNavigationLiveData().observeForever(this::navigate);
-    initApplication();
+    initExecutorStates(true);
+    initGeoLocation();
   }
 
-  public void initApplication() {
-    if (executorStateViewModel == null || geoLocationViewModel == null) {
+  public void initExecutorStates(boolean reload) {
+    if (executorStateViewModel == null) {
       throw new IllegalStateException("Граф зависимостей поломан!");
     }
-    executorStateViewModel.initializeExecutorState(true);
-    geoLocationViewModel.updateGeoLocations();
+    executorStateViewModel.initializeExecutorState(reload);
   }
 
-  public void loadApplication() {
-    if (executorStateViewModel == null || geoLocationViewModel == null) {
+  public void initGeoLocation() {
+    if (geoLocationViewModel == null) {
       throw new IllegalStateException("Граф зависимостей поломан!");
     }
-    executorStateViewModel.initializeExecutorState(false);
     geoLocationViewModel.updateGeoLocations();
   }
 
@@ -89,9 +87,6 @@ public class MainApplication extends Application {
       return;
     }
     switch (destination) {
-      case GeoLocationNavigate.RESOLVE_GEO_PROBLEM:
-        stopService();
-        break;
       case ExecutorStateNavigate.NO_NETWORK:
         stopService();
         break;
