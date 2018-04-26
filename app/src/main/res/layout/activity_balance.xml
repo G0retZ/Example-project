@@ -1,8 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<fragment xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
   xmlns:tools="http://schemas.android.com/tools"
-  android:id="@+id/fragment_balance"
   android:layout_width="match_parent"
   android:layout_height="match_parent"
-  android:name="com.fasten.executor_driver.view.BalanceFragment"
-  tools:layout="@layout/fragment_balance"/>
+  android:orientation="vertical">
+  <android.support.v7.widget.Toolbar
+    android:id="@+id/appBar"
+    style="@style/AppTheme.AppBar"
+    android:layout_width="match_parent"
+    android:layout_height="?android:attr/actionBarSize"
+    app:navigationIcon="@drawable/ic_menu_24dp"
+    app:title="@string/balance">
+    <LinearLayout
+      android:layout_width="wrap_content"
+      android:layout_height="match_parent"
+      android:gravity="end">
+      <Button
+        style="@style/AppTheme.Button.Borderless.Small"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/refresh"/>
+    </LinearLayout>
+  </android.support.v7.widget.Toolbar>
+  <fragment
+    android:id="@+id/fragment_balance"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:name="com.fasten.executor_driver.view.BalanceFragment"
+    tools:layout="@layout/fragment_balance"/>
+</LinearLayout>

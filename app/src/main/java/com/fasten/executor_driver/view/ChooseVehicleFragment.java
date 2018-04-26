@@ -8,7 +8,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.TextView;
 import com.fasten.executor_driver.R;
 import com.fasten.executor_driver.di.AppComponent;
@@ -29,10 +28,10 @@ public class ChooseVehicleFragment extends BaseFragment implements ChooseVehicle
 
   private ChooseVehicleViewModel chooseVehicleViewModel;
   private RecyclerView recyclerView;
-  private FrameLayout pendingIndicator;
   private TextView errorText;
   @NonNull
   private Disposable disposable = EmptyDisposable.INSTANCE;
+  private boolean pending;
 
   @Inject
   public void setChooseVehicleViewModel(@NonNull ChooseVehicleViewModel chooseVehicleViewModel) {
@@ -46,7 +45,6 @@ public class ChooseVehicleFragment extends BaseFragment implements ChooseVehicle
       @Nullable Bundle savedInstanceState) {
     View view = inflater.inflate(R.layout.fragment_choose_vehicle, container, false);
     recyclerView = view.findViewById(R.id.recyclerView);
-    pendingIndicator = view.findViewById(R.id.pending);
     errorText = view.findViewById(R.id.errorText);
     recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
     recyclerView.setAdapter(new ChooseVehicleAdapter(new ArrayList<>()));
@@ -81,13 +79,11 @@ public class ChooseVehicleFragment extends BaseFragment implements ChooseVehicle
   }
 
   @Override
-  public boolean onBackPressed() {
-    return pendingIndicator.getVisibility() == View.VISIBLE;
-  }
-
-  @Override
   public void showVehicleListPending(boolean pending) {
-    pendingIndicator.setVisibility(pending ? View.VISIBLE : View.GONE);
+    if (this.pending != pending) {
+      showPending(pending);
+    }
+    this.pending = pending;
   }
 
   @Override

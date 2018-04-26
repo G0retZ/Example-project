@@ -73,7 +73,7 @@
   </style>
 
   <style name="AppTheme.AppBar" parent="Widget.AppCompat.Toolbar">
-    <item name="android:height">?actionBarSize</item>
+    <item name="android:height">?android:attr/actionBarSize</item>
     <item name="android:background">@color/colorPrimary</item>
     <item name="contentInsetStartWithNavigation">0dp</item>
   </style>

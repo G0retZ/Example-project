@@ -1,43 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-  xmlns:app="http://schemas.android.com/apk/res-auto"
+<FrameLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
   xmlns:tools="http://schemas.android.com/tools"
   android:layout_width="match_parent"
   android:layout_height="match_parent">
-  <android.support.v7.widget.Toolbar
-    android:id="@+id/appBar"
-    android:layout_width="0dp"
-    android:layout_height="?actionBarSize"
-    style="@style/AppTheme.AppBar"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toTopOf="parent"
-    app:navigationIcon="@drawable/ic_back_24dp">
-    <TextView
-      style="@style/TextAppearance.AppCompat.Title"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:text="@string/choose_vehicle"/>
-  </android.support.v7.widget.Toolbar>
   <android.support.v7.widget.RecyclerView
     android:id="@+id/recyclerView"
-    android:layout_width="0dp"
-    android:layout_height="0dp"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:scrollbars="vertical"
-    app:layout_constraintBottom_toBottomOf="parent"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toBottomOf="@id/appBar"
     tools:listitem="@layout/fragment_choose_vehicle_list_item"/>
   <TextView
     android:id="@+id/errorText"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
+    android:layout_gravity="center"
     android:enabled="false"
-    android:textAppearance="@style/TextAppearance.AppCompat.Headline"
-    app:layout_constraintBottom_toBottomOf="parent"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toBottomOf="parent"/>
-  <include layout="@layout/pending_layout"/>
-</android.support.constraint.ConstraintLayout>
+    android:textAppearance="@style/TextAppearance.AppCompat.Headline"/>
+</FrameLayout>

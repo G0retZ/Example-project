@@ -15,7 +15,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.fasten.executor_driver.R;
@@ -55,7 +54,6 @@ public class PasswordFragment extends BaseFragment implements CodeViewActions,
   private ImageView codeInputUnderline;
   private EditText codeInput;
   private Button sendSmsRequest;
-  private FrameLayout pendingIndicator;
   private Context context;
 
   private SmsReceiver smsReceiver;
@@ -106,7 +104,6 @@ public class PasswordFragment extends BaseFragment implements CodeViewActions,
     codeInputUnderline = view.findViewById(R.id.codeInputUnderline);
     codeInput = view.findViewById(R.id.codeInput);
     sendSmsRequest = view.findViewById(R.id.sendSms);
-    pendingIndicator = view.findViewById(R.id.pending);
     sendSmsRequest.setOnClickListener(this::sendSmsRequest);
     setTextListener();
     return view;
@@ -168,11 +165,6 @@ public class PasswordFragment extends BaseFragment implements CodeViewActions,
   }
 
   @Override
-  public boolean onBackPressed() {
-    return smsPending || codePending;
-  }
-
-  @Override
   public void onPause() {
     super.onPause();
     smsCodeDisposable.dispose();
@@ -209,8 +201,10 @@ public class PasswordFragment extends BaseFragment implements CodeViewActions,
 
   @Override
   public void showCodeCheckPending(boolean pending) {
+    if (codePending != pending) {
+      showPending(pending);
+    }
     codePending = pending;
-    pendingIndicator.setVisibility(smsPending || codePending ? View.VISIBLE : View.GONE);
   }
 
   @Override
@@ -259,8 +253,10 @@ public class PasswordFragment extends BaseFragment implements CodeViewActions,
 
   @Override
   public void showSmsSendPending(boolean pending) {
+    if (smsPending != pending) {
+      showPending(pending);
+    }
     smsPending = pending;
-    pendingIndicator.setVisibility(smsPending || codePending ? View.VISIBLE : View.GONE);
   }
 
   @Override

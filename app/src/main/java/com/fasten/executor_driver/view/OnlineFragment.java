@@ -10,9 +10,8 @@ import android.view.ViewGroup;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import com.fasten.executor_driver.R;
 import com.fasten.executor_driver.presentation.onlineswitch.OnlineSwitchNavigate;
-import com.google.android.gms.maps.GoogleMap;
 
-public class OnlineFragment extends MapFragment {
+public class OnlineFragment extends BaseFragment {
 
   @NonNull
   private final OnCheckedChangeListener onCheckedChangeListener = (buttonView, isChecked) -> {
@@ -20,6 +19,7 @@ public class OnlineFragment extends MapFragment {
       navigate(OnlineSwitchNavigate.SERVICES);
     }
   };
+  @Nullable
   private SwitchCompat switchCompat;
 
   @Nullable
@@ -27,18 +27,15 @@ public class OnlineFragment extends MapFragment {
   public View onCreateView(@NonNull LayoutInflater inflater,
       @Nullable ViewGroup container,
       @Nullable Bundle savedInstanceState) {
-    return inflater.inflate(R.layout.fragment_online, container, false);
+    switchCompat = (SwitchCompat) inflater.inflate(R.layout.fragment_online, container, false);
+    return switchCompat;
   }
 
   @Override
   public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
-    switchCompat = view.findViewById(R.id.goOnlineSwitch);
-  }
-
-  @Override
-  public void onMapReady(GoogleMap googleMap) {
-    super.onMapReady(googleMap);
-    switchCompat.setOnCheckedChangeListener(onCheckedChangeListener);
+    if (switchCompat != null) {
+      switchCompat.setOnCheckedChangeListener(onCheckedChangeListener);
+    }
   }
 }

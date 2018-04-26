@@ -6,11 +6,9 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+import android.util.Log;
 import com.fasten.executor_driver.R;
-import com.fasten.executor_driver.di.AppComponent;
+import com.fasten.executor_driver.application.BaseActivity;
 import com.fasten.executor_driver.entity.GeoLocation;
 import com.fasten.executor_driver.presentation.geolocation.GeoLocationViewActions;
 import com.fasten.executor_driver.presentation.geolocation.GeoLocationViewModel;
@@ -19,8 +17,8 @@ import com.fasten.executor_driver.presentation.map.MapViewModel;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnMyLocationButtonClickListener;
-import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
@@ -31,11 +29,11 @@ import javax.inject.Inject;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class MapFragment extends BaseFragment implements OnMapReadyCallback,
+public class MapFragment extends SupportMapFragment implements OnMapReadyCallback,
     OnMyLocationButtonClickListener, MapViewActions, GeoLocationViewActions {
 
-  private static final String MAP_VIEW_BUNDLE_KEY = "MapViewBundleKey";
-
+  @Nullable
+  private BaseActivity baseActivity;
   @Nullable
   private GeoLocation lastLocation;
   private MapViewModel mapViewModel;
@@ -43,8 +41,6 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback,
 
   private GeoJsonLayer layer;
   private GoogleMap googleMap;
-  private Context context;
-  private MapView mapView;
 
   @Inject
   public void setMapViewModel(@NonNull MapViewModel mapViewModel) {
@@ -59,53 +55,31 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback,
   @Override
   public void onAttach(Context context) {
     super.onAttach(context);
-    this.context = context;
-  }
-
-  @Nullable
-  @Override
-  public View onCreateView(@NonNull LayoutInflater inflater,
-      @Nullable ViewGroup container,
-      @Nullable Bundle savedInstanceState) {
-    return inflater.inflate(R.layout.fragment_map, container, false);
+    try {
+      baseActivity = (BaseActivity) context;
+    } catch (ClassCastException e) {
+      Log.w(this.getClass().getName(), context.getClass().getName() +
+          " не наследует BaseActivity. OnBackPressed никогда не будет вызван.");
+    }
   }
 
   @Override
-  public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-    super.onViewCreated(view, savedInstanceState);
-    mapView = view.findViewById(R.id.map);
-  }
-
-  @Override
-  protected void onDependencyInject(AppComponent appComponent) {
-    super.onDependencyInject(appComponent);
-    appComponent.inject(this);
+  public void onCreate(Bundle bundle) {
+    super.onCreate(bundle);
+    getMapAsync(this);
   }
 
   @Override
   public void onActivityCreated(Bundle savedInstanceState) {
     super.onActivityCreated(savedInstanceState);
-    // *** IMPORTANT ***
-    // MapView requires that the Bundle you pass contain _ONLY_ MapView SDK
-    // objects or sub-Bundles.
-    Bundle mapViewBundle = null;
-    if (savedInstanceState != null) {
-      mapViewBundle = savedInstanceState.getBundle(MAP_VIEW_BUNDLE_KEY);
+    if (baseActivity != null) {
+      baseActivity.getDiComponent().inject(this);
     }
-    mapView.onCreate(mapViewBundle);
-    mapView.getMapAsync(this);
-  }
-
-  @Override
-  public void onStart() {
-    super.onStart();
-    mapView.onStart();
   }
 
   @Override
   public void onResume() {
     super.onResume();
-    mapView.onResume();
     if (googleMap != null) {
       geoLocationViewModel.updateGeoLocations();
     }
@@ -113,10 +87,13 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback,
 
   @Override
   public void onMapReady(GoogleMap googleMap) {
+    if (baseActivity == null) {
+      throw new IllegalStateException("!!!");
+    }
     this.googleMap = googleMap;
     try {
       googleMap.setMapStyle(
-          MapStyleOptions.loadRawResourceStyle(context, R.raw.mapstyle_aubergine)
+          MapStyleOptions.loadRawResourceStyle(baseActivity, R.raw.mapstyle_aubergine)
       );
     } catch (Resources.NotFoundException e) {
       e.printStackTrace();
@@ -146,44 +123,9 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback,
   }
 
   @Override
-  public void onPause() {
-    super.onPause();
-    mapView.onPause();
-  }
-
-  @Override
-  public void onSaveInstanceState(@NonNull Bundle outState) {
-    super.onSaveInstanceState(outState);
-    Bundle mapViewBundle = outState.getBundle(MAP_VIEW_BUNDLE_KEY);
-    if (mapViewBundle == null) {
-      mapViewBundle = new Bundle();
-      outState.putBundle(MAP_VIEW_BUNDLE_KEY, mapViewBundle);
-    }
-    mapView.onSaveInstanceState(mapViewBundle);
-  }
-
-  @Override
-  public void onStop() {
-    super.onStop();
-    mapView.onStop();
-  }
-
-  @Override
-  public void onDestroy() {
-    super.onDestroy();
-    mapView.onDestroy();
-  }
-
-  @Override
-  public void onLowMemory() {
-    super.onLowMemory();
-    mapView.onLowMemory();
-  }
-
-  @Override
   public void onDetach() {
     super.onDetach();
-    context = null;
+    baseActivity = null;
   }
 
   @Override

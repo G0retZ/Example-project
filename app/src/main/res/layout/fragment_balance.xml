@@ -1,34 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
   xmlns:app="http://schemas.android.com/apk/res-auto"
   android:layout_width="match_parent"
   android:layout_height="match_parent">
-  <android.support.v7.widget.Toolbar
-    android:id="@+id/appBar"
-    android:layout_width="0dp"
-    android:layout_height="?actionBarSize"
-    style="@style/AppTheme.AppBar"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toTopOf="parent"
-    app:navigationIcon="@drawable/ic_menu_24dp">
-    <LinearLayout
-      android:layout_width="match_parent"
-      android:layout_height="match_parent"
-      android:gravity="center_vertical">
-      <TextView
-        style="@style/TextAppearance.AppCompat.Title"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:text="@string/balance"/>
-      <Button
-        style="@style/AppTheme.Button.Borderless.Small"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/refresh"/>
-    </LinearLayout>
-  </android.support.v7.widget.Toolbar>
   <LinearLayout
     android:id="@+id/balanceError"
     android:layout_width="match_parent"
@@ -39,7 +14,7 @@
     android:orientation="horizontal"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toBottomOf="@id/appBar">
+    app:layout_constraintTop_toTopOf="parent">
     <TextView
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
@@ -84,8 +59,7 @@
     app:layout_constraintBottom_toTopOf="@+id/goPaymentOptions"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toBottomOf="@+id/balanceAmount"
-    />
+    app:layout_constraintTop_toBottomOf="@+id/balanceAmount"/>
   <Button
     android:id="@+id/goPaymentOptions"
     style="@style/AppTheme.Button.Colored.Dark"

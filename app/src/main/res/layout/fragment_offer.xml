@@ -197,5 +197,4 @@
     android:layout_height="56dp"
     android:layout_gravity="bottom"
     android:text="@string/accept"/>
-  <include layout="@layout/pending_layout"/>
 </FrameLayout>

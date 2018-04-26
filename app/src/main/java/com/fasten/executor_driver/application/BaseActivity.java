@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import com.fasten.executor_driver.di.AppComponent;
+import com.fasten.executor_driver.view.PendingDialogFragment;
 import java.util.LinkedList;
 
 /**
@@ -19,9 +20,11 @@ import java.util.LinkedList;
 @SuppressLint("Registered")
 public class BaseActivity extends AppCompatActivity {
 
-  public static final String NAVIGATION_UP = "Base.Go.Back";
+  @NonNull
+  private final PendingDialogFragment pendingDialogFragment = new PendingDialogFragment();
   @NonNull
   private final LinkedList<OnBackPressedInterceptor> onBackPressedInterceptors = new LinkedList<>();
+  private int blockRequests = 0;
 
   /**
    * Добавляет {@link OnBackPressedInterceptor} в реестр перехватчиков.
@@ -72,10 +75,30 @@ public class BaseActivity extends AppCompatActivity {
    * @param destination пункт назначения
    */
   public void navigate(@NonNull String destination) {
-    switch (destination) {
-      case NAVIGATION_UP:
-        onBackPressed();
-        break;
+  }
+
+  /**
+   * Заблокировать ЮИ экраном процесса. блокирует экран диалого процесса. Ведет учет запросов
+   * блкоировки/разблокировки. Если число запросов блокировки больше запросов разблокировки, то
+   * отображаем, иначе - не отображаем.
+   *
+   * @param block - блокировать или нет.
+   */
+  public void blockWithPending(boolean block) {
+    if (block) {
+      blockRequests++;
+    } else {
+      blockRequests--;
+    }
+    if (blockRequests > 0) {
+      if (getSupportFragmentManager().findFragmentByTag("pending") == null) {
+        pendingDialogFragment.setCancelable(false);
+        pendingDialogFragment.show(getSupportFragmentManager(), "pending");
+      }
+    } else {
+      if (getSupportFragmentManager().findFragmentByTag("pending") != null) {
+        pendingDialogFragment.dismiss();
+      }
     }
   }
 }
