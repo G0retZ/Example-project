@@ -36,7 +36,7 @@ public class AutoRouterImpl implements ActivityLifecycleCallbacks, AutoRouter {
         PaymentOptionsActivity.class
     ));
     statusGroups.put(ExecutorStateNavigate.MAP_ONLINE, Arrays.asList(
-        OnlineActivity.class, VehicleOptionsActivity.class, ServicesActivity.class,
+        OnlineActivity.class, VehicleOptionsActivity.class,
         GeolocationResolutionActivity.class, MenuActivity.class, BalanceActivity.class,
         PaymentOptionsActivity.class
     ));
