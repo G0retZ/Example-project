@@ -4,10 +4,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v7.app.ActionBar;
-import android.view.MenuItem;
+import android.support.v7.widget.Toolbar;
 import com.fasten.executor_driver.R;
-import com.fasten.executor_driver.presentation.executorstate.ExecutorStateNavigate;
 import com.fasten.executor_driver.presentation.menu.MenuNavigate;
 
 public class MenuActivity extends BaseActivity {
@@ -16,51 +14,33 @@ public class MenuActivity extends BaseActivity {
   public void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_menu);
-    ActionBar actionBar = getSupportActionBar();
-    if (actionBar != null) {
-      actionBar.setTitle(R.string.menu);
-      actionBar.setHomeAsUpIndicator(R.drawable.ic_close_24dp);
-      actionBar.setDisplayHomeAsUpEnabled(true);
+    Toolbar toolbar = findViewById(R.id.appBar);
+    if (toolbar != null) {
+      toolbar.setNavigationOnClickListener(v -> onBackPressed());
     }
-  }
-
-  @Override
-  public boolean onOptionsItemSelected(MenuItem item) {
-    switch (item.getItemId()) {
-      case android.R.id.home:
-        finish();
-        return (true);
-    }
-    return (super.onOptionsItemSelected(item));
   }
 
   @Override
   public void navigate(@NonNull String destination) {
     switch (destination) {
       case MenuNavigate.PROFILE:
-        finish();
+        onBackPressed();
         break;
       case MenuNavigate.BALANCE:
         startActivity(new Intent(this, BalanceActivity.class));
         finish();
         break;
       case MenuNavigate.MESSAGES:
-        finish();
+        onBackPressed();
         break;
       case MenuNavigate.HISTORY:
-        finish();
+        onBackPressed();
         break;
       case MenuNavigate.OPERATOR:
-        finish();
+        onBackPressed();
         break;
       case MenuNavigate.VEHICLES:
-        finish();
-        break;
-      case ExecutorStateNavigate.MAP_SHIFT_CLOSED:
-        break;
-      case ExecutorStateNavigate.MAP_SHIFT_OPENED:
-        break;
-      case ExecutorStateNavigate.MAP_ONLINE:
+        onBackPressed();
         break;
       default:
         super.navigate(destination);

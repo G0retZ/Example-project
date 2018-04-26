@@ -4,8 +4,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.Toolbar;
 import com.fasten.executor_driver.R;
-import com.fasten.executor_driver.presentation.executorstate.ExecutorStateNavigate;
 import com.fasten.executor_driver.presentation.selectedvehicle.SelectedVehicleNavigate;
 import com.fasten.executor_driver.presentation.vehicleoptions.VehicleOptionsNavigate;
 
@@ -15,16 +15,15 @@ public class VehicleOptionsActivity extends BaseActivity {
   public void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_vehicle_options);
-    setTitle(R.string.check_list);
+    Toolbar toolbar = findViewById(R.id.appBar);
+    if (toolbar != null) {
+      toolbar.setNavigationOnClickListener(v -> onBackPressed());
+    }
   }
 
   @Override
   public void navigate(@NonNull String destination) {
     switch (destination) {
-      case ExecutorStateNavigate.MAP_SHIFT_CLOSED:
-        break;
-      case ExecutorStateNavigate.MAP_SHIFT_OPENED:
-        break;
       case VehicleOptionsNavigate.SERVICES:
         startActivity(new Intent(this, ServicesActivity.class));
         finish();

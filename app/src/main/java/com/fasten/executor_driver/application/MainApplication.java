@@ -12,7 +12,6 @@ import com.fasten.executor_driver.di.AppComponent;
 import com.fasten.executor_driver.di.AppComponentImpl;
 import com.fasten.executor_driver.presentation.executorstate.ExecutorStateNavigate;
 import com.fasten.executor_driver.presentation.executorstate.ExecutorStateViewModel;
-import com.fasten.executor_driver.presentation.geolocation.GeoLocationNavigate;
 import com.fasten.executor_driver.presentation.geolocation.GeoLocationViewModel;
 import javax.inject.Inject;
 
@@ -28,6 +27,8 @@ public class MainApplication extends Application {
   private ExecutorStateViewModel executorStateViewModel;
   @Nullable
   private GeoLocationViewModel geoLocationViewModel;
+  @Nullable
+  private AutoRouter autoRouter;
 
   @Inject
   public void setExecutorStateViewModel(@NonNull ExecutorStateViewModel executorStateViewModel) {
@@ -37,6 +38,17 @@ public class MainApplication extends Application {
   @Inject
   public void setGeoLocationViewModel(@NonNull GeoLocationViewModel geoLocationViewModel) {
     this.geoLocationViewModel = geoLocationViewModel;
+  }
+
+  @Inject
+  public void setAutoRouter(@NonNull AutoRouter autoRouter) {
+    this.autoRouter = autoRouter;
+  }
+
+  @Inject
+  public void setLifeCycleCallbacks(
+      @Nullable ActivityLifecycleCallbacks activityLifecycleCallbacks) {
+    registerActivityLifecycleCallbacks(activityLifecycleCallbacks);
   }
 
   @Override
@@ -49,43 +61,59 @@ public class MainApplication extends Application {
     }
     executorStateViewModel.getNavigationLiveData().observeForever(this::navigate);
     geoLocationViewModel.getNavigationLiveData().observeForever(this::navigate);
-    executorStateViewModel.initializeExecutorState();
+    initExecutorStates(true);
+    initGeoLocation();
+  }
+
+  public void initExecutorStates(boolean reload) {
+    if (executorStateViewModel == null) {
+      throw new IllegalStateException("Граф зависимостей поломан!");
+    }
+    executorStateViewModel.initializeExecutorState(reload);
+  }
+
+  public void initGeoLocation() {
+    if (geoLocationViewModel == null) {
+      throw new IllegalStateException("Граф зависимостей поломан!");
+    }
     geoLocationViewModel.updateGeoLocations();
   }
 
-  private void navigate(@Nullable String direction) {
-    if (direction != null) {
-      switch (direction) {
-        case GeoLocationNavigate.RESOLVE_GEO_PROBLEM:
-          stopService();
-          break;
-        case ExecutorStateNavigate.NO_NETWORK:
-          stopService();
-          break;
-        case ExecutorStateNavigate.AUTHORIZE:
-          stopService();
-          break;
-        case ExecutorStateNavigate.MAP_SHIFT_CLOSED:
-          stopService();
-          break;
-        case ExecutorStateNavigate.MAP_SHIFT_OPENED:
-          startService(R.string.online, R.string.no_orders, R.string.to_app,
-              PendingIntent.getActivity(this, 0, new Intent(this, OnlineActivity.class), 0));
-          break;
-        case ExecutorStateNavigate.MAP_ONLINE:
-          startService(R.string.online, R.string.wait_for_orders, R.string.to_app,
-              PendingIntent.getActivity(this, 0, new Intent(this, OnlineActivity.class), 0));
-          break;
-        case ExecutorStateNavigate.OFFER_CONFIRMATION:
-          startService(R.string.offer, R.string.new_offer, R.string.consider,
-              PendingIntent.getActivity(this, 0, new Intent(this, OfferActivity.class), 0));
-          break;
-        case ExecutorStateNavigate.APPROACHING_LOAD_POINT:
-          startService(R.string.online, R.string.executing, R.string.to_app,
-              PendingIntent.getActivity(this, 0, new Intent(this, OnlineActivity.class), 0));
-          break;
-      }
+  private void navigate(@Nullable String destination) {
+    if (autoRouter == null) {
+      throw new IllegalStateException("Граф зависимостей поломан!");
     }
+    if (destination == null) {
+      return;
+    }
+    switch (destination) {
+      case ExecutorStateNavigate.NO_NETWORK:
+        stopService();
+        break;
+      case ExecutorStateNavigate.AUTHORIZE:
+        stopService();
+        break;
+      case ExecutorStateNavigate.MAP_SHIFT_CLOSED:
+        stopService();
+        break;
+      case ExecutorStateNavigate.MAP_SHIFT_OPENED:
+        startService(R.string.online, R.string.no_orders, R.string.to_app,
+            PendingIntent.getActivity(this, 0, new Intent(this, OnlineActivity.class), 0));
+        break;
+      case ExecutorStateNavigate.MAP_ONLINE:
+        startService(R.string.online, R.string.wait_for_orders, R.string.to_app,
+            PendingIntent.getActivity(this, 0, new Intent(this, OnlineActivity.class), 0));
+        break;
+      case ExecutorStateNavigate.OFFER_CONFIRMATION:
+        startService(R.string.offer, R.string.new_offer, R.string.consider,
+            PendingIntent.getActivity(this, 0, new Intent(this, OfferActivity.class), 0));
+        break;
+      case ExecutorStateNavigate.APPROACHING_LOAD_POINT:
+        startService(R.string.online, R.string.executing, R.string.to_app,
+            PendingIntent.getActivity(this, 0, new Intent(this, OnlineActivity.class), 0));
+        break;
+    }
+    autoRouter.navigateTo(destination);
   }
 
   @NonNull

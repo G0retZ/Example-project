@@ -30,7 +30,7 @@ public class GeoLocationUseCaseImpl implements GeoLocationUseCase {
   @Override
   public Flowable<GeoLocation> getGeoLocations() {
     if (geoLocationFlowable == null) {
-      geoLocationFlowable = executorStateUseCase.getExecutorStates()
+      geoLocationFlowable = executorStateUseCase.getExecutorStates(false)
           .onErrorResumeNext(Flowable.empty())
           .switchMap(executorState -> {
             switch (executorState) {
@@ -48,8 +48,7 @@ public class GeoLocationUseCaseImpl implements GeoLocationUseCase {
           ).doOnNext(
               geoLocation -> geoTrackingGateway.sendGeoLocation(geoLocation)
                   .subscribe(() -> {
-                  }, throwable -> {
-                  })
+                  }, Throwable::printStackTrace)
           ).replay(1)
           .refCount();
     }

@@ -37,7 +37,7 @@ public class OfferGatewayImpl implements OfferGateway {
   @Override
   public Flowable<Offer> getOffers() {
     return executorStateUseCase
-        .getExecutorStates()
+        .getExecutorStates(false)
         .subscribeOn(Schedulers.single())
         .observeOn(Schedulers.computation())
         .filter(executorState -> executorState == ExecutorState.ORDER_CONFIRMATION)

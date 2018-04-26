@@ -6,9 +6,11 @@ import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
 import com.fasten.executor_driver.interactor.auth.LoginUseCase;
+import com.fasten.executor_driver.presentation.SingleLiveEvent;
 import com.fasten.executor_driver.presentation.ViewState;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.internal.disposables.EmptyDisposable;
 import io.reactivex.schedulers.Schedulers;
 import javax.inject.Inject;
 
@@ -20,16 +22,16 @@ public class PhoneViewModelImpl extends ViewModel implements PhoneViewModel {
   @NonNull
   private final MutableLiveData<ViewState<PhoneViewActions>> viewStateLiveData;
   @NonNull
-  private final MutableLiveData<String> navigateLiveData;
-
-  private Disposable disposable;
+  private final SingleLiveEvent<String> navigateLiveData;
+  @NonNull
+  private Disposable disposable = EmptyDisposable.INSTANCE;
 
   @Inject
   public PhoneViewModelImpl(@NonNull LoginUseCase loginUseCase) {
     this.loginUseCase = loginUseCase;
     viewStateLiveData = new MutableLiveData<>();
     viewStateLiveData.postValue(new PhoneViewStateInitial());
-    navigateLiveData = new MutableLiveData<>();
+    navigateLiveData = new SingleLiveEvent<>();
   }
 
   @NonNull
@@ -46,16 +48,13 @@ public class PhoneViewModelImpl extends ViewModel implements PhoneViewModel {
 
   @Override
   public void phoneNumberChanged(@NonNull String phoneNumber) {
-    if (disposable != null && !disposable.isDisposed()) {
+    if (!disposable.isDisposed()) {
       return;
     }
     disposable = loginUseCase.validateLogin(phoneNumber.replaceAll("[^\\d]", ""))
         .subscribeOn(Schedulers.single())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(this::switchToSuccess, throwable -> switchToError());
-    if (disposable.isDisposed()) {
-      disposable = null;
-    }
   }
 
   @SuppressLint("CheckResult")
@@ -66,7 +65,10 @@ public class PhoneViewModelImpl extends ViewModel implements PhoneViewModel {
           .subscribeOn(Schedulers.single())
           .observeOn(AndroidSchedulers.mainThread())
           .subscribe(
-              () -> navigateLiveData.postValue(PhoneNavigate.PASSWORD),
+              () -> {
+                viewStateLiveData.postValue(new PhoneViewStateInitial());
+                navigateLiveData.postValue(PhoneNavigate.PASSWORD);
+              },
               Throwable::printStackTrace
           );
     }
@@ -75,19 +77,14 @@ public class PhoneViewModelImpl extends ViewModel implements PhoneViewModel {
   @Override
   protected void onCleared() {
     super.onCleared();
-    if (disposable != null && !disposable.isDisposed()) {
-      disposable.dispose();
-      disposable = null;
-    }
+    disposable.dispose();
   }
 
   private void switchToSuccess() {
-    disposable = null;
     viewStateLiveData.postValue(new PhoneViewStateReady());
   }
 
   private void switchToError() {
-    disposable = null;
     if (!(viewStateLiveData.getValue() instanceof PhoneViewStateInitial)) {
       viewStateLiveData.setValue(new PhoneViewStateInitial());
     }

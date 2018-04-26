@@ -1,7 +1,6 @@
 package com.fasten.executor_driver.view;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
 import android.os.Bundle;
@@ -42,7 +41,6 @@ public class MapFragment extends SupportMapFragment implements OnMapReadyCallbac
 
   private GeoJsonLayer layer;
   private GoogleMap googleMap;
-  private Activity activity;
 
   @Inject
   public void setMapViewModel(@NonNull MapViewModel mapViewModel) {
@@ -66,26 +64,37 @@ public class MapFragment extends SupportMapFragment implements OnMapReadyCallbac
   }
 
   @Override
-  public void onActivityCreated(Bundle bundle) {
-    super.onActivityCreated(bundle);
-    if (baseActivity != null) {
-      baseActivity.getDiComponent().inject(this);
-    }
+  public void onCreate(Bundle bundle) {
+    super.onCreate(bundle);
     getMapAsync(this);
   }
 
   @Override
-  public void onAttach(Activity activity) {
-    super.onAttach(activity);
-    this.activity = activity;
+  public void onActivityCreated(Bundle savedInstanceState) {
+    super.onActivityCreated(savedInstanceState);
+    if (baseActivity != null) {
+      baseActivity.getDiComponent().inject(this);
+    }
+  }
+
+  @Override
+  public void onResume() {
+    super.onResume();
+    if (googleMap != null) {
+      geoLocationViewModel.updateGeoLocations();
+    }
   }
 
   @Override
   public void onMapReady(GoogleMap googleMap) {
+    if (baseActivity == null) {
+      throw new IllegalStateException("!!!");
+    }
     this.googleMap = googleMap;
     try {
-      googleMap
-          .setMapStyle(MapStyleOptions.loadRawResourceStyle(activity, R.raw.mapstyle_aubergine));
+      googleMap.setMapStyle(
+          MapStyleOptions.loadRawResourceStyle(baseActivity, R.raw.mapstyle_aubergine)
+      );
     } catch (Resources.NotFoundException e) {
       e.printStackTrace();
     }
@@ -116,7 +125,7 @@ public class MapFragment extends SupportMapFragment implements OnMapReadyCallbac
   @Override
   public void onDetach() {
     super.onDetach();
-    activity = null;
+    baseActivity = null;
   }
 
   @Override

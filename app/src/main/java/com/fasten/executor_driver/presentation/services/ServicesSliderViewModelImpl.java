@@ -14,14 +14,11 @@ public class ServicesSliderViewModelImpl extends ViewModel implements ServicesSl
   private final ServicesListItems servicesListItems;
   @NonNull
   private final MutableLiveData<ViewState<ServicesSliderViewActions>> viewStateLiveData;
-  @NonNull
-  private final MutableLiveData<String> navigateLiveData;
 
   @Inject
   public ServicesSliderViewModelImpl(@NonNull ServicesListItems servicesListItems) {
     this.servicesListItems = servicesListItems;
     viewStateLiveData = new MutableLiveData<>();
-    navigateLiveData = new MutableLiveData<>();
   }
 
   @NonNull
@@ -33,7 +30,7 @@ public class ServicesSliderViewModelImpl extends ViewModel implements ServicesSl
   @NonNull
   @Override
   public LiveData<String> getNavigationLiveData() {
-    return navigateLiveData;
+    return new MutableLiveData<>();
   }
 
   @Override

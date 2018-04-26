@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
   android:layout_width="match_parent"
   android:layout_height="match_parent"
   android:orientation="vertical">
@@ -10,7 +11,7 @@
     android:layout_height="56dp"
     android:paddingStart="16dp"
     android:paddingEnd="16dp"
-    android:background="?selectableItemBackground"
+    android:background="?android:attr/selectableItemBackground"
     android:gravity="center_vertical"
     android:text="@string/qiwi"/>
   <View
@@ -19,8 +20,7 @@
     android:layout_height="1dp"
     android:layout_marginStart="16dp"
     android:layout_marginEnd="16dp"
-    android:background="@color/colorDivider"
-    />
+    android:background="@color/colorDivider"/>
   <TextView
     android:id="@+id/sberbank"
     style="@style/TextAppearance.AppCompat.Subhead"
@@ -28,7 +28,7 @@
     android:layout_height="56dp"
     android:paddingStart="16dp"
     android:paddingEnd="16dp"
-    android:background="?selectableItemBackground"
+    android:background="?android:attr/selectableItemBackground"
     android:gravity="center_vertical"
     android:text="@string/sberbank"/>
   <View
@@ -37,6 +37,5 @@
     android:layout_height="1dp"
     android:layout_marginStart="16dp"
     android:layout_marginEnd="16dp"
-    android:background="@color/colorDivider"
-    />
+    android:background="@color/colorDivider"/>
 </LinearLayout>

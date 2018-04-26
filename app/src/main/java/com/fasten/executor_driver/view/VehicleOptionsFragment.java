@@ -9,7 +9,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.TextView;
 import com.fasten.executor_driver.R;
 import com.fasten.executor_driver.di.AppComponent;
@@ -27,9 +26,9 @@ public class VehicleOptionsFragment extends BaseFragment implements VehicleOptio
 
   private VehicleOptionsViewModel vehicleOptionsViewModel;
   private RecyclerView recyclerView;
-  private FrameLayout pendingIndicator;
   private TextView errorText;
   private Button readyButton;
+  private boolean pending;
 
   @Inject
   public void setVehicleOptionsViewModel(@NonNull VehicleOptionsViewModel vehicleOptionsViewModel) {
@@ -43,7 +42,6 @@ public class VehicleOptionsFragment extends BaseFragment implements VehicleOptio
       @Nullable Bundle savedInstanceState) {
     View view = inflater.inflate(R.layout.fragment_vehicle_options, container, false);
     recyclerView = view.findViewById(R.id.recyclerView);
-    pendingIndicator = view.findViewById(R.id.pending);
     errorText = view.findViewById(R.id.errorText);
     readyButton = view.findViewById(R.id.readyButton);
     recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -82,7 +80,10 @@ public class VehicleOptionsFragment extends BaseFragment implements VehicleOptio
 
   @Override
   public void showVehicleOptionsPending(boolean pending) {
-    pendingIndicator.setVisibility(pending ? View.VISIBLE : View.GONE);
+    if (this.pending != pending) {
+      showPending(pending);
+    }
+    this.pending = pending;
   }
 
   @Override

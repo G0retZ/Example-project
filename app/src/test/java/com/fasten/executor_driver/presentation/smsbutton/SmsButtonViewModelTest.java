@@ -70,8 +70,7 @@ public class SmsButtonViewModelTest {
   }
 
   /**
-   * Не должен просить юзкейс отправить СМС с кодом на номер, если предыдущий запрос еще не
-   * завершился.
+   * Не должен просить юзкейс отправить СМС с кодом на номер, если таймер еще не вышел.
    */
   @Test
   public void DoNotTouchSmsUseCaseToSendMeCodeUntilTimeout() {

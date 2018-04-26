@@ -4,7 +4,6 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import com.fasten.executor_driver.R;
 import com.fasten.executor_driver.entity.NoServicesAvailableException;
 import com.fasten.executor_driver.entity.Service;
@@ -12,6 +11,7 @@ import com.fasten.executor_driver.interactor.services.ServicesUseCase;
 import com.fasten.executor_driver.presentation.ViewState;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.internal.disposables.EmptyDisposable;
 import io.reactivex.schedulers.Schedulers;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,15 +23,13 @@ public class ServicesViewModelImpl extends ViewModel implements ServicesViewMode
   @NonNull
   private final MutableLiveData<ViewState<ServicesViewActions>> viewStateLiveData;
   @NonNull
-  private final MutableLiveData<String> navigateLiveData;
-  @NonNull
   private final ServicesSliderViewModel servicesSliderViewModel;
   @NonNull
   private final ServicesListItems servicesListItems;
-  @Nullable
-  private Disposable servicesDisposable;
-  @Nullable
-  private Disposable setServicesDisposable;
+  @NonNull
+  private Disposable servicesDisposable = EmptyDisposable.INSTANCE;
+  @NonNull
+  private Disposable setServicesDisposable = EmptyDisposable.INSTANCE;
 
   @Inject
   public ServicesViewModelImpl(ServicesUseCase servicesUseCase,
@@ -41,28 +39,24 @@ public class ServicesViewModelImpl extends ViewModel implements ServicesViewMode
     this.servicesSliderViewModel = servicesSliderViewModel;
     this.servicesListItems = servicesListItems;
     viewStateLiveData = new MutableLiveData<>();
-    viewStateLiveData.postValue(new ServicesViewStatePending());
-    navigateLiveData = new MutableLiveData<>();
+    loadServices();
   }
 
   @NonNull
   @Override
   public LiveData<ViewState<ServicesViewActions>> getViewStateLiveData() {
-    if (servicesDisposable == null) {
-      loadServices();
-    }
     return viewStateLiveData;
   }
 
   @NonNull
   @Override
   public LiveData<String> getNavigationLiveData() {
-    return navigateLiveData;
+    return new MutableLiveData<>();
   }
 
   @Override
   public void setServices(List<ServicesListItem> servicesListItems) {
-    if (setServicesDisposable != null && !setServicesDisposable.isDisposed()) {
+    if (!setServicesDisposable.isDisposed()) {
       return;
     }
     ArrayList<Service> services = new ArrayList<>();
@@ -110,9 +104,10 @@ public class ServicesViewModelImpl extends ViewModel implements ServicesViewMode
   }
 
   private void loadServices() {
-    if (servicesDisposable != null && !servicesDisposable.isDisposed()) {
+    if (!servicesDisposable.isDisposed()) {
       return;
     }
+    viewStateLiveData.postValue(new ServicesViewStatePending());
     servicesDisposable = servicesUseCase.loadServices()
         .subscribeOn(Schedulers.single())
         .observeOn(AndroidSchedulers.mainThread())
@@ -143,11 +138,7 @@ public class ServicesViewModelImpl extends ViewModel implements ServicesViewMode
   @Override
   protected void onCleared() {
     super.onCleared();
-    if (setServicesDisposable != null) {
-      setServicesDisposable.dispose();
-    }
-    if (servicesDisposable != null) {
-      servicesDisposable.dispose();
-    }
+    setServicesDisposable.dispose();
+    servicesDisposable.dispose();
   }
 }

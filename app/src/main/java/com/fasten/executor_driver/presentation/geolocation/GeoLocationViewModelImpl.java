@@ -4,11 +4,12 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import com.fasten.executor_driver.interactor.GeoLocationUseCase;
+import com.fasten.executor_driver.presentation.SingleLiveEvent;
 import com.fasten.executor_driver.presentation.ViewState;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.internal.disposables.EmptyDisposable;
 import io.reactivex.schedulers.Schedulers;
 import javax.inject.Inject;
 
@@ -20,15 +21,15 @@ public class GeoLocationViewModelImpl extends ViewModel implements GeoLocationVi
   @NonNull
   private final MutableLiveData<ViewState<GeoLocationViewActions>> viewStateLiveData;
   @NonNull
-  private final MutableLiveData<String> navigateLiveData;
-  @Nullable
-  private Disposable disposable;
+  private final SingleLiveEvent<String> navigateLiveData;
+  @NonNull
+  private Disposable disposable = EmptyDisposable.INSTANCE;
 
   @Inject
   public GeoLocationViewModelImpl(@NonNull GeoLocationUseCase geoLocationUseCase) {
     this.geoLocationUseCase = geoLocationUseCase;
     viewStateLiveData = new MutableLiveData<>();
-    navigateLiveData = new MutableLiveData<>();
+    navigateLiveData = new SingleLiveEvent<>();
   }
 
   @NonNull
@@ -45,7 +46,7 @@ public class GeoLocationViewModelImpl extends ViewModel implements GeoLocationVi
 
   @Override
   public void updateGeoLocations() {
-    if (disposable != null && !disposable.isDisposed()) {
+    if (!disposable.isDisposed()) {
       return;
     }
     disposable = geoLocationUseCase.getGeoLocations()
@@ -60,8 +61,6 @@ public class GeoLocationViewModelImpl extends ViewModel implements GeoLocationVi
   @Override
   protected void onCleared() {
     super.onCleared();
-    if (disposable != null) {
-      disposable.dispose();
-    }
+    disposable.dispose();
   }
 }

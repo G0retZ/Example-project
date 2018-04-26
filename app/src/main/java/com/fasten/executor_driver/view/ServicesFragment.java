@@ -12,7 +12,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
@@ -39,10 +38,10 @@ public class ServicesFragment extends BaseFragment implements ServicesViewAction
   private TextView minPriceText;
   private TextView maxPriceText;
   private RecyclerView recyclerView;
-  private FrameLayout pendingIndicator;
   private TextView errorText;
   private Button readyButton;
   private Context context;
+  private boolean pending;
 
   @Override
   public void onAttach(Context context) {
@@ -70,7 +69,6 @@ public class ServicesFragment extends BaseFragment implements ServicesViewAction
     minPriceText = view.findViewById(R.id.minPriceText);
     maxPriceText = view.findViewById(R.id.maxPriceText);
     recyclerView = view.findViewById(R.id.recyclerView);
-    pendingIndicator = view.findViewById(R.id.pending);
     errorText = view.findViewById(R.id.errorText);
     readyButton = view.findViewById(R.id.readyButton);
     recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -131,7 +129,10 @@ public class ServicesFragment extends BaseFragment implements ServicesViewAction
 
   @Override
   public void showServicesPending(boolean pending) {
-    pendingIndicator.setVisibility(pending ? View.VISIBLE : View.GONE);
+    if (this.pending != pending) {
+      showPending(pending);
+    }
+    this.pending = pending;
   }
 
   @Override

@@ -4,16 +4,17 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import com.fasten.executor_driver.entity.DriverBlockedException;
 import com.fasten.executor_driver.entity.InsufficientCreditsException;
 import com.fasten.executor_driver.entity.NoFreeVehiclesException;
 import com.fasten.executor_driver.entity.NoVehiclesAvailableException;
 import com.fasten.executor_driver.interactor.vehicle.VehiclesAndOptionsUseCase;
+import com.fasten.executor_driver.presentation.SingleLiveEvent;
 import com.fasten.executor_driver.presentation.ViewState;
 import io.reactivex.Completable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.internal.disposables.EmptyDisposable;
 import io.reactivex.schedulers.Schedulers;
 import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
@@ -27,18 +28,18 @@ public class OnlineButtonViewModelImpl extends ViewModel implements OnlineButton
   @NonNull
   private final MutableLiveData<ViewState<OnlineButtonViewActions>> viewStateLiveData;
   @NonNull
-  private final MutableLiveData<String> navigateLiveData;
-  @Nullable
-  private Disposable loadDisposable;
-  @Nullable
-  private Disposable timerDisposable;
+  private final SingleLiveEvent<String> navigateLiveData;
+  @NonNull
+  private Disposable loadDisposable = EmptyDisposable.INSTANCE;
+  @NonNull
+  private Disposable timerDisposable = EmptyDisposable.INSTANCE;
 
   @Inject
   public OnlineButtonViewModelImpl(@NonNull VehiclesAndOptionsUseCase vehiclesAndOptionsUseCase) {
     this.vehiclesAndOptionsUseCase = vehiclesAndOptionsUseCase;
     viewStateLiveData = new MutableLiveData<>();
     viewStateLiveData.postValue(new OnlineButtonViewStateReady());
-    navigateLiveData = new MutableLiveData<>();
+    navigateLiveData = new SingleLiveEvent<>();
   }
 
   @NonNull
@@ -55,12 +56,11 @@ public class OnlineButtonViewModelImpl extends ViewModel implements OnlineButton
 
   @Override
   public void goOnline() {
-    if ((loadDisposable != null && !loadDisposable.isDisposed())
-        || timerDisposable != null && !timerDisposable.isDisposed()) {
+    if (!loadDisposable.isDisposed() || !timerDisposable.isDisposed()) {
       return;
     }
     viewStateLiveData.postValue(new OnlineButtonViewStateHold());
-    Disposable disposable = vehiclesAndOptionsUseCase.loadVehiclesAndOptions()
+    loadDisposable = vehiclesAndOptionsUseCase.loadVehiclesAndOptions()
         .subscribeOn(Schedulers.single())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(
@@ -83,15 +83,11 @@ public class OnlineButtonViewModelImpl extends ViewModel implements OnlineButton
               holdButton(DURATION_AFTER_FAIL);
             }
         );
-    if (this.loadDisposable == null || this.loadDisposable.isDisposed()) {
-      this.loadDisposable = disposable;
-    }
   }
 
   @Override
   public void consumeError() {
-    if ((loadDisposable != null && !loadDisposable.isDisposed())
-        || timerDisposable != null && !timerDisposable.isDisposed()) {
+    if (!loadDisposable.isDisposed() || !timerDisposable.isDisposed()) {
       viewStateLiveData.postValue(new OnlineButtonViewStateHold());
     } else {
       viewStateLiveData.postValue(new OnlineButtonViewStateReady());
@@ -111,11 +107,7 @@ public class OnlineButtonViewModelImpl extends ViewModel implements OnlineButton
   @Override
   protected void onCleared() {
     super.onCleared();
-    if (timerDisposable != null) {
-      timerDisposable.dispose();
-    }
-    if (loadDisposable != null) {
-      loadDisposable.dispose();
-    }
+    timerDisposable.dispose();
+    loadDisposable.dispose();
   }
 }

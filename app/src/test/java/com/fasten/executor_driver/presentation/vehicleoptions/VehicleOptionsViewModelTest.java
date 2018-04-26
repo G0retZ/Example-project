@@ -18,8 +18,6 @@ import com.fasten.executor_driver.entity.OptionNumeric;
 import com.fasten.executor_driver.interactor.vehicle.VehicleOptionsUseCase;
 import com.fasten.executor_driver.presentation.ViewState;
 import io.reactivex.Completable;
-import io.reactivex.Observable;
-import io.reactivex.Single;
 import io.reactivex.android.plugins.RxAndroidPlugins;
 import io.reactivex.plugins.RxJavaPlugins;
 import io.reactivex.schedulers.Schedulers;
@@ -54,12 +52,17 @@ public class VehicleOptionsViewModelTest {
   @Mock
   private Observer<String> navigateObserver;
 
+  private PublishSubject<List<Option>> publishSubject;
+  private SingleSubject<List<Option>> singleSubject;
+
   @Before
   public void setUp() {
     RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
     RxAndroidPlugins.setInitMainThreadSchedulerHandler(scheduler -> Schedulers.trampoline());
-    when(vehicleOptionsUseCase.getVehicleOptions()).thenReturn(Observable.never());
-    when(vehicleOptionsUseCase.getDriverOptions()).thenReturn(Single.never());
+    publishSubject = PublishSubject.create();
+    singleSubject = SingleSubject.create();
+    when(vehicleOptionsUseCase.getVehicleOptions()).thenReturn(publishSubject);
+    when(vehicleOptionsUseCase.getDriverOptions()).thenReturn(singleSubject);
     when(vehicleOptionsUseCase.setSelectedVehicleAndOptions(anyList(), anyList()))
         .thenReturn(Completable.never());
     vehicleVehicleOptionsViewModel = new VehicleOptionsViewModelImpl(vehicleOptionsUseCase);
@@ -68,27 +71,34 @@ public class VehicleOptionsViewModelTest {
   /* Тетсируем работу с юзкейсом выбора опций ТС. */
 
   /**
-   * Должен просить юзкейс получить список опций ТС, при первой и только при первой подписке.
+   * Должен просить юзкейс получить список опций ТС изначально.
    */
   @Test
   public void askVehicleOptionsUseCaseForOptionsInitially() {
+    // Результат:
+    verify(vehicleOptionsUseCase).getVehicleOptions();
+    verify(vehicleOptionsUseCase).getDriverOptions();
+    verifyNoMoreInteractions(vehicleOptionsUseCase);
+  }
+
+  /**
+   * Не должен трогать юзкейс при подписках.
+   */
+  @Test
+  public void doNotTouchUseCaseOnSubscriptions() {
     // Дано:
-    when(vehicleOptionsUseCase.getVehicleOptions()).thenReturn(Observable.just(
-        Arrays.asList(
-            new OptionBoolean(1, "name", "description", true, false),
-            new OptionBoolean(2, "emacs", "descriptions", true, true)
-        )
+    publishSubject.onNext(Arrays.asList(
+        new OptionBoolean(1, "name", "description", true, false),
+        new OptionBoolean(2, "emacs", "descriptions", true, true)
     ));
-    when(vehicleOptionsUseCase.getDriverOptions()).thenReturn(Single.just(
-        Arrays.asList(
-            new OptionNumeric(3, "names", "desc", true, 5, 0, 10),
-            new OptionNumeric(4, "nam", "script", true, 1, -1, 2)
-        )
+    singleSubject.onSuccess(Arrays.asList(
+        new OptionNumeric(3, "names", "desc", true, 5, 0, 10),
+        new OptionNumeric(4, "nam", "script", true, 1, -1, 2)
     ));
 
     // Действие:
     vehicleVehicleOptionsViewModel.getViewStateLiveData();
-    vehicleVehicleOptionsViewModel.getViewStateLiveData();
+    vehicleVehicleOptionsViewModel.getNavigationLiveData();
     vehicleVehicleOptionsViewModel.getViewStateLiveData();
 
     // Результат:
@@ -164,6 +174,8 @@ public class VehicleOptionsViewModelTest {
         new OptionNumeric(3, "names", "description", true, 5, 0, 10),
         new OptionNumeric(4, "nam", "description", false, 1, -1, 2)
     ));
+    verify(vehicleOptionsUseCase).getVehicleOptions();
+    verify(vehicleOptionsUseCase).getDriverOptions();
     verifyNoMoreInteractions(vehicleOptionsUseCase);
   }
 
@@ -212,11 +224,14 @@ public class VehicleOptionsViewModelTest {
     )));
 
     // Результат:
-    verify(vehicleOptionsUseCase, only()).setSelectedVehicleAndOptions(Collections.singletonList(
+    verify(vehicleOptionsUseCase).getVehicleOptions();
+    verify(vehicleOptionsUseCase).getDriverOptions();
+    verify(vehicleOptionsUseCase).setSelectedVehicleAndOptions(Collections.singletonList(
         new OptionBoolean(1, "name", "description", true, false)
     ), Collections.singletonList(
         new OptionNumeric(3, "names", "description", true, 5, 0, 10)
     ));
+    verifyNoMoreInteractions(vehicleOptionsUseCase);
   }
 
   /* Тетсируем переключение состояний. */
@@ -243,11 +258,7 @@ public class VehicleOptionsViewModelTest {
   @Test
   public void setReadyViewStateToLiveData() {
     // Дано:
-    PublishSubject<List<Option>> publishSubject = PublishSubject.create();
-    SingleSubject<List<Option>> singleSubject = SingleSubject.create();
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    when(vehicleOptionsUseCase.getVehicleOptions()).thenReturn(publishSubject);
-    when(vehicleOptionsUseCase.getDriverOptions()).thenReturn(singleSubject);
     vehicleVehicleOptionsViewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
@@ -321,7 +332,7 @@ public class VehicleOptionsViewModelTest {
             )
         ))
     ));
-    verifyNoMoreInteractions(viewStateObserver);
+    verifyZeroInteractions(viewStateObserver);
   }
 
   /**
@@ -330,11 +341,7 @@ public class VehicleOptionsViewModelTest {
   @Test
   public void setPendingViewStateToLiveData() {
     // Дано:
-    PublishSubject<List<Option>> publishSubject = PublishSubject.create();
-    SingleSubject<List<Option>> singleSubject = SingleSubject.create();
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    when(vehicleOptionsUseCase.getVehicleOptions()).thenReturn(publishSubject);
-    when(vehicleOptionsUseCase.getDriverOptions()).thenReturn(singleSubject);
     when(vehicleOptionsUseCase.setSelectedVehicleAndOptions(anyList(), anyList()))
         .thenReturn(Completable.complete());
     vehicleVehicleOptionsViewModel.getViewStateLiveData().observeForever(viewStateObserver);
@@ -381,11 +388,7 @@ public class VehicleOptionsViewModelTest {
   @Test
   public void setNetworkErrorViewStateToLiveData() {
     // Дано:
-    PublishSubject<List<Option>> publishSubject = PublishSubject.create();
-    SingleSubject<List<Option>> singleSubject = SingleSubject.create();
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    when(vehicleOptionsUseCase.getVehicleOptions()).thenReturn(publishSubject);
-    when(vehicleOptionsUseCase.getDriverOptions()).thenReturn(singleSubject);
     when(vehicleOptionsUseCase.setSelectedVehicleAndOptions(anyList(), anyList()))
         .thenReturn(Completable.error(NoNetworkException::new));
     vehicleVehicleOptionsViewModel.getViewStateLiveData().observeForever(viewStateObserver);

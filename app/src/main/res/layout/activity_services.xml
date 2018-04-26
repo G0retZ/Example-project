@@ -1,9 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<fragment
+<LinearLayout
   xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
   xmlns:tools="http://schemas.android.com/tools"
-  android:id="@+id/fragment_vehicle_options"
   android:layout_width="match_parent"
   android:layout_height="match_parent"
-  android:name="com.fasten.executor_driver.view.ServicesFragment"
-  tools:layout="@layout/fragment_vehicle_options"/>
+  android:orientation="vertical">
+  <android.support.v7.widget.Toolbar
+    android:id="@+id/appBar"
+    style="@style/AppTheme.AppBar"
+    android:layout_width="match_parent"
+    android:layout_height="?android:attr/actionBarSize"
+    app:navigationIcon="@drawable/ic_back_24dp"
+    app:title="@string/select_services"/>
+  <fragment
+    android:id="@+id/fragment_vehicle_options"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:name="com.fasten.executor_driver.view.ServicesFragment"
+    tools:layout="@layout/fragment_services"/>
+</LinearLayout>

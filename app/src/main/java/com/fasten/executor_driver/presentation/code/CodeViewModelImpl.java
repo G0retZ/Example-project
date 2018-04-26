@@ -4,14 +4,15 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import com.fasten.executor_driver.backend.web.NoNetworkException;
 import com.fasten.executor_driver.entity.ValidationException;
 import com.fasten.executor_driver.interactor.auth.PasswordUseCase;
+import com.fasten.executor_driver.presentation.SingleLiveEvent;
 import com.fasten.executor_driver.presentation.ViewState;
 import io.reactivex.Completable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.internal.disposables.EmptyDisposable;
 import io.reactivex.schedulers.Schedulers;
 import javax.inject.Inject;
 
@@ -22,16 +23,16 @@ public class CodeViewModelImpl extends ViewModel implements CodeViewModel {
   @NonNull
   private final MutableLiveData<ViewState<CodeViewActions>> viewStateLiveData;
   @NonNull
-  private final MutableLiveData<String> navigateLiveData;
-  @Nullable
-  private Disposable disposable;
+  private final SingleLiveEvent<String> navigateLiveData;
+  @NonNull
+  private Disposable disposable = EmptyDisposable.INSTANCE;
 
   @Inject
   public CodeViewModelImpl(@NonNull PasswordUseCase passwordUseCase) {
     this.passwordUseCase = passwordUseCase;
     viewStateLiveData = new MutableLiveData<>();
     viewStateLiveData.postValue(new CodeViewStateInitial());
-    navigateLiveData = new MutableLiveData<>();
+    navigateLiveData = new SingleLiveEvent<>();
   }
 
   @NonNull
@@ -48,7 +49,7 @@ public class CodeViewModelImpl extends ViewModel implements CodeViewModel {
 
   @Override
   public void setCode(@NonNull String code) {
-    if (disposable != null && !disposable.isDisposed()) {
+    if (!disposable.isDisposed()) {
       return;
     }
     disposable = passwordUseCase.authorize(
@@ -79,9 +80,8 @@ public class CodeViewModelImpl extends ViewModel implements CodeViewModel {
   @Override
   protected void onCleared() {
     super.onCleared();
-    if (disposable != null && !disposable.isDisposed()) {
+    if (!disposable.isDisposed()) {
       disposable.dispose();
-      disposable = null;
     }
   }
 }

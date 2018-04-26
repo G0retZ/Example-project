@@ -173,10 +173,10 @@ public class PhoneViewModelTest {
   }
 
   /**
-   * Не должен возвращать состояние вида "Продолжай" если не "Готов".
+   * Не должен возвращать начальное состояние вида если не "Готов".
    */
   @Test
-  public void doNotSetProceedViewStateToLiveDataPending() {
+  public void doNotSetInitialViewStateToLiveDataPending() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     phoneViewModel.getViewStateLiveData().observeForever(viewStateObserver);
@@ -190,10 +190,10 @@ public class PhoneViewModelTest {
   }
 
   /**
-   * Не должен возвращать состояний после "Готов".
+   * Должен ввернуть начальное состояние после "Готов".
    */
   @Test
-  public void setProceedViewStateToLiveDataPending() {
+  public void setInitialViewStateToLiveDataPending() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     phoneViewModel.getViewStateLiveData().observeForever(viewStateObserver);
@@ -206,6 +206,7 @@ public class PhoneViewModelTest {
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(any(PhoneViewStateInitial.class));
     inOrder.verify(viewStateObserver).onChanged(any(PhoneViewStateReady.class));
+    inOrder.verify(viewStateObserver).onChanged(any(PhoneViewStateInitial.class));
     verifyNoMoreInteractions(viewStateObserver);
   }
 

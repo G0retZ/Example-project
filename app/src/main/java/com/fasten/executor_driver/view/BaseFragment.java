@@ -98,4 +98,15 @@ public class BaseFragment extends Fragment implements OnBackPressedInterceptor {
       baseActivity.navigate(destination);
     }
   }
+
+  /**
+   * Показать экраном процесса.
+   *
+   * @param show - показать или нет.
+   */
+  protected void showPending(boolean show) {
+    if (baseActivity != null) {
+      baseActivity.blockWithPending(show);
+    }
+  }
 }

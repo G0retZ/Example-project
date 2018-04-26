@@ -1,5 +1,6 @@
 package com.fasten.executor_driver.interactor;
 
+import android.support.annotation.NonNull;
 import com.fasten.executor_driver.entity.ExecutorState;
 import io.reactivex.Flowable;
 
@@ -8,11 +9,12 @@ import io.reactivex.Flowable;
  */
 public interface ExecutorStateUseCase {
 
-
   /**
-   * Запрашивает статусы исполнителя.
+   * Запрашивает статусы исполнителя, выдает последний закешированный результат, если не сброшен.
    *
+   * @param reset - сбросить ли кеш? Сбрасывает кеш для всех последующих запросов к юзкейсу.
    * @return {@link Flowable<ExecutorState>} результат запроса.
    */
-  Flowable<ExecutorState> getExecutorStates();
+  @NonNull
+  Flowable<ExecutorState> getExecutorStates(boolean reset);
 }

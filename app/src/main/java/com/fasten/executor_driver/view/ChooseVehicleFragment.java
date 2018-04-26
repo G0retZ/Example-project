@@ -8,7 +8,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import com.fasten.executor_driver.R;
 import com.fasten.executor_driver.di.AppComponent;
@@ -16,6 +15,7 @@ import com.fasten.executor_driver.presentation.choosevehicle.ChooseVehicleListIt
 import com.fasten.executor_driver.presentation.choosevehicle.ChooseVehicleViewActions;
 import com.fasten.executor_driver.presentation.choosevehicle.ChooseVehicleViewModel;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.internal.disposables.EmptyDisposable;
 import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
@@ -28,10 +28,10 @@ public class ChooseVehicleFragment extends BaseFragment implements ChooseVehicle
 
   private ChooseVehicleViewModel chooseVehicleViewModel;
   private RecyclerView recyclerView;
-  private ProgressBar pendingIndicator;
   private TextView errorText;
-  @Nullable
-  private Disposable disposable;
+  @NonNull
+  private Disposable disposable = EmptyDisposable.INSTANCE;
+  private boolean pending;
 
   @Inject
   public void setChooseVehicleViewModel(@NonNull ChooseVehicleViewModel chooseVehicleViewModel) {
@@ -45,7 +45,6 @@ public class ChooseVehicleFragment extends BaseFragment implements ChooseVehicle
       @Nullable Bundle savedInstanceState) {
     View view = inflater.inflate(R.layout.fragment_choose_vehicle, container, false);
     recyclerView = view.findViewById(R.id.recyclerView);
-    pendingIndicator = view.findViewById(R.id.pending);
     errorText = view.findViewById(R.id.errorText);
     recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
     recyclerView.setAdapter(new ChooseVehicleAdapter(new ArrayList<>()));
@@ -76,14 +75,15 @@ public class ChooseVehicleFragment extends BaseFragment implements ChooseVehicle
   @Override
   public void onDestroyView() {
     super.onDestroyView();
-    if (disposable != null) {
-      disposable.dispose();
-    }
+    disposable.dispose();
   }
 
   @Override
   public void showVehicleListPending(boolean pending) {
-    pendingIndicator.setVisibility(pending ? View.VISIBLE : View.GONE);
+    if (this.pending != pending) {
+      showPending(pending);
+    }
+    this.pending = pending;
   }
 
   @Override
@@ -94,9 +94,7 @@ public class ChooseVehicleFragment extends BaseFragment implements ChooseVehicle
   @Override
   public void setVehicleListItems(@NonNull List<ChooseVehicleListItem> chooseVehicleListItems) {
     ChooseVehicleAdapter adapter = new ChooseVehicleAdapter(chooseVehicleListItems);
-    if (disposable != null) {
-      disposable.dispose();
-    }
+    disposable.dispose();
     disposable = adapter.getSelectionCallbacks().subscribe(chooseVehicleViewModel::selectItem);
     recyclerView.setAdapter(adapter);
   }

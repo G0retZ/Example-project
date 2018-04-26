@@ -5,10 +5,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v7.app.ActionBar;
-import android.view.MenuItem;
+import android.support.v7.widget.Toolbar;
 import com.fasten.executor_driver.R;
-import com.fasten.executor_driver.presentation.executorstate.ExecutorStateNavigate;
 import com.fasten.executor_driver.presentation.onlinebutton.OnlineButtonNavigate;
 
 public class MapActivity extends BaseActivity {
@@ -17,29 +15,17 @@ public class MapActivity extends BaseActivity {
   public void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_map);
-    ActionBar actionBar = getSupportActionBar();
-    if (actionBar != null) {
-      actionBar.setTitle("");
-      actionBar.setHomeAsUpIndicator(R.drawable.ic_menu_24dp);
-      actionBar.setDisplayHomeAsUpEnabled(true);
+    Toolbar toolbar = findViewById(R.id.appBar);
+    if (toolbar != null) {
+      toolbar.setNavigationOnClickListener(
+          v -> startActivity(new Intent(this, MenuActivity.class))
+      );
     }
-  }
-
-  @Override
-  public boolean onOptionsItemSelected(MenuItem item) {
-    switch (item.getItemId()) {
-      case android.R.id.home:
-        startActivity(new Intent(this, MenuActivity.class));
-        return (true);
-    }
-    return (super.onOptionsItemSelected(item));
   }
 
   @Override
   public void navigate(@NonNull String destination) {
     switch (destination) {
-      case ExecutorStateNavigate.MAP_SHIFT_CLOSED:
-        break;
       case OnlineButtonNavigate.DRIVER_BLOCKED:
         new Builder(this)
             .setTitle(R.string.error)

@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
   xmlns:app="http://schemas.android.com/apk/res-auto"
+  xmlns:tools="http://schemas.android.com/tools"
   android:layout_width="match_parent"
   android:layout_height="match_parent"
   android:orientation="vertical">
@@ -11,11 +13,11 @@
     android:layout_height="56dp"
     android:paddingStart="16dp"
     android:paddingEnd="16dp"
-    android:background="?selectableItemBackground"
+    android:background="?android:attr/selectableItemBackground"
     android:gravity="center_vertical"
     android:text="@string/profile"
-    app:layout_constraintBottom_toTopOf="@id/profileLine"
     app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintHorizontal_bias="0.0"
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toTopOf="parent"/>
   <View
@@ -23,7 +25,6 @@
     android:layout_width="0dp"
     android:layout_height="1dp"
     android:background="@color/colorDivider"
-    app:layout_constraintBottom_toTopOf="@id/balance"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toBottomOf="@+id/profile"/>
@@ -34,10 +35,9 @@
     android:layout_height="56dp"
     android:paddingStart="16dp"
     android:paddingEnd="16dp"
-    android:background="?selectableItemBackground"
+    android:background="?android:attr/selectableItemBackground"
     android:gravity="center_vertical"
     android:text="@string/balance"
-    app:layout_constraintBottom_toTopOf="@id/balanceLine"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toBottomOf="@id/profileLine"/>
@@ -48,21 +48,19 @@
     android:layout_height="56dp"
     android:paddingStart="16dp"
     android:paddingEnd="16dp"
-    android:background="?selectableItemBackground"
+    android:background="?android:attr/selectableItemBackground"
     android:gravity="center_vertical"
-    android:text="10 225 ₽"
     android:textColor="#47FF60"
-    app:layout_constraintBottom_toTopOf="@id/balanceLine"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintHorizontal_bias="1.0"
     app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toBottomOf="@id/profileLine"/>
+    app:layout_constraintTop_toBottomOf="@id/profileLine"
+    tools:text="10 225 ₽"/>
   <View
     android:id="@+id/balanceLine"
     android:layout_width="0dp"
     android:layout_height="1dp"
     android:background="@color/colorDivider"
-    app:layout_constraintBottom_toTopOf="@id/messages"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toBottomOf="@id/balance"/>
@@ -73,10 +71,9 @@
     android:layout_height="56dp"
     android:paddingStart="16dp"
     android:paddingEnd="16dp"
-    android:background="?selectableItemBackground"
+    android:background="?android:attr/selectableItemBackground"
     android:gravity="center_vertical"
     android:text="@string/messages"
-    app:layout_constraintBottom_toTopOf="@id/messagesLine"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toBottomOf="@id/balanceLine"/>
@@ -87,20 +84,18 @@
     android:layout_height="56dp"
     android:paddingStart="16dp"
     android:paddingEnd="16dp"
-    android:background="?selectableItemBackground"
+    android:background="?android:attr/selectableItemBackground"
     android:gravity="center_vertical"
-    android:text="2"
-    app:layout_constraintBottom_toTopOf="@id/messagesLine"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintHorizontal_bias="1.0"
     app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toBottomOf="@id/balanceLine"/>
+    app:layout_constraintTop_toBottomOf="@id/balanceLine"
+    tools:text="2"/>
   <View
     android:id="@+id/messagesLine"
     android:layout_width="0dp"
     android:layout_height="1dp"
     android:background="@color/colorDivider"
-    app:layout_constraintBottom_toTopOf="@id/history"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toBottomOf="@id/messages"/>
@@ -111,10 +106,9 @@
     android:layout_height="56dp"
     android:paddingStart="16dp"
     android:paddingEnd="16dp"
-    android:background="?selectableItemBackground"
+    android:background="?android:attr/selectableItemBackground"
     android:gravity="center_vertical"
     android:text="@string/order_history"
-    app:layout_constraintBottom_toTopOf="@id/historyLine"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toBottomOf="@id/messagesLine"/>
@@ -123,7 +117,6 @@
     android:layout_width="0dp"
     android:layout_height="1dp"
     android:background="@color/colorDivider"
-    app:layout_constraintBottom_toTopOf="@id/operator"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toBottomOf="@id/history"/>
@@ -134,10 +127,9 @@
     android:layout_height="56dp"
     android:paddingStart="16dp"
     android:paddingEnd="16dp"
-    android:background="?selectableItemBackground"
+    android:background="?android:attr/selectableItemBackground"
     android:gravity="center_vertical"
     android:text="@string/operator"
-    app:layout_constraintBottom_toTopOf="@id/operatorLine"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toBottomOf="@id/historyLine"/>
@@ -146,7 +138,6 @@
     android:layout_width="0dp"
     android:layout_height="1dp"
     android:background="@color/colorDivider"
-    app:layout_constraintBottom_toTopOf="@id/vehicles"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toBottomOf="@id/operator"/>
@@ -157,10 +148,9 @@
     android:layout_height="56dp"
     android:paddingStart="16dp"
     android:paddingEnd="16dp"
-    android:background="?selectableItemBackground"
+    android:background="?android:attr/selectableItemBackground"
     android:gravity="center_vertical"
     android:text="@string/vehicles_list"
-    app:layout_constraintBottom_toTopOf="@id/vehiclesLine"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toBottomOf="@id/operatorLine"/>

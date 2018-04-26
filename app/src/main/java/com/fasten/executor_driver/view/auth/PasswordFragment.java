@@ -15,7 +15,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.fasten.executor_driver.R;
@@ -29,6 +28,7 @@ import com.fasten.executor_driver.presentation.smsbutton.SmsButtonViewModel;
 import com.fasten.executor_driver.view.BaseFragment;
 import com.fasten.executor_driver.view.PermissionChecker;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.internal.disposables.EmptyDisposable;
 import javax.inject.Inject;
 
 /**
@@ -42,8 +42,8 @@ public class PasswordFragment extends BaseFragment implements CodeViewActions,
 
   @Nullable
   private PermissionChecker permissionChecker;
-  @Nullable
-  private Disposable permissionDisposable;
+  @NonNull
+  private Disposable permissionDisposable = EmptyDisposable.INSTANCE;
 
   private CodeViewModel codeViewModel;
   private CodeHeaderViewModel codeHeaderViewModel;
@@ -54,11 +54,11 @@ public class PasswordFragment extends BaseFragment implements CodeViewActions,
   private ImageView codeInputUnderline;
   private EditText codeInput;
   private Button sendSmsRequest;
-  private FrameLayout pendingIndicator;
   private Context context;
 
   private SmsReceiver smsReceiver;
-  private Disposable smsCodeDisposable;
+  @NonNull
+  private Disposable smsCodeDisposable = EmptyDisposable.INSTANCE;
   private boolean smsSent;
   private boolean smsPending;
   private boolean codePending;
@@ -104,7 +104,6 @@ public class PasswordFragment extends BaseFragment implements CodeViewActions,
     codeInputUnderline = view.findViewById(R.id.codeInputUnderline);
     codeInput = view.findViewById(R.id.codeInput);
     sendSmsRequest = view.findViewById(R.id.sendSms);
-    pendingIndicator = view.findViewById(R.id.pending);
     sendSmsRequest.setOnClickListener(this::sendSmsRequest);
     setTextListener();
     return view;
@@ -151,12 +150,14 @@ public class PasswordFragment extends BaseFragment implements CodeViewActions,
     if (savedInstanceState != null) {
       smsSent = savedInstanceState.getBoolean("smsSent", false);
     }
+    if (savedInstanceState == null) {
+      checkPermissions();
+    }
   }
 
   @Override
   public void onResume() {
     super.onResume();
-    checkPermissions();
     smsCodeDisposable = smsReceiver.getCodeFromSms().subscribe(text -> {
       codeInput.setText(text);
       codeInput.setSelection(text.length());
@@ -179,9 +180,7 @@ public class PasswordFragment extends BaseFragment implements CodeViewActions,
   public void onDestroy() {
     super.onDestroy();
     context.unregisterReceiver(smsReceiver);
-    if (permissionDisposable != null) {
-      permissionDisposable.dispose();
-    }
+    permissionDisposable.dispose();
   }
 
   @Override
@@ -202,8 +201,10 @@ public class PasswordFragment extends BaseFragment implements CodeViewActions,
 
   @Override
   public void showCodeCheckPending(boolean pending) {
+    if (codePending != pending) {
+      showPending(pending);
+    }
     codePending = pending;
-    pendingIndicator.setVisibility(smsPending || codePending ? View.VISIBLE : View.GONE);
   }
 
   @Override
@@ -252,8 +253,10 @@ public class PasswordFragment extends BaseFragment implements CodeViewActions,
 
   @Override
   public void showSmsSendPending(boolean pending) {
+    if (smsPending != pending) {
+      showPending(pending);
+    }
     smsPending = pending;
-    pendingIndicator.setVisibility(smsPending || codePending ? View.VISIBLE : View.GONE);
   }
 
   @Override

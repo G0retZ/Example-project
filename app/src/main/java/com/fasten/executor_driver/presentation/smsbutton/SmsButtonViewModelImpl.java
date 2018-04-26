@@ -10,6 +10,7 @@ import com.fasten.executor_driver.presentation.ViewState;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.internal.disposables.EmptyDisposable;
 import io.reactivex.schedulers.Schedulers;
 import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
@@ -21,7 +22,10 @@ public class SmsButtonViewModelImpl extends ViewModel implements SmsButtonViewMo
   private final SmsUseCase smsUseCase;
   @NonNull
   private final MutableLiveData<ViewState<SmsButtonViewActions>> viewStateLiveData;
-  private Disposable disposable;
+  @NonNull
+  private Disposable sendDisposable = EmptyDisposable.INSTANCE;
+  @NonNull
+  private Disposable timerDisposable = EmptyDisposable.INSTANCE;
 
   @Inject
   public SmsButtonViewModelImpl(@NonNull SmsUseCase smsUseCase) {
@@ -42,25 +46,13 @@ public class SmsButtonViewModelImpl extends ViewModel implements SmsButtonViewMo
     return new MutableLiveData<>();
   }
 
-  private void holdButton() {
-    disposable = Observable.interval(0, 1, TimeUnit.SECONDS, Schedulers.io())
-        .take(DURATION_AFTER_SUCCESS)
-        .map(count -> DURATION_AFTER_SUCCESS - count)
-        .subscribe(
-            count -> viewStateLiveData.postValue(new SmsButtonViewStateHold(count)),
-            throwable -> {
-            },
-            () -> viewStateLiveData.postValue(new SmsButtonViewStateReady())
-        );
-  }
-
   @Override
   public void sendMeSms() {
-    if (disposable != null && !disposable.isDisposed()) {
+    if (!sendDisposable.isDisposed() || !timerDisposable.isDisposed()) {
       return;
     }
     viewStateLiveData.postValue(new SmsButtonViewStatePending());
-    Disposable disposable = smsUseCase.sendMeCode()
+    sendDisposable = smsUseCase.sendMeCode()
         .subscribeOn(Schedulers.single())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(
@@ -73,16 +65,23 @@ public class SmsButtonViewModelImpl extends ViewModel implements SmsButtonViewMo
               }
             }
         );
-    if (this.disposable == null || this.disposable.isDisposed()) {
-      this.disposable = disposable;
-    }
+  }
+
+  private void holdButton() {
+    timerDisposable = Observable.interval(0, 1, TimeUnit.SECONDS, Schedulers.io())
+        .take(DURATION_AFTER_SUCCESS)
+        .map(count -> DURATION_AFTER_SUCCESS - count)
+        .subscribe(
+            count -> viewStateLiveData.postValue(new SmsButtonViewStateHold(count)),
+            Throwable::printStackTrace,
+            () -> viewStateLiveData.postValue(new SmsButtonViewStateReady())
+        );
   }
 
   @Override
   protected void onCleared() {
     super.onCleared();
-    if (disposable != null) {
-      disposable.dispose();
-    }
+    timerDisposable.dispose();
+    sendDisposable.dispose();
   }
 }

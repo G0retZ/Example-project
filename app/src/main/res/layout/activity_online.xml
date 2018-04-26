@@ -1,17 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
+<LinearLayout
   xmlns:android="http://schemas.android.com/apk/res/android"
   xmlns:app="http://schemas.android.com/apk/res-auto"
+  xmlns:tools="http://schemas.android.com/tools"
   android:layout_width="match_parent"
   android:layout_height="match_parent"
-  >
+  android:orientation="vertical">
+  <android.support.v7.widget.Toolbar
+    android:id="@+id/appBar"
+    style="@style/AppTheme.AppBar"
+    android:layout_width="match_parent"
+    android:layout_height="?android:attr/actionBarSize"
+    app:navigationIcon="@drawable/ic_menu_24dp">
+    <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:gravity="center_vertical|end">
+      <fragment
+        android:id="@+id/fragment_online"
+        android:layout_width="152dp"
+        android:layout_height="match_parent"
+        android:name="com.fasten.executor_driver.view.OnlineFragment"
+        tools:layout="@layout/fragment_online"/>
+    </LinearLayout>
+  </android.support.v7.widget.Toolbar>
   <fragment
     android:id="@+id/fragment_map"
-    android:layout_width="0dp"
-    android:layout_height="0dp"
-    android:name="com.fasten.executor_driver.view.MapFragment"
-    app:layout_constraintBottom_toBottomOf="parent"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toTopOf="parent"/>
-</android.support.constraint.ConstraintLayout>
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:name="com.fasten.executor_driver.view.MapFragment"/>
+</LinearLayout>

@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import com.fasten.executor_driver.R;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.internal.disposables.EmptyDisposable;
 
 public class GeolocationResolutionFragment extends BaseFragment {
 
@@ -22,8 +23,8 @@ public class GeolocationResolutionFragment extends BaseFragment {
 
   @Nullable
   private PermissionChecker permissionChecker;
-  @Nullable
-  private Disposable permissionDisposable;
+  @NonNull
+  private Disposable permissionDisposable = EmptyDisposable.INSTANCE;
 
   private Activity activity;
 
@@ -51,9 +52,7 @@ public class GeolocationResolutionFragment extends BaseFragment {
   @Override
   public void onDestroy() {
     super.onDestroy();
-    if (permissionDisposable != null) {
-      permissionDisposable.dispose();
-    }
+    permissionDisposable.dispose();
   }
 
   @Override

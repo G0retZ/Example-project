@@ -12,7 +12,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -39,8 +38,8 @@ public class OfferFragment extends BaseFragment implements OfferViewActions {
   private TextView passengersCountText;
   private TextView commentText;
   private Button acceptAction;
-  private FrameLayout pendingIndicator;
   private Context context;
+  private boolean pending;
 
   @Override
   public void onAttach(Context context) {
@@ -68,7 +67,6 @@ public class OfferFragment extends BaseFragment implements OfferViewActions {
     passengersCountText = view.findViewById(R.id.passengersCountText);
     commentText = view.findViewById(R.id.commentText);
     acceptAction = view.findViewById(R.id.acceptButton);
-    pendingIndicator = view.findViewById(R.id.pending);
     acceptAction.setOnClickListener(v -> offerViewModel.acceptOffer());
     declineAction.setOnClickListener(v -> offerViewModel.declineOffer());
     return view;
@@ -98,7 +96,10 @@ public class OfferFragment extends BaseFragment implements OfferViewActions {
 
   @Override
   public void showOfferPending(boolean pending) {
-    pendingIndicator.setVisibility(pending ? View.VISIBLE : View.GONE);
+    if (this.pending != pending) {
+      showPending(pending);
+    }
+    this.pending = pending;
   }
 
   @Override

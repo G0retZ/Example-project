@@ -59,8 +59,8 @@ public class OfferItemTest {
     assertEquals(offerItem.getOfferComment(), "com");
     assertEquals(offerItem.getPortersCount(), 2);
     assertEquals(offerItem.getPassengersCount(), 3);
-    assertArrayEquals(offerItem.getProgressLeft(), new long[] {75, 15000});
-    assertArrayEquals(offerItem.getProgressLeft(), new long[] {50, 10000});
+    assertArrayEquals(offerItem.getProgressLeft(), new long[]{75, 15000});
+    assertArrayEquals(offerItem.getProgressLeft(), new long[]{50, 10000});
   }
 
   @Test

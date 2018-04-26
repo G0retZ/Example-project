@@ -12,6 +12,7 @@ import com.fasten.executor_driver.presentation.ViewState;
 import com.fasten.executor_driver.utils.TimeUtils;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.internal.disposables.EmptyDisposable;
 import io.reactivex.schedulers.Schedulers;
 import javax.inject.Inject;
 
@@ -22,13 +23,11 @@ public class OfferViewModelImpl extends ViewModel implements OfferViewModel {
   @NonNull
   private final MutableLiveData<ViewState<OfferViewActions>> viewStateLiveData;
   @NonNull
-  private final MutableLiveData<String> navigateLiveData;
-  @NonNull
   private final TimeUtils timeUtils;
-  @Nullable
-  private Disposable offersDisposable;
-  @Nullable
-  private Disposable decisionDisposable;
+  @NonNull
+  private Disposable offersDisposable = EmptyDisposable.INSTANCE;
+  @NonNull
+  private Disposable decisionDisposable = EmptyDisposable.INSTANCE;
   @Nullable
   private OfferItem offerItem;
 
@@ -39,7 +38,6 @@ public class OfferViewModelImpl extends ViewModel implements OfferViewModel {
     this.timeUtils = timeUtils;
     viewStateLiveData = new MutableLiveData<>();
     viewStateLiveData.postValue(new OfferViewStatePending(offerItem));
-    navigateLiveData = new MutableLiveData<>();
   }
 
   @NonNull
@@ -52,12 +50,12 @@ public class OfferViewModelImpl extends ViewModel implements OfferViewModel {
   @NonNull
   @Override
   public LiveData<String> getNavigationLiveData() {
-    return navigateLiveData;
+    return new MutableLiveData<>();
   }
 
 
   private void loadOffers() {
-    if (offersDisposable == null || offersDisposable.isDisposed()) {
+    if (offersDisposable.isDisposed()) {
       offersDisposable = offerUseCase.getOffers()
           .subscribeOn(Schedulers.single())
           .observeOn(AndroidSchedulers.mainThread())
@@ -81,7 +79,7 @@ public class OfferViewModelImpl extends ViewModel implements OfferViewModel {
 
   @Override
   public void acceptOffer() {
-    if (decisionDisposable != null && !decisionDisposable.isDisposed()) {
+    if (!decisionDisposable.isDisposed()) {
       return;
     }
     viewStateLiveData.postValue(new OfferViewStatePending(offerItem));
@@ -96,7 +94,7 @@ public class OfferViewModelImpl extends ViewModel implements OfferViewModel {
 
   @Override
   public void declineOffer() {
-    if (decisionDisposable != null && !decisionDisposable.isDisposed()) {
+    if (!decisionDisposable.isDisposed()) {
       return;
     }
     viewStateLiveData.postValue(new OfferViewStatePending(offerItem));
@@ -120,13 +118,11 @@ public class OfferViewModelImpl extends ViewModel implements OfferViewModel {
   protected void onCleared() {
     super.onCleared();
     offerItem = null;
-    if (offersDisposable != null && !offersDisposable.isDisposed()) {
+    if (!offersDisposable.isDisposed()) {
       offersDisposable.dispose();
-      offersDisposable = null;
     }
-    if (decisionDisposable != null && !decisionDisposable.isDisposed()) {
+    if (!decisionDisposable.isDisposed()) {
       decisionDisposable.dispose();
-      decisionDisposable = null;
     }
   }
 }

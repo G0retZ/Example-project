@@ -4,16 +4,17 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import com.fasten.executor_driver.R;
 import com.fasten.executor_driver.entity.Option;
 import com.fasten.executor_driver.entity.OptionBoolean;
 import com.fasten.executor_driver.entity.OptionNumeric;
 import com.fasten.executor_driver.interactor.vehicle.VehicleOptionsUseCase;
+import com.fasten.executor_driver.presentation.SingleLiveEvent;
 import com.fasten.executor_driver.presentation.ViewState;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.internal.disposables.EmptyDisposable;
 import io.reactivex.schedulers.Schedulers;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,26 +27,24 @@ public class VehicleOptionsViewModelImpl extends ViewModel implements
   @NonNull
   private final MutableLiveData<ViewState<VehicleOptionsViewActions>> viewStateLiveData;
   @NonNull
-  private final MutableLiveData<String> navigateLiveData;
-  @Nullable
-  private Disposable optionsDisposable;
-  @Nullable
-  private Disposable occupyDisposable;
+  private final SingleLiveEvent<String> navigateLiveData;
+  @NonNull
+  private Disposable optionsDisposable = EmptyDisposable.INSTANCE;
+  @NonNull
+  private Disposable occupyDisposable = EmptyDisposable.INSTANCE;
 
   @Inject
   public VehicleOptionsViewModelImpl(VehicleOptionsUseCase vehicleOptionsUseCase) {
     this.vehicleOptionsUseCase = vehicleOptionsUseCase;
     viewStateLiveData = new MutableLiveData<>();
     viewStateLiveData.postValue(new VehicleOptionsViewStateInitial());
-    navigateLiveData = new MutableLiveData<>();
+    navigateLiveData = new SingleLiveEvent<>();
+    loadOptions();
   }
 
   @NonNull
   @Override
   public LiveData<ViewState<VehicleOptionsViewActions>> getViewStateLiveData() {
-    if (optionsDisposable == null) {
-      loadOptions();
-    }
     return viewStateLiveData;
   }
 
@@ -71,7 +70,7 @@ public class VehicleOptionsViewModelImpl extends ViewModel implements
   }
 
   private void loadOptions() {
-    if (optionsDisposable != null && !optionsDisposable.isDisposed()) {
+    if (!optionsDisposable.isDisposed()) {
       return;
     }
     optionsDisposable = Observable.combineLatest(
@@ -94,14 +93,13 @@ public class VehicleOptionsViewModelImpl extends ViewModel implements
         VehicleOptionsListItems::new
     ).subscribe(
         items -> viewStateLiveData.postValue(new VehicleOptionsViewStateReady(items)),
-        throwable -> {
-        }
+        Throwable::printStackTrace
     );
 
   }
 
   private void occupyVehicle(List<Option> vehicleOptions, List<Option> driverOptions) {
-    if (occupyDisposable != null && !occupyDisposable.isDisposed()) {
+    if (!occupyDisposable.isDisposed()) {
       return;
     }
     viewStateLiveData.postValue(new VehicleOptionsViewStatePending());
@@ -128,11 +126,7 @@ public class VehicleOptionsViewModelImpl extends ViewModel implements
   @Override
   protected void onCleared() {
     super.onCleared();
-    if (occupyDisposable != null) {
-      occupyDisposable.dispose();
-    }
-    if (optionsDisposable != null) {
-      optionsDisposable.dispose();
-    }
+    occupyDisposable.dispose();
+    optionsDisposable.dispose();
   }
 }

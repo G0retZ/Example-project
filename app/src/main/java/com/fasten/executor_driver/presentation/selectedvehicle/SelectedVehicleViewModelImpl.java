@@ -4,13 +4,13 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import com.fasten.executor_driver.entity.Vehicle;
 import com.fasten.executor_driver.interactor.vehicle.SelectedVehicleUseCase;
 import com.fasten.executor_driver.presentation.SingleLiveEvent;
 import com.fasten.executor_driver.presentation.ViewState;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.internal.disposables.EmptyDisposable;
 import io.reactivex.schedulers.Schedulers;
 import javax.inject.Inject;
 
@@ -22,8 +22,8 @@ public class SelectedVehicleViewModelImpl extends ViewModel implements SelectedV
   private final MutableLiveData<ViewState<SelectedVehicleViewActions>> viewStateLiveData;
   @NonNull
   private final SingleLiveEvent<String> navigateLiveData;
-  @Nullable
-  private Disposable disposable;
+  @NonNull
+  private Disposable disposable = EmptyDisposable.INSTANCE;
 
   @Inject
   public SelectedVehicleViewModelImpl(@NonNull SelectedVehicleUseCase vehiclesUseCase) {
@@ -41,16 +41,16 @@ public class SelectedVehicleViewModelImpl extends ViewModel implements SelectedV
   @NonNull
   @Override
   public LiveData<ViewState<SelectedVehicleViewActions>> getViewStateLiveData() {
-    loadVehicles();
+    loadSelectedVehicle();
     return viewStateLiveData;
   }
 
-  private void loadVehicles() {
-    if (disposable == null || disposable.isDisposed()) {
+  private void loadSelectedVehicle() {
+    if (disposable.isDisposed()) {
       disposable = vehiclesUseCase.getSelectedVehicle()
           .subscribeOn(Schedulers.single())
           .observeOn(AndroidSchedulers.mainThread())
-          .doAfterTerminate(this::loadVehicles)
+          .doAfterTerminate(this::loadSelectedVehicle)
           .subscribe(this::consumeVehicle, throwable -> consumeError());
     }
   }
@@ -76,8 +76,6 @@ public class SelectedVehicleViewModelImpl extends ViewModel implements SelectedV
   @Override
   protected void onCleared() {
     super.onCleared();
-    if (disposable != null) {
-      disposable.dispose();
-    }
+    disposable.dispose();
   }
 }

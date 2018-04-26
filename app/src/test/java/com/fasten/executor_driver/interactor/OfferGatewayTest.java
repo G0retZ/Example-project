@@ -1,5 +1,6 @@
 package com.fasten.executor_driver.interactor;
 
+import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.only;
@@ -52,7 +53,7 @@ public class OfferGatewayTest {
     RxJavaPlugins.setIoSchedulerHandler(scheduler -> Schedulers.trampoline());
     ExecutorState.ORDER_CONFIRMATION.setData(null);
     when(stompClient.send(anyString(), anyString())).thenReturn(Completable.never());
-    when(executorStateUseCase.getExecutorStates()).thenReturn(Flowable.never());
+    when(executorStateUseCase.getExecutorStates(anyBoolean())).thenReturn(Flowable.never());
     executorStateGateway = new OfferGatewayImpl(executorStateUseCase, stompClient, mapper);
   }
 
@@ -67,7 +68,7 @@ public class OfferGatewayTest {
     executorStateGateway.getOffers().test();
 
     // Результат:
-    verify(executorStateUseCase, only()).getExecutorStates();
+    verify(executorStateUseCase, only()).getExecutorStates(false);
   }
 
   /* Проверяем работу с клиентом STOMP */
@@ -148,7 +149,7 @@ public class OfferGatewayTest {
   @Test
   public void doNotTouchMapperIfShiftClosed() {
     // Дано:
-    when(executorStateUseCase.getExecutorStates())
+    when(executorStateUseCase.getExecutorStates(anyBoolean()))
         .thenReturn(Flowable.just(ExecutorState.SHIFT_CLOSED));
 
     // Действие:
@@ -164,7 +165,7 @@ public class OfferGatewayTest {
   @Test
   public void doNotTouchMapperIfShiftOpened() {
     // Дано:
-    when(executorStateUseCase.getExecutorStates())
+    when(executorStateUseCase.getExecutorStates(anyBoolean()))
         .thenReturn(Flowable.just(ExecutorState.SHIFT_OPENED));
 
     // Действие:
@@ -180,7 +181,8 @@ public class OfferGatewayTest {
   @Test
   public void doNotTouchMapperIfOnline() {
     // Дано:
-    when(executorStateUseCase.getExecutorStates()).thenReturn(Flowable.just(ExecutorState.ONLINE));
+    when(executorStateUseCase.getExecutorStates(anyBoolean()))
+        .thenReturn(Flowable.just(ExecutorState.ONLINE));
 
     // Действие:
     executorStateGateway.getOffers().test();
@@ -195,7 +197,7 @@ public class OfferGatewayTest {
   @Test
   public void doNotTouchMapperIfApproachingLoadPoint() {
     // Дано:
-    when(executorStateUseCase.getExecutorStates())
+    when(executorStateUseCase.getExecutorStates(anyBoolean()))
         .thenReturn(Flowable.just(ExecutorState.IN_PROGRESS));
 
     // Действие:
@@ -211,7 +213,7 @@ public class OfferGatewayTest {
   @Test
   public void doNotTouchMapperIfNoData() {
     // Дано:
-    when(executorStateUseCase.getExecutorStates())
+    when(executorStateUseCase.getExecutorStates(anyBoolean()))
         .thenReturn(Flowable.just(ExecutorState.ORDER_CONFIRMATION));
 
     // Действие:
@@ -230,7 +232,7 @@ public class OfferGatewayTest {
   public void askForMappingForData() throws Exception {
     // Дано:
     ExecutorState.ORDER_CONFIRMATION.setData("");
-    when(executorStateUseCase.getExecutorStates())
+    when(executorStateUseCase.getExecutorStates(anyBoolean()))
         .thenReturn(Flowable.just(ExecutorState.ORDER_CONFIRMATION));
 
     // Действие:
@@ -250,7 +252,7 @@ public class OfferGatewayTest {
   @Test
   public void ignoreForShiftClosed() {
     // Дано:
-    when(executorStateUseCase.getExecutorStates())
+    when(executorStateUseCase.getExecutorStates(anyBoolean()))
         .thenReturn(Flowable.just(ExecutorState.SHIFT_CLOSED));
 
     // Действие:
@@ -268,7 +270,7 @@ public class OfferGatewayTest {
   @Test
   public void ignoreForShiftOpened() {
     // Дано:
-    when(executorStateUseCase.getExecutorStates())
+    when(executorStateUseCase.getExecutorStates(anyBoolean()))
         .thenReturn(Flowable.just(ExecutorState.SHIFT_OPENED));
 
     // Действие:
@@ -286,7 +288,8 @@ public class OfferGatewayTest {
   @Test
   public void ignoreForOnline() {
     // Дано:
-    when(executorStateUseCase.getExecutorStates()).thenReturn(Flowable.just(ExecutorState.ONLINE));
+    when(executorStateUseCase.getExecutorStates(anyBoolean()))
+        .thenReturn(Flowable.just(ExecutorState.ONLINE));
 
     // Действие:
     TestSubscriber<Offer> testSubscriber = executorStateGateway.getOffers().test();
@@ -303,7 +306,7 @@ public class OfferGatewayTest {
   @Test
   public void ignoreForApproachingLoadPoint() {
     // Дано:
-    when(executorStateUseCase.getExecutorStates())
+    when(executorStateUseCase.getExecutorStates(anyBoolean()))
         .thenReturn(Flowable.just(ExecutorState.IN_PROGRESS));
 
     // Действие:
@@ -321,7 +324,7 @@ public class OfferGatewayTest {
   @Test
   public void answerNoOffersAvailableForNoData() {
     // Дано:
-    when(executorStateUseCase.getExecutorStates())
+    when(executorStateUseCase.getExecutorStates(anyBoolean()))
         .thenReturn(Flowable.just(ExecutorState.ORDER_CONFIRMATION));
 
     // Действие:
@@ -343,7 +346,7 @@ public class OfferGatewayTest {
     // Дано:
     doThrow(new DataMappingException()).when(mapper).map(anyString());
     ExecutorState.ORDER_CONFIRMATION.setData("");
-    when(executorStateUseCase.getExecutorStates())
+    when(executorStateUseCase.getExecutorStates(anyBoolean()))
         .thenReturn(Flowable.just(ExecutorState.ORDER_CONFIRMATION));
 
     // Действие:
@@ -365,7 +368,7 @@ public class OfferGatewayTest {
     // Дано:
     when(mapper.map(anyString())).thenReturn(offer);
     ExecutorState.ORDER_CONFIRMATION.setData("");
-    when(executorStateUseCase.getExecutorStates())
+    when(executorStateUseCase.getExecutorStates(anyBoolean()))
         .thenReturn(Flowable.just(ExecutorState.ORDER_CONFIRMATION));
 
     // Действие:

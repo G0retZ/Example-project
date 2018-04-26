@@ -22,8 +22,7 @@
     tools:ignore="GoogleAppIndexingWarning">
     <activity
       android:launchMode="singleTop"
-      android:name=".application.SplashScreenActivity"
-      android:theme="@style/AppTheme.NoActionBar">
+      android:name=".application.SplashScreenActivity">
       <intent-filter>
         <action android:name="android.intent.action.MAIN"/>
         <category android:name="android.intent.category.LAUNCHER"/>
@@ -31,8 +30,7 @@
     </activity>
     <activity
       android:launchMode="singleTop"
-      android:name=".application.MapActivity"
-      android:parentActivityName=".application.SplashScreenActivity"/>
+      android:name=".application.MapActivity"/>
     <activity
       android:launchMode="singleTop"
       android:name=".application.MenuActivity"/>
@@ -45,36 +43,28 @@
     <activity
       android:launchMode="singleTop"
       android:name=".application.LoginActivity"
-      android:parentActivityName=".application.SplashScreenActivity"
       android:windowSoftInputMode="stateVisible|adjustResize"/>
     <activity
       android:launchMode="singleTop"
       android:name=".application.PasswordActivity"
-      android:parentActivityName=".application.LoginActivity"
       android:windowSoftInputMode="stateVisible|adjustResize"/>
     <activity
       android:launchMode="singleTop"
-      android:name=".application.VehicleOptionsActivity"
-      android:parentActivityName=".application.MapActivity"/>
+      android:name=".application.VehicleOptionsActivity"/>
     <activity
       android:launchMode="singleTop"
-      android:name=".application.ChooseVehicleActivity"
-      android:parentActivityName=".application.VehicleOptionsActivity"/>
+      android:name=".application.ChooseVehicleActivity"/>
     <activity
       android:launchMode="singleTop"
-      android:name=".application.ServicesActivity"
-      android:parentActivityName=".application.VehicleOptionsActivity"/>
+      android:name=".application.ServicesActivity"/>
     <activity
       android:launchMode="singleTop"
-      android:name=".application.GeolocationResolutionActivity"
-      />
+      android:name=".application.GeolocationResolutionActivity"/>
     <activity
       android:launchMode="singleTop"
-      android:name=".application.OnlineActivity"
-      android:parentActivityName=".application.SplashScreenActivity"/>
+      android:name=".application.OnlineActivity"/>
     <activity
       android:launchMode="singleTop"
-      android:theme="@style/AppTheme.NoActionBar"
       android:name=".application.OfferActivity"/>
 
     <service
@@ -86,5 +76,4 @@
       android:name="com.google.android.geo.API_KEY"
       android:value="@string/google_maps_key"/>
   </application>
-
 </manifest>
