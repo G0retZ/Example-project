@@ -35,7 +35,9 @@ public class ExecutorStateUseCaseImpl implements ExecutorStateUseCase {
           .startWith(socketGateway.openSocket().toFlowable())
           .switchMap(gateway::getState)
           .replay(1)
-          .refCount();
+          .refCount()
+          // TODO: тут костыль о непонятном баге. На девайсах после ошибки новые подписчики не получают вообще ничего. Поэтому приходится подобным образо кешировать ошибку.
+          .doOnError(throwable -> executorStateFlowable = Flowable.error(throwable));
     }
     return executorStateFlowable;
   }

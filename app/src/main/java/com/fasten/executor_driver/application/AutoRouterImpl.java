@@ -36,7 +36,7 @@ public class AutoRouterImpl implements ActivityLifecycleCallbacks, AutoRouter {
         PaymentOptionsActivity.class
     ));
     statusGroups.put(ExecutorStateNavigate.MAP_ONLINE, Arrays.asList(
-        OnlineActivity.class, VehicleOptionsActivity.class,
+        OnlineActivity.class, VehicleOptionsActivity.class, ServicesActivity.class,
         GeolocationResolutionActivity.class, MenuActivity.class, BalanceActivity.class,
         PaymentOptionsActivity.class
     ));
@@ -118,67 +118,69 @@ public class AutoRouterImpl implements ActivityLifecycleCallbacks, AutoRouter {
     // Получаем группу активити по направлению, с которых нельзя просто так перебрасывать.
     List<Class<? extends Activity>> group = statusGroups.get(lastRouteAction);
     // Если такой группы нет или в ней нет текущей активити, то навигируем.
-    if (group == null || !group.contains(currentActivity.getClass())) {
-      switch (lastRouteAction) {
-        case ExecutorStateNavigate.NO_NETWORK:
-          new Builder(currentActivity)
-              .setTitle(R.string.error)
-              .setMessage("Без сети не работаем!")
-              .setCancelable(false)
-              .setPositiveButton(
-                  currentActivity.getString(android.R.string.ok),
-                  (a, b) -> android.os.Process.killProcess(android.os.Process.myPid())
-              )
-              .create()
-              .show();
-          break;
-        case ExecutorStateNavigate.AUTHORIZE:
-          currentActivity.startActivity(
-              new Intent(currentActivity, LoginActivity.class)
-                  .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK)
-          );
-          break;
-        case ExecutorStateNavigate.MAP_SHIFT_CLOSED:
-          currentActivity.startActivity(
-              new Intent(currentActivity, MapActivity.class)
-                  .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK)
-          );
-          break;
-        case ExecutorStateNavigate.MAP_SHIFT_OPENED:
-          currentActivity.startActivity(
-              new Intent(currentActivity, OnlineActivity.class)
-                  .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK)
-          );
-          break;
-        case ExecutorStateNavigate.MAP_ONLINE:
-          currentActivity.startActivity(
-              new Intent(currentActivity, OnlineActivity.class)
-                  .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK)
-          );
-          break;
-        case ExecutorStateNavigate.OFFER_CONFIRMATION:
-          currentActivity.startActivity(
-              new Intent(currentActivity, OfferActivity.class)
-                  .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK)
-          );
-          break;
-        case ExecutorStateNavigate.APPROACHING_LOAD_POINT:
-          new Builder(currentActivity)
-              .setTitle(R.string.error)
-              .setMessage("На пути к клиенту!")
-              .setCancelable(false)
-              .setPositiveButton(
-                  currentActivity.getString(android.R.string.ok),
-                  (a, b) -> android.os.Process.killProcess(android.os.Process.myPid())
-              )
-              .create()
-              .show();
-          break;
-        default:
-          return;
-      }
-      // Если переход сработал, то обнуляем направление. Если нет, то следующее активити попробует его обработать
-      lastRouteAction = null;
+    if (group != null && group.contains(currentActivity.getClass())) {
+      lastRouteAction = group.get(0) == currentActivity.getClass() ? null : lastRouteAction;
+      return;
     }
+    switch (lastRouteAction) {
+      case ExecutorStateNavigate.NO_NETWORK:
+        new Builder(currentActivity)
+            .setTitle(R.string.error)
+            .setMessage("Без сети не работаем!")
+            .setCancelable(false)
+            .setPositiveButton(
+                currentActivity.getString(android.R.string.ok),
+                (a, b) -> android.os.Process.killProcess(android.os.Process.myPid())
+            )
+            .create()
+            .show();
+        break;
+      case ExecutorStateNavigate.AUTHORIZE:
+        currentActivity.startActivity(
+            new Intent(currentActivity, LoginActivity.class)
+                .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK)
+        );
+        break;
+      case ExecutorStateNavigate.MAP_SHIFT_CLOSED:
+        currentActivity.startActivity(
+            new Intent(currentActivity, MapActivity.class)
+                .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK)
+        );
+        break;
+      case ExecutorStateNavigate.MAP_SHIFT_OPENED:
+        currentActivity.startActivity(
+            new Intent(currentActivity, OnlineActivity.class)
+                .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK)
+        );
+        break;
+      case ExecutorStateNavigate.MAP_ONLINE:
+        currentActivity.startActivity(
+            new Intent(currentActivity, OnlineActivity.class)
+                .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK)
+        );
+        break;
+      case ExecutorStateNavigate.OFFER_CONFIRMATION:
+        currentActivity.startActivity(
+            new Intent(currentActivity, OfferActivity.class)
+                .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK)
+        );
+        break;
+      case ExecutorStateNavigate.APPROACHING_LOAD_POINT:
+        new Builder(currentActivity)
+            .setTitle(R.string.error)
+            .setMessage("На пути к клиенту!")
+            .setCancelable(false)
+            .setPositiveButton(
+                currentActivity.getString(android.R.string.ok),
+                (a, b) -> android.os.Process.killProcess(android.os.Process.myPid())
+            )
+            .create()
+            .show();
+        break;
+      default:
+        return;
+    }
+    // Если переход сработал, то обнуляем направление. Если нет, то следующее активити попробует его обработать
+    lastRouteAction = null;
   }
 }
