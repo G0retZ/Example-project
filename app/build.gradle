@@ -14,6 +14,7 @@ android {
         buildConfigField 'String', 'SOCKET_URL', '"ws://dev.capsrv.xyz:8080/executor/ws"'
         buildConfigField 'String', 'GOLOCATION_DESTINATION', '"/mobile/online"'
         buildConfigField 'String', 'CONFIRM_OFFER_DESTINATION', '"/mobile/order"'
+        buildConfigField 'String', 'SET_STATUS_DESTINATION', '"/mobile/status"'
         buildConfigField 'String', 'STATS_DESTINATION', '"/queue/%s"'
         buildConfigField 'String', 'STATIC_MAP_KEY', '"AIzaSyC20FZNHJqrQH5UhypeUy3thpqII33QBPI"'
         vectorDrawables.useSupportLibrary = true

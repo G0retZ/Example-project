@@ -7,7 +7,7 @@ import io.reactivex.Completable;
 /**
  * Гейтвей передачи серверу нового статуса исполнителя.
  */
-interface ExecutorStateSwitchGateway {
+public interface ExecutorStateSwitchGateway {
 
   /**
    * Передает новый статус исполнителя серверу.
