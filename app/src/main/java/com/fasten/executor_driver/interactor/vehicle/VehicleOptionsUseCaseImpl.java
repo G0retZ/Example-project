@@ -65,8 +65,8 @@ public class VehicleOptionsUseCaseImpl implements VehicleOptionsUseCase {
   }
 
   @Override
-  public Completable setSelectedVehicleAndOptions(List<Option> options,
-      List<Option> driverOptions) {
+  public Completable setSelectedVehicleAndOptions(@NonNull List<Option> options,
+      @NonNull List<Option> driverOptions) {
     if (vehicle == null) {
       return Completable.error(new DataMappingException());
     }
