@@ -1,12 +1,12 @@
 package com.fasten.executor_driver.backend.settings;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Base64;
 import javax.crypto.Cipher;
+import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import javax.inject.Inject;
 
@@ -49,9 +49,10 @@ public class AppPreferences implements AppSettingsService {
   private String encrypt(@NonNull byte[] raw, @NonNull String data) {
     try {
       byte[] dataBytes = data.getBytes("UTF-8");
-      SecretKeySpec sKeySpec = new SecretKeySpec(raw, "AES");
-      @SuppressLint("GetInstance") Cipher cipher = Cipher.getInstance("AES");
-      cipher.init(Cipher.ENCRYPT_MODE, sKeySpec);
+
+      SecretKey secret_key = new SecretKeySpec(raw, "Blowfish");
+      Cipher cipher = Cipher.getInstance("Blowfish");
+      cipher.init(Cipher.ENCRYPT_MODE, secret_key);
       byte[] encrypted = cipher.doFinal(dataBytes);
       return Base64.encodeToString(encrypted, Base64.DEFAULT);
     } catch (Exception e) {
@@ -64,9 +65,9 @@ public class AppPreferences implements AppSettingsService {
   private String decrypt(@NonNull byte[] raw, @NonNull String data) {
     try {
       byte[] dataBytes = Base64.decode(data, Base64.DEFAULT);
-      SecretKeySpec sKeySpec = new SecretKeySpec(raw, "AES");
-      @SuppressLint("GetInstance") Cipher cipher = Cipher.getInstance("AES");
-      cipher.init(Cipher.DECRYPT_MODE, sKeySpec);
+      SecretKey secret_key = new SecretKeySpec(raw, "Blowfish");
+      Cipher cipher = Cipher.getInstance("Blowfish");
+      cipher.init(Cipher.DECRYPT_MODE, secret_key);
       byte[] decrypted = cipher.doFinal(dataBytes);
       return new String(decrypted, "UTF-8");
     } catch (Exception e) {
