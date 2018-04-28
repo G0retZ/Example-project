@@ -69,4 +69,6 @@
   <string name="offer">Предложение</string>
   <string name="new_offer">Новый заказ доступен для принятия!</string>
   <string name="consider">Рассмотреть</string>
+  <string name="proceed">Продолжить</string>
+  <string name="done">Готово</string>
 </resources>
