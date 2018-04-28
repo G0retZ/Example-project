@@ -14,6 +14,6 @@ class OnlineSwitchViewStateUnCheckedPending implements ViewState<OnlineSwitchVie
   public void apply(@NonNull OnlineSwitchViewActions stateActions) {
     stateActions.checkSwitch(false);
     stateActions.showSwitchPending(true);
-    stateActions.showError(-1);
+    stateActions.showError(null, false);
   }
 }

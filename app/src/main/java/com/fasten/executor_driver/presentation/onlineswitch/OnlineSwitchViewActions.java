@@ -1,5 +1,6 @@
 package com.fasten.executor_driver.presentation.onlineswitch;
 
+import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 
 /**
@@ -25,6 +26,7 @@ interface OnlineSwitchViewActions {
    * Показать ошибку.
    *
    * @param messageId - ИД текста сообщения об ошибке. -1 = не показывать ошибку.
+   * @param retrySocket - можно ли решить передергиванием сокета?
    */
-  void showError(@StringRes int messageId);
+  void showError(@Nullable @StringRes Integer messageId, boolean retrySocket);
 }

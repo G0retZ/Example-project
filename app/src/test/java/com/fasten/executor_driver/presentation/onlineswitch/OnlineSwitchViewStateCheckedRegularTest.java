@@ -31,7 +31,7 @@ public class OnlineSwitchViewStateCheckedRegularTest {
     // Результат:
     verify(codeViewActions).checkSwitch(true);
     verify(codeViewActions).showSwitchPending(false);
-    verify(codeViewActions).showError(-1);
+    verify(codeViewActions).showError(null, false);
     verifyNoMoreInteractions(codeViewActions);
   }
 }

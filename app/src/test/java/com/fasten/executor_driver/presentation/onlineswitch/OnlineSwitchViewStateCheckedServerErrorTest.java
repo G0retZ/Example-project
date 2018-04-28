@@ -32,7 +32,7 @@ public class OnlineSwitchViewStateCheckedServerErrorTest {
     // Результат:
     verify(codeViewActions).checkSwitch(true);
     verify(codeViewActions).showSwitchPending(false);
-    verify(codeViewActions).showError(R.string.server_fail);
+    verify(codeViewActions).showError(R.string.server_fail, false);
     verifyNoMoreInteractions(codeViewActions);
   }
 }
