@@ -174,7 +174,7 @@ public class PhoneViewModelTest {
   }
 
   /**
-   * Не должен вернуть начальное состояние вида повторно.
+   * Должен вернуть начальное состояние вида повторно.
    */
   @Test
   public void doNotSetInitialViewStateToLiveDataPending() {
