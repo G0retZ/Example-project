@@ -3,6 +3,8 @@ package com.fasten.executor_driver.backend.settings;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 import org.junit.Before;
@@ -19,7 +21,10 @@ public class AppSettingsServiceTest {
 
   @Before
   public void createService() {
-    appSettingsService = new AppPreferences(InstrumentationRegistry.getTargetContext(), true);
+    SharedPreferences preferences = InstrumentationRegistry.getTargetContext()
+        .getSharedPreferences("settings", Context.MODE_PRIVATE);
+    preferences.edit().clear().apply();
+    appSettingsService = new AppPreferences(InstrumentationRegistry.getTargetContext());
   }
 
   @Test
