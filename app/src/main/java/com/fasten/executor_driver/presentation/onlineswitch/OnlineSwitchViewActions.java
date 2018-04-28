@@ -6,7 +6,7 @@ import android.support.annotation.StringRes;
 /**
  * Действия для смены состояния вида переключателя "онлайн".
  */
-interface OnlineSwitchViewActions {
+public interface OnlineSwitchViewActions {
 
   /**
    * Включить/выключить переключатель онлайна.

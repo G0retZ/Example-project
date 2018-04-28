@@ -14,7 +14,7 @@ import io.reactivex.internal.disposables.EmptyDisposable;
 import io.reactivex.schedulers.Schedulers;
 import javax.inject.Inject;
 
-class OnlineSwitchViewModelImpl extends ViewModel implements OnlineSwitchViewModel {
+public class OnlineSwitchViewModelImpl extends ViewModel implements OnlineSwitchViewModel {
 
   @NonNull
   private final ExecutorStateNotOnlineUseCase executorStateNotOnlineUseCase;
@@ -28,7 +28,8 @@ class OnlineSwitchViewModelImpl extends ViewModel implements OnlineSwitchViewMod
   private Disposable setStateDisposable = EmptyDisposable.INSTANCE;
 
   @Inject
-  OnlineSwitchViewModelImpl(@NonNull ExecutorStateNotOnlineUseCase executorStateNotOnlineUseCase) {
+  public OnlineSwitchViewModelImpl(
+      @NonNull ExecutorStateNotOnlineUseCase executorStateNotOnlineUseCase) {
     this.executorStateNotOnlineUseCase = executorStateNotOnlineUseCase;
     viewStateLiveData = new SingleLiveEvent<>();
     navigateLiveData = new MutableLiveData<>();
@@ -107,7 +108,7 @@ class OnlineSwitchViewModelImpl extends ViewModel implements OnlineSwitchViewMod
   }
 
   @Override
-  public void consumeSocketError() {
+  public void consumeServerError() {
     viewStateLiveData.postValue(new OnlineSwitchViewStateCheckedRegular());
   }
 

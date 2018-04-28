@@ -147,9 +147,9 @@ public class OnlineSwitchViewModelTest {
   @Test
   public void doNotTouchExecutorStateUseCase() {
     // Действие:
-    onlineSwitchViewModel.consumeSocketError();
-    onlineSwitchViewModel.consumeSocketError();
-    onlineSwitchViewModel.consumeSocketError();
+    onlineSwitchViewModel.consumeServerError();
+    onlineSwitchViewModel.consumeServerError();
+    onlineSwitchViewModel.consumeServerError();
 
     // Результат:
     verify(executorStateNotOnlineUseCase, only()).getExecutorStates();

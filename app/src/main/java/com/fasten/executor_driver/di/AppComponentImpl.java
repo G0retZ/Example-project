@@ -23,6 +23,7 @@ import com.fasten.executor_driver.entity.Vehicle;
 import com.fasten.executor_driver.gateway.ErrorMapper;
 import com.fasten.executor_driver.gateway.ExecutorStateApiMapper;
 import com.fasten.executor_driver.gateway.ExecutorStateGatewayImpl;
+import com.fasten.executor_driver.gateway.ExecutorStateSwitchGatewayImpl;
 import com.fasten.executor_driver.gateway.GeoLocationGatewayImpl;
 import com.fasten.executor_driver.gateway.GeoTrackingGatewayImpl;
 import com.fasten.executor_driver.gateway.HeatMapGatewayImpl;
@@ -40,6 +41,7 @@ import com.fasten.executor_driver.gateway.VehicleApiMapper;
 import com.fasten.executor_driver.gateway.VehicleOptionApiMapper;
 import com.fasten.executor_driver.gateway.VehicleOptionsGatewayImpl;
 import com.fasten.executor_driver.gateway.VehiclesAndOptionsGatewayImpl;
+import com.fasten.executor_driver.interactor.ExecutorStateNotOnlineUseCaseImpl;
 import com.fasten.executor_driver.interactor.ExecutorStateUseCase;
 import com.fasten.executor_driver.interactor.ExecutorStateUseCaseImpl;
 import com.fasten.executor_driver.interactor.GeoLocationUseCase;
@@ -68,6 +70,7 @@ import com.fasten.executor_driver.presentation.geolocation.GeoLocationViewModelI
 import com.fasten.executor_driver.presentation.map.MapViewModelImpl;
 import com.fasten.executor_driver.presentation.offer.OfferViewModelImpl;
 import com.fasten.executor_driver.presentation.onlinebutton.OnlineButtonViewModelImpl;
+import com.fasten.executor_driver.presentation.onlineswitch.OnlineSwitchViewModelImpl;
 import com.fasten.executor_driver.presentation.phone.PhoneViewModelImpl;
 import com.fasten.executor_driver.presentation.selectedvehicle.SelectedVehicleViewModelImpl;
 import com.fasten.executor_driver.presentation.services.ServicesListItems;
@@ -80,6 +83,7 @@ import com.fasten.executor_driver.view.ChooseVehicleFragment;
 import com.fasten.executor_driver.view.GoOnlineFragment;
 import com.fasten.executor_driver.view.MapFragment;
 import com.fasten.executor_driver.view.OfferFragment;
+import com.fasten.executor_driver.view.OnlineFragment;
 import com.fasten.executor_driver.view.SelectedVehicleFragment;
 import com.fasten.executor_driver.view.ServicesFragment;
 import com.fasten.executor_driver.view.VehicleOptionsFragment;
@@ -297,6 +301,23 @@ public class AppComponentImpl implements AppComponent {
                 )
             )
         ).get(GeoLocationViewModelImpl.class)
+    );
+  }
+
+  @Override
+  public void inject(OnlineFragment onlineFragment) {
+    onlineFragment.setOnlineSwitchViewModel(
+        ViewModelProviders.of(
+            onlineFragment,
+            new ViewModelFactory<>(
+                new OnlineSwitchViewModelImpl(
+                    new ExecutorStateNotOnlineUseCaseImpl(
+                        new ExecutorStateSwitchGatewayImpl(stompClient),
+                        executorStateUseCase
+                    )
+                )
+            )
+        ).get(OnlineSwitchViewModelImpl.class)
     );
   }
 
