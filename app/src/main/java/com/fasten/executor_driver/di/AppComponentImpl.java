@@ -20,6 +20,7 @@ import com.fasten.executor_driver.entity.LoginValidator;
 import com.fasten.executor_driver.entity.PasswordValidator;
 import com.fasten.executor_driver.entity.PhoneNumberValidator;
 import com.fasten.executor_driver.entity.Vehicle;
+import com.fasten.executor_driver.gateway.CurrentVehicleOptionsGatewayImpl;
 import com.fasten.executor_driver.gateway.ErrorMapper;
 import com.fasten.executor_driver.gateway.ExecutorStateApiMapper;
 import com.fasten.executor_driver.gateway.ExecutorStateGatewayImpl;
@@ -31,6 +32,7 @@ import com.fasten.executor_driver.gateway.LastUsedVehicleGatewayImpl;
 import com.fasten.executor_driver.gateway.OfferApiMapper;
 import com.fasten.executor_driver.gateway.OfferGatewayImpl;
 import com.fasten.executor_driver.gateway.PasswordGatewayImpl;
+import com.fasten.executor_driver.gateway.SelectedVehicleOptionsGatewayImpl;
 import com.fasten.executor_driver.gateway.ServiceApiMapper;
 import com.fasten.executor_driver.gateway.ServicesGatewayImpl;
 import com.fasten.executor_driver.gateway.SmsCodeMapper;
@@ -55,6 +57,7 @@ import com.fasten.executor_driver.interactor.auth.SmsUseCaseImpl;
 import com.fasten.executor_driver.interactor.map.HeatMapUseCaseImpl;
 import com.fasten.executor_driver.interactor.services.ServicesUseCaseImpl;
 import com.fasten.executor_driver.interactor.vehicle.LastUsedVehicleGateway;
+import com.fasten.executor_driver.interactor.vehicle.SelectedVehicleOptionsUseCaseImpl;
 import com.fasten.executor_driver.interactor.vehicle.SelectedVehicleUseCaseImpl;
 import com.fasten.executor_driver.interactor.vehicle.VehicleChoiceSharer;
 import com.fasten.executor_driver.interactor.vehicle.VehicleChoiceUseCaseImpl;
@@ -85,6 +88,7 @@ import com.fasten.executor_driver.view.MapFragment;
 import com.fasten.executor_driver.view.OfferFragment;
 import com.fasten.executor_driver.view.OnlineFragment;
 import com.fasten.executor_driver.view.SelectedVehicleFragment;
+import com.fasten.executor_driver.view.SelectedVehicleOptionsFragment;
 import com.fasten.executor_driver.view.ServicesFragment;
 import com.fasten.executor_driver.view.VehicleOptionsFragment;
 import com.fasten.executor_driver.view.auth.LoginFragment;
@@ -381,6 +385,29 @@ public class AppComponentImpl implements AppComponent {
                         vehicleChoiceSharer,
                         lastUsedVehicleGateway,
                         vehiclesAndOptionsGateway
+                    )
+                )
+            )
+        ).get(VehicleOptionsViewModelImpl.class)
+    );
+  }
+
+  @Override
+  public void inject(SelectedVehicleOptionsFragment vehicleOptionsFragment) {
+    vehicleOptionsFragment.setVehicleOptionsViewModel(
+        ViewModelProviders.of(
+            vehicleOptionsFragment,
+            new ViewModelFactory<>(
+                new VehicleOptionsViewModelImpl(
+                    new SelectedVehicleOptionsUseCaseImpl(
+                        new CurrentVehicleOptionsGatewayImpl(
+                            apiService
+                        ),
+                        new SelectedVehicleOptionsGatewayImpl(
+                            apiService,
+                            new VehicleOptionApiMapper(),
+                            new ErrorMapper()
+                        )
                     )
                 )
             )

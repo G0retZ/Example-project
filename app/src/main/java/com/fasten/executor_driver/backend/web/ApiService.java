@@ -77,7 +77,7 @@ public interface ApiService {
   /*
    *  Запрос опций выбранного ТС и текущего исполнителя.
    */
-  @GET("/api/public/v1/mobile/car/option/assigned")
+  @GET("api/public/v1/mobile/car/option/assigned")
   Single<ApiSelectedOptionsForOnline> getSelectedOptionsForOnline();
 
   /*
