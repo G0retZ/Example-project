@@ -19,7 +19,6 @@ import com.fasten.executor_driver.backend.web.TokenKeeper;
 import com.fasten.executor_driver.entity.LoginValidator;
 import com.fasten.executor_driver.entity.PasswordValidator;
 import com.fasten.executor_driver.entity.PhoneNumberValidator;
-import com.fasten.executor_driver.entity.SmsCodeExtractor;
 import com.fasten.executor_driver.entity.Vehicle;
 import com.fasten.executor_driver.gateway.ErrorMapper;
 import com.fasten.executor_driver.gateway.ExecutorStateApiMapper;
@@ -33,6 +32,7 @@ import com.fasten.executor_driver.gateway.OfferGatewayImpl;
 import com.fasten.executor_driver.gateway.PasswordGatewayImpl;
 import com.fasten.executor_driver.gateway.ServiceApiMapper;
 import com.fasten.executor_driver.gateway.ServicesGatewayImpl;
+import com.fasten.executor_driver.gateway.SmsCodeMapper;
 import com.fasten.executor_driver.gateway.SmsGatewayImpl;
 import com.fasten.executor_driver.gateway.SocketGatewayImpl;
 import com.fasten.executor_driver.gateway.TokenKeeperImpl;
@@ -270,7 +270,7 @@ public class AppComponentImpl implements AppComponent {
     );
     passwordFragment.setSmsReceiver(
         new SmsReceiver(
-            new SmsCodeExtractor()
+            new SmsCodeMapper()
         )
     );
   }
