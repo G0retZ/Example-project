@@ -53,6 +53,9 @@
       android:name=".application.VehicleOptionsActivity"/>
     <activity
       android:launchMode="singleTop"
+      android:name=".application.SelectedVehicleOptionsActivity"/>
+    <activity
+      android:launchMode="singleTop"
       android:name=".application.ChooseVehicleActivity"/>
     <activity
       android:launchMode="singleTop"
