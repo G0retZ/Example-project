@@ -14,6 +14,6 @@ class OnlineSwitchViewStateUnCheckedRegular implements ViewState<OnlineSwitchVie
   public void apply(@NonNull OnlineSwitchViewActions stateActions) {
     stateActions.checkSwitch(false);
     stateActions.showSwitchPending(false);
-    stateActions.showError(-1);
+    stateActions.showError(null, false);
   }
 }

@@ -5,7 +5,7 @@ import com.fasten.executor_driver.presentation.ViewModel;
 /**
  * ViewModel переключателя онлайна.
  */
-interface OnlineSwitchViewModel extends ViewModel<OnlineSwitchViewActions> {
+public interface OnlineSwitchViewModel extends ViewModel<OnlineSwitchViewActions> {
 
   /**
    * Запрашивает смену на онлайн/не онлайн.
@@ -17,7 +17,7 @@ interface OnlineSwitchViewModel extends ViewModel<OnlineSwitchViewActions> {
   /**
    * Сигнализирует о "потреблении" ошибки.
    */
-  void consumeSocketError();
+  void consumeServerError();
 
   /**
    * Запрашивает обновление статусов с сервера.

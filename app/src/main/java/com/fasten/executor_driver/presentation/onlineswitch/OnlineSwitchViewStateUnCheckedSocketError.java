@@ -15,6 +15,6 @@ class OnlineSwitchViewStateUnCheckedSocketError implements ViewState<OnlineSwitc
   public void apply(@NonNull OnlineSwitchViewActions stateActions) {
     stateActions.checkSwitch(false);
     stateActions.showSwitchPending(false);
-    stateActions.showError(R.string.no_network_connection);
+    stateActions.showError(R.string.no_network_connection, true);
   }
 }

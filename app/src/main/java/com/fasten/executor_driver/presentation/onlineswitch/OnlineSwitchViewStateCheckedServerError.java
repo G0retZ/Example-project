@@ -15,6 +15,6 @@ class OnlineSwitchViewStateCheckedServerError implements ViewState<OnlineSwitchV
   public void apply(@NonNull OnlineSwitchViewActions stateActions) {
     stateActions.checkSwitch(true);
     stateActions.showSwitchPending(false);
-    stateActions.showError(R.string.server_fail);
+    stateActions.showError(R.string.server_fail, false);
   }
 }

@@ -6,7 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.telephony.SmsMessage;
-import com.fasten.executor_driver.entity.CodeExtractor;
+import com.fasten.executor_driver.gateway.Mapper;
 import io.reactivex.Observable;
 import io.reactivex.subjects.PublishSubject;
 import io.reactivex.subjects.Subject;
@@ -19,11 +19,11 @@ public class SmsReceiver extends BroadcastReceiver {
 
   public static final String ACTION = "android.provider.Telephony.SMS_RECEIVED";
   private final Subject<String> subject = PublishSubject.create();
-  private final CodeExtractor smsCodeExtractor;
+  private final Mapper<String, String> smsCodeMapper;
 
   @Inject
-  public SmsReceiver(@NonNull CodeExtractor smsCodeExtractor) {
-    this.smsCodeExtractor = smsCodeExtractor;
+  public SmsReceiver(@NonNull Mapper<String, String> smsCodeMapper) {
+    this.smsCodeMapper = smsCodeMapper;
   }
 
   /**
@@ -55,10 +55,10 @@ public class SmsReceiver extends BroadcastReceiver {
             for (SmsMessage message : messages) {
               bodyText.append(message.getMessageBody());
             }
-            String body = bodyText.toString();
-            body = smsCodeExtractor.extractCode(body);
-            if (body != null) {
-              subject.onNext(body);
+            try {
+              subject.onNext(smsCodeMapper.map(bodyText.toString()));
+            } catch (Exception e) {
+              subject.onError(e);
             }
           }
         }

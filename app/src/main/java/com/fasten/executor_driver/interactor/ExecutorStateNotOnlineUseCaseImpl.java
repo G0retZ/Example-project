@@ -17,7 +17,7 @@ public class ExecutorStateNotOnlineUseCaseImpl implements
   @Nullable
   private ExecutorState currentExecutorState;
 
-  ExecutorStateNotOnlineUseCaseImpl(
+  public ExecutorStateNotOnlineUseCaseImpl(
       @NonNull ExecutorStateSwitchGateway executorStateSwitchGateway,
       @NonNull ExecutorStateUseCase executorStateUseCase) {
     this.executorStateSwitchGateway = executorStateSwitchGateway;

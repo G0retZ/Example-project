@@ -32,7 +32,7 @@ public class OnlineSwitchViewStateUnCheckedSocketErrorTest {
     // Результат:
     verify(codeViewActions).checkSwitch(false);
     verify(codeViewActions).showSwitchPending(false);
-    verify(codeViewActions).showError(R.string.no_network_connection);
+    verify(codeViewActions).showError(R.string.no_network_connection, true);
     verifyNoMoreInteractions(codeViewActions);
   }
 }

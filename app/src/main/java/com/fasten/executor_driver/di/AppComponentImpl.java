@@ -19,11 +19,11 @@ import com.fasten.executor_driver.backend.web.TokenKeeper;
 import com.fasten.executor_driver.entity.LoginValidator;
 import com.fasten.executor_driver.entity.PasswordValidator;
 import com.fasten.executor_driver.entity.PhoneNumberValidator;
-import com.fasten.executor_driver.entity.SmsCodeExtractor;
 import com.fasten.executor_driver.entity.Vehicle;
 import com.fasten.executor_driver.gateway.ErrorMapper;
 import com.fasten.executor_driver.gateway.ExecutorStateApiMapper;
 import com.fasten.executor_driver.gateway.ExecutorStateGatewayImpl;
+import com.fasten.executor_driver.gateway.ExecutorStateSwitchGatewayImpl;
 import com.fasten.executor_driver.gateway.GeoLocationGatewayImpl;
 import com.fasten.executor_driver.gateway.GeoTrackingGatewayImpl;
 import com.fasten.executor_driver.gateway.HeatMapGatewayImpl;
@@ -33,6 +33,7 @@ import com.fasten.executor_driver.gateway.OfferGatewayImpl;
 import com.fasten.executor_driver.gateway.PasswordGatewayImpl;
 import com.fasten.executor_driver.gateway.ServiceApiMapper;
 import com.fasten.executor_driver.gateway.ServicesGatewayImpl;
+import com.fasten.executor_driver.gateway.SmsCodeMapper;
 import com.fasten.executor_driver.gateway.SmsGatewayImpl;
 import com.fasten.executor_driver.gateway.SocketGatewayImpl;
 import com.fasten.executor_driver.gateway.TokenKeeperImpl;
@@ -40,6 +41,7 @@ import com.fasten.executor_driver.gateway.VehicleApiMapper;
 import com.fasten.executor_driver.gateway.VehicleOptionApiMapper;
 import com.fasten.executor_driver.gateway.VehicleOptionsGatewayImpl;
 import com.fasten.executor_driver.gateway.VehiclesAndOptionsGatewayImpl;
+import com.fasten.executor_driver.interactor.ExecutorStateNotOnlineUseCaseImpl;
 import com.fasten.executor_driver.interactor.ExecutorStateUseCase;
 import com.fasten.executor_driver.interactor.ExecutorStateUseCaseImpl;
 import com.fasten.executor_driver.interactor.GeoLocationUseCase;
@@ -68,6 +70,7 @@ import com.fasten.executor_driver.presentation.geolocation.GeoLocationViewModelI
 import com.fasten.executor_driver.presentation.map.MapViewModelImpl;
 import com.fasten.executor_driver.presentation.offer.OfferViewModelImpl;
 import com.fasten.executor_driver.presentation.onlinebutton.OnlineButtonViewModelImpl;
+import com.fasten.executor_driver.presentation.onlineswitch.OnlineSwitchViewModelImpl;
 import com.fasten.executor_driver.presentation.phone.PhoneViewModelImpl;
 import com.fasten.executor_driver.presentation.selectedvehicle.SelectedVehicleViewModelImpl;
 import com.fasten.executor_driver.presentation.services.ServicesListItems;
@@ -80,6 +83,7 @@ import com.fasten.executor_driver.view.ChooseVehicleFragment;
 import com.fasten.executor_driver.view.GoOnlineFragment;
 import com.fasten.executor_driver.view.MapFragment;
 import com.fasten.executor_driver.view.OfferFragment;
+import com.fasten.executor_driver.view.OnlineFragment;
 import com.fasten.executor_driver.view.SelectedVehicleFragment;
 import com.fasten.executor_driver.view.ServicesFragment;
 import com.fasten.executor_driver.view.VehicleOptionsFragment;
@@ -270,7 +274,7 @@ public class AppComponentImpl implements AppComponent {
     );
     passwordFragment.setSmsReceiver(
         new SmsReceiver(
-            new SmsCodeExtractor()
+            new SmsCodeMapper()
         )
     );
   }
@@ -297,6 +301,23 @@ public class AppComponentImpl implements AppComponent {
                 )
             )
         ).get(GeoLocationViewModelImpl.class)
+    );
+  }
+
+  @Override
+  public void inject(OnlineFragment onlineFragment) {
+    onlineFragment.setOnlineSwitchViewModel(
+        ViewModelProviders.of(
+            onlineFragment,
+            new ViewModelFactory<>(
+                new OnlineSwitchViewModelImpl(
+                    new ExecutorStateNotOnlineUseCaseImpl(
+                        new ExecutorStateSwitchGatewayImpl(stompClient),
+                        executorStateUseCase
+                    )
+                )
+            )
+        ).get(OnlineSwitchViewModelImpl.class)
     );
   }
 
