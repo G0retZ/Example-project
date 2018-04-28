@@ -36,5 +36,6 @@ public interface VehicleOptionsUseCase {
    * @param driverOptions список опций исполнителя
    * @return {@link Completable} результат сохранения и выхода на линию
    */
-  Completable setSelectedVehicleAndOptions(List<Option> vehicleOptions, List<Option> driverOptions);
+  Completable setSelectedVehicleAndOptions(@NonNull List<Option> vehicleOptions,
+      @NonNull List<Option> driverOptions);
 }
