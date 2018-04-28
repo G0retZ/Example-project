@@ -2,6 +2,7 @@ package com.fasten.executor_driver.backend.web;
 
 import android.support.annotation.NonNull;
 import com.fasten.executor_driver.backend.web.incoming.ApiOptionsForOnline;
+import com.fasten.executor_driver.backend.web.incoming.ApiSelectedOptionsForOnline;
 import com.fasten.executor_driver.backend.web.incoming.ApiServiceItem;
 import com.fasten.executor_driver.backend.web.outgoing.ApiLogin;
 import com.fasten.executor_driver.backend.web.outgoing.ApiOptionItems;
@@ -71,5 +72,19 @@ public interface ApiService {
   @PUT("api/public/v1/mobile/car/carSearchRequest")
   Completable setMyServices(
       @NonNull @Query("ids") String servicesIds
+  );
+
+  /*
+   *  Запрос опций выбранного ТС и текущего исполнителя.
+   */
+  @GET("/api/public/v1/mobile/car/option/assigned")
+  Single<ApiSelectedOptionsForOnline> getSelectedOptionsForOnline();
+
+  /*
+   *  Запрос установки опций выбранного ТС и текущего исполнителя.
+   */
+  @PUT("api/public/v1/mobile/car/vehicleOptionItem")
+  Completable setSelectedVehicleOptions(
+      @NonNull @Body ApiOptionItems apiOptionItems
   );
 }
