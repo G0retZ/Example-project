@@ -12,7 +12,6 @@ import static org.mockito.Mockito.when;
 import com.fasten.executor_driver.backend.web.NoNetworkException;
 import com.fasten.executor_driver.entity.NoOffersAvailableException;
 import com.fasten.executor_driver.entity.Offer;
-import com.fasten.executor_driver.entity.RoutePoint;
 import com.fasten.executor_driver.gateway.DataMappingException;
 import io.reactivex.Completable;
 import io.reactivex.Flowable;
@@ -31,6 +30,10 @@ public class OfferUseCaseTest {
 
   @Mock
   private OfferGateway gateway;
+  @Mock
+  private Offer offer;
+  @Mock
+  private Offer offer2;
 
   @Before
   public void setUp() {
@@ -72,26 +75,18 @@ public class OfferUseCaseTest {
   @Test
   public void askGatewayToSendDecisionsForOffers() {
     // Дано:
-    when(gateway.getOffers()).thenReturn(
-        Flowable.just(new Offer(0, "com", 10, 10, 0, 0, 20, new RoutePoint(10, 20, "com", "add")))
-    );
+    when(gateway.getOffers()).thenReturn(Flowable.just(offer));
 
     // Действие:
     offerUseCase.getOffers().test();
     offerUseCase.sendDecision(true).test();
-    when(gateway.getOffers()).thenReturn(
-        Flowable.just(new Offer(2, "c", 1, 100, 1, 2, 200, new RoutePoint(101, 202, "m", "a")))
-    );
+    when(gateway.getOffers()).thenReturn(Flowable.just(offer));
     offerUseCase.getOffers().test();
     offerUseCase.sendDecision(false).test();
 
     // Результат:
-    verify(gateway).sendDecision(
-        new Offer(0, "com", 10, 10, 0, 0, 20, new RoutePoint(10, 20, "com", "add")), true
-    );
-    verify(gateway).sendDecision(
-        new Offer(2, "c", 1, 100, 1, 2, 200, new RoutePoint(101, 202, "m", "a")), false
-    );
+    verify(gateway).sendDecision(offer, true);
+    verify(gateway).sendDecision(offer, false);
   }
 
   /**
@@ -100,14 +95,7 @@ public class OfferUseCaseTest {
   @Test
   public void askGatewayToSendDecisionsForLastOfferOnly() {
     // Дано:
-    when(gateway.getOffers()).thenReturn(Flowable.just(
-        new Offer(0, "com", 10, 10, 0, 0, 20,
-            new RoutePoint(10, 20, "com", "add")
-        ),
-        new Offer(2, "c", 1, 100, 1, 2, 200,
-            new RoutePoint(101, 202, "m", "a")
-        )
-    ));
+    when(gateway.getOffers()).thenReturn(Flowable.just(offer, offer2));
 
     // Действие:
     offerUseCase.getOffers().test();
@@ -116,8 +104,7 @@ public class OfferUseCaseTest {
     offerUseCase.sendDecision(false).test();
 
     // Результат:
-    verify(gateway, times(2)).sendDecision(
-        eq(new Offer(2, "c", 1, 100, 1, 2, 200, new RoutePoint(101, 202, "m", "a"))), anyBoolean()
+    verify(gateway, times(2)).sendDecision(eq(offer2), anyBoolean()
     );
   }
 
@@ -146,27 +133,13 @@ public class OfferUseCaseTest {
   @Test
   public void answerWithOffers() {
     // Дано:
-    when(gateway.getOffers()).thenReturn(Flowable.just(
-        new Offer(0, "com", 10, 10, 0, 0, 20,
-            new RoutePoint(10, 20, "com", "add")
-        ),
-        new Offer(2, "c", 1, 100, 1, 2, 200,
-            new RoutePoint(101, 202, "m", "a")
-        )
-    ));
+    when(gateway.getOffers()).thenReturn(Flowable.just(offer, offer2));
 
     // Действие:
     TestSubscriber<Offer> test = offerUseCase.getOffers().test();
 
     // Результат:
-    test.assertValues(
-        new Offer(0, "com", 10, 10, 0, 0, 20,
-            new RoutePoint(10, 20, "com", "add")
-        ),
-        new Offer(2, "c", 1, 100, 1, 2, 200,
-            new RoutePoint(101, 202, "m", "a")
-        )
-    );
+    test.assertValues(offer, offer2);
     test.assertComplete();
     test.assertNoErrors();
   }
@@ -207,9 +180,7 @@ public class OfferUseCaseTest {
   @Test
   public void answerNoNetworkErrorForAccept() {
     // Дано:
-    when(gateway.getOffers()).thenReturn(
-        Flowable.just(new Offer(0, "com", 10, 10, 0, 0, 20, new RoutePoint(10, 20, "com", "add")))
-    );
+    when(gateway.getOffers()).thenReturn(Flowable.just(offer));
     when(gateway.sendDecision(any(), anyBoolean()))
         .thenReturn(Completable.error(new NoNetworkException()));
 
@@ -229,9 +200,7 @@ public class OfferUseCaseTest {
   @Test
   public void answerNoNetworkErrorForDecline() {
     // Дано:
-    when(gateway.getOffers()).thenReturn(
-        Flowable.just(new Offer(0, "com", 10, 10, 0, 0, 20, new RoutePoint(10, 20, "com", "add")))
-    );
+    when(gateway.getOffers()).thenReturn(Flowable.just(offer));
     when(gateway.sendDecision(any(), anyBoolean()))
         .thenReturn(Completable.error(new NoNetworkException()));
 
@@ -251,9 +220,7 @@ public class OfferUseCaseTest {
   @Test
   public void answerSendAcceptSuccessful() {
     // Дано:
-    when(gateway.getOffers()).thenReturn(
-        Flowable.just(new Offer(0, "com", 10, 10, 0, 0, 20, new RoutePoint(10, 20, "com", "add")))
-    );
+    when(gateway.getOffers()).thenReturn(Flowable.just(offer));
     when(gateway.sendDecision(any(), anyBoolean())).thenReturn(Completable.complete());
 
     // Действие:
@@ -271,9 +238,7 @@ public class OfferUseCaseTest {
   @Test
   public void answerSendDeclineSuccessful() {
     // Дано:
-    when(gateway.getOffers()).thenReturn(
-        Flowable.just(new Offer(0, "com", 10, 10, 0, 0, 20, new RoutePoint(10, 20, "com", "add")))
-    );
+    when(gateway.getOffers()).thenReturn(Flowable.just(offer));
     when(gateway.sendDecision(any(), anyBoolean())).thenReturn(Completable.complete());
 
     // Действие:

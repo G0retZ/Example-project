@@ -42,9 +42,7 @@ public class OfferItemTest {
     when(offer.getRoutePoint()).thenReturn(routePoint);
     when(offer.getDistance()).thenReturn(1200239L);
     when(offer.getComment()).thenReturn("com");
-    when(offer.getEstimatedPrice()).thenReturn(7000L);
-    when(offer.getPorters()).thenReturn(2);
-    when(offer.getPassengers()).thenReturn(3);
+    when(offer.getEstimatedPrice()).thenReturn("7000");
     when(offer.getTimeout()).thenReturn(20);
     when(routePoint.getAddress()).thenReturn("add");
     when(routePoint.getLatitude()).thenReturn(5.421);
@@ -53,12 +51,12 @@ public class OfferItemTest {
     // Результат:
     assertEquals(offerItem.getLoadPointMapUrl(),
         "https://maps.googleapis.com/maps/api/staticmap?center=5.421,10.2341&zoom=16&size=288x352&maptype=roadmap&key=AIzaSyC20FZNHJqrQH5UhypeUy3thpqII33QBPI");
-    assertEquals(offerItem.getPrice(), "от 7000 рублей");
+    assertEquals(offerItem.getPrice(), "7000");
     assertEquals(offerItem.getAddress(), "add");
     assertEquals(offerItem.getDistance(), 1200239);
     assertEquals(offerItem.getOfferComment(), "com");
-    assertEquals(offerItem.getPortersCount(), 2);
-    assertEquals(offerItem.getPassengersCount(), 3);
+    assertEquals(offerItem.getPortersCount(), 0);
+    assertEquals(offerItem.getPassengersCount(), 0);
     assertArrayEquals(offerItem.getProgressLeft(), new long[]{75, 15000});
     assertArrayEquals(offerItem.getProgressLeft(), new long[]{50, 10000});
   }
