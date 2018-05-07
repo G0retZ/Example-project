@@ -1,6 +1,5 @@
 package com.fasten.executor_driver.presentation.phone;
 
-import android.annotation.SuppressLint;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
@@ -57,21 +56,21 @@ public class PhoneViewModelImpl extends ViewModel implements PhoneViewModel {
         .subscribe(this::switchToSuccess, throwable -> switchToError());
   }
 
-  @SuppressLint("CheckResult")
   @Override
   public void nextClicked() {
-    if (viewStateLiveData.getValue() instanceof PhoneViewStateReady) {
-      loginUseCase.rememberLogin()
-          .subscribeOn(Schedulers.single())
-          .observeOn(AndroidSchedulers.mainThread())
-          .subscribe(
-              () -> {
-                viewStateLiveData.postValue(new PhoneViewStateInitial());
-                navigateLiveData.postValue(PhoneNavigate.PASSWORD);
-              },
-              Throwable::printStackTrace
-          );
+    if (!disposable.isDisposed()) {
+      return;
     }
+    disposable = loginUseCase.rememberLogin()
+        .subscribeOn(Schedulers.single())
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe(
+            () -> {
+              viewStateLiveData.postValue(new PhoneViewStateInitial());
+              navigateLiveData.postValue(PhoneNavigate.PASSWORD);
+            },
+            Throwable::printStackTrace
+        );
   }
 
   @Override

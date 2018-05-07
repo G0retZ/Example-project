@@ -29,17 +29,20 @@ public interface AppSettingsService {
    * Получить зашифрованные строковые данные.
    *
    * @param raw - ключ шифрования
+   * @param salt - соль шифрования
    * @param key - ключ данных
    */
   @Nullable
-  String getEncryptedData(@NonNull byte[] raw, @NonNull String key);
+  String getEncryptedData(@NonNull byte[] raw, @NonNull byte[] salt, @NonNull String key);
 
   /**
    * Сохранить строковые данные в зашифрованном виде.
    *
    * @param raw - ключ шифрования
+   * @param salt - соль шифрования
    * @param key - ключ данных
    * @param data - сами данные
    */
-  void saveEncryptedData(@NonNull byte[] raw, @NonNull String key, @Nullable String data);
+  void saveEncryptedData(@NonNull byte[] raw, @NonNull byte[] salt, @NonNull String key,
+      @Nullable String data);
 }

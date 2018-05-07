@@ -3,6 +3,7 @@ package com.fasten.executor_driver.presentation.phone;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.only;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
@@ -173,7 +174,7 @@ public class PhoneViewModelTest {
   }
 
   /**
-   * Не должен возвращать начальное состояние вида если не "Готов".
+   * Должен вернуть начальное состояние вида повторно.
    */
   @Test
   public void doNotSetInitialViewStateToLiveDataPending() {
@@ -185,7 +186,7 @@ public class PhoneViewModelTest {
     phoneViewModel.nextClicked();
 
     // Результат:
-    inOrder.verify(viewStateObserver).onChanged(any(PhoneViewStateInitial.class));
+    inOrder.verify(viewStateObserver, times(2)).onChanged(any(PhoneViewStateInitial.class));
     verifyNoMoreInteractions(viewStateObserver);
   }
 
