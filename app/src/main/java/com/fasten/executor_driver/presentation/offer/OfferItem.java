@@ -4,7 +4,6 @@ import android.support.annotation.NonNull;
 import com.fasten.executor_driver.BuildConfig;
 import com.fasten.executor_driver.entity.Offer;
 import com.fasten.executor_driver.utils.TimeUtils;
-import java.util.Locale;
 
 /**
  * Модель для отображения предложения заказа. Тестируемое форматирование.
@@ -46,12 +45,14 @@ class OfferItem {
     return offer.getRoutePoint().getAddress();
   }
 
+  @SuppressWarnings("SameReturnValue")
   public int getPortersCount() {
-    return offer.getPorters();
+    return 0;
   }
 
+  @SuppressWarnings("SameReturnValue")
   public int getPassengersCount() {
-    return offer.getPassengers();
+    return 0;
   }
 
   @NonNull
@@ -61,7 +62,7 @@ class OfferItem {
 
   @NonNull
   public String getPrice() {
-    return String.format(Locale.getDefault(), "от %d рублей", offer.getEstimatedPrice());
+    return offer.getEstimatedPrice();
   }
 
   public long[] getProgressLeft() {

@@ -14,7 +14,6 @@ import com.fasten.executor_driver.backend.websocket.ConnectionClosedException;
 import com.fasten.executor_driver.entity.ExecutorState;
 import com.fasten.executor_driver.entity.NoOffersAvailableException;
 import com.fasten.executor_driver.entity.Offer;
-import com.fasten.executor_driver.entity.RoutePoint;
 import com.fasten.executor_driver.gateway.DataMappingException;
 import com.fasten.executor_driver.gateway.Mapper;
 import com.fasten.executor_driver.gateway.OfferGatewayImpl;
@@ -36,8 +35,6 @@ import ua.naiksoftware.stomp.client.StompClient;
 @RunWith(MockitoJUnitRunner.class)
 public class OfferGatewayTest {
 
-  private final Offer offer = new Offer(7, "com", 1200239, 7000, 2, 1, 20,
-      new RoutePoint(123, 456, "com", "add"));
   private OfferGateway executorStateGateway;
   @Mock
   private StompClient stompClient;
@@ -45,6 +42,8 @@ public class OfferGatewayTest {
   private ExecutorStateUseCase executorStateUseCase;
   @Mock
   private Mapper<String, Offer> mapper;
+  @Mock
+  private Offer offer;
 
   @Before
   public void setUp() {
@@ -81,6 +80,7 @@ public class OfferGatewayTest {
     // Дано:
     InOrder inOrder = Mockito.inOrder(stompClient);
     when(stompClient.isConnected()).thenReturn(true);
+    when(offer.getId()).thenReturn(7L);
 
     // Действие:
     executorStateGateway.sendDecision(offer, false).test();
@@ -124,6 +124,7 @@ public class OfferGatewayTest {
     // Дано:
     InOrder inOrder = Mockito.inOrder(stompClient);
     when(stompClient.isConnecting()).thenReturn(true);
+    when(offer.getId()).thenReturn(7L);
 
     // Действие:
     executorStateGateway.sendDecision(offer, false).test();

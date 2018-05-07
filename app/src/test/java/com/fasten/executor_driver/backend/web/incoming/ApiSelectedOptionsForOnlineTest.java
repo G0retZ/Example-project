@@ -16,9 +16,9 @@ public class ApiSelectedOptionsForOnlineTest {
   public void setUp() {
     apiSelectedOptionsForOnline = new ApiSelectedOptionsForOnline(
         Arrays.asList(
-            new ApiOptionItem(765, "opto1", "desco1", false, true, "valo1", null, null),
-            new ApiOptionItem(456, "opto2", "desco2", true, true, "valo2", 5, 20),
-            new ApiOptionItem(876, "opto3", "desco3", false, false, "valo3", null, null)
+            new ApiOptionItem(765, "option1", "description1", false, true, "value1", null, null),
+            new ApiOptionItem(456, "option2", "description2", true, true, "value2", 5, 20),
+            new ApiOptionItem(876, "option3", "description3", false, false, "value3", null, null)
         ),
         Arrays.asList(
             new ApiOptionItem(324, "opt1", "desc1", true, false, "val1", -5, 3),
@@ -32,9 +32,9 @@ public class ApiSelectedOptionsForOnlineTest {
   @Test
   public void testConstructor() {
     assertEquals(apiSelectedOptionsForOnline.getVehicleOptions(), Arrays.asList(
-        new ApiOptionItem(765, "opto1", "desco1", false, true, "valo1", null, null),
-        new ApiOptionItem(456, "opto2", "desco2", true, true, "valo2", 5, 20),
-        new ApiOptionItem(876, "opto3", "desco3", false, false, "valo3", null, null)
+        new ApiOptionItem(765, "option1", "description1", false, true, "value1", null, null),
+        new ApiOptionItem(456, "option2", "description2", true, true, "value2", 5, 20),
+        new ApiOptionItem(876, "option3", "description3", false, false, "value3", null, null)
     ));
     assertEquals(apiSelectedOptionsForOnline.getDriverOptions(), Arrays.asList(
         new ApiOptionItem(324, "opt1", "desc1", true, false, "val1", -5, 3),
@@ -50,9 +50,11 @@ public class ApiSelectedOptionsForOnlineTest {
     assertEquals(apiSelectedOptionsForOnline,
         new ApiSelectedOptionsForOnline(
             Arrays.asList(
-                new ApiOptionItem(765, "opto1", "desco1", false, true, "valo1", null, null),
-                new ApiOptionItem(456, "opto2", "desco2", true, true, "valo2", 5, 20),
-                new ApiOptionItem(876, "opto3", "desco3", false, false, "valo3", null, null)
+                new ApiOptionItem(765, "option1", "description1", false, true, "value1", null,
+                    null),
+                new ApiOptionItem(456, "option2", "description2", true, true, "value2", 5, 20),
+                new ApiOptionItem(876, "option3", "description3", false, false, "value3", null,
+                    null)
             ),
             Arrays.asList(
                 new ApiOptionItem(324, "opt1", "desc1", true, false, "val1", -5, 3),
@@ -76,8 +78,9 @@ public class ApiSelectedOptionsForOnlineTest {
     assertNotEquals(apiSelectedOptionsForOnline,
         new ApiSelectedOptionsForOnline(
             Arrays.asList(
-                new ApiOptionItem(765, "opto1", "desco1", false, true, "valo1", null, null),
-                new ApiOptionItem(456, "opto2", "desco2", true, true, "valo2", 5, 20)
+                new ApiOptionItem(765, "option1", "description1", false, true, "value1", null,
+                    null),
+                new ApiOptionItem(456, "option2", "description2", true, true, "value2", 5, 20)
             ),
             Arrays.asList(
                 new ApiOptionItem(324, "opt1", "desc1", true, false, "val1", -5, 3),
@@ -90,9 +93,11 @@ public class ApiSelectedOptionsForOnlineTest {
     assertNotEquals(apiSelectedOptionsForOnline,
         new ApiSelectedOptionsForOnline(
             Arrays.asList(
-                new ApiOptionItem(765, "opto1", "desco1", false, true, "valo1", null, null),
-                new ApiOptionItem(456, "opto2", "desco2", true, true, "valo2", 5, 20),
-                new ApiOptionItem(886, "opto3", "desco3", false, false, "valo3", null, null)
+                new ApiOptionItem(765, "option1", "description1", false, true, "value1", null,
+                    null),
+                new ApiOptionItem(456, "option2", "description2", true, true, "value2", 5, 20),
+                new ApiOptionItem(886, "option3", "description3", false, false, "value3", null,
+                    null)
             ),
             Arrays.asList(
                 new ApiOptionItem(324, "opt1", "desc1", true, false, "val1", -5, 3),
@@ -105,9 +110,11 @@ public class ApiSelectedOptionsForOnlineTest {
     assertNotEquals(apiSelectedOptionsForOnline,
         new ApiSelectedOptionsForOnline(
             Arrays.asList(
-                new ApiOptionItem(765, "opto1", "desco1", false, true, "valo1", null, null),
-                new ApiOptionItem(456, "opto2", "desco2", true, true, "valo2", 5, 20),
-                new ApiOptionItem(876, "opto3", "desco3", false, false, "valo3", null, null)
+                new ApiOptionItem(765, "option1", "description1", false, true, "value1", null,
+                    null),
+                new ApiOptionItem(456, "option2", "description2", true, true, "value2", 5, 20),
+                new ApiOptionItem(876, "option3", "description3", false, false, "value3", null,
+                    null)
             ),
             new ArrayList<>()
         )
@@ -115,9 +122,11 @@ public class ApiSelectedOptionsForOnlineTest {
     assertNotEquals(apiSelectedOptionsForOnline,
         new ApiSelectedOptionsForOnline(
             Arrays.asList(
-                new ApiOptionItem(765, "opto1", "desco1", false, true, "valo1", null, null),
-                new ApiOptionItem(456, "opto2", "desco2", true, true, "valo2", 5, 20),
-                new ApiOptionItem(876, "opto3", "desco3", false, false, "valo3", null, null)
+                new ApiOptionItem(765, "option1", "description1", false, true, "value1", null,
+                    null),
+                new ApiOptionItem(456, "option2", "description2", true, true, "value2", 5, 20),
+                new ApiOptionItem(876, "option3", "description3", false, false, "value3", null,
+                    null)
             ),
             Arrays.asList(
                 new ApiOptionItem(324, "opt1", "desc1", true, false, "val1", -5, 3),
@@ -129,9 +138,11 @@ public class ApiSelectedOptionsForOnlineTest {
     assertNotEquals(apiSelectedOptionsForOnline,
         new ApiSelectedOptionsForOnline(
             Arrays.asList(
-                new ApiOptionItem(765, "opto1", "desco1", false, true, "valo1", null, null),
-                new ApiOptionItem(456, "opto2", "desco2", true, true, "valo2", 5, 20),
-                new ApiOptionItem(876, "opto3", "desco3", false, false, "valo3", null, null)
+                new ApiOptionItem(765, "option1", "description1", false, true, "value1", null,
+                    null),
+                new ApiOptionItem(456, "option2", "description2", true, true, "value2", 5, 20),
+                new ApiOptionItem(876, "option3", "description3", false, false, "value3", null,
+                    null)
             ),
             Arrays.asList(
                 new ApiOptionItem(32, "opt1", "desc1", true, false, "val1", -5, 3),

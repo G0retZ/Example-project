@@ -3,14 +3,11 @@ package com.fasten.executor_driver.gateway;
 import static org.junit.Assert.assertEquals;
 
 import com.fasten.executor_driver.entity.Offer;
-import com.fasten.executor_driver.entity.RoutePoint;
 import org.junit.Before;
 import org.junit.Test;
 
 public class OfferApiMapperTest {
 
-  private final Offer offer = new Offer(7, "com", 1200239, 7000, 2, 1, 25,
-      new RoutePoint(123, 456, "com", "add"));
   private Mapper<String, Offer> mapper;
 
   @Before
@@ -26,7 +23,7 @@ public class OfferApiMapperTest {
   @Test
   public void mappingJsonStringToOffer() throws Exception {
     // Дано и Действие:
-    Offer offer1 = mapper.map("{\n"
+    Offer offer = mapper.map("{\n"
         + "    \"id\": \"7\",\n"
         + "    \"comment\": \"com\",\n"
         + "    \"estimatedAmount\": \"7000\",\n"
@@ -48,7 +45,15 @@ public class OfferApiMapperTest {
         + "}");
 
     // Результат:
-    assertEquals(offer1, offer);
+    assertEquals(offer.getId(), 7);
+    assertEquals(offer.getComment(), "com");
+    assertEquals(offer.getDistance(), 1200239);
+    assertEquals(offer.getEstimatedPrice(), "7000");
+    assertEquals(offer.getTimeout(), 25);
+    assertEquals(offer.getRoutePoint().getLatitude(), 123, Double.MIN_VALUE);
+    assertEquals(offer.getRoutePoint().getLongitude(), 456, Double.MIN_VALUE);
+    assertEquals(offer.getRoutePoint().getComment(), "com");
+    assertEquals(offer.getRoutePoint().getAddress(), "add");
   }
 
   /**
@@ -60,7 +65,7 @@ public class OfferApiMapperTest {
   @Test
   public void mappingJsonStringWithoutTimeoutToOffer() throws Exception {
     // Дано и Действие:
-    Offer offer1 = mapper.map("{\n"
+    Offer offer = mapper.map("{\n"
         + "    \"id\": \"7\",\n"
         + "    \"comment\": \"com\",\n"
         + "    \"estimatedAmount\": \"7000\",\n"
@@ -81,8 +86,15 @@ public class OfferApiMapperTest {
         + "}");
 
     // Результат:
-    assertEquals(offer1, new Offer(7, "com", 1200239, 7000, 2, 1, 20,
-        new RoutePoint(123, 456, "com", "add")));
+    assertEquals(offer.getId(), 7);
+    assertEquals(offer.getComment(), "com");
+    assertEquals(offer.getDistance(), 1200239);
+    assertEquals(offer.getEstimatedPrice(), "7000");
+    assertEquals(offer.getTimeout(), 20);
+    assertEquals(offer.getRoutePoint().getLatitude(), 123, Double.MIN_VALUE);
+    assertEquals(offer.getRoutePoint().getLongitude(), 456, Double.MIN_VALUE);
+    assertEquals(offer.getRoutePoint().getComment(), "com");
+    assertEquals(offer.getRoutePoint().getAddress(), "add");
   }
 
   /**

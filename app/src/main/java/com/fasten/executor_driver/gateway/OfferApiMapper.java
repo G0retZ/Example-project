@@ -54,8 +54,6 @@ public class OfferApiMapper implements Mapper<String, Offer> {
         orderDto.comment == null ? "" : orderDto.comment,
         orderDto.executorDistance.distance,
         orderDto.estimatedAmount,
-        orderDto.passengers,
-        orderDto.porters,
         // TODO: это костыль, который подменяет таймаут 0 на 20
         orderDto.timeout == 0 ? 20 : orderDto.timeout,
         new RoutePoint(
@@ -88,11 +86,10 @@ public class OfferApiMapper implements Mapper<String, Offer> {
   private class OrderDto {
 
     long id;
-    long estimatedAmount;
+    @Nullable
+    String estimatedAmount;
     @Nullable
     String comment;
-    int passengers;
-    int porters;
     int timeout;
     @Nullable
     DriverDistancePair executorDistance;
