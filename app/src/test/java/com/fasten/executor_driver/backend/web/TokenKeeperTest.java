@@ -42,7 +42,7 @@ public class TokenKeeperTest {
     tokenKeeper.getToken();
 
     // Результат:
-    verify(appSettings, only()).getEncryptedData(any(byte[].class), eq("token"));
+    verify(appSettings, only()).getEncryptedData(any(byte[].class), any(byte[].class), eq("token"));
   }
 
   /**
@@ -54,7 +54,8 @@ public class TokenKeeperTest {
     tokenKeeper.saveToken("123456");
 
     // Результат:
-    verify(appSettings, only()).saveEncryptedData(any(byte[].class), eq("token"), eq("123456"));
+    verify(appSettings, only())
+        .saveEncryptedData(any(byte[].class), any(byte[].class), eq("token"), eq("123456"));
   }
 
   /**
@@ -67,9 +68,11 @@ public class TokenKeeperTest {
     tokenKeeper.getToken();
 
     // Результат:
-    verify(appSettings).saveEncryptedData(rawCaptor.capture(), eq("token"), eq("123456"));
-    verify(appSettings).getEncryptedData(rawCaptor.capture(), eq("token"));
-    assertEquals(rawCaptor.getAllValues().get(0), rawCaptor.getAllValues().get(1));
+    verify(appSettings)
+        .saveEncryptedData(rawCaptor.capture(), rawCaptor.capture(), eq("token"), eq("123456"));
+    verify(appSettings).getEncryptedData(rawCaptor.capture(), rawCaptor.capture(), eq("token"));
+    assertEquals(rawCaptor.getAllValues().get(0), rawCaptor.getAllValues().get(2));
+    assertEquals(rawCaptor.getAllValues().get(1), rawCaptor.getAllValues().get(3));
   }
 
   /**
@@ -78,7 +81,8 @@ public class TokenKeeperTest {
   @Test
   public void valueUnchangedForRead() {
     // Действие:
-    when(appSettings.getEncryptedData(any(byte[].class), eq("token"))).thenReturn("654321");
+    when(appSettings.getEncryptedData(any(byte[].class), any(byte[].class), eq("token")))
+        .thenReturn("654321");
 
     // Результат:
     assertEquals(tokenKeeper.getToken(), "654321");

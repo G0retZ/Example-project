@@ -17,6 +17,9 @@ public class AppSettingsServiceTest {
   private final byte[] raw = new byte[]{
       -124, -13, -49, -125, -18, -50, 29, 57, 91, 47, 117, 61, -61, 68, -11, -46
   };
+  private final byte[] salt = new byte[]{
+      -18, -35, -57, 10, -44, -33, -58, 88, -72, 116, -91, -60, -13, 45, 79, -33
+  };
   private AppSettingsService appSettingsService;
 
   @Before
@@ -54,26 +57,26 @@ public class AppSettingsServiceTest {
 
   @Test
   public void returnNullEncryptedValueByDefault() {
-    assertNull(appSettingsService.getEncryptedData(raw, "key"));
+    assertNull(appSettingsService.getEncryptedData(raw, salt, "key"));
   }
 
   @Test
   public void saveAndReadEncryptedValue() {
     // given:
-    appSettingsService.saveEncryptedData(raw, "key", "value");
+    appSettingsService.saveEncryptedData(raw, salt, "key", "value");
 
     // then:
-    assertEquals(appSettingsService.getEncryptedData(raw, "key"), "value");
+    assertEquals(appSettingsService.getEncryptedData(raw, salt, "key"), "value");
   }
 
   @Test
   public void saveAndReadEncryptedNullValue() {
     // given:
-    appSettingsService.saveEncryptedData(raw, "key", "value");
+    appSettingsService.saveEncryptedData(raw, salt, "key", "value");
 
     // then:
-    assertEquals(appSettingsService.getEncryptedData(raw, "key"), "value");
-    appSettingsService.saveEncryptedData(raw, "key", null);
-    assertNull(appSettingsService.getEncryptedData(raw, "key"));
+    assertEquals(appSettingsService.getEncryptedData(raw, salt, "key"), "value");
+    appSettingsService.saveEncryptedData(raw, salt, "key", null);
+    assertNull(appSettingsService.getEncryptedData(raw, salt, "key"));
   }
 }
