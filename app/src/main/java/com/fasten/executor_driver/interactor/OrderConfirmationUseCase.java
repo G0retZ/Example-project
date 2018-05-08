@@ -8,7 +8,7 @@ import io.reactivex.Flowable;
 /**
  * Юзкейс подтверждения заказа. Слушает заказы из гейтвея.
  */
-interface OrderConfirmationUseCase {
+public interface OrderConfirmationUseCase {
 
   /**
    * Запрашивает сбор данных о местоположении.
