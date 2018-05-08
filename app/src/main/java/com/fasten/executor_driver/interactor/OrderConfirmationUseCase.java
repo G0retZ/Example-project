@@ -6,23 +6,22 @@ import io.reactivex.Completable;
 import io.reactivex.Flowable;
 
 /**
- * Юзкейс предложений заказов. Слушает предложения из гейтвея.
+ * Юзкейс подтверждения заказа. Слушает заказы из гейтвея.
  */
-public interface OfferUseCase {
+public interface OrderConfirmationUseCase {
 
   /**
-   * Запрашивает данные о предложениях заказов.
+   * Запрашивает сбор данных о местоположении.
    *
    * @return {@link Flowable<Offer>} результат запроса.
    */
   Flowable<Offer> getOffers();
 
   /**
-   * Передает решение исполнителя по принятию заказа.
+   * Передает отказ исполнителя от заказа.
    *
-   * @param confirmed согласие исполнителя на прием заказа.
    * @return {@link Completable} результат - успех либо ошибка таймаута ожидания решения на сервере.
    */
   @NonNull
-  Completable sendDecision(boolean confirmed);
+  Completable cancelOrder();
 }

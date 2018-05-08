@@ -6,6 +6,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
@@ -24,9 +25,9 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
-public class OfferUseCaseTest {
+public class OrderConfirmationUseCaseTest {
 
-  private OfferUseCase offerUseCase;
+  private OrderConfirmationUseCase orderConfirmationUseCase;
 
   @Mock
   private OfferGateway gateway;
@@ -39,7 +40,7 @@ public class OfferUseCaseTest {
   public void setUp() {
     when(gateway.getOffers()).thenReturn(Flowable.never());
     when(gateway.sendDecision(any(), anyBoolean())).thenReturn(Completable.never());
-    offerUseCase = new OfferUseCaseImpl(gateway);
+    orderConfirmationUseCase = new OrderConfirmationUseCaseImpl(gateway);
   }
 
   /* Проверяем работу с гейтвеем */
@@ -50,47 +51,44 @@ public class OfferUseCaseTest {
   @Test
   public void askGatewayForOffers() {
     // Действие:
-    offerUseCase.getOffers().test();
+    orderConfirmationUseCase.getOffers().test();
 
     // Результат:
     verify(gateway, only()).getOffers();
   }
 
   /**
-   * Не должен запрашивать у гейтвея передачу решения, если не было заказа.
+   * Не должен запрашивать у гейтвея передачу отказа, если не было заказа.
    */
   @Test
-  public void doNotAskGatewayToSendDecision() {
+  public void doNotAskGatewayToSendCancel() {
     // Действие:
-    offerUseCase.sendDecision(true).test();
-    offerUseCase.sendDecision(false).test();
+    orderConfirmationUseCase.cancelOrder().test();
 
     // Результат:
     verifyZeroInteractions(gateway);
   }
 
   /**
-   * Должен запросить у гейтвея передачу решений.
+   * Должен запросить у гейтвея передачу отказов.
    */
   @Test
-  public void askGatewayToSendDecisionsForOffers() {
+  public void askGatewayToSendCancelForOffers() {
     // Дано:
     when(gateway.getOffers()).thenReturn(Flowable.just(offer));
 
     // Действие:
-    offerUseCase.getOffers().test();
-    offerUseCase.sendDecision(true).test();
-    when(gateway.getOffers()).thenReturn(Flowable.just(offer));
-    offerUseCase.getOffers().test();
-    offerUseCase.sendDecision(false).test();
+    orderConfirmationUseCase.getOffers().test();
+    orderConfirmationUseCase.cancelOrder().test();
 
     // Результат:
-    verify(gateway).sendDecision(offer, true);
+    verify(gateway).getOffers();
     verify(gateway).sendDecision(offer, false);
+    verifyNoMoreInteractions(gateway);
   }
 
   /**
-   * Должен запросить у гейтвея передачу решений только для последнего заказа.
+   * Должен запросить у гейтвея передачу отказа только для последнего заказа.
    */
   @Test
   public void askGatewayToSendDecisionsForLastOfferOnly() {
@@ -98,13 +96,13 @@ public class OfferUseCaseTest {
     when(gateway.getOffers()).thenReturn(Flowable.just(offer, offer2));
 
     // Действие:
-    offerUseCase.getOffers().test();
-    offerUseCase.getOffers().test();
-    offerUseCase.sendDecision(true).test();
-    offerUseCase.sendDecision(false).test();
+    orderConfirmationUseCase.getOffers().test();
+    orderConfirmationUseCase.getOffers().test();
+    orderConfirmationUseCase.cancelOrder().test();
+    orderConfirmationUseCase.cancelOrder().test();
 
     // Результат:
-    verify(gateway, times(2)).sendDecision(eq(offer2), anyBoolean());
+    verify(gateway, times(2)).sendDecision(eq(offer2), eq(false));
   }
 
   /* Проверяем ответы на запрос заказов */
@@ -118,7 +116,7 @@ public class OfferUseCaseTest {
     when(gateway.getOffers()).thenReturn(Flowable.error(new DataMappingException()));
 
     // Действие:
-    TestSubscriber<Offer> test = offerUseCase.getOffers().test();
+    TestSubscriber<Offer> test = orderConfirmationUseCase.getOffers().test();
 
     // Результат:
     test.assertError(DataMappingException.class);
@@ -135,7 +133,7 @@ public class OfferUseCaseTest {
     when(gateway.getOffers()).thenReturn(Flowable.just(offer, offer2));
 
     // Действие:
-    TestSubscriber<Offer> test = offerUseCase.getOffers().test();
+    TestSubscriber<Offer> test = orderConfirmationUseCase.getOffers().test();
 
     // Результат:
     test.assertValues(offer, offer2);
@@ -151,7 +149,7 @@ public class OfferUseCaseTest {
   @Test
   public void answerNoOffersErrorForAccept() {
     // Действие:
-    TestObserver<Void> test = offerUseCase.sendDecision(true).test();
+    TestObserver<Void> test = orderConfirmationUseCase.cancelOrder().test();
 
     // Результат:
     test.assertError(NoOffersAvailableException.class);
@@ -160,12 +158,12 @@ public class OfferUseCaseTest {
   }
 
   /**
-   * Должен ответить ошибкой отсуствия актуальных заказов на отказ.
+   * Должен ответить ошибкой отсуствия актуальных заказов.
    */
   @Test
-  public void answerNoOffersErrorForDecline() {
+  public void answerNoOffersError() {
     // Действие:
-    TestObserver<Void> test = offerUseCase.sendDecision(false).test();
+    TestObserver<Void> test = orderConfirmationUseCase.cancelOrder().test();
 
     // Результат:
     test.assertError(NoOffersAvailableException.class);
@@ -174,7 +172,7 @@ public class OfferUseCaseTest {
   }
 
   /**
-   * Должен ответить ошибкой сети на подтверждение.
+   * Должен ответить ошибкой сети.
    */
   @Test
   public void answerNoNetworkErrorForAccept() {
@@ -184,51 +182,13 @@ public class OfferUseCaseTest {
         .thenReturn(Completable.error(new NoNetworkException()));
 
     // Действие:
-    offerUseCase.getOffers().test();
-    TestObserver<Void> test = offerUseCase.sendDecision(true).test();
+    orderConfirmationUseCase.getOffers().test();
+    TestObserver<Void> test = orderConfirmationUseCase.cancelOrder().test();
 
     // Результат:
     test.assertError(NoNetworkException.class);
     test.assertNoValues();
     test.assertNotComplete();
-  }
-
-  /**
-   * Должен ответить ошибкой сети на отказ.
-   */
-  @Test
-  public void answerNoNetworkErrorForDecline() {
-    // Дано:
-    when(gateway.getOffers()).thenReturn(Flowable.just(offer));
-    when(gateway.sendDecision(any(), anyBoolean()))
-        .thenReturn(Completable.error(new NoNetworkException()));
-
-    // Действие:
-    offerUseCase.getOffers().test();
-    TestObserver<Void> test = offerUseCase.sendDecision(false).test();
-
-    // Результат:
-    test.assertError(NoNetworkException.class);
-    test.assertNoValues();
-    test.assertNotComplete();
-  }
-
-  /**
-   * Должен ответить успехом передачи подтверждения.
-   */
-  @Test
-  public void answerSendAcceptSuccessful() {
-    // Дано:
-    when(gateway.getOffers()).thenReturn(Flowable.just(offer));
-    when(gateway.sendDecision(any(), anyBoolean())).thenReturn(Completable.complete());
-
-    // Действие:
-    offerUseCase.getOffers().test();
-    TestObserver<Void> test = offerUseCase.sendDecision(true).test();
-
-    // Результат:
-    test.assertComplete();
-    test.assertNoErrors();
   }
 
   /**
@@ -241,8 +201,8 @@ public class OfferUseCaseTest {
     when(gateway.sendDecision(any(), anyBoolean())).thenReturn(Completable.complete());
 
     // Действие:
-    offerUseCase.getOffers().test();
-    TestObserver<Void> test = offerUseCase.sendDecision(false).test();
+    orderConfirmationUseCase.getOffers().test();
+    TestObserver<Void> test = orderConfirmationUseCase.cancelOrder().test();
 
     // Результат:
     test.assertComplete();

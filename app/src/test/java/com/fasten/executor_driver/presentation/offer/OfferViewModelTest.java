@@ -80,7 +80,7 @@ public class OfferViewModelTest {
   }
 
   /**
-   * Должен попросить юзкейс передать отказ от заказа.
+   * Должен попросить юзкейс передать принятие заказа.
    */
   @Test
   public void askOfferUseCaseToSendOfferAccepted() {
@@ -95,7 +95,7 @@ public class OfferViewModelTest {
   }
 
   /**
-   * Должен попросить юзкейс передать принятие заказа.
+   * Должен попросить юзкейс передать отказ от заказа.
    */
   @Test
   public void askOfferUseCaseToSendOfferDeclined() {
