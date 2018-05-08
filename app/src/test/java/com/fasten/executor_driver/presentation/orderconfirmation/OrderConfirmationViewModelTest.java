@@ -91,7 +91,7 @@ public class OrderConfirmationViewModelTest {
   }
 
   /**
-   * Не должен трогать юзкейс, если предыдущий запрос передачи решения еще не завершился.
+   * Не должен трогать юзкейс, если предыдущий запрос отмены заказа еще не завершился.
    */
   @Test
   public void DoNotTouchOrderConfirmationUseCaseDuringOrderConfirmationSetting() {
