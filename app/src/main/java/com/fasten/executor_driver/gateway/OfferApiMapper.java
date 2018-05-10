@@ -1,11 +1,12 @@
 package com.fasten.executor_driver.gateway;
 
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import com.fasten.executor_driver.backend.web.incoming.ApiOptionItem;
+import com.fasten.executor_driver.backend.websocket.incoming.ApiOffer;
 import com.fasten.executor_driver.entity.Offer;
+import com.fasten.executor_driver.entity.Option;
 import com.fasten.executor_driver.entity.RoutePoint;
 import com.google.gson.Gson;
-import java.util.List;
 import javax.inject.Inject;
 
 /**
@@ -13,8 +14,11 @@ import javax.inject.Inject;
  */
 public class OfferApiMapper implements Mapper<String, Offer> {
 
+  private final Mapper<ApiOptionItem, Option> apiOptionMapper;
+
   @Inject
-  public OfferApiMapper() {
+  public OfferApiMapper(Mapper<ApiOptionItem, Option> apiOptionMapper) {
+    this.apiOptionMapper = apiOptionMapper;
   }
 
   @NonNull
@@ -24,76 +28,50 @@ public class OfferApiMapper implements Mapper<String, Offer> {
       throw new DataMappingException("Ошибка маппинга: данные не должны быть пустыми!");
     }
     Gson gson = new Gson();
-    OrderDto orderDto;
+    ApiOffer apiOffer;
     try {
-      orderDto = gson.fromJson(from, OrderDto.class);
+      apiOffer = gson.fromJson(from, ApiOffer.class);
     } catch (Exception e) {
       throw new DataMappingException("Ошибка маппинга: не удалось распарсить JSON!", e);
     }
-    if (orderDto.route == null) {
+    if (apiOffer.getRoute() == null) {
       throw new DataMappingException("Ошибка маппинга: маршрут не должен быть null!");
     }
-    if (orderDto.route.isEmpty()) {
+    if (apiOffer.getRoute().isEmpty()) {
       throw new DataMappingException(
           "Ошибка маппинга: маршрут должен содержать хотя бы одну точку!"
       );
     }
-    String address = orderDto.route.get(0).address;
+    String address = apiOffer.getRoute().get(0).getAddress();
     if (address == null) {
       throw new DataMappingException("Ошибка маппинга: адрес не должен быть null!");
     }
     if (address.isEmpty()) {
       throw new DataMappingException("Ошибка маппинга: адрес не должен быть пустым!");
     }
-    if (orderDto.executorDistance == null) {
+    if (apiOffer.getExecutorDistance() == null) {
       throw new DataMappingException("Ошибка маппинга: Дистанция не должна быть null!");
     }
-    String comment = orderDto.route.get(0).comment;
-    return new Offer(
-        orderDto.id,
-        orderDto.comment == null ? "" : orderDto.comment,
-        orderDto.executorDistance.distance,
-        orderDto.estimatedAmount,
+    String comment = apiOffer.getRoute().get(0).getComment();
+    Offer offer = new Offer(
+        apiOffer.getId(),
+        apiOffer.getComment() == null ? "" : apiOffer.getComment(),
+        apiOffer.getExecutorDistance().getDistance(),
+        apiOffer.getEstimatedAmount(),
         // TODO: это костыль, который подменяет таймаут 0 на 20
-        orderDto.timeout == 0 ? 20 : orderDto.timeout,
+        apiOffer.getTimeout() == 0 ? 20 : apiOffer.getTimeout(),
         new RoutePoint(
-            orderDto.route.get(0).latitude,
-            orderDto.route.get(0).longitude,
+            apiOffer.getRoute().get(0).getLatitude(),
+            apiOffer.getRoute().get(0).getLongitude(),
             comment == null ? "" : comment,
             address
         )
     );
-  }
-
-  @SuppressWarnings("unused")
-  private class DriverDistancePair {
-
-    int distance;
-  }
-
-  @SuppressWarnings("unused")
-  private class RPoint {
-
-    double longitude;
-    double latitude;
-    @Nullable
-    String comment;
-    @Nullable
-    String address;
-  }
-
-  @SuppressWarnings("unused")
-  private class OrderDto {
-
-    long id;
-    @Nullable
-    String estimatedAmount;
-    @Nullable
-    String comment;
-    int timeout;
-    @Nullable
-    DriverDistancePair executorDistance;
-    @Nullable
-    List<RPoint> route;
+    if (apiOffer.getOptions() != null && !apiOffer.getOptions().isEmpty()) {
+      for (ApiOptionItem vehicleOptionItem : apiOffer.getOptions()) {
+        offer.addOptions(apiOptionMapper.map(vehicleOptionItem));
+      }
+    }
+    return offer;
   }
 }
