@@ -40,6 +40,5 @@ public interface AppComponent {
 
   void inject(OfferFragment offerFragment);
 
-  @SuppressWarnings({"EmptyMethod", "unused"})
   void inject(OrderConfirmationFragment offerFragment);
 }
