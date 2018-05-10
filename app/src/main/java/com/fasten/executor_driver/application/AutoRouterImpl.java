@@ -40,7 +40,7 @@ public class AutoRouterImpl implements ActivityLifecycleCallbacks, AutoRouter {
         GeolocationResolutionActivity.class, MenuActivity.class, BalanceActivity.class,
         PaymentOptionsActivity.class
     ));
-    statusGroups.put(ExecutorStateNavigate.OFFER_CONFIRMATION, Arrays.asList(
+    statusGroups.put(ExecutorStateNavigate.DRIVER_ORDER_CONFIRMATION, Arrays.asList(
         OfferActivity.class, GeolocationResolutionActivity.class
     ));
   }
@@ -159,16 +159,16 @@ public class AutoRouterImpl implements ActivityLifecycleCallbacks, AutoRouter {
                 .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK)
         );
         break;
-      case ExecutorStateNavigate.OFFER_CONFIRMATION:
+      case ExecutorStateNavigate.DRIVER_ORDER_CONFIRMATION:
         currentActivity.startActivity(
             new Intent(currentActivity, OfferActivity.class)
                 .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK)
         );
         break;
-      case ExecutorStateNavigate.APPROACHING_LOAD_POINT:
+      case ExecutorStateNavigate.CLIENT_ORDER_CONFIRMATION:
         new Builder(currentActivity)
             .setTitle(R.string.error)
-            .setMessage("На пути к клиенту!")
+            .setMessage("Неизвестный статус!")
             .setCancelable(false)
             .setPositiveButton(
                 currentActivity.getString(android.R.string.ok),

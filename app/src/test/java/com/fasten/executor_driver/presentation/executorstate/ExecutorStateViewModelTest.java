@@ -187,30 +187,30 @@ public class ExecutorStateViewModelTest {
   public void navigateToOfferConfirmation() {
     // Дано:
     when(executorStateUseCase.getExecutorStates(anyBoolean()))
-        .thenReturn(Flowable.just(ExecutorState.ORDER_CONFIRMATION));
+        .thenReturn(Flowable.just(ExecutorState.DRIVER_ORDER_CONFIRMATION));
 
     // Действие:
     executorStateViewModel.getNavigationLiveData().observeForever(navigationObserver);
     executorStateViewModel.initializeExecutorState(true);
 
     // Результат:
-    verify(navigationObserver, only()).onChanged(ExecutorStateNavigate.OFFER_CONFIRMATION);
+    verify(navigationObserver, only()).onChanged(ExecutorStateNavigate.DRIVER_ORDER_CONFIRMATION);
   }
 
   /**
-   * Должен вернуть "перейти к движению к точке погрузки".
+   * Должен вернуть "перейти к ожиданию подтверждения клиента".
    */
   @Test
-  public void navigateToApproachingLoadPoint() {
+  public void navigateToWaitForClientConfirmation() {
     // Дано:
     when(executorStateUseCase.getExecutorStates(anyBoolean()))
-        .thenReturn(Flowable.just(ExecutorState.IN_PROGRESS));
+        .thenReturn(Flowable.just(ExecutorState.CLIENT_ORDER_CONFIRMATION));
 
     // Действие:
     executorStateViewModel.getNavigationLiveData().observeForever(navigationObserver);
     executorStateViewModel.initializeExecutorState(false);
 
     // Результат:
-    verify(navigationObserver, only()).onChanged(ExecutorStateNavigate.APPROACHING_LOAD_POINT);
+    verify(navigationObserver, only()).onChanged(ExecutorStateNavigate.CLIENT_ORDER_CONFIRMATION);
   }
 }

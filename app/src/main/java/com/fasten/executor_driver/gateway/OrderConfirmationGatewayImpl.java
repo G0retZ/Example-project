@@ -14,7 +14,7 @@ import io.reactivex.schedulers.Schedulers;
 import javax.inject.Inject;
 import ua.naiksoftware.stomp.client.StompClient;
 
-public class OfferGatewayImpl implements OfferGateway {
+public class OrderConfirmationGatewayImpl implements OfferGateway {
 
   @NonNull
   private final ExecutorStateUseCase executorStateUseCase;
@@ -24,7 +24,7 @@ public class OfferGatewayImpl implements OfferGateway {
   private final Mapper<String, Offer> mapper;
 
   @Inject
-  public OfferGatewayImpl(
+  public OrderConfirmationGatewayImpl(
       @NonNull ExecutorStateUseCase executorStateUseCase,
       @NonNull StompClient stompClient,
       @NonNull Mapper<String, Offer> mapper) {
@@ -40,7 +40,7 @@ public class OfferGatewayImpl implements OfferGateway {
         .getExecutorStates(false)
         .subscribeOn(Schedulers.single())
         .observeOn(Schedulers.computation())
-        .filter(executorState -> executorState == ExecutorState.DRIVER_ORDER_CONFIRMATION)
+        .filter(executorState -> executorState == ExecutorState.CLIENT_ORDER_CONFIRMATION)
         .map(executorState -> {
           if (executorState.getData() == null) {
             throw new NoOffersAvailableException();

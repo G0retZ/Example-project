@@ -13,8 +13,8 @@ import java.lang.annotation.RetentionPolicy;
     ExecutorStateNavigate.MAP_SHIFT_CLOSED,
     ExecutorStateNavigate.MAP_SHIFT_OPENED,
     ExecutorStateNavigate.MAP_ONLINE,
-    ExecutorStateNavigate.OFFER_CONFIRMATION,
-    ExecutorStateNavigate.APPROACHING_LOAD_POINT
+    ExecutorStateNavigate.DRIVER_ORDER_CONFIRMATION,
+    ExecutorStateNavigate.CLIENT_ORDER_CONFIRMATION
 })
 @Retention(RetentionPolicy.SOURCE)
 public @interface ExecutorStateNavigate {
@@ -30,7 +30,7 @@ public @interface ExecutorStateNavigate {
   // Переход к получению заказов.
   String MAP_ONLINE = "to.Map.Online";
   // Переход к исполнению заказа.
-  String OFFER_CONFIRMATION = "to.Offer.Confirmation";
-  // Переход к движению к точке погрузки.
-  String APPROACHING_LOAD_POINT = "to.Approaching.Load.Point";
+  String DRIVER_ORDER_CONFIRMATION = "to.Driver.Order.Confirmation";
+  // Переход к ожиданию подтверждения клиентом.
+  String CLIENT_ORDER_CONFIRMATION = "to.Client.Order.Confirmation";
 }

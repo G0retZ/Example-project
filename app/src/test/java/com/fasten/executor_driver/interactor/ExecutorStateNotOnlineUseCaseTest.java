@@ -117,7 +117,7 @@ public class ExecutorStateNotOnlineUseCaseTest {
     when(executorStateUseCase.getExecutorStates(anyBoolean()))
         .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
     executorStateNotOnlineUseCase.getExecutorStates().test();
-    publishSubject.onNext(ExecutorState.ORDER_CONFIRMATION);
+    publishSubject.onNext(ExecutorState.DRIVER_ORDER_CONFIRMATION);
 
     // Действие:
     executorStateNotOnlineUseCase.setExecutorNotOnline().test();
@@ -127,16 +127,16 @@ public class ExecutorStateNotOnlineUseCaseTest {
   }
 
   /**
-   * Не должен трогать гейтвей передачи статусов, если последний статус был "на пути к точке погрузки".
+   * Не должен трогать гейтвей передачи статусов, если последний статус был "ожидание подтверждения клиента".
    */
   @Test
-  public void DoNotTouchGatewayIfApproachingLoadPoint() {
+  public void DoNotTouchGatewayIfWaitForClientConfirmation() {
     // Дано:
     PublishSubject<ExecutorState> publishSubject = PublishSubject.create();
     when(executorStateUseCase.getExecutorStates(anyBoolean()))
         .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
     executorStateNotOnlineUseCase.getExecutorStates().test();
-    publishSubject.onNext(ExecutorState.IN_PROGRESS);
+    publishSubject.onNext(ExecutorState.CLIENT_ORDER_CONFIRMATION);
 
     // Действие:
     executorStateNotOnlineUseCase.setExecutorNotOnline().test();
@@ -235,7 +235,7 @@ public class ExecutorStateNotOnlineUseCaseTest {
     when(executorStateUseCase.getExecutorStates(anyBoolean()))
         .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
     executorStateNotOnlineUseCase.getExecutorStates().test();
-    publishSubject.onNext(ExecutorState.ORDER_CONFIRMATION);
+    publishSubject.onNext(ExecutorState.DRIVER_ORDER_CONFIRMATION);
 
     // Действие:
     TestObserver<Void> testObserver =
@@ -251,13 +251,13 @@ public class ExecutorStateNotOnlineUseCaseTest {
    * Должен вернуть ошибку неподходящего статуса, если статус "на пути к точке погрузки".
    */
   @Test
-  public void answerForbiddenStatusErrorIfApproachingLoadPoint() {
+  public void answerForbiddenStatusErrorIfWaitForClientConfirmation() {
     // Дано:
     PublishSubject<ExecutorState> publishSubject = PublishSubject.create();
     when(executorStateUseCase.getExecutorStates(anyBoolean()))
         .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
     executorStateNotOnlineUseCase.getExecutorStates().test();
-    publishSubject.onNext(ExecutorState.IN_PROGRESS);
+    publishSubject.onNext(ExecutorState.CLIENT_ORDER_CONFIRMATION);
 
     // Действие:
     TestObserver<Void> testObserver =

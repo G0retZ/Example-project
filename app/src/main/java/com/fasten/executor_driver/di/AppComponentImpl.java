@@ -470,7 +470,8 @@ public class AppComponentImpl implements AppComponent {
                 new OfferViewModelImpl(
                     new OfferUseCaseImpl(
                         new OfferGatewayImpl(
-                            executorStateUseCase, stompClient, new OfferApiMapper()
+                            executorStateUseCase, stompClient,
+                            new OfferApiMapper(new VehicleOptionApiMapper())
                         )
                     ),
                     new TimeUtilsImpl()
