@@ -284,11 +284,11 @@ public class ExecutorStateApiMapperTest {
         Collections.singletonList(
             new StompHeader("Type", "Status")
         ),
-        "\nORDER_CONFIRMATION"
+        "\nDRIVER_ORDER_CONFIRMATION"
     ));
 
     // Результат:
-    assertEquals(executorState, ExecutorState.ORDER_CONFIRMATION);
+    assertEquals(executorState, ExecutorState.DRIVER_ORDER_CONFIRMATION);
     assertNull(executorState.getData());
   }
 
@@ -305,11 +305,11 @@ public class ExecutorStateApiMapperTest {
         Collections.singletonList(
             new StompHeader("Type", "Status")
         ),
-        "\n\"ORDER_CONFIRMATION\""
+        "\n\"DRIVER_ORDER_CONFIRMATION\""
     ));
 
     // Результат:
-    assertEquals(executorState, ExecutorState.ORDER_CONFIRMATION);
+    assertEquals(executorState, ExecutorState.DRIVER_ORDER_CONFIRMATION);
     assertNull(executorState.getData());
   }
 
@@ -324,13 +324,13 @@ public class ExecutorStateApiMapperTest {
     ExecutorState executorState = mapper.map(new StompMessage(
         "MESSAGE",
         Collections.singletonList(
-            new StompHeader("Status", "ORDER_CONFIRMATION")
+            new StompHeader("Status", "DRIVER_ORDER_CONFIRMATION")
         ),
         null
     ));
 
     // Результат:
-    assertEquals(executorState, ExecutorState.ORDER_CONFIRMATION);
+    assertEquals(executorState, ExecutorState.DRIVER_ORDER_CONFIRMATION);
     assertNull(executorState.getData());
   }
 
@@ -345,13 +345,13 @@ public class ExecutorStateApiMapperTest {
     ExecutorState executorState = mapper.map(new StompMessage(
         "MESSAGE",
         Collections.singletonList(
-            new StompHeader("Status", "ORDER_CONFIRMATION")
+            new StompHeader("Status", "DRIVER_ORDER_CONFIRMATION")
         ),
         "\npayload"
     ));
 
     // Результат:
-    assertEquals(executorState, ExecutorState.ORDER_CONFIRMATION);
+    assertEquals(executorState, ExecutorState.DRIVER_ORDER_CONFIRMATION);
     assertEquals(executorState.getData(), "\npayload");
   }
 
@@ -368,11 +368,11 @@ public class ExecutorStateApiMapperTest {
         Collections.singletonList(
             new StompHeader("Type", "Status")
         ),
-        "\nCLIENT_CONFIRMATION"
+        "\nCLIENT_ORDER_CONFIRMATION"
     ));
 
     // Результат:
-    assertEquals(executorState, ExecutorState.CLIENT_CONFIRMATION);
+    assertEquals(executorState, ExecutorState.CLIENT_ORDER_CONFIRMATION);
     assertNull(executorState.getData());
   }
 
@@ -389,11 +389,11 @@ public class ExecutorStateApiMapperTest {
         Collections.singletonList(
             new StompHeader("Type", "Status")
         ),
-        "\n\"CLIENT_CONFIRMATION\""
+        "\n\"CLIENT_ORDER_CONFIRMATION\""
     ));
 
     // Результат:
-    assertEquals(executorState, ExecutorState.CLIENT_CONFIRMATION);
+    assertEquals(executorState, ExecutorState.CLIENT_ORDER_CONFIRMATION);
     assertNull(executorState.getData());
   }
 
@@ -408,13 +408,13 @@ public class ExecutorStateApiMapperTest {
     ExecutorState executorState = mapper.map(new StompMessage(
         "MESSAGE",
         Collections.singletonList(
-            new StompHeader("Status", "CLIENT_CONFIRMATION")
+            new StompHeader("Status", "CLIENT_ORDER_CONFIRMATION")
         ),
         null
     ));
 
     // Результат:
-    assertEquals(executorState, ExecutorState.CLIENT_CONFIRMATION);
+    assertEquals(executorState, ExecutorState.CLIENT_ORDER_CONFIRMATION);
     assertNull(executorState.getData());
   }
 
@@ -429,13 +429,13 @@ public class ExecutorStateApiMapperTest {
     ExecutorState executorState = mapper.map(new StompMessage(
         "MESSAGE",
         Collections.singletonList(
-            new StompHeader("Status", "CLIENT_CONFIRMATION")
+            new StompHeader("Status", "CLIENT_ORDER_CONFIRMATION")
         ),
         "\npayload"
     ));
 
     // Результат:
-    assertEquals(executorState, ExecutorState.CLIENT_CONFIRMATION);
+    assertEquals(executorState, ExecutorState.CLIENT_ORDER_CONFIRMATION);
     assertEquals(executorState.getData(), "\npayload");
   }
 

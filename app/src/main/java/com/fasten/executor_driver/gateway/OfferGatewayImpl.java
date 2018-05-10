@@ -40,7 +40,7 @@ public class OfferGatewayImpl implements OfferGateway {
         .getExecutorStates(false)
         .subscribeOn(Schedulers.single())
         .observeOn(Schedulers.computation())
-        .filter(executorState -> executorState == ExecutorState.ORDER_CONFIRMATION)
+        .filter(executorState -> executorState == ExecutorState.DRIVER_ORDER_CONFIRMATION)
         .map(executorState -> {
           if (executorState.getData() == null) {
             throw new NoOffersAvailableException();

@@ -187,14 +187,14 @@ public class ExecutorStateViewModelTest {
   public void navigateToOfferConfirmation() {
     // Дано:
     when(executorStateUseCase.getExecutorStates(anyBoolean()))
-        .thenReturn(Flowable.just(ExecutorState.ORDER_CONFIRMATION));
+        .thenReturn(Flowable.just(ExecutorState.DRIVER_ORDER_CONFIRMATION));
 
     // Действие:
     executorStateViewModel.getNavigationLiveData().observeForever(navigationObserver);
     executorStateViewModel.initializeExecutorState(true);
 
     // Результат:
-    verify(navigationObserver, only()).onChanged(ExecutorStateNavigate.OFFER_CONFIRMATION);
+    verify(navigationObserver, only()).onChanged(ExecutorStateNavigate.DRIVER_ORDER_CONFIRMATION);
   }
 
   /**
@@ -204,13 +204,13 @@ public class ExecutorStateViewModelTest {
   public void navigateToWaitForClientConfirmation() {
     // Дано:
     when(executorStateUseCase.getExecutorStates(anyBoolean()))
-        .thenReturn(Flowable.just(ExecutorState.CLIENT_CONFIRMATION));
+        .thenReturn(Flowable.just(ExecutorState.CLIENT_ORDER_CONFIRMATION));
 
     // Действие:
     executorStateViewModel.getNavigationLiveData().observeForever(navigationObserver);
     executorStateViewModel.initializeExecutorState(false);
 
     // Результат:
-    verify(navigationObserver, only()).onChanged(ExecutorStateNavigate.CLIENT_CONFIRMATION);
+    verify(navigationObserver, only()).onChanged(ExecutorStateNavigate.CLIENT_ORDER_CONFIRMATION);
   }
 }
