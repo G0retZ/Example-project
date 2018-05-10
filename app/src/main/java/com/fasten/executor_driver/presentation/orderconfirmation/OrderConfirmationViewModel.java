@@ -5,7 +5,7 @@ import com.fasten.executor_driver.presentation.ViewModel;
 /**
  * ViewModel окна заказа.
  */
-interface OrderConfirmationViewModel extends ViewModel<OrderConfirmationViewActions> {
+public interface OrderConfirmationViewModel extends ViewModel<OrderConfirmationViewActions> {
 
   /**
    * Отказывается от заказа.

@@ -6,6 +6,7 @@ import com.fasten.executor_driver.view.GoOnlineFragment;
 import com.fasten.executor_driver.view.MapFragment;
 import com.fasten.executor_driver.view.OfferFragment;
 import com.fasten.executor_driver.view.OnlineFragment;
+import com.fasten.executor_driver.view.OrderConfirmationFragment;
 import com.fasten.executor_driver.view.SelectedVehicleFragment;
 import com.fasten.executor_driver.view.SelectedVehicleOptionsFragment;
 import com.fasten.executor_driver.view.ServicesFragment;
@@ -38,4 +39,7 @@ public interface AppComponent {
   void inject(ServicesFragment servicesFragment);
 
   void inject(OfferFragment offerFragment);
+
+  @SuppressWarnings({"EmptyMethod", "unused"})
+  void inject(OrderConfirmationFragment offerFragment);
 }
