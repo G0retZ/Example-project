@@ -35,7 +35,7 @@ import ua.naiksoftware.stomp.client.StompClient;
 @RunWith(MockitoJUnitRunner.class)
 public class OfferGatewayTest {
 
-  private OfferGateway executorStateGateway;
+  private OfferGateway offerGateway;
   @Mock
   private StompClient stompClient;
   @Mock
@@ -53,7 +53,7 @@ public class OfferGatewayTest {
     ExecutorState.ORDER_CONFIRMATION.setData(null);
     when(stompClient.send(anyString(), anyString())).thenReturn(Completable.never());
     when(executorStateUseCase.getExecutorStates(anyBoolean())).thenReturn(Flowable.never());
-    executorStateGateway = new OfferGatewayImpl(executorStateUseCase, stompClient, mapper);
+    offerGateway = new OfferGatewayImpl(executorStateUseCase, stompClient, mapper);
   }
 
   /* Проверяем работу с с юзкейсом статусов */
@@ -64,7 +64,7 @@ public class OfferGatewayTest {
   @Test
   public void askExecutorStateUseCaseForStatusUpdates() {
     // Действие:
-    executorStateGateway.getOffers().test();
+    offerGateway.getOffers().test();
 
     // Результат:
     verify(executorStateUseCase, only()).getExecutorStates(false);
@@ -83,8 +83,8 @@ public class OfferGatewayTest {
     when(offer.getId()).thenReturn(7L);
 
     // Действие:
-    executorStateGateway.sendDecision(offer, false).test();
-    executorStateGateway.sendDecision(offer, true).test();
+    offerGateway.sendDecision(offer, false).test();
+    offerGateway.sendDecision(offer, true).test();
 
     // Результат:
     inOrder.verify(stompClient).isConnected();
@@ -105,8 +105,8 @@ public class OfferGatewayTest {
     InOrder inOrder = Mockito.inOrder(stompClient);
 
     // Действие:
-    executorStateGateway.sendDecision(offer, false).test();
-    executorStateGateway.sendDecision(offer, true).test();
+    offerGateway.sendDecision(offer, false).test();
+    offerGateway.sendDecision(offer, true).test();
 
     // Результат:
     inOrder.verify(stompClient).isConnected();
@@ -127,8 +127,8 @@ public class OfferGatewayTest {
     when(offer.getId()).thenReturn(7L);
 
     // Действие:
-    executorStateGateway.sendDecision(offer, false).test();
-    executorStateGateway.sendDecision(offer, true).test();
+    offerGateway.sendDecision(offer, false).test();
+    offerGateway.sendDecision(offer, true).test();
 
     // Результат:
     inOrder.verify(stompClient).isConnected();
@@ -154,7 +154,7 @@ public class OfferGatewayTest {
         .thenReturn(Flowable.just(ExecutorState.SHIFT_CLOSED));
 
     // Действие:
-    executorStateGateway.getOffers().test();
+    offerGateway.getOffers().test();
 
     // Результат:
     verifyZeroInteractions(mapper);
@@ -170,7 +170,7 @@ public class OfferGatewayTest {
         .thenReturn(Flowable.just(ExecutorState.SHIFT_OPENED));
 
     // Действие:
-    executorStateGateway.getOffers().test();
+    offerGateway.getOffers().test();
 
     // Результат:
     verifyZeroInteractions(mapper);
@@ -186,7 +186,7 @@ public class OfferGatewayTest {
         .thenReturn(Flowable.just(ExecutorState.ONLINE));
 
     // Действие:
-    executorStateGateway.getOffers().test();
+    offerGateway.getOffers().test();
 
     // Результат:
     verifyZeroInteractions(mapper);
@@ -202,7 +202,7 @@ public class OfferGatewayTest {
         .thenReturn(Flowable.just(ExecutorState.CLIENT_CONFIRMATION));
 
     // Действие:
-    executorStateGateway.getOffers().test();
+    offerGateway.getOffers().test();
 
     // Результат:
     verifyZeroInteractions(mapper);
@@ -218,7 +218,7 @@ public class OfferGatewayTest {
         .thenReturn(Flowable.just(ExecutorState.ORDER_CONFIRMATION));
 
     // Действие:
-    executorStateGateway.getOffers().test();
+    offerGateway.getOffers().test();
 
     // Результат:
     verifyZeroInteractions(mapper);
@@ -237,7 +237,7 @@ public class OfferGatewayTest {
         .thenReturn(Flowable.just(ExecutorState.ORDER_CONFIRMATION));
 
     // Действие:
-    executorStateGateway.getOffers().test();
+    offerGateway.getOffers().test();
 
     // Результат:
     verify(mapper, only()).map("");
@@ -257,7 +257,7 @@ public class OfferGatewayTest {
         .thenReturn(Flowable.just(ExecutorState.SHIFT_CLOSED));
 
     // Действие:
-    TestSubscriber<Offer> testSubscriber = executorStateGateway.getOffers().test();
+    TestSubscriber<Offer> testSubscriber = offerGateway.getOffers().test();
 
     // Результат:
     testSubscriber.assertNoValues();
@@ -275,7 +275,7 @@ public class OfferGatewayTest {
         .thenReturn(Flowable.just(ExecutorState.SHIFT_OPENED));
 
     // Действие:
-    TestSubscriber<Offer> testSubscriber = executorStateGateway.getOffers().test();
+    TestSubscriber<Offer> testSubscriber = offerGateway.getOffers().test();
 
     // Результат:
     testSubscriber.assertNoValues();
@@ -293,7 +293,7 @@ public class OfferGatewayTest {
         .thenReturn(Flowable.just(ExecutorState.ONLINE));
 
     // Действие:
-    TestSubscriber<Offer> testSubscriber = executorStateGateway.getOffers().test();
+    TestSubscriber<Offer> testSubscriber = offerGateway.getOffers().test();
 
     // Результат:
     testSubscriber.assertNoValues();
@@ -311,7 +311,7 @@ public class OfferGatewayTest {
         .thenReturn(Flowable.just(ExecutorState.CLIENT_CONFIRMATION));
 
     // Действие:
-    TestSubscriber<Offer> testSubscriber = executorStateGateway.getOffers().test();
+    TestSubscriber<Offer> testSubscriber = offerGateway.getOffers().test();
 
     // Результат:
     testSubscriber.assertNoValues();
@@ -329,7 +329,7 @@ public class OfferGatewayTest {
         .thenReturn(Flowable.just(ExecutorState.ORDER_CONFIRMATION));
 
     // Действие:
-    TestSubscriber<Offer> testSubscriber = executorStateGateway.getOffers().test();
+    TestSubscriber<Offer> testSubscriber = offerGateway.getOffers().test();
 
     // Результат:
     testSubscriber.assertNoValues();
@@ -351,7 +351,7 @@ public class OfferGatewayTest {
         .thenReturn(Flowable.just(ExecutorState.ORDER_CONFIRMATION));
 
     // Действие:
-    TestSubscriber<Offer> testSubscriber = executorStateGateway.getOffers().test();
+    TestSubscriber<Offer> testSubscriber = offerGateway.getOffers().test();
 
     // Результат:
     testSubscriber.assertNoValues();
@@ -373,7 +373,7 @@ public class OfferGatewayTest {
         .thenReturn(Flowable.just(ExecutorState.ORDER_CONFIRMATION));
 
     // Действие:
-    TestSubscriber<Offer> testSubscriber = executorStateGateway.getOffers().test();
+    TestSubscriber<Offer> testSubscriber = offerGateway.getOffers().test();
 
     // Результат:
     testSubscriber.assertNoErrors();
@@ -391,7 +391,7 @@ public class OfferGatewayTest {
     when(stompClient.send(anyString(), anyString())).thenReturn(Completable.complete());
 
     // Действие:
-    TestObserver<Void> testObserver = executorStateGateway.sendDecision(offer, false).test();
+    TestObserver<Void> testObserver = offerGateway.sendDecision(offer, false).test();
 
     // Результат:
     testObserver.assertNoErrors();
@@ -409,7 +409,7 @@ public class OfferGatewayTest {
         .thenReturn(Completable.error(new NoNetworkException()));
 
     // Действие:
-    TestObserver<Void> testObserver = executorStateGateway.sendDecision(offer, false).test();
+    TestObserver<Void> testObserver = offerGateway.sendDecision(offer, false).test();
 
     // Результат:
     testObserver.assertNotComplete();
@@ -422,7 +422,7 @@ public class OfferGatewayTest {
   @Test
   public void answerSendDecisionErrorIfNotConnectedAndNotConnecting() {
     // Действие:
-    TestObserver<Void> testObserver = executorStateGateway.sendDecision(offer, false).test();
+    TestObserver<Void> testObserver = offerGateway.sendDecision(offer, false).test();
 
     // Результат:
     testObserver.assertNotComplete();
@@ -439,7 +439,7 @@ public class OfferGatewayTest {
     when(stompClient.send(anyString(), anyString())).thenReturn(Completable.complete());
 
     // Действие:
-    TestObserver<Void> testObserver = executorStateGateway.sendDecision(offer, false).test();
+    TestObserver<Void> testObserver = offerGateway.sendDecision(offer, false).test();
 
     // Результат:
     testObserver.assertNoErrors();
@@ -457,7 +457,7 @@ public class OfferGatewayTest {
         .thenReturn(Completable.error(new ConnectionClosedException()));
 
     // Действие:
-    TestObserver<Void> testObserver = executorStateGateway.sendDecision(offer, false).test();
+    TestObserver<Void> testObserver = offerGateway.sendDecision(offer, false).test();
 
     // Результат:
     testObserver.assertNotComplete();
