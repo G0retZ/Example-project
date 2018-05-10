@@ -10,6 +10,7 @@ import com.fasten.executor_driver.entity.OptionNumeric;
 import com.fasten.executor_driver.entity.RoutePoint;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Locale;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -57,7 +58,8 @@ public class OrderConfirmationItemTest {
         "https://maps.googleapis.com/maps/api/staticmap?center=5.421,10.2341&zoom=16&size=360x304&maptype=roadmap&key=AIzaSyC20FZNHJqrQH5UhypeUy3thpqII33QBPI");
     assertEquals(orderConfirmationItem.getPrice(), "7000");
     assertEquals(orderConfirmationItem.getAddress(), "add");
-    assertEquals(orderConfirmationItem.getDistance(), "12,24");
+    assertEquals(orderConfirmationItem.getDistance(),
+        String.format(Locale.getDefault(), "%.2f", 12.24f));
     assertEquals(orderConfirmationItem.getOfferComment(), "com");
     assertEquals(orderConfirmationItem.getEstimatedPrice(), "7000");
     assertEquals(orderConfirmationItem.getOrderOptionsRequired(),
