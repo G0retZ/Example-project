@@ -68,7 +68,7 @@ public class OrderConfirmationFragment extends BaseFragment implements
     optionsText = view.findViewById(R.id.optionsText);
     priceTitleText = view.findViewById(R.id.priceTitleText);
     priceText = view.findViewById(R.id.priceText);
-    declineAction.setOnClickListener(v -> orderConfirmationViewModel.cancelOrder());
+//    declineAction.setOnClickListener(v -> orderConfirmationViewModel.cancelOrder());
     return view;
   }
 
