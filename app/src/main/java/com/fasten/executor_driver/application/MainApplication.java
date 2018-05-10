@@ -108,7 +108,7 @@ public class MainApplication extends Application {
         startService(R.string.offer, R.string.new_offer, R.string.consider,
             PendingIntent.getActivity(this, 0, new Intent(this, OfferActivity.class), 0));
         break;
-      case ExecutorStateNavigate.APPROACHING_LOAD_POINT:
+      case ExecutorStateNavigate.CLIENT_CONFIRMATION:
         startService(R.string.online, R.string.executing, R.string.to_app,
             PendingIntent.getActivity(this, 0, new Intent(this, OnlineActivity.class), 0));
         break;

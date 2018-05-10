@@ -61,8 +61,8 @@ public class ExecutorStateViewModelImpl extends ViewModel implements ExecutorSta
                 case ORDER_CONFIRMATION:
                   navigateLiveData.postValue(ExecutorStateNavigate.OFFER_CONFIRMATION);
                   break;
-                case IN_PROGRESS:
-                  navigateLiveData.postValue(ExecutorStateNavigate.APPROACHING_LOAD_POINT);
+                case CLIENT_CONFIRMATION:
+                  navigateLiveData.postValue(ExecutorStateNavigate.CLIENT_CONFIRMATION);
                   break;
               }
             },

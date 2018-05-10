@@ -356,86 +356,86 @@ public class ExecutorStateApiMapperTest {
   }
 
   /**
-   * Должен успешно преобразовать тело в статус "на пути к точке погрузки".
+   * Должен успешно преобразовать тело в статус "ожидание подтверждения клиента".
    *
    * @throws Exception ошибка
    */
   @Test
-  public void mappingPayloadToApproachingLoadPoint() throws Exception {
+  public void mappingPayloadToWaitForClientConfirmation() throws Exception {
     // Дано и Действие:
     ExecutorState executorState = mapper.map(new StompMessage(
         "MESSAGE",
         Collections.singletonList(
             new StompHeader("Type", "Status")
         ),
-        "\nIN_PROGRESS"
+        "\nCLIENT_CONFIRMATION"
     ));
 
     // Результат:
-    assertEquals(executorState, ExecutorState.IN_PROGRESS);
+    assertEquals(executorState, ExecutorState.CLIENT_CONFIRMATION);
     assertNull(executorState.getData());
   }
 
   /**
-   * Должен успешно преобразовать тело с кавычками в статус "на пути к точке погрузки".
+   * Должен успешно преобразовать тело с кавычками в статус "ожидание подтверждения клиента".
    *
    * @throws Exception ошибка
    */
   @Test
-  public void mappingQuotedPayloadToApproachingLoadPoint() throws Exception {
+  public void mappingQuotedPayloadToWaitForClientConfirmation() throws Exception {
     // Дано и Действие:
     ExecutorState executorState = mapper.map(new StompMessage(
         "MESSAGE",
         Collections.singletonList(
             new StompHeader("Type", "Status")
         ),
-        "\n\"IN_PROGRESS\""
+        "\n\"CLIENT_CONFIRMATION\""
     ));
 
     // Результат:
-    assertEquals(executorState, ExecutorState.IN_PROGRESS);
+    assertEquals(executorState, ExecutorState.CLIENT_CONFIRMATION);
     assertNull(executorState.getData());
   }
 
   /**
-   * Должен успешно преобразовать строку из хедера в статус "на пути к точке погрузки".
+   * Должен успешно преобразовать строку из хедера в статус "ожидание подтверждения клиента".
    *
    * @throws Exception ошибка
    */
   @Test
-  public void mappingHeaderToApproachingLoadPoint() throws Exception {
+  public void mappingHeaderToWaitForClientConfirmation() throws Exception {
     // Дано и Действие:
     ExecutorState executorState = mapper.map(new StompMessage(
         "MESSAGE",
         Collections.singletonList(
-            new StompHeader("Status", "IN_PROGRESS")
+            new StompHeader("Status", "CLIENT_CONFIRMATION")
         ),
         null
     ));
 
     // Результат:
-    assertEquals(executorState, ExecutorState.IN_PROGRESS);
+    assertEquals(executorState, ExecutorState.CLIENT_CONFIRMATION);
     assertNull(executorState.getData());
   }
 
   /**
-   * Должен успешно преобразовать строку из хедера и тело в статус "на пути к точке погрузки" с данными.
+   * Должен успешно преобразовать строку из хедера и тело в статус "ожидание подтверждения клиента" с данными.
    *
    * @throws Exception ошибка
    */
   @Test
-  public void mappingHeaderWithPayloadToApproachingLoadPointWithData() throws Exception {
+  public void mappingHeaderWithPayloadToWaitForClientConfirmation() throws Exception {
     // Дано и Действие:
     ExecutorState executorState = mapper.map(new StompMessage(
         "MESSAGE",
         Collections.singletonList(
-            new StompHeader("Status", "IN_PROGRESS")
+            new StompHeader("Status", "CLIENT_CONFIRMATION")
         ),
         "\npayload"
     ));
 
     // Результат:
-    assertEquals(executorState, ExecutorState.IN_PROGRESS);
+    assertEquals(executorState, ExecutorState.CLIENT_CONFIRMATION);
     assertEquals(executorState.getData(), "\npayload");
   }
 

@@ -25,7 +25,7 @@ public enum ExecutorState {
   /**
    * Водитель "на пути к точке погрузки". В этом состоянии водитель направляется к точке погрузки.
    */
-  IN_PROGRESS;
+  CLIENT_CONFIRMATION;
 
   @Nullable
   private String data;

@@ -204,15 +204,15 @@ public class OnlineSwitchViewModelTest {
   }
 
   /**
-   * Должен вернуть состояние ожидания с неактивным переключателем для "на пути к точке погрузки".
+   * Должен вернуть состояние ожидания с неактивным переключателем для "ожидание подтверждения клиента".
    */
   @Test
-  public void setUncheckedPendingViewStateForApproachingLoadPoint() {
+  public void setUncheckedPendingViewStateForWaitForClientConfirmation() {
     // Дано:
     onlineSwitchViewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    publishSubject.onNext(ExecutorState.IN_PROGRESS);
+    publishSubject.onNext(ExecutorState.CLIENT_CONFIRMATION);
 
     // Результат:
     verify(viewStateObserver, times(2))

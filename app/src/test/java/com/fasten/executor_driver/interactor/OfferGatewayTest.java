@@ -193,13 +193,13 @@ public class OfferGatewayTest {
   }
 
   /**
-   * Не должен трогать маппер, если не пришел статус "на пути к точке погрузки".
+   * Не должен трогать маппер, если не пришел статус "ожидание подтверждения клиента".
    */
   @Test
-  public void doNotTouchMapperIfApproachingLoadPoint() {
+  public void doNotTouchMapperIfWaitForClientConfirmation() {
     // Дано:
     when(executorStateUseCase.getExecutorStates(anyBoolean()))
-        .thenReturn(Flowable.just(ExecutorState.IN_PROGRESS));
+        .thenReturn(Flowable.just(ExecutorState.CLIENT_CONFIRMATION));
 
     // Действие:
     executorStateGateway.getOffers().test();
@@ -305,10 +305,10 @@ public class OfferGatewayTest {
    * Должен ответить ошибкой отсутствия заказов для статуса "на пути к точке погрузки".
    */
   @Test
-  public void ignoreForApproachingLoadPoint() {
+  public void ignoreForWaitForClientConfirmation() {
     // Дано:
     when(executorStateUseCase.getExecutorStates(anyBoolean()))
-        .thenReturn(Flowable.just(ExecutorState.IN_PROGRESS));
+        .thenReturn(Flowable.just(ExecutorState.CLIENT_CONFIRMATION));
 
     // Действие:
     TestSubscriber<Offer> testSubscriber = executorStateGateway.getOffers().test();

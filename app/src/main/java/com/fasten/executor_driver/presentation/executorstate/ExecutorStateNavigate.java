@@ -14,7 +14,7 @@ import java.lang.annotation.RetentionPolicy;
     ExecutorStateNavigate.MAP_SHIFT_OPENED,
     ExecutorStateNavigate.MAP_ONLINE,
     ExecutorStateNavigate.OFFER_CONFIRMATION,
-    ExecutorStateNavigate.APPROACHING_LOAD_POINT
+    ExecutorStateNavigate.CLIENT_CONFIRMATION
 })
 @Retention(RetentionPolicy.SOURCE)
 public @interface ExecutorStateNavigate {
@@ -31,6 +31,6 @@ public @interface ExecutorStateNavigate {
   String MAP_ONLINE = "to.Map.Online";
   // Переход к исполнению заказа.
   String OFFER_CONFIRMATION = "to.Offer.Confirmation";
-  // Переход к движению к точке погрузки.
-  String APPROACHING_LOAD_POINT = "to.Approaching.Load.Point";
+  // Переход к ожиданию подтверждения клиентом.
+  String CLIENT_CONFIRMATION = "to.Client.Confirmation";
 }
