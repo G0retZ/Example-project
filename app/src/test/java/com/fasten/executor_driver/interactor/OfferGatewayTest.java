@@ -50,7 +50,7 @@ public class OfferGatewayTest {
     RxJavaPlugins.setComputationSchedulerHandler(scheduler -> Schedulers.trampoline());
     RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
     RxJavaPlugins.setIoSchedulerHandler(scheduler -> Schedulers.trampoline());
-    ExecutorState.ORDER_CONFIRMATION.setData(null);
+    ExecutorState.DRIVER_ORDER_CONFIRMATION.setData(null);
     when(stompClient.send(anyString(), anyString())).thenReturn(Completable.never());
     when(executorStateUseCase.getExecutorStates(anyBoolean())).thenReturn(Flowable.never());
     offerGateway = new OfferGatewayImpl(executorStateUseCase, stompClient, mapper);
@@ -199,7 +199,7 @@ public class OfferGatewayTest {
   public void doNotTouchMapperIfWaitForClientConfirmation() {
     // Дано:
     when(executorStateUseCase.getExecutorStates(anyBoolean()))
-        .thenReturn(Flowable.just(ExecutorState.CLIENT_CONFIRMATION));
+        .thenReturn(Flowable.just(ExecutorState.CLIENT_ORDER_CONFIRMATION));
 
     // Действие:
     offerGateway.getOffers().test();
@@ -215,7 +215,7 @@ public class OfferGatewayTest {
   public void doNotTouchMapperIfNoData() {
     // Дано:
     when(executorStateUseCase.getExecutorStates(anyBoolean()))
-        .thenReturn(Flowable.just(ExecutorState.ORDER_CONFIRMATION));
+        .thenReturn(Flowable.just(ExecutorState.DRIVER_ORDER_CONFIRMATION));
 
     // Действие:
     offerGateway.getOffers().test();
@@ -232,9 +232,9 @@ public class OfferGatewayTest {
   @Test
   public void askForMappingForData() throws Exception {
     // Дано:
-    ExecutorState.ORDER_CONFIRMATION.setData("");
+    ExecutorState.DRIVER_ORDER_CONFIRMATION.setData("");
     when(executorStateUseCase.getExecutorStates(anyBoolean()))
-        .thenReturn(Flowable.just(ExecutorState.ORDER_CONFIRMATION));
+        .thenReturn(Flowable.just(ExecutorState.DRIVER_ORDER_CONFIRMATION));
 
     // Действие:
     offerGateway.getOffers().test();
@@ -308,7 +308,7 @@ public class OfferGatewayTest {
   public void ignoreForWaitForClientConfirmation() {
     // Дано:
     when(executorStateUseCase.getExecutorStates(anyBoolean()))
-        .thenReturn(Flowable.just(ExecutorState.CLIENT_CONFIRMATION));
+        .thenReturn(Flowable.just(ExecutorState.CLIENT_ORDER_CONFIRMATION));
 
     // Действие:
     TestSubscriber<Offer> testSubscriber = offerGateway.getOffers().test();
@@ -326,7 +326,7 @@ public class OfferGatewayTest {
   public void answerNoOffersAvailableForNoData() {
     // Дано:
     when(executorStateUseCase.getExecutorStates(anyBoolean()))
-        .thenReturn(Flowable.just(ExecutorState.ORDER_CONFIRMATION));
+        .thenReturn(Flowable.just(ExecutorState.DRIVER_ORDER_CONFIRMATION));
 
     // Действие:
     TestSubscriber<Offer> testSubscriber = offerGateway.getOffers().test();
@@ -346,9 +346,9 @@ public class OfferGatewayTest {
   public void answerDataMappingError() throws Exception {
     // Дано:
     doThrow(new DataMappingException()).when(mapper).map(anyString());
-    ExecutorState.ORDER_CONFIRMATION.setData("");
+    ExecutorState.DRIVER_ORDER_CONFIRMATION.setData("");
     when(executorStateUseCase.getExecutorStates(anyBoolean()))
-        .thenReturn(Flowable.just(ExecutorState.ORDER_CONFIRMATION));
+        .thenReturn(Flowable.just(ExecutorState.DRIVER_ORDER_CONFIRMATION));
 
     // Действие:
     TestSubscriber<Offer> testSubscriber = offerGateway.getOffers().test();
@@ -368,9 +368,9 @@ public class OfferGatewayTest {
   public void answerWithOffer() throws Exception {
     // Дано:
     when(mapper.map(anyString())).thenReturn(offer);
-    ExecutorState.ORDER_CONFIRMATION.setData("");
+    ExecutorState.DRIVER_ORDER_CONFIRMATION.setData("");
     when(executorStateUseCase.getExecutorStates(anyBoolean()))
-        .thenReturn(Flowable.just(ExecutorState.ORDER_CONFIRMATION));
+        .thenReturn(Flowable.just(ExecutorState.DRIVER_ORDER_CONFIRMATION));
 
     // Действие:
     TestSubscriber<Offer> testSubscriber = offerGateway.getOffers().test();

@@ -195,7 +195,7 @@ public class OnlineSwitchViewModelTest {
     onlineSwitchViewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    publishSubject.onNext(ExecutorState.ORDER_CONFIRMATION);
+    publishSubject.onNext(ExecutorState.DRIVER_ORDER_CONFIRMATION);
 
     // Результат:
     verify(viewStateObserver, times(2))
@@ -212,7 +212,7 @@ public class OnlineSwitchViewModelTest {
     onlineSwitchViewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    publishSubject.onNext(ExecutorState.CLIENT_CONFIRMATION);
+    publishSubject.onNext(ExecutorState.CLIENT_ORDER_CONFIRMATION);
 
     // Результат:
     verify(viewStateObserver, times(2))

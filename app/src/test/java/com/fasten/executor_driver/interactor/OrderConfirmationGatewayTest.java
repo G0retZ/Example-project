@@ -50,7 +50,7 @@ public class OrderConfirmationGatewayTest {
     RxJavaPlugins.setComputationSchedulerHandler(scheduler -> Schedulers.trampoline());
     RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
     RxJavaPlugins.setIoSchedulerHandler(scheduler -> Schedulers.trampoline());
-    ExecutorState.CLIENT_CONFIRMATION.setData(null);
+    ExecutorState.CLIENT_ORDER_CONFIRMATION.setData(null);
     when(stompClient.send(anyString(), anyString())).thenReturn(Completable.never());
     when(executorStateUseCase.getExecutorStates(anyBoolean())).thenReturn(Flowable.never());
     orderConfirmationGateway = new OrderConfirmationGatewayImpl(executorStateUseCase, stompClient,
@@ -200,7 +200,7 @@ public class OrderConfirmationGatewayTest {
   public void doNotTouchMapperIfOfferConfirmation() {
     // Дано:
     when(executorStateUseCase.getExecutorStates(anyBoolean()))
-        .thenReturn(Flowable.just(ExecutorState.ORDER_CONFIRMATION));
+        .thenReturn(Flowable.just(ExecutorState.DRIVER_ORDER_CONFIRMATION));
 
     // Действие:
     orderConfirmationGateway.getOffers().test();
@@ -216,7 +216,7 @@ public class OrderConfirmationGatewayTest {
   public void doNotTouchMapperIfNoData() {
     // Дано:
     when(executorStateUseCase.getExecutorStates(anyBoolean()))
-        .thenReturn(Flowable.just(ExecutorState.CLIENT_CONFIRMATION));
+        .thenReturn(Flowable.just(ExecutorState.CLIENT_ORDER_CONFIRMATION));
 
     // Действие:
     orderConfirmationGateway.getOffers().test();
@@ -233,9 +233,9 @@ public class OrderConfirmationGatewayTest {
   @Test
   public void askForMappingForData() throws Exception {
     // Дано:
-    ExecutorState.CLIENT_CONFIRMATION.setData("");
+    ExecutorState.CLIENT_ORDER_CONFIRMATION.setData("");
     when(executorStateUseCase.getExecutorStates(anyBoolean()))
-        .thenReturn(Flowable.just(ExecutorState.CLIENT_CONFIRMATION));
+        .thenReturn(Flowable.just(ExecutorState.CLIENT_ORDER_CONFIRMATION));
 
     // Действие:
     orderConfirmationGateway.getOffers().test();
@@ -309,7 +309,7 @@ public class OrderConfirmationGatewayTest {
   public void ignoreForOfferConfirmation() {
     // Дано:
     when(executorStateUseCase.getExecutorStates(anyBoolean()))
-        .thenReturn(Flowable.just(ExecutorState.ORDER_CONFIRMATION));
+        .thenReturn(Flowable.just(ExecutorState.DRIVER_ORDER_CONFIRMATION));
 
     // Действие:
     TestSubscriber<Offer> testSubscriber = orderConfirmationGateway.getOffers().test();
@@ -327,7 +327,7 @@ public class OrderConfirmationGatewayTest {
   public void answerNoOffersAvailableForNoData() {
     // Дано:
     when(executorStateUseCase.getExecutorStates(anyBoolean()))
-        .thenReturn(Flowable.just(ExecutorState.CLIENT_CONFIRMATION));
+        .thenReturn(Flowable.just(ExecutorState.CLIENT_ORDER_CONFIRMATION));
 
     // Действие:
     TestSubscriber<Offer> testSubscriber = orderConfirmationGateway.getOffers().test();
@@ -347,9 +347,9 @@ public class OrderConfirmationGatewayTest {
   public void answerDataMappingError() throws Exception {
     // Дано:
     doThrow(new DataMappingException()).when(mapper).map(anyString());
-    ExecutorState.CLIENT_CONFIRMATION.setData("");
+    ExecutorState.CLIENT_ORDER_CONFIRMATION.setData("");
     when(executorStateUseCase.getExecutorStates(anyBoolean()))
-        .thenReturn(Flowable.just(ExecutorState.CLIENT_CONFIRMATION));
+        .thenReturn(Flowable.just(ExecutorState.CLIENT_ORDER_CONFIRMATION));
 
     // Действие:
     TestSubscriber<Offer> testSubscriber = orderConfirmationGateway.getOffers().test();
@@ -369,9 +369,9 @@ public class OrderConfirmationGatewayTest {
   public void answerWithOffer() throws Exception {
     // Дано:
     when(mapper.map(anyString())).thenReturn(offer);
-    ExecutorState.CLIENT_CONFIRMATION.setData("");
+    ExecutorState.CLIENT_ORDER_CONFIRMATION.setData("");
     when(executorStateUseCase.getExecutorStates(anyBoolean()))
-        .thenReturn(Flowable.just(ExecutorState.CLIENT_CONFIRMATION));
+        .thenReturn(Flowable.just(ExecutorState.CLIENT_ORDER_CONFIRMATION));
 
     // Действие:
     TestSubscriber<Offer> testSubscriber = orderConfirmationGateway.getOffers().test();
