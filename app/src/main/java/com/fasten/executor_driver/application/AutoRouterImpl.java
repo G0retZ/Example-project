@@ -43,6 +43,9 @@ public class AutoRouterImpl implements ActivityLifecycleCallbacks, AutoRouter {
     statusGroups.put(ExecutorStateNavigate.DRIVER_ORDER_CONFIRMATION, Arrays.asList(
         OfferActivity.class, GeolocationResolutionActivity.class
     ));
+    statusGroups.put(ExecutorStateNavigate.CLIENT_ORDER_CONFIRMATION, Arrays.asList(
+        OrderConfirmationActivity.class, GeolocationResolutionActivity.class
+    ));
   }
 
   @Nullable
@@ -166,6 +169,12 @@ public class AutoRouterImpl implements ActivityLifecycleCallbacks, AutoRouter {
         );
         break;
       case ExecutorStateNavigate.CLIENT_ORDER_CONFIRMATION:
+        currentActivity.startActivity(
+            new Intent(currentActivity, OrderConfirmationActivity.class)
+                .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK)
+        );
+        break;
+      default:
         new Builder(currentActivity)
             .setTitle(R.string.error)
             .setMessage("Неизвестный статус!")
@@ -176,8 +185,6 @@ public class AutoRouterImpl implements ActivityLifecycleCallbacks, AutoRouter {
             )
             .create()
             .show();
-        break;
-      default:
         return;
     }
     // Если переход сработал, то обнуляем направление. Если нет, то следующее активити попробует его обработать

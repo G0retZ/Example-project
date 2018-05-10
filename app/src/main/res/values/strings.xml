@@ -61,7 +61,7 @@
   <string name="sberbank">Сбербанк-онлайн</string>
   <string name="tariff_range">Тарифы, по которым вы готовы работать:</string>
   <string name="deselect_unwanted_services">Выключите услуги, которые вам не подходят:</string>
-  <string name="km">%1$dкм.</string>
+  <string name="km">%1$s км</string>
   <string name="porters">Грузчики</string>
   <string name="passengers">Пассажиры</string>
   <string name="comment">Коментарий</string>
@@ -71,4 +71,7 @@
   <string name="consider">Рассмотреть</string>
   <string name="proceed">Продолжить</string>
   <string name="done">Готово</string>
+  <string name="client_confirmation">Идет подтверждение у клиента.\nБудьте готовы начать заказ</string>
+  <string name="options">Опции</string>
+  <string name="cost">Цена</string>
 </resources>

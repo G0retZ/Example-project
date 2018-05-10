@@ -31,7 +31,7 @@ public class OrderConfirmationViewStateIdleTest {
   public void testActions() {
     // Дано:
     when(orderConfirmationItem.getAddress()).thenReturn("address");
-    when(orderConfirmationItem.getDistance()).thenReturn(123L);
+    when(orderConfirmationItem.getDistance()).thenReturn("123L");
     when(orderConfirmationItem.getLoadPointMapUrl()).thenReturn("url");
     when(orderConfirmationItem.getOfferComment()).thenReturn("comm");
     when(orderConfirmationItem.getEstimatedPrice()).thenReturn("1000");
@@ -42,7 +42,7 @@ public class OrderConfirmationViewStateIdleTest {
 
     // Результат:
     verify(orderConfirmationViewActions).showLoadPoint("url");
-    verify(orderConfirmationViewActions).showDistance(123L);
+    verify(orderConfirmationViewActions).showDistance("123L");
     verify(orderConfirmationViewActions).showLoadPointAddress("address");
     verify(orderConfirmationViewActions).showEstimatedPrice("1000");
     verify(orderConfirmationViewActions).showOrderOptionsRequirements("1,2,3");

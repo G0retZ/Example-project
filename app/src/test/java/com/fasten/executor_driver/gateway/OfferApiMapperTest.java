@@ -57,7 +57,7 @@ public class OfferApiMapperTest {
         + "            \"address\":\"add\"\n"
         + "        }\n"
         + "    ],\n"
-        + "    \"options\": [\n"
+        + "    \"optionsMobile\": [\n"
         + "        {\n"
         + "            \"id\": 56,\n"
         + "            \"name\": \"Грузчики\",\n"

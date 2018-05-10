@@ -31,6 +31,7 @@ import com.fasten.executor_driver.gateway.HeatMapGatewayImpl;
 import com.fasten.executor_driver.gateway.LastUsedVehicleGatewayImpl;
 import com.fasten.executor_driver.gateway.OfferApiMapper;
 import com.fasten.executor_driver.gateway.OfferGatewayImpl;
+import com.fasten.executor_driver.gateway.OrderConfirmationGatewayImpl;
 import com.fasten.executor_driver.gateway.PasswordGatewayImpl;
 import com.fasten.executor_driver.gateway.SelectedVehicleOptionsGatewayImpl;
 import com.fasten.executor_driver.gateway.ServiceApiMapper;
@@ -50,6 +51,7 @@ import com.fasten.executor_driver.interactor.GeoLocationUseCase;
 import com.fasten.executor_driver.interactor.GeoLocationUseCaseImpl;
 import com.fasten.executor_driver.interactor.MemoryDataSharer;
 import com.fasten.executor_driver.interactor.OfferUseCaseImpl;
+import com.fasten.executor_driver.interactor.OrderConfirmationUseCaseImpl;
 import com.fasten.executor_driver.interactor.auth.LoginSharer;
 import com.fasten.executor_driver.interactor.auth.LoginUseCaseImpl;
 import com.fasten.executor_driver.interactor.auth.PasswordUseCaseImpl;
@@ -74,6 +76,7 @@ import com.fasten.executor_driver.presentation.map.MapViewModelImpl;
 import com.fasten.executor_driver.presentation.offer.OfferViewModelImpl;
 import com.fasten.executor_driver.presentation.onlinebutton.OnlineButtonViewModelImpl;
 import com.fasten.executor_driver.presentation.onlineswitch.OnlineSwitchViewModelImpl;
+import com.fasten.executor_driver.presentation.orderconfirmation.OrderConfirmationViewModelImpl;
 import com.fasten.executor_driver.presentation.phone.PhoneViewModelImpl;
 import com.fasten.executor_driver.presentation.selectedvehicle.SelectedVehicleViewModelImpl;
 import com.fasten.executor_driver.presentation.services.ServicesListItems;
@@ -87,6 +90,7 @@ import com.fasten.executor_driver.view.GoOnlineFragment;
 import com.fasten.executor_driver.view.MapFragment;
 import com.fasten.executor_driver.view.OfferFragment;
 import com.fasten.executor_driver.view.OnlineFragment;
+import com.fasten.executor_driver.view.OrderConfirmationFragment;
 import com.fasten.executor_driver.view.SelectedVehicleFragment;
 import com.fasten.executor_driver.view.SelectedVehicleOptionsFragment;
 import com.fasten.executor_driver.view.ServicesFragment;
@@ -478,6 +482,25 @@ public class AppComponentImpl implements AppComponent {
                 )
             )
         ).get(OfferViewModelImpl.class)
+    );
+  }
+
+  @Override
+  public void inject(OrderConfirmationFragment orderConfirmationFragment) {
+    orderConfirmationFragment.setOrderConfirmationViewModel(
+        ViewModelProviders.of(
+            orderConfirmationFragment,
+            new ViewModelFactory<>(
+                new OrderConfirmationViewModelImpl(
+                    new OrderConfirmationUseCaseImpl(
+                        new OrderConfirmationGatewayImpl(
+                            executorStateUseCase, stompClient,
+                            new OfferApiMapper(new VehicleOptionApiMapper())
+                        )
+                    )
+                )
+            )
+        ).get(OrderConfirmationViewModelImpl.class)
     );
   }
 }

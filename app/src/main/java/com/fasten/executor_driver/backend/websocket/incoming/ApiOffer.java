@@ -24,7 +24,7 @@ public class ApiOffer {
   @SerializedName("route")
   private List<ApiRoutePoint> route;
   @Nullable
-  @SerializedName("options")
+  @SerializedName("optionsMobile")
   private List<ApiOptionItem> options;
 
   /**

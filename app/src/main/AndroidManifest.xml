@@ -69,6 +69,9 @@
     <activity
       android:launchMode="singleTop"
       android:name=".application.OfferActivity"/>
+    <activity
+      android:launchMode="singleTop"
+      android:name=".application.OrderConfirmationActivity"/>
 
     <service
       android:enabled="true"

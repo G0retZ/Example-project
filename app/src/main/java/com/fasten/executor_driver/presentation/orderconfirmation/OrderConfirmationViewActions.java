@@ -5,7 +5,7 @@ import android.support.annotation.NonNull;
 /**
  * Действия для смены состояния вида окна заказа.
  */
-interface OrderConfirmationViewActions {
+public interface OrderConfirmationViewActions {
 
   /**
    * Показать индикатор процесса.
@@ -26,35 +26,35 @@ interface OrderConfirmationViewActions {
    *
    * @param distance - расстояние
    */
-  void showDistance(long distance);
+  void showDistance(String distance);
 
   /**
    * Показать адрес точки погрузки.
    *
    * @param address - адрес
    */
-  void showLoadPointAddress(String address);
+  void showLoadPointAddress(@NonNull String address);
 
   /**
    * Показать рассчет стоимости.
    *
    * @param priceText - оценка стоимости заказа
    */
-  void showEstimatedPrice(String priceText);
+  void showEstimatedPrice(@NonNull String priceText);
 
   /**
    * Показать опции, необходимые для принятия заказа.
    *
    * @param options - список опций, требуемых для выполнения заказа
    */
-  void showOrderOptionsRequirements(String options);
+  void showOrderOptionsRequirements(@NonNull String options);
 
   /**
    * Показать комментарий к заказу.
    *
    * @param comment - адрес
    */
-  void showOrderConfirmationComment(String comment);
+  void showOrderConfirmationComment(@NonNull String comment);
 
   /**
    * Показать ошибку доступности заказов.

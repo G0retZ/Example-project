@@ -15,7 +15,7 @@ import io.reactivex.internal.disposables.EmptyDisposable;
 import io.reactivex.schedulers.Schedulers;
 import javax.inject.Inject;
 
-class OrderConfirmationViewModelImpl extends ViewModel implements
+public class OrderConfirmationViewModelImpl extends ViewModel implements
     OrderConfirmationViewModel {
 
   @NonNull
@@ -30,7 +30,7 @@ class OrderConfirmationViewModelImpl extends ViewModel implements
   private OrderConfirmationItem orderConfirmationItem;
 
   @Inject
-  OrderConfirmationViewModelImpl(
+  public OrderConfirmationViewModelImpl(
       @NonNull OrderConfirmationUseCase orderConfirmationUseCase) {
     this.orderConfirmationUseCase = orderConfirmationUseCase;
     viewStateLiveData = new MutableLiveData<>();
