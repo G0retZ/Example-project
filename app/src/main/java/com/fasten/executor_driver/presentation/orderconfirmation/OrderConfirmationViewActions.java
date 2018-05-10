@@ -26,7 +26,7 @@ public interface OrderConfirmationViewActions {
    *
    * @param distance - расстояние
    */
-  void showDistance(long distance);
+  void showDistance(String distance);
 
   /**
    * Показать адрес точки погрузки.

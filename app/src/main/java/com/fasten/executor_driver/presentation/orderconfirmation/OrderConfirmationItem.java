@@ -6,6 +6,7 @@ import com.fasten.executor_driver.entity.Offer;
 import com.fasten.executor_driver.entity.Option;
 import com.fasten.executor_driver.entity.OptionBoolean;
 import com.fasten.executor_driver.entity.OptionNumeric;
+import java.util.Locale;
 
 /**
  * Модель для отображения предложения заказа. Тестируемое форматирование.
@@ -33,8 +34,8 @@ class OrderConfirmationItem {
         + "&key=" + BuildConfig.STATIC_MAP_KEY;
   }
 
-  public long getDistance() {
-    return offer.getDistance();
+  public String getDistance() {
+    return String.format(Locale.getDefault(), "%.2f", offer.getDistance() / 1000d);
   }
 
   @NonNull

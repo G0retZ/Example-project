@@ -105,14 +105,12 @@ public class OrderConfirmationFragment extends BaseFragment implements
   @Override
   public void showLoadPoint(@NonNull String url) {
     Picasso.with(context).load(url)
-        .transform(new CropTransformation())
-        .transform(new RoundedCornerTransformation(2, 0))
         .into(mapImage);
   }
 
   @Override
-  public void showDistance(long distance) {
-    distanceText.setText(getString(R.string.balance_amount, distance));
+  public void showDistance(String distance) {
+    distanceText.setText(getString(R.string.km, distance));
   }
 
   @Override

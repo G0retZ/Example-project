@@ -37,7 +37,7 @@ public class OrderConfirmationItemTest {
   public void testGetters() {
     // Дано:
     when(offer.getRoutePoint()).thenReturn(routePoint);
-    when(offer.getDistance()).thenReturn(1200239L);
+    when(offer.getDistance()).thenReturn(12239L);
     when(offer.getComment()).thenReturn("com");
     when(offer.getEstimatedPrice()).thenReturn("7000");
     when(offer.getOptions()).thenReturn(new ArrayList<>(Arrays.asList(
@@ -57,7 +57,7 @@ public class OrderConfirmationItemTest {
         "https://maps.googleapis.com/maps/api/staticmap?center=5.421,10.2341&zoom=16&size=360x304&maptype=roadmap&key=AIzaSyC20FZNHJqrQH5UhypeUy3thpqII33QBPI");
     assertEquals(orderConfirmationItem.getPrice(), "7000");
     assertEquals(orderConfirmationItem.getAddress(), "add");
-    assertEquals(orderConfirmationItem.getDistance(), 1200239);
+    assertEquals(orderConfirmationItem.getDistance(), "12,24");
     assertEquals(orderConfirmationItem.getOfferComment(), "com");
     assertEquals(orderConfirmationItem.getEstimatedPrice(), "7000");
     assertEquals(orderConfirmationItem.getOrderOptionsRequired(),
