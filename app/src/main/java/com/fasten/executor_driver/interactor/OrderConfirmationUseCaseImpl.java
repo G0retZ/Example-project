@@ -8,7 +8,7 @@ import io.reactivex.Completable;
 import io.reactivex.Flowable;
 import javax.inject.Inject;
 
-class OrderConfirmationUseCaseImpl implements OrderConfirmationUseCase {
+public class OrderConfirmationUseCaseImpl implements OrderConfirmationUseCase {
 
   @NonNull
   private final OfferGateway offerGateway;
@@ -16,7 +16,7 @@ class OrderConfirmationUseCaseImpl implements OrderConfirmationUseCase {
   private Offer lastOffer;
 
   @Inject
-  OrderConfirmationUseCaseImpl(@NonNull OfferGateway offerGateway) {
+  public OrderConfirmationUseCaseImpl(@NonNull OfferGateway offerGateway) {
     this.offerGateway = offerGateway;
   }
 
