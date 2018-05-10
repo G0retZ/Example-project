@@ -71,4 +71,7 @@
   <string name="consider">Рассмотреть</string>
   <string name="proceed">Продолжить</string>
   <string name="done">Готово</string>
+  <string name="client_confirmation">Идет подтверждение у клиента.\nБудьте готовы начать заказ</string>
+  <string name="options">Опции</string>
+  <string name="cost">Цена</string>
 </resources>
