@@ -60,7 +60,7 @@ class OrderConfirmationItem {
       }
       result.append("\n");
     }
-    return result.toString();
+    return result.toString().trim();
   }
 
   @NonNull

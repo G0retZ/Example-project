@@ -44,8 +44,8 @@ public class OrderConfirmationViewStatePendingTest {
     verify(orderConfirmationViewActions).showLoadPoint("url");
     verify(orderConfirmationViewActions).showDistance("123L");
     verify(orderConfirmationViewActions).showLoadPointAddress("address");
-    verify(orderConfirmationViewActions).showOrderOptionsRequirements("1,2,3");
     verify(orderConfirmationViewActions).showEstimatedPrice("1000");
+    verify(orderConfirmationViewActions).showOrderOptionsRequirements("1,2,3");
     verify(orderConfirmationViewActions).showOrderConfirmationComment("comm");
     verify(orderConfirmationViewActions).showOrderConfirmationPending(true);
     verify(orderConfirmationViewActions).enableDeclineButton(false);

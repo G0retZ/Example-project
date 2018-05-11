@@ -9,6 +9,7 @@ import com.squareup.picasso.Transformation;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
+@SuppressWarnings("unused")
 public class CropTransformation implements Transformation {
 
 //  private static final String TAG = "PicassoTransformation";

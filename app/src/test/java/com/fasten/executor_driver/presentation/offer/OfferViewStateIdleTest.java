@@ -31,11 +31,11 @@ public class OfferViewStateIdleTest {
   public void testActions() {
     // Дано:
     when(offerItem.getAddress()).thenReturn("address");
-    when(offerItem.getDistance()).thenReturn(123L);
+    when(offerItem.getDistance()).thenReturn("123L");
     when(offerItem.getLoadPointMapUrl()).thenReturn("url");
     when(offerItem.getOfferComment()).thenReturn("comm");
-    when(offerItem.getPassengersCount()).thenReturn(1);
-    when(offerItem.getPortersCount()).thenReturn(2);
+    when(offerItem.getEstimatedPrice()).thenReturn("1000");
+    when(offerItem.getOfferOptionsRequired()).thenReturn("1,2,3");
     when(offerItem.getProgressLeft()).thenReturn(new long[]{123, 4532});
 
     // Действие:
@@ -43,10 +43,10 @@ public class OfferViewStateIdleTest {
 
     // Результат:
     verify(offerViewActions).showLoadPoint("url");
-    verify(offerViewActions).showDistance(123L);
+    verify(offerViewActions).showDistance("123L");
     verify(offerViewActions).showLoadPointAddress("address");
-    verify(offerViewActions).showPassengersCount(1);
-    verify(offerViewActions).showPortersCount(2);
+    verify(offerViewActions).showEstimatedPrice("1000");
+    verify(offerViewActions).showOfferOptionsRequirements("1,2,3");
     verify(offerViewActions).showOfferComment("comm");
     verify(offerViewActions).showTimeout(123, 4532);
     verify(offerViewActions).showOfferPending(false);

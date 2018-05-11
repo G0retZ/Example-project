@@ -26,11 +26,11 @@ class OfferViewState implements ViewState<OfferViewActions> {
     stateActions.showLoadPoint(offerItem.getLoadPointMapUrl());
     stateActions.showDistance(offerItem.getDistance());
     stateActions.showLoadPointAddress(offerItem.getAddress());
-    stateActions.showPassengersCount(offerItem.getPassengersCount());
-    stateActions.showPortersCount(offerItem.getPortersCount());
+    stateActions.showOfferOptionsRequirements(offerItem.getOfferOptionsRequired());
+    stateActions.showEstimatedPrice(offerItem.getEstimatedPrice());
     stateActions.showOfferComment(offerItem.getOfferComment());
     long timeout[] = offerItem.getProgressLeft();
-    stateActions.showTimeout(timeout[0], timeout[1]);
+    stateActions.showTimeout((int) timeout[0], timeout[1]);
   }
 
   @Override

@@ -26,7 +26,7 @@ public interface OfferViewActions {
    *
    * @param distance - расстояние
    */
-  void showDistance(long distance);
+  void showDistance(String distance);
 
   /**
    * Показать индикатор таймаута по заданным параметрам.
@@ -34,28 +34,28 @@ public interface OfferViewActions {
    * @param progress - сколько процентов осталось до окончания
    * @param timeout - время оставшееся до таймаут
    */
-  void showTimeout(long progress, long timeout);
+  void showTimeout(int progress, long timeout);
 
   /**
    * Показать адрес точки погрузки.
    *
    * @param address - адрес
    */
-  void showLoadPointAddress(String address);
+  void showLoadPointAddress(@NonNull String address);
 
   /**
-   * Показать количество грузчиков.
+   * Показать рассчет стоимости.
    *
-   * @param count - количество
+   * @param priceText - оценка стоимости заказа
    */
-  void showPortersCount(int count);
+  void showEstimatedPrice(@NonNull String priceText);
 
   /**
-   * Показать количество пассажиров.
+   * Показать опции, необходимые для принятия заказа.
    *
-   * @param count - количество
+   * @param options - список опций, требуемых для выполнения заказа
    */
-  void showPassengersCount(int count);
+  void showOfferOptionsRequirements(@NonNull String options);
 
   /**
    * Показать комментарий к заказу.

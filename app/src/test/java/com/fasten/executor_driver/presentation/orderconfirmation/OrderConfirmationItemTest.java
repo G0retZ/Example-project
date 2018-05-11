@@ -63,7 +63,7 @@ public class OrderConfirmationItemTest {
     assertEquals(orderConfirmationItem.getOfferComment(), "com");
     assertEquals(orderConfirmationItem.getEstimatedPrice(), "7000");
     assertEquals(orderConfirmationItem.getOrderOptionsRequired(),
-        "bool2\nbool4\nnum1: 3\nnum2: 7\n");
+        "bool2\nbool4\nnum1: 3\nnum2: 7");
   }
 
   @Test

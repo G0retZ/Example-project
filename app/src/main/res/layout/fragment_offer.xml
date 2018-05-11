@@ -1,200 +1,179 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
+<android.support.constraint.ConstraintLayout
   xmlns:android="http://schemas.android.com/apk/res/android"
   xmlns:app="http://schemas.android.com/apk/res-auto"
   xmlns:tools="http://schemas.android.com/tools"
   android:layout_width="match_parent"
   android:layout_height="match_parent"
   android:background="@color/colorPrimaryDark">
+  <android.support.design.widget.FloatingActionButton
+    android:id="@+id/declineButton"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="16dp"
+    android:layout_marginStart="16dp"
+    android:layout_marginLeft="16dp"
+    android:theme="@style/AppTheme.Button.Theme.Darker"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent"
+    app:srcCompat="@drawable/ic_reject_24dp"/>
   <ScrollView
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_marginBottom="56dp"
-    android:paddingStart="16dp"
-    android:paddingEnd="16dp">
+    android:scrollbarStyle="outsideOverlay"
+    android:layout_width="0dp"
+    android:layout_height="0dp"
+    app:layout_constraintBottom_toTopOf="@id/acceptButton"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent">
     <android.support.constraint.ConstraintLayout
       android:layout_width="match_parent"
-      android:layout_height="wrap_content">
+      android:layout_height="wrap_content"
+      android:paddingBottom="24dp">
       <ImageView
         android:id="@+id/mapImage"
-        android:layout_width="144dp"
-        android:layout_height="144dp"
-        android:layout_marginTop="36dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:contentDescription="@null"
-        android:src="@drawable/ic_circle"
+        android:src="@color/colorDivider"
+        app:layout_constraintDimensionRatio="H,6:5"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>
       <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
         android:contentDescription="@null"
         android:src="@drawable/circles"
         app:layout_constraintBottom_toBottomOf="@+id/mapImage"
         app:layout_constraintEnd_toEndOf="@+id/mapImage"
         app:layout_constraintStart_toStartOf="@+id/mapImage"
         app:layout_constraintTop_toTopOf="@+id/mapImage"/>
-      <com.fasten.executor_driver.view.DonutChart
-        android:id="@+id/timeoutChart"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        app:empty_color="@color/colorDivider"
-        app:inner_radius_ratio="0.1"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:radius="92dp"
-        app:sum_value_visible="false"
-        app:value="67"
-        app:value_color="@color/colorAccent"
-        app:values_visible="false"/>
+      <ImageView
+        android:id="@+id/gradient"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:contentDescription="@null"
+        android:src="@drawable/ic_gradient"
+        app:layout_constraintBottom_toBottomOf="@+id/mapImage"
+        app:layout_constraintDimensionRatio="H,10:3"
+        app:layout_constraintEnd_toEndOf="@+id/mapImage"
+        app:layout_constraintStart_toStartOf="@+id/mapImage"/>
       <TextView
         android:id="@+id/distanceText"
         style="@style/TextAppearance.AppCompat.Subhead"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
         android:text="@string/km"
         android:textColor="@color/colorAccentSecond"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/timeoutChart"/>
+        app:layout_constraintBottom_toBottomOf="@+id/gradient"
+        app:layout_constraintStart_toStartOf="parent"/>
       <TextView
         android:id="@+id/addressText"
-        style="@style/TextAppearance.AppCompat.Title"
-        android:layout_width="wrap_content"
+        style="@style/TextAppearance.AppCompat.Headline"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:gravity="center"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/distanceText"
-        tools:text="Промышленная улица, 47\nЗаезд со стороны ул. Вавилова"/>
-      <TextView
-        android:id="@+id/portersText"
-        style="@style/TextAppearance.AppCompat.Subhead"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:text="@string/porters"
-        android:textColor="@color/colorAccentSecond"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/addressText"/>
-      <TextView
-        android:id="@+id/passengersText"
-        style="@style/TextAppearance.AppCompat.Subhead"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:text="@string/passengers"
-        android:textColor="@color/colorAccentSecond"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/addressText"/>
-      <ImageView
-        android:id="@+id/portersImage"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:contentDescription="@null"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/portersText"
-        app:srcCompat="@drawable/ic_man"/>
-      <TextView
-        android:id="@+id/portersCountText"
-        style="@style/TextAppearance.AppCompat.Title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        app:layout_constraintStart_toEndOf="@+id/portersImage"
-        app:layout_constraintTop_toBottomOf="@+id/portersText"
-        tools:text="2"/>
-      <ImageView
-        android:id="@+id/passengersImage"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:contentDescription="@null"
-        android:orientation="horizontal"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/passengersText"
-        app:srcCompat="@drawable/ic_man"/>
-      <TextView
-        android:id="@+id/passengersCountText"
-        style="@style/TextAppearance.AppCompat.Title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        app:layout_constraintEnd_toStartOf="@+id/passengersImage"
-        app:layout_constraintTop_toBottomOf="@+id/passengersText"
-        tools:text="1"/>
-      <View
-        android:id="@+id/content_divider"
-        android:layout_width="0dp"
-        android:layout_height="1dp"
-        android:layout_marginTop="16dp"
-        android:background="@color/colorPrimary"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/passengersImage"/>
+        tools:text="Москва, ул. Академика Пилюгина, 14 корпус 4, кв. 1122, П2, Э8"/>
       <TextView
         android:id="@+id/commentTitleText"
         style="@style/TextAppearance.AppCompat.Subhead"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
         android:text="@string/comment"
         android:textColor="@color/colorAccentSecond"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/content_divider"/>
+        app:layout_constraintTop_toBottomOf="@+id/addressText"/>
       <TextView
         android:id="@+id/commentText"
-        style="@style/TextAppearance.AppCompat.Subhead"
+        style="@style/TextAppearance.AppCompat.Title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/commentTitleText"
         tools:text="Заехать купить 10 коробок. Чистая машина. Не курить!"/>
+      <TextView
+        android:id="@+id/optionsTitleText"
+        style="@style/TextAppearance.AppCompat.Subhead"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:text="@string/options"
+        android:textColor="@color/colorAccentSecond"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/commentText"/>
+      <TextView
+        android:id="@+id/optionsText"
+        style="@style/TextAppearance.AppCompat.Title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:lineSpacingExtra="6dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/optionsTitleText"
+        tools:text="Пропуск в центр Москвы\nОткрытый кузов\nРемни-крепления\nМобильный банк\nГрузчики: 2\nПассажиры: 3"/>
+      <TextView
+        android:id="@+id/priceTitleText"
+        style="@style/TextAppearance.AppCompat.Subhead"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:text="@string/cost"
+        android:textColor="@color/colorAccentSecond"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/optionsText"/>
+      <TextView
+        android:id="@+id/priceText"
+        style="@style/TextAppearance.AppCompat.Title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/priceTitleText"
+        tools:text="Предзаказ: 2500 руб. за 4 часа\nСверх пакета: 8 руб./мин."/>
     </android.support.constraint.ConstraintLayout>
   </ScrollView>
-  <ImageView
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_marginTop="16dp"
-    android:layout_marginStart="16dp"
-    android:layout_marginLeft="16dp"
-    android:contentDescription="@null"
-    android:src="@drawable/ic_circle"/>
-  <ImageButton
-    android:id="@+id/declineButton"
-    style="@style/Base.Widget.AppCompat.ActionButton"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_marginTop="16dp"
-    android:layout_marginStart="16dp"
-    android:layout_marginLeft="16dp"
-    android:contentDescription="@null"
-    app:srcCompat="@drawable/ic_reject_24dp"/>
+  <ProgressBar
+    android:id="@+id/timeoutChart"
+    style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+    android:layout_width="0dp"
+    android:layout_height="0dp"
+    android:progress="100"
+    android:progressDrawable="@drawable/plain_progressbar"
+    android:scaleX="-1"
+    app:layout_constraintBottom_toBottomOf="@id/acceptButton"
+    app:layout_constraintEnd_toEndOf="@id/acceptButton"
+    app:layout_constraintStart_toStartOf="@id/acceptButton"
+    app:layout_constraintTop_toTopOf="@id/acceptButton"/>
   <Button
     android:id="@+id/acceptButton"
-    style="@style/AppTheme.Button.Borderless.Filled"
-    android:layout_width="match_parent"
+    style="@style/AppTheme.Button.Borderless"
+    android:layout_width="0dp"
     android:layout_height="56dp"
-    android:layout_gravity="bottom"
-    android:text="@string/accept"/>
-</FrameLayout>
+    android:text="@string/accept"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"/>
+</android.support.constraint.ConstraintLayout>
