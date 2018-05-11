@@ -241,57 +241,6 @@ public class ExecutorStateApiMapperTest {
   }
 
   /**
-   * Должен дать ошибку, если сообщение null при заголовке Type.
-   *
-   * @throws Exception ошибка
-   */
-  @Test(expected = DataMappingException.class)
-  public void mappingNullMessageForTypeHeaderFail() throws Exception {
-    // Дано и Действие:
-    mapper.map(new StompMessage(
-        "MESSAGE",
-        Collections.singletonList(
-            new StompHeader("Type", "Status")
-        ),
-        null
-    ));
-  }
-
-  /**
-   * Должен дать ошибку, если сообщение пустое при заголовке Type.
-   *
-   * @throws Exception ошибка
-   */
-  @Test(expected = DataMappingException.class)
-  public void mappingEmptyMessageForTypeHeaderFail() throws Exception {
-    // Дано и Действие:
-    mapper.map(new StompMessage(
-        "MESSAGE",
-        Collections.singletonList(
-            new StompHeader("Type", "Status")
-        ),
-        ""
-    ));
-  }
-
-  /**
-   * Должен дать ошибку, если значение неверное при заголовке Type.
-   *
-   * @throws Exception ошибка
-   */
-  @Test(expected = DataMappingException.class)
-  public void mappingNonexistentForTypeHeaderFail() throws Exception {
-    // Дано и Действие:
-    mapper.map(new StompMessage(
-        "MESSAGE",
-        Collections.singletonList(
-            new StompHeader("Type", "Status")
-        ),
-        "SHIFT"
-    ));
-  }
-
-  /**
    * Должен дать ошибку, если заголовок Status null.
    *
    * @throws Exception ошибка
