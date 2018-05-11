@@ -20,48 +20,6 @@ public class ExecutorStateApiMapperTest {
   }
 
   /**
-   * Должен успешно преобразовать тело в статус "смена закрыта".
-   *
-   * @throws Exception ошибка
-   */
-  @Test
-  public void mappingPayloadToShiftClosed() throws Exception {
-    // Дано и Действие:
-    ExecutorState executorState = mapper.map(new StompMessage(
-        "MESSAGE",
-        Collections.singletonList(
-            new StompHeader("Type", "Status")
-        ),
-        "\nSHIFT_CLOSED"
-    ));
-
-    // Результат:
-    assertEquals(executorState, ExecutorState.SHIFT_CLOSED);
-    assertNull(executorState.getData());
-  }
-
-  /**
-   * Должен успешно преобразовать тело с кавычками в статус "смена закрыта".
-   *
-   * @throws Exception ошибка
-   */
-  @Test
-  public void mappingQuotedPayloadToShiftClosed() throws Exception {
-    // Дано и Действие:
-    ExecutorState executorState = mapper.map(new StompMessage(
-        "MESSAGE",
-        Collections.singletonList(
-            new StompHeader("Type", "Status")
-        ),
-        "\n\"SHIFT_CLOSED\""
-    ));
-
-    // Результат:
-    assertEquals(executorState, ExecutorState.SHIFT_CLOSED);
-    assertNull(executorState.getData());
-  }
-
-  /**
    * Должен успешно преобразовать строку из хедера в статус "смена закрыта".
    *
    * @throws Exception ошибка
@@ -101,48 +59,6 @@ public class ExecutorStateApiMapperTest {
     // Результат:
     assertEquals(executorState, ExecutorState.SHIFT_CLOSED);
     assertEquals(executorState.getData(), "\npayload");
-  }
-
-  /**
-   * Должен успешно преобразовать тело в статус "смена открыта".
-   *
-   * @throws Exception ошибка
-   */
-  @Test
-  public void mappingPayloadToShiftOpened() throws Exception {
-    // Дано и Действие:
-    ExecutorState executorState = mapper.map(new StompMessage(
-        "MESSAGE",
-        Collections.singletonList(
-            new StompHeader("Type", "Status")
-        ),
-        "\nSHIFT_OPENED"
-    ));
-
-    // Результат:
-    assertEquals(executorState, ExecutorState.SHIFT_OPENED);
-    assertNull(executorState.getData());
-  }
-
-  /**
-   * Должен успешно преобразовать тело с кавычками в статус "смена открыта".
-   *
-   * @throws Exception ошибка
-   */
-  @Test
-  public void mappingQuotedPayloadToShiftOpened() throws Exception {
-    // Дано и Действие:
-    ExecutorState executorState = mapper.map(new StompMessage(
-        "MESSAGE",
-        Collections.singletonList(
-            new StompHeader("Type", "Status")
-        ),
-        "\n\"SHIFT_OPENED\""
-    ));
-
-    // Результат:
-    assertEquals(executorState, ExecutorState.SHIFT_OPENED);
-    assertNull(executorState.getData());
   }
 
   /**
@@ -188,48 +104,6 @@ public class ExecutorStateApiMapperTest {
   }
 
   /**
-   * Должен успешно преобразовать тело в статус "онлайн".
-   *
-   * @throws Exception ошибка
-   */
-  @Test
-  public void mappingPayloadToOnline() throws Exception {
-    // Дано и Действие:
-    ExecutorState executorState = mapper.map(new StompMessage(
-        "MESSAGE",
-        Collections.singletonList(
-            new StompHeader("Type", "Status")
-        ),
-        "\nONLINE"
-    ));
-
-    // Результат:
-    assertEquals(executorState, ExecutorState.ONLINE);
-    assertNull(executorState.getData());
-  }
-
-  /**
-   * Должен успешно преобразовать тело с кавычками в статус "онлайн".
-   *
-   * @throws Exception ошибка
-   */
-  @Test
-  public void mappingQuotedPayloadToOnline() throws Exception {
-    // Дано и Действие:
-    ExecutorState executorState = mapper.map(new StompMessage(
-        "MESSAGE",
-        Collections.singletonList(
-            new StompHeader("Type", "Status")
-        ),
-        "\n\"ONLINE\""
-    ));
-
-    // Результат:
-    assertEquals(executorState, ExecutorState.ONLINE);
-    assertNull(executorState.getData());
-  }
-
-  /**
    * Должен успешно преобразовать строку из хедера в статус "онлайн".
    *
    * @throws Exception ошибка
@@ -272,48 +146,6 @@ public class ExecutorStateApiMapperTest {
   }
 
   /**
-   * Должен успешно преобразовать тело в статус "подтверждение заказа".
-   *
-   * @throws Exception ошибка
-   */
-  @Test
-  public void mappingPayloadToOfferConfirmation() throws Exception {
-    // Дано и Действие:
-    ExecutorState executorState = mapper.map(new StompMessage(
-        "MESSAGE",
-        Collections.singletonList(
-            new StompHeader("Type", "Status")
-        ),
-        "\nDRIVER_ORDER_CONFIRMATION"
-    ));
-
-    // Результат:
-    assertEquals(executorState, ExecutorState.DRIVER_ORDER_CONFIRMATION);
-    assertNull(executorState.getData());
-  }
-
-  /**
-   * Должен успешно преобразовать тело с кавычками в статус "подтверждение заказа".
-   *
-   * @throws Exception ошибка
-   */
-  @Test
-  public void mappingQuotedPayloadToOfferConfirmation() throws Exception {
-    // Дано и Действие:
-    ExecutorState executorState = mapper.map(new StompMessage(
-        "MESSAGE",
-        Collections.singletonList(
-            new StompHeader("Type", "Status")
-        ),
-        "\n\"DRIVER_ORDER_CONFIRMATION\""
-    ));
-
-    // Результат:
-    assertEquals(executorState, ExecutorState.DRIVER_ORDER_CONFIRMATION);
-    assertNull(executorState.getData());
-  }
-
-  /**
    * Должен успешно преобразовать строку из хедера в статус "подтверждение заказа".
    *
    * @throws Exception ошибка
@@ -353,48 +185,6 @@ public class ExecutorStateApiMapperTest {
     // Результат:
     assertEquals(executorState, ExecutorState.DRIVER_ORDER_CONFIRMATION);
     assertEquals(executorState.getData(), "\npayload");
-  }
-
-  /**
-   * Должен успешно преобразовать тело в статус "ожидание подтверждения клиента".
-   *
-   * @throws Exception ошибка
-   */
-  @Test
-  public void mappingPayloadToWaitForClientConfirmation() throws Exception {
-    // Дано и Действие:
-    ExecutorState executorState = mapper.map(new StompMessage(
-        "MESSAGE",
-        Collections.singletonList(
-            new StompHeader("Type", "Status")
-        ),
-        "\nCLIENT_ORDER_CONFIRMATION"
-    ));
-
-    // Результат:
-    assertEquals(executorState, ExecutorState.CLIENT_ORDER_CONFIRMATION);
-    assertNull(executorState.getData());
-  }
-
-  /**
-   * Должен успешно преобразовать тело с кавычками в статус "ожидание подтверждения клиента".
-   *
-   * @throws Exception ошибка
-   */
-  @Test
-  public void mappingQuotedPayloadToWaitForClientConfirmation() throws Exception {
-    // Дано и Действие:
-    ExecutorState executorState = mapper.map(new StompMessage(
-        "MESSAGE",
-        Collections.singletonList(
-            new StompHeader("Type", "Status")
-        ),
-        "\n\"CLIENT_ORDER_CONFIRMATION\""
-    ));
-
-    // Результат:
-    assertEquals(executorState, ExecutorState.CLIENT_ORDER_CONFIRMATION);
-    assertNull(executorState.getData());
   }
 
   /**
