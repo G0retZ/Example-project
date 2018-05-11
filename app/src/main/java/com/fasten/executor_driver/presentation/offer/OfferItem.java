@@ -3,7 +3,11 @@ package com.fasten.executor_driver.presentation.offer;
 import android.support.annotation.NonNull;
 import com.fasten.executor_driver.BuildConfig;
 import com.fasten.executor_driver.entity.Offer;
+import com.fasten.executor_driver.entity.Option;
+import com.fasten.executor_driver.entity.OptionBoolean;
+import com.fasten.executor_driver.entity.OptionNumeric;
 import com.fasten.executor_driver.utils.TimeUtils;
+import java.util.Locale;
 
 /**
  * Модель для отображения предложения заказа. Тестируемое форматирование.
@@ -31,13 +35,13 @@ class OfferItem {
         + ","
         + offer.getRoutePoint().getLongitude()
         + "&zoom=16"
-        + "&size=288x352"
+        + "&size=360x304"
         + "&maptype=roadmap"
         + "&key=" + BuildConfig.STATIC_MAP_KEY;
   }
 
-  public long getDistance() {
-    return offer.getDistance();
+  public String getDistance() {
+    return String.format(Locale.getDefault(), "%.2f", offer.getDistance() / 1000d);
   }
 
   @NonNull
@@ -45,14 +49,24 @@ class OfferItem {
     return offer.getRoutePoint().getAddress();
   }
 
-  @SuppressWarnings("SameReturnValue")
-  public int getPortersCount() {
-    return 0;
+  public String getEstimatedPrice() {
+    return offer.getEstimatedPrice();
   }
 
-  @SuppressWarnings("SameReturnValue")
-  public int getPassengersCount() {
-    return 0;
+  public String getOfferOptionsRequired() {
+    StringBuilder result = new StringBuilder();
+    for (Option option : offer.getOptions()) {
+      if (option instanceof OptionNumeric) {
+        result.append(option.getName()).append(": ").append(option.getValue());
+      } else if (option instanceof OptionBoolean) {
+        if (!(boolean) option.getValue()) {
+          continue;
+        }
+        result.append(option.getName());
+      }
+      result.append("\n");
+    }
+    return result.toString().trim();
   }
 
   @NonNull

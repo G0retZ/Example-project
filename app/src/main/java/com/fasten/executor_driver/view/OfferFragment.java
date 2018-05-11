@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import com.fasten.executor_driver.R;
 import com.fasten.executor_driver.di.AppComponent;
@@ -31,12 +32,15 @@ public class OfferFragment extends BaseFragment implements OfferViewActions {
   private OfferViewModel offerViewModel;
   private ImageButton declineAction;
   private ImageView mapImage;
-  private DonutChart timeoutChart;
+  private ProgressBar timeoutChart;
   private TextView distanceText;
   private TextView addressText;
-  private TextView portersCountText;
-  private TextView passengersCountText;
+  private TextView commentTitleText;
   private TextView commentText;
+  private TextView optionsTitleText;
+  private TextView optionsText;
+  private TextView priceTitleText;
+  private TextView priceText;
   private Button acceptAction;
   private Context context;
   private boolean pending;
@@ -63,9 +67,12 @@ public class OfferFragment extends BaseFragment implements OfferViewActions {
     timeoutChart = view.findViewById(R.id.timeoutChart);
     distanceText = view.findViewById(R.id.distanceText);
     addressText = view.findViewById(R.id.addressText);
-    portersCountText = view.findViewById(R.id.portersCountText);
-    passengersCountText = view.findViewById(R.id.passengersCountText);
+    commentTitleText = view.findViewById(R.id.commentTitleText);
     commentText = view.findViewById(R.id.commentText);
+    optionsTitleText = view.findViewById(R.id.optionsTitleText);
+    optionsText = view.findViewById(R.id.optionsText);
+    priceTitleText = view.findViewById(R.id.priceTitleText);
+    priceText = view.findViewById(R.id.priceText);
     acceptAction = view.findViewById(R.id.acceptButton);
     acceptAction.setOnClickListener(v -> offerViewModel.acceptOffer());
     declineAction.setOnClickListener(v -> offerViewModel.declineOffer());
@@ -105,20 +112,18 @@ public class OfferFragment extends BaseFragment implements OfferViewActions {
   @Override
   public void showLoadPoint(@NonNull String url) {
     Picasso.with(context).load(url)
-        .transform(new CropTransformation())
-        .transform(new RoundedCornerTransformation(2, 0))
         .into(mapImage);
   }
 
   @Override
-  public void showDistance(long distance) {
-    distanceText.setText(getString(R.string.balance_amount, distance));
+  public void showDistance(String distance) {
+    distanceText.setText(getString(R.string.km, distance));
   }
 
   @Override
-  public void showTimeout(long progress, long timeout) {
+  public void showTimeout(int progress, long timeout) {
     if (timeout > 0) {
-      ObjectAnimator animation = ObjectAnimator.ofFloat(timeoutChart, "value", progress, 0);
+      ObjectAnimator animation = ObjectAnimator.ofInt(timeoutChart, "progress", progress, 0);
       animation.setDuration(timeout);
       animation.addListener(new AnimatorListener() {
         @Override
@@ -145,23 +150,44 @@ public class OfferFragment extends BaseFragment implements OfferViewActions {
   }
 
   @Override
-  public void showLoadPointAddress(String address) {
+  public void showLoadPointAddress(@NonNull String address) {
     addressText.setText(address);
   }
 
   @Override
-  public void showPortersCount(int count) {
-    portersCountText.setText(String.valueOf(count));
+  public void showEstimatedPrice(@NonNull String priceText) {
+    if (priceText.trim().isEmpty()) {
+      priceTitleText.setVisibility(View.GONE);
+      this.priceText.setVisibility(View.GONE);
+    } else {
+      priceTitleText.setVisibility(View.VISIBLE);
+      this.priceText.setVisibility(View.VISIBLE);
+      this.priceText.setText(priceText);
+    }
   }
 
   @Override
-  public void showPassengersCount(int count) {
-    passengersCountText.setText(String.valueOf(count));
+  public void showOfferOptionsRequirements(@NonNull String options) {
+    if (options.trim().isEmpty()) {
+      optionsTitleText.setVisibility(View.GONE);
+      optionsText.setVisibility(View.GONE);
+    } else {
+      optionsTitleText.setVisibility(View.VISIBLE);
+      optionsText.setVisibility(View.VISIBLE);
+      optionsText.setText(options);
+    }
   }
 
   @Override
-  public void showOfferComment(String comment) {
-    commentText.setText(comment);
+  public void showOfferComment(@NonNull String comment) {
+    if (comment.trim().isEmpty()) {
+      commentTitleText.setVisibility(View.GONE);
+      commentText.setVisibility(View.GONE);
+    } else {
+      commentTitleText.setVisibility(View.VISIBLE);
+      commentText.setVisibility(View.VISIBLE);
+      commentText.setText(comment);
+    }
   }
 
   @Override
