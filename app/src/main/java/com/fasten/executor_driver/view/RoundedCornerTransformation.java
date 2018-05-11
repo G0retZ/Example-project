@@ -8,6 +8,7 @@ import android.graphics.RectF;
 import android.graphics.Shader;
 import com.squareup.picasso.Transformation;
 
+@SuppressWarnings("unused")
 class RoundedCornerTransformation implements Transformation {
 
   private final int cornerRadiusFactor;
