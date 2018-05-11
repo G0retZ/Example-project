@@ -45,7 +45,6 @@ public class OrderConfirmationFragment extends BaseFragment implements
     this.context = context;
   }
 
-  @SuppressWarnings("unused")
   @Inject
   public void setOrderConfirmationViewModel(
       @NonNull OrderConfirmationViewModel orderConfirmationViewModel) {
