@@ -146,6 +146,25 @@ public class ExecutorStateNotOnlineUseCaseTest {
   }
 
   /**
+   * Не должен трогать гейтвей передачи статусов, если последний статус был "на пути к клиенту".
+   */
+  @Test
+  public void DoNotTouchGatewayIfMovingToClient() {
+    // Дано:
+    PublishSubject<ExecutorState> publishSubject = PublishSubject.create();
+    when(executorStateUseCase.getExecutorStates(anyBoolean()))
+        .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
+    executorStateNotOnlineUseCase.getExecutorStates().test();
+    publishSubject.onNext(ExecutorState.MOVING_TO_CLIENT);
+
+    // Действие:
+    executorStateNotOnlineUseCase.setExecutorNotOnline().test();
+
+    // Результат:
+    verifyZeroInteractions(executorStateSwitchGateway);
+  }
+
+  /**
    * Должен отправить статус "смена открыта" через гейтвей передачи статусов.
    */
   @Test
@@ -248,7 +267,7 @@ public class ExecutorStateNotOnlineUseCaseTest {
   }
 
   /**
-   * Должен вернуть ошибку неподходящего статуса, если статус "на пути к точке погрузки".
+   * Должен вернуть ошибку неподходящего статуса, если статус "ожидания подтверждения клиентом".
    */
   @Test
   public void answerForbiddenStatusErrorIfWaitForClientConfirmation() {
@@ -258,6 +277,28 @@ public class ExecutorStateNotOnlineUseCaseTest {
         .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
     executorStateNotOnlineUseCase.getExecutorStates().test();
     publishSubject.onNext(ExecutorState.CLIENT_ORDER_CONFIRMATION);
+
+    // Действие:
+    TestObserver<Void> testObserver =
+        executorStateNotOnlineUseCase.setExecutorNotOnline().test();
+
+    // Результат:
+    testObserver.assertNoValues();
+    testObserver.assertNotComplete();
+    testObserver.assertError(ForbiddenExecutorStateException.class);
+  }
+
+  /**
+   * Должен вернуть ошибку неподходящего статуса, если статус "на пути к клиенту".
+   */
+  @Test
+  public void answerForbiddenStatusErrorIfMovingToClient() {
+    // Дано:
+    PublishSubject<ExecutorState> publishSubject = PublishSubject.create();
+    when(executorStateUseCase.getExecutorStates(anyBoolean()))
+        .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
+    executorStateNotOnlineUseCase.getExecutorStates().test();
+    publishSubject.onNext(ExecutorState.MOVING_TO_CLIENT);
 
     // Действие:
     TestObserver<Void> testObserver =

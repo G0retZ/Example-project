@@ -40,6 +40,12 @@ public class GeoLocationUseCaseImpl implements GeoLocationUseCase {
                 return geoLocationGateway.getGeoLocations(180000);
               case ONLINE:
                 return geoLocationGateway.getGeoLocations(15000);
+              case DRIVER_ORDER_CONFIRMATION:
+                return geoLocationGateway.getGeoLocations(15000);
+              case CLIENT_ORDER_CONFIRMATION:
+                return geoLocationGateway.getGeoLocations(15000);
+              case MOVING_TO_CLIENT:
+                return geoLocationGateway.getGeoLocations(15000);
               default:
                 return Flowable.empty();
             }

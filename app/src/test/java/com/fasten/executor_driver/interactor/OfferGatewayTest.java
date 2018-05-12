@@ -209,6 +209,22 @@ public class OfferGatewayTest {
   }
 
   /**
+   * Не должен трогать маппер, если не пришел статус "На пути к клиенту".
+   */
+  @Test
+  public void doNotTouchMapperIfMovingToClient() {
+    // Дано:
+    when(executorStateUseCase.getExecutorStates(anyBoolean()))
+        .thenReturn(Flowable.just(ExecutorState.MOVING_TO_CLIENT));
+
+    // Действие:
+    offerGateway.getOffers().test();
+
+    // Результат:
+    verifyZeroInteractions(mapper);
+  }
+
+  /**
    * Не должен трогать маппер, если статус без сообщения.
    */
   @Test
@@ -309,6 +325,24 @@ public class OfferGatewayTest {
     // Дано:
     when(executorStateUseCase.getExecutorStates(anyBoolean()))
         .thenReturn(Flowable.just(ExecutorState.CLIENT_ORDER_CONFIRMATION));
+
+    // Действие:
+    TestSubscriber<Offer> testSubscriber = offerGateway.getOffers().test();
+
+    // Результат:
+    testSubscriber.assertNoValues();
+    testSubscriber.assertComplete();
+    testSubscriber.assertNoErrors();
+  }
+
+  /**
+   * Должен ответить ошибкой отсутствия заказов для статуса "на пути к клиенту".
+   */
+  @Test
+  public void ignoreForMovingToClient() {
+    // Дано:
+    when(executorStateUseCase.getExecutorStates(anyBoolean()))
+        .thenReturn(Flowable.just(ExecutorState.MOVING_TO_CLIENT));
 
     // Действие:
     TestSubscriber<Offer> testSubscriber = offerGateway.getOffers().test();

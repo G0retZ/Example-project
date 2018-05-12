@@ -210,6 +210,22 @@ public class OrderConfirmationGatewayTest {
   }
 
   /**
+   * Не должен трогать маппер, если не пришел статус "принятие заказа".
+   */
+  @Test
+  public void doNotTouchMapperIfMovingToClient() {
+    // Дано:
+    when(executorStateUseCase.getExecutorStates(anyBoolean()))
+        .thenReturn(Flowable.just(ExecutorState.MOVING_TO_CLIENT));
+
+    // Действие:
+    orderConfirmationGateway.getOffers().test();
+
+    // Результат:
+    verifyZeroInteractions(mapper);
+  }
+
+  /**
    * Не должен трогать маппер, если статус без сообщения.
    */
   @Test
@@ -310,6 +326,24 @@ public class OrderConfirmationGatewayTest {
     // Дано:
     when(executorStateUseCase.getExecutorStates(anyBoolean()))
         .thenReturn(Flowable.just(ExecutorState.DRIVER_ORDER_CONFIRMATION));
+
+    // Действие:
+    TestSubscriber<Offer> testSubscriber = orderConfirmationGateway.getOffers().test();
+
+    // Результат:
+    testSubscriber.assertNoValues();
+    testSubscriber.assertComplete();
+    testSubscriber.assertNoErrors();
+  }
+
+  /**
+   * Должен ответить ошибкой отсутствия заказов для статуса "на пути к клиенту".
+   */
+  @Test
+  public void ignoreForMovingToClien() {
+    // Дано:
+    when(executorStateUseCase.getExecutorStates(anyBoolean()))
+        .thenReturn(Flowable.just(ExecutorState.MOVING_TO_CLIENT));
 
     // Действие:
     TestSubscriber<Offer> testSubscriber = orderConfirmationGateway.getOffers().test();

@@ -241,6 +241,48 @@ public class ExecutorStateApiMapperTest {
   }
 
   /**
+   * Должен успешно преобразовать строку из хедера в статус "на пути к клиенту".
+   *
+   * @throws Exception ошибка
+   */
+  @Test
+  public void mappingHeaderToMovingToClient() throws Exception {
+    // Дано и Действие:
+    ExecutorState executorState = mapper.map(new StompMessage(
+        "MESSAGE",
+        Collections.singletonList(
+            new StompHeader("Status", "MOVING_TO_CLIENT")
+        ),
+        null
+    ));
+
+    // Результат:
+    assertEquals(executorState, ExecutorState.MOVING_TO_CLIENT);
+    assertNull(executorState.getData());
+  }
+
+  /**
+   * Должен успешно преобразовать строку из хедера и тело в статус "на пути к клиенту" с данными.
+   *
+   * @throws Exception ошибка
+   */
+  @Test
+  public void mappingHeaderWithPayloadToMovingToClient() throws Exception {
+    // Дано и Действие:
+    ExecutorState executorState = mapper.map(new StompMessage(
+        "MESSAGE",
+        Collections.singletonList(
+            new StompHeader("Status", "MOVING_TO_CLIENT")
+        ),
+        "\npayload"
+    ));
+
+    // Результат:
+    assertEquals(executorState, ExecutorState.MOVING_TO_CLIENT);
+    assertEquals(executorState.getData(), "\npayload");
+  }
+
+  /**
    * Должен дать ошибку, если заголовок Status null.
    *
    * @throws Exception ошибка

@@ -213,4 +213,21 @@ public class ExecutorStateViewModelTest {
     // Результат:
     verify(navigationObserver, only()).onChanged(ExecutorStateNavigate.CLIENT_ORDER_CONFIRMATION);
   }
+
+  /**
+   * Должен вернуть "перейти к движению к клиенту".
+   */
+  @Test
+  public void navigateToMovingToClient() {
+    // Дано:
+    when(executorStateUseCase.getExecutorStates(anyBoolean()))
+        .thenReturn(Flowable.just(ExecutorState.MOVING_TO_CLIENT));
+
+    // Действие:
+    executorStateViewModel.getNavigationLiveData().observeForever(navigationObserver);
+    executorStateViewModel.initializeExecutorState(false);
+
+    // Результат:
+    verify(navigationObserver, only()).onChanged(ExecutorStateNavigate.MOVING_TO_CLIENT);
+  }
 }
