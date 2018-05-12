@@ -198,7 +198,7 @@ public class ClientOrderConfirmationGatewayTest {
    * Не должен трогать маппер, если не пришел статус "принятие заказа".
    */
   @Test
-  public void doNotTouchMapperIfOfferConfirmation() {
+  public void doNotTouchMapperIfDriverOrderConfirmation() {
     // Дано:
     when(executorStateUseCase.getExecutorStates(anyBoolean()))
         .thenReturn(Flowable.just(ExecutorState.DRIVER_ORDER_CONFIRMATION));
@@ -323,7 +323,7 @@ public class ClientOrderConfirmationGatewayTest {
    * Должен ответить ошибкой отсутствия заказов для статуса "принятие заказа".
    */
   @Test
-  public void ignoreForOfferConfirmation() {
+  public void ignoreForDriverOrderConfirmation() {
     // Дано:
     when(executorStateUseCase.getExecutorStates(anyBoolean()))
         .thenReturn(Flowable.just(ExecutorState.DRIVER_ORDER_CONFIRMATION));
@@ -359,7 +359,7 @@ public class ClientOrderConfirmationGatewayTest {
    * Должен ответить ошибкой отсутствия заказов для статуса "принятие заказа" без данных.
    */
   @Test
-  public void answerNoOffersAvailableForNoData() {
+  public void answerNoOrdersAvailableForNoData() {
     // Дано:
     when(executorStateUseCase.getExecutorStates(anyBoolean()))
         .thenReturn(Flowable.just(ExecutorState.CLIENT_ORDER_CONFIRMATION));
@@ -401,7 +401,7 @@ public class ClientOrderConfirmationGatewayTest {
    * @throws Exception error
    */
   @Test
-  public void answerWithOffer() throws Exception {
+  public void answerWithOrder() throws Exception {
     // Дано:
     when(mapper.map(anyString())).thenReturn(order);
     ExecutorState.CLIENT_ORDER_CONFIRMATION.setData("");

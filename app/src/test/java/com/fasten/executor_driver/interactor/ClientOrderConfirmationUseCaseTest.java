@@ -49,7 +49,7 @@ public class ClientOrderConfirmationUseCaseTest {
    * Должен запросить у гейтвея получение заказов.
    */
   @Test
-  public void askGatewayForOffers() {
+  public void askGatewayForOrders() {
     // Действие:
     clientOrderConfirmationUseCase.getOrders().test();
 
@@ -73,7 +73,7 @@ public class ClientOrderConfirmationUseCaseTest {
    * Должен запросить у гейтвея передачу отказов.
    */
   @Test
-  public void askGatewayToSendCancelForOffers() {
+  public void askGatewayToSendCancelForOrder() {
     // Дано:
     when(gateway.getOrders()).thenReturn(Flowable.just(order));
 
@@ -91,7 +91,7 @@ public class ClientOrderConfirmationUseCaseTest {
    * Должен запросить у гейтвея передачу отказа только для последнего заказа.
    */
   @Test
-  public void askGatewayToSendDecisionsForLastOfferOnly() {
+  public void askGatewayToSendDecisionsForLastOrderOnly() {
     // Дано:
     when(gateway.getOrders()).thenReturn(Flowable.just(order, order2));
 
@@ -128,7 +128,7 @@ public class ClientOrderConfirmationUseCaseTest {
    * Должен ответить заказами.
    */
   @Test
-  public void answerWithOffers() {
+  public void answerWithOrders() {
     // Дано:
     when(gateway.getOrders()).thenReturn(Flowable.just(order, order2));
 
@@ -141,27 +141,13 @@ public class ClientOrderConfirmationUseCaseTest {
     test.assertNoErrors();
   }
 
-  /* Проверяем ответы на запрос отправки решения */
+  /* Проверяем ответы на запрос отправки отмены */
 
   /**
-   * Должен ответить ошибкой отсуствия актуальных заказов на подтверждение.
+   * Должен ответить ошибкой отсуствия актуальных заказов для отмены.
    */
   @Test
-  public void answerNoOffersErrorForAccept() {
-    // Действие:
-    TestObserver<Void> test = clientOrderConfirmationUseCase.cancelOrder().test();
-
-    // Результат:
-    test.assertError(NoOrdersAvailableException.class);
-    test.assertNoValues();
-    test.assertNotComplete();
-  }
-
-  /**
-   * Должен ответить ошибкой отсуствия актуальных заказов.
-   */
-  @Test
-  public void answerNoOffersError() {
+  public void answerNoOrdersError() {
     // Действие:
     TestObserver<Void> test = clientOrderConfirmationUseCase.cancelOrder().test();
 
@@ -175,7 +161,7 @@ public class ClientOrderConfirmationUseCaseTest {
    * Должен ответить ошибкой сети.
    */
   @Test
-  public void answerNoNetworkErrorForAccept() {
+  public void answerNoNetworkErrorForCancel() {
     // Дано:
     when(gateway.getOrders()).thenReturn(Flowable.just(order));
     when(gateway.sendDecision(any(), anyBoolean()))

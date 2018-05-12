@@ -36,7 +36,7 @@ public class OrderApiMapperTest {
    * @throws Exception ошибка
    */
   @Test
-  public void mappingJsonStringToOffer() throws Exception {
+  public void mappingJsonStringToOrder() throws Exception {
     // Дано и Действие:
     Order order = mapper.map("{\n"
         + "    \"id\": \"7\",\n"
@@ -127,7 +127,7 @@ public class OrderApiMapperTest {
    * @throws Exception ошибка
    */
   @Test
-  public void mappingJsonStringToOfferWithoutOptions() throws Exception {
+  public void mappingJsonStringToOrderWithoutOptions() throws Exception {
     // Дано и Действие:
     Order order = mapper.map("{\n"
         + "    \"id\": \"7\",\n"
@@ -172,7 +172,7 @@ public class OrderApiMapperTest {
    */
   // TODO: это костыль, который подменяет таймаут 0 на 20
   @Test
-  public void mappingJsonStringWithoutTimeoutToOffer() throws Exception {
+  public void mappingJsonStringWithoutTimeoutToOrder() throws Exception {
     // Дано и Действие:
     Order order = mapper.map("{\n"
         + "    \"id\": \"7\",\n"

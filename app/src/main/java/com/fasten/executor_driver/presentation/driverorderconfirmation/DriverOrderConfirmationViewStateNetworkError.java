@@ -15,7 +15,7 @@ final class DriverOrderConfirmationViewStateNetworkError extends DriverOrderConf
   @Override
   public void apply(@NonNull DriverOrderConfirmationViewActions stateActions) {
     super.apply(stateActions);
-    stateActions.showPending(false);
+    stateActions.showDriverOrderConfirmationPending(false);
     stateActions.enableAcceptButton(false);
     stateActions.enableDeclineButton(false);
     stateActions.showOrderAvailabilityError(false);

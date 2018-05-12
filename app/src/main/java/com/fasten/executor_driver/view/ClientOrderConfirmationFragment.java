@@ -94,7 +94,7 @@ public class ClientOrderConfirmationFragment extends BaseFragment implements
   }
 
   @Override
-  public void showPending(boolean pending) {
+  public void showClientOrderConfirmationPending(boolean pending) {
     if (this.pending != pending) {
       showPending(pending);
     }

@@ -16,7 +16,7 @@ final class DriverOrderConfirmationViewStateUnavailableError extends
   @Override
   public void apply(@NonNull DriverOrderConfirmationViewActions stateActions) {
     super.apply(stateActions);
-    stateActions.showPending(false);
+    stateActions.showDriverOrderConfirmationPending(false);
     stateActions.enableAcceptButton(false);
     stateActions.enableDeclineButton(false);
     stateActions.showOrderAvailabilityError(true);
