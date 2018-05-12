@@ -26,9 +26,9 @@ class DriverOrderConfirmationViewState implements ViewState<DriverOrderConfirmat
     stateActions.showLoadPoint(orderItem.getLoadPointMapUrl());
     stateActions.showDistance(orderItem.getDistance());
     stateActions.showLoadPointAddress(orderItem.getAddress());
-    stateActions.showOfferOptionsRequirements(orderItem.getOfferOptionsRequired());
+    stateActions.showOrderOptionsRequirements(orderItem.getOrderOptionsRequired());
     stateActions.showEstimatedPrice(orderItem.getEstimatedPrice());
-    stateActions.showComment(orderItem.getOfferComment());
+    stateActions.showComment(orderItem.getOrderComment());
     long timeout[] = orderItem.getProgressLeft();
     stateActions.showTimeout((int) timeout[0], timeout[1]);
   }

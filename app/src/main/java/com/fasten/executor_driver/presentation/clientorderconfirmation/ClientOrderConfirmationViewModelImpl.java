@@ -5,7 +5,7 @@ import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import com.fasten.executor_driver.entity.NoOffersAvailableException;
+import com.fasten.executor_driver.entity.NoOrdersAvailableException;
 import com.fasten.executor_driver.entity.Order;
 import com.fasten.executor_driver.interactor.ClientOrderConfirmationUseCase;
 import com.fasten.executor_driver.presentation.ViewState;
@@ -40,7 +40,7 @@ public class ClientOrderConfirmationViewModelImpl extends ViewModel implements
   @NonNull
   @Override
   public LiveData<ViewState<ClientOrderConfirmationViewActions>> getViewStateLiveData() {
-    loadOffers();
+    loadOrders();
     return viewStateLiveData;
   }
 
@@ -51,23 +51,23 @@ public class ClientOrderConfirmationViewModelImpl extends ViewModel implements
   }
 
 
-  private void loadOffers() {
+  private void loadOrders() {
     if (orderConfirmationDisposable.isDisposed()) {
-      orderConfirmationDisposable = clientOrderConfirmationUseCase.getOffers()
+      orderConfirmationDisposable = clientOrderConfirmationUseCase.getOrders()
           .subscribeOn(Schedulers.single())
           .observeOn(AndroidSchedulers.mainThread())
-          .subscribe(this::consumeOffer, this::consumeError);
+          .subscribe(this::consumeOrder, this::consumeError);
     }
   }
 
 
-  private void consumeOffer(@NonNull Order order) {
+  private void consumeOrder(@NonNull Order order) {
     orderItem = new OrderItem(order);
     viewStateLiveData.postValue(new ClientOrderConfirmationViewStateIdle(orderItem));
   }
 
   private void consumeError(Throwable throwable) {
-    if (throwable instanceof NoOffersAvailableException) {
+    if (throwable instanceof NoOrdersAvailableException) {
       viewStateLiveData
           .postValue(new ClientOrderConfirmationViewStateUnavailableError(orderItem));
     } else {

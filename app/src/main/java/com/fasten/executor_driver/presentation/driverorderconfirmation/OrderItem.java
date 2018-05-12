@@ -53,7 +53,7 @@ class OrderItem {
     return order.getEstimatedPrice();
   }
 
-  public String getOfferOptionsRequired() {
+  public String getOrderOptionsRequired() {
     StringBuilder result = new StringBuilder();
     for (Option option : order.getOptions()) {
       if (option instanceof OptionNumeric) {
@@ -70,7 +70,7 @@ class OrderItem {
   }
 
   @NonNull
-  public String getOfferComment() {
+  public String getOrderComment() {
     return order.getComment();
   }
 

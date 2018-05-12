@@ -60,7 +60,7 @@ public class OrderItemTest {
     assertEquals(orderItem.getAddress(), "add");
     assertEquals(orderItem.getDistance(),
         String.format(Locale.getDefault(), "%.2f", 12.24f));
-    assertEquals(orderItem.getOfferComment(), "com");
+    assertEquals(orderItem.getOrderComment(), "com");
     assertEquals(orderItem.getEstimatedPrice(), "7000");
     assertEquals(orderItem.getOrderOptionsRequired(),
         "bool2\nbool4\nnum1: 3\nnum2: 7");

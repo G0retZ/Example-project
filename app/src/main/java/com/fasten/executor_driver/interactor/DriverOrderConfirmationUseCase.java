@@ -15,7 +15,7 @@ public interface DriverOrderConfirmationUseCase {
    *
    * @return {@link Flowable<Order>} результат запроса.
    */
-  Flowable<Order> getOffers();
+  Flowable<Order> getOrders();
 
   /**
    * Передает решение исполнителя по принятию заказа.

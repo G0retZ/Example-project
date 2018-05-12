@@ -3,9 +3,9 @@ package com.fasten.executor_driver.entity;
 /**
  * Ошибка: недостаточно средств.
  */
-public class NoOffersAvailableException extends Exception {
+public class NoOrdersAvailableException extends Exception {
 
-  public NoOffersAvailableException() {
+  public NoOrdersAvailableException() {
     super();
   }
 }

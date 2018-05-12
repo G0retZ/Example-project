@@ -18,7 +18,7 @@ final class DriverOrderConfirmationViewStateNetworkError extends DriverOrderConf
     stateActions.showPending(false);
     stateActions.enableAcceptButton(false);
     stateActions.enableDeclineButton(false);
-    stateActions.showOfferAvailabilityError(false);
+    stateActions.showOrderAvailabilityError(false);
     stateActions.showNetworkErrorMessage(true);
   }
 }

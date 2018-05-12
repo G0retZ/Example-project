@@ -16,7 +16,7 @@ public interface OrderGateway {
    * @return {@link Flowable<Order>} заказы для исполнителя.
    */
   @NonNull
-  Flowable<Order> getOffers();
+  Flowable<Order> getOrders();
 
   /**
    * Передает решение исполнителя по принятию заказа.

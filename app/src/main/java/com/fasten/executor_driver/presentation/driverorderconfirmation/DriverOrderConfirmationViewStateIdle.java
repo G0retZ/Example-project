@@ -18,7 +18,7 @@ final class DriverOrderConfirmationViewStateIdle extends DriverOrderConfirmation
     stateActions.showPending(false);
     stateActions.enableAcceptButton(true);
     stateActions.enableDeclineButton(true);
-    stateActions.showOfferAvailabilityError(false);
+    stateActions.showOrderAvailabilityError(false);
     stateActions.showNetworkErrorMessage(false);
   }
 }

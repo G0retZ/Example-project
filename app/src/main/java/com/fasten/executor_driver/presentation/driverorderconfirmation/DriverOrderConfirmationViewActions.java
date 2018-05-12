@@ -55,7 +55,7 @@ public interface DriverOrderConfirmationViewActions {
    *
    * @param options - список опций, требуемых для выполнения заказа
    */
-  void showOfferOptionsRequirements(@NonNull String options);
+  void showOrderOptionsRequirements(@NonNull String options);
 
   /**
    * Показать комментарий к заказу.
@@ -69,7 +69,7 @@ public interface DriverOrderConfirmationViewActions {
    *
    * @param show - показать или нет?
    */
-  void showOfferAvailabilityError(boolean show);
+  void showOrderAvailabilityError(boolean show);
 
   /**
    * Показать сообщение об ошибке сети.

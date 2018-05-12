@@ -466,10 +466,10 @@ public class AppComponentImpl implements AppComponent {
   }
 
   @Override
-  public void inject(DriverOrderConfirmationFragment offerFragment) {
-    offerFragment.setDriverOrderConfirmationViewModel(
+  public void inject(DriverOrderConfirmationFragment driverOrderConfirmationFragment) {
+    driverOrderConfirmationFragment.setDriverOrderConfirmationViewModel(
         ViewModelProviders.of(
-            offerFragment,
+            driverOrderConfirmationFragment,
             new ViewModelFactory<>(
                 new DriverOrderConfirmationViewModelImpl(
                     new DriverOrderConfirmationUseCaseImpl(
@@ -486,10 +486,10 @@ public class AppComponentImpl implements AppComponent {
   }
 
   @Override
-  public void inject(ClientOrderConfirmationFragment orderConfirmationFragment) {
-    orderConfirmationFragment.setClientOrderConfirmationViewModel(
+  public void inject(ClientOrderConfirmationFragment clientOrderConfirmationFragment) {
+    clientOrderConfirmationFragment.setClientOrderConfirmationViewModel(
         ViewModelProviders.of(
-            orderConfirmationFragment,
+            clientOrderConfirmationFragment,
             new ViewModelFactory<>(
                 new ClientOrderConfirmationViewModelImpl(
                     new ClientOrderConfirmationUseCaseImpl(

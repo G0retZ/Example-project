@@ -15,7 +15,7 @@ public interface ClientOrderConfirmationUseCase {
    *
    * @return {@link Flowable<Order>} результат запроса.
    */
-  Flowable<Order> getOffers();
+  Flowable<Order> getOrders();
 
   /**
    * Передает отказ исполнителя от заказа.

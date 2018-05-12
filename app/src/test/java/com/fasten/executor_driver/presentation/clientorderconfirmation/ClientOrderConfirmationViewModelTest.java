@@ -10,7 +10,7 @@ import static org.mockito.Mockito.when;
 import android.arch.core.executor.testing.InstantTaskExecutorRule;
 import android.arch.lifecycle.Observer;
 import com.fasten.executor_driver.backend.web.NoNetworkException;
-import com.fasten.executor_driver.entity.NoOffersAvailableException;
+import com.fasten.executor_driver.entity.NoOrdersAvailableException;
 import com.fasten.executor_driver.entity.Order;
 import com.fasten.executor_driver.gateway.DataMappingException;
 import com.fasten.executor_driver.interactor.ClientOrderConfirmationUseCase;
@@ -54,7 +54,7 @@ public class ClientOrderConfirmationViewModelTest {
   public void setUp() {
     RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
     RxAndroidPlugins.setInitMainThreadSchedulerHandler(scheduler -> Schedulers.trampoline());
-    when(clientOrderConfirmationUseCase.getOffers()).thenReturn(Flowable.never());
+    when(clientOrderConfirmationUseCase.getOrders()).thenReturn(Flowable.never());
     when(clientOrderConfirmationUseCase.cancelOrder()).thenReturn(Completable.never());
     clientOrderConfirmationViewModel = new ClientOrderConfirmationViewModelImpl(
         clientOrderConfirmationUseCase);
@@ -73,7 +73,7 @@ public class ClientOrderConfirmationViewModelTest {
     clientOrderConfirmationViewModel.getViewStateLiveData();
 
     // Результат:
-    verify(clientOrderConfirmationUseCase, only()).getOffers();
+    verify(clientOrderConfirmationUseCase, only()).getOrders();
   }
 
   /**
@@ -131,7 +131,7 @@ public class ClientOrderConfirmationViewModelTest {
     // Дано:
     PublishSubject<Order> publishSubject = PublishSubject.create();
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    when(clientOrderConfirmationUseCase.getOffers())
+    when(clientOrderConfirmationUseCase.getOrders())
         .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
     clientOrderConfirmationViewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
@@ -153,7 +153,7 @@ public class ClientOrderConfirmationViewModelTest {
     // Дано:
     PublishSubject<Order> publishSubject = PublishSubject.create();
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    when(clientOrderConfirmationUseCase.getOffers())
+    when(clientOrderConfirmationUseCase.getOrders())
         .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
     clientOrderConfirmationViewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
@@ -175,12 +175,12 @@ public class ClientOrderConfirmationViewModelTest {
     // Дано:
     PublishSubject<Order> publishSubject = PublishSubject.create();
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    when(clientOrderConfirmationUseCase.getOffers())
+    when(clientOrderConfirmationUseCase.getOrders())
         .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
     clientOrderConfirmationViewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    publishSubject.onError(new NoOffersAvailableException());
+    publishSubject.onError(new NoOrdersAvailableException());
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(new ClientOrderConfirmationViewStatePending(null));
@@ -197,7 +197,7 @@ public class ClientOrderConfirmationViewModelTest {
     // Дано:
     PublishSubject<Order> publishSubject = PublishSubject.create();
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    when(clientOrderConfirmationUseCase.getOffers())
+    when(clientOrderConfirmationUseCase.getOrders())
         .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
     clientOrderConfirmationViewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
@@ -268,7 +268,7 @@ public class ClientOrderConfirmationViewModelTest {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     when(clientOrderConfirmationUseCase.cancelOrder())
-        .thenReturn(Completable.error(NoOffersAvailableException::new));
+        .thenReturn(Completable.error(NoOrdersAvailableException::new));
     clientOrderConfirmationViewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
@@ -309,7 +309,7 @@ public class ClientOrderConfirmationViewModelTest {
     // Дано:
     PublishSubject<Order> publishSubject = PublishSubject.create();
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    when(clientOrderConfirmationUseCase.getOffers())
+    when(clientOrderConfirmationUseCase.getOrders())
         .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
     clientOrderConfirmationViewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
@@ -336,7 +336,7 @@ public class ClientOrderConfirmationViewModelTest {
     // Дано:
     PublishSubject<Order> publishSubject = PublishSubject.create();
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    when(clientOrderConfirmationUseCase.getOffers())
+    when(clientOrderConfirmationUseCase.getOrders())
         .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
     when(clientOrderConfirmationUseCase.cancelOrder())
         .thenReturn(Completable.error(NoNetworkException::new));
@@ -368,10 +368,10 @@ public class ClientOrderConfirmationViewModelTest {
     // Дано:
     PublishSubject<Order> publishSubject = PublishSubject.create();
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    when(clientOrderConfirmationUseCase.getOffers())
+    when(clientOrderConfirmationUseCase.getOrders())
         .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
     when(clientOrderConfirmationUseCase.cancelOrder())
-        .thenReturn(Completable.error(NoOffersAvailableException::new));
+        .thenReturn(Completable.error(NoOrdersAvailableException::new));
     clientOrderConfirmationViewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
@@ -401,7 +401,7 @@ public class ClientOrderConfirmationViewModelTest {
     // Дано:
     PublishSubject<Order> publishSubject = PublishSubject.create();
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    when(clientOrderConfirmationUseCase.getOffers())
+    when(clientOrderConfirmationUseCase.getOrders())
         .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
     when(clientOrderConfirmationUseCase.cancelOrder()).thenReturn(Completable.complete());
     clientOrderConfirmationViewModel.getViewStateLiveData().observeForever(viewStateObserver);

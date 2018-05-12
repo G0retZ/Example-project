@@ -11,12 +11,12 @@ public interface DriverOrderConfirmationViewModel extends
   /**
    * Принимает заказ.
    */
-  void acceptOffer();
+  void acceptOrder();
 
   /**
    * Отказывается от заказа.
    */
-  void declineOffer();
+  void declineOrder();
 
   /**
    * Сообщает, что таймер закончился.

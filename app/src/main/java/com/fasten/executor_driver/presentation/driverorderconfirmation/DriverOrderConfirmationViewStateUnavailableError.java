@@ -19,7 +19,7 @@ final class DriverOrderConfirmationViewStateUnavailableError extends
     stateActions.showPending(false);
     stateActions.enableAcceptButton(false);
     stateActions.enableDeclineButton(false);
-    stateActions.showOfferAvailabilityError(true);
+    stateActions.showOrderAvailabilityError(true);
     stateActions.showNetworkErrorMessage(false);
   }
 }

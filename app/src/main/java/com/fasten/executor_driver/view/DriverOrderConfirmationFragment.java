@@ -76,8 +76,8 @@ public class DriverOrderConfirmationFragment extends BaseFragment implements
     priceTitleText = view.findViewById(R.id.priceTitleText);
     priceText = view.findViewById(R.id.priceText);
     acceptAction = view.findViewById(R.id.acceptButton);
-    acceptAction.setOnClickListener(v -> driverOrderConfirmationViewModel.acceptOffer());
-    declineAction.setOnClickListener(v -> driverOrderConfirmationViewModel.declineOffer());
+    acceptAction.setOnClickListener(v -> driverOrderConfirmationViewModel.acceptOrder());
+    declineAction.setOnClickListener(v -> driverOrderConfirmationViewModel.declineOrder());
     return view;
   }
 
@@ -169,7 +169,7 @@ public class DriverOrderConfirmationFragment extends BaseFragment implements
   }
 
   @Override
-  public void showOfferOptionsRequirements(@NonNull String options) {
+  public void showOrderOptionsRequirements(@NonNull String options) {
     if (options.trim().isEmpty()) {
       optionsTitleText.setVisibility(View.GONE);
       optionsText.setVisibility(View.GONE);
@@ -193,7 +193,7 @@ public class DriverOrderConfirmationFragment extends BaseFragment implements
   }
 
   @Override
-  public void showOfferAvailabilityError(boolean show) {
+  public void showOrderAvailabilityError(boolean show) {
     if (show) {
       new Builder(context)
           .setTitle(R.string.error)

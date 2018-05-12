@@ -11,7 +11,7 @@ import static org.mockito.Mockito.when;
 import android.arch.core.executor.testing.InstantTaskExecutorRule;
 import android.arch.lifecycle.Observer;
 import com.fasten.executor_driver.backend.web.NoNetworkException;
-import com.fasten.executor_driver.entity.NoOffersAvailableException;
+import com.fasten.executor_driver.entity.NoOrdersAvailableException;
 import com.fasten.executor_driver.entity.Order;
 import com.fasten.executor_driver.gateway.DataMappingException;
 import com.fasten.executor_driver.interactor.DriverOrderConfirmationUseCase;
@@ -58,7 +58,7 @@ public class OrderViewModelTest {
   public void setUp() {
     RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
     RxAndroidPlugins.setInitMainThreadSchedulerHandler(scheduler -> Schedulers.trampoline());
-    when(driverOrderConfirmationUseCase.getOffers()).thenReturn(Flowable.never());
+    when(driverOrderConfirmationUseCase.getOrders()).thenReturn(Flowable.never());
     when(driverOrderConfirmationUseCase.sendDecision(anyBoolean())).thenReturn(Completable.never());
     driverOrderConfirmationViewModel = new DriverOrderConfirmationViewModelImpl(
         driverOrderConfirmationUseCase, timeUtils);
@@ -77,7 +77,7 @@ public class OrderViewModelTest {
     driverOrderConfirmationViewModel.getViewStateLiveData();
 
     // Результат:
-    verify(driverOrderConfirmationUseCase, only()).getOffers();
+    verify(driverOrderConfirmationUseCase, only()).getOrders();
   }
 
   /**
@@ -90,7 +90,7 @@ public class OrderViewModelTest {
         .thenReturn(Completable.complete());
 
     // Действие:
-    driverOrderConfirmationViewModel.acceptOffer();
+    driverOrderConfirmationViewModel.acceptOrder();
 
     // Результат:
     verify(driverOrderConfirmationUseCase, only()).sendDecision(true);
@@ -106,7 +106,7 @@ public class OrderViewModelTest {
         .thenReturn(Completable.complete());
 
     // Действие:
-    driverOrderConfirmationViewModel.declineOffer();
+    driverOrderConfirmationViewModel.declineOrder();
 
     // Результат:
     verify(driverOrderConfirmationUseCase, only()).sendDecision(false);
@@ -118,9 +118,9 @@ public class OrderViewModelTest {
   @Test
   public void DoNotTouchOfferUseCaseDuringOfferSetting() {
     // Действие:
-    driverOrderConfirmationViewModel.acceptOffer();
-    driverOrderConfirmationViewModel.declineOffer();
-    driverOrderConfirmationViewModel.acceptOffer();
+    driverOrderConfirmationViewModel.acceptOrder();
+    driverOrderConfirmationViewModel.declineOrder();
+    driverOrderConfirmationViewModel.acceptOrder();
 
     // Результат:
     verify(driverOrderConfirmationUseCase, only()).sendDecision(true);
@@ -152,7 +152,7 @@ public class OrderViewModelTest {
     // Дано:
     PublishSubject<Order> publishSubject = PublishSubject.create();
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    when(driverOrderConfirmationUseCase.getOffers())
+    when(driverOrderConfirmationUseCase.getOrders())
         .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
     driverOrderConfirmationViewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
@@ -174,7 +174,7 @@ public class OrderViewModelTest {
     // Дано:
     PublishSubject<Order> publishSubject = PublishSubject.create();
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    when(driverOrderConfirmationUseCase.getOffers())
+    when(driverOrderConfirmationUseCase.getOrders())
         .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
     driverOrderConfirmationViewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
@@ -196,12 +196,12 @@ public class OrderViewModelTest {
     // Дано:
     PublishSubject<Order> publishSubject = PublishSubject.create();
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    when(driverOrderConfirmationUseCase.getOffers())
+    when(driverOrderConfirmationUseCase.getOrders())
         .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
     driverOrderConfirmationViewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    publishSubject.onError(new NoOffersAvailableException());
+    publishSubject.onError(new NoOrdersAvailableException());
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(new DriverOrderConfirmationViewStatePending(null));
@@ -218,7 +218,7 @@ public class OrderViewModelTest {
     // Дано:
     PublishSubject<Order> publishSubject = PublishSubject.create();
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    when(driverOrderConfirmationUseCase.getOffers())
+    when(driverOrderConfirmationUseCase.getOrders())
         .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
     driverOrderConfirmationViewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
@@ -251,7 +251,7 @@ public class OrderViewModelTest {
     driverOrderConfirmationViewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    driverOrderConfirmationViewModel.acceptOffer();
+    driverOrderConfirmationViewModel.acceptOrder();
 
     // Результат:
     inOrder.verify(viewStateObserver, times(2))
@@ -269,7 +269,7 @@ public class OrderViewModelTest {
     driverOrderConfirmationViewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    driverOrderConfirmationViewModel.declineOffer();
+    driverOrderConfirmationViewModel.declineOrder();
 
     // Результат:
     inOrder.verify(viewStateObserver, times(2))
@@ -289,7 +289,7 @@ public class OrderViewModelTest {
     driverOrderConfirmationViewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    driverOrderConfirmationViewModel.acceptOffer();
+    driverOrderConfirmationViewModel.acceptOrder();
 
     // Результат:
     inOrder.verify(viewStateObserver, times(2))
@@ -311,7 +311,7 @@ public class OrderViewModelTest {
     driverOrderConfirmationViewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    driverOrderConfirmationViewModel.declineOffer();
+    driverOrderConfirmationViewModel.declineOrder();
 
     // Результат:
     inOrder.verify(viewStateObserver, times(2))
@@ -329,11 +329,11 @@ public class OrderViewModelTest {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     when(driverOrderConfirmationUseCase.sendDecision(anyBoolean()))
-        .thenReturn(Completable.error(NoOffersAvailableException::new));
+        .thenReturn(Completable.error(NoOrdersAvailableException::new));
     driverOrderConfirmationViewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    driverOrderConfirmationViewModel.acceptOffer();
+    driverOrderConfirmationViewModel.acceptOrder();
 
     // Результат:
     inOrder.verify(viewStateObserver, times(2))
@@ -351,11 +351,11 @@ public class OrderViewModelTest {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     when(driverOrderConfirmationUseCase.sendDecision(anyBoolean()))
-        .thenReturn(Completable.error(NoOffersAvailableException::new));
+        .thenReturn(Completable.error(NoOrdersAvailableException::new));
     driverOrderConfirmationViewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    driverOrderConfirmationViewModel.declineOffer();
+    driverOrderConfirmationViewModel.declineOrder();
 
     // Результат:
     inOrder.verify(viewStateObserver, times(2))
@@ -377,7 +377,7 @@ public class OrderViewModelTest {
     driverOrderConfirmationViewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    driverOrderConfirmationViewModel.acceptOffer();
+    driverOrderConfirmationViewModel.acceptOrder();
 
     // Результат:
     inOrder.verify(viewStateObserver, times(2))
@@ -397,7 +397,7 @@ public class OrderViewModelTest {
     driverOrderConfirmationViewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    driverOrderConfirmationViewModel.declineOffer();
+    driverOrderConfirmationViewModel.declineOrder();
 
     // Результат:
     inOrder.verify(viewStateObserver, times(2))
@@ -413,13 +413,13 @@ public class OrderViewModelTest {
     // Дано:
     PublishSubject<Order> publishSubject = PublishSubject.create();
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    when(driverOrderConfirmationUseCase.getOffers())
+    when(driverOrderConfirmationUseCase.getOrders())
         .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
     driverOrderConfirmationViewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
     publishSubject.onNext(order);
-    driverOrderConfirmationViewModel.acceptOffer();
+    driverOrderConfirmationViewModel.acceptOrder();
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(new DriverOrderConfirmationViewStatePending(null));
@@ -440,13 +440,13 @@ public class OrderViewModelTest {
     // Дано:
     PublishSubject<Order> publishSubject = PublishSubject.create();
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    when(driverOrderConfirmationUseCase.getOffers())
+    when(driverOrderConfirmationUseCase.getOrders())
         .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
     driverOrderConfirmationViewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
     publishSubject.onNext(order);
-    driverOrderConfirmationViewModel.declineOffer();
+    driverOrderConfirmationViewModel.declineOrder();
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(new DriverOrderConfirmationViewStatePending(null));
@@ -467,7 +467,7 @@ public class OrderViewModelTest {
     // Дано:
     PublishSubject<Order> publishSubject = PublishSubject.create();
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    when(driverOrderConfirmationUseCase.getOffers())
+    when(driverOrderConfirmationUseCase.getOrders())
         .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
     driverOrderConfirmationViewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
@@ -496,7 +496,7 @@ public class OrderViewModelTest {
     // Дано:
     PublishSubject<Order> publishSubject = PublishSubject.create();
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    when(driverOrderConfirmationUseCase.getOffers())
+    when(driverOrderConfirmationUseCase.getOrders())
         .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
     when(driverOrderConfirmationUseCase.sendDecision(anyBoolean()))
         .thenReturn(Completable.error(NoNetworkException::new));
@@ -504,7 +504,7 @@ public class OrderViewModelTest {
 
     // Действие:
     publishSubject.onNext(order);
-    driverOrderConfirmationViewModel.acceptOffer();
+    driverOrderConfirmationViewModel.acceptOrder();
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(new DriverOrderConfirmationViewStatePending(null));
@@ -528,7 +528,7 @@ public class OrderViewModelTest {
     // Дано:
     PublishSubject<Order> publishSubject = PublishSubject.create();
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    when(driverOrderConfirmationUseCase.getOffers())
+    when(driverOrderConfirmationUseCase.getOrders())
         .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
     when(driverOrderConfirmationUseCase.sendDecision(anyBoolean()))
         .thenReturn(Completable.error(NoNetworkException::new));
@@ -536,7 +536,7 @@ public class OrderViewModelTest {
 
     // Действие:
     publishSubject.onNext(order);
-    driverOrderConfirmationViewModel.declineOffer();
+    driverOrderConfirmationViewModel.declineOrder();
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(new DriverOrderConfirmationViewStatePending(null));
@@ -560,15 +560,15 @@ public class OrderViewModelTest {
     // Дано:
     PublishSubject<Order> publishSubject = PublishSubject.create();
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    when(driverOrderConfirmationUseCase.getOffers())
+    when(driverOrderConfirmationUseCase.getOrders())
         .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
     when(driverOrderConfirmationUseCase.sendDecision(anyBoolean()))
-        .thenReturn(Completable.error(NoOffersAvailableException::new));
+        .thenReturn(Completable.error(NoOrdersAvailableException::new));
     driverOrderConfirmationViewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
     publishSubject.onNext(order);
-    driverOrderConfirmationViewModel.acceptOffer();
+    driverOrderConfirmationViewModel.acceptOrder();
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(new DriverOrderConfirmationViewStatePending(null));
@@ -593,15 +593,15 @@ public class OrderViewModelTest {
     // Дано:
     PublishSubject<Order> publishSubject = PublishSubject.create();
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    when(driverOrderConfirmationUseCase.getOffers())
+    when(driverOrderConfirmationUseCase.getOrders())
         .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
     when(driverOrderConfirmationUseCase.sendDecision(anyBoolean()))
-        .thenReturn(Completable.error(NoOffersAvailableException::new));
+        .thenReturn(Completable.error(NoOrdersAvailableException::new));
     driverOrderConfirmationViewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
     publishSubject.onNext(order);
-    driverOrderConfirmationViewModel.declineOffer();
+    driverOrderConfirmationViewModel.declineOrder();
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(new DriverOrderConfirmationViewStatePending(null));
@@ -626,7 +626,7 @@ public class OrderViewModelTest {
     // Дано:
     PublishSubject<Order> publishSubject = PublishSubject.create();
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    when(driverOrderConfirmationUseCase.getOffers())
+    when(driverOrderConfirmationUseCase.getOrders())
         .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
     when(driverOrderConfirmationUseCase.sendDecision(anyBoolean()))
         .thenReturn(Completable.complete());
@@ -634,7 +634,7 @@ public class OrderViewModelTest {
 
     // Действие:
     publishSubject.onNext(order);
-    driverOrderConfirmationViewModel.acceptOffer();
+    driverOrderConfirmationViewModel.acceptOrder();
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(new DriverOrderConfirmationViewStatePending(null));
@@ -655,7 +655,7 @@ public class OrderViewModelTest {
     // Дано:
     PublishSubject<Order> publishSubject = PublishSubject.create();
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    when(driverOrderConfirmationUseCase.getOffers())
+    when(driverOrderConfirmationUseCase.getOrders())
         .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
     when(driverOrderConfirmationUseCase.sendDecision(anyBoolean()))
         .thenReturn(Completable.complete());
@@ -663,7 +663,7 @@ public class OrderViewModelTest {
 
     // Действие:
     publishSubject.onNext(order);
-    driverOrderConfirmationViewModel.declineOffer();
+    driverOrderConfirmationViewModel.declineOrder();
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(new DriverOrderConfirmationViewStatePending(null));

@@ -33,9 +33,9 @@ public class OrderViewStateNetworkErrorTest {
     when(orderItem.getAddress()).thenReturn("address");
     when(orderItem.getDistance()).thenReturn("123L");
     when(orderItem.getLoadPointMapUrl()).thenReturn("url");
-    when(orderItem.getOfferComment()).thenReturn("comm");
+    when(orderItem.getOrderComment()).thenReturn("comm");
     when(orderItem.getEstimatedPrice()).thenReturn("1000");
-    when(orderItem.getOfferOptionsRequired()).thenReturn("1,2,3");
+    when(orderItem.getOrderOptionsRequired()).thenReturn("1,2,3");
     when(orderItem.getProgressLeft()).thenReturn(new long[]{123, 4532});
 
     // Действие:
@@ -46,13 +46,13 @@ public class OrderViewStateNetworkErrorTest {
     verify(driverOrderConfirmationViewActions).showDistance("123L");
     verify(driverOrderConfirmationViewActions).showLoadPointAddress("address");
     verify(driverOrderConfirmationViewActions).showEstimatedPrice("1000");
-    verify(driverOrderConfirmationViewActions).showOfferOptionsRequirements("1,2,3");
+    verify(driverOrderConfirmationViewActions).showOrderOptionsRequirements("1,2,3");
     verify(driverOrderConfirmationViewActions).showComment("comm");
     verify(driverOrderConfirmationViewActions).showTimeout(123, 4532);
     verify(driverOrderConfirmationViewActions).showPending(false);
     verify(driverOrderConfirmationViewActions).enableAcceptButton(false);
     verify(driverOrderConfirmationViewActions).enableDeclineButton(false);
-    verify(driverOrderConfirmationViewActions).showOfferAvailabilityError(false);
+    verify(driverOrderConfirmationViewActions).showOrderAvailabilityError(false);
     verify(driverOrderConfirmationViewActions).showNetworkErrorMessage(true);
     verifyNoMoreInteractions(driverOrderConfirmationViewActions);
   }
@@ -69,7 +69,7 @@ public class OrderViewStateNetworkErrorTest {
     verify(driverOrderConfirmationViewActions).showPending(false);
     verify(driverOrderConfirmationViewActions).enableAcceptButton(false);
     verify(driverOrderConfirmationViewActions).enableDeclineButton(false);
-    verify(driverOrderConfirmationViewActions).showOfferAvailabilityError(false);
+    verify(driverOrderConfirmationViewActions).showOrderAvailabilityError(false);
     verify(driverOrderConfirmationViewActions).showNetworkErrorMessage(true);
     verifyNoMoreInteractions(driverOrderConfirmationViewActions);
   }

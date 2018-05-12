@@ -38,7 +38,7 @@ public interface AppComponent {
 
   void inject(ServicesFragment servicesFragment);
 
-  void inject(DriverOrderConfirmationFragment offerFragment);
+  void inject(DriverOrderConfirmationFragment driverOrderConfirmationFragment);
 
-  void inject(ClientOrderConfirmationFragment offerFragment);
+  void inject(ClientOrderConfirmationFragment clientOrderConfirmationFragment);
 }

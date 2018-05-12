@@ -28,7 +28,7 @@ class ClientOrderConfirmationViewState implements ViewState<ClientOrderConfirmat
     stateActions.showLoadPointAddress(orderItem.getAddress());
     stateActions.showOptionsRequirements(orderItem.getOrderOptionsRequired());
     stateActions.showEstimatedPrice(orderItem.getEstimatedPrice());
-    stateActions.showComment(orderItem.getOfferComment());
+    stateActions.showComment(orderItem.getOrderComment());
   }
 
   @Override

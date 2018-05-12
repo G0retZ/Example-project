@@ -105,7 +105,7 @@ public class MainApplication extends Application {
             PendingIntent.getActivity(this, 0, new Intent(this, OnlineActivity.class), 0));
         break;
       case ExecutorStateNavigate.DRIVER_ORDER_CONFIRMATION:
-        startService(R.string.offer, R.string.new_offer, R.string.consider,
+        startService(R.string.offer, R.string.new_order, R.string.consider,
             PendingIntent
                 .getActivity(this, 0, new Intent(this, DriverOrderConfirmationActivity.class), 0));
         break;

@@ -64,7 +64,7 @@ class OrderItem {
   }
 
   @NonNull
-  public String getOfferComment() {
+  public String getOrderComment() {
     return order.getComment();
   }
 

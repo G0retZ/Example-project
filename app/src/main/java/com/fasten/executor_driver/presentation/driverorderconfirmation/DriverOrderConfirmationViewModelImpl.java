@@ -5,7 +5,7 @@ import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import com.fasten.executor_driver.entity.NoOffersAvailableException;
+import com.fasten.executor_driver.entity.NoOrdersAvailableException;
 import com.fasten.executor_driver.entity.Order;
 import com.fasten.executor_driver.interactor.DriverOrderConfirmationUseCase;
 import com.fasten.executor_driver.presentation.ViewState;
@@ -26,7 +26,7 @@ public class DriverOrderConfirmationViewModelImpl extends ViewModel implements
   @NonNull
   private final TimeUtils timeUtils;
   @NonNull
-  private Disposable offersDisposable = EmptyDisposable.INSTANCE;
+  private Disposable ordersDisposable = EmptyDisposable.INSTANCE;
   @NonNull
   private Disposable decisionDisposable = EmptyDisposable.INSTANCE;
   @Nullable
@@ -45,7 +45,7 @@ public class DriverOrderConfirmationViewModelImpl extends ViewModel implements
   @NonNull
   @Override
   public LiveData<ViewState<DriverOrderConfirmationViewActions>> getViewStateLiveData() {
-    loadOffers();
+    loadOrders();
     return viewStateLiveData;
   }
 
@@ -56,23 +56,23 @@ public class DriverOrderConfirmationViewModelImpl extends ViewModel implements
   }
 
 
-  private void loadOffers() {
-    if (offersDisposable.isDisposed()) {
-      offersDisposable = driverOrderConfirmationUseCase.getOffers()
+  private void loadOrders() {
+    if (ordersDisposable.isDisposed()) {
+      ordersDisposable = driverOrderConfirmationUseCase.getOrders()
           .subscribeOn(Schedulers.single())
           .observeOn(AndroidSchedulers.mainThread())
-          .subscribe(this::consumeOffer, this::consumeError);
+          .subscribe(this::consumeOrder, this::consumeError);
     }
   }
 
 
-  private void consumeOffer(@NonNull Order order) {
+  private void consumeOrder(@NonNull Order order) {
     orderItem = new OrderItem(order, timeUtils);
     viewStateLiveData.postValue(new DriverOrderConfirmationViewStateIdle(orderItem));
   }
 
   private void consumeError(Throwable throwable) {
-    if (throwable instanceof NoOffersAvailableException) {
+    if (throwable instanceof NoOrdersAvailableException) {
       viewStateLiveData.postValue(new DriverOrderConfirmationViewStateUnavailableError(orderItem));
     } else {
       viewStateLiveData.postValue(new DriverOrderConfirmationViewStateNetworkError(orderItem));
@@ -80,7 +80,7 @@ public class DriverOrderConfirmationViewModelImpl extends ViewModel implements
   }
 
   @Override
-  public void acceptOffer() {
+  public void acceptOrder() {
     if (!decisionDisposable.isDisposed()) {
       return;
     }
@@ -95,7 +95,7 @@ public class DriverOrderConfirmationViewModelImpl extends ViewModel implements
   }
 
   @Override
-  public void declineOffer() {
+  public void declineOrder() {
     if (!decisionDisposable.isDisposed()) {
       return;
     }
@@ -120,8 +120,8 @@ public class DriverOrderConfirmationViewModelImpl extends ViewModel implements
   protected void onCleared() {
     super.onCleared();
     orderItem = null;
-    if (!offersDisposable.isDisposed()) {
-      offersDisposable.dispose();
+    if (!ordersDisposable.isDisposed()) {
+      ordersDisposable.dispose();
     }
     if (!decisionDisposable.isDisposed()) {
       decisionDisposable.dispose();

@@ -4,7 +4,7 @@ import android.support.annotation.NonNull;
 import com.fasten.executor_driver.BuildConfig;
 import com.fasten.executor_driver.backend.websocket.ConnectionClosedException;
 import com.fasten.executor_driver.entity.ExecutorState;
-import com.fasten.executor_driver.entity.NoOffersAvailableException;
+import com.fasten.executor_driver.entity.NoOrdersAvailableException;
 import com.fasten.executor_driver.entity.Order;
 import com.fasten.executor_driver.interactor.ExecutorStateUseCase;
 import com.fasten.executor_driver.interactor.OrderGateway;
@@ -35,7 +35,7 @@ public class DriverOrderConfirmationGatewayImpl implements OrderGateway {
 
   @NonNull
   @Override
-  public Flowable<Order> getOffers() {
+  public Flowable<Order> getOrders() {
     return executorStateUseCase
         .getExecutorStates(false)
         .subscribeOn(Schedulers.single())
@@ -43,7 +43,7 @@ public class DriverOrderConfirmationGatewayImpl implements OrderGateway {
         .filter(executorState -> executorState == ExecutorState.DRIVER_ORDER_CONFIRMATION)
         .map(executorState -> {
           if (executorState.getData() == null) {
-            throw new NoOffersAvailableException();
+            throw new NoOrdersAvailableException();
           }
           return mapper.map(executorState.getData());
         }).observeOn(Schedulers.single());

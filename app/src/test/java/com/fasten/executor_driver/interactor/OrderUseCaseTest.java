@@ -10,7 +10,7 @@ import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 import com.fasten.executor_driver.backend.web.NoNetworkException;
-import com.fasten.executor_driver.entity.NoOffersAvailableException;
+import com.fasten.executor_driver.entity.NoOrdersAvailableException;
 import com.fasten.executor_driver.entity.Order;
 import com.fasten.executor_driver.gateway.DataMappingException;
 import io.reactivex.Completable;
@@ -37,7 +37,7 @@ public class OrderUseCaseTest {
 
   @Before
   public void setUp() {
-    when(gateway.getOffers()).thenReturn(Flowable.never());
+    when(gateway.getOrders()).thenReturn(Flowable.never());
     when(gateway.sendDecision(any(), anyBoolean())).thenReturn(Completable.never());
     driverOrderConfirmationUseCase = new DriverOrderConfirmationUseCaseImpl(gateway);
   }
@@ -50,10 +50,10 @@ public class OrderUseCaseTest {
   @Test
   public void askGatewayForOffers() {
     // Действие:
-    driverOrderConfirmationUseCase.getOffers().test();
+    driverOrderConfirmationUseCase.getOrders().test();
 
     // Результат:
-    verify(gateway, only()).getOffers();
+    verify(gateway, only()).getOrders();
   }
 
   /**
@@ -75,13 +75,13 @@ public class OrderUseCaseTest {
   @Test
   public void askGatewayToSendDecisionsForOffers() {
     // Дано:
-    when(gateway.getOffers()).thenReturn(Flowable.just(order));
+    when(gateway.getOrders()).thenReturn(Flowable.just(order));
 
     // Действие:
-    driverOrderConfirmationUseCase.getOffers().test();
+    driverOrderConfirmationUseCase.getOrders().test();
     driverOrderConfirmationUseCase.sendDecision(true).test();
-    when(gateway.getOffers()).thenReturn(Flowable.just(order));
-    driverOrderConfirmationUseCase.getOffers().test();
+    when(gateway.getOrders()).thenReturn(Flowable.just(order));
+    driverOrderConfirmationUseCase.getOrders().test();
     driverOrderConfirmationUseCase.sendDecision(false).test();
 
     // Результат:
@@ -95,11 +95,11 @@ public class OrderUseCaseTest {
   @Test
   public void askGatewayToSendDecisionsForLastOfferOnly() {
     // Дано:
-    when(gateway.getOffers()).thenReturn(Flowable.just(order, order2));
+    when(gateway.getOrders()).thenReturn(Flowable.just(order, order2));
 
     // Действие:
-    driverOrderConfirmationUseCase.getOffers().test();
-    driverOrderConfirmationUseCase.getOffers().test();
+    driverOrderConfirmationUseCase.getOrders().test();
+    driverOrderConfirmationUseCase.getOrders().test();
     driverOrderConfirmationUseCase.sendDecision(true).test();
     driverOrderConfirmationUseCase.sendDecision(false).test();
 
@@ -115,10 +115,10 @@ public class OrderUseCaseTest {
   @Test
   public void answerDataMappingError() {
     // Дано:
-    when(gateway.getOffers()).thenReturn(Flowable.error(new DataMappingException()));
+    when(gateway.getOrders()).thenReturn(Flowable.error(new DataMappingException()));
 
     // Действие:
-    TestSubscriber<Order> test = driverOrderConfirmationUseCase.getOffers().test();
+    TestSubscriber<Order> test = driverOrderConfirmationUseCase.getOrders().test();
 
     // Результат:
     test.assertError(DataMappingException.class);
@@ -132,10 +132,10 @@ public class OrderUseCaseTest {
   @Test
   public void answerWithOffers() {
     // Дано:
-    when(gateway.getOffers()).thenReturn(Flowable.just(order, order2));
+    when(gateway.getOrders()).thenReturn(Flowable.just(order, order2));
 
     // Действие:
-    TestSubscriber<Order> test = driverOrderConfirmationUseCase.getOffers().test();
+    TestSubscriber<Order> test = driverOrderConfirmationUseCase.getOrders().test();
 
     // Результат:
     test.assertValues(order, order2);
@@ -154,7 +154,7 @@ public class OrderUseCaseTest {
     TestObserver<Void> test = driverOrderConfirmationUseCase.sendDecision(true).test();
 
     // Результат:
-    test.assertError(NoOffersAvailableException.class);
+    test.assertError(NoOrdersAvailableException.class);
     test.assertNoValues();
     test.assertNotComplete();
   }
@@ -168,7 +168,7 @@ public class OrderUseCaseTest {
     TestObserver<Void> test = driverOrderConfirmationUseCase.sendDecision(false).test();
 
     // Результат:
-    test.assertError(NoOffersAvailableException.class);
+    test.assertError(NoOrdersAvailableException.class);
     test.assertNoValues();
     test.assertNotComplete();
   }
@@ -179,12 +179,12 @@ public class OrderUseCaseTest {
   @Test
   public void answerNoNetworkErrorForAccept() {
     // Дано:
-    when(gateway.getOffers()).thenReturn(Flowable.just(order));
+    when(gateway.getOrders()).thenReturn(Flowable.just(order));
     when(gateway.sendDecision(any(), anyBoolean()))
         .thenReturn(Completable.error(new NoNetworkException()));
 
     // Действие:
-    driverOrderConfirmationUseCase.getOffers().test();
+    driverOrderConfirmationUseCase.getOrders().test();
     TestObserver<Void> test = driverOrderConfirmationUseCase.sendDecision(true).test();
 
     // Результат:
@@ -199,12 +199,12 @@ public class OrderUseCaseTest {
   @Test
   public void answerNoNetworkErrorForDecline() {
     // Дано:
-    when(gateway.getOffers()).thenReturn(Flowable.just(order));
+    when(gateway.getOrders()).thenReturn(Flowable.just(order));
     when(gateway.sendDecision(any(), anyBoolean()))
         .thenReturn(Completable.error(new NoNetworkException()));
 
     // Действие:
-    driverOrderConfirmationUseCase.getOffers().test();
+    driverOrderConfirmationUseCase.getOrders().test();
     TestObserver<Void> test = driverOrderConfirmationUseCase.sendDecision(false).test();
 
     // Результат:
@@ -219,11 +219,11 @@ public class OrderUseCaseTest {
   @Test
   public void answerSendAcceptSuccessful() {
     // Дано:
-    when(gateway.getOffers()).thenReturn(Flowable.just(order));
+    when(gateway.getOrders()).thenReturn(Flowable.just(order));
     when(gateway.sendDecision(any(), anyBoolean())).thenReturn(Completable.complete());
 
     // Действие:
-    driverOrderConfirmationUseCase.getOffers().test();
+    driverOrderConfirmationUseCase.getOrders().test();
     TestObserver<Void> test = driverOrderConfirmationUseCase.sendDecision(true).test();
 
     // Результат:
@@ -237,11 +237,11 @@ public class OrderUseCaseTest {
   @Test
   public void answerSendDeclineSuccessful() {
     // Дано:
-    when(gateway.getOffers()).thenReturn(Flowable.just(order));
+    when(gateway.getOrders()).thenReturn(Flowable.just(order));
     when(gateway.sendDecision(any(), anyBoolean())).thenReturn(Completable.complete());
 
     // Действие:
-    driverOrderConfirmationUseCase.getOffers().test();
+    driverOrderConfirmationUseCase.getOrders().test();
     TestObserver<Void> test = driverOrderConfirmationUseCase.sendDecision(false).test();
 
     // Результат:

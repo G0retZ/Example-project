@@ -18,7 +18,7 @@ final class DriverOrderConfirmationViewStatePending extends DriverOrderConfirmat
     stateActions.showPending(true);
     stateActions.enableAcceptButton(false);
     stateActions.enableDeclineButton(false);
-    stateActions.showOfferAvailabilityError(false);
+    stateActions.showOrderAvailabilityError(false);
     stateActions.showNetworkErrorMessage(false);
   }
 }

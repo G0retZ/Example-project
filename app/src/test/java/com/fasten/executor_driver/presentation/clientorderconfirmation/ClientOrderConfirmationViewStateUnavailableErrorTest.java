@@ -33,7 +33,7 @@ public class ClientOrderConfirmationViewStateUnavailableErrorTest {
     when(orderItem.getAddress()).thenReturn("address");
     when(orderItem.getDistance()).thenReturn("123L");
     when(orderItem.getLoadPointMapUrl()).thenReturn("url");
-    when(orderItem.getOfferComment()).thenReturn("comm");
+    when(orderItem.getOrderComment()).thenReturn("comm");
     when(orderItem.getEstimatedPrice()).thenReturn("1000");
     when(orderItem.getOrderOptionsRequired()).thenReturn("1,2,3");
 
