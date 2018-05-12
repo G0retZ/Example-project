@@ -47,7 +47,7 @@ public class ClientOrderConfirmationViewStateNetworkErrorTest {
     verify(clientOrderConfirmationViewActions).showEstimatedPrice("1000");
     verify(clientOrderConfirmationViewActions).showOptionsRequirements("1,2,3");
     verify(clientOrderConfirmationViewActions).showComment("comm");
-    verify(clientOrderConfirmationViewActions).showPending(false);
+    verify(clientOrderConfirmationViewActions).showClientOrderConfirmationPending(false);
     verify(clientOrderConfirmationViewActions).enableDeclineButton(false);
     verify(clientOrderConfirmationViewActions).showOrderAvailabilityError(false);
     verify(clientOrderConfirmationViewActions).showNetworkErrorMessage(true);
@@ -63,7 +63,7 @@ public class ClientOrderConfirmationViewStateNetworkErrorTest {
     viewState.apply(clientOrderConfirmationViewActions);
 
     // Результат:
-    verify(clientOrderConfirmationViewActions).showPending(false);
+    verify(clientOrderConfirmationViewActions).showClientOrderConfirmationPending(false);
     verify(clientOrderConfirmationViewActions).enableDeclineButton(false);
     verify(clientOrderConfirmationViewActions).showOrderAvailabilityError(false);
     verify(clientOrderConfirmationViewActions).showNetworkErrorMessage(true);

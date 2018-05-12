@@ -12,7 +12,7 @@ public interface ClientOrderConfirmationViewActions {
    *
    * @param pending - показать или нет?
    */
-  void showPending(boolean pending);
+  void showClientOrderConfirmationPending(boolean pending);
 
   /**
    * показать точку погрузки на карте по урл.

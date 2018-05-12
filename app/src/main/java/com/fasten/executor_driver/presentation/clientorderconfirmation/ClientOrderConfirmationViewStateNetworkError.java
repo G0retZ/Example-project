@@ -15,7 +15,7 @@ final class ClientOrderConfirmationViewStateNetworkError extends ClientOrderConf
   @Override
   public void apply(@NonNull ClientOrderConfirmationViewActions stateActions) {
     super.apply(stateActions);
-    stateActions.showPending(false);
+    stateActions.showClientOrderConfirmationPending(false);
     stateActions.enableDeclineButton(false);
     stateActions.showOrderAvailabilityError(false);
     stateActions.showNetworkErrorMessage(true);

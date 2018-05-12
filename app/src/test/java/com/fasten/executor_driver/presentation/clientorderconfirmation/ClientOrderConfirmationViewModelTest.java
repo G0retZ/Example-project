@@ -66,7 +66,7 @@ public class ClientOrderConfirmationViewModelTest {
    * Должен просить юзкейс получать заказы, при первой и только при первой подписке.
    */
   @Test
-  public void askOrderConfirmationUseCaseForOffersInitially() {
+  public void askUseCaseForOrdersInitially() {
     // Действие:
     clientOrderConfirmationViewModel.getViewStateLiveData();
     clientOrderConfirmationViewModel.getViewStateLiveData();
@@ -80,7 +80,7 @@ public class ClientOrderConfirmationViewModelTest {
    * Должен попросить юзкейс передать отказ от заказа.
    */
   @Test
-  public void askOrderConfirmationUseCaseToSendOrderConfirmationCanceled() {
+  public void askUseCaseToSendOrderConfirmationCanceled() {
     // Дано:
     when(clientOrderConfirmationUseCase.cancelOrder()).thenReturn(Completable.complete());
 
@@ -95,7 +95,7 @@ public class ClientOrderConfirmationViewModelTest {
    * Не должен трогать юзкейс, если предыдущий запрос отмены заказа еще не завершился.
    */
   @Test
-  public void DoNotTouchOrderConfirmationUseCaseDuringOrderConfirmationSetting() {
+  public void DoNotTouchUseCaseDuringOrderConfirmationSetting() {
     // Действие:
     clientOrderConfirmationViewModel.cancelOrder();
     clientOrderConfirmationViewModel.cancelOrder();
@@ -171,7 +171,7 @@ public class ClientOrderConfirmationViewModelTest {
    * Должен вернуть состояние вида "Ошибка" нет доступных заказов.
    */
   @Test
-  public void setNoOfferAvailableErrorViewStateToLiveData() {
+  public void setNoOrderAvailableErrorViewStateToLiveData() {
     // Дано:
     PublishSubject<Order> publishSubject = PublishSubject.create();
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
@@ -264,7 +264,7 @@ public class ClientOrderConfirmationViewModelTest {
    * Должен вернуть состояние вида "Ошибка" нет доступных заказов.
    */
   @Test
-  public void setNoOffersAvailableErrorViewStateWithoutOrderConfirmationToLiveDataForCancel() {
+  public void setNoOrdersAvailableErrorViewStateWithoutOrderConfirmationToLiveDataForCancel() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     when(clientOrderConfirmationUseCase.cancelOrder())
@@ -286,7 +286,7 @@ public class ClientOrderConfirmationViewModelTest {
    * Не должен возвращать никакого состояния вида.
    */
   @Test
-  public void setNoViewStateToLiveDataForCancelWithoutOffer() {
+  public void setNoViewStateToLiveDataForCancelWithoutOrder() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     when(clientOrderConfirmationUseCase.cancelOrder()).thenReturn(Completable.complete());

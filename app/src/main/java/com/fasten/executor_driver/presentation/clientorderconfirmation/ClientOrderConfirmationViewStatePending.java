@@ -15,7 +15,7 @@ final class ClientOrderConfirmationViewStatePending extends ClientOrderConfirmat
   @Override
   public void apply(@NonNull ClientOrderConfirmationViewActions stateActions) {
     super.apply(stateActions);
-    stateActions.showPending(true);
+    stateActions.showClientOrderConfirmationPending(true);
     stateActions.enableDeclineButton(false);
     stateActions.showOrderAvailabilityError(false);
     stateActions.showNetworkErrorMessage(false);

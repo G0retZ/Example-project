@@ -33,7 +33,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import ua.naiksoftware.stomp.client.StompClient;
 
 @RunWith(MockitoJUnitRunner.class)
-public class OrderGatewayTest {
+public class DriverOrderConfirmationGatewayTest {
 
   private OrderGateway orderGateway;
   @Mock
@@ -322,7 +322,7 @@ public class OrderGatewayTest {
    * Должен ответить ошибкой отсутствия заказов для статуса "ожидание подтверждения клиента".
    */
   @Test
-  public void ignoreForWaitForClientConfirmation() {
+  public void ignoreForClientOrderConfirmation() {
     // Дано:
     when(executorStateUseCase.getExecutorStates(anyBoolean()))
         .thenReturn(Flowable.just(ExecutorState.CLIENT_ORDER_CONFIRMATION));
@@ -358,7 +358,7 @@ public class OrderGatewayTest {
    * Должен ответить ошибкой отсутствия заказов для статуса "принятие заказа" без данных.
    */
   @Test
-  public void answerNoOffersAvailableForNoData() {
+  public void answerNoOrdersAvailableForNoData() {
     // Дано:
     when(executorStateUseCase.getExecutorStates(anyBoolean()))
         .thenReturn(Flowable.just(ExecutorState.DRIVER_ORDER_CONFIRMATION));
@@ -400,7 +400,7 @@ public class OrderGatewayTest {
    * @throws Exception error
    */
   @Test
-  public void answerWithOffer() throws Exception {
+  public void answerWithOrder() throws Exception {
     // Дано:
     when(mapper.map(anyString())).thenReturn(order);
     ExecutorState.DRIVER_ORDER_CONFIRMATION.setData("");

@@ -184,7 +184,7 @@ public class ExecutorStateViewModelTest {
    * Должен вернуть "перейти к подтверждению заказа".
    */
   @Test
-  public void navigateToOfferConfirmation() {
+  public void navigateToDriverOrderConfirmation() {
     // Дано:
     when(executorStateUseCase.getExecutorStates(anyBoolean()))
         .thenReturn(Flowable.just(ExecutorState.DRIVER_ORDER_CONFIRMATION));
@@ -201,7 +201,7 @@ public class ExecutorStateViewModelTest {
    * Должен вернуть "перейти к ожиданию подтверждения клиента".
    */
   @Test
-  public void navigateToWaitForClientConfirmation() {
+  public void navigateToClientOrderConfirmation() {
     // Дано:
     when(executorStateUseCase.getExecutorStates(anyBoolean()))
         .thenReturn(Flowable.just(ExecutorState.CLIENT_ORDER_CONFIRMATION));

@@ -17,7 +17,7 @@ final class ClientOrderConfirmationViewStateUnavailableError extends
   @Override
   public void apply(@NonNull ClientOrderConfirmationViewActions stateActions) {
     super.apply(stateActions);
-    stateActions.showPending(false);
+    stateActions.showClientOrderConfirmationPending(false);
     stateActions.enableDeclineButton(false);
     stateActions.showOrderAvailabilityError(true);
     stateActions.showNetworkErrorMessage(false);

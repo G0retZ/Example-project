@@ -24,7 +24,7 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
-public class OrderUseCaseTest {
+public class DriverOrderConfirmationUseCaseTest {
 
   private DriverOrderConfirmationUseCase driverOrderConfirmationUseCase;
 
@@ -48,7 +48,7 @@ public class OrderUseCaseTest {
    * Должен запросить у гейтвея получение заказов.
    */
   @Test
-  public void askGatewayForOffers() {
+  public void askGatewayForOrders() {
     // Действие:
     driverOrderConfirmationUseCase.getOrders().test();
 
@@ -73,7 +73,7 @@ public class OrderUseCaseTest {
    * Должен запросить у гейтвея передачу решений.
    */
   @Test
-  public void askGatewayToSendDecisionsForOffers() {
+  public void askGatewayToSendDecisionsForOrders() {
     // Дано:
     when(gateway.getOrders()).thenReturn(Flowable.just(order));
 
@@ -93,7 +93,7 @@ public class OrderUseCaseTest {
    * Должен запросить у гейтвея передачу решений только для последнего заказа.
    */
   @Test
-  public void askGatewayToSendDecisionsForLastOfferOnly() {
+  public void askGatewayToSendDecisionsForLastOrderOnly() {
     // Дано:
     when(gateway.getOrders()).thenReturn(Flowable.just(order, order2));
 
@@ -130,7 +130,7 @@ public class OrderUseCaseTest {
    * Должен ответить заказами.
    */
   @Test
-  public void answerWithOffers() {
+  public void answerWithOrders() {
     // Дано:
     when(gateway.getOrders()).thenReturn(Flowable.just(order, order2));
 
@@ -149,7 +149,7 @@ public class OrderUseCaseTest {
    * Должен ответить ошибкой отсуствия актуальных заказов на подтверждение.
    */
   @Test
-  public void answerNoOffersErrorForAccept() {
+  public void answerNoOrdersErrorForAccept() {
     // Действие:
     TestObserver<Void> test = driverOrderConfirmationUseCase.sendDecision(true).test();
 
@@ -163,7 +163,7 @@ public class OrderUseCaseTest {
    * Должен ответить ошибкой отсуствия актуальных заказов на отказ.
    */
   @Test
-  public void answerNoOffersErrorForDecline() {
+  public void answerNoOrdersErrorForDecline() {
     // Действие:
     TestObserver<Void> test = driverOrderConfirmationUseCase.sendDecision(false).test();
 

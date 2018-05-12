@@ -47,7 +47,7 @@ public class ClientOrderConfirmationViewStateIdleTest {
     verify(clientOrderConfirmationViewActions).showEstimatedPrice("1000");
     verify(clientOrderConfirmationViewActions).showOptionsRequirements("1,2,3");
     verify(clientOrderConfirmationViewActions).showComment("comm");
-    verify(clientOrderConfirmationViewActions).showPending(false);
+    verify(clientOrderConfirmationViewActions).showClientOrderConfirmationPending(false);
     verify(clientOrderConfirmationViewActions).enableDeclineButton(true);
     verify(clientOrderConfirmationViewActions).showOrderAvailabilityError(false);
     verify(clientOrderConfirmationViewActions).showNetworkErrorMessage(false);
@@ -63,7 +63,7 @@ public class ClientOrderConfirmationViewStateIdleTest {
     viewState.apply(clientOrderConfirmationViewActions);
 
     // Результат:
-    verify(clientOrderConfirmationViewActions).showPending(false);
+    verify(clientOrderConfirmationViewActions).showClientOrderConfirmationPending(false);
     verify(clientOrderConfirmationViewActions).enableDeclineButton(true);
     verify(clientOrderConfirmationViewActions).showOrderAvailabilityError(false);
     verify(clientOrderConfirmationViewActions).showNetworkErrorMessage(false);

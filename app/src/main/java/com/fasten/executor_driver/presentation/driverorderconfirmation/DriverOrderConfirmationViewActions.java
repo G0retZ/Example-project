@@ -12,7 +12,7 @@ public interface DriverOrderConfirmationViewActions {
    *
    * @param pending - показать или нет?
    */
-  void showPending(boolean pending);
+  void showDriverOrderConfirmationPending(boolean pending);
 
   /**
    * показать точку погрузки на карте по урл.

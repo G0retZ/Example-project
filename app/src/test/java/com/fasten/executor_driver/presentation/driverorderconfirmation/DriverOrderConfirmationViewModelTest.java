@@ -35,7 +35,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
-public class OrderViewModelTest {
+public class DriverOrderConfirmationViewModelTest {
 
   @Rule
   public TestRule rule = new InstantTaskExecutorRule();
@@ -70,7 +70,7 @@ public class OrderViewModelTest {
    * Должен просить юзкейс получать заказы, при первой и только при первой подписке.
    */
   @Test
-  public void askOfferUseCaseForOffersInitially() {
+  public void askUseCaseForOrdersInitially() {
     // Действие:
     driverOrderConfirmationViewModel.getViewStateLiveData();
     driverOrderConfirmationViewModel.getViewStateLiveData();
@@ -84,7 +84,7 @@ public class OrderViewModelTest {
    * Должен попросить юзкейс передать принятие заказа.
    */
   @Test
-  public void askOfferUseCaseToSendOfferAccepted() {
+  public void askUseCaseToSendOrderAccepted() {
     // Дано:
     when(driverOrderConfirmationUseCase.sendDecision(anyBoolean()))
         .thenReturn(Completable.complete());
@@ -100,7 +100,7 @@ public class OrderViewModelTest {
    * Должен попросить юзкейс передать отказ от заказа.
    */
   @Test
-  public void askOfferUseCaseToSendOfferDeclined() {
+  public void askUseCaseToSendOrderDeclined() {
     // Дано:
     when(driverOrderConfirmationUseCase.sendDecision(anyBoolean()))
         .thenReturn(Completable.complete());
@@ -116,7 +116,7 @@ public class OrderViewModelTest {
    * Не должен трогать юзкейс, если предыдущий запрос передачи решения еще не завершился.
    */
   @Test
-  public void DoNotTouchOfferUseCaseDuringOfferSetting() {
+  public void DoNotTouchUseCaseDuringOrderSetting() {
     // Действие:
     driverOrderConfirmationViewModel.acceptOrder();
     driverOrderConfirmationViewModel.declineOrder();
@@ -192,7 +192,7 @@ public class OrderViewModelTest {
    * Должен вернуть состояние вида "Ошибка" нет доступных заказов.
    */
   @Test
-  public void setNoOfferAvailableErrorViewStateToLiveData() {
+  public void setNoOrderAvailableErrorViewStateToLiveData() {
     // Дано:
     PublishSubject<Order> publishSubject = PublishSubject.create();
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
@@ -245,7 +245,7 @@ public class OrderViewModelTest {
    * Должен вернуть состояние вида "В процессе".
    */
   @Test
-  public void setPendingViewStateWithoutOfferToLiveDataForAccept() {
+  public void setPendingViewStateWithoutOrderToLiveDataForAccept() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     driverOrderConfirmationViewModel.getViewStateLiveData().observeForever(viewStateObserver);
@@ -263,7 +263,7 @@ public class OrderViewModelTest {
    * Должен вернуть состояние вида "В процессе".
    */
   @Test
-  public void setPendingViewStateWithoutOfferToLiveDataForDecline() {
+  public void setPendingViewStateWithoutOrderToLiveDataForDecline() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     driverOrderConfirmationViewModel.getViewStateLiveData().observeForever(viewStateObserver);
@@ -281,7 +281,7 @@ public class OrderViewModelTest {
    * Должен вернуть состояние вида "Ошибка" сети.
    */
   @Test
-  public void setNoNetworkErrorViewStateWithoutOfferToLiveDataForAccept() {
+  public void setNoNetworkErrorViewStateWithoutOrderToLiveDataForAccept() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     when(driverOrderConfirmationUseCase.sendDecision(anyBoolean()))
@@ -303,7 +303,7 @@ public class OrderViewModelTest {
    * Должен вернуть состояние вида "Ошибка" сети.
    */
   @Test
-  public void setNoNetworkErrorViewStateWithoutOfferToLiveDataForDecline() {
+  public void setNoNetworkErrorViewStateWithoutOrderToLiveDataForDecline() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     when(driverOrderConfirmationUseCase.sendDecision(anyBoolean()))
@@ -325,7 +325,7 @@ public class OrderViewModelTest {
    * Должен вернуть состояние вида "Ошибка" нет доступных заказов.
    */
   @Test
-  public void setNoOffersAvailableErrorViewStateWithoutOfferToLiveDataForAccept() {
+  public void setNoOrdersAvailableErrorViewStateWithoutOrderToLiveDataForAccept() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     when(driverOrderConfirmationUseCase.sendDecision(anyBoolean()))
@@ -347,7 +347,7 @@ public class OrderViewModelTest {
    * Должен вернуть состояние вида "Ошибка" нет доступных заказов.
    */
   @Test
-  public void setNoOffersAvailableErrorViewStateWithoutOfferToLiveDataForDecline() {
+  public void setNoOrdersAvailableErrorViewStateWithoutOrderToLiveDataForDecline() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     when(driverOrderConfirmationUseCase.sendDecision(anyBoolean()))
@@ -369,7 +369,7 @@ public class OrderViewModelTest {
    * Не должен возвращать никакого состояния вида.
    */
   @Test
-  public void setNoViewStateToLiveDataForAcceptWithoutOffer() {
+  public void setNoViewStateToLiveDataForAcceptWithoutOrder() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     when(driverOrderConfirmationUseCase.sendDecision(anyBoolean()))
@@ -389,7 +389,7 @@ public class OrderViewModelTest {
    * Не должен возвращать никакого состояния вида.
    */
   @Test
-  public void setNoViewStateToLiveDataForDeclineWithoutOffer() {
+  public void setNoViewStateToLiveDataForDeclineWithoutOrder() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     when(driverOrderConfirmationUseCase.sendDecision(anyBoolean()))
@@ -556,7 +556,7 @@ public class OrderViewModelTest {
    * Должен вернуть состояние вида "Ошибка" нет доступных заказов.
    */
   @Test
-  public void setNoOffersAvailableErrorViewStateToLiveDataForAccept() {
+  public void setNoOrdersAvailableErrorViewStateToLiveDataForAccept() {
     // Дано:
     PublishSubject<Order> publishSubject = PublishSubject.create();
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
@@ -589,7 +589,7 @@ public class OrderViewModelTest {
    * Должен вернуть состояние вида "Ошибка" нет доступных заказов.
    */
   @Test
-  public void setNoOffersAvailableErrorViewStateToLiveDataForDecline() {
+  public void setNoOrdersAvailableErrorViewStateToLiveDataForDecline() {
     // Дано:
     PublishSubject<Order> publishSubject = PublishSubject.create();
     InOrder inOrder = Mockito.inOrder(viewStateObserver);

@@ -15,7 +15,7 @@ final class DriverOrderConfirmationViewStatePending extends DriverOrderConfirmat
   @Override
   public void apply(@NonNull DriverOrderConfirmationViewActions stateActions) {
     super.apply(stateActions);
-    stateActions.showPending(true);
+    stateActions.showDriverOrderConfirmationPending(true);
     stateActions.enableAcceptButton(false);
     stateActions.enableDeclineButton(false);
     stateActions.showOrderAvailabilityError(false);

@@ -49,7 +49,7 @@ public class OrderViewStateIdleTest {
     verify(driverOrderConfirmationViewActions).showOrderOptionsRequirements("1,2,3");
     verify(driverOrderConfirmationViewActions).showComment("comm");
     verify(driverOrderConfirmationViewActions).showTimeout(123, 4532);
-    verify(driverOrderConfirmationViewActions).showPending(false);
+    verify(driverOrderConfirmationViewActions).showDriverOrderConfirmationPending(false);
     verify(driverOrderConfirmationViewActions).enableAcceptButton(true);
     verify(driverOrderConfirmationViewActions).enableDeclineButton(true);
     verify(driverOrderConfirmationViewActions).showOrderAvailabilityError(false);
@@ -66,7 +66,7 @@ public class OrderViewStateIdleTest {
     viewState.apply(driverOrderConfirmationViewActions);
 
     // Результат:
-    verify(driverOrderConfirmationViewActions).showPending(false);
+    verify(driverOrderConfirmationViewActions).showDriverOrderConfirmationPending(false);
     verify(driverOrderConfirmationViewActions).enableAcceptButton(true);
     verify(driverOrderConfirmationViewActions).enableDeclineButton(true);
     verify(driverOrderConfirmationViewActions).showOrderAvailabilityError(false);
