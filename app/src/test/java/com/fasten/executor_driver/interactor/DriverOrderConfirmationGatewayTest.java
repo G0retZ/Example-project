@@ -33,7 +33,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import ua.naiksoftware.stomp.client.StompClient;
 
 @RunWith(MockitoJUnitRunner.class)
-public class OrderGatewayTest {
+public class DriverOrderConfirmationGatewayTest {
 
   private OrderGateway orderGateway;
   @Mock

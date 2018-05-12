@@ -24,7 +24,7 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
-public class OrderUseCaseTest {
+public class DriverOrderConfirmationUseCaseTest {
 
   private DriverOrderConfirmationUseCase driverOrderConfirmationUseCase;
 
