@@ -22,6 +22,8 @@ public class ApiOfferTest {
         "More than $3000",
         "some comment",
         23,
+        1200,
+        1234567890,
         new ApiDriverDistancePair(32),
         Arrays.asList(
             new ApiRoutePoint(123, 456, "point comment", "address"),
@@ -40,6 +42,8 @@ public class ApiOfferTest {
     assertEquals(apiOffer.getEstimatedAmount(), "More than $3000");
     assertEquals(apiOffer.getComment(), "some comment");
     assertEquals(apiOffer.getTimeout(), 23);
+    assertEquals(apiOffer.getEta(), 1200);
+    assertEquals(apiOffer.getTimeStamp(), 1234567890);
     assertNotNull(apiOffer.getExecutorDistance());
     assertEquals(apiOffer.getExecutorDistance().getDistance(), 32);
     assertNotNull(apiOffer.getRoute());

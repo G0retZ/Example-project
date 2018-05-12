@@ -42,9 +42,9 @@ public class OfferApiMapperTest {
         + "    \"id\": \"7\",\n"
         + "    \"comment\": \"com\",\n"
         + "    \"estimatedAmount\": \"7000\",\n"
-        + "    \"passengers\": \"2\",\n"
-        + "    \"porters\": \"1\",\n"
         + "    \"timeout\": \"25\",\n"
+        + "    \"eta\": \"1200\",\n"
+        + "    \"timeStamp\": \"1234567890\",\n"
         + "    \"executorDistance\": {\n"
         + "        \"executorId\": \"5\",\n"
         + "        \"distance\": \"1200239\"\n"
@@ -107,6 +107,8 @@ public class OfferApiMapperTest {
     assertEquals(offer.getDistance(), 1200239);
     assertEquals(offer.getEstimatedPrice(), "7000");
     assertEquals(offer.getTimeout(), 25);
+    assertEquals(offer.getEta(), 1200);
+    assertEquals(offer.getTimeStamp(), 1234567890);
     assertEquals(offer.getRoutePoint().getLatitude(), 123, Double.MIN_VALUE);
     assertEquals(offer.getRoutePoint().getLongitude(), 456, Double.MIN_VALUE);
     assertEquals(offer.getRoutePoint().getComment(), "com");
@@ -131,9 +133,9 @@ public class OfferApiMapperTest {
         + "    \"id\": \"7\",\n"
         + "    \"comment\": \"com\",\n"
         + "    \"estimatedAmount\": \"7000\",\n"
-        + "    \"passengers\": \"2\",\n"
-        + "    \"porters\": \"1\",\n"
         + "    \"timeout\": \"25\",\n"
+        + "    \"eta\": \"1200\",\n"
+        + "    \"timeStamp\": \"1234567890\",\n"
         + "    \"executorDistance\": {\n"
         + "        \"executorId\": \"5\",\n"
         + "        \"distance\": \"1200239\"\n"
@@ -154,6 +156,8 @@ public class OfferApiMapperTest {
     assertEquals(offer.getDistance(), 1200239);
     assertEquals(offer.getEstimatedPrice(), "7000");
     assertEquals(offer.getTimeout(), 25);
+    assertEquals(offer.getEta(), 1200);
+    assertEquals(offer.getTimeStamp(), 1234567890);
     assertEquals(offer.getRoutePoint().getLatitude(), 123, Double.MIN_VALUE);
     assertEquals(offer.getRoutePoint().getLongitude(), 456, Double.MIN_VALUE);
     assertEquals(offer.getRoutePoint().getComment(), "com");
@@ -174,8 +178,8 @@ public class OfferApiMapperTest {
         + "    \"id\": \"7\",\n"
         + "    \"comment\": \"com\",\n"
         + "    \"estimatedAmount\": \"7000\",\n"
-        + "    \"passengers\": \"2\",\n"
-        + "    \"porters\": \"1\",\n"
+        + "    \"eta\": \"1200\",\n"
+        + "    \"timeStamp\": \"1234567890\",\n"
         + "    \"executorDistance\": {\n"
         + "        \"executorId\": \"5\",\n"
         + "        \"distance\": \"1200239\"\n"
@@ -196,6 +200,8 @@ public class OfferApiMapperTest {
     assertEquals(offer.getDistance(), 1200239);
     assertEquals(offer.getEstimatedPrice(), "7000");
     assertEquals(offer.getTimeout(), 20);
+    assertEquals(offer.getEta(), 1200);
+    assertEquals(offer.getTimeStamp(), 1234567890);
     assertEquals(offer.getRoutePoint().getLatitude(), 123, Double.MIN_VALUE);
     assertEquals(offer.getRoutePoint().getLongitude(), 456, Double.MIN_VALUE);
     assertEquals(offer.getRoutePoint().getComment(), "com");

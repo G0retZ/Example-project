@@ -15,7 +15,7 @@ public class OfferTest {
   @Before
   public void setUp() {
     routePoint = new RoutePoint(10, 5, "com", "add");
-    offer = new Offer(7, "com", 1200239, "7000", 20, routePoint);
+    offer = new Offer(7, "com", 1200239, "7000", 20, 600, 1234567890, routePoint);
   }
 
   @Test
@@ -25,6 +25,8 @@ public class OfferTest {
     assertEquals(offer.getDistance(), 1200239);
     assertEquals(offer.getEstimatedPrice(), "7000");
     assertEquals(offer.getTimeout(), 20);
+    assertEquals(offer.getEta(), 600);
+    assertEquals(offer.getTimeStamp(), 1234567890);
     assertEquals(offer.getRoutePoint(), routePoint);
     assertEquals(offer.getOptions(), new ArrayList<Option>());
   }

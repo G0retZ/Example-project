@@ -17,20 +17,24 @@ public class Offer {
   private final String comment;
   private final long distance;
   private final String estimatedPrice;
+  private final int timeout;
+  private final long eta;
+  private final long timeStamp;
   @NonNull
   private final List<Option> options = new ArrayList<>();
-  private final int timeout;
   @NonNull
   private final RoutePoint routePoint;
 
   public Offer(long id, @NonNull String comment, long distance, String estimatedPrice, int timeout,
-      @NonNull RoutePoint routePoint) {
+      long eta, long timeStamp, @NonNull RoutePoint routePoint) {
     this.id = id;
     this.comment = comment;
     this.distance = distance;
     this.estimatedPrice = estimatedPrice;
     this.timeout = timeout;
     this.routePoint = routePoint;
+    this.eta = eta;
+    this.timeStamp = timeStamp;
   }
 
   public long getId() {
@@ -52,6 +56,14 @@ public class Offer {
 
   public int getTimeout() {
     return timeout;
+  }
+
+  public long getEta() {
+    return eta;
+  }
+
+  public long getTimeStamp() {
+    return timeStamp;
   }
 
   @NonNull

@@ -60,6 +60,8 @@ public class OfferApiMapper implements Mapper<String, Offer> {
         apiOffer.getEstimatedAmount(),
         // TODO: это костыль, который подменяет таймаут 0 на 20
         apiOffer.getTimeout() == 0 ? 20 : apiOffer.getTimeout(),
+        apiOffer.getEta(),
+        apiOffer.getTimeStamp(),
         new RoutePoint(
             apiOffer.getRoute().get(0).getLatitude(),
             apiOffer.getRoute().get(0).getLongitude(),
