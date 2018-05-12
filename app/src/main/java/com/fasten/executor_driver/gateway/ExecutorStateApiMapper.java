@@ -19,13 +19,8 @@ public class ExecutorStateApiMapper implements Mapper<StompMessage, ExecutorStat
   public ExecutorState map(@NonNull StompMessage from) throws Exception {
     ExecutorState executorState;
     try {
-      if (from.findHeader("Status") != null) {
-        executorState = ExecutorState.valueOf(from.findHeader("Status").trim().replace("\"", ""));
-        executorState.setData(from.getPayload());
-      } else {
-        executorState = ExecutorState.valueOf(from.getPayload().trim().replace("\"", ""));
-        executorState.setData(null);
-      }
+      executorState = ExecutorState.valueOf(from.findHeader("Status").trim());
+      executorState.setData(from.getPayload());
     } catch (Exception e) {
       throw new DataMappingException("Ошибка маппинга: неверный формат статуса!", e);
     }

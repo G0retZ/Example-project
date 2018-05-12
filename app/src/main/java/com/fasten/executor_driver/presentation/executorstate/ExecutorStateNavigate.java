@@ -14,7 +14,8 @@ import java.lang.annotation.RetentionPolicy;
     ExecutorStateNavigate.MAP_SHIFT_OPENED,
     ExecutorStateNavigate.MAP_ONLINE,
     ExecutorStateNavigate.DRIVER_ORDER_CONFIRMATION,
-    ExecutorStateNavigate.CLIENT_ORDER_CONFIRMATION
+    ExecutorStateNavigate.CLIENT_ORDER_CONFIRMATION,
+    ExecutorStateNavigate.MOVING_TO_CLIENT
 })
 @Retention(RetentionPolicy.SOURCE)
 public @interface ExecutorStateNavigate {
@@ -33,4 +34,6 @@ public @interface ExecutorStateNavigate {
   String DRIVER_ORDER_CONFIRMATION = "to.Driver.Order.Confirmation";
   // Переход к ожиданию подтверждения клиентом.
   String CLIENT_ORDER_CONFIRMATION = "to.Client.Order.Confirmation";
+  // Переход к движению к клиенту.
+  String MOVING_TO_CLIENT = "to.Moving.To.Client";
 }

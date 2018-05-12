@@ -25,7 +25,11 @@ public enum ExecutorState {
   /**
    * Водитель "ожидает подтверждения клиента". В этом состоянии водитель ожидает подтверждение заказа клиентом.
    */
-  CLIENT_ORDER_CONFIRMATION;
+  CLIENT_ORDER_CONFIRMATION,
+  /**
+   * Водитель "на пути к клиенту". В этом состоянии водитель движется на встречу с клиентом.
+   */
+  MOVING_TO_CLIENT;
 
   @Nullable
   private String data;

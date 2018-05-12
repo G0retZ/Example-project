@@ -211,7 +211,9 @@ public class ExecutorStateUseCaseTest {
     when(socketGateway.openSocket()).thenReturn(Completable.complete());
     when(loginReceiver.get()).thenReturn(Observable.just("1234567890"));
     when(gateway.getState("1234567890")).thenReturn(
-        Flowable.just(ExecutorState.SHIFT_CLOSED, ExecutorState.SHIFT_OPENED, ExecutorState.ONLINE)
+        Flowable.just(ExecutorState.SHIFT_CLOSED, ExecutorState.SHIFT_OPENED, ExecutorState.ONLINE,
+            ExecutorState.DRIVER_ORDER_CONFIRMATION, ExecutorState.CLIENT_ORDER_CONFIRMATION,
+            ExecutorState.MOVING_TO_CLIENT)
     );
 
     // Действие:
@@ -220,7 +222,9 @@ public class ExecutorStateUseCaseTest {
 
     // Результат:
     testSubscriber
-        .assertValues(ExecutorState.SHIFT_CLOSED, ExecutorState.SHIFT_OPENED, ExecutorState.ONLINE);
+        .assertValues(ExecutorState.SHIFT_CLOSED, ExecutorState.SHIFT_OPENED, ExecutorState.ONLINE,
+            ExecutorState.DRIVER_ORDER_CONFIRMATION, ExecutorState.CLIENT_ORDER_CONFIRMATION,
+            ExecutorState.MOVING_TO_CLIENT);
     testSubscriber.assertNoErrors();
   }
 

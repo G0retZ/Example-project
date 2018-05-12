@@ -12,11 +12,11 @@ import static org.mockito.Mockito.when;
 import com.fasten.executor_driver.backend.web.NoNetworkException;
 import com.fasten.executor_driver.backend.websocket.ConnectionClosedException;
 import com.fasten.executor_driver.entity.ExecutorState;
-import com.fasten.executor_driver.entity.NoOffersAvailableException;
-import com.fasten.executor_driver.entity.Offer;
+import com.fasten.executor_driver.entity.NoOrdersAvailableException;
+import com.fasten.executor_driver.entity.Order;
+import com.fasten.executor_driver.gateway.ClientOrderConfirmationGatewayImpl;
 import com.fasten.executor_driver.gateway.DataMappingException;
 import com.fasten.executor_driver.gateway.Mapper;
-import com.fasten.executor_driver.gateway.OrderConfirmationGatewayImpl;
 import io.reactivex.Completable;
 import io.reactivex.Flowable;
 import io.reactivex.observers.TestObserver;
@@ -35,15 +35,15 @@ import ua.naiksoftware.stomp.client.StompClient;
 @RunWith(MockitoJUnitRunner.class)
 public class OrderConfirmationGatewayTest {
 
-  private OfferGateway orderConfirmationGateway;
+  private OrderGateway orderConfirmationGateway;
   @Mock
   private StompClient stompClient;
   @Mock
   private ExecutorStateUseCase executorStateUseCase;
   @Mock
-  private Mapper<String, Offer> mapper;
+  private Mapper<String, Order> mapper;
   @Mock
-  private Offer offer;
+  private Order order;
 
   @Before
   public void setUp() {
@@ -53,7 +53,8 @@ public class OrderConfirmationGatewayTest {
     ExecutorState.CLIENT_ORDER_CONFIRMATION.setData(null);
     when(stompClient.send(anyString(), anyString())).thenReturn(Completable.never());
     when(executorStateUseCase.getExecutorStates(anyBoolean())).thenReturn(Flowable.never());
-    orderConfirmationGateway = new OrderConfirmationGatewayImpl(executorStateUseCase, stompClient,
+    orderConfirmationGateway = new ClientOrderConfirmationGatewayImpl(executorStateUseCase,
+        stompClient,
         mapper);
   }
 
@@ -65,7 +66,7 @@ public class OrderConfirmationGatewayTest {
   @Test
   public void askExecutorStateUseCaseForStatusUpdates() {
     // Действие:
-    orderConfirmationGateway.getOffers().test();
+    orderConfirmationGateway.getOrders().test();
 
     // Результат:
     verify(executorStateUseCase, only()).getExecutorStates(false);
@@ -81,11 +82,11 @@ public class OrderConfirmationGatewayTest {
     // Дано:
     InOrder inOrder = Mockito.inOrder(stompClient);
     when(stompClient.isConnected()).thenReturn(true);
-    when(offer.getId()).thenReturn(7L);
+    when(order.getId()).thenReturn(7L);
 
     // Действие:
-    orderConfirmationGateway.sendDecision(offer, false).test();
-    orderConfirmationGateway.sendDecision(offer, true).test();
+    orderConfirmationGateway.sendDecision(order, false).test();
+    orderConfirmationGateway.sendDecision(order, true).test();
 
     // Результат:
     inOrder.verify(stompClient).isConnected();
@@ -106,8 +107,8 @@ public class OrderConfirmationGatewayTest {
     InOrder inOrder = Mockito.inOrder(stompClient);
 
     // Действие:
-    orderConfirmationGateway.sendDecision(offer, false).test();
-    orderConfirmationGateway.sendDecision(offer, true).test();
+    orderConfirmationGateway.sendDecision(order, false).test();
+    orderConfirmationGateway.sendDecision(order, true).test();
 
     // Результат:
     inOrder.verify(stompClient).isConnected();
@@ -125,11 +126,11 @@ public class OrderConfirmationGatewayTest {
     // Дано:
     InOrder inOrder = Mockito.inOrder(stompClient);
     when(stompClient.isConnecting()).thenReturn(true);
-    when(offer.getId()).thenReturn(7L);
+    when(order.getId()).thenReturn(7L);
 
     // Действие:
-    orderConfirmationGateway.sendDecision(offer, false).test();
-    orderConfirmationGateway.sendDecision(offer, true).test();
+    orderConfirmationGateway.sendDecision(order, false).test();
+    orderConfirmationGateway.sendDecision(order, true).test();
 
     // Результат:
     inOrder.verify(stompClient).isConnected();
@@ -155,7 +156,7 @@ public class OrderConfirmationGatewayTest {
         .thenReturn(Flowable.just(ExecutorState.SHIFT_CLOSED));
 
     // Действие:
-    orderConfirmationGateway.getOffers().test();
+    orderConfirmationGateway.getOrders().test();
 
     // Результат:
     verifyZeroInteractions(mapper);
@@ -171,7 +172,7 @@ public class OrderConfirmationGatewayTest {
         .thenReturn(Flowable.just(ExecutorState.SHIFT_OPENED));
 
     // Действие:
-    orderConfirmationGateway.getOffers().test();
+    orderConfirmationGateway.getOrders().test();
 
     // Результат:
     verifyZeroInteractions(mapper);
@@ -187,7 +188,7 @@ public class OrderConfirmationGatewayTest {
         .thenReturn(Flowable.just(ExecutorState.ONLINE));
 
     // Действие:
-    orderConfirmationGateway.getOffers().test();
+    orderConfirmationGateway.getOrders().test();
 
     // Результат:
     verifyZeroInteractions(mapper);
@@ -203,7 +204,23 @@ public class OrderConfirmationGatewayTest {
         .thenReturn(Flowable.just(ExecutorState.DRIVER_ORDER_CONFIRMATION));
 
     // Действие:
-    orderConfirmationGateway.getOffers().test();
+    orderConfirmationGateway.getOrders().test();
+
+    // Результат:
+    verifyZeroInteractions(mapper);
+  }
+
+  /**
+   * Не должен трогать маппер, если не пришел статус "принятие заказа".
+   */
+  @Test
+  public void doNotTouchMapperIfMovingToClient() {
+    // Дано:
+    when(executorStateUseCase.getExecutorStates(anyBoolean()))
+        .thenReturn(Flowable.just(ExecutorState.MOVING_TO_CLIENT));
+
+    // Действие:
+    orderConfirmationGateway.getOrders().test();
 
     // Результат:
     verifyZeroInteractions(mapper);
@@ -219,7 +236,7 @@ public class OrderConfirmationGatewayTest {
         .thenReturn(Flowable.just(ExecutorState.CLIENT_ORDER_CONFIRMATION));
 
     // Действие:
-    orderConfirmationGateway.getOffers().test();
+    orderConfirmationGateway.getOrders().test();
 
     // Результат:
     verifyZeroInteractions(mapper);
@@ -238,7 +255,7 @@ public class OrderConfirmationGatewayTest {
         .thenReturn(Flowable.just(ExecutorState.CLIENT_ORDER_CONFIRMATION));
 
     // Действие:
-    orderConfirmationGateway.getOffers().test();
+    orderConfirmationGateway.getOrders().test();
 
     // Результат:
     verify(mapper, only()).map("");
@@ -258,7 +275,7 @@ public class OrderConfirmationGatewayTest {
         .thenReturn(Flowable.just(ExecutorState.SHIFT_CLOSED));
 
     // Действие:
-    TestSubscriber<Offer> testSubscriber = orderConfirmationGateway.getOffers().test();
+    TestSubscriber<Order> testSubscriber = orderConfirmationGateway.getOrders().test();
 
     // Результат:
     testSubscriber.assertNoValues();
@@ -276,7 +293,7 @@ public class OrderConfirmationGatewayTest {
         .thenReturn(Flowable.just(ExecutorState.SHIFT_OPENED));
 
     // Действие:
-    TestSubscriber<Offer> testSubscriber = orderConfirmationGateway.getOffers().test();
+    TestSubscriber<Order> testSubscriber = orderConfirmationGateway.getOrders().test();
 
     // Результат:
     testSubscriber.assertNoValues();
@@ -294,7 +311,7 @@ public class OrderConfirmationGatewayTest {
         .thenReturn(Flowable.just(ExecutorState.ONLINE));
 
     // Действие:
-    TestSubscriber<Offer> testSubscriber = orderConfirmationGateway.getOffers().test();
+    TestSubscriber<Order> testSubscriber = orderConfirmationGateway.getOrders().test();
 
     // Результат:
     testSubscriber.assertNoValues();
@@ -312,7 +329,25 @@ public class OrderConfirmationGatewayTest {
         .thenReturn(Flowable.just(ExecutorState.DRIVER_ORDER_CONFIRMATION));
 
     // Действие:
-    TestSubscriber<Offer> testSubscriber = orderConfirmationGateway.getOffers().test();
+    TestSubscriber<Order> testSubscriber = orderConfirmationGateway.getOrders().test();
+
+    // Результат:
+    testSubscriber.assertNoValues();
+    testSubscriber.assertComplete();
+    testSubscriber.assertNoErrors();
+  }
+
+  /**
+   * Должен ответить ошибкой отсутствия заказов для статуса "на пути к клиенту".
+   */
+  @Test
+  public void ignoreForMovingToClient() {
+    // Дано:
+    when(executorStateUseCase.getExecutorStates(anyBoolean()))
+        .thenReturn(Flowable.just(ExecutorState.MOVING_TO_CLIENT));
+
+    // Действие:
+    TestSubscriber<Order> testSubscriber = orderConfirmationGateway.getOrders().test();
 
     // Результат:
     testSubscriber.assertNoValues();
@@ -330,12 +365,12 @@ public class OrderConfirmationGatewayTest {
         .thenReturn(Flowable.just(ExecutorState.CLIENT_ORDER_CONFIRMATION));
 
     // Действие:
-    TestSubscriber<Offer> testSubscriber = orderConfirmationGateway.getOffers().test();
+    TestSubscriber<Order> testSubscriber = orderConfirmationGateway.getOrders().test();
 
     // Результат:
     testSubscriber.assertNoValues();
     testSubscriber.assertNotComplete();
-    testSubscriber.assertError(NoOffersAvailableException.class);
+    testSubscriber.assertError(NoOrdersAvailableException.class);
   }
 
   /**
@@ -352,7 +387,7 @@ public class OrderConfirmationGatewayTest {
         .thenReturn(Flowable.just(ExecutorState.CLIENT_ORDER_CONFIRMATION));
 
     // Действие:
-    TestSubscriber<Offer> testSubscriber = orderConfirmationGateway.getOffers().test();
+    TestSubscriber<Order> testSubscriber = orderConfirmationGateway.getOrders().test();
 
     // Результат:
     testSubscriber.assertNoValues();
@@ -368,18 +403,18 @@ public class OrderConfirmationGatewayTest {
   @Test
   public void answerWithOffer() throws Exception {
     // Дано:
-    when(mapper.map(anyString())).thenReturn(offer);
+    when(mapper.map(anyString())).thenReturn(order);
     ExecutorState.CLIENT_ORDER_CONFIRMATION.setData("");
     when(executorStateUseCase.getExecutorStates(anyBoolean()))
         .thenReturn(Flowable.just(ExecutorState.CLIENT_ORDER_CONFIRMATION));
 
     // Действие:
-    TestSubscriber<Offer> testSubscriber = orderConfirmationGateway.getOffers().test();
+    TestSubscriber<Order> testSubscriber = orderConfirmationGateway.getOrders().test();
 
     // Результат:
     testSubscriber.assertNoErrors();
     testSubscriber.assertComplete();
-    testSubscriber.assertValue(offer);
+    testSubscriber.assertValue(order);
   }
 
   /**
@@ -392,7 +427,7 @@ public class OrderConfirmationGatewayTest {
     when(stompClient.send(anyString(), anyString())).thenReturn(Completable.complete());
 
     // Действие:
-    TestObserver<Void> testObserver = orderConfirmationGateway.sendDecision(offer, false).test();
+    TestObserver<Void> testObserver = orderConfirmationGateway.sendDecision(order, false).test();
 
     // Результат:
     testObserver.assertNoErrors();
@@ -410,7 +445,7 @@ public class OrderConfirmationGatewayTest {
         .thenReturn(Completable.error(new NoNetworkException()));
 
     // Действие:
-    TestObserver<Void> testObserver = orderConfirmationGateway.sendDecision(offer, false).test();
+    TestObserver<Void> testObserver = orderConfirmationGateway.sendDecision(order, false).test();
 
     // Результат:
     testObserver.assertNotComplete();
@@ -423,7 +458,7 @@ public class OrderConfirmationGatewayTest {
   @Test
   public void answerSendDecisionErrorIfNotConnectedAndNotConnecting() {
     // Действие:
-    TestObserver<Void> testObserver = orderConfirmationGateway.sendDecision(offer, false).test();
+    TestObserver<Void> testObserver = orderConfirmationGateway.sendDecision(order, false).test();
 
     // Результат:
     testObserver.assertNotComplete();
@@ -440,7 +475,7 @@ public class OrderConfirmationGatewayTest {
     when(stompClient.send(anyString(), anyString())).thenReturn(Completable.complete());
 
     // Действие:
-    TestObserver<Void> testObserver = orderConfirmationGateway.sendDecision(offer, false).test();
+    TestObserver<Void> testObserver = orderConfirmationGateway.sendDecision(order, false).test();
 
     // Результат:
     testObserver.assertNoErrors();
@@ -458,7 +493,7 @@ public class OrderConfirmationGatewayTest {
         .thenReturn(Completable.error(new ConnectionClosedException()));
 
     // Действие:
-    TestObserver<Void> testObserver = orderConfirmationGateway.sendDecision(offer, false).test();
+    TestObserver<Void> testObserver = orderConfirmationGateway.sendDecision(order, false).test();
 
     // Результат:
     testObserver.assertNotComplete();

@@ -2,11 +2,11 @@ package com.fasten.executor_driver.di;
 
 import com.fasten.executor_driver.application.MainApplication;
 import com.fasten.executor_driver.view.ChooseVehicleFragment;
+import com.fasten.executor_driver.view.ClientOrderConfirmationFragment;
+import com.fasten.executor_driver.view.DriverOrderConfirmationFragment;
 import com.fasten.executor_driver.view.GoOnlineFragment;
 import com.fasten.executor_driver.view.MapFragment;
-import com.fasten.executor_driver.view.OfferFragment;
 import com.fasten.executor_driver.view.OnlineFragment;
-import com.fasten.executor_driver.view.OrderConfirmationFragment;
 import com.fasten.executor_driver.view.SelectedVehicleFragment;
 import com.fasten.executor_driver.view.SelectedVehicleOptionsFragment;
 import com.fasten.executor_driver.view.ServicesFragment;
@@ -38,7 +38,7 @@ public interface AppComponent {
 
   void inject(ServicesFragment servicesFragment);
 
-  void inject(OfferFragment offerFragment);
+  void inject(DriverOrderConfirmationFragment driverOrderConfirmationFragment);
 
-  void inject(OrderConfirmationFragment offerFragment);
+  void inject(ClientOrderConfirmationFragment clientOrderConfirmationFragment);
 }
