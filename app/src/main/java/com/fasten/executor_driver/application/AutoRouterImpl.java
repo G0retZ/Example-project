@@ -41,10 +41,10 @@ public class AutoRouterImpl implements ActivityLifecycleCallbacks, AutoRouter {
         PaymentOptionsActivity.class
     ));
     statusGroups.put(ExecutorStateNavigate.DRIVER_ORDER_CONFIRMATION, Arrays.asList(
-        OfferActivity.class, GeolocationResolutionActivity.class
+        DriverOrderConfirmationActivity.class, GeolocationResolutionActivity.class
     ));
     statusGroups.put(ExecutorStateNavigate.CLIENT_ORDER_CONFIRMATION, Arrays.asList(
-        OrderConfirmationActivity.class, GeolocationResolutionActivity.class
+        ClientOrderConfirmationActivity.class, GeolocationResolutionActivity.class
     ));
   }
 
@@ -164,13 +164,13 @@ public class AutoRouterImpl implements ActivityLifecycleCallbacks, AutoRouter {
         break;
       case ExecutorStateNavigate.DRIVER_ORDER_CONFIRMATION:
         currentActivity.startActivity(
-            new Intent(currentActivity, OfferActivity.class)
+            new Intent(currentActivity, DriverOrderConfirmationActivity.class)
                 .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK)
         );
         break;
       case ExecutorStateNavigate.CLIENT_ORDER_CONFIRMATION:
         currentActivity.startActivity(
-            new Intent(currentActivity, OrderConfirmationActivity.class)
+            new Intent(currentActivity, ClientOrderConfirmationActivity.class)
                 .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK)
         );
         break;
