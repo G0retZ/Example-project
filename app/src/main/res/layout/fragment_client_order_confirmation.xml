@@ -35,19 +35,10 @@
         android:layout_height="0dp"
         android:contentDescription="@null"
         android:src="@color/colorDivider"
-        app:layout_constraintDimensionRatio="H,6:5"
+        app:layout_constraintDimensionRatio="H,9:5"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>
-      <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:contentDescription="@null"
-        android:src="@drawable/circles"
-        app:layout_constraintBottom_toBottomOf="@+id/mapImage"
-        app:layout_constraintEnd_toEndOf="@+id/mapImage"
-        app:layout_constraintStart_toStartOf="@+id/mapImage"
-        app:layout_constraintTop_toTopOf="@+id/mapImage"/>
       <ImageView
         android:id="@+id/gradient"
         android:layout_width="0dp"
@@ -58,6 +49,15 @@
         app:layout_constraintDimensionRatio="H,10:3"
         app:layout_constraintEnd_toEndOf="@+id/mapImage"
         app:layout_constraintStart_toStartOf="@+id/mapImage"/>
+      <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@null"
+        android:src="@drawable/circles"
+        app:layout_constraintBottom_toBottomOf="@+id/mapImage"
+        app:layout_constraintEnd_toEndOf="@+id/mapImage"
+        app:layout_constraintStart_toStartOf="@+id/mapImage"
+        app:layout_constraintTop_toTopOf="@+id/mapImage"/>
       <TextView
         android:id="@+id/distanceText"
         style="@style/TextAppearance.AppCompat.Subhead"
