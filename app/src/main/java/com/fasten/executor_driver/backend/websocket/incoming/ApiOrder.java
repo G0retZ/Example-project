@@ -11,7 +11,7 @@ public class ApiOrder {
   private long id;
   @Nullable
   @SerializedName("estimatedAmount")
-  private String estimatedAmount;
+  private String estimatedAmount = "";
   @Nullable
   @SerializedName("comment")
   private String comment;
