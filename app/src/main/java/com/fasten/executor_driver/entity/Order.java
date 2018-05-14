@@ -18,23 +18,23 @@ public class Order {
   private final long distance;
   private final String estimatedPrice;
   private final int timeout;
-  private final long eta;
-  private final long timeStamp;
+  private final long etaToStartPoint;
+  private final long confirmationTime;
   @NonNull
   private final List<Option> options = new ArrayList<>();
   @NonNull
   private final RoutePoint routePoint;
 
   public Order(long id, @NonNull String comment, long distance, String estimatedPrice, int timeout,
-      long eta, long timeStamp, @NonNull RoutePoint routePoint) {
+      long etaToStartPoint, long confirmationTime, @NonNull RoutePoint routePoint) {
     this.id = id;
     this.comment = comment;
     this.distance = distance;
     this.estimatedPrice = estimatedPrice;
     this.timeout = timeout;
     this.routePoint = routePoint;
-    this.eta = eta;
-    this.timeStamp = timeStamp;
+    this.etaToStartPoint = etaToStartPoint;
+    this.confirmationTime = confirmationTime;
   }
 
   public long getId() {
@@ -58,12 +58,12 @@ public class Order {
     return timeout;
   }
 
-  public long getEta() {
-    return eta;
+  public long getEtaToStartPoint() {
+    return etaToStartPoint;
   }
 
-  public long getTimeStamp() {
-    return timeStamp;
+  public long getConfirmationTime() {
+    return confirmationTime;
   }
 
   @NonNull

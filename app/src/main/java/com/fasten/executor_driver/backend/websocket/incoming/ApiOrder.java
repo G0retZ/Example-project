@@ -17,10 +17,10 @@ public class ApiOrder {
   private String comment;
   @SerializedName("timeout")
   private int timeout;
-  @SerializedName("eta")
-  private long eta;
-  @SerializedName("timeStamp")
-  private long timeStamp;
+  @SerializedName("etaToStartPoint")
+  private long etaToStartPoint;
+  @SerializedName("confirmationTime")
+  private long confirmationTime;
   @Nullable
   @SerializedName("executorDistance")
   private ApiDriverDistancePair executorDistance;
@@ -41,15 +41,16 @@ public class ApiOrder {
   @SuppressWarnings("SameParameterValue")
   ApiOrder(long id, @Nullable String estimatedAmount,
       @Nullable String comment, int timeout,
-      long eta, long timeStamp, @Nullable ApiDriverDistancePair executorDistance,
+      long etaToStartPoint, long confirmationTime,
+      @Nullable ApiDriverDistancePair executorDistance,
       @Nullable List<ApiRoutePoint> route,
       @Nullable List<ApiOptionItem> options) {
     this.id = id;
     this.estimatedAmount = estimatedAmount;
     this.comment = comment;
     this.timeout = timeout;
-    this.eta = eta;
-    this.timeStamp = timeStamp;
+    this.etaToStartPoint = etaToStartPoint;
+    this.confirmationTime = confirmationTime;
     this.executorDistance = executorDistance;
     this.route = route;
     this.options = options;
@@ -73,12 +74,12 @@ public class ApiOrder {
     return timeout;
   }
 
-  public long getEta() {
-    return eta;
+  public long getEtaToStartPoint() {
+    return etaToStartPoint;
   }
 
-  public long getTimeStamp() {
-    return timeStamp;
+  public long getConfirmationTime() {
+    return confirmationTime;
   }
 
   @Nullable

@@ -42,8 +42,8 @@ public class ApiOrderTest {
     assertEquals(apiOrder.getEstimatedAmount(), "More than $3000");
     assertEquals(apiOrder.getComment(), "some comment");
     assertEquals(apiOrder.getTimeout(), 23);
-    assertEquals(apiOrder.getEta(), 1200);
-    assertEquals(apiOrder.getTimeStamp(), 1234567890);
+    assertEquals(apiOrder.getEtaToStartPoint(), 1200);
+    assertEquals(apiOrder.getConfirmationTime(), 1234567890);
     assertNotNull(apiOrder.getExecutorDistance());
     assertEquals(apiOrder.getExecutorDistance().getDistance(), 32);
     assertNotNull(apiOrder.getRoute());
