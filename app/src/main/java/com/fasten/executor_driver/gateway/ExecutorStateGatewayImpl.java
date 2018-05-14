@@ -31,7 +31,7 @@ public class ExecutorStateGatewayImpl implements ExecutorStateGateway {
   @Override
   public Flowable<ExecutorState> getState(@Nullable String channelId) {
     if (stompClient.isConnected() || stompClient.isConnecting()) {
-      return stompClient.topic(String.format(BuildConfig.STATS_DESTINATION, channelId))
+      return stompClient.topic(String.format(BuildConfig.STATUS_DESTINATION, channelId))
           .subscribeOn(Schedulers.io())
           .observeOn(Schedulers.single())
           .filter(stompMessage -> stompMessage.findHeader("Status") != null || (
