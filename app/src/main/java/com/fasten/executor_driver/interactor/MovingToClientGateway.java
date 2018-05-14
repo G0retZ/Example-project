@@ -8,7 +8,7 @@ import io.reactivex.Flowable;
 /**
  * Гейтвей работы с заказами при движении к клиенту.
  */
-interface MovingToClientGateway {
+public interface MovingToClientGateway {
 
   /**
    * Ожидает от сокета заказы для отображения.
@@ -21,18 +21,16 @@ interface MovingToClientGateway {
   /**
    * Передает запрос звонка клиенту.
    *
-   * @param order заказ, к которому относится запрос звонка.
    * @return {@link Completable} результат - успех либо ошибка на сервере.
    */
   @NonNull
-  Completable callToClient(@NonNull Order order);
+  Completable callToClient();
 
   /**
    * Передает сообщение о прибытии к клиенту.
    *
-   * @param order заказ, к которому относится сообщение о прибытии.
    * @return {@link Completable} результат - успех либо ошибка на сервере.
    */
   @NonNull
-  Completable reportArrival(@NonNull Order order);
+  Completable reportArrival();
 }

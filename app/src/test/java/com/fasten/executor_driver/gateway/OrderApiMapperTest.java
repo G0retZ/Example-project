@@ -43,8 +43,8 @@ public class OrderApiMapperTest {
         + "    \"comment\": \"com\",\n"
         + "    \"estimatedAmount\": \"7000\",\n"
         + "    \"timeout\": \"25\",\n"
-        + "    \"eta\": \"1200\",\n"
-        + "    \"timeStamp\": \"1234567890\",\n"
+        + "    \"etaToStartPoint\": \"1200\",\n"
+        + "    \"confirmationTime\": \"1234567890\",\n"
         + "    \"executorDistance\": {\n"
         + "        \"executorId\": \"5\",\n"
         + "        \"distance\": \"1200239\"\n"
@@ -107,8 +107,8 @@ public class OrderApiMapperTest {
     assertEquals(order.getDistance(), 1200239);
     assertEquals(order.getEstimatedPrice(), "7000");
     assertEquals(order.getTimeout(), 25);
-    assertEquals(order.getEta(), 1200);
-    assertEquals(order.getTimeStamp(), 1234567890);
+    assertEquals(order.getEtaToStartPoint(), 1200);
+    assertEquals(order.getConfirmationTime(), 1234567890);
     assertEquals(order.getRoutePoint().getLatitude(), 123, Double.MIN_VALUE);
     assertEquals(order.getRoutePoint().getLongitude(), 456, Double.MIN_VALUE);
     assertEquals(order.getRoutePoint().getComment(), "com");
@@ -134,8 +134,8 @@ public class OrderApiMapperTest {
         + "    \"comment\": \"com\",\n"
         + "    \"estimatedAmount\": \"7000\",\n"
         + "    \"timeout\": \"25\",\n"
-        + "    \"eta\": \"1200\",\n"
-        + "    \"timeStamp\": \"1234567890\",\n"
+        + "    \"etaToStartPoint\": \"1200\",\n"
+        + "    \"confirmationTime\": \"1234567890\",\n"
         + "    \"executorDistance\": {\n"
         + "        \"executorId\": \"5\",\n"
         + "        \"distance\": \"1200239\"\n"
@@ -156,8 +156,8 @@ public class OrderApiMapperTest {
     assertEquals(order.getDistance(), 1200239);
     assertEquals(order.getEstimatedPrice(), "7000");
     assertEquals(order.getTimeout(), 25);
-    assertEquals(order.getEta(), 1200);
-    assertEquals(order.getTimeStamp(), 1234567890);
+    assertEquals(order.getEtaToStartPoint(), 1200);
+    assertEquals(order.getConfirmationTime(), 1234567890);
     assertEquals(order.getRoutePoint().getLatitude(), 123, Double.MIN_VALUE);
     assertEquals(order.getRoutePoint().getLongitude(), 456, Double.MIN_VALUE);
     assertEquals(order.getRoutePoint().getComment(), "com");
@@ -178,8 +178,8 @@ public class OrderApiMapperTest {
         + "    \"id\": \"7\",\n"
         + "    \"comment\": \"com\",\n"
         + "    \"estimatedAmount\": \"7000\",\n"
-        + "    \"eta\": \"1200\",\n"
-        + "    \"timeStamp\": \"1234567890\",\n"
+        + "    \"etaToStartPoint\": \"1200\",\n"
+        + "    \"confirmationTime\": \"1234567890\",\n"
         + "    \"executorDistance\": {\n"
         + "        \"executorId\": \"5\",\n"
         + "        \"distance\": \"1200239\"\n"
@@ -200,8 +200,8 @@ public class OrderApiMapperTest {
     assertEquals(order.getDistance(), 1200239);
     assertEquals(order.getEstimatedPrice(), "7000");
     assertEquals(order.getTimeout(), 20);
-    assertEquals(order.getEta(), 1200);
-    assertEquals(order.getTimeStamp(), 1234567890);
+    assertEquals(order.getEtaToStartPoint(), 1200);
+    assertEquals(order.getConfirmationTime(), 1234567890);
     assertEquals(order.getRoutePoint().getLatitude(), 123, Double.MIN_VALUE);
     assertEquals(order.getRoutePoint().getLongitude(), 456, Double.MIN_VALUE);
     assertEquals(order.getRoutePoint().getComment(), "com");

@@ -25,8 +25,8 @@ public class OrderTest {
     assertEquals(order.getDistance(), 1200239);
     assertEquals(order.getEstimatedPrice(), "7000");
     assertEquals(order.getTimeout(), 20);
-    assertEquals(order.getEta(), 600);
-    assertEquals(order.getTimeStamp(), 1234567890);
+    assertEquals(order.getEtaToStartPoint(), 600);
+    assertEquals(order.getConfirmationTime(), 1234567890);
     assertEquals(order.getRoutePoint(), routePoint);
     assertEquals(order.getOptions(), new ArrayList<Option>());
   }

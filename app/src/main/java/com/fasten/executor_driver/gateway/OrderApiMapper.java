@@ -60,8 +60,8 @@ public class OrderApiMapper implements Mapper<String, Order> {
         apiOrder.getEstimatedAmount(),
         // TODO: это костыль, который подменяет таймаут 0 на 20
         apiOrder.getTimeout() == 0 ? 20 : apiOrder.getTimeout(),
-        apiOrder.getEta(),
-        apiOrder.getTimeStamp(),
+        apiOrder.getEtaToStartPoint(),
+        apiOrder.getConfirmationTime(),
         new RoutePoint(
             apiOrder.getRoute().get(0).getLatitude(),
             apiOrder.getRoute().get(0).getLongitude(),
