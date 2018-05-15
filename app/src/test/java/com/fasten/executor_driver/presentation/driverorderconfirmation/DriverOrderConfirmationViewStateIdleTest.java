@@ -1,10 +1,7 @@
 package com.fasten.executor_driver.presentation.driverorderconfirmation;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 import org.junit.Before;
@@ -14,22 +11,20 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
-public class OrderViewStateTest {
+public class DriverOrderConfirmationViewStateIdleTest {
 
-  private DriverOrderConfirmationViewState viewState;
+  private DriverOrderConfirmationViewStateIdle viewState;
 
   @Mock
   private DriverOrderConfirmationViewActions driverOrderConfirmationViewActions;
 
   @Mock
   private OrderItem orderItem;
-  @Mock
-  private OrderItem orderItem2;
 
   @Before
   public void setUp() {
     when(orderItem.getAddress()).thenReturn("address");
-    viewState = new DriverOrderConfirmationViewState(orderItem);
+    viewState = new DriverOrderConfirmationViewStateIdle(orderItem);
   }
 
   @Test
@@ -54,25 +49,28 @@ public class OrderViewStateTest {
     verify(driverOrderConfirmationViewActions).showOrderOptionsRequirements("1,2,3");
     verify(driverOrderConfirmationViewActions).showComment("comm");
     verify(driverOrderConfirmationViewActions).showTimeout(123, 4532);
+    verify(driverOrderConfirmationViewActions).showDriverOrderConfirmationPending(false);
+    verify(driverOrderConfirmationViewActions).enableAcceptButton(true);
+    verify(driverOrderConfirmationViewActions).enableDeclineButton(true);
+    verify(driverOrderConfirmationViewActions).showOrderAvailabilityError(false);
+    verify(driverOrderConfirmationViewActions).showNetworkErrorMessage(false);
     verifyNoMoreInteractions(driverOrderConfirmationViewActions);
   }
 
   @Test
   public void testNoActions() {
     // Дано:
-    viewState = new DriverOrderConfirmationViewState(null);
+    viewState = new DriverOrderConfirmationViewStateIdle(null);
 
     // Действие:
     viewState.apply(driverOrderConfirmationViewActions);
 
     // Результат:
-    verifyZeroInteractions(driverOrderConfirmationViewActions);
-  }
-
-  @Test
-  public void testEquals() {
-    assertEquals(viewState, new DriverOrderConfirmationViewState(orderItem));
-    assertNotEquals(viewState, new DriverOrderConfirmationViewState(orderItem2));
-    assertNotEquals(viewState, new DriverOrderConfirmationViewState(null));
+    verify(driverOrderConfirmationViewActions).showDriverOrderConfirmationPending(false);
+    verify(driverOrderConfirmationViewActions).enableAcceptButton(true);
+    verify(driverOrderConfirmationViewActions).enableDeclineButton(true);
+    verify(driverOrderConfirmationViewActions).showOrderAvailabilityError(false);
+    verify(driverOrderConfirmationViewActions).showNetworkErrorMessage(false);
+    verifyNoMoreInteractions(driverOrderConfirmationViewActions);
   }
 }

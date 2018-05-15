@@ -11,9 +11,9 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
-public class OrderViewStateUnavailableErrorTest {
+public class DriverOrderConfirmationViewStateNetworkErrorTest {
 
-  private DriverOrderConfirmationViewStateUnavailableError viewState;
+  private DriverOrderConfirmationViewStateNetworkError viewState;
 
   @Mock
   private DriverOrderConfirmationViewActions driverOrderConfirmationViewActions;
@@ -24,7 +24,7 @@ public class OrderViewStateUnavailableErrorTest {
   @Before
   public void setUp() {
     when(orderItem.getAddress()).thenReturn("address");
-    viewState = new DriverOrderConfirmationViewStateUnavailableError(orderItem);
+    viewState = new DriverOrderConfirmationViewStateNetworkError(orderItem);
   }
 
   @Test
@@ -52,15 +52,15 @@ public class OrderViewStateUnavailableErrorTest {
     verify(driverOrderConfirmationViewActions).showDriverOrderConfirmationPending(false);
     verify(driverOrderConfirmationViewActions).enableAcceptButton(false);
     verify(driverOrderConfirmationViewActions).enableDeclineButton(false);
-    verify(driverOrderConfirmationViewActions).showOrderAvailabilityError(true);
-    verify(driverOrderConfirmationViewActions).showNetworkErrorMessage(false);
+    verify(driverOrderConfirmationViewActions).showOrderAvailabilityError(false);
+    verify(driverOrderConfirmationViewActions).showNetworkErrorMessage(true);
     verifyNoMoreInteractions(driverOrderConfirmationViewActions);
   }
 
   @Test
   public void testNoActions() {
     // Дано:
-    viewState = new DriverOrderConfirmationViewStateUnavailableError(null);
+    viewState = new DriverOrderConfirmationViewStateNetworkError(null);
 
     // Действие:
     viewState.apply(driverOrderConfirmationViewActions);
@@ -69,8 +69,8 @@ public class OrderViewStateUnavailableErrorTest {
     verify(driverOrderConfirmationViewActions).showDriverOrderConfirmationPending(false);
     verify(driverOrderConfirmationViewActions).enableAcceptButton(false);
     verify(driverOrderConfirmationViewActions).enableDeclineButton(false);
-    verify(driverOrderConfirmationViewActions).showOrderAvailabilityError(true);
-    verify(driverOrderConfirmationViewActions).showNetworkErrorMessage(false);
+    verify(driverOrderConfirmationViewActions).showOrderAvailabilityError(false);
+    verify(driverOrderConfirmationViewActions).showNetworkErrorMessage(true);
     verifyNoMoreInteractions(driverOrderConfirmationViewActions);
   }
 }

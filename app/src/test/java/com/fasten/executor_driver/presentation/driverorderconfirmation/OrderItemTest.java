@@ -63,7 +63,7 @@ public class OrderItemTest {
 
     // Результат:
     assertEquals(orderItem.getLoadPointMapUrl(),
-        "https://maps.googleapis.com/maps/api/staticmap?center=5.421,10.2341&zoom=16&size=360x304&maptype=roadmap&key=AIzaSyC20FZNHJqrQH5UhypeUy3thpqII33QBPI");
+        "https://maps.googleapis.com/maps/api/staticmap?center=5.421,10.2341&zoom=16&size=360x200&maptype=roadmap&key=AIzaSyC20FZNHJqrQH5UhypeUy3thpqII33QBPI");
     assertEquals(orderItem.getPrice(), "7000");
     assertEquals(orderItem.getAddress(), "add");
     assertEquals(orderItem.getDistance(),

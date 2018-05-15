@@ -35,7 +35,7 @@ class OrderItem {
         + ","
         + order.getRoutePoint().getLongitude()
         + "&zoom=16"
-        + "&size=360x304"
+        + "&size=360x200"
         + "&maptype=roadmap"
         + "&key=" + BuildConfig.STATIC_MAP_KEY;
   }
