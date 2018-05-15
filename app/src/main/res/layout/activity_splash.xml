@@ -7,4 +7,5 @@
   android:layout_height="wrap_content"
   android:layout_gravity="center"
   android:contentDescription="@null"
+  android:keepScreenOn="true"
   app:srcCompat="@drawable/splash_logo"/>
