@@ -13,10 +13,10 @@ cache:
   paths:
   - .gradle/
 
-gradlew_lint:
+gradlew_test:
   stage: test
   tags:
-    - docker-dev
+    - testing-apk
   script:
   - ./gradlew test
   artifacts:
@@ -29,7 +29,7 @@ gradlew_lint:
 android_build:
   stage: build
   tags:
-    - docker-dev
+    - testing-apk
   script:
     - ./gradlew clean assembleDebug
   artifacts:
