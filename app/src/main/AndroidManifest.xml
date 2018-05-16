@@ -72,6 +72,9 @@
     <activity
       android:launchMode="singleTop"
       android:name=".application.ClientOrderConfirmationActivity"/>
+    <activity
+      android:launchMode="singleTop"
+      android:name=".application.MovingToClientActivity"/>
 
     <service
       android:enabled="true"

@@ -33,18 +33,21 @@ public class AutoRouterImpl implements ActivityLifecycleCallbacks, AutoRouter {
     statusGroups.put(ExecutorStateNavigate.MAP_SHIFT_OPENED, Arrays.asList(
         OnlineActivity.class, VehicleOptionsActivity.class, ServicesActivity.class,
         GeolocationResolutionActivity.class, MenuActivity.class, BalanceActivity.class,
-        PaymentOptionsActivity.class
+        PaymentOptionsActivity.class, SelectedVehicleOptionsActivity.class
     ));
     statusGroups.put(ExecutorStateNavigate.MAP_ONLINE, Arrays.asList(
         OnlineActivity.class, VehicleOptionsActivity.class,
         GeolocationResolutionActivity.class, MenuActivity.class, BalanceActivity.class,
-        PaymentOptionsActivity.class
+        PaymentOptionsActivity.class, SelectedVehicleOptionsActivity.class
     ));
     statusGroups.put(ExecutorStateNavigate.DRIVER_ORDER_CONFIRMATION, Arrays.asList(
         DriverOrderConfirmationActivity.class, GeolocationResolutionActivity.class
     ));
     statusGroups.put(ExecutorStateNavigate.CLIENT_ORDER_CONFIRMATION, Arrays.asList(
         ClientOrderConfirmationActivity.class, GeolocationResolutionActivity.class
+    ));
+    statusGroups.put(ExecutorStateNavigate.MOVING_TO_CLIENT, Arrays.asList(
+        MovingToClientActivity.class, GeolocationResolutionActivity.class
     ));
   }
 
@@ -171,6 +174,12 @@ public class AutoRouterImpl implements ActivityLifecycleCallbacks, AutoRouter {
       case ExecutorStateNavigate.CLIENT_ORDER_CONFIRMATION:
         currentActivity.startActivity(
             new Intent(currentActivity, ClientOrderConfirmationActivity.class)
+                .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK)
+        );
+        break;
+      case ExecutorStateNavigate.MOVING_TO_CLIENT:
+        currentActivity.startActivity(
+            new Intent(currentActivity, MovingToClientActivity.class)
                 .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK)
         );
         break;

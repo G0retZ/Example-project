@@ -5,7 +5,7 @@ import android.support.annotation.NonNull;
 /**
  * Действия для смены состояния вида окна заказа.
  */
-interface MovingToClientViewActions {
+public interface MovingToClientViewActions {
 
   /**
    * Показать индикатор процесса.
@@ -26,7 +26,8 @@ interface MovingToClientViewActions {
    *
    * @param coordinates - координаты
    */
-  void showLoadPointCoordinates(String coordinates);
+  @SuppressWarnings({"unused", "EmptyMethod"})
+  void showLoadPointCoordinates(@NonNull String coordinates);
 
   /**
    * Показать индикатор таймаута по заданным параметрам.

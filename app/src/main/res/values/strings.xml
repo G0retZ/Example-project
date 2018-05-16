@@ -74,4 +74,7 @@
   <string name="client_confirmation">Идет подтверждение у клиента.\nБудьте готовы начать заказ</string>
   <string name="options">Опции</string>
   <string name="cost">Цена</string>
+  <string name="arrived">Я на месте</string>
+  <string name="before_meet_client">До встречи с клиентом</string>
+  <string name="call_client">Позвонить клиенту</string>
 </resources>
