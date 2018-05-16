@@ -19,9 +19,9 @@ public class OnlineSwitchViewModelImpl extends ViewModel implements OnlineSwitch
   @NonNull
   private final ExecutorStateNotOnlineUseCase executorStateNotOnlineUseCase;
   @NonNull
-  private final SingleLiveEvent<ViewState<OnlineSwitchViewActions>> viewStateLiveData;
+  private final MutableLiveData<ViewState<OnlineSwitchViewActions>> viewStateLiveData;
   @NonNull
-  private final MutableLiveData<String> navigateLiveData;
+  private final SingleLiveEvent<String> navigateLiveData;
   @NonNull
   private Disposable executorStatesDisposable = EmptyDisposable.INSTANCE;
   @NonNull
@@ -31,8 +31,8 @@ public class OnlineSwitchViewModelImpl extends ViewModel implements OnlineSwitch
   public OnlineSwitchViewModelImpl(
       @NonNull ExecutorStateNotOnlineUseCase executorStateNotOnlineUseCase) {
     this.executorStateNotOnlineUseCase = executorStateNotOnlineUseCase;
-    viewStateLiveData = new SingleLiveEvent<>();
-    navigateLiveData = new MutableLiveData<>();
+    viewStateLiveData = new MutableLiveData<>();
+    navigateLiveData = new SingleLiveEvent<>();
     loadExecutorState();
   }
 
