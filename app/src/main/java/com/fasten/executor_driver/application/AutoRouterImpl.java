@@ -9,13 +9,15 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.fasten.executor_driver.R;
 import com.fasten.executor_driver.presentation.executorstate.ExecutorStateNavigate;
+import com.fasten.executor_driver.presentation.executorstate.ExecutorStateViewActions;
 import com.fasten.executor_driver.presentation.geolocation.GeoLocationNavigate;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import javax.inject.Inject;
 
-public class AutoRouterImpl implements ActivityLifecycleCallbacks, AutoRouter {
+public class AutoRouterImpl implements ActivityLifecycleCallbacks, AutoRouter,
+    ExecutorStateViewActions {
 
   /**
    * Реестр активити, разбитых по группам, чтобы исключить нежелательные переходы по навигации.
@@ -58,6 +60,8 @@ public class AutoRouterImpl implements ActivityLifecycleCallbacks, AutoRouter {
   @GeoLocationNavigate
   private String lastRouteAction;
   private boolean goToGeoResolver;
+  @Nullable
+  private Runnable messageRunnable;
 
   @Inject
   public AutoRouterImpl() {
@@ -72,6 +76,9 @@ public class AutoRouterImpl implements ActivityLifecycleCallbacks, AutoRouter {
     currentActivity = activity;
     tryToNavigate();
     tryToResolveGeo();
+    if (messageRunnable != null) {
+      messageRunnable.run();
+    }
   }
 
   @Override
@@ -198,5 +205,21 @@ public class AutoRouterImpl implements ActivityLifecycleCallbacks, AutoRouter {
     }
     // Если переход сработал, то обнуляем направление. Если нет, то следующее активити попробует его обработать
     lastRouteAction = null;
+  }
+
+  @Override
+  public void showMessage(@NonNull String message) {
+    messageRunnable = () -> {
+      if (currentActivity != null) {
+        new Builder(currentActivity)
+            .setTitle(R.string.information)
+            .setMessage(message)
+            .setCancelable(false)
+            .setPositiveButton(currentActivity.getString(android.R.string.ok), null)
+            .create()
+            .show();
+        messageRunnable = null;
+      }
+    };
   }
 }

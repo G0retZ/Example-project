@@ -83,4 +83,5 @@
   <string name="no_order_info">Нет информации о заказе.</string>
   <string name="order_unavailable_for_accept">Этот заказ недоступен для принятия.</string>
   <string name="order_unavailable">Этот заказ недоступен.</string>
+  <string name="information">Информация</string>
 </resources>

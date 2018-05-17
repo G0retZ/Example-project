@@ -154,32 +154,6 @@ public class ExecutorStateGatewayTest {
   }
 
   /**
-   * Должен запросить маппинг если сообщение с заголовком Type="Status", если он соединен и не соединяется.
-   *
-   * @throws Exception error
-   */
-  @Test
-  public void askForMappingForTypeHeaderIfConnected() throws Exception {
-    // Дано:
-    when(stompClient.isConnected()).thenReturn(true);
-    when(stompClient.topic(anyString())).thenReturn(Observable.just(
-        new StompMessage(
-            "MESSAGE",
-            Collections.singletonList(
-                new StompHeader("Type", "Status")
-            ),
-            "payload"
-        )
-    ));
-
-    // Действие:
-    executorStateGateway.getState("1234567890").test();
-
-    // Результат:
-    verify(mapper, only()).map(any());
-  }
-
-  /**
    * Должен запросить маппинг если сообщение с заголовком Status, если он соединен и не соединяется.
    *
    * @throws Exception error
@@ -195,33 +169,6 @@ public class ExecutorStateGatewayTest {
                 new StompHeader("Status", "payload")
             ),
             "\n"
-        )
-    ));
-
-    // Действие:
-    executorStateGateway.getState("1234567890").test();
-
-    // Результат:
-    verify(mapper, only()).map(any());
-  }
-
-  /**
-   * Должен запросить маппинг после соединения если сообщение с заголовком Type = "Status" и верным
-   * телом, если он не соединен и соединяется.
-   *
-   * @throws Exception error
-   */
-  @Test
-  public void askForMappingForTypeHeaderIfConnectingAfterConnected() throws Exception {
-    // Дано:
-    when(stompClient.isConnecting()).thenReturn(true);
-    when(stompClient.topic(anyString())).thenReturn(Observable.just(
-        new StompMessage(
-            "MESSAGE",
-            Collections.singletonList(
-                new StompHeader("Type", "Status")
-            ),
-            "payload"
         )
     ));
 
@@ -288,33 +235,6 @@ public class ExecutorStateGatewayTest {
   }
 
   /**
-   * Должен ответить ошибкой для сообщения с заголовком Type="Status", если он соединен и не
-   * соединяется.
-   *
-   * @throws Exception error
-   */
-  @Test
-  public void answerDataMappingErrorForTypeHeaderIfConnected() throws Exception {
-    // Дано:
-    doThrow(new DataMappingException()).when(mapper).map(any());
-    when(stompClient.isConnected()).thenReturn(true);
-    when(stompClient.topic(anyString())).thenReturn(Observable.just(
-        new StompMessage(
-            "MESSAGE",
-            Collections.singletonList(new StompHeader("Type", "Status")),
-            null
-        )
-    ));
-
-    // Действие:
-    TestSubscriber<ExecutorState> testSubscriber =
-        executorStateGateway.getState("1234567890").test();
-
-    // Результат:
-    testSubscriber.assertError(DataMappingException.class);
-  }
-
-  /**
    * Должен ответить ошибкой для сообщение с заголовком Status, если он соединен и не соединяется.
    *
    * @throws Exception error
@@ -338,33 +258,6 @@ public class ExecutorStateGatewayTest {
 
     // Результат:
     testSubscriber.assertError(DataMappingException.class);
-  }
-
-  /**
-   * Должен вернуть статус для сообщения с заголовком Type = "Status", если он соединен и не
-   * соединяется.
-   *
-   * @throws Exception error
-   */
-  @Test
-  public void answerShiftOpenedForTypeHeaderIfConnected() throws Exception {
-    // Дано:
-    when(mapper.map(any())).thenReturn(ExecutorState.SHIFT_OPENED);
-    when(stompClient.isConnected()).thenReturn(true);
-    when(stompClient.topic(anyString())).thenReturn(Observable.just(
-        new StompMessage(
-            "MESSAGE",
-            Collections.singletonList(new StompHeader("Type", "Status")),
-            null
-        )
-    ));
-
-    // Действие:
-    TestSubscriber<ExecutorState> testSubscriber =
-        executorStateGateway.getState("1234567890").test();
-
-    // Результат:
-    testSubscriber.assertValue(ExecutorState.SHIFT_OPENED);
   }
 
   /**
@@ -449,34 +342,6 @@ public class ExecutorStateGatewayTest {
   }
 
   /**
-   * Должен ответить ошибкой для сообщения с заголовком Type = "Status", если он не соединен и
-   * соединяется.
-   *
-   * @throws Exception error
-   */
-  @Test
-  public void answerDataMappingErrorForTypeHeaderIfConnectingAfterConnected() throws Exception {
-    // Дано:
-    doThrow(new DataMappingException()).when(mapper).map(any());
-    when(stompClient.isConnecting()).thenReturn(true);
-    when(stompClient.topic(anyString())).thenReturn(Observable.just(
-        new StompMessage(
-            "MESSAGE",
-            Collections.singletonList(new StompHeader("Type", "Status")),
-            null
-        )
-    ));
-
-    // Действие:
-    TestSubscriber<ExecutorState> testSubscriber =
-        executorStateGateway.getState("1234567890").test();
-
-    // Результат:
-    testSubscriber.assertError(DataMappingException.class);
-    testSubscriber.assertNoValues();
-  }
-
-  /**
    * Должен ответить ошибкой для сообщения с заголовком Status, если он не соединен и соединяется.
    *
    * @throws Exception error
@@ -501,34 +366,6 @@ public class ExecutorStateGatewayTest {
     // Результат:
     testSubscriber.assertError(DataMappingException.class);
     testSubscriber.assertNoValues();
-  }
-
-  /**
-   * Должен вернуть статус для сообщения с заголовком Type = "Status", если он не соединен и
-   * соединяется.
-   *
-   * @throws Exception error
-   */
-  @Test
-  public void answerShiftOpenedForTypeHeaderIfConnectingAfterConnected() throws Exception {
-    // Дано:
-    when(mapper.map(any())).thenReturn(ExecutorState.SHIFT_OPENED);
-    when(stompClient.isConnecting()).thenReturn(true);
-    when(stompClient.topic(anyString())).thenReturn(Observable.just(
-        new StompMessage(
-            "MESSAGE",
-            Collections.singletonList(new StompHeader("Type", "Status")),
-            "payload"
-        )
-    ));
-
-    // Действие:
-    TestSubscriber<ExecutorState> testSubscriber =
-        executorStateGateway.getState("1234567890").test();
-
-    // Результат:
-    testSubscriber.assertValue(ExecutorState.SHIFT_OPENED);
-    testSubscriber.assertNoErrors();
   }
 
   /**
