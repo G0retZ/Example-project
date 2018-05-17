@@ -222,6 +222,7 @@ public class AppComponentImpl implements AppComponent {
     );
     AutoRouterImpl autoRouter = new AutoRouterImpl();
     mainApplication.setAutoRouter(autoRouter);
+    mainApplication.setExecutorStateViewActions(autoRouter);
     mainApplication.setLifeCycleCallbacks(autoRouter);
   }
 

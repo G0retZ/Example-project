@@ -11,6 +11,7 @@ import com.fasten.executor_driver.R;
 import com.fasten.executor_driver.di.AppComponent;
 import com.fasten.executor_driver.di.AppComponentImpl;
 import com.fasten.executor_driver.presentation.executorstate.ExecutorStateNavigate;
+import com.fasten.executor_driver.presentation.executorstate.ExecutorStateViewActions;
 import com.fasten.executor_driver.presentation.executorstate.ExecutorStateViewModel;
 import com.fasten.executor_driver.presentation.geolocation.GeoLocationViewModel;
 import javax.inject.Inject;
@@ -29,6 +30,8 @@ public class MainApplication extends Application {
   private GeoLocationViewModel geoLocationViewModel;
   @Nullable
   private AutoRouter autoRouter;
+  @Nullable
+  private ExecutorStateViewActions executorStateViewActions;
 
   @Inject
   public void setExecutorStateViewModel(@NonNull ExecutorStateViewModel executorStateViewModel) {
@@ -46,6 +49,12 @@ public class MainApplication extends Application {
   }
 
   @Inject
+  public void setExecutorStateViewActions(
+      @NonNull ExecutorStateViewActions executorStateViewActions) {
+    this.executorStateViewActions = executorStateViewActions;
+  }
+
+  @Inject
   public void setLifeCycleCallbacks(
       @Nullable ActivityLifecycleCallbacks activityLifecycleCallbacks) {
     registerActivityLifecycleCallbacks(activityLifecycleCallbacks);
@@ -59,6 +68,11 @@ public class MainApplication extends Application {
     if (executorStateViewModel == null || geoLocationViewModel == null) {
       throw new RuntimeException("Shit! WTF?!");
     }
+    executorStateViewModel.getViewStateLiveData().observeForever(viewState -> {
+      if (viewState != null && executorStateViewActions != null) {
+        viewState.apply(executorStateViewActions);
+      }
+    });
     executorStateViewModel.getNavigationLiveData().observeForever(this::navigate);
     geoLocationViewModel.getNavigationLiveData().observeForever(this::navigate);
     initExecutorStates(true);
