@@ -6,6 +6,7 @@ import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
 import com.fasten.executor_driver.backend.web.AuthorizationException;
 import com.fasten.executor_driver.interactor.ExecutorStateUseCase;
+import com.fasten.executor_driver.presentation.SingleLiveEvent;
 import com.fasten.executor_driver.presentation.ViewState;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
@@ -18,6 +19,8 @@ public class ExecutorStateViewModelImpl extends ViewModel implements ExecutorSta
   @NonNull
   private final ExecutorStateUseCase executorStateUseCase;
   @NonNull
+  private final SingleLiveEvent<ViewState<ExecutorStateViewActions>> messageLiveData;
+  @NonNull
   private final MutableLiveData<String> navigateLiveData;
   @NonNull
   private Disposable disposable = EmptyDisposable.INSTANCE;
@@ -26,12 +29,13 @@ public class ExecutorStateViewModelImpl extends ViewModel implements ExecutorSta
   public ExecutorStateViewModelImpl(@NonNull ExecutorStateUseCase executorStateUseCase) {
     this.executorStateUseCase = executorStateUseCase;
     navigateLiveData = new MutableLiveData<>();
+    messageLiveData = new SingleLiveEvent<>();
   }
 
   @NonNull
   @Override
   public LiveData<ViewState<ExecutorStateViewActions>> getViewStateLiveData() {
-    return new MutableLiveData<>();
+    return messageLiveData;
   }
 
   @NonNull
@@ -57,6 +61,13 @@ public class ExecutorStateViewModelImpl extends ViewModel implements ExecutorSta
                   break;
                 case ONLINE:
                   navigateLiveData.postValue(ExecutorStateNavigate.MAP_ONLINE);
+                  if (executorState.getData() != null
+                      && !executorState.getData().trim().isEmpty()) {
+                    messageLiveData.postValue(
+                        executorStateViewActions -> executorStateViewActions
+                            .showMessage(executorState.getData())
+                    );
+                  }
                   break;
                 case DRIVER_ORDER_CONFIRMATION:
                   navigateLiveData.postValue(ExecutorStateNavigate.DRIVER_ORDER_CONFIRMATION);

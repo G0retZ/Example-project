@@ -12,6 +12,7 @@ import android.arch.lifecycle.Observer;
 import com.fasten.executor_driver.backend.web.NoNetworkException;
 import com.fasten.executor_driver.entity.ExecutorState;
 import com.fasten.executor_driver.interactor.ExecutorStateUseCase;
+import com.fasten.executor_driver.presentation.ViewState;
 import io.reactivex.Flowable;
 import io.reactivex.android.plugins.RxAndroidPlugins;
 import io.reactivex.plugins.RxJavaPlugins;
@@ -21,6 +22,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestRule;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -34,12 +37,19 @@ public class ExecutorStateViewModelTest {
   private ExecutorStateViewModel executorStateViewModel;
   @Mock
   private Observer<String> navigationObserver;
+  @Mock
+  private Observer<ViewState<ExecutorStateViewActions>> viewStateObserver;
+  @Captor
+  private ArgumentCaptor<ViewState<ExecutorStateViewActions>> viewStateCaptor;
+  @Mock
+  private ExecutorStateViewActions executorStateViewActions;
 
   @Mock
   private ExecutorStateUseCase executorStateUseCase;
 
   @Before
   public void setUp() {
+    ExecutorState.ONLINE.setData(null);
     RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
     RxAndroidPlugins.setInitMainThreadSchedulerHandler(scheduler -> Schedulers.trampoline());
     when(executorStateUseCase.getExecutorStates(anyBoolean())).thenReturn(Flowable.never());
@@ -91,6 +101,28 @@ public class ExecutorStateViewModelTest {
     inOrder.verify(executorStateUseCase).getExecutorStates(true);
     inOrder.verify(executorStateUseCase).getExecutorStates(false);
     verifyNoMoreInteractions(executorStateUseCase);
+  }
+
+  /* Тетсируем сообщение. */
+
+  /**
+   * Должен показать сопутствующее сообщение.
+   */
+  @Test
+  public void showOnlineMessage() {
+    // Дано:
+    ExecutorState.ONLINE.setData("Message");
+    when(executorStateUseCase.getExecutorStates(anyBoolean()))
+        .thenReturn(Flowable.just(ExecutorState.ONLINE));
+
+    // Действие:
+    executorStateViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    executorStateViewModel.initializeExecutorState(false);
+
+    // Результат:
+    verify(viewStateObserver, only()).onChanged(viewStateCaptor.capture());
+    viewStateCaptor.getValue().apply(executorStateViewActions);
+    verify(executorStateViewActions, only()).showMessage("Message");
   }
 
   /* Тетсируем навигацию. */
