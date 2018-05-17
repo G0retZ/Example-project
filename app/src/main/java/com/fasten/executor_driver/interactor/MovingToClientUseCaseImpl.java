@@ -6,13 +6,13 @@ import io.reactivex.Completable;
 import io.reactivex.Flowable;
 import javax.inject.Inject;
 
-class MovingToClientUseCaseImpl implements MovingToClientUseCase {
+public class MovingToClientUseCaseImpl implements MovingToClientUseCase {
 
   @NonNull
   private final MovingToClientGateway movingToClientGateway;
 
   @Inject
-  MovingToClientUseCaseImpl(@NonNull MovingToClientGateway movingToClientGateway) {
+  public MovingToClientUseCaseImpl(@NonNull MovingToClientGateway movingToClientGateway) {
     this.movingToClientGateway = movingToClientGateway;
   }
 

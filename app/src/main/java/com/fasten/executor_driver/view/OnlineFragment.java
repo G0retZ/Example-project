@@ -58,9 +58,6 @@ public class OnlineFragment extends BaseFragment implements OnlineSwitchViewActi
   @Override
   public void onActivityCreated(@Nullable Bundle savedInstanceState) {
     super.onActivityCreated(savedInstanceState);
-    if (switchCompat != null) {
-      switchCompat.setOnCheckedChangeListener(onCheckedChangeListener);
-    }
     onlineSwitchViewModel.getViewStateLiveData().observe(this, viewState -> {
       if (viewState != null) {
         viewState.apply(this);
@@ -71,6 +68,14 @@ public class OnlineFragment extends BaseFragment implements OnlineSwitchViewActi
         navigate(destination);
       }
     });
+  }
+
+  @Override
+  public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+    super.onViewStateRestored(savedInstanceState);
+    if (switchCompat != null) {
+      switchCompat.setOnCheckedChangeListener(onCheckedChangeListener);
+    }
   }
 
   @Override

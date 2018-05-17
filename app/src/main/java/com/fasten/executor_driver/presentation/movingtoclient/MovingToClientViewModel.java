@@ -5,7 +5,7 @@ import com.fasten.executor_driver.presentation.ViewModel;
 /**
  * ViewModel окна движения к клиенту.
  */
-interface MovingToClientViewModel extends ViewModel<MovingToClientViewActions> {
+public interface MovingToClientViewModel extends ViewModel<MovingToClientViewActions> {
 
   /**
    * Запрашивает звонок клиенту.

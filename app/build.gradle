@@ -10,8 +10,8 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-        buildConfigField 'String', 'BASE_URL', '"http://dev.capsrv.xyz:8080/executor/"'
-        buildConfigField 'String', 'SOCKET_URL', '"ws://dev.capsrv.xyz:8080/executor/ws"'
+        buildConfigField 'String', 'BASE_URL', '"http://tst.capsrv.xyz:8080/executor/"'
+        buildConfigField 'String', 'SOCKET_URL', '"ws://tst.capsrv.xyz:8080/executor/ws"'
         buildConfigField 'String', 'GOLOCATION_DESTINATION', '"/mobile/online"'
         buildConfigField 'String', 'CONFIRM_OFFER_DESTINATION', '"/mobile/order"'
         buildConfigField 'String', 'SET_STATUS_DESTINATION', '"/mobile/status"'
@@ -47,6 +47,9 @@ dependencies {
     implementation "android.arch.lifecycle:runtime:1.1.1"
     implementation "android.arch.lifecycle:extensions:1.1.1"
     annotationProcessor "android.arch.lifecycle:compiler:1.1.1"
+
+    // Time
+    implementation 'joda-time:joda-time:2.9.9'
 
     // Picasso
     implementation 'com.squareup.picasso:picasso:2.5.2'

@@ -17,17 +17,17 @@
       android:layout_width="match_parent"
       android:layout_height="match_parent"
       android:gravity="center_vertical|end">
-      <fragment
-        android:id="@+id/fragment_online"
-        android:layout_width="152dp"
-        android:layout_height="match_parent"
-        android:name="com.fasten.executor_driver.view.OnlineFragment"
-        tools:layout="@layout/fragment_online"/>
+      <Button
+        style="@style/AppTheme.Button.Borderless.Small"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@android:string/cancel"/>
     </LinearLayout>
   </android.support.v7.widget.Toolbar>
   <fragment
-    android:id="@+id/fragment_map"
+    android:id="@+id/fragment_moving_to_client"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:name="com.fasten.executor_driver.view.MapFragment"/>
+    android:name="com.fasten.executor_driver.view.MovingToClientFragment"
+    tools:layout="@layout/fragment_moving_to_client"/>
 </LinearLayout>

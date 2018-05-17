@@ -16,7 +16,7 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
-public class OrderApiMapperTest {
+public class MovingToClientApiMapperTest {
 
   private Mapper<String, Order> mapper;
 
@@ -27,7 +27,7 @@ public class OrderApiMapperTest {
   public void setUp() throws Exception {
     when(apiOptionMapper.map(any(ApiOptionItem.class)))
         .thenReturn(new OptionBoolean(0, "n", "d", false, false));
-    mapper = new OrderApiMapper(apiOptionMapper);
+    mapper = new MovingToClientApiMapper(apiOptionMapper);
   }
 
   /**
@@ -154,6 +154,46 @@ public class OrderApiMapperTest {
     assertEquals(order.getId(), 7);
     assertEquals(order.getComment(), "com");
     assertEquals(order.getDistance(), 1200239);
+    assertEquals(order.getEstimatedPrice(), "7000");
+    assertEquals(order.getTimeout(), 25);
+    assertEquals(order.getEtaToStartPoint(), 1200);
+    assertEquals(order.getConfirmationTime(), 1234567890);
+    assertEquals(order.getRoutePoint().getLatitude(), 123, Double.MIN_VALUE);
+    assertEquals(order.getRoutePoint().getLongitude(), 456, Double.MIN_VALUE);
+    assertEquals(order.getRoutePoint().getComment(), "com");
+    assertEquals(order.getRoutePoint().getAddress(), "add");
+    assertEquals(order.getOptions().size(), 0);
+  }
+
+  /**
+   * Должен успешно преобразовать JSON в предложение заказа без дистанции.
+   *
+   * @throws Exception ошибка
+   */
+  @Test
+  public void mappingJsonStringToOrderWithoutDistance() throws Exception {
+    // Дано и Действие:
+    Order order = mapper.map("{\n"
+        + "    \"id\": \"7\",\n"
+        + "    \"comment\": \"com\",\n"
+        + "    \"estimatedAmount\": \"7000\",\n"
+        + "    \"timeout\": \"25\",\n"
+        + "    \"etaToStartPoint\": \"1200\",\n"
+        + "    \"confirmationTime\": \"1234567890\",\n"
+        + "    \"route\": [\n"
+        + "        {\n"
+        + "            \"longitude\":\"456\",\n"
+        + "            \"latitude\":\"123\",\n"
+        + "            \"comment\":\"com\",\n"
+        + "            \"address\":\"add\"\n"
+        + "        }\n"
+        + "    ]\n"
+        + "}");
+
+    // Результат:
+    assertEquals(order.getId(), 7);
+    assertEquals(order.getComment(), "com");
+    assertEquals(order.getDistance(), 0);
     assertEquals(order.getEstimatedPrice(), "7000");
     assertEquals(order.getTimeout(), 25);
     assertEquals(order.getEtaToStartPoint(), 1200);
@@ -352,32 +392,6 @@ public class OrderApiMapperTest {
         + "            \"latitude\":\"123\",\n"
         + "            \"comment\":\"com\",\n"
         + "            \"address\":\"\"\n"
-        + "        }\n"
-        + "    ]\n"
-        + "}");
-  }
-
-  /**
-   * Должен дать ошибку, если дистанция null.
-   *
-   * @throws Exception ошибка
-   */
-  @Test(expected = DataMappingException.class)
-  public void mappingNullDistanceFail() throws Exception {
-    // Дано и Действие:
-    mapper.map("{\n"
-        + "    \"id\": \"7\",\n"
-        + "    \"comment\": \"com\",\n"
-        + "    \"estimatedAmount\": \"7000\",\n"
-        + "    \"etaToStartPoint\": \"1200\",\n"
-        + "    \"confirmationTime\": \"1234567890\",\n"
-        + "    \"timeout\": \"25\",\n"
-        + "    \"route\": [\n"
-        + "        {\n"
-        + "            \"longitude\":\"456\",\n"
-        + "            \"latitude\":\"123\",\n"
-        + "            \"comment\":\"com\",\n"
-        + "            \"address\":\"add\"\n"
         + "        }\n"
         + "    ]\n"
         + "}");

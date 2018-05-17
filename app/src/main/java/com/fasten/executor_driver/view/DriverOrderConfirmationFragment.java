@@ -11,6 +11,7 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.LinearInterpolator;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -127,6 +128,7 @@ public class DriverOrderConfirmationFragment extends BaseFragment implements
     if (timeout > 0) {
       ObjectAnimator animation = ObjectAnimator.ofInt(timeoutChart, "progress", progress, 0);
       animation.setDuration(timeout);
+      animation.setInterpolator(new LinearInterpolator());
       animation.addListener(new AnimatorListener() {
         @Override
         public void onAnimationStart(Animator animation) {

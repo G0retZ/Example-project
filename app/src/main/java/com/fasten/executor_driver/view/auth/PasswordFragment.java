@@ -104,7 +104,7 @@ public class PasswordFragment extends BaseFragment implements CodeViewActions,
     codeInputUnderline = view.findViewById(R.id.codeInputUnderline);
     codeInput = view.findViewById(R.id.codeInput);
     sendSmsRequest = view.findViewById(R.id.sendSms);
-    sendSmsRequest.setOnClickListener(this::sendSmsRequest);
+    sendSmsRequest.setOnClickListener(v -> sendSmsRequest());
     setTextListener();
     return view;
   }
@@ -267,15 +267,14 @@ public class PasswordFragment extends BaseFragment implements CodeViewActions,
     }
   }
 
-  @SuppressWarnings("unused")
-  private void sendSmsRequest(View view) {
+  private void sendSmsRequest() {
     smsSent = true;
     smsButtonViewModel.sendMeSms();
   }
 
   private void autoSendSmsRequest() {
     if (!smsSent) {
-      sendSmsRequest(null);
+      sendSmsRequest();
     }
   }
 

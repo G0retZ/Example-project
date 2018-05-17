@@ -62,7 +62,7 @@
     app:layout_constraintTop_toBottomOf="@+id/balanceAmount"/>
   <Button
     android:id="@+id/goPaymentOptions"
-    style="@style/AppTheme.Button.Colored.Dark"
+    style="@style/AppTheme.Button.Colored.Darkest"
     android:layout_width="0dp"
     android:layout_height="64dp"
     android:layout_marginBottom="6dp"

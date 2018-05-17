@@ -261,7 +261,7 @@ public class MovingToClientViewModelTest {
    * Должен вернуть состояние вида "В процессе".
    */
   @Test
-  public void setPendingViewStateWithoutOrderToLiveDataForDecline() {
+  public void setPendingViewStateWithoutOrderToLiveDataForReportArrival() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     movingToClientViewModel.getViewStateLiveData().observeForever(viewStateObserver);
@@ -367,7 +367,7 @@ public class MovingToClientViewModelTest {
    * Не должен возвращать никакого состояния вида.
    */
   @Test
-  public void setNoViewStateToLiveDataForCallToClientWithoutOrder() {
+  public void setIdleViewStateToLiveDataForCallToClientWithoutOrder() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     when(movingToClientUseCase.callToClient())
@@ -378,8 +378,8 @@ public class MovingToClientViewModelTest {
     movingToClientViewModel.callToClient();
 
     // Результат:
-    inOrder.verify(viewStateObserver, times(2))
-        .onChanged(new MovingToClientViewStatePending(null));
+    inOrder.verify(viewStateObserver, times(2)).onChanged(new MovingToClientViewStatePending(null));
+    inOrder.verify(viewStateObserver).onChanged(new MovingToClientViewStateIdle(null));
     verifyNoMoreInteractions(viewStateObserver);
   }
 
@@ -525,7 +525,7 @@ public class MovingToClientViewModelTest {
    * Не должен возвращать никакого состояния вида.
    */
   @Test
-  public void setNoViewStateToLiveDataForCallToClient() {
+  public void setIdleViewStateToLiveDataForCallToClient() {
     // Дано:
     PublishSubject<Order> publishSubject = PublishSubject.create();
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
@@ -544,6 +544,9 @@ public class MovingToClientViewModelTest {
         new RouteItem(order, timeUtils)
     ));
     inOrder.verify(viewStateObserver).onChanged(new MovingToClientViewStatePending(
+        new RouteItem(order, timeUtils)
+    ));
+    inOrder.verify(viewStateObserver).onChanged(new MovingToClientViewStateIdle(
         new RouteItem(order, timeUtils)
     ));
     verifyNoMoreInteractions(viewStateObserver);

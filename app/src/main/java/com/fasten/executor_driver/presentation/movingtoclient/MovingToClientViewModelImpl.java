@@ -16,7 +16,7 @@ import io.reactivex.internal.disposables.EmptyDisposable;
 import io.reactivex.schedulers.Schedulers;
 import javax.inject.Inject;
 
-class MovingToClientViewModelImpl extends ViewModel implements MovingToClientViewModel {
+public class MovingToClientViewModelImpl extends ViewModel implements MovingToClientViewModel {
 
   @NonNull
   private final MovingToClientUseCase movingToClientUseCase;
@@ -32,7 +32,7 @@ class MovingToClientViewModelImpl extends ViewModel implements MovingToClientVie
   private RouteItem routeItem;
 
   @Inject
-  MovingToClientViewModelImpl(
+  public MovingToClientViewModelImpl(
       @NonNull MovingToClientUseCase movingToClientUseCase,
       @NonNull TimeUtils timeUtils) {
     this.movingToClientUseCase = movingToClientUseCase;
@@ -88,8 +88,8 @@ class MovingToClientViewModelImpl extends ViewModel implements MovingToClientVie
         .subscribeOn(Schedulers.single())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(
-            () -> {
-            }, this::consumeError
+            () -> viewStateLiveData.postValue(new MovingToClientViewStateIdle(routeItem)),
+            this::consumeError
         );
   }
 
