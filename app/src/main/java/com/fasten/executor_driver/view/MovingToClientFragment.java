@@ -20,8 +20,9 @@ import com.fasten.executor_driver.di.AppComponent;
 import com.fasten.executor_driver.presentation.movingtoclient.MovingToClientViewActions;
 import com.fasten.executor_driver.presentation.movingtoclient.MovingToClientViewModel;
 import com.squareup.picasso.Picasso;
-import java.util.Locale;
 import javax.inject.Inject;
+import org.joda.time.LocalTime;
+import org.joda.time.format.DateTimeFormat;
 
 /**
  * Отображает движение к клиенту.
@@ -37,6 +38,8 @@ public class MovingToClientFragment extends BaseFragment implements MovingToClie
   private Button navigationAction;
   private Context context;
   private boolean pending;
+  @Nullable
+  private ValueAnimator valueAnimator;
 
   @Override
   public void onAttach(Context context) {
@@ -84,6 +87,9 @@ public class MovingToClientFragment extends BaseFragment implements MovingToClie
 
   @Override
   public void onDetach() {
+    if (valueAnimator != null) {
+      valueAnimator.cancel();
+    }
     super.onDetach();
     context = null;
   }
@@ -108,9 +114,12 @@ public class MovingToClientFragment extends BaseFragment implements MovingToClie
 
   @Override
   public void showTimeout(int timeout) {
-    ValueAnimator valueAnimator = ValueAnimator.ofInt(timeout, -7200);
+    if (valueAnimator != null && valueAnimator.isStarted()) {
+      valueAnimator.cancel();
+    }
+    valueAnimator = ValueAnimator.ofInt(timeout, -7200);
+    valueAnimator.setDuration(timeout * 1000 + 7200000);
     valueAnimator.setInterpolator(new LinearInterpolator());
-    valueAnimator.setDuration(1000);
     valueAnimator.addUpdateListener(animation -> {
       int time = (int) animation.getAnimatedValue();
       if (VERSION.SDK_INT >= VERSION_CODES.M) {
@@ -126,10 +135,10 @@ public class MovingToClientFragment extends BaseFragment implements MovingToClie
         );
       }
       timerText.setText(
-          String.format(Locale.getDefault(), "%d:%d",
-              time - time % 60, Math.abs(time) % 60)
+          DateTimeFormat.forPattern("HH:mm:ss").print(LocalTime.fromMillisOfDay(time * 1000))
       );
     });
+    valueAnimator.start();
   }
 
   @Override
