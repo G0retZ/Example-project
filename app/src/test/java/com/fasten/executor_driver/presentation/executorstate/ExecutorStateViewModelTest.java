@@ -4,6 +4,7 @@ import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 import android.accounts.AuthenticatorException;
@@ -123,6 +124,60 @@ public class ExecutorStateViewModelTest {
     verify(viewStateObserver, only()).onChanged(viewStateCaptor.capture());
     viewStateCaptor.getValue().apply(executorStateViewActions);
     verify(executorStateViewActions, only()).showMessage("Message");
+  }
+
+  /**
+   * Не должен показывать null сообщение.
+   */
+  @Test
+  public void doNotShowNullMessage() {
+    // Дано:
+    ExecutorState.ONLINE.setData(null);
+    when(executorStateUseCase.getExecutorStates(anyBoolean()))
+        .thenReturn(Flowable.just(ExecutorState.ONLINE));
+
+    // Действие:
+    executorStateViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    executorStateViewModel.initializeExecutorState(false);
+
+    // Результат:
+    verifyZeroInteractions(viewStateObserver);
+  }
+
+  /**
+   * Не должен показывать пустое сообщение.
+   */
+  @Test
+  public void doNotShowEmptyMessage() {
+    // Дано:
+    ExecutorState.ONLINE.setData("");
+    when(executorStateUseCase.getExecutorStates(anyBoolean()))
+        .thenReturn(Flowable.just(ExecutorState.ONLINE));
+
+    // Действие:
+    executorStateViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    executorStateViewModel.initializeExecutorState(false);
+
+    // Результат:
+    verifyZeroInteractions(viewStateObserver);
+  }
+
+  /**
+   * Не должен показывать сообщение из пробелов.
+   */
+  @Test
+  public void doNotShowSpaceMessage() {
+    // Дано:
+    ExecutorState.ONLINE.setData("\n");
+    when(executorStateUseCase.getExecutorStates(anyBoolean()))
+        .thenReturn(Flowable.just(ExecutorState.ONLINE));
+
+    // Действие:
+    executorStateViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    executorStateViewModel.initializeExecutorState(false);
+
+    // Результат:
+    verifyZeroInteractions(viewStateObserver);
   }
 
   /* Тетсируем навигацию. */
