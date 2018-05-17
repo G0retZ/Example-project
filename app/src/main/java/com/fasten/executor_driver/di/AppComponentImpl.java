@@ -31,6 +31,7 @@ import com.fasten.executor_driver.gateway.GeoLocationGatewayImpl;
 import com.fasten.executor_driver.gateway.GeoTrackingGatewayImpl;
 import com.fasten.executor_driver.gateway.HeatMapGatewayImpl;
 import com.fasten.executor_driver.gateway.LastUsedVehicleGatewayImpl;
+import com.fasten.executor_driver.gateway.MovingToClientApiMapper;
 import com.fasten.executor_driver.gateway.MovingToClientGatewayImpl;
 import com.fasten.executor_driver.gateway.OrderApiMapper;
 import com.fasten.executor_driver.gateway.PasswordGatewayImpl;
@@ -518,7 +519,7 @@ public class AppComponentImpl implements AppComponent {
                     new MovingToClientUseCaseImpl(
                         new MovingToClientGatewayImpl(
                             executorStateUseCase, stompClient,
-                            new OrderApiMapper(new VehicleOptionApiMapper())
+                            new MovingToClientApiMapper(new VehicleOptionApiMapper())
                         )
                     ),
                     new TimeUtilsImpl()

@@ -12,12 +12,12 @@ import javax.inject.Inject;
 /**
  * Преобразуем статус из ответа сервера в бизнес объект статуса исполнителя.
  */
-public class OrderApiMapper implements Mapper<String, Order> {
+public class MovingToClientApiMapper implements Mapper<String, Order> {
 
   private final Mapper<ApiOptionItem, Option> apiOptionMapper;
 
   @Inject
-  public OrderApiMapper(Mapper<ApiOptionItem, Option> apiOptionMapper) {
+  public MovingToClientApiMapper(Mapper<ApiOptionItem, Option> apiOptionMapper) {
     this.apiOptionMapper = apiOptionMapper;
   }
 
@@ -49,9 +49,6 @@ public class OrderApiMapper implements Mapper<String, Order> {
     if (address.isEmpty()) {
       throw new DataMappingException("Ошибка маппинга: адрес не должен быть пустым!");
     }
-    if (apiOrder.getExecutorDistance() == null) {
-      throw new DataMappingException("Ошибка маппинга: Дистанция не должна быть null!");
-    }
     if (apiOrder.getEtaToStartPoint() == 0) {
       throw new DataMappingException("Ошибка маппинга: ETA должно быть больше 0!");
     }
@@ -62,10 +59,9 @@ public class OrderApiMapper implements Mapper<String, Order> {
     Order order = new Order(
         apiOrder.getId(),
         apiOrder.getComment() == null ? "" : apiOrder.getComment(),
-        apiOrder.getExecutorDistance().getDistance(),
+        apiOrder.getExecutorDistance() == null ? 0 : apiOrder.getExecutorDistance().getDistance(),
         apiOrder.getEstimatedAmount(),
-        // TODO: это костыль, который подменяет таймаут 0 на 20
-        apiOrder.getTimeout() == 0 ? 20 : apiOrder.getTimeout(),
+        apiOrder.getTimeout(),
         apiOrder.getEtaToStartPoint(),
         apiOrder.getConfirmationTime(),
         new RoutePoint(
