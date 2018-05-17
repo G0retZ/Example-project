@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.view.animation.LinearInterpolator;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.fasten.executor_driver.R;
 import com.fasten.executor_driver.di.AppComponent;
@@ -36,6 +37,7 @@ public class MovingToClientFragment extends BaseFragment implements MovingToClie
   private TextView timerText;
   @SuppressWarnings({"FieldCanBeLocal", "unused"})
   private Button navigationAction;
+  private LinearLayout callingMessage;
   private Context context;
   private boolean pending;
   @Nullable
@@ -62,9 +64,18 @@ public class MovingToClientFragment extends BaseFragment implements MovingToClie
     addressText = view.findViewById(R.id.addressText);
     timerText = view.findViewById(R.id.timerText);
     navigationAction = view.findViewById(R.id.openNavigator);
+    callingMessage = view.findViewById(R.id.callingMessage);
     Button callAction = view.findViewById(R.id.callToClient);
     Button arrivedAction = view.findViewById(R.id.reportArrived);
-    callAction.setOnClickListener(v -> movingToClientViewModel.callToClient());
+    callAction.setOnClickListener(v -> {
+      movingToClientViewModel.callToClient();
+      callAction.setEnabled(false);
+      callingMessage.setVisibility(View.VISIBLE);
+      callingMessage.postDelayed(() -> {
+        callAction.setEnabled(true);
+        callingMessage.setVisibility(View.GONE);
+      }, 10_000);
+    });
     arrivedAction.setOnClickListener(v -> movingToClientViewModel.reportArrival());
     return view;
   }
@@ -135,7 +146,8 @@ public class MovingToClientFragment extends BaseFragment implements MovingToClie
         );
       }
       timerText.setText(
-          DateTimeFormat.forPattern("HH:mm:ss").print(LocalTime.fromMillisOfDay(time * 1000))
+          DateTimeFormat.forPattern((time < 0 ? "-" : "") + "HH:mm:ss")
+              .print(LocalTime.fromMillisOfDay(Math.abs(time) * 1000))
       );
     });
     valueAnimator.start();
