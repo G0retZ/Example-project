@@ -69,6 +69,7 @@ public class OnlineButtonViewModelImpl extends ViewModel implements OnlineButton
               holdButton(DURATION_AFTER_SUCCESS);
             },
             throwable -> {
+              throwable.printStackTrace();
               if (throwable instanceof DriverBlockedException) {
                 navigateLiveData.setValue(OnlineButtonNavigate.DRIVER_BLOCKED);
               } else if (throwable instanceof InsufficientCreditsException) {

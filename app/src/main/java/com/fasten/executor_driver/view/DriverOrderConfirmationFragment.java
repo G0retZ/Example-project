@@ -199,7 +199,7 @@ public class DriverOrderConfirmationFragment extends BaseFragment implements
     if (show) {
       new Builder(context)
           .setTitle(R.string.error)
-          .setMessage("Этот заказ недоступен для принятия.")
+          .setMessage(R.string.order_unavailable_for_accept)
           .setPositiveButton(getString(android.R.string.ok), null)
           .create()
           .show();

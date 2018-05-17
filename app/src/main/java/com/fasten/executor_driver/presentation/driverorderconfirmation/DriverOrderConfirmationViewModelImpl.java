@@ -72,6 +72,7 @@ public class DriverOrderConfirmationViewModelImpl extends ViewModel implements
   }
 
   private void consumeError(Throwable throwable) {
+    throwable.printStackTrace();
     if (throwable instanceof NoOrdersAvailableException) {
       viewStateLiveData.postValue(new DriverOrderConfirmationViewStateUnavailableError(orderItem));
     } else {

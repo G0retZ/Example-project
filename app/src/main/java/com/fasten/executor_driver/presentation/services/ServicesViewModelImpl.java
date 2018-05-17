@@ -72,6 +72,7 @@ public class ServicesViewModelImpl extends ViewModel implements ServicesViewMode
             () -> {
             },
             throwable -> {
+              throwable.printStackTrace();
               ServicesViewStateResolvableError servicesViewStateError;
               if (throwable instanceof NoServicesAvailableException) {
                 servicesViewStateError = new ServicesViewStateResolvableError(
@@ -123,6 +124,7 @@ public class ServicesViewModelImpl extends ViewModel implements ServicesViewMode
               ));
             },
             throwable -> {
+              throwable.printStackTrace();
               ServicesViewStateError servicesViewStateError;
               if (throwable instanceof NoServicesAvailableException) {
                 servicesViewStateError = new ServicesViewStateError(R.string.no_services_available);

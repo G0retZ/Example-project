@@ -42,7 +42,7 @@ public class OrderApiMapperTest {
         + "    \"id\": \"7\",\n"
         + "    \"comment\": \"com\",\n"
         + "    \"estimatedAmount\": \"7000\",\n"
-        + "    \"timeout\": \"25\",\n"
+        + "    \"timeOut\": \"25\",\n"
         + "    \"etaToStartPoint\": \"1200\",\n"
         + "    \"confirmationTime\": \"1234567890\",\n"
         + "    \"executorDistance\": {\n"
@@ -133,7 +133,7 @@ public class OrderApiMapperTest {
         + "    \"id\": \"7\",\n"
         + "    \"comment\": \"com\",\n"
         + "    \"estimatedAmount\": \"7000\",\n"
-        + "    \"timeout\": \"25\",\n"
+        + "    \"timeOut\": \"25\",\n"
         + "    \"etaToStartPoint\": \"1200\",\n"
         + "    \"confirmationTime\": \"1234567890\",\n"
         + "    \"executorDistance\": {\n"
@@ -209,6 +209,49 @@ public class OrderApiMapperTest {
   }
 
   /**
+   * Должен успешно преобразовать JSON в предложение заказа без времени подтверждения.
+   *
+   * @throws Exception ошибка
+   */
+  @Test
+  public void mappingJsonStringToOrderWithoutConfirmationTime() throws Exception {
+    // Дано и Действие:
+    Order order = mapper.map("{\n"
+        + "    \"id\": \"7\",\n"
+        + "    \"comment\": \"com\",\n"
+        + "    \"estimatedAmount\": \"7000\",\n"
+        + "    \"timeOut\": \"25\",\n"
+        + "    \"etaToStartPoint\": \"1200\",\n"
+        + "    \"executorDistance\": {\n"
+        + "        \"executorId\": \"5\",\n"
+        + "        \"distance\": \"1200239\"\n"
+        + "    },\n"
+        + "    \"route\": [\n"
+        + "        {\n"
+        + "            \"longitude\":\"456\",\n"
+        + "            \"latitude\":\"123\",\n"
+        + "            \"comment\":\"com\",\n"
+        + "            \"address\":\"add\"\n"
+        + "        }\n"
+        + "    ]\n"
+        + "}");
+
+    // Результат:
+    assertEquals(order.getId(), 7);
+    assertEquals(order.getComment(), "com");
+    assertEquals(order.getDistance(), 1200239);
+    assertEquals(order.getEstimatedPrice(), "7000");
+    assertEquals(order.getTimeout(), 25);
+    assertEquals(order.getEtaToStartPoint(), 1200);
+    assertEquals(order.getConfirmationTime(), 0);
+    assertEquals(order.getRoutePoint().getLatitude(), 123, Double.MIN_VALUE);
+    assertEquals(order.getRoutePoint().getLongitude(), 456, Double.MIN_VALUE);
+    assertEquals(order.getRoutePoint().getComment(), "com");
+    assertEquals(order.getRoutePoint().getAddress(), "add");
+    assertEquals(order.getOptions().size(), 0);
+  }
+
+  /**
    * Должен дать ошибку, если строка пустая.
    *
    * @throws Exception ошибка
@@ -266,7 +309,7 @@ public class OrderApiMapperTest {
         + "    \"estimatedAmount\": \"7000\",\n"
         + "    \"etaToStartPoint\": \"1200\",\n"
         + "    \"confirmationTime\": \"1234567890\",\n"
-        + "    \"timeout\": \"25\",\n"
+        + "    \"timeOut\": \"25\",\n"
         + "    \"executorDistance\": {\n"
         + "        \"executorId\": \"5\",\n"
         + "        \"distance\": \"1200239\"\n"
@@ -288,7 +331,7 @@ public class OrderApiMapperTest {
         + "    \"estimatedAmount\": \"7000\",\n"
         + "    \"etaToStartPoint\": \"1200\",\n"
         + "    \"confirmationTime\": \"1234567890\",\n"
-        + "    \"timeout\": \"25\",\n"
+        + "    \"timeOut\": \"25\",\n"
         + "    \"executorDistance\": {\n"
         + "        \"executorId\": \"5\",\n"
         + "        \"distance\": \"1200239\"\n"
@@ -312,7 +355,7 @@ public class OrderApiMapperTest {
         + "    \"estimatedAmount\": \"7000\",\n"
         + "    \"etaToStartPoint\": \"1200\",\n"
         + "    \"confirmationTime\": \"1234567890\",\n"
-        + "    \"timeout\": \"25\",\n"
+        + "    \"timeOut\": \"25\",\n"
         + "    \"executorDistance\": {\n"
         + "        \"executorId\": \"5\",\n"
         + "        \"distance\": \"1200239\"\n"
@@ -341,7 +384,7 @@ public class OrderApiMapperTest {
         + "    \"estimatedAmount\": \"7000\",\n"
         + "    \"etaToStartPoint\": \"1200\",\n"
         + "    \"confirmationTime\": \"1234567890\",\n"
-        + "    \"timeout\": \"25\",\n"
+        + "    \"timeOut\": \"25\",\n"
         + "    \"executorDistance\": {\n"
         + "        \"executorId\": \"5\",\n"
         + "        \"distance\": \"1200239\"\n"
@@ -371,7 +414,7 @@ public class OrderApiMapperTest {
         + "    \"estimatedAmount\": \"7000\",\n"
         + "    \"etaToStartPoint\": \"1200\",\n"
         + "    \"confirmationTime\": \"1234567890\",\n"
-        + "    \"timeout\": \"25\",\n"
+        + "    \"timeOut\": \"25\",\n"
         + "    \"route\": [\n"
         + "        {\n"
         + "            \"longitude\":\"456\",\n"
@@ -395,39 +438,8 @@ public class OrderApiMapperTest {
         + "    \"id\": \"7\",\n"
         + "    \"comment\": \"com\",\n"
         + "    \"estimatedAmount\": \"7000\",\n"
-        + "    \"etaToStartPoint\": \"0\",\n"
         + "    \"confirmationTime\": \"1234567890\",\n"
-        + "    \"timeout\": \"25\",\n"
-        + "    \"executorDistance\": {\n"
-        + "        \"executorId\": \"5\",\n"
-        + "        \"distance\": \"1200239\"\n"
-        + "    },\n"
-        + "    \"route\": [\n"
-        + "        {\n"
-        + "            \"longitude\":\"456\",\n"
-        + "            \"latitude\":\"123\",\n"
-        + "            \"comment\":\"com\",\n"
-        + "            \"address\":\"add\"\n"
-        + "        }\n"
-        + "    ]\n"
-        + "}");
-  }
-
-  /**
-   * Должен дать ошибку, если время подтверждения = 0.
-   *
-   * @throws Exception ошибка
-   */
-  @Test(expected = DataMappingException.class)
-  public void mappingZeroConfirmationTimeFail() throws Exception {
-    // Дано и Действие:
-    mapper.map("{\n"
-        + "    \"id\": \"7\",\n"
-        + "    \"comment\": \"com\",\n"
-        + "    \"etaToStartPoint\": \"1200\",\n"
-        + "    \"estimatedAmount\": \"7000\",\n"
-        + "    \"etaToStartPoint\": \"0\",\n"
-        + "    \"timeout\": \"25\",\n"
+        + "    \"timeOut\": \"25\",\n"
         + "    \"executorDistance\": {\n"
         + "        \"executorId\": \"5\",\n"
         + "        \"distance\": \"1200239\"\n"

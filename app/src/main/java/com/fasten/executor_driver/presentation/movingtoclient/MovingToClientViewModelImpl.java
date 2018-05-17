@@ -71,6 +71,7 @@ public class MovingToClientViewModelImpl extends ViewModel implements MovingToCl
   }
 
   private void consumeError(Throwable throwable) {
+    throwable.printStackTrace();
     if (throwable instanceof NoOrdersAvailableException) {
       viewStateLiveData.postValue(new MovingToClientViewStateUnavailableError(routeItem));
     } else {

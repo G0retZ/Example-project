@@ -46,7 +46,7 @@ class OrderItem {
 
   @NonNull
   public String getAddress() {
-    return order.getRoutePoint().getAddress();
+    return order.getRoutePoint().getAddress() + "\n" + order.getRoutePoint().getComment();
   }
 
   public String getEstimatedPrice() {

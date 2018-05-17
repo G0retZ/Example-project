@@ -62,8 +62,10 @@ public class OnlineSwitchViewModelImpl extends ViewModel implements OnlineSwitch
             .subscribe(
                 () -> {
                 },
-                throwable -> viewStateLiveData
-                    .postValue(new OnlineSwitchViewStateCheckedServerError()));
+                throwable -> {
+                  throwable.printStackTrace();
+                  viewStateLiveData.postValue(new OnlineSwitchViewStateCheckedServerError());
+                });
       }
     }
   }
@@ -79,7 +81,10 @@ public class OnlineSwitchViewModelImpl extends ViewModel implements OnlineSwitch
     executorStatesDisposable = executorStateNotOnlineUseCase.getExecutorStates()
         .subscribeOn(Schedulers.single())
         .observeOn(AndroidSchedulers.mainThread())
-        .subscribe(this::onNextState, throwable -> onStateError());
+        .subscribe(this::onNextState, throwable -> {
+          throwable.printStackTrace();
+          onStateError();
+        });
   }
 
   private void onNextState(ExecutorState executorState) {

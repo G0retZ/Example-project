@@ -15,7 +15,7 @@ public class ApiOrder {
   @Nullable
   @SerializedName("comment")
   private String comment;
-  @SerializedName("timeout")
+  @SerializedName("timeOut")
   private int timeout;
   @SerializedName("etaToStartPoint")
   private long etaToStartPoint;

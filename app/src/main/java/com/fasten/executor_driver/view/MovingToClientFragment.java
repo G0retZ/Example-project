@@ -3,6 +3,8 @@ package com.fasten.executor_driver.view;
 import android.animation.ValueAnimator;
 import android.app.AlertDialog.Builder;
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
@@ -121,6 +123,21 @@ public class MovingToClientFragment extends BaseFragment implements MovingToClie
 
   @Override
   public void showLoadPointCoordinates(@NonNull String coordinates) {
+    navigationAction.setOnClickListener(v -> {
+      Intent navigationIntent = new Intent(Intent.ACTION_VIEW);
+      navigationIntent.setData(Uri.parse("geo:" + coordinates + "?q=" + coordinates
+          + "(" + getString(R.string.client) + ")"));
+      if (navigationIntent.resolveActivity(context.getPackageManager()) != null) {
+        startActivity(navigationIntent);
+      } else {
+        new Builder(context)
+            .setTitle(R.string.error)
+            .setMessage(R.string.install_geo_app)
+            .setPositiveButton(getString(android.R.string.ok), null)
+            .create()
+            .show();
+      }
+    });
   }
 
   @Override
@@ -163,7 +180,7 @@ public class MovingToClientFragment extends BaseFragment implements MovingToClie
     if (show) {
       new Builder(context)
           .setTitle(R.string.error)
-          .setMessage("Нет информации о заказе.")
+          .setMessage(R.string.no_order_info)
           .setPositiveButton(getString(android.R.string.ok), null)
           .create()
           .show();
