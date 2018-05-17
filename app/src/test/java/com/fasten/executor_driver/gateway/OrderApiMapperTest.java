@@ -166,11 +166,10 @@ public class OrderApiMapperTest {
   }
 
   /**
-   * Должен успешно преобразовать JSON без таймаута в предложение заказа с таймаутом 20.
+   * Должен успешно преобразовать JSON без таймаута.
    *
    * @throws Exception ошибка
    */
-  // TODO: это костыль, который подменяет таймаут 0 на 20
   @Test
   public void mappingJsonStringWithoutTimeoutToOrder() throws Exception {
     // Дано и Действие:
@@ -199,7 +198,7 @@ public class OrderApiMapperTest {
     assertEquals(order.getComment(), "com");
     assertEquals(order.getDistance(), 1200239);
     assertEquals(order.getEstimatedPrice(), "7000");
-    assertEquals(order.getTimeout(), 20);
+    assertEquals(order.getTimeout(), 0);
     assertEquals(order.getEtaToStartPoint(), 1200);
     assertEquals(order.getConfirmationTime(), 1234567890);
     assertEquals(order.getRoutePoint().getLatitude(), 123, Double.MIN_VALUE);

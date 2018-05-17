@@ -64,8 +64,7 @@ public class OrderApiMapper implements Mapper<String, Order> {
         apiOrder.getComment() == null ? "" : apiOrder.getComment(),
         apiOrder.getExecutorDistance().getDistance(),
         apiOrder.getEstimatedAmount(),
-        // TODO: это костыль, который подменяет таймаут 0 на 20
-        apiOrder.getTimeout() == 0 ? 20 : apiOrder.getTimeout(),
+        apiOrder.getTimeout(),
         apiOrder.getEtaToStartPoint(),
         apiOrder.getConfirmationTime(),
         new RoutePoint(
