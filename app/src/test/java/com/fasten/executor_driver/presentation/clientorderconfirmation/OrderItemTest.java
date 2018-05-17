@@ -50,6 +50,7 @@ public class OrderItemTest {
         new OptionNumeric(5, "num2", "nd", true, 7, 0, 5)
     )));
     when(routePoint.getAddress()).thenReturn("add");
+    when(routePoint.getComment()).thenReturn("comment");
     when(routePoint.getLatitude()).thenReturn(5.421);
     when(routePoint.getLongitude()).thenReturn(10.2341);
 
@@ -57,7 +58,7 @@ public class OrderItemTest {
     assertEquals(orderItem.getLoadPointMapUrl(),
         "https://maps.googleapis.com/maps/api/staticmap?center=5.421,10.2341&zoom=16&size=360x200&maptype=roadmap&key=AIzaSyC20FZNHJqrQH5UhypeUy3thpqII33QBPI");
     assertEquals(orderItem.getPrice(), "7000");
-    assertEquals(orderItem.getAddress(), "add");
+    assertEquals(orderItem.getAddress(), "add\ncomment");
     assertEquals(orderItem.getDistance(),
         String.format(Locale.getDefault(), "%.2f", 12.24f));
     assertEquals(orderItem.getOrderComment(), "com");
