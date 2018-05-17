@@ -158,7 +158,7 @@ public class ClientOrderConfirmationFragment extends BaseFragment implements
     if (show) {
       new Builder(context)
           .setTitle(R.string.error)
-          .setMessage("Этот заказ недоступен.")
+          .setMessage(R.string.order_unavailable)
           .setPositiveButton(getString(android.R.string.ok), null)
           .create()
           .show();
