@@ -88,8 +88,8 @@ public class MovingToClientViewModelImpl extends ViewModel implements MovingToCl
         .subscribeOn(Schedulers.single())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(
-            () -> {
-            }, this::consumeError
+            () -> viewStateLiveData.postValue(new MovingToClientViewStateIdle(routeItem)),
+            this::consumeError
         );
   }
 
