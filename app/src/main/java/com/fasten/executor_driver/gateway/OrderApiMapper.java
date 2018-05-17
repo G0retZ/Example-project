@@ -55,9 +55,6 @@ public class OrderApiMapper implements Mapper<String, Order> {
     if (apiOrder.getEtaToStartPoint() == 0) {
       throw new DataMappingException("Ошибка маппинга: ETA должно быть больше 0!");
     }
-    if (apiOrder.getConfirmationTime() == 0) {
-      throw new DataMappingException("Ошибка маппинга: Время подтверждения должно быть больше 0!");
-    }
     String comment = apiOrder.getRoute().get(0).getComment();
     Order order = new Order(
         apiOrder.getId(),
