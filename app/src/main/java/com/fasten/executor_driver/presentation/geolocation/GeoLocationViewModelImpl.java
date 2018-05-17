@@ -54,7 +54,10 @@ public class GeoLocationViewModelImpl extends ViewModel implements GeoLocationVi
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(
             location -> viewStateLiveData.postValue(new GeoLocationViewState(location)),
-            throwable -> navigateLiveData.postValue(GeoLocationNavigate.RESOLVE_GEO_PROBLEM)
+            throwable -> {
+              throwable.printStackTrace();
+              navigateLiveData.postValue(GeoLocationNavigate.RESOLVE_GEO_PROBLEM);
+            }
         );
   }
 

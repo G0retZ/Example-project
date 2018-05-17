@@ -70,6 +70,7 @@ public class ExecutorStateViewModelImpl extends ViewModel implements ExecutorSta
               }
             },
             throwable -> {
+              throwable.printStackTrace();
               if ((throwable instanceof AuthorizationException)) {
                 navigateLiveData.postValue(ExecutorStateNavigate.AUTHORIZE);
               } else {

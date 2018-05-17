@@ -109,8 +109,11 @@ public class VehicleOptionsViewModelImpl extends ViewModel implements
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(
             () -> navigateLiveData.postValue(VehicleOptionsNavigate.SERVICES),
-            throwable -> viewStateLiveData
-                .postValue(new VehicleOptionsViewStateError(R.string.no_network_connection))
+            throwable -> {
+              throwable.printStackTrace();
+              viewStateLiveData
+                  .postValue(new VehicleOptionsViewStateError(R.string.no_network_connection));
+            }
         );
   }
 

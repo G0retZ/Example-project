@@ -51,7 +51,7 @@ public class SelectedVehicleViewModelImpl extends ViewModel implements SelectedV
           .subscribeOn(Schedulers.single())
           .observeOn(AndroidSchedulers.mainThread())
           .doAfterTerminate(this::loadSelectedVehicle)
-          .subscribe(this::consumeVehicle, throwable -> consumeError());
+          .subscribe(this::consumeVehicle, this::consumeError);
     }
   }
 
@@ -69,7 +69,8 @@ public class SelectedVehicleViewModelImpl extends ViewModel implements SelectedV
     ));
   }
 
-  private void consumeError() {
+  private void consumeError(Throwable throwable) {
+    throwable.printStackTrace();
     viewStateLiveData.postValue(new SelectedVehicleViewState(""));
   }
 

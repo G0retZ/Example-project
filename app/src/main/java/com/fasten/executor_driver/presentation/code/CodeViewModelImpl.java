@@ -64,6 +64,7 @@ public class CodeViewModelImpl extends ViewModel implements CodeViewModel {
         .subscribe(
             () -> navigateLiveData.postValue(CodeNavigate.ENTER_APP),
             throwable -> {
+              throwable.printStackTrace();
               if (throwable instanceof NoNetworkException) {
                 viewStateLiveData.postValue(new CodeViewStateNetworkError());
               } else if (throwable instanceof ValidationException) {
