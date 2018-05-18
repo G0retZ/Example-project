@@ -6,7 +6,7 @@ import io.reactivex.Completable;
 /**
  * Гейтвей работы с заказами при движении к клиенту.
  */
-interface WaitingForClientGateway {
+public interface WaitingForClientGateway {
 
   /**
    * Передает запрос звонка клиенту.
