@@ -46,6 +46,8 @@ public class GeoLocationUseCaseImpl implements GeoLocationUseCase {
                 return geoLocationGateway.getGeoLocations(15000);
               case MOVING_TO_CLIENT:
                 return geoLocationGateway.getGeoLocations(15000);
+              case WAITING_FOR_CLIENT:
+                return geoLocationGateway.getGeoLocations(15000);
               default:
                 return Flowable.empty();
             }

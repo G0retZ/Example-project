@@ -29,7 +29,11 @@ public enum ExecutorState {
   /**
    * Водитель "на пути к клиенту". В этом состоянии водитель движется на встречу с клиентом.
    */
-  MOVING_TO_CLIENT;
+  MOVING_TO_CLIENT,
+  /**
+   * Водитель "ожидает выхода клиента". В этом состоянии водитель прибыл на место и ждет на встречи с клиентом.
+   */
+  WAITING_FOR_CLIENT;
 
   @Nullable
   private String data;

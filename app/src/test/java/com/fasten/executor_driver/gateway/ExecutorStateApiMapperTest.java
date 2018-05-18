@@ -283,6 +283,48 @@ public class ExecutorStateApiMapperTest {
   }
 
   /**
+   * Должен успешно преобразовать строку из хедера в статус "ожидание клиента".
+   *
+   * @throws Exception ошибка
+   */
+  @Test
+  public void mappingHeaderToWaitingForClient() throws Exception {
+    // Дано и Действие:
+    ExecutorState executorState = mapper.map(new StompMessage(
+        "MESSAGE",
+        Collections.singletonList(
+            new StompHeader("Status", "WAITING_FOR_CLIENT")
+        ),
+        null
+    ));
+
+    // Результат:
+    assertEquals(executorState, ExecutorState.WAITING_FOR_CLIENT);
+    assertNull(executorState.getData());
+  }
+
+  /**
+   * Должен успешно преобразовать строку из хедера и тело в статус "ожидание клиента" с данными.
+   *
+   * @throws Exception ошибка
+   */
+  @Test
+  public void mappingHeaderWithPayloadToWaitingForClient() throws Exception {
+    // Дано и Действие:
+    ExecutorState executorState = mapper.map(new StompMessage(
+        "MESSAGE",
+        Collections.singletonList(
+            new StompHeader("Status", "WAITING_FOR_CLIENT")
+        ),
+        "\npayload"
+    ));
+
+    // Результат:
+    assertEquals(executorState, ExecutorState.WAITING_FOR_CLIENT);
+    assertEquals(executorState.getData(), "\npayload");
+  }
+
+  /**
    * Должен дать ошибку, если заголовок Status null.
    *
    * @throws Exception ошибка

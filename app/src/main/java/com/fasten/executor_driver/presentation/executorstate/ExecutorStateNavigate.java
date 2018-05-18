@@ -36,4 +36,6 @@ public @interface ExecutorStateNavigate {
   String CLIENT_ORDER_CONFIRMATION = "to.Client.Order.Confirmation";
   // Переход к движению к клиенту.
   String MOVING_TO_CLIENT = "to.Moving.To.Client";
+  // Переход к движению к клиенту.
+  String WAITING_FOR_CLIENT = "to.Waiting.For.Client";
 }

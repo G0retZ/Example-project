@@ -20,9 +20,7 @@ import com.fasten.executor_driver.entity.LoginValidator;
 import com.fasten.executor_driver.entity.PasswordValidator;
 import com.fasten.executor_driver.entity.PhoneNumberValidator;
 import com.fasten.executor_driver.entity.Vehicle;
-import com.fasten.executor_driver.gateway.ClientOrderConfirmationGatewayImpl;
 import com.fasten.executor_driver.gateway.CurrentVehicleOptionsGatewayImpl;
-import com.fasten.executor_driver.gateway.DriverOrderConfirmationGatewayImpl;
 import com.fasten.executor_driver.gateway.ErrorMapper;
 import com.fasten.executor_driver.gateway.ExecutorStateApiMapper;
 import com.fasten.executor_driver.gateway.ExecutorStateGatewayImpl;
@@ -31,9 +29,10 @@ import com.fasten.executor_driver.gateway.GeoLocationGatewayImpl;
 import com.fasten.executor_driver.gateway.GeoTrackingGatewayImpl;
 import com.fasten.executor_driver.gateway.HeatMapGatewayImpl;
 import com.fasten.executor_driver.gateway.LastUsedVehicleGatewayImpl;
-import com.fasten.executor_driver.gateway.MovingToClientApiMapper;
 import com.fasten.executor_driver.gateway.MovingToClientGatewayImpl;
 import com.fasten.executor_driver.gateway.OrderApiMapper;
+import com.fasten.executor_driver.gateway.OrderConfirmationGatewayImpl;
+import com.fasten.executor_driver.gateway.OrderGatewayImpl;
 import com.fasten.executor_driver.gateway.PasswordGatewayImpl;
 import com.fasten.executor_driver.gateway.SelectedVehicleOptionsGatewayImpl;
 import com.fasten.executor_driver.gateway.ServiceApiMapper;
@@ -479,11 +478,11 @@ public class AppComponentImpl implements AppComponent {
             new ViewModelFactory<>(
                 new DriverOrderConfirmationViewModelImpl(
                     new DriverOrderConfirmationUseCaseImpl(
-                        new DriverOrderConfirmationGatewayImpl(
-                            executorStateUseCase, stompClient,
+                        new OrderGatewayImpl(
+                            executorStateUseCase,
                             new OrderApiMapper(new VehicleOptionApiMapper())
-                        )
-                    ),
+                        ),
+                        new OrderConfirmationGatewayImpl(stompClient)),
                     new TimeUtilsImpl()
                 )
             )
@@ -499,11 +498,11 @@ public class AppComponentImpl implements AppComponent {
             new ViewModelFactory<>(
                 new ClientOrderConfirmationViewModelImpl(
                     new ClientOrderConfirmationUseCaseImpl(
-                        new ClientOrderConfirmationGatewayImpl(
-                            executorStateUseCase, stompClient,
+                        new OrderGatewayImpl(
+                            executorStateUseCase,
                             new OrderApiMapper(new VehicleOptionApiMapper())
-                        )
-                    )
+                        ),
+                        new OrderConfirmationGatewayImpl(stompClient))
                 )
             )
         ).get(ClientOrderConfirmationViewModelImpl.class)
@@ -518,10 +517,11 @@ public class AppComponentImpl implements AppComponent {
             new ViewModelFactory<>(
                 new MovingToClientViewModelImpl(
                     new MovingToClientUseCaseImpl(
-                        new MovingToClientGatewayImpl(
-                            executorStateUseCase, stompClient,
-                            new MovingToClientApiMapper(new VehicleOptionApiMapper())
-                        )
+                        new OrderGatewayImpl(
+                            executorStateUseCase,
+                            new OrderApiMapper(new VehicleOptionApiMapper())
+                        ),
+                        new MovingToClientGatewayImpl(stompClient)
                     ),
                     new TimeUtilsImpl()
                 )

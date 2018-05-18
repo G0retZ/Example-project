@@ -5,6 +5,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.fasten.executor_driver.backend.web.NoNetworkException;
+import com.fasten.executor_driver.entity.ExecutorState;
 import com.fasten.executor_driver.entity.Order;
 import com.fasten.executor_driver.gateway.DataMappingException;
 import io.reactivex.Completable;
@@ -23,6 +24,8 @@ public class MovingToClientUseCaseTest {
   private MovingToClientUseCase movingToClientUseCase;
 
   @Mock
+  private OrderGateway orderGateway;
+  @Mock
   private MovingToClientGateway movingToClientGateway;
   @Mock
   private Order order;
@@ -31,10 +34,10 @@ public class MovingToClientUseCaseTest {
 
   @Before
   public void setUp() {
-    when(movingToClientGateway.getOrders()).thenReturn(Flowable.never());
+    when(orderGateway.getOrders(ExecutorState.MOVING_TO_CLIENT)).thenReturn(Flowable.never());
     when(movingToClientGateway.callToClient()).thenReturn(Completable.never());
     when(movingToClientGateway.reportArrival()).thenReturn(Completable.never());
-    movingToClientUseCase = new MovingToClientUseCaseImpl(movingToClientGateway);
+    movingToClientUseCase = new MovingToClientUseCaseImpl(orderGateway, movingToClientGateway);
   }
 
   /* Проверяем работу с гейтвеем */
@@ -48,7 +51,7 @@ public class MovingToClientUseCaseTest {
     movingToClientUseCase.getOrders().test();
 
     // Результат:
-    verify(movingToClientGateway, only()).getOrders();
+    verify(orderGateway, only()).getOrders(ExecutorState.MOVING_TO_CLIENT);
   }
 
   /**
@@ -83,7 +86,8 @@ public class MovingToClientUseCaseTest {
   @Test
   public void answerDataMappingError() {
     // Дано:
-    when(movingToClientGateway.getOrders()).thenReturn(Flowable.error(new DataMappingException()));
+    when(orderGateway.getOrders(ExecutorState.MOVING_TO_CLIENT))
+        .thenReturn(Flowable.error(new DataMappingException()));
 
     // Действие:
     TestSubscriber<Order> test = movingToClientUseCase.getOrders().test();
@@ -100,7 +104,8 @@ public class MovingToClientUseCaseTest {
   @Test
   public void answerWithOrders() {
     // Дано:
-    when(movingToClientGateway.getOrders()).thenReturn(Flowable.just(order, order2));
+    when(orderGateway.getOrders(ExecutorState.MOVING_TO_CLIENT))
+        .thenReturn(Flowable.just(order, order2));
 
     // Действие:
     TestSubscriber<Order> test = movingToClientUseCase.getOrders().test();
@@ -119,7 +124,7 @@ public class MovingToClientUseCaseTest {
   @Test
   public void answerNoNetworkErrorForCallClient() {
     // Дано:
-    when(movingToClientGateway.getOrders()).thenReturn(Flowable.just(order));
+    when(orderGateway.getOrders(ExecutorState.MOVING_TO_CLIENT)).thenReturn(Flowable.just(order));
     when(movingToClientGateway.callToClient())
         .thenReturn(Completable.error(new NoNetworkException()));
 
@@ -139,7 +144,7 @@ public class MovingToClientUseCaseTest {
   @Test
   public void answerSendCallClientSuccessful() {
     // Дано:
-    when(movingToClientGateway.getOrders()).thenReturn(Flowable.just(order));
+    when(orderGateway.getOrders(ExecutorState.MOVING_TO_CLIENT)).thenReturn(Flowable.just(order));
     when(movingToClientGateway.callToClient()).thenReturn(Completable.complete());
 
     // Действие:
@@ -159,7 +164,7 @@ public class MovingToClientUseCaseTest {
   @Test
   public void answerNoNetworkErrorForReportArrival() {
     // Дано:
-    when(movingToClientGateway.getOrders()).thenReturn(Flowable.just(order));
+    when(orderGateway.getOrders(ExecutorState.MOVING_TO_CLIENT)).thenReturn(Flowable.just(order));
     when(movingToClientGateway.reportArrival())
         .thenReturn(Completable.error(new NoNetworkException()));
 
@@ -179,7 +184,7 @@ public class MovingToClientUseCaseTest {
   @Test
   public void answerSendReportArrivalSuccessful() {
     // Дано:
-    when(movingToClientGateway.getOrders()).thenReturn(Flowable.just(order));
+    when(orderGateway.getOrders(ExecutorState.MOVING_TO_CLIENT)).thenReturn(Flowable.just(order));
     when(movingToClientGateway.reportArrival()).thenReturn(Completable.complete());
 
     // Действие:
