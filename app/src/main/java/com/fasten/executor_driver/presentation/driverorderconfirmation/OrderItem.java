@@ -74,11 +74,6 @@ class OrderItem {
     return order.getComment();
   }
 
-  @NonNull
-  public String getPrice() {
-    return order.getEstimatedPrice();
-  }
-
   public long[] getProgressLeft() {
     long[] res = new long[2];
     res[1] = timeUtils.currentTimeMillis() - timestamp;
