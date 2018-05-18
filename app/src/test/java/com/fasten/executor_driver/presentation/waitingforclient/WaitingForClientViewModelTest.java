@@ -93,7 +93,7 @@ public class WaitingForClientViewModelTest {
   }
 
   /**
-   * Должен попросить юзкейс сообщить начале погрузки.
+   * Должен попросить юзкейс сообщить о начале погрузки.
    */
   @Test
   public void askUseCaseToStartLoading() {
