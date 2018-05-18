@@ -5,7 +5,7 @@ import android.support.annotation.NonNull;
 /**
  * Действия для смены состояния вида окна заказа.
  */
-public interface WaitingForClientViewActions {
+interface WaitingForClientViewActions {
 
   /**
    * Показать индикатор процесса.

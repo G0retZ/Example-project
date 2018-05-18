@@ -8,7 +8,7 @@ import io.reactivex.Flowable;
 /**
  * Юзкейс движения к клиенту. Слушает заказ из гейтвея, передает действия исполнителя.
  */
-interface WaitingForClientUseCase {
+public interface WaitingForClientUseCase {
 
   /**
    * Запрашивает данные о выполняемом заказе.

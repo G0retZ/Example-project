@@ -7,7 +7,6 @@ import static org.mockito.Mockito.when;
 import com.fasten.executor_driver.entity.OptionBoolean;
 import com.fasten.executor_driver.entity.OptionNumeric;
 import com.fasten.executor_driver.entity.Order;
-import com.fasten.executor_driver.entity.RoutePoint;
 import java.util.ArrayList;
 import java.util.Arrays;
 import org.junit.Before;
@@ -25,8 +24,6 @@ public class OrderItemTest {
   private Order order;
   @Mock
   private Order order2;
-  @Mock
-  private RoutePoint routePoint;
 
   @Before
   public void setUp() {
