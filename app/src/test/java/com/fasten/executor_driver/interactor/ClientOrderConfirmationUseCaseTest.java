@@ -11,6 +11,7 @@ import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 import com.fasten.executor_driver.backend.web.NoNetworkException;
+import com.fasten.executor_driver.entity.ExecutorState;
 import com.fasten.executor_driver.entity.NoOrdersAvailableException;
 import com.fasten.executor_driver.entity.Order;
 import com.fasten.executor_driver.gateway.DataMappingException;
@@ -30,7 +31,9 @@ public class ClientOrderConfirmationUseCaseTest {
   private ClientOrderConfirmationUseCase clientOrderConfirmationUseCase;
 
   @Mock
-  private OrderGateway gateway;
+  private OrderGateway orderGateway;
+  @Mock
+  private OrderConfirmationGateway orderConfirmationGateway;
   @Mock
   private Order order;
   @Mock
@@ -38,9 +41,12 @@ public class ClientOrderConfirmationUseCaseTest {
 
   @Before
   public void setUp() {
-    when(gateway.getOrders()).thenReturn(Flowable.never());
-    when(gateway.sendDecision(any(), anyBoolean())).thenReturn(Completable.never());
-    clientOrderConfirmationUseCase = new ClientOrderConfirmationUseCaseImpl(gateway);
+    when(orderGateway.getOrders(ExecutorState.CLIENT_ORDER_CONFIRMATION))
+        .thenReturn(Flowable.never());
+    when(orderConfirmationGateway.sendDecision(any(), anyBoolean()))
+        .thenReturn(Completable.never());
+    clientOrderConfirmationUseCase = new ClientOrderConfirmationUseCaseImpl(orderGateway,
+        orderConfirmationGateway);
   }
 
   /* Проверяем работу с гейтвеем */
@@ -54,7 +60,7 @@ public class ClientOrderConfirmationUseCaseTest {
     clientOrderConfirmationUseCase.getOrders().test();
 
     // Результат:
-    verify(gateway, only()).getOrders();
+    verify(orderGateway, only()).getOrders(ExecutorState.CLIENT_ORDER_CONFIRMATION);
   }
 
   /**
@@ -66,7 +72,7 @@ public class ClientOrderConfirmationUseCaseTest {
     clientOrderConfirmationUseCase.cancelOrder().test();
 
     // Результат:
-    verifyZeroInteractions(gateway);
+    verifyZeroInteractions(orderConfirmationGateway);
   }
 
   /**
@@ -75,16 +81,15 @@ public class ClientOrderConfirmationUseCaseTest {
   @Test
   public void askGatewayToSendCancelForOrder() {
     // Дано:
-    when(gateway.getOrders()).thenReturn(Flowable.just(order));
+    when(orderGateway.getOrders(ExecutorState.CLIENT_ORDER_CONFIRMATION))
+        .thenReturn(Flowable.just(order));
 
     // Действие:
     clientOrderConfirmationUseCase.getOrders().test();
     clientOrderConfirmationUseCase.cancelOrder().test();
 
     // Результат:
-    verify(gateway).getOrders();
-    verify(gateway).sendDecision(order, false);
-    verifyNoMoreInteractions(gateway);
+    verify(orderConfirmationGateway, only()).sendDecision(order, false);
   }
 
   /**
@@ -93,7 +98,8 @@ public class ClientOrderConfirmationUseCaseTest {
   @Test
   public void askGatewayToSendDecisionsForLastOrderOnly() {
     // Дано:
-    when(gateway.getOrders()).thenReturn(Flowable.just(order, order2));
+    when(orderGateway.getOrders(ExecutorState.CLIENT_ORDER_CONFIRMATION))
+        .thenReturn(Flowable.just(order, order2));
 
     // Действие:
     clientOrderConfirmationUseCase.getOrders().test();
@@ -102,7 +108,8 @@ public class ClientOrderConfirmationUseCaseTest {
     clientOrderConfirmationUseCase.cancelOrder().test();
 
     // Результат:
-    verify(gateway, times(2)).sendDecision(eq(order2), eq(false));
+    verify(orderConfirmationGateway, times(2)).sendDecision(eq(order2), eq(false));
+    verifyNoMoreInteractions(orderConfirmationGateway);
   }
 
   /* Проверяем ответы на запрос заказов */
@@ -113,7 +120,8 @@ public class ClientOrderConfirmationUseCaseTest {
   @Test
   public void answerDataMappingError() {
     // Дано:
-    when(gateway.getOrders()).thenReturn(Flowable.error(new DataMappingException()));
+    when(orderGateway.getOrders(ExecutorState.CLIENT_ORDER_CONFIRMATION))
+        .thenReturn(Flowable.error(new DataMappingException()));
 
     // Действие:
     TestSubscriber<Order> test = clientOrderConfirmationUseCase.getOrders().test();
@@ -130,7 +138,8 @@ public class ClientOrderConfirmationUseCaseTest {
   @Test
   public void answerWithOrders() {
     // Дано:
-    when(gateway.getOrders()).thenReturn(Flowable.just(order, order2));
+    when(orderGateway.getOrders(ExecutorState.CLIENT_ORDER_CONFIRMATION))
+        .thenReturn(Flowable.just(order, order2));
 
     // Действие:
     TestSubscriber<Order> test = clientOrderConfirmationUseCase.getOrders().test();
@@ -163,8 +172,9 @@ public class ClientOrderConfirmationUseCaseTest {
   @Test
   public void answerNoNetworkErrorForCancel() {
     // Дано:
-    when(gateway.getOrders()).thenReturn(Flowable.just(order));
-    when(gateway.sendDecision(any(), anyBoolean()))
+    when(orderGateway.getOrders(ExecutorState.CLIENT_ORDER_CONFIRMATION))
+        .thenReturn(Flowable.just(order));
+    when(orderConfirmationGateway.sendDecision(any(), anyBoolean()))
         .thenReturn(Completable.error(new NoNetworkException()));
 
     // Действие:
@@ -183,8 +193,10 @@ public class ClientOrderConfirmationUseCaseTest {
   @Test
   public void answerSendDeclineSuccessful() {
     // Дано:
-    when(gateway.getOrders()).thenReturn(Flowable.just(order));
-    when(gateway.sendDecision(any(), anyBoolean())).thenReturn(Completable.complete());
+    when(orderGateway.getOrders(ExecutorState.CLIENT_ORDER_CONFIRMATION))
+        .thenReturn(Flowable.just(order));
+    when(orderConfirmationGateway.sendDecision(any(), anyBoolean()))
+        .thenReturn(Completable.complete());
 
     // Действие:
     clientOrderConfirmationUseCase.getOrders().test();
