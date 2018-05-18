@@ -52,7 +52,7 @@ public class WaitingForClientFragment extends BaseFragment implements
   public View onCreateView(@NonNull LayoutInflater inflater,
       @Nullable ViewGroup container,
       @Nullable Bundle savedInstanceState) {
-    View view = inflater.inflate(R.layout.fragment_driver_order_confirmation, container, false);
+    View view = inflater.inflate(R.layout.fragment_waiting_for_client, container, false);
     commentTitleText = view.findViewById(R.id.commentTitleText);
     commentText = view.findViewById(R.id.commentText);
     optionsTitleText = view.findViewById(R.id.optionsTitleText);
