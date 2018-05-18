@@ -84,4 +84,6 @@
   <string name="order_unavailable_for_accept">Этот заказ недоступен для принятия.</string>
   <string name="order_unavailable">Этот заказ недоступен.</string>
   <string name="information">Информация</string>
+  <string name="start_order">Начать выполнение</string>
+  <string name="wait_for_client">Ожидайте клиента</string>
 </resources>

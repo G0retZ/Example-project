@@ -5,7 +5,7 @@ import android.support.annotation.NonNull;
 /**
  * Действия для смены состояния вида окна ожидания клиента.
  */
-interface WaitingForClientViewActions {
+public interface WaitingForClientViewActions {
 
   /**
    * Показать индикатор процесса.

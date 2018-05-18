@@ -12,6 +12,7 @@ import com.fasten.executor_driver.view.SelectedVehicleFragment;
 import com.fasten.executor_driver.view.SelectedVehicleOptionsFragment;
 import com.fasten.executor_driver.view.ServicesFragment;
 import com.fasten.executor_driver.view.VehicleOptionsFragment;
+import com.fasten.executor_driver.view.WaitingForClientFragment;
 import com.fasten.executor_driver.view.auth.LoginFragment;
 import com.fasten.executor_driver.view.auth.PasswordFragment;
 
@@ -44,4 +45,6 @@ public interface AppComponent {
   void inject(ClientOrderConfirmationFragment clientOrderConfirmationFragment);
 
   void inject(MovingToClientFragment movingToClientFragment);
+
+  void inject(WaitingForClientFragment waitingForClientFragment);
 }

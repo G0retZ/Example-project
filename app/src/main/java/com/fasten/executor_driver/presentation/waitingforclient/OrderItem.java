@@ -19,7 +19,7 @@ class OrderItem {
   }
 
   public String getEstimatedPrice() {
-    return order.getEstimatedPrice();
+    return order.getEstimatedPrice().trim();
   }
 
   public String getOrderOptionsRequired() {
@@ -40,7 +40,7 @@ class OrderItem {
 
   @NonNull
   public String getOrderComment() {
-    return order.getComment();
+    return order.getComment().trim();
   }
 
   @Override

@@ -46,7 +46,8 @@ class RouteItem {
 
   @NonNull
   public String getAddress() {
-    return order.getRoutePoint().getAddress() + "\n" + order.getRoutePoint().getComment();
+    return order.getRoutePoint().getAddress().trim() + "\n" + order.getRoutePoint().getComment()
+        .trim();
   }
 
   @Override

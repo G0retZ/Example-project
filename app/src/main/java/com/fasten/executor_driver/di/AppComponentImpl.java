@@ -29,6 +29,7 @@ import com.fasten.executor_driver.gateway.GeoLocationGatewayImpl;
 import com.fasten.executor_driver.gateway.GeoTrackingGatewayImpl;
 import com.fasten.executor_driver.gateway.HeatMapGatewayImpl;
 import com.fasten.executor_driver.gateway.LastUsedVehicleGatewayImpl;
+import com.fasten.executor_driver.gateway.MovingToClientApiMapper;
 import com.fasten.executor_driver.gateway.MovingToClientGatewayImpl;
 import com.fasten.executor_driver.gateway.OrderApiMapper;
 import com.fasten.executor_driver.gateway.OrderConfirmationGatewayImpl;
@@ -45,6 +46,8 @@ import com.fasten.executor_driver.gateway.VehicleApiMapper;
 import com.fasten.executor_driver.gateway.VehicleOptionApiMapper;
 import com.fasten.executor_driver.gateway.VehicleOptionsGatewayImpl;
 import com.fasten.executor_driver.gateway.VehiclesAndOptionsGatewayImpl;
+import com.fasten.executor_driver.gateway.WaitingForClientApiMapper;
+import com.fasten.executor_driver.gateway.WaitingForClientGatewayImpl;
 import com.fasten.executor_driver.interactor.ClientOrderConfirmationUseCaseImpl;
 import com.fasten.executor_driver.interactor.DriverOrderConfirmationUseCaseImpl;
 import com.fasten.executor_driver.interactor.ExecutorStateNotOnlineUseCaseImpl;
@@ -54,6 +57,7 @@ import com.fasten.executor_driver.interactor.GeoLocationUseCase;
 import com.fasten.executor_driver.interactor.GeoLocationUseCaseImpl;
 import com.fasten.executor_driver.interactor.MemoryDataSharer;
 import com.fasten.executor_driver.interactor.MovingToClientUseCaseImpl;
+import com.fasten.executor_driver.interactor.WaitingForClientUseCaseImpl;
 import com.fasten.executor_driver.interactor.auth.LoginSharer;
 import com.fasten.executor_driver.interactor.auth.LoginUseCaseImpl;
 import com.fasten.executor_driver.interactor.auth.PasswordUseCaseImpl;
@@ -87,6 +91,7 @@ import com.fasten.executor_driver.presentation.services.ServicesSliderViewModelI
 import com.fasten.executor_driver.presentation.services.ServicesViewModelImpl;
 import com.fasten.executor_driver.presentation.smsbutton.SmsButtonViewModelImpl;
 import com.fasten.executor_driver.presentation.vehicleoptions.VehicleOptionsViewModelImpl;
+import com.fasten.executor_driver.presentation.waitingforclient.WaitingForClientViewModelImpl;
 import com.fasten.executor_driver.utils.TimeUtilsImpl;
 import com.fasten.executor_driver.view.ChooseVehicleFragment;
 import com.fasten.executor_driver.view.ClientOrderConfirmationFragment;
@@ -99,6 +104,7 @@ import com.fasten.executor_driver.view.SelectedVehicleFragment;
 import com.fasten.executor_driver.view.SelectedVehicleOptionsFragment;
 import com.fasten.executor_driver.view.ServicesFragment;
 import com.fasten.executor_driver.view.VehicleOptionsFragment;
+import com.fasten.executor_driver.view.WaitingForClientFragment;
 import com.fasten.executor_driver.view.auth.LoginFragment;
 import com.fasten.executor_driver.view.auth.PasswordFragment;
 import com.fasten.executor_driver.view.auth.SmsReceiver;
@@ -519,7 +525,7 @@ public class AppComponentImpl implements AppComponent {
                     new MovingToClientUseCaseImpl(
                         new OrderGatewayImpl(
                             executorStateUseCase,
-                            new OrderApiMapper(new VehicleOptionApiMapper())
+                            new MovingToClientApiMapper(new VehicleOptionApiMapper())
                         ),
                         new MovingToClientGatewayImpl(stompClient)
                     ),
@@ -527,6 +533,26 @@ public class AppComponentImpl implements AppComponent {
                 )
             )
         ).get(MovingToClientViewModelImpl.class)
+    );
+  }
+
+  @Override
+  public void inject(WaitingForClientFragment waitingForClientFragment) {
+    waitingForClientFragment.setWaitingForClientViewModel(
+        ViewModelProviders.of(
+            waitingForClientFragment,
+            new ViewModelFactory<>(
+                new WaitingForClientViewModelImpl(
+                    new WaitingForClientUseCaseImpl(
+                        new OrderGatewayImpl(
+                            executorStateUseCase,
+                            new WaitingForClientApiMapper(new VehicleOptionApiMapper())
+                        ),
+                        new WaitingForClientGatewayImpl(stompClient)
+                    )
+                )
+            )
+        ).get(WaitingForClientViewModelImpl.class)
     );
   }
 }

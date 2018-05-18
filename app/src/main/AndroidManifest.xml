@@ -75,6 +75,9 @@
     <activity
       android:launchMode="singleTop"
       android:name=".application.MovingToClientActivity"/>
+    <activity
+      android:launchMode="singleTop"
+      android:name=".application.WaitingForClientActivity"/>
 
     <service
       android:enabled="true"
