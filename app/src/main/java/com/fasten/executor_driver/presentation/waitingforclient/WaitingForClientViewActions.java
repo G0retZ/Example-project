@@ -3,7 +3,7 @@ package com.fasten.executor_driver.presentation.waitingforclient;
 import android.support.annotation.NonNull;
 
 /**
- * Действия для смены состояния вида окна заказа.
+ * Действия для смены состояния вида окна ожидания клиента.
  */
 interface WaitingForClientViewActions {
 
