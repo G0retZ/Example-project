@@ -29,6 +29,7 @@ import com.fasten.executor_driver.gateway.GeoLocationGatewayImpl;
 import com.fasten.executor_driver.gateway.GeoTrackingGatewayImpl;
 import com.fasten.executor_driver.gateway.HeatMapGatewayImpl;
 import com.fasten.executor_driver.gateway.LastUsedVehicleGatewayImpl;
+import com.fasten.executor_driver.gateway.MovingToClientApiMapper;
 import com.fasten.executor_driver.gateway.MovingToClientGatewayImpl;
 import com.fasten.executor_driver.gateway.OrderApiMapper;
 import com.fasten.executor_driver.gateway.OrderConfirmationGatewayImpl;
@@ -45,6 +46,7 @@ import com.fasten.executor_driver.gateway.VehicleApiMapper;
 import com.fasten.executor_driver.gateway.VehicleOptionApiMapper;
 import com.fasten.executor_driver.gateway.VehicleOptionsGatewayImpl;
 import com.fasten.executor_driver.gateway.VehiclesAndOptionsGatewayImpl;
+import com.fasten.executor_driver.gateway.WaitingForClientApiMapper;
 import com.fasten.executor_driver.gateway.WaitingForClientGatewayImpl;
 import com.fasten.executor_driver.interactor.ClientOrderConfirmationUseCaseImpl;
 import com.fasten.executor_driver.interactor.DriverOrderConfirmationUseCaseImpl;
@@ -523,7 +525,7 @@ public class AppComponentImpl implements AppComponent {
                     new MovingToClientUseCaseImpl(
                         new OrderGatewayImpl(
                             executorStateUseCase,
-                            new OrderApiMapper(new VehicleOptionApiMapper())
+                            new MovingToClientApiMapper(new VehicleOptionApiMapper())
                         ),
                         new MovingToClientGatewayImpl(stompClient)
                     ),
@@ -544,7 +546,7 @@ public class AppComponentImpl implements AppComponent {
                     new WaitingForClientUseCaseImpl(
                         new OrderGatewayImpl(
                             executorStateUseCase,
-                            new OrderApiMapper(new VehicleOptionApiMapper())
+                            new WaitingForClientApiMapper(new VehicleOptionApiMapper())
                         ),
                         new WaitingForClientGatewayImpl(stompClient)
                     )

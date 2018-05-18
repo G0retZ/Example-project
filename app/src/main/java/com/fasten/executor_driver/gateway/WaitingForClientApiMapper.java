@@ -17,7 +17,7 @@ public class WaitingForClientApiMapper implements Mapper<String, Order> {
   private final Mapper<ApiOptionItem, Option> apiOptionMapper;
 
   @Inject
-  WaitingForClientApiMapper(Mapper<ApiOptionItem, Option> apiOptionMapper) {
+  public WaitingForClientApiMapper(Mapper<ApiOptionItem, Option> apiOptionMapper) {
     this.apiOptionMapper = apiOptionMapper;
   }
 
