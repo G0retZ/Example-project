@@ -5,7 +5,7 @@ import com.fasten.executor_driver.presentation.ViewModel;
 /**
  * ViewModel окна ожидания клиента.
  */
-interface WaitingForClientViewModel extends ViewModel<WaitingForClientViewActions> {
+public interface WaitingForClientViewModel extends ViewModel<WaitingForClientViewActions> {
 
   /**
    * Запрашивает звонок клиенту.

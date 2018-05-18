@@ -7,7 +7,7 @@ import io.reactivex.Completable;
 import io.reactivex.Flowable;
 import javax.inject.Inject;
 
-class WaitingForClientUseCaseImpl implements WaitingForClientUseCase {
+public class WaitingForClientUseCaseImpl implements WaitingForClientUseCase {
 
   @NonNull
   private final OrderGateway orderGateway;
@@ -15,7 +15,7 @@ class WaitingForClientUseCaseImpl implements WaitingForClientUseCase {
   private final WaitingForClientGateway waitingForClientGateway;
 
   @Inject
-  WaitingForClientUseCaseImpl(@NonNull OrderGateway orderGateway,
+  public WaitingForClientUseCaseImpl(@NonNull OrderGateway orderGateway,
       @NonNull WaitingForClientGateway waitingForClientGateway) {
     this.orderGateway = orderGateway;
     this.waitingForClientGateway = waitingForClientGateway;

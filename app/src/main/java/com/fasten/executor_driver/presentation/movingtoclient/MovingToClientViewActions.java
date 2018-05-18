@@ -26,7 +26,6 @@ public interface MovingToClientViewActions {
    *
    * @param coordinates - координаты
    */
-  @SuppressWarnings({"unused", "EmptyMethod"})
   void showLoadPointCoordinates(@NonNull String coordinates);
 
   /**

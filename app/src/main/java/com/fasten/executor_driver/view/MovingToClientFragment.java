@@ -37,7 +37,6 @@ public class MovingToClientFragment extends BaseFragment implements MovingToClie
   private ImageView mapImage;
   private TextView addressText;
   private TextView timerText;
-  @SuppressWarnings({"FieldCanBeLocal", "unused"})
   private Button navigationAction;
   private LinearLayout callingMessage;
   private Context context;

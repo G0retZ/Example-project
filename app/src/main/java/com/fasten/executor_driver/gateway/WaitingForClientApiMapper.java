@@ -12,7 +12,7 @@ import javax.inject.Inject;
 /**
  * Преобразуем статус из ответа сервера в бизнес объект статуса исполнителя.
  */
-class WaitingForClientApiMapper implements Mapper<String, Order> {
+public class WaitingForClientApiMapper implements Mapper<String, Order> {
 
   private final Mapper<ApiOptionItem, Option> apiOptionMapper;
 

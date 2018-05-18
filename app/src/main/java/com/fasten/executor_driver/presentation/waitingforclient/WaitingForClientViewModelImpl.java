@@ -15,10 +15,10 @@ import io.reactivex.internal.disposables.EmptyDisposable;
 import io.reactivex.schedulers.Schedulers;
 import javax.inject.Inject;
 
-class WaitingForClientViewModelImpl extends ViewModel implements WaitingForClientViewModel {
+public class WaitingForClientViewModelImpl extends ViewModel implements WaitingForClientViewModel {
 
   @NonNull
-  private final WaitingForClientUseCase movingToClientUseCase;
+  private final WaitingForClientUseCase waitingForClientUseCase;
   @NonNull
   private final MutableLiveData<ViewState<WaitingForClientViewActions>> viewStateLiveData;
   @NonNull
@@ -29,8 +29,8 @@ class WaitingForClientViewModelImpl extends ViewModel implements WaitingForClien
   private OrderItem orderItem;
 
   @Inject
-  WaitingForClientViewModelImpl(@NonNull WaitingForClientUseCase movingToClientUseCase) {
-    this.movingToClientUseCase = movingToClientUseCase;
+  public WaitingForClientViewModelImpl(@NonNull WaitingForClientUseCase waitingForClientUseCase) {
+    this.waitingForClientUseCase = waitingForClientUseCase;
     viewStateLiveData = new MutableLiveData<>();
     viewStateLiveData.postValue(new WaitingForClientViewStatePending(orderItem));
   }
@@ -51,7 +51,7 @@ class WaitingForClientViewModelImpl extends ViewModel implements WaitingForClien
 
   private void loadOrders() {
     if (ordersDisposable.isDisposed()) {
-      ordersDisposable = movingToClientUseCase.getOrders()
+      ordersDisposable = waitingForClientUseCase.getOrders()
           .subscribeOn(Schedulers.single())
           .observeOn(AndroidSchedulers.mainThread())
           .subscribe(this::consumeOrder, this::consumeError);
@@ -79,7 +79,7 @@ class WaitingForClientViewModelImpl extends ViewModel implements WaitingForClien
       return;
     }
     viewStateLiveData.postValue(new WaitingForClientViewStatePending(orderItem));
-    actionsDisposable = movingToClientUseCase.callToClient()
+    actionsDisposable = waitingForClientUseCase.callToClient()
         .subscribeOn(Schedulers.single())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(
@@ -94,7 +94,7 @@ class WaitingForClientViewModelImpl extends ViewModel implements WaitingForClien
       return;
     }
     viewStateLiveData.postValue(new WaitingForClientViewStatePending(orderItem));
-    actionsDisposable = movingToClientUseCase.startTheOrder()
+    actionsDisposable = waitingForClientUseCase.startTheOrder()
         .subscribeOn(Schedulers.single())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(
