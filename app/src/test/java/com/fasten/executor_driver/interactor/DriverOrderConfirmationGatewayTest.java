@@ -226,6 +226,22 @@ public class DriverOrderConfirmationGatewayTest {
   }
 
   /**
+   * Не должен трогать маппер, если не пришел статус "Ожидание клиента".
+   */
+  @Test
+  public void doNotTouchMapperIfWaitingForClient() {
+    // Дано:
+    when(executorStateUseCase.getExecutorStates(anyBoolean()))
+        .thenReturn(Flowable.just(ExecutorState.WAITING_FOR_CLIENT));
+
+    // Действие:
+    orderGateway.getOrders().test();
+
+    // Результат:
+    verifyZeroInteractions(mapper);
+  }
+
+  /**
    * Не должен трогать маппер, если статус без сообщения.
    */
   @Test
@@ -344,6 +360,24 @@ public class DriverOrderConfirmationGatewayTest {
     // Дано:
     when(executorStateUseCase.getExecutorStates(anyBoolean()))
         .thenReturn(Flowable.just(ExecutorState.MOVING_TO_CLIENT));
+
+    // Действие:
+    TestSubscriber<Order> testSubscriber = orderGateway.getOrders().test();
+
+    // Результат:
+    testSubscriber.assertNoValues();
+    testSubscriber.assertComplete();
+    testSubscriber.assertNoErrors();
+  }
+
+  /**
+   * Должен ответить ошибкой отсутствия заказов для статуса "ожидание клиента".
+   */
+  @Test
+  public void ignoreForWaitingForClient() {
+    // Дано:
+    when(executorStateUseCase.getExecutorStates(anyBoolean()))
+        .thenReturn(Flowable.just(ExecutorState.WAITING_FOR_CLIENT));
 
     // Действие:
     TestSubscriber<Order> testSubscriber = orderGateway.getOrders().test();

@@ -217,6 +217,22 @@ public class MovingToClientGatewayTest {
   }
 
   /**
+   * Не должен трогать маппер, если пришел статус "получение заказа".
+   */
+  @Test
+  public void doNotTouchMapperIfNoData() {
+    // Дано:
+    when(executorStateUseCase.getExecutorStates(anyBoolean()))
+        .thenReturn(Flowable.just(ExecutorState.DRIVER_ORDER_CONFIRMATION));
+
+    // Действие:
+    orderGateway.getOrders().test();
+
+    // Результат:
+    verifyZeroInteractions(mapper);
+  }
+
+  /**
    * Не должен трогать маппер, если пришел статус "ожидание подтверждения клиента".
    */
   @Test
@@ -233,13 +249,13 @@ public class MovingToClientGatewayTest {
   }
 
   /**
-   * Не должен трогать маппер, если пришел статус "получение заказа".
+   * Не должен трогать маппер, если пришел статус "ожидание клиента".
    */
   @Test
-  public void doNotTouchMapperIfNoData() {
+  public void doNotTouchMapperIfWaitingForClient() {
     // Дано:
     when(executorStateUseCase.getExecutorStates(anyBoolean()))
-        .thenReturn(Flowable.just(ExecutorState.DRIVER_ORDER_CONFIRMATION));
+        .thenReturn(Flowable.just(ExecutorState.WAITING_FOR_CLIENT));
 
     // Действие:
     orderGateway.getOrders().test();
@@ -367,6 +383,24 @@ public class MovingToClientGatewayTest {
     // Дано:
     when(executorStateUseCase.getExecutorStates(anyBoolean()))
         .thenReturn(Flowable.just(ExecutorState.CLIENT_ORDER_CONFIRMATION));
+
+    // Действие:
+    TestSubscriber<Order> testSubscriber = orderGateway.getOrders().test();
+
+    // Результат:
+    testSubscriber.assertNoValues();
+    testSubscriber.assertComplete();
+    testSubscriber.assertNoErrors();
+  }
+
+  /**
+   * Должен ответить ошибкой отсутствия заказов для статуса "ожидание клиента".
+   */
+  @Test
+  public void ignoreForWaitingForClient() {
+    // Дано:
+    when(executorStateUseCase.getExecutorStates(anyBoolean()))
+        .thenReturn(Flowable.just(ExecutorState.WAITING_FOR_CLIENT));
 
     // Действие:
     TestSubscriber<Order> testSubscriber = orderGateway.getOrders().test();

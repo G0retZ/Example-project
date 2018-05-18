@@ -238,6 +238,23 @@ public class OnlineSwitchViewModelTest {
   }
 
   /**
+   * Должен вернуть состояние ожидания с неактивным переключателем для "ожидание клиента".
+   */
+  @Test
+  public void setUncheckedPendingViewStateForWaitingForClient() {
+    // Дано:
+    onlineSwitchViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+
+    // Действие:
+    publishSubject.onNext(ExecutorState.WAITING_FOR_CLIENT);
+
+    // Результат:
+    verify(viewStateObserver, times(2))
+        .onChanged(any(OnlineSwitchViewStateUnCheckedPending.class));
+    verifyNoMoreInteractions(viewStateObserver);
+  }
+
+  /**
    * Должен вернуть состояние ошибки сокета с неактивным переключателем при ошибке в подписке на
    * статусы исполнителя.
    */

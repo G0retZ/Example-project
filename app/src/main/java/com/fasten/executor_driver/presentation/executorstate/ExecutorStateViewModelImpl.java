@@ -78,6 +78,9 @@ public class ExecutorStateViewModelImpl extends ViewModel implements ExecutorSta
                 case MOVING_TO_CLIENT:
                   navigateLiveData.postValue(ExecutorStateNavigate.MOVING_TO_CLIENT);
                   break;
+                case WAITING_FOR_CLIENT:
+                  navigateLiveData.postValue(ExecutorStateNavigate.WAITING_FOR_CLIENT);
+                  break;
               }
             },
             throwable -> {

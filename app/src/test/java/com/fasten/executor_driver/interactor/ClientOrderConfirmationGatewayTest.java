@@ -227,6 +227,22 @@ public class ClientOrderConfirmationGatewayTest {
   }
 
   /**
+   * Не должен трогать маппер, если не пришел статус "ожидание клиента".
+   */
+  @Test
+  public void doNotTouchMapperIfWaitingForClient() {
+    // Дано:
+    when(executorStateUseCase.getExecutorStates(anyBoolean()))
+        .thenReturn(Flowable.just(ExecutorState.WAITING_FOR_CLIENT));
+
+    // Действие:
+    orderConfirmationGateway.getOrders().test();
+
+    // Результат:
+    verifyZeroInteractions(mapper);
+  }
+
+  /**
    * Не должен трогать маппер, если статус без сообщения.
    */
   @Test
@@ -345,6 +361,24 @@ public class ClientOrderConfirmationGatewayTest {
     // Дано:
     when(executorStateUseCase.getExecutorStates(anyBoolean()))
         .thenReturn(Flowable.just(ExecutorState.MOVING_TO_CLIENT));
+
+    // Действие:
+    TestSubscriber<Order> testSubscriber = orderConfirmationGateway.getOrders().test();
+
+    // Результат:
+    testSubscriber.assertNoValues();
+    testSubscriber.assertComplete();
+    testSubscriber.assertNoErrors();
+  }
+
+  /**
+   * Должен ответить ошибкой отсутствия заказов для статуса "ожидание клиента".
+   */
+  @Test
+  public void ignoreForWaitingForClient() {
+    // Дано:
+    when(executorStateUseCase.getExecutorStates(anyBoolean()))
+        .thenReturn(Flowable.just(ExecutorState.WAITING_FOR_CLIENT));
 
     // Действие:
     TestSubscriber<Order> testSubscriber = orderConfirmationGateway.getOrders().test();

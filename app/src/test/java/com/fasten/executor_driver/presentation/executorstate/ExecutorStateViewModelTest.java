@@ -317,4 +317,21 @@ public class ExecutorStateViewModelTest {
     // Результат:
     verify(navigationObserver, only()).onChanged(ExecutorStateNavigate.MOVING_TO_CLIENT);
   }
+
+  /**
+   * Должен вернуть "перейти к ожиданию клиента".
+   */
+  @Test
+  public void navigateToWaitingForClient() {
+    // Дано:
+    when(executorStateUseCase.getExecutorStates(anyBoolean()))
+        .thenReturn(Flowable.just(ExecutorState.WAITING_FOR_CLIENT));
+
+    // Действие:
+    executorStateViewModel.getNavigationLiveData().observeForever(navigationObserver);
+    executorStateViewModel.initializeExecutorState(false);
+
+    // Результат:
+    verify(navigationObserver, only()).onChanged(ExecutorStateNavigate.WAITING_FOR_CLIENT);
+  }
 }
