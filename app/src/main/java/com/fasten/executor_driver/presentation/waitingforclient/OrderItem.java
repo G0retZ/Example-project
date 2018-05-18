@@ -7,7 +7,7 @@ import com.fasten.executor_driver.entity.OptionNumeric;
 import com.fasten.executor_driver.entity.Order;
 
 /**
- * Модель для отображения предложения заказа. Тестируемое форматирование.
+ * Модель для отображения заказа при ожидании клиента. Тестируемое форматирование.
  */
 class OrderItem {
 
