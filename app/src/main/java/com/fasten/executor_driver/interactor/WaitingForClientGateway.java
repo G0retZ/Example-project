@@ -17,7 +17,7 @@ public interface WaitingForClientGateway {
   Completable callToClient();
 
   /**
-   * Передает сообщение о прибытии к клиенту.
+   * Передает сообщение о начале исполнения заказа.
    *
    * @return {@link Completable} результат - успех либо ошибка на сервере.
    */

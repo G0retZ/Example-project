@@ -59,10 +59,10 @@ public class WaitingForClientGatewayTest {
   }
 
   /**
-   * Должен запросить у клиента STOMP отправку "я на месте", если он соединен и не соединяется.
+   * Должен запросить у клиента STOMP отправку "начать погрузку", если он соединен и не соединяется.
    */
   @Test
-  public void askStompClientToSendReportArrival() {
+  public void askStompClientToSendStartOrder() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(stompClient);
     when(stompClient.isConnected()).thenReturn(true);
@@ -116,10 +116,10 @@ public class WaitingForClientGatewayTest {
   }
 
   /**
-   * Должен запросить у клиента STOMP отправку "я на месте", если он не соединен и соединяется.
+   * Должен запросить у клиента STOMP отправку "начать погрузку", если он не соединен и соединяется.
    */
   @Test
-  public void askStompClientToSendReportArrivalIfConnecting() {
+  public void askStompClientToSendStartOrderIfConnecting() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(stompClient);
     when(stompClient.isConnecting()).thenReturn(true);
@@ -159,7 +159,7 @@ public class WaitingForClientGatewayTest {
    * Должен ответить успехом, если он соединен и не соединяется.
    */
   @Test
-  public void answerReportArrivalSuccessIfConnected() {
+  public void answerStartOrderSuccessIfConnected() {
     // Дано:
     when(stompClient.isConnected()).thenReturn(true);
     when(stompClient.send(anyString(), anyString())).thenReturn(Completable.complete());
@@ -194,7 +194,7 @@ public class WaitingForClientGatewayTest {
    * Должен ответить ошибкой, если он соединен и не соединяется.
    */
   @Test
-  public void answerReportArrivalErrorIfConnected() {
+  public void answerStartOrderErrorIfConnected() {
     // Дано:
     when(stompClient.isConnected()).thenReturn(true);
     when(stompClient.send(anyString(), anyString()))
@@ -225,7 +225,7 @@ public class WaitingForClientGatewayTest {
    * Должен ответить ошибкой, если он не соединен и не соединяется.
    */
   @Test
-  public void answerReportArrivalErrorIfNotConnectedAndNotConnecting() {
+  public void answerStartOrderErrorIfNotConnectedAndNotConnecting() {
     // Действие:
     TestObserver<Void> testObserver = orderGateway.startTheOrder().test();
 
@@ -255,7 +255,7 @@ public class WaitingForClientGatewayTest {
    * Должен ответить успехом, если он не соединен и соединяется.
    */
   @Test
-  public void answerReportArrivalSuccessIfConnecting() {
+  public void answerStartOrderSuccessIfConnecting() {
     // Дано:
     when(stompClient.isConnecting()).thenReturn(true);
     when(stompClient.send(anyString(), anyString())).thenReturn(Completable.complete());
@@ -290,7 +290,7 @@ public class WaitingForClientGatewayTest {
    * Должен ответить ошибкой, если он не соединен и соединяется.
    */
   @Test
-  public void answerReportArrivalErrorIfConnecting() {
+  public void answerStartOrderErrorIfConnecting() {
     // Дано:
     when(stompClient.isConnecting()).thenReturn(true);
     when(stompClient.send(anyString(), anyString()))
