@@ -58,7 +58,7 @@ public class WaitingForClientUseCaseTest {
    * Должен запросить у гейтвея звонок клиенту.
    */
   @Test
-  public void askGatewayToToCallClientForOrder() {
+  public void askGatewayToCallClient() {
     // Действие:
     movingToClientUseCase.callToClient().test();
 
@@ -67,10 +67,10 @@ public class WaitingForClientUseCaseTest {
   }
 
   /**
-   * Должен сообщить гейтвею о прибытии к клиенту.
+   * Должен сообщить гейтвею о начале погрузки.
    */
   @Test
-  public void askGatewayToReportArrivalForOrder() {
+  public void askGatewayToStartOrder() {
     // Действие:
     movingToClientUseCase.startTheOrder().test();
 
@@ -156,13 +156,13 @@ public class WaitingForClientUseCaseTest {
     test.assertNoErrors();
   }
 
-  /* Проверяем ответы на сообщение о прибытии к клиенту */
+  /* Проверяем ответы на начало погрузки */
 
   /**
-   * Должен ответить ошибкой сети на сообщение о прибытии к клиенту.
+   * Должен ответить ошибкой сети на начала погрузки.
    */
   @Test
-  public void answerNoNetworkErrorForReportArrival() {
+  public void answerNoNetworkErrorForStartOrder() {
     // Дано:
     when(orderGateway.getOrders(ExecutorState.WAITING_FOR_CLIENT)).thenReturn(Flowable.just(order));
     when(movingToClientGateway.startTheOrder())
@@ -179,10 +179,10 @@ public class WaitingForClientUseCaseTest {
   }
 
   /**
-   * Должен ответить успехом отправки сообщения о прибытии к клиенту.
+   * Должен ответить успехом начала погрузки.
    */
   @Test
-  public void answerSendReportArrivalSuccessful() {
+  public void answerSendStartOrderSuccessful() {
     // Дано:
     when(orderGateway.getOrders(ExecutorState.WAITING_FOR_CLIENT)).thenReturn(Flowable.just(order));
     when(movingToClientGateway.startTheOrder()).thenReturn(Completable.complete());

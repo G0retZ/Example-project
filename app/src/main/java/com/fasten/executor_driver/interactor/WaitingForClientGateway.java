@@ -6,7 +6,7 @@ import io.reactivex.Completable;
 /**
  * Гейтвей работы с заказами при движении к клиенту.
  */
-interface WaitingForClientGateway {
+public interface WaitingForClientGateway {
 
   /**
    * Передает запрос звонка клиенту.
@@ -17,7 +17,7 @@ interface WaitingForClientGateway {
   Completable callToClient();
 
   /**
-   * Передает сообщение о прибытии к клиенту.
+   * Передает сообщение о начале исполнения заказа.
    *
    * @return {@link Completable} результат - успех либо ошибка на сервере.
    */

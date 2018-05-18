@@ -26,7 +26,7 @@ interface WaitingForClientUseCase {
   Completable callToClient();
 
   /**
-   * Сообщает серверу о прибытии к клиенту.
+   * Сообщает серверу о начале исполнения заказа.
    *
    * @return {@link Completable} результат - успех либо ошибка на сервере.
    */
