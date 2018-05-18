@@ -46,11 +46,12 @@ class OrderItem {
 
   @NonNull
   public String getAddress() {
-    return order.getRoutePoint().getAddress() + "\n" + order.getRoutePoint().getComment();
+    return order.getRoutePoint().getAddress().trim() + "\n" + order.getRoutePoint().getComment()
+        .trim();
   }
 
   public String getEstimatedPrice() {
-    return order.getEstimatedPrice();
+    return order.getEstimatedPrice().trim();
   }
 
   public String getOrderOptionsRequired() {
@@ -71,7 +72,7 @@ class OrderItem {
 
   @NonNull
   public String getOrderComment() {
-    return order.getComment();
+    return order.getComment().trim();
   }
 
   public long[] getProgressLeft() {
