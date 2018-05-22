@@ -255,6 +255,23 @@ public class OnlineSwitchViewModelTest {
   }
 
   /**
+   * Должен вернуть состояние ожидания с неактивным переключателем для "выполнения заказа".
+   */
+  @Test
+  public void setUncheckedPendingViewStateForOrderFulfillment() {
+    // Дано:
+    onlineSwitchViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+
+    // Действие:
+    publishSubject.onNext(ExecutorState.ORDER_FULFILLMENT);
+
+    // Результат:
+    verify(viewStateObserver, times(2))
+        .onChanged(any(OnlineSwitchViewStateUnCheckedPending.class));
+    verifyNoMoreInteractions(viewStateObserver);
+  }
+
+  /**
    * Должен вернуть состояние ошибки сокета с неактивным переключателем при ошибке в подписке на
    * статусы исполнителя.
    */

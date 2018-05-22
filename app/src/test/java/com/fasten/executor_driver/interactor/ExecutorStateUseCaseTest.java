@@ -213,7 +213,8 @@ public class ExecutorStateUseCaseTest {
     when(gateway.getState("1234567890")).thenReturn(
         Flowable.just(ExecutorState.SHIFT_CLOSED, ExecutorState.SHIFT_OPENED, ExecutorState.ONLINE,
             ExecutorState.DRIVER_ORDER_CONFIRMATION, ExecutorState.CLIENT_ORDER_CONFIRMATION,
-            ExecutorState.MOVING_TO_CLIENT, ExecutorState.WAITING_FOR_CLIENT)
+            ExecutorState.MOVING_TO_CLIENT, ExecutorState.WAITING_FOR_CLIENT,
+            ExecutorState.ORDER_FULFILLMENT)
     );
 
     // Действие:
@@ -224,7 +225,8 @@ public class ExecutorStateUseCaseTest {
     testSubscriber
         .assertValues(ExecutorState.SHIFT_CLOSED, ExecutorState.SHIFT_OPENED, ExecutorState.ONLINE,
             ExecutorState.DRIVER_ORDER_CONFIRMATION, ExecutorState.CLIENT_ORDER_CONFIRMATION,
-            ExecutorState.MOVING_TO_CLIENT, ExecutorState.WAITING_FOR_CLIENT);
+            ExecutorState.MOVING_TO_CLIENT, ExecutorState.WAITING_FOR_CLIENT,
+            ExecutorState.ORDER_FULFILLMENT);
     testSubscriber.assertNoErrors();
   }
 

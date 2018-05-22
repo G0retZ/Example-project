@@ -38,4 +38,6 @@ public @interface ExecutorStateNavigate {
   String MOVING_TO_CLIENT = "to.Moving.To.Client";
   // Переход к движению к клиенту.
   String WAITING_FOR_CLIENT = "to.Waiting.For.Client";
+  // Переход к выполнению заказа.
+  String ORDER_FULFILLMENT = "to.Order.Fulfillment";
 }

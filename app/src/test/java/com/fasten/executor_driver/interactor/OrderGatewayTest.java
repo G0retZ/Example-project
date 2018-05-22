@@ -70,7 +70,8 @@ public class OrderGatewayTest {
     when(executorStateUseCase.getExecutorStates(anyBoolean()))
         .thenReturn(Flowable.just(ExecutorState.SHIFT_CLOSED, ExecutorState.SHIFT_OPENED,
             ExecutorState.ONLINE, ExecutorState.CLIENT_ORDER_CONFIRMATION,
-            ExecutorState.MOVING_TO_CLIENT, ExecutorState.WAITING_FOR_CLIENT));
+            ExecutorState.MOVING_TO_CLIENT, ExecutorState.WAITING_FOR_CLIENT,
+            ExecutorState.ORDER_FULFILLMENT));
 
     // Действие:
     orderGateway.getOrders(ExecutorState.DRIVER_ORDER_CONFIRMATION).test();
@@ -127,7 +128,8 @@ public class OrderGatewayTest {
     when(executorStateUseCase.getExecutorStates(anyBoolean()))
         .thenReturn(Flowable.just(ExecutorState.SHIFT_CLOSED, ExecutorState.SHIFT_OPENED,
             ExecutorState.ONLINE, ExecutorState.CLIENT_ORDER_CONFIRMATION,
-            ExecutorState.MOVING_TO_CLIENT, ExecutorState.WAITING_FOR_CLIENT));
+            ExecutorState.MOVING_TO_CLIENT, ExecutorState.WAITING_FOR_CLIENT,
+            ExecutorState.ORDER_FULFILLMENT));
 
     // Действие:
     TestSubscriber<Order> testSubscriber =
