@@ -3,6 +3,7 @@ package com.fasten.executor_driver.gateway;
 import android.support.annotation.NonNull;
 import com.fasten.executor_driver.backend.web.incoming.ApiOptionItem;
 import com.fasten.executor_driver.backend.websocket.incoming.ApiOrder;
+import com.fasten.executor_driver.backend.websocket.incoming.ApiRoutePoint;
 import com.fasten.executor_driver.entity.Option;
 import com.fasten.executor_driver.entity.Order;
 import com.fasten.executor_driver.entity.RoutePoint;
@@ -14,11 +15,16 @@ import javax.inject.Inject;
  */
 public class WaitingForClientApiMapper implements Mapper<String, Order> {
 
+  @NonNull
   private final Mapper<ApiOptionItem, Option> apiOptionMapper;
+  @NonNull
+  private final Mapper<ApiRoutePoint, RoutePoint> routePointMapper;
 
   @Inject
-  public WaitingForClientApiMapper(Mapper<ApiOptionItem, Option> apiOptionMapper) {
+  public WaitingForClientApiMapper(@NonNull Mapper<ApiOptionItem, Option> apiOptionMapper,
+      @NonNull Mapper<ApiRoutePoint, RoutePoint> routePointMapper) {
     this.apiOptionMapper = apiOptionMapper;
+    this.routePointMapper = routePointMapper;
   }
 
   @NonNull
@@ -41,17 +47,16 @@ public class WaitingForClientApiMapper implements Mapper<String, Order> {
         apiOrder.getEstimatedAmount(),
         apiOrder.getTimeout(),
         apiOrder.getEtaToStartPoint(),
-        apiOrder.getConfirmationTime(),
-        new RoutePoint(
-            0,
-            0,
-            "",
-            ""
-        )
+        apiOrder.getConfirmationTime()
     );
-    if (apiOrder.getOptions() != null && !apiOrder.getOptions().isEmpty()) {
+    if (apiOrder.getOptions() != null) {
       for (ApiOptionItem vehicleOptionItem : apiOrder.getOptions()) {
         order.addOptions(apiOptionMapper.map(vehicleOptionItem));
+      }
+    }
+    if (apiOrder.getRoute() != null) {
+      for (ApiRoutePoint routePoint : apiOrder.getRoute()) {
+        order.addRoutePoints(routePointMapper.map(routePoint));
       }
     }
     return order;

@@ -12,6 +12,7 @@ import com.fasten.executor_driver.entity.RoutePoint;
 import com.fasten.executor_driver.utils.TimeUtils;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Locale;
 import org.junit.Before;
 import org.junit.Test;
@@ -44,7 +45,7 @@ public class OrderItemTest {
   @Test
   public void testGetters() {
     // Дано:
-    when(order.getRoutePoint()).thenReturn(routePoint);
+    when(order.getRoutePath()).thenReturn(Collections.singletonList(routePoint));
     when(order.getDistance()).thenReturn(12239L);
     when(order.getComment()).thenReturn("com");
     when(order.getEstimatedPrice()).thenReturn("7000");

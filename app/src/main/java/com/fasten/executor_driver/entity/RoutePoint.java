@@ -7,19 +7,27 @@ import android.support.annotation.NonNull;
  */
 public class RoutePoint {
 
+  private final long id;
   private final double latitude;
   private final double longitude;
   @NonNull
   private final String comment;
   @NonNull
   private final String address;
+  private final boolean checked;
 
-  public RoutePoint(double latitude, double longitude, @NonNull String comment,
-      @NonNull String address) {
+  public RoutePoint(long id, double latitude, double longitude, @NonNull String comment,
+      @NonNull String address, boolean checked) {
+    this.id = id;
     this.latitude = latitude;
     this.longitude = longitude;
     this.comment = comment;
     this.address = address;
+    this.checked = checked;
+  }
+
+  public long getId() {
+    return id;
   }
 
   public double getLatitude() {
@@ -38,5 +46,9 @@ public class RoutePoint {
   @NonNull
   public String getAddress() {
     return address;
+  }
+
+  public boolean isChecked() {
+    return checked;
   }
 }

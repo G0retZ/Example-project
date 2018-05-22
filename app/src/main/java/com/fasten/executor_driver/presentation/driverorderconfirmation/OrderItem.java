@@ -31,9 +31,9 @@ class OrderItem {
   public String getLoadPointMapUrl() {
     return "https://maps.googleapis.com/maps/api/staticmap?"
         + "center="
-        + order.getRoutePoint().getLatitude()
+        + order.getRoutePath().get(0).getLatitude()
         + ","
-        + order.getRoutePoint().getLongitude()
+        + order.getRoutePath().get(0).getLongitude()
         + "&zoom=16"
         + "&size=360x200"
         + "&maptype=roadmap"
@@ -46,7 +46,8 @@ class OrderItem {
 
   @NonNull
   public String getAddress() {
-    return (order.getRoutePoint().getAddress() + "\n" + order.getRoutePoint().getComment()).trim();
+    return (order.getRoutePath().get(0).getAddress() + "\n"
+        + order.getRoutePath().get(0).getComment()).trim();
   }
 
   public String getEstimatedPrice() {

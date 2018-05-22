@@ -2,12 +2,15 @@ package com.fasten.executor_driver.gateway;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
 import com.fasten.executor_driver.backend.web.incoming.ApiOptionItem;
+import com.fasten.executor_driver.backend.websocket.incoming.ApiRoutePoint;
 import com.fasten.executor_driver.entity.Option;
 import com.fasten.executor_driver.entity.OptionBoolean;
 import com.fasten.executor_driver.entity.Order;
+import com.fasten.executor_driver.entity.RoutePoint;
 import java.util.Arrays;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,12 +25,20 @@ public class MovingToClientApiMapperTest {
 
   @Mock
   private Mapper<ApiOptionItem, Option> apiOptionMapper;
+  @Mock
+  private Mapper<ApiRoutePoint, RoutePoint> routePointMapper;
+  @Mock
+  private OptionBoolean optionBoolean;
+  @Mock
+  private RoutePoint routePoint;
+  @Mock
+  private RoutePoint routePoint2;
 
   @Before
   public void setUp() throws Exception {
-    when(apiOptionMapper.map(any(ApiOptionItem.class)))
-        .thenReturn(new OptionBoolean(0, "n", "d", false, false));
-    mapper = new MovingToClientApiMapper(apiOptionMapper);
+    when(apiOptionMapper.map(any(ApiOptionItem.class))).thenReturn(optionBoolean);
+    when(routePointMapper.map(any(ApiRoutePoint.class))).thenReturn(routePoint, routePoint2);
+    mapper = new MovingToClientApiMapper(apiOptionMapper, routePointMapper);
   }
 
   /**
@@ -51,10 +62,28 @@ public class MovingToClientApiMapperTest {
         + "    },\n"
         + "    \"route\": [\n"
         + "        {\n"
+        + "            \"id\":\"7\",\n"
         + "            \"longitude\":\"456\",\n"
         + "            \"latitude\":\"123\",\n"
-        + "            \"comment\":\"com\",\n"
-        + "            \"address\":\"add\"\n"
+        + "            \"comment\":\"com1\",\n"
+        + "            \"address\":\"add1\",\n"
+        + "            \"checked\":\"false\"\n"
+        + "        },\n"
+        + "        {\n"
+        + "            \"id\":\"8\",\n"
+        + "            \"longitude\":\"123\",\n"
+        + "            \"latitude\":\"456\",\n"
+        + "            \"comment\":\"com2\",\n"
+        + "            \"address\":\"add2\",\n"
+        + "            \"checked\":\"true\"\n"
+        + "        },\n"
+        + "        {\n"
+        + "            \"id\":\"9\",\n"
+        + "            \"longitude\":\"321\",\n"
+        + "            \"latitude\":\"654\",\n"
+        + "            \"comment\":\"com3\",\n"
+        + "            \"address\":\"add3\",\n"
+        + "            \"checked\":\"false\"\n"
         + "        }\n"
         + "    ],\n"
         + "    \"optionsMobile\": [\n"
@@ -109,16 +138,10 @@ public class MovingToClientApiMapperTest {
     assertEquals(order.getTimeout(), 25);
     assertEquals(order.getEtaToStartPoint(), 1200);
     assertEquals(order.getConfirmationTime(), 1234567890);
-    assertEquals(order.getRoutePoint().getLatitude(), 123, Double.MIN_VALUE);
-    assertEquals(order.getRoutePoint().getLongitude(), 456, Double.MIN_VALUE);
-    assertEquals(order.getRoutePoint().getComment(), "com");
-    assertEquals(order.getRoutePoint().getAddress(), "add");
-    assertEquals(order.getOptions(), Arrays.asList(
-        new OptionBoolean(0, "n", "d", false, false),
-        new OptionBoolean(0, "n", "d", false, false),
-        new OptionBoolean(0, "n", "d", false, false),
-        new OptionBoolean(0, "n", "d", false, false)
-    ));
+    assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
+    assertEquals(order.getOptions(),
+        Arrays.asList(optionBoolean, optionBoolean, optionBoolean, optionBoolean)
+    );
   }
 
   /**
@@ -142,10 +165,28 @@ public class MovingToClientApiMapperTest {
         + "    },\n"
         + "    \"route\": [\n"
         + "        {\n"
+        + "            \"id\":\"7\",\n"
         + "            \"longitude\":\"456\",\n"
         + "            \"latitude\":\"123\",\n"
-        + "            \"comment\":\"com\",\n"
-        + "            \"address\":\"add\"\n"
+        + "            \"comment\":\"com1\",\n"
+        + "            \"address\":\"add1\",\n"
+        + "            \"checked\":\"false\"\n"
+        + "        },\n"
+        + "        {\n"
+        + "            \"id\":\"8\",\n"
+        + "            \"longitude\":\"123\",\n"
+        + "            \"latitude\":\"456\",\n"
+        + "            \"comment\":\"com2\",\n"
+        + "            \"address\":\"add2\",\n"
+        + "            \"checked\":\"true\"\n"
+        + "        },\n"
+        + "        {\n"
+        + "            \"id\":\"9\",\n"
+        + "            \"longitude\":\"321\",\n"
+        + "            \"latitude\":\"654\",\n"
+        + "            \"comment\":\"com3\",\n"
+        + "            \"address\":\"add3\",\n"
+        + "            \"checked\":\"false\"\n"
         + "        }\n"
         + "    ]\n"
         + "}");
@@ -158,10 +199,7 @@ public class MovingToClientApiMapperTest {
     assertEquals(order.getTimeout(), 25);
     assertEquals(order.getEtaToStartPoint(), 1200);
     assertEquals(order.getConfirmationTime(), 1234567890);
-    assertEquals(order.getRoutePoint().getLatitude(), 123, Double.MIN_VALUE);
-    assertEquals(order.getRoutePoint().getLongitude(), 456, Double.MIN_VALUE);
-    assertEquals(order.getRoutePoint().getComment(), "com");
-    assertEquals(order.getRoutePoint().getAddress(), "add");
+    assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
     assertEquals(order.getOptions().size(), 0);
   }
 
@@ -182,10 +220,28 @@ public class MovingToClientApiMapperTest {
         + "    \"confirmationTime\": \"1234567890\",\n"
         + "    \"route\": [\n"
         + "        {\n"
+        + "            \"id\":\"7\",\n"
         + "            \"longitude\":\"456\",\n"
         + "            \"latitude\":\"123\",\n"
-        + "            \"comment\":\"com\",\n"
-        + "            \"address\":\"add\"\n"
+        + "            \"comment\":\"com1\",\n"
+        + "            \"address\":\"add1\",\n"
+        + "            \"checked\":\"false\"\n"
+        + "        },\n"
+        + "        {\n"
+        + "            \"id\":\"8\",\n"
+        + "            \"longitude\":\"123\",\n"
+        + "            \"latitude\":\"456\",\n"
+        + "            \"comment\":\"com2\",\n"
+        + "            \"address\":\"add2\",\n"
+        + "            \"checked\":\"true\"\n"
+        + "        },\n"
+        + "        {\n"
+        + "            \"id\":\"9\",\n"
+        + "            \"longitude\":\"321\",\n"
+        + "            \"latitude\":\"654\",\n"
+        + "            \"comment\":\"com3\",\n"
+        + "            \"address\":\"add3\",\n"
+        + "            \"checked\":\"false\"\n"
         + "        }\n"
         + "    ]\n"
         + "}");
@@ -198,10 +254,7 @@ public class MovingToClientApiMapperTest {
     assertEquals(order.getTimeout(), 25);
     assertEquals(order.getEtaToStartPoint(), 1200);
     assertEquals(order.getConfirmationTime(), 1234567890);
-    assertEquals(order.getRoutePoint().getLatitude(), 123, Double.MIN_VALUE);
-    assertEquals(order.getRoutePoint().getLongitude(), 456, Double.MIN_VALUE);
-    assertEquals(order.getRoutePoint().getComment(), "com");
-    assertEquals(order.getRoutePoint().getAddress(), "add");
+    assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
     assertEquals(order.getOptions().size(), 0);
   }
 
@@ -225,10 +278,28 @@ public class MovingToClientApiMapperTest {
         + "    },\n"
         + "    \"route\": [\n"
         + "        {\n"
+        + "            \"id\":\"7\",\n"
         + "            \"longitude\":\"456\",\n"
         + "            \"latitude\":\"123\",\n"
-        + "            \"comment\":\"com\",\n"
-        + "            \"address\":\"add\"\n"
+        + "            \"comment\":\"com1\",\n"
+        + "            \"address\":\"add1\",\n"
+        + "            \"checked\":\"false\"\n"
+        + "        },\n"
+        + "        {\n"
+        + "            \"id\":\"8\",\n"
+        + "            \"longitude\":\"123\",\n"
+        + "            \"latitude\":\"456\",\n"
+        + "            \"comment\":\"com2\",\n"
+        + "            \"address\":\"add2\",\n"
+        + "            \"checked\":\"true\"\n"
+        + "        },\n"
+        + "        {\n"
+        + "            \"id\":\"9\",\n"
+        + "            \"longitude\":\"321\",\n"
+        + "            \"latitude\":\"654\",\n"
+        + "            \"comment\":\"com3\",\n"
+        + "            \"address\":\"add3\",\n"
+        + "            \"checked\":\"false\"\n"
         + "        }\n"
         + "    ]\n"
         + "}");
@@ -241,10 +312,7 @@ public class MovingToClientApiMapperTest {
     assertEquals(order.getTimeout(), 0);
     assertEquals(order.getEtaToStartPoint(), 1200);
     assertEquals(order.getConfirmationTime(), 1234567890);
-    assertEquals(order.getRoutePoint().getLatitude(), 123, Double.MIN_VALUE);
-    assertEquals(order.getRoutePoint().getLongitude(), 456, Double.MIN_VALUE);
-    assertEquals(order.getRoutePoint().getComment(), "com");
-    assertEquals(order.getRoutePoint().getAddress(), "add");
+    assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
     assertEquals(order.getOptions().size(), 0);
   }
 
@@ -339,65 +407,6 @@ public class MovingToClientApiMapperTest {
   }
 
   /**
-   * Должен дать ошибку, если нет адреса.
-   *
-   * @throws Exception ошибка
-   */
-  @Test(expected = DataMappingException.class)
-  public void mappingNullAddressFail() throws Exception {
-    // Дано и Действие:
-    mapper.map("{\n"
-        + "    \"id\": \"7\",\n"
-        + "    \"comment\": \"com\",\n"
-        + "    \"estimatedAmount\": \"7000\",\n"
-        + "    \"etaToStartPoint\": \"1200\",\n"
-        + "    \"confirmationTime\": \"1234567890\",\n"
-        + "    \"timeOut\": \"25\",\n"
-        + "    \"executorDistance\": {\n"
-        + "        \"executorId\": \"5\",\n"
-        + "        \"distance\": \"1200239\"\n"
-        + "    },\n"
-        + "    \"route\": [\n"
-        + "        {\n"
-        + "            \"longitude\":\"456\",\n"
-        + "            \"latitude\":\"123\",\n"
-        + "            \"comment\":\"com\"\n"
-        + "        }\n"
-        + "    ]\n"
-        + "}");
-  }
-
-  /**
-   * Должен дать ошибку, если адрес пустой.
-   *
-   * @throws Exception ошибка
-   */
-  @Test(expected = DataMappingException.class)
-  public void mappingEmptyAddressFail() throws Exception {
-    // Дано и Действие:
-    mapper.map("{\n"
-        + "    \"id\": \"7\",\n"
-        + "    \"comment\": \"com\",\n"
-        + "    \"estimatedAmount\": \"7000\",\n"
-        + "    \"etaToStartPoint\": \"1200\",\n"
-        + "    \"confirmationTime\": \"1234567890\",\n"
-        + "    \"timeOut\": \"25\",\n"
-        + "    \"executorDistance\": {\n"
-        + "        \"executorId\": \"5\",\n"
-        + "        \"distance\": \"1200239\"\n"
-        + "    },\n"
-        + "    \"route\": [\n"
-        + "        {\n"
-        + "            \"longitude\":\"456\",\n"
-        + "            \"latitude\":\"123\",\n"
-        + "            \"comment\":\"com\",\n"
-        + "            \"address\":\"\"\n"
-        + "        }\n"
-        + "    ]\n"
-        + "}");
-  }
-
-  /**
    * Должен дать ошибку, если ETA = 0.
    *
    * @throws Exception ошибка
@@ -418,10 +427,28 @@ public class MovingToClientApiMapperTest {
         + "    },\n"
         + "    \"route\": [\n"
         + "        {\n"
+        + "            \"id\":\"7\",\n"
         + "            \"longitude\":\"456\",\n"
         + "            \"latitude\":\"123\",\n"
-        + "            \"comment\":\"com\",\n"
-        + "            \"address\":\"add\"\n"
+        + "            \"comment\":\"com1\",\n"
+        + "            \"address\":\"add1\",\n"
+        + "            \"checked\":\"false\"\n"
+        + "        },\n"
+        + "        {\n"
+        + "            \"id\":\"8\",\n"
+        + "            \"longitude\":\"123\",\n"
+        + "            \"latitude\":\"456\",\n"
+        + "            \"comment\":\"com2\",\n"
+        + "            \"address\":\"add2\",\n"
+        + "            \"checked\":\"true\"\n"
+        + "        },\n"
+        + "        {\n"
+        + "            \"id\":\"9\",\n"
+        + "            \"longitude\":\"321\",\n"
+        + "            \"latitude\":\"654\",\n"
+        + "            \"comment\":\"com3\",\n"
+        + "            \"address\":\"add3\",\n"
+        + "            \"checked\":\"false\"\n"
         + "        }\n"
         + "    ]\n"
         + "}");
@@ -448,10 +475,214 @@ public class MovingToClientApiMapperTest {
         + "    },\n"
         + "    \"route\": [\n"
         + "        {\n"
+        + "            \"id\":\"7\",\n"
         + "            \"longitude\":\"456\",\n"
         + "            \"latitude\":\"123\",\n"
-        + "            \"comment\":\"com\",\n"
-        + "            \"address\":\"add\"\n"
+        + "            \"comment\":\"com1\",\n"
+        + "            \"address\":\"add1\",\n"
+        + "            \"checked\":\"false\"\n"
+        + "        },\n"
+        + "        {\n"
+        + "            \"id\":\"8\",\n"
+        + "            \"longitude\":\"123\",\n"
+        + "            \"latitude\":\"456\",\n"
+        + "            \"comment\":\"com2\",\n"
+        + "            \"address\":\"add2\",\n"
+        + "            \"checked\":\"true\"\n"
+        + "        },\n"
+        + "        {\n"
+        + "            \"id\":\"9\",\n"
+        + "            \"longitude\":\"321\",\n"
+        + "            \"latitude\":\"654\",\n"
+        + "            \"comment\":\"com3\",\n"
+        + "            \"address\":\"add3\",\n"
+        + "            \"checked\":\"false\"\n"
+        + "        }\n"
+        + "    ]\n"
+        + "}");
+  }
+
+  /**
+   * Должен дать ошибку, если была ошибка маппинга адреса.
+   *
+   * @throws Exception ошибка
+   */
+  @Test(expected = DataMappingException.class)
+  public void mappingFailForRoutePointMappingError() throws Exception {
+    // Дано
+    doThrow(new DataMappingException()).when(routePointMapper).map(any(ApiRoutePoint.class));
+
+    // Действие:
+    mapper.map("{\n"
+        + "    \"id\": \"7\",\n"
+        + "    \"comment\": \"com\",\n"
+        + "    \"estimatedAmount\": \"7000\",\n"
+        + "    \"timeOut\": \"25\",\n"
+        + "    \"etaToStartPoint\": \"1200\",\n"
+        + "    \"confirmationTime\": \"1234567890\",\n"
+        + "    \"executorDistance\": {\n"
+        + "        \"executorId\": \"5\",\n"
+        + "        \"distance\": \"1200239\"\n"
+        + "    },\n"
+        + "    \"route\": [\n"
+        + "        {\n"
+        + "            \"id\":\"7\",\n"
+        + "            \"longitude\":\"456\",\n"
+        + "            \"latitude\":\"123\",\n"
+        + "            \"comment\":\"com1\",\n"
+        + "            \"address\":\"add1\",\n"
+        + "            \"checked\":\"false\"\n"
+        + "        },\n"
+        + "        {\n"
+        + "            \"id\":\"8\",\n"
+        + "            \"longitude\":\"123\",\n"
+        + "            \"latitude\":\"456\",\n"
+        + "            \"comment\":\"com2\",\n"
+        + "            \"address\":\"add2\",\n"
+        + "            \"checked\":\"true\"\n"
+        + "        },\n"
+        + "        {\n"
+        + "            \"id\":\"9\",\n"
+        + "            \"longitude\":\"321\",\n"
+        + "            \"latitude\":\"654\",\n"
+        + "            \"comment\":\"com3\",\n"
+        + "            \"address\":\"add3\",\n"
+        + "            \"checked\":\"false\"\n"
+        + "        }\n"
+        + "    ],\n"
+        + "    \"optionsMobile\": [\n"
+        + "        {\n"
+        + "            \"id\": 56,\n"
+        + "            \"name\": \"Грузчики\",\n"
+        + "            \"value\": \"2\",\n"
+        + "            \"numeric\": true,\n"
+        + "            \"dynamic\": true,\n"
+        + "            \"min\": 0,\n"
+        + "            \"max\": 2,\n"
+        + "            \"description\": null\n"
+        + "        },\n"
+        + "        {\n"
+        + "            \"id\": 55,\n"
+        + "            \"name\": \"Ремни крепления\",\n"
+        + "            \"value\": \"true\",\n"
+        + "            \"numeric\": false,\n"
+        + "            \"dynamic\": true,\n"
+        + "            \"min\": null,\n"
+        + "            \"max\": null,\n"
+        + "            \"description\": \"Имеются стяжные ремни для для фиксации груза.\"\n"
+        + "        },\n"
+        + "        {\n"
+        + "            \"id\": 6,\n"
+        + "            \"name\": \"Безналичная оплата\",\n"
+        + "            \"value\": \"true\",\n"
+        + "            \"numeric\": false,\n"
+        + "            \"dynamic\": true,\n"
+        + "            \"min\": null,\n"
+        + "            \"max\": null,\n"
+        + "            \"description\": null\n"
+        + "        },\n"
+        + "        {\n"
+        + "            \"id\": 57,\n"
+        + "            \"name\": \"Гидроборт\",\n"
+        + "            \"value\": \"1500\",\n"
+        + "            \"numeric\": true,\n"
+        + "            \"dynamic\": false,\n"
+        + "            \"min\": null,\n"
+        + "            \"max\": null,\n"
+        + "            \"description\": \"Поднимающая штуковина\"\n"
+        + "        }\n"
+        + "    ]\n"
+        + "}");
+  }
+
+  /**
+   * Должен дать ошибку, если была ошибка маппинга опции.
+   *
+   * @throws Exception ошибка
+   */
+  @Test(expected = DataMappingException.class)
+  public void mappingFailForOptionMappingError() throws Exception {
+    // Дано
+    doThrow(new DataMappingException()).when(apiOptionMapper).map(any(ApiOptionItem.class));
+
+    // Действие:
+    mapper.map("{\n"
+        + "    \"id\": \"7\",\n"
+        + "    \"comment\": \"com\",\n"
+        + "    \"estimatedAmount\": \"7000\",\n"
+        + "    \"timeOut\": \"25\",\n"
+        + "    \"etaToStartPoint\": \"1200\",\n"
+        + "    \"confirmationTime\": \"1234567890\",\n"
+        + "    \"executorDistance\": {\n"
+        + "        \"executorId\": \"5\",\n"
+        + "        \"distance\": \"1200239\"\n"
+        + "    },\n"
+        + "    \"route\": [\n"
+        + "        {\n"
+        + "            \"id\":\"7\",\n"
+        + "            \"longitude\":\"456\",\n"
+        + "            \"latitude\":\"123\",\n"
+        + "            \"comment\":\"com1\",\n"
+        + "            \"address\":\"add1\",\n"
+        + "            \"checked\":\"false\"\n"
+        + "        },\n"
+        + "        {\n"
+        + "            \"id\":\"8\",\n"
+        + "            \"longitude\":\"123\",\n"
+        + "            \"latitude\":\"456\",\n"
+        + "            \"comment\":\"com2\",\n"
+        + "            \"address\":\"add2\",\n"
+        + "            \"checked\":\"true\"\n"
+        + "        },\n"
+        + "        {\n"
+        + "            \"id\":\"9\",\n"
+        + "            \"longitude\":\"321\",\n"
+        + "            \"latitude\":\"654\",\n"
+        + "            \"comment\":\"com3\",\n"
+        + "            \"address\":\"add3\",\n"
+        + "            \"checked\":\"false\"\n"
+        + "        }\n"
+        + "    ],\n"
+        + "    \"optionsMobile\": [\n"
+        + "        {\n"
+        + "            \"id\": 56,\n"
+        + "            \"name\": \"Грузчики\",\n"
+        + "            \"value\": \"2\",\n"
+        + "            \"numeric\": true,\n"
+        + "            \"dynamic\": true,\n"
+        + "            \"min\": 0,\n"
+        + "            \"max\": 2,\n"
+        + "            \"description\": null\n"
+        + "        },\n"
+        + "        {\n"
+        + "            \"id\": 55,\n"
+        + "            \"name\": \"Ремни крепления\",\n"
+        + "            \"value\": \"true\",\n"
+        + "            \"numeric\": false,\n"
+        + "            \"dynamic\": true,\n"
+        + "            \"min\": null,\n"
+        + "            \"max\": null,\n"
+        + "            \"description\": \"Имеются стяжные ремни для для фиксации груза.\"\n"
+        + "        },\n"
+        + "        {\n"
+        + "            \"id\": 6,\n"
+        + "            \"name\": \"Безналичная оплата\",\n"
+        + "            \"value\": \"true\",\n"
+        + "            \"numeric\": false,\n"
+        + "            \"dynamic\": true,\n"
+        + "            \"min\": null,\n"
+        + "            \"max\": null,\n"
+        + "            \"description\": null\n"
+        + "        },\n"
+        + "        {\n"
+        + "            \"id\": 57,\n"
+        + "            \"name\": \"Гидроборт\",\n"
+        + "            \"value\": \"1500\",\n"
+        + "            \"numeric\": true,\n"
+        + "            \"dynamic\": false,\n"
+        + "            \"min\": null,\n"
+        + "            \"max\": null,\n"
+        + "            \"description\": \"Поднимающая штуковина\"\n"
         + "        }\n"
         + "    ]\n"
         + "}");
