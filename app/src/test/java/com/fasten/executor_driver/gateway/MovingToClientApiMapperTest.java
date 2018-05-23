@@ -2,14 +2,20 @@ package com.fasten.executor_driver.gateway;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
 import com.fasten.executor_driver.backend.web.incoming.ApiOptionItem;
+import com.fasten.executor_driver.backend.websocket.incoming.ApiRoutePoint;
 import com.fasten.executor_driver.entity.Option;
 import com.fasten.executor_driver.entity.OptionBoolean;
+import com.fasten.executor_driver.entity.OptionNumeric;
 import com.fasten.executor_driver.entity.Order;
+import com.fasten.executor_driver.entity.RoutePoint;
+import java.util.ArrayList;
 import java.util.Arrays;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -18,234 +24,513 @@ import org.mockito.junit.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class MovingToClientApiMapperTest {
 
+  @Rule
+  public final ApiOrderRule rule = new ApiOrderRule();
+
   private Mapper<String, Order> mapper;
 
   @Mock
   private Mapper<ApiOptionItem, Option> apiOptionMapper;
+  @Mock
+  private Mapper<ApiRoutePoint, RoutePoint> routePointMapper;
+  @Mock
+  private OptionBoolean optionBoolean;
+  @Mock
+  private OptionNumeric optionNumeric;
+  @Mock
+  private RoutePoint routePoint;
+  @Mock
+  private RoutePoint routePoint2;
 
   @Before
   public void setUp() throws Exception {
     when(apiOptionMapper.map(any(ApiOptionItem.class)))
-        .thenReturn(new OptionBoolean(0, "n", "d", false, false));
-    mapper = new MovingToClientApiMapper(apiOptionMapper);
+        .thenReturn(optionNumeric, optionBoolean, optionBoolean, optionNumeric);
+    when(routePointMapper.map(any(ApiRoutePoint.class))).thenReturn(routePoint, routePoint2);
+    mapper = new MovingToClientApiMapper(apiOptionMapper, routePointMapper);
   }
 
   /**
-   * Должен успешно преобразовать JSON в предложение заказа.
+   * Должен успешно преобразовать JSON в заказ.
    *
    * @throws Exception ошибка
    */
   @Test
-  public void mappingJsonStringToOrder() throws Exception {
+  public void mappingJsonStringToOrderSuccess() throws Exception {
     // Дано и Действие:
-    Order order = mapper.map("{\n"
-        + "    \"id\": \"7\",\n"
-        + "    \"comment\": \"com\",\n"
-        + "    \"estimatedAmount\": \"7000\",\n"
-        + "    \"timeOut\": \"25\",\n"
-        + "    \"etaToStartPoint\": \"1200\",\n"
-        + "    \"confirmationTime\": \"1234567890\",\n"
-        + "    \"executorDistance\": {\n"
-        + "        \"executorId\": \"5\",\n"
-        + "        \"distance\": \"1200239\"\n"
-        + "    },\n"
-        + "    \"route\": [\n"
-        + "        {\n"
-        + "            \"longitude\":\"456\",\n"
-        + "            \"latitude\":\"123\",\n"
-        + "            \"comment\":\"com\",\n"
-        + "            \"address\":\"add\"\n"
-        + "        }\n"
-        + "    ],\n"
-        + "    \"optionsMobile\": [\n"
-        + "        {\n"
-        + "            \"id\": 56,\n"
-        + "            \"name\": \"Грузчики\",\n"
-        + "            \"value\": \"2\",\n"
-        + "            \"numeric\": true,\n"
-        + "            \"dynamic\": true,\n"
-        + "            \"min\": 0,\n"
-        + "            \"max\": 2,\n"
-        + "            \"description\": null\n"
-        + "        },\n"
-        + "        {\n"
-        + "            \"id\": 55,\n"
-        + "            \"name\": \"Ремни крепления\",\n"
-        + "            \"value\": \"true\",\n"
-        + "            \"numeric\": false,\n"
-        + "            \"dynamic\": true,\n"
-        + "            \"min\": null,\n"
-        + "            \"max\": null,\n"
-        + "            \"description\": \"Имеются стяжные ремни для для фиксации груза.\"\n"
-        + "        },\n"
-        + "        {\n"
-        + "            \"id\": 6,\n"
-        + "            \"name\": \"Безналичная оплата\",\n"
-        + "            \"value\": \"true\",\n"
-        + "            \"numeric\": false,\n"
-        + "            \"dynamic\": true,\n"
-        + "            \"min\": null,\n"
-        + "            \"max\": null,\n"
-        + "            \"description\": null\n"
-        + "        },\n"
-        + "        {\n"
-        + "            \"id\": 57,\n"
-        + "            \"name\": \"Гидроборт\",\n"
-        + "            \"value\": \"1500\",\n"
-        + "            \"numeric\": true,\n"
-        + "            \"dynamic\": false,\n"
-        + "            \"min\": null,\n"
-        + "            \"max\": null,\n"
-        + "            \"description\": \"Поднимающая штуковина\"\n"
-        + "        }\n"
-        + "    ]\n"
-        + "}");
+    Order order = mapper.map(rule.getFullOrder());
 
     // Результат:
     assertEquals(order.getId(), 7);
-    assertEquals(order.getComment(), "com");
-    assertEquals(order.getDistance(), 1200239);
-    assertEquals(order.getEstimatedPrice(), "7000");
+    assertEquals(order.getComment(), "some comment");
+    assertEquals(order.getEstimatedPrice(), "over 9999 BTC");
+    assertEquals(order.getOrderCost(), 10_000);
+    assertEquals(order.getExcessCost(), 352);
     assertEquals(order.getTimeout(), 25);
-    assertEquals(order.getEtaToStartPoint(), 1200);
-    assertEquals(order.getConfirmationTime(), 1234567890);
-    assertEquals(order.getRoutePoint().getLatitude(), 123, Double.MIN_VALUE);
-    assertEquals(order.getRoutePoint().getLongitude(), 456, Double.MIN_VALUE);
-    assertEquals(order.getRoutePoint().getComment(), "com");
-    assertEquals(order.getRoutePoint().getAddress(), "add");
-    assertEquals(order.getOptions(), Arrays.asList(
-        new OptionBoolean(0, "n", "d", false, false),
-        new OptionBoolean(0, "n", "d", false, false),
-        new OptionBoolean(0, "n", "d", false, false),
-        new OptionBoolean(0, "n", "d", false, false)
-    ));
+    assertEquals(order.getEtaToStartPoint(), 1234567890);
+    assertEquals(order.getConfirmationTime(), 9876543210L);
+    assertEquals(order.getOrderStartTime(), 9876598760L);
+    assertEquals(order.getDistance(), 546);
+    assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
+    assertEquals(order.getOptions(),
+        Arrays.asList(optionNumeric, optionBoolean, optionBoolean, optionNumeric)
+    );
   }
 
   /**
-   * Должен успешно преобразовать JSON в предложение заказа без опций.
+   * Должен успешно преобразовать JSON без ИД в заказ.
    *
    * @throws Exception ошибка
    */
   @Test
-  public void mappingJsonStringToOrderWithoutOptions() throws Exception {
+  public void mappingJsonStringWithoutIdToOrderSuccess() throws Exception {
     // Дано и Действие:
-    Order order = mapper.map("{\n"
-        + "    \"id\": \"7\",\n"
-        + "    \"comment\": \"com\",\n"
-        + "    \"estimatedAmount\": \"7000\",\n"
-        + "    \"timeOut\": \"25\",\n"
-        + "    \"etaToStartPoint\": \"1200\",\n"
-        + "    \"confirmationTime\": \"1234567890\",\n"
-        + "    \"executorDistance\": {\n"
-        + "        \"executorId\": \"5\",\n"
-        + "        \"distance\": \"1200239\"\n"
-        + "    },\n"
-        + "    \"route\": [\n"
-        + "        {\n"
-        + "            \"longitude\":\"456\",\n"
-        + "            \"latitude\":\"123\",\n"
-        + "            \"comment\":\"com\",\n"
-        + "            \"address\":\"add\"\n"
-        + "        }\n"
-        + "    ]\n"
-        + "}");
+    Order order = mapper.map(rule.getOrderWithoutId());
 
     // Результат:
-    assertEquals(order.getId(), 7);
-    assertEquals(order.getComment(), "com");
-    assertEquals(order.getDistance(), 1200239);
-    assertEquals(order.getEstimatedPrice(), "7000");
+    assertEquals(order.getId(), 0);
+    assertEquals(order.getComment(), "some comment");
+    assertEquals(order.getEstimatedPrice(), "over 9999 BTC");
+    assertEquals(order.getOrderCost(), 10_000);
+    assertEquals(order.getExcessCost(), 352);
     assertEquals(order.getTimeout(), 25);
-    assertEquals(order.getEtaToStartPoint(), 1200);
-    assertEquals(order.getConfirmationTime(), 1234567890);
-    assertEquals(order.getRoutePoint().getLatitude(), 123, Double.MIN_VALUE);
-    assertEquals(order.getRoutePoint().getLongitude(), 456, Double.MIN_VALUE);
-    assertEquals(order.getRoutePoint().getComment(), "com");
-    assertEquals(order.getRoutePoint().getAddress(), "add");
-    assertEquals(order.getOptions().size(), 0);
+    assertEquals(order.getEtaToStartPoint(), 1234567890);
+    assertEquals(order.getConfirmationTime(), 9876543210L);
+    assertEquals(order.getOrderStartTime(), 9876598760L);
+    assertEquals(order.getDistance(), 546);
+    assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
+    assertEquals(order.getOptions(),
+        Arrays.asList(optionNumeric, optionBoolean, optionBoolean, optionNumeric)
+    );
   }
 
   /**
-   * Должен успешно преобразовать JSON в предложение заказа без дистанции.
+   * Должен успешно преобразовать JSON без комментария в заказ.
    *
    * @throws Exception ошибка
    */
   @Test
-  public void mappingJsonStringToOrderWithoutDistance() throws Exception {
+  public void mappingJsonStringWithoutCommentToOrderSuccess() throws Exception {
     // Дано и Действие:
-    Order order = mapper.map("{\n"
-        + "    \"id\": \"7\",\n"
-        + "    \"comment\": \"com\",\n"
-        + "    \"estimatedAmount\": \"7000\",\n"
-        + "    \"timeOut\": \"25\",\n"
-        + "    \"etaToStartPoint\": \"1200\",\n"
-        + "    \"confirmationTime\": \"1234567890\",\n"
-        + "    \"route\": [\n"
-        + "        {\n"
-        + "            \"longitude\":\"456\",\n"
-        + "            \"latitude\":\"123\",\n"
-        + "            \"comment\":\"com\",\n"
-        + "            \"address\":\"add\"\n"
-        + "        }\n"
-        + "    ]\n"
-        + "}");
+    Order order = mapper.map(rule.getOrderWithoutComment());
 
     // Результат:
     assertEquals(order.getId(), 7);
-    assertEquals(order.getComment(), "com");
-    assertEquals(order.getDistance(), 0);
-    assertEquals(order.getEstimatedPrice(), "7000");
+    assertEquals(order.getComment(), "");
+    assertEquals(order.getEstimatedPrice(), "over 9999 BTC");
+    assertEquals(order.getOrderCost(), 10_000);
+    assertEquals(order.getExcessCost(), 352);
     assertEquals(order.getTimeout(), 25);
-    assertEquals(order.getEtaToStartPoint(), 1200);
-    assertEquals(order.getConfirmationTime(), 1234567890);
-    assertEquals(order.getRoutePoint().getLatitude(), 123, Double.MIN_VALUE);
-    assertEquals(order.getRoutePoint().getLongitude(), 456, Double.MIN_VALUE);
-    assertEquals(order.getRoutePoint().getComment(), "com");
-    assertEquals(order.getRoutePoint().getAddress(), "add");
-    assertEquals(order.getOptions().size(), 0);
+    assertEquals(order.getEtaToStartPoint(), 1234567890);
+    assertEquals(order.getConfirmationTime(), 9876543210L);
+    assertEquals(order.getOrderStartTime(), 9876598760L);
+    assertEquals(order.getDistance(), 546);
+    assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
+    assertEquals(order.getOptions(),
+        Arrays.asList(optionNumeric, optionBoolean, optionBoolean, optionNumeric)
+    );
   }
 
   /**
-   * Должен успешно преобразовать JSON без таймаута.
+   * Должен успешно преобразовать JSON без описания цены в заказ.
    *
    * @throws Exception ошибка
    */
   @Test
-  public void mappingJsonStringWithoutTimeoutToOrder() throws Exception {
+  public void mappingJsonStringWithoutEstimationToOrderSuccess() throws Exception {
     // Дано и Действие:
-    Order order = mapper.map("{\n"
-        + "    \"id\": \"7\",\n"
-        + "    \"comment\": \"com\",\n"
-        + "    \"estimatedAmount\": \"7000\",\n"
-        + "    \"etaToStartPoint\": \"1200\",\n"
-        + "    \"confirmationTime\": \"1234567890\",\n"
-        + "    \"executorDistance\": {\n"
-        + "        \"executorId\": \"5\",\n"
-        + "        \"distance\": \"1200239\"\n"
-        + "    },\n"
-        + "    \"route\": [\n"
-        + "        {\n"
-        + "            \"longitude\":\"456\",\n"
-        + "            \"latitude\":\"123\",\n"
-        + "            \"comment\":\"com\",\n"
-        + "            \"address\":\"add\"\n"
-        + "        }\n"
-        + "    ]\n"
-        + "}");
+    Order order = mapper.map(rule.getOrderWithoutEstimation());
 
     // Результат:
     assertEquals(order.getId(), 7);
-    assertEquals(order.getComment(), "com");
-    assertEquals(order.getDistance(), 1200239);
-    assertEquals(order.getEstimatedPrice(), "7000");
+    assertEquals(order.getComment(), "some comment");
+    assertEquals(order.getEstimatedPrice(), "");
+    assertEquals(order.getOrderCost(), 10_000);
+    assertEquals(order.getExcessCost(), 352);
+    assertEquals(order.getTimeout(), 25);
+    assertEquals(order.getEtaToStartPoint(), 1234567890);
+    assertEquals(order.getConfirmationTime(), 9876543210L);
+    assertEquals(order.getOrderStartTime(), 9876598760L);
+    assertEquals(order.getDistance(), 546);
+    assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
+    assertEquals(order.getOptions(),
+        Arrays.asList(optionNumeric, optionBoolean, optionBoolean, optionNumeric)
+    );
+  }
+
+  /**
+   * Должен успешно преобразовать JSON без рассчетной стоимости в заказ.
+   *
+   * @throws Exception ошибка
+   */
+  @Test
+  public void mappingJsonStringWithoutCostToOrderSuccess() throws Exception {
+    // Дано и Действие:
+    Order order = mapper.map(rule.getOrderWithoutCost());
+
+    // Результат:
+    assertEquals(order.getId(), 7);
+    assertEquals(order.getComment(), "some comment");
+    assertEquals(order.getEstimatedPrice(), "over 9999 BTC");
+    assertEquals(order.getOrderCost(), 0);
+    assertEquals(order.getExcessCost(), 352);
+    assertEquals(order.getTimeout(), 25);
+    assertEquals(order.getEtaToStartPoint(), 1234567890);
+    assertEquals(order.getConfirmationTime(), 9876543210L);
+    assertEquals(order.getOrderStartTime(), 9876598760L);
+    assertEquals(order.getDistance(), 546);
+    assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
+    assertEquals(order.getOptions(),
+        Arrays.asList(optionNumeric, optionBoolean, optionBoolean, optionNumeric)
+    );
+  }
+
+  /**
+   * Должен успешно преобразовать JSON без стоимости сверх пакета в заказ.
+   *
+   * @throws Exception ошибка
+   */
+  @Test
+  public void mappingJsonStringWithoutExcessCostToOrderSuccess() throws Exception {
+    // Дано и Действие:
+    Order order = mapper.map(rule.getOrderWithoutExcessCost());
+
+    // Результат:
+    assertEquals(order.getId(), 7);
+    assertEquals(order.getComment(), "some comment");
+    assertEquals(order.getEstimatedPrice(), "over 9999 BTC");
+    assertEquals(order.getOrderCost(), 10_000);
+    assertEquals(order.getExcessCost(), 0);
+    assertEquals(order.getTimeout(), 25);
+    assertEquals(order.getEtaToStartPoint(), 1234567890);
+    assertEquals(order.getConfirmationTime(), 9876543210L);
+    assertEquals(order.getOrderStartTime(), 9876598760L);
+    assertEquals(order.getDistance(), 546);
+    assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
+    assertEquals(order.getOptions(),
+        Arrays.asList(optionNumeric, optionBoolean, optionBoolean, optionNumeric)
+    );
+  }
+
+  /**
+   * Должен успешно преобразовать JSON без таймаута в заказ.
+   *
+   * @throws Exception ошибка
+   */
+  @Test
+  public void mappingJsonStringWithoutTimeoutToOrderSuccess() throws Exception {
+    // Дано и Действие:
+    Order order = mapper.map(rule.getOrderWithoutTimeout());
+
+    // Результат:
+    assertEquals(order.getId(), 7);
+    assertEquals(order.getComment(), "some comment");
+    assertEquals(order.getEstimatedPrice(), "over 9999 BTC");
+    assertEquals(order.getOrderCost(), 10_000);
+    assertEquals(order.getExcessCost(), 352);
     assertEquals(order.getTimeout(), 0);
-    assertEquals(order.getEtaToStartPoint(), 1200);
-    assertEquals(order.getConfirmationTime(), 1234567890);
-    assertEquals(order.getRoutePoint().getLatitude(), 123, Double.MIN_VALUE);
-    assertEquals(order.getRoutePoint().getLongitude(), 456, Double.MIN_VALUE);
-    assertEquals(order.getRoutePoint().getComment(), "com");
-    assertEquals(order.getRoutePoint().getAddress(), "add");
-    assertEquals(order.getOptions().size(), 0);
+    assertEquals(order.getEtaToStartPoint(), 1234567890);
+    assertEquals(order.getConfirmationTime(), 9876543210L);
+    assertEquals(order.getOrderStartTime(), 9876598760L);
+    assertEquals(order.getDistance(), 546);
+    assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
+    assertEquals(order.getOptions(),
+        Arrays.asList(optionNumeric, optionBoolean, optionBoolean, optionNumeric)
+    );
+  }
+
+  /**
+   * Должен дать ошибку, если пришел JSON без ETA.
+   *
+   * @throws Exception ошибка
+   */
+  @Test(expected = DataMappingException.class)
+  public void mappingJsonStringWithoutEtaToOrderFail() throws Exception {
+    // Дано и Действие:
+    Order order = mapper.map(rule.getOrderWithoutEta());
+
+    // Результат:
+    assertEquals(order.getId(), 7);
+    assertEquals(order.getComment(), "some comment");
+    assertEquals(order.getEstimatedPrice(), "over 9999 BTC");
+    assertEquals(order.getOrderCost(), 10_000);
+    assertEquals(order.getExcessCost(), 352);
+    assertEquals(order.getTimeout(), 25);
+    assertEquals(order.getEtaToStartPoint(), 0);
+    assertEquals(order.getConfirmationTime(), 9876543210L);
+    assertEquals(order.getOrderStartTime(), 9876598760L);
+    assertEquals(order.getDistance(), 546);
+    assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
+    assertEquals(order.getOptions(),
+        Arrays.asList(optionNumeric, optionBoolean, optionBoolean, optionNumeric)
+    );
+  }
+
+  /**
+   * Должен дать ошибку, если пришел JSON без времени подтверждения.
+   *
+   * @throws Exception ошибка
+   */
+  @Test(expected = DataMappingException.class)
+  public void mappingJsonStringWithoutConfirmationTimeToOrderFail() throws Exception {
+    // Дано и Действие:
+    Order order = mapper.map(rule.getOrderWithoutConfirmationTime());
+
+    // Результат:
+    assertEquals(order.getId(), 7);
+    assertEquals(order.getComment(), "some comment");
+    assertEquals(order.getEstimatedPrice(), "over 9999 BTC");
+    assertEquals(order.getOrderCost(), 10_000);
+    assertEquals(order.getExcessCost(), 352);
+    assertEquals(order.getTimeout(), 25);
+    assertEquals(order.getEtaToStartPoint(), 1234567890);
+    assertEquals(order.getConfirmationTime(), 0);
+    assertEquals(order.getOrderStartTime(), 9876598760L);
+    assertEquals(order.getDistance(), 546);
+    assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
+    assertEquals(order.getOptions(),
+        Arrays.asList(optionNumeric, optionBoolean, optionBoolean, optionNumeric)
+    );
+  }
+
+  /**
+   * Должен успешно преобразовать JSON без времени начала в заказ.
+   *
+   * @throws Exception ошибка
+   */
+  @Test
+  public void mappingJsonStringWithoutStartTimeToOrderSuccess() throws Exception {
+    // Дано и Действие:
+    Order order = mapper.map(rule.getOrderWithoutStartTime());
+
+    // Результат:
+    assertEquals(order.getId(), 7);
+    assertEquals(order.getComment(), "some comment");
+    assertEquals(order.getEstimatedPrice(), "over 9999 BTC");
+    assertEquals(order.getOrderCost(), 10_000);
+    assertEquals(order.getExcessCost(), 352);
+    assertEquals(order.getTimeout(), 25);
+    assertEquals(order.getEtaToStartPoint(), 1234567890);
+    assertEquals(order.getConfirmationTime(), 9876543210L);
+    assertEquals(order.getOrderStartTime(), 0);
+    assertEquals(order.getDistance(), 546);
+    assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
+    assertEquals(order.getOptions(),
+        Arrays.asList(optionNumeric, optionBoolean, optionBoolean, optionNumeric)
+    );
+  }
+
+  /**
+   * Должен успешно преобразовать JSON без ИД в дистанции в заказ.
+   *
+   * @throws Exception ошибка
+   */
+  @Test
+  public void mappingJsonStringWithoutDistanceIdToOrderSuccess() throws Exception {
+    // Дано и Действие:
+    Order order = mapper.map(rule.getOrderWithoutDistanceId());
+
+    // Результат:
+    assertEquals(order.getId(), 7);
+    assertEquals(order.getComment(), "some comment");
+    assertEquals(order.getEstimatedPrice(), "over 9999 BTC");
+    assertEquals(order.getOrderCost(), 10_000);
+    assertEquals(order.getExcessCost(), 352);
+    assertEquals(order.getTimeout(), 25);
+    assertEquals(order.getEtaToStartPoint(), 1234567890);
+    assertEquals(order.getConfirmationTime(), 9876543210L);
+    assertEquals(order.getOrderStartTime(), 9876598760L);
+    assertEquals(order.getDistance(), 546);
+    assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
+    assertEquals(order.getOptions(),
+        Arrays.asList(optionNumeric, optionBoolean, optionBoolean, optionNumeric)
+    );
+  }
+
+  /**
+   * Должен дать ошибку, если пришел JSON без значения дистанции.
+   *
+   * @throws Exception ошибка
+   */
+  @Test(expected = DataMappingException.class)
+  public void mappingJsonStringWithoutDistanceValueToOrderFail() throws Exception {
+    // Дано и Действие:
+    Order order = mapper.map(rule.getOrderWithoutDistanceValue());
+
+    // Результат:
+    assertEquals(order.getId(), 7);
+    assertEquals(order.getComment(), "some comment");
+    assertEquals(order.getEstimatedPrice(), "over 9999 BTC");
+    assertEquals(order.getOrderCost(), 10_000);
+    assertEquals(order.getExcessCost(), 352);
+    assertEquals(order.getTimeout(), 25);
+    assertEquals(order.getEtaToStartPoint(), 1234567890);
+    assertEquals(order.getConfirmationTime(), 9876543210L);
+    assertEquals(order.getOrderStartTime(), 9876598760L);
+    assertEquals(order.getDistance(), 0);
+    assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
+    assertEquals(order.getOptions(),
+        Arrays.asList(optionNumeric, optionBoolean, optionBoolean, optionNumeric)
+    );
+  }
+
+  /**
+   * Должен успешно преобразовать JSON без дистанции в заказ.
+   *
+   * @throws Exception ошибка
+   */
+  @Test
+  public void mappingJsonStringWithoutDistanceToOrderSuccess() throws Exception {
+    // Дано и Действие:
+    Order order = mapper.map(rule.getOrderWithoutDistance());
+
+    // Результат:
+    assertEquals(order.getId(), 7);
+    assertEquals(order.getComment(), "some comment");
+    assertEquals(order.getEstimatedPrice(), "over 9999 BTC");
+    assertEquals(order.getOrderCost(), 10_000);
+    assertEquals(order.getExcessCost(), 352);
+    assertEquals(order.getTimeout(), 25);
+    assertEquals(order.getEtaToStartPoint(), 1234567890);
+    assertEquals(order.getConfirmationTime(), 9876543210L);
+    assertEquals(order.getOrderStartTime(), 9876598760L);
+    assertEquals(order.getDistance(), 0);
+    assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
+    assertEquals(order.getOptions(),
+        Arrays.asList(optionNumeric, optionBoolean, optionBoolean, optionNumeric)
+    );
+  }
+
+  /**
+   * Должен дать ошибку, если пришел JSON с пустым маршрутом.
+   *
+   * @throws Exception ошибка
+   */
+  @Test(expected = DataMappingException.class)
+  public void mappingJsonStringWithEmptyRouteToOrderFail() throws Exception {
+    // Дано и Действие:
+    Order order = mapper.map(rule.getOrderWithEmptyRoute());
+
+    // Результат:
+    assertEquals(order.getId(), 7);
+    assertEquals(order.getComment(), "some comment");
+    assertEquals(order.getEstimatedPrice(), "over 9999 BTC");
+    assertEquals(order.getOrderCost(), 10_000);
+    assertEquals(order.getExcessCost(), 352);
+    assertEquals(order.getTimeout(), 25);
+    assertEquals(order.getEtaToStartPoint(), 1234567890);
+    assertEquals(order.getConfirmationTime(), 9876543210L);
+    assertEquals(order.getOrderStartTime(), 9876598760L);
+    assertEquals(order.getDistance(), 546);
+    assertEquals(order.getRoutePath(), new ArrayList<>());
+    assertEquals(order.getOptions(),
+        Arrays.asList(optionNumeric, optionBoolean, optionBoolean, optionNumeric)
+    );
+  }
+
+  /**
+   * Должен дать ошибку, если пришел JSON без маршрута.
+   *
+   * @throws Exception ошибка
+   */
+  @Test(expected = DataMappingException.class)
+  public void mappingJsonStringWithoutRouteToOrderFail() throws Exception {
+    // Дано и Действие:
+    Order order = mapper.map(rule.getOrderWithoutRoute());
+
+    // Результат:
+    assertEquals(order.getId(), 7);
+    assertEquals(order.getComment(), "some comment");
+    assertEquals(order.getEstimatedPrice(), "over 9999 BTC");
+    assertEquals(order.getOrderCost(), 10_000);
+    assertEquals(order.getExcessCost(), 352);
+    assertEquals(order.getTimeout(), 25);
+    assertEquals(order.getEtaToStartPoint(), 1234567890);
+    assertEquals(order.getConfirmationTime(), 9876543210L);
+    assertEquals(order.getOrderStartTime(), 9876598760L);
+    assertEquals(order.getDistance(), 546);
+    assertEquals(order.getRoutePath(), new ArrayList<>());
+    assertEquals(order.getOptions(),
+        Arrays.asList(optionNumeric, optionBoolean, optionBoolean, optionNumeric)
+    );
+  }
+
+  /**
+   * Должен успешно преобразовать JSON с пустым списком опций в заказ.
+   *
+   * @throws Exception ошибка
+   */
+  @Test
+  public void mappingJsonStringWithEmptyOptionsToOrderSuccess() throws Exception {
+    // Дано и Действие:
+    Order order = mapper.map(rule.getOrderWithEmptyOptions());
+
+    // Результат:
+    assertEquals(order.getId(), 7);
+    assertEquals(order.getComment(), "some comment");
+    assertEquals(order.getEstimatedPrice(), "over 9999 BTC");
+    assertEquals(order.getOrderCost(), 10_000);
+    assertEquals(order.getExcessCost(), 352);
+    assertEquals(order.getTimeout(), 25);
+    assertEquals(order.getEtaToStartPoint(), 1234567890);
+    assertEquals(order.getConfirmationTime(), 9876543210L);
+    assertEquals(order.getOrderStartTime(), 9876598760L);
+    assertEquals(order.getDistance(), 546);
+    assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
+    assertEquals(order.getOptions(), new ArrayList<>());
+  }
+
+  /**
+   * Должен успешно преобразовать JSON без опций в заказ.
+   *
+   * @throws Exception ошибка
+   */
+  @Test
+  public void mappingJsonStringWithoutOptionsToOrderSuccess() throws Exception {
+    // Дано и Действие:
+    Order order = mapper.map(rule.getOrderWithoutOptions());
+
+    // Результат:
+    assertEquals(order.getId(), 7);
+    assertEquals(order.getComment(), "some comment");
+    assertEquals(order.getEstimatedPrice(), "over 9999 BTC");
+    assertEquals(order.getOrderCost(), 10_000);
+    assertEquals(order.getExcessCost(), 352);
+    assertEquals(order.getTimeout(), 25);
+    assertEquals(order.getEtaToStartPoint(), 1234567890);
+    assertEquals(order.getConfirmationTime(), 9876543210L);
+    assertEquals(order.getOrderStartTime(), 9876598760L);
+    assertEquals(order.getDistance(), 546);
+    assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
+    assertEquals(order.getOptions(), new ArrayList<>());
+  }
+
+  /**
+   * Должен дать ошибку, если была ошибка маппинга адреса.
+   *
+   * @throws Exception ошибка
+   */
+  @Test(expected = DataMappingException.class)
+  public void mappingFailForRoutePointMappingError() throws Exception {
+    // Дано
+    doThrow(new DataMappingException()).when(routePointMapper).map(any(ApiRoutePoint.class));
+
+    // Действие:
+    mapper.map(rule.getFullOrder());
+  }
+
+  /**
+   * Должен дать ошибку, если была ошибка маппинга опции.
+   *
+   * @throws Exception ошибка
+   */
+  @Test(expected = DataMappingException.class)
+  public void mappingFailForOptionMappingError() throws Exception {
+    // Дано
+    doThrow(new DataMappingException()).when(apiOptionMapper).map(any(ApiOptionItem.class));
+
+    // Действие:
+    mapper.map(rule.getFullOrder());
   }
 
   /**
@@ -290,170 +575,5 @@ public class MovingToClientApiMapperTest {
   public void mappingArrayFail() throws Exception {
     // Дано и Действие:
     mapper.map("[]");
-  }
-
-  /**
-   * Должен дать ошибку, если маршрута нет.
-   *
-   * @throws Exception ошибка
-   */
-  @Test(expected = DataMappingException.class)
-  public void mappingNullRouteFail() throws Exception {
-    // Дано и Действие:
-    mapper.map("{\n"
-        + "    \"id\": \"7\",\n"
-        + "    \"comment\": \"com\",\n"
-        + "    \"estimatedAmount\": \"7000\",\n"
-        + "    \"etaToStartPoint\": \"1200\",\n"
-        + "    \"confirmationTime\": \"1234567890\",\n"
-        + "    \"timeOut\": \"25\",\n"
-        + "    \"executorDistance\": {\n"
-        + "        \"executorId\": \"5\",\n"
-        + "        \"distance\": \"1200239\"\n"
-        + "    }\n"
-        + "}");
-  }
-
-  /**
-   * Должен дать ошибку, если в маршруте нет точек.
-   *
-   * @throws Exception ошибка
-   */
-  @Test(expected = DataMappingException.class)
-  public void mappingEmptyRouteFail() throws Exception {
-    // Дано и Действие:
-    mapper.map("{\n"
-        + "    \"id\": \"7\",\n"
-        + "    \"comment\": \"com\",\n"
-        + "    \"estimatedAmount\": \"7000\",\n"
-        + "    \"etaToStartPoint\": \"1200\",\n"
-        + "    \"confirmationTime\": \"1234567890\",\n"
-        + "    \"timeOut\": \"25\",\n"
-        + "    \"executorDistance\": {\n"
-        + "        \"executorId\": \"5\",\n"
-        + "        \"distance\": \"1200239\"\n"
-        + "    },\n"
-        + "    \"route\": [\n"
-        + "    ]\n"
-        + "}");
-  }
-
-  /**
-   * Должен дать ошибку, если нет адреса.
-   *
-   * @throws Exception ошибка
-   */
-  @Test(expected = DataMappingException.class)
-  public void mappingNullAddressFail() throws Exception {
-    // Дано и Действие:
-    mapper.map("{\n"
-        + "    \"id\": \"7\",\n"
-        + "    \"comment\": \"com\",\n"
-        + "    \"estimatedAmount\": \"7000\",\n"
-        + "    \"etaToStartPoint\": \"1200\",\n"
-        + "    \"confirmationTime\": \"1234567890\",\n"
-        + "    \"timeOut\": \"25\",\n"
-        + "    \"executorDistance\": {\n"
-        + "        \"executorId\": \"5\",\n"
-        + "        \"distance\": \"1200239\"\n"
-        + "    },\n"
-        + "    \"route\": [\n"
-        + "        {\n"
-        + "            \"longitude\":\"456\",\n"
-        + "            \"latitude\":\"123\",\n"
-        + "            \"comment\":\"com\"\n"
-        + "        }\n"
-        + "    ]\n"
-        + "}");
-  }
-
-  /**
-   * Должен дать ошибку, если адрес пустой.
-   *
-   * @throws Exception ошибка
-   */
-  @Test(expected = DataMappingException.class)
-  public void mappingEmptyAddressFail() throws Exception {
-    // Дано и Действие:
-    mapper.map("{\n"
-        + "    \"id\": \"7\",\n"
-        + "    \"comment\": \"com\",\n"
-        + "    \"estimatedAmount\": \"7000\",\n"
-        + "    \"etaToStartPoint\": \"1200\",\n"
-        + "    \"confirmationTime\": \"1234567890\",\n"
-        + "    \"timeOut\": \"25\",\n"
-        + "    \"executorDistance\": {\n"
-        + "        \"executorId\": \"5\",\n"
-        + "        \"distance\": \"1200239\"\n"
-        + "    },\n"
-        + "    \"route\": [\n"
-        + "        {\n"
-        + "            \"longitude\":\"456\",\n"
-        + "            \"latitude\":\"123\",\n"
-        + "            \"comment\":\"com\",\n"
-        + "            \"address\":\"\"\n"
-        + "        }\n"
-        + "    ]\n"
-        + "}");
-  }
-
-  /**
-   * Должен дать ошибку, если ETA = 0.
-   *
-   * @throws Exception ошибка
-   */
-  @Test(expected = DataMappingException.class)
-  public void mappingZeroEtaFail() throws Exception {
-    // Дано и Действие:
-    mapper.map("{\n"
-        + "    \"id\": \"7\",\n"
-        + "    \"comment\": \"com\",\n"
-        + "    \"estimatedAmount\": \"7000\",\n"
-        + "    \"etaToStartPoint\": \"0\",\n"
-        + "    \"confirmationTime\": \"1234567890\",\n"
-        + "    \"timeOut\": \"25\",\n"
-        + "    \"executorDistance\": {\n"
-        + "        \"executorId\": \"5\",\n"
-        + "        \"distance\": \"1200239\"\n"
-        + "    },\n"
-        + "    \"route\": [\n"
-        + "        {\n"
-        + "            \"longitude\":\"456\",\n"
-        + "            \"latitude\":\"123\",\n"
-        + "            \"comment\":\"com\",\n"
-        + "            \"address\":\"add\"\n"
-        + "        }\n"
-        + "    ]\n"
-        + "}");
-  }
-
-  /**
-   * Должен дать ошибку, если время подтверждения = 0.
-   *
-   * @throws Exception ошибка
-   */
-  @Test(expected = DataMappingException.class)
-  public void mappingZeroConfirmationTimeFail() throws Exception {
-    // Дано и Действие:
-    mapper.map("{\n"
-        + "    \"id\": \"7\",\n"
-        + "    \"comment\": \"com\",\n"
-        + "    \"etaToStartPoint\": \"1200\",\n"
-        + "    \"estimatedAmount\": \"7000\",\n"
-        + "    \"etaToStartPoint\": \"0\",\n"
-        + "    \"timeOut\": \"25\",\n"
-        + "    \"executorDistance\": {\n"
-        + "        \"executorId\": \"5\",\n"
-        + "        \"distance\": \"1200239\"\n"
-        + "    },\n"
-        + "    \"route\": [\n"
-        + "        {\n"
-        + "            \"longitude\":\"456\",\n"
-        + "            \"latitude\":\"123\",\n"
-        + "            \"comment\":\"com\",\n"
-        + "            \"address\":\"add\"\n"
-        + "        }\n"
-        + "    ]\n"
-        + "}");
   }
 }

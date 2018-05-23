@@ -4,18 +4,38 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 
+@RunWith(MockitoJUnitRunner.class)
 public class OrderTest {
 
   private Order order;
+  @Mock
+  private OptionNumeric option0;
+  @Mock
+  private OptionNumeric option1;
+  @Mock
+  private OptionBoolean option2;
+  @Mock
+  private OptionBoolean option3;
+  @Mock
   private RoutePoint routePoint;
+  @Mock
+  private RoutePoint routePoint1;
+  @Mock
+  private RoutePoint routePoint2;
+  @Mock
+  private RoutePoint routePoint3;
 
   @Before
   public void setUp() {
-    routePoint = new RoutePoint(10, 5, "com", "add");
-    order = new Order(7, "com", 1200239, "7000", 20, 600, 1234567890, routePoint);
+    order = new Order(7, "com", 1200239, "7000", 7000, 2400, 20, 600, 1234567890, 9876543210L);
+    order.addRoutePoints(routePoint);
   }
 
   @Test
@@ -24,62 +44,51 @@ public class OrderTest {
     assertEquals(order.getComment(), "com");
     assertEquals(order.getDistance(), 1200239);
     assertEquals(order.getEstimatedPrice(), "7000");
+    assertEquals(order.getOrderCost(), 7000);
+    assertEquals(order.getExcessCost(), 2400);
     assertEquals(order.getTimeout(), 20);
     assertEquals(order.getEtaToStartPoint(), 600);
     assertEquals(order.getConfirmationTime(), 1234567890);
-    assertEquals(order.getRoutePoint(), routePoint);
+    assertEquals(order.getOrderStartTime(), 9876543210L);
+    assertEquals(order.getRoutePath(), Collections.singletonList(routePoint));
     assertEquals(order.getOptions(), new ArrayList<Option>());
+    assertEquals(order.getRoutePath(), Collections.singletonList(routePoint));
   }
 
   @Test
   public void testSetOptions() {
-    order.setOptions(
-        new OptionNumeric(0, "name0", "description0", false, 10, 0, 20),
-        new OptionNumeric(1, "name1", "description1", true, -5, -18, 0),
-        new OptionBoolean(2, "name2", "description2", true, false),
-        new OptionBoolean(3, "name3", "description3", false, true)
-    );
-    order.setOptions(
-        new OptionNumeric(0, "name0", "description0", false, 10, 0, 20),
-        new OptionNumeric(1, "name1", "description1", true, -5, -18, 0),
-        new OptionBoolean(2, "name2", "description2", true, false),
-        new OptionBoolean(3, "name3", "description3", false, true)
-    );
-    assertEquals(order.getOptions(), new ArrayList<Option>(
-        Arrays.asList(
-            new OptionNumeric(0, "name0", "description0", false, 10, 0, 20),
-            new OptionNumeric(1, "name1", "description1", true, -5, -18, 0),
-            new OptionBoolean(2, "name2", "description2", true, false),
-            new OptionBoolean(3, "name3", "description3", false, true)
-        )
+    order.setOptions(option0, option1, option2, option3);
+    order.setOptions(option3, option1, option0, option2);
+    assertEquals(order.getOptions(), new ArrayList<>(
+        Arrays.asList(option3, option1, option0, option2)
     ));
   }
 
   @Test
   public void testAddOptions() {
-    order.addOptions(
-        new OptionNumeric(0, "name0", "description0", false, 10, 0, 20),
-        new OptionNumeric(1, "name1", "description1", true, -5, -18, 0),
-        new OptionBoolean(2, "name2", "description2", true, false),
-        new OptionBoolean(3, "name3", "description3", false, true)
-    );
-    order.addOptions(
-        new OptionNumeric(0, "name0", "description0", false, 10, 0, 20),
-        new OptionNumeric(1, "name1", "description1", true, -5, -18, 0),
-        new OptionBoolean(2, "name2", "description2", true, false),
-        new OptionBoolean(3, "name3", "description3", false, true)
-    );
-    assertEquals(order.getOptions(), new ArrayList<Option>(
-        Arrays.asList(
-            new OptionNumeric(0, "name0", "description0", false, 10, 0, 20),
-            new OptionNumeric(1, "name1", "description1", true, -5, -18, 0),
-            new OptionBoolean(2, "name2", "description2", true, false),
-            new OptionBoolean(3, "name3", "description3", false, true),
-            new OptionNumeric(0, "name0", "description0", false, 10, 0, 20),
-            new OptionNumeric(1, "name1", "description1", true, -5, -18, 0),
-            new OptionBoolean(2, "name2", "description2", true, false),
-            new OptionBoolean(3, "name3", "description3", false, true)
-        )
+    order.addOptions(option0, option1, option2, option3);
+    order.addOptions(option3, option1, option0, option2);
+    assertEquals(order.getOptions(), new ArrayList<>(
+        Arrays.asList(option0, option1, option2, option3, option3, option1, option0, option2)
+    ));
+  }
+
+  @Test
+  public void testSetRoutePoints() {
+    order.setRoutePoints(routePoint1, routePoint2, routePoint3);
+    order.setRoutePoints(routePoint3, routePoint2, routePoint1);
+    assertEquals(order.getRoutePath(), new ArrayList<>(
+        Arrays.asList(routePoint3, routePoint2, routePoint1)
+    ));
+  }
+
+  @Test
+  public void testAddRoutePoints() {
+    order.addRoutePoints(routePoint1, routePoint2, routePoint3);
+    order.addRoutePoints(routePoint3, routePoint2, routePoint1);
+    assertEquals(order.getRoutePath(), new ArrayList<>(
+        Arrays.asList(routePoint, routePoint1, routePoint2, routePoint3, routePoint3, routePoint2,
+            routePoint1)
     ));
   }
 }

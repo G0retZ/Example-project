@@ -7,6 +7,7 @@ import static org.mockito.Mockito.when;
 import com.fasten.executor_driver.entity.Order;
 import com.fasten.executor_driver.entity.RoutePoint;
 import com.fasten.executor_driver.utils.TimeUtils;
+import java.util.Collections;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -38,7 +39,7 @@ public class RouteItemTest {
   @Test
   public void testGetters() {
     // Дано:
-    when(order.getRoutePoint()).thenReturn(routePoint);
+    when(order.getRoutePath()).thenReturn(Collections.singletonList(routePoint));
     when(order.getEtaToStartPoint()).thenReturn(358L);
     when(order.getConfirmationTime()).thenReturn(12384000L);
     when(routePoint.getAddress()).thenReturn("add");

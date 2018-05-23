@@ -184,6 +184,25 @@ public class ExecutorStateNotOnlineUseCaseTest {
   }
 
   /**
+   * Не должен трогать гейтвей передачи статусов, если последний статус был "выполнение заказа".
+   */
+  @Test
+  public void DoNotTouchGatewayIfOrderFulfillment() {
+    // Дано:
+    PublishSubject<ExecutorState> publishSubject = PublishSubject.create();
+    when(executorStateUseCase.getExecutorStates(anyBoolean()))
+        .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
+    executorStateNotOnlineUseCase.getExecutorStates().test();
+    publishSubject.onNext(ExecutorState.ORDER_FULFILLMENT);
+
+    // Действие:
+    executorStateNotOnlineUseCase.setExecutorNotOnline().test();
+
+    // Результат:
+    verifyZeroInteractions(executorStateSwitchGateway);
+  }
+
+  /**
    * Должен отправить статус "смена открыта" через гейтвей передачи статусов.
    */
   @Test
@@ -340,6 +359,28 @@ public class ExecutorStateNotOnlineUseCaseTest {
         .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
     executorStateNotOnlineUseCase.getExecutorStates().test();
     publishSubject.onNext(ExecutorState.WAITING_FOR_CLIENT);
+
+    // Действие:
+    TestObserver<Void> testObserver =
+        executorStateNotOnlineUseCase.setExecutorNotOnline().test();
+
+    // Результат:
+    testObserver.assertNoValues();
+    testObserver.assertNotComplete();
+    testObserver.assertError(ForbiddenExecutorStateException.class);
+  }
+
+  /**
+   * Должен вернуть ошибку неподходящего статуса, если статус "выполнение заказа".
+   */
+  @Test
+  public void answerForbiddenStatusErrorIfOrderFulfillment() {
+    // Дано:
+    PublishSubject<ExecutorState> publishSubject = PublishSubject.create();
+    when(executorStateUseCase.getExecutorStates(anyBoolean()))
+        .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
+    executorStateNotOnlineUseCase.getExecutorStates().test();
+    publishSubject.onNext(ExecutorState.ORDER_FULFILLMENT);
 
     // Действие:
     TestObserver<Void> testObserver =

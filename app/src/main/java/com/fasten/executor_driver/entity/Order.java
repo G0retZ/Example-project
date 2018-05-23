@@ -9,6 +9,7 @@ import java.util.List;
  * Неизменная бизнес сущность заказа. Содержит в себе ID, комментарий, расстояние до клиента,
  * предполагаемую цену, список опций и таймуат предложения.
  * Список опций неизменен, но его содержимое может изменяться - дополняться или заменяться.
+ * Список точек маршрута неизменен, но его содержимое может изменяться - дополняться или заменяться.
  */
 public class Order {
 
@@ -16,25 +17,32 @@ public class Order {
   @NonNull
   private final String comment;
   private final long distance;
+  @NonNull
   private final String estimatedPrice;
+  private final int orderCost;
+  private final int excessCost;
   private final int timeout;
   private final long etaToStartPoint;
   private final long confirmationTime;
+  private final long orderStartTime;
   @NonNull
   private final List<Option> options = new ArrayList<>();
   @NonNull
-  private final RoutePoint routePoint;
+  private final List<RoutePoint> routePath = new ArrayList<>();
 
-  public Order(long id, @NonNull String comment, long distance, String estimatedPrice, int timeout,
-      long etaToStartPoint, long confirmationTime, @NonNull RoutePoint routePoint) {
+  public Order(long id, @NonNull String comment, long distance, @NonNull String estimatedPrice,
+      int orderCost, int excessCost, int timeout,
+      long etaToStartPoint, long confirmationTime, long orderStartTime) {
     this.id = id;
     this.comment = comment;
     this.distance = distance;
     this.estimatedPrice = estimatedPrice;
+    this.orderCost = orderCost;
+    this.excessCost = excessCost;
     this.timeout = timeout;
-    this.routePoint = routePoint;
     this.etaToStartPoint = etaToStartPoint;
     this.confirmationTime = confirmationTime;
+    this.orderStartTime = orderStartTime;
   }
 
   public long getId() {
@@ -50,8 +58,17 @@ public class Order {
     return distance;
   }
 
+  @NonNull
   public String getEstimatedPrice() {
     return estimatedPrice;
+  }
+
+  public int getOrderCost() {
+    return orderCost;
+  }
+
+  public int getExcessCost() {
+    return excessCost;
   }
 
   public int getTimeout() {
@@ -64,6 +81,10 @@ public class Order {
 
   public long getConfirmationTime() {
     return confirmationTime;
+  }
+
+  public long getOrderStartTime() {
+    return orderStartTime;
   }
 
   @NonNull
@@ -81,7 +102,16 @@ public class Order {
   }
 
   @NonNull
-  public RoutePoint getRoutePoint() {
-    return routePoint;
+  public List<RoutePoint> getRoutePath() {
+    return routePath;
+  }
+
+  public void setRoutePoints(@NonNull RoutePoint... routePoints) {
+    routePath.clear();
+    addRoutePoints(routePoints);
+  }
+
+  public void addRoutePoints(@NonNull RoutePoint... routePoints) {
+    routePath.addAll(Arrays.asList(routePoints));
   }
 }

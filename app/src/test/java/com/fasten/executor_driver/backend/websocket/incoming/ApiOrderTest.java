@@ -20,14 +20,14 @@ public class ApiOrderTest {
     apiOrder = new ApiOrder(
         432,
         "More than $3000",
-        "some comment",
+        5000, 2300, "some comment",
         23,
         1200,
         1234567890,
-        new ApiDriverDistancePair(32),
+        9876543210L, new ApiDriverDistancePair(32),
         Arrays.asList(
-            new ApiRoutePoint(123, 456, "point comment", "address"),
-            new ApiRoutePoint(321, 654, "comment point", "rest")
+            new ApiRoutePoint(5, 123, 456, "point comment", "address", true),
+            new ApiRoutePoint(6, 321, 654, "comment point", "rest", false)
         ),
         Arrays.asList(
             new ApiOptionItem(12, "name", "description", false, false, "false", null, null),
@@ -40,22 +40,29 @@ public class ApiOrderTest {
   public void testConstructor() {
     assertEquals(apiOrder.getId(), 432);
     assertEquals(apiOrder.getEstimatedAmount(), "More than $3000");
+    assertEquals(apiOrder.getOrderCost(), 5000);
+    assertEquals(apiOrder.getExcessCost(), 2300);
     assertEquals(apiOrder.getComment(), "some comment");
     assertEquals(apiOrder.getTimeout(), 23);
     assertEquals(apiOrder.getEtaToStartPoint(), 1200);
     assertEquals(apiOrder.getConfirmationTime(), 1234567890);
+    assertEquals(apiOrder.getOrderStartTime(), 9876543210L);
     assertNotNull(apiOrder.getExecutorDistance());
     assertEquals(apiOrder.getExecutorDistance().getDistance(), 32);
     assertNotNull(apiOrder.getRoute());
     assertEquals(apiOrder.getRoute().size(), 2);
+    assertEquals(apiOrder.getRoute().get(0).getId(), 5);
     assertEquals(apiOrder.getRoute().get(0).getLatitude(), 123, Double.MIN_VALUE);
     assertEquals(apiOrder.getRoute().get(0).getLongitude(), 456, Double.MIN_VALUE);
     assertEquals(apiOrder.getRoute().get(0).getComment(), "point comment");
     assertEquals(apiOrder.getRoute().get(0).getAddress(), "address");
+    assertTrue(apiOrder.getRoute().get(0).isChecked());
+    assertEquals(apiOrder.getRoute().get(1).getId(), 6);
     assertEquals(apiOrder.getRoute().get(1).getLatitude(), 321, Double.MIN_VALUE);
     assertEquals(apiOrder.getRoute().get(1).getLongitude(), 654, Double.MIN_VALUE);
     assertEquals(apiOrder.getRoute().get(1).getComment(), "comment point");
     assertEquals(apiOrder.getRoute().get(1).getAddress(), "rest");
+    assertFalse(apiOrder.getRoute().get(1).isChecked());
     assertNotNull(apiOrder.getOptions());
     assertEquals(apiOrder.getOptions().size(), 2);
     assertEquals(apiOrder.getOptions().get(0).getId(), 12);

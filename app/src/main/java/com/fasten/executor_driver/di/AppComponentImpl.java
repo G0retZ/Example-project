@@ -35,6 +35,7 @@ import com.fasten.executor_driver.gateway.OrderApiMapper;
 import com.fasten.executor_driver.gateway.OrderConfirmationGatewayImpl;
 import com.fasten.executor_driver.gateway.OrderGatewayImpl;
 import com.fasten.executor_driver.gateway.PasswordGatewayImpl;
+import com.fasten.executor_driver.gateway.RoutePointApiMapper;
 import com.fasten.executor_driver.gateway.SelectedVehicleOptionsGatewayImpl;
 import com.fasten.executor_driver.gateway.ServiceApiMapper;
 import com.fasten.executor_driver.gateway.ServicesGatewayImpl;
@@ -486,7 +487,10 @@ public class AppComponentImpl implements AppComponent {
                     new DriverOrderConfirmationUseCaseImpl(
                         new OrderGatewayImpl(
                             executorStateUseCase,
-                            new OrderApiMapper(new VehicleOptionApiMapper())
+                            new OrderApiMapper(
+                                new VehicleOptionApiMapper(),
+                                new RoutePointApiMapper()
+                            )
                         ),
                         new OrderConfirmationGatewayImpl(stompClient)),
                     new TimeUtilsImpl()
@@ -506,7 +510,10 @@ public class AppComponentImpl implements AppComponent {
                     new ClientOrderConfirmationUseCaseImpl(
                         new OrderGatewayImpl(
                             executorStateUseCase,
-                            new OrderApiMapper(new VehicleOptionApiMapper())
+                            new OrderApiMapper(
+                                new VehicleOptionApiMapper(),
+                                new RoutePointApiMapper()
+                            )
                         ),
                         new OrderConfirmationGatewayImpl(stompClient))
                 )
@@ -525,7 +532,10 @@ public class AppComponentImpl implements AppComponent {
                     new MovingToClientUseCaseImpl(
                         new OrderGatewayImpl(
                             executorStateUseCase,
-                            new MovingToClientApiMapper(new VehicleOptionApiMapper())
+                            new MovingToClientApiMapper(
+                                new VehicleOptionApiMapper(),
+                                new RoutePointApiMapper()
+                            )
                         ),
                         new MovingToClientGatewayImpl(stompClient)
                     ),
@@ -546,7 +556,10 @@ public class AppComponentImpl implements AppComponent {
                     new WaitingForClientUseCaseImpl(
                         new OrderGatewayImpl(
                             executorStateUseCase,
-                            new WaitingForClientApiMapper(new VehicleOptionApiMapper())
+                            new WaitingForClientApiMapper(
+                                new VehicleOptionApiMapper(),
+                                new RoutePointApiMapper()
+                            )
                         ),
                         new WaitingForClientGatewayImpl(stompClient)
                     )

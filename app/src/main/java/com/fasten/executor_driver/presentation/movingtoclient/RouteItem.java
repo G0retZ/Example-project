@@ -25,9 +25,9 @@ class RouteItem {
   public String getLoadPointMapUrl() {
     return "https://maps.googleapis.com/maps/api/staticmap?"
         + "center="
-        + order.getRoutePoint().getLatitude()
+        + order.getRoutePath().get(0).getLatitude()
         + ","
-        + order.getRoutePoint().getLongitude()
+        + order.getRoutePath().get(0).getLongitude()
         + "&zoom=16"
         + "&size=360x200"
         + "&maptype=roadmap"
@@ -36,7 +36,8 @@ class RouteItem {
 
   @NonNull
   public String getCoordinatesString() {
-    return order.getRoutePoint().getLatitude() + "," + order.getRoutePoint().getLongitude();
+    return order.getRoutePath().get(0).getLatitude() + ","
+        + order.getRoutePath().get(0).getLongitude();
   }
 
   public int getSecondsToMeetClient() {
@@ -46,7 +47,8 @@ class RouteItem {
 
   @NonNull
   public String getAddress() {
-    return (order.getRoutePoint().getAddress() + "\n" + order.getRoutePoint().getComment()).trim();
+    return (order.getRoutePath().get(0).getAddress() + "\n"
+        + order.getRoutePath().get(0).getComment()).trim();
   }
 
   @Override

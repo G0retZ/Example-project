@@ -3,6 +3,7 @@ package com.fasten.executor_driver.gateway;
 import android.support.annotation.NonNull;
 import com.fasten.executor_driver.backend.web.incoming.ApiOptionItem;
 import com.fasten.executor_driver.backend.websocket.incoming.ApiOrder;
+import com.fasten.executor_driver.backend.websocket.incoming.ApiRoutePoint;
 import com.fasten.executor_driver.entity.Option;
 import com.fasten.executor_driver.entity.Order;
 import com.fasten.executor_driver.entity.RoutePoint;
@@ -14,11 +15,16 @@ import javax.inject.Inject;
  */
 public class MovingToClientApiMapper implements Mapper<String, Order> {
 
+  @NonNull
   private final Mapper<ApiOptionItem, Option> apiOptionMapper;
+  @NonNull
+  private final Mapper<ApiRoutePoint, RoutePoint> routePointMapper;
 
   @Inject
-  public MovingToClientApiMapper(Mapper<ApiOptionItem, Option> apiOptionMapper) {
+  public MovingToClientApiMapper(@NonNull Mapper<ApiOptionItem, Option> apiOptionMapper,
+      @NonNull Mapper<ApiRoutePoint, RoutePoint> routePointMapper) {
     this.apiOptionMapper = apiOptionMapper;
+    this.routePointMapper = routePointMapper;
   }
 
   @NonNull
@@ -34,6 +40,12 @@ public class MovingToClientApiMapper implements Mapper<String, Order> {
     } catch (Exception e) {
       throw new DataMappingException("Ошибка маппинга: не удалось распарсить JSON!", e);
     }
+    if (apiOrder.getEtaToStartPoint() == 0) {
+      throw new DataMappingException("Ошибка маппинга: ETA должно быть больше 0!");
+    }
+    if (apiOrder.getConfirmationTime() == 0) {
+      throw new DataMappingException("Ошибка маппинга: Время подтверждения должно быть больше 0!");
+    }
     if (apiOrder.getRoute() == null) {
       throw new DataMappingException("Ошибка маппинга: маршрут не должен быть null!");
     }
@@ -42,39 +54,24 @@ public class MovingToClientApiMapper implements Mapper<String, Order> {
           "Ошибка маппинга: маршрут должен содержать хотя бы одну точку!"
       );
     }
-    String address = apiOrder.getRoute().get(0).getAddress();
-    if (address == null) {
-      throw new DataMappingException("Ошибка маппинга: адрес не должен быть null!");
-    }
-    if (address.isEmpty()) {
-      throw new DataMappingException("Ошибка маппинга: адрес не должен быть пустым!");
-    }
-    if (apiOrder.getEtaToStartPoint() == 0) {
-      throw new DataMappingException("Ошибка маппинга: ETA должно быть больше 0!");
-    }
-    if (apiOrder.getConfirmationTime() == 0) {
-      throw new DataMappingException("Ошибка маппинга: Время подтверждения должно быть больше 0!");
-    }
-    String comment = apiOrder.getRoute().get(0).getComment();
     Order order = new Order(
         apiOrder.getId(),
         apiOrder.getComment() == null ? "" : apiOrder.getComment(),
         apiOrder.getExecutorDistance() == null ? 0 : apiOrder.getExecutorDistance().getDistance(),
-        apiOrder.getEstimatedAmount(),
+        apiOrder.getEstimatedAmount() == null ? "" : apiOrder.getEstimatedAmount(),
+        apiOrder.getOrderCost(),
+        apiOrder.getExcessCost(),
         apiOrder.getTimeout(),
         apiOrder.getEtaToStartPoint(),
         apiOrder.getConfirmationTime(),
-        new RoutePoint(
-            apiOrder.getRoute().get(0).getLatitude(),
-            apiOrder.getRoute().get(0).getLongitude(),
-            comment == null ? "" : comment,
-            address
-        )
-    );
-    if (apiOrder.getOptions() != null && !apiOrder.getOptions().isEmpty()) {
+        apiOrder.getOrderStartTime());
+    if (apiOrder.getOptions() != null) {
       for (ApiOptionItem vehicleOptionItem : apiOrder.getOptions()) {
         order.addOptions(apiOptionMapper.map(vehicleOptionItem));
       }
+    }
+    for (ApiRoutePoint routePoint : apiOrder.getRoute()) {
+      order.addRoutePoints(routePointMapper.map(routePoint));
     }
     return order;
   }

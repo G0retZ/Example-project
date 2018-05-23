@@ -324,6 +324,49 @@ public class ExecutorStateApiMapperTest {
     assertEquals(executorState.getData(), "\npayload");
   }
 
+
+  /**
+   * Должен успешно преобразовать строку из хедера в статус "выполнение заказа".
+   *
+   * @throws Exception ошибка
+   */
+  @Test
+  public void mappingHeaderToOrderFulfillment() throws Exception {
+    // Дано и Действие:
+    ExecutorState executorState = mapper.map(new StompMessage(
+        "MESSAGE",
+        Collections.singletonList(
+            new StompHeader("Status", "ORDER_FULFILLMENT")
+        ),
+        null
+    ));
+
+    // Результат:
+    assertEquals(executorState, ExecutorState.ORDER_FULFILLMENT);
+    assertNull(executorState.getData());
+  }
+
+  /**
+   * Должен успешно преобразовать строку из хедера и тело в статус "выполнение заказа" с данными.
+   *
+   * @throws Exception ошибка
+   */
+  @Test
+  public void mappingHeaderWithPayloadToOrderFulfillment() throws Exception {
+    // Дано и Действие:
+    ExecutorState executorState = mapper.map(new StompMessage(
+        "MESSAGE",
+        Collections.singletonList(
+            new StompHeader("Status", "ORDER_FULFILLMENT")
+        ),
+        "\npayload"
+    ));
+
+    // Результат:
+    assertEquals(executorState, ExecutorState.ORDER_FULFILLMENT);
+    assertEquals(executorState.getData(), "\npayload");
+  }
+
   /**
    * Должен дать ошибку, если заголовок Status null.
    *

@@ -110,6 +110,9 @@ public class OnlineSwitchViewModelImpl extends ViewModel implements OnlineSwitch
       case WAITING_FOR_CLIENT:
         viewStateLiveData.postValue(new OnlineSwitchViewStateUnCheckedPending());
         break;
+      case ORDER_FULFILLMENT:
+        viewStateLiveData.postValue(new OnlineSwitchViewStateUnCheckedPending());
+        break;
       default:
     }
   }

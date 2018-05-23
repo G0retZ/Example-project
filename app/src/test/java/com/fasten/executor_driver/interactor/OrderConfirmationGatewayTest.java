@@ -6,7 +6,6 @@ import static org.mockito.Mockito.when;
 
 import com.fasten.executor_driver.backend.web.NoNetworkException;
 import com.fasten.executor_driver.backend.websocket.ConnectionClosedException;
-import com.fasten.executor_driver.entity.ExecutorState;
 import com.fasten.executor_driver.entity.Order;
 import com.fasten.executor_driver.gateway.OrderConfirmationGatewayImpl;
 import io.reactivex.Completable;
@@ -36,7 +35,6 @@ public class OrderConfirmationGatewayTest {
     RxJavaPlugins.setComputationSchedulerHandler(scheduler -> Schedulers.trampoline());
     RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
     RxJavaPlugins.setIoSchedulerHandler(scheduler -> Schedulers.trampoline());
-    ExecutorState.CLIENT_ORDER_CONFIRMATION.setData(null);
     when(stompClient.send(anyString(), anyString())).thenReturn(Completable.never());
     orderConfirmationGateway = new OrderConfirmationGatewayImpl(stompClient);
   }

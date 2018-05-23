@@ -334,4 +334,21 @@ public class ExecutorStateViewModelTest {
     // Результат:
     verify(navigationObserver, only()).onChanged(ExecutorStateNavigate.WAITING_FOR_CLIENT);
   }
+
+  /**
+   * Должен вернуть "перейти к выполнению заказа".
+   */
+  @Test
+  public void navigateToOrderFulfillment() {
+    // Дано:
+    when(executorStateUseCase.getExecutorStates(anyBoolean()))
+        .thenReturn(Flowable.just(ExecutorState.ORDER_FULFILLMENT));
+
+    // Действие:
+    executorStateViewModel.getNavigationLiveData().observeForever(navigationObserver);
+    executorStateViewModel.initializeExecutorState(false);
+
+    // Результат:
+    verify(navigationObserver, only()).onChanged(ExecutorStateNavigate.ORDER_FULFILLMENT);
+  }
 }

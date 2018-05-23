@@ -280,17 +280,35 @@ public class GeoLocationUseCaseTest {
   }
 
   /**
+   * Должен запросить гейтвей получать локации с интервалом 15 сек,
+   * при переходе в состояние "Выполнение заказа".
+   */
+  @Test
+  public void askGatewayForLocationsEvery15secIfGoToOrderFulfillment() {
+    // Дано:
+    when(executorStateUseCase.getExecutorStates(anyBoolean()))
+        .thenReturn(Flowable.just(ExecutorState.ORDER_FULFILLMENT));
+
+    // Действие:
+    geoLocationUseCase.getGeoLocations().test();
+
+    // Результат:
+    verify(geoLocationGateway, only()).getGeoLocations(15000);
+  }
+
+  /**
    * Должен запросить гейтвей получать локации с различным интервалом, при смене состояний.
    */
   @Test
   public void askGatewayForLocationsDependingOnNewStatesArrival() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(geoLocationGateway);
-    when(executorStateUseCase.getExecutorStates(anyBoolean())).thenReturn(Flowable.just(
+    when(executorStateUseCase.getExecutorStates(anyBoolean())).thenReturn(Flowable.fromArray(
         ExecutorState.SHIFT_CLOSED, ExecutorState.SHIFT_OPENED, ExecutorState.ONLINE,
         ExecutorState.DRIVER_ORDER_CONFIRMATION, ExecutorState.CLIENT_ORDER_CONFIRMATION,
-        ExecutorState.MOVING_TO_CLIENT, ExecutorState.WAITING_FOR_CLIENT, ExecutorState.ONLINE,
-        ExecutorState.SHIFT_OPENED, ExecutorState.SHIFT_CLOSED
+        ExecutorState.MOVING_TO_CLIENT, ExecutorState.WAITING_FOR_CLIENT,
+        ExecutorState.ORDER_FULFILLMENT, ExecutorState.ONLINE, ExecutorState.SHIFT_OPENED,
+        ExecutorState.SHIFT_CLOSED
     ));
 
     // Действие:
@@ -299,7 +317,7 @@ public class GeoLocationUseCaseTest {
     // Результат:
     inOrder.verify(geoLocationGateway).getGeoLocations(3600000);
     inOrder.verify(geoLocationGateway).getGeoLocations(180000);
-    inOrder.verify(geoLocationGateway, times(6)).getGeoLocations(15000);
+    inOrder.verify(geoLocationGateway, times(7)).getGeoLocations(15000);
     inOrder.verify(geoLocationGateway).getGeoLocations(180000);
     inOrder.verify(geoLocationGateway).getGeoLocations(3600000);
     verifyNoMoreInteractions(geoLocationGateway);
@@ -313,11 +331,12 @@ public class GeoLocationUseCaseTest {
   @Test
   public void disposePreviousGatewayQueriesOnNewStatesArrival() throws Exception {
     // Дано:
-    when(executorStateUseCase.getExecutorStates(anyBoolean())).thenReturn(Flowable.just(
+    when(executorStateUseCase.getExecutorStates(anyBoolean())).thenReturn(Flowable.fromArray(
         ExecutorState.SHIFT_CLOSED, ExecutorState.SHIFT_OPENED, ExecutorState.ONLINE,
         ExecutorState.DRIVER_ORDER_CONFIRMATION, ExecutorState.CLIENT_ORDER_CONFIRMATION,
-        ExecutorState.MOVING_TO_CLIENT, ExecutorState.WAITING_FOR_CLIENT, ExecutorState.ONLINE,
-        ExecutorState.SHIFT_OPENED, ExecutorState.SHIFT_CLOSED
+        ExecutorState.MOVING_TO_CLIENT, ExecutorState.WAITING_FOR_CLIENT,
+        ExecutorState.ORDER_FULFILLMENT, ExecutorState.ONLINE, ExecutorState.SHIFT_OPENED,
+        ExecutorState.SHIFT_CLOSED
     ));
     when(geoLocationGateway.getGeoLocations(anyLong()))
         .thenReturn(Flowable.<GeoLocation>never().doOnCancel(action));
@@ -326,7 +345,7 @@ public class GeoLocationUseCaseTest {
     geoLocationUseCase.getGeoLocations().test();
 
     // Результат:
-    verify(action, times(9)).run();
+    verify(action, times(10)).run();
   }
 
   /* Проверяем работу с гейтвеем отправки геопозиции в ответ на ответы гейтвея геопозиции */
