@@ -25,7 +25,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 public class MovingToClientApiMapperTest {
 
   @Rule
-  public ApiOrderRule rule = new ApiOrderRule();
+  public final ApiOrderRule rule = new ApiOrderRule();
 
   private Mapper<String, Order> mapper;
 

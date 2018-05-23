@@ -25,7 +25,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 public class OrderApiMapperTest {
 
   @Rule
-  public ApiOrderRule rule = new ApiOrderRule();
+  public final ApiOrderRule rule = new ApiOrderRule();
 
   private Mapper<String, Order> mapper;
 
@@ -486,7 +486,7 @@ public class OrderApiMapperTest {
    * @throws Exception ошибка
    */
   @Test
-  public void mappingJsonStringWithoutOptionsToOrderSucces() throws Exception {
+  public void mappingJsonStringWithoutOptionsToOrderSuccess() throws Exception {
     // Дано и Действие:
     Order order = mapper.map(rule.getOrderWithoutOptions());
 
