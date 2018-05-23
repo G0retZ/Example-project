@@ -44,11 +44,13 @@ public class WaitingForClientApiMapper implements Mapper<String, Order> {
         apiOrder.getId(),
         apiOrder.getComment() == null ? "" : apiOrder.getComment(),
         apiOrder.getExecutorDistance() == null ? 0 : apiOrder.getExecutorDistance().getDistance(),
-        apiOrder.getEstimatedAmount(),
+        apiOrder.getEstimatedAmount() == null ? "" : apiOrder.getEstimatedAmount(),
+        apiOrder.getOrderCost(),
+        apiOrder.getExcessCost(),
         apiOrder.getTimeout(),
         apiOrder.getEtaToStartPoint(),
-        apiOrder.getConfirmationTime()
-    );
+        apiOrder.getConfirmationTime(),
+        apiOrder.getOrderStartTime());
     if (apiOrder.getOptions() != null) {
       for (ApiOptionItem vehicleOptionItem : apiOrder.getOptions()) {
         order.addOptions(apiOptionMapper.map(vehicleOptionItem));

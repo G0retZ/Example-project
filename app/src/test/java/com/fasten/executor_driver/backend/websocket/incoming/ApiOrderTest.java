@@ -20,11 +20,11 @@ public class ApiOrderTest {
     apiOrder = new ApiOrder(
         432,
         "More than $3000",
-        "some comment",
+        5000, 2300, "some comment",
         23,
         1200,
         1234567890,
-        new ApiDriverDistancePair(32),
+        9876543210L, new ApiDriverDistancePair(32),
         Arrays.asList(
             new ApiRoutePoint(5, 123, 456, "point comment", "address", true),
             new ApiRoutePoint(6, 321, 654, "comment point", "rest", false)
@@ -40,10 +40,13 @@ public class ApiOrderTest {
   public void testConstructor() {
     assertEquals(apiOrder.getId(), 432);
     assertEquals(apiOrder.getEstimatedAmount(), "More than $3000");
+    assertEquals(apiOrder.getOrderCost(), 5000);
+    assertEquals(apiOrder.getExcessCost(), 2300);
     assertEquals(apiOrder.getComment(), "some comment");
     assertEquals(apiOrder.getTimeout(), 23);
     assertEquals(apiOrder.getEtaToStartPoint(), 1200);
     assertEquals(apiOrder.getConfirmationTime(), 1234567890);
+    assertEquals(apiOrder.getOrderStartTime(), 9876543210L);
     assertNotNull(apiOrder.getExecutorDistance());
     assertEquals(apiOrder.getExecutorDistance().getDistance(), 32);
     assertNotNull(apiOrder.getRoute());

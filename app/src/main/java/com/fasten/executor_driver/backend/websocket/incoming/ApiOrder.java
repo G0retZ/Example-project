@@ -12,6 +12,10 @@ public class ApiOrder {
   @Nullable
   @SerializedName("estimatedAmount")
   private String estimatedAmount = "";
+  @SerializedName("orderCost")
+  private int orderCost;
+  @SerializedName("excessCost")
+  private int excessCost;
   @Nullable
   @SerializedName("comment")
   private String comment;
@@ -21,6 +25,8 @@ public class ApiOrder {
   private long etaToStartPoint;
   @SerializedName("confirmationTime")
   private long confirmationTime;
+  @SerializedName("orderStartTime")
+  private long orderStartTime;
   @Nullable
   @SerializedName("executorDistance")
   private ApiDriverDistancePair executorDistance;
@@ -40,17 +46,20 @@ public class ApiOrder {
 
   @SuppressWarnings("SameParameterValue")
   ApiOrder(long id, @Nullable String estimatedAmount,
-      @Nullable String comment, int timeout,
+      int orderCost, int excessCost, @Nullable String comment, int timeout,
       long etaToStartPoint, long confirmationTime,
-      @Nullable ApiDriverDistancePair executorDistance,
+      long orderStartTime, @Nullable ApiDriverDistancePair executorDistance,
       @Nullable List<ApiRoutePoint> route,
       @Nullable List<ApiOptionItem> options) {
     this.id = id;
     this.estimatedAmount = estimatedAmount;
+    this.orderCost = orderCost;
+    this.excessCost = excessCost;
     this.comment = comment;
     this.timeout = timeout;
     this.etaToStartPoint = etaToStartPoint;
     this.confirmationTime = confirmationTime;
+    this.orderStartTime = orderStartTime;
     this.executorDistance = executorDistance;
     this.route = route;
     this.options = options;
@@ -63,6 +72,14 @@ public class ApiOrder {
   @Nullable
   public String getEstimatedAmount() {
     return estimatedAmount;
+  }
+
+  public int getOrderCost() {
+    return orderCost;
+  }
+
+  public int getExcessCost() {
+    return excessCost;
   }
 
   @Nullable
@@ -80,6 +97,10 @@ public class ApiOrder {
 
   public long getConfirmationTime() {
     return confirmationTime;
+  }
+
+  public long getOrderStartTime() {
+    return orderStartTime;
   }
 
   @Nullable
