@@ -1,41 +1,36 @@
 package com.fasten.executor_driver.gateway;
 
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import com.fasten.executor_driver.BuildConfig;
 import com.fasten.executor_driver.backend.websocket.ConnectionClosedException;
-import com.fasten.executor_driver.entity.ExecutorState;
-import com.fasten.executor_driver.interactor.ExecutorStateGateway;
+import com.fasten.executor_driver.interactor.OrderExcessCostGateway;
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
 import io.reactivex.schedulers.Schedulers;
-import javax.inject.Inject;
 import ua.naiksoftware.stomp.client.StompClient;
 import ua.naiksoftware.stomp.client.StompMessage;
 
-public class ExecutorStateGatewayImpl implements ExecutorStateGateway {
+public class OrderExcessCostGatewayImpl implements OrderExcessCostGateway {
 
   @NonNull
   private final StompClient stompClient;
   @NonNull
-  private final Mapper<StompMessage, ExecutorState> mapper;
+  private final Mapper<StompMessage, Integer> mapper;
 
-  @Inject
-  public ExecutorStateGatewayImpl(@NonNull StompClient stompClient,
-      @NonNull Mapper<StompMessage, ExecutorState> mapper) {
+  public OrderExcessCostGatewayImpl(@NonNull StompClient stompClient,
+      @NonNull Mapper<StompMessage, Integer> mapper) {
     this.stompClient = stompClient;
     this.mapper = mapper;
   }
 
   @NonNull
   @Override
-  public Flowable<ExecutorState> getState(@Nullable String channelId) {
+  public Flowable<Integer> getOrderExcessCost() {
     if (stompClient.isConnected() || stompClient.isConnecting()) {
-      return stompClient.topic(String.format(BuildConfig.STATUS_DESTINATION, channelId))
+      return stompClient.topic(BuildConfig.ORDER_EXCESS_COST_DESTINATION)
           .toFlowable(BackpressureStrategy.BUFFER)
           .subscribeOn(Schedulers.io())
           .observeOn(Schedulers.single())
-          .filter(stompMessage -> stompMessage.findHeader("Status") != null)
           .map(mapper::map);
     }
     return Flowable.error(new ConnectionClosedException());

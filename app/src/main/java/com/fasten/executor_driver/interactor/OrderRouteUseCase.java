@@ -29,11 +29,11 @@ interface OrderRouteUseCase {
   Completable closeRoutePoint(@NonNull RoutePoint routePoint);
 
   /**
-   * Открыть маршрутную точку.
+   * Задать следующую маршрутную точку.
    *
    * @param routePoint - точка маршрута
    * @return {@link Completable} результат - успех либо ошибка на сервере.
    */
   @NonNull
-  Completable openRoutePoint(@NonNull RoutePoint routePoint);
+  Completable nextRoutePoint(@NonNull RoutePoint routePoint);
 }

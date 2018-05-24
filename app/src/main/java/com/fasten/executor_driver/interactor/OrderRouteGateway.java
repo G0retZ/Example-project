@@ -5,17 +5,25 @@ import com.fasten.executor_driver.entity.RoutePoint;
 import io.reactivex.Completable;
 
 /**
- * Гейтвей пометки точки как открытой/закрытой.
+ * Гейтвей работы с точками маршрута.
  */
-interface OrderRouteGateway {
+public interface OrderRouteGateway {
 
   /**
-   * Запрашивает сервер пометить точку.
+   * Запрашивает сервер закрыть точку.
    *
    * @param routePoint - точка маршрута.
-   * @param check - снять или установить метку.
    * @return {@link Completable} результат - успех либо ошибка на сервере.
    */
   @NonNull
-  Completable checkRoutePoint(@NonNull RoutePoint routePoint, boolean check);
+  Completable closeRoutePoint(@NonNull RoutePoint routePoint);
+
+  /**
+   * Запрашивает сервер задать следующую точку маршрута.
+   *
+   * @param routePoint - точка маршрута.
+   * @return {@link Completable} результат - успех либо ошибка на сервере.
+   */
+  @NonNull
+  Completable nextRoutePoint(@NonNull RoutePoint routePoint);
 }

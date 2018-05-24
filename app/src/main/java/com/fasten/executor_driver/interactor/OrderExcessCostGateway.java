@@ -1,16 +1,18 @@
 package com.fasten.executor_driver.interactor;
 
+import android.support.annotation.NonNull;
 import io.reactivex.Flowable;
 
 /**
  * Гейтвей цены выполнения заказа.
  */
-interface OrderCurrentCostGateway {
+public interface OrderExcessCostGateway {
 
   /**
    * Запрашивает изменения цены выполняемого заказа.
    *
    * @return {@link Flowable<Integer>} результат запроса.
    */
-  Flowable<Integer> getOrderCostUpdates();
+  @NonNull
+  Flowable<Integer> getOrderExcessCost();
 }
