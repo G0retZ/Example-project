@@ -6,7 +6,7 @@ import io.reactivex.Flowable;
 /**
  * Юзкейс текущей цены выполнения заказа.
  */
-interface OrderCurrentCostUseCase {
+public interface OrderCurrentCostUseCase {
 
   /**
    * Запрашивает текущую цену выполняемого заказа.
