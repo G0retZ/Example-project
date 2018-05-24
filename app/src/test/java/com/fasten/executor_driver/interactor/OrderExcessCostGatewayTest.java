@@ -49,10 +49,10 @@ public class OrderExcessCostGatewayTest {
   /* Проверяем работу с клиентом STOMP */
 
   /**
-   * Должен запросить у клиента STOMP статусы, если он соединен и не соединяется.
+   * Должен запросить у клиента STOMP обновления цены, если он соединен и не соединяется.
    */
   @Test
-  public void askStompClientForStatus() {
+  public void askStompClientForExcessiveCost() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(stompClient);
     when(stompClient.isConnected()).thenReturn(true);
@@ -70,7 +70,7 @@ public class OrderExcessCostGatewayTest {
    * Не должен просить у клиента STOMP соединение, если он не соединен и не соединяется.
    */
   @Test
-  public void doNotAskStompClientToConnectOrForStatus() {
+  public void doNotAskStompClientToConnectOrForExcessiveCost() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(stompClient);
 
@@ -84,10 +84,10 @@ public class OrderExcessCostGatewayTest {
   }
 
   /**
-   * Должен запросить у клиента STOMP статусы, если он не соединен и соединяется.
+   * Должен запросить у клиента STOMP обновления цены, если он не соединен и соединяется.
    */
   @Test
-  public void askStompClientForStatusIfConnecting() {
+  public void askStompClientForExcessiveCostIfConnecting() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(stompClient);
     when(stompClient.isConnecting()).thenReturn(true);
@@ -110,7 +110,7 @@ public class OrderExcessCostGatewayTest {
    * @throws Exception error
    */
   @Test
-  public void askForMappingForStatusHeaderIfConnected() throws Exception {
+  public void askForMappingForExcessiveCostIfConnected() throws Exception {
     // Дано:
     when(stompClient.isConnected()).thenReturn(true);
     when(stompClient.topic(anyString())).thenReturn(Observable.just(
@@ -130,7 +130,7 @@ public class OrderExcessCostGatewayTest {
    * @throws Exception error
    */
   @Test
-  public void askForMappingForStatusHeaderIfConnectingAfterConnected() throws Exception {
+  public void askForMappingForExcessiveCostIfConnectingAfterConnected() throws Exception {
     // Дано:
     when(stompClient.isConnecting()).thenReturn(true);
     when(stompClient.topic(anyString())).thenReturn(Observable.just(
@@ -146,7 +146,7 @@ public class OrderExcessCostGatewayTest {
 
   /* Проверяем правильность потоков (добавить) */
 
-  /* Проверяем результаты обработки сообщений от сервера по статусам */
+  /* Проверяем результаты обработки сообщений от сервера */
 
   /**
    * Должен ответить ошибкой маппинга, если он соединен и не соединяется.
@@ -154,7 +154,7 @@ public class OrderExcessCostGatewayTest {
    * @throws Exception error
    */
   @Test
-  public void answerDataMappingErrorForStatusHeaderIfConnected() throws Exception {
+  public void answerDataMappingErrorForExcessiveCostIfConnected() throws Exception {
     // Дано:
     doThrow(new DataMappingException()).when(mapper).map(any());
     when(stompClient.isConnected()).thenReturn(true);
@@ -175,7 +175,7 @@ public class OrderExcessCostGatewayTest {
    * @throws Exception error
    */
   @Test
-  public void answerShiftOpenedForStatusHeaderIfConnected() throws Exception {
+  public void answerShiftOpenedForExcessiveCostIfConnected() throws Exception {
     // Дано:
     when(mapper.map(any())).thenReturn(12345);
     when(stompClient.isConnected()).thenReturn(true);
@@ -224,7 +224,7 @@ public class OrderExcessCostGatewayTest {
    * @throws Exception error
    */
   @Test
-  public void answerDataMappingErrorForStatusHeaderIfConnectingAfterConnected() throws Exception {
+  public void answerDataMappingErrorForExcessiveCostIfConnectingAfterConnected() throws Exception {
     // Дано:
     doThrow(new DataMappingException()).when(mapper).map(any());
     when(stompClient.isConnecting()).thenReturn(true);
@@ -246,7 +246,7 @@ public class OrderExcessCostGatewayTest {
    * @throws Exception error
    */
   @Test
-  public void answerShiftOpenedForStatusHeaderIfConnectingAfterConnected() throws Exception {
+  public void answerShiftOpenedForExcessiveCostIfConnectingAfterConnected() throws Exception {
     // Дано:
     when(mapper.map(any())).thenReturn(54321);
     when(stompClient.isConnecting()).thenReturn(true);
