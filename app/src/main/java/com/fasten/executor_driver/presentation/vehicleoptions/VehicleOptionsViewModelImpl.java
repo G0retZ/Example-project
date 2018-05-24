@@ -23,6 +23,7 @@ import javax.inject.Inject;
 public class VehicleOptionsViewModelImpl extends ViewModel implements
     VehicleOptionsViewModel {
 
+  @NonNull
   private final VehicleOptionsUseCase vehicleOptionsUseCase;
   @NonNull
   private final MutableLiveData<ViewState<VehicleOptionsViewActions>> viewStateLiveData;
@@ -34,7 +35,7 @@ public class VehicleOptionsViewModelImpl extends ViewModel implements
   private Disposable occupyDisposable = EmptyDisposable.INSTANCE;
 
   @Inject
-  public VehicleOptionsViewModelImpl(VehicleOptionsUseCase vehicleOptionsUseCase) {
+  public VehicleOptionsViewModelImpl(@NonNull VehicleOptionsUseCase vehicleOptionsUseCase) {
     this.vehicleOptionsUseCase = vehicleOptionsUseCase;
     viewStateLiveData = new MutableLiveData<>();
     viewStateLiveData.postValue(new VehicleOptionsViewStateInitial());

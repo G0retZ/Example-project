@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * Юзкейс маршрута выполнения заказа.
  */
-interface OrderRouteUseCase {
+public interface OrderRouteUseCase {
 
   /**
    * Запрашивает данные о маршруте выполняемого заказа.
