@@ -45,23 +45,39 @@ public class OrderRouteGatewayTest {
    * Должен запросить у клиента STOMP отправку, если он соединен и не соединяется.
    */
   @Test
-  public void askStompClientToSendMessage() {
+  public void askStompClientToSendCloseRoutePointMessage() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(stompClient);
     when(stompClient.isConnected()).thenReturn(true);
     when(routePoint.getId()).thenReturn(7L);
 
     // Действие:
-    orderRouteGateway.checkRoutePoint(routePoint, false).test();
-    orderRouteGateway.checkRoutePoint(routePoint, true).test();
+    orderRouteGateway.closeRoutePoint(routePoint).test();
 
     // Результат:
     inOrder.verify(stompClient).isConnected();
     inOrder.verify(stompClient)
-        .send("/mobile/trip", "{\"id\":\"7\", \"checked\":\"false\"}");
+        .send("/mobile/trip", "{\"close\":\"7\"}");
+    verifyNoMoreInteractions(stompClient);
+  }
+
+  /**
+   * Должен запросить у клиента STOMP отправку, если он соединен и не соединяется.
+   */
+  @Test
+  public void askStompClientToSendNextRoutePointMessage() {
+    // Дано:
+    InOrder inOrder = Mockito.inOrder(stompClient);
+    when(stompClient.isConnected()).thenReturn(true);
+    when(routePoint.getId()).thenReturn(7L);
+
+    // Действие:
+    orderRouteGateway.nextRoutePoint(routePoint).test();
+
+    // Результат:
     inOrder.verify(stompClient).isConnected();
     inOrder.verify(stompClient)
-        .send("/mobile/trip", "{\"id\":\"7\", \"checked\":\"true\"}");
+        .send("/mobile/trip", "{\"next\":\"7\"}");
     verifyNoMoreInteractions(stompClient);
   }
 
@@ -69,17 +85,31 @@ public class OrderRouteGatewayTest {
    * Не должен просить у клиента STOMP соединение, если он не соединен и не соединяется.
    */
   @Test
-  public void doNotAskStompClientToConnectOrSendIfNotConnected() {
+  public void doNotAskStompClientToConnectOrSendCloseRoutePointIfNotConnected() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(stompClient);
 
     // Действие:
-    orderRouteGateway.checkRoutePoint(routePoint, false).test();
-    orderRouteGateway.checkRoutePoint(routePoint, true).test();
+    orderRouteGateway.closeRoutePoint(routePoint).test();
 
     // Результат:
     inOrder.verify(stompClient).isConnected();
     inOrder.verify(stompClient).isConnecting();
+    verifyNoMoreInteractions(stompClient);
+  }
+
+  /**
+   * Не должен просить у клиента STOMP соединение, если он не соединен и не соединяется.
+   */
+  @Test
+  public void doNotAskStompClientToConnectOrSendNextRoutePointIfNotConnected() {
+    // Дано:
+    InOrder inOrder = Mockito.inOrder(stompClient);
+
+    // Действие:
+    orderRouteGateway.nextRoutePoint(routePoint).test();
+
+    // Результат:
     inOrder.verify(stompClient).isConnected();
     inOrder.verify(stompClient).isConnecting();
     verifyNoMoreInteractions(stompClient);
@@ -89,25 +119,41 @@ public class OrderRouteGatewayTest {
    * Должен запросить у клиента STOMP отправку, если он не соединен и соединяется.
    */
   @Test
-  public void askStompClientToSendMessageIfConnecting() {
+  public void askStompClientToSendCloseRoutePointMessageIfConnecting() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(stompClient);
     when(stompClient.isConnecting()).thenReturn(true);
     when(routePoint.getId()).thenReturn(7L);
 
     // Действие:
-    orderRouteGateway.checkRoutePoint(routePoint, false).test();
-    orderRouteGateway.checkRoutePoint(routePoint, true).test();
+    orderRouteGateway.closeRoutePoint(routePoint).test();
 
     // Результат:
     inOrder.verify(stompClient).isConnected();
     inOrder.verify(stompClient).isConnecting();
     inOrder.verify(stompClient)
-        .send("/mobile/trip", "{\"id\":\"7\", \"checked\":\"false\"}");
+        .send("/mobile/trip", "{\"close\":\"7\"}");
+    verifyNoMoreInteractions(stompClient);
+  }
+
+  /**
+   * Должен запросить у клиента STOMP отправку, если он не соединен и соединяется.
+   */
+  @Test
+  public void askStompClientToSendNextRoutePointMessageIfConnecting() {
+    // Дано:
+    InOrder inOrder = Mockito.inOrder(stompClient);
+    when(stompClient.isConnecting()).thenReturn(true);
+    when(routePoint.getId()).thenReturn(7L);
+
+    // Действие:
+    orderRouteGateway.nextRoutePoint(routePoint).test();
+
+    // Результат:
     inOrder.verify(stompClient).isConnected();
     inOrder.verify(stompClient).isConnecting();
     inOrder.verify(stompClient)
-        .send("/mobile/trip", "{\"id\":\"7\", \"checked\":\"true\"}");
+        .send("/mobile/trip", "{\"next\":\"7\"}");
     verifyNoMoreInteractions(stompClient);
   }
 
@@ -119,13 +165,30 @@ public class OrderRouteGatewayTest {
    * Должен ответить успехом, если он соединен и не соединяется.
    */
   @Test
-  public void answerSendRoutePointCheckSuccessIfConnected() {
+  public void answerSendCloseRoutePointSuccessIfConnected() {
     // Дано:
     when(stompClient.isConnected()).thenReturn(true);
     when(stompClient.send(anyString(), anyString())).thenReturn(Completable.complete());
 
     // Действие:
-    TestObserver<Void> testObserver = orderRouteGateway.checkRoutePoint(routePoint, false).test();
+    TestObserver<Void> testObserver = orderRouteGateway.closeRoutePoint(routePoint).test();
+
+    // Результат:
+    testObserver.assertNoErrors();
+    testObserver.assertComplete();
+  }
+
+  /**
+   * Должен ответить успехом, если он соединен и не соединяется.
+   */
+  @Test
+  public void answerSendNextRoutePointSuccessIfConnected() {
+    // Дано:
+    when(stompClient.isConnected()).thenReturn(true);
+    when(stompClient.send(anyString(), anyString())).thenReturn(Completable.complete());
+
+    // Действие:
+    TestObserver<Void> testObserver = orderRouteGateway.nextRoutePoint(routePoint).test();
 
     // Результат:
     testObserver.assertNoErrors();
@@ -136,14 +199,32 @@ public class OrderRouteGatewayTest {
    * Должен ответить ошибкой, если он соединен и не соединяется.
    */
   @Test
-  public void answerSendRoutePointCheckErrorIfConnected() {
+  public void answerSendCloseRoutePointErrorIfConnected() {
     // Дано:
     when(stompClient.isConnected()).thenReturn(true);
     when(stompClient.send(anyString(), anyString()))
         .thenReturn(Completable.error(new NoNetworkException()));
 
     // Действие:
-    TestObserver<Void> testObserver = orderRouteGateway.checkRoutePoint(routePoint, false).test();
+    TestObserver<Void> testObserver = orderRouteGateway.closeRoutePoint(routePoint).test();
+
+    // Результат:
+    testObserver.assertNotComplete();
+    testObserver.assertError(NoNetworkException.class);
+  }
+
+  /**
+   * Должен ответить ошибкой, если он соединен и не соединяется.
+   */
+  @Test
+  public void answerSendNextRoutePointErrorIfConnected() {
+    // Дано:
+    when(stompClient.isConnected()).thenReturn(true);
+    when(stompClient.send(anyString(), anyString()))
+        .thenReturn(Completable.error(new NoNetworkException()));
+
+    // Действие:
+    TestObserver<Void> testObserver = orderRouteGateway.nextRoutePoint(routePoint).test();
 
     // Результат:
     testObserver.assertNotComplete();
@@ -154,9 +235,22 @@ public class OrderRouteGatewayTest {
    * Должен ответить ошибкой, если он не соединен и не соединяется.
    */
   @Test
-  public void answerSendRoutePointCheckErrorIfNotConnectedAndNotConnecting() {
+  public void answerSendCloseRoutePointErrorIfNotConnectedAndNotConnecting() {
     // Действие:
-    TestObserver<Void> testObserver = orderRouteGateway.checkRoutePoint(routePoint, false).test();
+    TestObserver<Void> testObserver = orderRouteGateway.closeRoutePoint(routePoint).test();
+
+    // Результат:
+    testObserver.assertNotComplete();
+    testObserver.assertError(ConnectionClosedException.class);
+  }
+
+  /**
+   * Должен ответить ошибкой, если он не соединен и не соединяется.
+   */
+  @Test
+  public void answerSendNextRoutePointErrorIfNotConnectedAndNotConnecting() {
+    // Действие:
+    TestObserver<Void> testObserver = orderRouteGateway.nextRoutePoint(routePoint).test();
 
     // Результат:
     testObserver.assertNotComplete();
@@ -167,13 +261,30 @@ public class OrderRouteGatewayTest {
    * Должен ответить успехом, если он не соединен и соединяется.
    */
   @Test
-  public void answerSendRoutePointCheckSuccessIfConnecting() {
+  public void answerSendCloseRoutePointSuccessIfConnecting() {
     // Дано:
     when(stompClient.isConnecting()).thenReturn(true);
     when(stompClient.send(anyString(), anyString())).thenReturn(Completable.complete());
 
     // Действие:
-    TestObserver<Void> testObserver = orderRouteGateway.checkRoutePoint(routePoint, false).test();
+    TestObserver<Void> testObserver = orderRouteGateway.closeRoutePoint(routePoint).test();
+
+    // Результат:
+    testObserver.assertNoErrors();
+    testObserver.assertComplete();
+  }
+
+  /**
+   * Должен ответить успехом, если он не соединен и соединяется.
+   */
+  @Test
+  public void answerSendNextRoutePointSuccessIfConnecting() {
+    // Дано:
+    when(stompClient.isConnecting()).thenReturn(true);
+    when(stompClient.send(anyString(), anyString())).thenReturn(Completable.complete());
+
+    // Действие:
+    TestObserver<Void> testObserver = orderRouteGateway.nextRoutePoint(routePoint).test();
 
     // Результат:
     testObserver.assertNoErrors();
@@ -184,14 +295,32 @@ public class OrderRouteGatewayTest {
    * Должен ответить ошибкой, если он не соединен и соединяется.
    */
   @Test
-  public void answerSendRoutePointCheckErrorIfConnecting() {
+  public void answerSendCloseRoutePointErrorIfConnecting() {
     // Дано:
     when(stompClient.isConnecting()).thenReturn(true);
     when(stompClient.send(anyString(), anyString()))
         .thenReturn(Completable.error(new ConnectionClosedException()));
 
     // Действие:
-    TestObserver<Void> testObserver = orderRouteGateway.checkRoutePoint(routePoint, false).test();
+    TestObserver<Void> testObserver = orderRouteGateway.closeRoutePoint(routePoint).test();
+
+    // Результат:
+    testObserver.assertNotComplete();
+    testObserver.assertError(ConnectionClosedException.class);
+  }
+
+  /**
+   * Должен ответить ошибкой, если он не соединен и соединяется.
+   */
+  @Test
+  public void answerSendNextRoutePointErrorIfConnecting() {
+    // Дано:
+    when(stompClient.isConnecting()).thenReturn(true);
+    when(stompClient.send(anyString(), anyString()))
+        .thenReturn(Completable.error(new ConnectionClosedException()));
+
+    // Действие:
+    TestObserver<Void> testObserver = orderRouteGateway.nextRoutePoint(routePoint).test();
 
     // Результат:
     testObserver.assertNotComplete();

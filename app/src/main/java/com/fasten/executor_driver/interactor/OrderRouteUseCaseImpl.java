@@ -31,12 +31,12 @@ class OrderRouteUseCaseImpl implements OrderRouteUseCase {
   @NonNull
   @Override
   public Completable closeRoutePoint(@NonNull RoutePoint routePoint) {
-    return orderRouteGateway.checkRoutePoint(routePoint, true);
+    return orderRouteGateway.closeRoutePoint(routePoint);
   }
 
   @NonNull
   @Override
-  public Completable openRoutePoint(@NonNull RoutePoint routePoint) {
-    return orderRouteGateway.checkRoutePoint(routePoint, false);
+  public Completable nextRoutePoint(@NonNull RoutePoint routePoint) {
+    return orderRouteGateway.nextRoutePoint(routePoint);
   }
 }

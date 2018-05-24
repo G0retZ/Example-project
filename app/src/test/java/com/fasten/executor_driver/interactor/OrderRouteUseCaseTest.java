@@ -1,8 +1,6 @@
 package com.fasten.executor_driver.interactor;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyBoolean;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -51,7 +49,8 @@ public class OrderRouteUseCaseTest {
   @Before
   public void setUp() {
     when(orderGateway.getOrders(ExecutorState.ORDER_FULFILLMENT)).thenReturn(Flowable.never());
-    when(orderRouteGateway.checkRoutePoint(any(), anyBoolean())).thenReturn(Completable.never());
+    when(orderRouteGateway.closeRoutePoint(any())).thenReturn(Completable.never());
+    when(orderRouteGateway.nextRoutePoint(any())).thenReturn(Completable.never());
     orderRouteUseCase = new OrderRouteUseCaseImpl(orderGateway, orderRouteGateway);
   }
 
@@ -80,7 +79,7 @@ public class OrderRouteUseCaseTest {
     orderRouteUseCase.closeRoutePoint(routePoint).test();
 
     // Результат:
-    verify(orderRouteGateway, only()).checkRoutePoint(routePoint, true);
+    verify(orderRouteGateway, only()).closeRoutePoint(routePoint);
   }
 
   /**
@@ -89,10 +88,10 @@ public class OrderRouteUseCaseTest {
   @Test
   public void askGatewayToUnCheckRoutePoint() {
     // Действие:
-    orderRouteUseCase.openRoutePoint(routePoint).test();
+    orderRouteUseCase.nextRoutePoint(routePoint).test();
 
     // Результат:
-    verify(orderRouteGateway, only()).checkRoutePoint(routePoint, false);
+    verify(orderRouteGateway, only()).nextRoutePoint(routePoint);
   }
 
   /* Проверяем ответы на запрос маршрута */
@@ -145,7 +144,7 @@ public class OrderRouteUseCaseTest {
   @Test
   public void answerNoNetworkErrorForCloseRoutePoint() {
     // Дано:
-    when(orderRouteGateway.checkRoutePoint(any(), eq(true)))
+    when(orderRouteGateway.closeRoutePoint(any()))
         .thenReturn(Completable.error(new NoNetworkException()));
 
     // Действие:
@@ -163,11 +162,11 @@ public class OrderRouteUseCaseTest {
   @Test
   public void answerNoNetworkErrorForOpenRoutePoint() {
     // Дано:
-    when(orderRouteGateway.checkRoutePoint(any(), eq(false)))
+    when(orderRouteGateway.nextRoutePoint(any()))
         .thenReturn(Completable.error(new NoNetworkException()));
 
     // Действие:
-    TestObserver<Void> test = orderRouteUseCase.openRoutePoint(routePoint).test();
+    TestObserver<Void> test = orderRouteUseCase.nextRoutePoint(routePoint).test();
 
     // Результат:
     test.assertError(NoNetworkException.class);
@@ -181,7 +180,7 @@ public class OrderRouteUseCaseTest {
   @Test
   public void answerSendCloseRoutePointSuccessful() {
     // Дано:
-    when(orderRouteGateway.checkRoutePoint(any(), eq(true))).thenReturn(Completable.complete());
+    when(orderRouteGateway.closeRoutePoint(any())).thenReturn(Completable.complete());
 
     // Действие:
     TestObserver<Void> test = orderRouteUseCase.closeRoutePoint(routePoint).test();
@@ -197,10 +196,10 @@ public class OrderRouteUseCaseTest {
   @Test
   public void answerSendOpenRoutePointSuccessful() {
     // Дано:
-    when(orderRouteGateway.checkRoutePoint(any(), eq(false))).thenReturn(Completable.complete());
+    when(orderRouteGateway.nextRoutePoint(any())).thenReturn(Completable.complete());
 
     // Действие:
-    TestObserver<Void> test = orderRouteUseCase.openRoutePoint(routePoint).test();
+    TestObserver<Void> test = orderRouteUseCase.nextRoutePoint(routePoint).test();
 
     // Результат:
     test.assertComplete();
