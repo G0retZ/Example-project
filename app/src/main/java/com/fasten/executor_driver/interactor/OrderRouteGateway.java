@@ -7,7 +7,7 @@ import io.reactivex.Completable;
 /**
  * Гейтвей пометки точки как открытой/закрытой.
  */
-interface OrderRouteGateway {
+public interface OrderRouteGateway {
 
   /**
    * Запрашивает сервер пометить точку.
