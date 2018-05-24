@@ -49,6 +49,11 @@ class RoutePointItem {
     return routePoint.getComment();
   }
 
+  @NonNull
+  public RoutePoint getRoutePoint() {
+    return routePoint;
+  }
+
   @Override
   public String toString() {
     return "RoutePointItem{" +

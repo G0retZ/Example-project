@@ -7,7 +7,7 @@ import android.support.annotation.NonNull;
  */
 final class NextRoutePointViewStateError extends NextRoutePointViewState {
 
-  NextRoutePointViewStateError(RoutePointItem routePointItem) {
+  NextRoutePointViewStateError(@NonNull RoutePointItem routePointItem) {
     super(routePointItem);
   }
 

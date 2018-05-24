@@ -7,7 +7,7 @@ import android.support.annotation.NonNull;
  */
 final class NextRoutePointViewStateIdle extends NextRoutePointViewState {
 
-  NextRoutePointViewStateIdle(RoutePointItem routePointItem) {
+  NextRoutePointViewStateIdle(@NonNull RoutePointItem routePointItem) {
     super(routePointItem);
   }
 
