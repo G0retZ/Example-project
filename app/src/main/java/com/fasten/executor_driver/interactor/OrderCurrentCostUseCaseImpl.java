@@ -21,7 +21,7 @@ class OrderCurrentCostUseCaseImpl implements OrderCurrentCostUseCase {
   @Override
   public Flowable<Integer> getOrderCurrentCost() {
     return orderGateway.getOrders(ExecutorState.ORDER_FULFILLMENT)
-        .flatMap(
+        .switchMap(
             order -> orderCurrentCostGateway.getOrderCostUpdates()
                 .startWith(order.getExcessCost())
                 .map(cost -> cost + order.getOrderCost())

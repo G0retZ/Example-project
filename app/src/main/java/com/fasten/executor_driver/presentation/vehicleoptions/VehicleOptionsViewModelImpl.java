@@ -77,7 +77,7 @@ public class VehicleOptionsViewModelImpl extends ViewModel implements
         vehicleOptionsUseCase.getVehicleOptions()
             .subscribeOn(Schedulers.single())
             .observeOn(AndroidSchedulers.mainThread())
-            .flatMap(options -> Observable
+            .switchMap(options -> Observable
                 .fromIterable(options)
                 .<VehicleOptionsListItem<?>>map(this::map)
                 .toList()
