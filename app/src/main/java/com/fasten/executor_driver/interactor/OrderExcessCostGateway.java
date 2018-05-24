@@ -5,12 +5,12 @@ import io.reactivex.Flowable;
 /**
  * Гейтвей цены выполнения заказа.
  */
-interface OrderCurrentCostGateway {
+interface OrderExcessCostGateway {
 
   /**
    * Запрашивает изменения цены выполняемого заказа.
    *
    * @return {@link Flowable<Integer>} результат запроса.
    */
-  Flowable<Integer> getOrderCostUpdates();
+  Flowable<Integer> getOrderExcessCost();
 }

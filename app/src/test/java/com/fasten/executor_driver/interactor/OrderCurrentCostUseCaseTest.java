@@ -23,7 +23,7 @@ public class OrderCurrentCostUseCaseTest {
   @Mock
   private OrderGateway orderGateway;
   @Mock
-  private OrderCurrentCostGateway orderCurrentCostGateway;
+  private OrderExcessCostGateway orderExcessCostGateway;
   @Mock
   private Order order;
   @Mock
@@ -32,9 +32,9 @@ public class OrderCurrentCostUseCaseTest {
   @Before
   public void setUp() {
     when(orderGateway.getOrders(ExecutorState.ORDER_FULFILLMENT)).thenReturn(Flowable.never());
-    when(orderCurrentCostGateway.getOrderCostUpdates()).thenReturn(Flowable.never());
+    when(orderExcessCostGateway.getOrderExcessCost()).thenReturn(Flowable.never());
     orderCurrentCostUseCase = new OrderCurrentCostUseCaseImpl(orderGateway,
-        orderCurrentCostGateway);
+        orderExcessCostGateway);
   }
 
   /* Проверяем работу с гейтвеем заказа */
@@ -62,7 +62,7 @@ public class OrderCurrentCostUseCaseTest {
     orderCurrentCostUseCase.getOrderCurrentCost().test();
 
     // Результат:
-    verifyZeroInteractions(orderCurrentCostGateway);
+    verifyZeroInteractions(orderExcessCostGateway);
   }
 
   /**
@@ -77,7 +77,7 @@ public class OrderCurrentCostUseCaseTest {
     orderCurrentCostUseCase.getOrderCurrentCost().test();
 
     // Результат:
-    verify(orderCurrentCostGateway, only()).getOrderCostUpdates();
+    verify(orderExcessCostGateway, only()).getOrderExcessCost();
   }
 
   /* Проверяем ответы на запрос цены заказа */
@@ -110,7 +110,7 @@ public class OrderCurrentCostUseCaseTest {
         .thenReturn(Flowable.just(order, order2));
     when(order.getOrderCost()).thenReturn(100);
     when(order.getExcessCost()).thenReturn(1);
-    when(orderCurrentCostGateway.getOrderCostUpdates())
+    when(orderExcessCostGateway.getOrderExcessCost())
         .thenReturn(Flowable.error(new DataMappingException()));
 
     // Действие:
@@ -157,7 +157,7 @@ public class OrderCurrentCostUseCaseTest {
     when(order.getExcessCost()).thenReturn(0);
     when(order2.getOrderCost()).thenReturn(8391);
     when(order2.getExcessCost()).thenReturn(3782);
-    when(orderCurrentCostGateway.getOrderCostUpdates()).thenReturn(
+    when(orderExcessCostGateway.getOrderExcessCost()).thenReturn(
         Flowable.just(23, 45, 39, 98, 102),
         Flowable.just(4, 546, 8765, 837)
     );

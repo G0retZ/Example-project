@@ -9,12 +9,12 @@ class OrderCurrentCostUseCaseImpl implements OrderCurrentCostUseCase {
   @NonNull
   private final OrderGateway orderGateway;
   @NonNull
-  private final OrderCurrentCostGateway orderCurrentCostGateway;
+  private final OrderExcessCostGateway orderExcessCostGateway;
 
   OrderCurrentCostUseCaseImpl(@NonNull OrderGateway orderGateway,
-      @NonNull OrderCurrentCostGateway orderCurrentCostGateway) {
+      @NonNull OrderExcessCostGateway orderExcessCostGateway) {
     this.orderGateway = orderGateway;
-    this.orderCurrentCostGateway = orderCurrentCostGateway;
+    this.orderExcessCostGateway = orderExcessCostGateway;
   }
 
   @NonNull
@@ -22,7 +22,7 @@ class OrderCurrentCostUseCaseImpl implements OrderCurrentCostUseCase {
   public Flowable<Integer> getOrderCurrentCost() {
     return orderGateway.getOrders(ExecutorState.ORDER_FULFILLMENT)
         .switchMap(
-            order -> orderCurrentCostGateway.getOrderCostUpdates()
+            order -> orderExcessCostGateway.getOrderExcessCost()
                 .startWith(order.getExcessCost())
                 .map(cost -> cost + order.getOrderCost())
         );
