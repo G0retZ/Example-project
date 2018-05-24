@@ -110,7 +110,7 @@ public class NextRoutePointViewModelTest {
    * Не должен трогать юзкейс, если предыдущий запрос закрытия точки маршрута еще не завершился.
    */
   @Test
-  public void DoNotTouchUseCaseDuringOrderSetting() {
+  public void DoNotTouchUseCaseDuringRoutePointClosing() {
     // Действие:
     movingToClientViewModel.closeRoutePoint();
     movingToClientViewModel.closeRoutePoint();
@@ -229,7 +229,7 @@ public class NextRoutePointViewModelTest {
    * Должен вернуть состояние вида "В процессе".
    */
   @Test
-  public void setPendingViewStateWithoutOrderToLiveDataForCallToClient() {
+  public void setPendingViewStateWithoutOrderToLiveDataForCloseRoutePoint() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     movingToClientViewModel.getViewStateLiveData().observeForever(viewStateObserver);
@@ -247,7 +247,7 @@ public class NextRoutePointViewModelTest {
    * Должен вернуть состояние вида "Ошибка" сети.
    */
   @Test
-  public void setNoNetworkErrorViewStateWithoutOrderToLiveDataForCallToClient() {
+  public void setNoNetworkErrorViewStateWithoutOrderToLiveDataForCloseRoutePoint() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     when(orderRouteUseCase.closeRoutePoint(any()))
@@ -268,7 +268,7 @@ public class NextRoutePointViewModelTest {
    * Должен вернуть состояние вида "Ошибка" нет доступных заказов.
    */
   @Test
-  public void setNoOrdersAvailableErrorViewStateWithoutOrderToLiveDataForCallToClient() {
+  public void setNoOrdersAvailableErrorViewStateWithoutOrderToLiveDataForCloseRoutePoint() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     when(orderRouteUseCase.closeRoutePoint(any()))
@@ -289,7 +289,7 @@ public class NextRoutePointViewModelTest {
    * Не должен возвращать никакого состояния вида.
    */
   @Test
-  public void setIdleViewStateToLiveDataForCallToClientWithoutOrder() {
+  public void setIdleViewStateToLiveDataForCloseRoutePointWithoutRoute() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     when(orderRouteUseCase.closeRoutePoint(any())).thenReturn(Completable.complete());
@@ -308,7 +308,7 @@ public class NextRoutePointViewModelTest {
    * Должен вернуть состояние вида "В процессе".
    */
   @Test
-  public void setPendingViewStateToLiveDataForCallToClient() {
+  public void setPendingViewStateToLiveDataForCloseRoutePoint() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     movingToClientViewModel.getViewStateLiveData().observeForever(viewStateObserver);
@@ -332,7 +332,7 @@ public class NextRoutePointViewModelTest {
    * Должен вернуть состояние вида "Ошибка" сети.
    */
   @Test
-  public void setNoNetworkErrorViewStateToLiveDataForCallToClient() {
+  public void setNoNetworkErrorViewStateToLiveDataForCloseRoutePoint() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     when(orderRouteUseCase.closeRoutePoint(any()))
@@ -361,7 +361,7 @@ public class NextRoutePointViewModelTest {
    * Не должен возвращать никакого состояния вида.
    */
   @Test
-  public void setIdleViewStateToLiveDataForCallToClient() {
+  public void setIdleViewStateToLiveDataForCloseRoutePoint() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     when(orderRouteUseCase.closeRoutePoint(any())).thenReturn(Completable.complete());
