@@ -8,7 +8,7 @@ import android.support.annotation.StringRes;
 interface OrderCostViewActions {
 
   /**
-   * Задать текст на кнопке.
+   * Задать текст стоимости.
    *
    * @param textId - ИД ресурса текста
    * @param currentCost - текущая стоимость заказа.
