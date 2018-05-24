@@ -6,7 +6,7 @@ import io.reactivex.Flowable;
 /**
  * Юзкейс общего времени выполнения заказа.
  */
-interface OrderFulfillmentTimeUseCase {
+public interface OrderFulfillmentTimeUseCase {
 
   /**
    * Запрашивает общее время выполнения заказа.
