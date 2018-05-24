@@ -26,7 +26,7 @@ class OrderTimeViewModelImpl extends ViewModel implements OrderTimeViewModel {
     this.orderCurrentCostUseCase = orderCurrentCostUseCase;
     viewStateLiveData = new MutableLiveData<>();
     viewStateLiveData.postValue(new OrderTimeViewState(0));
-    loadOptions();
+    loadOrderTime();
   }
 
   @NonNull
@@ -41,7 +41,7 @@ class OrderTimeViewModelImpl extends ViewModel implements OrderTimeViewModel {
     return new MutableLiveData<>();
   }
 
-  private void loadOptions() {
+  private void loadOrderTime() {
     if (!disposable.isDisposed()) {
       return;
     }

@@ -26,7 +26,7 @@ class OrderCostViewModelImpl extends ViewModel implements OrderCostViewModel {
     this.orderCurrentCostUseCase = orderCurrentCostUseCase;
     viewStateLiveData = new MutableLiveData<>();
     viewStateLiveData.postValue(new OrderCostViewState(0));
-    loadOptions();
+    loadOrderCosts();
   }
 
   @NonNull
@@ -41,7 +41,7 @@ class OrderCostViewModelImpl extends ViewModel implements OrderCostViewModel {
     return new MutableLiveData<>();
   }
 
-  private void loadOptions() {
+  private void loadOrderCosts() {
     if (!disposable.isDisposed()) {
       return;
     }
