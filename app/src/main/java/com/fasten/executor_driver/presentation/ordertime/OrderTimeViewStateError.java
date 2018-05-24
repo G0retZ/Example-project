@@ -3,7 +3,7 @@ package com.fasten.executor_driver.presentation.ordertime;
 import android.support.annotation.NonNull;
 
 /**
- * Состояние вида текущего времени заказа.
+ * Состояние вида ошибки текущего времени заказа.
  */
 final class OrderTimeViewStateError extends OrderTimeViewState {
 

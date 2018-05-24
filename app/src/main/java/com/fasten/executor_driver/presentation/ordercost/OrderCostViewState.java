@@ -5,7 +5,7 @@ import com.fasten.executor_driver.R;
 import com.fasten.executor_driver.presentation.ViewState;
 
 /**
- * Состояние вида текущей стоимости заказа.
+ * Общее состояние вида текущей стоимости заказа.
  */
 class OrderCostViewState implements ViewState<OrderCostViewActions> {
 

@@ -3,7 +3,7 @@ package com.fasten.executor_driver.presentation.ordercost;
 import android.support.annotation.NonNull;
 
 /**
- * Состояние вида текущей стоимости заказа.
+ * Состояние вида ошибки текущей стоимости заказа.
  */
 final class OrderCostViewStateError extends OrderCostViewState {
 

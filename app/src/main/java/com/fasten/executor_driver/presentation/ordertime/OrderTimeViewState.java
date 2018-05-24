@@ -4,7 +4,7 @@ import android.support.annotation.NonNull;
 import com.fasten.executor_driver.presentation.ViewState;
 
 /**
- * Состояние вида текущего времени заказа.
+ * Общее состояние вида текущего времени заказа.
  */
 class OrderTimeViewState implements ViewState<OrderTimeViewActions> {
 
