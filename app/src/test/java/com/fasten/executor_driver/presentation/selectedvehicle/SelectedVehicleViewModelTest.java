@@ -15,7 +15,6 @@ import io.reactivex.Observable;
 import io.reactivex.android.plugins.RxAndroidPlugins;
 import io.reactivex.plugins.RxJavaPlugins;
 import io.reactivex.schedulers.Schedulers;
-import io.reactivex.schedulers.TestScheduler;
 import io.reactivex.subjects.PublishSubject;
 import org.junit.Before;
 import org.junit.Rule;
@@ -33,7 +32,6 @@ public class SelectedVehicleViewModelTest {
   @Rule
   public TestRule rule = new InstantTaskExecutorRule();
   private SelectedVehicleViewModel selectedVehicleViewModel;
-  private TestScheduler testScheduler;
   @Mock
   private Observer<ViewState<SelectedVehicleViewActions>> viewStateObserver;
 
@@ -45,8 +43,6 @@ public class SelectedVehicleViewModelTest {
 
   @Before
   public void setUp() {
-    testScheduler = new TestScheduler();
-    RxJavaPlugins.setIoSchedulerHandler(scheduler -> testScheduler);
     RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
     RxAndroidPlugins.setInitMainThreadSchedulerHandler(scheduler -> Schedulers.trampoline());
     when(selectedVehicleUseCase.getSelectedVehicle()).thenReturn(Observable.never());
