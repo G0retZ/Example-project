@@ -14,6 +14,7 @@ import javax.inject.Inject;
 
 class OrderCostViewModelImpl extends ViewModel implements OrderCostViewModel {
 
+  @NonNull
   private final OrderCurrentCostUseCase orderCurrentCostUseCase;
   @NonNull
   private final MutableLiveData<ViewState<OrderCostViewActions>> viewStateLiveData;
@@ -21,7 +22,7 @@ class OrderCostViewModelImpl extends ViewModel implements OrderCostViewModel {
   private Disposable disposable = EmptyDisposable.INSTANCE;
 
   @Inject
-  OrderCostViewModelImpl(OrderCurrentCostUseCase orderCurrentCostUseCase) {
+  OrderCostViewModelImpl(@NonNull OrderCurrentCostUseCase orderCurrentCostUseCase) {
     this.orderCurrentCostUseCase = orderCurrentCostUseCase;
     viewStateLiveData = new MutableLiveData<>();
     viewStateLiveData.postValue(new OrderCostViewState(0));
