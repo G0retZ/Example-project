@@ -36,6 +36,17 @@ public class OrderRouteGatewayImpl implements OrderRouteGateway {
 
   @NonNull
   @Override
+  public Completable completeTheOrder() {
+    if (stompClient.isConnected() || stompClient.isConnecting()) {
+      return stompClient.send(BuildConfig.TRIP_DESTINATION, "\"COMPLETE_ORDER\"")
+          .subscribeOn(Schedulers.io())
+          .observeOn(Schedulers.single());
+    }
+    return Completable.error(new ConnectionClosedException());
+  }
+
+  @NonNull
+  @Override
   public Completable nextRoutePoint(@NonNull RoutePoint routePoint) {
     if (stompClient.isConnected() || stompClient.isConnecting()) {
       return stompClient.send(

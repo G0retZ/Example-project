@@ -50,6 +50,7 @@ public class OrderRouteUseCaseTest {
   public void setUp() {
     when(orderGateway.getOrders(ExecutorState.ORDER_FULFILLMENT)).thenReturn(Flowable.never());
     when(orderRouteGateway.closeRoutePoint(any())).thenReturn(Completable.never());
+    when(orderRouteGateway.completeTheOrder()).thenReturn(Completable.never());
     when(orderRouteGateway.nextRoutePoint(any())).thenReturn(Completable.never());
     orderRouteUseCase = new OrderRouteUseCaseImpl(orderGateway, orderRouteGateway);
   }
@@ -83,10 +84,22 @@ public class OrderRouteUseCaseTest {
   }
 
   /**
-   * Должен запросить у гейтвея снять отметку с точки.
+   * Должен запросить у гейтвея завершить заказ.
    */
   @Test
-  public void askGatewayToUnCheckRoutePoint() {
+  public void askGatewayToCompleteTheOrder() {
+    // Действие:
+    orderRouteUseCase.completeTheOrder().test();
+
+    // Результат:
+    verify(orderRouteGateway, only()).completeTheOrder();
+  }
+
+  /**
+   * Должен запросить у гейтвея выбрать другую точку.
+   */
+  @Test
+  public void askGatewayToUseNextRoutePoint() {
     // Действие:
     orderRouteUseCase.nextRoutePoint(routePoint).test();
 
@@ -136,7 +149,7 @@ public class OrderRouteUseCaseTest {
     test.assertNoErrors();
   }
 
-  /* Проверяем ответы на запросы открытия/закрытия точки */
+  /* Проверяем ответы на запросы управления точками */
 
   /**
    * Должен ответить ошибкой сети на запрос закрытия точки.
@@ -157,10 +170,28 @@ public class OrderRouteUseCaseTest {
   }
 
   /**
-   * Должен ответить ошибкой сети на на запрос открытия точки.
+   * Должен ответить ошибкой сети на запрос завершения заказа.
    */
   @Test
-  public void answerNoNetworkErrorForOpenRoutePoint() {
+  public void answerNoNetworkErrorForCompleteTheOrder() {
+    // Дано:
+    when(orderRouteGateway.completeTheOrder())
+        .thenReturn(Completable.error(new NoNetworkException()));
+
+    // Действие:
+    TestObserver<Void> test = orderRouteUseCase.completeTheOrder().test();
+
+    // Результат:
+    test.assertError(NoNetworkException.class);
+    test.assertNoValues();
+    test.assertNotComplete();
+  }
+
+  /**
+   * Должен ответить ошибкой сети на на запрос выбора другой точки.
+   */
+  @Test
+  public void answerNoNetworkErrorForUseNextRoutePoint() {
     // Дано:
     when(orderRouteGateway.nextRoutePoint(any()))
         .thenReturn(Completable.error(new NoNetworkException()));
@@ -191,10 +222,26 @@ public class OrderRouteUseCaseTest {
   }
 
   /**
-   * Должен ответить успехом на запрос открытия точки.
+   * Должен ответить успехом запроса завершения заказа.
    */
   @Test
-  public void answerSendOpenRoutePointSuccessful() {
+  public void answerSendCompleteTheOrderSuccessful() {
+    // Дано:
+    when(orderRouteGateway.completeTheOrder()).thenReturn(Completable.complete());
+
+    // Действие:
+    TestObserver<Void> test = orderRouteUseCase.completeTheOrder().test();
+
+    // Результат:
+    test.assertComplete();
+    test.assertNoErrors();
+  }
+
+  /**
+   * Должен ответить успехом на запрос выбора другой точки.
+   */
+  @Test
+  public void answerSendUseNextRoutePointSuccessful() {
     // Дано:
     when(orderRouteGateway.nextRoutePoint(any())).thenReturn(Completable.complete());
 
