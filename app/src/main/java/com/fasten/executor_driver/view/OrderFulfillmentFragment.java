@@ -40,6 +40,8 @@ public class OrderFulfillmentFragment extends BaseFragment implements OrderCostV
   private TextView commentTitleText;
   private TextView commentText;
   private Button getDirectionsAction;
+  private Button closeRoutePointAction;
+  private Button completeTheOrderAction;
   private Context context;
   private boolean pending;
 
@@ -76,8 +78,10 @@ public class OrderFulfillmentFragment extends BaseFragment implements OrderCostV
     commentTitleText = view.findViewById(R.id.commentTitleText);
     commentText = view.findViewById(R.id.commentText);
     getDirectionsAction = view.findViewById(R.id.openNavigator);
-    Button closeRoutePointAction = view.findViewById(R.id.closeRoutePoint);
+    closeRoutePointAction = view.findViewById(R.id.closeRoutePoint);
     closeRoutePointAction.setOnClickListener(v -> nextRoutePointViewModel.closeRoutePoint());
+    completeTheOrderAction = view.findViewById(R.id.completeTheOrder);
+    completeTheOrderAction.setOnClickListener(v -> nextRoutePointViewModel.completeTheOrder());
     return view;
   }
 
@@ -128,21 +132,26 @@ public class OrderFulfillmentFragment extends BaseFragment implements OrderCostV
 
   @Override
   public void showNextRoutePointCoordinates(@NonNull String coordinates) {
-    getDirectionsAction.setOnClickListener(v -> {
-      Intent navigationIntent = new Intent(Intent.ACTION_VIEW);
-      navigationIntent.setData(Uri.parse("geo:" + coordinates + "?q=" + coordinates
-          + "(" + getString(R.string.client) + ")"));
-      if (navigationIntent.resolveActivity(context.getPackageManager()) != null) {
-        startActivity(navigationIntent);
-      } else {
-        new Builder(context)
-            .setTitle(R.string.error)
-            .setMessage(R.string.install_geo_app)
-            .setPositiveButton(getString(android.R.string.ok), null)
-            .create()
-            .show();
-      }
-    });
+    if (coordinates.trim().isEmpty()) {
+      getDirectionsAction.setVisibility(View.GONE);
+    } else {
+      getDirectionsAction.setVisibility(View.VISIBLE);
+      getDirectionsAction.setOnClickListener(v -> {
+        Intent navigationIntent = new Intent(Intent.ACTION_VIEW);
+        navigationIntent.setData(Uri.parse("geo:" + coordinates + "?q=" + coordinates
+            + "(" + getString(R.string.client) + ")"));
+        if (navigationIntent.resolveActivity(context.getPackageManager()) != null) {
+          startActivity(navigationIntent);
+        } else {
+          new Builder(context)
+              .setTitle(R.string.error)
+              .setMessage(R.string.install_geo_app)
+              .setPositiveButton(getString(android.R.string.ok), null)
+              .create()
+              .show();
+        }
+      });
+    }
   }
 
   @Override
@@ -154,12 +163,25 @@ public class OrderFulfillmentFragment extends BaseFragment implements OrderCostV
   public void showNextRoutePointComment(@NonNull String comment) {
     if (comment.trim().isEmpty()) {
       commentTitleText.setVisibility(View.GONE);
-      commentText.setVisibility(View.GONE);
     } else {
       commentTitleText.setVisibility(View.VISIBLE);
-      commentText.setVisibility(View.VISIBLE);
-      commentText.setText(comment);
     }
+    commentText.setText(comment);
+  }
+
+  @Override
+  public void showCloseNextRoutePointAction(boolean show) {
+    closeRoutePointAction.setVisibility(show ? View.VISIBLE : View.GONE);
+  }
+
+  @Override
+  public void showCompleteOrderAction(boolean show) {
+    completeTheOrderAction.setVisibility(show ? View.VISIBLE : View.GONE);
+  }
+
+  @Override
+  public void showNoRouteRide(boolean show) {
+    getDirectionsAction.setVisibility(show ? View.VISIBLE : View.GONE);
   }
 
   @Override
