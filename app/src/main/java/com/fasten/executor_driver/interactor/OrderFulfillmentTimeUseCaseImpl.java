@@ -28,7 +28,7 @@ public class OrderFulfillmentTimeUseCaseImpl implements OrderFulfillmentTimeUseC
     return orderGateway.getOrders(ExecutorState.ORDER_FULFILLMENT)
         .switchMap(order -> {
               long offset =
-                  order.getOrderStartTime() - Math.round(timeUtils.currentTimeMillis() / 1000d);
+                  Math.round((timeUtils.currentTimeMillis() - order.getOrderStartTime()) / 1000d);
               return Flowable.interval(0, 1, TimeUnit.SECONDS, Schedulers.io())
                   .map(count -> count + offset);
             }
