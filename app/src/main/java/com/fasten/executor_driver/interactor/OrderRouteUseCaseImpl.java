@@ -7,15 +7,17 @@ import com.fasten.executor_driver.entity.RoutePoint;
 import io.reactivex.Completable;
 import io.reactivex.Flowable;
 import java.util.List;
+import javax.inject.Inject;
 
-class OrderRouteUseCaseImpl implements OrderRouteUseCase {
+public class OrderRouteUseCaseImpl implements OrderRouteUseCase {
 
   @NonNull
   private final OrderGateway orderGateway;
   @NonNull
   private final OrderRouteGateway orderRouteGateway;
 
-  OrderRouteUseCaseImpl(@NonNull OrderGateway orderGateway,
+  @Inject
+  public OrderRouteUseCaseImpl(@NonNull OrderGateway orderGateway,
       @NonNull OrderRouteGateway orderRouteGateway) {
     this.orderGateway = orderGateway;
     this.orderRouteGateway = orderRouteGateway;

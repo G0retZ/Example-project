@@ -7,10 +7,10 @@ import ua.naiksoftware.stomp.client.StompMessage;
 /**
  * Извлекаем стоимость сверх пакета из ответа сервера.
  */
-class ExcessiveCostApiMapper implements Mapper<StompMessage, Integer> {
+public class ExcessiveCostApiMapper implements Mapper<StompMessage, Integer> {
 
   @Inject
-  ExcessiveCostApiMapper() {
+  public ExcessiveCostApiMapper() {
   }
 
   @NonNull

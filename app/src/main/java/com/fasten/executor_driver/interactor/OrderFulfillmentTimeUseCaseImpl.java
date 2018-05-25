@@ -6,15 +6,17 @@ import com.fasten.executor_driver.utils.TimeUtils;
 import io.reactivex.Flowable;
 import io.reactivex.schedulers.Schedulers;
 import java.util.concurrent.TimeUnit;
+import javax.inject.Inject;
 
-class OrderFulfillmentTimeUseCaseImpl implements OrderFulfillmentTimeUseCase {
+public class OrderFulfillmentTimeUseCaseImpl implements OrderFulfillmentTimeUseCase {
 
   @NonNull
   private final OrderGateway orderGateway;
   @NonNull
   private final TimeUtils timeUtils;
 
-  OrderFulfillmentTimeUseCaseImpl(@NonNull OrderGateway orderGateway,
+  @Inject
+  public OrderFulfillmentTimeUseCaseImpl(@NonNull OrderGateway orderGateway,
       @NonNull TimeUtils timeUtils) {
     this.orderGateway = orderGateway;
     this.timeUtils = timeUtils;

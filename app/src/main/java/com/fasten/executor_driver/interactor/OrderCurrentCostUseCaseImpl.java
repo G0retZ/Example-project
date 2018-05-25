@@ -3,15 +3,17 @@ package com.fasten.executor_driver.interactor;
 import android.support.annotation.NonNull;
 import com.fasten.executor_driver.entity.ExecutorState;
 import io.reactivex.Flowable;
+import javax.inject.Inject;
 
-class OrderCurrentCostUseCaseImpl implements OrderCurrentCostUseCase {
+public class OrderCurrentCostUseCaseImpl implements OrderCurrentCostUseCase {
 
   @NonNull
   private final OrderGateway orderGateway;
   @NonNull
   private final OrderExcessCostGateway orderExcessCostGateway;
 
-  OrderCurrentCostUseCaseImpl(@NonNull OrderGateway orderGateway,
+  @Inject
+  public OrderCurrentCostUseCaseImpl(@NonNull OrderGateway orderGateway,
       @NonNull OrderExcessCostGateway orderExcessCostGateway) {
     this.orderGateway = orderGateway;
     this.orderExcessCostGateway = orderExcessCostGateway;

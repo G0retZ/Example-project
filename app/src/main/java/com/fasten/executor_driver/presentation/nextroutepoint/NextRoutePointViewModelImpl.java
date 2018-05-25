@@ -14,7 +14,7 @@ import io.reactivex.schedulers.Schedulers;
 import java.util.Collections;
 import javax.inject.Inject;
 
-class NextRoutePointViewModelImpl extends ViewModel implements NextRoutePointViewModel {
+public class NextRoutePointViewModelImpl extends ViewModel implements NextRoutePointViewModel {
 
   @NonNull
   private final OrderRouteUseCase orderRouteUseCase;
@@ -28,7 +28,7 @@ class NextRoutePointViewModelImpl extends ViewModel implements NextRoutePointVie
   private RoutePointItem lastRoutePointItem;
 
   @Inject
-  NextRoutePointViewModelImpl(@NonNull OrderRouteUseCase orderRouteUseCase) {
+  public NextRoutePointViewModelImpl(@NonNull OrderRouteUseCase orderRouteUseCase) {
     this.orderRouteUseCase = orderRouteUseCase;
     viewStateLiveData = new MutableLiveData<>();
     viewStateLiveData.postValue(new NextRoutePointViewStatePending(

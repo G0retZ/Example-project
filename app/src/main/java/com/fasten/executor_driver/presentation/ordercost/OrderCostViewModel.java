@@ -6,4 +6,5 @@ import com.fasten.executor_driver.presentation.ViewModel;
  * ViewModel окна текущей стоимости заказа.
  */
 public interface OrderCostViewModel extends ViewModel<OrderCostViewActions> {
+
 }
