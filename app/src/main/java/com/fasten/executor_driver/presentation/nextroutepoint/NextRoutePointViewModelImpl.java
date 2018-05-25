@@ -4,6 +4,7 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import com.fasten.executor_driver.entity.RoutePoint;
 import com.fasten.executor_driver.interactor.OrderRouteUseCase;
 import com.fasten.executor_driver.presentation.ViewState;
@@ -11,7 +12,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.internal.disposables.EmptyDisposable;
 import io.reactivex.schedulers.Schedulers;
-import java.util.Collections;
 import javax.inject.Inject;
 
 public class NextRoutePointViewModelImpl extends ViewModel implements NextRoutePointViewModel {
@@ -23,19 +23,17 @@ public class NextRoutePointViewModelImpl extends ViewModel implements NextRouteP
   @NonNull
   private Disposable disposable = EmptyDisposable.INSTANCE;
   @NonNull
-  private Disposable closeRoutePointDisposable = EmptyDisposable.INSTANCE;
-  @NonNull
-  private RoutePointItem lastRoutePointItem;
+  private Disposable completeDisposable = EmptyDisposable.INSTANCE;
+  @Nullable
+  private ViewState<NextRoutePointViewActions> lastViewState;
+  @Nullable
+  private RoutePoint lastRoutePoint;
 
   @Inject
   public NextRoutePointViewModelImpl(@NonNull OrderRouteUseCase orderRouteUseCase) {
     this.orderRouteUseCase = orderRouteUseCase;
     viewStateLiveData = new MutableLiveData<>();
-    viewStateLiveData.postValue(new NextRoutePointViewStatePending(
-        lastRoutePointItem = new RoutePointItem(Collections.singletonList(
-            new RoutePoint(0, 0, 0, "", "", false)
-        ))
-    ));
+    viewStateLiveData.postValue(new NextRoutePointViewStatePending(null));
     loadRoutePoints();
   }
 
@@ -53,19 +51,38 @@ public class NextRoutePointViewModelImpl extends ViewModel implements NextRouteP
 
   @Override
   public void closeRoutePoint() {
-    if (!closeRoutePointDisposable.isDisposed()) {
+    if (!completeDisposable.isDisposed() || lastRoutePoint == null) {
       return;
     }
-    viewStateLiveData.postValue(new NextRoutePointViewStatePending(lastRoutePointItem));
-    closeRoutePointDisposable = orderRouteUseCase
-        .closeRoutePoint(lastRoutePointItem.getRoutePoint())
+    viewStateLiveData.postValue(new NextRoutePointViewStatePending(lastViewState));
+    completeDisposable = orderRouteUseCase
+        .closeRoutePoint(lastRoutePoint)
         .subscribeOn(Schedulers.single())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(
             () -> {
             }, throwable -> {
               throwable.printStackTrace();
-              viewStateLiveData.postValue(new NextRoutePointViewStateError(lastRoutePointItem));
+              viewStateLiveData.postValue(lastViewState);
+            }
+        );
+  }
+
+  @Override
+  public void completeTheOrder() {
+    if (!completeDisposable.isDisposed()) {
+      return;
+    }
+    viewStateLiveData.postValue(new NextRoutePointViewStatePending(lastViewState));
+    completeDisposable = orderRouteUseCase
+        .completeTheOrder()
+        .subscribeOn(Schedulers.single())
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe(
+            () -> {
+            }, throwable -> {
+              throwable.printStackTrace();
+              viewStateLiveData.postValue(lastViewState);
             }
         );
   }
@@ -78,12 +95,24 @@ public class NextRoutePointViewModelImpl extends ViewModel implements NextRouteP
         .subscribeOn(Schedulers.single())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(
-            routePoints -> viewStateLiveData.postValue(new NextRoutePointViewStateIdle(
-                lastRoutePointItem = new RoutePointItem(routePoints)
-            )),
+            routePoints -> {
+              completeDisposable.dispose();
+              for (RoutePoint routePoint : routePoints) {
+                lastRoutePoint = routePoint;
+                if (!routePoint.isChecked()) {
+                  viewStateLiveData.postValue(lastViewState = new NextRoutePointViewStateEnRoute(
+                      new RoutePointItem(lastRoutePoint)
+                  ));
+                  return;
+                }
+              }
+              viewStateLiveData.postValue(
+                  lastViewState = new NextRoutePointViewStateNoRoute(routePoints.size() < 2)
+              );
+            },
             throwable -> {
               throwable.printStackTrace();
-              viewStateLiveData.postValue(new NextRoutePointViewStateError(lastRoutePointItem));
+              viewStateLiveData.postValue(new NextRoutePointViewStateError(lastViewState));
             }
         );
   }
@@ -92,6 +121,6 @@ public class NextRoutePointViewModelImpl extends ViewModel implements NextRouteP
   protected void onCleared() {
     super.onCleared();
     disposable.dispose();
-    closeRoutePointDisposable.dispose();
+    completeDisposable.dispose();
   }
 }

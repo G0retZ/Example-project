@@ -2,7 +2,6 @@ package com.fasten.executor_driver.presentation.nextroutepoint;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.only;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
@@ -22,6 +21,7 @@ import io.reactivex.plugins.RxJavaPlugins;
 import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.PublishSubject;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import org.junit.Before;
 import org.junit.Rule;
@@ -60,6 +60,7 @@ public class NextRoutePointViewModelTest {
     when(orderRouteUseCase.getOrderRoutePoints())
         .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
     when(orderRouteUseCase.closeRoutePoint(any())).thenReturn(Completable.never());
+    when(orderRouteUseCase.completeTheOrder()).thenReturn(Completable.never());
     movingToClientViewModel = new NextRoutePointViewModelImpl(orderRouteUseCase);
   }
 
@@ -107,22 +108,65 @@ public class NextRoutePointViewModelTest {
   }
 
   /**
+   * Должен попросить юзкейс завершить заказ.
+   */
+  @Test
+  public void askUseCaseToCompleteTheOrder() {
+    // Дано:
+    publishSubject.onNext(Arrays.asList(routePoint, routePoint1, routePoint2));
+
+    // Действие:
+    movingToClientViewModel.completeTheOrder();
+
+    // Результат:
+    verify(orderRouteUseCase).getOrderRoutePoints();
+    verify(orderRouteUseCase).completeTheOrder();
+    verifyNoMoreInteractions(orderRouteUseCase);
+  }
+
+  /**
    * Не должен трогать юзкейс, если предыдущий запрос закрытия точки маршрута еще не завершился.
    */
   @Test
   public void DoNotTouchUseCaseDuringRoutePointClosing() {
+    // Дано:
+    publishSubject.onNext(Arrays.asList(routePoint, routePoint1, routePoint2));
+
     // Действие:
     movingToClientViewModel.closeRoutePoint();
     movingToClientViewModel.closeRoutePoint();
+    movingToClientViewModel.completeTheOrder();
+    movingToClientViewModel.closeRoutePoint();
+    movingToClientViewModel.completeTheOrder();
+
+    // Результат:
+    verify(orderRouteUseCase).getOrderRoutePoints();
+    verify(orderRouteUseCase).closeRoutePoint(routePoint);
+    verifyNoMoreInteractions(orderRouteUseCase);
+  }
+
+  /**
+   * Не должен трогать юзкейс, если предыдущий запрос завершения заказа еще не завершился.
+   */
+  @Test
+  public void DoNotTouchUseCaseDuringOrderCompleting() {
+    // Дано:
+    publishSubject.onNext(Arrays.asList(routePoint, routePoint1, routePoint2));
+
+    // Действие:
+    movingToClientViewModel.completeTheOrder();
+    movingToClientViewModel.completeTheOrder();
+    movingToClientViewModel.closeRoutePoint();
+    movingToClientViewModel.completeTheOrder();
     movingToClientViewModel.closeRoutePoint();
 
     // Результат:
     verify(orderRouteUseCase).getOrderRoutePoints();
-    verify(orderRouteUseCase).closeRoutePoint(any());
+    verify(orderRouteUseCase).completeTheOrder();
     verifyNoMoreInteractions(orderRouteUseCase);
   }
 
-  /* Тетсируем переключение состояний. */
+  /* Тетсируем переключение состояний от сервера. */
 
   /**
    * Должен вернуть состояние вида ожидания изначально.
@@ -136,7 +180,7 @@ public class NextRoutePointViewModelTest {
     movingToClientViewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Результат:
-    inOrder.verify(viewStateObserver).onChanged(any(NextRoutePointViewStatePending.class));
+    inOrder.verify(viewStateObserver).onChanged(new NextRoutePointViewStatePending(null));
     verifyNoMoreInteractions(viewStateObserver);
   }
 
@@ -153,8 +197,8 @@ public class NextRoutePointViewModelTest {
     publishSubject.onError(new NoNetworkException());
 
     // Результат:
-    inOrder.verify(viewStateObserver).onChanged(any(NextRoutePointViewStatePending.class));
-    inOrder.verify(viewStateObserver).onChanged(any(NextRoutePointViewStateError.class));
+    inOrder.verify(viewStateObserver).onChanged(new NextRoutePointViewStatePending(null));
+    inOrder.verify(viewStateObserver).onChanged(new NextRoutePointViewStateError(null));
     verifyNoMoreInteractions(viewStateObserver);
   }
 
@@ -171,8 +215,8 @@ public class NextRoutePointViewModelTest {
     publishSubject.onError(new DataMappingException());
 
     // Результат:
-    inOrder.verify(viewStateObserver).onChanged(any(NextRoutePointViewStatePending.class));
-    inOrder.verify(viewStateObserver).onChanged(any(NextRoutePointViewStateError.class));
+    inOrder.verify(viewStateObserver).onChanged(new NextRoutePointViewStatePending(null));
+    inOrder.verify(viewStateObserver).onChanged(new NextRoutePointViewStateError(null));
     verifyNoMoreInteractions(viewStateObserver);
   }
 
@@ -189,195 +233,561 @@ public class NextRoutePointViewModelTest {
     publishSubject.onError(new NoOrdersAvailableException());
 
     // Результат:
-    inOrder.verify(viewStateObserver).onChanged(any(NextRoutePointViewStatePending.class));
-    inOrder.verify(viewStateObserver).onChanged(any(NextRoutePointViewStateError.class));
+    inOrder.verify(viewStateObserver).onChanged(new NextRoutePointViewStatePending(null));
+    inOrder.verify(viewStateObserver).onChanged(new NextRoutePointViewStateError(null));
     verifyNoMoreInteractions(viewStateObserver);
   }
 
   /**
-   * Должен вернуть состояния вида "Бездействие" с полученнымы маршрутами.
+   * Должен вернуть состояние вида "Без маршрута" для одной закрытой точки.
    */
   @Test
-  public void setIdleViewStateToLiveData() {
+  public void setNoRouteViewStateToLiveData() {
+    // Дано:
+    InOrder inOrder = Mockito.inOrder(viewStateObserver);
+    movingToClientViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+
+    // Действие:
+    when(routePoint.isChecked()).thenReturn(true);
+    publishSubject.onNext(Collections.singletonList(routePoint));
+
+    // Результат:
+    inOrder.verify(viewStateObserver).onChanged(new NextRoutePointViewStatePending(null));
+    inOrder.verify(viewStateObserver).onChanged(new NextRoutePointViewStateNoRoute(true));
+    verifyNoMoreInteractions(viewStateObserver);
+  }
+
+  /**
+   * Должен вернуть состояния вида "На маршруте" с полученными маршрутами.
+   */
+  @Test
+  public void setEnRouteViewStateToLiveData() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     movingToClientViewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
     publishSubject.onNext(Arrays.asList(routePoint, routePoint1, routePoint2));
-    publishSubject.onNext(Arrays.asList(routePoint1, routePoint2, routePoint));
-    publishSubject.onNext(Arrays.asList(routePoint2, routePoint1, routePoint));
+    when(routePoint.isChecked()).thenReturn(true);
+    publishSubject.onNext(Arrays.asList(routePoint, routePoint1, routePoint2));
+    when(routePoint1.isChecked()).thenReturn(true);
+    publishSubject.onNext(Arrays.asList(routePoint, routePoint1, routePoint2));
 
     // Результат:
-    inOrder.verify(viewStateObserver).onChanged(any(NextRoutePointViewStatePending.class));
-    inOrder.verify(viewStateObserver).onChanged(new NextRoutePointViewStateIdle(
-            new RoutePointItem(Arrays.asList(routePoint, routePoint2, routePoint1))
-        )
+    inOrder.verify(viewStateObserver).onChanged(new NextRoutePointViewStatePending(null));
+    inOrder.verify(viewStateObserver).onChanged(
+        new NextRoutePointViewStateEnRoute(new RoutePointItem(routePoint))
     );
-    inOrder.verify(viewStateObserver).onChanged(new NextRoutePointViewStateIdle(
-            new RoutePointItem(Arrays.asList(routePoint1, routePoint, routePoint2))
-        )
+    inOrder.verify(viewStateObserver).onChanged(
+        new NextRoutePointViewStateEnRoute(new RoutePointItem(routePoint1))
     );
-    inOrder.verify(viewStateObserver).onChanged(new NextRoutePointViewStateIdle(
-            new RoutePointItem(Arrays.asList(routePoint2, routePoint2, routePoint1))
-        )
+    inOrder.verify(viewStateObserver).onChanged(
+        new NextRoutePointViewStateEnRoute(new RoutePointItem(routePoint2))
     );
     verifyNoMoreInteractions(viewStateObserver);
   }
 
   /**
-   * Должен вернуть состояние вида "В процессе".
+   * Должен вернуть состояние вида "Без маршрута" в итоге.
    */
   @Test
-  public void setPendingViewStateWithoutOrderToLiveDataForCloseRoutePoint() {
+  public void setNoRouteViewStateLastToLiveData() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     movingToClientViewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    movingToClientViewModel.closeRoutePoint();
+    publishSubject.onNext(Arrays.asList(routePoint, routePoint1, routePoint2));
+    when(routePoint.isChecked()).thenReturn(true);
+    publishSubject.onNext(Arrays.asList(routePoint, routePoint1, routePoint2));
+    when(routePoint1.isChecked()).thenReturn(true);
+    publishSubject.onNext(Arrays.asList(routePoint, routePoint1, routePoint2));
+    when(routePoint2.isChecked()).thenReturn(true);
+    publishSubject.onNext(Arrays.asList(routePoint, routePoint1, routePoint2));
 
     // Результат:
-    inOrder.verify(viewStateObserver, times(2))
-        .onChanged(any(NextRoutePointViewStatePending.class));
+    inOrder.verify(viewStateObserver).onChanged(new NextRoutePointViewStatePending(null));
+    inOrder.verify(viewStateObserver).onChanged(
+        new NextRoutePointViewStateEnRoute(new RoutePointItem(routePoint))
+    );
+    inOrder.verify(viewStateObserver).onChanged(
+        new NextRoutePointViewStateEnRoute(new RoutePointItem(routePoint1))
+    );
+    inOrder.verify(viewStateObserver).onChanged(
+        new NextRoutePointViewStateEnRoute(new RoutePointItem(routePoint2))
+    );
+    inOrder.verify(viewStateObserver).onChanged(
+        new NextRoutePointViewStateNoRoute(false)
+    );
     verifyNoMoreInteractions(viewStateObserver);
   }
 
+  /* Тетсируем переключение состояний при закрытии точки. */
+
   /**
-   * Должен вернуть состояние вида "Ошибка" сети.
+   * Должен вернуть состояние вида "В процессе" во время "по маршруту" для закрытия точки.
    */
   @Test
-  public void setNoNetworkErrorViewStateWithoutOrderToLiveDataForCloseRoutePoint() {
+  public void setPendingViewStateWithEnRouteViewStateToLiveDataForCloseRoutePoint() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    when(orderRouteUseCase.closeRoutePoint(any()))
-        .thenReturn(Completable.error(NoNetworkException::new));
     movingToClientViewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
+    publishSubject.onNext(Arrays.asList(routePoint, routePoint1, routePoint2));
     movingToClientViewModel.closeRoutePoint();
 
     // Результат:
-    inOrder.verify(viewStateObserver, times(2))
-        .onChanged(any(NextRoutePointViewStatePending.class));
-    inOrder.verify(viewStateObserver).onChanged(any(NextRoutePointViewStateError.class));
+    inOrder.verify(viewStateObserver).onChanged(new NextRoutePointViewStatePending(null));
+    inOrder.verify(viewStateObserver).onChanged(new NextRoutePointViewStateEnRoute(
+        new RoutePointItem(routePoint)
+    ));
+    inOrder.verify(viewStateObserver).onChanged(new NextRoutePointViewStatePending(
+        new NextRoutePointViewStateEnRoute(
+            new RoutePointItem(routePoint)
+        )
+    ));
     verifyNoMoreInteractions(viewStateObserver);
   }
 
   /**
-   * Должен вернуть состояние вида "Ошибка" нет доступных заказов.
+   * Должен вернуть состояние вида "В процессе" во время "по городу" для закрытия точки.
    */
   @Test
-  public void setNoOrdersAvailableErrorViewStateWithoutOrderToLiveDataForCloseRoutePoint() {
+  public void setPendingViewStateWithNoRouteTrueViewStateToLiveDataForCloseRoutePoint() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    when(orderRouteUseCase.closeRoutePoint(any()))
-        .thenReturn(Completable.error(NoOrdersAvailableException::new));
+    movingToClientViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    when(routePoint.isChecked()).thenReturn(true);
+
+    // Действие:
+    publishSubject.onNext(Collections.singletonList(routePoint));
+    movingToClientViewModel.closeRoutePoint();
+
+    // Результат:
+    inOrder.verify(viewStateObserver).onChanged(new NextRoutePointViewStatePending(null));
+    inOrder.verify(viewStateObserver).onChanged(new NextRoutePointViewStateNoRoute(true));
+    inOrder.verify(viewStateObserver).onChanged(new NextRoutePointViewStatePending(
+        new NextRoutePointViewStateNoRoute(true)
+    ));
+    verifyNoMoreInteractions(viewStateObserver);
+  }
+
+  /**
+   * Должен вернуть состояние вида "В процессе" во время "после маршрута" для закрытия точки.
+   */
+  @Test
+  public void setPendingViewStateWithNoRouteFalseViewStateToLiveDataForCloseRoutePoint() {
+    // Дано:
+    InOrder inOrder = Mockito.inOrder(viewStateObserver);
+    movingToClientViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    when(routePoint.isChecked()).thenReturn(true);
+    when(routePoint1.isChecked()).thenReturn(true);
+    when(routePoint2.isChecked()).thenReturn(true);
+
+    // Действие:
+    publishSubject.onNext(Arrays.asList(routePoint, routePoint1, routePoint2));
+    movingToClientViewModel.closeRoutePoint();
+
+    // Результат:
+    inOrder.verify(viewStateObserver).onChanged(new NextRoutePointViewStatePending(null));
+    inOrder.verify(viewStateObserver).onChanged(new NextRoutePointViewStateNoRoute(false));
+    inOrder.verify(viewStateObserver).onChanged(new NextRoutePointViewStatePending(
+        new NextRoutePointViewStateNoRoute(false)
+    ));
+    verifyNoMoreInteractions(viewStateObserver);
+  }
+
+  /**
+   * Должен вернуть предыдущее состояние вида "по маршруту" после "В процессе" для закрытия точки.
+   */
+  @Test
+  public void setEnRouteViewStateToLiveDataAfterPendingForCloseRoutePoint() {
+    // Дано:
+    InOrder inOrder = Mockito.inOrder(viewStateObserver);
+    when(orderRouteUseCase.closeRoutePoint(any())).thenReturn(Completable.error(Exception::new));
     movingToClientViewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
+    publishSubject.onNext(Arrays.asList(routePoint, routePoint1, routePoint2));
     movingToClientViewModel.closeRoutePoint();
 
     // Результат:
-    inOrder.verify(viewStateObserver, times(2))
-        .onChanged(any(NextRoutePointViewStatePending.class));
-    inOrder.verify(viewStateObserver).onChanged(any(NextRoutePointViewStateError.class));
+    inOrder.verify(viewStateObserver).onChanged(new NextRoutePointViewStatePending(null));
+    inOrder.verify(viewStateObserver).onChanged(new NextRoutePointViewStateEnRoute(
+        new RoutePointItem(routePoint)
+    ));
+    inOrder.verify(viewStateObserver).onChanged(new NextRoutePointViewStatePending(
+        new NextRoutePointViewStateEnRoute(
+            new RoutePointItem(routePoint)
+        )
+    ));
+    inOrder.verify(viewStateObserver).onChanged(new NextRoutePointViewStateEnRoute(
+        new RoutePointItem(routePoint)
+    ));
     verifyNoMoreInteractions(viewStateObserver);
   }
 
   /**
-   * Не должен возвращать никакого состояния вида.
+   * Должен вернуть предыдущее состояние вида "по городу" после "В процессе" для закрытия точки.
    */
   @Test
-  public void setIdleViewStateToLiveDataForCloseRoutePointWithoutRoute() {
+  public void setNoRouteTrueViewStateToLiveDataAfterPendingForCloseRoutePoint() {
+    // Дано:
+    InOrder inOrder = Mockito.inOrder(viewStateObserver);
+    when(orderRouteUseCase.closeRoutePoint(any())).thenReturn(Completable.error(Exception::new));
+    movingToClientViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    when(routePoint.isChecked()).thenReturn(true);
+
+    // Действие:
+    publishSubject.onNext(Collections.singletonList(routePoint));
+    movingToClientViewModel.closeRoutePoint();
+
+    // Результат:
+    inOrder.verify(viewStateObserver).onChanged(new NextRoutePointViewStatePending(null));
+    inOrder.verify(viewStateObserver).onChanged(new NextRoutePointViewStateNoRoute(true));
+    inOrder.verify(viewStateObserver).onChanged(new NextRoutePointViewStatePending(
+        new NextRoutePointViewStateNoRoute(true)
+    ));
+    inOrder.verify(viewStateObserver).onChanged(new NextRoutePointViewStateNoRoute(true));
+    verifyNoMoreInteractions(viewStateObserver);
+  }
+
+  /**
+   * Должен вернуть предыдущее состояние вида "после маршрута" после "В процессе" для закрытия точки.
+   */
+  @Test
+  public void setNoRouteFalseViewStateToLiveDataAfterPendingForCloseRoutePoint() {
+    // Дано:
+    InOrder inOrder = Mockito.inOrder(viewStateObserver);
+    when(orderRouteUseCase.closeRoutePoint(any())).thenReturn(Completable.error(Exception::new));
+    movingToClientViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    when(routePoint.isChecked()).thenReturn(true);
+    when(routePoint1.isChecked()).thenReturn(true);
+    when(routePoint2.isChecked()).thenReturn(true);
+
+    // Действие:
+    publishSubject.onNext(Arrays.asList(routePoint, routePoint1, routePoint2));
+    movingToClientViewModel.closeRoutePoint();
+
+    // Результат:
+    inOrder.verify(viewStateObserver).onChanged(new NextRoutePointViewStatePending(null));
+    inOrder.verify(viewStateObserver).onChanged(new NextRoutePointViewStateNoRoute(false));
+    inOrder.verify(viewStateObserver).onChanged(new NextRoutePointViewStatePending(
+        new NextRoutePointViewStateNoRoute(false)));
+    inOrder.verify(viewStateObserver).onChanged(new NextRoutePointViewStateNoRoute(false));
+    verifyNoMoreInteractions(viewStateObserver);
+  }
+
+
+  /**
+   * Не должен возвращать состояний после "В процессе" для закрытия точки.
+   */
+  @Test
+  public void setNoViewStateToLiveDataAfterPendingWithEnRouteForCloseRoutePoint() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     when(orderRouteUseCase.closeRoutePoint(any())).thenReturn(Completable.complete());
     movingToClientViewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    movingToClientViewModel.closeRoutePoint();
-
-    // Результат:
-    inOrder.verify(viewStateObserver, times(2))
-        .onChanged(any(NextRoutePointViewStatePending.class));
-    verifyNoMoreInteractions(viewStateObserver);
-  }
-
-  /**
-   * Должен вернуть состояние вида "В процессе".
-   */
-  @Test
-  public void setPendingViewStateToLiveDataForCloseRoutePoint() {
-    // Дано:
-    InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    movingToClientViewModel.getViewStateLiveData().observeForever(viewStateObserver);
-
-    // Действие:
     publishSubject.onNext(Arrays.asList(routePoint, routePoint1, routePoint2));
     movingToClientViewModel.closeRoutePoint();
 
     // Результат:
-    inOrder.verify(viewStateObserver).onChanged(any(NextRoutePointViewStatePending.class));
-    inOrder.verify(viewStateObserver).onChanged(new NextRoutePointViewStateIdle(
-        new RoutePointItem(Arrays.asList(routePoint, routePoint1, routePoint2))
+    inOrder.verify(viewStateObserver).onChanged(new NextRoutePointViewStatePending(null));
+    inOrder.verify(viewStateObserver).onChanged(new NextRoutePointViewStateEnRoute(
+        new RoutePointItem(routePoint)
     ));
     inOrder.verify(viewStateObserver).onChanged(new NextRoutePointViewStatePending(
-        new RoutePointItem(Arrays.asList(routePoint, routePoint1, routePoint2))
+        new NextRoutePointViewStateEnRoute(
+            new RoutePointItem(routePoint)
+        )
     ));
     verifyNoMoreInteractions(viewStateObserver);
   }
 
   /**
-   * Должен вернуть состояние вида "Ошибка" сети.
+   * Не должен возвращать состояний после "В процессе" для закрытия точки.
    */
   @Test
-  public void setNoNetworkErrorViewStateToLiveDataForCloseRoutePoint() {
-    // Дано:
-    InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    when(orderRouteUseCase.closeRoutePoint(any()))
-        .thenReturn(Completable.error(NoNetworkException::new));
-    movingToClientViewModel.getViewStateLiveData().observeForever(viewStateObserver);
-
-    // Действие:
-    publishSubject.onNext(Arrays.asList(routePoint, routePoint1, routePoint2));
-    movingToClientViewModel.closeRoutePoint();
-
-    // Результат:
-    inOrder.verify(viewStateObserver).onChanged(any(NextRoutePointViewStatePending.class));
-    inOrder.verify(viewStateObserver).onChanged(new NextRoutePointViewStateIdle(
-        new RoutePointItem(Arrays.asList(routePoint, routePoint1, routePoint2))
-    ));
-    inOrder.verify(viewStateObserver).onChanged(new NextRoutePointViewStatePending(
-        new RoutePointItem(Arrays.asList(routePoint, routePoint1, routePoint2))
-    ));
-    inOrder.verify(viewStateObserver).onChanged(new NextRoutePointViewStateError(
-        new RoutePointItem(Arrays.asList(routePoint, routePoint1, routePoint2))
-    ));
-    verifyNoMoreInteractions(viewStateObserver);
-  }
-
-  /**
-   * Не должен возвращать никакого состояния вида.
-   */
-  @Test
-  public void setIdleViewStateToLiveDataForCloseRoutePoint() {
+  public void setNoViewStateToLiveDataAfterPendingWithNoRouteTrueForCloseRoutePoint() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     when(orderRouteUseCase.closeRoutePoint(any())).thenReturn(Completable.complete());
     movingToClientViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    when(routePoint.isChecked()).thenReturn(true);
+
+    // Действие:
+    publishSubject.onNext(Collections.singletonList(routePoint));
+    movingToClientViewModel.closeRoutePoint();
+
+    // Результат:
+    inOrder.verify(viewStateObserver).onChanged(new NextRoutePointViewStatePending(null));
+    inOrder.verify(viewStateObserver).onChanged(new NextRoutePointViewStateNoRoute(true));
+    inOrder.verify(viewStateObserver).onChanged(new NextRoutePointViewStatePending(
+        new NextRoutePointViewStateNoRoute(true)
+    ));
+    verifyNoMoreInteractions(viewStateObserver);
+  }
+
+  /**
+   * Не должен возвращать состояний после "В процессе" для закрытия точки.
+   */
+  @Test
+  public void setNoViewStateToLiveDataAfterPendingWithNoRouteFalseForCloseRoutePoint() {
+    // Дано:
+    InOrder inOrder = Mockito.inOrder(viewStateObserver);
+    when(orderRouteUseCase.closeRoutePoint(any())).thenReturn(Completable.complete());
+    movingToClientViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    when(routePoint.isChecked()).thenReturn(true);
+    when(routePoint1.isChecked()).thenReturn(true);
+    when(routePoint2.isChecked()).thenReturn(true);
 
     // Действие:
     publishSubject.onNext(Arrays.asList(routePoint, routePoint1, routePoint2));
     movingToClientViewModel.closeRoutePoint();
 
     // Результат:
-    inOrder.verify(viewStateObserver).onChanged(any(NextRoutePointViewStatePending.class));
-    inOrder.verify(viewStateObserver).onChanged(new NextRoutePointViewStateIdle(
-        new RoutePointItem(Arrays.asList(routePoint, routePoint1, routePoint2))
+    inOrder.verify(viewStateObserver).onChanged(new NextRoutePointViewStatePending(null));
+    inOrder.verify(viewStateObserver).onChanged(new NextRoutePointViewStateNoRoute(false));
+    inOrder.verify(viewStateObserver).onChanged(new NextRoutePointViewStatePending(
+        new NextRoutePointViewStateNoRoute(false)
+    ));
+    verifyNoMoreInteractions(viewStateObserver);
+  }
+
+  /* Тетсируем переключение состояний при завершении заказа. */
+
+  /**
+   * Должен вернуть состояние вида "В процессе" во время "по маршруту" для закрытия точки.
+   */
+  @Test
+  public void setPendingViewStateWithEnRouteViewStateToLiveDataForCompleteTheOrder() {
+    // Дано:
+    InOrder inOrder = Mockito.inOrder(viewStateObserver);
+    movingToClientViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+
+    // Действие:
+    publishSubject.onNext(Arrays.asList(routePoint, routePoint1, routePoint2));
+    movingToClientViewModel.completeTheOrder();
+
+    // Результат:
+    inOrder.verify(viewStateObserver).onChanged(new NextRoutePointViewStatePending(null));
+    inOrder.verify(viewStateObserver).onChanged(new NextRoutePointViewStateEnRoute(
+        new RoutePointItem(routePoint)
     ));
     inOrder.verify(viewStateObserver).onChanged(new NextRoutePointViewStatePending(
-        new RoutePointItem(Arrays.asList(routePoint, routePoint1, routePoint2))
+        new NextRoutePointViewStateEnRoute(
+            new RoutePointItem(routePoint)
+        )
+    ));
+    verifyNoMoreInteractions(viewStateObserver);
+  }
+
+  /**
+   * Должен вернуть состояние вида "В процессе" во время "по городу" для закрытия точки.
+   */
+  @Test
+  public void setPendingViewStateWithNoRouteTrueViewStateToLiveDataForCompleteTheOrder() {
+    // Дано:
+    InOrder inOrder = Mockito.inOrder(viewStateObserver);
+    movingToClientViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    when(routePoint.isChecked()).thenReturn(true);
+
+    // Действие:
+    publishSubject.onNext(Collections.singletonList(routePoint));
+    movingToClientViewModel.completeTheOrder();
+
+    // Результат:
+    inOrder.verify(viewStateObserver).onChanged(new NextRoutePointViewStatePending(null));
+    inOrder.verify(viewStateObserver).onChanged(new NextRoutePointViewStateNoRoute(true));
+    inOrder.verify(viewStateObserver).onChanged(new NextRoutePointViewStatePending(
+        new NextRoutePointViewStateNoRoute(true)
+    ));
+    verifyNoMoreInteractions(viewStateObserver);
+  }
+
+  /**
+   * Должен вернуть состояние вида "В процессе" во время "после маршрута" для закрытия точки.
+   */
+  @Test
+  public void setPendingViewStateWithNoRouteFalseViewStateToLiveDataForCompleteTheOrder() {
+    // Дано:
+    InOrder inOrder = Mockito.inOrder(viewStateObserver);
+    movingToClientViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    when(routePoint.isChecked()).thenReturn(true);
+    when(routePoint1.isChecked()).thenReturn(true);
+    when(routePoint2.isChecked()).thenReturn(true);
+
+    // Действие:
+    publishSubject.onNext(Arrays.asList(routePoint, routePoint1, routePoint2));
+    movingToClientViewModel.completeTheOrder();
+
+    // Результат:
+    inOrder.verify(viewStateObserver).onChanged(new NextRoutePointViewStatePending(null));
+    inOrder.verify(viewStateObserver).onChanged(new NextRoutePointViewStateNoRoute(false));
+    inOrder.verify(viewStateObserver).onChanged(new NextRoutePointViewStatePending(
+        new NextRoutePointViewStateNoRoute(false)
+    ));
+    verifyNoMoreInteractions(viewStateObserver);
+  }
+
+  /**
+   * Должен вернуть предыдущее состояние вида "по маршруту" после "В процессе" для закрытия точки.
+   */
+  @Test
+  public void setEnRouteViewStateToLiveDataAfterPendingForCompleteTheOrder() {
+    // Дано:
+    InOrder inOrder = Mockito.inOrder(viewStateObserver);
+    when(orderRouteUseCase.completeTheOrder()).thenReturn(Completable.error(Exception::new));
+    movingToClientViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+
+    // Действие:
+    publishSubject.onNext(Arrays.asList(routePoint, routePoint1, routePoint2));
+    movingToClientViewModel.completeTheOrder();
+
+    // Результат:
+    inOrder.verify(viewStateObserver).onChanged(new NextRoutePointViewStatePending(null));
+    inOrder.verify(viewStateObserver).onChanged(new NextRoutePointViewStateEnRoute(
+        new RoutePointItem(routePoint)
+    ));
+    inOrder.verify(viewStateObserver).onChanged(new NextRoutePointViewStatePending(
+        new NextRoutePointViewStateEnRoute(
+            new RoutePointItem(routePoint)
+        )
+    ));
+    inOrder.verify(viewStateObserver).onChanged(new NextRoutePointViewStateEnRoute(
+        new RoutePointItem(routePoint)
+    ));
+    verifyNoMoreInteractions(viewStateObserver);
+  }
+
+  /**
+   * Должен вернуть предыдущее состояние вида "по городу" после "В процессе" для закрытия точки.
+   */
+  @Test
+  public void setNoRouteTrueViewStateToLiveDataAfterPendingForCompleteTheOrder() {
+    // Дано:
+    InOrder inOrder = Mockito.inOrder(viewStateObserver);
+    when(orderRouteUseCase.completeTheOrder()).thenReturn(Completable.error(Exception::new));
+    movingToClientViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    when(routePoint.isChecked()).thenReturn(true);
+
+    // Действие:
+    publishSubject.onNext(Collections.singletonList(routePoint));
+    movingToClientViewModel.completeTheOrder();
+
+    // Результат:
+    inOrder.verify(viewStateObserver).onChanged(new NextRoutePointViewStatePending(null));
+    inOrder.verify(viewStateObserver).onChanged(new NextRoutePointViewStateNoRoute(true));
+    inOrder.verify(viewStateObserver).onChanged(new NextRoutePointViewStatePending(
+        new NextRoutePointViewStateNoRoute(true)
+    ));
+    inOrder.verify(viewStateObserver).onChanged(new NextRoutePointViewStateNoRoute(true));
+    verifyNoMoreInteractions(viewStateObserver);
+  }
+
+  /**
+   * Должен вернуть предыдущее состояние вида "после маршрута" после "В процессе" для закрытия точки.
+   */
+  @Test
+  public void setNoRouteFalseViewStateToLiveDataAfterPendingForCompleteTheOrder() {
+    // Дано:
+    InOrder inOrder = Mockito.inOrder(viewStateObserver);
+    when(orderRouteUseCase.completeTheOrder()).thenReturn(Completable.error(Exception::new));
+    movingToClientViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    when(routePoint.isChecked()).thenReturn(true);
+    when(routePoint1.isChecked()).thenReturn(true);
+    when(routePoint2.isChecked()).thenReturn(true);
+
+    // Действие:
+    publishSubject.onNext(Arrays.asList(routePoint, routePoint1, routePoint2));
+    movingToClientViewModel.completeTheOrder();
+
+    // Результат:
+    inOrder.verify(viewStateObserver).onChanged(new NextRoutePointViewStatePending(null));
+    inOrder.verify(viewStateObserver).onChanged(new NextRoutePointViewStateNoRoute(false));
+    inOrder.verify(viewStateObserver).onChanged(new NextRoutePointViewStatePending(
+        new NextRoutePointViewStateNoRoute(false)));
+    inOrder.verify(viewStateObserver).onChanged(new NextRoutePointViewStateNoRoute(false));
+    verifyNoMoreInteractions(viewStateObserver);
+  }
+
+
+  /**
+   * Не должен возвращать состояний после "В процессе" для закрытия точки.
+   */
+  @Test
+  public void setNoViewStateToLiveDataAfterPendingWithEnRouteForCompleteTheOrder() {
+    // Дано:
+    InOrder inOrder = Mockito.inOrder(viewStateObserver);
+    when(orderRouteUseCase.completeTheOrder()).thenReturn(Completable.complete());
+    movingToClientViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+
+    // Действие:
+    publishSubject.onNext(Arrays.asList(routePoint, routePoint1, routePoint2));
+    movingToClientViewModel.completeTheOrder();
+
+    // Результат:
+    inOrder.verify(viewStateObserver).onChanged(new NextRoutePointViewStatePending(null));
+    inOrder.verify(viewStateObserver).onChanged(new NextRoutePointViewStateEnRoute(
+        new RoutePointItem(routePoint)
+    ));
+    inOrder.verify(viewStateObserver).onChanged(new NextRoutePointViewStatePending(
+        new NextRoutePointViewStateEnRoute(
+            new RoutePointItem(routePoint)
+        )
+    ));
+    verifyNoMoreInteractions(viewStateObserver);
+  }
+
+  /**
+   * Не должен возвращать состояний после "В процессе" для закрытия точки.
+   */
+  @Test
+  public void setNoViewStateToLiveDataAfterPendingWithNoRouteTrueForCompleteTheOrder() {
+    // Дано:
+    InOrder inOrder = Mockito.inOrder(viewStateObserver);
+    when(orderRouteUseCase.completeTheOrder()).thenReturn(Completable.complete());
+    movingToClientViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    when(routePoint.isChecked()).thenReturn(true);
+
+    // Действие:
+    publishSubject.onNext(Collections.singletonList(routePoint));
+    movingToClientViewModel.completeTheOrder();
+
+    // Результат:
+    inOrder.verify(viewStateObserver).onChanged(new NextRoutePointViewStatePending(null));
+    inOrder.verify(viewStateObserver).onChanged(new NextRoutePointViewStateNoRoute(true));
+    inOrder.verify(viewStateObserver).onChanged(new NextRoutePointViewStatePending(
+        new NextRoutePointViewStateNoRoute(true)
+    ));
+    verifyNoMoreInteractions(viewStateObserver);
+  }
+
+  /**
+   * Не должен возвращать состояний после "В процессе" для закрытия точки.
+   */
+  @Test
+  public void setNoViewStateToLiveDataAfterPendingWithNoRouteFalseForCompleteTheOrder() {
+    // Дано:
+    InOrder inOrder = Mockito.inOrder(viewStateObserver);
+    when(orderRouteUseCase.completeTheOrder()).thenReturn(Completable.complete());
+    movingToClientViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    when(routePoint.isChecked()).thenReturn(true);
+    when(routePoint1.isChecked()).thenReturn(true);
+    when(routePoint2.isChecked()).thenReturn(true);
+
+    // Действие:
+    publishSubject.onNext(Arrays.asList(routePoint, routePoint1, routePoint2));
+    movingToClientViewModel.completeTheOrder();
+
+    // Результат:
+    inOrder.verify(viewStateObserver).onChanged(new NextRoutePointViewStatePending(null));
+    inOrder.verify(viewStateObserver).onChanged(new NextRoutePointViewStateNoRoute(false));
+    inOrder.verify(viewStateObserver).onChanged(new NextRoutePointViewStatePending(
+        new NextRoutePointViewStateNoRoute(false)
     ));
     verifyNoMoreInteractions(viewStateObserver);
   }

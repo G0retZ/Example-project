@@ -11,4 +11,9 @@ public interface NextRoutePointViewModel extends ViewModel<NextRoutePointViewAct
    * Закрывает точку маршрута.
    */
   void closeRoutePoint();
+
+  /**
+   * Завершает выполнение заказа.
+   */
+  void completeTheOrder();
 }
