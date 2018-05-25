@@ -4,8 +4,8 @@
   xmlns:tools="http://schemas.android.com/tools"
   android:layout_width="match_parent"
   android:layout_height="match_parent"
-  android:animateLayoutChanges="true"
   android:paddingBottom="12dp"
+  android:animateLayoutChanges="true"
   android:orientation="vertical">
   <ScrollView
     android:layout_width="match_parent"
@@ -53,6 +53,17 @@
         android:layout_marginEnd="16dp"
         android:textSize="40sp"
         tools:text="10 028 ₽"/>
+      <TextView
+        android:id="@+id/freeRideText"
+        style="@style/TextAppearance.AppCompat.Headline"
+        android:textStyle="bold"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="48dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:text="@string/free_ride"
+        android:visibility="gone"/>
       <TextView
         android:id="@+id/addressText"
         style="@style/TextAppearance.AppCompat.Headline"

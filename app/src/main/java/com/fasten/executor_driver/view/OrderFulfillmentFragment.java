@@ -36,6 +36,7 @@ public class OrderFulfillmentFragment extends BaseFragment implements OrderCostV
   private NextRoutePointViewModel nextRoutePointViewModel;
   private TextView totalTimeText;
   private TextView totalCostText;
+  private TextView freeRideText;
   private TextView addressText;
   private TextView commentTitleText;
   private TextView commentText;
@@ -74,6 +75,7 @@ public class OrderFulfillmentFragment extends BaseFragment implements OrderCostV
     View view = inflater.inflate(R.layout.fragment_order_fulfillment, container, false);
     totalTimeText = view.findViewById(R.id.timeText);
     totalCostText = view.findViewById(R.id.costText);
+    freeRideText = view.findViewById(R.id.freeRideText);
     addressText = view.findViewById(R.id.addressText);
     commentTitleText = view.findViewById(R.id.commentTitleText);
     commentText = view.findViewById(R.id.commentText);
@@ -181,7 +183,7 @@ public class OrderFulfillmentFragment extends BaseFragment implements OrderCostV
 
   @Override
   public void showNoRouteRide(boolean show) {
-    getDirectionsAction.setVisibility(show ? View.VISIBLE : View.GONE);
+    freeRideText.setVisibility(show ? View.VISIBLE : View.GONE);
   }
 
   @Override
