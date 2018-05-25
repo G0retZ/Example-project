@@ -78,6 +78,9 @@
     <activity
       android:launchMode="singleTop"
       android:name=".application.WaitingForClientActivity"/>
+    <activity
+      android:launchMode="singleTop"
+      android:name=".application.OrderFulfillmentActivity"/>
 
     <service
       android:enabled="true"

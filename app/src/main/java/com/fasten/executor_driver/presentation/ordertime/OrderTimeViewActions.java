@@ -3,7 +3,7 @@ package com.fasten.executor_driver.presentation.ordertime;
 /**
  * Действия для смены состояния вида текущего времени заказа.
  */
-interface OrderTimeViewActions {
+public interface OrderTimeViewActions {
 
   /**
    * Задать общее время заказа.

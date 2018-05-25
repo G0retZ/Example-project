@@ -5,7 +5,7 @@ import android.support.annotation.NonNull;
 /**
  * Действия для смены состояния вида следующей точки маршрута заказа.
  */
-interface NextRoutePointViewActions {
+public interface NextRoutePointViewActions {
 
   /**
    * Показать индикатор процесса.
@@ -19,6 +19,7 @@ interface NextRoutePointViewActions {
    *
    * @param url - адрес картинки с точкой погрузки на карте
    */
+  @SuppressWarnings({"EmptyMethod", "unused"})
   void showNextRoutePoint(@NonNull String url);
 
   /**

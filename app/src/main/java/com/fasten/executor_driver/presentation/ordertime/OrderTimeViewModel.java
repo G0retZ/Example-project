@@ -5,6 +5,5 @@ import com.fasten.executor_driver.presentation.ViewModel;
 /**
  * ViewModel окна текущего времени заказа.
  */
-interface OrderTimeViewModel extends ViewModel<OrderTimeViewActions> {
-
+public interface OrderTimeViewModel extends ViewModel<OrderTimeViewActions> {
 }
