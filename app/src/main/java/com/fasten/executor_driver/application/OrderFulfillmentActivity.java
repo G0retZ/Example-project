@@ -9,6 +9,6 @@ public class OrderFulfillmentActivity extends BaseActivity {
   @Override
   protected void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_waiting_for_client);
+    setContentView(R.layout.activity_order_fulfillment);
   }
 }

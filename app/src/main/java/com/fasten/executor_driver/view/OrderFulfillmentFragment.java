@@ -70,7 +70,7 @@ public class OrderFulfillmentFragment extends BaseFragment implements OrderCostV
       @Nullable ViewGroup container,
       @Nullable Bundle savedInstanceState) {
     View view = inflater.inflate(R.layout.fragment_order_fulfillment, container, false);
-    totalTimeText = view.findViewById(R.id.timerText);
+    totalTimeText = view.findViewById(R.id.timeText);
     totalCostText = view.findViewById(R.id.costText);
     addressText = view.findViewById(R.id.addressText);
     commentTitleText = view.findViewById(R.id.commentTitleText);
