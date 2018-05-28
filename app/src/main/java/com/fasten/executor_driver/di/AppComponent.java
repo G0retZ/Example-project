@@ -9,6 +9,7 @@ import com.fasten.executor_driver.view.MapFragment;
 import com.fasten.executor_driver.view.MovingToClientFragment;
 import com.fasten.executor_driver.view.OnlineFragment;
 import com.fasten.executor_driver.view.OrderFulfillmentFragment;
+import com.fasten.executor_driver.view.OrderRouteFragment;
 import com.fasten.executor_driver.view.SelectedVehicleFragment;
 import com.fasten.executor_driver.view.SelectedVehicleOptionsFragment;
 import com.fasten.executor_driver.view.ServicesFragment;
@@ -50,4 +51,6 @@ public interface AppComponent {
   void inject(WaitingForClientFragment waitingForClientFragment);
 
   void inject(OrderFulfillmentFragment orderFulfillmentFragment);
+
+  void inject(OrderRouteFragment orderRouteFragment);
 }

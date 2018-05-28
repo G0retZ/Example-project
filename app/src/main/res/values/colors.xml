@@ -4,11 +4,14 @@
   <color name="colorPrimary">#212D3B</color>
   <color name="colorPrimaryDark">#171E26</color>
   <color name="colorAccent">#FF3194FF</color>
+  <color name="colorAccentTranslucent">#003194FF</color>
   <color name="colorAccentSecond">#FF5078A0</color>
   <color name="colorAccentGreen">#47FF60</color>
+  <color name="colorAccentGreenTranslucent">#0047FF60</color>
   <color name="colorDisabled">#1FFFFFFF</color>
   <color name="colorSmoke">#66000000</color>
   <color name="colorDivider">#FF212D3A</color>
   <color name="colorWindowBackground">#131A22</color>
+  <color name="colorWindowBackgroundTranslucent">#00131A22</color>
   <color name="colorError">#FFF2144C</color>
 </resources>
