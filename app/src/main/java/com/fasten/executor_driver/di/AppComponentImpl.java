@@ -94,6 +94,7 @@ import com.fasten.executor_driver.presentation.nextroutepoint.NextRoutePointView
 import com.fasten.executor_driver.presentation.onlinebutton.OnlineButtonViewModelImpl;
 import com.fasten.executor_driver.presentation.onlineswitch.OnlineSwitchViewModelImpl;
 import com.fasten.executor_driver.presentation.ordercost.OrderCostViewModelImpl;
+import com.fasten.executor_driver.presentation.orderroute.OrderRouteViewModelImpl;
 import com.fasten.executor_driver.presentation.ordertime.OrderTimeViewModelImpl;
 import com.fasten.executor_driver.presentation.phone.PhoneViewModelImpl;
 import com.fasten.executor_driver.presentation.selectedvehicle.SelectedVehicleViewModelImpl;
@@ -647,6 +648,24 @@ public class AppComponentImpl implements AppComponent {
 
   @Override
   public void inject(OrderRouteFragment orderRouteFragment) {
-
+    orderRouteFragment.setOrderRouteViewModel(
+        ViewModelProviders.of(
+            orderRouteFragment,
+            new ViewModelFactory<>(
+                new OrderRouteViewModelImpl(
+                    new OrderRouteUseCaseImpl(
+                        new OrderGatewayImpl(
+                            executorStateUseCase,
+                            new OrderFulfillmentApiMapper(
+                                new VehicleOptionApiMapper(),
+                                new RoutePointApiMapper()
+                            )
+                        ),
+                        new OrderRouteGatewayImpl(stompClient)
+                    )
+                )
+            )
+        ).get(OrderRouteViewModelImpl.class)
+    );
   }
 }

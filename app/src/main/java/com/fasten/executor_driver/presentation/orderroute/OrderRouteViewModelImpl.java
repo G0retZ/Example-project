@@ -14,7 +14,7 @@ import io.reactivex.internal.disposables.EmptyDisposable;
 import io.reactivex.schedulers.Schedulers;
 import javax.inject.Inject;
 
-class OrderRouteViewModelImpl extends ViewModel implements
+public class OrderRouteViewModelImpl extends ViewModel implements
     OrderRouteViewModel {
 
   @NonNull
@@ -29,7 +29,7 @@ class OrderRouteViewModelImpl extends ViewModel implements
   private ViewState<OrderRouteViewActions> lastViewState;
 
   @Inject
-  OrderRouteViewModelImpl(@NonNull OrderRouteUseCase orderRouteUseCase) {
+  public OrderRouteViewModelImpl(@NonNull OrderRouteUseCase orderRouteUseCase) {
     this.orderRouteUseCase = orderRouteUseCase;
     viewStateLiveData = new MutableLiveData<>();
     viewStateLiveData.postValue(new OrderRouteViewStatePending(lastViewState));
