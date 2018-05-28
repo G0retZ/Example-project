@@ -47,6 +47,7 @@ public class AppPreferences implements AppSettingsService {
     preferences.edit().putString(key, data == null ? null : encrypt(raw, salt, data)).apply();
   }
 
+  @SuppressWarnings("SpellCheckingInspection")
   @Nullable
   private String encrypt(@NonNull byte[] raw, @NonNull byte[] salt, @NonNull String data) {
     try {
@@ -63,6 +64,7 @@ public class AppPreferences implements AppSettingsService {
     return null;
   }
 
+  @SuppressWarnings("SpellCheckingInspection")
   @Nullable
   private String decrypt(@NonNull byte[] raw, @NonNull byte[] salt, @NonNull String data) {
     try {
