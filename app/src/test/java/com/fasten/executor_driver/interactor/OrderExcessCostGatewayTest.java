@@ -51,6 +51,7 @@ public class OrderExcessCostGatewayTest {
   /**
    * Должен запросить у клиента STOMP обновления цены, если он соединен и не соединяется.
    */
+  @SuppressWarnings("SpellCheckingInspection")
   @Test
   public void askStompClientForExcessiveCost() {
     // Дано:
@@ -86,6 +87,7 @@ public class OrderExcessCostGatewayTest {
   /**
    * Должен запросить у клиента STOMP обновления цены, если он не соединен и соединяется.
    */
+  @SuppressWarnings("SpellCheckingInspection")
   @Test
   public void askStompClientForExcessiveCostIfConnecting() {
     // Дано:
