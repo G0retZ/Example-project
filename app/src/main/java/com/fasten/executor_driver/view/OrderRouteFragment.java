@@ -45,7 +45,7 @@ public class OrderRouteFragment extends BaseFragment implements OrderRouteViewAc
   public View onCreateView(@NonNull LayoutInflater inflater,
       @Nullable ViewGroup container,
       @Nullable Bundle savedInstanceState) {
-    View view = inflater.inflate(R.layout.fragment_vehicle_options, container, false);
+    View view = inflater.inflate(R.layout.fragment_order_route, container, false);
     recyclerView = view.findViewById(R.id.recyclerView);
     recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
     recyclerView.setAdapter(new ChooseVehicleAdapter(new ArrayList<>()));
