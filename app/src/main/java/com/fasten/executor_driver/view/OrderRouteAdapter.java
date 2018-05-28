@@ -53,7 +53,7 @@ class OrderRouteAdapter extends RecyclerView.Adapter<OrderRouteAdapter.RoutePoin
       int position) {
     RoutePointItem item = routePointItems.get(position);
     if (holder.positionText != null) {
-      holder.positionText.setText(String.format(Locale.US, "%d", position));
+      holder.positionText.setText(String.format(Locale.US, "%d", position + 1));
     }
     holder.addressText.setText(item.getAddress());
     if (holder.selectNextAction != null) {
