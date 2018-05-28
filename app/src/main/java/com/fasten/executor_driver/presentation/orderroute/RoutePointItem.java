@@ -24,6 +24,11 @@ class RoutePointItem {
     return routePoint.getAddress();
   }
 
+  @NonNull
+  public RoutePoint getRoutePoint() {
+    return routePoint;
+  }
+
   @Override
   public String toString() {
     return "RoutePointItem{" +

@@ -36,6 +36,7 @@ public class RoutePointItemTest {
     // Результат:
     assertTrue(routePointItem.isChecked());
     assertEquals(routePointItem.getAddress(), "add");
+    assertEquals(routePointItem.getRoutePoint(), routePoint);
   }
 
   @Test
