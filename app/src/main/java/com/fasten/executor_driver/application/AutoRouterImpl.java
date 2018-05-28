@@ -54,6 +54,9 @@ public class AutoRouterImpl implements ActivityLifecycleCallbacks, AutoRouter,
     statusGroups.put(ExecutorStateNavigate.WAITING_FOR_CLIENT, Arrays.asList(
         WaitingForClientActivity.class, GeolocationResolutionActivity.class
     ));
+    statusGroups.put(ExecutorStateNavigate.ORDER_FULFILLMENT, Arrays.asList(
+        OrderFulfillmentActivity.class, GeolocationResolutionActivity.class
+    ));
   }
 
   @Nullable
@@ -196,6 +199,12 @@ public class AutoRouterImpl implements ActivityLifecycleCallbacks, AutoRouter,
       case ExecutorStateNavigate.WAITING_FOR_CLIENT:
         currentActivity.startActivity(
             new Intent(currentActivity, WaitingForClientActivity.class)
+                .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK)
+        );
+        break;
+      case ExecutorStateNavigate.ORDER_FULFILLMENT:
+        currentActivity.startActivity(
+            new Intent(currentActivity, OrderFulfillmentActivity.class)
                 .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK)
         );
         break;

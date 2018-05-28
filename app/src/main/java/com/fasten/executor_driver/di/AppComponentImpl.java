@@ -22,6 +22,7 @@ import com.fasten.executor_driver.entity.PhoneNumberValidator;
 import com.fasten.executor_driver.entity.Vehicle;
 import com.fasten.executor_driver.gateway.CurrentVehicleOptionsGatewayImpl;
 import com.fasten.executor_driver.gateway.ErrorMapper;
+import com.fasten.executor_driver.gateway.ExcessiveCostApiMapper;
 import com.fasten.executor_driver.gateway.ExecutorStateApiMapper;
 import com.fasten.executor_driver.gateway.ExecutorStateGatewayImpl;
 import com.fasten.executor_driver.gateway.ExecutorStateSwitchGatewayImpl;
@@ -33,7 +34,10 @@ import com.fasten.executor_driver.gateway.MovingToClientApiMapper;
 import com.fasten.executor_driver.gateway.MovingToClientGatewayImpl;
 import com.fasten.executor_driver.gateway.OrderApiMapper;
 import com.fasten.executor_driver.gateway.OrderConfirmationGatewayImpl;
+import com.fasten.executor_driver.gateway.OrderExcessCostGatewayImpl;
+import com.fasten.executor_driver.gateway.OrderFulfillmentApiMapper;
 import com.fasten.executor_driver.gateway.OrderGatewayImpl;
+import com.fasten.executor_driver.gateway.OrderRouteGatewayImpl;
 import com.fasten.executor_driver.gateway.PasswordGatewayImpl;
 import com.fasten.executor_driver.gateway.RoutePointApiMapper;
 import com.fasten.executor_driver.gateway.SelectedVehicleOptionsGatewayImpl;
@@ -58,6 +62,9 @@ import com.fasten.executor_driver.interactor.GeoLocationUseCase;
 import com.fasten.executor_driver.interactor.GeoLocationUseCaseImpl;
 import com.fasten.executor_driver.interactor.MemoryDataSharer;
 import com.fasten.executor_driver.interactor.MovingToClientUseCaseImpl;
+import com.fasten.executor_driver.interactor.OrderCurrentCostUseCaseImpl;
+import com.fasten.executor_driver.interactor.OrderFulfillmentTimeUseCaseImpl;
+import com.fasten.executor_driver.interactor.OrderRouteUseCaseImpl;
 import com.fasten.executor_driver.interactor.WaitingForClientUseCaseImpl;
 import com.fasten.executor_driver.interactor.auth.LoginSharer;
 import com.fasten.executor_driver.interactor.auth.LoginUseCaseImpl;
@@ -83,8 +90,11 @@ import com.fasten.executor_driver.presentation.executorstate.ExecutorStateViewMo
 import com.fasten.executor_driver.presentation.geolocation.GeoLocationViewModelImpl;
 import com.fasten.executor_driver.presentation.map.MapViewModelImpl;
 import com.fasten.executor_driver.presentation.movingtoclient.MovingToClientViewModelImpl;
+import com.fasten.executor_driver.presentation.nextroutepoint.NextRoutePointViewModelImpl;
 import com.fasten.executor_driver.presentation.onlinebutton.OnlineButtonViewModelImpl;
 import com.fasten.executor_driver.presentation.onlineswitch.OnlineSwitchViewModelImpl;
+import com.fasten.executor_driver.presentation.ordercost.OrderCostViewModelImpl;
+import com.fasten.executor_driver.presentation.ordertime.OrderTimeViewModelImpl;
 import com.fasten.executor_driver.presentation.phone.PhoneViewModelImpl;
 import com.fasten.executor_driver.presentation.selectedvehicle.SelectedVehicleViewModelImpl;
 import com.fasten.executor_driver.presentation.services.ServicesListItems;
@@ -101,6 +111,7 @@ import com.fasten.executor_driver.view.GoOnlineFragment;
 import com.fasten.executor_driver.view.MapFragment;
 import com.fasten.executor_driver.view.MovingToClientFragment;
 import com.fasten.executor_driver.view.OnlineFragment;
+import com.fasten.executor_driver.view.OrderFulfillmentFragment;
 import com.fasten.executor_driver.view.SelectedVehicleFragment;
 import com.fasten.executor_driver.view.SelectedVehicleOptionsFragment;
 import com.fasten.executor_driver.view.ServicesFragment;
@@ -566,6 +577,70 @@ public class AppComponentImpl implements AppComponent {
                 )
             )
         ).get(WaitingForClientViewModelImpl.class)
+    );
+  }
+
+  @Override
+  public void inject(OrderFulfillmentFragment orderFulfillmentFragment) {
+    orderFulfillmentFragment.setOrderTimeViewModel(
+        ViewModelProviders.of(
+            orderFulfillmentFragment,
+            new ViewModelFactory<>(
+                new OrderTimeViewModelImpl(
+                    new OrderFulfillmentTimeUseCaseImpl(
+                        new OrderGatewayImpl(
+                            executorStateUseCase,
+                            new OrderFulfillmentApiMapper(
+                                new VehicleOptionApiMapper(),
+                                new RoutePointApiMapper()
+                            )
+                        ),
+                        new TimeUtilsImpl()
+                    )
+                )
+            )
+        ).get(OrderTimeViewModelImpl.class)
+    );
+    orderFulfillmentFragment.setOrderCostViewModel(
+        ViewModelProviders.of(
+            orderFulfillmentFragment,
+            new ViewModelFactory<>(
+                new OrderCostViewModelImpl(
+                    new OrderCurrentCostUseCaseImpl(
+                        new OrderGatewayImpl(
+                            executorStateUseCase,
+                            new OrderFulfillmentApiMapper(
+                                new VehicleOptionApiMapper(),
+                                new RoutePointApiMapper()
+                            )
+                        ),
+                        new OrderExcessCostGatewayImpl(
+                            stompClient,
+                            new ExcessiveCostApiMapper()
+                        )
+                    )
+                )
+            )
+        ).get(OrderCostViewModelImpl.class)
+    );
+    orderFulfillmentFragment.setNextRoutePointViewModel(
+        ViewModelProviders.of(
+            orderFulfillmentFragment,
+            new ViewModelFactory<>(
+                new NextRoutePointViewModelImpl(
+                    new OrderRouteUseCaseImpl(
+                        new OrderGatewayImpl(
+                            executorStateUseCase,
+                            new OrderFulfillmentApiMapper(
+                                new VehicleOptionApiMapper(),
+                                new RoutePointApiMapper()
+                            )
+                        ),
+                        new OrderRouteGatewayImpl(stompClient)
+                    )
+                )
+            )
+        ).get(NextRoutePointViewModelImpl.class)
     );
   }
 }

@@ -13,9 +13,9 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
-public class NextRoutePointViewStateTest {
+public class NextRoutePointViewStateEnRouteTest {
 
-  private NextRoutePointViewState viewState;
+  private NextRoutePointViewStateEnRoute viewState;
 
   @Mock
   private NextRoutePointViewActions nextRoutePointViewActions;
@@ -26,7 +26,7 @@ public class NextRoutePointViewStateTest {
 
   @Before
   public void setUp() {
-    viewState = new NextRoutePointViewState(routePointItem);
+    viewState = new NextRoutePointViewStateEnRoute(routePointItem);
   }
 
   @Test
@@ -45,12 +45,17 @@ public class NextRoutePointViewStateTest {
     verify(nextRoutePointViewActions).showNextRoutePointCoordinates("0,0");
     verify(nextRoutePointViewActions).showNextRoutePointAddress("add");
     verify(nextRoutePointViewActions).showNextRoutePointComment("com");
+    verify(nextRoutePointViewActions).showNextRoutePointPending(false);
+    verify(nextRoutePointViewActions).showNextRoutePointNetworkErrorMessage(false);
+    verify(nextRoutePointViewActions).showCloseNextRoutePointAction(true);
+    verify(nextRoutePointViewActions).showCompleteOrderAction(false);
+    verify(nextRoutePointViewActions).showNoRouteRide(false);
     verifyNoMoreInteractions(nextRoutePointViewActions);
   }
 
   @Test
   public void testEquals() {
-    assertEquals(viewState, new NextRoutePointViewState(routePointItem));
-    assertNotEquals(viewState, new NextRoutePointViewState(routePointItem2));
+    assertEquals(viewState, new NextRoutePointViewStateEnRoute(routePointItem));
+    assertNotEquals(viewState, new NextRoutePointViewStateEnRoute(routePointItem2));
   }
 }

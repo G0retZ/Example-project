@@ -12,7 +12,7 @@ import io.reactivex.internal.disposables.EmptyDisposable;
 import io.reactivex.schedulers.Schedulers;
 import javax.inject.Inject;
 
-class OrderTimeViewModelImpl extends ViewModel implements OrderTimeViewModel {
+public class OrderTimeViewModelImpl extends ViewModel implements OrderTimeViewModel {
 
   @NonNull
   private final OrderFulfillmentTimeUseCase orderCurrentCostUseCase;
@@ -22,7 +22,7 @@ class OrderTimeViewModelImpl extends ViewModel implements OrderTimeViewModel {
   private Disposable disposable = EmptyDisposable.INSTANCE;
 
   @Inject
-  OrderTimeViewModelImpl(@NonNull OrderFulfillmentTimeUseCase orderCurrentCostUseCase) {
+  public OrderTimeViewModelImpl(@NonNull OrderFulfillmentTimeUseCase orderCurrentCostUseCase) {
     this.orderCurrentCostUseCase = orderCurrentCostUseCase;
     viewStateLiveData = new MutableLiveData<>();
     viewStateLiveData.postValue(new OrderTimeViewState(0));

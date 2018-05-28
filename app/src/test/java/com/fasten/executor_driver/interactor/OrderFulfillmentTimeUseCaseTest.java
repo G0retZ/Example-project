@@ -87,9 +87,9 @@ public class OrderFulfillmentTimeUseCaseTest {
     PublishSubject<Order> publishSubject = PublishSubject.create();
     when(orderGateway.getOrders(ExecutorState.ORDER_FULFILLMENT))
         .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
-    when(order.getOrderStartTime()).thenReturn(12345L);
-    when(order2.getOrderStartTime()).thenReturn(6789L);
-    when(timeUtils.currentTimeMillis()).thenReturn(12340000L, 6777000L);
+    when(order.getOrderStartTime()).thenReturn(12345000L);
+    when(order2.getOrderStartTime()).thenReturn(6789000L);
+    when(timeUtils.currentTimeMillis()).thenReturn(12350000L, 6801000L);
 
     // Действие:
     TestSubscriber<Long> test = orderFulfillmentTimeUseCase.getOrderElapsedTime().test();

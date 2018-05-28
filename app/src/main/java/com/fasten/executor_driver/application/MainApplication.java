@@ -124,8 +124,23 @@ public class MainApplication extends Application {
                 .getActivity(this, 0, new Intent(this, DriverOrderConfirmationActivity.class), 0));
         break;
       case ExecutorStateNavigate.CLIENT_ORDER_CONFIRMATION:
-        startService(R.string.online, R.string.executing, R.string.to_app,
-            PendingIntent.getActivity(this, 0, new Intent(this, OnlineActivity.class), 0));
+        startService(R.string.working, R.string.client_confirm, R.string.to_app,
+            PendingIntent
+                .getActivity(this, 0, new Intent(this, ClientOrderConfirmationActivity.class), 0));
+        break;
+      case ExecutorStateNavigate.MOVING_TO_CLIENT:
+        startService(R.string.working, R.string.moving_to_client, R.string.to_app,
+            PendingIntent.getActivity(this, 0, new Intent(this, MovingToClientActivity.class), 0));
+        break;
+      case ExecutorStateNavigate.WAITING_FOR_CLIENT:
+        startService(R.string.working, R.string.wait_for_client, R.string.to_app,
+            PendingIntent
+                .getActivity(this, 0, new Intent(this, WaitingForClientActivity.class), 0));
+        break;
+      case ExecutorStateNavigate.ORDER_FULFILLMENT:
+        startService(R.string.working, R.string.order_fulfillment, R.string.to_app,
+            PendingIntent
+                .getActivity(this, 0, new Intent(this, OrderFulfillmentActivity.class), 0));
         break;
     }
     autoRouter.navigateTo(destination);

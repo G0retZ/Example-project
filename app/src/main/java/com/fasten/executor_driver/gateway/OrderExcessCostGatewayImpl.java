@@ -7,6 +7,7 @@ import com.fasten.executor_driver.interactor.OrderExcessCostGateway;
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
 import io.reactivex.schedulers.Schedulers;
+import javax.inject.Inject;
 import ua.naiksoftware.stomp.client.StompClient;
 import ua.naiksoftware.stomp.client.StompMessage;
 
@@ -17,6 +18,7 @@ public class OrderExcessCostGatewayImpl implements OrderExcessCostGateway {
   @NonNull
   private final Mapper<StompMessage, Integer> mapper;
 
+  @Inject
   public OrderExcessCostGatewayImpl(@NonNull StompClient stompClient,
       @NonNull Mapper<StompMessage, Integer> mapper) {
     this.stompClient = stompClient;

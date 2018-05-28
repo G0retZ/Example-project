@@ -5,7 +5,7 @@ import android.support.annotation.StringRes;
 /**
  * Действия для смены состояния вида текущей стоимости заказа.
  */
-interface OrderCostViewActions {
+public interface OrderCostViewActions {
 
   /**
    * Задать текст стоимости.

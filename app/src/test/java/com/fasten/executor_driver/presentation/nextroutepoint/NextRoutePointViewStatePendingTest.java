@@ -2,11 +2,10 @@ package com.fasten.executor_driver.presentation.nextroutepoint;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
+import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.when;
 
-import org.junit.Before;
+import com.fasten.executor_driver.presentation.ViewState;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -20,39 +19,40 @@ public class NextRoutePointViewStatePendingTest {
   @Mock
   private NextRoutePointViewActions nextRoutePointViewActions;
   @Mock
-  private RoutePointItem routePointItem;
+  private ViewState<NextRoutePointViewActions> parentViewState;
   @Mock
-  private RoutePointItem routePointItem2;
-
-  @Before
-  public void setUp() {
-    viewState = new NextRoutePointViewStatePending(routePointItem);
-  }
+  private ViewState<NextRoutePointViewActions> parentViewState1;
 
   @Test
   public void testActions() {
     // Дано:
-    when(routePointItem.getMapUrl()).thenReturn("url");
-    when(routePointItem.getAddress()).thenReturn("add");
-    when(routePointItem.getComment()).thenReturn("com");
-    when(routePointItem.getCoordinatesString()).thenReturn("0,0");
+    viewState = new NextRoutePointViewStatePending(parentViewState);
 
     // Действие:
     viewState.apply(nextRoutePointViewActions);
 
     // Результат:
-    verify(nextRoutePointViewActions).showNextRoutePoint("url");
-    verify(nextRoutePointViewActions).showNextRoutePointCoordinates("0,0");
-    verify(nextRoutePointViewActions).showNextRoutePointAddress("add");
-    verify(nextRoutePointViewActions).showNextRoutePointComment("com");
-    verify(nextRoutePointViewActions).showNextRoutePointPending(true);
-    verify(nextRoutePointViewActions).showNextRoutePointNetworkErrorMessage(false);
-    verifyNoMoreInteractions(nextRoutePointViewActions);
+    verify(nextRoutePointViewActions, only()).showNextRoutePointPending(true);
+    verify(parentViewState, only()).apply(nextRoutePointViewActions);
+  }
+
+  @Test
+  public void testActionsWithNull() {
+    // Дано:
+    viewState = new NextRoutePointViewStatePending(null);
+
+    // Действие:
+    viewState.apply(nextRoutePointViewActions);
+
+    // Результат:
+    verify(nextRoutePointViewActions, only()).showNextRoutePointPending(true);
   }
 
   @Test
   public void testEquals() {
-    assertEquals(viewState, new NextRoutePointViewStatePending(routePointItem));
-    assertNotEquals(viewState, new NextRoutePointViewStatePending(routePointItem2));
+    viewState = new NextRoutePointViewStatePending(parentViewState);
+    assertEquals(viewState, new NextRoutePointViewStatePending(parentViewState));
+    assertNotEquals(viewState, new NextRoutePointViewStatePending(parentViewState1));
+    assertNotEquals(viewState, new NextRoutePointViewStatePending(null));
   }
 }

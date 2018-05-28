@@ -19,6 +19,14 @@ public interface OrderRouteGateway {
   Completable closeRoutePoint(@NonNull RoutePoint routePoint);
 
   /**
+   * Запрашивает сервер завершить заказ.
+   *
+   * @return {@link Completable} результат - успех либо ошибка на сервере.
+   */
+  @NonNull
+  Completable completeTheOrder();
+
+  /**
    * Запрашивает сервер задать следующую точку маршрута.
    *
    * @param routePoint - точка маршрута.

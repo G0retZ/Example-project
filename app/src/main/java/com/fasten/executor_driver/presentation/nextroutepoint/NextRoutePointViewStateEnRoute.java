@@ -4,14 +4,14 @@ import android.support.annotation.NonNull;
 import com.fasten.executor_driver.presentation.ViewState;
 
 /**
- * Общее состояние вида следующей маршрутной точки заказа.
+ * Состояние вида движения к следующей маршрутной точки заказа.
  */
-class NextRoutePointViewState implements ViewState<NextRoutePointViewActions> {
+final class NextRoutePointViewStateEnRoute implements ViewState<NextRoutePointViewActions> {
 
   @NonNull
   private final RoutePointItem routePointItem;
 
-  NextRoutePointViewState(@NonNull RoutePointItem routePointItem) {
+  NextRoutePointViewStateEnRoute(@NonNull RoutePointItem routePointItem) {
     this.routePointItem = routePointItem;
   }
 
@@ -21,6 +21,11 @@ class NextRoutePointViewState implements ViewState<NextRoutePointViewActions> {
     stateActions.showNextRoutePointAddress(routePointItem.getAddress());
     stateActions.showNextRoutePointComment(routePointItem.getComment());
     stateActions.showNextRoutePointCoordinates(routePointItem.getCoordinatesString());
+    stateActions.showNextRoutePointPending(false);
+    stateActions.showNextRoutePointNetworkErrorMessage(false);
+    stateActions.showCloseNextRoutePointAction(true);
+    stateActions.showCompleteOrderAction(false);
+    stateActions.showNoRouteRide(false);
   }
 
   @Override
@@ -32,7 +37,7 @@ class NextRoutePointViewState implements ViewState<NextRoutePointViewActions> {
       return false;
     }
 
-    NextRoutePointViewState that = (NextRoutePointViewState) o;
+    NextRoutePointViewStateEnRoute that = (NextRoutePointViewStateEnRoute) o;
 
     return routePointItem.equals(that.routePointItem);
   }
