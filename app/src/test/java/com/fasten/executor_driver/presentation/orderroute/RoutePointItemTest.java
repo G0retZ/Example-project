@@ -15,7 +15,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class RoutePointItemTest {
 
-  private RoutePointItem routeItem;
+  private RoutePointItem routePointItem;
 
   @Mock
   private RoutePoint routePoint;
@@ -24,7 +24,7 @@ public class RoutePointItemTest {
 
   @Before
   public void setUp() {
-    routeItem = new RoutePointItem(routePoint);
+    routePointItem = new RoutePointItem(routePoint);
   }
 
   @Test
@@ -34,13 +34,13 @@ public class RoutePointItemTest {
     when(routePoint.isChecked()).thenReturn(true);
 
     // Результат:
-    assertTrue(routeItem.isChecked());
-    assertEquals(routeItem.getAddress(), "add");
+    assertTrue(routePointItem.isChecked());
+    assertEquals(routePointItem.getAddress(), "add");
   }
 
   @Test
   public void testEquals() {
-    assertEquals(routeItem, new RoutePointItem(routePoint));
-    assertNotEquals(routeItem, new RoutePointItem(routePoint1));
+    assertEquals(routePointItem, new RoutePointItem(routePoint));
+    assertNotEquals(routePointItem, new RoutePointItem(routePoint1));
   }
 }
