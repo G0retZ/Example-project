@@ -94,6 +94,7 @@ import com.fasten.executor_driver.presentation.nextroutepoint.NextRoutePointView
 import com.fasten.executor_driver.presentation.onlinebutton.OnlineButtonViewModelImpl;
 import com.fasten.executor_driver.presentation.onlineswitch.OnlineSwitchViewModelImpl;
 import com.fasten.executor_driver.presentation.ordercost.OrderCostViewModelImpl;
+import com.fasten.executor_driver.presentation.orderroute.OrderRouteViewModelImpl;
 import com.fasten.executor_driver.presentation.ordertime.OrderTimeViewModelImpl;
 import com.fasten.executor_driver.presentation.phone.PhoneViewModelImpl;
 import com.fasten.executor_driver.presentation.selectedvehicle.SelectedVehicleViewModelImpl;
@@ -112,6 +113,7 @@ import com.fasten.executor_driver.view.MapFragment;
 import com.fasten.executor_driver.view.MovingToClientFragment;
 import com.fasten.executor_driver.view.OnlineFragment;
 import com.fasten.executor_driver.view.OrderFulfillmentFragment;
+import com.fasten.executor_driver.view.OrderRouteFragment;
 import com.fasten.executor_driver.view.SelectedVehicleFragment;
 import com.fasten.executor_driver.view.SelectedVehicleOptionsFragment;
 import com.fasten.executor_driver.view.ServicesFragment;
@@ -641,6 +643,29 @@ public class AppComponentImpl implements AppComponent {
                 )
             )
         ).get(NextRoutePointViewModelImpl.class)
+    );
+  }
+
+  @Override
+  public void inject(OrderRouteFragment orderRouteFragment) {
+    orderRouteFragment.setOrderRouteViewModel(
+        ViewModelProviders.of(
+            orderRouteFragment,
+            new ViewModelFactory<>(
+                new OrderRouteViewModelImpl(
+                    new OrderRouteUseCaseImpl(
+                        new OrderGatewayImpl(
+                            executorStateUseCase,
+                            new OrderFulfillmentApiMapper(
+                                new VehicleOptionApiMapper(),
+                                new RoutePointApiMapper()
+                            )
+                        ),
+                        new OrderRouteGatewayImpl(stompClient)
+                    )
+                )
+            )
+        ).get(OrderRouteViewModelImpl.class)
     );
   }
 }

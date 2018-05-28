@@ -6,7 +6,7 @@ import java.util.List;
 /**
  * Модель для отображения списка точек маршрута заказа. Контейнер для моделей точек маршрута.
  */
-class RoutePointItems {
+public class RoutePointItems {
 
   @NonNull
   private final List<RoutePointItem> routePointItems;

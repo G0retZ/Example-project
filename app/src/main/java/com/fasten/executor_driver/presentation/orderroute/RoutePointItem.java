@@ -6,7 +6,7 @@ import com.fasten.executor_driver.entity.RoutePoint;
 /**
  * Модель для отображения информации о точке маршрута заказа. Тестируемое форматирование.
  */
-class RoutePointItem {
+public class RoutePointItem {
 
   @NonNull
   private final RoutePoint routePoint;

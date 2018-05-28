@@ -5,7 +5,7 @@ import android.support.annotation.NonNull;
 /**
  * Действия для смены состояния вида окна списка ТС исполнителя.
  */
-interface OrderRouteViewActions {
+public interface OrderRouteViewActions {
 
   /**
    * Показать индикатор процесса.

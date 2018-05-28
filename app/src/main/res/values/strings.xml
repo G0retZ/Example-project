@@ -97,4 +97,7 @@
   <string name="actions">Действия</string>
   <string name="complete_the_order">Завершить услугу</string>
   <string name="free_ride">По городу</string>
+  <string name="select">Выбрать</string>
+  <string name="in_progress">В работе</string>
+  <string name="route">Маршрут</string>
 </resources>
