@@ -28,7 +28,8 @@
   <FrameLayout
     android:id="@+id/callingMessage"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"/>
+    android:layout_height="wrap_content"
+    android:animateLayoutChanges="true"/>
   <fragment
     android:id="@+id/fragment_order_fulfillment"
     android:layout_width="match_parent"
