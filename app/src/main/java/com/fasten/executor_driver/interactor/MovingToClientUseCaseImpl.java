@@ -28,12 +28,6 @@ public class MovingToClientUseCaseImpl implements MovingToClientUseCase {
 
   @NonNull
   @Override
-  public Completable callToClient() {
-    return movingToClientGateway.callToClient();
-  }
-
-  @NonNull
-  @Override
   public Completable reportArrival() {
     return movingToClientGateway.reportArrival();
   }

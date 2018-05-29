@@ -8,11 +8,6 @@ import com.fasten.executor_driver.presentation.ViewModel;
 public interface WaitingForClientViewModel extends ViewModel<WaitingForClientViewActions> {
 
   /**
-   * Запрашивает звонок клиенту.
-   */
-  void callToClient();
-
-  /**
    * Сообщает о начале погрузки.
    */
   void startLoading();

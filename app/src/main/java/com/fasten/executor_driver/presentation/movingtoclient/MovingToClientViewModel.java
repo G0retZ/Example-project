@@ -8,11 +8,6 @@ import com.fasten.executor_driver.presentation.ViewModel;
 public interface MovingToClientViewModel extends ViewModel<MovingToClientViewActions> {
 
   /**
-   * Запрашивает звонок клиенту.
-   */
-  void callToClient();
-
-  /**
    * Сообщает о прибытии в место встречи.
    */
   void reportArrival();

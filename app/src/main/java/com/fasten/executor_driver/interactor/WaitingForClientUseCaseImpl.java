@@ -28,12 +28,6 @@ public class WaitingForClientUseCaseImpl implements WaitingForClientUseCase {
 
   @NonNull
   @Override
-  public Completable callToClient() {
-    return waitingForClientGateway.callToClient();
-  }
-
-  @NonNull
-  @Override
   public Completable startTheOrder() {
     return waitingForClientGateway.startTheOrder();
   }

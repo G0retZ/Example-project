@@ -20,6 +20,7 @@ import com.fasten.executor_driver.entity.LoginValidator;
 import com.fasten.executor_driver.entity.PasswordValidator;
 import com.fasten.executor_driver.entity.PhoneNumberValidator;
 import com.fasten.executor_driver.entity.Vehicle;
+import com.fasten.executor_driver.gateway.CallToClientGatewayImpl;
 import com.fasten.executor_driver.gateway.CurrentVehicleOptionsGatewayImpl;
 import com.fasten.executor_driver.gateway.ErrorMapper;
 import com.fasten.executor_driver.gateway.ExcessiveCostApiMapper;
@@ -53,6 +54,7 @@ import com.fasten.executor_driver.gateway.VehicleOptionsGatewayImpl;
 import com.fasten.executor_driver.gateway.VehiclesAndOptionsGatewayImpl;
 import com.fasten.executor_driver.gateway.WaitingForClientApiMapper;
 import com.fasten.executor_driver.gateway.WaitingForClientGatewayImpl;
+import com.fasten.executor_driver.interactor.CallToClientUseCaseImpl;
 import com.fasten.executor_driver.interactor.ClientOrderConfirmationUseCaseImpl;
 import com.fasten.executor_driver.interactor.DriverOrderConfirmationUseCaseImpl;
 import com.fasten.executor_driver.interactor.ExecutorStateNotOnlineUseCaseImpl;
@@ -81,6 +83,7 @@ import com.fasten.executor_driver.interactor.vehicle.VehicleOptionsUseCaseImpl;
 import com.fasten.executor_driver.interactor.vehicle.VehiclesAndOptionsGateway;
 import com.fasten.executor_driver.interactor.vehicle.VehiclesAndOptionsUseCaseImpl;
 import com.fasten.executor_driver.presentation.ViewModelFactory;
+import com.fasten.executor_driver.presentation.calltoclient.CallToClientViewModelImpl;
 import com.fasten.executor_driver.presentation.choosevehicle.ChooseVehicleViewModelImpl;
 import com.fasten.executor_driver.presentation.clientorderconfirmation.ClientOrderConfirmationViewModelImpl;
 import com.fasten.executor_driver.presentation.code.CodeViewModelImpl;
@@ -105,6 +108,7 @@ import com.fasten.executor_driver.presentation.smsbutton.SmsButtonViewModelImpl;
 import com.fasten.executor_driver.presentation.vehicleoptions.VehicleOptionsViewModelImpl;
 import com.fasten.executor_driver.presentation.waitingforclient.WaitingForClientViewModelImpl;
 import com.fasten.executor_driver.utils.TimeUtilsImpl;
+import com.fasten.executor_driver.view.CallToClientFragment;
 import com.fasten.executor_driver.view.ChooseVehicleFragment;
 import com.fasten.executor_driver.view.ClientOrderConfirmationFragment;
 import com.fasten.executor_driver.view.DriverOrderConfirmationFragment;
@@ -666,6 +670,22 @@ public class AppComponentImpl implements AppComponent {
                 )
             )
         ).get(OrderRouteViewModelImpl.class)
+    );
+  }
+
+  @Override
+  public void inject(CallToClientFragment callToClientFragment) {
+    callToClientFragment.setCallToClientViewModel(
+        ViewModelProviders.of(
+            callToClientFragment,
+            new ViewModelFactory<>(
+                new CallToClientViewModelImpl(
+                    new CallToClientUseCaseImpl(
+                        new CallToClientGatewayImpl(stompClient)
+                    )
+                )
+            )
+        ).get(CallToClientViewModelImpl.class)
     );
   }
 }

@@ -21,17 +21,6 @@ public class WaitingForClientGatewayImpl implements WaitingForClientGateway {
 
   @NonNull
   @Override
-  public Completable callToClient() {
-    if (stompClient.isConnected() || stompClient.isConnecting()) {
-      return stompClient.send(BuildConfig.TRIP_DESTINATION, "\"CALL_TO_CLIENT\"")
-          .subscribeOn(Schedulers.io())
-          .observeOn(Schedulers.single());
-    }
-    return Completable.error(new ConnectionClosedException());
-  }
-
-  @NonNull
-  @Override
   public Completable startTheOrder() {
     if (stompClient.isConnected() || stompClient.isConnecting()) {
       return stompClient.send(BuildConfig.TRIP_DESTINATION, "\"START_ORDER\"")

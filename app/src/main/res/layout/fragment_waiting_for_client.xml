@@ -20,16 +20,6 @@
       android:paddingBottom="24dp"
       android:orientation="vertical">
       <TextView
-        style="@style/TextAppearance.AppCompat.Headline"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:text="@string/wait_for_client"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/optionsText"/>
-      <TextView
         android:id="@+id/priceTitleText"
         style="@style/TextAppearance.AppCompat.Subhead"
         android:layout_width="wrap_content"
@@ -125,30 +115,4 @@
     app:layout_constraintBottom_toBottomOf="parent"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toEndOf="@id/callToClient"/>
-  <LinearLayout
-    android:id="@+id/callingMessage"
-    android:layout_width="0dp"
-    android:layout_height="wrap_content"
-    android:background="@color/colorAccentGreen"
-    android:gravity="center"
-    android:orientation="horizontal"
-    android:visibility="gone"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toTopOf="parent">
-    <ImageView
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_margin="16dp"
-      android:contentDescription="@null"
-      app:srcCompat="@drawable/ic_phone_in_talk_black_24dp"/>
-    <TextView
-      style="@style/TextAppearance.AppCompat.Subhead.Inverse"
-      android:layout_width="0dp"
-      android:layout_height="wrap_content"
-      android:layout_weight="1"
-      android:layout_marginTop="16dp"
-      android:layout_marginBottom="16dp"
-      android:text="@string/calling_client"/>
-  </LinearLayout>
 </android.support.constraint.ConstraintLayout>

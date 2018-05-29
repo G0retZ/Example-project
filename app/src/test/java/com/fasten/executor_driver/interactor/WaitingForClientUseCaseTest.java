@@ -35,7 +35,6 @@ public class WaitingForClientUseCaseTest {
   @Before
   public void setUp() {
     when(orderGateway.getOrders(ExecutorState.WAITING_FOR_CLIENT)).thenReturn(Flowable.never());
-    when(movingToClientGateway.callToClient()).thenReturn(Completable.never());
     when(movingToClientGateway.startTheOrder()).thenReturn(Completable.never());
     movingToClientUseCase = new WaitingForClientUseCaseImpl(orderGateway, movingToClientGateway);
   }
@@ -52,18 +51,6 @@ public class WaitingForClientUseCaseTest {
 
     // Результат:
     verify(orderGateway, only()).getOrders(ExecutorState.WAITING_FOR_CLIENT);
-  }
-
-  /**
-   * Должен запросить у гейтвея звонок клиенту.
-   */
-  @Test
-  public void askGatewayToCallClient() {
-    // Действие:
-    movingToClientUseCase.callToClient().test();
-
-    // Результат:
-    verify(movingToClientGateway, only()).callToClient();
   }
 
   /**
@@ -112,46 +99,6 @@ public class WaitingForClientUseCaseTest {
 
     // Результат:
     test.assertValues(order, order2);
-    test.assertComplete();
-    test.assertNoErrors();
-  }
-
-  /* Проверяем ответы на запрос звонка клиенту */
-
-  /**
-   * Должен ответить ошибкой сети на запрос звонка клиенту.
-   */
-  @Test
-  public void answerNoNetworkErrorForCallClient() {
-    // Дано:
-    when(orderGateway.getOrders(ExecutorState.WAITING_FOR_CLIENT)).thenReturn(Flowable.just(order));
-    when(movingToClientGateway.callToClient())
-        .thenReturn(Completable.error(new NoNetworkException()));
-
-    // Действие:
-    movingToClientUseCase.getOrders().test();
-    TestObserver<Void> test = movingToClientUseCase.callToClient().test();
-
-    // Результат:
-    test.assertError(NoNetworkException.class);
-    test.assertNoValues();
-    test.assertNotComplete();
-  }
-
-  /**
-   * Должен ответить успехом запроса звонка клиенту.
-   */
-  @Test
-  public void answerSendCallClientSuccessful() {
-    // Дано:
-    when(orderGateway.getOrders(ExecutorState.WAITING_FOR_CLIENT)).thenReturn(Flowable.just(order));
-    when(movingToClientGateway.callToClient()).thenReturn(Completable.complete());
-
-    // Действие:
-    movingToClientUseCase.getOrders().test();
-    TestObserver<Void> test = movingToClientUseCase.callToClient().test();
-
-    // Результат:
     test.assertComplete();
     test.assertNoErrors();
   }
