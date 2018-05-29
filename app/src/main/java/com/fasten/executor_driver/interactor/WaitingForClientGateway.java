@@ -9,14 +9,6 @@ import io.reactivex.Completable;
 public interface WaitingForClientGateway {
 
   /**
-   * Передает запрос звонка клиенту.
-   *
-   * @return {@link Completable} результат - успех либо ошибка на сервере.
-   */
-  @NonNull
-  Completable callToClient();
-
-  /**
    * Передает сообщение о начале исполнения заказа.
    *
    * @return {@link Completable} результат - успех либо ошибка на сервере.

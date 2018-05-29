@@ -18,14 +18,6 @@ public interface WaitingForClientUseCase {
   Flowable<Order> getOrders();
 
   /**
-   * Запрашивает звонок клиенту.
-   *
-   * @return {@link Completable} результат - успех либо ошибка на сервере.
-   */
-  @NonNull
-  Completable callToClient();
-
-  /**
    * Сообщает серверу о начале исполнения заказа.
    *
    * @return {@link Completable} результат - успех либо ошибка на сервере.

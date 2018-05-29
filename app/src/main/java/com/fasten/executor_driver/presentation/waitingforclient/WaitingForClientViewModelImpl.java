@@ -74,21 +74,6 @@ public class WaitingForClientViewModelImpl extends ViewModel implements WaitingF
   }
 
   @Override
-  public void callToClient() {
-    if (!actionsDisposable.isDisposed()) {
-      return;
-    }
-    viewStateLiveData.postValue(new WaitingForClientViewStatePending(orderItem));
-    actionsDisposable = waitingForClientUseCase.callToClient()
-        .subscribeOn(Schedulers.single())
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribe(
-            () -> viewStateLiveData.postValue(new WaitingForClientViewStateIdle(orderItem)),
-            this::consumeError
-        );
-  }
-
-  @Override
   public void startLoading() {
     if (!actionsDisposable.isDisposed()) {
       return;

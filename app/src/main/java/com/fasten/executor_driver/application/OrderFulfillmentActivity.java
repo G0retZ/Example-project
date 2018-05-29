@@ -4,9 +4,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
 import com.fasten.executor_driver.R;
+import com.fasten.executor_driver.presentation.calltoclient.CallToClientNavigate;
 import com.fasten.executor_driver.presentation.oderfulfillmentmenu.OrderFulfillmentMenuNavigate;
+import com.fasten.executor_driver.view.CallToClientFragment;
 import com.fasten.executor_driver.view.OrderFulfillmentActionsDialogFragment;
 
 public class OrderFulfillmentActivity extends BaseActivity {
@@ -30,9 +33,23 @@ public class OrderFulfillmentActivity extends BaseActivity {
 
   @Override
   public void navigate(@NonNull String destination) {
+    Fragment fragment;
     switch (destination) {
       case OrderFulfillmentMenuNavigate.ORDER_ROUTE:
         startActivity(new Intent(this, OrderRouteActivity.class));
+        break;
+      case OrderFulfillmentMenuNavigate.CALL_TO_CLIENT:
+        fragment = getSupportFragmentManager().findFragmentByTag("callToClient");
+        if (fragment == null) {
+          getSupportFragmentManager().beginTransaction()
+              .add(R.id.callingMessage, new CallToClientFragment(), "callToClient").commit();
+        }
+        break;
+      case CallToClientNavigate.FINISHED:
+        fragment = getSupportFragmentManager().findFragmentByTag("callToClient");
+        if (fragment != null) {
+          getSupportFragmentManager().beginTransaction().remove(fragment).commit();
+        }
         break;
       default:
         super.navigate(destination);

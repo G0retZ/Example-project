@@ -18,14 +18,6 @@ public interface MovingToClientUseCase {
   Flowable<Order> getOrders();
 
   /**
-   * Запрашивает звонок клиенту.
-   *
-   * @return {@link Completable} результат - успех либо ошибка на сервере.
-   */
-  @NonNull
-  Completable callToClient();
-
-  /**
    * Сообщает серверу о прибытии к клиенту.
    *
    * @return {@link Completable} результат - успех либо ошибка на сервере.

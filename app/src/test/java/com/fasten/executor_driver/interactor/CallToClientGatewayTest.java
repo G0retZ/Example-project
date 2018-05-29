@@ -7,7 +7,7 @@ import static org.mockito.Mockito.when;
 import com.fasten.executor_driver.backend.web.NoNetworkException;
 import com.fasten.executor_driver.backend.websocket.ConnectionClosedException;
 import com.fasten.executor_driver.entity.ExecutorState;
-import com.fasten.executor_driver.gateway.WaitingForClientGatewayImpl;
+import com.fasten.executor_driver.gateway.CallToClientGatewayImpl;
 import io.reactivex.Completable;
 import io.reactivex.observers.TestObserver;
 import io.reactivex.plugins.RxJavaPlugins;
@@ -22,9 +22,9 @@ import org.mockito.junit.MockitoJUnitRunner;
 import ua.naiksoftware.stomp.client.StompClient;
 
 @RunWith(MockitoJUnitRunner.class)
-public class WaitingForClientGatewayTest {
+public class CallToClientGatewayTest {
 
-  private WaitingForClientGateway orderGateway;
+  private CallToClientGateway orderGateway;
   @Mock
   private StompClient stompClient;
 
@@ -35,26 +35,26 @@ public class WaitingForClientGatewayTest {
     RxJavaPlugins.setIoSchedulerHandler(scheduler -> Schedulers.trampoline());
     ExecutorState.MOVING_TO_CLIENT.setData(null);
     when(stompClient.send(anyString(), anyString())).thenReturn(Completable.never());
-    orderGateway = new WaitingForClientGatewayImpl(stompClient);
+    orderGateway = new CallToClientGatewayImpl(stompClient);
   }
 
   /* Проверяем работу с клиентом STOMP */
 
   /**
-   * Должен запросить у клиента STOMP отправку "начать погрузку", если он соединен и не соединяется.
+   * Должен запросить у клиента STOMP отправку "звонок клиенту", если он соединен и не соединяется.
    */
   @Test
-  public void askStompClientToSendStartOrder() {
+  public void askStompClientToSendCallToClient() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(stompClient);
     when(stompClient.isConnected()).thenReturn(true);
 
     // Действие:
-    orderGateway.startTheOrder().test();
+    orderGateway.callToClient().test();
 
     // Результат:
     inOrder.verify(stompClient).isConnected();
-    inOrder.verify(stompClient).send("/mobile/trip", "\"START_ORDER\"");
+    inOrder.verify(stompClient).send("/mobile/trip", "\"CALL_TO_CLIENT\"");
     verifyNoMoreInteractions(stompClient);
   }
 
@@ -67,7 +67,7 @@ public class WaitingForClientGatewayTest {
     InOrder inOrder = Mockito.inOrder(stompClient);
 
     // Действие:
-    orderGateway.startTheOrder().test();
+    orderGateway.callToClient().test();
 
     // Результат:
     inOrder.verify(stompClient).isConnected();
@@ -76,21 +76,21 @@ public class WaitingForClientGatewayTest {
   }
 
   /**
-   * Должен запросить у клиента STOMP отправку "начать погрузку", если он не соединен и соединяется.
+   * Должен запросить у клиента STOMP отправку "звонок клиенту", если он не соединен и соединяется.
    */
   @Test
-  public void askStompClientToSendStartOrderIfConnecting() {
+  public void askStompClientToSendCallToClientIfConnecting() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(stompClient);
     when(stompClient.isConnecting()).thenReturn(true);
 
     // Действие:
-    orderGateway.startTheOrder().test();
+    orderGateway.callToClient().test();
 
     // Результат:
     inOrder.verify(stompClient).isConnected();
     inOrder.verify(stompClient).isConnecting();
-    inOrder.verify(stompClient).send("/mobile/trip", "\"START_ORDER\"");
+    inOrder.verify(stompClient).send("/mobile/trip", "\"CALL_TO_CLIENT\"");
     verifyNoMoreInteractions(stompClient);
   }
 
@@ -102,13 +102,13 @@ public class WaitingForClientGatewayTest {
    * Должен ответить успехом, если он соединен и не соединяется.
    */
   @Test
-  public void answerStartOrderSuccessIfConnected() {
+  public void answerCallToClientSuccessIfConnected() {
     // Дано:
     when(stompClient.isConnected()).thenReturn(true);
     when(stompClient.send(anyString(), anyString())).thenReturn(Completable.complete());
 
     // Действие:
-    TestObserver<Void> testObserver = orderGateway.startTheOrder().test();
+    TestObserver<Void> testObserver = orderGateway.callToClient().test();
 
     // Результат:
     testObserver.assertNoErrors();
@@ -119,14 +119,14 @@ public class WaitingForClientGatewayTest {
    * Должен ответить ошибкой, если он соединен и не соединяется.
    */
   @Test
-  public void answerStartOrderErrorIfConnected() {
+  public void answerCallToClientErrorIfConnected() {
     // Дано:
     when(stompClient.isConnected()).thenReturn(true);
     when(stompClient.send(anyString(), anyString()))
         .thenReturn(Completable.error(new NoNetworkException()));
 
     // Действие:
-    TestObserver<Void> testObserver = orderGateway.startTheOrder().test();
+    TestObserver<Void> testObserver = orderGateway.callToClient().test();
 
     // Результат:
     testObserver.assertNotComplete();
@@ -137,9 +137,9 @@ public class WaitingForClientGatewayTest {
    * Должен ответить ошибкой, если он не соединен и не соединяется.
    */
   @Test
-  public void answerStartOrderErrorIfNotConnectedAndNotConnecting() {
+  public void answerCallToClientErrorIfNotConnectedAndNotConnecting() {
     // Действие:
-    TestObserver<Void> testObserver = orderGateway.startTheOrder().test();
+    TestObserver<Void> testObserver = orderGateway.callToClient().test();
 
     // Результат:
     testObserver.assertNotComplete();
@@ -150,13 +150,13 @@ public class WaitingForClientGatewayTest {
    * Должен ответить успехом, если он не соединен и соединяется.
    */
   @Test
-  public void answerStartOrderSuccessIfConnecting() {
+  public void answerCallToClientSuccessIfConnecting() {
     // Дано:
     when(stompClient.isConnecting()).thenReturn(true);
     when(stompClient.send(anyString(), anyString())).thenReturn(Completable.complete());
 
     // Действие:
-    TestObserver<Void> testObserver = orderGateway.startTheOrder().test();
+    TestObserver<Void> testObserver = orderGateway.callToClient().test();
 
     // Результат:
     testObserver.assertNoErrors();
@@ -167,14 +167,14 @@ public class WaitingForClientGatewayTest {
    * Должен ответить ошибкой, если он не соединен и соединяется.
    */
   @Test
-  public void answerStartOrderErrorIfConnecting() {
+  public void answerCallToClientErrorIfConnecting() {
     // Дано:
     when(stompClient.isConnecting()).thenReturn(true);
     when(stompClient.send(anyString(), anyString()))
         .thenReturn(Completable.error(new ConnectionClosedException()));
 
     // Действие:
-    TestObserver<Void> testObserver = orderGateway.startTheOrder().test();
+    TestObserver<Void> testObserver = orderGateway.callToClient().test();
 
     // Результат:
     testObserver.assertNotComplete();

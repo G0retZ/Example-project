@@ -80,21 +80,6 @@ public class MovingToClientViewModelImpl extends ViewModel implements MovingToCl
   }
 
   @Override
-  public void callToClient() {
-    if (!actionsDisposable.isDisposed()) {
-      return;
-    }
-    viewStateLiveData.postValue(new MovingToClientViewStatePending(routeItem));
-    actionsDisposable = movingToClientUseCase.callToClient()
-        .subscribeOn(Schedulers.single())
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribe(
-            () -> viewStateLiveData.postValue(new MovingToClientViewStateIdle(routeItem)),
-            this::consumeError
-        );
-  }
-
-  @Override
   public void reportArrival() {
     if (!actionsDisposable.isDisposed()) {
       return;

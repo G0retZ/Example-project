@@ -24,6 +24,19 @@
         android:text="@android:string/cancel"/>
     </LinearLayout>
   </android.support.v7.widget.Toolbar>
+  <FrameLayout
+    android:id="@+id/callingMessage"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:animateLayoutChanges="true"/>
+  <TextView
+    style="@style/TextAppearance.AppCompat.Headline"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="24dp"
+    android:layout_marginStart="16dp"
+    android:layout_marginEnd="16dp"
+    android:text="@string/wait_for_client"/>
   <fragment
     android:id="@+id/fragment_moving_to_client"
     android:layout_width="match_parent"

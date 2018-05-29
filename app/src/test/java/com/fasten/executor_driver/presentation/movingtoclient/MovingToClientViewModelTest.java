@@ -58,7 +58,6 @@ public class MovingToClientViewModelTest {
     RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
     RxAndroidPlugins.setInitMainThreadSchedulerHandler(scheduler -> Schedulers.trampoline());
     when(movingToClientUseCase.getOrders()).thenReturn(Flowable.never());
-    when(movingToClientUseCase.callToClient()).thenReturn(Completable.never());
     when(movingToClientUseCase.reportArrival()).thenReturn(Completable.never());
     movingToClientViewModel = new MovingToClientViewModelImpl(
         movingToClientUseCase, timeUtils);
@@ -81,21 +80,6 @@ public class MovingToClientViewModelTest {
   }
 
   /**
-   * Должен попросить юзкейс позвонить клиенту.
-   */
-  @Test
-  public void askUseCaseToCallToClient() {
-    // Дано:
-    when(movingToClientUseCase.callToClient()).thenReturn(Completable.complete());
-
-    // Действие:
-    movingToClientViewModel.callToClient();
-
-    // Результат:
-    verify(movingToClientUseCase, only()).callToClient();
-  }
-
-  /**
    * Должен попросить юзкейс сообщить о прибытии на место встречи.
    */
   @Test
@@ -111,17 +95,17 @@ public class MovingToClientViewModelTest {
   }
 
   /**
-   * Не должен трогать юзкейс, если предыдущий запрос звонка/прибытия еще не завершился.
+   * Не должен трогать юзкейс, если предыдущий запрос прибытия еще не завершился.
    */
   @Test
   public void DoNotTouchUseCaseDuringOrderSetting() {
     // Действие:
-    movingToClientViewModel.callToClient();
     movingToClientViewModel.reportArrival();
-    movingToClientViewModel.callToClient();
+    movingToClientViewModel.reportArrival();
+    movingToClientViewModel.reportArrival();
 
     // Результат:
-    verify(movingToClientUseCase, only()).callToClient();
+    verify(movingToClientUseCase, only()).reportArrival();
   }
 
   /* Тетсируем переключение состояний. */
@@ -243,24 +227,6 @@ public class MovingToClientViewModelTest {
    * Должен вернуть состояние вида "В процессе".
    */
   @Test
-  public void setPendingViewStateWithoutOrderToLiveDataForCallToClient() {
-    // Дано:
-    InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    movingToClientViewModel.getViewStateLiveData().observeForever(viewStateObserver);
-
-    // Действие:
-    movingToClientViewModel.callToClient();
-
-    // Результат:
-    inOrder.verify(viewStateObserver, times(2))
-        .onChanged(new MovingToClientViewStatePending(null));
-    verifyNoMoreInteractions(viewStateObserver);
-  }
-
-  /**
-   * Должен вернуть состояние вида "В процессе".
-   */
-  @Test
   public void setPendingViewStateWithoutOrderToLiveDataForReportArrival() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
@@ -272,28 +238,6 @@ public class MovingToClientViewModelTest {
     // Результат:
     inOrder.verify(viewStateObserver, times(2))
         .onChanged(new MovingToClientViewStatePending(null));
-    verifyNoMoreInteractions(viewStateObserver);
-  }
-
-  /**
-   * Должен вернуть состояние вида "Ошибка" сети.
-   */
-  @Test
-  public void setNoNetworkErrorViewStateWithoutOrderToLiveDataForCallToClient() {
-    // Дано:
-    InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    when(movingToClientUseCase.callToClient())
-        .thenReturn(Completable.error(NoNetworkException::new));
-    movingToClientViewModel.getViewStateLiveData().observeForever(viewStateObserver);
-
-    // Действие:
-    movingToClientViewModel.callToClient();
-
-    // Результат:
-    inOrder.verify(viewStateObserver, times(2))
-        .onChanged(new MovingToClientViewStatePending(null));
-    inOrder.verify(viewStateObserver)
-        .onChanged(new MovingToClientViewStateNetworkError(null));
     verifyNoMoreInteractions(viewStateObserver);
   }
 
@@ -323,28 +267,6 @@ public class MovingToClientViewModelTest {
    * Должен вернуть состояние вида "Ошибка" нет доступных заказов.
    */
   @Test
-  public void setNoOrdersAvailableErrorViewStateWithoutOrderToLiveDataForCallToClient() {
-    // Дано:
-    InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    when(movingToClientUseCase.callToClient())
-        .thenReturn(Completable.error(NoOrdersAvailableException::new));
-    movingToClientViewModel.getViewStateLiveData().observeForever(viewStateObserver);
-
-    // Действие:
-    movingToClientViewModel.callToClient();
-
-    // Результат:
-    inOrder.verify(viewStateObserver, times(2))
-        .onChanged(new MovingToClientViewStatePending(null));
-    inOrder.verify(viewStateObserver)
-        .onChanged(new MovingToClientViewStateUnavailableError(null));
-    verifyNoMoreInteractions(viewStateObserver);
-  }
-
-  /**
-   * Должен вернуть состояние вида "Ошибка" нет доступных заказов.
-   */
-  @Test
   public void setNoOrdersAvailableErrorViewStateWithoutOrderToLiveDataForReportArrival() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
@@ -367,26 +289,6 @@ public class MovingToClientViewModelTest {
    * Не должен возвращать никакого состояния вида.
    */
   @Test
-  public void setIdleViewStateToLiveDataForCallToClientWithoutOrder() {
-    // Дано:
-    InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    when(movingToClientUseCase.callToClient())
-        .thenReturn(Completable.complete());
-    movingToClientViewModel.getViewStateLiveData().observeForever(viewStateObserver);
-
-    // Действие:
-    movingToClientViewModel.callToClient();
-
-    // Результат:
-    inOrder.verify(viewStateObserver, times(2)).onChanged(new MovingToClientViewStatePending(null));
-    inOrder.verify(viewStateObserver).onChanged(new MovingToClientViewStateIdle(null));
-    verifyNoMoreInteractions(viewStateObserver);
-  }
-
-  /**
-   * Не должен возвращать никакого состояния вида.
-   */
-  @Test
   public void setNoViewStateToLiveDataForReportArrivalWithoutOrder() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
@@ -400,33 +302,6 @@ public class MovingToClientViewModelTest {
     // Результат:
     inOrder.verify(viewStateObserver, times(2))
         .onChanged(new MovingToClientViewStatePending(null));
-    verifyNoMoreInteractions(viewStateObserver);
-  }
-
-  /**
-   * Должен вернуть состояние вида "В процессе".
-   */
-  @Test
-  public void setPendingViewStateToLiveDataForCallToClient() {
-    // Дано:
-    PublishSubject<Order> publishSubject = PublishSubject.create();
-    InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    when(movingToClientUseCase.getOrders())
-        .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
-    movingToClientViewModel.getViewStateLiveData().observeForever(viewStateObserver);
-
-    // Действие:
-    publishSubject.onNext(order);
-    movingToClientViewModel.callToClient();
-
-    // Результат:
-    inOrder.verify(viewStateObserver).onChanged(new MovingToClientViewStatePending(null));
-    inOrder.verify(viewStateObserver).onChanged(new MovingToClientViewStateIdle(
-        new RouteItem(order, timeUtils)
-    ));
-    inOrder.verify(viewStateObserver).onChanged(new MovingToClientViewStatePending(
-        new RouteItem(order, timeUtils)
-    ));
     verifyNoMoreInteractions(viewStateObserver);
   }
 
@@ -461,38 +336,6 @@ public class MovingToClientViewModelTest {
    * Должен вернуть состояние вида "Ошибка" сети.
    */
   @Test
-  public void setNoNetworkErrorViewStateToLiveDataForCallToClient() {
-    // Дано:
-    PublishSubject<Order> publishSubject = PublishSubject.create();
-    InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    when(movingToClientUseCase.getOrders())
-        .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
-    when(movingToClientUseCase.callToClient())
-        .thenReturn(Completable.error(NoNetworkException::new));
-    movingToClientViewModel.getViewStateLiveData().observeForever(viewStateObserver);
-
-    // Действие:
-    publishSubject.onNext(order);
-    movingToClientViewModel.callToClient();
-
-    // Результат:
-    inOrder.verify(viewStateObserver).onChanged(new MovingToClientViewStatePending(null));
-    inOrder.verify(viewStateObserver).onChanged(new MovingToClientViewStateIdle(
-        new RouteItem(order, timeUtils)
-    ));
-    inOrder.verify(viewStateObserver).onChanged(new MovingToClientViewStatePending(
-        new RouteItem(order, timeUtils)
-    ));
-    inOrder.verify(viewStateObserver).onChanged(new MovingToClientViewStateNetworkError(
-        new RouteItem(order, timeUtils)
-    ));
-    verifyNoMoreInteractions(viewStateObserver);
-  }
-
-  /**
-   * Должен вернуть состояние вида "Ошибка" сети.
-   */
-  @Test
   public void setNoNetworkErrorViewStateToLiveDataForReportArrival() {
     // Дано:
     PublishSubject<Order> publishSubject = PublishSubject.create();
@@ -516,37 +359,6 @@ public class MovingToClientViewModelTest {
         new RouteItem(order, timeUtils)
     ));
     inOrder.verify(viewStateObserver).onChanged(new MovingToClientViewStateNetworkError(
-        new RouteItem(order, timeUtils)
-    ));
-    verifyNoMoreInteractions(viewStateObserver);
-  }
-
-  /**
-   * Не должен возвращать никакого состояния вида.
-   */
-  @Test
-  public void setIdleViewStateToLiveDataForCallToClient() {
-    // Дано:
-    PublishSubject<Order> publishSubject = PublishSubject.create();
-    InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    when(movingToClientUseCase.getOrders())
-        .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
-    when(movingToClientUseCase.callToClient()).thenReturn(Completable.complete());
-    movingToClientViewModel.getViewStateLiveData().observeForever(viewStateObserver);
-
-    // Действие:
-    publishSubject.onNext(order);
-    movingToClientViewModel.callToClient();
-
-    // Результат:
-    inOrder.verify(viewStateObserver).onChanged(new MovingToClientViewStatePending(null));
-    inOrder.verify(viewStateObserver).onChanged(new MovingToClientViewStateIdle(
-        new RouteItem(order, timeUtils)
-    ));
-    inOrder.verify(viewStateObserver).onChanged(new MovingToClientViewStatePending(
-        new RouteItem(order, timeUtils)
-    ));
-    inOrder.verify(viewStateObserver).onChanged(new MovingToClientViewStateIdle(
         new RouteItem(order, timeUtils)
     ));
     verifyNoMoreInteractions(viewStateObserver);

@@ -41,24 +41,6 @@ public class MovingToClientGatewayTest {
   /* Проверяем работу с клиентом STOMP */
 
   /**
-   * Должен запросить у клиента STOMP отправку "звонок клиенту", если он соединен и не соединяется.
-   */
-  @Test
-  public void askStompClientToSendCallToClient() {
-    // Дано:
-    InOrder inOrder = Mockito.inOrder(stompClient);
-    when(stompClient.isConnected()).thenReturn(true);
-
-    // Действие:
-    orderGateway.callToClient().test();
-
-    // Результат:
-    inOrder.verify(stompClient).isConnected();
-    inOrder.verify(stompClient).send("/mobile/trip", "\"CALL_TO_CLIENT\"");
-    verifyNoMoreInteractions(stompClient);
-  }
-
-  /**
    * Должен запросить у клиента STOMP отправку "я на месте", если он соединен и не соединяется.
    */
   @Test
@@ -85,33 +67,11 @@ public class MovingToClientGatewayTest {
     InOrder inOrder = Mockito.inOrder(stompClient);
 
     // Действие:
-    orderGateway.callToClient().test();
     orderGateway.reportArrival().test();
 
     // Результат:
     inOrder.verify(stompClient).isConnected();
     inOrder.verify(stompClient).isConnecting();
-    inOrder.verify(stompClient).isConnected();
-    inOrder.verify(stompClient).isConnecting();
-    verifyNoMoreInteractions(stompClient);
-  }
-
-  /**
-   * Должен запросить у клиента STOMP отправку "звонок клиенту", если он не соединен и соединяется.
-   */
-  @Test
-  public void askStompClientToSendCallToClientIfConnecting() {
-    // Дано:
-    InOrder inOrder = Mockito.inOrder(stompClient);
-    when(stompClient.isConnecting()).thenReturn(true);
-
-    // Действие:
-    orderGateway.callToClient().test();
-
-    // Результат:
-    inOrder.verify(stompClient).isConnected();
-    inOrder.verify(stompClient).isConnecting();
-    inOrder.verify(stompClient).send("/mobile/trip", "\"CALL_TO_CLIENT\"");
     verifyNoMoreInteractions(stompClient);
   }
 
@@ -142,23 +102,6 @@ public class MovingToClientGatewayTest {
    * Должен ответить успехом, если он соединен и не соединяется.
    */
   @Test
-  public void answerCallToClientSuccessIfConnected() {
-    // Дано:
-    when(stompClient.isConnected()).thenReturn(true);
-    when(stompClient.send(anyString(), anyString())).thenReturn(Completable.complete());
-
-    // Действие:
-    TestObserver<Void> testObserver = orderGateway.callToClient().test();
-
-    // Результат:
-    testObserver.assertNoErrors();
-    testObserver.assertComplete();
-  }
-
-  /**
-   * Должен ответить успехом, если он соединен и не соединяется.
-   */
-  @Test
   public void answerReportArrivalSuccessIfConnected() {
     // Дано:
     when(stompClient.isConnected()).thenReturn(true);
@@ -170,24 +113,6 @@ public class MovingToClientGatewayTest {
     // Результат:
     testObserver.assertNoErrors();
     testObserver.assertComplete();
-  }
-
-  /**
-   * Должен ответить ошибкой, если он соединен и не соединяется.
-   */
-  @Test
-  public void answerCallToClientErrorIfConnected() {
-    // Дано:
-    when(stompClient.isConnected()).thenReturn(true);
-    when(stompClient.send(anyString(), anyString()))
-        .thenReturn(Completable.error(new NoNetworkException()));
-
-    // Действие:
-    TestObserver<Void> testObserver = orderGateway.callToClient().test();
-
-    // Результат:
-    testObserver.assertNotComplete();
-    testObserver.assertError(NoNetworkException.class);
   }
 
   /**
@@ -212,19 +137,6 @@ public class MovingToClientGatewayTest {
    * Должен ответить ошибкой, если он не соединен и не соединяется.
    */
   @Test
-  public void answerCallToClientErrorIfNotConnectedAndNotConnecting() {
-    // Действие:
-    TestObserver<Void> testObserver = orderGateway.callToClient().test();
-
-    // Результат:
-    testObserver.assertNotComplete();
-    testObserver.assertError(ConnectionClosedException.class);
-  }
-
-  /**
-   * Должен ответить ошибкой, если он не соединен и не соединяется.
-   */
-  @Test
   public void answerReportArrivalErrorIfNotConnectedAndNotConnecting() {
     // Действие:
     TestObserver<Void> testObserver = orderGateway.reportArrival().test();
@@ -232,23 +144,6 @@ public class MovingToClientGatewayTest {
     // Результат:
     testObserver.assertNotComplete();
     testObserver.assertError(ConnectionClosedException.class);
-  }
-
-  /**
-   * Должен ответить успехом, если он не соединен и соединяется.
-   */
-  @Test
-  public void answerCallToClientSuccessIfConnecting() {
-    // Дано:
-    when(stompClient.isConnecting()).thenReturn(true);
-    when(stompClient.send(anyString(), anyString())).thenReturn(Completable.complete());
-
-    // Действие:
-    TestObserver<Void> testObserver = orderGateway.callToClient().test();
-
-    // Результат:
-    testObserver.assertNoErrors();
-    testObserver.assertComplete();
   }
 
   /**
@@ -266,24 +161,6 @@ public class MovingToClientGatewayTest {
     // Результат:
     testObserver.assertNoErrors();
     testObserver.assertComplete();
-  }
-
-  /**
-   * Должен ответить ошибкой, если он не соединен и соединяется.
-   */
-  @Test
-  public void answerCallToClientErrorIfConnecting() {
-    // Дано:
-    when(stompClient.isConnecting()).thenReturn(true);
-    when(stompClient.send(anyString(), anyString()))
-        .thenReturn(Completable.error(new ConnectionClosedException()));
-
-    // Действие:
-    TestObserver<Void> testObserver = orderGateway.callToClient().test();
-
-    // Результат:
-    testObserver.assertNotComplete();
-    testObserver.assertError(ConnectionClosedException.class);
   }
 
   /**

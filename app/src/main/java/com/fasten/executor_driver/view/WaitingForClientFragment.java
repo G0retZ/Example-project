@@ -9,10 +9,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.fasten.executor_driver.R;
 import com.fasten.executor_driver.di.AppComponent;
+import com.fasten.executor_driver.presentation.waitingforclient.WaitingForClientNavigate;
 import com.fasten.executor_driver.presentation.waitingforclient.WaitingForClientViewActions;
 import com.fasten.executor_driver.presentation.waitingforclient.WaitingForClientViewModel;
 import javax.inject.Inject;
@@ -31,7 +31,6 @@ public class WaitingForClientFragment extends BaseFragment implements
   private TextView optionsText;
   private TextView priceTitleText;
   private TextView priceText;
-  private LinearLayout callingMessage;
   private Context context;
   private boolean pending;
 
@@ -59,17 +58,12 @@ public class WaitingForClientFragment extends BaseFragment implements
     optionsText = view.findViewById(R.id.optionsText);
     priceTitleText = view.findViewById(R.id.priceTitleText);
     priceText = view.findViewById(R.id.priceText);
-    callingMessage = view.findViewById(R.id.callingMessage);
     Button callToClient = view.findViewById(R.id.callToClient);
     Button startLoading = view.findViewById(R.id.startLoading);
     callToClient.setOnClickListener(v -> {
-      waitingForClientViewModel.callToClient();
+      navigate(WaitingForClientNavigate.CALL_TO_CLIENT);
       callToClient.setEnabled(false);
-      callingMessage.setVisibility(View.VISIBLE);
-      callingMessage.postDelayed(() -> {
-        callToClient.setEnabled(true);
-        callingMessage.setVisibility(View.GONE);
-      }, 10_000);
+      callToClient.postDelayed(() -> callToClient.setEnabled(true), 10_000);
     });
     startLoading.setOnClickListener(v -> waitingForClientViewModel.startLoading());
     return view;

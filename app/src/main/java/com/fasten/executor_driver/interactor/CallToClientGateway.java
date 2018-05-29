@@ -4,15 +4,15 @@ import android.support.annotation.NonNull;
 import io.reactivex.Completable;
 
 /**
- * Гейтвей работы с заказами при движении к клиенту.
+ * Гейтвей звонка клиенту.
  */
-public interface MovingToClientGateway {
+public interface CallToClientGateway {
 
   /**
-   * Передает сообщение о прибытии к клиенту.
+   * Передает запрос звонка клиенту.
    *
    * @return {@link Completable} результат - успех либо ошибка на сервере.
    */
   @NonNull
-  Completable reportArrival();
+  Completable callToClient();
 }
