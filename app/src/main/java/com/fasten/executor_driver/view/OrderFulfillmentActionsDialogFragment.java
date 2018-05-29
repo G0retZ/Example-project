@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,6 +34,12 @@ public class OrderFulfillmentActionsDialogFragment extends DialogFragment {
     }
   }
 
+  @Override
+  public void onCreate(@Nullable Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    setStyle(DialogFragment.STYLE_NO_FRAME, R.style.AppTheme);
+  }
+
   @Nullable
   @Override
   public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -54,6 +61,7 @@ public class OrderFulfillmentActionsDialogFragment extends DialogFragment {
         );
       }
     }
+    ((Toolbar) view.findViewById(R.id.appBar)).setNavigationOnClickListener(v -> dismiss());
     view.findViewById(R.id.orderRoute).setOnClickListener(
         v -> navigate(OrderFulfillmentMenuNavigate.ORDER_ROUTE)
     );
@@ -72,12 +80,13 @@ public class OrderFulfillmentActionsDialogFragment extends DialogFragment {
     view.findViewById(R.id.addService).setOnClickListener(
         v -> navigate(OrderFulfillmentMenuNavigate.ADD_SERVICE)
     );
-    view.findViewById(R.id.cancelOrder).setOnClickListener(
-        v -> navigate(OrderFulfillmentMenuNavigate.CANCEL_ORDER)
+    view.findViewById(R.id.callToOperator).setOnClickListener(
+        v -> navigate(OrderFulfillmentMenuNavigate.CALL_TO_OPERATOR)
     );
   }
 
   private void navigate(@NonNull String destination) {
+    dismiss();
     if (baseActivity != null) {
       baseActivity.navigate(destination);
     }

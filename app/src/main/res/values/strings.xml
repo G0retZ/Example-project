@@ -105,4 +105,5 @@
   <string name="order_details">Информация о заказе</string>
   <string name="add_service">Добавить услугу</string>
   <string name="cancel_order">Отменить заказ</string>
+  <string name="call_to_operator">Связь с диспетчером</string>
 </resources>
