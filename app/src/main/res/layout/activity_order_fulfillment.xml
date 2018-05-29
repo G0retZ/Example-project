@@ -25,6 +25,10 @@
         android:text="@string/actions"/>
     </LinearLayout>
   </android.support.v7.widget.Toolbar>
+  <FrameLayout
+    android:id="@+id/callingMessage"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"/>
   <fragment
     android:id="@+id/fragment_order_fulfillment"
     android:layout_width="match_parent"
