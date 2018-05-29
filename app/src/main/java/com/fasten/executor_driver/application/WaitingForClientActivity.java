@@ -19,13 +19,17 @@ public class WaitingForClientActivity extends BaseActivity {
 
   @Override
   public void navigate(@NonNull String destination) {
+    Fragment fragment;
     switch (destination) {
       case WaitingForClientNavigate.CALL_TO_CLIENT:
-        getSupportFragmentManager().beginTransaction()
-            .add(R.id.callingMessage, new CallToClientFragment(), "call").commit();
+        fragment = getSupportFragmentManager().findFragmentByTag("callToClient");
+        if (fragment == null) {
+          getSupportFragmentManager().beginTransaction()
+              .add(R.id.callingMessage, new CallToClientFragment(), "callToClient").commit();
+        }
         break;
       case CallToClientNavigate.FINISHED:
-        Fragment fragment = getSupportFragmentManager().findFragmentByTag("call");
+        fragment = getSupportFragmentManager().findFragmentByTag("callToClient");
         if (fragment != null) {
           getSupportFragmentManager().beginTransaction().remove(fragment).commit();
         }
