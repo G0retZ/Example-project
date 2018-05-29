@@ -71,6 +71,12 @@ public class CallToClientFragment extends BaseFragment implements CallToClientVi
   }
 
   @Override
+  public void onResume() {
+    super.onResume();
+    callToClientViewModel.callToClient();
+  }
+
+  @Override
   public void showCallToClientPending(boolean pending) {
     if (this.pending != pending) {
       showPending(pending);
