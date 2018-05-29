@@ -100,4 +100,10 @@
   <string name="select">Выбрать</string>
   <string name="in_progress">В работе</string>
   <string name="route">Маршрут</string>
+  <string name="pause">Пауза</string>
+  <string name="cost_detailed">Детальный расчет</string>
+  <string name="order_details">Информация о заказе</string>
+  <string name="add_service">Добавить услугу</string>
+  <string name="cancel_order">Отменить заказ</string>
+  <string name="call_to_operator">Связь с диспетчером</string>
 </resources>
