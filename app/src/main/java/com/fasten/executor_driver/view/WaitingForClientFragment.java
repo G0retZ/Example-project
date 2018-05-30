@@ -137,6 +137,11 @@ public class WaitingForClientFragment extends BaseFragment implements
   }
 
   @Override
+  public void showTimeout(int progress, long timeout) {
+
+  }
+
+  @Override
   public void showDistance(String distance) {
 
   }

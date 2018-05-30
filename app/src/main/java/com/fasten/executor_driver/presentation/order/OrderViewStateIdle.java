@@ -28,6 +28,8 @@ final class OrderViewStateIdle implements ViewState<OrderViewActions> {
     stateActions.showOrderPending(false);
     stateActions.showOrderAvailabilityError(false);
     stateActions.showNetworkErrorMessage(false);
+    long timeout[] = orderItem.getProgressLeft();
+    stateActions.showTimeout((int) timeout[0], timeout[1]);
   }
 
   @Override

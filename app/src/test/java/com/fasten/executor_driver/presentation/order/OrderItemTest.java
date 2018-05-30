@@ -1,5 +1,6 @@
 package com.fasten.executor_driver.presentation.order;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.mockito.Mockito.when;
@@ -40,7 +41,8 @@ public class OrderItemTest {
 
   @Before
   public void setUp() {
-    when(timeUtils.currentTimeMillis()).thenReturn(12390182L, 12395182L, 12400182L);
+    when(timeUtils.currentTimeMillis())
+        .thenReturn(12390182L, 12390182L, 12395182L, 12400182L, 12395182L, 12400182L);
     orderItem = new OrderItem(order, timeUtils);
   }
 
@@ -53,6 +55,7 @@ public class OrderItemTest {
     when(order.getDistance()).thenReturn(12239L);
     when(order.getComment()).thenReturn("com");
     when(order.getEstimatedPrice()).thenReturn("7000");
+    when(order.getTimeout()).thenReturn(20);
     when(order.getOptions()).thenReturn(new ArrayList<>(Arrays.asList(
         new OptionBoolean(0, "bool1", "bd", false, false),
         new OptionBoolean(1, "bool2", "bd", false, true),
@@ -80,6 +83,8 @@ public class OrderItemTest {
     assertEquals(orderItem.getSecondsToMeetClient(), 352);
     assertEquals(orderItem.getSecondsToMeetClient(), 347);
     assertEquals(orderItem.getSecondsToMeetClient(), 342);
+    assertArrayEquals(orderItem.getProgressLeft(), new long[]{75, 15000});
+    assertArrayEquals(orderItem.getProgressLeft(), new long[]{50, 10000});
   }
 
   @Test

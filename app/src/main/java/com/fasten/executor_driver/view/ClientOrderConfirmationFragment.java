@@ -115,6 +115,11 @@ public class ClientOrderConfirmationFragment extends BaseFragment implements
   }
 
   @Override
+  public void showTimeout(int progress, long timeout) {
+
+  }
+
+  @Override
   public void showDistance(String distance) {
     distanceText.setText(getString(R.string.km, distance));
   }

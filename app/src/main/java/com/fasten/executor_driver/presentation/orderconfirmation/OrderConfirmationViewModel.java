@@ -1,12 +1,11 @@
-package com.fasten.executor_driver.presentation.driverorderconfirmation;
+package com.fasten.executor_driver.presentation.orderconfirmation;
 
 import com.fasten.executor_driver.presentation.ViewModel;
 
 /**
  * ViewModel окна заказа.
  */
-public interface DriverOrderConfirmationViewModel extends
-    ViewModel<DriverOrderConfirmationViewActions> {
+public interface OrderConfirmationViewModel extends ViewModel<OrderConfirmationViewActions> {
 
   /**
    * Принимает заказ.

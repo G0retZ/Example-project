@@ -29,11 +29,19 @@ public interface OrderViewActions {
   void showLoadPointCoordinates(@NonNull String coordinates);
 
   /**
-   * Показать индикатор таймаута по заданным параметрам.
+   * Показать индикатор таймаута до встречи с клиентом.
    *
    * @param timeout - время оставшееся до таймаута в секундах
    */
   void showTimeout(int timeout);
+
+  /**
+   * Показать индикатор таймаута приниятия решения по заказу.
+   *
+   * @param progress - сколько процентов осталось до окончания
+   * @param timeout - время оставшееся до таймаут
+   */
+  void showTimeout(int progress, long timeout);
 
   /**
    * Показать растояние до точки погрузки.

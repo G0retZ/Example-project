@@ -56,7 +56,6 @@ import com.fasten.executor_driver.gateway.VehiclesAndOptionsGatewayImpl;
 import com.fasten.executor_driver.gateway.WaitingForClientApiMapper;
 import com.fasten.executor_driver.gateway.WaitingForClientGatewayImpl;
 import com.fasten.executor_driver.interactor.CallToClientUseCaseImpl;
-import com.fasten.executor_driver.interactor.DriverOrderConfirmationUseCaseImpl;
 import com.fasten.executor_driver.interactor.ExecutorStateNotOnlineUseCaseImpl;
 import com.fasten.executor_driver.interactor.ExecutorStateUseCase;
 import com.fasten.executor_driver.interactor.ExecutorStateUseCaseImpl;
@@ -64,6 +63,7 @@ import com.fasten.executor_driver.interactor.GeoLocationUseCase;
 import com.fasten.executor_driver.interactor.GeoLocationUseCaseImpl;
 import com.fasten.executor_driver.interactor.MemoryDataSharer;
 import com.fasten.executor_driver.interactor.MovingToClientUseCaseImpl;
+import com.fasten.executor_driver.interactor.OrderConfirmationUseCaseImpl;
 import com.fasten.executor_driver.interactor.OrderCurrentCostUseCaseImpl;
 import com.fasten.executor_driver.interactor.OrderFulfillmentTimeUseCaseImpl;
 import com.fasten.executor_driver.interactor.OrderRouteUseCaseImpl;
@@ -88,7 +88,6 @@ import com.fasten.executor_driver.presentation.calltoclient.CallToClientViewMode
 import com.fasten.executor_driver.presentation.choosevehicle.ChooseVehicleViewModelImpl;
 import com.fasten.executor_driver.presentation.code.CodeViewModelImpl;
 import com.fasten.executor_driver.presentation.codeHeader.CodeHeaderViewModelImpl;
-import com.fasten.executor_driver.presentation.driverorderconfirmation.DriverOrderConfirmationViewModelImpl;
 import com.fasten.executor_driver.presentation.executorstate.ExecutorStateViewModelImpl;
 import com.fasten.executor_driver.presentation.geolocation.GeoLocationViewModelImpl;
 import com.fasten.executor_driver.presentation.map.MapViewModelImpl;
@@ -97,6 +96,7 @@ import com.fasten.executor_driver.presentation.nextroutepoint.NextRoutePointView
 import com.fasten.executor_driver.presentation.onlinebutton.OnlineButtonViewModelImpl;
 import com.fasten.executor_driver.presentation.onlineswitch.OnlineSwitchViewModelImpl;
 import com.fasten.executor_driver.presentation.order.OrderViewModelImpl;
+import com.fasten.executor_driver.presentation.orderconfirmation.OrderConfirmationViewModelImpl;
 import com.fasten.executor_driver.presentation.ordercost.OrderCostViewModelImpl;
 import com.fasten.executor_driver.presentation.orderroute.OrderRouteViewModelImpl;
 import com.fasten.executor_driver.presentation.ordertime.OrderTimeViewModelImpl;
@@ -497,12 +497,12 @@ public class AppComponentImpl implements AppComponent {
 
   @Override
   public void inject(DriverOrderConfirmationFragment driverOrderConfirmationFragment) {
-    driverOrderConfirmationFragment.setDriverOrderConfirmationViewModel(
+    driverOrderConfirmationFragment.setOrderConfirmationViewModel(
         ViewModelProviders.of(
             driverOrderConfirmationFragment,
             new ViewModelFactory<>(
-                new DriverOrderConfirmationViewModelImpl(
-                    new DriverOrderConfirmationUseCaseImpl(
+                new OrderConfirmationViewModelImpl(
+                    new OrderConfirmationUseCaseImpl(
                         new OrderGatewayImpl(
                             executorStateUseCase,
                             ExecutorState.DRIVER_ORDER_CONFIRMATION,
@@ -511,11 +511,31 @@ public class AppComponentImpl implements AppComponent {
                                 new RoutePointApiMapper()
                             )
                         ),
-                        new OrderConfirmationGatewayImpl(stompClient)),
+                        new OrderConfirmationGatewayImpl(stompClient)
+                    )
+                )
+            )
+        ).get(OrderConfirmationViewModelImpl.class)
+    );
+    driverOrderConfirmationFragment.setOrderViewModel(
+        ViewModelProviders.of(
+            driverOrderConfirmationFragment,
+            new ViewModelFactory<>(
+                new OrderViewModelImpl(
+                    new OrderUseCaseImpl(
+                        new OrderGatewayImpl(
+                            executorStateUseCase,
+                            ExecutorState.DRIVER_ORDER_CONFIRMATION,
+                            new OrderApiMapper(
+                                new VehicleOptionApiMapper(),
+                                new RoutePointApiMapper()
+                            )
+                        )
+                    ),
                     new TimeUtilsImpl()
                 )
             )
-        ).get(DriverOrderConfirmationViewModelImpl.class)
+        ).get(OrderViewModelImpl.class)
     );
   }
 

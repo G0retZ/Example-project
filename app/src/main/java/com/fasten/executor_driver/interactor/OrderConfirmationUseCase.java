@@ -1,21 +1,12 @@
 package com.fasten.executor_driver.interactor;
 
 import android.support.annotation.NonNull;
-import com.fasten.executor_driver.entity.Order;
 import io.reactivex.Completable;
-import io.reactivex.Flowable;
 
 /**
- * Юзкейс предложений заказов. Слушает предложения из гейтвея.
+ * Юзкейс принятия заказов. Принимает или отвергает последний полученный заказ.
  */
-public interface DriverOrderConfirmationUseCase {
-
-  /**
-   * Запрашивает данные о предложениях заказов.
-   *
-   * @return {@link Flowable<Order>} результат запроса.
-   */
-  Flowable<Order> getOrders();
+public interface OrderConfirmationUseCase {
 
   /**
    * Передает решение исполнителя по принятию заказа.
