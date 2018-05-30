@@ -10,16 +10,16 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
-public class WaitingForClientViewStatePendingTest {
+public class WaitingForClientViewStateErrorTest {
 
-  private WaitingForClientViewStatePending viewState;
+  private WaitingForClientViewStateError viewState;
 
   @Mock
   private WaitingForClientViewActions driverOrderConfirmationViewActions;
 
   @Before
   public void setUp() {
-    viewState = new WaitingForClientViewStatePending();
+    viewState = new WaitingForClientViewStateError();
   }
 
   @Test
@@ -28,8 +28,8 @@ public class WaitingForClientViewStatePendingTest {
     viewState.apply(driverOrderConfirmationViewActions);
 
     // Результат:
-    verify(driverOrderConfirmationViewActions).showWaitingForClientPending(true);
-    verify(driverOrderConfirmationViewActions).showNetworkErrorMessage(false);
+    verify(driverOrderConfirmationViewActions).showWaitingForClientPending(false);
+    verify(driverOrderConfirmationViewActions).showNetworkErrorMessage(true);
     verifyNoMoreInteractions(driverOrderConfirmationViewActions);
   }
 }

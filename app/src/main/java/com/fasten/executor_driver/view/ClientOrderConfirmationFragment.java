@@ -8,13 +8,12 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.fasten.executor_driver.R;
 import com.fasten.executor_driver.di.AppComponent;
-import com.fasten.executor_driver.presentation.clientorderconfirmation.ClientOrderConfirmationViewActions;
-import com.fasten.executor_driver.presentation.clientorderconfirmation.ClientOrderConfirmationViewModel;
+import com.fasten.executor_driver.presentation.order.OrderViewActions;
+import com.fasten.executor_driver.presentation.order.OrderViewModel;
 import com.squareup.picasso.Picasso;
 import javax.inject.Inject;
 
@@ -23,10 +22,9 @@ import javax.inject.Inject;
  */
 
 public class ClientOrderConfirmationFragment extends BaseFragment implements
-    ClientOrderConfirmationViewActions {
+    OrderViewActions {
 
-  private ClientOrderConfirmationViewModel clientOrderConfirmationViewModel;
-  private ImageButton declineAction;
+  private OrderViewModel orderViewModel;
   private ImageView mapImage;
   private TextView distanceText;
   private TextView addressText;
@@ -46,9 +44,9 @@ public class ClientOrderConfirmationFragment extends BaseFragment implements
   }
 
   @Inject
-  public void setClientOrderConfirmationViewModel(
-      @NonNull ClientOrderConfirmationViewModel clientOrderConfirmationViewModel) {
-    this.clientOrderConfirmationViewModel = clientOrderConfirmationViewModel;
+  public void setOrderViewModel(
+      @NonNull OrderViewModel orderViewModel) {
+    this.orderViewModel = orderViewModel;
   }
 
   @Nullable
@@ -57,7 +55,6 @@ public class ClientOrderConfirmationFragment extends BaseFragment implements
       @Nullable ViewGroup container,
       @Nullable Bundle savedInstanceState) {
     View view = inflater.inflate(R.layout.fragment_client_order_confirmation, container, false);
-    declineAction = view.findViewById(R.id.declineButton);
     mapImage = view.findViewById(R.id.mapImage);
     distanceText = view.findViewById(R.id.distanceText);
     addressText = view.findViewById(R.id.addressText);
@@ -67,7 +64,7 @@ public class ClientOrderConfirmationFragment extends BaseFragment implements
     optionsText = view.findViewById(R.id.optionsText);
     priceTitleText = view.findViewById(R.id.priceTitleText);
     priceText = view.findViewById(R.id.priceText);
-//    declineAction.setOnClickListener(v -> clientOrderConfirmationViewModel.cancelOrder());
+//    declineAction.setOnClickListener(v -> orderViewModel.cancelOrder());
     return view;
   }
 
@@ -80,7 +77,7 @@ public class ClientOrderConfirmationFragment extends BaseFragment implements
   @Override
   public void onActivityCreated(@Nullable Bundle savedInstanceState) {
     super.onActivityCreated(savedInstanceState);
-    clientOrderConfirmationViewModel.getViewStateLiveData().observe(this, viewState -> {
+    orderViewModel.getViewStateLiveData().observe(this, viewState -> {
       if (viewState != null) {
         viewState.apply(this);
       }
@@ -94,7 +91,7 @@ public class ClientOrderConfirmationFragment extends BaseFragment implements
   }
 
   @Override
-  public void showClientOrderConfirmationPending(boolean pending) {
+  public void showOrderPending(boolean pending) {
     if (this.pending != pending) {
       showPending(pending);
     }
@@ -105,6 +102,16 @@ public class ClientOrderConfirmationFragment extends BaseFragment implements
   public void showLoadPoint(@NonNull String url) {
     Picasso.with(context).load(url)
         .into(mapImage);
+  }
+
+  @Override
+  public void showLoadPointCoordinates(@NonNull String coordinates) {
+
+  }
+
+  @Override
+  public void showTimeout(int timeout) {
+
   }
 
   @Override
@@ -130,7 +137,7 @@ public class ClientOrderConfirmationFragment extends BaseFragment implements
   }
 
   @Override
-  public void showOptionsRequirements(@NonNull String options) {
+  public void showOrderOptionsRequirements(@NonNull String options) {
     if (options.trim().isEmpty()) {
       optionsTitleText.setVisibility(View.GONE);
       optionsText.setVisibility(View.GONE);
@@ -175,10 +182,5 @@ public class ClientOrderConfirmationFragment extends BaseFragment implements
           .create()
           .show();
     }
-  }
-
-  @Override
-  public void enableDeclineButton(boolean enable) {
-    declineAction.setEnabled(enable);
   }
 }

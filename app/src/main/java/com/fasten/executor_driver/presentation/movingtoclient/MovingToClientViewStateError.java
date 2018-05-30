@@ -1,23 +1,16 @@
 package com.fasten.executor_driver.presentation.movingtoclient;
 
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import com.fasten.executor_driver.presentation.ViewState;
 
 /**
  * Состояние ошибки сети вида заказа.
  */
-final class MovingToClientViewStateNetworkError extends
-    MovingToClientViewState {
-
-  MovingToClientViewStateNetworkError(@Nullable RouteItem routeItem) {
-    super(routeItem);
-  }
+final class MovingToClientViewStateError implements ViewState<MovingToClientViewActions> {
 
   @Override
   public void apply(@NonNull MovingToClientViewActions stateActions) {
-    super.apply(stateActions);
     stateActions.showMovingToClientPending(false);
-    stateActions.showOrderAvailabilityError(false);
     stateActions.showNetworkErrorMessage(true);
   }
 }

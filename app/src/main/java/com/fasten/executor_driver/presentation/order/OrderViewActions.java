@@ -1,18 +1,18 @@
-package com.fasten.executor_driver.presentation.clientorderconfirmation;
+package com.fasten.executor_driver.presentation.order;
 
 import android.support.annotation.NonNull;
 
 /**
  * Действия для смены состояния вида окна заказа.
  */
-public interface ClientOrderConfirmationViewActions {
+public interface OrderViewActions {
 
   /**
    * Показать индикатор процесса.
    *
    * @param pending - показать или нет?
    */
-  void showClientOrderConfirmationPending(boolean pending);
+  void showOrderPending(boolean pending);
 
   /**
    * показать точку погрузки на карте по урл.
@@ -20,6 +20,20 @@ public interface ClientOrderConfirmationViewActions {
    * @param url - адрес картинки с точкой погрузки на карте
    */
   void showLoadPoint(@NonNull String url);
+
+  /**
+   * Показать координаты точки погрузки.
+   *
+   * @param coordinates - координаты
+   */
+  void showLoadPointCoordinates(@NonNull String coordinates);
+
+  /**
+   * Показать индикатор таймаута по заданным параметрам.
+   *
+   * @param timeout - время оставшееся до таймаута в секундах
+   */
+  void showTimeout(int timeout);
 
   /**
    * Показать растояние до точки погрузки.
@@ -47,7 +61,7 @@ public interface ClientOrderConfirmationViewActions {
    *
    * @param options - список опций, требуемых для выполнения заказа
    */
-  void showOptionsRequirements(@NonNull String options);
+  void showOrderOptionsRequirements(@NonNull String options);
 
   /**
    * Показать комментарий к заказу.
@@ -69,11 +83,4 @@ public interface ClientOrderConfirmationViewActions {
    * @param show - показать или нет?
    */
   void showNetworkErrorMessage(boolean show);
-
-  /**
-   * Задействовать кнопку отказа.
-   *
-   * @param enable - задействовать или нет?
-   */
-  void enableDeclineButton(boolean enable);
 }

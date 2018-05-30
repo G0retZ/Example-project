@@ -5,7 +5,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
-import com.fasten.executor_driver.entity.ExecutorState;
 import com.fasten.executor_driver.entity.Order;
 import com.fasten.executor_driver.gateway.DataMappingException;
 import io.reactivex.Flowable;
@@ -31,7 +30,7 @@ public class OrderCurrentCostUseCaseTest {
 
   @Before
   public void setUp() {
-    when(orderGateway.getOrders(ExecutorState.ORDER_FULFILLMENT)).thenReturn(Flowable.never());
+    when(orderGateway.getOrders()).thenReturn(Flowable.never());
     when(orderExcessCostGateway.getOrderExcessCost()).thenReturn(Flowable.never());
     orderCurrentCostUseCase = new OrderCurrentCostUseCaseImpl(orderGateway,
         orderExcessCostGateway);
@@ -48,7 +47,7 @@ public class OrderCurrentCostUseCaseTest {
     orderCurrentCostUseCase.getOrderCurrentCost().test();
 
     // Результат:
-    verify(orderGateway, only()).getOrders(ExecutorState.ORDER_FULFILLMENT);
+    verify(orderGateway, only()).getOrders();
   }
 
   /* Проверяем работу с гейтвеем текущей цены заказа */
@@ -71,7 +70,7 @@ public class OrderCurrentCostUseCaseTest {
   @Test
   public void askCurrentCostGatewayForCostUpdates() {
     // Дано:
-    when(orderGateway.getOrders(ExecutorState.ORDER_FULFILLMENT)).thenReturn(Flowable.just(order));
+    when(orderGateway.getOrders()).thenReturn(Flowable.just(order));
 
     // Действие:
     orderCurrentCostUseCase.getOrderCurrentCost().test();
@@ -88,7 +87,7 @@ public class OrderCurrentCostUseCaseTest {
   @Test
   public void answerDataMappingError() {
     // Дано:
-    when(orderGateway.getOrders(ExecutorState.ORDER_FULFILLMENT))
+    when(orderGateway.getOrders())
         .thenReturn(Flowable.error(new DataMappingException()));
 
     // Действие:
@@ -106,7 +105,7 @@ public class OrderCurrentCostUseCaseTest {
   @Test
   public void answerDataMappingErrorInCurrentCost() {
     // Дано:
-    when(orderGateway.getOrders(ExecutorState.ORDER_FULFILLMENT))
+    when(orderGateway.getOrders())
         .thenReturn(Flowable.just(order, order2));
     when(order.getOrderCost()).thenReturn(100);
     when(order.getExcessCost()).thenReturn(1);
@@ -128,7 +127,7 @@ public class OrderCurrentCostUseCaseTest {
   @Test
   public void answerWithOrdersCostsOnly() {
     // Дано:
-    when(orderGateway.getOrders(ExecutorState.ORDER_FULFILLMENT))
+    when(orderGateway.getOrders())
         .thenReturn(Flowable.just(order, order2));
     when(order.getOrderCost()).thenReturn(100);
     when(order.getExcessCost()).thenReturn(10);
@@ -151,7 +150,7 @@ public class OrderCurrentCostUseCaseTest {
   @Test
   public void answerWithOrdersAndUpdatedCosts() {
     // Дано:
-    when(orderGateway.getOrders(ExecutorState.ORDER_FULFILLMENT))
+    when(orderGateway.getOrders())
         .thenReturn(Flowable.just(order, order2));
     when(order.getOrderCost()).thenReturn(100);
     when(order.getExcessCost()).thenReturn(0);

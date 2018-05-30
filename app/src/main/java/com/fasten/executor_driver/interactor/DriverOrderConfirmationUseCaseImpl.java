@@ -2,7 +2,6 @@ package com.fasten.executor_driver.interactor;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import com.fasten.executor_driver.entity.ExecutorState;
 import com.fasten.executor_driver.entity.NoOrdersAvailableException;
 import com.fasten.executor_driver.entity.Order;
 import io.reactivex.Completable;
@@ -27,7 +26,7 @@ public class DriverOrderConfirmationUseCaseImpl implements DriverOrderConfirmati
 
   @Override
   public Flowable<Order> getOrders() {
-    return orderGateway.getOrders(ExecutorState.DRIVER_ORDER_CONFIRMATION)
+    return orderGateway.getOrders()
         .doOnNext(order -> lastOrder = order);
   }
 

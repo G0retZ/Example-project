@@ -2,7 +2,6 @@ package com.fasten.executor_driver.presentation.waitingforclient;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.only;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
@@ -10,18 +9,12 @@ import static org.mockito.Mockito.when;
 import android.arch.core.executor.testing.InstantTaskExecutorRule;
 import android.arch.lifecycle.Observer;
 import com.fasten.executor_driver.backend.web.NoNetworkException;
-import com.fasten.executor_driver.entity.NoOrdersAvailableException;
-import com.fasten.executor_driver.entity.Order;
-import com.fasten.executor_driver.gateway.DataMappingException;
 import com.fasten.executor_driver.interactor.WaitingForClientUseCase;
 import com.fasten.executor_driver.presentation.ViewState;
-import io.reactivex.BackpressureStrategy;
 import io.reactivex.Completable;
-import io.reactivex.Flowable;
 import io.reactivex.android.plugins.RxAndroidPlugins;
 import io.reactivex.plugins.RxJavaPlugins;
 import io.reactivex.schedulers.Schedulers;
-import io.reactivex.subjects.PublishSubject;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -40,12 +33,6 @@ public class WaitingForClientViewModelTest {
   private WaitingForClientViewModel movingToClientViewModel;
   @Mock
   private WaitingForClientUseCase movingToClientUseCase;
-  @Mock
-  private Order order;
-  @Mock
-  private Order order1;
-  @Mock
-  private Order order2;
 
   @Mock
   private Observer<ViewState<WaitingForClientViewActions>> viewStateObserver;
@@ -54,27 +41,12 @@ public class WaitingForClientViewModelTest {
   public void setUp() {
     RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
     RxAndroidPlugins.setInitMainThreadSchedulerHandler(scheduler -> Schedulers.trampoline());
-    when(movingToClientUseCase.getOrders()).thenReturn(Flowable.never());
     when(movingToClientUseCase.startTheOrder()).thenReturn(Completable.never());
     movingToClientViewModel = new WaitingForClientViewModelImpl(
         movingToClientUseCase);
   }
 
-  /* Тетсируем работу с юзкейсом заказа. */
-
-  /**
-   * Должен просить юзкейс получать заказы, при первой и только при первой подписке.
-   */
-  @Test
-  public void askUseCaseForOrdersInitially() {
-    // Действие:
-    movingToClientViewModel.getViewStateLiveData();
-    movingToClientViewModel.getViewStateLiveData();
-    movingToClientViewModel.getViewStateLiveData();
-
-    // Результат:
-    verify(movingToClientUseCase, only()).getOrders();
-  }
+  /* Тетсируем работу с юзкейсом. */
 
   /**
    * Должен попросить юзкейс сообщить о начале погрузки.
@@ -108,10 +80,10 @@ public class WaitingForClientViewModelTest {
   /* Тетсируем переключение состояний. */
 
   /**
-   * Должен вернуть состояние вида ожидания изначально.
+   * Должен вернуть состояние вида бездействия изначально.
    */
   @Test
-  public void setPendingViewStateToLiveDataInitially() {
+  public void setIdleViewStateToLiveDataInitially() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
 
@@ -119,104 +91,7 @@ public class WaitingForClientViewModelTest {
     movingToClientViewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Результат:
-    inOrder.verify(viewStateObserver).onChanged(any(WaitingForClientViewStatePending.class));
-    verifyNoMoreInteractions(viewStateObserver);
-  }
-
-  /**
-   * Должен вернуть состояние вида "Ошибка" нет сети.
-   */
-  @Test
-  public void setNoNetworkErrorViewStateToLiveData() {
-    // Дано:
-    PublishSubject<Order> publishSubject = PublishSubject.create();
-    InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    when(movingToClientUseCase.getOrders())
-        .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
-    movingToClientViewModel.getViewStateLiveData().observeForever(viewStateObserver);
-
-    // Действие:
-    publishSubject.onError(new NoNetworkException());
-
-    // Результат:
-    inOrder.verify(viewStateObserver).onChanged(new WaitingForClientViewStatePending(null));
-    inOrder.verify(viewStateObserver)
-        .onChanged(new WaitingForClientViewStateNetworkError(null));
-    verifyNoMoreInteractions(viewStateObserver);
-  }
-
-  /**
-   * Должен вернуть состояние вида "Ошибка" нет сети.
-   */
-  @Test
-  public void setNoNetworkErrorViewStateToLiveDataForMappingError() {
-    // Дано:
-    PublishSubject<Order> publishSubject = PublishSubject.create();
-    InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    when(movingToClientUseCase.getOrders())
-        .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
-    movingToClientViewModel.getViewStateLiveData().observeForever(viewStateObserver);
-
-    // Действие:
-    publishSubject.onError(new DataMappingException());
-
-    // Результат:
-    inOrder.verify(viewStateObserver).onChanged(new WaitingForClientViewStatePending(null));
-    inOrder.verify(viewStateObserver)
-        .onChanged(new WaitingForClientViewStateNetworkError(null));
-    verifyNoMoreInteractions(viewStateObserver);
-  }
-
-  /**
-   * Должен вернуть состояние вида "Ошибка" нет доступных заказов.
-   */
-  @Test
-  public void setNoOrderAvailableErrorViewStateToLiveData() {
-    // Дано:
-    PublishSubject<Order> publishSubject = PublishSubject.create();
-    InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    when(movingToClientUseCase.getOrders())
-        .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
-    movingToClientViewModel.getViewStateLiveData().observeForever(viewStateObserver);
-
-    // Действие:
-    publishSubject.onError(new NoOrdersAvailableException());
-
-    // Результат:
-    inOrder.verify(viewStateObserver).onChanged(new WaitingForClientViewStatePending(null));
-    inOrder.verify(viewStateObserver)
-        .onChanged(new WaitingForClientViewStateUnavailableError(null));
-    verifyNoMoreInteractions(viewStateObserver);
-  }
-
-  /**
-   * Должен вернуть состояния вида "Бездействие" с полученнымы заказами.
-   */
-  @Test
-  public void setIdleViewStateToLiveData() {
-    // Дано:
-    PublishSubject<Order> publishSubject = PublishSubject.create();
-    InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    when(movingToClientUseCase.getOrders())
-        .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
-    movingToClientViewModel.getViewStateLiveData().observeForever(viewStateObserver);
-
-    // Действие:
-    publishSubject.onNext(order);
-    publishSubject.onNext(order1);
-    publishSubject.onNext(order2);
-
-    // Результат:
-    inOrder.verify(viewStateObserver).onChanged(new WaitingForClientViewStatePending(null));
-    inOrder.verify(viewStateObserver).onChanged(new WaitingForClientViewStateIdle(
-        new OrderItem(order))
-    );
-    inOrder.verify(viewStateObserver).onChanged(new WaitingForClientViewStateIdle(
-        new OrderItem(order1))
-    );
-    inOrder.verify(viewStateObserver).onChanged(new WaitingForClientViewStateIdle(
-        new OrderItem(order2))
-    );
+    inOrder.verify(viewStateObserver).onChanged(any(WaitingForClientViewStateIdle.class));
     verifyNoMoreInteractions(viewStateObserver);
   }
 
@@ -233,8 +108,8 @@ public class WaitingForClientViewModelTest {
     movingToClientViewModel.startLoading();
 
     // Результат:
-    inOrder.verify(viewStateObserver, times(2))
-        .onChanged(new WaitingForClientViewStatePending(null));
+    inOrder.verify(viewStateObserver).onChanged(any(WaitingForClientViewStateIdle.class));
+    inOrder.verify(viewStateObserver).onChanged(any(WaitingForClientViewStatePending.class));
     verifyNoMoreInteractions(viewStateObserver);
   }
 
@@ -253,32 +128,9 @@ public class WaitingForClientViewModelTest {
     movingToClientViewModel.startLoading();
 
     // Результат:
-    inOrder.verify(viewStateObserver, times(2))
-        .onChanged(new WaitingForClientViewStatePending(null));
-    inOrder.verify(viewStateObserver)
-        .onChanged(new WaitingForClientViewStateNetworkError(null));
-    verifyNoMoreInteractions(viewStateObserver);
-  }
-
-  /**
-   * Должен вернуть состояние вида "Ошибка" нет доступных заказов.
-   */
-  @Test
-  public void setNoOrdersAvailableErrorViewStateWithoutOrderToLiveDataForStartLoading() {
-    // Дано:
-    InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    when(movingToClientUseCase.startTheOrder())
-        .thenReturn(Completable.error(NoOrdersAvailableException::new));
-    movingToClientViewModel.getViewStateLiveData().observeForever(viewStateObserver);
-
-    // Действие:
-    movingToClientViewModel.startLoading();
-
-    // Результат:
-    inOrder.verify(viewStateObserver, times(2))
-        .onChanged(new WaitingForClientViewStatePending(null));
-    inOrder.verify(viewStateObserver)
-        .onChanged(new WaitingForClientViewStateUnavailableError(null));
+    inOrder.verify(viewStateObserver).onChanged(any(WaitingForClientViewStateIdle.class));
+    inOrder.verify(viewStateObserver).onChanged(any(WaitingForClientViewStatePending.class));
+    inOrder.verify(viewStateObserver).onChanged(any(WaitingForClientViewStateError.class));
     verifyNoMoreInteractions(viewStateObserver);
   }
 
@@ -297,95 +149,8 @@ public class WaitingForClientViewModelTest {
     movingToClientViewModel.startLoading();
 
     // Результат:
-    inOrder.verify(viewStateObserver, times(2))
-        .onChanged(new WaitingForClientViewStatePending(null));
-    verifyNoMoreInteractions(viewStateObserver);
-  }
-
-  /**
-   * Должен вернуть состояние вида "В процессе".
-   */
-  @Test
-  public void setPendingViewStateToLiveDataForStartLoading() {
-    // Дано:
-    PublishSubject<Order> publishSubject = PublishSubject.create();
-    InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    when(movingToClientUseCase.getOrders())
-        .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
-    movingToClientViewModel.getViewStateLiveData().observeForever(viewStateObserver);
-
-    // Действие:
-    publishSubject.onNext(order);
-    movingToClientViewModel.startLoading();
-
-    // Результат:
-    inOrder.verify(viewStateObserver).onChanged(new WaitingForClientViewStatePending(null));
-    inOrder.verify(viewStateObserver).onChanged(new WaitingForClientViewStateIdle(
-        new OrderItem(order)
-    ));
-    inOrder.verify(viewStateObserver).onChanged(new WaitingForClientViewStatePending(
-        new OrderItem(order)
-    ));
-    verifyNoMoreInteractions(viewStateObserver);
-  }
-
-  /**
-   * Должен вернуть состояние вида "Ошибка" сети.
-   */
-  @Test
-  public void setNoNetworkErrorViewStateToLiveDataForStartLoading() {
-    // Дано:
-    PublishSubject<Order> publishSubject = PublishSubject.create();
-    InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    when(movingToClientUseCase.getOrders())
-        .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
-    when(movingToClientUseCase.startTheOrder())
-        .thenReturn(Completable.error(NoNetworkException::new));
-    movingToClientViewModel.getViewStateLiveData().observeForever(viewStateObserver);
-
-    // Действие:
-    publishSubject.onNext(order);
-    movingToClientViewModel.startLoading();
-
-    // Результат:
-    inOrder.verify(viewStateObserver).onChanged(new WaitingForClientViewStatePending(null));
-    inOrder.verify(viewStateObserver).onChanged(new WaitingForClientViewStateIdle(
-        new OrderItem(order)
-    ));
-    inOrder.verify(viewStateObserver).onChanged(new WaitingForClientViewStatePending(
-        new OrderItem(order)
-    ));
-    inOrder.verify(viewStateObserver).onChanged(new WaitingForClientViewStateNetworkError(
-        new OrderItem(order)
-    ));
-    verifyNoMoreInteractions(viewStateObserver);
-  }
-
-  /**
-   * Не должен возвращать никакого состояния вида.
-   */
-  @Test
-  public void setNoViewStateToLiveDataForStartLoading() {
-    // Дано:
-    PublishSubject<Order> publishSubject = PublishSubject.create();
-    InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    when(movingToClientUseCase.getOrders())
-        .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
-    when(movingToClientUseCase.startTheOrder()).thenReturn(Completable.complete());
-    movingToClientViewModel.getViewStateLiveData().observeForever(viewStateObserver);
-
-    // Действие:
-    publishSubject.onNext(order);
-    movingToClientViewModel.startLoading();
-
-    // Результат:
-    inOrder.verify(viewStateObserver).onChanged(new WaitingForClientViewStatePending(null));
-    inOrder.verify(viewStateObserver).onChanged(new WaitingForClientViewStateIdle(
-        new OrderItem(order)
-    ));
-    inOrder.verify(viewStateObserver).onChanged(new WaitingForClientViewStatePending(
-        new OrderItem(order)
-    ));
+    inOrder.verify(viewStateObserver).onChanged(any(WaitingForClientViewStateIdle.class));
+    inOrder.verify(viewStateObserver).onChanged(any(WaitingForClientViewStatePending.class));
     verifyNoMoreInteractions(viewStateObserver);
   }
 }

@@ -5,17 +5,6 @@
   xmlns:tools="http://schemas.android.com/tools"
   android:layout_width="match_parent"
   android:layout_height="match_parent">
-  <android.support.design.widget.FloatingActionButton
-    android:id="@+id/declineButton"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_marginTop="16dp"
-    android:layout_marginStart="16dp"
-    android:layout_marginLeft="16dp"
-    android:theme="@style/AppTheme.Button.Theme.Darker"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toTopOf="parent"
-    app:srcCompat="@drawable/ic_reject_24dp"/>
   <ScrollView
     android:scrollbarStyle="outsideOverlay"
     android:layout_width="0dp"

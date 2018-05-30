@@ -1,11 +1,14 @@
-package com.fasten.executor_driver.presentation.clientorderconfirmation;
+package com.fasten.executor_driver.presentation.order;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import com.fasten.executor_driver.BuildConfig;
 import com.fasten.executor_driver.entity.Option;
 import com.fasten.executor_driver.entity.OptionBoolean;
 import com.fasten.executor_driver.entity.OptionNumeric;
 import com.fasten.executor_driver.entity.Order;
+import com.fasten.executor_driver.entity.RoutePoint;
+import com.fasten.executor_driver.utils.TimeUtils;
 import java.util.Locale;
 
 /**
@@ -15,23 +18,38 @@ class OrderItem {
 
   @NonNull
   private final Order order;
+  @NonNull
+  private final TimeUtils timeUtils;
 
-  OrderItem(@NonNull Order order) {
+  OrderItem(@NonNull Order order, @NonNull TimeUtils timeUtils) {
     this.order = order;
+    this.timeUtils = timeUtils;
   }
 
   @SuppressWarnings("SpellCheckingInspection")
   @NonNull
   public String getLoadPointMapUrl() {
-    return "https://maps.googleapis.com/maps/api/staticmap?"
+    RoutePoint routePoint = getFirstOpenRoutePoint();
+    return routePoint == null ? "" : "https://maps.googleapis.com/maps/api/staticmap?"
         + "center="
-        + order.getRoutePath().get(0).getLatitude()
+        + routePoint.getLatitude()
         + ","
-        + order.getRoutePath().get(0).getLongitude()
+        + routePoint.getLongitude()
         + "&zoom=16"
         + "&size=360x200"
         + "&maptype=roadmap"
         + "&key=" + BuildConfig.STATIC_MAP_KEY;
+  }
+
+  @NonNull
+  public String getCoordinatesString() {
+    RoutePoint routePoint = getFirstOpenRoutePoint();
+    return routePoint == null ? "" : routePoint.getLatitude() + "," + routePoint.getLongitude();
+  }
+
+  public int getSecondsToMeetClient() {
+    return Math.round((order.getConfirmationTime() + order.getEtaToStartPoint() * 1000
+        - timeUtils.currentTimeMillis()) / 1000f);
   }
 
   public String getDistance() {
@@ -40,12 +58,13 @@ class OrderItem {
 
   @NonNull
   public String getAddress() {
-    return (order.getRoutePath().get(0).getAddress() + "\n"
-        + order.getRoutePath().get(0).getComment()).trim();
+    RoutePoint routePoint = getFirstOpenRoutePoint();
+    return routePoint == null ? ""
+        : (routePoint.getAddress() + "\n" + routePoint.getComment()).trim();
   }
 
   public String getEstimatedPrice() {
-    return order.getEstimatedPrice();
+    return order.getEstimatedPrice().trim();
   }
 
   public String getOrderOptionsRequired() {
@@ -69,9 +88,14 @@ class OrderItem {
     return order.getComment().trim();
   }
 
-  @NonNull
-  public String getPrice() {
-    return order.getEstimatedPrice().trim();
+  @Nullable
+  private RoutePoint getFirstOpenRoutePoint() {
+    for (RoutePoint routePoint : order.getRoutePath()) {
+      if (!routePoint.isChecked()) {
+        return routePoint;
+      }
+    }
+    return null;
   }
 
   @Override

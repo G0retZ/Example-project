@@ -1,7 +1,6 @@
 package com.fasten.executor_driver.interactor;
 
 import android.support.annotation.NonNull;
-import com.fasten.executor_driver.entity.ExecutorState;
 import com.fasten.executor_driver.entity.Order;
 import com.fasten.executor_driver.entity.RoutePoint;
 import io.reactivex.Completable;
@@ -26,7 +25,7 @@ public class OrderRouteUseCaseImpl implements OrderRouteUseCase {
   @NonNull
   @Override
   public Flowable<List<RoutePoint>> getOrderRoutePoints() {
-    return orderGateway.getOrders(ExecutorState.ORDER_FULFILLMENT)
+    return orderGateway.getOrders()
         .map(Order::getRoutePath);
   }
 

@@ -16,6 +16,7 @@ import com.fasten.executor_driver.backend.web.ConnectivityInterceptor;
 import com.fasten.executor_driver.backend.web.ReceiveTokenInterceptor;
 import com.fasten.executor_driver.backend.web.SendTokenInterceptor;
 import com.fasten.executor_driver.backend.web.TokenKeeper;
+import com.fasten.executor_driver.entity.ExecutorState;
 import com.fasten.executor_driver.entity.LoginValidator;
 import com.fasten.executor_driver.entity.PasswordValidator;
 import com.fasten.executor_driver.entity.PhoneNumberValidator;
@@ -55,7 +56,6 @@ import com.fasten.executor_driver.gateway.VehiclesAndOptionsGatewayImpl;
 import com.fasten.executor_driver.gateway.WaitingForClientApiMapper;
 import com.fasten.executor_driver.gateway.WaitingForClientGatewayImpl;
 import com.fasten.executor_driver.interactor.CallToClientUseCaseImpl;
-import com.fasten.executor_driver.interactor.ClientOrderConfirmationUseCaseImpl;
 import com.fasten.executor_driver.interactor.DriverOrderConfirmationUseCaseImpl;
 import com.fasten.executor_driver.interactor.ExecutorStateNotOnlineUseCaseImpl;
 import com.fasten.executor_driver.interactor.ExecutorStateUseCase;
@@ -67,6 +67,7 @@ import com.fasten.executor_driver.interactor.MovingToClientUseCaseImpl;
 import com.fasten.executor_driver.interactor.OrderCurrentCostUseCaseImpl;
 import com.fasten.executor_driver.interactor.OrderFulfillmentTimeUseCaseImpl;
 import com.fasten.executor_driver.interactor.OrderRouteUseCaseImpl;
+import com.fasten.executor_driver.interactor.OrderUseCaseImpl;
 import com.fasten.executor_driver.interactor.WaitingForClientUseCaseImpl;
 import com.fasten.executor_driver.interactor.auth.LoginSharer;
 import com.fasten.executor_driver.interactor.auth.LoginUseCaseImpl;
@@ -85,7 +86,6 @@ import com.fasten.executor_driver.interactor.vehicle.VehiclesAndOptionsUseCaseIm
 import com.fasten.executor_driver.presentation.ViewModelFactory;
 import com.fasten.executor_driver.presentation.calltoclient.CallToClientViewModelImpl;
 import com.fasten.executor_driver.presentation.choosevehicle.ChooseVehicleViewModelImpl;
-import com.fasten.executor_driver.presentation.clientorderconfirmation.ClientOrderConfirmationViewModelImpl;
 import com.fasten.executor_driver.presentation.code.CodeViewModelImpl;
 import com.fasten.executor_driver.presentation.codeHeader.CodeHeaderViewModelImpl;
 import com.fasten.executor_driver.presentation.driverorderconfirmation.DriverOrderConfirmationViewModelImpl;
@@ -96,6 +96,7 @@ import com.fasten.executor_driver.presentation.movingtoclient.MovingToClientView
 import com.fasten.executor_driver.presentation.nextroutepoint.NextRoutePointViewModelImpl;
 import com.fasten.executor_driver.presentation.onlinebutton.OnlineButtonViewModelImpl;
 import com.fasten.executor_driver.presentation.onlineswitch.OnlineSwitchViewModelImpl;
+import com.fasten.executor_driver.presentation.order.OrderViewModelImpl;
 import com.fasten.executor_driver.presentation.ordercost.OrderCostViewModelImpl;
 import com.fasten.executor_driver.presentation.orderroute.OrderRouteViewModelImpl;
 import com.fasten.executor_driver.presentation.ordertime.OrderTimeViewModelImpl;
@@ -504,6 +505,7 @@ public class AppComponentImpl implements AppComponent {
                     new DriverOrderConfirmationUseCaseImpl(
                         new OrderGatewayImpl(
                             executorStateUseCase,
+                            ExecutorState.DRIVER_ORDER_CONFIRMATION,
                             new OrderApiMapper(
                                 new VehicleOptionApiMapper(),
                                 new RoutePointApiMapper()
@@ -519,23 +521,25 @@ public class AppComponentImpl implements AppComponent {
 
   @Override
   public void inject(ClientOrderConfirmationFragment clientOrderConfirmationFragment) {
-    clientOrderConfirmationFragment.setClientOrderConfirmationViewModel(
+    clientOrderConfirmationFragment.setOrderViewModel(
         ViewModelProviders.of(
             clientOrderConfirmationFragment,
             new ViewModelFactory<>(
-                new ClientOrderConfirmationViewModelImpl(
-                    new ClientOrderConfirmationUseCaseImpl(
+                new OrderViewModelImpl(
+                    new OrderUseCaseImpl(
                         new OrderGatewayImpl(
                             executorStateUseCase,
+                            ExecutorState.CLIENT_ORDER_CONFIRMATION,
                             new OrderApiMapper(
                                 new VehicleOptionApiMapper(),
                                 new RoutePointApiMapper()
                             )
-                        ),
-                        new OrderConfirmationGatewayImpl(stompClient))
+                        )
+                    ),
+                    new TimeUtilsImpl()
                 )
             )
-        ).get(ClientOrderConfirmationViewModelImpl.class)
+        ).get(OrderViewModelImpl.class)
     );
   }
 
@@ -547,19 +551,31 @@ public class AppComponentImpl implements AppComponent {
             new ViewModelFactory<>(
                 new MovingToClientViewModelImpl(
                     new MovingToClientUseCaseImpl(
+                        new MovingToClientGatewayImpl(stompClient)
+                    )
+                )
+            )
+        ).get(MovingToClientViewModelImpl.class)
+    );
+    movingToClientFragment.setOrderViewModel(
+        ViewModelProviders.of(
+            movingToClientFragment,
+            new ViewModelFactory<>(
+                new OrderViewModelImpl(
+                    new OrderUseCaseImpl(
                         new OrderGatewayImpl(
                             executorStateUseCase,
+                            ExecutorState.MOVING_TO_CLIENT,
                             new MovingToClientApiMapper(
                                 new VehicleOptionApiMapper(),
                                 new RoutePointApiMapper()
                             )
-                        ),
-                        new MovingToClientGatewayImpl(stompClient)
+                        )
                     ),
                     new TimeUtilsImpl()
                 )
             )
-        ).get(MovingToClientViewModelImpl.class)
+        ).get(OrderViewModelImpl.class)
     );
   }
 
@@ -571,18 +587,31 @@ public class AppComponentImpl implements AppComponent {
             new ViewModelFactory<>(
                 new WaitingForClientViewModelImpl(
                     new WaitingForClientUseCaseImpl(
-                        new OrderGatewayImpl(
-                            executorStateUseCase,
-                            new WaitingForClientApiMapper(
-                                new VehicleOptionApiMapper(),
-                                new RoutePointApiMapper()
-                            )
-                        ),
                         new WaitingForClientGatewayImpl(stompClient)
                     )
                 )
             )
         ).get(WaitingForClientViewModelImpl.class)
+    );
+    waitingForClientFragment.setOrderViewModel(
+        ViewModelProviders.of(
+            waitingForClientFragment,
+            new ViewModelFactory<>(
+                new OrderViewModelImpl(
+                    new OrderUseCaseImpl(
+                        new OrderGatewayImpl(
+                            executorStateUseCase,
+                            ExecutorState.WAITING_FOR_CLIENT,
+                            new WaitingForClientApiMapper(
+                                new VehicleOptionApiMapper(),
+                                new RoutePointApiMapper()
+                            )
+                        )
+                    ),
+                    new TimeUtilsImpl()
+                )
+            )
+        ).get(OrderViewModelImpl.class)
     );
   }
 
@@ -596,6 +625,7 @@ public class AppComponentImpl implements AppComponent {
                     new OrderFulfillmentTimeUseCaseImpl(
                         new OrderGatewayImpl(
                             executorStateUseCase,
+                            ExecutorState.ORDER_FULFILLMENT,
                             new OrderFulfillmentApiMapper(
                                 new VehicleOptionApiMapper(),
                                 new RoutePointApiMapper()
@@ -615,6 +645,7 @@ public class AppComponentImpl implements AppComponent {
                     new OrderCurrentCostUseCaseImpl(
                         new OrderGatewayImpl(
                             executorStateUseCase,
+                            ExecutorState.ORDER_FULFILLMENT,
                             new OrderFulfillmentApiMapper(
                                 new VehicleOptionApiMapper(),
                                 new RoutePointApiMapper()
@@ -637,6 +668,7 @@ public class AppComponentImpl implements AppComponent {
                     new OrderRouteUseCaseImpl(
                         new OrderGatewayImpl(
                             executorStateUseCase,
+                            ExecutorState.ORDER_FULFILLMENT,
                             new OrderFulfillmentApiMapper(
                                 new VehicleOptionApiMapper(),
                                 new RoutePointApiMapper()
@@ -660,6 +692,7 @@ public class AppComponentImpl implements AppComponent {
                     new OrderRouteUseCaseImpl(
                         new OrderGatewayImpl(
                             executorStateUseCase,
+                            ExecutorState.ORDER_FULFILLMENT,
                             new OrderFulfillmentApiMapper(
                                 new VehicleOptionApiMapper(),
                                 new RoutePointApiMapper()

@@ -11,7 +11,6 @@ import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 import com.fasten.executor_driver.backend.web.NoNetworkException;
-import com.fasten.executor_driver.entity.ExecutorState;
 import com.fasten.executor_driver.entity.NoOrdersAvailableException;
 import com.fasten.executor_driver.entity.Order;
 import com.fasten.executor_driver.gateway.DataMappingException;
@@ -41,7 +40,7 @@ public class DriverOrderConfirmationUseCaseTest {
 
   @Before
   public void setUp() {
-    when(orderGateway.getOrders(ExecutorState.DRIVER_ORDER_CONFIRMATION))
+    when(orderGateway.getOrders())
         .thenReturn(Flowable.never());
     when(orderConfirmationGateway.sendDecision(any(), anyBoolean()))
         .thenReturn(Completable.never());
@@ -60,7 +59,7 @@ public class DriverOrderConfirmationUseCaseTest {
     driverOrderConfirmationUseCase.getOrders().test();
 
     // Результат:
-    verify(orderGateway, only()).getOrders(ExecutorState.DRIVER_ORDER_CONFIRMATION);
+    verify(orderGateway, only()).getOrders();
   }
 
   /**
@@ -82,13 +81,13 @@ public class DriverOrderConfirmationUseCaseTest {
   @Test
   public void askGatewayToSendDecisionsForOrders() {
     // Дано:
-    when(orderGateway.getOrders(ExecutorState.DRIVER_ORDER_CONFIRMATION))
+    when(orderGateway.getOrders())
         .thenReturn(Flowable.just(order));
 
     // Действие:
     driverOrderConfirmationUseCase.getOrders().test();
     driverOrderConfirmationUseCase.sendDecision(true).test();
-    when(orderGateway.getOrders(ExecutorState.DRIVER_ORDER_CONFIRMATION))
+    when(orderGateway.getOrders())
         .thenReturn(Flowable.just(order));
     driverOrderConfirmationUseCase.getOrders().test();
     driverOrderConfirmationUseCase.sendDecision(false).test();
@@ -105,7 +104,7 @@ public class DriverOrderConfirmationUseCaseTest {
   @Test
   public void askGatewayToSendDecisionsForLastOrderOnly() {
     // Дано:
-    when(orderGateway.getOrders(ExecutorState.DRIVER_ORDER_CONFIRMATION))
+    when(orderGateway.getOrders())
         .thenReturn(Flowable.just(order, order2));
 
     // Действие:
@@ -127,7 +126,7 @@ public class DriverOrderConfirmationUseCaseTest {
   @Test
   public void answerDataMappingError() {
     // Дано:
-    when(orderGateway.getOrders(ExecutorState.DRIVER_ORDER_CONFIRMATION))
+    when(orderGateway.getOrders())
         .thenReturn(Flowable.error(new DataMappingException()));
 
     // Действие:
@@ -145,7 +144,7 @@ public class DriverOrderConfirmationUseCaseTest {
   @Test
   public void answerWithOrders() {
     // Дано:
-    when(orderGateway.getOrders(ExecutorState.DRIVER_ORDER_CONFIRMATION))
+    when(orderGateway.getOrders())
         .thenReturn(Flowable.just(order, order2));
 
     // Действие:
@@ -193,7 +192,7 @@ public class DriverOrderConfirmationUseCaseTest {
   @Test
   public void answerNoNetworkErrorForAccept() {
     // Дано:
-    when(orderGateway.getOrders(ExecutorState.DRIVER_ORDER_CONFIRMATION))
+    when(orderGateway.getOrders())
         .thenReturn(Flowable.just(order));
     when(orderConfirmationGateway.sendDecision(any(), anyBoolean()))
         .thenReturn(Completable.error(new NoNetworkException()));
@@ -214,7 +213,7 @@ public class DriverOrderConfirmationUseCaseTest {
   @Test
   public void answerNoNetworkErrorForDecline() {
     // Дано:
-    when(orderGateway.getOrders(ExecutorState.DRIVER_ORDER_CONFIRMATION))
+    when(orderGateway.getOrders())
         .thenReturn(Flowable.just(order));
     when(orderConfirmationGateway.sendDecision(any(), anyBoolean()))
         .thenReturn(Completable.error(new NoNetworkException()));
@@ -235,7 +234,7 @@ public class DriverOrderConfirmationUseCaseTest {
   @Test
   public void answerSendAcceptSuccessful() {
     // Дано:
-    when(orderGateway.getOrders(ExecutorState.DRIVER_ORDER_CONFIRMATION))
+    when(orderGateway.getOrders())
         .thenReturn(Flowable.just(order));
     when(orderConfirmationGateway.sendDecision(any(), anyBoolean()))
         .thenReturn(Completable.complete());
@@ -255,7 +254,7 @@ public class DriverOrderConfirmationUseCaseTest {
   @Test
   public void answerSendDeclineSuccessful() {
     // Дано:
-    when(orderGateway.getOrders(ExecutorState.DRIVER_ORDER_CONFIRMATION))
+    when(orderGateway.getOrders())
         .thenReturn(Flowable.just(order));
     when(orderConfirmationGateway.sendDecision(any(), anyBoolean()))
         .thenReturn(Completable.complete());

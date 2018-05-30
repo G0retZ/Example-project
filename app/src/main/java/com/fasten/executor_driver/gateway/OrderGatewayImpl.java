@@ -15,19 +15,23 @@ public class OrderGatewayImpl implements OrderGateway {
   @NonNull
   private final ExecutorStateUseCase executorStateUseCase;
   @NonNull
+  private final ExecutorState executorState;
+  @NonNull
   private final Mapper<String, Order> mapper;
 
   @Inject
   public OrderGatewayImpl(
       @NonNull ExecutorStateUseCase executorStateUseCase,
+      @NonNull ExecutorState executorState,
       @NonNull Mapper<String, Order> mapper) {
     this.executorStateUseCase = executorStateUseCase;
+    this.executorState = executorState;
     this.mapper = mapper;
   }
 
   @NonNull
   @Override
-  public Flowable<Order> getOrders(@NonNull ExecutorState executorState) {
+  public Flowable<Order> getOrders() {
     return executorStateUseCase
         .getExecutorStates(false)
         .subscribeOn(Schedulers.single())
