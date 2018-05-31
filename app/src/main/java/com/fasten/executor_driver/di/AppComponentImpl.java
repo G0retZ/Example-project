@@ -117,6 +117,7 @@ import com.fasten.executor_driver.view.GoOnlineFragment;
 import com.fasten.executor_driver.view.MapFragment;
 import com.fasten.executor_driver.view.MovingToClientFragment;
 import com.fasten.executor_driver.view.OnlineFragment;
+import com.fasten.executor_driver.view.OrderFulfillmentDetailsFragment;
 import com.fasten.executor_driver.view.OrderFulfillmentFragment;
 import com.fasten.executor_driver.view.OrderRouteFragment;
 import com.fasten.executor_driver.view.SelectedVehicleFragment;
@@ -739,6 +740,30 @@ public class AppComponentImpl implements AppComponent {
                 )
             )
         ).get(CallToClientViewModelImpl.class)
+    );
+  }
+
+  @Override
+  public void inject(OrderFulfillmentDetailsFragment orderFulfillmentDetailsFragment) {
+    orderFulfillmentDetailsFragment.setOrderViewModel(
+        ViewModelProviders.of(
+            orderFulfillmentDetailsFragment,
+            new ViewModelFactory<>(
+                new OrderViewModelImpl(
+                    new OrderUseCaseImpl(
+                        new OrderGatewayImpl(
+                            executorStateUseCase,
+                            ExecutorState.ORDER_FULFILLMENT,
+                            new WaitingForClientApiMapper(
+                                new VehicleOptionApiMapper(),
+                                new RoutePointApiMapper()
+                            )
+                        )
+                    ),
+                    new TimeUtilsImpl()
+                )
+            )
+        ).get(OrderViewModelImpl.class)
     );
   }
 }

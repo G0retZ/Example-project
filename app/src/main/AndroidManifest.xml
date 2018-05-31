@@ -84,6 +84,9 @@
     <activity
       android:launchMode="singleTop"
       android:name=".application.OrderRouteActivity"/>
+    <activity
+      android:launchMode="singleTop"
+      android:name=".application.OrderFulfillmentDetailsActivity"/>
 
     <service
       android:enabled="true"
