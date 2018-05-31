@@ -30,12 +30,11 @@
     android:layout_height="wrap_content"
     android:animateLayoutChanges="true"/>
   <TextView
-    style="@style/TextAppearance.AppCompat.Headline"
-    android:layout_width="wrap_content"
+    style="@style/TextAppearance.AppCompat.Subhead.Inverse"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="24dp"
-    android:layout_marginStart="16dp"
-    android:layout_marginEnd="16dp"
+    android:padding="16dp"
+    android:background="@color/colorAccentGreen"
     android:text="@string/wait_for_client"/>
   <fragment
     android:id="@+id/fragment_waiting_for_client"
