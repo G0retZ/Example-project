@@ -55,7 +55,8 @@ public class AutoRouterImpl implements ActivityLifecycleCallbacks, AutoRouter,
         WaitingForClientActivity.class, GeolocationResolutionActivity.class
     ));
     statusGroups.put(ExecutorStateNavigate.ORDER_FULFILLMENT, Arrays.asList(
-        OrderFulfillmentActivity.class, GeolocationResolutionActivity.class
+        OrderFulfillmentActivity.class, OrderFulfillmentDetailsActivity.class,
+        GeolocationResolutionActivity.class
     ));
   }
 

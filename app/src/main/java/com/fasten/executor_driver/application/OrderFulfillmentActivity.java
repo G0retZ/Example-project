@@ -38,6 +38,9 @@ public class OrderFulfillmentActivity extends BaseActivity {
       case OrderFulfillmentMenuNavigate.ORDER_ROUTE:
         startActivity(new Intent(this, OrderRouteActivity.class));
         break;
+      case OrderFulfillmentMenuNavigate.ORDER_INFORMATION:
+        startActivity(new Intent(this, OrderFulfillmentDetailsActivity.class));
+        break;
       case OrderFulfillmentMenuNavigate.CALL_TO_CLIENT:
         fragment = getSupportFragmentManager().findFragmentByTag("callToClient");
         if (fragment == null) {

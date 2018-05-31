@@ -22,6 +22,8 @@ import com.fasten.executor_driver.di.AppComponent;
 import com.fasten.executor_driver.presentation.movingtoclient.MovingToClientNavigate;
 import com.fasten.executor_driver.presentation.movingtoclient.MovingToClientViewActions;
 import com.fasten.executor_driver.presentation.movingtoclient.MovingToClientViewModel;
+import com.fasten.executor_driver.presentation.order.OrderViewActions;
+import com.fasten.executor_driver.presentation.order.OrderViewModel;
 import com.squareup.picasso.Picasso;
 import javax.inject.Inject;
 import org.joda.time.LocalTime;
@@ -31,15 +33,18 @@ import org.joda.time.format.DateTimeFormat;
  * Отображает движение к клиенту.
  */
 
-public class MovingToClientFragment extends BaseFragment implements MovingToClientViewActions {
+public class MovingToClientFragment extends BaseFragment implements MovingToClientViewActions,
+    OrderViewActions {
 
   private MovingToClientViewModel movingToClientViewModel;
+  private OrderViewModel orderViewModel;
   private ImageView mapImage;
   private TextView addressText;
   private TextView timerText;
   private Button navigationAction;
   private Context context;
-  private boolean pending;
+  private boolean movingToClientPending;
+  private boolean orderPending;
   @Nullable
   private ValueAnimator valueAnimator;
 
@@ -47,6 +52,11 @@ public class MovingToClientFragment extends BaseFragment implements MovingToClie
   public void onAttach(Context context) {
     super.onAttach(context);
     this.context = context;
+  }
+
+  @Inject
+  public void setOrderViewModel(OrderViewModel orderViewModel) {
+    this.orderViewModel = orderViewModel;
   }
 
   @Inject
@@ -84,6 +94,11 @@ public class MovingToClientFragment extends BaseFragment implements MovingToClie
   @Override
   public void onActivityCreated(@Nullable Bundle savedInstanceState) {
     super.onActivityCreated(savedInstanceState);
+    orderViewModel.getViewStateLiveData().observe(this, viewState -> {
+      if (viewState != null) {
+        viewState.apply(this);
+      }
+    });
     movingToClientViewModel.getViewStateLiveData().observe(this, viewState -> {
       if (viewState != null) {
         viewState.apply(this);
@@ -102,16 +117,23 @@ public class MovingToClientFragment extends BaseFragment implements MovingToClie
 
   @Override
   public void showMovingToClientPending(boolean pending) {
-    if (this.pending != pending) {
+    if (this.movingToClientPending != pending) {
       showPending(pending);
     }
-    this.pending = pending;
+    this.movingToClientPending = pending;
+  }
+
+  @Override
+  public void showOrderPending(boolean pending) {
+    if (this.orderPending != pending) {
+      showPending(pending);
+    }
+    this.orderPending = pending;
   }
 
   @Override
   public void showLoadPoint(@NonNull String url) {
-    Picasso.with(context).load(url)
-        .into(mapImage);
+    Picasso.with(context).load(url).into(mapImage);
   }
 
   @Override
@@ -164,8 +186,33 @@ public class MovingToClientFragment extends BaseFragment implements MovingToClie
   }
 
   @Override
+  public void showTimeout(int progress, long timeout) {
+
+  }
+
+  @Override
+  public void showDistance(String distance) {
+
+  }
+
+  @Override
   public void showLoadPointAddress(@NonNull String address) {
     addressText.setText(address);
+  }
+
+  @Override
+  public void showEstimatedPrice(@NonNull String priceText) {
+
+  }
+
+  @Override
+  public void showOrderOptionsRequirements(@NonNull String options) {
+
+  }
+
+  @Override
+  public void showComment(@NonNull String comment) {
+
   }
 
   @Override

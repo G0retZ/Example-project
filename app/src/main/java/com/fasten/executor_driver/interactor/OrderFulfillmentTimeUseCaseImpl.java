@@ -1,7 +1,6 @@
 package com.fasten.executor_driver.interactor;
 
 import android.support.annotation.NonNull;
-import com.fasten.executor_driver.entity.ExecutorState;
 import com.fasten.executor_driver.utils.TimeUtils;
 import io.reactivex.Flowable;
 import io.reactivex.schedulers.Schedulers;
@@ -25,7 +24,7 @@ public class OrderFulfillmentTimeUseCaseImpl implements OrderFulfillmentTimeUseC
   @NonNull
   @Override
   public Flowable<Long> getOrderElapsedTime() {
-    return orderGateway.getOrders(ExecutorState.ORDER_FULFILLMENT)
+    return orderGateway.getOrders()
         .switchMap(order -> {
               long offset =
                   Math.round((timeUtils.currentTimeMillis() - order.getOrderStartTime()) / 1000d);

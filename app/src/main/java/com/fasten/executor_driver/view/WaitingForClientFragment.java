@@ -12,6 +12,8 @@ import android.widget.Button;
 import android.widget.TextView;
 import com.fasten.executor_driver.R;
 import com.fasten.executor_driver.di.AppComponent;
+import com.fasten.executor_driver.presentation.order.OrderViewActions;
+import com.fasten.executor_driver.presentation.order.OrderViewModel;
 import com.fasten.executor_driver.presentation.waitingforclient.WaitingForClientNavigate;
 import com.fasten.executor_driver.presentation.waitingforclient.WaitingForClientViewActions;
 import com.fasten.executor_driver.presentation.waitingforclient.WaitingForClientViewModel;
@@ -22,9 +24,10 @@ import javax.inject.Inject;
  */
 
 public class WaitingForClientFragment extends BaseFragment implements
-    WaitingForClientViewActions {
+    WaitingForClientViewActions, OrderViewActions {
 
   private WaitingForClientViewModel waitingForClientViewModel;
+  private OrderViewModel orderViewModel;
   private TextView commentTitleText;
   private TextView commentText;
   private TextView optionsTitleText;
@@ -32,7 +35,8 @@ public class WaitingForClientFragment extends BaseFragment implements
   private TextView priceTitleText;
   private TextView priceText;
   private Context context;
-  private boolean pending;
+  private boolean waitingForClientPending;
+  private boolean orderPending;
 
   @Override
   public void onAttach(Context context) {
@@ -44,6 +48,11 @@ public class WaitingForClientFragment extends BaseFragment implements
   public void setWaitingForClientViewModel(
       @NonNull WaitingForClientViewModel waitingForClientViewModel) {
     this.waitingForClientViewModel = waitingForClientViewModel;
+  }
+
+  @Inject
+  public void setOrderViewModel(@NonNull OrderViewModel orderViewModel) {
+    this.orderViewModel = orderViewModel;
   }
 
   @Nullable
@@ -78,6 +87,11 @@ public class WaitingForClientFragment extends BaseFragment implements
   @Override
   public void onActivityCreated(@Nullable Bundle savedInstanceState) {
     super.onActivityCreated(savedInstanceState);
+    orderViewModel.getViewStateLiveData().observe(this, viewState -> {
+      if (viewState != null) {
+        viewState.apply(this);
+      }
+    });
     waitingForClientViewModel.getViewStateLiveData().observe(this, viewState -> {
       if (viewState != null) {
         viewState.apply(this);
@@ -93,10 +107,48 @@ public class WaitingForClientFragment extends BaseFragment implements
 
   @Override
   public void showWaitingForClientPending(boolean pending) {
-    if (this.pending != pending) {
+    if (this.waitingForClientPending != pending) {
       showPending(pending);
     }
-    this.pending = pending;
+    this.waitingForClientPending = pending;
+  }
+
+  @Override
+  public void showOrderPending(boolean pending) {
+    if (this.orderPending != pending) {
+      showPending(pending);
+    }
+    this.orderPending = pending;
+  }
+
+  @Override
+  public void showLoadPoint(@NonNull String url) {
+
+  }
+
+  @Override
+  public void showLoadPointCoordinates(@NonNull String coordinates) {
+
+  }
+
+  @Override
+  public void showTimeout(int timeout) {
+
+  }
+
+  @Override
+  public void showTimeout(int progress, long timeout) {
+
+  }
+
+  @Override
+  public void showDistance(String distance) {
+
+  }
+
+  @Override
+  public void showLoadPointAddress(@NonNull String address) {
+
   }
 
   @Override

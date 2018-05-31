@@ -4,7 +4,6 @@ import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.fasten.executor_driver.entity.ExecutorState;
 import com.fasten.executor_driver.entity.Order;
 import com.fasten.executor_driver.gateway.DataMappingException;
 import com.fasten.executor_driver.utils.TimeUtils;
@@ -40,7 +39,7 @@ public class OrderFulfillmentTimeUseCaseTest {
   public void setUp() {
     testScheduler = new TestScheduler();
     RxJavaPlugins.setIoSchedulerHandler(scheduler -> testScheduler);
-    when(orderGateway.getOrders(ExecutorState.ORDER_FULFILLMENT)).thenReturn(Flowable.never());
+    when(orderGateway.getOrders()).thenReturn(Flowable.never());
     orderFulfillmentTimeUseCase = new OrderFulfillmentTimeUseCaseImpl(orderGateway, timeUtils);
   }
 
@@ -55,7 +54,7 @@ public class OrderFulfillmentTimeUseCaseTest {
     orderFulfillmentTimeUseCase.getOrderElapsedTime().test();
 
     // Результат:
-    verify(orderGateway, only()).getOrders(ExecutorState.ORDER_FULFILLMENT);
+    verify(orderGateway, only()).getOrders();
   }
 
   /* Проверяем ответы на запрос времени заказа */
@@ -66,7 +65,7 @@ public class OrderFulfillmentTimeUseCaseTest {
   @Test
   public void answerDataMappingError() {
     // Дано:
-    when(orderGateway.getOrders(ExecutorState.ORDER_FULFILLMENT))
+    when(orderGateway.getOrders())
         .thenReturn(Flowable.error(new DataMappingException()));
 
     // Действие:
@@ -85,7 +84,7 @@ public class OrderFulfillmentTimeUseCaseTest {
   public void answerWithTimeUpdates() {
     // Дано:
     PublishSubject<Order> publishSubject = PublishSubject.create();
-    when(orderGateway.getOrders(ExecutorState.ORDER_FULFILLMENT))
+    when(orderGateway.getOrders())
         .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
     when(order.getOrderStartTime()).thenReturn(12345000L);
     when(order2.getOrderStartTime()).thenReturn(6789000L);

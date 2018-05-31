@@ -1,23 +1,16 @@
 package com.fasten.executor_driver.presentation.movingtoclient;
 
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import com.fasten.executor_driver.presentation.ViewState;
 
 /**
  * Состояние ожидания при подтверждении или отказе от заказа.
  */
-final class MovingToClientViewStatePending extends
-    MovingToClientViewState {
-
-  MovingToClientViewStatePending(@Nullable RouteItem routeItem) {
-    super(routeItem);
-  }
+final class MovingToClientViewStatePending implements ViewState<MovingToClientViewActions> {
 
   @Override
   public void apply(@NonNull MovingToClientViewActions stateActions) {
-    super.apply(stateActions);
     stateActions.showMovingToClientPending(true);
-    stateActions.showOrderAvailabilityError(false);
     stateActions.showNetworkErrorMessage(false);
   }
 }

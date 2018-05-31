@@ -1,7 +1,6 @@
 package com.fasten.executor_driver.interactor;
 
 import android.support.annotation.NonNull;
-import com.fasten.executor_driver.entity.ExecutorState;
 import io.reactivex.Flowable;
 import javax.inject.Inject;
 
@@ -22,7 +21,7 @@ public class OrderCurrentCostUseCaseImpl implements OrderCurrentCostUseCase {
   @NonNull
   @Override
   public Flowable<Integer> getOrderCurrentCost() {
-    return orderGateway.getOrders(ExecutorState.ORDER_FULFILLMENT)
+    return orderGateway.getOrders()
         .switchMap(
             order -> orderExcessCostGateway.getOrderExcessCost()
                 .startWith(order.getExcessCost())

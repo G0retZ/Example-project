@@ -38,7 +38,7 @@
     android:layout_marginEnd="16dp"
     android:text="@string/wait_for_client"/>
   <fragment
-    android:id="@+id/fragment_moving_to_client"
+    android:id="@+id/fragment_waiting_for_client"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:name="com.fasten.executor_driver.view.WaitingForClientFragment"

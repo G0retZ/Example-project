@@ -19,8 +19,10 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import com.fasten.executor_driver.R;
 import com.fasten.executor_driver.di.AppComponent;
-import com.fasten.executor_driver.presentation.driverorderconfirmation.DriverOrderConfirmationViewActions;
-import com.fasten.executor_driver.presentation.driverorderconfirmation.DriverOrderConfirmationViewModel;
+import com.fasten.executor_driver.presentation.order.OrderViewActions;
+import com.fasten.executor_driver.presentation.order.OrderViewModel;
+import com.fasten.executor_driver.presentation.orderconfirmation.OrderConfirmationViewActions;
+import com.fasten.executor_driver.presentation.orderconfirmation.OrderConfirmationViewModel;
 import com.squareup.picasso.Picasso;
 import javax.inject.Inject;
 
@@ -29,9 +31,10 @@ import javax.inject.Inject;
  */
 
 public class DriverOrderConfirmationFragment extends BaseFragment implements
-    DriverOrderConfirmationViewActions {
+    OrderConfirmationViewActions, OrderViewActions {
 
-  private DriverOrderConfirmationViewModel driverOrderConfirmationViewModel;
+  private OrderConfirmationViewModel orderConfirmationViewModel;
+  private OrderViewModel orderViewModel;
   private ImageButton declineAction;
   private ImageView mapImage;
   private ProgressBar timeoutChart;
@@ -45,7 +48,8 @@ public class DriverOrderConfirmationFragment extends BaseFragment implements
   private TextView priceText;
   private Button acceptAction;
   private Context context;
-  private boolean pending;
+  private boolean orderConfirmationPending;
+  private boolean orderPending;
 
   @Override
   public void onAttach(Context context) {
@@ -54,9 +58,14 @@ public class DriverOrderConfirmationFragment extends BaseFragment implements
   }
 
   @Inject
-  public void setDriverOrderConfirmationViewModel(
-      @NonNull DriverOrderConfirmationViewModel driverOrderConfirmationViewModel) {
-    this.driverOrderConfirmationViewModel = driverOrderConfirmationViewModel;
+  public void setOrderConfirmationViewModel(
+      @NonNull OrderConfirmationViewModel orderConfirmationViewModel) {
+    this.orderConfirmationViewModel = orderConfirmationViewModel;
+  }
+
+  @Inject
+  public void setOrderViewModel(@NonNull OrderViewModel orderViewModel) {
+    this.orderViewModel = orderViewModel;
   }
 
   @Nullable
@@ -77,8 +86,8 @@ public class DriverOrderConfirmationFragment extends BaseFragment implements
     priceTitleText = view.findViewById(R.id.priceTitleText);
     priceText = view.findViewById(R.id.priceText);
     acceptAction = view.findViewById(R.id.acceptButton);
-    acceptAction.setOnClickListener(v -> driverOrderConfirmationViewModel.acceptOrder());
-    declineAction.setOnClickListener(v -> driverOrderConfirmationViewModel.declineOrder());
+    acceptAction.setOnClickListener(v -> orderConfirmationViewModel.acceptOrder());
+    declineAction.setOnClickListener(v -> orderConfirmationViewModel.declineOrder());
     return view;
   }
 
@@ -91,7 +100,12 @@ public class DriverOrderConfirmationFragment extends BaseFragment implements
   @Override
   public void onActivityCreated(@Nullable Bundle savedInstanceState) {
     super.onActivityCreated(savedInstanceState);
-    driverOrderConfirmationViewModel.getViewStateLiveData().observe(this, viewState -> {
+    orderViewModel.getViewStateLiveData().observe(this, viewState -> {
+      if (viewState != null) {
+        viewState.apply(this);
+      }
+    });
+    orderConfirmationViewModel.getViewStateLiveData().observe(this, viewState -> {
       if (viewState != null) {
         viewState.apply(this);
       }
@@ -106,16 +120,34 @@ public class DriverOrderConfirmationFragment extends BaseFragment implements
 
   @Override
   public void showDriverOrderConfirmationPending(boolean pending) {
-    if (this.pending != pending) {
+    if (this.orderConfirmationPending != pending) {
       showPending(pending);
     }
-    this.pending = pending;
+    this.orderConfirmationPending = pending;
+  }
+
+  @Override
+  public void showOrderPending(boolean pending) {
+    if (this.orderPending != pending) {
+      showPending(pending);
+    }
+    this.orderPending = pending;
   }
 
   @Override
   public void showLoadPoint(@NonNull String url) {
     Picasso.with(context).load(url)
         .into(mapImage);
+  }
+
+  @Override
+  public void showLoadPointCoordinates(@NonNull String coordinates) {
+
+  }
+
+  @Override
+  public void showTimeout(int timeout) {
+
   }
 
   @Override
@@ -136,7 +168,7 @@ public class DriverOrderConfirmationFragment extends BaseFragment implements
 
         @Override
         public void onAnimationEnd(Animator animation) {
-          driverOrderConfirmationViewModel.counterTimeOut();
+          orderConfirmationViewModel.counterTimeOut();
         }
 
         @Override
@@ -149,7 +181,7 @@ public class DriverOrderConfirmationFragment extends BaseFragment implements
       });
       animation.start();
     } else {
-      driverOrderConfirmationViewModel.counterTimeOut();
+      orderConfirmationViewModel.counterTimeOut();
     }
   }
 

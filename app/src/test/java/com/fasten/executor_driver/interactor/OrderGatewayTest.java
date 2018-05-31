@@ -42,7 +42,6 @@ public class OrderGatewayTest {
     RxJavaPlugins.setIoSchedulerHandler(scheduler -> Schedulers.trampoline());
     ExecutorState.DRIVER_ORDER_CONFIRMATION.setData(null);
     when(executorStateUseCase.getExecutorStates(anyBoolean())).thenReturn(Flowable.never());
-    orderGateway = new OrderGatewayImpl(executorStateUseCase, mapper);
   }
 
   /* Проверяем работу с с юзкейсом статусов */
@@ -52,8 +51,12 @@ public class OrderGatewayTest {
    */
   @Test
   public void askExecutorStateUseCaseForStatusUpdates() {
+    // Дано:
+    orderGateway = new OrderGatewayImpl(executorStateUseCase,
+        ExecutorState.DRIVER_ORDER_CONFIRMATION, mapper);
+
     // Действие:
-    orderGateway.getOrders(ExecutorState.DRIVER_ORDER_CONFIRMATION).test();
+    orderGateway.getOrders().test();
 
     // Результат:
     verify(executorStateUseCase, only()).getExecutorStates(false);
@@ -67,6 +70,8 @@ public class OrderGatewayTest {
   @Test
   public void doNotTouchMapperIfExecutorStateIncorrect() {
     // Дано:
+    orderGateway = new OrderGatewayImpl(executorStateUseCase,
+        ExecutorState.DRIVER_ORDER_CONFIRMATION, mapper);
     when(executorStateUseCase.getExecutorStates(anyBoolean()))
         .thenReturn(Flowable.just(ExecutorState.SHIFT_CLOSED, ExecutorState.SHIFT_OPENED,
             ExecutorState.ONLINE, ExecutorState.CLIENT_ORDER_CONFIRMATION,
@@ -74,7 +79,7 @@ public class OrderGatewayTest {
             ExecutorState.ORDER_FULFILLMENT));
 
     // Действие:
-    orderGateway.getOrders(ExecutorState.DRIVER_ORDER_CONFIRMATION).test();
+    orderGateway.getOrders().test();
 
     // Результат:
     verifyZeroInteractions(mapper);
@@ -86,11 +91,13 @@ public class OrderGatewayTest {
   @Test
   public void doNotTouchMapperIfNoData() {
     // Дано:
+    orderGateway = new OrderGatewayImpl(executorStateUseCase,
+        ExecutorState.CLIENT_ORDER_CONFIRMATION, mapper);
     when(executorStateUseCase.getExecutorStates(anyBoolean()))
         .thenReturn(Flowable.just(ExecutorState.CLIENT_ORDER_CONFIRMATION));
 
     // Действие:
-    orderGateway.getOrders(ExecutorState.CLIENT_ORDER_CONFIRMATION).test();
+    orderGateway.getOrders().test();
 
     // Результат:
     verifyZeroInteractions(mapper);
@@ -105,11 +112,13 @@ public class OrderGatewayTest {
   public void askForMappingForData() throws Exception {
     // Дано:
     ExecutorState.MOVING_TO_CLIENT.setData("");
+    orderGateway = new OrderGatewayImpl(executorStateUseCase, ExecutorState.MOVING_TO_CLIENT,
+        mapper);
     when(executorStateUseCase.getExecutorStates(anyBoolean()))
         .thenReturn(Flowable.just(ExecutorState.MOVING_TO_CLIENT));
 
     // Действие:
-    orderGateway.getOrders(ExecutorState.MOVING_TO_CLIENT).test();
+    orderGateway.getOrders().test();
 
     // Результат:
     verify(mapper, only()).map("");
@@ -125,6 +134,8 @@ public class OrderGatewayTest {
   @Test
   public void ignoreForIncorrectExecutorState() {
     // Дано:
+    orderGateway = new OrderGatewayImpl(executorStateUseCase,
+        ExecutorState.DRIVER_ORDER_CONFIRMATION, mapper);
     when(executorStateUseCase.getExecutorStates(anyBoolean()))
         .thenReturn(Flowable.just(ExecutorState.SHIFT_CLOSED, ExecutorState.SHIFT_OPENED,
             ExecutorState.ONLINE, ExecutorState.CLIENT_ORDER_CONFIRMATION,
@@ -132,8 +143,7 @@ public class OrderGatewayTest {
             ExecutorState.ORDER_FULFILLMENT));
 
     // Действие:
-    TestSubscriber<Order> testSubscriber =
-        orderGateway.getOrders(ExecutorState.DRIVER_ORDER_CONFIRMATION).test();
+    TestSubscriber<Order> testSubscriber = orderGateway.getOrders().test();
 
     // Результат:
     testSubscriber.assertNoValues();
@@ -147,12 +157,13 @@ public class OrderGatewayTest {
   @Test
   public void answerNoOrdersAvailableForNoData() {
     // Дано:
+    orderGateway = new OrderGatewayImpl(executorStateUseCase,
+        ExecutorState.CLIENT_ORDER_CONFIRMATION, mapper);
     when(executorStateUseCase.getExecutorStates(anyBoolean()))
         .thenReturn(Flowable.just(ExecutorState.CLIENT_ORDER_CONFIRMATION));
 
     // Действие:
-    TestSubscriber<Order> testSubscriber = orderGateway
-        .getOrders(ExecutorState.CLIENT_ORDER_CONFIRMATION).test();
+    TestSubscriber<Order> testSubscriber = orderGateway.getOrders().test();
 
     // Результат:
     testSubscriber.assertNoValues();
@@ -168,14 +179,15 @@ public class OrderGatewayTest {
   @Test
   public void answerDataMappingError() throws Exception {
     // Дано:
+    orderGateway = new OrderGatewayImpl(executorStateUseCase, ExecutorState.MOVING_TO_CLIENT,
+        mapper);
     doThrow(new DataMappingException()).when(mapper).map(anyString());
     ExecutorState.MOVING_TO_CLIENT.setData("");
     when(executorStateUseCase.getExecutorStates(anyBoolean()))
         .thenReturn(Flowable.just(ExecutorState.MOVING_TO_CLIENT));
 
     // Действие:
-    TestSubscriber<Order> testSubscriber =
-        orderGateway.getOrders(ExecutorState.MOVING_TO_CLIENT).test();
+    TestSubscriber<Order> testSubscriber = orderGateway.getOrders().test();
 
     // Результат:
     testSubscriber.assertNoValues();
@@ -191,14 +203,15 @@ public class OrderGatewayTest {
   @Test
   public void answerWithOrder() throws Exception {
     // Дано:
+    orderGateway = new OrderGatewayImpl(executorStateUseCase, ExecutorState.WAITING_FOR_CLIENT,
+        mapper);
     when(mapper.map(anyString())).thenReturn(order);
     ExecutorState.WAITING_FOR_CLIENT.setData("");
     when(executorStateUseCase.getExecutorStates(anyBoolean()))
         .thenReturn(Flowable.just(ExecutorState.WAITING_FOR_CLIENT));
 
     // Действие:
-    TestSubscriber<Order> testSubscriber =
-        orderGateway.getOrders(ExecutorState.WAITING_FOR_CLIENT).test();
+    TestSubscriber<Order> testSubscriber = orderGateway.getOrders().test();
 
     // Результат:
     testSubscriber.assertNoErrors();

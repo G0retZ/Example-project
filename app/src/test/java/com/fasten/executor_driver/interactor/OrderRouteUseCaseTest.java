@@ -6,7 +6,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.fasten.executor_driver.backend.web.NoNetworkException;
-import com.fasten.executor_driver.entity.ExecutorState;
 import com.fasten.executor_driver.entity.Order;
 import com.fasten.executor_driver.entity.RoutePoint;
 import com.fasten.executor_driver.gateway.DataMappingException;
@@ -48,7 +47,7 @@ public class OrderRouteUseCaseTest {
 
   @Before
   public void setUp() {
-    when(orderGateway.getOrders(ExecutorState.ORDER_FULFILLMENT)).thenReturn(Flowable.never());
+    when(orderGateway.getOrders()).thenReturn(Flowable.never());
     when(orderRouteGateway.closeRoutePoint(any())).thenReturn(Completable.never());
     when(orderRouteGateway.completeTheOrder()).thenReturn(Completable.never());
     when(orderRouteGateway.nextRoutePoint(any())).thenReturn(Completable.never());
@@ -66,7 +65,7 @@ public class OrderRouteUseCaseTest {
     orderRouteUseCase.getOrderRoutePoints().test();
 
     // Результат:
-    verify(orderGateway, only()).getOrders(ExecutorState.ORDER_FULFILLMENT);
+    verify(orderGateway, only()).getOrders();
   }
 
   /* Проверяем работу с гейтвеем маршрута заказа */
@@ -115,7 +114,7 @@ public class OrderRouteUseCaseTest {
   @Test
   public void answerDataMappingError() {
     // Дано:
-    when(orderGateway.getOrders(ExecutorState.ORDER_FULFILLMENT))
+    when(orderGateway.getOrders())
         .thenReturn(Flowable.error(new DataMappingException()));
 
     // Действие:
@@ -133,7 +132,7 @@ public class OrderRouteUseCaseTest {
   @Test
   public void answerWithOrders() {
     // Дано:
-    when(orderGateway.getOrders(ExecutorState.ORDER_FULFILLMENT))
+    when(orderGateway.getOrders())
         .thenReturn(Flowable.just(order, order2));
     when(order.getRoutePath()).thenReturn(Arrays.asList(routePoint1, routePoint2, routePoint3));
     when(order2.getRoutePath()).thenReturn(Arrays.asList(routePoint4, routePoint, routePoint3));
