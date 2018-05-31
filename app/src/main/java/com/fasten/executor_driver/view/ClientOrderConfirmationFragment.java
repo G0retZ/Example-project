@@ -8,13 +8,11 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 import com.fasten.executor_driver.R;
 import com.fasten.executor_driver.di.AppComponent;
 import com.fasten.executor_driver.presentation.order.OrderViewActions;
 import com.fasten.executor_driver.presentation.order.OrderViewModel;
-import com.squareup.picasso.Picasso;
 import javax.inject.Inject;
 
 /**
@@ -25,7 +23,6 @@ public class ClientOrderConfirmationFragment extends BaseFragment implements
     OrderViewActions {
 
   private OrderViewModel orderViewModel;
-  private ImageView mapImage;
   private TextView distanceText;
   private TextView addressText;
   private TextView commentTitleText;
@@ -55,7 +52,6 @@ public class ClientOrderConfirmationFragment extends BaseFragment implements
       @Nullable ViewGroup container,
       @Nullable Bundle savedInstanceState) {
     View view = inflater.inflate(R.layout.fragment_client_order_confirmation, container, false);
-    mapImage = view.findViewById(R.id.mapImage);
     distanceText = view.findViewById(R.id.distanceText);
     addressText = view.findViewById(R.id.addressText);
     commentTitleText = view.findViewById(R.id.commentTitleText);
@@ -64,7 +60,6 @@ public class ClientOrderConfirmationFragment extends BaseFragment implements
     optionsText = view.findViewById(R.id.optionsText);
     priceTitleText = view.findViewById(R.id.priceTitleText);
     priceText = view.findViewById(R.id.priceText);
-//    declineAction.setOnClickListener(v -> orderViewModel.cancelOrder());
     return view;
   }
 
@@ -100,8 +95,7 @@ public class ClientOrderConfirmationFragment extends BaseFragment implements
 
   @Override
   public void showLoadPoint(@NonNull String url) {
-    Picasso.with(context).load(url)
-        .into(mapImage);
+
   }
 
   @Override

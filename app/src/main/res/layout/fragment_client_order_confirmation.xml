@@ -1,73 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
+<LinearLayout
   xmlns:android="http://schemas.android.com/apk/res/android"
-  xmlns:app="http://schemas.android.com/apk/res-auto"
   xmlns:tools="http://schemas.android.com/tools"
   android:layout_width="match_parent"
-  android:layout_height="match_parent">
+  android:layout_height="match_parent"
+  android:orientation="vertical">
+  <TextView
+    style="@style/TextAppearance.AppCompat.Subhead.Inverse"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="16dp"
+    android:background="@color/colorAccentGreen"
+    android:text="@string/client_confirmation"/>
   <ScrollView
     android:scrollbarStyle="outsideOverlay"
-    android:layout_width="0dp"
+    android:layout_width="match_parent"
     android:layout_height="0dp"
-    app:layout_constraintBottom_toTopOf="@id/waitText"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toTopOf="parent">
-    <android.support.constraint.ConstraintLayout
+    android:layout_weight="1">
+    <LinearLayout
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:paddingBottom="24dp">
-      <ImageView
-        android:id="@+id/mapImage"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:contentDescription="@null"
-        android:src="@color/colorDivider"
-        app:layout_constraintDimensionRatio="H,9:5"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
-      <ImageView
-        android:id="@+id/gradient"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:contentDescription="@null"
-        android:src="@drawable/ic_gradient"
-        app:layout_constraintBottom_toBottomOf="@+id/mapImage"
-        app:layout_constraintDimensionRatio="H,10:3"
-        app:layout_constraintEnd_toEndOf="@+id/mapImage"
-        app:layout_constraintStart_toStartOf="@+id/mapImage"/>
-      <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:contentDescription="@null"
-        android:src="@drawable/circles"
-        app:layout_constraintBottom_toBottomOf="@+id/mapImage"
-        app:layout_constraintEnd_toEndOf="@+id/mapImage"
-        app:layout_constraintStart_toStartOf="@+id/mapImage"
-        app:layout_constraintTop_toTopOf="@+id/mapImage"/>
+      android:paddingBottom="24dp"
+      android:orientation="vertical">
       <TextView
         android:id="@+id/distanceText"
         style="@style/TextAppearance.AppCompat.Subhead"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
         android:layout_marginBottom="8dp"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
+        android:drawableLeft="@drawable/ic_distance_icon"
+        android:drawableStart="@drawable/ic_distance_icon"
         android:text="@string/km"
-        android:textColor="@color/colorAccentSecond"
-        app:layout_constraintBottom_toBottomOf="@+id/gradient"
-        app:layout_constraintStart_toStartOf="parent"/>
+        android:textColor="@color/colorAccentSecond"/>
       <TextView
         android:id="@+id/addressText"
         style="@style/TextAppearance.AppCompat.Headline"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/distanceText"
         tools:text="Москва, ул. Академика Пилюгина, 14 корпус 4, кв. 1122, П2, Э8"/>
       <TextView
         android:id="@+id/commentTitleText"
@@ -78,9 +52,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
         android:text="@string/comment"
-        android:textColor="@color/colorAccentSecond"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/addressText"/>
+        android:textColor="@color/colorAccentSecond"/>
       <TextView
         android:id="@+id/commentText"
         style="@style/TextAppearance.AppCompat.Title"
@@ -89,8 +61,6 @@
         android:layout_marginTop="8dp"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/commentTitleText"
         tools:text="Заехать купить 10 коробок. Чистая машина. Не курить!"/>
       <TextView
         android:id="@+id/optionsTitleText"
@@ -101,21 +71,16 @@
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
         android:text="@string/options"
-        android:textColor="@color/colorAccentSecond"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/commentText"/>
+        android:textColor="@color/colorAccentSecond"/>
       <TextView
         android:id="@+id/optionsText"
         style="@style/TextAppearance.AppCompat.Title"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
         android:lineSpacingExtra="6dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/optionsTitleText"
         tools:text="Пропуск в центр Москвы\nОткрытый кузов\nРемни-крепления\nМобильный банк\nГрузчики: 2\nПассажиры: 3"/>
       <TextView
         android:id="@+id/priceTitleText"
@@ -126,44 +91,21 @@
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
         android:text="@string/cost"
-        android:textColor="@color/colorAccentSecond"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/optionsText"/>
+        android:textColor="@color/colorAccentSecond"/>
       <TextView
         android:id="@+id/priceText"
         style="@style/TextAppearance.AppCompat.Title"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/priceTitleText"
         tools:text="Предзаказ: 2500 руб. за 4 часа\nСверх пакета: 8 руб./мин."/>
-    </android.support.constraint.ConstraintLayout>
+    </LinearLayout>
   </ScrollView>
-  <TextView
-    android:id="@+id/waitText"
-    style="@style/TextAppearance.AppCompat.Subhead"
-    android:layout_width="0dp"
-    android:layout_height="wrap_content"
-    android:paddingTop="8dp"
-    android:paddingBottom="16dp"
-    android:paddingStart="16dp"
-    android:paddingEnd="16dp"
-    android:background="@color/colorDivider"
-    android:text="@string/client_confirmation"
-    android:textSize="20sp"
-    app:layout_constraintBottom_toBottomOf="parent"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintStart_toStartOf="parent"/>
   <ProgressBar
     style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-    android:layout_width="0dp"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:indeterminate="true"
-    app:layout_constraintBottom_toBottomOf="parent"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintStart_toStartOf="parent"/>
-</android.support.constraint.ConstraintLayout>
+    android:indeterminate="true"/>
+</LinearLayout>
