@@ -28,14 +28,15 @@
     android:id="@+id/callingMessage"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:animateLayoutChanges="true"/>
-  <TextView
-    style="@style/TextAppearance.AppCompat.Subhead.Inverse"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:padding="16dp"
-    android:background="@color/colorAccentGreen"
-    android:text="@string/wait_for_client"/>
+    android:animateLayoutChanges="true">
+    <TextView
+      style="@style/TextAppearance.AppCompat.Subhead.Inverse"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:padding="16dp"
+      android:background="@color/colorAccentGreen"
+      android:text="@string/wait_for_client"/>
+  </FrameLayout>
   <fragment
     android:id="@+id/fragment_waiting_for_client"
     android:layout_width="match_parent"
