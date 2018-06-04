@@ -95,7 +95,9 @@ class OrderItem {
     long[] res = new long[2];
     res[1] = timeUtils.currentTimeMillis() - timestamp;
     res[1] = order.getTimeout() * 1000 - res[1];
-    res[0] = res[1] / (10L * order.getTimeout());
+    if (order.getTimeout() > 0) {
+      res[0] = res[1] / (10L * order.getTimeout());
+    }
     return res;
   }
 
