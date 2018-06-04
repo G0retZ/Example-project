@@ -47,7 +47,6 @@ class OrderRouteAdapter extends RecyclerView.Adapter<OrderRouteAdapter.RoutePoin
     return new RoutePointViewHolder(view);
   }
 
-  @SuppressWarnings("unchecked")
   @Override
   public void onBindViewHolder(@NonNull OrderRouteAdapter.RoutePointViewHolder holder,
       int position) {
