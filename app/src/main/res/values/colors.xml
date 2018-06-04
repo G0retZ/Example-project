@@ -7,6 +7,7 @@
   <color name="colorAccentTranslucent">#003194FF</color>
   <color name="colorAccentSecond">#FF5078A0</color>
   <color name="colorAccentGreen">#47FF60</color>
+  <color name="colorAccentGreenDisabled">#4D47FF60</color>
   <color name="colorAccentGreenTranslucent">#0047FF60</color>
   <color name="colorDisabled">#1FFFFFFF</color>
   <color name="colorSmoke">#66000000</color>

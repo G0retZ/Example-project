@@ -87,7 +87,7 @@ public class ServicesListItems {
   }
 
   public int getMinPrice() {
-    return minPrice;
+    return minSelectedPrice;
   }
 
   /**

@@ -40,7 +40,7 @@ public class ServicesListItemsTest {
    */
   @Test
   public void minPrice() {
-    assertEquals(servicesListItems.getMinPrice(), 10);
+    assertEquals(servicesListItems.getMinPrice(), 90);
   }
 
   /**

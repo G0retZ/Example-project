@@ -92,6 +92,7 @@ public class ServicesViewModelImpl extends ViewModel implements ServicesViewMode
 
   @Override
   public void setSliderPosition(int position) {
+    servicesSliderViewModel.refresh();
     viewStateLiveData.postValue(new ServicesViewStateReady(
         servicesListItems.getServicesListItems(position)
     ));
