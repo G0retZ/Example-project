@@ -49,9 +49,8 @@ public class OrderViewStateIdleTest {
 
     // Результат:
     verify(orderViewActions).showLoadPoint("url");
-    verify(orderViewActions).showLoadPointCoordinates("1.3,2.4");
+    verify(orderViewActions).showLoadPointAddress("1.3,2.4", "address");
     verify(orderViewActions).showDistance("123L");
-    verify(orderViewActions).showLoadPointAddress("address");
     verify(orderViewActions).showComment("comm");
     verify(orderViewActions).showTimeout(654321);
     verify(orderViewActions).showTimeout(3, 5);

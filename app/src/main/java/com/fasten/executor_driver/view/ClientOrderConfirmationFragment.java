@@ -99,8 +99,8 @@ public class ClientOrderConfirmationFragment extends BaseFragment implements
   }
 
   @Override
-  public void showLoadPointCoordinates(@NonNull String coordinates) {
-
+  public void showLoadPointAddress(@NonNull String coordinates, @NonNull String address) {
+    addressText.setText(address);
   }
 
   @Override
@@ -116,11 +116,6 @@ public class ClientOrderConfirmationFragment extends BaseFragment implements
   @Override
   public void showDistance(String distance) {
     distanceText.setText(getString(R.string.km, distance));
-  }
-
-  @Override
-  public void showLoadPointAddress(@NonNull String address) {
-    addressText.setText(address);
   }
 
   @Override

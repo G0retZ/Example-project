@@ -28,8 +28,7 @@ public class NextRoutePointViewStateNoRouteTest {
 
     // Результат:
     verify(nextRoutePointViewActions).showNextRoutePoint("");
-    verify(nextRoutePointViewActions).showNextRoutePointCoordinates("");
-    verify(nextRoutePointViewActions).showNextRoutePointAddress("");
+    verify(nextRoutePointViewActions).showNextRoutePointAddress("", "");
     verify(nextRoutePointViewActions).showNextRoutePointComment("");
     verify(nextRoutePointViewActions).showNextRoutePointPending(false);
     verify(nextRoutePointViewActions).showNextRoutePointNetworkErrorMessage(false);
@@ -49,8 +48,7 @@ public class NextRoutePointViewStateNoRouteTest {
 
     // Результат:
     verify(nextRoutePointViewActions).showNextRoutePoint("");
-    verify(nextRoutePointViewActions).showNextRoutePointCoordinates("");
-    verify(nextRoutePointViewActions).showNextRoutePointAddress("");
+    verify(nextRoutePointViewActions).showNextRoutePointAddress("", "");
     verify(nextRoutePointViewActions).showNextRoutePointComment("");
     verify(nextRoutePointViewActions).showNextRoutePointPending(false);
     verify(nextRoutePointViewActions).showNextRoutePointNetworkErrorMessage(false);

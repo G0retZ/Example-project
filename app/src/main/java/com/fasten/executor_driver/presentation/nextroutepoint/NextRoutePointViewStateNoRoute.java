@@ -17,9 +17,8 @@ final class NextRoutePointViewStateNoRoute implements ViewState<NextRoutePointVi
   @Override
   public void apply(@NonNull NextRoutePointViewActions stateActions) {
     stateActions.showNextRoutePoint("");
-    stateActions.showNextRoutePointAddress("");
+    stateActions.showNextRoutePointAddress("", "");
     stateActions.showNextRoutePointComment("");
-    stateActions.showNextRoutePointCoordinates("");
     stateActions.showNextRoutePointPending(false);
     stateActions.showNextRoutePointNetworkErrorMessage(false);
     stateActions.showCloseNextRoutePointAction(false);

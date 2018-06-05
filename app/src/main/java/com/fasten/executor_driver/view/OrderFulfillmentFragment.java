@@ -133,14 +133,15 @@ public class OrderFulfillmentFragment extends BaseFragment implements OrderCostV
   }
 
   @Override
-  public void showNextRoutePointCoordinates(@NonNull String coordinates) {
+  public void showNextRoutePointAddress(@NonNull String coordinates, @NonNull String address) {
+    addressText.setText(address);
     if (coordinates.trim().isEmpty()) {
       getDirectionsAction.setVisibility(View.GONE);
     } else {
       getDirectionsAction.setVisibility(View.VISIBLE);
       getDirectionsAction.setOnClickListener(v -> {
         Intent navigationIntent = new Intent(Intent.ACTION_VIEW);
-        navigationIntent.setData(Uri.parse("geo:" + coordinates + "?q=" + coordinates
+        navigationIntent.setData(Uri.parse("geo:" + coordinates + "?q=" + address
             + "(" + getString(R.string.client) + ")"));
         if (navigationIntent.resolveActivity(context.getPackageManager()) != null) {
           startActivity(navigationIntent);
@@ -154,11 +155,6 @@ public class OrderFulfillmentFragment extends BaseFragment implements OrderCostV
         }
       });
     }
-  }
-
-  @Override
-  public void showNextRoutePointAddress(@NonNull String address) {
-    addressText.setText(address);
   }
 
   @Override

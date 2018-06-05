@@ -18,9 +18,9 @@ final class NextRoutePointViewStateEnRoute implements ViewState<NextRoutePointVi
   @Override
   public void apply(@NonNull NextRoutePointViewActions stateActions) {
     stateActions.showNextRoutePoint(routePointItem.getMapUrl());
-    stateActions.showNextRoutePointAddress(routePointItem.getAddress());
+    stateActions.showNextRoutePointAddress(routePointItem.getCoordinatesString(),
+        routePointItem.getAddress());
     stateActions.showNextRoutePointComment(routePointItem.getComment());
-    stateActions.showNextRoutePointCoordinates(routePointItem.getCoordinatesString());
     stateActions.showNextRoutePointPending(false);
     stateActions.showNextRoutePointNetworkErrorMessage(false);
     stateActions.showCloseNextRoutePointAction(true);

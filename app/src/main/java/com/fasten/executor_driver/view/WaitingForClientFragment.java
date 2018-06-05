@@ -127,7 +127,7 @@ public class WaitingForClientFragment extends BaseFragment implements
   }
 
   @Override
-  public void showLoadPointCoordinates(@NonNull String coordinates) {
+  public void showLoadPointAddress(@NonNull String coordinates, @NonNull String address) {
 
   }
 
@@ -143,11 +143,6 @@ public class WaitingForClientFragment extends BaseFragment implements
 
   @Override
   public void showDistance(String distance) {
-
-  }
-
-  @Override
-  public void showLoadPointAddress(@NonNull String address) {
 
   }
 
