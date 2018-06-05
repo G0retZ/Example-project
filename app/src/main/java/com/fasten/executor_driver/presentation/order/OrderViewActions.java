@@ -22,13 +22,6 @@ public interface OrderViewActions {
   void showLoadPoint(@NonNull String url);
 
   /**
-   * Показать координаты точки погрузки.
-   *
-   * @param coordinates - координаты
-   */
-  void showLoadPointCoordinates(@NonNull String coordinates);
-
-  /**
    * Показать индикатор таймаута до встречи с клиентом.
    *
    * @param timeout - время оставшееся до таймаута в секундах
@@ -53,9 +46,10 @@ public interface OrderViewActions {
   /**
    * Показать адрес точки погрузки.
    *
+   * @param coordinates - координаты
    * @param address - адрес
    */
-  void showLoadPointAddress(@NonNull String address);
+  void showLoadPointAddress(@NonNull String coordinates, @NonNull String address);
 
   /**
    * Показать рассчет стоимости.

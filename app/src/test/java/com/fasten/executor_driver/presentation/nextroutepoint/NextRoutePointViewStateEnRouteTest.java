@@ -42,8 +42,7 @@ public class NextRoutePointViewStateEnRouteTest {
 
     // Результат:
     verify(nextRoutePointViewActions).showNextRoutePoint("url");
-    verify(nextRoutePointViewActions).showNextRoutePointCoordinates("0,0");
-    verify(nextRoutePointViewActions).showNextRoutePointAddress("add");
+    verify(nextRoutePointViewActions).showNextRoutePointAddress("0,0", "add");
     verify(nextRoutePointViewActions).showNextRoutePointComment("com");
     verify(nextRoutePointViewActions).showNextRoutePointPending(false);
     verify(nextRoutePointViewActions).showNextRoutePointNetworkErrorMessage(false);

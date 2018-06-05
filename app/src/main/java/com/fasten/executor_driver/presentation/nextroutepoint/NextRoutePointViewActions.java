@@ -23,18 +23,12 @@ public interface NextRoutePointViewActions {
   void showNextRoutePoint(@NonNull String url);
 
   /**
-   * Показать координаты следующей точки маршрута.
-   *
-   * @param coordinates - координаты
-   */
-  void showNextRoutePointCoordinates(@NonNull String coordinates);
-
-  /**
    * Показать адрес следующей точки маршрута.
    *
+   * @param coordinates - координаты
    * @param address - текущее время заказа в секундах. Если пусто, значит адреса нету.
    */
-  void showNextRoutePointAddress(@NonNull String address);
+  void showNextRoutePointAddress(@NonNull String coordinates, @NonNull String address);
 
   /**
    * Показать комментарий к следующей точки маршрута.

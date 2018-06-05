@@ -93,7 +93,7 @@ public class OrderFulfillmentDetailsFragment extends BaseFragment implements Ord
   }
 
   @Override
-  public void showLoadPointCoordinates(@NonNull String coordinates) {
+  public void showLoadPointAddress(@NonNull String coordinates, @NonNull String address) {
 
   }
 
@@ -109,11 +109,6 @@ public class OrderFulfillmentDetailsFragment extends BaseFragment implements Ord
 
   @Override
   public void showDistance(String distance) {
-
-  }
-
-  @Override
-  public void showLoadPointAddress(@NonNull String address) {
 
   }
 

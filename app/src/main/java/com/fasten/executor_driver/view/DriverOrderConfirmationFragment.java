@@ -141,8 +141,8 @@ public class DriverOrderConfirmationFragment extends BaseFragment implements
   }
 
   @Override
-  public void showLoadPointCoordinates(@NonNull String coordinates) {
-
+  public void showLoadPointAddress(@NonNull String coordinates, @NonNull String address) {
+    addressText.setText(address);
   }
 
   @Override
@@ -183,11 +183,6 @@ public class DriverOrderConfirmationFragment extends BaseFragment implements
     } else {
       orderConfirmationViewModel.counterTimeOut();
     }
-  }
-
-  @Override
-  public void showLoadPointAddress(@NonNull String address) {
-    addressText.setText(address);
   }
 
   @Override

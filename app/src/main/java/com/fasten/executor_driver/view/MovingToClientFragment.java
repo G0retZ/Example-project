@@ -137,10 +137,11 @@ public class MovingToClientFragment extends BaseFragment implements MovingToClie
   }
 
   @Override
-  public void showLoadPointCoordinates(@NonNull String coordinates) {
+  public void showLoadPointAddress(@NonNull String coordinates, @NonNull String address) {
+    addressText.setText(address);
     navigationAction.setOnClickListener(v -> {
       Intent navigationIntent = new Intent(Intent.ACTION_VIEW);
-      navigationIntent.setData(Uri.parse("geo:" + coordinates + "?q=" + coordinates
+      navigationIntent.setData(Uri.parse("geo:" + coordinates + "?q=" + address
           + "(" + getString(R.string.client) + ")"));
       if (navigationIntent.resolveActivity(context.getPackageManager()) != null) {
         startActivity(navigationIntent);
@@ -193,11 +194,6 @@ public class MovingToClientFragment extends BaseFragment implements MovingToClie
   @Override
   public void showDistance(String distance) {
 
-  }
-
-  @Override
-  public void showLoadPointAddress(@NonNull String address) {
-    addressText.setText(address);
   }
 
   @Override
