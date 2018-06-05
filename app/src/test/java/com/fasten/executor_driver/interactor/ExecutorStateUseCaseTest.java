@@ -174,6 +174,21 @@ public class ExecutorStateUseCaseTest {
    * Не должен запрпрашивать у гейтвея статус исполнителя.
    */
   @Test
+  public void doNotAskGatewayForStatusIfSocketError() {
+    // Дано:
+    when(socketGateway.openSocket()).thenReturn(Completable.error(NoNetworkException::new));
+
+    // Действие:
+    executorStateUseCase.getExecutorStates(true).test();
+
+    // Результат:
+    verifyZeroInteractions(gateway);
+  }
+
+  /**
+   * Не должен запрпрашивать у гейтвея статус исполнителя.
+   */
+  @Test
   public void doNotAskGatewayForStatus() {
     // Дано:
     when(socketGateway.openSocket()).thenReturn(Completable.complete());
