@@ -6,7 +6,7 @@ import android.support.annotation.NonNull;
  * Бизнес сущность причины отказа от заказа. Immutable.
  * Создается через конструктор с не нулевыми полями.
  */
-class CancelOrderReason {
+public class CancelOrderReason {
 
   @NonNull
   private final String id;
