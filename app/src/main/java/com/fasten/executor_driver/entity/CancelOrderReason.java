@@ -8,18 +8,16 @@ import android.support.annotation.NonNull;
  */
 public class CancelOrderReason {
 
-  @NonNull
-  private final String id;
+  private final int id;
   @NonNull
   private final String name;
 
-  CancelOrderReason(@NonNull String id, @NonNull String name) {
+  public CancelOrderReason(int id, @NonNull String name) {
     this.id = id;
     this.name = name;
   }
 
-  @NonNull
-  public String getId() {
+  public int getId() {
     return id;
   }
 

@@ -8,8 +8,8 @@ public class CancelOrderReasonTest {
 
   @Test
   public void testConstructor() {
-    CancelOrderReason cancelOrderReason = new CancelOrderReason("id", "name");
-    assertEquals(cancelOrderReason.getId(), "id");
+    CancelOrderReason cancelOrderReason = new CancelOrderReason(3, "name");
+    assertEquals(cancelOrderReason.getId(), 3);
     assertEquals(cancelOrderReason.getName(), "name");
   }
 }
