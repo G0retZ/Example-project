@@ -1,0 +1,58 @@
+package com.fasten.executor_driver.presentation.cancelorderreasons;
+
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.MutableLiveData;
+import android.arch.lifecycle.ViewModel;
+import android.support.annotation.NonNull;
+import com.fasten.executor_driver.interactor.CancelOrderUseCase;
+import com.fasten.executor_driver.presentation.ViewState;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.internal.disposables.EmptyDisposable;
+import io.reactivex.schedulers.Schedulers;
+import javax.inject.Inject;
+
+public class CancelOrderReasonsViewModelImpl extends ViewModel implements
+    CancelOrderReasonsViewModel {
+
+  @NonNull
+  private final CancelOrderUseCase cancelOrderUseCase;
+  @NonNull
+  private Disposable disposable = EmptyDisposable.INSTANCE;
+
+  @Inject
+  CancelOrderReasonsViewModelImpl(@NonNull CancelOrderUseCase cancelOrderUseCase) {
+    this.cancelOrderUseCase = cancelOrderUseCase;
+  }
+
+  @NonNull
+  @Override
+  public LiveData<ViewState<CancelOrderReasonsViewActions>> getViewStateLiveData() {
+    return new MutableLiveData<>();
+  }
+
+  @NonNull
+  @Override
+  public LiveData<String> getNavigationLiveData() {
+    return new MutableLiveData<>();
+  }
+
+  @Override
+  public void initializeCancelOrderReasons(boolean reset) {
+    disposable.dispose();
+    disposable = cancelOrderUseCase.getCancelOrderReasons(reset)
+        .subscribeOn(Schedulers.single())
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe(
+            cancelOrderReasons -> {
+            },
+            Throwable::printStackTrace
+        );
+  }
+
+  @Override
+  protected void onCleared() {
+    super.onCleared();
+    disposable.dispose();
+  }
+}
