@@ -10,6 +10,7 @@ import android.support.annotation.StringRes;
 import com.fasten.executor_driver.R;
 import com.fasten.executor_driver.di.AppComponent;
 import com.fasten.executor_driver.di.AppComponentImpl;
+import com.fasten.executor_driver.presentation.cancelorderreasons.CancelOrderReasonsViewModel;
 import com.fasten.executor_driver.presentation.executorstate.ExecutorStateNavigate;
 import com.fasten.executor_driver.presentation.executorstate.ExecutorStateViewActions;
 import com.fasten.executor_driver.presentation.executorstate.ExecutorStateViewModel;
@@ -24,6 +25,8 @@ public class MainApplication extends Application {
 
   @Nullable
   private AppComponent appComponent;
+  @Nullable
+  private CancelOrderReasonsViewModel cancelOrderReasonsViewModel;
   @Nullable
   private ExecutorStateViewModel executorStateViewModel;
   @Nullable
@@ -46,6 +49,12 @@ public class MainApplication extends Application {
   @Inject
   public void setAutoRouter(@NonNull AutoRouter autoRouter) {
     this.autoRouter = autoRouter;
+  }
+
+  @Inject
+  public void setCancelOrderReasonsViewModel(
+      @Nullable CancelOrderReasonsViewModel cancelOrderReasonsViewModel) {
+    this.cancelOrderReasonsViewModel = cancelOrderReasonsViewModel;
   }
 
   @Inject
@@ -83,6 +92,10 @@ public class MainApplication extends Application {
     if (executorStateViewModel == null) {
       throw new IllegalStateException("Граф зависимостей поломан!");
     }
+    if (cancelOrderReasonsViewModel == null) {
+      throw new IllegalStateException("Граф зависимостей поломан!");
+    }
+    cancelOrderReasonsViewModel.initializeCancelOrderReasons(reload);
     executorStateViewModel.initializeExecutorState(reload);
   }
 

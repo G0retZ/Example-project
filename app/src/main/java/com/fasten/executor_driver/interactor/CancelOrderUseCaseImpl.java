@@ -7,8 +7,9 @@ import io.reactivex.BackpressureStrategy;
 import io.reactivex.Completable;
 import io.reactivex.Flowable;
 import java.util.List;
+import javax.inject.Inject;
 
-class CancelOrderUseCaseImpl implements CancelOrderUseCase {
+public class CancelOrderUseCaseImpl implements CancelOrderUseCase {
 
   @NonNull
   private final CancelOrderGateway gateway;
@@ -21,7 +22,8 @@ class CancelOrderUseCaseImpl implements CancelOrderUseCase {
   @Nullable
   private List<CancelOrderReason> cancelOrderReasons;
 
-  CancelOrderUseCaseImpl(@NonNull CancelOrderGateway gateway,
+  @Inject
+  public CancelOrderUseCaseImpl(@NonNull CancelOrderGateway gateway,
       @NonNull SocketGateway socketGateway,
       @NonNull DataReceiver<String> loginReceiver) {
     this.gateway = gateway;

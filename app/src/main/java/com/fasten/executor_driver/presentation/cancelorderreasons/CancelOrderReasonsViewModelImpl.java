@@ -21,7 +21,7 @@ public class CancelOrderReasonsViewModelImpl extends ViewModel implements
   private Disposable disposable = EmptyDisposable.INSTANCE;
 
   @Inject
-  CancelOrderReasonsViewModelImpl(@NonNull CancelOrderUseCase cancelOrderUseCase) {
+  public CancelOrderReasonsViewModelImpl(@NonNull CancelOrderUseCase cancelOrderUseCase) {
     this.cancelOrderUseCase = cancelOrderUseCase;
   }
 
