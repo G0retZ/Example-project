@@ -7,10 +7,10 @@ import com.google.gson.annotations.SerializedName;
 public class ApiCancelOrderReason {
 
   @SerializedName("id")
-  private int id;
+  private final int id;
   @SerializedName("description")
   @NonNull
-  private String description;
+  private final String description;
 
   public ApiCancelOrderReason(@NonNull CancelOrderReason cancelOrderReason) {
     this.id = cancelOrderReason.getId();
