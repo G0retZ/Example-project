@@ -9,20 +9,22 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
+import ua.naiksoftware.stomp.client.StompMessage;
 
 /**
  * Преобразуем статус из ответа сервера в бизнес объект статуса исполнителя.
  */
-class CancelOrderReasonApiMapper implements Mapper<String, List<CancelOrderReason>> {
+public class CancelOrderReasonApiMapper implements Mapper<StompMessage, List<CancelOrderReason>> {
 
   @Inject
-  CancelOrderReasonApiMapper() {
+  public CancelOrderReasonApiMapper() {
   }
 
   @NonNull
   @Override
-  public List<CancelOrderReason> map(@NonNull String from) throws Exception {
-    if (from.isEmpty()) {
+  public List<CancelOrderReason> map(@NonNull StompMessage from) throws Exception {
+    String fromString = from.getPayload().trim();
+    if (fromString.isEmpty()) {
       throw new DataMappingException("Ошибка маппинга: данные не должны быть пустыми!");
     }
     Gson gson = new Gson();
@@ -30,7 +32,7 @@ class CancelOrderReasonApiMapper implements Mapper<String, List<CancelOrderReaso
     }.getType();
     List<ApiCancelOrderReason> apiCancelOrderReasons;
     try {
-      apiCancelOrderReasons = gson.fromJson(from, type);
+      apiCancelOrderReasons = gson.fromJson(fromString, type);
     } catch (Exception e) {
       throw new DataMappingException("Ошибка маппинга: не удалось распарсить JSON!", e);
     }

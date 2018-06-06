@@ -5,13 +5,15 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import com.fasten.executor_driver.entity.CancelOrderReason;
+import java.util.ArrayList;
 import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
+import ua.naiksoftware.stomp.client.StompMessage;
 
 public class CancelOrderReasonApiMapperTest {
 
-  private Mapper<String, List<CancelOrderReason>> mapper;
+  private Mapper<StompMessage, List<CancelOrderReason>> mapper;
 
   @Before
   public void setUp() {
@@ -27,12 +29,14 @@ public class CancelOrderReasonApiMapperTest {
   public void mappingJsonStringToCancelOrderReasonsSuccess() throws Exception {
     // Дано и Действие:
     List<CancelOrderReason> cancelOrderReasons = mapper.map(
-        "["
-            + "{\"id\":1,\"description\":\"one\"},"
-            + "{\"id\":2,\"description\":\"two\"},"
-            + "{\"id\":3,\"description\":\"three\"},"
-            + "{\"id\":4,\"description\":\"four\"}"
-            + "]"
+        new StompMessage("", new ArrayList<>(),
+            "["
+                + "{\"id\":1,\"description\":\"one\"},"
+                + "{\"id\":2,\"description\":\"two\"},"
+                + "{\"id\":3,\"description\":\"three\"},"
+                + "{\"id\":4,\"description\":\"four\"}"
+                + "]"
+        )
     );
 
     // Результат:
@@ -60,12 +64,14 @@ public class CancelOrderReasonApiMapperTest {
   public void mappingJsonStringWithEmptyNamesToCancelOrderReasonsSuccess() throws Exception {
     // Дано и Действие:
     List<CancelOrderReason> cancelOrderReasons = mapper.map(
-        "["
-            + "{\"id\":1,\"description\":\"one\"},"
-            + "{\"id\":2,\"description\":\"\"},"
-            + "{\"id\":3,\"description\":\"three\"},"
-            + "{\"id\":4,\"description\":\"\"}"
-            + "]"
+        new StompMessage("", new ArrayList<>(),
+            "["
+                + "{\"id\":1,\"description\":\"one\"},"
+                + "{\"id\":2,\"description\":\"\"},"
+                + "{\"id\":3,\"description\":\"three\"},"
+                + "{\"id\":4,\"description\":\"\"}"
+                + "]"
+        )
     );
 
     // Результат:
@@ -93,12 +99,14 @@ public class CancelOrderReasonApiMapperTest {
   public void mappingJsonStringWithNumbersToCancelOrderReasonsSuccess() throws Exception {
     // Дано и Действие:
     List<CancelOrderReason> cancelOrderReasons = mapper.map(
-        "["
-            + "{\"id\":1,\"description\":10},"
-            + "{\"id\":2,\"description\":20},"
-            + "{\"id\":3,\"description\":30},"
-            + "{\"id\":4,\"description\":40}"
-            + "]"
+        new StompMessage("", new ArrayList<>(),
+            "["
+                + "{\"id\":1,\"description\":10},"
+                + "{\"id\":2,\"description\":20},"
+                + "{\"id\":3,\"description\":30},"
+                + "{\"id\":4,\"description\":40}"
+                + "]"
+        )
     );
 
     // Результат:
@@ -125,7 +133,8 @@ public class CancelOrderReasonApiMapperTest {
   @Test
   public void mappingJsonStringWithoutEntriesToCancelOrderReasonsSuccess() throws Exception {
     // Дано и Действие:
-    List<CancelOrderReason> cancelOrderReasons = mapper.map("[]");
+    List<CancelOrderReason> cancelOrderReasons = mapper
+        .map(new StompMessage("", new ArrayList<>(), "[]"));
 
     // Результат:
     assertTrue(cancelOrderReasons.isEmpty());
@@ -140,12 +149,14 @@ public class CancelOrderReasonApiMapperTest {
   public void mappingJsonStringWitNullNameToCancelOrderReasonsFail() throws Exception {
     // Дано, Действие и Результат:
     mapper.map(
-        "["
-            + "{\"id\":1,\"description\":\"one\"},"
-            + "{\"id\":2,\"description\":null},"
-            + "{\"id\":3,\"description\":\"three\"},"
-            + "{\"id\":4,\"description\":\"four\"}"
-            + "]"
+        new StompMessage("", new ArrayList<>(),
+            "["
+                + "{\"id\":1,\"description\":\"one\"},"
+                + "{\"id\":2,\"description\":null},"
+                + "{\"id\":3,\"description\":\"three\"},"
+                + "{\"id\":4,\"description\":\"four\"}"
+                + "]"
+        )
     );
   }
 
@@ -158,12 +169,14 @@ public class CancelOrderReasonApiMapperTest {
   public void mappingJsonStringWithoutNameToCancelOrderReasonsFail() throws Exception {
     // Дано, Действие и Результат:
     mapper.map(
-        "["
-            + "{\"id\":1,\"description\":\"one\"},"
-            + "{\"id\":2},"
-            + "{\"id\":3,\"description\":\"three\"},"
-            + "{\"id\":4,\"description\":\"four\"}"
-            + "]"
+        new StompMessage("", new ArrayList<>(),
+            "["
+                + "{\"id\":1,\"description\":\"one\"},"
+                + "{\"id\":2},"
+                + "{\"id\":3,\"description\":\"three\"},"
+                + "{\"id\":4,\"description\":\"four\"}"
+                + "]"
+        )
     );
   }
 
@@ -175,7 +188,7 @@ public class CancelOrderReasonApiMapperTest {
   @Test(expected = DataMappingException.class)
   public void mappingEmptyFail() throws Exception {
     // Дано и Действие:
-    mapper.map("");
+    mapper.map(new StompMessage("", new ArrayList<>(), ""));
   }
 
   /**
@@ -186,7 +199,7 @@ public class CancelOrderReasonApiMapperTest {
   @Test(expected = DataMappingException.class)
   public void mappingStringFail() throws Exception {
     // Дано и Действие:
-    mapper.map("dasie");
+    mapper.map(new StompMessage("", new ArrayList<>(), "dasie"));
   }
 
   /**
@@ -197,7 +210,7 @@ public class CancelOrderReasonApiMapperTest {
   @Test(expected = DataMappingException.class)
   public void mappingNumberFail() throws Exception {
     // Дано и Действие:
-    mapper.map("12");
+    mapper.map(new StompMessage("", new ArrayList<>(), "12"));
   }
 
   /**
@@ -208,6 +221,6 @@ public class CancelOrderReasonApiMapperTest {
   @Test(expected = DataMappingException.class)
   public void mappingObjectFail() throws Exception {
     // Дано и Действие:
-    mapper.map("{}");
+    mapper.map(new StompMessage("", new ArrayList<>(), "{}"));
   }
 }
