@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * Действия для смены состояния вида окна списка ТС исполнителя.
  */
-public interface CancelOrderViewActions {
+interface CancelOrderViewActions {
 
   /**
    * Показать индикатор процесса.
