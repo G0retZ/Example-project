@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * Юзкейс отмены заказа.
  */
-interface CancelOrderUseCase {
+public interface CancelOrderUseCase {
 
   /**
    * Запрашивает список причин отмены от заказа, выдает последний закешированный результат, если не сброшен.
