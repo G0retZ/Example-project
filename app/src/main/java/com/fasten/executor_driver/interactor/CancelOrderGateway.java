@@ -9,15 +9,16 @@ import java.util.List;
 /**
  * Гейтвей отмены заказа.
  */
-interface CancelOrderGateway {
+public interface CancelOrderGateway {
 
   /**
    * Получать список причин отмены от заказа.
    *
+   * @param channelId - ID "канала", откуда брать причины отказа.
    * @return {@link Flowable<CancelOrderReason>} результат запроса.
    */
   @NonNull
-  Flowable<List<CancelOrderReason>> loadCancelOrderReasons();
+  Flowable<List<CancelOrderReason>> loadCancelOrderReasons(@NonNull String channelId);
 
   /**
    * Отменить заказ с причиной.

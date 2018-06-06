@@ -24,7 +24,7 @@ import ua.naiksoftware.stomp.client.StompClient;
 @RunWith(MockitoJUnitRunner.class)
 public class CallToClientGatewayTest {
 
-  private CallToClientGateway orderGateway;
+  private CallToClientGateway callToClientGateway;
   @Mock
   private StompClient stompClient;
 
@@ -35,7 +35,7 @@ public class CallToClientGatewayTest {
     RxJavaPlugins.setIoSchedulerHandler(scheduler -> Schedulers.trampoline());
     ExecutorState.MOVING_TO_CLIENT.setData(null);
     when(stompClient.send(anyString(), anyString())).thenReturn(Completable.never());
-    orderGateway = new CallToClientGatewayImpl(stompClient);
+    callToClientGateway = new CallToClientGatewayImpl(stompClient);
   }
 
   /* Проверяем работу с клиентом STOMP */
@@ -50,7 +50,7 @@ public class CallToClientGatewayTest {
     when(stompClient.isConnected()).thenReturn(true);
 
     // Действие:
-    orderGateway.callToClient().test();
+    callToClientGateway.callToClient().test();
 
     // Результат:
     inOrder.verify(stompClient).isConnected();
@@ -67,7 +67,7 @@ public class CallToClientGatewayTest {
     InOrder inOrder = Mockito.inOrder(stompClient);
 
     // Действие:
-    orderGateway.callToClient().test();
+    callToClientGateway.callToClient().test();
 
     // Результат:
     inOrder.verify(stompClient).isConnected();
@@ -85,7 +85,7 @@ public class CallToClientGatewayTest {
     when(stompClient.isConnecting()).thenReturn(true);
 
     // Действие:
-    orderGateway.callToClient().test();
+    callToClientGateway.callToClient().test();
 
     // Результат:
     inOrder.verify(stompClient).isConnected();
@@ -108,7 +108,7 @@ public class CallToClientGatewayTest {
     when(stompClient.send(anyString(), anyString())).thenReturn(Completable.complete());
 
     // Действие:
-    TestObserver<Void> testObserver = orderGateway.callToClient().test();
+    TestObserver<Void> testObserver = callToClientGateway.callToClient().test();
 
     // Результат:
     testObserver.assertNoErrors();
@@ -126,7 +126,7 @@ public class CallToClientGatewayTest {
         .thenReturn(Completable.error(new NoNetworkException()));
 
     // Действие:
-    TestObserver<Void> testObserver = orderGateway.callToClient().test();
+    TestObserver<Void> testObserver = callToClientGateway.callToClient().test();
 
     // Результат:
     testObserver.assertNotComplete();
@@ -139,7 +139,7 @@ public class CallToClientGatewayTest {
   @Test
   public void answerCallToClientErrorIfNotConnectedAndNotConnecting() {
     // Действие:
-    TestObserver<Void> testObserver = orderGateway.callToClient().test();
+    TestObserver<Void> testObserver = callToClientGateway.callToClient().test();
 
     // Результат:
     testObserver.assertNotComplete();
@@ -156,7 +156,7 @@ public class CallToClientGatewayTest {
     when(stompClient.send(anyString(), anyString())).thenReturn(Completable.complete());
 
     // Действие:
-    TestObserver<Void> testObserver = orderGateway.callToClient().test();
+    TestObserver<Void> testObserver = callToClientGateway.callToClient().test();
 
     // Результат:
     testObserver.assertNoErrors();
@@ -174,7 +174,7 @@ public class CallToClientGatewayTest {
         .thenReturn(Completable.error(new ConnectionClosedException()));
 
     // Действие:
-    TestObserver<Void> testObserver = orderGateway.callToClient().test();
+    TestObserver<Void> testObserver = callToClientGateway.callToClient().test();
 
     // Результат:
     testObserver.assertNotComplete();

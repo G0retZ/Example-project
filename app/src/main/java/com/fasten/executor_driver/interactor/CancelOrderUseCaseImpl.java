@@ -3,6 +3,7 @@ package com.fasten.executor_driver.interactor;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.fasten.executor_driver.entity.CancelOrderReason;
+import io.reactivex.BackpressureStrategy;
 import io.reactivex.Completable;
 import io.reactivex.Flowable;
 import java.util.List;
@@ -14,22 +15,28 @@ class CancelOrderUseCaseImpl implements CancelOrderUseCase {
   @NonNull
   private final SocketGateway socketGateway;
   @NonNull
+  private final DataReceiver<String> loginReceiver;
+  @NonNull
   private Flowable<List<CancelOrderReason>> cancelOrderReasonsFlowable = Flowable.empty();
   @Nullable
   private List<CancelOrderReason> cancelOrderReasons;
 
   CancelOrderUseCaseImpl(@NonNull CancelOrderGateway gateway,
-      @NonNull SocketGateway socketGateway) {
+      @NonNull SocketGateway socketGateway,
+      @NonNull DataReceiver<String> loginReceiver) {
     this.gateway = gateway;
     this.socketGateway = socketGateway;
+    this.loginReceiver = loginReceiver;
   }
 
   @NonNull
   @Override
   public Flowable<List<CancelOrderReason>> getCancelOrderReasons(boolean reset) {
     if (reset) {
-      cancelOrderReasonsFlowable = gateway.loadCancelOrderReasons()
+      cancelOrderReasonsFlowable = loginReceiver.get()
+          .toFlowable(BackpressureStrategy.BUFFER)
           .startWith(socketGateway.openSocket().toFlowable())
+          .switchMap(gateway::loadCancelOrderReasons)
           .map(cancelOrderReasons1 -> cancelOrderReasons = cancelOrderReasons1)
           .replay(1)
           .refCount()
