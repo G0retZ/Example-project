@@ -10,6 +10,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.fasten.executor_driver.R;
 import com.fasten.executor_driver.presentation.balance.BalanceNavigate;
+import java.text.DecimalFormat;
 
 /**
  * Отображает баланс.
@@ -31,12 +32,12 @@ public class BalanceFragment extends BaseFragment {
     errorLayout = view.findViewById(R.id.balanceError);
     balanceAmount = view.findViewById(R.id.balanceAmount);
     errorLayout.setVisibility(View.GONE);
-    balanceAmount.setText(getString(R.string.balance_amount, 5000).replace("5", "5 "));
+    balanceAmount.setText(new DecimalFormat(getString(R.string.currency_format)).format(5000));
     return view;
   }
 
   public void showError() {
     errorLayout.setVisibility(View.VISIBLE);
-    balanceAmount.setText(getString(R.string.balance_amount, 400));
+    balanceAmount.setText(new DecimalFormat(getString(R.string.currency_format)).format(400));
   }
 }

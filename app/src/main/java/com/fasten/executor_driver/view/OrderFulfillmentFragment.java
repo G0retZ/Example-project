@@ -20,6 +20,7 @@ import com.fasten.executor_driver.presentation.ordercost.OrderCostViewActions;
 import com.fasten.executor_driver.presentation.ordercost.OrderCostViewModel;
 import com.fasten.executor_driver.presentation.ordertime.OrderTimeViewActions;
 import com.fasten.executor_driver.presentation.ordertime.OrderTimeViewModel;
+import java.text.DecimalFormat;
 import javax.inject.Inject;
 import org.joda.time.LocalTime;
 import org.joda.time.format.DateTimeFormat;
@@ -195,8 +196,13 @@ public class OrderFulfillmentFragment extends BaseFragment implements OrderCostV
   }
 
   @Override
-  public void setOrderCostText(int textId, int currentCost) {
-    totalCostText.setText(getString(textId, currentCost));
+  public void setOrderCostText(int currentCost) {
+    if (!getResources().getBoolean(R.bool.show_cents)) {
+      currentCost = Math.round(currentCost / 100f);
+    }
+    totalCostText.setText(
+        new DecimalFormat(getString(R.string.currency_format)).format(currentCost)
+    );
   }
 
   @Override

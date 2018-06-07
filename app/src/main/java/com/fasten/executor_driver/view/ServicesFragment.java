@@ -22,6 +22,7 @@ import com.fasten.executor_driver.presentation.services.ServicesSliderViewAction
 import com.fasten.executor_driver.presentation.services.ServicesSliderViewModel;
 import com.fasten.executor_driver.presentation.services.ServicesViewActions;
 import com.fasten.executor_driver.presentation.services.ServicesViewModel;
+import java.text.DecimalFormat;
 import java.util.List;
 import javax.inject.Inject;
 
@@ -173,11 +174,17 @@ public class ServicesFragment extends BaseFragment implements ServicesViewAction
 
   @Override
   public void setMinPrice(int minPrice) {
-    minPriceText.setText(getString(R.string.money_amount, minPrice));
+    if (!getResources().getBoolean(R.bool.show_cents)) {
+      minPrice = Math.round(minPrice / 100f);
+    }
+    minPriceText.setText(new DecimalFormat(getString(R.string.currency_format)).format(minPrice));
   }
 
   @Override
   public void setMaxPrice(int maxPrice) {
-    maxPriceText.setText(getString(R.string.money_amount, maxPrice));
+    if (!getResources().getBoolean(R.bool.show_cents)) {
+      maxPrice = Math.round(maxPrice / 100f);
+    }
+    maxPriceText.setText(new DecimalFormat(getString(R.string.currency_format)).format(maxPrice));
   }
 }

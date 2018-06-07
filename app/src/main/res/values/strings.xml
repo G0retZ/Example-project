@@ -11,8 +11,6 @@
   <string name="enter">Войти</string>
   <string name="code">Код</string>
   <string name="sms_code_message">Мы отправили СМС с кодом на\n%1$s</string>
-  <string name="balance_amount">%1$d ₽</string>
-  <string name="money_amount">%1$d ₽</string>
   <string name="invalid_code">Введен неверный код</string>
   <string name="get_code_from_sms">Получить код с помощью СМС</string>
   <string name="repeat_code_from_sms_delayed">Отправить повтороно %1$d сек</string>
@@ -110,4 +108,5 @@
   <string name="cancel_reason">Причина отмены</string>
   <string name="do_not_cancel">Не отменять</string>
   <string name="calling_operator">Дистпечер скоро свяжется.\nБудьте готовы взять трубку!</string>
+  <string name="currency_format">###,###,### ₽</string>
 </resources>

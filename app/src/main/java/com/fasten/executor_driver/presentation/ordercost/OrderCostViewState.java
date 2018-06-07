@@ -1,7 +1,6 @@
 package com.fasten.executor_driver.presentation.ordercost;
 
 import android.support.annotation.NonNull;
-import com.fasten.executor_driver.R;
 import com.fasten.executor_driver.presentation.ViewState;
 
 /**
@@ -17,7 +16,7 @@ class OrderCostViewState implements ViewState<OrderCostViewActions> {
 
   @Override
   public void apply(@NonNull OrderCostViewActions stateActions) {
-    stateActions.setOrderCostText(R.string.money_amount, orderCost);
+    stateActions.setOrderCostText(orderCost);
   }
 
   @Override
