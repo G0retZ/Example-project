@@ -53,7 +53,7 @@ public class MainApplication extends Application {
 
   @Inject
   public void setCancelOrderReasonsViewModel(
-      @Nullable CancelOrderReasonsViewModel cancelOrderReasonsViewModel) {
+      @NonNull CancelOrderReasonsViewModel cancelOrderReasonsViewModel) {
     this.cancelOrderReasonsViewModel = cancelOrderReasonsViewModel;
   }
 

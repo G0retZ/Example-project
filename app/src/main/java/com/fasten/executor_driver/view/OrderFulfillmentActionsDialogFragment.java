@@ -1,6 +1,5 @@
 package com.fasten.executor_driver.view;
 
-import android.content.Context;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
@@ -14,25 +13,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import com.fasten.executor_driver.R;
-import com.fasten.executor_driver.application.BaseActivity;
 import com.fasten.executor_driver.presentation.oderfulfillmentmenu.OrderFulfillmentMenuNavigate;
 
 /**
  * Отображает меню действий во время выполнения заказа.
  */
 
-public class OrderFulfillmentActionsDialogFragment extends DialogFragment {
-
-  @Nullable
-  private BaseActivity baseActivity;
-
-  @Override
-  public void onAttach(Context context) {
-    super.onAttach(context);
-    if (context instanceof BaseActivity) {
-      baseActivity = (BaseActivity) context;
-    }
-  }
+public class OrderFulfillmentActionsDialogFragment extends BaseDialogFragment {
 
   @Override
   public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -85,10 +72,9 @@ public class OrderFulfillmentActionsDialogFragment extends DialogFragment {
     );
   }
 
-  private void navigate(@NonNull String destination) {
+  @Override
+  protected void navigate(@NonNull String destination) {
     dismiss();
-    if (baseActivity != null) {
-      baseActivity.navigate(destination);
-    }
+    super.navigate(destination);
   }
 }
