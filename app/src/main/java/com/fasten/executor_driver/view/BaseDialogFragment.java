@@ -56,7 +56,7 @@ public class BaseDialogFragment extends DialogFragment implements OnBackPressedI
    *
    * @param appComponent - компонент, который может произвести внедрение
    */
-  protected void onDependencyInject(AppComponent appComponent) {
+  void onDependencyInject(AppComponent appComponent) {
   }
 
   @Override
@@ -93,7 +93,7 @@ public class BaseDialogFragment extends DialogFragment implements OnBackPressedI
    *
    * @param destination пункт назначения
    */
-  protected void navigate(@NonNull String destination) {
+  void navigate(@NonNull String destination) {
     if (baseActivity != null) {
       baseActivity.navigate(destination);
     }
@@ -104,7 +104,7 @@ public class BaseDialogFragment extends DialogFragment implements OnBackPressedI
    *
    * @param show - показать или нет.
    */
-  protected void showPending(boolean show) {
+  void showPending(boolean show) {
     if (baseActivity != null) {
       baseActivity.blockWithPending(show);
     }

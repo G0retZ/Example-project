@@ -73,7 +73,7 @@ public class OrderFulfillmentActionsDialogFragment extends BaseDialogFragment {
   }
 
   @Override
-  protected void navigate(@NonNull String destination) {
+  void navigate(@NonNull String destination) {
     dismiss();
     super.navigate(destination);
   }

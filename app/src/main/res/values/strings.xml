@@ -107,4 +107,6 @@
   <string name="cancel_order">Отменить заказ</string>
   <string name="call_to_operator">Связь с диспетчером</string>
   <string name="minus_sign">–</string>
+  <string name="cancel_reason">Причина отмены</string>
+  <string name="do_not_cancel">Не отменять</string>
 </resources>

@@ -31,7 +31,7 @@ public class CancelOrderViewModelImpl extends ViewModel implements CancelOrderVi
   private ViewState<CancelOrderViewActions> lastViewState;
 
   @Inject
-  CancelOrderViewModelImpl(@NonNull CancelOrderUseCase cancelOrderUseCase) {
+  public CancelOrderViewModelImpl(@NonNull CancelOrderUseCase cancelOrderUseCase) {
     this.cancelOrderUseCase = cancelOrderUseCase;
     viewStateLiveData = new MutableLiveData<>();
     navigateLiveData = new SingleLiveEvent<>();

@@ -89,6 +89,7 @@ import com.fasten.executor_driver.interactor.vehicle.VehiclesAndOptionsGateway;
 import com.fasten.executor_driver.interactor.vehicle.VehiclesAndOptionsUseCaseImpl;
 import com.fasten.executor_driver.presentation.ViewModelFactory;
 import com.fasten.executor_driver.presentation.calltoclient.CallToClientViewModelImpl;
+import com.fasten.executor_driver.presentation.cancelorder.CancelOrderViewModelImpl;
 import com.fasten.executor_driver.presentation.cancelorderreasons.CancelOrderReasonsViewModelImpl;
 import com.fasten.executor_driver.presentation.choosevehicle.ChooseVehicleViewModelImpl;
 import com.fasten.executor_driver.presentation.code.CodeViewModelImpl;
@@ -115,6 +116,7 @@ import com.fasten.executor_driver.presentation.vehicleoptions.VehicleOptionsView
 import com.fasten.executor_driver.presentation.waitingforclient.WaitingForClientViewModelImpl;
 import com.fasten.executor_driver.utils.TimeUtilsImpl;
 import com.fasten.executor_driver.view.CallToClientFragment;
+import com.fasten.executor_driver.view.CancelOrderDialogFragment;
 import com.fasten.executor_driver.view.ChooseVehicleFragment;
 import com.fasten.executor_driver.view.ClientOrderConfirmationFragment;
 import com.fasten.executor_driver.view.DriverOrderConfirmationFragment;
@@ -783,6 +785,20 @@ public class AppComponentImpl implements AppComponent {
                 )
             )
         ).get(OrderViewModelImpl.class)
+    );
+  }
+
+  @Override
+  public void inject(CancelOrderDialogFragment cancelOrderDialogFragment) {
+    cancelOrderDialogFragment.setOrderRouteViewModel(
+        ViewModelProviders.of(
+            cancelOrderDialogFragment,
+            new ViewModelFactory<>(
+                new CancelOrderViewModelImpl(
+                    cancelOrderUseCase
+                )
+            )
+        ).get(CancelOrderViewModelImpl.class)
     );
   }
 }

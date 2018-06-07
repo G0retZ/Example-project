@@ -8,6 +8,7 @@ import com.fasten.executor_driver.R;
 import com.fasten.executor_driver.presentation.calltoclient.CallToClientNavigate;
 import com.fasten.executor_driver.presentation.movingtoclient.MovingToClientNavigate;
 import com.fasten.executor_driver.view.CallToClientFragment;
+import com.fasten.executor_driver.view.CancelOrderDialogFragment;
 
 public class MovingToClientActivity extends BaseActivity {
 
@@ -15,6 +16,13 @@ public class MovingToClientActivity extends BaseActivity {
   protected void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_moving_to_client);
+    findViewById(R.id.cancelOrder).setOnClickListener(v -> {
+      if (getSupportFragmentManager().findFragmentByTag("cancelOrder") == null) {
+        new CancelOrderDialogFragment().show(getSupportFragmentManager(), "cancelOrder");
+      }
+      v.setEnabled(false);
+      v.postDelayed(() -> v.setEnabled(true), 10_000);
+    });
   }
 
   @Override
