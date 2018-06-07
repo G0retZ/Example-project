@@ -4,6 +4,7 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
+import com.fasten.executor_driver.gateway.DataMappingException;
 import com.fasten.executor_driver.interactor.CancelOrderUseCase;
 import com.fasten.executor_driver.presentation.ViewState;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -18,11 +19,14 @@ public class CancelOrderReasonsViewModelImpl extends ViewModel implements
   @NonNull
   private final CancelOrderUseCase cancelOrderUseCase;
   @NonNull
+  private final MutableLiveData<String> navigateLiveData;
+  @NonNull
   private Disposable disposable = EmptyDisposable.INSTANCE;
 
   @Inject
   public CancelOrderReasonsViewModelImpl(@NonNull CancelOrderUseCase cancelOrderUseCase) {
     this.cancelOrderUseCase = cancelOrderUseCase;
+    navigateLiveData = new MutableLiveData<>();
   }
 
   @NonNull
@@ -34,7 +38,7 @@ public class CancelOrderReasonsViewModelImpl extends ViewModel implements
   @NonNull
   @Override
   public LiveData<String> getNavigationLiveData() {
-    return new MutableLiveData<>();
+    return navigateLiveData;
   }
 
   @Override
@@ -46,7 +50,12 @@ public class CancelOrderReasonsViewModelImpl extends ViewModel implements
         .subscribe(
             cancelOrderReasons -> {
             },
-            Throwable::printStackTrace
+            throwable -> {
+              throwable.printStackTrace();
+              if (throwable instanceof DataMappingException) {
+                navigateLiveData.postValue(CancelOrderReasonsNavigate.SERVER_DATA_ERROR);
+              }
+            }
         );
   }
 
