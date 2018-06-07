@@ -116,6 +116,7 @@ import com.fasten.executor_driver.presentation.vehicleoptions.VehicleOptionsView
 import com.fasten.executor_driver.presentation.waitingforclient.WaitingForClientViewModelImpl;
 import com.fasten.executor_driver.utils.TimeUtilsImpl;
 import com.fasten.executor_driver.view.CallToClientFragment;
+import com.fasten.executor_driver.view.CallToOperatorFragment;
 import com.fasten.executor_driver.view.CancelOrderDialogFragment;
 import com.fasten.executor_driver.view.ChooseVehicleFragment;
 import com.fasten.executor_driver.view.ClientOrderConfirmationFragment;
@@ -800,5 +801,10 @@ public class AppComponentImpl implements AppComponent {
             )
         ).get(CancelOrderViewModelImpl.class)
     );
+  }
+
+  @Override
+  public void inject(CallToOperatorFragment callToOperatorFragment) {
+
   }
 }
