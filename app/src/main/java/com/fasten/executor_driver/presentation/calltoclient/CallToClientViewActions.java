@@ -1,7 +1,7 @@
 package com.fasten.executor_driver.presentation.calltoclient;
 
 /**
- * Действия для смены состояния вида окна заказа.
+ * Действия для смены состояния вида окна звонка клиенту.
  */
 public interface CallToClientViewActions {
 
