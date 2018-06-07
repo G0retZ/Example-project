@@ -241,7 +241,7 @@ public class CancelOrderViewModelTest {
    * Должен вернуть предыдущее состояние вида.
    */
   @Test
-  public void setCancelOrderViewStateToLiveDataAfterPendingForCancelOrder() {
+  public void setCancelOrderViewStateToLiveDataAfterPendingForCancelOrderError() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     when(orderRouteUseCase.cancelOrder(any())).thenReturn(Completable.error(Exception::new));
@@ -268,10 +268,10 @@ public class CancelOrderViewModelTest {
   }
 
   /**
-   * Не должен возвращать состояний после "В процессе".
+   * Должен вернуть предыдущее состояние вида.
    */
   @Test
-  public void setNoViewStateToLiveDataAfterPendingForCancelOrder() {
+  public void setCancelOrderViewStateToLiveDataAfterPendingForCancelOrderSuccess() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     when(orderRouteUseCase.cancelOrder(any())).thenReturn(Completable.complete());
@@ -290,6 +290,9 @@ public class CancelOrderViewModelTest {
         new CancelOrderViewState(
             Arrays.asList(cancelOrderReason, cancelOrderReason1, cancelOrderReason2)
         )
+    ));
+    inOrder.verify(viewStateObserver).onChanged(new CancelOrderViewState(
+        Arrays.asList(cancelOrderReason, cancelOrderReason1, cancelOrderReason2)
     ));
     verifyNoMoreInteractions(viewStateObserver);
   }

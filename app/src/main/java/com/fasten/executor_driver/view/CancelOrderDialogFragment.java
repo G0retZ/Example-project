@@ -26,14 +26,14 @@ import javax.inject.Inject;
 public class CancelOrderDialogFragment extends BaseDialogFragment implements
     CancelOrderViewActions {
 
-  private CancelOrderViewModel orderRouteViewModel;
+  private CancelOrderViewModel cancelOrderViewModel;
   private RecyclerView recyclerView;
   private Context context;
   private boolean pending;
 
   @Inject
-  public void setOrderRouteViewModel(@NonNull CancelOrderViewModel orderRouteViewModel) {
-    this.orderRouteViewModel = orderRouteViewModel;
+  public void setCancelOrderViewModel(@NonNull CancelOrderViewModel cancelOrderViewModel) {
+    this.cancelOrderViewModel = cancelOrderViewModel;
   }
 
   @Override
@@ -63,7 +63,13 @@ public class CancelOrderDialogFragment extends BaseDialogFragment implements
   @Override
   public void onActivityCreated(@Nullable Bundle savedInstanceState) {
     super.onActivityCreated(savedInstanceState);
-    orderRouteViewModel.getViewStateLiveData().observe(this, viewState -> {
+    cancelOrderViewModel.getNavigationLiveData().observe(this, destination -> {
+      dismiss();
+      if (destination != null) {
+        navigate(destination);
+      }
+    });
+    cancelOrderViewModel.getViewStateLiveData().observe(this, viewState -> {
       if (viewState != null) {
         viewState.apply(this);
       }
@@ -92,7 +98,7 @@ public class CancelOrderDialogFragment extends BaseDialogFragment implements
   @Override
   public void setCancelOrderReasons(@NonNull List<CancelOrderReason> cancelOrderReasons) {
     CancelOrderAdapter adapter = new CancelOrderAdapter(cancelOrderReasons,
-        orderRouteViewModel::selectItem);
+        cancelOrderViewModel::selectItem);
     recyclerView.setAdapter(adapter);
   }
 

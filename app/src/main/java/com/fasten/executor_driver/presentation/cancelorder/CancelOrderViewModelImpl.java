@@ -61,7 +61,10 @@ public class CancelOrderViewModelImpl extends ViewModel implements CancelOrderVi
         .subscribeOn(Schedulers.single())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(
-            () -> navigateLiveData.postValue(CancelOrderNavigate.ORDER_CANCELED),
+            () -> {
+              viewStateLiveData.postValue(lastViewState);
+              navigateLiveData.postValue(CancelOrderNavigate.ORDER_CANCELED);
+            },
             throwable -> {
               throwable.printStackTrace();
               viewStateLiveData.postValue(lastViewState);

@@ -11,7 +11,7 @@ import java.lang.annotation.RetentionPolicy;
     CancelOrderNavigate.ORDER_CANCELED
 })
 @Retention(RetentionPolicy.SOURCE)
-@interface CancelOrderNavigate {
+public @interface CancelOrderNavigate {
 
   // Переход к "заказ отменен".
   String ORDER_CANCELED = "CancelOrder.to.OrderCanceled";

@@ -790,7 +790,7 @@ public class AppComponentImpl implements AppComponent {
 
   @Override
   public void inject(CancelOrderDialogFragment cancelOrderDialogFragment) {
-    cancelOrderDialogFragment.setOrderRouteViewModel(
+    cancelOrderDialogFragment.setCancelOrderViewModel(
         ViewModelProviders.of(
             cancelOrderDialogFragment,
             new ViewModelFactory<>(
