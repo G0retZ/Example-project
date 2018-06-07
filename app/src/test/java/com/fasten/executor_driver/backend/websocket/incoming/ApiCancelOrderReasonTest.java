@@ -9,15 +9,16 @@ public class ApiCancelOrderReasonTest {
 
   @Test
   public void testConstructor() {
-    ApiCancelOrderReason cancelOrderReason = new ApiCancelOrderReason(4, "name");
+    ApiCancelOrderReason cancelOrderReason = new ApiCancelOrderReason(4, "name", "unused");
     assertEquals(cancelOrderReason.getId(), 4);
     assertEquals(cancelOrderReason.getDescription(), "name");
   }
 
   @Test
   public void testConstructorWithNull() {
-    ApiCancelOrderReason cancelOrderReason = new ApiCancelOrderReason(0, null);
+    ApiCancelOrderReason cancelOrderReason = new ApiCancelOrderReason(0, null, null);
     assertEquals(cancelOrderReason.getId(), 0);
     assertNull(cancelOrderReason.getDescription());
+    assertNull(cancelOrderReason.getName());
   }
 }

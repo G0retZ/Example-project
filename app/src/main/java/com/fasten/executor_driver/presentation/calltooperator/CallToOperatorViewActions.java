@@ -1,16 +1,16 @@
-package com.fasten.executor_driver.presentation.calltoclient;
+package com.fasten.executor_driver.presentation.calltooperator;
 
 /**
- * Действия для смены состояния вида окна звонка клиенту.
+ * Действия для смены состояния вида окна связи с оператором.
  */
-public interface CallToClientViewActions {
+public interface CallToOperatorViewActions {
 
   /**
    * Показать индикатор процесса.
    *
    * @param pending - показать или нет?
    */
-  void showCallToClientPending(boolean pending);
+  void showCallToOperatorPending(boolean pending);
 
   /**
    * Показать сообщение об ошибке сети.

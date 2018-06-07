@@ -2,6 +2,8 @@ package com.fasten.executor_driver.di;
 
 import com.fasten.executor_driver.application.MainApplication;
 import com.fasten.executor_driver.view.CallToClientFragment;
+import com.fasten.executor_driver.view.CallToOperatorFragment;
+import com.fasten.executor_driver.view.CancelOrderDialogFragment;
 import com.fasten.executor_driver.view.ChooseVehicleFragment;
 import com.fasten.executor_driver.view.ClientOrderConfirmationFragment;
 import com.fasten.executor_driver.view.DriverOrderConfirmationFragment;
@@ -59,4 +61,8 @@ public interface AppComponent {
   void inject(CallToClientFragment callToClientFragment);
 
   void inject(OrderFulfillmentDetailsFragment orderFulfillmentDetailsFragment);
+
+  void inject(CancelOrderDialogFragment cancelOrderDialogFragment);
+
+  void inject(CallToOperatorFragment callToOperatorFragment);
 }

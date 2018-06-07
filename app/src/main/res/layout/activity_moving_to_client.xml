@@ -18,6 +18,7 @@
       android:layout_height="match_parent"
       android:gravity="center_vertical|end">
       <Button
+        android:id="@+id/cancelOrder"
         style="@style/AppTheme.Button.Borderless.Small"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

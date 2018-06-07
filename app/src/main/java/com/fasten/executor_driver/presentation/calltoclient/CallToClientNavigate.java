@@ -5,7 +5,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 /**
- * Направления навигации из окна ввода кода-пароля.
+ * Направления навигации из окна звонка клиенту.
  */
 @StringDef({
     CallToClientNavigate.FINISHED
@@ -13,6 +13,6 @@ import java.lang.annotation.RetentionPolicy;
 @Retention(RetentionPolicy.SOURCE)
 public @interface CallToClientNavigate {
 
-  // Переход к карте для выхода на линию.
+  // Переход к окончанию звонка.
   String FINISHED = "CallToClient.finish";
 }

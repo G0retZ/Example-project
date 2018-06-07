@@ -16,6 +16,7 @@ android {
         buildConfigField 'String', 'CONFIRM_OFFER_DESTINATION', '"/mobile/order"'
         buildConfigField 'String', 'SET_STATUS_DESTINATION', '"/mobile/status"'
         buildConfigField 'String', 'TRIP_DESTINATION', '"/mobile/trip"'
+        buildConfigField 'String', 'CANCEL_ORDER_DESTINATION', '"/mobile/takeOffOrder"'
         buildConfigField 'String', 'STATUS_DESTINATION', '"/queue/%s"'
         buildConfigField 'String', 'ORDER_EXCESS_COST_DESTINATION', '"/mobile/order/ecost"'
         buildConfigField 'String', 'STATIC_MAP_KEY', '"AIzaSyC20FZNHJqrQH5UhypeUy3thpqII33QBPI"'

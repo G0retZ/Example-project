@@ -22,6 +22,8 @@ import com.fasten.executor_driver.entity.PasswordValidator;
 import com.fasten.executor_driver.entity.PhoneNumberValidator;
 import com.fasten.executor_driver.entity.Vehicle;
 import com.fasten.executor_driver.gateway.CallToClientGatewayImpl;
+import com.fasten.executor_driver.gateway.CancelOrderGatewayImpl;
+import com.fasten.executor_driver.gateway.CancelOrderReasonApiMapper;
 import com.fasten.executor_driver.gateway.CurrentVehicleOptionsGatewayImpl;
 import com.fasten.executor_driver.gateway.ErrorMapper;
 import com.fasten.executor_driver.gateway.ExcessiveCostApiMapper;
@@ -56,6 +58,8 @@ import com.fasten.executor_driver.gateway.VehiclesAndOptionsGatewayImpl;
 import com.fasten.executor_driver.gateway.WaitingForClientApiMapper;
 import com.fasten.executor_driver.gateway.WaitingForClientGatewayImpl;
 import com.fasten.executor_driver.interactor.CallToClientUseCaseImpl;
+import com.fasten.executor_driver.interactor.CancelOrderUseCase;
+import com.fasten.executor_driver.interactor.CancelOrderUseCaseImpl;
 import com.fasten.executor_driver.interactor.ExecutorStateNotOnlineUseCaseImpl;
 import com.fasten.executor_driver.interactor.ExecutorStateUseCase;
 import com.fasten.executor_driver.interactor.ExecutorStateUseCaseImpl;
@@ -85,6 +89,9 @@ import com.fasten.executor_driver.interactor.vehicle.VehiclesAndOptionsGateway;
 import com.fasten.executor_driver.interactor.vehicle.VehiclesAndOptionsUseCaseImpl;
 import com.fasten.executor_driver.presentation.ViewModelFactory;
 import com.fasten.executor_driver.presentation.calltoclient.CallToClientViewModelImpl;
+import com.fasten.executor_driver.presentation.calltooperator.CallToOperatorViewModelImpl;
+import com.fasten.executor_driver.presentation.cancelorder.CancelOrderViewModelImpl;
+import com.fasten.executor_driver.presentation.cancelorderreasons.CancelOrderReasonsViewModelImpl;
 import com.fasten.executor_driver.presentation.choosevehicle.ChooseVehicleViewModelImpl;
 import com.fasten.executor_driver.presentation.code.CodeViewModelImpl;
 import com.fasten.executor_driver.presentation.codeHeader.CodeHeaderViewModelImpl;
@@ -110,6 +117,8 @@ import com.fasten.executor_driver.presentation.vehicleoptions.VehicleOptionsView
 import com.fasten.executor_driver.presentation.waitingforclient.WaitingForClientViewModelImpl;
 import com.fasten.executor_driver.utils.TimeUtilsImpl;
 import com.fasten.executor_driver.view.CallToClientFragment;
+import com.fasten.executor_driver.view.CallToOperatorFragment;
+import com.fasten.executor_driver.view.CancelOrderDialogFragment;
 import com.fasten.executor_driver.view.ChooseVehicleFragment;
 import com.fasten.executor_driver.view.ClientOrderConfirmationFragment;
 import com.fasten.executor_driver.view.DriverOrderConfirmationFragment;
@@ -150,6 +159,8 @@ public class AppComponentImpl implements AppComponent {
   @NonNull
   private final ExecutorStateUseCase executorStateUseCase;
   @NonNull
+  private final CancelOrderUseCase cancelOrderUseCase;
+  @NonNull
   private final GeoLocationUseCase geoLocationUseCase;
   @NonNull
   private final MemoryDataSharer<String> loginSharer;
@@ -176,6 +187,13 @@ public class AppComponentImpl implements AppComponent {
     loginSharer = new LoginSharer(appSettingsService);
     vehicleChoiceSharer = new VehicleChoiceSharer();
     lastUsedVehicleGateway = new LastUsedVehicleGatewayImpl(appSettingsService);
+    cancelOrderUseCase = new CancelOrderUseCaseImpl(
+        new CancelOrderGatewayImpl(stompClient, new CancelOrderReasonApiMapper()),
+        new SocketGatewayImpl(
+            stompClient
+        ),
+        loginSharer
+    );
     executorStateUseCase = new ExecutorStateUseCaseImpl(
         new ExecutorStateGatewayImpl(stompClient, new ExecutorStateApiMapper()),
         new SocketGatewayImpl(
@@ -235,6 +253,11 @@ public class AppComponentImpl implements AppComponent {
 
   @Override
   public void inject(MainApplication mainApplication) {
+    mainApplication.setCancelOrderReasonsViewModel(
+        new CancelOrderReasonsViewModelImpl(
+            cancelOrderUseCase
+        )
+    );
     mainApplication.setExecutorStateViewModel(
         new ExecutorStateViewModelImpl(
             executorStateUseCase
@@ -764,6 +787,32 @@ public class AppComponentImpl implements AppComponent {
                 )
             )
         ).get(OrderViewModelImpl.class)
+    );
+  }
+
+  @Override
+  public void inject(CancelOrderDialogFragment cancelOrderDialogFragment) {
+    cancelOrderDialogFragment.setCancelOrderViewModel(
+        ViewModelProviders.of(
+            cancelOrderDialogFragment,
+            new ViewModelFactory<>(
+                new CancelOrderViewModelImpl(
+                    cancelOrderUseCase
+                )
+            )
+        ).get(CancelOrderViewModelImpl.class)
+    );
+  }
+
+  @Override
+  public void inject(CallToOperatorFragment callToOperatorFragment) {
+    callToOperatorFragment.setCallToOperatorViewModel(
+        ViewModelProviders.of(
+            callToOperatorFragment,
+            new ViewModelFactory<>(
+                new CallToOperatorViewModelImpl()
+            )
+        ).get(CallToOperatorViewModelImpl.class)
     );
   }
 }

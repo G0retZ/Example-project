@@ -31,7 +31,7 @@ public class CancelOrderViewModelImpl extends ViewModel implements CancelOrderVi
   private ViewState<CancelOrderViewActions> lastViewState;
 
   @Inject
-  CancelOrderViewModelImpl(@NonNull CancelOrderUseCase cancelOrderUseCase) {
+  public CancelOrderViewModelImpl(@NonNull CancelOrderUseCase cancelOrderUseCase) {
     this.cancelOrderUseCase = cancelOrderUseCase;
     viewStateLiveData = new MutableLiveData<>();
     navigateLiveData = new SingleLiveEvent<>();
@@ -61,7 +61,10 @@ public class CancelOrderViewModelImpl extends ViewModel implements CancelOrderVi
         .subscribeOn(Schedulers.single())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(
-            () -> navigateLiveData.postValue(CancelOrderNavigate.ORDER_CANCELED),
+            () -> {
+              viewStateLiveData.postValue(lastViewState);
+              navigateLiveData.postValue(CancelOrderNavigate.ORDER_CANCELED);
+            },
             throwable -> {
               throwable.printStackTrace();
               viewStateLiveData.postValue(lastViewState);

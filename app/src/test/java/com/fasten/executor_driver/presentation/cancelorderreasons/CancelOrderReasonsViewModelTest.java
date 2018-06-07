@@ -13,6 +13,7 @@ import android.arch.lifecycle.Observer;
 import com.fasten.executor_driver.backend.web.NoNetworkException;
 import com.fasten.executor_driver.entity.CancelOrderReason;
 import com.fasten.executor_driver.entity.ExecutorState;
+import com.fasten.executor_driver.gateway.DataMappingException;
 import com.fasten.executor_driver.interactor.CancelOrderUseCase;
 import com.fasten.executor_driver.presentation.ViewState;
 import io.reactivex.Flowable;
@@ -171,5 +172,22 @@ public class CancelOrderReasonsViewModelTest {
 
     // Результат:
     verifyZeroInteractions(navigationObserver);
+  }
+
+  /**
+   * Должен вернуть ошибку данных сервера.
+   */
+  @Test
+  public void navigateToServerDataError() {
+    // Дано:
+    when(cancelOrderUseCase.getCancelOrderReasons(anyBoolean()))
+        .thenReturn(Flowable.error(DataMappingException::new));
+
+    // Действие:
+    cancelOrderReasonsViewModel.getNavigationLiveData().observeForever(navigationObserver);
+    cancelOrderReasonsViewModel.initializeCancelOrderReasons(true);
+
+    // Результат:
+    verify(navigationObserver, only()).onChanged(CancelOrderReasonsNavigate.SERVER_DATA_ERROR);
   }
 }

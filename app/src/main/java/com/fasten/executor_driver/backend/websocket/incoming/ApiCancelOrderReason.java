@@ -9,6 +9,8 @@ public class ApiCancelOrderReason {
   private int id;
   @SerializedName("description")
   private String description;
+  @SerializedName("name")
+  private String name;
 
   /**
    * Конструктор без параметров желателен для безопасной работы Gson.
@@ -17,9 +19,10 @@ public class ApiCancelOrderReason {
   public ApiCancelOrderReason() {
   }
 
-  ApiCancelOrderReason(int id, @Nullable String description) {
+  ApiCancelOrderReason(int id, @Nullable String description, @Nullable String name) {
     this.id = id;
     this.description = description;
+    this.name = name;
   }
 
   public int getId() {
@@ -28,5 +31,9 @@ public class ApiCancelOrderReason {
 
   public String getDescription() {
     return description;
+  }
+
+  public String getName() {
+    return name;
   }
 }

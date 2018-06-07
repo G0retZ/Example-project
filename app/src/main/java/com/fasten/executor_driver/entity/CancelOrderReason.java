@@ -11,10 +11,13 @@ public class CancelOrderReason {
   private final int id;
   @NonNull
   private final String name;
+  @NonNull
+  private final String unusedName;
 
-  public CancelOrderReason(int id, @NonNull String name) {
+  public CancelOrderReason(int id, @NonNull String name, @NonNull String unusedName) {
     this.id = id;
     this.name = name;
+    this.unusedName = unusedName;
   }
 
   public int getId() {
@@ -24,5 +27,10 @@ public class CancelOrderReason {
   @NonNull
   public String getName() {
     return name;
+  }
+
+  @NonNull
+  public String getUnusedName() {
+    return unusedName;
   }
 }

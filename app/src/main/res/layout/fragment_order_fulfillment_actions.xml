@@ -105,7 +105,7 @@
         android:layout_height="1dp"
         android:background="@color/colorDivider"/>
       <TextView
-        android:id="@+id/callToOperator"
+        android:id="@+id/reportAProblem"
         style="@style/TextAppearance.AppCompat.Subhead"
         android:layout_width="match_parent"
         android:layout_height="56dp"
@@ -113,7 +113,7 @@
         android:paddingEnd="16dp"
         android:background="?android:attr/selectableItemBackground"
         android:gravity="center_vertical"
-        android:text="@string/call_to_operator"/>
+        android:text="@string/report_a_problem"/>
       <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
