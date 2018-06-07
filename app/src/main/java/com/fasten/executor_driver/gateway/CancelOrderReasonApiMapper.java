@@ -43,7 +43,7 @@ public class CancelOrderReasonApiMapper implements Mapper<StompMessage, List<Can
             "Ошибка маппинга: нет причины отказа для ИД = " + apiCancelOrderReason.getId() + " !");
       }
       cancelOrderReasons.add(new CancelOrderReason(apiCancelOrderReason.getId(),
-          apiCancelOrderReason.getDescription()));
+          apiCancelOrderReason.getDescription(), apiCancelOrderReason.getName()));
     }
     return cancelOrderReasons;
   }

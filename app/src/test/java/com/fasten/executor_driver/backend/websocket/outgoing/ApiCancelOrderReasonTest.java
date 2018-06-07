@@ -20,6 +20,7 @@ public class ApiCancelOrderReasonTest {
     // Дано:
     when(cancelOrderReason.getId()).thenReturn(7);
     when(cancelOrderReason.getName()).thenReturn("seven");
+    when(cancelOrderReason.getUnusedName()).thenReturn("unused");
 
     // Действие:
     ApiCancelOrderReason apiCancelOrderReason = new ApiCancelOrderReason(cancelOrderReason);
@@ -27,5 +28,6 @@ public class ApiCancelOrderReasonTest {
     // Результат:
     assertEquals(apiCancelOrderReason.getId(), 7);
     assertEquals(apiCancelOrderReason.getDescription(), "seven");
+    assertEquals(apiCancelOrderReason.getName(), "unused");
   }
 }
