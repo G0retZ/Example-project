@@ -40,7 +40,7 @@ public class CallToOperatorFragment extends BaseFragment implements CallToOperat
   public View onCreateView(@NonNull LayoutInflater inflater,
       @Nullable ViewGroup container,
       @Nullable Bundle savedInstanceState) {
-    return inflater.inflate(R.layout.fragment_call_to_client, container, false);
+    return inflater.inflate(R.layout.fragment_call_to_operator, container, false);
   }
 
   @Override
