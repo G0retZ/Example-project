@@ -10,6 +10,7 @@ public interface CallToOperatorViewActions {
    *
    * @param pending - показать или нет?
    */
+  @SuppressWarnings("unused")
   void showCallToOperatorPending(boolean pending);
 
   /**
@@ -17,5 +18,6 @@ public interface CallToOperatorViewActions {
    *
    * @param show - показать или нет?
    */
+  @SuppressWarnings("unused")
   void showNetworkErrorMessage(boolean show);
 }

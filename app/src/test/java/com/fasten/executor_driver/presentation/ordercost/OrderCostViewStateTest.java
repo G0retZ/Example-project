@@ -5,7 +5,6 @@ import static org.junit.Assert.assertNotEquals;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
 
-import com.fasten.executor_driver.R;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -31,7 +30,7 @@ public class OrderCostViewStateTest {
     viewState.apply(orderCostViewActions);
 
     // Результат:
-    verify(orderCostViewActions, only()).setOrderCostText(R.string.money_amount, 12345);
+    verify(orderCostViewActions, only()).setOrderCostText(12345);
   }
 
   @Test

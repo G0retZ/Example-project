@@ -40,7 +40,7 @@
     android:layout_marginStart="16dp"
     android:layout_marginEnd="16dp"
     android:gravity="center"
-    android:text="@string/balance_amount"
+    android:text="@string/currency_format"
     android:textColor="@android:color/white"
     android:textSize="50sp"
     app:layout_constraintBottom_toTopOf="@+id/minimumBalance"

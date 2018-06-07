@@ -5,7 +5,6 @@ import static org.junit.Assert.assertNotEquals;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
-import com.fasten.executor_driver.R;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -31,7 +30,7 @@ public class OrderCostViewStateIdleTest {
     viewState.apply(orderCostViewActions);
 
     // Результат:
-    verify(orderCostViewActions).setOrderCostText(R.string.money_amount, 12345);
+    verify(orderCostViewActions).setOrderCostText(12345);
     verify(orderCostViewActions).showOrderCostNetworkErrorMessage(false);
     verifyNoMoreInteractions(orderCostViewActions);
   }
