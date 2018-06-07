@@ -14,7 +14,7 @@ import java.lang.annotation.RetentionPolicy;
     OrderFulfillmentMenuNavigate.ORDER_INFORMATION,
     OrderFulfillmentMenuNavigate.CALL_TO_CLIENT,
     OrderFulfillmentMenuNavigate.ADD_SERVICE,
-    OrderFulfillmentMenuNavigate.CALL_TO_OPERATOR
+    OrderFulfillmentMenuNavigate.REPORT_A_PROBLEM
 })
 @Retention(RetentionPolicy.SOURCE)
 public @interface OrderFulfillmentMenuNavigate {
@@ -38,5 +38,5 @@ public @interface OrderFulfillmentMenuNavigate {
   String ADD_SERVICE = "OrderFulfillmentMenu.to.AddService";
 
   // Переход к решению отсутствия свободных ТС.
-  String CALL_TO_OPERATOR = "OrderFulfillmentMenu.to.CancelOrder";
+  String REPORT_A_PROBLEM = "OrderFulfillmentMenu.to.CancelOrder";
 }

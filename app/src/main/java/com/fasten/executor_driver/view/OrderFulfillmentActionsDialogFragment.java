@@ -67,8 +67,8 @@ public class OrderFulfillmentActionsDialogFragment extends BaseDialogFragment {
     view.findViewById(R.id.addService).setOnClickListener(
         v -> navigate(OrderFulfillmentMenuNavigate.ADD_SERVICE)
     );
-    view.findViewById(R.id.callToOperator).setOnClickListener(
-        v -> navigate(OrderFulfillmentMenuNavigate.CALL_TO_OPERATOR)
+    view.findViewById(R.id.reportAProblem).setOnClickListener(
+        v -> navigate(OrderFulfillmentMenuNavigate.REPORT_A_PROBLEM)
     );
   }
 

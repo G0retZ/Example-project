@@ -105,7 +105,7 @@
   <string name="order_details">Информация о заказе</string>
   <string name="add_service">Добавить услугу</string>
   <string name="cancel_order">Отменить заказ</string>
-  <string name="call_to_operator">Связь с диспетчером</string>
+  <string name="report_a_problem">Сообщить о проблеме</string>
   <string name="minus_sign">–</string>
   <string name="cancel_reason">Причина отмены</string>
   <string name="do_not_cancel">Не отменять</string>
