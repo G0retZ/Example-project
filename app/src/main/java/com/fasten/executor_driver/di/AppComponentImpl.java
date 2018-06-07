@@ -89,6 +89,7 @@ import com.fasten.executor_driver.interactor.vehicle.VehiclesAndOptionsGateway;
 import com.fasten.executor_driver.interactor.vehicle.VehiclesAndOptionsUseCaseImpl;
 import com.fasten.executor_driver.presentation.ViewModelFactory;
 import com.fasten.executor_driver.presentation.calltoclient.CallToClientViewModelImpl;
+import com.fasten.executor_driver.presentation.calltooperator.CallToOperatorViewModelImpl;
 import com.fasten.executor_driver.presentation.cancelorder.CancelOrderViewModelImpl;
 import com.fasten.executor_driver.presentation.cancelorderreasons.CancelOrderReasonsViewModelImpl;
 import com.fasten.executor_driver.presentation.choosevehicle.ChooseVehicleViewModelImpl;
@@ -805,6 +806,13 @@ public class AppComponentImpl implements AppComponent {
 
   @Override
   public void inject(CallToOperatorFragment callToOperatorFragment) {
-
+    callToOperatorFragment.setCallToOperatorViewModel(
+        ViewModelProviders.of(
+            callToOperatorFragment,
+            new ViewModelFactory<>(
+                new CallToOperatorViewModelImpl()
+            )
+        ).get(CallToOperatorViewModelImpl.class)
+    );
   }
 }

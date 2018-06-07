@@ -14,7 +14,7 @@ import io.reactivex.schedulers.Schedulers;
 import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
 
-class CallToOperatorViewModelImpl extends ViewModel implements CallToOperatorViewModel {
+public class CallToOperatorViewModelImpl extends ViewModel implements CallToOperatorViewModel {
 
   @NonNull
   private final SingleLiveEvent<String> navigateLiveData;
@@ -22,7 +22,7 @@ class CallToOperatorViewModelImpl extends ViewModel implements CallToOperatorVie
   private Disposable disposable = EmptyDisposable.INSTANCE;
 
   @Inject
-  CallToOperatorViewModelImpl() {
+  public CallToOperatorViewModelImpl() {
     navigateLiveData = new SingleLiveEvent<>();
   }
 
