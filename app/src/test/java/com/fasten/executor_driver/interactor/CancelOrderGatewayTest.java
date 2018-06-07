@@ -234,7 +234,8 @@ public class CancelOrderGatewayTest {
 
     // Результат:
     inOrder.verify(stompClient).isConnected();
-    inOrder.verify(stompClient).send("/mobile/trip", "{\"id\":7,\"description\":\"seven\"}");
+    inOrder.verify(stompClient)
+        .send("/mobile/takeOffOrder", "{\"id\":7,\"description\":\"seven\"}");
     verifyNoMoreInteractions(stompClient);
   }
 
@@ -272,7 +273,8 @@ public class CancelOrderGatewayTest {
     // Результат:
     inOrder.verify(stompClient).isConnected();
     inOrder.verify(stompClient).isConnecting();
-    inOrder.verify(stompClient).send("/mobile/trip", "{\"id\":7,\"description\":\"seven\"}");
+    inOrder.verify(stompClient)
+        .send("/mobile/takeOffOrder", "{\"id\":7,\"description\":\"seven\"}");
     verifyNoMoreInteractions(stompClient);
   }
 
