@@ -10,6 +10,7 @@ import android.support.annotation.StringRes;
 import com.fasten.executor_driver.R;
 import com.fasten.executor_driver.di.AppComponent;
 import com.fasten.executor_driver.di.AppComponentImpl;
+import com.fasten.executor_driver.presentation.cancelorderreasons.CancelOrderReasonsNavigate;
 import com.fasten.executor_driver.presentation.cancelorderreasons.CancelOrderReasonsViewModel;
 import com.fasten.executor_driver.presentation.executorstate.ExecutorStateNavigate;
 import com.fasten.executor_driver.presentation.executorstate.ExecutorStateViewActions;
@@ -74,7 +75,8 @@ public class MainApplication extends Application {
     super.onCreate();
     appComponent = new AppComponentImpl(this.getApplicationContext());
     appComponent.inject(this);
-    if (executorStateViewModel == null || geoLocationViewModel == null) {
+    if (cancelOrderReasonsViewModel == null || executorStateViewModel == null
+        || geoLocationViewModel == null) {
       throw new RuntimeException("Shit! WTF?!");
     }
     executorStateViewModel.getViewStateLiveData().observeForever(viewState -> {
@@ -82,6 +84,7 @@ public class MainApplication extends Application {
         viewState.apply(executorStateViewActions);
       }
     });
+    cancelOrderReasonsViewModel.getNavigationLiveData().observeForever(this::navigate);
     executorStateViewModel.getNavigationLiveData().observeForever(this::navigate);
     geoLocationViewModel.getNavigationLiveData().observeForever(this::navigate);
     initExecutorStates(true);
@@ -114,6 +117,9 @@ public class MainApplication extends Application {
       return;
     }
     switch (destination) {
+      case CancelOrderReasonsNavigate.SERVER_DATA_ERROR:
+        stopService();
+        break;
       case ExecutorStateNavigate.NO_NETWORK:
         stopService();
         break;
