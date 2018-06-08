@@ -92,6 +92,7 @@ import com.fasten.executor_driver.interactor.vehicle.VehicleOptionsUseCaseImpl;
 import com.fasten.executor_driver.interactor.vehicle.VehiclesAndOptionsGateway;
 import com.fasten.executor_driver.interactor.vehicle.VehiclesAndOptionsUseCaseImpl;
 import com.fasten.executor_driver.presentation.ViewModelFactory;
+import com.fasten.executor_driver.presentation.balance.BalanceViewModelImpl;
 import com.fasten.executor_driver.presentation.calltoclient.CallToClientViewModelImpl;
 import com.fasten.executor_driver.presentation.calltooperator.CallToOperatorViewModelImpl;
 import com.fasten.executor_driver.presentation.cancelorder.CancelOrderViewModelImpl;
@@ -844,6 +845,15 @@ public class AppComponentImpl implements AppComponent {
 
   @Override
   public void inject(BalanceFragment balanceFragment) {
-
+    balanceFragment.setBalanceViewModel(
+        ViewModelProviders.of(
+            balanceFragment,
+            new ViewModelFactory<>(
+                new BalanceViewModelImpl(
+                    executorBalanceUseCase
+                )
+            )
+        ).get(BalanceViewModelImpl.class)
+    );
   }
 }

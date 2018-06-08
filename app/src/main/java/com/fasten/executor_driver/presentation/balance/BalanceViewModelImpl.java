@@ -14,7 +14,7 @@ import io.reactivex.internal.disposables.EmptyDisposable;
 import io.reactivex.schedulers.Schedulers;
 import javax.inject.Inject;
 
-class BalanceViewModelImpl extends ViewModel implements BalanceViewModel {
+public class BalanceViewModelImpl extends ViewModel implements BalanceViewModel {
 
   @NonNull
   private final ExecutorBalanceUseCase executorBalanceUseCase;
@@ -28,7 +28,7 @@ class BalanceViewModelImpl extends ViewModel implements BalanceViewModel {
   private ViewState<BalanceViewActions> lastViewState;
 
   @Inject
-  BalanceViewModelImpl(@NonNull ExecutorBalanceUseCase executorBalanceUseCase) {
+  public BalanceViewModelImpl(@NonNull ExecutorBalanceUseCase executorBalanceUseCase) {
     this.executorBalanceUseCase = executorBalanceUseCase;
     viewStateLiveData = new MutableLiveData<>();
     navigateLiveData = new SingleLiveEvent<>();
