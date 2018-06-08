@@ -1,0 +1,20 @@
+package com.fasten.executor_driver.interactor;
+
+import android.support.annotation.NonNull;
+import com.fasten.executor_driver.entity.ExecutorBalance;
+import io.reactivex.Flowable;
+
+/**
+ * Гейтвей баланса исполнителя.
+ */
+interface ExecutorBalanceGateway {
+
+  /**
+   * Получать баланс исполнителя.
+   *
+   * @param channelId - ID "канала", откуда брать баланс.
+   * @return {@link Flowable<ExecutorBalanceGateway>} результат запроса.
+   */
+  @NonNull
+  Flowable<ExecutorBalance> loadExecutorBalance(@NonNull String channelId);
+}

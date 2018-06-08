@@ -4,12 +4,13 @@ package com.fasten.executor_driver.entity;
  * Бизнес сущность баланса исполнителя. Immutable.
  * Создается через конструктор с не нулевыми полями.
  */
-class ExecutorBalance {
+public class ExecutorBalance {
 
   private final int mainAccount;
   private final int bonusAccount;
   private final int cashlessAccount;
 
+  @SuppressWarnings("SameParameterValue")
   ExecutorBalance(int mainAccount, int bonusAccount, int cashlessAccount) {
     this.mainAccount = mainAccount;
     this.bonusAccount = bonusAccount;
