@@ -7,7 +7,7 @@ import io.reactivex.Flowable;
 /**
  * Гейтвей баланса исполнителя.
  */
-interface ExecutorBalanceGateway {
+public interface ExecutorBalanceGateway {
 
   /**
    * Получать баланс исполнителя.

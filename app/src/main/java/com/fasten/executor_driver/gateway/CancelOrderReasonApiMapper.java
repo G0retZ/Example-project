@@ -12,7 +12,7 @@ import javax.inject.Inject;
 import ua.naiksoftware.stomp.client.StompMessage;
 
 /**
- * Преобразуем статус из ответа сервера в бизнес объект статуса исполнителя.
+ * Преобразуем причины отмены заказа из ответа сервера в бизнес объект статуса исполнителя.
  */
 public class CancelOrderReasonApiMapper implements Mapper<StompMessage, List<CancelOrderReason>> {
 
