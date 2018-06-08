@@ -56,7 +56,8 @@ class BalanceViewModelImpl extends ViewModel implements BalanceViewModel {
         .subscribeOn(Schedulers.single())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(
-            executorBalance -> viewStateLiveData.postValue(new BalanceViewState(executorBalance)),
+            executorBalance -> viewStateLiveData
+                .postValue(lastViewState = new BalanceViewState(executorBalance)),
             throwable -> {
               throwable.printStackTrace();
               viewStateLiveData.postValue(new BalanceViewStateError(lastViewState));
