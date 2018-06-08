@@ -5,7 +5,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 /**
- * Направления навигации при изменении статуса исполнителя.
+ * Направления навигации при получении списка причин отказа от заказа.
  */
 @StringDef({
     CancelOrderReasonsNavigate.SERVER_DATA_ERROR

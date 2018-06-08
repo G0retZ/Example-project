@@ -58,10 +58,10 @@ public class CancelOrderReasonsViewModelTest {
   /* Тетсируем работу с юзкейсом. */
 
   /**
-   * Должен попросить у юзкейса статусы исполнителя без сброса кеша.
+   * Должен попросить у юзкейса причины отказа от заказа без сброса кеша.
    */
   @Test
-  public void askDataReceiverToSubscribeToLocationUpdates() {
+  public void askDataReceiverToSubscribeToCancelOrderReasonsUpdates() {
     // Действие:
     cancelOrderReasonsViewModel.initializeCancelOrderReasons(false);
 
@@ -70,10 +70,10 @@ public class CancelOrderReasonsViewModelTest {
   }
 
   /**
-   * Должен попросить у юзкейса статусы исполнителя со сбросом кеша.
+   * Должен попросить у юзкейса причины отказа от заказа со сбросом кеша.
    */
   @Test
-  public void askDataReceiverToSubscribeToLocationUpdatesWithCacheReset() {
+  public void askDataReceiverToSubscribeToCancelOrderReasonsUpdatesWithCacheReset() {
     // Действие:
     cancelOrderReasonsViewModel.initializeCancelOrderReasons(true);
 
@@ -82,11 +82,11 @@ public class CancelOrderReasonsViewModelTest {
   }
 
   /**
-   * Не должен просить у юзкейса загрузить статусы исполнителя, без сброса кеша, даже если уже
+   * Должен просить у юзкейса загрузить причины отказа от заказа , без сброса кеша, даже если уже
    * подписан.
    */
   @Test
-  public void doNotTouchUseCaseBeforeAfterFirstRequestComplete() {
+  public void doNotTouchUseCaseBeforeFirstRequestComplete() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(cancelOrderUseCase);
 

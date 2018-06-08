@@ -38,7 +38,6 @@ public class CancelOrderViewModelImpl extends ViewModel implements CancelOrderVi
     loadCancelOrderReasons();
   }
 
-
   @NonNull
   @Override
   public LiveData<ViewState<CancelOrderViewActions>> getViewStateLiveData() {
