@@ -160,7 +160,7 @@ public class CancelOrderUseCaseTest {
   }
 
   /**
-   * Должен отписаться от предыдущих запросов статусов исполнителя.
+   * Должен отписаться от предыдущих запросов списка причин для отказа.
    *
    * @throws Exception error
    */
@@ -182,10 +182,10 @@ public class CancelOrderUseCaseTest {
   }
 
   /**
-   * Не должен запрпрашивать у гейтвея статус исполнителя.
+   * Не должен запрпрашивать у гейтвея список причин для отказа.
    */
   @Test
-  public void doNotAskGatewayForStatusIfSocketError() {
+  public void doNotAskGatewayForCancelReasonsIfSocketError() {
     // Дано:
     when(socketGateway.openSocket()).thenReturn(Completable.error(NoNetworkException::new));
 
@@ -197,10 +197,10 @@ public class CancelOrderUseCaseTest {
   }
 
   /**
-   * Не должен запрпрашивать у гейтвея статус исполнителя.
+   * Не должен запрпрашивать у гейтвея список причин для отказа.
    */
   @Test
-  public void doNotAskGatewayForStatus() {
+  public void doNotAskGatewayForCancelReasons() {
     // Дано:
     when(socketGateway.openSocket()).thenReturn(Completable.complete());
     when(loginReceiver.get()).thenReturn(Observable.error(NoNetworkException::new));
