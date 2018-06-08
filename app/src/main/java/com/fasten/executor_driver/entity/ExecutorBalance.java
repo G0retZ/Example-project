@@ -11,7 +11,7 @@ public class ExecutorBalance {
   private final int cashlessAccount;
 
   @SuppressWarnings("SameParameterValue")
-  ExecutorBalance(int mainAccount, int bonusAccount, int cashlessAccount) {
+  public ExecutorBalance(int mainAccount, int bonusAccount, int cashlessAccount) {
     this.mainAccount = mainAccount;
     this.bonusAccount = bonusAccount;
     this.cashlessAccount = cashlessAccount;
