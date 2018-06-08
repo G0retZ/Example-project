@@ -39,7 +39,7 @@ public class ExecutorBalanceGatewayTest {
   @Mock
   private StompClient stompClient;
   @Mock
-  private Mapper<StompMessage, ExecutorBalance> mapper;
+  private Mapper<String, ExecutorBalance> mapper;
   @Mock
   private ExecutorBalance executorBalance;
 
@@ -178,7 +178,7 @@ public class ExecutorBalanceGatewayTest {
     executorBalanceGateway.loadExecutorBalance("1234567890").test();
 
     // Результат:
-    verify(mapper, only()).map(any());
+    verify(mapper, only()).map("\n");
   }
 
   /**
@@ -205,7 +205,7 @@ public class ExecutorBalanceGatewayTest {
     executorBalanceGateway.loadExecutorBalance("1234567890").test();
 
     // Результат:
-    verify(mapper, only()).map(any());
+    verify(mapper, only()).map("\n");
   }
 
   /* Проверяем правильность потоков (добавить) */
