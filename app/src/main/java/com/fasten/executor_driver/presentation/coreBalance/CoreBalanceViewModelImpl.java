@@ -24,7 +24,7 @@ public class CoreBalanceViewModelImpl extends ViewModel implements CoreBalanceVi
   private Disposable disposable = EmptyDisposable.INSTANCE;
 
   @Inject
-  CoreBalanceViewModelImpl(@NonNull ExecutorBalanceUseCase executorBalanceUseCase) {
+  public CoreBalanceViewModelImpl(@NonNull ExecutorBalanceUseCase executorBalanceUseCase) {
     this.executorBalanceUseCase = executorBalanceUseCase;
     navigateLiveData = new MutableLiveData<>();
   }

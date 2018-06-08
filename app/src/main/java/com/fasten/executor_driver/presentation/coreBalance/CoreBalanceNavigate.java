@@ -11,8 +11,8 @@ import java.lang.annotation.RetentionPolicy;
     CoreBalanceNavigate.SERVER_DATA_ERROR
 })
 @Retention(RetentionPolicy.SOURCE)
-@interface CoreBalanceNavigate {
+public @interface CoreBalanceNavigate {
 
   // Переход к проблеме совместимости формата данных с сервером.
-  String SERVER_DATA_ERROR = "to.ServerDataError";
+  String SERVER_DATA_ERROR = "to.ServerBalanceDataError";
 }

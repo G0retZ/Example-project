@@ -27,6 +27,8 @@ import com.fasten.executor_driver.gateway.CancelOrderReasonApiMapper;
 import com.fasten.executor_driver.gateway.CurrentVehicleOptionsGatewayImpl;
 import com.fasten.executor_driver.gateway.ErrorMapper;
 import com.fasten.executor_driver.gateway.ExcessiveCostApiMapper;
+import com.fasten.executor_driver.gateway.ExecutorBalanceApiMapper;
+import com.fasten.executor_driver.gateway.ExecutorBalanceGatewayImpl;
 import com.fasten.executor_driver.gateway.ExecutorStateApiMapper;
 import com.fasten.executor_driver.gateway.ExecutorStateGatewayImpl;
 import com.fasten.executor_driver.gateway.ExecutorStateSwitchGatewayImpl;
@@ -60,6 +62,8 @@ import com.fasten.executor_driver.gateway.WaitingForClientGatewayImpl;
 import com.fasten.executor_driver.interactor.CallToClientUseCaseImpl;
 import com.fasten.executor_driver.interactor.CancelOrderUseCase;
 import com.fasten.executor_driver.interactor.CancelOrderUseCaseImpl;
+import com.fasten.executor_driver.interactor.ExecutorBalanceUseCase;
+import com.fasten.executor_driver.interactor.ExecutorBalanceUseCaseImpl;
 import com.fasten.executor_driver.interactor.ExecutorStateNotOnlineUseCaseImpl;
 import com.fasten.executor_driver.interactor.ExecutorStateUseCase;
 import com.fasten.executor_driver.interactor.ExecutorStateUseCaseImpl;
@@ -95,6 +99,7 @@ import com.fasten.executor_driver.presentation.cancelorderreasons.CancelOrderRea
 import com.fasten.executor_driver.presentation.choosevehicle.ChooseVehicleViewModelImpl;
 import com.fasten.executor_driver.presentation.code.CodeViewModelImpl;
 import com.fasten.executor_driver.presentation.codeHeader.CodeHeaderViewModelImpl;
+import com.fasten.executor_driver.presentation.coreBalance.CoreBalanceViewModelImpl;
 import com.fasten.executor_driver.presentation.executorstate.ExecutorStateViewModelImpl;
 import com.fasten.executor_driver.presentation.geolocation.GeoLocationViewModelImpl;
 import com.fasten.executor_driver.presentation.map.MapViewModelImpl;
@@ -161,6 +166,8 @@ public class AppComponentImpl implements AppComponent {
   @NonNull
   private final CancelOrderUseCase cancelOrderUseCase;
   @NonNull
+  private final ExecutorBalanceUseCase executorBalanceUseCase;
+  @NonNull
   private final GeoLocationUseCase geoLocationUseCase;
   @NonNull
   private final MemoryDataSharer<String> loginSharer;
@@ -188,7 +195,20 @@ public class AppComponentImpl implements AppComponent {
     vehicleChoiceSharer = new VehicleChoiceSharer();
     lastUsedVehicleGateway = new LastUsedVehicleGatewayImpl(appSettingsService);
     cancelOrderUseCase = new CancelOrderUseCaseImpl(
-        new CancelOrderGatewayImpl(stompClient, new CancelOrderReasonApiMapper()),
+        new CancelOrderGatewayImpl(
+            stompClient,
+            new CancelOrderReasonApiMapper()
+        ),
+        new SocketGatewayImpl(
+            stompClient
+        ),
+        loginSharer
+    );
+    executorBalanceUseCase = new ExecutorBalanceUseCaseImpl(
+        new ExecutorBalanceGatewayImpl(
+            stompClient,
+            new ExecutorBalanceApiMapper()
+        ),
         new SocketGatewayImpl(
             stompClient
         ),
@@ -256,6 +276,11 @@ public class AppComponentImpl implements AppComponent {
     mainApplication.setCancelOrderReasonsViewModel(
         new CancelOrderReasonsViewModelImpl(
             cancelOrderUseCase
+        )
+    );
+    mainApplication.setCoreBalanceViewModel(
+        new CoreBalanceViewModelImpl(
+            executorBalanceUseCase
         )
     );
     mainApplication.setExecutorStateViewModel(
