@@ -2,9 +2,9 @@ package com.fasten.executor_driver.backend.websocket.incoming;
 
 import com.google.gson.annotations.SerializedName;
 
-class ApiExecutorBalance {
+public class ApiExecutorBalance {
 
-  @SerializedName("id")
+  @SerializedName("mainAccount")
   private int mainAccount;
   @SerializedName("bonusAccount")
   private int bonusAccount;
