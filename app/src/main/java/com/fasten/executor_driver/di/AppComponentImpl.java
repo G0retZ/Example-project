@@ -121,6 +121,7 @@ import com.fasten.executor_driver.presentation.smsbutton.SmsButtonViewModelImpl;
 import com.fasten.executor_driver.presentation.vehicleoptions.VehicleOptionsViewModelImpl;
 import com.fasten.executor_driver.presentation.waitingforclient.WaitingForClientViewModelImpl;
 import com.fasten.executor_driver.utils.TimeUtilsImpl;
+import com.fasten.executor_driver.view.BalanceFragment;
 import com.fasten.executor_driver.view.CallToClientFragment;
 import com.fasten.executor_driver.view.CallToOperatorFragment;
 import com.fasten.executor_driver.view.CancelOrderDialogFragment;
@@ -839,5 +840,10 @@ public class AppComponentImpl implements AppComponent {
             )
         ).get(CallToOperatorViewModelImpl.class)
     );
+  }
+
+  @Override
+  public void inject(BalanceFragment balanceFragment) {
+
   }
 }

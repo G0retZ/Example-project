@@ -1,25 +1,44 @@
 package com.fasten.executor_driver.view;
 
+import android.app.AlertDialog.Builder;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.fasten.executor_driver.R;
+import com.fasten.executor_driver.di.AppComponent;
 import com.fasten.executor_driver.presentation.balance.BalanceNavigate;
+import com.fasten.executor_driver.presentation.balance.BalanceViewActions;
+import com.fasten.executor_driver.presentation.balance.BalanceViewModel;
 import java.text.DecimalFormat;
+import javax.inject.Inject;
 
 /**
  * Отображает баланс.
  */
 
-public class BalanceFragment extends BaseFragment {
+public class BalanceFragment extends BaseFragment implements BalanceViewActions {
 
-  private LinearLayout errorLayout;
+  private BalanceViewModel balanceViewModel;
   private TextView balanceAmount;
+  private TextView bonusAmount;
+  private Context context;
+  private boolean pending;
+
+  @Override
+  public void onAttach(Context context) {
+    super.onAttach(context);
+    this.context = context;
+  }
+
+  @Inject
+  public void setBalanceViewModel(@NonNull BalanceViewModel balanceViewModel) {
+    this.balanceViewModel = balanceViewModel;
+  }
 
   @Nullable
   @Override
@@ -29,15 +48,75 @@ public class BalanceFragment extends BaseFragment {
     View view = inflater.inflate(R.layout.fragment_balance, container, false);
     view.findViewById(R.id.goPaymentOptions)
         .setOnClickListener(v -> navigate(BalanceNavigate.PAYMENT_OPTIONS));
-    errorLayout = view.findViewById(R.id.balanceError);
     balanceAmount = view.findViewById(R.id.balanceAmount);
-    errorLayout.setVisibility(View.GONE);
-    balanceAmount.setText(new DecimalFormat(getString(R.string.currency_format)).format(5000));
+    bonusAmount = view.findViewById(R.id.bonusAmount);
     return view;
   }
 
-  public void showError() {
-    errorLayout.setVisibility(View.VISIBLE);
-    balanceAmount.setText(new DecimalFormat(getString(R.string.currency_format)).format(400));
+  @Override
+  protected void onDependencyInject(AppComponent appComponent) {
+    // Required by Dagger2 for field injection
+    appComponent.inject(this);
+  }
+
+  @Override
+  public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+    super.onActivityCreated(savedInstanceState);
+    balanceViewModel.getNavigationLiveData().observe(this, destination -> {
+      if (destination != null) {
+        navigate(destination);
+      }
+    });
+    balanceViewModel.getViewStateLiveData().observe(this, viewState -> {
+      if (viewState != null) {
+        viewState.apply(this);
+      }
+    });
+  }
+
+  @Override
+  public void onDetach() {
+    super.onDetach();
+    context = null;
+  }
+
+  @Override
+  public void showMainAccountAmount(int amount) {
+    if (!getResources().getBoolean(R.bool.show_cents)) {
+      amount = Math.round(amount / 100f);
+    }
+    balanceAmount.setText(
+        new DecimalFormat(getString(R.string.currency_format)).format(amount)
+    );
+  }
+
+  @Override
+  public void showBonusAccountAmount(int amount) {
+    if (!getResources().getBoolean(R.bool.show_cents)) {
+      amount = Math.round(amount / 100f);
+    }
+    bonusAmount.setText(
+        new DecimalFormat(getString(R.string.currency_format)).format(amount)
+    );
+  }
+
+  @Override
+  public void showBalancePending(boolean pending) {
+    if (this.pending != pending) {
+      showPending(pending);
+    }
+    this.pending = pending;
+  }
+
+  @Override
+  public void showBalanceErrorMessage(boolean show) {
+    if (show) {
+      new Builder(context)
+          .setTitle(R.string.error)
+          .setMessage(R.string.no_network_connection)
+          .setPositiveButton(getString(android.R.string.ok), null)
+          .create()
+          .show();
+    }
   }
 }
