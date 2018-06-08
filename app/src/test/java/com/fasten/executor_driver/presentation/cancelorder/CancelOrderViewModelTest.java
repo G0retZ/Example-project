@@ -39,9 +39,9 @@ public class CancelOrderViewModelTest {
 
   @Rule
   public TestRule rule = new InstantTaskExecutorRule();
-  private CancelOrderViewModel orderRouteViewModel;
+  private CancelOrderViewModel cancelOrderViewModel;
   @Mock
-  private CancelOrderUseCase orderRouteUseCase;
+  private CancelOrderUseCase cancelOrderUseCase;
   @Mock
   private CancelOrderReason cancelOrderReason;
   @Mock
@@ -61,10 +61,10 @@ public class CancelOrderViewModelTest {
     publishSubject = PublishSubject.create();
     RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
     RxAndroidPlugins.setInitMainThreadSchedulerHandler(scheduler -> Schedulers.trampoline());
-    when(orderRouteUseCase.getCancelOrderReasons(anyBoolean()))
+    when(cancelOrderUseCase.getCancelOrderReasons(anyBoolean()))
         .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
-    when(orderRouteUseCase.cancelOrder(any())).thenReturn(Completable.never());
-    orderRouteViewModel = new CancelOrderViewModelImpl(orderRouteUseCase);
+    when(cancelOrderUseCase.cancelOrder(any())).thenReturn(Completable.never());
+    cancelOrderViewModel = new CancelOrderViewModelImpl(cancelOrderUseCase);
   }
 
   /* Тетсируем работу с юзкейсом заказа. */
@@ -75,7 +75,7 @@ public class CancelOrderViewModelTest {
   @Test
   public void askUseCaseForCancelOrderReasonsInitially() {
     // Результат:
-    verify(orderRouteUseCase, only()).getCancelOrderReasons(false);
+    verify(cancelOrderUseCase, only()).getCancelOrderReasons(false);
   }
 
   /**
@@ -84,13 +84,13 @@ public class CancelOrderViewModelTest {
   @Test
   public void doNotTouchUseCaseOnSubscriptions() {
     // Действие:
-    orderRouteViewModel.getViewStateLiveData();
-    orderRouteViewModel.getNavigationLiveData();
-    orderRouteViewModel.getViewStateLiveData();
-    orderRouteViewModel.getNavigationLiveData();
+    cancelOrderViewModel.getViewStateLiveData();
+    cancelOrderViewModel.getNavigationLiveData();
+    cancelOrderViewModel.getViewStateLiveData();
+    cancelOrderViewModel.getNavigationLiveData();
 
     // Результат:
-    verify(orderRouteUseCase, only()).getCancelOrderReasons(false);
+    verify(cancelOrderUseCase, only()).getCancelOrderReasons(false);
   }
 
   /**
@@ -99,12 +99,12 @@ public class CancelOrderViewModelTest {
   @Test
   public void askUseCaseToCancelOrder() {
     // Действие:
-    orderRouteViewModel.selectItem(cancelOrderReason1);
+    cancelOrderViewModel.selectItem(cancelOrderReason1);
 
     // Результат:
-    verify(orderRouteUseCase).getCancelOrderReasons(false);
-    verify(orderRouteUseCase).cancelOrder(cancelOrderReason1);
-    verifyNoMoreInteractions(orderRouteUseCase);
+    verify(cancelOrderUseCase).getCancelOrderReasons(false);
+    verify(cancelOrderUseCase).cancelOrder(cancelOrderReason1);
+    verifyNoMoreInteractions(cancelOrderUseCase);
   }
 
   /**
@@ -113,14 +113,14 @@ public class CancelOrderViewModelTest {
   @Test
   public void DoNotTouchUseCaseDuringCancelOrder() {
     // Дано:
-    orderRouteViewModel.selectItem(cancelOrderReason);
-    orderRouteViewModel.selectItem(cancelOrderReason1);
-    orderRouteViewModel.selectItem(cancelOrderReason2);
+    cancelOrderViewModel.selectItem(cancelOrderReason);
+    cancelOrderViewModel.selectItem(cancelOrderReason1);
+    cancelOrderViewModel.selectItem(cancelOrderReason2);
 
     // Результат:
-    verify(orderRouteUseCase).getCancelOrderReasons(false);
-    verify(orderRouteUseCase).cancelOrder(cancelOrderReason);
-    verifyNoMoreInteractions(orderRouteUseCase);
+    verify(cancelOrderUseCase).getCancelOrderReasons(false);
+    verify(cancelOrderUseCase).cancelOrder(cancelOrderReason);
+    verifyNoMoreInteractions(cancelOrderUseCase);
   }
 
   /* Тетсируем переключение состояний от сервера. */
@@ -134,7 +134,7 @@ public class CancelOrderViewModelTest {
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
 
     // Действие:
-    orderRouteViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    cancelOrderViewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(new CancelOrderViewStatePending(null));
@@ -148,7 +148,7 @@ public class CancelOrderViewModelTest {
   public void setNoNetworkErrorViewStateToLiveData() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    orderRouteViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    cancelOrderViewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
     publishSubject.onError(new NoNetworkException());
@@ -166,7 +166,7 @@ public class CancelOrderViewModelTest {
   public void setNoNetworkErrorViewStateToLiveDataForMappingError() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    orderRouteViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    cancelOrderViewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
     publishSubject.onError(new DataMappingException());
@@ -184,7 +184,7 @@ public class CancelOrderViewModelTest {
   public void setCancelOrderViewStateToLiveData() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    orderRouteViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    cancelOrderViewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
     publishSubject.onNext(Collections.singletonList(cancelOrderReason));
@@ -218,11 +218,11 @@ public class CancelOrderViewModelTest {
   public void setPendingViewStateStateToLiveDataForCancelOrder() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    orderRouteViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    cancelOrderViewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
     publishSubject.onNext(Arrays.asList(cancelOrderReason, cancelOrderReason1, cancelOrderReason2));
-    orderRouteViewModel.selectItem(cancelOrderReason1);
+    cancelOrderViewModel.selectItem(cancelOrderReason1);
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(new CancelOrderViewStatePending(null));
@@ -244,12 +244,12 @@ public class CancelOrderViewModelTest {
   public void setCancelOrderViewStateToLiveDataAfterPendingForCancelOrderError() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    when(orderRouteUseCase.cancelOrder(any())).thenReturn(Completable.error(Exception::new));
-    orderRouteViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    when(cancelOrderUseCase.cancelOrder(any())).thenReturn(Completable.error(Exception::new));
+    cancelOrderViewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
     publishSubject.onNext(Arrays.asList(cancelOrderReason, cancelOrderReason1, cancelOrderReason2));
-    orderRouteViewModel.selectItem(cancelOrderReason1);
+    cancelOrderViewModel.selectItem(cancelOrderReason1);
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(new CancelOrderViewStatePending(null));
@@ -274,12 +274,12 @@ public class CancelOrderViewModelTest {
   public void setCancelOrderViewStateToLiveDataAfterPendingForCancelOrderSuccess() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    when(orderRouteUseCase.cancelOrder(any())).thenReturn(Completable.complete());
-    orderRouteViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    when(cancelOrderUseCase.cancelOrder(any())).thenReturn(Completable.complete());
+    cancelOrderViewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
     publishSubject.onNext(Arrays.asList(cancelOrderReason, cancelOrderReason1, cancelOrderReason2));
-    orderRouteViewModel.selectItem(cancelOrderReason1);
+    cancelOrderViewModel.selectItem(cancelOrderReason1);
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(new CancelOrderViewStatePending(null));
@@ -305,7 +305,7 @@ public class CancelOrderViewModelTest {
   @Test
   public void setNothingToLiveDataForNewReasons() {
     // Дано:
-    orderRouteViewModel.getNavigationLiveData().observeForever(navigateObserver);
+    cancelOrderViewModel.getNavigationLiveData().observeForever(navigateObserver);
 
     // Действие:
     // Действие:
@@ -324,12 +324,12 @@ public class CancelOrderViewModelTest {
   @Test
   public void setNothingToLiveData() {
     // Дано:
-    when(orderRouteUseCase.cancelOrder(any()))
+    when(cancelOrderUseCase.cancelOrder(any()))
         .thenReturn(Completable.error(new IndexOutOfBoundsException()));
-    orderRouteViewModel.getNavigationLiveData().observeForever(navigateObserver);
+    cancelOrderViewModel.getNavigationLiveData().observeForever(navigateObserver);
 
     // Действие:
-    orderRouteViewModel.selectItem(cancelOrderReason);
+    cancelOrderViewModel.selectItem(cancelOrderReason);
 
     // Результат:
     verifyZeroInteractions(navigateObserver);
@@ -341,11 +341,11 @@ public class CancelOrderViewModelTest {
   @Test
   public void setNavigateToOrderCanceledToLiveData() {
     // Дано:
-    when(orderRouteUseCase.cancelOrder(any())).thenReturn(Completable.complete());
-    orderRouteViewModel.getNavigationLiveData().observeForever(navigateObserver);
+    when(cancelOrderUseCase.cancelOrder(any())).thenReturn(Completable.complete());
+    cancelOrderViewModel.getNavigationLiveData().observeForever(navigateObserver);
 
     // Действие:
-    orderRouteViewModel.selectItem(cancelOrderReason);
+    cancelOrderViewModel.selectItem(cancelOrderReason);
 
     // Результат:
     verify(navigateObserver, only()).onChanged(CancelOrderNavigate.ORDER_CANCELED);

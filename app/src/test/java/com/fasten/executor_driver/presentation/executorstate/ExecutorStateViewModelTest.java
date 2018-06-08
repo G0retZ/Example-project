@@ -63,7 +63,7 @@ public class ExecutorStateViewModelTest {
    * Должен попросить у юзкейса статусы исполнителя без сброса кеша.
    */
   @Test
-  public void askDataReceiverToSubscribeToLocationUpdates() {
+  public void askDataReceiverToSubscribeToExecutorStateUpdates() {
     // Действие:
     executorStateViewModel.initializeExecutorState(false);
 
@@ -75,7 +75,7 @@ public class ExecutorStateViewModelTest {
    * Должен попросить у юзкейса статусы исполнителя со сбросом кеша.
    */
   @Test
-  public void askDataReceiverToSubscribeToLocationUpdatesWithCacheReset() {
+  public void askDataReceiverToSubscribeToExecutorStateUpdatesWithCacheReset() {
     // Действие:
     executorStateViewModel.initializeExecutorState(true);
 
@@ -84,11 +84,11 @@ public class ExecutorStateViewModelTest {
   }
 
   /**
-   * Не должен просить у юзкейса загрузить статусы исполнителя, без сброса кеша, даже если уже
+   * Должен просить у юзкейса загрузить статусы исполнителя, без сброса кеша, даже если уже
    * подписан.
    */
   @Test
-  public void doNotTouchUseCaseBeforeAfterFirstRequestComplete() {
+  public void doNotTouchUseCaseBeforeFirstRequestComplete() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(executorStateUseCase);
 

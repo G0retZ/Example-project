@@ -8,7 +8,7 @@ import io.reactivex.Flowable;
 /**
  * Юзкейс баланса исполнителя.
  */
-interface ExecutorBalanceUseCase {
+public interface ExecutorBalanceUseCase {
 
   /**
    * Запрашивает баланс исполнителя, выдает последний закешированный результат, если не сброшен.
