@@ -63,10 +63,10 @@ public class CancelOrderGatewayTest {
   /* Проверяем работу с клиентом STOMP */
 
   /**
-   * Должен запросить у клиента STOMP статусы, если он соединен и не соединяется.
+   * Должен запросить у клиента STOMP причины для отказа, если он соединен и не соединяется.
    */
   @Test
-  public void askStompClientForStatus() {
+  public void askStompClientForCancelReason() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(stompClient);
     when(stompClient.isConnected()).thenReturn(true);
@@ -84,7 +84,7 @@ public class CancelOrderGatewayTest {
    * Не должен просить у клиента STOMP соединение, если он не соединен и не соединяется.
    */
   @Test
-  public void doNotAskStompClientToConnectOrForStatus() {
+  public void doNotAskStompClientToConnectOrForCancelReason() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(stompClient);
 
@@ -98,10 +98,10 @@ public class CancelOrderGatewayTest {
   }
 
   /**
-   * Должен запросить у клиента STOMP статусы, если он не соединен и соединяется.
+   * Должен запросить у клиента STOMP причины для отказа, если он не соединен и соединяется.
    */
   @Test
-  public void askStompClientForStatusIfConnecting() {
+  public void askStompClientForCancelReasonIfConnecting() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(stompClient);
     when(stompClient.isConnecting()).thenReturn(true);
@@ -170,7 +170,7 @@ public class CancelOrderGatewayTest {
    * @throws Exception error
    */
   @Test
-  public void askForMappingForStatusHeaderIfConnected() throws Exception {
+  public void askForMappingForCancelReasonHeaderIfConnected() throws Exception {
     // Дано:
     when(stompClient.isConnected()).thenReturn(true);
     when(stompClient.topic(anyString())).thenReturn(Observable.just(
@@ -197,7 +197,7 @@ public class CancelOrderGatewayTest {
    * @throws Exception error
    */
   @Test
-  public void askForMappingForStatusHeaderIfConnectingAfterConnected() throws Exception {
+  public void askForMappingForCancelReasonHeaderIfConnectingAfterConnected() throws Exception {
     // Дано:
     when(stompClient.isConnecting()).thenReturn(true);
     when(stompClient.topic(anyString())).thenReturn(Observable.just(
@@ -280,7 +280,7 @@ public class CancelOrderGatewayTest {
 
   /* Проверяем правильность потоков (добавить) */
 
-  /* Проверяем результаты обработки сообщений от сервера по статусам */
+  /* Проверяем результаты обработки сообщений от сервера по причинам для отказа */
 
   /**
    * Должен игнорировать сообщение без нужных заголовков, если он соединен и не соединяется.
@@ -307,12 +307,12 @@ public class CancelOrderGatewayTest {
   }
 
   /**
-   * Должен ответить ошибкой для сообщение с заголовком Status, если он соединен и не соединяется.
+   * Должен ответить ошибкой для сообщение с заголовком CancelReason, если он соединен и не соединяется.
    *
    * @throws Exception error
    */
   @Test
-  public void answerDataMappingErrorForStatusHeaderIfConnected() throws Exception {
+  public void answerDataMappingErrorForCancelReasonHeaderIfConnected() throws Exception {
     // Дано:
     doThrow(new DataMappingException()).when(mapper).map(any());
     when(stompClient.isConnected()).thenReturn(true);
@@ -333,12 +333,12 @@ public class CancelOrderGatewayTest {
   }
 
   /**
-   * Должен вернуть статус для сообщение с заголовком Status, если он соединен и не соединяется.
+   * Должен вернуть причины для отказа для сообщения с заголовком CancelReason, если он соединен и не соединяется.
    *
    * @throws Exception error
    */
   @Test
-  public void answerShiftOpenedForStatusHeaderIfConnected() throws Exception {
+  public void answerShiftOpenedForCancelReasonHeaderIfConnected() throws Exception {
     // Дано:
     when(mapper.map(any())).thenReturn(
         Arrays.asList(cancelOrderReason, cancelOrderReason1, cancelOrderReason2)
@@ -418,12 +418,13 @@ public class CancelOrderGatewayTest {
   }
 
   /**
-   * Должен ответить ошибкой для сообщения с заголовком Status, если он не соединен и соединяется.
+   * Должен ответить ошибкой для сообщения с заголовком CancelReason, если он не соединен и соединяется.
    *
    * @throws Exception error
    */
   @Test
-  public void answerDataMappingErrorForStatusHeaderIfConnectingAfterConnected() throws Exception {
+  public void answerDataMappingErrorForCancelReasonHeaderIfConnectingAfterConnected()
+      throws Exception {
     // Дано:
     doThrow(new DataMappingException()).when(mapper).map(any());
     when(stompClient.isConnecting()).thenReturn(true);
@@ -445,13 +446,14 @@ public class CancelOrderGatewayTest {
   }
 
   /**
-   * Должен вернуть статус для сообщения с верным заголовком Status, если он не соединен и
+   * Должен вернуть причины для отказа для сообщения с верным заголовком CancelReason, если он не соединен и
    * соединяется.
    *
    * @throws Exception error
    */
   @Test
-  public void answerShiftOpenedForStatusHeaderIfConnectingAfterConnected() throws Exception {
+  public void answerWithCancelReasonsForCancelReasonHeaderIfConnectingAfterConnected()
+      throws Exception {
     // Дано:
     when(mapper.map(any())).thenReturn(
         Arrays.asList(cancelOrderReason, cancelOrderReason1, cancelOrderReason2)
