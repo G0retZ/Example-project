@@ -5,7 +5,7 @@ import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
 import javax.inject.Inject;
 
-class MissedOrderUseCaseImpl implements MissedOrderUseCase {
+public class MissedOrderUseCaseImpl implements MissedOrderUseCase {
 
   @NonNull
   private final MissedOrderGateway gateway;
@@ -15,7 +15,7 @@ class MissedOrderUseCaseImpl implements MissedOrderUseCase {
   private final DataReceiver<String> loginReceiver;
 
   @Inject
-  MissedOrderUseCaseImpl(@NonNull MissedOrderGateway gateway,
+  public MissedOrderUseCaseImpl(@NonNull MissedOrderGateway gateway,
       @NonNull SocketGateway socketGateway,
       @NonNull DataReceiver<String> loginReceiver) {
     this.gateway = gateway;
