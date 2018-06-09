@@ -6,7 +6,7 @@ import io.reactivex.Flowable;
 /**
  * Гейтвей упущенноых заказов.
  */
-interface MissedOrderGateway {
+public interface MissedOrderGateway {
 
   /**
    * Получать сообщения об упущенных заказах.
