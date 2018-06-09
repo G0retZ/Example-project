@@ -9,6 +9,7 @@ import com.fasten.executor_driver.entity.OptionBoolean;
 import com.fasten.executor_driver.entity.OptionNumeric;
 import com.fasten.executor_driver.entity.Order;
 import com.fasten.executor_driver.entity.RoutePoint;
+import com.fasten.executor_driver.entity.RoutePointState;
 import com.fasten.executor_driver.utils.TimeUtils;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -64,7 +65,7 @@ public class OrderItemTest {
         new OptionNumeric(4, "num1", "nd", false, 3, 0, 5),
         new OptionNumeric(5, "num2", "nd", true, 7, 0, 5)
     )));
-    when(routePoint.isChecked()).thenReturn(true);
+    when(routePoint1.getRoutePointState()).thenReturn(RoutePointState.ACTIVE);
     when(routePoint1.getAddress()).thenReturn("add");
     when(routePoint1.getComment()).thenReturn("comment");
     when(routePoint1.getLatitude()).thenReturn(5.421);

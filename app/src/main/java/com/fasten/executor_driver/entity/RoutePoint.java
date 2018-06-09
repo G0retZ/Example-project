@@ -14,16 +14,17 @@ public class RoutePoint {
   private final String comment;
   @NonNull
   private final String address;
-  private final boolean checked;
+  @NonNull
+  private final RoutePointState routePointState;
 
   public RoutePoint(long id, double latitude, double longitude, @NonNull String comment,
-      @NonNull String address, boolean checked) {
+      @NonNull String address, @NonNull RoutePointState routePointState) {
     this.id = id;
     this.latitude = latitude;
     this.longitude = longitude;
     this.comment = comment;
     this.address = address;
-    this.checked = checked;
+    this.routePointState = routePointState;
   }
 
   public long getId() {
@@ -48,7 +49,8 @@ public class RoutePoint {
     return address;
   }
 
-  public boolean isChecked() {
-    return checked;
+  @NonNull
+  public RoutePointState getRoutePointState() {
+    return routePointState;
   }
 }

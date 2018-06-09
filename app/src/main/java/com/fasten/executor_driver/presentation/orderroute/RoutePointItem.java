@@ -2,6 +2,7 @@ package com.fasten.executor_driver.presentation.orderroute;
 
 import android.support.annotation.NonNull;
 import com.fasten.executor_driver.entity.RoutePoint;
+import com.fasten.executor_driver.entity.RoutePointState;
 
 /**
  * Модель для отображения информации о точке маршрута заказа. Тестируемое форматирование.
@@ -15,8 +16,12 @@ public class RoutePointItem {
     this.routePoint = routePoint;
   }
 
-  public boolean isChecked() {
-    return routePoint.isChecked();
+  public boolean isActive() {
+    return routePoint.getRoutePointState() == RoutePointState.ACTIVE;
+  }
+
+  public boolean isProcessed() {
+    return routePoint.getRoutePointState() == RoutePointState.PROCESSED;
   }
 
   @NonNull

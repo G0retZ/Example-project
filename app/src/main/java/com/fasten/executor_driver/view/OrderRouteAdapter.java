@@ -10,18 +10,18 @@ import android.widget.Button;
 import android.widget.TextView;
 import com.fasten.executor_driver.R;
 import com.fasten.executor_driver.presentation.orderroute.RoutePointItem;
-import com.fasten.executor_driver.presentation.orderroute.RoutePointItems;
 import io.reactivex.functions.Consumer;
+import java.util.List;
 import java.util.Locale;
 
 class OrderRouteAdapter extends RecyclerView.Adapter<OrderRouteAdapter.RoutePointViewHolder> {
 
   @NonNull
-  private final RoutePointItems routePointItems;
+  private final List<RoutePointItem> routePointItems;
   @NonNull
   private final Consumer<RoutePointItem> selectListener;
 
-  OrderRouteAdapter(@NonNull RoutePointItems routePointItems,
+  OrderRouteAdapter(@NonNull List<RoutePointItem> routePointItems,
       @NonNull Consumer<RoutePointItem> selectListener) {
     this.routePointItems = routePointItems;
     this.selectListener = selectListener;
@@ -34,8 +34,8 @@ class OrderRouteAdapter extends RecyclerView.Adapter<OrderRouteAdapter.RoutePoin
 
   @Override
   public int getItemViewType(int position) {
-    return routePointItems.get(position).isChecked()
-        ? R.layout.fragment_order_route_point_item_checked
+    return routePointItems.get(position).isProcessed()
+        ? R.layout.fragment_order_route_point_item_processed
         : R.layout.fragment_order_route_point_item;
   }
 
@@ -56,7 +56,7 @@ class OrderRouteAdapter extends RecyclerView.Adapter<OrderRouteAdapter.RoutePoin
     }
     holder.addressText.setText(item.getAddress());
     if (holder.selectNextAction != null) {
-      if (routePointItems.isInProgress(item)) {
+      if (item.isActive()) {
         holder.selectNextAction.setEnabled(false);
         holder.selectNextAction.setText(R.string.in_progress);
       } else {

@@ -2,6 +2,7 @@ package com.fasten.executor_driver.presentation.orderroute;
 
 import android.support.annotation.NonNull;
 import com.fasten.executor_driver.presentation.ViewState;
+import java.util.List;
 
 /**
  * Состояние гоновности списка точек маршрута заказа.
@@ -9,9 +10,9 @@ import com.fasten.executor_driver.presentation.ViewState;
 public final class OrderRouteViewState implements ViewState<OrderRouteViewActions> {
 
   @NonNull
-  private final RoutePointItems routePointItems;
+  private final List<RoutePointItem> routePointItems;
 
-  OrderRouteViewState(@NonNull RoutePointItems routePointItems) {
+  OrderRouteViewState(@NonNull List<RoutePointItem> routePointItems) {
     this.routePointItems = routePointItems;
   }
 

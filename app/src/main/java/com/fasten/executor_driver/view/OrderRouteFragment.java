@@ -14,8 +14,9 @@ import com.fasten.executor_driver.R;
 import com.fasten.executor_driver.di.AppComponent;
 import com.fasten.executor_driver.presentation.orderroute.OrderRouteViewActions;
 import com.fasten.executor_driver.presentation.orderroute.OrderRouteViewModel;
-import com.fasten.executor_driver.presentation.orderroute.RoutePointItems;
+import com.fasten.executor_driver.presentation.orderroute.RoutePointItem;
 import java.util.ArrayList;
+import java.util.List;
 import javax.inject.Inject;
 
 /**
@@ -83,7 +84,7 @@ public class OrderRouteFragment extends BaseFragment implements OrderRouteViewAc
   }
 
   @Override
-  public void setRoutePointItems(@NonNull RoutePointItems routePointItems) {
+  public void setRoutePointItems(@NonNull List<RoutePointItem> routePointItems) {
     OrderRouteAdapter adapter = new OrderRouteAdapter(routePointItems,
         orderRouteViewModel::selectNextRoutePoint);
     recyclerView.setAdapter(adapter);

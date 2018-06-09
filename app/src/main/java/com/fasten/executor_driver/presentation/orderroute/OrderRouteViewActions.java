@@ -1,6 +1,7 @@
 package com.fasten.executor_driver.presentation.orderroute;
 
 import android.support.annotation.NonNull;
+import java.util.List;
 
 /**
  * Действия для смены состояния вида окна списка ТС исполнителя.
@@ -19,7 +20,7 @@ public interface OrderRouteViewActions {
    *
    * @param routePointItems - список ТС
    */
-  void setRoutePointItems(@NonNull RoutePointItems routePointItems);
+  void setRoutePointItems(@NonNull List<RoutePointItem> routePointItems);
 
   /**
    * Показать сообщение об ошибке.

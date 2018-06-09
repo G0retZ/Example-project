@@ -8,6 +8,7 @@ import com.fasten.executor_driver.entity.OptionBoolean;
 import com.fasten.executor_driver.entity.OptionNumeric;
 import com.fasten.executor_driver.entity.Order;
 import com.fasten.executor_driver.entity.RoutePoint;
+import com.fasten.executor_driver.entity.RoutePointState;
 import com.fasten.executor_driver.utils.TimeUtils;
 import java.util.Locale;
 
@@ -31,7 +32,7 @@ class OrderItem {
   @SuppressWarnings("SpellCheckingInspection")
   @NonNull
   public String getLoadPointMapUrl() {
-    RoutePoint routePoint = getFirstOpenRoutePoint();
+    RoutePoint routePoint = getFirstActiveRoutePoint();
     return routePoint == null ? "" : "https://maps.googleapis.com/maps/api/staticmap?"
         + "center="
         + routePoint.getLatitude()
@@ -45,7 +46,7 @@ class OrderItem {
 
   @NonNull
   public String getCoordinatesString() {
-    RoutePoint routePoint = getFirstOpenRoutePoint();
+    RoutePoint routePoint = getFirstActiveRoutePoint();
     return routePoint == null ? "" : routePoint.getLatitude() + "," + routePoint.getLongitude();
   }
 
@@ -60,7 +61,7 @@ class OrderItem {
 
   @NonNull
   public String getAddress() {
-    RoutePoint routePoint = getFirstOpenRoutePoint();
+    RoutePoint routePoint = getFirstActiveRoutePoint();
     return routePoint == null ? ""
         : (routePoint.getAddress() + "\n" + routePoint.getComment()).trim();
   }
@@ -102,9 +103,9 @@ class OrderItem {
   }
 
   @Nullable
-  private RoutePoint getFirstOpenRoutePoint() {
+  private RoutePoint getFirstActiveRoutePoint() {
     for (RoutePoint routePoint : order.getRoutePath()) {
-      if (!routePoint.isChecked()) {
+      if (routePoint.getRoutePointState() == RoutePointState.ACTIVE) {
         return routePoint;
       }
     }

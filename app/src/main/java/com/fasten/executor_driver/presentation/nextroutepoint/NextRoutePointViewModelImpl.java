@@ -6,6 +6,7 @@ import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.fasten.executor_driver.entity.RoutePoint;
+import com.fasten.executor_driver.entity.RoutePointState;
 import com.fasten.executor_driver.interactor.OrderRouteUseCase;
 import com.fasten.executor_driver.presentation.ViewState;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -99,7 +100,7 @@ public class NextRoutePointViewModelImpl extends ViewModel implements NextRouteP
               completeDisposable.dispose();
               for (RoutePoint routePoint : routePoints) {
                 lastRoutePoint = routePoint;
-                if (!routePoint.isChecked()) {
+                if (lastRoutePoint.getRoutePointState() == RoutePointState.ACTIVE) {
                   viewStateLiveData.postValue(lastViewState = new NextRoutePointViewStateEnRoute(
                       new RoutePointItem(lastRoutePoint)
                   ));
