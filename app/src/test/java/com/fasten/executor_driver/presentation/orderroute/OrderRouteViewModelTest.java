@@ -209,35 +209,27 @@ public class OrderRouteViewModelTest {
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(new OrderRouteViewStatePending(null));
     inOrder.verify(viewStateObserver).onChanged(new OrderRouteViewState(
-        new RoutePointItems(
-            Collections.singletonList(new RoutePointItem(routePoint))
+        Collections.singletonList(new RoutePointItem(routePoint))
+    ));
+    inOrder.verify(viewStateObserver).onChanged(new OrderRouteViewState(
+        Arrays.asList(
+            new RoutePointItem(routePoint),
+            new RoutePointItem(routePoint1),
+            new RoutePointItem(routePoint2)
         )
     ));
     inOrder.verify(viewStateObserver).onChanged(new OrderRouteViewState(
-        new RoutePointItems(
-            Arrays.asList(
-                new RoutePointItem(routePoint),
-                new RoutePointItem(routePoint1),
-                new RoutePointItem(routePoint2)
-            )
+        Arrays.asList(
+            new RoutePointItem(routePoint1),
+            new RoutePointItem(routePoint),
+            new RoutePointItem(routePoint2)
         )
     ));
     inOrder.verify(viewStateObserver).onChanged(new OrderRouteViewState(
-        new RoutePointItems(
-            Arrays.asList(
-                new RoutePointItem(routePoint1),
-                new RoutePointItem(routePoint),
-                new RoutePointItem(routePoint2)
-            )
-        )
-    ));
-    inOrder.verify(viewStateObserver).onChanged(new OrderRouteViewState(
-        new RoutePointItems(
-            Arrays.asList(
-                new RoutePointItem(routePoint2),
-                new RoutePointItem(routePoint1),
-                new RoutePointItem(routePoint)
-            )
+        Arrays.asList(
+            new RoutePointItem(routePoint2),
+            new RoutePointItem(routePoint1),
+            new RoutePointItem(routePoint)
         )
     ));
     verifyNoMoreInteractions(viewStateObserver);
@@ -261,22 +253,18 @@ public class OrderRouteViewModelTest {
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(new OrderRouteViewStatePending(null));
     inOrder.verify(viewStateObserver).onChanged(new OrderRouteViewState(
-        new RoutePointItems(
-            Arrays.asList(
-                new RoutePointItem(routePoint),
-                new RoutePointItem(routePoint1),
-                new RoutePointItem(routePoint2)
-            )
+        Arrays.asList(
+            new RoutePointItem(routePoint),
+            new RoutePointItem(routePoint1),
+            new RoutePointItem(routePoint2)
         )
     ));
     inOrder.verify(viewStateObserver).onChanged(new OrderRouteViewStatePending(
         new OrderRouteViewState(
-            new RoutePointItems(
-                Arrays.asList(
-                    new RoutePointItem(routePoint),
-                    new RoutePointItem(routePoint1),
-                    new RoutePointItem(routePoint2)
-                )
+            Arrays.asList(
+                new RoutePointItem(routePoint),
+                new RoutePointItem(routePoint1),
+                new RoutePointItem(routePoint2)
             )
         )
     ));
@@ -300,32 +288,26 @@ public class OrderRouteViewModelTest {
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(new OrderRouteViewStatePending(null));
     inOrder.verify(viewStateObserver).onChanged(new OrderRouteViewState(
-        new RoutePointItems(
-            Arrays.asList(
-                new RoutePointItem(routePoint),
-                new RoutePointItem(routePoint1),
-                new RoutePointItem(routePoint2)
-            )
+        Arrays.asList(
+            new RoutePointItem(routePoint),
+            new RoutePointItem(routePoint1),
+            new RoutePointItem(routePoint2)
         )
     ));
     inOrder.verify(viewStateObserver).onChanged(new OrderRouteViewStatePending(
         new OrderRouteViewState(
-            new RoutePointItems(
-                Arrays.asList(
-                    new RoutePointItem(routePoint),
-                    new RoutePointItem(routePoint1),
-                    new RoutePointItem(routePoint2)
-                )
-            )
-        )
-    ));
-    inOrder.verify(viewStateObserver).onChanged(new OrderRouteViewState(
-        new RoutePointItems(
             Arrays.asList(
                 new RoutePointItem(routePoint),
                 new RoutePointItem(routePoint1),
                 new RoutePointItem(routePoint2)
             )
+        )
+    ));
+    inOrder.verify(viewStateObserver).onChanged(new OrderRouteViewState(
+        Arrays.asList(
+            new RoutePointItem(routePoint),
+            new RoutePointItem(routePoint1),
+            new RoutePointItem(routePoint2)
         )
     ));
     verifyNoMoreInteractions(viewStateObserver);
@@ -348,22 +330,18 @@ public class OrderRouteViewModelTest {
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(new OrderRouteViewStatePending(null));
     inOrder.verify(viewStateObserver).onChanged(new OrderRouteViewState(
-        new RoutePointItems(
-            Arrays.asList(
-                new RoutePointItem(routePoint),
-                new RoutePointItem(routePoint1),
-                new RoutePointItem(routePoint2)
-            )
+        Arrays.asList(
+            new RoutePointItem(routePoint),
+            new RoutePointItem(routePoint1),
+            new RoutePointItem(routePoint2)
         )
     ));
     inOrder.verify(viewStateObserver).onChanged(new OrderRouteViewStatePending(
         new OrderRouteViewState(
-            new RoutePointItems(
-                Arrays.asList(
-                    new RoutePointItem(routePoint),
-                    new RoutePointItem(routePoint1),
-                    new RoutePointItem(routePoint2)
-                )
+            Arrays.asList(
+                new RoutePointItem(routePoint),
+                new RoutePointItem(routePoint1),
+                new RoutePointItem(routePoint2)
             )
         )
     ));
