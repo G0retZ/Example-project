@@ -65,7 +65,7 @@ public class ExecutorStateViewModelImpl extends ViewModel implements ExecutorSta
                       && !executorState.getData().trim().isEmpty()) {
                     messageLiveData.postValue(
                         executorStateViewActions -> executorStateViewActions
-                            .showMessage(executorState.getData())
+                            .showOnlineMessage(executorState.getData())
                     );
                   }
                   break;

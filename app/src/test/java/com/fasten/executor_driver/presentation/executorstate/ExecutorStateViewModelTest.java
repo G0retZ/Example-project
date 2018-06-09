@@ -123,7 +123,7 @@ public class ExecutorStateViewModelTest {
     // Результат:
     verify(viewStateObserver, only()).onChanged(viewStateCaptor.capture());
     viewStateCaptor.getValue().apply(executorStateViewActions);
-    verify(executorStateViewActions, only()).showMessage("Message");
+    verify(executorStateViewActions, only()).showOnlineMessage("Message");
   }
 
   /**
