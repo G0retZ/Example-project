@@ -263,12 +263,12 @@ public class ExecutorBalanceGatewayTest {
   }
 
   /**
-   * Должен вернуть статус для сообщения с заголовком Balance, если он соединен и не соединяется.
+   * Должен вернуть баланс исполнителя для сообщения с заголовком Balance, если он соединен и не соединяется.
    *
    * @throws Exception error
    */
   @Test
-  public void answerWithBalanceForBalanceHeaderIfConnected() throws Exception {
+  public void answerWithExecutorBalanceForBalanceHeaderIfConnected() throws Exception {
     // Дано:
     when(mapper.map(any())).thenReturn(executorBalance);
     when(stompClient.isConnected()).thenReturn(true);
@@ -371,13 +371,13 @@ public class ExecutorBalanceGatewayTest {
   }
 
   /**
-   * Должен вернуть статус для сообщения с верным заголовком Balance, если он не соединен и
+   * Должен вернуть баланс исполнителя для сообщения с верным заголовком Balance, если он не соединен и
    * соединяется.
    *
    * @throws Exception error
    */
   @Test
-  public void answerShiftOpenedForBalanceHeaderIfConnectingAfterConnected() throws Exception {
+  public void answerWithExecutorBalanceForBalanceHeaderIfConnectingAfterConnected() throws Exception {
     // Дано:
     when(mapper.map(any())).thenReturn(executorBalance);
     when(stompClient.isConnecting()).thenReturn(true);
