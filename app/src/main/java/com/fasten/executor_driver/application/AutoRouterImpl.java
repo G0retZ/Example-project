@@ -240,7 +240,7 @@ public class AutoRouterImpl implements ActivityLifecycleCallbacks, AutoRouter,
   }
 
   @Override
-  public void showMessage(@NonNull String message) {
+  public void showOnlineMessage(@NonNull String message) {
     messageRunnable = () -> {
       if (currentActivity != null) {
         new Builder(currentActivity)

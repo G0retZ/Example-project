@@ -6,7 +6,7 @@ import io.reactivex.Flowable;
 /**
  * Юзкейс упущенных заказов.
  */
-interface MissedOrderUseCase {
+public interface MissedOrderUseCase {
 
   /**
    * Запрашивает сообщения об упущенных заказах.
