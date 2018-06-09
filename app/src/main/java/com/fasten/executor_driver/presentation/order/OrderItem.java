@@ -109,7 +109,7 @@ class OrderItem {
         return routePoint;
       }
     }
-    return null;
+    return order.getRoutePath().get(0);
   }
 
   @Override

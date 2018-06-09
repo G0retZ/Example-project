@@ -45,11 +45,9 @@ public class OrderItemTest {
     when(timeUtils.currentTimeMillis())
         .thenReturn(12390182L, 12390182L, 12395182L, 12400182L, 12395182L, 12400182L);
     orderItem = new OrderItem(order, timeUtils);
-  }
-
-  @Test
-  public void testGetters() {
-    // Дано:
+    when(routePoint.getRoutePointState()).thenReturn(RoutePointState.QUEUED);
+    when(routePoint1.getRoutePointState()).thenReturn(RoutePointState.QUEUED);
+    when(routePoint2.getRoutePointState()).thenReturn(RoutePointState.QUEUED);
     when(order.getRoutePath()).thenReturn(Arrays.asList(routePoint, routePoint1, routePoint2));
     when(order.getEtaToStartPoint()).thenReturn(358L);
     when(order.getConfirmationTime()).thenReturn(12384000L);
@@ -65,17 +63,69 @@ public class OrderItemTest {
         new OptionNumeric(4, "num1", "nd", false, 3, 0, 5),
         new OptionNumeric(5, "num2", "nd", true, 7, 0, 5)
     )));
-    when(routePoint1.getRoutePointState()).thenReturn(RoutePointState.ACTIVE);
-    when(routePoint1.getAddress()).thenReturn("add");
-    when(routePoint1.getComment()).thenReturn("comment");
-    when(routePoint1.getLatitude()).thenReturn(5.421);
-    when(routePoint1.getLongitude()).thenReturn(10.2341);
+    when(routePoint.getAddress()).thenReturn("add0");
+    when(routePoint.getComment()).thenReturn("comment0");
+    when(routePoint.getLatitude()).thenReturn(5.421);
+    when(routePoint.getLongitude()).thenReturn(10.2341);
+    when(routePoint1.getAddress()).thenReturn("add1");
+    when(routePoint1.getComment()).thenReturn("comment1");
+    when(routePoint1.getLatitude()).thenReturn(15.421);
+    when(routePoint1.getLongitude()).thenReturn(20.2341);
+  }
+
+  @Test
+  public void testGettersForAllQueued() {
+    // Результат:
+    assertEquals(orderItem.getLoadPointMapUrl(),
+        "https://maps.googleapis.com/maps/api/staticmap?center=5.421,10.2341&zoom=16&size=360x200&maptype=roadmap&key=AIzaSyC20FZNHJqrQH5UhypeUy3thpqII33QBPI");
+    assertEquals(orderItem.getCoordinatesString(), "5.421,10.2341");
+    assertEquals(orderItem.getAddress(), "add0\ncomment0");
+    assertEquals(orderItem.getDistance(),
+        String.format(Locale.getDefault(), "%.2f", 12.24f));
+    assertEquals(orderItem.getOrderComment(), "com");
+    assertEquals(orderItem.getEstimatedPrice(), "7000");
+    assertEquals(orderItem.getOrderOptionsRequired(), "bool2\nbool4\nnum1: 3\nnum2: 7");
+    assertEquals(orderItem.getSecondsToMeetClient(), 352);
+    assertEquals(orderItem.getSecondsToMeetClient(), 347);
+    assertEquals(orderItem.getSecondsToMeetClient(), 342);
+    assertArrayEquals(orderItem.getProgressLeft(), new long[]{75, 15000});
+    assertArrayEquals(orderItem.getProgressLeft(), new long[]{50, 10000});
+  }
+
+  @Test
+  public void testGettersForAllClosed() {
+    // Дано:
+    when(routePoint.getRoutePointState()).thenReturn(RoutePointState.PROCESSED);
+    when(routePoint1.getRoutePointState()).thenReturn(RoutePointState.PROCESSED);
+    when(routePoint2.getRoutePointState()).thenReturn(RoutePointState.PROCESSED);
 
     // Результат:
     assertEquals(orderItem.getLoadPointMapUrl(),
         "https://maps.googleapis.com/maps/api/staticmap?center=5.421,10.2341&zoom=16&size=360x200&maptype=roadmap&key=AIzaSyC20FZNHJqrQH5UhypeUy3thpqII33QBPI");
     assertEquals(orderItem.getCoordinatesString(), "5.421,10.2341");
-    assertEquals(orderItem.getAddress(), "add\ncomment");
+    assertEquals(orderItem.getAddress(), "add0\ncomment0");
+    assertEquals(orderItem.getDistance(),
+        String.format(Locale.getDefault(), "%.2f", 12.24f));
+    assertEquals(orderItem.getOrderComment(), "com");
+    assertEquals(orderItem.getEstimatedPrice(), "7000");
+    assertEquals(orderItem.getOrderOptionsRequired(), "bool2\nbool4\nnum1: 3\nnum2: 7");
+    assertEquals(orderItem.getSecondsToMeetClient(), 352);
+    assertEquals(orderItem.getSecondsToMeetClient(), 347);
+    assertEquals(orderItem.getSecondsToMeetClient(), 342);
+    assertArrayEquals(orderItem.getProgressLeft(), new long[]{75, 15000});
+    assertArrayEquals(orderItem.getProgressLeft(), new long[]{50, 10000});
+  }
+
+  @Test
+  public void testGettersForSecondActive() {
+    // Дано:
+    when(routePoint1.getRoutePointState()).thenReturn(RoutePointState.ACTIVE);
+
+    // Результат:
+    assertEquals(orderItem.getLoadPointMapUrl(),
+        "https://maps.googleapis.com/maps/api/staticmap?center=15.421,20.2341&zoom=16&size=360x200&maptype=roadmap&key=AIzaSyC20FZNHJqrQH5UhypeUy3thpqII33QBPI");
+    assertEquals(orderItem.getCoordinatesString(), "15.421,20.2341");
+    assertEquals(orderItem.getAddress(), "add1\ncomment1");
     assertEquals(orderItem.getDistance(),
         String.format(Locale.getDefault(), "%.2f", 12.24f));
     assertEquals(orderItem.getOrderComment(), "com");
