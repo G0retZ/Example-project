@@ -11,6 +11,7 @@ import android.arch.lifecycle.Observer;
 import com.fasten.executor_driver.backend.web.NoNetworkException;
 import com.fasten.executor_driver.entity.NoOrdersAvailableException;
 import com.fasten.executor_driver.entity.RoutePoint;
+import com.fasten.executor_driver.entity.RoutePointState;
 import com.fasten.executor_driver.gateway.DataMappingException;
 import com.fasten.executor_driver.interactor.OrderRouteUseCase;
 import com.fasten.executor_driver.presentation.ViewState;
@@ -61,6 +62,9 @@ public class NextRoutePointViewModelTest {
         .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
     when(orderRouteUseCase.closeRoutePoint(any())).thenReturn(Completable.never());
     when(orderRouteUseCase.completeTheOrder()).thenReturn(Completable.never());
+    when(routePoint.getRoutePointState()).thenReturn(RoutePointState.QUEUED);
+    when(routePoint1.getRoutePointState()).thenReturn(RoutePointState.QUEUED);
+    when(routePoint2.getRoutePointState()).thenReturn(RoutePointState.QUEUED);
     movingToClientViewModel = new NextRoutePointViewModelImpl(orderRouteUseCase);
   }
 
@@ -96,6 +100,7 @@ public class NextRoutePointViewModelTest {
   @Test
   public void askUseCaseToCloseRoutePoint() {
     // Дано:
+    when(routePoint.getRoutePointState()).thenReturn(RoutePointState.ACTIVE);
     publishSubject.onNext(Arrays.asList(routePoint, routePoint1, routePoint2));
 
     // Действие:
@@ -130,6 +135,7 @@ public class NextRoutePointViewModelTest {
   @Test
   public void DoNotTouchUseCaseDuringRoutePointClosing() {
     // Дано:
+    when(routePoint.getRoutePointState()).thenReturn(RoutePointState.ACTIVE);
     publishSubject.onNext(Arrays.asList(routePoint, routePoint1, routePoint2));
 
     // Действие:
@@ -248,7 +254,7 @@ public class NextRoutePointViewModelTest {
     movingToClientViewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    when(routePoint.isChecked()).thenReturn(true);
+    when(routePoint.getRoutePointState()).thenReturn(RoutePointState.PROCESSED);
     publishSubject.onNext(Collections.singletonList(routePoint));
 
     // Результат:
@@ -267,10 +273,13 @@ public class NextRoutePointViewModelTest {
     movingToClientViewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
+    when(routePoint.getRoutePointState()).thenReturn(RoutePointState.ACTIVE);
     publishSubject.onNext(Arrays.asList(routePoint, routePoint1, routePoint2));
-    when(routePoint.isChecked()).thenReturn(true);
+    when(routePoint.getRoutePointState()).thenReturn(RoutePointState.PROCESSED);
+    when(routePoint1.getRoutePointState()).thenReturn(RoutePointState.ACTIVE);
     publishSubject.onNext(Arrays.asList(routePoint, routePoint1, routePoint2));
-    when(routePoint1.isChecked()).thenReturn(true);
+    when(routePoint1.getRoutePointState()).thenReturn(RoutePointState.PROCESSED);
+    when(routePoint2.getRoutePointState()).thenReturn(RoutePointState.ACTIVE);
     publishSubject.onNext(Arrays.asList(routePoint, routePoint1, routePoint2));
 
     // Результат:
@@ -294,15 +303,18 @@ public class NextRoutePointViewModelTest {
   public void setNoRouteViewStateLastToLiveData() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
+    when(routePoint.getRoutePointState()).thenReturn(RoutePointState.ACTIVE);
     movingToClientViewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
     publishSubject.onNext(Arrays.asList(routePoint, routePoint1, routePoint2));
-    when(routePoint.isChecked()).thenReturn(true);
+    when(routePoint.getRoutePointState()).thenReturn(RoutePointState.PROCESSED);
+    when(routePoint1.getRoutePointState()).thenReturn(RoutePointState.ACTIVE);
     publishSubject.onNext(Arrays.asList(routePoint, routePoint1, routePoint2));
-    when(routePoint1.isChecked()).thenReturn(true);
+    when(routePoint1.getRoutePointState()).thenReturn(RoutePointState.PROCESSED);
+    when(routePoint2.getRoutePointState()).thenReturn(RoutePointState.ACTIVE);
     publishSubject.onNext(Arrays.asList(routePoint, routePoint1, routePoint2));
-    when(routePoint2.isChecked()).thenReturn(true);
+    when(routePoint2.getRoutePointState()).thenReturn(RoutePointState.PROCESSED);
     publishSubject.onNext(Arrays.asList(routePoint, routePoint1, routePoint2));
 
     // Результат:
@@ -331,6 +343,7 @@ public class NextRoutePointViewModelTest {
   public void setPendingViewStateWithEnRouteViewStateToLiveDataForCloseRoutePoint() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
+    when(routePoint.getRoutePointState()).thenReturn(RoutePointState.ACTIVE);
     movingToClientViewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
@@ -358,7 +371,7 @@ public class NextRoutePointViewModelTest {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     movingToClientViewModel.getViewStateLiveData().observeForever(viewStateObserver);
-    when(routePoint.isChecked()).thenReturn(true);
+    when(routePoint.getRoutePointState()).thenReturn(RoutePointState.PROCESSED);
 
     // Действие:
     publishSubject.onNext(Collections.singletonList(routePoint));
@@ -381,9 +394,9 @@ public class NextRoutePointViewModelTest {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     movingToClientViewModel.getViewStateLiveData().observeForever(viewStateObserver);
-    when(routePoint.isChecked()).thenReturn(true);
-    when(routePoint1.isChecked()).thenReturn(true);
-    when(routePoint2.isChecked()).thenReturn(true);
+    when(routePoint.getRoutePointState()).thenReturn(RoutePointState.PROCESSED);
+    when(routePoint1.getRoutePointState()).thenReturn(RoutePointState.PROCESSED);
+    when(routePoint2.getRoutePointState()).thenReturn(RoutePointState.PROCESSED);
 
     // Действие:
     publishSubject.onNext(Arrays.asList(routePoint, routePoint1, routePoint2));
@@ -406,6 +419,7 @@ public class NextRoutePointViewModelTest {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     when(orderRouteUseCase.closeRoutePoint(any())).thenReturn(Completable.error(Exception::new));
+    when(routePoint.getRoutePointState()).thenReturn(RoutePointState.ACTIVE);
     movingToClientViewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
@@ -436,8 +450,8 @@ public class NextRoutePointViewModelTest {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     when(orderRouteUseCase.closeRoutePoint(any())).thenReturn(Completable.error(Exception::new));
+    when(routePoint.getRoutePointState()).thenReturn(RoutePointState.PROCESSED);
     movingToClientViewModel.getViewStateLiveData().observeForever(viewStateObserver);
-    when(routePoint.isChecked()).thenReturn(true);
 
     // Действие:
     publishSubject.onNext(Collections.singletonList(routePoint));
@@ -462,9 +476,9 @@ public class NextRoutePointViewModelTest {
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     when(orderRouteUseCase.closeRoutePoint(any())).thenReturn(Completable.error(Exception::new));
     movingToClientViewModel.getViewStateLiveData().observeForever(viewStateObserver);
-    when(routePoint.isChecked()).thenReturn(true);
-    when(routePoint1.isChecked()).thenReturn(true);
-    when(routePoint2.isChecked()).thenReturn(true);
+    when(routePoint.getRoutePointState()).thenReturn(RoutePointState.PROCESSED);
+    when(routePoint1.getRoutePointState()).thenReturn(RoutePointState.PROCESSED);
+    when(routePoint2.getRoutePointState()).thenReturn(RoutePointState.PROCESSED);
 
     // Действие:
     publishSubject.onNext(Arrays.asList(routePoint, routePoint1, routePoint2));
@@ -488,6 +502,7 @@ public class NextRoutePointViewModelTest {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     when(orderRouteUseCase.closeRoutePoint(any())).thenReturn(Completable.complete());
+    when(routePoint.getRoutePointState()).thenReturn(RoutePointState.ACTIVE);
     movingToClientViewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
@@ -516,7 +531,7 @@ public class NextRoutePointViewModelTest {
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     when(orderRouteUseCase.closeRoutePoint(any())).thenReturn(Completable.complete());
     movingToClientViewModel.getViewStateLiveData().observeForever(viewStateObserver);
-    when(routePoint.isChecked()).thenReturn(true);
+    when(routePoint.getRoutePointState()).thenReturn(RoutePointState.PROCESSED);
 
     // Действие:
     publishSubject.onNext(Collections.singletonList(routePoint));
@@ -540,9 +555,9 @@ public class NextRoutePointViewModelTest {
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     when(orderRouteUseCase.closeRoutePoint(any())).thenReturn(Completable.complete());
     movingToClientViewModel.getViewStateLiveData().observeForever(viewStateObserver);
-    when(routePoint.isChecked()).thenReturn(true);
-    when(routePoint1.isChecked()).thenReturn(true);
-    when(routePoint2.isChecked()).thenReturn(true);
+    when(routePoint.getRoutePointState()).thenReturn(RoutePointState.PROCESSED);
+    when(routePoint1.getRoutePointState()).thenReturn(RoutePointState.PROCESSED);
+    when(routePoint2.getRoutePointState()).thenReturn(RoutePointState.PROCESSED);
 
     // Действие:
     publishSubject.onNext(Arrays.asList(routePoint, routePoint1, routePoint2));
@@ -566,6 +581,7 @@ public class NextRoutePointViewModelTest {
   public void setPendingViewStateWithEnRouteViewStateToLiveDataForCompleteTheOrder() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
+    when(routePoint.getRoutePointState()).thenReturn(RoutePointState.ACTIVE);
     movingToClientViewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
@@ -593,7 +609,7 @@ public class NextRoutePointViewModelTest {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     movingToClientViewModel.getViewStateLiveData().observeForever(viewStateObserver);
-    when(routePoint.isChecked()).thenReturn(true);
+    when(routePoint.getRoutePointState()).thenReturn(RoutePointState.PROCESSED);
 
     // Действие:
     publishSubject.onNext(Collections.singletonList(routePoint));
@@ -616,9 +632,9 @@ public class NextRoutePointViewModelTest {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     movingToClientViewModel.getViewStateLiveData().observeForever(viewStateObserver);
-    when(routePoint.isChecked()).thenReturn(true);
-    when(routePoint1.isChecked()).thenReturn(true);
-    when(routePoint2.isChecked()).thenReturn(true);
+    when(routePoint.getRoutePointState()).thenReturn(RoutePointState.PROCESSED);
+    when(routePoint1.getRoutePointState()).thenReturn(RoutePointState.PROCESSED);
+    when(routePoint2.getRoutePointState()).thenReturn(RoutePointState.PROCESSED);
 
     // Действие:
     publishSubject.onNext(Arrays.asList(routePoint, routePoint1, routePoint2));
@@ -641,6 +657,7 @@ public class NextRoutePointViewModelTest {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     when(orderRouteUseCase.completeTheOrder()).thenReturn(Completable.error(Exception::new));
+    when(routePoint.getRoutePointState()).thenReturn(RoutePointState.ACTIVE);
     movingToClientViewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
@@ -672,7 +689,7 @@ public class NextRoutePointViewModelTest {
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     when(orderRouteUseCase.completeTheOrder()).thenReturn(Completable.error(Exception::new));
     movingToClientViewModel.getViewStateLiveData().observeForever(viewStateObserver);
-    when(routePoint.isChecked()).thenReturn(true);
+    when(routePoint.getRoutePointState()).thenReturn(RoutePointState.PROCESSED);
 
     // Действие:
     publishSubject.onNext(Collections.singletonList(routePoint));
@@ -697,9 +714,9 @@ public class NextRoutePointViewModelTest {
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     when(orderRouteUseCase.completeTheOrder()).thenReturn(Completable.error(Exception::new));
     movingToClientViewModel.getViewStateLiveData().observeForever(viewStateObserver);
-    when(routePoint.isChecked()).thenReturn(true);
-    when(routePoint1.isChecked()).thenReturn(true);
-    when(routePoint2.isChecked()).thenReturn(true);
+    when(routePoint.getRoutePointState()).thenReturn(RoutePointState.PROCESSED);
+    when(routePoint1.getRoutePointState()).thenReturn(RoutePointState.PROCESSED);
+    when(routePoint2.getRoutePointState()).thenReturn(RoutePointState.PROCESSED);
 
     // Действие:
     publishSubject.onNext(Arrays.asList(routePoint, routePoint1, routePoint2));
@@ -723,6 +740,7 @@ public class NextRoutePointViewModelTest {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     when(orderRouteUseCase.completeTheOrder()).thenReturn(Completable.complete());
+    when(routePoint.getRoutePointState()).thenReturn(RoutePointState.ACTIVE);
     movingToClientViewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
@@ -751,7 +769,7 @@ public class NextRoutePointViewModelTest {
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     when(orderRouteUseCase.completeTheOrder()).thenReturn(Completable.complete());
     movingToClientViewModel.getViewStateLiveData().observeForever(viewStateObserver);
-    when(routePoint.isChecked()).thenReturn(true);
+    when(routePoint.getRoutePointState()).thenReturn(RoutePointState.PROCESSED);
 
     // Действие:
     publishSubject.onNext(Collections.singletonList(routePoint));
@@ -775,9 +793,9 @@ public class NextRoutePointViewModelTest {
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     when(orderRouteUseCase.completeTheOrder()).thenReturn(Completable.complete());
     movingToClientViewModel.getViewStateLiveData().observeForever(viewStateObserver);
-    when(routePoint.isChecked()).thenReturn(true);
-    when(routePoint1.isChecked()).thenReturn(true);
-    when(routePoint2.isChecked()).thenReturn(true);
+    when(routePoint.getRoutePointState()).thenReturn(RoutePointState.PROCESSED);
+    when(routePoint1.getRoutePointState()).thenReturn(RoutePointState.PROCESSED);
+    when(routePoint2.getRoutePointState()).thenReturn(RoutePointState.PROCESSED);
 
     // Действие:
     publishSubject.onNext(Arrays.asList(routePoint, routePoint1, routePoint2));

@@ -56,7 +56,7 @@ public class OrderRouteGatewayTest {
 
     // Результат:
     inOrder.verify(stompClient).isConnected();
-    inOrder.verify(stompClient).send("/mobile/trip", "{\"close\":\"7\"}");
+    inOrder.verify(stompClient).send("/mobile/changeRoutePoint", "{\"complete\":\"7\"}");
     verifyNoMoreInteractions(stompClient);
   }
 
@@ -93,7 +93,7 @@ public class OrderRouteGatewayTest {
 
     // Результат:
     inOrder.verify(stompClient).isConnected();
-    inOrder.verify(stompClient).send("/mobile/trip", "{\"next\":\"7\"}");
+    inOrder.verify(stompClient).send("/mobile/changeRoutePoint", "{\"next\":\"7\"}");
     verifyNoMoreInteractions(stompClient);
   }
 
@@ -164,7 +164,7 @@ public class OrderRouteGatewayTest {
     // Результат:
     inOrder.verify(stompClient).isConnected();
     inOrder.verify(stompClient).isConnecting();
-    inOrder.verify(stompClient).send("/mobile/trip", "{\"close\":\"7\"}");
+    inOrder.verify(stompClient).send("/mobile/changeRoutePoint", "{\"complete\":\"7\"}");
     verifyNoMoreInteractions(stompClient);
   }
 
@@ -203,7 +203,7 @@ public class OrderRouteGatewayTest {
     // Результат:
     inOrder.verify(stompClient).isConnected();
     inOrder.verify(stompClient).isConnecting();
-    inOrder.verify(stompClient).send("/mobile/trip", "{\"next\":\"7\"}");
+    inOrder.verify(stompClient).send("/mobile/changeRoutePoint", "{\"next\":\"7\"}");
     verifyNoMoreInteractions(stompClient);
   }
 

@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNotEquals;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
+import java.util.Arrays;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,13 +20,13 @@ public class OrderRouteViewStateTest {
   @Mock
   private OrderRouteViewActions orderRouteViewActions;
   @Mock
-  private RoutePointItems routePointItems;
+  private RoutePointItem routePointItems;
   @Mock
-  private RoutePointItems routePointItems1;
+  private RoutePointItem routePointItems1;
 
   @Before
   public void setUp() {
-    viewState = new OrderRouteViewState(routePointItems);
+    viewState = new OrderRouteViewState(Arrays.asList(routePointItems, routePointItems1));
   }
 
   @Test
@@ -34,7 +35,8 @@ public class OrderRouteViewStateTest {
     viewState.apply(orderRouteViewActions);
 
     // Результат:
-    verify(orderRouteViewActions).setRoutePointItems(routePointItems);
+    verify(orderRouteViewActions)
+        .setRoutePointItems(Arrays.asList(routePointItems, routePointItems1));
     verify(orderRouteViewActions).showOrderRouteErrorMessage(false);
     verify(orderRouteViewActions).showOrderRoutePending(false);
     verifyNoMoreInteractions(orderRouteViewActions);
@@ -42,7 +44,9 @@ public class OrderRouteViewStateTest {
 
   @Test
   public void testEquals() {
-    assertEquals(viewState, new OrderRouteViewState(routePointItems));
-    assertNotEquals(viewState, new OrderRouteViewState(routePointItems1));
+    assertEquals(viewState,
+        new OrderRouteViewState(Arrays.asList(routePointItems, routePointItems1)));
+    assertNotEquals(viewState,
+        new OrderRouteViewState(Arrays.asList(routePointItems1, routePointItems)));
   }
 }

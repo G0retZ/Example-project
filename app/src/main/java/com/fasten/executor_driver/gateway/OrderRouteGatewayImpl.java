@@ -25,8 +25,8 @@ public class OrderRouteGatewayImpl implements OrderRouteGateway {
   public Completable closeRoutePoint(@NonNull RoutePoint routePoint) {
     if (stompClient.isConnected() || stompClient.isConnecting()) {
       return stompClient.send(
-          BuildConfig.TRIP_DESTINATION,
-          "{\"close\":\"" + routePoint.getId() + "\"}"
+          BuildConfig.ROUTE_DESTINATION,
+          "{\"complete\":\"" + routePoint.getId() + "\"}"
       )
           .subscribeOn(Schedulers.io())
           .observeOn(Schedulers.single());
@@ -50,7 +50,7 @@ public class OrderRouteGatewayImpl implements OrderRouteGateway {
   public Completable nextRoutePoint(@NonNull RoutePoint routePoint) {
     if (stompClient.isConnected() || stompClient.isConnecting()) {
       return stompClient.send(
-          BuildConfig.TRIP_DESTINATION,
+          BuildConfig.ROUTE_DESTINATION,
           "{\"next\":\"" + routePoint.getId() + "\"}"
       )
           .subscribeOn(Schedulers.io())

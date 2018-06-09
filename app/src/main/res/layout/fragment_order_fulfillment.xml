@@ -1,14 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<android.support.constraint.ConstraintLayout
   xmlns:android="http://schemas.android.com/apk/res/android"
   xmlns:tools="http://schemas.android.com/tools"
   android:layout_width="match_parent"
   android:layout_height="match_parent"
-  android:paddingBottom="12dp"
-  android:orientation="vertical">
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  android:paddingBottom="12dp">
   <ScrollView
-    android:layout_width="match_parent"
+    android:layout_width="0dp"
     android:layout_height="0dp"
+    app:layout_constraintBottom_toTopOf="@id/openNavigator"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent"
     android:layout_weight="1">
     <LinearLayout
       android:layout_width="match_parent"
@@ -95,27 +99,35 @@
   <Button
     android:id="@+id/openNavigator"
     style="@style/AppTheme.Button.Colored.Compact"
-    android:layout_width="match_parent"
-    android:layout_height="56dp"
+    android:layout_width="0dp"
+    android:layout_height="wrap_content"
     android:layout_marginTop="16dp"
     android:layout_marginStart="12dp"
-    android:layout_marginEnd="12dp"
+    android:layout_marginLeft="12dp"
+    app:layout_constraintBottom_toTopOf="@id/completeTheOrder"
+    app:layout_constraintEnd_toStartOf="@id/closeRoutePoint"
+    app:layout_constraintStart_toStartOf="parent"
     android:text="@string/get_directions"/>
   <Button
     android:id="@+id/closeRoutePoint"
     style="@style/AppTheme.Button.Colored.Compact"
-    android:layout_width="match_parent"
-    android:layout_height="56dp"
-    android:layout_marginStart="12dp"
+    android:layout_width="0dp"
+    android:layout_height="wrap_content"
     android:layout_marginEnd="12dp"
-    android:text="@string/close_route_point"/>
+    android:layout_marginRight="12dp"
+    android:text="@string/arrived"
+    app:layout_constraintBottom_toTopOf="@id/completeTheOrder"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toEndOf="@id/openNavigator"/>
   <Button
     android:id="@+id/completeTheOrder"
     style="@style/AppTheme.Button.Colored.Compact"
-    android:layout_width="match_parent"
+    android:layout_width="0dp"
     android:layout_height="56dp"
     android:layout_marginStart="12dp"
     android:layout_marginEnd="12dp"
     android:text="@string/complete_the_order"
-    android:visibility="gone"/>
-</LinearLayout>
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"/>
+</android.support.constraint.ConstraintLayout>

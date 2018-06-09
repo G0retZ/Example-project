@@ -79,7 +79,6 @@ public class OrderRouteViewModelImpl extends ViewModel implements
             .fromIterable(routePoints)
             .map(RoutePointItem::new)
             .toList()
-            .map(RoutePointItems::new)
             .toFlowable()
         )
         .subscribe(

@@ -5,8 +5,8 @@ import com.google.gson.annotations.SerializedName;
 
 public class ApiRoutePoint {
 
-  @SerializedName("id")
-  private long id;
+  @SerializedName("index")
+  private long index;
   @SerializedName("latitude")
   private double latitude;
   @SerializedName("longitude")
@@ -17,8 +17,9 @@ public class ApiRoutePoint {
   @Nullable
   @SerializedName("address")
   private String address;
-  @SerializedName("checked")
-  private boolean checked;
+  @Nullable
+  @SerializedName("status")
+  private String status;
 
   /**
    * Конструктор без параметров желателен для безопасной работы Gson.
@@ -27,18 +28,18 @@ public class ApiRoutePoint {
   public ApiRoutePoint() {
   }
 
-  public ApiRoutePoint(long id, double latitude, double longitude, @Nullable String comment,
-      @Nullable String address, boolean checked) {
-    this.id = id;
+  public ApiRoutePoint(long index, double latitude, double longitude, @Nullable String comment,
+      @Nullable String address, @Nullable String status) {
+    this.index = index;
     this.latitude = latitude;
     this.longitude = longitude;
     this.comment = comment;
     this.address = address;
-    this.checked = checked;
+    this.status = status;
   }
 
-  public long getId() {
-    return id;
+  public long getIndex() {
+    return index;
   }
 
   public double getLatitude() {
@@ -59,7 +60,8 @@ public class ApiRoutePoint {
     return address;
   }
 
-  public boolean isChecked() {
-    return checked;
+  @Nullable
+  public String getStatus() {
+    return status;
   }
 }
