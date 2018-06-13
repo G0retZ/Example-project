@@ -88,6 +88,11 @@ public class BalanceFragment extends BaseFragment implements BalanceViewActions 
     balanceAmount.setText(
         new DecimalFormat(getString(R.string.currency_format)).format(amount)
     );
+    if (amount < 0) {
+      balanceAmount.setTextColor(getResources().getColor(R.color.colorError));
+    } else {
+      balanceAmount.setTextColor(getResources().getColor(android.R.color.white));
+    }
   }
 
   @Override
