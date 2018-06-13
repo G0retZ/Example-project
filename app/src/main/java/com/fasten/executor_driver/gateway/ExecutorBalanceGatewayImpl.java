@@ -10,18 +10,17 @@ import io.reactivex.Flowable;
 import io.reactivex.schedulers.Schedulers;
 import javax.inject.Inject;
 import ua.naiksoftware.stomp.client.StompClient;
-import ua.naiksoftware.stomp.client.StompMessage;
 
 public class ExecutorBalanceGatewayImpl implements ExecutorBalanceGateway {
 
   @NonNull
   private final StompClient stompClient;
   @NonNull
-  private final Mapper<StompMessage, ExecutorBalance> mapper;
+  private final Mapper<String, ExecutorBalance> mapper;
 
   @Inject
   public ExecutorBalanceGatewayImpl(@NonNull StompClient stompClient,
-      @NonNull Mapper<StompMessage, ExecutorBalance> mapper) {
+      @NonNull Mapper<String, ExecutorBalance> mapper) {
     this.stompClient = stompClient;
     this.mapper = mapper;
   }
@@ -35,7 +34,7 @@ public class ExecutorBalanceGatewayImpl implements ExecutorBalanceGateway {
           .subscribeOn(Schedulers.io())
           .observeOn(Schedulers.single())
           .filter(stompMessage -> stompMessage.findHeader("Balance") != null)
-          .map(mapper::map);
+          .map(stompMessage -> mapper.map(stompMessage.getPayload()));
     }
     return Flowable.error(new ConnectionClosedException());
   }

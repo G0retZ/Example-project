@@ -12,19 +12,8 @@
     style="@style/AppTheme.AppBar"
     android:layout_width="match_parent"
     android:layout_height="?android:attr/actionBarSize"
-    app:navigationIcon="@drawable/ic_menu_24dp"
-    app:title="@string/balance">
-    <LinearLayout
-      android:layout_width="wrap_content"
-      android:layout_height="match_parent"
-      android:gravity="end">
-      <Button
-        style="@style/AppTheme.Button.Borderless.Small"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/refresh"/>
-    </LinearLayout>
-  </android.support.v7.widget.Toolbar>
+    app:navigationIcon="@drawable/ic_back_24dp"
+    app:title="@string/balance"/>
   <fragment
     android:id="@+id/fragment_balance"
     android:layout_width="match_parent"

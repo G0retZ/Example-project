@@ -3,7 +3,7 @@ package com.fasten.executor_driver.presentation.balance;
 /**
  * Действия для смены состояния вида окна баланса.
  */
-interface BalanceViewActions {
+public interface BalanceViewActions {
 
   /**
    * Показать сумму на основном счете.

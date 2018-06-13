@@ -15,6 +15,8 @@ import com.fasten.executor_driver.di.AppComponent;
 import com.fasten.executor_driver.di.AppComponentImpl;
 import com.fasten.executor_driver.presentation.cancelorderreasons.CancelOrderReasonsNavigate;
 import com.fasten.executor_driver.presentation.cancelorderreasons.CancelOrderReasonsViewModel;
+import com.fasten.executor_driver.presentation.coreBalance.CoreBalanceNavigate;
+import com.fasten.executor_driver.presentation.coreBalance.CoreBalanceViewModel;
 import com.fasten.executor_driver.presentation.executorstate.ExecutorStateNavigate;
 import com.fasten.executor_driver.presentation.executorstate.ExecutorStateViewActions;
 import com.fasten.executor_driver.presentation.executorstate.ExecutorStateViewModel;
@@ -33,6 +35,8 @@ public class MainApplication extends Application implements MissedOrderViewActio
   private AppComponent appComponent;
   @Nullable
   private CancelOrderReasonsViewModel cancelOrderReasonsViewModel;
+  @Nullable
+  private CoreBalanceViewModel coreBalanceViewModel;
   @Nullable
   private ExecutorStateViewModel executorStateViewModel;
   @Nullable
@@ -69,6 +73,11 @@ public class MainApplication extends Application implements MissedOrderViewActio
   }
 
   @Inject
+  public void setCoreBalanceViewModel(@NonNull CoreBalanceViewModel coreBalanceViewModel) {
+    this.coreBalanceViewModel = coreBalanceViewModel;
+  }
+
+  @Inject
   public void setMissedOrderViewModel(@Nullable MissedOrderViewModel missedOrderViewModel) {
     this.missedOrderViewModel = missedOrderViewModel;
   }
@@ -91,8 +100,9 @@ public class MainApplication extends Application implements MissedOrderViewActio
     notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
     appComponent = new AppComponentImpl(this.getApplicationContext());
     appComponent.inject(this);
-    if (cancelOrderReasonsViewModel == null || executorStateViewModel == null
-        || geoLocationViewModel == null || missedOrderViewModel == null) {
+    if (cancelOrderReasonsViewModel == null || coreBalanceViewModel == null ||
+        executorStateViewModel == null || geoLocationViewModel == null
+        || missedOrderViewModel == null) {
       throw new RuntimeException("Shit! WTF?!");
     }
     executorStateViewModel.getViewStateLiveData().observeForever(viewState -> {
@@ -106,6 +116,7 @@ public class MainApplication extends Application implements MissedOrderViewActio
       }
     });
     cancelOrderReasonsViewModel.getNavigationLiveData().observeForever(this::navigate);
+    coreBalanceViewModel.getNavigationLiveData().observeForever(this::navigate);
     executorStateViewModel.getNavigationLiveData().observeForever(this::navigate);
     geoLocationViewModel.getNavigationLiveData().observeForever(this::navigate);
     missedOrderViewModel.initializeMissedOrderMessages();
@@ -114,16 +125,20 @@ public class MainApplication extends Application implements MissedOrderViewActio
   }
 
   public void initExecutorStates(boolean reload) {
-    if (executorStateViewModel == null) {
+    if (cancelOrderReasonsViewModel == null) {
       throw new IllegalStateException("Граф зависимостей поломан!");
     }
-    if (cancelOrderReasonsViewModel == null) {
+    if (coreBalanceViewModel == null) {
+      throw new IllegalStateException("Граф зависимостей поломан!");
+    }
+    if (executorStateViewModel == null) {
       throw new IllegalStateException("Граф зависимостей поломан!");
     }
     if (missedOrderViewModel == null) {
       throw new IllegalStateException("Граф зависимостей поломан!");
     }
     cancelOrderReasonsViewModel.initializeCancelOrderReasons(reload);
+    coreBalanceViewModel.initializeExecutorBalance(reload);
     executorStateViewModel.initializeExecutorState(reload);
     missedOrderViewModel.initializeMissedOrderMessages();
   }
@@ -144,6 +159,9 @@ public class MainApplication extends Application implements MissedOrderViewActio
     }
     switch (destination) {
       case CancelOrderReasonsNavigate.SERVER_DATA_ERROR:
+        stopService();
+        break;
+      case CoreBalanceNavigate.SERVER_DATA_ERROR:
         stopService();
         break;
       case ExecutorStateNavigate.NO_NETWORK:

@@ -27,6 +27,8 @@ import com.fasten.executor_driver.gateway.CancelOrderReasonApiMapper;
 import com.fasten.executor_driver.gateway.CurrentVehicleOptionsGatewayImpl;
 import com.fasten.executor_driver.gateway.ErrorMapper;
 import com.fasten.executor_driver.gateway.ExcessiveCostApiMapper;
+import com.fasten.executor_driver.gateway.ExecutorBalanceApiMapper;
+import com.fasten.executor_driver.gateway.ExecutorBalanceGatewayImpl;
 import com.fasten.executor_driver.gateway.ExecutorStateApiMapper;
 import com.fasten.executor_driver.gateway.ExecutorStateGatewayImpl;
 import com.fasten.executor_driver.gateway.ExecutorStateSwitchGatewayImpl;
@@ -61,6 +63,8 @@ import com.fasten.executor_driver.gateway.WaitingForClientGatewayImpl;
 import com.fasten.executor_driver.interactor.CallToClientUseCaseImpl;
 import com.fasten.executor_driver.interactor.CancelOrderUseCase;
 import com.fasten.executor_driver.interactor.CancelOrderUseCaseImpl;
+import com.fasten.executor_driver.interactor.ExecutorBalanceUseCase;
+import com.fasten.executor_driver.interactor.ExecutorBalanceUseCaseImpl;
 import com.fasten.executor_driver.interactor.ExecutorStateNotOnlineUseCaseImpl;
 import com.fasten.executor_driver.interactor.ExecutorStateUseCase;
 import com.fasten.executor_driver.interactor.ExecutorStateUseCaseImpl;
@@ -90,6 +94,7 @@ import com.fasten.executor_driver.interactor.vehicle.VehicleOptionsUseCaseImpl;
 import com.fasten.executor_driver.interactor.vehicle.VehiclesAndOptionsGateway;
 import com.fasten.executor_driver.interactor.vehicle.VehiclesAndOptionsUseCaseImpl;
 import com.fasten.executor_driver.presentation.ViewModelFactory;
+import com.fasten.executor_driver.presentation.balance.BalanceViewModelImpl;
 import com.fasten.executor_driver.presentation.calltoclient.CallToClientViewModelImpl;
 import com.fasten.executor_driver.presentation.calltooperator.CallToOperatorViewModelImpl;
 import com.fasten.executor_driver.presentation.cancelorder.CancelOrderViewModelImpl;
@@ -97,6 +102,7 @@ import com.fasten.executor_driver.presentation.cancelorderreasons.CancelOrderRea
 import com.fasten.executor_driver.presentation.choosevehicle.ChooseVehicleViewModelImpl;
 import com.fasten.executor_driver.presentation.code.CodeViewModelImpl;
 import com.fasten.executor_driver.presentation.codeHeader.CodeHeaderViewModelImpl;
+import com.fasten.executor_driver.presentation.coreBalance.CoreBalanceViewModelImpl;
 import com.fasten.executor_driver.presentation.executorstate.ExecutorStateViewModelImpl;
 import com.fasten.executor_driver.presentation.geolocation.GeoLocationViewModelImpl;
 import com.fasten.executor_driver.presentation.map.MapViewModelImpl;
@@ -119,6 +125,8 @@ import com.fasten.executor_driver.presentation.smsbutton.SmsButtonViewModelImpl;
 import com.fasten.executor_driver.presentation.vehicleoptions.VehicleOptionsViewModelImpl;
 import com.fasten.executor_driver.presentation.waitingforclient.WaitingForClientViewModelImpl;
 import com.fasten.executor_driver.utils.TimeUtilsImpl;
+import com.fasten.executor_driver.view.BalanceFragment;
+import com.fasten.executor_driver.view.BalanceSummaryFragment;
 import com.fasten.executor_driver.view.CallToClientFragment;
 import com.fasten.executor_driver.view.CallToOperatorFragment;
 import com.fasten.executor_driver.view.CancelOrderDialogFragment;
@@ -127,6 +135,7 @@ import com.fasten.executor_driver.view.ClientOrderConfirmationFragment;
 import com.fasten.executor_driver.view.DriverOrderConfirmationFragment;
 import com.fasten.executor_driver.view.GoOnlineFragment;
 import com.fasten.executor_driver.view.MapFragment;
+import com.fasten.executor_driver.view.MenuFragment;
 import com.fasten.executor_driver.view.MovingToClientFragment;
 import com.fasten.executor_driver.view.OnlineFragment;
 import com.fasten.executor_driver.view.OrderFulfillmentDetailsFragment;
@@ -164,6 +173,8 @@ public class AppComponentImpl implements AppComponent {
   @NonNull
   private final CancelOrderUseCase cancelOrderUseCase;
   @NonNull
+  private final ExecutorBalanceUseCase executorBalanceUseCase;
+  @NonNull
   private final GeoLocationUseCase geoLocationUseCase;
   @NonNull
   private final MemoryDataSharer<String> loginSharer;
@@ -191,7 +202,20 @@ public class AppComponentImpl implements AppComponent {
     vehicleChoiceSharer = new VehicleChoiceSharer();
     lastUsedVehicleGateway = new LastUsedVehicleGatewayImpl(appSettingsService);
     cancelOrderUseCase = new CancelOrderUseCaseImpl(
-        new CancelOrderGatewayImpl(stompClient, new CancelOrderReasonApiMapper()),
+        new CancelOrderGatewayImpl(
+            stompClient,
+            new CancelOrderReasonApiMapper()
+        ),
+        new SocketGatewayImpl(
+            stompClient
+        ),
+        loginSharer
+    );
+    executorBalanceUseCase = new ExecutorBalanceUseCaseImpl(
+        new ExecutorBalanceGatewayImpl(
+            stompClient,
+            new ExecutorBalanceApiMapper()
+        ),
         new SocketGatewayImpl(
             stompClient
         ),
@@ -259,6 +283,11 @@ public class AppComponentImpl implements AppComponent {
     mainApplication.setCancelOrderReasonsViewModel(
         new CancelOrderReasonsViewModelImpl(
             cancelOrderUseCase
+        )
+    );
+    mainApplication.setCoreBalanceViewModel(
+        new CoreBalanceViewModelImpl(
+            executorBalanceUseCase
         )
     );
     mainApplication.setExecutorStateViewModel(
@@ -829,6 +858,48 @@ public class AppComponentImpl implements AppComponent {
                 new CallToOperatorViewModelImpl()
             )
         ).get(CallToOperatorViewModelImpl.class)
+    );
+  }
+
+  @Override
+  public void inject(BalanceFragment balanceFragment) {
+    balanceFragment.setBalanceViewModel(
+        ViewModelProviders.of(
+            balanceFragment,
+            new ViewModelFactory<>(
+                new BalanceViewModelImpl(
+                    executorBalanceUseCase
+                )
+            )
+        ).get(BalanceViewModelImpl.class)
+    );
+  }
+
+  @Override
+  public void inject(BalanceSummaryFragment balanceSummaryFragment) {
+    balanceSummaryFragment.setBalanceViewModel(
+        ViewModelProviders.of(
+            balanceSummaryFragment,
+            new ViewModelFactory<>(
+                new BalanceViewModelImpl(
+                    executorBalanceUseCase
+                )
+            )
+        ).get(BalanceViewModelImpl.class)
+    );
+  }
+
+  @Override
+  public void inject(MenuFragment menuFragment) {
+    menuFragment.setBalanceViewModel(
+        ViewModelProviders.of(
+            menuFragment,
+            new ViewModelFactory<>(
+                new BalanceViewModelImpl(
+                    executorBalanceUseCase
+                )
+            )
+        ).get(BalanceViewModelImpl.class)
     );
   }
 }
