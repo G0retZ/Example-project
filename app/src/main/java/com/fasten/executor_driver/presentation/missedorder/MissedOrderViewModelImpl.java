@@ -13,7 +13,7 @@ import io.reactivex.internal.disposables.EmptyDisposable;
 import io.reactivex.schedulers.Schedulers;
 import javax.inject.Inject;
 
-class MissedOrderViewModelImpl extends ViewModel implements
+public class MissedOrderViewModelImpl extends ViewModel implements
     MissedOrderViewModel {
 
   @NonNull
@@ -24,7 +24,7 @@ class MissedOrderViewModelImpl extends ViewModel implements
   private Disposable disposable = EmptyDisposable.INSTANCE;
 
   @Inject
-  MissedOrderViewModelImpl(@NonNull MissedOrderUseCase missedOrderUseCase) {
+  public MissedOrderViewModelImpl(@NonNull MissedOrderUseCase missedOrderUseCase) {
     this.missedOrderUseCase = missedOrderUseCase;
     messageLiveData = new SingleLiveEvent<>();
   }

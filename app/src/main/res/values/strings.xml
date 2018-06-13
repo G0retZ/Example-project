@@ -35,7 +35,6 @@
   <string name="moving_to_client">На встречу с клиентом!</string>
   <string name="waiting_for_client">Ожидание клиента</string>
   <string name="order_fulfillment">Выполнение заказа</string>
-  <string name="to_app">В приложение</string>
   <string name="no_orders">Не получать заказы</string>
   <string name="wait_for_orders">Ожидание заказа</string>
   <string name="to_loading_point">В пути к месту погрузки</string>
@@ -111,4 +110,6 @@
   <string name="currency_format">##,###,### ₽</string>
   <string name="bonus_explained">Бонусные рубли не подлежат обмену на наличные денежные средства.</string>
   <string name="bonus_amount">Бонусных рублей</string>
+  <string name="missed_order">Упущен заказ</string>
+  <string name="server_connection">Связь с сервером</string>
 </resources>

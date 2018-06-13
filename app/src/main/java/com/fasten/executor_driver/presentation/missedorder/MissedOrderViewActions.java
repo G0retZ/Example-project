@@ -5,7 +5,7 @@ import android.support.annotation.NonNull;
 /**
  * Действия для смены состояния вида окна упущенного заказа.
  */
-interface MissedOrderViewActions {
+public interface MissedOrderViewActions {
 
   /**
    * Показать сообщение об упущенном заказе.

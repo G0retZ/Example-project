@@ -36,6 +36,7 @@ import com.fasten.executor_driver.gateway.GeoLocationGatewayImpl;
 import com.fasten.executor_driver.gateway.GeoTrackingGatewayImpl;
 import com.fasten.executor_driver.gateway.HeatMapGatewayImpl;
 import com.fasten.executor_driver.gateway.LastUsedVehicleGatewayImpl;
+import com.fasten.executor_driver.gateway.MissedOrderGatewayImpl;
 import com.fasten.executor_driver.gateway.MovingToClientApiMapper;
 import com.fasten.executor_driver.gateway.MovingToClientGatewayImpl;
 import com.fasten.executor_driver.gateway.OrderApiMapper;
@@ -70,6 +71,7 @@ import com.fasten.executor_driver.interactor.ExecutorStateUseCaseImpl;
 import com.fasten.executor_driver.interactor.GeoLocationUseCase;
 import com.fasten.executor_driver.interactor.GeoLocationUseCaseImpl;
 import com.fasten.executor_driver.interactor.MemoryDataSharer;
+import com.fasten.executor_driver.interactor.MissedOrderUseCaseImpl;
 import com.fasten.executor_driver.interactor.MovingToClientUseCaseImpl;
 import com.fasten.executor_driver.interactor.OrderConfirmationUseCaseImpl;
 import com.fasten.executor_driver.interactor.OrderCurrentCostUseCaseImpl;
@@ -104,6 +106,7 @@ import com.fasten.executor_driver.presentation.coreBalance.CoreBalanceViewModelI
 import com.fasten.executor_driver.presentation.executorstate.ExecutorStateViewModelImpl;
 import com.fasten.executor_driver.presentation.geolocation.GeoLocationViewModelImpl;
 import com.fasten.executor_driver.presentation.map.MapViewModelImpl;
+import com.fasten.executor_driver.presentation.missedorder.MissedOrderViewModelImpl;
 import com.fasten.executor_driver.presentation.movingtoclient.MovingToClientViewModelImpl;
 import com.fasten.executor_driver.presentation.nextroutepoint.NextRoutePointViewModelImpl;
 import com.fasten.executor_driver.presentation.onlinebutton.OnlineButtonViewModelImpl;
@@ -295,6 +298,19 @@ public class AppComponentImpl implements AppComponent {
     mainApplication.setGeoLocationViewModel(
         new GeoLocationViewModelImpl(
             geoLocationUseCase
+        )
+    );
+    mainApplication.setMissedOrderViewModel(
+        new MissedOrderViewModelImpl(
+            new MissedOrderUseCaseImpl(
+                new MissedOrderGatewayImpl(
+                    stompClient
+                ),
+                new SocketGatewayImpl(
+                    stompClient
+                ),
+                loginSharer
+            )
         )
     );
     AutoRouterImpl autoRouter = new AutoRouterImpl();

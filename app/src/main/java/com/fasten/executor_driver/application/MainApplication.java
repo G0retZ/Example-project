@@ -1,12 +1,14 @@
 package com.fasten.executor_driver.application;
 
 import android.app.Application;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
+import android.support.v4.app.NotificationCompat.Builder;
 import com.fasten.executor_driver.R;
 import com.fasten.executor_driver.di.AppComponent;
 import com.fasten.executor_driver.di.AppComponentImpl;
@@ -18,13 +20,15 @@ import com.fasten.executor_driver.presentation.executorstate.ExecutorStateNaviga
 import com.fasten.executor_driver.presentation.executorstate.ExecutorStateViewActions;
 import com.fasten.executor_driver.presentation.executorstate.ExecutorStateViewModel;
 import com.fasten.executor_driver.presentation.geolocation.GeoLocationViewModel;
+import com.fasten.executor_driver.presentation.missedorder.MissedOrderViewActions;
+import com.fasten.executor_driver.presentation.missedorder.MissedOrderViewModel;
 import javax.inject.Inject;
 
 /**
  * Application.
  */
 
-public class MainApplication extends Application {
+public class MainApplication extends Application implements MissedOrderViewActions {
 
   @Nullable
   private AppComponent appComponent;
@@ -37,9 +41,14 @@ public class MainApplication extends Application {
   @Nullable
   private GeoLocationViewModel geoLocationViewModel;
   @Nullable
+  private MissedOrderViewModel missedOrderViewModel;
+  @Nullable
   private AutoRouter autoRouter;
   @Nullable
   private ExecutorStateViewActions executorStateViewActions;
+  private int missedOrdersCount;
+  @Nullable
+  private NotificationManager notificationManager;
 
   @Inject
   public void setExecutorStateViewModel(@NonNull ExecutorStateViewModel executorStateViewModel) {
@@ -68,6 +77,11 @@ public class MainApplication extends Application {
   }
 
   @Inject
+  public void setMissedOrderViewModel(@Nullable MissedOrderViewModel missedOrderViewModel) {
+    this.missedOrderViewModel = missedOrderViewModel;
+  }
+
+  @Inject
   public void setExecutorStateViewActions(
       @NonNull ExecutorStateViewActions executorStateViewActions) {
     this.executorStateViewActions = executorStateViewActions;
@@ -82,10 +96,12 @@ public class MainApplication extends Application {
   @Override
   public void onCreate() {
     super.onCreate();
+    notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
     appComponent = new AppComponentImpl(this.getApplicationContext());
     appComponent.inject(this);
     if (cancelOrderReasonsViewModel == null || coreBalanceViewModel == null ||
-        executorStateViewModel == null || geoLocationViewModel == null) {
+        executorStateViewModel == null || geoLocationViewModel == null
+        || missedOrderViewModel == null) {
       throw new RuntimeException("Shit! WTF?!");
     }
     executorStateViewModel.getViewStateLiveData().observeForever(viewState -> {
@@ -93,10 +109,16 @@ public class MainApplication extends Application {
         viewState.apply(executorStateViewActions);
       }
     });
+    missedOrderViewModel.getViewStateLiveData().observeForever(viewState -> {
+      if (viewState != null && executorStateViewActions != null) {
+        viewState.apply(this);
+      }
+    });
     cancelOrderReasonsViewModel.getNavigationLiveData().observeForever(this::navigate);
     coreBalanceViewModel.getNavigationLiveData().observeForever(this::navigate);
     executorStateViewModel.getNavigationLiveData().observeForever(this::navigate);
     geoLocationViewModel.getNavigationLiveData().observeForever(this::navigate);
+    missedOrderViewModel.initializeMissedOrderMessages();
     initExecutorStates(true);
     initGeoLocation();
   }
@@ -111,9 +133,13 @@ public class MainApplication extends Application {
     if (executorStateViewModel == null) {
       throw new IllegalStateException("Граф зависимостей поломан!");
     }
+    if (missedOrderViewModel == null) {
+      throw new IllegalStateException("Граф зависимостей поломан!");
+    }
     cancelOrderReasonsViewModel.initializeCancelOrderReasons(reload);
     coreBalanceViewModel.initializeExecutorBalance(reload);
     executorStateViewModel.initializeExecutorState(reload);
+    missedOrderViewModel.initializeMissedOrderMessages();
   }
 
   public void initGeoLocation() {
@@ -147,36 +173,32 @@ public class MainApplication extends Application {
         stopService();
         break;
       case ExecutorStateNavigate.MAP_SHIFT_OPENED:
-        startService(R.string.online, R.string.no_orders, R.string.to_app,
-            PendingIntent.getActivity(this, 0, new Intent(this, OnlineActivity.class), 0));
+        startService(R.string.online, R.string.no_orders, PendingIntent
+            .getActivity(this, 0, new Intent(this, OnlineActivity.class), 0));
         break;
       case ExecutorStateNavigate.MAP_ONLINE:
-        startService(R.string.online, R.string.wait_for_orders, R.string.to_app,
-            PendingIntent.getActivity(this, 0, new Intent(this, OnlineActivity.class), 0));
+        startService(R.string.online, R.string.wait_for_orders, PendingIntent
+            .getActivity(this, 0, new Intent(this, OnlineActivity.class), 0));
         break;
       case ExecutorStateNavigate.DRIVER_ORDER_CONFIRMATION:
-        startService(R.string.offer, R.string.new_order, R.string.consider,
-            PendingIntent
-                .getActivity(this, 0, new Intent(this, DriverOrderConfirmationActivity.class), 0));
+        startService(R.string.offer, R.string.new_order, PendingIntent
+            .getActivity(this, 0, new Intent(this, DriverOrderConfirmationActivity.class), 0));
         break;
       case ExecutorStateNavigate.CLIENT_ORDER_CONFIRMATION:
-        startService(R.string.working, R.string.client_confirm, R.string.to_app,
-            PendingIntent
-                .getActivity(this, 0, new Intent(this, ClientOrderConfirmationActivity.class), 0));
+        startService(R.string.working, R.string.client_confirm, PendingIntent
+            .getActivity(this, 0, new Intent(this, ClientOrderConfirmationActivity.class), 0));
         break;
       case ExecutorStateNavigate.MOVING_TO_CLIENT:
-        startService(R.string.working, R.string.moving_to_client, R.string.to_app,
-            PendingIntent.getActivity(this, 0, new Intent(this, MovingToClientActivity.class), 0));
+        startService(R.string.working, R.string.moving_to_client, PendingIntent
+            .getActivity(this, 0, new Intent(this, MovingToClientActivity.class), 0));
         break;
       case ExecutorStateNavigate.WAITING_FOR_CLIENT:
-        startService(R.string.working, R.string.wait_for_client, R.string.to_app,
-            PendingIntent
-                .getActivity(this, 0, new Intent(this, WaitingForClientActivity.class), 0));
+        startService(R.string.working, R.string.wait_for_client, PendingIntent
+            .getActivity(this, 0, new Intent(this, WaitingForClientActivity.class), 0));
         break;
       case ExecutorStateNavigate.ORDER_FULFILLMENT:
-        startService(R.string.working, R.string.order_fulfillment, R.string.to_app,
-            PendingIntent
-                .getActivity(this, 0, new Intent(this, OrderFulfillmentActivity.class), 0));
+        startService(R.string.working, R.string.order_fulfillment, PendingIntent
+            .getActivity(this, 0, new Intent(this, OrderFulfillmentActivity.class), 0));
         break;
     }
     autoRouter.navigateTo(destination);
@@ -190,20 +212,18 @@ public class MainApplication extends Application {
     return appComponent;
   }
 
-  private void startService(@StringRes int title, @StringRes int text, @StringRes int actionText,
+  private void startService(@StringRes int title, @StringRes int text,
       PendingIntent activityPendingIntent) {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
       startForegroundService(new Intent(this, PersistenceService.class)
           .putExtra(Intent.EXTRA_TITLE, title)
           .putExtra(Intent.EXTRA_TEXT, text)
-          .putExtra(Intent.EXTRA_HTML_TEXT, actionText)
           .putExtra(Intent.EXTRA_INTENT, activityPendingIntent)
       );
     } else {
       startService(new Intent(this, PersistenceService.class)
           .putExtra(Intent.EXTRA_TITLE, title)
           .putExtra(Intent.EXTRA_TEXT, text)
-          .putExtra(Intent.EXTRA_HTML_TEXT, actionText)
           .putExtra(Intent.EXTRA_INTENT, activityPendingIntent)
       );
     }
@@ -211,5 +231,22 @@ public class MainApplication extends Application {
 
   private void stopService() {
     stopService(new Intent(this, PersistenceService.class));
+  }
+
+  @Override
+  public void showMissedOrderMessage(@NonNull String message) {
+    if (notificationManager != null) {
+      Builder builder = new Builder(this, "state_channel")
+          .setContentText(getString(R.string.missed_order))
+          .setContentTitle(message)
+          .setAutoCancel(true)
+          .setContentIntent(
+              PendingIntent.getActivity(this, 0, new Intent(this, BalanceActivity.class), 0)
+          )
+          .setSmallIcon(R.mipmap.ic_launcher)
+          .setTicker(getString(R.string.missed_order))
+          .setWhen(System.currentTimeMillis());
+      notificationManager.notify(missedOrdersCount++ % 5, builder.build());
+    }
   }
 }
