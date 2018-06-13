@@ -25,16 +25,10 @@ public class OrderExcessCostGatewayImpl implements OrderExcessCostGateway {
     this.mapper = mapper;
   }
 
+  // TODO: заглушка из-за неготовности бекенда
   @NonNull
   @Override
   public Flowable<Integer> getOrderExcessCost() {
-    if (stompClient.isConnected() || stompClient.isConnecting()) {
-      return stompClient.topic(BuildConfig.ORDER_EXCESS_COST_DESTINATION)
-          .toFlowable(BackpressureStrategy.BUFFER)
-          .subscribeOn(Schedulers.io())
-          .observeOn(Schedulers.single())
-          .map(mapper::map);
-    }
-    return Flowable.error(new ConnectionClosedException());
+    return Flowable.never();
   }
 }
