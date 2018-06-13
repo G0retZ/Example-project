@@ -132,6 +132,7 @@ import com.fasten.executor_driver.view.ClientOrderConfirmationFragment;
 import com.fasten.executor_driver.view.DriverOrderConfirmationFragment;
 import com.fasten.executor_driver.view.GoOnlineFragment;
 import com.fasten.executor_driver.view.MapFragment;
+import com.fasten.executor_driver.view.MenuFragment;
 import com.fasten.executor_driver.view.MovingToClientFragment;
 import com.fasten.executor_driver.view.OnlineFragment;
 import com.fasten.executor_driver.view.OrderFulfillmentDetailsFragment;
@@ -863,6 +864,20 @@ public class AppComponentImpl implements AppComponent {
     balanceSummaryFragment.setBalanceViewModel(
         ViewModelProviders.of(
             balanceSummaryFragment,
+            new ViewModelFactory<>(
+                new BalanceViewModelImpl(
+                    executorBalanceUseCase
+                )
+            )
+        ).get(BalanceViewModelImpl.class)
+    );
+  }
+
+  @Override
+  public void inject(MenuFragment menuFragment) {
+    menuFragment.setBalanceViewModel(
+        ViewModelProviders.of(
+            menuFragment,
             new ViewModelFactory<>(
                 new BalanceViewModelImpl(
                     executorBalanceUseCase
