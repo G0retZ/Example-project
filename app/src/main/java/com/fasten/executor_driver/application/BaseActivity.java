@@ -91,12 +91,12 @@ public class BaseActivity extends AppCompatActivity {
       blockRequests--;
     }
     if (blockRequests > 0) {
-      if (getSupportFragmentManager().findFragmentByTag("pending") == null) {
+      if (!pendingDialogFragment.isShowing()) {
         pendingDialogFragment.setCancelable(false);
         pendingDialogFragment.show(getSupportFragmentManager(), "pending");
       }
     } else {
-      if (getSupportFragmentManager().findFragmentByTag("pending") != null) {
+      if (pendingDialogFragment.isShowing()) {
         pendingDialogFragment.dismiss();
       }
     }
