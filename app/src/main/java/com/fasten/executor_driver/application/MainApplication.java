@@ -1,7 +1,6 @@
 package com.fasten.executor_driver.application;
 
 import android.app.Application;
-import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
@@ -174,36 +173,32 @@ public class MainApplication extends Application implements MissedOrderViewActio
         stopService();
         break;
       case ExecutorStateNavigate.MAP_SHIFT_OPENED:
-        startService(R.string.online, R.string.no_orders, R.string.to_app,
-            PendingIntent.getActivity(this, 0, new Intent(this, OnlineActivity.class), 0));
+        startService(R.string.online, R.string.no_orders, PendingIntent
+            .getActivity(this, 0, new Intent(this, OnlineActivity.class), 0));
         break;
       case ExecutorStateNavigate.MAP_ONLINE:
-        startService(R.string.online, R.string.wait_for_orders, R.string.to_app,
-            PendingIntent.getActivity(this, 0, new Intent(this, OnlineActivity.class), 0));
+        startService(R.string.online, R.string.wait_for_orders, PendingIntent
+            .getActivity(this, 0, new Intent(this, OnlineActivity.class), 0));
         break;
       case ExecutorStateNavigate.DRIVER_ORDER_CONFIRMATION:
-        startService(R.string.offer, R.string.new_order, R.string.consider,
-            PendingIntent
-                .getActivity(this, 0, new Intent(this, DriverOrderConfirmationActivity.class), 0));
+        startService(R.string.offer, R.string.new_order, PendingIntent
+            .getActivity(this, 0, new Intent(this, DriverOrderConfirmationActivity.class), 0));
         break;
       case ExecutorStateNavigate.CLIENT_ORDER_CONFIRMATION:
-        startService(R.string.working, R.string.client_confirm, R.string.to_app,
-            PendingIntent
-                .getActivity(this, 0, new Intent(this, ClientOrderConfirmationActivity.class), 0));
+        startService(R.string.working, R.string.client_confirm, PendingIntent
+            .getActivity(this, 0, new Intent(this, ClientOrderConfirmationActivity.class), 0));
         break;
       case ExecutorStateNavigate.MOVING_TO_CLIENT:
-        startService(R.string.working, R.string.moving_to_client, R.string.to_app,
-            PendingIntent.getActivity(this, 0, new Intent(this, MovingToClientActivity.class), 0));
+        startService(R.string.working, R.string.moving_to_client, PendingIntent
+            .getActivity(this, 0, new Intent(this, MovingToClientActivity.class), 0));
         break;
       case ExecutorStateNavigate.WAITING_FOR_CLIENT:
-        startService(R.string.working, R.string.wait_for_client, R.string.to_app,
-            PendingIntent
-                .getActivity(this, 0, new Intent(this, WaitingForClientActivity.class), 0));
+        startService(R.string.working, R.string.wait_for_client, PendingIntent
+            .getActivity(this, 0, new Intent(this, WaitingForClientActivity.class), 0));
         break;
       case ExecutorStateNavigate.ORDER_FULFILLMENT:
-        startService(R.string.working, R.string.order_fulfillment, R.string.to_app,
-            PendingIntent
-                .getActivity(this, 0, new Intent(this, OrderFulfillmentActivity.class), 0));
+        startService(R.string.working, R.string.order_fulfillment, PendingIntent
+            .getActivity(this, 0, new Intent(this, OrderFulfillmentActivity.class), 0));
         break;
     }
     autoRouter.navigateTo(destination);
@@ -217,20 +212,18 @@ public class MainApplication extends Application implements MissedOrderViewActio
     return appComponent;
   }
 
-  private void startService(@StringRes int title, @StringRes int text, @StringRes int actionText,
+  private void startService(@StringRes int title, @StringRes int text,
       PendingIntent activityPendingIntent) {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
       startForegroundService(new Intent(this, PersistenceService.class)
           .putExtra(Intent.EXTRA_TITLE, title)
           .putExtra(Intent.EXTRA_TEXT, text)
-          .putExtra(Intent.EXTRA_HTML_TEXT, actionText)
           .putExtra(Intent.EXTRA_INTENT, activityPendingIntent)
       );
     } else {
       startService(new Intent(this, PersistenceService.class)
           .putExtra(Intent.EXTRA_TITLE, title)
           .putExtra(Intent.EXTRA_TEXT, text)
-          .putExtra(Intent.EXTRA_HTML_TEXT, actionText)
           .putExtra(Intent.EXTRA_INTENT, activityPendingIntent)
       );
     }
@@ -243,11 +236,13 @@ public class MainApplication extends Application implements MissedOrderViewActio
   @Override
   public void showMissedOrderMessage(@NonNull String message) {
     if (notificationManager != null) {
-      Builder builder = new Builder(this, "missed_order")
+      Builder builder = new Builder(this, "state_channel")
           .setContentText(getString(R.string.missed_order))
           .setContentTitle(message)
           .setAutoCancel(true)
-          .setPriority(Notification.PRIORITY_HIGH)
+          .setContentIntent(
+              PendingIntent.getActivity(this, 0, new Intent(this, BalanceActivity.class), 0)
+          )
           .setSmallIcon(R.mipmap.ic_launcher)
           .setTicker(getString(R.string.missed_order))
           .setWhen(System.currentTimeMillis());

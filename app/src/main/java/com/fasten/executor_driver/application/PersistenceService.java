@@ -43,10 +43,11 @@ public class PersistenceService extends Service {
       NotificationManager notificationManager =
           (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
       if (notificationManager != null) {
-        CharSequence name = getString(R.string.app_name);
         // Create the channel for the notification
         NotificationChannel mChannel =
-            new NotificationChannel(CHANNEL_ID, name, NotificationManager.IMPORTANCE_DEFAULT);
+            new NotificationChannel(CHANNEL_ID, getString(R.string.server_connection),
+                NotificationManager.IMPORTANCE_HIGH);
+        mChannel.enableVibration(true);
 
         // Set the Notification Channel for the Notification Manager.
         notificationManager.createNotificationChannel(mChannel);
@@ -63,7 +64,6 @@ public class PersistenceService extends Service {
     startForeground(NOTIFICATION_ID, getNotification(
         intent.getIntExtra(Intent.EXTRA_TITLE, 0),
         intent.getIntExtra(Intent.EXTRA_TEXT, 0),
-        intent.getIntExtra(Intent.EXTRA_HTML_TEXT, 0),
         intent.getParcelableExtra(Intent.EXTRA_INTENT)
     ));
     return START_NOT_STICKY;
@@ -84,15 +84,14 @@ public class PersistenceService extends Service {
    * Returns the {@link NotificationCompat} used as part of the foreground service.
    */
   private Notification getNotification(@StringRes int title, @StringRes int text,
-      @StringRes int actionText, @Nullable PendingIntent activityPendingIntent) {
+      @Nullable PendingIntent activityPendingIntent) {
     NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID);
     if (activityPendingIntent != null) {
-      builder.addAction(R.mipmap.ic_launcher, getString(actionText), activityPendingIntent);
+      builder.setContentIntent(activityPendingIntent);
     }
     builder.setContentText(getString(text))
         .setContentTitle(getString(title))
         .setOngoing(true)
-        .setPriority(Notification.PRIORITY_HIGH)
         .setSmallIcon(R.mipmap.ic_launcher)
         .setTicker(getString(text))
         .setWhen(System.currentTimeMillis());
