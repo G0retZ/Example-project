@@ -5,7 +5,7 @@ import com.fasten.executor_driver.presentation.ViewModel;
 /**
  * ViewModel окна баланса.
  */
-interface BalanceViewModel extends ViewModel<BalanceViewActions> {
+public interface BalanceViewModel extends ViewModel<BalanceViewActions> {
 
   /**
    * Пополняет счет.

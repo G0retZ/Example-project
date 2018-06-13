@@ -7,7 +7,6 @@ import android.support.annotation.NonNull;
 import com.fasten.executor_driver.gateway.DataMappingException;
 import com.fasten.executor_driver.interactor.ExecutorBalanceUseCase;
 import com.fasten.executor_driver.presentation.ViewState;
-import com.fasten.executor_driver.presentation.cancelorderreasons.CancelOrderReasonsNavigate;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.internal.disposables.EmptyDisposable;
@@ -24,7 +23,7 @@ public class CoreBalanceViewModelImpl extends ViewModel implements CoreBalanceVi
   private Disposable disposable = EmptyDisposable.INSTANCE;
 
   @Inject
-  CoreBalanceViewModelImpl(@NonNull ExecutorBalanceUseCase executorBalanceUseCase) {
+  public CoreBalanceViewModelImpl(@NonNull ExecutorBalanceUseCase executorBalanceUseCase) {
     this.executorBalanceUseCase = executorBalanceUseCase;
     navigateLiveData = new MutableLiveData<>();
   }
@@ -53,7 +52,7 @@ public class CoreBalanceViewModelImpl extends ViewModel implements CoreBalanceVi
             throwable -> {
               throwable.printStackTrace();
               if (throwable instanceof DataMappingException) {
-                navigateLiveData.postValue(CancelOrderReasonsNavigate.SERVER_DATA_ERROR);
+                navigateLiveData.postValue(CoreBalanceNavigate.SERVER_DATA_ERROR);
               }
             }
         );

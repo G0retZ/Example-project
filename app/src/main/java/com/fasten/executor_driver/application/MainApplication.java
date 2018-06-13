@@ -12,6 +12,8 @@ import com.fasten.executor_driver.di.AppComponent;
 import com.fasten.executor_driver.di.AppComponentImpl;
 import com.fasten.executor_driver.presentation.cancelorderreasons.CancelOrderReasonsNavigate;
 import com.fasten.executor_driver.presentation.cancelorderreasons.CancelOrderReasonsViewModel;
+import com.fasten.executor_driver.presentation.coreBalance.CoreBalanceNavigate;
+import com.fasten.executor_driver.presentation.coreBalance.CoreBalanceViewModel;
 import com.fasten.executor_driver.presentation.executorstate.ExecutorStateNavigate;
 import com.fasten.executor_driver.presentation.executorstate.ExecutorStateViewActions;
 import com.fasten.executor_driver.presentation.executorstate.ExecutorStateViewModel;
@@ -28,6 +30,8 @@ public class MainApplication extends Application {
   private AppComponent appComponent;
   @Nullable
   private CancelOrderReasonsViewModel cancelOrderReasonsViewModel;
+  @Nullable
+  private CoreBalanceViewModel coreBalanceViewModel;
   @Nullable
   private ExecutorStateViewModel executorStateViewModel;
   @Nullable
@@ -59,6 +63,11 @@ public class MainApplication extends Application {
   }
 
   @Inject
+  public void setCoreBalanceViewModel(@NonNull CoreBalanceViewModel coreBalanceViewModel) {
+    this.coreBalanceViewModel = coreBalanceViewModel;
+  }
+
+  @Inject
   public void setExecutorStateViewActions(
       @NonNull ExecutorStateViewActions executorStateViewActions) {
     this.executorStateViewActions = executorStateViewActions;
@@ -75,8 +84,8 @@ public class MainApplication extends Application {
     super.onCreate();
     appComponent = new AppComponentImpl(this.getApplicationContext());
     appComponent.inject(this);
-    if (cancelOrderReasonsViewModel == null || executorStateViewModel == null
-        || geoLocationViewModel == null) {
+    if (cancelOrderReasonsViewModel == null || coreBalanceViewModel == null ||
+        executorStateViewModel == null || geoLocationViewModel == null) {
       throw new RuntimeException("Shit! WTF?!");
     }
     executorStateViewModel.getViewStateLiveData().observeForever(viewState -> {
@@ -85,6 +94,7 @@ public class MainApplication extends Application {
       }
     });
     cancelOrderReasonsViewModel.getNavigationLiveData().observeForever(this::navigate);
+    coreBalanceViewModel.getNavigationLiveData().observeForever(this::navigate);
     executorStateViewModel.getNavigationLiveData().observeForever(this::navigate);
     geoLocationViewModel.getNavigationLiveData().observeForever(this::navigate);
     initExecutorStates(true);
@@ -92,13 +102,17 @@ public class MainApplication extends Application {
   }
 
   public void initExecutorStates(boolean reload) {
-    if (executorStateViewModel == null) {
-      throw new IllegalStateException("Граф зависимостей поломан!");
-    }
     if (cancelOrderReasonsViewModel == null) {
       throw new IllegalStateException("Граф зависимостей поломан!");
     }
+    if (coreBalanceViewModel == null) {
+      throw new IllegalStateException("Граф зависимостей поломан!");
+    }
+    if (executorStateViewModel == null) {
+      throw new IllegalStateException("Граф зависимостей поломан!");
+    }
     cancelOrderReasonsViewModel.initializeCancelOrderReasons(reload);
+    coreBalanceViewModel.initializeExecutorBalance(reload);
     executorStateViewModel.initializeExecutorState(reload);
   }
 
@@ -118,6 +132,9 @@ public class MainApplication extends Application {
     }
     switch (destination) {
       case CancelOrderReasonsNavigate.SERVER_DATA_ERROR:
+        stopService();
+        break;
+      case CoreBalanceNavigate.SERVER_DATA_ERROR:
         stopService();
         break;
       case ExecutorStateNavigate.NO_NETWORK:

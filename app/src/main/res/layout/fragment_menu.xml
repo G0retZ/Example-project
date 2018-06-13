@@ -42,7 +42,7 @@
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toBottomOf="@id/profileLine"/>
   <TextView
-    android:id="@+id/money"
+    android:id="@+id/balanceAmount"
     style="@style/TextAppearance.AppCompat.Subhead"
     android:layout_width="wrap_content"
     android:layout_height="56dp"
@@ -50,12 +50,9 @@
     android:paddingEnd="16dp"
     android:background="?android:attr/selectableItemBackground"
     android:gravity="center_vertical"
-    android:textColor="#47FF60"
     app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintHorizontal_bias="1.0"
-    app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toBottomOf="@id/profileLine"
-    tools:text="10 225 ₽"/>
+    tools:text="@string/currency_format"/>
   <View
     android:id="@+id/balanceLine"
     android:layout_width="0dp"
@@ -87,8 +84,6 @@
     android:background="?android:attr/selectableItemBackground"
     android:gravity="center_vertical"
     app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintHorizontal_bias="1.0"
-    app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toBottomOf="@id/balanceLine"
     tools:text="2"/>
   <View

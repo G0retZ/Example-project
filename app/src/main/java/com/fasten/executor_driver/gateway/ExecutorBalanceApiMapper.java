@@ -9,10 +9,10 @@ import javax.inject.Inject;
 /**
  * Преобразуем статус из ответа сервера в бизнес объект статуса исполнителя.
  */
-class ExecutorBalanceApiMapper implements Mapper<String, ExecutorBalance> {
+public class ExecutorBalanceApiMapper implements Mapper<String, ExecutorBalance> {
 
   @Inject
-  ExecutorBalanceApiMapper() {
+  public ExecutorBalanceApiMapper() {
   }
 
   @NonNull

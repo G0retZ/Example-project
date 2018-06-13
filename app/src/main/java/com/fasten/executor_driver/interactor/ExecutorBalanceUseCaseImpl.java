@@ -6,7 +6,7 @@ import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
 import javax.inject.Inject;
 
-class ExecutorBalanceUseCaseImpl implements ExecutorBalanceUseCase {
+public class ExecutorBalanceUseCaseImpl implements ExecutorBalanceUseCase {
 
   @NonNull
   private final ExecutorBalanceGateway gateway;
@@ -18,7 +18,7 @@ class ExecutorBalanceUseCaseImpl implements ExecutorBalanceUseCase {
   private Flowable<ExecutorBalance> cancelOrderReasonsFlowable = Flowable.empty();
 
   @Inject
-  ExecutorBalanceUseCaseImpl(@NonNull ExecutorBalanceGateway gateway,
+  public ExecutorBalanceUseCaseImpl(@NonNull ExecutorBalanceGateway gateway,
       @NonNull SocketGateway socketGateway,
       @NonNull DataReceiver<String> loginReceiver) {
     this.gateway = gateway;

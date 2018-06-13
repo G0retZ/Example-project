@@ -14,5 +14,5 @@ import java.lang.annotation.RetentionPolicy;
 public @interface CancelOrderReasonsNavigate {
 
   // Переход к проблеме совместимости формата данных с сервером.
-  String SERVER_DATA_ERROR = "to.ServerDataError";
+  String SERVER_DATA_ERROR = "to.ServerCancelReasonsDataError";
 }

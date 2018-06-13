@@ -11,9 +11,9 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import com.fasten.executor_driver.R;
 import com.fasten.executor_driver.di.AppComponent;
-import com.fasten.executor_driver.presentation.balance.BalanceNavigate;
 import com.fasten.executor_driver.presentation.balance.BalanceViewActions;
 import com.fasten.executor_driver.presentation.balance.BalanceViewModel;
+import com.fasten.executor_driver.presentation.menu.MenuNavigate;
 import java.text.DecimalFormat;
 import javax.inject.Inject;
 
@@ -21,11 +21,10 @@ import javax.inject.Inject;
  * Отображает баланс.
  */
 
-public class BalanceFragment extends BaseFragment implements BalanceViewActions {
+public class BalanceSummaryFragment extends BaseFragment implements BalanceViewActions {
 
   private BalanceViewModel balanceViewModel;
   private TextView balanceAmount;
-  private TextView bonusAmount;
   private Context context;
   private boolean pending;
 
@@ -45,11 +44,9 @@ public class BalanceFragment extends BaseFragment implements BalanceViewActions 
   public View onCreateView(@NonNull LayoutInflater inflater,
       @Nullable ViewGroup container,
       @Nullable Bundle savedInstanceState) {
-    View view = inflater.inflate(R.layout.fragment_balance, container, false);
-    view.findViewById(R.id.goPaymentOptions)
-        .setOnClickListener(v -> navigate(BalanceNavigate.PAYMENT_OPTIONS));
+    View view = inflater.inflate(R.layout.fragment_balance_summary, container, false);
     balanceAmount = view.findViewById(R.id.balanceAmount);
-    bonusAmount = view.findViewById(R.id.bonusAmount);
+    balanceAmount.setOnClickListener(v -> navigate(MenuNavigate.BALANCE));
     return view;
   }
 
@@ -97,12 +94,7 @@ public class BalanceFragment extends BaseFragment implements BalanceViewActions 
 
   @Override
   public void showBonusAccountAmount(int amount) {
-    if (!getResources().getBoolean(R.bool.show_cents)) {
-      amount = Math.round(amount / 100f);
-    }
-    bonusAmount.setText(
-        new DecimalFormat(getString(R.string.currency_format)).format(amount)
-    );
+
   }
 
   @Override
