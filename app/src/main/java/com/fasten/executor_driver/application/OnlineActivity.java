@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
 import com.fasten.executor_driver.R;
+import com.fasten.executor_driver.presentation.menu.MenuNavigate;
 import com.fasten.executor_driver.presentation.onlineswitch.OnlineSwitchNavigate;
 
 public class OnlineActivity extends BaseActivity {
@@ -30,6 +31,9 @@ public class OnlineActivity extends BaseActivity {
         break;
       case OnlineSwitchNavigate.VEHICLE_OPTIONS:
         startActivity(new Intent(this, SelectedVehicleOptionsActivity.class));
+        break;
+      case MenuNavigate.BALANCE:
+        startActivity(new Intent(this, BalanceActivity.class));
         break;
       default:
         super.navigate(destination);

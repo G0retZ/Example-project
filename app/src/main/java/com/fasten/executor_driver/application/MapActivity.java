@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
 import com.fasten.executor_driver.R;
+import com.fasten.executor_driver.presentation.menu.MenuNavigate;
 import com.fasten.executor_driver.presentation.onlinebutton.OnlineButtonNavigate;
 
 public class MapActivity extends BaseActivity {
@@ -59,6 +60,9 @@ public class MapActivity extends BaseActivity {
         break;
       case OnlineButtonNavigate.VEHICLE_OPTIONS:
         startActivity(new Intent(this, VehicleOptionsActivity.class));
+        break;
+      case MenuNavigate.BALANCE:
+        startActivity(new Intent(this, BalanceActivity.class));
         break;
       default:
         super.navigate(destination);

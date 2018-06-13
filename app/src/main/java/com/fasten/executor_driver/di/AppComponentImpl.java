@@ -123,6 +123,7 @@ import com.fasten.executor_driver.presentation.vehicleoptions.VehicleOptionsView
 import com.fasten.executor_driver.presentation.waitingforclient.WaitingForClientViewModelImpl;
 import com.fasten.executor_driver.utils.TimeUtilsImpl;
 import com.fasten.executor_driver.view.BalanceFragment;
+import com.fasten.executor_driver.view.BalanceSummaryFragment;
 import com.fasten.executor_driver.view.CallToClientFragment;
 import com.fasten.executor_driver.view.CallToOperatorFragment;
 import com.fasten.executor_driver.view.CancelOrderDialogFragment;
@@ -848,6 +849,20 @@ public class AppComponentImpl implements AppComponent {
     balanceFragment.setBalanceViewModel(
         ViewModelProviders.of(
             balanceFragment,
+            new ViewModelFactory<>(
+                new BalanceViewModelImpl(
+                    executorBalanceUseCase
+                )
+            )
+        ).get(BalanceViewModelImpl.class)
+    );
+  }
+
+  @Override
+  public void inject(BalanceSummaryFragment balanceSummaryFragment) {
+    balanceSummaryFragment.setBalanceViewModel(
+        ViewModelProviders.of(
+            balanceSummaryFragment,
             new ViewModelFactory<>(
                 new BalanceViewModelImpl(
                     executorBalanceUseCase

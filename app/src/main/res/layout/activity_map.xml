@@ -13,6 +13,12 @@
     android:layout_width="match_parent"
     android:layout_height="?android:attr/actionBarSize"
     app:navigationIcon="@drawable/ic_menu_24dp">
+    <fragment
+      android:id="@+id/fragment_balance_summary"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:name="com.fasten.executor_driver.view.BalanceSummaryFragment"
+      tools:layout="@layout/fragment_balance_summary"/>
   </android.support.v7.widget.Toolbar>
   <fragment
     android:id="@+id/fragment_map"
