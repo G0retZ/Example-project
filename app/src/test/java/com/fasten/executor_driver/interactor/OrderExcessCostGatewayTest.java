@@ -43,7 +43,12 @@ public class OrderExcessCostGatewayTest {
     RxJavaPlugins.setIoSchedulerHandler(scheduler -> Schedulers.trampoline());
     RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
     executorStateGateway = new OrderExcessCostGatewayImpl(stompClient, mapper);
-    when(stompClient.topic(anyString())).thenReturn(Observable.never());
+//    when(stompClient.topic(anyString())).thenReturn(Observable.never());
+  }
+
+  @Test
+  public void askStompClientForExcessiveCost() {
+
   }
 
 //  /* Проверяем работу с клиентом STOMP */
