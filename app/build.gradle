@@ -10,8 +10,8 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-        buildConfigField 'String', 'BASE_URL', '"http://localhost:9080/executor/"'
-        buildConfigField 'String', 'SOCKET_URL', '"ws://localhost:9080/executor/ws"'
+        buildConfigField 'String', 'BASE_URL', '"http://tst.capsrv.xyz:9080/executor/"'
+        buildConfigField 'String', 'SOCKET_URL', '"ws://tst.capsrv.xyz:9080/executor/ws"'
         buildConfigField 'String', 'GOLOCATION_DESTINATION', '"/mobile/online"'
         buildConfigField 'String', 'CONFIRM_OFFER_DESTINATION', '"/mobile/order"'
         buildConfigField 'String', 'SET_STATUS_DESTINATION', '"/mobile/status"'
@@ -35,8 +35,6 @@ android {
         debug {
             applicationIdSuffix ".debug"
             debuggable true
-            buildConfigField 'String', 'BASE_URL', '"http://tst.capsrv.xyz:9080/executor/"'
-            buildConfigField 'String', 'SOCKET_URL', '"ws://tst.capsrv.xyz:9080/executor/ws"'
         }
 
         /**
@@ -45,8 +43,8 @@ android {
          * type, and then changes the manifest placeholder and application ID.
          */
         staging {
+            initWith debug
             applicationIdSuffix ".debugStaging"
-            debuggable true
             buildConfigField 'String', 'BASE_URL', '"http://stg.capsrv.xyz:8080/executor/"'
             buildConfigField 'String', 'SOCKET_URL', '"ws://stg.capsrv.xyz:8080/executor/ws"'
         }
