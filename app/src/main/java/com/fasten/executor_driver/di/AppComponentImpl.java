@@ -249,6 +249,7 @@ public class AppComponentImpl implements AppComponent {
     builder.readTimeout(10, TimeUnit.SECONDS)
         .connectTimeout(10, TimeUnit.SECONDS)
         .writeTimeout(10, TimeUnit.SECONDS)
+        .pingInterval(30, TimeUnit.SECONDS)
         .addInterceptor(connectivityInterceptor)
         .addInterceptor(authorizationInterceptor)
         .addInterceptor(receiveTokenInterceptor)
