@@ -118,7 +118,6 @@ public class MainApplication extends Application implements MissedOrderViewActio
     coreBalanceViewModel.getNavigationLiveData().observeForever(this::navigate);
     executorStateViewModel.getNavigationLiveData().observeForever(this::navigate);
     geoLocationViewModel.getNavigationLiveData().observeForever(this::navigate);
-    missedOrderViewModel.initializeMissedOrderMessages();
     initExecutorStates(true);
     initGeoLocation();
   }
