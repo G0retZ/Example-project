@@ -4,7 +4,7 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import com.fasten.executor_driver.backend.web.NoNetworkException;
-import com.fasten.executor_driver.gateway.SocketGatewayImpl;
+import com.fasten.executor_driver.gateway.ServerConnectionGatewayImpl;
 import io.reactivex.Observable;
 import io.reactivex.plugins.RxJavaPlugins;
 import io.reactivex.schedulers.Schedulers;
@@ -21,9 +21,9 @@ import ua.naiksoftware.stomp.LifecycleEvent.Type;
 import ua.naiksoftware.stomp.client.StompClient;
 
 @RunWith(MockitoJUnitRunner.class)
-public class SocketGatewayTest {
+public class ServerConnectionGatewayTest {
 
-  private SocketGateway socketGateway;
+  private ServerConnectionGateway serverConnectionGateway;
 
   @Mock
   private StompClient stompClient;
@@ -32,7 +32,7 @@ public class SocketGatewayTest {
   public void setUp() {
     RxJavaPlugins.setIoSchedulerHandler(scheduler -> Schedulers.trampoline());
     RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
-    socketGateway = new SocketGatewayImpl(stompClient);
+    serverConnectionGateway = new ServerConnectionGatewayImpl(stompClient);
     when(stompClient.lifecycle()).thenReturn(Observable.never());
   }
 
@@ -49,7 +49,7 @@ public class SocketGatewayTest {
     when(stompClient.isConnected()).thenReturn(true);
 
     // Действие:
-    socketGateway.openSocket().test();
+    serverConnectionGateway.openSocket().test();
 
     // Результат:
     inOrder.verify(stompClient).lifecycle();
@@ -68,7 +68,7 @@ public class SocketGatewayTest {
     when(stompClient.isConnecting()).thenReturn(true);
 
     // Действие:
-    socketGateway.openSocket().test();
+    serverConnectionGateway.openSocket().test();
 
     // Результат:
     inOrder.verify(stompClient).lifecycle();
@@ -87,7 +87,7 @@ public class SocketGatewayTest {
     InOrder inOrder = Mockito.inOrder(stompClient);
 
     // Действие:
-    socketGateway.openSocket().test();
+    serverConnectionGateway.openSocket().test();
 
     // Результат:
     inOrder.verify(stompClient).lifecycle();
@@ -106,7 +106,7 @@ public class SocketGatewayTest {
     InOrder inOrder = Mockito.inOrder(stompClient);
 
     // Действие:
-    socketGateway.openSocket().test().dispose();
+    serverConnectionGateway.openSocket().test().dispose();
 
     // Результат:
     inOrder.verify(stompClient).lifecycle();
@@ -130,7 +130,7 @@ public class SocketGatewayTest {
     when(stompClient.isConnected()).thenReturn(true);
 
     // Действие:
-    TestSubscriber<Boolean> testSubscriber = socketGateway.openSocket().test();
+    TestSubscriber<Boolean> testSubscriber = serverConnectionGateway.openSocket().test();
 
     // Результат:
     testSubscriber.assertNotComplete();
@@ -143,7 +143,7 @@ public class SocketGatewayTest {
   @Test
   public void answerNothingIfNotConnected() {
     // Действие:
-    TestSubscriber<Boolean> testSubscriber = socketGateway.openSocket().test();
+    TestSubscriber<Boolean> testSubscriber = serverConnectionGateway.openSocket().test();
 
     // Результат:
     testSubscriber.assertNotComplete();
@@ -161,7 +161,7 @@ public class SocketGatewayTest {
     );
 
     // Действие:
-    TestSubscriber<Boolean> testSubscriber = socketGateway.openSocket().test();
+    TestSubscriber<Boolean> testSubscriber = serverConnectionGateway.openSocket().test();
 
     // Результат:
     testSubscriber.assertNotComplete();
@@ -179,7 +179,7 @@ public class SocketGatewayTest {
     );
 
     // Действие:
-    TestSubscriber<Boolean> testSubscriber = socketGateway.openSocket().test();
+    TestSubscriber<Boolean> testSubscriber = serverConnectionGateway.openSocket().test();
 
     // Результат:
     testSubscriber.assertNoValues();
@@ -199,7 +199,7 @@ public class SocketGatewayTest {
     );
 
     // Действие:
-    TestSubscriber<Boolean> testSubscriber = socketGateway.openSocket().test();
+    TestSubscriber<Boolean> testSubscriber = serverConnectionGateway.openSocket().test();
 
     // Результат:
     testSubscriber.assertError(NoNetworkException.class);

@@ -1,7 +1,7 @@
 package com.fasten.executor_driver.gateway;
 
 import android.support.annotation.NonNull;
-import com.fasten.executor_driver.interactor.SocketGateway;
+import com.fasten.executor_driver.interactor.ServerConnectionGateway;
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
 import io.reactivex.functions.Function;
@@ -11,13 +11,13 @@ import org.reactivestreams.Publisher;
 import ua.naiksoftware.stomp.LifecycleEvent;
 import ua.naiksoftware.stomp.client.StompClient;
 
-public class SocketGatewayImpl implements SocketGateway {
+public class ServerConnectionGatewayImpl implements ServerConnectionGateway {
 
   @NonNull
   private final StompClient stompClient;
 
   @Inject
-  public SocketGatewayImpl(@NonNull StompClient stompClient) {
+  public ServerConnectionGatewayImpl(@NonNull StompClient stompClient) {
     this.stompClient = stompClient;
   }
 
