@@ -12,7 +12,7 @@ import java.lang.annotation.RetentionPolicy;
     ServerConnectionNavigate.AUTHORIZE
 })
 @Retention(RetentionPolicy.SOURCE)
-@interface ServerConnectionNavigate {
+public @interface ServerConnectionNavigate {
 
   // Переход к решению проблем сети.
   String NO_NETWORK = "to.NoNetwork";

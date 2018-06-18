@@ -196,11 +196,11 @@ public class ExecutorStateViewModelTest {
     executorStateViewModel.initializeExecutorState(false);
 
     // Результат:
-    verify(navigationObserver, only()).onChanged(ExecutorStateNavigate.NO_NETWORK);
+    verify(navigationObserver, only()).onChanged(ExecutorStateNavigate.SERVER_DATA_ERROR);
   }
 
   /**
-   * Должен вернуть "перейти к авторизации".
+   * Должен вернуть "перейти к отсутствию сети".
    */
   @Test
   public void navigateToAuthorize() {
@@ -213,7 +213,7 @@ public class ExecutorStateViewModelTest {
     executorStateViewModel.initializeExecutorState(true);
 
     // Результат:
-    verify(navigationObserver, only()).onChanged(ExecutorStateNavigate.NO_NETWORK);
+    verify(navigationObserver, only()).onChanged(ExecutorStateNavigate.SERVER_DATA_ERROR);
   }
 
   /**

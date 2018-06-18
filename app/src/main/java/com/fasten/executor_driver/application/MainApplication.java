@@ -22,6 +22,7 @@ import com.fasten.executor_driver.presentation.executorstate.ExecutorStateViewMo
 import com.fasten.executor_driver.presentation.geolocation.GeoLocationViewModel;
 import com.fasten.executor_driver.presentation.missedorder.MissedOrderViewActions;
 import com.fasten.executor_driver.presentation.missedorder.MissedOrderViewModel;
+import com.fasten.executor_driver.presentation.serverconnection.ServerConnectionNavigate;
 import javax.inject.Inject;
 
 /**
@@ -156,16 +157,19 @@ public class MainApplication extends Application implements MissedOrderViewActio
       return;
     }
     switch (destination) {
+      case ServerConnectionNavigate.NO_NETWORK:
+        stopService();
+        break;
+      case ServerConnectionNavigate.AUTHORIZE:
+        stopService();
+        break;
       case CancelOrderReasonsNavigate.SERVER_DATA_ERROR:
         stopService();
         break;
       case CoreBalanceNavigate.SERVER_DATA_ERROR:
         stopService();
         break;
-      case ExecutorStateNavigate.NO_NETWORK:
-        stopService();
-        break;
-      case ExecutorStateNavigate.AUTHORIZE:
+      case ExecutorStateNavigate.SERVER_DATA_ERROR:
         stopService();
         break;
       case ExecutorStateNavigate.MAP_SHIFT_CLOSED:
