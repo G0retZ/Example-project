@@ -32,9 +32,10 @@ public class ExecutorBalanceGatewayImpl implements ExecutorBalanceGateway {
       return stompClient.topic(String.format(BuildConfig.STATUS_DESTINATION, channelId))
           .toFlowable(BackpressureStrategy.BUFFER)
           .subscribeOn(Schedulers.io())
-          .observeOn(Schedulers.single())
+          .onErrorResumeNext(Flowable.empty())
           .filter(stompMessage -> stompMessage.findHeader("Balance") != null)
-          .map(stompMessage -> mapper.map(stompMessage.getPayload()));
+          .map(stompMessage -> mapper.map(stompMessage.getPayload()))
+          .observeOn(Schedulers.single());
     }
     return Flowable.error(new ConnectionClosedException());
   }
