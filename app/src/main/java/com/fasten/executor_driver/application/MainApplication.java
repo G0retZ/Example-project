@@ -22,16 +22,22 @@ import com.fasten.executor_driver.presentation.executorstate.ExecutorStateViewMo
 import com.fasten.executor_driver.presentation.geolocation.GeoLocationViewModel;
 import com.fasten.executor_driver.presentation.missedorder.MissedOrderViewActions;
 import com.fasten.executor_driver.presentation.missedorder.MissedOrderViewModel;
+import com.fasten.executor_driver.presentation.serverconnection.ServerConnectionNavigate;
+import com.fasten.executor_driver.presentation.serverconnection.ServerConnectionViewActions;
+import com.fasten.executor_driver.presentation.serverconnection.ServerConnectionViewModel;
 import javax.inject.Inject;
 
 /**
  * Application.
  */
 
-public class MainApplication extends Application implements MissedOrderViewActions {
+public class MainApplication extends Application implements ServerConnectionViewActions,
+    MissedOrderViewActions {
 
   @Nullable
   private AppComponent appComponent;
+  @Nullable
+  private ServerConnectionViewModel serverConnectionViewModel;
   @Nullable
   private CancelOrderReasonsViewModel cancelOrderReasonsViewModel;
   @Nullable
@@ -49,6 +55,12 @@ public class MainApplication extends Application implements MissedOrderViewActio
   private int missedOrdersCount;
   @Nullable
   private NotificationManager notificationManager;
+
+  @Inject
+  public void setServerConnectionViewModel(
+      @NonNull ServerConnectionViewModel serverConnectionViewModel) {
+    this.serverConnectionViewModel = serverConnectionViewModel;
+  }
 
   @Inject
   public void setExecutorStateViewModel(@NonNull ExecutorStateViewModel executorStateViewModel) {
@@ -101,9 +113,14 @@ public class MainApplication extends Application implements MissedOrderViewActio
     appComponent.inject(this);
     if (cancelOrderReasonsViewModel == null || coreBalanceViewModel == null ||
         executorStateViewModel == null || geoLocationViewModel == null
-        || missedOrderViewModel == null) {
+        || missedOrderViewModel == null || serverConnectionViewModel == null) {
       throw new RuntimeException("Shit! WTF?!");
     }
+    serverConnectionViewModel.getViewStateLiveData().observeForever(viewState -> {
+      if (viewState != null) {
+        viewState.apply(this);
+      }
+    });
     executorStateViewModel.getViewStateLiveData().observeForever(viewState -> {
       if (viewState != null && executorStateViewActions != null) {
         viewState.apply(executorStateViewActions);
@@ -114,31 +131,23 @@ public class MainApplication extends Application implements MissedOrderViewActio
         viewState.apply(this);
       }
     });
+    serverConnectionViewModel.getNavigationLiveData().observeForever(this::navigate);
     cancelOrderReasonsViewModel.getNavigationLiveData().observeForever(this::navigate);
     coreBalanceViewModel.getNavigationLiveData().observeForever(this::navigate);
     executorStateViewModel.getNavigationLiveData().observeForever(this::navigate);
     geoLocationViewModel.getNavigationLiveData().observeForever(this::navigate);
-    initExecutorStates(true);
+    initServerConnection();
     initGeoLocation();
   }
 
-  public void initExecutorStates(boolean reload) {
-    if (cancelOrderReasonsViewModel == null) {
-      throw new IllegalStateException("Граф зависимостей поломан!");
-    }
-    if (coreBalanceViewModel == null) {
+  public void initServerConnection() {
+    if (serverConnectionViewModel == null) {
       throw new IllegalStateException("Граф зависимостей поломан!");
     }
     if (executorStateViewModel == null) {
       throw new IllegalStateException("Граф зависимостей поломан!");
     }
-    if (missedOrderViewModel == null) {
-      throw new IllegalStateException("Граф зависимостей поломан!");
-    }
-    cancelOrderReasonsViewModel.initializeCancelOrderReasons(reload);
-    coreBalanceViewModel.initializeExecutorBalance(reload);
-    executorStateViewModel.initializeExecutorState(reload);
-    missedOrderViewModel.initializeMissedOrderMessages();
+    serverConnectionViewModel.connectServer();
   }
 
   public void initGeoLocation() {
@@ -146,6 +155,28 @@ public class MainApplication extends Application implements MissedOrderViewActio
       throw new IllegalStateException("Граф зависимостей поломан!");
     }
     geoLocationViewModel.updateGeoLocations();
+  }
+
+  @Override
+  public void showConnectionReady(boolean connected) {
+    if (connected) {
+      if (cancelOrderReasonsViewModel == null) {
+        throw new IllegalStateException("Граф зависимостей поломан!");
+      }
+      if (coreBalanceViewModel == null) {
+        throw new IllegalStateException("Граф зависимостей поломан!");
+      }
+      if (executorStateViewModel == null) {
+        throw new IllegalStateException("Граф зависимостей поломан!");
+      }
+      if (missedOrderViewModel == null) {
+        throw new IllegalStateException("Граф зависимостей поломан!");
+      }
+      executorStateViewModel.initializeExecutorState();
+      cancelOrderReasonsViewModel.initializeCancelOrderReasons();
+      coreBalanceViewModel.initializeExecutorBalance();
+      missedOrderViewModel.initializeMissedOrderMessages();
+    }
   }
 
   private void navigate(@Nullable String destination) {
@@ -156,16 +187,19 @@ public class MainApplication extends Application implements MissedOrderViewActio
       return;
     }
     switch (destination) {
+      case ServerConnectionNavigate.NO_NETWORK:
+        stopService();
+        break;
+      case ServerConnectionNavigate.AUTHORIZE:
+        stopService();
+        break;
       case CancelOrderReasonsNavigate.SERVER_DATA_ERROR:
         stopService();
         break;
       case CoreBalanceNavigate.SERVER_DATA_ERROR:
         stopService();
         break;
-      case ExecutorStateNavigate.NO_NETWORK:
-        stopService();
-        break;
-      case ExecutorStateNavigate.AUTHORIZE:
+      case ExecutorStateNavigate.SERVER_DATA_ERROR:
         stopService();
         break;
       case ExecutorStateNavigate.MAP_SHIFT_CLOSED:

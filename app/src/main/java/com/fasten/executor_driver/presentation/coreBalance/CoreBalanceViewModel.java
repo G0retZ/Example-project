@@ -8,9 +8,7 @@ import com.fasten.executor_driver.presentation.ViewModel;
 public interface CoreBalanceViewModel extends ViewModel<CoreBalanceViewActions> {
 
   /**
-   * Запрашивает подписку на основу баланса со сбросом кеша или без.
-   *
-   * @param reset - сбросить ли кеш?
+   * Запрашивает подписку на основу баланса со сбросом кеша.
    */
-  void initializeExecutorBalance(boolean reset);
+  void initializeExecutorBalance();
 }

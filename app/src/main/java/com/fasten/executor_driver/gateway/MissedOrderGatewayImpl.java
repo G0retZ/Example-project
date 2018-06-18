@@ -25,9 +25,10 @@ public class MissedOrderGatewayImpl implements MissedOrderGateway {
       return stompClient.topic(String.format(BuildConfig.STATUS_DESTINATION, channelId))
           .toFlowable(BackpressureStrategy.BUFFER)
           .subscribeOn(Schedulers.io())
-          .observeOn(Schedulers.single())
+          .onErrorResumeNext(Flowable.empty())
           .filter(stompMessage -> stompMessage.findHeader("MissedOrder") != null)
-          .map(stompMessage -> stompMessage.getPayload().trim());
+          .map(stompMessage -> stompMessage.getPayload().trim())
+          .observeOn(Schedulers.single());
     }
     return Flowable.error(new ConnectionClosedException());
   }

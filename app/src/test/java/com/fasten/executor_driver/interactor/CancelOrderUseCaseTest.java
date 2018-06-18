@@ -37,8 +37,6 @@ public class CancelOrderUseCaseTest {
   @Mock
   private CancelOrderGateway gateway;
   @Mock
-  private SocketGateway socketGateway;
-  @Mock
   private DataReceiver<String> loginReceiver;
   @Mock
   private CancelOrderReason cancelOrderReason;
@@ -56,51 +54,7 @@ public class CancelOrderUseCaseTest {
     when(gateway.loadCancelOrderReasons(anyString())).thenReturn(Flowable.never());
     when(loginReceiver.get()).thenReturn(Observable.never());
     when(gateway.cancelOrder(any())).thenReturn(Completable.never());
-    when(socketGateway.openSocket()).thenReturn(Completable.never());
-    cancelOrderUseCase = new CancelOrderUseCaseImpl(gateway, socketGateway, loginReceiver);
-  }
-
-  /* Проверяем работу с гейтвеем сокета */
-
-  /**
-   * Должен запросить у гейтвея соединение.
-   */
-  @Test
-  public void askSocketGatewayForConnection() {
-    // Действие:
-    cancelOrderUseCase.getCancelOrderReasons(true).test();
-
-    // Результат:
-    verify(socketGateway, only()).openSocket();
-  }
-
-  /**
-   * Не должен запрашивать у гейтвея соединений, если не было сброса.
-   */
-  @Test
-  public void doNotAskSocketGatewayForConnectionAgain() {
-    // Действие:
-    cancelOrderUseCase.getCancelOrderReasons(false).test();
-    cancelOrderUseCase.getCancelOrderReasons(false).test();
-    cancelOrderUseCase.getCancelOrderReasons(false).test();
-
-    // Результат:
-    verifyZeroInteractions(socketGateway);
-  }
-
-  /**
-   * Должен запросить у гейтвея повторное соединение после сброса.
-   */
-  @Test
-  public void askSocketGatewayForConnectionAgainAfterReset() {
-    // Действие:
-    cancelOrderUseCase.getCancelOrderReasons(false).test();
-    cancelOrderUseCase.getCancelOrderReasons(true).test();
-    cancelOrderUseCase.getCancelOrderReasons(false).test();
-    cancelOrderUseCase.getCancelOrderReasons(true).test();
-
-    // Результат:
-    verify(socketGateway, times(2)).openSocket();
+    cancelOrderUseCase = new CancelOrderUseCaseImpl(gateway, loginReceiver);
   }
 
   /* Проверяем работу с публикатором логина */
@@ -110,9 +64,6 @@ public class CancelOrderUseCaseTest {
    */
   @Test
   public void askLoginPublisherForLogin() {
-    // Дано:
-    when(socketGateway.openSocket()).thenReturn(Completable.complete());
-
     // Действие:
     cancelOrderUseCase.getCancelOrderReasons(true).test();
 
@@ -143,7 +94,6 @@ public class CancelOrderUseCaseTest {
   public void askGatewayForCancelReasons() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(gateway);
-    when(socketGateway.openSocket()).thenReturn(Completable.complete());
     when(loginReceiver.get()).thenReturn(Observable.just(
         "1234567890", "0987654321", "123454321", "09876567890"
     ));
@@ -167,7 +117,6 @@ public class CancelOrderUseCaseTest {
   @Test
   public void ubSubscribeFromPreviousRequestsToGateway() throws Exception {
     // Дано:
-    when(socketGateway.openSocket()).thenReturn(Completable.complete());
     when(loginReceiver.get()).thenReturn(Observable.just(
         "1234567890", "0987654321", "123454321", "09876567890"
     ));
@@ -186,9 +135,6 @@ public class CancelOrderUseCaseTest {
    */
   @Test
   public void doNotAskGatewayForCancelReasonsIfSocketError() {
-    // Дано:
-    when(socketGateway.openSocket()).thenReturn(Completable.error(NoNetworkException::new));
-
     // Действие:
     cancelOrderUseCase.getCancelOrderReasons(true).test();
 
@@ -202,7 +148,6 @@ public class CancelOrderUseCaseTest {
   @Test
   public void doNotAskGatewayForCancelReasons() {
     // Дано:
-    when(socketGateway.openSocket()).thenReturn(Completable.complete());
     when(loginReceiver.get()).thenReturn(Observable.error(NoNetworkException::new));
 
     // Действие:
@@ -232,7 +177,6 @@ public class CancelOrderUseCaseTest {
   @Test
   public void doNotAskGatewayToCancelIfSelectionInvalid() {
     // Дано:
-    when(socketGateway.openSocket()).thenReturn(Completable.complete());
     when(loginReceiver.get()).thenReturn(Observable.just("1234567890"));
     when(gateway.loadCancelOrderReasons("1234567890")).thenReturn(Flowable.just(
         new ArrayList<>(Arrays.asList(cancelOrderReason, cancelOrderReason2, cancelOrderReason3))
@@ -252,7 +196,6 @@ public class CancelOrderUseCaseTest {
   @Test
   public void askGatewayToCancelOrderWithSelectedReason() {
     // Дано:
-    when(socketGateway.openSocket()).thenReturn(Completable.complete());
     when(loginReceiver.get()).thenReturn(Observable.just("1234567890"));
     when(gateway.loadCancelOrderReasons("1234567890")).thenReturn(Flowable.just(
         new ArrayList<>(Arrays.asList(cancelOrderReason, cancelOrderReason1, cancelOrderReason3))
@@ -277,7 +220,6 @@ public class CancelOrderUseCaseTest {
   @Test
   public void answerWithCancelOrderReason() {
     // Дано:
-    when(socketGateway.openSocket()).thenReturn(Completable.complete());
     when(loginReceiver.get()).thenReturn(Observable.just("1234567890"));
     when(gateway.loadCancelOrderReasons("1234567890")).thenReturn(Flowable.just(
         new ArrayList<>(Arrays.asList(cancelOrderReason, cancelOrderReason2, cancelOrderReason3)),
@@ -299,29 +241,10 @@ public class CancelOrderUseCaseTest {
   }
 
   /**
-   * Должен вернуть ошибку, если открытие сокета обломалось.
-   */
-  @Test
-  public void answerConnectionClosedError() {
-    // Дано:
-    when(socketGateway.openSocket()).thenReturn(Completable.error(ConnectException::new));
-
-    // Действие:
-    TestSubscriber<List<CancelOrderReason>> testSubscriber =
-        cancelOrderUseCase.getCancelOrderReasons(true).test();
-
-    // Результат:
-    testSubscriber.assertError(ConnectException.class);
-    testSubscriber.assertNoValues();
-  }
-
-  /**
    * Должен вернуть ошибку, если была ошибка получения логина.
    */
   @Test
   public void answerWithErrorIfGetLoginFailed() {
-    // Дано:
-    when(socketGateway.openSocket()).thenReturn(Completable.complete());
     when(loginReceiver.get()).thenReturn(Observable.error(ConnectException::new));
 
     // Действие:
@@ -338,8 +261,6 @@ public class CancelOrderUseCaseTest {
    */
   @Test
   public void answerWithErrorIfSubscriptionFailed() {
-    // Дано:
-    when(socketGateway.openSocket()).thenReturn(Completable.complete());
     when(loginReceiver.get()).thenReturn(Observable.just("1234567890"));
     when(gateway.loadCancelOrderReasons("1234567890"))
         .thenReturn(Flowable.error(ConnectException::new));
@@ -358,8 +279,6 @@ public class CancelOrderUseCaseTest {
    */
   @Test
   public void answerComplete() {
-    // Дано:
-    when(socketGateway.openSocket()).thenReturn(Completable.complete());
     when(loginReceiver.get()).thenReturn(Observable.just("1234567890"));
     when(gateway.loadCancelOrderReasons("1234567890")).thenReturn(Flowable.empty());
 
@@ -393,8 +312,6 @@ public class CancelOrderUseCaseTest {
    */
   @Test
   public void answerOutOfBoundsError() {
-    // Дано:
-    when(socketGateway.openSocket()).thenReturn(Completable.complete());
     when(loginReceiver.get()).thenReturn(Observable.just("1234567890"));
     when(gateway.loadCancelOrderReasons("1234567890")).thenReturn(Flowable.just(
         new ArrayList<>(Arrays.asList(
@@ -413,8 +330,6 @@ public class CancelOrderUseCaseTest {
    */
   @Test
   public void answerWithErrorIfCancelOrderFailed() {
-    // Дано:
-    when(socketGateway.openSocket()).thenReturn(Completable.complete());
     when(loginReceiver.get()).thenReturn(Observable.just("1234567890"));
     when(gateway.loadCancelOrderReasons("1234567890")).thenReturn(Flowable.just(
         new ArrayList<>(Arrays.asList(
@@ -437,8 +352,6 @@ public class CancelOrderUseCaseTest {
    */
   @Test
   public void answerCancelOrderSuccess() {
-    // Дано:
-    when(socketGateway.openSocket()).thenReturn(Completable.complete());
     when(loginReceiver.get()).thenReturn(Observable.just("1234567890"));
     when(gateway.loadCancelOrderReasons("1234567890")).thenReturn(Flowable.just(
         new ArrayList<>(Arrays.asList(

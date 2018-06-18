@@ -2,6 +2,7 @@ package com.fasten.executor_driver.presentation.executorstate;
 
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.Mockito.only;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.verifyZeroInteractions;
@@ -25,9 +26,7 @@ import org.junit.rules.TestRule;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
-import org.mockito.InOrder;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -60,24 +59,12 @@ public class ExecutorStateViewModelTest {
   /* Тетсируем работу с юзкейсом. */
 
   /**
-   * Должен попросить у юзкейса статусы исполнителя без сброса кеша.
-   */
-  @Test
-  public void askDataReceiverToSubscribeToExecutorStateUpdates() {
-    // Действие:
-    executorStateViewModel.initializeExecutorState(false);
-
-    // Результат:
-    verify(executorStateUseCase, only()).getExecutorStates(false);
-  }
-
-  /**
    * Должен попросить у юзкейса статусы исполнителя со сбросом кеша.
    */
   @Test
-  public void askDataReceiverToSubscribeToExecutorStateUpdatesWithCacheReset() {
+  public void askUseCaseToSubscribeToExecutorStateUpdatesWithCacheReset() {
     // Действие:
-    executorStateViewModel.initializeExecutorState(true);
+    executorStateViewModel.initializeExecutorState();
 
     // Результат:
     verify(executorStateUseCase, only()).getExecutorStates(true);
@@ -89,18 +76,13 @@ public class ExecutorStateViewModelTest {
    */
   @Test
   public void doNotTouchUseCaseBeforeFirstRequestComplete() {
-    // Дано:
-    InOrder inOrder = Mockito.inOrder(executorStateUseCase);
-
     // Действие:
-    executorStateViewModel.initializeExecutorState(false);
-    executorStateViewModel.initializeExecutorState(true);
-    executorStateViewModel.initializeExecutorState(false);
+    executorStateViewModel.initializeExecutorState();
+    executorStateViewModel.initializeExecutorState();
+    executorStateViewModel.initializeExecutorState();
 
     // Результат:
-    inOrder.verify(executorStateUseCase).getExecutorStates(false);
-    inOrder.verify(executorStateUseCase).getExecutorStates(true);
-    inOrder.verify(executorStateUseCase).getExecutorStates(false);
+    verify(executorStateUseCase, times(3)).getExecutorStates(true);
     verifyNoMoreInteractions(executorStateUseCase);
   }
 
@@ -118,7 +100,7 @@ public class ExecutorStateViewModelTest {
 
     // Действие:
     executorStateViewModel.getViewStateLiveData().observeForever(viewStateObserver);
-    executorStateViewModel.initializeExecutorState(false);
+    executorStateViewModel.initializeExecutorState();
 
     // Результат:
     verify(viewStateObserver, only()).onChanged(viewStateCaptor.capture());
@@ -138,7 +120,7 @@ public class ExecutorStateViewModelTest {
 
     // Действие:
     executorStateViewModel.getViewStateLiveData().observeForever(viewStateObserver);
-    executorStateViewModel.initializeExecutorState(false);
+    executorStateViewModel.initializeExecutorState();
 
     // Результат:
     verifyZeroInteractions(viewStateObserver);
@@ -156,7 +138,7 @@ public class ExecutorStateViewModelTest {
 
     // Действие:
     executorStateViewModel.getViewStateLiveData().observeForever(viewStateObserver);
-    executorStateViewModel.initializeExecutorState(false);
+    executorStateViewModel.initializeExecutorState();
 
     // Результат:
     verifyZeroInteractions(viewStateObserver);
@@ -174,7 +156,7 @@ public class ExecutorStateViewModelTest {
 
     // Действие:
     executorStateViewModel.getViewStateLiveData().observeForever(viewStateObserver);
-    executorStateViewModel.initializeExecutorState(false);
+    executorStateViewModel.initializeExecutorState();
 
     // Результат:
     verifyZeroInteractions(viewStateObserver);
@@ -193,14 +175,14 @@ public class ExecutorStateViewModelTest {
 
     // Действие:
     executorStateViewModel.getNavigationLiveData().observeForever(navigationObserver);
-    executorStateViewModel.initializeExecutorState(false);
+    executorStateViewModel.initializeExecutorState();
 
     // Результат:
-    verify(navigationObserver, only()).onChanged(ExecutorStateNavigate.NO_NETWORK);
+    verify(navigationObserver, only()).onChanged(ExecutorStateNavigate.SERVER_DATA_ERROR);
   }
 
   /**
-   * Должен вернуть "перейти к авторизации".
+   * Должен вернуть "перейти к отсутствию сети".
    */
   @Test
   public void navigateToAuthorize() {
@@ -210,10 +192,10 @@ public class ExecutorStateViewModelTest {
 
     // Действие:
     executorStateViewModel.getNavigationLiveData().observeForever(navigationObserver);
-    executorStateViewModel.initializeExecutorState(true);
+    executorStateViewModel.initializeExecutorState();
 
     // Результат:
-    verify(navigationObserver, only()).onChanged(ExecutorStateNavigate.NO_NETWORK);
+    verify(navigationObserver, only()).onChanged(ExecutorStateNavigate.SERVER_DATA_ERROR);
   }
 
   /**
@@ -227,7 +209,7 @@ public class ExecutorStateViewModelTest {
 
     // Действие:
     executorStateViewModel.getNavigationLiveData().observeForever(navigationObserver);
-    executorStateViewModel.initializeExecutorState(false);
+    executorStateViewModel.initializeExecutorState();
 
     // Результат:
     verify(navigationObserver, only()).onChanged(ExecutorStateNavigate.MAP_SHIFT_CLOSED);
@@ -244,7 +226,7 @@ public class ExecutorStateViewModelTest {
 
     // Действие:
     executorStateViewModel.getNavigationLiveData().observeForever(navigationObserver);
-    executorStateViewModel.initializeExecutorState(true);
+    executorStateViewModel.initializeExecutorState();
 
     // Результат:
     verify(navigationObserver, only()).onChanged(ExecutorStateNavigate.MAP_SHIFT_OPENED);
@@ -261,7 +243,7 @@ public class ExecutorStateViewModelTest {
 
     // Действие:
     executorStateViewModel.getNavigationLiveData().observeForever(navigationObserver);
-    executorStateViewModel.initializeExecutorState(false);
+    executorStateViewModel.initializeExecutorState();
 
     // Результат:
     verify(navigationObserver, only()).onChanged(ExecutorStateNavigate.MAP_ONLINE);
@@ -278,7 +260,7 @@ public class ExecutorStateViewModelTest {
 
     // Действие:
     executorStateViewModel.getNavigationLiveData().observeForever(navigationObserver);
-    executorStateViewModel.initializeExecutorState(true);
+    executorStateViewModel.initializeExecutorState();
 
     // Результат:
     verify(navigationObserver, only()).onChanged(ExecutorStateNavigate.DRIVER_ORDER_CONFIRMATION);
@@ -295,7 +277,7 @@ public class ExecutorStateViewModelTest {
 
     // Действие:
     executorStateViewModel.getNavigationLiveData().observeForever(navigationObserver);
-    executorStateViewModel.initializeExecutorState(false);
+    executorStateViewModel.initializeExecutorState();
 
     // Результат:
     verify(navigationObserver, only()).onChanged(ExecutorStateNavigate.CLIENT_ORDER_CONFIRMATION);
@@ -312,7 +294,7 @@ public class ExecutorStateViewModelTest {
 
     // Действие:
     executorStateViewModel.getNavigationLiveData().observeForever(navigationObserver);
-    executorStateViewModel.initializeExecutorState(false);
+    executorStateViewModel.initializeExecutorState();
 
     // Результат:
     verify(navigationObserver, only()).onChanged(ExecutorStateNavigate.MOVING_TO_CLIENT);
@@ -329,7 +311,7 @@ public class ExecutorStateViewModelTest {
 
     // Действие:
     executorStateViewModel.getNavigationLiveData().observeForever(navigationObserver);
-    executorStateViewModel.initializeExecutorState(false);
+    executorStateViewModel.initializeExecutorState();
 
     // Результат:
     verify(navigationObserver, only()).onChanged(ExecutorStateNavigate.WAITING_FOR_CLIENT);
@@ -346,7 +328,7 @@ public class ExecutorStateViewModelTest {
 
     // Действие:
     executorStateViewModel.getNavigationLiveData().observeForever(navigationObserver);
-    executorStateViewModel.initializeExecutorState(false);
+    executorStateViewModel.initializeExecutorState();
 
     // Результат:
     verify(navigationObserver, only()).onChanged(ExecutorStateNavigate.ORDER_FULFILLMENT);

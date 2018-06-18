@@ -289,10 +289,10 @@ public class ExecutorBalanceGatewayTest {
   }
 
   /**
-   * Должен ответить ошибкой, если он соединен и не соединяется.
+   * Должен игнорировать ошибку, если он соединен и не соединяется.
    */
   @Test
-  public void answerErrorIfConnected() {
+  public void ignoreErrorIfConnected() {
     // Дано:
     when(stompClient.isConnected()).thenReturn(true);
     when(stompClient.topic(anyString())).thenReturn(Observable.error(new NoNetworkException()));
@@ -302,7 +302,9 @@ public class ExecutorBalanceGatewayTest {
         executorBalanceGateway.loadExecutorBalance("1234567890").test();
 
     // Результат:
-    testSubscriber.assertError(NoNetworkException.class);
+    testSubscriber.assertNoErrors();
+    testSubscriber.assertNoValues();
+    testSubscriber.assertComplete();
   }
 
   /**
@@ -377,7 +379,8 @@ public class ExecutorBalanceGatewayTest {
    * @throws Exception error
    */
   @Test
-  public void answerWithExecutorBalanceForBalanceHeaderIfConnectingAfterConnected() throws Exception {
+  public void answerWithExecutorBalanceForBalanceHeaderIfConnectingAfterConnected()
+      throws Exception {
     // Дано:
     when(mapper.map(any())).thenReturn(executorBalance);
     when(stompClient.isConnecting()).thenReturn(true);
@@ -399,7 +402,7 @@ public class ExecutorBalanceGatewayTest {
   }
 
   /**
-   * Должен ответить ошибкой, если он не соединен и соединяется.
+   * Должен игнорировать ошибку, если он не соединен и соединяется.
    */
   @Test
   public void answerErrorIfConnecting() {
@@ -413,7 +416,8 @@ public class ExecutorBalanceGatewayTest {
         executorBalanceGateway.loadExecutorBalance("1234567890").test();
 
     // Результат:
-    testSubscriber.assertError(ConnectionClosedException.class);
+    testSubscriber.assertNoErrors();
     testSubscriber.assertNoValues();
+    testSubscriber.assertComplete();
   }
 }

@@ -34,9 +34,10 @@ public class ExecutorStateGatewayImpl implements ExecutorStateGateway {
       return stompClient.topic(String.format(BuildConfig.STATUS_DESTINATION, channelId))
           .toFlowable(BackpressureStrategy.BUFFER)
           .subscribeOn(Schedulers.io())
-          .observeOn(Schedulers.single())
+          .onErrorResumeNext(Flowable.empty())
           .filter(stompMessage -> stompMessage.findHeader("Status") != null)
-          .map(mapper::map);
+          .map(mapper::map)
+          .observeOn(Schedulers.single());
     }
     return Flowable.error(new ConnectionClosedException());
   }

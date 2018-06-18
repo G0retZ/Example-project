@@ -13,6 +13,7 @@ import com.fasten.executor_driver.presentation.coreBalance.CoreBalanceNavigate;
 import com.fasten.executor_driver.presentation.executorstate.ExecutorStateNavigate;
 import com.fasten.executor_driver.presentation.executorstate.ExecutorStateViewActions;
 import com.fasten.executor_driver.presentation.geolocation.GeoLocationNavigate;
+import com.fasten.executor_driver.presentation.serverconnection.ServerConnectionNavigate;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -27,7 +28,7 @@ public class AutoRouterImpl implements ActivityLifecycleCallbacks, AutoRouter,
   private static final HashMap<String, List<Class<? extends Activity>>> statusGroups = new HashMap<>();
 
   static {
-    statusGroups.put(ExecutorStateNavigate.AUTHORIZE, Arrays.asList(
+    statusGroups.put(ServerConnectionNavigate.AUTHORIZE, Arrays.asList(
         LoginActivity.class, PasswordActivity.class
     ));
     statusGroups.put(ExecutorStateNavigate.MAP_SHIFT_CLOSED, Arrays.asList(
@@ -68,6 +69,10 @@ public class AutoRouterImpl implements ActivityLifecycleCallbacks, AutoRouter,
   @ExecutorStateNavigate
   @GeoLocationNavigate
   private String lastRouteAction;
+  @Nullable
+  @ExecutorStateNavigate
+  @GeoLocationNavigate
+  private String splashRouteAction;
   private boolean goToGeoResolver;
   @Nullable
   private Runnable messageRunnable;
@@ -83,6 +88,10 @@ public class AutoRouterImpl implements ActivityLifecycleCallbacks, AutoRouter,
   @Override
   public void onActivityStarted(Activity activity) {
     currentActivity = activity;
+    // Если это сплеш-скрин, то планируем ему последний переход по статусу, если такой был.
+    if (activity instanceof SplashScreenActivity) {
+      lastRouteAction = splashRouteAction;
+    }
     tryToNavigate();
     tryToResolveGeo();
     if (messageRunnable != null) {
@@ -119,7 +128,7 @@ public class AutoRouterImpl implements ActivityLifecycleCallbacks, AutoRouter,
       goToGeoResolver = true;
       tryToResolveGeo();
     } else {
-      lastRouteAction = destination;
+      splashRouteAction = lastRouteAction = destination;
       tryToNavigate();
     }
   }
@@ -145,10 +154,28 @@ public class AutoRouterImpl implements ActivityLifecycleCallbacks, AutoRouter,
       return;
     }
     switch (lastRouteAction) {
-      case ExecutorStateNavigate.NO_NETWORK:
+      case ServerConnectionNavigate.NO_NETWORK:
         new Builder(currentActivity)
             .setTitle(R.string.error)
             .setMessage("Без сети не работаем!")
+            .setCancelable(false)
+            .setPositiveButton(
+                currentActivity.getString(android.R.string.ok),
+                (a, b) -> android.os.Process.killProcess(android.os.Process.myPid())
+            )
+            .create()
+            .show();
+        break;
+      case ServerConnectionNavigate.AUTHORIZE:
+        currentActivity.startActivity(
+            new Intent(currentActivity, LoginActivity.class)
+                .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK)
+        );
+        break;
+      case ExecutorStateNavigate.SERVER_DATA_ERROR:
+        new Builder(currentActivity)
+            .setTitle(R.string.error)
+            .setMessage("Ошибка совместимости с протоколом сервера!")
             .setCancelable(false)
             .setPositiveButton(
                 currentActivity.getString(android.R.string.ok),
@@ -180,12 +207,6 @@ public class AutoRouterImpl implements ActivityLifecycleCallbacks, AutoRouter,
             )
             .create()
             .show();
-        break;
-      case ExecutorStateNavigate.AUTHORIZE:
-        currentActivity.startActivity(
-            new Intent(currentActivity, LoginActivity.class)
-                .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK)
-        );
         break;
       case ExecutorStateNavigate.MAP_SHIFT_CLOSED:
         currentActivity.startActivity(

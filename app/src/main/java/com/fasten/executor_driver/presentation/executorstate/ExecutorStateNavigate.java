@@ -8,8 +8,7 @@ import java.lang.annotation.RetentionPolicy;
  * Направления навигации при изменении статуса исполнителя.
  */
 @StringDef({
-    ExecutorStateNavigate.NO_NETWORK,
-    ExecutorStateNavigate.AUTHORIZE,
+    ExecutorStateNavigate.SERVER_DATA_ERROR,
     ExecutorStateNavigate.MAP_SHIFT_CLOSED,
     ExecutorStateNavigate.MAP_SHIFT_OPENED,
     ExecutorStateNavigate.MAP_ONLINE,
@@ -21,9 +20,7 @@ import java.lang.annotation.RetentionPolicy;
 public @interface ExecutorStateNavigate {
 
   // Переход к решению проблем сети.
-  String NO_NETWORK = "to.NoNetwork";
-  // Переход к авторизации.
-  String AUTHORIZE = "to.Authorization";
+  String SERVER_DATA_ERROR = "to.ServerDataError";
   // Переход к карте.
   String MAP_SHIFT_CLOSED = "to.Map.Shift.Closed";
   // Переход к карте.

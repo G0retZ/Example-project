@@ -2,6 +2,7 @@ package com.fasten.executor_driver.presentation.cancelorderreasons;
 
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.Mockito.only;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.verifyZeroInteractions;
@@ -26,9 +27,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestRule;
 import org.junit.runner.RunWith;
-import org.mockito.InOrder;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -58,47 +57,30 @@ public class CancelOrderReasonsViewModelTest {
   /* Тетсируем работу с юзкейсом. */
 
   /**
-   * Должен попросить у юзкейса причины отказа от заказа без сброса кеша.
-   */
-  @Test
-  public void askDataReceiverToSubscribeToCancelOrderReasonsUpdates() {
-    // Действие:
-    cancelOrderReasonsViewModel.initializeCancelOrderReasons(false);
-
-    // Результат:
-    verify(cancelOrderUseCase, only()).getCancelOrderReasons(false);
-  }
-
-  /**
    * Должен попросить у юзкейса причины отказа от заказа со сбросом кеша.
    */
   @Test
   public void askDataReceiverToSubscribeToCancelOrderReasonsUpdatesWithCacheReset() {
     // Действие:
-    cancelOrderReasonsViewModel.initializeCancelOrderReasons(true);
+    cancelOrderReasonsViewModel.initializeCancelOrderReasons();
 
     // Результат:
     verify(cancelOrderUseCase, only()).getCancelOrderReasons(true);
   }
 
   /**
-   * Должен просить у юзкейса загрузить причины отказа от заказа , без сброса кеша, даже если уже
+   * Должен просить у юзкейса загрузить причины отказа от заказа, со сбросом кеша, даже если уже
    * подписан.
    */
   @Test
   public void doNotTouchUseCaseBeforeFirstRequestComplete() {
-    // Дано:
-    InOrder inOrder = Mockito.inOrder(cancelOrderUseCase);
-
     // Действие:
-    cancelOrderReasonsViewModel.initializeCancelOrderReasons(false);
-    cancelOrderReasonsViewModel.initializeCancelOrderReasons(true);
-    cancelOrderReasonsViewModel.initializeCancelOrderReasons(false);
+    cancelOrderReasonsViewModel.initializeCancelOrderReasons();
+    cancelOrderReasonsViewModel.initializeCancelOrderReasons();
+    cancelOrderReasonsViewModel.initializeCancelOrderReasons();
 
     // Результат:
-    inOrder.verify(cancelOrderUseCase).getCancelOrderReasons(false);
-    inOrder.verify(cancelOrderUseCase).getCancelOrderReasons(true);
-    inOrder.verify(cancelOrderUseCase).getCancelOrderReasons(false);
+    verify(cancelOrderUseCase, times(3)).getCancelOrderReasons(true);
     verifyNoMoreInteractions(cancelOrderUseCase);
   }
 
@@ -115,7 +97,7 @@ public class CancelOrderReasonsViewModelTest {
 
     // Действие:
     cancelOrderReasonsViewModel.getViewStateLiveData().observeForever(viewStateObserver);
-    cancelOrderReasonsViewModel.initializeCancelOrderReasons(false);
+    cancelOrderReasonsViewModel.initializeCancelOrderReasons();
 
     // Результат:
     verifyZeroInteractions(viewStateObserver);
@@ -134,7 +116,7 @@ public class CancelOrderReasonsViewModelTest {
 
     // Действие:
     cancelOrderReasonsViewModel.getNavigationLiveData().observeForever(navigationObserver);
-    cancelOrderReasonsViewModel.initializeCancelOrderReasons(false);
+    cancelOrderReasonsViewModel.initializeCancelOrderReasons();
 
     // Результат:
     verifyZeroInteractions(navigationObserver);
@@ -151,7 +133,7 @@ public class CancelOrderReasonsViewModelTest {
 
     // Действие:
     cancelOrderReasonsViewModel.getNavigationLiveData().observeForever(navigationObserver);
-    cancelOrderReasonsViewModel.initializeCancelOrderReasons(true);
+    cancelOrderReasonsViewModel.initializeCancelOrderReasons();
 
     // Результат:
     verifyZeroInteractions(navigationObserver);
@@ -168,7 +150,7 @@ public class CancelOrderReasonsViewModelTest {
 
     // Действие:
     cancelOrderReasonsViewModel.getNavigationLiveData().observeForever(navigationObserver);
-    cancelOrderReasonsViewModel.initializeCancelOrderReasons(false);
+    cancelOrderReasonsViewModel.initializeCancelOrderReasons();
 
     // Результат:
     verifyZeroInteractions(navigationObserver);
@@ -185,7 +167,7 @@ public class CancelOrderReasonsViewModelTest {
 
     // Действие:
     cancelOrderReasonsViewModel.getNavigationLiveData().observeForever(navigationObserver);
-    cancelOrderReasonsViewModel.initializeCancelOrderReasons(true);
+    cancelOrderReasonsViewModel.initializeCancelOrderReasons();
 
     // Результат:
     verify(navigationObserver, only()).onChanged(CancelOrderReasonsNavigate.SERVER_DATA_ERROR);

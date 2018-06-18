@@ -8,9 +8,7 @@ import com.fasten.executor_driver.presentation.ViewModel;
 public interface CancelOrderReasonsViewModel extends ViewModel<CancelOrderReasonsViewActions> {
 
   /**
-   * Запрашивает подписку на список причин для отказа со сбросом кеша или без.
-   *
-   * @param reset - сбросить ли кеш?
+   * Запрашивает подписку на список причин для отказа со сбросом кеша.
    */
-  void initializeCancelOrderReasons(boolean reset);
+  void initializeCancelOrderReasons();
 }

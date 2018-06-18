@@ -11,18 +11,14 @@ public class ExecutorBalanceUseCaseImpl implements ExecutorBalanceUseCase {
   @NonNull
   private final ExecutorBalanceGateway gateway;
   @NonNull
-  private final SocketGateway socketGateway;
-  @NonNull
   private final DataReceiver<String> loginReceiver;
   @NonNull
   private Flowable<ExecutorBalance> cancelOrderReasonsFlowable = Flowable.empty();
 
   @Inject
   public ExecutorBalanceUseCaseImpl(@NonNull ExecutorBalanceGateway gateway,
-      @NonNull SocketGateway socketGateway,
       @NonNull DataReceiver<String> loginReceiver) {
     this.gateway = gateway;
-    this.socketGateway = socketGateway;
     this.loginReceiver = loginReceiver;
   }
 
@@ -32,7 +28,6 @@ public class ExecutorBalanceUseCaseImpl implements ExecutorBalanceUseCase {
     if (reset) {
       cancelOrderReasonsFlowable = loginReceiver.get()
           .toFlowable(BackpressureStrategy.BUFFER)
-          .startWith(socketGateway.openSocket().toFlowable())
           .switchMap(gateway::loadExecutorBalance)
           .replay(1)
           .refCount()

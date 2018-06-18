@@ -4,7 +4,6 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
-import com.fasten.executor_driver.backend.web.AuthorizationException;
 import com.fasten.executor_driver.interactor.ExecutorStateUseCase;
 import com.fasten.executor_driver.presentation.SingleLiveEvent;
 import com.fasten.executor_driver.presentation.ViewState;
@@ -45,9 +44,9 @@ public class ExecutorStateViewModelImpl extends ViewModel implements ExecutorSta
   }
 
   @Override
-  public void initializeExecutorState(boolean reset) {
+  public void initializeExecutorState() {
     disposable.dispose();
-    disposable = executorStateUseCase.getExecutorStates(reset)
+    disposable = executorStateUseCase.getExecutorStates(true)
         .subscribeOn(Schedulers.single())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(
@@ -88,11 +87,7 @@ public class ExecutorStateViewModelImpl extends ViewModel implements ExecutorSta
             },
             throwable -> {
               throwable.printStackTrace();
-              if ((throwable instanceof AuthorizationException)) {
-                navigateLiveData.postValue(ExecutorStateNavigate.AUTHORIZE);
-              } else {
-                navigateLiveData.postValue(ExecutorStateNavigate.NO_NETWORK);
-              }
+              navigateLiveData.postValue(ExecutorStateNavigate.SERVER_DATA_ERROR);
             });
   }
 

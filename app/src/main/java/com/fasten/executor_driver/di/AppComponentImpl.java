@@ -48,11 +48,11 @@ import com.fasten.executor_driver.gateway.OrderRouteGatewayImpl;
 import com.fasten.executor_driver.gateway.PasswordGatewayImpl;
 import com.fasten.executor_driver.gateway.RoutePointApiMapper;
 import com.fasten.executor_driver.gateway.SelectedVehicleOptionsGatewayImpl;
+import com.fasten.executor_driver.gateway.ServerConnectionGatewayImpl;
 import com.fasten.executor_driver.gateway.ServiceApiMapper;
 import com.fasten.executor_driver.gateway.ServicesGatewayImpl;
 import com.fasten.executor_driver.gateway.SmsCodeMapper;
 import com.fasten.executor_driver.gateway.SmsGatewayImpl;
-import com.fasten.executor_driver.gateway.SocketGatewayImpl;
 import com.fasten.executor_driver.gateway.TokenKeeperImpl;
 import com.fasten.executor_driver.gateway.VehicleApiMapper;
 import com.fasten.executor_driver.gateway.VehicleOptionApiMapper;
@@ -78,6 +78,7 @@ import com.fasten.executor_driver.interactor.OrderCurrentCostUseCaseImpl;
 import com.fasten.executor_driver.interactor.OrderFulfillmentTimeUseCaseImpl;
 import com.fasten.executor_driver.interactor.OrderRouteUseCaseImpl;
 import com.fasten.executor_driver.interactor.OrderUseCaseImpl;
+import com.fasten.executor_driver.interactor.ServerConnectionUseCaseImpl;
 import com.fasten.executor_driver.interactor.WaitingForClientUseCaseImpl;
 import com.fasten.executor_driver.interactor.auth.LoginSharer;
 import com.fasten.executor_driver.interactor.auth.LoginUseCaseImpl;
@@ -118,6 +119,7 @@ import com.fasten.executor_driver.presentation.orderroute.OrderRouteViewModelImp
 import com.fasten.executor_driver.presentation.ordertime.OrderTimeViewModelImpl;
 import com.fasten.executor_driver.presentation.phone.PhoneViewModelImpl;
 import com.fasten.executor_driver.presentation.selectedvehicle.SelectedVehicleViewModelImpl;
+import com.fasten.executor_driver.presentation.serverconnection.ServerConnectionViewModelImpl;
 import com.fasten.executor_driver.presentation.services.ServicesListItems;
 import com.fasten.executor_driver.presentation.services.ServicesSliderViewModelImpl;
 import com.fasten.executor_driver.presentation.services.ServicesViewModelImpl;
@@ -206,9 +208,6 @@ public class AppComponentImpl implements AppComponent {
             stompClient,
             new CancelOrderReasonApiMapper()
         ),
-        new SocketGatewayImpl(
-            stompClient
-        ),
         loginSharer
     );
     executorBalanceUseCase = new ExecutorBalanceUseCaseImpl(
@@ -216,16 +215,10 @@ public class AppComponentImpl implements AppComponent {
             stompClient,
             new ExecutorBalanceApiMapper()
         ),
-        new SocketGatewayImpl(
-            stompClient
-        ),
         loginSharer
     );
     executorStateUseCase = new ExecutorStateUseCaseImpl(
         new ExecutorStateGatewayImpl(stompClient, new ExecutorStateApiMapper()),
-        new SocketGatewayImpl(
-            stompClient
-        ),
         loginSharer
     );
     geoLocationUseCase = new GeoLocationUseCaseImpl(
@@ -281,6 +274,15 @@ public class AppComponentImpl implements AppComponent {
 
   @Override
   public void inject(MainApplication mainApplication) {
+    mainApplication.setServerConnectionViewModel(
+        new ServerConnectionViewModelImpl(
+            new ServerConnectionUseCaseImpl(
+                new ServerConnectionGatewayImpl(
+                    stompClient
+                )
+            )
+        )
+    );
     mainApplication.setCancelOrderReasonsViewModel(
         new CancelOrderReasonsViewModelImpl(
             cancelOrderUseCase
@@ -305,9 +307,6 @@ public class AppComponentImpl implements AppComponent {
         new MissedOrderViewModelImpl(
             new MissedOrderUseCaseImpl(
                 new MissedOrderGatewayImpl(
-                    stompClient
-                ),
-                new SocketGatewayImpl(
                     stompClient
                 ),
                 loginSharer
