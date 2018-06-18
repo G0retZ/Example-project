@@ -188,20 +188,6 @@ public class ExecutorStateUseCaseTest {
   }
 
   /**
-   * Должен вернуть ошибку, если открытие сокета обломалось.
-   */
-  @Test
-  public void answerWithErrorIfSocketConnectionFailed() {
-    // Действие:
-    TestSubscriber<ExecutorState> testSubscriber =
-        executorStateUseCase.getExecutorStates(true).test();
-
-    // Результат:
-    testSubscriber.assertError(ConnectException.class);
-    testSubscriber.assertNoValues();
-  }
-
-  /**
    * Должен вернуть ошибку, если была ошибка получения логина.
    */
   @Test

@@ -170,20 +170,6 @@ public class ExecutorBalanceUseCaseTest {
   }
 
   /**
-   * Должен вернуть ошибку, если открытие сокета обломалось.
-   */
-  @Test
-  public void answerConnectionClosedError() {
-    // Действие:
-    TestSubscriber<ExecutorBalance> testSubscriber =
-        executorBalanceUseCase.getExecutorBalance(true).test();
-
-    // Результат:
-    testSubscriber.assertError(ConnectException.class);
-    testSubscriber.assertNoValues();
-  }
-
-  /**
    * Должен вернуть ошибку, если была ошибка получения логина.
    */
   @Test

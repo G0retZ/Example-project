@@ -134,19 +134,6 @@ public class MissedOrderUseCaseTest {
   }
 
   /**
-   * Должен вернуть ошибку, если открытие сокета обломалось.
-   */
-  @Test
-  public void answerConnectionClosedError() {
-    // Действие:
-    TestSubscriber<String> testSubscriber = missedOrderUseCase.getMissedOrders().test();
-
-    // Результат:
-    testSubscriber.assertError(ConnectException.class);
-    testSubscriber.assertNoValues();
-  }
-
-  /**
    * Должен вернуть ошибку, если была ошибка получения логина.
    */
   @Test

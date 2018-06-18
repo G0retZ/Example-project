@@ -241,20 +241,6 @@ public class CancelOrderUseCaseTest {
   }
 
   /**
-   * Должен вернуть ошибку, если открытие сокета обломалось.
-   */
-  @Test
-  public void answerConnectionClosedError() {
-    // Действие:
-    TestSubscriber<List<CancelOrderReason>> testSubscriber =
-        cancelOrderUseCase.getCancelOrderReasons(true).test();
-
-    // Результат:
-    testSubscriber.assertError(ConnectException.class);
-    testSubscriber.assertNoValues();
-  }
-
-  /**
    * Должен вернуть ошибку, если была ошибка получения логина.
    */
   @Test
