@@ -137,7 +137,6 @@ public class MainApplication extends Application implements ServerConnectionView
     executorStateViewModel.getNavigationLiveData().observeForever(this::navigate);
     geoLocationViewModel.getNavigationLiveData().observeForever(this::navigate);
     initServerConnection();
-    initGeoLocation();
   }
 
   public void initServerConnection() {
@@ -176,6 +175,7 @@ public class MainApplication extends Application implements ServerConnectionView
       cancelOrderReasonsViewModel.initializeCancelOrderReasons();
       coreBalanceViewModel.initializeExecutorBalance();
       missedOrderViewModel.initializeMissedOrderMessages();
+      initGeoLocation();
     }
   }
 

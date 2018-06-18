@@ -24,7 +24,6 @@ public class PasswordActivity extends BaseActivity {
     switch (destination) {
       case CodeNavigate.ENTER_APP:
         ((MainApplication) getApplication()).initServerConnection();
-        ((MainApplication) getApplication()).initGeoLocation();
         break;
       default:
         super.navigate(destination);
