@@ -52,7 +52,6 @@ import com.fasten.executor_driver.gateway.ServiceApiMapper;
 import com.fasten.executor_driver.gateway.ServicesGatewayImpl;
 import com.fasten.executor_driver.gateway.SmsCodeMapper;
 import com.fasten.executor_driver.gateway.SmsGatewayImpl;
-import com.fasten.executor_driver.gateway.SocketGatewayImpl;
 import com.fasten.executor_driver.gateway.TokenKeeperImpl;
 import com.fasten.executor_driver.gateway.VehicleApiMapper;
 import com.fasten.executor_driver.gateway.VehicleOptionApiMapper;
@@ -206,9 +205,6 @@ public class AppComponentImpl implements AppComponent {
             stompClient,
             new CancelOrderReasonApiMapper()
         ),
-        new SocketGatewayImpl(
-            stompClient
-        ),
         loginSharer
     );
     executorBalanceUseCase = new ExecutorBalanceUseCaseImpl(
@@ -216,16 +212,10 @@ public class AppComponentImpl implements AppComponent {
             stompClient,
             new ExecutorBalanceApiMapper()
         ),
-        new SocketGatewayImpl(
-            stompClient
-        ),
         loginSharer
     );
     executorStateUseCase = new ExecutorStateUseCaseImpl(
         new ExecutorStateGatewayImpl(stompClient, new ExecutorStateApiMapper()),
-        new SocketGatewayImpl(
-            stompClient
-        ),
         loginSharer
     );
     geoLocationUseCase = new GeoLocationUseCaseImpl(
@@ -305,9 +295,6 @@ public class AppComponentImpl implements AppComponent {
         new MissedOrderViewModelImpl(
             new MissedOrderUseCaseImpl(
                 new MissedOrderGatewayImpl(
-                    stompClient
-                ),
-                new SocketGatewayImpl(
                     stompClient
                 ),
                 loginSharer

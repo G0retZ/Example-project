@@ -1,6 +1,6 @@
 package com.fasten.executor_driver.interactor;
 
-import io.reactivex.Completable;
+import io.reactivex.Flowable;
 
 /**
  * Гейтвей вебсокета.
@@ -8,12 +8,8 @@ import io.reactivex.Completable;
 public interface SocketGateway {
 
   /**
-   * Открывает сокет.
+   * Открывает сокет. Первое значение говорит об успешном соединении.
+   * Чтобы закрыть сеодинение, нужно отписаться.
    */
-  Completable openSocket();
-
-  /**
-   * Закрывает сокет.
-   */
-  void closeSocket();
+  Flowable<Boolean> openSocket();
 }

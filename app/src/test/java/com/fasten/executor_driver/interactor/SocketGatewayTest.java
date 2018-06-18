@@ -1,18 +1,14 @@
 package com.fasten.executor_driver.interactor;
 
-import static org.junit.Assert.assertFalse;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import com.fasten.executor_driver.backend.web.NoNetworkException;
-import com.fasten.executor_driver.backend.websocket.ConnectionClosedException;
 import com.fasten.executor_driver.gateway.SocketGatewayImpl;
 import io.reactivex.Observable;
-import io.reactivex.observers.TestObserver;
 import io.reactivex.plugins.RxJavaPlugins;
 import io.reactivex.schedulers.Schedulers;
-import io.reactivex.subjects.PublishSubject;
+import io.reactivex.subscribers.TestSubscriber;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -43,27 +39,50 @@ public class SocketGatewayTest {
   /* Проверяем работу с клиентом STOMP */
 
   /**
-   * Не должен просить у клиента STOMP соединения, если он соединен и не соединяется.
+   * Должен запросить у клиента STOMP подписку на событие соединения, проверить статус соединения.
+   * Не должен запрашивать соединение, если уже соединен.
    */
   @Test
-  public void doNotAskStompClientToConnect() {
+  public void askStompClientToSubscribeForLifecycleIfConnected() {
     // Дано:
+    InOrder inOrder = Mockito.inOrder(stompClient);
     when(stompClient.isConnected()).thenReturn(true);
 
     // Действие:
     socketGateway.openSocket().test();
 
     // Результат:
-    verify(stompClient).isConnected();
+    inOrder.verify(stompClient).lifecycle();
+    inOrder.verify(stompClient).isConnected();
     verifyNoMoreInteractions(stompClient);
   }
 
   /**
-   * Должен запросить у клиента STOMP соединение, если он не соединен и не соединяется, и
-   * подписаться на событие соединения.
+   * Должен запросить у клиента STOMP подписку на событие соединения, проверить статуса соединения.
+   * Не должен запрашивать соединение, если уже соединяется.
    */
   @Test
-  public void askStompClientToConnectAndSubscribeForLifecycle() {
+  public void askStompClientToSubscribeForLifecycleIfConnecting() {
+    // Дано:
+    InOrder inOrder = Mockito.inOrder(stompClient);
+    when(stompClient.isConnecting()).thenReturn(true);
+
+    // Действие:
+    socketGateway.openSocket().test();
+
+    // Результат:
+    inOrder.verify(stompClient).lifecycle();
+    inOrder.verify(stompClient).isConnected();
+    inOrder.verify(stompClient).isConnecting();
+    verifyNoMoreInteractions(stompClient);
+  }
+
+  /**
+   * Должен запросить у клиента STOMP подписку на событие соединения, проверить статуса соединения.
+   * Должен запросить соединение, если не соединен и не соединяется.
+   */
+  @Test
+  public void askStompClientToSubscribeForLifecycleAndToConnect() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(stompClient);
 
@@ -71,189 +90,30 @@ public class SocketGatewayTest {
     socketGateway.openSocket().test();
 
     // Результат:
-    inOrder.verify(stompClient).isConnected();
     inOrder.verify(stompClient).lifecycle();
+    inOrder.verify(stompClient).isConnected();
     inOrder.verify(stompClient).isConnecting();
     inOrder.verify(stompClient).connect();
     verifyNoMoreInteractions(stompClient);
   }
 
   /**
-   * Должен отписаться у клиента STOMP от событий соединения, если он не соединен и не соединяется,
-   * и после соединения.
+   * Должен запросить у клиента STOMP закрытие соединения, если была отписка.
    */
   @Test
-  public void unSubscribeFromStompClientLifeCycleAfterConnect() {
+  public void askStompClientToDisconnectOnCancel() {
     // Дано:
-    PublishSubject<LifecycleEvent> publishSubject = PublishSubject.create();
-    when(stompClient.lifecycle()).thenReturn(publishSubject);
+    InOrder inOrder = Mockito.inOrder(stompClient);
 
     // Действие:
-    socketGateway.openSocket().test();
-    publishSubject.onNext(new LifecycleEvent(Type.OPENED));
+    socketGateway.openSocket().test().dispose();
 
     // Результат:
-    assertFalse(publishSubject.hasObservers());
-  }
-
-  /**
-   * Должен отписаться у клиента STOMP от событий соединения, если он не соединен и не соединяется,
-   * и соединение было закрыто.
-   */
-  @Test
-  public void unSubscribeStompClientLifeCycleAfterDisconnect() {
-    // Дано:
-    PublishSubject<LifecycleEvent> publishSubject = PublishSubject.create();
-    when(stompClient.lifecycle()).thenReturn(publishSubject);
-
-    // Действие:
-    socketGateway.openSocket().test();
-    publishSubject.onNext(new LifecycleEvent(Type.CLOSED));
-
-    // Результат:
-    assertFalse(publishSubject.hasObservers());
-  }
-
-  /**
-   * Должен отписаться у клиента STOMP от событий соединения, если он не соединен и не соединяется,
-   * и соединение провалилось.
-   */
-  @Test
-  public void unSubscribeStompClientLifeCycleAfterFailed() {
-    // Дано:
-    PublishSubject<LifecycleEvent> publishSubject = PublishSubject.create();
-    when(stompClient.lifecycle()).thenReturn(publishSubject);
-
-    // Действие:
-    socketGateway.openSocket().test();
-    publishSubject.onNext(new LifecycleEvent(Type.ERROR));
-
-    // Результат:
-    assertFalse(publishSubject.hasObservers());
-  }
-
-  /**
-   * Должен запросить у клиента STOMP подписку на событие соединения, если он не соединен и
-   * соединяется.
-   */
-  @Test
-  public void askStompClientToSubscribeForLifecycle() {
-    // Дано:
-    when(stompClient.isConnecting()).thenReturn(true);
-
-    // Действие:
-    socketGateway.openSocket().test();
-
-    // Результат:
-    verify(stompClient).isConnected();
-    verify(stompClient).lifecycle();
-    verify(stompClient).isConnecting();
-    verifyNoMoreInteractions(stompClient);
-  }
-
-  /**
-   * Должен отписаться у клиента STOMP от событий соединения, если он не соединен и соединяется,
-   * и после соединения.
-   */
-  @Test
-  public void unSubscribeConnectingStompClientLifeCycleAfterConnect() {
-    // Дано:
-    PublishSubject<LifecycleEvent> publishSubject = PublishSubject.create();
-    when(stompClient.lifecycle()).thenReturn(publishSubject);
-    when(stompClient.isConnecting()).thenReturn(true);
-
-    // Действие:
-    socketGateway.openSocket().test();
-    publishSubject.onNext(new LifecycleEvent(Type.OPENED));
-
-    // Результат:
-    assertFalse(publishSubject.hasObservers());
-  }
-
-  /**
-   * Должен отписаться у клиента STOMP от событий соединения, если он не соединен и соединяется,
-   * и соединение было закрыто.
-   */
-  @Test
-  public void unSubscribeConnectingStompClientLifeCycleAfterDisconnect() {
-    // Дано:
-    PublishSubject<LifecycleEvent> publishSubject = PublishSubject.create();
-    when(stompClient.lifecycle()).thenReturn(publishSubject);
-    when(stompClient.isConnecting()).thenReturn(true);
-
-    // Действие:
-    socketGateway.openSocket().test();
-    publishSubject.onNext(new LifecycleEvent(Type.CLOSED));
-
-    // Результат:
-    assertFalse(publishSubject.hasObservers());
-  }
-
-  /**
-   * Должен отписаться у клиента STOMP от событий соединения, если он не соединен и соединяется,
-   * и соединение провалилось.
-   */
-  @Test
-  public void unSubscribeConnectingStompClientLifeCycleAfterFailed() {
-    // Дано:
-    PublishSubject<LifecycleEvent> publishSubject = PublishSubject.create();
-    when(stompClient.lifecycle()).thenReturn(publishSubject);
-    when(stompClient.isConnecting()).thenReturn(true);
-
-    // Действие:
-    socketGateway.openSocket().test();
-    publishSubject.onNext(new LifecycleEvent(Type.ERROR));
-
-    // Результат:
-    assertFalse(publishSubject.hasObservers());
-  }
-
-  /**
-   * Должен просить у клиента STOMP разединения, если он соединен и не соединяется.
-   */
-  @Test
-  public void askStompClientToDisconnectIfConnected() {
-    // Дано:
-    when(stompClient.isConnected()).thenReturn(true);
-
-    // Действие:
-    socketGateway.closeSocket();
-
-    // Результат:
-    verify(stompClient).isConnected();
-    verify(stompClient).disconnect();
-    verifyNoMoreInteractions(stompClient);
-  }
-
-  /**
-   * Не Должен запросить у клиента STOMP разединения, если он не соединен и соединяется.
-   */
-  @Test
-  public void askStompClientToDisconnectIfConnecting() {
-    // Дано:
-    when(stompClient.isConnecting()).thenReturn(true);
-
-    // Действие:
-    socketGateway.closeSocket();
-
-    // Результат:
-    verify(stompClient).isConnected();
-    verify(stompClient).isConnecting();
-    verify(stompClient).disconnect();
-    verifyNoMoreInteractions(stompClient);
-  }
-
-  /**
-   * Не должен просить у клиента STOMP разединения, если он не соединен и не соединяется.
-   */
-  @Test
-  public void doNotAskStompClientToDisconnect() {
-    // Действие:
-    socketGateway.closeSocket();
-
-    // Результат:
-    verify(stompClient).isConnected();
-    verify(stompClient).isConnecting();
+    inOrder.verify(stompClient).lifecycle();
+    inOrder.verify(stompClient).isConnected();
+    inOrder.verify(stompClient).isConnecting();
+    inOrder.verify(stompClient).connect();
+    inOrder.verify(stompClient).disconnect();
     verifyNoMoreInteractions(stompClient);
   }
 
@@ -270,104 +130,80 @@ public class SocketGatewayTest {
     when(stompClient.isConnected()).thenReturn(true);
 
     // Действие:
-    TestObserver<Void> testObserver = socketGateway.openSocket().test();
+    TestSubscriber<Boolean> testSubscriber = socketGateway.openSocket().test();
 
     // Результат:
-    testObserver.assertComplete();
+    testSubscriber.assertNotComplete();
+    testSubscriber.assertValue(true);
   }
 
   /**
-   * Должен ответить успехом, если он не соединен и не соединяется, после соединения.
+   * Не должен ничем отвечать, если он не соединен и соединяется.
+   */
+  @Test
+  public void answerNothingIfNotConnected() {
+    // Действие:
+    TestSubscriber<Boolean> testSubscriber = socketGateway.openSocket().test();
+
+    // Результат:
+    testSubscriber.assertNotComplete();
+    testSubscriber.assertNoValues();
+  }
+
+  /**
+   * Должен ответить успехом после соединения.
    */
   @Test
   public void answerOpenSuccessAfterConnected() {
     // Дано:
-    when(stompClient.lifecycle()).thenReturn(Observable.just((new LifecycleEvent(Type.OPENED))));
+    when(stompClient.lifecycle()).thenReturn(
+        Observable.just((new LifecycleEvent(Type.OPENED))).concatWith(Observable.never())
+    );
 
     // Действие:
-    TestObserver<Void> testObserver = socketGateway.openSocket().test();
+    TestSubscriber<Boolean> testSubscriber = socketGateway.openSocket().test();
 
     // Результат:
-    testObserver.assertComplete();
+    testSubscriber.assertNotComplete();
+    testSubscriber.assertValue(true);
   }
 
   /**
-   * Должен ответить ошибкой, если он не соединен и не соединяется, если соединение было закрыто.
+   * Должен ответить завершением, если соединение было закрыто.
    */
   @Test
-  public void answerOpenErrorAfterDisconnected() {
+  public void answerClosedAfterConnectionClosed() {
     // Дано:
-    when(stompClient.lifecycle()).thenReturn(Observable.just((new LifecycleEvent(Type.CLOSED))));
+    when(stompClient.lifecycle()).thenReturn(
+        Observable.just((new LifecycleEvent(Type.CLOSED))).concatWith(Observable.never())
+    );
 
     // Действие:
-    TestObserver<Void> testObserver = socketGateway.openSocket().test();
+    TestSubscriber<Boolean> testSubscriber = socketGateway.openSocket().test();
 
     // Результат:
-    testObserver.assertError(ConnectionClosedException.class);
+    testSubscriber.assertNoValues();
+    testSubscriber.assertNoErrors();
+    testSubscriber.assertComplete();
   }
 
   /**
-   * Должен ответить ошибкой, если он не соединен и не соединяется, если соединение провалилось.
+   * Должен ответить ошибкой, если соединение провалилось.
    */
   @Test
   public void answerOpenErrorAfterFailed() {
     // Дано:
-    when(stompClient.lifecycle())
-        .thenReturn(Observable.just((new LifecycleEvent(Type.ERROR, new NoNetworkException()))));
+    when(stompClient.lifecycle()).thenReturn(
+        Observable.just((new LifecycleEvent(Type.ERROR, new NoNetworkException())))
+            .concatWith(Observable.never())
+    );
 
     // Действие:
-    TestObserver<Void> testObserver = socketGateway.openSocket().test();
+    TestSubscriber<Boolean> testSubscriber = socketGateway.openSocket().test();
 
     // Результат:
-    testObserver.assertError(NoNetworkException.class);
-  }
-
-  /**
-   * Должен ответить успехом, если он не соединен и соединяется, после соединения.
-   */
-  @Test
-  public void ifConnectingAnswerOpenSuccessAfterConnected() {
-    // Дано:
-    when(stompClient.isConnecting()).thenReturn(true);
-    when(stompClient.lifecycle()).thenReturn(Observable.just((new LifecycleEvent(Type.OPENED))));
-
-    // Действие:
-    TestObserver<Void> testObserver = socketGateway.openSocket().test();
-
-    // Результат:
-    testObserver.assertComplete();
-  }
-
-  /**
-   * Должен ответить ошибкой, если он не соединен и соединяется, если соединение было закрыто.
-   */
-  @Test
-  public void ifConnectingAnswerOpenErrorAfterDisconnected() {
-    // Дано:
-    when(stompClient.isConnecting()).thenReturn(true);
-    when(stompClient.lifecycle()).thenReturn(Observable.just((new LifecycleEvent(Type.CLOSED))));
-
-    // Действие:
-    TestObserver<Void> testObserver = socketGateway.openSocket().test();
-
-    // Результат:
-    testObserver.assertError(ConnectionClosedException.class);
-  }
-
-  /**
-   * Должен ответить ошибкой, если он не соединен и соединяется, если соединение провалилось.
-   */
-  @Test
-  public void ifConnectingAnswerOpenErrorAfterFailed() {
-    // Дано:
-    when(stompClient.isConnecting()).thenReturn(true);
-    when(stompClient.lifecycle())
-        .thenReturn(Observable.just((new LifecycleEvent(Type.ERROR, new NoNetworkException()))));
-
-    // Действие:
-    TestObserver<Void> testObserver = socketGateway.openSocket().test();
-
-    // Результат:
-    testObserver.assertError(NoNetworkException.class);
+    testSubscriber.assertError(NoNetworkException.class);
+    testSubscriber.assertNotComplete();
+    testSubscriber.assertNoValues();
   }
 }

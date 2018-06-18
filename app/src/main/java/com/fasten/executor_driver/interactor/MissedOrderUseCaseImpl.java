@@ -10,16 +10,12 @@ public class MissedOrderUseCaseImpl implements MissedOrderUseCase {
   @NonNull
   private final MissedOrderGateway gateway;
   @NonNull
-  private final SocketGateway socketGateway;
-  @NonNull
   private final DataReceiver<String> loginReceiver;
 
   @Inject
   public MissedOrderUseCaseImpl(@NonNull MissedOrderGateway gateway,
-      @NonNull SocketGateway socketGateway,
       @NonNull DataReceiver<String> loginReceiver) {
     this.gateway = gateway;
-    this.socketGateway = socketGateway;
     this.loginReceiver = loginReceiver;
   }
 
@@ -28,7 +24,6 @@ public class MissedOrderUseCaseImpl implements MissedOrderUseCase {
   public Flowable<String> getMissedOrders() {
     return loginReceiver.get()
         .toFlowable(BackpressureStrategy.BUFFER)
-        .startWith(socketGateway.openSocket().toFlowable())
         .switchMap(gateway::loadMissedOrdersMessages);
   }
 }

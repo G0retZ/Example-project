@@ -10,7 +10,6 @@ import static org.mockito.Mockito.when;
 
 import com.fasten.executor_driver.backend.web.NoNetworkException;
 import com.fasten.executor_driver.entity.ExecutorState;
-import io.reactivex.Completable;
 import io.reactivex.Flowable;
 import io.reactivex.Observable;
 import io.reactivex.functions.Action;
@@ -33,9 +32,6 @@ public class ExecutorStateUseCaseTest {
   private ExecutorStateGateway gateway;
 
   @Mock
-  private SocketGateway socketGateway;
-
-  @Mock
   private DataReceiver<String> loginReceiver;
 
   @Mock
@@ -45,51 +41,7 @@ public class ExecutorStateUseCaseTest {
   public void setUp() {
     when(gateway.getState(anyString())).thenReturn(Flowable.never());
     when(loginReceiver.get()).thenReturn(Observable.never());
-    when(socketGateway.openSocket()).thenReturn(Completable.never());
-    executorStateUseCase = new ExecutorStateUseCaseImpl(gateway, socketGateway, loginReceiver);
-  }
-
-  /* Проверяем работу с гейтвеем сокета */
-
-  /**
-   * Должен запросить у гейтвея соединение.
-   */
-  @Test
-  public void askSocketGatewayForConnection() {
-    // Действие:
-    executorStateUseCase.getExecutorStates(true).test();
-
-    // Результат:
-    verify(socketGateway, only()).openSocket();
-  }
-
-  /**
-   * Не должен запрашивать у гейтвея соединений, если не было сброса.
-   */
-  @Test
-  public void doNotAskSocketGatewayForConnectionAgain() {
-    // Действие:
-    executorStateUseCase.getExecutorStates(false).test();
-    executorStateUseCase.getExecutorStates(false).test();
-    executorStateUseCase.getExecutorStates(false).test();
-
-    // Результат:
-    verifyZeroInteractions(socketGateway);
-  }
-
-  /**
-   * Должен запросить у гейтвея повторное соединение после сброса.
-   */
-  @Test
-  public void askSocketGatewayForConnectionAgainAfterReset() {
-    // Действие:
-    executorStateUseCase.getExecutorStates(false).test();
-    executorStateUseCase.getExecutorStates(true).test();
-    executorStateUseCase.getExecutorStates(false).test();
-    executorStateUseCase.getExecutorStates(true).test();
-
-    // Результат:
-    verify(socketGateway, times(2)).openSocket();
+    executorStateUseCase = new ExecutorStateUseCaseImpl(gateway, loginReceiver);
   }
 
   /* Проверяем работу с публикатором логина */
@@ -99,9 +51,6 @@ public class ExecutorStateUseCaseTest {
    */
   @Test
   public void askLoginPublisherForLogin() {
-    // Дано:
-    when(socketGateway.openSocket()).thenReturn(Completable.complete());
-
     // Действие:
     executorStateUseCase.getExecutorStates(true).test();
 
@@ -132,7 +81,6 @@ public class ExecutorStateUseCaseTest {
   public void askGatewayForStatus() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(gateway);
-    when(socketGateway.openSocket()).thenReturn(Completable.complete());
     when(loginReceiver.get()).thenReturn(Observable.just(
         "1234567890", "0987654321", "123454321", "09876567890"
     ));
@@ -156,7 +104,6 @@ public class ExecutorStateUseCaseTest {
   @Test
   public void ubSubscribeFromPreviousRequestsToGateway() throws Exception {
     // Дано:
-    when(socketGateway.openSocket()).thenReturn(Completable.complete());
     when(loginReceiver.get()).thenReturn(Observable.just(
         "1234567890", "0987654321", "123454321", "09876567890"
     ));
@@ -175,9 +122,6 @@ public class ExecutorStateUseCaseTest {
    */
   @Test
   public void doNotAskGatewayForStatusIfSocketError() {
-    // Дано:
-    when(socketGateway.openSocket()).thenReturn(Completable.error(NoNetworkException::new));
-
     // Действие:
     executorStateUseCase.getExecutorStates(true).test();
 
@@ -191,7 +135,6 @@ public class ExecutorStateUseCaseTest {
   @Test
   public void doNotAskGatewayForStatus() {
     // Дано:
-    when(socketGateway.openSocket()).thenReturn(Completable.complete());
     when(loginReceiver.get()).thenReturn(Observable.error(NoNetworkException::new));
 
     // Действие:
@@ -223,7 +166,6 @@ public class ExecutorStateUseCaseTest {
   @Test
   public void answerWithStatuses() {
     // Дано:
-    when(socketGateway.openSocket()).thenReturn(Completable.complete());
     when(loginReceiver.get()).thenReturn(Observable.just("1234567890"));
     when(gateway.getState("1234567890")).thenReturn(
         Flowable.just(ExecutorState.SHIFT_CLOSED, ExecutorState.SHIFT_OPENED, ExecutorState.ONLINE,
@@ -250,9 +192,6 @@ public class ExecutorStateUseCaseTest {
    */
   @Test
   public void answerWithErrorIfSocketConnectionFailed() {
-    // Дано:
-    when(socketGateway.openSocket()).thenReturn(Completable.error(ConnectException::new));
-
     // Действие:
     TestSubscriber<ExecutorState> testSubscriber =
         executorStateUseCase.getExecutorStates(true).test();
@@ -267,8 +206,6 @@ public class ExecutorStateUseCaseTest {
    */
   @Test
   public void answerWithErrorIfGetLoginFailed() {
-    // Дано:
-    when(socketGateway.openSocket()).thenReturn(Completable.complete());
     when(loginReceiver.get()).thenReturn(Observable.error(ConnectException::new));
 
     // Действие:
@@ -285,8 +222,6 @@ public class ExecutorStateUseCaseTest {
    */
   @Test
   public void answerWithErrorIfSubscriptionFailed() {
-    // Дано:
-    when(socketGateway.openSocket()).thenReturn(Completable.complete());
     when(loginReceiver.get()).thenReturn(Observable.just("1234567890"));
     when(gateway.getState("1234567890")).thenReturn(Flowable.error(ConnectException::new));
 
@@ -304,8 +239,6 @@ public class ExecutorStateUseCaseTest {
    */
   @Test
   public void answerComplete() {
-    // Дано:
-    when(socketGateway.openSocket()).thenReturn(Completable.complete());
     when(loginReceiver.get()).thenReturn(Observable.just("1234567890"));
     when(gateway.getState("1234567890")).thenReturn(Flowable.empty());
 

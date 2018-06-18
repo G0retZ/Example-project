@@ -14,8 +14,6 @@ public class CancelOrderUseCaseImpl implements CancelOrderUseCase {
   @NonNull
   private final CancelOrderGateway gateway;
   @NonNull
-  private final SocketGateway socketGateway;
-  @NonNull
   private final DataReceiver<String> loginReceiver;
   @NonNull
   private Flowable<List<CancelOrderReason>> cancelOrderReasonsFlowable = Flowable.empty();
@@ -24,10 +22,8 @@ public class CancelOrderUseCaseImpl implements CancelOrderUseCase {
 
   @Inject
   public CancelOrderUseCaseImpl(@NonNull CancelOrderGateway gateway,
-      @NonNull SocketGateway socketGateway,
       @NonNull DataReceiver<String> loginReceiver) {
     this.gateway = gateway;
-    this.socketGateway = socketGateway;
     this.loginReceiver = loginReceiver;
   }
 
@@ -37,7 +33,6 @@ public class CancelOrderUseCaseImpl implements CancelOrderUseCase {
     if (reset) {
       cancelOrderReasonsFlowable = loginReceiver.get()
           .toFlowable(BackpressureStrategy.BUFFER)
-          .startWith(socketGateway.openSocket().toFlowable())
           .switchMap(gateway::loadCancelOrderReasons)
           .map(cancelOrderReasons1 -> cancelOrderReasons = cancelOrderReasons1)
           .replay(1)

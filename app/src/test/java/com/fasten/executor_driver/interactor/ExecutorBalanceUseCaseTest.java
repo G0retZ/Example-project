@@ -1,7 +1,6 @@
 package com.fasten.executor_driver.interactor;
 
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -10,7 +9,6 @@ import static org.mockito.Mockito.when;
 
 import com.fasten.executor_driver.backend.web.NoNetworkException;
 import com.fasten.executor_driver.entity.ExecutorBalance;
-import io.reactivex.Completable;
 import io.reactivex.Flowable;
 import io.reactivex.Observable;
 import io.reactivex.functions.Action;
@@ -32,8 +30,6 @@ public class ExecutorBalanceUseCaseTest {
   @Mock
   private ExecutorBalanceGateway gateway;
   @Mock
-  private SocketGateway socketGateway;
-  @Mock
   private DataReceiver<String> loginReceiver;
   @Mock
   private ExecutorBalance executorBalance;
@@ -48,68 +44,7 @@ public class ExecutorBalanceUseCaseTest {
   public void setUp() {
     when(gateway.loadExecutorBalance(anyString())).thenReturn(Flowable.never());
     when(loginReceiver.get()).thenReturn(Observable.never());
-    when(socketGateway.openSocket()).thenReturn(Completable.never());
-    executorBalanceUseCase = new ExecutorBalanceUseCaseImpl(gateway, socketGateway, loginReceiver);
-  }
-
-  /* Проверяем работу с гейтвеем сокета */
-
-  /**
-   * Должен запросить у гейтвея соединение.
-   */
-  @Test
-  public void askSocketGatewayForConnection() {
-    // Действие:
-    executorBalanceUseCase.getExecutorBalance(true).test();
-
-    // Результат:
-    verify(socketGateway, only()).openSocket();
-  }
-
-  /**
-   * Не должен запрашивать у гейтвея соединений, если не было сброса.
-   */
-  @Test
-  public void doNotAskSocketGatewayForConnectionAgain() {
-    // Действие:
-    executorBalanceUseCase.getExecutorBalance(false).test();
-    executorBalanceUseCase.getExecutorBalance(false).test();
-    executorBalanceUseCase.getExecutorBalance(false).test();
-
-    // Результат:
-    verifyZeroInteractions(socketGateway);
-  }
-
-  /**
-   * Должен запросить у гейтвея повторное соединение после сброса.
-   */
-  @Test
-  public void askSocketGatewayForConnectionAgainAfterReset() {
-    // Действие:
-    executorBalanceUseCase.getExecutorBalance(false).test();
-    executorBalanceUseCase.getExecutorBalance(true).test();
-    executorBalanceUseCase.getExecutorBalance(false).test();
-    executorBalanceUseCase.getExecutorBalance(true).test();
-
-    // Результат:
-    verify(socketGateway, times(2)).openSocket();
-  }
-
-  /* Проверяем работу с публикатором логина */
-
-  /**
-   * Должен запросить у публикатора логин исполнителя.
-   */
-  @Test
-  public void askLoginPublisherForLogin() {
-    // Дано:
-    when(socketGateway.openSocket()).thenReturn(Completable.complete());
-
-    // Действие:
-    executorBalanceUseCase.getExecutorBalance(true).test();
-
-    // Результат:
-    verify(loginReceiver, only()).get();
+    executorBalanceUseCase = new ExecutorBalanceUseCaseImpl(gateway, loginReceiver);
   }
 
   /**
@@ -135,7 +70,6 @@ public class ExecutorBalanceUseCaseTest {
   public void askGatewayForExecutorBalance() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(gateway);
-    when(socketGateway.openSocket()).thenReturn(Completable.complete());
     when(loginReceiver.get()).thenReturn(Observable.just(
         "1234567890", "0987654321", "123454321", "09876567890"
     ));
@@ -159,7 +93,6 @@ public class ExecutorBalanceUseCaseTest {
   @Test
   public void ubSubscribeFromPreviousRequestsToGateway() throws Exception {
     // Дано:
-    when(socketGateway.openSocket()).thenReturn(Completable.complete());
     when(loginReceiver.get()).thenReturn(Observable.just(
         "1234567890", "0987654321", "123454321", "09876567890"
     ));
@@ -178,9 +111,6 @@ public class ExecutorBalanceUseCaseTest {
    */
   @Test
   public void doNotAskGatewayForExecutorBalanceIfSocketError() {
-    // Дано:
-    when(socketGateway.openSocket()).thenReturn(Completable.error(NoNetworkException::new));
-
     // Действие:
     executorBalanceUseCase.getExecutorBalance(true).test();
 
@@ -194,7 +124,6 @@ public class ExecutorBalanceUseCaseTest {
   @Test
   public void doNotAskGatewayForExecutorBalance() {
     // Дано:
-    when(socketGateway.openSocket()).thenReturn(Completable.complete());
     when(loginReceiver.get()).thenReturn(Observable.error(NoNetworkException::new));
 
     // Действие:
@@ -227,7 +156,6 @@ public class ExecutorBalanceUseCaseTest {
   @Test
   public void answerWithExecutorBalance() {
     // Дано:
-    when(socketGateway.openSocket()).thenReturn(Completable.complete());
     when(loginReceiver.get()).thenReturn(Observable.just("1234567890"));
     when(gateway.loadExecutorBalance("1234567890"))
         .thenReturn(Flowable.just(executorBalance, executorBalance2, executorBalance1));
@@ -246,9 +174,6 @@ public class ExecutorBalanceUseCaseTest {
    */
   @Test
   public void answerConnectionClosedError() {
-    // Дано:
-    when(socketGateway.openSocket()).thenReturn(Completable.error(ConnectException::new));
-
     // Действие:
     TestSubscriber<ExecutorBalance> testSubscriber =
         executorBalanceUseCase.getExecutorBalance(true).test();
@@ -264,7 +189,6 @@ public class ExecutorBalanceUseCaseTest {
   @Test
   public void answerWithErrorIfGetLoginFailed() {
     // Дано:
-    when(socketGateway.openSocket()).thenReturn(Completable.complete());
     when(loginReceiver.get()).thenReturn(Observable.error(ConnectException::new));
 
     // Действие:
@@ -282,7 +206,6 @@ public class ExecutorBalanceUseCaseTest {
   @Test
   public void answerWithErrorIfSubscriptionFailed() {
     // Дано:
-    when(socketGateway.openSocket()).thenReturn(Completable.complete());
     when(loginReceiver.get()).thenReturn(Observable.just("1234567890"));
     when(gateway.loadExecutorBalance("1234567890"))
         .thenReturn(Flowable.error(ConnectException::new));
@@ -302,7 +225,6 @@ public class ExecutorBalanceUseCaseTest {
   @Test
   public void answerComplete() {
     // Дано:
-    when(socketGateway.openSocket()).thenReturn(Completable.complete());
     when(loginReceiver.get()).thenReturn(Observable.just("1234567890"));
     when(gateway.loadExecutorBalance("1234567890")).thenReturn(Flowable.empty());
 

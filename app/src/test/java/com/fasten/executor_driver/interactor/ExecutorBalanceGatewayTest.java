@@ -377,7 +377,8 @@ public class ExecutorBalanceGatewayTest {
    * @throws Exception error
    */
   @Test
-  public void answerWithExecutorBalanceForBalanceHeaderIfConnectingAfterConnected() throws Exception {
+  public void answerWithExecutorBalanceForBalanceHeaderIfConnectingAfterConnected()
+      throws Exception {
     // Дано:
     when(mapper.map(any())).thenReturn(executorBalance);
     when(stompClient.isConnecting()).thenReturn(true);

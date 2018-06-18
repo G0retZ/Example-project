@@ -1,11 +1,14 @@
 package com.fasten.executor_driver.gateway;
 
 import android.support.annotation.NonNull;
-import com.fasten.executor_driver.backend.websocket.ConnectionClosedException;
 import com.fasten.executor_driver.interactor.SocketGateway;
-import io.reactivex.Completable;
+import io.reactivex.BackpressureStrategy;
+import io.reactivex.Flowable;
+import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 import javax.inject.Inject;
+import org.reactivestreams.Publisher;
+import ua.naiksoftware.stomp.LifecycleEvent;
 import ua.naiksoftware.stomp.client.StompClient;
 
 public class SocketGatewayImpl implements SocketGateway {
@@ -19,35 +22,30 @@ public class SocketGatewayImpl implements SocketGateway {
   }
 
   @Override
-  public Completable openSocket() {
-    if (stompClient.isConnected()) {
-      return Completable.complete();
-    }
-    Completable completable = stompClient.lifecycle()
+  public Flowable<Boolean> openSocket() {
+    return stompClient.lifecycle()
+        .toFlowable(BackpressureStrategy.BUFFER)
         .subscribeOn(Schedulers.io())
-        .observeOn(Schedulers.single())
-        .firstElement()
-        .flatMapCompletable(lifecycleEvent -> {
+        .takeWhile(lifecycleEvent -> lifecycleEvent.getType() != LifecycleEvent.Type.CLOSED)
+        .switchMap((Function<LifecycleEvent, Publisher<Boolean>>) lifecycleEvent -> {
           switch (lifecycleEvent.getType()) {
             case OPENED:
-              return Completable.complete();
+              return Flowable.just(true);
             case ERROR:
-              return Completable.error(lifecycleEvent.getException());
-            case CLOSED:
-              return Completable.error(new ConnectionClosedException());
+              return Flowable.error(lifecycleEvent.getException());
+            default:
+              return Flowable.error(new Exception());
           }
-          return Completable.complete();
-        });
-    if (!stompClient.isConnecting()) {
-      stompClient.connect();
-    }
-    return completable;
-  }
-
-  @Override
-  public void closeSocket() {
-    if (stompClient.isConnected() || stompClient.isConnecting()) {
-      stompClient.disconnect();
-    }
+        })
+        .startWith(Flowable.create(emitter -> {
+          if (stompClient.isConnected()) {
+            emitter.onNext(true);
+          } else if (!stompClient.isConnecting()) {
+            stompClient.connect();
+          }
+          emitter.onComplete();
+        }, BackpressureStrategy.BUFFER))
+        .doOnCancel(stompClient::disconnect)
+        .observeOn(Schedulers.single());
   }
 }
