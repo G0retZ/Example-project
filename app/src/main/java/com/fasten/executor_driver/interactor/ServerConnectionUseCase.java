@@ -5,7 +5,7 @@ import io.reactivex.Flowable;
 /**
  * Юзкейс вебсокета.
  */
-interface ServerConnectionUseCase {
+public interface ServerConnectionUseCase {
 
   /**
    * Соединяет с сокетом сервера. Первое значение говорит об успешном соединении.
