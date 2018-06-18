@@ -3,7 +3,7 @@ package com.fasten.executor_driver.presentation.serverconnection;
 /**
  * Действия для смены состояния вида окна подключения к серверу.
  */
-interface ServerConnectionViewActions {
+public interface ServerConnectionViewActions {
 
   /**
    * Показать текущее состояние подключения.

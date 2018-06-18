@@ -5,7 +5,7 @@ import com.fasten.executor_driver.presentation.ViewModel;
 /**
  * ViewModel подключения к серверу.
  */
-interface ServerConnectionViewModel extends ViewModel<ServerConnectionViewActions> {
+public interface ServerConnectionViewModel extends ViewModel<ServerConnectionViewActions> {
 
   /**
    * Запрашивает подключение к серверу.

@@ -42,9 +42,9 @@ public class CancelOrderReasonsViewModelImpl extends ViewModel implements
   }
 
   @Override
-  public void initializeCancelOrderReasons(boolean reset) {
+  public void initializeCancelOrderReasons() {
     disposable.dispose();
-    disposable = cancelOrderUseCase.getCancelOrderReasons(reset)
+    disposable = cancelOrderUseCase.getCancelOrderReasons(true)
         .subscribeOn(Schedulers.single())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(

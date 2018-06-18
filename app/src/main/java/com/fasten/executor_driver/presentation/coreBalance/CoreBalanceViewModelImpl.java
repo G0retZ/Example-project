@@ -41,9 +41,9 @@ public class CoreBalanceViewModelImpl extends ViewModel implements CoreBalanceVi
   }
 
   @Override
-  public void initializeExecutorBalance(boolean reset) {
+  public void initializeExecutorBalance() {
     disposable.dispose();
-    disposable = executorBalanceUseCase.getExecutorBalance(reset)
+    disposable = executorBalanceUseCase.getExecutorBalance(true)
         .subscribeOn(Schedulers.single())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(

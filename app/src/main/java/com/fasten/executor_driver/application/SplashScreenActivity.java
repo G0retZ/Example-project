@@ -11,11 +11,4 @@ public class SplashScreenActivity extends BaseActivity {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_splash);
   }
-
-  @Override
-  protected void onResume() {
-    super.onResume();
-    ((MainApplication) getApplication()).initExecutorStates(false);
-    ((MainApplication) getApplication()).initGeoLocation();
-  }
 }

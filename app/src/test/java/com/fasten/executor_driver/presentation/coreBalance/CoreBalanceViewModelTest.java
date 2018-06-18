@@ -2,6 +2,7 @@ package com.fasten.executor_driver.presentation.coreBalance;
 
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.Mockito.only;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.verifyZeroInteractions;
@@ -25,9 +26,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestRule;
 import org.junit.runner.RunWith;
-import org.mockito.InOrder;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -57,47 +56,30 @@ public class CoreBalanceViewModelTest {
   /* Тетсируем работу с юзкейсом. */
 
   /**
-   * Должен попросить у юзкейса баланс исполнителя без сброса кеша.
-   */
-  @Test
-  public void askUseCaseToSubscribeToBalanceUpdates() {
-    // Действие:
-    coreBalanceViewModel.initializeExecutorBalance(false);
-
-    // Результат:
-    verify(executorBalanceUseCase, only()).getExecutorBalance(false);
-  }
-
-  /**
    * Должен попросить у юзкейса баланс исполнителя со сбросом кеша.
    */
   @Test
   public void askUseCaseToSubscribeToBalanceUpdatesWithCacheReset() {
     // Действие:
-    coreBalanceViewModel.initializeExecutorBalance(true);
+    coreBalanceViewModel.initializeExecutorBalance();
 
     // Результат:
     verify(executorBalanceUseCase, only()).getExecutorBalance(true);
   }
 
   /**
-   * Должен просить у юзкейса загрузить баланс исполнителя, без сброса кеша, даже если уже
+   * Должен просить у юзкейса загрузить баланс исполнителя, со сбросом кеша, даже если уже
    * подписан.
    */
   @Test
   public void doNotTouchUseCaseBeforeFirstRequestComplete() {
-    // Дано:
-    InOrder inOrder = Mockito.inOrder(executorBalanceUseCase);
-
     // Действие:
-    coreBalanceViewModel.initializeExecutorBalance(false);
-    coreBalanceViewModel.initializeExecutorBalance(true);
-    coreBalanceViewModel.initializeExecutorBalance(false);
+    coreBalanceViewModel.initializeExecutorBalance();
+    coreBalanceViewModel.initializeExecutorBalance();
+    coreBalanceViewModel.initializeExecutorBalance();
 
     // Результат:
-    inOrder.verify(executorBalanceUseCase).getExecutorBalance(false);
-    inOrder.verify(executorBalanceUseCase).getExecutorBalance(true);
-    inOrder.verify(executorBalanceUseCase).getExecutorBalance(false);
+    verify(executorBalanceUseCase, times(3)).getExecutorBalance(true);
     verifyNoMoreInteractions(executorBalanceUseCase);
   }
 
@@ -114,7 +96,7 @@ public class CoreBalanceViewModelTest {
 
     // Действие:
     coreBalanceViewModel.getViewStateLiveData().observeForever(viewStateObserver);
-    coreBalanceViewModel.initializeExecutorBalance(false);
+    coreBalanceViewModel.initializeExecutorBalance();
 
     // Результат:
     verifyZeroInteractions(viewStateObserver);
@@ -133,7 +115,7 @@ public class CoreBalanceViewModelTest {
 
     // Действие:
     coreBalanceViewModel.getNavigationLiveData().observeForever(navigationObserver);
-    coreBalanceViewModel.initializeExecutorBalance(false);
+    coreBalanceViewModel.initializeExecutorBalance();
 
     // Результат:
     verifyZeroInteractions(navigationObserver);
@@ -150,7 +132,7 @@ public class CoreBalanceViewModelTest {
 
     // Действие:
     coreBalanceViewModel.getNavigationLiveData().observeForever(navigationObserver);
-    coreBalanceViewModel.initializeExecutorBalance(true);
+    coreBalanceViewModel.initializeExecutorBalance();
 
     // Результат:
     verifyZeroInteractions(navigationObserver);
@@ -167,7 +149,7 @@ public class CoreBalanceViewModelTest {
 
     // Действие:
     coreBalanceViewModel.getNavigationLiveData().observeForever(navigationObserver);
-    coreBalanceViewModel.initializeExecutorBalance(false);
+    coreBalanceViewModel.initializeExecutorBalance();
 
     // Результат:
     verifyZeroInteractions(navigationObserver);
@@ -184,7 +166,7 @@ public class CoreBalanceViewModelTest {
 
     // Действие:
     coreBalanceViewModel.getNavigationLiveData().observeForever(navigationObserver);
-    coreBalanceViewModel.initializeExecutorBalance(true);
+    coreBalanceViewModel.initializeExecutorBalance();
 
     // Результат:
     verify(navigationObserver, only()).onChanged(CoreBalanceNavigate.SERVER_DATA_ERROR);

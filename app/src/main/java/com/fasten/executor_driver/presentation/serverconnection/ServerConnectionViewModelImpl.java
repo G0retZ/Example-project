@@ -14,7 +14,7 @@ import io.reactivex.internal.disposables.EmptyDisposable;
 import io.reactivex.schedulers.Schedulers;
 import javax.inject.Inject;
 
-class ServerConnectionViewModelImpl extends ViewModel implements ServerConnectionViewModel {
+public class ServerConnectionViewModelImpl extends ViewModel implements ServerConnectionViewModel {
 
   @NonNull
   private final ServerConnectionUseCase serverConnectionUseCase;
@@ -26,7 +26,7 @@ class ServerConnectionViewModelImpl extends ViewModel implements ServerConnectio
   private Disposable disposable = EmptyDisposable.INSTANCE;
 
   @Inject
-  ServerConnectionViewModelImpl(@NonNull ServerConnectionUseCase serverConnectionUseCase) {
+  public ServerConnectionViewModelImpl(@NonNull ServerConnectionUseCase serverConnectionUseCase) {
     this.serverConnectionUseCase = serverConnectionUseCase;
     navigateLiveData = new MutableLiveData<>();
     viewStateLiveData = new SingleLiveEvent<>();

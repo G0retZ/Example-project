@@ -8,9 +8,7 @@ import com.fasten.executor_driver.presentation.ViewModel;
 public interface ExecutorStateViewModel extends ViewModel<ExecutorStateViewActions> {
 
   /**
-   * Запрашивает подписку на статус исполнителя со сбросом кеша или без.
-   *
-   * @param reset - сбросить ли кеш?
+   * Запрашивает подписку на статус исполнителя со сбросом.
    */
-  void initializeExecutorState(boolean reset);
+  void initializeExecutorState();
 }

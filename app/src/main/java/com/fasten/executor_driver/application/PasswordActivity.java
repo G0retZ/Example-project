@@ -23,7 +23,7 @@ public class PasswordActivity extends BaseActivity {
   public void navigate(@NonNull String destination) {
     switch (destination) {
       case CodeNavigate.ENTER_APP:
-        ((MainApplication) getApplication()).initExecutorStates(true);
+        ((MainApplication) getApplication()).initServerConnection();
         ((MainApplication) getApplication()).initGeoLocation();
         break;
       default:

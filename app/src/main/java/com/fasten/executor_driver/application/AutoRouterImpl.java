@@ -69,6 +69,10 @@ public class AutoRouterImpl implements ActivityLifecycleCallbacks, AutoRouter,
   @ExecutorStateNavigate
   @GeoLocationNavigate
   private String lastRouteAction;
+  @Nullable
+  @ExecutorStateNavigate
+  @GeoLocationNavigate
+  private String splashRouteAction;
   private boolean goToGeoResolver;
   @Nullable
   private Runnable messageRunnable;
@@ -84,6 +88,10 @@ public class AutoRouterImpl implements ActivityLifecycleCallbacks, AutoRouter,
   @Override
   public void onActivityStarted(Activity activity) {
     currentActivity = activity;
+    // Если это сплеш-скрин, то планируем ему последний переход по статусу, если такой был.
+    if (activity instanceof SplashScreenActivity) {
+      lastRouteAction = splashRouteAction;
+    }
     tryToNavigate();
     tryToResolveGeo();
     if (messageRunnable != null) {
@@ -120,7 +128,7 @@ public class AutoRouterImpl implements ActivityLifecycleCallbacks, AutoRouter,
       goToGeoResolver = true;
       tryToResolveGeo();
     } else {
-      lastRouteAction = destination;
+      splashRouteAction = lastRouteAction = destination;
       tryToNavigate();
     }
   }
