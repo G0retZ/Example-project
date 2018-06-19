@@ -1,11 +1,10 @@
 package com.fasten.executor_driver.interactor;
 
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.only;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.fasten.executor_driver.backend.web.NoNetworkException;
-import com.fasten.executor_driver.backend.websocket.ConnectionClosedException;
 import com.fasten.executor_driver.entity.ExecutorState;
 import com.fasten.executor_driver.gateway.MovingToClientGatewayImpl;
 import io.reactivex.Completable;
@@ -15,9 +14,7 @@ import io.reactivex.schedulers.Schedulers;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InOrder;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import ua.naiksoftware.stomp.client.StompClient;
 
@@ -41,57 +38,15 @@ public class MovingToClientGatewayTest {
   /* Проверяем работу с клиентом STOMP */
 
   /**
-   * Должен запросить у клиента STOMP отправку "я на месте", если он соединен и не соединяется.
+   * Должен запросить у клиента STOMP отправку "я на месте".
    */
   @Test
   public void askStompClientToSendReportArrival() {
-    // Дано:
-    InOrder inOrder = Mockito.inOrder(stompClient);
-    when(stompClient.isConnected()).thenReturn(true);
-
     // Действие:
     orderGateway.reportArrival().test();
 
     // Результат:
-    inOrder.verify(stompClient).isConnected();
-    inOrder.verify(stompClient).send("/mobile/trip", "\"DRIVER_ARRIVED\"");
-    verifyNoMoreInteractions(stompClient);
-  }
-
-  /**
-   * Не должен просить у клиента STOMP соединение, если он не соединен и не соединяется.
-   */
-  @Test
-  public void doNotAskStompClientToConnectOrSendIfNotConnected() {
-    // Дано:
-    InOrder inOrder = Mockito.inOrder(stompClient);
-
-    // Действие:
-    orderGateway.reportArrival().test();
-
-    // Результат:
-    inOrder.verify(stompClient).isConnected();
-    inOrder.verify(stompClient).isConnecting();
-    verifyNoMoreInteractions(stompClient);
-  }
-
-  /**
-   * Должен запросить у клиента STOMP отправку "я на месте", если он не соединен и соединяется.
-   */
-  @Test
-  public void askStompClientToSendReportArrivalIfConnecting() {
-    // Дано:
-    InOrder inOrder = Mockito.inOrder(stompClient);
-    when(stompClient.isConnecting()).thenReturn(true);
-
-    // Действие:
-    orderGateway.reportArrival().test();
-
-    // Результат:
-    inOrder.verify(stompClient).isConnected();
-    inOrder.verify(stompClient).isConnecting();
-    inOrder.verify(stompClient).send("/mobile/trip", "\"DRIVER_ARRIVED\"");
-    verifyNoMoreInteractions(stompClient);
+    verify(stompClient, only()).send("/mobile/trip", "\"DRIVER_ARRIVED\"");
   }
 
   /* Проверяем правильность потоков (добавить) */
@@ -99,12 +54,11 @@ public class MovingToClientGatewayTest {
   /* Проверяем результаты обработки сообщений от сервера по статусам */
 
   /**
-   * Должен ответить успехом, если он соединен и не соединяется.
+   * Должен ответить успехом.
    */
   @Test
   public void answerReportArrivalSuccessIfConnected() {
     // Дано:
-    when(stompClient.isConnected()).thenReturn(true);
     when(stompClient.send(anyString(), anyString())).thenReturn(Completable.complete());
 
     // Действие:
@@ -116,68 +70,19 @@ public class MovingToClientGatewayTest {
   }
 
   /**
-   * Должен ответить ошибкой, если он соединен и не соединяется.
+   * Должен ответить ошибкой.
    */
   @Test
   public void answerReportArrivalErrorIfConnected() {
     // Дано:
-    when(stompClient.isConnected()).thenReturn(true);
     when(stompClient.send(anyString(), anyString()))
-        .thenReturn(Completable.error(new NoNetworkException()));
+        .thenReturn(Completable.error(new IllegalArgumentException()));
 
     // Действие:
     TestObserver<Void> testObserver = orderGateway.reportArrival().test();
 
     // Результат:
     testObserver.assertNotComplete();
-    testObserver.assertError(NoNetworkException.class);
-  }
-
-  /**
-   * Должен ответить ошибкой, если он не соединен и не соединяется.
-   */
-  @Test
-  public void answerReportArrivalErrorIfNotConnectedAndNotConnecting() {
-    // Действие:
-    TestObserver<Void> testObserver = orderGateway.reportArrival().test();
-
-    // Результат:
-    testObserver.assertNotComplete();
-    testObserver.assertError(ConnectionClosedException.class);
-  }
-
-  /**
-   * Должен ответить успехом, если он не соединен и соединяется.
-   */
-  @Test
-  public void answerReportArrivalSuccessIfConnecting() {
-    // Дано:
-    when(stompClient.isConnecting()).thenReturn(true);
-    when(stompClient.send(anyString(), anyString())).thenReturn(Completable.complete());
-
-    // Действие:
-    TestObserver<Void> testObserver = orderGateway.reportArrival().test();
-
-    // Результат:
-    testObserver.assertNoErrors();
-    testObserver.assertComplete();
-  }
-
-  /**
-   * Должен ответить ошибкой, если он не соединен и соединяется.
-   */
-  @Test
-  public void answerReportArrivalErrorIfConnecting() {
-    // Дано:
-    when(stompClient.isConnecting()).thenReturn(true);
-    when(stompClient.send(anyString(), anyString()))
-        .thenReturn(Completable.error(new ConnectionClosedException()));
-
-    // Действие:
-    TestObserver<Void> testObserver = orderGateway.reportArrival().test();
-
-    // Результат:
-    testObserver.assertNotComplete();
-    testObserver.assertError(ConnectionClosedException.class);
+    testObserver.assertError(IllegalArgumentException.class);
   }
 }

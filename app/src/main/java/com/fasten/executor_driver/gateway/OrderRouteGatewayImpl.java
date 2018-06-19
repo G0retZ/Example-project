@@ -2,7 +2,6 @@ package com.fasten.executor_driver.gateway;
 
 import android.support.annotation.NonNull;
 import com.fasten.executor_driver.BuildConfig;
-import com.fasten.executor_driver.backend.websocket.ConnectionClosedException;
 import com.fasten.executor_driver.entity.RoutePoint;
 import com.fasten.executor_driver.interactor.OrderRouteGateway;
 import io.reactivex.Completable;
@@ -23,39 +22,30 @@ public class OrderRouteGatewayImpl implements OrderRouteGateway {
   @NonNull
   @Override
   public Completable closeRoutePoint(@NonNull RoutePoint routePoint) {
-    if (stompClient.isConnected() || stompClient.isConnecting()) {
-      return stompClient.send(
-          BuildConfig.ROUTE_DESTINATION,
-          "{\"complete\":\"" + routePoint.getId() + "\"}"
-      )
-          .subscribeOn(Schedulers.io())
-          .observeOn(Schedulers.single());
-    }
-    return Completable.error(new ConnectionClosedException());
+    return stompClient.send(
+        BuildConfig.ROUTE_DESTINATION,
+        "{\"complete\":\"" + routePoint.getId() + "\"}"
+    )
+        .subscribeOn(Schedulers.io())
+        .observeOn(Schedulers.single());
   }
 
   @NonNull
   @Override
   public Completable completeTheOrder() {
-    if (stompClient.isConnected() || stompClient.isConnecting()) {
-      return stompClient.send(BuildConfig.TRIP_DESTINATION, "\"COMPLETE_ORDER\"")
-          .subscribeOn(Schedulers.io())
-          .observeOn(Schedulers.single());
-    }
-    return Completable.error(new ConnectionClosedException());
+    return stompClient.send(BuildConfig.TRIP_DESTINATION, "\"COMPLETE_ORDER\"")
+        .subscribeOn(Schedulers.io())
+        .observeOn(Schedulers.single());
   }
 
   @NonNull
   @Override
   public Completable nextRoutePoint(@NonNull RoutePoint routePoint) {
-    if (stompClient.isConnected() || stompClient.isConnecting()) {
-      return stompClient.send(
-          BuildConfig.ROUTE_DESTINATION,
-          "{\"next\":\"" + routePoint.getId() + "\"}"
-      )
-          .subscribeOn(Schedulers.io())
-          .observeOn(Schedulers.single());
-    }
-    return Completable.error(new ConnectionClosedException());
+    return stompClient.send(
+        BuildConfig.ROUTE_DESTINATION,
+        "{\"next\":\"" + routePoint.getId() + "\"}"
+    )
+        .subscribeOn(Schedulers.io())
+        .observeOn(Schedulers.single());
   }
 }

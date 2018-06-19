@@ -2,7 +2,6 @@ package com.fasten.executor_driver.gateway;
 
 import android.support.annotation.NonNull;
 import com.fasten.executor_driver.BuildConfig;
-import com.fasten.executor_driver.backend.websocket.ConnectionClosedException;
 import com.fasten.executor_driver.entity.ExecutorState;
 import com.fasten.executor_driver.interactor.ExecutorStateSwitchGateway;
 import io.reactivex.Completable;
@@ -21,12 +20,9 @@ public class ExecutorStateSwitchGatewayImpl implements ExecutorStateSwitchGatewa
   @NonNull
   @Override
   public Completable sendNewExecutorState(ExecutorState executorState) {
-    if (stompClient.isConnected() || stompClient.isConnecting()) {
-      return stompClient
-          .send(BuildConfig.SET_STATUS_DESTINATION, "\"" + executorState.toString() + "\"")
-          .subscribeOn(Schedulers.io())
-          .observeOn(Schedulers.single());
-    }
-    return Completable.error(new ConnectionClosedException());
+    return stompClient
+        .send(BuildConfig.SET_STATUS_DESTINATION, "\"" + executorState.toString() + "\"")
+        .subscribeOn(Schedulers.io())
+        .observeOn(Schedulers.single());
   }
 }

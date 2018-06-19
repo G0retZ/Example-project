@@ -2,7 +2,6 @@ package com.fasten.executor_driver.gateway;
 
 import android.support.annotation.NonNull;
 import com.fasten.executor_driver.BuildConfig;
-import com.fasten.executor_driver.backend.websocket.ConnectionClosedException;
 import com.fasten.executor_driver.interactor.MovingToClientGateway;
 import io.reactivex.Completable;
 import io.reactivex.schedulers.Schedulers;
@@ -22,11 +21,8 @@ public class MovingToClientGatewayImpl implements MovingToClientGateway {
   @NonNull
   @Override
   public Completable reportArrival() {
-    if (stompClient.isConnected() || stompClient.isConnecting()) {
-      return stompClient.send(BuildConfig.TRIP_DESTINATION, "\"DRIVER_ARRIVED\"")
-          .subscribeOn(Schedulers.io())
-          .observeOn(Schedulers.single());
-    }
-    return Completable.error(new ConnectionClosedException());
+    return stompClient.send(BuildConfig.TRIP_DESTINATION, "\"DRIVER_ARRIVED\"")
+        .subscribeOn(Schedulers.io())
+        .observeOn(Schedulers.single());
   }
 }

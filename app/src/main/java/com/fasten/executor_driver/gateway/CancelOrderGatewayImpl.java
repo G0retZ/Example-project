@@ -49,12 +49,9 @@ public class CancelOrderGatewayImpl implements CancelOrderGateway {
   @NonNull
   @Override
   public Completable cancelOrder(@NonNull CancelOrderReason cancelOrderReason) {
-    if (stompClient.isConnected() || stompClient.isConnecting()) {
-      return stompClient.send(BuildConfig.CANCEL_ORDER_DESTINATION,
-          new Gson().toJson(new ApiCancelOrderReason(cancelOrderReason)))
-          .subscribeOn(Schedulers.io())
-          .observeOn(Schedulers.single());
-    }
-    return Completable.error(new ConnectionClosedException());
+    return stompClient.send(BuildConfig.CANCEL_ORDER_DESTINATION,
+        new Gson().toJson(new ApiCancelOrderReason(cancelOrderReason)))
+        .subscribeOn(Schedulers.io())
+        .observeOn(Schedulers.single());
   }
 }

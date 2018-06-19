@@ -219,63 +219,20 @@ public class CancelOrderGatewayTest {
 
 
   /**
-   * Должен запросить у клиента STOMP отправку причины отказа, если он соединен и не соединяется.
+   * Должен запросить у клиента STOMP отправку причины отказа.
    */
   @Test
   public void askStompClientToSendCancelOrderReason() {
     // Дано:
     when(cancelOrderReason.getId()).thenReturn(7);
     when(cancelOrderReason.getName()).thenReturn("seven");
-    InOrder inOrder = Mockito.inOrder(stompClient);
-    when(stompClient.isConnected()).thenReturn(true);
 
     // Действие:
     cancelOrderGateway.cancelOrder(cancelOrderReason).test();
 
     // Результат:
-    inOrder.verify(stompClient).isConnected();
-    inOrder.verify(stompClient)
+    verify(stompClient, only())
         .send("/mobile/takeOffOrder", "{\"id\":7,\"description\":\"seven\"}");
-    verifyNoMoreInteractions(stompClient);
-  }
-
-  /**
-   * Не должен просить у клиента STOMP соединение, если он не соединен и не соединяется.
-   */
-  @Test
-  public void doNotAskStompClientToConnectOrSendIfNotConnected() {
-    // Дано:
-    InOrder inOrder = Mockito.inOrder(stompClient);
-
-    // Действие:
-    cancelOrderGateway.cancelOrder(cancelOrderReason).test();
-
-    // Результат:
-    inOrder.verify(stompClient).isConnected();
-    inOrder.verify(stompClient).isConnecting();
-    verifyNoMoreInteractions(stompClient);
-  }
-
-  /**
-   * Должен запросить у клиента STOMP отправку причины отказа, если он не соединен и соединяется.
-   */
-  @Test
-  public void askStompClientToSendCancelOrderReasonIfConnecting() {
-    // Дано:
-    when(cancelOrderReason.getId()).thenReturn(7);
-    when(cancelOrderReason.getName()).thenReturn("seven");
-    InOrder inOrder = Mockito.inOrder(stompClient);
-    when(stompClient.isConnecting()).thenReturn(true);
-
-    // Действие:
-    cancelOrderGateway.cancelOrder(cancelOrderReason).test();
-
-    // Результат:
-    inOrder.verify(stompClient).isConnected();
-    inOrder.verify(stompClient).isConnecting();
-    inOrder.verify(stompClient)
-        .send("/mobile/takeOffOrder", "{\"id\":7,\"description\":\"seven\"}");
-    verifyNoMoreInteractions(stompClient);
   }
 
   /* Проверяем правильность потоков (добавить) */
@@ -501,14 +458,13 @@ public class CancelOrderGatewayTest {
   }
 
   /**
-   * Должен ответить успехом, если он соединен и не соединяется.
+   * Должен ответить успехом.
    */
   @Test
-  public void answerCancelOrderReasonSuccessIfConnected() {
+  public void answerCancelOrderReasonSuccess() {
     // Дано:
     when(cancelOrderReason.getId()).thenReturn(7);
     when(cancelOrderReason.getName()).thenReturn("seven");
-    when(stompClient.isConnected()).thenReturn(true);
     when(stompClient.send(anyString(), anyString())).thenReturn(Completable.complete());
 
     // Действие:
@@ -520,74 +476,21 @@ public class CancelOrderGatewayTest {
   }
 
   /**
-   * Должен ответить ошибкой, если он соединен и не соединяется.
+   * Должен ответить ошибкой.
    */
   @Test
-  public void answerCancelOrderReasonErrorIfConnected() {
+  public void answerCancelOrderReasonError() {
     // Дано:
     when(cancelOrderReason.getId()).thenReturn(7);
     when(cancelOrderReason.getName()).thenReturn("seven");
-    when(stompClient.isConnected()).thenReturn(true);
     when(stompClient.send(anyString(), anyString()))
-        .thenReturn(Completable.error(new NoNetworkException()));
+        .thenReturn(Completable.error(new IllegalArgumentException()));
 
     // Действие:
     TestObserver<Void> testObserver = cancelOrderGateway.cancelOrder(cancelOrderReason).test();
 
     // Результат:
     testObserver.assertNotComplete();
-    testObserver.assertError(NoNetworkException.class);
-  }
-
-  /**
-   * Должен ответить ошибкой, если он не соединен и не соединяется.
-   */
-  @Test
-  public void answerCancelOrderReasonErrorIfNotConnectedAndNotConnecting() {
-    // Действие:
-    TestObserver<Void> testObserver = cancelOrderGateway.cancelOrder(cancelOrderReason).test();
-
-    // Результат:
-    testObserver.assertNotComplete();
-    testObserver.assertError(ConnectionClosedException.class);
-  }
-
-  /**
-   * Должен ответить успехом, если он не соединен и соединяется.
-   */
-  @Test
-  public void answerCancelOrderReasonSuccessIfConnecting() {
-    // Дано:
-    when(cancelOrderReason.getId()).thenReturn(7);
-    when(cancelOrderReason.getName()).thenReturn("seven");
-    when(stompClient.isConnecting()).thenReturn(true);
-    when(stompClient.send(anyString(), anyString())).thenReturn(Completable.complete());
-
-    // Действие:
-    TestObserver<Void> testObserver = cancelOrderGateway.cancelOrder(cancelOrderReason).test();
-
-    // Результат:
-    testObserver.assertNoErrors();
-    testObserver.assertComplete();
-  }
-
-  /**
-   * Должен ответить ошибкой, если он не соединен и соединяется.
-   */
-  @Test
-  public void answerCancelOrderReasonErrorIfConnecting() {
-    // Дано:
-    when(cancelOrderReason.getId()).thenReturn(7);
-    when(cancelOrderReason.getName()).thenReturn("seven");
-    when(stompClient.isConnecting()).thenReturn(true);
-    when(stompClient.send(anyString(), anyString()))
-        .thenReturn(Completable.error(new ConnectionClosedException()));
-
-    // Действие:
-    TestObserver<Void> testObserver = cancelOrderGateway.cancelOrder(cancelOrderReason).test();
-
-    // Результат:
-    testObserver.assertNotComplete();
-    testObserver.assertError(ConnectionClosedException.class);
+    testObserver.assertError(IllegalArgumentException.class);
   }
 }

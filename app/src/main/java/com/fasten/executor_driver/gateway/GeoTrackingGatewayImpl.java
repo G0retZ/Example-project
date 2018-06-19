@@ -2,7 +2,6 @@ package com.fasten.executor_driver.gateway;
 
 import android.support.annotation.NonNull;
 import com.fasten.executor_driver.BuildConfig;
-import com.fasten.executor_driver.backend.websocket.ConnectionClosedException;
 import com.fasten.executor_driver.backend.websocket.outgoing.ApiGeoLocation;
 import com.fasten.executor_driver.entity.GeoLocation;
 import com.fasten.executor_driver.interactor.GeoTrackingGateway;
@@ -28,15 +27,12 @@ public class GeoTrackingGatewayImpl implements GeoTrackingGateway {
   @NonNull
   @Override
   public Completable sendGeoLocation(GeoLocation geoLocation) {
-    if (stompClient.isConnected() || stompClient.isConnecting()) {
-      return stompClient.send(BuildConfig.GOLOCATION_DESTINATION, gson.toJson(
-          new ApiGeoLocation(
-              geoLocation.getLatitude(), geoLocation.getLongitude(), geoLocation.getTimestamp()
-          )
-      ))
-          .subscribeOn(Schedulers.io())
-          .observeOn(Schedulers.single());
-    }
-    return Completable.error(new ConnectionClosedException());
+    return stompClient.send(BuildConfig.GOLOCATION_DESTINATION, gson.toJson(
+        new ApiGeoLocation(
+            geoLocation.getLatitude(), geoLocation.getLongitude(), geoLocation.getTimestamp()
+        )
+    ))
+        .subscribeOn(Schedulers.io())
+        .observeOn(Schedulers.single());
   }
 }
