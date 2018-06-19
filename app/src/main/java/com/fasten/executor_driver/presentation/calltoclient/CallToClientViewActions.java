@@ -11,11 +11,4 @@ public interface CallToClientViewActions {
    * @param pending - показать или нет?
    */
   void showCallToClientPending(boolean pending);
-
-  /**
-   * Показать сообщение об ошибке сети.
-   *
-   * @param show - показать или нет?
-   */
-  void showNetworkErrorMessage(boolean show);
 }

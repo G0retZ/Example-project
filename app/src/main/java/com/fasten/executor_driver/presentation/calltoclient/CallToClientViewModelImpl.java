@@ -59,7 +59,10 @@ public class CallToClientViewModelImpl extends ViewModel implements CallToClient
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(
             () -> navigateLiveData.postValue(CallToClientNavigate.FINISHED),
-            throwable -> viewStateLiveData.postValue(new CallToClientViewStateNetworkError())
+            throwable -> {
+              viewStateLiveData.postValue(new CallToClientViewStateIdle());
+              navigateLiveData.postValue(CallToClientNavigate.NO_CONNECTION);
+            }
         );
   }
 

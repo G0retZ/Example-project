@@ -1,7 +1,5 @@
 package com.fasten.executor_driver.view;
 
-import android.app.AlertDialog.Builder;
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -21,14 +19,7 @@ import javax.inject.Inject;
 public class CallToClientFragment extends BaseFragment implements CallToClientViewActions {
 
   private CallToClientViewModel callToClientViewModel;
-  private Context context;
   private boolean pending;
-
-  @Override
-  public void onAttach(Context context) {
-    super.onAttach(context);
-    this.context = context;
-  }
 
   @Inject
   public void setCallToClientViewModel(@NonNull CallToClientViewModel callToClientViewModel) {
@@ -65,12 +56,6 @@ public class CallToClientFragment extends BaseFragment implements CallToClientVi
   }
 
   @Override
-  public void onDetach() {
-    super.onDetach();
-    context = null;
-  }
-
-  @Override
   public void onResume() {
     super.onResume();
     callToClientViewModel.callToClient();
@@ -82,17 +67,5 @@ public class CallToClientFragment extends BaseFragment implements CallToClientVi
       showPending(pending);
     }
     this.pending = pending;
-  }
-
-  @Override
-  public void showNetworkErrorMessage(boolean show) {
-    if (show) {
-      new Builder(context)
-          .setTitle(R.string.error)
-          .setMessage(R.string.no_network_connection)
-          .setPositiveButton(getString(android.R.string.ok), null)
-          .create()
-          .show();
-    }
   }
 }

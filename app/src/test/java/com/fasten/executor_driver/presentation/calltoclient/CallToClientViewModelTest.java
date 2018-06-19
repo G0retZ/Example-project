@@ -121,10 +121,10 @@ public class CallToClientViewModelTest {
   }
 
   /**
-   * Должен вернуть состояние вида "Ошибка" сети.
+   * Должен вернуть состояние вида бездействия при ошибке сети.
    */
   @Test
-  public void setNoNetworkErrorViewState() {
+  public void setIdleViewState() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     when(callToClientUseCase.callToClient())
@@ -137,7 +137,7 @@ public class CallToClientViewModelTest {
 
     // Результат:
     inOrder.verify(viewStateObserver, times(2)).onChanged(any(CallToClientViewStatePending.class));
-    inOrder.verify(viewStateObserver).onChanged(any(CallToClientViewStateNetworkError.class));
+    inOrder.verify(viewStateObserver).onChanged(any(CallToClientViewStateIdle.class));
     verifyNoMoreInteractions(viewStateObserver);
   }
 
@@ -221,9 +221,10 @@ public class CallToClientViewModelTest {
 
     // Действие:
     callToClientViewModel.callToClient();
+    testScheduler.advanceTimeBy(1, TimeUnit.NANOSECONDS);
 
     // Результат:
-    verifyZeroInteractions(navigateObserver);
+    verify(navigateObserver, only()).onChanged(CallToClientNavigate.NO_CONNECTION);
   }
 
   /**

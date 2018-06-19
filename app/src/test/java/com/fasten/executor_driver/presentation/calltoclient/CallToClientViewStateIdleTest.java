@@ -1,7 +1,7 @@
 package com.fasten.executor_driver.presentation.calltoclient;
 
+import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -28,8 +28,6 @@ public class CallToClientViewStateIdleTest {
     viewState.apply(movingToClientViewActions);
 
     // Результат:
-    verify(movingToClientViewActions).showCallToClientPending(false);
-    verify(movingToClientViewActions).showNetworkErrorMessage(false);
-    verifyNoMoreInteractions(movingToClientViewActions);
+    verify(movingToClientViewActions, only()).showCallToClientPending(false);
   }
 }

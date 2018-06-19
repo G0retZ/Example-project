@@ -11,6 +11,5 @@ final class CallToClientViewStatePending implements ViewState<CallToClientViewAc
   @Override
   public void apply(@NonNull CallToClientViewActions stateActions) {
     stateActions.showCallToClientPending(true);
-    stateActions.showNetworkErrorMessage(false);
   }
 }

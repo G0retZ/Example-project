@@ -11,6 +11,5 @@ final class CallToClientViewStateIdle implements ViewState<CallToClientViewActio
   @Override
   public void apply(@NonNull CallToClientViewActions stateActions) {
     stateActions.showCallToClientPending(false);
-    stateActions.showNetworkErrorMessage(false);
   }
 }
