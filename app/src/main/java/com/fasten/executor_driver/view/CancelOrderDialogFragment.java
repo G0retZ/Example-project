@@ -107,7 +107,7 @@ public class CancelOrderDialogFragment extends BaseDialogFragment implements
     if (show) {
       new Builder(context)
           .setTitle(R.string.error)
-          .setMessage(R.string.no_network_connection)
+          .setMessage(R.string.server_data_format_error)
           .setPositiveButton(getString(android.R.string.ok), null)
           .create()
           .show();

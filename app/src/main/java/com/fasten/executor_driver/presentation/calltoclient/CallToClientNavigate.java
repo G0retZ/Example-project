@@ -15,6 +15,6 @@ import java.lang.annotation.RetentionPolicy;
 public @interface CallToClientNavigate {
 
   // Переход к окончанию звонка.
-  String FINISHED = "CallToClient.finish";
-  String NO_CONNECTION = "CallToClient.noConnection";
+  String FINISHED = "CallToClient.to.Finish";
+  String NO_CONNECTION = "CallToClient.to.NoConnection";
 }

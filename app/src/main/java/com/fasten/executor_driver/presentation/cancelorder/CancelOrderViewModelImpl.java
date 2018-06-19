@@ -67,6 +67,9 @@ public class CancelOrderViewModelImpl extends ViewModel implements CancelOrderVi
             throwable -> {
               throwable.printStackTrace();
               viewStateLiveData.postValue(lastViewState);
+              if (throwable instanceof IllegalStateException) {
+                navigateLiveData.postValue(CancelOrderNavigate.NO_CONNECTION);
+              }
             }
         );
   }

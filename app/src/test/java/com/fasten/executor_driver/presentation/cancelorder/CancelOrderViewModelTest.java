@@ -336,6 +336,23 @@ public class CancelOrderViewModelTest {
   }
 
   /**
+   * Должен вернуть "перейти к ошибке сети" если была ошибка сети.
+   */
+  @Test
+  public void setNoConnectionToLiveData() {
+    // Дано:
+    when(cancelOrderUseCase.cancelOrder(any()))
+        .thenReturn(Completable.error(new IllegalStateException()));
+    cancelOrderViewModel.getNavigationLiveData().observeForever(navigateObserver);
+
+    // Действие:
+    cancelOrderViewModel.selectItem(cancelOrderReason);
+
+    // Результат:
+    verify(navigateObserver, only()).onChanged(CancelOrderNavigate.NO_CONNECTION);
+  }
+
+  /**
    * Должен вернуть "перейти к заказ отменен" если выбор был успешным.
    */
   @Test

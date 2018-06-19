@@ -2,6 +2,7 @@
   <string name="app_name">Везет Добро</string>
   <string name="authorization">Авторизация</string>
   <string name="phone_number">Номер телефона</string>
+  <string name="server_data_format_error">Ошибка формата данных от сервера</string>
   <string name="no_network_connection">Отсуствует подключение к сети</string>
   <string name="sms_network_error">Ошибка соединения,\nповторите попытку</string>
   <string name="code_network_error">Ошибка соединения,\nвведите код еще раз</string>
