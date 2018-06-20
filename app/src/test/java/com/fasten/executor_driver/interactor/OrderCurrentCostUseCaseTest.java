@@ -107,8 +107,7 @@ public class OrderCurrentCostUseCaseTest {
     // Дано:
     when(orderGateway.getOrders())
         .thenReturn(Flowable.just(order, order2));
-    when(order.getOrderCost()).thenReturn(100);
-    when(order.getExcessCost()).thenReturn(1);
+    when(order.getTotalCost()).thenReturn(101);
     when(orderExcessCostGateway.getOrderExcessCost())
         .thenReturn(Flowable.error(new DataMappingException()));
 
@@ -129,10 +128,8 @@ public class OrderCurrentCostUseCaseTest {
     // Дано:
     when(orderGateway.getOrders())
         .thenReturn(Flowable.just(order, order2));
-    when(order.getOrderCost()).thenReturn(100);
-    when(order.getExcessCost()).thenReturn(10);
-    when(order2.getOrderCost()).thenReturn(8391);
-    when(order2.getExcessCost()).thenReturn(3782);
+    when(order.getTotalCost()).thenReturn(110);
+    when(order2.getTotalCost()).thenReturn(12173);
 
     // Действие:
     TestSubscriber<Integer> test = orderCurrentCostUseCase.getOrderCurrentCost().test();
@@ -152,13 +149,11 @@ public class OrderCurrentCostUseCaseTest {
     // Дано:
     when(orderGateway.getOrders())
         .thenReturn(Flowable.just(order, order2));
-    when(order.getOrderCost()).thenReturn(100);
-    when(order.getExcessCost()).thenReturn(0);
-    when(order2.getOrderCost()).thenReturn(8391);
-    when(order2.getExcessCost()).thenReturn(3782);
+    when(order.getTotalCost()).thenReturn(100);
+    when(order2.getTotalCost()).thenReturn(12173);
     when(orderExcessCostGateway.getOrderExcessCost()).thenReturn(
-        Flowable.just(23, 45, 39, 98, 102),
-        Flowable.just(4, 546, 8765, 837)
+        Flowable.just(123, 145, 139, 198, 202),
+        Flowable.just(8395, 8937, 17156, 9228)
     );
 
     // Действие:

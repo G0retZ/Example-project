@@ -24,8 +24,7 @@ public class OrderCurrentCostUseCaseImpl implements OrderCurrentCostUseCase {
     return orderGateway.getOrders()
         .switchMap(
             order -> orderExcessCostGateway.getOrderExcessCost()
-                .startWith(order.getExcessCost())
-                .map(cost -> cost + order.getOrderCost())
+                .startWith(order.getTotalCost())
         );
   }
 }

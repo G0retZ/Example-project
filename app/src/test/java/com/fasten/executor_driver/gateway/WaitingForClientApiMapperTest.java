@@ -64,8 +64,7 @@ public class WaitingForClientApiMapperTest {
     assertEquals(order.getId(), 7);
     assertEquals(order.getComment(), "some comment");
     assertEquals(order.getEstimatedPrice(), "over 9999 BTC");
-    assertEquals(order.getOrderCost(), 10_000);
-    assertEquals(order.getExcessCost(), 352);
+    assertEquals(order.getTotalCost(), 10_352);
     assertEquals(order.getTimeout(), 25);
     assertEquals(order.getEtaToStartPoint(), 1234567890);
     assertEquals(order.getConfirmationTime(), 9876543210L);
@@ -91,8 +90,7 @@ public class WaitingForClientApiMapperTest {
     assertEquals(order.getId(), 0);
     assertEquals(order.getComment(), "some comment");
     assertEquals(order.getEstimatedPrice(), "over 9999 BTC");
-    assertEquals(order.getOrderCost(), 10_000);
-    assertEquals(order.getExcessCost(), 352);
+    assertEquals(order.getTotalCost(), 10_352);
     assertEquals(order.getTimeout(), 25);
     assertEquals(order.getEtaToStartPoint(), 1234567890);
     assertEquals(order.getConfirmationTime(), 9876543210L);
@@ -118,8 +116,7 @@ public class WaitingForClientApiMapperTest {
     assertEquals(order.getId(), 7);
     assertEquals(order.getComment(), "");
     assertEquals(order.getEstimatedPrice(), "over 9999 BTC");
-    assertEquals(order.getOrderCost(), 10_000);
-    assertEquals(order.getExcessCost(), 352);
+    assertEquals(order.getTotalCost(), 10_352);
     assertEquals(order.getTimeout(), 25);
     assertEquals(order.getEtaToStartPoint(), 1234567890);
     assertEquals(order.getConfirmationTime(), 9876543210L);
@@ -145,8 +142,7 @@ public class WaitingForClientApiMapperTest {
     assertEquals(order.getId(), 7);
     assertEquals(order.getComment(), "some comment");
     assertEquals(order.getEstimatedPrice(), "");
-    assertEquals(order.getOrderCost(), 10_000);
-    assertEquals(order.getExcessCost(), 352);
+    assertEquals(order.getTotalCost(), 10_352);
     assertEquals(order.getTimeout(), 25);
     assertEquals(order.getEtaToStartPoint(), 1234567890);
     assertEquals(order.getConfirmationTime(), 9876543210L);
@@ -172,35 +168,7 @@ public class WaitingForClientApiMapperTest {
     assertEquals(order.getId(), 7);
     assertEquals(order.getComment(), "some comment");
     assertEquals(order.getEstimatedPrice(), "over 9999 BTC");
-    assertEquals(order.getOrderCost(), 0);
-    assertEquals(order.getExcessCost(), 352);
-    assertEquals(order.getTimeout(), 25);
-    assertEquals(order.getEtaToStartPoint(), 1234567890);
-    assertEquals(order.getConfirmationTime(), 9876543210L);
-    assertEquals(order.getOrderStartTime(), 9876598760L);
-    assertEquals(order.getDistance(), 546);
-    assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
-    assertEquals(order.getOptions(),
-        Arrays.asList(optionNumeric, optionBoolean, optionBoolean, optionNumeric)
-    );
-  }
-
-  /**
-   * Должен успешно преобразовать JSON без стоимости сверх пакета в заказ.
-   *
-   * @throws Exception ошибка
-   */
-  @Test
-  public void mappingJsonStringWithoutExcessCostToOrderSuccess() throws Exception {
-    // Дано и Действие:
-    Order order = mapper.map(rule.getOrderWithoutExcessCost());
-
-    // Результат:
-    assertEquals(order.getId(), 7);
-    assertEquals(order.getComment(), "some comment");
-    assertEquals(order.getEstimatedPrice(), "over 9999 BTC");
-    assertEquals(order.getOrderCost(), 10_000);
-    assertEquals(order.getExcessCost(), 0);
+    assertEquals(order.getTotalCost(), 0);
     assertEquals(order.getTimeout(), 25);
     assertEquals(order.getEtaToStartPoint(), 1234567890);
     assertEquals(order.getConfirmationTime(), 9876543210L);
@@ -226,8 +194,7 @@ public class WaitingForClientApiMapperTest {
     assertEquals(order.getId(), 7);
     assertEquals(order.getComment(), "some comment");
     assertEquals(order.getEstimatedPrice(), "over 9999 BTC");
-    assertEquals(order.getOrderCost(), 10_000);
-    assertEquals(order.getExcessCost(), 352);
+    assertEquals(order.getTotalCost(), 10_352);
     assertEquals(order.getTimeout(), 0);
     assertEquals(order.getEtaToStartPoint(), 1234567890);
     assertEquals(order.getConfirmationTime(), 9876543210L);
@@ -253,8 +220,7 @@ public class WaitingForClientApiMapperTest {
     assertEquals(order.getId(), 7);
     assertEquals(order.getComment(), "some comment");
     assertEquals(order.getEstimatedPrice(), "over 9999 BTC");
-    assertEquals(order.getOrderCost(), 10_000);
-    assertEquals(order.getExcessCost(), 352);
+    assertEquals(order.getTotalCost(), 10_352);
     assertEquals(order.getTimeout(), 25);
     assertEquals(order.getEtaToStartPoint(), 0);
     assertEquals(order.getConfirmationTime(), 9876543210L);
@@ -280,8 +246,7 @@ public class WaitingForClientApiMapperTest {
     assertEquals(order.getId(), 7);
     assertEquals(order.getComment(), "some comment");
     assertEquals(order.getEstimatedPrice(), "over 9999 BTC");
-    assertEquals(order.getOrderCost(), 10_000);
-    assertEquals(order.getExcessCost(), 352);
+    assertEquals(order.getTotalCost(), 10_352);
     assertEquals(order.getTimeout(), 25);
     assertEquals(order.getEtaToStartPoint(), 1234567890);
     assertEquals(order.getConfirmationTime(), 0);
@@ -307,8 +272,7 @@ public class WaitingForClientApiMapperTest {
     assertEquals(order.getId(), 7);
     assertEquals(order.getComment(), "some comment");
     assertEquals(order.getEstimatedPrice(), "over 9999 BTC");
-    assertEquals(order.getOrderCost(), 10_000);
-    assertEquals(order.getExcessCost(), 352);
+    assertEquals(order.getTotalCost(), 10_352);
     assertEquals(order.getTimeout(), 25);
     assertEquals(order.getEtaToStartPoint(), 1234567890);
     assertEquals(order.getConfirmationTime(), 9876543210L);
@@ -334,8 +298,7 @@ public class WaitingForClientApiMapperTest {
     assertEquals(order.getId(), 7);
     assertEquals(order.getComment(), "some comment");
     assertEquals(order.getEstimatedPrice(), "over 9999 BTC");
-    assertEquals(order.getOrderCost(), 10_000);
-    assertEquals(order.getExcessCost(), 352);
+    assertEquals(order.getTotalCost(), 10_352);
     assertEquals(order.getTimeout(), 25);
     assertEquals(order.getEtaToStartPoint(), 1234567890);
     assertEquals(order.getConfirmationTime(), 9876543210L);
@@ -361,8 +324,7 @@ public class WaitingForClientApiMapperTest {
     assertEquals(order.getId(), 7);
     assertEquals(order.getComment(), "some comment");
     assertEquals(order.getEstimatedPrice(), "over 9999 BTC");
-    assertEquals(order.getOrderCost(), 10_000);
-    assertEquals(order.getExcessCost(), 352);
+    assertEquals(order.getTotalCost(), 10_352);
     assertEquals(order.getTimeout(), 25);
     assertEquals(order.getEtaToStartPoint(), 1234567890);
     assertEquals(order.getConfirmationTime(), 9876543210L);
@@ -388,8 +350,7 @@ public class WaitingForClientApiMapperTest {
     assertEquals(order.getId(), 7);
     assertEquals(order.getComment(), "some comment");
     assertEquals(order.getEstimatedPrice(), "over 9999 BTC");
-    assertEquals(order.getOrderCost(), 10_000);
-    assertEquals(order.getExcessCost(), 352);
+    assertEquals(order.getTotalCost(), 10_352);
     assertEquals(order.getTimeout(), 25);
     assertEquals(order.getEtaToStartPoint(), 1234567890);
     assertEquals(order.getConfirmationTime(), 9876543210L);
@@ -415,8 +376,7 @@ public class WaitingForClientApiMapperTest {
     assertEquals(order.getId(), 7);
     assertEquals(order.getComment(), "some comment");
     assertEquals(order.getEstimatedPrice(), "over 9999 BTC");
-    assertEquals(order.getOrderCost(), 10_000);
-    assertEquals(order.getExcessCost(), 352);
+    assertEquals(order.getTotalCost(), 10_352);
     assertEquals(order.getTimeout(), 25);
     assertEquals(order.getEtaToStartPoint(), 1234567890);
     assertEquals(order.getConfirmationTime(), 9876543210L);
@@ -442,8 +402,7 @@ public class WaitingForClientApiMapperTest {
     assertEquals(order.getId(), 7);
     assertEquals(order.getComment(), "some comment");
     assertEquals(order.getEstimatedPrice(), "over 9999 BTC");
-    assertEquals(order.getOrderCost(), 10_000);
-    assertEquals(order.getExcessCost(), 352);
+    assertEquals(order.getTotalCost(), 10_352);
     assertEquals(order.getTimeout(), 25);
     assertEquals(order.getEtaToStartPoint(), 1234567890);
     assertEquals(order.getConfirmationTime(), 9876543210L);
@@ -469,8 +428,7 @@ public class WaitingForClientApiMapperTest {
     assertEquals(order.getId(), 7);
     assertEquals(order.getComment(), "some comment");
     assertEquals(order.getEstimatedPrice(), "over 9999 BTC");
-    assertEquals(order.getOrderCost(), 10_000);
-    assertEquals(order.getExcessCost(), 352);
+    assertEquals(order.getTotalCost(), 10_352);
     assertEquals(order.getTimeout(), 25);
     assertEquals(order.getEtaToStartPoint(), 1234567890);
     assertEquals(order.getConfirmationTime(), 9876543210L);
@@ -494,8 +452,7 @@ public class WaitingForClientApiMapperTest {
     assertEquals(order.getId(), 7);
     assertEquals(order.getComment(), "some comment");
     assertEquals(order.getEstimatedPrice(), "over 9999 BTC");
-    assertEquals(order.getOrderCost(), 10_000);
-    assertEquals(order.getExcessCost(), 352);
+    assertEquals(order.getTotalCost(), 10_352);
     assertEquals(order.getTimeout(), 25);
     assertEquals(order.getEtaToStartPoint(), 1234567890);
     assertEquals(order.getConfirmationTime(), 9876543210L);
