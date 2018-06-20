@@ -47,6 +47,8 @@ public class ExecutorBalanceUseCaseTest {
     executorBalanceUseCase = new ExecutorBalanceUseCaseImpl(gateway, loginReceiver);
   }
 
+  /* Проверяем работу с публикатором логина */
+
   /**
    * Не должен запрашивать у публикатора логин исполнителя, если не было сброса.
    */
@@ -59,6 +61,21 @@ public class ExecutorBalanceUseCaseTest {
 
     // Результат:
     verifyZeroInteractions(loginReceiver);
+  }
+
+  /**
+   * Должен запросивать у публикатора логин исполнителя.
+   */
+  @Test
+  public void askLoginPublisherForLogin() {
+    // Действие:
+    executorBalanceUseCase.getExecutorBalance(true).test();
+    executorBalanceUseCase.getExecutorBalance(true).test();
+    executorBalanceUseCase.getExecutorBalance(true).test();
+
+    // Результат:
+    verify(loginReceiver, times(3)).get();
+    verifyNoMoreInteractions(loginReceiver);
   }
 
   /* Проверяем работу с гейтвеем */
