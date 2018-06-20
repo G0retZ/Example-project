@@ -1,8 +1,5 @@
 package com.fasten.executor_driver.presentation.onlineswitch;
 
-import android.support.annotation.Nullable;
-import android.support.annotation.StringRes;
-
 /**
  * Действия для смены состояния вида переключателя "онлайн".
  */
@@ -23,10 +20,7 @@ public interface OnlineSwitchViewActions {
   void showSwitchPending(boolean show);
 
   /**
-   * Показать ошибку.
-   *
-   * @param messageId - ИД текста сообщения об ошибке. -1 = не показывать ошибку.
-   * @param retrySocket - можно ли решить передергиванием сокета?
+   * Показать ошибку данных сервера.
    */
-  void showError(@Nullable @StringRes Integer messageId, boolean retrySocket);
+  void showServerDataError();
 }

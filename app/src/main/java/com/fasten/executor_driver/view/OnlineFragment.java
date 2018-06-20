@@ -5,7 +5,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.annotation.StringRes;
 import android.support.v7.widget.SwitchCompat;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -99,21 +98,12 @@ public class OnlineFragment extends BaseFragment implements OnlineSwitchViewActi
   }
 
   @Override
-  public void showError(@Nullable @StringRes Integer messageId, boolean retrySocket) {
-    if (context != null && messageId != null) {
-      new Builder(context)
-          .setTitle(R.string.error)
-          .setMessage(messageId)
-          .setPositiveButton(getString(android.R.string.ok), (dialog, which) -> {
-            if (retrySocket) {
-              onlineSwitchViewModel.refreshStates();
-            } else {
-              onlineSwitchViewModel.consumeServerError();
-            }
-          })
-          .create()
-          .show();
-    }
-
+  public void showServerDataError() {
+    new Builder(context)
+        .setTitle(R.string.error)
+        .setMessage(R.string.server_data_format_error)
+        .setPositiveButton(getString(android.R.string.ok), null)
+        .create()
+        .show();
   }
 }

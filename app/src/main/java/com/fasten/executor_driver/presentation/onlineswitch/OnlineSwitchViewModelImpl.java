@@ -4,6 +4,7 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import com.fasten.executor_driver.entity.ExecutorState;
 import com.fasten.executor_driver.interactor.ExecutorStateNotOnlineUseCase;
 import com.fasten.executor_driver.presentation.SingleLiveEvent;
@@ -26,6 +27,8 @@ public class OnlineSwitchViewModelImpl extends ViewModel implements OnlineSwitch
   private Disposable executorStatesDisposable = EmptyDisposable.INSTANCE;
   @NonNull
   private Disposable setStateDisposable = EmptyDisposable.INSTANCE;
+  @Nullable
+  private ViewState<OnlineSwitchViewActions> lastViewState;
 
   @Inject
   public OnlineSwitchViewModelImpl(
@@ -52,10 +55,11 @@ public class OnlineSwitchViewModelImpl extends ViewModel implements OnlineSwitch
   public void setNewState(boolean online) {
     if (setStateDisposable.isDisposed()) {
       if (online) {
-        viewStateLiveData.postValue(new OnlineSwitchViewStateUnCheckedRegular());
+        viewStateLiveData.postValue(lastViewState = new OnlineSwitchViewState(false));
         navigateLiveData.postValue(OnlineSwitchNavigate.VEHICLE_OPTIONS);
       } else {
-        viewStateLiveData.postValue(new OnlineSwitchViewStateUnCheckedPending());
+        viewStateLiveData
+            .postValue(new OnlineSwitchViewStatePending(new OnlineSwitchViewState(false)));
         setStateDisposable = executorStateNotOnlineUseCase.setExecutorNotOnline()
             .subscribeOn(Schedulers.single())
             .observeOn(AndroidSchedulers.mainThread())
@@ -64,66 +68,63 @@ public class OnlineSwitchViewModelImpl extends ViewModel implements OnlineSwitch
                 },
                 throwable -> {
                   throwable.printStackTrace();
-                  viewStateLiveData.postValue(new OnlineSwitchViewStateCheckedServerError());
+                  if (throwable instanceof IllegalStateException) {
+                    navigateLiveData.postValue(OnlineSwitchNavigate.NO_CONNECTION);
+                  } else {
+                    viewStateLiveData
+                        .postValue(new OnlineSwitchViewStateServerDataError(lastViewState));
+                  }
                 });
       }
     }
   }
 
-  @Override
-  public void refreshStates() {
-    loadExecutorState();
-  }
-
   private void loadExecutorState() {
-    viewStateLiveData.postValue(new OnlineSwitchViewStateUnCheckedPending());
+    viewStateLiveData.postValue(new OnlineSwitchViewStatePending(lastViewState));
     executorStatesDisposable.dispose();
     executorStatesDisposable = executorStateNotOnlineUseCase.getExecutorStates()
         .subscribeOn(Schedulers.single())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(this::onNextState, throwable -> {
           throwable.printStackTrace();
-          onStateError();
+          viewStateLiveData.postValue(new OnlineSwitchViewStateServerDataError(lastViewState));
         });
   }
 
   private void onNextState(ExecutorState executorState) {
     switch (executorState) {
       case SHIFT_CLOSED:
-        viewStateLiveData.postValue(new OnlineSwitchViewStateUnCheckedPending());
+        viewStateLiveData
+            .postValue(new OnlineSwitchViewStatePending(new OnlineSwitchViewState(false)));
         break;
       case SHIFT_OPENED:
-        viewStateLiveData.postValue(new OnlineSwitchViewStateUnCheckedRegular());
+        viewStateLiveData.postValue(lastViewState = new OnlineSwitchViewState(false));
         break;
       case ONLINE:
-        viewStateLiveData.postValue(new OnlineSwitchViewStateCheckedRegular());
+        viewStateLiveData.postValue(lastViewState = new OnlineSwitchViewState(true));
         break;
       case DRIVER_ORDER_CONFIRMATION:
-        viewStateLiveData.postValue(new OnlineSwitchViewStateUnCheckedPending());
+        viewStateLiveData
+            .postValue(new OnlineSwitchViewStatePending(new OnlineSwitchViewState(true)));
         break;
       case CLIENT_ORDER_CONFIRMATION:
-        viewStateLiveData.postValue(new OnlineSwitchViewStateUnCheckedPending());
+        viewStateLiveData
+            .postValue(new OnlineSwitchViewStatePending(new OnlineSwitchViewState(true)));
         break;
       case MOVING_TO_CLIENT:
-        viewStateLiveData.postValue(new OnlineSwitchViewStateUnCheckedPending());
+        viewStateLiveData
+            .postValue(new OnlineSwitchViewStatePending(new OnlineSwitchViewState(true)));
         break;
       case WAITING_FOR_CLIENT:
-        viewStateLiveData.postValue(new OnlineSwitchViewStateUnCheckedPending());
+        viewStateLiveData
+            .postValue(new OnlineSwitchViewStatePending(new OnlineSwitchViewState(true)));
         break;
       case ORDER_FULFILLMENT:
-        viewStateLiveData.postValue(new OnlineSwitchViewStateUnCheckedPending());
+        viewStateLiveData
+            .postValue(new OnlineSwitchViewStatePending(new OnlineSwitchViewState(true)));
         break;
       default:
     }
-  }
-
-  private void onStateError() {
-    viewStateLiveData.postValue(new OnlineSwitchViewStateUnCheckedSocketError());
-  }
-
-  @Override
-  public void consumeServerError() {
-    viewStateLiveData.postValue(new OnlineSwitchViewStateCheckedRegular());
   }
 
   @Override
