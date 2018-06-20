@@ -59,7 +59,6 @@ public class ExecutorStateViewModelImpl extends ViewModel implements ExecutorSta
                   navigateLiveData.postValue(ExecutorStateNavigate.MAP_SHIFT_OPENED);
                   break;
                 case ONLINE:
-                  navigateLiveData.postValue(ExecutorStateNavigate.MAP_ONLINE);
                   if (executorState.getData() != null
                       && !executorState.getData().trim().isEmpty()) {
                     messageLiveData.postValue(
@@ -67,6 +66,7 @@ public class ExecutorStateViewModelImpl extends ViewModel implements ExecutorSta
                             .showOnlineMessage(executorState.getData())
                     );
                   }
+                  navigateLiveData.postValue(ExecutorStateNavigate.MAP_ONLINE);
                   break;
                 case DRIVER_ORDER_CONFIRMATION:
                   navigateLiveData.postValue(ExecutorStateNavigate.DRIVER_ORDER_CONFIRMATION);
