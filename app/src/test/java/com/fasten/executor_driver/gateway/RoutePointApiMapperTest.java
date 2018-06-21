@@ -162,7 +162,7 @@ public class RoutePointApiMapperTest {
    * @throws Exception ошибка
    */
   @Test(expected = DataMappingException.class)
-  public void mappingWithoEmptyStatusFail() throws Exception {
+  public void mappingWithEmptyStatusFail() throws Exception {
     // Дано:
     ApiRoutePoint apiRoutePoint = new ApiRoutePoint(7, 123, 456, "comment", "address", "");
 
