@@ -29,7 +29,7 @@ public class ApiOrderTest {
     apiOrder = new ApiOrder(
         432,
         "More than $3000",
-        5000, 2300, "some comment",
+        7300, "some comment",
         23,
         1200,
         1234567890,
@@ -43,8 +43,7 @@ public class ApiOrderTest {
   public void testConstructor() {
     assertEquals(apiOrder.getId(), 432);
     assertEquals(apiOrder.getEstimatedAmount(), "More than $3000");
-    assertEquals(apiOrder.getOrderCost(), 5000);
-    assertEquals(apiOrder.getExcessCost(), 2300);
+    assertEquals(apiOrder.getTotalAmount(), 7300);
     assertEquals(apiOrder.getComment(), "some comment");
     assertEquals(apiOrder.getTimeout(), 23);
     assertEquals(apiOrder.getEtaToStartPoint(), 1200);

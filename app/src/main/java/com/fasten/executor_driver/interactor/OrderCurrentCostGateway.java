@@ -6,13 +6,14 @@ import io.reactivex.Flowable;
 /**
  * Гейтвей цены выполнения заказа.
  */
-public interface OrderExcessCostGateway {
+public interface OrderCurrentCostGateway {
 
   /**
    * Запрашивает изменения цены выполняемого заказа.
    *
+   * @param channelId - ID "канала", откуда брать баланс.
    * @return {@link Flowable<Integer>} результат запроса.
    */
   @NonNull
-  Flowable<Integer> getOrderExcessCost();
+  Flowable<Integer> getOrderCurrentCost(@NonNull String channelId);
 }

@@ -3,17 +3,19 @@ package com.fasten.executor_driver.gateway;
 import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import org.junit.Before;
 import org.junit.Test;
+import ua.naiksoftware.stomp.StompHeader;
 import ua.naiksoftware.stomp.client.StompMessage;
 
-public class ExcessiveCostApiMapperTest {
+public class OrderCurrentCostApiMapperTest {
 
   private Mapper<StompMessage, Integer> mapper;
 
   @Before
   public void setUp() {
-    mapper = new ExcessiveCostApiMapper();
+    mapper = new OrderCurrentCostApiMapper();
   }
 
   /**
@@ -24,7 +26,8 @@ public class ExcessiveCostApiMapperTest {
   @Test
   public void mappingPayLoadToInteger() throws Exception {
     // Дано и Действие:
-    int excessiveCost = mapper.map(new StompMessage("MESSAGE", new ArrayList<>(), "\n1234567890"));
+    int excessiveCost = mapper.map(new StompMessage("MESSAGE",
+        Collections.singletonList(new StompHeader("TotalAmount", "1234567890")), "\n"));
 
     // Результат:
     assertEquals(excessiveCost, 1234567890);
