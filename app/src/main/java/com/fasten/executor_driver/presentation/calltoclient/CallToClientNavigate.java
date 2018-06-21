@@ -16,5 +16,7 @@ public @interface CallToClientNavigate {
 
   // Переход к окончанию звонка.
   String FINISHED = "CallToClient.to.Finish";
+
+  // Переход к ошибке соединения.
   String NO_CONNECTION = "CallToClient.to.NoConnection";
 }

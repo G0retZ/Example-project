@@ -8,7 +8,6 @@ import static org.mockito.Mockito.when;
 
 import android.arch.core.executor.testing.InstantTaskExecutorRule;
 import android.arch.lifecycle.Observer;
-import com.fasten.executor_driver.backend.web.NoNetworkException;
 import com.fasten.executor_driver.entity.GeoLocation;
 import com.fasten.executor_driver.interactor.GeoLocationUseCase;
 import com.fasten.executor_driver.presentation.ViewState;
@@ -131,10 +130,10 @@ public class GeoLocationViewModelTest {
   }
 
   /**
-   * Должен вернуть "перейти к к ошибке соединения".
+   * Должен вернуть "перейти к ошибке соединения".
    */
   @Test
-  public void navigateToNoConnection() {
+  public void setNavigateForNoNetworkError() {
     // Дано:
     when(geoLocationUseCase.getGeoLocations())
         .thenReturn(Flowable.error(IllegalStateException::new));
@@ -151,9 +150,9 @@ public class GeoLocationViewModelTest {
    * Не должен ничего возвращать для непонятной ошибки.
    */
   @Test
-  public void navigateNowhere() {
+  public void doNotSetNavigateForOtherError() {
     // Дано:
-    when(geoLocationUseCase.getGeoLocations()).thenReturn(Flowable.error(NoNetworkException::new));
+    when(geoLocationUseCase.getGeoLocations()).thenReturn(Flowable.error(Exception::new));
 
     // Действие:
     mapViewModel.getNavigationLiveData().observeForever(navigationObserver);

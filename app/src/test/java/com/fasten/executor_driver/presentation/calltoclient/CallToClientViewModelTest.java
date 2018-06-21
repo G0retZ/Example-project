@@ -124,7 +124,7 @@ public class CallToClientViewModelTest {
    * Должен вернуть состояние вида бездействия при ошибке сети.
    */
   @Test
-  public void setIdleViewState() {
+  public void setIdleViewStateToLiveDataForError() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     when(callToClientUseCase.callToClient())
@@ -210,10 +210,10 @@ public class CallToClientViewModelTest {
   }
 
   /**
-   * Не должен никуда переходить для вида "Ошибка" сети.
+   * Должен вернуть "перейти к ошибке соединения".
    */
   @Test
-  public void doNotSetNavigateForNoNetworkError() {
+  public void setNavigateForNoNetworkError() {
     // Дано:
     when(callToClientUseCase.callToClient())
         .thenReturn(Completable.error(NoNetworkException::new));

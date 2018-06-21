@@ -504,7 +504,7 @@ public class OnlineButtonViewModelTest {
   }
 
   /**
-   * Должен вернуть "перейти к к решению блокировки водителя" если водитель заблокирован.
+   * Должен вернуть "перейти к решению блокировки водителя" если водитель заблокирован.
    */
   @Test
   public void setNavigateToDriverBlockedToLiveData() {
