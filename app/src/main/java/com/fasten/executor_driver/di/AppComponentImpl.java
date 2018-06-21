@@ -26,7 +26,6 @@ import com.fasten.executor_driver.gateway.CancelOrderGatewayImpl;
 import com.fasten.executor_driver.gateway.CancelOrderReasonApiMapper;
 import com.fasten.executor_driver.gateway.CurrentVehicleOptionsGatewayImpl;
 import com.fasten.executor_driver.gateway.ErrorMapper;
-import com.fasten.executor_driver.gateway.ExcessiveCostApiMapper;
 import com.fasten.executor_driver.gateway.ExecutorBalanceApiMapper;
 import com.fasten.executor_driver.gateway.ExecutorBalanceGatewayImpl;
 import com.fasten.executor_driver.gateway.ExecutorStateApiMapper;
@@ -41,7 +40,8 @@ import com.fasten.executor_driver.gateway.MovingToClientApiMapper;
 import com.fasten.executor_driver.gateway.MovingToClientGatewayImpl;
 import com.fasten.executor_driver.gateway.OrderApiMapper;
 import com.fasten.executor_driver.gateway.OrderConfirmationGatewayImpl;
-import com.fasten.executor_driver.gateway.OrderExcessCostGatewayImpl;
+import com.fasten.executor_driver.gateway.OrderCurrentCostApiMapper;
+import com.fasten.executor_driver.gateway.OrderCurrentCostGatewayImpl;
 import com.fasten.executor_driver.gateway.OrderFulfillmentApiMapper;
 import com.fasten.executor_driver.gateway.OrderGatewayImpl;
 import com.fasten.executor_driver.gateway.OrderRouteGatewayImpl;
@@ -740,9 +740,10 @@ public class AppComponentImpl implements AppComponent {
                                 new RoutePointApiMapper()
                             )
                         ),
-                        new OrderExcessCostGatewayImpl(
+                        loginSharer,
+                        new OrderCurrentCostGatewayImpl(
                             stompClient,
-                            new ExcessiveCostApiMapper()
+                            new OrderCurrentCostApiMapper()
                         )
                     )
                 )
