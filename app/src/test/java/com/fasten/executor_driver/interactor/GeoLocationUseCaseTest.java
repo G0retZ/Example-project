@@ -46,7 +46,7 @@ public class GeoLocationUseCaseTest {
   @Before
   public void setUp() {
     when(geoLocationGateway.getGeoLocations(anyLong())).thenReturn(Flowable.never());
-    when(geoTrackingGateway.sendGeoLocation(any())).thenReturn(Completable.complete());
+    when(geoTrackingGateway.sendGeoLocation(any())).thenReturn(Completable.never());
     when(executorStateUseCase.getExecutorStates(anyBoolean())).thenReturn(Flowable.never());
     geoLocationUseCase = new GeoLocationUseCaseImpl(
         geoLocationGateway, geoTrackingGateway, executorStateUseCase
@@ -366,7 +366,7 @@ public class GeoLocationUseCaseTest {
   }
 
   /**
-   * Должен отправить полученную геопозицию через гейтвей передачи геолокаций.
+   * Должен отправить полученные геопозиции через гейтвей передачи геолокаций.
    */
   @Test
   public void askTrackingGatewayToSendNewGeoLocation() {
@@ -374,13 +374,22 @@ public class GeoLocationUseCaseTest {
     when(executorStateUseCase.getExecutorStates(anyBoolean()))
         .thenReturn(Flowable.just(ExecutorState.SHIFT_CLOSED));
     when(geoLocationGateway.getGeoLocations(anyLong()))
-        .thenReturn(Flowable.just(new GeoLocation(1, 2, 3)));
+        .thenReturn(Flowable.just(
+            new GeoLocation(1, 2, 3),
+            new GeoLocation(3, 1, 2),
+            new GeoLocation(2, 3, 1),
+            new GeoLocation(0, 0, 0)
+        ));
 
     // Действие:
     geoLocationUseCase.getGeoLocations().test();
 
     // Результат:
-    verify(geoTrackingGateway, only()).sendGeoLocation(new GeoLocation(1, 2, 3));
+    verify(geoTrackingGateway).sendGeoLocation(new GeoLocation(1, 2, 3));
+    verify(geoTrackingGateway).sendGeoLocation(new GeoLocation(3, 1, 2));
+    verify(geoTrackingGateway).sendGeoLocation(new GeoLocation(2, 3, 1));
+    verify(geoTrackingGateway).sendGeoLocation(new GeoLocation(0, 0, 0));
+    verifyNoMoreInteractions(geoTrackingGateway);
   }
 
   /**
@@ -431,6 +440,7 @@ public class GeoLocationUseCaseTest {
         new GeoLocation(4, 5, 6),
         new GeoLocation(7, 8, 9)
     ));
+    when(geoTrackingGateway.sendGeoLocation(any())).thenReturn(Completable.complete());
 
     // Действие:
     TestSubscriber<GeoLocation> testSubscriber = geoLocationUseCase.getGeoLocations().test();
@@ -472,6 +482,29 @@ public class GeoLocationUseCaseTest {
     when(executorStateUseCase.getExecutorStates(anyBoolean()))
         .thenReturn(Flowable.just(ExecutorState.SHIFT_CLOSED));
     when(geoLocationGateway.getGeoLocations(anyLong())).thenReturn(Flowable.error(new Exception()));
+
+    // Действие:
+    TestSubscriber<GeoLocation> testSubscriber = geoLocationUseCase.getGeoLocations().test();
+
+    // Результат:
+    testSubscriber.assertNoValues();
+    testSubscriber.assertError(Exception.class);
+  }
+
+  /**
+   * Должен вернуть ошибку при ошибке отправки статуса.
+   */
+  @Test
+  public void answerWithErrorOnSendGeolocationError() {
+    // Дано:
+    when(executorStateUseCase.getExecutorStates(anyBoolean()))
+        .thenReturn(Flowable.just(ExecutorState.SHIFT_CLOSED));
+    when(geoLocationGateway.getGeoLocations(anyLong())).thenReturn(Flowable.just(
+        new GeoLocation(1, 2, 3),
+        new GeoLocation(4, 5, 6),
+        new GeoLocation(7, 8, 9)
+    ));
+    when(geoTrackingGateway.sendGeoLocation(any())).thenReturn(Completable.error(Exception::new));
 
     // Действие:
     TestSubscriber<GeoLocation> testSubscriber = geoLocationUseCase.getGeoLocations().test();

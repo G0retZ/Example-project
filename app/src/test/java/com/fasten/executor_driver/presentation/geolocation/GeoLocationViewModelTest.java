@@ -3,6 +3,7 @@ package com.fasten.executor_driver.presentation.geolocation;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 import android.arch.core.executor.testing.InstantTaskExecutorRule;
@@ -119,7 +120,7 @@ public class GeoLocationViewModelTest {
   @Test
   public void navigateToResolveGoeLocationProblem() {
     // Дано:
-    when(geoLocationUseCase.getGeoLocations()).thenReturn(Flowable.error(NoNetworkException::new));
+    when(geoLocationUseCase.getGeoLocations()).thenReturn(Flowable.error(SecurityException::new));
 
     // Действие:
     mapViewModel.getNavigationLiveData().observeForever(navigationObserver);
@@ -127,5 +128,38 @@ public class GeoLocationViewModelTest {
 
     // Результат:
     verify(navigationObserver, only()).onChanged(GeoLocationNavigate.RESOLVE_GEO_PROBLEM);
+  }
+
+  /**
+   * Должен вернуть "перейти к к ошибке соединения".
+   */
+  @Test
+  public void navigateToNoConnection() {
+    // Дано:
+    when(geoLocationUseCase.getGeoLocations())
+        .thenReturn(Flowable.error(IllegalStateException::new));
+
+    // Действие:
+    mapViewModel.getNavigationLiveData().observeForever(navigationObserver);
+    mapViewModel.updateGeoLocations();
+
+    // Результат:
+    verify(navigationObserver, only()).onChanged(GeoLocationNavigate.NO_CONNECTION);
+  }
+
+  /**
+   * Не должен ничего возвращать для непонятной ошибки.
+   */
+  @Test
+  public void navigateNowhere() {
+    // Дано:
+    when(geoLocationUseCase.getGeoLocations()).thenReturn(Flowable.error(NoNetworkException::new));
+
+    // Действие:
+    mapViewModel.getNavigationLiveData().observeForever(navigationObserver);
+    mapViewModel.updateGeoLocations();
+
+    // Результат:
+    verifyZeroInteractions(navigationObserver);
   }
 }

@@ -55,10 +55,9 @@ public class GeoLocationUseCaseImpl implements GeoLocationUseCase {
             }
           }).doOnTerminate(
               () -> geoLocationFlowable = null
-          ).doOnNext(
-              geoLocation -> geoTrackingGateway.sendGeoLocation(geoLocation)
-                  .subscribe(() -> {
-                  }, Throwable::printStackTrace)
+          ).switchMap(
+              geoLocation -> Flowable.just(geoLocation)
+                  .startWith(geoTrackingGateway.sendGeoLocation(geoLocation).toFlowable())
           ).replay(1)
           .refCount();
     }
