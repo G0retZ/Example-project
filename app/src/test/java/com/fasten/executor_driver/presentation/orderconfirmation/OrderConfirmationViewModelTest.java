@@ -5,6 +5,7 @@ import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 import android.arch.core.executor.testing.InstantTaskExecutorRule;
@@ -37,6 +38,8 @@ public class OrderConfirmationViewModelTest {
 
   @Mock
   private Observer<ViewState<OrderConfirmationViewActions>> viewStateObserver;
+  @Mock
+  private Observer<String> navigateObserver;
 
   @Before
   public void setUp() {
@@ -165,7 +168,7 @@ public class OrderConfirmationViewModelTest {
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(any(OrderConfirmationViewStateIdle.class));
     inOrder.verify(viewStateObserver).onChanged(any(OrderConfirmationViewStatePending.class));
-    inOrder.verify(viewStateObserver).onChanged(any(OrderConfirmationViewStateError.class));
+    inOrder.verify(viewStateObserver).onChanged(any(OrderConfirmationViewStateIdle.class));
     verifyNoMoreInteractions(viewStateObserver);
   }
 
@@ -186,7 +189,7 @@ public class OrderConfirmationViewModelTest {
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(any(OrderConfirmationViewStateIdle.class));
     inOrder.verify(viewStateObserver).onChanged(any(OrderConfirmationViewStatePending.class));
-    inOrder.verify(viewStateObserver).onChanged(any(OrderConfirmationViewStateError.class));
+    inOrder.verify(viewStateObserver).onChanged(any(OrderConfirmationViewStateIdle.class));
     verifyNoMoreInteractions(viewStateObserver);
   }
 
@@ -228,5 +231,115 @@ public class OrderConfirmationViewModelTest {
     inOrder.verify(viewStateObserver).onChanged(any(OrderConfirmationViewStateIdle.class));
     inOrder.verify(viewStateObserver).onChanged(any(OrderConfirmationViewStatePending.class));
     verifyNoMoreInteractions(viewStateObserver);
+  }
+
+  /* Тетсируем навигацию. */
+
+  /**
+   * Не должен никуда переходить изначально.
+   */
+  @Test
+  public void doNotSetNavigateInitially() {
+    // Действие:
+    orderConfirmationViewModel.getNavigationLiveData().observeForever(navigateObserver);
+
+    // Результат:
+    verifyZeroInteractions(navigateObserver);
+  }
+
+  /**
+   * Не должен никуда переходить для вида "В процессе отказа".
+   */
+  @Test
+  public void doNotSetNavigateForDeclinePending() {
+    // Дано:
+    orderConfirmationViewModel.getNavigationLiveData().observeForever(navigateObserver);
+
+    // Действие:
+    orderConfirmationViewModel.declineOrder();
+
+    // Результат:
+    verifyZeroInteractions(navigateObserver);
+  }
+
+  /**
+   * Должен вернуть "перейти к ошибке соединения" для отказа.
+   */
+  @Test
+  public void setNavigateToNoConnectionForDecline() {
+    // Дано:
+    when(orderConfirmationUseCase.sendDecision(false))
+        .thenReturn(Completable.error(IllegalStateException::new));
+    orderConfirmationViewModel.getNavigationLiveData().observeForever(navigateObserver);
+
+    // Действие:
+    orderConfirmationViewModel.declineOrder();
+
+    // Результат:
+    verify(navigateObserver, only()).onChanged(OrderConfirmationNavigate.NO_CONNECTION);
+  }
+
+  /**
+   * Не должен никуда переходить после отказа.
+   */
+  @Test
+  public void doNotSetNavigateForDeclineSuccess() {
+    // Дано:
+    when(orderConfirmationUseCase.sendDecision(false)).thenReturn(Completable.complete());
+    orderConfirmationViewModel.getNavigationLiveData().observeForever(navigateObserver);
+
+    // Действие:
+    orderConfirmationViewModel.declineOrder();
+
+    // Результат:
+    verifyZeroInteractions(navigateObserver);
+  }
+
+  /**
+   * Не должен никуда переходить для вида "В процессе отказа".
+   */
+  @Test
+  public void doNotSetNavigateForAcceptPending() {
+    // Дано:
+    orderConfirmationViewModel.getNavigationLiveData().observeForever(navigateObserver);
+
+    // Действие:
+    orderConfirmationViewModel.acceptOrder();
+
+    // Результат:
+    verifyZeroInteractions(navigateObserver);
+  }
+
+  /**
+   * Должен вернуть "перейти к ошибке соединения" для отказа.
+   */
+  @Test
+  public void setNavigateToNoConnectionForAccept() {
+    // Дано:
+    when(orderConfirmationUseCase.sendDecision(true))
+        .thenReturn(Completable.error(IllegalStateException::new));
+    orderConfirmationViewModel.getNavigationLiveData().observeForever(navigateObserver);
+
+    // Действие:
+    orderConfirmationViewModel.acceptOrder();
+
+    // Результат:
+    verify(navigateObserver, only()).onChanged(OrderConfirmationNavigate.NO_CONNECTION);
+  }
+
+  /**
+   * Не должен никуда переходить после отказа.
+   */
+  @Test
+  public void doNotSetNavigateForAcceptSuccess() {
+    // Дано:
+    when(orderConfirmationUseCase.sendDecision(true)).thenReturn(Completable.complete());
+    orderConfirmationViewModel.getNavigationLiveData().observeForever(navigateObserver);
+
+    // Действие:
+    orderConfirmationViewModel.acceptOrder();
+
+    // Результат:
+    verifyZeroInteractions(navigateObserver);
   }
 }

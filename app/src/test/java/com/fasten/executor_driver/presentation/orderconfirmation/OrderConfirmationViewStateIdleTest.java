@@ -23,8 +23,6 @@ public class OrderConfirmationViewStateIdleTest {
     verify(orderConfirmationViewActions).showDriverOrderConfirmationPending(false);
     verify(orderConfirmationViewActions).enableAcceptButton(true);
     verify(orderConfirmationViewActions).enableDeclineButton(true);
-    verify(orderConfirmationViewActions).showOrderAvailabilityError(false);
-    verify(orderConfirmationViewActions).showNetworkErrorMessage(false);
     verifyNoMoreInteractions(orderConfirmationViewActions);
   }
 }

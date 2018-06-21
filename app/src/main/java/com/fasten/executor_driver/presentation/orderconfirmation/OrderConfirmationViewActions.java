@@ -13,20 +13,6 @@ public interface OrderConfirmationViewActions {
   void showDriverOrderConfirmationPending(boolean pending);
 
   /**
-   * Показать ошибку доступности заказов.
-   *
-   * @param show - показать или нет?
-   */
-  void showOrderAvailabilityError(boolean show);
-
-  /**
-   * Показать сообщение об ошибке сети.
-   *
-   * @param show - показать или нет?
-   */
-  void showNetworkErrorMessage(boolean show);
-
-  /**
    * Задействовать кнопку отказа.
    *
    * @param enable - задействовать или нет?

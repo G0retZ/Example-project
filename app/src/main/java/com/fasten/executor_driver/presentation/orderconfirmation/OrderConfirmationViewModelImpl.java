@@ -5,6 +5,7 @@ import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
 import com.fasten.executor_driver.interactor.OrderConfirmationUseCase;
+import com.fasten.executor_driver.presentation.SingleLiveEvent;
 import com.fasten.executor_driver.presentation.ViewState;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
@@ -20,6 +21,8 @@ public class OrderConfirmationViewModelImpl extends ViewModel implements
   @NonNull
   private final MutableLiveData<ViewState<OrderConfirmationViewActions>> viewStateLiveData;
   @NonNull
+  private final SingleLiveEvent<String> navigateLiveData;
+  @NonNull
   private Disposable disposable = EmptyDisposable.INSTANCE;
 
   @Inject
@@ -28,6 +31,7 @@ public class OrderConfirmationViewModelImpl extends ViewModel implements
     this.orderConfirmationUseCase = orderConfirmationUseCase;
     viewStateLiveData = new MutableLiveData<>();
     viewStateLiveData.postValue(new OrderConfirmationViewStateIdle());
+    navigateLiveData = new SingleLiveEvent<>();
   }
 
   @NonNull
@@ -39,7 +43,7 @@ public class OrderConfirmationViewModelImpl extends ViewModel implements
   @NonNull
   @Override
   public LiveData<String> getNavigationLiveData() {
-    return new MutableLiveData<>();
+    return navigateLiveData;
   }
 
   @Override
@@ -55,7 +59,8 @@ public class OrderConfirmationViewModelImpl extends ViewModel implements
             () -> {
             }, throwable -> {
               throwable.printStackTrace();
-              viewStateLiveData.postValue(new OrderConfirmationViewStateError());
+              viewStateLiveData.postValue(new OrderConfirmationViewStateIdle());
+              navigateLiveData.postValue(OrderConfirmationNavigate.NO_CONNECTION);
             }
         );
   }
@@ -73,7 +78,8 @@ public class OrderConfirmationViewModelImpl extends ViewModel implements
             () -> {
             }, throwable -> {
               throwable.printStackTrace();
-              viewStateLiveData.postValue(new OrderConfirmationViewStateError());
+              viewStateLiveData.postValue(new OrderConfirmationViewStateIdle());
+              navigateLiveData.postValue(OrderConfirmationNavigate.NO_CONNECTION);
             }
         );
   }
