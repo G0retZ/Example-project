@@ -9,7 +9,7 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
-public class MovingToClientViewStateErrorTest {
+public class MovingToClientViewStateCallingTest {
 
   @Mock
   private MovingToClientViewActions movingToClientViewActions;
@@ -17,11 +17,11 @@ public class MovingToClientViewStateErrorTest {
   @Test
   public void testActions() {
     // Действие:
-    new MovingToClientViewStateError().apply(movingToClientViewActions);
+    new MovingToClientViewStateCalling().apply(movingToClientViewActions);
 
     // Результат:
     verify(movingToClientViewActions).showMovingToClientPending(false);
-    verify(movingToClientViewActions).showNetworkErrorMessage(true);
+    verify(movingToClientViewActions).enableMovingToClientCallButton(false);
     verifyNoMoreInteractions(movingToClientViewActions);
   }
 }

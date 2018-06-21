@@ -11,6 +11,6 @@ final class MovingToClientViewStateIdle implements ViewState<MovingToClientViewA
   @Override
   public void apply(@NonNull MovingToClientViewActions stateActions) {
     stateActions.showMovingToClientPending(false);
-    stateActions.showNetworkErrorMessage(false);
+    stateActions.enableMovingToClientCallButton(true);
   }
 }

@@ -11,6 +11,6 @@ final class MovingToClientViewStatePending implements ViewState<MovingToClientVi
   @Override
   public void apply(@NonNull MovingToClientViewActions stateActions) {
     stateActions.showMovingToClientPending(true);
-    stateActions.showNetworkErrorMessage(false);
+    stateActions.enableMovingToClientCallButton(true);
   }
 }

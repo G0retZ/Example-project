@@ -21,7 +21,7 @@ public class MovingToClientViewStatePendingTest {
 
     // Результат:
     verify(movingToClientViewActions).showMovingToClientPending(true);
-    verify(movingToClientViewActions).showNetworkErrorMessage(false);
+    verify(movingToClientViewActions).enableMovingToClientCallButton(true);
     verifyNoMoreInteractions(movingToClientViewActions);
   }
 }
