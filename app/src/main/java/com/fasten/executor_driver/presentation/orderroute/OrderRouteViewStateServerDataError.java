@@ -21,7 +21,7 @@ public final class OrderRouteViewStateServerDataError implements ViewState<Order
     if (parentViewState != null) {
       parentViewState.apply(stateActions);
     }
-    stateActions.showServerDataError();
+    stateActions.showOrderRouteServerDataError();
   }
 
   @Override

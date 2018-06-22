@@ -32,7 +32,7 @@ public class OrderRouteViewStateServerDataErrorTest {
     viewState.apply(nextRoutePointViewActions);
 
     // Результат:
-    verify(nextRoutePointViewActions, only()).showServerDataError();
+    verify(nextRoutePointViewActions, only()).showOrderRouteServerDataError();
     verify(parentViewState, only()).apply(nextRoutePointViewActions);
   }
 
@@ -45,7 +45,7 @@ public class OrderRouteViewStateServerDataErrorTest {
     viewState.apply(nextRoutePointViewActions);
 
     // Результат:
-    verify(nextRoutePointViewActions, only()).showServerDataError();
+    verify(nextRoutePointViewActions, only()).showOrderRouteServerDataError();
   }
 
   @Test

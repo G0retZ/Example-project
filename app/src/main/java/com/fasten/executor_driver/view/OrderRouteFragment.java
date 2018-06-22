@@ -96,7 +96,7 @@ public class OrderRouteFragment extends BaseFragment implements OrderRouteViewAc
   }
 
   @Override
-  public void showServerDataError() {
+  public void showOrderRouteServerDataError() {
     new Builder(context)
         .setTitle(R.string.error)
         .setMessage(R.string.server_data_format_error)

@@ -189,7 +189,7 @@ public class OrderFulfillmentFragment extends BaseFragment implements OrderCostV
   }
 
   @Override
-  public void showServerDataError() {
+  public void showNextRoutePointServerDataError() {
     new Builder(context)
         .setTitle(R.string.error)
         .setMessage(R.string.server_data_format_error)

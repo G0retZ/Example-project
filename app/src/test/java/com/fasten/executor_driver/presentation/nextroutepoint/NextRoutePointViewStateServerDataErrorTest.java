@@ -32,7 +32,7 @@ public class NextRoutePointViewStateServerDataErrorTest {
     viewState.apply(nextRoutePointViewActions);
 
     // Результат:
-    verify(nextRoutePointViewActions, only()).showServerDataError();
+    verify(nextRoutePointViewActions, only()).showNextRoutePointServerDataError();
     verify(parentViewState, only()).apply(nextRoutePointViewActions);
   }
 
@@ -45,7 +45,7 @@ public class NextRoutePointViewStateServerDataErrorTest {
     viewState.apply(nextRoutePointViewActions);
 
     // Результат:
-    verify(nextRoutePointViewActions, only()).showServerDataError();
+    verify(nextRoutePointViewActions, only()).showNextRoutePointServerDataError();
   }
 
   @Test

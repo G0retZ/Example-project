@@ -61,5 +61,5 @@ public interface NextRoutePointViewActions {
   /**
    * Показать ошибку данных сервера.
    */
-  void showServerDataError();
+  void showNextRoutePointServerDataError();
 }

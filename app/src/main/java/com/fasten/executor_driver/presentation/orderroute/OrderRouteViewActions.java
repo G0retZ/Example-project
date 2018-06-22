@@ -25,5 +25,5 @@ public interface OrderRouteViewActions {
   /**
    * Показать ошибку данных сервера.
    */
-  void showServerDataError();
+  void showOrderRouteServerDataError();
 }

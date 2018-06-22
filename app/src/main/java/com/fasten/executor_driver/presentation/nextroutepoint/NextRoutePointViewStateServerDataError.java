@@ -22,7 +22,7 @@ final class NextRoutePointViewStateServerDataError implements ViewState<NextRout
     if (parentViewState != null) {
       parentViewState.apply(stateActions);
     }
-    stateActions.showServerDataError();
+    stateActions.showNextRoutePointServerDataError();
   }
 
   @Override
