@@ -7,12 +7,12 @@ import com.fasten.executor_driver.presentation.ViewState;
 /**
  * Состояние ошибки при получении списка причин отказа или отправке причины отказа.
  */
-final class CancelOrderViewStateError implements ViewState<CancelOrderViewActions> {
+final class CancelOrderViewStateServerDataError implements ViewState<CancelOrderViewActions> {
 
   @Nullable
   private final ViewState<CancelOrderViewActions> parentViewState;
 
-  CancelOrderViewStateError(@Nullable ViewState<CancelOrderViewActions> parentViewState) {
+  CancelOrderViewStateServerDataError(@Nullable ViewState<CancelOrderViewActions> parentViewState) {
     this.parentViewState = parentViewState;
   }
 
@@ -22,7 +22,7 @@ final class CancelOrderViewStateError implements ViewState<CancelOrderViewAction
       parentViewState.apply(stateActions);
     }
     stateActions.showCancelOrderReasons(parentViewState != null);
-    stateActions.showCancelOrderErrorMessage(true);
+    stateActions.showCancelOrderServerDataError();
   }
 
   @Override
@@ -34,7 +34,7 @@ final class CancelOrderViewStateError implements ViewState<CancelOrderViewAction
       return false;
     }
 
-    CancelOrderViewStateError that = (CancelOrderViewStateError) o;
+    CancelOrderViewStateServerDataError that = (CancelOrderViewStateServerDataError) o;
 
     return parentViewState != null ? parentViewState.equals(that.parentViewState)
         : that.parentViewState == null;

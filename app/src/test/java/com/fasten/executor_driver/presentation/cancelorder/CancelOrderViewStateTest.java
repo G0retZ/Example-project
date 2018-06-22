@@ -36,7 +36,6 @@ public class CancelOrderViewStateTest {
     verify(orderRouteViewActions).setCancelOrderReasons(Collections.singletonList(routePointItems));
     verify(orderRouteViewActions).showCancelOrderReasons(true);
     verify(orderRouteViewActions).showCancelOrderPending(false);
-    verify(orderRouteViewActions).showCancelOrderErrorMessage(false);
     verifyNoMoreInteractions(orderRouteViewActions);
   }
 

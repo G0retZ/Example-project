@@ -155,7 +155,7 @@ public class CancelOrderViewModelTest {
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(new CancelOrderViewStatePending(null));
-    inOrder.verify(viewStateObserver).onChanged(new CancelOrderViewStateError(null));
+    inOrder.verify(viewStateObserver).onChanged(new CancelOrderViewStateServerDataError(null));
     verifyNoMoreInteractions(viewStateObserver);
   }
 
@@ -173,7 +173,7 @@ public class CancelOrderViewModelTest {
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(new CancelOrderViewStatePending(null));
-    inOrder.verify(viewStateObserver).onChanged(new CancelOrderViewStateError(null));
+    inOrder.verify(viewStateObserver).onChanged(new CancelOrderViewStateServerDataError(null));
     verifyNoMoreInteractions(viewStateObserver);
   }
 

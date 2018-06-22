@@ -85,9 +85,9 @@ public class CancelOrderViewModelImpl extends ViewModel implements CancelOrderVi
         .subscribe(
             cancelOrderReasons -> viewStateLiveData
                 .postValue(lastViewState = new CancelOrderViewState(cancelOrderReasons)),
-            error -> {
-              error.printStackTrace();
-              viewStateLiveData.postValue(new CancelOrderViewStateError(lastViewState));
+            throwable -> {
+              throwable.printStackTrace();
+              viewStateLiveData.postValue(new CancelOrderViewStateServerDataError(lastViewState));
             }
         );
   }

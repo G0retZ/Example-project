@@ -13,9 +13,9 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
-public class CancelOrderViewStateErrorTest {
+public class CancelOrderViewStateServerDataErrorTest {
 
-  private CancelOrderViewStateError viewState;
+  private CancelOrderViewStateServerDataError viewState;
 
   @Mock
   private CancelOrderViewActions nextRoutePointViewActions;
@@ -27,13 +27,13 @@ public class CancelOrderViewStateErrorTest {
   @Test
   public void testActions() {
     // Дано:
-    viewState = new CancelOrderViewStateError(parentViewState);
+    viewState = new CancelOrderViewStateServerDataError(parentViewState);
 
     // Действие:
     viewState.apply(nextRoutePointViewActions);
 
     // Результат:
-    verify(nextRoutePointViewActions).showCancelOrderErrorMessage(true);
+    verify(nextRoutePointViewActions).showCancelOrderServerDataError();
     verify(nextRoutePointViewActions).showCancelOrderReasons(true);
     verify(parentViewState, only()).apply(nextRoutePointViewActions);
     verifyNoMoreInteractions(nextRoutePointViewActions);
@@ -42,22 +42,22 @@ public class CancelOrderViewStateErrorTest {
   @Test
   public void testActionsWithNull() {
     // Дано:
-    viewState = new CancelOrderViewStateError(null);
+    viewState = new CancelOrderViewStateServerDataError(null);
 
     // Действие:
     viewState.apply(nextRoutePointViewActions);
 
     // Результат:
-    verify(nextRoutePointViewActions).showCancelOrderErrorMessage(true);
+    verify(nextRoutePointViewActions).showCancelOrderServerDataError();
     verify(nextRoutePointViewActions).showCancelOrderReasons(false);
     verifyNoMoreInteractions(nextRoutePointViewActions);
   }
 
   @Test
   public void testEquals() {
-    viewState = new CancelOrderViewStateError(parentViewState);
-    assertEquals(viewState, new CancelOrderViewStateError(parentViewState));
-    assertNotEquals(viewState, new CancelOrderViewStateError(parentViewState1));
-    assertNotEquals(viewState, new CancelOrderViewStateError(null));
+    viewState = new CancelOrderViewStateServerDataError(parentViewState);
+    assertEquals(viewState, new CancelOrderViewStateServerDataError(parentViewState));
+    assertNotEquals(viewState, new CancelOrderViewStateServerDataError(parentViewState1));
+    assertNotEquals(viewState, new CancelOrderViewStateServerDataError(null));
   }
 }

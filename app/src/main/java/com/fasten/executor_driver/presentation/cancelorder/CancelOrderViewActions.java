@@ -31,9 +31,7 @@ public interface CancelOrderViewActions {
   void setCancelOrderReasons(@NonNull List<CancelOrderReason> cancelOrderReasons);
 
   /**
-   * Показать сообщение об ошибке.
-   *
-   * @param show - показать или нет?
+   * Показать ошибку данных сервера.
    */
-  void showCancelOrderErrorMessage(boolean show);
+  void showCancelOrderServerDataError();
 }

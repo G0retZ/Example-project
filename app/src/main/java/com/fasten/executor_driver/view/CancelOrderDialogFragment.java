@@ -103,14 +103,12 @@ public class CancelOrderDialogFragment extends BaseDialogFragment implements
   }
 
   @Override
-  public void showCancelOrderErrorMessage(boolean show) {
-    if (show) {
-      new Builder(context)
-          .setTitle(R.string.error)
-          .setMessage(R.string.server_data_format_error)
-          .setPositiveButton(getString(android.R.string.ok), null)
-          .create()
-          .show();
-    }
+  public void showCancelOrderServerDataError() {
+    new Builder(context)
+        .setTitle(R.string.error)
+        .setMessage(R.string.server_data_format_error)
+        .setPositiveButton(getString(android.R.string.ok), null)
+        .create()
+        .show();
   }
 }
