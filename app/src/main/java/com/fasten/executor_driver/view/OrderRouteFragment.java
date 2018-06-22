@@ -67,6 +67,11 @@ public class OrderRouteFragment extends BaseFragment implements OrderRouteViewAc
         viewState.apply(this);
       }
     });
+    orderRouteViewModel.getNavigationLiveData().observe(this, destination -> {
+      if (destination != null) {
+        navigate(destination);
+      }
+    });
   }
 
   @Override
@@ -91,14 +96,12 @@ public class OrderRouteFragment extends BaseFragment implements OrderRouteViewAc
   }
 
   @Override
-  public void showOrderRouteErrorMessage(boolean show) {
-    if (show) {
-      new Builder(context)
-          .setTitle(R.string.error)
-          .setMessage(R.string.no_network_connection)
-          .setPositiveButton(getString(android.R.string.ok), null)
-          .create()
-          .show();
-    }
+  public void showServerDataError() {
+    new Builder(context)
+        .setTitle(R.string.error)
+        .setMessage(R.string.server_data_format_error)
+        .setPositiveButton(getString(android.R.string.ok), null)
+        .create()
+        .show();
   }
 }

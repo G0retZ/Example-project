@@ -45,7 +45,6 @@ public class NextRoutePointViewStateEnRouteTest {
     verify(nextRoutePointViewActions).showNextRoutePointAddress("0,0", "add");
     verify(nextRoutePointViewActions).showNextRoutePointComment("com");
     verify(nextRoutePointViewActions).showNextRoutePointPending(false);
-    verify(nextRoutePointViewActions).showNextRoutePointNetworkErrorMessage(false);
     verify(nextRoutePointViewActions).showCloseNextRoutePointAction(true);
     verify(nextRoutePointViewActions).showCompleteOrderAction(false);
     verify(nextRoutePointViewActions).showNoRouteRide(false);

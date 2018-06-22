@@ -20,7 +20,6 @@ final class NextRoutePointViewStateNoRoute implements ViewState<NextRoutePointVi
     stateActions.showNextRoutePointAddress("", "");
     stateActions.showNextRoutePointComment("");
     stateActions.showNextRoutePointPending(false);
-    stateActions.showNextRoutePointNetworkErrorMessage(false);
     stateActions.showCloseNextRoutePointAction(false);
     stateActions.showCompleteOrderAction(true);
     stateActions.showNoRouteRide(noRouteRide);

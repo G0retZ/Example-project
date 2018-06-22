@@ -7,12 +7,13 @@ import com.fasten.executor_driver.presentation.ViewState;
 /**
  * Состояние вида ошибки следующей маршрутной точки заказа.
  */
-final class NextRoutePointViewStateError implements ViewState<NextRoutePointViewActions> {
+final class NextRoutePointViewStateServerDataError implements ViewState<NextRoutePointViewActions> {
 
   @Nullable
   private final ViewState<NextRoutePointViewActions> parentViewState;
 
-  NextRoutePointViewStateError(@Nullable ViewState<NextRoutePointViewActions> parentViewState) {
+  NextRoutePointViewStateServerDataError(
+      @Nullable ViewState<NextRoutePointViewActions> parentViewState) {
     this.parentViewState = parentViewState;
   }
 
@@ -21,7 +22,7 @@ final class NextRoutePointViewStateError implements ViewState<NextRoutePointView
     if (parentViewState != null) {
       parentViewState.apply(stateActions);
     }
-    stateActions.showNextRoutePointNetworkErrorMessage(true);
+    stateActions.showServerDataError();
   }
 
   @Override
@@ -33,7 +34,7 @@ final class NextRoutePointViewStateError implements ViewState<NextRoutePointView
       return false;
     }
 
-    NextRoutePointViewStateError that = (NextRoutePointViewStateError) o;
+    NextRoutePointViewStateServerDataError that = (NextRoutePointViewStateServerDataError) o;
 
     return parentViewState != null ? parentViewState.equals(that.parentViewState)
         : that.parentViewState == null;

@@ -7,12 +7,12 @@ import com.fasten.executor_driver.presentation.ViewState;
 /**
  * Состояние ошибки  списка точек маршрута заказа.
  */
-public final class OrderRouteViewStateError implements ViewState<OrderRouteViewActions> {
+public final class OrderRouteViewStateServerDataError implements ViewState<OrderRouteViewActions> {
 
   @Nullable
   private final ViewState<OrderRouteViewActions> parentViewState;
 
-  OrderRouteViewStateError(@Nullable ViewState<OrderRouteViewActions> parentViewState) {
+  OrderRouteViewStateServerDataError(@Nullable ViewState<OrderRouteViewActions> parentViewState) {
     this.parentViewState = parentViewState;
   }
 
@@ -21,7 +21,7 @@ public final class OrderRouteViewStateError implements ViewState<OrderRouteViewA
     if (parentViewState != null) {
       parentViewState.apply(stateActions);
     }
-    stateActions.showOrderRouteErrorMessage(true);
+    stateActions.showServerDataError();
   }
 
   @Override
@@ -33,7 +33,7 @@ public final class OrderRouteViewStateError implements ViewState<OrderRouteViewA
       return false;
     }
 
-    OrderRouteViewStateError that = (OrderRouteViewStateError) o;
+    OrderRouteViewStateServerDataError that = (OrderRouteViewStateServerDataError) o;
 
     return parentViewState != null ? parentViewState.equals(that.parentViewState)
         : that.parentViewState == null;

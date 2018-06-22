@@ -19,7 +19,6 @@ public final class OrderRouteViewState implements ViewState<OrderRouteViewAction
   @Override
   public void apply(@NonNull OrderRouteViewActions stateActions) {
     stateActions.showOrderRoutePending(false);
-    stateActions.showOrderRouteErrorMessage(false);
     stateActions.setRoutePointItems(routePointItems);
   }
 

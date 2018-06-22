@@ -37,7 +37,6 @@ public class OrderRouteViewStateTest {
     // Результат:
     verify(orderRouteViewActions)
         .setRoutePointItems(Arrays.asList(routePointItems, routePointItems1));
-    verify(orderRouteViewActions).showOrderRouteErrorMessage(false);
     verify(orderRouteViewActions).showOrderRoutePending(false);
     verifyNoMoreInteractions(orderRouteViewActions);
   }

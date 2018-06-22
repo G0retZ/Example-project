@@ -4,6 +4,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 import android.arch.core.executor.testing.InstantTaskExecutorRule;
@@ -51,6 +52,8 @@ public class OrderRouteViewModelTest {
 
   @Mock
   private Observer<ViewState<OrderRouteViewActions>> viewStateObserver;
+  @Mock
+  private Observer<String> navigateObserver;
 
   @Before
   public void setUp() {
@@ -151,7 +154,7 @@ public class OrderRouteViewModelTest {
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(new OrderRouteViewStatePending(null));
-    inOrder.verify(viewStateObserver).onChanged(new OrderRouteViewStateError(null));
+    inOrder.verify(viewStateObserver).onChanged(new OrderRouteViewStateServerDataError(null));
     verifyNoMoreInteractions(viewStateObserver);
   }
 
@@ -169,7 +172,7 @@ public class OrderRouteViewModelTest {
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(new OrderRouteViewStatePending(null));
-    inOrder.verify(viewStateObserver).onChanged(new OrderRouteViewStateError(null));
+    inOrder.verify(viewStateObserver).onChanged(new OrderRouteViewStateServerDataError(null));
     verifyNoMoreInteractions(viewStateObserver);
   }
 
@@ -187,7 +190,7 @@ public class OrderRouteViewModelTest {
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(new OrderRouteViewStatePending(null));
-    inOrder.verify(viewStateObserver).onChanged(new OrderRouteViewStateError(null));
+    inOrder.verify(viewStateObserver).onChanged(new OrderRouteViewStateServerDataError(null));
     verifyNoMoreInteractions(viewStateObserver);
   }
 
@@ -346,5 +349,53 @@ public class OrderRouteViewModelTest {
         )
     ));
     verifyNoMoreInteractions(viewStateObserver);
+  }
+
+  /* Тестируем навигацию. */
+
+  /**
+   * Не должен никуда ходить при запросе смены следующей точки маршрута.
+   */
+  @Test
+  public void doNotTouchNavigationObserverForNextRouteSelection() {
+    // Действие:
+    orderRouteViewModel.getNavigationLiveData().observeForever(navigateObserver);
+    orderRouteViewModel.selectNextRoutePoint(new RoutePointItem(routePoint));
+
+    // Результат:
+    verifyZeroInteractions(navigateObserver);
+  }
+
+  /**
+   * Должен вернуть перейти к ошибке сети при запросе смены следующей точки маршрута.
+   */
+  @Test
+  public void navigateToNoConnectionForNextRouteSelectionNoNetworkError() {
+    // Дано:
+    when(orderRouteUseCase.nextRoutePoint(routePoint))
+        .thenReturn(Completable.error(new IllegalStateException()));
+
+    // Действие:
+    orderRouteViewModel.getNavigationLiveData().observeForever(navigateObserver);
+    orderRouteViewModel.selectNextRoutePoint(new RoutePointItem(routePoint));
+
+    // Результат:
+    verify(navigateObserver, only()).onChanged(OrderRouteNavigate.NO_CONNECTION);
+  }
+
+  /**
+   * Не должен никуда ходить при успешной смене следующей точки маршрута.
+   */
+  @Test
+  public void doNotTouchNavigationObserverForNextRouteSelectionSuccess() {
+    // Дано:
+    when(orderRouteUseCase.nextRoutePoint(routePoint)).thenReturn(Completable.complete());
+
+    // Действие:
+    orderRouteViewModel.getNavigationLiveData().observeForever(navigateObserver);
+    orderRouteViewModel.selectNextRoutePoint(new RoutePointItem(routePoint));
+
+    // Результат:
+    verifyZeroInteractions(navigateObserver);
   }
 }

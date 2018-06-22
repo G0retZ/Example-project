@@ -112,6 +112,11 @@ public class OrderFulfillmentFragment extends BaseFragment implements OrderCostV
         viewState.apply(this);
       }
     });
+    nextRoutePointViewModel.getNavigationLiveData().observe(this, destination -> {
+      if (destination != null) {
+        navigate(destination);
+      }
+    });
   }
 
   @Override
@@ -184,15 +189,13 @@ public class OrderFulfillmentFragment extends BaseFragment implements OrderCostV
   }
 
   @Override
-  public void showNextRoutePointNetworkErrorMessage(boolean show) {
-    if (show) {
-      new Builder(context)
-          .setTitle(R.string.error)
-          .setMessage(R.string.no_network_connection)
-          .setPositiveButton(getString(android.R.string.ok), null)
-          .create()
-          .show();
-    }
+  public void showServerDataError() {
+    new Builder(context)
+        .setTitle(R.string.error)
+        .setMessage(R.string.server_data_format_error)
+        .setPositiveButton(getString(android.R.string.ok), null)
+        .create()
+        .show();
   }
 
   @Override

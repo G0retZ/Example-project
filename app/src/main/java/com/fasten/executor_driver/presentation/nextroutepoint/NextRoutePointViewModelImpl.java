@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import com.fasten.executor_driver.entity.RoutePoint;
 import com.fasten.executor_driver.entity.RoutePointState;
 import com.fasten.executor_driver.interactor.OrderRouteUseCase;
+import com.fasten.executor_driver.presentation.SingleLiveEvent;
 import com.fasten.executor_driver.presentation.ViewState;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
@@ -22,6 +23,8 @@ public class NextRoutePointViewModelImpl extends ViewModel implements NextRouteP
   @NonNull
   private final MutableLiveData<ViewState<NextRoutePointViewActions>> viewStateLiveData;
   @NonNull
+  private final SingleLiveEvent<String> navigateLiveData;
+  @NonNull
   private Disposable disposable = EmptyDisposable.INSTANCE;
   @NonNull
   private Disposable completeDisposable = EmptyDisposable.INSTANCE;
@@ -34,6 +37,7 @@ public class NextRoutePointViewModelImpl extends ViewModel implements NextRouteP
   public NextRoutePointViewModelImpl(@NonNull OrderRouteUseCase orderRouteUseCase) {
     this.orderRouteUseCase = orderRouteUseCase;
     viewStateLiveData = new MutableLiveData<>();
+    navigateLiveData = new SingleLiveEvent<>();
     viewStateLiveData.postValue(new NextRoutePointViewStatePending(null));
     loadRoutePoints();
   }
@@ -47,7 +51,7 @@ public class NextRoutePointViewModelImpl extends ViewModel implements NextRouteP
   @NonNull
   @Override
   public LiveData<String> getNavigationLiveData() {
-    return new MutableLiveData<>();
+    return navigateLiveData;
   }
 
   @Override
@@ -65,6 +69,7 @@ public class NextRoutePointViewModelImpl extends ViewModel implements NextRouteP
             }, throwable -> {
               throwable.printStackTrace();
               viewStateLiveData.postValue(lastViewState);
+              navigateLiveData.postValue(NextRoutePointNavigate.NO_CONNECTION);
             }
         );
   }
@@ -84,6 +89,7 @@ public class NextRoutePointViewModelImpl extends ViewModel implements NextRouteP
             }, throwable -> {
               throwable.printStackTrace();
               viewStateLiveData.postValue(lastViewState);
+              navigateLiveData.postValue(NextRoutePointNavigate.NO_CONNECTION);
             }
         );
   }
@@ -113,7 +119,8 @@ public class NextRoutePointViewModelImpl extends ViewModel implements NextRouteP
             },
             throwable -> {
               throwable.printStackTrace();
-              viewStateLiveData.postValue(new NextRoutePointViewStateError(lastViewState));
+              viewStateLiveData
+                  .postValue(new NextRoutePointViewStateServerDataError(lastViewState));
             }
         );
   }

@@ -12,9 +12,9 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
-public class NextRoutePointViewStateErrorTest {
+public class NextRoutePointViewStateServerDataErrorTest {
 
-  private NextRoutePointViewStateError viewState;
+  private NextRoutePointViewStateServerDataError viewState;
 
   @Mock
   private NextRoutePointViewActions nextRoutePointViewActions;
@@ -26,33 +26,33 @@ public class NextRoutePointViewStateErrorTest {
   @Test
   public void testActions() {
     // Дано:
-    viewState = new NextRoutePointViewStateError(parentViewState);
+    viewState = new NextRoutePointViewStateServerDataError(parentViewState);
 
     // Действие:
     viewState.apply(nextRoutePointViewActions);
 
     // Результат:
-    verify(nextRoutePointViewActions, only()).showNextRoutePointNetworkErrorMessage(true);
+    verify(nextRoutePointViewActions, only()).showServerDataError();
     verify(parentViewState, only()).apply(nextRoutePointViewActions);
   }
 
   @Test
   public void testActionsWithNull() {
     // Дано:
-    viewState = new NextRoutePointViewStateError(null);
+    viewState = new NextRoutePointViewStateServerDataError(null);
 
     // Действие:
     viewState.apply(nextRoutePointViewActions);
 
     // Результат:
-    verify(nextRoutePointViewActions, only()).showNextRoutePointNetworkErrorMessage(true);
+    verify(nextRoutePointViewActions, only()).showServerDataError();
   }
 
   @Test
   public void testEquals() {
-    viewState = new NextRoutePointViewStateError(parentViewState);
-    assertEquals(viewState, new NextRoutePointViewStateError(parentViewState));
-    assertNotEquals(viewState, new NextRoutePointViewStateError(parentViewState1));
-    assertNotEquals(viewState, new NextRoutePointViewStateError(null));
+    viewState = new NextRoutePointViewStateServerDataError(parentViewState);
+    assertEquals(viewState, new NextRoutePointViewStateServerDataError(parentViewState));
+    assertNotEquals(viewState, new NextRoutePointViewStateServerDataError(parentViewState1));
+    assertNotEquals(viewState, new NextRoutePointViewStateServerDataError(null));
   }
 }

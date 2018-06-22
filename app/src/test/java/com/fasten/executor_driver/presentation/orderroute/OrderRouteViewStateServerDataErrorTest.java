@@ -12,9 +12,9 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
-public class OrderRouteViewStateErrorTest {
+public class OrderRouteViewStateServerDataErrorTest {
 
-  private OrderRouteViewStateError viewState;
+  private OrderRouteViewStateServerDataError viewState;
 
   @Mock
   private OrderRouteViewActions nextRoutePointViewActions;
@@ -26,33 +26,33 @@ public class OrderRouteViewStateErrorTest {
   @Test
   public void testActions() {
     // Дано:
-    viewState = new OrderRouteViewStateError(parentViewState);
+    viewState = new OrderRouteViewStateServerDataError(parentViewState);
 
     // Действие:
     viewState.apply(nextRoutePointViewActions);
 
     // Результат:
-    verify(nextRoutePointViewActions, only()).showOrderRouteErrorMessage(true);
+    verify(nextRoutePointViewActions, only()).showServerDataError();
     verify(parentViewState, only()).apply(nextRoutePointViewActions);
   }
 
   @Test
   public void testActionsWithNull() {
     // Дано:
-    viewState = new OrderRouteViewStateError(null);
+    viewState = new OrderRouteViewStateServerDataError(null);
 
     // Действие:
     viewState.apply(nextRoutePointViewActions);
 
     // Результат:
-    verify(nextRoutePointViewActions, only()).showOrderRouteErrorMessage(true);
+    verify(nextRoutePointViewActions, only()).showServerDataError();
   }
 
   @Test
   public void testEquals() {
-    viewState = new OrderRouteViewStateError(parentViewState);
-    assertEquals(viewState, new OrderRouteViewStateError(parentViewState));
-    assertNotEquals(viewState, new OrderRouteViewStateError(parentViewState1));
-    assertNotEquals(viewState, new OrderRouteViewStateError(null));
+    viewState = new OrderRouteViewStateServerDataError(parentViewState);
+    assertEquals(viewState, new OrderRouteViewStateServerDataError(parentViewState));
+    assertNotEquals(viewState, new OrderRouteViewStateServerDataError(parentViewState1));
+    assertNotEquals(viewState, new OrderRouteViewStateServerDataError(null));
   }
 }

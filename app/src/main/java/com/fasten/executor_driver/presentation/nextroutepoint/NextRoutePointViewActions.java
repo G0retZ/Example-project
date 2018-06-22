@@ -59,9 +59,7 @@ public interface NextRoutePointViewActions {
   void showNoRouteRide(boolean show);
 
   /**
-   * Показать сообщение об ошибке сети.
-   *
-   * @param show - показать или нет?
+   * Показать ошибку данных сервера.
    */
-  void showNextRoutePointNetworkErrorMessage(boolean show);
+  void showServerDataError();
 }

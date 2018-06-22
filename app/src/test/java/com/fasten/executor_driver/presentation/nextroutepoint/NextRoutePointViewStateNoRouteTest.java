@@ -31,7 +31,6 @@ public class NextRoutePointViewStateNoRouteTest {
     verify(nextRoutePointViewActions).showNextRoutePointAddress("", "");
     verify(nextRoutePointViewActions).showNextRoutePointComment("");
     verify(nextRoutePointViewActions).showNextRoutePointPending(false);
-    verify(nextRoutePointViewActions).showNextRoutePointNetworkErrorMessage(false);
     verify(nextRoutePointViewActions).showNoRouteRide(true);
     verify(nextRoutePointViewActions).showCloseNextRoutePointAction(false);
     verify(nextRoutePointViewActions).showCompleteOrderAction(true);
@@ -51,7 +50,6 @@ public class NextRoutePointViewStateNoRouteTest {
     verify(nextRoutePointViewActions).showNextRoutePointAddress("", "");
     verify(nextRoutePointViewActions).showNextRoutePointComment("");
     verify(nextRoutePointViewActions).showNextRoutePointPending(false);
-    verify(nextRoutePointViewActions).showNextRoutePointNetworkErrorMessage(false);
     verify(nextRoutePointViewActions).showNoRouteRide(false);
     verify(nextRoutePointViewActions).showCloseNextRoutePointAction(false);
     verify(nextRoutePointViewActions).showCompleteOrderAction(true);
