@@ -33,7 +33,7 @@ public class BalanceViewStateServerDataErrorTest {
     viewState.apply(nextRoutePointViewActions);
 
     // Результат:
-    verify(nextRoutePointViewActions).showBalanceServerDataErrorMessage();
+    verify(nextRoutePointViewActions).showBalanceServerDataError();
     verify(parentViewState, only()).apply(nextRoutePointViewActions);
     verifyNoMoreInteractions(nextRoutePointViewActions);
   }
@@ -47,7 +47,7 @@ public class BalanceViewStateServerDataErrorTest {
     viewState.apply(nextRoutePointViewActions);
 
     // Результат:
-    verify(nextRoutePointViewActions).showBalanceServerDataErrorMessage();
+    verify(nextRoutePointViewActions).showBalanceServerDataError();
     verifyNoMoreInteractions(nextRoutePointViewActions);
   }
 

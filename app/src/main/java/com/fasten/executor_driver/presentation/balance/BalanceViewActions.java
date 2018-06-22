@@ -29,5 +29,5 @@ public interface BalanceViewActions {
   /**
    * Показать ошибку данных сервера.
    */
-  void showBalanceServerDataErrorMessage();
+  void showBalanceServerDataError();
 }

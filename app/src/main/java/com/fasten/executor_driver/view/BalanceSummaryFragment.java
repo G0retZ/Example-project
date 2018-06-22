@@ -106,7 +106,7 @@ public class BalanceSummaryFragment extends BaseFragment implements BalanceViewA
   }
 
   @Override
-  public void showBalanceServerDataErrorMessage() {
+  public void showBalanceServerDataError() {
     new Builder(context)
         .setTitle(R.string.error)
         .setMessage(R.string.server_data_format_error)

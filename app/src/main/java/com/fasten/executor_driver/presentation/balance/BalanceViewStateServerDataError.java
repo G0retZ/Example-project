@@ -21,7 +21,7 @@ final class BalanceViewStateServerDataError implements ViewState<BalanceViewActi
     if (parentViewState != null) {
       parentViewState.apply(stateActions);
     }
-    stateActions.showBalanceServerDataErrorMessage();
+    stateActions.showBalanceServerDataError();
   }
 
   @Override
