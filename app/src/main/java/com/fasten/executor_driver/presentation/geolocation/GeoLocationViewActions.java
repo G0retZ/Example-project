@@ -14,4 +14,9 @@ public interface GeoLocationViewActions {
    * @param geoLocation - данные местоположения на карте.
    */
   void updateLocation(@NonNull GeoLocation geoLocation);
+
+  /**
+   * Показать ошибку данных сервера.
+   */
+  void showGeoLocationServerDataError();
 }

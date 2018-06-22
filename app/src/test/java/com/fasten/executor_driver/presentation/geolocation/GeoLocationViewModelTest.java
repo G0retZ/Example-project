@@ -111,6 +111,83 @@ public class GeoLocationViewModelTest {
     verifyNoMoreInteractions(viewStateObserver);
   }
 
+  /**
+   * Должен вернуть состояние ошибки данных сервера.
+   */
+  @Test
+  public void setServerDataErrorViewStateToLiveData() {
+    // Дано:
+    InOrder inOrder = Mockito.inOrder(viewStateObserver);
+    when(geoLocationUseCase.getGeoLocations()).thenReturn(
+        Flowable.just(
+            new GeoLocation(1, 2, 3),
+            new GeoLocation(4, 5, 6),
+            new GeoLocation(7, 8, 9),
+            new GeoLocation(11, 22, 33)
+        ).concatWith(Flowable.error(Exception::new))
+    );
+
+    // Действие:
+    mapViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    mapViewModel.updateGeoLocations();
+
+    // Результат:
+    inOrder.verify(viewStateObserver).onChanged(
+        new GeoLocationViewState(new GeoLocation(1, 2, 3))
+    );
+    inOrder.verify(viewStateObserver).onChanged(
+        new GeoLocationViewState(new GeoLocation(4, 5, 6))
+    );
+    inOrder.verify(viewStateObserver).onChanged(
+        new GeoLocationViewState(new GeoLocation(7, 8, 9))
+    );
+    inOrder.verify(viewStateObserver).onChanged(
+        new GeoLocationViewState(new GeoLocation(11, 22, 33))
+    );
+    inOrder.verify(viewStateObserver).onChanged(
+        new GeoLocationViewStateServerDataError(
+            new GeoLocationViewState(new GeoLocation(11, 22, 33))
+        )
+    );
+    verifyNoMoreInteractions(viewStateObserver);
+  }
+
+  /**
+   * Не должен возвращать новых состояний при ошибке в геолокации.
+   */
+  @Test
+  public void setNoNewViewStateToLiveData() {
+    // Дано:
+    InOrder inOrder = Mockito.inOrder(viewStateObserver);
+    when(geoLocationUseCase.getGeoLocations()).thenReturn(
+        Flowable.just(
+            new GeoLocation(1, 2, 3),
+            new GeoLocation(4, 5, 6),
+            new GeoLocation(7, 8, 9),
+            new GeoLocation(11, 22, 33)
+        ).concatWith(Flowable.error(SecurityException::new))
+    );
+
+    // Действие:
+    mapViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    mapViewModel.updateGeoLocations();
+
+    // Результат:
+    inOrder.verify(viewStateObserver).onChanged(
+        new GeoLocationViewState(new GeoLocation(1, 2, 3))
+    );
+    inOrder.verify(viewStateObserver).onChanged(
+        new GeoLocationViewState(new GeoLocation(4, 5, 6))
+    );
+    inOrder.verify(viewStateObserver).onChanged(
+        new GeoLocationViewState(new GeoLocation(7, 8, 9))
+    );
+    inOrder.verify(viewStateObserver).onChanged(
+        new GeoLocationViewState(new GeoLocation(11, 22, 33))
+    );
+    verifyNoMoreInteractions(viewStateObserver);
+  }
+
   /* Тетсируем навигацию. */
 
   /**
@@ -130,29 +207,33 @@ public class GeoLocationViewModelTest {
   }
 
   /**
-   * Должен вернуть "перейти к ошибке соединения".
+   * Не должен ничего возвращать для другой ошибки.
    */
   @Test
-  public void setNavigateForNoNetworkError() {
+  public void doNotSetNavigateForOtherError() {
     // Дано:
-    when(geoLocationUseCase.getGeoLocations())
-        .thenReturn(Flowable.error(IllegalStateException::new));
+    when(geoLocationUseCase.getGeoLocations()).thenReturn(Flowable.error(Exception::new));
 
     // Действие:
     mapViewModel.getNavigationLiveData().observeForever(navigationObserver);
     mapViewModel.updateGeoLocations();
 
     // Результат:
-    verify(navigationObserver, only()).onChanged(GeoLocationNavigate.NO_CONNECTION);
+    verifyZeroInteractions(navigationObserver);
   }
 
   /**
-   * Не должен ничего возвращать для непонятной ошибки.
+   * Не должен ничего возвращать для данных.
    */
   @Test
-  public void doNotSetNavigateForOtherError() {
+  public void doNotSetNavigateForData() {
     // Дано:
-    when(geoLocationUseCase.getGeoLocations()).thenReturn(Flowable.error(Exception::new));
+    when(geoLocationUseCase.getGeoLocations()).thenReturn(Flowable.just(
+        new GeoLocation(1, 2, 3),
+        new GeoLocation(4, 5, 6),
+        new GeoLocation(7, 8, 9),
+        new GeoLocation(11, 22, 33)
+    ));
 
     // Действие:
     mapViewModel.getNavigationLiveData().observeForever(navigationObserver);

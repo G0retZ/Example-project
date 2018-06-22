@@ -1,6 +1,7 @@
 package com.fasten.executor_driver.view;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.res.Resources;
 import android.os.Bundle;
@@ -185,6 +186,18 @@ public class MapFragment extends SupportMapFragment implements OnMapReadyCallbac
                   .build()
           )
       );
+    }
+  }
+
+  @Override
+  public void showGeoLocationServerDataError() {
+    if (baseActivity != null) {
+      new Builder(baseActivity)
+          .setTitle(R.string.error)
+          .setMessage(R.string.server_data_format_error)
+          .setPositiveButton(getString(android.R.string.ok), null)
+          .create()
+          .show();
     }
   }
 }
