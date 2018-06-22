@@ -97,6 +97,11 @@ public class WaitingForClientFragment extends BaseFragment implements
         viewState.apply(this);
       }
     });
+    waitingForClientViewModel.getNavigationLiveData().observe(this, destination -> {
+      if (destination != null) {
+        navigate(destination);
+      }
+    });
   }
 
   @Override

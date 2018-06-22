@@ -11,6 +11,5 @@ final class WaitingForClientViewStateIdle implements ViewState<WaitingForClientV
   @Override
   public void apply(@NonNull WaitingForClientViewActions stateActions) {
     stateActions.showWaitingForClientPending(false);
-    stateActions.showNetworkErrorMessage(false);
   }
 }

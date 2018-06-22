@@ -11,6 +11,5 @@ final class WaitingForClientViewStatePending implements ViewState<WaitingForClie
   @Override
   public void apply(@NonNull WaitingForClientViewActions stateActions) {
     stateActions.showWaitingForClientPending(true);
-    stateActions.showNetworkErrorMessage(false);
   }
 }
