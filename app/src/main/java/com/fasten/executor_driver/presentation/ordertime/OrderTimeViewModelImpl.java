@@ -49,9 +49,9 @@ public class OrderTimeViewModelImpl extends ViewModel implements OrderTimeViewMo
         .subscribeOn(Schedulers.single())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(
-            time -> viewStateLiveData.postValue(new OrderTimeViewStateIdle(time)),
+            time -> viewStateLiveData.postValue(new OrderTimeViewState(time)),
             throwable -> {
-              viewStateLiveData.postValue(new OrderTimeViewStateError(0));
+              viewStateLiveData.postValue(new OrderTimeViewStateServerDataError(0));
               throwable.printStackTrace();
             }
         );

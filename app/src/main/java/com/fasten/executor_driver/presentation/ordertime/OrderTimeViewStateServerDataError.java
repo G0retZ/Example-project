@@ -5,15 +5,15 @@ import android.support.annotation.NonNull;
 /**
  * Состояние вида ошибки текущего времени заказа.
  */
-final class OrderTimeViewStateError extends OrderTimeViewState {
+final class OrderTimeViewStateServerDataError extends OrderTimeViewState {
 
-  OrderTimeViewStateError(long orderCost) {
+  OrderTimeViewStateServerDataError(long orderCost) {
     super(orderCost);
   }
 
   @Override
   public void apply(@NonNull OrderTimeViewActions stateActions) {
     super.apply(stateActions);
-    stateActions.showOrderTimeNetworkErrorMessage(true);
+    stateActions.showOrderTimeServerDataError();
   }
 }

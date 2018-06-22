@@ -13,9 +13,7 @@ public interface OrderTimeViewActions {
   void setOrderTimeText(long currentSeconds);
 
   /**
-   * Показать сообщение об ошибке сети.
-   *
-   * @param show - показать или нет?
+   * Показать ошибку данных сервера.
    */
-  void showOrderTimeNetworkErrorMessage(boolean show);
+  void showOrderTimeServerDataError();
 }

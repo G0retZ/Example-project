@@ -7,7 +7,6 @@ import static org.mockito.Mockito.when;
 
 import android.arch.core.executor.testing.InstantTaskExecutorRule;
 import android.arch.lifecycle.Observer;
-import com.fasten.executor_driver.backend.websocket.ConnectionClosedException;
 import com.fasten.executor_driver.interactor.OrderFulfillmentTimeUseCase;
 import com.fasten.executor_driver.presentation.ViewState;
 import io.reactivex.BackpressureStrategy;
@@ -109,10 +108,10 @@ public class OrderTimeViewModelTest {
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(new OrderTimeViewState(0));
-    inOrder.verify(viewStateObserver).onChanged(new OrderTimeViewStateIdle(123));
-    inOrder.verify(viewStateObserver).onChanged(new OrderTimeViewStateIdle(873));
-    inOrder.verify(viewStateObserver).onChanged(new OrderTimeViewStateIdle(4728));
-    inOrder.verify(viewStateObserver).onChanged(new OrderTimeViewStateIdle(32));
+    inOrder.verify(viewStateObserver).onChanged(new OrderTimeViewState(123));
+    inOrder.verify(viewStateObserver).onChanged(new OrderTimeViewState(873));
+    inOrder.verify(viewStateObserver).onChanged(new OrderTimeViewState(4728));
+    inOrder.verify(viewStateObserver).onChanged(new OrderTimeViewState(32));
     verifyNoMoreInteractions(viewStateObserver);
   }
 
@@ -130,15 +129,15 @@ public class OrderTimeViewModelTest {
     publishSubject.onNext(873L);
     publishSubject.onNext(4728L);
     publishSubject.onNext(32L);
-    publishSubject.onError(new ConnectionClosedException());
+    publishSubject.onError(new Exception());
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(new OrderTimeViewState(0));
-    inOrder.verify(viewStateObserver).onChanged(new OrderTimeViewStateIdle(123));
-    inOrder.verify(viewStateObserver).onChanged(new OrderTimeViewStateIdle(873));
-    inOrder.verify(viewStateObserver).onChanged(new OrderTimeViewStateIdle(4728));
-    inOrder.verify(viewStateObserver).onChanged(new OrderTimeViewStateIdle(32));
-    inOrder.verify(viewStateObserver).onChanged(new OrderTimeViewStateError(0));
+    inOrder.verify(viewStateObserver).onChanged(new OrderTimeViewState(123));
+    inOrder.verify(viewStateObserver).onChanged(new OrderTimeViewState(873));
+    inOrder.verify(viewStateObserver).onChanged(new OrderTimeViewState(4728));
+    inOrder.verify(viewStateObserver).onChanged(new OrderTimeViewState(32));
+    inOrder.verify(viewStateObserver).onChanged(new OrderTimeViewStateServerDataError(0));
     verifyNoMoreInteractions(viewStateObserver);
   }
 }

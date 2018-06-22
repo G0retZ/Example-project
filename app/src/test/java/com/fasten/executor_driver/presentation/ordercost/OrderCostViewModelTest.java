@@ -34,7 +34,6 @@ public class OrderCostViewModelTest {
   private OrderCurrentCostUseCase orderCurrentCostUseCase;
   @Mock
   private Observer<ViewState<OrderCostViewActions>> viewStateObserver;
-  @Mock
   private PublishSubject<Integer> publishSubject;
 
   @Before

@@ -228,14 +228,12 @@ public class OrderFulfillmentFragment extends BaseFragment implements OrderCostV
   }
 
   @Override
-  public void showOrderTimeNetworkErrorMessage(boolean show) {
-    if (show) {
-      new Builder(context)
-          .setTitle(R.string.error)
-          .setMessage(R.string.no_network_connection)
-          .setPositiveButton(getString(android.R.string.ok), null)
-          .create()
-          .show();
-    }
+  public void showOrderTimeServerDataError() {
+    new Builder(context)
+        .setTitle(R.string.error)
+        .setMessage(R.string.server_data_format_error)
+        .setPositiveButton(getString(android.R.string.ok), null)
+        .create()
+        .show();
   }
 }

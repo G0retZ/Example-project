@@ -12,16 +12,16 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
-public class OrderTimeViewStateErrorTest {
+public class OrderTimeViewStateServerDataErrorTest {
 
-  private OrderTimeViewStateError viewState;
+  private OrderTimeViewStateServerDataError viewState;
 
   @Mock
   private OrderTimeViewActions orderTimeViewActions;
 
   @Before
   public void setUp() {
-    viewState = new OrderTimeViewStateError(12345);
+    viewState = new OrderTimeViewStateServerDataError(12345);
   }
 
   @Test
@@ -31,13 +31,13 @@ public class OrderTimeViewStateErrorTest {
 
     // Результат:
     verify(orderTimeViewActions).setOrderTimeText(12345);
-    verify(orderTimeViewActions).showOrderTimeNetworkErrorMessage(true);
+    verify(orderTimeViewActions).showOrderTimeServerDataError();
     verifyNoMoreInteractions(orderTimeViewActions);
   }
 
   @Test
   public void testEquals() {
-    assertEquals(viewState, new OrderTimeViewStateError(12345));
-    assertNotEquals(viewState, new OrderTimeViewStateError(54321));
+    assertEquals(viewState, new OrderTimeViewStateServerDataError(12345));
+    assertNotEquals(viewState, new OrderTimeViewStateServerDataError(54321));
   }
 }
