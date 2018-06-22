@@ -73,7 +73,7 @@ public class OrderViewModelImpl extends ViewModel implements
     if (throwable instanceof NoOrdersAvailableException) {
       viewStateLiveData.postValue(new OrderViewStateUnavailableError(lastViewState));
     } else {
-      viewStateLiveData.postValue(new OrderViewStateNetworkError(lastViewState));
+      viewStateLiveData.postValue(new OrderViewStateServerDataError(lastViewState));
     }
   }
 

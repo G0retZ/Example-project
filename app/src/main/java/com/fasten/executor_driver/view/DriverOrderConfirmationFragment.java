@@ -222,27 +222,23 @@ public class DriverOrderConfirmationFragment extends BaseFragment implements
   }
 
   @Override
-  public void showOrderAvailabilityError(boolean show) {
-    if (show) {
-      new Builder(context)
-          .setTitle(R.string.error)
-          .setMessage(R.string.order_unavailable_for_accept)
-          .setPositiveButton(getString(android.R.string.ok), null)
-          .create()
-          .show();
-    }
+  public void showOrderAvailabilityError() {
+    new Builder(context)
+        .setTitle(R.string.error)
+        .setMessage(R.string.no_order_info)
+        .setPositiveButton(getString(android.R.string.ok), null)
+        .create()
+        .show();
   }
 
   @Override
-  public void showNetworkErrorMessage(boolean show) {
-    if (show) {
-      new Builder(context)
-          .setTitle(R.string.error)
-          .setMessage(R.string.no_network_connection)
-          .setPositiveButton(getString(android.R.string.ok), null)
-          .create()
-          .show();
-    }
+  public void showOrderServerDataError() {
+    new Builder(context)
+        .setTitle(R.string.error)
+        .setMessage(R.string.server_data_format_error)
+        .setPositiveButton(getString(android.R.string.ok), null)
+        .create()
+        .show();
   }
 
   @Override

@@ -7,12 +7,12 @@ import com.fasten.executor_driver.presentation.ViewState;
 /**
  * Состояние ошибки сети вида заказа.
  */
-final class OrderViewStateNetworkError implements ViewState<OrderViewActions> {
+final class OrderViewStateServerDataError implements ViewState<OrderViewActions> {
 
   @Nullable
   private final ViewState<OrderViewActions> parentViewState;
 
-  OrderViewStateNetworkError(@Nullable ViewState<OrderViewActions> parentViewState) {
+  OrderViewStateServerDataError(@Nullable ViewState<OrderViewActions> parentViewState) {
     this.parentViewState = parentViewState;
   }
 
@@ -22,8 +22,7 @@ final class OrderViewStateNetworkError implements ViewState<OrderViewActions> {
       parentViewState.apply(stateActions);
     }
     stateActions.showOrderPending(false);
-    stateActions.showOrderAvailabilityError(false);
-    stateActions.showNetworkErrorMessage(true);
+    stateActions.showOrderServerDataError();
   }
 
   @Override
@@ -35,7 +34,7 @@ final class OrderViewStateNetworkError implements ViewState<OrderViewActions> {
       return false;
     }
 
-    OrderViewStateNetworkError that = (OrderViewStateNetworkError) o;
+    OrderViewStateServerDataError that = (OrderViewStateServerDataError) o;
 
     return parentViewState != null ? parentViewState.equals(that.parentViewState)
         : that.parentViewState == null;

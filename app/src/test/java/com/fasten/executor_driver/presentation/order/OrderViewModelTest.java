@@ -111,7 +111,7 @@ public class OrderViewModelTest {
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(new OrderViewStatePending(null));
     inOrder.verify(viewStateObserver)
-        .onChanged(new OrderViewStateNetworkError(null));
+        .onChanged(new OrderViewStateServerDataError(null));
     verifyNoMoreInteractions(viewStateObserver);
   }
 
@@ -133,7 +133,7 @@ public class OrderViewModelTest {
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(new OrderViewStatePending(null));
     inOrder.verify(viewStateObserver)
-        .onChanged(new OrderViewStateNetworkError(null));
+        .onChanged(new OrderViewStateServerDataError(null));
     verifyNoMoreInteractions(viewStateObserver);
   }
 

@@ -57,8 +57,6 @@ public class OrderViewStateIdleTest {
     verify(orderViewActions).showEstimatedPrice("1000");
     verify(orderViewActions).showOrderOptionsRequirements("1,2,3");
     verify(orderViewActions).showOrderPending(false);
-    verify(orderViewActions).showOrderAvailabilityError(false);
-    verify(orderViewActions).showNetworkErrorMessage(false);
     verifyNoMoreInteractions(orderViewActions);
   }
 

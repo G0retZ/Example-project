@@ -22,8 +22,7 @@ final class OrderViewStateUnavailableError implements ViewState<OrderViewActions
       parentViewState.apply(stateActions);
     }
     stateActions.showOrderPending(false);
-    stateActions.showOrderAvailabilityError(true);
-    stateActions.showNetworkErrorMessage(false);
+    stateActions.showOrderAvailabilityError();
   }
 
   @Override

@@ -39,8 +39,6 @@ public class OrderViewStatePendingTest {
 
     // Результат:
     verify(orderViewActions).showOrderPending(true);
-    verify(orderViewActions).showOrderAvailabilityError(false);
-    verify(orderViewActions).showNetworkErrorMessage(false);
     verifyNoMoreInteractions(orderViewActions);
     verify(parentViewState, only()).apply(orderViewActions);
   }
@@ -55,8 +53,6 @@ public class OrderViewStatePendingTest {
 
     // Результат:
     verify(orderViewActions).showOrderPending(true);
-    verify(orderViewActions).showOrderAvailabilityError(false);
-    verify(orderViewActions).showNetworkErrorMessage(false);
     verifyNoMoreInteractions(orderViewActions);
     verifyZeroInteractions(parentViewState);
   }

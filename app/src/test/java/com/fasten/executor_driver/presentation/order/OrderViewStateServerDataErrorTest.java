@@ -15,9 +15,9 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
-public class OrderViewStateNetworkErrorTest {
+public class OrderViewStateServerDataErrorTest {
 
-  private OrderViewStateNetworkError viewState;
+  private OrderViewStateServerDataError viewState;
 
   @Mock
   private OrderViewActions orderViewActions;
@@ -29,7 +29,7 @@ public class OrderViewStateNetworkErrorTest {
 
   @Before
   public void setUp() {
-    viewState = new OrderViewStateNetworkError(parentViewState);
+    viewState = new OrderViewStateServerDataError(parentViewState);
   }
 
   @Test
@@ -39,8 +39,7 @@ public class OrderViewStateNetworkErrorTest {
 
     // Результат:
     verify(orderViewActions).showOrderPending(false);
-    verify(orderViewActions).showOrderAvailabilityError(false);
-    verify(orderViewActions).showNetworkErrorMessage(true);
+    verify(orderViewActions).showOrderServerDataError();
     verifyNoMoreInteractions(orderViewActions);
     verify(parentViewState, only()).apply(orderViewActions);
   }
@@ -48,24 +47,23 @@ public class OrderViewStateNetworkErrorTest {
   @Test
   public void testNoActions() {
     // Дано:
-    viewState = new OrderViewStateNetworkError(null);
+    viewState = new OrderViewStateServerDataError(null);
 
     // Действие:
     viewState.apply(orderViewActions);
 
     // Результат:
     verify(orderViewActions).showOrderPending(false);
-    verify(orderViewActions).showOrderAvailabilityError(false);
-    verify(orderViewActions).showNetworkErrorMessage(true);
+    verify(orderViewActions).showOrderServerDataError();
     verifyNoMoreInteractions(orderViewActions);
     verifyZeroInteractions(parentViewState);
   }
 
   @Test
   public void testEquals() {
-    viewState = new OrderViewStateNetworkError(parentViewState);
-    assertEquals(viewState, new OrderViewStateNetworkError(parentViewState));
-    assertNotEquals(viewState, new OrderViewStateNetworkError(parentViewState1));
-    assertNotEquals(viewState, new OrderViewStateNetworkError(null));
+    viewState = new OrderViewStateServerDataError(parentViewState);
+    assertEquals(viewState, new OrderViewStateServerDataError(parentViewState));
+    assertNotEquals(viewState, new OrderViewStateServerDataError(parentViewState1));
+    assertNotEquals(viewState, new OrderViewStateServerDataError(null));
   }
 }
