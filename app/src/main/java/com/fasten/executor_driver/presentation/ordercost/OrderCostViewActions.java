@@ -13,9 +13,7 @@ public interface OrderCostViewActions {
   void setOrderCostText(int currentCost);
 
   /**
-   * Показать сообщение об ошибке сети.
-   *
-   * @param show - показать или нет?
+   * Показать ошибку данных сервера.
    */
-  void showOrderCostNetworkErrorMessage(boolean show);
+  void showOrderCostServerDataError();
 }

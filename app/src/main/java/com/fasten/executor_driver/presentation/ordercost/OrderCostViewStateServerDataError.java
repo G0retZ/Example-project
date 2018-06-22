@@ -5,15 +5,15 @@ import android.support.annotation.NonNull;
 /**
  * Состояние вида ошибки текущей стоимости заказа.
  */
-final class OrderCostViewStateError extends OrderCostViewState {
+final class OrderCostViewStateServerDataError extends OrderCostViewState {
 
-  OrderCostViewStateError(int orderCost) {
+  OrderCostViewStateServerDataError(int orderCost) {
     super(orderCost);
   }
 
   @Override
   public void apply(@NonNull OrderCostViewActions stateActions) {
     super.apply(stateActions);
-    stateActions.showOrderCostNetworkErrorMessage(true);
+    stateActions.showOrderCostServerDataError();
   }
 }

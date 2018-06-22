@@ -7,7 +7,6 @@ import static org.mockito.Mockito.when;
 
 import android.arch.core.executor.testing.InstantTaskExecutorRule;
 import android.arch.lifecycle.Observer;
-import com.fasten.executor_driver.backend.websocket.ConnectionClosedException;
 import com.fasten.executor_driver.interactor.OrderCurrentCostUseCase;
 import com.fasten.executor_driver.presentation.ViewState;
 import io.reactivex.BackpressureStrategy;
@@ -32,9 +31,10 @@ public class OrderCostViewModelTest {
   public TestRule rule = new InstantTaskExecutorRule();
   private OrderCostViewModel orderCostViewModel;
   @Mock
+  private OrderCurrentCostUseCase orderCurrentCostUseCase;
+  @Mock
   private Observer<ViewState<OrderCostViewActions>> viewStateObserver;
   @Mock
-  private OrderCurrentCostUseCase orderCurrentCostUseCase;
   private PublishSubject<Integer> publishSubject;
 
   @Before
@@ -109,15 +109,15 @@ public class OrderCostViewModelTest {
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(new OrderCostViewState(0));
-    inOrder.verify(viewStateObserver).onChanged(new OrderCostViewStateIdle(123));
-    inOrder.verify(viewStateObserver).onChanged(new OrderCostViewStateIdle(873));
-    inOrder.verify(viewStateObserver).onChanged(new OrderCostViewStateIdle(4728));
-    inOrder.verify(viewStateObserver).onChanged(new OrderCostViewStateIdle(32));
+    inOrder.verify(viewStateObserver).onChanged(new OrderCostViewState(123));
+    inOrder.verify(viewStateObserver).onChanged(new OrderCostViewState(873));
+    inOrder.verify(viewStateObserver).onChanged(new OrderCostViewState(4728));
+    inOrder.verify(viewStateObserver).onChanged(new OrderCostViewState(32));
     verifyNoMoreInteractions(viewStateObserver);
   }
 
   /**
-   * Должен вернуть состояние вида ошибки.
+   * Должен вернуть состояние вида ошибки данных сервера.
    */
   @Test
   public void setErrorViewStateToLiveDataOnError() {
@@ -130,15 +130,15 @@ public class OrderCostViewModelTest {
     publishSubject.onNext(873);
     publishSubject.onNext(4728);
     publishSubject.onNext(32);
-    publishSubject.onError(new ConnectionClosedException());
+    publishSubject.onError(new Exception());
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(new OrderCostViewState(0));
-    inOrder.verify(viewStateObserver).onChanged(new OrderCostViewStateIdle(123));
-    inOrder.verify(viewStateObserver).onChanged(new OrderCostViewStateIdle(873));
-    inOrder.verify(viewStateObserver).onChanged(new OrderCostViewStateIdle(4728));
-    inOrder.verify(viewStateObserver).onChanged(new OrderCostViewStateIdle(32));
-    inOrder.verify(viewStateObserver).onChanged(new OrderCostViewStateError(0));
+    inOrder.verify(viewStateObserver).onChanged(new OrderCostViewState(123));
+    inOrder.verify(viewStateObserver).onChanged(new OrderCostViewState(873));
+    inOrder.verify(viewStateObserver).onChanged(new OrderCostViewState(4728));
+    inOrder.verify(viewStateObserver).onChanged(new OrderCostViewState(32));
+    inOrder.verify(viewStateObserver).onChanged(new OrderCostViewStateServerDataError(0));
     verifyNoMoreInteractions(viewStateObserver);
   }
 }

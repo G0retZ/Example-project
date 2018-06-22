@@ -49,10 +49,10 @@ public class OrderCostViewModelImpl extends ViewModel implements OrderCostViewMo
         .subscribeOn(Schedulers.single())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(
-            integer -> viewStateLiveData.postValue(new OrderCostViewStateIdle(integer)),
+            integer -> viewStateLiveData.postValue(new OrderCostViewState(integer)),
             throwable -> {
-              viewStateLiveData.postValue(new OrderCostViewStateError(0));
               throwable.printStackTrace();
+              viewStateLiveData.postValue(new OrderCostViewStateServerDataError(0));
             }
         );
   }
