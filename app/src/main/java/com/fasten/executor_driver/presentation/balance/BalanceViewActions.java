@@ -27,9 +27,7 @@ public interface BalanceViewActions {
   void showBalancePending(boolean pending);
 
   /**
-   * Показать сообщение об ошибке.
-   *
-   * @param show - показать или нет?
+   * Показать ошибку данных сервера.
    */
-  void showBalanceErrorMessage(boolean show);
+  void showBalanceServerDataErrorMessage();
 }

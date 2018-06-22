@@ -7,12 +7,12 @@ import com.fasten.executor_driver.presentation.ViewState;
 /**
  * Состояние ошибки при получении списка причин отказа или отправке причины отказа.
  */
-final class BalanceViewStateError implements ViewState<BalanceViewActions> {
+final class BalanceViewStateServerDataError implements ViewState<BalanceViewActions> {
 
   @Nullable
   private final ViewState<BalanceViewActions> parentViewState;
 
-  BalanceViewStateError(@Nullable ViewState<BalanceViewActions> parentViewState) {
+  BalanceViewStateServerDataError(@Nullable ViewState<BalanceViewActions> parentViewState) {
     this.parentViewState = parentViewState;
   }
 
@@ -21,7 +21,7 @@ final class BalanceViewStateError implements ViewState<BalanceViewActions> {
     if (parentViewState != null) {
       parentViewState.apply(stateActions);
     }
-    stateActions.showBalanceErrorMessage(true);
+    stateActions.showBalanceServerDataErrorMessage();
   }
 
   @Override
@@ -33,7 +33,7 @@ final class BalanceViewStateError implements ViewState<BalanceViewActions> {
       return false;
     }
 
-    BalanceViewStateError that = (BalanceViewStateError) o;
+    BalanceViewStateServerDataError that = (BalanceViewStateServerDataError) o;
 
     return parentViewState != null ? parentViewState.equals(that.parentViewState)
         : that.parentViewState == null;

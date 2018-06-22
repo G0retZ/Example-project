@@ -9,9 +9,7 @@ import static org.mockito.Mockito.when;
 
 import android.arch.core.executor.testing.InstantTaskExecutorRule;
 import android.arch.lifecycle.Observer;
-import com.fasten.executor_driver.backend.web.NoNetworkException;
 import com.fasten.executor_driver.entity.ExecutorBalance;
-import com.fasten.executor_driver.gateway.DataMappingException;
 import com.fasten.executor_driver.interactor.ExecutorBalanceUseCase;
 import com.fasten.executor_driver.presentation.ViewState;
 import io.reactivex.BackpressureStrategy;
@@ -106,25 +104,7 @@ public class BalanceViewModelTest {
   }
 
   /**
-   * Должен вернуть состояние вида "Ошибка" если нет сети.
-   */
-  @Test
-  public void setNoNetworkErrorViewStateToLiveData() {
-    // Дано:
-    InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    balanceViewModel.getViewStateLiveData().observeForever(viewStateObserver);
-
-    // Действие:
-    publishSubject.onError(new NoNetworkException());
-
-    // Результат:
-    inOrder.verify(viewStateObserver).onChanged(new BalanceViewStatePending(null));
-    inOrder.verify(viewStateObserver).onChanged(new BalanceViewStateError(null));
-    verifyNoMoreInteractions(viewStateObserver);
-  }
-
-  /**
-   * Должен вернуть состояние вида "Ошибка" если данные не смапились.
+   * Должен вернуть состояние вида "Ошибка данных" если была ошибка.
    */
   @Test
   public void setNoNetworkErrorViewStateToLiveDataForMappingError() {
@@ -133,11 +113,11 @@ public class BalanceViewModelTest {
     balanceViewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    publishSubject.onError(new DataMappingException());
+    publishSubject.onError(new Exception());
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(new BalanceViewStatePending(null));
-    inOrder.verify(viewStateObserver).onChanged(new BalanceViewStateError(null));
+    inOrder.verify(viewStateObserver).onChanged(new BalanceViewStateServerDataError(null));
     verifyNoMoreInteractions(viewStateObserver);
   }
 

@@ -21,7 +21,6 @@ final class BalanceViewState implements ViewState<BalanceViewActions> {
     balanceViewActions.showMainAccountAmount(executorBalance.getMainAccount());
     balanceViewActions.showBonusAccountAmount(executorBalance.getBonusAccount());
     balanceViewActions.showBalancePending(false);
-    balanceViewActions.showBalanceErrorMessage(false);
   }
 
   @Override

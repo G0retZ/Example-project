@@ -43,7 +43,6 @@ public class BalanceViewStateTest {
     verify(orderRouteViewActions).showMainAccountAmount(1);
     verify(orderRouteViewActions).showBonusAccountAmount(2);
     verify(orderRouteViewActions).showBalancePending(false);
-    verify(orderRouteViewActions).showBalanceErrorMessage(false);
     verifyNoMoreInteractions(orderRouteViewActions);
   }
 

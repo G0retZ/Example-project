@@ -13,9 +13,9 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
-public class BalanceViewStateErrorTest {
+public class BalanceViewStateServerDataErrorTest {
 
-  private BalanceViewStateError viewState;
+  private BalanceViewStateServerDataError viewState;
 
   @Mock
   private BalanceViewActions nextRoutePointViewActions;
@@ -27,13 +27,13 @@ public class BalanceViewStateErrorTest {
   @Test
   public void testActions() {
     // Дано:
-    viewState = new BalanceViewStateError(parentViewState);
+    viewState = new BalanceViewStateServerDataError(parentViewState);
 
     // Действие:
     viewState.apply(nextRoutePointViewActions);
 
     // Результат:
-    verify(nextRoutePointViewActions).showBalanceErrorMessage(true);
+    verify(nextRoutePointViewActions).showBalanceServerDataErrorMessage();
     verify(parentViewState, only()).apply(nextRoutePointViewActions);
     verifyNoMoreInteractions(nextRoutePointViewActions);
   }
@@ -41,21 +41,21 @@ public class BalanceViewStateErrorTest {
   @Test
   public void testActionsWithNull() {
     // Дано:
-    viewState = new BalanceViewStateError(null);
+    viewState = new BalanceViewStateServerDataError(null);
 
     // Действие:
     viewState.apply(nextRoutePointViewActions);
 
     // Результат:
-    verify(nextRoutePointViewActions).showBalanceErrorMessage(true);
+    verify(nextRoutePointViewActions).showBalanceServerDataErrorMessage();
     verifyNoMoreInteractions(nextRoutePointViewActions);
   }
 
   @Test
   public void testEquals() {
-    viewState = new BalanceViewStateError(parentViewState);
-    assertEquals(viewState, new BalanceViewStateError(parentViewState));
-    assertNotEquals(viewState, new BalanceViewStateError(parentViewState1));
-    assertNotEquals(viewState, new BalanceViewStateError(null));
+    viewState = new BalanceViewStateServerDataError(parentViewState);
+    assertEquals(viewState, new BalanceViewStateServerDataError(parentViewState));
+    assertNotEquals(viewState, new BalanceViewStateServerDataError(parentViewState1));
+    assertNotEquals(viewState, new BalanceViewStateServerDataError(null));
   }
 }
