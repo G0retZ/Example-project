@@ -98,7 +98,7 @@ public class OnlineFragment extends BaseFragment implements OnlineSwitchViewActi
   }
 
   @Override
-  public void showServerDataError() {
+  public void showOnlineSwitchServerDataError() {
     new Builder(context)
         .setTitle(R.string.error)
         .setMessage(R.string.server_data_format_error)

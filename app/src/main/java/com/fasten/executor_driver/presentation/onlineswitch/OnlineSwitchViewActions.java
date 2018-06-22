@@ -22,5 +22,5 @@ public interface OnlineSwitchViewActions {
   /**
    * Показать ошибку данных сервера.
    */
-  void showServerDataError();
+  void showOnlineSwitchServerDataError();
 }

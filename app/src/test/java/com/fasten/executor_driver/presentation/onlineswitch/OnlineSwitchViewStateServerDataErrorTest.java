@@ -32,7 +32,7 @@ public class OnlineSwitchViewStateServerDataErrorTest {
     viewState.apply(onlineSwitchViewActions);
 
     // Результат:
-    verify(onlineSwitchViewActions, only()).showServerDataError();
+    verify(onlineSwitchViewActions, only()).showOnlineSwitchServerDataError();
     verify(parentViewState, only()).apply(onlineSwitchViewActions);
   }
 
@@ -45,7 +45,7 @@ public class OnlineSwitchViewStateServerDataErrorTest {
     viewState.apply(onlineSwitchViewActions);
 
     // Результат:
-    verify(onlineSwitchViewActions, only()).showServerDataError();
+    verify(onlineSwitchViewActions, only()).showOnlineSwitchServerDataError();
   }
 
   @Test

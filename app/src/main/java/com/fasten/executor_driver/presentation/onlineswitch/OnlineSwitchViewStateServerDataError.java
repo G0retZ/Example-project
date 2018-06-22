@@ -24,7 +24,7 @@ class OnlineSwitchViewStateServerDataError implements ViewState<OnlineSwitchView
     if (parentViewState != null) {
       parentViewState.apply(stateActions);
     }
-    stateActions.showServerDataError();
+    stateActions.showOnlineSwitchServerDataError();
   }
 
   @Override
