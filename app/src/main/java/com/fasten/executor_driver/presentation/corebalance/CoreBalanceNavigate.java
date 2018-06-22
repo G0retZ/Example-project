@@ -1,4 +1,4 @@
-package com.fasten.executor_driver.presentation.coreBalance;
+package com.fasten.executor_driver.presentation.corebalance;
 
 import android.support.annotation.StringDef;
 import java.lang.annotation.Retention;

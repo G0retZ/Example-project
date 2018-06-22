@@ -9,7 +9,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.fasten.executor_driver.R;
 import com.fasten.executor_driver.presentation.cancelorderreasons.CancelOrderReasonsNavigate;
-import com.fasten.executor_driver.presentation.coreBalance.CoreBalanceNavigate;
+import com.fasten.executor_driver.presentation.corebalance.CoreBalanceNavigate;
 import com.fasten.executor_driver.presentation.executorstate.ExecutorStateNavigate;
 import com.fasten.executor_driver.presentation.executorstate.ExecutorStateViewActions;
 import com.fasten.executor_driver.presentation.geolocation.GeoLocationNavigate;

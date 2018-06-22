@@ -1,4 +1,4 @@
-package com.fasten.executor_driver.presentation.coreBalance;
+package com.fasten.executor_driver.presentation.corebalance;
 
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.Mockito.only;

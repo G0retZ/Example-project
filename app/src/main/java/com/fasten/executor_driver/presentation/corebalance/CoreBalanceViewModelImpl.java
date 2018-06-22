@@ -1,4 +1,4 @@
-package com.fasten.executor_driver.presentation.coreBalance;
+package com.fasten.executor_driver.presentation.corebalance;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;

@@ -102,8 +102,8 @@ import com.fasten.executor_driver.presentation.cancelorder.CancelOrderViewModelI
 import com.fasten.executor_driver.presentation.cancelorderreasons.CancelOrderReasonsViewModelImpl;
 import com.fasten.executor_driver.presentation.choosevehicle.ChooseVehicleViewModelImpl;
 import com.fasten.executor_driver.presentation.code.CodeViewModelImpl;
-import com.fasten.executor_driver.presentation.codeHeader.CodeHeaderViewModelImpl;
-import com.fasten.executor_driver.presentation.coreBalance.CoreBalanceViewModelImpl;
+import com.fasten.executor_driver.presentation.codeheader.CodeHeaderViewModelImpl;
+import com.fasten.executor_driver.presentation.corebalance.CoreBalanceViewModelImpl;
 import com.fasten.executor_driver.presentation.executorstate.ExecutorStateViewModelImpl;
 import com.fasten.executor_driver.presentation.geolocation.GeoLocationViewModelImpl;
 import com.fasten.executor_driver.presentation.map.MapViewModelImpl;
