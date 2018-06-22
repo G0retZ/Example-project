@@ -32,8 +32,8 @@ public class MovingToClientViewModelImpl extends ViewModel implements MovingToCl
   public MovingToClientViewModelImpl(@NonNull MovingToClientUseCase movingToClientUseCase) {
     this.movingToClientUseCase = movingToClientUseCase;
     viewStateLiveData = new MutableLiveData<>();
-    viewStateLiveData.postValue(new MovingToClientViewStateIdle());
     navigateLiveData = new SingleLiveEvent<>();
+    viewStateLiveData.postValue(new MovingToClientViewStateIdle());
   }
 
   @NonNull

@@ -38,8 +38,8 @@ public class VehicleOptionsViewModelImpl extends ViewModel implements
   public VehicleOptionsViewModelImpl(@NonNull VehicleOptionsUseCase vehicleOptionsUseCase) {
     this.vehicleOptionsUseCase = vehicleOptionsUseCase;
     viewStateLiveData = new MutableLiveData<>();
-    viewStateLiveData.postValue(new VehicleOptionsViewStateInitial());
     navigateLiveData = new SingleLiveEvent<>();
+    viewStateLiveData.postValue(new VehicleOptionsViewStateInitial());
     loadOptions();
   }
 

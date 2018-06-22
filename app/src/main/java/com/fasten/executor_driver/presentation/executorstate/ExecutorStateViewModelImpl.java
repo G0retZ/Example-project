@@ -27,8 +27,8 @@ public class ExecutorStateViewModelImpl extends ViewModel implements ExecutorSta
   @Inject
   public ExecutorStateViewModelImpl(@NonNull ExecutorStateUseCase executorStateUseCase) {
     this.executorStateUseCase = executorStateUseCase;
-    navigateLiveData = new MutableLiveData<>();
     messageLiveData = new SingleLiveEvent<>();
+    navigateLiveData = new MutableLiveData<>();
   }
 
   @NonNull

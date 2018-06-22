@@ -29,8 +29,8 @@ public class PhoneViewModelImpl extends ViewModel implements PhoneViewModel {
   public PhoneViewModelImpl(@NonNull LoginUseCase loginUseCase) {
     this.loginUseCase = loginUseCase;
     viewStateLiveData = new MutableLiveData<>();
-    viewStateLiveData.postValue(new PhoneViewStateInitial());
     navigateLiveData = new SingleLiveEvent<>();
+    viewStateLiveData.postValue(new PhoneViewStateInitial());
   }
 
   @NonNull

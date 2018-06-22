@@ -31,8 +31,8 @@ public class CodeViewModelImpl extends ViewModel implements CodeViewModel {
   public CodeViewModelImpl(@NonNull PasswordUseCase passwordUseCase) {
     this.passwordUseCase = passwordUseCase;
     viewStateLiveData = new MutableLiveData<>();
-    viewStateLiveData.postValue(new CodeViewStateInitial());
     navigateLiveData = new SingleLiveEvent<>();
+    viewStateLiveData.postValue(new CodeViewStateInitial());
   }
 
   @NonNull

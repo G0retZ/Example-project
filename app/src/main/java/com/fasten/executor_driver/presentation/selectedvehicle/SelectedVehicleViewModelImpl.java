@@ -29,8 +29,8 @@ public class SelectedVehicleViewModelImpl extends ViewModel implements SelectedV
   public SelectedVehicleViewModelImpl(@NonNull SelectedVehicleUseCase vehiclesUseCase) {
     this.vehiclesUseCase = vehiclesUseCase;
     viewStateLiveData = new MutableLiveData<>();
-    viewStateLiveData.postValue(new SelectedVehicleViewState(""));
     navigateLiveData = new SingleLiveEvent<>();
+    viewStateLiveData.postValue(new SelectedVehicleViewState(""));
   }
 
   @Override

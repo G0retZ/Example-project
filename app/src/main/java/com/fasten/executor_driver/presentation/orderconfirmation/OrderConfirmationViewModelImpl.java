@@ -30,8 +30,8 @@ public class OrderConfirmationViewModelImpl extends ViewModel implements
       @NonNull OrderConfirmationUseCase orderConfirmationUseCase) {
     this.orderConfirmationUseCase = orderConfirmationUseCase;
     viewStateLiveData = new MutableLiveData<>();
-    viewStateLiveData.postValue(new OrderConfirmationViewStateIdle());
     navigateLiveData = new SingleLiveEvent<>();
+    viewStateLiveData.postValue(new OrderConfirmationViewStateIdle());
   }
 
   @NonNull

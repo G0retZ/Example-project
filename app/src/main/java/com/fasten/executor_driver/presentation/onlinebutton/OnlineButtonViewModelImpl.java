@@ -38,8 +38,8 @@ public class OnlineButtonViewModelImpl extends ViewModel implements OnlineButton
   public OnlineButtonViewModelImpl(@NonNull VehiclesAndOptionsUseCase vehiclesAndOptionsUseCase) {
     this.vehiclesAndOptionsUseCase = vehiclesAndOptionsUseCase;
     viewStateLiveData = new MutableLiveData<>();
-    viewStateLiveData.postValue(new OnlineButtonViewStateReady());
     navigateLiveData = new SingleLiveEvent<>();
+    viewStateLiveData.postValue(new OnlineButtonViewStateReady());
   }
 
   @NonNull

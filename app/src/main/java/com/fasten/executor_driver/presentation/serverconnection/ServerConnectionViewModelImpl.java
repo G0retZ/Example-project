@@ -28,8 +28,8 @@ public class ServerConnectionViewModelImpl extends ViewModel implements ServerCo
   @Inject
   public ServerConnectionViewModelImpl(@NonNull ServerConnectionUseCase serverConnectionUseCase) {
     this.serverConnectionUseCase = serverConnectionUseCase;
-    navigateLiveData = new MutableLiveData<>();
     viewStateLiveData = new SingleLiveEvent<>();
+    navigateLiveData = new MutableLiveData<>();
   }
 
   @NonNull
