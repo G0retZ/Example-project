@@ -21,7 +21,7 @@ import ua.naiksoftware.stomp.client.StompClient;
 @RunWith(MockitoJUnitRunner.class)
 public class WaitingForClientGatewayTest {
 
-  private WaitingForClientGateway orderGateway;
+  private WaitingForClientGateway gateway;
   @Mock
   private StompClient stompClient;
 
@@ -32,7 +32,7 @@ public class WaitingForClientGatewayTest {
     RxJavaPlugins.setIoSchedulerHandler(scheduler -> Schedulers.trampoline());
     ExecutorState.MOVING_TO_CLIENT.setData(null);
     when(stompClient.send(anyString(), anyString())).thenReturn(Completable.never());
-    orderGateway = new WaitingForClientGatewayImpl(stompClient);
+    gateway = new WaitingForClientGatewayImpl(stompClient);
   }
 
   /* Проверяем работу с клиентом STOMP */
@@ -43,7 +43,7 @@ public class WaitingForClientGatewayTest {
   @Test
   public void askStompClientToSendStartOrder() {
     // Действие:
-    orderGateway.startTheOrder().test();
+    gateway.startTheOrder().test();
 
     // Результат:
     verify(stompClient, only()).send("/mobile/trip", "\"START_ORDER\"");
@@ -62,7 +62,7 @@ public class WaitingForClientGatewayTest {
     when(stompClient.send(anyString(), anyString())).thenReturn(Completable.complete());
 
     // Действие:
-    TestObserver<Void> testObserver = orderGateway.startTheOrder().test();
+    TestObserver<Void> testObserver = gateway.startTheOrder().test();
 
     // Результат:
     testObserver.assertNoErrors();
@@ -79,7 +79,7 @@ public class WaitingForClientGatewayTest {
         .thenReturn(Completable.error(new IllegalArgumentException()));
 
     // Действие:
-    TestObserver<Void> testObserver = orderGateway.startTheOrder().test();
+    TestObserver<Void> testObserver = gateway.startTheOrder().test();
 
     // Результат:
     testObserver.assertNotComplete();

@@ -17,14 +17,14 @@ import org.mockito.junit.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class SelectedVehicleUseCaseTest {
 
-  private SelectedVehicleUseCase selectedVehicleUseCase;
+  private SelectedVehicleUseCase useCase;
 
   @Mock
   private DataReceiver<Vehicle> vehicleChoiceReceiver;
 
   @Before
   public void setUp() {
-    selectedVehicleUseCase = new SelectedVehicleUseCaseImpl(vehicleChoiceReceiver);
+    useCase = new SelectedVehicleUseCaseImpl(vehicleChoiceReceiver);
     when(vehicleChoiceReceiver.get()).thenReturn(Observable.never());
   }
 
@@ -36,7 +36,7 @@ public class SelectedVehicleUseCaseTest {
   @Test
   public void askVehicleDataSharerForVehicles() {
     // Действие:
-    selectedVehicleUseCase.getSelectedVehicle().test();
+    useCase.getSelectedVehicle().test();
 
     // Результат:
     verify(vehicleChoiceReceiver, only()).get();
@@ -58,7 +58,7 @@ public class SelectedVehicleUseCaseTest {
     ));
 
     // Действие и Результат:
-    selectedVehicleUseCase.getSelectedVehicle().test().assertValues(
+    useCase.getSelectedVehicle().test().assertValues(
         new Vehicle(12, "manufacturer", "model", "color", "license", false),
         new Vehicle(13, "manufacture", "models", "colo", "licenses", true),
         new Vehicle(14, "manufacturers", "modeler", "color", "licensees", false),
@@ -75,6 +75,6 @@ public class SelectedVehicleUseCaseTest {
     when(vehicleChoiceReceiver.get()).thenReturn(Observable.error(new NoFreeVehiclesException()));
 
     // Действие и Результат:
-    selectedVehicleUseCase.getSelectedVehicle().test().assertError(NoFreeVehiclesException.class);
+    useCase.getSelectedVehicle().test().assertError(NoFreeVehiclesException.class);
   }
 }

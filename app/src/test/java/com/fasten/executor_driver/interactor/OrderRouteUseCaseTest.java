@@ -24,7 +24,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class OrderRouteUseCaseTest {
 
-  private OrderRouteUseCase orderRouteUseCase;
+  private OrderRouteUseCase useCase;
 
   @Mock
   private OrderGateway orderGateway;
@@ -51,7 +51,7 @@ public class OrderRouteUseCaseTest {
     when(orderRouteGateway.closeRoutePoint(any())).thenReturn(Completable.never());
     when(orderRouteGateway.completeTheOrder()).thenReturn(Completable.never());
     when(orderRouteGateway.nextRoutePoint(any())).thenReturn(Completable.never());
-    orderRouteUseCase = new OrderRouteUseCaseImpl(orderGateway, orderRouteGateway);
+    useCase = new OrderRouteUseCaseImpl(orderGateway, orderRouteGateway);
   }
 
   /* Проверяем работу с гейтвеем заказа */
@@ -62,7 +62,7 @@ public class OrderRouteUseCaseTest {
   @Test
   public void askGatewayForOrders() {
     // Действие:
-    orderRouteUseCase.getOrderRoutePoints().test();
+    useCase.getOrderRoutePoints().test();
 
     // Результат:
     verify(orderGateway, only()).getOrders();
@@ -76,7 +76,7 @@ public class OrderRouteUseCaseTest {
   @Test
   public void askGatewayToCheckRoutePoint() {
     // Действие:
-    orderRouteUseCase.closeRoutePoint(routePoint).test();
+    useCase.closeRoutePoint(routePoint).test();
 
     // Результат:
     verify(orderRouteGateway, only()).closeRoutePoint(routePoint);
@@ -88,7 +88,7 @@ public class OrderRouteUseCaseTest {
   @Test
   public void askGatewayToCompleteTheOrder() {
     // Действие:
-    orderRouteUseCase.completeTheOrder().test();
+    useCase.completeTheOrder().test();
 
     // Результат:
     verify(orderRouteGateway, only()).completeTheOrder();
@@ -100,7 +100,7 @@ public class OrderRouteUseCaseTest {
   @Test
   public void askGatewayToUseNextRoutePoint() {
     // Действие:
-    orderRouteUseCase.nextRoutePoint(routePoint).test();
+    useCase.nextRoutePoint(routePoint).test();
 
     // Результат:
     verify(orderRouteGateway, only()).nextRoutePoint(routePoint);
@@ -118,7 +118,7 @@ public class OrderRouteUseCaseTest {
         .thenReturn(Flowable.error(new DataMappingException()));
 
     // Действие:
-    TestSubscriber<List<RoutePoint>> test = orderRouteUseCase.getOrderRoutePoints().test();
+    TestSubscriber<List<RoutePoint>> test = useCase.getOrderRoutePoints().test();
 
     // Результат:
     test.assertError(DataMappingException.class);
@@ -138,7 +138,7 @@ public class OrderRouteUseCaseTest {
     when(order2.getRoutePath()).thenReturn(Arrays.asList(routePoint4, routePoint, routePoint3));
 
     // Действие:
-    TestSubscriber<List<RoutePoint>> test = orderRouteUseCase.getOrderRoutePoints().test();
+    TestSubscriber<List<RoutePoint>> test = useCase.getOrderRoutePoints().test();
 
     // Результат:
     test.assertValueCount(2);
@@ -160,7 +160,7 @@ public class OrderRouteUseCaseTest {
         .thenReturn(Completable.error(new NoNetworkException()));
 
     // Действие:
-    TestObserver<Void> test = orderRouteUseCase.closeRoutePoint(routePoint).test();
+    TestObserver<Void> test = useCase.closeRoutePoint(routePoint).test();
 
     // Результат:
     test.assertError(NoNetworkException.class);
@@ -178,7 +178,7 @@ public class OrderRouteUseCaseTest {
         .thenReturn(Completable.error(new NoNetworkException()));
 
     // Действие:
-    TestObserver<Void> test = orderRouteUseCase.completeTheOrder().test();
+    TestObserver<Void> test = useCase.completeTheOrder().test();
 
     // Результат:
     test.assertError(NoNetworkException.class);
@@ -196,7 +196,7 @@ public class OrderRouteUseCaseTest {
         .thenReturn(Completable.error(new NoNetworkException()));
 
     // Действие:
-    TestObserver<Void> test = orderRouteUseCase.nextRoutePoint(routePoint).test();
+    TestObserver<Void> test = useCase.nextRoutePoint(routePoint).test();
 
     // Результат:
     test.assertError(NoNetworkException.class);
@@ -213,7 +213,7 @@ public class OrderRouteUseCaseTest {
     when(orderRouteGateway.closeRoutePoint(any())).thenReturn(Completable.complete());
 
     // Действие:
-    TestObserver<Void> test = orderRouteUseCase.closeRoutePoint(routePoint).test();
+    TestObserver<Void> test = useCase.closeRoutePoint(routePoint).test();
 
     // Результат:
     test.assertComplete();
@@ -229,7 +229,7 @@ public class OrderRouteUseCaseTest {
     when(orderRouteGateway.completeTheOrder()).thenReturn(Completable.complete());
 
     // Действие:
-    TestObserver<Void> test = orderRouteUseCase.completeTheOrder().test();
+    TestObserver<Void> test = useCase.completeTheOrder().test();
 
     // Результат:
     test.assertComplete();
@@ -245,7 +245,7 @@ public class OrderRouteUseCaseTest {
     when(orderRouteGateway.nextRoutePoint(any())).thenReturn(Completable.complete());
 
     // Действие:
-    TestObserver<Void> test = orderRouteUseCase.nextRoutePoint(routePoint).test();
+    TestObserver<Void> test = useCase.nextRoutePoint(routePoint).test();
 
     // Результат:
     test.assertComplete();

@@ -34,7 +34,7 @@ import ua.naiksoftware.stomp.client.StompMessage;
 @RunWith(MockitoJUnitRunner.class)
 public class ExecutorBalanceGatewayTest {
 
-  private ExecutorBalanceGateway executorBalanceGateway;
+  private ExecutorBalanceGateway gateway;
 
   @Mock
   private StompClient stompClient;
@@ -47,7 +47,7 @@ public class ExecutorBalanceGatewayTest {
   public void setUp() {
     RxJavaPlugins.setIoSchedulerHandler(scheduler -> Schedulers.trampoline());
     RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
-    executorBalanceGateway = new ExecutorBalanceGatewayImpl(stompClient, mapper);
+    gateway = new ExecutorBalanceGatewayImpl(stompClient, mapper);
     when(stompClient.topic(anyString())).thenReturn(Observable.never());
   }
 
@@ -63,7 +63,7 @@ public class ExecutorBalanceGatewayTest {
     when(stompClient.isConnected()).thenReturn(true);
 
     // Действие:
-    executorBalanceGateway.loadExecutorBalance("1234567890").test();
+    gateway.loadExecutorBalance("1234567890").test();
 
     // Результат:
     inOrder.verify(stompClient).isConnected();
@@ -80,7 +80,7 @@ public class ExecutorBalanceGatewayTest {
     InOrder inOrder = Mockito.inOrder(stompClient);
 
     // Действие:
-    executorBalanceGateway.loadExecutorBalance("1234567890").test();
+    gateway.loadExecutorBalance("1234567890").test();
 
     // Результат:
     inOrder.verify(stompClient).isConnected();
@@ -98,7 +98,7 @@ public class ExecutorBalanceGatewayTest {
     when(stompClient.isConnecting()).thenReturn(true);
 
     // Действие:
-    executorBalanceGateway.loadExecutorBalance("1234567890").test();
+    gateway.loadExecutorBalance("1234567890").test();
 
     // Результат:
     inOrder.verify(stompClient).isConnected();
@@ -126,7 +126,7 @@ public class ExecutorBalanceGatewayTest {
     ));
 
     // Действие:
-    executorBalanceGateway.loadExecutorBalance("1234567890").test();
+    gateway.loadExecutorBalance("1234567890").test();
 
     // Результат:
     verifyZeroInteractions(mapper);
@@ -149,7 +149,7 @@ public class ExecutorBalanceGatewayTest {
     ));
 
     // Действие:
-    executorBalanceGateway.loadExecutorBalance("1234567890").test();
+    gateway.loadExecutorBalance("1234567890").test();
 
     // Результат:
     verifyZeroInteractions(mapper);
@@ -175,7 +175,7 @@ public class ExecutorBalanceGatewayTest {
     ));
 
     // Действие:
-    executorBalanceGateway.loadExecutorBalance("1234567890").test();
+    gateway.loadExecutorBalance("1234567890").test();
 
     // Результат:
     verify(mapper, only()).map("\n");
@@ -202,7 +202,7 @@ public class ExecutorBalanceGatewayTest {
     ));
 
     // Действие:
-    executorBalanceGateway.loadExecutorBalance("1234567890").test();
+    gateway.loadExecutorBalance("1234567890").test();
 
     // Результат:
     verify(mapper, only()).map("\n");
@@ -230,7 +230,7 @@ public class ExecutorBalanceGatewayTest {
 
     // Действие:
     TestSubscriber<ExecutorBalance> testSubscriber =
-        executorBalanceGateway.loadExecutorBalance("1234567890").test();
+        gateway.loadExecutorBalance("1234567890").test();
 
     // Результат:
     testSubscriber.assertNoValues();
@@ -256,7 +256,7 @@ public class ExecutorBalanceGatewayTest {
 
     // Действие:
     TestSubscriber<ExecutorBalance> testSubscriber =
-        executorBalanceGateway.loadExecutorBalance("1234567890").test();
+        gateway.loadExecutorBalance("1234567890").test();
 
     // Результат:
     testSubscriber.assertError(DataMappingException.class);
@@ -282,7 +282,7 @@ public class ExecutorBalanceGatewayTest {
 
     // Действие:
     TestSubscriber<ExecutorBalance> testSubscriber =
-        executorBalanceGateway.loadExecutorBalance("1234567890").test();
+        gateway.loadExecutorBalance("1234567890").test();
 
     // Результат:
     testSubscriber.assertValue(executorBalance);
@@ -299,7 +299,7 @@ public class ExecutorBalanceGatewayTest {
 
     // Действие:
     TestSubscriber<ExecutorBalance> testSubscriber =
-        executorBalanceGateway.loadExecutorBalance("1234567890").test();
+        gateway.loadExecutorBalance("1234567890").test();
 
     // Результат:
     testSubscriber.assertNoErrors();
@@ -314,7 +314,7 @@ public class ExecutorBalanceGatewayTest {
   public void answerConnectionErrorIfNotConnectingAfterConnected() {
     // Действие:
     TestSubscriber<ExecutorBalance> testSubscriber =
-        executorBalanceGateway.loadExecutorBalance("1234567890").test();
+        gateway.loadExecutorBalance("1234567890").test();
 
     // Результат:
     testSubscriber.assertError(ConnectionClosedException.class);
@@ -338,7 +338,7 @@ public class ExecutorBalanceGatewayTest {
 
     // Действие:
     TestSubscriber<ExecutorBalance> testSubscriber =
-        executorBalanceGateway.loadExecutorBalance("1234567890").test();
+        gateway.loadExecutorBalance("1234567890").test();
 
     // Результат:
     testSubscriber.assertNoValues();
@@ -365,7 +365,7 @@ public class ExecutorBalanceGatewayTest {
 
     // Действие:
     TestSubscriber<ExecutorBalance> testSubscriber =
-        executorBalanceGateway.loadExecutorBalance("1234567890").test();
+        gateway.loadExecutorBalance("1234567890").test();
 
     // Результат:
     testSubscriber.assertError(DataMappingException.class);
@@ -394,7 +394,7 @@ public class ExecutorBalanceGatewayTest {
 
     // Действие:
     TestSubscriber<ExecutorBalance> testSubscriber =
-        executorBalanceGateway.loadExecutorBalance("1234567890").test();
+        gateway.loadExecutorBalance("1234567890").test();
 
     // Результат:
     testSubscriber.assertValue(executorBalance);
@@ -413,7 +413,7 @@ public class ExecutorBalanceGatewayTest {
 
     // Действие:
     TestSubscriber<ExecutorBalance> testSubscriber =
-        executorBalanceGateway.loadExecutorBalance("1234567890").test();
+        gateway.loadExecutorBalance("1234567890").test();
 
     // Результат:
     testSubscriber.assertNoErrors();

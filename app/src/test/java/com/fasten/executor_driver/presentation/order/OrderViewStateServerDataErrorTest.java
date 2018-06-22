@@ -20,7 +20,7 @@ public class OrderViewStateServerDataErrorTest {
   private OrderViewStateServerDataError viewState;
 
   @Mock
-  private OrderViewActions orderViewActions;
+  private OrderViewActions viewActions;
 
   @Mock
   private ViewState<OrderViewActions> parentViewState;
@@ -35,13 +35,13 @@ public class OrderViewStateServerDataErrorTest {
   @Test
   public void testActions() {
     // Действие:
-    viewState.apply(orderViewActions);
+    viewState.apply(viewActions);
 
     // Результат:
-    verify(orderViewActions).showOrderPending(false);
-    verify(orderViewActions).showOrderServerDataError();
-    verifyNoMoreInteractions(orderViewActions);
-    verify(parentViewState, only()).apply(orderViewActions);
+    verify(viewActions).showOrderPending(false);
+    verify(viewActions).showOrderServerDataError();
+    verifyNoMoreInteractions(viewActions);
+    verify(parentViewState, only()).apply(viewActions);
   }
 
   @Test
@@ -50,12 +50,12 @@ public class OrderViewStateServerDataErrorTest {
     viewState = new OrderViewStateServerDataError(null);
 
     // Действие:
-    viewState.apply(orderViewActions);
+    viewState.apply(viewActions);
 
     // Результат:
-    verify(orderViewActions).showOrderPending(false);
-    verify(orderViewActions).showOrderServerDataError();
-    verifyNoMoreInteractions(orderViewActions);
+    verify(viewActions).showOrderPending(false);
+    verify(viewActions).showOrderServerDataError();
+    verifyNoMoreInteractions(viewActions);
     verifyZeroInteractions(parentViewState);
   }
 

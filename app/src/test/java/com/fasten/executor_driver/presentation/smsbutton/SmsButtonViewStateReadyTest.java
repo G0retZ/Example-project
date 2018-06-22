@@ -16,7 +16,7 @@ public class SmsButtonViewStateReadyTest {
   private SmsButtonViewStateReady viewState;
 
   @Mock
-  private SmsButtonViewActions smsButtonViewActions;
+  private SmsButtonViewActions viewActions;
 
   @Before
   public void setUp() {
@@ -26,13 +26,13 @@ public class SmsButtonViewStateReadyTest {
   @Test
   public void testActions() {
     // Действие:
-    viewState.apply(smsButtonViewActions);
+    viewState.apply(viewActions);
 
     // Результат:
-    verify(smsButtonViewActions).setSmsButtonText(R.string.repeat_code_from_sms, null);
-    verify(smsButtonViewActions).enableSmsButton(true);
-    verify(smsButtonViewActions).showSmsSendNetworkErrorMessage(false);
-    verify(smsButtonViewActions).showSmsSendPending(false);
-    verifyNoMoreInteractions(smsButtonViewActions);
+    verify(viewActions).setSmsButtonText(R.string.repeat_code_from_sms, null);
+    verify(viewActions).enableSmsButton(true);
+    verify(viewActions).showSmsSendNetworkErrorMessage(false);
+    verify(viewActions).showSmsSendPending(false);
+    verifyNoMoreInteractions(viewActions);
   }
 }

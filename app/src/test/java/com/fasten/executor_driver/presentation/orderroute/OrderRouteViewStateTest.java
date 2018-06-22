@@ -18,7 +18,7 @@ public class OrderRouteViewStateTest {
   private OrderRouteViewState viewState;
 
   @Mock
-  private OrderRouteViewActions orderRouteViewActions;
+  private OrderRouteViewActions viewActions;
   @Mock
   private RoutePointItem routePointItems;
   @Mock
@@ -32,13 +32,13 @@ public class OrderRouteViewStateTest {
   @Test
   public void testActions() {
     // Действие:
-    viewState.apply(orderRouteViewActions);
+    viewState.apply(viewActions);
 
     // Результат:
-    verify(orderRouteViewActions)
+    verify(viewActions)
         .setRoutePointItems(Arrays.asList(routePointItems, routePointItems1));
-    verify(orderRouteViewActions).showOrderRoutePending(false);
-    verifyNoMoreInteractions(orderRouteViewActions);
+    verify(viewActions).showOrderRoutePending(false);
+    verifyNoMoreInteractions(viewActions);
   }
 
   @Test

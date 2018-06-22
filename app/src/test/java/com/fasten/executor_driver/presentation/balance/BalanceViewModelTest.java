@@ -32,9 +32,9 @@ public class BalanceViewModelTest {
 
   @Rule
   public TestRule rule = new InstantTaskExecutorRule();
-  private BalanceViewModel balanceViewModel;
+  private BalanceViewModel viewModel;
   @Mock
-  private ExecutorBalanceUseCase orderRouteUseCase;
+  private ExecutorBalanceUseCase useCase;
   @Mock
   private ExecutorBalance executorBalance;
   @Mock
@@ -54,9 +54,9 @@ public class BalanceViewModelTest {
     publishSubject = PublishSubject.create();
     RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
     RxAndroidPlugins.setInitMainThreadSchedulerHandler(scheduler -> Schedulers.trampoline());
-    when(orderRouteUseCase.getExecutorBalance(anyBoolean()))
+    when(useCase.getExecutorBalance(anyBoolean()))
         .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
-    balanceViewModel = new BalanceViewModelImpl(orderRouteUseCase);
+    viewModel = new BalanceViewModelImpl(useCase);
   }
 
   /* Тетсируем работу с юзкейсом заказа. */
@@ -67,7 +67,7 @@ public class BalanceViewModelTest {
   @Test
   public void askUseCaseForExecutorBalancesInitially() {
     // Результат:
-    verify(orderRouteUseCase, only()).getExecutorBalance(false);
+    verify(useCase, only()).getExecutorBalance(false);
   }
 
   /**
@@ -76,13 +76,13 @@ public class BalanceViewModelTest {
   @Test
   public void doNotTouchUseCaseOnSubscriptions() {
     // Действие:
-    balanceViewModel.getViewStateLiveData();
-    balanceViewModel.getNavigationLiveData();
-    balanceViewModel.getViewStateLiveData();
-    balanceViewModel.getNavigationLiveData();
+    viewModel.getViewStateLiveData();
+    viewModel.getNavigationLiveData();
+    viewModel.getViewStateLiveData();
+    viewModel.getNavigationLiveData();
 
     // Результат:
-    verify(orderRouteUseCase, only()).getExecutorBalance(false);
+    verify(useCase, only()).getExecutorBalance(false);
   }
 
   /* Тетсируем переключение состояний от сервера. */
@@ -96,7 +96,7 @@ public class BalanceViewModelTest {
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
 
     // Действие:
-    balanceViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(new BalanceViewStatePending(null));
@@ -110,7 +110,7 @@ public class BalanceViewModelTest {
   public void setNoNetworkErrorViewStateToLiveDataForMappingError() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    balanceViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
     publishSubject.onError(new Exception());
@@ -128,7 +128,7 @@ public class BalanceViewModelTest {
   public void setBalanceViewStateToLiveData() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    balanceViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
     publishSubject.onNext(executorBalance);
@@ -152,11 +152,11 @@ public class BalanceViewModelTest {
   public void setPendingViewStateStateToLiveDataForReplenishAccount() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    balanceViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
     publishSubject.onNext(executorBalance);
-    balanceViewModel.replenishAccount();
+    viewModel.replenishAccount();
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(new BalanceViewStatePending(null));
@@ -172,7 +172,7 @@ public class BalanceViewModelTest {
   @Test
   public void setNothingToLiveDataForBalanceUpdates() {
     // Дано:
-    balanceViewModel.getNavigationLiveData().observeForever(navigateObserver);
+    viewModel.getNavigationLiveData().observeForever(navigateObserver);
 
     // Действие:
     // Действие:
@@ -190,10 +190,10 @@ public class BalanceViewModelTest {
   @Test
   public void setNavigateToReplenishAccountToLiveData() {
     // Дано:
-    balanceViewModel.getNavigationLiveData().observeForever(navigateObserver);
+    viewModel.getNavigationLiveData().observeForever(navigateObserver);
 
     // Действие:
-    balanceViewModel.replenishAccount();
+    viewModel.replenishAccount();
 
     // Результат:
     verify(navigateObserver, only()).onChanged(BalanceNavigate.PAYMENT_OPTIONS);

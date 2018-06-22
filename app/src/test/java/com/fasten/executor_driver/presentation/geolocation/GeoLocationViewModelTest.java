@@ -30,7 +30,7 @@ public class GeoLocationViewModelTest {
 
   @Rule
   public TestRule rule = new InstantTaskExecutorRule();
-  private GeoLocationViewModel mapViewModel;
+  private GeoLocationViewModel viewModel;
   @Mock
   private Observer<ViewState<GeoLocationViewActions>> viewStateObserver;
   @Mock
@@ -44,7 +44,7 @@ public class GeoLocationViewModelTest {
     RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
     RxAndroidPlugins.setInitMainThreadSchedulerHandler(scheduler -> Schedulers.trampoline());
     when(geoLocationUseCase.getGeoLocations()).thenReturn(Flowable.never());
-    mapViewModel = new GeoLocationViewModelImpl(geoLocationUseCase);
+    viewModel = new GeoLocationViewModelImpl(geoLocationUseCase);
   }
 
   /* Тетсируем работу с публикатором местоположения. */
@@ -55,7 +55,7 @@ public class GeoLocationViewModelTest {
   @Test
   public void askDataReceiverToSubscribeToLocationUpdates() {
     // Действие:
-    mapViewModel.updateGeoLocations();
+    viewModel.updateGeoLocations();
 
     // Результат:
     verify(geoLocationUseCase, only()).getGeoLocations();
@@ -67,9 +67,9 @@ public class GeoLocationViewModelTest {
   @Test
   public void DoNotTouchDataReceiverAfterFirstSubscription() {
     // Действие:
-    mapViewModel.updateGeoLocations();
-    mapViewModel.updateGeoLocations();
-    mapViewModel.updateGeoLocations();
+    viewModel.updateGeoLocations();
+    viewModel.updateGeoLocations();
+    viewModel.updateGeoLocations();
 
     // Результат:
     verify(geoLocationUseCase, only()).getGeoLocations();
@@ -92,8 +92,8 @@ public class GeoLocationViewModelTest {
     ));
 
     // Действие:
-    mapViewModel.getViewStateLiveData().observeForever(viewStateObserver);
-    mapViewModel.updateGeoLocations();
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.updateGeoLocations();
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(
@@ -128,8 +128,8 @@ public class GeoLocationViewModelTest {
     );
 
     // Действие:
-    mapViewModel.getViewStateLiveData().observeForever(viewStateObserver);
-    mapViewModel.updateGeoLocations();
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.updateGeoLocations();
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(
@@ -169,8 +169,8 @@ public class GeoLocationViewModelTest {
     );
 
     // Действие:
-    mapViewModel.getViewStateLiveData().observeForever(viewStateObserver);
-    mapViewModel.updateGeoLocations();
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.updateGeoLocations();
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(
@@ -205,8 +205,8 @@ public class GeoLocationViewModelTest {
     );
 
     // Действие:
-    mapViewModel.getViewStateLiveData().observeForever(viewStateObserver);
-    mapViewModel.updateGeoLocations();
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.updateGeoLocations();
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(
@@ -235,8 +235,8 @@ public class GeoLocationViewModelTest {
     when(geoLocationUseCase.getGeoLocations()).thenReturn(Flowable.error(SecurityException::new));
 
     // Действие:
-    mapViewModel.getNavigationLiveData().observeForever(navigationObserver);
-    mapViewModel.updateGeoLocations();
+    viewModel.getNavigationLiveData().observeForever(navigationObserver);
+    viewModel.updateGeoLocations();
 
     // Результат:
     verify(navigationObserver, only()).onChanged(GeoLocationNavigate.RESOLVE_GEO_PROBLEM);
@@ -252,8 +252,8 @@ public class GeoLocationViewModelTest {
         .thenReturn(Flowable.error(IllegalStateException::new));
 
     // Действие:
-    mapViewModel.getNavigationLiveData().observeForever(navigationObserver);
-    mapViewModel.updateGeoLocations();
+    viewModel.getNavigationLiveData().observeForever(navigationObserver);
+    viewModel.updateGeoLocations();
 
     // Результат:
     verify(navigationObserver, only()).onChanged(GeoLocationNavigate.NO_CONNECTION);
@@ -268,8 +268,8 @@ public class GeoLocationViewModelTest {
     when(geoLocationUseCase.getGeoLocations()).thenReturn(Flowable.error(Exception::new));
 
     // Действие:
-    mapViewModel.getNavigationLiveData().observeForever(navigationObserver);
-    mapViewModel.updateGeoLocations();
+    viewModel.getNavigationLiveData().observeForever(navigationObserver);
+    viewModel.updateGeoLocations();
 
     // Результат:
     verifyZeroInteractions(navigationObserver);
@@ -289,8 +289,8 @@ public class GeoLocationViewModelTest {
     ));
 
     // Действие:
-    mapViewModel.getNavigationLiveData().observeForever(navigationObserver);
-    mapViewModel.updateGeoLocations();
+    viewModel.getNavigationLiveData().observeForever(navigationObserver);
+    viewModel.updateGeoLocations();
 
     // Результат:
     verifyZeroInteractions(navigationObserver);

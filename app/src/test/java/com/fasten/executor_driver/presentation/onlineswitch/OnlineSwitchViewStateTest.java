@@ -17,7 +17,7 @@ public class OnlineSwitchViewStateTest {
   private ViewState<OnlineSwitchViewActions> viewState;
 
   @Mock
-  private OnlineSwitchViewActions codeViewActions;
+  private OnlineSwitchViewActions viewActions;
 
   @Test
   public void testActionsTrue() {
@@ -25,12 +25,12 @@ public class OnlineSwitchViewStateTest {
     viewState = new OnlineSwitchViewState(true);
 
     // Действие:
-    viewState.apply(codeViewActions);
+    viewState.apply(viewActions);
 
     // Результат:
-    verify(codeViewActions).checkSwitch(true);
-    verify(codeViewActions).showSwitchPending(false);
-    verifyNoMoreInteractions(codeViewActions);
+    verify(viewActions).checkSwitch(true);
+    verify(viewActions).showSwitchPending(false);
+    verifyNoMoreInteractions(viewActions);
   }
 
   @Test
@@ -39,12 +39,12 @@ public class OnlineSwitchViewStateTest {
     viewState = new OnlineSwitchViewState(false);
 
     // Действие:
-    viewState.apply(codeViewActions);
+    viewState.apply(viewActions);
 
     // Результат:
-    verify(codeViewActions).checkSwitch(false);
-    verify(codeViewActions).showSwitchPending(false);
-    verifyNoMoreInteractions(codeViewActions);
+    verify(viewActions).checkSwitch(false);
+    verify(viewActions).showSwitchPending(false);
+    verifyNoMoreInteractions(viewActions);
   }
 
   @Test

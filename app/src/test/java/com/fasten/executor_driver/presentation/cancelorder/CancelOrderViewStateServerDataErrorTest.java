@@ -18,7 +18,7 @@ public class CancelOrderViewStateServerDataErrorTest {
   private CancelOrderViewStateServerDataError viewState;
 
   @Mock
-  private CancelOrderViewActions nextRoutePointViewActions;
+  private CancelOrderViewActions viewActions;
   @Mock
   private ViewState<CancelOrderViewActions> parentViewState;
   @Mock
@@ -30,13 +30,13 @@ public class CancelOrderViewStateServerDataErrorTest {
     viewState = new CancelOrderViewStateServerDataError(parentViewState);
 
     // Действие:
-    viewState.apply(nextRoutePointViewActions);
+    viewState.apply(viewActions);
 
     // Результат:
-    verify(nextRoutePointViewActions).showCancelOrderServerDataError();
-    verify(nextRoutePointViewActions).showCancelOrderReasons(true);
-    verify(parentViewState, only()).apply(nextRoutePointViewActions);
-    verifyNoMoreInteractions(nextRoutePointViewActions);
+    verify(viewActions).showCancelOrderServerDataError();
+    verify(viewActions).showCancelOrderReasons(true);
+    verify(parentViewState, only()).apply(viewActions);
+    verifyNoMoreInteractions(viewActions);
   }
 
   @Test
@@ -45,12 +45,12 @@ public class CancelOrderViewStateServerDataErrorTest {
     viewState = new CancelOrderViewStateServerDataError(null);
 
     // Действие:
-    viewState.apply(nextRoutePointViewActions);
+    viewState.apply(viewActions);
 
     // Результат:
-    verify(nextRoutePointViewActions).showCancelOrderServerDataError();
-    verify(nextRoutePointViewActions).showCancelOrderReasons(false);
-    verifyNoMoreInteractions(nextRoutePointViewActions);
+    verify(viewActions).showCancelOrderServerDataError();
+    verify(viewActions).showCancelOrderReasons(false);
+    verifyNoMoreInteractions(viewActions);
   }
 
   @Test

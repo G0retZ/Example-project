@@ -21,7 +21,7 @@ import ua.naiksoftware.stomp.client.StompClient;
 @RunWith(MockitoJUnitRunner.class)
 public class ExecutorStateSwitchGatewayTest {
 
-  private ExecutorStateSwitchGateway geoTrackingGateway;
+  private ExecutorStateSwitchGateway gateway;
 
   @Mock
   private StompClient stompClient;
@@ -30,7 +30,7 @@ public class ExecutorStateSwitchGatewayTest {
   public void setUp() {
     RxJavaPlugins.setIoSchedulerHandler(scheduler -> Schedulers.trampoline());
     RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
-    geoTrackingGateway = new ExecutorStateSwitchGatewayImpl(stompClient);
+    gateway = new ExecutorStateSwitchGatewayImpl(stompClient);
     when(stompClient.send(anyString(), anyString())).thenReturn(Completable.never());
   }
 
@@ -42,7 +42,7 @@ public class ExecutorStateSwitchGatewayTest {
   @Test
   public void askStompClientToSendMessage() {
     // Действие:
-    geoTrackingGateway.sendNewExecutorState(ExecutorState.ONLINE).test();
+    gateway.sendNewExecutorState(ExecutorState.ONLINE).test();
 
     // Результат:
     verify(stompClient, only()).send("/mobile/status", "\"ONLINE\"");
@@ -62,7 +62,7 @@ public class ExecutorStateSwitchGatewayTest {
 
     // Действие:
     TestObserver<Void> testObserver =
-        geoTrackingGateway.sendNewExecutorState(ExecutorState.ONLINE).test();
+        gateway.sendNewExecutorState(ExecutorState.ONLINE).test();
 
     // Результат:
     testObserver.assertComplete();
@@ -79,7 +79,7 @@ public class ExecutorStateSwitchGatewayTest {
 
     // Действие:
     TestObserver<Void> testObserver =
-        geoTrackingGateway.sendNewExecutorState(ExecutorState.ONLINE).test();
+        gateway.sendNewExecutorState(ExecutorState.ONLINE).test();
 
     // Результат:
     testObserver.assertError(IllegalArgumentException.class);

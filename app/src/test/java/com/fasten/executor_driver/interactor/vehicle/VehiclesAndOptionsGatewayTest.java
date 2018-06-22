@@ -37,7 +37,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class VehiclesAndOptionsGatewayTest {
 
-  private VehiclesAndOptionsGateway vehiclesAndOptionsGateway;
+  private VehiclesAndOptionsGateway gateway;
 
   @Mock
   private ApiService api;
@@ -58,7 +58,7 @@ public class VehiclesAndOptionsGatewayTest {
   public void setUp() throws Exception {
     RxJavaPlugins.setIoSchedulerHandler(scheduler -> Schedulers.trampoline());
     RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
-    vehiclesAndOptionsGateway = new VehiclesAndOptionsGatewayImpl(api, apiOptionMapper,
+    gateway = new VehiclesAndOptionsGatewayImpl(api, apiOptionMapper,
         vehicleMapper, errorMapper);
     when(api.getOptionsForOnline()).thenReturn(Single.never());
     when(vehicleMapper.map(any(ApiVehicle.class))).thenReturn(
@@ -82,7 +82,7 @@ public class VehiclesAndOptionsGatewayTest {
   @Test
   public void askApiForOptionsForOnlineOnGetVehicles() {
     // Действие:
-    vehiclesAndOptionsGateway.getExecutorVehicles();
+    gateway.getExecutorVehicles();
 
     // Результат:
     verify(api, only()).getOptionsForOnline();
@@ -94,7 +94,7 @@ public class VehiclesAndOptionsGatewayTest {
   @Test
   public void askApiForOptionsForOnlineOnGetOptions() {
     // Действие:
-    vehiclesAndOptionsGateway.getExecutorOptions();
+    gateway.getExecutorOptions();
 
     // Результат:
     verify(api, only()).getOptionsForOnline();
@@ -106,8 +106,8 @@ public class VehiclesAndOptionsGatewayTest {
   @Test
   public void doNotAskApiForOptionsForOnlineTwiceAfterVehiclesRequested() {
     // Действие:
-    vehiclesAndOptionsGateway.getExecutorVehicles();
-    vehiclesAndOptionsGateway.getExecutorOptions();
+    gateway.getExecutorVehicles();
+    gateway.getExecutorOptions();
 
     // Результат:
     verify(api, only()).getOptionsForOnline();
@@ -119,8 +119,8 @@ public class VehiclesAndOptionsGatewayTest {
   @Test
   public void doNotAskApiForOptionsForOnlineTwiceAfterOptionsRequested() {
     // Действие:
-    vehiclesAndOptionsGateway.getExecutorOptions();
-    vehiclesAndOptionsGateway.getExecutorVehicles();
+    gateway.getExecutorOptions();
+    gateway.getExecutorVehicles();
 
     // Результат:
     verify(api, only()).getOptionsForOnline();
@@ -147,7 +147,7 @@ public class VehiclesAndOptionsGatewayTest {
     ))));
 
     // Действие:
-    vehiclesAndOptionsGateway.getExecutorVehicles().test();
+    gateway.getExecutorVehicles().test();
 
     // Результат:
     verify(vehicleMapper, times(3)).map(new ApiVehicle());
@@ -174,7 +174,7 @@ public class VehiclesAndOptionsGatewayTest {
     ))));
 
     // Действие:
-    vehiclesAndOptionsGateway.getExecutorVehicles().test();
+    gateway.getExecutorVehicles().test();
 
     // Результат:
     verify(vehicleMapper, only()).map(new ApiVehicle());
@@ -201,7 +201,7 @@ public class VehiclesAndOptionsGatewayTest {
     ))));
 
     // Действие:
-    vehiclesAndOptionsGateway.getExecutorOptions().test();
+    gateway.getExecutorOptions().test();
 
     // Результат:
     verify(apiOptionMapper, times(3)).map(new ApiOptionItem());
@@ -228,7 +228,7 @@ public class VehiclesAndOptionsGatewayTest {
     ))));
 
     // Действие:
-    vehiclesAndOptionsGateway.getExecutorOptions().test();
+    gateway.getExecutorOptions().test();
 
     // Результат:
     verify(apiOptionMapper, only()).map(new ApiOptionItem());
@@ -247,7 +247,7 @@ public class VehiclesAndOptionsGatewayTest {
     when(api.getOptionsForOnline()).thenReturn(Single.error(new NoNetworkException()));
 
     // Действие:
-    vehiclesAndOptionsGateway.getExecutorVehicles().test();
+    gateway.getExecutorVehicles().test();
 
     // Результат:
     verify(errorMapper, only()).map(throwableCaptor.capture());
@@ -265,7 +265,7 @@ public class VehiclesAndOptionsGatewayTest {
     when(api.getOptionsForOnline()).thenReturn(Single.error(new NoNetworkException()));
 
     // Действие:
-    vehiclesAndOptionsGateway.getExecutorOptions().test();
+    gateway.getExecutorOptions().test();
 
     // Результат:
     verify(errorMapper, only()).map(throwableCaptor.capture());
@@ -288,8 +288,8 @@ public class VehiclesAndOptionsGatewayTest {
     when(errorMapper.map(any())).thenReturn(new NoNetworkException());
 
     // Действие и Результат:
-    vehiclesAndOptionsGateway.getExecutorVehicles().test().assertError(NoNetworkException.class);
-    vehiclesAndOptionsGateway.getExecutorOptions().test().assertError(NoNetworkException.class);
+    gateway.getExecutorVehicles().test().assertError(NoNetworkException.class);
+    gateway.getExecutorOptions().test().assertError(NoNetworkException.class);
   }
 
   /**
@@ -304,9 +304,9 @@ public class VehiclesAndOptionsGatewayTest {
     when(errorMapper.map(any())).thenReturn(new IllegalArgumentException());
 
     // Действие и Результат:
-    vehiclesAndOptionsGateway.getExecutorVehicles().test()
+    gateway.getExecutorVehicles().test()
         .assertError(IllegalArgumentException.class);
-    vehiclesAndOptionsGateway.getExecutorOptions().test()
+    gateway.getExecutorOptions().test()
         .assertError(IllegalArgumentException.class);
   }
 
@@ -331,7 +331,7 @@ public class VehiclesAndOptionsGatewayTest {
     ))));
 
     // Действие:
-    TestObserver testObserver = vehiclesAndOptionsGateway.getExecutorVehicles().test();
+    TestObserver testObserver = gateway.getExecutorVehicles().test();
 
     // Результат:
     testObserver.assertError(DataMappingException.class);
@@ -358,7 +358,7 @@ public class VehiclesAndOptionsGatewayTest {
     ))));
 
     // Действие:
-    TestObserver testObserver = vehiclesAndOptionsGateway.getExecutorOptions().test();
+    TestObserver testObserver = gateway.getExecutorOptions().test();
 
     // Результат:
     testObserver.assertError(DataMappingException.class);
@@ -381,7 +381,7 @@ public class VehiclesAndOptionsGatewayTest {
     ))));
 
     // Действие:
-    TestObserver<List<Vehicle>> testObserver = vehiclesAndOptionsGateway.getExecutorVehicles()
+    TestObserver<List<Vehicle>> testObserver = gateway.getExecutorVehicles()
         .test();
 
     // Результат:
@@ -411,7 +411,7 @@ public class VehiclesAndOptionsGatewayTest {
     ))));
 
     // Действие:
-    TestObserver<List<Option>> testObserver = vehiclesAndOptionsGateway.getExecutorOptions()
+    TestObserver<List<Option>> testObserver = gateway.getExecutorOptions()
         .test();
 
     // Результат:

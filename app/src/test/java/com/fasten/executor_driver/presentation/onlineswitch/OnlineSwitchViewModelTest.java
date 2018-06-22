@@ -35,7 +35,7 @@ public class OnlineSwitchViewModelTest {
 
   @Rule
   public TestRule rule = new InstantTaskExecutorRule();
-  private OnlineSwitchViewModel onlineSwitchViewModel;
+  private OnlineSwitchViewModel viewModel;
   @Mock
   private ExecutorStateNotOnlineUseCase executorStateNotOnlineUseCase;
   @Mock
@@ -52,7 +52,7 @@ public class OnlineSwitchViewModelTest {
     when(executorStateNotOnlineUseCase.setExecutorNotOnline()).thenReturn(Completable.never());
     when(executorStateNotOnlineUseCase.getExecutorStates())
         .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
-    onlineSwitchViewModel = new OnlineSwitchViewModelImpl(executorStateNotOnlineUseCase);
+    viewModel = new OnlineSwitchViewModelImpl(executorStateNotOnlineUseCase);
   }
 
   /* Тетсируем работу с юзкейсом. */
@@ -72,9 +72,9 @@ public class OnlineSwitchViewModelTest {
   @Test
   public void doNotTouchUseCaseForSwitchToOnline() {
     // Действие:
-    onlineSwitchViewModel.setNewState(true);
-    onlineSwitchViewModel.setNewState(true);
-    onlineSwitchViewModel.setNewState(true);
+    viewModel.setNewState(true);
+    viewModel.setNewState(true);
+    viewModel.setNewState(true);
 
     // Результат:
     verify(executorStateNotOnlineUseCase, only()).getExecutorStates();
@@ -87,9 +87,9 @@ public class OnlineSwitchViewModelTest {
   @Test
   public void askUseCaseToSetNotOnlineOnlyOnce() {
     // Действие:
-    onlineSwitchViewModel.setNewState(false);
-    onlineSwitchViewModel.setNewState(false);
-    onlineSwitchViewModel.setNewState(false);
+    viewModel.setNewState(false);
+    viewModel.setNewState(false);
+    viewModel.setNewState(false);
 
     // Результат:
     verify(executorStateNotOnlineUseCase).getExecutorStates();
@@ -113,12 +113,12 @@ public class OnlineSwitchViewModelTest {
     );
 
     // Действие:
-    onlineSwitchViewModel.setNewState(false);
-    onlineSwitchViewModel.setNewState(false);
-    onlineSwitchViewModel.setNewState(false);
-    onlineSwitchViewModel.setNewState(false);
-    onlineSwitchViewModel.setNewState(false);
-    onlineSwitchViewModel.setNewState(false);
+    viewModel.setNewState(false);
+    viewModel.setNewState(false);
+    viewModel.setNewState(false);
+    viewModel.setNewState(false);
+    viewModel.setNewState(false);
+    viewModel.setNewState(false);
 
     // Результат:
     inOrder.verify(executorStateNotOnlineUseCase).getExecutorStates();
@@ -134,7 +134,7 @@ public class OnlineSwitchViewModelTest {
   @Test
   public void setUncheckedPendingViewStateInitially() {
     // Действие:
-    onlineSwitchViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Результат:
     verify(viewStateObserver, only()).onChanged(new OnlineSwitchViewStatePending(null));
@@ -147,7 +147,7 @@ public class OnlineSwitchViewModelTest {
   public void setUncheckedPendingViewStateForShiftClosed() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    onlineSwitchViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
     publishSubject.onNext(ExecutorState.SHIFT_CLOSED);
@@ -166,7 +166,7 @@ public class OnlineSwitchViewModelTest {
   public void setCheckedPendingViewStateForOrderConfirmation() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    onlineSwitchViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
     publishSubject.onNext(ExecutorState.DRIVER_ORDER_CONFIRMATION);
@@ -185,7 +185,7 @@ public class OnlineSwitchViewModelTest {
   public void setCheckedPendingViewStateForWaitForClientConfirmation() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    onlineSwitchViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
     publishSubject.onNext(ExecutorState.CLIENT_ORDER_CONFIRMATION);
@@ -204,7 +204,7 @@ public class OnlineSwitchViewModelTest {
   public void setCheckedPendingViewStateForMovingToClient() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    onlineSwitchViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
     publishSubject.onNext(ExecutorState.MOVING_TO_CLIENT);
@@ -223,7 +223,7 @@ public class OnlineSwitchViewModelTest {
   public void setCheckedPendingViewStateForWaitingForClient() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    onlineSwitchViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
     publishSubject.onNext(ExecutorState.WAITING_FOR_CLIENT);
@@ -242,7 +242,7 @@ public class OnlineSwitchViewModelTest {
   public void setCheckedPendingViewStateForOrderFulfillment() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    onlineSwitchViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
     publishSubject.onNext(ExecutorState.ORDER_FULFILLMENT);
@@ -262,7 +262,7 @@ public class OnlineSwitchViewModelTest {
   public void setServerDataErrorViewStateForExecutorStateError() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    onlineSwitchViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
     publishSubject.onError(new DataMappingException());
@@ -280,7 +280,7 @@ public class OnlineSwitchViewModelTest {
   public void setUncheckedViewStateForShiftOpened() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    onlineSwitchViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
     publishSubject.onNext(ExecutorState.SHIFT_OPENED);
@@ -298,7 +298,7 @@ public class OnlineSwitchViewModelTest {
   public void setCheckedViewStateForOnline() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    onlineSwitchViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
     publishSubject.onNext(ExecutorState.ONLINE);
@@ -316,11 +316,11 @@ public class OnlineSwitchViewModelTest {
   public void setUnCheckedViewStateForSetOnline() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    onlineSwitchViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
     publishSubject.onNext(ExecutorState.SHIFT_OPENED);
-    onlineSwitchViewModel.setNewState(true);
+    viewModel.setNewState(true);
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(new OnlineSwitchViewStatePending(null));
@@ -335,11 +335,11 @@ public class OnlineSwitchViewModelTest {
   public void setUnCheckedPendingViewStateForSetNotOnline() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    onlineSwitchViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
     publishSubject.onNext(ExecutorState.ONLINE);
-    onlineSwitchViewModel.setNewState(false);
+    viewModel.setNewState(false);
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(new OnlineSwitchViewStatePending(null));
@@ -357,11 +357,11 @@ public class OnlineSwitchViewModelTest {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     when(executorStateNotOnlineUseCase.setExecutorNotOnline()).thenReturn(Completable.complete());
-    onlineSwitchViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
     publishSubject.onNext(ExecutorState.ONLINE);
-    onlineSwitchViewModel.setNewState(false);
+    viewModel.setNewState(false);
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(new OnlineSwitchViewStatePending(null));
@@ -380,11 +380,11 @@ public class OnlineSwitchViewModelTest {
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     when(executorStateNotOnlineUseCase.setExecutorNotOnline())
         .thenReturn(Completable.error(new ForbiddenExecutorStateException()));
-    onlineSwitchViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
     publishSubject.onNext(ExecutorState.ONLINE);
-    onlineSwitchViewModel.setNewState(false);
+    viewModel.setNewState(false);
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(new OnlineSwitchViewStatePending(null));
@@ -405,11 +405,11 @@ public class OnlineSwitchViewModelTest {
     when(executorStateNotOnlineUseCase.setExecutorNotOnline())
         .thenReturn(Completable.error(new IllegalStateException()));
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    onlineSwitchViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
     publishSubject.onNext(ExecutorState.ONLINE);
-    onlineSwitchViewModel.setNewState(false);
+    viewModel.setNewState(false);
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(new OnlineSwitchViewStatePending(null));
@@ -427,8 +427,8 @@ public class OnlineSwitchViewModelTest {
   @Test
   public void navigateToVehicleOptions() {
     // Действие:
-    onlineSwitchViewModel.getNavigationLiveData().observeForever(navigateObserver);
-    onlineSwitchViewModel.setNewState(true);
+    viewModel.getNavigationLiveData().observeForever(navigateObserver);
+    viewModel.setNewState(true);
 
     // Результат:
     verify(navigateObserver, only()).onChanged(OnlineSwitchNavigate.VEHICLE_OPTIONS);
@@ -444,8 +444,8 @@ public class OnlineSwitchViewModelTest {
         .thenReturn(Completable.error(new IllegalStateException()));
 
     // Действие:
-    onlineSwitchViewModel.getNavigationLiveData().observeForever(navigateObserver);
-    onlineSwitchViewModel.setNewState(false);
+    viewModel.getNavigationLiveData().observeForever(navigateObserver);
+    viewModel.setNewState(false);
 
     // Результат:
     verify(navigateObserver, only()).onChanged(OnlineSwitchNavigate.NO_CONNECTION);
@@ -464,10 +464,10 @@ public class OnlineSwitchViewModelTest {
     );
 
     // Действие:
-    onlineSwitchViewModel.getNavigationLiveData().observeForever(navigateObserver);
-    onlineSwitchViewModel.setNewState(false);
-    onlineSwitchViewModel.setNewState(false);
-    onlineSwitchViewModel.setNewState(false);
+    viewModel.getNavigationLiveData().observeForever(navigateObserver);
+    viewModel.setNewState(false);
+    viewModel.setNewState(false);
+    viewModel.setNewState(false);
 
     // Результат:
     verifyZeroInteractions(navigateObserver);

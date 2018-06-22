@@ -16,7 +16,7 @@ public class NextRoutePointViewStateNoRouteTest {
   private NextRoutePointViewStateNoRoute viewState;
 
   @Mock
-  private NextRoutePointViewActions nextRoutePointViewActions;
+  private NextRoutePointViewActions viewActions;
 
   @Test
   public void testActionsWithTrue() {
@@ -24,17 +24,17 @@ public class NextRoutePointViewStateNoRouteTest {
     viewState = new NextRoutePointViewStateNoRoute(true);
 
     // Действие:
-    viewState.apply(nextRoutePointViewActions);
+    viewState.apply(viewActions);
 
     // Результат:
-    verify(nextRoutePointViewActions).showNextRoutePoint("");
-    verify(nextRoutePointViewActions).showNextRoutePointAddress("", "");
-    verify(nextRoutePointViewActions).showNextRoutePointComment("");
-    verify(nextRoutePointViewActions).showNextRoutePointPending(false);
-    verify(nextRoutePointViewActions).showNoRouteRide(true);
-    verify(nextRoutePointViewActions).showCloseNextRoutePointAction(false);
-    verify(nextRoutePointViewActions).showCompleteOrderAction(true);
-    verifyNoMoreInteractions(nextRoutePointViewActions);
+    verify(viewActions).showNextRoutePoint("");
+    verify(viewActions).showNextRoutePointAddress("", "");
+    verify(viewActions).showNextRoutePointComment("");
+    verify(viewActions).showNextRoutePointPending(false);
+    verify(viewActions).showNoRouteRide(true);
+    verify(viewActions).showCloseNextRoutePointAction(false);
+    verify(viewActions).showCompleteOrderAction(true);
+    verifyNoMoreInteractions(viewActions);
   }
 
   @Test
@@ -43,17 +43,17 @@ public class NextRoutePointViewStateNoRouteTest {
     viewState = new NextRoutePointViewStateNoRoute(false);
 
     // Действие:
-    viewState.apply(nextRoutePointViewActions);
+    viewState.apply(viewActions);
 
     // Результат:
-    verify(nextRoutePointViewActions).showNextRoutePoint("");
-    verify(nextRoutePointViewActions).showNextRoutePointAddress("", "");
-    verify(nextRoutePointViewActions).showNextRoutePointComment("");
-    verify(nextRoutePointViewActions).showNextRoutePointPending(false);
-    verify(nextRoutePointViewActions).showNoRouteRide(false);
-    verify(nextRoutePointViewActions).showCloseNextRoutePointAction(false);
-    verify(nextRoutePointViewActions).showCompleteOrderAction(true);
-    verifyNoMoreInteractions(nextRoutePointViewActions);
+    verify(viewActions).showNextRoutePoint("");
+    verify(viewActions).showNextRoutePointAddress("", "");
+    verify(viewActions).showNextRoutePointComment("");
+    verify(viewActions).showNextRoutePointPending(false);
+    verify(viewActions).showNoRouteRide(false);
+    verify(viewActions).showCloseNextRoutePointAction(false);
+    verify(viewActions).showCompleteOrderAction(true);
+    verifyNoMoreInteractions(viewActions);
   }
 
   @Test

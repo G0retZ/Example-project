@@ -34,7 +34,7 @@ public class ExecutorStateViewModelTest {
 
   @Rule
   public TestRule rule = new InstantTaskExecutorRule();
-  private ExecutorStateViewModel executorStateViewModel;
+  private ExecutorStateViewModel viewModel;
   @Mock
   private Observer<String> navigationObserver;
   @Mock
@@ -42,7 +42,7 @@ public class ExecutorStateViewModelTest {
   @Captor
   private ArgumentCaptor<ViewState<ExecutorStateViewActions>> viewStateCaptor;
   @Mock
-  private ExecutorStateViewActions executorStateViewActions;
+  private ExecutorStateViewActions viewActions;
 
   @Mock
   private ExecutorStateUseCase executorStateUseCase;
@@ -53,7 +53,7 @@ public class ExecutorStateViewModelTest {
     RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
     RxAndroidPlugins.setInitMainThreadSchedulerHandler(scheduler -> Schedulers.trampoline());
     when(executorStateUseCase.getExecutorStates(anyBoolean())).thenReturn(Flowable.never());
-    executorStateViewModel = new ExecutorStateViewModelImpl(executorStateUseCase);
+    viewModel = new ExecutorStateViewModelImpl(executorStateUseCase);
   }
 
   /* Тетсируем работу с юзкейсом. */
@@ -64,7 +64,7 @@ public class ExecutorStateViewModelTest {
   @Test
   public void askUseCaseToSubscribeToExecutorStateUpdatesWithCacheReset() {
     // Действие:
-    executorStateViewModel.initializeExecutorState();
+    viewModel.initializeExecutorState();
 
     // Результат:
     verify(executorStateUseCase, only()).getExecutorStates(true);
@@ -77,9 +77,9 @@ public class ExecutorStateViewModelTest {
   @Test
   public void doNotTouchUseCaseBeforeFirstRequestComplete() {
     // Действие:
-    executorStateViewModel.initializeExecutorState();
-    executorStateViewModel.initializeExecutorState();
-    executorStateViewModel.initializeExecutorState();
+    viewModel.initializeExecutorState();
+    viewModel.initializeExecutorState();
+    viewModel.initializeExecutorState();
 
     // Результат:
     verify(executorStateUseCase, times(3)).getExecutorStates(true);
@@ -99,13 +99,13 @@ public class ExecutorStateViewModelTest {
         .thenReturn(Flowable.just(ExecutorState.ONLINE));
 
     // Действие:
-    executorStateViewModel.getViewStateLiveData().observeForever(viewStateObserver);
-    executorStateViewModel.initializeExecutorState();
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.initializeExecutorState();
 
     // Результат:
     verify(viewStateObserver, only()).onChanged(viewStateCaptor.capture());
-    viewStateCaptor.getValue().apply(executorStateViewActions);
-    verify(executorStateViewActions, only()).showOnlineMessage("Message");
+    viewStateCaptor.getValue().apply(viewActions);
+    verify(viewActions, only()).showOnlineMessage("Message");
   }
 
   /**
@@ -119,8 +119,8 @@ public class ExecutorStateViewModelTest {
         .thenReturn(Flowable.just(ExecutorState.ONLINE));
 
     // Действие:
-    executorStateViewModel.getViewStateLiveData().observeForever(viewStateObserver);
-    executorStateViewModel.initializeExecutorState();
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.initializeExecutorState();
 
     // Результат:
     verifyZeroInteractions(viewStateObserver);
@@ -137,8 +137,8 @@ public class ExecutorStateViewModelTest {
         .thenReturn(Flowable.just(ExecutorState.ONLINE));
 
     // Действие:
-    executorStateViewModel.getViewStateLiveData().observeForever(viewStateObserver);
-    executorStateViewModel.initializeExecutorState();
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.initializeExecutorState();
 
     // Результат:
     verifyZeroInteractions(viewStateObserver);
@@ -155,8 +155,8 @@ public class ExecutorStateViewModelTest {
         .thenReturn(Flowable.just(ExecutorState.ONLINE));
 
     // Действие:
-    executorStateViewModel.getViewStateLiveData().observeForever(viewStateObserver);
-    executorStateViewModel.initializeExecutorState();
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.initializeExecutorState();
 
     // Результат:
     verifyZeroInteractions(viewStateObserver);
@@ -174,8 +174,8 @@ public class ExecutorStateViewModelTest {
         .thenReturn(Flowable.error(NoNetworkException::new));
 
     // Действие:
-    executorStateViewModel.getNavigationLiveData().observeForever(navigationObserver);
-    executorStateViewModel.initializeExecutorState();
+    viewModel.getNavigationLiveData().observeForever(navigationObserver);
+    viewModel.initializeExecutorState();
 
     // Результат:
     verify(navigationObserver, only()).onChanged(ExecutorStateNavigate.SERVER_DATA_ERROR);
@@ -191,8 +191,8 @@ public class ExecutorStateViewModelTest {
         .thenReturn(Flowable.error(AuthenticatorException::new));
 
     // Действие:
-    executorStateViewModel.getNavigationLiveData().observeForever(navigationObserver);
-    executorStateViewModel.initializeExecutorState();
+    viewModel.getNavigationLiveData().observeForever(navigationObserver);
+    viewModel.initializeExecutorState();
 
     // Результат:
     verify(navigationObserver, only()).onChanged(ExecutorStateNavigate.SERVER_DATA_ERROR);
@@ -208,8 +208,8 @@ public class ExecutorStateViewModelTest {
         .thenReturn(Flowable.just(ExecutorState.SHIFT_CLOSED));
 
     // Действие:
-    executorStateViewModel.getNavigationLiveData().observeForever(navigationObserver);
-    executorStateViewModel.initializeExecutorState();
+    viewModel.getNavigationLiveData().observeForever(navigationObserver);
+    viewModel.initializeExecutorState();
 
     // Результат:
     verify(navigationObserver, only()).onChanged(ExecutorStateNavigate.MAP_SHIFT_CLOSED);
@@ -225,8 +225,8 @@ public class ExecutorStateViewModelTest {
         .thenReturn(Flowable.just(ExecutorState.SHIFT_OPENED));
 
     // Действие:
-    executorStateViewModel.getNavigationLiveData().observeForever(navigationObserver);
-    executorStateViewModel.initializeExecutorState();
+    viewModel.getNavigationLiveData().observeForever(navigationObserver);
+    viewModel.initializeExecutorState();
 
     // Результат:
     verify(navigationObserver, only()).onChanged(ExecutorStateNavigate.MAP_SHIFT_OPENED);
@@ -242,8 +242,8 @@ public class ExecutorStateViewModelTest {
         .thenReturn(Flowable.just(ExecutorState.ONLINE));
 
     // Действие:
-    executorStateViewModel.getNavigationLiveData().observeForever(navigationObserver);
-    executorStateViewModel.initializeExecutorState();
+    viewModel.getNavigationLiveData().observeForever(navigationObserver);
+    viewModel.initializeExecutorState();
 
     // Результат:
     verify(navigationObserver, only()).onChanged(ExecutorStateNavigate.MAP_ONLINE);
@@ -259,8 +259,8 @@ public class ExecutorStateViewModelTest {
         .thenReturn(Flowable.just(ExecutorState.DRIVER_ORDER_CONFIRMATION));
 
     // Действие:
-    executorStateViewModel.getNavigationLiveData().observeForever(navigationObserver);
-    executorStateViewModel.initializeExecutorState();
+    viewModel.getNavigationLiveData().observeForever(navigationObserver);
+    viewModel.initializeExecutorState();
 
     // Результат:
     verify(navigationObserver, only()).onChanged(ExecutorStateNavigate.DRIVER_ORDER_CONFIRMATION);
@@ -276,8 +276,8 @@ public class ExecutorStateViewModelTest {
         .thenReturn(Flowable.just(ExecutorState.CLIENT_ORDER_CONFIRMATION));
 
     // Действие:
-    executorStateViewModel.getNavigationLiveData().observeForever(navigationObserver);
-    executorStateViewModel.initializeExecutorState();
+    viewModel.getNavigationLiveData().observeForever(navigationObserver);
+    viewModel.initializeExecutorState();
 
     // Результат:
     verify(navigationObserver, only()).onChanged(ExecutorStateNavigate.CLIENT_ORDER_CONFIRMATION);
@@ -293,8 +293,8 @@ public class ExecutorStateViewModelTest {
         .thenReturn(Flowable.just(ExecutorState.MOVING_TO_CLIENT));
 
     // Действие:
-    executorStateViewModel.getNavigationLiveData().observeForever(navigationObserver);
-    executorStateViewModel.initializeExecutorState();
+    viewModel.getNavigationLiveData().observeForever(navigationObserver);
+    viewModel.initializeExecutorState();
 
     // Результат:
     verify(navigationObserver, only()).onChanged(ExecutorStateNavigate.MOVING_TO_CLIENT);
@@ -310,8 +310,8 @@ public class ExecutorStateViewModelTest {
         .thenReturn(Flowable.just(ExecutorState.WAITING_FOR_CLIENT));
 
     // Действие:
-    executorStateViewModel.getNavigationLiveData().observeForever(navigationObserver);
-    executorStateViewModel.initializeExecutorState();
+    viewModel.getNavigationLiveData().observeForever(navigationObserver);
+    viewModel.initializeExecutorState();
 
     // Результат:
     verify(navigationObserver, only()).onChanged(ExecutorStateNavigate.WAITING_FOR_CLIENT);
@@ -327,8 +327,8 @@ public class ExecutorStateViewModelTest {
         .thenReturn(Flowable.just(ExecutorState.ORDER_FULFILLMENT));
 
     // Действие:
-    executorStateViewModel.getNavigationLiveData().observeForever(navigationObserver);
-    executorStateViewModel.initializeExecutorState();
+    viewModel.getNavigationLiveData().observeForever(navigationObserver);
+    viewModel.initializeExecutorState();
 
     // Результат:
     verify(navigationObserver, only()).onChanged(ExecutorStateNavigate.ORDER_FULFILLMENT);

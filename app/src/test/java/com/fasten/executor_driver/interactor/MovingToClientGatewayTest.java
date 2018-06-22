@@ -21,7 +21,7 @@ import ua.naiksoftware.stomp.client.StompClient;
 @RunWith(MockitoJUnitRunner.class)
 public class MovingToClientGatewayTest {
 
-  private MovingToClientGateway orderGateway;
+  private MovingToClientGateway gateway;
   @Mock
   private StompClient stompClient;
 
@@ -32,7 +32,7 @@ public class MovingToClientGatewayTest {
     RxJavaPlugins.setIoSchedulerHandler(scheduler -> Schedulers.trampoline());
     ExecutorState.MOVING_TO_CLIENT.setData(null);
     when(stompClient.send(anyString(), anyString())).thenReturn(Completable.never());
-    orderGateway = new MovingToClientGatewayImpl(stompClient);
+    gateway = new MovingToClientGatewayImpl(stompClient);
   }
 
   /* Проверяем работу с клиентом STOMP */
@@ -43,7 +43,7 @@ public class MovingToClientGatewayTest {
   @Test
   public void askStompClientToSendReportArrival() {
     // Действие:
-    orderGateway.reportArrival().test();
+    gateway.reportArrival().test();
 
     // Результат:
     verify(stompClient, only()).send("/mobile/trip", "\"DRIVER_ARRIVED\"");
@@ -62,7 +62,7 @@ public class MovingToClientGatewayTest {
     when(stompClient.send(anyString(), anyString())).thenReturn(Completable.complete());
 
     // Действие:
-    TestObserver<Void> testObserver = orderGateway.reportArrival().test();
+    TestObserver<Void> testObserver = gateway.reportArrival().test();
 
     // Результат:
     testObserver.assertNoErrors();
@@ -79,7 +79,7 @@ public class MovingToClientGatewayTest {
         .thenReturn(Completable.error(new IllegalArgumentException()));
 
     // Действие:
-    TestObserver<Void> testObserver = orderGateway.reportArrival().test();
+    TestObserver<Void> testObserver = gateway.reportArrival().test();
 
     // Результат:
     testObserver.assertNotComplete();

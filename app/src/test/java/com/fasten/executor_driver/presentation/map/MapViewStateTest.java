@@ -17,7 +17,7 @@ public class MapViewStateTest {
   private MapViewState viewState;
 
   @Mock
-  private MapViewActions mapViewActions;
+  private MapViewActions viewActions;
 
   @Before
   public void setUp() {
@@ -27,11 +27,11 @@ public class MapViewStateTest {
   @Test
   public void testActions() {
     // Действие:
-    viewState.apply(mapViewActions);
+    viewState.apply(viewActions);
 
     // Результат:
-    verify(mapViewActions).updateHeatMap("geoData");
-    verifyNoMoreInteractions(mapViewActions);
+    verify(viewActions).updateHeatMap("geoData");
+    verifyNoMoreInteractions(viewActions);
   }
 
   @Test

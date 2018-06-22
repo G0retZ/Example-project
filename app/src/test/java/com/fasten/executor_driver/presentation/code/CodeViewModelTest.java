@@ -36,7 +36,7 @@ public class CodeViewModelTest {
 
   @Rule
   public TestRule rule = new InstantTaskExecutorRule();
-  private CodeViewModel codeViewModel;
+  private CodeViewModel viewModel;
   @Mock
   private PasswordUseCase passwordUseCase;
 
@@ -55,7 +55,7 @@ public class CodeViewModelTest {
     RxAndroidPlugins.setInitMainThreadSchedulerHandler(scheduler -> Schedulers.trampoline());
     when(passwordUseCase.authorize(anyString(), any(Completable.class)))
         .thenReturn(Completable.never());
-    codeViewModel = new CodeViewModelImpl(passwordUseCase);
+    viewModel = new CodeViewModelImpl(passwordUseCase);
   }
 
   /* Тетсируем работу с юзкейсом кода. */
@@ -66,9 +66,9 @@ public class CodeViewModelTest {
   @Test
   public void DoNotAskPasswordUseCaseToAuthorize() {
     // Действие:
-    codeViewModel.setCode("1   2   ");
-    codeViewModel.setCode("1   2   3   ");
-    codeViewModel.setCode("1   2   3   4");
+    viewModel.setCode("1   2   ");
+    viewModel.setCode("1   2   3   ");
+    viewModel.setCode("1   2   3   4");
 
     // Результат:
     verify(passwordUseCase, only()).authorize(eq("12"), afterValidationCaptor.capture());
@@ -84,9 +84,9 @@ public class CodeViewModelTest {
         .thenReturn(Completable.error(new ValidationException()));
 
     // Действие:
-    codeViewModel.setCode("1   2   ");
-    codeViewModel.setCode("1   2   3   ");
-    codeViewModel.setCode("1   2   3   4");
+    viewModel.setCode("1   2   ");
+    viewModel.setCode("1   2   3   ");
+    viewModel.setCode("1   2   3   4");
 
     // Результат:
     verify(passwordUseCase).authorize(eq("12"), afterValidationCaptor.capture());
@@ -106,7 +106,7 @@ public class CodeViewModelTest {
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
 
     // Действие:
-    codeViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(any(CodeViewStateInitial.class));
@@ -120,15 +120,15 @@ public class CodeViewModelTest {
   public void setNoNewViewStateToLiveData() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    codeViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
     when(passwordUseCase.authorize(anyString(), any(Completable.class)))
         .thenReturn(Completable.error(new ValidationException()));
 
     // Действие:
-    codeViewModel.setCode("");
-    codeViewModel.setCode("1   2   ");
-    codeViewModel.setCode("1   2   3   ");
-    codeViewModel.setCode("1   2   3   4");
+    viewModel.setCode("");
+    viewModel.setCode("1   2   ");
+    viewModel.setCode("1   2   3   ");
+    viewModel.setCode("1   2   3   4");
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(any(CodeViewStateInitial.class));
@@ -142,17 +142,17 @@ public class CodeViewModelTest {
   public void setPendingViewStateToLiveDataAfterValidationSuccess() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    codeViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
     when(passwordUseCase.authorize(anyString(), any(Completable.class)))
         .thenReturn(Completable.error(new ValidationException()));
     when(passwordUseCase.authorize(eq("12457"), any(Completable.class)))
         .thenReturn(Completable.never());
 
     // Действие:
-    codeViewModel.setCode("");
-    codeViewModel.setCode("1   2   ");
-    codeViewModel.setCode("1   2   4   5   ");
-    codeViewModel.setCode("1   2   4   5   7   ");
+    viewModel.setCode("");
+    viewModel.setCode("1   2   ");
+    viewModel.setCode("1   2   4   5   ");
+    viewModel.setCode("1   2   4   5   7   ");
 
     // Результат:
     verify(passwordUseCase).authorize(eq("12457"), afterValidationCaptor.capture());
@@ -170,12 +170,12 @@ public class CodeViewModelTest {
     // Дано:
     CompletableSubject completableSubject = CompletableSubject.create();
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    codeViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
     when(passwordUseCase.authorize(anyString(), any(Completable.class)))
         .thenReturn(completableSubject);
 
     // Действие:
-    codeViewModel.setCode("1   2   4   5");
+    viewModel.setCode("1   2   4   5");
 
     // Результат:
     verify(passwordUseCase).authorize(eq("1245"), afterValidationCaptor.capture());
@@ -197,12 +197,12 @@ public class CodeViewModelTest {
     // Дано:
     CompletableSubject completableSubject = CompletableSubject.create();
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    codeViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
     when(passwordUseCase.authorize(anyString(), any(Completable.class)))
         .thenReturn(completableSubject);
 
     // Действие:
-    codeViewModel.setCode("1   2   4   5");
+    viewModel.setCode("1   2   4   5");
     verify(passwordUseCase).authorize(eq("1245"), afterValidationCaptor.capture());
     afterValidationCaptor.getValue().subscribe(
         () -> completableSubject.onError(new IllegalArgumentException()),
@@ -210,7 +210,7 @@ public class CodeViewModelTest {
     );
     when(passwordUseCase.authorize(anyString(), any(Completable.class)))
         .thenReturn(Completable.error(new ValidationException()));
-    codeViewModel.setCode("1   2   4   ");
+    viewModel.setCode("1   2   4   ");
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(any(CodeViewStateInitial.class));
@@ -228,12 +228,12 @@ public class CodeViewModelTest {
     // Дано:
     CompletableSubject completableSubject = CompletableSubject.create();
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    codeViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
     when(passwordUseCase.authorize(anyString(), any(Completable.class)))
         .thenReturn(completableSubject);
 
     // Действие:
-    codeViewModel.setCode("1   2   4   5");
+    viewModel.setCode("1   2   4   5");
 
     // Результат:
     verify(passwordUseCase).authorize(eq("1245"), afterValidationCaptor.capture());
@@ -256,12 +256,12 @@ public class CodeViewModelTest {
   public void setNavigateToMapToLiveData() {
     // Дано:
     CompletableSubject completableSubject = CompletableSubject.create();
-    codeViewModel.getNavigationLiveData().observeForever(navigateObserver);
+    viewModel.getNavigationLiveData().observeForever(navigateObserver);
     when(passwordUseCase.authorize(anyString(), any(Completable.class)))
         .thenReturn(completableSubject);
 
     // Действие:
-    codeViewModel.setCode("1   2   4   5");
+    viewModel.setCode("1   2   4   5");
 
     // Результат:
     verify(passwordUseCase).authorize(eq("1245"), afterValidationCaptor.capture());

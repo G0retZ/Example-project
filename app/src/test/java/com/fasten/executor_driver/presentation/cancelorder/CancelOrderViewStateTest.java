@@ -18,7 +18,7 @@ public class CancelOrderViewStateTest {
   private CancelOrderViewState viewState;
 
   @Mock
-  private CancelOrderViewActions orderRouteViewActions;
+  private CancelOrderViewActions viewActions;
   @Mock
   private CancelOrderReason routePointItems;
   @Mock
@@ -30,13 +30,13 @@ public class CancelOrderViewStateTest {
     viewState = new CancelOrderViewState(Collections.singletonList(routePointItems));
 
     // Действие:
-    viewState.apply(orderRouteViewActions);
+    viewState.apply(viewActions);
 
     // Результат:
-    verify(orderRouteViewActions).setCancelOrderReasons(Collections.singletonList(routePointItems));
-    verify(orderRouteViewActions).showCancelOrderReasons(true);
-    verify(orderRouteViewActions).showCancelOrderPending(false);
-    verifyNoMoreInteractions(orderRouteViewActions);
+    verify(viewActions).setCancelOrderReasons(Collections.singletonList(routePointItems));
+    verify(viewActions).showCancelOrderReasons(true);
+    verify(viewActions).showCancelOrderPending(false);
+    verifyNoMoreInteractions(viewActions);
   }
 
   @Test

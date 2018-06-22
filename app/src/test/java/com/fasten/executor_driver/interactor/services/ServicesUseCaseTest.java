@@ -22,7 +22,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class ServicesUseCaseTest {
 
-  private ServicesUseCase servicesUseCase;
+  private ServicesUseCase useCase;
 
   @Mock
   private ServicesGateway gateway;
@@ -31,7 +31,7 @@ public class ServicesUseCaseTest {
   public void setUp() {
     when(gateway.getServices()).thenReturn(Single.never());
     when(gateway.sendSelectedServices(anyList())).thenReturn(Completable.never());
-    servicesUseCase = new ServicesUseCaseImpl(gateway);
+    useCase = new ServicesUseCaseImpl(gateway);
   }
 
   /* Проверяем работу с гейтвеем */
@@ -42,7 +42,7 @@ public class ServicesUseCaseTest {
   @Test
   public void askGatewayForServices() {
     // Действие:
-    servicesUseCase.loadServices().test();
+    useCase.loadServices().test();
 
     // Результат:
     verify(gateway, only()).getServices();
@@ -54,7 +54,7 @@ public class ServicesUseCaseTest {
   @Test
   public void doNotTouchGatewayIfNoServices() {
     // Действие:
-    servicesUseCase.setSelectedServices(new ArrayList<>()).test();
+    useCase.setSelectedServices(new ArrayList<>()).test();
 
     // Результат:
     verifyZeroInteractions(gateway);
@@ -66,7 +66,7 @@ public class ServicesUseCaseTest {
   @Test
   public void doNotTouchGatewayIfNoSelectedServices() {
     // Действие:
-    servicesUseCase.setSelectedServices(
+    useCase.setSelectedServices(
         Arrays.asList(
             new Service(0, "n1", 100, false),
             new Service(1, "n2", 10, false),
@@ -84,7 +84,7 @@ public class ServicesUseCaseTest {
   @Test
   public void askGatewaySetSelectedServices() {
     // Действие:
-    servicesUseCase.setSelectedServices(
+    useCase.setSelectedServices(
         Arrays.asList(
             new Service(0, "n1", 100, true),
             new Service(1, "n2", 10, false),
@@ -112,7 +112,7 @@ public class ServicesUseCaseTest {
     when(gateway.getServices()).thenReturn(Single.error(new NoNetworkException()));
 
     // Действие и Результат:
-    servicesUseCase.loadServices().test().assertError(NoNetworkException.class);
+    useCase.loadServices().test().assertError(NoNetworkException.class);
   }
 
   /**
@@ -124,7 +124,7 @@ public class ServicesUseCaseTest {
     when(gateway.getServices()).thenReturn(Single.just(new ArrayList<>()));
 
     // Действие и Результат:
-    servicesUseCase.loadServices().test().assertError(NoServicesAvailableException.class);
+    useCase.loadServices().test().assertError(NoServicesAvailableException.class);
   }
 
   /**
@@ -142,8 +142,8 @@ public class ServicesUseCaseTest {
     ));
 
     // Действие и Результат:
-    servicesUseCase.loadServices().test().assertComplete();
-    servicesUseCase.loadServices().test().assertValue(
+    useCase.loadServices().test().assertComplete();
+    useCase.loadServices().test().assertValue(
         Arrays.asList(
             new Service(0, "n1", 100, true),
             new Service(1, "n2", 10, false),
@@ -158,7 +158,7 @@ public class ServicesUseCaseTest {
   @Test
   public void answerNoVehiclesAvailableErrorForEmptyList() {
     // Действие и Результат:
-    servicesUseCase.setSelectedServices(new ArrayList<>()).test()
+    useCase.setSelectedServices(new ArrayList<>()).test()
         .assertError(NoServicesAvailableException.class);
   }
 
@@ -168,7 +168,7 @@ public class ServicesUseCaseTest {
   @Test
   public void answerNoVehiclesAvailableErrorForNoSelectedServices() {
     // Действие и Результат:
-    servicesUseCase.setSelectedServices(
+    useCase.setSelectedServices(
         Arrays.asList(
             new Service(0, "n1", 100, false),
             new Service(1, "n2", 10, false),
@@ -187,7 +187,7 @@ public class ServicesUseCaseTest {
         .thenReturn(Completable.error(new NoNetworkException()));
 
     // Действие и Результат:
-    servicesUseCase.setSelectedServices(
+    useCase.setSelectedServices(
         Arrays.asList(
             new Service(0, "n1", 100, true),
             new Service(1, "n2", 10, false),
@@ -205,7 +205,7 @@ public class ServicesUseCaseTest {
     when(gateway.sendSelectedServices(anyList())).thenReturn(Completable.complete());
 
     // Действие и Результат:
-    servicesUseCase.setSelectedServices(
+    useCase.setSelectedServices(
         Arrays.asList(
             new Service(0, "n1", 100, true),
             new Service(1, "n2", 10, false),

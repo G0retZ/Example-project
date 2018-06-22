@@ -17,7 +17,7 @@ public class OrderTimeViewStateServerDataErrorTest {
   private OrderTimeViewStateServerDataError viewState;
 
   @Mock
-  private OrderTimeViewActions orderTimeViewActions;
+  private OrderTimeViewActions viewActions;
 
   @Before
   public void setUp() {
@@ -27,12 +27,12 @@ public class OrderTimeViewStateServerDataErrorTest {
   @Test
   public void testActions() {
     // Действие:
-    viewState.apply(orderTimeViewActions);
+    viewState.apply(viewActions);
 
     // Результат:
-    verify(orderTimeViewActions).setOrderTimeText(12345);
-    verify(orderTimeViewActions).showOrderTimeServerDataError();
-    verifyNoMoreInteractions(orderTimeViewActions);
+    verify(viewActions).setOrderTimeText(12345);
+    verify(viewActions).showOrderTimeServerDataError();
+    verifyNoMoreInteractions(viewActions);
   }
 
   @Test

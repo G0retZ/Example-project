@@ -17,7 +17,7 @@ public class NextRoutePointViewStateServerDataErrorTest {
   private NextRoutePointViewStateServerDataError viewState;
 
   @Mock
-  private NextRoutePointViewActions nextRoutePointViewActions;
+  private NextRoutePointViewActions viewActions;
   @Mock
   private ViewState<NextRoutePointViewActions> parentViewState;
   @Mock
@@ -29,11 +29,11 @@ public class NextRoutePointViewStateServerDataErrorTest {
     viewState = new NextRoutePointViewStateServerDataError(parentViewState);
 
     // Действие:
-    viewState.apply(nextRoutePointViewActions);
+    viewState.apply(viewActions);
 
     // Результат:
-    verify(nextRoutePointViewActions, only()).showNextRoutePointServerDataError();
-    verify(parentViewState, only()).apply(nextRoutePointViewActions);
+    verify(viewActions, only()).showNextRoutePointServerDataError();
+    verify(parentViewState, only()).apply(viewActions);
   }
 
   @Test
@@ -42,10 +42,10 @@ public class NextRoutePointViewStateServerDataErrorTest {
     viewState = new NextRoutePointViewStateServerDataError(null);
 
     // Действие:
-    viewState.apply(nextRoutePointViewActions);
+    viewState.apply(viewActions);
 
     // Результат:
-    verify(nextRoutePointViewActions, only()).showNextRoutePointServerDataError();
+    verify(viewActions, only()).showNextRoutePointServerDataError();
   }
 
   @Test

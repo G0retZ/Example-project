@@ -17,14 +17,14 @@ import org.mockito.junit.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class LastUsedVehicleGatewayTest {
 
-  private LastUsedVehicleGateway lastUsedVehicleGateway;
+  private LastUsedVehicleGateway gateway;
 
   @Mock
   private AppSettingsService appSettings;
 
   @Before
   public void setUp() {
-    lastUsedVehicleGateway = new LastUsedVehicleGatewayImpl(appSettings);
+    gateway = new LastUsedVehicleGatewayImpl(appSettings);
   }
 
   /**
@@ -33,7 +33,7 @@ public class LastUsedVehicleGatewayTest {
   @Test
   public void askSettingsForLasUsedVehicleId() {
     // Действие:
-    lastUsedVehicleGateway.getLastUsedVehicleId().test();
+    gateway.getLastUsedVehicleId().test();
 
     // Результат:
     verify(appSettings, only()).getData("lastUsedVehicle");
@@ -45,11 +45,11 @@ public class LastUsedVehicleGatewayTest {
   @Test
   public void doNotAskSettingsForLasUsedVehicleIdAfterFirstRequest() {
     // Действие:
-    lastUsedVehicleGateway.getLastUsedVehicleId().test();
-    lastUsedVehicleGateway.getLastUsedVehicleId().test();
-    lastUsedVehicleGateway.getLastUsedVehicleId().test();
-    lastUsedVehicleGateway.getLastUsedVehicleId().test();
-    lastUsedVehicleGateway.getLastUsedVehicleId().test();
+    gateway.getLastUsedVehicleId().test();
+    gateway.getLastUsedVehicleId().test();
+    gateway.getLastUsedVehicleId().test();
+    gateway.getLastUsedVehicleId().test();
+    gateway.getLastUsedVehicleId().test();
 
     // Результат:
     verify(appSettings, only()).getData("lastUsedVehicle");
@@ -61,7 +61,7 @@ public class LastUsedVehicleGatewayTest {
   @Test
   public void askSettingsForSaveLasUsedVehicleId() {
     // Действие:
-    lastUsedVehicleGateway.saveLastUsedVehicleId(
+    gateway.saveLastUsedVehicleId(
         new Vehicle(123456, "manufacturer", "model", "color", "license", false)
     ).test();
 
@@ -75,14 +75,14 @@ public class LastUsedVehicleGatewayTest {
   @Test
   public void doNotAskSettingsForLasUsedVehicleIdAfterSave() {
     // Действие:
-    lastUsedVehicleGateway.saveLastUsedVehicleId(
+    gateway.saveLastUsedVehicleId(
         new Vehicle(123456, "manufacturer", "model", "color", "license", false)
     ).test();
-    lastUsedVehicleGateway.getLastUsedVehicleId().test();
-    lastUsedVehicleGateway.getLastUsedVehicleId().test();
-    lastUsedVehicleGateway.getLastUsedVehicleId().test();
-    lastUsedVehicleGateway.getLastUsedVehicleId().test();
-    lastUsedVehicleGateway.getLastUsedVehicleId().test();
+    gateway.getLastUsedVehicleId().test();
+    gateway.getLastUsedVehicleId().test();
+    gateway.getLastUsedVehicleId().test();
+    gateway.getLastUsedVehicleId().test();
+    gateway.getLastUsedVehicleId().test();
 
     // Результат:
     verify(appSettings, only()).saveData(eq("lastUsedVehicle"), eq("123456"));
@@ -97,7 +97,7 @@ public class LastUsedVehicleGatewayTest {
     when(appSettings.getData("lastUsedVehicle")).thenReturn("654321");
 
     // Действие и Результат:
-    lastUsedVehicleGateway.getLastUsedVehicleId().test().assertValue(654321L);
+    gateway.getLastUsedVehicleId().test().assertValue(654321L);
   }
 
   /**
@@ -106,7 +106,7 @@ public class LastUsedVehicleGatewayTest {
   @Test
   public void returnDefaultValueIfNoSuch() {
     // Действие и Результат:
-    lastUsedVehicleGateway.getLastUsedVehicleId().test().assertValue(-1L);
+    gateway.getLastUsedVehicleId().test().assertValue(-1L);
   }
 
   /**
@@ -118,7 +118,7 @@ public class LastUsedVehicleGatewayTest {
     when(appSettings.getData("lastUsedVehicle")).thenReturn("");
 
     // Действие и Результат:
-    lastUsedVehicleGateway.getLastUsedVehicleId().test().assertValue(-1L);
+    gateway.getLastUsedVehicleId().test().assertValue(-1L);
   }
 
   /**
@@ -130,7 +130,7 @@ public class LastUsedVehicleGatewayTest {
     when(appSettings.getData("lastUsedVehicle")).thenReturn("as32as");
 
     // Действие и Результат:
-    lastUsedVehicleGateway.getLastUsedVehicleId().test().assertValue(-1L);
+    gateway.getLastUsedVehicleId().test().assertValue(-1L);
   }
 
   /**
@@ -139,7 +139,7 @@ public class LastUsedVehicleGatewayTest {
   @Test
   public void returnComplete() {
     // Действие и Результат:
-    lastUsedVehicleGateway.saveLastUsedVehicleId(
+    gateway.saveLastUsedVehicleId(
         new Vehicle(123456, "manufacturer", "model", "color", "license", false)
     ).test().assertComplete();
   }

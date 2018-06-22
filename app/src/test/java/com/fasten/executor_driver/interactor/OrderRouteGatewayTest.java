@@ -21,7 +21,7 @@ import ua.naiksoftware.stomp.client.StompClient;
 @RunWith(MockitoJUnitRunner.class)
 public class OrderRouteGatewayTest {
 
-  private OrderRouteGateway orderRouteGateway;
+  private OrderRouteGateway gateway;
   @Mock
   private StompClient stompClient;
   @Mock
@@ -33,7 +33,7 @@ public class OrderRouteGatewayTest {
     RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
     RxJavaPlugins.setIoSchedulerHandler(scheduler -> Schedulers.trampoline());
     when(stompClient.send(anyString(), anyString())).thenReturn(Completable.never());
-    orderRouteGateway = new OrderRouteGatewayImpl(stompClient);
+    gateway = new OrderRouteGatewayImpl(stompClient);
   }
 
   /* Проверяем работу с клиентом STOMP */
@@ -47,7 +47,7 @@ public class OrderRouteGatewayTest {
     when(routePoint.getId()).thenReturn(7L);
 
     // Действие:
-    orderRouteGateway.closeRoutePoint(routePoint).test();
+    gateway.closeRoutePoint(routePoint).test();
 
     // Результат:
     verify(stompClient, only()).send("/mobile/changeRoutePoint", "{\"complete\":\"7\"}");
@@ -59,7 +59,7 @@ public class OrderRouteGatewayTest {
   @Test
   public void askStompClientToSendCompleteTheOrderMessage() {
     // Действие:
-    orderRouteGateway.completeTheOrder().test();
+    gateway.completeTheOrder().test();
 
     // Результат:
     verify(stompClient, only()).send("/mobile/trip", "\"COMPLETE_ORDER\"");
@@ -74,7 +74,7 @@ public class OrderRouteGatewayTest {
     when(routePoint.getId()).thenReturn(7L);
 
     // Действие:
-    orderRouteGateway.nextRoutePoint(routePoint).test();
+    gateway.nextRoutePoint(routePoint).test();
 
     // Результат:
     verify(stompClient, only()).send("/mobile/changeRoutePoint", "{\"next\":\"7\"}");
@@ -93,7 +93,7 @@ public class OrderRouteGatewayTest {
     when(stompClient.send(anyString(), anyString())).thenReturn(Completable.complete());
 
     // Действие:
-    TestObserver<Void> testObserver = orderRouteGateway.closeRoutePoint(routePoint).test();
+    TestObserver<Void> testObserver = gateway.closeRoutePoint(routePoint).test();
 
     // Результат:
     testObserver.assertNoErrors();
@@ -109,7 +109,7 @@ public class OrderRouteGatewayTest {
     when(stompClient.send(anyString(), anyString())).thenReturn(Completable.complete());
 
     // Действие:
-    TestObserver<Void> testObserver = orderRouteGateway.completeTheOrder().test();
+    TestObserver<Void> testObserver = gateway.completeTheOrder().test();
 
     // Результат:
     testObserver.assertNoErrors();
@@ -125,7 +125,7 @@ public class OrderRouteGatewayTest {
     when(stompClient.send(anyString(), anyString())).thenReturn(Completable.complete());
 
     // Действие:
-    TestObserver<Void> testObserver = orderRouteGateway.nextRoutePoint(routePoint).test();
+    TestObserver<Void> testObserver = gateway.nextRoutePoint(routePoint).test();
 
     // Результат:
     testObserver.assertNoErrors();
@@ -142,7 +142,7 @@ public class OrderRouteGatewayTest {
         .thenReturn(Completable.error(new IllegalArgumentException()));
 
     // Действие:
-    TestObserver<Void> testObserver = orderRouteGateway.closeRoutePoint(routePoint).test();
+    TestObserver<Void> testObserver = gateway.closeRoutePoint(routePoint).test();
 
     // Результат:
     testObserver.assertNotComplete();
@@ -159,7 +159,7 @@ public class OrderRouteGatewayTest {
         .thenReturn(Completable.error(new IllegalArgumentException()));
 
     // Действие:
-    TestObserver<Void> testObserver = orderRouteGateway.completeTheOrder().test();
+    TestObserver<Void> testObserver = gateway.completeTheOrder().test();
 
     // Результат:
     testObserver.assertNotComplete();
@@ -176,7 +176,7 @@ public class OrderRouteGatewayTest {
         .thenReturn(Completable.error(new IllegalArgumentException()));
 
     // Действие:
-    TestObserver<Void> testObserver = orderRouteGateway.nextRoutePoint(routePoint).test();
+    TestObserver<Void> testObserver = gateway.nextRoutePoint(routePoint).test();
 
     // Результат:
     testObserver.assertNotComplete();

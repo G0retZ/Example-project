@@ -16,15 +16,15 @@ import org.mockito.junit.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class ServerConnectionUseCaseTest {
 
-  private ServerConnectionUseCase serverConnectionUseCase;
+  private ServerConnectionUseCase useCase;
 
   @Mock
-  private ServerConnectionGateway serverConnectionGateway;
+  private ServerConnectionGateway gateway;
 
   @Before
   public void setUp() {
-    when(serverConnectionGateway.openSocket()).thenReturn(Flowable.never());
-    serverConnectionUseCase = new ServerConnectionUseCaseImpl(serverConnectionGateway);
+    when(gateway.openSocket()).thenReturn(Flowable.never());
+    useCase = new ServerConnectionUseCaseImpl(gateway);
   }
 
   /* Проверяем работу с гейтвеем */
@@ -35,10 +35,10 @@ public class ServerConnectionUseCaseTest {
   @Test
   public void askGatewayToOpenSocket() {
     // Действие:
-    serverConnectionUseCase.connect().test();
+    useCase.connect().test();
 
     // Результат:
-    verify(serverConnectionGateway, only()).openSocket();
+    verify(gateway, only()).openSocket();
   }
 
   /* Проверяем ответы на запрос соединения */
@@ -49,10 +49,10 @@ public class ServerConnectionUseCaseTest {
   @Test
   public void answerNoNetworkError() {
     // Дано:
-    when(serverConnectionGateway.openSocket()).thenReturn(Flowable.error(new NoNetworkException()));
+    when(gateway.openSocket()).thenReturn(Flowable.error(new NoNetworkException()));
 
     // Действие:
-    TestSubscriber<Boolean> testSubscriber = serverConnectionUseCase.connect().test();
+    TestSubscriber<Boolean> testSubscriber = useCase.connect().test();
 
     // Результат:
     testSubscriber.assertError(NoNetworkException.class);
@@ -66,11 +66,11 @@ public class ServerConnectionUseCaseTest {
   @Test
   public void answerConnectSuccessful() {
     // Дано:
-    when(serverConnectionGateway.openSocket())
+    when(gateway.openSocket())
         .thenReturn(Flowable.just(true).concatWith(Flowable.never()));
 
     // Действие:
-    TestSubscriber<Boolean> testSubscriber = serverConnectionUseCase.connect().test();
+    TestSubscriber<Boolean> testSubscriber = useCase.connect().test();
 
     // Результат:
     testSubscriber.assertNotComplete();
@@ -84,10 +84,10 @@ public class ServerConnectionUseCaseTest {
   @Test
   public void answerConnectionClosed() {
     // Дано:
-    when(serverConnectionGateway.openSocket()).thenReturn(Flowable.empty());
+    when(gateway.openSocket()).thenReturn(Flowable.empty());
 
     // Действие:
-    TestSubscriber<Boolean> testSubscriber = serverConnectionUseCase.connect().test();
+    TestSubscriber<Boolean> testSubscriber = useCase.connect().test();
 
     // Результат:
     testSubscriber.assertComplete();

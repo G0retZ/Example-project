@@ -17,7 +17,7 @@ public class OrderCostViewStateServerDataErrorTest {
   private OrderCostViewStateServerDataError viewState;
 
   @Mock
-  private OrderCostViewActions orderCostViewActions;
+  private OrderCostViewActions viewActions;
 
   @Before
   public void setUp() {
@@ -27,12 +27,12 @@ public class OrderCostViewStateServerDataErrorTest {
   @Test
   public void testActions() {
     // Действие:
-    viewState.apply(orderCostViewActions);
+    viewState.apply(viewActions);
 
     // Результат:
-    verify(orderCostViewActions).setOrderCostText(12345);
-    verify(orderCostViewActions).showOrderCostServerDataError();
-    verifyNoMoreInteractions(orderCostViewActions);
+    verify(viewActions).setOrderCostText(12345);
+    verify(viewActions).showOrderCostServerDataError();
+    verifyNoMoreInteractions(viewActions);
   }
 
   @Test

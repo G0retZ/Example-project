@@ -17,7 +17,7 @@ public class OnlineSwitchViewStatePendingTest {
   private ViewState<OnlineSwitchViewActions> viewState;
 
   @Mock
-  private OnlineSwitchViewActions onlineSwitchViewActions;
+  private OnlineSwitchViewActions viewActions;
   @Mock
   private ViewState<OnlineSwitchViewActions> parentViewState;
   @Mock
@@ -29,11 +29,11 @@ public class OnlineSwitchViewStatePendingTest {
     viewState = new OnlineSwitchViewStatePending(parentViewState);
 
     // Действие:
-    viewState.apply(onlineSwitchViewActions);
+    viewState.apply(viewActions);
 
     // Результат:
-    verify(onlineSwitchViewActions, only()).showSwitchPending(true);
-    verify(parentViewState, only()).apply(onlineSwitchViewActions);
+    verify(viewActions, only()).showSwitchPending(true);
+    verify(parentViewState, only()).apply(viewActions);
   }
 
   @Test
@@ -42,10 +42,10 @@ public class OnlineSwitchViewStatePendingTest {
     viewState = new OnlineSwitchViewStatePending(null);
 
     // Действие:
-    viewState.apply(onlineSwitchViewActions);
+    viewState.apply(viewActions);
 
     // Результат:
-    verify(onlineSwitchViewActions, only()).showSwitchPending(true);
+    verify(viewActions, only()).showSwitchPending(true);
   }
 
   @Test

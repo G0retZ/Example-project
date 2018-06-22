@@ -36,7 +36,7 @@ public class OrderViewModelTest {
 
   @Rule
   public TestRule rule = new InstantTaskExecutorRule();
-  private OrderViewModel orderViewModel;
+  private OrderViewModel viewModel;
   @Mock
   private OrderUseCase orderUseCase;
   @Mock
@@ -56,7 +56,7 @@ public class OrderViewModelTest {
     RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
     RxAndroidPlugins.setInitMainThreadSchedulerHandler(scheduler -> Schedulers.trampoline());
     when(orderUseCase.getOrders()).thenReturn(Flowable.never());
-    orderViewModel = new OrderViewModelImpl(orderUseCase, timeUtils);
+    viewModel = new OrderViewModelImpl(orderUseCase, timeUtils);
   }
 
   /* Тетсируем работу с юзкейсом заказа. */
@@ -67,9 +67,9 @@ public class OrderViewModelTest {
   @Test
   public void askUseCaseForOrdersInitially() {
     // Действие:
-    orderViewModel.getViewStateLiveData();
-    orderViewModel.getViewStateLiveData();
-    orderViewModel.getViewStateLiveData();
+    viewModel.getViewStateLiveData();
+    viewModel.getViewStateLiveData();
+    viewModel.getViewStateLiveData();
 
     // Результат:
     verify(orderUseCase, only()).getOrders();
@@ -86,7 +86,7 @@ public class OrderViewModelTest {
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
 
     // Действие:
-    orderViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(any(OrderViewStatePending.class));
@@ -103,7 +103,7 @@ public class OrderViewModelTest {
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     when(orderUseCase.getOrders())
         .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
-    orderViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
     publishSubject.onError(new NoNetworkException());
@@ -125,7 +125,7 @@ public class OrderViewModelTest {
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     when(orderUseCase.getOrders())
         .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
-    orderViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
     publishSubject.onError(new DataMappingException());
@@ -147,7 +147,7 @@ public class OrderViewModelTest {
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     when(orderUseCase.getOrders())
         .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
-    orderViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
     publishSubject.onError(new NoOrdersAvailableException());
@@ -169,7 +169,7 @@ public class OrderViewModelTest {
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     when(orderUseCase.getOrders())
         .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
-    orderViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
     publishSubject.onNext(order);

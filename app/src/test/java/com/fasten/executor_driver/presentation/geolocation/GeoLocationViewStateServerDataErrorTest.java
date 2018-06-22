@@ -18,7 +18,7 @@ public class GeoLocationViewStateServerDataErrorTest {
   private ViewState<GeoLocationViewActions> viewState;
 
   @Mock
-  private GeoLocationViewActions onlineSwitchViewActions;
+  private GeoLocationViewActions viewActions;
   @Mock
   private ViewState<GeoLocationViewActions> parentViewState;
   @Mock
@@ -30,11 +30,11 @@ public class GeoLocationViewStateServerDataErrorTest {
     viewState = new GeoLocationViewStateServerDataError(parentViewState);
 
     // Действие:
-    viewState.apply(onlineSwitchViewActions);
+    viewState.apply(viewActions);
 
     // Результат:
-    verify(onlineSwitchViewActions, only()).showGeoLocationServerDataError();
-    verify(parentViewState, only()).apply(onlineSwitchViewActions);
+    verify(viewActions, only()).showGeoLocationServerDataError();
+    verify(parentViewState, only()).apply(viewActions);
   }
 
   @Test
@@ -43,10 +43,10 @@ public class GeoLocationViewStateServerDataErrorTest {
     viewState = new GeoLocationViewStateServerDataError(null);
 
     // Действие:
-    viewState.apply(onlineSwitchViewActions);
+    viewState.apply(viewActions);
 
     // Результат:
-    verify(onlineSwitchViewActions, only()).showGeoLocationServerDataError();
+    verify(viewActions, only()).showGeoLocationServerDataError();
   }
 
   @Test

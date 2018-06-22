@@ -25,7 +25,7 @@ public class HeatMapUseCaseTest {
 
   private final static int REQUIRED_INTERVAL = 5;
 
-  private HeatMapUseCase heatMapUseCase;
+  private HeatMapUseCase useCase;
 
   private TestScheduler testScheduler;
 
@@ -40,7 +40,7 @@ public class HeatMapUseCaseTest {
     testScheduler = new TestScheduler();
     RxJavaPlugins.setIoSchedulerHandler(scheduler -> testScheduler);
     when(gateway.getHeatMap()).thenReturn(Single.never());
-    heatMapUseCase = new HeatMapUseCaseImpl(gateway);
+    useCase = new HeatMapUseCaseImpl(gateway);
   }
 
   /* Проверяем работу с гейтвеем */
@@ -51,7 +51,7 @@ public class HeatMapUseCaseTest {
   @Test
   public void askGatewayForHeatMap() {
     // Действие:
-    heatMapUseCase.loadHeatMap().test();
+    useCase.loadHeatMap().test();
 
     // Результат:
     verify(gateway, only()).getHeatMap();
@@ -63,8 +63,8 @@ public class HeatMapUseCaseTest {
   @Test
   public void doNotAskGatewayForHeatMap() {
     // Действие:
-    heatMapUseCase.loadHeatMap().test();
-    heatMapUseCase.loadHeatMap().test();
+    useCase.loadHeatMap().test();
+    useCase.loadHeatMap().test();
 
     // Результат:
     verify(gateway, only()).getHeatMap();
@@ -81,7 +81,7 @@ public class HeatMapUseCaseTest {
     when(gateway.getHeatMap()).thenReturn(Single.error(new NoNetworkException()));
 
     // Действие:
-    TestSubscriber<String> testObserver = heatMapUseCase.loadHeatMap().test();
+    TestSubscriber<String> testObserver = useCase.loadHeatMap().test();
     testScheduler.advanceTimeBy(REQUIRED_INTERVAL, TimeUnit.MINUTES);
     testScheduler.advanceTimeBy(REQUIRED_INTERVAL, TimeUnit.MINUTES);
     testScheduler.advanceTimeBy(REQUIRED_INTERVAL, TimeUnit.MINUTES);
@@ -119,7 +119,7 @@ public class HeatMapUseCaseTest {
     }));
 
     // Действие:
-    TestSubscriber<String> testObserver = heatMapUseCase.loadHeatMap().test();
+    TestSubscriber<String> testObserver = useCase.loadHeatMap().test();
     testScheduler.advanceTimeBy(REQUIRED_INTERVAL * 9, TimeUnit.MINUTES);
 
     // Результат:
@@ -141,11 +141,11 @@ public class HeatMapUseCaseTest {
     when(gateway.getHeatMap()).thenReturn(Single.fromCallable(testCallable));
 
     // Действие:
-    Disposable disposable1 = heatMapUseCase.loadHeatMap()
+    Disposable disposable1 = useCase.loadHeatMap()
         .subscribe(System.out::println); // +1 вызов
-    Disposable disposable2 = heatMapUseCase.loadHeatMap()
+    Disposable disposable2 = useCase.loadHeatMap()
         .subscribe(System.out::println); // +1 вызов
-    Disposable disposable3 = heatMapUseCase.loadHeatMap()
+    Disposable disposable3 = useCase.loadHeatMap()
         .subscribe(System.out::println); // +1 вызов
     testScheduler
         .advanceTimeBy(REQUIRED_INTERVAL, TimeUnit.MINUTES); // +3 вызова на всех подписчиков

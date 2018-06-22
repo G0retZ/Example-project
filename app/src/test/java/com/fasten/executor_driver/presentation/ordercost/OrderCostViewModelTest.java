@@ -29,7 +29,7 @@ public class OrderCostViewModelTest {
 
   @Rule
   public TestRule rule = new InstantTaskExecutorRule();
-  private OrderCostViewModel orderCostViewModel;
+  private OrderCostViewModel viewModel;
   @Mock
   private OrderCurrentCostUseCase orderCurrentCostUseCase;
   @Mock
@@ -43,7 +43,7 @@ public class OrderCostViewModelTest {
     RxAndroidPlugins.setInitMainThreadSchedulerHandler(scheduler -> Schedulers.trampoline());
     when(orderCurrentCostUseCase.getOrderCurrentCost())
         .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
-    orderCostViewModel = new OrderCostViewModelImpl(orderCurrentCostUseCase);
+    viewModel = new OrderCostViewModelImpl(orderCurrentCostUseCase);
   }
 
 
@@ -64,10 +64,10 @@ public class OrderCostViewModelTest {
   @Test
   public void DoNotTouchSelectedVehicleUseCaseDuringVehicleChoosing() {
     // Действие:
-    orderCostViewModel.getViewStateLiveData();
-    orderCostViewModel.getNavigationLiveData();
-    orderCostViewModel.getViewStateLiveData();
-    orderCostViewModel.getNavigationLiveData();
+    viewModel.getViewStateLiveData();
+    viewModel.getNavigationLiveData();
+    viewModel.getViewStateLiveData();
+    viewModel.getNavigationLiveData();
 
     // Результат:
     verify(orderCurrentCostUseCase, only()).getOrderCurrentCost();
@@ -84,7 +84,7 @@ public class OrderCostViewModelTest {
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
 
     // Действие:
-    orderCostViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(new OrderCostViewState(0));
@@ -98,7 +98,7 @@ public class OrderCostViewModelTest {
   public void setViewStateWithCostsToLiveData() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    orderCostViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
     publishSubject.onNext(123);
@@ -122,7 +122,7 @@ public class OrderCostViewModelTest {
   public void setErrorViewStateToLiveDataOnError() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    orderCostViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
     publishSubject.onNext(123);

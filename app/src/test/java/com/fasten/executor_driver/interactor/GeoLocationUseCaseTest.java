@@ -29,7 +29,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class GeoLocationUseCaseTest {
 
-  private GeoLocationUseCase geoLocationUseCase;
+  private GeoLocationUseCase useCase;
 
   @Mock
   private GeoLocationGateway geoLocationGateway;
@@ -48,7 +48,7 @@ public class GeoLocationUseCaseTest {
     when(geoLocationGateway.getGeoLocations(anyLong())).thenReturn(Flowable.never());
     when(geoTrackingGateway.sendGeoLocation(any())).thenReturn(Completable.never());
     when(executorStateUseCase.getExecutorStates(anyBoolean())).thenReturn(Flowable.never());
-    geoLocationUseCase = new GeoLocationUseCaseImpl(
+    useCase = new GeoLocationUseCaseImpl(
         geoLocationGateway, geoTrackingGateway, executorStateUseCase
     );
   }
@@ -61,7 +61,7 @@ public class GeoLocationUseCaseTest {
   @Test
   public void getExecutorStates() {
     // Действие:
-    geoLocationUseCase.getGeoLocations().test();
+    useCase.getGeoLocations().test();
 
     // Результат:
     verify(executorStateUseCase, only()).getExecutorStates(false);
@@ -73,8 +73,8 @@ public class GeoLocationUseCaseTest {
   @Test
   public void getExecutorStatesAgainAfterReload() {
     // Действие:
-    geoLocationUseCase.getGeoLocations().test();
-    geoLocationUseCase.getGeoLocations().test();
+    useCase.getGeoLocations().test();
+    useCase.getGeoLocations().test();
 
     // Результат:
     verify(executorStateUseCase, only()).getExecutorStates(false);
@@ -90,8 +90,8 @@ public class GeoLocationUseCaseTest {
         .thenReturn(Flowable.error(new ConnectionClosedException()));
 
     // Действие:
-    geoLocationUseCase.getGeoLocations().test();
-    geoLocationUseCase.getGeoLocations().test();
+    useCase.getGeoLocations().test();
+    useCase.getGeoLocations().test();
 
     // Результат:
     verify(executorStateUseCase, times(2)).getExecutorStates(false);
@@ -107,8 +107,8 @@ public class GeoLocationUseCaseTest {
     when(executorStateUseCase.getExecutorStates(anyBoolean())).thenReturn(Flowable.empty());
 
     // Действие:
-    geoLocationUseCase.getGeoLocations().test();
-    geoLocationUseCase.getGeoLocations().test();
+    useCase.getGeoLocations().test();
+    useCase.getGeoLocations().test();
 
     // Результат:
     verify(executorStateUseCase, times(2)).getExecutorStates(false);
@@ -123,7 +123,7 @@ public class GeoLocationUseCaseTest {
   @Test
   public void doNotTouchGatewayIfNoStatus() {
     // Действие:
-    geoLocationUseCase.getGeoLocations().test();
+    useCase.getGeoLocations().test();
 
     // Результат:
     verifyZeroInteractions(geoLocationGateway);
@@ -139,7 +139,7 @@ public class GeoLocationUseCaseTest {
         .thenReturn(Flowable.error(new ConnectionClosedException()));
 
     // Действие:
-    geoLocationUseCase.getGeoLocations().test();
+    useCase.getGeoLocations().test();
 
     // Результат:
     verifyZeroInteractions(geoLocationGateway);
@@ -154,7 +154,7 @@ public class GeoLocationUseCaseTest {
     when(executorStateUseCase.getExecutorStates(anyBoolean())).thenReturn(Flowable.empty());
 
     // Действие:
-    geoLocationUseCase.getGeoLocations().test();
+    useCase.getGeoLocations().test();
 
     // Результат:
     verifyZeroInteractions(geoLocationGateway);
@@ -171,7 +171,7 @@ public class GeoLocationUseCaseTest {
         .thenReturn(Flowable.just(ExecutorState.SHIFT_CLOSED));
 
     // Действие:
-    geoLocationUseCase.getGeoLocations().test();
+    useCase.getGeoLocations().test();
 
     // Результат:
     verify(geoLocationGateway, only()).getGeoLocations(3600000);
@@ -188,7 +188,7 @@ public class GeoLocationUseCaseTest {
         .thenReturn(Flowable.just(ExecutorState.SHIFT_OPENED));
 
     // Действие:
-    geoLocationUseCase.getGeoLocations().test();
+    useCase.getGeoLocations().test();
 
     // Результат:
     verify(geoLocationGateway, only()).getGeoLocations(180000);
@@ -205,7 +205,7 @@ public class GeoLocationUseCaseTest {
         .thenReturn(Flowable.just(ExecutorState.ONLINE));
 
     // Действие:
-    geoLocationUseCase.getGeoLocations().test();
+    useCase.getGeoLocations().test();
 
     // Результат:
     verify(geoLocationGateway, only()).getGeoLocations(15000);
@@ -222,7 +222,7 @@ public class GeoLocationUseCaseTest {
         .thenReturn(Flowable.just(ExecutorState.DRIVER_ORDER_CONFIRMATION));
 
     // Действие:
-    geoLocationUseCase.getGeoLocations().test();
+    useCase.getGeoLocations().test();
 
     // Результат:
     verify(geoLocationGateway, only()).getGeoLocations(15000);
@@ -239,7 +239,7 @@ public class GeoLocationUseCaseTest {
         .thenReturn(Flowable.just(ExecutorState.CLIENT_ORDER_CONFIRMATION));
 
     // Действие:
-    geoLocationUseCase.getGeoLocations().test();
+    useCase.getGeoLocations().test();
 
     // Результат:
     verify(geoLocationGateway, only()).getGeoLocations(15000);
@@ -256,7 +256,7 @@ public class GeoLocationUseCaseTest {
         .thenReturn(Flowable.just(ExecutorState.MOVING_TO_CLIENT));
 
     // Действие:
-    geoLocationUseCase.getGeoLocations().test();
+    useCase.getGeoLocations().test();
 
     // Результат:
     verify(geoLocationGateway, only()).getGeoLocations(15000);
@@ -273,7 +273,7 @@ public class GeoLocationUseCaseTest {
         .thenReturn(Flowable.just(ExecutorState.WAITING_FOR_CLIENT));
 
     // Действие:
-    geoLocationUseCase.getGeoLocations().test();
+    useCase.getGeoLocations().test();
 
     // Результат:
     verify(geoLocationGateway, only()).getGeoLocations(15000);
@@ -290,7 +290,7 @@ public class GeoLocationUseCaseTest {
         .thenReturn(Flowable.just(ExecutorState.ORDER_FULFILLMENT));
 
     // Действие:
-    geoLocationUseCase.getGeoLocations().test();
+    useCase.getGeoLocations().test();
 
     // Результат:
     verify(geoLocationGateway, only()).getGeoLocations(15000);
@@ -312,7 +312,7 @@ public class GeoLocationUseCaseTest {
     ));
 
     // Действие:
-    geoLocationUseCase.getGeoLocations().test();
+    useCase.getGeoLocations().test();
 
     // Результат:
     inOrder.verify(geoLocationGateway).getGeoLocations(3600000);
@@ -342,7 +342,7 @@ public class GeoLocationUseCaseTest {
         .thenReturn(Flowable.<GeoLocation>never().doOnCancel(action));
 
     // Действие:
-    geoLocationUseCase.getGeoLocations().test();
+    useCase.getGeoLocations().test();
 
     // Результат:
     verify(action, times(10)).run();
@@ -359,7 +359,7 @@ public class GeoLocationUseCaseTest {
     when(executorStateUseCase.getExecutorStates(anyBoolean())).thenReturn(Flowable.empty());
 
     // Действие:
-    geoLocationUseCase.getGeoLocations().test();
+    useCase.getGeoLocations().test();
 
     // Результат:
     verifyZeroInteractions(geoTrackingGateway);
@@ -382,7 +382,7 @@ public class GeoLocationUseCaseTest {
         ));
 
     // Действие:
-    geoLocationUseCase.getGeoLocations().test();
+    useCase.getGeoLocations().test();
 
     // Результат:
     verify(geoTrackingGateway).sendGeoLocation(new GeoLocation(1, 2, 3));
@@ -402,7 +402,7 @@ public class GeoLocationUseCaseTest {
         .thenReturn(Flowable.error(ConnectException::new));
 
     // Действие:
-    geoLocationUseCase.getGeoLocations().test();
+    useCase.getGeoLocations().test();
 
     // Результат:
     verifyZeroInteractions(geoTrackingGateway);
@@ -419,7 +419,7 @@ public class GeoLocationUseCaseTest {
     when(geoLocationGateway.getGeoLocations(anyLong())).thenReturn(Flowable.error(new Exception()));
 
     // Действие:
-    geoLocationUseCase.getGeoLocations().test();
+    useCase.getGeoLocations().test();
 
     // Результат:
     verifyZeroInteractions(geoTrackingGateway);
@@ -443,7 +443,7 @@ public class GeoLocationUseCaseTest {
     when(geoTrackingGateway.sendGeoLocation(any())).thenReturn(Completable.complete());
 
     // Действие:
-    TestSubscriber<GeoLocation> testSubscriber = geoLocationUseCase.getGeoLocations().test();
+    TestSubscriber<GeoLocation> testSubscriber = useCase.getGeoLocations().test();
 
     // Результат:
     testSubscriber.assertValues(
@@ -465,7 +465,7 @@ public class GeoLocationUseCaseTest {
         .thenReturn(Flowable.error(ConnectException::new));
 
     // Действие:
-    TestSubscriber<GeoLocation> testSubscriber = geoLocationUseCase.getGeoLocations().test();
+    TestSubscriber<GeoLocation> testSubscriber = useCase.getGeoLocations().test();
 
     // Результат:
     testSubscriber.assertNoValues();
@@ -484,7 +484,7 @@ public class GeoLocationUseCaseTest {
     when(geoLocationGateway.getGeoLocations(anyLong())).thenReturn(Flowable.error(new Exception()));
 
     // Действие:
-    TestSubscriber<GeoLocation> testSubscriber = geoLocationUseCase.getGeoLocations().test();
+    TestSubscriber<GeoLocation> testSubscriber = useCase.getGeoLocations().test();
 
     // Результат:
     testSubscriber.assertNoValues();
@@ -507,7 +507,7 @@ public class GeoLocationUseCaseTest {
     when(geoTrackingGateway.sendGeoLocation(any())).thenReturn(Completable.error(Exception::new));
 
     // Действие:
-    TestSubscriber<GeoLocation> testSubscriber = geoLocationUseCase.getGeoLocations().test();
+    TestSubscriber<GeoLocation> testSubscriber = useCase.getGeoLocations().test();
 
     // Результат:
     testSubscriber.assertNoValues();
@@ -523,7 +523,7 @@ public class GeoLocationUseCaseTest {
     when(executorStateUseCase.getExecutorStates(anyBoolean())).thenReturn(Flowable.empty());
 
     // Действие:
-    TestSubscriber<GeoLocation> testSubscriber = geoLocationUseCase.getGeoLocations().test();
+    TestSubscriber<GeoLocation> testSubscriber = useCase.getGeoLocations().test();
 
     // Результат:
     testSubscriber.assertNoValues();

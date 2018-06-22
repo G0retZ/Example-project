@@ -23,7 +23,7 @@ import ua.naiksoftware.stomp.client.StompClient;
 @RunWith(MockitoJUnitRunner.class)
 public class ServerConnectionGatewayTest {
 
-  private ServerConnectionGateway serverConnectionGateway;
+  private ServerConnectionGateway gateway;
 
   @Mock
   private StompClient stompClient;
@@ -32,7 +32,7 @@ public class ServerConnectionGatewayTest {
   public void setUp() {
     RxJavaPlugins.setIoSchedulerHandler(scheduler -> Schedulers.trampoline());
     RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
-    serverConnectionGateway = new ServerConnectionGatewayImpl(stompClient);
+    gateway = new ServerConnectionGatewayImpl(stompClient);
     when(stompClient.lifecycle()).thenReturn(Observable.never());
   }
 
@@ -49,7 +49,7 @@ public class ServerConnectionGatewayTest {
     when(stompClient.isConnected()).thenReturn(true);
 
     // Действие:
-    serverConnectionGateway.openSocket().test();
+    gateway.openSocket().test();
 
     // Результат:
     inOrder.verify(stompClient).lifecycle();
@@ -68,7 +68,7 @@ public class ServerConnectionGatewayTest {
     when(stompClient.isConnecting()).thenReturn(true);
 
     // Действие:
-    serverConnectionGateway.openSocket().test();
+    gateway.openSocket().test();
 
     // Результат:
     inOrder.verify(stompClient).lifecycle();
@@ -87,7 +87,7 @@ public class ServerConnectionGatewayTest {
     InOrder inOrder = Mockito.inOrder(stompClient);
 
     // Действие:
-    serverConnectionGateway.openSocket().test();
+    gateway.openSocket().test();
 
     // Результат:
     inOrder.verify(stompClient).lifecycle();
@@ -106,7 +106,7 @@ public class ServerConnectionGatewayTest {
     InOrder inOrder = Mockito.inOrder(stompClient);
 
     // Действие:
-    serverConnectionGateway.openSocket().test().dispose();
+    gateway.openSocket().test().dispose();
 
     // Результат:
     inOrder.verify(stompClient).lifecycle();
@@ -130,7 +130,7 @@ public class ServerConnectionGatewayTest {
     when(stompClient.isConnected()).thenReturn(true);
 
     // Действие:
-    TestSubscriber<Boolean> testSubscriber = serverConnectionGateway.openSocket().test();
+    TestSubscriber<Boolean> testSubscriber = gateway.openSocket().test();
 
     // Результат:
     testSubscriber.assertNotComplete();
@@ -143,7 +143,7 @@ public class ServerConnectionGatewayTest {
   @Test
   public void answerNothingIfNotConnected() {
     // Действие:
-    TestSubscriber<Boolean> testSubscriber = serverConnectionGateway.openSocket().test();
+    TestSubscriber<Boolean> testSubscriber = gateway.openSocket().test();
 
     // Результат:
     testSubscriber.assertNotComplete();
@@ -161,7 +161,7 @@ public class ServerConnectionGatewayTest {
     );
 
     // Действие:
-    TestSubscriber<Boolean> testSubscriber = serverConnectionGateway.openSocket().test();
+    TestSubscriber<Boolean> testSubscriber = gateway.openSocket().test();
 
     // Результат:
     testSubscriber.assertNotComplete();
@@ -179,7 +179,7 @@ public class ServerConnectionGatewayTest {
     );
 
     // Действие:
-    TestSubscriber<Boolean> testSubscriber = serverConnectionGateway.openSocket().test();
+    TestSubscriber<Boolean> testSubscriber = gateway.openSocket().test();
 
     // Результат:
     testSubscriber.assertNoValues();
@@ -199,7 +199,7 @@ public class ServerConnectionGatewayTest {
     );
 
     // Действие:
-    TestSubscriber<Boolean> testSubscriber = serverConnectionGateway.openSocket().test();
+    TestSubscriber<Boolean> testSubscriber = gateway.openSocket().test();
 
     // Результат:
     testSubscriber.assertError(NoNetworkException.class);

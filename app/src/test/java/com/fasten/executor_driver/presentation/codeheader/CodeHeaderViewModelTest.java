@@ -29,7 +29,7 @@ public class CodeHeaderViewModelTest {
 
   @Rule
   public TestRule rule = new InstantTaskExecutorRule();
-  private CodeHeaderViewModel codeHeaderViewModel;
+  private CodeHeaderViewModel viewModel;
   @Mock
   private DataReceiver<String> loginReceiver;
 
@@ -41,7 +41,7 @@ public class CodeHeaderViewModelTest {
     RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
     RxAndroidPlugins.setInitMainThreadSchedulerHandler(scheduler -> Schedulers.trampoline());
     when(loginReceiver.get()).thenReturn(PublishSubject.never());
-    codeHeaderViewModel = new CodeHeaderViewModelImpl(loginReceiver);
+    viewModel = new CodeHeaderViewModelImpl(loginReceiver);
   }
 
   /* Тетсируем работу с публикатором номера телефона. */
@@ -53,9 +53,9 @@ public class CodeHeaderViewModelTest {
   @Test
   public void askSelectedDataSharerForLoginInitially() {
     // Действие:
-    codeHeaderViewModel.getViewStateLiveData();
-    codeHeaderViewModel.getViewStateLiveData();
-    codeHeaderViewModel.getViewStateLiveData();
+    viewModel.getViewStateLiveData();
+    viewModel.getViewStateLiveData();
+    viewModel.getViewStateLiveData();
 
     // Результат:
     verify(loginReceiver, only()).get();
@@ -72,7 +72,7 @@ public class CodeHeaderViewModelTest {
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     PublishSubject<String> publishSubject = PublishSubject.create();
     when(loginReceiver.get()).thenReturn(publishSubject);
-    codeHeaderViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
     publishSubject.onNext("79997004450");
@@ -97,7 +97,7 @@ public class CodeHeaderViewModelTest {
     // Дано:
     PublishSubject<String> publishSubject = PublishSubject.create();
     when(loginReceiver.get()).thenReturn(publishSubject, PublishSubject.never());
-    codeHeaderViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
     publishSubject.onError(new IllegalArgumentException());

@@ -20,7 +20,7 @@ public class OrderViewStateUnavailableErrorTest {
   private OrderViewStateUnavailableError viewState;
 
   @Mock
-  private OrderViewActions orderViewActions;
+  private OrderViewActions viewActions;
 
   @Mock
   private ViewState<OrderViewActions> parentViewState;
@@ -35,13 +35,13 @@ public class OrderViewStateUnavailableErrorTest {
   @Test
   public void testActions() {
     // Действие:
-    viewState.apply(orderViewActions);
+    viewState.apply(viewActions);
 
     // Результат:
-    verify(orderViewActions).showOrderPending(false);
-    verify(orderViewActions).showOrderAvailabilityError();
-    verifyNoMoreInteractions(orderViewActions);
-    verify(parentViewState, only()).apply(orderViewActions);
+    verify(viewActions).showOrderPending(false);
+    verify(viewActions).showOrderAvailabilityError();
+    verifyNoMoreInteractions(viewActions);
+    verify(parentViewState, only()).apply(viewActions);
   }
 
   @Test
@@ -50,12 +50,12 @@ public class OrderViewStateUnavailableErrorTest {
     viewState = new OrderViewStateUnavailableError(null);
 
     // Действие:
-    viewState.apply(orderViewActions);
+    viewState.apply(viewActions);
 
     // Результат:
-    verify(orderViewActions).showOrderPending(false);
-    verify(orderViewActions).showOrderAvailabilityError();
-    verifyNoMoreInteractions(orderViewActions);
+    verify(viewActions).showOrderPending(false);
+    verify(viewActions).showOrderAvailabilityError();
+    verifyNoMoreInteractions(viewActions);
     verifyZeroInteractions(parentViewState);
   }
 

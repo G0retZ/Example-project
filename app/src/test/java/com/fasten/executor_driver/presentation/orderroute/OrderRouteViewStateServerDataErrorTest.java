@@ -17,7 +17,7 @@ public class OrderRouteViewStateServerDataErrorTest {
   private OrderRouteViewStateServerDataError viewState;
 
   @Mock
-  private OrderRouteViewActions nextRoutePointViewActions;
+  private OrderRouteViewActions viewActions;
   @Mock
   private ViewState<OrderRouteViewActions> parentViewState;
   @Mock
@@ -29,11 +29,11 @@ public class OrderRouteViewStateServerDataErrorTest {
     viewState = new OrderRouteViewStateServerDataError(parentViewState);
 
     // Действие:
-    viewState.apply(nextRoutePointViewActions);
+    viewState.apply(viewActions);
 
     // Результат:
-    verify(nextRoutePointViewActions, only()).showOrderRouteServerDataError();
-    verify(parentViewState, only()).apply(nextRoutePointViewActions);
+    verify(viewActions, only()).showOrderRouteServerDataError();
+    verify(parentViewState, only()).apply(viewActions);
   }
 
   @Test
@@ -42,10 +42,10 @@ public class OrderRouteViewStateServerDataErrorTest {
     viewState = new OrderRouteViewStateServerDataError(null);
 
     // Действие:
-    viewState.apply(nextRoutePointViewActions);
+    viewState.apply(viewActions);
 
     // Результат:
-    verify(nextRoutePointViewActions, only()).showOrderRouteServerDataError();
+    verify(viewActions, only()).showOrderRouteServerDataError();
   }
 
   @Test

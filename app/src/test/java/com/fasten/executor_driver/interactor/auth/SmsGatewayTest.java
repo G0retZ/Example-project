@@ -20,7 +20,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class SmsGatewayTest {
 
-  private SmsGateway phoneCallGateway;
+  private SmsGateway gateway;
 
   @Mock
   private ApiService api;
@@ -29,7 +29,7 @@ public class SmsGatewayTest {
   public void setUp() {
     RxJavaPlugins.setIoSchedulerHandler(scheduler -> Schedulers.trampoline());
     RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
-    phoneCallGateway = new SmsGatewayImpl(api);
+    gateway = new SmsGatewayImpl(api);
     when(api.sendMeCode(anyString())).thenReturn(Completable.never());
   }
 
@@ -41,7 +41,7 @@ public class SmsGatewayTest {
   @Test
   public void smsMeCompletableRequested() {
     // Действие:
-    phoneCallGateway.sendMeCode("012345");
+    gateway.sendMeCode("012345");
 
     // Результат:
     verify(api, only()).sendMeCode("012345");
@@ -60,7 +60,7 @@ public class SmsGatewayTest {
     when(api.sendMeCode(anyString())).thenReturn(Completable.error(new NoNetworkException()));
 
     // Результат:
-    phoneCallGateway.sendMeCode("01234").test().assertError(NoNetworkException.class);
+    gateway.sendMeCode("01234").test().assertError(NoNetworkException.class);
   }
 
   /**
@@ -72,6 +72,6 @@ public class SmsGatewayTest {
     when(api.sendMeCode(anyString())).thenReturn(Completable.complete());
 
     // Результат:
-    phoneCallGateway.sendMeCode("012345").test().assertComplete();
+    gateway.sendMeCode("012345").test().assertComplete();
   }
 }

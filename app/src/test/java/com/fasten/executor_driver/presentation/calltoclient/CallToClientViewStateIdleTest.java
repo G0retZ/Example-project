@@ -15,7 +15,7 @@ public class CallToClientViewStateIdleTest {
   private CallToClientViewStateIdle viewState;
 
   @Mock
-  private CallToClientViewActions movingToClientViewActions;
+  private CallToClientViewActions viewActions;
 
   @Before
   public void setUp() {
@@ -25,9 +25,9 @@ public class CallToClientViewStateIdleTest {
   @Test
   public void testActions() {
     // Действие:
-    viewState.apply(movingToClientViewActions);
+    viewState.apply(viewActions);
 
     // Результат:
-    verify(movingToClientViewActions, only()).showCallToClientPending(false);
+    verify(viewActions, only()).showCallToClientPending(false);
   }
 }

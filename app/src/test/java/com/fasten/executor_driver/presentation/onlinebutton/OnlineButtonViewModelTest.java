@@ -38,7 +38,7 @@ public class OnlineButtonViewModelTest {
 
   @Rule
   public TestRule rule = new InstantTaskExecutorRule();
-  private OnlineButtonViewModel onlineButtonViewModel;
+  private OnlineButtonViewModel viewModel;
   private TestScheduler testScheduler;
   @Mock
   private Observer<ViewState<OnlineButtonViewActions>> viewStateObserver;
@@ -56,7 +56,7 @@ public class OnlineButtonViewModelTest {
     RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
     RxAndroidPlugins.setInitMainThreadSchedulerHandler(scheduler -> Schedulers.trampoline());
     when(vehiclesAndOptionsUseCase.loadVehiclesAndOptions()).thenReturn(Completable.never());
-    onlineButtonViewModel = new OnlineButtonViewModelImpl(vehiclesAndOptionsUseCase);
+    viewModel = new OnlineButtonViewModelImpl(vehiclesAndOptionsUseCase);
   }
 
   /* Тетсируем работу с юзкейсом выхода на линию. */
@@ -67,9 +67,9 @@ public class OnlineButtonViewModelTest {
   @Test
   public void DoNotTouchOnlineUseCaseUntilRequestFinished() {
     // Действие:
-    onlineButtonViewModel.goOnline();
-    onlineButtonViewModel.goOnline();
-    onlineButtonViewModel.goOnline();
+    viewModel.goOnline();
+    viewModel.goOnline();
+    viewModel.goOnline();
 
     // Результат:
     verify(vehiclesAndOptionsUseCase, only()).loadVehiclesAndOptions();
@@ -85,17 +85,17 @@ public class OnlineButtonViewModelTest {
     InOrder inOrder = Mockito.inOrder(vehiclesAndOptionsUseCase);
 
     // Действие:
-    onlineButtonViewModel.goOnline();
+    viewModel.goOnline();
     testScheduler.advanceTimeBy(1, TimeUnit.SECONDS);
-    onlineButtonViewModel.goOnline();
+    viewModel.goOnline();
     testScheduler.advanceTimeBy(2, TimeUnit.SECONDS);
-    onlineButtonViewModel.goOnline();
+    viewModel.goOnline();
 
     // Результат:
     inOrder.verify(vehiclesAndOptionsUseCase).loadVehiclesAndOptions();
     inOrder.verifyNoMoreInteractions();
     testScheduler.advanceTimeBy(3, TimeUnit.SECONDS);
-    onlineButtonViewModel.goOnline();
+    viewModel.goOnline();
     inOrder.verify(vehiclesAndOptionsUseCase).loadVehiclesAndOptions();
     verifyNoMoreInteractions(vehiclesAndOptionsUseCase);
 
@@ -111,11 +111,11 @@ public class OnlineButtonViewModelTest {
         .thenReturn(Completable.error(new NoNetworkException()));
 
     // Действие:
-    onlineButtonViewModel.goOnline();
+    viewModel.goOnline();
     testScheduler.advanceTimeBy(5, TimeUnit.SECONDS);
-    onlineButtonViewModel.goOnline();
+    viewModel.goOnline();
     testScheduler.advanceTimeBy(5, TimeUnit.SECONDS);
-    onlineButtonViewModel.goOnline();
+    viewModel.goOnline();
     testScheduler.advanceTimeBy(5, TimeUnit.SECONDS);
 
     // Результат:
@@ -131,7 +131,7 @@ public class OnlineButtonViewModelTest {
   @Test
   public void setReadyViewStateToLiveData() {
     // Действие:
-    onlineButtonViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Результат:
     verify(viewStateObserver, only()).onChanged(any(OnlineButtonViewStateReady.class));
@@ -144,10 +144,10 @@ public class OnlineButtonViewModelTest {
   public void setPendingViewStateToLiveData() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    onlineButtonViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    onlineButtonViewModel.goOnline();
+    viewModel.goOnline();
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(any(OnlineButtonViewStateReady.class));
@@ -164,10 +164,10 @@ public class OnlineButtonViewModelTest {
     when(vehiclesAndOptionsUseCase.loadVehiclesAndOptions())
         .thenReturn(Completable.error(new DriverBlockedException()));
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    onlineButtonViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    onlineButtonViewModel.goOnline();
+    viewModel.goOnline();
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(any(OnlineButtonViewStateReady.class));
@@ -184,10 +184,10 @@ public class OnlineButtonViewModelTest {
     when(vehiclesAndOptionsUseCase.loadVehiclesAndOptions())
         .thenReturn(Completable.error(new DriverBlockedException()));
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    onlineButtonViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    onlineButtonViewModel.goOnline();
+    viewModel.goOnline();
     testScheduler.advanceTimeBy(5, TimeUnit.SECONDS);
 
     // Результат:
@@ -206,10 +206,10 @@ public class OnlineButtonViewModelTest {
     when(vehiclesAndOptionsUseCase.loadVehiclesAndOptions())
         .thenReturn(Completable.error(new InsufficientCreditsException()));
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    onlineButtonViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    onlineButtonViewModel.goOnline();
+    viewModel.goOnline();
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(any(OnlineButtonViewStateReady.class));
@@ -226,10 +226,10 @@ public class OnlineButtonViewModelTest {
     when(vehiclesAndOptionsUseCase.loadVehiclesAndOptions())
         .thenReturn(Completable.error(new InsufficientCreditsException()));
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    onlineButtonViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    onlineButtonViewModel.goOnline();
+    viewModel.goOnline();
     testScheduler.advanceTimeBy(5, TimeUnit.SECONDS);
 
     // Результат:
@@ -248,10 +248,10 @@ public class OnlineButtonViewModelTest {
     when(vehiclesAndOptionsUseCase.loadVehiclesAndOptions())
         .thenReturn(Completable.error(new NoVehiclesAvailableException()));
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    onlineButtonViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    onlineButtonViewModel.goOnline();
+    viewModel.goOnline();
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(any(OnlineButtonViewStateReady.class));
@@ -268,10 +268,10 @@ public class OnlineButtonViewModelTest {
     when(vehiclesAndOptionsUseCase.loadVehiclesAndOptions())
         .thenReturn(Completable.error(new NoVehiclesAvailableException()));
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    onlineButtonViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    onlineButtonViewModel.goOnline();
+    viewModel.goOnline();
     testScheduler.advanceTimeBy(5, TimeUnit.SECONDS);
 
     // Результат:
@@ -290,10 +290,10 @@ public class OnlineButtonViewModelTest {
     when(vehiclesAndOptionsUseCase.loadVehiclesAndOptions())
         .thenReturn(Completable.error(new NoFreeVehiclesException()));
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    onlineButtonViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    onlineButtonViewModel.goOnline();
+    viewModel.goOnline();
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(any(OnlineButtonViewStateReady.class));
@@ -310,10 +310,10 @@ public class OnlineButtonViewModelTest {
     when(vehiclesAndOptionsUseCase.loadVehiclesAndOptions())
         .thenReturn(Completable.error(new NoFreeVehiclesException()));
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    onlineButtonViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    onlineButtonViewModel.goOnline();
+    viewModel.goOnline();
     testScheduler.advanceTimeBy(5, TimeUnit.SECONDS);
 
     // Результат:
@@ -332,10 +332,10 @@ public class OnlineButtonViewModelTest {
     when(vehiclesAndOptionsUseCase.loadVehiclesAndOptions())
         .thenReturn(Completable.error(new NoNetworkException()));
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    onlineButtonViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    onlineButtonViewModel.goOnline();
+    viewModel.goOnline();
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(any(OnlineButtonViewStateReady.class));
@@ -355,11 +355,11 @@ public class OnlineButtonViewModelTest {
     when(vehiclesAndOptionsUseCase.loadVehiclesAndOptions())
         .thenReturn(Completable.error(new NoNetworkException()));
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    onlineButtonViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    onlineButtonViewModel.goOnline();
-    onlineButtonViewModel.consumeError();
+    viewModel.goOnline();
+    viewModel.consumeError();
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(any(OnlineButtonViewStateReady.class));
@@ -379,10 +379,10 @@ public class OnlineButtonViewModelTest {
     when(vehiclesAndOptionsUseCase.loadVehiclesAndOptions())
         .thenReturn(Completable.error(new NoNetworkException()));
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    onlineButtonViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    onlineButtonViewModel.goOnline();
+    viewModel.goOnline();
     testScheduler.advanceTimeBy(5, TimeUnit.SECONDS);
 
     // Результат:
@@ -403,11 +403,11 @@ public class OnlineButtonViewModelTest {
     when(vehiclesAndOptionsUseCase.loadVehiclesAndOptions())
         .thenReturn(Completable.error(new NoNetworkException()));
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    onlineButtonViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    onlineButtonViewModel.goOnline();
-    onlineButtonViewModel.consumeError();
+    viewModel.goOnline();
+    viewModel.consumeError();
     testScheduler.advanceTimeBy(5, TimeUnit.SECONDS);
 
     // Результат:
@@ -430,12 +430,12 @@ public class OnlineButtonViewModelTest {
     when(vehiclesAndOptionsUseCase.loadVehiclesAndOptions())
         .thenReturn(Completable.error(new NoNetworkException()));
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    onlineButtonViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    onlineButtonViewModel.goOnline();
+    viewModel.goOnline();
     testScheduler.advanceTimeBy(5, TimeUnit.SECONDS);
-    onlineButtonViewModel.consumeError();
+    viewModel.consumeError();
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(any(OnlineButtonViewStateReady.class));
@@ -455,10 +455,10 @@ public class OnlineButtonViewModelTest {
     // Дано:
     when(vehiclesAndOptionsUseCase.loadVehiclesAndOptions()).thenReturn(Completable.complete());
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    onlineButtonViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    onlineButtonViewModel.goOnline();
+    viewModel.goOnline();
     testScheduler.advanceTimeBy(5, TimeUnit.SECONDS);
 
     // Результат:
@@ -478,10 +478,10 @@ public class OnlineButtonViewModelTest {
     // Дано:
     when(vehiclesAndOptionsUseCase.loadVehiclesAndOptions())
         .thenReturn(Completable.error(new NoNetworkException()));
-    onlineButtonViewModel.getNavigationLiveData().observeForever(navigateObserver);
+    viewModel.getNavigationLiveData().observeForever(navigateObserver);
 
     // Действие:
-    onlineButtonViewModel.goOnline();
+    viewModel.goOnline();
 
     // Результат:
     verifyZeroInteractions(navigateObserver);
@@ -494,10 +494,10 @@ public class OnlineButtonViewModelTest {
   public void setNavigateToVehiclesToLiveData() {
     // Дано:
     when(vehiclesAndOptionsUseCase.loadVehiclesAndOptions()).thenReturn(Completable.complete());
-    onlineButtonViewModel.getNavigationLiveData().observeForever(navigateObserver);
+    viewModel.getNavigationLiveData().observeForever(navigateObserver);
 
     // Действие:
-    onlineButtonViewModel.goOnline();
+    viewModel.goOnline();
 
     // Результат:
     verify(navigateObserver, only()).onChanged(OnlineButtonNavigate.VEHICLE_OPTIONS);
@@ -511,10 +511,10 @@ public class OnlineButtonViewModelTest {
     // Дано:
     when(vehiclesAndOptionsUseCase.loadVehiclesAndOptions())
         .thenReturn(Completable.error(new DriverBlockedException()));
-    onlineButtonViewModel.getNavigationLiveData().observeForever(navigateObserver);
+    viewModel.getNavigationLiveData().observeForever(navigateObserver);
 
     // Действие:
-    onlineButtonViewModel.goOnline();
+    viewModel.goOnline();
 
     // Результат:
     verify(navigateObserver, only()).onChanged(OnlineButtonNavigate.DRIVER_BLOCKED);
@@ -528,10 +528,10 @@ public class OnlineButtonViewModelTest {
     // Дано:
     when(vehiclesAndOptionsUseCase.loadVehiclesAndOptions())
         .thenReturn(Completable.error(new InsufficientCreditsException()));
-    onlineButtonViewModel.getNavigationLiveData().observeForever(navigateObserver);
+    viewModel.getNavigationLiveData().observeForever(navigateObserver);
 
     // Действие:
-    onlineButtonViewModel.goOnline();
+    viewModel.goOnline();
 
     // Результат:
     verify(navigateObserver, only()).onChanged(OnlineButtonNavigate.INSUFFICIENT_CREDITS);
@@ -545,10 +545,10 @@ public class OnlineButtonViewModelTest {
     // Дано:
     when(vehiclesAndOptionsUseCase.loadVehiclesAndOptions())
         .thenReturn(Completable.error(new NoFreeVehiclesException()));
-    onlineButtonViewModel.getNavigationLiveData().observeForever(navigateObserver);
+    viewModel.getNavigationLiveData().observeForever(navigateObserver);
 
     // Действие:
-    onlineButtonViewModel.goOnline();
+    viewModel.goOnline();
 
     // Результат:
     verify(navigateObserver, only()).onChanged(OnlineButtonNavigate.NO_FREE_VEHICLES);
@@ -562,10 +562,10 @@ public class OnlineButtonViewModelTest {
     // Дано:
     when(vehiclesAndOptionsUseCase.loadVehiclesAndOptions())
         .thenReturn(Completable.error(new NoVehiclesAvailableException()));
-    onlineButtonViewModel.getNavigationLiveData().observeForever(navigateObserver);
+    viewModel.getNavigationLiveData().observeForever(navigateObserver);
 
     // Действие:
-    onlineButtonViewModel.goOnline();
+    viewModel.goOnline();
 
     // Результат:
     verify(navigateObserver, only()).onChanged(OnlineButtonNavigate.NO_VEHICLES);

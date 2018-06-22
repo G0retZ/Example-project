@@ -33,7 +33,7 @@ public class ServerConnectionViewModelTest {
 
   @Rule
   public TestRule rule = new InstantTaskExecutorRule();
-  private ServerConnectionViewModel executorStateViewModel;
+  private ServerConnectionViewModel viewModel;
   @Mock
   private Observer<String> navigationObserver;
   @Mock
@@ -41,7 +41,7 @@ public class ServerConnectionViewModelTest {
   @Captor
   private ArgumentCaptor<ViewState<ServerConnectionViewActions>> viewStateCaptor;
   @Mock
-  private ServerConnectionViewActions executorStateViewActions;
+  private ServerConnectionViewActions viewActions;
 
   @Mock
   private ServerConnectionUseCase executorStateUseCase;
@@ -51,7 +51,7 @@ public class ServerConnectionViewModelTest {
     RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
     RxAndroidPlugins.setInitMainThreadSchedulerHandler(scheduler -> Schedulers.trampoline());
     when(executorStateUseCase.connect()).thenReturn(Flowable.never());
-    executorStateViewModel = new ServerConnectionViewModelImpl(executorStateUseCase);
+    viewModel = new ServerConnectionViewModelImpl(executorStateUseCase);
   }
 
   /* Тетсируем работу с юзкейсом. */
@@ -62,7 +62,7 @@ public class ServerConnectionViewModelTest {
   @Test
   public void askUseCaseToConnectServer() {
     // Действие:
-    executorStateViewModel.connectServer();
+    viewModel.connectServer();
 
     // Результат:
     verify(executorStateUseCase, only()).connect();
@@ -74,9 +74,9 @@ public class ServerConnectionViewModelTest {
   @Test
   public void doNotAskUseCaseToConnectServerIfAlreadyConnected() {
     // Действие:
-    executorStateViewModel.connectServer();
-    executorStateViewModel.connectServer();
-    executorStateViewModel.connectServer();
+    viewModel.connectServer();
+    viewModel.connectServer();
+    viewModel.connectServer();
 
     // Результат:
     verify(executorStateUseCase, only()).connect();
@@ -90,23 +90,23 @@ public class ServerConnectionViewModelTest {
   @Test
   public void showServerConnectionStatus() {
     // Дано:
-    InOrder inOrder = Mockito.inOrder(executorStateViewActions);
+    InOrder inOrder = Mockito.inOrder(viewActions);
     when(executorStateUseCase.connect())
         .thenReturn(Flowable.just(true, false, false, true).concatWith(Flowable.never()));
 
     // Действие:
-    executorStateViewModel.getViewStateLiveData().observeForever(viewStateObserver);
-    executorStateViewModel.connectServer();
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.connectServer();
 
     // Результат:
     verify(viewStateObserver, times(4)).onChanged(viewStateCaptor.capture());
     for (ViewState<ServerConnectionViewActions> value : viewStateCaptor.getAllValues()) {
-      value.apply(executorStateViewActions);
+      value.apply(viewActions);
     }
-    inOrder.verify(executorStateViewActions).showConnectionReady(true);
-    inOrder.verify(executorStateViewActions, times(2)).showConnectionReady(false);
-    inOrder.verify(executorStateViewActions).showConnectionReady(true);
-    verifyNoMoreInteractions(viewStateObserver, executorStateViewActions);
+    inOrder.verify(viewActions).showConnectionReady(true);
+    inOrder.verify(viewActions, times(2)).showConnectionReady(false);
+    inOrder.verify(viewActions).showConnectionReady(true);
+    verifyNoMoreInteractions(viewStateObserver, viewActions);
   }
 
   /**
@@ -115,21 +115,21 @@ public class ServerConnectionViewModelTest {
   @Test
   public void showNoServerConnectionOnCompletion() {
     // Дано:
-    InOrder inOrder = Mockito.inOrder(executorStateViewActions);
+    InOrder inOrder = Mockito.inOrder(viewActions);
     when(executorStateUseCase.connect()).thenReturn(Flowable.just(true));
 
     // Действие:
-    executorStateViewModel.getViewStateLiveData().observeForever(viewStateObserver);
-    executorStateViewModel.connectServer();
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.connectServer();
 
     // Результат:
     verify(viewStateObserver, times(2)).onChanged(viewStateCaptor.capture());
     for (ViewState<ServerConnectionViewActions> value : viewStateCaptor.getAllValues()) {
-      value.apply(executorStateViewActions);
+      value.apply(viewActions);
     }
-    inOrder.verify(executorStateViewActions).showConnectionReady(true);
-    inOrder.verify(executorStateViewActions).showConnectionReady(false);
-    verifyNoMoreInteractions(viewStateObserver, executorStateViewActions);
+    inOrder.verify(viewActions).showConnectionReady(true);
+    inOrder.verify(viewActions).showConnectionReady(false);
+    verifyNoMoreInteractions(viewStateObserver, viewActions);
   }
 
   /**
@@ -138,20 +138,20 @@ public class ServerConnectionViewModelTest {
   @Test
   public void showNoServerConnectionOnNetworkError() {
     // Дано:
-    InOrder inOrder = Mockito.inOrder(executorStateViewActions);
+    InOrder inOrder = Mockito.inOrder(viewActions);
     when(executorStateUseCase.connect()).thenReturn(Flowable.error(NoNetworkException::new));
 
     // Действие:
-    executorStateViewModel.getViewStateLiveData().observeForever(viewStateObserver);
-    executorStateViewModel.connectServer();
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.connectServer();
 
     // Результат:
     verify(viewStateObserver, only()).onChanged(viewStateCaptor.capture());
     for (ViewState<ServerConnectionViewActions> value : viewStateCaptor.getAllValues()) {
-      value.apply(executorStateViewActions);
+      value.apply(viewActions);
     }
-    inOrder.verify(executorStateViewActions).showConnectionReady(false);
-    verifyNoMoreInteractions(executorStateViewActions);
+    inOrder.verify(viewActions).showConnectionReady(false);
+    verifyNoMoreInteractions(viewActions);
   }
 
   /**
@@ -160,20 +160,20 @@ public class ServerConnectionViewModelTest {
   @Test
   public void showNoServerConnectionOnAuthError() {
     // Дано:
-    InOrder inOrder = Mockito.inOrder(executorStateViewActions);
+    InOrder inOrder = Mockito.inOrder(viewActions);
     when(executorStateUseCase.connect()).thenReturn(Flowable.error(AuthenticatorException::new));
 
     // Действие:
-    executorStateViewModel.getViewStateLiveData().observeForever(viewStateObserver);
-    executorStateViewModel.connectServer();
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.connectServer();
 
     // Результат:
     verify(viewStateObserver, only()).onChanged(viewStateCaptor.capture());
     for (ViewState<ServerConnectionViewActions> value : viewStateCaptor.getAllValues()) {
-      value.apply(executorStateViewActions);
+      value.apply(viewActions);
     }
-    inOrder.verify(executorStateViewActions).showConnectionReady(false);
-    verifyNoMoreInteractions(executorStateViewActions);
+    inOrder.verify(viewActions).showConnectionReady(false);
+    verifyNoMoreInteractions(viewActions);
   }
 
   /* Тетсируем навигацию. */
@@ -187,8 +187,8 @@ public class ServerConnectionViewModelTest {
     when(executorStateUseCase.connect()).thenReturn(Flowable.error(NoNetworkException::new));
 
     // Действие:
-    executorStateViewModel.getNavigationLiveData().observeForever(navigationObserver);
-    executorStateViewModel.connectServer();
+    viewModel.getNavigationLiveData().observeForever(navigationObserver);
+    viewModel.connectServer();
 
     // Результат:
     verify(navigationObserver, only()).onChanged(ServerConnectionNavigate.NO_NETWORK);
@@ -203,8 +203,8 @@ public class ServerConnectionViewModelTest {
     when(executorStateUseCase.connect()).thenReturn(Flowable.error(AuthenticatorException::new));
 
     // Действие:
-    executorStateViewModel.getNavigationLiveData().observeForever(navigationObserver);
-    executorStateViewModel.connectServer();
+    viewModel.getNavigationLiveData().observeForever(navigationObserver);
+    viewModel.connectServer();
 
     // Результат:
     verify(navigationObserver, only()).onChanged(ServerConnectionNavigate.NO_NETWORK);

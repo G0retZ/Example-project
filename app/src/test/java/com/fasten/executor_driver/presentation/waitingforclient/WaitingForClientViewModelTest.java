@@ -31,7 +31,7 @@ public class WaitingForClientViewModelTest {
 
   @Rule
   public TestRule rule = new InstantTaskExecutorRule();
-  private WaitingForClientViewModel waitingForClientViewModel;
+  private WaitingForClientViewModel viewModel;
   @Mock
   private WaitingForClientUseCase waitingForClientUseCase;
 
@@ -45,7 +45,7 @@ public class WaitingForClientViewModelTest {
     RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
     RxAndroidPlugins.setInitMainThreadSchedulerHandler(scheduler -> Schedulers.trampoline());
     when(waitingForClientUseCase.startTheOrder()).thenReturn(Completable.never());
-    waitingForClientViewModel = new WaitingForClientViewModelImpl(
+    viewModel = new WaitingForClientViewModelImpl(
         waitingForClientUseCase);
   }
 
@@ -60,7 +60,7 @@ public class WaitingForClientViewModelTest {
     when(waitingForClientUseCase.startTheOrder()).thenReturn(Completable.complete());
 
     // Действие:
-    waitingForClientViewModel.startLoading();
+    viewModel.startLoading();
 
     // Результат:
     verify(waitingForClientUseCase, only()).startTheOrder();
@@ -72,9 +72,9 @@ public class WaitingForClientViewModelTest {
   @Test
   public void DoNotTouchUseCaseDuringOrderSetting() {
     // Действие:
-    waitingForClientViewModel.startLoading();
-    waitingForClientViewModel.startLoading();
-    waitingForClientViewModel.startLoading();
+    viewModel.startLoading();
+    viewModel.startLoading();
+    viewModel.startLoading();
 
     // Результат:
     verify(waitingForClientUseCase, only()).startTheOrder();
@@ -91,7 +91,7 @@ public class WaitingForClientViewModelTest {
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
 
     // Действие:
-    waitingForClientViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(any(WaitingForClientViewStateIdle.class));
@@ -105,10 +105,10 @@ public class WaitingForClientViewModelTest {
   public void setPendingViewStateWithoutOrderToLiveDataForStartLoading() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    waitingForClientViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    waitingForClientViewModel.startLoading();
+    viewModel.startLoading();
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(any(WaitingForClientViewStateIdle.class));
@@ -125,10 +125,10 @@ public class WaitingForClientViewModelTest {
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     when(waitingForClientUseCase.startTheOrder())
         .thenReturn(Completable.error(NoNetworkException::new));
-    waitingForClientViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    waitingForClientViewModel.startLoading();
+    viewModel.startLoading();
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(any(WaitingForClientViewStateIdle.class));
@@ -146,10 +146,10 @@ public class WaitingForClientViewModelTest {
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     when(waitingForClientUseCase.startTheOrder())
         .thenReturn(Completable.complete());
-    waitingForClientViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    waitingForClientViewModel.startLoading();
+    viewModel.startLoading();
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(any(WaitingForClientViewStateIdle.class));
@@ -165,8 +165,8 @@ public class WaitingForClientViewModelTest {
   @Test
   public void doNotTouchNavigationObserver() {
     // Действие:
-    waitingForClientViewModel.getNavigationLiveData().observeForever(navigateObserver);
-    waitingForClientViewModel.startLoading();
+    viewModel.getNavigationLiveData().observeForever(navigateObserver);
+    viewModel.startLoading();
 
     // Результат:
     verifyZeroInteractions(navigateObserver);
@@ -182,8 +182,8 @@ public class WaitingForClientViewModelTest {
         .thenReturn(Completable.error(new IllegalStateException()));
 
     // Действие:
-    waitingForClientViewModel.getNavigationLiveData().observeForever(navigateObserver);
-    waitingForClientViewModel.startLoading();
+    viewModel.getNavigationLiveData().observeForever(navigateObserver);
+    viewModel.startLoading();
 
     // Результат:
     verify(navigateObserver, only()).onChanged(WaitingForClientNavigate.NO_CONNECTION);
@@ -198,8 +198,8 @@ public class WaitingForClientViewModelTest {
     when(waitingForClientUseCase.startTheOrder()).thenReturn(Completable.complete());
 
     // Действие:
-    waitingForClientViewModel.getNavigationLiveData().observeForever(navigateObserver);
-    waitingForClientViewModel.startLoading();
+    viewModel.getNavigationLiveData().observeForever(navigateObserver);
+    viewModel.startLoading();
 
     // Результат:
     verifyZeroInteractions(navigateObserver);

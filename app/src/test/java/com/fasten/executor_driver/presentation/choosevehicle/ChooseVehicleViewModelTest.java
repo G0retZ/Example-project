@@ -36,7 +36,7 @@ public class ChooseVehicleViewModelTest {
 
   @Rule
   public TestRule rule = new InstantTaskExecutorRule();
-  private ChooseVehicleViewModel chooseVehicleViewModel;
+  private ChooseVehicleViewModel viewModel;
   @Mock
   private VehicleChoiceUseCase vehicleChoiceUseCase;
 
@@ -55,7 +55,7 @@ public class ChooseVehicleViewModelTest {
     vehicleSingleSubject = SingleSubject.create();
     when(vehicleChoiceUseCase.getVehicles()).thenReturn(vehicleSingleSubject);
     when(vehicleChoiceUseCase.selectVehicle(any())).thenReturn(Completable.never());
-    chooseVehicleViewModel = new ChooseVehicleViewModelImpl(vehicleChoiceUseCase);
+    viewModel = new ChooseVehicleViewModelImpl(vehicleChoiceUseCase);
   }
 
   /* Тетсируем работу с юзкейсом выбора ТС. */
@@ -81,10 +81,10 @@ public class ChooseVehicleViewModelTest {
         new Vehicle(3, "m", "m", "co", "l", false),
         new Vehicle(4, "ma", "m", "c", "l", true)
     ));
-    chooseVehicleViewModel.getViewStateLiveData();
-    chooseVehicleViewModel.getViewStateLiveData();
-    chooseVehicleViewModel.getNavigationLiveData();
-    chooseVehicleViewModel.getViewStateLiveData();
+    viewModel.getViewStateLiveData();
+    viewModel.getViewStateLiveData();
+    viewModel.getNavigationLiveData();
+    viewModel.getViewStateLiveData();
 
     // Результат:
     verify(vehicleChoiceUseCase, only()).getVehicles();
@@ -99,11 +99,11 @@ public class ChooseVehicleViewModelTest {
     when(vehicleChoiceUseCase.selectVehicle(any())).thenReturn(Completable.complete());
 
     // Действие:
-    chooseVehicleViewModel
+    viewModel
         .selectItem(new ChooseVehicleListItem(new Vehicle(1, "m", "m", "c", "l", false)));
-    chooseVehicleViewModel
+    viewModel
         .selectItem(new ChooseVehicleListItem(new Vehicle(2, "ma", "m", "co", "l", true)));
-    chooseVehicleViewModel
+    viewModel
         .selectItem(new ChooseVehicleListItem(new Vehicle(3, "m", "m", "co", "l", false)));
 
     // Результат:
@@ -120,11 +120,11 @@ public class ChooseVehicleViewModelTest {
   @Test
   public void DoNotTouchChooseVehicleUseCaseDuringVehicleChoosing() {
     // Действие:
-    chooseVehicleViewModel
+    viewModel
         .selectItem(new ChooseVehicleListItem(new Vehicle(1, "m", "m", "c", "l", false)));
-    chooseVehicleViewModel
+    viewModel
         .selectItem(new ChooseVehicleListItem(new Vehicle(2, "ma", "m", "co", "l", true)));
-    chooseVehicleViewModel
+    viewModel
         .selectItem(new ChooseVehicleListItem(new Vehicle(3, "m", "m", "co", "l", false)));
 
     // Результат:
@@ -144,7 +144,7 @@ public class ChooseVehicleViewModelTest {
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
 
     // Действие:
-    chooseVehicleViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(any(ChooseVehicleViewStatePending.class));
@@ -158,7 +158,7 @@ public class ChooseVehicleViewModelTest {
   public void setNetworkErrorViewStateToLiveData() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    chooseVehicleViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
     vehicleSingleSubject.onError(new Exception());
@@ -177,7 +177,7 @@ public class ChooseVehicleViewModelTest {
   public void setEmptyErrorViewStateToLiveData() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    chooseVehicleViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
     vehicleSingleSubject.onError(new NoVehiclesAvailableException());
@@ -196,7 +196,7 @@ public class ChooseVehicleViewModelTest {
   public void setSuccessViewStateToLiveDataPending() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    chooseVehicleViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
     vehicleSingleSubject.onSuccess(Arrays.asList(
@@ -235,10 +235,10 @@ public class ChooseVehicleViewModelTest {
     // Дано:
     when(vehicleChoiceUseCase.selectVehicle(any()))
         .thenReturn(Completable.error(new IndexOutOfBoundsException()));
-    chooseVehicleViewModel.getNavigationLiveData().observeForever(navigateObserver);
+    viewModel.getNavigationLiveData().observeForever(navigateObserver);
 
     // Действие:
-    chooseVehicleViewModel
+    viewModel
         .selectItem(new ChooseVehicleListItem(new Vehicle(1, "m", "m", "c", "l", false)));
 
     // Результат:
@@ -252,10 +252,10 @@ public class ChooseVehicleViewModelTest {
   public void setNavigateToSetVehicleOptionsToLiveData() {
     // Дано:
     when(vehicleChoiceUseCase.selectVehicle(any())).thenReturn(Completable.complete());
-    chooseVehicleViewModel.getNavigationLiveData().observeForever(navigateObserver);
+    viewModel.getNavigationLiveData().observeForever(navigateObserver);
 
     // Действие:
-    chooseVehicleViewModel
+    viewModel
         .selectItem(new ChooseVehicleListItem(new Vehicle(1, "m", "m", "c", "l", false)));
 
     // Результат:

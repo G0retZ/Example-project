@@ -38,7 +38,7 @@ import ua.naiksoftware.stomp.client.StompMessage;
 @RunWith(MockitoJUnitRunner.class)
 public class CancelOrderGatewayTest {
 
-  private CancelOrderGateway cancelOrderGateway;
+  private CancelOrderGateway gateway;
 
   @Mock
   private StompClient stompClient;
@@ -55,7 +55,7 @@ public class CancelOrderGatewayTest {
   public void setUp() {
     RxJavaPlugins.setIoSchedulerHandler(scheduler -> Schedulers.trampoline());
     RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
-    cancelOrderGateway = new CancelOrderGatewayImpl(stompClient, mapper);
+    gateway = new CancelOrderGatewayImpl(stompClient, mapper);
     when(stompClient.topic(anyString())).thenReturn(Observable.never());
     when(stompClient.send(anyString(), anyString())).thenReturn(Completable.never());
   }
@@ -72,7 +72,7 @@ public class CancelOrderGatewayTest {
     when(stompClient.isConnected()).thenReturn(true);
 
     // Действие:
-    cancelOrderGateway.loadCancelOrderReasons("1234567890").test();
+    gateway.loadCancelOrderReasons("1234567890").test();
 
     // Результат:
     inOrder.verify(stompClient).isConnected();
@@ -89,7 +89,7 @@ public class CancelOrderGatewayTest {
     InOrder inOrder = Mockito.inOrder(stompClient);
 
     // Действие:
-    cancelOrderGateway.loadCancelOrderReasons("1234567890").test();
+    gateway.loadCancelOrderReasons("1234567890").test();
 
     // Результат:
     inOrder.verify(stompClient).isConnected();
@@ -107,7 +107,7 @@ public class CancelOrderGatewayTest {
     when(stompClient.isConnecting()).thenReturn(true);
 
     // Действие:
-    cancelOrderGateway.loadCancelOrderReasons("1234567890").test();
+    gateway.loadCancelOrderReasons("1234567890").test();
 
     // Результат:
     inOrder.verify(stompClient).isConnected();
@@ -135,7 +135,7 @@ public class CancelOrderGatewayTest {
     ));
 
     // Действие:
-    cancelOrderGateway.loadCancelOrderReasons("1234567890").test();
+    gateway.loadCancelOrderReasons("1234567890").test();
 
     // Результат:
     verifyZeroInteractions(mapper);
@@ -158,7 +158,7 @@ public class CancelOrderGatewayTest {
     ));
 
     // Действие:
-    cancelOrderGateway.loadCancelOrderReasons("1234567890").test();
+    gateway.loadCancelOrderReasons("1234567890").test();
 
     // Результат:
     verifyZeroInteractions(mapper);
@@ -184,7 +184,7 @@ public class CancelOrderGatewayTest {
     ));
 
     // Действие:
-    cancelOrderGateway.loadCancelOrderReasons("1234567890").test();
+    gateway.loadCancelOrderReasons("1234567890").test();
 
     // Результат:
     verify(mapper, only()).map(any());
@@ -211,7 +211,7 @@ public class CancelOrderGatewayTest {
     ));
 
     // Действие:
-    cancelOrderGateway.loadCancelOrderReasons("1234567890").test();
+    gateway.loadCancelOrderReasons("1234567890").test();
 
     // Результат:
     verify(mapper, only()).map(any());
@@ -228,7 +228,7 @@ public class CancelOrderGatewayTest {
     when(cancelOrderReason.getName()).thenReturn("seven");
 
     // Действие:
-    cancelOrderGateway.cancelOrder(cancelOrderReason).test();
+    gateway.cancelOrder(cancelOrderReason).test();
 
     // Результат:
     verify(stompClient, only())
@@ -257,7 +257,7 @@ public class CancelOrderGatewayTest {
 
     // Действие:
     TestSubscriber<List<CancelOrderReason>> testSubscriber =
-        cancelOrderGateway.loadCancelOrderReasons("1234567890").test();
+        gateway.loadCancelOrderReasons("1234567890").test();
 
     // Результат:
     testSubscriber.assertNoValues();
@@ -283,7 +283,7 @@ public class CancelOrderGatewayTest {
 
     // Действие:
     TestSubscriber<List<CancelOrderReason>> testSubscriber =
-        cancelOrderGateway.loadCancelOrderReasons("1234567890").test();
+        gateway.loadCancelOrderReasons("1234567890").test();
 
     // Результат:
     testSubscriber.assertError(DataMappingException.class);
@@ -311,7 +311,7 @@ public class CancelOrderGatewayTest {
 
     // Действие:
     TestSubscriber<List<CancelOrderReason>> testSubscriber =
-        cancelOrderGateway.loadCancelOrderReasons("1234567890").test();
+        gateway.loadCancelOrderReasons("1234567890").test();
 
     // Результат:
     testSubscriber.assertValue(
@@ -330,7 +330,7 @@ public class CancelOrderGatewayTest {
 
     // Действие:
     TestSubscriber<List<CancelOrderReason>> testSubscriber =
-        cancelOrderGateway.loadCancelOrderReasons("1234567890").test();
+        gateway.loadCancelOrderReasons("1234567890").test();
 
     // Результат:
     testSubscriber.assertNoErrors();
@@ -345,7 +345,7 @@ public class CancelOrderGatewayTest {
   public void answerConnectionErrorIfNotConnectingAfterConnected() {
     // Действие:
     TestSubscriber<List<CancelOrderReason>> testSubscriber =
-        cancelOrderGateway.loadCancelOrderReasons("1234567890").test();
+        gateway.loadCancelOrderReasons("1234567890").test();
 
     // Результат:
     testSubscriber.assertError(ConnectionClosedException.class);
@@ -369,7 +369,7 @@ public class CancelOrderGatewayTest {
 
     // Действие:
     TestSubscriber<List<CancelOrderReason>> testSubscriber =
-        cancelOrderGateway.loadCancelOrderReasons("1234567890").test();
+        gateway.loadCancelOrderReasons("1234567890").test();
 
     // Результат:
     testSubscriber.assertNoValues();
@@ -397,7 +397,7 @@ public class CancelOrderGatewayTest {
 
     // Действие:
     TestSubscriber<List<CancelOrderReason>> testSubscriber =
-        cancelOrderGateway.loadCancelOrderReasons("1234567890").test();
+        gateway.loadCancelOrderReasons("1234567890").test();
 
     // Результат:
     testSubscriber.assertError(DataMappingException.class);
@@ -428,7 +428,7 @@ public class CancelOrderGatewayTest {
 
     // Действие:
     TestSubscriber<List<CancelOrderReason>> testSubscriber =
-        cancelOrderGateway.loadCancelOrderReasons("1234567890").test();
+        gateway.loadCancelOrderReasons("1234567890").test();
 
     // Результат:
     testSubscriber.assertValue(
@@ -449,7 +449,7 @@ public class CancelOrderGatewayTest {
 
     // Действие:
     TestSubscriber<List<CancelOrderReason>> testSubscriber =
-        cancelOrderGateway.loadCancelOrderReasons("1234567890").test();
+        gateway.loadCancelOrderReasons("1234567890").test();
 
     // Результат:
     testSubscriber.assertNoErrors();
@@ -468,7 +468,7 @@ public class CancelOrderGatewayTest {
     when(stompClient.send(anyString(), anyString())).thenReturn(Completable.complete());
 
     // Действие:
-    TestObserver<Void> testObserver = cancelOrderGateway.cancelOrder(cancelOrderReason).test();
+    TestObserver<Void> testObserver = gateway.cancelOrder(cancelOrderReason).test();
 
     // Результат:
     testObserver.assertNoErrors();
@@ -487,7 +487,7 @@ public class CancelOrderGatewayTest {
         .thenReturn(Completable.error(new IllegalArgumentException()));
 
     // Действие:
-    TestObserver<Void> testObserver = cancelOrderGateway.cancelOrder(cancelOrderReason).test();
+    TestObserver<Void> testObserver = gateway.cancelOrder(cancelOrderReason).test();
 
     // Результат:
     testObserver.assertNotComplete();

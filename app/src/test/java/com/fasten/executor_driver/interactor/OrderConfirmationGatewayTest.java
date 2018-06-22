@@ -22,7 +22,7 @@ import ua.naiksoftware.stomp.client.StompClient;
 @RunWith(MockitoJUnitRunner.class)
 public class OrderConfirmationGatewayTest {
 
-  private OrderConfirmationGateway orderConfirmationGateway;
+  private OrderConfirmationGateway gateway;
   @Mock
   private StompClient stompClient;
   @Mock
@@ -34,7 +34,7 @@ public class OrderConfirmationGatewayTest {
     RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
     RxJavaPlugins.setIoSchedulerHandler(scheduler -> Schedulers.trampoline());
     when(stompClient.send(anyString(), anyString())).thenReturn(Completable.never());
-    orderConfirmationGateway = new OrderConfirmationGatewayImpl(stompClient);
+    gateway = new OrderConfirmationGatewayImpl(stompClient);
   }
 
   /* Проверяем работу с клиентом STOMP */
@@ -49,8 +49,8 @@ public class OrderConfirmationGatewayTest {
     when(order.getId()).thenReturn(7L);
 
     // Действие:
-    orderConfirmationGateway.sendDecision(order, false).test();
-    orderConfirmationGateway.sendDecision(order, true).test();
+    gateway.sendDecision(order, false).test();
+    gateway.sendDecision(order, true).test();
 
     // Результат:
     inOrder.verify(stompClient)
@@ -73,7 +73,7 @@ public class OrderConfirmationGatewayTest {
     when(stompClient.send(anyString(), anyString())).thenReturn(Completable.complete());
 
     // Действие:
-    TestObserver<Void> testObserver = orderConfirmationGateway.sendDecision(order, false).test();
+    TestObserver<Void> testObserver = gateway.sendDecision(order, false).test();
 
     // Результат:
     testObserver.assertNoErrors();
@@ -90,7 +90,7 @@ public class OrderConfirmationGatewayTest {
         .thenReturn(Completable.error(new IllegalArgumentException()));
 
     // Действие:
-    TestObserver<Void> testObserver = orderConfirmationGateway.sendDecision(order, false).test();
+    TestObserver<Void> testObserver = gateway.sendDecision(order, false).test();
 
     // Результат:
     testObserver.assertNotComplete();

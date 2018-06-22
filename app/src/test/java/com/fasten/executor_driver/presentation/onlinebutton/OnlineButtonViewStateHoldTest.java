@@ -15,7 +15,7 @@ public class OnlineButtonViewStateHoldTest {
   private OnlineButtonViewStateHold viewState;
 
   @Mock
-  private OnlineButtonViewActions smsButtonViewActions;
+  private OnlineButtonViewActions viewActions;
 
   @Before
   public void setUp() {
@@ -25,11 +25,11 @@ public class OnlineButtonViewStateHoldTest {
   @Test
   public void testActions() {
     // Действие:
-    viewState.apply(smsButtonViewActions);
+    viewState.apply(viewActions);
 
     // Результат:
-    verify(smsButtonViewActions).enableGoOnlineButton(false);
-    verify(smsButtonViewActions).showGoOnlineError(null);
-    verifyNoMoreInteractions(smsButtonViewActions);
+    verify(viewActions).enableGoOnlineButton(false);
+    verify(viewActions).showGoOnlineError(null);
+    verifyNoMoreInteractions(viewActions);
   }
 }

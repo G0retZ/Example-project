@@ -29,7 +29,7 @@ public class OrderTimeViewModelTest {
 
   @Rule
   public TestRule rule = new InstantTaskExecutorRule();
-  private OrderTimeViewModel orderTimeViewModel;
+  private OrderTimeViewModel viewModel;
   @Mock
   private Observer<ViewState<OrderTimeViewActions>> viewStateObserver;
   @Mock
@@ -43,7 +43,7 @@ public class OrderTimeViewModelTest {
     RxAndroidPlugins.setInitMainThreadSchedulerHandler(scheduler -> Schedulers.trampoline());
     when(orderCurrentTimeUseCase.getOrderElapsedTime())
         .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
-    orderTimeViewModel = new OrderTimeViewModelImpl(orderCurrentTimeUseCase);
+    viewModel = new OrderTimeViewModelImpl(orderCurrentTimeUseCase);
   }
 
 
@@ -64,10 +64,10 @@ public class OrderTimeViewModelTest {
   @Test
   public void DoNotTouchSelectedVehicleUseCaseDuringVehicleChoosing() {
     // Действие:
-    orderTimeViewModel.getViewStateLiveData();
-    orderTimeViewModel.getNavigationLiveData();
-    orderTimeViewModel.getViewStateLiveData();
-    orderTimeViewModel.getNavigationLiveData();
+    viewModel.getViewStateLiveData();
+    viewModel.getNavigationLiveData();
+    viewModel.getViewStateLiveData();
+    viewModel.getNavigationLiveData();
 
     // Результат:
     verify(orderCurrentTimeUseCase, only()).getOrderElapsedTime();
@@ -84,7 +84,7 @@ public class OrderTimeViewModelTest {
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
 
     // Действие:
-    orderTimeViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(new OrderTimeViewState(0));
@@ -98,7 +98,7 @@ public class OrderTimeViewModelTest {
   public void setViewStateWithTimesToLiveData() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    orderTimeViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
     publishSubject.onNext(123L);
@@ -122,7 +122,7 @@ public class OrderTimeViewModelTest {
   public void setErrorViewStateToLiveDataOnError() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    orderTimeViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
     publishSubject.onNext(123L);

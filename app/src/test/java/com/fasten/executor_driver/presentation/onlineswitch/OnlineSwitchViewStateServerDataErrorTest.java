@@ -17,7 +17,7 @@ public class OnlineSwitchViewStateServerDataErrorTest {
   private ViewState<OnlineSwitchViewActions> viewState;
 
   @Mock
-  private OnlineSwitchViewActions onlineSwitchViewActions;
+  private OnlineSwitchViewActions viewActions;
   @Mock
   private ViewState<OnlineSwitchViewActions> parentViewState;
   @Mock
@@ -29,11 +29,11 @@ public class OnlineSwitchViewStateServerDataErrorTest {
     viewState = new OnlineSwitchViewStateServerDataError(parentViewState);
 
     // Действие:
-    viewState.apply(onlineSwitchViewActions);
+    viewState.apply(viewActions);
 
     // Результат:
-    verify(onlineSwitchViewActions, only()).showOnlineSwitchServerDataError();
-    verify(parentViewState, only()).apply(onlineSwitchViewActions);
+    verify(viewActions, only()).showOnlineSwitchServerDataError();
+    verify(parentViewState, only()).apply(viewActions);
   }
 
   @Test
@@ -42,10 +42,10 @@ public class OnlineSwitchViewStateServerDataErrorTest {
     viewState = new OnlineSwitchViewStateServerDataError(null);
 
     // Действие:
-    viewState.apply(onlineSwitchViewActions);
+    viewState.apply(viewActions);
 
     // Результат:
-    verify(onlineSwitchViewActions, only()).showOnlineSwitchServerDataError();
+    verify(viewActions, only()).showOnlineSwitchServerDataError();
   }
 
   @Test

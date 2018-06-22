@@ -26,7 +26,7 @@ import ua.naiksoftware.stomp.client.StompMessage;
 @RunWith(MockitoJUnitRunner.class)
 public class MissedOrderGatewayTest {
 
-  private MissedOrderGateway missedOrderGateway;
+  private MissedOrderGateway gateway;
 
   @Mock
   private StompClient stompClient;
@@ -35,7 +35,7 @@ public class MissedOrderGatewayTest {
   public void setUp() {
     RxJavaPlugins.setIoSchedulerHandler(scheduler -> Schedulers.trampoline());
     RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
-    missedOrderGateway = new MissedOrderGatewayImpl(stompClient);
+    gateway = new MissedOrderGatewayImpl(stompClient);
     when(stompClient.topic(anyString())).thenReturn(Observable.never());
   }
 
@@ -51,7 +51,7 @@ public class MissedOrderGatewayTest {
     when(stompClient.isConnected()).thenReturn(true);
 
     // Действие:
-    missedOrderGateway.loadMissedOrdersMessages("1234567890").test();
+    gateway.loadMissedOrdersMessages("1234567890").test();
 
     // Результат:
     inOrder.verify(stompClient).isConnected();
@@ -68,7 +68,7 @@ public class MissedOrderGatewayTest {
     InOrder inOrder = Mockito.inOrder(stompClient);
 
     // Действие:
-    missedOrderGateway.loadMissedOrdersMessages("1234567890").test();
+    gateway.loadMissedOrdersMessages("1234567890").test();
 
     // Результат:
     inOrder.verify(stompClient).isConnected();
@@ -86,7 +86,7 @@ public class MissedOrderGatewayTest {
     when(stompClient.isConnecting()).thenReturn(true);
 
     // Действие:
-    missedOrderGateway.loadMissedOrdersMessages("1234567890").test();
+    gateway.loadMissedOrdersMessages("1234567890").test();
 
     // Результат:
     inOrder.verify(stompClient).isConnected();
@@ -116,7 +116,7 @@ public class MissedOrderGatewayTest {
     ));
 
     // Действие:
-    TestSubscriber<String> testSubscriber = missedOrderGateway
+    TestSubscriber<String> testSubscriber = gateway
         .loadMissedOrdersMessages("1234567890").test();
 
     // Результат:
@@ -140,7 +140,7 @@ public class MissedOrderGatewayTest {
 
     // Действие:
     TestSubscriber<String> testSubscriber =
-        missedOrderGateway.loadMissedOrdersMessages("1234567890").test();
+        gateway.loadMissedOrdersMessages("1234567890").test();
 
     // Результат:
     testSubscriber.assertValue("Message this");
@@ -157,7 +157,7 @@ public class MissedOrderGatewayTest {
 
     // Действие:
     TestSubscriber<String> testSubscriber =
-        missedOrderGateway.loadMissedOrdersMessages("1234567890").test();
+        gateway.loadMissedOrdersMessages("1234567890").test();
 
     // Результат:
     testSubscriber.assertNoErrors();
@@ -172,7 +172,7 @@ public class MissedOrderGatewayTest {
   public void answerConnectionErrorIfNotConnectingAfterConnected() {
     // Действие:
     TestSubscriber<String> testSubscriber =
-        missedOrderGateway.loadMissedOrdersMessages("1234567890").test();
+        gateway.loadMissedOrdersMessages("1234567890").test();
 
     // Результат:
     testSubscriber.assertError(ConnectionClosedException.class);
@@ -196,7 +196,7 @@ public class MissedOrderGatewayTest {
 
     // Действие:
     TestSubscriber<String> testSubscriber =
-        missedOrderGateway.loadMissedOrdersMessages("1234567890").test();
+        gateway.loadMissedOrdersMessages("1234567890").test();
 
     // Результат:
     testSubscriber.assertNoValues();
@@ -221,7 +221,7 @@ public class MissedOrderGatewayTest {
 
     // Действие:
     TestSubscriber<String> testSubscriber =
-        missedOrderGateway.loadMissedOrdersMessages("1234567890").test();
+        gateway.loadMissedOrdersMessages("1234567890").test();
 
     // Результат:
     testSubscriber.assertValue("Message this");
@@ -240,7 +240,7 @@ public class MissedOrderGatewayTest {
 
     // Действие:
     TestSubscriber<String> testSubscriber =
-        missedOrderGateway.loadMissedOrdersMessages("1234567890").test();
+        gateway.loadMissedOrdersMessages("1234567890").test();
 
     // Результат:
     testSubscriber.assertNoErrors();

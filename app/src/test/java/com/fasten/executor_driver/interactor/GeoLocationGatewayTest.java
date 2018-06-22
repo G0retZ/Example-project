@@ -23,7 +23,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class GeoLocationGatewayTest {
 
-  private GeoLocationGateway geoLocationGateway;
+  private GeoLocationGateway gateway;
 
   @Mock
   private GeolocationCenter geolocationCenter;
@@ -32,7 +32,7 @@ public class GeoLocationGatewayTest {
   public void setUp() {
     RxJavaPlugins.setIoSchedulerHandler(scheduler -> Schedulers.trampoline());
     RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
-    geoLocationGateway = new GeoLocationGatewayImpl(geolocationCenter);
+    gateway = new GeoLocationGatewayImpl(geolocationCenter);
     when(geolocationCenter.getLocations(anyLong())).thenReturn(Flowable.never());
   }
 
@@ -44,7 +44,7 @@ public class GeoLocationGatewayTest {
   @Test
   public void askGeolocationCenterForLocations() {
     // Действие:
-    geoLocationGateway.getGeoLocations(140);
+    gateway.getGeoLocations(140);
 
     // Результат:
     verify(geolocationCenter, only()).getLocations(140);
@@ -64,7 +64,7 @@ public class GeoLocationGatewayTest {
         .thenReturn(Flowable.error(new NoNetworkException()));
 
     // Действие и Результат:
-    geoLocationGateway.getGeoLocations(123).test().assertError(NoNetworkException.class);
+    gateway.getGeoLocations(123).test().assertError(NoNetworkException.class);
   }
 
   /**
@@ -113,7 +113,7 @@ public class GeoLocationGatewayTest {
     when(geolocationCenter.getLocations(anyLong())).thenReturn(Flowable.just(location));
 
     // Действие:
-    TestSubscriber<GeoLocation> testSubscriber = geoLocationGateway.getGeoLocations(34).test();
+    TestSubscriber<GeoLocation> testSubscriber = gateway.getGeoLocations(34).test();
 
     // Результат:
     testSubscriber.assertValue(new GeoLocation(123, 456, 789));

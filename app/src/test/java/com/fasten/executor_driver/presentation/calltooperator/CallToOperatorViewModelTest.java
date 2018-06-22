@@ -23,7 +23,7 @@ public class CallToOperatorViewModelTest {
 
   @Rule
   public TestRule rule = new InstantTaskExecutorRule();
-  private CallToOperatorViewModel callToOperatorViewModel;
+  private CallToOperatorViewModel viewModel;
   private TestScheduler testScheduler;
 
   @Mock
@@ -35,7 +35,7 @@ public class CallToOperatorViewModelTest {
   public void setUp() {
     testScheduler = new TestScheduler();
     RxJavaPlugins.setIoSchedulerHandler(scheduler -> testScheduler);
-    callToOperatorViewModel = new CallToOperatorViewModelImpl();
+    viewModel = new CallToOperatorViewModelImpl();
   }
 
   /* Тетсируем переключение состояний. */
@@ -46,8 +46,8 @@ public class CallToOperatorViewModelTest {
   @Test
   public void setNoViewStateToLiveDataEver() {
     // Действие:
-    callToOperatorViewModel.getViewStateLiveData().observeForever(viewStateObserver);
-    callToOperatorViewModel.callToOperator();
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.callToOperator();
     testScheduler.advanceTimeBy(20, TimeUnit.MINUTES);
 
     // Результат:
@@ -62,7 +62,7 @@ public class CallToOperatorViewModelTest {
   @Test
   public void doNotSetNavigateInitially() {
     // Действие:
-    callToOperatorViewModel.getNavigationLiveData().observeForever(navigateObserver);
+    viewModel.getNavigationLiveData().observeForever(navigateObserver);
 
     // Результат:
     verifyZeroInteractions(navigateObserver);
@@ -74,10 +74,10 @@ public class CallToOperatorViewModelTest {
   @Test
   public void doNotSetNavigate() {
     // Дано:
-    callToOperatorViewModel.getNavigationLiveData().observeForever(navigateObserver);
+    viewModel.getNavigationLiveData().observeForever(navigateObserver);
 
     // Действие:
-    callToOperatorViewModel.callToOperator();
+    viewModel.callToOperator();
 
     // Результат:
     verifyZeroInteractions(navigateObserver);
@@ -89,10 +89,10 @@ public class CallToOperatorViewModelTest {
   @Test
   public void doNotSetNavigateAfter9999ms() {
     // Дано:
-    callToOperatorViewModel.getNavigationLiveData().observeForever(navigateObserver);
+    viewModel.getNavigationLiveData().observeForever(navigateObserver);
 
     // Действие:
-    callToOperatorViewModel.callToOperator();
+    viewModel.callToOperator();
     testScheduler.advanceTimeBy(9999, TimeUnit.MILLISECONDS);
 
     // Результат:
@@ -105,10 +105,10 @@ public class CallToOperatorViewModelTest {
   @Test
   public void setNavigateToFinishAfter10SecondsLater() {
     // Дано:
-    callToOperatorViewModel.getNavigationLiveData().observeForever(navigateObserver);
+    viewModel.getNavigationLiveData().observeForever(navigateObserver);
 
     // Действие:
-    callToOperatorViewModel.callToOperator();
+    viewModel.callToOperator();
     testScheduler.advanceTimeBy(10, TimeUnit.SECONDS);
 
     // Результат:

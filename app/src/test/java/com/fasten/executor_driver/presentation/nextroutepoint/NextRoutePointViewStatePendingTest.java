@@ -17,7 +17,7 @@ public class NextRoutePointViewStatePendingTest {
   private NextRoutePointViewStatePending viewState;
 
   @Mock
-  private NextRoutePointViewActions nextRoutePointViewActions;
+  private NextRoutePointViewActions viewActions;
   @Mock
   private ViewState<NextRoutePointViewActions> parentViewState;
   @Mock
@@ -29,11 +29,11 @@ public class NextRoutePointViewStatePendingTest {
     viewState = new NextRoutePointViewStatePending(parentViewState);
 
     // Действие:
-    viewState.apply(nextRoutePointViewActions);
+    viewState.apply(viewActions);
 
     // Результат:
-    verify(nextRoutePointViewActions, only()).showNextRoutePointPending(true);
-    verify(parentViewState, only()).apply(nextRoutePointViewActions);
+    verify(viewActions, only()).showNextRoutePointPending(true);
+    verify(parentViewState, only()).apply(viewActions);
   }
 
   @Test
@@ -42,10 +42,10 @@ public class NextRoutePointViewStatePendingTest {
     viewState = new NextRoutePointViewStatePending(null);
 
     // Действие:
-    viewState.apply(nextRoutePointViewActions);
+    viewState.apply(viewActions);
 
     // Результат:
-    verify(nextRoutePointViewActions, only()).showNextRoutePointPending(true);
+    verify(viewActions, only()).showNextRoutePointPending(true);
   }
 
   @Test

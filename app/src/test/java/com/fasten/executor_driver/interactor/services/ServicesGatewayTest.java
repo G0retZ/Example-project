@@ -30,7 +30,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class ServicesGatewayTest {
 
-  private ServicesGateway servicesGateway;
+  private ServicesGateway gateway;
 
   @Mock
   private ApiService api;
@@ -41,7 +41,7 @@ public class ServicesGatewayTest {
   public void setUp() {
     RxJavaPlugins.setIoSchedulerHandler(scheduler -> Schedulers.trampoline());
     RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
-    servicesGateway = new ServicesGatewayImpl(api, mapper);
+    gateway = new ServicesGatewayImpl(api, mapper);
     when(api.getMyServices()).thenReturn(Single.never());
     when(api.getMySelectedServices()).thenReturn(Single.never());
     when(api.setMyServices(anyString())).thenReturn(Completable.never());
@@ -55,7 +55,7 @@ public class ServicesGatewayTest {
   @Test
   public void askGatewayForSelectedServices() {
     // Действие:
-    servicesGateway.getServices().test();
+    gateway.getServices().test();
 
     // Результат:
     verify(api).getMySelectedServices();
@@ -71,7 +71,7 @@ public class ServicesGatewayTest {
     when(api.getMySelectedServices()).thenReturn(Single.just("5,6"));
 
     // Действие:
-    servicesGateway.getServices().test();
+    gateway.getServices().test();
 
     // Результат:
     verify(api).getMySelectedServices();
@@ -85,7 +85,7 @@ public class ServicesGatewayTest {
   @Test
   public void setServicesCompletableRequested() {
     // Действие:
-    servicesGateway.sendSelectedServices(
+    gateway.sendSelectedServices(
         Arrays.asList(
             new Service(0, "n", 100, false),
             new Service(3, "n", 104, true),
@@ -117,7 +117,7 @@ public class ServicesGatewayTest {
     )));
 
     // Действие:
-    servicesGateway.getServices().test();
+    gateway.getServices().test();
 
     // Результат:
     verify(mapper).map(new ApiServiceItem(0, "n1", 100).setSelected(true));
@@ -143,7 +143,7 @@ public class ServicesGatewayTest {
     )));
 
     // Действие:
-    servicesGateway.getServices().test();
+    gateway.getServices().test();
 
     // Результат:
     verify(mapper, only()).map(new ApiServiceItem(0, "n1", 100).setSelected(true));
@@ -162,7 +162,7 @@ public class ServicesGatewayTest {
     when(api.getMySelectedServices()).thenReturn(Single.error(new NoNetworkException()));
 
     // Результат:
-    servicesGateway.getServices().test().assertError(NoNetworkException.class);
+    gateway.getServices().test().assertError(NoNetworkException.class);
   }
 
   /**
@@ -175,7 +175,7 @@ public class ServicesGatewayTest {
     when(api.getMyServices()).thenReturn(Single.error(new NoNetworkException()));
 
     // Результат:
-    servicesGateway.getServices().test().assertError(NoNetworkException.class);
+    gateway.getServices().test().assertError(NoNetworkException.class);
   }
 
   /**
@@ -193,7 +193,7 @@ public class ServicesGatewayTest {
     )));
 
     // Результат:
-    servicesGateway.getServices().test().assertError(DataMappingException.class);
+    gateway.getServices().test().assertError(DataMappingException.class);
   }
 
   /**
@@ -215,7 +215,7 @@ public class ServicesGatewayTest {
     )));
 
     // Действие:
-    TestObserver<List<Service>> testObserver = servicesGateway.getServices().test();
+    TestObserver<List<Service>> testObserver = gateway.getServices().test();
 
     // Результат:
     testObserver.assertComplete();
@@ -235,7 +235,7 @@ public class ServicesGatewayTest {
     when(api.setMyServices(anyString())).thenReturn(Completable.error(new NoNetworkException()));
 
     // Действие и Результат:
-    servicesGateway.sendSelectedServices(
+    gateway.sendSelectedServices(
         Arrays.asList(
             new Service(0, "n1", 100, false),
             new Service(1, "n2", 10, true),
@@ -253,7 +253,7 @@ public class ServicesGatewayTest {
     when(api.setMyServices(anyString())).thenReturn(Completable.complete());
 
     // Действие и Результат:
-    servicesGateway.sendSelectedServices(
+    gateway.sendSelectedServices(
         Arrays.asList(
             new Service(0, "n1", 100, false),
             new Service(1, "n2", 10, true),

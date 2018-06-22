@@ -18,7 +18,7 @@ public class BalanceViewStatePendingTest {
   private BalanceViewStatePending viewState;
 
   @Mock
-  private BalanceViewActions nextRoutePointViewActions;
+  private BalanceViewActions viewActions;
   @Mock
   private ViewState<BalanceViewActions> parentViewState;
   @Mock
@@ -30,12 +30,12 @@ public class BalanceViewStatePendingTest {
     viewState = new BalanceViewStatePending(parentViewState);
 
     // Действие:
-    viewState.apply(nextRoutePointViewActions);
+    viewState.apply(viewActions);
 
     // Результат:
-    verify(nextRoutePointViewActions).showBalancePending(true);
-    verify(parentViewState, only()).apply(nextRoutePointViewActions);
-    verifyNoMoreInteractions(nextRoutePointViewActions);
+    verify(viewActions).showBalancePending(true);
+    verify(parentViewState, only()).apply(viewActions);
+    verifyNoMoreInteractions(viewActions);
   }
 
   @Test
@@ -44,11 +44,11 @@ public class BalanceViewStatePendingTest {
     viewState = new BalanceViewStatePending(null);
 
     // Действие:
-    viewState.apply(nextRoutePointViewActions);
+    viewState.apply(viewActions);
 
     // Результат:
-    verify(nextRoutePointViewActions).showBalancePending(true);
-    verifyNoMoreInteractions(nextRoutePointViewActions);
+    verify(viewActions).showBalancePending(true);
+    verifyNoMoreInteractions(viewActions);
   }
 
   @Test

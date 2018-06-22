@@ -18,7 +18,7 @@ public class BalanceViewStateServerDataErrorTest {
   private BalanceViewStateServerDataError viewState;
 
   @Mock
-  private BalanceViewActions nextRoutePointViewActions;
+  private BalanceViewActions viewActions;
   @Mock
   private ViewState<BalanceViewActions> parentViewState;
   @Mock
@@ -30,12 +30,12 @@ public class BalanceViewStateServerDataErrorTest {
     viewState = new BalanceViewStateServerDataError(parentViewState);
 
     // Действие:
-    viewState.apply(nextRoutePointViewActions);
+    viewState.apply(viewActions);
 
     // Результат:
-    verify(nextRoutePointViewActions).showBalanceServerDataError();
-    verify(parentViewState, only()).apply(nextRoutePointViewActions);
-    verifyNoMoreInteractions(nextRoutePointViewActions);
+    verify(viewActions).showBalanceServerDataError();
+    verify(parentViewState, only()).apply(viewActions);
+    verifyNoMoreInteractions(viewActions);
   }
 
   @Test
@@ -44,11 +44,11 @@ public class BalanceViewStateServerDataErrorTest {
     viewState = new BalanceViewStateServerDataError(null);
 
     // Действие:
-    viewState.apply(nextRoutePointViewActions);
+    viewState.apply(viewActions);
 
     // Результат:
-    verify(nextRoutePointViewActions).showBalanceServerDataError();
-    verifyNoMoreInteractions(nextRoutePointViewActions);
+    verify(viewActions).showBalanceServerDataError();
+    verifyNoMoreInteractions(viewActions);
   }
 
   @Test

@@ -15,7 +15,7 @@ public class PhoneViewStateInitialTest {
   private PhoneViewStateInitial viewState;
 
   @Mock
-  private PhoneViewActions phoneViewActions;
+  private PhoneViewActions viewActions;
 
   @Before
   public void setUp() {
@@ -25,10 +25,10 @@ public class PhoneViewStateInitialTest {
   @Test
   public void testActions() {
     // Действие:
-    viewState.apply(phoneViewActions);
+    viewState.apply(viewActions);
 
     // Результат:
-    verify(phoneViewActions).enableButton(false);
-    verifyNoMoreInteractions(phoneViewActions);
+    verify(viewActions).enableButton(false);
+    verifyNoMoreInteractions(viewActions);
   }
 }

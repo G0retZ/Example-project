@@ -33,7 +33,7 @@ public class MovingToClientViewModelTest {
 
   @Rule
   public TestRule rule = new InstantTaskExecutorRule();
-  private MovingToClientViewModel movingToClientViewModel;
+  private MovingToClientViewModel viewModel;
   @Mock
   private MovingToClientUseCase movingToClientUseCase;
   private TestScheduler testScheduler;
@@ -50,7 +50,7 @@ public class MovingToClientViewModelTest {
     RxJavaPlugins.setIoSchedulerHandler(scheduler -> testScheduler);
     RxAndroidPlugins.setInitMainThreadSchedulerHandler(scheduler -> Schedulers.trampoline());
     when(movingToClientUseCase.reportArrival()).thenReturn(Completable.never());
-    movingToClientViewModel = new MovingToClientViewModelImpl(movingToClientUseCase);
+    viewModel = new MovingToClientViewModelImpl(movingToClientUseCase);
   }
 
   /* Тетсируем работу с юзкейсом заказа. */
@@ -64,7 +64,7 @@ public class MovingToClientViewModelTest {
     when(movingToClientUseCase.reportArrival()).thenReturn(Completable.complete());
 
     // Действие:
-    movingToClientViewModel.reportArrival();
+    viewModel.reportArrival();
 
     // Результат:
     verify(movingToClientUseCase, only()).reportArrival();
@@ -76,9 +76,9 @@ public class MovingToClientViewModelTest {
   @Test
   public void DoNotTouchUseCaseDuringOrderSetting() {
     // Действие:
-    movingToClientViewModel.reportArrival();
-    movingToClientViewModel.reportArrival();
-    movingToClientViewModel.reportArrival();
+    viewModel.reportArrival();
+    viewModel.reportArrival();
+    viewModel.reportArrival();
 
     // Результат:
     verify(movingToClientUseCase, only()).reportArrival();
@@ -95,7 +95,7 @@ public class MovingToClientViewModelTest {
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
 
     // Действие:
-    movingToClientViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(any(MovingToClientViewStateIdle.class));
@@ -109,10 +109,10 @@ public class MovingToClientViewModelTest {
   public void setPendingViewStateToLiveDataForReportArrival() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    movingToClientViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    movingToClientViewModel.reportArrival();
+    viewModel.reportArrival();
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(any(MovingToClientViewStateIdle.class));
@@ -129,10 +129,10 @@ public class MovingToClientViewModelTest {
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     when(movingToClientUseCase.reportArrival())
         .thenReturn(Completable.error(NoNetworkException::new));
-    movingToClientViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    movingToClientViewModel.reportArrival();
+    viewModel.reportArrival();
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(any(MovingToClientViewStateIdle.class));
@@ -149,10 +149,10 @@ public class MovingToClientViewModelTest {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     when(movingToClientUseCase.reportArrival()).thenReturn(Completable.complete());
-    movingToClientViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    movingToClientViewModel.reportArrival();
+    viewModel.reportArrival();
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(any(MovingToClientViewStateIdle.class));
@@ -167,10 +167,10 @@ public class MovingToClientViewModelTest {
   public void setCallingViewStateToLiveDataForCallToClient() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    movingToClientViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    movingToClientViewModel.callToClient();
+    viewModel.callToClient();
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(any(MovingToClientViewStateIdle.class));
@@ -185,10 +185,10 @@ public class MovingToClientViewModelTest {
   public void setIdleViewStateToLiveData20SecondsAfterCall() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    movingToClientViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    movingToClientViewModel.callToClient();
+    viewModel.callToClient();
     testScheduler.advanceTimeBy(20, TimeUnit.SECONDS);
 
     // Результат:
@@ -206,7 +206,7 @@ public class MovingToClientViewModelTest {
   @Test
   public void doNotSetNavigateInitially() {
     // Действие:
-    movingToClientViewModel.getNavigationLiveData().observeForever(navigateObserver);
+    viewModel.getNavigationLiveData().observeForever(navigateObserver);
 
     // Результат:
     verifyZeroInteractions(navigateObserver);
@@ -218,10 +218,10 @@ public class MovingToClientViewModelTest {
   @Test
   public void doNotSetNavigateForPending() {
     // Дано:
-    movingToClientViewModel.getNavigationLiveData().observeForever(navigateObserver);
+    viewModel.getNavigationLiveData().observeForever(navigateObserver);
 
     // Действие:
-    movingToClientViewModel.reportArrival();
+    viewModel.reportArrival();
 
     // Результат:
     verifyZeroInteractions(navigateObserver);
@@ -235,10 +235,10 @@ public class MovingToClientViewModelTest {
     // Дано:
     when(movingToClientUseCase.reportArrival())
         .thenReturn(Completable.error(IllegalStateException::new));
-    movingToClientViewModel.getNavigationLiveData().observeForever(navigateObserver);
+    viewModel.getNavigationLiveData().observeForever(navigateObserver);
 
     // Действие:
-    movingToClientViewModel.reportArrival();
+    viewModel.reportArrival();
 
     // Результат:
     verify(navigateObserver, only()).onChanged(MovingToClientNavigate.NO_CONNECTION);
@@ -251,10 +251,10 @@ public class MovingToClientViewModelTest {
   public void doNotSetNavigateForReportArrivalSuccess() {
     // Дано:
     when(movingToClientUseCase.reportArrival()).thenReturn(Completable.complete());
-    movingToClientViewModel.getNavigationLiveData().observeForever(navigateObserver);
+    viewModel.getNavigationLiveData().observeForever(navigateObserver);
 
     // Действие:
-    movingToClientViewModel.reportArrival();
+    viewModel.reportArrival();
 
     // Результат:
     verifyZeroInteractions(navigateObserver);
@@ -266,10 +266,10 @@ public class MovingToClientViewModelTest {
   @Test
   public void setNavigateToCallToClientForCallRequest() {
     // Дано:
-    movingToClientViewModel.getNavigationLiveData().observeForever(navigateObserver);
+    viewModel.getNavigationLiveData().observeForever(navigateObserver);
 
     // Действие:
-    movingToClientViewModel.callToClient();
+    viewModel.callToClient();
 
     // Результат:
     verify(navigateObserver, only()).onChanged(MovingToClientNavigate.CALL_TO_CLIENT);
@@ -281,10 +281,10 @@ public class MovingToClientViewModelTest {
   @Test
   public void doNotSetNavigateForCalling() {
     // Дано:
-    movingToClientViewModel.getNavigationLiveData().observeForever(navigateObserver);
+    viewModel.getNavigationLiveData().observeForever(navigateObserver);
 
     // Действие:
-    movingToClientViewModel.callToClient();
+    viewModel.callToClient();
     testScheduler.advanceTimeBy(9999, TimeUnit.MILLISECONDS);
 
     // Результат:
@@ -297,10 +297,10 @@ public class MovingToClientViewModelTest {
   @Test
   public void doNotSetNavigateAfter10SecondsOfCalling() {
     // Дано:
-    movingToClientViewModel.getNavigationLiveData().observeForever(navigateObserver);
+    viewModel.getNavigationLiveData().observeForever(navigateObserver);
 
     // Действие:
-    movingToClientViewModel.callToClient();
+    viewModel.callToClient();
     testScheduler.advanceTimeBy(10, TimeUnit.SECONDS);
 
     // Результат:

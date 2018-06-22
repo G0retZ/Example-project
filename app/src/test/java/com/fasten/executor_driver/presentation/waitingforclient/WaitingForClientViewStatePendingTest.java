@@ -15,7 +15,7 @@ public class WaitingForClientViewStatePendingTest {
   private WaitingForClientViewStatePending viewState;
 
   @Mock
-  private WaitingForClientViewActions driverOrderConfirmationViewActions;
+  private WaitingForClientViewActions viewActions;
 
   @Before
   public void setUp() {
@@ -25,9 +25,9 @@ public class WaitingForClientViewStatePendingTest {
   @Test
   public void testActions() {
     // Действие:
-    viewState.apply(driverOrderConfirmationViewActions);
+    viewState.apply(viewActions);
 
     // Результат:
-    verify(driverOrderConfirmationViewActions, only()).showWaitingForClientPending(true);
+    verify(viewActions, only()).showWaitingForClientPending(true);
   }
 }

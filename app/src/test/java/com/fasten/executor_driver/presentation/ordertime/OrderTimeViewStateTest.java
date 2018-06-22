@@ -17,7 +17,7 @@ public class OrderTimeViewStateTest {
   private OrderTimeViewState viewState;
 
   @Mock
-  private OrderTimeViewActions orderTimeViewActions;
+  private OrderTimeViewActions viewActions;
 
   @Before
   public void setUp() {
@@ -27,10 +27,10 @@ public class OrderTimeViewStateTest {
   @Test
   public void testActions() {
     // Действие:
-    viewState.apply(orderTimeViewActions);
+    viewState.apply(viewActions);
 
     // Результат:
-    verify(orderTimeViewActions, only()).setOrderTimeText(12345);
+    verify(viewActions, only()).setOrderTimeText(12345);
   }
 
   @Test

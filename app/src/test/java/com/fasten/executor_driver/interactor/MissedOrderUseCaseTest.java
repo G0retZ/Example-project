@@ -24,7 +24,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class MissedOrderUseCaseTest {
 
-  private MissedOrderUseCase missedOrderUseCase;
+  private MissedOrderUseCase useCase;
 
   @Mock
   private MissedOrderGateway gateway;
@@ -37,7 +37,7 @@ public class MissedOrderUseCaseTest {
   public void setUp() {
     when(gateway.loadMissedOrdersMessages(anyString())).thenReturn(Flowable.never());
     when(loginReceiver.get()).thenReturn(Observable.never());
-    missedOrderUseCase = new MissedOrderUseCaseImpl(gateway, loginReceiver);
+    useCase = new MissedOrderUseCaseImpl(gateway, loginReceiver);
   }
 
   /* Проверяем работу с гейтвеем */
@@ -54,7 +54,7 @@ public class MissedOrderUseCaseTest {
     ));
 
     // Действие:
-    missedOrderUseCase.getMissedOrders().test();
+    useCase.getMissedOrders().test();
 
     // Результат:
     inOrder.verify(gateway).loadMissedOrdersMessages("1234567890");
@@ -79,7 +79,7 @@ public class MissedOrderUseCaseTest {
         .thenReturn(Flowable.<String>never().doOnCancel(action));
 
     // Действие:
-    missedOrderUseCase.getMissedOrders().test();
+    useCase.getMissedOrders().test();
 
     // Результат:
     verify(action, times(3)).run();
@@ -91,7 +91,7 @@ public class MissedOrderUseCaseTest {
   @Test
   public void doNotAskGatewayForMissedOrdersIfSocketError() {
     // Действие:
-    missedOrderUseCase.getMissedOrders().test();
+    useCase.getMissedOrders().test();
 
     // Результат:
     verifyZeroInteractions(gateway);
@@ -106,7 +106,7 @@ public class MissedOrderUseCaseTest {
     when(loginReceiver.get()).thenReturn(Observable.error(NoNetworkException::new));
 
     // Действие:
-    missedOrderUseCase.getMissedOrders().test();
+    useCase.getMissedOrders().test();
 
     // Результат:
     verifyZeroInteractions(gateway);
@@ -126,7 +126,7 @@ public class MissedOrderUseCaseTest {
         .thenReturn(Flowable.just("1", "2", "3"));
 
     // Действие:
-    TestSubscriber<String> testSubscriber = missedOrderUseCase.getMissedOrders().test();
+    TestSubscriber<String> testSubscriber = useCase.getMissedOrders().test();
 
     // Результат:
     testSubscriber.assertValues("1", "2", "3");
@@ -142,7 +142,7 @@ public class MissedOrderUseCaseTest {
     when(loginReceiver.get()).thenReturn(Observable.error(ConnectException::new));
 
     // Действие:
-    TestSubscriber<String> testSubscriber = missedOrderUseCase.getMissedOrders().test();
+    TestSubscriber<String> testSubscriber = useCase.getMissedOrders().test();
 
     // Результат:
     testSubscriber.assertError(ConnectException.class);
@@ -160,7 +160,7 @@ public class MissedOrderUseCaseTest {
         .thenReturn(Flowable.error(ConnectException::new));
 
     // Действие:
-    TestSubscriber<String> testSubscriber = missedOrderUseCase.getMissedOrders().test();
+    TestSubscriber<String> testSubscriber = useCase.getMissedOrders().test();
 
     // Результат:
     testSubscriber.assertError(ConnectException.class);
@@ -177,7 +177,7 @@ public class MissedOrderUseCaseTest {
     when(gateway.loadMissedOrdersMessages("1234567890")).thenReturn(Flowable.empty());
 
     // Действие:
-    TestSubscriber<String> testSubscriber = missedOrderUseCase.getMissedOrders().test();
+    TestSubscriber<String> testSubscriber = useCase.getMissedOrders().test();
 
     // Результат:
     testSubscriber.assertComplete();

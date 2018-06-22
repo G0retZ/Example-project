@@ -32,7 +32,7 @@ import ua.naiksoftware.stomp.client.StompMessage;
 @RunWith(MockitoJUnitRunner.class)
 public class OrderCurrentCostGatewayTest {
 
-  private OrderCurrentCostGateway executorStateGateway;
+  private OrderCurrentCostGateway gateway;
 
   @Mock
   private StompClient stompClient;
@@ -43,7 +43,7 @@ public class OrderCurrentCostGatewayTest {
   public void setUp() {
     RxJavaPlugins.setIoSchedulerHandler(scheduler -> Schedulers.trampoline());
     RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
-    executorStateGateway = new OrderCurrentCostGatewayImpl(stompClient, mapper);
+    gateway = new OrderCurrentCostGatewayImpl(stompClient, mapper);
     when(stompClient.topic(anyString())).thenReturn(Observable.never());
   }
 
@@ -60,7 +60,7 @@ public class OrderCurrentCostGatewayTest {
     when(stompClient.isConnected()).thenReturn(true);
 
     // Действие:
-    executorStateGateway.getOrderCurrentCost("1234567890").test();
+    gateway.getOrderCurrentCost("1234567890").test();
 
     // Результат:
     inOrder.verify(stompClient).isConnected();
@@ -77,7 +77,7 @@ public class OrderCurrentCostGatewayTest {
     InOrder inOrder = Mockito.inOrder(stompClient);
 
     // Действие:
-    executorStateGateway.getOrderCurrentCost("1234567890").test();
+    gateway.getOrderCurrentCost("1234567890").test();
 
     // Результат:
     inOrder.verify(stompClient).isConnected();
@@ -96,7 +96,7 @@ public class OrderCurrentCostGatewayTest {
     when(stompClient.isConnecting()).thenReturn(true);
 
     // Действие:
-    executorStateGateway.getOrderCurrentCost("1234567890").test();
+    gateway.getOrderCurrentCost("1234567890").test();
 
     // Результат:
     inOrder.verify(stompClient).isConnected();
@@ -122,7 +122,7 @@ public class OrderCurrentCostGatewayTest {
     ));
 
     // Действие:
-    executorStateGateway.getOrderCurrentCost("1234567890").test();
+    gateway.getOrderCurrentCost("1234567890").test();
 
     // Результат:
     verify(mapper, only()).map(any());
@@ -143,7 +143,7 @@ public class OrderCurrentCostGatewayTest {
     ));
 
     // Действие:
-    executorStateGateway.getOrderCurrentCost("1234567890").test();
+    gateway.getOrderCurrentCost("1234567890").test();
 
     // Результат:
     verify(mapper, only()).map(any());
@@ -171,7 +171,7 @@ public class OrderCurrentCostGatewayTest {
 
     // Действие:
     TestSubscriber<Integer> testSubscriber =
-        executorStateGateway.getOrderCurrentCost("1234567890").test();
+        gateway.getOrderCurrentCost("1234567890").test();
 
     // Результат:
     testSubscriber.assertNoValues();
@@ -194,7 +194,7 @@ public class OrderCurrentCostGatewayTest {
 
     // Действие:
     TestSubscriber<Integer> testSubscriber =
-        executorStateGateway.getOrderCurrentCost("1234567890").test();
+        gateway.getOrderCurrentCost("1234567890").test();
 
     // Результат:
     testSubscriber.assertError(DataMappingException.class);
@@ -217,7 +217,7 @@ public class OrderCurrentCostGatewayTest {
 
     // Действие:
     TestSubscriber<Integer> testSubscriber =
-        executorStateGateway.getOrderCurrentCost("1234567890").test();
+        gateway.getOrderCurrentCost("1234567890").test();
 
     // Результат:
     testSubscriber.assertValue(12345);
@@ -234,7 +234,7 @@ public class OrderCurrentCostGatewayTest {
 
     // Действие:
     TestSubscriber<Integer> testSubscriber =
-        executorStateGateway.getOrderCurrentCost("1234567890").test();
+        gateway.getOrderCurrentCost("1234567890").test();
 
     // Результат:
     testSubscriber.assertNoErrors();
@@ -249,7 +249,7 @@ public class OrderCurrentCostGatewayTest {
   public void answerConnectionErrorIfNotConnectingAfterConnected() {
     // Действие:
     TestSubscriber<Integer> testSubscriber =
-        executorStateGateway.getOrderCurrentCost("1234567890").test();
+        gateway.getOrderCurrentCost("1234567890").test();
 
     // Результат:
     testSubscriber.assertError(ConnectionClosedException.class);
@@ -273,7 +273,7 @@ public class OrderCurrentCostGatewayTest {
 
     // Действие:
     TestSubscriber<Integer> testSubscriber =
-        executorStateGateway.getOrderCurrentCost("1234567890").test();
+        gateway.getOrderCurrentCost("1234567890").test();
 
     // Результат:
     testSubscriber.assertNoValues();
@@ -297,7 +297,7 @@ public class OrderCurrentCostGatewayTest {
 
     // Действие:
     TestSubscriber<Integer> testSubscriber =
-        executorStateGateway.getOrderCurrentCost("1234567890").test();
+        gateway.getOrderCurrentCost("1234567890").test();
 
     // Результат:
     testSubscriber.assertError(DataMappingException.class);
@@ -321,7 +321,7 @@ public class OrderCurrentCostGatewayTest {
 
     // Действие:
     TestSubscriber<Integer> testSubscriber =
-        executorStateGateway.getOrderCurrentCost("1234567890").test();
+        gateway.getOrderCurrentCost("1234567890").test();
 
     // Результат:
     testSubscriber.assertValue(54321);
@@ -340,7 +340,7 @@ public class OrderCurrentCostGatewayTest {
 
     // Действие:
     TestSubscriber<Integer> testSubscriber =
-        executorStateGateway.getOrderCurrentCost("1234567890").test();
+        gateway.getOrderCurrentCost("1234567890").test();
 
     // Результат:
     testSubscriber.assertNoErrors();

@@ -12,16 +12,16 @@ import org.mockito.junit.MockitoJUnitRunner;
 public class MovingToClientViewStatePendingTest {
 
   @Mock
-  private MovingToClientViewActions movingToClientViewActions;
+  private MovingToClientViewActions viewActions;
 
   @Test
   public void testActions() {
     // Действие:
-    new MovingToClientViewStatePending().apply(movingToClientViewActions);
+    new MovingToClientViewStatePending().apply(viewActions);
 
     // Результат:
-    verify(movingToClientViewActions).showMovingToClientPending(true);
-    verify(movingToClientViewActions).enableMovingToClientCallButton(true);
-    verifyNoMoreInteractions(movingToClientViewActions);
+    verify(viewActions).showMovingToClientPending(true);
+    verify(viewActions).enableMovingToClientCallButton(true);
+    verifyNoMoreInteractions(viewActions);
   }
 }

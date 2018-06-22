@@ -18,7 +18,7 @@ public class CodeHeaderViewStateTest {
   private CodeHeaderViewState viewState;
 
   @Mock
-  private CodeHeaderViewActions codeViewActions;
+  private CodeHeaderViewActions viewActions;
 
   @Before
   public void setUp() {
@@ -28,10 +28,10 @@ public class CodeHeaderViewStateTest {
   @Test
   public void testActions() {
     // Действие:
-    viewState.apply(codeViewActions);
+    viewState.apply(viewActions);
 
     // Результат:
-    verify(codeViewActions, only())
+    verify(viewActions, only())
         .setDescriptiveHeaderText(R.string.sms_code_message, "+7 (999) 700-44-50");
   }
 

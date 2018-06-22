@@ -23,7 +23,7 @@ public class ServicesSliderViewModelTest {
 
   @Rule
   public TestRule rule = new InstantTaskExecutorRule();
-  private ServicesSliderViewModel servicesViewModel;
+  private ServicesSliderViewModel viewModel;
   @Mock
   private ServicesListItems servicesListItems;
 
@@ -34,11 +34,11 @@ public class ServicesSliderViewModelTest {
   private ArgumentCaptor<ViewState<ServicesSliderViewActions>> viewStateCaptor;
 
   @Mock
-  private ServicesSliderViewActions servicesSliderViewActions;
+  private ServicesSliderViewActions viewActions;
 
   @Before
   public void setUp() {
-    servicesViewModel = new ServicesSliderViewModelImpl(servicesListItems);
+    viewModel = new ServicesSliderViewModelImpl(servicesListItems);
     when(servicesListItems.getCurrentPosition()).thenReturn(30);
     when(servicesListItems.getMaxPrice()).thenReturn(1500);
     when(servicesListItems.getMinPrice()).thenReturn(500);
@@ -53,12 +53,12 @@ public class ServicesSliderViewModelTest {
   @Test
   public void askServicesFilter() {
     // Дано:
-    servicesViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    servicesViewModel.refresh();
+    viewModel.refresh();
     verify(viewStateObserver).onChanged(viewStateCaptor.capture());
-    viewStateCaptor.getValue().apply(servicesSliderViewActions);
+    viewStateCaptor.getValue().apply(viewActions);
 
     // Результат:
     verify(servicesListItems).getCurrentPosition();
@@ -71,18 +71,18 @@ public class ServicesSliderViewModelTest {
   @Test
   public void stateApply() {
     // Дано:
-    servicesViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    servicesViewModel.refresh();
+    viewModel.refresh();
     verify(viewStateObserver).onChanged(viewStateCaptor.capture());
-    viewStateCaptor.getValue().apply(servicesSliderViewActions);
+    viewStateCaptor.getValue().apply(viewActions);
 
     // Результат:
-    verify(servicesSliderViewActions).setMaxPrice(1500);
-    verify(servicesSliderViewActions).setMinPrice(500);
-    verify(servicesSliderViewActions).setSliderPosition(30);
-    verifyNoMoreInteractions(servicesSliderViewActions);
+    verify(viewActions).setMaxPrice(1500);
+    verify(viewActions).setMinPrice(500);
+    verify(viewActions).setSliderPosition(30);
+    verifyNoMoreInteractions(viewActions);
   }
 
   /* Тетсируем переключение состояний. */
@@ -93,10 +93,10 @@ public class ServicesSliderViewModelTest {
   @Test
   public void setViewStateToLiveData() {
     // Дано:
-    servicesViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    servicesViewModel.refresh();
+    viewModel.refresh();
 
     // Результат:
     verify(viewStateObserver).onChanged(any(ServicesSliderViewModelImpl.class));

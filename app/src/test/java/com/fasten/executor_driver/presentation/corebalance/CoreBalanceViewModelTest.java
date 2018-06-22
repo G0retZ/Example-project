@@ -34,7 +34,7 @@ public class CoreBalanceViewModelTest {
 
   @Rule
   public TestRule rule = new InstantTaskExecutorRule();
-  private CoreBalanceViewModel coreBalanceViewModel;
+  private CoreBalanceViewModel viewModel;
   @Mock
   private Observer<String> navigationObserver;
   @Mock
@@ -50,7 +50,7 @@ public class CoreBalanceViewModelTest {
     RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
     RxAndroidPlugins.setInitMainThreadSchedulerHandler(scheduler -> Schedulers.trampoline());
     when(executorBalanceUseCase.getExecutorBalance(anyBoolean())).thenReturn(Flowable.never());
-    coreBalanceViewModel = new CoreBalanceViewModelImpl(executorBalanceUseCase);
+    viewModel = new CoreBalanceViewModelImpl(executorBalanceUseCase);
   }
 
   /* Тетсируем работу с юзкейсом. */
@@ -61,7 +61,7 @@ public class CoreBalanceViewModelTest {
   @Test
   public void askUseCaseToSubscribeToBalanceUpdatesWithCacheReset() {
     // Действие:
-    coreBalanceViewModel.initializeExecutorBalance();
+    viewModel.initializeExecutorBalance();
 
     // Результат:
     verify(executorBalanceUseCase, only()).getExecutorBalance(true);
@@ -74,9 +74,9 @@ public class CoreBalanceViewModelTest {
   @Test
   public void doNotTouchUseCaseBeforeFirstRequestComplete() {
     // Действие:
-    coreBalanceViewModel.initializeExecutorBalance();
-    coreBalanceViewModel.initializeExecutorBalance();
-    coreBalanceViewModel.initializeExecutorBalance();
+    viewModel.initializeExecutorBalance();
+    viewModel.initializeExecutorBalance();
+    viewModel.initializeExecutorBalance();
 
     // Результат:
     verify(executorBalanceUseCase, times(3)).getExecutorBalance(true);
@@ -95,8 +95,8 @@ public class CoreBalanceViewModelTest {
         .thenReturn(Flowable.just(executorBalance));
 
     // Действие:
-    coreBalanceViewModel.getViewStateLiveData().observeForever(viewStateObserver);
-    coreBalanceViewModel.initializeExecutorBalance();
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.initializeExecutorBalance();
 
     // Результат:
     verifyZeroInteractions(viewStateObserver);
@@ -114,8 +114,8 @@ public class CoreBalanceViewModelTest {
         .thenReturn(Flowable.error(NoNetworkException::new));
 
     // Действие:
-    coreBalanceViewModel.getNavigationLiveData().observeForever(navigationObserver);
-    coreBalanceViewModel.initializeExecutorBalance();
+    viewModel.getNavigationLiveData().observeForever(navigationObserver);
+    viewModel.initializeExecutorBalance();
 
     // Результат:
     verifyZeroInteractions(navigationObserver);
@@ -131,8 +131,8 @@ public class CoreBalanceViewModelTest {
         .thenReturn(Flowable.error(AuthenticatorException::new));
 
     // Действие:
-    coreBalanceViewModel.getNavigationLiveData().observeForever(navigationObserver);
-    coreBalanceViewModel.initializeExecutorBalance();
+    viewModel.getNavigationLiveData().observeForever(navigationObserver);
+    viewModel.initializeExecutorBalance();
 
     // Результат:
     verifyZeroInteractions(navigationObserver);
@@ -148,8 +148,8 @@ public class CoreBalanceViewModelTest {
         .thenReturn(Flowable.just(executorBalance));
 
     // Действие:
-    coreBalanceViewModel.getNavigationLiveData().observeForever(navigationObserver);
-    coreBalanceViewModel.initializeExecutorBalance();
+    viewModel.getNavigationLiveData().observeForever(navigationObserver);
+    viewModel.initializeExecutorBalance();
 
     // Результат:
     verifyZeroInteractions(navigationObserver);
@@ -165,8 +165,8 @@ public class CoreBalanceViewModelTest {
         .thenReturn(Flowable.error(DataMappingException::new));
 
     // Действие:
-    coreBalanceViewModel.getNavigationLiveData().observeForever(navigationObserver);
-    coreBalanceViewModel.initializeExecutorBalance();
+    viewModel.getNavigationLiveData().observeForever(navigationObserver);
+    viewModel.initializeExecutorBalance();
 
     // Результат:
     verify(navigationObserver, only()).onChanged(CoreBalanceNavigate.SERVER_DATA_ERROR);

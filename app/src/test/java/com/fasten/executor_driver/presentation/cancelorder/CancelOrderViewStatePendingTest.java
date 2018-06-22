@@ -18,7 +18,7 @@ public class CancelOrderViewStatePendingTest {
   private CancelOrderViewStatePending viewState;
 
   @Mock
-  private CancelOrderViewActions nextRoutePointViewActions;
+  private CancelOrderViewActions viewActions;
   @Mock
   private ViewState<CancelOrderViewActions> parentViewState;
   @Mock
@@ -30,13 +30,13 @@ public class CancelOrderViewStatePendingTest {
     viewState = new CancelOrderViewStatePending(parentViewState);
 
     // Действие:
-    viewState.apply(nextRoutePointViewActions);
+    viewState.apply(viewActions);
 
     // Результат:
-    verify(nextRoutePointViewActions).showCancelOrderPending(true);
-    verify(nextRoutePointViewActions).showCancelOrderReasons(true);
-    verify(parentViewState, only()).apply(nextRoutePointViewActions);
-    verifyNoMoreInteractions(nextRoutePointViewActions);
+    verify(viewActions).showCancelOrderPending(true);
+    verify(viewActions).showCancelOrderReasons(true);
+    verify(parentViewState, only()).apply(viewActions);
+    verifyNoMoreInteractions(viewActions);
   }
 
   @Test
@@ -45,12 +45,12 @@ public class CancelOrderViewStatePendingTest {
     viewState = new CancelOrderViewStatePending(null);
 
     // Действие:
-    viewState.apply(nextRoutePointViewActions);
+    viewState.apply(viewActions);
 
     // Результат:
-    verify(nextRoutePointViewActions).showCancelOrderPending(true);
-    verify(nextRoutePointViewActions).showCancelOrderReasons(false);
-    verifyNoMoreInteractions(nextRoutePointViewActions);
+    verify(viewActions).showCancelOrderPending(true);
+    verify(viewActions).showCancelOrderReasons(false);
+    verifyNoMoreInteractions(viewActions);
   }
 
   @Test

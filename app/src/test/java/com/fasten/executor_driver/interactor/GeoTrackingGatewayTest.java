@@ -21,7 +21,7 @@ import ua.naiksoftware.stomp.client.StompClient;
 @RunWith(MockitoJUnitRunner.class)
 public class GeoTrackingGatewayTest {
 
-  private GeoTrackingGateway geoTrackingGateway;
+  private GeoTrackingGateway gateway;
 
   @Mock
   private StompClient stompClient;
@@ -30,7 +30,7 @@ public class GeoTrackingGatewayTest {
   public void setUp() {
     RxJavaPlugins.setIoSchedulerHandler(scheduler -> Schedulers.trampoline());
     RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
-    geoTrackingGateway = new GeoTrackingGatewayImpl(stompClient);
+    gateway = new GeoTrackingGatewayImpl(stompClient);
     when(stompClient.send(anyString(), anyString())).thenReturn(Completable.never());
   }
 
@@ -42,7 +42,7 @@ public class GeoTrackingGatewayTest {
   @Test
   public void askStompClientToSendMessage() {
     // Действие:
-    geoTrackingGateway.sendGeoLocation(new GeoLocation(1, 2, 3)).test();
+    gateway.sendGeoLocation(new GeoLocation(1, 2, 3)).test();
 
     // Результат:
     verify(stompClient, only())
@@ -63,7 +63,7 @@ public class GeoTrackingGatewayTest {
 
     // Действие:
     TestObserver<Void> testObserver =
-        geoTrackingGateway.sendGeoLocation(new GeoLocation(1, 2, 3)).test();
+        gateway.sendGeoLocation(new GeoLocation(1, 2, 3)).test();
 
     // Результат:
     testObserver.assertComplete();
@@ -80,7 +80,7 @@ public class GeoTrackingGatewayTest {
 
     // Действие:
     TestObserver<Void> testObserver =
-        geoTrackingGateway.sendGeoLocation(new GeoLocation(1, 2, 3)).test();
+        gateway.sendGeoLocation(new GeoLocation(1, 2, 3)).test();
 
     // Результат:
     testObserver.assertError(IllegalArgumentException.class);

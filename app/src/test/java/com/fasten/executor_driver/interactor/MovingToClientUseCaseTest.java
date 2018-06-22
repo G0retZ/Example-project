@@ -16,15 +16,15 @@ import org.mockito.junit.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class MovingToClientUseCaseTest {
 
-  private MovingToClientUseCase movingToClientUseCase;
+  private MovingToClientUseCase useCase;
 
   @Mock
-  private MovingToClientGateway movingToClientGateway;
+  private MovingToClientGateway gateway;
 
   @Before
   public void setUp() {
-    when(movingToClientGateway.reportArrival()).thenReturn(Completable.never());
-    movingToClientUseCase = new MovingToClientUseCaseImpl(movingToClientGateway);
+    when(gateway.reportArrival()).thenReturn(Completable.never());
+    useCase = new MovingToClientUseCaseImpl(gateway);
   }
 
   /* Проверяем работу с гейтвеем */
@@ -35,10 +35,10 @@ public class MovingToClientUseCaseTest {
   @Test
   public void askGatewayToReportArrivalForOrder() {
     // Действие:
-    movingToClientUseCase.reportArrival().test();
+    useCase.reportArrival().test();
 
     // Результат:
-    verify(movingToClientGateway, only()).reportArrival();
+    verify(gateway, only()).reportArrival();
   }
 
   /* Проверяем ответы на сообщение о прибытии к клиенту */
@@ -49,11 +49,11 @@ public class MovingToClientUseCaseTest {
   @Test
   public void answerNoNetworkErrorForReportArrival() {
     // Дано:
-    when(movingToClientGateway.reportArrival())
+    when(gateway.reportArrival())
         .thenReturn(Completable.error(new NoNetworkException()));
 
     // Действие:
-    TestObserver<Void> test = movingToClientUseCase.reportArrival().test();
+    TestObserver<Void> test = useCase.reportArrival().test();
 
     // Результат:
     test.assertError(NoNetworkException.class);
@@ -67,10 +67,10 @@ public class MovingToClientUseCaseTest {
   @Test
   public void answerSendReportArrivalSuccessful() {
     // Дано:
-    when(movingToClientGateway.reportArrival()).thenReturn(Completable.complete());
+    when(gateway.reportArrival()).thenReturn(Completable.complete());
 
     // Действие:
-    TestObserver<Void> test = movingToClientUseCase.reportArrival().test();
+    TestObserver<Void> test = useCase.reportArrival().test();
 
     // Результат:
     test.assertComplete();

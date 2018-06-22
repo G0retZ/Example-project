@@ -23,19 +23,19 @@ import org.mockito.junit.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class ExecutorStateNotOnlineUseCaseTest {
 
-  private ExecutorStateNotOnlineUseCase executorStateNotOnlineUseCase;
+  private ExecutorStateNotOnlineUseCase useCase;
 
   @Mock
-  private ExecutorStateSwitchGateway executorStateSwitchGateway;
+  private ExecutorStateSwitchGateway gateway;
   @Mock
   private ExecutorStateUseCase executorStateUseCase;
 
   @Before
   public void setUp() {
-    when(executorStateSwitchGateway.sendNewExecutorState(any())).thenReturn(Completable.complete());
+    when(gateway.sendNewExecutorState(any())).thenReturn(Completable.complete());
     when(executorStateUseCase.getExecutorStates(false)).thenReturn(Flowable.never());
-    executorStateNotOnlineUseCase = new ExecutorStateNotOnlineUseCaseImpl(
-        executorStateSwitchGateway, executorStateUseCase);
+    useCase = new ExecutorStateNotOnlineUseCaseImpl(gateway,
+        executorStateUseCase);
   }
 
   /* Проверяем работу с юзкейсом состояний */
@@ -46,7 +46,7 @@ public class ExecutorStateNotOnlineUseCaseTest {
   @Test
   public void getExecutorStates() {
     // Действие:
-    executorStateNotOnlineUseCase.getExecutorStates().test();
+    useCase.getExecutorStates().test();
 
     // Результат:
     verify(executorStateUseCase, only()).getExecutorStates(false);
@@ -60,13 +60,13 @@ public class ExecutorStateNotOnlineUseCaseTest {
   @Test
   public void DoNotTouchGatewayWithoutStatus() {
     // Дано:
-    executorStateNotOnlineUseCase.getExecutorStates().test();
+    useCase.getExecutorStates().test();
 
     // Действие:
-    executorStateNotOnlineUseCase.setExecutorNotOnline().test();
+    useCase.setExecutorNotOnline().test();
 
     // Результат:
-    verifyZeroInteractions(executorStateSwitchGateway);
+    verifyZeroInteractions(gateway);
   }
 
   /**
@@ -78,14 +78,14 @@ public class ExecutorStateNotOnlineUseCaseTest {
     PublishSubject<ExecutorState> publishSubject = PublishSubject.create();
     when(executorStateUseCase.getExecutorStates(anyBoolean()))
         .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
-    executorStateNotOnlineUseCase.getExecutorStates().test();
+    useCase.getExecutorStates().test();
     publishSubject.onNext(ExecutorState.SHIFT_CLOSED);
 
     // Действие:
-    executorStateNotOnlineUseCase.setExecutorNotOnline().test();
+    useCase.setExecutorNotOnline().test();
 
     // Результат:
-    verifyZeroInteractions(executorStateSwitchGateway);
+    verifyZeroInteractions(gateway);
   }
 
   /**
@@ -97,14 +97,14 @@ public class ExecutorStateNotOnlineUseCaseTest {
     PublishSubject<ExecutorState> publishSubject = PublishSubject.create();
     when(executorStateUseCase.getExecutorStates(anyBoolean()))
         .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
-    executorStateNotOnlineUseCase.getExecutorStates().test();
+    useCase.getExecutorStates().test();
     publishSubject.onNext(ExecutorState.SHIFT_OPENED);
 
     // Действие:
-    executorStateNotOnlineUseCase.setExecutorNotOnline().test();
+    useCase.setExecutorNotOnline().test();
 
     // Результат:
-    verifyZeroInteractions(executorStateSwitchGateway);
+    verifyZeroInteractions(gateway);
   }
 
   /**
@@ -116,14 +116,14 @@ public class ExecutorStateNotOnlineUseCaseTest {
     PublishSubject<ExecutorState> publishSubject = PublishSubject.create();
     when(executorStateUseCase.getExecutorStates(anyBoolean()))
         .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
-    executorStateNotOnlineUseCase.getExecutorStates().test();
+    useCase.getExecutorStates().test();
     publishSubject.onNext(ExecutorState.DRIVER_ORDER_CONFIRMATION);
 
     // Действие:
-    executorStateNotOnlineUseCase.setExecutorNotOnline().test();
+    useCase.setExecutorNotOnline().test();
 
     // Результат:
-    verifyZeroInteractions(executorStateSwitchGateway);
+    verifyZeroInteractions(gateway);
   }
 
   /**
@@ -135,14 +135,14 @@ public class ExecutorStateNotOnlineUseCaseTest {
     PublishSubject<ExecutorState> publishSubject = PublishSubject.create();
     when(executorStateUseCase.getExecutorStates(anyBoolean()))
         .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
-    executorStateNotOnlineUseCase.getExecutorStates().test();
+    useCase.getExecutorStates().test();
     publishSubject.onNext(ExecutorState.CLIENT_ORDER_CONFIRMATION);
 
     // Действие:
-    executorStateNotOnlineUseCase.setExecutorNotOnline().test();
+    useCase.setExecutorNotOnline().test();
 
     // Результат:
-    verifyZeroInteractions(executorStateSwitchGateway);
+    verifyZeroInteractions(gateway);
   }
 
   /**
@@ -154,14 +154,14 @@ public class ExecutorStateNotOnlineUseCaseTest {
     PublishSubject<ExecutorState> publishSubject = PublishSubject.create();
     when(executorStateUseCase.getExecutorStates(anyBoolean()))
         .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
-    executorStateNotOnlineUseCase.getExecutorStates().test();
+    useCase.getExecutorStates().test();
     publishSubject.onNext(ExecutorState.MOVING_TO_CLIENT);
 
     // Действие:
-    executorStateNotOnlineUseCase.setExecutorNotOnline().test();
+    useCase.setExecutorNotOnline().test();
 
     // Результат:
-    verifyZeroInteractions(executorStateSwitchGateway);
+    verifyZeroInteractions(gateway);
   }
 
   /**
@@ -173,14 +173,14 @@ public class ExecutorStateNotOnlineUseCaseTest {
     PublishSubject<ExecutorState> publishSubject = PublishSubject.create();
     when(executorStateUseCase.getExecutorStates(anyBoolean()))
         .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
-    executorStateNotOnlineUseCase.getExecutorStates().test();
+    useCase.getExecutorStates().test();
     publishSubject.onNext(ExecutorState.WAITING_FOR_CLIENT);
 
     // Действие:
-    executorStateNotOnlineUseCase.setExecutorNotOnline().test();
+    useCase.setExecutorNotOnline().test();
 
     // Результат:
-    verifyZeroInteractions(executorStateSwitchGateway);
+    verifyZeroInteractions(gateway);
   }
 
   /**
@@ -192,14 +192,14 @@ public class ExecutorStateNotOnlineUseCaseTest {
     PublishSubject<ExecutorState> publishSubject = PublishSubject.create();
     when(executorStateUseCase.getExecutorStates(anyBoolean()))
         .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
-    executorStateNotOnlineUseCase.getExecutorStates().test();
+    useCase.getExecutorStates().test();
     publishSubject.onNext(ExecutorState.ORDER_FULFILLMENT);
 
     // Действие:
-    executorStateNotOnlineUseCase.setExecutorNotOnline().test();
+    useCase.setExecutorNotOnline().test();
 
     // Результат:
-    verifyZeroInteractions(executorStateSwitchGateway);
+    verifyZeroInteractions(gateway);
   }
 
   /**
@@ -211,14 +211,14 @@ public class ExecutorStateNotOnlineUseCaseTest {
     PublishSubject<ExecutorState> publishSubject = PublishSubject.create();
     when(executorStateUseCase.getExecutorStates(anyBoolean()))
         .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
-    executorStateNotOnlineUseCase.getExecutorStates().test();
+    useCase.getExecutorStates().test();
     publishSubject.onNext(ExecutorState.ONLINE);
 
     // Действие:
-    executorStateNotOnlineUseCase.setExecutorNotOnline().test();
+    useCase.setExecutorNotOnline().test();
 
     // Результат:
-    verify(executorStateSwitchGateway, only()).sendNewExecutorState(ExecutorState.SHIFT_OPENED);
+    verify(gateway, only()).sendNewExecutorState(ExecutorState.SHIFT_OPENED);
   }
 
   /* Проверяем ответы */
@@ -229,8 +229,7 @@ public class ExecutorStateNotOnlineUseCaseTest {
   @Test
   public void answerForbiddenStatusErrorIfNoStatus() {
     // Действие:
-    TestObserver<Void> testObserver =
-        executorStateNotOnlineUseCase.setExecutorNotOnline().test();
+    TestObserver<Void> testObserver = useCase.setExecutorNotOnline().test();
 
     // Результат:
     testObserver.assertNoValues();
@@ -247,12 +246,11 @@ public class ExecutorStateNotOnlineUseCaseTest {
     PublishSubject<ExecutorState> publishSubject = PublishSubject.create();
     when(executorStateUseCase.getExecutorStates(anyBoolean()))
         .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
-    executorStateNotOnlineUseCase.getExecutorStates().test();
+    useCase.getExecutorStates().test();
     publishSubject.onNext(ExecutorState.SHIFT_CLOSED);
 
     // Действие:
-    TestObserver<Void> testObserver =
-        executorStateNotOnlineUseCase.setExecutorNotOnline().test();
+    TestObserver<Void> testObserver = useCase.setExecutorNotOnline().test();
 
     // Результат:
     testObserver.assertNoValues();
@@ -269,12 +267,11 @@ public class ExecutorStateNotOnlineUseCaseTest {
     PublishSubject<ExecutorState> publishSubject = PublishSubject.create();
     when(executorStateUseCase.getExecutorStates(anyBoolean()))
         .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
-    executorStateNotOnlineUseCase.getExecutorStates().test();
+    useCase.getExecutorStates().test();
     publishSubject.onNext(ExecutorState.SHIFT_OPENED);
 
     // Действие:
-    TestObserver<Void> testObserver =
-        executorStateNotOnlineUseCase.setExecutorNotOnline().test();
+    TestObserver<Void> testObserver = useCase.setExecutorNotOnline().test();
 
     // Результат:
     testObserver.assertNoValues();
@@ -291,12 +288,11 @@ public class ExecutorStateNotOnlineUseCaseTest {
     PublishSubject<ExecutorState> publishSubject = PublishSubject.create();
     when(executorStateUseCase.getExecutorStates(anyBoolean()))
         .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
-    executorStateNotOnlineUseCase.getExecutorStates().test();
+    useCase.getExecutorStates().test();
     publishSubject.onNext(ExecutorState.DRIVER_ORDER_CONFIRMATION);
 
     // Действие:
-    TestObserver<Void> testObserver =
-        executorStateNotOnlineUseCase.setExecutorNotOnline().test();
+    TestObserver<Void> testObserver = useCase.setExecutorNotOnline().test();
 
     // Результат:
     testObserver.assertNoValues();
@@ -313,12 +309,11 @@ public class ExecutorStateNotOnlineUseCaseTest {
     PublishSubject<ExecutorState> publishSubject = PublishSubject.create();
     when(executorStateUseCase.getExecutorStates(anyBoolean()))
         .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
-    executorStateNotOnlineUseCase.getExecutorStates().test();
+    useCase.getExecutorStates().test();
     publishSubject.onNext(ExecutorState.CLIENT_ORDER_CONFIRMATION);
 
     // Действие:
-    TestObserver<Void> testObserver =
-        executorStateNotOnlineUseCase.setExecutorNotOnline().test();
+    TestObserver<Void> testObserver = useCase.setExecutorNotOnline().test();
 
     // Результат:
     testObserver.assertNoValues();
@@ -335,12 +330,11 @@ public class ExecutorStateNotOnlineUseCaseTest {
     PublishSubject<ExecutorState> publishSubject = PublishSubject.create();
     when(executorStateUseCase.getExecutorStates(anyBoolean()))
         .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
-    executorStateNotOnlineUseCase.getExecutorStates().test();
+    useCase.getExecutorStates().test();
     publishSubject.onNext(ExecutorState.MOVING_TO_CLIENT);
 
     // Действие:
-    TestObserver<Void> testObserver =
-        executorStateNotOnlineUseCase.setExecutorNotOnline().test();
+    TestObserver<Void> testObserver = useCase.setExecutorNotOnline().test();
 
     // Результат:
     testObserver.assertNoValues();
@@ -357,12 +351,11 @@ public class ExecutorStateNotOnlineUseCaseTest {
     PublishSubject<ExecutorState> publishSubject = PublishSubject.create();
     when(executorStateUseCase.getExecutorStates(anyBoolean()))
         .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
-    executorStateNotOnlineUseCase.getExecutorStates().test();
+    useCase.getExecutorStates().test();
     publishSubject.onNext(ExecutorState.WAITING_FOR_CLIENT);
 
     // Действие:
-    TestObserver<Void> testObserver =
-        executorStateNotOnlineUseCase.setExecutorNotOnline().test();
+    TestObserver<Void> testObserver = useCase.setExecutorNotOnline().test();
 
     // Результат:
     testObserver.assertNoValues();
@@ -379,12 +372,11 @@ public class ExecutorStateNotOnlineUseCaseTest {
     PublishSubject<ExecutorState> publishSubject = PublishSubject.create();
     when(executorStateUseCase.getExecutorStates(anyBoolean()))
         .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
-    executorStateNotOnlineUseCase.getExecutorStates().test();
+    useCase.getExecutorStates().test();
     publishSubject.onNext(ExecutorState.ORDER_FULFILLMENT);
 
     // Действие:
-    TestObserver<Void> testObserver =
-        executorStateNotOnlineUseCase.setExecutorNotOnline().test();
+    TestObserver<Void> testObserver = useCase.setExecutorNotOnline().test();
 
     // Результат:
     testObserver.assertNoValues();
@@ -401,14 +393,13 @@ public class ExecutorStateNotOnlineUseCaseTest {
     PublishSubject<ExecutorState> publishSubject = PublishSubject.create();
     when(executorStateUseCase.getExecutorStates(anyBoolean()))
         .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
-    executorStateNotOnlineUseCase.getExecutorStates().test();
-    when(executorStateSwitchGateway.sendNewExecutorState(any()))
+    useCase.getExecutorStates().test();
+    when(gateway.sendNewExecutorState(any()))
         .thenReturn(Completable.error(new Exception()));
     publishSubject.onNext(ExecutorState.ONLINE);
 
     // Действие:
-    TestObserver<Void> testObserver =
-        executorStateNotOnlineUseCase.setExecutorNotOnline().test();
+    TestObserver<Void> testObserver = useCase.setExecutorNotOnline().test();
 
     // Результат:
     testObserver.assertNoValues();
@@ -425,13 +416,12 @@ public class ExecutorStateNotOnlineUseCaseTest {
     PublishSubject<ExecutorState> publishSubject = PublishSubject.create();
     when(executorStateUseCase.getExecutorStates(anyBoolean()))
         .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
-    executorStateNotOnlineUseCase.getExecutorStates().test();
-    when(executorStateSwitchGateway.sendNewExecutorState(any())).thenReturn(Completable.complete());
+    useCase.getExecutorStates().test();
+    when(gateway.sendNewExecutorState(any())).thenReturn(Completable.complete());
     publishSubject.onNext(ExecutorState.ONLINE);
 
     // Действие:
-    TestObserver<Void> testObserver =
-        executorStateNotOnlineUseCase.setExecutorNotOnline().test();
+    TestObserver<Void> testObserver = useCase.setExecutorNotOnline().test();
 
     // Результат:
     testObserver.assertNoValues();

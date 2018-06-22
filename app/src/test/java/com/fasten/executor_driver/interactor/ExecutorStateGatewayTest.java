@@ -34,7 +34,7 @@ import ua.naiksoftware.stomp.client.StompMessage;
 @RunWith(MockitoJUnitRunner.class)
 public class ExecutorStateGatewayTest {
 
-  private ExecutorStateGateway executorStateGateway;
+  private ExecutorStateGateway gateway;
 
   @Mock
   private StompClient stompClient;
@@ -45,7 +45,7 @@ public class ExecutorStateGatewayTest {
   public void setUp() {
     RxJavaPlugins.setIoSchedulerHandler(scheduler -> Schedulers.trampoline());
     RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
-    executorStateGateway = new ExecutorStateGatewayImpl(stompClient, mapper);
+    gateway = new ExecutorStateGatewayImpl(stompClient, mapper);
     when(stompClient.topic(anyString())).thenReturn(Observable.never());
   }
 
@@ -61,7 +61,7 @@ public class ExecutorStateGatewayTest {
     when(stompClient.isConnected()).thenReturn(true);
 
     // Действие:
-    executorStateGateway.getState("1234567890").test();
+    gateway.getState("1234567890").test();
 
     // Результат:
     inOrder.verify(stompClient).isConnected();
@@ -78,7 +78,7 @@ public class ExecutorStateGatewayTest {
     InOrder inOrder = Mockito.inOrder(stompClient);
 
     // Действие:
-    executorStateGateway.getState("1234567890").test();
+    gateway.getState("1234567890").test();
 
     // Результат:
     inOrder.verify(stompClient).isConnected();
@@ -96,7 +96,7 @@ public class ExecutorStateGatewayTest {
     when(stompClient.isConnecting()).thenReturn(true);
 
     // Действие:
-    executorStateGateway.getState("1234567890").test();
+    gateway.getState("1234567890").test();
 
     // Результат:
     inOrder.verify(stompClient).isConnected();
@@ -124,7 +124,7 @@ public class ExecutorStateGatewayTest {
     ));
 
     // Действие:
-    executorStateGateway.getState("1234567890").test();
+    gateway.getState("1234567890").test();
 
     // Результат:
     verifyZeroInteractions(mapper);
@@ -147,7 +147,7 @@ public class ExecutorStateGatewayTest {
     ));
 
     // Действие:
-    executorStateGateway.getState("1234567890").test();
+    gateway.getState("1234567890").test();
 
     // Результат:
     verifyZeroInteractions(mapper);
@@ -173,7 +173,7 @@ public class ExecutorStateGatewayTest {
     ));
 
     // Действие:
-    executorStateGateway.getState("1234567890").test();
+    gateway.getState("1234567890").test();
 
     // Результат:
     verify(mapper, only()).map(any());
@@ -200,7 +200,7 @@ public class ExecutorStateGatewayTest {
     ));
 
     // Действие:
-    executorStateGateway.getState("1234567890").test();
+    gateway.getState("1234567890").test();
 
     // Результат:
     verify(mapper, only()).map(any());
@@ -228,7 +228,7 @@ public class ExecutorStateGatewayTest {
 
     // Действие:
     TestSubscriber<ExecutorState> testSubscriber =
-        executorStateGateway.getState("1234567890").test();
+        gateway.getState("1234567890").test();
 
     // Результат:
     testSubscriber.assertNoValues();
@@ -254,7 +254,7 @@ public class ExecutorStateGatewayTest {
 
     // Действие:
     TestSubscriber<ExecutorState> testSubscriber =
-        executorStateGateway.getState("1234567890").test();
+        gateway.getState("1234567890").test();
 
     // Результат:
     testSubscriber.assertError(DataMappingException.class);
@@ -280,7 +280,7 @@ public class ExecutorStateGatewayTest {
 
     // Действие:
     TestSubscriber<ExecutorState> testSubscriber =
-        executorStateGateway.getState("1234567890").test();
+        gateway.getState("1234567890").test();
 
     // Результат:
     testSubscriber.assertValue(ExecutorState.SHIFT_OPENED);
@@ -297,7 +297,7 @@ public class ExecutorStateGatewayTest {
 
     // Действие:
     TestSubscriber<ExecutorState> testSubscriber =
-        executorStateGateway.getState("1234567890").test();
+        gateway.getState("1234567890").test();
 
     // Результат:
     testSubscriber.assertNoErrors();
@@ -312,7 +312,7 @@ public class ExecutorStateGatewayTest {
   public void answerConnectionErrorIfNotConnectingAfterConnected() {
     // Действие:
     TestSubscriber<ExecutorState> testSubscriber =
-        executorStateGateway.getState("1234567890").test();
+        gateway.getState("1234567890").test();
 
     // Результат:
     testSubscriber.assertError(ConnectionClosedException.class);
@@ -336,7 +336,7 @@ public class ExecutorStateGatewayTest {
 
     // Действие:
     TestSubscriber<ExecutorState> testSubscriber =
-        executorStateGateway.getState("1234567890").test();
+        gateway.getState("1234567890").test();
 
     // Результат:
     testSubscriber.assertNoValues();
@@ -363,7 +363,7 @@ public class ExecutorStateGatewayTest {
 
     // Действие:
     TestSubscriber<ExecutorState> testSubscriber =
-        executorStateGateway.getState("1234567890").test();
+        gateway.getState("1234567890").test();
 
     // Результат:
     testSubscriber.assertError(DataMappingException.class);
@@ -391,7 +391,7 @@ public class ExecutorStateGatewayTest {
 
     // Действие:
     TestSubscriber<ExecutorState> testSubscriber =
-        executorStateGateway.getState("1234567890").test();
+        gateway.getState("1234567890").test();
 
     // Результат:
     testSubscriber.assertValue(ExecutorState.SHIFT_OPENED);
@@ -410,7 +410,7 @@ public class ExecutorStateGatewayTest {
 
     // Действие:
     TestSubscriber<ExecutorState> testSubscriber =
-        executorStateGateway.getState("1234567890").test();
+        gateway.getState("1234567890").test();
 
     // Результат:
     testSubscriber.assertNoErrors();
