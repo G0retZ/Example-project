@@ -25,6 +25,10 @@ public class ApiOrder {
   private long confirmationTime;
   @SerializedName("startTime")
   private long orderStartTime;
+  @SerializedName("overPackageTimer")
+  private long overPackageTimer;
+  @SerializedName("overPackagePeriod")
+  private long overPackagePeriod;
   @Nullable
   @SerializedName("executorDistance")
   private ApiDriverDistancePair executorDistance;
@@ -46,7 +50,8 @@ public class ApiOrder {
   ApiOrder(long id, @Nullable String estimatedAmount,
       int totalAmount, @Nullable String comment, int timeout,
       long etaToStartPoint, long confirmationTime,
-      long orderStartTime, @Nullable ApiDriverDistancePair executorDistance,
+      long orderStartTime, long overPackageTimer, long overPackagePeriod,
+      @Nullable ApiDriverDistancePair executorDistance,
       @Nullable List<ApiRoutePoint> route,
       @Nullable List<ApiOptionItem> options) {
     this.id = id;
@@ -57,6 +62,8 @@ public class ApiOrder {
     this.etaToStartPoint = etaToStartPoint;
     this.confirmationTime = confirmationTime;
     this.orderStartTime = orderStartTime;
+    this.overPackageTimer = overPackageTimer;
+    this.overPackagePeriod = overPackagePeriod;
     this.executorDistance = executorDistance;
     this.route = route;
     this.options = options;
@@ -94,6 +101,14 @@ public class ApiOrder {
 
   public long getOrderStartTime() {
     return orderStartTime;
+  }
+
+  public long getOverPackageTimer() {
+    return overPackageTimer;
+  }
+
+  public long getOverPackagePeriod() {
+    return overPackagePeriod;
   }
 
   @Nullable

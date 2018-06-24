@@ -5,7 +5,6 @@ import static org.junit.Assert.assertNotNull;
 
 import com.fasten.executor_driver.backend.web.incoming.ApiOptionItem;
 import java.util.Arrays;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -14,7 +13,6 @@ import org.mockito.junit.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class ApiOrderTest {
 
-  private ApiOrder apiOrder;
   @Mock
   private ApiRoutePoint apiRoutePoint;
   @Mock
@@ -24,23 +22,22 @@ public class ApiOrderTest {
   @Mock
   private ApiOptionItem apiOptionItem1;
 
-  @Before
-  public void setUp() {
-    apiOrder = new ApiOrder(
+  @Test
+  public void testConstructor() {
+    // Дано:
+    ApiOrder apiOrder = new ApiOrder(
         432,
         "More than $3000",
         7300, "some comment",
         23,
         1200,
         1234567890,
-        9876543210L, new ApiDriverDistancePair(32),
+        9876543210L, 12312412L, 32423L, new ApiDriverDistancePair(32),
         Arrays.asList(apiRoutePoint, apiRoutePoint1),
         Arrays.asList(apiOptionItem, apiOptionItem1)
     );
-  }
 
-  @Test
-  public void testConstructor() {
+    // Результат
     assertEquals(apiOrder.getId(), 432);
     assertEquals(apiOrder.getEstimatedAmount(), "More than $3000");
     assertEquals(apiOrder.getTotalAmount(), 7300);
@@ -49,6 +46,8 @@ public class ApiOrderTest {
     assertEquals(apiOrder.getEtaToStartPoint(), 1200);
     assertEquals(apiOrder.getConfirmationTime(), 1234567890);
     assertEquals(apiOrder.getOrderStartTime(), 9876543210L);
+    assertEquals(apiOrder.getOverPackageTimer(), 12312412L);
+    assertEquals(apiOrder.getOverPackagePeriod(), 32423L);
     assertNotNull(apiOrder.getExecutorDistance());
     assertEquals(apiOrder.getExecutorDistance().getDistance(), 32);
     assertNotNull(apiOrder.getRoute());
