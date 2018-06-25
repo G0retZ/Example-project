@@ -8,7 +8,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
-import android.util.Pair;
+import android.support.v4.util.Pair;
 import com.fasten.executor_driver.entity.ExecutorState;
 import com.fasten.executor_driver.entity.NoOrdersAvailableException;
 import com.fasten.executor_driver.gateway.CurrentCostPollingTimersGatewayImpl;

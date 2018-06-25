@@ -1,7 +1,7 @@
 package com.fasten.executor_driver.gateway;
 
 import android.support.annotation.NonNull;
-import android.util.Pair;
+import android.support.v4.util.Pair;
 import com.fasten.executor_driver.entity.ExecutorState;
 import com.fasten.executor_driver.entity.NoOrdersAvailableException;
 import com.fasten.executor_driver.interactor.CurrentCostPollingTimersGateway;

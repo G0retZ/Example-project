@@ -1,7 +1,7 @@
 package com.fasten.executor_driver.interactor;
 
 import android.support.annotation.NonNull;
-import android.util.Pair;
+import android.support.v4.util.Pair;
 import io.reactivex.Flowable;
 
 /**
