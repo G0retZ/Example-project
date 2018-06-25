@@ -32,7 +32,7 @@ public class ApiOrderTest {
         23,
         1200,
         1234567890,
-        9876543210L, 12312412L, 32423L, new ApiDriverDistancePair(32),
+        9876543210L, new ApiDriverDistancePair(32),
         Arrays.asList(apiRoutePoint, apiRoutePoint1),
         Arrays.asList(apiOptionItem, apiOptionItem1)
     );
@@ -46,8 +46,6 @@ public class ApiOrderTest {
     assertEquals(apiOrder.getEtaToStartPoint(), 1200);
     assertEquals(apiOrder.getConfirmationTime(), 1234567890);
     assertEquals(apiOrder.getOrderStartTime(), 9876543210L);
-    assertEquals(apiOrder.getOverPackageTimer(), 12312412L);
-    assertEquals(apiOrder.getOverPackagePeriod(), 32423L);
     assertNotNull(apiOrder.getExecutorDistance());
     assertEquals(apiOrder.getExecutorDistance().getDistance(), 32);
     assertNotNull(apiOrder.getRoute());

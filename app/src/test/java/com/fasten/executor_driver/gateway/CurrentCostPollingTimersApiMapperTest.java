@@ -1,9 +1,8 @@
 package com.fasten.executor_driver.gateway;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
-import android.support.v4.util.Pair;
+import com.fasten.executor_driver.utils.Pair;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -14,7 +13,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 public class CurrentCostPollingTimersApiMapperTest {
 
   @Rule
-  public final ApiOrderRule rule = new ApiOrderRule();
+  public final ApiOrderTimersRule rule = new ApiOrderTimersRule();
 
   private Mapper<String, Pair<Long, Long>> mapper;
 
@@ -31,297 +30,69 @@ public class CurrentCostPollingTimersApiMapperTest {
   @Test
   public void mappingJsonStringToOrderSuccess() throws Exception {
     // Дано и Действие:
-    Pair<Long, Long> pair = mapper.map(rule.getFullOrder());
+    Pair<Long, Long> pair = mapper.map(rule.getApiOrderTimers(423_401L, 93_212L));
 
     // Результат:
-    assertNotNull(pair.first);
-    assertNotNull(pair.second);
-    assertEquals((long) pair.first, 423401L);
-    assertEquals((long) pair.second, 93212L);
+    assertEquals(pair.first, new Long(423_401L));
+    assertEquals(pair.second, new Long(93_212L));
   }
 
   /**
-   * Должен успешно преобразовать JSON без ИД в пару значений таймеров.
+   * Должен успешно преобразовать JSON без таймера пакета в пару значений таймеров.
    *
    * @throws Exception ошибка
    */
-  @Test
-  public void mappingJsonStringWithoutIdToOrderSuccess() throws Exception {
+  public void mappingJsonStringWithoutOrderTimerToOrderSuccess() throws Exception {
     // Дано и Действие:
-    Pair<Long, Long> pair = mapper.map(rule.getOrderWithoutId());
+    Pair<Long, Long> pair = mapper.map(rule.getApiOrderTimers(null, 93_212L));
 
     // Результат:
-    assertNotNull(pair.first);
-    assertNotNull(pair.second);
-    assertEquals((long) pair.first, 423401L);
-    assertEquals((long) pair.second, 93212L);
+    assertEquals(pair.first, new Long(0L));
+    assertEquals(pair.second, new Long(93_212L));
   }
 
   /**
-   * Должен успешно преобразовать JSON без комментария в пару значений таймеров.
+   * Должен дать ошибку, если JSON без периода.
    *
    * @throws Exception ошибка
    */
-  @Test
-  public void mappingJsonStringWithoutCommentToOrderSuccess() throws Exception {
+  @Test(expected = DataMappingException.class)
+  public void mappingJsonStringWithoutOrderPeriodFail() throws Exception {
     // Дано и Действие:
-    Pair<Long, Long> pair = mapper.map(rule.getOrderWithoutComment());
-
-    // Результат:
-    assertNotNull(pair.first);
-    assertNotNull(pair.second);
-    assertEquals((long) pair.first, 423401L);
-    assertEquals((long) pair.second, 93212L);
+    mapper.map(rule.getApiOrderTimers(423_401L, null));
   }
 
   /**
-   * Должен успешно преобразовать JSON без описания цены в пару значений таймеров.
+   * Должен дать ошибку, если JSON с малым периодом пакета.
    *
    * @throws Exception ошибка
    */
-  @Test
-  public void mappingJsonStringWithoutEstimationToOrderSuccess() throws Exception {
+  @Test(expected = DataMappingException.class)
+  public void mappingJsonStringWithSmallOrderPeriodFail() throws Exception {
     // Дано и Действие:
-    Pair<Long, Long> pair = mapper.map(rule.getOrderWithoutEstimation());
-
-    // Результат:
-    assertNotNull(pair.first);
-    assertNotNull(pair.second);
-    assertEquals((long) pair.first, 423401L);
-    assertEquals((long) pair.second, 93212L);
+    mapper.map(rule.getApiOrderTimers(423_401L, 14_999L));
   }
 
   /**
-   * Должен успешно преобразовать JSON без рассчетной стоимости в пару значений таймеров.
+   * Должен дать ошибку, если JSON с отрицательным таймером пакета.
    *
    * @throws Exception ошибка
    */
-  @Test
-  public void mappingJsonStringWithoutCostToOrderSuccess() throws Exception {
+  @Test(expected = DataMappingException.class)
+  public void mappingJsonStringWithNegativeOrderTimerFail() throws Exception {
     // Дано и Действие:
-    Pair<Long, Long> pair = mapper.map(rule.getOrderWithoutCost());
-
-    // Результат:
-    assertNotNull(pair.first);
-    assertNotNull(pair.second);
-    assertEquals((long) pair.first, 423401L);
-    assertEquals((long) pair.second, 93212L);
+    mapper.map(rule.getApiOrderTimers(-1L, 93_212L));
   }
 
   /**
-   * Должен успешно преобразовать JSON без таймаута в пару значений таймеров.
+   * Должен дать ошибку, если JSON с отрицательным периодом пакета.
    *
    * @throws Exception ошибка
    */
-  @Test
-  public void mappingJsonStringWithoutTimeoutToOrderSuccess() throws Exception {
+  @Test(expected = DataMappingException.class)
+  public void mappingJsonStringWithNegativeOrderPeriodFail() throws Exception {
     // Дано и Действие:
-    Pair<Long, Long> pair = mapper.map(rule.getOrderWithoutTimeout());
-
-    // Результат:
-    assertNotNull(pair.first);
-    assertNotNull(pair.second);
-    assertEquals((long) pair.first, 423401L);
-    assertEquals((long) pair.second, 93212L);
-  }
-
-  /**
-   * Должен успешно преобразовать JSON без ETA в пару значений таймеров.
-   *
-   * @throws Exception ошибка
-   */
-  public void mappingJsonStringWithoutEtaToOrderSuccess() throws Exception {
-    // Дано и Действие:
-    Pair<Long, Long> pair = mapper.map(rule.getOrderWithoutEta());
-
-    // Результат:
-    assertNotNull(pair.first);
-    assertNotNull(pair.second);
-    assertEquals((long) pair.first, 423401L);
-    assertEquals((long) pair.second, 93212L);
-  }
-
-  /**
-   * Должен успешно преобразовать JSON без времени подтверждения в пару значений таймеров.
-   *
-   * @throws Exception ошибка
-   */
-  @Test
-  public void mappingJsonStringWithoutConfirmationTimeToOrderSuccess() throws Exception {
-    // Дано и Действие:
-    Pair<Long, Long> pair = mapper.map(rule.getOrderWithoutConfirmationTime());
-
-    // Результат:
-    assertNotNull(pair.first);
-    assertNotNull(pair.second);
-    assertEquals((long) pair.first, 423401L);
-    assertEquals((long) pair.second, 93212L);
-  }
-
-  /**
-   * Должен успешно преобразовать JSON без времени начала в пару значений таймеров.
-   *
-   * @throws Exception ошибка
-   */
-  @Test
-  public void mappingJsonStringWithoutStartTimeToOrderSuccess() throws Exception {
-    // Дано и Действие:
-    Pair<Long, Long> pair = mapper.map(rule.getOrderWithoutStartTime());
-
-    // Результат:
-    assertNotNull(pair.first);
-    assertNotNull(pair.second);
-    assertEquals((long) pair.first, 423401L);
-    assertEquals((long) pair.second, 93212L);
-  }
-
-  /**
-   * Должен успешно преобразовать JSON без времени таймера до начала поллинга в пару значений таймеров.
-   *
-   * @throws Exception ошибка
-   */
-  @Test
-  public void mappingJsonStringWithouOverPackageTimerSuccess() throws Exception {
-    // Дано и Действие:
-    Pair<Long, Long> pair = mapper.map(rule.getOrderWithoutOverPackageTimer());
-
-    // Результат:
-    assertNotNull(pair.first);
-    assertNotNull(pair.second);
-    assertEquals((long) pair.first, 0L);
-    assertEquals((long) pair.second, 93212L);
-  }
-
-  /**
-   * Должен успешно преобразовать JSON без времени периода поллинга в пару значений таймеров.
-   *
-   * @throws Exception ошибка
-   */
-  @Test
-  public void mappingJsonStringWithoutOverPackagePeriodSuccess() throws Exception {
-    // Дано и Действие:
-    Pair<Long, Long> pair = mapper.map(rule.getOrderWithoutOverPackagePeriod());
-
-    // Результат:
-    assertNotNull(pair.first);
-    assertNotNull(pair.second);
-    assertEquals((long) pair.first, 423401L);
-    assertEquals((long) pair.second, 0L);
-  }
-
-  /**
-   * Должен успешно преобразовать JSON без ИД в дистанции в пару значений таймеров.
-   *
-   * @throws Exception ошибка
-   */
-  @Test
-  public void mappingJsonStringWithoutDistanceIdToOrderSuccess() throws Exception {
-    // Дано и Действие:
-    Pair<Long, Long> pair = mapper.map(rule.getOrderWithoutDistanceId());
-
-    // Результат:
-    assertNotNull(pair.first);
-    assertNotNull(pair.second);
-    assertEquals((long) pair.first, 423401L);
-    assertEquals((long) pair.second, 93212L);
-  }
-
-  /**
-   * Должен успешно преобразовать JSON без значения дистанции в пару значений таймеров.
-   *
-   * @throws Exception ошибка
-   */
-  public void mappingJsonStringWithoutDistanceValueToOrderSuccess() throws Exception {
-    // Дано и Действие:
-    Pair<Long, Long> pair = mapper.map(rule.getOrderWithoutDistanceValue());
-
-    // Результат:
-    assertNotNull(pair.first);
-    assertNotNull(pair.second);
-    assertEquals((long) pair.first, 423401L);
-    assertEquals((long) pair.second, 93212L);
-  }
-
-  /**
-   * Должен успешно преобразовать JSON без дистанции в пару значений таймеров.
-   *
-   * @throws Exception ошибка
-   */
-  public void mappingJsonStringWithoutDistanceToOrderSuccess() throws Exception {
-    // Дано и Действие:
-    Pair<Long, Long> pair = mapper.map(rule.getOrderWithoutDistance());
-
-    // Результат:
-    assertNotNull(pair.first);
-    assertNotNull(pair.second);
-    assertEquals((long) pair.first, 423401L);
-    assertEquals((long) pair.second, 93212L);
-  }
-
-  /**
-   * Должен успешно преобразовать JSON с пустым маршрутом в пару значений таймеров.
-   *
-   * @throws Exception ошибка
-   */
-  public void mappingJsonStringWithEmptyRouteToOrderSuccess() throws Exception {
-    // Дано и Действие:
-    Pair<Long, Long> pair = mapper.map(rule.getOrderWithEmptyRoute());
-
-    // Результат:
-    assertNotNull(pair.first);
-    assertNotNull(pair.second);
-    assertEquals((long) pair.first, 423401L);
-    assertEquals((long) pair.second, 93212L);
-  }
-
-  /**
-   * Должен успешно преобразовать JSON без маршрута в пару значений таймеров.
-   *
-   * @throws Exception ошибка
-   */
-  public void mappingJsonStringWithoutRouteToOrderSuccess() throws Exception {
-    // Дано и Действие:
-    Pair<Long, Long> pair = mapper.map(rule.getOrderWithoutRoute());
-
-    // Результат:
-    assertNotNull(pair.first);
-    assertNotNull(pair.second);
-    assertEquals((long) pair.first, 423401L);
-    assertEquals((long) pair.second, 93212L);
-  }
-
-  /**
-   * Должен успешно преобразовать JSON с пустым списком опций в пару значений таймеров.
-   *
-   * @throws Exception ошибка
-   */
-  @Test
-  public void mappingJsonStringWithEmptyOptionsToOrderSuccess() throws Exception {
-    // Дано и Действие:
-    Pair<Long, Long> pair = mapper.map(rule.getOrderWithEmptyOptions());
-
-    // Результат:
-    assertNotNull(pair.first);
-    assertNotNull(pair.second);
-    assertEquals((long) pair.first, 423401L);
-    assertEquals((long) pair.second, 93212L);
-  }
-
-  /**
-   * Должен успешно преобразовать JSON без опций в пару значений таймеров.
-   *
-   * @throws Exception ошибка
-   */
-  @Test
-  public void mappingJsonStringWithoutOptionsToOrderSuccess() throws Exception {
-    // Дано и Действие:
-    Pair<Long, Long> pair = mapper.map(rule.getOrderWithoutOptions());
-
-    // Результат:
-    assertNotNull(pair.first);
-    assertNotNull(pair.second);
-    assertEquals((long) pair.first, 423401L);
-    assertEquals((long) pair.second, 93212L);
+    mapper.map(rule.getApiOrderTimers(423_401L, -1L));
   }
 
   /**
