@@ -9,7 +9,6 @@ import static org.mockito.Mockito.when;
 import android.arch.core.executor.testing.InstantTaskExecutorRule;
 import android.arch.lifecycle.Observer;
 import com.fasten.executor_driver.backend.web.NoNetworkException;
-import com.fasten.executor_driver.entity.NoOrdersAvailableException;
 import com.fasten.executor_driver.entity.Order;
 import com.fasten.executor_driver.gateway.DataMappingException;
 import com.fasten.executor_driver.interactor.OrderUseCase;
@@ -134,28 +133,6 @@ public class OrderViewModelTest {
     inOrder.verify(viewStateObserver).onChanged(new OrderViewStatePending(null));
     inOrder.verify(viewStateObserver)
         .onChanged(new OrderViewStateServerDataError(null));
-    verifyNoMoreInteractions(viewStateObserver);
-  }
-
-  /**
-   * Должен вернуть состояние вида "Ошибка" нет доступных заказов.
-   */
-  @Test
-  public void setNoOrderAvailableErrorViewStateToLiveData() {
-    // Дано:
-    PublishSubject<Order> publishSubject = PublishSubject.create();
-    InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    when(orderUseCase.getOrders())
-        .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
-    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
-
-    // Действие:
-    publishSubject.onError(new NoOrdersAvailableException());
-
-    // Результат:
-    inOrder.verify(viewStateObserver).onChanged(new OrderViewStatePending(null));
-    inOrder.verify(viewStateObserver)
-        .onChanged(new OrderViewStateUnavailableError(null));
     verifyNoMoreInteractions(viewStateObserver);
   }
 

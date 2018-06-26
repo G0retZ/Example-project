@@ -9,7 +9,6 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import com.fasten.executor_driver.backend.web.NoNetworkException;
-import com.fasten.executor_driver.entity.NoOrdersAvailableException;
 import com.fasten.executor_driver.entity.Order;
 import com.fasten.executor_driver.gateway.DataMappingException;
 import io.reactivex.Completable;
@@ -110,23 +109,6 @@ public class OrderConfirmationUseCaseTest {
 
     // Результат:
     test.assertError(DataMappingException.class);
-    test.assertNoValues();
-    test.assertNotComplete();
-  }
-
-  /**
-   * Должен ответить ошибкой отсуствия актуальных заказов на отказ.
-   */
-  @Test
-  public void answerNoOrdersErrorForDecline() {
-    // Дано:
-    when(orderGateway.getOrders()).thenReturn(Flowable.error(new NoOrdersAvailableException()));
-
-    // Действие:
-    TestObserver<Void> test = useCase.sendDecision(false).test();
-
-    // Результат:
-    test.assertError(NoOrdersAvailableException.class);
     test.assertNoValues();
     test.assertNotComplete();
   }

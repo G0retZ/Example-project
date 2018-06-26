@@ -218,16 +218,6 @@ public class MovingToClientFragment extends BaseFragment implements MovingToClie
   }
 
   @Override
-  public void showOrderAvailabilityError() {
-    new Builder(context)
-        .setTitle(R.string.error)
-        .setMessage(R.string.no_order_info)
-        .setPositiveButton(getString(android.R.string.ok), null)
-        .create()
-        .show();
-  }
-
-  @Override
   public void showOrderServerDataError() {
     new Builder(context)
         .setTitle(R.string.error)

@@ -10,7 +10,6 @@ import static org.mockito.Mockito.when;
 import android.arch.core.executor.testing.InstantTaskExecutorRule;
 import android.arch.lifecycle.Observer;
 import com.fasten.executor_driver.backend.web.NoNetworkException;
-import com.fasten.executor_driver.entity.NoOrdersAvailableException;
 import com.fasten.executor_driver.entity.RoutePoint;
 import com.fasten.executor_driver.entity.RoutePointState;
 import com.fasten.executor_driver.gateway.DataMappingException;
@@ -222,24 +221,6 @@ public class NextRoutePointViewModelTest {
 
     // Действие:
     publishSubject.onError(new DataMappingException());
-
-    // Результат:
-    inOrder.verify(viewStateObserver).onChanged(new NextRoutePointViewStatePending(null));
-    inOrder.verify(viewStateObserver).onChanged(new NextRoutePointViewStateServerDataError(null));
-    verifyNoMoreInteractions(viewStateObserver);
-  }
-
-  /**
-   * Должен вернуть состояние вида "Ошибка" нет доступных заказов.
-   */
-  @Test
-  public void setNoOrderAvailableErrorViewStateToLiveData() {
-    // Дано:
-    InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
-
-    // Действие:
-    publishSubject.onError(new NoOrdersAvailableException());
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(new NextRoutePointViewStatePending(null));

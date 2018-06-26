@@ -5,7 +5,6 @@ import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import com.fasten.executor_driver.entity.NoOrdersAvailableException;
 import com.fasten.executor_driver.entity.Order;
 import com.fasten.executor_driver.interactor.OrderUseCase;
 import com.fasten.executor_driver.presentation.ViewState;
@@ -70,11 +69,7 @@ public class OrderViewModelImpl extends ViewModel implements
 
   private void consumeError(Throwable throwable) {
     throwable.printStackTrace();
-    if (throwable instanceof NoOrdersAvailableException) {
-      viewStateLiveData.postValue(new OrderViewStateUnavailableError(lastViewState));
-    } else {
-      viewStateLiveData.postValue(new OrderViewStateServerDataError(lastViewState));
-    }
+    viewStateLiveData.postValue(new OrderViewStateServerDataError(lastViewState));
   }
 
   @Override

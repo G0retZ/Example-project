@@ -73,11 +73,6 @@ public interface OrderViewActions {
   void showComment(@NonNull String comment);
 
   /**
-   * Показать ошибку доступности данных заказа.
-   */
-  void showOrderAvailabilityError();
-
-  /**
    * Показать ошибку данных сервера.
    */
   void showOrderServerDataError();

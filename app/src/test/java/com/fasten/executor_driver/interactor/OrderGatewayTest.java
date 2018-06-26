@@ -9,7 +9,6 @@ import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 import com.fasten.executor_driver.entity.ExecutorState;
-import com.fasten.executor_driver.entity.NoOrdersAvailableException;
 import com.fasten.executor_driver.entity.Order;
 import com.fasten.executor_driver.gateway.DataMappingException;
 import com.fasten.executor_driver.gateway.Mapper;
@@ -152,7 +151,7 @@ public class OrderGatewayTest {
   }
 
   /**
-   * Должен ответить ошибкой отсутствия заказов для статуса "принятие заказа" без данных.
+   * Должен ответить ошибкой маппинга заказа для статуса "принятие заказа" без данных.
    */
   @Test
   public void answerNoOrdersAvailableForNoData() {
@@ -168,7 +167,7 @@ public class OrderGatewayTest {
     // Результат:
     testSubscriber.assertNoValues();
     testSubscriber.assertNotComplete();
-    testSubscriber.assertError(NoOrdersAvailableException.class);
+    testSubscriber.assertError(DataMappingException.class);
   }
 
   /**
