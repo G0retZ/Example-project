@@ -7,7 +7,9 @@ import static org.mockito.Mockito.verifyZeroInteractions;
 import android.arch.core.executor.testing.InstantTaskExecutorRule;
 import android.arch.lifecycle.Observer;
 import com.fasten.executor_driver.presentation.ViewState;
+import io.reactivex.android.plugins.RxAndroidPlugins;
 import io.reactivex.plugins.RxJavaPlugins;
+import io.reactivex.schedulers.Schedulers;
 import io.reactivex.schedulers.TestScheduler;
 import java.util.concurrent.TimeUnit;
 import org.junit.Before;
@@ -35,6 +37,7 @@ public class CallToOperatorViewModelTest {
   public void setUp() {
     testScheduler = new TestScheduler();
     RxJavaPlugins.setIoSchedulerHandler(scheduler -> testScheduler);
+    RxAndroidPlugins.setInitMainThreadSchedulerHandler(scheduler -> Schedulers.trampoline());
     viewModel = new CallToOperatorViewModelImpl();
   }
 

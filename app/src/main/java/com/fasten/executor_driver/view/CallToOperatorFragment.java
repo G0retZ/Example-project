@@ -1,7 +1,5 @@
 package com.fasten.executor_driver.view;
 
-import android.app.AlertDialog.Builder;
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -21,14 +19,6 @@ import javax.inject.Inject;
 public class CallToOperatorFragment extends BaseFragment implements CallToOperatorViewActions {
 
   private CallToOperatorViewModel callToOperatorViewModel;
-  private Context context;
-  private boolean pending;
-
-  @Override
-  public void onAttach(Context context) {
-    super.onAttach(context);
-    this.context = context;
-  }
 
   @Inject
   public void setCallToOperatorViewModel(@NonNull CallToOperatorViewModel callToOperatorViewModel) {
@@ -65,34 +55,8 @@ public class CallToOperatorFragment extends BaseFragment implements CallToOperat
   }
 
   @Override
-  public void onDetach() {
-    super.onDetach();
-    context = null;
-  }
-
-  @Override
   public void onResume() {
     super.onResume();
     callToOperatorViewModel.callToOperator();
-  }
-
-  @Override
-  public void showCallToOperatorPending(boolean pending) {
-    if (this.pending != pending) {
-      showPending(pending);
-    }
-    this.pending = pending;
-  }
-
-  @Override
-  public void showNetworkErrorMessage(boolean show) {
-    if (show) {
-      new Builder(context)
-          .setTitle(R.string.error)
-          .setMessage(R.string.no_network_connection)
-          .setPositiveButton(getString(android.R.string.ok), null)
-          .create()
-          .show();
-    }
   }
 }
