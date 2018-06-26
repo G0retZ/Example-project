@@ -14,7 +14,7 @@ public class ApiOrderRule extends CommonTestRule {
   private final static String OBJECT_END = "}";
   private final static String ORDER_ID = "\"id\": %d";
   private final static String ORDER_COMMENT = "\"comment\": \"%s\"";
-  private final static String ORDER_ESTIMATED = "\"estimatedAmount\": \"%s\"";
+  private final static String ORDER_ESTIMATED = "\"estimatedAmountText\": \"%s\"";
   private final static String ORDER_TOTAL_COST = "\"totalAmount\": %d";
   private final static String ORDER_TIMEOUT = "\"timeOut\": %d";
   private final static String ORDER_ETA = "\"etaToStartPoint\": %d";

@@ -10,8 +10,8 @@ public class ApiOrder {
   @SerializedName("id")
   private long id;
   @Nullable
-  @SerializedName("estimatedAmount")
-  private String estimatedAmount = "";
+  @SerializedName("estimatedAmountText")
+  private String estimatedAmount;
   @SerializedName("totalAmount")
   private int totalAmount;
   @Nullable
