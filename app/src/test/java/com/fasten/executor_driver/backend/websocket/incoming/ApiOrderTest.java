@@ -5,7 +5,6 @@ import static org.junit.Assert.assertNotNull;
 
 import com.fasten.executor_driver.backend.web.incoming.ApiOptionItem;
 import java.util.Arrays;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -14,7 +13,6 @@ import org.mockito.junit.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class ApiOrderTest {
 
-  private ApiOrder apiOrder;
   @Mock
   private ApiRoutePoint apiRoutePoint;
   @Mock
@@ -24,9 +22,10 @@ public class ApiOrderTest {
   @Mock
   private ApiOptionItem apiOptionItem1;
 
-  @Before
-  public void setUp() {
-    apiOrder = new ApiOrder(
+  @Test
+  public void testConstructor() {
+    // Дано:
+    ApiOrder apiOrder = new ApiOrder(
         432,
         "More than $3000",
         7300, "some comment",
@@ -37,10 +36,8 @@ public class ApiOrderTest {
         Arrays.asList(apiRoutePoint, apiRoutePoint1),
         Arrays.asList(apiOptionItem, apiOptionItem1)
     );
-  }
 
-  @Test
-  public void testConstructor() {
+    // Результат
     assertEquals(apiOrder.getId(), 432);
     assertEquals(apiOrder.getEstimatedAmount(), "More than $3000");
     assertEquals(apiOrder.getTotalAmount(), 7300);

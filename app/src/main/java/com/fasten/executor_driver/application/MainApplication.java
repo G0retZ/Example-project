@@ -16,6 +16,7 @@ import com.fasten.executor_driver.presentation.cancelorderreasons.CancelOrderRea
 import com.fasten.executor_driver.presentation.cancelorderreasons.CancelOrderReasonsViewModel;
 import com.fasten.executor_driver.presentation.coreBalance.CoreBalanceNavigate;
 import com.fasten.executor_driver.presentation.coreBalance.CoreBalanceViewModel;
+import com.fasten.executor_driver.presentation.currentcostpolling.CurrentCostPollingViewModel;
 import com.fasten.executor_driver.presentation.executorstate.ExecutorStateNavigate;
 import com.fasten.executor_driver.presentation.executorstate.ExecutorStateViewActions;
 import com.fasten.executor_driver.presentation.executorstate.ExecutorStateViewModel;
@@ -48,6 +49,8 @@ public class MainApplication extends Application implements ServerConnectionView
   private GeoLocationViewModel geoLocationViewModel;
   @Nullable
   private MissedOrderViewModel missedOrderViewModel;
+  @Nullable
+  private CurrentCostPollingViewModel currentCostPollingViewModel;
   @Nullable
   private AutoRouter autoRouter;
   @Nullable
@@ -89,8 +92,14 @@ public class MainApplication extends Application implements ServerConnectionView
   }
 
   @Inject
-  public void setMissedOrderViewModel(@Nullable MissedOrderViewModel missedOrderViewModel) {
+  public void setMissedOrderViewModel(@NonNull MissedOrderViewModel missedOrderViewModel) {
     this.missedOrderViewModel = missedOrderViewModel;
+  }
+
+  @Inject
+  public void setCurrentCostPollingViewModel(
+      @NonNull CurrentCostPollingViewModel currentCostPollingViewModel) {
+    this.currentCostPollingViewModel = currentCostPollingViewModel;
   }
 
   @Inject
@@ -113,7 +122,8 @@ public class MainApplication extends Application implements ServerConnectionView
     appComponent.inject(this);
     if (cancelOrderReasonsViewModel == null || coreBalanceViewModel == null ||
         executorStateViewModel == null || geoLocationViewModel == null
-        || missedOrderViewModel == null || serverConnectionViewModel == null) {
+        || missedOrderViewModel == null || serverConnectionViewModel == null
+        || currentCostPollingViewModel == null) {
       throw new RuntimeException("Shit! WTF?!");
     }
     serverConnectionViewModel.getViewStateLiveData().observeForever(viewState -> {
@@ -136,6 +146,7 @@ public class MainApplication extends Application implements ServerConnectionView
     coreBalanceViewModel.getNavigationLiveData().observeForever(this::navigate);
     executorStateViewModel.getNavigationLiveData().observeForever(this::navigate);
     geoLocationViewModel.getNavigationLiveData().observeForever(this::navigate);
+    currentCostPollingViewModel.getNavigationLiveData().observeForever(this::navigate);
     initServerConnection();
   }
 
@@ -171,10 +182,14 @@ public class MainApplication extends Application implements ServerConnectionView
       if (missedOrderViewModel == null) {
         throw new IllegalStateException("Граф зависимостей поломан!");
       }
+      if (currentCostPollingViewModel == null) {
+        throw new IllegalStateException("Граф зависимостей поломан!");
+      }
       executorStateViewModel.initializeExecutorState();
       cancelOrderReasonsViewModel.initializeCancelOrderReasons();
       coreBalanceViewModel.initializeExecutorBalance();
       missedOrderViewModel.initializeMissedOrderMessages();
+      currentCostPollingViewModel.initializeCurrentCostPolling();
       initGeoLocation();
     }
   }

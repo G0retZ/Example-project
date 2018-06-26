@@ -24,6 +24,8 @@ import com.fasten.executor_driver.entity.Vehicle;
 import com.fasten.executor_driver.gateway.CallToClientGatewayImpl;
 import com.fasten.executor_driver.gateway.CancelOrderGatewayImpl;
 import com.fasten.executor_driver.gateway.CancelOrderReasonApiMapper;
+import com.fasten.executor_driver.gateway.CurrentCostPollingGatewayImpl;
+import com.fasten.executor_driver.gateway.CurrentCostPollingTimersApiMapper;
 import com.fasten.executor_driver.gateway.CurrentVehicleOptionsGatewayImpl;
 import com.fasten.executor_driver.gateway.ErrorMapper;
 import com.fasten.executor_driver.gateway.ExecutorBalanceApiMapper;
@@ -63,6 +65,7 @@ import com.fasten.executor_driver.gateway.WaitingForClientGatewayImpl;
 import com.fasten.executor_driver.interactor.CallToClientUseCaseImpl;
 import com.fasten.executor_driver.interactor.CancelOrderUseCase;
 import com.fasten.executor_driver.interactor.CancelOrderUseCaseImpl;
+import com.fasten.executor_driver.interactor.CurrentCostPollingUseCaseImpl;
 import com.fasten.executor_driver.interactor.ExecutorBalanceUseCase;
 import com.fasten.executor_driver.interactor.ExecutorBalanceUseCaseImpl;
 import com.fasten.executor_driver.interactor.ExecutorStateNotOnlineUseCaseImpl;
@@ -104,6 +107,7 @@ import com.fasten.executor_driver.presentation.choosevehicle.ChooseVehicleViewMo
 import com.fasten.executor_driver.presentation.code.CodeViewModelImpl;
 import com.fasten.executor_driver.presentation.codeHeader.CodeHeaderViewModelImpl;
 import com.fasten.executor_driver.presentation.coreBalance.CoreBalanceViewModelImpl;
+import com.fasten.executor_driver.presentation.currentcostpolling.CurrentCostPollingViewModelImpl;
 import com.fasten.executor_driver.presentation.executorstate.ExecutorStateViewModelImpl;
 import com.fasten.executor_driver.presentation.geolocation.GeoLocationViewModelImpl;
 import com.fasten.executor_driver.presentation.map.MapViewModelImpl;
@@ -308,6 +312,17 @@ public class AppComponentImpl implements AppComponent {
             new MissedOrderUseCaseImpl(
                 new MissedOrderGatewayImpl(
                     stompClient
+                ),
+                loginSharer
+            )
+        )
+    );
+    mainApplication.setCurrentCostPollingViewModel(
+        new CurrentCostPollingViewModelImpl(
+            new CurrentCostPollingUseCaseImpl(
+                new CurrentCostPollingGatewayImpl(
+                    stompClient,
+                    new CurrentCostPollingTimersApiMapper()
                 ),
                 loginSharer
             )
