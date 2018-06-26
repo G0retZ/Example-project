@@ -45,8 +45,8 @@ public class ApiOrder {
   @SuppressWarnings("SameParameterValue")
   ApiOrder(long id, @Nullable String estimatedAmount,
       int totalAmount, @Nullable String comment, int timeout,
-      long etaToStartPoint, long confirmationTime,
-      long orderStartTime, @Nullable ApiDriverDistancePair executorDistance,
+      long etaToStartPoint, long confirmationTime, long orderStartTime,
+      @Nullable ApiDriverDistancePair executorDistance,
       @Nullable List<ApiRoutePoint> route,
       @Nullable List<ApiOptionItem> options) {
     this.id = id;

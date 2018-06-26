@@ -19,7 +19,7 @@ android {
         buildConfigField 'String', 'ROUTE_DESTINATION', '"/mobile/changeRoutePoint"'
         buildConfigField 'String', 'CANCEL_ORDER_DESTINATION', '"/mobile/takeOffOrder"'
         buildConfigField 'String', 'STATUS_DESTINATION', '"/queue/%s"'
-        buildConfigField 'String', 'ORDER_EXCESS_COST_DESTINATION', '"/mobile/order/ecost"'
+        buildConfigField 'String', 'POLLING_DESTINATION', '"/mobile/retrieveOverPackage"'
         buildConfigField 'String', 'STATIC_MAP_KEY', '"AIzaSyC20FZNHJqrQH5UhypeUy3thpqII33QBPI"'
         vectorDrawables.useSupportLibrary = true
     }
