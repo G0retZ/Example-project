@@ -9,10 +9,10 @@ import io.reactivex.Completable;
 public interface CurrentCostPollingGateway {
 
   /**
-   * Передает сообщение поллинга.
+   * запрашивает начало поллинга.
    *
-   * @return {@link Completable} результат - успех либо ошибка на сервере.
+   * @return {@link Completable} результат - окончание либо ошибка.
    */
   @NonNull
-  Completable poll();
+  Completable startPolling(@NonNull String channelId);
 }

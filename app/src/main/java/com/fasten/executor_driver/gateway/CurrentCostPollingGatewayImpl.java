@@ -2,24 +2,47 @@ package com.fasten.executor_driver.gateway;
 
 import android.support.annotation.NonNull;
 import com.fasten.executor_driver.BuildConfig;
+import com.fasten.executor_driver.backend.websocket.ConnectionClosedException;
 import com.fasten.executor_driver.interactor.CurrentCostPollingGateway;
+import com.fasten.executor_driver.utils.Pair;
+import io.reactivex.BackpressureStrategy;
 import io.reactivex.Completable;
+import io.reactivex.Flowable;
 import io.reactivex.schedulers.Schedulers;
+import java.util.concurrent.TimeUnit;
 import ua.naiksoftware.stomp.client.StompClient;
 
 public class CurrentCostPollingGatewayImpl implements CurrentCostPollingGateway {
 
   @NonNull
   private final StompClient stompClient;
+  @NonNull
+  private final Mapper<String, Pair<Long, Long>> mapper;
 
-  public CurrentCostPollingGatewayImpl(@NonNull StompClient stompClient) {
+  public CurrentCostPollingGatewayImpl(@NonNull StompClient stompClient,
+      @NonNull Mapper<String, Pair<Long, Long>> mapper) {
     this.stompClient = stompClient;
+    this.mapper = mapper;
   }
 
   @NonNull
   @Override
-  public Completable poll() {
-    return stompClient.send(BuildConfig.POLLING_DESTINATION, "\"\"")
-        .subscribeOn(Schedulers.io());
+  public Completable startPolling(@NonNull String channelId) {
+    if (stompClient.isConnected() || stompClient.isConnecting()) {
+      return stompClient.topic(String.format(BuildConfig.STATUS_DESTINATION, channelId))
+          .toFlowable(BackpressureStrategy.BUFFER)
+          .subscribeOn(Schedulers.io())
+          .observeOn(Schedulers.computation())
+          .filter(stompMessage -> stompMessage.findHeader("OverPackage") != null)
+          .takeWhile(stompMessage -> stompMessage.findHeader("OverPackage").equals("1"))
+          .map(stompMessage -> mapper.map(stompMessage.getPayload()))
+          .switchMap(pair -> Flowable
+              .interval(pair.first, pair.second, TimeUnit.MILLISECONDS, Schedulers.io())
+              .observeOn(Schedulers.computation())
+          ).flatMapCompletable(
+              b -> stompClient.send(BuildConfig.POLLING_DESTINATION, "\"\"")
+          ).observeOn(Schedulers.single());
+    }
+    return Completable.error(new ConnectionClosedException());
   }
 }
