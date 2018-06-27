@@ -60,7 +60,7 @@ public class BalanceViewModelImpl extends ViewModel implements BalanceViewModel 
                 .postValue(lastViewState = new BalanceViewState(executorBalance)),
             throwable -> {
               throwable.printStackTrace();
-              viewStateLiveData.postValue(new BalanceViewStateServerDataError(lastViewState));
+              navigateLiveData.postValue(BalanceNavigate.SERVER_DATA_ERROR);
             }
         );
   }

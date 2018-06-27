@@ -1,6 +1,5 @@
 package com.fasten.executor_driver.view;
 
-import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -108,15 +107,5 @@ public class MenuFragment extends BaseFragment implements BalanceViewActions {
       showPending(pending);
     }
     this.pending = pending;
-  }
-
-  @Override
-  public void showBalanceServerDataError() {
-    new Builder(context)
-        .setTitle(R.string.error)
-        .setMessage(R.string.server_data_format_error)
-        .setPositiveButton(getString(android.R.string.ok), null)
-        .create()
-        .show();
   }
 }

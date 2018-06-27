@@ -104,21 +104,18 @@ public class BalanceViewModelTest {
   }
 
   /**
-   * Должен вернуть состояние вида "Ошибка данных" если была ошибка.
+   * Не должен давать иных состояний вида если была ошибка.
    */
   @Test
   public void setNoNetworkErrorViewStateToLiveDataForMappingError() {
     // Дано:
-    InOrder inOrder = Mockito.inOrder(viewStateObserver);
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
     publishSubject.onError(new Exception());
 
     // Результат:
-    inOrder.verify(viewStateObserver).onChanged(new BalanceViewStatePending(null));
-    inOrder.verify(viewStateObserver).onChanged(new BalanceViewStateServerDataError(null));
-    verifyNoMoreInteractions(viewStateObserver);
+    verify(viewStateObserver, only()).onChanged(new BalanceViewStatePending(null));
   }
 
   /**
@@ -197,5 +194,20 @@ public class BalanceViewModelTest {
 
     // Результат:
     verify(navigateObserver, only()).onChanged(BalanceNavigate.PAYMENT_OPTIONS);
+  }
+
+  /**
+   * Должен вернуть ошибку данных сервера.
+   */
+  @Test
+  public void setNavigateToServerDataError() {
+    // Дано:
+    viewModel.getNavigationLiveData().observeForever(navigateObserver);
+
+    // Действие:
+    publishSubject.onError(new Exception());
+
+    // Результат:
+    verify(navigateObserver, only()).onChanged(BalanceNavigate.SERVER_DATA_ERROR);
   }
 }
