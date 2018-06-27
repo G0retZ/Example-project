@@ -21,9 +21,4 @@ public interface OrderRouteViewActions {
    * @param routePointItems - список ТС
    */
   void setRoutePointItems(@NonNull List<RoutePointItem> routePointItems);
-
-  /**
-   * Показать ошибку данных сервера.
-   */
-  void showOrderRouteServerDataError();
 }

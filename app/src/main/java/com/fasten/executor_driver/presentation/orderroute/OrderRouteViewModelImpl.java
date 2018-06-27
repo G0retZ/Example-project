@@ -93,7 +93,7 @@ public class OrderRouteViewModelImpl extends ViewModel implements
             },
             throwable -> {
               throwable.printStackTrace();
-              viewStateLiveData.postValue(new OrderRouteViewStateServerDataError(lastViewState));
+              navigateLiveData.postValue(OrderRouteNavigate.SERVER_DATA_ERROR);
             }
         );
   }

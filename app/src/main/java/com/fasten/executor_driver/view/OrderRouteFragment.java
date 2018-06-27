@@ -1,7 +1,5 @@
 package com.fasten.executor_driver.view;
 
-import android.app.AlertDialog.Builder;
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -27,18 +25,11 @@ public class OrderRouteFragment extends BaseFragment implements OrderRouteViewAc
 
   private OrderRouteViewModel orderRouteViewModel;
   private RecyclerView recyclerView;
-  private Context context;
   private boolean pending;
 
   @Inject
   public void setOrderRouteViewModel(@NonNull OrderRouteViewModel orderRouteViewModel) {
     this.orderRouteViewModel = orderRouteViewModel;
-  }
-
-  @Override
-  public void onAttach(Context context) {
-    super.onAttach(context);
-    this.context = context;
   }
 
   @Nullable
@@ -75,12 +66,6 @@ public class OrderRouteFragment extends BaseFragment implements OrderRouteViewAc
   }
 
   @Override
-  public void onDetach() {
-    super.onDetach();
-    context = null;
-  }
-
-  @Override
   public void showOrderRoutePending(boolean pending) {
     if (this.pending != pending) {
       showPending(pending);
@@ -93,15 +78,5 @@ public class OrderRouteFragment extends BaseFragment implements OrderRouteViewAc
     OrderRouteAdapter adapter = new OrderRouteAdapter(routePointItems,
         orderRouteViewModel::selectNextRoutePoint);
     recyclerView.setAdapter(adapter);
-  }
-
-  @Override
-  public void showOrderRouteServerDataError() {
-    new Builder(context)
-        .setTitle(R.string.error)
-        .setMessage(R.string.server_data_format_error)
-        .setPositiveButton(getString(android.R.string.ok), null)
-        .create()
-        .show();
   }
 }

@@ -11,7 +11,6 @@ import android.arch.core.executor.testing.InstantTaskExecutorRule;
 import android.arch.lifecycle.Observer;
 import com.fasten.executor_driver.backend.web.NoNetworkException;
 import com.fasten.executor_driver.entity.RoutePoint;
-import com.fasten.executor_driver.gateway.DataMappingException;
 import com.fasten.executor_driver.interactor.OrderRouteUseCase;
 import com.fasten.executor_driver.presentation.ViewState;
 import io.reactivex.BackpressureStrategy;
@@ -140,39 +139,18 @@ public class OrderRouteViewModelTest {
   }
 
   /**
-   * Должен вернуть состояние вида "Ошибка" нет сети.
+   * Не должен давать иных состояний вида если была ошибка.
    */
   @Test
-  public void setNoNetworkErrorViewStateToLiveData() {
+  public void doNotSetAnyViewStateToLiveDataForError() {
     // Дано:
-    InOrder inOrder = Mockito.inOrder(viewStateObserver);
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
     publishSubject.onError(new NoNetworkException());
 
     // Результат:
-    inOrder.verify(viewStateObserver).onChanged(new OrderRouteViewStatePending(null));
-    inOrder.verify(viewStateObserver).onChanged(new OrderRouteViewStateServerDataError(null));
-    verifyNoMoreInteractions(viewStateObserver);
-  }
-
-  /**
-   * Должен вернуть состояние вида "Ошибка" нет сети.
-   */
-  @Test
-  public void setNoNetworkErrorViewStateToLiveDataForMappingError() {
-    // Дано:
-    InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
-
-    // Действие:
-    publishSubject.onError(new DataMappingException());
-
-    // Результат:
-    inOrder.verify(viewStateObserver).onChanged(new OrderRouteViewStatePending(null));
-    inOrder.verify(viewStateObserver).onChanged(new OrderRouteViewStateServerDataError(null));
-    verifyNoMoreInteractions(viewStateObserver);
+    verify(viewStateObserver, only()).onChanged(new OrderRouteViewStatePending(null));
   }
 
   /**
@@ -333,6 +311,21 @@ public class OrderRouteViewModelTest {
   }
 
   /* Тестируем навигацию. */
+
+  /**
+   * Должен вернуть "перейти к ошибке данных сервера".
+   */
+  @Test
+  public void setNavigateToServerDataError() {
+    // Дано:
+    viewModel.getNavigationLiveData().observeForever(navigateObserver);
+
+    // Действие:
+    publishSubject.onError(new Exception());
+
+    // Результат:
+    verify(navigateObserver, only()).onChanged(OrderRouteNavigate.SERVER_DATA_ERROR);
+  }
 
   /**
    * Не должен никуда ходить при запросе смены следующей точки маршрута.
