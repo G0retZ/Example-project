@@ -11,9 +11,4 @@ public interface OrderCostViewActions {
    * @param currentCost - текущая стоимость заказа.
    */
   void setOrderCostText(int currentCost);
-
-  /**
-   * Показать ошибку данных сервера.
-   */
-  void showOrderCostServerDataError();
 }

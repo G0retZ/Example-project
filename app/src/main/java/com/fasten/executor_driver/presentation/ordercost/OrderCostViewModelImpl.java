@@ -5,6 +5,7 @@ import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
 import com.fasten.executor_driver.interactor.OrderCurrentCostUseCase;
+import com.fasten.executor_driver.presentation.SingleLiveEvent;
 import com.fasten.executor_driver.presentation.ViewState;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
@@ -19,12 +20,15 @@ public class OrderCostViewModelImpl extends ViewModel implements OrderCostViewMo
   @NonNull
   private final MutableLiveData<ViewState<OrderCostViewActions>> viewStateLiveData;
   @NonNull
+  private final SingleLiveEvent<String> navigateLiveData;
+  @NonNull
   private Disposable disposable = EmptyDisposable.INSTANCE;
 
   @Inject
   public OrderCostViewModelImpl(@NonNull OrderCurrentCostUseCase orderCurrentCostUseCase) {
     this.orderCurrentCostUseCase = orderCurrentCostUseCase;
     viewStateLiveData = new MutableLiveData<>();
+    navigateLiveData = new SingleLiveEvent<>();
     viewStateLiveData.postValue(new OrderCostViewState(0));
     loadOrderCosts();
   }
@@ -38,7 +42,7 @@ public class OrderCostViewModelImpl extends ViewModel implements OrderCostViewMo
   @NonNull
   @Override
   public LiveData<String> getNavigationLiveData() {
-    return new MutableLiveData<>();
+    return navigateLiveData;
   }
 
   private void loadOrderCosts() {
@@ -52,7 +56,7 @@ public class OrderCostViewModelImpl extends ViewModel implements OrderCostViewMo
             integer -> viewStateLiveData.postValue(new OrderCostViewState(integer)),
             throwable -> {
               throwable.printStackTrace();
-              viewStateLiveData.postValue(new OrderCostViewStateServerDataError(0));
+              navigateLiveData.postValue(OrderCostNavigate.SERVER_DATA_ERROR);
             }
         );
   }

@@ -34,6 +34,8 @@ public class OrderCostViewModelTest {
   private OrderCurrentCostUseCase orderCurrentCostUseCase;
   @Mock
   private Observer<ViewState<OrderCostViewActions>> viewStateObserver;
+  @Mock
+  private Observer<String> navigateObserver;
   private PublishSubject<Integer> publishSubject;
 
   @Before
@@ -116,10 +118,10 @@ public class OrderCostViewModelTest {
   }
 
   /**
-   * Должен вернуть состояние вида ошибки данных сервера.
+   * Не должен давать иных состояний вида если была ошибка.
    */
   @Test
-  public void setErrorViewStateToLiveDataOnError() {
+  public void doNotSetAnyViewStateToLiveDataForError() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
@@ -137,7 +139,23 @@ public class OrderCostViewModelTest {
     inOrder.verify(viewStateObserver).onChanged(new OrderCostViewState(873));
     inOrder.verify(viewStateObserver).onChanged(new OrderCostViewState(4728));
     inOrder.verify(viewStateObserver).onChanged(new OrderCostViewState(32));
-    inOrder.verify(viewStateObserver).onChanged(new OrderCostViewStateServerDataError(0));
     verifyNoMoreInteractions(viewStateObserver);
+  }
+
+  /* Тестируем навигацию. */
+
+  /**
+   * Должен вернуть "перейти к ошибке данных сервера".
+   */
+  @Test
+  public void setNavigateToServerDataError() {
+    // Дано:
+    viewModel.getNavigationLiveData().observeForever(navigateObserver);
+
+    // Действие:
+    publishSubject.onError(new Exception());
+
+    // Результат:
+    verify(navigateObserver, only()).onChanged(OrderCostNavigate.SERVER_DATA_ERROR);
   }
 }

@@ -102,6 +102,11 @@ public class OrderFulfillmentFragment extends BaseFragment implements OrderCostV
         viewState.apply(this);
       }
     });
+    orderCostViewModel.getNavigationLiveData().observe(this, destination -> {
+      if (destination != null) {
+        navigate(destination);
+      }
+    });
     orderTimeViewModel.getViewStateLiveData().observe(this, viewState -> {
       if (viewState != null) {
         viewState.apply(this);
@@ -196,16 +201,6 @@ public class OrderFulfillmentFragment extends BaseFragment implements OrderCostV
     totalCostText.setText(
         new DecimalFormat(getString(R.string.currency_format)).format(currentCost)
     );
-  }
-
-  @Override
-  public void showOrderCostServerDataError() {
-    new Builder(context)
-        .setTitle(R.string.error)
-        .setMessage(R.string.server_data_format_error)
-        .setPositiveButton(getString(android.R.string.ok), null)
-        .create()
-        .show();
   }
 
   @Override
