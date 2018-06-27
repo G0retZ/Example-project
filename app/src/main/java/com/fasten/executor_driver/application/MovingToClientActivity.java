@@ -1,9 +1,11 @@
 package com.fasten.executor_driver.application;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.Toolbar;
 import com.fasten.executor_driver.R;
 import com.fasten.executor_driver.presentation.calltoclient.CallToClientNavigate;
 import com.fasten.executor_driver.presentation.calltooperator.CallToOperatorNavigate;
@@ -19,13 +21,19 @@ public class MovingToClientActivity extends BaseActivity {
   protected void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_moving_to_client);
-    findViewById(R.id.cancelOrder).setOnClickListener(v -> {
-      if (getSupportFragmentManager().findFragmentByTag("cancelOrder") == null) {
-        new CancelOrderDialogFragment().show(getSupportFragmentManager(), "cancelOrder");
-      }
-      v.setEnabled(false);
-      v.postDelayed(() -> v.setEnabled(true), 10_000);
-    });
+    Toolbar toolbar = findViewById(R.id.appBar);
+    if (toolbar != null) {
+      toolbar.setNavigationOnClickListener(
+          v -> startActivity(new Intent(this, MenuActivity.class))
+      );
+      toolbar.findViewById(R.id.cancelOrder).setOnClickListener(v -> {
+        if (getSupportFragmentManager().findFragmentByTag("cancelOrder") == null) {
+          new CancelOrderDialogFragment().show(getSupportFragmentManager(), "cancelOrder");
+        }
+        v.setEnabled(false);
+        v.postDelayed(() -> v.setEnabled(true), 10_000);
+      });
+    }
   }
 
   @Override
