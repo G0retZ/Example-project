@@ -31,9 +31,11 @@ public class OrderTimeViewModelTest {
   public TestRule rule = new InstantTaskExecutorRule();
   private OrderTimeViewModel viewModel;
   @Mock
+  private OrderFulfillmentTimeUseCase orderCurrentTimeUseCase;
+  @Mock
   private Observer<ViewState<OrderTimeViewActions>> viewStateObserver;
   @Mock
-  private OrderFulfillmentTimeUseCase orderCurrentTimeUseCase;
+  private Observer<String> navigateObserver;
   private PublishSubject<Long> publishSubject;
 
   @Before
@@ -137,7 +139,23 @@ public class OrderTimeViewModelTest {
     inOrder.verify(viewStateObserver).onChanged(new OrderTimeViewState(873));
     inOrder.verify(viewStateObserver).onChanged(new OrderTimeViewState(4728));
     inOrder.verify(viewStateObserver).onChanged(new OrderTimeViewState(32));
-    inOrder.verify(viewStateObserver).onChanged(new OrderTimeViewStateServerDataError(0));
     verifyNoMoreInteractions(viewStateObserver);
+  }
+
+  /* Тестируем навигацию. */
+
+  /**
+   * Должен вернуть "перейти к ошибке данных сервера".
+   */
+  @Test
+  public void setNavigateToServerDataError() {
+    // Дано:
+    viewModel.getNavigationLiveData().observeForever(navigateObserver);
+
+    // Действие:
+    publishSubject.onError(new Exception());
+
+    // Результат:
+    verify(navigateObserver, only()).onChanged(OrderTimeNavigate.SERVER_DATA_ERROR);
   }
 }

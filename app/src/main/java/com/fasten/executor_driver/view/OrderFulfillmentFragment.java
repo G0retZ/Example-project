@@ -112,6 +112,11 @@ public class OrderFulfillmentFragment extends BaseFragment implements OrderCostV
         viewState.apply(this);
       }
     });
+    orderTimeViewModel.getNavigationLiveData().observe(this, destination -> {
+      if (destination != null) {
+        navigate(destination);
+      }
+    });
     nextRoutePointViewModel.getViewStateLiveData().observe(this, viewState -> {
       if (viewState != null) {
         viewState.apply(this);
@@ -210,15 +215,5 @@ public class OrderFulfillmentFragment extends BaseFragment implements OrderCostV
             LocalTime.fromMillisOfDay(currentSeconds * 1000)
         )
     );
-  }
-
-  @Override
-  public void showOrderTimeServerDataError() {
-    new Builder(context)
-        .setTitle(R.string.error)
-        .setMessage(R.string.server_data_format_error)
-        .setPositiveButton(getString(android.R.string.ok), null)
-        .create()
-        .show();
   }
 }

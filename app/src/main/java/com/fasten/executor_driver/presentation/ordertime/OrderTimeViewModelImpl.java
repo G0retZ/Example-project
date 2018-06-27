@@ -5,6 +5,7 @@ import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
 import com.fasten.executor_driver.interactor.OrderFulfillmentTimeUseCase;
+import com.fasten.executor_driver.presentation.SingleLiveEvent;
 import com.fasten.executor_driver.presentation.ViewState;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
@@ -19,12 +20,15 @@ public class OrderTimeViewModelImpl extends ViewModel implements OrderTimeViewMo
   @NonNull
   private final MutableLiveData<ViewState<OrderTimeViewActions>> viewStateLiveData;
   @NonNull
+  private final SingleLiveEvent<String> navigateLiveData;
+  @NonNull
   private Disposable disposable = EmptyDisposable.INSTANCE;
 
   @Inject
   public OrderTimeViewModelImpl(@NonNull OrderFulfillmentTimeUseCase orderCurrentCostUseCase) {
     this.orderCurrentCostUseCase = orderCurrentCostUseCase;
     viewStateLiveData = new MutableLiveData<>();
+    navigateLiveData = new SingleLiveEvent<>();
     viewStateLiveData.postValue(new OrderTimeViewState(0));
     loadOrderTime();
   }
@@ -38,7 +42,7 @@ public class OrderTimeViewModelImpl extends ViewModel implements OrderTimeViewMo
   @NonNull
   @Override
   public LiveData<String> getNavigationLiveData() {
-    return new MutableLiveData<>();
+    return navigateLiveData;
   }
 
   private void loadOrderTime() {
@@ -51,8 +55,8 @@ public class OrderTimeViewModelImpl extends ViewModel implements OrderTimeViewMo
         .subscribe(
             time -> viewStateLiveData.postValue(new OrderTimeViewState(time)),
             throwable -> {
-              viewStateLiveData.postValue(new OrderTimeViewStateServerDataError(0));
               throwable.printStackTrace();
+              navigateLiveData.postValue(OrderTimeNavigate.SERVER_DATA_ERROR);
             }
         );
   }

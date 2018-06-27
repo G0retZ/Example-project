@@ -11,9 +11,4 @@ public interface OrderTimeViewActions {
    * @param currentSeconds - текущее время заказа в секундах.
    */
   void setOrderTimeText(long currentSeconds);
-
-  /**
-   * Показать ошибку данных сервера.
-   */
-  void showOrderTimeServerDataError();
 }
