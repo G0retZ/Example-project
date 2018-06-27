@@ -63,7 +63,7 @@ public class ServerConnectionViewModelImpl extends ViewModel implements ServerCo
               if ((throwable instanceof AuthorizationException)) {
                 navigateLiveData.postValue(ServerConnectionNavigate.AUTHORIZE);
               } else {
-                navigateLiveData.postValue(ServerConnectionNavigate.NO_NETWORK);
+                navigateLiveData.postValue(ServerConnectionNavigate.NO_CONNECTION);
               }
             }, () -> viewStateLiveData.postValue(viewActions ->
                 viewActions.showConnectionReady(false)

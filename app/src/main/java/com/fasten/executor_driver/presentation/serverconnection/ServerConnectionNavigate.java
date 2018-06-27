@@ -8,14 +8,14 @@ import java.lang.annotation.RetentionPolicy;
  * Направления навигации при подключении к серверу.
  */
 @StringDef({
-    ServerConnectionNavigate.NO_NETWORK,
+    ServerConnectionNavigate.NO_CONNECTION,
     ServerConnectionNavigate.AUTHORIZE
 })
 @Retention(RetentionPolicy.SOURCE)
 public @interface ServerConnectionNavigate {
 
   // Переход к решению проблем сети.
-  String NO_NETWORK = "to.NoNetwork";
+  String NO_CONNECTION = "ServerConnection.to.NoConnection";
   // Переход к авторизации.
-  String AUTHORIZE = "to.Authorization";
+  String AUTHORIZE = "ServerConnection.to.Authorization";
 }

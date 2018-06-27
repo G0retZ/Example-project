@@ -20,21 +20,21 @@ import java.lang.annotation.RetentionPolicy;
 public @interface ExecutorStateNavigate {
 
   // Переход к решению проблем сети.
-  String SERVER_DATA_ERROR = "to.ServerDataError";
+  String SERVER_DATA_ERROR = "ExecutorState.to.ServerDataError";
   // Переход к карте.
-  String MAP_SHIFT_CLOSED = "to.Map.Shift.Closed";
+  String MAP_SHIFT_CLOSED = "ExecutorState.to.MapShiftClosed";
   // Переход к карте.
-  String MAP_SHIFT_OPENED = "to.Map.Shift.Opened";
+  String MAP_SHIFT_OPENED = "ExecutorState.to.MapShiftOpened";
   // Переход к получению заказов.
-  String MAP_ONLINE = "to.Map.Online";
+  String MAP_ONLINE = "ExecutorState.to.MapOnline";
   // Переход к исполнению заказа.
-  String DRIVER_ORDER_CONFIRMATION = "to.Driver.Order.Confirmation";
+  String DRIVER_ORDER_CONFIRMATION = "ExecutorState.to.DriverOrderConfirmation";
   // Переход к ожиданию подтверждения клиентом.
-  String CLIENT_ORDER_CONFIRMATION = "to.Client.Order.Confirmation";
+  String CLIENT_ORDER_CONFIRMATION = "ExecutorState.to.ClientOrderConfirmation";
   // Переход к движению к клиенту.
-  String MOVING_TO_CLIENT = "to.Moving.To.Client";
+  String MOVING_TO_CLIENT = "ExecutorState.to.MovingToClient";
   // Переход к движению к клиенту.
-  String WAITING_FOR_CLIENT = "to.Waiting.For.Client";
+  String WAITING_FOR_CLIENT = "ExecutorState.to.WaitingForClient";
   // Переход к выполнению заказа.
-  String ORDER_FULFILLMENT = "to.Order.Fulfillment";
+  String ORDER_FULFILLMENT = "ExecutorState.to.OrderFulfillment";
 }

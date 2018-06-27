@@ -191,7 +191,7 @@ public class ServerConnectionViewModelTest {
     viewModel.connectServer();
 
     // Результат:
-    verify(navigationObserver, only()).onChanged(ServerConnectionNavigate.NO_NETWORK);
+    verify(navigationObserver, only()).onChanged(ServerConnectionNavigate.NO_CONNECTION);
   }
 
   /**
@@ -207,6 +207,6 @@ public class ServerConnectionViewModelTest {
     viewModel.connectServer();
 
     // Результат:
-    verify(navigationObserver, only()).onChanged(ServerConnectionNavigate.NO_NETWORK);
+    verify(navigationObserver, only()).onChanged(ServerConnectionNavigate.NO_CONNECTION);
   }
 }

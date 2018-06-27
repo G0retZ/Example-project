@@ -154,7 +154,7 @@ public class AutoRouterImpl implements ActivityLifecycleCallbacks, AutoRouter,
       return;
     }
     switch (lastRouteAction) {
-      case ServerConnectionNavigate.NO_NETWORK:
+      case ServerConnectionNavigate.NO_CONNECTION:
         new Builder(currentActivity)
             .setTitle(R.string.error)
             .setMessage("Без сети не работаем!")

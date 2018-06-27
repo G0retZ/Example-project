@@ -243,7 +243,7 @@ public class GeoLocationViewModelTest {
   }
 
   /**
-   * Должен вернуть "перейти к ошибке соединения".
+   * Не должен ничего возвращать для ошибки подключения.
    */
   @Test
   public void setNavigateForNoNetworkError() {
@@ -256,7 +256,7 @@ public class GeoLocationViewModelTest {
     viewModel.updateGeoLocations();
 
     // Результат:
-    verify(navigationObserver, only()).onChanged(GeoLocationNavigate.NO_CONNECTION);
+    verifyZeroInteractions(navigationObserver);
   }
 
   /**

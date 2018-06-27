@@ -14,5 +14,5 @@ import java.lang.annotation.RetentionPolicy;
 public @interface BalanceNavigate {
 
   // Переход к выбору способа оплаты.
-  String PAYMENT_OPTIONS = "Balance.to.Payment.Options";
+  String PAYMENT_OPTIONS = "Balance.to.PaymentOptions";
 }
