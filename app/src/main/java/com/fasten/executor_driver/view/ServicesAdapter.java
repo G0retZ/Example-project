@@ -68,7 +68,7 @@ class ServicesAdapter extends RecyclerView.Adapter<ServiceViewHolder> {
     ServicesListItem item = sortedList.get(position);
     holder.itemView.setOnClickListener(null);
     holder.nameText.setText(item.getName());
-    holder.priceText.setText(item.getPrice());
+    holder.priceText.setText(item.getPrice(holder.itemView.getResources()));
     holder.switchCompat.setOnCheckedChangeListener(null);
     holder.switchCompat.setChecked(item.isChecked());
     holder.switchCompat.setOnCheckedChangeListener((v, b) -> item.setChecked(b));
