@@ -1,7 +1,10 @@
 package com.fasten.executor_driver.presentation.services;
 
+import android.content.res.Resources;
 import android.support.annotation.NonNull;
+import com.fasten.executor_driver.R;
 import com.fasten.executor_driver.entity.Service;
+import java.text.DecimalFormat;
 import java.util.Locale;
 
 /**
@@ -27,8 +30,13 @@ public class ServicesListItem {
   }
 
   @NonNull
-  public String getPrice() {
-    return String.format(Locale.getDefault(), "от %d рублей за первый час", service.getPrice());
+  public String getPrice(Resources resources) {
+    int currentCost = service.getPrice();
+    if (!resources.getBoolean(R.bool.show_cents)) {
+      currentCost = Math.round(currentCost / 100f);
+    }
+    return String.format(Locale.getDefault(), "от %s за первый час",
+        new DecimalFormat(resources.getString(R.string.currency_format)).format(currentCost));
   }
 
   public int getPriceValue() {

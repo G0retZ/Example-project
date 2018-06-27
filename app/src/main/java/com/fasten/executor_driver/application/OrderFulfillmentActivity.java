@@ -24,7 +24,9 @@ public class OrderFulfillmentActivity extends BaseActivity {
     setContentView(R.layout.activity_order_fulfillment);
     Toolbar toolbar = findViewById(R.id.appBar);
     if (toolbar != null) {
-      toolbar.setNavigationOnClickListener(v -> onBackPressed());
+      toolbar.setNavigationOnClickListener(
+          v -> startActivity(new Intent(this, MenuActivity.class))
+      );
       toolbar.findViewById(R.id.orderActions).setOnClickListener(
           v -> {
             if (getSupportFragmentManager().findFragmentByTag("menu") == null) {
