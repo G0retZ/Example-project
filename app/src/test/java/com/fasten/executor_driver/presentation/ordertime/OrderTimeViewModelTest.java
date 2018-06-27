@@ -52,10 +52,10 @@ public class OrderTimeViewModelTest {
   /* Тетсируем работу с юзкейсом текущего времени выполнения заказа. */
 
   /**
-   * Должен просить юзкейс получить актуальную цену, при создании.
+   * Должен просить юзкейс получить актуальное время выполнения заказа, при создании.
    */
   @Test
-  public void askSelectedVehicleUseCaseForVehiclesInitially() {
+  public void askUseCaseForOrderTimeInitially() {
     // Результат:
     verify(orderCurrentTimeUseCase, only()).getOrderElapsedTime();
   }
@@ -64,7 +64,7 @@ public class OrderTimeViewModelTest {
    * Не должен трогать юзкейс на подписках.
    */
   @Test
-  public void DoNotTouchSelectedVehicleUseCaseDuringVehicleChoosing() {
+  public void doNotTouchUseCaseOnSubscriptions() {
     // Действие:
     viewModel.getViewStateLiveData();
     viewModel.getNavigationLiveData();

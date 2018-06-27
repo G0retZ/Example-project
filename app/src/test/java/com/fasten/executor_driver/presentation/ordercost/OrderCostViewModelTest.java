@@ -55,7 +55,7 @@ public class OrderCostViewModelTest {
    * Должен просить юзкейс получить актуальную цену, при создании.
    */
   @Test
-  public void askSelectedVehicleUseCaseForVehiclesInitially() {
+  public void askUseCaseForOrderCostInitially() {
     // Результат:
     verify(orderCurrentCostUseCase, only()).getOrderCurrentCost();
   }
@@ -64,7 +64,7 @@ public class OrderCostViewModelTest {
    * Не должен трогать юзкейс на подписках.
    */
   @Test
-  public void DoNotTouchSelectedVehicleUseCaseDuringVehicleChoosing() {
+  public void DoNotTouchUseCaseOnSubscriptions() {
     // Действие:
     viewModel.getViewStateLiveData();
     viewModel.getNavigationLiveData();
