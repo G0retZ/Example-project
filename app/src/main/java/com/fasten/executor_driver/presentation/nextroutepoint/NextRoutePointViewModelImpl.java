@@ -119,8 +119,7 @@ public class NextRoutePointViewModelImpl extends ViewModel implements NextRouteP
             },
             throwable -> {
               throwable.printStackTrace();
-              viewStateLiveData
-                  .postValue(new NextRoutePointViewStateServerDataError(lastViewState));
+              navigateLiveData.postValue(NextRoutePointNavigate.SERVER_DATA_ERROR);
             }
         );
   }

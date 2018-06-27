@@ -9,10 +9,8 @@ import static org.mockito.Mockito.when;
 
 import android.arch.core.executor.testing.InstantTaskExecutorRule;
 import android.arch.lifecycle.Observer;
-import com.fasten.executor_driver.backend.web.NoNetworkException;
 import com.fasten.executor_driver.entity.RoutePoint;
 import com.fasten.executor_driver.entity.RoutePointState;
-import com.fasten.executor_driver.gateway.DataMappingException;
 import com.fasten.executor_driver.interactor.OrderRouteUseCase;
 import com.fasten.executor_driver.presentation.ViewState;
 import io.reactivex.BackpressureStrategy;
@@ -193,39 +191,18 @@ public class NextRoutePointViewModelTest {
   }
 
   /**
-   * Должен вернуть состояние вида "Ошибка" нет сети.
+   * Не должен давать иных состояний вида если была ошибка.
    */
   @Test
-  public void setNoNetworkErrorViewStateToLiveData() {
+  public void doNotSetAnyViewStateToLiveDataForError() {
     // Дано:
-    InOrder inOrder = Mockito.inOrder(viewStateObserver);
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    publishSubject.onError(new NoNetworkException());
+    publishSubject.onError(new Exception());
 
     // Результат:
-    inOrder.verify(viewStateObserver).onChanged(new NextRoutePointViewStatePending(null));
-    inOrder.verify(viewStateObserver).onChanged(new NextRoutePointViewStateServerDataError(null));
-    verifyNoMoreInteractions(viewStateObserver);
-  }
-
-  /**
-   * Должен вернуть состояние вида "Ошибка" нет сети.
-   */
-  @Test
-  public void setNoNetworkErrorViewStateToLiveDataForMappingError() {
-    // Дано:
-    InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
-
-    // Действие:
-    publishSubject.onError(new DataMappingException());
-
-    // Результат:
-    inOrder.verify(viewStateObserver).onChanged(new NextRoutePointViewStatePending(null));
-    inOrder.verify(viewStateObserver).onChanged(new NextRoutePointViewStateServerDataError(null));
-    verifyNoMoreInteractions(viewStateObserver);
+    verify(viewStateObserver, only()).onChanged(new NextRoutePointViewStatePending(null));
   }
 
   /**
@@ -797,15 +774,30 @@ public class NextRoutePointViewModelTest {
   /* Тестируем навигацию. */
 
   /**
+   * Должен вернуть "перейти к ошибке данных сервера".
+   */
+  @Test
+  public void setNavigateToServerDataError() {
+    // Дано:
+    viewModel.getNavigationLiveData().observeForever(navigateObserver);
+
+    // Действие:
+    publishSubject.onError(new Exception());
+
+    // Результат:
+    verify(navigateObserver, only()).onChanged(NextRoutePointNavigate.SERVER_DATA_ERROR);
+  }
+
+  /**
    * Не должен никуда ходить при закрытии точки маршрута.
    */
   @Test
   public void doNotTouchNavigationObserverForCloseRoutePoint() {
     // Дано:
     when(routePoint.getRoutePointState()).thenReturn(RoutePointState.ACTIVE);
+    viewModel.getNavigationLiveData().observeForever(navigateObserver);
 
     // Действие:
-    viewModel.getNavigationLiveData().observeForever(navigateObserver);
     publishSubject.onNext(Arrays.asList(routePoint, routePoint1, routePoint2));
     viewModel.closeRoutePoint();
 
@@ -822,9 +814,9 @@ public class NextRoutePointViewModelTest {
     when(routePoint.getRoutePointState()).thenReturn(RoutePointState.ACTIVE);
     when(orderRouteUseCase.closeRoutePoint(routePoint))
         .thenReturn(Completable.error(new IllegalStateException()));
+    viewModel.getNavigationLiveData().observeForever(navigateObserver);
 
     // Действие:
-    viewModel.getNavigationLiveData().observeForever(navigateObserver);
     publishSubject.onNext(Arrays.asList(routePoint, routePoint1, routePoint2));
     viewModel.closeRoutePoint();
 
@@ -840,9 +832,9 @@ public class NextRoutePointViewModelTest {
     // Дано:
     when(routePoint.getRoutePointState()).thenReturn(RoutePointState.ACTIVE);
     when(orderRouteUseCase.closeRoutePoint(routePoint)).thenReturn(Completable.complete());
+    viewModel.getNavigationLiveData().observeForever(navigateObserver);
 
     // Действие:
-    viewModel.getNavigationLiveData().observeForever(navigateObserver);
     publishSubject.onNext(Arrays.asList(routePoint, routePoint1, routePoint2));
     viewModel.closeRoutePoint();
 
@@ -855,8 +847,10 @@ public class NextRoutePointViewModelTest {
    */
   @Test
   public void doNotTouchNavigationObserverForCompleteOrder() {
-    // Действие:
+    // Дано:
     viewModel.getNavigationLiveData().observeForever(navigateObserver);
+
+    // Действие:
     publishSubject.onNext(Arrays.asList(routePoint, routePoint1, routePoint2));
     viewModel.completeTheOrder();
 
@@ -872,9 +866,9 @@ public class NextRoutePointViewModelTest {
     // Дано:
     when(orderRouteUseCase.completeTheOrder())
         .thenReturn(Completable.error(new IllegalStateException()));
+    viewModel.getNavigationLiveData().observeForever(navigateObserver);
 
     // Действие:
-    viewModel.getNavigationLiveData().observeForever(navigateObserver);
     viewModel.completeTheOrder();
 
     // Результат:
@@ -888,9 +882,9 @@ public class NextRoutePointViewModelTest {
   public void doNotTouchNavigationObserverForCompleteOrderSuccess() {
     // Дано:
     when(orderRouteUseCase.completeTheOrder()).thenReturn(Completable.complete());
+    viewModel.getNavigationLiveData().observeForever(navigateObserver);
 
     // Действие:
-    viewModel.getNavigationLiveData().observeForever(navigateObserver);
     viewModel.completeTheOrder();
 
     // Результат:

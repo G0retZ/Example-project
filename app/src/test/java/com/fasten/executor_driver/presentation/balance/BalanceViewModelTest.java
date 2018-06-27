@@ -107,7 +107,7 @@ public class BalanceViewModelTest {
    * Не должен давать иных состояний вида если была ошибка.
    */
   @Test
-  public void setNoNetworkErrorViewStateToLiveDataForMappingError() {
+  public void doNotSetAnyViewStateToLiveDataForError() {
     // Дано:
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 

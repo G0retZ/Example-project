@@ -11,7 +11,6 @@ import static org.mockito.Mockito.when;
 import android.arch.core.executor.testing.InstantTaskExecutorRule;
 import android.arch.lifecycle.Observer;
 import com.fasten.executor_driver.entity.CancelOrderReason;
-import com.fasten.executor_driver.gateway.DataMappingException;
 import com.fasten.executor_driver.interactor.CancelOrderUseCase;
 import com.fasten.executor_driver.presentation.ViewState;
 import io.reactivex.BackpressureStrategy;
@@ -144,12 +143,12 @@ public class CancelOrderViewModelTest {
    * Не должен давать иных состояний вида если была ошибка.
    */
   @Test
-  public void setNoNetworkErrorViewStateToLiveDataForMappingError() {
+  public void doNotSetAnyViewStateToLiveDataForError() {
     // Дано:
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    publishSubject.onError(new DataMappingException());
+    publishSubject.onError(new Exception());
 
     // Результат:
     verify(viewStateObserver, only()).onChanged(new CancelOrderViewStatePending(null));

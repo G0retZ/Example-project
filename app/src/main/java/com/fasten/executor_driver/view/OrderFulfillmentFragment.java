@@ -189,16 +189,6 @@ public class OrderFulfillmentFragment extends BaseFragment implements OrderCostV
   }
 
   @Override
-  public void showNextRoutePointServerDataError() {
-    new Builder(context)
-        .setTitle(R.string.error)
-        .setMessage(R.string.server_data_format_error)
-        .setPositiveButton(getString(android.R.string.ok), null)
-        .create()
-        .show();
-  }
-
-  @Override
   public void setOrderCostText(int currentCost) {
     if (!getResources().getBoolean(R.bool.show_cents)) {
       currentCost = Math.round(currentCost / 100f);

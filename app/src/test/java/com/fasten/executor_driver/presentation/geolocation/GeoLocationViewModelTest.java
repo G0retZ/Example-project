@@ -184,6 +184,42 @@ public class GeoLocationViewModelTest {
   }
 
   /**
+   * Не должен возвращать новых состояний при другой ошибке.
+   */
+  @Test
+  public void setNoNewViewStateToLiveDataForError() {
+    // Дано:
+    InOrder inOrder = Mockito.inOrder(viewStateObserver);
+    when(geoLocationUseCase.getGeoLocations()).thenReturn(
+        Flowable.just(
+            new GeoLocation(1, 2, 3),
+            new GeoLocation(4, 5, 6),
+            new GeoLocation(7, 8, 9),
+            new GeoLocation(11, 22, 33)
+        ).concatWith(Flowable.error(Exception::new))
+    );
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
+
+    // Действие:
+    viewModel.updateGeoLocations();
+
+    // Результат:
+    inOrder.verify(viewStateObserver).onChanged(
+        new GeoLocationViewState(new GeoLocation(1, 2, 3))
+    );
+    inOrder.verify(viewStateObserver).onChanged(
+        new GeoLocationViewState(new GeoLocation(4, 5, 6))
+    );
+    inOrder.verify(viewStateObserver).onChanged(
+        new GeoLocationViewState(new GeoLocation(7, 8, 9))
+    );
+    inOrder.verify(viewStateObserver).onChanged(
+        new GeoLocationViewState(new GeoLocation(11, 22, 33))
+    );
+    verifyNoMoreInteractions(viewStateObserver);
+  }
+
+  /**
    * Не должен возвращать новых состояний при ошибке в геолокации.
    */
   @Test
