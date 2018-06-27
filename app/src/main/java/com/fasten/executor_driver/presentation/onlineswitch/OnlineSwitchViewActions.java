@@ -18,9 +18,4 @@ public interface OnlineSwitchViewActions {
    * @param show - показать или нет?
    */
   void showSwitchPending(boolean show);
-
-  /**
-   * Показать ошибку данных сервера.
-   */
-  void showOnlineSwitchServerDataError();
 }

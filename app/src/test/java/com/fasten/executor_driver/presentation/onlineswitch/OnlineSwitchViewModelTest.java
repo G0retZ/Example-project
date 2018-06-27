@@ -11,7 +11,6 @@ import android.arch.core.executor.testing.InstantTaskExecutorRule;
 import android.arch.lifecycle.Observer;
 import com.fasten.executor_driver.entity.ExecutorState;
 import com.fasten.executor_driver.entity.ForbiddenExecutorStateException;
-import com.fasten.executor_driver.gateway.DataMappingException;
 import com.fasten.executor_driver.interactor.ExecutorStateNotOnlineUseCase;
 import com.fasten.executor_driver.presentation.ViewState;
 import io.reactivex.BackpressureStrategy;
@@ -255,22 +254,18 @@ public class OnlineSwitchViewModelTest {
   }
 
   /**
-   * Должен вернуть состояние ошибки в данных с сервера с неактивным переключателем при ошибке в
-   * подписке на статусы исполнителя.
+   * Не должен давать иных состояний вида если была ошибка в подписке на статусы исполнителя.
    */
   @Test
-  public void setServerDataErrorViewStateForExecutorStateError() {
+  public void doNotSetAnyViewStateToLiveDataForExecutorStateError() {
     // Дано:
-    InOrder inOrder = Mockito.inOrder(viewStateObserver);
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    publishSubject.onError(new DataMappingException());
+    publishSubject.onError(new Exception());
 
     // Результат:
-    inOrder.verify(viewStateObserver).onChanged(new OnlineSwitchViewStatePending(null));
-    inOrder.verify(viewStateObserver).onChanged(new OnlineSwitchViewStateServerDataError(null));
-    verifyNoMoreInteractions(viewStateObserver);
+    verify(viewStateObserver, only()).onChanged(new OnlineSwitchViewStatePending(null));
   }
 
   /**
@@ -372,10 +367,10 @@ public class OnlineSwitchViewModelTest {
   }
 
   /**
-   * Должен вернуть состояние ошибки в данных от сервера с активным переключателем для запроса установки не онлайн.
+   * Не должен давать иных состояний вида если была ошибка в запросе установки не онлайн.
    */
   @Test
-  public void setUnCheckedServerErrorViewStateForSetNotOnline() {
+  public void doNotSetAnyViewStateToLiveDataForSetNotOnlineError() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     when(executorStateNotOnlineUseCase.setExecutorNotOnline())
@@ -391,8 +386,6 @@ public class OnlineSwitchViewModelTest {
     inOrder.verify(viewStateObserver).onChanged(new OnlineSwitchViewState(true));
     inOrder.verify(viewStateObserver)
         .onChanged(new OnlineSwitchViewStatePending(new OnlineSwitchViewState(false)));
-    inOrder.verify(viewStateObserver)
-        .onChanged(new OnlineSwitchViewStateServerDataError(new OnlineSwitchViewState(true)));
     verifyNoMoreInteractions(viewStateObserver);
   }
 
@@ -420,6 +413,38 @@ public class OnlineSwitchViewModelTest {
   }
 
   /* Тестируем навигацию. */
+
+  /**
+   * Должен вернуть "перейти к ошибке данных сервера".
+   */
+  @Test
+  public void setNavigateToServerDataErrorForExecutorStateError() {
+    // Дано:
+    viewModel.getNavigationLiveData().observeForever(navigateObserver);
+
+    // Действие:
+    publishSubject.onError(new Exception());
+
+    // Результат:
+    verify(navigateObserver, only()).onChanged(OnlineSwitchNavigate.SERVER_DATA_ERROR);
+  }
+
+  /**
+   * Должен вернуть "перейти к ошибке данных сервера".
+   */
+  @Test
+  public void setNavigateToServerDataErrorSetNotOnlineError() {
+    // Дано:
+    viewModel.getNavigationLiveData().observeForever(navigateObserver);
+    when(executorStateNotOnlineUseCase.setExecutorNotOnline())
+        .thenReturn(Completable.error(new ForbiddenExecutorStateException()));
+
+    // Действие:
+    viewModel.setNewState(false);
+
+    // Результат:
+    verify(navigateObserver, only()).onChanged(OnlineSwitchNavigate.SERVER_DATA_ERROR);
+  }
 
   /**
    * Должен вернуть перейти к настройке параметров ТС.
@@ -459,13 +484,11 @@ public class OnlineSwitchViewModelTest {
     // Дано:
     when(executorStateNotOnlineUseCase.setExecutorNotOnline()).thenReturn(
         Completable.complete(),
-        Completable.error(new ForbiddenExecutorStateException()),
         Completable.never()
     );
 
     // Действие:
     viewModel.getNavigationLiveData().observeForever(navigateObserver);
-    viewModel.setNewState(false);
     viewModel.setNewState(false);
     viewModel.setNewState(false);
 

@@ -1,7 +1,5 @@
 package com.fasten.executor_driver.view;
 
-import android.app.AlertDialog.Builder;
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -25,18 +23,10 @@ public class OnlineFragment extends BaseFragment implements OnlineSwitchViewActi
 
   @Nullable
   private SwitchCompat switchCompat;
-  @Nullable
-  private Context context;
 
   @Inject
   public void setOnlineSwitchViewModel(OnlineSwitchViewModel onlineSwitchViewModel) {
     this.onlineSwitchViewModel = onlineSwitchViewModel;
-  }
-
-  @Override
-  public void onAttach(Context context) {
-    super.onAttach(context);
-    this.context = context;
   }
 
   @Nullable
@@ -78,12 +68,6 @@ public class OnlineFragment extends BaseFragment implements OnlineSwitchViewActi
   }
 
   @Override
-  public void onDetach() {
-    super.onDetach();
-    context = null;
-  }
-
-  @Override
   public void checkSwitch(boolean check) {
     if (switchCompat != null) {
       switchCompat.setOnCheckedChangeListener(null);
@@ -95,15 +79,5 @@ public class OnlineFragment extends BaseFragment implements OnlineSwitchViewActi
   @Override
   public void showSwitchPending(boolean show) {
     showPending(show);
-  }
-
-  @Override
-  public void showOnlineSwitchServerDataError() {
-    new Builder(context)
-        .setTitle(R.string.error)
-        .setMessage(R.string.server_data_format_error)
-        .setPositiveButton(getString(android.R.string.ok), null)
-        .create()
-        .show();
   }
 }
