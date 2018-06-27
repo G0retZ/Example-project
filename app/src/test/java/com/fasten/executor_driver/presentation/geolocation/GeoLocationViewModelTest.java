@@ -90,9 +90,9 @@ public class GeoLocationViewModelTest {
         new GeoLocation(7, 8, 9),
         new GeoLocation(11, 22, 33)
     ));
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
     viewModel.updateGeoLocations();
 
     // Результат:
@@ -112,7 +112,7 @@ public class GeoLocationViewModelTest {
   }
 
   /**
-   * Должен вернуть состояние ошибки данных сервера.
+   * Не должен возвращать состояний при ошибки данных сервера.
    */
   @Test
   public void setServerDataErrorViewStateToLiveData() {
@@ -126,9 +126,9 @@ public class GeoLocationViewModelTest {
             new GeoLocation(11, 22, 33)
         ).concatWith(Flowable.error(Exception::new))
     );
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
     viewModel.updateGeoLocations();
 
     // Результат:
@@ -143,11 +143,6 @@ public class GeoLocationViewModelTest {
     );
     inOrder.verify(viewStateObserver).onChanged(
         new GeoLocationViewState(new GeoLocation(11, 22, 33))
-    );
-    inOrder.verify(viewStateObserver).onChanged(
-        new GeoLocationViewStateServerDataError(
-            new GeoLocationViewState(new GeoLocation(11, 22, 33))
-        )
     );
     verifyNoMoreInteractions(viewStateObserver);
   }
@@ -167,9 +162,9 @@ public class GeoLocationViewModelTest {
             new GeoLocation(11, 22, 33)
         ).concatWith(Flowable.error(IllegalStateException::new))
     );
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
     viewModel.updateGeoLocations();
 
     // Результат:
@@ -203,9 +198,9 @@ public class GeoLocationViewModelTest {
             new GeoLocation(11, 22, 33)
         ).concatWith(Flowable.error(SecurityException::new))
     );
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
     viewModel.updateGeoLocations();
 
     // Результат:
@@ -233,9 +228,9 @@ public class GeoLocationViewModelTest {
   public void navigateToResolveGoeLocationProblem() {
     // Дано:
     when(geoLocationUseCase.getGeoLocations()).thenReturn(Flowable.error(SecurityException::new));
+    viewModel.getNavigationLiveData().observeForever(navigationObserver);
 
     // Действие:
-    viewModel.getNavigationLiveData().observeForever(navigationObserver);
     viewModel.updateGeoLocations();
 
     // Результат:
@@ -250,9 +245,9 @@ public class GeoLocationViewModelTest {
     // Дано:
     when(geoLocationUseCase.getGeoLocations())
         .thenReturn(Flowable.error(IllegalStateException::new));
+    viewModel.getNavigationLiveData().observeForever(navigationObserver);
 
     // Действие:
-    viewModel.getNavigationLiveData().observeForever(navigationObserver);
     viewModel.updateGeoLocations();
 
     // Результат:
@@ -260,19 +255,19 @@ public class GeoLocationViewModelTest {
   }
 
   /**
-   * Не должен ничего возвращать для другой ошибки.
+   * Должен вернуть "перейти к ошибке данных сервера".
    */
   @Test
-  public void doNotSetNavigateForOtherError() {
+  public void setNavigateToServerDataError() {
     // Дано:
     when(geoLocationUseCase.getGeoLocations()).thenReturn(Flowable.error(Exception::new));
+    viewModel.getNavigationLiveData().observeForever(navigationObserver);
 
     // Действие:
-    viewModel.getNavigationLiveData().observeForever(navigationObserver);
     viewModel.updateGeoLocations();
 
     // Результат:
-    verifyZeroInteractions(navigationObserver);
+    verify(navigationObserver, only()).onChanged(GeoLocationNavigate.SERVER_DATA_ERROR);
   }
 
   /**
@@ -287,9 +282,9 @@ public class GeoLocationViewModelTest {
         new GeoLocation(7, 8, 9),
         new GeoLocation(11, 22, 33)
     ));
+    viewModel.getNavigationLiveData().observeForever(navigationObserver);
 
     // Действие:
-    viewModel.getNavigationLiveData().observeForever(navigationObserver);
     viewModel.updateGeoLocations();
 
     // Результат:

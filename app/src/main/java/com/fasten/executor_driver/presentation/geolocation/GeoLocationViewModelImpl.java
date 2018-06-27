@@ -4,7 +4,6 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import com.fasten.executor_driver.interactor.GeoLocationUseCase;
 import com.fasten.executor_driver.presentation.SingleLiveEvent;
 import com.fasten.executor_driver.presentation.ViewState;
@@ -25,8 +24,6 @@ public class GeoLocationViewModelImpl extends ViewModel implements GeoLocationVi
   private final SingleLiveEvent<String> navigateLiveData;
   @NonNull
   private Disposable disposable = EmptyDisposable.INSTANCE;
-  @Nullable
-  private ViewState<GeoLocationViewActions> lastViewState;
 
   @Inject
   public GeoLocationViewModelImpl(@NonNull GeoLocationUseCase geoLocationUseCase) {
@@ -57,13 +54,13 @@ public class GeoLocationViewModelImpl extends ViewModel implements GeoLocationVi
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(
             location -> viewStateLiveData
-                .postValue(lastViewState = new GeoLocationViewState(location)),
+                .postValue(new GeoLocationViewState(location)),
             throwable -> {
               throwable.printStackTrace();
               if (throwable instanceof SecurityException) {
                 navigateLiveData.postValue(GeoLocationNavigate.RESOLVE_GEO_PROBLEM);
               } else if (!(throwable instanceof IllegalStateException)) {
-                viewStateLiveData.postValue(new GeoLocationViewStateServerDataError(lastViewState));
+                navigateLiveData.postValue(GeoLocationNavigate.SERVER_DATA_ERROR);
               }
             }
         );
