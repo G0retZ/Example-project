@@ -10,7 +10,6 @@ import static org.mockito.Mockito.when;
 
 import android.arch.core.executor.testing.InstantTaskExecutorRule;
 import android.arch.lifecycle.Observer;
-import com.fasten.executor_driver.backend.web.NoNetworkException;
 import com.fasten.executor_driver.entity.CancelOrderReason;
 import com.fasten.executor_driver.gateway.DataMappingException;
 import com.fasten.executor_driver.interactor.CancelOrderUseCase;
@@ -142,39 +141,18 @@ public class CancelOrderViewModelTest {
   }
 
   /**
-   * Должен вернуть состояние вида "Ошибка" если нет сети.
-   */
-  @Test
-  public void setNoNetworkErrorViewStateToLiveData() {
-    // Дано:
-    InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
-
-    // Действие:
-    publishSubject.onError(new NoNetworkException());
-
-    // Результат:
-    inOrder.verify(viewStateObserver).onChanged(new CancelOrderViewStatePending(null));
-    inOrder.verify(viewStateObserver).onChanged(new CancelOrderViewStateServerDataError(null));
-    verifyNoMoreInteractions(viewStateObserver);
-  }
-
-  /**
-   * Должен вернуть состояние вида "Ошибка" если данные не смапились.
+   * Не должен давать иных состояний вида если была ошибка.
    */
   @Test
   public void setNoNetworkErrorViewStateToLiveDataForMappingError() {
     // Дано:
-    InOrder inOrder = Mockito.inOrder(viewStateObserver);
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
     publishSubject.onError(new DataMappingException());
 
     // Результат:
-    inOrder.verify(viewStateObserver).onChanged(new CancelOrderViewStatePending(null));
-    inOrder.verify(viewStateObserver).onChanged(new CancelOrderViewStateServerDataError(null));
-    verifyNoMoreInteractions(viewStateObserver);
+    verify(viewStateObserver, only()).onChanged(new CancelOrderViewStatePending(null));
   }
 
   /**
@@ -316,6 +294,21 @@ public class CancelOrderViewModelTest {
 
     // Результат:
     verifyZeroInteractions(navigateObserver);
+  }
+
+  /**
+   * Должен вернуть "перейти к ошибке данных сервера".
+   */
+  @Test
+  public void setNavigateToServerDataError() {
+    // Дано:
+    viewModel.getNavigationLiveData().observeForever(navigateObserver);
+
+    // Действие:
+    publishSubject.onError(new Exception());
+
+    // Результат:
+    verify(navigateObserver, only()).onChanged(CancelOrderNavigate.SERVER_DATA_ERROR);
   }
 
   /**

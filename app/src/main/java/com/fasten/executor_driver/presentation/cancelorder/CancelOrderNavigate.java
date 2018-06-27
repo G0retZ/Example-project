@@ -9,12 +9,18 @@ import java.lang.annotation.RetentionPolicy;
  */
 @StringDef({
     CancelOrderNavigate.ORDER_CANCELED,
-    CancelOrderNavigate.NO_CONNECTION
+    CancelOrderNavigate.NO_CONNECTION,
+    CancelOrderNavigate.SERVER_DATA_ERROR
 })
 @Retention(RetentionPolicy.SOURCE)
 public @interface CancelOrderNavigate {
 
   // Переход к "заказ отменен".
   String ORDER_CANCELED = "CancelOrder.to.OrderCanceled";
+
+  // Переход к ошибке соединения.
   String NO_CONNECTION = "CancelOrder.to.NoConnection";
+
+  // Переход к проблеме совместимости формата данных с сервером.
+  String SERVER_DATA_ERROR = "CancelOrder.to.ServerDataError";
 }

@@ -29,9 +29,4 @@ public interface CancelOrderViewActions {
    * @param cancelOrderReasons - список ТС
    */
   void setCancelOrderReasons(@NonNull List<CancelOrderReason> cancelOrderReasons);
-
-  /**
-   * Показать ошибку данных сервера.
-   */
-  void showCancelOrderServerDataError();
 }

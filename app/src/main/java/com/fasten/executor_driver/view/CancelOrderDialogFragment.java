@@ -1,7 +1,5 @@
 package com.fasten.executor_driver.view;
 
-import android.app.AlertDialog.Builder;
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -28,18 +26,11 @@ public class CancelOrderDialogFragment extends BaseDialogFragment implements
 
   private CancelOrderViewModel cancelOrderViewModel;
   private RecyclerView recyclerView;
-  private Context context;
   private boolean pending;
 
   @Inject
   public void setCancelOrderViewModel(@NonNull CancelOrderViewModel cancelOrderViewModel) {
     this.cancelOrderViewModel = cancelOrderViewModel;
-  }
-
-  @Override
-  public void onAttach(Context context) {
-    super.onAttach(context);
-    this.context = context;
   }
 
   @Nullable
@@ -77,12 +68,6 @@ public class CancelOrderDialogFragment extends BaseDialogFragment implements
   }
 
   @Override
-  public void onDetach() {
-    super.onDetach();
-    context = null;
-  }
-
-  @Override
   public void showCancelOrderPending(boolean pending) {
     if (this.pending != pending) {
       showPending(pending);
@@ -100,15 +85,5 @@ public class CancelOrderDialogFragment extends BaseDialogFragment implements
     CancelOrderAdapter adapter = new CancelOrderAdapter(cancelOrderReasons,
         cancelOrderViewModel::selectItem);
     recyclerView.setAdapter(adapter);
-  }
-
-  @Override
-  public void showCancelOrderServerDataError() {
-    new Builder(context)
-        .setTitle(R.string.error)
-        .setMessage(R.string.server_data_format_error)
-        .setPositiveButton(getString(android.R.string.ok), null)
-        .create()
-        .show();
   }
 }

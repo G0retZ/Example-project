@@ -197,7 +197,7 @@ public class BalanceViewModelTest {
   }
 
   /**
-   * Должен вернуть ошибку данных сервера.
+   * Должен вернуть "перейти к ошибке данных сервера".
    */
   @Test
   public void setNavigateToServerDataError() {

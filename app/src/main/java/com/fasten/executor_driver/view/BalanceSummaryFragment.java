@@ -1,6 +1,5 @@
 package com.fasten.executor_driver.view;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -24,14 +23,7 @@ public class BalanceSummaryFragment extends BaseFragment implements BalanceViewA
 
   private BalanceViewModel balanceViewModel;
   private TextView balanceAmount;
-  private Context context;
   private boolean pending;
-
-  @Override
-  public void onAttach(Context context) {
-    super.onAttach(context);
-    this.context = context;
-  }
 
   @Inject
   public void setBalanceViewModel(@NonNull BalanceViewModel balanceViewModel) {
@@ -68,12 +60,6 @@ public class BalanceSummaryFragment extends BaseFragment implements BalanceViewA
         viewState.apply(this);
       }
     });
-  }
-
-  @Override
-  public void onDetach() {
-    super.onDetach();
-    context = null;
   }
 
   @Override
