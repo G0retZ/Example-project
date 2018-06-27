@@ -19,7 +19,7 @@ public class ApiOrderRule extends CommonTestRule {
   private final static String ORDER_TIMEOUT = "\"timeOut\": %d";
   private final static String ORDER_ETA = "\"etaToStartPoint\": %d";
   private final static String ORDER_CONFIRM_TIME = "\"confirmationTime\": %d";
-  private final static String ORDER_START_TIME = "\"startTime\": %d";
+  private final static String ORDER_START_TIME = "\"startDate\": %d";
   private final static String ORDER_DISTANCE_START = "\"executorDistance\": {";
   private final static String ORDER_DISTANCE_EXECUTOR_ID = "\"executorId\": %d";
   private final static String ORDER_DISTANCE_VALUE = "\"distance\": %d";
