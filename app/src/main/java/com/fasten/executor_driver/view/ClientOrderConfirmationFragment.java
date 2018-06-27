@@ -1,7 +1,5 @@
 package com.fasten.executor_driver.view;
 
-import android.app.AlertDialog.Builder;
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -31,14 +29,7 @@ public class ClientOrderConfirmationFragment extends BaseFragment implements
   private TextView optionsText;
   private TextView priceTitleText;
   private TextView priceText;
-  private Context context;
   private boolean pending;
-
-  @Override
-  public void onAttach(Context context) {
-    super.onAttach(context);
-    this.context = context;
-  }
 
   @Inject
   public void setOrderViewModel(
@@ -77,12 +68,11 @@ public class ClientOrderConfirmationFragment extends BaseFragment implements
         viewState.apply(this);
       }
     });
-  }
-
-  @Override
-  public void onDetach() {
-    super.onDetach();
-    context = null;
+    orderViewModel.getNavigationLiveData().observe(this, destination -> {
+      if (destination != null) {
+        navigate(destination);
+      }
+    });
   }
 
   @Override
@@ -152,15 +142,5 @@ public class ClientOrderConfirmationFragment extends BaseFragment implements
       commentText.setVisibility(View.VISIBLE);
       commentText.setText(comment);
     }
-  }
-
-  @Override
-  public void showOrderServerDataError() {
-    new Builder(context)
-        .setTitle(R.string.error)
-        .setMessage(R.string.server_data_format_error)
-        .setPositiveButton(getString(android.R.string.ok), null)
-        .create()
-        .show();
   }
 }

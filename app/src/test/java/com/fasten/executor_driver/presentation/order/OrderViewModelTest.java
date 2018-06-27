@@ -8,9 +8,7 @@ import static org.mockito.Mockito.when;
 
 import android.arch.core.executor.testing.InstantTaskExecutorRule;
 import android.arch.lifecycle.Observer;
-import com.fasten.executor_driver.backend.web.NoNetworkException;
 import com.fasten.executor_driver.entity.Order;
-import com.fasten.executor_driver.gateway.DataMappingException;
 import com.fasten.executor_driver.interactor.OrderUseCase;
 import com.fasten.executor_driver.presentation.ViewState;
 import com.fasten.executor_driver.utils.TimeUtils;
@@ -49,6 +47,8 @@ public class OrderViewModelTest {
 
   @Mock
   private Observer<ViewState<OrderViewActions>> viewStateObserver;
+  @Mock
+  private Observer<String> navigateObserver;
 
   @Before
   public void setUp() {
@@ -93,47 +93,21 @@ public class OrderViewModelTest {
   }
 
   /**
-   * Должен вернуть состояние вида "Ошибка" нет сети.
+   * Не должен давать иных состояний вида если была ошибка.
    */
   @Test
-  public void setNoNetworkErrorViewStateToLiveData() {
+  public void doNotSetAnyViewStateToLiveDataForError() {
     // Дано:
     PublishSubject<Order> publishSubject = PublishSubject.create();
-    InOrder inOrder = Mockito.inOrder(viewStateObserver);
     when(orderUseCase.getOrders())
         .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    publishSubject.onError(new NoNetworkException());
+    publishSubject.onError(new Exception());
 
     // Результат:
-    inOrder.verify(viewStateObserver).onChanged(new OrderViewStatePending(null));
-    inOrder.verify(viewStateObserver)
-        .onChanged(new OrderViewStateServerDataError(null));
-    verifyNoMoreInteractions(viewStateObserver);
-  }
-
-  /**
-   * Должен вернуть состояние вида "Ошибка" нет сети.
-   */
-  @Test
-  public void setNoNetworkErrorViewStateToLiveDataForMappingError() {
-    // Дано:
-    PublishSubject<Order> publishSubject = PublishSubject.create();
-    InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    when(orderUseCase.getOrders())
-        .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
-    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
-
-    // Действие:
-    publishSubject.onError(new DataMappingException());
-
-    // Результат:
-    inOrder.verify(viewStateObserver).onChanged(new OrderViewStatePending(null));
-    inOrder.verify(viewStateObserver)
-        .onChanged(new OrderViewStateServerDataError(null));
-    verifyNoMoreInteractions(viewStateObserver);
+    verify(viewStateObserver, only()).onChanged(new OrderViewStatePending(null));
   }
 
   /**
@@ -165,5 +139,26 @@ public class OrderViewModelTest {
         new OrderItem(order2, timeUtils))
     );
     verifyNoMoreInteractions(viewStateObserver);
+  }
+
+  /* Тестируем навигацию. */
+
+  /**
+   * Должен вернуть "перейти к ошибке данных сервера".
+   */
+  @Test
+  public void setNavigateToServerDataError() {
+    // Дано:
+    PublishSubject<Order> publishSubject = PublishSubject.create();
+    when(orderUseCase.getOrders())
+        .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getNavigationLiveData().observeForever(navigateObserver);
+
+    // Действие:
+    publishSubject.onError(new Exception());
+
+    // Результат:
+    verify(navigateObserver, only()).onChanged(OrderNavigate.SERVER_DATA_ERROR);
   }
 }

@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.fasten.executor_driver.entity.Order;
 import com.fasten.executor_driver.interactor.OrderUseCase;
+import com.fasten.executor_driver.presentation.SingleLiveEvent;
 import com.fasten.executor_driver.presentation.ViewState;
 import com.fasten.executor_driver.utils.TimeUtils;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -23,6 +24,8 @@ public class OrderViewModelImpl extends ViewModel implements
   @NonNull
   private final MutableLiveData<ViewState<OrderViewActions>> viewStateLiveData;
   @NonNull
+  private final SingleLiveEvent<String> navigateLiveData;
+  @NonNull
   private final TimeUtils timeUtils;
   @NonNull
   private Disposable disposable = EmptyDisposable.INSTANCE;
@@ -34,6 +37,7 @@ public class OrderViewModelImpl extends ViewModel implements
     this.orderUseCase = orderUseCase;
     this.timeUtils = timeUtils;
     viewStateLiveData = new MutableLiveData<>();
+    navigateLiveData = new SingleLiveEvent<>();
     viewStateLiveData.postValue(new OrderViewStatePending(lastViewState));
   }
 
@@ -47,7 +51,7 @@ public class OrderViewModelImpl extends ViewModel implements
   @NonNull
   @Override
   public LiveData<String> getNavigationLiveData() {
-    return new MutableLiveData<>();
+    return navigateLiveData;
   }
 
 
@@ -69,7 +73,7 @@ public class OrderViewModelImpl extends ViewModel implements
 
   private void consumeError(Throwable throwable) {
     throwable.printStackTrace();
-    viewStateLiveData.postValue(new OrderViewStateServerDataError(lastViewState));
+    navigateLiveData.postValue(OrderNavigate.SERVER_DATA_ERROR);
   }
 
   @Override

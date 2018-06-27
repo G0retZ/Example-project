@@ -71,9 +71,4 @@ public interface OrderViewActions {
    * @param comment - адрес
    */
   void showComment(@NonNull String comment);
-
-  /**
-   * Показать ошибку данных сервера.
-   */
-  void showOrderServerDataError();
 }

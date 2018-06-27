@@ -95,6 +95,11 @@ public class MovingToClientFragment extends BaseFragment implements MovingToClie
         viewState.apply(this);
       }
     });
+    orderViewModel.getNavigationLiveData().observe(this, destination -> {
+      if (destination != null) {
+        navigate(destination);
+      }
+    });
     movingToClientViewModel.getViewStateLiveData().observe(this, viewState -> {
       if (viewState != null) {
         viewState.apply(this);
@@ -215,15 +220,5 @@ public class MovingToClientFragment extends BaseFragment implements MovingToClie
   @Override
   public void showComment(@NonNull String comment) {
 
-  }
-
-  @Override
-  public void showOrderServerDataError() {
-    new Builder(context)
-        .setTitle(R.string.error)
-        .setMessage(R.string.server_data_format_error)
-        .setPositiveButton(getString(android.R.string.ok), null)
-        .create()
-        .show();
   }
 }
