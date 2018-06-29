@@ -5,8 +5,7 @@
   android:layout_width="match_parent"
   android:layout_height="match_parent"
   android:animateLayoutChanges="true"
-  android:keepScreenOn="true"
-  tools:ignore="MergeRootFrame">
+  android:keepScreenOn="true">
   <fragment
     android:id="@+id/fragment_client_order_confirmation"
     android:layout_width="match_parent"
