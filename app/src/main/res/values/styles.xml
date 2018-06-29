@@ -10,6 +10,10 @@
   </style>
 
   <!-- Button styles -->
+  <style name="AppTheme.Accent.White" parent="AppTheme">
+    <item name="colorAccent">@android:color/white</item>
+  </style>
+
   <style name="AppTheme.Button.Theme" parent="AppTheme">
   </style>
 
@@ -91,6 +95,10 @@
     <item name="android:height">?android:attr/actionBarSize</item>
     <item name="android:background">@color/colorPrimary</item>
     <item name="contentInsetStartWithNavigation">0dp</item>
+  </style>
+
+  <style name="AppTheme.ProgressBar.White" parent="Widget.AppCompat.ProgressBar">
+    <item name="android:theme">@style/AppTheme.Accent.White</item>
   </style>
 
 </resources>

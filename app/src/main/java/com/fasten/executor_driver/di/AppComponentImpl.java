@@ -81,6 +81,7 @@ import com.fasten.executor_driver.interactor.OrderCurrentCostUseCaseImpl;
 import com.fasten.executor_driver.interactor.OrderFulfillmentTimeUseCaseImpl;
 import com.fasten.executor_driver.interactor.OrderRouteUseCaseImpl;
 import com.fasten.executor_driver.interactor.OrderUseCaseImpl;
+import com.fasten.executor_driver.interactor.ServerConnectionUseCase;
 import com.fasten.executor_driver.interactor.ServerConnectionUseCaseImpl;
 import com.fasten.executor_driver.interactor.WaitingForClientUseCaseImpl;
 import com.fasten.executor_driver.interactor.auth.LoginSharer;
@@ -149,6 +150,7 @@ import com.fasten.executor_driver.view.OrderFulfillmentFragment;
 import com.fasten.executor_driver.view.OrderRouteFragment;
 import com.fasten.executor_driver.view.SelectedVehicleFragment;
 import com.fasten.executor_driver.view.SelectedVehicleOptionsFragment;
+import com.fasten.executor_driver.view.ServerConnectionFragment;
 import com.fasten.executor_driver.view.ServicesFragment;
 import com.fasten.executor_driver.view.VehicleOptionsFragment;
 import com.fasten.executor_driver.view.WaitingForClientFragment;
@@ -174,6 +176,8 @@ public class AppComponentImpl implements AppComponent {
   private final ApiService apiService;
   @NonNull
   private final StompClient stompClient;
+  @NonNull
+  private final ServerConnectionUseCase serverConnectionUseCase;
   @NonNull
   private final ExecutorStateUseCase executorStateUseCase;
   @NonNull
@@ -207,6 +211,11 @@ public class AppComponentImpl implements AppComponent {
     loginSharer = new LoginSharer(appSettingsService);
     vehicleChoiceSharer = new VehicleChoiceSharer();
     lastUsedVehicleGateway = new LastUsedVehicleGatewayImpl(appSettingsService);
+    serverConnectionUseCase = new ServerConnectionUseCaseImpl(
+        new ServerConnectionGatewayImpl(
+            stompClient
+        )
+    );
     cancelOrderUseCase = new CancelOrderUseCaseImpl(
         new CancelOrderGatewayImpl(
             stompClient,
@@ -280,11 +289,7 @@ public class AppComponentImpl implements AppComponent {
   public void inject(MainApplication mainApplication) {
     mainApplication.setServerConnectionViewModel(
         new ServerConnectionViewModelImpl(
-            new ServerConnectionUseCaseImpl(
-                new ServerConnectionGatewayImpl(
-                    stompClient
-                )
-            )
+            serverConnectionUseCase
         )
     );
     mainApplication.setCancelOrderReasonsViewModel(
@@ -916,6 +921,20 @@ public class AppComponentImpl implements AppComponent {
                 )
             )
         ).get(BalanceViewModelImpl.class)
+    );
+  }
+
+  @Override
+  public void inject(ServerConnectionFragment serverConnectionFragment) {
+    serverConnectionFragment.setServerConnectionViewModel(
+        ViewModelProviders.of(
+            serverConnectionFragment,
+            new ViewModelFactory<>(
+                new ServerConnectionViewModelImpl(
+                    serverConnectionUseCase
+                )
+            )
+        ).get(ServerConnectionViewModelImpl.class)
     );
   }
 }

@@ -4,6 +4,7 @@
   <string name="phone_number">Номер телефона</string>
   <string name="server_data_format_error">Ошибка формата данных от сервера</string>
   <string name="no_network_connection">Отсуствует подключение к сети</string>
+  <string name="no_network_connecting">Соединение отсутствует.\nВосстанавливаем связь…</string>
   <string name="sms_network_error">Ошибка соединения,\nповторите попытку</string>
   <string name="code_network_error">Ошибка соединения,\nвведите код еще раз</string>
   <string name="server_fail">Ошибка взаимодействия с сервером</string>
