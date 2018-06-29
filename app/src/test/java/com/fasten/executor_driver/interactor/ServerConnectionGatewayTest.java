@@ -78,7 +78,7 @@ public class ServerConnectionGatewayTest {
   }
 
   /**
-   * Должен запросить у клиента STOMP подписку на событие соединения, проверить статуса соединения.
+   * Должен запросить у клиента STOMP подписку на событие соединения, проверить статус соединения.
    * Должен запросить соединение, если не соединен и не соединяется.
    */
   @Test
@@ -94,26 +94,6 @@ public class ServerConnectionGatewayTest {
     inOrder.verify(stompClient).isConnected();
     inOrder.verify(stompClient).isConnecting();
     inOrder.verify(stompClient).connect();
-    verifyNoMoreInteractions(stompClient);
-  }
-
-  /**
-   * Должен запросить у клиента STOMP закрытие соединения, если была отписка.
-   */
-  @Test
-  public void askStompClientToDisconnectOnCancel() {
-    // Дано:
-    InOrder inOrder = Mockito.inOrder(stompClient);
-
-    // Действие:
-    gateway.openSocket().test().dispose();
-
-    // Результат:
-    inOrder.verify(stompClient).lifecycle();
-    inOrder.verify(stompClient).isConnected();
-    inOrder.verify(stompClient).isConnecting();
-    inOrder.verify(stompClient).connect();
-    inOrder.verify(stompClient).disconnect();
     verifyNoMoreInteractions(stompClient);
   }
 

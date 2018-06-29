@@ -52,7 +52,6 @@ public class ServerConnectionGatewayImpl implements ServerConnectionGateway {
           }
           emitter.onComplete();
         }, BackpressureStrategy.BUFFER))
-        .doOnCancel(stompClient::disconnect)
         .observeOn(Schedulers.single());
   }
 }
