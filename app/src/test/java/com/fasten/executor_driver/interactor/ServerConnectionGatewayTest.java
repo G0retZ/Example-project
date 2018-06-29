@@ -169,10 +169,10 @@ public class ServerConnectionGatewayTest {
   }
 
   /**
-   * Должен ответить завершением, если соединение было закрыто.
+   * Должен ответить False + ошибкой, если соединение было закрыто.
    */
   @Test
-  public void answerClosedAfterConnectionClosed() {
+  public void answerWithFalseAndErrorAfterConnectionClosed() {
     // Дано:
     when(stompClient.lifecycle()).thenReturn(
         Observable.just((new LifecycleEvent(Type.CLOSED))).concatWith(Observable.never())
@@ -182,16 +182,16 @@ public class ServerConnectionGatewayTest {
     TestSubscriber<Boolean> testSubscriber = gateway.openSocket().test();
 
     // Результат:
-    testSubscriber.assertNoValues();
-    testSubscriber.assertNoErrors();
-    testSubscriber.assertComplete();
+    testSubscriber.assertError(InterruptedException.class);
+    testSubscriber.assertValue(false);
+    testSubscriber.assertNotComplete();
   }
 
   /**
-   * Должен ответить ошибкой, если соединение провалилось.
+   * Должен ответить False + ошибкой, если соединение провалилось.
    */
   @Test
-  public void answerOpenErrorAfterFailed() {
+  public void answerWithFalseAndErrorAfterFailed() {
     // Дано:
     when(stompClient.lifecycle()).thenReturn(
         Observable.just((new LifecycleEvent(Type.ERROR, new NoNetworkException())))
@@ -203,7 +203,7 @@ public class ServerConnectionGatewayTest {
 
     // Результат:
     testSubscriber.assertError(NoNetworkException.class);
+    testSubscriber.assertValue(false);
     testSubscriber.assertNotComplete();
-    testSubscriber.assertNoValues();
   }
 }

@@ -26,15 +26,22 @@ public class ServerConnectionGatewayImpl implements ServerConnectionGateway {
     return stompClient.lifecycle()
         .toFlowable(BackpressureStrategy.BUFFER)
         .subscribeOn(Schedulers.io())
-        .takeWhile(lifecycleEvent -> lifecycleEvent.getType() != LifecycleEvent.Type.CLOSED)
         .switchMap((Function<LifecycleEvent, Publisher<Boolean>>) lifecycleEvent -> {
           switch (lifecycleEvent.getType()) {
             case OPENED:
               return Flowable.just(true);
             case ERROR:
-              return Flowable.error(lifecycleEvent.getException());
+              return Flowable.just(false).concatWith(
+                  Flowable.error(lifecycleEvent.getException())
+              );
+            case CLOSED:
+              return Flowable.just(false).concatWith(
+                  Flowable.error(InterruptedException::new)
+              );
             default:
-              return Flowable.error(new Exception());
+              return Flowable.just(false).concatWith(
+                  Flowable.error(Exception::new)
+              );
           }
         })
         .startWith(Flowable.create(emitter -> {
