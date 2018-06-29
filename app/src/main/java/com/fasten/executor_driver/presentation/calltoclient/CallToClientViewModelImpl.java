@@ -55,7 +55,7 @@ public class CallToClientViewModelImpl extends ViewModel implements CallToClient
         .subscribeOn(Schedulers.single())
         .observeOn(AndroidSchedulers.mainThread())
         .doOnComplete(() -> viewStateLiveData.postValue(new CallToClientViewStateIdle()))
-        .delay(10, TimeUnit.SECONDS, Schedulers.io())
+        .delay(10, TimeUnit.SECONDS)
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(
             () -> navigateLiveData.postValue(CallToClientNavigate.FINISHED),

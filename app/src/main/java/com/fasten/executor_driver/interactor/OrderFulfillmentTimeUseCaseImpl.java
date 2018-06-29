@@ -28,8 +28,9 @@ public class OrderFulfillmentTimeUseCaseImpl implements OrderFulfillmentTimeUseC
         .switchMap(order -> {
               long offset =
                   Math.round((timeUtils.currentTimeMillis() - order.getOrderStartTime()) / 1000d);
-              return Flowable.interval(0, 1, TimeUnit.SECONDS, Schedulers.io())
-                  .map(count -> count + offset);
+          return Flowable.interval(0, 1, TimeUnit.SECONDS)
+              .map(count -> count + offset)
+              .observeOn(Schedulers.single());
             }
         );
   }

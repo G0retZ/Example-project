@@ -3,7 +3,6 @@ package com.fasten.executor_driver.interactor.map;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import io.reactivex.Flowable;
-import io.reactivex.schedulers.Schedulers;
 import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
 
@@ -27,9 +26,9 @@ public class HeatMapUseCaseImpl implements HeatMapUseCase {
     if (heatMapEmitter == null) {
       heatMapEmitter = gateway.getHeatMap()
           .repeatWhen(completed -> completed
-              .concatMap(v -> Flowable.timer(POLLING_INTERVAL, TimeUnit.MINUTES, Schedulers.io())))
+              .concatMap(v -> Flowable.timer(POLLING_INTERVAL, TimeUnit.MINUTES)))
           .retryWhen(failed -> failed
-              .concatMap(v -> Flowable.timer(POLLING_INTERVAL, TimeUnit.MINUTES, Schedulers.io())))
+              .concatMap(throwable -> Flowable.timer(POLLING_INTERVAL, TimeUnit.MINUTES)))
           .share();
     }
     return heatMapEmitter;

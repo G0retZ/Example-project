@@ -47,8 +47,8 @@ public class CallToClientViewModelTest {
   @Before
   public void setUp() {
     testScheduler = new TestScheduler();
+    RxJavaPlugins.setComputationSchedulerHandler(scheduler -> testScheduler);
     RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
-    RxJavaPlugins.setIoSchedulerHandler(scheduler -> testScheduler);
     RxAndroidPlugins.setInitMainThreadSchedulerHandler(scheduler -> Schedulers.trampoline());
     when(callToClientUseCase.callToClient()).thenReturn(Completable.never());
     viewModel = new CallToClientViewModelImpl(callToClientUseCase);

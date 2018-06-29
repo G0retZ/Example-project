@@ -52,7 +52,7 @@ public class OnlineButtonViewModelTest {
   @Before
   public void setUp() {
     testScheduler = new TestScheduler();
-    RxJavaPlugins.setIoSchedulerHandler(scheduler -> testScheduler);
+    RxJavaPlugins.setComputationSchedulerHandler(scheduler -> testScheduler);
     RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
     RxAndroidPlugins.setInitMainThreadSchedulerHandler(scheduler -> Schedulers.trampoline());
     when(vehiclesAndOptionsUseCase.loadVehiclesAndOptions()).thenReturn(Completable.never());

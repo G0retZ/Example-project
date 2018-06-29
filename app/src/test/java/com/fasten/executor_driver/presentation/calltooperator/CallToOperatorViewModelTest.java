@@ -36,7 +36,7 @@ public class CallToOperatorViewModelTest {
   @Before
   public void setUp() {
     testScheduler = new TestScheduler();
-    RxJavaPlugins.setIoSchedulerHandler(scheduler -> testScheduler);
+    RxJavaPlugins.setComputationSchedulerHandler(scheduler -> testScheduler);
     RxAndroidPlugins.setInitMainThreadSchedulerHandler(scheduler -> Schedulers.trampoline());
     viewModel = new CallToOperatorViewModelImpl();
   }

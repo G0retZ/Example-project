@@ -37,8 +37,7 @@ public class CurrentCostPollingGatewayImpl implements CurrentCostPollingGateway 
           .takeWhile(stompMessage -> stompMessage.findHeader("OverPackage").equals("1"))
           .map(stompMessage -> mapper.map(stompMessage.getPayload()))
           .switchMap(pair -> Flowable
-              .interval(pair.first, pair.second, TimeUnit.MILLISECONDS, Schedulers.io())
-              .observeOn(Schedulers.computation())
+              .interval(pair.first, pair.second, TimeUnit.MILLISECONDS)
           ).flatMapCompletable(
               b -> stompClient.send(BuildConfig.POLLING_DESTINATION, "\"\"")
           ).observeOn(Schedulers.single());

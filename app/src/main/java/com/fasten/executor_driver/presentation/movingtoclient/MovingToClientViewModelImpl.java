@@ -58,7 +58,7 @@ public class MovingToClientViewModelImpl extends ViewModel implements MovingToCl
           viewStateLiveData.postValue(new MovingToClientViewStateCalling());
           navigateLiveData.postValue(MovingToClientNavigate.CALL_TO_CLIENT);
         })
-        .delay(10, TimeUnit.SECONDS, Schedulers.io())
+        .delay(10, TimeUnit.SECONDS)
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(
             () -> viewStateLiveData.postValue(new MovingToClientViewStateIdle()), throwable -> {

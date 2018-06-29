@@ -38,7 +38,7 @@ public class OrderFulfillmentTimeUseCaseTest {
   @Before
   public void setUp() {
     testScheduler = new TestScheduler();
-    RxJavaPlugins.setIoSchedulerHandler(scheduler -> testScheduler);
+    RxJavaPlugins.setComputationSchedulerHandler(scheduler -> testScheduler);
     when(gateway.getOrders()).thenReturn(Flowable.never());
     useCase = new OrderFulfillmentTimeUseCaseImpl(gateway, timeUtils);
   }

@@ -45,7 +45,7 @@ public class SmsButtonViewModelTest {
   @Before
   public void setUp() {
     testScheduler = new TestScheduler();
-    RxJavaPlugins.setIoSchedulerHandler(scheduler -> testScheduler);
+    RxJavaPlugins.setComputationSchedulerHandler(scheduler -> testScheduler);
     RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
     RxAndroidPlugins.setInitMainThreadSchedulerHandler(scheduler -> Schedulers.trampoline());
     when(smsUseCase.sendMeCode()).thenReturn(Completable.never());

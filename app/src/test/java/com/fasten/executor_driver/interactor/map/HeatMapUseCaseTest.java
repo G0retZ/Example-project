@@ -10,6 +10,7 @@ import com.fasten.executor_driver.backend.web.NoNetworkException;
 import io.reactivex.Single;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.plugins.RxJavaPlugins;
+import io.reactivex.schedulers.Schedulers;
 import io.reactivex.schedulers.TestScheduler;
 import io.reactivex.subscribers.TestSubscriber;
 import java.util.concurrent.Callable;
@@ -38,7 +39,8 @@ public class HeatMapUseCaseTest {
   @Before
   public void setUp() {
     testScheduler = new TestScheduler();
-    RxJavaPlugins.setIoSchedulerHandler(scheduler -> testScheduler);
+    RxJavaPlugins.setComputationSchedulerHandler(scheduler -> testScheduler);
+    RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
     when(gateway.getHeatMap()).thenReturn(Single.never());
     useCase = new HeatMapUseCaseImpl(gateway);
   }

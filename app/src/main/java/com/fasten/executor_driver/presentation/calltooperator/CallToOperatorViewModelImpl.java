@@ -10,7 +10,6 @@ import io.reactivex.Completable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.internal.disposables.EmptyDisposable;
-import io.reactivex.schedulers.Schedulers;
 import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
 
@@ -44,7 +43,7 @@ public class CallToOperatorViewModelImpl extends ViewModel implements CallToOper
       return;
     }
     disposable = Completable.complete()
-        .delay(10, TimeUnit.SECONDS, Schedulers.io())
+        .delay(10, TimeUnit.SECONDS)
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(
             () -> navigateLiveData.postValue(CallToOperatorNavigate.FINISHED),

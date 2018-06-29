@@ -50,8 +50,8 @@ public class CurrentCostPollingGatewayTest {
   @Before
   public void setUp() {
     testScheduler = new TestScheduler();
-    RxJavaPlugins.setIoSchedulerHandler(scheduler -> testScheduler);
-    RxJavaPlugins.setComputationSchedulerHandler(scheduler -> Schedulers.trampoline());
+    RxJavaPlugins.setComputationSchedulerHandler(scheduler -> testScheduler);
+    RxJavaPlugins.setIoSchedulerHandler(scheduler -> Schedulers.trampoline());
     RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
     ExecutorState.MOVING_TO_CLIENT.setData(null);
     when(stompClient.send(anyString(), anyString())).thenReturn(Completable.never());

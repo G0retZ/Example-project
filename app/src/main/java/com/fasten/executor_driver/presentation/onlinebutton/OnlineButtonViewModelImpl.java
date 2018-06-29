@@ -96,8 +96,8 @@ public class OnlineButtonViewModelImpl extends ViewModel implements OnlineButton
   }
 
   private void holdButton(int duration) {
-    timerDisposable = Completable.complete()
-        .delay(duration, TimeUnit.SECONDS, Schedulers.io())
+    timerDisposable = Completable.timer(duration, TimeUnit.SECONDS)
+        .observeOn(AndroidSchedulers.mainThread())
         .subscribe(() -> {
           if (viewStateLiveData.getValue() instanceof OnlineButtonViewStateHold) {
             viewStateLiveData.postValue(new OnlineButtonViewStateReady());
