@@ -52,22 +52,17 @@ public class ServerConnectionViewModelImpl extends ViewModel implements ServerCo
     disposable = serverConnectionUseCase.connect()
         .subscribeOn(Schedulers.single())
         .observeOn(AndroidSchedulers.mainThread())
-        .subscribe(connected ->
+        .subscribe(
+            connected ->
                 viewStateLiveData.postValue(viewActions ->
                     viewActions.showConnectionReady(connected)
-                ), throwable -> {
+                ),
+            throwable -> {
               throwable.printStackTrace();
-              viewStateLiveData.postValue(viewActions ->
-                  viewActions.showConnectionReady(false)
-              );
               if ((throwable instanceof AuthorizationException)) {
                 navigateLiveData.postValue(ServerConnectionNavigate.AUTHORIZE);
-              } else {
-                navigateLiveData.postValue(ServerConnectionNavigate.NO_CONNECTION);
               }
-            }, () -> viewStateLiveData.postValue(viewActions ->
-                viewActions.showConnectionReady(false)
-            )
+            }
         );
   }
 

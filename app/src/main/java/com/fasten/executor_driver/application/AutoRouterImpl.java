@@ -154,18 +154,6 @@ public class AutoRouterImpl implements ActivityLifecycleCallbacks, AutoRouter,
       return;
     }
     switch (lastRouteAction) {
-      case ServerConnectionNavigate.NO_CONNECTION:
-        new Builder(currentActivity)
-            .setTitle(R.string.error)
-            .setMessage("Без сети не работаем!")
-            .setCancelable(false)
-            .setPositiveButton(
-                currentActivity.getString(android.R.string.ok),
-                (a, b) -> android.os.Process.killProcess(android.os.Process.myPid())
-            )
-            .create()
-            .show();
-        break;
       case ServerConnectionNavigate.AUTHORIZE:
         currentActivity.startActivity(
             new Intent(currentActivity, LoginActivity.class)

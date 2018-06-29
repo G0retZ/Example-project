@@ -4,11 +4,12 @@ import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
-import android.accounts.AuthenticatorException;
 import android.arch.core.executor.testing.InstantTaskExecutorRule;
 import android.arch.lifecycle.Observer;
+import com.fasten.executor_driver.backend.web.AuthorizationException;
 import com.fasten.executor_driver.backend.web.NoNetworkException;
 import com.fasten.executor_driver.interactor.ServerConnectionUseCase;
 import com.fasten.executor_driver.presentation.ViewState;
@@ -110,13 +111,13 @@ public class ServerConnectionViewModelTest {
   }
 
   /**
-   * Должен отобразить отсустсвие подключения, если оно было завершено.
+   * Не должен ничего показывать при ошибке.
    */
   @Test
-  public void showNoServerConnectionOnCompletion() {
-    // Дано:
+  public void showNothingOnError() {
     InOrder inOrder = Mockito.inOrder(viewActions);
-    when(executorStateUseCase.connect()).thenReturn(Flowable.just(true));
+    when(executorStateUseCase.connect())
+        .thenReturn(Flowable.just(true, false).concatWith(Flowable.error(NoNetworkException::new)));
 
     // Действие:
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
@@ -133,66 +134,29 @@ public class ServerConnectionViewModelTest {
   }
 
   /**
-   * Должен показать отсустсвие подключения, если при ошибке сети.
+   * Не должен ничего показывать при завершении.
    */
   @Test
-  public void showNoServerConnectionOnNetworkError() {
+  public void showNothingOnCompletion() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewActions);
-    when(executorStateUseCase.connect()).thenReturn(Flowable.error(NoNetworkException::new));
+    when(executorStateUseCase.connect()).thenReturn(Flowable.just(true, false));
 
     // Действие:
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
     viewModel.connectServer();
 
     // Результат:
-    verify(viewStateObserver, only()).onChanged(viewStateCaptor.capture());
+    verify(viewStateObserver, times(2)).onChanged(viewStateCaptor.capture());
     for (ViewState<ServerConnectionViewActions> value : viewStateCaptor.getAllValues()) {
       value.apply(viewActions);
     }
+    inOrder.verify(viewActions).showConnectionReady(true);
     inOrder.verify(viewActions).showConnectionReady(false);
-    verifyNoMoreInteractions(viewActions);
-  }
-
-  /**
-   * Должен показать показать отсустсвие подключения, если при ошибке авторизации.
-   */
-  @Test
-  public void showNoServerConnectionOnAuthError() {
-    // Дано:
-    InOrder inOrder = Mockito.inOrder(viewActions);
-    when(executorStateUseCase.connect()).thenReturn(Flowable.error(AuthenticatorException::new));
-
-    // Действие:
-    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
-    viewModel.connectServer();
-
-    // Результат:
-    verify(viewStateObserver, only()).onChanged(viewStateCaptor.capture());
-    for (ViewState<ServerConnectionViewActions> value : viewStateCaptor.getAllValues()) {
-      value.apply(viewActions);
-    }
-    inOrder.verify(viewActions).showConnectionReady(false);
-    verifyNoMoreInteractions(viewActions);
+    verifyNoMoreInteractions(viewStateObserver, viewActions);
   }
 
   /* Тетсируем навигацию. */
-
-  /**
-   * Должен вернуть "перейти к отсутствию сети".
-   */
-  @Test
-  public void navigateToNoNetwork() {
-    // Дано:
-    when(executorStateUseCase.connect()).thenReturn(Flowable.error(NoNetworkException::new));
-
-    // Действие:
-    viewModel.getNavigationLiveData().observeForever(navigationObserver);
-    viewModel.connectServer();
-
-    // Результат:
-    verify(navigationObserver, only()).onChanged(ServerConnectionNavigate.NO_CONNECTION);
-  }
 
   /**
    * Должен вернуть "перейти к авторизации".
@@ -200,13 +164,29 @@ public class ServerConnectionViewModelTest {
   @Test
   public void navigateToAuthorize() {
     // Дано:
-    when(executorStateUseCase.connect()).thenReturn(Flowable.error(AuthenticatorException::new));
+    when(executorStateUseCase.connect()).thenReturn(Flowable.error(AuthorizationException::new));
 
     // Действие:
     viewModel.getNavigationLiveData().observeForever(navigationObserver);
     viewModel.connectServer();
 
     // Результат:
-    verify(navigationObserver, only()).onChanged(ServerConnectionNavigate.NO_CONNECTION);
+    verify(navigationObserver, only()).onChanged(ServerConnectionNavigate.AUTHORIZE);
+  }
+
+  /**
+   * Должен игноррировать прочие ошибки.
+   */
+  @Test
+  public void navigateToNoNetwork() {
+    // Дано:
+    when(executorStateUseCase.connect()).thenReturn(Flowable.error(Exception::new));
+
+    // Действие:
+    viewModel.getNavigationLiveData().observeForever(navigationObserver);
+    viewModel.connectServer();
+
+    // Результат:
+    verifyZeroInteractions(navigationObserver);
   }
 }

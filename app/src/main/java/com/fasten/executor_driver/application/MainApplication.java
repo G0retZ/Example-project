@@ -202,9 +202,6 @@ public class MainApplication extends Application implements ServerConnectionView
       return;
     }
     switch (destination) {
-      case ServerConnectionNavigate.NO_CONNECTION:
-        stopService();
-        break;
       case ServerConnectionNavigate.AUTHORIZE:
         stopService();
         break;
