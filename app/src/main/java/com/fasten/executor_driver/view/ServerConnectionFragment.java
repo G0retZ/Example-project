@@ -32,7 +32,7 @@ public class ServerConnectionFragment extends BaseFragment implements ServerConn
   public View onCreateView(@NonNull LayoutInflater inflater,
       @Nullable ViewGroup container,
       @Nullable Bundle savedInstanceState) {
-    rootView = inflater.inflate(R.layout.fragment_no_connection, container, false);
+    rootView = inflater.inflate(R.layout.fragment_server_connection, container, false);
     return rootView;
   }
 
