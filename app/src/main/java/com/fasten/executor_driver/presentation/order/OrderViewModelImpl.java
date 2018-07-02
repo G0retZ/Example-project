@@ -79,8 +79,6 @@ public class OrderViewModelImpl extends ViewModel implements
   @Override
   protected void onCleared() {
     super.onCleared();
-    if (!disposable.isDisposed()) {
-      disposable.dispose();
-    }
+    disposable.dispose();
   }
 }

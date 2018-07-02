@@ -90,9 +90,7 @@ public class MovingToClientViewModelImpl extends ViewModel implements MovingToCl
   @Override
   protected void onCleared() {
     super.onCleared();
-    if (!disposable.isDisposed()) {
-      disposable.dispose();
-    }
+    disposable.dispose();
     callingDisposable.dispose();
   }
 }

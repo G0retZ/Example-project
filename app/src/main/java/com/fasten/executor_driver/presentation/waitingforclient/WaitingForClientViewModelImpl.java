@@ -66,8 +66,6 @@ public class WaitingForClientViewModelImpl extends ViewModel implements WaitingF
   @Override
   protected void onCleared() {
     super.onCleared();
-    if (!actionsDisposable.isDisposed()) {
-      actionsDisposable.dispose();
-    }
+    actionsDisposable.dispose();
   }
 }

@@ -58,8 +58,6 @@ public class CallToOperatorViewModelImpl extends ViewModel implements CallToOper
   @Override
   protected void onCleared() {
     super.onCleared();
-    if (!disposable.isDisposed()) {
-      disposable.dispose();
-    }
+    disposable.dispose();
   }
 }

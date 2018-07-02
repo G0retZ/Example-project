@@ -81,8 +81,6 @@ public class CodeViewModelImpl extends ViewModel implements CodeViewModel {
   @Override
   protected void onCleared() {
     super.onCleared();
-    if (!disposable.isDisposed()) {
-      disposable.dispose();
-    }
+    disposable.dispose();
   }
 }
