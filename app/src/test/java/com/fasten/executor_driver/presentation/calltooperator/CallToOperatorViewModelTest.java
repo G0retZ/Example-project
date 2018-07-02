@@ -1,7 +1,9 @@
 package com.fasten.executor_driver.presentation.calltooperator;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.verifyZeroInteractions;
 
 import android.arch.core.executor.testing.InstantTaskExecutorRule;
@@ -17,7 +19,9 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestRule;
 import org.junit.runner.RunWith;
+import org.mockito.InOrder;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -44,17 +48,53 @@ public class CallToOperatorViewModelTest {
   /* Тетсируем переключение состояний. */
 
   /**
-   * Не должен возвращать никаких состояний вида.
+   * Должен вернуть состояние вида "не звоним" изначально.
    */
   @Test
-  public void setNoViewStateToLiveDataEver() {
+  public void setNotCallingViewStateToLiveDataInitially() {
     // Действие:
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
-    viewModel.callToOperator();
-    testScheduler.advanceTimeBy(20, TimeUnit.MINUTES);
 
     // Результат:
-    verifyZeroInteractions(viewStateObserver);
+    verify(viewStateObserver, only()).onChanged(any(CallToOperatorViewStateNotCalling.class));
+  }
+
+  /**
+   * Должен вернуть состояние вида "звоним".
+   */
+  @Test
+  public void setCallingViewStateToLiveDataForComplete() {
+    // Дано:
+    InOrder inOrder = Mockito.inOrder(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
+
+    // Действие:
+    viewModel.callToOperator();
+
+    // Результат:
+    inOrder.verify(viewStateObserver).onChanged(any(CallToOperatorViewStateNotCalling.class));
+    inOrder.verify(viewStateObserver).onChanged(any(CallToOperatorViewStateCalling.class));
+    verifyNoMoreInteractions(viewStateObserver);
+  }
+
+  /**
+   * Должен вернуть состояние вида "не звоним" по истечении 10 секунд.
+   */
+  @Test
+  public void setNotCallingViewStateToLiveData10SecondsAfterCall() {
+    // Дано:
+    InOrder inOrder = Mockito.inOrder(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
+
+    // Действие:
+    viewModel.callToOperator();
+    testScheduler.advanceTimeBy(10, TimeUnit.SECONDS);
+
+    // Результат:
+    inOrder.verify(viewStateObserver).onChanged(any(CallToOperatorViewStateNotCalling.class));
+    inOrder.verify(viewStateObserver).onChanged(any(CallToOperatorViewStateCalling.class));
+    inOrder.verify(viewStateObserver).onChanged(any(CallToOperatorViewStateNotCalling.class));
+    verifyNoMoreInteractions(viewStateObserver);
   }
 
   /* Тетсируем навигацию. */
@@ -72,7 +112,7 @@ public class CallToOperatorViewModelTest {
   }
 
   /**
-   * Не должен никуда переходить для вида "В процессе".
+   * Не должен никуда переходить при запросе.
    */
   @Test
   public void doNotSetNavigate() {
@@ -87,7 +127,7 @@ public class CallToOperatorViewModelTest {
   }
 
   /**
-   * Не должен никуда переходить.
+   * Не должен никуда переходить и через 10 минут.
    */
   @Test
   public void doNotSetNavigateAfter9999ms() {
@@ -96,25 +136,9 @@ public class CallToOperatorViewModelTest {
 
     // Действие:
     viewModel.callToOperator();
-    testScheduler.advanceTimeBy(9999, TimeUnit.MILLISECONDS);
+    testScheduler.advanceTimeBy(10, TimeUnit.MINUTES);
 
     // Результат:
     verifyZeroInteractions(navigateObserver);
-  }
-
-  /**
-   * Должен вернуть "перейти к финишу" через 10 секунд после успеха запроса дозвона.
-   */
-  @Test
-  public void setNavigateToFinishAfter10SecondsLater() {
-    // Дано:
-    viewModel.getNavigationLiveData().observeForever(navigateObserver);
-
-    // Действие:
-    viewModel.callToOperator();
-    testScheduler.advanceTimeBy(10, TimeUnit.SECONDS);
-
-    // Результат:
-    verify(navigateObserver, only()).onChanged(CallToOperatorNavigate.FINISHED);
   }
 }

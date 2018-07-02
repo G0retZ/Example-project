@@ -90,7 +90,7 @@ public class CallToClientViewModelTest {
    * Должен вернуть состояние вида "не звоним" изначально.
    */
   @Test
-  public void setPendingViewStateToLiveDataInitially() {
+  public void setNotCallingViewStateToLiveDataInitially() {
     // Действие:
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 

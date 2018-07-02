@@ -7,7 +7,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
 import com.fasten.executor_driver.R;
-import com.fasten.executor_driver.presentation.calltooperator.CallToOperatorNavigate;
 import com.fasten.executor_driver.presentation.cancelorder.CancelOrderNavigate;
 import com.fasten.executor_driver.presentation.waitingforclient.WaitingForClientNavigate;
 import com.fasten.executor_driver.view.CallToClientFragment;
@@ -50,12 +49,6 @@ public class WaitingForClientActivity extends BaseActivity {
         if (fragment == null) {
           getSupportFragmentManager().beginTransaction()
               .add(0, new CallToOperatorFragment(), "callToOperator").commit();
-        }
-        break;
-      case CallToOperatorNavigate.FINISHED:
-        fragment = getSupportFragmentManager().findFragmentByTag("callToOperator");
-        if (fragment != null) {
-          getSupportFragmentManager().beginTransaction().remove(fragment).commit();
         }
         break;
       default:

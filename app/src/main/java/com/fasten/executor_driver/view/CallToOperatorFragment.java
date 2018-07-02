@@ -54,9 +54,12 @@ public class CallToOperatorFragment extends BaseFragment implements CallToOperat
     });
   }
 
-  @Override
-  public void onResume() {
-    super.onResume();
+  public void callToOperator() {
     callToOperatorViewModel.callToOperator();
+  }
+
+  @Override
+  public void showCallingToOperator(boolean calling) {
+
   }
 }

@@ -60,6 +60,7 @@ public class CallToClientViewModelImpl extends ViewModel implements CallToClient
         .subscribe(
             () -> viewStateLiveData.postValue(new CallToClientViewStateNotCalling()),
             throwable -> {
+              throwable.printStackTrace();
               viewStateLiveData.postValue(new CallToClientViewStateNotCalling());
               navigateLiveData.postValue(CallToClientNavigate.NO_CONNECTION);
             }

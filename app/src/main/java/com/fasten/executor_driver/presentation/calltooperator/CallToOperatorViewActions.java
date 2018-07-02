@@ -5,4 +5,10 @@ package com.fasten.executor_driver.presentation.calltooperator;
  */
 public interface CallToOperatorViewActions {
 
+  /**
+   * Показать статус звонка.
+   *
+   * @param calling - звоним или нет?
+   */
+  void showCallingToOperator(boolean calling);
 }
