@@ -48,7 +48,7 @@ public class ServerConnectionGatewayImpl implements ServerConnectionGateway {
           if (stompClient.isConnected()) {
             emitter.onNext(true);
           } else if (!stompClient.isConnecting()) {
-            stompClient.connect();
+            stompClient.reconnect();
           }
           emitter.onComplete();
         }, BackpressureStrategy.BUFFER))

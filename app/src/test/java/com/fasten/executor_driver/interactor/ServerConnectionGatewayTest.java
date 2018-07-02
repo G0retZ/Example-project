@@ -93,7 +93,7 @@ public class ServerConnectionGatewayTest {
     inOrder.verify(stompClient).lifecycle();
     inOrder.verify(stompClient).isConnected();
     inOrder.verify(stompClient).isConnecting();
-    inOrder.verify(stompClient).connect();
+    inOrder.verify(stompClient).reconnect();
     verifyNoMoreInteractions(stompClient);
   }
 
