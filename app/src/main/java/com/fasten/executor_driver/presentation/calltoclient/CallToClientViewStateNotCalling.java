@@ -4,7 +4,7 @@ import android.support.annotation.NonNull;
 import com.fasten.executor_driver.presentation.ViewState;
 
 /**
- * Состояние бездействия вида заказа.
+ * Состояние вида отсутсвия процесса звонка клиенту.
  */
 final class CallToClientViewStateNotCalling implements ViewState<CallToClientViewActions> {
 

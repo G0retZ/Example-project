@@ -117,7 +117,7 @@ public class CallToClientViewModelTest {
   }
 
   /**
-   * Должен вернуть состояние вида бездействия "не звоним" при ошибке сети.
+   * Должен вернуть состояние вида "не звоним" при ошибке сети.
    */
   @Test
   public void setNotCallingViewStateToLiveDataForError() {
@@ -139,7 +139,7 @@ public class CallToClientViewModelTest {
   }
 
   /**
-   * Не должен возвращать никакого состояния вида.
+   * Должен вернуть состояние вида "звоним".
    */
   @Test
   public void setCallingViewStateToLiveDataForComplete() {
@@ -159,10 +159,10 @@ public class CallToClientViewModelTest {
   }
 
   /**
-   * Не должен возвращать никакого состояния вида по истечении 20 секунд.
+   * Должен вернуть состояние вида "не звоним" по истечении 10 секунд.
    */
   @Test
-  public void setNotCallingViewStateToLiveData20SecondsAfterCall() {
+  public void setNotCallingViewStateToLiveData10SecondsAfterCall() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     when(callToClientUseCase.callToClient()).thenReturn(Completable.complete());
@@ -170,7 +170,7 @@ public class CallToClientViewModelTest {
 
     // Действие:
     viewModel.callToClient();
-    testScheduler.advanceTimeBy(20, TimeUnit.SECONDS);
+    testScheduler.advanceTimeBy(10, TimeUnit.SECONDS);
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(any(CallToClientViewStateNotCalling.class));
