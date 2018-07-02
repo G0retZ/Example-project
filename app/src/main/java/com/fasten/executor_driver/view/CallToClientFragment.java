@@ -18,6 +18,7 @@ import javax.inject.Inject;
 
 public class CallToClientFragment extends BaseFragment implements CallToClientViewActions {
 
+  private View rootView;
   private CallToClientViewModel callToClientViewModel;
   private boolean pending;
 
@@ -31,7 +32,7 @@ public class CallToClientFragment extends BaseFragment implements CallToClientVi
   public View onCreateView(@NonNull LayoutInflater inflater,
       @Nullable ViewGroup container,
       @Nullable Bundle savedInstanceState) {
-    return inflater.inflate(R.layout.fragment_call_to_client, container, false);
+    return rootView = inflater.inflate(R.layout.fragment_call_to_client, container, false);
   }
 
   @Override
@@ -69,6 +70,6 @@ public class CallToClientFragment extends BaseFragment implements CallToClientVi
 
   @Override
   public void showCallingToClient(boolean calling) {
-
+    rootView.setVisibility(calling ? View.VISIBLE : View.GONE);
   }
 }

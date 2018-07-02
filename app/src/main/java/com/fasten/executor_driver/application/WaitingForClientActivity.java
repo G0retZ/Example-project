@@ -40,17 +40,16 @@ public class WaitingForClientActivity extends BaseActivity {
     Fragment fragment;
     switch (destination) {
       case WaitingForClientNavigate.CALL_TO_CLIENT:
-        fragment = getSupportFragmentManager().findFragmentByTag("callToClient");
-        if (fragment == null) {
-          getSupportFragmentManager().beginTransaction()
-              .add(R.id.callingMessage, new CallToClientFragment(), "callToClient").commit();
+        fragment = getSupportFragmentManager().findFragmentById(R.id.fragment_call_to_client);
+        if (fragment != null && fragment instanceof CallToClientFragment) {
+          ((CallToClientFragment) fragment).callToClient();
         }
         break;
       case CancelOrderNavigate.ORDER_CANCELED:
         fragment = getSupportFragmentManager().findFragmentByTag("callToOperator");
         if (fragment == null) {
           getSupportFragmentManager().beginTransaction()
-              .add(R.id.callingMessage, new CallToOperatorFragment(), "callToOperator").commit();
+              .add(0, new CallToOperatorFragment(), "callToOperator").commit();
         }
         break;
       case CallToOperatorNavigate.FINISHED:

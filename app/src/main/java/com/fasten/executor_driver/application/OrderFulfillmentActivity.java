@@ -47,10 +47,9 @@ public class OrderFulfillmentActivity extends BaseActivity {
         startActivity(new Intent(this, OrderFulfillmentDetailsActivity.class));
         break;
       case OrderFulfillmentMenuNavigate.CALL_TO_CLIENT:
-        fragment = getSupportFragmentManager().findFragmentByTag("callToClient");
-        if (fragment == null) {
-          getSupportFragmentManager().beginTransaction()
-              .add(R.id.callingMessage, new CallToClientFragment(), "callToClient").commit();
+        fragment = getSupportFragmentManager().findFragmentById(R.id.fragment_call_to_client);
+        if (fragment != null && fragment instanceof CallToClientFragment) {
+          ((CallToClientFragment) fragment).callToClient();
         }
         break;
       case OrderFulfillmentMenuNavigate.REPORT_A_PROBLEM:
@@ -62,7 +61,7 @@ public class OrderFulfillmentActivity extends BaseActivity {
         fragment = getSupportFragmentManager().findFragmentByTag("callToOperator");
         if (fragment == null) {
           getSupportFragmentManager().beginTransaction()
-              .add(R.id.callingMessage, new CallToOperatorFragment(), "callToOperator").commit();
+              .add(0, new CallToOperatorFragment(), "callToOperator").commit();
         }
         break;
       case CallToOperatorNavigate.FINISHED:
