@@ -5,7 +5,6 @@ import com.fasten.executor_driver.BuildConfig;
 import com.fasten.executor_driver.backend.websocket.ConnectionClosedException;
 import com.fasten.executor_driver.interactor.CurrentCostPollingGateway;
 import com.fasten.executor_driver.utils.Pair;
-import io.reactivex.BackpressureStrategy;
 import io.reactivex.Completable;
 import io.reactivex.Flowable;
 import io.reactivex.schedulers.Schedulers;
@@ -30,7 +29,6 @@ public class CurrentCostPollingGatewayImpl implements CurrentCostPollingGateway 
   public Completable startPolling(@NonNull String channelId) {
     if (stompClient.isConnected() || stompClient.isConnecting()) {
       return stompClient.topic(String.format(BuildConfig.STATUS_DESTINATION, channelId))
-          .toFlowable(BackpressureStrategy.BUFFER)
           .subscribeOn(Schedulers.io())
           .observeOn(Schedulers.computation())
           .filter(stompMessage -> stompMessage.findHeader("OverPackage") != null)

@@ -13,7 +13,7 @@ import com.fasten.executor_driver.backend.websocket.ConnectionClosedException;
 import com.fasten.executor_driver.gateway.DataMappingException;
 import com.fasten.executor_driver.gateway.Mapper;
 import com.fasten.executor_driver.gateway.OrderCurrentCostGatewayImpl;
-import io.reactivex.Observable;
+import io.reactivex.Flowable;
 import io.reactivex.plugins.RxJavaPlugins;
 import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subscribers.TestSubscriber;
@@ -44,7 +44,7 @@ public class OrderCurrentCostGatewayTest {
     RxJavaPlugins.setIoSchedulerHandler(scheduler -> Schedulers.trampoline());
     RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
     gateway = new OrderCurrentCostGatewayImpl(stompClient, mapper);
-    when(stompClient.topic(anyString())).thenReturn(Observable.never());
+    when(stompClient.topic(anyString())).thenReturn(Flowable.never());
   }
 
   /* Проверяем работу с клиентом STOMP */
@@ -116,7 +116,7 @@ public class OrderCurrentCostGatewayTest {
   public void askForMappingForTotalCostIfConnected() throws Exception {
     // Дано:
     when(stompClient.isConnected()).thenReturn(true);
-    when(stompClient.topic(anyString())).thenReturn(Observable.just(
+    when(stompClient.topic(anyString())).thenReturn(Flowable.just(
         new StompMessage("MESSAGE",
             Collections.singletonList(new StompHeader("TotalAmount", "")), "\n")
     ));
@@ -137,7 +137,7 @@ public class OrderCurrentCostGatewayTest {
   public void askForMappingForTotalCostIfConnectingAfterConnected() throws Exception {
     // Дано:
     when(stompClient.isConnecting()).thenReturn(true);
-    when(stompClient.topic(anyString())).thenReturn(Observable.just(
+    when(stompClient.topic(anyString())).thenReturn(Flowable.just(
         new StompMessage("MESSAGE",
             Collections.singletonList(new StompHeader("TotalAmount", "")), "\n")
     ));
@@ -160,7 +160,7 @@ public class OrderCurrentCostGatewayTest {
   public void ignoreWrongHeaderIfConnected() {
     // Дано:
     when(stompClient.isConnected()).thenReturn(true);
-    when(stompClient.topic(anyString())).thenReturn(Observable.just(
+    when(stompClient.topic(anyString())).thenReturn(Flowable.just(
         new StompMessage("MESSAGE", null, "SHIFT"),
         new StompMessage(
             "MESSAGE",
@@ -187,7 +187,7 @@ public class OrderCurrentCostGatewayTest {
     // Дано:
     doThrow(new DataMappingException()).when(mapper).map(any());
     when(stompClient.isConnected()).thenReturn(true);
-    when(stompClient.topic(anyString())).thenReturn(Observable.just(
+    when(stompClient.topic(anyString())).thenReturn(Flowable.just(
         new StompMessage("MESSAGE",
             Collections.singletonList(new StompHeader("TotalAmount", "")), "\n")
     ));
@@ -210,7 +210,7 @@ public class OrderCurrentCostGatewayTest {
     // Дано:
     when(mapper.map(any())).thenReturn(12345);
     when(stompClient.isConnected()).thenReturn(true);
-    when(stompClient.topic(anyString())).thenReturn(Observable.just(
+    when(stompClient.topic(anyString())).thenReturn(Flowable.just(
         new StompMessage("MESSAGE",
             Collections.singletonList(new StompHeader("TotalAmount", "")), "\n")
     ));
@@ -230,7 +230,7 @@ public class OrderCurrentCostGatewayTest {
   public void ignoreErrorIfConnected() {
     // Дано:
     when(stompClient.isConnected()).thenReturn(true);
-    when(stompClient.topic(anyString())).thenReturn(Observable.error(new NoNetworkException()));
+    when(stompClient.topic(anyString())).thenReturn(Flowable.error(new NoNetworkException()));
 
     // Действие:
     TestSubscriber<Integer> testSubscriber =
@@ -262,7 +262,7 @@ public class OrderCurrentCostGatewayTest {
   public void ignoreWrongHeaderIfConnectingAfterConnected() {
     // Дано:
     when(stompClient.isConnecting()).thenReturn(true);
-    when(stompClient.topic(anyString())).thenReturn(Observable.just(
+    when(stompClient.topic(anyString())).thenReturn(Flowable.just(
         new StompMessage("MESSAGE", null, "SHIFT"),
         new StompMessage(
             "MESSAGE",
@@ -290,7 +290,7 @@ public class OrderCurrentCostGatewayTest {
     // Дано:
     doThrow(new DataMappingException()).when(mapper).map(any());
     when(stompClient.isConnecting()).thenReturn(true);
-    when(stompClient.topic(anyString())).thenReturn(Observable.just(
+    when(stompClient.topic(anyString())).thenReturn(Flowable.just(
         new StompMessage("MESSAGE",
             Collections.singletonList(new StompHeader("TotalAmount", "")), "\n")
     ));
@@ -314,7 +314,7 @@ public class OrderCurrentCostGatewayTest {
     // Дано:
     when(mapper.map(any())).thenReturn(54321);
     when(stompClient.isConnecting()).thenReturn(true);
-    when(stompClient.topic(anyString())).thenReturn(Observable.just(
+    when(stompClient.topic(anyString())).thenReturn(Flowable.just(
         new StompMessage("MESSAGE",
             Collections.singletonList(new StompHeader("TotalAmount", "")), "\n")
     ));
@@ -336,7 +336,7 @@ public class OrderCurrentCostGatewayTest {
     // Дано:
     when(stompClient.isConnecting()).thenReturn(true);
     when(stompClient.topic(anyString()))
-        .thenReturn(Observable.error(new ConnectionClosedException()));
+        .thenReturn(Flowable.error(new ConnectionClosedException()));
 
     // Действие:
     TestSubscriber<Integer> testSubscriber =

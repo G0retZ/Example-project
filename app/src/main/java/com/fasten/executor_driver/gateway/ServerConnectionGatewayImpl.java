@@ -24,7 +24,6 @@ public class ServerConnectionGatewayImpl implements ServerConnectionGateway {
   @Override
   public Flowable<Boolean> openSocket() {
     return stompClient.lifecycle()
-        .toFlowable(BackpressureStrategy.BUFFER)
         .subscribeOn(Schedulers.io())
         .switchMap((Function<LifecycleEvent, Publisher<Boolean>>) lifecycleEvent -> {
           switch (lifecycleEvent.getType()) {

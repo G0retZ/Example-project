@@ -6,7 +6,6 @@ import com.fasten.executor_driver.BuildConfig;
 import com.fasten.executor_driver.backend.websocket.ConnectionClosedException;
 import com.fasten.executor_driver.entity.ExecutorState;
 import com.fasten.executor_driver.interactor.ExecutorStateGateway;
-import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
 import io.reactivex.schedulers.Schedulers;
 import javax.inject.Inject;
@@ -32,7 +31,6 @@ public class ExecutorStateGatewayImpl implements ExecutorStateGateway {
   public Flowable<ExecutorState> getState(@Nullable String channelId) {
     if (stompClient.isConnected() || stompClient.isConnecting()) {
       return stompClient.topic(String.format(BuildConfig.STATUS_DESTINATION, channelId))
-          .toFlowable(BackpressureStrategy.BUFFER)
           .subscribeOn(Schedulers.io())
           .onErrorResumeNext(Flowable.empty())
           .filter(stompMessage -> stompMessage.findHeader("Status") != null)

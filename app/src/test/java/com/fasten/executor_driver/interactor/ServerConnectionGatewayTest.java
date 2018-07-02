@@ -5,7 +5,7 @@ import static org.mockito.Mockito.when;
 
 import com.fasten.executor_driver.backend.web.NoNetworkException;
 import com.fasten.executor_driver.gateway.ServerConnectionGatewayImpl;
-import io.reactivex.Observable;
+import io.reactivex.Flowable;
 import io.reactivex.plugins.RxJavaPlugins;
 import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subscribers.TestSubscriber;
@@ -33,7 +33,7 @@ public class ServerConnectionGatewayTest {
     RxJavaPlugins.setIoSchedulerHandler(scheduler -> Schedulers.trampoline());
     RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
     gateway = new ServerConnectionGatewayImpl(stompClient);
-    when(stompClient.lifecycle()).thenReturn(Observable.never());
+    when(stompClient.lifecycle()).thenReturn(Flowable.never());
   }
 
   /* Проверяем работу с клиентом STOMP */
@@ -137,7 +137,7 @@ public class ServerConnectionGatewayTest {
   public void answerOpenSuccessAfterConnected() {
     // Дано:
     when(stompClient.lifecycle()).thenReturn(
-        Observable.just((new LifecycleEvent(Type.OPENED))).concatWith(Observable.never())
+        Flowable.just((new LifecycleEvent(Type.OPENED))).concatWith(Flowable.never())
     );
 
     // Действие:
@@ -155,7 +155,7 @@ public class ServerConnectionGatewayTest {
   public void answerWithFalseAndErrorAfterConnectionClosed() {
     // Дано:
     when(stompClient.lifecycle()).thenReturn(
-        Observable.just((new LifecycleEvent(Type.CLOSED))).concatWith(Observable.never())
+        Flowable.just((new LifecycleEvent(Type.CLOSED))).concatWith(Flowable.never())
     );
 
     // Действие:
@@ -174,8 +174,8 @@ public class ServerConnectionGatewayTest {
   public void answerWithFalseAndErrorAfterFailed() {
     // Дано:
     when(stompClient.lifecycle()).thenReturn(
-        Observable.just((new LifecycleEvent(Type.ERROR, new NoNetworkException())))
-            .concatWith(Observable.never())
+        Flowable.just((new LifecycleEvent(Type.ERROR, new NoNetworkException())))
+            .concatWith(Flowable.never())
     );
 
     // Действие:

@@ -15,7 +15,7 @@ import com.fasten.executor_driver.entity.ExecutorState;
 import com.fasten.executor_driver.gateway.DataMappingException;
 import com.fasten.executor_driver.gateway.ExecutorStateGatewayImpl;
 import com.fasten.executor_driver.gateway.Mapper;
-import io.reactivex.Observable;
+import io.reactivex.Flowable;
 import io.reactivex.plugins.RxJavaPlugins;
 import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subscribers.TestSubscriber;
@@ -46,7 +46,7 @@ public class ExecutorStateGatewayTest {
     RxJavaPlugins.setIoSchedulerHandler(scheduler -> Schedulers.trampoline());
     RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
     gateway = new ExecutorStateGatewayImpl(stompClient, mapper);
-    when(stompClient.topic(anyString())).thenReturn(Observable.never());
+    when(stompClient.topic(anyString())).thenReturn(Flowable.never());
   }
 
   /* Проверяем работу с клиентом STOMP */
@@ -114,7 +114,7 @@ public class ExecutorStateGatewayTest {
   public void doNotTouchMapperIfWrongHeaderIfConnected() {
     // Дано:
     when(stompClient.isConnected()).thenReturn(true);
-    when(stompClient.topic(anyString())).thenReturn(Observable.just(
+    when(stompClient.topic(anyString())).thenReturn(Flowable.just(
         new StompMessage("MESSAGE", null, "SHIFT"),
         new StompMessage(
             "MESSAGE",
@@ -137,7 +137,7 @@ public class ExecutorStateGatewayTest {
   public void doNotTouchMapperIfWrongHeaderIfConnectingAfterConnected() {
     // Дано:
     when(stompClient.isConnecting()).thenReturn(true);
-    when(stompClient.topic(anyString())).thenReturn(Observable.just(
+    when(stompClient.topic(anyString())).thenReturn(Flowable.just(
         new StompMessage("MESSAGE", null, "SHIFT"),
         new StompMessage(
             "MESSAGE",
@@ -162,7 +162,7 @@ public class ExecutorStateGatewayTest {
   public void askForMappingForStatusHeaderIfConnected() throws Exception {
     // Дано:
     when(stompClient.isConnected()).thenReturn(true);
-    when(stompClient.topic(anyString())).thenReturn(Observable.just(
+    when(stompClient.topic(anyString())).thenReturn(Flowable.just(
         new StompMessage(
             "MESSAGE",
             Collections.singletonList(
@@ -189,7 +189,7 @@ public class ExecutorStateGatewayTest {
   public void askForMappingForStatusHeaderIfConnectingAfterConnected() throws Exception {
     // Дано:
     when(stompClient.isConnecting()).thenReturn(true);
-    when(stompClient.topic(anyString())).thenReturn(Observable.just(
+    when(stompClient.topic(anyString())).thenReturn(Flowable.just(
         new StompMessage(
             "MESSAGE",
             Collections.singletonList(
@@ -217,7 +217,7 @@ public class ExecutorStateGatewayTest {
   public void ignoreWrongHeaderIfConnected() {
     // Дано:
     when(stompClient.isConnected()).thenReturn(true);
-    when(stompClient.topic(anyString())).thenReturn(Observable.just(
+    when(stompClient.topic(anyString())).thenReturn(Flowable.just(
         new StompMessage("MESSAGE", null, "SHIFT"),
         new StompMessage(
             "MESSAGE",
@@ -244,7 +244,7 @@ public class ExecutorStateGatewayTest {
     // Дано:
     doThrow(new DataMappingException()).when(mapper).map(any());
     when(stompClient.isConnected()).thenReturn(true);
-    when(stompClient.topic(anyString())).thenReturn(Observable.just(
+    when(stompClient.topic(anyString())).thenReturn(Flowable.just(
         new StompMessage(
             "MESSAGE",
             Collections.singletonList(new StompHeader("Status", "payload")),
@@ -270,7 +270,7 @@ public class ExecutorStateGatewayTest {
     // Дано:
     when(mapper.map(any())).thenReturn(ExecutorState.SHIFT_OPENED);
     when(stompClient.isConnected()).thenReturn(true);
-    when(stompClient.topic(anyString())).thenReturn(Observable.just(
+    when(stompClient.topic(anyString())).thenReturn(Flowable.just(
         new StompMessage(
             "MESSAGE",
             Collections.singletonList(new StompHeader("Status", "payload")),
@@ -293,7 +293,7 @@ public class ExecutorStateGatewayTest {
   public void ignoreErrorIfConnected() {
     // Дано:
     when(stompClient.isConnected()).thenReturn(true);
-    when(stompClient.topic(anyString())).thenReturn(Observable.error(new NoNetworkException()));
+    when(stompClient.topic(anyString())).thenReturn(Flowable.error(new NoNetworkException()));
 
     // Действие:
     TestSubscriber<ExecutorState> testSubscriber =
@@ -325,7 +325,7 @@ public class ExecutorStateGatewayTest {
   public void ignoreWrongHeaderIfConnectingAfterConnected() {
     // Дано:
     when(stompClient.isConnecting()).thenReturn(true);
-    when(stompClient.topic(anyString())).thenReturn(Observable.just(
+    when(stompClient.topic(anyString())).thenReturn(Flowable.just(
         new StompMessage("MESSAGE", null, "SHIFT"),
         new StompMessage(
             "MESSAGE",
@@ -353,7 +353,7 @@ public class ExecutorStateGatewayTest {
     // Дано:
     doThrow(new DataMappingException()).when(mapper).map(any());
     when(stompClient.isConnecting()).thenReturn(true);
-    when(stompClient.topic(anyString())).thenReturn(Observable.just(
+    when(stompClient.topic(anyString())).thenReturn(Flowable.just(
         new StompMessage(
             "MESSAGE",
             Collections.singletonList(new StompHeader("Status", "")),
@@ -381,7 +381,7 @@ public class ExecutorStateGatewayTest {
     // Дано:
     when(mapper.map(any())).thenReturn(ExecutorState.SHIFT_OPENED);
     when(stompClient.isConnecting()).thenReturn(true);
-    when(stompClient.topic(anyString())).thenReturn(Observable.just(
+    when(stompClient.topic(anyString())).thenReturn(Flowable.just(
         new StompMessage(
             "MESSAGE",
             Collections.singletonList(new StompHeader("Status", "")),
@@ -406,7 +406,7 @@ public class ExecutorStateGatewayTest {
     // Дано:
     when(stompClient.isConnecting()).thenReturn(true);
     when(stompClient.topic(anyString()))
-        .thenReturn(Observable.error(new ConnectionClosedException()));
+        .thenReturn(Flowable.error(new ConnectionClosedException()));
 
     // Действие:
     TestSubscriber<ExecutorState> testSubscriber =

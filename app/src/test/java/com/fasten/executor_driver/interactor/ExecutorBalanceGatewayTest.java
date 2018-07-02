@@ -15,7 +15,7 @@ import com.fasten.executor_driver.entity.ExecutorBalance;
 import com.fasten.executor_driver.gateway.DataMappingException;
 import com.fasten.executor_driver.gateway.ExecutorBalanceGatewayImpl;
 import com.fasten.executor_driver.gateway.Mapper;
-import io.reactivex.Observable;
+import io.reactivex.Flowable;
 import io.reactivex.plugins.RxJavaPlugins;
 import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subscribers.TestSubscriber;
@@ -48,7 +48,7 @@ public class ExecutorBalanceGatewayTest {
     RxJavaPlugins.setIoSchedulerHandler(scheduler -> Schedulers.trampoline());
     RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
     gateway = new ExecutorBalanceGatewayImpl(stompClient, mapper);
-    when(stompClient.topic(anyString())).thenReturn(Observable.never());
+    when(stompClient.topic(anyString())).thenReturn(Flowable.never());
   }
 
   /* Проверяем работу с клиентом STOMP */
@@ -116,7 +116,7 @@ public class ExecutorBalanceGatewayTest {
   public void doNotTouchMapperIfWrongHeaderIfConnected() {
     // Дано:
     when(stompClient.isConnected()).thenReturn(true);
-    when(stompClient.topic(anyString())).thenReturn(Observable.just(
+    when(stompClient.topic(anyString())).thenReturn(Flowable.just(
         new StompMessage("MESSAGE", null, "SHIFT"),
         new StompMessage(
             "MESSAGE",
@@ -139,7 +139,7 @@ public class ExecutorBalanceGatewayTest {
   public void doNotTouchMapperIfWrongHeaderIfConnectingAfterConnected() {
     // Дано:
     when(stompClient.isConnecting()).thenReturn(true);
-    when(stompClient.topic(anyString())).thenReturn(Observable.just(
+    when(stompClient.topic(anyString())).thenReturn(Flowable.just(
         new StompMessage("MESSAGE", null, "SHIFT"),
         new StompMessage(
             "MESSAGE",
@@ -164,7 +164,7 @@ public class ExecutorBalanceGatewayTest {
   public void askForMappingForBalanceHeaderIfConnected() throws Exception {
     // Дано:
     when(stompClient.isConnected()).thenReturn(true);
-    when(stompClient.topic(anyString())).thenReturn(Observable.just(
+    when(stompClient.topic(anyString())).thenReturn(Flowable.just(
         new StompMessage(
             "MESSAGE",
             Collections.singletonList(
@@ -191,7 +191,7 @@ public class ExecutorBalanceGatewayTest {
   public void askForMappingForBalanceHeaderIfConnectingAfterConnected() throws Exception {
     // Дано:
     when(stompClient.isConnecting()).thenReturn(true);
-    when(stompClient.topic(anyString())).thenReturn(Observable.just(
+    when(stompClient.topic(anyString())).thenReturn(Flowable.just(
         new StompMessage(
             "MESSAGE",
             Collections.singletonList(
@@ -219,7 +219,7 @@ public class ExecutorBalanceGatewayTest {
   public void ignoreWrongHeaderIfConnected() {
     // Дано:
     when(stompClient.isConnected()).thenReturn(true);
-    when(stompClient.topic(anyString())).thenReturn(Observable.just(
+    when(stompClient.topic(anyString())).thenReturn(Flowable.just(
         new StompMessage("MESSAGE", null, "SHIFT"),
         new StompMessage(
             "MESSAGE",
@@ -246,7 +246,7 @@ public class ExecutorBalanceGatewayTest {
     // Дано:
     doThrow(new DataMappingException()).when(mapper).map(any());
     when(stompClient.isConnected()).thenReturn(true);
-    when(stompClient.topic(anyString())).thenReturn(Observable.just(
+    when(stompClient.topic(anyString())).thenReturn(Flowable.just(
         new StompMessage(
             "MESSAGE",
             Collections.singletonList(new StompHeader("Balance", "payload")),
@@ -272,7 +272,7 @@ public class ExecutorBalanceGatewayTest {
     // Дано:
     when(mapper.map(any())).thenReturn(executorBalance);
     when(stompClient.isConnected()).thenReturn(true);
-    when(stompClient.topic(anyString())).thenReturn(Observable.just(
+    when(stompClient.topic(anyString())).thenReturn(Flowable.just(
         new StompMessage(
             "MESSAGE",
             Collections.singletonList(new StompHeader("Balance", "payload")),
@@ -295,7 +295,7 @@ public class ExecutorBalanceGatewayTest {
   public void ignoreErrorIfConnected() {
     // Дано:
     when(stompClient.isConnected()).thenReturn(true);
-    when(stompClient.topic(anyString())).thenReturn(Observable.error(new NoNetworkException()));
+    when(stompClient.topic(anyString())).thenReturn(Flowable.error(new NoNetworkException()));
 
     // Действие:
     TestSubscriber<ExecutorBalance> testSubscriber =
@@ -327,7 +327,7 @@ public class ExecutorBalanceGatewayTest {
   public void ignoreWrongHeaderIfConnectingAfterConnected() {
     // Дано:
     when(stompClient.isConnecting()).thenReturn(true);
-    when(stompClient.topic(anyString())).thenReturn(Observable.just(
+    when(stompClient.topic(anyString())).thenReturn(Flowable.just(
         new StompMessage("MESSAGE", null, "SHIFT"),
         new StompMessage(
             "MESSAGE",
@@ -355,7 +355,7 @@ public class ExecutorBalanceGatewayTest {
     // Дано:
     doThrow(new DataMappingException()).when(mapper).map(any());
     when(stompClient.isConnecting()).thenReturn(true);
-    when(stompClient.topic(anyString())).thenReturn(Observable.just(
+    when(stompClient.topic(anyString())).thenReturn(Flowable.just(
         new StompMessage(
             "MESSAGE",
             Collections.singletonList(new StompHeader("Balance", "")),
@@ -384,7 +384,7 @@ public class ExecutorBalanceGatewayTest {
     // Дано:
     when(mapper.map(any())).thenReturn(executorBalance);
     when(stompClient.isConnecting()).thenReturn(true);
-    when(stompClient.topic(anyString())).thenReturn(Observable.just(
+    when(stompClient.topic(anyString())).thenReturn(Flowable.just(
         new StompMessage(
             "MESSAGE",
             Collections.singletonList(new StompHeader("Balance", "")),
@@ -409,7 +409,7 @@ public class ExecutorBalanceGatewayTest {
     // Дано:
     when(stompClient.isConnecting()).thenReturn(true);
     when(stompClient.topic(anyString()))
-        .thenReturn(Observable.error(new ConnectionClosedException()));
+        .thenReturn(Flowable.error(new ConnectionClosedException()));
 
     // Действие:
     TestSubscriber<ExecutorBalance> testSubscriber =
