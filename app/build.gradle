@@ -90,7 +90,7 @@ dependencies {
     implementation 'com.squareup.okhttp3:logging-interceptor:3.9.0'
 
     // WebSocket STOMP
-    implementation 'com.github.G0retZ:StompProtocolAndroid:18.0.7'
+    implementation 'com.github.G0retZ:StompProtocolAndroid:18.0.8'
     implementation 'net.sourceforge.streamsupport:streamsupport:1.5.5'
     implementation 'net.sourceforge.streamsupport:streamsupport-cfuture:1.5.5'
 
