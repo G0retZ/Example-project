@@ -45,10 +45,9 @@ public class MovingToClientActivity extends BaseActivity {
         }
         break;
       case CancelOrderNavigate.ORDER_CANCELED:
-        fragment = getSupportFragmentManager().findFragmentByTag("callToOperator");
-        if (fragment == null) {
-          getSupportFragmentManager().beginTransaction()
-              .add(0, new CallToOperatorFragment(), "callToOperator").commit();
+        fragment = getSupportFragmentManager().findFragmentById(R.id.fragment_call_to_operator);
+        if (fragment != null && fragment instanceof CallToOperatorFragment) {
+          ((CallToOperatorFragment) fragment).callToOperator();
         }
         break;
       default:

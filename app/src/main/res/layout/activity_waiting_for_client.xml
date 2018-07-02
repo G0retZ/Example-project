@@ -49,15 +49,14 @@
     app:layout_constraintTop_toBottomOf="@id/appBar"
     tools:layout="@layout/fragment_call_to_client"/>
   <fragment
-    android:id="@+id/fragment_waiting_for_client"
+    android:id="@+id/fragment_call_to_operator"
     android:layout_width="0dp"
-    android:layout_height="0dp"
-    android:name="com.fasten.executor_driver.view.WaitingForClientFragment"
-    app:layout_constraintBottom_toBottomOf="parent"
+    android:layout_height="wrap_content"
+    android:name="com.fasten.executor_driver.view.CallToOperatorFragment"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toBottomOf="@id/stateMessage"
-    tools:layout="@layout/fragment_waiting_for_client"/>
+    app:layout_constraintTop_toBottomOf="@id/appBar"
+    tools:layout="@layout/fragment_call_to_operator"/>
   <fragment
     android:id="@+id/fragment_server_connection"
     android:layout_width="0dp"
@@ -67,4 +66,22 @@
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toBottomOf="@id/appBar"
     tools:layout="@layout/fragment_server_connection"/>
+  <android.support.constraint.Barrier
+    android:id="@+id/barrier"
+    android:layout_width="0dp"
+    android:layout_height="wrap_content"
+    app:barrierDirection="bottom"
+    app:constraint_referenced_ids="stateMessage,fragment_call_to_client,fragment_call_to_operator,fragment_server_connection"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"/>
+  <fragment
+    android:id="@+id/fragment_waiting_for_client"
+    android:layout_width="0dp"
+    android:layout_height="0dp"
+    android:name="com.fasten.executor_driver.view.WaitingForClientFragment"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@id/barrier"
+    tools:layout="@layout/fragment_waiting_for_client"/>
 </android.support.constraint.ConstraintLayout>

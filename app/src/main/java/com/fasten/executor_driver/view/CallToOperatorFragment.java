@@ -18,6 +18,7 @@ import javax.inject.Inject;
 
 public class CallToOperatorFragment extends BaseFragment implements CallToOperatorViewActions {
 
+  private View rootView;
   private CallToOperatorViewModel callToOperatorViewModel;
 
   @Inject
@@ -30,7 +31,7 @@ public class CallToOperatorFragment extends BaseFragment implements CallToOperat
   public View onCreateView(@NonNull LayoutInflater inflater,
       @Nullable ViewGroup container,
       @Nullable Bundle savedInstanceState) {
-    return inflater.inflate(R.layout.fragment_call_to_operator, container, false);
+    return rootView = inflater.inflate(R.layout.fragment_call_to_operator, container, false);
   }
 
   @Override
@@ -60,6 +61,6 @@ public class CallToOperatorFragment extends BaseFragment implements CallToOperat
 
   @Override
   public void showCallingToOperator(boolean calling) {
-
+    rootView.setVisibility(calling ? View.VISIBLE : View.GONE);
   }
 }
