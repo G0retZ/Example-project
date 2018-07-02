@@ -11,4 +11,11 @@ public interface CallToClientViewActions {
    * @param pending - показать или нет?
    */
   void showCallToClientPending(boolean pending);
+
+  /**
+   * Показать статус звонка.
+   *
+   * @param calling - звоним или нет?
+   */
+  void showCallingToClient(boolean calling);
 }

@@ -8,14 +8,10 @@ import java.lang.annotation.RetentionPolicy;
  * Направления навигации из окна звонка клиенту.
  */
 @StringDef({
-    CallToClientNavigate.FINISHED,
     CallToClientNavigate.NO_CONNECTION
 })
 @Retention(RetentionPolicy.SOURCE)
-public @interface CallToClientNavigate {
-
-  // Переход к окончанию звонка.
-  String FINISHED = "CallToClient.to.Finish";
+@interface CallToClientNavigate {
 
   // Переход к ошибке соединения.
   String NO_CONNECTION = "CallToClient.to.NoConnection";

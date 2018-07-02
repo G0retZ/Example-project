@@ -7,7 +7,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
 import com.fasten.executor_driver.R;
-import com.fasten.executor_driver.presentation.calltoclient.CallToClientNavigate;
 import com.fasten.executor_driver.presentation.calltooperator.CallToOperatorNavigate;
 import com.fasten.executor_driver.presentation.cancelorder.CancelOrderNavigate;
 import com.fasten.executor_driver.presentation.oderfulfillmentmenu.OrderFulfillmentMenuNavigate;
@@ -52,12 +51,6 @@ public class OrderFulfillmentActivity extends BaseActivity {
         if (fragment == null) {
           getSupportFragmentManager().beginTransaction()
               .add(R.id.callingMessage, new CallToClientFragment(), "callToClient").commit();
-        }
-        break;
-      case CallToClientNavigate.FINISHED:
-        fragment = getSupportFragmentManager().findFragmentByTag("callToClient");
-        if (fragment != null) {
-          getSupportFragmentManager().beginTransaction().remove(fragment).commit();
         }
         break;
       case OrderFulfillmentMenuNavigate.REPORT_A_PROBLEM:

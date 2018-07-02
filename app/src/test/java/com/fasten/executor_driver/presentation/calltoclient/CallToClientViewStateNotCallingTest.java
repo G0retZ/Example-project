@@ -1,7 +1,7 @@
 package com.fasten.executor_driver.presentation.calltoclient;
 
-import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -10,16 +10,16 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
-public class CallToClientViewStateIdleTest {
+public class CallToClientViewStateNotCallingTest {
 
-  private CallToClientViewStateIdle viewState;
+  private CallToClientViewStateNotCalling viewState;
 
   @Mock
   private CallToClientViewActions viewActions;
 
   @Before
   public void setUp() {
-    viewState = new CallToClientViewStateIdle();
+    viewState = new CallToClientViewStateNotCalling();
   }
 
   @Test
@@ -28,6 +28,8 @@ public class CallToClientViewStateIdleTest {
     viewState.apply(viewActions);
 
     // Результат:
-    verify(viewActions, only()).showCallToClientPending(false);
+    verify(viewActions).showCallingToClient(false);
+    verify(viewActions).showCallToClientPending(false);
+    verifyNoMoreInteractions(viewActions);
   }
 }

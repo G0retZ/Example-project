@@ -30,7 +30,6 @@ public class CallToClientViewModelImpl extends ViewModel implements CallToClient
     this.callToClientUseCase = callToClientUseCase;
     viewStateLiveData = new MutableLiveData<>();
     navigateLiveData = new SingleLiveEvent<>();
-    viewStateLiveData.postValue(new CallToClientViewStatePending());
   }
 
   @NonNull
@@ -54,13 +53,13 @@ public class CallToClientViewModelImpl extends ViewModel implements CallToClient
     disposable = callToClientUseCase.callToClient()
         .subscribeOn(Schedulers.single())
         .observeOn(AndroidSchedulers.mainThread())
-        .doOnComplete(() -> viewStateLiveData.postValue(new CallToClientViewStateIdle()))
+        .doOnComplete(() -> viewStateLiveData.postValue(new CallToClientViewStateCalling()))
         .delay(10, TimeUnit.SECONDS)
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(
-            () -> navigateLiveData.postValue(CallToClientNavigate.FINISHED),
+            () -> viewStateLiveData.postValue(new CallToClientViewStateNotCalling()),
             throwable -> {
-              viewStateLiveData.postValue(new CallToClientViewStateIdle());
+              viewStateLiveData.postValue(new CallToClientViewStateNotCalling());
               navigateLiveData.postValue(CallToClientNavigate.NO_CONNECTION);
             }
         );

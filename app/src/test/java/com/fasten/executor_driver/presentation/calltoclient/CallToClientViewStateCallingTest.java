@@ -10,16 +10,16 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
-public class CallToClientViewStatePendingTest {
+public class CallToClientViewStateCallingTest {
 
-  private CallToClientViewStatePending viewState;
+  private CallToClientViewStateCalling viewState;
 
   @Mock
   private CallToClientViewActions viewActions;
 
   @Before
   public void setUp() {
-    viewState = new CallToClientViewStatePending();
+    viewState = new CallToClientViewStateCalling();
   }
 
   @Test
@@ -28,8 +28,8 @@ public class CallToClientViewStatePendingTest {
     viewState.apply(viewActions);
 
     // Результат:
-    verify(viewActions).showCallingToClient(false);
-    verify(viewActions).showCallToClientPending(true);
+    verify(viewActions).showCallingToClient(true);
+    verify(viewActions).showCallToClientPending(false);
     verifyNoMoreInteractions(viewActions);
   }
 }

@@ -55,9 +55,7 @@ public class CallToClientFragment extends BaseFragment implements CallToClientVi
     });
   }
 
-  @Override
-  public void onResume() {
-    super.onResume();
+  public void callToClient() {
     callToClientViewModel.callToClient();
   }
 
@@ -67,5 +65,10 @@ public class CallToClientFragment extends BaseFragment implements CallToClientVi
       showPending(pending);
     }
     this.pending = pending;
+  }
+
+  @Override
+  public void showCallingToClient(boolean calling) {
+
   }
 }

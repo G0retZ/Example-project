@@ -4,13 +4,13 @@ import android.support.annotation.NonNull;
 import com.fasten.executor_driver.presentation.ViewState;
 
 /**
- * Состояние ожидания при подтверждении или отказе от заказа.
+ * Состояние бездействия вида заказа.
  */
-final class CallToClientViewStatePending implements ViewState<CallToClientViewActions> {
+final class CallToClientViewStateNotCalling implements ViewState<CallToClientViewActions> {
 
   @Override
   public void apply(@NonNull CallToClientViewActions stateActions) {
-    stateActions.showCallToClientPending(true);
+    stateActions.showCallToClientPending(false);
     stateActions.showCallingToClient(false);
   }
 }
