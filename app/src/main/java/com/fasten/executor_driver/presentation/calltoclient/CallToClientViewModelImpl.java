@@ -30,6 +30,7 @@ public class CallToClientViewModelImpl extends ViewModel implements CallToClient
     this.callToClientUseCase = callToClientUseCase;
     viewStateLiveData = new MutableLiveData<>();
     navigateLiveData = new SingleLiveEvent<>();
+    viewStateLiveData.postValue(new CallToClientViewStateNotCalling());
   }
 
   @NonNull

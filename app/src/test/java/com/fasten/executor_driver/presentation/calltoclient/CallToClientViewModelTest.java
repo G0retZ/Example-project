@@ -87,7 +87,7 @@ public class CallToClientViewModelTest {
   /* Тетсируем переключение состояний. */
 
   /**
-   * Не должен возвращать никаких состояний вида изначально.
+   * Должен вернуть состояние вида "не звоним" изначально.
    */
   @Test
   public void setPendingViewStateToLiveDataInitially() {
@@ -95,7 +95,7 @@ public class CallToClientViewModelTest {
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Результат:
-    verifyZeroInteractions(viewStateObserver);
+    verify(viewStateObserver, only()).onChanged(any(CallToClientViewStateNotCalling.class));
   }
 
   /**
@@ -104,13 +104,16 @@ public class CallToClientViewModelTest {
   @Test
   public void setPendingViewStateWhenCallToClient() {
     // Дано:
+    InOrder inOrder = Mockito.inOrder(viewStateObserver);
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
     viewModel.callToClient();
 
     // Результат:
-    verify(viewStateObserver, only()).onChanged(any(CallToClientViewStatePending.class));
+    inOrder.verify(viewStateObserver).onChanged(any(CallToClientViewStateNotCalling.class));
+    inOrder.verify(viewStateObserver).onChanged(any(CallToClientViewStatePending.class));
+    verifyNoMoreInteractions(viewStateObserver);
   }
 
   /**
@@ -129,6 +132,7 @@ public class CallToClientViewModelTest {
     testScheduler.advanceTimeBy(1, TimeUnit.NANOSECONDS);
 
     // Результат:
+    inOrder.verify(viewStateObserver).onChanged(any(CallToClientViewStateNotCalling.class));
     inOrder.verify(viewStateObserver).onChanged(any(CallToClientViewStatePending.class));
     inOrder.verify(viewStateObserver).onChanged(any(CallToClientViewStateNotCalling.class));
     verifyNoMoreInteractions(viewStateObserver);
@@ -148,6 +152,7 @@ public class CallToClientViewModelTest {
     viewModel.callToClient();
 
     // Результат:
+    inOrder.verify(viewStateObserver).onChanged(any(CallToClientViewStateNotCalling.class));
     inOrder.verify(viewStateObserver).onChanged(any(CallToClientViewStatePending.class));
     inOrder.verify(viewStateObserver).onChanged(any(CallToClientViewStateCalling.class));
     verifyNoMoreInteractions(viewStateObserver);
@@ -168,6 +173,7 @@ public class CallToClientViewModelTest {
     testScheduler.advanceTimeBy(20, TimeUnit.SECONDS);
 
     // Результат:
+    inOrder.verify(viewStateObserver).onChanged(any(CallToClientViewStateNotCalling.class));
     inOrder.verify(viewStateObserver).onChanged(any(CallToClientViewStatePending.class));
     inOrder.verify(viewStateObserver).onChanged(any(CallToClientViewStateCalling.class));
     inOrder.verify(viewStateObserver).onChanged(any(CallToClientViewStateNotCalling.class));
