@@ -11,13 +11,15 @@ import static org.mockito.Mockito.when;
 import com.fasten.executor_driver.backend.web.ApiService;
 import com.fasten.executor_driver.backend.web.NoNetworkException;
 import com.fasten.executor_driver.backend.web.incoming.ApiOptionItem;
-import com.fasten.executor_driver.backend.web.incoming.ApiSelectedOptionsForOnline;
+import com.fasten.executor_driver.backend.web.incoming.ApiOptionsForOnline;
+import com.fasten.executor_driver.backend.web.incoming.ApiVehicle;
 import com.fasten.executor_driver.entity.Option;
 import com.fasten.executor_driver.entity.OptionBoolean;
 import com.fasten.executor_driver.entity.OptionNumeric;
+import com.fasten.executor_driver.entity.Vehicle;
 import com.fasten.executor_driver.gateway.DataMappingException;
 import com.fasten.executor_driver.gateway.Mapper;
-import com.fasten.executor_driver.gateway.SelectedVehicleOptionsGatewayImpl;
+import com.fasten.executor_driver.gateway.SelectedVehicleAndOptionsGatewayImpl;
 import io.reactivex.Single;
 import io.reactivex.observers.TestObserver;
 import io.reactivex.plugins.RxJavaPlugins;
@@ -33,15 +35,18 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
-public class SelectedVehicleOptionsGatewayTest {
+public class SelectedVehicleAndOptionsGatewayTest {
 
-  private SelectedVehicleOptionsGateway gateway;
+  private VehiclesAndOptionsGateway gateway;
 
   @Mock
   private ApiService api;
 
   @Mock
   private Mapper<ApiOptionItem, Option> apiOptionMapper;
+
+  @Mock
+  private Mapper<ApiVehicle, Vehicle> vehicleMapper;
 
   @Mock
   private Mapper<Throwable, Throwable> errorMapper;
@@ -53,9 +58,14 @@ public class SelectedVehicleOptionsGatewayTest {
   public void setUp() throws Exception {
     RxJavaPlugins.setIoSchedulerHandler(scheduler -> Schedulers.trampoline());
     RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
-    gateway = new SelectedVehicleOptionsGatewayImpl(api, apiOptionMapper,
+    gateway = new SelectedVehicleAndOptionsGatewayImpl(api, apiOptionMapper, vehicleMapper,
         errorMapper);
     when(api.getSelectedOptionsForOnline()).thenReturn(Single.never());
+    when(vehicleMapper.map(any(ApiVehicle.class))).thenReturn(
+        new Vehicle(1, "m", "m", "c", "l", false),
+        new Vehicle(2, "ma", "mo", "co", "li", true),
+        new Vehicle(3, "man", "mod", "col", "lic", false)
+    );
     when(apiOptionMapper.map(any(ApiOptionItem.class))).thenReturn(
         new OptionBoolean(1, "n", "d", false, true),
         new OptionNumeric(2, "na", "de", false, 100, 0, 200),
@@ -72,7 +82,7 @@ public class SelectedVehicleOptionsGatewayTest {
   @Test
   public void askApiForOptionsForOnlineOnGetVehicles() {
     // Действие:
-    gateway.getVehicleOptions();
+    gateway.getExecutorVehicles();
 
     // Результат:
     verify(api, only()).getSelectedOptionsForOnline();
@@ -96,7 +106,7 @@ public class SelectedVehicleOptionsGatewayTest {
   @Test
   public void doNotAskApiForOptionsForOnlineTwiceAfterVehiclesRequested() {
     // Действие:
-    gateway.getVehicleOptions();
+    gateway.getExecutorVehicles();
     gateway.getExecutorOptions();
 
     // Результат:
@@ -110,7 +120,7 @@ public class SelectedVehicleOptionsGatewayTest {
   public void doNotAskApiForOptionsForOnlineTwiceAfterOptionsRequested() {
     // Действие:
     gateway.getExecutorOptions();
-    gateway.getVehicleOptions();
+    gateway.getExecutorVehicles();
 
     // Результат:
     verify(api, only()).getSelectedOptionsForOnline();
@@ -127,10 +137,10 @@ public class SelectedVehicleOptionsGatewayTest {
   public void askVehicleMapperForMapping() throws Exception {
     // Дано:
     when(api.getSelectedOptionsForOnline())
-        .thenReturn(Single.just(new ApiSelectedOptionsForOnline(Arrays.asList(
-            new ApiOptionItem(),
-            new ApiOptionItem(),
-            new ApiOptionItem()
+        .thenReturn(Single.just(new ApiOptionsForOnline(Arrays.asList(
+            new ApiVehicle(),
+            new ApiVehicle(),
+            new ApiVehicle()
         ), Arrays.asList(
             new ApiOptionItem(),
             new ApiOptionItem(),
@@ -138,11 +148,11 @@ public class SelectedVehicleOptionsGatewayTest {
         ))));
 
     // Действие:
-    gateway.getVehicleOptions().test();
+    gateway.getExecutorVehicles().test();
 
     // Результат:
-    verify(apiOptionMapper, times(3)).map(new ApiOptionItem());
-    verifyNoMoreInteractions(apiOptionMapper);
+    verify(vehicleMapper, times(3)).map(new ApiVehicle());
+    verifyNoMoreInteractions(vehicleMapper);
   }
 
   /**
@@ -153,12 +163,12 @@ public class SelectedVehicleOptionsGatewayTest {
   @Test
   public void askVehicleMapperForFirstMappingOnly() throws Exception {
     // Дано:
-    when(apiOptionMapper.map(any(ApiOptionItem.class))).thenThrow(new DataMappingException());
+    when(vehicleMapper.map(any(ApiVehicle.class))).thenThrow(new DataMappingException());
     when(api.getSelectedOptionsForOnline())
-        .thenReturn(Single.just(new ApiSelectedOptionsForOnline(Arrays.asList(
-            new ApiOptionItem(),
-            new ApiOptionItem(),
-            new ApiOptionItem()
+        .thenReturn(Single.just(new ApiOptionsForOnline(Arrays.asList(
+            new ApiVehicle(),
+            new ApiVehicle(),
+            new ApiVehicle()
         ), Arrays.asList(
             new ApiOptionItem(),
             new ApiOptionItem(),
@@ -166,10 +176,10 @@ public class SelectedVehicleOptionsGatewayTest {
         ))));
 
     // Действие:
-    gateway.getVehicleOptions().test();
+    gateway.getExecutorVehicles().test();
 
     // Результат:
-    verify(apiOptionMapper, only()).map(new ApiOptionItem());
+    verify(vehicleMapper, only()).map(new ApiVehicle());
   }
 
   /* Проверяем работу с преобразователем опций исполнителя */
@@ -183,10 +193,10 @@ public class SelectedVehicleOptionsGatewayTest {
   public void askOptionsMapperForMapping() throws Exception {
     // Дано:
     when(api.getSelectedOptionsForOnline())
-        .thenReturn(Single.just(new ApiSelectedOptionsForOnline(Arrays.asList(
-            new ApiOptionItem(),
-            new ApiOptionItem(),
-            new ApiOptionItem()
+        .thenReturn(Single.just(new ApiOptionsForOnline(Arrays.asList(
+            new ApiVehicle(),
+            new ApiVehicle(),
+            new ApiVehicle()
         ), Arrays.asList(
             new ApiOptionItem(),
             new ApiOptionItem(),
@@ -211,10 +221,10 @@ public class SelectedVehicleOptionsGatewayTest {
     // Дано:
     when(apiOptionMapper.map(any(ApiOptionItem.class))).thenThrow(new DataMappingException());
     when(api.getSelectedOptionsForOnline())
-        .thenReturn(Single.just(new ApiSelectedOptionsForOnline(Arrays.asList(
-            new ApiOptionItem(),
-            new ApiOptionItem(),
-            new ApiOptionItem()
+        .thenReturn(Single.just(new ApiOptionsForOnline(Arrays.asList(
+            new ApiVehicle(),
+            new ApiVehicle(),
+            new ApiVehicle()
         ), Arrays.asList(
             new ApiOptionItem(),
             new ApiOptionItem(),
@@ -241,7 +251,7 @@ public class SelectedVehicleOptionsGatewayTest {
     when(api.getSelectedOptionsForOnline()).thenReturn(Single.error(new NoNetworkException()));
 
     // Действие:
-    gateway.getVehicleOptions().test();
+    gateway.getExecutorVehicles().test();
 
     // Результат:
     verify(errorMapper, only()).map(throwableCaptor.capture());
@@ -282,7 +292,7 @@ public class SelectedVehicleOptionsGatewayTest {
     when(errorMapper.map(any())).thenReturn(new NoNetworkException());
 
     // Действие и Результат:
-    gateway.getVehicleOptions().test().assertError(NoNetworkException.class);
+    gateway.getExecutorVehicles().test().assertError(NoNetworkException.class);
     gateway.getExecutorOptions().test().assertError(NoNetworkException.class);
   }
 
@@ -298,7 +308,7 @@ public class SelectedVehicleOptionsGatewayTest {
     when(errorMapper.map(any())).thenReturn(new IllegalArgumentException());
 
     // Действие и Результат:
-    gateway.getVehicleOptions().test()
+    gateway.getExecutorVehicles().test()
         .assertError(IllegalArgumentException.class);
     gateway.getExecutorOptions().test()
         .assertError(IllegalArgumentException.class);
@@ -312,13 +322,13 @@ public class SelectedVehicleOptionsGatewayTest {
   @Test
   public void answerVehicleDataMappingError() throws Exception {
     // Дано:
-    when(apiOptionMapper.map(any(ApiOptionItem.class))).thenThrow(new DataMappingException());
+    when(vehicleMapper.map(any(ApiVehicle.class))).thenThrow(new DataMappingException());
     when(errorMapper.map(any())).thenReturn(new DataMappingException());
     when(api.getSelectedOptionsForOnline())
-        .thenReturn(Single.just(new ApiSelectedOptionsForOnline(Arrays.asList(
-            new ApiOptionItem(),
-            new ApiOptionItem(),
-            new ApiOptionItem()
+        .thenReturn(Single.just(new ApiOptionsForOnline(Arrays.asList(
+            new ApiVehicle(),
+            new ApiVehicle(),
+            new ApiVehicle()
         ), Arrays.asList(
             new ApiOptionItem(),
             new ApiOptionItem(),
@@ -326,7 +336,7 @@ public class SelectedVehicleOptionsGatewayTest {
         ))));
 
     // Действие:
-    TestObserver testObserver = gateway.getVehicleOptions().test();
+    TestObserver testObserver = gateway.getExecutorVehicles().test();
 
     // Результат:
     testObserver.assertError(DataMappingException.class);
@@ -343,10 +353,10 @@ public class SelectedVehicleOptionsGatewayTest {
     when(apiOptionMapper.map(any(ApiOptionItem.class))).thenThrow(new DataMappingException());
     when(errorMapper.map(any())).thenReturn(new DataMappingException());
     when(api.getSelectedOptionsForOnline())
-        .thenReturn(Single.just(new ApiSelectedOptionsForOnline(Arrays.asList(
-            new ApiOptionItem(),
-            new ApiOptionItem(),
-            new ApiOptionItem()
+        .thenReturn(Single.just(new ApiOptionsForOnline(Arrays.asList(
+            new ApiVehicle(),
+            new ApiVehicle(),
+            new ApiVehicle()
         ), Arrays.asList(
             new ApiOptionItem(),
             new ApiOptionItem(),
@@ -367,10 +377,10 @@ public class SelectedVehicleOptionsGatewayTest {
   public void answerWithVehicleEntities() {
     // Дано:
     when(api.getSelectedOptionsForOnline())
-        .thenReturn(Single.just(new ApiSelectedOptionsForOnline(Arrays.asList(
-            new ApiOptionItem(),
-            new ApiOptionItem(),
-            new ApiOptionItem()
+        .thenReturn(Single.just(new ApiOptionsForOnline(Arrays.asList(
+            new ApiVehicle(),
+            new ApiVehicle(),
+            new ApiVehicle()
         ), Arrays.asList(
             new ApiOptionItem(),
             new ApiOptionItem(),
@@ -378,15 +388,15 @@ public class SelectedVehicleOptionsGatewayTest {
         ))));
 
     // Действие:
-    TestObserver<List<Option>> testObserver = gateway.getVehicleOptions()
+    TestObserver<List<Vehicle>> testObserver = gateway.getExecutorVehicles()
         .test();
 
     // Результат:
     testObserver.assertComplete();
     testObserver.assertValue(Arrays.asList(
-        new OptionBoolean(1, "n", "d", false, true),
-        new OptionNumeric(2, "na", "de", false, 100, 0, 200),
-        new OptionBoolean(3, "nam", "des", true, false)
+        new Vehicle(1, "m", "m", "c", "l", false),
+        new Vehicle(2, "ma", "mo", "co", "li", true),
+        new Vehicle(3, "man", "mod", "col", "lic", false)
     ));
   }
 
@@ -397,10 +407,10 @@ public class SelectedVehicleOptionsGatewayTest {
   public void answerWithOptionEntities() {
     // Дано:
     when(api.getSelectedOptionsForOnline())
-        .thenReturn(Single.just(new ApiSelectedOptionsForOnline(Arrays.asList(
-            new ApiOptionItem(),
-            new ApiOptionItem(),
-            new ApiOptionItem()
+        .thenReturn(Single.just(new ApiOptionsForOnline(Arrays.asList(
+            new ApiVehicle(),
+            new ApiVehicle(),
+            new ApiVehicle()
         ), Arrays.asList(
             new ApiOptionItem(),
             new ApiOptionItem(),

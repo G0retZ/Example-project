@@ -8,7 +8,6 @@ import static org.mockito.Mockito.when;
 
 import com.fasten.executor_driver.backend.web.NoNetworkException;
 import com.fasten.executor_driver.entity.DriverBlockedException;
-import com.fasten.executor_driver.entity.InsufficientCreditsException;
 import com.fasten.executor_driver.entity.NoFreeVehiclesException;
 import com.fasten.executor_driver.entity.NoVehiclesAvailableException;
 import com.fasten.executor_driver.entity.Vehicle;
@@ -88,9 +87,6 @@ public class VehiclesAndOptionsUseCaseTest {
     when(lastUsedVehicleGateway.getLastUsedVehicleId()).thenReturn(Single.just(10L));
     useCase.loadVehiclesAndOptions().test();
     when(gateway.getExecutorVehicles()).thenReturn(Single.error(new NoNetworkException()));
-    useCase.loadVehiclesAndOptions().test();
-    when(gateway.getExecutorVehicles())
-        .thenReturn(Single.error(new InsufficientCreditsException()));
     useCase.loadVehiclesAndOptions().test();
     when(gateway.getExecutorVehicles()).thenReturn(Single.error(new DriverBlockedException()));
     useCase.loadVehiclesAndOptions().test();
@@ -302,21 +298,6 @@ public class VehiclesAndOptionsUseCaseTest {
     // Действие и Результат:
     useCase.loadVehiclesAndOptions().test()
         .assertError(DriverBlockedException.class);
-  }
-
-  /**
-   * Должен ответить ошибкой недостаточности средств.
-   */
-  @Test
-  public void answerInsufficientCreditsError() {
-    // Дано:
-    when(lastUsedVehicleGateway.getLastUsedVehicleId()).thenReturn(Single.just(-1L));
-    when(gateway.getExecutorVehicles())
-        .thenReturn(Single.error(new InsufficientCreditsException()));
-
-    // Действие и Результат:
-    useCase.loadVehiclesAndOptions().test()
-        .assertError(InsufficientCreditsException.class);
   }
 
   /**

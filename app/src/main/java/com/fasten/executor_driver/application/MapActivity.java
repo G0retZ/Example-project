@@ -36,10 +36,6 @@ public class MapActivity extends BaseActivity {
             .create()
             .show();
         break;
-      case OnlineButtonNavigate.INSUFFICIENT_CREDITS:
-        startActivity(new Intent(this, BalanceActivity.class).putExtra("error", 1));
-        finish();
-        break;
       case OnlineButtonNavigate.NO_FREE_VEHICLES:
         new Builder(this)
             .setTitle(R.string.error)

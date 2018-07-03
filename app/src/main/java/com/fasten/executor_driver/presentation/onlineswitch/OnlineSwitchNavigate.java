@@ -5,18 +5,17 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 /**
- * Направления навигации при старте приложения.
+ * Направления навигации по переключателю выхода на линию.
  */
 @StringDef({
-    OnlineSwitchNavigate.SERVICES,
     OnlineSwitchNavigate.VEHICLE_OPTIONS
 })
 @Retention(RetentionPolicy.SOURCE)
 public @interface OnlineSwitchNavigate {
 
-  // Переход к выбору услуг.
-  String SERVICES = "OnlineSwitch.to.Services";
-
   // Переход к настройке опций ТС.
-  String VEHICLE_OPTIONS = "OnlineButton.to.VehicleOptions";
+  String VEHICLE_OPTIONS = "OnlineSwitch.to.VehicleOptions";
+
+  // Переход к решению блокировки водителя.
+  String DRIVER_BLOCKED = "OnlineButton.to.DriverBlocked";
 }

@@ -9,9 +9,11 @@ import static org.mockito.Mockito.when;
 
 import android.arch.core.executor.testing.InstantTaskExecutorRule;
 import android.arch.lifecycle.Observer;
+import com.fasten.executor_driver.backend.web.NoNetworkException;
+import com.fasten.executor_driver.entity.DriverBlockedException;
 import com.fasten.executor_driver.entity.ExecutorState;
-import com.fasten.executor_driver.entity.ForbiddenExecutorStateException;
 import com.fasten.executor_driver.interactor.ExecutorStateNotOnlineUseCase;
+import com.fasten.executor_driver.interactor.vehicle.VehiclesAndOptionsUseCase;
 import com.fasten.executor_driver.presentation.CommonNavigate;
 import com.fasten.executor_driver.presentation.ViewState;
 import io.reactivex.BackpressureStrategy;
@@ -39,6 +41,8 @@ public class OnlineSwitchViewModelTest {
   @Mock
   private ExecutorStateNotOnlineUseCase executorStateNotOnlineUseCase;
   @Mock
+  private VehiclesAndOptionsUseCase vehiclesAndOptionsUseCase;
+  @Mock
   private Observer<ViewState<OnlineSwitchViewActions>> viewStateObserver;
   @Mock
   private Observer<String> navigateObserver;
@@ -49,13 +53,76 @@ public class OnlineSwitchViewModelTest {
     publishSubject = PublishSubject.create();
     RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
     RxAndroidPlugins.setInitMainThreadSchedulerHandler(scheduler -> Schedulers.trampoline());
+    when(vehiclesAndOptionsUseCase.loadVehiclesAndOptions()).thenReturn(Completable.never());
     when(executorStateNotOnlineUseCase.setExecutorNotOnline()).thenReturn(Completable.never());
     when(executorStateNotOnlineUseCase.getExecutorStates())
         .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
-    viewModel = new OnlineSwitchViewModelImpl(executorStateNotOnlineUseCase);
+    viewModel = new OnlineSwitchViewModelImpl(vehiclesAndOptionsUseCase,
+        executorStateNotOnlineUseCase);
   }
 
-  /* Тетсируем работу с юзкейсом. */
+  /* Тетсируем работу с юзкейсом выхода на линию. */
+
+  /**
+   * Не должен трогать юзкейс при установке статуса "онлайн".
+   */
+  @Test
+  public void doNotTouchUseCaseForSwitchToOffline() {
+    // Действие:
+    viewModel.setNewState(false);
+    viewModel.setNewState(false);
+    viewModel.setNewState(false);
+
+    // Результат:
+    verifyZeroInteractions(vehiclesAndOptionsUseCase);
+  }
+
+  /**
+   * Не должен просить юзкейс выйти на линию, если предыдущий запрос еще не завершился.
+   */
+  @Test
+  public void DoNotTouchOnlineUseCaseUntilRequestFinished() {
+    // Действие:
+    viewModel.setNewState(true);
+    viewModel.setNewState(true);
+    viewModel.setNewState(true);
+
+    // Результат:
+    verify(vehiclesAndOptionsUseCase, only()).loadVehiclesAndOptions();
+  }
+
+  /**
+   * Должен попросить юзкейс отправить выйти на линию.
+   */
+  @Test
+  public void askOnlineUseCaseToGoOnline() {
+    // Дано:
+    when(vehiclesAndOptionsUseCase.loadVehiclesAndOptions()).thenReturn(
+        Completable.complete(),
+        Completable.error(new Exception()),
+        Completable.complete(),
+        Completable.error(new NoNetworkException()),
+        Completable.complete(),
+        Completable.error(new DriverBlockedException()),
+        Completable.complete()
+    );
+
+    // Действие:
+    viewModel.setNewState(true);
+    viewModel.setNewState(true);
+    viewModel.setNewState(true);
+    viewModel.setNewState(true);
+    viewModel.setNewState(true);
+    viewModel.setNewState(true);
+    viewModel.setNewState(true);
+    viewModel.setNewState(true);
+
+    // Результат:
+    verify(vehiclesAndOptionsUseCase, times(8)).loadVehiclesAndOptions();
+    verifyNoMoreInteractions(vehiclesAndOptionsUseCase);
+  }
+
+  /* Тетсируем работу с юзкейсом статуса не онлайн. */
 
   /**
    * Должен просить у юзкейса источник для подписки изначально.
@@ -106,7 +173,7 @@ public class OnlineSwitchViewModelTest {
     InOrder inOrder = Mockito.inOrder(executorStateNotOnlineUseCase);
     when(executorStateNotOnlineUseCase.setExecutorNotOnline()).thenReturn(
         Completable.complete(),
-        Completable.error(new ForbiddenExecutorStateException()),
+        Completable.error(new Exception()),
         Completable.complete(),
         Completable.error(new IllegalStateException()),
         Completable.complete()
@@ -306,10 +373,10 @@ public class OnlineSwitchViewModelTest {
   }
 
   /**
-   * Должен вернуть состояние с неактивным переключателем для запроса установки онлайн.
+   * Должен вернуть состояние ожидания с активным переключателем для запроса установки онлайн.
    */
   @Test
-  public void setUnCheckedViewStateForSetOnline() {
+  public void setCheckedPendingViewStateForSetOnline() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
@@ -320,7 +387,104 @@ public class OnlineSwitchViewModelTest {
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(new OnlineSwitchViewStatePending(null));
-    inOrder.verify(viewStateObserver, times(2)).onChanged(new OnlineSwitchViewState(false));
+    inOrder.verify(viewStateObserver).onChanged(new OnlineSwitchViewState(false));
+    inOrder.verify(viewStateObserver)
+        .onChanged(new OnlineSwitchViewStatePending(new OnlineSwitchViewState(true)));
+    verifyNoMoreInteractions(viewStateObserver);
+  }
+
+  /**
+   * Должен вернуть состояние с неактивным переключателем для завершенного запроса установки онлайн.
+   */
+  @Test
+  public void setUnCheckedViewStateForSetOnlineSuccess() {
+    // Дано:
+    InOrder inOrder = Mockito.inOrder(viewStateObserver);
+    when(vehiclesAndOptionsUseCase.loadVehiclesAndOptions()).thenReturn(Completable.complete());
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
+
+    // Действие:
+    publishSubject.onNext(ExecutorState.SHIFT_OPENED);
+    viewModel.setNewState(true);
+
+    // Результат:
+    inOrder.verify(viewStateObserver).onChanged(new OnlineSwitchViewStatePending(null));
+    inOrder.verify(viewStateObserver).onChanged(new OnlineSwitchViewState(false));
+    inOrder.verify(viewStateObserver)
+        .onChanged(new OnlineSwitchViewStatePending(new OnlineSwitchViewState(true)));
+    inOrder.verify(viewStateObserver).onChanged(new OnlineSwitchViewState(false));
+    verifyNoMoreInteractions(viewStateObserver);
+  }
+
+  /**
+   * Должен вернуть состояние с неактивным переключателем если была ошибка блокировки водителя при
+   * запросе установки не онлайн.
+   */
+  @Test
+  public void setUnCheckedViewStateForSetOnlineDriverBlockedError() {
+    // Дано:
+    when(vehiclesAndOptionsUseCase.loadVehiclesAndOptions())
+        .thenReturn(Completable.error(new DriverBlockedException()));
+    InOrder inOrder = Mockito.inOrder(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
+
+    // Действие:
+    publishSubject.onNext(ExecutorState.SHIFT_OPENED);
+    viewModel.setNewState(true);
+
+    // Результат:
+    inOrder.verify(viewStateObserver).onChanged(new OnlineSwitchViewStatePending(null));
+    inOrder.verify(viewStateObserver).onChanged(new OnlineSwitchViewState(false));
+    inOrder.verify(viewStateObserver)
+        .onChanged(new OnlineSwitchViewStatePending(new OnlineSwitchViewState(true)));
+    inOrder.verify(viewStateObserver).onChanged(new OnlineSwitchViewState(false));
+    verifyNoMoreInteractions(viewStateObserver);
+  }
+
+  /**
+   * Не должен возвращать состояние ошибки для запроса установки не онлайн, если была ошибка подключения.
+   */
+  @Test
+  public void setUnCheckedViewStateForSetOnlineNoConnectionError() {
+    // Дано:
+    when(vehiclesAndOptionsUseCase.loadVehiclesAndOptions())
+        .thenReturn(Completable.error(new NoNetworkException()));
+    InOrder inOrder = Mockito.inOrder(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
+
+    // Действие:
+    publishSubject.onNext(ExecutorState.SHIFT_OPENED);
+    viewModel.setNewState(true);
+
+    // Результат:
+    inOrder.verify(viewStateObserver).onChanged(new OnlineSwitchViewStatePending(null));
+    inOrder.verify(viewStateObserver).onChanged(new OnlineSwitchViewState(false));
+    inOrder.verify(viewStateObserver)
+        .onChanged(new OnlineSwitchViewStatePending(new OnlineSwitchViewState(true)));
+    inOrder.verify(viewStateObserver).onChanged(new OnlineSwitchViewState(false));
+    verifyNoMoreInteractions(viewStateObserver);
+  }
+
+  /**
+   * Не должен давать иных состояний вида если была другая ошибка в запросе установки онлайн.
+   */
+  @Test
+  public void doNotSetAnyViewStateToLiveDataForSetOnlineOtherError() {
+    // Дано:
+    InOrder inOrder = Mockito.inOrder(viewStateObserver);
+    when(vehiclesAndOptionsUseCase.loadVehiclesAndOptions())
+        .thenReturn(Completable.error(new IllegalStateException()));
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
+
+    // Действие:
+    publishSubject.onNext(ExecutorState.SHIFT_OPENED);
+    viewModel.setNewState(true);
+
+    // Результат:
+    inOrder.verify(viewStateObserver).onChanged(new OnlineSwitchViewStatePending(null));
+    inOrder.verify(viewStateObserver).onChanged(new OnlineSwitchViewState(false));
+    inOrder.verify(viewStateObserver)
+        .onChanged(new OnlineSwitchViewStatePending(new OnlineSwitchViewState(true)));
     verifyNoMoreInteractions(viewStateObserver);
   }
 
@@ -368,29 +532,6 @@ public class OnlineSwitchViewModelTest {
   }
 
   /**
-   * Не должен давать иных состояний вида если была ошибка в запросе установки не онлайн.
-   */
-  @Test
-  public void doNotSetAnyViewStateToLiveDataForSetNotOnlineError() {
-    // Дано:
-    InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    when(executorStateNotOnlineUseCase.setExecutorNotOnline())
-        .thenReturn(Completable.error(new ForbiddenExecutorStateException()));
-    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
-
-    // Действие:
-    publishSubject.onNext(ExecutorState.ONLINE);
-    viewModel.setNewState(false);
-
-    // Результат:
-    inOrder.verify(viewStateObserver).onChanged(new OnlineSwitchViewStatePending(null));
-    inOrder.verify(viewStateObserver).onChanged(new OnlineSwitchViewState(true));
-    inOrder.verify(viewStateObserver)
-        .onChanged(new OnlineSwitchViewStatePending(new OnlineSwitchViewState(false)));
-    verifyNoMoreInteractions(viewStateObserver);
-  }
-
-  /**
    * Не должен возвращать состояние ошибки для запроса установки не онлайн, если была ошибка подключения.
    */
   @Test
@@ -411,6 +552,29 @@ public class OnlineSwitchViewModelTest {
     inOrder.verify(viewStateObserver)
         .onChanged(new OnlineSwitchViewStatePending(new OnlineSwitchViewState(false)));
     inOrder.verify(viewStateObserver).onChanged(new OnlineSwitchViewState(true));
+    verifyNoMoreInteractions(viewStateObserver);
+  }
+
+  /**
+   * Не должен давать иных состояний вида если была ошибка в запросе установки не онлайн.
+   */
+  @Test
+  public void doNotSetAnyViewStateToLiveDataForSetNotOnlineError() {
+    // Дано:
+    InOrder inOrder = Mockito.inOrder(viewStateObserver);
+    when(executorStateNotOnlineUseCase.setExecutorNotOnline())
+        .thenReturn(Completable.error(new Exception()));
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
+
+    // Действие:
+    publishSubject.onNext(ExecutorState.ONLINE);
+    viewModel.setNewState(false);
+
+    // Результат:
+    inOrder.verify(viewStateObserver).onChanged(new OnlineSwitchViewStatePending(null));
+    inOrder.verify(viewStateObserver).onChanged(new OnlineSwitchViewState(true));
+    inOrder.verify(viewStateObserver)
+        .onChanged(new OnlineSwitchViewStatePending(new OnlineSwitchViewState(false)));
     verifyNoMoreInteractions(viewStateObserver);
   }
 
@@ -435,11 +599,11 @@ public class OnlineSwitchViewModelTest {
    * Должен вернуть "перейти к ошибке данных сервера".
    */
   @Test
-  public void setNavigateToServerDataErrorSetNotOnlineError() {
+  public void setNavigateToServerDataErrorForSetNotOnlineError() {
     // Дано:
     viewModel.getNavigationLiveData().observeForever(navigateObserver);
     when(executorStateNotOnlineUseCase.setExecutorNotOnline())
-        .thenReturn(Completable.error(new ForbiddenExecutorStateException()));
+        .thenReturn(Completable.error(new Exception()));
 
     // Действие:
     viewModel.setNewState(false);
@@ -449,23 +613,10 @@ public class OnlineSwitchViewModelTest {
   }
 
   /**
-   * Должен вернуть перейти к настройке параметров ТС.
-   */
-  @Test
-  public void navigateToVehicleOptions() {
-    // Действие:
-    viewModel.getNavigationLiveData().observeForever(navigateObserver);
-    viewModel.setNewState(true);
-
-    // Результат:
-    verify(navigateObserver, only()).onChanged(OnlineSwitchNavigate.VEHICLE_OPTIONS);
-  }
-
-  /**
    * Должен вернуть перейти к ошибке сети.
    */
   @Test
-  public void navigateToNoConnection() {
+  public void navigateToNoConnectionForSetNotOnlineError() {
     // Дано:
     when(executorStateNotOnlineUseCase.setExecutorNotOnline())
         .thenReturn(Completable.error(new IllegalStateException()));
@@ -496,5 +647,72 @@ public class OnlineSwitchViewModelTest {
 
     // Результат:
     verifyZeroInteractions(navigateObserver);
+  }
+
+  /**
+   * Должен вернуть "перейти к ошибке данных сервера".
+   */
+  @Test
+  public void setNavigateToServerDataErrorForSetOnlineError() {
+    // Дано:
+    viewModel.getNavigationLiveData().observeForever(navigateObserver);
+    when(vehiclesAndOptionsUseCase.loadVehiclesAndOptions())
+        .thenReturn(Completable.error(new Exception()));
+
+    // Действие:
+    viewModel.setNewState(true);
+
+    // Результат:
+    verify(navigateObserver, only()).onChanged(CommonNavigate.SERVER_DATA_ERROR);
+  }
+
+  /**
+   * Должен вернуть перейти к ошибке сети.
+   */
+  @Test
+  public void navigateToNoConnectionForSetOnlineError() {
+    // Дано:
+    when(vehiclesAndOptionsUseCase.loadVehiclesAndOptions())
+        .thenReturn(Completable.error(new NoNetworkException()));
+
+    // Действие:
+    viewModel.getNavigationLiveData().observeForever(navigateObserver);
+    viewModel.setNewState(true);
+
+    // Результат:
+    verify(navigateObserver, only()).onChanged(CommonNavigate.NO_CONNECTION);
+  }
+
+  /**
+   * Должен вернуть перейти к ошибке блокировки водителя.
+   */
+  @Test
+  public void navigateToDriverBlockedForSetOnlineError() {
+    // Дано:
+    when(vehiclesAndOptionsUseCase.loadVehiclesAndOptions())
+        .thenReturn(Completable.error(new DriverBlockedException()));
+
+    // Действие:
+    viewModel.getNavigationLiveData().observeForever(navigateObserver);
+    viewModel.setNewState(true);
+
+    // Результат:
+    verify(navigateObserver, only()).onChanged(OnlineSwitchNavigate.DRIVER_BLOCKED);
+  }
+
+  /**
+   * Должен вернуть перейти к настройке параметров ТС.
+   */
+  @Test
+  public void navigateToVehicleOptions() {
+    // Дано:
+    when(vehiclesAndOptionsUseCase.loadVehiclesAndOptions()).thenReturn(Completable.complete());
+
+    // Действие:
+    viewModel.getNavigationLiveData().observeForever(navigateObserver);
+    viewModel.setNewState(true);
+
+    // Результат:
+    verify(navigateObserver, only()).onChanged(OnlineSwitchNavigate.VEHICLE_OPTIONS);
   }
 }

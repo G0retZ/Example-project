@@ -4,7 +4,6 @@ import static org.junit.Assert.assertTrue;
 
 import com.fasten.executor_driver.backend.web.NoNetworkException;
 import com.fasten.executor_driver.entity.DriverBlockedException;
-import com.fasten.executor_driver.entity.InsufficientCreditsException;
 import okhttp3.MediaType;
 import okhttp3.Protocol;
 import okhttp3.Request;
@@ -51,7 +50,7 @@ public class ErrorMapperTest {
   }
 
   /**
-   * Должен успешно преобразовать 422 ошибку с кодом 422.2 в ошибку недостаточности средств.
+   * Не должен преобразовывать 422 ошибку с другим кодом.
    *
    * @throws Exception ошибка
    */
@@ -74,7 +73,7 @@ public class ErrorMapperTest {
     Throwable error = mapper.map(new HttpException(response));
 
     // Результат:
-    assertTrue(error instanceof InsufficientCreditsException);
+    assertTrue(error instanceof HttpException);
   }
 
   /**
