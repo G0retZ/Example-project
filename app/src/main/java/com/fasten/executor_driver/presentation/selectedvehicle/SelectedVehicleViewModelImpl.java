@@ -5,7 +5,9 @@ import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
 import com.fasten.executor_driver.entity.Vehicle;
+import com.fasten.executor_driver.gateway.DataMappingException;
 import com.fasten.executor_driver.interactor.vehicle.SelectedVehicleUseCase;
+import com.fasten.executor_driver.presentation.CommonNavigate;
 import com.fasten.executor_driver.presentation.SingleLiveEvent;
 import com.fasten.executor_driver.presentation.ViewState;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -72,6 +74,9 @@ public class SelectedVehicleViewModelImpl extends ViewModel implements SelectedV
   private void consumeError(Throwable throwable) {
     throwable.printStackTrace();
     viewStateLiveData.postValue(new SelectedVehicleViewState(""));
+    if (throwable instanceof DataMappingException) {
+      navigateLiveData.postValue(CommonNavigate.SERVER_DATA_ERROR);
+    }
   }
 
   @Override
