@@ -394,7 +394,7 @@ public class OnlineSwitchViewModelTest {
    * Не должен возвращать состояние ошибки для запроса установки не онлайн, если была ошибка подключения.
    */
   @Test
-  public void setNoAdditionalViewStateForSetNotOnlineIfNoConnection() {
+  public void setCheckedViewStateForSetNotOnlineIfNoConnection() {
     // Дано:
     when(executorStateNotOnlineUseCase.setExecutorNotOnline())
         .thenReturn(Completable.error(new IllegalStateException()));
@@ -410,6 +410,7 @@ public class OnlineSwitchViewModelTest {
     inOrder.verify(viewStateObserver).onChanged(new OnlineSwitchViewState(true));
     inOrder.verify(viewStateObserver)
         .onChanged(new OnlineSwitchViewStatePending(new OnlineSwitchViewState(false)));
+    inOrder.verify(viewStateObserver).onChanged(new OnlineSwitchViewState(true));
     verifyNoMoreInteractions(viewStateObserver);
   }
 
