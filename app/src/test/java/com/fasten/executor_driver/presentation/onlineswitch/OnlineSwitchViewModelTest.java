@@ -12,6 +12,7 @@ import android.arch.lifecycle.Observer;
 import com.fasten.executor_driver.entity.ExecutorState;
 import com.fasten.executor_driver.entity.ForbiddenExecutorStateException;
 import com.fasten.executor_driver.interactor.ExecutorStateNotOnlineUseCase;
+import com.fasten.executor_driver.presentation.CommonNavigate;
 import com.fasten.executor_driver.presentation.ViewState;
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Completable;
@@ -426,7 +427,7 @@ public class OnlineSwitchViewModelTest {
     publishSubject.onError(new Exception());
 
     // Результат:
-    verify(navigateObserver, only()).onChanged(OnlineSwitchNavigate.SERVER_DATA_ERROR);
+    verify(navigateObserver, only()).onChanged(CommonNavigate.SERVER_DATA_ERROR);
   }
 
   /**
@@ -443,7 +444,7 @@ public class OnlineSwitchViewModelTest {
     viewModel.setNewState(false);
 
     // Результат:
-    verify(navigateObserver, only()).onChanged(OnlineSwitchNavigate.SERVER_DATA_ERROR);
+    verify(navigateObserver, only()).onChanged(CommonNavigate.SERVER_DATA_ERROR);
   }
 
   /**
@@ -473,7 +474,7 @@ public class OnlineSwitchViewModelTest {
     viewModel.setNewState(false);
 
     // Результат:
-    verify(navigateObserver, only()).onChanged(OnlineSwitchNavigate.NO_CONNECTION);
+    verify(navigateObserver, only()).onChanged(CommonNavigate.NO_CONNECTION);
   }
 
   /**

@@ -11,6 +11,7 @@ import android.arch.core.executor.testing.InstantTaskExecutorRule;
 import android.arch.lifecycle.Observer;
 import com.fasten.executor_driver.backend.web.NoNetworkException;
 import com.fasten.executor_driver.interactor.CallToClientUseCase;
+import com.fasten.executor_driver.presentation.CommonNavigate;
 import com.fasten.executor_driver.presentation.ViewState;
 import io.reactivex.Completable;
 import io.reactivex.android.plugins.RxAndroidPlugins;
@@ -224,7 +225,7 @@ public class CallToClientViewModelTest {
     testScheduler.advanceTimeBy(1, TimeUnit.NANOSECONDS);
 
     // Результат:
-    verify(navigateObserver, only()).onChanged(CallToClientNavigate.NO_CONNECTION);
+    verify(navigateObserver, only()).onChanged(CommonNavigate.NO_CONNECTION);
   }
 
   /**

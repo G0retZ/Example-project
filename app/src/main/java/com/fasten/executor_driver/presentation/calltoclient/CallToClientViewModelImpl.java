@@ -5,6 +5,7 @@ import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
 import com.fasten.executor_driver.interactor.CallToClientUseCase;
+import com.fasten.executor_driver.presentation.CommonNavigate;
 import com.fasten.executor_driver.presentation.SingleLiveEvent;
 import com.fasten.executor_driver.presentation.ViewState;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -62,7 +63,7 @@ public class CallToClientViewModelImpl extends ViewModel implements CallToClient
             throwable -> {
               throwable.printStackTrace();
               viewStateLiveData.postValue(new CallToClientViewStateNotCalling());
-              navigateLiveData.postValue(CallToClientNavigate.NO_CONNECTION);
+              navigateLiveData.postValue(CommonNavigate.NO_CONNECTION);
             }
         );
   }

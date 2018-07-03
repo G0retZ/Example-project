@@ -8,6 +8,7 @@ import static org.mockito.Mockito.when;
 import android.arch.core.executor.testing.InstantTaskExecutorRule;
 import android.arch.lifecycle.Observer;
 import com.fasten.executor_driver.interactor.OrderCurrentCostUseCase;
+import com.fasten.executor_driver.presentation.CommonNavigate;
 import com.fasten.executor_driver.presentation.ViewState;
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.android.plugins.RxAndroidPlugins;
@@ -156,6 +157,6 @@ public class OrderCostViewModelTest {
     publishSubject.onError(new Exception());
 
     // Результат:
-    verify(navigateObserver, only()).onChanged(OrderCostNavigate.SERVER_DATA_ERROR);
+    verify(navigateObserver, only()).onChanged(CommonNavigate.SERVER_DATA_ERROR);
   }
 }

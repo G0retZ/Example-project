@@ -12,6 +12,7 @@ import android.arch.core.executor.testing.InstantTaskExecutorRule;
 import android.arch.lifecycle.Observer;
 import com.fasten.executor_driver.backend.web.NoNetworkException;
 import com.fasten.executor_driver.interactor.OrderConfirmationUseCase;
+import com.fasten.executor_driver.presentation.CommonNavigate;
 import com.fasten.executor_driver.presentation.ViewState;
 import io.reactivex.Completable;
 import io.reactivex.android.plugins.RxAndroidPlugins;
@@ -276,7 +277,7 @@ public class OrderConfirmationViewModelTest {
     viewModel.declineOrder();
 
     // Результат:
-    verify(navigateObserver, only()).onChanged(OrderConfirmationNavigate.NO_CONNECTION);
+    verify(navigateObserver, only()).onChanged(CommonNavigate.NO_CONNECTION);
   }
 
   /**
@@ -324,7 +325,7 @@ public class OrderConfirmationViewModelTest {
     viewModel.acceptOrder();
 
     // Результат:
-    verify(navigateObserver, only()).onChanged(OrderConfirmationNavigate.NO_CONNECTION);
+    verify(navigateObserver, only()).onChanged(CommonNavigate.NO_CONNECTION);
   }
 
   /**

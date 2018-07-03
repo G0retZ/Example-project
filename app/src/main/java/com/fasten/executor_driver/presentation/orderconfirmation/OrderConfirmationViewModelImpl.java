@@ -5,6 +5,7 @@ import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
 import com.fasten.executor_driver.interactor.OrderConfirmationUseCase;
+import com.fasten.executor_driver.presentation.CommonNavigate;
 import com.fasten.executor_driver.presentation.SingleLiveEvent;
 import com.fasten.executor_driver.presentation.ViewState;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -60,7 +61,7 @@ public class OrderConfirmationViewModelImpl extends ViewModel implements
             }, throwable -> {
               throwable.printStackTrace();
               viewStateLiveData.postValue(new OrderConfirmationViewStateIdle());
-              navigateLiveData.postValue(OrderConfirmationNavigate.NO_CONNECTION);
+              navigateLiveData.postValue(CommonNavigate.NO_CONNECTION);
             }
         );
   }
@@ -79,7 +80,7 @@ public class OrderConfirmationViewModelImpl extends ViewModel implements
             }, throwable -> {
               throwable.printStackTrace();
               viewStateLiveData.postValue(new OrderConfirmationViewStateIdle());
-              navigateLiveData.postValue(OrderConfirmationNavigate.NO_CONNECTION);
+              navigateLiveData.postValue(CommonNavigate.NO_CONNECTION);
             }
         );
   }

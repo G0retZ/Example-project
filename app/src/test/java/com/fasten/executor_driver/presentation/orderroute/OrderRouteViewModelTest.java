@@ -12,6 +12,7 @@ import android.arch.lifecycle.Observer;
 import com.fasten.executor_driver.backend.web.NoNetworkException;
 import com.fasten.executor_driver.entity.RoutePoint;
 import com.fasten.executor_driver.interactor.OrderRouteUseCase;
+import com.fasten.executor_driver.presentation.CommonNavigate;
 import com.fasten.executor_driver.presentation.ViewState;
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Completable;
@@ -324,7 +325,7 @@ public class OrderRouteViewModelTest {
     publishSubject.onError(new Exception());
 
     // Результат:
-    verify(navigateObserver, only()).onChanged(OrderRouteNavigate.SERVER_DATA_ERROR);
+    verify(navigateObserver, only()).onChanged(CommonNavigate.SERVER_DATA_ERROR);
   }
 
   /**
@@ -354,7 +355,7 @@ public class OrderRouteViewModelTest {
     viewModel.selectNextRoutePoint(new RoutePointItem(routePoint));
 
     // Результат:
-    verify(navigateObserver, only()).onChanged(OrderRouteNavigate.NO_CONNECTION);
+    verify(navigateObserver, only()).onChanged(CommonNavigate.NO_CONNECTION);
   }
 
   /**

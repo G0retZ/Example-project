@@ -10,6 +10,7 @@ import android.arch.core.executor.testing.InstantTaskExecutorRule;
 import android.arch.lifecycle.Observer;
 import com.fasten.executor_driver.entity.Order;
 import com.fasten.executor_driver.interactor.OrderUseCase;
+import com.fasten.executor_driver.presentation.CommonNavigate;
 import com.fasten.executor_driver.presentation.ViewState;
 import com.fasten.executor_driver.utils.TimeUtils;
 import io.reactivex.BackpressureStrategy;
@@ -159,6 +160,6 @@ public class OrderViewModelTest {
     publishSubject.onError(new Exception());
 
     // Результат:
-    verify(navigateObserver, only()).onChanged(OrderNavigate.SERVER_DATA_ERROR);
+    verify(navigateObserver, only()).onChanged(CommonNavigate.SERVER_DATA_ERROR);
   }
 }

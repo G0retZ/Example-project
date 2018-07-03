@@ -5,6 +5,7 @@ import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
 import com.fasten.executor_driver.interactor.OrderFulfillmentTimeUseCase;
+import com.fasten.executor_driver.presentation.CommonNavigate;
 import com.fasten.executor_driver.presentation.SingleLiveEvent;
 import com.fasten.executor_driver.presentation.ViewState;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -56,7 +57,7 @@ public class OrderTimeViewModelImpl extends ViewModel implements OrderTimeViewMo
             time -> viewStateLiveData.postValue(new OrderTimeViewState(time)),
             throwable -> {
               throwable.printStackTrace();
-              navigateLiveData.postValue(OrderTimeNavigate.SERVER_DATA_ERROR);
+              navigateLiveData.postValue(CommonNavigate.SERVER_DATA_ERROR);
             }
         );
   }

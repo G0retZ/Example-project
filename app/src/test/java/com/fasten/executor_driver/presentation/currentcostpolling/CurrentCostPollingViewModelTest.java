@@ -11,6 +11,7 @@ import android.arch.core.executor.testing.InstantTaskExecutorRule;
 import android.arch.lifecycle.Observer;
 import com.fasten.executor_driver.gateway.DataMappingException;
 import com.fasten.executor_driver.interactor.CurrentCostPollingUseCase;
+import com.fasten.executor_driver.presentation.CommonNavigate;
 import com.fasten.executor_driver.presentation.ViewState;
 import io.reactivex.Completable;
 import io.reactivex.android.plugins.RxAndroidPlugins;
@@ -167,7 +168,7 @@ public class CurrentCostPollingViewModelTest {
     currentCostPollingViewModel.initializeCurrentCostPolling();
 
     // Результат:
-    verify(navigationObserver, only()).onChanged(CurrentCostPollingStateNavigate.SERVER_DATA_ERROR);
+    verify(navigationObserver, only()).onChanged(CommonNavigate.SERVER_DATA_ERROR);
   }
 
   /**

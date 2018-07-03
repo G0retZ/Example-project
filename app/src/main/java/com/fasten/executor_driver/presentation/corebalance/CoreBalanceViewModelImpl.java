@@ -6,6 +6,7 @@ import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
 import com.fasten.executor_driver.gateway.DataMappingException;
 import com.fasten.executor_driver.interactor.ExecutorBalanceUseCase;
+import com.fasten.executor_driver.presentation.CommonNavigate;
 import com.fasten.executor_driver.presentation.ViewState;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
@@ -52,7 +53,7 @@ public class CoreBalanceViewModelImpl extends ViewModel implements CoreBalanceVi
             throwable -> {
               throwable.printStackTrace();
               if (throwable instanceof DataMappingException) {
-                navigateLiveData.postValue(CoreBalanceNavigate.SERVER_DATA_ERROR);
+                navigateLiveData.postValue(CommonNavigate.SERVER_DATA_ERROR);
               }
             }
         );

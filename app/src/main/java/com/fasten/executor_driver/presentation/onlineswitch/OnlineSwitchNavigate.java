@@ -9,9 +9,7 @@ import java.lang.annotation.RetentionPolicy;
  */
 @StringDef({
     OnlineSwitchNavigate.SERVICES,
-    OnlineSwitchNavigate.VEHICLE_OPTIONS,
-    OnlineSwitchNavigate.NO_CONNECTION,
-    OnlineSwitchNavigate.SERVER_DATA_ERROR
+    OnlineSwitchNavigate.VEHICLE_OPTIONS
 })
 @Retention(RetentionPolicy.SOURCE)
 public @interface OnlineSwitchNavigate {
@@ -21,10 +19,4 @@ public @interface OnlineSwitchNavigate {
 
   // Переход к настройке опций ТС.
   String VEHICLE_OPTIONS = "OnlineButton.to.VehicleOptions";
-
-  // Переход к ошибке соединения.
-  String NO_CONNECTION = "OnlineButton.to.NoConnection";
-
-  // Переход к проблеме совместимости формата данных с сервером.
-  String SERVER_DATA_ERROR = "OnlineButton.to.ServerDataError";
 }

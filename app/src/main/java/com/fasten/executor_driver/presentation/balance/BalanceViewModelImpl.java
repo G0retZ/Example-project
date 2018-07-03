@@ -6,6 +6,7 @@ import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.fasten.executor_driver.interactor.ExecutorBalanceUseCase;
+import com.fasten.executor_driver.presentation.CommonNavigate;
 import com.fasten.executor_driver.presentation.SingleLiveEvent;
 import com.fasten.executor_driver.presentation.ViewState;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -60,7 +61,7 @@ public class BalanceViewModelImpl extends ViewModel implements BalanceViewModel 
                 .postValue(lastViewState = new BalanceViewState(executorBalance)),
             throwable -> {
               throwable.printStackTrace();
-              navigateLiveData.postValue(BalanceNavigate.SERVER_DATA_ERROR);
+              navigateLiveData.postValue(CommonNavigate.SERVER_DATA_ERROR);
             }
         );
   }

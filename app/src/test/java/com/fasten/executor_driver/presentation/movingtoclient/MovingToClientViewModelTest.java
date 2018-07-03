@@ -11,6 +11,7 @@ import android.arch.core.executor.testing.InstantTaskExecutorRule;
 import android.arch.lifecycle.Observer;
 import com.fasten.executor_driver.backend.web.NoNetworkException;
 import com.fasten.executor_driver.interactor.MovingToClientUseCase;
+import com.fasten.executor_driver.presentation.CommonNavigate;
 import com.fasten.executor_driver.presentation.ViewState;
 import io.reactivex.Completable;
 import io.reactivex.android.plugins.RxAndroidPlugins;
@@ -241,7 +242,7 @@ public class MovingToClientViewModelTest {
     viewModel.reportArrival();
 
     // Результат:
-    verify(navigateObserver, only()).onChanged(MovingToClientNavigate.NO_CONNECTION);
+    verify(navigateObserver, only()).onChanged(CommonNavigate.NO_CONNECTION);
   }
 
   /**

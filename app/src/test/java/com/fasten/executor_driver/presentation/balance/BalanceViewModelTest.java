@@ -11,6 +11,7 @@ import android.arch.core.executor.testing.InstantTaskExecutorRule;
 import android.arch.lifecycle.Observer;
 import com.fasten.executor_driver.entity.ExecutorBalance;
 import com.fasten.executor_driver.interactor.ExecutorBalanceUseCase;
+import com.fasten.executor_driver.presentation.CommonNavigate;
 import com.fasten.executor_driver.presentation.ViewState;
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.android.plugins.RxAndroidPlugins;
@@ -208,6 +209,6 @@ public class BalanceViewModelTest {
     publishSubject.onError(new Exception());
 
     // Результат:
-    verify(navigateObserver, only()).onChanged(BalanceNavigate.SERVER_DATA_ERROR);
+    verify(navigateObserver, only()).onChanged(CommonNavigate.SERVER_DATA_ERROR);
   }
 }

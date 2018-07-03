@@ -14,6 +14,7 @@ import android.arch.lifecycle.Observer;
 import com.fasten.executor_driver.backend.web.NoNetworkException;
 import com.fasten.executor_driver.entity.ExecutorState;
 import com.fasten.executor_driver.interactor.ExecutorStateUseCase;
+import com.fasten.executor_driver.presentation.CommonNavigate;
 import com.fasten.executor_driver.presentation.ViewState;
 import io.reactivex.Flowable;
 import io.reactivex.android.plugins.RxAndroidPlugins;
@@ -178,7 +179,7 @@ public class ExecutorStateViewModelTest {
     viewModel.initializeExecutorState();
 
     // Результат:
-    verify(navigationObserver, only()).onChanged(ExecutorStateNavigate.SERVER_DATA_ERROR);
+    verify(navigationObserver, only()).onChanged(CommonNavigate.SERVER_DATA_ERROR);
   }
 
   /**
@@ -195,7 +196,7 @@ public class ExecutorStateViewModelTest {
     viewModel.initializeExecutorState();
 
     // Результат:
-    verify(navigationObserver, only()).onChanged(ExecutorStateNavigate.SERVER_DATA_ERROR);
+    verify(navigationObserver, only()).onChanged(CommonNavigate.SERVER_DATA_ERROR);
   }
 
   /**

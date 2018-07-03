@@ -12,6 +12,7 @@ import android.arch.core.executor.testing.InstantTaskExecutorRule;
 import android.arch.lifecycle.Observer;
 import com.fasten.executor_driver.entity.CancelOrderReason;
 import com.fasten.executor_driver.interactor.CancelOrderUseCase;
+import com.fasten.executor_driver.presentation.CommonNavigate;
 import com.fasten.executor_driver.presentation.ViewState;
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Completable;
@@ -307,7 +308,7 @@ public class CancelOrderViewModelTest {
     publishSubject.onError(new Exception());
 
     // Результат:
-    verify(navigateObserver, only()).onChanged(CancelOrderNavigate.SERVER_DATA_ERROR);
+    verify(navigateObserver, only()).onChanged(CommonNavigate.SERVER_DATA_ERROR);
   }
 
   /**
@@ -341,7 +342,7 @@ public class CancelOrderViewModelTest {
     viewModel.selectItem(cancelOrderReason);
 
     // Результат:
-    verify(navigateObserver, only()).onChanged(CancelOrderNavigate.NO_CONNECTION);
+    verify(navigateObserver, only()).onChanged(CommonNavigate.NO_CONNECTION);
   }
 
   /**

@@ -5,6 +5,7 @@ import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
 import com.fasten.executor_driver.interactor.GeoLocationUseCase;
+import com.fasten.executor_driver.presentation.CommonNavigate;
 import com.fasten.executor_driver.presentation.SingleLiveEvent;
 import com.fasten.executor_driver.presentation.ViewState;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -60,7 +61,7 @@ public class GeoLocationViewModelImpl extends ViewModel implements GeoLocationVi
               if (throwable instanceof SecurityException) {
                 navigateLiveData.postValue(GeoLocationNavigate.RESOLVE_GEO_PROBLEM);
               } else if (!(throwable instanceof IllegalStateException)) {
-                navigateLiveData.postValue(GeoLocationNavigate.SERVER_DATA_ERROR);
+                navigateLiveData.postValue(CommonNavigate.SERVER_DATA_ERROR);
               }
             }
         );

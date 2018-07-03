@@ -5,6 +5,7 @@ import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
 import com.fasten.executor_driver.interactor.WaitingForClientUseCase;
+import com.fasten.executor_driver.presentation.CommonNavigate;
 import com.fasten.executor_driver.presentation.SingleLiveEvent;
 import com.fasten.executor_driver.presentation.ViewState;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -58,7 +59,7 @@ public class WaitingForClientViewModelImpl extends ViewModel implements WaitingF
             }, throwable -> {
               throwable.printStackTrace();
               viewStateLiveData.postValue(new WaitingForClientViewStateIdle());
-              navigateLiveData.postValue(WaitingForClientNavigate.NO_CONNECTION);
+              navigateLiveData.postValue(CommonNavigate.NO_CONNECTION);
             }
         );
   }

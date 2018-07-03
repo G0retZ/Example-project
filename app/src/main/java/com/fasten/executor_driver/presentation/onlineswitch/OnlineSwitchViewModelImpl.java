@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.fasten.executor_driver.entity.ExecutorState;
 import com.fasten.executor_driver.interactor.ExecutorStateNotOnlineUseCase;
+import com.fasten.executor_driver.presentation.CommonNavigate;
 import com.fasten.executor_driver.presentation.SingleLiveEvent;
 import com.fasten.executor_driver.presentation.ViewState;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -69,9 +70,9 @@ public class OnlineSwitchViewModelImpl extends ViewModel implements OnlineSwitch
                 throwable -> {
                   throwable.printStackTrace();
                   if (throwable instanceof IllegalStateException) {
-                    navigateLiveData.postValue(OnlineSwitchNavigate.NO_CONNECTION);
+                    navigateLiveData.postValue(CommonNavigate.NO_CONNECTION);
                   } else {
-                    navigateLiveData.postValue(OnlineSwitchNavigate.SERVER_DATA_ERROR);
+                    navigateLiveData.postValue(CommonNavigate.SERVER_DATA_ERROR);
                   }
                 });
       }
@@ -86,7 +87,7 @@ public class OnlineSwitchViewModelImpl extends ViewModel implements OnlineSwitch
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(this::onNextState, throwable -> {
           throwable.printStackTrace();
-          navigateLiveData.postValue(OnlineSwitchNavigate.SERVER_DATA_ERROR);
+          navigateLiveData.postValue(CommonNavigate.SERVER_DATA_ERROR);
         });
   }
 

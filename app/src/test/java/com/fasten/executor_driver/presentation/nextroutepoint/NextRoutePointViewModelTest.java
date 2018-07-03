@@ -12,6 +12,7 @@ import android.arch.lifecycle.Observer;
 import com.fasten.executor_driver.entity.RoutePoint;
 import com.fasten.executor_driver.entity.RoutePointState;
 import com.fasten.executor_driver.interactor.OrderRouteUseCase;
+import com.fasten.executor_driver.presentation.CommonNavigate;
 import com.fasten.executor_driver.presentation.ViewState;
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Completable;
@@ -785,7 +786,7 @@ public class NextRoutePointViewModelTest {
     publishSubject.onError(new Exception());
 
     // Результат:
-    verify(navigateObserver, only()).onChanged(NextRoutePointNavigate.SERVER_DATA_ERROR);
+    verify(navigateObserver, only()).onChanged(CommonNavigate.SERVER_DATA_ERROR);
   }
 
   /**
@@ -821,7 +822,7 @@ public class NextRoutePointViewModelTest {
     viewModel.closeRoutePoint();
 
     // Результат:
-    verify(navigateObserver, only()).onChanged(NextRoutePointNavigate.NO_CONNECTION);
+    verify(navigateObserver, only()).onChanged(CommonNavigate.NO_CONNECTION);
   }
 
   /**
@@ -872,7 +873,7 @@ public class NextRoutePointViewModelTest {
     viewModel.completeTheOrder();
 
     // Результат:
-    verify(navigateObserver, only()).onChanged(NextRoutePointNavigate.NO_CONNECTION);
+    verify(navigateObserver, only()).onChanged(CommonNavigate.NO_CONNECTION);
   }
 
   /**

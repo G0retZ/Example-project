@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.fasten.executor_driver.entity.Order;
 import com.fasten.executor_driver.interactor.OrderUseCase;
+import com.fasten.executor_driver.presentation.CommonNavigate;
 import com.fasten.executor_driver.presentation.SingleLiveEvent;
 import com.fasten.executor_driver.presentation.ViewState;
 import com.fasten.executor_driver.utils.TimeUtils;
@@ -73,7 +74,7 @@ public class OrderViewModelImpl extends ViewModel implements
 
   private void consumeError(Throwable throwable) {
     throwable.printStackTrace();
-    navigateLiveData.postValue(OrderNavigate.SERVER_DATA_ERROR);
+    navigateLiveData.postValue(CommonNavigate.SERVER_DATA_ERROR);
   }
 
   @Override
