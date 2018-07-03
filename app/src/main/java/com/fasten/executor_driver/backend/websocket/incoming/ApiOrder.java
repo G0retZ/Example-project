@@ -12,6 +12,10 @@ public class ApiOrder {
   @Nullable
   @SerializedName("estimatedAmountText")
   private String estimatedAmountText;
+  @SerializedName("estimatedTime")
+  private long estimatedTime;
+  @SerializedName("estimatedRouteDistance")
+  private long estimatedRouteDistance;
   @SerializedName("totalAmount")
   private int totalAmount;
   @Nullable
@@ -43,14 +47,16 @@ public class ApiOrder {
   }
 
   @SuppressWarnings("SameParameterValue")
-  ApiOrder(long id, @Nullable String estimatedAmountText,
-      int totalAmount, @Nullable String comment, int timeout,
+  ApiOrder(long id, @Nullable String estimatedAmountText, long estimatedTime,
+      long estimatedRouteDistance, int totalAmount, @Nullable String comment, int timeout,
       long etaToStartPoint, long confirmationTime, long orderStartTime,
       @Nullable ApiDriverDistancePair executorDistance,
       @Nullable List<ApiRoutePoint> route,
       @Nullable List<ApiOptionItem> options) {
     this.id = id;
     this.estimatedAmountText = estimatedAmountText;
+    this.estimatedRouteDistance = estimatedRouteDistance;
+    this.estimatedTime = estimatedTime;
     this.totalAmount = totalAmount;
     this.comment = comment;
     this.timeout = timeout;
@@ -69,6 +75,14 @@ public class ApiOrder {
   @Nullable
   public String getEstimatedAmountText() {
     return estimatedAmountText;
+  }
+
+  public long getEstimatedTime() {
+    return estimatedTime;
+  }
+
+  public long getEstimatedRouteDistance() {
+    return estimatedRouteDistance;
   }
 
   public int getTotalAmount() {
