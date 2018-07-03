@@ -6,6 +6,8 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
 import com.fasten.executor_driver.R;
 import com.fasten.executor_driver.di.AppComponent;
 import com.fasten.executor_driver.presentation.serverconnection.ServerConnectionViewActions;
@@ -55,5 +57,14 @@ public class ServerConnectionFragment extends BaseFragment implements ServerConn
   @Override
   public void showConnectionReady(boolean connected) {
     rootView.setVisibility(connected ? View.GONE : View.VISIBLE);
+  }
+
+  public void blink() {
+    Animation anim = new AlphaAnimation(1.0f, 0.8f);
+    anim.setDuration(50); //You can manage the blinking time with this parameter
+    anim.setStartOffset(20);
+    anim.setRepeatMode(Animation.REVERSE);
+    anim.setRepeatCount(3);
+    rootView.startAnimation(anim);
   }
 }
