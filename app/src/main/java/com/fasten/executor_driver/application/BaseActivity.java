@@ -87,6 +87,9 @@ public class BaseActivity extends AppCompatActivity {
           ((ServerConnectionFragment) fragment).blink();
         }
         break;
+      case CommonNavigate.SERVER_DATA_ERROR:
+        ((MainApplication) getApplication()).navigate(destination);
+        break;
     }
   }
 

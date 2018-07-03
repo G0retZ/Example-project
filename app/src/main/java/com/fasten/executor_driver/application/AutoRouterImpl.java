@@ -127,7 +127,9 @@ public class AutoRouterImpl implements ActivityLifecycleCallbacks, AutoRouter,
       goToGeoResolver = true;
       tryToResolveGeo();
     } else {
-      splashRouteAction = lastRouteAction = destination;
+      if (lastRouteAction == null || !lastRouteAction.equals(CommonNavigate.SERVER_DATA_ERROR)) {
+        splashRouteAction = lastRouteAction = destination;
+      }
       tryToNavigate();
     }
   }
@@ -170,7 +172,7 @@ public class AutoRouterImpl implements ActivityLifecycleCallbacks, AutoRouter,
             )
             .create()
             .show();
-        break;
+        return;
       case ExecutorStateNavigate.MAP_SHIFT_CLOSED:
         currentActivity.startActivity(
             new Intent(currentActivity, MapActivity.class)

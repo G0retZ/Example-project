@@ -193,7 +193,7 @@ public class MainApplication extends Application implements ServerConnectionView
     }
   }
 
-  private void navigate(@Nullable String destination) {
+  void navigate(@Nullable String destination) {
     if (autoRouter == null) {
       throw new IllegalStateException("Граф зависимостей поломан!");
     }
