@@ -49,7 +49,7 @@ import com.fasten.executor_driver.gateway.OrderGatewayImpl;
 import com.fasten.executor_driver.gateway.OrderRouteGatewayImpl;
 import com.fasten.executor_driver.gateway.PasswordGatewayImpl;
 import com.fasten.executor_driver.gateway.RoutePointApiMapper;
-import com.fasten.executor_driver.gateway.SelectedVehicleOptionsGatewayImpl;
+import com.fasten.executor_driver.gateway.SelectedVehicleAndOptionsGatewayImpl;
 import com.fasten.executor_driver.gateway.ServerConnectionGatewayImpl;
 import com.fasten.executor_driver.gateway.ServiceApiMapper;
 import com.fasten.executor_driver.gateway.ServicesGatewayImpl;
@@ -90,7 +90,6 @@ import com.fasten.executor_driver.interactor.auth.SmsUseCaseImpl;
 import com.fasten.executor_driver.interactor.map.HeatMapUseCaseImpl;
 import com.fasten.executor_driver.interactor.services.ServicesUseCaseImpl;
 import com.fasten.executor_driver.interactor.vehicle.LastUsedVehicleGateway;
-import com.fasten.executor_driver.interactor.vehicle.SelectedVehicleOptionsUseCaseImpl;
 import com.fasten.executor_driver.interactor.vehicle.SelectedVehicleUseCaseImpl;
 import com.fasten.executor_driver.interactor.vehicle.VehicleChoiceSharer;
 import com.fasten.executor_driver.interactor.vehicle.VehicleChoiceUseCaseImpl;
@@ -195,6 +194,8 @@ public class AppComponentImpl implements AppComponent {
   // Типа кастомный скоуп.
   @Nullable
   private VehiclesAndOptionsGateway vehiclesAndOptionsGateway;
+  @Nullable
+  private VehiclesAndOptionsGateway selectedVehiclesAndOptionsGateway;
 
   public AppComponentImpl(@NonNull Context appContext) {
     appContext = appContext.getApplicationContext();
@@ -433,6 +434,14 @@ public class AppComponentImpl implements AppComponent {
 
   @Override
   public void inject(OnlineFragment onlineFragment) {
+    selectedVehiclesAndOptionsGateway = new SelectedVehicleAndOptionsGatewayImpl(
+        apiService,
+        new VehicleOptionApiMapper(),
+        new VehicleApiMapper(
+            new VehicleOptionApiMapper()
+        ),
+        new ErrorMapper()
+    );
     onlineFragment.setOnlineSwitchViewModel(
         ViewModelProviders.of(
             onlineFragment,
@@ -517,20 +526,21 @@ public class AppComponentImpl implements AppComponent {
 
   @Override
   public void inject(SelectedVehicleOptionsFragment vehicleOptionsFragment) {
+    if (selectedVehiclesAndOptionsGateway == null) {
+      throw new IllegalStateException("Граф зависимостей поломан!");
+    }
     vehicleOptionsFragment.setVehicleOptionsViewModel(
         ViewModelProviders.of(
             vehicleOptionsFragment,
             new ViewModelFactory<>(
                 new VehicleOptionsViewModelImpl(
-                    new SelectedVehicleOptionsUseCaseImpl(
+                    new VehicleOptionsUseCaseImpl(
                         new CurrentVehicleOptionsGatewayImpl(
                             apiService
                         ),
-                        new SelectedVehicleOptionsGatewayImpl(
-                            apiService,
-                            new VehicleOptionApiMapper(),
-                            new ErrorMapper()
-                        )
+                        vehicleChoiceSharer,
+                        lastUsedVehicleGateway,
+                        selectedVehiclesAndOptionsGateway
                     )
                 )
             )

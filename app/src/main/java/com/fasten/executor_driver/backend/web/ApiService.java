@@ -2,7 +2,6 @@ package com.fasten.executor_driver.backend.web;
 
 import android.support.annotation.NonNull;
 import com.fasten.executor_driver.backend.web.incoming.ApiOptionsForOnline;
-import com.fasten.executor_driver.backend.web.incoming.ApiSelectedOptionsForOnline;
 import com.fasten.executor_driver.backend.web.incoming.ApiServiceItem;
 import com.fasten.executor_driver.backend.web.outgoing.ApiLogin;
 import com.fasten.executor_driver.backend.web.outgoing.ApiOptionItems;
@@ -77,8 +76,8 @@ public interface ApiService {
   /*
    *  Запрос опций выбранного ТС и текущего исполнителя.
    */
-  @GET("api/public/v1/mobile/car/option/assigned")
-  Single<ApiSelectedOptionsForOnline> getSelectedOptionsForOnline();
+  @GET("api/public/v1/mobile/car/active")
+  Single<ApiOptionsForOnline> getSelectedOptionsForOnline();
 
   /*
    *  Запрос установки опций выбранного ТС и текущего исполнителя.
