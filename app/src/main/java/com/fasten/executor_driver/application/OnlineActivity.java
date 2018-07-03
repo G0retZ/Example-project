@@ -1,5 +1,6 @@
 package com.fasten.executor_driver.application;
 
+import android.app.AlertDialog.Builder;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -26,6 +27,15 @@ public class OnlineActivity extends BaseActivity {
   @Override
   public void navigate(@NonNull String destination) {
     switch (destination) {
+      case OnlineSwitchNavigate.DRIVER_BLOCKED:
+        new Builder(this)
+            .setTitle(R.string.error)
+            .setMessage("Тебя забанили!")
+            .setPositiveButton(getString(android.R.string.ok), null)
+            .setNegativeButton(getString(android.R.string.cancel), null)
+            .create()
+            .show();
+        break;
       case OnlineSwitchNavigate.VEHICLE_OPTIONS:
         startActivity(new Intent(this, SelectedVehicleOptionsActivity.class));
         break;
