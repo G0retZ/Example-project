@@ -59,6 +59,8 @@ public class MovingToClientApiMapper implements Mapper<String, Order> {
         apiOrder.getComment() == null ? "" : apiOrder.getComment(),
         apiOrder.getExecutorDistance() == null ? 0 : apiOrder.getExecutorDistance().getDistance(),
         apiOrder.getEstimatedAmountText() == null ? "" : apiOrder.getEstimatedAmountText(),
+        apiOrder.getEstimatedTime(),
+        apiOrder.getEstimatedRouteDistance(),
         apiOrder.getTotalAmount(),
         apiOrder.getTimeout(),
         apiOrder.getEtaToStartPoint(),

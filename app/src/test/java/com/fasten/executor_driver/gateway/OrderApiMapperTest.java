@@ -64,6 +64,8 @@ public class OrderApiMapperTest {
     assertEquals(order.getId(), 7);
     assertEquals(order.getComment(), "some comment");
     assertEquals(order.getEstimatedPrice(), "over 9999 BTC");
+    assertEquals(order.getEstimatedTime(), 234_532_000);
+    assertEquals(order.getEstimatedRouteLength(), 35_213);
     assertEquals(order.getTotalCost(), 10_352);
     assertEquals(order.getTimeout(), 25);
     assertEquals(order.getEtaToStartPoint(), 1234567890);
@@ -90,6 +92,8 @@ public class OrderApiMapperTest {
     assertEquals(order.getId(), 0);
     assertEquals(order.getComment(), "some comment");
     assertEquals(order.getEstimatedPrice(), "over 9999 BTC");
+    assertEquals(order.getEstimatedTime(), 234_532_000);
+    assertEquals(order.getEstimatedRouteLength(), 35_213);
     assertEquals(order.getTotalCost(), 10_352);
     assertEquals(order.getTimeout(), 25);
     assertEquals(order.getEtaToStartPoint(), 1234567890);
@@ -116,6 +120,8 @@ public class OrderApiMapperTest {
     assertEquals(order.getId(), 7);
     assertEquals(order.getComment(), "");
     assertEquals(order.getEstimatedPrice(), "over 9999 BTC");
+    assertEquals(order.getEstimatedTime(), 234_532_000);
+    assertEquals(order.getEstimatedRouteLength(), 35_213);
     assertEquals(order.getTotalCost(), 10_352);
     assertEquals(order.getTimeout(), 25);
     assertEquals(order.getEtaToStartPoint(), 1234567890);
@@ -134,14 +140,72 @@ public class OrderApiMapperTest {
    * @throws Exception ошибка
    */
   @Test
-  public void mappingJsonStringWithoutEstimationToOrderSuccess() throws Exception {
+  public void mappingJsonStringWithoutEstimatedAmountTextToOrderSuccess() throws Exception {
     // Дано и Действие:
-    Order order = mapper.map(rule.getOrderWithoutEstimation());
+    Order order = mapper.map(rule.getOrderWithoutEstimatedAmountText());
 
     // Результат:
     assertEquals(order.getId(), 7);
     assertEquals(order.getComment(), "some comment");
     assertEquals(order.getEstimatedPrice(), "");
+    assertEquals(order.getEstimatedTime(), 234_532_000);
+    assertEquals(order.getEstimatedRouteLength(), 35_213);
+    assertEquals(order.getTotalCost(), 10_352);
+    assertEquals(order.getTimeout(), 25);
+    assertEquals(order.getEtaToStartPoint(), 1234567890);
+    assertEquals(order.getConfirmationTime(), 9876543210L);
+    assertEquals(order.getOrderStartTime(), 9876598760L);
+    assertEquals(order.getDistance(), 546);
+    assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
+    assertEquals(order.getOptions(),
+        Arrays.asList(optionNumeric, optionBoolean, optionBoolean, optionNumeric)
+    );
+  }
+
+  /**
+   * Должен успешно преобразовать JSON без расчетного времени заказа в заказ.
+   *
+   * @throws Exception ошибка
+   */
+  @Test
+  public void mappingJsonStringWithoutEstimatedTimeToOrderSuccess() throws Exception {
+    // Дано и Действие:
+    Order order = mapper.map(rule.getOrderWithoutEstimatedTime());
+
+    // Результат:
+    assertEquals(order.getId(), 7);
+    assertEquals(order.getComment(), "some comment");
+    assertEquals(order.getEstimatedPrice(), "over 9999 BTC");
+    assertEquals(order.getEstimatedTime(), 0);
+    assertEquals(order.getEstimatedRouteLength(), 35_213);
+    assertEquals(order.getTotalCost(), 10_352);
+    assertEquals(order.getTimeout(), 25);
+    assertEquals(order.getEtaToStartPoint(), 1234567890);
+    assertEquals(order.getConfirmationTime(), 9876543210L);
+    assertEquals(order.getOrderStartTime(), 9876598760L);
+    assertEquals(order.getDistance(), 546);
+    assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
+    assertEquals(order.getOptions(),
+        Arrays.asList(optionNumeric, optionBoolean, optionBoolean, optionNumeric)
+    );
+  }
+
+  /**
+   * Должен успешно преобразовать JSON без расчетной длины маршрута в заказ.
+   *
+   * @throws Exception ошибка
+   */
+  @Test
+  public void mappingJsonStringWithoutEstimatedRouteLengthToOrderSuccess() throws Exception {
+    // Дано и Действие:
+    Order order = mapper.map(rule.getOrderWithoutEstimatedRouteDistance());
+
+    // Результат:
+    assertEquals(order.getId(), 7);
+    assertEquals(order.getComment(), "some comment");
+    assertEquals(order.getEstimatedPrice(), "over 9999 BTC");
+    assertEquals(order.getEstimatedTime(), 234_532_000);
+    assertEquals(order.getEstimatedRouteLength(), 0);
     assertEquals(order.getTotalCost(), 10_352);
     assertEquals(order.getTimeout(), 25);
     assertEquals(order.getEtaToStartPoint(), 1234567890);
@@ -168,6 +232,8 @@ public class OrderApiMapperTest {
     assertEquals(order.getId(), 7);
     assertEquals(order.getComment(), "some comment");
     assertEquals(order.getEstimatedPrice(), "over 9999 BTC");
+    assertEquals(order.getEstimatedTime(), 234_532_000);
+    assertEquals(order.getEstimatedRouteLength(), 35_213);
     assertEquals(order.getTotalCost(), 0);
     assertEquals(order.getTimeout(), 25);
     assertEquals(order.getEtaToStartPoint(), 1234567890);
@@ -194,6 +260,8 @@ public class OrderApiMapperTest {
     assertEquals(order.getId(), 7);
     assertEquals(order.getComment(), "some comment");
     assertEquals(order.getEstimatedPrice(), "over 9999 BTC");
+    assertEquals(order.getEstimatedTime(), 234_532_000);
+    assertEquals(order.getEstimatedRouteLength(), 35_213);
     assertEquals(order.getTotalCost(), 10_352);
     assertEquals(order.getTimeout(), 0);
     assertEquals(order.getEtaToStartPoint(), 1234567890);
@@ -220,6 +288,8 @@ public class OrderApiMapperTest {
     assertEquals(order.getId(), 7);
     assertEquals(order.getComment(), "some comment");
     assertEquals(order.getEstimatedPrice(), "over 9999 BTC");
+    assertEquals(order.getEstimatedTime(), 234_532_000);
+    assertEquals(order.getEstimatedRouteLength(), 35_213);
     assertEquals(order.getTotalCost(), 10_352);
     assertEquals(order.getTimeout(), 25);
     assertEquals(order.getEtaToStartPoint(), 0);
@@ -246,6 +316,8 @@ public class OrderApiMapperTest {
     assertEquals(order.getId(), 7);
     assertEquals(order.getComment(), "some comment");
     assertEquals(order.getEstimatedPrice(), "over 9999 BTC");
+    assertEquals(order.getEstimatedTime(), 234_532_000);
+    assertEquals(order.getEstimatedRouteLength(), 35_213);
     assertEquals(order.getTotalCost(), 10_352);
     assertEquals(order.getTimeout(), 25);
     assertEquals(order.getEtaToStartPoint(), 1234567890);
@@ -272,6 +344,8 @@ public class OrderApiMapperTest {
     assertEquals(order.getId(), 7);
     assertEquals(order.getComment(), "some comment");
     assertEquals(order.getEstimatedPrice(), "over 9999 BTC");
+    assertEquals(order.getEstimatedTime(), 234_532_000);
+    assertEquals(order.getEstimatedRouteLength(), 35_213);
     assertEquals(order.getTotalCost(), 10_352);
     assertEquals(order.getTimeout(), 25);
     assertEquals(order.getEtaToStartPoint(), 1234567890);
@@ -298,6 +372,8 @@ public class OrderApiMapperTest {
     assertEquals(order.getId(), 7);
     assertEquals(order.getComment(), "some comment");
     assertEquals(order.getEstimatedPrice(), "over 9999 BTC");
+    assertEquals(order.getEstimatedTime(), 234_532_000);
+    assertEquals(order.getEstimatedRouteLength(), 35_213);
     assertEquals(order.getTotalCost(), 10_352);
     assertEquals(order.getTimeout(), 25);
     assertEquals(order.getEtaToStartPoint(), 1234567890);
@@ -324,6 +400,8 @@ public class OrderApiMapperTest {
     assertEquals(order.getId(), 7);
     assertEquals(order.getComment(), "some comment");
     assertEquals(order.getEstimatedPrice(), "over 9999 BTC");
+    assertEquals(order.getEstimatedTime(), 234_532_000);
+    assertEquals(order.getEstimatedRouteLength(), 35_213);
     assertEquals(order.getTotalCost(), 10_352);
     assertEquals(order.getTimeout(), 25);
     assertEquals(order.getEtaToStartPoint(), 1234567890);
@@ -350,6 +428,8 @@ public class OrderApiMapperTest {
     assertEquals(order.getId(), 7);
     assertEquals(order.getComment(), "some comment");
     assertEquals(order.getEstimatedPrice(), "over 9999 BTC");
+    assertEquals(order.getEstimatedTime(), 234_532_000);
+    assertEquals(order.getEstimatedRouteLength(), 35_213);
     assertEquals(order.getTotalCost(), 10_352);
     assertEquals(order.getTimeout(), 25);
     assertEquals(order.getEtaToStartPoint(), 1234567890);
@@ -376,6 +456,8 @@ public class OrderApiMapperTest {
     assertEquals(order.getId(), 7);
     assertEquals(order.getComment(), "some comment");
     assertEquals(order.getEstimatedPrice(), "over 9999 BTC");
+    assertEquals(order.getEstimatedTime(), 234_532_000);
+    assertEquals(order.getEstimatedRouteLength(), 35_213);
     assertEquals(order.getTotalCost(), 10_352);
     assertEquals(order.getTimeout(), 25);
     assertEquals(order.getEtaToStartPoint(), 1234567890);
@@ -402,6 +484,8 @@ public class OrderApiMapperTest {
     assertEquals(order.getId(), 7);
     assertEquals(order.getComment(), "some comment");
     assertEquals(order.getEstimatedPrice(), "over 9999 BTC");
+    assertEquals(order.getEstimatedTime(), 234_532_000);
+    assertEquals(order.getEstimatedRouteLength(), 35_213);
     assertEquals(order.getTotalCost(), 10_352);
     assertEquals(order.getTimeout(), 25);
     assertEquals(order.getEtaToStartPoint(), 1234567890);
@@ -428,6 +512,8 @@ public class OrderApiMapperTest {
     assertEquals(order.getId(), 7);
     assertEquals(order.getComment(), "some comment");
     assertEquals(order.getEstimatedPrice(), "over 9999 BTC");
+    assertEquals(order.getEstimatedTime(), 234_532_000);
+    assertEquals(order.getEstimatedRouteLength(), 35_213);
     assertEquals(order.getTotalCost(), 10_352);
     assertEquals(order.getTimeout(), 25);
     assertEquals(order.getEtaToStartPoint(), 1234567890);
@@ -452,6 +538,8 @@ public class OrderApiMapperTest {
     assertEquals(order.getId(), 7);
     assertEquals(order.getComment(), "some comment");
     assertEquals(order.getEstimatedPrice(), "over 9999 BTC");
+    assertEquals(order.getEstimatedTime(), 234_532_000);
+    assertEquals(order.getEstimatedRouteLength(), 35_213);
     assertEquals(order.getTotalCost(), 10_352);
     assertEquals(order.getTimeout(), 25);
     assertEquals(order.getEtaToStartPoint(), 1234567890);
