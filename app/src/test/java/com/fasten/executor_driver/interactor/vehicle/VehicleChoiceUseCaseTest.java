@@ -6,7 +6,7 @@ import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 import com.fasten.executor_driver.backend.web.NoNetworkException;
-import com.fasten.executor_driver.entity.InsufficientCreditsException;
+import com.fasten.executor_driver.entity.DriverBlockedException;
 import com.fasten.executor_driver.entity.NoVehiclesAvailableException;
 import com.fasten.executor_driver.entity.Vehicle;
 import io.reactivex.Observer;
@@ -55,16 +55,16 @@ public class VehicleChoiceUseCaseTest {
   /* Проверяем ответы на запрос списка ТС */
 
   /**
-   * Должен ответить ошибкой недостаточности средств.
+   * Должен ответить ошибкой блокировки водителя.
    */
   @Test
   public void answerNoNetworkError() {
     // Дано:
     when(gateway.getExecutorVehicles())
-        .thenReturn(Single.error(new InsufficientCreditsException()));
+        .thenReturn(Single.error(new DriverBlockedException()));
 
     // Действие и Результат:
-    useCase.getVehicles().test().assertError(InsufficientCreditsException.class);
+    useCase.getVehicles().test().assertError(DriverBlockedException.class);
   }
 
   /**

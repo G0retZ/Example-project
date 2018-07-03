@@ -12,7 +12,6 @@ import android.arch.core.executor.testing.InstantTaskExecutorRule;
 import android.arch.lifecycle.Observer;
 import com.fasten.executor_driver.backend.web.NoNetworkException;
 import com.fasten.executor_driver.entity.DriverBlockedException;
-import com.fasten.executor_driver.entity.InsufficientCreditsException;
 import com.fasten.executor_driver.entity.NoFreeVehiclesException;
 import com.fasten.executor_driver.entity.NoVehiclesAvailableException;
 import com.fasten.executor_driver.interactor.vehicle.VehiclesAndOptionsUseCase;
@@ -41,11 +40,9 @@ public class OnlineButtonViewModelTest {
   private OnlineButtonViewModel viewModel;
   private TestScheduler testScheduler;
   @Mock
-  private Observer<ViewState<OnlineButtonViewActions>> viewStateObserver;
-
-  @Mock
   private VehiclesAndOptionsUseCase vehiclesAndOptionsUseCase;
-
+  @Mock
+  private Observer<ViewState<OnlineButtonViewActions>> viewStateObserver;
   @Mock
   private Observer<String> navigateObserver;
 
@@ -183,48 +180,6 @@ public class OnlineButtonViewModelTest {
     // Дано:
     when(vehiclesAndOptionsUseCase.loadVehiclesAndOptions())
         .thenReturn(Completable.error(new DriverBlockedException()));
-    InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
-
-    // Действие:
-    viewModel.goOnline();
-    testScheduler.advanceTimeBy(5, TimeUnit.SECONDS);
-
-    // Результат:
-    inOrder.verify(viewStateObserver).onChanged(any(OnlineButtonViewStateReady.class));
-    inOrder.verify(viewStateObserver).onChanged(any(OnlineButtonViewStateHold.class));
-    inOrder.verify(viewStateObserver).onChanged(any(OnlineButtonViewStateReady.class));
-    verifyNoMoreInteractions(viewStateObserver);
-  }
-
-  /**
-   * Не должен переходить в состояние вида "Ошибка", если недостаточно средств.
-   */
-  @Test
-  public void doNotSetErrorViewStateToLiveDataAfterFailForInsufficientCredits() {
-    // Дано:
-    when(vehiclesAndOptionsUseCase.loadVehiclesAndOptions())
-        .thenReturn(Completable.error(new InsufficientCreditsException()));
-    InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
-
-    // Действие:
-    viewModel.goOnline();
-
-    // Результат:
-    inOrder.verify(viewStateObserver).onChanged(any(OnlineButtonViewStateReady.class));
-    inOrder.verify(viewStateObserver).onChanged(any(OnlineButtonViewStateHold.class));
-    verifyNoMoreInteractions(viewStateObserver);
-  }
-
-  /**
-   * Должен вернуть рабочее состояние после таймера, если недостаточно средств.
-   */
-  @Test
-  public void setReadyViewStateToLiveDataAfterFailForInsufficientCredits() {
-    // Дано:
-    when(vehiclesAndOptionsUseCase.loadVehiclesAndOptions())
-        .thenReturn(Completable.error(new InsufficientCreditsException()));
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
@@ -518,23 +473,6 @@ public class OnlineButtonViewModelTest {
 
     // Результат:
     verify(navigateObserver, only()).onChanged(OnlineButtonNavigate.DRIVER_BLOCKED);
-  }
-
-  /**
-   * Должен вернуть "перейти к решению недостатка средств" если недостаточно средств.
-   */
-  @Test
-  public void setNavigateToInsufficientCreditsToLiveData() {
-    // Дано:
-    when(vehiclesAndOptionsUseCase.loadVehiclesAndOptions())
-        .thenReturn(Completable.error(new InsufficientCreditsException()));
-    viewModel.getNavigationLiveData().observeForever(navigateObserver);
-
-    // Действие:
-    viewModel.goOnline();
-
-    // Результат:
-    verify(navigateObserver, only()).onChanged(OnlineButtonNavigate.INSUFFICIENT_CREDITS);
   }
 
   /**

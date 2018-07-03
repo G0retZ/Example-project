@@ -5,7 +5,6 @@ import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
 import com.fasten.executor_driver.entity.DriverBlockedException;
-import com.fasten.executor_driver.entity.InsufficientCreditsException;
 import com.fasten.executor_driver.entity.NoFreeVehiclesException;
 import com.fasten.executor_driver.entity.NoVehiclesAvailableException;
 import com.fasten.executor_driver.interactor.vehicle.VehiclesAndOptionsUseCase;
@@ -72,8 +71,6 @@ public class OnlineButtonViewModelImpl extends ViewModel implements OnlineButton
               throwable.printStackTrace();
               if (throwable instanceof DriverBlockedException) {
                 navigateLiveData.setValue(OnlineButtonNavigate.DRIVER_BLOCKED);
-              } else if (throwable instanceof InsufficientCreditsException) {
-                navigateLiveData.setValue(OnlineButtonNavigate.INSUFFICIENT_CREDITS);
               } else if (throwable instanceof NoFreeVehiclesException) {
                 navigateLiveData.setValue(OnlineButtonNavigate.NO_FREE_VEHICLES);
               } else if (throwable instanceof NoVehiclesAvailableException) {

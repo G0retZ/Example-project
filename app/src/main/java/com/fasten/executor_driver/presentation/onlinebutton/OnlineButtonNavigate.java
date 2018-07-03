@@ -10,7 +10,6 @@ import java.lang.annotation.RetentionPolicy;
 @StringDef({
     OnlineButtonNavigate.VEHICLE_OPTIONS,
     OnlineButtonNavigate.DRIVER_BLOCKED,
-    OnlineButtonNavigate.INSUFFICIENT_CREDITS,
     OnlineButtonNavigate.NO_VEHICLES,
     OnlineButtonNavigate.NO_FREE_VEHICLES
 })
@@ -22,9 +21,6 @@ public @interface OnlineButtonNavigate {
 
   // Переход к решению блокировки водителя.
   String DRIVER_BLOCKED = "OnlineButton.to.DriverBlocked";
-
-  // Переход к решению недостатка средств.
-  String INSUFFICIENT_CREDITS = "OnlineButton.to.InsufficientCredits";
 
   // Переход к решению отсутствия ТС.
   String NO_VEHICLES = "OnlineButton.to.NoVehicles";

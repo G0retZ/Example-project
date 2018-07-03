@@ -58,8 +58,7 @@ public class VehiclesAndOptionsGatewayTest {
   public void setUp() throws Exception {
     RxJavaPlugins.setIoSchedulerHandler(scheduler -> Schedulers.trampoline());
     RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
-    gateway = new VehiclesAndOptionsGatewayImpl(api, apiOptionMapper,
-        vehicleMapper, errorMapper);
+    gateway = new VehiclesAndOptionsGatewayImpl(api, apiOptionMapper, vehicleMapper, errorMapper);
     when(api.getOptionsForOnline()).thenReturn(Single.never());
     when(vehicleMapper.map(any(ApiVehicle.class))).thenReturn(
         new Vehicle(1, "m", "m", "c", "l", false),
