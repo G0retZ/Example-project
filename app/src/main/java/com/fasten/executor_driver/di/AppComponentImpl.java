@@ -447,6 +447,11 @@ public class AppComponentImpl implements AppComponent {
             onlineFragment,
             new ViewModelFactory<>(
                 new OnlineSwitchViewModelImpl(
+                    new VehiclesAndOptionsUseCaseImpl(
+                        selectedVehiclesAndOptionsGateway,
+                        vehicleChoiceSharer,
+                        lastUsedVehicleGateway
+                    ),
                     new ExecutorStateNotOnlineUseCaseImpl(
                         new ExecutorStateSwitchGatewayImpl(stompClient),
                         executorStateUseCase

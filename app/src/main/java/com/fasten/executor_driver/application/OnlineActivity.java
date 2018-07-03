@@ -26,9 +26,6 @@ public class OnlineActivity extends BaseActivity {
   @Override
   public void navigate(@NonNull String destination) {
     switch (destination) {
-      case OnlineSwitchNavigate.SERVICES:
-        startActivity(new Intent(this, ServicesActivity.class));
-        break;
       case OnlineSwitchNavigate.VEHICLE_OPTIONS:
         startActivity(new Intent(this, SelectedVehicleOptionsActivity.class));
         break;
@@ -37,7 +34,6 @@ public class OnlineActivity extends BaseActivity {
         break;
       default:
         super.navigate(destination);
-        break;
     }
   }
 }
