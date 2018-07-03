@@ -39,7 +39,7 @@ public class ApiOrderTest {
 
     // Результат
     assertEquals(apiOrder.getId(), 432);
-    assertEquals(apiOrder.getEstimatedAmount(), "More than $3000");
+    assertEquals(apiOrder.getEstimatedAmountText(), "More than $3000");
     assertEquals(apiOrder.getTotalAmount(), 7300);
     assertEquals(apiOrder.getComment(), "some comment");
     assertEquals(apiOrder.getTimeout(), 23);

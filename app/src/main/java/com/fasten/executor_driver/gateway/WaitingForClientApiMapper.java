@@ -44,7 +44,7 @@ public class WaitingForClientApiMapper implements Mapper<String, Order> {
         apiOrder.getId(),
         apiOrder.getComment() == null ? "" : apiOrder.getComment(),
         apiOrder.getExecutorDistance() == null ? 0 : apiOrder.getExecutorDistance().getDistance(),
-        apiOrder.getEstimatedAmount() == null ? "" : apiOrder.getEstimatedAmount(),
+        apiOrder.getEstimatedAmountText() == null ? "" : apiOrder.getEstimatedAmountText(),
         apiOrder.getTotalAmount(),
         apiOrder.getTimeout(),
         apiOrder.getEtaToStartPoint(),
