@@ -12,16 +12,16 @@ import org.mockito.junit.MockitoJUnitRunner;
 public class MovingToClientViewStateIdleTest {
 
   @Mock
-  private MovingToClientViewActions movingToClientViewActions;
+  private MovingToClientViewActions viewActions;
 
   @Test
   public void testActions() {
     // Действие:
-    new MovingToClientViewStateIdle().apply(movingToClientViewActions);
+    new MovingToClientViewStateIdle().apply(viewActions);
 
     // Результат:
-    verify(movingToClientViewActions).showMovingToClientPending(false);
-    verify(movingToClientViewActions).showNetworkErrorMessage(false);
-    verifyNoMoreInteractions(movingToClientViewActions);
+    verify(viewActions).showMovingToClientPending(false);
+    verify(viewActions).enableMovingToClientCallButton(true);
+    verifyNoMoreInteractions(viewActions);
   }
 }

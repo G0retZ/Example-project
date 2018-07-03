@@ -16,15 +16,15 @@ import org.mockito.junit.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class WaitingForClientUseCaseTest {
 
-  private WaitingForClientUseCase movingToClientUseCase;
+  private WaitingForClientUseCase useCase;
 
   @Mock
-  private WaitingForClientGateway movingToClientGateway;
+  private WaitingForClientGateway gateway;
 
   @Before
   public void setUp() {
-    when(movingToClientGateway.startTheOrder()).thenReturn(Completable.never());
-    movingToClientUseCase = new WaitingForClientUseCaseImpl(movingToClientGateway);
+    when(gateway.startTheOrder()).thenReturn(Completable.never());
+    useCase = new WaitingForClientUseCaseImpl(gateway);
   }
 
   /* Проверяем работу с гейтвеем */
@@ -35,10 +35,10 @@ public class WaitingForClientUseCaseTest {
   @Test
   public void askGatewayToStartOrder() {
     // Действие:
-    movingToClientUseCase.startTheOrder().test();
+    useCase.startTheOrder().test();
 
     // Результат:
-    verify(movingToClientGateway, only()).startTheOrder();
+    verify(gateway, only()).startTheOrder();
   }
 
   /* Проверяем ответы на начало погрузки */
@@ -49,11 +49,11 @@ public class WaitingForClientUseCaseTest {
   @Test
   public void answerNoNetworkErrorForStartOrder() {
     // Дано:
-    when(movingToClientGateway.startTheOrder())
+    when(gateway.startTheOrder())
         .thenReturn(Completable.error(new NoNetworkException()));
 
     // Действие:
-    TestObserver<Void> test = movingToClientUseCase.startTheOrder().test();
+    TestObserver<Void> test = useCase.startTheOrder().test();
 
     // Результат:
     test.assertError(NoNetworkException.class);
@@ -67,10 +67,10 @@ public class WaitingForClientUseCaseTest {
   @Test
   public void answerSendStartOrderSuccessful() {
     // Дано:
-    when(movingToClientGateway.startTheOrder()).thenReturn(Completable.complete());
+    when(gateway.startTheOrder()).thenReturn(Completable.complete());
 
     // Действие:
-    TestObserver<Void> test = movingToClientUseCase.startTheOrder().test();
+    TestObserver<Void> test = useCase.startTheOrder().test();
 
     // Результат:
     test.assertComplete();

@@ -1,7 +1,5 @@
 package com.fasten.executor_driver.view;
 
-import android.app.AlertDialog.Builder;
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -20,15 +18,9 @@ import javax.inject.Inject;
 
 public class CallToClientFragment extends BaseFragment implements CallToClientViewActions {
 
+  private View rootView;
   private CallToClientViewModel callToClientViewModel;
-  private Context context;
   private boolean pending;
-
-  @Override
-  public void onAttach(Context context) {
-    super.onAttach(context);
-    this.context = context;
-  }
 
   @Inject
   public void setCallToClientViewModel(@NonNull CallToClientViewModel callToClientViewModel) {
@@ -40,7 +32,7 @@ public class CallToClientFragment extends BaseFragment implements CallToClientVi
   public View onCreateView(@NonNull LayoutInflater inflater,
       @Nullable ViewGroup container,
       @Nullable Bundle savedInstanceState) {
-    return inflater.inflate(R.layout.fragment_call_to_client, container, false);
+    return rootView = inflater.inflate(R.layout.fragment_call_to_client, container, false);
   }
 
   @Override
@@ -64,15 +56,7 @@ public class CallToClientFragment extends BaseFragment implements CallToClientVi
     });
   }
 
-  @Override
-  public void onDetach() {
-    super.onDetach();
-    context = null;
-  }
-
-  @Override
-  public void onResume() {
-    super.onResume();
+  public void callToClient() {
     callToClientViewModel.callToClient();
   }
 
@@ -85,14 +69,7 @@ public class CallToClientFragment extends BaseFragment implements CallToClientVi
   }
 
   @Override
-  public void showNetworkErrorMessage(boolean show) {
-    if (show) {
-      new Builder(context)
-          .setTitle(R.string.error)
-          .setMessage(R.string.no_network_connection)
-          .setPositiveButton(getString(android.R.string.ok), null)
-          .create()
-          .show();
-    }
+  public void showCallingToClient(boolean calling) {
+    rootView.setVisibility(calling ? View.VISIBLE : View.GONE);
   }
 }

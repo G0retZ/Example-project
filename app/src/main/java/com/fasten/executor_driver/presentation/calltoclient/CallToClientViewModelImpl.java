@@ -5,6 +5,7 @@ import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
 import com.fasten.executor_driver.interactor.CallToClientUseCase;
+import com.fasten.executor_driver.presentation.CommonNavigate;
 import com.fasten.executor_driver.presentation.SingleLiveEvent;
 import com.fasten.executor_driver.presentation.ViewState;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -29,8 +30,8 @@ public class CallToClientViewModelImpl extends ViewModel implements CallToClient
   public CallToClientViewModelImpl(@NonNull CallToClientUseCase callToClientUseCase) {
     this.callToClientUseCase = callToClientUseCase;
     viewStateLiveData = new MutableLiveData<>();
-    viewStateLiveData.postValue(new CallToClientViewStatePending());
     navigateLiveData = new SingleLiveEvent<>();
+    viewStateLiveData.postValue(new CallToClientViewStateNotCalling());
   }
 
   @NonNull
@@ -54,20 +55,22 @@ public class CallToClientViewModelImpl extends ViewModel implements CallToClient
     disposable = callToClientUseCase.callToClient()
         .subscribeOn(Schedulers.single())
         .observeOn(AndroidSchedulers.mainThread())
-        .doOnComplete(() -> viewStateLiveData.postValue(new CallToClientViewStateIdle()))
-        .delay(10, TimeUnit.SECONDS, Schedulers.io())
+        .doOnComplete(() -> viewStateLiveData.postValue(new CallToClientViewStateCalling()))
+        .delay(10, TimeUnit.SECONDS)
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(
-            () -> navigateLiveData.postValue(CallToClientNavigate.FINISHED),
-            throwable -> viewStateLiveData.postValue(new CallToClientViewStateNetworkError())
+            () -> viewStateLiveData.postValue(new CallToClientViewStateNotCalling()),
+            throwable -> {
+              throwable.printStackTrace();
+              viewStateLiveData.postValue(new CallToClientViewStateNotCalling());
+              navigateLiveData.postValue(CommonNavigate.NO_CONNECTION);
+            }
         );
   }
 
   @Override
   protected void onCleared() {
     super.onCleared();
-    if (!disposable.isDisposed()) {
-      disposable.dispose();
-    }
+    disposable.dispose();
   }
 }

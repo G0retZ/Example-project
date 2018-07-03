@@ -26,7 +26,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class ExecutorStateUseCaseTest {
 
-  private ExecutorStateUseCase executorStateUseCase;
+  private ExecutorStateUseCase useCase;
 
   @Mock
   private ExecutorStateGateway gateway;
@@ -41,7 +41,7 @@ public class ExecutorStateUseCaseTest {
   public void setUp() {
     when(gateway.getState(anyString())).thenReturn(Flowable.never());
     when(loginReceiver.get()).thenReturn(Observable.never());
-    executorStateUseCase = new ExecutorStateUseCaseImpl(gateway, loginReceiver);
+    useCase = new ExecutorStateUseCaseImpl(gateway, loginReceiver);
   }
 
   /* Проверяем работу с публикатором логина */
@@ -52,7 +52,7 @@ public class ExecutorStateUseCaseTest {
   @Test
   public void askLoginPublisherForLogin() {
     // Действие:
-    executorStateUseCase.getExecutorStates(true).test();
+    useCase.getExecutorStates(true).test();
 
     // Результат:
     verify(loginReceiver, only()).get();
@@ -64,9 +64,9 @@ public class ExecutorStateUseCaseTest {
   @Test
   public void doNotTouchLoginPublisherWithoutReset() {
     // Действие:
-    executorStateUseCase.getExecutorStates(false).test();
-    executorStateUseCase.getExecutorStates(false).test();
-    executorStateUseCase.getExecutorStates(false).test();
+    useCase.getExecutorStates(false).test();
+    useCase.getExecutorStates(false).test();
+    useCase.getExecutorStates(false).test();
 
     // Результат:
     verifyZeroInteractions(loginReceiver);
@@ -86,7 +86,7 @@ public class ExecutorStateUseCaseTest {
     ));
 
     // Действие:
-    executorStateUseCase.getExecutorStates(true).test();
+    useCase.getExecutorStates(true).test();
 
     // Результат:
     inOrder.verify(gateway).getState("1234567890");
@@ -111,7 +111,7 @@ public class ExecutorStateUseCaseTest {
         .thenReturn(Flowable.<ExecutorState>never().doOnCancel(action));
 
     // Действие:
-    executorStateUseCase.getExecutorStates(true).test();
+    useCase.getExecutorStates(true).test();
 
     // Результат:
     verify(action, times(3)).run();
@@ -123,7 +123,7 @@ public class ExecutorStateUseCaseTest {
   @Test
   public void doNotAskGatewayForStatusIfSocketError() {
     // Действие:
-    executorStateUseCase.getExecutorStates(true).test();
+    useCase.getExecutorStates(true).test();
 
     // Результат:
     verifyZeroInteractions(gateway);
@@ -138,7 +138,7 @@ public class ExecutorStateUseCaseTest {
     when(loginReceiver.get()).thenReturn(Observable.error(NoNetworkException::new));
 
     // Действие:
-    executorStateUseCase.getExecutorStates(true).test();
+    useCase.getExecutorStates(true).test();
 
     // Результат:
     verifyZeroInteractions(gateway);
@@ -150,9 +150,9 @@ public class ExecutorStateUseCaseTest {
   @Test
   public void doNotTouchGatewayWithoutReset() {
     // Действие:
-    executorStateUseCase.getExecutorStates(false).test();
-    executorStateUseCase.getExecutorStates(false).test();
-    executorStateUseCase.getExecutorStates(false).test();
+    useCase.getExecutorStates(false).test();
+    useCase.getExecutorStates(false).test();
+    useCase.getExecutorStates(false).test();
 
     // Результат:
     verifyZeroInteractions(gateway);
@@ -176,7 +176,7 @@ public class ExecutorStateUseCaseTest {
 
     // Действие:
     TestSubscriber<ExecutorState> testSubscriber =
-        executorStateUseCase.getExecutorStates(true).test();
+        useCase.getExecutorStates(true).test();
 
     // Результат:
     testSubscriber
@@ -196,7 +196,7 @@ public class ExecutorStateUseCaseTest {
 
     // Действие:
     TestSubscriber<ExecutorState> testSubscriber =
-        executorStateUseCase.getExecutorStates(true).test();
+        useCase.getExecutorStates(true).test();
 
     // Результат:
     testSubscriber.assertError(ConnectException.class);
@@ -213,7 +213,7 @@ public class ExecutorStateUseCaseTest {
 
     // Действие:
     TestSubscriber<ExecutorState> testSubscriber =
-        executorStateUseCase.getExecutorStates(true).test();
+        useCase.getExecutorStates(true).test();
 
     // Результат:
     testSubscriber.assertError(ConnectException.class);
@@ -230,7 +230,7 @@ public class ExecutorStateUseCaseTest {
 
     // Действие:
     TestSubscriber<ExecutorState> testSubscriber =
-        executorStateUseCase.getExecutorStates(true).test();
+        useCase.getExecutorStates(true).test();
 
     // Результат:
     testSubscriber.assertComplete();
@@ -245,7 +245,7 @@ public class ExecutorStateUseCaseTest {
   public void answerCompleteWithoutReset() {
     // Действие:
     TestSubscriber<ExecutorState> testSubscriber =
-        executorStateUseCase.getExecutorStates(false).test();
+        useCase.getExecutorStates(false).test();
 
     // Результат:
     testSubscriber.assertComplete();

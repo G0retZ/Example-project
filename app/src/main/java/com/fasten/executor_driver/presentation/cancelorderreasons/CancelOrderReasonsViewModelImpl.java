@@ -6,6 +6,7 @@ import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
 import com.fasten.executor_driver.gateway.DataMappingException;
 import com.fasten.executor_driver.interactor.CancelOrderUseCase;
+import com.fasten.executor_driver.presentation.CommonNavigate;
 import com.fasten.executor_driver.presentation.ViewState;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
@@ -53,7 +54,7 @@ public class CancelOrderReasonsViewModelImpl extends ViewModel implements
             throwable -> {
               throwable.printStackTrace();
               if (throwable instanceof DataMappingException) {
-                navigateLiveData.postValue(CancelOrderReasonsNavigate.SERVER_DATA_ERROR);
+                navigateLiveData.postValue(CommonNavigate.SERVER_DATA_ERROR);
               }
             }
         );

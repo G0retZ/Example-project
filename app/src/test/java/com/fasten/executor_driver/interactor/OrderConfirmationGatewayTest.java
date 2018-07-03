@@ -4,8 +4,6 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
-import com.fasten.executor_driver.backend.web.NoNetworkException;
-import com.fasten.executor_driver.backend.websocket.ConnectionClosedException;
 import com.fasten.executor_driver.entity.Order;
 import com.fasten.executor_driver.gateway.OrderConfirmationGatewayImpl;
 import io.reactivex.Completable;
@@ -24,7 +22,7 @@ import ua.naiksoftware.stomp.client.StompClient;
 @RunWith(MockitoJUnitRunner.class)
 public class OrderConfirmationGatewayTest {
 
-  private OrderConfirmationGateway orderConfirmationGateway;
+  private OrderConfirmationGateway gateway;
   @Mock
   private StompClient stompClient;
   @Mock
@@ -36,76 +34,27 @@ public class OrderConfirmationGatewayTest {
     RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
     RxJavaPlugins.setIoSchedulerHandler(scheduler -> Schedulers.trampoline());
     when(stompClient.send(anyString(), anyString())).thenReturn(Completable.never());
-    orderConfirmationGateway = new OrderConfirmationGatewayImpl(stompClient);
+    gateway = new OrderConfirmationGatewayImpl(stompClient);
   }
 
   /* Проверяем работу с клиентом STOMP */
 
   /**
-   * Должен запросить у клиента STOMP отправку, если он соединен и не соединяется.
+   * Должен запросить у клиента STOMP отправку сообщения.
    */
   @Test
   public void askStompClientToSendMessage() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(stompClient);
-    when(stompClient.isConnected()).thenReturn(true);
     when(order.getId()).thenReturn(7L);
 
     // Действие:
-    orderConfirmationGateway.sendDecision(order, false).test();
-    orderConfirmationGateway.sendDecision(order, true).test();
+    gateway.sendDecision(order, false).test();
+    gateway.sendDecision(order, true).test();
 
     // Результат:
-    inOrder.verify(stompClient).isConnected();
     inOrder.verify(stompClient)
         .send("/mobile/order", "{\"id\":\"7\", \"approved\":\"false\"}");
-    inOrder.verify(stompClient).isConnected();
-    inOrder.verify(stompClient)
-        .send("/mobile/order", "{\"id\":\"7\", \"approved\":\"true\"}");
-    verifyNoMoreInteractions(stompClient);
-  }
-
-  /**
-   * Не должен просить у клиента STOMP соединение, если он не соединен и не соединяется.
-   */
-  @Test
-  public void doNotAskStompClientToConnectOrSendIfNotConnected() {
-    // Дано:
-    InOrder inOrder = Mockito.inOrder(stompClient);
-
-    // Действие:
-    orderConfirmationGateway.sendDecision(order, false).test();
-    orderConfirmationGateway.sendDecision(order, true).test();
-
-    // Результат:
-    inOrder.verify(stompClient).isConnected();
-    inOrder.verify(stompClient).isConnecting();
-    inOrder.verify(stompClient).isConnected();
-    inOrder.verify(stompClient).isConnecting();
-    verifyNoMoreInteractions(stompClient);
-  }
-
-  /**
-   * Должен запросить у клиента STOMP отправку, если он не соединен и соединяется.
-   */
-  @Test
-  public void askStompClientToSendMessageIfConnecting() {
-    // Дано:
-    InOrder inOrder = Mockito.inOrder(stompClient);
-    when(stompClient.isConnecting()).thenReturn(true);
-    when(order.getId()).thenReturn(7L);
-
-    // Действие:
-    orderConfirmationGateway.sendDecision(order, false).test();
-    orderConfirmationGateway.sendDecision(order, true).test();
-
-    // Результат:
-    inOrder.verify(stompClient).isConnected();
-    inOrder.verify(stompClient).isConnecting();
-    inOrder.verify(stompClient)
-        .send("/mobile/order", "{\"id\":\"7\", \"approved\":\"false\"}");
-    inOrder.verify(stompClient).isConnected();
-    inOrder.verify(stompClient).isConnecting();
     inOrder.verify(stompClient)
         .send("/mobile/order", "{\"id\":\"7\", \"approved\":\"true\"}");
     verifyNoMoreInteractions(stompClient);
@@ -116,16 +65,15 @@ public class OrderConfirmationGatewayTest {
   /* Проверяем результаты обработки сообщений от сервера по статусам */
 
   /**
-   * Должен ответить успехом, если он соединен и не соединяется.
+   * Должен ответить успехом.
    */
   @Test
-  public void answerSendDecisionSuccessIfConnected() {
+  public void answerSendDecisionSuccess() {
     // Дано:
-    when(stompClient.isConnected()).thenReturn(true);
     when(stompClient.send(anyString(), anyString())).thenReturn(Completable.complete());
 
     // Действие:
-    TestObserver<Void> testObserver = orderConfirmationGateway.sendDecision(order, false).test();
+    TestObserver<Void> testObserver = gateway.sendDecision(order, false).test();
 
     // Результат:
     testObserver.assertNoErrors();
@@ -133,68 +81,19 @@ public class OrderConfirmationGatewayTest {
   }
 
   /**
-   * Должен ответить ошибкой, если он соединен и не соединяется.
+   * Должен ответить ошибкой.
    */
   @Test
-  public void answerSendDecisionErrorIfConnected() {
+  public void answerSendDecisionError() {
     // Дано:
-    when(stompClient.isConnected()).thenReturn(true);
     when(stompClient.send(anyString(), anyString()))
-        .thenReturn(Completable.error(new NoNetworkException()));
+        .thenReturn(Completable.error(new IllegalArgumentException()));
 
     // Действие:
-    TestObserver<Void> testObserver = orderConfirmationGateway.sendDecision(order, false).test();
+    TestObserver<Void> testObserver = gateway.sendDecision(order, false).test();
 
     // Результат:
     testObserver.assertNotComplete();
-    testObserver.assertError(NoNetworkException.class);
-  }
-
-  /**
-   * Должен ответить ошибкой, если он не соединен и не соединяется.
-   */
-  @Test
-  public void answerSendDecisionErrorIfNotConnectedAndNotConnecting() {
-    // Действие:
-    TestObserver<Void> testObserver = orderConfirmationGateway.sendDecision(order, false).test();
-
-    // Результат:
-    testObserver.assertNotComplete();
-    testObserver.assertError(ConnectionClosedException.class);
-  }
-
-  /**
-   * Должен ответить успехом, если он не соединен и соединяется.
-   */
-  @Test
-  public void answerSendDecisionSuccessIfConnecting() {
-    // Дано:
-    when(stompClient.isConnecting()).thenReturn(true);
-    when(stompClient.send(anyString(), anyString())).thenReturn(Completable.complete());
-
-    // Действие:
-    TestObserver<Void> testObserver = orderConfirmationGateway.sendDecision(order, false).test();
-
-    // Результат:
-    testObserver.assertNoErrors();
-    testObserver.assertComplete();
-  }
-
-  /**
-   * Должен ответить ошибкой, если он не соединен и соединяется.
-   */
-  @Test
-  public void answerSendDecisionErrorIfConnecting() {
-    // Дано:
-    when(stompClient.isConnecting()).thenReturn(true);
-    when(stompClient.send(anyString(), anyString()))
-        .thenReturn(Completable.error(new ConnectionClosedException()));
-
-    // Действие:
-    TestObserver<Void> testObserver = orderConfirmationGateway.sendDecision(order, false).test();
-
-    // Результат:
-    testObserver.assertNotComplete();
-    testObserver.assertError(ConnectionClosedException.class);
+    testObserver.assertError(IllegalArgumentException.class);
   }
 }

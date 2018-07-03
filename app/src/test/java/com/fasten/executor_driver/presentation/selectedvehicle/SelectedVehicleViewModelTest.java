@@ -31,7 +31,7 @@ public class SelectedVehicleViewModelTest {
 
   @Rule
   public TestRule rule = new InstantTaskExecutorRule();
-  private SelectedVehicleViewModel selectedVehicleViewModel;
+  private SelectedVehicleViewModel viewModel;
   @Mock
   private Observer<ViewState<SelectedVehicleViewActions>> viewStateObserver;
 
@@ -46,7 +46,7 @@ public class SelectedVehicleViewModelTest {
     RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
     RxAndroidPlugins.setInitMainThreadSchedulerHandler(scheduler -> Schedulers.trampoline());
     when(selectedVehicleUseCase.getSelectedVehicle()).thenReturn(Observable.never());
-    selectedVehicleViewModel = new SelectedVehicleViewModelImpl(selectedVehicleUseCase);
+    viewModel = new SelectedVehicleViewModelImpl(selectedVehicleUseCase);
   }
 
 
@@ -58,9 +58,9 @@ public class SelectedVehicleViewModelTest {
   @Test
   public void askSelectedVehicleUseCaseForVehiclesInitially() {
     // Действие:
-    selectedVehicleViewModel.getViewStateLiveData();
-    selectedVehicleViewModel.getViewStateLiveData();
-    selectedVehicleViewModel.getViewStateLiveData();
+    viewModel.getViewStateLiveData();
+    viewModel.getViewStateLiveData();
+    viewModel.getViewStateLiveData();
 
     // Результат:
     verify(selectedVehicleUseCase, only()).getSelectedVehicle();
@@ -72,9 +72,9 @@ public class SelectedVehicleViewModelTest {
   @Test
   public void DoNotTouchSelectedVehicleUseCaseDuringVehicleChoosing() {
     // Действие:
-    selectedVehicleViewModel.changeVehicle();
-    selectedVehicleViewModel.getNavigationLiveData();
-    selectedVehicleViewModel.changeVehicle();
+    viewModel.changeVehicle();
+    viewModel.getNavigationLiveData();
+    viewModel.changeVehicle();
 
     // Результат:
     verifyZeroInteractions(selectedVehicleUseCase);
@@ -91,7 +91,7 @@ public class SelectedVehicleViewModelTest {
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
 
     // Действие:
-    selectedVehicleViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(new SelectedVehicleViewState(""));
@@ -107,7 +107,7 @@ public class SelectedVehicleViewModelTest {
     PublishSubject<Vehicle> publishSubject = PublishSubject.create();
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     when(selectedVehicleUseCase.getSelectedVehicle()).thenReturn(publishSubject);
-    selectedVehicleViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
     publishSubject.onNext(new Vehicle(1, "m", "m", "c", "l", false));
@@ -135,7 +135,7 @@ public class SelectedVehicleViewModelTest {
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     when(selectedVehicleUseCase.getSelectedVehicle())
         .thenReturn(publishSubject, PublishSubject.never());
-    selectedVehicleViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
     publishSubject.onNext(new Vehicle(1, "m", "m", "c", "l", false));
@@ -162,10 +162,10 @@ public class SelectedVehicleViewModelTest {
   @Test
   public void setNavigateToVehiclesToLiveData() {
     // Дано:
-    selectedVehicleViewModel.getNavigationLiveData().observeForever(navigateObserver);
+    viewModel.getNavigationLiveData().observeForever(navigateObserver);
 
     // Действие:
-    selectedVehicleViewModel.changeVehicle();
+    viewModel.changeVehicle();
 
     // Результат:
     verify(navigateObserver, only()).onChanged(SelectedVehicleNavigate.VEHICLES);

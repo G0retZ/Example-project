@@ -22,8 +22,6 @@ final class OrderViewStatePending implements ViewState<OrderViewActions> {
       parentViewState.apply(stateActions);
     }
     stateActions.showOrderPending(true);
-    stateActions.showOrderAvailabilityError(false);
-    stateActions.showNetworkErrorMessage(false);
   }
 
   @Override

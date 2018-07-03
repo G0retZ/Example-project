@@ -20,7 +20,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class LoginUseCaseTest {
 
-  private LoginUseCase loginUseCase;
+  private LoginUseCase useCase;
 
   @Mock
   private Validator<String> loginValidator;
@@ -31,7 +31,7 @@ public class LoginUseCaseTest {
   @Before
   public void setUp() throws Exception {
     doThrow(new ValidationException()).when(loginValidator).validate(anyString());
-    loginUseCase = new LoginUseCaseImpl(loginObserver, loginValidator);
+    useCase = new LoginUseCaseImpl(loginObserver, loginValidator);
   }
 
   /* Проверяем работу с валидаторами */
@@ -44,7 +44,7 @@ public class LoginUseCaseTest {
   @Test
   public void askLoginValidatorForResult() throws Exception {
     // Действие:
-    loginUseCase.validateLogin("").test();
+    useCase.validateLogin("").test();
 
     // Результат:
     verify(loginValidator, only()).validate("");
@@ -58,7 +58,7 @@ public class LoginUseCaseTest {
   @Test
   public void answerErrorIfLoginInvalid() {
     // Действие и Результат:
-    loginUseCase.validateLogin("12").test().assertError(ValidationException.class);
+    useCase.validateLogin("12").test().assertError(ValidationException.class);
   }
 
   /**
@@ -72,7 +72,7 @@ public class LoginUseCaseTest {
     doNothing().when(loginValidator).validate(anyString());
 
     // Действие и Результат:
-    loginUseCase.validateLogin("").test().assertComplete();
+    useCase.validateLogin("").test().assertComplete();
   }
 
   /* Проверяем работу с публикатором логина */
@@ -85,9 +85,9 @@ public class LoginUseCaseTest {
   @Test
   public void doNotTouchDataSharer() throws Exception {
     // Действие:
-    loginUseCase.validateLogin("checkLogin").test();
+    useCase.validateLogin("checkLogin").test();
     doNothing().when(loginValidator).validate(anyString());
-    loginUseCase.validateLogin("checkLogin").test();
+    useCase.validateLogin("checkLogin").test();
 
     // Результат:
     verifyZeroInteractions(loginObserver);
@@ -104,9 +104,9 @@ public class LoginUseCaseTest {
     doNothing().when(loginValidator).validate(anyString());
 
     // Действие:
-    loginUseCase.rememberLogin().test().assertComplete();
-    loginUseCase.validateLogin("checkLogin").test();
-    loginUseCase.rememberLogin().test().assertComplete();
+    useCase.rememberLogin().test().assertComplete();
+    useCase.validateLogin("checkLogin").test();
+    useCase.rememberLogin().test().assertComplete();
 
     // Результат:
     verify(loginObserver).onComplete();

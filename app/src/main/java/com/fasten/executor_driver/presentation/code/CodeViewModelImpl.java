@@ -31,8 +31,8 @@ public class CodeViewModelImpl extends ViewModel implements CodeViewModel {
   public CodeViewModelImpl(@NonNull PasswordUseCase passwordUseCase) {
     this.passwordUseCase = passwordUseCase;
     viewStateLiveData = new MutableLiveData<>();
-    viewStateLiveData.postValue(new CodeViewStateInitial());
     navigateLiveData = new SingleLiveEvent<>();
+    viewStateLiveData.postValue(new CodeViewStateInitial());
   }
 
   @NonNull
@@ -81,8 +81,6 @@ public class CodeViewModelImpl extends ViewModel implements CodeViewModel {
   @Override
   protected void onCleared() {
     super.onCleared();
-    if (!disposable.isDisposed()) {
-      disposable.dispose();
-    }
+    disposable.dispose();
   }
 }

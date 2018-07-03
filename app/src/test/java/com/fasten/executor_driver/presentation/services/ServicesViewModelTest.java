@@ -42,7 +42,7 @@ public class ServicesViewModelTest {
 
   @Rule
   public TestRule rule = new InstantTaskExecutorRule();
-  private ServicesViewModel servicesViewModel;
+  private ServicesViewModel viewModel;
   @Mock
   private ServicesUseCase servicesUseCase;
   @Mock
@@ -67,7 +67,7 @@ public class ServicesViewModelTest {
             new ServicesListItem(new Service(2, "n3", 130, false))
         )
     );
-    servicesViewModel = new ServicesViewModelImpl(servicesUseCase, servicesSliderViewModel,
+    viewModel = new ServicesViewModelImpl(servicesUseCase, servicesSliderViewModel,
         servicesListItems);
   }
 
@@ -95,9 +95,9 @@ public class ServicesViewModelTest {
             new Service(2, "n3", 130, false)
         )
     );
-    servicesViewModel.getViewStateLiveData();
-    servicesViewModel.getNavigationLiveData();
-    servicesViewModel.getViewStateLiveData();
+    viewModel.getViewStateLiveData();
+    viewModel.getNavigationLiveData();
+    viewModel.getViewStateLiveData();
 
     // Результат:
     verify(servicesUseCase, only()).loadServices();
@@ -112,14 +112,14 @@ public class ServicesViewModelTest {
     when(servicesUseCase.setSelectedServices(anyList())).thenReturn(Completable.complete());
 
     // Действие:
-    servicesViewModel.setServices(Collections.singletonList(
+    viewModel.setServices(Collections.singletonList(
         new ServicesListItem(new Service(0, "n1", 100, false))
     ));
-    servicesViewModel.setServices(Arrays.asList(
+    viewModel.setServices(Arrays.asList(
         new ServicesListItem(new Service(0, "n1", 100, false)),
         new ServicesListItem(new Service(1, "n2", 10, false))
     ));
-    servicesViewModel.setServices(Arrays.asList(
+    viewModel.setServices(Arrays.asList(
         new ServicesListItem(new Service(0, "n1", 100, false)),
         new ServicesListItem(new Service(1, "n2", 10, false)),
         new ServicesListItem(new Service(2, "n3", 130, false))
@@ -148,14 +148,14 @@ public class ServicesViewModelTest {
   @Test
   public void DoNotTouchServicesUseCaseDuringServicesSetting() {
     // Действие:
-    servicesViewModel.setServices(Collections.singletonList(
+    viewModel.setServices(Collections.singletonList(
         new ServicesListItem(new Service(0, "n1", 100, false))
     ));
-    servicesViewModel.setServices(Arrays.asList(
+    viewModel.setServices(Arrays.asList(
         new ServicesListItem(new Service(0, "n1", 100, false)),
         new ServicesListItem(new Service(1, "n2", 10, false))
     ));
-    servicesViewModel.setServices(Arrays.asList(
+    viewModel.setServices(Arrays.asList(
         new ServicesListItem(new Service(0, "n1", 100, false)),
         new ServicesListItem(new Service(1, "n2", 10, false)),
         new ServicesListItem(new Service(2, "n3", 130, false))
@@ -218,9 +218,9 @@ public class ServicesViewModelTest {
     serviceSingleSubject.onError(new Exception());
 
     // Действие:
-    servicesViewModel.getViewStateLiveData();
-    servicesViewModel.getNavigationLiveData();
-    servicesViewModel.getViewStateLiveData();
+    viewModel.getViewStateLiveData();
+    viewModel.getNavigationLiveData();
+    viewModel.getViewStateLiveData();
 
     // Результат:
     verifyZeroInteractions(servicesListItems);
@@ -232,9 +232,9 @@ public class ServicesViewModelTest {
   @Test
   public void askServicesFilterWithProgress() {
     // Действие:
-    servicesViewModel.setSliderPosition(50);
-    servicesViewModel.setSliderPosition(40);
-    servicesViewModel.setSliderPosition(30);
+    viewModel.setSliderPosition(50);
+    viewModel.setSliderPosition(40);
+    viewModel.setSliderPosition(30);
 
     // Результат:
     verify(servicesListItems).getServicesListItems(50);
@@ -249,9 +249,9 @@ public class ServicesViewModelTest {
   @Test
   public void askServicesFilterOnErrorConsume() {
     // Действие:
-    servicesViewModel.errorConsumed();
-    servicesViewModel.errorConsumed();
-    servicesViewModel.errorConsumed();
+    viewModel.errorConsumed();
+    viewModel.errorConsumed();
+    viewModel.errorConsumed();
 
     // Результат:
     verify(servicesListItems, times(3)).getServicesListItems();
@@ -268,7 +268,7 @@ public class ServicesViewModelTest {
         .thenReturn(Completable.error(NoNetworkException::new));
 
     // Действие:
-    servicesViewModel.setServices(new ArrayList<>());
+    viewModel.setServices(new ArrayList<>());
 
     // Результат:
     verify(servicesListItems, only()).getServicesListItems();
@@ -280,7 +280,7 @@ public class ServicesViewModelTest {
    * Должен дернуть обновление модели вида ползунка после получения списка услуг.
    */
   @Test
-  public void askServicesSliderViewModelToRefresh() {
+  public void viewModelToRefresh() {
     // Действие:
     serviceSingleSubject.onSuccess(
         Arrays.asList(
@@ -298,7 +298,7 @@ public class ServicesViewModelTest {
    * Не должен трогать модель вида ползунка, если была ошибка получения списка услуг.
    */
   @Test
-  public void doNotTouchServicesSliderViewModel() {
+  public void viewModel() {
     // Действие:
     serviceSingleSubject.onError(new Exception());
 
@@ -310,11 +310,11 @@ public class ServicesViewModelTest {
    * Не должен трогать модель вида ползунка на подписках.
    */
   @Test
-  public void doNotTouchServicesSliderViewModelOnSubscriptions() {
+  public void viewModelOnSubscriptions() {
     // Действие:
-    servicesViewModel.getViewStateLiveData();
-    servicesViewModel.getNavigationLiveData();
-    servicesViewModel.getViewStateLiveData();
+    viewModel.getViewStateLiveData();
+    viewModel.getNavigationLiveData();
+    viewModel.getViewStateLiveData();
 
     // Результат:
     verifyZeroInteractions(servicesSliderViewModel);
@@ -324,7 +324,7 @@ public class ServicesViewModelTest {
    * Не должен трогать модель вида ползунка, при работе с установкой выбранных услуг.
    */
   @Test
-  public void doNotTouchServicesSliderViewModelForSetServices() {
+  public void viewModelForSetServices() {
     // Дано:
     when(servicesUseCase.setSelectedServices(anyList())).thenReturn(
         Completable.complete(),
@@ -333,9 +333,9 @@ public class ServicesViewModelTest {
     );
 
     // Действие:
-    servicesViewModel.setServices(new ArrayList<>());
-    servicesViewModel.setServices(new ArrayList<>());
-    servicesViewModel.setServices(new ArrayList<>());
+    viewModel.setServices(new ArrayList<>());
+    viewModel.setServices(new ArrayList<>());
+    viewModel.setServices(new ArrayList<>());
 
     // Результат:
     verifyZeroInteractions(servicesSliderViewModel);
@@ -352,7 +352,7 @@ public class ServicesViewModelTest {
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
 
     // Действие:
-    servicesViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(any(ServicesViewStatePending.class));
@@ -366,7 +366,7 @@ public class ServicesViewModelTest {
   public void setNoNetworkErrorViewStateToLiveData() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    servicesViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
     serviceSingleSubject.onError(new NoNetworkException());
@@ -385,7 +385,7 @@ public class ServicesViewModelTest {
   public void setNoNetworkErrorViewStateToLiveDataForMappingError() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    servicesViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
     serviceSingleSubject.onError(new DataMappingException());
@@ -404,7 +404,7 @@ public class ServicesViewModelTest {
   public void setNoServicesAvailableErrorViewStateToLiveData() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    servicesViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
     serviceSingleSubject.onError(new NoServicesAvailableException());
@@ -423,7 +423,7 @@ public class ServicesViewModelTest {
   public void setReadyViewStateToLiveData() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    servicesViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
     serviceSingleSubject.onSuccess(Arrays.asList(
@@ -451,7 +451,7 @@ public class ServicesViewModelTest {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     when(servicesUseCase.setSelectedServices(anyList())).thenReturn(Completable.complete());
-    servicesViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
     serviceSingleSubject.onSuccess(Arrays.asList(
@@ -459,7 +459,7 @@ public class ServicesViewModelTest {
         new Service(1, "n2", 10, false),
         new Service(2, "n3", 130, false)
     ));
-    servicesViewModel.setServices(new ArrayList<>());
+    viewModel.setServices(new ArrayList<>());
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(any(ServicesViewStatePending.class));
@@ -482,7 +482,7 @@ public class ServicesViewModelTest {
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     when(servicesUseCase.setSelectedServices(anyList()))
         .thenReturn(Completable.error(NoNetworkException::new));
-    servicesViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
     serviceSingleSubject.onSuccess(Arrays.asList(
@@ -490,7 +490,7 @@ public class ServicesViewModelTest {
         new Service(1, "n2", 10, false),
         new Service(2, "n3", 130, false)
     ));
-    servicesViewModel.setServices(new ArrayList<>());
+    viewModel.setServices(new ArrayList<>());
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(any(ServicesViewStatePending.class));
@@ -520,7 +520,7 @@ public class ServicesViewModelTest {
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     when(servicesUseCase.setSelectedServices(anyList()))
         .thenReturn(Completable.error(NoServicesAvailableException::new));
-    servicesViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
     serviceSingleSubject.onSuccess(Arrays.asList(
@@ -528,7 +528,7 @@ public class ServicesViewModelTest {
         new Service(1, "n2", 10, false),
         new Service(2, "n3", 130, false)
     ));
-    servicesViewModel.setServices(new ArrayList<>());
+    viewModel.setServices(new ArrayList<>());
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(any(ServicesViewStatePending.class));
@@ -558,7 +558,7 @@ public class ServicesViewModelTest {
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     when(servicesUseCase.setSelectedServices(anyList()))
         .thenReturn(Completable.error(NoServicesAvailableException::new));
-    servicesViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
     serviceSingleSubject.onSuccess(Arrays.asList(
@@ -566,8 +566,8 @@ public class ServicesViewModelTest {
         new Service(1, "n2", 10, false),
         new Service(2, "n3", 130, false)
     ));
-    servicesViewModel.setServices(new ArrayList<>());
-    servicesViewModel.errorConsumed();
+    viewModel.setServices(new ArrayList<>());
+    viewModel.errorConsumed();
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(any(ServicesViewStatePending.class));

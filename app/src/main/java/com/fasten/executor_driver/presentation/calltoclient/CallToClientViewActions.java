@@ -13,9 +13,9 @@ public interface CallToClientViewActions {
   void showCallToClientPending(boolean pending);
 
   /**
-   * Показать сообщение об ошибке сети.
+   * Показать статус звонка.
    *
-   * @param show - показать или нет?
+   * @param calling - звоним или нет?
    */
-  void showNetworkErrorMessage(boolean show);
+  void showCallingToClient(boolean calling);
 }

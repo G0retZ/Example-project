@@ -6,6 +6,8 @@ import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.fasten.executor_driver.interactor.OrderRouteUseCase;
+import com.fasten.executor_driver.presentation.CommonNavigate;
+import com.fasten.executor_driver.presentation.SingleLiveEvent;
 import com.fasten.executor_driver.presentation.ViewState;
 import io.reactivex.Flowable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -22,6 +24,8 @@ public class OrderRouteViewModelImpl extends ViewModel implements
   @NonNull
   private final MutableLiveData<ViewState<OrderRouteViewActions>> viewStateLiveData;
   @NonNull
+  private final SingleLiveEvent<String> navigateLiveData;
+  @NonNull
   private Disposable disposable = EmptyDisposable.INSTANCE;
   @NonNull
   private Disposable nextPointDisposable = EmptyDisposable.INSTANCE;
@@ -32,6 +36,7 @@ public class OrderRouteViewModelImpl extends ViewModel implements
   public OrderRouteViewModelImpl(@NonNull OrderRouteUseCase orderRouteUseCase) {
     this.orderRouteUseCase = orderRouteUseCase;
     viewStateLiveData = new MutableLiveData<>();
+    navigateLiveData = new SingleLiveEvent<>();
     viewStateLiveData.postValue(new OrderRouteViewStatePending(lastViewState));
     loadRoutePoints();
   }
@@ -45,7 +50,7 @@ public class OrderRouteViewModelImpl extends ViewModel implements
   @NonNull
   @Override
   public LiveData<String> getNavigationLiveData() {
-    return new MutableLiveData<>();
+    return navigateLiveData;
   }
 
   @Override
@@ -64,6 +69,7 @@ public class OrderRouteViewModelImpl extends ViewModel implements
             throwable -> {
               throwable.printStackTrace();
               viewStateLiveData.postValue(lastViewState);
+              navigateLiveData.postValue(CommonNavigate.NO_CONNECTION);
             }
         );
   }
@@ -88,7 +94,7 @@ public class OrderRouteViewModelImpl extends ViewModel implements
             },
             throwable -> {
               throwable.printStackTrace();
-              viewStateLiveData.postValue(new OrderRouteViewStateError(lastViewState));
+              navigateLiveData.postValue(CommonNavigate.SERVER_DATA_ERROR);
             }
         );
   }

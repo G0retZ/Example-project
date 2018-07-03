@@ -15,7 +15,7 @@ public class OnlineButtonViewStateReadyTest {
   private OnlineButtonViewStateReady viewState;
 
   @Mock
-  private OnlineButtonViewActions onlineButtonViewActions;
+  private OnlineButtonViewActions viewActions;
 
   @Before
   public void setUp() {
@@ -25,11 +25,11 @@ public class OnlineButtonViewStateReadyTest {
   @Test
   public void testActions() {
     // Действие:
-    viewState.apply(onlineButtonViewActions);
+    viewState.apply(viewActions);
 
     // Результат:
-    verify(onlineButtonViewActions).enableGoOnlineButton(true);
-    verify(onlineButtonViewActions).showGoOnlineError(null);
-    verifyNoMoreInteractions(onlineButtonViewActions);
+    verify(viewActions).enableGoOnlineButton(true);
+    verify(viewActions).showGoOnlineError(null);
+    verifyNoMoreInteractions(viewActions);
   }
 }

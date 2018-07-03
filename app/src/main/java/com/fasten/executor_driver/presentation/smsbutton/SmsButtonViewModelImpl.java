@@ -69,9 +69,10 @@ public class SmsButtonViewModelImpl extends ViewModel implements SmsButtonViewMo
   }
 
   private void holdButton() {
-    timerDisposable = Observable.interval(0, 1, TimeUnit.SECONDS, Schedulers.io())
+    timerDisposable = Observable.interval(0, 1, TimeUnit.SECONDS)
         .take(DURATION_AFTER_SUCCESS)
         .map(count -> DURATION_AFTER_SUCCESS - count)
+        .observeOn(AndroidSchedulers.mainThread())
         .subscribe(
             count -> viewStateLiveData.postValue(new SmsButtonViewStateHold(count)),
             Throwable::printStackTrace,

@@ -22,7 +22,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class PasswordGatewayTest {
 
-  private PasswordGateway passwordGateway;
+  private PasswordGateway gateway;
 
   @Mock
   private ApiService api;
@@ -31,7 +31,7 @@ public class PasswordGatewayTest {
   public void setUp() {
     RxJavaPlugins.setIoSchedulerHandler(scheduler -> Schedulers.trampoline());
     RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
-    passwordGateway = new PasswordGatewayImpl(api);
+    gateway = new PasswordGatewayImpl(api);
     when(api.authorize(any(ApiLogin.class))).thenReturn(Completable.never());
   }
 
@@ -43,7 +43,7 @@ public class PasswordGatewayTest {
   @Test
   public void authCompletableRequested() {
     // Действие:
-    passwordGateway.authorize(new LoginData("Login", "Password"));
+    gateway.authorize(new LoginData("Login", "Password"));
 
     // Результат:
     verify(api, only()).authorize(new ApiLogin("Login", "Password"));
@@ -63,7 +63,7 @@ public class PasswordGatewayTest {
         .thenReturn(Completable.error(new NoNetworkException()));
 
     // Результат:
-    passwordGateway.authorize(new LoginData("Login", "Password"))
+    gateway.authorize(new LoginData("Login", "Password"))
         .test().assertError(NoNetworkException.class);
   }
 
@@ -76,7 +76,7 @@ public class PasswordGatewayTest {
     when(api.authorize(any(ApiLogin.class))).thenReturn(Completable.complete());
 
     // Результат:
-    passwordGateway.authorize(new LoginData("Login", "Password"))
+    gateway.authorize(new LoginData("Login", "Password"))
         .test().assertComplete();
   }
 }

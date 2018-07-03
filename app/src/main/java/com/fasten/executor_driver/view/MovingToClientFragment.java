@@ -19,7 +19,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import com.fasten.executor_driver.R;
 import com.fasten.executor_driver.di.AppComponent;
-import com.fasten.executor_driver.presentation.movingtoclient.MovingToClientNavigate;
 import com.fasten.executor_driver.presentation.movingtoclient.MovingToClientViewActions;
 import com.fasten.executor_driver.presentation.movingtoclient.MovingToClientViewModel;
 import com.fasten.executor_driver.presentation.order.OrderViewActions;
@@ -41,6 +40,7 @@ public class MovingToClientFragment extends BaseFragment implements MovingToClie
   private ImageView mapImage;
   private TextView addressText;
   private TextView timerText;
+  private Button callAction;
   private Button navigationAction;
   private Context context;
   private boolean movingToClientPending;
@@ -74,13 +74,9 @@ public class MovingToClientFragment extends BaseFragment implements MovingToClie
     addressText = view.findViewById(R.id.addressText);
     timerText = view.findViewById(R.id.timerText);
     navigationAction = view.findViewById(R.id.openNavigator);
-    Button callAction = view.findViewById(R.id.callToClient);
+    callAction = view.findViewById(R.id.callToClient);
     Button arrivedAction = view.findViewById(R.id.reportArrived);
-    callAction.setOnClickListener(v -> {
-      navigate(MovingToClientNavigate.CALL_TO_CLIENT);
-      callAction.setEnabled(false);
-      callAction.postDelayed(() -> callAction.setEnabled(true), 10_000);
-    });
+    callAction.setOnClickListener(v -> movingToClientViewModel.callToClient());
     arrivedAction.setOnClickListener(v -> movingToClientViewModel.reportArrival());
     return view;
   }
@@ -99,9 +95,19 @@ public class MovingToClientFragment extends BaseFragment implements MovingToClie
         viewState.apply(this);
       }
     });
+    orderViewModel.getNavigationLiveData().observe(this, destination -> {
+      if (destination != null) {
+        navigate(destination);
+      }
+    });
     movingToClientViewModel.getViewStateLiveData().observe(this, viewState -> {
       if (viewState != null) {
         viewState.apply(this);
+      }
+    });
+    movingToClientViewModel.getNavigationLiveData().observe(this, destination -> {
+      if (destination != null) {
+        navigate(destination);
       }
     });
   }
@@ -121,6 +127,11 @@ public class MovingToClientFragment extends BaseFragment implements MovingToClie
       showPending(pending);
     }
     this.movingToClientPending = pending;
+  }
+
+  @Override
+  public void enableMovingToClientCallButton(boolean enable) {
+    callAction.setEnabled(enable);
   }
 
   @Override
@@ -209,29 +220,5 @@ public class MovingToClientFragment extends BaseFragment implements MovingToClie
   @Override
   public void showComment(@NonNull String comment) {
 
-  }
-
-  @Override
-  public void showOrderAvailabilityError(boolean show) {
-    if (show) {
-      new Builder(context)
-          .setTitle(R.string.error)
-          .setMessage(R.string.no_order_info)
-          .setPositiveButton(getString(android.R.string.ok), null)
-          .create()
-          .show();
-    }
-  }
-
-  @Override
-  public void showNetworkErrorMessage(boolean show) {
-    if (show) {
-      new Builder(context)
-          .setTitle(R.string.error)
-          .setMessage(R.string.no_network_connection)
-          .setPositiveButton(getString(android.R.string.ok), null)
-          .create()
-          .show();
-    }
   }
 }

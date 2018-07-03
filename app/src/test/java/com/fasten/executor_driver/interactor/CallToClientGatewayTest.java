@@ -1,11 +1,10 @@
 package com.fasten.executor_driver.interactor;
 
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.only;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.fasten.executor_driver.backend.web.NoNetworkException;
-import com.fasten.executor_driver.backend.websocket.ConnectionClosedException;
 import com.fasten.executor_driver.entity.ExecutorState;
 import com.fasten.executor_driver.gateway.CallToClientGatewayImpl;
 import io.reactivex.Completable;
@@ -15,16 +14,14 @@ import io.reactivex.schedulers.Schedulers;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InOrder;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import ua.naiksoftware.stomp.client.StompClient;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CallToClientGatewayTest {
 
-  private CallToClientGateway callToClientGateway;
+  private CallToClientGateway gateway;
   @Mock
   private StompClient stompClient;
 
@@ -35,63 +32,21 @@ public class CallToClientGatewayTest {
     RxJavaPlugins.setIoSchedulerHandler(scheduler -> Schedulers.trampoline());
     ExecutorState.MOVING_TO_CLIENT.setData(null);
     when(stompClient.send(anyString(), anyString())).thenReturn(Completable.never());
-    callToClientGateway = new CallToClientGatewayImpl(stompClient);
+    gateway = new CallToClientGatewayImpl(stompClient);
   }
 
   /* Проверяем работу с клиентом STOMP */
 
   /**
-   * Должен запросить у клиента STOMP отправку "звонок клиенту", если он соединен и не соединяется.
+   * Должен запросить у клиента STOMP отправку "звонок клиенту".
    */
   @Test
   public void askStompClientToSendCallToClient() {
-    // Дано:
-    InOrder inOrder = Mockito.inOrder(stompClient);
-    when(stompClient.isConnected()).thenReturn(true);
-
     // Действие:
-    callToClientGateway.callToClient().test();
+    gateway.callToClient().test();
 
     // Результат:
-    inOrder.verify(stompClient).isConnected();
-    inOrder.verify(stompClient).send("/mobile/trip", "\"CALL_TO_CLIENT\"");
-    verifyNoMoreInteractions(stompClient);
-  }
-
-  /**
-   * Не должен просить у клиента STOMP соединение, если он не соединен и не соединяется.
-   */
-  @Test
-  public void doNotAskStompClientToConnectOrSendIfNotConnected() {
-    // Дано:
-    InOrder inOrder = Mockito.inOrder(stompClient);
-
-    // Действие:
-    callToClientGateway.callToClient().test();
-
-    // Результат:
-    inOrder.verify(stompClient).isConnected();
-    inOrder.verify(stompClient).isConnecting();
-    verifyNoMoreInteractions(stompClient);
-  }
-
-  /**
-   * Должен запросить у клиента STOMP отправку "звонок клиенту", если он не соединен и соединяется.
-   */
-  @Test
-  public void askStompClientToSendCallToClientIfConnecting() {
-    // Дано:
-    InOrder inOrder = Mockito.inOrder(stompClient);
-    when(stompClient.isConnecting()).thenReturn(true);
-
-    // Действие:
-    callToClientGateway.callToClient().test();
-
-    // Результат:
-    inOrder.verify(stompClient).isConnected();
-    inOrder.verify(stompClient).isConnecting();
-    inOrder.verify(stompClient).send("/mobile/trip", "\"CALL_TO_CLIENT\"");
-    verifyNoMoreInteractions(stompClient);
+    verify(stompClient, only()).send("/mobile/trip", "\"CALL_TO_CLIENT\"");
   }
 
   /* Проверяем правильность потоков (добавить) */
@@ -99,16 +54,15 @@ public class CallToClientGatewayTest {
   /* Проверяем результаты обработки сообщений от сервера по статусам */
 
   /**
-   * Должен ответить успехом, если он соединен и не соединяется.
+   * Должен ответить успехом.
    */
   @Test
-  public void answerCallToClientSuccessIfConnected() {
+  public void answerCallToClientSuccess() {
     // Дано:
-    when(stompClient.isConnected()).thenReturn(true);
     when(stompClient.send(anyString(), anyString())).thenReturn(Completable.complete());
 
     // Действие:
-    TestObserver<Void> testObserver = callToClientGateway.callToClient().test();
+    TestObserver<Void> testObserver = gateway.callToClient().test();
 
     // Результат:
     testObserver.assertNoErrors();
@@ -116,68 +70,19 @@ public class CallToClientGatewayTest {
   }
 
   /**
-   * Должен ответить ошибкой, если он соединен и не соединяется.
+   * Должен ответить ошибкой.
    */
   @Test
-  public void answerCallToClientErrorIfConnected() {
+  public void answerCallToClientError() {
     // Дано:
-    when(stompClient.isConnected()).thenReturn(true);
     when(stompClient.send(anyString(), anyString()))
-        .thenReturn(Completable.error(new NoNetworkException()));
+        .thenReturn(Completable.error(new IllegalArgumentException()));
 
     // Действие:
-    TestObserver<Void> testObserver = callToClientGateway.callToClient().test();
+    TestObserver<Void> testObserver = gateway.callToClient().test();
 
     // Результат:
     testObserver.assertNotComplete();
-    testObserver.assertError(NoNetworkException.class);
-  }
-
-  /**
-   * Должен ответить ошибкой, если он не соединен и не соединяется.
-   */
-  @Test
-  public void answerCallToClientErrorIfNotConnectedAndNotConnecting() {
-    // Действие:
-    TestObserver<Void> testObserver = callToClientGateway.callToClient().test();
-
-    // Результат:
-    testObserver.assertNotComplete();
-    testObserver.assertError(ConnectionClosedException.class);
-  }
-
-  /**
-   * Должен ответить успехом, если он не соединен и соединяется.
-   */
-  @Test
-  public void answerCallToClientSuccessIfConnecting() {
-    // Дано:
-    when(stompClient.isConnecting()).thenReturn(true);
-    when(stompClient.send(anyString(), anyString())).thenReturn(Completable.complete());
-
-    // Действие:
-    TestObserver<Void> testObserver = callToClientGateway.callToClient().test();
-
-    // Результат:
-    testObserver.assertNoErrors();
-    testObserver.assertComplete();
-  }
-
-  /**
-   * Должен ответить ошибкой, если он не соединен и соединяется.
-   */
-  @Test
-  public void answerCallToClientErrorIfConnecting() {
-    // Дано:
-    when(stompClient.isConnecting()).thenReturn(true);
-    when(stompClient.send(anyString(), anyString()))
-        .thenReturn(Completable.error(new ConnectionClosedException()));
-
-    // Действие:
-    TestObserver<Void> testObserver = callToClientGateway.callToClient().test();
-
-    // Результат:
-    testObserver.assertNotComplete();
-    testObserver.assertError(ConnectionClosedException.class);
+    testObserver.assertError(IllegalArgumentException.class);
   }
 }

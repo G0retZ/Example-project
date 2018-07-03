@@ -5,6 +5,7 @@ import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
 import com.fasten.executor_driver.interactor.ExecutorStateUseCase;
+import com.fasten.executor_driver.presentation.CommonNavigate;
 import com.fasten.executor_driver.presentation.SingleLiveEvent;
 import com.fasten.executor_driver.presentation.ViewState;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -27,8 +28,8 @@ public class ExecutorStateViewModelImpl extends ViewModel implements ExecutorSta
   @Inject
   public ExecutorStateViewModelImpl(@NonNull ExecutorStateUseCase executorStateUseCase) {
     this.executorStateUseCase = executorStateUseCase;
-    navigateLiveData = new MutableLiveData<>();
     messageLiveData = new SingleLiveEvent<>();
+    navigateLiveData = new MutableLiveData<>();
   }
 
   @NonNull
@@ -87,7 +88,7 @@ public class ExecutorStateViewModelImpl extends ViewModel implements ExecutorSta
             },
             throwable -> {
               throwable.printStackTrace();
-              navigateLiveData.postValue(ExecutorStateNavigate.SERVER_DATA_ERROR);
+              navigateLiveData.postValue(CommonNavigate.SERVER_DATA_ERROR);
             });
   }
 

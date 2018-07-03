@@ -5,7 +5,6 @@ import com.fasten.executor_driver.BuildConfig;
 import com.fasten.executor_driver.backend.websocket.ConnectionClosedException;
 import com.fasten.executor_driver.entity.ExecutorBalance;
 import com.fasten.executor_driver.interactor.ExecutorBalanceGateway;
-import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
 import io.reactivex.schedulers.Schedulers;
 import javax.inject.Inject;
@@ -30,7 +29,6 @@ public class ExecutorBalanceGatewayImpl implements ExecutorBalanceGateway {
   public Flowable<ExecutorBalance> loadExecutorBalance(@NonNull String channelId) {
     if (stompClient.isConnected() || stompClient.isConnecting()) {
       return stompClient.topic(String.format(BuildConfig.STATUS_DESTINATION, channelId))
-          .toFlowable(BackpressureStrategy.BUFFER)
           .subscribeOn(Schedulers.io())
           .onErrorResumeNext(Flowable.empty())
           .filter(stompMessage -> stompMessage.findHeader("Balance") != null)

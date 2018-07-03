@@ -17,7 +17,7 @@ public class OrderRouteViewStatePendingTest {
   private OrderRouteViewStatePending viewState;
 
   @Mock
-  private OrderRouteViewActions nextRoutePointViewActions;
+  private OrderRouteViewActions viewActions;
   @Mock
   private ViewState<OrderRouteViewActions> parentViewState;
   @Mock
@@ -29,11 +29,11 @@ public class OrderRouteViewStatePendingTest {
     viewState = new OrderRouteViewStatePending(parentViewState);
 
     // Действие:
-    viewState.apply(nextRoutePointViewActions);
+    viewState.apply(viewActions);
 
     // Результат:
-    verify(nextRoutePointViewActions, only()).showOrderRoutePending(true);
-    verify(parentViewState, only()).apply(nextRoutePointViewActions);
+    verify(viewActions, only()).showOrderRoutePending(true);
+    verify(parentViewState, only()).apply(viewActions);
   }
 
   @Test
@@ -42,10 +42,10 @@ public class OrderRouteViewStatePendingTest {
     viewState = new OrderRouteViewStatePending(null);
 
     // Действие:
-    viewState.apply(nextRoutePointViewActions);
+    viewState.apply(viewActions);
 
     // Результат:
-    verify(nextRoutePointViewActions, only()).showOrderRoutePending(true);
+    verify(viewActions, only()).showOrderRoutePending(true);
   }
 
   @Test

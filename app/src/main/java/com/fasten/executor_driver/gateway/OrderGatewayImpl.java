@@ -2,7 +2,6 @@ package com.fasten.executor_driver.gateway;
 
 import android.support.annotation.NonNull;
 import com.fasten.executor_driver.entity.ExecutorState;
-import com.fasten.executor_driver.entity.NoOrdersAvailableException;
 import com.fasten.executor_driver.entity.Order;
 import com.fasten.executor_driver.interactor.ExecutorStateUseCase;
 import com.fasten.executor_driver.interactor.OrderGateway;
@@ -39,7 +38,7 @@ public class OrderGatewayImpl implements OrderGateway {
         .filter(executorState1 -> executorState1 == executorState)
         .map(executorState1 -> {
           if (executorState1.getData() == null) {
-            throw new NoOrdersAvailableException();
+            throw new DataMappingException("Ошибка маппинга: данные не должны быть null!");
           }
           return mapper.map(executorState1.getData());
         }).observeOn(Schedulers.single());

@@ -61,7 +61,7 @@ android {
 dependencies {
     // Support Library
     implementation 'com.android.support:appcompat-v7:27.1.1'
-    implementation 'com.android.support.constraint:constraint-layout:1.1.1'
+    implementation 'com.android.support.constraint:constraint-layout:1.1.2'
     implementation 'com.android.support:recyclerview-v7:27.1.1'
     implementation 'com.android.support:design:27.1.1'
     implementation 'com.android.support:support-vector-drawable:27.1.1'
@@ -90,7 +90,7 @@ dependencies {
     implementation 'com.squareup.okhttp3:logging-interceptor:3.9.0'
 
     // WebSocket STOMP
-    implementation 'com.github.G0retZ:StompProtocolAndroid:18.0.4'
+    implementation 'com.github.G0retZ:StompProtocolAndroid:18.0.11'
     implementation 'net.sourceforge.streamsupport:streamsupport:1.5.5'
     implementation 'net.sourceforge.streamsupport:streamsupport-cfuture:1.5.5'
 

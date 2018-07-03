@@ -22,7 +22,7 @@ public class VehicleOptionsViewStateReadyTest {
   private VehicleOptionsViewStateReady viewState;
 
   @Mock
-  private VehicleOptionsViewActions codeViewActions;
+  private VehicleOptionsViewActions viewActions;
 
   @Before
   public void setUp() {
@@ -46,14 +46,14 @@ public class VehicleOptionsViewStateReadyTest {
   @Test
   public void testActions() {
     // Действие:
-    viewState.apply(codeViewActions);
+    viewState.apply(viewActions);
 
     // Результат:
-    verify(codeViewActions).enableReadyButton(true);
-    verify(codeViewActions).showVehicleOptionsList(true);
-    verify(codeViewActions).showVehicleOptionsPending(false);
-    verify(codeViewActions).showVehicleOptionsListErrorMessage(false);
-    verify(codeViewActions).setVehicleOptionsListItems(new VehicleOptionsListItems(Arrays.asList(
+    verify(viewActions).enableReadyButton(true);
+    verify(viewActions).showVehicleOptionsList(true);
+    verify(viewActions).showVehicleOptionsPending(false);
+    verify(viewActions).showVehicleOptionsListErrorMessage(false);
+    verify(viewActions).setVehicleOptionsListItems(new VehicleOptionsListItems(Arrays.asList(
         new VehicleOptionsListItem<>(
             new OptionBoolean(1, "name", "description", true, false)
         ),
@@ -68,7 +68,7 @@ public class VehicleOptionsViewStateReadyTest {
             new OptionNumeric(4, "nam", "description", false, 1, -1, 2)
         )
     )));
-    verifyNoMoreInteractions(codeViewActions);
+    verifyNoMoreInteractions(viewActions);
   }
 
   @Test

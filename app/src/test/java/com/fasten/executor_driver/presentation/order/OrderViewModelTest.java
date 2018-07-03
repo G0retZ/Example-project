@@ -8,11 +8,9 @@ import static org.mockito.Mockito.when;
 
 import android.arch.core.executor.testing.InstantTaskExecutorRule;
 import android.arch.lifecycle.Observer;
-import com.fasten.executor_driver.backend.web.NoNetworkException;
-import com.fasten.executor_driver.entity.NoOrdersAvailableException;
 import com.fasten.executor_driver.entity.Order;
-import com.fasten.executor_driver.gateway.DataMappingException;
 import com.fasten.executor_driver.interactor.OrderUseCase;
+import com.fasten.executor_driver.presentation.CommonNavigate;
 import com.fasten.executor_driver.presentation.ViewState;
 import com.fasten.executor_driver.utils.TimeUtils;
 import io.reactivex.BackpressureStrategy;
@@ -36,7 +34,7 @@ public class OrderViewModelTest {
 
   @Rule
   public TestRule rule = new InstantTaskExecutorRule();
-  private OrderViewModel orderViewModel;
+  private OrderViewModel viewModel;
   @Mock
   private OrderUseCase orderUseCase;
   @Mock
@@ -50,13 +48,15 @@ public class OrderViewModelTest {
 
   @Mock
   private Observer<ViewState<OrderViewActions>> viewStateObserver;
+  @Mock
+  private Observer<String> navigateObserver;
 
   @Before
   public void setUp() {
     RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
     RxAndroidPlugins.setInitMainThreadSchedulerHandler(scheduler -> Schedulers.trampoline());
     when(orderUseCase.getOrders()).thenReturn(Flowable.never());
-    orderViewModel = new OrderViewModelImpl(orderUseCase, timeUtils);
+    viewModel = new OrderViewModelImpl(orderUseCase, timeUtils);
   }
 
   /* Тетсируем работу с юзкейсом заказа. */
@@ -67,9 +67,9 @@ public class OrderViewModelTest {
   @Test
   public void askUseCaseForOrdersInitially() {
     // Действие:
-    orderViewModel.getViewStateLiveData();
-    orderViewModel.getViewStateLiveData();
-    orderViewModel.getViewStateLiveData();
+    viewModel.getViewStateLiveData();
+    viewModel.getViewStateLiveData();
+    viewModel.getViewStateLiveData();
 
     // Результат:
     verify(orderUseCase, only()).getOrders();
@@ -86,7 +86,7 @@ public class OrderViewModelTest {
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
 
     // Действие:
-    orderViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(any(OrderViewStatePending.class));
@@ -94,69 +94,21 @@ public class OrderViewModelTest {
   }
 
   /**
-   * Должен вернуть состояние вида "Ошибка" нет сети.
+   * Не должен давать иных состояний вида если была ошибка.
    */
   @Test
-  public void setNoNetworkErrorViewStateToLiveData() {
+  public void doNotSetAnyViewStateToLiveDataForError() {
     // Дано:
     PublishSubject<Order> publishSubject = PublishSubject.create();
-    InOrder inOrder = Mockito.inOrder(viewStateObserver);
     when(orderUseCase.getOrders())
         .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
-    orderViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    publishSubject.onError(new NoNetworkException());
+    publishSubject.onError(new Exception());
 
     // Результат:
-    inOrder.verify(viewStateObserver).onChanged(new OrderViewStatePending(null));
-    inOrder.verify(viewStateObserver)
-        .onChanged(new OrderViewStateNetworkError(null));
-    verifyNoMoreInteractions(viewStateObserver);
-  }
-
-  /**
-   * Должен вернуть состояние вида "Ошибка" нет сети.
-   */
-  @Test
-  public void setNoNetworkErrorViewStateToLiveDataForMappingError() {
-    // Дано:
-    PublishSubject<Order> publishSubject = PublishSubject.create();
-    InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    when(orderUseCase.getOrders())
-        .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
-    orderViewModel.getViewStateLiveData().observeForever(viewStateObserver);
-
-    // Действие:
-    publishSubject.onError(new DataMappingException());
-
-    // Результат:
-    inOrder.verify(viewStateObserver).onChanged(new OrderViewStatePending(null));
-    inOrder.verify(viewStateObserver)
-        .onChanged(new OrderViewStateNetworkError(null));
-    verifyNoMoreInteractions(viewStateObserver);
-  }
-
-  /**
-   * Должен вернуть состояние вида "Ошибка" нет доступных заказов.
-   */
-  @Test
-  public void setNoOrderAvailableErrorViewStateToLiveData() {
-    // Дано:
-    PublishSubject<Order> publishSubject = PublishSubject.create();
-    InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    when(orderUseCase.getOrders())
-        .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
-    orderViewModel.getViewStateLiveData().observeForever(viewStateObserver);
-
-    // Действие:
-    publishSubject.onError(new NoOrdersAvailableException());
-
-    // Результат:
-    inOrder.verify(viewStateObserver).onChanged(new OrderViewStatePending(null));
-    inOrder.verify(viewStateObserver)
-        .onChanged(new OrderViewStateUnavailableError(null));
-    verifyNoMoreInteractions(viewStateObserver);
+    verify(viewStateObserver, only()).onChanged(new OrderViewStatePending(null));
   }
 
   /**
@@ -169,7 +121,7 @@ public class OrderViewModelTest {
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     when(orderUseCase.getOrders())
         .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
-    orderViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
     publishSubject.onNext(order);
@@ -188,5 +140,26 @@ public class OrderViewModelTest {
         new OrderItem(order2, timeUtils))
     );
     verifyNoMoreInteractions(viewStateObserver);
+  }
+
+  /* Тестируем навигацию. */
+
+  /**
+   * Должен вернуть "перейти к ошибке данных сервера".
+   */
+  @Test
+  public void setNavigateToServerDataError() {
+    // Дано:
+    PublishSubject<Order> publishSubject = PublishSubject.create();
+    when(orderUseCase.getOrders())
+        .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getNavigationLiveData().observeForever(navigateObserver);
+
+    // Действие:
+    publishSubject.onError(new Exception());
+
+    // Результат:
+    verify(navigateObserver, only()).onChanged(CommonNavigate.SERVER_DATA_ERROR);
   }
 }

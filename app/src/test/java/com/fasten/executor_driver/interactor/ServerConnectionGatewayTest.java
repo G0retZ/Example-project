@@ -5,7 +5,7 @@ import static org.mockito.Mockito.when;
 
 import com.fasten.executor_driver.backend.web.NoNetworkException;
 import com.fasten.executor_driver.gateway.ServerConnectionGatewayImpl;
-import io.reactivex.Observable;
+import io.reactivex.Flowable;
 import io.reactivex.plugins.RxJavaPlugins;
 import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subscribers.TestSubscriber;
@@ -23,7 +23,7 @@ import ua.naiksoftware.stomp.client.StompClient;
 @RunWith(MockitoJUnitRunner.class)
 public class ServerConnectionGatewayTest {
 
-  private ServerConnectionGateway serverConnectionGateway;
+  private ServerConnectionGateway gateway;
 
   @Mock
   private StompClient stompClient;
@@ -32,8 +32,8 @@ public class ServerConnectionGatewayTest {
   public void setUp() {
     RxJavaPlugins.setIoSchedulerHandler(scheduler -> Schedulers.trampoline());
     RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
-    serverConnectionGateway = new ServerConnectionGatewayImpl(stompClient);
-    when(stompClient.lifecycle()).thenReturn(Observable.never());
+    gateway = new ServerConnectionGatewayImpl(stompClient);
+    when(stompClient.lifecycle()).thenReturn(Flowable.never());
   }
 
   /* Проверяем работу с клиентом STOMP */
@@ -49,7 +49,7 @@ public class ServerConnectionGatewayTest {
     when(stompClient.isConnected()).thenReturn(true);
 
     // Действие:
-    serverConnectionGateway.openSocket().test();
+    gateway.openSocket().test();
 
     // Результат:
     inOrder.verify(stompClient).lifecycle();
@@ -68,7 +68,7 @@ public class ServerConnectionGatewayTest {
     when(stompClient.isConnecting()).thenReturn(true);
 
     // Действие:
-    serverConnectionGateway.openSocket().test();
+    gateway.openSocket().test();
 
     // Результат:
     inOrder.verify(stompClient).lifecycle();
@@ -78,7 +78,7 @@ public class ServerConnectionGatewayTest {
   }
 
   /**
-   * Должен запросить у клиента STOMP подписку на событие соединения, проверить статуса соединения.
+   * Должен запросить у клиента STOMP подписку на событие соединения, проверить статус соединения.
    * Должен запросить соединение, если не соединен и не соединяется.
    */
   @Test
@@ -87,33 +87,13 @@ public class ServerConnectionGatewayTest {
     InOrder inOrder = Mockito.inOrder(stompClient);
 
     // Действие:
-    serverConnectionGateway.openSocket().test();
+    gateway.openSocket().test();
 
     // Результат:
     inOrder.verify(stompClient).lifecycle();
     inOrder.verify(stompClient).isConnected();
     inOrder.verify(stompClient).isConnecting();
-    inOrder.verify(stompClient).connect();
-    verifyNoMoreInteractions(stompClient);
-  }
-
-  /**
-   * Должен запросить у клиента STOMP закрытие соединения, если была отписка.
-   */
-  @Test
-  public void askStompClientToDisconnectOnCancel() {
-    // Дано:
-    InOrder inOrder = Mockito.inOrder(stompClient);
-
-    // Действие:
-    serverConnectionGateway.openSocket().test().dispose();
-
-    // Результат:
-    inOrder.verify(stompClient).lifecycle();
-    inOrder.verify(stompClient).isConnected();
-    inOrder.verify(stompClient).isConnecting();
-    inOrder.verify(stompClient).connect();
-    inOrder.verify(stompClient).disconnect();
+    inOrder.verify(stompClient).reconnect();
     verifyNoMoreInteractions(stompClient);
   }
 
@@ -130,7 +110,7 @@ public class ServerConnectionGatewayTest {
     when(stompClient.isConnected()).thenReturn(true);
 
     // Действие:
-    TestSubscriber<Boolean> testSubscriber = serverConnectionGateway.openSocket().test();
+    TestSubscriber<Boolean> testSubscriber = gateway.openSocket().test();
 
     // Результат:
     testSubscriber.assertNotComplete();
@@ -143,7 +123,7 @@ public class ServerConnectionGatewayTest {
   @Test
   public void answerNothingIfNotConnected() {
     // Действие:
-    TestSubscriber<Boolean> testSubscriber = serverConnectionGateway.openSocket().test();
+    TestSubscriber<Boolean> testSubscriber = gateway.openSocket().test();
 
     // Результат:
     testSubscriber.assertNotComplete();
@@ -157,11 +137,11 @@ public class ServerConnectionGatewayTest {
   public void answerOpenSuccessAfterConnected() {
     // Дано:
     when(stompClient.lifecycle()).thenReturn(
-        Observable.just((new LifecycleEvent(Type.OPENED))).concatWith(Observable.never())
+        Flowable.just((new LifecycleEvent(Type.OPENED))).concatWith(Flowable.never())
     );
 
     // Действие:
-    TestSubscriber<Boolean> testSubscriber = serverConnectionGateway.openSocket().test();
+    TestSubscriber<Boolean> testSubscriber = gateway.openSocket().test();
 
     // Результат:
     testSubscriber.assertNotComplete();
@@ -169,41 +149,41 @@ public class ServerConnectionGatewayTest {
   }
 
   /**
-   * Должен ответить завершением, если соединение было закрыто.
+   * Должен ответить False + ошибкой, если соединение было закрыто.
    */
   @Test
-  public void answerClosedAfterConnectionClosed() {
+  public void answerWithFalseAndErrorAfterConnectionClosed() {
     // Дано:
     when(stompClient.lifecycle()).thenReturn(
-        Observable.just((new LifecycleEvent(Type.CLOSED))).concatWith(Observable.never())
+        Flowable.just((new LifecycleEvent(Type.CLOSED))).concatWith(Flowable.never())
     );
 
     // Действие:
-    TestSubscriber<Boolean> testSubscriber = serverConnectionGateway.openSocket().test();
+    TestSubscriber<Boolean> testSubscriber = gateway.openSocket().test();
 
     // Результат:
-    testSubscriber.assertNoValues();
-    testSubscriber.assertNoErrors();
-    testSubscriber.assertComplete();
+    testSubscriber.assertError(InterruptedException.class);
+    testSubscriber.assertValue(false);
+    testSubscriber.assertNotComplete();
   }
 
   /**
-   * Должен ответить ошибкой, если соединение провалилось.
+   * Должен ответить False + ошибкой, если соединение провалилось.
    */
   @Test
-  public void answerOpenErrorAfterFailed() {
+  public void answerWithFalseAndErrorAfterFailed() {
     // Дано:
     when(stompClient.lifecycle()).thenReturn(
-        Observable.just((new LifecycleEvent(Type.ERROR, new NoNetworkException())))
-            .concatWith(Observable.never())
+        Flowable.just((new LifecycleEvent(Type.ERROR, new NoNetworkException())))
+            .concatWith(Flowable.never())
     );
 
     // Действие:
-    TestSubscriber<Boolean> testSubscriber = serverConnectionGateway.openSocket().test();
+    TestSubscriber<Boolean> testSubscriber = gateway.openSocket().test();
 
     // Результат:
     testSubscriber.assertError(NoNetworkException.class);
+    testSubscriber.assertValue(false);
     testSubscriber.assertNotComplete();
-    testSubscriber.assertNoValues();
   }
 }

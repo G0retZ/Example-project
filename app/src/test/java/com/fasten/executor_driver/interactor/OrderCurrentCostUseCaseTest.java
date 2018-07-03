@@ -22,7 +22,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class OrderCurrentCostUseCaseTest {
 
-  private OrderCurrentCostUseCase orderCurrentCostUseCase;
+  private OrderCurrentCostUseCase useCase;
   @Mock
   private OrderGateway orderGateway;
   @Mock
@@ -39,7 +39,7 @@ public class OrderCurrentCostUseCaseTest {
     when(orderGateway.getOrders()).thenReturn(Flowable.never());
     when(loginReceiver.get()).thenReturn(Observable.never());
     when(orderCurrentCostGateway.getOrderCurrentCost(anyString())).thenReturn(Flowable.never());
-    orderCurrentCostUseCase = new OrderCurrentCostUseCaseImpl(orderGateway, loginReceiver,
+    useCase = new OrderCurrentCostUseCaseImpl(orderGateway, loginReceiver,
         orderCurrentCostGateway);
   }
 
@@ -51,9 +51,9 @@ public class OrderCurrentCostUseCaseTest {
   @Test
   public void doNotTouchLoginPublisherWithoutReset() {
     // Действие:
-    orderCurrentCostUseCase.getOrderCurrentCost().test();
-    orderCurrentCostUseCase.getOrderCurrentCost().test();
-    orderCurrentCostUseCase.getOrderCurrentCost().test();
+    useCase.getOrderCurrentCost().test();
+    useCase.getOrderCurrentCost().test();
+    useCase.getOrderCurrentCost().test();
 
     // Результат:
     verify(loginReceiver, times(3)).get();
@@ -71,7 +71,7 @@ public class OrderCurrentCostUseCaseTest {
     when(loginReceiver.get()).thenReturn(Observable.just("1234567890"));
 
     // Действие:
-    orderCurrentCostUseCase.getOrderCurrentCost().test();
+    useCase.getOrderCurrentCost().test();
 
     // Результат:
     verify(orderGateway, only()).getOrders();
@@ -88,7 +88,7 @@ public class OrderCurrentCostUseCaseTest {
     when(loginReceiver.get()).thenReturn(Observable.just("1234567890"));
 
     // Действие:
-    orderCurrentCostUseCase.getOrderCurrentCost().test();
+    useCase.getOrderCurrentCost().test();
 
     // Результат:
     verifyZeroInteractions(orderCurrentCostGateway);
@@ -104,7 +104,7 @@ public class OrderCurrentCostUseCaseTest {
     when(orderGateway.getOrders()).thenReturn(Flowable.just(order));
 
     // Действие:
-    orderCurrentCostUseCase.getOrderCurrentCost().test();
+    useCase.getOrderCurrentCost().test();
 
     // Результат:
     verify(orderCurrentCostGateway, only()).getOrderCurrentCost("1234567890");
@@ -123,7 +123,7 @@ public class OrderCurrentCostUseCaseTest {
         .thenReturn(Flowable.error(new DataMappingException()));
 
     // Действие:
-    TestSubscriber<Integer> test = orderCurrentCostUseCase.getOrderCurrentCost().test();
+    TestSubscriber<Integer> test = useCase.getOrderCurrentCost().test();
 
     // Результат:
     test.assertError(DataMappingException.class);
@@ -145,7 +145,7 @@ public class OrderCurrentCostUseCaseTest {
         .thenReturn(Flowable.error(new DataMappingException()));
 
     // Действие:
-    TestSubscriber<Integer> test = orderCurrentCostUseCase.getOrderCurrentCost().test();
+    TestSubscriber<Integer> test = useCase.getOrderCurrentCost().test();
 
     // Результат:
     test.assertError(DataMappingException.class);
@@ -166,7 +166,7 @@ public class OrderCurrentCostUseCaseTest {
     when(order2.getTotalCost()).thenReturn(12173);
 
     // Действие:
-    TestSubscriber<Integer> test = orderCurrentCostUseCase.getOrderCurrentCost().test();
+    TestSubscriber<Integer> test = useCase.getOrderCurrentCost().test();
 
     // Результат:
     test.assertValues(110, 12173);
@@ -192,7 +192,7 @@ public class OrderCurrentCostUseCaseTest {
     );
 
     // Действие:
-    TestSubscriber<Integer> test = orderCurrentCostUseCase.getOrderCurrentCost().test();
+    TestSubscriber<Integer> test = useCase.getOrderCurrentCost().test();
 
     // Результат:
     test.assertValues(100, 123, 145, 139, 198, 202, 12173, 8395, 8937, 17156, 9228);

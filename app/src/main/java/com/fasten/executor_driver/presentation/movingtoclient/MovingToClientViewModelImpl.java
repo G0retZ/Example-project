@@ -5,11 +5,15 @@ import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
 import com.fasten.executor_driver.interactor.MovingToClientUseCase;
+import com.fasten.executor_driver.presentation.CommonNavigate;
+import com.fasten.executor_driver.presentation.SingleLiveEvent;
 import com.fasten.executor_driver.presentation.ViewState;
+import io.reactivex.Completable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.internal.disposables.EmptyDisposable;
 import io.reactivex.schedulers.Schedulers;
+import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
 
 public class MovingToClientViewModelImpl extends ViewModel implements MovingToClientViewModel {
@@ -19,12 +23,17 @@ public class MovingToClientViewModelImpl extends ViewModel implements MovingToCl
   @NonNull
   private final MutableLiveData<ViewState<MovingToClientViewActions>> viewStateLiveData;
   @NonNull
+  private final SingleLiveEvent<String> navigateLiveData;
+  @NonNull
   private Disposable disposable = EmptyDisposable.INSTANCE;
+  @NonNull
+  private Disposable callingDisposable = EmptyDisposable.INSTANCE;
 
   @Inject
   public MovingToClientViewModelImpl(@NonNull MovingToClientUseCase movingToClientUseCase) {
     this.movingToClientUseCase = movingToClientUseCase;
     viewStateLiveData = new MutableLiveData<>();
+    navigateLiveData = new SingleLiveEvent<>();
     viewStateLiveData.postValue(new MovingToClientViewStateIdle());
   }
 
@@ -37,7 +46,27 @@ public class MovingToClientViewModelImpl extends ViewModel implements MovingToCl
   @NonNull
   @Override
   public LiveData<String> getNavigationLiveData() {
-    return new MutableLiveData<>();
+    return navigateLiveData;
+  }
+
+  @Override
+  public void callToClient() {
+    if (!callingDisposable.isDisposed()) {
+      return;
+    }
+    callingDisposable = Completable.complete()
+        .doOnComplete(() -> {
+          viewStateLiveData.postValue(new MovingToClientViewStateCalling());
+          navigateLiveData.postValue(MovingToClientNavigate.CALL_TO_CLIENT);
+        })
+        .delay(10, TimeUnit.SECONDS)
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe(
+            () -> viewStateLiveData.postValue(new MovingToClientViewStateIdle()), throwable -> {
+              throwable.printStackTrace();
+              viewStateLiveData.postValue(new MovingToClientViewStateIdle());
+            }
+        );
   }
 
   @Override
@@ -53,7 +82,8 @@ public class MovingToClientViewModelImpl extends ViewModel implements MovingToCl
             () -> {
             }, throwable -> {
               throwable.printStackTrace();
-              viewStateLiveData.postValue(new MovingToClientViewStateError());
+              viewStateLiveData.postValue(new MovingToClientViewStateIdle());
+              navigateLiveData.postValue(CommonNavigate.NO_CONNECTION);
             }
         );
   }
@@ -61,8 +91,7 @@ public class MovingToClientViewModelImpl extends ViewModel implements MovingToCl
   @Override
   protected void onCleared() {
     super.onCleared();
-    if (!disposable.isDisposed()) {
-      disposable.dispose();
-    }
+    disposable.dispose();
+    callingDisposable.dispose();
   }
 }

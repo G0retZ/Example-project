@@ -14,5 +14,5 @@ import java.lang.annotation.RetentionPolicy;
 public @interface GeoLocationNavigate {
 
   // Переход к решению проблемы с геолокацией.
-  String RESOLVE_GEO_PROBLEM = "to.Resolve.GeoLocation.Problem";
+  String RESOLVE_GEO_PROBLEM = "GeoLocation.to.ResolveGeoLocationProblem";
 }

@@ -16,7 +16,7 @@ import com.fasten.executor_driver.gateway.CancelOrderGatewayImpl;
 import com.fasten.executor_driver.gateway.DataMappingException;
 import com.fasten.executor_driver.gateway.Mapper;
 import io.reactivex.Completable;
-import io.reactivex.Observable;
+import io.reactivex.Flowable;
 import io.reactivex.observers.TestObserver;
 import io.reactivex.plugins.RxJavaPlugins;
 import io.reactivex.schedulers.Schedulers;
@@ -38,7 +38,7 @@ import ua.naiksoftware.stomp.client.StompMessage;
 @RunWith(MockitoJUnitRunner.class)
 public class CancelOrderGatewayTest {
 
-  private CancelOrderGateway cancelOrderGateway;
+  private CancelOrderGateway gateway;
 
   @Mock
   private StompClient stompClient;
@@ -55,8 +55,8 @@ public class CancelOrderGatewayTest {
   public void setUp() {
     RxJavaPlugins.setIoSchedulerHandler(scheduler -> Schedulers.trampoline());
     RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
-    cancelOrderGateway = new CancelOrderGatewayImpl(stompClient, mapper);
-    when(stompClient.topic(anyString())).thenReturn(Observable.never());
+    gateway = new CancelOrderGatewayImpl(stompClient, mapper);
+    when(stompClient.topic(anyString())).thenReturn(Flowable.never());
     when(stompClient.send(anyString(), anyString())).thenReturn(Completable.never());
   }
 
@@ -72,7 +72,7 @@ public class CancelOrderGatewayTest {
     when(stompClient.isConnected()).thenReturn(true);
 
     // Действие:
-    cancelOrderGateway.loadCancelOrderReasons("1234567890").test();
+    gateway.loadCancelOrderReasons("1234567890").test();
 
     // Результат:
     inOrder.verify(stompClient).isConnected();
@@ -89,7 +89,7 @@ public class CancelOrderGatewayTest {
     InOrder inOrder = Mockito.inOrder(stompClient);
 
     // Действие:
-    cancelOrderGateway.loadCancelOrderReasons("1234567890").test();
+    gateway.loadCancelOrderReasons("1234567890").test();
 
     // Результат:
     inOrder.verify(stompClient).isConnected();
@@ -107,7 +107,7 @@ public class CancelOrderGatewayTest {
     when(stompClient.isConnecting()).thenReturn(true);
 
     // Действие:
-    cancelOrderGateway.loadCancelOrderReasons("1234567890").test();
+    gateway.loadCancelOrderReasons("1234567890").test();
 
     // Результат:
     inOrder.verify(stompClient).isConnected();
@@ -125,7 +125,7 @@ public class CancelOrderGatewayTest {
   public void doNotTouchMapperIfWrongHeaderIfConnected() {
     // Дано:
     when(stompClient.isConnected()).thenReturn(true);
-    when(stompClient.topic(anyString())).thenReturn(Observable.just(
+    when(stompClient.topic(anyString())).thenReturn(Flowable.just(
         new StompMessage("MESSAGE", null, "SHIFT"),
         new StompMessage(
             "MESSAGE",
@@ -135,7 +135,7 @@ public class CancelOrderGatewayTest {
     ));
 
     // Действие:
-    cancelOrderGateway.loadCancelOrderReasons("1234567890").test();
+    gateway.loadCancelOrderReasons("1234567890").test();
 
     // Результат:
     verifyZeroInteractions(mapper);
@@ -148,7 +148,7 @@ public class CancelOrderGatewayTest {
   public void doNotTouchMapperIfWrongHeaderIfConnectingAfterConnected() {
     // Дано:
     when(stompClient.isConnecting()).thenReturn(true);
-    when(stompClient.topic(anyString())).thenReturn(Observable.just(
+    when(stompClient.topic(anyString())).thenReturn(Flowable.just(
         new StompMessage("MESSAGE", null, "SHIFT"),
         new StompMessage(
             "MESSAGE",
@@ -158,7 +158,7 @@ public class CancelOrderGatewayTest {
     ));
 
     // Действие:
-    cancelOrderGateway.loadCancelOrderReasons("1234567890").test();
+    gateway.loadCancelOrderReasons("1234567890").test();
 
     // Результат:
     verifyZeroInteractions(mapper);
@@ -173,7 +173,7 @@ public class CancelOrderGatewayTest {
   public void askForMappingForCancelReasonHeaderIfConnected() throws Exception {
     // Дано:
     when(stompClient.isConnected()).thenReturn(true);
-    when(stompClient.topic(anyString())).thenReturn(Observable.just(
+    when(stompClient.topic(anyString())).thenReturn(Flowable.just(
         new StompMessage(
             "MESSAGE",
             Collections.singletonList(
@@ -184,7 +184,7 @@ public class CancelOrderGatewayTest {
     ));
 
     // Действие:
-    cancelOrderGateway.loadCancelOrderReasons("1234567890").test();
+    gateway.loadCancelOrderReasons("1234567890").test();
 
     // Результат:
     verify(mapper, only()).map(any());
@@ -200,7 +200,7 @@ public class CancelOrderGatewayTest {
   public void askForMappingForCancelReasonHeaderIfConnectingAfterConnected() throws Exception {
     // Дано:
     when(stompClient.isConnecting()).thenReturn(true);
-    when(stompClient.topic(anyString())).thenReturn(Observable.just(
+    when(stompClient.topic(anyString())).thenReturn(Flowable.just(
         new StompMessage(
             "MESSAGE",
             Collections.singletonList(
@@ -211,7 +211,7 @@ public class CancelOrderGatewayTest {
     ));
 
     // Действие:
-    cancelOrderGateway.loadCancelOrderReasons("1234567890").test();
+    gateway.loadCancelOrderReasons("1234567890").test();
 
     // Результат:
     verify(mapper, only()).map(any());
@@ -219,63 +219,20 @@ public class CancelOrderGatewayTest {
 
 
   /**
-   * Должен запросить у клиента STOMP отправку причины отказа, если он соединен и не соединяется.
+   * Должен запросить у клиента STOMP отправку причины отказа.
    */
   @Test
   public void askStompClientToSendCancelOrderReason() {
     // Дано:
     when(cancelOrderReason.getId()).thenReturn(7);
     when(cancelOrderReason.getName()).thenReturn("seven");
-    InOrder inOrder = Mockito.inOrder(stompClient);
-    when(stompClient.isConnected()).thenReturn(true);
 
     // Действие:
-    cancelOrderGateway.cancelOrder(cancelOrderReason).test();
+    gateway.cancelOrder(cancelOrderReason).test();
 
     // Результат:
-    inOrder.verify(stompClient).isConnected();
-    inOrder.verify(stompClient)
+    verify(stompClient, only())
         .send("/mobile/takeOffOrder", "{\"id\":7,\"description\":\"seven\"}");
-    verifyNoMoreInteractions(stompClient);
-  }
-
-  /**
-   * Не должен просить у клиента STOMP соединение, если он не соединен и не соединяется.
-   */
-  @Test
-  public void doNotAskStompClientToConnectOrSendIfNotConnected() {
-    // Дано:
-    InOrder inOrder = Mockito.inOrder(stompClient);
-
-    // Действие:
-    cancelOrderGateway.cancelOrder(cancelOrderReason).test();
-
-    // Результат:
-    inOrder.verify(stompClient).isConnected();
-    inOrder.verify(stompClient).isConnecting();
-    verifyNoMoreInteractions(stompClient);
-  }
-
-  /**
-   * Должен запросить у клиента STOMP отправку причины отказа, если он не соединен и соединяется.
-   */
-  @Test
-  public void askStompClientToSendCancelOrderReasonIfConnecting() {
-    // Дано:
-    when(cancelOrderReason.getId()).thenReturn(7);
-    when(cancelOrderReason.getName()).thenReturn("seven");
-    InOrder inOrder = Mockito.inOrder(stompClient);
-    when(stompClient.isConnecting()).thenReturn(true);
-
-    // Действие:
-    cancelOrderGateway.cancelOrder(cancelOrderReason).test();
-
-    // Результат:
-    inOrder.verify(stompClient).isConnected();
-    inOrder.verify(stompClient).isConnecting();
-    inOrder.verify(stompClient)
-        .send("/mobile/takeOffOrder", "{\"id\":7,\"description\":\"seven\"}");
-    verifyNoMoreInteractions(stompClient);
   }
 
   /* Проверяем правильность потоков (добавить) */
@@ -289,7 +246,7 @@ public class CancelOrderGatewayTest {
   public void ignoreWrongHeaderIfConnected() {
     // Дано:
     when(stompClient.isConnected()).thenReturn(true);
-    when(stompClient.topic(anyString())).thenReturn(Observable.just(
+    when(stompClient.topic(anyString())).thenReturn(Flowable.just(
         new StompMessage("MESSAGE", null, "SHIFT"),
         new StompMessage(
             "MESSAGE",
@@ -300,7 +257,7 @@ public class CancelOrderGatewayTest {
 
     // Действие:
     TestSubscriber<List<CancelOrderReason>> testSubscriber =
-        cancelOrderGateway.loadCancelOrderReasons("1234567890").test();
+        gateway.loadCancelOrderReasons("1234567890").test();
 
     // Результат:
     testSubscriber.assertNoValues();
@@ -316,7 +273,7 @@ public class CancelOrderGatewayTest {
     // Дано:
     doThrow(new DataMappingException()).when(mapper).map(any());
     when(stompClient.isConnected()).thenReturn(true);
-    when(stompClient.topic(anyString())).thenReturn(Observable.just(
+    when(stompClient.topic(anyString())).thenReturn(Flowable.just(
         new StompMessage(
             "MESSAGE",
             Collections.singletonList(new StompHeader("CancelReason", "payload")),
@@ -326,7 +283,7 @@ public class CancelOrderGatewayTest {
 
     // Действие:
     TestSubscriber<List<CancelOrderReason>> testSubscriber =
-        cancelOrderGateway.loadCancelOrderReasons("1234567890").test();
+        gateway.loadCancelOrderReasons("1234567890").test();
 
     // Результат:
     testSubscriber.assertError(DataMappingException.class);
@@ -344,7 +301,7 @@ public class CancelOrderGatewayTest {
         Arrays.asList(cancelOrderReason, cancelOrderReason1, cancelOrderReason2)
     );
     when(stompClient.isConnected()).thenReturn(true);
-    when(stompClient.topic(anyString())).thenReturn(Observable.just(
+    when(stompClient.topic(anyString())).thenReturn(Flowable.just(
         new StompMessage(
             "MESSAGE",
             Collections.singletonList(new StompHeader("CancelReason", "payload")),
@@ -354,7 +311,7 @@ public class CancelOrderGatewayTest {
 
     // Действие:
     TestSubscriber<List<CancelOrderReason>> testSubscriber =
-        cancelOrderGateway.loadCancelOrderReasons("1234567890").test();
+        gateway.loadCancelOrderReasons("1234567890").test();
 
     // Результат:
     testSubscriber.assertValue(
@@ -369,11 +326,11 @@ public class CancelOrderGatewayTest {
   public void ignoreErrorIfConnected() {
     // Дано:
     when(stompClient.isConnected()).thenReturn(true);
-    when(stompClient.topic(anyString())).thenReturn(Observable.error(new NoNetworkException()));
+    when(stompClient.topic(anyString())).thenReturn(Flowable.error(new NoNetworkException()));
 
     // Действие:
     TestSubscriber<List<CancelOrderReason>> testSubscriber =
-        cancelOrderGateway.loadCancelOrderReasons("1234567890").test();
+        gateway.loadCancelOrderReasons("1234567890").test();
 
     // Результат:
     testSubscriber.assertNoErrors();
@@ -388,7 +345,7 @@ public class CancelOrderGatewayTest {
   public void answerConnectionErrorIfNotConnectingAfterConnected() {
     // Действие:
     TestSubscriber<List<CancelOrderReason>> testSubscriber =
-        cancelOrderGateway.loadCancelOrderReasons("1234567890").test();
+        gateway.loadCancelOrderReasons("1234567890").test();
 
     // Результат:
     testSubscriber.assertError(ConnectionClosedException.class);
@@ -401,7 +358,7 @@ public class CancelOrderGatewayTest {
   public void ignoreWrongHeaderIfConnectingAfterConnected() {
     // Дано:
     when(stompClient.isConnecting()).thenReturn(true);
-    when(stompClient.topic(anyString())).thenReturn(Observable.just(
+    when(stompClient.topic(anyString())).thenReturn(Flowable.just(
         new StompMessage("MESSAGE", null, "SHIFT"),
         new StompMessage(
             "MESSAGE",
@@ -412,7 +369,7 @@ public class CancelOrderGatewayTest {
 
     // Действие:
     TestSubscriber<List<CancelOrderReason>> testSubscriber =
-        cancelOrderGateway.loadCancelOrderReasons("1234567890").test();
+        gateway.loadCancelOrderReasons("1234567890").test();
 
     // Результат:
     testSubscriber.assertNoValues();
@@ -430,7 +387,7 @@ public class CancelOrderGatewayTest {
     // Дано:
     doThrow(new DataMappingException()).when(mapper).map(any());
     when(stompClient.isConnecting()).thenReturn(true);
-    when(stompClient.topic(anyString())).thenReturn(Observable.just(
+    when(stompClient.topic(anyString())).thenReturn(Flowable.just(
         new StompMessage(
             "MESSAGE",
             Collections.singletonList(new StompHeader("CancelReason", "")),
@@ -440,7 +397,7 @@ public class CancelOrderGatewayTest {
 
     // Действие:
     TestSubscriber<List<CancelOrderReason>> testSubscriber =
-        cancelOrderGateway.loadCancelOrderReasons("1234567890").test();
+        gateway.loadCancelOrderReasons("1234567890").test();
 
     // Результат:
     testSubscriber.assertError(DataMappingException.class);
@@ -461,7 +418,7 @@ public class CancelOrderGatewayTest {
         Arrays.asList(cancelOrderReason, cancelOrderReason1, cancelOrderReason2)
     );
     when(stompClient.isConnecting()).thenReturn(true);
-    when(stompClient.topic(anyString())).thenReturn(Observable.just(
+    when(stompClient.topic(anyString())).thenReturn(Flowable.just(
         new StompMessage(
             "MESSAGE",
             Collections.singletonList(new StompHeader("CancelReason", "")),
@@ -471,7 +428,7 @@ public class CancelOrderGatewayTest {
 
     // Действие:
     TestSubscriber<List<CancelOrderReason>> testSubscriber =
-        cancelOrderGateway.loadCancelOrderReasons("1234567890").test();
+        gateway.loadCancelOrderReasons("1234567890").test();
 
     // Результат:
     testSubscriber.assertValue(
@@ -488,11 +445,11 @@ public class CancelOrderGatewayTest {
     // Дано:
     when(stompClient.isConnecting()).thenReturn(true);
     when(stompClient.topic(anyString()))
-        .thenReturn(Observable.error(new ConnectionClosedException()));
+        .thenReturn(Flowable.error(new ConnectionClosedException()));
 
     // Действие:
     TestSubscriber<List<CancelOrderReason>> testSubscriber =
-        cancelOrderGateway.loadCancelOrderReasons("1234567890").test();
+        gateway.loadCancelOrderReasons("1234567890").test();
 
     // Результат:
     testSubscriber.assertNoErrors();
@@ -501,18 +458,17 @@ public class CancelOrderGatewayTest {
   }
 
   /**
-   * Должен ответить успехом, если он соединен и не соединяется.
+   * Должен ответить успехом.
    */
   @Test
-  public void answerCancelOrderReasonSuccessIfConnected() {
+  public void answerCancelOrderReasonSuccess() {
     // Дано:
     when(cancelOrderReason.getId()).thenReturn(7);
     when(cancelOrderReason.getName()).thenReturn("seven");
-    when(stompClient.isConnected()).thenReturn(true);
     when(stompClient.send(anyString(), anyString())).thenReturn(Completable.complete());
 
     // Действие:
-    TestObserver<Void> testObserver = cancelOrderGateway.cancelOrder(cancelOrderReason).test();
+    TestObserver<Void> testObserver = gateway.cancelOrder(cancelOrderReason).test();
 
     // Результат:
     testObserver.assertNoErrors();
@@ -520,74 +476,21 @@ public class CancelOrderGatewayTest {
   }
 
   /**
-   * Должен ответить ошибкой, если он соединен и не соединяется.
+   * Должен ответить ошибкой.
    */
   @Test
-  public void answerCancelOrderReasonErrorIfConnected() {
+  public void answerCancelOrderReasonError() {
     // Дано:
     when(cancelOrderReason.getId()).thenReturn(7);
     when(cancelOrderReason.getName()).thenReturn("seven");
-    when(stompClient.isConnected()).thenReturn(true);
     when(stompClient.send(anyString(), anyString()))
-        .thenReturn(Completable.error(new NoNetworkException()));
+        .thenReturn(Completable.error(new IllegalArgumentException()));
 
     // Действие:
-    TestObserver<Void> testObserver = cancelOrderGateway.cancelOrder(cancelOrderReason).test();
+    TestObserver<Void> testObserver = gateway.cancelOrder(cancelOrderReason).test();
 
     // Результат:
     testObserver.assertNotComplete();
-    testObserver.assertError(NoNetworkException.class);
-  }
-
-  /**
-   * Должен ответить ошибкой, если он не соединен и не соединяется.
-   */
-  @Test
-  public void answerCancelOrderReasonErrorIfNotConnectedAndNotConnecting() {
-    // Действие:
-    TestObserver<Void> testObserver = cancelOrderGateway.cancelOrder(cancelOrderReason).test();
-
-    // Результат:
-    testObserver.assertNotComplete();
-    testObserver.assertError(ConnectionClosedException.class);
-  }
-
-  /**
-   * Должен ответить успехом, если он не соединен и соединяется.
-   */
-  @Test
-  public void answerCancelOrderReasonSuccessIfConnecting() {
-    // Дано:
-    when(cancelOrderReason.getId()).thenReturn(7);
-    when(cancelOrderReason.getName()).thenReturn("seven");
-    when(stompClient.isConnecting()).thenReturn(true);
-    when(stompClient.send(anyString(), anyString())).thenReturn(Completable.complete());
-
-    // Действие:
-    TestObserver<Void> testObserver = cancelOrderGateway.cancelOrder(cancelOrderReason).test();
-
-    // Результат:
-    testObserver.assertNoErrors();
-    testObserver.assertComplete();
-  }
-
-  /**
-   * Должен ответить ошибкой, если он не соединен и соединяется.
-   */
-  @Test
-  public void answerCancelOrderReasonErrorIfConnecting() {
-    // Дано:
-    when(cancelOrderReason.getId()).thenReturn(7);
-    when(cancelOrderReason.getName()).thenReturn("seven");
-    when(stompClient.isConnecting()).thenReturn(true);
-    when(stompClient.send(anyString(), anyString()))
-        .thenReturn(Completable.error(new ConnectionClosedException()));
-
-    // Действие:
-    TestObserver<Void> testObserver = cancelOrderGateway.cancelOrder(cancelOrderReason).test();
-
-    // Результат:
-    testObserver.assertNotComplete();
-    testObserver.assertError(ConnectionClosedException.class);
+    testObserver.assertError(IllegalArgumentException.class);
   }
 }

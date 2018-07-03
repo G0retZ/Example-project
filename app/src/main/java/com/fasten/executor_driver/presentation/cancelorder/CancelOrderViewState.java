@@ -21,7 +21,6 @@ final class CancelOrderViewState implements ViewState<CancelOrderViewActions> {
   public void apply(@NonNull CancelOrderViewActions stateActions) {
     stateActions.showCancelOrderReasons(true);
     stateActions.showCancelOrderPending(false);
-    stateActions.showCancelOrderErrorMessage(false);
     stateActions.setCancelOrderReasons(cancelOrderReasons);
   }
 

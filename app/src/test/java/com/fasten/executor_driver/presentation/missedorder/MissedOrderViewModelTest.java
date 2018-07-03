@@ -31,13 +31,13 @@ public class MissedOrderViewModelTest {
 
   @Rule
   public TestRule rule = new InstantTaskExecutorRule();
-  private MissedOrderViewModel missedOrderViewModel;
+  private MissedOrderViewModel viewModel;
   @Mock
   private Observer<ViewState<MissedOrderViewActions>> viewStateObserver;
   @Captor
   private ArgumentCaptor<ViewState<MissedOrderViewActions>> viewStateCaptor;
   @Mock
-  private MissedOrderViewActions missedOrderViewActions;
+  private MissedOrderViewActions viewActions;
 
   @Mock
   private MissedOrderUseCase missedOrderUseCase;
@@ -48,7 +48,7 @@ public class MissedOrderViewModelTest {
     RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
     RxAndroidPlugins.setInitMainThreadSchedulerHandler(scheduler -> Schedulers.trampoline());
     when(missedOrderUseCase.getMissedOrders()).thenReturn(Flowable.never());
-    missedOrderViewModel = new MissedOrderViewModelImpl(missedOrderUseCase);
+    viewModel = new MissedOrderViewModelImpl(missedOrderUseCase);
   }
 
   /* Тетсируем работу с юзкейсом. */
@@ -59,7 +59,7 @@ public class MissedOrderViewModelTest {
   @Test
   public void askDataReceiverToSubscribeToMissedOrdersMessages() {
     // Действие:
-    missedOrderViewModel.initializeMissedOrderMessages();
+    viewModel.initializeMissedOrderMessages();
 
     // Результат:
     verify(missedOrderUseCase, only()).getMissedOrders();
@@ -71,9 +71,9 @@ public class MissedOrderViewModelTest {
   @Test
   public void askDataReceiverToSubscribeToMissedOrdersMessagesIfAlreadyAsked() {
     // Действие:
-    missedOrderViewModel.initializeMissedOrderMessages();
-    missedOrderViewModel.initializeMissedOrderMessages();
-    missedOrderViewModel.initializeMissedOrderMessages();
+    viewModel.initializeMissedOrderMessages();
+    viewModel.initializeMissedOrderMessages();
+    viewModel.initializeMissedOrderMessages();
 
     // Результат:
     verify(missedOrderUseCase, times(3)).getMissedOrders();
@@ -91,13 +91,13 @@ public class MissedOrderViewModelTest {
     when(missedOrderUseCase.getMissedOrders()).thenReturn(Flowable.just("Message"));
 
     // Действие:
-    missedOrderViewModel.getViewStateLiveData().observeForever(viewStateObserver);
-    missedOrderViewModel.initializeMissedOrderMessages();
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.initializeMissedOrderMessages();
 
     // Результат:
     verify(viewStateObserver, only()).onChanged(viewStateCaptor.capture());
-    viewStateCaptor.getValue().apply(missedOrderViewActions);
-    verify(missedOrderViewActions, only()).showMissedOrderMessage("Message");
+    viewStateCaptor.getValue().apply(viewActions);
+    verify(viewActions, only()).showMissedOrderMessage("Message");
   }
 
   /**
@@ -109,8 +109,8 @@ public class MissedOrderViewModelTest {
     when(missedOrderUseCase.getMissedOrders()).thenReturn(Flowable.just(""));
 
     // Действие:
-    missedOrderViewModel.getViewStateLiveData().observeForever(viewStateObserver);
-    missedOrderViewModel.initializeMissedOrderMessages();
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.initializeMissedOrderMessages();
 
     // Результат:
     verifyZeroInteractions(viewStateObserver);
@@ -125,8 +125,8 @@ public class MissedOrderViewModelTest {
     when(missedOrderUseCase.getMissedOrders()).thenReturn(Flowable.just("\n"));
 
     // Действие:
-    missedOrderViewModel.getViewStateLiveData().observeForever(viewStateObserver);
-    missedOrderViewModel.initializeMissedOrderMessages();
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.initializeMissedOrderMessages();
 
     // Результат:
     verifyZeroInteractions(viewStateObserver);

@@ -5,9 +5,10 @@ import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import com.fasten.executor_driver.entity.NoOrdersAvailableException;
 import com.fasten.executor_driver.entity.Order;
 import com.fasten.executor_driver.interactor.OrderUseCase;
+import com.fasten.executor_driver.presentation.CommonNavigate;
+import com.fasten.executor_driver.presentation.SingleLiveEvent;
 import com.fasten.executor_driver.presentation.ViewState;
 import com.fasten.executor_driver.utils.TimeUtils;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -24,6 +25,8 @@ public class OrderViewModelImpl extends ViewModel implements
   @NonNull
   private final MutableLiveData<ViewState<OrderViewActions>> viewStateLiveData;
   @NonNull
+  private final SingleLiveEvent<String> navigateLiveData;
+  @NonNull
   private final TimeUtils timeUtils;
   @NonNull
   private Disposable disposable = EmptyDisposable.INSTANCE;
@@ -35,6 +38,7 @@ public class OrderViewModelImpl extends ViewModel implements
     this.orderUseCase = orderUseCase;
     this.timeUtils = timeUtils;
     viewStateLiveData = new MutableLiveData<>();
+    navigateLiveData = new SingleLiveEvent<>();
     viewStateLiveData.postValue(new OrderViewStatePending(lastViewState));
   }
 
@@ -48,7 +52,7 @@ public class OrderViewModelImpl extends ViewModel implements
   @NonNull
   @Override
   public LiveData<String> getNavigationLiveData() {
-    return new MutableLiveData<>();
+    return navigateLiveData;
   }
 
 
@@ -70,18 +74,12 @@ public class OrderViewModelImpl extends ViewModel implements
 
   private void consumeError(Throwable throwable) {
     throwable.printStackTrace();
-    if (throwable instanceof NoOrdersAvailableException) {
-      viewStateLiveData.postValue(new OrderViewStateUnavailableError(lastViewState));
-    } else {
-      viewStateLiveData.postValue(new OrderViewStateNetworkError(lastViewState));
-    }
+    navigateLiveData.postValue(CommonNavigate.SERVER_DATA_ERROR);
   }
 
   @Override
   protected void onCleared() {
     super.onCleared();
-    if (!disposable.isDisposed()) {
-      disposable.dispose();
-    }
+    disposable.dispose();
   }
 }

@@ -25,11 +25,4 @@ public interface BalanceViewActions {
    * @param pending - показать или нет?
    */
   void showBalancePending(boolean pending);
-
-  /**
-   * Показать сообщение об ошибке.
-   *
-   * @param show - показать или нет?
-   */
-  void showBalanceErrorMessage(boolean show);
 }

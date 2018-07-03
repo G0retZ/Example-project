@@ -30,7 +30,7 @@ public class MapViewModelTest {
 
   @Rule
   public TestRule rule = new InstantTaskExecutorRule();
-  private MapViewModel mapViewModel;
+  private MapViewModel viewModel;
   @Mock
   private Observer<ViewState<MapViewActions>> viewStateObserver;
 
@@ -42,7 +42,7 @@ public class MapViewModelTest {
     RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
     RxAndroidPlugins.setInitMainThreadSchedulerHandler(scheduler -> Schedulers.trampoline());
     when(heatMapUseCase.loadHeatMap()).thenReturn(Flowable.never());
-    mapViewModel = new MapViewModelImpl(heatMapUseCase);
+    viewModel = new MapViewModelImpl(heatMapUseCase);
   }
 
   /* Тетсируем работу с юзкейсом тепловой карты. */
@@ -53,7 +53,7 @@ public class MapViewModelTest {
   @Test
   public void askUseCaseToSubscribeToHeatMapUpdates() {
     // Действие:
-    mapViewModel.getViewStateLiveData();
+    viewModel.getViewStateLiveData();
 
     // Результат:
     verify(heatMapUseCase, only()).loadHeatMap();
@@ -65,9 +65,9 @@ public class MapViewModelTest {
   @Test
   public void DoNotTouchUseCaseAfterFirstSubscription() {
     // Действие:
-    mapViewModel.getViewStateLiveData();
-    mapViewModel.getViewStateLiveData();
-    mapViewModel.getViewStateLiveData();
+    viewModel.getViewStateLiveData();
+    viewModel.getViewStateLiveData();
+    viewModel.getViewStateLiveData();
 
     // Результат:
     verify(heatMapUseCase, only()).loadHeatMap();
@@ -81,7 +81,7 @@ public class MapViewModelTest {
   @Test
   public void setViewStateWithNullToLiveData() {
     // Действие:
-    mapViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Результат:
     verify(viewStateObserver, only()).onChanged(new MapViewState(null));
@@ -99,7 +99,7 @@ public class MapViewModelTest {
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
 
     // Действие:
-    mapViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
     publishSubject.onNext("heat map 1");
     publishSubject.onNext("heat map 2");
     publishSubject.onNext("heat map 3");

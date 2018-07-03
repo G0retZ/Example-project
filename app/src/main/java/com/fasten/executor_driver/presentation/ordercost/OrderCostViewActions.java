@@ -11,11 +11,4 @@ public interface OrderCostViewActions {
    * @param currentCost - текущая стоимость заказа.
    */
   void setOrderCostText(int currentCost);
-
-  /**
-   * Показать сообщение об ошибке сети.
-   *
-   * @param show - показать или нет?
-   */
-  void showOrderCostNetworkErrorMessage(boolean show);
 }

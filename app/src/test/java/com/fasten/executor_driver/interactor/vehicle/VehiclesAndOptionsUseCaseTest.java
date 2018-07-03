@@ -26,7 +26,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class VehiclesAndOptionsUseCaseTest {
 
-  private VehiclesAndOptionsUseCase vehiclesAndOptionsUseCase;
+  private VehiclesAndOptionsUseCase useCase;
 
   @Mock
   private VehiclesAndOptionsGateway gateway;
@@ -41,7 +41,7 @@ public class VehiclesAndOptionsUseCaseTest {
   public void setUp() {
     when(gateway.getExecutorVehicles()).thenReturn(Single.never());
     when(lastUsedVehicleGateway.getLastUsedVehicleId()).thenReturn(Single.never());
-    vehiclesAndOptionsUseCase = new VehiclesAndOptionsUseCaseImpl(gateway, vehicleChoiceObserver,
+    useCase = new VehiclesAndOptionsUseCaseImpl(gateway, vehicleChoiceObserver,
         lastUsedVehicleGateway);
   }
 
@@ -53,7 +53,7 @@ public class VehiclesAndOptionsUseCaseTest {
   @Test
   public void askLastUsedVehiclesDataSharerForLastUsedVehicleInitially() {
     // Действие:
-    vehiclesAndOptionsUseCase.loadVehiclesAndOptions().test();
+    useCase.loadVehiclesAndOptions().test();
 
     // Результат:
     verify(lastUsedVehicleGateway, only()).getLastUsedVehicleId();
@@ -70,7 +70,7 @@ public class VehiclesAndOptionsUseCaseTest {
     when(lastUsedVehicleGateway.getLastUsedVehicleId()).thenReturn(Single.just(10L));
 
     // Действие:
-    vehiclesAndOptionsUseCase.loadVehiclesAndOptions().test();
+    useCase.loadVehiclesAndOptions().test();
 
     // Результат:
     verify(gateway).getExecutorVehicles();
@@ -86,22 +86,22 @@ public class VehiclesAndOptionsUseCaseTest {
   public void doNotTouchVehicleChoiceSharer() {
     // Действие:
     when(lastUsedVehicleGateway.getLastUsedVehicleId()).thenReturn(Single.just(10L));
-    vehiclesAndOptionsUseCase.loadVehiclesAndOptions().test();
+    useCase.loadVehiclesAndOptions().test();
     when(gateway.getExecutorVehicles()).thenReturn(Single.error(new NoNetworkException()));
-    vehiclesAndOptionsUseCase.loadVehiclesAndOptions().test();
+    useCase.loadVehiclesAndOptions().test();
     when(gateway.getExecutorVehicles())
         .thenReturn(Single.error(new InsufficientCreditsException()));
-    vehiclesAndOptionsUseCase.loadVehiclesAndOptions().test();
+    useCase.loadVehiclesAndOptions().test();
     when(gateway.getExecutorVehicles()).thenReturn(Single.error(new DriverBlockedException()));
-    vehiclesAndOptionsUseCase.loadVehiclesAndOptions().test();
+    useCase.loadVehiclesAndOptions().test();
     when(gateway.getExecutorVehicles()).thenReturn(Single.just(
         new ArrayList<>(Collections.singletonList(
             new Vehicle(12, "manufacturer", "model", "color", "license", true)
         ))
     ));
-    vehiclesAndOptionsUseCase.loadVehiclesAndOptions().test();
+    useCase.loadVehiclesAndOptions().test();
     when(gateway.getExecutorVehicles()).thenReturn(Single.just(new ArrayList<>()));
-    vehiclesAndOptionsUseCase.loadVehiclesAndOptions().test();
+    useCase.loadVehiclesAndOptions().test();
 
     // Результат:
     verifyZeroInteractions(vehicleChoiceObserver);
@@ -124,7 +124,7 @@ public class VehiclesAndOptionsUseCaseTest {
     ));
 
     // Действие:
-    vehiclesAndOptionsUseCase.loadVehiclesAndOptions().test();
+    useCase.loadVehiclesAndOptions().test();
 
     // Результат:
     verify(vehicleChoiceObserver, only())
@@ -150,7 +150,7 @@ public class VehiclesAndOptionsUseCaseTest {
     ));
 
     // Действие:
-    vehiclesAndOptionsUseCase.loadVehiclesAndOptions().test();
+    useCase.loadVehiclesAndOptions().test();
 
     // Результат:
     verify(vehicleChoiceObserver, only())
@@ -175,7 +175,7 @@ public class VehiclesAndOptionsUseCaseTest {
     ));
 
     // Действие:
-    vehiclesAndOptionsUseCase.loadVehiclesAndOptions().test();
+    useCase.loadVehiclesAndOptions().test();
 
     // Результат:
     verify(vehicleChoiceObserver, only())
@@ -199,7 +199,7 @@ public class VehiclesAndOptionsUseCaseTest {
     ));
 
     // Действие:
-    vehiclesAndOptionsUseCase.loadVehiclesAndOptions().test();
+    useCase.loadVehiclesAndOptions().test();
 
     // Результат:
     verify(vehicleChoiceObserver, only())
@@ -223,7 +223,7 @@ public class VehiclesAndOptionsUseCaseTest {
     ));
 
     // Действие:
-    vehiclesAndOptionsUseCase.loadVehiclesAndOptions().test();
+    useCase.loadVehiclesAndOptions().test();
 
     // Результат:
     verify(vehicleChoiceObserver, only())
@@ -247,7 +247,7 @@ public class VehiclesAndOptionsUseCaseTest {
     ));
 
     // Действие:
-    vehiclesAndOptionsUseCase.loadVehiclesAndOptions().test();
+    useCase.loadVehiclesAndOptions().test();
 
     // Результат:
     verify(vehicleChoiceObserver, only())
@@ -268,7 +268,7 @@ public class VehiclesAndOptionsUseCaseTest {
     ));
 
     // Действие:
-    vehiclesAndOptionsUseCase.loadVehiclesAndOptions().test();
+    useCase.loadVehiclesAndOptions().test();
 
     // Результат:
     verify(vehicleChoiceObserver, only())
@@ -287,7 +287,7 @@ public class VehiclesAndOptionsUseCaseTest {
     when(gateway.getExecutorVehicles()).thenReturn(Single.error(new NoNetworkException()));
 
     // Действие и Результат:
-    vehiclesAndOptionsUseCase.loadVehiclesAndOptions().test().assertError(NoNetworkException.class);
+    useCase.loadVehiclesAndOptions().test().assertError(NoNetworkException.class);
   }
 
   /**
@@ -300,7 +300,7 @@ public class VehiclesAndOptionsUseCaseTest {
     when(gateway.getExecutorVehicles()).thenReturn(Single.error(new DriverBlockedException()));
 
     // Действие и Результат:
-    vehiclesAndOptionsUseCase.loadVehiclesAndOptions().test()
+    useCase.loadVehiclesAndOptions().test()
         .assertError(DriverBlockedException.class);
   }
 
@@ -315,7 +315,7 @@ public class VehiclesAndOptionsUseCaseTest {
         .thenReturn(Single.error(new InsufficientCreditsException()));
 
     // Действие и Результат:
-    vehiclesAndOptionsUseCase.loadVehiclesAndOptions().test()
+    useCase.loadVehiclesAndOptions().test()
         .assertError(InsufficientCreditsException.class);
   }
 
@@ -329,7 +329,7 @@ public class VehiclesAndOptionsUseCaseTest {
     when(gateway.getExecutorVehicles()).thenReturn(Single.just(new ArrayList<>()));
 
     // Действие и Результат:
-    vehiclesAndOptionsUseCase.loadVehiclesAndOptions().test()
+    useCase.loadVehiclesAndOptions().test()
         .assertError(NoVehiclesAvailableException.class);
   }
 
@@ -348,7 +348,7 @@ public class VehiclesAndOptionsUseCaseTest {
     ));
 
     // Действие и Результат:
-    vehiclesAndOptionsUseCase.loadVehiclesAndOptions().test()
+    useCase.loadVehiclesAndOptions().test()
         .assertError(NoFreeVehiclesException.class);
   }
 
@@ -369,7 +369,7 @@ public class VehiclesAndOptionsUseCaseTest {
     ));
 
     // Действие и Результат:
-    vehiclesAndOptionsUseCase.loadVehiclesAndOptions().test().assertComplete();
+    useCase.loadVehiclesAndOptions().test().assertComplete();
   }
 
   /**
@@ -386,7 +386,7 @@ public class VehiclesAndOptionsUseCaseTest {
     ));
 
     // Действие и Результат:
-    vehiclesAndOptionsUseCase.loadVehiclesAndOptions().test().assertComplete();
+    useCase.loadVehiclesAndOptions().test().assertComplete();
   }
 
   /**
@@ -406,6 +406,6 @@ public class VehiclesAndOptionsUseCaseTest {
     ));
 
     // Действие и Результат:
-    vehiclesAndOptionsUseCase.loadVehiclesAndOptions().test().assertComplete();
+    useCase.loadVehiclesAndOptions().test().assertComplete();
   }
 }

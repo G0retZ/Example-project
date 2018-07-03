@@ -13,7 +13,5 @@ final class OrderConfirmationViewStateIdle implements ViewState<OrderConfirmatio
     stateActions.showDriverOrderConfirmationPending(false);
     stateActions.enableAcceptButton(true);
     stateActions.enableDeclineButton(true);
-    stateActions.showOrderAvailabilityError(false);
-    stateActions.showNetworkErrorMessage(false);
   }
 }

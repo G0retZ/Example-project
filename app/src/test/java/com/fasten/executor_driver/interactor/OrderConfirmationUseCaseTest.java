@@ -9,7 +9,6 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import com.fasten.executor_driver.backend.web.NoNetworkException;
-import com.fasten.executor_driver.entity.NoOrdersAvailableException;
 import com.fasten.executor_driver.entity.Order;
 import com.fasten.executor_driver.gateway.DataMappingException;
 import io.reactivex.Completable;
@@ -24,7 +23,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class OrderConfirmationUseCaseTest {
 
-  private OrderConfirmationUseCase orderConfirmationUseCase;
+  private OrderConfirmationUseCase useCase;
 
   @Mock
   private OrderGateway orderGateway;
@@ -40,7 +39,7 @@ public class OrderConfirmationUseCaseTest {
     when(orderGateway.getOrders()).thenReturn(Flowable.never());
     when(orderConfirmationGateway.sendDecision(any(), anyBoolean()))
         .thenReturn(Completable.never());
-    orderConfirmationUseCase = new OrderConfirmationUseCaseImpl(orderGateway,
+    useCase = new OrderConfirmationUseCaseImpl(orderGateway,
         orderConfirmationGateway);
   }
 
@@ -52,8 +51,8 @@ public class OrderConfirmationUseCaseTest {
   @Test
   public void askGatewayForOrders() {
     // Действие:
-    orderConfirmationUseCase.sendDecision(true).test();
-    orderConfirmationUseCase.sendDecision(false).test();
+    useCase.sendDecision(true).test();
+    useCase.sendDecision(false).test();
 
     // Результат:
     verify(orderGateway, times(2)).getOrders();
@@ -69,8 +68,8 @@ public class OrderConfirmationUseCaseTest {
     when(orderGateway.getOrders()).thenReturn(Flowable.just(order));
 
     // Действие:
-    orderConfirmationUseCase.sendDecision(true).test();
-    orderConfirmationUseCase.sendDecision(false).test();
+    useCase.sendDecision(true).test();
+    useCase.sendDecision(false).test();
 
     // Результат:
     verify(orderConfirmationGateway).sendDecision(order, true);
@@ -87,8 +86,8 @@ public class OrderConfirmationUseCaseTest {
     when(orderGateway.getOrders()).thenReturn(Flowable.just(order, order2));
 
     // Действие:
-    orderConfirmationUseCase.sendDecision(true).test();
-    orderConfirmationUseCase.sendDecision(false).test();
+    useCase.sendDecision(true).test();
+    useCase.sendDecision(false).test();
 
     // Результат:
     verify(orderConfirmationGateway, times(2)).sendDecision(eq(order), anyBoolean());
@@ -106,27 +105,10 @@ public class OrderConfirmationUseCaseTest {
     when(orderGateway.getOrders()).thenReturn(Flowable.error(new DataMappingException()));
 
     // Действие:
-    TestObserver<Void> test = orderConfirmationUseCase.sendDecision(true).test();
+    TestObserver<Void> test = useCase.sendDecision(true).test();
 
     // Результат:
     test.assertError(DataMappingException.class);
-    test.assertNoValues();
-    test.assertNotComplete();
-  }
-
-  /**
-   * Должен ответить ошибкой отсуствия актуальных заказов на отказ.
-   */
-  @Test
-  public void answerNoOrdersErrorForDecline() {
-    // Дано:
-    when(orderGateway.getOrders()).thenReturn(Flowable.error(new NoOrdersAvailableException()));
-
-    // Действие:
-    TestObserver<Void> test = orderConfirmationUseCase.sendDecision(false).test();
-
-    // Результат:
-    test.assertError(NoOrdersAvailableException.class);
     test.assertNoValues();
     test.assertNotComplete();
   }
@@ -142,7 +124,7 @@ public class OrderConfirmationUseCaseTest {
         .thenReturn(Completable.error(new NoNetworkException()));
 
     // Действие:
-    TestObserver<Void> test = orderConfirmationUseCase.sendDecision(true).test();
+    TestObserver<Void> test = useCase.sendDecision(true).test();
 
     // Результат:
     test.assertError(NoNetworkException.class);
@@ -162,7 +144,7 @@ public class OrderConfirmationUseCaseTest {
         .thenReturn(Completable.error(new NoNetworkException()));
 
     // Действие:
-    TestObserver<Void> test = orderConfirmationUseCase.sendDecision(false).test();
+    TestObserver<Void> test = useCase.sendDecision(false).test();
 
     // Результат:
     test.assertError(NoNetworkException.class);
@@ -182,7 +164,7 @@ public class OrderConfirmationUseCaseTest {
         .thenReturn(Completable.complete());
 
     // Действие:
-    TestObserver<Void> test = orderConfirmationUseCase.sendDecision(true).test();
+    TestObserver<Void> test = useCase.sendDecision(true).test();
 
     // Результат:
     test.assertComplete();
@@ -201,7 +183,7 @@ public class OrderConfirmationUseCaseTest {
         .thenReturn(Completable.complete());
 
     // Действие:
-    TestObserver<Void> test = orderConfirmationUseCase.sendDecision(false).test();
+    TestObserver<Void> test = useCase.sendDecision(false).test();
 
     // Результат:
     test.assertComplete();

@@ -16,6 +16,7 @@ import com.fasten.executor_driver.entity.CancelOrderReason;
 import com.fasten.executor_driver.entity.ExecutorState;
 import com.fasten.executor_driver.gateway.DataMappingException;
 import com.fasten.executor_driver.interactor.CancelOrderUseCase;
+import com.fasten.executor_driver.presentation.CommonNavigate;
 import com.fasten.executor_driver.presentation.ViewState;
 import io.reactivex.Flowable;
 import io.reactivex.android.plugins.RxAndroidPlugins;
@@ -35,7 +36,7 @@ public class CancelOrderReasonsViewModelTest {
 
   @Rule
   public TestRule rule = new InstantTaskExecutorRule();
-  private CancelOrderReasonsViewModel cancelOrderReasonsViewModel;
+  private CancelOrderReasonsViewModel viewModel;
   @Mock
   private Observer<String> navigationObserver;
   @Mock
@@ -51,7 +52,7 @@ public class CancelOrderReasonsViewModelTest {
     RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
     RxAndroidPlugins.setInitMainThreadSchedulerHandler(scheduler -> Schedulers.trampoline());
     when(cancelOrderUseCase.getCancelOrderReasons(anyBoolean())).thenReturn(Flowable.never());
-    cancelOrderReasonsViewModel = new CancelOrderReasonsViewModelImpl(cancelOrderUseCase);
+    viewModel = new CancelOrderReasonsViewModelImpl(cancelOrderUseCase);
   }
 
   /* Тетсируем работу с юзкейсом. */
@@ -62,7 +63,7 @@ public class CancelOrderReasonsViewModelTest {
   @Test
   public void askDataReceiverToSubscribeToCancelOrderReasonsUpdatesWithCacheReset() {
     // Действие:
-    cancelOrderReasonsViewModel.initializeCancelOrderReasons();
+    viewModel.initializeCancelOrderReasons();
 
     // Результат:
     verify(cancelOrderUseCase, only()).getCancelOrderReasons(true);
@@ -75,9 +76,9 @@ public class CancelOrderReasonsViewModelTest {
   @Test
   public void doNotTouchUseCaseBeforeFirstRequestComplete() {
     // Действие:
-    cancelOrderReasonsViewModel.initializeCancelOrderReasons();
-    cancelOrderReasonsViewModel.initializeCancelOrderReasons();
-    cancelOrderReasonsViewModel.initializeCancelOrderReasons();
+    viewModel.initializeCancelOrderReasons();
+    viewModel.initializeCancelOrderReasons();
+    viewModel.initializeCancelOrderReasons();
 
     // Результат:
     verify(cancelOrderUseCase, times(3)).getCancelOrderReasons(true);
@@ -96,8 +97,8 @@ public class CancelOrderReasonsViewModelTest {
         .thenReturn(Flowable.just(Collections.singletonList(cancelOrderReason)));
 
     // Действие:
-    cancelOrderReasonsViewModel.getViewStateLiveData().observeForever(viewStateObserver);
-    cancelOrderReasonsViewModel.initializeCancelOrderReasons();
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.initializeCancelOrderReasons();
 
     // Результат:
     verifyZeroInteractions(viewStateObserver);
@@ -115,8 +116,8 @@ public class CancelOrderReasonsViewModelTest {
         .thenReturn(Flowable.error(NoNetworkException::new));
 
     // Действие:
-    cancelOrderReasonsViewModel.getNavigationLiveData().observeForever(navigationObserver);
-    cancelOrderReasonsViewModel.initializeCancelOrderReasons();
+    viewModel.getNavigationLiveData().observeForever(navigationObserver);
+    viewModel.initializeCancelOrderReasons();
 
     // Результат:
     verifyZeroInteractions(navigationObserver);
@@ -132,8 +133,8 @@ public class CancelOrderReasonsViewModelTest {
         .thenReturn(Flowable.error(AuthenticatorException::new));
 
     // Действие:
-    cancelOrderReasonsViewModel.getNavigationLiveData().observeForever(navigationObserver);
-    cancelOrderReasonsViewModel.initializeCancelOrderReasons();
+    viewModel.getNavigationLiveData().observeForever(navigationObserver);
+    viewModel.initializeCancelOrderReasons();
 
     // Результат:
     verifyZeroInteractions(navigationObserver);
@@ -149,8 +150,8 @@ public class CancelOrderReasonsViewModelTest {
         .thenReturn(Flowable.just(Collections.singletonList(cancelOrderReason)));
 
     // Действие:
-    cancelOrderReasonsViewModel.getNavigationLiveData().observeForever(navigationObserver);
-    cancelOrderReasonsViewModel.initializeCancelOrderReasons();
+    viewModel.getNavigationLiveData().observeForever(navigationObserver);
+    viewModel.initializeCancelOrderReasons();
 
     // Результат:
     verifyZeroInteractions(navigationObserver);
@@ -166,10 +167,10 @@ public class CancelOrderReasonsViewModelTest {
         .thenReturn(Flowable.error(DataMappingException::new));
 
     // Действие:
-    cancelOrderReasonsViewModel.getNavigationLiveData().observeForever(navigationObserver);
-    cancelOrderReasonsViewModel.initializeCancelOrderReasons();
+    viewModel.getNavigationLiveData().observeForever(navigationObserver);
+    viewModel.initializeCancelOrderReasons();
 
     // Результат:
-    verify(navigationObserver, only()).onChanged(CancelOrderReasonsNavigate.SERVER_DATA_ERROR);
+    verify(navigationObserver, only()).onChanged(CommonNavigate.SERVER_DATA_ERROR);
   }
 }

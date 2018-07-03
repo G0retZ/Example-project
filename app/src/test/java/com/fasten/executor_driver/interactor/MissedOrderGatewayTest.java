@@ -7,7 +7,7 @@ import static org.mockito.Mockito.when;
 import com.fasten.executor_driver.backend.web.NoNetworkException;
 import com.fasten.executor_driver.backend.websocket.ConnectionClosedException;
 import com.fasten.executor_driver.gateway.MissedOrderGatewayImpl;
-import io.reactivex.Observable;
+import io.reactivex.Flowable;
 import io.reactivex.plugins.RxJavaPlugins;
 import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subscribers.TestSubscriber;
@@ -26,7 +26,7 @@ import ua.naiksoftware.stomp.client.StompMessage;
 @RunWith(MockitoJUnitRunner.class)
 public class MissedOrderGatewayTest {
 
-  private MissedOrderGateway missedOrderGateway;
+  private MissedOrderGateway gateway;
 
   @Mock
   private StompClient stompClient;
@@ -35,8 +35,8 @@ public class MissedOrderGatewayTest {
   public void setUp() {
     RxJavaPlugins.setIoSchedulerHandler(scheduler -> Schedulers.trampoline());
     RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
-    missedOrderGateway = new MissedOrderGatewayImpl(stompClient);
-    when(stompClient.topic(anyString())).thenReturn(Observable.never());
+    gateway = new MissedOrderGatewayImpl(stompClient);
+    when(stompClient.topic(anyString())).thenReturn(Flowable.never());
   }
 
   /* Проверяем работу с клиентом STOMP */
@@ -51,7 +51,7 @@ public class MissedOrderGatewayTest {
     when(stompClient.isConnected()).thenReturn(true);
 
     // Действие:
-    missedOrderGateway.loadMissedOrdersMessages("1234567890").test();
+    gateway.loadMissedOrdersMessages("1234567890").test();
 
     // Результат:
     inOrder.verify(stompClient).isConnected();
@@ -68,7 +68,7 @@ public class MissedOrderGatewayTest {
     InOrder inOrder = Mockito.inOrder(stompClient);
 
     // Действие:
-    missedOrderGateway.loadMissedOrdersMessages("1234567890").test();
+    gateway.loadMissedOrdersMessages("1234567890").test();
 
     // Результат:
     inOrder.verify(stompClient).isConnected();
@@ -86,7 +86,7 @@ public class MissedOrderGatewayTest {
     when(stompClient.isConnecting()).thenReturn(true);
 
     // Действие:
-    missedOrderGateway.loadMissedOrdersMessages("1234567890").test();
+    gateway.loadMissedOrdersMessages("1234567890").test();
 
     // Результат:
     inOrder.verify(stompClient).isConnected();
@@ -106,7 +106,7 @@ public class MissedOrderGatewayTest {
   public void ignoreWrongHeaderIfConnected() {
     // Дано:
     when(stompClient.isConnected()).thenReturn(true);
-    when(stompClient.topic(anyString())).thenReturn(Observable.just(
+    when(stompClient.topic(anyString())).thenReturn(Flowable.just(
         new StompMessage("MESSAGE", null, "SHIFT"),
         new StompMessage(
             "MESSAGE",
@@ -116,7 +116,7 @@ public class MissedOrderGatewayTest {
     ));
 
     // Действие:
-    TestSubscriber<String> testSubscriber = missedOrderGateway
+    TestSubscriber<String> testSubscriber = gateway
         .loadMissedOrdersMessages("1234567890").test();
 
     // Результат:
@@ -130,7 +130,7 @@ public class MissedOrderGatewayTest {
   public void answerWithMissedOrderMessagesForMissedOrderHeaderIfConnected() {
     // Дано:
     when(stompClient.isConnected()).thenReturn(true);
-    when(stompClient.topic(anyString())).thenReturn(Observable.just(
+    when(stompClient.topic(anyString())).thenReturn(Flowable.just(
         new StompMessage(
             "MESSAGE",
             Collections.singletonList(new StompHeader("MissedOrder", "payload")),
@@ -140,7 +140,7 @@ public class MissedOrderGatewayTest {
 
     // Действие:
     TestSubscriber<String> testSubscriber =
-        missedOrderGateway.loadMissedOrdersMessages("1234567890").test();
+        gateway.loadMissedOrdersMessages("1234567890").test();
 
     // Результат:
     testSubscriber.assertValue("Message this");
@@ -153,11 +153,11 @@ public class MissedOrderGatewayTest {
   public void ignoreErrorIfConnected() {
     // Дано:
     when(stompClient.isConnected()).thenReturn(true);
-    when(stompClient.topic(anyString())).thenReturn(Observable.error(new NoNetworkException()));
+    when(stompClient.topic(anyString())).thenReturn(Flowable.error(new NoNetworkException()));
 
     // Действие:
     TestSubscriber<String> testSubscriber =
-        missedOrderGateway.loadMissedOrdersMessages("1234567890").test();
+        gateway.loadMissedOrdersMessages("1234567890").test();
 
     // Результат:
     testSubscriber.assertNoErrors();
@@ -172,7 +172,7 @@ public class MissedOrderGatewayTest {
   public void answerConnectionErrorIfNotConnectingAfterConnected() {
     // Действие:
     TestSubscriber<String> testSubscriber =
-        missedOrderGateway.loadMissedOrdersMessages("1234567890").test();
+        gateway.loadMissedOrdersMessages("1234567890").test();
 
     // Результат:
     testSubscriber.assertError(ConnectionClosedException.class);
@@ -185,7 +185,7 @@ public class MissedOrderGatewayTest {
   public void ignoreWrongHeaderIfConnectingAfterConnected() {
     // Дано:
     when(stompClient.isConnecting()).thenReturn(true);
-    when(stompClient.topic(anyString())).thenReturn(Observable.just(
+    when(stompClient.topic(anyString())).thenReturn(Flowable.just(
         new StompMessage("MESSAGE", null, "SHIFT"),
         new StompMessage(
             "MESSAGE",
@@ -196,7 +196,7 @@ public class MissedOrderGatewayTest {
 
     // Действие:
     TestSubscriber<String> testSubscriber =
-        missedOrderGateway.loadMissedOrdersMessages("1234567890").test();
+        gateway.loadMissedOrdersMessages("1234567890").test();
 
     // Результат:
     testSubscriber.assertNoValues();
@@ -211,7 +211,7 @@ public class MissedOrderGatewayTest {
   public void answerWithMessagesForMissedOrderHeaderIfConnectingAfterConnected() {
     // Дано:
     when(stompClient.isConnecting()).thenReturn(true);
-    when(stompClient.topic(anyString())).thenReturn(Observable.just(
+    when(stompClient.topic(anyString())).thenReturn(Flowable.just(
         new StompMessage(
             "MESSAGE",
             Collections.singletonList(new StompHeader("MissedOrder", "")),
@@ -221,7 +221,7 @@ public class MissedOrderGatewayTest {
 
     // Действие:
     TestSubscriber<String> testSubscriber =
-        missedOrderGateway.loadMissedOrdersMessages("1234567890").test();
+        gateway.loadMissedOrdersMessages("1234567890").test();
 
     // Результат:
     testSubscriber.assertValue("Message this");
@@ -236,11 +236,11 @@ public class MissedOrderGatewayTest {
     // Дано:
     when(stompClient.isConnecting()).thenReturn(true);
     when(stompClient.topic(anyString()))
-        .thenReturn(Observable.error(new ConnectionClosedException()));
+        .thenReturn(Flowable.error(new ConnectionClosedException()));
 
     // Действие:
     TestSubscriber<String> testSubscriber =
-        missedOrderGateway.loadMissedOrdersMessages("1234567890").test();
+        gateway.loadMissedOrdersMessages("1234567890").test();
 
     // Результат:
     testSubscriber.assertNoErrors();

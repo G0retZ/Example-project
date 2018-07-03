@@ -16,7 +16,7 @@ public class ServicesViewStateReadyTest {
   private ServicesViewStateReady viewState;
 
   @Mock
-  private ServicesViewActions codeViewActions;
+  private ServicesViewActions viewActions;
 
   @Before
   public void setUp() {
@@ -26,15 +26,15 @@ public class ServicesViewStateReadyTest {
   @Test
   public void testActions() {
     // Действие:
-    viewState.apply(codeViewActions);
+    viewState.apply(viewActions);
 
     // Результат:
-    verify(codeViewActions).enableReadyButton(true);
-    verify(codeViewActions).showServicesList(true);
-    verify(codeViewActions).showServicesPending(false);
-    verify(codeViewActions).showServicesListErrorMessage(false, 0);
-    verify(codeViewActions).showServicesListResolvableErrorMessage(false, 0);
-    verify(codeViewActions).setServicesListItems(new ArrayList<>());
-    verifyNoMoreInteractions(codeViewActions);
+    verify(viewActions).enableReadyButton(true);
+    verify(viewActions).showServicesList(true);
+    verify(viewActions).showServicesPending(false);
+    verify(viewActions).showServicesListErrorMessage(false, 0);
+    verify(viewActions).showServicesListResolvableErrorMessage(false, 0);
+    verify(viewActions).setServicesListItems(new ArrayList<>());
+    verifyNoMoreInteractions(viewActions);
   }
 }

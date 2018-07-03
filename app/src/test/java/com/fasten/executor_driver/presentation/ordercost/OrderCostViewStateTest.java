@@ -17,7 +17,7 @@ public class OrderCostViewStateTest {
   private OrderCostViewState viewState;
 
   @Mock
-  private OrderCostViewActions orderCostViewActions;
+  private OrderCostViewActions viewActions;
 
   @Before
   public void setUp() {
@@ -27,10 +27,10 @@ public class OrderCostViewStateTest {
   @Test
   public void testActions() {
     // Действие:
-    viewState.apply(orderCostViewActions);
+    viewState.apply(viewActions);
 
     // Результат:
-    verify(orderCostViewActions, only()).setOrderCostText(12345);
+    verify(viewActions, only()).setOrderCostText(12345);
   }
 
   @Test

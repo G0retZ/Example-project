@@ -1,7 +1,5 @@
 package com.fasten.executor_driver.view;
 
-import android.app.AlertDialog.Builder;
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -27,18 +25,11 @@ public class OrderRouteFragment extends BaseFragment implements OrderRouteViewAc
 
   private OrderRouteViewModel orderRouteViewModel;
   private RecyclerView recyclerView;
-  private Context context;
   private boolean pending;
 
   @Inject
   public void setOrderRouteViewModel(@NonNull OrderRouteViewModel orderRouteViewModel) {
     this.orderRouteViewModel = orderRouteViewModel;
-  }
-
-  @Override
-  public void onAttach(Context context) {
-    super.onAttach(context);
-    this.context = context;
   }
 
   @Nullable
@@ -67,12 +58,11 @@ public class OrderRouteFragment extends BaseFragment implements OrderRouteViewAc
         viewState.apply(this);
       }
     });
-  }
-
-  @Override
-  public void onDetach() {
-    super.onDetach();
-    context = null;
+    orderRouteViewModel.getNavigationLiveData().observe(this, destination -> {
+      if (destination != null) {
+        navigate(destination);
+      }
+    });
   }
 
   @Override
@@ -88,17 +78,5 @@ public class OrderRouteFragment extends BaseFragment implements OrderRouteViewAc
     OrderRouteAdapter adapter = new OrderRouteAdapter(routePointItems,
         orderRouteViewModel::selectNextRoutePoint);
     recyclerView.setAdapter(adapter);
-  }
-
-  @Override
-  public void showOrderRouteErrorMessage(boolean show) {
-    if (show) {
-      new Builder(context)
-          .setTitle(R.string.error)
-          .setMessage(R.string.no_network_connection)
-          .setPositiveButton(getString(android.R.string.ok), null)
-          .create()
-          .show();
-    }
   }
 }

@@ -2,7 +2,6 @@ package com.fasten.executor_driver.presentation.calltoclient;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.only;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.verifyZeroInteractions;
@@ -12,6 +11,7 @@ import android.arch.core.executor.testing.InstantTaskExecutorRule;
 import android.arch.lifecycle.Observer;
 import com.fasten.executor_driver.backend.web.NoNetworkException;
 import com.fasten.executor_driver.interactor.CallToClientUseCase;
+import com.fasten.executor_driver.presentation.CommonNavigate;
 import com.fasten.executor_driver.presentation.ViewState;
 import io.reactivex.Completable;
 import io.reactivex.android.plugins.RxAndroidPlugins;
@@ -34,7 +34,7 @@ public class CallToClientViewModelTest {
 
   @Rule
   public TestRule rule = new InstantTaskExecutorRule();
-  private CallToClientViewModel callToClientViewModel;
+  private CallToClientViewModel viewModel;
   @Mock
   private CallToClientUseCase callToClientUseCase;
   private TestScheduler testScheduler;
@@ -47,11 +47,11 @@ public class CallToClientViewModelTest {
   @Before
   public void setUp() {
     testScheduler = new TestScheduler();
+    RxJavaPlugins.setComputationSchedulerHandler(scheduler -> testScheduler);
     RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
-    RxJavaPlugins.setIoSchedulerHandler(scheduler -> testScheduler);
     RxAndroidPlugins.setInitMainThreadSchedulerHandler(scheduler -> Schedulers.trampoline());
     when(callToClientUseCase.callToClient()).thenReturn(Completable.never());
-    callToClientViewModel = new CallToClientViewModelImpl(callToClientUseCase);
+    viewModel = new CallToClientViewModelImpl(callToClientUseCase);
   }
 
   /* Тетсируем работу с юзкейсом. */
@@ -65,7 +65,7 @@ public class CallToClientViewModelTest {
     when(callToClientUseCase.callToClient()).thenReturn(Completable.complete());
 
     // Действие:
-    callToClientViewModel.callToClient();
+    viewModel.callToClient();
 
     // Результат:
     verify(callToClientUseCase, only()).callToClient();
@@ -77,9 +77,9 @@ public class CallToClientViewModelTest {
   @Test
   public void DoNotTouchUseCaseDuringOrderSetting() {
     // Действие:
-    callToClientViewModel.callToClient();
-    callToClientViewModel.callToClient();
-    callToClientViewModel.callToClient();
+    viewModel.callToClient();
+    viewModel.callToClient();
+    viewModel.callToClient();
 
     // Результат:
     verify(callToClientUseCase, only()).callToClient();
@@ -88,19 +88,15 @@ public class CallToClientViewModelTest {
   /* Тетсируем переключение состояний. */
 
   /**
-   * Должен вернуть состояние вида ожидания изначально.
+   * Должен вернуть состояние вида "не звоним" изначально.
    */
   @Test
-  public void setPendingViewStateToLiveDataInitially() {
-    // Дано:
-    InOrder inOrder = Mockito.inOrder(viewStateObserver);
-
+  public void setNotCallingViewStateToLiveDataInitially() {
     // Действие:
-    callToClientViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Результат:
-    inOrder.verify(viewStateObserver).onChanged(any(CallToClientViewStatePending.class));
-    verifyNoMoreInteractions(viewStateObserver);
+    verify(viewStateObserver, only()).onChanged(any(CallToClientViewStateNotCalling.class));
   }
 
   /**
@@ -110,73 +106,78 @@ public class CallToClientViewModelTest {
   public void setPendingViewStateWhenCallToClient() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    callToClientViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    callToClientViewModel.callToClient();
+    viewModel.callToClient();
 
     // Результат:
-    inOrder.verify(viewStateObserver, times(2)).onChanged(any(CallToClientViewStatePending.class));
+    inOrder.verify(viewStateObserver).onChanged(any(CallToClientViewStateNotCalling.class));
+    inOrder.verify(viewStateObserver).onChanged(any(CallToClientViewStatePending.class));
     verifyNoMoreInteractions(viewStateObserver);
   }
 
   /**
-   * Должен вернуть состояние вида "Ошибка" сети.
+   * Должен вернуть состояние вида "не звоним" при ошибке сети.
    */
   @Test
-  public void setNoNetworkErrorViewState() {
+  public void setNotCallingViewStateToLiveDataForError() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     when(callToClientUseCase.callToClient())
         .thenReturn(Completable.error(NoNetworkException::new));
-    callToClientViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    callToClientViewModel.callToClient();
+    viewModel.callToClient();
     testScheduler.advanceTimeBy(1, TimeUnit.NANOSECONDS);
 
     // Результат:
-    inOrder.verify(viewStateObserver, times(2)).onChanged(any(CallToClientViewStatePending.class));
-    inOrder.verify(viewStateObserver).onChanged(any(CallToClientViewStateNetworkError.class));
+    inOrder.verify(viewStateObserver).onChanged(any(CallToClientViewStateNotCalling.class));
+    inOrder.verify(viewStateObserver).onChanged(any(CallToClientViewStatePending.class));
+    inOrder.verify(viewStateObserver).onChanged(any(CallToClientViewStateNotCalling.class));
     verifyNoMoreInteractions(viewStateObserver);
   }
 
   /**
-   * Не должен возвращать никакого состояния вида.
+   * Должен вернуть состояние вида "звоним".
    */
   @Test
-  public void setIdleViewStateToLiveData() {
+  public void setCallingViewStateToLiveDataForComplete() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     when(callToClientUseCase.callToClient()).thenReturn(Completable.complete());
-    callToClientViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    callToClientViewModel.callToClient();
+    viewModel.callToClient();
 
     // Результат:
-    inOrder.verify(viewStateObserver, times(2)).onChanged(any(CallToClientViewStatePending.class));
-    inOrder.verify(viewStateObserver).onChanged(any(CallToClientViewStateIdle.class));
+    inOrder.verify(viewStateObserver).onChanged(any(CallToClientViewStateNotCalling.class));
+    inOrder.verify(viewStateObserver).onChanged(any(CallToClientViewStatePending.class));
+    inOrder.verify(viewStateObserver).onChanged(any(CallToClientViewStateCalling.class));
     verifyNoMoreInteractions(viewStateObserver);
   }
 
   /**
-   * Не должен возвращать никакого состояния вида по истечении 20 секунд.
+   * Должен вернуть состояние вида "не звоним" по истечении 10 секунд.
    */
   @Test
-  public void setNoViewStateToLiveData20SecondsAfterCall() {
+  public void setNotCallingViewStateToLiveData10SecondsAfterCall() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     when(callToClientUseCase.callToClient()).thenReturn(Completable.complete());
-    callToClientViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    callToClientViewModel.callToClient();
-    testScheduler.advanceTimeBy(20, TimeUnit.SECONDS);
+    viewModel.callToClient();
+    testScheduler.advanceTimeBy(10, TimeUnit.SECONDS);
 
     // Результат:
-    inOrder.verify(viewStateObserver, times(2)).onChanged(any(CallToClientViewStatePending.class));
-    inOrder.verify(viewStateObserver).onChanged(any(CallToClientViewStateIdle.class));
+    inOrder.verify(viewStateObserver).onChanged(any(CallToClientViewStateNotCalling.class));
+    inOrder.verify(viewStateObserver).onChanged(any(CallToClientViewStatePending.class));
+    inOrder.verify(viewStateObserver).onChanged(any(CallToClientViewStateCalling.class));
+    inOrder.verify(viewStateObserver).onChanged(any(CallToClientViewStateNotCalling.class));
     verifyNoMoreInteractions(viewStateObserver);
   }
 
@@ -188,7 +189,7 @@ public class CallToClientViewModelTest {
   @Test
   public void doNotSetNavigateInitially() {
     // Действие:
-    callToClientViewModel.getNavigationLiveData().observeForever(navigateObserver);
+    viewModel.getNavigationLiveData().observeForever(navigateObserver);
 
     // Результат:
     verifyZeroInteractions(navigateObserver);
@@ -200,30 +201,31 @@ public class CallToClientViewModelTest {
   @Test
   public void doNotSetNavigateForPending() {
     // Дано:
-    callToClientViewModel.getNavigationLiveData().observeForever(navigateObserver);
+    viewModel.getNavigationLiveData().observeForever(navigateObserver);
 
     // Действие:
-    callToClientViewModel.callToClient();
+    viewModel.callToClient();
 
     // Результат:
     verifyZeroInteractions(navigateObserver);
   }
 
   /**
-   * Не должен никуда переходить для вида "Ошибка" сети.
+   * Должен вернуть "перейти к ошибке соединения".
    */
   @Test
-  public void doNotSetNavigateForNoNetworkError() {
+  public void setNavigateForNoNetworkError() {
     // Дано:
     when(callToClientUseCase.callToClient())
         .thenReturn(Completable.error(NoNetworkException::new));
-    callToClientViewModel.getNavigationLiveData().observeForever(navigateObserver);
+    viewModel.getNavigationLiveData().observeForever(navigateObserver);
 
     // Действие:
-    callToClientViewModel.callToClient();
+    viewModel.callToClient();
+    testScheduler.advanceTimeBy(1, TimeUnit.NANOSECONDS);
 
     // Результат:
-    verifyZeroInteractions(navigateObserver);
+    verify(navigateObserver, only()).onChanged(CommonNavigate.NO_CONNECTION);
   }
 
   /**
@@ -233,10 +235,10 @@ public class CallToClientViewModelTest {
   public void doNotSetNavigateForIdle() {
     // Дано:
     when(callToClientUseCase.callToClient()).thenReturn(Completable.complete());
-    callToClientViewModel.getNavigationLiveData().observeForever(navigateObserver);
+    viewModel.getNavigationLiveData().observeForever(navigateObserver);
 
     // Действие:
-    callToClientViewModel.callToClient();
+    viewModel.callToClient();
     testScheduler.advanceTimeBy(9999, TimeUnit.MILLISECONDS);
 
     // Результат:
@@ -244,19 +246,19 @@ public class CallToClientViewModelTest {
   }
 
   /**
-   * Должен вернуть "перейти к финишу" через 10 секунд после успеха запроса дозвона.
+   * Не должен никуда переходить через 10 секунд после успеха запроса дозвона.
    */
   @Test
   public void setNavigateToFinishAfter10SecondsLater() {
     // Дано:
     when(callToClientUseCase.callToClient()).thenReturn(Completable.complete());
-    callToClientViewModel.getNavigationLiveData().observeForever(navigateObserver);
+    viewModel.getNavigationLiveData().observeForever(navigateObserver);
 
     // Действие:
-    callToClientViewModel.callToClient();
+    viewModel.callToClient();
     testScheduler.advanceTimeBy(10, TimeUnit.SECONDS);
 
     // Результат:
-    verify(navigateObserver, only()).onChanged(CallToClientNavigate.FINISHED);
+    verifyZeroInteractions(navigateObserver);
   }
 }

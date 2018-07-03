@@ -16,15 +16,15 @@ import org.mockito.junit.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class CallToClientUseCaseTest {
 
-  private CallToClientUseCase movingToClientUseCase;
+  private CallToClientUseCase useCase;
 
   @Mock
-  private CallToClientGateway callToClientGateway;
+  private CallToClientGateway gateway;
 
   @Before
   public void setUp() {
-    when(callToClientGateway.callToClient()).thenReturn(Completable.never());
-    movingToClientUseCase = new CallToClientUseCaseImpl(callToClientGateway);
+    when(gateway.callToClient()).thenReturn(Completable.never());
+    useCase = new CallToClientUseCaseImpl(gateway);
   }
 
   /* Проверяем работу с гейтвеем */
@@ -35,10 +35,10 @@ public class CallToClientUseCaseTest {
   @Test
   public void askGatewayToToCallClientForOrder() {
     // Действие:
-    movingToClientUseCase.callToClient().test();
+    useCase.callToClient().test();
 
     // Результат:
-    verify(callToClientGateway, only()).callToClient();
+    verify(gateway, only()).callToClient();
   }
 
   /* Проверяем ответы на запрос звонка клиенту */
@@ -49,11 +49,11 @@ public class CallToClientUseCaseTest {
   @Test
   public void answerNoNetworkErrorForCallClient() {
     // Дано:
-    when(callToClientGateway.callToClient())
+    when(gateway.callToClient())
         .thenReturn(Completable.error(new NoNetworkException()));
 
     // Действие:
-    TestObserver<Void> test = movingToClientUseCase.callToClient().test();
+    TestObserver<Void> test = useCase.callToClient().test();
 
     // Результат:
     test.assertError(NoNetworkException.class);
@@ -67,10 +67,10 @@ public class CallToClientUseCaseTest {
   @Test
   public void answerSendCallClientSuccessful() {
     // Дано:
-    when(callToClientGateway.callToClient()).thenReturn(Completable.complete());
+    when(gateway.callToClient()).thenReturn(Completable.complete());
 
     // Действие:
-    TestObserver<Void> test = movingToClientUseCase.callToClient().test();
+    TestObserver<Void> test = useCase.callToClient().test();
 
     // Результат:
     test.assertComplete();

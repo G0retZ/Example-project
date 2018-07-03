@@ -105,8 +105,8 @@ import com.fasten.executor_driver.presentation.cancelorder.CancelOrderViewModelI
 import com.fasten.executor_driver.presentation.cancelorderreasons.CancelOrderReasonsViewModelImpl;
 import com.fasten.executor_driver.presentation.choosevehicle.ChooseVehicleViewModelImpl;
 import com.fasten.executor_driver.presentation.code.CodeViewModelImpl;
-import com.fasten.executor_driver.presentation.codeHeader.CodeHeaderViewModelImpl;
-import com.fasten.executor_driver.presentation.coreBalance.CoreBalanceViewModelImpl;
+import com.fasten.executor_driver.presentation.codeheader.CodeHeaderViewModelImpl;
+import com.fasten.executor_driver.presentation.corebalance.CoreBalanceViewModelImpl;
 import com.fasten.executor_driver.presentation.currentcostpolling.CurrentCostPollingViewModelImpl;
 import com.fasten.executor_driver.presentation.executorstate.ExecutorStateViewModelImpl;
 import com.fasten.executor_driver.presentation.geolocation.GeoLocationViewModelImpl;
@@ -123,6 +123,7 @@ import com.fasten.executor_driver.presentation.orderroute.OrderRouteViewModelImp
 import com.fasten.executor_driver.presentation.ordertime.OrderTimeViewModelImpl;
 import com.fasten.executor_driver.presentation.phone.PhoneViewModelImpl;
 import com.fasten.executor_driver.presentation.selectedvehicle.SelectedVehicleViewModelImpl;
+import com.fasten.executor_driver.presentation.serverconnection.ServerConnectionViewModel;
 import com.fasten.executor_driver.presentation.serverconnection.ServerConnectionViewModelImpl;
 import com.fasten.executor_driver.presentation.services.ServicesListItems;
 import com.fasten.executor_driver.presentation.services.ServicesSliderViewModelImpl;
@@ -149,6 +150,7 @@ import com.fasten.executor_driver.view.OrderFulfillmentFragment;
 import com.fasten.executor_driver.view.OrderRouteFragment;
 import com.fasten.executor_driver.view.SelectedVehicleFragment;
 import com.fasten.executor_driver.view.SelectedVehicleOptionsFragment;
+import com.fasten.executor_driver.view.ServerConnectionFragment;
 import com.fasten.executor_driver.view.ServicesFragment;
 import com.fasten.executor_driver.view.VehicleOptionsFragment;
 import com.fasten.executor_driver.view.WaitingForClientFragment;
@@ -174,6 +176,8 @@ public class AppComponentImpl implements AppComponent {
   private final ApiService apiService;
   @NonNull
   private final StompClient stompClient;
+  @NonNull
+  private final ServerConnectionViewModel serverConnectionViewModel;
   @NonNull
   private final ExecutorStateUseCase executorStateUseCase;
   @NonNull
@@ -207,6 +211,13 @@ public class AppComponentImpl implements AppComponent {
     loginSharer = new LoginSharer(appSettingsService);
     vehicleChoiceSharer = new VehicleChoiceSharer();
     lastUsedVehicleGateway = new LastUsedVehicleGatewayImpl(appSettingsService);
+    serverConnectionViewModel = new ServerConnectionViewModelImpl(
+        new ServerConnectionUseCaseImpl(
+            new ServerConnectionGatewayImpl(
+                stompClient
+            )
+        )
+    );
     cancelOrderUseCase = new CancelOrderUseCaseImpl(
         new CancelOrderGatewayImpl(
             stompClient,
@@ -279,13 +290,7 @@ public class AppComponentImpl implements AppComponent {
   @Override
   public void inject(MainApplication mainApplication) {
     mainApplication.setServerConnectionViewModel(
-        new ServerConnectionViewModelImpl(
-            new ServerConnectionUseCaseImpl(
-                new ServerConnectionGatewayImpl(
-                    stompClient
-                )
-            )
-        )
+        serverConnectionViewModel
     );
     mainApplication.setCancelOrderReasonsViewModel(
         new CancelOrderReasonsViewModelImpl(
@@ -916,6 +921,13 @@ public class AppComponentImpl implements AppComponent {
                 )
             )
         ).get(BalanceViewModelImpl.class)
+    );
+  }
+
+  @Override
+  public void inject(ServerConnectionFragment serverConnectionFragment) {
+    serverConnectionFragment.setServerConnectionViewModel(
+        serverConnectionViewModel
     );
   }
 }

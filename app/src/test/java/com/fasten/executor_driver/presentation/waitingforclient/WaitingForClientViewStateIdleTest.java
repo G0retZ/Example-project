@@ -1,7 +1,7 @@
 package com.fasten.executor_driver.presentation.waitingforclient;
 
+import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -15,7 +15,7 @@ public class WaitingForClientViewStateIdleTest {
   private WaitingForClientViewStateIdle viewState;
 
   @Mock
-  private WaitingForClientViewActions driverOrderConfirmationViewActions;
+  private WaitingForClientViewActions viewActions;
 
   @Before
   public void setUp() {
@@ -25,11 +25,9 @@ public class WaitingForClientViewStateIdleTest {
   @Test
   public void testActions() {
     // Действие:
-    viewState.apply(driverOrderConfirmationViewActions);
+    viewState.apply(viewActions);
 
     // Результат:
-    verify(driverOrderConfirmationViewActions).showWaitingForClientPending(false);
-    verify(driverOrderConfirmationViewActions).showNetworkErrorMessage(false);
-    verifyNoMoreInteractions(driverOrderConfirmationViewActions);
+    verify(viewActions, only()).showWaitingForClientPending(false);
   }
 }

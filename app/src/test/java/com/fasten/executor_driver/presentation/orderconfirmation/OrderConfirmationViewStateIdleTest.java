@@ -12,19 +12,17 @@ import org.mockito.junit.MockitoJUnitRunner;
 public class OrderConfirmationViewStateIdleTest {
 
   @Mock
-  private OrderConfirmationViewActions orderConfirmationViewActions;
+  private OrderConfirmationViewActions viewActions;
 
   @Test
   public void testActions() {
     // Действие:
-    new OrderConfirmationViewStateIdle().apply(orderConfirmationViewActions);
+    new OrderConfirmationViewStateIdle().apply(viewActions);
 
     // Результат:
-    verify(orderConfirmationViewActions).showDriverOrderConfirmationPending(false);
-    verify(orderConfirmationViewActions).enableAcceptButton(true);
-    verify(orderConfirmationViewActions).enableDeclineButton(true);
-    verify(orderConfirmationViewActions).showOrderAvailabilityError(false);
-    verify(orderConfirmationViewActions).showNetworkErrorMessage(false);
-    verifyNoMoreInteractions(orderConfirmationViewActions);
+    verify(viewActions).showDriverOrderConfirmationPending(false);
+    verify(viewActions).enableAcceptButton(true);
+    verify(viewActions).enableDeclineButton(true);
+    verifyNoMoreInteractions(viewActions);
   }
 }

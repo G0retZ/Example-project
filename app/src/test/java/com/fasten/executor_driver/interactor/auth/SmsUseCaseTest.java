@@ -24,7 +24,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class SmsUseCaseTest {
 
-  private SmsUseCase smsUseCase;
+  private SmsUseCase useCase;
 
   @Mock
   private SmsGateway gateway;
@@ -41,7 +41,7 @@ public class SmsUseCaseTest {
     doThrow(new ValidationException()).when(phoneNumberValidator).validate(anyString());
     doNothing().when(phoneNumberValidator).validate("0123456");
     when(phoneNumberReceiver.get()).thenReturn(Observable.never());
-    smsUseCase = new SmsUseCaseImpl(gateway, phoneNumberReceiver, phoneNumberValidator);
+    useCase = new SmsUseCaseImpl(gateway, phoneNumberReceiver, phoneNumberValidator);
   }
 
   /* Проверяем работу с публикатором номера телефона */
@@ -52,7 +52,7 @@ public class SmsUseCaseTest {
   @Test
   public void doNotTouchDataSharer() {
     // Действие:
-    smsUseCase.sendMeCode().test();
+    useCase.sendMeCode().test();
 
     // Результат:
     verify(phoneNumberReceiver, only()).get();
@@ -71,7 +71,7 @@ public class SmsUseCaseTest {
     when(phoneNumberReceiver.get()).thenReturn(Observable.just("1", "2", "3"));
 
     // Действие:
-    smsUseCase.sendMeCode().test();
+    useCase.sendMeCode().test();
 
     // Результат:
     verify(phoneNumberValidator, only()).validate("1");
@@ -88,7 +88,7 @@ public class SmsUseCaseTest {
     when(phoneNumberReceiver.get()).thenReturn(Observable.just("1", "2", "3"));
 
     // Действие:
-    TestObserver<Void> testObserver = smsUseCase.sendMeCode().test();
+    TestObserver<Void> testObserver = useCase.sendMeCode().test();
 
     // Результат:
     testObserver.assertNoValues();
@@ -108,7 +108,7 @@ public class SmsUseCaseTest {
     doNothing().when(phoneNumberValidator).validate(anyString());
 
     // Действие:
-    TestObserver<Void> testObserver = smsUseCase.sendMeCode().test();
+    TestObserver<Void> testObserver = useCase.sendMeCode().test();
 
     // Результат:
     testObserver.assertNoValues();
@@ -127,7 +127,7 @@ public class SmsUseCaseTest {
     when(phoneNumberReceiver.get()).thenReturn(Observable.just("012345", "2", "3"));
 
     // Действие:
-    smsUseCase.sendMeCode().test();
+    useCase.sendMeCode().test();
 
     // Результат:
     verifyZeroInteractions(gateway);
@@ -142,7 +142,7 @@ public class SmsUseCaseTest {
     when(phoneNumberReceiver.get()).thenReturn(Observable.just("0123456", "2", "3"));
 
     // Действие:
-    smsUseCase.sendMeCode().test();
+    useCase.sendMeCode().test();
 
     // Результат:
     verify(gateway, only()).sendMeCode("0123456");
@@ -160,7 +160,7 @@ public class SmsUseCaseTest {
     when(gateway.sendMeCode(anyString())).thenReturn(Completable.error(new NoNetworkException()));
 
     // Действие:
-    TestObserver<Void> testObserver = smsUseCase.sendMeCode().test();
+    TestObserver<Void> testObserver = useCase.sendMeCode().test();
 
     // Результат:
     testObserver.assertNoValues();
@@ -178,7 +178,7 @@ public class SmsUseCaseTest {
     when(gateway.sendMeCode(anyString())).thenReturn(Completable.complete());
 
     // Действие:
-    TestObserver<Void> testObserver = smsUseCase.sendMeCode().test();
+    TestObserver<Void> testObserver = useCase.sendMeCode().test();
 
     // Результат:
     testObserver.assertNoValues();

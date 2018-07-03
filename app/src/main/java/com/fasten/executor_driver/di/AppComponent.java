@@ -19,6 +19,7 @@ import com.fasten.executor_driver.view.OrderFulfillmentFragment;
 import com.fasten.executor_driver.view.OrderRouteFragment;
 import com.fasten.executor_driver.view.SelectedVehicleFragment;
 import com.fasten.executor_driver.view.SelectedVehicleOptionsFragment;
+import com.fasten.executor_driver.view.ServerConnectionFragment;
 import com.fasten.executor_driver.view.ServicesFragment;
 import com.fasten.executor_driver.view.VehicleOptionsFragment;
 import com.fasten.executor_driver.view.WaitingForClientFragment;
@@ -74,4 +75,6 @@ public interface AppComponent {
   void inject(BalanceSummaryFragment balanceSummaryFragment);
 
   void inject(MenuFragment menuFragment);
+
+  void inject(ServerConnectionFragment serverConnectionFragment);
 }

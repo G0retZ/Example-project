@@ -6,18 +6,9 @@ package com.fasten.executor_driver.presentation.calltooperator;
 public interface CallToOperatorViewActions {
 
   /**
-   * Показать индикатор процесса.
+   * Показать статус звонка.
    *
-   * @param pending - показать или нет?
+   * @param calling - звоним или нет?
    */
-  @SuppressWarnings("unused")
-  void showCallToOperatorPending(boolean pending);
-
-  /**
-   * Показать сообщение об ошибке сети.
-   *
-   * @param show - показать или нет?
-   */
-  @SuppressWarnings("unused")
-  void showNetworkErrorMessage(boolean show);
+  void showCallingToOperator(boolean calling);
 }

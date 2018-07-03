@@ -19,7 +19,7 @@ public class BalanceViewStateTest {
   private BalanceViewState viewState;
 
   @Mock
-  private BalanceViewActions orderRouteViewActions;
+  private BalanceViewActions viewActions;
   @Mock
   private ExecutorBalance executorBalance;
   @Mock
@@ -37,14 +37,13 @@ public class BalanceViewStateTest {
     // Дано:
 
     // Действие:
-    viewState.apply(orderRouteViewActions);
+    viewState.apply(viewActions);
 
     // Результат:
-    verify(orderRouteViewActions).showMainAccountAmount(1);
-    verify(orderRouteViewActions).showBonusAccountAmount(2);
-    verify(orderRouteViewActions).showBalancePending(false);
-    verify(orderRouteViewActions).showBalanceErrorMessage(false);
-    verifyNoMoreInteractions(orderRouteViewActions);
+    verify(viewActions).showMainAccountAmount(1);
+    verify(viewActions).showBonusAccountAmount(2);
+    verify(viewActions).showBalancePending(false);
+    verifyNoMoreInteractions(viewActions);
   }
 
   @Test

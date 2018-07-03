@@ -15,7 +15,7 @@ public class CallToClientViewStatePendingTest {
   private CallToClientViewStatePending viewState;
 
   @Mock
-  private CallToClientViewActions movingToClientViewActions;
+  private CallToClientViewActions viewActions;
 
   @Before
   public void setUp() {
@@ -25,11 +25,11 @@ public class CallToClientViewStatePendingTest {
   @Test
   public void testActions() {
     // Действие:
-    viewState.apply(movingToClientViewActions);
+    viewState.apply(viewActions);
 
     // Результат:
-    verify(movingToClientViewActions).showCallToClientPending(true);
-    verify(movingToClientViewActions).showNetworkErrorMessage(false);
-    verifyNoMoreInteractions(movingToClientViewActions);
+    verify(viewActions).showCallingToClient(false);
+    verify(viewActions).showCallToClientPending(true);
+    verifyNoMoreInteractions(viewActions);
   }
 }

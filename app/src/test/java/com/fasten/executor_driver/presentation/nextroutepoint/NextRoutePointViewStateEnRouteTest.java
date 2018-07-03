@@ -18,7 +18,7 @@ public class NextRoutePointViewStateEnRouteTest {
   private NextRoutePointViewStateEnRoute viewState;
 
   @Mock
-  private NextRoutePointViewActions nextRoutePointViewActions;
+  private NextRoutePointViewActions viewActions;
   @Mock
   private RoutePointItem routePointItem;
   @Mock
@@ -38,18 +38,17 @@ public class NextRoutePointViewStateEnRouteTest {
     when(routePointItem.getCoordinatesString()).thenReturn("0,0");
 
     // Действие:
-    viewState.apply(nextRoutePointViewActions);
+    viewState.apply(viewActions);
 
     // Результат:
-    verify(nextRoutePointViewActions).showNextRoutePoint("url");
-    verify(nextRoutePointViewActions).showNextRoutePointAddress("0,0", "add");
-    verify(nextRoutePointViewActions).showNextRoutePointComment("com");
-    verify(nextRoutePointViewActions).showNextRoutePointPending(false);
-    verify(nextRoutePointViewActions).showNextRoutePointNetworkErrorMessage(false);
-    verify(nextRoutePointViewActions).showCloseNextRoutePointAction(true);
-    verify(nextRoutePointViewActions).showCompleteOrderAction(false);
-    verify(nextRoutePointViewActions).showNoRouteRide(false);
-    verifyNoMoreInteractions(nextRoutePointViewActions);
+    verify(viewActions).showNextRoutePoint("url");
+    verify(viewActions).showNextRoutePointAddress("0,0", "add");
+    verify(viewActions).showNextRoutePointComment("com");
+    verify(viewActions).showNextRoutePointPending(false);
+    verify(viewActions).showCloseNextRoutePointAction(true);
+    verify(viewActions).showCompleteOrderAction(false);
+    verify(viewActions).showNoRouteRide(false);
+    verifyNoMoreInteractions(viewActions);
   }
 
   @Test

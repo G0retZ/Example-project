@@ -8,7 +8,9 @@ import com.fasten.executor_driver.R;
 import com.fasten.executor_driver.entity.Option;
 import com.fasten.executor_driver.entity.OptionBoolean;
 import com.fasten.executor_driver.entity.OptionNumeric;
+import com.fasten.executor_driver.gateway.DataMappingException;
 import com.fasten.executor_driver.interactor.vehicle.VehicleOptionsUseCase;
+import com.fasten.executor_driver.presentation.CommonNavigate;
 import com.fasten.executor_driver.presentation.SingleLiveEvent;
 import com.fasten.executor_driver.presentation.ViewState;
 import io.reactivex.Observable;
@@ -38,8 +40,8 @@ public class VehicleOptionsViewModelImpl extends ViewModel implements
   public VehicleOptionsViewModelImpl(@NonNull VehicleOptionsUseCase vehicleOptionsUseCase) {
     this.vehicleOptionsUseCase = vehicleOptionsUseCase;
     viewStateLiveData = new MutableLiveData<>();
-    viewStateLiveData.postValue(new VehicleOptionsViewStateInitial());
     navigateLiveData = new SingleLiveEvent<>();
+    viewStateLiveData.postValue(new VehicleOptionsViewStateInitial());
     loadOptions();
   }
 
@@ -94,7 +96,14 @@ public class VehicleOptionsViewModelImpl extends ViewModel implements
         VehicleOptionsListItems::new
     ).subscribe(
         items -> viewStateLiveData.postValue(new VehicleOptionsViewStateReady(items)),
-        Throwable::printStackTrace
+        throwable -> {
+          throwable.printStackTrace();
+          if (throwable instanceof DataMappingException) {
+            navigateLiveData.postValue(CommonNavigate.SERVER_DATA_ERROR);
+          } else {
+            navigateLiveData.postValue(CommonNavigate.NO_CONNECTION);
+          }
+        }
     );
 
   }

@@ -18,7 +18,7 @@ public class OrderViewStateIdleTest {
   private OrderViewStateIdle viewState;
 
   @Mock
-  private OrderViewActions orderViewActions;
+  private OrderViewActions viewActions;
 
   @Mock
   private OrderItem orderItem;
@@ -45,21 +45,19 @@ public class OrderViewStateIdleTest {
     when(orderItem.getProgressLeft()).thenReturn(new long[]{3, 5});
 
     // Действие:
-    viewState.apply(orderViewActions);
+    viewState.apply(viewActions);
 
     // Результат:
-    verify(orderViewActions).showLoadPoint("url");
-    verify(orderViewActions).showLoadPointAddress("1.3,2.4", "address");
-    verify(orderViewActions).showDistance("123L");
-    verify(orderViewActions).showComment("comm");
-    verify(orderViewActions).showTimeout(654321);
-    verify(orderViewActions).showTimeout(3, 5);
-    verify(orderViewActions).showEstimatedPrice("1000");
-    verify(orderViewActions).showOrderOptionsRequirements("1,2,3");
-    verify(orderViewActions).showOrderPending(false);
-    verify(orderViewActions).showOrderAvailabilityError(false);
-    verify(orderViewActions).showNetworkErrorMessage(false);
-    verifyNoMoreInteractions(orderViewActions);
+    verify(viewActions).showLoadPoint("url");
+    verify(viewActions).showLoadPointAddress("1.3,2.4", "address");
+    verify(viewActions).showDistance("123L");
+    verify(viewActions).showComment("comm");
+    verify(viewActions).showTimeout(654321);
+    verify(viewActions).showTimeout(3, 5);
+    verify(viewActions).showEstimatedPrice("1000");
+    verify(viewActions).showOrderOptionsRequirements("1,2,3");
+    verify(viewActions).showOrderPending(false);
+    verifyNoMoreInteractions(viewActions);
   }
 
   @Test

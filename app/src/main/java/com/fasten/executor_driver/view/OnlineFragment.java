@@ -1,11 +1,8 @@
 package com.fasten.executor_driver.view;
 
-import android.app.AlertDialog.Builder;
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.annotation.StringRes;
 import android.support.v7.widget.SwitchCompat;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,18 +23,10 @@ public class OnlineFragment extends BaseFragment implements OnlineSwitchViewActi
 
   @Nullable
   private SwitchCompat switchCompat;
-  @Nullable
-  private Context context;
 
   @Inject
   public void setOnlineSwitchViewModel(OnlineSwitchViewModel onlineSwitchViewModel) {
     this.onlineSwitchViewModel = onlineSwitchViewModel;
-  }
-
-  @Override
-  public void onAttach(Context context) {
-    super.onAttach(context);
-    this.context = context;
   }
 
   @Nullable
@@ -79,12 +68,6 @@ public class OnlineFragment extends BaseFragment implements OnlineSwitchViewActi
   }
 
   @Override
-  public void onDetach() {
-    super.onDetach();
-    context = null;
-  }
-
-  @Override
   public void checkSwitch(boolean check) {
     if (switchCompat != null) {
       switchCompat.setOnCheckedChangeListener(null);
@@ -96,24 +79,5 @@ public class OnlineFragment extends BaseFragment implements OnlineSwitchViewActi
   @Override
   public void showSwitchPending(boolean show) {
     showPending(show);
-  }
-
-  @Override
-  public void showError(@Nullable @StringRes Integer messageId, boolean retrySocket) {
-    if (context != null && messageId != null) {
-      new Builder(context)
-          .setTitle(R.string.error)
-          .setMessage(messageId)
-          .setPositiveButton(getString(android.R.string.ok), (dialog, which) -> {
-            if (retrySocket) {
-              onlineSwitchViewModel.refreshStates();
-            } else {
-              onlineSwitchViewModel.consumeServerError();
-            }
-          })
-          .create()
-          .show();
-    }
-
   }
 }

@@ -28,7 +28,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class VehicleOptionsGatewayTest {
 
-  private VehicleOptionsGateway vehicleOptionsGateway;
+  private VehicleOptionsGateway gateway;
 
   @Mock
   private ApiService api;
@@ -37,7 +37,7 @@ public class VehicleOptionsGatewayTest {
   public void setUp() {
     RxJavaPlugins.setIoSchedulerHandler(scheduler -> Schedulers.trampoline());
     RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
-    vehicleOptionsGateway = new VehicleOptionsGatewayImpl(api);
+    gateway = new VehicleOptionsGatewayImpl(api);
     when(api.occupyCarWithOptions(anyLong(), any())).thenReturn(Completable.never());
   }
 
@@ -58,7 +58,7 @@ public class VehicleOptionsGatewayTest {
     );
 
     // Действие:
-    vehicleOptionsGateway.sendVehicleOptions(vehicle, Arrays.asList(
+    gateway.sendVehicleOptions(vehicle, Arrays.asList(
         new OptionNumeric(5, "name0", "desc0", true, -1, -5, 20),
         new OptionNumeric(6, "name1", "desc1", true, 2, -18, 5),
         new OptionBoolean(7, "name2", "desc2", true, true),
@@ -116,7 +116,7 @@ public class VehicleOptionsGatewayTest {
         .thenReturn(Completable.error(NoNetworkException::new));
 
     // Действие и Результат:
-    vehicleOptionsGateway.sendVehicleOptions(vehicle, Arrays.asList(
+    gateway.sendVehicleOptions(vehicle, Arrays.asList(
         new OptionNumeric(5, "name0", "desc0", true, -1, -5, 20),
         new OptionNumeric(6, "name1", "desc1", true, 2, -18, 5),
         new OptionBoolean(7, "name2", "desc2", true, true),
@@ -154,7 +154,7 @@ public class VehicleOptionsGatewayTest {
     )))).thenReturn(Completable.complete());
 
     // Действие и Результат:
-    vehicleOptionsGateway.sendVehicleOptions(vehicle, Arrays.asList(
+    gateway.sendVehicleOptions(vehicle, Arrays.asList(
         new OptionNumeric(5, "name0", "desc0", true, -1, -5, 20),
         new OptionNumeric(6, "name1", "desc1", true, 2, -18, 5),
         new OptionBoolean(7, "name2", "desc2", true, true),

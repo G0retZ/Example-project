@@ -15,7 +15,7 @@ public class ChooseVehicleViewStatePendingTest {
   private ChooseVehicleViewStatePending viewState;
 
   @Mock
-  private ChooseVehicleViewActions codeViewActions;
+  private ChooseVehicleViewActions viewActions;
 
   @Before
   public void setUp() {
@@ -25,12 +25,12 @@ public class ChooseVehicleViewStatePendingTest {
   @Test
   public void testActions() {
     // Действие:
-    viewState.apply(codeViewActions);
+    viewState.apply(viewActions);
 
     // Результат:
-    verify(codeViewActions).showVehicleListErrorMessage(false);
-    verify(codeViewActions).showVehicleList(false);
-    verify(codeViewActions).showVehicleListPending(true);
-    verifyNoMoreInteractions(codeViewActions);
+    verify(viewActions).showVehicleListErrorMessage(false);
+    verify(viewActions).showVehicleList(false);
+    verify(viewActions).showVehicleListPending(true);
+    verifyNoMoreInteractions(viewActions);
   }
 }

@@ -42,7 +42,7 @@ public class VehicleOptionsViewModelTest {
 
   @Rule
   public TestRule rule = new InstantTaskExecutorRule();
-  private VehicleOptionsViewModel vehicleVehicleOptionsViewModel;
+  private VehicleOptionsViewModel viewModel;
   @Mock
   private VehicleOptionsUseCase vehicleOptionsUseCase;
 
@@ -65,7 +65,7 @@ public class VehicleOptionsViewModelTest {
     when(vehicleOptionsUseCase.getDriverOptions()).thenReturn(singleSubject);
     when(vehicleOptionsUseCase.setSelectedVehicleAndOptions(anyList(), anyList()))
         .thenReturn(Completable.never());
-    vehicleVehicleOptionsViewModel = new VehicleOptionsViewModelImpl(vehicleOptionsUseCase);
+    viewModel = new VehicleOptionsViewModelImpl(vehicleOptionsUseCase);
   }
 
   /* Тетсируем работу с юзкейсом выбора опций ТС. */
@@ -97,9 +97,9 @@ public class VehicleOptionsViewModelTest {
     ));
 
     // Действие:
-    vehicleVehicleOptionsViewModel.getViewStateLiveData();
-    vehicleVehicleOptionsViewModel.getNavigationLiveData();
-    vehicleVehicleOptionsViewModel.getViewStateLiveData();
+    viewModel.getViewStateLiveData();
+    viewModel.getNavigationLiveData();
+    viewModel.getViewStateLiveData();
 
     // Результат:
     verify(vehicleOptionsUseCase).getVehicleOptions();
@@ -117,7 +117,7 @@ public class VehicleOptionsViewModelTest {
         .thenReturn(Completable.complete());
 
     // Действие:
-    vehicleVehicleOptionsViewModel.setOptions(new VehicleOptionsListItems(
+    viewModel.setOptions(new VehicleOptionsListItems(
         Collections.singletonList(
             new VehicleOptionsListItem<>(
                 new OptionBoolean(1, "name", "description", true, false)
@@ -127,7 +127,7 @@ public class VehicleOptionsViewModelTest {
             new OptionNumeric(3, "names", "description", true, 5, 0, 10)
         )
     )));
-    vehicleVehicleOptionsViewModel.setOptions(new VehicleOptionsListItems(Arrays.asList(
+    viewModel.setOptions(new VehicleOptionsListItems(Arrays.asList(
         new VehicleOptionsListItem<>(
             new OptionBoolean(1, "name", "description", true, false)
         ),
@@ -139,7 +139,7 @@ public class VehicleOptionsViewModelTest {
             new OptionNumeric(3, "names", "description", true, 5, 0, 10)
         )
     )));
-    vehicleVehicleOptionsViewModel.setOptions(new VehicleOptionsListItems(Arrays.asList(
+    viewModel.setOptions(new VehicleOptionsListItems(Arrays.asList(
         new VehicleOptionsListItem<>(
             new OptionBoolean(1, "name", "description", true, false)
         ),
@@ -185,7 +185,7 @@ public class VehicleOptionsViewModelTest {
   @Test
   public void DoNotTouchVehicleOptionsUseCaseDuringVehicleOccupying() {
     // Действие:
-    vehicleVehicleOptionsViewModel.setOptions(new VehicleOptionsListItems(
+    viewModel.setOptions(new VehicleOptionsListItems(
         Collections.singletonList(
             new VehicleOptionsListItem<>(
                 new OptionBoolean(1, "name", "description", true, false)
@@ -195,7 +195,7 @@ public class VehicleOptionsViewModelTest {
             new OptionNumeric(3, "names", "description", true, 5, 0, 10)
         )
     )));
-    vehicleVehicleOptionsViewModel.setOptions(new VehicleOptionsListItems(Arrays.asList(
+    viewModel.setOptions(new VehicleOptionsListItems(Arrays.asList(
         new VehicleOptionsListItem<>(
             new OptionBoolean(1, "name", "description", true, false)
         ),
@@ -207,7 +207,7 @@ public class VehicleOptionsViewModelTest {
             new OptionNumeric(3, "names", "description", true, 5, 0, 10)
         )
     )));
-    vehicleVehicleOptionsViewModel.setOptions(new VehicleOptionsListItems(Arrays.asList(
+    viewModel.setOptions(new VehicleOptionsListItems(Arrays.asList(
         new VehicleOptionsListItem<>(
             new OptionBoolean(1, "name", "description", true, false)
         ),
@@ -245,7 +245,7 @@ public class VehicleOptionsViewModelTest {
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
 
     // Действие:
-    vehicleVehicleOptionsViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(any(VehicleOptionsViewStateInitial.class));
@@ -259,7 +259,7 @@ public class VehicleOptionsViewModelTest {
   public void setReadyViewStateToLiveData() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    vehicleVehicleOptionsViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
     publishSubject.onNext(Arrays.asList(
@@ -344,7 +344,7 @@ public class VehicleOptionsViewModelTest {
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     when(vehicleOptionsUseCase.setSelectedVehicleAndOptions(anyList(), anyList()))
         .thenReturn(Completable.complete());
-    vehicleVehicleOptionsViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
     publishSubject.onNext(Arrays.asList(
@@ -355,7 +355,7 @@ public class VehicleOptionsViewModelTest {
         new OptionNumeric(3, "names", "desc", true, 5, 0, 10),
         new OptionNumeric(4, "nam", "script", true, 1, -1, 2)
     ));
-    vehicleVehicleOptionsViewModel.setOptions(
+    viewModel.setOptions(
         new VehicleOptionsListItems(new ArrayList<>(), new ArrayList<>())
     );
 
@@ -391,7 +391,7 @@ public class VehicleOptionsViewModelTest {
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     when(vehicleOptionsUseCase.setSelectedVehicleAndOptions(anyList(), anyList()))
         .thenReturn(Completable.error(NoNetworkException::new));
-    vehicleVehicleOptionsViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
     publishSubject.onNext(Arrays.asList(
@@ -402,7 +402,7 @@ public class VehicleOptionsViewModelTest {
         new OptionNumeric(3, "names", "desc", true, 5, 0, 10),
         new OptionNumeric(4, "nam", "script", true, 1, -1, 2)
     ));
-    vehicleVehicleOptionsViewModel.setOptions(
+    viewModel.setOptions(
         new VehicleOptionsListItems(new ArrayList<>(), new ArrayList<>())
     );
 
@@ -441,10 +441,10 @@ public class VehicleOptionsViewModelTest {
     // Дано:
     when(vehicleOptionsUseCase.setSelectedVehicleAndOptions(anyList(), anyList()))
         .thenReturn(Completable.error(new NoNetworkException()));
-    vehicleVehicleOptionsViewModel.getNavigationLiveData().observeForever(navigateObserver);
+    viewModel.getNavigationLiveData().observeForever(navigateObserver);
 
     // Действие:
-    vehicleVehicleOptionsViewModel.setOptions(
+    viewModel.setOptions(
         new VehicleOptionsListItems(new ArrayList<>(), new ArrayList<>())
     );
 
@@ -460,10 +460,10 @@ public class VehicleOptionsViewModelTest {
     // Дано:
     when(vehicleOptionsUseCase.setSelectedVehicleAndOptions(anyList(), anyList()))
         .thenReturn(Completable.complete());
-    vehicleVehicleOptionsViewModel.getNavigationLiveData().observeForever(navigateObserver);
+    viewModel.getNavigationLiveData().observeForever(navigateObserver);
 
     // Действие:
-    vehicleVehicleOptionsViewModel.setOptions(
+    viewModel.setOptions(
         new VehicleOptionsListItems(new ArrayList<>(), new ArrayList<>())
     );
 

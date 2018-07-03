@@ -18,7 +18,7 @@ public class GeoLocationViewStateTest {
   private GeoLocationViewState viewState;
 
   @Mock
-  private GeoLocationViewActions mapViewActions;
+  private GeoLocationViewActions viewActions;
 
   @Before
   public void setUp() {
@@ -28,11 +28,11 @@ public class GeoLocationViewStateTest {
   @Test
   public void testActions() {
     // Действие:
-    viewState.apply(mapViewActions);
+    viewState.apply(viewActions);
 
     // Результат:
-    verify(mapViewActions).updateLocation(new GeoLocation(1, 2, 3));
-    verifyNoMoreInteractions(mapViewActions);
+    verify(viewActions).updateLocation(new GeoLocation(1, 2, 3));
+    verifyNoMoreInteractions(viewActions);
   }
 
   @Test

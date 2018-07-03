@@ -23,10 +23,10 @@ import org.mockito.junit.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class OrderFulfillmentTimeUseCaseTest {
 
-  private OrderFulfillmentTimeUseCase orderFulfillmentTimeUseCase;
+  private OrderFulfillmentTimeUseCase useCase;
 
   @Mock
-  private OrderGateway orderGateway;
+  private OrderGateway gateway;
   @Mock
   private TimeUtils timeUtils;
   @Mock
@@ -38,9 +38,9 @@ public class OrderFulfillmentTimeUseCaseTest {
   @Before
   public void setUp() {
     testScheduler = new TestScheduler();
-    RxJavaPlugins.setIoSchedulerHandler(scheduler -> testScheduler);
-    when(orderGateway.getOrders()).thenReturn(Flowable.never());
-    orderFulfillmentTimeUseCase = new OrderFulfillmentTimeUseCaseImpl(orderGateway, timeUtils);
+    RxJavaPlugins.setComputationSchedulerHandler(scheduler -> testScheduler);
+    when(gateway.getOrders()).thenReturn(Flowable.never());
+    useCase = new OrderFulfillmentTimeUseCaseImpl(gateway, timeUtils);
   }
 
   /* Проверяем работу с гейтвеем */
@@ -51,10 +51,10 @@ public class OrderFulfillmentTimeUseCaseTest {
   @Test
   public void askGatewayForOrders() {
     // Действие:
-    orderFulfillmentTimeUseCase.getOrderElapsedTime().test();
+    useCase.getOrderElapsedTime().test();
 
     // Результат:
-    verify(orderGateway, only()).getOrders();
+    verify(gateway, only()).getOrders();
   }
 
   /* Проверяем ответы на запрос времени заказа */
@@ -65,11 +65,11 @@ public class OrderFulfillmentTimeUseCaseTest {
   @Test
   public void answerDataMappingError() {
     // Дано:
-    when(orderGateway.getOrders())
+    when(gateway.getOrders())
         .thenReturn(Flowable.error(new DataMappingException()));
 
     // Действие:
-    TestSubscriber<Long> test = orderFulfillmentTimeUseCase.getOrderElapsedTime().test();
+    TestSubscriber<Long> test = useCase.getOrderElapsedTime().test();
 
     // Результат:
     test.assertError(DataMappingException.class);
@@ -84,14 +84,14 @@ public class OrderFulfillmentTimeUseCaseTest {
   public void answerWithTimeUpdates() {
     // Дано:
     PublishSubject<Order> publishSubject = PublishSubject.create();
-    when(orderGateway.getOrders())
+    when(gateway.getOrders())
         .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
     when(order.getOrderStartTime()).thenReturn(12345000L);
     when(order2.getOrderStartTime()).thenReturn(6789000L);
     when(timeUtils.currentTimeMillis()).thenReturn(12350000L, 6801000L);
 
     // Действие:
-    TestSubscriber<Long> test = orderFulfillmentTimeUseCase.getOrderElapsedTime().test();
+    TestSubscriber<Long> test = useCase.getOrderElapsedTime().test();
     publishSubject.onNext(order);
     testScheduler.advanceTimeBy(2, TimeUnit.SECONDS);
     testScheduler.advanceTimeBy(3, TimeUnit.SECONDS);

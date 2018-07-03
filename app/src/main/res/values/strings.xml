@@ -2,7 +2,9 @@
   <string name="app_name">Везет Добро</string>
   <string name="authorization">Авторизация</string>
   <string name="phone_number">Номер телефона</string>
+  <string name="server_data_format_error">Ошибка формата данных от сервера</string>
   <string name="no_network_connection">Отсуствует подключение к сети</string>
+  <string name="no_network_connecting">Соединение отсутствует.\nВосстанавливаем связь…</string>
   <string name="sms_network_error">Ошибка соединения,\nповторите попытку</string>
   <string name="code_network_error">Ошибка соединения,\nвведите код еще раз</string>
   <string name="server_fail">Ошибка взаимодействия с сервером</string>
@@ -81,7 +83,6 @@
   <string name="calling_client">Идет вызов клиенту.\nБудьте готовы взять трубку!</string>
   <string name="client">Клиент</string>
   <string name="install_geo_app">Сначала установите приложение для навигации.</string>
-  <string name="no_order_info">Нет информации о заказе.</string>
   <string name="order_unavailable_for_accept">Этот заказ недоступен для принятия.</string>
   <string name="order_unavailable">Этот заказ недоступен.</string>
   <string name="information">Информация</string>

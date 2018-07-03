@@ -8,7 +8,6 @@ import com.fasten.executor_driver.backend.websocket.outgoing.ApiCancelOrderReaso
 import com.fasten.executor_driver.entity.CancelOrderReason;
 import com.fasten.executor_driver.interactor.CancelOrderGateway;
 import com.google.gson.Gson;
-import io.reactivex.BackpressureStrategy;
 import io.reactivex.Completable;
 import io.reactivex.Flowable;
 import io.reactivex.schedulers.Schedulers;
@@ -36,7 +35,6 @@ public class CancelOrderGatewayImpl implements CancelOrderGateway {
   public Flowable<List<CancelOrderReason>> loadCancelOrderReasons(@Nullable String channelId) {
     if (stompClient.isConnected() || stompClient.isConnecting()) {
       return stompClient.topic(String.format(BuildConfig.STATUS_DESTINATION, channelId))
-          .toFlowable(BackpressureStrategy.BUFFER)
           .subscribeOn(Schedulers.io())
           .onErrorResumeNext(Flowable.empty())
           .filter(stompMessage -> stompMessage.findHeader("CancelReason") != null)
@@ -49,12 +47,9 @@ public class CancelOrderGatewayImpl implements CancelOrderGateway {
   @NonNull
   @Override
   public Completable cancelOrder(@NonNull CancelOrderReason cancelOrderReason) {
-    if (stompClient.isConnected() || stompClient.isConnecting()) {
-      return stompClient.send(BuildConfig.CANCEL_ORDER_DESTINATION,
-          new Gson().toJson(new ApiCancelOrderReason(cancelOrderReason)))
-          .subscribeOn(Schedulers.io())
-          .observeOn(Schedulers.single());
-    }
-    return Completable.error(new ConnectionClosedException());
+    return stompClient.send(BuildConfig.CANCEL_ORDER_DESTINATION,
+        new Gson().toJson(new ApiCancelOrderReason(cancelOrderReason)))
+        .subscribeOn(Schedulers.io())
+        .observeOn(Schedulers.single());
   }
 }

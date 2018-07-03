@@ -16,7 +16,7 @@ public class CodeViewStateErrorTest {
   private CodeViewStateError viewState;
 
   @Mock
-  private CodeViewActions codeViewActions;
+  private CodeViewActions viewActions;
 
   @Before
   public void setUp() {
@@ -26,14 +26,14 @@ public class CodeViewStateErrorTest {
   @Test
   public void testActions() {
     // Действие:
-    viewState.apply(codeViewActions);
+    viewState.apply(viewActions);
 
     // Результат:
-    verify(codeViewActions).enableInputField(true);
-    verify(codeViewActions).showCodeCheckPending(false);
-    verify(codeViewActions).showCodeCheckError(true);
-    verify(codeViewActions).showCodeCheckNetworkErrorMessage(false);
-    verify(codeViewActions).setUnderlineImage(R.drawable.ic_code_input_error);
-    verifyNoMoreInteractions(codeViewActions);
+    verify(viewActions).enableInputField(true);
+    verify(viewActions).showCodeCheckPending(false);
+    verify(viewActions).showCodeCheckError(true);
+    verify(viewActions).showCodeCheckNetworkErrorMessage(false);
+    verify(viewActions).setUnderlineImage(R.drawable.ic_code_input_error);
+    verifyNoMoreInteractions(viewActions);
   }
 }

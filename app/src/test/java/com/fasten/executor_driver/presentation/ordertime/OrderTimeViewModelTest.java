@@ -7,8 +7,8 @@ import static org.mockito.Mockito.when;
 
 import android.arch.core.executor.testing.InstantTaskExecutorRule;
 import android.arch.lifecycle.Observer;
-import com.fasten.executor_driver.backend.websocket.ConnectionClosedException;
 import com.fasten.executor_driver.interactor.OrderFulfillmentTimeUseCase;
+import com.fasten.executor_driver.presentation.CommonNavigate;
 import com.fasten.executor_driver.presentation.ViewState;
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.android.plugins.RxAndroidPlugins;
@@ -30,11 +30,13 @@ public class OrderTimeViewModelTest {
 
   @Rule
   public TestRule rule = new InstantTaskExecutorRule();
-  private OrderTimeViewModel orderTimeViewModel;
+  private OrderTimeViewModel viewModel;
+  @Mock
+  private OrderFulfillmentTimeUseCase orderCurrentTimeUseCase;
   @Mock
   private Observer<ViewState<OrderTimeViewActions>> viewStateObserver;
   @Mock
-  private OrderFulfillmentTimeUseCase orderCurrentTimeUseCase;
+  private Observer<String> navigateObserver;
   private PublishSubject<Long> publishSubject;
 
   @Before
@@ -44,17 +46,17 @@ public class OrderTimeViewModelTest {
     RxAndroidPlugins.setInitMainThreadSchedulerHandler(scheduler -> Schedulers.trampoline());
     when(orderCurrentTimeUseCase.getOrderElapsedTime())
         .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
-    orderTimeViewModel = new OrderTimeViewModelImpl(orderCurrentTimeUseCase);
+    viewModel = new OrderTimeViewModelImpl(orderCurrentTimeUseCase);
   }
 
 
   /* Тетсируем работу с юзкейсом текущего времени выполнения заказа. */
 
   /**
-   * Должен просить юзкейс получить актуальную цену, при создании.
+   * Должен просить юзкейс получить актуальное время выполнения заказа, при создании.
    */
   @Test
-  public void askSelectedVehicleUseCaseForVehiclesInitially() {
+  public void askUseCaseForOrderTimeInitially() {
     // Результат:
     verify(orderCurrentTimeUseCase, only()).getOrderElapsedTime();
   }
@@ -63,12 +65,12 @@ public class OrderTimeViewModelTest {
    * Не должен трогать юзкейс на подписках.
    */
   @Test
-  public void DoNotTouchSelectedVehicleUseCaseDuringVehicleChoosing() {
+  public void doNotTouchUseCaseOnSubscriptions() {
     // Действие:
-    orderTimeViewModel.getViewStateLiveData();
-    orderTimeViewModel.getNavigationLiveData();
-    orderTimeViewModel.getViewStateLiveData();
-    orderTimeViewModel.getNavigationLiveData();
+    viewModel.getViewStateLiveData();
+    viewModel.getNavigationLiveData();
+    viewModel.getViewStateLiveData();
+    viewModel.getNavigationLiveData();
 
     // Результат:
     verify(orderCurrentTimeUseCase, only()).getOrderElapsedTime();
@@ -85,7 +87,7 @@ public class OrderTimeViewModelTest {
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
 
     // Действие:
-    orderTimeViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(new OrderTimeViewState(0));
@@ -99,7 +101,7 @@ public class OrderTimeViewModelTest {
   public void setViewStateWithTimesToLiveData() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    orderTimeViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
     publishSubject.onNext(123L);
@@ -109,10 +111,10 @@ public class OrderTimeViewModelTest {
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(new OrderTimeViewState(0));
-    inOrder.verify(viewStateObserver).onChanged(new OrderTimeViewStateIdle(123));
-    inOrder.verify(viewStateObserver).onChanged(new OrderTimeViewStateIdle(873));
-    inOrder.verify(viewStateObserver).onChanged(new OrderTimeViewStateIdle(4728));
-    inOrder.verify(viewStateObserver).onChanged(new OrderTimeViewStateIdle(32));
+    inOrder.verify(viewStateObserver).onChanged(new OrderTimeViewState(123));
+    inOrder.verify(viewStateObserver).onChanged(new OrderTimeViewState(873));
+    inOrder.verify(viewStateObserver).onChanged(new OrderTimeViewState(4728));
+    inOrder.verify(viewStateObserver).onChanged(new OrderTimeViewState(32));
     verifyNoMoreInteractions(viewStateObserver);
   }
 
@@ -123,22 +125,38 @@ public class OrderTimeViewModelTest {
   public void setErrorViewStateToLiveDataOnError() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    orderTimeViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
     publishSubject.onNext(123L);
     publishSubject.onNext(873L);
     publishSubject.onNext(4728L);
     publishSubject.onNext(32L);
-    publishSubject.onError(new ConnectionClosedException());
+    publishSubject.onError(new Exception());
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(new OrderTimeViewState(0));
-    inOrder.verify(viewStateObserver).onChanged(new OrderTimeViewStateIdle(123));
-    inOrder.verify(viewStateObserver).onChanged(new OrderTimeViewStateIdle(873));
-    inOrder.verify(viewStateObserver).onChanged(new OrderTimeViewStateIdle(4728));
-    inOrder.verify(viewStateObserver).onChanged(new OrderTimeViewStateIdle(32));
-    inOrder.verify(viewStateObserver).onChanged(new OrderTimeViewStateError(0));
+    inOrder.verify(viewStateObserver).onChanged(new OrderTimeViewState(123));
+    inOrder.verify(viewStateObserver).onChanged(new OrderTimeViewState(873));
+    inOrder.verify(viewStateObserver).onChanged(new OrderTimeViewState(4728));
+    inOrder.verify(viewStateObserver).onChanged(new OrderTimeViewState(32));
     verifyNoMoreInteractions(viewStateObserver);
+  }
+
+  /* Тестируем навигацию. */
+
+  /**
+   * Должен вернуть "перейти к ошибке данных сервера".
+   */
+  @Test
+  public void setNavigateToServerDataError() {
+    // Дано:
+    viewModel.getNavigationLiveData().observeForever(navigateObserver);
+
+    // Действие:
+    publishSubject.onError(new Exception());
+
+    // Результат:
+    verify(navigateObserver, only()).onChanged(CommonNavigate.SERVER_DATA_ERROR);
   }
 }

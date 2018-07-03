@@ -17,7 +17,7 @@ public class ChooseVehicleViewStateErrorTest {
   private ChooseVehicleViewStateError viewState;
 
   @Mock
-  private ChooseVehicleViewActions codeViewActions;
+  private ChooseVehicleViewActions viewActions;
 
   @Before
   public void setUp() {
@@ -27,14 +27,14 @@ public class ChooseVehicleViewStateErrorTest {
   @Test
   public void testActions() {
     // Действие:
-    viewState.apply(codeViewActions);
+    viewState.apply(viewActions);
 
     // Результат:
-    verify(codeViewActions).showVehicleList(false);
-    verify(codeViewActions).showVehicleListPending(false);
-    verify(codeViewActions).showVehicleListErrorMessage(true);
-    verify(codeViewActions).setVehicleListErrorMessage(123);
-    verifyNoMoreInteractions(codeViewActions);
+    verify(viewActions).showVehicleList(false);
+    verify(viewActions).showVehicleListPending(false);
+    verify(viewActions).showVehicleListErrorMessage(true);
+    verify(viewActions).setVehicleListErrorMessage(123);
+    verifyNoMoreInteractions(viewActions);
   }
 
   @Test

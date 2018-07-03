@@ -71,18 +71,4 @@ public interface OrderViewActions {
    * @param comment - адрес
    */
   void showComment(@NonNull String comment);
-
-  /**
-   * Показать ошибку доступности заказов.
-   *
-   * @param show - показать или нет?
-   */
-  void showOrderAvailabilityError(boolean show);
-
-  /**
-   * Показать сообщение об ошибке сети.
-   *
-   * @param show - показать или нет?
-   */
-  void showNetworkErrorMessage(boolean show);
 }

@@ -3,9 +3,13 @@ package com.fasten.executor_driver.application;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
+import com.fasten.executor_driver.R;
 import com.fasten.executor_driver.di.AppComponent;
+import com.fasten.executor_driver.presentation.CommonNavigate;
 import com.fasten.executor_driver.view.PendingDialogFragment;
+import com.fasten.executor_driver.view.ServerConnectionFragment;
 import java.util.LinkedList;
 
 /**
@@ -75,6 +79,18 @@ public class BaseActivity extends AppCompatActivity {
    * @param destination пункт назначения
    */
   public void navigate(@NonNull String destination) {
+    switch (destination) {
+      case CommonNavigate.NO_CONNECTION:
+        Fragment fragment = getSupportFragmentManager()
+            .findFragmentById(R.id.fragment_server_connection);
+        if (fragment != null && fragment instanceof ServerConnectionFragment) {
+          ((ServerConnectionFragment) fragment).blink();
+        }
+        break;
+      case CommonNavigate.SERVER_DATA_ERROR:
+        ((MainApplication) getApplication()).navigate(destination);
+        break;
+    }
   }
 
   /**

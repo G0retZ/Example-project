@@ -19,5 +19,5 @@ public @interface PaymentOptionsNavigate {
   String QIWI = "PaymentOptions.to.Qiwi";
 
   // Переход к оплате через Сбербанк-онлайн.
-  String SBERBANK_ONLINE = "PaymentOptions.to.Sberbank.Online";
+  String SBERBANK_ONLINE = "PaymentOptions.to.SberbankOnline";
 }

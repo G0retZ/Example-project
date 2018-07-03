@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.fasten.executor_driver.entity.CancelOrderReason;
 import com.fasten.executor_driver.interactor.CancelOrderUseCase;
+import com.fasten.executor_driver.presentation.CommonNavigate;
 import com.fasten.executor_driver.presentation.SingleLiveEvent;
 import com.fasten.executor_driver.presentation.ViewState;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -67,6 +68,9 @@ public class CancelOrderViewModelImpl extends ViewModel implements CancelOrderVi
             throwable -> {
               throwable.printStackTrace();
               viewStateLiveData.postValue(lastViewState);
+              if (throwable instanceof IllegalStateException) {
+                navigateLiveData.postValue(CommonNavigate.NO_CONNECTION);
+              }
             }
         );
   }
@@ -82,9 +86,9 @@ public class CancelOrderViewModelImpl extends ViewModel implements CancelOrderVi
         .subscribe(
             cancelOrderReasons -> viewStateLiveData
                 .postValue(lastViewState = new CancelOrderViewState(cancelOrderReasons)),
-            error -> {
-              error.printStackTrace();
-              viewStateLiveData.postValue(new CancelOrderViewStateError(lastViewState));
+            throwable -> {
+              throwable.printStackTrace();
+              navigateLiveData.postValue(CommonNavigate.SERVER_DATA_ERROR);
             }
         );
   }

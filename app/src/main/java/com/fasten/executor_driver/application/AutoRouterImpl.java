@@ -8,8 +8,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.fasten.executor_driver.R;
-import com.fasten.executor_driver.presentation.cancelorderreasons.CancelOrderReasonsNavigate;
-import com.fasten.executor_driver.presentation.coreBalance.CoreBalanceNavigate;
+import com.fasten.executor_driver.presentation.CommonNavigate;
 import com.fasten.executor_driver.presentation.executorstate.ExecutorStateNavigate;
 import com.fasten.executor_driver.presentation.executorstate.ExecutorStateViewActions;
 import com.fasten.executor_driver.presentation.geolocation.GeoLocationNavigate;
@@ -128,7 +127,9 @@ public class AutoRouterImpl implements ActivityLifecycleCallbacks, AutoRouter,
       goToGeoResolver = true;
       tryToResolveGeo();
     } else {
-      splashRouteAction = lastRouteAction = destination;
+      if (lastRouteAction == null || !lastRouteAction.equals(CommonNavigate.SERVER_DATA_ERROR)) {
+        splashRouteAction = lastRouteAction = destination;
+      }
       tryToNavigate();
     }
   }
@@ -154,25 +155,13 @@ public class AutoRouterImpl implements ActivityLifecycleCallbacks, AutoRouter,
       return;
     }
     switch (lastRouteAction) {
-      case ServerConnectionNavigate.NO_NETWORK:
-        new Builder(currentActivity)
-            .setTitle(R.string.error)
-            .setMessage("Без сети не работаем!")
-            .setCancelable(false)
-            .setPositiveButton(
-                currentActivity.getString(android.R.string.ok),
-                (a, b) -> android.os.Process.killProcess(android.os.Process.myPid())
-            )
-            .create()
-            .show();
-        break;
       case ServerConnectionNavigate.AUTHORIZE:
         currentActivity.startActivity(
             new Intent(currentActivity, LoginActivity.class)
                 .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK)
         );
         break;
-      case ExecutorStateNavigate.SERVER_DATA_ERROR:
+      case CommonNavigate.SERVER_DATA_ERROR:
         new Builder(currentActivity)
             .setTitle(R.string.error)
             .setMessage("Ошибка совместимости с протоколом сервера!")
@@ -183,31 +172,7 @@ public class AutoRouterImpl implements ActivityLifecycleCallbacks, AutoRouter,
             )
             .create()
             .show();
-        break;
-      case CancelOrderReasonsNavigate.SERVER_DATA_ERROR:
-        new Builder(currentActivity)
-            .setTitle(R.string.error)
-            .setMessage("Ошибка совместимости с протоколом сервера!")
-            .setCancelable(false)
-            .setPositiveButton(
-                currentActivity.getString(android.R.string.ok),
-                (a, b) -> android.os.Process.killProcess(android.os.Process.myPid())
-            )
-            .create()
-            .show();
-        break;
-      case CoreBalanceNavigate.SERVER_DATA_ERROR:
-        new Builder(currentActivity)
-            .setTitle(R.string.error)
-            .setMessage("Ошибка совместимости с протоколом сервера!")
-            .setCancelable(false)
-            .setPositiveButton(
-                currentActivity.getString(android.R.string.ok),
-                (a, b) -> android.os.Process.killProcess(android.os.Process.myPid())
-            )
-            .create()
-            .show();
-        break;
+        return;
       case ExecutorStateNavigate.MAP_SHIFT_CLOSED:
         currentActivity.startActivity(
             new Intent(currentActivity, MapActivity.class)

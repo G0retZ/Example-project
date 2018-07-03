@@ -19,7 +19,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class HeatMapGatewayTest {
 
-  private HeatMapGateway heatMapGateway;
+  private HeatMapGateway gateway;
 
   @Mock
   private ApiService api;
@@ -28,7 +28,7 @@ public class HeatMapGatewayTest {
   public void setUp() {
     RxJavaPlugins.setIoSchedulerHandler(scheduler -> Schedulers.trampoline());
     RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
-    heatMapGateway = new HeatMapGatewayImpl(api);
+    gateway = new HeatMapGatewayImpl(api);
     when(api.getHeatMap()).thenReturn(Single.never());
   }
 
@@ -40,7 +40,7 @@ public class HeatMapGatewayTest {
   @Test
   public void askGatewayForHeatMap() {
     // Действие:
-    heatMapGateway.getHeatMap();
+    gateway.getHeatMap();
 
     // Результат:
     verify(api, only()).getHeatMap();
@@ -59,7 +59,7 @@ public class HeatMapGatewayTest {
     when(api.getHeatMap()).thenReturn(Single.error(new NoNetworkException()));
 
     // Результат:
-    heatMapGateway.getHeatMap().test().assertError(NoNetworkException.class);
+    gateway.getHeatMap().test().assertError(NoNetworkException.class);
   }
 
   /**
@@ -71,7 +71,7 @@ public class HeatMapGatewayTest {
     when(api.getHeatMap()).thenReturn(Single.just("12"));
 
     // Результат:
-    heatMapGateway.getHeatMap().test().assertComplete();
-    heatMapGateway.getHeatMap().test().assertValue("12");
+    gateway.getHeatMap().test().assertComplete();
+    gateway.getHeatMap().test().assertValue("12");
   }
 }

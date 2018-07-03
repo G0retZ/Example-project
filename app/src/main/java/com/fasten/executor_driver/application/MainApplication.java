@@ -12,10 +12,9 @@ import android.support.v4.app.NotificationCompat.Builder;
 import com.fasten.executor_driver.R;
 import com.fasten.executor_driver.di.AppComponent;
 import com.fasten.executor_driver.di.AppComponentImpl;
-import com.fasten.executor_driver.presentation.cancelorderreasons.CancelOrderReasonsNavigate;
+import com.fasten.executor_driver.presentation.CommonNavigate;
 import com.fasten.executor_driver.presentation.cancelorderreasons.CancelOrderReasonsViewModel;
-import com.fasten.executor_driver.presentation.coreBalance.CoreBalanceNavigate;
-import com.fasten.executor_driver.presentation.coreBalance.CoreBalanceViewModel;
+import com.fasten.executor_driver.presentation.corebalance.CoreBalanceViewModel;
 import com.fasten.executor_driver.presentation.currentcostpolling.CurrentCostPollingViewModel;
 import com.fasten.executor_driver.presentation.executorstate.ExecutorStateNavigate;
 import com.fasten.executor_driver.presentation.executorstate.ExecutorStateViewActions;
@@ -194,7 +193,7 @@ public class MainApplication extends Application implements ServerConnectionView
     }
   }
 
-  private void navigate(@Nullable String destination) {
+  void navigate(@Nullable String destination) {
     if (autoRouter == null) {
       throw new IllegalStateException("Граф зависимостей поломан!");
     }
@@ -202,19 +201,10 @@ public class MainApplication extends Application implements ServerConnectionView
       return;
     }
     switch (destination) {
-      case ServerConnectionNavigate.NO_NETWORK:
-        stopService();
-        break;
       case ServerConnectionNavigate.AUTHORIZE:
         stopService();
         break;
-      case CancelOrderReasonsNavigate.SERVER_DATA_ERROR:
-        stopService();
-        break;
-      case CoreBalanceNavigate.SERVER_DATA_ERROR:
-        stopService();
-        break;
-      case ExecutorStateNavigate.SERVER_DATA_ERROR:
+      case CommonNavigate.SERVER_DATA_ERROR:
         stopService();
         break;
       case ExecutorStateNavigate.MAP_SHIFT_CLOSED:

@@ -1,7 +1,5 @@
 package com.fasten.executor_driver.view;
 
-import android.app.AlertDialog.Builder;
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -20,15 +18,8 @@ import javax.inject.Inject;
 
 public class CallToOperatorFragment extends BaseFragment implements CallToOperatorViewActions {
 
+  private View rootView;
   private CallToOperatorViewModel callToOperatorViewModel;
-  private Context context;
-  private boolean pending;
-
-  @Override
-  public void onAttach(Context context) {
-    super.onAttach(context);
-    this.context = context;
-  }
 
   @Inject
   public void setCallToOperatorViewModel(@NonNull CallToOperatorViewModel callToOperatorViewModel) {
@@ -40,7 +31,7 @@ public class CallToOperatorFragment extends BaseFragment implements CallToOperat
   public View onCreateView(@NonNull LayoutInflater inflater,
       @Nullable ViewGroup container,
       @Nullable Bundle savedInstanceState) {
-    return inflater.inflate(R.layout.fragment_call_to_operator, container, false);
+    return rootView = inflater.inflate(R.layout.fragment_call_to_operator, container, false);
   }
 
   @Override
@@ -64,35 +55,12 @@ public class CallToOperatorFragment extends BaseFragment implements CallToOperat
     });
   }
 
-  @Override
-  public void onDetach() {
-    super.onDetach();
-    context = null;
-  }
-
-  @Override
-  public void onResume() {
-    super.onResume();
+  public void callToOperator() {
     callToOperatorViewModel.callToOperator();
   }
 
   @Override
-  public void showCallToOperatorPending(boolean pending) {
-    if (this.pending != pending) {
-      showPending(pending);
-    }
-    this.pending = pending;
-  }
-
-  @Override
-  public void showNetworkErrorMessage(boolean show) {
-    if (show) {
-      new Builder(context)
-          .setTitle(R.string.error)
-          .setMessage(R.string.no_network_connection)
-          .setPositiveButton(getString(android.R.string.ok), null)
-          .create()
-          .show();
-    }
+  public void showCallingToOperator(boolean calling) {
+    rootView.setVisibility(calling ? View.VISIBLE : View.GONE);
   }
 }

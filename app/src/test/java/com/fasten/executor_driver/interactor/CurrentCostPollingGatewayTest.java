@@ -17,7 +17,7 @@ import com.fasten.executor_driver.gateway.DataMappingException;
 import com.fasten.executor_driver.gateway.Mapper;
 import com.fasten.executor_driver.utils.Pair;
 import io.reactivex.Completable;
-import io.reactivex.Observable;
+import io.reactivex.Flowable;
 import io.reactivex.observers.TestObserver;
 import io.reactivex.plugins.RxJavaPlugins;
 import io.reactivex.schedulers.Schedulers;
@@ -50,12 +50,12 @@ public class CurrentCostPollingGatewayTest {
   @Before
   public void setUp() {
     testScheduler = new TestScheduler();
-    RxJavaPlugins.setIoSchedulerHandler(scheduler -> testScheduler);
-    RxJavaPlugins.setComputationSchedulerHandler(scheduler -> Schedulers.trampoline());
+    RxJavaPlugins.setComputationSchedulerHandler(scheduler -> testScheduler);
+    RxJavaPlugins.setIoSchedulerHandler(scheduler -> Schedulers.trampoline());
     RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
     ExecutorState.MOVING_TO_CLIENT.setData(null);
     when(stompClient.send(anyString(), anyString())).thenReturn(Completable.never());
-    when(stompClient.topic(anyString())).thenReturn(Observable.never());
+    when(stompClient.topic(anyString())).thenReturn(Flowable.never());
     currentCostPollingGateway = new CurrentCostPollingGatewayImpl(stompClient, mapper);
   }
 
@@ -124,7 +124,7 @@ public class CurrentCostPollingGatewayTest {
   public void doNotTouchMapperIfWrongHeader() {
     // Дано:
     when(stompClient.isConnected()).thenReturn(true);
-    when(stompClient.topic(anyString())).thenReturn(Observable.just(
+    when(stompClient.topic(anyString())).thenReturn(Flowable.just(
         new StompMessage("MESSAGE", null, "SHIFT"),
         new StompMessage(
             "MESSAGE",
@@ -147,7 +147,7 @@ public class CurrentCostPollingGatewayTest {
   public void doNotTouchMapperForOverPackageHeader0() {
     // Дано:
     when(stompClient.isConnected()).thenReturn(true);
-    when(stompClient.topic(anyString())).thenReturn(Observable.just(
+    when(stompClient.topic(anyString())).thenReturn(Flowable.just(
         new StompMessage(
             "MESSAGE",
             Collections.singletonList(
@@ -173,7 +173,7 @@ public class CurrentCostPollingGatewayTest {
   public void askForMappingForOverPackageHeader1() throws Exception {
     // Дано:
     when(stompClient.isConnected()).thenReturn(true);
-    when(stompClient.topic(anyString())).thenReturn(Observable.just(
+    when(stompClient.topic(anyString())).thenReturn(Flowable.just(
         new StompMessage(
             "MESSAGE",
             Collections.singletonList(
@@ -201,7 +201,7 @@ public class CurrentCostPollingGatewayTest {
     // Дано:
     InOrder inOrder = Mockito.inOrder(stompClient);
     when(stompClient.isConnecting()).thenReturn(true);
-    when(stompClient.topic(anyString())).thenReturn(Observable.just(
+    when(stompClient.topic(anyString())).thenReturn(Flowable.just(
         new StompMessage(
             "MESSAGE",
             Collections.singletonList(
@@ -231,7 +231,7 @@ public class CurrentCostPollingGatewayTest {
     // Дано:
     InOrder inOrder = Mockito.inOrder(stompClient);
     when(stompClient.isConnected()).thenReturn(true);
-    when(stompClient.topic(anyString())).thenReturn(Observable.just(
+    when(stompClient.topic(anyString())).thenReturn(Flowable.just(
         new StompMessage(
             "MESSAGE",
             Collections.singletonList(
@@ -263,7 +263,7 @@ public class CurrentCostPollingGatewayTest {
     // Дано:
     InOrder inOrder = Mockito.inOrder(stompClient);
     when(stompClient.isConnected()).thenReturn(true);
-    when(stompClient.topic(anyString())).thenReturn(Observable.just(
+    when(stompClient.topic(anyString())).thenReturn(Flowable.just(
         new StompMessage(
             "MESSAGE",
             Collections.singletonList(
@@ -297,7 +297,7 @@ public class CurrentCostPollingGatewayTest {
     // Дано:
     InOrder inOrder = Mockito.inOrder(stompClient);
     when(stompClient.isConnected()).thenReturn(true);
-    when(stompClient.topic(anyString())).thenReturn(Observable.just(
+    when(stompClient.topic(anyString())).thenReturn(Flowable.just(
         new StompMessage(
             "MESSAGE",
             Collections.singletonList(
@@ -343,7 +343,7 @@ public class CurrentCostPollingGatewayTest {
   public void answerWithErrorIfSubscribed() {
     // Дано:
     when(stompClient.isConnected()).thenReturn(true);
-    when(stompClient.topic(anyString())).thenReturn(Observable.error(new IOException()));
+    when(stompClient.topic(anyString())).thenReturn(Flowable.error(new IOException()));
 
     // Действие:
     TestObserver<Void> testSubscriber =
@@ -363,14 +363,14 @@ public class CurrentCostPollingGatewayTest {
     // Дано:
     when(stompClient.isConnected()).thenReturn(true);
     when(stompClient.topic(anyString())).thenReturn(
-        Observable.just(
+        Flowable.just(
             new StompMessage("MESSAGE", null, "SHIFT"),
             new StompMessage(
                 "MESSAGE",
                 Collections.singletonList(new StompHeader("Type", "State")),
                 "SHIFT"
             )
-        ).concatWith(Observable.never())
+        ).concatWith(Flowable.never())
     );
 
     // Действие:
@@ -394,13 +394,13 @@ public class CurrentCostPollingGatewayTest {
     doThrow(new DataMappingException()).when(mapper).map(any());
     when(stompClient.isConnected()).thenReturn(true);
     when(stompClient.topic(anyString())).thenReturn(
-        Observable.just(
+        Flowable.just(
             new StompMessage(
                 "MESSAGE",
                 Collections.singletonList(new StompHeader("OverPackage", "1")),
                 null
             )
-        ).concatWith(Observable.never())
+        ).concatWith(Flowable.never())
     );
 
     // Действие:
@@ -421,13 +421,13 @@ public class CurrentCostPollingGatewayTest {
     // Дано:
     when(stompClient.isConnected()).thenReturn(true);
     when(stompClient.topic(anyString())).thenReturn(
-        Observable.just(
+        Flowable.just(
             new StompMessage(
                 "MESSAGE",
                 Collections.singletonList(new StompHeader("OverPackage", "0")),
                 null
             )
-        ).concatWith(Observable.never())
+        ).concatWith(Flowable.never())
     );
 
     // Действие:
@@ -451,13 +451,13 @@ public class CurrentCostPollingGatewayTest {
     when(mapper.map(any())).thenReturn(new Pair<>(10_000L, 30_000L));
     when(stompClient.isConnected()).thenReturn(true);
     when(stompClient.topic(anyString())).thenReturn(
-        Observable.just(
+        Flowable.just(
             new StompMessage(
                 "MESSAGE",
                 Collections.singletonList(new StompHeader("OverPackage", "1")),
                 "\n"
             )
-        ).concatWith(Observable.never())
+        ).concatWith(Flowable.never())
     );
 
     // Действие:
@@ -481,13 +481,13 @@ public class CurrentCostPollingGatewayTest {
     when(mapper.map(any())).thenReturn(new Pair<>(10_000L, 30_000L));
     when(stompClient.isConnected()).thenReturn(true);
     when(stompClient.topic(anyString())).thenReturn(
-        Observable.just(
+        Flowable.just(
             new StompMessage(
                 "MESSAGE",
                 Collections.singletonList(new StompHeader("OverPackage", "1")),
                 "\n"
             )
-        ).concatWith(Observable.never())
+        ).concatWith(Flowable.never())
     );
     when(stompClient.send(anyString(), anyString())).thenReturn(Completable.complete());
 
@@ -511,13 +511,13 @@ public class CurrentCostPollingGatewayTest {
     when(mapper.map(any())).thenReturn(new Pair<>(0L, 30_000L));
     when(stompClient.isConnected()).thenReturn(true);
     when(stompClient.topic(anyString())).thenReturn(
-        Observable.just(
+        Flowable.just(
             new StompMessage(
                 "MESSAGE",
                 Collections.singletonList(new StompHeader("OverPackage", "1")),
                 "\n"
             )
-        ).concatWith(Observable.never())
+        ).concatWith(Flowable.never())
     );
     when(stompClient.send(anyString(), anyString()))
         .thenReturn(Completable.error(IllegalArgumentException::new));
@@ -542,13 +542,13 @@ public class CurrentCostPollingGatewayTest {
     when(mapper.map(any())).thenReturn(new Pair<>(10_000L, 30_000L));
     when(stompClient.isConnected()).thenReturn(true);
     when(stompClient.topic(anyString())).thenReturn(
-        Observable.just(
+        Flowable.just(
             new StompMessage(
                 "MESSAGE",
                 Collections.singletonList(new StompHeader("OverPackage", "1")),
                 "\n"
             )
-        ).concatWith(Observable.never())
+        ).concatWith(Flowable.never())
     );
     when(stompClient.send(anyString(), anyString()))
         .thenReturn(Completable.error(IllegalArgumentException::new));

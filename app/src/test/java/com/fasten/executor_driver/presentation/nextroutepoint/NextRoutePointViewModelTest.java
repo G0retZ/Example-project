@@ -4,16 +4,15 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 import android.arch.core.executor.testing.InstantTaskExecutorRule;
 import android.arch.lifecycle.Observer;
-import com.fasten.executor_driver.backend.web.NoNetworkException;
-import com.fasten.executor_driver.entity.NoOrdersAvailableException;
 import com.fasten.executor_driver.entity.RoutePoint;
 import com.fasten.executor_driver.entity.RoutePointState;
-import com.fasten.executor_driver.gateway.DataMappingException;
 import com.fasten.executor_driver.interactor.OrderRouteUseCase;
+import com.fasten.executor_driver.presentation.CommonNavigate;
 import com.fasten.executor_driver.presentation.ViewState;
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Completable;
@@ -39,7 +38,7 @@ public class NextRoutePointViewModelTest {
 
   @Rule
   public TestRule rule = new InstantTaskExecutorRule();
-  private NextRoutePointViewModel movingToClientViewModel;
+  private NextRoutePointViewModel viewModel;
   @Mock
   private OrderRouteUseCase orderRouteUseCase;
   @Mock
@@ -52,6 +51,8 @@ public class NextRoutePointViewModelTest {
 
   @Mock
   private Observer<ViewState<NextRoutePointViewActions>> viewStateObserver;
+  @Mock
+  private Observer<String> navigateObserver;
 
   @Before
   public void setUp() {
@@ -65,7 +66,7 @@ public class NextRoutePointViewModelTest {
     when(routePoint.getRoutePointState()).thenReturn(RoutePointState.QUEUED);
     when(routePoint1.getRoutePointState()).thenReturn(RoutePointState.QUEUED);
     when(routePoint2.getRoutePointState()).thenReturn(RoutePointState.QUEUED);
-    movingToClientViewModel = new NextRoutePointViewModelImpl(orderRouteUseCase);
+    viewModel = new NextRoutePointViewModelImpl(orderRouteUseCase);
   }
 
   /* Тетсируем работу с юзкейсом заказа. */
@@ -85,10 +86,10 @@ public class NextRoutePointViewModelTest {
   @Test
   public void doNotTouchUseCaseOnSubscriptions() {
     // Действие:
-    movingToClientViewModel.getViewStateLiveData();
-    movingToClientViewModel.getNavigationLiveData();
-    movingToClientViewModel.getViewStateLiveData();
-    movingToClientViewModel.getNavigationLiveData();
+    viewModel.getViewStateLiveData();
+    viewModel.getNavigationLiveData();
+    viewModel.getViewStateLiveData();
+    viewModel.getNavigationLiveData();
 
     // Результат:
     verify(orderRouteUseCase, only()).getOrderRoutePoints();
@@ -104,7 +105,7 @@ public class NextRoutePointViewModelTest {
     publishSubject.onNext(Arrays.asList(routePoint, routePoint1, routePoint2));
 
     // Действие:
-    movingToClientViewModel.closeRoutePoint();
+    viewModel.closeRoutePoint();
 
     // Результат:
     verify(orderRouteUseCase).getOrderRoutePoints();
@@ -121,7 +122,7 @@ public class NextRoutePointViewModelTest {
     publishSubject.onNext(Arrays.asList(routePoint, routePoint1, routePoint2));
 
     // Действие:
-    movingToClientViewModel.completeTheOrder();
+    viewModel.completeTheOrder();
 
     // Результат:
     verify(orderRouteUseCase).getOrderRoutePoints();
@@ -139,11 +140,11 @@ public class NextRoutePointViewModelTest {
     publishSubject.onNext(Arrays.asList(routePoint, routePoint1, routePoint2));
 
     // Действие:
-    movingToClientViewModel.closeRoutePoint();
-    movingToClientViewModel.closeRoutePoint();
-    movingToClientViewModel.completeTheOrder();
-    movingToClientViewModel.closeRoutePoint();
-    movingToClientViewModel.completeTheOrder();
+    viewModel.closeRoutePoint();
+    viewModel.closeRoutePoint();
+    viewModel.completeTheOrder();
+    viewModel.closeRoutePoint();
+    viewModel.completeTheOrder();
 
     // Результат:
     verify(orderRouteUseCase).getOrderRoutePoints();
@@ -160,11 +161,11 @@ public class NextRoutePointViewModelTest {
     publishSubject.onNext(Arrays.asList(routePoint, routePoint1, routePoint2));
 
     // Действие:
-    movingToClientViewModel.completeTheOrder();
-    movingToClientViewModel.completeTheOrder();
-    movingToClientViewModel.closeRoutePoint();
-    movingToClientViewModel.completeTheOrder();
-    movingToClientViewModel.closeRoutePoint();
+    viewModel.completeTheOrder();
+    viewModel.completeTheOrder();
+    viewModel.closeRoutePoint();
+    viewModel.completeTheOrder();
+    viewModel.closeRoutePoint();
 
     // Результат:
     verify(orderRouteUseCase).getOrderRoutePoints();
@@ -183,7 +184,7 @@ public class NextRoutePointViewModelTest {
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
 
     // Действие:
-    movingToClientViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(new NextRoutePointViewStatePending(null));
@@ -191,57 +192,18 @@ public class NextRoutePointViewModelTest {
   }
 
   /**
-   * Должен вернуть состояние вида "Ошибка" нет сети.
+   * Не должен давать иных состояний вида если была ошибка.
    */
   @Test
-  public void setNoNetworkErrorViewStateToLiveData() {
+  public void doNotSetAnyViewStateToLiveDataForError() {
     // Дано:
-    InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    movingToClientViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    publishSubject.onError(new NoNetworkException());
+    publishSubject.onError(new Exception());
 
     // Результат:
-    inOrder.verify(viewStateObserver).onChanged(new NextRoutePointViewStatePending(null));
-    inOrder.verify(viewStateObserver).onChanged(new NextRoutePointViewStateError(null));
-    verifyNoMoreInteractions(viewStateObserver);
-  }
-
-  /**
-   * Должен вернуть состояние вида "Ошибка" нет сети.
-   */
-  @Test
-  public void setNoNetworkErrorViewStateToLiveDataForMappingError() {
-    // Дано:
-    InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    movingToClientViewModel.getViewStateLiveData().observeForever(viewStateObserver);
-
-    // Действие:
-    publishSubject.onError(new DataMappingException());
-
-    // Результат:
-    inOrder.verify(viewStateObserver).onChanged(new NextRoutePointViewStatePending(null));
-    inOrder.verify(viewStateObserver).onChanged(new NextRoutePointViewStateError(null));
-    verifyNoMoreInteractions(viewStateObserver);
-  }
-
-  /**
-   * Должен вернуть состояние вида "Ошибка" нет доступных заказов.
-   */
-  @Test
-  public void setNoOrderAvailableErrorViewStateToLiveData() {
-    // Дано:
-    InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    movingToClientViewModel.getViewStateLiveData().observeForever(viewStateObserver);
-
-    // Действие:
-    publishSubject.onError(new NoOrdersAvailableException());
-
-    // Результат:
-    inOrder.verify(viewStateObserver).onChanged(new NextRoutePointViewStatePending(null));
-    inOrder.verify(viewStateObserver).onChanged(new NextRoutePointViewStateError(null));
-    verifyNoMoreInteractions(viewStateObserver);
+    verify(viewStateObserver, only()).onChanged(new NextRoutePointViewStatePending(null));
   }
 
   /**
@@ -251,7 +213,7 @@ public class NextRoutePointViewModelTest {
   public void setNoRouteViewStateToLiveData() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    movingToClientViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
     when(routePoint.getRoutePointState()).thenReturn(RoutePointState.PROCESSED);
@@ -270,7 +232,7 @@ public class NextRoutePointViewModelTest {
   public void setEnRouteViewStateToLiveData() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    movingToClientViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
     when(routePoint.getRoutePointState()).thenReturn(RoutePointState.ACTIVE);
@@ -304,7 +266,7 @@ public class NextRoutePointViewModelTest {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     when(routePoint.getRoutePointState()).thenReturn(RoutePointState.ACTIVE);
-    movingToClientViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
     publishSubject.onNext(Arrays.asList(routePoint, routePoint1, routePoint2));
@@ -344,11 +306,11 @@ public class NextRoutePointViewModelTest {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     when(routePoint.getRoutePointState()).thenReturn(RoutePointState.ACTIVE);
-    movingToClientViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
     publishSubject.onNext(Arrays.asList(routePoint, routePoint1, routePoint2));
-    movingToClientViewModel.closeRoutePoint();
+    viewModel.closeRoutePoint();
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(new NextRoutePointViewStatePending(null));
@@ -370,12 +332,12 @@ public class NextRoutePointViewModelTest {
   public void setPendingViewStateWithNoRouteTrueViewStateToLiveDataForCloseRoutePoint() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    movingToClientViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
     when(routePoint.getRoutePointState()).thenReturn(RoutePointState.PROCESSED);
 
     // Действие:
     publishSubject.onNext(Collections.singletonList(routePoint));
-    movingToClientViewModel.closeRoutePoint();
+    viewModel.closeRoutePoint();
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(new NextRoutePointViewStatePending(null));
@@ -393,14 +355,14 @@ public class NextRoutePointViewModelTest {
   public void setPendingViewStateWithNoRouteFalseViewStateToLiveDataForCloseRoutePoint() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    movingToClientViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
     when(routePoint.getRoutePointState()).thenReturn(RoutePointState.PROCESSED);
     when(routePoint1.getRoutePointState()).thenReturn(RoutePointState.PROCESSED);
     when(routePoint2.getRoutePointState()).thenReturn(RoutePointState.PROCESSED);
 
     // Действие:
     publishSubject.onNext(Arrays.asList(routePoint, routePoint1, routePoint2));
-    movingToClientViewModel.closeRoutePoint();
+    viewModel.closeRoutePoint();
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(new NextRoutePointViewStatePending(null));
@@ -420,11 +382,11 @@ public class NextRoutePointViewModelTest {
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     when(orderRouteUseCase.closeRoutePoint(any())).thenReturn(Completable.error(Exception::new));
     when(routePoint.getRoutePointState()).thenReturn(RoutePointState.ACTIVE);
-    movingToClientViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
     publishSubject.onNext(Arrays.asList(routePoint, routePoint1, routePoint2));
-    movingToClientViewModel.closeRoutePoint();
+    viewModel.closeRoutePoint();
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(new NextRoutePointViewStatePending(null));
@@ -451,11 +413,11 @@ public class NextRoutePointViewModelTest {
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     when(orderRouteUseCase.closeRoutePoint(any())).thenReturn(Completable.error(Exception::new));
     when(routePoint.getRoutePointState()).thenReturn(RoutePointState.PROCESSED);
-    movingToClientViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
     publishSubject.onNext(Collections.singletonList(routePoint));
-    movingToClientViewModel.closeRoutePoint();
+    viewModel.closeRoutePoint();
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(new NextRoutePointViewStatePending(null));
@@ -475,14 +437,14 @@ public class NextRoutePointViewModelTest {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     when(orderRouteUseCase.closeRoutePoint(any())).thenReturn(Completable.error(Exception::new));
-    movingToClientViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
     when(routePoint.getRoutePointState()).thenReturn(RoutePointState.PROCESSED);
     when(routePoint1.getRoutePointState()).thenReturn(RoutePointState.PROCESSED);
     when(routePoint2.getRoutePointState()).thenReturn(RoutePointState.PROCESSED);
 
     // Действие:
     publishSubject.onNext(Arrays.asList(routePoint, routePoint1, routePoint2));
-    movingToClientViewModel.closeRoutePoint();
+    viewModel.closeRoutePoint();
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(new NextRoutePointViewStatePending(null));
@@ -503,11 +465,11 @@ public class NextRoutePointViewModelTest {
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     when(orderRouteUseCase.closeRoutePoint(any())).thenReturn(Completable.complete());
     when(routePoint.getRoutePointState()).thenReturn(RoutePointState.ACTIVE);
-    movingToClientViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
     publishSubject.onNext(Arrays.asList(routePoint, routePoint1, routePoint2));
-    movingToClientViewModel.closeRoutePoint();
+    viewModel.closeRoutePoint();
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(new NextRoutePointViewStatePending(null));
@@ -530,12 +492,12 @@ public class NextRoutePointViewModelTest {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     when(orderRouteUseCase.closeRoutePoint(any())).thenReturn(Completable.complete());
-    movingToClientViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
     when(routePoint.getRoutePointState()).thenReturn(RoutePointState.PROCESSED);
 
     // Действие:
     publishSubject.onNext(Collections.singletonList(routePoint));
-    movingToClientViewModel.closeRoutePoint();
+    viewModel.closeRoutePoint();
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(new NextRoutePointViewStatePending(null));
@@ -554,14 +516,14 @@ public class NextRoutePointViewModelTest {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     when(orderRouteUseCase.closeRoutePoint(any())).thenReturn(Completable.complete());
-    movingToClientViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
     when(routePoint.getRoutePointState()).thenReturn(RoutePointState.PROCESSED);
     when(routePoint1.getRoutePointState()).thenReturn(RoutePointState.PROCESSED);
     when(routePoint2.getRoutePointState()).thenReturn(RoutePointState.PROCESSED);
 
     // Действие:
     publishSubject.onNext(Arrays.asList(routePoint, routePoint1, routePoint2));
-    movingToClientViewModel.closeRoutePoint();
+    viewModel.closeRoutePoint();
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(new NextRoutePointViewStatePending(null));
@@ -582,11 +544,11 @@ public class NextRoutePointViewModelTest {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     when(routePoint.getRoutePointState()).thenReturn(RoutePointState.ACTIVE);
-    movingToClientViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
     publishSubject.onNext(Arrays.asList(routePoint, routePoint1, routePoint2));
-    movingToClientViewModel.completeTheOrder();
+    viewModel.completeTheOrder();
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(new NextRoutePointViewStatePending(null));
@@ -608,12 +570,12 @@ public class NextRoutePointViewModelTest {
   public void setPendingViewStateWithNoRouteTrueViewStateToLiveDataForCompleteTheOrder() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    movingToClientViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
     when(routePoint.getRoutePointState()).thenReturn(RoutePointState.PROCESSED);
 
     // Действие:
     publishSubject.onNext(Collections.singletonList(routePoint));
-    movingToClientViewModel.completeTheOrder();
+    viewModel.completeTheOrder();
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(new NextRoutePointViewStatePending(null));
@@ -631,14 +593,14 @@ public class NextRoutePointViewModelTest {
   public void setPendingViewStateWithNoRouteFalseViewStateToLiveDataForCompleteTheOrder() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    movingToClientViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
     when(routePoint.getRoutePointState()).thenReturn(RoutePointState.PROCESSED);
     when(routePoint1.getRoutePointState()).thenReturn(RoutePointState.PROCESSED);
     when(routePoint2.getRoutePointState()).thenReturn(RoutePointState.PROCESSED);
 
     // Действие:
     publishSubject.onNext(Arrays.asList(routePoint, routePoint1, routePoint2));
-    movingToClientViewModel.completeTheOrder();
+    viewModel.completeTheOrder();
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(new NextRoutePointViewStatePending(null));
@@ -658,11 +620,11 @@ public class NextRoutePointViewModelTest {
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     when(orderRouteUseCase.completeTheOrder()).thenReturn(Completable.error(Exception::new));
     when(routePoint.getRoutePointState()).thenReturn(RoutePointState.ACTIVE);
-    movingToClientViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
     publishSubject.onNext(Arrays.asList(routePoint, routePoint1, routePoint2));
-    movingToClientViewModel.completeTheOrder();
+    viewModel.completeTheOrder();
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(new NextRoutePointViewStatePending(null));
@@ -688,12 +650,12 @@ public class NextRoutePointViewModelTest {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     when(orderRouteUseCase.completeTheOrder()).thenReturn(Completable.error(Exception::new));
-    movingToClientViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
     when(routePoint.getRoutePointState()).thenReturn(RoutePointState.PROCESSED);
 
     // Действие:
     publishSubject.onNext(Collections.singletonList(routePoint));
-    movingToClientViewModel.completeTheOrder();
+    viewModel.completeTheOrder();
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(new NextRoutePointViewStatePending(null));
@@ -713,14 +675,14 @@ public class NextRoutePointViewModelTest {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     when(orderRouteUseCase.completeTheOrder()).thenReturn(Completable.error(Exception::new));
-    movingToClientViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
     when(routePoint.getRoutePointState()).thenReturn(RoutePointState.PROCESSED);
     when(routePoint1.getRoutePointState()).thenReturn(RoutePointState.PROCESSED);
     when(routePoint2.getRoutePointState()).thenReturn(RoutePointState.PROCESSED);
 
     // Действие:
     publishSubject.onNext(Arrays.asList(routePoint, routePoint1, routePoint2));
-    movingToClientViewModel.completeTheOrder();
+    viewModel.completeTheOrder();
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(new NextRoutePointViewStatePending(null));
@@ -741,11 +703,11 @@ public class NextRoutePointViewModelTest {
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     when(orderRouteUseCase.completeTheOrder()).thenReturn(Completable.complete());
     when(routePoint.getRoutePointState()).thenReturn(RoutePointState.ACTIVE);
-    movingToClientViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
     publishSubject.onNext(Arrays.asList(routePoint, routePoint1, routePoint2));
-    movingToClientViewModel.completeTheOrder();
+    viewModel.completeTheOrder();
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(new NextRoutePointViewStatePending(null));
@@ -768,12 +730,12 @@ public class NextRoutePointViewModelTest {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     when(orderRouteUseCase.completeTheOrder()).thenReturn(Completable.complete());
-    movingToClientViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
     when(routePoint.getRoutePointState()).thenReturn(RoutePointState.PROCESSED);
 
     // Действие:
     publishSubject.onNext(Collections.singletonList(routePoint));
-    movingToClientViewModel.completeTheOrder();
+    viewModel.completeTheOrder();
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(new NextRoutePointViewStatePending(null));
@@ -792,14 +754,14 @@ public class NextRoutePointViewModelTest {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     when(orderRouteUseCase.completeTheOrder()).thenReturn(Completable.complete());
-    movingToClientViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
     when(routePoint.getRoutePointState()).thenReturn(RoutePointState.PROCESSED);
     when(routePoint1.getRoutePointState()).thenReturn(RoutePointState.PROCESSED);
     when(routePoint2.getRoutePointState()).thenReturn(RoutePointState.PROCESSED);
 
     // Действие:
     publishSubject.onNext(Arrays.asList(routePoint, routePoint1, routePoint2));
-    movingToClientViewModel.completeTheOrder();
+    viewModel.completeTheOrder();
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(new NextRoutePointViewStatePending(null));
@@ -808,5 +770,125 @@ public class NextRoutePointViewModelTest {
         new NextRoutePointViewStateNoRoute(false)
     ));
     verifyNoMoreInteractions(viewStateObserver);
+  }
+
+  /* Тестируем навигацию. */
+
+  /**
+   * Должен вернуть "перейти к ошибке данных сервера".
+   */
+  @Test
+  public void setNavigateToServerDataError() {
+    // Дано:
+    viewModel.getNavigationLiveData().observeForever(navigateObserver);
+
+    // Действие:
+    publishSubject.onError(new Exception());
+
+    // Результат:
+    verify(navigateObserver, only()).onChanged(CommonNavigate.SERVER_DATA_ERROR);
+  }
+
+  /**
+   * Не должен никуда ходить при закрытии точки маршрута.
+   */
+  @Test
+  public void doNotTouchNavigationObserverForCloseRoutePoint() {
+    // Дано:
+    when(routePoint.getRoutePointState()).thenReturn(RoutePointState.ACTIVE);
+    viewModel.getNavigationLiveData().observeForever(navigateObserver);
+
+    // Действие:
+    publishSubject.onNext(Arrays.asList(routePoint, routePoint1, routePoint2));
+    viewModel.closeRoutePoint();
+
+    // Результат:
+    verifyZeroInteractions(navigateObserver);
+  }
+
+  /**
+   * Должен вернуть перейти к ошибке сети при закрытии точки маршрута.
+   */
+  @Test
+  public void navigateToNoConnectionForCloseRoutePointNoNetworkError() {
+    // Дано:
+    when(routePoint.getRoutePointState()).thenReturn(RoutePointState.ACTIVE);
+    when(orderRouteUseCase.closeRoutePoint(routePoint))
+        .thenReturn(Completable.error(new IllegalStateException()));
+    viewModel.getNavigationLiveData().observeForever(navigateObserver);
+
+    // Действие:
+    publishSubject.onNext(Arrays.asList(routePoint, routePoint1, routePoint2));
+    viewModel.closeRoutePoint();
+
+    // Результат:
+    verify(navigateObserver, only()).onChanged(CommonNavigate.NO_CONNECTION);
+  }
+
+  /**
+   * Не должен никуда ходить при успешном закрытии точки маршрута.
+   */
+  @Test
+  public void doNotTouchNavigationObserverForCloseRoutePointSuccess() {
+    // Дано:
+    when(routePoint.getRoutePointState()).thenReturn(RoutePointState.ACTIVE);
+    when(orderRouteUseCase.closeRoutePoint(routePoint)).thenReturn(Completable.complete());
+    viewModel.getNavigationLiveData().observeForever(navigateObserver);
+
+    // Действие:
+    publishSubject.onNext(Arrays.asList(routePoint, routePoint1, routePoint2));
+    viewModel.closeRoutePoint();
+
+    // Результат:
+    verifyZeroInteractions(navigateObserver);
+  }
+
+  /**
+   * Не должен никуда ходить при завершении заказа.
+   */
+  @Test
+  public void doNotTouchNavigationObserverForCompleteOrder() {
+    // Дано:
+    viewModel.getNavigationLiveData().observeForever(navigateObserver);
+
+    // Действие:
+    publishSubject.onNext(Arrays.asList(routePoint, routePoint1, routePoint2));
+    viewModel.completeTheOrder();
+
+    // Результат:
+    verifyZeroInteractions(navigateObserver);
+  }
+
+  /**
+   * Должен вернуть перейти к ошибке сети при завершении заказа.
+   */
+  @Test
+  public void navigateToNoConnectionForCompleteOrderNoNetworkError() {
+    // Дано:
+    when(orderRouteUseCase.completeTheOrder())
+        .thenReturn(Completable.error(new IllegalStateException()));
+    viewModel.getNavigationLiveData().observeForever(navigateObserver);
+
+    // Действие:
+    viewModel.completeTheOrder();
+
+    // Результат:
+    verify(navigateObserver, only()).onChanged(CommonNavigate.NO_CONNECTION);
+  }
+
+  /**
+   * Не должен никуда ходить при успешном завершении заказа.
+   */
+  @Test
+  public void doNotTouchNavigationObserverForCompleteOrderSuccess() {
+    // Дано:
+    when(orderRouteUseCase.completeTheOrder()).thenReturn(Completable.complete());
+    viewModel.getNavigationLiveData().observeForever(navigateObserver);
+
+    // Действие:
+    viewModel.completeTheOrder();
+
+    // Результат:
+    verifyZeroInteractions(navigateObserver);
   }
 }

@@ -13,14 +13,4 @@ public interface OnlineSwitchViewModel extends ViewModel<OnlineSwitchViewActions
    * @param online - онлайн или не онлайн?
    */
   void setNewState(boolean online);
-
-  /**
-   * Сигнализирует о "потреблении" ошибки.
-   */
-  void consumeServerError();
-
-  /**
-   * Запрашивает обновление статусов с сервера.
-   */
-  void refreshStates();
 }

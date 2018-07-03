@@ -4,38 +4,37 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
-import com.fasten.executor_driver.presentation.SingleLiveEvent;
 import com.fasten.executor_driver.presentation.ViewState;
 import io.reactivex.Completable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.internal.disposables.EmptyDisposable;
-import io.reactivex.schedulers.Schedulers;
 import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
 
 public class CallToOperatorViewModelImpl extends ViewModel implements CallToOperatorViewModel {
 
   @NonNull
-  private final SingleLiveEvent<String> navigateLiveData;
+  private final MutableLiveData<ViewState<CallToOperatorViewActions>> viewStateLiveData;
   @NonNull
   private Disposable disposable = EmptyDisposable.INSTANCE;
 
   @Inject
   public CallToOperatorViewModelImpl() {
-    navigateLiveData = new SingleLiveEvent<>();
+    viewStateLiveData = new MutableLiveData<>();
+    viewStateLiveData.postValue(new CallToOperatorViewStateNotCalling());
   }
 
   @NonNull
   @Override
   public LiveData<ViewState<CallToOperatorViewActions>> getViewStateLiveData() {
-    return new MutableLiveData<>();
+    return viewStateLiveData;
   }
 
   @NonNull
   @Override
   public LiveData<String> getNavigationLiveData() {
-    return navigateLiveData;
+    return new MutableLiveData<>();
   }
 
   @Override
@@ -43,20 +42,22 @@ public class CallToOperatorViewModelImpl extends ViewModel implements CallToOper
     if (!disposable.isDisposed()) {
       return;
     }
+    viewStateLiveData.postValue(new CallToOperatorViewStateCalling());
     disposable = Completable.complete()
-        .delay(10, TimeUnit.SECONDS, Schedulers.io())
+        .delay(10, TimeUnit.SECONDS)
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(
-            () -> navigateLiveData.postValue(CallToOperatorNavigate.FINISHED),
-            Throwable::printStackTrace
+            () -> viewStateLiveData.postValue(new CallToOperatorViewStateNotCalling()),
+            throwable -> {
+              throwable.printStackTrace();
+              viewStateLiveData.postValue(new CallToOperatorViewStateNotCalling());
+            }
         );
   }
 
   @Override
   protected void onCleared() {
     super.onCleared();
-    if (!disposable.isDisposed()) {
-      disposable.dispose();
-    }
+    disposable.dispose();
   }
 }

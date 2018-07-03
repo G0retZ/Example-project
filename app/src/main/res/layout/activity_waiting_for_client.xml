@@ -1,17 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<android.support.constraint.ConstraintLayout
   xmlns:android="http://schemas.android.com/apk/res/android"
   xmlns:app="http://schemas.android.com/apk/res-auto"
   xmlns:tools="http://schemas.android.com/tools"
   android:layout_width="match_parent"
   android:layout_height="match_parent"
-  android:keepScreenOn="true"
-  android:orientation="vertical">
+  android:animateLayoutChanges="true"
+  android:keepScreenOn="true">
   <android.support.v7.widget.Toolbar
     android:id="@+id/appBar"
     style="@style/AppTheme.AppBar"
-    android:layout_width="match_parent"
+    android:layout_width="0dp"
     android:layout_height="?android:attr/actionBarSize"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent"
     app:navigationIcon="@drawable/ic_menu_24dp">
     <LinearLayout
       android:layout_width="match_parent"
@@ -25,23 +28,60 @@
         android:text="@android:string/cancel"/>
     </LinearLayout>
   </android.support.v7.widget.Toolbar>
-  <FrameLayout
-    android:id="@+id/callingMessage"
-    android:layout_width="match_parent"
+  <TextView
+    android:id="@+id/stateMessage"
+    style="@style/TextAppearance.AppCompat.Subhead.Inverse"
+    android:layout_width="0dp"
     android:layout_height="wrap_content"
-    android:animateLayoutChanges="true">
-    <TextView
-      style="@style/TextAppearance.AppCompat.Subhead.Inverse"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:padding="16dp"
-      android:background="@color/colorAccentGreen"
-      android:text="@string/wait_for_client"/>
-  </FrameLayout>
+    android:padding="16dp"
+    android:background="@color/colorAccentGreen"
+    android:text="@string/wait_for_client"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@id/appBar"/>
+  <fragment
+    android:id="@+id/fragment_call_to_client"
+    android:layout_width="0dp"
+    android:layout_height="wrap_content"
+    android:name="com.fasten.executor_driver.view.CallToClientFragment"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@id/appBar"
+    tools:layout="@layout/fragment_call_to_client"/>
+  <fragment
+    android:id="@+id/fragment_call_to_operator"
+    android:layout_width="0dp"
+    android:layout_height="wrap_content"
+    android:name="com.fasten.executor_driver.view.CallToOperatorFragment"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@id/appBar"
+    tools:layout="@layout/fragment_call_to_operator"/>
+  <fragment
+    android:id="@+id/fragment_server_connection"
+    android:layout_width="0dp"
+    android:layout_height="wrap_content"
+    android:name="com.fasten.executor_driver.view.ServerConnectionFragment"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@id/appBar"
+    tools:layout="@layout/fragment_server_connection"/>
+  <android.support.constraint.Barrier
+    android:id="@+id/barrier"
+    android:layout_width="0dp"
+    android:layout_height="wrap_content"
+    app:barrierDirection="bottom"
+    app:constraint_referenced_ids="stateMessage,fragment_call_to_client,fragment_call_to_operator,fragment_server_connection"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"/>
   <fragment
     android:id="@+id/fragment_waiting_for_client"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_width="0dp"
+    android:layout_height="0dp"
     android:name="com.fasten.executor_driver.view.WaitingForClientFragment"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@id/barrier"
     tools:layout="@layout/fragment_waiting_for_client"/>
-</LinearLayout>
+</android.support.constraint.ConstraintLayout>

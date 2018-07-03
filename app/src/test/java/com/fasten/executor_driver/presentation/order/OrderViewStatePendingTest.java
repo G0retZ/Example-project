@@ -20,7 +20,7 @@ public class OrderViewStatePendingTest {
   private OrderViewStatePending viewState;
 
   @Mock
-  private OrderViewActions orderViewActions;
+  private OrderViewActions viewActions;
 
   @Mock
   private ViewState<OrderViewActions> parentViewState;
@@ -35,14 +35,12 @@ public class OrderViewStatePendingTest {
   @Test
   public void testActions() {
     // Действие:
-    viewState.apply(orderViewActions);
+    viewState.apply(viewActions);
 
     // Результат:
-    verify(orderViewActions).showOrderPending(true);
-    verify(orderViewActions).showOrderAvailabilityError(false);
-    verify(orderViewActions).showNetworkErrorMessage(false);
-    verifyNoMoreInteractions(orderViewActions);
-    verify(parentViewState, only()).apply(orderViewActions);
+    verify(viewActions).showOrderPending(true);
+    verifyNoMoreInteractions(viewActions);
+    verify(parentViewState, only()).apply(viewActions);
   }
 
   @Test
@@ -51,13 +49,11 @@ public class OrderViewStatePendingTest {
     viewState = new OrderViewStatePending(null);
 
     // Действие:
-    viewState.apply(orderViewActions);
+    viewState.apply(viewActions);
 
     // Результат:
-    verify(orderViewActions).showOrderPending(true);
-    verify(orderViewActions).showOrderAvailabilityError(false);
-    verify(orderViewActions).showNetworkErrorMessage(false);
-    verifyNoMoreInteractions(orderViewActions);
+    verify(viewActions).showOrderPending(true);
+    verifyNoMoreInteractions(viewActions);
     verifyZeroInteractions(parentViewState);
   }
 

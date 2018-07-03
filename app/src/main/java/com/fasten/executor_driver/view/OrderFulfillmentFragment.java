@@ -102,14 +102,29 @@ public class OrderFulfillmentFragment extends BaseFragment implements OrderCostV
         viewState.apply(this);
       }
     });
+    orderCostViewModel.getNavigationLiveData().observe(this, destination -> {
+      if (destination != null) {
+        navigate(destination);
+      }
+    });
     orderTimeViewModel.getViewStateLiveData().observe(this, viewState -> {
       if (viewState != null) {
         viewState.apply(this);
       }
     });
+    orderTimeViewModel.getNavigationLiveData().observe(this, destination -> {
+      if (destination != null) {
+        navigate(destination);
+      }
+    });
     nextRoutePointViewModel.getViewStateLiveData().observe(this, viewState -> {
       if (viewState != null) {
         viewState.apply(this);
+      }
+    });
+    nextRoutePointViewModel.getNavigationLiveData().observe(this, destination -> {
+      if (destination != null) {
+        navigate(destination);
       }
     });
   }
@@ -184,18 +199,6 @@ public class OrderFulfillmentFragment extends BaseFragment implements OrderCostV
   }
 
   @Override
-  public void showNextRoutePointNetworkErrorMessage(boolean show) {
-    if (show) {
-      new Builder(context)
-          .setTitle(R.string.error)
-          .setMessage(R.string.no_network_connection)
-          .setPositiveButton(getString(android.R.string.ok), null)
-          .create()
-          .show();
-    }
-  }
-
-  @Override
   public void setOrderCostText(int currentCost) {
     if (!getResources().getBoolean(R.bool.show_cents)) {
       currentCost = Math.round(currentCost / 100f);
@@ -206,35 +209,11 @@ public class OrderFulfillmentFragment extends BaseFragment implements OrderCostV
   }
 
   @Override
-  public void showOrderCostNetworkErrorMessage(boolean show) {
-    if (show) {
-      new Builder(context)
-          .setTitle(R.string.error)
-          .setMessage(R.string.no_network_connection)
-          .setPositiveButton(getString(android.R.string.ok), null)
-          .create()
-          .show();
-    }
-  }
-
-  @Override
   public void setOrderTimeText(long currentSeconds) {
     totalTimeText.setText(
         DateTimeFormat.forPattern("HH:mm:ss").print(
             LocalTime.fromMillisOfDay(currentSeconds * 1000)
         )
     );
-  }
-
-  @Override
-  public void showOrderTimeNetworkErrorMessage(boolean show) {
-    if (show) {
-      new Builder(context)
-          .setTitle(R.string.error)
-          .setMessage(R.string.no_network_connection)
-          .setPositiveButton(getString(android.R.string.ok), null)
-          .create()
-          .show();
-    }
   }
 }

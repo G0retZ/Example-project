@@ -38,8 +38,8 @@ public class OnlineButtonViewModelImpl extends ViewModel implements OnlineButton
   public OnlineButtonViewModelImpl(@NonNull VehiclesAndOptionsUseCase vehiclesAndOptionsUseCase) {
     this.vehiclesAndOptionsUseCase = vehiclesAndOptionsUseCase;
     viewStateLiveData = new MutableLiveData<>();
-    viewStateLiveData.postValue(new OnlineButtonViewStateReady());
     navigateLiveData = new SingleLiveEvent<>();
+    viewStateLiveData.postValue(new OnlineButtonViewStateReady());
   }
 
   @NonNull
@@ -96,8 +96,8 @@ public class OnlineButtonViewModelImpl extends ViewModel implements OnlineButton
   }
 
   private void holdButton(int duration) {
-    timerDisposable = Completable.complete()
-        .delay(duration, TimeUnit.SECONDS, Schedulers.io())
+    timerDisposable = Completable.timer(duration, TimeUnit.SECONDS)
+        .observeOn(AndroidSchedulers.mainThread())
         .subscribe(() -> {
           if (viewStateLiveData.getValue() instanceof OnlineButtonViewStateHold) {
             viewStateLiveData.postValue(new OnlineButtonViewStateReady());

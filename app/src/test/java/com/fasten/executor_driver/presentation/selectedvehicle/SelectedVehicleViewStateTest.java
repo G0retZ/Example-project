@@ -17,7 +17,7 @@ public class SelectedVehicleViewStateTest {
   private SelectedVehicleViewState viewState;
 
   @Mock
-  private SelectedVehicleViewActions codeViewActions;
+  private SelectedVehicleViewActions viewActions;
 
   @Before
   public void setUp() {
@@ -27,23 +27,23 @@ public class SelectedVehicleViewStateTest {
   @Test
   public void testEmptyNameActions() {
     // Действие:
-    new SelectedVehicleViewState("").apply(codeViewActions);
+    new SelectedVehicleViewState("").apply(viewActions);
 
     // Результат:
-    verify(codeViewActions).setVehicleName("--");
-    verify(codeViewActions).enableChangeButton(false);
-    verifyNoMoreInteractions(codeViewActions);
+    verify(viewActions).setVehicleName("--");
+    verify(viewActions).enableChangeButton(false);
+    verifyNoMoreInteractions(viewActions);
   }
 
   @Test
   public void testNameActions() {
     // Действие:
-    new SelectedVehicleViewState("name").apply(codeViewActions);
+    new SelectedVehicleViewState("name").apply(viewActions);
 
     // Результат:
-    verify(codeViewActions).setVehicleName("name");
-    verify(codeViewActions).enableChangeButton(true);
-    verifyNoMoreInteractions(codeViewActions);
+    verify(viewActions).setVehicleName("name");
+    verify(viewActions).enableChangeButton(true);
+    verifyNoMoreInteractions(viewActions);
   }
 
   @Test

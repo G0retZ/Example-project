@@ -25,7 +25,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class ExecutorBalanceUseCaseTest {
 
-  private ExecutorBalanceUseCase executorBalanceUseCase;
+  private ExecutorBalanceUseCase useCase;
 
   @Mock
   private ExecutorBalanceGateway gateway;
@@ -44,7 +44,7 @@ public class ExecutorBalanceUseCaseTest {
   public void setUp() {
     when(gateway.loadExecutorBalance(anyString())).thenReturn(Flowable.never());
     when(loginReceiver.get()).thenReturn(Observable.never());
-    executorBalanceUseCase = new ExecutorBalanceUseCaseImpl(gateway, loginReceiver);
+    useCase = new ExecutorBalanceUseCaseImpl(gateway, loginReceiver);
   }
 
   /* Проверяем работу с публикатором логина */
@@ -55,9 +55,9 @@ public class ExecutorBalanceUseCaseTest {
   @Test
   public void doNotTouchLoginPublisherWithoutReset() {
     // Действие:
-    executorBalanceUseCase.getExecutorBalance(false).test();
-    executorBalanceUseCase.getExecutorBalance(false).test();
-    executorBalanceUseCase.getExecutorBalance(false).test();
+    useCase.getExecutorBalance(false).test();
+    useCase.getExecutorBalance(false).test();
+    useCase.getExecutorBalance(false).test();
 
     // Результат:
     verifyZeroInteractions(loginReceiver);
@@ -69,9 +69,9 @@ public class ExecutorBalanceUseCaseTest {
   @Test
   public void askLoginPublisherForLogin() {
     // Действие:
-    executorBalanceUseCase.getExecutorBalance(true).test();
-    executorBalanceUseCase.getExecutorBalance(true).test();
-    executorBalanceUseCase.getExecutorBalance(true).test();
+    useCase.getExecutorBalance(true).test();
+    useCase.getExecutorBalance(true).test();
+    useCase.getExecutorBalance(true).test();
 
     // Результат:
     verify(loginReceiver, times(3)).get();
@@ -92,7 +92,7 @@ public class ExecutorBalanceUseCaseTest {
     ));
 
     // Действие:
-    executorBalanceUseCase.getExecutorBalance(true).test();
+    useCase.getExecutorBalance(true).test();
 
     // Результат:
     inOrder.verify(gateway).loadExecutorBalance("1234567890");
@@ -117,7 +117,7 @@ public class ExecutorBalanceUseCaseTest {
         .thenReturn(Flowable.<ExecutorBalance>never().doOnCancel(action));
 
     // Действие:
-    executorBalanceUseCase.getExecutorBalance(true).test();
+    useCase.getExecutorBalance(true).test();
 
     // Результат:
     verify(action, times(3)).run();
@@ -129,7 +129,7 @@ public class ExecutorBalanceUseCaseTest {
   @Test
   public void doNotAskGatewayForExecutorBalanceIfSocketError() {
     // Действие:
-    executorBalanceUseCase.getExecutorBalance(true).test();
+    useCase.getExecutorBalance(true).test();
 
     // Результат:
     verifyZeroInteractions(gateway);
@@ -144,7 +144,7 @@ public class ExecutorBalanceUseCaseTest {
     when(loginReceiver.get()).thenReturn(Observable.error(NoNetworkException::new));
 
     // Действие:
-    executorBalanceUseCase.getExecutorBalance(true).test();
+    useCase.getExecutorBalance(true).test();
 
     // Результат:
     verifyZeroInteractions(gateway);
@@ -156,9 +156,9 @@ public class ExecutorBalanceUseCaseTest {
   @Test
   public void doNotTouchGatewayWithoutReset() {
     // Действие:
-    executorBalanceUseCase.getExecutorBalance(false).test();
-    executorBalanceUseCase.getExecutorBalance(false).test();
-    executorBalanceUseCase.getExecutorBalance(false).test();
+    useCase.getExecutorBalance(false).test();
+    useCase.getExecutorBalance(false).test();
+    useCase.getExecutorBalance(false).test();
 
     // Результат:
     verifyZeroInteractions(gateway);
@@ -179,7 +179,7 @@ public class ExecutorBalanceUseCaseTest {
 
     // Действие:
     TestSubscriber<ExecutorBalance> testSubscriber =
-        executorBalanceUseCase.getExecutorBalance(true).test();
+        useCase.getExecutorBalance(true).test();
 
     // Результат:
     testSubscriber.assertValues(executorBalance, executorBalance2, executorBalance1);
@@ -196,7 +196,7 @@ public class ExecutorBalanceUseCaseTest {
 
     // Действие:
     TestSubscriber<ExecutorBalance> testSubscriber =
-        executorBalanceUseCase.getExecutorBalance(true).test();
+        useCase.getExecutorBalance(true).test();
 
     // Результат:
     testSubscriber.assertError(ConnectException.class);
@@ -215,7 +215,7 @@ public class ExecutorBalanceUseCaseTest {
 
     // Действие:
     TestSubscriber<ExecutorBalance> testSubscriber =
-        executorBalanceUseCase.getExecutorBalance(true).test();
+        useCase.getExecutorBalance(true).test();
 
     // Результат:
     testSubscriber.assertError(ConnectException.class);
@@ -233,7 +233,7 @@ public class ExecutorBalanceUseCaseTest {
 
     // Действие:
     TestSubscriber<ExecutorBalance> testSubscriber =
-        executorBalanceUseCase.getExecutorBalance(true).test();
+        useCase.getExecutorBalance(true).test();
 
     // Результат:
     testSubscriber.assertComplete();
@@ -248,7 +248,7 @@ public class ExecutorBalanceUseCaseTest {
   public void answerCompleteWithoutReset() {
     // Действие:
     TestSubscriber<ExecutorBalance> testSubscriber =
-        executorBalanceUseCase.getExecutorBalance(false).test();
+        useCase.getExecutorBalance(false).test();
 
     // Результат:
     testSubscriber.assertComplete();

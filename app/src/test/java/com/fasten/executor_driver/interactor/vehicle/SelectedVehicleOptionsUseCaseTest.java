@@ -27,7 +27,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class SelectedVehicleOptionsUseCaseTest {
 
-  private VehicleOptionsUseCase vehicleOptionsUseCase;
+  private VehicleOptionsUseCase useCase;
 
   @Mock
   private VehicleOptionsGateway gateway;
@@ -37,7 +37,7 @@ public class SelectedVehicleOptionsUseCaseTest {
 
   @Before
   public void setUp() {
-    vehicleOptionsUseCase = new SelectedVehicleOptionsUseCaseImpl(gateway,
+    useCase = new SelectedVehicleOptionsUseCaseImpl(gateway,
         selectedVehicleOptionsGateway);
     when(gateway.sendVehicleOptions(any(Vehicle.class), anyList())).thenReturn(Completable.never());
     when(selectedVehicleOptionsGateway.getVehicleOptions()).thenReturn(Single.never());
@@ -52,7 +52,7 @@ public class SelectedVehicleOptionsUseCaseTest {
   @Test
   public void askSelectedVehicleOptionsGatewayForVehicleOptions() {
     // Действие:
-    vehicleOptionsUseCase.getVehicleOptions().test();
+    useCase.getVehicleOptions().test();
 
     // Результат:
     verify(selectedVehicleOptionsGateway, only()).getVehicleOptions();
@@ -64,7 +64,7 @@ public class SelectedVehicleOptionsUseCaseTest {
   @Test
   public void askSelectedVehicleOptionsGatewayForExecutorOptions() {
     // Действие:
-    vehicleOptionsUseCase.getDriverOptions().test();
+    useCase.getDriverOptions().test();
 
     // Результат:
     verify(selectedVehicleOptionsGateway, only()).getExecutorOptions();
@@ -76,7 +76,7 @@ public class SelectedVehicleOptionsUseCaseTest {
   @Test
   public void doNotTouchSelectedVehicleOptionsGateway() {
     // Действие:
-    vehicleOptionsUseCase.setSelectedVehicleAndOptions(
+    useCase.setSelectedVehicleAndOptions(
         new ArrayList<>(Arrays.asList(
             new OptionNumeric(1, "name1", "desc1", true, -5, -18, 0),
             new OptionBoolean(2, "name2", "desc2", true, false)
@@ -104,7 +104,7 @@ public class SelectedVehicleOptionsUseCaseTest {
     )));
 
     // Действие:
-    TestObserver<List<Option>> testObserver = vehicleOptionsUseCase.getVehicleOptions().test();
+    TestObserver<List<Option>> testObserver = useCase.getVehicleOptions().test();
 
     // Результат:
     testObserver.assertValues(
@@ -131,7 +131,7 @@ public class SelectedVehicleOptionsUseCaseTest {
 
     // Действие
     TestObserver<List<Option>> testObserver =
-        vehicleOptionsUseCase.getVehicleOptions().test();
+        useCase.getVehicleOptions().test();
 
     // Результат:
     testObserver.assertValues(new ArrayList<>());
@@ -156,7 +156,7 @@ public class SelectedVehicleOptionsUseCaseTest {
     ));
 
     // Действие и Результат:
-    vehicleOptionsUseCase.getDriverOptions().test().assertValues(
+    useCase.getDriverOptions().test().assertValues(
         new ArrayList<>(Arrays.asList(
             new OptionNumeric(1, "name1", "desc1", true, -5, -18, 0),
             new OptionBoolean(2, "name2", "desc2", true, false)
@@ -181,7 +181,7 @@ public class SelectedVehicleOptionsUseCaseTest {
     ));
 
     // Действие
-    TestObserver<List<Option>> testObserver = vehicleOptionsUseCase.getDriverOptions().test();
+    TestObserver<List<Option>> testObserver = useCase.getDriverOptions().test();
 
     // Результат:
     testObserver.assertValues(
@@ -197,7 +197,7 @@ public class SelectedVehicleOptionsUseCaseTest {
   @Test
   public void askGatewayToSetVehicleAndDriverOptions() {
     // Действие:
-    vehicleOptionsUseCase.setSelectedVehicleAndOptions(
+    useCase.setSelectedVehicleAndOptions(
         new ArrayList<>(Arrays.asList(
             new OptionNumeric(0, "name0", "desc0", true, 40, 0, 120),
             new OptionNumeric(1, "name1", "desc1", true, -50, 20, 30),
@@ -233,7 +233,7 @@ public class SelectedVehicleOptionsUseCaseTest {
         .thenReturn(Completable.error(NoNetworkException::new));
 
     // Действие:
-    TestObserver<Void> testObserver = vehicleOptionsUseCase
+    TestObserver<Void> testObserver = useCase
         .setSelectedVehicleAndOptions(new ArrayList<>(), new ArrayList<>()).test();
 
     // Результат:
@@ -250,7 +250,7 @@ public class SelectedVehicleOptionsUseCaseTest {
         .thenReturn(Completable.complete());
 
     // Действие:
-    TestObserver<Void> testObserver = vehicleOptionsUseCase
+    TestObserver<Void> testObserver = useCase
         .setSelectedVehicleAndOptions(new ArrayList<>(), new ArrayList<>()).test();
 
     // Результат:

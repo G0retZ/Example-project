@@ -6,6 +6,7 @@ import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
 import com.fasten.executor_driver.gateway.DataMappingException;
 import com.fasten.executor_driver.interactor.CurrentCostPollingUseCase;
+import com.fasten.executor_driver.presentation.CommonNavigate;
 import com.fasten.executor_driver.presentation.SingleLiveEvent;
 import com.fasten.executor_driver.presentation.ViewState;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -63,7 +64,7 @@ public class CurrentCostPollingViewModelImpl extends ViewModel implements
             throwable -> {
               throwable.printStackTrace();
               if (throwable instanceof DataMappingException) {
-                navigateLiveData.postValue(CurrentCostPollingStateNavigate.SERVER_DATA_ERROR);
+                navigateLiveData.postValue(CommonNavigate.SERVER_DATA_ERROR);
               }
             });
   }

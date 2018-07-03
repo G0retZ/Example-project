@@ -3,7 +3,6 @@ package com.fasten.executor_driver.view;
 import android.animation.Animator;
 import android.animation.Animator.AnimatorListener;
 import android.animation.ObjectAnimator;
-import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -103,6 +102,11 @@ public class DriverOrderConfirmationFragment extends BaseFragment implements
     orderViewModel.getViewStateLiveData().observe(this, viewState -> {
       if (viewState != null) {
         viewState.apply(this);
+      }
+    });
+    orderViewModel.getNavigationLiveData().observe(this, destination -> {
+      if (destination != null) {
+        navigate(destination);
       }
     });
     orderConfirmationViewModel.getViewStateLiveData().observe(this, viewState -> {
@@ -218,30 +222,6 @@ public class DriverOrderConfirmationFragment extends BaseFragment implements
       commentTitleText.setVisibility(View.VISIBLE);
       commentText.setVisibility(View.VISIBLE);
       commentText.setText(comment);
-    }
-  }
-
-  @Override
-  public void showOrderAvailabilityError(boolean show) {
-    if (show) {
-      new Builder(context)
-          .setTitle(R.string.error)
-          .setMessage(R.string.order_unavailable_for_accept)
-          .setPositiveButton(getString(android.R.string.ok), null)
-          .create()
-          .show();
-    }
-  }
-
-  @Override
-  public void showNetworkErrorMessage(boolean show) {
-    if (show) {
-      new Builder(context)
-          .setTitle(R.string.error)
-          .setMessage(R.string.no_network_connection)
-          .setPositiveButton(getString(android.R.string.ok), null)
-          .create()
-          .show();
     }
   }
 

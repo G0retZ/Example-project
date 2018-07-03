@@ -13,9 +13,9 @@ public interface MovingToClientViewActions {
   void showMovingToClientPending(boolean pending);
 
   /**
-   * Показать сообщение об ошибке сети.
+   * Задействовать кнопку звонка клиенту.
    *
-   * @param show - показать или нет?
+   * @param enable - задействовать или нет?
    */
-  void showNetworkErrorMessage(boolean show);
+  void enableMovingToClientCallButton(boolean enable);
 }

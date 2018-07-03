@@ -21,7 +21,7 @@ public class OnlineButtonViewStateErrorTest {
   private OnlineButtonViewStateError viewState;
 
   @Mock
-  private OnlineButtonViewActions codeViewActions;
+  private OnlineButtonViewActions viewActions;
 
   @Captor
   private ArgumentCaptor<Throwable> throwableCaptor;
@@ -34,12 +34,12 @@ public class OnlineButtonViewStateErrorTest {
   @Test
   public void testActions() {
     // Действие:
-    viewState.apply(codeViewActions);
+    viewState.apply(viewActions);
 
     // Результат:
-    verify(codeViewActions).showGoOnlineError(throwableCaptor.capture());
-    verify(codeViewActions).enableGoOnlineButton(false);
-    verifyNoMoreInteractions(codeViewActions);
+    verify(viewActions).showGoOnlineError(throwableCaptor.capture());
+    verify(viewActions).enableGoOnlineButton(false);
+    verifyNoMoreInteractions(viewActions);
     assertTrue(
         ThrowableUtils.throwableEquals(
             throwableCaptor.getValue(),
