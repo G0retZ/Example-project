@@ -97,7 +97,7 @@ class OrderItem {
   }
 
   public String getServiceName() {
-    return "";
+    return order.getServiceName();
   }
 
   public int getEstimatedPrice() {

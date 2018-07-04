@@ -55,6 +55,7 @@ public class OrderItemTest {
     when(order.getEstimatedRouteLength()).thenReturn(33239L);
     when(order.getEstimatedTime()).thenReturn(3324339L);
     when(order.getComment()).thenReturn("com");
+    when(order.getServiceName()).thenReturn("service");
     when(order.getEstimatedPriceText()).thenReturn("7000");
     when(order.getEstimatedPrice()).thenReturn(7000);
     when(order.getTimeout()).thenReturn(20_000L);
@@ -89,7 +90,7 @@ public class OrderItemTest {
     assertEquals(orderItem.getDistance(),
         String.format(Locale.getDefault(), "%.2f", 12.24f));
     assertEquals(orderItem.getOrderComment(), "com");
-    assertEquals(orderItem.getServiceName(), "");
+    assertEquals(orderItem.getServiceName(), "service");
     assertEquals(orderItem.getEstimatedPriceText(), "7000");
     assertEquals(orderItem.getEstimatedPrice(), 7000);
     assertEquals(orderItem.getRoutePointsCount(), 3);
@@ -122,7 +123,7 @@ public class OrderItemTest {
     assertEquals(orderItem.getDistance(),
         String.format(Locale.getDefault(), "%.2f", 12.24f));
     assertEquals(orderItem.getOrderComment(), "com");
-    assertEquals(orderItem.getServiceName(), "");
+    assertEquals(orderItem.getServiceName(), "service");
     assertEquals(orderItem.getEstimatedPriceText(), "7000");
     assertEquals(orderItem.getEstimatedPrice(), 7000);
     assertEquals(orderItem.getRoutePointsCount(), 3);
@@ -153,7 +154,7 @@ public class OrderItemTest {
     assertEquals(orderItem.getDistance(),
         String.format(Locale.getDefault(), "%.2f", 12.24f));
     assertEquals(orderItem.getOrderComment(), "com");
-    assertEquals(orderItem.getServiceName(), "");
+    assertEquals(orderItem.getServiceName(), "service");
     assertEquals(orderItem.getEstimatedPriceText(), "7000");
     assertEquals(orderItem.getEstimatedPrice(), 7000);
     assertEquals(orderItem.getRoutePointsCount(), 3);

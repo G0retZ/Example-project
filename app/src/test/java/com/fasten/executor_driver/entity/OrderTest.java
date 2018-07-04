@@ -34,7 +34,7 @@ public class OrderTest {
 
   @Before
   public void setUp() {
-    order = new Order(7, "com", 1200239, "7000", 7000, 7728_192_819L, 28_020,
+    order = new Order(7, "com", "service", 1200239, "7000", 7000, 7728_192_819L, 28_020,
         9400, 20, 600, 1234567890, 9876543210L);
     order.addRoutePoints(routePoint);
   }
@@ -43,6 +43,7 @@ public class OrderTest {
   public void testConstructor() {
     assertEquals(order.getId(), 7);
     assertEquals(order.getComment(), "com");
+    assertEquals(order.getServiceName(), "service");
     assertEquals(order.getDistance(), 1200239);
     assertEquals(order.getEstimatedPriceText(), "7000");
     assertEquals(order.getEstimatedPrice(), 7000);
