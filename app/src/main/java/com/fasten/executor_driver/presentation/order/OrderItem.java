@@ -66,8 +66,12 @@ class OrderItem {
         : (routePoint.getAddress() + "\n" + routePoint.getComment()).trim();
   }
 
-  public String getEstimatedPrice() {
-    return order.getEstimatedPrice().trim();
+  public int getEstimatedPrice() {
+    return order.getEstimatedPrice();
+  }
+
+  public String getEstimatedPriceText() {
+    return order.getEstimatedPriceText().trim();
   }
 
   public String getOrderOptionsRequired() {

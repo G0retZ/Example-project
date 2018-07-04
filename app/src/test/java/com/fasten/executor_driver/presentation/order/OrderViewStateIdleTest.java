@@ -40,7 +40,8 @@ public class OrderViewStateIdleTest {
     when(orderItem.getAddress()).thenReturn("address");
     when(orderItem.getOrderComment()).thenReturn("comm");
     when(orderItem.getSecondsToMeetClient()).thenReturn(654321);
-    when(orderItem.getEstimatedPrice()).thenReturn("1000");
+    when(orderItem.getEstimatedPriceText()).thenReturn("1000");
+    when(orderItem.getEstimatedPrice()).thenReturn(1000);
     when(orderItem.getOrderOptionsRequired()).thenReturn("1,2,3");
     when(orderItem.getProgressLeft()).thenReturn(new long[]{3, 5});
 

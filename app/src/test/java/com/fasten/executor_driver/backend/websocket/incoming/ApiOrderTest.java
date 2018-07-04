@@ -28,6 +28,7 @@ public class ApiOrderTest {
     ApiOrder apiOrder = new ApiOrder(
         432,
         "More than $3000",
+        3000,
         219078901,
         23400,
         7300,
@@ -43,6 +44,7 @@ public class ApiOrderTest {
     // Результат
     assertEquals(apiOrder.getId(), 432);
     assertEquals(apiOrder.getEstimatedAmountText(), "More than $3000");
+    assertEquals(apiOrder.getEstimatedAmount(), 3000);
     assertEquals(apiOrder.getEstimatedTime(), 219078901);
     assertEquals(apiOrder.getEstimatedRouteDistance(), 23400);
     assertEquals(apiOrder.getTotalAmount(), 7300);

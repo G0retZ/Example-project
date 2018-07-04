@@ -53,7 +53,8 @@ public class OrderItemTest {
     when(order.getConfirmationTime()).thenReturn(12384000L);
     when(order.getDistance()).thenReturn(12239L);
     when(order.getComment()).thenReturn("com");
-    when(order.getEstimatedPrice()).thenReturn("7000");
+    when(order.getEstimatedPriceText()).thenReturn("7000");
+    when(order.getEstimatedPrice()).thenReturn(7000);
     when(order.getTimeout()).thenReturn(20);
     when(order.getOptions()).thenReturn(new ArrayList<>(Arrays.asList(
         new OptionBoolean(0, "bool1", "bd", false, false),
@@ -83,7 +84,8 @@ public class OrderItemTest {
     assertEquals(orderItem.getDistance(),
         String.format(Locale.getDefault(), "%.2f", 12.24f));
     assertEquals(orderItem.getOrderComment(), "com");
-    assertEquals(orderItem.getEstimatedPrice(), "7000");
+    assertEquals(orderItem.getEstimatedPriceText(), "7000");
+    assertEquals(orderItem.getEstimatedPrice(), 7000);
     assertEquals(orderItem.getOrderOptionsRequired(), "bool2\nbool4\nnum1: 3\nnum2: 7");
     assertEquals(orderItem.getSecondsToMeetClient(), 352);
     assertEquals(orderItem.getSecondsToMeetClient(), 347);
@@ -107,7 +109,8 @@ public class OrderItemTest {
     assertEquals(orderItem.getDistance(),
         String.format(Locale.getDefault(), "%.2f", 12.24f));
     assertEquals(orderItem.getOrderComment(), "com");
-    assertEquals(orderItem.getEstimatedPrice(), "7000");
+    assertEquals(orderItem.getEstimatedPriceText(), "7000");
+    assertEquals(orderItem.getEstimatedPrice(), 7000);
     assertEquals(orderItem.getOrderOptionsRequired(), "bool2\nbool4\nnum1: 3\nnum2: 7");
     assertEquals(orderItem.getSecondsToMeetClient(), 352);
     assertEquals(orderItem.getSecondsToMeetClient(), 347);
@@ -129,7 +132,8 @@ public class OrderItemTest {
     assertEquals(orderItem.getDistance(),
         String.format(Locale.getDefault(), "%.2f", 12.24f));
     assertEquals(orderItem.getOrderComment(), "com");
-    assertEquals(orderItem.getEstimatedPrice(), "7000");
+    assertEquals(orderItem.getEstimatedPriceText(), "7000");
+    assertEquals(orderItem.getEstimatedPrice(), 7000);
     assertEquals(orderItem.getOrderOptionsRequired(), "bool2\nbool4\nnum1: 3\nnum2: 7");
     assertEquals(orderItem.getSecondsToMeetClient(), 352);
     assertEquals(orderItem.getSecondsToMeetClient(), 347);

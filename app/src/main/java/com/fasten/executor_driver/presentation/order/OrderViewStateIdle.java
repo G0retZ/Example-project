@@ -22,7 +22,7 @@ final class OrderViewStateIdle implements ViewState<OrderViewActions> {
     stateActions.showDistance(orderItem.getDistance());
     stateActions.showTimeout(orderItem.getSecondsToMeetClient());
     stateActions.showComment(orderItem.getOrderComment());
-    stateActions.showEstimatedPrice(orderItem.getEstimatedPrice());
+    stateActions.showEstimatedPrice(orderItem.getEstimatedPriceText());
     stateActions.showOrderOptionsRequirements(orderItem.getOrderOptionsRequired());
     stateActions.showOrderPending(false);
     long timeout[] = orderItem.getProgressLeft();

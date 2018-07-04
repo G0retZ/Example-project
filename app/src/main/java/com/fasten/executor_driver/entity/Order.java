@@ -18,7 +18,8 @@ public class Order {
   private final String comment;
   private final long distance;
   @NonNull
-  private final String estimatedPrice;
+  private final String estimatedPriceText;
+  private final int estimatedPrice;
   private final long estimatedTime;
   private final long estimatedRouteLength;
   private final int totalCost;
@@ -31,12 +32,13 @@ public class Order {
   @NonNull
   private final List<RoutePoint> routePath = new ArrayList<>();
 
-  public Order(long id, @NonNull String comment, long distance, @NonNull String estimatedPrice,
-      long estimatedTime, long estimatedRouteLength, int totalCost, int timeout,
+  public Order(long id, @NonNull String comment, long distance, @NonNull String estimatedPriceText,
+      int estimatedPrice, long estimatedTime, long estimatedRouteLength, int totalCost, int timeout,
       long etaToStartPoint, long confirmationTime, long orderStartTime) {
     this.id = id;
     this.comment = comment;
     this.distance = distance;
+    this.estimatedPriceText = estimatedPriceText;
     this.estimatedPrice = estimatedPrice;
     this.estimatedTime = estimatedTime;
     this.estimatedRouteLength = estimatedRouteLength;
@@ -61,7 +63,11 @@ public class Order {
   }
 
   @NonNull
-  public String getEstimatedPrice() {
+  public String getEstimatedPriceText() {
+    return estimatedPriceText;
+  }
+
+  public int getEstimatedPrice() {
     return estimatedPrice;
   }
 
