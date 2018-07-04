@@ -49,6 +49,7 @@
         app:layout_constraintEnd_toEndOf="@+id/mapImage"
         app:layout_constraintStart_toStartOf="@+id/mapImage"/>
       <ImageView
+        android:id="@+id/circles"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:contentDescription="@null"
@@ -57,101 +58,191 @@
         app:layout_constraintEnd_toEndOf="@+id/mapImage"
         app:layout_constraintStart_toStartOf="@+id/mapImage"
         app:layout_constraintTop_toTopOf="@+id/mapImage"/>
+      <ImageView
+        android:id="@+id/routePointMark"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="33dp"
+        android:contentDescription="@null"
+        app:layout_constraintBottom_toBottomOf="@id/circles"
+        app:layout_constraintEnd_toEndOf="@id/circles"
+        app:layout_constraintStart_toStartOf="@id/circles"
+        app:layout_constraintTop_toTopOf="@id/circles"
+        app:srcCompat="@drawable/ic_route_point"/>
+      <TextView
+        style="@style/TextAppearance.AppCompat.Subhead"
+        android:textStyle="bold"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="1"
+        app:layout_constraintEnd_toEndOf="@id/routePointMark"
+        app:layout_constraintStart_toStartOf="@id/routePointMark"
+        app:layout_constraintTop_toTopOf="@id/routePointMark"/>
+      <ImageView
+        android:id="@+id/navigationArrow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginStart="56dp"
+        android:layout_marginLeft="56dp"
+        android:contentDescription="@null"
+        app:layout_constraintBottom_toBottomOf="@id/gradient"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@drawable/ic_navigation_arrow"/>
       <TextView
         android:id="@+id/distanceText"
         style="@style/TextAppearance.AppCompat.Subhead"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
+        android:layout_margin="4dp"
         android:text="@string/km"
         android:textColor="@color/colorAccentSecond"
-        app:layout_constraintBottom_toBottomOf="@+id/gradient"
-        app:layout_constraintStart_toStartOf="parent"/>
+        app:layout_constraintBottom_toBottomOf="@id/gradient"
+        app:layout_constraintStart_toEndOf="@id/navigationArrow"/>
+      <ImageView
+        android:id="@+id/navigationTimer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:contentDescription="@null"
+        app:layout_constraintBottom_toBottomOf="@id/gradient"
+        app:layout_constraintStart_toEndOf="@id/distanceText"
+        app:srcCompat="@drawable/ic_navigation_timer"/>
       <TextView
-        android:id="@+id/addressText"
-        style="@style/TextAppearance.AppCompat.Headline"
+        android:id="@+id/etaText"
+        style="@style/TextAppearance.AppCompat.Subhead"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="4dp"
+        android:text="@string/eta"
+        android:textColor="@color/colorAccentSecond"
+        app:layout_constraintBottom_toBottomOf="@+id/gradient"
+        app:layout_constraintStart_toEndOf="@id/navigationTimer"/>
+      <ImageView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="13dp"
+        android:alpha="0.6"
+        android:contentDescription="@null"
+        app:layout_constraintBottom_toBottomOf="@id/routePointMark2"
+        app:layout_constraintEnd_toEndOf="@id/routePointMark1"
+        app:layout_constraintStart_toStartOf="@id/routePointMark1"
+        app:layout_constraintTop_toTopOf="@id/routePointMark1"
+        app:srcCompat="@drawable/ic_gradient_accent"/>
+      <ImageView
+        android:id="@+id/routePointMark1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:contentDescription="@null"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/gradient"
+        app:srcCompat="@drawable/ic_route_point"/>
+      <TextView
+        android:id="@+id/positionText1"
+        style="@style/TextAppearance.AppCompat.Subhead"
+        android:textStyle="bold"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:gravity="center"
+        android:text="1"
+        app:layout_constraintEnd_toEndOf="@id/routePointMark1"
+        app:layout_constraintStart_toStartOf="@id/routePointMark1"
+        app:layout_constraintTop_toTopOf="@id/routePointMark1"/>
+      <TextView
+        android:id="@+id/addressText1"
+        style="@style/TextAppearance.AppCompat.Subhead"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/routePointMark1"
+        app:layout_constraintTop_toBottomOf="@id/gradient"
+        tools:text="Москва, ул. Академика Пилюгина, 14 корпус 4, кв. 1122, П2, Э8"/>
+      <ImageView
+        android:id="@+id/routePointMark2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:contentDescription="@null"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/distanceText"
+        app:layout_constraintTop_toBottomOf="@id/addressText1"
+        app:srcCompat="@drawable/ic_route_point"/>
+      <TextView
+        android:id="@+id/positionText2"
+        style="@style/TextAppearance.AppCompat.Subhead"
+        android:textStyle="bold"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:gravity="center"
+        app:layout_constraintEnd_toEndOf="@id/routePointMark2"
+        app:layout_constraintStart_toStartOf="@id/routePointMark2"
+        app:layout_constraintTop_toTopOf="@id/routePointMark2"
+        tools:text="2"/>
+      <TextView
+        android:id="@+id/addressText2"
+        style="@style/TextAppearance.AppCompat.Subhead"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/routePointMark1"
+        app:layout_constraintTop_toBottomOf="@id/addressText1"
         tools:text="Москва, ул. Академика Пилюгина, 14 корпус 4, кв. 1122, П2, Э8"/>
       <TextView
-        android:id="@+id/commentTitleText"
+        android:id="@+id/estimationTitleText"
         style="@style/TextAppearance.AppCompat.Subhead"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
-        android:text="@string/comment"
+        android:text="@string/order_distance_and_duration"
         android:textColor="@color/colorAccentSecond"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/addressText"/>
+        app:layout_constraintTop_toBottomOf="@+id/addressText2"/>
       <TextView
-        android:id="@+id/commentText"
+        android:id="@+id/estimationText"
         style="@style/TextAppearance.AppCompat.Title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/commentTitleText"
-        tools:text="Заехать купить 10 коробок. Чистая машина. Не курить!"/>
+        app:layout_constraintTop_toBottomOf="@+id/estimationTitleText"
+        tools:text="@string/km_h_m_p"/>
       <TextView
-        android:id="@+id/optionsTitleText"
+        android:id="@+id/serviceTitleText"
         style="@style/TextAppearance.AppCompat.Subhead"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="16dp"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
-        android:text="@string/options"
+        android:text="@string/service"
         android:textColor="@color/colorAccentSecond"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/commentText"/>
+        app:layout_constraintTop_toBottomOf="@+id/estimationText"/>
       <TextView
-        android:id="@+id/optionsText"
+        android:id="@+id/serviceText"
         style="@style/TextAppearance.AppCompat.Title"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:lineSpacingExtra="6dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/optionsTitleText"
-        tools:text="Пропуск в центр Москвы\nОткрытый кузов\nРемни-крепления\nМобильный банк\nГрузчики: 2\nПассажиры: 3"/>
-      <TextView
-        android:id="@+id/priceTitleText"
-        style="@style/TextAppearance.AppCompat.Subhead"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
-        android:text="@string/cost"
-        android:textColor="@color/colorAccentSecond"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/optionsText"/>
-      <TextView
-        android:id="@+id/priceText"
-        style="@style/TextAppearance.AppCompat.Title"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/priceTitleText"
-        tools:text="Предзаказ: 2500 руб. за 4 часа\nСверх пакета: 8 руб./мин."/>
+        app:layout_constraintTop_toBottomOf="@+id/serviceTitleText"
+        tools:text="Грузоперевозка"/>
     </android.support.constraint.ConstraintLayout>
   </ScrollView>
   <ProgressBar

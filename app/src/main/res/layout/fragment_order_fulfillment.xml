@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout
   xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
   xmlns:tools="http://schemas.android.com/tools"
   android:layout_width="match_parent"
   android:layout_height="match_parent"
-  xmlns:app="http://schemas.android.com/apk/res-auto"
   android:paddingBottom="12dp">
   <ScrollView
     android:layout_width="0dp"
     android:layout_height="0dp"
+    android:layout_weight="1"
     app:layout_constraintBottom_toTopOf="@id/openNavigator"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toTopOf="parent"
-    android:layout_weight="1">
+    app:layout_constraintTop_toTopOf="parent">
     <LinearLayout
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
@@ -104,10 +104,10 @@
     android:layout_marginTop="16dp"
     android:layout_marginStart="12dp"
     android:layout_marginLeft="12dp"
+    android:text="@string/get_directions"
     app:layout_constraintBottom_toTopOf="@id/completeTheOrder"
     app:layout_constraintEnd_toStartOf="@id/closeRoutePoint"
-    app:layout_constraintStart_toStartOf="parent"
-    android:text="@string/get_directions"/>
+    app:layout_constraintStart_toStartOf="parent"/>
   <Button
     android:id="@+id/closeRoutePoint"
     style="@style/AppTheme.Button.Colored.Compact"
