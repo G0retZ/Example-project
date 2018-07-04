@@ -51,7 +51,7 @@ class OrderItem {
   }
 
   public int getSecondsToMeetClient() {
-    return Math.round((order.getConfirmationTime() + order.getEtaToStartPoint() * 1000
+    return Math.round((order.getConfirmationTime() + order.getEtaToStartPoint()
         - timeUtils.currentTimeMillis()) / 1000f);
   }
 
@@ -59,11 +59,45 @@ class OrderItem {
     return String.format(Locale.getDefault(), "%.2f", order.getDistance() / 1000d);
   }
 
+  public int getEtaSeconds() {
+    return Math.round(order.getEtaToStartPoint() / 1000f);
+  }
+
   @NonNull
-  public String getAddress() {
+  public String getNextAddress() {
     RoutePoint routePoint = getFirstActiveRoutePoint();
-    return routePoint == null ? ""
-        : (routePoint.getAddress() + "\n" + routePoint.getComment()).trim();
+    return routePoint == null ? "" : routePoint.getAddress().trim();
+  }
+
+  @NonNull
+  public String getNextAddressComment() {
+    RoutePoint routePoint = getFirstActiveRoutePoint();
+    return routePoint == null ? "" : routePoint.getComment().trim();
+  }
+
+  @NonNull
+  public String getLastAddress() {
+    RoutePoint routePoint = null;
+    if (order.getRoutePath().size() > 1) {
+      routePoint = order.getRoutePath().get(order.getRoutePath().size() - 1);
+    }
+    return routePoint == null ? "" : routePoint.getAddress().trim();
+  }
+
+  public int getRoutePointsCount() {
+    return order.getRoutePath().size();
+  }
+
+  public String getRouteLength() {
+    return String.format(Locale.getDefault(), "%.2f", order.getEstimatedRouteLength() / 1000d);
+  }
+
+  public int getEstimatedTimeSeconds() {
+    return Math.round(order.getEstimatedTime() / 1000f);
+  }
+
+  public String getServiceName() {
+    return "";
   }
 
   public int getEstimatedPrice() {

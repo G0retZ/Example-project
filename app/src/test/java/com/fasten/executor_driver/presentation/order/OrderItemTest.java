@@ -49,9 +49,11 @@ public class OrderItemTest {
     when(routePoint1.getRoutePointState()).thenReturn(RoutePointState.QUEUED);
     when(routePoint2.getRoutePointState()).thenReturn(RoutePointState.QUEUED);
     when(order.getRoutePath()).thenReturn(Arrays.asList(routePoint, routePoint1, routePoint2));
-    when(order.getEtaToStartPoint()).thenReturn(358L);
+    when(order.getEtaToStartPoint()).thenReturn(358000L);
     when(order.getConfirmationTime()).thenReturn(12384000L);
     when(order.getDistance()).thenReturn(12239L);
+    when(order.getEstimatedRouteLength()).thenReturn(33239L);
+    when(order.getEstimatedTime()).thenReturn(3324339L);
     when(order.getComment()).thenReturn("com");
     when(order.getEstimatedPriceText()).thenReturn("7000");
     when(order.getEstimatedPrice()).thenReturn(7000);
@@ -72,6 +74,7 @@ public class OrderItemTest {
     when(routePoint1.getComment()).thenReturn("comment1");
     when(routePoint1.getLatitude()).thenReturn(15.421);
     when(routePoint1.getLongitude()).thenReturn(20.2341);
+    when(routePoint2.getAddress()).thenReturn("add2");
   }
 
   @Test
@@ -80,13 +83,21 @@ public class OrderItemTest {
     assertEquals(orderItem.getLoadPointMapUrl(),
         "https://maps.googleapis.com/maps/api/staticmap?center=5.421,10.2341&zoom=16&size=360x200&maptype=roadmap&key=AIzaSyC20FZNHJqrQH5UhypeUy3thpqII33QBPI");
     assertEquals(orderItem.getCoordinatesString(), "5.421,10.2341");
-    assertEquals(orderItem.getAddress(), "add0\ncomment0");
+    assertEquals(orderItem.getNextAddress(), "add0");
+    assertEquals(orderItem.getNextAddressComment(), "comment0");
+    assertEquals(orderItem.getLastAddress(), "add2");
     assertEquals(orderItem.getDistance(),
         String.format(Locale.getDefault(), "%.2f", 12.24f));
     assertEquals(orderItem.getOrderComment(), "com");
+    assertEquals(orderItem.getServiceName(), "");
     assertEquals(orderItem.getEstimatedPriceText(), "7000");
     assertEquals(orderItem.getEstimatedPrice(), 7000);
+    assertEquals(orderItem.getRoutePointsCount(), 3);
+    assertEquals(orderItem.getRouteLength(),
+        String.format(Locale.getDefault(), "%.2f", 33239 / 1000d));
+    assertEquals(orderItem.getEstimatedTimeSeconds(), 3324);
     assertEquals(orderItem.getOrderOptionsRequired(), "bool2\nbool4\nnum1: 3\nnum2: 7");
+    assertEquals(orderItem.getEtaSeconds(), 358);
     assertEquals(orderItem.getSecondsToMeetClient(), 352);
     assertEquals(orderItem.getSecondsToMeetClient(), 347);
     assertEquals(orderItem.getSecondsToMeetClient(), 342);
@@ -105,13 +116,21 @@ public class OrderItemTest {
     assertEquals(orderItem.getLoadPointMapUrl(),
         "https://maps.googleapis.com/maps/api/staticmap?center=5.421,10.2341&zoom=16&size=360x200&maptype=roadmap&key=AIzaSyC20FZNHJqrQH5UhypeUy3thpqII33QBPI");
     assertEquals(orderItem.getCoordinatesString(), "5.421,10.2341");
-    assertEquals(orderItem.getAddress(), "add0\ncomment0");
+    assertEquals(orderItem.getNextAddress(), "add0");
+    assertEquals(orderItem.getNextAddressComment(), "comment0");
+    assertEquals(orderItem.getLastAddress(), "add2");
     assertEquals(orderItem.getDistance(),
         String.format(Locale.getDefault(), "%.2f", 12.24f));
     assertEquals(orderItem.getOrderComment(), "com");
+    assertEquals(orderItem.getServiceName(), "");
     assertEquals(orderItem.getEstimatedPriceText(), "7000");
     assertEquals(orderItem.getEstimatedPrice(), 7000);
+    assertEquals(orderItem.getRoutePointsCount(), 3);
+    assertEquals(orderItem.getRouteLength(),
+        String.format(Locale.getDefault(), "%.2f", 33239 / 1000d));
+    assertEquals(orderItem.getEstimatedTimeSeconds(), 3324);
     assertEquals(orderItem.getOrderOptionsRequired(), "bool2\nbool4\nnum1: 3\nnum2: 7");
+    assertEquals(orderItem.getEtaSeconds(), 358);
     assertEquals(orderItem.getSecondsToMeetClient(), 352);
     assertEquals(orderItem.getSecondsToMeetClient(), 347);
     assertEquals(orderItem.getSecondsToMeetClient(), 342);
@@ -128,13 +147,21 @@ public class OrderItemTest {
     assertEquals(orderItem.getLoadPointMapUrl(),
         "https://maps.googleapis.com/maps/api/staticmap?center=15.421,20.2341&zoom=16&size=360x200&maptype=roadmap&key=AIzaSyC20FZNHJqrQH5UhypeUy3thpqII33QBPI");
     assertEquals(orderItem.getCoordinatesString(), "15.421,20.2341");
-    assertEquals(orderItem.getAddress(), "add1\ncomment1");
+    assertEquals(orderItem.getNextAddress(), "add1");
+    assertEquals(orderItem.getNextAddressComment(), "comment1");
+    assertEquals(orderItem.getLastAddress(), "add2");
     assertEquals(orderItem.getDistance(),
         String.format(Locale.getDefault(), "%.2f", 12.24f));
     assertEquals(orderItem.getOrderComment(), "com");
+    assertEquals(orderItem.getServiceName(), "");
     assertEquals(orderItem.getEstimatedPriceText(), "7000");
     assertEquals(orderItem.getEstimatedPrice(), 7000);
+    assertEquals(orderItem.getRoutePointsCount(), 3);
+    assertEquals(orderItem.getRouteLength(),
+        String.format(Locale.getDefault(), "%.2f", 33239 / 1000d));
+    assertEquals(orderItem.getEstimatedTimeSeconds(), 3324);
     assertEquals(orderItem.getOrderOptionsRequired(), "bool2\nbool4\nnum1: 3\nnum2: 7");
+    assertEquals(orderItem.getEtaSeconds(), 358);
     assertEquals(orderItem.getSecondsToMeetClient(), 352);
     assertEquals(orderItem.getSecondsToMeetClient(), 347);
     assertEquals(orderItem.getSecondsToMeetClient(), 342);

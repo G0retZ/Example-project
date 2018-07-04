@@ -18,7 +18,7 @@ final class OrderViewStateIdle implements ViewState<OrderViewActions> {
   @Override
   public void apply(@NonNull OrderViewActions stateActions) {
     stateActions.showLoadPoint(orderItem.getLoadPointMapUrl());
-    stateActions.showLoadPointAddress(orderItem.getCoordinatesString(), orderItem.getAddress());
+    stateActions.showLoadPointAddress(orderItem.getCoordinatesString(), orderItem.getNextAddress());
     stateActions.showDistance(orderItem.getDistance());
     stateActions.showTimeout(orderItem.getSecondsToMeetClient());
     stateActions.showComment(orderItem.getOrderComment());
