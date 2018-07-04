@@ -27,7 +27,7 @@ public class OrderViewStateIdleTest {
 
   @Before
   public void setUp() {
-    when(orderItem.getAddress()).thenReturn("address");
+    when(orderItem.getNextAddress()).thenReturn("address");
     viewState = new OrderViewStateIdle(orderItem);
   }
 
@@ -37,11 +37,18 @@ public class OrderViewStateIdleTest {
     when(orderItem.getLoadPointMapUrl()).thenReturn("url");
     when(orderItem.getCoordinatesString()).thenReturn("1.3,2.4");
     when(orderItem.getDistance()).thenReturn("123L");
-    when(orderItem.getAddress()).thenReturn("address");
-    when(orderItem.getOrderComment()).thenReturn("comm");
+    when(orderItem.getEtaSeconds()).thenReturn(321);
+    when(orderItem.getNextAddress()).thenReturn("address");
+    when(orderItem.getNextAddressComment()).thenReturn("a comment");
+    when(orderItem.getRoutePointsCount()).thenReturn(7);
+    when(orderItem.getLastAddress()).thenReturn("add");
+    when(orderItem.getRouteLength()).thenReturn("la-la-la");
+    when(orderItem.getEstimatedTimeSeconds()).thenReturn(7929);
+    when(orderItem.getEstimatedPrice()).thenReturn(6812);
+    when(orderItem.getServiceName()).thenReturn("service");
     when(orderItem.getSecondsToMeetClient()).thenReturn(654321);
+    when(orderItem.getOrderComment()).thenReturn("comm");
     when(orderItem.getEstimatedPriceText()).thenReturn("1000");
-    when(orderItem.getEstimatedPrice()).thenReturn(1000);
     when(orderItem.getOrderOptionsRequired()).thenReturn("1,2,3");
     when(orderItem.getProgressLeft()).thenReturn(new long[]{3, 5});
 
@@ -50,10 +57,16 @@ public class OrderViewStateIdleTest {
 
     // Результат:
     verify(viewActions).showLoadPoint("url");
-    verify(viewActions).showLoadPointAddress("1.3,2.4", "address");
-    verify(viewActions).showDistance("123L");
-    verify(viewActions).showComment("comm");
+    verify(viewActions).showFirstPointDistance("123L");
+    verify(viewActions).showFirstPointEta(321);
+    verify(viewActions).showNextPointAddress("1.3,2.4", "address");
+    verify(viewActions).showNextPointComment("a comment");
+    verify(viewActions).showRoutePointsCount(7);
+    verify(viewActions).showLastPointAddress("add");
+    verify(viewActions).showOrderConditions("la-la-la", 7929, 6812);
+    verify(viewActions).showServiceName("service");
     verify(viewActions).showTimeout(654321);
+    verify(viewActions).showComment("comm");
     verify(viewActions).showTimeout(3, 5);
     verify(viewActions).showEstimatedPrice("1000");
     verify(viewActions).showOrderOptionsRequirements("1,2,3");

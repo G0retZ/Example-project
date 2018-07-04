@@ -148,7 +148,7 @@ public class MovingToClientFragment extends BaseFragment implements MovingToClie
   }
 
   @Override
-  public void showLoadPointAddress(@NonNull String coordinates, @NonNull String address) {
+  public void showNextPointAddress(@NonNull String coordinates, @NonNull String address) {
     addressText.setText(address);
     navigationAction.setOnClickListener(v -> {
       Intent navigationIntent = new Intent(Intent.ACTION_VIEW);
@@ -165,6 +165,26 @@ public class MovingToClientFragment extends BaseFragment implements MovingToClie
             .show();
       }
     });
+  }
+
+  @Override
+  public void showNextPointComment(@NonNull String comment) {
+
+  }
+
+  @Override
+  public void showLastPointAddress(@NonNull String address) {
+
+  }
+
+  @Override
+  public void showRoutePointsCount(int count) {
+
+  }
+
+  @Override
+  public void showServiceName(@NonNull String serviceName) {
+
   }
 
   @Override
@@ -203,12 +223,22 @@ public class MovingToClientFragment extends BaseFragment implements MovingToClie
   }
 
   @Override
-  public void showDistance(String distance) {
+  public void showFirstPointDistance(String distance) {
+
+  }
+
+  @Override
+  public void showFirstPointEta(int etaTime) {
 
   }
 
   @Override
   public void showEstimatedPrice(@NonNull String priceText) {
+
+  }
+
+  @Override
+  public void showOrderConditions(@NonNull String routeDistance, int time, int cost) {
 
   }
 

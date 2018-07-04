@@ -89,8 +89,28 @@ public class ClientOrderConfirmationFragment extends BaseFragment implements
   }
 
   @Override
-  public void showLoadPointAddress(@NonNull String coordinates, @NonNull String address) {
+  public void showNextPointAddress(@NonNull String coordinates, @NonNull String address) {
     addressText.setText(address);
+  }
+
+  @Override
+  public void showNextPointComment(@NonNull String comment) {
+
+  }
+
+  @Override
+  public void showLastPointAddress(@NonNull String address) {
+
+  }
+
+  @Override
+  public void showRoutePointsCount(int count) {
+
+  }
+
+  @Override
+  public void showServiceName(@NonNull String serviceName) {
+
   }
 
   @Override
@@ -104,8 +124,13 @@ public class ClientOrderConfirmationFragment extends BaseFragment implements
   }
 
   @Override
-  public void showDistance(String distance) {
+  public void showFirstPointDistance(String distance) {
     distanceText.setText(getString(R.string.km, distance));
+  }
+
+  @Override
+  public void showFirstPointEta(int etaTime) {
+
   }
 
   @Override
@@ -118,6 +143,11 @@ public class ClientOrderConfirmationFragment extends BaseFragment implements
       this.priceText.setVisibility(View.VISIBLE);
       this.priceText.setText(priceText);
     }
+  }
+
+  @Override
+  public void showOrderConditions(@NonNull String routeDistance, int time, int cost) {
+
   }
 
   @Override
