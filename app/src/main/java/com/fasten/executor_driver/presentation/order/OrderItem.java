@@ -133,9 +133,9 @@ class OrderItem {
   public long[] getProgressLeft() {
     long[] res = new long[2];
     res[1] = timeUtils.currentTimeMillis() - timestamp;
-    res[1] = order.getTimeout() * 1000 - res[1];
+    res[1] = order.getTimeout() - res[1];
     if (order.getTimeout() > 0) {
-      res[0] = res[1] / (10L * order.getTimeout());
+      res[0] = res[1] * 100L / (order.getTimeout());
     }
     return res;
   }

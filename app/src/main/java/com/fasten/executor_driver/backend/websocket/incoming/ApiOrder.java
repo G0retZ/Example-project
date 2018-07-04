@@ -24,7 +24,7 @@ public class ApiOrder {
   @SerializedName("comment")
   private String comment;
   @SerializedName("timeOut")
-  private int timeout;
+  private long timeout;
   @SerializedName("etaToStartPoint")
   private long etaToStartPoint;
   @SerializedName("confirmationTime")
@@ -50,7 +50,7 @@ public class ApiOrder {
 
   @SuppressWarnings("SameParameterValue")
   ApiOrder(long id, @Nullable String estimatedAmountText, int estimatedAmount, long estimatedTime,
-      long estimatedRouteDistance, int totalAmount, @Nullable String comment, int timeout,
+      long estimatedRouteDistance, int totalAmount, @Nullable String comment, long timeout,
       long etaToStartPoint, long confirmationTime, long orderStartTime,
       @Nullable ApiDriverDistancePair executorDistance,
       @Nullable List<ApiRoutePoint> route,
@@ -101,7 +101,7 @@ public class ApiOrder {
     return comment;
   }
 
-  public int getTimeout() {
+  public long getTimeout() {
     return timeout;
   }
 
