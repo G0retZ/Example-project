@@ -39,6 +39,8 @@ public class MovingToClientFragment extends BaseFragment implements MovingToClie
   private OrderViewModel orderViewModel;
   private ImageView mapImage;
   private TextView addressText;
+  private TextView commentTitleText;
+  private TextView commentText;
   private TextView timerText;
   private Button callAction;
   private Button navigationAction;
@@ -72,6 +74,8 @@ public class MovingToClientFragment extends BaseFragment implements MovingToClie
     View view = inflater.inflate(R.layout.fragment_moving_to_client, container, false);
     mapImage = view.findViewById(R.id.mapImage);
     addressText = view.findViewById(R.id.addressText);
+    commentTitleText = view.findViewById(R.id.commentTitleText);
+    commentText = view.findViewById(R.id.commentText);
     timerText = view.findViewById(R.id.timerText);
     navigationAction = view.findViewById(R.id.openNavigator);
     callAction = view.findViewById(R.id.callToClient);
@@ -169,7 +173,14 @@ public class MovingToClientFragment extends BaseFragment implements MovingToClie
 
   @Override
   public void showNextPointComment(@NonNull String comment) {
-
+    if (comment.trim().isEmpty()) {
+      commentTitleText.setVisibility(View.GONE);
+      commentText.setVisibility(View.GONE);
+    } else {
+      commentTitleText.setVisibility(View.VISIBLE);
+      commentText.setVisibility(View.VISIBLE);
+      commentText.setText(comment);
+    }
   }
 
   @Override
