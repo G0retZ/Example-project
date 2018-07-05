@@ -122,7 +122,27 @@ public class WaitingForClientFragment extends BaseFragment implements
   }
 
   @Override
-  public void showLoadPointAddress(@NonNull String coordinates, @NonNull String address) {
+  public void showNextPointAddress(@NonNull String coordinates, @NonNull String address) {
+
+  }
+
+  @Override
+  public void showNextPointComment(@NonNull String comment) {
+
+  }
+
+  @Override
+  public void showLastPointAddress(@NonNull String address) {
+
+  }
+
+  @Override
+  public void showRoutePointsCount(int count) {
+
+  }
+
+  @Override
+  public void showServiceName(@NonNull String serviceName) {
 
   }
 
@@ -137,7 +157,12 @@ public class WaitingForClientFragment extends BaseFragment implements
   }
 
   @Override
-  public void showDistance(String distance) {
+  public void showFirstPointDistance(String distance) {
+
+  }
+
+  @Override
+  public void showFirstPointEta(int etaTime) {
 
   }
 
@@ -151,6 +176,11 @@ public class WaitingForClientFragment extends BaseFragment implements
       this.priceText.setVisibility(View.VISIBLE);
       this.priceText.setText(priceText);
     }
+  }
+
+  @Override
+  public void showOrderConditions(@NonNull String routeDistance, int time, int cost) {
+
   }
 
   @Override

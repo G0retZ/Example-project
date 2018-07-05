@@ -37,19 +37,54 @@ public interface OrderViewActions {
   void showTimeout(int progress, long timeout);
 
   /**
-   * Показать растояние до точки погрузки.
+   * Показать растояние до первой точки маршрута.
    *
    * @param distance - расстояние
    */
-  void showDistance(String distance);
+  void showFirstPointDistance(String distance);
 
   /**
-   * Показать адрес точки погрузки.
+   * Показать время до первой точки маршрута.
+   *
+   * @param etaTime - время до первой точки в секундах
+   */
+  void showFirstPointEta(int etaTime);
+
+  /**
+   * Показать адрес следующей точки маршрута.
    *
    * @param coordinates - координаты
    * @param address - адрес
    */
-  void showLoadPointAddress(@NonNull String coordinates, @NonNull String address);
+  void showNextPointAddress(@NonNull String coordinates, @NonNull String address);
+
+  /**
+   * Показать комментарий к адресу следующей точки маршрута.
+   *
+   * @param comment - координаты
+   */
+  void showNextPointComment(@NonNull String comment);
+
+  /**
+   * Показать адрес последней точки маршрута.
+   *
+   * @param address - адрес
+   */
+  void showLastPointAddress(@NonNull String address);
+
+  /**
+   * Показать количество точек маршрута.
+   *
+   * @param count - количество
+   */
+  void showRoutePointsCount(int count);
+
+  /**
+   * Показать услугу заказа.
+   *
+   * @param serviceName - имя услуги
+   */
+  void showServiceName(@NonNull String serviceName);
 
   /**
    * Показать рассчет стоимости.
@@ -57,6 +92,15 @@ public interface OrderViewActions {
    * @param priceText - оценка стоимости заказа
    */
   void showEstimatedPrice(@NonNull String priceText);
+
+  /**
+   * Показать ценовые условия заказа.
+   *
+   * @param routeDistance - длинна маршрута
+   * @param time - время заказа в секундах
+   * @param cost - общая стоимость пакета в копейках
+   */
+  void showOrderConditions(@NonNull String routeDistance, int time, int cost);
 
   /**
    * Показать опции, необходимые для принятия заказа.

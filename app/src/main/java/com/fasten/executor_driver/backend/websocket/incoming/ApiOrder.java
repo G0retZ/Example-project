@@ -11,14 +11,20 @@ public class ApiOrder {
   private long id;
   @Nullable
   @SerializedName("estimatedAmountText")
-  private String estimatedAmount;
+  private String estimatedAmountText;
+  @SerializedName("estimatedAmount")
+  private int estimatedAmount;
+  @SerializedName("estimatedTime")
+  private long estimatedTime;
+  @SerializedName("estimatedRouteDistance")
+  private long estimatedRouteDistance;
   @SerializedName("totalAmount")
   private int totalAmount;
   @Nullable
   @SerializedName("comment")
   private String comment;
   @SerializedName("timeOut")
-  private int timeout;
+  private long timeout;
   @SerializedName("etaToStartPoint")
   private long etaToStartPoint;
   @SerializedName("confirmationTime")
@@ -28,6 +34,9 @@ public class ApiOrder {
   @Nullable
   @SerializedName("executorDistance")
   private ApiDriverDistancePair executorDistance;
+  @Nullable
+  @SerializedName("carSearchRequest")
+  private ApiOrderService apiOrderService;
   @Nullable
   @SerializedName("route")
   private List<ApiRoutePoint> route;
@@ -43,14 +52,18 @@ public class ApiOrder {
   }
 
   @SuppressWarnings("SameParameterValue")
-  ApiOrder(long id, @Nullable String estimatedAmount,
-      int totalAmount, @Nullable String comment, int timeout,
+  ApiOrder(long id, @Nullable String estimatedAmountText, int estimatedAmount, long estimatedTime,
+      long estimatedRouteDistance, int totalAmount, @Nullable String comment, long timeout,
       long etaToStartPoint, long confirmationTime, long orderStartTime,
       @Nullable ApiDriverDistancePair executorDistance,
+      @Nullable ApiOrderService apiOrderService,
       @Nullable List<ApiRoutePoint> route,
       @Nullable List<ApiOptionItem> options) {
     this.id = id;
+    this.estimatedAmountText = estimatedAmountText;
     this.estimatedAmount = estimatedAmount;
+    this.estimatedRouteDistance = estimatedRouteDistance;
+    this.estimatedTime = estimatedTime;
     this.totalAmount = totalAmount;
     this.comment = comment;
     this.timeout = timeout;
@@ -58,6 +71,7 @@ public class ApiOrder {
     this.confirmationTime = confirmationTime;
     this.orderStartTime = orderStartTime;
     this.executorDistance = executorDistance;
+    this.apiOrderService = apiOrderService;
     this.route = route;
     this.options = options;
   }
@@ -67,8 +81,20 @@ public class ApiOrder {
   }
 
   @Nullable
-  public String getEstimatedAmount() {
+  public String getEstimatedAmountText() {
+    return estimatedAmountText;
+  }
+
+  public int getEstimatedAmount() {
     return estimatedAmount;
+  }
+
+  public long getEstimatedTime() {
+    return estimatedTime;
+  }
+
+  public long getEstimatedRouteDistance() {
+    return estimatedRouteDistance;
   }
 
   public int getTotalAmount() {
@@ -80,7 +106,7 @@ public class ApiOrder {
     return comment;
   }
 
-  public int getTimeout() {
+  public long getTimeout() {
     return timeout;
   }
 
@@ -99,6 +125,11 @@ public class ApiOrder {
   @Nullable
   public ApiDriverDistancePair getExecutorDistance() {
     return executorDistance;
+  }
+
+  @Nullable
+  public ApiOrderService getApiOrderService() {
+    return apiOrderService;
   }
 
   @Nullable

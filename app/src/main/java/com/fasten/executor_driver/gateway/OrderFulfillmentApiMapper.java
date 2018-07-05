@@ -40,6 +40,12 @@ public class OrderFulfillmentApiMapper implements Mapper<String, Order> {
     } catch (Exception e) {
       throw new DataMappingException("Ошибка маппинга: не удалось распарсить JSON!", e);
     }
+    if (apiOrder.getApiOrderService() == null) {
+      throw new DataMappingException("Ошибка маппинга: Услуга не должна быть null!");
+    }
+    if (apiOrder.getApiOrderService().getName() == null) {
+      throw new DataMappingException("Ошибка маппинга: Имя услуги не должно быть null!");
+    }
     if (apiOrder.getRoute() == null) {
       throw new DataMappingException("Ошибка маппинга: маршрут не должен быть null!");
     }
@@ -51,8 +57,12 @@ public class OrderFulfillmentApiMapper implements Mapper<String, Order> {
     Order order = new Order(
         apiOrder.getId(),
         apiOrder.getComment() == null ? "" : apiOrder.getComment(),
+        apiOrder.getApiOrderService().getName(),
         apiOrder.getExecutorDistance() == null ? 0 : apiOrder.getExecutorDistance().getDistance(),
-        apiOrder.getEstimatedAmount() == null ? "" : apiOrder.getEstimatedAmount(),
+        apiOrder.getEstimatedAmountText() == null ? "" : apiOrder.getEstimatedAmountText(),
+        apiOrder.getEstimatedAmount(),
+        apiOrder.getEstimatedTime(),
+        apiOrder.getEstimatedRouteDistance(),
         apiOrder.getTotalAmount(),
         apiOrder.getTimeout(),
         apiOrder.getEtaToStartPoint(),

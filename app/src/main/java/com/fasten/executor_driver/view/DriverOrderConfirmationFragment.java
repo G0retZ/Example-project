@@ -23,7 +23,9 @@ import com.fasten.executor_driver.presentation.order.OrderViewModel;
 import com.fasten.executor_driver.presentation.orderconfirmation.OrderConfirmationViewActions;
 import com.fasten.executor_driver.presentation.orderconfirmation.OrderConfirmationViewModel;
 import com.squareup.picasso.Picasso;
+import java.text.DecimalFormat;
 import javax.inject.Inject;
+import org.joda.time.LocalTime;
 
 /**
  * Отображает заказ.
@@ -38,13 +40,12 @@ public class DriverOrderConfirmationFragment extends BaseFragment implements
   private ImageView mapImage;
   private ProgressBar timeoutChart;
   private TextView distanceText;
-  private TextView addressText;
-  private TextView commentTitleText;
-  private TextView commentText;
-  private TextView optionsTitleText;
-  private TextView optionsText;
-  private TextView priceTitleText;
-  private TextView priceText;
+  private TextView etaText;
+  private TextView addressText1;
+  private TextView addressText2;
+  private TextView positionText2;
+  private TextView estimationText;
+  private TextView serviceText;
   private Button acceptAction;
   private Context context;
   private boolean orderConfirmationPending;
@@ -77,13 +78,12 @@ public class DriverOrderConfirmationFragment extends BaseFragment implements
     mapImage = view.findViewById(R.id.mapImage);
     timeoutChart = view.findViewById(R.id.timeoutChart);
     distanceText = view.findViewById(R.id.distanceText);
-    addressText = view.findViewById(R.id.addressText);
-    commentTitleText = view.findViewById(R.id.commentTitleText);
-    commentText = view.findViewById(R.id.commentText);
-    optionsTitleText = view.findViewById(R.id.optionsTitleText);
-    optionsText = view.findViewById(R.id.optionsText);
-    priceTitleText = view.findViewById(R.id.priceTitleText);
-    priceText = view.findViewById(R.id.priceText);
+    etaText = view.findViewById(R.id.etaText);
+    addressText1 = view.findViewById(R.id.addressText1);
+    addressText2 = view.findViewById(R.id.addressText2);
+    positionText2 = view.findViewById(R.id.positionText2);
+    estimationText = view.findViewById(R.id.estimationText);
+    serviceText = view.findViewById(R.id.serviceText);
     acceptAction = view.findViewById(R.id.acceptButton);
     acceptAction.setOnClickListener(v -> orderConfirmationViewModel.acceptOrder());
     declineAction.setOnClickListener(v -> orderConfirmationViewModel.declineOrder());
@@ -145,8 +145,28 @@ public class DriverOrderConfirmationFragment extends BaseFragment implements
   }
 
   @Override
-  public void showLoadPointAddress(@NonNull String coordinates, @NonNull String address) {
-    addressText.setText(address);
+  public void showNextPointAddress(@NonNull String coordinates, @NonNull String address) {
+    addressText1.setText(address);
+  }
+
+  @Override
+  public void showNextPointComment(@NonNull String comment) {
+
+  }
+
+  @Override
+  public void showLastPointAddress(@NonNull String address) {
+    addressText2.setText(address.isEmpty() ? getString(R.string.free_ride) : address);
+  }
+
+  @Override
+  public void showRoutePointsCount(int count) {
+    positionText2.setText(String.valueOf(count < 2 ? 2 : count));
+  }
+
+  @Override
+  public void showServiceName(@NonNull String serviceName) {
+    serviceText.setText(serviceName);
   }
 
   @Override
@@ -155,8 +175,13 @@ public class DriverOrderConfirmationFragment extends BaseFragment implements
   }
 
   @Override
-  public void showDistance(String distance) {
+  public void showFirstPointDistance(String distance) {
     distanceText.setText(getString(R.string.km, distance));
+  }
+
+  @Override
+  public void showFirstPointEta(int etaTime) {
+    etaText.setText(getString(R.string.eta, Math.round(etaTime / 60F)));
   }
 
   @Override
@@ -191,38 +216,31 @@ public class DriverOrderConfirmationFragment extends BaseFragment implements
 
   @Override
   public void showEstimatedPrice(@NonNull String priceText) {
-    if (priceText.trim().isEmpty()) {
-      priceTitleText.setVisibility(View.GONE);
-      this.priceText.setVisibility(View.GONE);
-    } else {
-      priceTitleText.setVisibility(View.VISIBLE);
-      this.priceText.setVisibility(View.VISIBLE);
-      this.priceText.setText(priceText);
+
+  }
+
+  @Override
+  public void showOrderConditions(@NonNull String routeDistance, int time, int cost) {
+    LocalTime localTime = LocalTime.fromMillisOfDay(time * 1000);
+    if (!getResources().getBoolean(R.bool.show_cents)) {
+      cost = Math.round(cost / 100f);
     }
+    estimationText.setText(getString(
+        R.string.km_h_m_p, routeDistance,
+        localTime.getHourOfDay(),
+        localTime.getMinuteOfHour(),
+        new DecimalFormat(getString(R.string.currency_format)).format(cost))
+    );
   }
 
   @Override
   public void showOrderOptionsRequirements(@NonNull String options) {
-    if (options.trim().isEmpty()) {
-      optionsTitleText.setVisibility(View.GONE);
-      optionsText.setVisibility(View.GONE);
-    } else {
-      optionsTitleText.setVisibility(View.VISIBLE);
-      optionsText.setVisibility(View.VISIBLE);
-      optionsText.setText(options);
-    }
+
   }
 
   @Override
   public void showComment(@NonNull String comment) {
-    if (comment.trim().isEmpty()) {
-      commentTitleText.setVisibility(View.GONE);
-      commentText.setVisibility(View.GONE);
-    } else {
-      commentTitleText.setVisibility(View.VISIBLE);
-      commentText.setVisibility(View.VISIBLE);
-      commentText.setText(comment);
-    }
+
   }
 
   @Override

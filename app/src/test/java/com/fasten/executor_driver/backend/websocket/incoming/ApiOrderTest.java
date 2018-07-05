@@ -14,6 +14,10 @@ import org.mockito.junit.MockitoJUnitRunner;
 public class ApiOrderTest {
 
   @Mock
+  private ApiDriverDistancePair apiDriverDistancePair;
+  @Mock
+  private ApiOrderService apiOrderService;
+  @Mock
   private ApiRoutePoint apiRoutePoint;
   @Mock
   private ApiRoutePoint apiRoutePoint1;
@@ -28,18 +32,27 @@ public class ApiOrderTest {
     ApiOrder apiOrder = new ApiOrder(
         432,
         "More than $3000",
-        7300, "some comment",
+        3000,
+        219078901,
+        23400,
+        7300,
+        "some comment",
         23,
         1200,
         1234567890,
-        9876543210L, new ApiDriverDistancePair(32),
+        9876543210L,
+        apiDriverDistancePair,
+        apiOrderService,
         Arrays.asList(apiRoutePoint, apiRoutePoint1),
         Arrays.asList(apiOptionItem, apiOptionItem1)
     );
 
     // Результат
     assertEquals(apiOrder.getId(), 432);
-    assertEquals(apiOrder.getEstimatedAmount(), "More than $3000");
+    assertEquals(apiOrder.getEstimatedAmountText(), "More than $3000");
+    assertEquals(apiOrder.getEstimatedAmount(), 3000);
+    assertEquals(apiOrder.getEstimatedTime(), 219078901);
+    assertEquals(apiOrder.getEstimatedRouteDistance(), 23400);
     assertEquals(apiOrder.getTotalAmount(), 7300);
     assertEquals(apiOrder.getComment(), "some comment");
     assertEquals(apiOrder.getTimeout(), 23);
@@ -47,7 +60,8 @@ public class ApiOrderTest {
     assertEquals(apiOrder.getConfirmationTime(), 1234567890);
     assertEquals(apiOrder.getOrderStartTime(), 9876543210L);
     assertNotNull(apiOrder.getExecutorDistance());
-    assertEquals(apiOrder.getExecutorDistance().getDistance(), 32);
+    assertEquals(apiOrder.getExecutorDistance(), apiDriverDistancePair);
+    assertEquals(apiOrder.getApiOrderService(), apiOrderService);
     assertNotNull(apiOrder.getRoute());
     assertEquals(apiOrder.getRoute().size(), 2);
     assertEquals(apiOrder.getRoute().get(0), apiRoutePoint);
