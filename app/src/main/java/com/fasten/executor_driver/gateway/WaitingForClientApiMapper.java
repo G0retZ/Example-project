@@ -46,14 +46,11 @@ public class WaitingForClientApiMapper implements Mapper<String, Order> {
     if (apiOrder.getApiOrderService().getName() == null) {
       throw new DataMappingException("Ошибка маппинга: Имя услуги не должно быть null!");
     }
-    if (apiOrder.getExecutorDistance() == null) {
-      throw new DataMappingException("Ошибка маппинга: Дистанция не должна быть null!");
-    }
     Order order = new Order(
         apiOrder.getId(),
         apiOrder.getComment() == null ? "" : apiOrder.getComment(),
         apiOrder.getApiOrderService().getName(),
-        apiOrder.getExecutorDistance().getDistance(),
+        apiOrder.getExecutorDistance() == null ? 0 : apiOrder.getExecutorDistance().getDistance(),
         apiOrder.getEstimatedAmountText() == null ? "" : apiOrder.getEstimatedAmountText(),
         apiOrder.getEstimatedAmount(),
         apiOrder.getEstimatedTime(),

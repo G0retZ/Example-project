@@ -475,8 +475,8 @@ public class WaitingForClientApiMapperTest {
    *
    * @throws Exception ошибка
    */
-  @Test(expected = DataMappingException.class)
-  public void mappingJsonStringWithoutDistanceToOrderFail() throws Exception {
+  @Test
+  public void mappingJsonStringWithoutDistanceToOrderSuccess() throws Exception {
     // Дано и Действие:
     Order order = mapper.map(rule.getOrderWithoutDistance());
 
