@@ -72,7 +72,9 @@ public class OrderFulfillmentApiMapperTest {
     assertEquals(order.getEtaToStartPoint(), 1234567890);
     assertEquals(order.getConfirmationTime(), 9876543210L);
     assertEquals(order.getOrderStartTime(), 9876598760L);
+    assertEquals(order.getServiceName(), "service");
     assertEquals(order.getDistance(), 546);
+    assertEquals(order.getServiceName(), "service");
     assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
     assertEquals(order.getOptions(),
         Arrays.asList(optionNumeric, optionBoolean, optionBoolean, optionNumeric)
@@ -101,6 +103,7 @@ public class OrderFulfillmentApiMapperTest {
     assertEquals(order.getEtaToStartPoint(), 1234567890);
     assertEquals(order.getConfirmationTime(), 9876543210L);
     assertEquals(order.getOrderStartTime(), 9876598760L);
+    assertEquals(order.getServiceName(), "service");
     assertEquals(order.getDistance(), 546);
     assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
     assertEquals(order.getOptions(),
@@ -130,6 +133,7 @@ public class OrderFulfillmentApiMapperTest {
     assertEquals(order.getEtaToStartPoint(), 1234567890);
     assertEquals(order.getConfirmationTime(), 9876543210L);
     assertEquals(order.getOrderStartTime(), 9876598760L);
+    assertEquals(order.getServiceName(), "service");
     assertEquals(order.getDistance(), 546);
     assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
     assertEquals(order.getOptions(),
@@ -159,6 +163,7 @@ public class OrderFulfillmentApiMapperTest {
     assertEquals(order.getEtaToStartPoint(), 1234567890);
     assertEquals(order.getConfirmationTime(), 9876543210L);
     assertEquals(order.getOrderStartTime(), 9876598760L);
+    assertEquals(order.getServiceName(), "service");
     assertEquals(order.getDistance(), 546);
     assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
     assertEquals(order.getOptions(),
@@ -188,6 +193,7 @@ public class OrderFulfillmentApiMapperTest {
     assertEquals(order.getEtaToStartPoint(), 1234567890);
     assertEquals(order.getConfirmationTime(), 9876543210L);
     assertEquals(order.getOrderStartTime(), 9876598760L);
+    assertEquals(order.getServiceName(), "service");
     assertEquals(order.getDistance(), 546);
     assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
     assertEquals(order.getOptions(),
@@ -217,6 +223,7 @@ public class OrderFulfillmentApiMapperTest {
     assertEquals(order.getEtaToStartPoint(), 1234567890);
     assertEquals(order.getConfirmationTime(), 9876543210L);
     assertEquals(order.getOrderStartTime(), 9876598760L);
+    assertEquals(order.getServiceName(), "service");
     assertEquals(order.getDistance(), 546);
     assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
     assertEquals(order.getOptions(),
@@ -246,6 +253,7 @@ public class OrderFulfillmentApiMapperTest {
     assertEquals(order.getEtaToStartPoint(), 1234567890);
     assertEquals(order.getConfirmationTime(), 9876543210L);
     assertEquals(order.getOrderStartTime(), 9876598760L);
+    assertEquals(order.getServiceName(), "service");
     assertEquals(order.getDistance(), 546);
     assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
     assertEquals(order.getOptions(),
@@ -275,6 +283,7 @@ public class OrderFulfillmentApiMapperTest {
     assertEquals(order.getEtaToStartPoint(), 1234567890);
     assertEquals(order.getConfirmationTime(), 9876543210L);
     assertEquals(order.getOrderStartTime(), 9876598760L);
+    assertEquals(order.getServiceName(), "service");
     assertEquals(order.getDistance(), 546);
     assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
     assertEquals(order.getOptions(),
@@ -304,6 +313,7 @@ public class OrderFulfillmentApiMapperTest {
     assertEquals(order.getEtaToStartPoint(), 1234567890);
     assertEquals(order.getConfirmationTime(), 9876543210L);
     assertEquals(order.getOrderStartTime(), 9876598760L);
+    assertEquals(order.getServiceName(), "service");
     assertEquals(order.getDistance(), 546);
     assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
     assertEquals(order.getOptions(),
@@ -333,6 +343,7 @@ public class OrderFulfillmentApiMapperTest {
     assertEquals(order.getEtaToStartPoint(), 0);
     assertEquals(order.getConfirmationTime(), 9876543210L);
     assertEquals(order.getOrderStartTime(), 9876598760L);
+    assertEquals(order.getServiceName(), "service");
     assertEquals(order.getDistance(), 546);
     assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
     assertEquals(order.getOptions(),
@@ -362,6 +373,7 @@ public class OrderFulfillmentApiMapperTest {
     assertEquals(order.getEtaToStartPoint(), 1234567890);
     assertEquals(order.getConfirmationTime(), 0);
     assertEquals(order.getOrderStartTime(), 9876598760L);
+    assertEquals(order.getServiceName(), "service");
     assertEquals(order.getDistance(), 546);
     assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
     assertEquals(order.getOptions(),
@@ -391,6 +403,7 @@ public class OrderFulfillmentApiMapperTest {
     assertEquals(order.getEtaToStartPoint(), 1234567890);
     assertEquals(order.getConfirmationTime(), 9876543210L);
     assertEquals(order.getOrderStartTime(), 0);
+    assertEquals(order.getServiceName(), "service");
     assertEquals(order.getDistance(), 546);
     assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
     assertEquals(order.getOptions(),
@@ -420,6 +433,7 @@ public class OrderFulfillmentApiMapperTest {
     assertEquals(order.getEtaToStartPoint(), 1234567890);
     assertEquals(order.getConfirmationTime(), 9876543210L);
     assertEquals(order.getOrderStartTime(), 9876598760L);
+    assertEquals(order.getServiceName(), "service");
     assertEquals(order.getDistance(), 546);
     assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
     assertEquals(order.getOptions(),
@@ -449,6 +463,7 @@ public class OrderFulfillmentApiMapperTest {
     assertEquals(order.getEtaToStartPoint(), 1234567890);
     assertEquals(order.getConfirmationTime(), 9876543210L);
     assertEquals(order.getOrderStartTime(), 9876598760L);
+    assertEquals(order.getServiceName(), "service");
     assertEquals(order.getDistance(), 0);
     assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
     assertEquals(order.getOptions(),
@@ -478,7 +493,128 @@ public class OrderFulfillmentApiMapperTest {
     assertEquals(order.getEtaToStartPoint(), 1234567890);
     assertEquals(order.getConfirmationTime(), 9876543210L);
     assertEquals(order.getOrderStartTime(), 9876598760L);
+    assertEquals(order.getServiceName(), "service");
     assertEquals(order.getDistance(), 0);
+    assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
+    assertEquals(order.getOptions(),
+        Arrays.asList(optionNumeric, optionBoolean, optionBoolean, optionNumeric)
+    );
+  }
+
+  /**
+   * Должен успешно преобразовать JSON без ИД в дистанции в заказ.
+   *
+   * @throws Exception ошибка
+   */
+  @Test
+  public void mappingJsonStringWithoutServiceIdToOrderSuccess() throws Exception {
+    // Дано и Действие:
+    Order order = mapper.map(rule.getOrderWithoutServiceId());
+
+    // Результат:
+    assertEquals(order.getId(), 7);
+    assertEquals(order.getComment(), "some comment");
+    assertEquals(order.getEstimatedPriceText(), "over 9999 BTC");
+    assertEquals(order.getEstimatedPrice(), 9999);
+    assertEquals(order.getEstimatedTime(), 234_532_000);
+    assertEquals(order.getEstimatedRouteLength(), 35_213);
+    assertEquals(order.getTotalCost(), 10_352);
+    assertEquals(order.getTimeout(), 25);
+    assertEquals(order.getEtaToStartPoint(), 1234567890);
+    assertEquals(order.getConfirmationTime(), 9876543210L);
+    assertEquals(order.getOrderStartTime(), 9876598760L);
+    assertEquals(order.getServiceName(), "service");
+    assertEquals(order.getDistance(), 546);
+    assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
+    assertEquals(order.getOptions(),
+        Arrays.asList(optionNumeric, optionBoolean, optionBoolean, optionNumeric)
+    );
+  }
+
+  /**
+   * Должен дать ошибку, если пришел JSON без значения дистанции.
+   *
+   * @throws Exception ошибка
+   */
+  @Test
+  public void mappingJsonStringWithoutServiceNameToOrderSuccess() throws Exception {
+    // Дано и Действие:
+    Order order = mapper.map(rule.getOrderWithoutServiceName());
+
+    // Результат:
+    assertEquals(order.getId(), 7);
+    assertEquals(order.getComment(), "some comment");
+    assertEquals(order.getEstimatedPriceText(), "over 9999 BTC");
+    assertEquals(order.getEstimatedPrice(), 9999);
+    assertEquals(order.getEstimatedTime(), 234_532_000);
+    assertEquals(order.getEstimatedRouteLength(), 35_213);
+    assertEquals(order.getTotalCost(), 10_352);
+    assertEquals(order.getTimeout(), 25);
+    assertEquals(order.getEtaToStartPoint(), 1234567890);
+    assertEquals(order.getConfirmationTime(), 9876543210L);
+    assertEquals(order.getOrderStartTime(), 9876598760L);
+    assertEquals(order.getServiceName(), "");
+    assertEquals(order.getDistance(), 546);
+    assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
+    assertEquals(order.getOptions(),
+        Arrays.asList(optionNumeric, optionBoolean, optionBoolean, optionNumeric)
+    );
+  }
+
+  /**
+   * Должен дать ошибку, если пришел JSON без значения дистанции.
+   *
+   * @throws Exception ошибка
+   */
+  @Test
+  public void mappingJsonStringWithoutServicePriceToOrderSuccess() throws Exception {
+    // Дано и Действие:
+    Order order = mapper.map(rule.getOrderWithoutServicePrice());
+
+    // Результат:
+    assertEquals(order.getId(), 7);
+    assertEquals(order.getComment(), "some comment");
+    assertEquals(order.getEstimatedPriceText(), "over 9999 BTC");
+    assertEquals(order.getEstimatedPrice(), 9999);
+    assertEquals(order.getEstimatedTime(), 234_532_000);
+    assertEquals(order.getEstimatedRouteLength(), 35_213);
+    assertEquals(order.getTotalCost(), 10_352);
+    assertEquals(order.getTimeout(), 25);
+    assertEquals(order.getEtaToStartPoint(), 1234567890);
+    assertEquals(order.getConfirmationTime(), 9876543210L);
+    assertEquals(order.getOrderStartTime(), 9876598760L);
+    assertEquals(order.getServiceName(), "service");
+    assertEquals(order.getDistance(), 546);
+    assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
+    assertEquals(order.getOptions(),
+        Arrays.asList(optionNumeric, optionBoolean, optionBoolean, optionNumeric)
+    );
+  }
+
+  /**
+   * Должен успешно преобразовать JSON без дистанции в заказ.
+   *
+   * @throws Exception ошибка
+   */
+  @Test
+  public void mappingJsonStringWithoutServiceToOrderSuccess() throws Exception {
+    // Дано и Действие:
+    Order order = mapper.map(rule.getOrderWithoutService());
+
+    // Результат:
+    assertEquals(order.getId(), 7);
+    assertEquals(order.getComment(), "some comment");
+    assertEquals(order.getEstimatedPriceText(), "over 9999 BTC");
+    assertEquals(order.getEstimatedPrice(), 9999);
+    assertEquals(order.getEstimatedTime(), 234_532_000);
+    assertEquals(order.getEstimatedRouteLength(), 35_213);
+    assertEquals(order.getTotalCost(), 10_352);
+    assertEquals(order.getTimeout(), 25);
+    assertEquals(order.getEtaToStartPoint(), 1234567890);
+    assertEquals(order.getConfirmationTime(), 9876543210L);
+    assertEquals(order.getOrderStartTime(), 9876598760L);
+    assertEquals(order.getServiceName(), "");
+    assertEquals(order.getDistance(), 546);
     assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
     assertEquals(order.getOptions(),
         Arrays.asList(optionNumeric, optionBoolean, optionBoolean, optionNumeric)
@@ -507,6 +643,7 @@ public class OrderFulfillmentApiMapperTest {
     assertEquals(order.getEtaToStartPoint(), 1234567890);
     assertEquals(order.getConfirmationTime(), 9876543210L);
     assertEquals(order.getOrderStartTime(), 9876598760L);
+    assertEquals(order.getServiceName(), "service");
     assertEquals(order.getDistance(), 546);
     assertEquals(order.getRoutePath(), new ArrayList<>());
     assertEquals(order.getOptions(),
@@ -536,6 +673,7 @@ public class OrderFulfillmentApiMapperTest {
     assertEquals(order.getEtaToStartPoint(), 1234567890);
     assertEquals(order.getConfirmationTime(), 9876543210L);
     assertEquals(order.getOrderStartTime(), 9876598760L);
+    assertEquals(order.getServiceName(), "service");
     assertEquals(order.getDistance(), 546);
     assertEquals(order.getRoutePath(), new ArrayList<>());
     assertEquals(order.getOptions(),
@@ -565,6 +703,7 @@ public class OrderFulfillmentApiMapperTest {
     assertEquals(order.getEtaToStartPoint(), 1234567890);
     assertEquals(order.getConfirmationTime(), 9876543210L);
     assertEquals(order.getOrderStartTime(), 9876598760L);
+    assertEquals(order.getServiceName(), "service");
     assertEquals(order.getDistance(), 546);
     assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
     assertEquals(order.getOptions(), new ArrayList<>());
@@ -592,6 +731,7 @@ public class OrderFulfillmentApiMapperTest {
     assertEquals(order.getEtaToStartPoint(), 1234567890);
     assertEquals(order.getConfirmationTime(), 9876543210L);
     assertEquals(order.getOrderStartTime(), 9876598760L);
+    assertEquals(order.getServiceName(), "service");
     assertEquals(order.getDistance(), 546);
     assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
     assertEquals(order.getOptions(), new ArrayList<>());

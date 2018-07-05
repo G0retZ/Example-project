@@ -51,7 +51,8 @@ public class OrderFulfillmentApiMapper implements Mapper<String, Order> {
     Order order = new Order(
         apiOrder.getId(),
         apiOrder.getComment() == null ? "" : apiOrder.getComment(),
-        "",
+        apiOrder.getApiOrderService() == null || apiOrder.getApiOrderService().getName() == null ?
+            "" : apiOrder.getApiOrderService().getName(),
         apiOrder.getExecutorDistance() == null ? 0 : apiOrder.getExecutorDistance().getDistance(),
         apiOrder.getEstimatedAmountText() == null ? "" : apiOrder.getEstimatedAmountText(),
         apiOrder.getEstimatedAmount(),
