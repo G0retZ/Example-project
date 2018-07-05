@@ -20,7 +20,7 @@ class ServicesAdapter extends RecyclerView.Adapter<ServiceViewHolder> {
   @NonNull
   private final SortedList<ServicesListItem> sortedList;
 
-  ServicesAdapter() {
+  ServicesAdapter(Runnable runnable) {
     sortedList = new SortedList<>(ServicesListItem.class,
         new SortedListAdapterCallback<ServicesListItem>(this) {
 
@@ -37,6 +37,14 @@ class ServicesAdapter extends RecyclerView.Adapter<ServiceViewHolder> {
           @Override
           public boolean areItemsTheSame(ServicesListItem item1, ServicesListItem item2) {
             return item1.equals(item2);
+          }
+
+          @Override
+          public void onInserted(int position, int count) {
+            super.onInserted(position, count);
+            if (position == 0) {
+              runnable.run();
+            }
           }
         });
   }
