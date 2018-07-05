@@ -1,35 +1,50 @@
 package com.fasten.executor_driver.view;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import com.fasten.executor_driver.R;
 import com.fasten.executor_driver.di.AppComponent;
 import com.fasten.executor_driver.presentation.order.OrderViewActions;
 import com.fasten.executor_driver.presentation.order.OrderViewModel;
+import com.squareup.picasso.Picasso;
+import java.text.DecimalFormat;
 import javax.inject.Inject;
+import org.joda.time.LocalTime;
 
 /**
  * Отображает подтверждение заказа.
  */
 
-public class ClientOrderConfirmationFragment extends BaseFragment implements
-    OrderViewActions {
+public class ClientOrderConfirmationFragment extends BaseFragment implements OrderViewActions {
 
   private OrderViewModel orderViewModel;
+  private ImageView mapImage;
   private TextView distanceText;
-  private TextView addressText;
-  private TextView commentTitleText;
-  private TextView commentText;
+  private TextView etaText;
+  private TextView addressText1;
+  private TextView addressText2;
+  private TextView positionText2;
+  private TextView estimationText;
+  private TextView serviceText;
+  private TextView cargoDescTitleText;
+  private TextView cargoDescText;
   private TextView optionsTitleText;
   private TextView optionsText;
-  private TextView priceTitleText;
-  private TextView priceText;
+  private Context context;
   private boolean pending;
+
+  @Override
+  public void onAttach(Context context) {
+    super.onAttach(context);
+    this.context = context;
+  }
 
   @Inject
   public void setOrderViewModel(
@@ -43,14 +58,18 @@ public class ClientOrderConfirmationFragment extends BaseFragment implements
       @Nullable ViewGroup container,
       @Nullable Bundle savedInstanceState) {
     View view = inflater.inflate(R.layout.fragment_client_order_confirmation, container, false);
+    mapImage = view.findViewById(R.id.mapImage);
     distanceText = view.findViewById(R.id.distanceText);
-    addressText = view.findViewById(R.id.addressText);
-    commentTitleText = view.findViewById(R.id.commentTitleText);
-    commentText = view.findViewById(R.id.commentText);
+    etaText = view.findViewById(R.id.etaText);
+    addressText1 = view.findViewById(R.id.addressText1);
+    addressText2 = view.findViewById(R.id.addressText2);
+    positionText2 = view.findViewById(R.id.positionText2);
+    estimationText = view.findViewById(R.id.estimationText);
+    serviceText = view.findViewById(R.id.serviceText);
+    cargoDescTitleText = view.findViewById(R.id.cargoDescTitleText);
+    cargoDescText = view.findViewById(R.id.cargoDescText);
     optionsTitleText = view.findViewById(R.id.optionsTitleText);
     optionsText = view.findViewById(R.id.optionsText);
-    priceTitleText = view.findViewById(R.id.priceTitleText);
-    priceText = view.findViewById(R.id.priceText);
     return view;
   }
 
@@ -76,6 +95,12 @@ public class ClientOrderConfirmationFragment extends BaseFragment implements
   }
 
   @Override
+  public void onDetach() {
+    super.onDetach();
+    context = null;
+  }
+
+  @Override
   public void showOrderPending(boolean pending) {
     if (this.pending != pending) {
       showPending(pending);
@@ -85,12 +110,12 @@ public class ClientOrderConfirmationFragment extends BaseFragment implements
 
   @Override
   public void showLoadPoint(@NonNull String url) {
-
+    Picasso.with(context).load(url).into(mapImage);
   }
 
   @Override
   public void showNextPointAddress(@NonNull String coordinates, @NonNull String address) {
-    addressText.setText(address);
+    addressText1.setText(address);
   }
 
   @Override
@@ -100,26 +125,21 @@ public class ClientOrderConfirmationFragment extends BaseFragment implements
 
   @Override
   public void showLastPointAddress(@NonNull String address) {
-
+    addressText2.setText(address.isEmpty() ? getString(R.string.free_ride) : address);
   }
 
   @Override
   public void showRoutePointsCount(int count) {
-
+    positionText2.setText(String.valueOf(count < 2 ? 2 : count));
   }
 
   @Override
   public void showServiceName(@NonNull String serviceName) {
-
+    serviceText.setText(serviceName);
   }
 
   @Override
   public void showTimeout(int timeout) {
-
-  }
-
-  @Override
-  public void showTimeout(int progress, long timeout) {
 
   }
 
@@ -130,24 +150,31 @@ public class ClientOrderConfirmationFragment extends BaseFragment implements
 
   @Override
   public void showFirstPointEta(int etaTime) {
+    etaText.setText(getString(R.string.eta, Math.round(etaTime / 60F)));
+  }
+
+  @Override
+  public void showTimeout(int progress, long timeout) {
 
   }
 
   @Override
   public void showEstimatedPrice(@NonNull String priceText) {
-    if (priceText.trim().isEmpty()) {
-      priceTitleText.setVisibility(View.GONE);
-      this.priceText.setVisibility(View.GONE);
-    } else {
-      priceTitleText.setVisibility(View.VISIBLE);
-      this.priceText.setVisibility(View.VISIBLE);
-      this.priceText.setText(priceText);
-    }
+
   }
 
   @Override
   public void showOrderConditions(@NonNull String routeDistance, int time, int cost) {
-
+    LocalTime localTime = LocalTime.fromMillisOfDay(time * 1000);
+    if (!getResources().getBoolean(R.bool.show_cents)) {
+      cost = Math.round(cost / 100f);
+    }
+    estimationText.setText(getString(
+        R.string.km_h_m_p, routeDistance,
+        localTime.getHourOfDay(),
+        localTime.getMinuteOfHour(),
+        new DecimalFormat(getString(R.string.currency_format)).format(cost))
+    );
   }
 
   @Override
@@ -165,12 +192,12 @@ public class ClientOrderConfirmationFragment extends BaseFragment implements
   @Override
   public void showComment(@NonNull String comment) {
     if (comment.trim().isEmpty()) {
-      commentTitleText.setVisibility(View.GONE);
-      commentText.setVisibility(View.GONE);
+      cargoDescTitleText.setVisibility(View.GONE);
+      cargoDescText.setVisibility(View.GONE);
     } else {
-      commentTitleText.setVisibility(View.VISIBLE);
-      commentText.setVisibility(View.VISIBLE);
-      commentText.setText(comment);
+      cargoDescTitleText.setVisibility(View.VISIBLE);
+      cargoDescText.setVisibility(View.VISIBLE);
+      cargoDescText.setText(comment);
     }
   }
 }

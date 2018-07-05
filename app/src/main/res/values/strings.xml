@@ -68,6 +68,7 @@
   <string name="eta">≈ %1$dмин.</string>
   <string name="porters">Грузчики</string>
   <string name="passengers">Пассажиры</string>
+  <string name="cargo_description">Описание груза</string>
   <string name="comment">Коментарий</string>
   <string name="accept">Принять</string>
   <string name="offer">Предложение</string>
@@ -75,7 +76,7 @@
   <string name="consider">Рассмотреть</string>
   <string name="proceed">Продолжить</string>
   <string name="done">Готово</string>
-  <string name="client_confirmation">Идет подтверждение у клиента.\nБудьте готовы начать заказ</string>
+  <string name="client_confirmation">Идет подтверждение у клиента.\nБудьте готовы начать движение</string>
   <string name="options">Опции</string>
   <string name="cost">Стоимость</string>
   <string name="arrived">Сообщить о прибытии</string>

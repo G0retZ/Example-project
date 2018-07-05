@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout
   xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
   xmlns:tools="http://schemas.android.com/tools"
   android:layout_width="match_parent"
   android:layout_height="match_parent"
@@ -10,12 +11,30 @@
     android:id="@+id/fragment_client_order_confirmation"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_marginBottom="56dp"
     android:name="com.fasten.executor_driver.view.ClientOrderConfirmationFragment"
     tools:layout="@layout/fragment_client_order_confirmation"/>
+  <ImageButton
+    android:id="@+id/appBar"
+    style="@style/Widget.AppCompat.ActionButton"
+    android:layout_width="56dp"
+    android:layout_height="56dp"
+    android:contentDescription="@null"
+    app:srcCompat="@drawable/ic_menu_24dp"/>
   <fragment
     android:id="@+id/fragment_server_connection"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:name="com.fasten.executor_driver.view.ServerConnectionFragment"
     tools:layout="@layout/fragment_server_connection"/>
+  <TextView
+    style="@style/TextAppearance.AppCompat.Subhead.Inverse"
+    android:layout_width="match_parent"
+    android:layout_height="56dp"
+    android:layout_gravity="bottom"
+    android:paddingStart="16dp"
+    android:paddingEnd="16dp"
+    android:background="@color/colorAccentGreen"
+    android:gravity="center_vertical"
+    android:text="@string/client_confirmation"/>
 </FrameLayout>
