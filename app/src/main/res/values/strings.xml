@@ -115,6 +115,6 @@
   <string name="missed_order">Упущен заказ</string>
   <string name="server_connection">Связь с сервером</string>
   <string name="service">Услуга</string>
-  <string name="order_distance_and_duration">Пробег и длительность заказа и стоимость</string>
+  <string name="order_distance_and_duration">Пробег, длительность, стоимость</string>
   <string name="km_h_m_p">%1$s км, %2$d ч. %3$d мин. ≈ %4$s</string>
 </resources>
