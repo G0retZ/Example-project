@@ -501,7 +501,7 @@ public class MovingToClientApiMapperTest {
   }
 
   /**
-   * Должен успешно преобразовать JSON без ИД в дистанции в заказ.
+   * Должен успешно преобразовать JSON без ИД в услуге в заказ.
    *
    * @throws Exception ошибка
    */
@@ -531,12 +531,12 @@ public class MovingToClientApiMapperTest {
   }
 
   /**
-   * Должен дать ошибку, если пришел JSON без значения дистанции.
+   * Должен дать ошибку, если пришел JSON без имени услуги.
    *
    * @throws Exception ошибка
    */
-  @Test
-  public void mappingJsonStringWithoutServiceNameToOrderSuccess() throws Exception {
+  @Test(expected = DataMappingException.class)
+  public void mappingJsonStringWithoutServiceNameToOrderFail() throws Exception {
     // Дано и Действие:
     Order order = mapper.map(rule.getOrderWithoutServiceName());
 
@@ -561,7 +561,7 @@ public class MovingToClientApiMapperTest {
   }
 
   /**
-   * Должен дать ошибку, если пришел JSON без значения дистанции.
+   * Должен успешно преобразовать JSON без цены услуги в заказ.
    *
    * @throws Exception ошибка
    */
@@ -591,12 +591,12 @@ public class MovingToClientApiMapperTest {
   }
 
   /**
-   * Должен успешно преобразовать JSON без дистанции в заказ.
+   * Должен дать ошибку, если пришел JSON без услуги в заказ.
    *
    * @throws Exception ошибка
    */
-  @Test
-  public void mappingJsonStringWithoutServiceToOrderSuccess() throws Exception {
+  @Test(expected = DataMappingException.class)
+  public void mappingJsonStringWithoutServiceToOrderFail() throws Exception {
     // Дано и Действие:
     Order order = mapper.map(rule.getOrderWithoutService());
 

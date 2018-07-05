@@ -501,7 +501,7 @@ public class WaitingForClientApiMapperTest {
   }
 
   /**
-   * Должен успешно преобразовать JSON без ИД в дистанции в заказ.
+   * Должен успешно преобразовать JSON без ИД в услуге в заказ.
    *
    * @throws Exception ошибка
    */
@@ -531,7 +531,7 @@ public class WaitingForClientApiMapperTest {
   }
 
   /**
-   * Должен дать ошибку, если пришел JSON без значения дистанции.
+   * Должен дать ошибку, если пришел JSON без имени услуги.
    *
    * @throws Exception ошибка
    */
@@ -561,7 +561,7 @@ public class WaitingForClientApiMapperTest {
   }
 
   /**
-   * Должен дать ошибку, если пришел JSON без значения дистанции.
+   * Должен успешно преобразовать JSON без цены услуги в заказ.
    *
    * @throws Exception ошибка
    */
@@ -591,7 +591,7 @@ public class WaitingForClientApiMapperTest {
   }
 
   /**
-   * Должен успешно преобразовать JSON без дистанции в заказ.
+   * Должен дать ошибку, если пришел JSON без услуги в заказ.
    *
    * @throws Exception ошибка
    */

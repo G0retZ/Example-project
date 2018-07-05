@@ -40,6 +40,12 @@ public class MovingToClientApiMapper implements Mapper<String, Order> {
     } catch (Exception e) {
       throw new DataMappingException("Ошибка маппинга: не удалось распарсить JSON!", e);
     }
+    if (apiOrder.getApiOrderService() == null) {
+      throw new DataMappingException("Ошибка маппинга: Услуга не должна быть null!");
+    }
+    if (apiOrder.getApiOrderService().getName() == null) {
+      throw new DataMappingException("Ошибка маппинга: Имя услуги не должно быть null!");
+    }
     if (apiOrder.getEtaToStartPoint() == 0) {
       throw new DataMappingException("Ошибка маппинга: ETA должно быть больше 0!");
     }
@@ -57,8 +63,7 @@ public class MovingToClientApiMapper implements Mapper<String, Order> {
     Order order = new Order(
         apiOrder.getId(),
         apiOrder.getComment() == null ? "" : apiOrder.getComment(),
-        apiOrder.getApiOrderService() == null || apiOrder.getApiOrderService().getName() == null ?
-            "" : apiOrder.getApiOrderService().getName(),
+        apiOrder.getApiOrderService().getName(),
         apiOrder.getExecutorDistance() == null ? 0 : apiOrder.getExecutorDistance().getDistance(),
         apiOrder.getEstimatedAmountText() == null ? "" : apiOrder.getEstimatedAmountText(),
         apiOrder.getEstimatedAmount(),
