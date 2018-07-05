@@ -35,6 +35,9 @@ public class ApiOrder {
   @SerializedName("executorDistance")
   private ApiDriverDistancePair executorDistance;
   @Nullable
+  @SerializedName("carSearchRequest")
+  private ApiOrderService apiOrderService;
+  @Nullable
   @SerializedName("route")
   private List<ApiRoutePoint> route;
   @Nullable
@@ -53,6 +56,7 @@ public class ApiOrder {
       long estimatedRouteDistance, int totalAmount, @Nullable String comment, long timeout,
       long etaToStartPoint, long confirmationTime, long orderStartTime,
       @Nullable ApiDriverDistancePair executorDistance,
+      @Nullable ApiOrderService apiOrderService,
       @Nullable List<ApiRoutePoint> route,
       @Nullable List<ApiOptionItem> options) {
     this.id = id;
@@ -67,6 +71,7 @@ public class ApiOrder {
     this.confirmationTime = confirmationTime;
     this.orderStartTime = orderStartTime;
     this.executorDistance = executorDistance;
+    this.apiOrderService = apiOrderService;
     this.route = route;
     this.options = options;
   }
@@ -120,6 +125,11 @@ public class ApiOrder {
   @Nullable
   public ApiDriverDistancePair getExecutorDistance() {
     return executorDistance;
+  }
+
+  @Nullable
+  public ApiOrderService getApiOrderService() {
+    return apiOrderService;
   }
 
   @Nullable

@@ -14,6 +14,7 @@ public class ApiDriverDistancePair {
   public ApiDriverDistancePair() {
   }
 
+  @SuppressWarnings("SameParameterValue")
   ApiDriverDistancePair(int distance) {
     this.distance = distance;
   }
