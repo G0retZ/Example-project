@@ -23,6 +23,7 @@ import com.fasten.executor_driver.view.ServerConnectionFragment;
 import com.fasten.executor_driver.view.ServicesFragment;
 import com.fasten.executor_driver.view.VehicleOptionsFragment;
 import com.fasten.executor_driver.view.WaitingForClientFragment;
+import com.fasten.executor_driver.view.WaitingForClientRouteFragment;
 import com.fasten.executor_driver.view.auth.LoginFragment;
 import com.fasten.executor_driver.view.auth.PasswordFragment;
 
@@ -77,4 +78,6 @@ public interface AppComponent {
   void inject(MenuFragment menuFragment);
 
   void inject(ServerConnectionFragment serverConnectionFragment);
+
+  void inject(WaitingForClientRouteFragment waitingForClientRouteFragment);
 }
