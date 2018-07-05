@@ -57,7 +57,7 @@ public class WaitingForClientFragment extends BaseFragment implements
       @Nullable ViewGroup container,
       @Nullable Bundle savedInstanceState) {
     View view = inflater.inflate(R.layout.fragment_waiting_for_client, container, false);
-    addressText1 = view.findViewById(R.id.addressText1);
+    addressText1 = view.findViewById(R.id.addressText);
     commentTitleText = view.findViewById(R.id.commentTitleText);
     commentText = view.findViewById(R.id.commentText);
     estimationText = view.findViewById(R.id.estimationText);
@@ -189,6 +189,9 @@ public class WaitingForClientFragment extends BaseFragment implements
   @Override
   public void showOrderConditions(@NonNull String routeDistance, int time, int cost) {
     LocalTime localTime = LocalTime.fromMillisOfDay(time * 1000);
+    if (!getResources().getBoolean(R.bool.show_cents)) {
+      cost = Math.round(cost / 100f);
+    }
     estimationText.setText(getString(
         R.string.km_h_m_p, routeDistance,
         localTime.getHourOfDay(),

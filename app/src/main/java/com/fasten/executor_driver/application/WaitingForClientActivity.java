@@ -39,7 +39,7 @@ public class WaitingForClientActivity extends BaseActivity {
     Fragment fragment;
     switch (destination) {
       case WaitingForClientMenuNavigate.ORDER_ROUTE:
-        startActivity(new Intent(this, OrderRouteActivity.class));
+        startActivity(new Intent(this, WaitingForClientRouteActivity.class));
         break;
       case WaitingForClientMenuNavigate.REPORT_A_PROBLEM:
         if (getSupportFragmentManager().findFragmentByTag("reportAProblem") == null) {

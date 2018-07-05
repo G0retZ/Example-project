@@ -165,6 +165,9 @@ public class ClientOrderConfirmationFragment extends BaseFragment implements Ord
   @Override
   public void showOrderConditions(@NonNull String routeDistance, int time, int cost) {
     LocalTime localTime = LocalTime.fromMillisOfDay(time * 1000);
+    if (!getResources().getBoolean(R.bool.show_cents)) {
+      cost = Math.round(cost / 100f);
+    }
     estimationText.setText(getString(
         R.string.km_h_m_p, routeDistance,
         localTime.getHourOfDay(),
