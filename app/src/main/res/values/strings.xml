@@ -62,8 +62,8 @@
   <string name="vehicles_list">Список ТС</string>
   <string name="qiwi">Qiwi</string>
   <string name="sberbank">Сбербанк-онлайн</string>
-  <string name="tariff_range">Тарифы, по которым вы готовы работать:</string>
-  <string name="deselect_unwanted_services">Выключите услуги, которые вам не подходят:</string>
+  <string name="tariff_range">Тарифы, по которым вы готовы работать</string>
+  <string name="deselect_unwanted_services">Выключите услуги, которые вам не подходят</string>
   <string name="km">%1$sкм</string>
   <string name="eta">≈ %1$dмин.</string>
   <string name="porters">Грузчики</string>

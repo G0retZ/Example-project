@@ -73,7 +73,7 @@ public class ServicesFragment extends BaseFragment implements ServicesViewAction
     errorText = view.findViewById(R.id.errorText);
     readyButton = view.findViewById(R.id.readyButton);
     recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-    recyclerView.setAdapter(new ServicesAdapter());
+    recyclerView.setAdapter(new ServicesAdapter(() -> recyclerView.scrollToPosition(0)));
     readyButton.setOnClickListener(v -> servicesViewModel.setServices(
         ((ServicesAdapter) recyclerView.getAdapter()).getServicesListItems())
     );
