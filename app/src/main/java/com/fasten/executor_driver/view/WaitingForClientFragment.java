@@ -57,7 +57,7 @@ public class WaitingForClientFragment extends BaseFragment implements
       @Nullable ViewGroup container,
       @Nullable Bundle savedInstanceState) {
     View view = inflater.inflate(R.layout.fragment_waiting_for_client, container, false);
-    addressText1 = view.findViewById(R.id.addressText1);
+    addressText1 = view.findViewById(R.id.addressText);
     commentTitleText = view.findViewById(R.id.commentTitleText);
     commentText = view.findViewById(R.id.commentText);
     estimationText = view.findViewById(R.id.estimationText);
