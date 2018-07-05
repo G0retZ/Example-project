@@ -58,4 +58,14 @@ public enum ExecutorState {
   public void setData(@Nullable String data) {
     this.data = data;
   }
+
+  private long customerTimer;
+
+  public long getCustomerTimer() {
+    return customerTimer;
+  }
+
+  public void setCustomerTimer(long customerTimer) {
+    this.customerTimer = customerTimer;
+  }
 }
