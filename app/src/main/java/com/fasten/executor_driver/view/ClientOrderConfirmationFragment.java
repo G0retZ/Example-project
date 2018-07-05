@@ -33,8 +33,8 @@ public class ClientOrderConfirmationFragment extends BaseFragment implements Ord
   private TextView positionText2;
   private TextView estimationText;
   private TextView serviceText;
-  private TextView commentTitleText;
-  private TextView commentText;
+  private TextView cargoDescTitleText;
+  private TextView cargoDescText;
   private TextView optionsTitleText;
   private TextView optionsText;
   private Context context;
@@ -66,8 +66,8 @@ public class ClientOrderConfirmationFragment extends BaseFragment implements Ord
     positionText2 = view.findViewById(R.id.positionText2);
     estimationText = view.findViewById(R.id.estimationText);
     serviceText = view.findViewById(R.id.serviceText);
-    commentTitleText = view.findViewById(R.id.commentTitleText);
-    commentText = view.findViewById(R.id.commentText);
+    cargoDescTitleText = view.findViewById(R.id.cargoDescTitleText);
+    cargoDescText = view.findViewById(R.id.cargoDescText);
     optionsTitleText = view.findViewById(R.id.optionsTitleText);
     optionsText = view.findViewById(R.id.optionsText);
     return view;
@@ -189,12 +189,12 @@ public class ClientOrderConfirmationFragment extends BaseFragment implements Ord
   @Override
   public void showComment(@NonNull String comment) {
     if (comment.trim().isEmpty()) {
-      commentTitleText.setVisibility(View.GONE);
-      commentText.setVisibility(View.GONE);
+      cargoDescTitleText.setVisibility(View.GONE);
+      cargoDescText.setVisibility(View.GONE);
     } else {
-      commentTitleText.setVisibility(View.VISIBLE);
-      commentText.setVisibility(View.VISIBLE);
-      commentText.setText(comment);
+      cargoDescTitleText.setVisibility(View.VISIBLE);
+      cargoDescText.setVisibility(View.VISIBLE);
+      cargoDescText.setText(comment);
     }
   }
 }

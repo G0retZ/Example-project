@@ -226,7 +226,7 @@
       app:layout_constraintTop_toBottomOf="@+id/serviceTitleText"
       tools:text="Грузоперевозка"/>
     <TextView
-      android:id="@+id/commentTitleText"
+      android:id="@+id/cargoDescTitleText"
       style="@style/TextAppearance.AppCompat.Subhead"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
@@ -238,14 +238,14 @@
       app:layout_constraintStart_toStartOf="parent"
       app:layout_constraintTop_toBottomOf="@id/serviceText"/>
     <TextView
-      android:id="@+id/commentText"
+      android:id="@+id/cargoDescText"
       style="@style/TextAppearance.AppCompat.Title"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:layout_marginStart="16dp"
       android:layout_marginEnd="16dp"
       app:layout_constraintStart_toStartOf="parent"
-      app:layout_constraintTop_toBottomOf="@id/commentTitleText"
+      app:layout_constraintTop_toBottomOf="@id/cargoDescTitleText"
       tools:text="Заехать купить 10 коробок. Чистая машина. Не курить!"/>
     <TextView
       android:id="@+id/optionsTitleText"
@@ -258,7 +258,7 @@
       android:text="@string/options"
       android:textColor="@color/colorAccentSecond"
       app:layout_constraintStart_toStartOf="parent"
-      app:layout_constraintTop_toBottomOf="@id/commentText"/>
+      app:layout_constraintTop_toBottomOf="@id/cargoDescText"/>
     <TextView
       android:id="@+id/optionsText"
       style="@style/TextAppearance.AppCompat.Title"
