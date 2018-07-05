@@ -21,11 +21,11 @@
       android:layout_height="match_parent"
       android:gravity="center_vertical|end">
       <Button
-        android:id="@+id/cancelOrder"
+        android:id="@+id/orderActions"
         style="@style/AppTheme.Button.Borderless.Small"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@android:string/cancel"/>
+        android:text="@string/actions"/>
     </LinearLayout>
   </android.support.v7.widget.Toolbar>
   <TextView
