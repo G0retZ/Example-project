@@ -153,6 +153,7 @@ import com.fasten.executor_driver.view.ServerConnectionFragment;
 import com.fasten.executor_driver.view.ServicesFragment;
 import com.fasten.executor_driver.view.VehicleOptionsFragment;
 import com.fasten.executor_driver.view.WaitingForClientFragment;
+import com.fasten.executor_driver.view.WaitingForClientRouteFragment;
 import com.fasten.executor_driver.view.auth.LoginFragment;
 import com.fasten.executor_driver.view.auth.PasswordFragment;
 import com.fasten.executor_driver.view.auth.SmsReceiver;
@@ -943,6 +944,30 @@ public class AppComponentImpl implements AppComponent {
   public void inject(ServerConnectionFragment serverConnectionFragment) {
     serverConnectionFragment.setServerConnectionViewModel(
         serverConnectionViewModel
+    );
+  }
+
+  @Override
+  public void inject(WaitingForClientRouteFragment waitingForClientRouteFragment) {
+    waitingForClientRouteFragment.setOrderRouteViewModel(
+        ViewModelProviders.of(
+            waitingForClientRouteFragment,
+            new ViewModelFactory<>(
+                new OrderRouteViewModelImpl(
+                    new OrderRouteUseCaseImpl(
+                        new OrderGatewayImpl(
+                            executorStateUseCase,
+                            ExecutorState.WAITING_FOR_CLIENT,
+                            new OrderFulfillmentApiMapper(
+                                new VehicleOptionApiMapper(),
+                                new RoutePointApiMapper()
+                            )
+                        ),
+                        new OrderRouteGatewayImpl(stompClient)
+                    )
+                )
+            )
+        ).get(OrderRouteViewModelImpl.class)
     );
   }
 }

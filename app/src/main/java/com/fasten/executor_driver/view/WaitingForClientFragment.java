@@ -15,7 +15,9 @@ import com.fasten.executor_driver.presentation.order.OrderViewModel;
 import com.fasten.executor_driver.presentation.waitingforclient.WaitingForClientNavigate;
 import com.fasten.executor_driver.presentation.waitingforclient.WaitingForClientViewActions;
 import com.fasten.executor_driver.presentation.waitingforclient.WaitingForClientViewModel;
+import java.text.DecimalFormat;
 import javax.inject.Inject;
+import org.joda.time.LocalTime;
 
 /**
  * Отображает ожидание клиента.
@@ -26,12 +28,15 @@ public class WaitingForClientFragment extends BaseFragment implements
 
   private WaitingForClientViewModel waitingForClientViewModel;
   private OrderViewModel orderViewModel;
+  private TextView addressText1;
   private TextView commentTitleText;
   private TextView commentText;
+  private TextView estimationText;
+  private TextView serviceText;
+  private TextView cargoDescTitleText;
+  private TextView cargoDescText;
   private TextView optionsTitleText;
   private TextView optionsText;
-  private TextView priceTitleText;
-  private TextView priceText;
   private boolean waitingForClientPending;
   private boolean orderPending;
 
@@ -52,12 +57,15 @@ public class WaitingForClientFragment extends BaseFragment implements
       @Nullable ViewGroup container,
       @Nullable Bundle savedInstanceState) {
     View view = inflater.inflate(R.layout.fragment_waiting_for_client, container, false);
+    addressText1 = view.findViewById(R.id.addressText);
     commentTitleText = view.findViewById(R.id.commentTitleText);
     commentText = view.findViewById(R.id.commentText);
+    estimationText = view.findViewById(R.id.estimationText);
+    serviceText = view.findViewById(R.id.serviceText);
+    cargoDescTitleText = view.findViewById(R.id.cargoDescTitleText);
+    cargoDescText = view.findViewById(R.id.cargoDescText);
     optionsTitleText = view.findViewById(R.id.optionsTitleText);
     optionsText = view.findViewById(R.id.optionsText);
-    priceTitleText = view.findViewById(R.id.priceTitleText);
-    priceText = view.findViewById(R.id.priceText);
     Button callToClient = view.findViewById(R.id.callToClient);
     Button startLoading = view.findViewById(R.id.startLoading);
     callToClient.setOnClickListener(v -> {
@@ -123,12 +131,19 @@ public class WaitingForClientFragment extends BaseFragment implements
 
   @Override
   public void showNextPointAddress(@NonNull String coordinates, @NonNull String address) {
-
+    addressText1.setText(address);
   }
 
   @Override
   public void showNextPointComment(@NonNull String comment) {
-
+    if (comment.trim().isEmpty()) {
+      commentTitleText.setVisibility(View.GONE);
+      commentText.setVisibility(View.GONE);
+    } else {
+      commentTitleText.setVisibility(View.VISIBLE);
+      commentText.setVisibility(View.VISIBLE);
+      commentText.setText(comment);
+    }
   }
 
   @Override
@@ -143,16 +158,11 @@ public class WaitingForClientFragment extends BaseFragment implements
 
   @Override
   public void showServiceName(@NonNull String serviceName) {
-
+    serviceText.setText(serviceName);
   }
 
   @Override
   public void showTimeout(int timeout) {
-
-  }
-
-  @Override
-  public void showTimeout(int progress, long timeout) {
 
   }
 
@@ -167,20 +177,27 @@ public class WaitingForClientFragment extends BaseFragment implements
   }
 
   @Override
+  public void showTimeout(int progress, long timeout) {
+
+  }
+
+  @Override
   public void showEstimatedPrice(@NonNull String priceText) {
-    if (priceText.trim().isEmpty()) {
-      priceTitleText.setVisibility(View.GONE);
-      this.priceText.setVisibility(View.GONE);
-    } else {
-      priceTitleText.setVisibility(View.VISIBLE);
-      this.priceText.setVisibility(View.VISIBLE);
-      this.priceText.setText(priceText);
-    }
+
   }
 
   @Override
   public void showOrderConditions(@NonNull String routeDistance, int time, int cost) {
-
+    LocalTime localTime = LocalTime.fromMillisOfDay(time * 1000);
+    if (!getResources().getBoolean(R.bool.show_cents)) {
+      cost = Math.round(cost / 100f);
+    }
+    estimationText.setText(getString(
+        R.string.km_h_m_p, routeDistance,
+        localTime.getHourOfDay(),
+        localTime.getMinuteOfHour(),
+        new DecimalFormat(getString(R.string.currency_format)).format(cost))
+    );
   }
 
   @Override
@@ -198,12 +215,12 @@ public class WaitingForClientFragment extends BaseFragment implements
   @Override
   public void showComment(@NonNull String comment) {
     if (comment.trim().isEmpty()) {
-      commentTitleText.setVisibility(View.GONE);
-      commentText.setVisibility(View.GONE);
+      cargoDescTitleText.setVisibility(View.GONE);
+      cargoDescText.setVisibility(View.GONE);
     } else {
-      commentTitleText.setVisibility(View.VISIBLE);
-      commentText.setVisibility(View.VISIBLE);
-      commentText.setText(comment);
+      cargoDescTitleText.setVisibility(View.VISIBLE);
+      cargoDescText.setVisibility(View.VISIBLE);
+      cargoDescText.setText(comment);
     }
   }
 }

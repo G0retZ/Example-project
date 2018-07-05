@@ -25,13 +25,11 @@ public class OrderFulfillmentActivity extends BaseActivity {
       toolbar.setNavigationOnClickListener(
           v -> startActivity(new Intent(this, MenuActivity.class))
       );
-      toolbar.findViewById(R.id.orderActions).setOnClickListener(
-          v -> {
-            if (getSupportFragmentManager().findFragmentByTag("menu") == null) {
-              new OrderFulfillmentActionsDialogFragment().show(getSupportFragmentManager(), "menu");
-            }
-          }
-      );
+      toolbar.findViewById(R.id.orderActions).setOnClickListener(v -> {
+        if (getSupportFragmentManager().findFragmentByTag("menu") == null) {
+          new OrderFulfillmentActionsDialogFragment().show(getSupportFragmentManager(), "menu");
+        }
+      });
     }
   }
 

@@ -9,9 +9,11 @@ import android.support.v7.widget.Toolbar;
 import com.fasten.executor_driver.R;
 import com.fasten.executor_driver.presentation.cancelorder.CancelOrderNavigate;
 import com.fasten.executor_driver.presentation.waitingforclient.WaitingForClientNavigate;
+import com.fasten.executor_driver.presentation.waitingforclientmenu.WaitingForClientMenuNavigate;
 import com.fasten.executor_driver.view.CallToClientFragment;
 import com.fasten.executor_driver.view.CallToOperatorFragment;
 import com.fasten.executor_driver.view.CancelOrderDialogFragment;
+import com.fasten.executor_driver.view.WaitingForClientActionsDialogFragment;
 
 public class WaitingForClientActivity extends BaseActivity {
 
@@ -24,12 +26,10 @@ public class WaitingForClientActivity extends BaseActivity {
       toolbar.setNavigationOnClickListener(
           v -> startActivity(new Intent(this, MenuActivity.class))
       );
-      toolbar.findViewById(R.id.cancelOrder).setOnClickListener(v -> {
-        if (getSupportFragmentManager().findFragmentByTag("cancelOrder") == null) {
-          new CancelOrderDialogFragment().show(getSupportFragmentManager(), "cancelOrder");
+      toolbar.findViewById(R.id.orderActions).setOnClickListener(v -> {
+        if (getSupportFragmentManager().findFragmentByTag("menu") == null) {
+          new WaitingForClientActionsDialogFragment().show(getSupportFragmentManager(), "menu");
         }
-        v.setEnabled(false);
-        v.postDelayed(() -> v.setEnabled(true), 10_000);
       });
     }
   }
@@ -38,6 +38,14 @@ public class WaitingForClientActivity extends BaseActivity {
   public void navigate(@NonNull String destination) {
     Fragment fragment;
     switch (destination) {
+      case WaitingForClientMenuNavigate.ORDER_ROUTE:
+        startActivity(new Intent(this, WaitingForClientRouteActivity.class));
+        break;
+      case WaitingForClientMenuNavigate.REPORT_A_PROBLEM:
+        if (getSupportFragmentManager().findFragmentByTag("reportAProblem") == null) {
+          new CancelOrderDialogFragment().show(getSupportFragmentManager(), "reportAProblem");
+        }
+        break;
       case WaitingForClientNavigate.CALL_TO_CLIENT:
         fragment = getSupportFragmentManager().findFragmentById(R.id.fragment_call_to_client);
         if (fragment != null && fragment instanceof CallToClientFragment) {

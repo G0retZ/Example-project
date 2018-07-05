@@ -47,8 +47,7 @@ public class ClientOrderConfirmationFragment extends BaseFragment implements Ord
   }
 
   @Inject
-  public void setOrderViewModel(
-      @NonNull OrderViewModel orderViewModel) {
+  public void setOrderViewModel(@NonNull OrderViewModel orderViewModel) {
     this.orderViewModel = orderViewModel;
   }
 
