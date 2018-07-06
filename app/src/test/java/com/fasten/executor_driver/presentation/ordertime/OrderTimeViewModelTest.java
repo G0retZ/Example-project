@@ -119,10 +119,10 @@ public class OrderTimeViewModelTest {
   }
 
   /**
-   * Должен вернуть состояние вида ошибки.
+   * Не должен возвращать иных состояний вида при ошибке.
    */
   @Test
-  public void setErrorViewStateToLiveDataOnError() {
+  public void setNoNewViewStateViewStateToLiveDataOnError() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
