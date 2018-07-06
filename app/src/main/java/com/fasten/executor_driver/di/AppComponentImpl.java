@@ -103,6 +103,7 @@ import com.fasten.executor_driver.presentation.calltooperator.CallToOperatorView
 import com.fasten.executor_driver.presentation.cancelorder.CancelOrderViewModelImpl;
 import com.fasten.executor_driver.presentation.cancelorderreasons.CancelOrderReasonsViewModelImpl;
 import com.fasten.executor_driver.presentation.choosevehicle.ChooseVehicleViewModelImpl;
+import com.fasten.executor_driver.presentation.clientorderconfirmationtime.ClientOrderConfirmationTimeViewModelImpl;
 import com.fasten.executor_driver.presentation.code.CodeViewModelImpl;
 import com.fasten.executor_driver.presentation.codeheader.CodeHeaderViewModelImpl;
 import com.fasten.executor_driver.presentation.corebalance.CoreBalanceViewModelImpl;
@@ -138,6 +139,7 @@ import com.fasten.executor_driver.view.CallToOperatorFragment;
 import com.fasten.executor_driver.view.CancelOrderDialogFragment;
 import com.fasten.executor_driver.view.ChooseVehicleFragment;
 import com.fasten.executor_driver.view.ClientOrderConfirmationFragment;
+import com.fasten.executor_driver.view.ClientOrderConfirmationTimeFragment;
 import com.fasten.executor_driver.view.DriverOrderConfirmationFragment;
 import com.fasten.executor_driver.view.GoOnlineFragment;
 import com.fasten.executor_driver.view.MapFragment;
@@ -968,6 +970,20 @@ public class AppComponentImpl implements AppComponent {
                 )
             )
         ).get(OrderRouteViewModelImpl.class)
+    );
+  }
+
+  @Override
+  public void inject(ClientOrderConfirmationTimeFragment clientOrderConfirmationTimeFragment) {
+    clientOrderConfirmationTimeFragment.setClientOrderConfirmationTimeViewModel(
+        ViewModelProviders.of(
+            clientOrderConfirmationTimeFragment,
+            new ViewModelFactory<>(
+                new ClientOrderConfirmationTimeViewModelImpl(
+                    executorStateUseCase
+                )
+            )
+        ).get(ClientOrderConfirmationTimeViewModelImpl.class)
     );
   }
 }

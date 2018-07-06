@@ -21,6 +21,12 @@ public class ExecutorStateApiMapper implements Mapper<StompMessage, ExecutorStat
     try {
       executorState = ExecutorState.valueOf(from.findHeader("Status").trim());
       executorState.setData(from.getPayload());
+      String customerTimer = from.findHeader("CustomerConfirmationTimer");
+      if (customerTimer != null) {
+        executorState.setCustomerTimer(Long.valueOf(customerTimer));
+      } else {
+        executorState.setCustomerTimer(0);
+      }
     } catch (Exception e) {
       throw new DataMappingException("Ошибка маппинга: неверный формат статуса!", e);
     }

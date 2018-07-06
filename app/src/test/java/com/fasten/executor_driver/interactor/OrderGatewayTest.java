@@ -40,6 +40,7 @@ public class OrderGatewayTest {
     RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
     RxJavaPlugins.setIoSchedulerHandler(scheduler -> Schedulers.trampoline());
     ExecutorState.DRIVER_ORDER_CONFIRMATION.setData(null);
+    ExecutorState.CLIENT_ORDER_CONFIRMATION.setData(null);
     when(useCase.getExecutorStates(anyBoolean())).thenReturn(Flowable.never());
   }
 
