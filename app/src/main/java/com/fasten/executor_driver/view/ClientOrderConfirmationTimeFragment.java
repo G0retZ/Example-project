@@ -37,7 +37,8 @@ public class ClientOrderConfirmationTimeFragment extends BaseFragment implements
   public View onCreateView(@NonNull LayoutInflater inflater,
       @Nullable ViewGroup container,
       @Nullable Bundle savedInstanceState) {
-    View view = inflater.inflate(R.layout.fragment_client_order_confirmation, container, false);
+    View view = inflater
+        .inflate(R.layout.fragment_client_order_confirmation_time, container, false);
     waitingForClientTimerText = view.findViewById(R.id.clientTimerText);
     waitingForClientTimer = view.findViewById(R.id.clientTimer);
     return view;
