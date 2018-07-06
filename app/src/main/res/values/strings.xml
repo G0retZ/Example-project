@@ -77,7 +77,7 @@
   <string name="proceed">Продолжить</string>
   <string name="done">Готово</string>
   <string name="client_confirmation">Идет подтверждение у клиента.\nБудьте готовы начать движение</string>
-  <string name="client_confirmation_problem">Не удается дозвониться клиенту.\nОператор принимает решение по заказу.</string>
+  <string name="client_confirmation_problem">Не удается дозвониться клиенту.\nОператор занимается вашим заказом.</string>
   <string name="options">Опции</string>
   <string name="cost">Стоимость</string>
   <string name="arrived">Сообщить о прибытии</string>
