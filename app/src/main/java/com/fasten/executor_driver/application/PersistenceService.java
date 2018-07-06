@@ -1,5 +1,7 @@
 package com.fasten.executor_driver.application;
 
+import android.app.Activity;
+import android.app.Application.ActivityLifecycleCallbacks;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -7,6 +9,7 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.IBinder;
@@ -24,6 +27,9 @@ public class PersistenceService extends Service {
   private static final String TAG = PersistenceService.class.getSimpleName();
 
   private static final String CHANNEL_ID = "state_channel";
+  private static final String QUIET_CHANNEL_ID = "state_channel_quiet";
+
+  private boolean onscreen;
 
   /**
    * The identifier for the notification displayed for the foreground service.
@@ -51,8 +57,51 @@ public class PersistenceService extends Service {
 
         // Set the Notification Channel for the Notification Manager.
         notificationManager.createNotificationChannel(mChannel);
+
+        mChannel = new NotificationChannel(QUIET_CHANNEL_ID, getString(R.string.server_connection),
+            NotificationManager.IMPORTANCE_DEFAULT);
+        mChannel.enableVibration(true);
+
+        // Set the Notification Channel for the Notification Manager.
+        notificationManager.createNotificationChannel(mChannel);
       }
     }
+    getApplication().registerActivityLifecycleCallbacks(new ActivityLifecycleCallbacks() {
+      @Override
+      public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
+
+      }
+
+      @Override
+      public void onActivityStarted(Activity activity) {
+
+      }
+
+      @Override
+      public void onActivityResumed(Activity activity) {
+        onscreen = true;
+      }
+
+      @Override
+      public void onActivityPaused(Activity activity) {
+        onscreen = false;
+      }
+
+      @Override
+      public void onActivityStopped(Activity activity) {
+
+      }
+
+      @Override
+      public void onActivitySaveInstanceState(Activity activity, Bundle outState) {
+
+      }
+
+      @Override
+      public void onActivityDestroyed(Activity activity) {
+
+      }
+    });
   }
 
   @Override
@@ -85,7 +134,8 @@ public class PersistenceService extends Service {
    */
   private Notification getNotification(@StringRes int title, @StringRes int text,
       @Nullable PendingIntent activityPendingIntent) {
-    NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID);
+    NotificationCompat.Builder builder =
+        new NotificationCompat.Builder(this, onscreen ? QUIET_CHANNEL_ID : CHANNEL_ID);
     if (activityPendingIntent != null) {
       builder.setContentIntent(activityPendingIntent);
     }
