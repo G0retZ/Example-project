@@ -49,6 +49,7 @@ public enum ExecutorState {
 
   @Nullable
   private String data;
+  private long customerTimer;
 
   @Nullable
   public String getData() {
@@ -58,8 +59,6 @@ public enum ExecutorState {
   public void setData(@Nullable String data) {
     this.data = data;
   }
-
-  private long customerTimer;
 
   public long getCustomerTimer() {
     return customerTimer;
