@@ -558,6 +558,9 @@ public class AppComponentImpl implements AppComponent {
 
   @Override
   public void inject(SelectedVehicleFragment selectedVehicleFragment) {
+    if (vehiclesAndOptionsGateway == null && selectedVehiclesAndOptionsGateway == null) {
+      throw new IllegalStateException("Граф зависимостей поломан!");
+    }
     selectedVehicleFragment.setSelectedVehicleViewModel(
         ViewModelProviders.of(
             selectedVehicleFragment,
@@ -569,6 +572,20 @@ public class AppComponentImpl implements AppComponent {
                 )
             )
         ).get(SelectedVehicleViewModelImpl.class)
+    );
+    selectedVehicleFragment.setChooseVehicleViewModel(
+        ViewModelProviders.of(
+            selectedVehicleFragment,
+            new ViewModelFactory<>(
+                new ChooseVehicleViewModelImpl(
+                    new VehicleChoiceUseCaseImpl(
+                        selectedVehiclesAndOptionsGateway == null ?
+                            vehiclesAndOptionsGateway :
+                            selectedVehiclesAndOptionsGateway,
+                        vehicleChoiceSharer)
+                )
+            )
+        ).get(ChooseVehicleViewModelImpl.class)
     );
   }
 

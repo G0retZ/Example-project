@@ -10,17 +10,23 @@ import android.widget.Button;
 import android.widget.TextView;
 import com.fasten.executor_driver.R;
 import com.fasten.executor_driver.di.AppComponent;
+import com.fasten.executor_driver.presentation.choosevehicle.ChooseVehicleListItem;
+import com.fasten.executor_driver.presentation.choosevehicle.ChooseVehicleViewActions;
+import com.fasten.executor_driver.presentation.choosevehicle.ChooseVehicleViewModel;
 import com.fasten.executor_driver.presentation.selectedvehicle.SelectedVehicleViewActions;
 import com.fasten.executor_driver.presentation.selectedvehicle.SelectedVehicleViewModel;
+import java.util.List;
 import javax.inject.Inject;
 
 /**
  * Отображает выбранную ТС.
  */
 
-public class SelectedVehicleFragment extends BaseFragment implements SelectedVehicleViewActions {
+public class SelectedVehicleFragment extends BaseFragment implements SelectedVehicleViewActions,
+    ChooseVehicleViewActions {
 
   private SelectedVehicleViewModel selectedVehicleViewModel;
+  private ChooseVehicleViewModel chooseVehicleViewModel;
   private Button changeButton;
   private TextView nameText;
 
@@ -28,6 +34,11 @@ public class SelectedVehicleFragment extends BaseFragment implements SelectedVeh
   public void setSelectedVehicleViewModel(
       @NonNull SelectedVehicleViewModel selectedVehicleViewModel) {
     this.selectedVehicleViewModel = selectedVehicleViewModel;
+  }
+
+  @Inject
+  public void setChooseVehicleViewModel(@NonNull ChooseVehicleViewModel chooseVehicleViewModel) {
+    this.chooseVehicleViewModel = chooseVehicleViewModel;
   }
 
   @Nullable
@@ -61,6 +72,16 @@ public class SelectedVehicleFragment extends BaseFragment implements SelectedVeh
         viewState.apply(this);
       }
     });
+    chooseVehicleViewModel.getNavigationLiveData().observe(this, destination -> {
+      if (destination != null) {
+        navigate(destination);
+      }
+    });
+    chooseVehicleViewModel.getViewStateLiveData().observe(this, viewState -> {
+      if (viewState != null) {
+        viewState.apply(this);
+      }
+    });
   }
 
   @Override
@@ -71,5 +92,30 @@ public class SelectedVehicleFragment extends BaseFragment implements SelectedVeh
   @Override
   public void enableChangeButton(boolean enable) {
     changeButton.setEnabled(enable);
+  }
+
+  @Override
+  public void showVehicleListPending(boolean pending) {
+
+  }
+
+  @Override
+  public void showVehicleList(boolean show) {
+    changeButton.setVisibility(show ? View.VISIBLE : View.GONE);
+  }
+
+  @Override
+  public void setVehicleListItems(@NonNull List<ChooseVehicleListItem> chooseVehicleListItems) {
+    changeButton.setVisibility(chooseVehicleListItems.size() > 1 ? View.VISIBLE : View.GONE);
+  }
+
+  @Override
+  public void showVehicleListErrorMessage(boolean show) {
+
+  }
+
+  @Override
+  public void setVehicleListErrorMessage(int messageId) {
+
   }
 }
