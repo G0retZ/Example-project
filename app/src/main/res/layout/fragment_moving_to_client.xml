@@ -36,17 +36,51 @@
     app:layout_constraintStart_toStartOf="@+id/mapImage"
     app:layout_constraintTop_toTopOf="@+id/mapImage"/>
   <TextView
+    android:id="@+id/addressTitleText"
+    style="@style/TextAppearance.AppCompat.Subhead"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="8dp"
+    android:layout_marginStart="16dp"
+    android:layout_marginEnd="16dp"
+    android:text="@string/address"
+    android:textColor="@color/colorAccentSecond"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@id/circles"/>
+  <TextView
     android:id="@+id/addressText"
     style="@style/TextAppearance.AppCompat.Title"
     android:layout_width="0dp"
     android:layout_height="wrap_content"
-    android:layout_marginTop="24dp"
     android:layout_marginStart="16dp"
     android:layout_marginEnd="16dp"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toBottomOf="@id/circles"
-    tools:text="Москва, ул. Академика Пилюгина, 14 корпус 4, кв. 1122, П2, Э8\nВзять пропуск"/>
+    app:layout_constraintTop_toBottomOf="@id/addressTitleText"
+    tools:text="Москва, ул. Академика Пилюгина, 14 корпус 4, кв. 1122"/>
+  <TextView
+    android:id="@+id/commentTitleText"
+    style="@style/TextAppearance.AppCompat.Subhead"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="8dp"
+    android:layout_marginStart="16dp"
+    android:layout_marginEnd="16dp"
+    android:text="@string/comment"
+    android:textColor="@color/colorAccentSecond"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@id/addressText"/>
+  <TextView
+    android:id="@+id/commentText"
+    style="@style/TextAppearance.AppCompat.Title"
+    android:layout_width="0dp"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="16dp"
+    android:layout_marginEnd="16dp"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@id/commentTitleText"
+    tools:text="Заезд со стороны двора"/>
   <TextView
     android:id="@+id/timerTitleText"
     style="@style/TextAppearance.AppCompat.Title"
@@ -59,7 +93,7 @@
     app:layout_constraintBottom_toTopOf="@id/timerText"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toBottomOf="@+id/addressText"
+    app:layout_constraintTop_toBottomOf="@+id/commentText"
     app:layout_constraintVertical_chainStyle="packed"/>
   <TextView
     android:id="@+id/timerText"
