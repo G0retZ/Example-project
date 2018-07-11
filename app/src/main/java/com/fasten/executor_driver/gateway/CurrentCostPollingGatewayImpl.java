@@ -8,8 +8,12 @@ import com.fasten.executor_driver.utils.Pair;
 import io.reactivex.Completable;
 import io.reactivex.Flowable;
 import io.reactivex.schedulers.Schedulers;
+import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
+import javax.inject.Inject;
+import ua.naiksoftware.stomp.StompHeader;
 import ua.naiksoftware.stomp.client.StompClient;
+import ua.naiksoftware.stomp.client.StompMessage;
 
 public class CurrentCostPollingGatewayImpl implements CurrentCostPollingGateway {
 
@@ -18,6 +22,7 @@ public class CurrentCostPollingGatewayImpl implements CurrentCostPollingGateway 
   @NonNull
   private final Mapper<String, Pair<Long, Long>> mapper;
 
+  @Inject
   public CurrentCostPollingGatewayImpl(@NonNull StompClient stompClient,
       @NonNull Mapper<String, Pair<Long, Long>> mapper) {
     this.stompClient = stompClient;
@@ -28,10 +33,24 @@ public class CurrentCostPollingGatewayImpl implements CurrentCostPollingGateway 
   @Override
   public Completable startPolling(@NonNull String channelId) {
     if (stompClient.isConnected() || stompClient.isConnecting()) {
-      return stompClient.topic(String.format(BuildConfig.STATUS_DESTINATION, channelId))
-          .subscribeOn(Schedulers.io())
+      return stompClient.topic(
+          String.format(BuildConfig.STATUS_DESTINATION, channelId),
+          StompClient.ACK_CLIENT_INDIVIDUAL
+      ).subscribeOn(Schedulers.io())
           .observeOn(Schedulers.computation())
           .filter(stompMessage -> stompMessage.findHeader("OverPackage") != null)
+          .doOnNext(
+              stompMessage -> stompClient.sendAfterConnection(
+                  new StompMessage("ACK",
+                      Arrays.asList(
+                          new StompHeader("subscription", stompMessage.findHeader("subscription")),
+                          new StompHeader("message-id", stompMessage.findHeader("message-id"))
+                      ),
+                      ""
+                  )
+              ).subscribe(() -> {
+              }, Throwable::printStackTrace)
+          )
           .takeWhile(stompMessage -> stompMessage.findHeader("OverPackage").equals("1"))
           .map(stompMessage -> mapper.map(stompMessage.getPayload()))
           .switchMap(pair -> Flowable
