@@ -1,5 +1,6 @@
 package com.fasten.executor_driver.interactor;
 
+import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doThrow;
@@ -27,6 +28,8 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -50,14 +53,19 @@ public class CancelOrderGatewayTest {
   private CancelOrderReason cancelOrderReason1;
   @Mock
   private CancelOrderReason cancelOrderReason2;
+  @Captor
+  private ArgumentCaptor<StompMessage> stompMessageCaptor;
 
   @Before
   public void setUp() {
     RxJavaPlugins.setIoSchedulerHandler(scheduler -> Schedulers.trampoline());
     RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
     gateway = new CancelOrderGatewayImpl(stompClient, mapper);
-    when(stompClient.topic(anyString())).thenReturn(Flowable.never());
+    when(stompClient.topic("/queue/1234567890", StompClient.ACK_CLIENT_INDIVIDUAL))
+        .thenReturn(Flowable.never());
     when(stompClient.send(anyString(), anyString())).thenReturn(Completable.never());
+    when(stompClient.sendAfterConnection(any(StompMessage.class)))
+        .thenReturn(Completable.complete());
   }
 
   /* Проверяем работу с клиентом STOMP */
@@ -76,7 +84,7 @@ public class CancelOrderGatewayTest {
 
     // Результат:
     inOrder.verify(stompClient).isConnected();
-    inOrder.verify(stompClient).topic("/queue/1234567890");
+    inOrder.verify(stompClient).topic("/queue/1234567890", StompClient.ACK_CLIENT_INDIVIDUAL);
     verifyNoMoreInteractions(stompClient);
   }
 
@@ -112,7 +120,78 @@ public class CancelOrderGatewayTest {
     // Результат:
     inOrder.verify(stompClient).isConnected();
     inOrder.verify(stompClient).isConnecting();
-    inOrder.verify(stompClient).topic("/queue/1234567890");
+    inOrder.verify(stompClient).topic("/queue/1234567890", StompClient.ACK_CLIENT_INDIVIDUAL);
+    verifyNoMoreInteractions(stompClient);
+  }
+
+  /**
+   * Должен запросить у клиента STOMP отправку ACK сразу, если он соединен и не соединяется.
+   */
+  @Test
+  public void askStompClientToSendAckForCancelReasonIfConnected() {
+    // Дано:
+    InOrder inOrder = Mockito.inOrder(stompClient);
+    when(stompClient.isConnected()).thenReturn(true);
+    when(stompClient.topic("/queue/1234567890", StompClient.ACK_CLIENT_INDIVIDUAL))
+        .thenReturn(Flowable.just(
+            new StompMessage(
+                "MESSAGE",
+                Arrays.asList(
+                    new StompHeader("CancelReason", ""),
+                    new StompHeader("subscription", "subs"),
+                    new StompHeader("message-id", "mess")
+                ),
+                "\n"
+            )
+        ));
+
+    // Действие:
+    gateway.loadCancelOrderReasons("1234567890").test();
+
+    // Результат:
+    inOrder.verify(stompClient).isConnected();
+    inOrder.verify(stompClient).topic("/queue/1234567890", StompClient.ACK_CLIENT_INDIVIDUAL);
+    inOrder.verify(stompClient).sendAfterConnection(stompMessageCaptor.capture());
+    assertEquals(stompMessageCaptor.getValue().getStompCommand(), "ACK");
+    assertEquals(stompMessageCaptor.getValue().findHeader("subscription"), "subs");
+    assertEquals(stompMessageCaptor.getValue().findHeader("message-id"), "mess");
+    assertEquals(stompMessageCaptor.getValue().getPayload(), "");
+    verifyNoMoreInteractions(stompClient);
+  }
+
+  /**
+   * Должен запросить у клиента STOMP отправку ACK сразу, если он не соединен и соединяется.
+   */
+  @Test
+  public void askStompClientToSendAckForCancelReasonIfConnecting() {
+    // Дано:
+    InOrder inOrder = Mockito.inOrder(stompClient);
+    when(stompClient.isConnecting()).thenReturn(true);
+    when(stompClient.topic("/queue/1234567890", StompClient.ACK_CLIENT_INDIVIDUAL))
+        .thenReturn(Flowable.just(
+            new StompMessage(
+                "MESSAGE",
+                Arrays.asList(
+                    new StompHeader("CancelReason", ""),
+                    new StompHeader("subscription", "subs"),
+                    new StompHeader("message-id", "mess")
+                ),
+                "\n"
+            )
+        ));
+
+    // Действие:
+    gateway.loadCancelOrderReasons("1234567890").test();
+
+    // Результат:
+    inOrder.verify(stompClient).isConnected();
+    inOrder.verify(stompClient).isConnecting();
+    inOrder.verify(stompClient).topic("/queue/1234567890", StompClient.ACK_CLIENT_INDIVIDUAL);
+    inOrder.verify(stompClient).sendAfterConnection(stompMessageCaptor.capture());
+    assertEquals(stompMessageCaptor.getValue().getStompCommand(), "ACK");
+    assertEquals(stompMessageCaptor.getValue().findHeader("subscription"), "subs");
+    assertEquals(stompMessageCaptor.getValue().findHeader("message-id"), "mess");
+    assertEquals(stompMessageCaptor.getValue().getPayload(), "");
     verifyNoMoreInteractions(stompClient);
   }
 
@@ -125,14 +204,15 @@ public class CancelOrderGatewayTest {
   public void doNotTouchMapperIfWrongHeaderIfConnected() {
     // Дано:
     when(stompClient.isConnected()).thenReturn(true);
-    when(stompClient.topic(anyString())).thenReturn(Flowable.just(
-        new StompMessage("MESSAGE", null, "SHIFT"),
-        new StompMessage(
-            "MESSAGE",
-            Collections.singletonList(new StompHeader("Type", "State")),
-            "SHIFT"
-        )
-    ));
+    when(stompClient.topic("/queue/1234567890", StompClient.ACK_CLIENT_INDIVIDUAL))
+        .thenReturn(Flowable.just(
+            new StompMessage("MESSAGE", null, "SHIFT"),
+            new StompMessage(
+                "MESSAGE",
+                Collections.singletonList(new StompHeader("Type", "State")),
+                "SHIFT"
+            )
+        ));
 
     // Действие:
     gateway.loadCancelOrderReasons("1234567890").test();
@@ -148,14 +228,15 @@ public class CancelOrderGatewayTest {
   public void doNotTouchMapperIfWrongHeaderIfConnectingAfterConnected() {
     // Дано:
     when(stompClient.isConnecting()).thenReturn(true);
-    when(stompClient.topic(anyString())).thenReturn(Flowable.just(
-        new StompMessage("MESSAGE", null, "SHIFT"),
-        new StompMessage(
-            "MESSAGE",
-            Collections.singletonList(new StompHeader("Type", "State")),
-            "SHIFT"
-        )
-    ));
+    when(stompClient.topic("/queue/1234567890", StompClient.ACK_CLIENT_INDIVIDUAL))
+        .thenReturn(Flowable.just(
+            new StompMessage("MESSAGE", null, "SHIFT"),
+            new StompMessage(
+                "MESSAGE",
+                Collections.singletonList(new StompHeader("Type", "State")),
+                "SHIFT"
+            )
+        ));
 
     // Действие:
     gateway.loadCancelOrderReasons("1234567890").test();
@@ -173,15 +254,16 @@ public class CancelOrderGatewayTest {
   public void askForMappingForCancelReasonHeaderIfConnected() throws Exception {
     // Дано:
     when(stompClient.isConnected()).thenReturn(true);
-    when(stompClient.topic(anyString())).thenReturn(Flowable.just(
-        new StompMessage(
-            "MESSAGE",
-            Collections.singletonList(
-                new StompHeader("CancelReason", "")
-            ),
-            "\n"
-        )
-    ));
+    when(stompClient.topic("/queue/1234567890", StompClient.ACK_CLIENT_INDIVIDUAL))
+        .thenReturn(Flowable.just(
+            new StompMessage(
+                "MESSAGE",
+                Collections.singletonList(
+                    new StompHeader("CancelReason", "")
+                ),
+                "\n"
+            )
+        ));
 
     // Действие:
     gateway.loadCancelOrderReasons("1234567890").test();
@@ -200,15 +282,16 @@ public class CancelOrderGatewayTest {
   public void askForMappingForCancelReasonHeaderIfConnectingAfterConnected() throws Exception {
     // Дано:
     when(stompClient.isConnecting()).thenReturn(true);
-    when(stompClient.topic(anyString())).thenReturn(Flowable.just(
-        new StompMessage(
-            "MESSAGE",
-            Collections.singletonList(
-                new StompHeader("CancelReason", "")
-            ),
-            "\n"
-        )
-    ));
+    when(stompClient.topic("/queue/1234567890", StompClient.ACK_CLIENT_INDIVIDUAL))
+        .thenReturn(Flowable.just(
+            new StompMessage(
+                "MESSAGE",
+                Collections.singletonList(
+                    new StompHeader("CancelReason", "")
+                ),
+                "\n"
+            )
+        ));
 
     // Действие:
     gateway.loadCancelOrderReasons("1234567890").test();
@@ -246,14 +329,15 @@ public class CancelOrderGatewayTest {
   public void ignoreWrongHeaderIfConnected() {
     // Дано:
     when(stompClient.isConnected()).thenReturn(true);
-    when(stompClient.topic(anyString())).thenReturn(Flowable.just(
-        new StompMessage("MESSAGE", null, "SHIFT"),
-        new StompMessage(
-            "MESSAGE",
-            Collections.singletonList(new StompHeader("Type", "State")),
-            "SHIFT"
-        )
-    ));
+    when(stompClient.topic("/queue/1234567890", StompClient.ACK_CLIENT_INDIVIDUAL))
+        .thenReturn(Flowable.just(
+            new StompMessage("MESSAGE", null, "SHIFT"),
+            new StompMessage(
+                "MESSAGE",
+                Collections.singletonList(new StompHeader("Type", "State")),
+                "SHIFT"
+            )
+        ));
 
     // Действие:
     TestSubscriber<List<CancelOrderReason>> testSubscriber =
@@ -273,13 +357,14 @@ public class CancelOrderGatewayTest {
     // Дано:
     doThrow(new DataMappingException()).when(mapper).map(any());
     when(stompClient.isConnected()).thenReturn(true);
-    when(stompClient.topic(anyString())).thenReturn(Flowable.just(
-        new StompMessage(
-            "MESSAGE",
-            Collections.singletonList(new StompHeader("CancelReason", "payload")),
-            null
-        )
-    ));
+    when(stompClient.topic("/queue/1234567890", StompClient.ACK_CLIENT_INDIVIDUAL))
+        .thenReturn(Flowable.just(
+            new StompMessage(
+                "MESSAGE",
+                Collections.singletonList(new StompHeader("CancelReason", "payload")),
+                null
+            )
+        ));
 
     // Действие:
     TestSubscriber<List<CancelOrderReason>> testSubscriber =
@@ -301,13 +386,14 @@ public class CancelOrderGatewayTest {
         Arrays.asList(cancelOrderReason, cancelOrderReason1, cancelOrderReason2)
     );
     when(stompClient.isConnected()).thenReturn(true);
-    when(stompClient.topic(anyString())).thenReturn(Flowable.just(
-        new StompMessage(
-            "MESSAGE",
-            Collections.singletonList(new StompHeader("CancelReason", "payload")),
-            "\n"
-        )
-    ));
+    when(stompClient.topic("/queue/1234567890", StompClient.ACK_CLIENT_INDIVIDUAL))
+        .thenReturn(Flowable.just(
+            new StompMessage(
+                "MESSAGE",
+                Collections.singletonList(new StompHeader("CancelReason", "payload")),
+                "\n"
+            )
+        ));
 
     // Действие:
     TestSubscriber<List<CancelOrderReason>> testSubscriber =
@@ -326,7 +412,8 @@ public class CancelOrderGatewayTest {
   public void ignoreErrorIfConnected() {
     // Дано:
     when(stompClient.isConnected()).thenReturn(true);
-    when(stompClient.topic(anyString())).thenReturn(Flowable.error(new NoNetworkException()));
+    when(stompClient.topic("/queue/1234567890", StompClient.ACK_CLIENT_INDIVIDUAL))
+        .thenReturn(Flowable.error(new NoNetworkException()));
 
     // Действие:
     TestSubscriber<List<CancelOrderReason>> testSubscriber =
@@ -358,14 +445,15 @@ public class CancelOrderGatewayTest {
   public void ignoreWrongHeaderIfConnectingAfterConnected() {
     // Дано:
     when(stompClient.isConnecting()).thenReturn(true);
-    when(stompClient.topic(anyString())).thenReturn(Flowable.just(
-        new StompMessage("MESSAGE", null, "SHIFT"),
-        new StompMessage(
-            "MESSAGE",
-            Collections.singletonList(new StompHeader("Type", "State")),
-            "SHIFT"
-        )
-    ));
+    when(stompClient.topic("/queue/1234567890", StompClient.ACK_CLIENT_INDIVIDUAL))
+        .thenReturn(Flowable.just(
+            new StompMessage("MESSAGE", null, "SHIFT"),
+            new StompMessage(
+                "MESSAGE",
+                Collections.singletonList(new StompHeader("Type", "State")),
+                "SHIFT"
+            )
+        ));
 
     // Действие:
     TestSubscriber<List<CancelOrderReason>> testSubscriber =
@@ -387,13 +475,14 @@ public class CancelOrderGatewayTest {
     // Дано:
     doThrow(new DataMappingException()).when(mapper).map(any());
     when(stompClient.isConnecting()).thenReturn(true);
-    when(stompClient.topic(anyString())).thenReturn(Flowable.just(
-        new StompMessage(
-            "MESSAGE",
-            Collections.singletonList(new StompHeader("CancelReason", "")),
-            "\n"
-        )
-    ));
+    when(stompClient.topic("/queue/1234567890", StompClient.ACK_CLIENT_INDIVIDUAL))
+        .thenReturn(Flowable.just(
+            new StompMessage(
+                "MESSAGE",
+                Collections.singletonList(new StompHeader("CancelReason", "")),
+                "\n"
+            )
+        ));
 
     // Действие:
     TestSubscriber<List<CancelOrderReason>> testSubscriber =
@@ -418,13 +507,14 @@ public class CancelOrderGatewayTest {
         Arrays.asList(cancelOrderReason, cancelOrderReason1, cancelOrderReason2)
     );
     when(stompClient.isConnecting()).thenReturn(true);
-    when(stompClient.topic(anyString())).thenReturn(Flowable.just(
-        new StompMessage(
-            "MESSAGE",
-            Collections.singletonList(new StompHeader("CancelReason", "")),
-            "\n"
-        )
-    ));
+    when(stompClient.topic("/queue/1234567890", StompClient.ACK_CLIENT_INDIVIDUAL))
+        .thenReturn(Flowable.just(
+            new StompMessage(
+                "MESSAGE",
+                Collections.singletonList(new StompHeader("CancelReason", "")),
+                "\n"
+            )
+        ));
 
     // Действие:
     TestSubscriber<List<CancelOrderReason>> testSubscriber =
@@ -444,7 +534,7 @@ public class CancelOrderGatewayTest {
   public void answerErrorIfConnecting() {
     // Дано:
     when(stompClient.isConnecting()).thenReturn(true);
-    when(stompClient.topic(anyString()))
+    when(stompClient.topic("/queue/1234567890", StompClient.ACK_CLIENT_INDIVIDUAL))
         .thenReturn(Flowable.error(new ConnectionClosedException()));
 
     // Действие:

@@ -52,6 +52,7 @@ public class ServerConnectionGatewayTest {
     gateway.openSocket().test();
 
     // Результат:
+    inOrder.verify(stompClient).setHeartbeat(25_000, 1.2F);
     inOrder.verify(stompClient).lifecycle();
     inOrder.verify(stompClient).isConnected();
     verifyNoMoreInteractions(stompClient);
@@ -71,6 +72,7 @@ public class ServerConnectionGatewayTest {
     gateway.openSocket().test();
 
     // Результат:
+    inOrder.verify(stompClient).setHeartbeat(25_000, 1.2F);
     inOrder.verify(stompClient).lifecycle();
     inOrder.verify(stompClient).isConnected();
     inOrder.verify(stompClient).isConnecting();
@@ -90,6 +92,7 @@ public class ServerConnectionGatewayTest {
     gateway.openSocket().test();
 
     // Результат:
+    inOrder.verify(stompClient).setHeartbeat(25_000, 1.2F);
     inOrder.verify(stompClient).lifecycle();
     inOrder.verify(stompClient).isConnected();
     inOrder.verify(stompClient).isConnecting();

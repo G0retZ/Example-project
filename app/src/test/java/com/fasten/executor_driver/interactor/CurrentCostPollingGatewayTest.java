@@ -1,5 +1,6 @@
 package com.fasten.executor_driver.interactor;
 
+import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doThrow;
@@ -23,11 +24,14 @@ import io.reactivex.plugins.RxJavaPlugins;
 import io.reactivex.schedulers.Schedulers;
 import io.reactivex.schedulers.TestScheduler;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.concurrent.TimeUnit;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -39,11 +43,13 @@ import ua.naiksoftware.stomp.client.StompMessage;
 @RunWith(MockitoJUnitRunner.class)
 public class CurrentCostPollingGatewayTest {
 
-  private CurrentCostPollingGateway currentCostPollingGateway;
+  private CurrentCostPollingGateway gateway;
   @Mock
   private StompClient stompClient;
   @Mock
   private Mapper<String, Pair<Long, Long>> mapper;
+  @Captor
+  private ArgumentCaptor<StompMessage> stompMessageCaptor;
 
   private TestScheduler testScheduler;
 
@@ -55,8 +61,11 @@ public class CurrentCostPollingGatewayTest {
     RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
     ExecutorState.MOVING_TO_CLIENT.setData(null);
     when(stompClient.send(anyString(), anyString())).thenReturn(Completable.never());
-    when(stompClient.topic(anyString())).thenReturn(Flowable.never());
-    currentCostPollingGateway = new CurrentCostPollingGatewayImpl(stompClient, mapper);
+    when(stompClient.topic("/queue/1234567890", StompClient.ACK_CLIENT_INDIVIDUAL))
+        .thenReturn(Flowable.never());
+    when(stompClient.sendAfterConnection(any(StompMessage.class)))
+        .thenReturn(Completable.complete());
+    gateway = new CurrentCostPollingGatewayImpl(stompClient, mapper);
   }
 
   /* Проверяем работу с клиентом STOMP на получение таймингов */
@@ -71,11 +80,11 @@ public class CurrentCostPollingGatewayTest {
     when(stompClient.isConnected()).thenReturn(true);
 
     // Действие:
-    currentCostPollingGateway.startPolling("1234567890").test();
+    gateway.startPolling("1234567890").test();
 
     // Результат:
     inOrder.verify(stompClient).isConnected();
-    inOrder.verify(stompClient).topic("/queue/1234567890");
+    inOrder.verify(stompClient).topic("/queue/1234567890", StompClient.ACK_CLIENT_INDIVIDUAL);
     verifyNoMoreInteractions(stompClient);
   }
 
@@ -88,7 +97,7 @@ public class CurrentCostPollingGatewayTest {
     InOrder inOrder = Mockito.inOrder(stompClient);
 
     // Действие:
-    currentCostPollingGateway.startPolling("1234567890").test();
+    gateway.startPolling("1234567890").test();
 
     // Результат:
     inOrder.verify(stompClient).isConnected();
@@ -106,12 +115,85 @@ public class CurrentCostPollingGatewayTest {
     when(stompClient.isConnecting()).thenReturn(true);
 
     // Действие:
-    currentCostPollingGateway.startPolling("1234567890").test();
+    gateway.startPolling("1234567890").test();
 
     // Результат:
     inOrder.verify(stompClient).isConnected();
     inOrder.verify(stompClient).isConnecting();
-    inOrder.verify(stompClient).topic("/queue/1234567890");
+    inOrder.verify(stompClient).topic("/queue/1234567890", StompClient.ACK_CLIENT_INDIVIDUAL);
+    verifyNoMoreInteractions(stompClient);
+  }
+
+  /**
+   * Должен запросить у клиента STOMP отправку ACK сразу, если он соединен и не соединяется.
+   */
+  @Test
+  public void askStompClientToSendAckForTimersIfConnected() {
+    // Дано:
+    InOrder inOrder = Mockito.inOrder(stompClient);
+    when(stompClient.isConnected()).thenReturn(true);
+    when(stompClient.topic("/queue/1234567890", StompClient.ACK_CLIENT_INDIVIDUAL))
+        .thenReturn(Flowable.just(
+            new StompMessage(
+                "MESSAGE",
+                Arrays.asList(
+                    new StompHeader("OverPackage", "1"),
+                    new StompHeader("subscription", "subs"),
+                    new StompHeader("message-id", "mess")
+                ),
+                "\n"
+            )
+        ));
+
+    // Действие:
+    gateway.startPolling("1234567890").test();
+    testScheduler.advanceTimeBy(1, TimeUnit.NANOSECONDS);
+
+    // Результат:
+    inOrder.verify(stompClient).isConnected();
+    inOrder.verify(stompClient).topic("/queue/1234567890", StompClient.ACK_CLIENT_INDIVIDUAL);
+    inOrder.verify(stompClient).sendAfterConnection(stompMessageCaptor.capture());
+    assertEquals(stompMessageCaptor.getValue().getStompCommand(), "ACK");
+    assertEquals(stompMessageCaptor.getValue().findHeader("subscription"), "subs");
+    assertEquals(stompMessageCaptor.getValue().findHeader("message-id"), "mess");
+    assertEquals(stompMessageCaptor.getValue().getPayload(), "");
+    verifyNoMoreInteractions(stompClient);
+  }
+
+  /**
+   * Должен запросить у клиента STOMP отправку ACK сразу, если он не соединен и соединяется.
+   */
+  @Test
+  public void askStompClientToSendAckForTimersIfConnecting() {
+    // Дано:
+    InOrder inOrder = Mockito.inOrder(stompClient);
+    when(stompClient.isConnecting()).thenReturn(true);
+    when(stompClient.topic("/queue/1234567890", StompClient.ACK_CLIENT_INDIVIDUAL))
+        .thenReturn(Flowable.just(
+            new StompMessage(
+                "MESSAGE",
+                Arrays.asList(
+                    new StompHeader("OverPackage", "1"),
+                    new StompHeader("subscription", "subs"),
+                    new StompHeader("message-id", "mess")
+                ),
+                "\n"
+            )
+        ));
+
+    // Действие:
+    gateway.startPolling("1234567890").test();
+    testScheduler.advanceTimeBy(1, TimeUnit.NANOSECONDS);
+
+    // Результат:
+    inOrder.verify(stompClient).isConnected();
+    inOrder.verify(stompClient).isConnecting();
+    inOrder.verify(stompClient).topic("/queue/1234567890", StompClient.ACK_CLIENT_INDIVIDUAL);
+    inOrder.verify(stompClient).sendAfterConnection(stompMessageCaptor.capture());
+    assertEquals(stompMessageCaptor.getValue().getStompCommand(), "ACK");
+    assertEquals(stompMessageCaptor.getValue().findHeader("subscription"), "subs");
+    assertEquals(stompMessageCaptor.getValue().findHeader("message-id"), "mess");
+    assertEquals(stompMessageCaptor.getValue().getPayload(), "");
     verifyNoMoreInteractions(stompClient);
   }
 
@@ -124,17 +206,18 @@ public class CurrentCostPollingGatewayTest {
   public void doNotTouchMapperIfWrongHeader() {
     // Дано:
     when(stompClient.isConnected()).thenReturn(true);
-    when(stompClient.topic(anyString())).thenReturn(Flowable.just(
-        new StompMessage("MESSAGE", null, "SHIFT"),
-        new StompMessage(
-            "MESSAGE",
-            Collections.singletonList(new StompHeader("Type", "State")),
-            "SHIFT"
-        )
-    ));
+    when(stompClient.topic("/queue/1234567890", StompClient.ACK_CLIENT_INDIVIDUAL))
+        .thenReturn(Flowable.just(
+            new StompMessage("MESSAGE", null, "SHIFT"),
+            new StompMessage(
+                "MESSAGE",
+                Collections.singletonList(new StompHeader("Type", "State")),
+                "SHIFT"
+            )
+        ));
 
     // Действие:
-    currentCostPollingGateway.startPolling("1234567890").test();
+    gateway.startPolling("1234567890").test();
 
     // Результат:
     verifyZeroInteractions(mapper);
@@ -147,18 +230,19 @@ public class CurrentCostPollingGatewayTest {
   public void doNotTouchMapperForOverPackageHeader0() {
     // Дано:
     when(stompClient.isConnected()).thenReturn(true);
-    when(stompClient.topic(anyString())).thenReturn(Flowable.just(
-        new StompMessage(
-            "MESSAGE",
-            Collections.singletonList(
-                new StompHeader("OverPackage", "0")
-            ),
-            "\n"
-        )
-    ));
+    when(stompClient.topic("/queue/1234567890", StompClient.ACK_CLIENT_INDIVIDUAL))
+        .thenReturn(Flowable.just(
+            new StompMessage(
+                "MESSAGE",
+                Collections.singletonList(
+                    new StompHeader("OverPackage", "0")
+                ),
+                "\n"
+            )
+        ));
 
     // Действие:
-    currentCostPollingGateway.startPolling("1234567890").test();
+    gateway.startPolling("1234567890").test();
 
     // Результат:
     verifyZeroInteractions(mapper);
@@ -173,18 +257,19 @@ public class CurrentCostPollingGatewayTest {
   public void askForMappingForOverPackageHeader1() throws Exception {
     // Дано:
     when(stompClient.isConnected()).thenReturn(true);
-    when(stompClient.topic(anyString())).thenReturn(Flowable.just(
-        new StompMessage(
-            "MESSAGE",
-            Collections.singletonList(
-                new StompHeader("OverPackage", "1")
-            ),
-            "\n"
-        )
-    ));
+    when(stompClient.topic("/queue/1234567890", StompClient.ACK_CLIENT_INDIVIDUAL))
+        .thenReturn(Flowable.just(
+            new StompMessage(
+                "MESSAGE",
+                Collections.singletonList(
+                    new StompHeader("OverPackage", "1")
+                ),
+                "\n"
+            )
+        ));
 
     // Действие:
-    currentCostPollingGateway.startPolling("1234567890").test();
+    gateway.startPolling("1234567890").test();
     testScheduler.advanceTimeBy(1, TimeUnit.NANOSECONDS);
 
     // Результат:
@@ -201,28 +286,29 @@ public class CurrentCostPollingGatewayTest {
     // Дано:
     InOrder inOrder = Mockito.inOrder(stompClient);
     when(stompClient.isConnecting()).thenReturn(true);
-    when(stompClient.topic(anyString())).thenReturn(Flowable.just(
-        new StompMessage(
-            "MESSAGE",
-            Collections.singletonList(
-                new StompHeader("OverPackage", "")
-            ),
-            "\n"
-        )
-    ));
+    when(stompClient.topic("/queue/1234567890", StompClient.ACK_CLIENT_INDIVIDUAL))
+        .thenReturn(Flowable.just(
+            new StompMessage(
+                "MESSAGE",
+                Collections.singletonList(
+                    new StompHeader("OverPackage", "")
+                ),
+                "\n"
+            )
+        ));
 
     // Действие:
-    currentCostPollingGateway.startPolling("1234567890").test();
+    gateway.startPolling("1234567890").test();
 
     // Результат:
     inOrder.verify(stompClient).isConnected();
     inOrder.verify(stompClient).isConnecting();
-    inOrder.verify(stompClient).topic("/queue/1234567890");
+    inOrder.verify(stompClient).topic("/queue/1234567890", StompClient.ACK_CLIENT_INDIVIDUAL);
     verifyNoMoreInteractions(stompClient);
   }
 
   /**
-   * Должен просить у клиента STOMP отправку пинга сразу, если пакет истек.
+   * Должен просить у клиента STOMP отправку ACK и пинга сразу, если пакет истек.
    *
    * @throws Exception error
    */
@@ -231,30 +317,38 @@ public class CurrentCostPollingGatewayTest {
     // Дано:
     InOrder inOrder = Mockito.inOrder(stompClient);
     when(stompClient.isConnected()).thenReturn(true);
-    when(stompClient.topic(anyString())).thenReturn(Flowable.just(
-        new StompMessage(
-            "MESSAGE",
-            Collections.singletonList(
-                new StompHeader("OverPackage", "1")
-            ),
-            "\n"
-        )
-    ));
+    when(stompClient.topic("/queue/1234567890", StompClient.ACK_CLIENT_INDIVIDUAL))
+        .thenReturn(Flowable.just(
+            new StompMessage(
+                "MESSAGE",
+                Arrays.asList(
+                    new StompHeader("OverPackage", "1"),
+                    new StompHeader("subscription", "subs"),
+                    new StompHeader("message-id", "mess")
+                ),
+                "\n"
+            )
+        ));
     when(mapper.map(anyString())).thenReturn(new Pair<>(0L, 30_000L));
 
     // Действие:
-    currentCostPollingGateway.startPolling("1234567890").test();
+    gateway.startPolling("1234567890").test();
     testScheduler.advanceTimeBy(1, TimeUnit.NANOSECONDS);
 
     // Результат:
     inOrder.verify(stompClient).isConnected();
-    inOrder.verify(stompClient).topic("/queue/1234567890");
+    inOrder.verify(stompClient).topic("/queue/1234567890", StompClient.ACK_CLIENT_INDIVIDUAL);
+    inOrder.verify(stompClient).sendAfterConnection(stompMessageCaptor.capture());
+    assertEquals(stompMessageCaptor.getValue().getStompCommand(), "ACK");
+    assertEquals(stompMessageCaptor.getValue().findHeader("subscription"), "subs");
+    assertEquals(stompMessageCaptor.getValue().findHeader("message-id"), "mess");
+    assertEquals(stompMessageCaptor.getValue().getPayload(), "");
     inOrder.verify(stompClient).send("/mobile/retrieveOverPackage", "\"\"");
     verifyNoMoreInteractions(stompClient);
   }
 
   /**
-   * Должен запросить у клиента STOMP отправку пинга после 10 секунд.
+   * Должен запросить у клиента STOMP отправку ACK сразу и пинга после 10 секунд.
    *
    * @throws Exception error
    */
@@ -263,24 +357,32 @@ public class CurrentCostPollingGatewayTest {
     // Дано:
     InOrder inOrder = Mockito.inOrder(stompClient);
     when(stompClient.isConnected()).thenReturn(true);
-    when(stompClient.topic(anyString())).thenReturn(Flowable.just(
-        new StompMessage(
-            "MESSAGE",
-            Collections.singletonList(
-                new StompHeader("OverPackage", "1")
-            ),
-            "\n"
-        )
-    ));
+    when(stompClient.topic("/queue/1234567890", StompClient.ACK_CLIENT_INDIVIDUAL))
+        .thenReturn(Flowable.just(
+            new StompMessage(
+                "MESSAGE",
+                Arrays.asList(
+                    new StompHeader("OverPackage", "1"),
+                    new StompHeader("subscription", "subs"),
+                    new StompHeader("message-id", "mess")
+                ),
+                "\n"
+            )
+        ));
     when(mapper.map(anyString())).thenReturn(new Pair<>(10_000L, 30_000L));
 
     // Действие:
-    currentCostPollingGateway.startPolling("1234567890").test();
+    gateway.startPolling("1234567890").test();
     testScheduler.advanceTimeBy(9, TimeUnit.SECONDS);
 
     // Результат:
     inOrder.verify(stompClient).isConnected();
-    inOrder.verify(stompClient).topic("/queue/1234567890");
+    inOrder.verify(stompClient).topic("/queue/1234567890", StompClient.ACK_CLIENT_INDIVIDUAL);
+    inOrder.verify(stompClient).sendAfterConnection(stompMessageCaptor.capture());
+    assertEquals(stompMessageCaptor.getValue().getStompCommand(), "ACK");
+    assertEquals(stompMessageCaptor.getValue().findHeader("subscription"), "subs");
+    assertEquals(stompMessageCaptor.getValue().findHeader("message-id"), "mess");
+    assertEquals(stompMessageCaptor.getValue().getPayload(), "");
     verifyNoMoreInteractions(stompClient);
     testScheduler.advanceTimeBy(1, TimeUnit.SECONDS);
     inOrder.verify(stompClient).send("/mobile/retrieveOverPackage", "\"\"");
@@ -288,7 +390,7 @@ public class CurrentCostPollingGatewayTest {
   }
 
   /**
-   * Должен запросить у клиента STOMP отправку набора пингов после 200 секунд.
+   * Должен запросить у клиента STOMP отправку ACK сразу и набора пингов после 200 секунд.
    *
    * @throws Exception error
    */
@@ -297,24 +399,32 @@ public class CurrentCostPollingGatewayTest {
     // Дано:
     InOrder inOrder = Mockito.inOrder(stompClient);
     when(stompClient.isConnected()).thenReturn(true);
-    when(stompClient.topic(anyString())).thenReturn(Flowable.just(
-        new StompMessage(
-            "MESSAGE",
-            Collections.singletonList(
-                new StompHeader("OverPackage", "1")
-            ),
-            "\n"
-        )
-    ));
+    when(stompClient.topic("/queue/1234567890", StompClient.ACK_CLIENT_INDIVIDUAL))
+        .thenReturn(Flowable.just(
+            new StompMessage(
+                "MESSAGE",
+                Arrays.asList(
+                    new StompHeader("OverPackage", "1"),
+                    new StompHeader("subscription", "subs"),
+                    new StompHeader("message-id", "mess")
+                ),
+                "\n"
+            )
+        ));
     when(mapper.map(anyString())).thenReturn(new Pair<>(10_000L, 30_000L));
 
     // Действие:
-    currentCostPollingGateway.startPolling("1234567890").test();
+    gateway.startPolling("1234567890").test();
     testScheduler.advanceTimeBy(220, TimeUnit.SECONDS);
 
     // Результат:
     inOrder.verify(stompClient).isConnected();
-    inOrder.verify(stompClient).topic("/queue/1234567890");
+    inOrder.verify(stompClient).topic("/queue/1234567890", StompClient.ACK_CLIENT_INDIVIDUAL);
+    inOrder.verify(stompClient).sendAfterConnection(stompMessageCaptor.capture());
+    assertEquals(stompMessageCaptor.getValue().getStompCommand(), "ACK");
+    assertEquals(stompMessageCaptor.getValue().findHeader("subscription"), "subs");
+    assertEquals(stompMessageCaptor.getValue().findHeader("message-id"), "mess");
+    assertEquals(stompMessageCaptor.getValue().getPayload(), "");
     inOrder.verify(stompClient, times(8)).send("/mobile/retrieveOverPackage", "\"\"");
     verifyNoMoreInteractions(stompClient);
   }
@@ -330,7 +440,7 @@ public class CurrentCostPollingGatewayTest {
   public void answerConnectionErrorIfNotConnectedAndNotConnecting() {
     // Действие:
     TestObserver<Void> testSubscriber =
-        currentCostPollingGateway.startPolling("1234567890").test();
+        gateway.startPolling("1234567890").test();
 
     // Результат:
     testSubscriber.assertError(ConnectionClosedException.class);
@@ -343,11 +453,12 @@ public class CurrentCostPollingGatewayTest {
   public void answerWithErrorIfSubscribed() {
     // Дано:
     when(stompClient.isConnected()).thenReturn(true);
-    when(stompClient.topic(anyString())).thenReturn(Flowable.error(new IOException()));
+    when(stompClient.topic("/queue/1234567890", StompClient.ACK_CLIENT_INDIVIDUAL))
+        .thenReturn(Flowable.error(new IOException()));
 
     // Действие:
     TestObserver<Void> testSubscriber =
-        currentCostPollingGateway.startPolling("1234567890").test();
+        gateway.startPolling("1234567890").test();
     testScheduler.advanceTimeBy(1, TimeUnit.NANOSECONDS);
 
     // Результат:
@@ -362,7 +473,7 @@ public class CurrentCostPollingGatewayTest {
   public void ignoreWrongHeaderAndWaitForCompletionOrInterruption() {
     // Дано:
     when(stompClient.isConnected()).thenReturn(true);
-    when(stompClient.topic(anyString())).thenReturn(
+    when(stompClient.topic("/queue/1234567890", StompClient.ACK_CLIENT_INDIVIDUAL)).thenReturn(
         Flowable.just(
             new StompMessage("MESSAGE", null, "SHIFT"),
             new StompMessage(
@@ -375,7 +486,7 @@ public class CurrentCostPollingGatewayTest {
 
     // Действие:
     TestObserver<Void> testSubscriber =
-        currentCostPollingGateway.startPolling("1234567890").test();
+        gateway.startPolling("1234567890").test();
     testScheduler.advanceTimeBy(1, TimeUnit.NANOSECONDS);
 
     // Результат:
@@ -393,7 +504,7 @@ public class CurrentCostPollingGatewayTest {
     // Дано:
     doThrow(new DataMappingException()).when(mapper).map(any());
     when(stompClient.isConnected()).thenReturn(true);
-    when(stompClient.topic(anyString())).thenReturn(
+    when(stompClient.topic("/queue/1234567890", StompClient.ACK_CLIENT_INDIVIDUAL)).thenReturn(
         Flowable.just(
             new StompMessage(
                 "MESSAGE",
@@ -405,7 +516,7 @@ public class CurrentCostPollingGatewayTest {
 
     // Действие:
     TestObserver<Void> testSubscriber =
-        currentCostPollingGateway.startPolling("1234567890").test();
+        gateway.startPolling("1234567890").test();
     testScheduler.advanceTimeBy(1, TimeUnit.NANOSECONDS);
 
     // Результат:
@@ -420,7 +531,7 @@ public class CurrentCostPollingGatewayTest {
   public void answerCompleteForOverPackageHeader0() {
     // Дано:
     when(stompClient.isConnected()).thenReturn(true);
-    when(stompClient.topic(anyString())).thenReturn(
+    when(stompClient.topic("/queue/1234567890", StompClient.ACK_CLIENT_INDIVIDUAL)).thenReturn(
         Flowable.just(
             new StompMessage(
                 "MESSAGE",
@@ -432,7 +543,7 @@ public class CurrentCostPollingGatewayTest {
 
     // Действие:
     TestObserver<Void> testSubscriber =
-        currentCostPollingGateway.startPolling("1234567890").test();
+        gateway.startPolling("1234567890").test();
     testScheduler.advanceTimeBy(1, TimeUnit.NANOSECONDS);
 
     // Результат:
@@ -450,7 +561,7 @@ public class CurrentCostPollingGatewayTest {
     // Дано:
     when(mapper.map(any())).thenReturn(new Pair<>(10_000L, 30_000L));
     when(stompClient.isConnected()).thenReturn(true);
-    when(stompClient.topic(anyString())).thenReturn(
+    when(stompClient.topic("/queue/1234567890", StompClient.ACK_CLIENT_INDIVIDUAL)).thenReturn(
         Flowable.just(
             new StompMessage(
                 "MESSAGE",
@@ -462,7 +573,7 @@ public class CurrentCostPollingGatewayTest {
 
     // Действие:
     TestObserver<Void> testSubscriber =
-        currentCostPollingGateway.startPolling("1234567890").test();
+        gateway.startPolling("1234567890").test();
     testScheduler.advanceTimeBy(1, TimeUnit.NANOSECONDS);
 
     // Результат:
@@ -480,7 +591,7 @@ public class CurrentCostPollingGatewayTest {
     // Дано:
     when(mapper.map(any())).thenReturn(new Pair<>(10_000L, 30_000L));
     when(stompClient.isConnected()).thenReturn(true);
-    when(stompClient.topic(anyString())).thenReturn(
+    when(stompClient.topic("/queue/1234567890", StompClient.ACK_CLIENT_INDIVIDUAL)).thenReturn(
         Flowable.just(
             new StompMessage(
                 "MESSAGE",
@@ -492,7 +603,7 @@ public class CurrentCostPollingGatewayTest {
     when(stompClient.send(anyString(), anyString())).thenReturn(Completable.complete());
 
     // Действие:
-    TestObserver<Void> testObserver = currentCostPollingGateway.startPolling("1234567890").test();
+    TestObserver<Void> testObserver = gateway.startPolling("1234567890").test();
     testScheduler.advanceTimeBy(10, TimeUnit.MINUTES);
 
     // Результат:
@@ -510,7 +621,7 @@ public class CurrentCostPollingGatewayTest {
     // Дано:
     when(mapper.map(any())).thenReturn(new Pair<>(0L, 30_000L));
     when(stompClient.isConnected()).thenReturn(true);
-    when(stompClient.topic(anyString())).thenReturn(
+    when(stompClient.topic("/queue/1234567890", StompClient.ACK_CLIENT_INDIVIDUAL)).thenReturn(
         Flowable.just(
             new StompMessage(
                 "MESSAGE",
@@ -523,7 +634,7 @@ public class CurrentCostPollingGatewayTest {
         .thenReturn(Completable.error(IllegalArgumentException::new));
 
     // Действие:
-    TestObserver<Void> testObserver = currentCostPollingGateway.startPolling("1234567890").test();
+    TestObserver<Void> testObserver = gateway.startPolling("1234567890").test();
     testScheduler.advanceTimeBy(1, TimeUnit.NANOSECONDS);
 
     // Результат:
@@ -541,7 +652,7 @@ public class CurrentCostPollingGatewayTest {
     // Дано:
     when(mapper.map(any())).thenReturn(new Pair<>(10_000L, 30_000L));
     when(stompClient.isConnected()).thenReturn(true);
-    when(stompClient.topic(anyString())).thenReturn(
+    when(stompClient.topic("/queue/1234567890", StompClient.ACK_CLIENT_INDIVIDUAL)).thenReturn(
         Flowable.just(
             new StompMessage(
                 "MESSAGE",
@@ -554,7 +665,7 @@ public class CurrentCostPollingGatewayTest {
         .thenReturn(Completable.error(IllegalArgumentException::new));
 
     // Действие:
-    TestObserver<Void> testObserver = currentCostPollingGateway.startPolling("1234567890").test();
+    TestObserver<Void> testObserver = gateway.startPolling("1234567890").test();
     testScheduler.advanceTimeBy(9, TimeUnit.SECONDS);
 
     // Результат:
