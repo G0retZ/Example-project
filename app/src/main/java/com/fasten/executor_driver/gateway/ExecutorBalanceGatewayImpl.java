@@ -7,8 +7,11 @@ import com.fasten.executor_driver.entity.ExecutorBalance;
 import com.fasten.executor_driver.interactor.ExecutorBalanceGateway;
 import io.reactivex.Flowable;
 import io.reactivex.schedulers.Schedulers;
+import java.util.Arrays;
 import javax.inject.Inject;
+import ua.naiksoftware.stomp.StompHeader;
 import ua.naiksoftware.stomp.client.StompClient;
+import ua.naiksoftware.stomp.client.StompMessage;
 
 public class ExecutorBalanceGatewayImpl implements ExecutorBalanceGateway {
 
@@ -28,10 +31,24 @@ public class ExecutorBalanceGatewayImpl implements ExecutorBalanceGateway {
   @Override
   public Flowable<ExecutorBalance> loadExecutorBalance(@NonNull String channelId) {
     if (stompClient.isConnected() || stompClient.isConnecting()) {
-      return stompClient.topic(String.format(BuildConfig.STATUS_DESTINATION, channelId))
-          .subscribeOn(Schedulers.io())
+      return stompClient.topic(
+          String.format(BuildConfig.STATUS_DESTINATION, channelId),
+          StompClient.ACK_CLIENT_INDIVIDUAL
+      ).subscribeOn(Schedulers.io())
           .onErrorResumeNext(Flowable.empty())
           .filter(stompMessage -> stompMessage.findHeader("Balance") != null)
+          .doOnNext(
+              stompMessage -> stompClient.sendAfterConnection(
+                  new StompMessage("ACK",
+                      Arrays.asList(
+                          new StompHeader("subscription", stompMessage.findHeader("subscription")),
+                          new StompHeader("message-id", stompMessage.findHeader("message-id"))
+                      ),
+                      ""
+                  )
+              ).subscribe(() -> {
+              }, Throwable::printStackTrace)
+          )
           .map(stompMessage -> mapper.map(stompMessage.getPayload()))
           .observeOn(Schedulers.single());
     }
