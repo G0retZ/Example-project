@@ -28,14 +28,11 @@ public class PersistenceService extends Service {
 
   private static final String CHANNEL_ID = "state_channel";
   private static final String QUIET_CHANNEL_ID = "state_channel_quiet";
-
-  private boolean onscreen;
-
   /**
    * The identifier for the notification displayed for the foreground service.
    */
   private static final int NOTIFICATION_ID = 18372713;
-
+  private boolean onscreen;
   private Handler mServiceHandler;
 
   @Override
