@@ -1,7 +1,7 @@
 package com.fasten.executor_driver.interactor;
 
+import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
@@ -15,14 +15,18 @@ import com.fasten.executor_driver.entity.ExecutorState;
 import com.fasten.executor_driver.gateway.DataMappingException;
 import com.fasten.executor_driver.gateway.ExecutorStateGatewayImpl;
 import com.fasten.executor_driver.gateway.Mapper;
+import io.reactivex.Completable;
 import io.reactivex.Flowable;
 import io.reactivex.plugins.RxJavaPlugins;
 import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subscribers.TestSubscriber;
+import java.util.Arrays;
 import java.util.Collections;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -40,13 +44,18 @@ public class ExecutorStateGatewayTest {
   private StompClient stompClient;
   @Mock
   private Mapper<StompMessage, ExecutorState> mapper;
+  @Captor
+  private ArgumentCaptor<StompMessage> stompMessageCaptor;
 
   @Before
   public void setUp() {
     RxJavaPlugins.setIoSchedulerHandler(scheduler -> Schedulers.trampoline());
     RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
     gateway = new ExecutorStateGatewayImpl(stompClient, mapper);
-    when(stompClient.topic(anyString())).thenReturn(Flowable.never());
+    when(stompClient.topic("/queue/1234567890", StompClient.ACK_CLIENT_INDIVIDUAL))
+        .thenReturn(Flowable.never());
+    when(stompClient.sendAfterConnection(any(StompMessage.class)))
+        .thenReturn(Completable.complete());
   }
 
   /* Проверяем работу с клиентом STOMP */
@@ -65,7 +74,7 @@ public class ExecutorStateGatewayTest {
 
     // Результат:
     inOrder.verify(stompClient).isConnected();
-    inOrder.verify(stompClient).topic("/queue/1234567890");
+    inOrder.verify(stompClient).topic("/queue/1234567890", StompClient.ACK_CLIENT_INDIVIDUAL);
     verifyNoMoreInteractions(stompClient);
   }
 
@@ -101,7 +110,78 @@ public class ExecutorStateGatewayTest {
     // Результат:
     inOrder.verify(stompClient).isConnected();
     inOrder.verify(stompClient).isConnecting();
-    inOrder.verify(stompClient).topic("/queue/1234567890");
+    inOrder.verify(stompClient).topic("/queue/1234567890", StompClient.ACK_CLIENT_INDIVIDUAL);
+    verifyNoMoreInteractions(stompClient);
+  }
+
+  /**
+   * Должен запросить у клиента STOMP отправку ACK сразу, если он соединен и не соединяется.
+   */
+  @Test
+  public void askStompClientToSendAckForStatusIfConnected() {
+    // Дано:
+    InOrder inOrder = Mockito.inOrder(stompClient);
+    when(stompClient.isConnected()).thenReturn(true);
+    when(stompClient.topic("/queue/1234567890", StompClient.ACK_CLIENT_INDIVIDUAL))
+        .thenReturn(Flowable.just(
+            new StompMessage(
+                "MESSAGE",
+                Arrays.asList(
+                    new StompHeader("Status", "payload"),
+                    new StompHeader("subscription", "subs"),
+                    new StompHeader("message-id", "mess")
+                ),
+                "\n"
+            )
+        ));
+
+    // Действие:
+    gateway.getState("1234567890").test();
+
+    // Результат:
+    inOrder.verify(stompClient).isConnected();
+    inOrder.verify(stompClient).topic("/queue/1234567890", StompClient.ACK_CLIENT_INDIVIDUAL);
+    inOrder.verify(stompClient).sendAfterConnection(stompMessageCaptor.capture());
+    assertEquals(stompMessageCaptor.getValue().getStompCommand(), "ACK");
+    assertEquals(stompMessageCaptor.getValue().findHeader("subscription"), "subs");
+    assertEquals(stompMessageCaptor.getValue().findHeader("message-id"), "mess");
+    assertEquals(stompMessageCaptor.getValue().getPayload(), "");
+    verifyNoMoreInteractions(stompClient);
+  }
+
+  /**
+   * Должен запросить у клиента STOMP отправку ACK сразу, если он не соединен и соединяется.
+   */
+  @Test
+  public void askStompClientToSendAckForStatusIfConnecting() {
+    // Дано:
+    InOrder inOrder = Mockito.inOrder(stompClient);
+    when(stompClient.isConnecting()).thenReturn(true);
+    when(stompClient.topic("/queue/1234567890", StompClient.ACK_CLIENT_INDIVIDUAL))
+        .thenReturn(Flowable.just(
+            new StompMessage(
+                "MESSAGE",
+                Arrays.asList(
+                    new StompHeader("Status", "payload"),
+                    new StompHeader("subscription", "subs"),
+                    new StompHeader("message-id", "mess")
+                ),
+                "\n"
+            )
+        ));
+
+    // Действие:
+    gateway.getState("1234567890").test();
+
+    // Результат:
+    inOrder.verify(stompClient).isConnected();
+    inOrder.verify(stompClient).isConnecting();
+    inOrder.verify(stompClient).topic("/queue/1234567890", StompClient.ACK_CLIENT_INDIVIDUAL);
+    inOrder.verify(stompClient).sendAfterConnection(stompMessageCaptor.capture());
+    assertEquals(stompMessageCaptor.getValue().getStompCommand(), "ACK");
+    assertEquals(stompMessageCaptor.getValue().findHeader("subscription"), "subs");
+    assertEquals(stompMessageCaptor.getValue().findHeader("message-id"), "mess");
+    assertEquals(stompMessageCaptor.getValue().getPayload(), "");
     verifyNoMoreInteractions(stompClient);
   }
 
@@ -114,14 +194,15 @@ public class ExecutorStateGatewayTest {
   public void doNotTouchMapperIfWrongHeaderIfConnected() {
     // Дано:
     when(stompClient.isConnected()).thenReturn(true);
-    when(stompClient.topic(anyString())).thenReturn(Flowable.just(
-        new StompMessage("MESSAGE", null, "SHIFT"),
-        new StompMessage(
-            "MESSAGE",
-            Collections.singletonList(new StompHeader("Type", "State")),
-            "SHIFT"
-        )
-    ));
+    when(stompClient.topic("/queue/1234567890", StompClient.ACK_CLIENT_INDIVIDUAL))
+        .thenReturn(Flowable.just(
+            new StompMessage("MESSAGE", null, "SHIFT"),
+            new StompMessage(
+                "MESSAGE",
+                Collections.singletonList(new StompHeader("Type", "State")),
+                "SHIFT"
+            )
+        ));
 
     // Действие:
     gateway.getState("1234567890").test();
@@ -137,14 +218,15 @@ public class ExecutorStateGatewayTest {
   public void doNotTouchMapperIfWrongHeaderIfConnectingAfterConnected() {
     // Дано:
     when(stompClient.isConnecting()).thenReturn(true);
-    when(stompClient.topic(anyString())).thenReturn(Flowable.just(
-        new StompMessage("MESSAGE", null, "SHIFT"),
-        new StompMessage(
-            "MESSAGE",
-            Collections.singletonList(new StompHeader("Type", "State")),
-            "SHIFT"
-        )
-    ));
+    when(stompClient.topic("/queue/1234567890", StompClient.ACK_CLIENT_INDIVIDUAL))
+        .thenReturn(Flowable.just(
+            new StompMessage("MESSAGE", null, "SHIFT"),
+            new StompMessage(
+                "MESSAGE",
+                Collections.singletonList(new StompHeader("Type", "State")),
+                "SHIFT"
+            )
+        ));
 
     // Действие:
     gateway.getState("1234567890").test();
@@ -162,15 +244,16 @@ public class ExecutorStateGatewayTest {
   public void askForMappingForStatusHeaderIfConnected() throws Exception {
     // Дано:
     when(stompClient.isConnected()).thenReturn(true);
-    when(stompClient.topic(anyString())).thenReturn(Flowable.just(
-        new StompMessage(
-            "MESSAGE",
-            Collections.singletonList(
-                new StompHeader("Status", "payload")
-            ),
-            "\n"
-        )
-    ));
+    when(stompClient.topic("/queue/1234567890", StompClient.ACK_CLIENT_INDIVIDUAL))
+        .thenReturn(Flowable.just(
+            new StompMessage(
+                "MESSAGE",
+                Collections.singletonList(
+                    new StompHeader("Status", "payload")
+                ),
+                "\n"
+            )
+        ));
 
     // Действие:
     gateway.getState("1234567890").test();
@@ -189,15 +272,16 @@ public class ExecutorStateGatewayTest {
   public void askForMappingForStatusHeaderIfConnectingAfterConnected() throws Exception {
     // Дано:
     when(stompClient.isConnecting()).thenReturn(true);
-    when(stompClient.topic(anyString())).thenReturn(Flowable.just(
-        new StompMessage(
-            "MESSAGE",
-            Collections.singletonList(
-                new StompHeader("Status", "payload")
-            ),
-            "\n"
-        )
-    ));
+    when(stompClient.topic("/queue/1234567890", StompClient.ACK_CLIENT_INDIVIDUAL))
+        .thenReturn(Flowable.just(
+            new StompMessage(
+                "MESSAGE",
+                Collections.singletonList(
+                    new StompHeader("Status", "payload")
+                ),
+                "\n"
+            )
+        ));
 
     // Действие:
     gateway.getState("1234567890").test();
@@ -217,14 +301,15 @@ public class ExecutorStateGatewayTest {
   public void ignoreWrongHeaderIfConnected() {
     // Дано:
     when(stompClient.isConnected()).thenReturn(true);
-    when(stompClient.topic(anyString())).thenReturn(Flowable.just(
-        new StompMessage("MESSAGE", null, "SHIFT"),
-        new StompMessage(
-            "MESSAGE",
-            Collections.singletonList(new StompHeader("Type", "State")),
-            "SHIFT"
-        )
-    ));
+    when(stompClient.topic("/queue/1234567890", StompClient.ACK_CLIENT_INDIVIDUAL))
+        .thenReturn(Flowable.just(
+            new StompMessage("MESSAGE", null, "SHIFT"),
+            new StompMessage(
+                "MESSAGE",
+                Collections.singletonList(new StompHeader("Type", "State")),
+                "SHIFT"
+            )
+        ));
 
     // Действие:
     TestSubscriber<ExecutorState> testSubscriber =
@@ -244,13 +329,14 @@ public class ExecutorStateGatewayTest {
     // Дано:
     doThrow(new DataMappingException()).when(mapper).map(any());
     when(stompClient.isConnected()).thenReturn(true);
-    when(stompClient.topic(anyString())).thenReturn(Flowable.just(
-        new StompMessage(
-            "MESSAGE",
-            Collections.singletonList(new StompHeader("Status", "payload")),
-            null
-        )
-    ));
+    when(stompClient.topic("/queue/1234567890", StompClient.ACK_CLIENT_INDIVIDUAL))
+        .thenReturn(Flowable.just(
+            new StompMessage(
+                "MESSAGE",
+                Collections.singletonList(new StompHeader("Status", "payload")),
+                null
+            )
+        ));
 
     // Действие:
     TestSubscriber<ExecutorState> testSubscriber =
@@ -270,13 +356,14 @@ public class ExecutorStateGatewayTest {
     // Дано:
     when(mapper.map(any())).thenReturn(ExecutorState.SHIFT_OPENED);
     when(stompClient.isConnected()).thenReturn(true);
-    when(stompClient.topic(anyString())).thenReturn(Flowable.just(
-        new StompMessage(
-            "MESSAGE",
-            Collections.singletonList(new StompHeader("Status", "payload")),
-            "\n"
-        )
-    ));
+    when(stompClient.topic("/queue/1234567890", StompClient.ACK_CLIENT_INDIVIDUAL))
+        .thenReturn(Flowable.just(
+            new StompMessage(
+                "MESSAGE",
+                Collections.singletonList(new StompHeader("Status", "payload")),
+                "\n"
+            )
+        ));
 
     // Действие:
     TestSubscriber<ExecutorState> testSubscriber =
@@ -293,7 +380,8 @@ public class ExecutorStateGatewayTest {
   public void ignoreErrorIfConnected() {
     // Дано:
     when(stompClient.isConnected()).thenReturn(true);
-    when(stompClient.topic(anyString())).thenReturn(Flowable.error(new NoNetworkException()));
+    when(stompClient.topic("/queue/1234567890", StompClient.ACK_CLIENT_INDIVIDUAL))
+        .thenReturn(Flowable.error(new NoNetworkException()));
 
     // Действие:
     TestSubscriber<ExecutorState> testSubscriber =
@@ -325,14 +413,15 @@ public class ExecutorStateGatewayTest {
   public void ignoreWrongHeaderIfConnectingAfterConnected() {
     // Дано:
     when(stompClient.isConnecting()).thenReturn(true);
-    when(stompClient.topic(anyString())).thenReturn(Flowable.just(
-        new StompMessage("MESSAGE", null, "SHIFT"),
-        new StompMessage(
-            "MESSAGE",
-            Collections.singletonList(new StompHeader("Type", "State")),
-            "SHIFT"
-        )
-    ));
+    when(stompClient.topic("/queue/1234567890", StompClient.ACK_CLIENT_INDIVIDUAL))
+        .thenReturn(Flowable.just(
+            new StompMessage("MESSAGE", null, "SHIFT"),
+            new StompMessage(
+                "MESSAGE",
+                Collections.singletonList(new StompHeader("Type", "State")),
+                "SHIFT"
+            )
+        ));
 
     // Действие:
     TestSubscriber<ExecutorState> testSubscriber =
@@ -353,13 +442,14 @@ public class ExecutorStateGatewayTest {
     // Дано:
     doThrow(new DataMappingException()).when(mapper).map(any());
     when(stompClient.isConnecting()).thenReturn(true);
-    when(stompClient.topic(anyString())).thenReturn(Flowable.just(
-        new StompMessage(
-            "MESSAGE",
-            Collections.singletonList(new StompHeader("Status", "")),
-            "\n"
-        )
-    ));
+    when(stompClient.topic("/queue/1234567890", StompClient.ACK_CLIENT_INDIVIDUAL))
+        .thenReturn(Flowable.just(
+            new StompMessage(
+                "MESSAGE",
+                Collections.singletonList(new StompHeader("Status", "")),
+                "\n"
+            )
+        ));
 
     // Действие:
     TestSubscriber<ExecutorState> testSubscriber =
@@ -381,13 +471,14 @@ public class ExecutorStateGatewayTest {
     // Дано:
     when(mapper.map(any())).thenReturn(ExecutorState.SHIFT_OPENED);
     when(stompClient.isConnecting()).thenReturn(true);
-    when(stompClient.topic(anyString())).thenReturn(Flowable.just(
-        new StompMessage(
-            "MESSAGE",
-            Collections.singletonList(new StompHeader("Status", "")),
-            "\n"
-        )
-    ));
+    when(stompClient.topic("/queue/1234567890", StompClient.ACK_CLIENT_INDIVIDUAL))
+        .thenReturn(Flowable.just(
+            new StompMessage(
+                "MESSAGE",
+                Collections.singletonList(new StompHeader("Status", "")),
+                "\n"
+            )
+        ));
 
     // Действие:
     TestSubscriber<ExecutorState> testSubscriber =
@@ -405,7 +496,7 @@ public class ExecutorStateGatewayTest {
   public void answerErrorIfConnecting() {
     // Дано:
     when(stompClient.isConnecting()).thenReturn(true);
-    when(stompClient.topic(anyString()))
+    when(stompClient.topic("/queue/1234567890", StompClient.ACK_CLIENT_INDIVIDUAL))
         .thenReturn(Flowable.error(new ConnectionClosedException()));
 
     // Действие:
