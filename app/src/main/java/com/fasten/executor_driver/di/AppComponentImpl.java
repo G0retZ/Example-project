@@ -8,6 +8,7 @@ import com.fasten.executor_driver.BuildConfig;
 import com.fasten.executor_driver.application.AutoRouterImpl;
 import com.fasten.executor_driver.application.MainApplication;
 import com.fasten.executor_driver.backend.geolocation.GeolocationCenterImpl;
+import com.fasten.executor_driver.backend.ringtone.SingleRingTonePlayer;
 import com.fasten.executor_driver.backend.settings.AppPreferences;
 import com.fasten.executor_driver.backend.settings.AppSettingsService;
 import com.fasten.executor_driver.backend.web.ApiService;
@@ -189,6 +190,8 @@ public class AppComponentImpl implements AppComponent {
   @NonNull
   private final GeoLocationUseCase geoLocationUseCase;
   @NonNull
+  private final SingleRingTonePlayer singleRingTonePlayer;
+  @NonNull
   private final MemoryDataSharer<String> loginSharer;
   @NonNull
   private final MemoryDataSharer<Vehicle> vehicleChoiceSharer;
@@ -250,6 +253,7 @@ public class AppComponentImpl implements AppComponent {
             stompClient
         ), executorStateUseCase
     );
+    singleRingTonePlayer = new SingleRingTonePlayer(appContext);
   }
 
   private OkHttpClient initHttpClient(
@@ -293,6 +297,9 @@ public class AppComponentImpl implements AppComponent {
 
   @Override
   public void inject(MainApplication mainApplication) {
+    mainApplication.setRingTonePlayer(
+        singleRingTonePlayer
+    );
     mainApplication.setServerConnectionViewModel(
         serverConnectionViewModel
     );
@@ -337,7 +344,7 @@ public class AppComponentImpl implements AppComponent {
             )
         )
     );
-    AutoRouterImpl autoRouter = new AutoRouterImpl();
+    AutoRouterImpl autoRouter = new AutoRouterImpl(singleRingTonePlayer);
     mainApplication.setAutoRouter(autoRouter);
     mainApplication.setExecutorStateViewActions(autoRouter);
     mainApplication.setLifeCycleCallbacks(autoRouter);

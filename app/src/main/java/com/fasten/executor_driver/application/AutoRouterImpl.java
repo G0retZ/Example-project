@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.fasten.executor_driver.R;
+import com.fasten.executor_driver.backend.ringtone.RingTonePlayer;
 import com.fasten.executor_driver.presentation.CommonNavigate;
 import com.fasten.executor_driver.presentation.executorstate.ExecutorStateNavigate;
 import com.fasten.executor_driver.presentation.executorstate.ExecutorStateViewActions;
@@ -62,6 +63,8 @@ public class AutoRouterImpl implements ActivityLifecycleCallbacks, AutoRouter,
     ));
   }
 
+  @NonNull
+  private final RingTonePlayer ringTonePlayer;
   @Nullable
   private Activity currentActivity;
   @Nullable
@@ -77,7 +80,8 @@ public class AutoRouterImpl implements ActivityLifecycleCallbacks, AutoRouter,
   private Runnable messageRunnable;
 
   @Inject
-  public AutoRouterImpl() {
+  public AutoRouterImpl(@NonNull RingTonePlayer ringTonePlayer) {
+    this.ringTonePlayer = ringTonePlayer;
   }
 
   @Override
@@ -128,6 +132,14 @@ public class AutoRouterImpl implements ActivityLifecycleCallbacks, AutoRouter,
       tryToResolveGeo();
     } else {
       if (lastRouteAction == null || !lastRouteAction.equals(CommonNavigate.SERVER_DATA_ERROR)) {
+        if (splashRouteAction != null && destination.equals(ExecutorStateNavigate.MAP_ONLINE)) {
+          switch (splashRouteAction) {
+            case ExecutorStateNavigate.DRIVER_ORDER_CONFIRMATION:
+              ringTonePlayer.playRingTone(R.raw.decline_offer);
+              break;
+            default:
+          }
+        }
         splashRouteAction = lastRouteAction = destination;
       }
       tryToNavigate();

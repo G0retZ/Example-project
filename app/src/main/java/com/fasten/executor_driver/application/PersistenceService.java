@@ -50,6 +50,7 @@ public class PersistenceService extends Service {
         NotificationChannel mChannel =
             new NotificationChannel(CHANNEL_ID, getString(R.string.server_connection),
                 NotificationManager.IMPORTANCE_HIGH);
+        mChannel.setSound(null, null);
         mChannel.enableVibration(true);
 
         // Set the Notification Channel for the Notification Manager.
@@ -57,6 +58,7 @@ public class PersistenceService extends Service {
 
         mChannel = new NotificationChannel(QUIET_CHANNEL_ID, getString(R.string.server_connection),
             NotificationManager.IMPORTANCE_DEFAULT);
+        mChannel.setSound(null, null);
         mChannel.enableVibration(true);
 
         // Set the Notification Channel for the Notification Manager.
@@ -139,6 +141,7 @@ public class PersistenceService extends Service {
     builder.setContentText(getString(text))
         .setContentTitle(getString(title))
         .setOngoing(true)
+        .setSound(null)
         .setSmallIcon(R.mipmap.ic_launcher)
         .setTicker(getString(text))
         .setWhen(System.currentTimeMillis());

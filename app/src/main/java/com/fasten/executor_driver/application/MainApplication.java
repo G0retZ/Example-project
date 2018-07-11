@@ -7,9 +7,11 @@ import android.content.Intent;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.RawRes;
 import android.support.annotation.StringRes;
 import android.support.v4.app.NotificationCompat.Builder;
 import com.fasten.executor_driver.R;
+import com.fasten.executor_driver.backend.ringtone.RingTonePlayer;
 import com.fasten.executor_driver.di.AppComponent;
 import com.fasten.executor_driver.di.AppComponentImpl;
 import com.fasten.executor_driver.presentation.CommonNavigate;
@@ -37,6 +39,8 @@ public class MainApplication extends Application implements ServerConnectionView
   @Nullable
   private AppComponent appComponent;
   @Nullable
+  private RingTonePlayer ringTonePlayer;
+  @Nullable
   private ServerConnectionViewModel serverConnectionViewModel;
   @Nullable
   private CancelOrderReasonsViewModel cancelOrderReasonsViewModel;
@@ -57,6 +61,11 @@ public class MainApplication extends Application implements ServerConnectionView
   private int missedOrdersCount;
   @Nullable
   private NotificationManager notificationManager;
+
+  @Inject
+  public void setRingTonePlayer(@Nullable RingTonePlayer ringTonePlayer) {
+    this.ringTonePlayer = ringTonePlayer;
+  }
 
   @Inject
   public void setServerConnectionViewModel(
@@ -219,10 +228,12 @@ public class MainApplication extends Application implements ServerConnectionView
             .getActivity(this, 0, new Intent(this, OnlineActivity.class), 0));
         break;
       case ExecutorStateNavigate.DRIVER_ORDER_CONFIRMATION:
+        playSound(R.raw.new_order);
         startService(R.string.offer, R.string.new_order, PendingIntent
             .getActivity(this, 0, new Intent(this, DriverOrderConfirmationActivity.class), 0));
         break;
       case ExecutorStateNavigate.CLIENT_ORDER_CONFIRMATION:
+        playSound(R.raw.accept_offer);
         startService(R.string.working, R.string.client_confirm, PendingIntent
             .getActivity(this, 0, new Intent(this, ClientOrderConfirmationActivity.class), 0));
         break;
@@ -250,6 +261,24 @@ public class MainApplication extends Application implements ServerConnectionView
     return appComponent;
   }
 
+  @Override
+  public void showMissedOrderMessage(@NonNull String message) {
+    playSound(R.raw.missed_offer);
+    if (notificationManager != null) {
+      Builder builder = new Builder(this, "state_channel")
+          .setContentText(getString(R.string.missed_order))
+          .setContentTitle(message)
+          .setAutoCancel(true)
+          .setContentIntent(
+              PendingIntent.getActivity(this, 0, new Intent(this, BalanceActivity.class), 0)
+          )
+          .setSmallIcon(R.mipmap.ic_launcher)
+          .setTicker(getString(R.string.missed_order))
+          .setWhen(System.currentTimeMillis());
+      notificationManager.notify(missedOrdersCount++ % 5, builder.build());
+    }
+  }
+
   private void startService(@StringRes int title, @StringRes int text,
       PendingIntent activityPendingIntent) {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -271,20 +300,10 @@ public class MainApplication extends Application implements ServerConnectionView
     stopService(new Intent(this, PersistenceService.class));
   }
 
-  @Override
-  public void showMissedOrderMessage(@NonNull String message) {
-    if (notificationManager != null) {
-      Builder builder = new Builder(this, "state_channel")
-          .setContentText(getString(R.string.missed_order))
-          .setContentTitle(message)
-          .setAutoCancel(true)
-          .setContentIntent(
-              PendingIntent.getActivity(this, 0, new Intent(this, BalanceActivity.class), 0)
-          )
-          .setSmallIcon(R.mipmap.ic_launcher)
-          .setTicker(getString(R.string.missed_order))
-          .setWhen(System.currentTimeMillis());
-      notificationManager.notify(missedOrdersCount++ % 5, builder.build());
+  private void playSound(@RawRes int rawId) {
+    if (ringTonePlayer == null) {
+      throw new IllegalStateException("Граф зависимостей поломан!");
     }
+    ringTonePlayer.playRingTone(rawId);
   }
 }
