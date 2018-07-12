@@ -90,6 +90,10 @@ public class BaseActivity extends AppCompatActivity {
       case CommonNavigate.SERVER_DATA_ERROR:
         ((MainApplication) getApplication()).navigate(destination);
         break;
+      case CommonNavigate.EXIT:
+        blockWithPending(true);
+        ((MainApplication) getApplication()).navigate(destination);
+        break;
     }
   }
 
