@@ -9,11 +9,13 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.fasten.executor_driver.R;
 import com.fasten.executor_driver.backend.ringtone.RingTonePlayer;
+import com.fasten.executor_driver.backend.vibro.ShakeItPlayer;
 import com.fasten.executor_driver.presentation.CommonNavigate;
 import com.fasten.executor_driver.presentation.executorstate.ExecutorStateNavigate;
 import com.fasten.executor_driver.presentation.executorstate.ExecutorStateViewActions;
 import com.fasten.executor_driver.presentation.geolocation.GeoLocationNavigate;
 import com.fasten.executor_driver.presentation.serverconnection.ServerConnectionNavigate;
+import com.fasten.executor_driver.utils.Pair;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -65,6 +67,8 @@ public class AutoRouterImpl implements ActivityLifecycleCallbacks, AutoRouter,
 
   @NonNull
   private final RingTonePlayer ringTonePlayer;
+  @NonNull
+  private final ShakeItPlayer shakeItPlayer;
   @Nullable
   private Activity currentActivity;
   @Nullable
@@ -80,8 +84,10 @@ public class AutoRouterImpl implements ActivityLifecycleCallbacks, AutoRouter,
   private Runnable messageRunnable;
 
   @Inject
-  public AutoRouterImpl(@NonNull RingTonePlayer ringTonePlayer) {
+  public AutoRouterImpl(@NonNull RingTonePlayer ringTonePlayer,
+      @NonNull ShakeItPlayer shakeItPlayer) {
     this.ringTonePlayer = ringTonePlayer;
+    this.shakeItPlayer = shakeItPlayer;
   }
 
   @Override
@@ -136,6 +142,15 @@ public class AutoRouterImpl implements ActivityLifecycleCallbacks, AutoRouter,
           switch (splashRouteAction) {
             case ExecutorStateNavigate.DRIVER_ORDER_CONFIRMATION:
               ringTonePlayer.playRingTone(R.raw.decline_offer);
+              shakeItPlayer.shakeIt(Arrays.asList(
+                  new Pair<>(50L, 255),
+                  new Pair<>(50L, 0),
+                  new Pair<>(100L, 255),
+                  new Pair<>(50L, 0),
+                  new Pair<>(150L, 255),
+                  new Pair<>(50L, 0),
+                  new Pair<>(250L, 255)
+              ));
               break;
             default:
           }

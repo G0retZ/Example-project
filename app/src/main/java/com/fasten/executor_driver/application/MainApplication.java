@@ -12,6 +12,7 @@ import android.support.annotation.StringRes;
 import android.support.v4.app.NotificationCompat.Builder;
 import com.fasten.executor_driver.R;
 import com.fasten.executor_driver.backend.ringtone.RingTonePlayer;
+import com.fasten.executor_driver.backend.vibro.ShakeItPlayer;
 import com.fasten.executor_driver.di.AppComponent;
 import com.fasten.executor_driver.di.AppComponentImpl;
 import com.fasten.executor_driver.presentation.CommonNavigate;
@@ -27,6 +28,10 @@ import com.fasten.executor_driver.presentation.missedorder.MissedOrderViewModel;
 import com.fasten.executor_driver.presentation.serverconnection.ServerConnectionNavigate;
 import com.fasten.executor_driver.presentation.serverconnection.ServerConnectionViewActions;
 import com.fasten.executor_driver.presentation.serverconnection.ServerConnectionViewModel;
+import com.fasten.executor_driver.utils.Pair;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import javax.inject.Inject;
 
 /**
@@ -40,6 +45,8 @@ public class MainApplication extends Application implements ServerConnectionView
   private AppComponent appComponent;
   @Nullable
   private RingTonePlayer ringTonePlayer;
+  @Nullable
+  private ShakeItPlayer shakeItPlayer;
   @Nullable
   private ServerConnectionViewModel serverConnectionViewModel;
   @Nullable
@@ -65,6 +72,11 @@ public class MainApplication extends Application implements ServerConnectionView
   @Inject
   public void setRingTonePlayer(@Nullable RingTonePlayer ringTonePlayer) {
     this.ringTonePlayer = ringTonePlayer;
+  }
+
+  @Inject
+  public void setShakeItPlayer(@Nullable ShakeItPlayer shakeItPlayer) {
+    this.shakeItPlayer = shakeItPlayer;
   }
 
   @Inject
@@ -228,12 +240,137 @@ public class MainApplication extends Application implements ServerConnectionView
             .getActivity(this, 0, new Intent(this, OnlineActivity.class), 0));
         break;
       case ExecutorStateNavigate.DRIVER_ORDER_CONFIRMATION:
-        playSound(R.raw.new_order);
+        playSound(R.raw.new_offer);
+        List<Pair<Long, Integer>> pairs = new ArrayList<>();
+        pairs.add(new Pair<>(50L, 255));
+        pairs.add(new Pair<>(50L, 0));
+        pairs.add(new Pair<>(100L, 255));
+        pairs.add(new Pair<>(50L, 0));
+        pairs.add(new Pair<>(150L, 255));
+        pairs.add(new Pair<>(50L, 0));
+        pairs.add(new Pair<>(200L, 255));
+        pairs.add(new Pair<>(50L, 0));
+        pairs.add(new Pair<>(200L, 255));
+        pairs.add(new Pair<>(50L, 0));
+        pairs.add(new Pair<>(150L, 255));
+        pairs.add(new Pair<>(50L, 0));
+        pairs.add(new Pair<>(50L, 255));
+        pairs.add(new Pair<>(1800L, 0));
+        pairs.add(new Pair<>(50L, 255));
+        pairs.add(new Pair<>(50L, 0));
+        pairs.add(new Pair<>(100L, 255));
+        pairs.add(new Pair<>(50L, 0));
+        pairs.add(new Pair<>(150L, 255));
+        pairs.add(new Pair<>(50L, 0));
+        pairs.add(new Pair<>(200L, 255));
+        pairs.add(new Pair<>(50L, 0));
+        pairs.add(new Pair<>(200L, 255));
+        pairs.add(new Pair<>(50L, 0));
+        pairs.add(new Pair<>(150L, 255));
+        pairs.add(new Pair<>(50L, 0));
+        pairs.add(new Pair<>(50L, 255));
+        pairs.add(new Pair<>(1800L, 0));
+        pairs.add(new Pair<>(50L, 255));
+        pairs.add(new Pair<>(50L, 0));
+        pairs.add(new Pair<>(100L, 255));
+        pairs.add(new Pair<>(50L, 0));
+        pairs.add(new Pair<>(150L, 255));
+        pairs.add(new Pair<>(50L, 0));
+        pairs.add(new Pair<>(200L, 255));
+        pairs.add(new Pair<>(50L, 0));
+        pairs.add(new Pair<>(200L, 255));
+        pairs.add(new Pair<>(50L, 0));
+        pairs.add(new Pair<>(150L, 255));
+        pairs.add(new Pair<>(50L, 0));
+        pairs.add(new Pair<>(50L, 255));
+        pairs.add(new Pair<>(1800L, 0));
+        pairs.add(new Pair<>(50L, 255));
+        pairs.add(new Pair<>(50L, 0));
+        pairs.add(new Pair<>(100L, 255));
+        pairs.add(new Pair<>(50L, 0));
+        pairs.add(new Pair<>(150L, 255));
+        pairs.add(new Pair<>(50L, 0));
+        pairs.add(new Pair<>(200L, 255));
+        pairs.add(new Pair<>(50L, 0));
+        pairs.add(new Pair<>(200L, 255));
+        pairs.add(new Pair<>(50L, 0));
+        pairs.add(new Pair<>(150L, 255));
+        pairs.add(new Pair<>(50L, 0));
+        pairs.add(new Pair<>(50L, 255));
+        pairs.add(new Pair<>(1800L, 0));
+        pairs.add(new Pair<>(50L, 255));
+        pairs.add(new Pair<>(50L, 0));
+        pairs.add(new Pair<>(100L, 255));
+        pairs.add(new Pair<>(50L, 0));
+        pairs.add(new Pair<>(150L, 255));
+        pairs.add(new Pair<>(50L, 0));
+        pairs.add(new Pair<>(200L, 255));
+        pairs.add(new Pair<>(50L, 0));
+        pairs.add(new Pair<>(200L, 255));
+        pairs.add(new Pair<>(50L, 0));
+        pairs.add(new Pair<>(150L, 255));
+        pairs.add(new Pair<>(50L, 0));
+        pairs.add(new Pair<>(50L, 255));
+        pairs.add(new Pair<>(1800L, 0));
+        pairs.add(new Pair<>(50L, 255));
+        pairs.add(new Pair<>(50L, 0));
+        pairs.add(new Pair<>(100L, 255));
+        pairs.add(new Pair<>(50L, 0));
+        pairs.add(new Pair<>(150L, 255));
+        pairs.add(new Pair<>(50L, 0));
+        pairs.add(new Pair<>(200L, 255));
+        pairs.add(new Pair<>(50L, 0));
+        pairs.add(new Pair<>(200L, 255));
+        pairs.add(new Pair<>(50L, 0));
+        pairs.add(new Pair<>(150L, 255));
+        pairs.add(new Pair<>(50L, 0));
+        pairs.add(new Pair<>(50L, 255));
+        pairs.add(new Pair<>(1800L, 0));
+        pairs.add(new Pair<>(50L, 255));
+        pairs.add(new Pair<>(50L, 0));
+        pairs.add(new Pair<>(100L, 255));
+        pairs.add(new Pair<>(50L, 0));
+        pairs.add(new Pair<>(150L, 255));
+        pairs.add(new Pair<>(50L, 0));
+        pairs.add(new Pair<>(200L, 255));
+        pairs.add(new Pair<>(50L, 0));
+        pairs.add(new Pair<>(200L, 255));
+        pairs.add(new Pair<>(50L, 0));
+        pairs.add(new Pair<>(150L, 255));
+        pairs.add(new Pair<>(50L, 0));
+        pairs.add(new Pair<>(50L, 255));
+        pairs.add(new Pair<>(1800L, 0));
+        pairs.add(new Pair<>(50L, 255));
+        pairs.add(new Pair<>(50L, 0));
+        pairs.add(new Pair<>(100L, 255));
+        pairs.add(new Pair<>(50L, 0));
+        pairs.add(new Pair<>(150L, 255));
+        pairs.add(new Pair<>(50L, 0));
+        pairs.add(new Pair<>(200L, 255));
+        pairs.add(new Pair<>(50L, 0));
+        pairs.add(new Pair<>(200L, 255));
+        pairs.add(new Pair<>(50L, 0));
+        pairs.add(new Pair<>(150L, 255));
+        pairs.add(new Pair<>(50L, 0));
+        shakeIt(pairs);
         startService(R.string.offer, R.string.new_order, PendingIntent
             .getActivity(this, 0, new Intent(this, DriverOrderConfirmationActivity.class), 0));
         break;
       case ExecutorStateNavigate.CLIENT_ORDER_CONFIRMATION:
         playSound(R.raw.accept_offer);
+        shakeIt(Arrays.asList(
+            new Pair<>(100L, 255),
+            new Pair<>(50L, 0),
+            new Pair<>(50L, 255),
+            new Pair<>(50L, 0),
+            new Pair<>(50L, 255),
+            new Pair<>(50L, 0),
+            new Pair<>(100L, 255),
+            new Pair<>(50L, 0),
+            new Pair<>(50L, 255),
+            new Pair<>(50L, 0),
+            new Pair<>(100L, 255)
+        ));
         startService(R.string.working, R.string.client_confirm, PendingIntent
             .getActivity(this, 0, new Intent(this, ClientOrderConfirmationActivity.class), 0));
         break;
@@ -264,10 +401,22 @@ public class MainApplication extends Application implements ServerConnectionView
   @Override
   public void showMissedOrderMessage(@NonNull String message) {
     playSound(R.raw.missed_offer);
+    shakeIt(Arrays.asList(
+        new Pair<>(50L, 255),
+        new Pair<>(50L, 0),
+        new Pair<>(100L, 255),
+        new Pair<>(50L, 0),
+        new Pair<>(150L, 255),
+        new Pair<>(50L, 0),
+        new Pair<>(200L, 255),
+        new Pair<>(50L, 0)
+    ));
     if (notificationManager != null) {
       Builder builder = new Builder(this, "state_channel")
           .setContentText(getString(R.string.missed_order))
           .setContentTitle(message)
+          .setSound(null)
+          .setVibrate(new long[0])
           .setAutoCancel(true)
           .setContentIntent(
               PendingIntent.getActivity(this, 0, new Intent(this, BalanceActivity.class), 0)
@@ -305,5 +454,12 @@ public class MainApplication extends Application implements ServerConnectionView
       throw new IllegalStateException("Граф зависимостей поломан!");
     }
     ringTonePlayer.playRingTone(rawId);
+  }
+
+  private void shakeIt(@NonNull List<Pair<Long, Integer>> patternItems) {
+    if (shakeItPlayer == null) {
+      throw new IllegalStateException("Граф зависимостей поломан!");
+    }
+    shakeItPlayer.shakeIt(patternItems);
   }
 }
