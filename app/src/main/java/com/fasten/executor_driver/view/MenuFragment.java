@@ -9,9 +9,12 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import com.fasten.executor_driver.R;
 import com.fasten.executor_driver.di.AppComponent;
+import com.fasten.executor_driver.presentation.CommonNavigate;
 import com.fasten.executor_driver.presentation.balance.BalanceViewActions;
 import com.fasten.executor_driver.presentation.balance.BalanceViewModel;
 import com.fasten.executor_driver.presentation.menu.MenuNavigate;
+import com.fasten.executor_driver.presentation.onlineswitch.OnlineSwitchViewActions;
+import com.fasten.executor_driver.presentation.onlineswitch.OnlineSwitchViewModel;
 import java.text.DecimalFormat;
 import javax.inject.Inject;
 
@@ -19,15 +22,23 @@ import javax.inject.Inject;
  * Отображает меню.
  */
 
-public class MenuFragment extends BaseFragment implements BalanceViewActions {
+public class MenuFragment extends BaseFragment implements BalanceViewActions,
+    OnlineSwitchViewActions {
 
   private BalanceViewModel balanceViewModel;
+  private OnlineSwitchViewModel onlineSwitchViewModel;
   private TextView balanceAmount;
   private boolean pending;
+  private boolean nowOnline;
 
   @Inject
   public void setBalanceViewModel(@NonNull BalanceViewModel balanceViewModel) {
     this.balanceViewModel = balanceViewModel;
+  }
+
+  @Inject
+  public void setOnlineSwitchViewModel(OnlineSwitchViewModel onlineSwitchViewModel) {
+    this.onlineSwitchViewModel = onlineSwitchViewModel;
   }
 
   @Nullable
@@ -42,6 +53,12 @@ public class MenuFragment extends BaseFragment implements BalanceViewActions {
     view.findViewById(R.id.history).setOnClickListener(v -> navigate(MenuNavigate.HISTORY));
     view.findViewById(R.id.operator).setOnClickListener(v -> navigate(MenuNavigate.OPERATOR));
     view.findViewById(R.id.vehicles).setOnClickListener(v -> navigate(MenuNavigate.VEHICLES));
+    view.findViewById(R.id.exit).setOnClickListener(v -> {
+      if (nowOnline) {
+        onlineSwitchViewModel.setNewState(false);
+      }
+      navigate(CommonNavigate.EXIT);
+    });
     balanceAmount = view.findViewById(R.id.balanceAmount);
     return view;
   }
@@ -63,6 +80,16 @@ public class MenuFragment extends BaseFragment implements BalanceViewActions {
     balanceViewModel.getViewStateLiveData().observe(this, viewState -> {
       if (viewState != null) {
         viewState.apply(this);
+      }
+    });
+    onlineSwitchViewModel.getViewStateLiveData().observe(this, viewState -> {
+      if (viewState != null) {
+        viewState.apply(this);
+      }
+    });
+    onlineSwitchViewModel.getNavigationLiveData().observe(this, destination -> {
+      if (destination != null) {
+        navigate(destination);
       }
     });
   }
@@ -93,5 +120,18 @@ public class MenuFragment extends BaseFragment implements BalanceViewActions {
       showPending(pending);
     }
     this.pending = pending;
+  }
+
+  @Override
+  public void checkSwitch(boolean check) {
+    nowOnline = check;
+  }
+
+  @Override
+  public void showSwitchPending(boolean show) {
+    if (this.pending != show) {
+      showPending(pending);
+    }
+    this.pending = show;
   }
 }

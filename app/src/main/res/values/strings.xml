@@ -60,6 +60,7 @@
   <string name="order_history">История заказов</string>
   <string name="operator">Оператор</string>
   <string name="vehicles_list">Список ТС</string>
+  <string name="exit_app">Выйти из приложения</string>
   <string name="qiwi">Qiwi</string>
   <string name="sberbank">Сбербанк-онлайн</string>
   <string name="tariff_range">Тарифы, по которым вы готовы работать</string>
