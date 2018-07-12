@@ -967,6 +967,9 @@ public class AppComponentImpl implements AppComponent {
 
   @Override
   public void inject(MenuFragment menuFragment) {
+    if (selectedVehiclesAndOptionsGateway == null) {
+      throw new IllegalStateException("Граф зависимостей поломан!");
+    }
     menuFragment.setBalanceViewModel(
         ViewModelProviders.of(
             menuFragment,
@@ -976,6 +979,24 @@ public class AppComponentImpl implements AppComponent {
                 )
             )
         ).get(BalanceViewModelImpl.class)
+    );
+    menuFragment.setOnlineSwitchViewModel(
+        ViewModelProviders.of(
+            menuFragment,
+            new ViewModelFactory<>(
+                new OnlineSwitchViewModelImpl(
+                    new VehiclesAndOptionsUseCaseImpl(
+                        selectedVehiclesAndOptionsGateway,
+                        vehicleChoiceSharer,
+                        lastUsedVehicleGateway
+                    ),
+                    new ExecutorStateNotOnlineUseCaseImpl(
+                        new ExecutorStateSwitchGatewayImpl(stompClient),
+                        executorStateUseCase
+                    )
+                )
+            )
+        ).get(OnlineSwitchViewModelImpl.class)
     );
   }
 
