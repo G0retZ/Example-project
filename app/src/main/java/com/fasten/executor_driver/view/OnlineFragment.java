@@ -23,6 +23,7 @@ public class OnlineFragment extends BaseFragment implements OnlineSwitchViewActi
 
   @Nullable
   private SwitchCompat switchCompat;
+  private boolean pending;
 
   @Inject
   public void setOnlineSwitchViewModel(OnlineSwitchViewModel onlineSwitchViewModel) {
@@ -78,6 +79,9 @@ public class OnlineFragment extends BaseFragment implements OnlineSwitchViewActi
 
   @Override
   public void showSwitchPending(boolean show) {
-    showPending(show);
+    if (this.pending != show) {
+      showPending(pending);
+    }
+    this.pending = show;
   }
 }

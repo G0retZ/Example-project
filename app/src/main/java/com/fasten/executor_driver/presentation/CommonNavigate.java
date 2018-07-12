@@ -9,7 +9,8 @@ import java.lang.annotation.RetentionPolicy;
  */
 @StringDef({
     CommonNavigate.NO_CONNECTION,
-    CommonNavigate.SERVER_DATA_ERROR
+    CommonNavigate.SERVER_DATA_ERROR,
+    CommonNavigate.EXIT
 })
 @Retention(RetentionPolicy.SOURCE)
 public @interface CommonNavigate {
@@ -19,4 +20,7 @@ public @interface CommonNavigate {
 
   // Переход к проблеме совместимости формата данных с сервером.
   String SERVER_DATA_ERROR = "CommonNavigate.to.ServerDataError";
+
+  // Выйти из приложения.
+  String EXIT = "Menu.to.Exit";
 }

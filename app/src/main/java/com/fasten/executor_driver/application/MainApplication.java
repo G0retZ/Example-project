@@ -228,6 +228,9 @@ public class MainApplication extends Application implements ServerConnectionView
       case CommonNavigate.SERVER_DATA_ERROR:
         stopService();
         break;
+      case CommonNavigate.EXIT:
+        stopService();
+        break;
       case ExecutorStateNavigate.MAP_SHIFT_CLOSED:
         stopService();
         break;

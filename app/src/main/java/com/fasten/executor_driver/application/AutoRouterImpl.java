@@ -4,7 +4,9 @@ import android.app.Activity;
 import android.app.AlertDialog.Builder;
 import android.app.Application.ActivityLifecycleCallbacks;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.fasten.executor_driver.R;
@@ -195,10 +197,13 @@ public class AutoRouterImpl implements ActivityLifecycleCallbacks, AutoRouter,
             .setCancelable(false)
             .setPositiveButton(
                 currentActivity.getString(android.R.string.ok),
-                (a, b) -> android.os.Process.killProcess(android.os.Process.myPid())
+                (a, b) -> exitAndKill(currentActivity)
             )
             .create()
             .show();
+        return;
+      case CommonNavigate.EXIT:
+        exitAndKill(currentActivity);
         return;
       case ExecutorStateNavigate.MAP_SHIFT_CLOSED:
         currentActivity.startActivity(
@@ -255,7 +260,7 @@ public class AutoRouterImpl implements ActivityLifecycleCallbacks, AutoRouter,
             .setCancelable(false)
             .setPositiveButton(
                 currentActivity.getString(android.R.string.ok),
-                (a, b) -> android.os.Process.killProcess(android.os.Process.myPid())
+                (a, b) -> exitAndKill(currentActivity)
             )
             .create()
             .show();
@@ -279,5 +284,16 @@ public class AutoRouterImpl implements ActivityLifecycleCallbacks, AutoRouter,
         messageRunnable = null;
       }
     };
+  }
+
+  private void exitAndKill(Activity activity) {
+    if (Build.VERSION.SDK_INT >= 21) {
+      activity.finishAndRemoveTask();
+    } else {
+      activity.finishAffinity();
+    }
+    new Handler().postDelayed(
+        () -> android.os.Process.killProcess(android.os.Process.myPid()), 1000
+    );
   }
 }
