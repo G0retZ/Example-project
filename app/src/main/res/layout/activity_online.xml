@@ -26,13 +26,13 @@
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        android:name="com.fasten.executor_driver.view.BalanceSummaryFragment"
+        android:name="com.cargopull.executor_driver.view.BalanceSummaryFragment"
         tools:layout="@layout/fragment_balance_summary"/>
       <fragment
         android:id="@+id/fragment_online"
         android:layout_width="152dp"
         android:layout_height="match_parent"
-        android:name="com.fasten.executor_driver.view.OnlineFragment"
+        android:name="com.cargopull.executor_driver.view.OnlineFragment"
         tools:layout="@layout/fragment_online"/>
     </LinearLayout>
   </android.support.v7.widget.Toolbar>
@@ -40,7 +40,7 @@
     android:id="@+id/fragment_map"
     android:layout_width="0dp"
     android:layout_height="0dp"
-    android:name="com.fasten.executor_driver.view.MapFragment"
+    android:name="com.cargopull.executor_driver.view.MapFragment"
     app:layout_constraintBottom_toBottomOf="parent"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
@@ -49,7 +49,7 @@
     android:id="@+id/fragment_server_connection"
     android:layout_width="0dp"
     android:layout_height="wrap_content"
-    android:name="com.fasten.executor_driver.view.ServerConnectionFragment"
+    android:name="com.cargopull.executor_driver.view.ServerConnectionFragment"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toBottomOf="@id/appBar"
