@@ -18,6 +18,6 @@
     android:id="@+id/fragment_payment_options"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:name="com.fasten.executor_driver.view.PaymentOptionsFragment"
+    android:name="com.cargopull.executor_driver.view.PaymentOptionsFragment"
     tools:layout="@layout/fragment_payment_options"/>
 </LinearLayout>

@@ -17,6 +17,6 @@
     android:id="@+id/fragment_auth_password"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:name="com.fasten.executor_driver.view.auth.PasswordFragment"
+    android:name="com.cargopull.executor_driver.view.auth.PasswordFragment"
     tools:layout="@layout/fragment_auth_password"/>
 </LinearLayout>

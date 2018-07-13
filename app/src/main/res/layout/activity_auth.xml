@@ -16,6 +16,6 @@
     android:id="@+id/fragment_auth_login"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:name="com.fasten.executor_driver.view.auth.LoginFragment"
+    android:name="com.cargopull.executor_driver.view.auth.LoginFragment"
     tools:layout="@layout/fragment_auth_login"/>
 </LinearLayout>

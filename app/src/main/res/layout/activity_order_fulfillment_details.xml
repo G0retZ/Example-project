@@ -18,6 +18,6 @@
     android:id="@+id/fragment_order_fulfillment_details"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:name="com.fasten.executor_driver.view.OrderFulfillmentDetailsFragment"
+    android:name="com.cargopull.executor_driver.view.OrderFulfillmentDetailsFragment"
     tools:layout="@layout/fragment_order_fulfillment_details"/>
 </LinearLayout>
