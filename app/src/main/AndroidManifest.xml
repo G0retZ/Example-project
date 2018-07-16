@@ -96,9 +96,19 @@
       android:enabled="true"
       android:exported="false"
       android:name=".application.PersistenceService"/>
+    <service
+      android:name=".application.FcmService"
+      tools:ignore="ExportedService">
+      <intent-filter>
+        <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+      </intent-filter>
+    </service>
 
     <meta-data
       android:name="com.google.android.geo.API_KEY"
       android:value="@string/google_maps_key"/>
+    <!--<meta-data-->
+    <!--android:name="com.google.firebase.messaging.default_notification_channel_id"-->
+    <!--android:value="@string/default_notification_channel_id"/>-->
   </application>
 </manifest>

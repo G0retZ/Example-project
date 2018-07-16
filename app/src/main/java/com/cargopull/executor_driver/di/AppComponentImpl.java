@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.cargopull.executor_driver.BuildConfig;
 import com.cargopull.executor_driver.application.AutoRouterImpl;
+import com.cargopull.executor_driver.application.FcmService;
 import com.cargopull.executor_driver.application.MainApplication;
 import com.cargopull.executor_driver.backend.geolocation.GeolocationCenterImpl;
 import com.cargopull.executor_driver.backend.ringtone.SingleRingTonePlayer;
@@ -363,6 +364,11 @@ public class AppComponentImpl implements AppComponent {
     mainApplication.setAutoRouter(autoRouter);
     mainApplication.setExecutorStateViewActions(autoRouter);
     mainApplication.setLifeCycleCallbacks(autoRouter);
+  }
+
+  @Override
+  public void inject(FcmService fcmService) {
+    fcmService.setStateViewActions(autoRouter);
   }
 
   @Override
