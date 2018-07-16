@@ -235,8 +235,7 @@ public class MainApplication extends MultiDexApplication implements ServerConnec
         stopService();
         break;
       case ExecutorStateNavigate.MAP_SHIFT_OPENED:
-        startService(R.string.online, R.string.no_orders, PendingIntent
-            .getActivity(this, 0, new Intent(this, OnlineActivity.class), 0));
+        stopService();
         break;
       case ExecutorStateNavigate.MAP_ONLINE:
         startService(R.string.online, R.string.wait_for_orders, PendingIntent
