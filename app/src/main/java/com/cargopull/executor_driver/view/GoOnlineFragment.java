@@ -1,7 +1,5 @@
 package com.cargopull.executor_driver.view;
 
-import android.app.AlertDialog.Builder;
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -23,17 +21,11 @@ public class GoOnlineFragment extends BaseFragment implements OnlineButtonViewAc
 
   private OnlineButtonViewModel onlineButtonViewModel;
   private Button goOnlineRequest;
-  private Context context;
+  private boolean pending;
 
   @Inject
   public void setOnlineButtonViewModel(@NonNull OnlineButtonViewModel onlineButtonViewModel) {
     this.onlineButtonViewModel = onlineButtonViewModel;
-  }
-
-  @Override
-  public void onAttach(Context context) {
-    super.onAttach(context);
-    this.context = context;
   }
 
   @Nullable
@@ -69,29 +61,15 @@ public class GoOnlineFragment extends BaseFragment implements OnlineButtonViewAc
   }
 
   @Override
-  public void onDetach() {
-    super.onDetach();
-    context = null;
-  }
-
-  @Override
   public void enableGoOnlineButton(boolean enable) {
     goOnlineRequest.setEnabled(enable);
   }
 
   @Override
-  public void showGoOnlineError(@Nullable Throwable error) {
-    if (error == null) {
-      return;
+  public void showGoOnlinePending(boolean show) {
+    if (this.pending != show) {
+      showPending(pending);
     }
-    new Builder(context)
-        .setTitle(R.string.error)
-        .setMessage(error.getMessage())
-        .setPositiveButton(getString(android.R.string.ok),
-            (dialog, which) -> onlineButtonViewModel.consumeError())
-        .setNegativeButton(getString(android.R.string.cancel),
-            (dialog, which) -> onlineButtonViewModel.consumeError())
-        .create()
-        .show();
+    this.pending = show;
   }
 }

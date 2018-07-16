@@ -1,7 +1,5 @@
 package com.cargopull.executor_driver.presentation.onlinebutton;
 
-import android.support.annotation.Nullable;
-
 /**
  * Действия для смены состояния вида кнопки выхода на линию.
  */
@@ -15,9 +13,9 @@ public interface OnlineButtonViewActions {
   void enableGoOnlineButton(boolean enable);
 
   /**
-   * Показать ошибку.
+   * Показать индикатор процесса.
    *
-   * @param error - ошибка
+   * @param show - показать или нет?
    */
-  void showGoOnlineError(@Nullable Throwable error);
+  void showGoOnlinePending(boolean show);
 }

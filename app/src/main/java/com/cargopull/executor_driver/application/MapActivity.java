@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
 import com.cargopull.executor_driver.R;
+import com.cargopull.executor_driver.presentation.CommonNavigate;
 import com.cargopull.executor_driver.presentation.menu.MenuNavigate;
 import com.cargopull.executor_driver.presentation.onlinebutton.OnlineButtonNavigate;
 
@@ -49,6 +50,15 @@ public class MapActivity extends BaseActivity {
         new Builder(this)
             .setTitle(R.string.error)
             .setMessage("У тебя вообще нет тачек!")
+            .setPositiveButton(getString(android.R.string.ok), null)
+            .setNegativeButton(getString(android.R.string.cancel), null)
+            .create()
+            .show();
+        break;
+      case CommonNavigate.NO_CONNECTION:
+        new Builder(this)
+            .setTitle(R.string.error)
+            .setMessage(R.string.no_network_connection)
             .setPositiveButton(getString(android.R.string.ok), null)
             .setNegativeButton(getString(android.R.string.cancel), null)
             .create()

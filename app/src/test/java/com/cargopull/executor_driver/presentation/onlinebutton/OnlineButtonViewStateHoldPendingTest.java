@@ -9,7 +9,7 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
-public class OnlineButtonViewStateHoldTest {
+public class OnlineButtonViewStateHoldPendingTest {
 
   @Mock
   private OnlineButtonViewActions viewActions;
@@ -17,11 +17,11 @@ public class OnlineButtonViewStateHoldTest {
   @Test
   public void testActions() {
     // Действие:
-    new OnlineButtonViewStateHold().apply(viewActions);
+    new OnlineButtonViewStateHoldPending().apply(viewActions);
 
     // Результат:
     verify(viewActions).enableGoOnlineButton(false);
-    verify(viewActions).showGoOnlinePending(false);
+    verify(viewActions).showGoOnlinePending(true);
     verifyNoMoreInteractions(viewActions);
   }
 }

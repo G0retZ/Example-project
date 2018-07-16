@@ -11,9 +11,4 @@ public interface OnlineButtonViewModel extends ViewModel<OnlineButtonViewActions
    * Запрашивает выход на линию.
    */
   void goOnline();
-
-  /**
-   * Пользователь среагировал на ошибку.
-   */
-  void consumeError();
 }

@@ -5,7 +5,6 @@ import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 import android.arch.core.executor.testing.InstantTaskExecutorRule;
@@ -15,6 +14,7 @@ import com.cargopull.executor_driver.entity.DriverBlockedException;
 import com.cargopull.executor_driver.entity.NoFreeVehiclesException;
 import com.cargopull.executor_driver.entity.NoVehiclesAvailableException;
 import com.cargopull.executor_driver.interactor.vehicle.VehiclesAndOptionsUseCase;
+import com.cargopull.executor_driver.presentation.CommonNavigate;
 import com.cargopull.executor_driver.presentation.ViewState;
 import io.reactivex.Completable;
 import io.reactivex.android.plugins.RxAndroidPlugins;
@@ -148,12 +148,12 @@ public class OnlineButtonViewModelTest {
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(any(OnlineButtonViewStateReady.class));
-    inOrder.verify(viewStateObserver).onChanged(any(OnlineButtonViewStateHold.class));
+    inOrder.verify(viewStateObserver).onChanged(any(OnlineButtonViewStateHoldPending.class));
     verifyNoMoreInteractions(viewStateObserver);
   }
 
   /**
-   * Не должен переходить в состояние вида "Ошибка", если водитель заблокирован.
+   * Должен вернуть состояния вида "Бездействие", если водитель заблокирован.
    */
   @Test
   public void doNotSetErrorViewStateToLiveDataAfterFailForBlockedDriver() {
@@ -168,6 +168,7 @@ public class OnlineButtonViewModelTest {
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(any(OnlineButtonViewStateReady.class));
+    inOrder.verify(viewStateObserver).onChanged(any(OnlineButtonViewStateHoldPending.class));
     inOrder.verify(viewStateObserver).onChanged(any(OnlineButtonViewStateHold.class));
     verifyNoMoreInteractions(viewStateObserver);
   }
@@ -189,16 +190,17 @@ public class OnlineButtonViewModelTest {
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(any(OnlineButtonViewStateReady.class));
+    inOrder.verify(viewStateObserver).onChanged(any(OnlineButtonViewStateHoldPending.class));
     inOrder.verify(viewStateObserver).onChanged(any(OnlineButtonViewStateHold.class));
     inOrder.verify(viewStateObserver).onChanged(any(OnlineButtonViewStateReady.class));
     verifyNoMoreInteractions(viewStateObserver);
   }
 
   /**
-   * Не должен переходить в состояние вида "Ошибка", если нет ТС.
+   * Должен вернуть состояния вида "Бездействие", если нет ТС.
    */
   @Test
-  public void doNotSetErrorViewStateToLiveDataAfterFailForNoVehicles() {
+  public void setHoldPendingViewStateToLiveDataAfterFailForNoVehicles() {
     // Дано:
     when(vehiclesAndOptionsUseCase.loadVehiclesAndOptions())
         .thenReturn(Completable.error(new NoVehiclesAvailableException()));
@@ -210,6 +212,7 @@ public class OnlineButtonViewModelTest {
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(any(OnlineButtonViewStateReady.class));
+    inOrder.verify(viewStateObserver).onChanged(any(OnlineButtonViewStateHoldPending.class));
     inOrder.verify(viewStateObserver).onChanged(any(OnlineButtonViewStateHold.class));
     verifyNoMoreInteractions(viewStateObserver);
   }
@@ -231,16 +234,17 @@ public class OnlineButtonViewModelTest {
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(any(OnlineButtonViewStateReady.class));
+    inOrder.verify(viewStateObserver).onChanged(any(OnlineButtonViewStateHoldPending.class));
     inOrder.verify(viewStateObserver).onChanged(any(OnlineButtonViewStateHold.class));
     inOrder.verify(viewStateObserver).onChanged(any(OnlineButtonViewStateReady.class));
     verifyNoMoreInteractions(viewStateObserver);
   }
 
   /**
-   * Не должен переходить в состояние вида "Ошибка", если нет свободных ТС.
+   * Должен вернуть состояния вида "Бездействие", если нет свободных ТС.
    */
   @Test
-  public void doNotSetErrorViewStateToLiveDataAfterFailForNoFreeVehicles() {
+  public void setHoldPendingViewStateToLiveDataAfterFailForNoFreeVehicles() {
     // Дано:
     when(vehiclesAndOptionsUseCase.loadVehiclesAndOptions())
         .thenReturn(Completable.error(new NoFreeVehiclesException()));
@@ -252,12 +256,13 @@ public class OnlineButtonViewModelTest {
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(any(OnlineButtonViewStateReady.class));
+    inOrder.verify(viewStateObserver).onChanged(any(OnlineButtonViewStateHoldPending.class));
     inOrder.verify(viewStateObserver).onChanged(any(OnlineButtonViewStateHold.class));
     verifyNoMoreInteractions(viewStateObserver);
   }
 
   /**
-   * Должен вернуть рабочее состояние после таймера, если нет свободных ТС.
+   * Должен вернуть рабочее состояние вида после таймера, если нет свободных ТС.
    */
   @Test
   public void setReadyViewStateToLiveDataAfterFailForNoFreeVehicles() {
@@ -273,16 +278,17 @@ public class OnlineButtonViewModelTest {
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(any(OnlineButtonViewStateReady.class));
+    inOrder.verify(viewStateObserver).onChanged(any(OnlineButtonViewStateHoldPending.class));
     inOrder.verify(viewStateObserver).onChanged(any(OnlineButtonViewStateHold.class));
     inOrder.verify(viewStateObserver).onChanged(any(OnlineButtonViewStateReady.class));
     verifyNoMoreInteractions(viewStateObserver);
   }
 
   /**
-   * Должен вернуть состояние вида "Ошибка" после ошибки запроса выхода на линию.
+   * Должен вернуть состояния вида "Бездействие", если нет сети.
    */
   @Test
-  public void setErrorViewStateToLiveDataAfterFail() {
+  public void setHoldPendingViewStateToLiveDataForNoConnection() {
     // Дано:
     when(vehiclesAndOptionsUseCase.loadVehiclesAndOptions())
         .thenReturn(Completable.error(new NoNetworkException()));
@@ -294,42 +300,16 @@ public class OnlineButtonViewModelTest {
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(any(OnlineButtonViewStateReady.class));
-    inOrder.verify(viewStateObserver).onChanged(any(OnlineButtonViewStateHold.class));
-    inOrder.verify(viewStateObserver)
-        .onChanged(new OnlineButtonViewStateError(new NoNetworkException()));
-    verifyNoMoreInteractions(viewStateObserver);
-  }
-
-  /**
-   * Должен вернуть состояние вида "Ожидайте" после ошибки запроса выхода на линию, если ошибка была
-   * потреблена до истечения таймера.
-   */
-  @Test
-  public void setHoldViewStateToLiveDataAfterFailConsumedBeforeTimeout() {
-    // Дано:
-    when(vehiclesAndOptionsUseCase.loadVehiclesAndOptions())
-        .thenReturn(Completable.error(new NoNetworkException()));
-    InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
-
-    // Действие:
-    viewModel.goOnline();
-    viewModel.consumeError();
-
-    // Результат:
-    inOrder.verify(viewStateObserver).onChanged(any(OnlineButtonViewStateReady.class));
-    inOrder.verify(viewStateObserver).onChanged(any(OnlineButtonViewStateHold.class));
-    inOrder.verify(viewStateObserver)
-        .onChanged(new OnlineButtonViewStateError(new NoNetworkException()));
+    inOrder.verify(viewStateObserver).onChanged(any(OnlineButtonViewStateHoldPending.class));
     inOrder.verify(viewStateObserver).onChanged(any(OnlineButtonViewStateHold.class));
     verifyNoMoreInteractions(viewStateObserver);
   }
 
   /**
-   * Должен оставить состояние вида "Ошибка", если она не была потреблена после истечения таймера.
+   * Должен вернуть рабочее состояние вида после таймера, если нет сети.
    */
   @Test
-  public void doNotUnsetErrorViewStateToLiveDataAfterFailNotConsumedAfterTimeout() {
+  public void setReadyViewStateToLiveDataAfterFailForNoConnection() {
     // Дано:
     when(vehiclesAndOptionsUseCase.loadVehiclesAndOptions())
         .thenReturn(Completable.error(new NoNetworkException()));
@@ -342,71 +322,81 @@ public class OnlineButtonViewModelTest {
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(any(OnlineButtonViewStateReady.class));
+    inOrder.verify(viewStateObserver).onChanged(any(OnlineButtonViewStateHoldPending.class));
     inOrder.verify(viewStateObserver).onChanged(any(OnlineButtonViewStateHold.class));
-    inOrder.verify(viewStateObserver)
-        .onChanged(new OnlineButtonViewStateError(new NoNetworkException()));
+    inOrder.verify(viewStateObserver).onChanged(any(OnlineButtonViewStateReady.class));
     verifyNoMoreInteractions(viewStateObserver);
   }
 
   /**
-   * Должен вернуть состояние вида "Ожидайте" с возвратом обратно в состояние готовности после
-   * ошибки запроса выхода на линию и ее потребления.
+   * Должен вернуть состояния вида "Бездействие", при другой ошибке.
    */
   @Test
-  public void setHoldViewStateToLiveDataAfterFailConsumedAfterTimeout() {
+  public void setHoldPendingViewStateToLiveDataAfterOtherFail() {
     // Дано:
     when(vehiclesAndOptionsUseCase.loadVehiclesAndOptions())
-        .thenReturn(Completable.error(new NoNetworkException()));
+        .thenReturn(Completable.error(new Exception()));
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
     viewModel.goOnline();
-    viewModel.consumeError();
-    testScheduler.advanceTimeBy(5, TimeUnit.SECONDS);
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(any(OnlineButtonViewStateReady.class));
+    inOrder.verify(viewStateObserver).onChanged(any(OnlineButtonViewStateHoldPending.class));
     inOrder.verify(viewStateObserver).onChanged(any(OnlineButtonViewStateHold.class));
-    inOrder.verify(viewStateObserver)
-        .onChanged(new OnlineButtonViewStateError(new NoNetworkException()));
-    inOrder.verify(viewStateObserver).onChanged(any(OnlineButtonViewStateHold.class));
-    inOrder.verify(viewStateObserver).onChanged(any(OnlineButtonViewStateReady.class));
     verifyNoMoreInteractions(viewStateObserver);
   }
 
   /**
-   * Должен вернуть состояние рабочее вида после ошибки запроса выхода на линию, если она была
-   * потреблена после истечения таймера.
+   * Должен вернуть рабочее состояние вида после таймера, при другой ошибке.
    */
   @Test
-  public void setReadyViewStateToLiveDataAfterFailAfterTimeout() {
+  public void setReadyViewStateToLiveDataAfterOtherFailAfterTimeout() {
     // Дано:
     when(vehiclesAndOptionsUseCase.loadVehiclesAndOptions())
-        .thenReturn(Completable.error(new NoNetworkException()));
+        .thenReturn(Completable.error(new Exception()));
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
     viewModel.goOnline();
     testScheduler.advanceTimeBy(5, TimeUnit.SECONDS);
-    viewModel.consumeError();
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(any(OnlineButtonViewStateReady.class));
+    inOrder.verify(viewStateObserver).onChanged(any(OnlineButtonViewStateHoldPending.class));
     inOrder.verify(viewStateObserver).onChanged(any(OnlineButtonViewStateHold.class));
-    inOrder.verify(viewStateObserver)
-        .onChanged(new OnlineButtonViewStateError(new NoNetworkException()));
     inOrder.verify(viewStateObserver).onChanged(any(OnlineButtonViewStateReady.class));
     verifyNoMoreInteractions(viewStateObserver);
   }
 
   /**
-   * Должен вернуть состояния вида "Ожидайте" с возвратом обратно в состояние готовности после
-   * успешного запроса выхода на линию.
+   * Должен вернуть состояния вида "Бездействие" после успешного запроса выхода на линию.
    */
   @Test
-  public void setHoldViewStateToLiveData() {
+  public void setHoldPendingViewStateToLiveDataForComplete() {
+    // Дано:
+    when(vehiclesAndOptionsUseCase.loadVehiclesAndOptions()).thenReturn(Completable.complete());
+    InOrder inOrder = Mockito.inOrder(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
+
+    // Действие:
+    viewModel.goOnline();
+
+    // Результат:
+    inOrder.verify(viewStateObserver).onChanged(any(OnlineButtonViewStateReady.class));
+    inOrder.verify(viewStateObserver).onChanged(any(OnlineButtonViewStateHoldPending.class));
+    inOrder.verify(viewStateObserver).onChanged(any(OnlineButtonViewStateHold.class));
+    verifyNoMoreInteractions(viewStateObserver);
+  }
+
+  /**
+   * Должен вернуть рабочее состояние вида после таймера, после успешного запроса выхода на линию.
+   */
+  @Test
+  public void setReadyViewStateToLiveDataForComplete() {
     // Дано:
     when(vehiclesAndOptionsUseCase.loadVehiclesAndOptions()).thenReturn(Completable.complete());
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
@@ -418,29 +408,13 @@ public class OnlineButtonViewModelTest {
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(any(OnlineButtonViewStateReady.class));
+    inOrder.verify(viewStateObserver).onChanged(any(OnlineButtonViewStateHoldPending.class));
     inOrder.verify(viewStateObserver).onChanged(any(OnlineButtonViewStateHold.class));
     inOrder.verify(viewStateObserver).onChanged(any(OnlineButtonViewStateReady.class));
     verifyNoMoreInteractions(viewStateObserver);
   }
 
   /* Тетсируем навигацию. */
-
-  /**
-   * Должен игнорировать прочие ошибки.
-   */
-  @Test
-  public void setNothingToLiveData() {
-    // Дано:
-    when(vehiclesAndOptionsUseCase.loadVehiclesAndOptions())
-        .thenReturn(Completable.error(new NoNetworkException()));
-    viewModel.getNavigationLiveData().observeForever(navigateObserver);
-
-    // Действие:
-    viewModel.goOnline();
-
-    // Результат:
-    verifyZeroInteractions(navigateObserver);
-  }
 
   /**
    * Должен вернуть "перейти к списку ТС" если загрузка была успешной.
@@ -507,5 +481,39 @@ public class OnlineButtonViewModelTest {
 
     // Результат:
     verify(navigateObserver, only()).onChanged(OnlineButtonNavigate.NO_VEHICLES);
+  }
+
+  /**
+   * Должен вернуть "перейти к ошибке сети".
+   */
+  @Test
+  public void setNavigateToNoConnectionToLiveData() {
+    // Дано:
+    when(vehiclesAndOptionsUseCase.loadVehiclesAndOptions())
+        .thenReturn(Completable.error(new NoNetworkException()));
+    viewModel.getNavigationLiveData().observeForever(navigateObserver);
+
+    // Действие:
+    viewModel.goOnline();
+
+    // Результат:
+    verify(navigateObserver, only()).onChanged(CommonNavigate.NO_CONNECTION);
+  }
+
+  /**
+   * Должен вернуть "перейти к ошибке формата данных сервера".
+   */
+  @Test
+  public void setNavigateToServerDataErrorToLiveData() {
+    // Дано:
+    when(vehiclesAndOptionsUseCase.loadVehiclesAndOptions())
+        .thenReturn(Completable.error(new Exception()));
+    viewModel.getNavigationLiveData().observeForever(navigateObserver);
+
+    // Действие:
+    viewModel.goOnline();
+
+    // Результат:
+    verify(navigateObserver, only()).onChanged(CommonNavigate.SERVER_DATA_ERROR);
   }
 }

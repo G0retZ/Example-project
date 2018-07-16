@@ -4,10 +4,12 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
+import com.cargopull.executor_driver.backend.web.NoNetworkException;
 import com.cargopull.executor_driver.entity.DriverBlockedException;
 import com.cargopull.executor_driver.entity.NoFreeVehiclesException;
 import com.cargopull.executor_driver.entity.NoVehiclesAvailableException;
 import com.cargopull.executor_driver.interactor.vehicle.VehiclesAndOptionsUseCase;
+import com.cargopull.executor_driver.presentation.CommonNavigate;
 import com.cargopull.executor_driver.presentation.SingleLiveEvent;
 import com.cargopull.executor_driver.presentation.ViewState;
 import io.reactivex.Completable;
@@ -58,48 +60,41 @@ public class OnlineButtonViewModelImpl extends ViewModel implements OnlineButton
     if (!loadDisposable.isDisposed() || !timerDisposable.isDisposed()) {
       return;
     }
-    viewStateLiveData.postValue(new OnlineButtonViewStateHold());
+    viewStateLiveData.postValue(new OnlineButtonViewStateHoldPending());
     loadDisposable = vehiclesAndOptionsUseCase.loadVehiclesAndOptions()
         .subscribeOn(Schedulers.single())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(
             () -> {
-              navigateLiveData.setValue(OnlineButtonNavigate.VEHICLE_OPTIONS);
+              navigateLiveData.postValue(OnlineButtonNavigate.VEHICLE_OPTIONS);
               holdButton(DURATION_AFTER_SUCCESS);
             },
             throwable -> {
               throwable.printStackTrace();
               if (throwable instanceof DriverBlockedException) {
-                navigateLiveData.setValue(OnlineButtonNavigate.DRIVER_BLOCKED);
+                navigateLiveData.postValue(OnlineButtonNavigate.DRIVER_BLOCKED);
               } else if (throwable instanceof NoFreeVehiclesException) {
-                navigateLiveData.setValue(OnlineButtonNavigate.NO_FREE_VEHICLES);
+                navigateLiveData.postValue(OnlineButtonNavigate.NO_FREE_VEHICLES);
               } else if (throwable instanceof NoVehiclesAvailableException) {
-                navigateLiveData.setValue(OnlineButtonNavigate.NO_VEHICLES);
+                navigateLiveData.postValue(OnlineButtonNavigate.NO_VEHICLES);
+              } else if (throwable instanceof NoNetworkException) {
+                navigateLiveData.postValue(CommonNavigate.NO_CONNECTION);
               } else {
-                viewStateLiveData.postValue(new OnlineButtonViewStateError(throwable));
+                navigateLiveData.postValue(CommonNavigate.SERVER_DATA_ERROR);
               }
               holdButton(DURATION_AFTER_FAIL);
             }
         );
   }
 
-  @Override
-  public void consumeError() {
-    if (!loadDisposable.isDisposed() || !timerDisposable.isDisposed()) {
-      viewStateLiveData.postValue(new OnlineButtonViewStateHold());
-    } else {
-      viewStateLiveData.postValue(new OnlineButtonViewStateReady());
-    }
-  }
-
   private void holdButton(int duration) {
+    viewStateLiveData.postValue(new OnlineButtonViewStateHold());
     timerDisposable = Completable.timer(duration, TimeUnit.SECONDS)
         .observeOn(AndroidSchedulers.mainThread())
-        .subscribe(() -> {
-          if (viewStateLiveData.getValue() instanceof OnlineButtonViewStateHold) {
-            viewStateLiveData.postValue(new OnlineButtonViewStateReady());
-          }
-        }, Throwable::printStackTrace);
+        .subscribe(
+            () -> viewStateLiveData.postValue(new OnlineButtonViewStateReady()),
+            Throwable::printStackTrace
+        );
   }
 
   @Override
