@@ -5,11 +5,8 @@ import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import com.cargopull.executor_driver.backend.web.NoNetworkException;
-import com.cargopull.executor_driver.entity.DriverBlockedException;
 import com.cargopull.executor_driver.entity.ExecutorState;
 import com.cargopull.executor_driver.interactor.ExecutorStateNotOnlineUseCase;
-import com.cargopull.executor_driver.interactor.vehicle.VehiclesAndOptionsUseCase;
 import com.cargopull.executor_driver.presentation.CommonNavigate;
 import com.cargopull.executor_driver.presentation.SingleLiveEvent;
 import com.cargopull.executor_driver.presentation.ViewState;
@@ -24,8 +21,6 @@ public class OnlineSwitchViewModelImpl extends ViewModel implements OnlineSwitch
   @NonNull
   private final ExecutorStateNotOnlineUseCase executorStateNotOnlineUseCase;
   @NonNull
-  private final VehiclesAndOptionsUseCase vehiclesAndOptionsUseCase;
-  @NonNull
   private final MutableLiveData<ViewState<OnlineSwitchViewActions>> viewStateLiveData;
   @NonNull
   private final SingleLiveEvent<String> navigateLiveData;
@@ -38,9 +33,7 @@ public class OnlineSwitchViewModelImpl extends ViewModel implements OnlineSwitch
 
   @Inject
   public OnlineSwitchViewModelImpl(
-      @NonNull VehiclesAndOptionsUseCase vehiclesAndOptionsUseCase,
       @NonNull ExecutorStateNotOnlineUseCase executorStateNotOnlineUseCase) {
-    this.vehiclesAndOptionsUseCase = vehiclesAndOptionsUseCase;
     this.executorStateNotOnlineUseCase = executorStateNotOnlineUseCase;
     viewStateLiveData = new MutableLiveData<>();
     navigateLiveData = new SingleLiveEvent<>();
@@ -63,29 +56,8 @@ public class OnlineSwitchViewModelImpl extends ViewModel implements OnlineSwitch
   public void setNewState(boolean online) {
     if (setStateDisposable.isDisposed()) {
       if (online) {
-        viewStateLiveData
-            .postValue(new OnlineSwitchViewStatePending(new OnlineSwitchViewState(true)));
-        setStateDisposable = vehiclesAndOptionsUseCase.loadVehiclesAndOptions()
-            .subscribeOn(Schedulers.single())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(
-                () -> {
-                  navigateLiveData.postValue(OnlineSwitchNavigate.VEHICLE_OPTIONS);
-                  viewStateLiveData.postValue(lastViewState = new OnlineSwitchViewState(false));
-                },
-                throwable -> {
-                  throwable.printStackTrace();
-                  if (throwable instanceof DriverBlockedException) {
-                    viewStateLiveData.postValue(lastViewState = new OnlineSwitchViewState(false));
-                    navigateLiveData.setValue(OnlineSwitchNavigate.DRIVER_BLOCKED);
-                  } else if (throwable instanceof NoNetworkException) {
-                    viewStateLiveData.postValue(lastViewState = new OnlineSwitchViewState(false));
-                    navigateLiveData.postValue(CommonNavigate.NO_CONNECTION);
-                  } else {
-                    navigateLiveData.postValue(CommonNavigate.SERVER_DATA_ERROR);
-                  }
-                }
-            );
+        viewStateLiveData.postValue(lastViewState = new OnlineSwitchViewState(false));
+        navigateLiveData.postValue(OnlineSwitchNavigate.VEHICLE_OPTIONS);
       } else {
         viewStateLiveData
             .postValue(new OnlineSwitchViewStatePending(new OnlineSwitchViewState(false)));

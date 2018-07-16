@@ -183,6 +183,8 @@ public class AppComponentImpl implements AppComponent {
   @NonNull
   private final StompClient stompClient;
   @NonNull
+  private final AutoRouterImpl autoRouter;
+  @NonNull
   private final ServerConnectionViewModel serverConnectionViewModel;
   @NonNull
   private final ExecutorStateUseCase executorStateUseCase;
@@ -264,6 +266,7 @@ public class AppComponentImpl implements AppComponent {
         new NewPatternMapper(),
         new OldPatternMapper()
     );
+    autoRouter = new AutoRouterImpl(singleRingTonePlayer, singleShakePlayer);
   }
 
   private OkHttpClient initHttpClient(
@@ -357,7 +360,6 @@ public class AppComponentImpl implements AppComponent {
             )
         )
     );
-    AutoRouterImpl autoRouter = new AutoRouterImpl(singleRingTonePlayer, singleShakePlayer);
     mainApplication.setAutoRouter(autoRouter);
     mainApplication.setExecutorStateViewActions(autoRouter);
     mainApplication.setLifeCycleCallbacks(autoRouter);
@@ -470,11 +472,6 @@ public class AppComponentImpl implements AppComponent {
             onlineFragment,
             new ViewModelFactory<>(
                 new OnlineSwitchViewModelImpl(
-                    new VehiclesAndOptionsUseCaseImpl(
-                        selectedVehiclesAndOptionsGateway,
-                        vehicleChoiceSharer,
-                        lastUsedVehicleGateway
-                    ),
                     new ExecutorStateNotOnlineUseCaseImpl(
                         new ExecutorStateSwitchGatewayImpl(stompClient),
                         executorStateUseCase
@@ -482,6 +479,20 @@ public class AppComponentImpl implements AppComponent {
                 )
             )
         ).get(OnlineSwitchViewModelImpl.class)
+    );
+    onlineFragment.setOnlineButtonViewModel(
+        ViewModelProviders.of(
+            onlineFragment,
+            new ViewModelFactory<>(
+                new OnlineButtonViewModelImpl(
+                    new VehiclesAndOptionsUseCaseImpl(
+                        selectedVehiclesAndOptionsGateway,
+                        vehicleChoiceSharer,
+                        lastUsedVehicleGateway
+                    )
+                )
+            )
+        ).get(OnlineButtonViewModelImpl.class)
     );
   }
 
@@ -967,9 +978,6 @@ public class AppComponentImpl implements AppComponent {
 
   @Override
   public void inject(MenuFragment menuFragment) {
-    if (selectedVehiclesAndOptionsGateway == null) {
-      throw new IllegalStateException("Граф зависимостей поломан!");
-    }
     menuFragment.setBalanceViewModel(
         ViewModelProviders.of(
             menuFragment,
@@ -985,11 +993,6 @@ public class AppComponentImpl implements AppComponent {
             menuFragment,
             new ViewModelFactory<>(
                 new OnlineSwitchViewModelImpl(
-                    new VehiclesAndOptionsUseCaseImpl(
-                        selectedVehiclesAndOptionsGateway,
-                        vehicleChoiceSharer,
-                        lastUsedVehicleGateway
-                    ),
                     new ExecutorStateNotOnlineUseCaseImpl(
                         new ExecutorStateSwitchGatewayImpl(stompClient),
                         executorStateUseCase
