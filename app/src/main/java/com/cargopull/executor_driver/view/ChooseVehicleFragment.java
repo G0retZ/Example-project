@@ -31,7 +31,6 @@ public class ChooseVehicleFragment extends BaseFragment implements ChooseVehicle
   private TextView errorText;
   @NonNull
   private Disposable disposable = EmptyDisposable.INSTANCE;
-  private boolean pending;
 
   @Inject
   public void setChooseVehicleViewModel(@NonNull ChooseVehicleViewModel chooseVehicleViewModel) {
@@ -80,10 +79,7 @@ public class ChooseVehicleFragment extends BaseFragment implements ChooseVehicle
 
   @Override
   public void showVehicleListPending(boolean pending) {
-    if (this.pending != pending) {
-      showPending(pending);
-    }
-    this.pending = pending;
+    showPending(pending, toString());
   }
 
   @Override

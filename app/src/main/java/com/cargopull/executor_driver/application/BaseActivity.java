@@ -10,7 +10,9 @@ import com.cargopull.executor_driver.di.AppComponent;
 import com.cargopull.executor_driver.presentation.CommonNavigate;
 import com.cargopull.executor_driver.view.PendingDialogFragment;
 import com.cargopull.executor_driver.view.ServerConnectionFragment;
+import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.Set;
 
 /**
  * Базовая {@link Activity} с поддержкой:
@@ -28,7 +30,7 @@ public class BaseActivity extends AppCompatActivity {
   private final PendingDialogFragment pendingDialogFragment = new PendingDialogFragment();
   @NonNull
   private final LinkedList<OnBackPressedInterceptor> onBackPressedInterceptors = new LinkedList<>();
-  private int blockRequests = 0;
+  private final Set<String> blockers = new HashSet<>();
 
   /**
    * Добавляет {@link OnBackPressedInterceptor} в реестр перехватчиков.
@@ -91,7 +93,7 @@ public class BaseActivity extends AppCompatActivity {
         ((MainApplication) getApplication()).navigate(destination);
         break;
       case CommonNavigate.EXIT:
-        blockWithPending(true);
+        blockWithPending(true, "exit");
         ((MainApplication) getApplication()).navigate(destination);
         break;
     }
@@ -103,21 +105,22 @@ public class BaseActivity extends AppCompatActivity {
    * отображаем, иначе - не отображаем.
    *
    * @param block - блокировать или нет.
+   * @param blockerId - Уникальный ИД блокирующего.
    */
-  public void blockWithPending(boolean block) {
+  public void blockWithPending(boolean block, @NonNull String blockerId) {
     if (block) {
-      blockRequests++;
+      blockers.add(blockerId);
     } else {
-      blockRequests--;
+      blockers.remove(blockerId);
     }
-    if (blockRequests > 0) {
+    if (blockers.isEmpty()) {
+      if (pendingDialogFragment.isShowing()) {
+        pendingDialogFragment.dismiss();
+      }
+    } else {
       if (!pendingDialogFragment.isShowing()) {
         pendingDialogFragment.setCancelable(false);
         pendingDialogFragment.show(getSupportFragmentManager(), "pending");
-      }
-    } else {
-      if (pendingDialogFragment.isShowing()) {
-        pendingDialogFragment.dismiss();
       }
     }
   }

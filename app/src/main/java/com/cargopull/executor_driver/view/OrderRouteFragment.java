@@ -25,7 +25,6 @@ public class OrderRouteFragment extends BaseFragment implements OrderRouteViewAc
 
   private OrderRouteViewModel orderRouteViewModel;
   private RecyclerView recyclerView;
-  private boolean pending;
 
   @Inject
   public void setOrderRouteViewModel(@NonNull OrderRouteViewModel orderRouteViewModel) {
@@ -67,10 +66,7 @@ public class OrderRouteFragment extends BaseFragment implements OrderRouteViewAc
 
   @Override
   public void showOrderRoutePending(boolean pending) {
-    if (this.pending != pending) {
-      showPending(pending);
-    }
-    this.pending = pending;
+    showPending(pending, toString());
   }
 
   @Override

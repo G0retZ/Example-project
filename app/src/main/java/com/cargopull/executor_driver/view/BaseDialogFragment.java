@@ -5,7 +5,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.DialogFragment;
 import android.util.Log;
 import com.cargopull.executor_driver.application.BaseActivity;
@@ -16,7 +15,7 @@ import com.cargopull.executor_driver.di.AppComponent;
  * {@link DialogFragment} с поддержкой:
  * <ul>
  * <li>onBackPressed()</li>
- * <li>Отображения ошибки сети</li>
+ * <li>Отображения процесса</li>
  * </ul>
  */
 
@@ -80,13 +79,6 @@ public class BaseDialogFragment extends DialogFragment implements OnBackPressedI
     return false;
   }
 
-  @SuppressWarnings("unused")
-  public void showNoNetworkError() {
-    if (getView() != null) {
-      Snackbar.make(getView(), "", Snackbar.LENGTH_SHORT).show();
-    }
-  }
-
   /**
    * Метод перехода куда либо.
    * Позволяет отвязать {@link android.app.Fragment} от конкретных {@link Activity}.
@@ -100,13 +92,14 @@ public class BaseDialogFragment extends DialogFragment implements OnBackPressedI
   }
 
   /**
-   * Показать экраном процесса.
+   * Показать экран процесса.
    *
    * @param show - показать или нет.
+   * @param blockerId - Уникальный ИД блокирующего.
    */
-  void showPending(boolean show) {
+  void showPending(boolean show, @NonNull String blockerId) {
     if (baseActivity != null) {
-      baseActivity.blockWithPending(show);
+      baseActivity.blockWithPending(show, blockerId);
     }
   }
 }

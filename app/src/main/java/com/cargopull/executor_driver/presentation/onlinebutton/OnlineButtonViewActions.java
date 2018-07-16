@@ -15,7 +15,7 @@ public interface OnlineButtonViewActions {
   /**
    * Показать индикатор процесса.
    *
-   * @param show - показать или нет?
+   * @param pending - показать или нет?
    */
-  void showGoOnlinePending(boolean show);
+  void showGoOnlinePending(boolean pending);
 }

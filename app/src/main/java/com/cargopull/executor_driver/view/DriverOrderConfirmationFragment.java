@@ -48,8 +48,6 @@ public class DriverOrderConfirmationFragment extends BaseFragment implements
   private TextView serviceText;
   private Button acceptAction;
   private Context context;
-  private boolean orderConfirmationPending;
-  private boolean orderPending;
 
   @Override
   public void onAttach(Context context) {
@@ -124,18 +122,12 @@ public class DriverOrderConfirmationFragment extends BaseFragment implements
 
   @Override
   public void showDriverOrderConfirmationPending(boolean pending) {
-    if (this.orderConfirmationPending != pending) {
-      showPending(pending);
-    }
-    this.orderConfirmationPending = pending;
+    showPending(pending, toString() + "0");
   }
 
   @Override
   public void showOrderPending(boolean pending) {
-    if (this.orderPending != pending) {
-      showPending(pending);
-    }
-    this.orderPending = pending;
+    showPending(pending, toString() + "1");
   }
 
   @Override

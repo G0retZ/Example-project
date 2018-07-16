@@ -45,8 +45,6 @@ public class MovingToClientFragment extends BaseFragment implements MovingToClie
   private Button callAction;
   private Button navigationAction;
   private Context context;
-  private boolean movingToClientPending;
-  private boolean orderPending;
   @Nullable
   private ValueAnimator valueAnimator;
 
@@ -127,10 +125,7 @@ public class MovingToClientFragment extends BaseFragment implements MovingToClie
 
   @Override
   public void showMovingToClientPending(boolean pending) {
-    if (this.movingToClientPending != pending) {
-      showPending(pending);
-    }
-    this.movingToClientPending = pending;
+    showPending(pending, toString() + "0");
   }
 
   @Override
@@ -140,10 +135,7 @@ public class MovingToClientFragment extends BaseFragment implements MovingToClie
 
   @Override
   public void showOrderPending(boolean pending) {
-    if (this.orderPending != pending) {
-      showPending(pending);
-    }
-    this.orderPending = pending;
+    showPending(pending, toString() + "1");
   }
 
   @Override

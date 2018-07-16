@@ -21,7 +21,6 @@ public class GoOnlineFragment extends BaseFragment implements OnlineButtonViewAc
 
   private OnlineButtonViewModel onlineButtonViewModel;
   private Button goOnlineRequest;
-  private boolean pending;
 
   @Inject
   public void setOnlineButtonViewModel(@NonNull OnlineButtonViewModel onlineButtonViewModel) {
@@ -66,10 +65,7 @@ public class GoOnlineFragment extends BaseFragment implements OnlineButtonViewAc
   }
 
   @Override
-  public void showGoOnlinePending(boolean show) {
-    if (this.pending != show) {
-      showPending(pending);
-    }
-    this.pending = show;
+  public void showGoOnlinePending(boolean pending) {
+    showPending(pending, toString());
   }
 }

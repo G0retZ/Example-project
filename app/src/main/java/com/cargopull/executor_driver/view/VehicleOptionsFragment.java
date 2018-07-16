@@ -28,7 +28,6 @@ public class VehicleOptionsFragment extends BaseFragment implements VehicleOptio
   private RecyclerView recyclerView;
   private TextView errorText;
   private Button readyButton;
-  private boolean pending;
 
   @Inject
   public void setVehicleOptionsViewModel(@NonNull VehicleOptionsViewModel vehicleOptionsViewModel) {
@@ -80,10 +79,7 @@ public class VehicleOptionsFragment extends BaseFragment implements VehicleOptio
 
   @Override
   public void showVehicleOptionsPending(boolean pending) {
-    if (this.pending != pending) {
-      showPending(pending);
-    }
-    this.pending = pending;
+    showPending(pending, toString());
   }
 
   @Override

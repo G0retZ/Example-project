@@ -38,7 +38,6 @@ public class ClientOrderConfirmationFragment extends BaseFragment implements Ord
   private TextView optionsTitleText;
   private TextView optionsText;
   private Context context;
-  private boolean pending;
 
   @Override
   public void onAttach(Context context) {
@@ -101,10 +100,7 @@ public class ClientOrderConfirmationFragment extends BaseFragment implements Ord
 
   @Override
   public void showOrderPending(boolean pending) {
-    if (this.pending != pending) {
-      showPending(pending);
-    }
-    this.pending = pending;
+    showPending(pending, toString());
   }
 
   @Override
