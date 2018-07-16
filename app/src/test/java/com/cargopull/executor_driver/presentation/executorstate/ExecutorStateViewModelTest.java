@@ -90,7 +90,63 @@ public class ExecutorStateViewModelTest {
   /* Тетсируем сообщение. */
 
   /**
-   * Должен показать сопутствующее сообщение.
+   * Должен показать сопутствующее открытой смене сообщение.
+   */
+  @Test
+  public void showShiftOpenedMessage() {
+    // Дано:
+    ExecutorState.SHIFT_OPENED.setData("Message");
+    when(executorStateUseCase.getExecutorStates(anyBoolean()))
+        .thenReturn(Flowable.just(ExecutorState.SHIFT_OPENED));
+
+    // Действие:
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.initializeExecutorState();
+
+    // Результат:
+    verify(viewStateObserver, only()).onChanged(viewStateCaptor.capture());
+    viewStateCaptor.getValue().apply(viewActions);
+    verify(viewActions, only()).showOnlineMessage("Message");
+  }
+
+  /**
+   * Не должен показывать null сообщение.
+   */
+  @Test
+  public void doNotShowNullShiftOpenedMessage() {
+    // Дано:
+    ExecutorState.SHIFT_OPENED.setData(null);
+    when(executorStateUseCase.getExecutorStates(anyBoolean()))
+        .thenReturn(Flowable.just(ExecutorState.SHIFT_OPENED));
+
+    // Действие:
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.initializeExecutorState();
+
+    // Результат:
+    verifyZeroInteractions(viewStateObserver);
+  }
+
+  /**
+   * Не должен показывать пустое сообщение.
+   */
+  @Test
+  public void doNotShowEmptyShiftOpenedMessage() {
+    // Дано:
+    ExecutorState.SHIFT_OPENED.setData("");
+    when(executorStateUseCase.getExecutorStates(anyBoolean()))
+        .thenReturn(Flowable.just(ExecutorState.SHIFT_OPENED));
+
+    // Действие:
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.initializeExecutorState();
+
+    // Результат:
+    verifyZeroInteractions(viewStateObserver);
+  }
+
+  /**
+   * Должен показать сопутствующее онлайн сообщение.
    */
   @Test
   public void showOnlineMessage() {
@@ -113,7 +169,7 @@ public class ExecutorStateViewModelTest {
    * Не должен показывать null сообщение.
    */
   @Test
-  public void doNotShowNullMessage() {
+  public void doNotShowNullOnlineMessage() {
     // Дано:
     ExecutorState.ONLINE.setData(null);
     when(executorStateUseCase.getExecutorStates(anyBoolean()))
@@ -131,7 +187,7 @@ public class ExecutorStateViewModelTest {
    * Не должен показывать пустое сообщение.
    */
   @Test
-  public void doNotShowEmptyMessage() {
+  public void doNotShowEmptyOnlineMessage() {
     // Дано:
     ExecutorState.ONLINE.setData("");
     when(executorStateUseCase.getExecutorStates(anyBoolean()))

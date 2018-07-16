@@ -57,6 +57,13 @@ public class ExecutorStateViewModelImpl extends ViewModel implements ExecutorSta
                   navigateLiveData.postValue(ExecutorStateNavigate.MAP_SHIFT_CLOSED);
                   break;
                 case SHIFT_OPENED:
+                  if (executorState.getData() != null
+                      && !executorState.getData().trim().isEmpty()) {
+                    messageLiveData.postValue(
+                        executorStateViewActions -> executorStateViewActions
+                            .showOnlineMessage(executorState.getData())
+                    );
+                  }
                   navigateLiveData.postValue(ExecutorStateNavigate.MAP_SHIFT_OPENED);
                   break;
                 case ONLINE:

@@ -93,7 +93,8 @@ public class BaseFragment extends Fragment implements OnBackPressedInterceptor {
 
   /**
    * Показать экран процесса.
-   *  @param show - показать или нет.
+   *
+   * @param show - показать или нет.
    * @param blockerId - Уникальный ИД блокирующего.
    */
   protected void showPending(boolean show, @NonNull String blockerId) {
