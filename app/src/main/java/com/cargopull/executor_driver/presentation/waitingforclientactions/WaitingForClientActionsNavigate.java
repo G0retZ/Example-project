@@ -5,7 +5,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 /**
- * Направления навигации из меню действий выполнения заказа.
+ * Направления навигации из меню действий ожидания клиента.
  */
 @StringDef({
     WaitingForClientActionsNavigate.ORDER_ROUTE,
@@ -14,9 +14,9 @@ import java.lang.annotation.RetentionPolicy;
 @Retention(RetentionPolicy.SOURCE)
 public @interface WaitingForClientActionsNavigate {
 
-  // Переход к профилю.
-  String ORDER_ROUTE = "WaitingForClientMenu.to.OrderRoute";
+  // Переход к маршруту заказа.
+  String ORDER_ROUTE = "WaitingForClientActions.to.OrderRoute";
 
-  // Переход к решению отсутствия свободных ТС.
-  String REPORT_A_PROBLEM = "WaitingForClientMenu.to.CancelOrder";
+  // Переход к решению проблемы.
+  String REPORT_A_PROBLEM = "WaitingForClientActions.to.CancelOrder";
 }

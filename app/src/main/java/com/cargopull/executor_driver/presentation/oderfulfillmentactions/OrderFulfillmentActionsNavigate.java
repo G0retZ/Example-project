@@ -19,24 +19,24 @@ import java.lang.annotation.RetentionPolicy;
 @Retention(RetentionPolicy.SOURCE)
 public @interface OrderFulfillmentActionsNavigate {
 
-  // Переход к профилю.
-  String ORDER_ROUTE = "OrderFulfillmentMenu.to.OrderRoute";
+  // Переход к маршруту заказа.
+  String ORDER_ROUTE = "OrderFulfillmentActions.to.OrderRoute";
 
-  // Переход к балансу.
-  String PAUSE = "OrderFulfillmentMenu.to.Pause";
+  // Переход к паузе заказа.
+  String PAUSE = "OrderFulfillmentActions.to.Pause";
 
-  // Переход к решению недостатка средств.
-  String COST_DETAILED = "OrderFulfillmentMenu.to.CostDetailed";
+  // Переход к детальному расчету.
+  String COST_DETAILED = "OrderFulfillmentActions.to.CostDetailed";
 
-  // Переход к решению отсутствия ТС.
-  String ORDER_INFORMATION = "OrderFulfillmentMenu.to.OrderInformation";
+  // Переход к деталям заказа.
+  String ORDER_INFORMATION = "OrderFulfillmentActions.to.OrderInformation";
 
-  // Переход к решению отсутствия свободных ТС.
-  String CALL_TO_CLIENT = "OrderFulfillmentMenu.to.CallToClient";
+  // Переход к звонку клиенту.
+  String CALL_TO_CLIENT = "OrderFulfillmentActions.to.CallToClient";
 
-  // Переход к решению отсутствия свободных ТС.
-  String ADD_SERVICE = "OrderFulfillmentMenu.to.AddService";
+  // Переход к добавлению услуги.
+  String ADD_SERVICE = "OrderFulfillmentActions.to.AddService";
 
-  // Переход к решению отсутствия свободных ТС.
-  String REPORT_A_PROBLEM = "OrderFulfillmentMenu.to.CancelOrder";
+  // Переход к решению проблемы.
+  String REPORT_A_PROBLEM = "OrderFulfillmentActions.to.CancelOrder";
 }
