@@ -149,7 +149,9 @@ import com.cargopull.executor_driver.view.DriverOrderConfirmationFragment;
 import com.cargopull.executor_driver.view.GoOnlineFragment;
 import com.cargopull.executor_driver.view.MapFragment;
 import com.cargopull.executor_driver.view.MenuFragment;
+import com.cargopull.executor_driver.view.MovingToClientDetailsFragment;
 import com.cargopull.executor_driver.view.MovingToClientFragment;
+import com.cargopull.executor_driver.view.MovingToClientRouteFragment;
 import com.cargopull.executor_driver.view.OnlineFragment;
 import com.cargopull.executor_driver.view.OrderFulfillmentDetailsFragment;
 import com.cargopull.executor_driver.view.OrderFulfillmentFragment;
@@ -268,45 +270,6 @@ public class AppComponentImpl implements AppComponent {
         new OldPatternMapper()
     );
     autoRouter = new AutoRouterImpl(singleRingTonePlayer, singleShakePlayer);
-  }
-
-  private OkHttpClient initHttpClient(
-      @NonNull Interceptor connectivityInterceptor,
-      @NonNull Interceptor authorizationInterceptor,
-      @NonNull Interceptor sendTokenInterceptor,
-      @NonNull Interceptor receiveTokenInterceptor) {
-    OkHttpClient.Builder builder = new OkHttpClient.Builder();
-    builder.readTimeout(10, TimeUnit.SECONDS)
-        .connectTimeout(10, TimeUnit.SECONDS)
-        .writeTimeout(10, TimeUnit.SECONDS)
-        .pingInterval(30, TimeUnit.SECONDS)
-        .addInterceptor(connectivityInterceptor)
-        .addInterceptor(authorizationInterceptor)
-        .addInterceptor(receiveTokenInterceptor)
-        .addInterceptor(sendTokenInterceptor);
-    // Add logging interceptor for debug build only
-    if (BuildConfig.DEBUG) {
-      HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
-      logging.setLevel(HttpLoggingInterceptor.Level.BODY);
-      builder.addInterceptor(logging);
-    }
-    return builder.build();
-  }
-
-  private ApiService initApiService(OkHttpClient okHttpClient) {
-    // build OkHttpClient builder
-    return new Retrofit.Builder()
-        .baseUrl(BuildConfig.BASE_URL)
-        .client(okHttpClient)
-        .addConverterFactory(ScalarsConverterFactory.create())
-        .addConverterFactory(GsonConverterFactory.create())
-        .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-        .build()
-        .create(ApiService.class);
-  }
-
-  private StompClient initStompClient(OkHttpClient okHttpClient) {
-    return Stomp.over(Stomp.ConnectionProvider.OKHTTP, BuildConfig.SOCKET_URL, null, okHttpClient);
   }
 
   @Override
@@ -725,6 +688,20 @@ public class AppComponentImpl implements AppComponent {
   }
 
   @Override
+  public void inject(ClientOrderConfirmationTimeFragment clientOrderConfirmationTimeFragment) {
+    clientOrderConfirmationTimeFragment.setClientOrderConfirmationTimeViewModel(
+        ViewModelProviders.of(
+            clientOrderConfirmationTimeFragment,
+            new ViewModelFactory<>(
+                new ClientOrderConfirmationTimeViewModelImpl(
+                    executorStateUseCase
+                )
+            )
+        ).get(ClientOrderConfirmationTimeViewModelImpl.class)
+    );
+  }
+
+  @Override
   public void inject(MovingToClientFragment movingToClientFragment) {
     movingToClientFragment.setMovingToClientViewModel(
         ViewModelProviders.of(
@@ -761,6 +738,54 @@ public class AppComponentImpl implements AppComponent {
   }
 
   @Override
+  public void inject(MovingToClientDetailsFragment movingToClientDetailsFragment) {
+    movingToClientDetailsFragment.setOrderViewModel(
+        ViewModelProviders.of(
+            movingToClientDetailsFragment,
+            new ViewModelFactory<>(
+                new OrderViewModelImpl(
+                    new OrderUseCaseImpl(
+                        new OrderGatewayImpl(
+                            executorStateUseCase,
+                            ExecutorState.MOVING_TO_CLIENT,
+                            new WaitingForClientApiMapper(
+                                new VehicleOptionApiMapper(),
+                                new RoutePointApiMapper()
+                            )
+                        )
+                    ),
+                    new TimeUtilsImpl()
+                )
+            )
+        ).get(OrderViewModelImpl.class)
+    );
+  }
+
+  @Override
+  public void inject(MovingToClientRouteFragment movingToClientRouteFragment) {
+    movingToClientRouteFragment.setOrderRouteViewModel(
+        ViewModelProviders.of(
+            movingToClientRouteFragment,
+            new ViewModelFactory<>(
+                new OrderRouteViewModelImpl(
+                    new OrderRouteUseCaseImpl(
+                        new OrderGatewayImpl(
+                            executorStateUseCase,
+                            ExecutorState.MOVING_TO_CLIENT,
+                            new OrderFulfillmentApiMapper(
+                                new VehicleOptionApiMapper(),
+                                new RoutePointApiMapper()
+                            )
+                        ),
+                        new OrderRouteGatewayImpl(stompClient)
+                    )
+                )
+            )
+        ).get(OrderRouteViewModelImpl.class)
+    );
+  }
+
+  @Override
   public void inject(WaitingForClientFragment waitingForClientFragment) {
     waitingForClientFragment.setWaitingForClientViewModel(
         ViewModelProviders.of(
@@ -793,6 +818,30 @@ public class AppComponentImpl implements AppComponent {
                 )
             )
         ).get(OrderViewModelImpl.class)
+    );
+  }
+
+  @Override
+  public void inject(WaitingForClientRouteFragment waitingForClientRouteFragment) {
+    waitingForClientRouteFragment.setOrderRouteViewModel(
+        ViewModelProviders.of(
+            waitingForClientRouteFragment,
+            new ViewModelFactory<>(
+                new OrderRouteViewModelImpl(
+                    new OrderRouteUseCaseImpl(
+                        new OrderGatewayImpl(
+                            executorStateUseCase,
+                            ExecutorState.WAITING_FOR_CLIENT,
+                            new OrderFulfillmentApiMapper(
+                                new VehicleOptionApiMapper(),
+                                new RoutePointApiMapper()
+                            )
+                        ),
+                        new OrderRouteGatewayImpl(stompClient)
+                    )
+                )
+            )
+        ).get(OrderRouteViewModelImpl.class)
     );
   }
 
@@ -865,6 +914,30 @@ public class AppComponentImpl implements AppComponent {
   }
 
   @Override
+  public void inject(OrderFulfillmentDetailsFragment orderFulfillmentDetailsFragment) {
+    orderFulfillmentDetailsFragment.setOrderViewModel(
+        ViewModelProviders.of(
+            orderFulfillmentDetailsFragment,
+            new ViewModelFactory<>(
+                new OrderViewModelImpl(
+                    new OrderUseCaseImpl(
+                        new OrderGatewayImpl(
+                            executorStateUseCase,
+                            ExecutorState.ORDER_FULFILLMENT,
+                            new WaitingForClientApiMapper(
+                                new VehicleOptionApiMapper(),
+                                new RoutePointApiMapper()
+                            )
+                        )
+                    ),
+                    new TimeUtilsImpl()
+                )
+            )
+        ).get(OrderViewModelImpl.class)
+    );
+  }
+
+  @Override
   public void inject(OrderRouteFragment orderRouteFragment) {
     orderRouteFragment.setOrderRouteViewModel(
         ViewModelProviders.of(
@@ -905,26 +978,14 @@ public class AppComponentImpl implements AppComponent {
   }
 
   @Override
-  public void inject(OrderFulfillmentDetailsFragment orderFulfillmentDetailsFragment) {
-    orderFulfillmentDetailsFragment.setOrderViewModel(
+  public void inject(CallToOperatorFragment callToOperatorFragment) {
+    callToOperatorFragment.setCallToOperatorViewModel(
         ViewModelProviders.of(
-            orderFulfillmentDetailsFragment,
+            callToOperatorFragment,
             new ViewModelFactory<>(
-                new OrderViewModelImpl(
-                    new OrderUseCaseImpl(
-                        new OrderGatewayImpl(
-                            executorStateUseCase,
-                            ExecutorState.ORDER_FULFILLMENT,
-                            new WaitingForClientApiMapper(
-                                new VehicleOptionApiMapper(),
-                                new RoutePointApiMapper()
-                            )
-                        )
-                    ),
-                    new TimeUtilsImpl()
-                )
+                new CallToOperatorViewModelImpl()
             )
-        ).get(OrderViewModelImpl.class)
+        ).get(CallToOperatorViewModelImpl.class)
     );
   }
 
@@ -939,18 +1000,6 @@ public class AppComponentImpl implements AppComponent {
                 )
             )
         ).get(CancelOrderViewModelImpl.class)
-    );
-  }
-
-  @Override
-  public void inject(CallToOperatorFragment callToOperatorFragment) {
-    callToOperatorFragment.setCallToOperatorViewModel(
-        ViewModelProviders.of(
-            callToOperatorFragment,
-            new ViewModelFactory<>(
-                new CallToOperatorViewModelImpl()
-            )
-        ).get(CallToOperatorViewModelImpl.class)
     );
   }
 
@@ -1016,41 +1065,42 @@ public class AppComponentImpl implements AppComponent {
     );
   }
 
-  @Override
-  public void inject(WaitingForClientRouteFragment waitingForClientRouteFragment) {
-    waitingForClientRouteFragment.setOrderRouteViewModel(
-        ViewModelProviders.of(
-            waitingForClientRouteFragment,
-            new ViewModelFactory<>(
-                new OrderRouteViewModelImpl(
-                    new OrderRouteUseCaseImpl(
-                        new OrderGatewayImpl(
-                            executorStateUseCase,
-                            ExecutorState.WAITING_FOR_CLIENT,
-                            new OrderFulfillmentApiMapper(
-                                new VehicleOptionApiMapper(),
-                                new RoutePointApiMapper()
-                            )
-                        ),
-                        new OrderRouteGatewayImpl(stompClient)
-                    )
-                )
-            )
-        ).get(OrderRouteViewModelImpl.class)
-    );
+  private OkHttpClient initHttpClient(
+      @NonNull Interceptor connectivityInterceptor,
+      @NonNull Interceptor authorizationInterceptor,
+      @NonNull Interceptor sendTokenInterceptor,
+      @NonNull Interceptor receiveTokenInterceptor) {
+    OkHttpClient.Builder builder = new OkHttpClient.Builder();
+    builder.readTimeout(10, TimeUnit.SECONDS)
+        .connectTimeout(10, TimeUnit.SECONDS)
+        .writeTimeout(10, TimeUnit.SECONDS)
+        .pingInterval(30, TimeUnit.SECONDS)
+        .addInterceptor(connectivityInterceptor)
+        .addInterceptor(authorizationInterceptor)
+        .addInterceptor(receiveTokenInterceptor)
+        .addInterceptor(sendTokenInterceptor);
+    // Add logging interceptor for debug build only
+    if (BuildConfig.DEBUG) {
+      HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
+      logging.setLevel(HttpLoggingInterceptor.Level.BODY);
+      builder.addInterceptor(logging);
+    }
+    return builder.build();
   }
 
-  @Override
-  public void inject(ClientOrderConfirmationTimeFragment clientOrderConfirmationTimeFragment) {
-    clientOrderConfirmationTimeFragment.setClientOrderConfirmationTimeViewModel(
-        ViewModelProviders.of(
-            clientOrderConfirmationTimeFragment,
-            new ViewModelFactory<>(
-                new ClientOrderConfirmationTimeViewModelImpl(
-                    executorStateUseCase
-                )
-            )
-        ).get(ClientOrderConfirmationTimeViewModelImpl.class)
-    );
+  private ApiService initApiService(OkHttpClient okHttpClient) {
+    // build OkHttpClient builder
+    return new Retrofit.Builder()
+        .baseUrl(BuildConfig.BASE_URL)
+        .client(okHttpClient)
+        .addConverterFactory(ScalarsConverterFactory.create())
+        .addConverterFactory(GsonConverterFactory.create())
+        .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+        .build()
+        .create(ApiService.class);
+  }
+
+  private StompClient initStompClient(OkHttpClient okHttpClient) {
+    return Stomp.over(Stomp.ConnectionProvider.OKHTTP, BuildConfig.SOCKET_URL, null, okHttpClient);
   }
 }

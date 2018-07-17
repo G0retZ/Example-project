@@ -9,9 +9,11 @@ import android.support.v7.widget.Toolbar;
 import com.cargopull.executor_driver.R;
 import com.cargopull.executor_driver.presentation.cancelorder.CancelOrderNavigate;
 import com.cargopull.executor_driver.presentation.movingtoclient.MovingToClientNavigate;
+import com.cargopull.executor_driver.presentation.movingtoclientactions.MovingToClientActionsNavigate;
 import com.cargopull.executor_driver.view.CallToClientFragment;
 import com.cargopull.executor_driver.view.CallToOperatorFragment;
 import com.cargopull.executor_driver.view.CancelOrderDialogFragment;
+import com.cargopull.executor_driver.view.MovingToClientActionsDialogFragment;
 
 public class MovingToClientActivity extends BaseActivity {
 
@@ -24,12 +26,10 @@ public class MovingToClientActivity extends BaseActivity {
       toolbar.setNavigationOnClickListener(
           v -> startActivity(new Intent(this, MenuActivity.class))
       );
-      toolbar.findViewById(R.id.cancelOrder).setOnClickListener(v -> {
-        if (getSupportFragmentManager().findFragmentByTag("cancelOrder") == null) {
-          new CancelOrderDialogFragment().show(getSupportFragmentManager(), "cancelOrder");
+      toolbar.findViewById(R.id.orderActions).setOnClickListener(v -> {
+        if (getSupportFragmentManager().findFragmentByTag("menu") == null) {
+          new MovingToClientActionsDialogFragment().show(getSupportFragmentManager(), "menu");
         }
-        v.setEnabled(false);
-        v.postDelayed(() -> v.setEnabled(true), 10_000);
       });
     }
   }
@@ -38,6 +38,17 @@ public class MovingToClientActivity extends BaseActivity {
   public void navigate(@NonNull String destination) {
     Fragment fragment;
     switch (destination) {
+      case MovingToClientActionsNavigate.ORDER_ROUTE:
+        startActivity(new Intent(this, MovingToClientRouteActivity.class));
+        break;
+      case MovingToClientActionsNavigate.ORDER_INFORMATION:
+        startActivity(new Intent(this, MovingToClientDetailsActivity.class));
+        break;
+      case MovingToClientActionsNavigate.REPORT_A_PROBLEM:
+        if (getSupportFragmentManager().findFragmentByTag("reportAProblem") == null) {
+          new CancelOrderDialogFragment().show(getSupportFragmentManager(), "reportAProblem");
+        }
+        break;
       case MovingToClientNavigate.CALL_TO_CLIENT:
         fragment = getSupportFragmentManager().findFragmentById(R.id.fragment_call_to_client);
         if (fragment != null && fragment instanceof CallToClientFragment) {

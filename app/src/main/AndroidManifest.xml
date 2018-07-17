@@ -78,19 +78,25 @@
       android:name=".application.MovingToClientActivity"/>
     <activity
       android:launchMode="singleTop"
+      android:name=".application.MovingToClientDetailsActivity"/>
+    <activity
+      android:launchMode="singleTop"
+      android:name=".application.MovingToClientRouteActivity"/>
+    <activity
+      android:launchMode="singleTop"
       android:name=".application.WaitingForClientActivity"/>
+    <activity
+      android:launchMode="singleTop"
+      android:name=".application.WaitingForClientRouteActivity"/>
     <activity
       android:launchMode="singleTop"
       android:name=".application.OrderFulfillmentActivity"/>
     <activity
       android:launchMode="singleTop"
-      android:name=".application.OrderRouteActivity"/>
-    <activity
-      android:launchMode="singleTop"
       android:name=".application.OrderFulfillmentDetailsActivity"/>
     <activity
       android:launchMode="singleTop"
-      android:name=".application.WaitingForClientRouteActivity"/>
+      android:name=".application.OrderRouteActivity"/>
 
     <service
       android:enabled="true"

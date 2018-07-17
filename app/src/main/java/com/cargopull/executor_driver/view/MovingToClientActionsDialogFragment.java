@@ -13,13 +13,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import com.cargopull.executor_driver.R;
-import com.cargopull.executor_driver.presentation.waitingforclientactions.WaitingForClientActionsNavigate;
+import com.cargopull.executor_driver.presentation.movingtoclientactions.MovingToClientActionsNavigate;
 
 /**
  * Отображает меню действий во время выполнения заказа.
  */
 
-public class WaitingForClientActionsDialogFragment extends BaseDialogFragment {
+public class MovingToClientActionsDialogFragment extends BaseDialogFragment {
 
   @Override
   public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -31,7 +31,7 @@ public class WaitingForClientActionsDialogFragment extends BaseDialogFragment {
   @Override
   public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
       @Nullable Bundle savedInstanceState) {
-    return inflater.inflate(R.layout.fragment_waiting_for_client_actions, container, false);
+    return inflater.inflate(R.layout.fragment_moving_to_client_actions, container, false);
   }
 
   @Override
@@ -50,10 +50,13 @@ public class WaitingForClientActionsDialogFragment extends BaseDialogFragment {
     }
     ((Toolbar) view.findViewById(R.id.appBar)).setNavigationOnClickListener(v -> dismiss());
     view.findViewById(R.id.orderRoute).setOnClickListener(
-        v -> navigate(WaitingForClientActionsNavigate.ORDER_ROUTE)
+        v -> navigate(MovingToClientActionsNavigate.ORDER_ROUTE)
+    );
+    view.findViewById(R.id.orderDetails).setOnClickListener(
+        v -> navigate(MovingToClientActionsNavigate.ORDER_INFORMATION)
     );
     view.findViewById(R.id.reportAProblem).setOnClickListener(
-        v -> navigate(WaitingForClientActionsNavigate.REPORT_A_PROBLEM)
+        v -> navigate(MovingToClientActionsNavigate.REPORT_A_PROBLEM)
     );
   }
 

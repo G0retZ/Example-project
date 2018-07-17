@@ -174,9 +174,6 @@ public class MainApplication extends MultiDexApplication implements ServerConnec
     if (serverConnectionViewModel == null) {
       throw new IllegalStateException("Граф зависимостей поломан!");
     }
-    if (executorStateViewModel == null) {
-      throw new IllegalStateException("Граф зависимостей поломан!");
-    }
     serverConnectionViewModel.connectServer();
   }
 
@@ -218,6 +215,9 @@ public class MainApplication extends MultiDexApplication implements ServerConnec
     if (autoRouter == null) {
       throw new IllegalStateException("Граф зависимостей поломан!");
     }
+    if (serverConnectionViewModel == null) {
+      throw new IllegalStateException("Граф зависимостей поломан!");
+    }
     if (destination == null) {
       return;
     }
@@ -229,6 +229,7 @@ public class MainApplication extends MultiDexApplication implements ServerConnec
         stopService();
         break;
       case CommonNavigate.EXIT:
+        serverConnectionViewModel.disconnectServer();
         stopService();
         break;
       case ExecutorStateNavigate.MAP_SHIFT_CLOSED:

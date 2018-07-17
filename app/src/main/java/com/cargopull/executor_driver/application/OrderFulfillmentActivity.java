@@ -8,7 +8,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
 import com.cargopull.executor_driver.R;
 import com.cargopull.executor_driver.presentation.cancelorder.CancelOrderNavigate;
-import com.cargopull.executor_driver.presentation.oderfulfillmentmenu.OrderFulfillmentMenuNavigate;
+import com.cargopull.executor_driver.presentation.oderfulfillmentactions.OrderFulfillmentActionsNavigate;
 import com.cargopull.executor_driver.view.CallToClientFragment;
 import com.cargopull.executor_driver.view.CallToOperatorFragment;
 import com.cargopull.executor_driver.view.CancelOrderDialogFragment;
@@ -37,19 +37,19 @@ public class OrderFulfillmentActivity extends BaseActivity {
   public void navigate(@NonNull String destination) {
     Fragment fragment;
     switch (destination) {
-      case OrderFulfillmentMenuNavigate.ORDER_ROUTE:
+      case OrderFulfillmentActionsNavigate.ORDER_ROUTE:
         startActivity(new Intent(this, OrderRouteActivity.class));
         break;
-      case OrderFulfillmentMenuNavigate.ORDER_INFORMATION:
+      case OrderFulfillmentActionsNavigate.ORDER_INFORMATION:
         startActivity(new Intent(this, OrderFulfillmentDetailsActivity.class));
         break;
-      case OrderFulfillmentMenuNavigate.CALL_TO_CLIENT:
+      case OrderFulfillmentActionsNavigate.CALL_TO_CLIENT:
         fragment = getSupportFragmentManager().findFragmentById(R.id.fragment_call_to_client);
         if (fragment != null && fragment instanceof CallToClientFragment) {
           ((CallToClientFragment) fragment).callToClient();
         }
         break;
-      case OrderFulfillmentMenuNavigate.REPORT_A_PROBLEM:
+      case OrderFulfillmentActionsNavigate.REPORT_A_PROBLEM:
         if (getSupportFragmentManager().findFragmentByTag("reportAProblem") == null) {
           new CancelOrderDialogFragment().show(getSupportFragmentManager(), "reportAProblem");
         }

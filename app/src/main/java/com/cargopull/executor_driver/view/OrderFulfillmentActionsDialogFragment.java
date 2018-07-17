@@ -13,7 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import com.cargopull.executor_driver.R;
-import com.cargopull.executor_driver.presentation.oderfulfillmentmenu.OrderFulfillmentMenuNavigate;
+import com.cargopull.executor_driver.presentation.oderfulfillmentactions.OrderFulfillmentActionsNavigate;
 
 /**
  * Отображает меню действий во время выполнения заказа.
@@ -50,25 +50,25 @@ public class OrderFulfillmentActionsDialogFragment extends BaseDialogFragment {
     }
     ((Toolbar) view.findViewById(R.id.appBar)).setNavigationOnClickListener(v -> dismiss());
     view.findViewById(R.id.orderRoute).setOnClickListener(
-        v -> navigate(OrderFulfillmentMenuNavigate.ORDER_ROUTE)
+        v -> navigate(OrderFulfillmentActionsNavigate.ORDER_ROUTE)
     );
     view.findViewById(R.id.pause).setOnClickListener(
-        v -> navigate(OrderFulfillmentMenuNavigate.PAUSE)
+        v -> navigate(OrderFulfillmentActionsNavigate.PAUSE)
     );
     view.findViewById(R.id.costDetailed).setOnClickListener(
-        v -> navigate(OrderFulfillmentMenuNavigate.COST_DETAILED)
+        v -> navigate(OrderFulfillmentActionsNavigate.COST_DETAILED)
     );
     view.findViewById(R.id.orderDetails).setOnClickListener(
-        v -> navigate(OrderFulfillmentMenuNavigate.ORDER_INFORMATION)
+        v -> navigate(OrderFulfillmentActionsNavigate.ORDER_INFORMATION)
     );
     view.findViewById(R.id.callToClient).setOnClickListener(
-        v -> navigate(OrderFulfillmentMenuNavigate.CALL_TO_CLIENT)
+        v -> navigate(OrderFulfillmentActionsNavigate.CALL_TO_CLIENT)
     );
     view.findViewById(R.id.addService).setOnClickListener(
-        v -> navigate(OrderFulfillmentMenuNavigate.ADD_SERVICE)
+        v -> navigate(OrderFulfillmentActionsNavigate.ADD_SERVICE)
     );
     view.findViewById(R.id.reportAProblem).setOnClickListener(
-        v -> navigate(OrderFulfillmentMenuNavigate.REPORT_A_PROBLEM)
+        v -> navigate(OrderFulfillmentActionsNavigate.REPORT_A_PROBLEM)
     );
   }
 

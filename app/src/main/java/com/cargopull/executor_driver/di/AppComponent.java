@@ -14,7 +14,9 @@ import com.cargopull.executor_driver.view.DriverOrderConfirmationFragment;
 import com.cargopull.executor_driver.view.GoOnlineFragment;
 import com.cargopull.executor_driver.view.MapFragment;
 import com.cargopull.executor_driver.view.MenuFragment;
+import com.cargopull.executor_driver.view.MovingToClientDetailsFragment;
 import com.cargopull.executor_driver.view.MovingToClientFragment;
+import com.cargopull.executor_driver.view.MovingToClientRouteFragment;
 import com.cargopull.executor_driver.view.OnlineFragment;
 import com.cargopull.executor_driver.view.OrderFulfillmentDetailsFragment;
 import com.cargopull.executor_driver.view.OrderFulfillmentFragment;
@@ -59,21 +61,29 @@ public interface AppComponent {
 
   void inject(ClientOrderConfirmationFragment clientOrderConfirmationFragment);
 
+  void inject(ClientOrderConfirmationTimeFragment clientOrderConfirmationTimeFragment);
+
   void inject(MovingToClientFragment movingToClientFragment);
+
+  void inject(MovingToClientDetailsFragment movingToClientDetailsFragment);
+
+  void inject(MovingToClientRouteFragment movingToClientRouteFragment);
 
   void inject(WaitingForClientFragment waitingForClientFragment);
 
+  void inject(WaitingForClientRouteFragment waitingForClientRouteFragment);
+
   void inject(OrderFulfillmentFragment orderFulfillmentFragment);
+
+  void inject(OrderFulfillmentDetailsFragment orderFulfillmentDetailsFragment);
 
   void inject(OrderRouteFragment orderRouteFragment);
 
   void inject(CallToClientFragment callToClientFragment);
 
-  void inject(OrderFulfillmentDetailsFragment orderFulfillmentDetailsFragment);
+  void inject(CallToOperatorFragment callToOperatorFragment);
 
   void inject(CancelOrderDialogFragment cancelOrderDialogFragment);
-
-  void inject(CallToOperatorFragment callToOperatorFragment);
 
   void inject(BalanceFragment balanceFragment);
 
@@ -82,8 +92,4 @@ public interface AppComponent {
   void inject(MenuFragment menuFragment);
 
   void inject(ServerConnectionFragment serverConnectionFragment);
-
-  void inject(WaitingForClientRouteFragment waitingForClientRouteFragment);
-
-  void inject(ClientOrderConfirmationTimeFragment clientOrderConfirmationTimeFragment);
 }
