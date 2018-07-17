@@ -1,4 +1,4 @@
-package com.cargopull.executor_driver.presentation.oderfulfillmentmenu;
+package com.cargopull.executor_driver.presentation.oderfulfillmentactions;
 
 import android.support.annotation.StringDef;
 import java.lang.annotation.Retention;
@@ -8,16 +8,16 @@ import java.lang.annotation.RetentionPolicy;
  * Направления навигации из меню действий выполнения заказа.
  */
 @StringDef({
-    OrderFulfillmentMenuNavigate.ORDER_ROUTE,
-    OrderFulfillmentMenuNavigate.PAUSE,
-    OrderFulfillmentMenuNavigate.COST_DETAILED,
-    OrderFulfillmentMenuNavigate.ORDER_INFORMATION,
-    OrderFulfillmentMenuNavigate.CALL_TO_CLIENT,
-    OrderFulfillmentMenuNavigate.ADD_SERVICE,
-    OrderFulfillmentMenuNavigate.REPORT_A_PROBLEM
+    OrderFulfillmentActionsNavigate.ORDER_ROUTE,
+    OrderFulfillmentActionsNavigate.PAUSE,
+    OrderFulfillmentActionsNavigate.COST_DETAILED,
+    OrderFulfillmentActionsNavigate.ORDER_INFORMATION,
+    OrderFulfillmentActionsNavigate.CALL_TO_CLIENT,
+    OrderFulfillmentActionsNavigate.ADD_SERVICE,
+    OrderFulfillmentActionsNavigate.REPORT_A_PROBLEM
 })
 @Retention(RetentionPolicy.SOURCE)
-public @interface OrderFulfillmentMenuNavigate {
+public @interface OrderFulfillmentActionsNavigate {
 
   // Переход к профилю.
   String ORDER_ROUTE = "OrderFulfillmentMenu.to.OrderRoute";

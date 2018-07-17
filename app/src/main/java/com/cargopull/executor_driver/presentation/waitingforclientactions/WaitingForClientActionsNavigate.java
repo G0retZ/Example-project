@@ -1,4 +1,4 @@
-package com.cargopull.executor_driver.presentation.waitingforclientmenu;
+package com.cargopull.executor_driver.presentation.waitingforclientactions;
 
 import android.support.annotation.StringDef;
 import java.lang.annotation.Retention;
@@ -8,11 +8,11 @@ import java.lang.annotation.RetentionPolicy;
  * Направления навигации из меню действий выполнения заказа.
  */
 @StringDef({
-    WaitingForClientMenuNavigate.ORDER_ROUTE,
-    WaitingForClientMenuNavigate.REPORT_A_PROBLEM
+    WaitingForClientActionsNavigate.ORDER_ROUTE,
+    WaitingForClientActionsNavigate.REPORT_A_PROBLEM
 })
 @Retention(RetentionPolicy.SOURCE)
-public @interface WaitingForClientMenuNavigate {
+public @interface WaitingForClientActionsNavigate {
 
   // Переход к профилю.
   String ORDER_ROUTE = "WaitingForClientMenu.to.OrderRoute";

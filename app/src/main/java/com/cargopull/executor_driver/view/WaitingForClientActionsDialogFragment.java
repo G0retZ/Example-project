@@ -13,7 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import com.cargopull.executor_driver.R;
-import com.cargopull.executor_driver.presentation.waitingforclientmenu.WaitingForClientMenuNavigate;
+import com.cargopull.executor_driver.presentation.waitingforclientactions.WaitingForClientActionsNavigate;
 
 /**
  * Отображает меню действий во время выполнения заказа.
@@ -50,10 +50,10 @@ public class WaitingForClientActionsDialogFragment extends BaseDialogFragment {
     }
     ((Toolbar) view.findViewById(R.id.appBar)).setNavigationOnClickListener(v -> dismiss());
     view.findViewById(R.id.orderRoute).setOnClickListener(
-        v -> navigate(WaitingForClientMenuNavigate.ORDER_ROUTE)
+        v -> navigate(WaitingForClientActionsNavigate.ORDER_ROUTE)
     );
     view.findViewById(R.id.reportAProblem).setOnClickListener(
-        v -> navigate(WaitingForClientMenuNavigate.REPORT_A_PROBLEM)
+        v -> navigate(WaitingForClientActionsNavigate.REPORT_A_PROBLEM)
     );
   }
 

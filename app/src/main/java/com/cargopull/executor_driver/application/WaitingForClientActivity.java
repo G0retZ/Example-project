@@ -9,7 +9,7 @@ import android.support.v7.widget.Toolbar;
 import com.cargopull.executor_driver.R;
 import com.cargopull.executor_driver.presentation.cancelorder.CancelOrderNavigate;
 import com.cargopull.executor_driver.presentation.waitingforclient.WaitingForClientNavigate;
-import com.cargopull.executor_driver.presentation.waitingforclientmenu.WaitingForClientMenuNavigate;
+import com.cargopull.executor_driver.presentation.waitingforclientactions.WaitingForClientActionsNavigate;
 import com.cargopull.executor_driver.view.CallToClientFragment;
 import com.cargopull.executor_driver.view.CallToOperatorFragment;
 import com.cargopull.executor_driver.view.CancelOrderDialogFragment;
@@ -38,10 +38,10 @@ public class WaitingForClientActivity extends BaseActivity {
   public void navigate(@NonNull String destination) {
     Fragment fragment;
     switch (destination) {
-      case WaitingForClientMenuNavigate.ORDER_ROUTE:
+      case WaitingForClientActionsNavigate.ORDER_ROUTE:
         startActivity(new Intent(this, WaitingForClientRouteActivity.class));
         break;
-      case WaitingForClientMenuNavigate.REPORT_A_PROBLEM:
+      case WaitingForClientActionsNavigate.REPORT_A_PROBLEM:
         if (getSupportFragmentManager().findFragmentByTag("reportAProblem") == null) {
           new CancelOrderDialogFragment().show(getSupportFragmentManager(), "reportAProblem");
         }
