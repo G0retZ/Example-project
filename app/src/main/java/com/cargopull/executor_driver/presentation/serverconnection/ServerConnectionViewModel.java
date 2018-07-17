@@ -11,4 +11,9 @@ public interface ServerConnectionViewModel extends ViewModel<ServerConnectionVie
    * Запрашивает подключение к серверу.
    */
   void connectServer();
+
+  /**
+   * Запрашивает отключение от сервера.
+   */
+  void disconnectServer();
 }

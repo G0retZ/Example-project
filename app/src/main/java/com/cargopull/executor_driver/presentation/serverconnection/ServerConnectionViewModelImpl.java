@@ -51,7 +51,9 @@ public class ServerConnectionViewModelImpl extends ViewModel implements ServerCo
     disposable = serverConnectionUseCase.connect()
         .subscribeOn(Schedulers.single())
         .observeOn(AndroidSchedulers.mainThread())
-        .subscribe(
+        .doOnCancel(
+            () -> viewStateLiveData.postValue(viewActions -> viewActions.showConnectionReady(false))
+        ).subscribe(
             connected ->
                 viewStateLiveData.postValue(viewActions ->
                     viewActions.showConnectionReady(connected)
@@ -63,6 +65,11 @@ public class ServerConnectionViewModelImpl extends ViewModel implements ServerCo
               }
             }
         );
+  }
+
+  @Override
+  public void disconnectServer() {
+    disposable.dispose();
   }
 
   @Override

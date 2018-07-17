@@ -15,6 +15,7 @@ import com.cargopull.executor_driver.interactor.ServerConnectionUseCase;
 import com.cargopull.executor_driver.presentation.ViewState;
 import io.reactivex.Flowable;
 import io.reactivex.android.plugins.RxAndroidPlugins;
+import io.reactivex.functions.Action;
 import io.reactivex.plugins.RxJavaPlugins;
 import io.reactivex.schedulers.Schedulers;
 import org.junit.Before;
@@ -43,9 +44,10 @@ public class ServerConnectionViewModelTest {
   private ArgumentCaptor<ViewState<ServerConnectionViewActions>> viewStateCaptor;
   @Mock
   private ServerConnectionViewActions viewActions;
-
   @Mock
   private ServerConnectionUseCase executorStateUseCase;
+  @Mock
+  private Action disposableAction;
 
   @Before
   public void setUp() {
@@ -83,6 +85,27 @@ public class ServerConnectionViewModelTest {
     verify(executorStateUseCase, only()).connect();
   }
 
+  /**
+   * Должен отписаться на запрос отключения от сервера.
+   *
+   * @throws Exception error
+   */
+  @Test
+  public void disposeConnectionToServer() throws Exception {
+    // Дано:
+    when(executorStateUseCase.connect())
+        .thenReturn(Flowable.<Boolean>never().doOnCancel(disposableAction));
+
+    // Действие:
+    viewModel.connectServer();
+
+    // Результат:
+    verify(executorStateUseCase, only()).connect();
+    verifyZeroInteractions(disposableAction);
+    viewModel.disconnectServer();
+    verify(disposableAction, only()).run();
+  }
+
   /* Тетсируем сообщение. */
 
   /**
@@ -107,6 +130,33 @@ public class ServerConnectionViewModelTest {
     inOrder.verify(viewActions).showConnectionReady(true);
     inOrder.verify(viewActions, times(2)).showConnectionReady(false);
     inOrder.verify(viewActions).showConnectionReady(true);
+    verifyNoMoreInteractions(viewStateObserver, viewActions);
+  }
+
+  /**
+   * Должен отобразить отсутствие подключения к серверу при отписке.
+   */
+  @Test
+  public void showNoServerConnectionForDisconnect() {
+    // Дано:
+    InOrder inOrder = Mockito.inOrder(viewActions);
+    when(executorStateUseCase.connect())
+        .thenReturn(Flowable.just(true, false, false, true).concatWith(Flowable.never()));
+
+    // Действие:
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.connectServer();
+    viewModel.disconnectServer();
+
+    // Результат:
+    verify(viewStateObserver, times(5)).onChanged(viewStateCaptor.capture());
+    for (ViewState<ServerConnectionViewActions> value : viewStateCaptor.getAllValues()) {
+      value.apply(viewActions);
+    }
+    inOrder.verify(viewActions).showConnectionReady(true);
+    inOrder.verify(viewActions, times(2)).showConnectionReady(false);
+    inOrder.verify(viewActions).showConnectionReady(true);
+    inOrder.verify(viewActions).showConnectionReady(false);
     verifyNoMoreInteractions(viewStateObserver, viewActions);
   }
 
