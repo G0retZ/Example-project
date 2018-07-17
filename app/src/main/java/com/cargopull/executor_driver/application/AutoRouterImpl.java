@@ -105,9 +105,7 @@ public class AutoRouterImpl implements ActivityLifecycleCallbacks, AutoRouter,
     }
     tryToNavigate();
     tryToResolveGeo();
-    if (messageRunnable != null) {
-      messageRunnable.run();
-    }
+    tryToShowMessage();
   }
 
   @Override
@@ -160,6 +158,29 @@ public class AutoRouterImpl implements ActivityLifecycleCallbacks, AutoRouter,
         splashRouteAction = lastRouteAction = destination;
       }
       tryToNavigate();
+    }
+  }
+
+  @Override
+  public void showOnlineMessage(@NonNull String message) {
+    messageRunnable = () -> {
+      if (currentActivity != null) {
+        new Builder(currentActivity)
+            .setTitle(R.string.information)
+            .setMessage(message)
+            .setCancelable(false)
+            .setPositiveButton(currentActivity.getString(android.R.string.ok), null)
+            .create()
+            .show();
+        messageRunnable = null;
+      }
+    };
+    tryToShowMessage();
+  }
+
+  private void tryToShowMessage() {
+    if (currentActivity != null && messageRunnable != null) {
+      currentActivity.runOnUiThread(messageRunnable);
     }
   }
 
@@ -268,22 +289,6 @@ public class AutoRouterImpl implements ActivityLifecycleCallbacks, AutoRouter,
     }
     // Если переход сработал, то обнуляем направление. Если нет, то следующее активити попробует его обработать
     lastRouteAction = null;
-  }
-
-  @Override
-  public void showOnlineMessage(@NonNull String message) {
-    messageRunnable = () -> {
-      if (currentActivity != null) {
-        new Builder(currentActivity)
-            .setTitle(R.string.information)
-            .setMessage(message)
-            .setCancelable(false)
-            .setPositiveButton(currentActivity.getString(android.R.string.ok), null)
-            .create()
-            .show();
-        messageRunnable = null;
-      }
-    };
   }
 
   private void exitAndKill(Activity activity) {

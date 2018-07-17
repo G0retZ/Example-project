@@ -24,7 +24,6 @@ public class BalanceFragment extends BaseFragment implements BalanceViewActions 
   private BalanceViewModel balanceViewModel;
   private TextView balanceAmount;
   private TextView bonusAmount;
-  private boolean pending;
 
   @Inject
   public void setBalanceViewModel(@NonNull BalanceViewModel balanceViewModel) {
@@ -92,9 +91,6 @@ public class BalanceFragment extends BaseFragment implements BalanceViewActions 
 
   @Override
   public void showBalancePending(boolean pending) {
-    if (this.pending != pending) {
-      showPending(pending);
-    }
-    this.pending = pending;
+    showPending(pending, toString());
   }
 }

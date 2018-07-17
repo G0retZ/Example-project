@@ -60,8 +60,6 @@ public class PasswordFragment extends BaseFragment implements CodeViewActions,
   @NonNull
   private Disposable smsCodeDisposable = EmptyDisposable.INSTANCE;
   private boolean smsSent;
-  private boolean smsPending;
-  private boolean codePending;
   private boolean smsNetworkError;
   private boolean codeNetworkError;
   private boolean codeError;
@@ -201,10 +199,7 @@ public class PasswordFragment extends BaseFragment implements CodeViewActions,
 
   @Override
   public void showCodeCheckPending(boolean pending) {
-    if (codePending != pending) {
-      showPending(pending);
-    }
-    codePending = pending;
+    showPending(pending, toString() + "0");
   }
 
   @Override
@@ -253,10 +248,7 @@ public class PasswordFragment extends BaseFragment implements CodeViewActions,
 
   @Override
   public void showSmsSendPending(boolean pending) {
-    if (smsPending != pending) {
-      showPending(pending);
-    }
-    smsPending = pending;
+    showPending(pending, toString() + "1");
   }
 
   @Override

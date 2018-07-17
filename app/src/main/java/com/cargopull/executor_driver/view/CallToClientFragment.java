@@ -20,7 +20,6 @@ public class CallToClientFragment extends BaseFragment implements CallToClientVi
 
   private View rootView;
   private CallToClientViewModel callToClientViewModel;
-  private boolean pending;
 
   @Inject
   public void setCallToClientViewModel(@NonNull CallToClientViewModel callToClientViewModel) {
@@ -62,10 +61,7 @@ public class CallToClientFragment extends BaseFragment implements CallToClientVi
 
   @Override
   public void showCallToClientPending(boolean pending) {
-    if (this.pending != pending) {
-      showPending(pending);
-    }
-    this.pending = pending;
+    showPending(pending, toString());
   }
 
   @Override

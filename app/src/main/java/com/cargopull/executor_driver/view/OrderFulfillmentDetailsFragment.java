@@ -26,7 +26,6 @@ public class OrderFulfillmentDetailsFragment extends BaseFragment implements Ord
   private TextView optionsText;
   private TextView priceTitleText;
   private TextView priceText;
-  private boolean pending;
 
   @Inject
   public void setOrderViewModel(@NonNull OrderViewModel orderViewModel) {
@@ -71,10 +70,7 @@ public class OrderFulfillmentDetailsFragment extends BaseFragment implements Ord
 
   @Override
   public void showOrderPending(boolean pending) {
-    if (this.pending != pending) {
-      showPending(pending);
-    }
-    this.pending = pending;
+    showPending(pending, toString());
   }
 
   @Override

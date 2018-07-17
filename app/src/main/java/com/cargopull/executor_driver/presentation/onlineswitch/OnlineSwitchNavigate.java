@@ -15,7 +15,4 @@ public @interface OnlineSwitchNavigate {
 
   // Переход к настройке опций ТС.
   String VEHICLE_OPTIONS = "OnlineSwitch.to.VehicleOptions";
-
-  // Переход к решению блокировки водителя.
-  String DRIVER_BLOCKED = "OnlineButton.to.DriverBlocked";
 }

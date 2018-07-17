@@ -26,7 +26,6 @@ public interface VehiclesAndOptionsGateway {
    *
    * @return {@link Single} результат запроса списка опций Исполнителя
    */
-  @SuppressWarnings("unused")
   @NonNull
   Single<List<Option>> getExecutorOptions();
 }

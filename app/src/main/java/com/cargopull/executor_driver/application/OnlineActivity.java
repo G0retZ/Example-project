@@ -8,7 +8,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
 import com.cargopull.executor_driver.R;
 import com.cargopull.executor_driver.presentation.menu.MenuNavigate;
-import com.cargopull.executor_driver.presentation.onlineswitch.OnlineSwitchNavigate;
+import com.cargopull.executor_driver.presentation.onlinebutton.OnlineButtonNavigate;
 
 public class OnlineActivity extends BaseActivity {
 
@@ -27,7 +27,7 @@ public class OnlineActivity extends BaseActivity {
   @Override
   public void navigate(@NonNull String destination) {
     switch (destination) {
-      case OnlineSwitchNavigate.DRIVER_BLOCKED:
+      case OnlineButtonNavigate.DRIVER_BLOCKED:
         new Builder(this)
             .setTitle(R.string.error)
             .setMessage("Тебя забанили!")
@@ -36,7 +36,25 @@ public class OnlineActivity extends BaseActivity {
             .create()
             .show();
         break;
-      case OnlineSwitchNavigate.VEHICLE_OPTIONS:
+      case OnlineButtonNavigate.NO_FREE_VEHICLES:
+        new Builder(this)
+            .setTitle(R.string.error)
+            .setMessage("Нету тачки для тебя!")
+            .setPositiveButton(getString(android.R.string.ok), null)
+            .setNegativeButton(getString(android.R.string.cancel), null)
+            .create()
+            .show();
+        break;
+      case OnlineButtonNavigate.NO_VEHICLES:
+        new Builder(this)
+            .setTitle(R.string.error)
+            .setMessage("У тебя вообще нет тачек!")
+            .setPositiveButton(getString(android.R.string.ok), null)
+            .setNegativeButton(getString(android.R.string.cancel), null)
+            .create()
+            .show();
+        break;
+      case OnlineButtonNavigate.VEHICLE_OPTIONS:
         startActivity(new Intent(this, SelectedVehicleOptionsActivity.class));
         break;
       case MenuNavigate.BALANCE:

@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "177654963426",
+    "firebase_url": "https://cargopull-fcm-dev.firebaseio.com",
+    "project_id": "cargopull-fcm-dev",
+    "storage_bucket": "cargopull-fcm-dev.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:177654963426:android:fd8769cce97bc17b",
+        "android_client_info": {
+          "package_name": "com.cargopull.executor_driver.debug"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "177654963426-hk8r33oagaj3o0ora2tmu1bejqr31l2l.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDPDtzzAVYQbdodvxIDIF-0cpQ8sdzP8dk"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

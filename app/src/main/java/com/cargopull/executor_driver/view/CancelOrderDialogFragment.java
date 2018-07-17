@@ -26,7 +26,6 @@ public class CancelOrderDialogFragment extends BaseDialogFragment implements
 
   private CancelOrderViewModel cancelOrderViewModel;
   private RecyclerView recyclerView;
-  private boolean pending;
 
   @Inject
   public void setCancelOrderViewModel(@NonNull CancelOrderViewModel cancelOrderViewModel) {
@@ -69,10 +68,7 @@ public class CancelOrderDialogFragment extends BaseDialogFragment implements
 
   @Override
   public void showCancelOrderPending(boolean pending) {
-    if (this.pending != pending) {
-      showPending(pending);
-    }
-    this.pending = pending;
+    showPending(pending, getClass().getSimpleName() + hashCode());
   }
 
   @Override

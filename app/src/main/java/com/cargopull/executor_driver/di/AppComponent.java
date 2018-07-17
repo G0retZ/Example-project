@@ -1,5 +1,6 @@
 package com.cargopull.executor_driver.di;
 
+import com.cargopull.executor_driver.application.FcmService;
 import com.cargopull.executor_driver.application.MainApplication;
 import com.cargopull.executor_driver.view.BalanceFragment;
 import com.cargopull.executor_driver.view.BalanceSummaryFragment;
@@ -31,6 +32,8 @@ import com.cargopull.executor_driver.view.auth.PasswordFragment;
 public interface AppComponent {
 
   void inject(MainApplication mainApplication);
+
+  void inject(FcmService fcmService);
 
   void inject(LoginFragment loginFragment);
 

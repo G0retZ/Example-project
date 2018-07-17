@@ -28,7 +28,6 @@ public class MenuFragment extends BaseFragment implements BalanceViewActions,
   private BalanceViewModel balanceViewModel;
   private OnlineSwitchViewModel onlineSwitchViewModel;
   private TextView balanceAmount;
-  private boolean pending;
   private boolean nowOnline;
 
   @Inject
@@ -116,10 +115,7 @@ public class MenuFragment extends BaseFragment implements BalanceViewActions,
 
   @Override
   public void showBalancePending(boolean pending) {
-    if (this.pending != pending) {
-      showPending(pending);
-    }
-    this.pending = pending;
+    showPending(pending, toString() + "0");
   }
 
   @Override
@@ -128,10 +124,7 @@ public class MenuFragment extends BaseFragment implements BalanceViewActions,
   }
 
   @Override
-  public void showSwitchPending(boolean show) {
-    if (this.pending != show) {
-      showPending(pending);
-    }
-    this.pending = show;
+  public void showSwitchPending(boolean pending) {
+    showPending(pending, toString() + "1");
   }
 }

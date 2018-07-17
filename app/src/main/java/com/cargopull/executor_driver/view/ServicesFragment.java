@@ -42,7 +42,6 @@ public class ServicesFragment extends BaseFragment implements ServicesViewAction
   private TextView errorText;
   private Button readyButton;
   private Context context;
-  private boolean pending;
 
   @Override
   public void onAttach(Context context) {
@@ -130,10 +129,7 @@ public class ServicesFragment extends BaseFragment implements ServicesViewAction
 
   @Override
   public void showServicesPending(boolean pending) {
-    if (this.pending != pending) {
-      showPending(pending);
-    }
-    this.pending = pending;
+    showPending(pending, toString());
   }
 
   @Override

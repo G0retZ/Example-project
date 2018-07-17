@@ -25,7 +25,6 @@ public interface VehicleOptionsUseCase {
    *
    * @return {@link Observable} результат запроса
    */
-  @SuppressWarnings("unused")
   @NonNull
   Single<List<Option>> getDriverOptions();
 

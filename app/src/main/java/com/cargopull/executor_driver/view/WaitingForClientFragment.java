@@ -37,8 +37,6 @@ public class WaitingForClientFragment extends BaseFragment implements
   private TextView cargoDescText;
   private TextView optionsTitleText;
   private TextView optionsText;
-  private boolean waitingForClientPending;
-  private boolean orderPending;
 
   @Inject
   public void setWaitingForClientViewModel(
@@ -110,18 +108,12 @@ public class WaitingForClientFragment extends BaseFragment implements
 
   @Override
   public void showWaitingForClientPending(boolean pending) {
-    if (this.waitingForClientPending != pending) {
-      showPending(pending);
-    }
-    this.waitingForClientPending = pending;
+    showPending(pending, toString() + "0");
   }
 
   @Override
   public void showOrderPending(boolean pending) {
-    if (this.orderPending != pending) {
-      showPending(pending);
-    }
-    this.orderPending = pending;
+    showPending(pending, toString() + "1");
   }
 
   @Override

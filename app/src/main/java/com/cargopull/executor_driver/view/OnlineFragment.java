@@ -10,24 +10,32 @@ import android.view.ViewGroup;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import com.cargopull.executor_driver.R;
 import com.cargopull.executor_driver.di.AppComponent;
+import com.cargopull.executor_driver.presentation.onlinebutton.OnlineButtonViewActions;
+import com.cargopull.executor_driver.presentation.onlinebutton.OnlineButtonViewModel;
+import com.cargopull.executor_driver.presentation.onlineswitch.OnlineSwitchNavigate;
 import com.cargopull.executor_driver.presentation.onlineswitch.OnlineSwitchViewActions;
 import com.cargopull.executor_driver.presentation.onlineswitch.OnlineSwitchViewModel;
 import javax.inject.Inject;
 
-public class OnlineFragment extends BaseFragment implements OnlineSwitchViewActions {
+public class OnlineFragment extends BaseFragment implements OnlineSwitchViewActions,
+    OnlineButtonViewActions {
 
   private OnlineSwitchViewModel onlineSwitchViewModel;
   @NonNull
   private final OnCheckedChangeListener onCheckedChangeListener =
       (buttonView, isChecked) -> onlineSwitchViewModel.setNewState(isChecked);
-
+  private OnlineButtonViewModel onlineButtonViewModel;
   @Nullable
   private SwitchCompat switchCompat;
-  private boolean pending;
 
   @Inject
   public void setOnlineSwitchViewModel(OnlineSwitchViewModel onlineSwitchViewModel) {
     this.onlineSwitchViewModel = onlineSwitchViewModel;
+  }
+
+  @Inject
+  public void setOnlineButtonViewModel(@NonNull OnlineButtonViewModel onlineButtonViewModel) {
+    this.onlineButtonViewModel = onlineButtonViewModel;
   }
 
   @Nullable
@@ -58,6 +66,16 @@ public class OnlineFragment extends BaseFragment implements OnlineSwitchViewActi
         navigate(destination);
       }
     });
+    onlineButtonViewModel.getNavigationLiveData().observe(this, destination -> {
+      if (destination != null) {
+        navigate(destination);
+      }
+    });
+    onlineButtonViewModel.getViewStateLiveData().observe(this, viewState -> {
+      if (viewState != null) {
+        viewState.apply(this);
+      }
+    });
   }
 
   @Override
@@ -65,6 +83,15 @@ public class OnlineFragment extends BaseFragment implements OnlineSwitchViewActi
     super.onViewStateRestored(savedInstanceState);
     if (switchCompat != null) {
       switchCompat.setOnCheckedChangeListener(onCheckedChangeListener);
+    }
+  }
+
+  @Override
+  protected void navigate(@NonNull String destination) {
+    if (destination.equals(OnlineSwitchNavigate.VEHICLE_OPTIONS)) {
+      onlineButtonViewModel.goOnline();
+    } else {
+      super.navigate(destination);
     }
   }
 
@@ -78,10 +105,19 @@ public class OnlineFragment extends BaseFragment implements OnlineSwitchViewActi
   }
 
   @Override
-  public void showSwitchPending(boolean show) {
-    if (this.pending != show) {
-      showPending(pending);
+  public void showSwitchPending(boolean pending) {
+    showPending(pending, toString() + "0");
+  }
+
+  @Override
+  public void showGoOnlinePending(boolean pending) {
+    showPending(pending, toString() + "1");
+  }
+
+  @Override
+  public void enableGoOnlineButton(boolean enable) {
+    if (switchCompat != null) {
+      switchCompat.setEnabled(enable);
     }
-    this.pending = show;
   }
 }

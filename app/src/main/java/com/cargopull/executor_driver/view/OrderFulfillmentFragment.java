@@ -45,7 +45,6 @@ public class OrderFulfillmentFragment extends BaseFragment implements OrderCostV
   private Button closeRoutePointAction;
   private Button completeTheOrderAction;
   private Context context;
-  private boolean pending;
 
   @Inject
   public void setOrderCostViewModel(OrderCostViewModel orderCostViewModel) {
@@ -137,10 +136,7 @@ public class OrderFulfillmentFragment extends BaseFragment implements OrderCostV
 
   @Override
   public void showNextRoutePointPending(boolean pending) {
-    if (this.pending != pending) {
-      showPending(pending);
-    }
-    this.pending = pending;
+    showPending(pending, toString());
   }
 
   @Override

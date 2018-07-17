@@ -15,7 +15,7 @@ public interface OnlineSwitchViewActions {
   /**
    * Показать индикатор процесса.
    *
-   * @param show - показать или нет?
+   * @param pending - показать или нет?
    */
-  void showSwitchPending(boolean show);
+  void showSwitchPending(boolean pending);
 }
