@@ -197,6 +197,69 @@ public class CurrentCostPollingGatewayTest {
     verifyNoMoreInteractions(stompClient);
   }
 
+  /**
+   * Не должен просить у клиента STOMP отправку ACK для 0, если он соединен и не соединяется.
+   */
+  @Test
+  public void doNotAskStompClientToSendAckForTimersIfConnected() {
+    // Дано:
+    InOrder inOrder = Mockito.inOrder(stompClient);
+    when(stompClient.isConnected()).thenReturn(true);
+    when(stompClient.topic("/queue/1234567890", StompClient.ACK_CLIENT_INDIVIDUAL))
+        .thenReturn(Flowable.just(
+            new StompMessage(
+                "MESSAGE",
+                Arrays.asList(
+                    new StompHeader("OverPackage", "0"),
+                    new StompHeader("subscription", "subs"),
+                    new StompHeader("message-id", "mess")
+                ),
+                "\n"
+            )
+        ));
+
+    // Действие:
+    gateway.startPolling("1234567890").test();
+    testScheduler.advanceTimeBy(1, TimeUnit.NANOSECONDS);
+
+    // Результат:
+    inOrder.verify(stompClient).isConnected();
+    inOrder.verify(stompClient).topic("/queue/1234567890", StompClient.ACK_CLIENT_INDIVIDUAL);
+    verifyNoMoreInteractions(stompClient);
+  }
+
+  /**
+   * Не должен просить у клиента STOMP отправку ACK для 0, если он не соединен и соединяется.
+   */
+  @Test
+  public void doNotAskStompClientToSendAckForTimersIfConnecting() {
+    // Дано:
+    InOrder inOrder = Mockito.inOrder(stompClient);
+    when(stompClient.isConnecting()).thenReturn(true);
+    when(stompClient.topic("/queue/1234567890", StompClient.ACK_CLIENT_INDIVIDUAL))
+        .thenReturn(Flowable.just(
+            new StompMessage(
+                "MESSAGE",
+                Arrays.asList(
+                    new StompHeader("OverPackage", "0"),
+                    new StompHeader("subscription", "subs"),
+                    new StompHeader("message-id", "mess")
+                ),
+                "\n"
+            )
+        ));
+
+    // Действие:
+    gateway.startPolling("1234567890").test();
+    testScheduler.advanceTimeBy(1, TimeUnit.NANOSECONDS);
+
+    // Результат:
+    inOrder.verify(stompClient).isConnected();
+    inOrder.verify(stompClient).isConnecting();
+    inOrder.verify(stompClient).topic("/queue/1234567890", StompClient.ACK_CLIENT_INDIVIDUAL);
+    verifyNoMoreInteractions(stompClient);
+  }
+
   /* Проверяем работу с маппером */
 
   /**
