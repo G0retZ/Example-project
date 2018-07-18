@@ -122,4 +122,5 @@
   <string name="order_distance_and_duration">Пробег, длительность, стоимость</string>
   <string name="km_h_m_p">%1$s км, %2$d ч. %3$d мин. ≈ %4$s</string>
   <string name="address">Адрес</string>
+  <string name="exit_confirmation">Вы уверены, что хотите выйти?\n</string>
 </resources>
