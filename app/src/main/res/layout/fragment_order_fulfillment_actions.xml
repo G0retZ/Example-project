@@ -118,6 +118,21 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="@color/colorDivider"/>
+      <TextView
+        android:id="@+id/completeTheOrder"
+        style="@style/TextAppearance.AppCompat.Subhead"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:background="?android:attr/selectableItemBackground"
+        android:gravity="center_vertical"
+        android:text="@string/complete_the_order"
+        android:visibility="gone"/>
+      <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/colorDivider"/>
     </LinearLayout>
   </ScrollView>
 </LinearLayout>

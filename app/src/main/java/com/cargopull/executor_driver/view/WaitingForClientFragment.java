@@ -1,12 +1,20 @@
 package com.cargopull.executor_driver.view;
 
+import android.animation.Animator;
+import android.animation.Animator.AnimatorListener;
+import android.animation.ObjectAnimator;
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.DecelerateInterpolator;
+import android.view.animation.LinearInterpolator;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import com.cargopull.executor_driver.R;
 import com.cargopull.executor_driver.di.AppComponent;
@@ -37,6 +45,10 @@ public class WaitingForClientFragment extends BaseFragment implements
   private TextView cargoDescText;
   private TextView optionsTitleText;
   private TextView optionsText;
+  @Nullable
+  private ObjectAnimator delayAnimator;
+  @Nullable
+  private ObjectAnimator resetAnimator;
 
   @Inject
   public void setWaitingForClientViewModel(
@@ -49,6 +61,7 @@ public class WaitingForClientFragment extends BaseFragment implements
     this.orderViewModel = orderViewModel;
   }
 
+  @SuppressLint("ClickableViewAccessibility")
   @Nullable
   @Override
   public View onCreateView(@NonNull LayoutInflater inflater,
@@ -65,13 +78,60 @@ public class WaitingForClientFragment extends BaseFragment implements
     optionsTitleText = view.findViewById(R.id.optionsTitleText);
     optionsText = view.findViewById(R.id.optionsText);
     Button callToClient = view.findViewById(R.id.callToClient);
-    Button startLoading = view.findViewById(R.id.startLoading);
+    ProgressBar startLoading = view.findViewById(R.id.startLoading);
     callToClient.setOnClickListener(v -> {
       navigate(WaitingForClientNavigate.CALL_TO_CLIENT);
       callToClient.setEnabled(false);
       callToClient.postDelayed(() -> callToClient.setEnabled(true), 10_000);
     });
-    startLoading.setOnClickListener(v -> waitingForClientViewModel.startLoading());
+    delayAnimator = ObjectAnimator.ofInt(startLoading, "progress", 0, 100);
+    delayAnimator.setDuration(1500);
+    delayAnimator.setInterpolator(new DecelerateInterpolator());
+    delayAnimator.addListener(new AnimatorListener() {
+      private boolean canceled;
+
+      @Override
+      public void onAnimationStart(Animator animation) {
+        canceled = false;
+      }
+
+      @Override
+      public void onAnimationEnd(Animator animation) {
+        if (!canceled) {
+          waitingForClientViewModel.startLoading();
+        }
+      }
+
+      @Override
+      public void onAnimationCancel(Animator animation) {
+        canceled = true;
+      }
+
+      @Override
+      public void onAnimationRepeat(Animator animation) {
+
+      }
+    });
+
+    startLoading.setOnTouchListener((v, event) -> {
+      int i = event.getAction();
+      if (i == MotionEvent.ACTION_DOWN) {
+        delayAnimator.start();
+        if (resetAnimator != null) {
+          resetAnimator.cancel();
+        }
+        return true;
+      } else if (i == MotionEvent.ACTION_UP) {
+        delayAnimator.cancel();
+        resetAnimator = ObjectAnimator
+            .ofInt(startLoading, "progress", startLoading.getProgress(), 0);
+        resetAnimator.setDuration(150);
+        resetAnimator.setInterpolator(new LinearInterpolator());
+        resetAnimator.start();
+        return true;
+      }
+      return false;
+    });
     return view;
   }
 
@@ -104,6 +164,17 @@ public class WaitingForClientFragment extends BaseFragment implements
         navigate(destination);
       }
     });
+  }
+
+  @Override
+  public void onDetach() {
+    if (resetAnimator != null) {
+      resetAnimator.cancel();
+    }
+    if (delayAnimator != null) {
+      delayAnimator.cancel();
+    }
+    super.onDetach();
   }
 
   @Override

@@ -153,6 +153,7 @@ import com.cargopull.executor_driver.view.MovingToClientDetailsFragment;
 import com.cargopull.executor_driver.view.MovingToClientFragment;
 import com.cargopull.executor_driver.view.MovingToClientRouteFragment;
 import com.cargopull.executor_driver.view.OnlineFragment;
+import com.cargopull.executor_driver.view.OrderFulfillmentActionsDialogFragment;
 import com.cargopull.executor_driver.view.OrderFulfillmentDetailsFragment;
 import com.cargopull.executor_driver.view.OrderFulfillmentFragment;
 import com.cargopull.executor_driver.view.OrderRouteFragment;
@@ -934,6 +935,30 @@ public class AppComponentImpl implements AppComponent {
                 )
             )
         ).get(OrderViewModelImpl.class)
+    );
+  }
+
+  @Override
+  public void inject(OrderFulfillmentActionsDialogFragment orderFulfillmentActionsDialogFragment) {
+    orderFulfillmentActionsDialogFragment.setNextRoutePointViewModel(
+        ViewModelProviders.of(
+            orderFulfillmentActionsDialogFragment,
+            new ViewModelFactory<>(
+                new NextRoutePointViewModelImpl(
+                    new OrderRouteUseCaseImpl(
+                        new OrderGatewayImpl(
+                            executorStateUseCase,
+                            ExecutorState.ORDER_FULFILLMENT,
+                            new OrderFulfillmentApiMapper(
+                                new VehicleOptionApiMapper(),
+                                new RoutePointApiMapper()
+                            )
+                        ),
+                        new OrderRouteGatewayImpl(stompClient)
+                    )
+                )
+            )
+        ).get(NextRoutePointViewModelImpl.class)
     );
   }
 

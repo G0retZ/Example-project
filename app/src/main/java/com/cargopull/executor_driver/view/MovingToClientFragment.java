@@ -1,6 +1,10 @@
 package com.cargopull.executor_driver.view;
 
+import android.animation.Animator;
+import android.animation.Animator.AnimatorListener;
+import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
+import android.annotation.SuppressLint;
 import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.Intent;
@@ -11,11 +15,14 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.DecelerateInterpolator;
 import android.view.animation.LinearInterpolator;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import com.cargopull.executor_driver.R;
 import com.cargopull.executor_driver.di.AppComponent;
@@ -46,7 +53,12 @@ public class MovingToClientFragment extends BaseFragment implements MovingToClie
   private Button navigationAction;
   private Context context;
   @Nullable
-  private ValueAnimator valueAnimator;
+  private ValueAnimator timeoutAnimator;
+  @Nullable
+  private ObjectAnimator delayAnimator;
+  @Nullable
+  private ObjectAnimator resetAnimator;
+
 
   @Override
   public void onAttach(Context context) {
@@ -64,6 +76,7 @@ public class MovingToClientFragment extends BaseFragment implements MovingToClie
     this.movingToClientViewModel = movingToClientViewModel;
   }
 
+  @SuppressLint("ClickableViewAccessibility")
   @Nullable
   @Override
   public View onCreateView(@NonNull LayoutInflater inflater,
@@ -77,9 +90,56 @@ public class MovingToClientFragment extends BaseFragment implements MovingToClie
     timerText = view.findViewById(R.id.timerText);
     navigationAction = view.findViewById(R.id.openNavigator);
     callAction = view.findViewById(R.id.callToClient);
-    Button arrivedAction = view.findViewById(R.id.reportArrived);
+    ProgressBar arrivedAction = view.findViewById(R.id.reportArrived);
     callAction.setOnClickListener(v -> movingToClientViewModel.callToClient());
-    arrivedAction.setOnClickListener(v -> movingToClientViewModel.reportArrival());
+    delayAnimator = ObjectAnimator.ofInt(arrivedAction, "progress", 0, 100);
+    delayAnimator.setDuration(1500);
+    delayAnimator.setInterpolator(new DecelerateInterpolator());
+    delayAnimator.addListener(new AnimatorListener() {
+      private boolean canceled;
+
+      @Override
+      public void onAnimationStart(Animator animation) {
+        canceled = false;
+      }
+
+      @Override
+      public void onAnimationEnd(Animator animation) {
+        if (!canceled) {
+          movingToClientViewModel.reportArrival();
+        }
+      }
+
+      @Override
+      public void onAnimationCancel(Animator animation) {
+        canceled = true;
+      }
+
+      @Override
+      public void onAnimationRepeat(Animator animation) {
+
+      }
+    });
+
+    arrivedAction.setOnTouchListener((v, event) -> {
+      int i = event.getAction();
+      if (i == MotionEvent.ACTION_DOWN) {
+        delayAnimator.start();
+        if (resetAnimator != null) {
+          resetAnimator.cancel();
+        }
+        return true;
+      } else if (i == MotionEvent.ACTION_UP) {
+        delayAnimator.cancel();
+        resetAnimator = ObjectAnimator
+            .ofInt(arrivedAction, "progress", arrivedAction.getProgress(), 0);
+        resetAnimator.setDuration(150);
+        resetAnimator.setInterpolator(new LinearInterpolator());
+        resetAnimator.start();
+        return true;
+      }
+      return false;
+    });
     return view;
   }
 
@@ -116,8 +176,14 @@ public class MovingToClientFragment extends BaseFragment implements MovingToClie
 
   @Override
   public void onDetach() {
-    if (valueAnimator != null) {
-      valueAnimator.cancel();
+    if (timeoutAnimator != null) {
+      timeoutAnimator.cancel();
+    }
+    if (resetAnimator != null) {
+      resetAnimator.cancel();
+    }
+    if (delayAnimator != null) {
+      delayAnimator.cancel();
     }
     super.onDetach();
     context = null;
@@ -192,13 +258,17 @@ public class MovingToClientFragment extends BaseFragment implements MovingToClie
 
   @Override
   public void showTimeout(int timeout) {
-    if (valueAnimator != null && valueAnimator.isStarted()) {
-      valueAnimator.cancel();
+    if (timeoutAnimator != null && timeoutAnimator.isStarted()) {
+      timeoutAnimator.cancel();
     }
-    valueAnimator = ValueAnimator.ofInt(timeout, -7200);
-    valueAnimator.setDuration(timeout * 1000 + 7200000);
-    valueAnimator.setInterpolator(new LinearInterpolator());
-    valueAnimator.addUpdateListener(animation -> {
+    int toTime = -7200;
+    if (timeout < 0) {
+      toTime = timeout + toTime;
+    }
+    timeoutAnimator = ValueAnimator.ofInt(timeout, toTime);
+    timeoutAnimator.setDuration((timeout - toTime) * 1000);
+    timeoutAnimator.setInterpolator(new LinearInterpolator());
+    timeoutAnimator.addUpdateListener(animation -> {
       int time = (int) animation.getAnimatedValue();
       if (VERSION.SDK_INT >= VERSION_CODES.M) {
         timerText.setTextColor(
@@ -217,7 +287,7 @@ public class MovingToClientFragment extends BaseFragment implements MovingToClie
               .print(LocalTime.fromMillisOfDay(Math.abs(time) * 1000))
       );
     });
-    valueAnimator.start();
+    timeoutAnimator.start();
   }
 
   @Override

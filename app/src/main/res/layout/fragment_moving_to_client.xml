@@ -117,7 +117,7 @@
     android:layout_marginLeft="4dp"
     android:text="@string/navigator"
     app:layout_constraintBottom_toTopOf="@id/reportArrived"
-    app:layout_constraintEnd_toStartOf="@id/callToClient"
+    app:layout_constraintEnd_toStartOf="@+id/callToClient"
     app:layout_constraintStart_toStartOf="parent"/>
   <Button
     android:id="@+id/callToClient"
@@ -129,17 +129,30 @@
     android:text="@string/call_client"
     app:layout_constraintBottom_toTopOf="@id/reportArrived"
     app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintStart_toEndOf="@id/openNavigator"/>
-  <Button
+    app:layout_constraintStart_toEndOf="@+id/openNavigator"/>
+  <ProgressBar
     android:id="@+id/reportArrived"
-    style="@style/AppTheme.Button.Colored"
+    style="@style/Widget.AppCompat.ProgressBar.Horizontal"
     android:layout_width="0dp"
-    android:layout_height="64dp"
-    android:layout_marginBottom="4dp"
-    android:layout_marginStart="4dp"
-    android:layout_marginEnd="4dp"
-    android:text="@string/arrived"
+    android:layout_height="56dp"
+    android:layout_marginTop="4dp"
+    android:layout_marginBottom="8dp"
+    android:layout_marginStart="8dp"
+    android:layout_marginEnd="8dp"
+    android:progressDrawable="@drawable/button_progressbar"
     app:layout_constraintBottom_toBottomOf="parent"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"/>
+  <TextView
+    style="@style/TextAppearance.AppCompat.Widget.Button.Colored"
+    android:layout_width="0dp"
+    android:layout_height="0dp"
+    android:gravity="center"
+    android:text="@string/arrived"
+    android:textColor="@android:color/primary_text_dark"
+    android:textSize="19sp"
+    app:layout_constraintBottom_toBottomOf="@id/reportArrived"
+    app:layout_constraintEnd_toEndOf="@id/reportArrived"
+    app:layout_constraintStart_toStartOf="@id/reportArrived"
+    app:layout_constraintTop_toTopOf="@id/reportArrived"/>
 </android.support.constraint.ConstraintLayout>

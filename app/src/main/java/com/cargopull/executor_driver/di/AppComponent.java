@@ -18,6 +18,7 @@ import com.cargopull.executor_driver.view.MovingToClientDetailsFragment;
 import com.cargopull.executor_driver.view.MovingToClientFragment;
 import com.cargopull.executor_driver.view.MovingToClientRouteFragment;
 import com.cargopull.executor_driver.view.OnlineFragment;
+import com.cargopull.executor_driver.view.OrderFulfillmentActionsDialogFragment;
 import com.cargopull.executor_driver.view.OrderFulfillmentDetailsFragment;
 import com.cargopull.executor_driver.view.OrderFulfillmentFragment;
 import com.cargopull.executor_driver.view.OrderRouteFragment;
@@ -76,6 +77,8 @@ public interface AppComponent {
   void inject(OrderFulfillmentFragment orderFulfillmentFragment);
 
   void inject(OrderFulfillmentDetailsFragment orderFulfillmentDetailsFragment);
+
+  void inject(OrderFulfillmentActionsDialogFragment orderFulfillmentActionsDialogFragment);
 
   void inject(OrderRouteFragment orderRouteFragment);
 

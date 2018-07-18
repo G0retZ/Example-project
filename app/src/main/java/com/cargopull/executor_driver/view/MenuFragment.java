@@ -1,5 +1,7 @@
 package com.cargopull.executor_driver.view;
 
+import android.app.AlertDialog.Builder;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -52,12 +54,20 @@ public class MenuFragment extends BaseFragment implements BalanceViewActions,
     view.findViewById(R.id.history).setOnClickListener(v -> navigate(MenuNavigate.HISTORY));
     view.findViewById(R.id.operator).setOnClickListener(v -> navigate(MenuNavigate.OPERATOR));
     view.findViewById(R.id.vehicles).setOnClickListener(v -> navigate(MenuNavigate.VEHICLES));
-    view.findViewById(R.id.exit).setOnClickListener(v -> {
-      if (nowOnline) {
-        onlineSwitchViewModel.setNewState(false);
-      }
-      navigate(CommonNavigate.EXIT);
-    });
+    Context context = getContext();
+    view.findViewById(R.id.exit).setOnClickListener(
+        v -> new Builder(context)
+            .setMessage(R.string.exit_confirmation)
+            .setPositiveButton(getString(android.R.string.ok), ((dialog, which) -> {
+              if (nowOnline) {
+                onlineSwitchViewModel.setNewState(false);
+              }
+              navigate(CommonNavigate.EXIT);
+            }))
+            .setNegativeButton(getString(android.R.string.cancel), null)
+            .create()
+            .show()
+    );
     balanceAmount = view.findViewById(R.id.balanceAmount);
     return view;
   }
