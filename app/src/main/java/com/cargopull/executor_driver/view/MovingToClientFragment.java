@@ -261,8 +261,12 @@ public class MovingToClientFragment extends BaseFragment implements MovingToClie
     if (timeoutAnimator != null && timeoutAnimator.isStarted()) {
       timeoutAnimator.cancel();
     }
-    timeoutAnimator = ValueAnimator.ofInt(timeout, -7200);
-    timeoutAnimator.setDuration(timeout * 1000 + 7200000);
+    int toTime = -7200;
+    if (timeout < 0) {
+      toTime = timeout + toTime;
+    }
+    timeoutAnimator = ValueAnimator.ofInt(timeout, toTime);
+    timeoutAnimator.setDuration((timeout - toTime) * 1000);
     timeoutAnimator.setInterpolator(new LinearInterpolator());
     timeoutAnimator.addUpdateListener(animation -> {
       int time = (int) animation.getAnimatedValue();
