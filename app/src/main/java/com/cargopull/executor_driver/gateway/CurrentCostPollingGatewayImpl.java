@@ -39,6 +39,7 @@ public class CurrentCostPollingGatewayImpl implements CurrentCostPollingGateway 
       ).subscribeOn(Schedulers.io())
           .observeOn(Schedulers.computation())
           .filter(stompMessage -> stompMessage.findHeader("OverPackage") != null)
+          .takeWhile(stompMessage -> stompMessage.findHeader("OverPackage").equals("1"))
           .doOnNext(
               stompMessage -> stompClient.sendAfterConnection(
                   new StompMessage("ACK",
@@ -51,7 +52,6 @@ public class CurrentCostPollingGatewayImpl implements CurrentCostPollingGateway 
               ).subscribe(() -> {
               }, Throwable::printStackTrace)
           )
-          .takeWhile(stompMessage -> stompMessage.findHeader("OverPackage").equals("1"))
           .map(stompMessage -> mapper.map(stompMessage.getPayload()))
           .switchMap(pair -> Flowable
               .interval(pair.first, pair.second, TimeUnit.MILLISECONDS)
