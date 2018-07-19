@@ -50,8 +50,8 @@ public class SmsReceiver extends BroadcastReceiver {
           }
           // Проверяем отправителя
           String sms_from = messages[0].getDisplayOriginatingAddress();
-          if ("FASTEN".equals(sms_from) || "VEZET".equals(sms_from)
-              || "VEZETDOBRO".equals(sms_from)) {
+          if ("FASTEN".equalsIgnoreCase(sms_from) || "VEZET".equalsIgnoreCase(sms_from)
+              || "VEZETDOBRO".equalsIgnoreCase(sms_from)) {
             StringBuilder bodyText = new StringBuilder();
             for (SmsMessage message : messages) {
               bodyText.append(message.getMessageBody());
