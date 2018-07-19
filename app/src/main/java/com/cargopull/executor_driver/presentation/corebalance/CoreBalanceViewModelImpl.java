@@ -51,7 +51,6 @@ public class CoreBalanceViewModelImpl extends ViewModel implements CoreBalanceVi
             executorBalance -> {
             },
             throwable -> {
-              throwable.printStackTrace();
               if (throwable instanceof DataMappingException) {
                 navigateLiveData.postValue(CommonNavigate.SERVER_DATA_ERROR);
               }

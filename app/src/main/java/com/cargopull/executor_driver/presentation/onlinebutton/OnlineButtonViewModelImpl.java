@@ -70,7 +70,6 @@ public class OnlineButtonViewModelImpl extends ViewModel implements OnlineButton
               holdButton(DURATION_AFTER_SUCCESS);
             },
             throwable -> {
-              throwable.printStackTrace();
               if (throwable instanceof DriverBlockedException) {
                 navigateLiveData.postValue(OnlineButtonNavigate.DRIVER_BLOCKED);
               } else if (throwable instanceof NoFreeVehiclesException) {
@@ -93,7 +92,8 @@ public class OnlineButtonViewModelImpl extends ViewModel implements OnlineButton
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(
             () -> viewStateLiveData.postValue(new OnlineButtonViewStateReady()),
-            Throwable::printStackTrace
+            throwable -> {
+            }
         );
   }
 

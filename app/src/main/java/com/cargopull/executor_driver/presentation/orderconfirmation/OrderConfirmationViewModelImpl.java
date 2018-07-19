@@ -59,7 +59,6 @@ public class OrderConfirmationViewModelImpl extends ViewModel implements
         .subscribe(
             () -> {
             }, throwable -> {
-              throwable.printStackTrace();
               viewStateLiveData.postValue(new OrderConfirmationViewStateIdle());
               navigateLiveData.postValue(CommonNavigate.NO_CONNECTION);
             }
@@ -78,7 +77,6 @@ public class OrderConfirmationViewModelImpl extends ViewModel implements
         .subscribe(
             () -> {
             }, throwable -> {
-              throwable.printStackTrace();
               viewStateLiveData.postValue(new OrderConfirmationViewStateIdle());
               navigateLiveData.postValue(CommonNavigate.NO_CONNECTION);
             }

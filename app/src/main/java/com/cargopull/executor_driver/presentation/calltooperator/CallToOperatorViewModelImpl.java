@@ -48,10 +48,7 @@ public class CallToOperatorViewModelImpl extends ViewModel implements CallToOper
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(
             () -> viewStateLiveData.postValue(new CallToOperatorViewStateNotCalling()),
-            throwable -> {
-              throwable.printStackTrace();
-              viewStateLiveData.postValue(new CallToOperatorViewStateNotCalling());
-            }
+            throwable -> viewStateLiveData.postValue(new CallToOperatorViewStateNotCalling())
         );
   }
 

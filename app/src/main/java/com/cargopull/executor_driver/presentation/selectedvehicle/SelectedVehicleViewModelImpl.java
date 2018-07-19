@@ -72,7 +72,6 @@ public class SelectedVehicleViewModelImpl extends ViewModel implements SelectedV
   }
 
   private void consumeError(Throwable throwable) {
-    throwable.printStackTrace();
     viewStateLiveData.postValue(new SelectedVehicleViewState(""));
     if (throwable instanceof DataMappingException) {
       navigateLiveData.postValue(CommonNavigate.SERVER_DATA_ERROR);

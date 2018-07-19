@@ -57,7 +57,6 @@ public class WaitingForClientViewModelImpl extends ViewModel implements WaitingF
         .subscribe(
             () -> {
             }, throwable -> {
-              throwable.printStackTrace();
               viewStateLiveData.postValue(new WaitingForClientViewStateIdle());
               navigateLiveData.postValue(CommonNavigate.NO_CONNECTION);
             }

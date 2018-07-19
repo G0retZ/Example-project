@@ -51,7 +51,8 @@ public class MapViewModelImpl extends ViewModel implements MapViewModel {
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(
             geoJson -> viewStateLiveData.postValue(new MapViewState(geoJson)),
-            Throwable::printStackTrace
+            throwable -> {
+            }
         );
   }
 

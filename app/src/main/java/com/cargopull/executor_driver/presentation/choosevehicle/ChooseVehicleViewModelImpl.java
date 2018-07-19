@@ -62,7 +62,8 @@ public class ChooseVehicleViewModelImpl extends ViewModel implements ChooseVehic
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(
             () -> navigateLiveData.postValue(ChooseVehicleNavigate.VEHICLE_OPTIONS),
-            Throwable::printStackTrace
+            throwable -> {
+            }
         );
   }
 
@@ -86,8 +87,7 @@ public class ChooseVehicleViewModelImpl extends ViewModel implements ChooseVehic
   }
 
   private void consumeError(Throwable error) {
-    error.printStackTrace();
-    if (error.getClass() == NoVehiclesAvailableException.class) {
+    if (error instanceof NoVehiclesAvailableException) {
       viewStateLiveData.postValue(new ChooseVehicleViewStateError(R.string.no_vehicles_available));
     } else {
       viewStateLiveData.postValue(new ChooseVehicleViewStateError(R.string.error));

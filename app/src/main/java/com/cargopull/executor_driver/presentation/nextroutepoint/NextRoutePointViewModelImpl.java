@@ -68,7 +68,6 @@ public class NextRoutePointViewModelImpl extends ViewModel implements NextRouteP
         .subscribe(
             () -> {
             }, throwable -> {
-              throwable.printStackTrace();
               viewStateLiveData.postValue(lastViewState);
               navigateLiveData.postValue(CommonNavigate.NO_CONNECTION);
             }
@@ -88,7 +87,6 @@ public class NextRoutePointViewModelImpl extends ViewModel implements NextRouteP
         .subscribe(
             () -> {
             }, throwable -> {
-              throwable.printStackTrace();
               viewStateLiveData.postValue(lastViewState);
               navigateLiveData.postValue(CommonNavigate.NO_CONNECTION);
             }
@@ -118,10 +116,7 @@ public class NextRoutePointViewModelImpl extends ViewModel implements NextRouteP
                   lastViewState = new NextRoutePointViewStateNoRoute(routePoints.size() < 2)
               );
             },
-            throwable -> {
-              throwable.printStackTrace();
-              navigateLiveData.postValue(CommonNavigate.SERVER_DATA_ERROR);
-            }
+            throwable -> navigateLiveData.postValue(CommonNavigate.SERVER_DATA_ERROR)
         );
   }
 

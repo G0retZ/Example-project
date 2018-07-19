@@ -55,7 +55,8 @@ public class MissedOrderViewModelImpl extends ViewModel implements
                 );
               }
             },
-            Throwable::printStackTrace
+            throwable -> {
+            }
         );
   }
 

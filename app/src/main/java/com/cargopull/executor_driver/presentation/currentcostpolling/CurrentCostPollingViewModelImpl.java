@@ -62,7 +62,6 @@ public class CurrentCostPollingViewModelImpl extends ViewModel implements
         }).subscribe(
             () -> completed = true,
             throwable -> {
-              throwable.printStackTrace();
               if (throwable instanceof DataMappingException) {
                 navigateLiveData.postValue(CommonNavigate.SERVER_DATA_ERROR);
               }

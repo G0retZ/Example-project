@@ -62,7 +62,8 @@ public class OrderViewModelImpl extends ViewModel implements
       disposable = orderUseCase.getOrders()
           .subscribeOn(Schedulers.single())
           .observeOn(AndroidSchedulers.mainThread())
-          .subscribe(this::consumeOrder, this::consumeError);
+          .subscribe(this::consumeOrder,
+              throwable -> navigateLiveData.postValue(CommonNavigate.SERVER_DATA_ERROR));
     }
   }
 
@@ -70,11 +71,6 @@ public class OrderViewModelImpl extends ViewModel implements
   private void consumeOrder(@NonNull Order order) {
     lastViewState = new OrderViewStateIdle(new OrderItem(order, timeUtils));
     viewStateLiveData.postValue(lastViewState);
-  }
-
-  private void consumeError(Throwable throwable) {
-    throwable.printStackTrace();
-    navigateLiveData.postValue(CommonNavigate.SERVER_DATA_ERROR);
   }
 
   @Override

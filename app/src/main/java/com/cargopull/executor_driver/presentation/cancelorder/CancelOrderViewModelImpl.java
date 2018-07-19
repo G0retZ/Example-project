@@ -66,7 +66,6 @@ public class CancelOrderViewModelImpl extends ViewModel implements CancelOrderVi
               navigateLiveData.postValue(CancelOrderNavigate.ORDER_CANCELED);
             },
             throwable -> {
-              throwable.printStackTrace();
               viewStateLiveData.postValue(lastViewState);
               if (throwable instanceof IllegalStateException) {
                 navigateLiveData.postValue(CommonNavigate.NO_CONNECTION);
@@ -86,10 +85,7 @@ public class CancelOrderViewModelImpl extends ViewModel implements CancelOrderVi
         .subscribe(
             cancelOrderReasons -> viewStateLiveData
                 .postValue(lastViewState = new CancelOrderViewState(cancelOrderReasons)),
-            throwable -> {
-              throwable.printStackTrace();
-              navigateLiveData.postValue(CommonNavigate.SERVER_DATA_ERROR);
-            }
+            throwable -> navigateLiveData.postValue(CommonNavigate.SERVER_DATA_ERROR)
         );
   }
 

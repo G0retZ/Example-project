@@ -97,7 +97,6 @@ public class VehicleOptionsViewModelImpl extends ViewModel implements
     ).subscribe(
         items -> viewStateLiveData.postValue(new VehicleOptionsViewStateReady(items)),
         throwable -> {
-          throwable.printStackTrace();
           if (throwable instanceof DataMappingException) {
             navigateLiveData.postValue(CommonNavigate.SERVER_DATA_ERROR);
           } else {
@@ -119,11 +118,8 @@ public class VehicleOptionsViewModelImpl extends ViewModel implements
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(
             () -> navigateLiveData.postValue(VehicleOptionsNavigate.SERVICES),
-            throwable -> {
-              throwable.printStackTrace();
-              viewStateLiveData
-                  .postValue(new VehicleOptionsViewStateError(R.string.no_network_connection));
-            }
+            throwable -> viewStateLiveData
+                .postValue(new VehicleOptionsViewStateError(R.string.no_network_connection))
         );
   }
 

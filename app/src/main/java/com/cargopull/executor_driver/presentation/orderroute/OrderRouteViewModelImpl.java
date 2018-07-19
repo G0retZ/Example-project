@@ -67,7 +67,6 @@ public class OrderRouteViewModelImpl extends ViewModel implements
             () -> {
             },
             throwable -> {
-              throwable.printStackTrace();
               viewStateLiveData.postValue(lastViewState);
               navigateLiveData.postValue(CommonNavigate.NO_CONNECTION);
             }
@@ -92,10 +91,7 @@ public class OrderRouteViewModelImpl extends ViewModel implements
               nextPointDisposable.dispose();
               viewStateLiveData.postValue(lastViewState = new OrderRouteViewState(routePointItems));
             },
-            throwable -> {
-              throwable.printStackTrace();
-              navigateLiveData.postValue(CommonNavigate.SERVER_DATA_ERROR);
-            }
+            throwable -> navigateLiveData.postValue(CommonNavigate.SERVER_DATA_ERROR)
         );
   }
 
