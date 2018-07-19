@@ -9,7 +9,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import com.cargopull.executor_driver.R;
 import com.cargopull.executor_driver.di.AppComponent;
-import com.cargopull.executor_driver.presentation.balance.BalanceNavigate;
 import com.cargopull.executor_driver.presentation.balance.BalanceViewActions;
 import com.cargopull.executor_driver.presentation.balance.BalanceViewModel;
 import java.text.DecimalFormat;
@@ -36,8 +35,6 @@ public class BalanceFragment extends BaseFragment implements BalanceViewActions 
       @Nullable ViewGroup container,
       @Nullable Bundle savedInstanceState) {
     View view = inflater.inflate(R.layout.fragment_balance, container, false);
-    view.findViewById(R.id.goPaymentOptions)
-        .setOnClickListener(v -> navigate(BalanceNavigate.PAYMENT_OPTIONS));
     balanceAmount = view.findViewById(R.id.balanceAmount);
     bonusAmount = view.findViewById(R.id.bonusAmount);
     return view;

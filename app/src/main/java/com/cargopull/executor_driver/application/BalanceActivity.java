@@ -1,6 +1,5 @@
 package com.cargopull.executor_driver.application;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -22,12 +21,8 @@ public class BalanceActivity extends BaseActivity {
 
   @Override
   public void navigate(@NonNull String destination) {
-    switch (destination) {
-      case BalanceNavigate.PAYMENT_OPTIONS:
-        startActivity(new Intent(this, PaymentOptionsActivity.class));
-        break;
-      default:
-        super.navigate(destination);
+    if (!BalanceNavigate.PAYMENT_OPTIONS.equals(destination)) {
+      super.navigate(destination);
     }
   }
 }

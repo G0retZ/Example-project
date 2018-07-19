@@ -63,22 +63,4 @@
     android:layout_width="wrap_content"
     android:layout_height="0dp"
     android:layout_weight="1"/>
-  <Button
-    android:id="@+id/goPaymentOptions"
-    style="@style/AppTheme.Button.Colored.Darkest"
-    android:layout_width="match_parent"
-    android:layout_height="64dp"
-    android:layout_marginBottom="6dp"
-    android:layout_marginStart="12dp"
-    android:layout_marginEnd="12dp"
-    android:text="@string/top_up_balance"/>
-  <Button
-    android:id="@+id/goHistory"
-    style="@style/AppTheme.Button.Borderless"
-    android:layout_width="match_parent"
-    android:layout_height="56dp"
-    android:layout_marginBottom="8dp"
-    android:layout_marginStart="16dp"
-    android:layout_marginEnd="16dp"
-    android:text="@string/payment_history"/>
 </LinearLayout>
