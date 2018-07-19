@@ -912,6 +912,26 @@ public class AppComponentImpl implements AppComponent {
             )
         ).get(NextRoutePointViewModelImpl.class)
     );
+    orderFulfillmentFragment.setOrderRouteViewModel(
+        ViewModelProviders.of(
+            orderFulfillmentFragment,
+            new ViewModelFactory<>(
+                new OrderRouteViewModelImpl(
+                    new OrderRouteUseCaseImpl(
+                        new OrderGatewayImpl(
+                            executorStateUseCase,
+                            ExecutorState.ORDER_FULFILLMENT,
+                            new OrderFulfillmentApiMapper(
+                                new VehicleOptionApiMapper(),
+                                new RoutePointApiMapper()
+                            )
+                        ),
+                        new OrderRouteGatewayImpl(stompClient)
+                    )
+                )
+            )
+        ).get(OrderRouteViewModelImpl.class)
+    );
   }
 
   @Override

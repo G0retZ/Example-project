@@ -26,9 +26,13 @@ import com.cargopull.executor_driver.presentation.nextroutepoint.NextRoutePointV
 import com.cargopull.executor_driver.presentation.nextroutepoint.NextRoutePointViewModel;
 import com.cargopull.executor_driver.presentation.ordercost.OrderCostViewActions;
 import com.cargopull.executor_driver.presentation.ordercost.OrderCostViewModel;
+import com.cargopull.executor_driver.presentation.orderroute.OrderRouteViewActions;
+import com.cargopull.executor_driver.presentation.orderroute.OrderRouteViewModel;
+import com.cargopull.executor_driver.presentation.orderroute.RoutePointItem;
 import com.cargopull.executor_driver.presentation.ordertime.OrderTimeViewActions;
 import com.cargopull.executor_driver.presentation.ordertime.OrderTimeViewModel;
 import java.text.DecimalFormat;
+import java.util.List;
 import javax.inject.Inject;
 import org.joda.time.LocalTime;
 import org.joda.time.format.DateTimeFormat;
@@ -38,14 +42,16 @@ import org.joda.time.format.DateTimeFormat;
  */
 
 public class OrderFulfillmentFragment extends BaseFragment implements OrderCostViewActions,
-    OrderTimeViewActions, NextRoutePointViewActions {
+    OrderTimeViewActions, NextRoutePointViewActions, OrderRouteViewActions {
 
   private OrderCostViewModel orderCostViewModel;
   private OrderTimeViewModel orderTimeViewModel;
   private NextRoutePointViewModel nextRoutePointViewModel;
+  private OrderRouteViewModel orderRouteViewModel;
   private TextView totalTimeText;
   private TextView totalCostText;
   private TextView freeRideText;
+  private TextView addressTitleText;
   private TextView addressText;
   private TextView commentTitleText;
   private TextView commentText;
@@ -79,6 +85,11 @@ public class OrderFulfillmentFragment extends BaseFragment implements OrderCostV
     this.nextRoutePointViewModel = nextRoutePointViewModel;
   }
 
+  @Inject
+  public void setOrderRouteViewModel(@NonNull OrderRouteViewModel orderRouteViewModel) {
+    this.orderRouteViewModel = orderRouteViewModel;
+  }
+
   @Override
   public void onAttach(Context context) {
     super.onAttach(context);
@@ -95,6 +106,7 @@ public class OrderFulfillmentFragment extends BaseFragment implements OrderCostV
     totalTimeText = view.findViewById(R.id.timeText);
     totalCostText = view.findViewById(R.id.costText);
     freeRideText = view.findViewById(R.id.freeRideText);
+    addressTitleText = view.findViewById(R.id.addressTitleText);
     addressText = view.findViewById(R.id.addressText);
     commentTitleText = view.findViewById(R.id.commentTitleText);
     commentText = view.findViewById(R.id.commentText);
@@ -244,6 +256,16 @@ public class OrderFulfillmentFragment extends BaseFragment implements OrderCostV
         navigate(destination);
       }
     });
+    orderRouteViewModel.getViewStateLiveData().observe(this, viewState -> {
+      if (viewState != null) {
+        viewState.apply(this);
+      }
+    });
+    orderRouteViewModel.getNavigationLiveData().observe(this, destination -> {
+      if (destination != null) {
+        navigate(destination);
+      }
+    });
   }
 
   @Override
@@ -266,7 +288,7 @@ public class OrderFulfillmentFragment extends BaseFragment implements OrderCostV
 
   @Override
   public void showNextRoutePointPending(boolean pending) {
-    showPending(pending, toString());
+    showPending(pending, toString() + "0");
   }
 
   @Override
@@ -276,6 +298,11 @@ public class OrderFulfillmentFragment extends BaseFragment implements OrderCostV
 
   @Override
   public void showNextRoutePointAddress(@NonNull String coordinates, @NonNull String address) {
+    if (address.trim().isEmpty()) {
+      addressTitleText.setVisibility(View.GONE);
+    } else {
+      addressTitleText.setVisibility(View.VISIBLE);
+    }
     addressText.setText(address);
     if (coordinates.trim().isEmpty()) {
       getDirectionsAction.setVisibility(View.GONE);
@@ -343,5 +370,22 @@ public class OrderFulfillmentFragment extends BaseFragment implements OrderCostV
             LocalTime.fromMillisOfDay(currentSeconds * 1000)
         )
     );
+  }
+
+  @Override
+  public void showOrderRoutePending(boolean pending) {
+    showPending(pending, toString() + "1");
+  }
+
+  @Override
+  public void setRoutePointItems(@NonNull List<RoutePointItem> routePointItems) {
+    int pos = 0;
+    for (RoutePointItem routePointItem : routePointItems) {
+      pos++;
+      if (routePointItem.isActive()) {
+        break;
+      }
+    }
+    addressTitleText.setText(getString(R.string.next_address, pos, routePointItems.size()));
   }
 }

@@ -68,11 +68,20 @@
         android:text="@string/free_ride"
         android:visibility="gone"/>
       <TextView
+        android:id="@+id/addressTitleText"
+        style="@style/TextAppearance.AppCompat.Title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="48dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:text="@string/next_address"
+        android:textColor="@color/colorAccentSecond"/>
+      <TextView
         android:id="@+id/addressText"
         style="@style/TextAppearance.AppCompat.Headline"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
         tools:text="Москва, ул. Академика Пилюгина, 14 корпус 4, кв. 1122, П2, Э8"/>

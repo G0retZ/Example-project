@@ -124,4 +124,5 @@
   <string name="address">Адрес</string>
   <string name="exit_confirmation">Вы уверены, что хотите выйти?\n</string>
   <string name="order_complete_question">Вы завершили работу не на всех точках. Вы уверены, что хотите завершить заказ?</string>
+  <string name="next_address">Следующий адрес (%1$d из %2$d)</string>
 </resources>
