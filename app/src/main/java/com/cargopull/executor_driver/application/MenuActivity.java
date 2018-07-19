@@ -23,24 +23,9 @@ public class MenuActivity extends BaseActivity {
   @Override
   public void navigate(@NonNull String destination) {
     switch (destination) {
-      case MenuNavigate.PROFILE:
-        onBackPressed();
-        break;
       case MenuNavigate.BALANCE:
         startActivity(new Intent(this, BalanceActivity.class));
         finish();
-        break;
-      case MenuNavigate.MESSAGES:
-        onBackPressed();
-        break;
-      case MenuNavigate.HISTORY:
-        onBackPressed();
-        break;
-      case MenuNavigate.OPERATOR:
-        onBackPressed();
-        break;
-      case MenuNavigate.VEHICLES:
-        onBackPressed();
         break;
       default:
         super.navigate(destination);
