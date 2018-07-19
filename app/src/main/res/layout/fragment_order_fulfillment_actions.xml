@@ -35,34 +35,6 @@
         android:layout_height="1dp"
         android:background="@color/colorDivider"/>
       <TextView
-        android:id="@+id/pause"
-        style="@style/TextAppearance.AppCompat.Subhead"
-        android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
-        android:background="?android:attr/selectableItemBackground"
-        android:gravity="center_vertical"
-        android:text="@string/pause"/>
-      <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/colorDivider"/>
-      <TextView
-        android:id="@+id/costDetailed"
-        style="@style/TextAppearance.AppCompat.Subhead"
-        android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
-        android:background="?android:attr/selectableItemBackground"
-        android:gravity="center_vertical"
-        android:text="@string/cost_detailed"/>
-      <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/colorDivider"/>
-      <TextView
         android:id="@+id/orderDetails"
         style="@style/TextAppearance.AppCompat.Subhead"
         android:layout_width="match_parent"
@@ -86,20 +58,6 @@
         android:background="?android:attr/selectableItemBackground"
         android:gravity="center_vertical"
         android:text="@string/call_client"/>
-      <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/colorDivider"/>
-      <TextView
-        android:id="@+id/addService"
-        style="@style/TextAppearance.AppCompat.Subhead"
-        android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
-        android:background="?android:attr/selectableItemBackground"
-        android:gravity="center_vertical"
-        android:text="@string/add_service"/>
       <View
         android:layout_width="match_parent"
         android:layout_height="1dp"

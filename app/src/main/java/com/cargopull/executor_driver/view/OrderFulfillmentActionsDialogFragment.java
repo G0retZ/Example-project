@@ -74,20 +74,11 @@ public class OrderFulfillmentActionsDialogFragment extends BaseDialogFragment im
     view.findViewById(R.id.orderRoute).setOnClickListener(
         v -> navigate(OrderFulfillmentActionsNavigate.ORDER_ROUTE)
     );
-    view.findViewById(R.id.pause).setOnClickListener(
-        v -> navigate(OrderFulfillmentActionsNavigate.PAUSE)
-    );
-    view.findViewById(R.id.costDetailed).setOnClickListener(
-        v -> navigate(OrderFulfillmentActionsNavigate.COST_DETAILED)
-    );
     view.findViewById(R.id.orderDetails).setOnClickListener(
         v -> navigate(OrderFulfillmentActionsNavigate.ORDER_INFORMATION)
     );
     view.findViewById(R.id.callToClient).setOnClickListener(
         v -> navigate(OrderFulfillmentActionsNavigate.CALL_TO_CLIENT)
-    );
-    view.findViewById(R.id.addService).setOnClickListener(
-        v -> navigate(OrderFulfillmentActionsNavigate.ADD_SERVICE)
     );
     view.findViewById(R.id.reportAProblem).setOnClickListener(
         v -> navigate(OrderFulfillmentActionsNavigate.REPORT_A_PROBLEM)
