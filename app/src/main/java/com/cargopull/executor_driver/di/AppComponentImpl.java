@@ -136,6 +136,8 @@ import com.cargopull.executor_driver.presentation.services.ServicesViewModelImpl
 import com.cargopull.executor_driver.presentation.smsbutton.SmsButtonViewModelImpl;
 import com.cargopull.executor_driver.presentation.vehicleoptions.VehicleOptionsViewModelImpl;
 import com.cargopull.executor_driver.presentation.waitingforclient.WaitingForClientViewModelImpl;
+import com.cargopull.executor_driver.utils.ErrorReporter;
+import com.cargopull.executor_driver.utils.ErrorReporterImpl;
 import com.cargopull.executor_driver.utils.TimeUtilsImpl;
 import com.cargopull.executor_driver.view.BalanceFragment;
 import com.cargopull.executor_driver.view.BalanceSummaryFragment;
@@ -180,6 +182,8 @@ import ua.naiksoftware.stomp.client.StompClient;
 
 public class AppComponentImpl implements AppComponent {
 
+  @NonNull
+  private final ErrorReporter errorReporter;
   @NonNull
   private final AppSettingsService appSettingsService;
   @NonNull
@@ -229,6 +233,7 @@ public class AppComponentImpl implements AppComponent {
     loginSharer = new LoginSharer(appSettingsService);
     vehicleChoiceSharer = new VehicleChoiceSharer();
     lastUsedVehicleGateway = new LastUsedVehicleGatewayImpl(appSettingsService);
+    errorReporter = new ErrorReporterImpl(loginSharer);
     serverConnectionViewModel = new ServerConnectionViewModelImpl(
         new ServerConnectionUseCaseImpl(
             new ServerConnectionGatewayImpl(
@@ -237,6 +242,7 @@ public class AppComponentImpl implements AppComponent {
         )
     );
     cancelOrderUseCase = new CancelOrderUseCaseImpl(
+        errorReporter,
         new CancelOrderGatewayImpl(
             stompClient,
             new CancelOrderReasonApiMapper()
@@ -244,6 +250,7 @@ public class AppComponentImpl implements AppComponent {
         loginSharer
     );
     executorBalanceUseCase = new ExecutorBalanceUseCaseImpl(
+        errorReporter,
         new ExecutorBalanceGatewayImpl(
             stompClient,
             new ExecutorBalanceApiMapper()
@@ -251,6 +258,7 @@ public class AppComponentImpl implements AppComponent {
         loginSharer
     );
     executorStateUseCase = new ExecutorStateUseCaseImpl(
+        errorReporter,
         new ExecutorStateGatewayImpl(stompClient, new ExecutorStateApiMapper()),
         loginSharer
     );
@@ -307,6 +315,7 @@ public class AppComponentImpl implements AppComponent {
     mainApplication.setMissedOrderViewModel(
         new MissedOrderViewModelImpl(
             new MissedOrderUseCaseImpl(
+                errorReporter,
                 new MissedOrderGatewayImpl(
                     stompClient
                 ),
@@ -443,6 +452,7 @@ public class AppComponentImpl implements AppComponent {
             new ViewModelFactory<>(
                 new OnlineSwitchViewModelImpl(
                     new ExecutorStateNotOnlineUseCaseImpl(
+                        errorReporter,
                         new ExecutorStateSwitchGatewayImpl(stompClient),
                         executorStateUseCase
                     )
@@ -456,6 +466,7 @@ public class AppComponentImpl implements AppComponent {
             new ViewModelFactory<>(
                 new OnlineButtonViewModelImpl(
                     new VehiclesAndOptionsUseCaseImpl(
+                        errorReporter,
                         selectedVehiclesAndOptionsGateway,
                         vehicleChoiceSharer,
                         lastUsedVehicleGateway
@@ -482,6 +493,7 @@ public class AppComponentImpl implements AppComponent {
             new ViewModelFactory<>(
                 new OnlineButtonViewModelImpl(
                     new VehiclesAndOptionsUseCaseImpl(
+                        errorReporter,
                         vehiclesAndOptionsGateway,
                         vehicleChoiceSharer,
                         lastUsedVehicleGateway
@@ -502,7 +514,9 @@ public class AppComponentImpl implements AppComponent {
             chooseVehicleFragment,
             new ViewModelFactory<>(
                 new ChooseVehicleViewModelImpl(
-                    new VehicleChoiceUseCaseImpl(vehiclesAndOptionsGateway, vehicleChoiceSharer)
+                    new VehicleChoiceUseCaseImpl(
+                        errorReporter, vehiclesAndOptionsGateway, vehicleChoiceSharer
+                    )
                 )
             )
         ).get(ChooseVehicleViewModelImpl.class)
@@ -520,6 +534,7 @@ public class AppComponentImpl implements AppComponent {
             new ViewModelFactory<>(
                 new VehicleOptionsViewModelImpl(
                     new VehicleOptionsUseCaseImpl(
+                        errorReporter,
                         new VehicleOptionsGatewayImpl(
                             apiService
                         ),
@@ -544,6 +559,7 @@ public class AppComponentImpl implements AppComponent {
             new ViewModelFactory<>(
                 new VehicleOptionsViewModelImpl(
                     new VehicleOptionsUseCaseImpl(
+                        errorReporter,
                         new CurrentVehicleOptionsGatewayImpl(
                             apiService
                         ),
@@ -580,6 +596,7 @@ public class AppComponentImpl implements AppComponent {
             new ViewModelFactory<>(
                 new ChooseVehicleViewModelImpl(
                     new VehicleChoiceUseCaseImpl(
+                        errorReporter,
                         selectedVehiclesAndOptionsGateway == null ?
                             vehiclesAndOptionsGateway :
                             selectedVehiclesAndOptionsGateway,
@@ -608,6 +625,7 @@ public class AppComponentImpl implements AppComponent {
             new ViewModelFactory<>(
                 new ServicesViewModelImpl(
                     new ServicesUseCaseImpl(
+                        errorReporter,
                         new ServicesGatewayImpl(
                             apiService,
                             new ServiceApiMapper()
@@ -648,6 +666,7 @@ public class AppComponentImpl implements AppComponent {
             new ViewModelFactory<>(
                 new OrderViewModelImpl(
                     new OrderUseCaseImpl(
+                        errorReporter,
                         new OrderGatewayImpl(
                             executorStateUseCase,
                             ExecutorState.DRIVER_ORDER_CONFIRMATION,
@@ -672,6 +691,7 @@ public class AppComponentImpl implements AppComponent {
             new ViewModelFactory<>(
                 new OrderViewModelImpl(
                     new OrderUseCaseImpl(
+                        errorReporter,
                         new OrderGatewayImpl(
                             executorStateUseCase,
                             ExecutorState.CLIENT_ORDER_CONFIRMATION,
@@ -722,6 +742,7 @@ public class AppComponentImpl implements AppComponent {
             new ViewModelFactory<>(
                 new OrderViewModelImpl(
                     new OrderUseCaseImpl(
+                        errorReporter,
                         new OrderGatewayImpl(
                             executorStateUseCase,
                             ExecutorState.MOVING_TO_CLIENT,
@@ -746,6 +767,7 @@ public class AppComponentImpl implements AppComponent {
             new ViewModelFactory<>(
                 new OrderViewModelImpl(
                     new OrderUseCaseImpl(
+                        errorReporter,
                         new OrderGatewayImpl(
                             executorStateUseCase,
                             ExecutorState.MOVING_TO_CLIENT,
@@ -770,6 +792,7 @@ public class AppComponentImpl implements AppComponent {
             new ViewModelFactory<>(
                 new OrderRouteViewModelImpl(
                     new OrderRouteUseCaseImpl(
+                        errorReporter,
                         new OrderGatewayImpl(
                             executorStateUseCase,
                             ExecutorState.MOVING_TO_CLIENT,
@@ -806,6 +829,7 @@ public class AppComponentImpl implements AppComponent {
             new ViewModelFactory<>(
                 new OrderViewModelImpl(
                     new OrderUseCaseImpl(
+                        errorReporter,
                         new OrderGatewayImpl(
                             executorStateUseCase,
                             ExecutorState.WAITING_FOR_CLIENT,
@@ -830,6 +854,7 @@ public class AppComponentImpl implements AppComponent {
             new ViewModelFactory<>(
                 new OrderRouteViewModelImpl(
                     new OrderRouteUseCaseImpl(
+                        errorReporter,
                         new OrderGatewayImpl(
                             executorStateUseCase,
                             ExecutorState.WAITING_FOR_CLIENT,
@@ -854,6 +879,7 @@ public class AppComponentImpl implements AppComponent {
             new ViewModelFactory<>(
                 new OrderTimeViewModelImpl(
                     new OrderFulfillmentTimeUseCaseImpl(
+                        errorReporter,
                         new OrderGatewayImpl(
                             executorStateUseCase,
                             ExecutorState.ORDER_FULFILLMENT,
@@ -874,6 +900,7 @@ public class AppComponentImpl implements AppComponent {
             new ViewModelFactory<>(
                 new OrderCostViewModelImpl(
                     new OrderCurrentCostUseCaseImpl(
+                        errorReporter,
                         new OrderGatewayImpl(
                             executorStateUseCase,
                             ExecutorState.ORDER_FULFILLMENT,
@@ -898,6 +925,7 @@ public class AppComponentImpl implements AppComponent {
             new ViewModelFactory<>(
                 new NextRoutePointViewModelImpl(
                     new OrderRouteUseCaseImpl(
+                        errorReporter,
                         new OrderGatewayImpl(
                             executorStateUseCase,
                             ExecutorState.ORDER_FULFILLMENT,
@@ -918,6 +946,7 @@ public class AppComponentImpl implements AppComponent {
             new ViewModelFactory<>(
                 new OrderRouteViewModelImpl(
                     new OrderRouteUseCaseImpl(
+                        errorReporter,
                         new OrderGatewayImpl(
                             executorStateUseCase,
                             ExecutorState.ORDER_FULFILLMENT,
@@ -942,6 +971,7 @@ public class AppComponentImpl implements AppComponent {
             new ViewModelFactory<>(
                 new OrderViewModelImpl(
                     new OrderUseCaseImpl(
+                        errorReporter,
                         new OrderGatewayImpl(
                             executorStateUseCase,
                             ExecutorState.ORDER_FULFILLMENT,
@@ -966,6 +996,7 @@ public class AppComponentImpl implements AppComponent {
             new ViewModelFactory<>(
                 new NextRoutePointViewModelImpl(
                     new OrderRouteUseCaseImpl(
+                        errorReporter,
                         new OrderGatewayImpl(
                             executorStateUseCase,
                             ExecutorState.ORDER_FULFILLMENT,
@@ -990,6 +1021,7 @@ public class AppComponentImpl implements AppComponent {
             new ViewModelFactory<>(
                 new OrderRouteViewModelImpl(
                     new OrderRouteUseCaseImpl(
+                        errorReporter,
                         new OrderGatewayImpl(
                             executorStateUseCase,
                             ExecutorState.ORDER_FULFILLMENT,
@@ -1094,6 +1126,7 @@ public class AppComponentImpl implements AppComponent {
             new ViewModelFactory<>(
                 new OnlineSwitchViewModelImpl(
                     new ExecutorStateNotOnlineUseCaseImpl(
+                        errorReporter,
                         new ExecutorStateSwitchGatewayImpl(stompClient),
                         executorStateUseCase
                     )

@@ -53,12 +53,11 @@ public class CurrentCostPollingGatewayImpl implements CurrentCostPollingGateway 
               }, Throwable::printStackTrace)
           )
           .map(stompMessage -> mapper.map(stompMessage.getPayload()))
-          .switchMap(pair -> Flowable
-              .interval(pair.first, pair.second, TimeUnit.MILLISECONDS)
-          ).flatMapCompletable(
+          .switchMap(pair -> Flowable.interval(pair.first, pair.second, TimeUnit.MILLISECONDS))
+          .flatMapCompletable(
               b -> stompClient.send(BuildConfig.POLLING_DESTINATION, "\"\"")
           ).observeOn(Schedulers.single());
     }
-    return Completable.error(new ConnectionClosedException());
+    return Completable.error(ConnectionClosedException::new);
   }
 }

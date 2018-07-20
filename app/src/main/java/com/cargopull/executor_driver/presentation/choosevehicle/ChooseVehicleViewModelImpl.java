@@ -5,7 +5,7 @@ import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
 import com.cargopull.executor_driver.R;
-import com.cargopull.executor_driver.entity.NoVehiclesAvailableException;
+import com.cargopull.executor_driver.entity.EmptyListException;
 import com.cargopull.executor_driver.entity.Vehicle;
 import com.cargopull.executor_driver.interactor.vehicle.VehicleChoiceUseCase;
 import com.cargopull.executor_driver.presentation.SingleLiveEvent;
@@ -62,7 +62,8 @@ public class ChooseVehicleViewModelImpl extends ViewModel implements ChooseVehic
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(
             () -> navigateLiveData.postValue(ChooseVehicleNavigate.VEHICLE_OPTIONS),
-            Throwable::printStackTrace
+            throwable -> {
+            }
         );
   }
 
@@ -86,8 +87,7 @@ public class ChooseVehicleViewModelImpl extends ViewModel implements ChooseVehic
   }
 
   private void consumeError(Throwable error) {
-    error.printStackTrace();
-    if (error.getClass() == NoVehiclesAvailableException.class) {
+    if (error instanceof EmptyListException) {
       viewStateLiveData.postValue(new ChooseVehicleViewStateError(R.string.no_vehicles_available));
     } else {
       viewStateLiveData.postValue(new ChooseVehicleViewStateError(R.string.error));

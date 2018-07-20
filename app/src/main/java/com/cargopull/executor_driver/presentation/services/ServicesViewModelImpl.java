@@ -5,7 +5,7 @@ import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
 import com.cargopull.executor_driver.R;
-import com.cargopull.executor_driver.entity.NoServicesAvailableException;
+import com.cargopull.executor_driver.entity.EmptyListException;
 import com.cargopull.executor_driver.entity.Service;
 import com.cargopull.executor_driver.interactor.services.ServicesUseCase;
 import com.cargopull.executor_driver.presentation.ViewState;
@@ -72,9 +72,8 @@ public class ServicesViewModelImpl extends ViewModel implements ServicesViewMode
             () -> {
             },
             throwable -> {
-              throwable.printStackTrace();
               ServicesViewStateResolvableError servicesViewStateError;
-              if (throwable instanceof NoServicesAvailableException) {
+              if (throwable instanceof EmptyListException) {
                 servicesViewStateError = new ServicesViewStateResolvableError(
                     R.string.no_services_selected,
                     this.servicesListItems.getServicesListItems()
@@ -125,9 +124,8 @@ public class ServicesViewModelImpl extends ViewModel implements ServicesViewMode
               ));
             },
             throwable -> {
-              throwable.printStackTrace();
               ServicesViewStateError servicesViewStateError;
-              if (throwable instanceof NoServicesAvailableException) {
+              if (throwable instanceof EmptyListException) {
                 servicesViewStateError = new ServicesViewStateError(R.string.no_services_available);
               } else {
                 servicesViewStateError = new ServicesViewStateError(R.string.no_network_connection);

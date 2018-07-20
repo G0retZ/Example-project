@@ -52,6 +52,6 @@ public class ExecutorBalanceGatewayImpl implements ExecutorBalanceGateway {
           .map(stompMessage -> mapper.map(stompMessage.getPayload()))
           .observeOn(Schedulers.single());
     }
-    return Flowable.error(new ConnectionClosedException());
+    return Flowable.error(ConnectionClosedException::new);
   }
 }

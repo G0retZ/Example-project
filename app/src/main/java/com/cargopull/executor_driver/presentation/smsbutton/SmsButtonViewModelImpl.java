@@ -58,7 +58,6 @@ public class SmsButtonViewModelImpl extends ViewModel implements SmsButtonViewMo
         .subscribe(
             this::holdButton,
             throwable -> {
-              throwable.printStackTrace();
               if (throwable instanceof NoNetworkException) {
                 viewStateLiveData.postValue(new SmsButtonViewStateError());
               } else {
@@ -75,7 +74,8 @@ public class SmsButtonViewModelImpl extends ViewModel implements SmsButtonViewMo
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(
             count -> viewStateLiveData.postValue(new SmsButtonViewStateHold(count)),
-            Throwable::printStackTrace,
+            throwable -> {
+            },
             () -> viewStateLiveData.postValue(new SmsButtonViewStateReady())
         );
   }

@@ -53,7 +53,7 @@ public class PhoneViewModelImpl extends ViewModel implements PhoneViewModel {
     disposable = loginUseCase.validateLogin(phoneNumber.replaceAll("[^\\d]", ""))
         .subscribeOn(Schedulers.single())
         .observeOn(AndroidSchedulers.mainThread())
-        .subscribe(this::switchToSuccess, this::switchToError);
+        .subscribe(this::switchToSuccess, throwable -> switchToError());
   }
 
   @Override
@@ -69,7 +69,8 @@ public class PhoneViewModelImpl extends ViewModel implements PhoneViewModel {
               viewStateLiveData.postValue(new PhoneViewStateInitial());
               navigateLiveData.postValue(PhoneNavigate.PASSWORD);
             },
-            Throwable::printStackTrace
+            throwable -> {
+            }
         );
   }
 
@@ -83,8 +84,7 @@ public class PhoneViewModelImpl extends ViewModel implements PhoneViewModel {
     viewStateLiveData.postValue(new PhoneViewStateReady());
   }
 
-  private void switchToError(Throwable throwable) {
-    throwable.printStackTrace();
+  private void switchToError() {
     if (!(viewStateLiveData.getValue() instanceof PhoneViewStateInitial)) {
       viewStateLiveData.setValue(new PhoneViewStateInitial());
     }

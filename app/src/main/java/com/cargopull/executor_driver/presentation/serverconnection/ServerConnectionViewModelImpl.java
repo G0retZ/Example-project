@@ -59,7 +59,6 @@ public class ServerConnectionViewModelImpl extends ViewModel implements ServerCo
                     viewActions.showConnectionReady(connected)
                 ),
             throwable -> {
-              throwable.printStackTrace();
               if ((throwable instanceof AuthorizationException)) {
                 navigateLiveData.postValue(ServerConnectionNavigate.AUTHORIZE);
               }

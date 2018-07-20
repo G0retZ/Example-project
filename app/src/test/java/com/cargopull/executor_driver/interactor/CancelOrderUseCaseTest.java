@@ -11,13 +11,15 @@ import static org.mockito.Mockito.when;
 
 import com.cargopull.executor_driver.backend.web.NoNetworkException;
 import com.cargopull.executor_driver.entity.CancelOrderReason;
+import com.cargopull.executor_driver.gateway.DataMappingException;
+import com.cargopull.executor_driver.utils.ErrorReporter;
 import io.reactivex.Completable;
 import io.reactivex.Flowable;
 import io.reactivex.Observable;
 import io.reactivex.functions.Action;
 import io.reactivex.observers.TestObserver;
 import io.reactivex.subscribers.TestSubscriber;
-import java.net.ConnectException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -34,6 +36,8 @@ public class CancelOrderUseCaseTest {
 
   private CancelOrderUseCase useCase;
 
+  @Mock
+  private ErrorReporter errorReporter;
   @Mock
   private CancelOrderGateway gateway;
   @Mock
@@ -54,7 +58,7 @@ public class CancelOrderUseCaseTest {
     when(gateway.loadCancelOrderReasons(anyString())).thenReturn(Flowable.never());
     when(loginReceiver.get()).thenReturn(Observable.never());
     when(gateway.cancelOrder(any())).thenReturn(Completable.never());
-    useCase = new CancelOrderUseCaseImpl(gateway, loginReceiver);
+    useCase = new CancelOrderUseCaseImpl(errorReporter, gateway, loginReceiver);
   }
 
   /* Проверяем работу с публикатором логина */
@@ -211,6 +215,79 @@ public class CancelOrderUseCaseTest {
     verifyNoMoreInteractions(gateway);
   }
 
+  /* Проверяем отправку ошибок в репортер */
+
+  /**
+   * Должен отправить ошибку, если была ошибка получения логина.
+   */
+  @Test
+  public void reportGetLoginFailed() {
+    when(loginReceiver.get()).thenReturn(Observable.error(IOException::new));
+
+    // Действие:
+    useCase.getCancelOrderReasons(true).test();
+
+    // Результат:
+    verify(errorReporter, only()).reportError(any(IOException.class));
+  }
+
+  /**
+   * Должен отправить ошибку, если подписка обломалась.
+   */
+  @Test
+  public void reportSubscriptionFailed() {
+    when(loginReceiver.get()).thenReturn(Observable.just("1234567890"));
+    when(gateway.loadCancelOrderReasons("1234567890"))
+        .thenReturn(Flowable.error(DataMappingException::new));
+
+    // Действие:
+    useCase.getCancelOrderReasons(true).test();
+
+    // Результат:
+    verify(errorReporter, only()).reportError(any(DataMappingException.class));
+  }
+
+  /**
+   * Должен отправить ошибку, если выбраной причины нет в списке.
+   */
+  @Test
+  public void reportOutOfBoundsError() {
+    when(loginReceiver.get()).thenReturn(Observable.just("1234567890"));
+    when(gateway.loadCancelOrderReasons("1234567890")).thenReturn(Flowable.just(
+        new ArrayList<>(Arrays.asList(
+            cancelOrderReason, cancelOrderReason1, cancelOrderReason3
+        ))
+    ));
+
+    // Действие:
+    useCase.getCancelOrderReasons(true).test();
+    useCase.cancelOrder(cancelOrderReason2).test();
+
+    // Результат:
+    verify(errorReporter, only()).reportError(any(IndexOutOfBoundsException.class));
+  }
+
+  /**
+   * Не должен отправлять ошибку, если отправка отмены заказа обломалась.
+   */
+  @Test
+  public void doNotReportCancelOrderFailed() {
+    when(loginReceiver.get()).thenReturn(Observable.just("1234567890"));
+    when(gateway.loadCancelOrderReasons("1234567890")).thenReturn(Flowable.just(
+        new ArrayList<>(Arrays.asList(
+            cancelOrderReason, cancelOrderReason1, cancelOrderReason2, cancelOrderReason3
+        ))
+    ));
+    when(gateway.cancelOrder(any())).thenReturn(Completable.error(NoNetworkException::new));
+
+    // Действие:
+    useCase.getCancelOrderReasons(true).test();
+    useCase.cancelOrder(cancelOrderReason2).test();
+
+    // Результат:
+    verifyZeroInteractions(errorReporter);
+  }
+
   /* Проверяем ответы */
 
   /**
@@ -245,14 +322,14 @@ public class CancelOrderUseCaseTest {
    */
   @Test
   public void answerWithErrorIfGetLoginFailed() {
-    when(loginReceiver.get()).thenReturn(Observable.error(ConnectException::new));
+    when(loginReceiver.get()).thenReturn(Observable.error(IOException::new));
 
     // Действие:
     TestSubscriber<List<CancelOrderReason>> testSubscriber =
         useCase.getCancelOrderReasons(true).test();
 
     // Результат:
-    testSubscriber.assertError(ConnectException.class);
+    testSubscriber.assertError(IOException.class);
     testSubscriber.assertNoValues();
   }
 
@@ -263,14 +340,14 @@ public class CancelOrderUseCaseTest {
   public void answerWithErrorIfSubscriptionFailed() {
     when(loginReceiver.get()).thenReturn(Observable.just("1234567890"));
     when(gateway.loadCancelOrderReasons("1234567890"))
-        .thenReturn(Flowable.error(ConnectException::new));
+        .thenReturn(Flowable.error(DataMappingException::new));
 
     // Действие:
     TestSubscriber<List<CancelOrderReason>> testSubscriber =
         useCase.getCancelOrderReasons(true).test();
 
     // Результат:
-    testSubscriber.assertError(ConnectException.class);
+    testSubscriber.assertError(DataMappingException.class);
     testSubscriber.assertNoValues();
   }
 

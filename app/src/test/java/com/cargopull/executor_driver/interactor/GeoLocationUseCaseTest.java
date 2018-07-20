@@ -33,13 +33,10 @@ public class GeoLocationUseCaseTest {
 
   @Mock
   private GeoLocationGateway geoLocationGateway;
-
   @Mock
   private GeoTrackingGateway geoTrackingGateway;
-
   @Mock
   private ExecutorStateUseCase executorStateUseCase;
-
   @Mock
   private Action action;
 

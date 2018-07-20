@@ -13,7 +13,7 @@ import android.arch.core.executor.testing.InstantTaskExecutorRule;
 import android.arch.lifecycle.Observer;
 import com.cargopull.executor_driver.R;
 import com.cargopull.executor_driver.backend.web.NoNetworkException;
-import com.cargopull.executor_driver.entity.NoServicesAvailableException;
+import com.cargopull.executor_driver.entity.EmptyListException;
 import com.cargopull.executor_driver.entity.Service;
 import com.cargopull.executor_driver.gateway.DataMappingException;
 import com.cargopull.executor_driver.interactor.services.ServicesUseCase;
@@ -329,7 +329,7 @@ public class ServicesViewModelTest {
     when(servicesUseCase.setSelectedServices(anyList())).thenReturn(
         Completable.complete(),
         Completable.error(NoNetworkException::new),
-        Completable.error(NoServicesAvailableException::new)
+        Completable.error(EmptyListException::new)
     );
 
     // Действие:
@@ -407,7 +407,7 @@ public class ServicesViewModelTest {
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    serviceSingleSubject.onError(new NoServicesAvailableException());
+    serviceSingleSubject.onError(new EmptyListException());
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(any(ServicesViewStatePending.class));
@@ -519,7 +519,7 @@ public class ServicesViewModelTest {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     when(servicesUseCase.setSelectedServices(anyList()))
-        .thenReturn(Completable.error(NoServicesAvailableException::new));
+        .thenReturn(Completable.error(EmptyListException::new));
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
@@ -557,7 +557,7 @@ public class ServicesViewModelTest {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     when(servicesUseCase.setSelectedServices(anyList()))
-        .thenReturn(Completable.error(NoServicesAvailableException::new));
+        .thenReturn(Completable.error(EmptyListException::new));
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:

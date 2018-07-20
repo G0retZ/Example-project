@@ -8,4 +8,8 @@ public class DriverBlockedException extends Exception {
   public DriverBlockedException() {
     super();
   }
+
+  public DriverBlockedException(String message) {
+    super(message);
+  }
 }

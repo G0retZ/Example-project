@@ -26,7 +26,7 @@ public class CurrentCostPollingTimersApiMapper implements Mapper<String, Pair<Lo
     try {
       apiOrderTimers = gson.fromJson(from, ApiOrderTimers.class);
     } catch (Exception e) {
-      throw new DataMappingException("Ошибка маппинга: не удалось распарсить JSON!", e);
+      throw new DataMappingException("Ошибка маппинга: не удалось распарсить JSON: " + from, e);
     }
     long timer = 0;
     if (apiOrderTimers.getOverPackageTimer() != null) {

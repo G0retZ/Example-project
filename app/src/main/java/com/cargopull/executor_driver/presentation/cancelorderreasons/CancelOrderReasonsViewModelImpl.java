@@ -52,7 +52,6 @@ public class CancelOrderReasonsViewModelImpl extends ViewModel implements
             cancelOrderReasons -> {
             },
             throwable -> {
-              throwable.printStackTrace();
               if (throwable instanceof DataMappingException) {
                 navigateLiveData.postValue(CommonNavigate.SERVER_DATA_ERROR);
               }

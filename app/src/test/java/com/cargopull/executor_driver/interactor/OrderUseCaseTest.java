@@ -1,11 +1,13 @@
 package com.cargopull.executor_driver.interactor;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.cargopull.executor_driver.entity.Order;
 import com.cargopull.executor_driver.gateway.DataMappingException;
+import com.cargopull.executor_driver.utils.ErrorReporter;
 import io.reactivex.Flowable;
 import io.reactivex.subscribers.TestSubscriber;
 import org.junit.Before;
@@ -20,6 +22,8 @@ public class OrderUseCaseTest {
   private OrderUseCase useCase;
 
   @Mock
+  private ErrorReporter errorReporter;
+  @Mock
   private OrderGateway gateway;
   @Mock
   private Order order;
@@ -29,7 +33,7 @@ public class OrderUseCaseTest {
   @Before
   public void setUp() {
     when(gateway.getOrders()).thenReturn(Flowable.never());
-    useCase = new OrderUseCaseImpl(gateway);
+    useCase = new OrderUseCaseImpl(errorReporter, gateway);
   }
 
   /* Проверяем работу с гейтвеем */
@@ -44,6 +48,23 @@ public class OrderUseCaseTest {
 
     // Результат:
     verify(gateway, only()).getOrders();
+  }
+
+  /* Проверяем отправку ошибок в репортер */
+
+  /**
+   * Должен отправить ошибку маппинга.
+   */
+  @Test
+  public void reportDataMappingError() {
+    // Дано:
+    when(gateway.getOrders()).thenReturn(Flowable.error(new DataMappingException()));
+
+    // Действие:
+    useCase.getOrders().test();
+
+    // Результат:
+    verify(errorReporter, only()).reportError(any(DataMappingException.class));
   }
 
   /* Проверяем ответы на запрос заказов */

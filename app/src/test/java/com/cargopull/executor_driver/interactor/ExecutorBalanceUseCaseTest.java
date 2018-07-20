@@ -1,6 +1,8 @@
 package com.cargopull.executor_driver.interactor;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -9,11 +11,13 @@ import static org.mockito.Mockito.when;
 
 import com.cargopull.executor_driver.backend.web.NoNetworkException;
 import com.cargopull.executor_driver.entity.ExecutorBalance;
+import com.cargopull.executor_driver.gateway.DataMappingException;
+import com.cargopull.executor_driver.utils.ErrorReporter;
 import io.reactivex.Flowable;
 import io.reactivex.Observable;
 import io.reactivex.functions.Action;
 import io.reactivex.subscribers.TestSubscriber;
-import java.net.ConnectException;
+import java.io.IOException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,6 +31,8 @@ public class ExecutorBalanceUseCaseTest {
 
   private ExecutorBalanceUseCase useCase;
 
+  @Mock
+  private ErrorReporter errorReporter;
   @Mock
   private ExecutorBalanceGateway gateway;
   @Mock
@@ -44,7 +50,7 @@ public class ExecutorBalanceUseCaseTest {
   public void setUp() {
     when(gateway.loadExecutorBalance(anyString())).thenReturn(Flowable.never());
     when(loginReceiver.get()).thenReturn(Observable.never());
-    useCase = new ExecutorBalanceUseCaseImpl(gateway, loginReceiver);
+    useCase = new ExecutorBalanceUseCaseImpl(errorReporter, gateway, loginReceiver);
   }
 
   /* Проверяем работу с публикатором логина */
@@ -164,6 +170,40 @@ public class ExecutorBalanceUseCaseTest {
     verifyZeroInteractions(gateway);
   }
 
+  /* Проверяем отправку ошибок в репортер */
+
+  /**
+   * Должен отправить ошибку, если была ошибка получения логина.
+   */
+  @Test
+  public void reportGetLoginFailed() {
+    // Дано:
+    when(loginReceiver.get()).thenReturn(Observable.error(IOException::new));
+
+    // Действие:
+    useCase.getExecutorBalance(true).test();
+
+    // Результат:
+    verify(errorReporter, only()).reportError(any(IOException.class));
+  }
+
+  /**
+   * Должен отправить ошибку, если подписка обломалась.
+   */
+  @Test
+  public void reportSubscriptionFailed() {
+    // Дано:
+    when(loginReceiver.get()).thenReturn(Observable.just("1234567890"));
+    when(gateway.loadExecutorBalance("1234567890"))
+        .thenReturn(Flowable.error(DataMappingException::new));
+
+    // Действие:
+    useCase.getExecutorBalance(true).test();
+
+    // Результат:
+    verify(errorReporter, only()).reportError(any(DataMappingException.class));
+  }
+
   /* Проверяем ответы */
 
   /**
@@ -192,14 +232,14 @@ public class ExecutorBalanceUseCaseTest {
   @Test
   public void answerWithErrorIfGetLoginFailed() {
     // Дано:
-    when(loginReceiver.get()).thenReturn(Observable.error(ConnectException::new));
+    when(loginReceiver.get()).thenReturn(Observable.error(IOException::new));
 
     // Действие:
     TestSubscriber<ExecutorBalance> testSubscriber =
         useCase.getExecutorBalance(true).test();
 
     // Результат:
-    testSubscriber.assertError(ConnectException.class);
+    testSubscriber.assertError(IOException.class);
     testSubscriber.assertNoValues();
   }
 
@@ -211,14 +251,14 @@ public class ExecutorBalanceUseCaseTest {
     // Дано:
     when(loginReceiver.get()).thenReturn(Observable.just("1234567890"));
     when(gateway.loadExecutorBalance("1234567890"))
-        .thenReturn(Flowable.error(ConnectException::new));
+        .thenReturn(Flowable.error(DataMappingException::new));
 
     // Действие:
     TestSubscriber<ExecutorBalance> testSubscriber =
         useCase.getExecutorBalance(true).test();
 
     // Результат:
-    testSubscriber.assertError(ConnectException.class);
+    testSubscriber.assertError(DataMappingException.class);
     testSubscriber.assertNoValues();
   }
 

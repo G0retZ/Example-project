@@ -33,4 +33,13 @@ public class CancelOrderReason {
   public String getUnusedName() {
     return unusedName;
   }
+
+  @Override
+  public String toString() {
+    return "CancelOrderReason{" +
+        "id=" + id +
+        ", name='" + name + '\'' +
+        ", unusedName='" + unusedName + '\'' +
+        '}';
+  }
 }

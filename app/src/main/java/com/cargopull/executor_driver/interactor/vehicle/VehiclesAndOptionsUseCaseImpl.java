@@ -1,16 +1,20 @@
 package com.cargopull.executor_driver.interactor.vehicle;
 
 import android.support.annotation.NonNull;
-import com.cargopull.executor_driver.entity.NoFreeVehiclesException;
-import com.cargopull.executor_driver.entity.NoVehiclesAvailableException;
+import com.cargopull.executor_driver.entity.DriverBlockedException;
+import com.cargopull.executor_driver.entity.EmptyListException;
 import com.cargopull.executor_driver.entity.Vehicle;
+import com.cargopull.executor_driver.utils.ErrorReporter;
 import io.reactivex.Completable;
 import io.reactivex.Observer;
 import io.reactivex.Single;
+import java.util.NoSuchElementException;
 import javax.inject.Inject;
 
 public class VehiclesAndOptionsUseCaseImpl implements VehiclesAndOptionsUseCase {
 
+  @NonNull
+  private final ErrorReporter errorReporter;
   @NonNull
   private final VehiclesAndOptionsGateway gateway;
   @NonNull
@@ -19,9 +23,12 @@ public class VehiclesAndOptionsUseCaseImpl implements VehiclesAndOptionsUseCase 
   private final LastUsedVehicleGateway lastUsedVehicleGateway;
 
   @Inject
-  public VehiclesAndOptionsUseCaseImpl(@NonNull VehiclesAndOptionsGateway gateway,
+  public VehiclesAndOptionsUseCaseImpl(
+      @NonNull ErrorReporter errorReporter,
+      @NonNull VehiclesAndOptionsGateway gateway,
       @NonNull Observer<Vehicle> vehicleChoiceObserver,
       @NonNull LastUsedVehicleGateway lastUsedVehicleGateway) {
+    this.errorReporter = errorReporter;
     this.gateway = gateway;
     this.vehicleChoiceObserver = vehicleChoiceObserver;
     this.lastUsedVehicleGateway = lastUsedVehicleGateway;
@@ -37,7 +44,7 @@ public class VehiclesAndOptionsUseCaseImpl implements VehiclesAndOptionsUseCase 
                 .getExecutorVehicles()
                 .doOnSuccess(list -> {
                   if (list.isEmpty()) {
-                    throw new NoVehiclesAvailableException();
+                    throw new EmptyListException("Нет ТС доступных для исполнителя.");
                   }
                   Vehicle freeVehicle = null;
                   for (Vehicle vehicle : list) {
@@ -49,11 +56,17 @@ public class VehiclesAndOptionsUseCaseImpl implements VehiclesAndOptionsUseCase 
                     }
                   }
                   if (freeVehicle == null) {
-                    throw new NoFreeVehiclesException();
+                    throw new NoSuchElementException("Нет свободных ТС. Доступные ТС:" + list);
                   } else {
                     vehicleChoiceObserver.onNext(freeVehicle);
                   }
                 }).toCompletable()
-        );
+        ).doOnError(throwable -> {
+          if (throwable instanceof DriverBlockedException
+              || throwable instanceof EmptyListException
+              || throwable instanceof NoSuchElementException) {
+            errorReporter.reportError(throwable);
+          }
+        });
   }
 }

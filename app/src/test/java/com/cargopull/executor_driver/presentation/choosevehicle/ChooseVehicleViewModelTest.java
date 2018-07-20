@@ -10,7 +10,7 @@ import static org.mockito.Mockito.when;
 import android.arch.core.executor.testing.InstantTaskExecutorRule;
 import android.arch.lifecycle.Observer;
 import com.cargopull.executor_driver.R;
-import com.cargopull.executor_driver.entity.NoVehiclesAvailableException;
+import com.cargopull.executor_driver.entity.EmptyListException;
 import com.cargopull.executor_driver.entity.Vehicle;
 import com.cargopull.executor_driver.interactor.vehicle.VehicleChoiceUseCase;
 import com.cargopull.executor_driver.presentation.ViewState;
@@ -180,7 +180,7 @@ public class ChooseVehicleViewModelTest {
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    vehicleSingleSubject.onError(new NoVehiclesAvailableException());
+    vehicleSingleSubject.onError(new EmptyListException());
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(any(ChooseVehicleViewStatePending.class));

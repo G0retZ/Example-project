@@ -4,10 +4,10 @@ import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.cargopull.executor_driver.entity.NoFreeVehiclesException;
 import com.cargopull.executor_driver.entity.Vehicle;
 import com.cargopull.executor_driver.interactor.DataReceiver;
 import io.reactivex.Observable;
+import java.util.NoSuchElementException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -72,9 +72,9 @@ public class SelectedVehicleUseCaseTest {
   @Test
   public void answerWithError() {
     // Дано:
-    when(vehicleChoiceReceiver.get()).thenReturn(Observable.error(new NoFreeVehiclesException()));
+    when(vehicleChoiceReceiver.get()).thenReturn(Observable.error(new NoSuchElementException()));
 
     // Действие и Результат:
-    useCase.getSelectedVehicle().test().assertError(NoFreeVehiclesException.class);
+    useCase.getSelectedVehicle().test().assertError(NoSuchElementException.class);
   }
 }

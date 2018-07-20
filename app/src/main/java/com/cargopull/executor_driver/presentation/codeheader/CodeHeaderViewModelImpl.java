@@ -40,7 +40,11 @@ public class CodeHeaderViewModelImpl extends ViewModel implements CodeHeaderView
           .subscribeOn(Schedulers.single())
           .observeOn(AndroidSchedulers.mainThread())
           .doAfterTerminate(this::loadLogin)
-          .subscribe(this::consumePhoneNumber, Throwable::printStackTrace);
+          .subscribe(
+              this::consumePhoneNumber,
+              throwable -> {
+              }
+          );
     }
   }
 

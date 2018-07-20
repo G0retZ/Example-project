@@ -1,11 +1,13 @@
 package com.cargopull.executor_driver.interactor;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.cargopull.executor_driver.entity.Order;
 import com.cargopull.executor_driver.gateway.DataMappingException;
+import com.cargopull.executor_driver.utils.ErrorReporter;
 import com.cargopull.executor_driver.utils.TimeUtils;
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
@@ -26,6 +28,8 @@ public class OrderFulfillmentTimeUseCaseTest {
   private OrderFulfillmentTimeUseCase useCase;
 
   @Mock
+  private ErrorReporter errorReporter;
+  @Mock
   private OrderGateway gateway;
   @Mock
   private TimeUtils timeUtils;
@@ -40,7 +44,7 @@ public class OrderFulfillmentTimeUseCaseTest {
     testScheduler = new TestScheduler();
     RxJavaPlugins.setComputationSchedulerHandler(scheduler -> testScheduler);
     when(gateway.getOrders()).thenReturn(Flowable.never());
-    useCase = new OrderFulfillmentTimeUseCaseImpl(gateway, timeUtils);
+    useCase = new OrderFulfillmentTimeUseCaseImpl(errorReporter, gateway, timeUtils);
   }
 
   /* Проверяем работу с гейтвеем */
@@ -55,6 +59,23 @@ public class OrderFulfillmentTimeUseCaseTest {
 
     // Результат:
     verify(gateway, only()).getOrders();
+  }
+
+  /* Проверяем отправку ошибок в репортер */
+
+  /**
+   * Должен отправить ошибку маппинга.
+   */
+  @Test
+  public void reportDataMappingError() {
+    // Дано:
+    when(gateway.getOrders()).thenReturn(Flowable.error(new DataMappingException()));
+
+    // Действие:
+    useCase.getOrderElapsedTime().test();
+
+    // Результат:
+    verify(errorReporter, only()).reportError(any(DataMappingException.class));
   }
 
   /* Проверяем ответы на запрос времени заказа */

@@ -3,6 +3,7 @@ package com.cargopull.executor_driver.interactor;
 import android.support.annotation.NonNull;
 import com.cargopull.executor_driver.entity.Order;
 import com.cargopull.executor_driver.entity.RoutePoint;
+import com.cargopull.executor_driver.utils.ErrorReporter;
 import io.reactivex.Completable;
 import io.reactivex.Flowable;
 import java.util.List;
@@ -11,13 +12,17 @@ import javax.inject.Inject;
 public class OrderRouteUseCaseImpl implements OrderRouteUseCase {
 
   @NonNull
+  private final ErrorReporter errorReporter;
+  @NonNull
   private final OrderGateway orderGateway;
   @NonNull
   private final OrderRouteGateway orderRouteGateway;
 
   @Inject
-  public OrderRouteUseCaseImpl(@NonNull OrderGateway orderGateway,
+  public OrderRouteUseCaseImpl(@NonNull ErrorReporter errorReporter,
+      @NonNull OrderGateway orderGateway,
       @NonNull OrderRouteGateway orderRouteGateway) {
+    this.errorReporter = errorReporter;
     this.orderGateway = orderGateway;
     this.orderRouteGateway = orderRouteGateway;
   }
@@ -26,7 +31,8 @@ public class OrderRouteUseCaseImpl implements OrderRouteUseCase {
   @Override
   public Flowable<List<RoutePoint>> getOrderRoutePoints() {
     return orderGateway.getOrders()
-        .map(Order::getRoutePath);
+        .map(Order::getRoutePath)
+        .doOnError(errorReporter::reportError);
   }
 
   @NonNull

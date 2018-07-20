@@ -57,7 +57,6 @@ public class GeoLocationViewModelImpl extends ViewModel implements GeoLocationVi
             location -> viewStateLiveData
                 .postValue(new GeoLocationViewState(location)),
             throwable -> {
-              throwable.printStackTrace();
               if (throwable instanceof SecurityException) {
                 navigateLiveData.postValue(GeoLocationNavigate.RESOLVE_GEO_PROBLEM);
               } else if (!(throwable instanceof IllegalStateException)) {

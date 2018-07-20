@@ -8,7 +8,7 @@ import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 import com.cargopull.executor_driver.entity.ExecutorState;
-import com.cargopull.executor_driver.entity.ForbiddenExecutorStateException;
+import com.cargopull.executor_driver.utils.ErrorReporter;
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Completable;
 import io.reactivex.Flowable;
@@ -26,6 +26,8 @@ public class ExecutorStateNotOnlineUseCaseTest {
   private ExecutorStateNotOnlineUseCase useCase;
 
   @Mock
+  private ErrorReporter errorReporter;
+  @Mock
   private ExecutorStateSwitchGateway gateway;
   @Mock
   private ExecutorStateUseCase executorStateUseCase;
@@ -34,8 +36,7 @@ public class ExecutorStateNotOnlineUseCaseTest {
   public void setUp() {
     when(gateway.sendNewExecutorState(any())).thenReturn(Completable.complete());
     when(executorStateUseCase.getExecutorStates(false)).thenReturn(Flowable.never());
-    useCase = new ExecutorStateNotOnlineUseCaseImpl(gateway,
-        executorStateUseCase);
+    useCase = new ExecutorStateNotOnlineUseCaseImpl(errorReporter, gateway, executorStateUseCase);
   }
 
   /* Проверяем работу с юзкейсом состояний */
@@ -221,6 +222,174 @@ public class ExecutorStateNotOnlineUseCaseTest {
     verify(gateway, only()).sendNewExecutorState(ExecutorState.SHIFT_OPENED);
   }
 
+  /* Проверяем отправку ошибок в репортер */
+
+  /**
+   * Должен отправить ошибку неподходящего статуса, если статуса нет.
+   */
+  @Test
+  public void reportForbiddenStatusErrorIfNoStatus() {
+    // Действие:
+    useCase.setExecutorNotOnline().test();
+
+    // Результат:
+    verify(errorReporter, only()).reportError(any(IllegalArgumentException.class));
+  }
+
+  /**
+   * Должен отправить ошибку неподходящего статуса, если статус "смена закрыта".
+   */
+  @Test
+  public void reportForbiddenStatusErrorIfShiftClosed() {
+    // Дано:
+    PublishSubject<ExecutorState> publishSubject = PublishSubject.create();
+    when(executorStateUseCase.getExecutorStates(anyBoolean()))
+        .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
+    useCase.getExecutorStates().test();
+    publishSubject.onNext(ExecutorState.SHIFT_CLOSED);
+
+    // Действие:
+    useCase.setExecutorNotOnline().test();
+
+    // Результат:
+    verify(errorReporter, only()).reportError(any(IllegalArgumentException.class));
+  }
+
+  /**
+   * Должен отправить ошибку неподходящего статуса, если статус "смена открыта".
+   */
+  @Test
+  public void reportForbiddenStatusErrorIfOnline() {
+    // Дано:
+    PublishSubject<ExecutorState> publishSubject = PublishSubject.create();
+    when(executorStateUseCase.getExecutorStates(anyBoolean()))
+        .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
+    useCase.getExecutorStates().test();
+    publishSubject.onNext(ExecutorState.SHIFT_OPENED);
+
+    // Действие:
+    useCase.setExecutorNotOnline().test();
+
+    // Результат:
+    verify(errorReporter, only()).reportError(any(IllegalArgumentException.class));
+  }
+
+  /**
+   * Должен отправить ошибку неподходящего статуса, если статус "принятие заказа".
+   */
+  @Test
+  public void reportForbiddenStatusErrorIfOrderConfirmation() {
+    // Дано:
+    PublishSubject<ExecutorState> publishSubject = PublishSubject.create();
+    when(executorStateUseCase.getExecutorStates(anyBoolean()))
+        .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
+    useCase.getExecutorStates().test();
+    publishSubject.onNext(ExecutorState.DRIVER_ORDER_CONFIRMATION);
+
+    // Действие:
+    useCase.setExecutorNotOnline().test();
+
+    // Результат:
+    verify(errorReporter, only()).reportError(any(IllegalArgumentException.class));
+  }
+
+  /**
+   * Должен отправить ошибку неподходящего статуса, если статус "ожидания подтверждения клиентом".
+   */
+  @Test
+  public void reportForbiddenStatusErrorIfWaitForClientConfirmation() {
+    // Дано:
+    PublishSubject<ExecutorState> publishSubject = PublishSubject.create();
+    when(executorStateUseCase.getExecutorStates(anyBoolean()))
+        .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
+    useCase.getExecutorStates().test();
+    publishSubject.onNext(ExecutorState.CLIENT_ORDER_CONFIRMATION);
+
+    // Действие:
+    useCase.setExecutorNotOnline().test();
+
+    // Результат:
+    verify(errorReporter, only()).reportError(any(IllegalArgumentException.class));
+  }
+
+  /**
+   * Должен отправить ошибку неподходящего статуса, если статус "на пути к клиенту".
+   */
+  @Test
+  public void reportForbiddenStatusErrorIfMovingToClient() {
+    // Дано:
+    PublishSubject<ExecutorState> publishSubject = PublishSubject.create();
+    when(executorStateUseCase.getExecutorStates(anyBoolean()))
+        .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
+    useCase.getExecutorStates().test();
+    publishSubject.onNext(ExecutorState.MOVING_TO_CLIENT);
+
+    // Действие:
+    useCase.setExecutorNotOnline().test();
+
+    // Результат:
+    verify(errorReporter, only()).reportError(any(IllegalArgumentException.class));
+  }
+
+  /**
+   * Должен отправить ошибку неподходящего статуса, если статус "ожидание клиента".
+   */
+  @Test
+  public void reportForbiddenStatusErrorIfWaitingForClient() {
+    // Дано:
+    PublishSubject<ExecutorState> publishSubject = PublishSubject.create();
+    when(executorStateUseCase.getExecutorStates(anyBoolean()))
+        .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
+    useCase.getExecutorStates().test();
+    publishSubject.onNext(ExecutorState.WAITING_FOR_CLIENT);
+
+    // Действие:
+    useCase.setExecutorNotOnline().test();
+
+    // Результат:
+    verify(errorReporter, only()).reportError(any(IllegalArgumentException.class));
+  }
+
+  /**
+   * Должен отправить ошибку неподходящего статуса, если статус "выполнение заказа".
+   */
+  @Test
+  public void reportForbiddenStatusErrorIfOrderFulfillment() {
+    // Дано:
+    PublishSubject<ExecutorState> publishSubject = PublishSubject.create();
+    when(executorStateUseCase.getExecutorStates(anyBoolean()))
+        .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
+    useCase.getExecutorStates().test();
+    publishSubject.onNext(ExecutorState.ORDER_FULFILLMENT);
+
+    // Действие:
+    useCase.setExecutorNotOnline().test();
+
+    // Результат:
+    verify(errorReporter, only()).reportError(any(IllegalArgumentException.class));
+  }
+
+  /**
+   * Не должен отправлять ошибку при ошибке отправки статуса.
+   */
+  @Test
+  public void doNotReportError() {
+    // Дано:
+    PublishSubject<ExecutorState> publishSubject = PublishSubject.create();
+    when(executorStateUseCase.getExecutorStates(anyBoolean()))
+        .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
+    useCase.getExecutorStates().test();
+    when(gateway.sendNewExecutorState(any()))
+        .thenReturn(Completable.error(new Exception()));
+    publishSubject.onNext(ExecutorState.ONLINE);
+
+    // Действие:
+    useCase.setExecutorNotOnline().test();
+
+    // Результат:
+    verifyZeroInteractions(errorReporter);
+  }
+
   /* Проверяем ответы */
 
   /**
@@ -234,7 +403,7 @@ public class ExecutorStateNotOnlineUseCaseTest {
     // Результат:
     testObserver.assertNoValues();
     testObserver.assertNotComplete();
-    testObserver.assertError(ForbiddenExecutorStateException.class);
+    testObserver.assertError(IllegalArgumentException.class);
   }
 
   /**
@@ -255,7 +424,7 @@ public class ExecutorStateNotOnlineUseCaseTest {
     // Результат:
     testObserver.assertNoValues();
     testObserver.assertNotComplete();
-    testObserver.assertError(ForbiddenExecutorStateException.class);
+    testObserver.assertError(IllegalArgumentException.class);
   }
 
   /**
@@ -276,7 +445,7 @@ public class ExecutorStateNotOnlineUseCaseTest {
     // Результат:
     testObserver.assertNoValues();
     testObserver.assertNotComplete();
-    testObserver.assertError(ForbiddenExecutorStateException.class);
+    testObserver.assertError(IllegalArgumentException.class);
   }
 
   /**
@@ -297,7 +466,7 @@ public class ExecutorStateNotOnlineUseCaseTest {
     // Результат:
     testObserver.assertNoValues();
     testObserver.assertNotComplete();
-    testObserver.assertError(ForbiddenExecutorStateException.class);
+    testObserver.assertError(IllegalArgumentException.class);
   }
 
   /**
@@ -318,7 +487,7 @@ public class ExecutorStateNotOnlineUseCaseTest {
     // Результат:
     testObserver.assertNoValues();
     testObserver.assertNotComplete();
-    testObserver.assertError(ForbiddenExecutorStateException.class);
+    testObserver.assertError(IllegalArgumentException.class);
   }
 
   /**
@@ -339,7 +508,7 @@ public class ExecutorStateNotOnlineUseCaseTest {
     // Результат:
     testObserver.assertNoValues();
     testObserver.assertNotComplete();
-    testObserver.assertError(ForbiddenExecutorStateException.class);
+    testObserver.assertError(IllegalArgumentException.class);
   }
 
   /**
@@ -360,7 +529,7 @@ public class ExecutorStateNotOnlineUseCaseTest {
     // Результат:
     testObserver.assertNoValues();
     testObserver.assertNotComplete();
-    testObserver.assertError(ForbiddenExecutorStateException.class);
+    testObserver.assertError(IllegalArgumentException.class);
   }
 
   /**
@@ -381,7 +550,7 @@ public class ExecutorStateNotOnlineUseCaseTest {
     // Результат:
     testObserver.assertNoValues();
     testObserver.assertNotComplete();
-    testObserver.assertError(ForbiddenExecutorStateException.class);
+    testObserver.assertError(IllegalArgumentException.class);
   }
 
   /**

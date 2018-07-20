@@ -93,10 +93,7 @@ public class ExecutorStateViewModelImpl extends ViewModel implements ExecutorSta
                   break;
               }
             },
-            throwable -> {
-              throwable.printStackTrace();
-              navigateLiveData.postValue(CommonNavigate.SERVER_DATA_ERROR);
-            });
+            throwable -> navigateLiveData.postValue(CommonNavigate.SERVER_DATA_ERROR));
   }
 
   @Override

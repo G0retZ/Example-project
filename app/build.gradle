@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'io.fabric'
 apply plugin: 'com.getkeepsafe.dexcount'
 
 android {
@@ -28,6 +29,7 @@ android {
     buildTypes {
         release {
             minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             buildConfigField 'String', 'BASE_URL', '"http://tst.capsrv.xyz:8080/executor/"'
             buildConfigField 'String', 'SOCKET_URL', '"ws://tst.capsrv.xyz:8080/executor/ws"'
@@ -36,6 +38,7 @@ android {
 
         debug {
             minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             applicationIdSuffix ".debug"
             debuggable true
@@ -109,6 +112,9 @@ dependencies {
     // FCM
     implementation 'com.google.firebase:firebase-messaging:17.1.0'
     implementation 'com.google.firebase:firebase-core:16.0.1'
+
+    // Analytics
+    implementation 'com.crashlytics.sdk.android:crashlytics:2.9.4'
 
     // Multi DEX
     implementation 'com.android.support:multidex:1.0.3'

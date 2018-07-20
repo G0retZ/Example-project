@@ -25,7 +25,7 @@ public class ErrorMapper implements Mapper<Throwable, Throwable> {
         if (code != null) {
           switch (code) {
             case "422.1":
-              return new DriverBlockedException();
+              return new DriverBlockedException("Водитель заблокирован!");
           }
         }
       }

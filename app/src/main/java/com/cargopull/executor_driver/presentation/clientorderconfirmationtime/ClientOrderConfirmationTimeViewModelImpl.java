@@ -66,10 +66,7 @@ public class ClientOrderConfirmationTimeViewModelImpl extends ViewModel implemen
                 time > 0 ? new ClientOrderConfirmationTimeViewStateCounting(time) :
                     new ClientOrderConfirmationTimeViewStateNotCounting()
             ),
-            throwable -> {
-              throwable.printStackTrace();
-              navigateLiveData.postValue(CommonNavigate.SERVER_DATA_ERROR);
-            }
+            throwable -> navigateLiveData.postValue(CommonNavigate.SERVER_DATA_ERROR)
         );
   }
 

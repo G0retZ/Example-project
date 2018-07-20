@@ -68,7 +68,6 @@ public class OnlineSwitchViewModelImpl extends ViewModel implements OnlineSwitch
                 () -> {
                 },
                 throwable -> {
-                  throwable.printStackTrace();
                   if (throwable instanceof IllegalStateException) {
                     viewStateLiveData.postValue(new OnlineSwitchViewState(true));
                     navigateLiveData.postValue(CommonNavigate.NO_CONNECTION);
@@ -86,10 +85,8 @@ public class OnlineSwitchViewModelImpl extends ViewModel implements OnlineSwitch
     executorStatesDisposable = executorStateNotOnlineUseCase.getExecutorStates()
         .subscribeOn(Schedulers.single())
         .observeOn(AndroidSchedulers.mainThread())
-        .subscribe(this::onNextState, throwable -> {
-          throwable.printStackTrace();
-          navigateLiveData.postValue(CommonNavigate.SERVER_DATA_ERROR);
-        });
+        .subscribe(this::onNextState,
+            throwable -> navigateLiveData.postValue(CommonNavigate.SERVER_DATA_ERROR));
   }
 
   private void onNextState(ExecutorState executorState) {
