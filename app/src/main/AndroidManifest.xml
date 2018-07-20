@@ -41,11 +41,11 @@
     <activity
       android:launchMode="singleTop"
       android:name=".application.LoginActivity"
-      android:windowSoftInputMode="stateVisible|adjustResize"/>
+      android:windowSoftInputMode="stateAlwaysVisible|adjustResize"/>
     <activity
       android:launchMode="singleTop"
       android:name=".application.PasswordActivity"
-      android:windowSoftInputMode="stateVisible|adjustResize"/>
+      android:windowSoftInputMode="stateAlwaysVisible|adjustResize"/>
     <activity
       android:launchMode="singleTop"
       android:name=".application.VehicleOptionsActivity"/>
