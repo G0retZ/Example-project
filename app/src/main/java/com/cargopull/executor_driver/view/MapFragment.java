@@ -88,7 +88,7 @@ public class MapFragment extends SupportMapFragment implements OnMapReadyCallbac
   @Override
   public void onMapReady(GoogleMap googleMap) {
     if (baseActivity == null) {
-      throw new IllegalStateException("!!!");
+      throw new IllegalStateException("Shit! WTF?!");
     }
     this.googleMap = googleMap;
     try {

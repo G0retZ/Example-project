@@ -57,7 +57,7 @@ public class CancelOrderGatewayImpl implements CancelOrderGateway {
           .map(mapper::map)
           .observeOn(Schedulers.single());
     }
-    return Flowable.error(new ConnectionClosedException());
+    return Flowable.error(ConnectionClosedException::new);
   }
 
   @NonNull
