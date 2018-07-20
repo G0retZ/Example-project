@@ -452,6 +452,7 @@ public class AppComponentImpl implements AppComponent {
             new ViewModelFactory<>(
                 new OnlineSwitchViewModelImpl(
                     new ExecutorStateNotOnlineUseCaseImpl(
+                        errorReporter,
                         new ExecutorStateSwitchGatewayImpl(stompClient),
                         executorStateUseCase
                     )
@@ -1103,6 +1104,7 @@ public class AppComponentImpl implements AppComponent {
             new ViewModelFactory<>(
                 new OnlineSwitchViewModelImpl(
                     new ExecutorStateNotOnlineUseCaseImpl(
+                        errorReporter,
                         new ExecutorStateSwitchGatewayImpl(stompClient),
                         executorStateUseCase
                     )
