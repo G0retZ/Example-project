@@ -534,6 +534,7 @@ public class AppComponentImpl implements AppComponent {
             new ViewModelFactory<>(
                 new VehicleOptionsViewModelImpl(
                     new VehicleOptionsUseCaseImpl(
+                        errorReporter,
                         new VehicleOptionsGatewayImpl(
                             apiService
                         ),
@@ -558,6 +559,7 @@ public class AppComponentImpl implements AppComponent {
             new ViewModelFactory<>(
                 new VehicleOptionsViewModelImpl(
                     new VehicleOptionsUseCaseImpl(
+                        errorReporter,
                         new CurrentVehicleOptionsGatewayImpl(
                             apiService
                         ),

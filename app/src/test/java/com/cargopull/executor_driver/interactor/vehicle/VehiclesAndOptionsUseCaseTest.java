@@ -273,7 +273,7 @@ public class VehiclesAndOptionsUseCaseTest {
         .onNext(new Vehicle(14, "manufacturers", "modeler", "color", "licensing", false));
   }
 
-  /* Проверяем ответы на запрос загрузки списка ТС */
+  /* Проверяем отправку ошибок в репортер */
 
   /**
    * Не должен отправлять ошибку сети.

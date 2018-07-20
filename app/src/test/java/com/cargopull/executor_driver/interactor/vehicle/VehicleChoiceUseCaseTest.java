@@ -199,7 +199,7 @@ public class VehicleChoiceUseCaseTest {
     verifyZeroInteractions(vehicleChoiceObserver);
   }
 
-  /* Проверяем ответы на запрос загрузки списка ТС */
+  /* Проверяем отправку ошибок в репортер */
 
   /**
    * Должен отправить ошибку, если выбраного ТС нет в списке.
