@@ -34,7 +34,7 @@ public class CancelOrderReasonApiMapper implements Mapper<StompMessage, List<Can
     try {
       apiCancelOrderReasons = gson.fromJson(fromString, type);
     } catch (Exception e) {
-      throw new DataMappingException("Ошибка маппинга: не удалось распарсить JSON!", e);
+      throw new DataMappingException("Ошибка маппинга: не удалось распарсить JSON: " + from, e);
     }
     ArrayList<CancelOrderReason> cancelOrderReasons = new ArrayList<>();
     for (ApiCancelOrderReason apiCancelOrderReason : apiCancelOrderReasons) {

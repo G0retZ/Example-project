@@ -26,7 +26,7 @@ public class ExecutorBalanceApiMapper implements Mapper<String, ExecutorBalance>
     try {
       apiExecutorBalance = gson.fromJson(from, ApiExecutorBalance.class);
     } catch (Exception e) {
-      throw new DataMappingException("Ошибка маппинга: не удалось распарсить JSON!", e);
+      throw new DataMappingException("Ошибка маппинга: не удалось распарсить JSON: " + from, e);
     }
     return new ExecutorBalance(
         apiExecutorBalance.getMainAccount(),

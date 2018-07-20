@@ -38,7 +38,7 @@ public class OrderApiMapper implements Mapper<String, Order> {
     try {
       apiOrder = gson.fromJson(from, ApiOrder.class);
     } catch (Exception e) {
-      throw new DataMappingException("Ошибка маппинга: не удалось распарсить JSON!", e);
+      throw new DataMappingException("Ошибка маппинга: не удалось распарсить JSON: " + from, e);
     }
     if (apiOrder.getApiOrderService() == null) {
       throw new DataMappingException("Ошибка маппинга: Услуга не должна быть null!");
