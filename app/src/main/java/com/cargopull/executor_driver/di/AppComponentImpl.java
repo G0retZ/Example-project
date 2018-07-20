@@ -666,6 +666,7 @@ public class AppComponentImpl implements AppComponent {
             new ViewModelFactory<>(
                 new OrderViewModelImpl(
                     new OrderUseCaseImpl(
+                        errorReporter,
                         new OrderGatewayImpl(
                             executorStateUseCase,
                             ExecutorState.DRIVER_ORDER_CONFIRMATION,
@@ -690,6 +691,7 @@ public class AppComponentImpl implements AppComponent {
             new ViewModelFactory<>(
                 new OrderViewModelImpl(
                     new OrderUseCaseImpl(
+                        errorReporter,
                         new OrderGatewayImpl(
                             executorStateUseCase,
                             ExecutorState.CLIENT_ORDER_CONFIRMATION,
@@ -740,6 +742,7 @@ public class AppComponentImpl implements AppComponent {
             new ViewModelFactory<>(
                 new OrderViewModelImpl(
                     new OrderUseCaseImpl(
+                        errorReporter,
                         new OrderGatewayImpl(
                             executorStateUseCase,
                             ExecutorState.MOVING_TO_CLIENT,
@@ -764,6 +767,7 @@ public class AppComponentImpl implements AppComponent {
             new ViewModelFactory<>(
                 new OrderViewModelImpl(
                     new OrderUseCaseImpl(
+                        errorReporter,
                         new OrderGatewayImpl(
                             executorStateUseCase,
                             ExecutorState.MOVING_TO_CLIENT,
@@ -824,6 +828,7 @@ public class AppComponentImpl implements AppComponent {
             new ViewModelFactory<>(
                 new OrderViewModelImpl(
                     new OrderUseCaseImpl(
+                        errorReporter,
                         new OrderGatewayImpl(
                             executorStateUseCase,
                             ExecutorState.WAITING_FOR_CLIENT,
@@ -960,6 +965,7 @@ public class AppComponentImpl implements AppComponent {
             new ViewModelFactory<>(
                 new OrderViewModelImpl(
                     new OrderUseCaseImpl(
+                        errorReporter,
                         new OrderGatewayImpl(
                             executorStateUseCase,
                             ExecutorState.ORDER_FULFILLMENT,
