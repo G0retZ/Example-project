@@ -225,8 +225,7 @@ public class CancelOrderUseCaseTest {
     when(loginReceiver.get()).thenReturn(Observable.error(IOException::new));
 
     // Действие:
-    TestSubscriber<List<CancelOrderReason>> testSubscriber =
-        useCase.getCancelOrderReasons(true).test();
+    useCase.getCancelOrderReasons(true).test();
 
     // Результат:
     verify(errorReporter, only()).reportError(any(IOException.class));
@@ -242,8 +241,7 @@ public class CancelOrderUseCaseTest {
         .thenReturn(Flowable.error(DataMappingException::new));
 
     // Действие:
-    TestSubscriber<List<CancelOrderReason>> testSubscriber =
-        useCase.getCancelOrderReasons(true).test();
+    useCase.getCancelOrderReasons(true).test();
 
     // Результат:
     verify(errorReporter, only()).reportError(any(DataMappingException.class));
@@ -284,7 +282,7 @@ public class CancelOrderUseCaseTest {
 
     // Действие:
     useCase.getCancelOrderReasons(true).test();
-    TestObserver<Void> testSubscriber = useCase.cancelOrder(cancelOrderReason2).test();
+    useCase.cancelOrder(cancelOrderReason2).test();
 
     // Результат:
     verifyZeroInteractions(errorReporter);
