@@ -2,12 +2,15 @@ package com.cargopull.executor_driver.interactor;
 
 import android.support.annotation.NonNull;
 import com.cargopull.executor_driver.entity.ExecutorState;
+import com.cargopull.executor_driver.utils.ErrorReporter;
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
 import javax.inject.Inject;
 
 public class ExecutorStateUseCaseImpl implements ExecutorStateUseCase {
 
+  @NonNull
+  private final ErrorReporter errorReporter;
   @NonNull
   private final ExecutorStateGateway gateway;
   @NonNull
@@ -16,8 +19,10 @@ public class ExecutorStateUseCaseImpl implements ExecutorStateUseCase {
   private Flowable<ExecutorState> executorStateFlowable = Flowable.empty();
 
   @Inject
-  public ExecutorStateUseCaseImpl(@NonNull ExecutorStateGateway gateway,
+  public ExecutorStateUseCaseImpl(@NonNull ErrorReporter errorReporter,
+      @NonNull ExecutorStateGateway gateway,
       @NonNull DataReceiver<String> loginReceiver) {
+    this.errorReporter = errorReporter;
     this.gateway = gateway;
     this.loginReceiver = loginReceiver;
   }
@@ -29,6 +34,7 @@ public class ExecutorStateUseCaseImpl implements ExecutorStateUseCase {
       executorStateFlowable = loginReceiver.get()
           .toFlowable(BackpressureStrategy.BUFFER)
           .switchMap(gateway::getState)
+          .doOnError(errorReporter::reportError)
           .replay(1)
           .refCount()
           // TODO: тут костыль о непонятном баге. На девайсах после ошибки новые подписчики не получают вообще ничего. Поэтому приходится подобным образо кешировать ошибку.

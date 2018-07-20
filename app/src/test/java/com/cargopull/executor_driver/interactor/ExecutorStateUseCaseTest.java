@@ -1,5 +1,6 @@
 package com.cargopull.executor_driver.interactor;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.times;
@@ -10,11 +11,13 @@ import static org.mockito.Mockito.when;
 
 import com.cargopull.executor_driver.backend.web.NoNetworkException;
 import com.cargopull.executor_driver.entity.ExecutorState;
+import com.cargopull.executor_driver.gateway.DataMappingException;
+import com.cargopull.executor_driver.utils.ErrorReporter;
 import io.reactivex.Flowable;
 import io.reactivex.Observable;
 import io.reactivex.functions.Action;
 import io.reactivex.subscribers.TestSubscriber;
-import java.net.ConnectException;
+import java.io.IOException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -29,11 +32,11 @@ public class ExecutorStateUseCaseTest {
   private ExecutorStateUseCase useCase;
 
   @Mock
+  private ErrorReporter errorReporter;
+  @Mock
   private ExecutorStateGateway gateway;
-
   @Mock
   private DataReceiver<String> loginReceiver;
-
   @Mock
   private Action action;
 
@@ -41,7 +44,7 @@ public class ExecutorStateUseCaseTest {
   public void setUp() {
     when(gateway.getState(anyString())).thenReturn(Flowable.never());
     when(loginReceiver.get()).thenReturn(Observable.never());
-    useCase = new ExecutorStateUseCaseImpl(gateway, loginReceiver);
+    useCase = new ExecutorStateUseCaseImpl(errorReporter, gateway, loginReceiver);
   }
 
   /* Проверяем работу с публикатором логина */
@@ -158,6 +161,37 @@ public class ExecutorStateUseCaseTest {
     verifyZeroInteractions(gateway);
   }
 
+  /* Проверяем отправку ошибок в репортер */
+
+  /**
+   * Должен отправить ошибку, если была ошибка получения логина.
+   */
+  @Test
+  public void reportGetLoginFailed() {
+    when(loginReceiver.get()).thenReturn(Observable.error(IOException::new));
+
+    // Действие:
+    useCase.getExecutorStates(true).test();
+
+    // Результат:
+    verify(errorReporter).reportError(any(IOException.class));
+  }
+
+  /**
+   * Должен отправить ошибку, если подписка обломалась.
+   */
+  @Test
+  public void reportSubscriptionFailed() {
+    when(loginReceiver.get()).thenReturn(Observable.just("1234567890"));
+    when(gateway.getState("1234567890")).thenReturn(Flowable.error(DataMappingException::new));
+
+    // Действие:
+    useCase.getExecutorStates(true).test();
+
+    // Результат:
+    verify(errorReporter).reportError(any(DataMappingException.class));
+  }
+
   /* Проверяем ответы */
 
   /**
@@ -192,14 +226,14 @@ public class ExecutorStateUseCaseTest {
    */
   @Test
   public void answerWithErrorIfGetLoginFailed() {
-    when(loginReceiver.get()).thenReturn(Observable.error(ConnectException::new));
+    when(loginReceiver.get()).thenReturn(Observable.error(IOException::new));
 
     // Действие:
     TestSubscriber<ExecutorState> testSubscriber =
         useCase.getExecutorStates(true).test();
 
     // Результат:
-    testSubscriber.assertError(ConnectException.class);
+    testSubscriber.assertError(IOException.class);
     testSubscriber.assertNoValues();
   }
 
@@ -209,14 +243,14 @@ public class ExecutorStateUseCaseTest {
   @Test
   public void answerWithErrorIfSubscriptionFailed() {
     when(loginReceiver.get()).thenReturn(Observable.just("1234567890"));
-    when(gateway.getState("1234567890")).thenReturn(Flowable.error(ConnectException::new));
+    when(gateway.getState("1234567890")).thenReturn(Flowable.error(DataMappingException::new));
 
     // Действие:
     TestSubscriber<ExecutorState> testSubscriber =
         useCase.getExecutorStates(true).test();
 
     // Результат:
-    testSubscriber.assertError(ConnectException.class);
+    testSubscriber.assertError(DataMappingException.class);
     testSubscriber.assertNoValues();
   }
 

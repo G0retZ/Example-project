@@ -258,6 +258,7 @@ public class AppComponentImpl implements AppComponent {
         loginSharer
     );
     executorStateUseCase = new ExecutorStateUseCaseImpl(
+        errorReporter,
         new ExecutorStateGatewayImpl(stompClient, new ExecutorStateApiMapper()),
         loginSharer
     );
