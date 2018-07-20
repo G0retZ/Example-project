@@ -625,6 +625,7 @@ public class AppComponentImpl implements AppComponent {
             new ViewModelFactory<>(
                 new ServicesViewModelImpl(
                     new ServicesUseCaseImpl(
+                        errorReporter,
                         new ServicesGatewayImpl(
                             apiService,
                             new ServiceApiMapper()

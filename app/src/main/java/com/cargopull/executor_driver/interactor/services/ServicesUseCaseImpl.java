@@ -1,8 +1,9 @@
 package com.cargopull.executor_driver.interactor.services;
 
 import android.support.annotation.NonNull;
-import com.cargopull.executor_driver.entity.NoServicesAvailableException;
+import com.cargopull.executor_driver.entity.EmptyListException;
 import com.cargopull.executor_driver.entity.Service;
+import com.cargopull.executor_driver.utils.ErrorReporter;
 import io.reactivex.Completable;
 import io.reactivex.Single;
 import java.util.ArrayList;
@@ -12,10 +13,14 @@ import javax.inject.Inject;
 public class ServicesUseCaseImpl implements ServicesUseCase {
 
   @NonNull
+  private final ErrorReporter errorReporter;
+  @NonNull
   private final ServicesGateway gateway;
 
   @Inject
-  public ServicesUseCaseImpl(@NonNull ServicesGateway gateway) {
+  public ServicesUseCaseImpl(@NonNull ErrorReporter errorReporter,
+      @NonNull ServicesGateway gateway) {
+    this.errorReporter = errorReporter;
     this.gateway = gateway;
   }
 
@@ -24,23 +29,34 @@ public class ServicesUseCaseImpl implements ServicesUseCase {
   public Single<List<Service>> loadServices() {
     return gateway.getServices().map(services -> {
       if (services.isEmpty()) {
-        throw new NoServicesAvailableException();
+        throw new EmptyListException("Нет доступных услуг.");
       }
       return services;
+    }).doOnError(throwable -> {
+      if (throwable instanceof EmptyListException) {
+        errorReporter.reportError(throwable);
+      }
     });
   }
 
   @Override
   public Completable setSelectedServices(List<Service> services) {
-    List<Service> selectedServices = new ArrayList<>();
-    for (Service service : services) {
-      if (service.isSelected()) {
-        selectedServices.add(service);
+    return Single.fromCallable(() -> {
+      List<Service> selectedServices = new ArrayList<>();
+      for (Service service : services) {
+        if (service.isSelected()) {
+          selectedServices.add(service);
+        }
       }
-    }
-    if (selectedServices.isEmpty()) {
-      return Completable.error(new NoServicesAvailableException());
-    }
-    return gateway.sendSelectedServices(selectedServices);
+      if (selectedServices.isEmpty()) {
+        throw new EmptyListException("Не выбрано услуг для on-line.");
+      }
+      return selectedServices;
+    }).flatMapCompletable(gateway::sendSelectedServices)
+        .doOnError(throwable -> {
+          if (throwable instanceof EmptyListException) {
+            errorReporter.reportError(throwable);
+          }
+        });
   }
 }
