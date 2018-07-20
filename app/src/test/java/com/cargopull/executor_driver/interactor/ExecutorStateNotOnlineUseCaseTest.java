@@ -373,7 +373,7 @@ public class ExecutorStateNotOnlineUseCaseTest {
    * Не должен отправлять ошибку при ошибке отправки статуса.
    */
   @Test
-  public void reportWithError() {
+  public void doNotReportError() {
     // Дано:
     PublishSubject<ExecutorState> publishSubject = PublishSubject.create();
     when(executorStateUseCase.getExecutorStates(anyBoolean()))
