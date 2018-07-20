@@ -13,4 +13,10 @@ public class CancelOrderReasonTest {
     assertEquals(cancelOrderReason.getName(), "name");
     assertEquals(cancelOrderReason.getUnusedName(), "unused");
   }
+
+  @Test
+  public void testToString() {
+    CancelOrderReason cancelOrderReason = new CancelOrderReason(7, "me", "used");
+    assertEquals(cancelOrderReason.toString(), "CancelOrderReason{id=7, name='me', unusedName='used'}");
+  }
 }
