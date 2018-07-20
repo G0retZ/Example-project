@@ -792,6 +792,7 @@ public class AppComponentImpl implements AppComponent {
             new ViewModelFactory<>(
                 new OrderRouteViewModelImpl(
                     new OrderRouteUseCaseImpl(
+                        errorReporter,
                         new OrderGatewayImpl(
                             executorStateUseCase,
                             ExecutorState.MOVING_TO_CLIENT,
@@ -853,6 +854,7 @@ public class AppComponentImpl implements AppComponent {
             new ViewModelFactory<>(
                 new OrderRouteViewModelImpl(
                     new OrderRouteUseCaseImpl(
+                        errorReporter,
                         new OrderGatewayImpl(
                             executorStateUseCase,
                             ExecutorState.WAITING_FOR_CLIENT,
@@ -921,6 +923,7 @@ public class AppComponentImpl implements AppComponent {
             new ViewModelFactory<>(
                 new NextRoutePointViewModelImpl(
                     new OrderRouteUseCaseImpl(
+                        errorReporter,
                         new OrderGatewayImpl(
                             executorStateUseCase,
                             ExecutorState.ORDER_FULFILLMENT,
@@ -941,6 +944,7 @@ public class AppComponentImpl implements AppComponent {
             new ViewModelFactory<>(
                 new OrderRouteViewModelImpl(
                     new OrderRouteUseCaseImpl(
+                        errorReporter,
                         new OrderGatewayImpl(
                             executorStateUseCase,
                             ExecutorState.ORDER_FULFILLMENT,
@@ -990,6 +994,7 @@ public class AppComponentImpl implements AppComponent {
             new ViewModelFactory<>(
                 new NextRoutePointViewModelImpl(
                     new OrderRouteUseCaseImpl(
+                        errorReporter,
                         new OrderGatewayImpl(
                             executorStateUseCase,
                             ExecutorState.ORDER_FULFILLMENT,
@@ -1014,6 +1019,7 @@ public class AppComponentImpl implements AppComponent {
             new ViewModelFactory<>(
                 new OrderRouteViewModelImpl(
                     new OrderRouteUseCaseImpl(
+                        errorReporter,
                         new OrderGatewayImpl(
                             executorStateUseCase,
                             ExecutorState.ORDER_FULFILLMENT,

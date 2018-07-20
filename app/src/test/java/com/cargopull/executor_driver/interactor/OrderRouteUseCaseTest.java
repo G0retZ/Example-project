@@ -9,6 +9,7 @@ import com.cargopull.executor_driver.backend.web.NoNetworkException;
 import com.cargopull.executor_driver.entity.Order;
 import com.cargopull.executor_driver.entity.RoutePoint;
 import com.cargopull.executor_driver.gateway.DataMappingException;
+import com.cargopull.executor_driver.utils.ErrorReporter;
 import io.reactivex.Completable;
 import io.reactivex.Flowable;
 import io.reactivex.observers.TestObserver;
@@ -26,6 +27,8 @@ public class OrderRouteUseCaseTest {
 
   private OrderRouteUseCase useCase;
 
+  @Mock
+  private ErrorReporter errorReporter;
   @Mock
   private OrderGateway orderGateway;
   @Mock
@@ -51,7 +54,7 @@ public class OrderRouteUseCaseTest {
     when(orderRouteGateway.closeRoutePoint(any())).thenReturn(Completable.never());
     when(orderRouteGateway.completeTheOrder()).thenReturn(Completable.never());
     when(orderRouteGateway.nextRoutePoint(any())).thenReturn(Completable.never());
-    useCase = new OrderRouteUseCaseImpl(orderGateway, orderRouteGateway);
+    useCase = new OrderRouteUseCaseImpl(errorReporter, orderGateway, orderRouteGateway);
   }
 
   /* Проверяем работу с гейтвеем заказа */
@@ -104,6 +107,23 @@ public class OrderRouteUseCaseTest {
 
     // Результат:
     verify(orderRouteGateway, only()).nextRoutePoint(routePoint);
+  }
+
+  /* Проверяем отправку ошибок в репортер */
+
+  /**
+   * Должен отправить ошибку маппинга.
+   */
+  @Test
+  public void reportDataMappingError() {
+    // Дано:
+    when(orderGateway.getOrders()).thenReturn(Flowable.error(new DataMappingException()));
+
+    // Действие:
+    useCase.getOrderRoutePoints().test();
+
+    // Результат:
+    verify(errorReporter, only()).reportError(any(DataMappingException.class));
   }
 
   /* Проверяем ответы на запрос маршрута */
