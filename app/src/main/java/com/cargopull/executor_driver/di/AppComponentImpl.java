@@ -315,6 +315,7 @@ public class AppComponentImpl implements AppComponent {
     mainApplication.setMissedOrderViewModel(
         new MissedOrderViewModelImpl(
             new MissedOrderUseCaseImpl(
+                errorReporter,
                 new MissedOrderGatewayImpl(
                     stompClient
                 ),

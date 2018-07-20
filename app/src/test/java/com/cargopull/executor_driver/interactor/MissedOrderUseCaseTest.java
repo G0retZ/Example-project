@@ -1,6 +1,8 @@
 package com.cargopull.executor_driver.interactor;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -8,11 +10,13 @@ import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 import com.cargopull.executor_driver.backend.web.NoNetworkException;
+import com.cargopull.executor_driver.gateway.DataMappingException;
+import com.cargopull.executor_driver.utils.ErrorReporter;
 import io.reactivex.Flowable;
 import io.reactivex.Observable;
 import io.reactivex.functions.Action;
 import io.reactivex.subscribers.TestSubscriber;
-import java.net.ConnectException;
+import java.io.IOException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,6 +31,8 @@ public class MissedOrderUseCaseTest {
   private MissedOrderUseCase useCase;
 
   @Mock
+  private ErrorReporter errorReporter;
+  @Mock
   private MissedOrderGateway gateway;
   @Mock
   private DataReceiver<String> loginReceiver;
@@ -37,7 +43,7 @@ public class MissedOrderUseCaseTest {
   public void setUp() {
     when(gateway.loadMissedOrdersMessages(anyString())).thenReturn(Flowable.never());
     when(loginReceiver.get()).thenReturn(Observable.never());
-    useCase = new MissedOrderUseCaseImpl(gateway, loginReceiver);
+    useCase = new MissedOrderUseCaseImpl(errorReporter, gateway, loginReceiver);
   }
 
   /* Проверяем работу с гейтвеем */
@@ -112,6 +118,40 @@ public class MissedOrderUseCaseTest {
     verifyZeroInteractions(gateway);
   }
 
+  /* Проверяем отправку ошибок в репортер */
+
+  /**
+   * Должен отправить ошибку, если была ошибка получения логина.
+   */
+  @Test
+  public void reportGetLoginFailed() {
+    // Дано:
+    when(loginReceiver.get()).thenReturn(Observable.error(IOException::new));
+
+    // Действие:
+    useCase.getMissedOrders().test();
+
+    // Результат:
+    verify(errorReporter, only()).reportError(any(IOException.class));
+  }
+
+  /**
+   * Должен отправить ошибку, если подписка обломалась.
+   */
+  @Test
+  public void reportSubscriptionFailed() {
+    // Дано:
+    when(loginReceiver.get()).thenReturn(Observable.just("1234567890"));
+    when(gateway.loadMissedOrdersMessages("1234567890"))
+        .thenReturn(Flowable.error(DataMappingException::new));
+
+    // Действие:
+    useCase.getMissedOrders().test();
+
+    // Результат:
+    verify(errorReporter, only()).reportError(any(DataMappingException.class));
+  }
+
   /* Проверяем ответы */
 
   /**
@@ -139,13 +179,13 @@ public class MissedOrderUseCaseTest {
   @Test
   public void answerWithErrorIfGetLoginFailed() {
     // Дано:
-    when(loginReceiver.get()).thenReturn(Observable.error(ConnectException::new));
+    when(loginReceiver.get()).thenReturn(Observable.error(IOException::new));
 
     // Действие:
     TestSubscriber<String> testSubscriber = useCase.getMissedOrders().test();
 
     // Результат:
-    testSubscriber.assertError(ConnectException.class);
+    testSubscriber.assertError(IOException.class);
     testSubscriber.assertNoValues();
   }
 
@@ -157,13 +197,13 @@ public class MissedOrderUseCaseTest {
     // Дано:
     when(loginReceiver.get()).thenReturn(Observable.just("1234567890"));
     when(gateway.loadMissedOrdersMessages("1234567890"))
-        .thenReturn(Flowable.error(ConnectException::new));
+        .thenReturn(Flowable.error(DataMappingException::new));
 
     // Действие:
     TestSubscriber<String> testSubscriber = useCase.getMissedOrders().test();
 
     // Результат:
-    testSubscriber.assertError(ConnectException.class);
+    testSubscriber.assertError(DataMappingException.class);
     testSubscriber.assertNoValues();
   }
 
