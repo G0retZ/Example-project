@@ -11,8 +11,7 @@ import android.arch.core.executor.testing.InstantTaskExecutorRule;
 import android.arch.lifecycle.Observer;
 import com.cargopull.executor_driver.backend.web.NoNetworkException;
 import com.cargopull.executor_driver.entity.DriverBlockedException;
-import com.cargopull.executor_driver.entity.NoFreeVehiclesException;
-import com.cargopull.executor_driver.entity.NoVehiclesAvailableException;
+import com.cargopull.executor_driver.entity.EmptyListException;
 import com.cargopull.executor_driver.interactor.vehicle.VehiclesAndOptionsUseCase;
 import com.cargopull.executor_driver.presentation.CommonNavigate;
 import com.cargopull.executor_driver.presentation.ViewState;
@@ -21,6 +20,7 @@ import io.reactivex.android.plugins.RxAndroidPlugins;
 import io.reactivex.plugins.RxJavaPlugins;
 import io.reactivex.schedulers.Schedulers;
 import io.reactivex.schedulers.TestScheduler;
+import java.util.NoSuchElementException;
 import java.util.concurrent.TimeUnit;
 import org.junit.Before;
 import org.junit.Rule;
@@ -203,7 +203,7 @@ public class OnlineButtonViewModelTest {
   public void setHoldPendingViewStateToLiveDataAfterFailForNoVehicles() {
     // Дано:
     when(vehiclesAndOptionsUseCase.loadVehiclesAndOptions())
-        .thenReturn(Completable.error(new NoVehiclesAvailableException()));
+        .thenReturn(Completable.error(new EmptyListException()));
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
@@ -224,7 +224,7 @@ public class OnlineButtonViewModelTest {
   public void setReadyViewStateToLiveDataAfterFailForNoVehicles() {
     // Дано:
     when(vehiclesAndOptionsUseCase.loadVehiclesAndOptions())
-        .thenReturn(Completable.error(new NoVehiclesAvailableException()));
+        .thenReturn(Completable.error(new EmptyListException()));
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
@@ -247,7 +247,7 @@ public class OnlineButtonViewModelTest {
   public void setHoldPendingViewStateToLiveDataAfterFailForNoFreeVehicles() {
     // Дано:
     when(vehiclesAndOptionsUseCase.loadVehiclesAndOptions())
-        .thenReturn(Completable.error(new NoFreeVehiclesException()));
+        .thenReturn(Completable.error(new NoSuchElementException()));
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
@@ -268,7 +268,7 @@ public class OnlineButtonViewModelTest {
   public void setReadyViewStateToLiveDataAfterFailForNoFreeVehicles() {
     // Дано:
     when(vehiclesAndOptionsUseCase.loadVehiclesAndOptions())
-        .thenReturn(Completable.error(new NoFreeVehiclesException()));
+        .thenReturn(Completable.error(new NoSuchElementException()));
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
@@ -456,7 +456,7 @@ public class OnlineButtonViewModelTest {
   public void setNavigateToNoFreeVehiclesToLiveData() {
     // Дано:
     when(vehiclesAndOptionsUseCase.loadVehiclesAndOptions())
-        .thenReturn(Completable.error(new NoFreeVehiclesException()));
+        .thenReturn(Completable.error(new NoSuchElementException()));
     viewModel.getNavigationLiveData().observeForever(navigateObserver);
 
     // Действие:
@@ -473,7 +473,7 @@ public class OnlineButtonViewModelTest {
   public void setNavigateToNoVehiclesToLiveData() {
     // Дано:
     when(vehiclesAndOptionsUseCase.loadVehiclesAndOptions())
-        .thenReturn(Completable.error(new NoVehiclesAvailableException()));
+        .thenReturn(Completable.error(new EmptyListException()));
     viewModel.getNavigationLiveData().observeForever(navigateObserver);
 
     // Действие:

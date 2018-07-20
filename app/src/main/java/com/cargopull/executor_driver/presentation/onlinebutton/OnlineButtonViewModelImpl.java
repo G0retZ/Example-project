@@ -6,8 +6,7 @@ import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
 import com.cargopull.executor_driver.backend.web.NoNetworkException;
 import com.cargopull.executor_driver.entity.DriverBlockedException;
-import com.cargopull.executor_driver.entity.NoFreeVehiclesException;
-import com.cargopull.executor_driver.entity.NoVehiclesAvailableException;
+import com.cargopull.executor_driver.entity.EmptyListException;
 import com.cargopull.executor_driver.interactor.vehicle.VehiclesAndOptionsUseCase;
 import com.cargopull.executor_driver.presentation.CommonNavigate;
 import com.cargopull.executor_driver.presentation.SingleLiveEvent;
@@ -17,6 +16,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.internal.disposables.EmptyDisposable;
 import io.reactivex.schedulers.Schedulers;
+import java.util.NoSuchElementException;
 import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
 
@@ -72,9 +72,9 @@ public class OnlineButtonViewModelImpl extends ViewModel implements OnlineButton
             throwable -> {
               if (throwable instanceof DriverBlockedException) {
                 navigateLiveData.postValue(OnlineButtonNavigate.DRIVER_BLOCKED);
-              } else if (throwable instanceof NoFreeVehiclesException) {
+              } else if (throwable instanceof NoSuchElementException) {
                 navigateLiveData.postValue(OnlineButtonNavigate.NO_FREE_VEHICLES);
-              } else if (throwable instanceof NoVehiclesAvailableException) {
+              } else if (throwable instanceof EmptyListException) {
                 navigateLiveData.postValue(OnlineButtonNavigate.NO_VEHICLES);
               } else if (throwable instanceof NoNetworkException) {
                 navigateLiveData.postValue(CommonNavigate.NO_CONNECTION);
