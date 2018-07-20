@@ -879,6 +879,7 @@ public class AppComponentImpl implements AppComponent {
             new ViewModelFactory<>(
                 new OrderTimeViewModelImpl(
                     new OrderFulfillmentTimeUseCaseImpl(
+                        errorReporter,
                         new OrderGatewayImpl(
                             executorStateUseCase,
                             ExecutorState.ORDER_FULFILLMENT,
