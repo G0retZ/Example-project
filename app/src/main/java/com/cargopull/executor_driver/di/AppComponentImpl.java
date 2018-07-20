@@ -250,6 +250,7 @@ public class AppComponentImpl implements AppComponent {
         loginSharer
     );
     executorBalanceUseCase = new ExecutorBalanceUseCaseImpl(
+        errorReporter,
         new ExecutorBalanceGatewayImpl(
             stompClient,
             new ExecutorBalanceApiMapper()
