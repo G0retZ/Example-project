@@ -514,7 +514,9 @@ public class AppComponentImpl implements AppComponent {
             chooseVehicleFragment,
             new ViewModelFactory<>(
                 new ChooseVehicleViewModelImpl(
-                    new VehicleChoiceUseCaseImpl(vehiclesAndOptionsGateway, vehicleChoiceSharer)
+                    new VehicleChoiceUseCaseImpl(
+                        errorReporter, vehiclesAndOptionsGateway, vehicleChoiceSharer
+                    )
                 )
             )
         ).get(ChooseVehicleViewModelImpl.class)
@@ -592,6 +594,7 @@ public class AppComponentImpl implements AppComponent {
             new ViewModelFactory<>(
                 new ChooseVehicleViewModelImpl(
                     new VehicleChoiceUseCaseImpl(
+                        errorReporter,
                         selectedVehiclesAndOptionsGateway == null ?
                             vehiclesAndOptionsGateway :
                             selectedVehiclesAndOptionsGateway,

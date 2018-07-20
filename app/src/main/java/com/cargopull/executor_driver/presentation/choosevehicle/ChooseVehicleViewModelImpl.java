@@ -5,7 +5,7 @@ import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
 import com.cargopull.executor_driver.R;
-import com.cargopull.executor_driver.entity.NoVehiclesAvailableException;
+import com.cargopull.executor_driver.entity.EmptyListException;
 import com.cargopull.executor_driver.entity.Vehicle;
 import com.cargopull.executor_driver.interactor.vehicle.VehicleChoiceUseCase;
 import com.cargopull.executor_driver.presentation.SingleLiveEvent;
@@ -87,7 +87,7 @@ public class ChooseVehicleViewModelImpl extends ViewModel implements ChooseVehic
   }
 
   private void consumeError(Throwable error) {
-    if (error instanceof NoVehiclesAvailableException) {
+    if (error instanceof EmptyListException) {
       viewStateLiveData.postValue(new ChooseVehicleViewStateError(R.string.no_vehicles_available));
     } else {
       viewStateLiveData.postValue(new ChooseVehicleViewStateError(R.string.error));
