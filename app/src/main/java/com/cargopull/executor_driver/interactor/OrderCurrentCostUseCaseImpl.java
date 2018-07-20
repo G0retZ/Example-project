@@ -1,12 +1,15 @@
 package com.cargopull.executor_driver.interactor;
 
 import android.support.annotation.NonNull;
+import com.cargopull.executor_driver.utils.ErrorReporter;
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
 import javax.inject.Inject;
 
 public class OrderCurrentCostUseCaseImpl implements OrderCurrentCostUseCase {
 
+  @NonNull
+  private final ErrorReporter errorReporter;
   @NonNull
   private final OrderGateway orderGateway;
   @NonNull
@@ -15,9 +18,12 @@ public class OrderCurrentCostUseCaseImpl implements OrderCurrentCostUseCase {
   private final OrderCurrentCostGateway orderCurrentCostGateway;
 
   @Inject
-  public OrderCurrentCostUseCaseImpl(@NonNull OrderGateway orderGateway,
+  public OrderCurrentCostUseCaseImpl(
+      @NonNull ErrorReporter errorReporter,
+      @NonNull OrderGateway orderGateway,
       @NonNull DataReceiver<String> loginReceiver,
       @NonNull OrderCurrentCostGateway orderCurrentCostGateway) {
+    this.errorReporter = errorReporter;
     this.orderGateway = orderGateway;
     this.loginReceiver = loginReceiver;
     this.orderCurrentCostGateway = orderCurrentCostGateway;
@@ -33,6 +39,6 @@ public class OrderCurrentCostUseCaseImpl implements OrderCurrentCostUseCase {
                 orderCurrentCostGateway.getOrderCurrentCost(login)
                     .startWith(order.getTotalCost())
             )
-        );
+        ).doOnError(errorReporter::reportError);
   }
 }

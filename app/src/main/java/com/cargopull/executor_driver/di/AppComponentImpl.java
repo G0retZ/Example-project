@@ -900,6 +900,7 @@ public class AppComponentImpl implements AppComponent {
             new ViewModelFactory<>(
                 new OrderCostViewModelImpl(
                     new OrderCurrentCostUseCaseImpl(
+                        errorReporter,
                         new OrderGatewayImpl(
                             executorStateUseCase,
                             ExecutorState.ORDER_FULFILLMENT,
