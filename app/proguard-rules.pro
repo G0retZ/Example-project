@@ -69,7 +69,3 @@
 -dontwarn com.crashlytics.**
 -keep class com.google.android.gms.measurement.AppMeasurement { *; }
 -keep class com.google.android.gms.measurement.AppMeasurement$OnEventListener { *; }
-
-# наши пакеты
-# -adaptresourcefilenames **.ogg,**.xml,**.gif,**.jpg,**.png
-#-keep class !com.cargopull.executor_driver.**{*;}
