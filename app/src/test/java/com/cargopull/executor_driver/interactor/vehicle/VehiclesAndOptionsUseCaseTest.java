@@ -1,5 +1,6 @@
 package com.cargopull.executor_driver.interactor.vehicle;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -8,14 +9,15 @@ import static org.mockito.Mockito.when;
 
 import com.cargopull.executor_driver.backend.web.NoNetworkException;
 import com.cargopull.executor_driver.entity.DriverBlockedException;
-import com.cargopull.executor_driver.entity.NoFreeVehiclesException;
-import com.cargopull.executor_driver.entity.NoVehiclesAvailableException;
+import com.cargopull.executor_driver.entity.EmptyListException;
 import com.cargopull.executor_driver.entity.Vehicle;
+import com.cargopull.executor_driver.utils.ErrorReporter;
 import io.reactivex.Observer;
 import io.reactivex.Single;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.NoSuchElementException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -28,11 +30,11 @@ public class VehiclesAndOptionsUseCaseTest {
   private VehiclesAndOptionsUseCase useCase;
 
   @Mock
+  private ErrorReporter errorReporter;
+  @Mock
   private VehiclesAndOptionsGateway gateway;
-
   @Mock
   private Observer<Vehicle> vehicleChoiceObserver;
-
   @Mock
   private LastUsedVehicleGateway lastUsedVehicleGateway;
 
@@ -40,7 +42,7 @@ public class VehiclesAndOptionsUseCaseTest {
   public void setUp() {
     when(gateway.getExecutorVehicles()).thenReturn(Single.never());
     when(lastUsedVehicleGateway.getLastUsedVehicleId()).thenReturn(Single.never());
-    useCase = new VehiclesAndOptionsUseCaseImpl(gateway, vehicleChoiceObserver,
+    useCase = new VehiclesAndOptionsUseCaseImpl(errorReporter, gateway, vehicleChoiceObserver,
         lastUsedVehicleGateway);
   }
 
@@ -274,6 +276,143 @@ public class VehiclesAndOptionsUseCaseTest {
   /* Проверяем ответы на запрос загрузки списка ТС */
 
   /**
+   * Не должен отправлять ошибку сети.
+   */
+  @Test
+  public void doNotReportNoNetworkError() {
+    // Дано:
+    when(lastUsedVehicleGateway.getLastUsedVehicleId()).thenReturn(Single.just(-1L));
+    when(gateway.getExecutorVehicles()).thenReturn(Single.error(new NoNetworkException()));
+
+    // Действие:
+    useCase.loadVehiclesAndOptions().test();
+
+    // Результат:
+    verifyZeroInteractions(errorReporter);
+  }
+
+  /**
+   * Должен отправить ошибку блокировки.
+   */
+  @Test
+  public void reportDriverBlockedError() {
+    // Дано:
+    when(lastUsedVehicleGateway.getLastUsedVehicleId()).thenReturn(Single.just(-1L));
+    when(gateway.getExecutorVehicles()).thenReturn(Single.error(new DriverBlockedException()));
+
+    // Действие:
+    useCase.loadVehiclesAndOptions().test();
+
+    // Результат:
+    verify(errorReporter, only()).reportError(any(DriverBlockedException.class));
+  }
+
+  /**
+   * Должен отправить ошибку отсуствствия доступных ТС.
+   */
+  @Test
+  public void reportNoVehiclesAvailableError() {
+    // Дано:
+    when(lastUsedVehicleGateway.getLastUsedVehicleId()).thenReturn(Single.just(-1L));
+    when(gateway.getExecutorVehicles()).thenReturn(Single.just(new ArrayList<>()));
+
+    // Действие:
+    useCase.loadVehiclesAndOptions().test();
+
+    // Результат:
+    verify(errorReporter, only()).reportError(any(EmptyListException.class));
+  }
+
+  /**
+   * Должен отправить ошибку отсуствствия свободных ТС.
+   */
+  @Test
+  public void reportNoFreeVehiclesError() {
+    // Дано:
+    when(lastUsedVehicleGateway.getLastUsedVehicleId()).thenReturn(Single.just(-1L));
+    when(gateway.getExecutorVehicles()).thenReturn(Single.just(
+        new ArrayList<>(Arrays.asList(
+            new Vehicle(12, "manufacturer", "model", "color", "license", true),
+            new Vehicle(15, "man fact", "modelers", "colo", "licensee", true)
+        ))
+    ));
+
+    // Действие:
+    useCase.loadVehiclesAndOptions().test();
+
+    // Результат:
+    verify(errorReporter, only()).reportError(any(NoSuchElementException.class));
+  }
+
+  /**
+   * Не должен отправлять ошибку.
+   */
+  @Test
+  public void doNotReportErrorIfOnlyOneFreeVehicleAvailable() {
+    // Дано:
+    when(lastUsedVehicleGateway.getLastUsedVehicleId()).thenReturn(Single.just(-1L));
+    when(gateway.getExecutorVehicles()).thenReturn(Single.just(
+        new ArrayList<>(Arrays.asList(
+            new Vehicle(12, "manufacturer", "model", "color", "license", true),
+            new Vehicle(13, "manufacture", "models", "colo", "licenses", true),
+            new Vehicle(14, "manufacturers", "modeler", "color", "licensing", false),
+            new Vehicle(15, "man fact", "modelers", "colo", "licensee", true)
+        ))
+    ));
+
+    // Действие:
+    useCase.loadVehiclesAndOptions().test();
+
+    // Результат:
+    verifyZeroInteractions(errorReporter);
+  }
+
+  /**
+   * Не должен отправлять ошибку.
+   */
+  @Test
+  public void doNotReportErrorIfOnlyOneVehicleAvailableAndFree() {
+    // Дано:
+    when(lastUsedVehicleGateway.getLastUsedVehicleId()).thenReturn(Single.just(-1L));
+    when(gateway.getExecutorVehicles()).thenReturn(Single.just(
+        new ArrayList<>(Collections.singletonList(
+            new Vehicle(14, "manufacturers", "modeler", "color", "licensing", false)
+        ))
+    ));
+
+    // Действие:
+    useCase.loadVehiclesAndOptions().test();
+
+    // Результат:
+    verifyZeroInteractions(errorReporter);
+  }
+
+  /**
+   * Не должен отправлять ошибку.
+   */
+  @Test
+  public void doNotReportErrorIfLoadSuccessful() {
+    // Дано:
+    when(lastUsedVehicleGateway.getLastUsedVehicleId()).thenReturn(Single.just(-1L));
+    when(gateway.getExecutorVehicles()).thenReturn(Single.just(
+        new ArrayList<>(Arrays.asList(
+            new Vehicle(12, "manufacturer", "model", "color", "license", false),
+            new Vehicle(13, "manufacture", "models", "colo", "licenses", true),
+            new Vehicle(14, "manufacturers", "modeler", "color", "licensing", false),
+            new Vehicle(15, "man fact", "modelers", "colo", "licensee", true)
+        ))
+    ));
+
+    // Действие:
+    useCase.loadVehiclesAndOptions().test();
+
+    // Результат:
+    verifyZeroInteractions(errorReporter);
+  }
+
+  /* Проверяем ответы на запрос загрузки списка ТС */
+
+  /**
    * Должен ответить ошибкой сети.
    */
   @Test
@@ -311,7 +450,7 @@ public class VehiclesAndOptionsUseCaseTest {
 
     // Действие и Результат:
     useCase.loadVehiclesAndOptions().test()
-        .assertError(NoVehiclesAvailableException.class);
+        .assertError(EmptyListException.class);
   }
 
   /**
@@ -330,7 +469,7 @@ public class VehiclesAndOptionsUseCaseTest {
 
     // Действие и Результат:
     useCase.loadVehiclesAndOptions().test()
-        .assertError(NoFreeVehiclesException.class);
+        .assertError(NoSuchElementException.class);
   }
 
   /**

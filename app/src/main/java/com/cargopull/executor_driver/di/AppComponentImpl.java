@@ -466,6 +466,7 @@ public class AppComponentImpl implements AppComponent {
             new ViewModelFactory<>(
                 new OnlineButtonViewModelImpl(
                     new VehiclesAndOptionsUseCaseImpl(
+                        errorReporter,
                         selectedVehiclesAndOptionsGateway,
                         vehicleChoiceSharer,
                         lastUsedVehicleGateway
@@ -492,6 +493,7 @@ public class AppComponentImpl implements AppComponent {
             new ViewModelFactory<>(
                 new OnlineButtonViewModelImpl(
                     new VehiclesAndOptionsUseCaseImpl(
+                        errorReporter,
                         vehiclesAndOptionsGateway,
                         vehicleChoiceSharer,
                         lastUsedVehicleGateway
