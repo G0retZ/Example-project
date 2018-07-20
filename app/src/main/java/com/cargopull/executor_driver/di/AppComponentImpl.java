@@ -136,6 +136,8 @@ import com.cargopull.executor_driver.presentation.services.ServicesViewModelImpl
 import com.cargopull.executor_driver.presentation.smsbutton.SmsButtonViewModelImpl;
 import com.cargopull.executor_driver.presentation.vehicleoptions.VehicleOptionsViewModelImpl;
 import com.cargopull.executor_driver.presentation.waitingforclient.WaitingForClientViewModelImpl;
+import com.cargopull.executor_driver.utils.ErrorReporter;
+import com.cargopull.executor_driver.utils.ErrorReporterImpl;
 import com.cargopull.executor_driver.utils.TimeUtilsImpl;
 import com.cargopull.executor_driver.view.BalanceFragment;
 import com.cargopull.executor_driver.view.BalanceSummaryFragment;
@@ -180,6 +182,8 @@ import ua.naiksoftware.stomp.client.StompClient;
 
 public class AppComponentImpl implements AppComponent {
 
+  @NonNull
+  private final ErrorReporter errorReporter;
   @NonNull
   private final AppSettingsService appSettingsService;
   @NonNull
@@ -229,6 +233,7 @@ public class AppComponentImpl implements AppComponent {
     loginSharer = new LoginSharer(appSettingsService);
     vehicleChoiceSharer = new VehicleChoiceSharer();
     lastUsedVehicleGateway = new LastUsedVehicleGatewayImpl(appSettingsService);
+    errorReporter = new ErrorReporterImpl(loginSharer);
     serverConnectionViewModel = new ServerConnectionViewModelImpl(
         new ServerConnectionUseCaseImpl(
             new ServerConnectionGatewayImpl(
@@ -237,6 +242,7 @@ public class AppComponentImpl implements AppComponent {
         )
     );
     cancelOrderUseCase = new CancelOrderUseCaseImpl(
+        errorReporter,
         new CancelOrderGatewayImpl(
             stompClient,
             new CancelOrderReasonApiMapper()
