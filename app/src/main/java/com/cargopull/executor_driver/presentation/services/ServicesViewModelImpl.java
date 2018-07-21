@@ -119,6 +119,10 @@ public class ServicesViewModelImpl extends ViewModel implements ServicesViewMode
             items -> {
               if (items.size() == 1) {
                 servicesListItems.setServicesListItems(items);
+                viewStateLiveData.postValue(new ServicesViewStateReady(
+                    servicesListItems.getServicesListItems(0)
+                ));
+                servicesSliderViewModel.refresh();
                 setServices(servicesListItems.getServicesListItems(0));
               } else {
                 servicesListItems.setServicesListItems(items);
