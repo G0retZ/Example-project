@@ -25,12 +25,15 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import com.cargopull.executor_driver.R;
+import com.cargopull.executor_driver.backend.vibro.ShakeItPlayer;
 import com.cargopull.executor_driver.di.AppComponent;
 import com.cargopull.executor_driver.presentation.movingtoclient.MovingToClientViewActions;
 import com.cargopull.executor_driver.presentation.movingtoclient.MovingToClientViewModel;
 import com.cargopull.executor_driver.presentation.order.OrderViewActions;
 import com.cargopull.executor_driver.presentation.order.OrderViewModel;
+import com.cargopull.executor_driver.utils.Pair;
 import com.squareup.picasso.Picasso;
+import java.util.Collections;
 import javax.inject.Inject;
 import org.joda.time.LocalTime;
 import org.joda.time.format.DateTimeFormat;
@@ -44,6 +47,8 @@ public class MovingToClientFragment extends BaseFragment implements MovingToClie
 
   private MovingToClientViewModel movingToClientViewModel;
   private OrderViewModel orderViewModel;
+  @Nullable
+  private ShakeItPlayer shakeItPlayer;
   private ImageView mapImage;
   private TextView addressText;
   private TextView commentTitleText;
@@ -74,6 +79,11 @@ public class MovingToClientFragment extends BaseFragment implements MovingToClie
   @Inject
   public void setMovingToClientViewModel(@NonNull MovingToClientViewModel movingToClientViewModel) {
     this.movingToClientViewModel = movingToClientViewModel;
+  }
+
+  @Inject
+  public void setShakeItPlayer(@NonNull ShakeItPlayer shakeItPlayer) {
+    this.shakeItPlayer = shakeItPlayer;
   }
 
   @SuppressLint("ClickableViewAccessibility")
@@ -107,6 +117,9 @@ public class MovingToClientFragment extends BaseFragment implements MovingToClie
       public void onAnimationEnd(Animator animation) {
         if (!canceled) {
           movingToClientViewModel.reportArrival();
+          if (shakeItPlayer != null) {
+            shakeItPlayer.shakeIt(Collections.singletonList(new Pair<>(200L, 255)));
+          }
         }
       }
 

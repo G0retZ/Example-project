@@ -21,6 +21,7 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import com.cargopull.executor_driver.R;
+import com.cargopull.executor_driver.backend.vibro.ShakeItPlayer;
 import com.cargopull.executor_driver.di.AppComponent;
 import com.cargopull.executor_driver.presentation.nextroutepoint.NextRoutePointViewActions;
 import com.cargopull.executor_driver.presentation.nextroutepoint.NextRoutePointViewModel;
@@ -31,7 +32,9 @@ import com.cargopull.executor_driver.presentation.orderroute.OrderRouteViewModel
 import com.cargopull.executor_driver.presentation.orderroute.RoutePointItem;
 import com.cargopull.executor_driver.presentation.ordertime.OrderTimeViewActions;
 import com.cargopull.executor_driver.presentation.ordertime.OrderTimeViewModel;
+import com.cargopull.executor_driver.utils.Pair;
 import java.text.DecimalFormat;
+import java.util.Collections;
 import java.util.List;
 import javax.inject.Inject;
 import org.joda.time.LocalTime;
@@ -48,6 +51,8 @@ public class OrderFulfillmentFragment extends BaseFragment implements OrderCostV
   private OrderTimeViewModel orderTimeViewModel;
   private NextRoutePointViewModel nextRoutePointViewModel;
   private OrderRouteViewModel orderRouteViewModel;
+  @Nullable
+  private ShakeItPlayer shakeItPlayer;
   private TextView totalTimeText;
   private TextView totalCostText;
   private TextView freeRideText;
@@ -88,6 +93,11 @@ public class OrderFulfillmentFragment extends BaseFragment implements OrderCostV
   @Inject
   public void setOrderRouteViewModel(@NonNull OrderRouteViewModel orderRouteViewModel) {
     this.orderRouteViewModel = orderRouteViewModel;
+  }
+
+  @Inject
+  public void setShakeItPlayer(@NonNull ShakeItPlayer shakeItPlayer) {
+    this.shakeItPlayer = shakeItPlayer;
   }
 
   @Override
@@ -131,6 +141,9 @@ public class OrderFulfillmentFragment extends BaseFragment implements OrderCostV
       public void onAnimationEnd(Animator animation) {
         if (!canceled) {
           nextRoutePointViewModel.closeRoutePoint();
+          if (shakeItPlayer != null) {
+            shakeItPlayer.shakeIt(Collections.singletonList(new Pair<>(200L, 255)));
+          }
         }
       }
 
@@ -181,6 +194,9 @@ public class OrderFulfillmentFragment extends BaseFragment implements OrderCostV
       public void onAnimationEnd(Animator animation) {
         if (!canceled) {
           nextRoutePointViewModel.completeTheOrder();
+          if (shakeItPlayer != null) {
+            shakeItPlayer.shakeIt(Collections.singletonList(new Pair<>(200L, 255)));
+          }
         }
       }
 

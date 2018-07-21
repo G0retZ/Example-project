@@ -17,13 +17,16 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import com.cargopull.executor_driver.R;
+import com.cargopull.executor_driver.backend.vibro.ShakeItPlayer;
 import com.cargopull.executor_driver.di.AppComponent;
 import com.cargopull.executor_driver.presentation.order.OrderViewActions;
 import com.cargopull.executor_driver.presentation.order.OrderViewModel;
 import com.cargopull.executor_driver.presentation.waitingforclient.WaitingForClientNavigate;
 import com.cargopull.executor_driver.presentation.waitingforclient.WaitingForClientViewActions;
 import com.cargopull.executor_driver.presentation.waitingforclient.WaitingForClientViewModel;
+import com.cargopull.executor_driver.utils.Pair;
 import java.text.DecimalFormat;
+import java.util.Collections;
 import javax.inject.Inject;
 import org.joda.time.LocalTime;
 
@@ -36,6 +39,8 @@ public class WaitingForClientFragment extends BaseFragment implements
 
   private WaitingForClientViewModel waitingForClientViewModel;
   private OrderViewModel orderViewModel;
+  @Nullable
+  private ShakeItPlayer shakeItPlayer;
   private TextView addressText1;
   private TextView commentTitleText;
   private TextView commentText;
@@ -59,6 +64,11 @@ public class WaitingForClientFragment extends BaseFragment implements
   @Inject
   public void setOrderViewModel(@NonNull OrderViewModel orderViewModel) {
     this.orderViewModel = orderViewModel;
+  }
+
+  @Inject
+  public void setShakeItPlayer(@NonNull ShakeItPlayer shakeItPlayer) {
+    this.shakeItPlayer = shakeItPlayer;
   }
 
   @SuppressLint("ClickableViewAccessibility")
@@ -99,6 +109,9 @@ public class WaitingForClientFragment extends BaseFragment implements
       public void onAnimationEnd(Animator animation) {
         if (!canceled) {
           waitingForClientViewModel.startLoading();
+          if (shakeItPlayer != null) {
+            shakeItPlayer.shakeIt(Collections.singletonList(new Pair<>(200L, 255)));
+          }
         }
       }
 
