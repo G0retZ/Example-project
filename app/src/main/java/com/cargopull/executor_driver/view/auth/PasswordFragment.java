@@ -261,6 +261,7 @@ public class PasswordFragment extends BaseFragment implements CodeViewActions,
 
   private void sendSmsRequest() {
     smsSent = true;
+    codeInput.setText("");
     smsButtonViewModel.sendMeSms();
   }
 
