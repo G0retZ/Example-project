@@ -117,11 +117,16 @@ public class ServicesViewModelImpl extends ViewModel implements ServicesViewMode
         .toList()
         .subscribe(
             items -> {
-              servicesListItems.setServicesListItems(items);
-              servicesSliderViewModel.refresh();
-              viewStateLiveData.postValue(new ServicesViewStateReady(
-                  servicesListItems.getServicesListItems()
-              ));
+              if (items.size() == 1) {
+                servicesListItems.setServicesListItems(items);
+                setServices(servicesListItems.getServicesListItems(0));
+              } else {
+                servicesListItems.setServicesListItems(items);
+                servicesSliderViewModel.refresh();
+                viewStateLiveData.postValue(new ServicesViewStateReady(
+                    servicesListItems.getServicesListItems()
+                ));
+              }
             },
             throwable -> {
               ServicesViewStateError servicesViewStateError;
