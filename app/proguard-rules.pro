@@ -20,6 +20,7 @@
 # -printmapping map.txt
 # -dump class_files.txt
 # -printseeds seeds.txt
+# -dontobfuscate
 
 -dontpreverify
 -repackageclasses
