@@ -341,7 +341,7 @@ public class AppComponentImpl implements AppComponent {
 
   @Override
   public void inject(FcmService fcmService) {
-    fcmService.setStateViewActions(autoRouter);
+    fcmService.setAnnouncementStateViewActions(autoRouter);
   }
 
   @Override
@@ -757,6 +757,9 @@ public class AppComponentImpl implements AppComponent {
             )
         ).get(OrderViewModelImpl.class)
     );
+    movingToClientFragment.setShakeItPlayer(
+        singleShakePlayer
+    );
   }
 
   @Override
@@ -843,6 +846,9 @@ public class AppComponentImpl implements AppComponent {
                 )
             )
         ).get(OrderViewModelImpl.class)
+    );
+    waitingForClientFragment.setShakeItPlayer(
+        singleShakePlayer
     );
   }
 
@@ -960,6 +966,9 @@ public class AppComponentImpl implements AppComponent {
                 )
             )
         ).get(OrderRouteViewModelImpl.class)
+    );
+    orderFulfillmentFragment.setShakeItPlayer(
+        singleShakePlayer
     );
   }
 

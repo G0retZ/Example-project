@@ -29,28 +29,23 @@ public class OnlineActivity extends BaseActivity {
     switch (destination) {
       case OnlineButtonNavigate.DRIVER_BLOCKED:
         new Builder(this)
-            .setTitle(R.string.error)
-            .setMessage("Тебя забанили!")
+            .setMessage(R.string.driver_blocked_message)
             .setPositiveButton(getString(android.R.string.ok), null)
-            .setNegativeButton(getString(android.R.string.cancel), null)
             .create()
             .show();
         break;
       case OnlineButtonNavigate.NO_FREE_VEHICLES:
         new Builder(this)
-            .setTitle(R.string.error)
-            .setMessage("Нету тачки для тебя!")
+            .setMessage(R.string.no_free_vehicle_message)
             .setPositiveButton(getString(android.R.string.ok), null)
-            .setNegativeButton(getString(android.R.string.cancel), null)
             .create()
             .show();
         break;
       case OnlineButtonNavigate.NO_VEHICLES:
         new Builder(this)
             .setTitle(R.string.error)
-            .setMessage("У тебя вообще нет тачек!")
+            .setMessage(R.string.no_vehicles_message)
             .setPositiveButton(getString(android.R.string.ok), null)
-            .setNegativeButton(getString(android.R.string.cancel), null)
             .create()
             .show();
         break;

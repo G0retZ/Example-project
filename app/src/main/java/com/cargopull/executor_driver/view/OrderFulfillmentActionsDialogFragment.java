@@ -33,7 +33,7 @@ public class OrderFulfillmentActionsDialogFragment extends BaseDialogFragment im
   private Context context;
 
   @Inject
-  public void setNextRoutePointViewModel(NextRoutePointViewModel nextRoutePointViewModel) {
+  public void setNextRoutePointViewModel(@NonNull NextRoutePointViewModel nextRoutePointViewModel) {
     this.nextRoutePointViewModel = nextRoutePointViewModel;
   }
 

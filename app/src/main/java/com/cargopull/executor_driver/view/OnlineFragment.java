@@ -29,7 +29,7 @@ public class OnlineFragment extends BaseFragment implements OnlineSwitchViewActi
   private SwitchCompat switchCompat;
 
   @Inject
-  public void setOnlineSwitchViewModel(OnlineSwitchViewModel onlineSwitchViewModel) {
+  public void setOnlineSwitchViewModel(@NonNull OnlineSwitchViewModel onlineSwitchViewModel) {
     this.onlineSwitchViewModel = onlineSwitchViewModel;
   }
 

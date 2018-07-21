@@ -41,11 +41,11 @@
     <activity
       android:launchMode="singleTop"
       android:name=".application.LoginActivity"
-      android:windowSoftInputMode="stateVisible|adjustResize"/>
+      android:windowSoftInputMode="stateAlwaysVisible|adjustResize"/>
     <activity
       android:launchMode="singleTop"
       android:name=".application.PasswordActivity"
-      android:windowSoftInputMode="stateVisible|adjustResize"/>
+      android:windowSoftInputMode="stateAlwaysVisible|adjustResize"/>
     <activity
       android:launchMode="singleTop"
       android:name=".application.VehicleOptionsActivity"/>
@@ -110,8 +110,5 @@
     <meta-data
       android:name="com.google.android.geo.API_KEY"
       android:value="@string/google_maps_key"/>
-    <!--<meta-data-->
-    <!--android:name="com.google.firebase.messaging.default_notification_channel_id"-->
-    <!--android:value="@string/default_notification_channel_id"/>-->
   </application>
 </manifest>

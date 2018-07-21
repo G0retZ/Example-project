@@ -48,7 +48,7 @@ public class MapFragment extends SupportMapFragment implements OnMapReadyCallbac
   }
 
   @Inject
-  public void setGeoLocationViewModel(GeoLocationViewModel geoLocationViewModel) {
+  public void setGeoLocationViewModel(@NonNull GeoLocationViewModel geoLocationViewModel) {
     this.geoLocationViewModel = geoLocationViewModel;
   }
 

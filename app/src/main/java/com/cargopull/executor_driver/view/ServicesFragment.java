@@ -55,7 +55,7 @@ public class ServicesFragment extends BaseFragment implements ServicesViewAction
   }
 
   @Inject
-  public void setServicesSliderViewModel(ServicesSliderViewModel servicesSliderViewModel) {
+  public void setServicesSliderViewModel(@NonNull ServicesSliderViewModel servicesSliderViewModel) {
     this.servicesSliderViewModel = servicesSliderViewModel;
   }
 

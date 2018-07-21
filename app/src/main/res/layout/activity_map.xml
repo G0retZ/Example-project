@@ -20,6 +20,8 @@
       android:id="@+id/fragment_balance_summary"
       android:layout_width="match_parent"
       android:layout_height="match_parent"
+      android:layout_marginEnd="?android:attr/actionBarSize"
+      android:layout_marginRight="?android:attr/actionBarSize"
       android:name="com.cargopull.executor_driver.view.BalanceSummaryFragment"
       tools:layout="@layout/fragment_balance_summary"/>
   </android.support.v7.widget.Toolbar>
