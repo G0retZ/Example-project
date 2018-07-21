@@ -38,7 +38,7 @@ public class MenuFragment extends BaseFragment implements BalanceViewActions,
   }
 
   @Inject
-  public void setOnlineSwitchViewModel(OnlineSwitchViewModel onlineSwitchViewModel) {
+  public void setOnlineSwitchViewModel(@NonNull OnlineSwitchViewModel onlineSwitchViewModel) {
     this.onlineSwitchViewModel = onlineSwitchViewModel;
   }
 

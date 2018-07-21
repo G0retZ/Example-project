@@ -47,7 +47,6 @@ public class MovingToClientFragment extends BaseFragment implements MovingToClie
 
   private MovingToClientViewModel movingToClientViewModel;
   private OrderViewModel orderViewModel;
-  @Nullable
   private ShakeItPlayer shakeItPlayer;
   private ImageView mapImage;
   private TextView addressText;
@@ -72,7 +71,7 @@ public class MovingToClientFragment extends BaseFragment implements MovingToClie
   }
 
   @Inject
-  public void setOrderViewModel(OrderViewModel orderViewModel) {
+  public void setOrderViewModel(@NonNull OrderViewModel orderViewModel) {
     this.orderViewModel = orderViewModel;
   }
 
@@ -117,9 +116,7 @@ public class MovingToClientFragment extends BaseFragment implements MovingToClie
       public void onAnimationEnd(Animator animation) {
         if (!canceled) {
           movingToClientViewModel.reportArrival();
-          if (shakeItPlayer != null) {
-            shakeItPlayer.shakeIt(Collections.singletonList(new Pair<>(200L, 255)));
-          }
+          shakeItPlayer.shakeIt(Collections.singletonList(new Pair<>(200L, 255)));
         }
       }
 

@@ -51,7 +51,6 @@ public class OrderFulfillmentFragment extends BaseFragment implements OrderCostV
   private OrderTimeViewModel orderTimeViewModel;
   private NextRoutePointViewModel nextRoutePointViewModel;
   private OrderRouteViewModel orderRouteViewModel;
-  @Nullable
   private ShakeItPlayer shakeItPlayer;
   private TextView totalTimeText;
   private TextView totalCostText;
@@ -76,17 +75,17 @@ public class OrderFulfillmentFragment extends BaseFragment implements OrderCostV
   private ObjectAnimator completeTheOrderResetAnimator;
 
   @Inject
-  public void setOrderCostViewModel(OrderCostViewModel orderCostViewModel) {
+  public void setOrderCostViewModel(@NonNull OrderCostViewModel orderCostViewModel) {
     this.orderCostViewModel = orderCostViewModel;
   }
 
   @Inject
-  public void setOrderTimeViewModel(OrderTimeViewModel orderTimeViewModel) {
+  public void setOrderTimeViewModel(@NonNull OrderTimeViewModel orderTimeViewModel) {
     this.orderTimeViewModel = orderTimeViewModel;
   }
 
   @Inject
-  public void setNextRoutePointViewModel(NextRoutePointViewModel nextRoutePointViewModel) {
+  public void setNextRoutePointViewModel(@NonNull NextRoutePointViewModel nextRoutePointViewModel) {
     this.nextRoutePointViewModel = nextRoutePointViewModel;
   }
 
@@ -141,9 +140,7 @@ public class OrderFulfillmentFragment extends BaseFragment implements OrderCostV
       public void onAnimationEnd(Animator animation) {
         if (!canceled) {
           nextRoutePointViewModel.closeRoutePoint();
-          if (shakeItPlayer != null) {
-            shakeItPlayer.shakeIt(Collections.singletonList(new Pair<>(200L, 255)));
-          }
+          shakeItPlayer.shakeIt(Collections.singletonList(new Pair<>(200L, 255)));
         }
       }
 
@@ -194,9 +191,7 @@ public class OrderFulfillmentFragment extends BaseFragment implements OrderCostV
       public void onAnimationEnd(Animator animation) {
         if (!canceled) {
           nextRoutePointViewModel.completeTheOrder();
-          if (shakeItPlayer != null) {
-            shakeItPlayer.shakeIt(Collections.singletonList(new Pair<>(200L, 255)));
-          }
+          shakeItPlayer.shakeIt(Collections.singletonList(new Pair<>(200L, 255)));
         }
       }
 

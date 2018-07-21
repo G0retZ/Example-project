@@ -39,7 +39,6 @@ public class WaitingForClientFragment extends BaseFragment implements
 
   private WaitingForClientViewModel waitingForClientViewModel;
   private OrderViewModel orderViewModel;
-  @Nullable
   private ShakeItPlayer shakeItPlayer;
   private TextView addressText1;
   private TextView commentTitleText;
@@ -109,9 +108,7 @@ public class WaitingForClientFragment extends BaseFragment implements
       public void onAnimationEnd(Animator animation) {
         if (!canceled) {
           waitingForClientViewModel.startLoading();
-          if (shakeItPlayer != null) {
-            shakeItPlayer.shakeIt(Collections.singletonList(new Pair<>(200L, 255)));
-          }
+          shakeItPlayer.shakeIt(Collections.singletonList(new Pair<>(200L, 255)));
         }
       }
 
