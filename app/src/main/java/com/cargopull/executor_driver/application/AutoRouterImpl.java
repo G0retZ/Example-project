@@ -13,6 +13,7 @@ import com.cargopull.executor_driver.R;
 import com.cargopull.executor_driver.backend.ringtone.RingTonePlayer;
 import com.cargopull.executor_driver.backend.vibro.ShakeItPlayer;
 import com.cargopull.executor_driver.presentation.CommonNavigate;
+import com.cargopull.executor_driver.presentation.announcement.AnnouncementStateViewActions;
 import com.cargopull.executor_driver.presentation.executorstate.ExecutorStateNavigate;
 import com.cargopull.executor_driver.presentation.executorstate.ExecutorStateViewActions;
 import com.cargopull.executor_driver.presentation.geolocation.GeoLocationNavigate;
@@ -24,7 +25,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 public class AutoRouterImpl implements ActivityLifecycleCallbacks, AutoRouter,
-    ExecutorStateViewActions {
+    ExecutorStateViewActions, AnnouncementStateViewActions {
 
   /**
    * Реестр активити, разбитых по группам, чтобы исключить нежелательные переходы по навигации.
@@ -175,13 +176,18 @@ public class AutoRouterImpl implements ActivityLifecycleCallbacks, AutoRouter,
         messageRunnable = null;
       }
     };
-    tryToShowMessage();
   }
 
   private void tryToShowMessage() {
     if (currentActivity != null && messageRunnable != null) {
       currentActivity.runOnUiThread(messageRunnable);
     }
+  }
+
+  @Override
+  public void showMessage(@NonNull String message) {
+    showOnlineMessage(message);
+    tryToShowMessage();
   }
 
   private void tryToResolveGeo() {

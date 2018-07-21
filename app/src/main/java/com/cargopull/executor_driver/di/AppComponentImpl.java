@@ -341,7 +341,7 @@ public class AppComponentImpl implements AppComponent {
 
   @Override
   public void inject(FcmService fcmService) {
-    fcmService.setStateViewActions(autoRouter);
+    fcmService.setAnnouncementStateViewActions(autoRouter);
   }
 
   @Override

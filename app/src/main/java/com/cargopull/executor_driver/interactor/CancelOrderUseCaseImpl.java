@@ -56,7 +56,7 @@ public class CancelOrderUseCaseImpl implements CancelOrderUseCase {
     return Single.fromCallable(() -> {
       if (cancelOrderReasons == null || !cancelOrderReasons.contains(cancelOrderReason)) {
         throw new IndexOutOfBoundsException("Невереная причина отказа: " + cancelOrderReason + "."
-                + "Доступные причины отказа: " + cancelOrderReasons);
+            + "Доступные причины отказа: " + cancelOrderReasons);
       }
       return cancelOrderReason;
     }).doOnError(errorReporter::reportError)
