@@ -185,7 +185,7 @@ public class ChooseVehicleViewModelTest {
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(any(ChooseVehicleViewStatePending.class));
     inOrder.verify(viewStateObserver)
-        .onChanged(new ChooseVehicleViewStateError(R.string.no_vehicles_available));
+        .onChanged(new ChooseVehicleViewStateError(R.string.no_vehicles_message));
     verifyNoMoreInteractions(viewStateObserver);
   }
 

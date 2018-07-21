@@ -20,7 +20,7 @@
   <string name="error">Ошибка</string>
   <string name="free">Свободна</string>
   <string name="busy">Занята</string>
-  <string name="no_vehicles_available">Нет доступных ТС</string>
+  <string name="no_vehicles_message">У вас отсутствуют транспортные средства.\nОбратитесь в офис обслуживания.</string>
   <string name="choose_vehicle">Гараж</string>
   <string name="check_list">Чек лист</string>
   <string name="change">Сменить</string>
@@ -90,4 +90,6 @@
   <string name="exit_confirmation">Вы уверены, что хотите выйти?\n</string>
   <string name="order_complete_question">Вы завершили работу не на всех точках. Вы уверены, что хотите завершить заказ?</string>
   <string name="next_address">Следующий адрес (%1$d из %2$d)</string>
+  <string name="driver_blocked_message">Вы заблокированы.\nОбратитесь в офис обслуживания.</string>
+  <string name="no_free_vehicle_message">Все транспортные средства заняты.\nОбратитесь к вашему руководителю.</string>
 </resources>

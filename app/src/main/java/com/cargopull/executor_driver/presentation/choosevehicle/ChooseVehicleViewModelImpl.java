@@ -88,7 +88,7 @@ public class ChooseVehicleViewModelImpl extends ViewModel implements ChooseVehic
 
   private void consumeError(Throwable error) {
     if (error instanceof EmptyListException) {
-      viewStateLiveData.postValue(new ChooseVehicleViewStateError(R.string.no_vehicles_available));
+      viewStateLiveData.postValue(new ChooseVehicleViewStateError(R.string.no_vehicles_message));
     } else {
       viewStateLiveData.postValue(new ChooseVehicleViewStateError(R.string.error));
     }
