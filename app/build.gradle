@@ -2,7 +2,25 @@ apply plugin: 'com.android.application'
 apply plugin: 'io.fabric'
 apply plugin: 'com.getkeepsafe.dexcount'
 
+// Create a variable called keystorePropertiesFile, and initialize it to your
+// keystore.properties file, in the rootProject folder.
+def keystorePropertiesFile = new File(System.properties['user.home'], "cargopull.properties")
+
+// Initialize a new Properties() object called keystoreProperties.
+def keystoreProperties = new Properties()
+
+// Load your keystore.properties file into the keystoreProperties object.
+keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+
 android {
+    signingConfigs {
+        upload {
+            storeFile file(System.properties['user.home'] + "/" + keystoreProperties['storeFile'])
+            keyAlias keystoreProperties['executorAlias']
+            keyPassword keystoreProperties['executorPassword']
+            storePassword keystoreProperties['storePassword']
+        }
+    }
     buildToolsVersion '27.0.3'
     compileSdkVersion 27
     defaultConfig {
@@ -33,9 +51,8 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             buildConfigField 'String', 'BASE_URL', '"http://tst.capsrv.xyz:8080/executor/"'
             buildConfigField 'String', 'SOCKET_URL', '"ws://tst.capsrv.xyz:8080/executor/ws"'
+            signingConfig signingConfigs.upload
         }
-
-
         debug {
             minifyEnabled true
             shrinkResources true
@@ -43,7 +60,6 @@ android {
             applicationIdSuffix ".debug"
             debuggable true
         }
-
         /**
          * The `initWith` property allows you to copy configurations from other build types,
          * then configure just the settings you want to change. This one copies the debug build
@@ -73,52 +89,40 @@ dependencies {
     implementation 'com.android.support:design:27.1.1'
     implementation 'com.android.support:support-vector-drawable:27.1.1'
     implementation 'com.android.support:cardview-v7:27.1.1'
-
     // Android Architecture Components : Lifecycle
-    implementation "android.arch.lifecycle:runtime:1.1.1"
-    implementation "android.arch.lifecycle:extensions:1.1.1"
+    implementation 'android.arch.lifecycle:runtime:1.1.1'
+    implementation 'android.arch.lifecycle:extensions:1.1.1'
     annotationProcessor "android.arch.lifecycle:compiler:1.1.1"
-
     // Time
     implementation 'joda-time:joda-time:2.9.9'
-
     // Picasso
     implementation 'com.squareup.picasso:picasso:2.5.2'
-
     // Reactive Extensions
     implementation 'io.reactivex.rxjava2:rxjava:2.1.7'
     implementation 'com.jakewharton.rxbinding2:rxbinding:2.0.0'
-
     // Network
     implementation 'com.squareup.retrofit2:retrofit:2.3.0'
     implementation 'com.squareup.retrofit2:converter-scalars:2.3.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.3.0'
     implementation 'com.squareup.retrofit2:adapter-rxjava2:2.3.0'
     implementation 'com.squareup.okhttp3:logging-interceptor:3.9.0'
-
     // WebSocket STOMP
     implementation 'com.github.G0retZ:StompProtocolAndroid:18.0.15'
     implementation 'net.sourceforge.streamsupport:streamsupport:1.5.5'
     implementation 'net.sourceforge.streamsupport:streamsupport-cfuture:1.5.5'
-
     // Dependency injection
     implementation 'javax.inject:javax.inject:1'
-
     // Google Play Services
     implementation 'com.google.android.gms:play-services-location:15.0.1'
     implementation 'com.google.android.gms:play-services-maps:15.0.1'
     implementation 'com.google.maps.android:android-maps-utils:0.5'
-
     // FCM
     implementation 'com.google.firebase:firebase-messaging:17.1.0'
     implementation 'com.google.firebase:firebase-core:16.0.1'
-
     // Analytics
     implementation 'com.crashlytics.sdk.android:crashlytics:2.9.4'
-
     // Multi DEX
     implementation 'com.android.support:multidex:1.0.3'
-
     // Testing
     testImplementation 'junit:junit:4.12'
     testImplementation 'org.mockito:mockito-core:2.13.0'
