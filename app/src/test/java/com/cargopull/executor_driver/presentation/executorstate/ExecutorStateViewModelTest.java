@@ -390,4 +390,21 @@ public class ExecutorStateViewModelTest {
     // Результат:
     verify(navigationObserver, only()).onChanged(ExecutorStateNavigate.ORDER_FULFILLMENT);
   }
+
+  /**
+   * Должен вернуть "перейти к приему оплаты".
+   */
+  @Test
+  public void navigateToPaymentAcceptance() {
+    // Дано:
+    when(executorStateUseCase.getExecutorStates(anyBoolean()))
+        .thenReturn(Flowable.just(ExecutorState.PAYMENT_ACCEPTANCE));
+
+    // Действие:
+    viewModel.getNavigationLiveData().observeForever(navigationObserver);
+    viewModel.initializeExecutorState();
+
+    // Результат:
+    verify(navigationObserver, only()).onChanged(ExecutorStateNavigate.PAYMENT_ACCEPTANCE);
+  }
 }

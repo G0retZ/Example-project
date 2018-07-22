@@ -121,6 +121,10 @@ public class OnlineSwitchViewModelImpl extends ViewModel implements OnlineSwitch
         viewStateLiveData
             .postValue(new OnlineSwitchViewStatePending(new OnlineSwitchViewState(true)));
         break;
+      case PAYMENT_ACCEPTANCE:
+        viewStateLiveData
+            .postValue(new OnlineSwitchViewStatePending(new OnlineSwitchViewState(true)));
+        break;
       default:
     }
   }

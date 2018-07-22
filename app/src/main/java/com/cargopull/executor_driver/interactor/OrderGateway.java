@@ -5,7 +5,7 @@ import com.cargopull.executor_driver.entity.Order;
 import io.reactivex.Flowable;
 
 /**
- * Гейтвей получения с заказа.
+ * Гейтвей получения заказа.
  */
 public interface OrderGateway {
 

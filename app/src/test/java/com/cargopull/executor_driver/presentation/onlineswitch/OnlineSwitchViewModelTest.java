@@ -254,6 +254,25 @@ public class OnlineSwitchViewModelTest {
   }
 
   /**
+   * Должен вернуть состояние ожидания с активным переключателем для "приема оплаты".
+   */
+  @Test
+  public void setCheckedPendingViewStateForPaymentAcceptance() {
+    // Дано:
+    InOrder inOrder = Mockito.inOrder(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
+
+    // Действие:
+    publishSubject.onNext(ExecutorState.PAYMENT_ACCEPTANCE);
+
+    // Результат:
+    inOrder.verify(viewStateObserver).onChanged(new OnlineSwitchViewStatePending(null));
+    inOrder.verify(viewStateObserver)
+        .onChanged(new OnlineSwitchViewStatePending(new OnlineSwitchViewState(true)));
+    verifyNoMoreInteractions(viewStateObserver);
+  }
+
+  /**
    * Не должен давать иных состояний вида если была ошибка в подписке на статусы исполнителя.
    */
   @Test

@@ -743,6 +743,96 @@ public class ExecutorStateApiMapperTest {
   }
 
   /**
+   * Должен успешно преобразовать строку из хедера в статус "прием оплаты".
+   *
+   * @throws Exception ошибка
+   */
+  @Test
+  public void mappingHeaderToPaymentAcceptance() throws Exception {
+    // Дано и Действие:
+    ExecutorState executorState = mapper.map(new StompMessage(
+        "MESSAGE",
+        Collections.singletonList(
+            new StompHeader("Status", "PAYMENT_ACCEPTANCE")
+        ),
+        null
+    ));
+
+    // Результат:
+    assertEquals(executorState, ExecutorState.PAYMENT_ACCEPTANCE);
+    assertEquals(executorState.getCustomerTimer(), 0);
+    assertNull(executorState.getData());
+  }
+
+  /**
+   * Должен успешно преобразовать строку из хедера и тело в статус "прием оплаты" с данными.
+   *
+   * @throws Exception ошибка
+   */
+  @Test
+  public void mappingHeaderWithPayloadToPaymentAcceptance() throws Exception {
+    // Дано и Действие:
+    ExecutorState executorState = mapper.map(new StompMessage(
+        "MESSAGE",
+        Collections.singletonList(
+            new StompHeader("Status", "PAYMENT_ACCEPTANCE")
+        ),
+        "\npayload"
+    ));
+
+    // Результат:
+    assertEquals(executorState, ExecutorState.PAYMENT_ACCEPTANCE);
+    assertEquals(executorState.getCustomerTimer(), 0);
+    assertEquals(executorState.getData(), "\npayload");
+  }
+
+  /**
+   * Должен успешно преобразовать строки из хедеров в статус "прием оплаты" с не-нулевым таймером.
+   *
+   * @throws Exception ошибка
+   */
+  @Test
+  public void mappingHeadersToOrderPaymentAcceptanceWithTimer() throws Exception {
+    // Дано и Действие:
+    ExecutorState executorState = mapper.map(new StompMessage(
+        "MESSAGE",
+        Arrays.asList(
+            new StompHeader("Status", "PAYMENT_ACCEPTANCE"),
+            new StompHeader("CustomerConfirmationTimer", "1345")
+        ),
+        null
+    ));
+
+    // Результат:
+    assertEquals(executorState, ExecutorState.PAYMENT_ACCEPTANCE);
+    assertNull(executorState.getData());
+    assertEquals(executorState.getCustomerTimer(), 1345);
+  }
+
+  /**
+   * Должен успешно преобразовать строку из хедера и тело в статус "прием оплаты" с данными и не-нулевым таймером.
+   *
+   * @throws Exception ошибка
+   */
+  @Test
+  public void mappingHeadersWithPayloadToPaymentAcceptanceWithDataAndTimer() throws Exception {
+    // Дано и Действие:
+    ExecutorState executorState = mapper.map(new StompMessage(
+        "MESSAGE",
+        Arrays.asList(
+            new StompHeader("Status", "PAYMENT_ACCEPTANCE"),
+            new StompHeader("CustomerConfirmationTimer", "1345")
+        ),
+        "\npayload"
+    ));
+
+    // Результат:
+    assertEquals(executorState, ExecutorState.PAYMENT_ACCEPTANCE);
+    assertEquals(executorState.getCustomerTimer(), 1345);
+    assertEquals(executorState.getData(), "\npayload");
+  }
+
+  /**
    * Должен дать ошибку, если нужных хедеров нет.
    *
    * @throws Exception ошибка
@@ -815,7 +905,7 @@ public class ExecutorStateApiMapperTest {
     mapper.map(new StompMessage(
         "MESSAGE",
         Arrays.asList(
-            new StompHeader("Status", "ORDER_FULFILLMENT"),
+            new StompHeader("Status", "WAITING_FOR_CLIENT"),
             new StompHeader("CustomerConfirmationTimer", "")
         ),
         null
