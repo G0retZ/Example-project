@@ -294,6 +294,23 @@ public class GeoLocationUseCaseTest {
   }
 
   /**
+   * Должен запросить гейтвей получать локации с интервалом 15 сек,
+   * при переходе в состояние "Прием оплаты".
+   */
+  @Test
+  public void askGatewayForLocationsEvery15secIfGoToPaymentAcceptance() {
+    // Дано:
+    when(executorStateUseCase.getExecutorStates(anyBoolean()))
+        .thenReturn(Flowable.just(ExecutorState.PAYMENT_ACCEPTANCE));
+
+    // Действие:
+    useCase.getGeoLocations().test();
+
+    // Результат:
+    verify(geoLocationGateway, only()).getGeoLocations(15000);
+  }
+
+  /**
    * Должен запросить гейтвей получать локации с различным интервалом, при смене состояний.
    */
   @Test
@@ -304,8 +321,8 @@ public class GeoLocationUseCaseTest {
         ExecutorState.SHIFT_CLOSED, ExecutorState.SHIFT_OPENED, ExecutorState.ONLINE,
         ExecutorState.DRIVER_ORDER_CONFIRMATION, ExecutorState.CLIENT_ORDER_CONFIRMATION,
         ExecutorState.MOVING_TO_CLIENT, ExecutorState.WAITING_FOR_CLIENT,
-        ExecutorState.ORDER_FULFILLMENT, ExecutorState.ONLINE, ExecutorState.SHIFT_OPENED,
-        ExecutorState.SHIFT_CLOSED
+        ExecutorState.ORDER_FULFILLMENT, ExecutorState.PAYMENT_ACCEPTANCE, ExecutorState.ONLINE,
+        ExecutorState.SHIFT_OPENED, ExecutorState.SHIFT_CLOSED
     ));
 
     // Действие:
@@ -314,7 +331,7 @@ public class GeoLocationUseCaseTest {
     // Результат:
     inOrder.verify(geoLocationGateway).getGeoLocations(3600000);
     inOrder.verify(geoLocationGateway).getGeoLocations(180000);
-    inOrder.verify(geoLocationGateway, times(7)).getGeoLocations(15000);
+    inOrder.verify(geoLocationGateway, times(8)).getGeoLocations(15000);
     inOrder.verify(geoLocationGateway).getGeoLocations(180000);
     inOrder.verify(geoLocationGateway).getGeoLocations(3600000);
     verifyNoMoreInteractions(geoLocationGateway);
@@ -332,8 +349,8 @@ public class GeoLocationUseCaseTest {
         ExecutorState.SHIFT_CLOSED, ExecutorState.SHIFT_OPENED, ExecutorState.ONLINE,
         ExecutorState.DRIVER_ORDER_CONFIRMATION, ExecutorState.CLIENT_ORDER_CONFIRMATION,
         ExecutorState.MOVING_TO_CLIENT, ExecutorState.WAITING_FOR_CLIENT,
-        ExecutorState.ORDER_FULFILLMENT, ExecutorState.ONLINE, ExecutorState.SHIFT_OPENED,
-        ExecutorState.SHIFT_CLOSED
+        ExecutorState.ORDER_FULFILLMENT, ExecutorState.PAYMENT_ACCEPTANCE, ExecutorState.ONLINE,
+        ExecutorState.SHIFT_OPENED, ExecutorState.SHIFT_CLOSED
     ));
     when(geoLocationGateway.getGeoLocations(anyLong()))
         .thenReturn(Flowable.<GeoLocation>never().doOnCancel(action));
@@ -342,7 +359,7 @@ public class GeoLocationUseCaseTest {
     useCase.getGeoLocations().test();
 
     // Результат:
-    verify(action, times(10)).run();
+    verify(action, times(11)).run();
   }
 
   /* Проверяем работу с гейтвеем отправки геопозиции в ответ на ответы гейтвея геопозиции */

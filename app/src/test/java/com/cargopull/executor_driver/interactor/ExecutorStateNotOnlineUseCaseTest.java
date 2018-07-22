@@ -204,6 +204,25 @@ public class ExecutorStateNotOnlineUseCaseTest {
   }
 
   /**
+   * Не должен трогать гейтвей передачи статусов, если последний статус был "прием оплаты".
+   */
+  @Test
+  public void DoNotTouchGatewayIfPaymentAcceptance() {
+    // Дано:
+    PublishSubject<ExecutorState> publishSubject = PublishSubject.create();
+    when(executorStateUseCase.getExecutorStates(anyBoolean()))
+        .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
+    useCase.getExecutorStates().test();
+    publishSubject.onNext(ExecutorState.PAYMENT_ACCEPTANCE);
+
+    // Действие:
+    useCase.setExecutorNotOnline().test();
+
+    // Результат:
+    verifyZeroInteractions(gateway);
+  }
+
+  /**
    * Должен отправить статус "смена открыта" через гейтвей передачи статусов.
    */
   @Test
@@ -361,6 +380,25 @@ public class ExecutorStateNotOnlineUseCaseTest {
         .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
     useCase.getExecutorStates().test();
     publishSubject.onNext(ExecutorState.ORDER_FULFILLMENT);
+
+    // Действие:
+    useCase.setExecutorNotOnline().test();
+
+    // Результат:
+    verify(errorReporter, only()).reportError(any(IllegalArgumentException.class));
+  }
+
+  /**
+   * Должен отправить ошибку неподходящего статуса, если статус "прием оплаты".
+   */
+  @Test
+  public void reportForbiddenStatusErrorIfPaymentAcceptance() {
+    // Дано:
+    PublishSubject<ExecutorState> publishSubject = PublishSubject.create();
+    when(executorStateUseCase.getExecutorStates(anyBoolean()))
+        .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
+    useCase.getExecutorStates().test();
+    publishSubject.onNext(ExecutorState.PAYMENT_ACCEPTANCE);
 
     // Действие:
     useCase.setExecutorNotOnline().test();
@@ -543,6 +581,27 @@ public class ExecutorStateNotOnlineUseCaseTest {
         .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
     useCase.getExecutorStates().test();
     publishSubject.onNext(ExecutorState.ORDER_FULFILLMENT);
+
+    // Действие:
+    TestObserver<Void> testObserver = useCase.setExecutorNotOnline().test();
+
+    // Результат:
+    testObserver.assertNoValues();
+    testObserver.assertNotComplete();
+    testObserver.assertError(IllegalArgumentException.class);
+  }
+
+  /**
+   * Должен вернуть ошибку неподходящего статуса, если статус "прием оплаты".
+   */
+  @Test
+  public void answerForbiddenStatusErrorIfPaymentAcceptance() {
+    // Дано:
+    PublishSubject<ExecutorState> publishSubject = PublishSubject.create();
+    when(executorStateUseCase.getExecutorStates(anyBoolean()))
+        .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
+    useCase.getExecutorStates().test();
+    publishSubject.onNext(ExecutorState.PAYMENT_ACCEPTANCE);
 
     // Действие:
     TestObserver<Void> testObserver = useCase.setExecutorNotOnline().test();
