@@ -5,14 +5,14 @@ import com.cargopull.executor_driver.entity.OrderCostDetails;
 import com.cargopull.executor_driver.utils.ErrorReporter;
 import io.reactivex.Flowable;
 
-class OrderCostDetailsCaseImpl implements OrderCostDetailsCase {
+class OrderCostDetailsUseCaseImpl implements OrderCostDetailsUseCase {
 
   @NonNull
   private final ErrorReporter errorReporter;
   @NonNull
   private final OrderCostDetailsGateway orderCostDetailsGateway;
 
-  OrderCostDetailsCaseImpl(@NonNull ErrorReporter errorReporter,
+  OrderCostDetailsUseCaseImpl(@NonNull ErrorReporter errorReporter,
       @NonNull OrderCostDetailsGateway orderCostDetailsGateway) {
     this.errorReporter = errorReporter;
     this.orderCostDetailsGateway = orderCostDetailsGateway;

@@ -17,9 +17,9 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
-public class OrderCostDetailsCaseTest {
+public class OrderCostDetailsUseCaseTest {
 
-  private OrderCostDetailsCase useCase;
+  private OrderCostDetailsUseCase useCase;
 
   @Mock
   private ErrorReporter errorReporter;
@@ -33,7 +33,7 @@ public class OrderCostDetailsCaseTest {
   @Before
   public void setUp() {
     when(gateway.getOrderCostDetails()).thenReturn(Flowable.never());
-    useCase = new OrderCostDetailsCaseImpl(errorReporter, gateway);
+    useCase = new OrderCostDetailsUseCaseImpl(errorReporter, gateway);
   }
 
   /* Проверяем работу с гейтвеем */
