@@ -9,12 +9,12 @@ import java.util.List;
  */
 class PackageCostDetails {
 
-  @NonNull
-  public final List<PackageOptionCost> optionCosts;
   private final long packageTime;
   private final int packageDistance;
   private final long packageCost;
   private final long serviceCost;
+  @NonNull
+  private final List<PackageOptionCost> optionCosts;
 
   PackageCostDetails(long packageTime, int packageDistance, long packageCost,
       long serviceCost, @NonNull List<PackageOptionCost> optionCosts) {

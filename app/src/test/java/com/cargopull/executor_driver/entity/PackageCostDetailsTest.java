@@ -33,11 +33,11 @@ public class PackageCostDetailsTest {
     assertEquals(packageOptionCost.getPackageDistance(), 234);
     assertEquals(packageOptionCost.getPackageCost(), 345);
     assertEquals(packageOptionCost.getServiceCost(), 456);
-    assertEquals(packageOptionCost.optionCosts.size(), 5);
-    assertEquals(packageOptionCost.optionCosts.get(0), optionCost0);
-    assertEquals(packageOptionCost.optionCosts.get(1), optionCost1);
-    assertEquals(packageOptionCost.optionCosts.get(2), optionCost2);
-    assertEquals(packageOptionCost.optionCosts.get(3), optionCost3);
-    assertEquals(packageOptionCost.optionCosts.get(4), optionCost4);
+    assertEquals(packageOptionCost.getOptionCosts().size(), 5);
+    assertEquals(packageOptionCost.getOptionCosts().get(0), optionCost0);
+    assertEquals(packageOptionCost.getOptionCosts().get(1), optionCost1);
+    assertEquals(packageOptionCost.getOptionCosts().get(2), optionCost2);
+    assertEquals(packageOptionCost.getOptionCosts().get(3), optionCost3);
+    assertEquals(packageOptionCost.getOptionCosts().get(4), optionCost4);
   }
 }
