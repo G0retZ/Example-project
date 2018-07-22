@@ -9,10 +9,10 @@ import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 import com.cargopull.executor_driver.entity.ExecutorState;
-import com.cargopull.executor_driver.entity.Order;
+import com.cargopull.executor_driver.entity.OrderCostDetails;
 import com.cargopull.executor_driver.gateway.DataMappingException;
 import com.cargopull.executor_driver.gateway.Mapper;
-import com.cargopull.executor_driver.gateway.OrderGatewayImpl;
+import com.cargopull.executor_driver.gateway.OrderCostDetailsGatewayImpl;
 import io.reactivex.Flowable;
 import io.reactivex.plugins.RxJavaPlugins;
 import io.reactivex.schedulers.Schedulers;
@@ -24,23 +24,22 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
-public class OrderGatewayTest {
+public class OrderCostDetailsGatewayTest {
 
-  private OrderGateway gateway;
+  private OrderCostDetailsGateway gateway;
   @Mock
   private ExecutorStateUseCase useCase;
   @Mock
-  private Mapper<String, Order> mapper;
+  private Mapper<String, OrderCostDetails> mapper;
   @Mock
-  private Order order;
+  private OrderCostDetails order;
 
   @Before
   public void setUp() {
     RxJavaPlugins.setComputationSchedulerHandler(scheduler -> Schedulers.trampoline());
     RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
     RxJavaPlugins.setIoSchedulerHandler(scheduler -> Schedulers.trampoline());
-    ExecutorState.DRIVER_ORDER_CONFIRMATION.setData(null);
-    ExecutorState.CLIENT_ORDER_CONFIRMATION.setData(null);
+    ExecutorState.PAYMENT_ACCEPTANCE.setData(null);
     when(useCase.getExecutorStates(anyBoolean())).thenReturn(Flowable.never());
   }
 
@@ -52,10 +51,10 @@ public class OrderGatewayTest {
   @Test
   public void askExecutorStateUseCaseForStatusUpdates() {
     // Дано:
-    gateway = new OrderGatewayImpl(useCase, ExecutorState.DRIVER_ORDER_CONFIRMATION, mapper);
+    gateway = new OrderCostDetailsGatewayImpl(useCase, mapper);
 
     // Действие:
-    gateway.getOrders().test();
+    gateway.getOrderCostDetails().test();
 
     // Результат:
     verify(useCase, only()).getExecutorStates(false);
@@ -69,15 +68,15 @@ public class OrderGatewayTest {
   @Test
   public void doNotTouchMapperIfExecutorStateIncorrect() {
     // Дано:
-    gateway = new OrderGatewayImpl(useCase, ExecutorState.DRIVER_ORDER_CONFIRMATION, mapper);
+    gateway = new OrderCostDetailsGatewayImpl(useCase, mapper);
     when(useCase.getExecutorStates(anyBoolean()))
         .thenReturn(Flowable.just(ExecutorState.SHIFT_CLOSED, ExecutorState.SHIFT_OPENED,
-            ExecutorState.ONLINE, ExecutorState.CLIENT_ORDER_CONFIRMATION,
-            ExecutorState.MOVING_TO_CLIENT, ExecutorState.WAITING_FOR_CLIENT,
-            ExecutorState.ORDER_FULFILLMENT, ExecutorState.PAYMENT_ACCEPTANCE));
+            ExecutorState.ONLINE, ExecutorState.DRIVER_ORDER_CONFIRMATION,
+            ExecutorState.CLIENT_ORDER_CONFIRMATION, ExecutorState.MOVING_TO_CLIENT,
+            ExecutorState.WAITING_FOR_CLIENT, ExecutorState.ORDER_FULFILLMENT));
 
     // Действие:
-    gateway.getOrders().test();
+    gateway.getOrderCostDetails().test();
 
     // Результат:
     verifyZeroInteractions(mapper);
@@ -89,12 +88,12 @@ public class OrderGatewayTest {
   @Test
   public void doNotTouchMapperIfNoData() {
     // Дано:
-    gateway = new OrderGatewayImpl(useCase, ExecutorState.CLIENT_ORDER_CONFIRMATION, mapper);
+    gateway = new OrderCostDetailsGatewayImpl(useCase, mapper);
     when(useCase.getExecutorStates(anyBoolean()))
-        .thenReturn(Flowable.just(ExecutorState.CLIENT_ORDER_CONFIRMATION));
+        .thenReturn(Flowable.just(ExecutorState.PAYMENT_ACCEPTANCE));
 
     // Действие:
-    gateway.getOrders().test();
+    gateway.getOrderCostDetails().test();
 
     // Результат:
     verifyZeroInteractions(mapper);
@@ -108,13 +107,13 @@ public class OrderGatewayTest {
   @Test
   public void askForMappingForData() throws Exception {
     // Дано:
-    ExecutorState.MOVING_TO_CLIENT.setData("");
-    gateway = new OrderGatewayImpl(useCase, ExecutorState.MOVING_TO_CLIENT, mapper);
+    ExecutorState.PAYMENT_ACCEPTANCE.setData("");
+    gateway = new OrderCostDetailsGatewayImpl(useCase, mapper);
     when(useCase.getExecutorStates(anyBoolean()))
-        .thenReturn(Flowable.just(ExecutorState.MOVING_TO_CLIENT));
+        .thenReturn(Flowable.just(ExecutorState.PAYMENT_ACCEPTANCE));
 
     // Действие:
-    gateway.getOrders().test();
+    gateway.getOrderCostDetails().test();
 
     // Результат:
     verify(mapper, only()).map("");
@@ -130,15 +129,15 @@ public class OrderGatewayTest {
   @Test
   public void ignoreForIncorrectExecutorState() {
     // Дано:
-    gateway = new OrderGatewayImpl(useCase, ExecutorState.DRIVER_ORDER_CONFIRMATION, mapper);
+    gateway = new OrderCostDetailsGatewayImpl(useCase, mapper);
     when(useCase.getExecutorStates(anyBoolean()))
         .thenReturn(Flowable.just(ExecutorState.SHIFT_CLOSED, ExecutorState.SHIFT_OPENED,
-            ExecutorState.ONLINE, ExecutorState.CLIENT_ORDER_CONFIRMATION,
-            ExecutorState.MOVING_TO_CLIENT, ExecutorState.WAITING_FOR_CLIENT,
-            ExecutorState.ORDER_FULFILLMENT, ExecutorState.PAYMENT_ACCEPTANCE));
+            ExecutorState.ONLINE, ExecutorState.DRIVER_ORDER_CONFIRMATION,
+            ExecutorState.CLIENT_ORDER_CONFIRMATION, ExecutorState.MOVING_TO_CLIENT,
+            ExecutorState.WAITING_FOR_CLIENT, ExecutorState.ORDER_FULFILLMENT));
 
     // Действие:
-    TestSubscriber<Order> testSubscriber = gateway.getOrders().test();
+    TestSubscriber<OrderCostDetails> testSubscriber = gateway.getOrderCostDetails().test();
 
     // Результат:
     testSubscriber.assertNoValues();
@@ -147,17 +146,17 @@ public class OrderGatewayTest {
   }
 
   /**
-   * Должен ответить ошибкой маппинга заказа для статуса "принятие заказа" без данных.
+   * Должен ответить ошибкой маппинга детального расчета заказа для статуса "принятие оплаты" без данных.
    */
   @Test
-  public void answerNoOrdersAvailableForNoData() {
+  public void answerNoOrderCostDetailsAvailableForNoData() {
     // Дано:
-    gateway = new OrderGatewayImpl(useCase, ExecutorState.CLIENT_ORDER_CONFIRMATION, mapper);
+    gateway = new OrderCostDetailsGatewayImpl(useCase, mapper);
     when(useCase.getExecutorStates(anyBoolean()))
-        .thenReturn(Flowable.just(ExecutorState.CLIENT_ORDER_CONFIRMATION));
+        .thenReturn(Flowable.just(ExecutorState.PAYMENT_ACCEPTANCE));
 
     // Действие:
-    TestSubscriber<Order> testSubscriber = gateway.getOrders().test();
+    TestSubscriber<OrderCostDetails> testSubscriber = gateway.getOrderCostDetails().test();
 
     // Результат:
     testSubscriber.assertNoValues();
@@ -173,14 +172,14 @@ public class OrderGatewayTest {
   @Test
   public void answerDataMappingError() throws Exception {
     // Дано:
-    gateway = new OrderGatewayImpl(useCase, ExecutorState.MOVING_TO_CLIENT, mapper);
+    gateway = new OrderCostDetailsGatewayImpl(useCase, mapper);
     doThrow(new DataMappingException()).when(mapper).map(anyString());
-    ExecutorState.MOVING_TO_CLIENT.setData("");
+    ExecutorState.PAYMENT_ACCEPTANCE.setData("");
     when(useCase.getExecutorStates(anyBoolean()))
-        .thenReturn(Flowable.just(ExecutorState.MOVING_TO_CLIENT));
+        .thenReturn(Flowable.just(ExecutorState.PAYMENT_ACCEPTANCE));
 
     // Действие:
-    TestSubscriber<Order> testSubscriber = gateway.getOrders().test();
+    TestSubscriber<OrderCostDetails> testSubscriber = gateway.getOrderCostDetails().test();
 
     // Результат:
     testSubscriber.assertNoValues();
@@ -189,21 +188,21 @@ public class OrderGatewayTest {
   }
 
   /**
-   * Должен вернуть заказ.
+   * Должен вернуть детальный расчет заказа.
    *
    * @throws Exception error
    */
   @Test
-  public void answerWithOrder() throws Exception {
+  public void answerWithOrderCostDetails() throws Exception {
     // Дано:
-    gateway = new OrderGatewayImpl(useCase, ExecutorState.WAITING_FOR_CLIENT, mapper);
+    gateway = new OrderCostDetailsGatewayImpl(useCase, mapper);
     when(mapper.map(anyString())).thenReturn(order);
-    ExecutorState.WAITING_FOR_CLIENT.setData("");
+    ExecutorState.PAYMENT_ACCEPTANCE.setData("");
     when(useCase.getExecutorStates(anyBoolean()))
-        .thenReturn(Flowable.just(ExecutorState.WAITING_FOR_CLIENT));
+        .thenReturn(Flowable.just(ExecutorState.PAYMENT_ACCEPTANCE));
 
     // Действие:
-    TestSubscriber<Order> testSubscriber = gateway.getOrders().test();
+    TestSubscriber<OrderCostDetails> testSubscriber = gateway.getOrderCostDetails().test();
 
     // Результат:
     testSubscriber.assertNoErrors();

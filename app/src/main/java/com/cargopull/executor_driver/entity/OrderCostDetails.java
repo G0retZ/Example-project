@@ -15,7 +15,7 @@ public class OrderCostDetails {
   @Nullable
   private final PackageCostDetails overPackageTariff;
 
-  OrderCostDetails(long orderCost,
+  public OrderCostDetails(long orderCost,
       @Nullable PackageCostDetails estimatedCost,
       @Nullable PackageCostDetails overPackageCost,
       @Nullable PackageCostDetails overPackageTariff) {

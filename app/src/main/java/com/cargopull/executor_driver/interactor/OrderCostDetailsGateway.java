@@ -7,7 +7,7 @@ import io.reactivex.Flowable;
 /**
  * Гейтвей получения детального расчета заказа.
  */
-interface OrderCostDetailsGateway {
+public interface OrderCostDetailsGateway {
 
   /**
    * Ожидает детальные расчеты заказа у сокета.
