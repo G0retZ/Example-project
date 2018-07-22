@@ -44,7 +44,7 @@ public class OrderGatewayTest {
     when(useCase.getExecutorStates(anyBoolean())).thenReturn(Flowable.never());
   }
 
-  /* Проверяем работу с с юзкейсом статусов */
+  /* Проверяем работу с юзкейсом статусов */
 
   /**
    * Должен попросить у юзкейса статусы исполнителя.
@@ -52,8 +52,7 @@ public class OrderGatewayTest {
   @Test
   public void askExecutorStateUseCaseForStatusUpdates() {
     // Дано:
-    gateway = new OrderGatewayImpl(useCase,
-        ExecutorState.DRIVER_ORDER_CONFIRMATION, mapper);
+    gateway = new OrderGatewayImpl(useCase, ExecutorState.DRIVER_ORDER_CONFIRMATION, mapper);
 
     // Действие:
     gateway.getOrders().test();
@@ -65,13 +64,12 @@ public class OrderGatewayTest {
   /* Проверяем работу с маппером */
 
   /**
-   * Не должен трогать маппер, если не статус не соответствует фильтруемому.
+   * Не должен трогать маппер, если статус не соответствует фильтруемому.
    */
   @Test
   public void doNotTouchMapperIfExecutorStateIncorrect() {
     // Дано:
-    gateway = new OrderGatewayImpl(useCase,
-        ExecutorState.DRIVER_ORDER_CONFIRMATION, mapper);
+    gateway = new OrderGatewayImpl(useCase, ExecutorState.DRIVER_ORDER_CONFIRMATION, mapper);
     when(useCase.getExecutorStates(anyBoolean()))
         .thenReturn(Flowable.just(ExecutorState.SHIFT_CLOSED, ExecutorState.SHIFT_OPENED,
             ExecutorState.ONLINE, ExecutorState.CLIENT_ORDER_CONFIRMATION,
@@ -91,8 +89,7 @@ public class OrderGatewayTest {
   @Test
   public void doNotTouchMapperIfNoData() {
     // Дано:
-    gateway = new OrderGatewayImpl(useCase,
-        ExecutorState.CLIENT_ORDER_CONFIRMATION, mapper);
+    gateway = new OrderGatewayImpl(useCase, ExecutorState.CLIENT_ORDER_CONFIRMATION, mapper);
     when(useCase.getExecutorStates(anyBoolean()))
         .thenReturn(Flowable.just(ExecutorState.CLIENT_ORDER_CONFIRMATION));
 
@@ -112,8 +109,7 @@ public class OrderGatewayTest {
   public void askForMappingForData() throws Exception {
     // Дано:
     ExecutorState.MOVING_TO_CLIENT.setData("");
-    gateway = new OrderGatewayImpl(useCase, ExecutorState.MOVING_TO_CLIENT,
-        mapper);
+    gateway = new OrderGatewayImpl(useCase, ExecutorState.MOVING_TO_CLIENT, mapper);
     when(useCase.getExecutorStates(anyBoolean()))
         .thenReturn(Flowable.just(ExecutorState.MOVING_TO_CLIENT));
 
@@ -134,8 +130,7 @@ public class OrderGatewayTest {
   @Test
   public void ignoreForIncorrectExecutorState() {
     // Дано:
-    gateway = new OrderGatewayImpl(useCase,
-        ExecutorState.DRIVER_ORDER_CONFIRMATION, mapper);
+    gateway = new OrderGatewayImpl(useCase, ExecutorState.DRIVER_ORDER_CONFIRMATION, mapper);
     when(useCase.getExecutorStates(anyBoolean()))
         .thenReturn(Flowable.just(ExecutorState.SHIFT_CLOSED, ExecutorState.SHIFT_OPENED,
             ExecutorState.ONLINE, ExecutorState.CLIENT_ORDER_CONFIRMATION,
@@ -157,8 +152,7 @@ public class OrderGatewayTest {
   @Test
   public void answerNoOrdersAvailableForNoData() {
     // Дано:
-    gateway = new OrderGatewayImpl(useCase,
-        ExecutorState.CLIENT_ORDER_CONFIRMATION, mapper);
+    gateway = new OrderGatewayImpl(useCase, ExecutorState.CLIENT_ORDER_CONFIRMATION, mapper);
     when(useCase.getExecutorStates(anyBoolean()))
         .thenReturn(Flowable.just(ExecutorState.CLIENT_ORDER_CONFIRMATION));
 
@@ -179,8 +173,7 @@ public class OrderGatewayTest {
   @Test
   public void answerDataMappingError() throws Exception {
     // Дано:
-    gateway = new OrderGatewayImpl(useCase, ExecutorState.MOVING_TO_CLIENT,
-        mapper);
+    gateway = new OrderGatewayImpl(useCase, ExecutorState.MOVING_TO_CLIENT, mapper);
     doThrow(new DataMappingException()).when(mapper).map(anyString());
     ExecutorState.MOVING_TO_CLIENT.setData("");
     when(useCase.getExecutorStates(anyBoolean()))
@@ -203,8 +196,7 @@ public class OrderGatewayTest {
   @Test
   public void answerWithOrder() throws Exception {
     // Дано:
-    gateway = new OrderGatewayImpl(useCase, ExecutorState.WAITING_FOR_CLIENT,
-        mapper);
+    gateway = new OrderGatewayImpl(useCase, ExecutorState.WAITING_FOR_CLIENT, mapper);
     when(mapper.map(anyString())).thenReturn(order);
     ExecutorState.WAITING_FOR_CLIENT.setData("");
     when(useCase.getExecutorStates(anyBoolean()))
