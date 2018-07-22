@@ -5,13 +5,13 @@ import android.support.annotation.NonNull;
 /**
  * Неизменная бизнес сущность стоимости опции заказа.
  */
-class PackageOptionCost {
+public class PackageOptionCost {
 
   @NonNull
   private final String name;
   private final int cost;
 
-  PackageOptionCost(@NonNull String name, int cost) {
+  public PackageOptionCost(@NonNull String name, int cost) {
     this.name = name;
     this.cost = cost;
   }

@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * Неизменная бизнес сущность детализации стоимости пакета заказа.
  */
-class PackageCostDetails {
+public class PackageCostDetails {
 
   private final long packageTime;
   private final int packageDistance;
@@ -16,7 +16,7 @@ class PackageCostDetails {
   @NonNull
   private final List<PackageOptionCost> optionCosts;
 
-  PackageCostDetails(long packageTime, int packageDistance, long packageCost,
+  public PackageCostDetails(long packageTime, int packageDistance, long packageCost,
       long serviceCost, @NonNull List<PackageOptionCost> optionCosts) {
     this.packageTime = packageTime;
     this.packageDistance = packageDistance;
