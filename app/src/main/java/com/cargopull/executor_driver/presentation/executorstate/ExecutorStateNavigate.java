@@ -13,7 +13,10 @@ import java.lang.annotation.RetentionPolicy;
     ExecutorStateNavigate.MAP_ONLINE,
     ExecutorStateNavigate.DRIVER_ORDER_CONFIRMATION,
     ExecutorStateNavigate.CLIENT_ORDER_CONFIRMATION,
-    ExecutorStateNavigate.MOVING_TO_CLIENT
+    ExecutorStateNavigate.MOVING_TO_CLIENT,
+    ExecutorStateNavigate.WAITING_FOR_CLIENT,
+    ExecutorStateNavigate.ORDER_FULFILLMENT,
+    ExecutorStateNavigate.PAYMENT_ACCEPTANCE
 })
 @Retention(RetentionPolicy.SOURCE)
 public @interface ExecutorStateNavigate {
@@ -34,4 +37,6 @@ public @interface ExecutorStateNavigate {
   String WAITING_FOR_CLIENT = "ExecutorState.to.WaitingForClient";
   // Переход к выполнению заказа.
   String ORDER_FULFILLMENT = "ExecutorState.to.OrderFulfillment";
+  // Переход к расчету с клиентом.
+  String PAYMENT_ACCEPTANCE = "ExecutorState.to.PaymentAcceptance";
 }
