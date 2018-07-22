@@ -5,7 +5,7 @@ import android.support.annotation.Nullable;
 /**
  * Неизменная бизнес сущность детализации стоимости заказа.
  */
-class OrderCostDetails {
+public class OrderCostDetails {
 
   private final long orderCost;
   @Nullable
