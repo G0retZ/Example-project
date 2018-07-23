@@ -6,7 +6,7 @@ import io.reactivex.Completable;
 /**
  * Гейтвей подтверждения оплаты заказа.
  */
-interface ConfirmOrderPaymentGateway {
+public interface ConfirmOrderPaymentGateway {
 
   /**
    * Передает запрос подтверждения оплаты заказа.
