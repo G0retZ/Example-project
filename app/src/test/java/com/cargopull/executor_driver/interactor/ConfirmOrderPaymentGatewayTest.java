@@ -46,7 +46,7 @@ public class ConfirmOrderPaymentGatewayTest {
     gateway.confirmOrderPayment().test();
 
     // Результат:
-    verify(stompClient, only()).send("/mobile/trip", "\"PAYMENT_CONFIRMATION_COMPLETE\"");
+    verify(stompClient, only()).send("/mobile/trip", "\"COMPLETE_PAYMENT_CONFIRMATION\"");
   }
 
   /* Проверяем правильность потоков (добавить) */
