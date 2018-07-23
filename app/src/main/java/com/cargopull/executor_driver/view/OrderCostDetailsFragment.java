@@ -48,6 +48,7 @@ public class OrderCostDetailsFragment extends BaseFragment implements OrderCostD
   private TextView overPackageTariffServiceCostTitle;
   private TextView overPackageTariffServiceCost;
   private LinearLayout overPackageTariffOptionsCosts;
+  @SuppressWarnings({"FieldCanBeLocal", "unused"})
   private Button paidAction;
 
   @Inject

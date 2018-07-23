@@ -7,8 +7,6 @@ public class ApiOrderOverPackage {
 
   @SerializedName("estimatedCsrPackageCost")
   private long estimatedPackageCost;
-  @SerializedName("estimatedMoverPackageCost")
-  private long estimatedMoverCost;
   @SerializedName("overPackageTime")
   private long overPackageTime;
   @SerializedName("overPackageCsrCost")
@@ -33,14 +31,13 @@ public class ApiOrderOverPackage {
   public ApiOrderOverPackage() {
   }
 
-  public ApiOrderOverPackage(long estimatedPackageCost, long estimatedMoverCost,
-      long overPackageTime,
+  @SuppressWarnings("unused")
+  public ApiOrderOverPackage(long estimatedPackageCost, long overPackageTime,
       long overPackageCost,
       @Nullable String overPackageMoverCostName, long overPackageMoverCost,
       long overPackageTariff,
       @Nullable String overPackageMoverTariffName, long overPackageMoverTariff) {
     this.estimatedPackageCost = estimatedPackageCost;
-    this.estimatedMoverCost = estimatedMoverCost;
     this.overPackageTime = overPackageTime;
     this.overPackageCost = overPackageCost;
     this.overPackageMoverCostName = overPackageMoverCostName;
@@ -52,10 +49,6 @@ public class ApiOrderOverPackage {
 
   public long getEstimatedPackageCost() {
     return estimatedPackageCost;
-  }
-
-  public long getEstimatedMoverCost() {
-    return estimatedMoverCost;
   }
 
   public long getOverPackageTime() {

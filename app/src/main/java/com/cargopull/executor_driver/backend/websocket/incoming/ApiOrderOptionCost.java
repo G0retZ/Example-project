@@ -18,6 +18,7 @@ public class ApiOrderOptionCost {
   public ApiOrderOptionCost() {
   }
 
+  @SuppressWarnings("unused")
   public ApiOrderOptionCost(@Nullable String optionName, long optionPrice) {
     this.optionName = optionName;
     this.optionPrice = optionPrice;

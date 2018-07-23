@@ -17,6 +17,7 @@ public class ApiOrderOptionsCostDetails {
   public ApiOrderOptionsCostDetails() {
   }
 
+  @SuppressWarnings("unused")
   public ApiOrderOptionsCostDetails(@Nullable List<ApiOrderOptionCost> optionsCosts) {
     this.optionsCosts = optionsCosts;
   }
