@@ -51,7 +51,7 @@ public class OrderItemTest {
     when(order.getRoutePath()).thenReturn(Arrays.asList(routePoint, routePoint1, routePoint2));
     when(order.getEtaToStartPoint()).thenReturn(358000L);
     when(order.getConfirmationTime()).thenReturn(12384000L);
-    when(order.getDistance()).thenReturn(12239L);
+    when(order.getDistance()).thenReturn(12239);
     when(order.getEstimatedRouteLength()).thenReturn(33239L);
     when(order.getEstimatedTime()).thenReturn(3324339L);
     when(order.getComment()).thenReturn("com");
