@@ -29,6 +29,7 @@ import com.cargopull.executor_driver.entity.Vehicle;
 import com.cargopull.executor_driver.gateway.CallToClientGatewayImpl;
 import com.cargopull.executor_driver.gateway.CancelOrderGatewayImpl;
 import com.cargopull.executor_driver.gateway.CancelOrderReasonApiMapper;
+import com.cargopull.executor_driver.gateway.ConfirmOrderPaymentGatewayImpl;
 import com.cargopull.executor_driver.gateway.CurrentCostPollingGatewayImpl;
 import com.cargopull.executor_driver.gateway.CurrentCostPollingTimersApiMapper;
 import com.cargopull.executor_driver.gateway.CurrentVehicleOptionsGatewayImpl;
@@ -72,6 +73,7 @@ import com.cargopull.executor_driver.gateway.WaitingForClientGatewayImpl;
 import com.cargopull.executor_driver.interactor.CallToClientUseCaseImpl;
 import com.cargopull.executor_driver.interactor.CancelOrderUseCase;
 import com.cargopull.executor_driver.interactor.CancelOrderUseCaseImpl;
+import com.cargopull.executor_driver.interactor.ConfirmOrderPaymentUseCaseImpl;
 import com.cargopull.executor_driver.interactor.CurrentCostPollingUseCaseImpl;
 import com.cargopull.executor_driver.interactor.ExecutorBalanceUseCase;
 import com.cargopull.executor_driver.interactor.ExecutorBalanceUseCaseImpl;
@@ -114,6 +116,7 @@ import com.cargopull.executor_driver.presentation.choosevehicle.ChooseVehicleVie
 import com.cargopull.executor_driver.presentation.clientorderconfirmationtime.ClientOrderConfirmationTimeViewModelImpl;
 import com.cargopull.executor_driver.presentation.code.CodeViewModelImpl;
 import com.cargopull.executor_driver.presentation.codeheader.CodeHeaderViewModelImpl;
+import com.cargopull.executor_driver.presentation.confirmorderpayment.ConfirmOrderPaymentViewModelImpl;
 import com.cargopull.executor_driver.presentation.corebalance.CoreBalanceViewModelImpl;
 import com.cargopull.executor_driver.presentation.currentcostpolling.CurrentCostPollingViewModelImpl;
 import com.cargopull.executor_driver.presentation.executorstate.ExecutorStateViewModelImpl;
@@ -1177,6 +1180,19 @@ public class AppComponentImpl implements AppComponent {
             )
         ).get(OrderCostDetailsViewModelImpl.class)
     );
+    orderCostDetailsFragment.setConfirmOrderPaymentViewModel(
+        ViewModelProviders.of(
+            orderCostDetailsFragment,
+            new ViewModelFactory<>(
+                new ConfirmOrderPaymentViewModelImpl(
+                    new ConfirmOrderPaymentUseCaseImpl(
+                        new ConfirmOrderPaymentGatewayImpl(stompClient)
+                    )
+                )
+            )
+        ).get(ConfirmOrderPaymentViewModelImpl.class)
+    );
+    orderCostDetailsFragment.setShakeItPlayer(singleShakePlayer);
   }
 
   @Override

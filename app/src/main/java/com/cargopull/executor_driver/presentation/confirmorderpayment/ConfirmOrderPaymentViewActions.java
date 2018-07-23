@@ -3,7 +3,7 @@ package com.cargopull.executor_driver.presentation.confirmorderpayment;
 /**
  * Действия для смены состояния вида окна звонка клиенту.
  */
-interface ConfirmOrderPaymentViewActions {
+public interface ConfirmOrderPaymentViewActions {
 
   /**
    * Показать индикатор процесса.

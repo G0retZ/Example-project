@@ -27,7 +27,7 @@ public class ConfirmOrderPaymentViewModelImpl extends ViewModel implements
   private Disposable disposable = EmptyDisposable.INSTANCE;
 
   @Inject
-  ConfirmOrderPaymentViewModelImpl(
+  public ConfirmOrderPaymentViewModelImpl(
       @NonNull ConfirmOrderPaymentUseCase confirmOrderPaymentUseCase) {
     this.confirmOrderPaymentUseCase = confirmOrderPaymentUseCase;
     viewStateLiveData = new MutableLiveData<>();
