@@ -52,8 +52,8 @@ android {
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            buildConfigField 'String', 'BASE_URL', '"http://tst.capsrv.xyz:8080/executor/"'
-            buildConfigField 'String', 'SOCKET_URL', '"ws://tst.capsrv.xyz:8080/executor/ws"'
+            buildConfigField 'String', 'BASE_URL', '"https://gate.cargopull.host:8443/executor/"'
+            buildConfigField 'String', 'SOCKET_URL', '"wss://gate.cargopull.host:8443/executor/ws"'
             signingConfig signingConfigs.upload
         }
         debug {
