@@ -6,7 +6,7 @@ import io.reactivex.Completable;
 /**
  * Юзкейс подтверждения оплаты заказа.
  */
-interface ConfirmOrderPaymentUseCase {
+public interface ConfirmOrderPaymentUseCase {
 
   /**
    * Подтвердить оплату заказа.
