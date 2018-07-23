@@ -100,7 +100,7 @@ class OrderItem {
     return order.getServiceName();
   }
 
-  public int getEstimatedPrice() {
+  public long getEstimatedPrice() {
     return order.getEstimatedPrice();
   }
 

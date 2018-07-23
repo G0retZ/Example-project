@@ -136,7 +136,7 @@ public class MovingToClientDetailsFragment extends BaseFragment implements Order
   }
 
   @Override
-  public void showOrderConditions(@NonNull String routeDistance, int time, int cost) {
+  public void showOrderConditions(@NonNull String routeDistance, int time, long cost) {
 
   }
 

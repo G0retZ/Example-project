@@ -16,7 +16,7 @@ import io.reactivex.internal.disposables.EmptyDisposable;
 import io.reactivex.schedulers.Schedulers;
 import javax.inject.Inject;
 
-class OrderCostDetailsViewModelImpl extends ViewModel implements
+public class OrderCostDetailsViewModelImpl extends ViewModel implements
     OrderCostDetailsViewModel {
 
   @NonNull
@@ -31,7 +31,7 @@ class OrderCostDetailsViewModelImpl extends ViewModel implements
   private ViewState<OrderCostDetailsViewActions> lastViewState;
 
   @Inject
-  OrderCostDetailsViewModelImpl(@NonNull OrderCostDetailsUseCase orderCostDetailsUseCase) {
+  public OrderCostDetailsViewModelImpl(@NonNull OrderCostDetailsUseCase orderCostDetailsUseCase) {
     this.orderCostDetailsUseCase = orderCostDetailsUseCase;
     viewStateLiveData = new MutableLiveData<>();
     navigateLiveData = new SingleLiveEvent<>();

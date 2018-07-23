@@ -31,7 +31,7 @@ public class OrderCostDetailsGatewayImpl implements OrderCostDetailsGateway {
         .getExecutorStates(false)
         .subscribeOn(Schedulers.single())
         .observeOn(Schedulers.computation())
-        .filter(executorState1 -> executorState1 == ExecutorState.PAYMENT_ACCEPTANCE)
+        .filter(executorState1 -> executorState1 == ExecutorState.PAYMENT_CONFIRMATION)
         .map(executorState1 -> {
           if (executorState1.getData() == null) {
             throw new DataMappingException("Ошибка маппинга: данные не должны быть null!");

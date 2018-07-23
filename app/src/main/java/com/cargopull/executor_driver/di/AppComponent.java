@@ -18,6 +18,9 @@ import com.cargopull.executor_driver.view.MovingToClientDetailsFragment;
 import com.cargopull.executor_driver.view.MovingToClientFragment;
 import com.cargopull.executor_driver.view.MovingToClientRouteFragment;
 import com.cargopull.executor_driver.view.OnlineFragment;
+import com.cargopull.executor_driver.view.OrderCostDetailsFragment;
+import com.cargopull.executor_driver.view.OrderCostDetailsOrderDetailsFragment;
+import com.cargopull.executor_driver.view.OrderCostDetailsRouteFragment;
 import com.cargopull.executor_driver.view.OrderFulfillmentActionsDialogFragment;
 import com.cargopull.executor_driver.view.OrderFulfillmentDetailsFragment;
 import com.cargopull.executor_driver.view.OrderFulfillmentFragment;
@@ -95,4 +98,10 @@ public interface AppComponent {
   void inject(MenuFragment menuFragment);
 
   void inject(ServerConnectionFragment serverConnectionFragment);
+
+  void inject(OrderCostDetailsFragment orderCostDetailsFragment);
+
+  void inject(OrderCostDetailsOrderDetailsFragment orderCostDetailsOrderDetailsFragment);
+
+  void inject(OrderCostDetailsRouteFragment orderCostDetailsRouteFragment);
 }

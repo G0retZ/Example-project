@@ -11,7 +11,7 @@ public class ApiOrderService {
   @SerializedName("name")
   private String name;
   @SerializedName("price")
-  private int price;
+  private long price;
 
   /**
    * Конструктор без параметров желателен для безопасной работы Gson.
@@ -21,7 +21,7 @@ public class ApiOrderService {
   }
 
   @SuppressWarnings("SameParameterValue")
-  ApiOrderService(long id, @Nullable String name, int price) {
+  ApiOrderService(long id, @Nullable String name, long price) {
     this.id = id;
     this.name = name;
     this.price = price;
@@ -36,7 +36,7 @@ public class ApiOrderService {
     return name;
   }
 
-  public int getPrice() {
+  public long getPrice() {
     return price;
   }
 }

@@ -6,26 +6,25 @@ package com.cargopull.executor_driver.entity;
  */
 public class ExecutorBalance {
 
-  private final int mainAccount;
-  private final int bonusAccount;
-  private final int cashlessAccount;
+  private final long mainAccount;
+  private final long bonusAccount;
+  private final long cashlessAccount;
 
-  @SuppressWarnings("SameParameterValue")
-  public ExecutorBalance(int mainAccount, int bonusAccount, int cashlessAccount) {
+  public ExecutorBalance(long mainAccount, long bonusAccount, long cashlessAccount) {
     this.mainAccount = mainAccount;
     this.bonusAccount = bonusAccount;
     this.cashlessAccount = cashlessAccount;
   }
 
-  public int getMainAccount() {
+  public long getMainAccount() {
     return mainAccount;
   }
 
-  public int getBonusAccount() {
+  public long getBonusAccount() {
     return bonusAccount;
   }
 
-  public int getCashlessAccount() {
+  public long getCashlessAccount() {
     return cashlessAccount;
   }
 }

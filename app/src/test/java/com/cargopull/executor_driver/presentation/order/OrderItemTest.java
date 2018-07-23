@@ -51,13 +51,13 @@ public class OrderItemTest {
     when(order.getRoutePath()).thenReturn(Arrays.asList(routePoint, routePoint1, routePoint2));
     when(order.getEtaToStartPoint()).thenReturn(358000L);
     when(order.getConfirmationTime()).thenReturn(12384000L);
-    when(order.getDistance()).thenReturn(12239L);
+    when(order.getDistance()).thenReturn(12239);
     when(order.getEstimatedRouteLength()).thenReturn(33239L);
     when(order.getEstimatedTime()).thenReturn(3324339L);
     when(order.getComment()).thenReturn("com");
     when(order.getServiceName()).thenReturn("service");
     when(order.getEstimatedPriceText()).thenReturn("7000");
-    when(order.getEstimatedPrice()).thenReturn(7000);
+    when(order.getEstimatedPrice()).thenReturn(7000L);
     when(order.getTimeout()).thenReturn(20_000L);
     when(order.getOptions()).thenReturn(new ArrayList<>(Arrays.asList(
         new OptionBoolean(0, "bool1", "bd", false, false),

@@ -47,6 +47,8 @@ import com.cargopull.executor_driver.gateway.MovingToClientApiMapper;
 import com.cargopull.executor_driver.gateway.MovingToClientGatewayImpl;
 import com.cargopull.executor_driver.gateway.OrderApiMapper;
 import com.cargopull.executor_driver.gateway.OrderConfirmationGatewayImpl;
+import com.cargopull.executor_driver.gateway.OrderCostDetailsApiMapper;
+import com.cargopull.executor_driver.gateway.OrderCostDetailsGatewayImpl;
 import com.cargopull.executor_driver.gateway.OrderCurrentCostApiMapper;
 import com.cargopull.executor_driver.gateway.OrderCurrentCostGatewayImpl;
 import com.cargopull.executor_driver.gateway.OrderFulfillmentApiMapper;
@@ -82,6 +84,7 @@ import com.cargopull.executor_driver.interactor.MemoryDataSharer;
 import com.cargopull.executor_driver.interactor.MissedOrderUseCaseImpl;
 import com.cargopull.executor_driver.interactor.MovingToClientUseCaseImpl;
 import com.cargopull.executor_driver.interactor.OrderConfirmationUseCaseImpl;
+import com.cargopull.executor_driver.interactor.OrderCostDetailsUseCaseImpl;
 import com.cargopull.executor_driver.interactor.OrderCurrentCostUseCaseImpl;
 import com.cargopull.executor_driver.interactor.OrderFulfillmentTimeUseCaseImpl;
 import com.cargopull.executor_driver.interactor.OrderRouteUseCaseImpl;
@@ -121,6 +124,7 @@ import com.cargopull.executor_driver.presentation.movingtoclient.MovingToClientV
 import com.cargopull.executor_driver.presentation.nextroutepoint.NextRoutePointViewModelImpl;
 import com.cargopull.executor_driver.presentation.onlinebutton.OnlineButtonViewModelImpl;
 import com.cargopull.executor_driver.presentation.onlineswitch.OnlineSwitchViewModelImpl;
+import com.cargopull.executor_driver.presentation.ordecostdetails.OrderCostDetailsViewModelImpl;
 import com.cargopull.executor_driver.presentation.order.OrderViewModelImpl;
 import com.cargopull.executor_driver.presentation.orderconfirmation.OrderConfirmationViewModelImpl;
 import com.cargopull.executor_driver.presentation.ordercost.OrderCostViewModelImpl;
@@ -155,6 +159,9 @@ import com.cargopull.executor_driver.view.MovingToClientDetailsFragment;
 import com.cargopull.executor_driver.view.MovingToClientFragment;
 import com.cargopull.executor_driver.view.MovingToClientRouteFragment;
 import com.cargopull.executor_driver.view.OnlineFragment;
+import com.cargopull.executor_driver.view.OrderCostDetailsFragment;
+import com.cargopull.executor_driver.view.OrderCostDetailsOrderDetailsFragment;
+import com.cargopull.executor_driver.view.OrderCostDetailsRouteFragment;
 import com.cargopull.executor_driver.view.OrderFulfillmentActionsDialogFragment;
 import com.cargopull.executor_driver.view.OrderFulfillmentDetailsFragment;
 import com.cargopull.executor_driver.view.OrderFulfillmentFragment;
@@ -1149,6 +1156,76 @@ public class AppComponentImpl implements AppComponent {
   public void inject(ServerConnectionFragment serverConnectionFragment) {
     serverConnectionFragment.setServerConnectionViewModel(
         serverConnectionViewModel
+    );
+  }
+
+  @Override
+  public void inject(OrderCostDetailsFragment orderCostDetailsFragment) {
+    orderCostDetailsFragment.setOrderCostDetailsViewModel(
+        ViewModelProviders.of(
+            orderCostDetailsFragment,
+            new ViewModelFactory<>(
+                new OrderCostDetailsViewModelImpl(
+                    new OrderCostDetailsUseCaseImpl(
+                        errorReporter,
+                        new OrderCostDetailsGatewayImpl(
+                            executorStateUseCase,
+                            new OrderCostDetailsApiMapper()
+                        )
+                    )
+                )
+            )
+        ).get(OrderCostDetailsViewModelImpl.class)
+    );
+  }
+
+  @Override
+  public void inject(OrderCostDetailsOrderDetailsFragment orderCostDetailsOrderDetailsFragment) {
+    orderCostDetailsOrderDetailsFragment.setOrderViewModel(
+        ViewModelProviders.of(
+            orderCostDetailsOrderDetailsFragment,
+            new ViewModelFactory<>(
+                new OrderViewModelImpl(
+                    new OrderUseCaseImpl(
+                        errorReporter,
+                        new OrderGatewayImpl(
+                            executorStateUseCase,
+                            ExecutorState.PAYMENT_CONFIRMATION,
+                            new WaitingForClientApiMapper(
+                                new VehicleOptionApiMapper(),
+                                new RoutePointApiMapper()
+                            )
+                        )
+                    ),
+                    new TimeUtilsImpl()
+                )
+            )
+        ).get(OrderViewModelImpl.class)
+    );
+  }
+
+  @Override
+  public void inject(OrderCostDetailsRouteFragment orderCostDetailsRouteFragment) {
+    orderCostDetailsRouteFragment.setOrderRouteViewModel(
+        ViewModelProviders.of(
+            orderCostDetailsRouteFragment,
+            new ViewModelFactory<>(
+                new OrderRouteViewModelImpl(
+                    new OrderRouteUseCaseImpl(
+                        errorReporter,
+                        new OrderGatewayImpl(
+                            executorStateUseCase,
+                            ExecutorState.PAYMENT_CONFIRMATION,
+                            new OrderFulfillmentApiMapper(
+                                new VehicleOptionApiMapper(),
+                                new RoutePointApiMapper()
+                            )
+                        ),
+                        new OrderRouteGatewayImpl(stompClient)
+                    )
+                )
+            )
+        ).get(OrderRouteViewModelImpl.class)
     );
   }
 

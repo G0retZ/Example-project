@@ -11,7 +11,7 @@ import ua.naiksoftware.stomp.client.StompMessage;
 
 public class OrderCurrentCostApiMapperTest {
 
-  private Mapper<StompMessage, Integer> mapper;
+  private Mapper<StompMessage, Long> mapper;
 
   @Before
   public void setUp() {
@@ -26,11 +26,11 @@ public class OrderCurrentCostApiMapperTest {
   @Test
   public void mappingPayLoadToInteger() throws Exception {
     // Дано и Действие:
-    int excessiveCost = mapper.map(new StompMessage("MESSAGE",
+    long excessiveCost = mapper.map(new StompMessage("MESSAGE",
         Collections.singletonList(new StompHeader("TotalAmount", "1234567890")), "\n"));
 
     // Результат:
-    assertEquals(excessiveCost, 1234567890);
+    assertEquals(excessiveCost, 1234567890L);
   }
 
   /**

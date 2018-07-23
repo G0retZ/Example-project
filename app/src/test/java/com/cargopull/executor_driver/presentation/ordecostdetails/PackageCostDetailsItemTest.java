@@ -5,7 +5,7 @@ import static org.junit.Assert.assertNotEquals;
 import static org.mockito.Mockito.when;
 
 import com.cargopull.executor_driver.entity.PackageCostDetails;
-import com.cargopull.executor_driver.entity.PackageOptionCost;
+import com.cargopull.executor_driver.utils.Pair;
 import java.util.Arrays;
 import java.util.Locale;
 import org.junit.Before;
@@ -22,12 +22,6 @@ public class PackageCostDetailsItemTest {
   private PackageCostDetails packageCostDetails;
   @Mock
   private PackageCostDetails packageCostDetails1;
-  @Mock
-  private PackageOptionCost packageOptionCost0;
-  @Mock
-  private PackageOptionCost packageOptionCost1;
-  @Mock
-  private PackageOptionCost packageOptionCost2;
 
   @Before
   public void setUp() {
@@ -75,22 +69,20 @@ public class PackageCostDetailsItemTest {
   public void testGetOptionsCosts() {
     // Дано:
     when(packageCostDetails.getOptionCosts())
-        .thenReturn(Arrays.asList(packageOptionCost0, packageOptionCost1, packageOptionCost2));
-    when(packageOptionCost0.getName()).thenReturn("name1");
-    when(packageOptionCost0.getCost()).thenReturn(1);
-    when(packageOptionCost1.getName()).thenReturn("name2");
-    when(packageOptionCost1.getCost()).thenReturn(2);
-    when(packageOptionCost2.getName()).thenReturn("name3");
-    when(packageOptionCost2.getCost()).thenReturn(3);
+        .thenReturn(Arrays.asList(
+            new Pair<>("name1", 1L),
+            new Pair<>("name2", 2L),
+            new Pair<>("name3", 3L)
+        ));
 
     // Результат:
     assertEquals(packageCostDetailsItem.getOptionsCosts().size(), 3);
     assertEquals(packageCostDetailsItem.getOptionsCosts().get(0).first, "name1");
-    assertEquals(packageCostDetailsItem.getOptionsCosts().get(0).second, new Integer(1));
+    assertEquals(packageCostDetailsItem.getOptionsCosts().get(0).second, new Long(1));
     assertEquals(packageCostDetailsItem.getOptionsCosts().get(1).first, "name2");
-    assertEquals(packageCostDetailsItem.getOptionsCosts().get(1).second, new Integer(2));
+    assertEquals(packageCostDetailsItem.getOptionsCosts().get(1).second, new Long(2));
     assertEquals(packageCostDetailsItem.getOptionsCosts().get(2).first, "name3");
-    assertEquals(packageCostDetailsItem.getOptionsCosts().get(2).second, new Integer(3));
+    assertEquals(packageCostDetailsItem.getOptionsCosts().get(2).second, new Long(3));
   }
 
   @Test

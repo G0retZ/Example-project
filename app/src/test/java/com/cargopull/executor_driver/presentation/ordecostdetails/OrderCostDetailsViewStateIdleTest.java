@@ -33,11 +33,11 @@ public class OrderCostDetailsViewStateIdleTest {
   @Mock
   private PackageCostDetailsItem overPackageTariffCostDetailsItem;
   @Mock
-  private List<Pair<String, Integer>> estimatedOptionsCosts;
+  private List<Pair<String, Long>> estimatedOptionsCosts;
   @Mock
-  private List<Pair<String, Integer>> overPackageOptionsCosts;
+  private List<Pair<String, Long>> overPackageOptionsCosts;
   @Mock
-  private List<Pair<String, Integer>> overPackageOptionsTariffs;
+  private List<Pair<String, Long>> overPackageOptionsTariffs;
 
   @Before
   public void setUp() {

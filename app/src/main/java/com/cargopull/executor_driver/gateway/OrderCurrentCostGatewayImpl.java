@@ -17,18 +17,18 @@ public class OrderCurrentCostGatewayImpl implements OrderCurrentCostGateway {
   @NonNull
   private final StompClient stompClient;
   @NonNull
-  private final Mapper<StompMessage, Integer> mapper;
+  private final Mapper<StompMessage, Long> mapper;
 
   @Inject
   public OrderCurrentCostGatewayImpl(@NonNull StompClient stompClient,
-      @NonNull Mapper<StompMessage, Integer> mapper) {
+      @NonNull Mapper<StompMessage, Long> mapper) {
     this.stompClient = stompClient;
     this.mapper = mapper;
   }
 
   @NonNull
   @Override
-  public Flowable<Integer> getOrderCurrentCost(@NonNull String channelId) {
+  public Flowable<Long> getOrderCurrentCost(@NonNull String channelId) {
     if (stompClient.isConnected() || stompClient.isConnecting()) {
       return stompClient.topic(
           String.format(BuildConfig.STATUS_DESTINATION, channelId),

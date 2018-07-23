@@ -13,13 +13,13 @@ public class ApiOrder {
   @SerializedName("estimatedAmountText")
   private String estimatedAmountText;
   @SerializedName("estimatedAmount")
-  private int estimatedAmount;
-  @SerializedName("estimatedTime")
+  private long estimatedAmount;
+  @SerializedName("overPackageStartCalculationTime")
   private long estimatedTime;
   @SerializedName("estimatedRouteDistance")
-  private long estimatedRouteDistance;
+  private int estimatedRouteDistance;
   @SerializedName("totalAmount")
-  private int totalAmount;
+  private long totalAmount;
   @Nullable
   @SerializedName("comment")
   private String comment;
@@ -47,13 +47,13 @@ public class ApiOrder {
   /**
    * Конструктор без параметров желателен для безопасной работы Gson.
    */
-  @SuppressWarnings({"unused", "SpellCheckingInspection"})
+  @SuppressWarnings({"unused", "SpellCheckingInspection", "WeakerAccess"})
   public ApiOrder() {
   }
 
   @SuppressWarnings("SameParameterValue")
-  ApiOrder(long id, @Nullable String estimatedAmountText, int estimatedAmount, long estimatedTime,
-      long estimatedRouteDistance, int totalAmount, @Nullable String comment, long timeout,
+  ApiOrder(long id, @Nullable String estimatedAmountText, long estimatedAmount, long estimatedTime,
+      int estimatedRouteDistance, long totalAmount, @Nullable String comment, long timeout,
       long etaToStartPoint, long confirmationTime, long orderStartTime,
       @Nullable ApiDriverDistancePair executorDistance,
       @Nullable ApiOrderService apiOrderService,
@@ -85,7 +85,7 @@ public class ApiOrder {
     return estimatedAmountText;
   }
 
-  public int getEstimatedAmount() {
+  public long getEstimatedAmount() {
     return estimatedAmount;
   }
 
@@ -93,11 +93,11 @@ public class ApiOrder {
     return estimatedTime;
   }
 
-  public long getEstimatedRouteDistance() {
+  public int getEstimatedRouteDistance() {
     return estimatedRouteDistance;
   }
 
-  public int getTotalAmount() {
+  public long getTotalAmount() {
     return totalAmount;
   }
 

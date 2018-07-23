@@ -37,7 +37,7 @@ public class OrderCostViewModelTest {
   private Observer<ViewState<OrderCostViewActions>> viewStateObserver;
   @Mock
   private Observer<String> navigateObserver;
-  private PublishSubject<Integer> publishSubject;
+  private PublishSubject<Long> publishSubject;
 
   @Before
   public void setUp() {
@@ -104,10 +104,10 @@ public class OrderCostViewModelTest {
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    publishSubject.onNext(123);
-    publishSubject.onNext(873);
-    publishSubject.onNext(4728);
-    publishSubject.onNext(32);
+    publishSubject.onNext(123L);
+    publishSubject.onNext(873L);
+    publishSubject.onNext(4728L);
+    publishSubject.onNext(32L);
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(new OrderCostViewState(0));
@@ -128,10 +128,10 @@ public class OrderCostViewModelTest {
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    publishSubject.onNext(123);
-    publishSubject.onNext(873);
-    publishSubject.onNext(4728);
-    publishSubject.onNext(32);
+    publishSubject.onNext(123L);
+    publishSubject.onNext(873L);
+    publishSubject.onNext(4728L);
+    publishSubject.onNext(32L);
     publishSubject.onError(new Exception());
 
     // Результат:

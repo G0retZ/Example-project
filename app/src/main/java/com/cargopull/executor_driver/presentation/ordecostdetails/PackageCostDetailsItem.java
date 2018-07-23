@@ -2,9 +2,7 @@ package com.cargopull.executor_driver.presentation.ordecostdetails;
 
 import android.support.annotation.NonNull;
 import com.cargopull.executor_driver.entity.PackageCostDetails;
-import com.cargopull.executor_driver.entity.PackageOptionCost;
 import com.cargopull.executor_driver.utils.Pair;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -37,12 +35,8 @@ class PackageCostDetailsItem {
     return packageCostDetails.getServiceCost();
   }
 
-  public List<Pair<String, Integer>> getOptionsCosts() {
-    List<Pair<String, Integer>> res = new ArrayList<>();
-    for (PackageOptionCost packageOptionCost : packageCostDetails.getOptionCosts()) {
-      res.add(new Pair<>(packageOptionCost.getName(), packageOptionCost.getCost()));
-    }
-    return res;
+  public List<Pair<String, Long>> getOptionsCosts() {
+    return packageCostDetails.getOptionCosts();
   }
 
   @Override

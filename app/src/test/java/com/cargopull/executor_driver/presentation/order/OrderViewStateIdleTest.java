@@ -44,7 +44,7 @@ public class OrderViewStateIdleTest {
     when(orderItem.getLastAddress()).thenReturn("add");
     when(orderItem.getRouteLength()).thenReturn("la-la-la");
     when(orderItem.getEstimatedTimeSeconds()).thenReturn(7929);
-    when(orderItem.getEstimatedPrice()).thenReturn(6812);
+    when(orderItem.getEstimatedPrice()).thenReturn(6812L);
     when(orderItem.getServiceName()).thenReturn("service");
     when(orderItem.getSecondsToMeetClient()).thenReturn(654321);
     when(orderItem.getOrderComment()).thenReturn("comm");

@@ -57,14 +57,20 @@ public class AutoRouterImpl implements ActivityLifecycleCallbacks, AutoRouter,
         ClientOrderConfirmationActivity.class, GeolocationResolutionActivity.class
     ));
     statusGroups.put(ExecutorStateNavigate.MOVING_TO_CLIENT, Arrays.asList(
-        MovingToClientActivity.class, GeolocationResolutionActivity.class
+        MovingToClientActivity.class, MovingToClientDetailsActivity.class,
+        MovingToClientRouteActivity.class, GeolocationResolutionActivity.class
     ));
     statusGroups.put(ExecutorStateNavigate.WAITING_FOR_CLIENT, Arrays.asList(
-        WaitingForClientActivity.class, GeolocationResolutionActivity.class
+        WaitingForClientActivity.class, WaitingForClientRouteActivity.class,
+        GeolocationResolutionActivity.class
     ));
     statusGroups.put(ExecutorStateNavigate.ORDER_FULFILLMENT, Arrays.asList(
         OrderFulfillmentActivity.class, OrderFulfillmentDetailsActivity.class,
-        GeolocationResolutionActivity.class
+        OrderRouteActivity.class, GeolocationResolutionActivity.class
+    ));
+    statusGroups.put(ExecutorStateNavigate.PAYMENT_CONFIRMATION, Arrays.asList(
+        OrderCostDetailsActivity.class, OrderCostDetailsOrderDetailsActivity.class,
+        OrderCostDetailsRouteActivity.class, GeolocationResolutionActivity.class
     ));
   }
 
@@ -277,6 +283,12 @@ public class AutoRouterImpl implements ActivityLifecycleCallbacks, AutoRouter,
       case ExecutorStateNavigate.ORDER_FULFILLMENT:
         currentActivity.startActivity(
             new Intent(currentActivity, OrderFulfillmentActivity.class)
+                .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK)
+        );
+        break;
+      case ExecutorStateNavigate.PAYMENT_CONFIRMATION:
+        currentActivity.startActivity(
+            new Intent(currentActivity, OrderCostDetailsActivity.class)
                 .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK)
         );
         break;

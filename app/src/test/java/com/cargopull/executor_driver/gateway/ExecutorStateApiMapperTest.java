@@ -753,13 +753,13 @@ public class ExecutorStateApiMapperTest {
     ExecutorState executorState = mapper.map(new StompMessage(
         "MESSAGE",
         Collections.singletonList(
-            new StompHeader("Status", "PAYMENT_ACCEPTANCE")
+            new StompHeader("Status", "PAYMENT_CONFIRMATION")
         ),
         null
     ));
 
     // Результат:
-    assertEquals(executorState, ExecutorState.PAYMENT_ACCEPTANCE);
+    assertEquals(executorState, ExecutorState.PAYMENT_CONFIRMATION);
     assertEquals(executorState.getCustomerTimer(), 0);
     assertNull(executorState.getData());
   }
@@ -775,13 +775,13 @@ public class ExecutorStateApiMapperTest {
     ExecutorState executorState = mapper.map(new StompMessage(
         "MESSAGE",
         Collections.singletonList(
-            new StompHeader("Status", "PAYMENT_ACCEPTANCE")
+            new StompHeader("Status", "PAYMENT_CONFIRMATION")
         ),
         "\npayload"
     ));
 
     // Результат:
-    assertEquals(executorState, ExecutorState.PAYMENT_ACCEPTANCE);
+    assertEquals(executorState, ExecutorState.PAYMENT_CONFIRMATION);
     assertEquals(executorState.getCustomerTimer(), 0);
     assertEquals(executorState.getData(), "\npayload");
   }
@@ -797,14 +797,14 @@ public class ExecutorStateApiMapperTest {
     ExecutorState executorState = mapper.map(new StompMessage(
         "MESSAGE",
         Arrays.asList(
-            new StompHeader("Status", "PAYMENT_ACCEPTANCE"),
+            new StompHeader("Status", "PAYMENT_CONFIRMATION"),
             new StompHeader("CustomerConfirmationTimer", "1345")
         ),
         null
     ));
 
     // Результат:
-    assertEquals(executorState, ExecutorState.PAYMENT_ACCEPTANCE);
+    assertEquals(executorState, ExecutorState.PAYMENT_CONFIRMATION);
     assertNull(executorState.getData());
     assertEquals(executorState.getCustomerTimer(), 1345);
   }
@@ -820,14 +820,14 @@ public class ExecutorStateApiMapperTest {
     ExecutorState executorState = mapper.map(new StompMessage(
         "MESSAGE",
         Arrays.asList(
-            new StompHeader("Status", "PAYMENT_ACCEPTANCE"),
+            new StompHeader("Status", "PAYMENT_CONFIRMATION"),
             new StompHeader("CustomerConfirmationTimer", "1345")
         ),
         "\npayload"
     ));
 
     // Результат:
-    assertEquals(executorState, ExecutorState.PAYMENT_ACCEPTANCE);
+    assertEquals(executorState, ExecutorState.PAYMENT_CONFIRMATION);
     assertEquals(executorState.getCustomerTimer(), 1345);
     assertEquals(executorState.getData(), "\npayload");
   }

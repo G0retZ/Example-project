@@ -39,7 +39,7 @@ public class OrderCostDetailsGatewayTest {
     RxJavaPlugins.setComputationSchedulerHandler(scheduler -> Schedulers.trampoline());
     RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
     RxJavaPlugins.setIoSchedulerHandler(scheduler -> Schedulers.trampoline());
-    ExecutorState.PAYMENT_ACCEPTANCE.setData(null);
+    ExecutorState.PAYMENT_CONFIRMATION.setData(null);
     when(useCase.getExecutorStates(anyBoolean())).thenReturn(Flowable.never());
   }
 
@@ -90,7 +90,7 @@ public class OrderCostDetailsGatewayTest {
     // Дано:
     gateway = new OrderCostDetailsGatewayImpl(useCase, mapper);
     when(useCase.getExecutorStates(anyBoolean()))
-        .thenReturn(Flowable.just(ExecutorState.PAYMENT_ACCEPTANCE));
+        .thenReturn(Flowable.just(ExecutorState.PAYMENT_CONFIRMATION));
 
     // Действие:
     gateway.getOrderCostDetails().test();
@@ -107,10 +107,10 @@ public class OrderCostDetailsGatewayTest {
   @Test
   public void askForMappingForData() throws Exception {
     // Дано:
-    ExecutorState.PAYMENT_ACCEPTANCE.setData("");
+    ExecutorState.PAYMENT_CONFIRMATION.setData("");
     gateway = new OrderCostDetailsGatewayImpl(useCase, mapper);
     when(useCase.getExecutorStates(anyBoolean()))
-        .thenReturn(Flowable.just(ExecutorState.PAYMENT_ACCEPTANCE));
+        .thenReturn(Flowable.just(ExecutorState.PAYMENT_CONFIRMATION));
 
     // Действие:
     gateway.getOrderCostDetails().test();
@@ -153,7 +153,7 @@ public class OrderCostDetailsGatewayTest {
     // Дано:
     gateway = new OrderCostDetailsGatewayImpl(useCase, mapper);
     when(useCase.getExecutorStates(anyBoolean()))
-        .thenReturn(Flowable.just(ExecutorState.PAYMENT_ACCEPTANCE));
+        .thenReturn(Flowable.just(ExecutorState.PAYMENT_CONFIRMATION));
 
     // Действие:
     TestSubscriber<OrderCostDetails> testSubscriber = gateway.getOrderCostDetails().test();
@@ -174,9 +174,9 @@ public class OrderCostDetailsGatewayTest {
     // Дано:
     gateway = new OrderCostDetailsGatewayImpl(useCase, mapper);
     doThrow(new DataMappingException()).when(mapper).map(anyString());
-    ExecutorState.PAYMENT_ACCEPTANCE.setData("");
+    ExecutorState.PAYMENT_CONFIRMATION.setData("");
     when(useCase.getExecutorStates(anyBoolean()))
-        .thenReturn(Flowable.just(ExecutorState.PAYMENT_ACCEPTANCE));
+        .thenReturn(Flowable.just(ExecutorState.PAYMENT_CONFIRMATION));
 
     // Действие:
     TestSubscriber<OrderCostDetails> testSubscriber = gateway.getOrderCostDetails().test();
@@ -197,9 +197,9 @@ public class OrderCostDetailsGatewayTest {
     // Дано:
     gateway = new OrderCostDetailsGatewayImpl(useCase, mapper);
     when(mapper.map(anyString())).thenReturn(order);
-    ExecutorState.PAYMENT_ACCEPTANCE.setData("");
+    ExecutorState.PAYMENT_CONFIRMATION.setData("");
     when(useCase.getExecutorStates(anyBoolean()))
-        .thenReturn(Flowable.just(ExecutorState.PAYMENT_ACCEPTANCE));
+        .thenReturn(Flowable.just(ExecutorState.PAYMENT_CONFIRMATION));
 
     // Действие:
     TestSubscriber<OrderCostDetails> testSubscriber = gateway.getOrderCostDetails().test();

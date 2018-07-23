@@ -99,7 +99,7 @@ public class MenuFragment extends BaseFragment implements BalanceViewActions,
   }
 
   @Override
-  public void showMainAccountAmount(int amount) {
+  public void showMainAccountAmount(long amount) {
     if (!getResources().getBoolean(R.bool.show_cents)) {
       amount = Math.round(amount / 100f);
     }
@@ -114,7 +114,7 @@ public class MenuFragment extends BaseFragment implements BalanceViewActions,
   }
 
   @Override
-  public void showBonusAccountAmount(int amount) {
+  public void showBonusAccountAmount(long amount) {
 
   }
 

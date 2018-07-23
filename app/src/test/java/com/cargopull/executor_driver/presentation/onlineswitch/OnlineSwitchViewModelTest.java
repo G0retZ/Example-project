@@ -263,7 +263,7 @@ public class OnlineSwitchViewModelTest {
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    publishSubject.onNext(ExecutorState.PAYMENT_ACCEPTANCE);
+    publishSubject.onNext(ExecutorState.PAYMENT_CONFIRMATION);
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(new OnlineSwitchViewStatePending(null));

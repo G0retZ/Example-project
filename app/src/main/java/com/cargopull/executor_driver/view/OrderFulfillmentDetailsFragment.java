@@ -136,7 +136,7 @@ public class OrderFulfillmentDetailsFragment extends BaseFragment implements Ord
   }
 
   @Override
-  public void showOrderConditions(@NonNull String routeDistance, int time, int cost) {
+  public void showOrderConditions(@NonNull String routeDistance, int time, long cost) {
 
   }
 
