@@ -1,6 +1,7 @@
 package com.cargopull.executor_driver.entity;
 
 import android.support.annotation.NonNull;
+import com.cargopull.executor_driver.utils.Pair;
 import java.util.Collections;
 import java.util.List;
 
@@ -14,10 +15,10 @@ public class PackageCostDetails {
   private final long packageCost;
   private final long serviceCost;
   @NonNull
-  private final List<PackageOptionCost> optionCosts;
+  private final List<Pair<String, Integer>> optionCosts;
 
   public PackageCostDetails(long packageTime, int packageDistance, long packageCost,
-      long serviceCost, @NonNull List<PackageOptionCost> optionCosts) {
+      long serviceCost, @NonNull List<Pair<String, Integer>> optionCosts) {
     this.packageTime = packageTime;
     this.packageDistance = packageDistance;
     this.packageCost = packageCost;
@@ -42,7 +43,7 @@ public class PackageCostDetails {
   }
 
   @NonNull
-  public List<PackageOptionCost> getOptionCosts() {
+  public List<Pair<String, Integer>> getOptionCosts() {
     return optionCosts;
   }
 }

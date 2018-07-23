@@ -5,7 +5,7 @@ import static org.junit.Assert.assertNotEquals;
 import static org.mockito.Mockito.when;
 
 import com.cargopull.executor_driver.entity.PackageCostDetails;
-import com.cargopull.executor_driver.entity.PackageOptionCost;
+import com.cargopull.executor_driver.utils.Pair;
 import java.util.Arrays;
 import java.util.Locale;
 import org.junit.Before;
@@ -23,11 +23,11 @@ public class PackageCostDetailsItemTest {
   @Mock
   private PackageCostDetails packageCostDetails1;
   @Mock
-  private PackageOptionCost packageOptionCost0;
+  private Pair<String, Integer> packageOptionCost0;
   @Mock
-  private PackageOptionCost packageOptionCost1;
+  private Pair<String, Integer> packageOptionCost1;
   @Mock
-  private PackageOptionCost packageOptionCost2;
+  private Pair<String, Integer> packageOptionCost2;
 
   @Before
   public void setUp() {
@@ -76,12 +76,12 @@ public class PackageCostDetailsItemTest {
     // Дано:
     when(packageCostDetails.getOptionCosts())
         .thenReturn(Arrays.asList(packageOptionCost0, packageOptionCost1, packageOptionCost2));
-    when(packageOptionCost0.getName()).thenReturn("name1");
-    when(packageOptionCost0.getCost()).thenReturn(1);
-    when(packageOptionCost1.getName()).thenReturn("name2");
-    when(packageOptionCost1.getCost()).thenReturn(2);
-    when(packageOptionCost2.getName()).thenReturn("name3");
-    when(packageOptionCost2.getCost()).thenReturn(3);
+    when(packageOptionCost0.first).thenReturn("name1");
+    when(packageOptionCost0.second).thenReturn(1);
+    when(packageOptionCost1.first).thenReturn("name2");
+    when(packageOptionCost1.second).thenReturn(2);
+    when(packageOptionCost2.first).thenReturn("name3");
+    when(packageOptionCost2.second).thenReturn(3);
 
     // Результат:
     assertEquals(packageCostDetailsItem.getOptionsCosts().size(), 3);

@@ -2,6 +2,7 @@ package com.cargopull.executor_driver.entity;
 
 import static org.junit.Assert.assertEquals;
 
+import com.cargopull.executor_driver.utils.Pair;
 import java.util.Arrays;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,15 +13,15 @@ import org.mockito.junit.MockitoJUnitRunner;
 public class PackageCostDetailsTest {
 
   @Mock
-  private PackageOptionCost optionCost0;
+  private Pair<String, Integer> optionCost0;
   @Mock
-  private PackageOptionCost optionCost1;
+  private Pair<String, Integer> optionCost1;
   @Mock
-  private PackageOptionCost optionCost2;
+  private Pair<String, Integer> optionCost2;
   @Mock
-  private PackageOptionCost optionCost3;
+  private Pair<String, Integer> optionCost3;
   @Mock
-  private PackageOptionCost optionCost4;
+  private Pair<String, Integer> optionCost4;
 
   @Test
   public void testConstructor() {
