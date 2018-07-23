@@ -94,6 +94,9 @@
     <activity
       android:launchMode="singleTop"
       android:name=".application.OrderRouteActivity"/>
+    <activity
+      android:launchMode="singleTop"
+      android:name=".application.OrderCostDetailsActivity"/>
 
     <service
       android:enabled="true"
