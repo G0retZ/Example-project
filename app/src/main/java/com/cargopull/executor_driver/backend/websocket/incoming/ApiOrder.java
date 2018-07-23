@@ -14,7 +14,7 @@ public class ApiOrder {
   private String estimatedAmountText;
   @SerializedName("estimatedAmount")
   private int estimatedAmount;
-  @SerializedName("estimatedTime")
+  @SerializedName("overPackageStartCalculationTime")
   private long estimatedTime;
   @SerializedName("estimatedRouteDistance")
   private long estimatedRouteDistance;
