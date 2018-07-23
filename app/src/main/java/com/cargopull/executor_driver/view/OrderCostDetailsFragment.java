@@ -175,7 +175,8 @@ public class OrderCostDetailsFragment extends BaseFragment implements OrderCostD
     for (Pair<String, Long> pair : optionsCosts) {
       View view = getLayoutInflater().inflate(
           R.layout.fragment_order_cost_details_option_item, estimatedOptionsCosts, false);
-      ((TextView) view.findViewById(R.id.optionNameText)).setText(pair.first);
+      ((TextView) view.findViewById(R.id.optionNameText))
+          .setText(getString(R.string.option_name, pair.first));
       long cost = pair.second;
       if (!getResources().getBoolean(R.bool.show_cents)) {
         cost = Math.round(cost / 100f);
@@ -230,7 +231,8 @@ public class OrderCostDetailsFragment extends BaseFragment implements OrderCostD
     for (Pair<String, Long> pair : optionsCosts) {
       View view = getLayoutInflater().inflate(
           R.layout.fragment_order_cost_details_option_item, overPackageOptionsCosts, false);
-      ((TextView) view.findViewById(R.id.optionNameText)).setText(pair.first);
+      ((TextView) view.findViewById(R.id.optionNameText))
+          .setText(getString(R.string.option_name, pair.first));
       long cost = pair.second;
       if (!getResources().getBoolean(R.bool.show_cents)) {
         cost = Math.round(cost / 100f);
@@ -276,7 +278,8 @@ public class OrderCostDetailsFragment extends BaseFragment implements OrderCostD
     for (Pair<String, Long> pair : optionsTariffs) {
       View view = getLayoutInflater().inflate(
           R.layout.fragment_order_cost_details_option_item, overPackageTariffOptionsCosts, false);
-      ((TextView) view.findViewById(R.id.optionNameText)).setText(pair.first);
+      ((TextView) view.findViewById(R.id.optionNameText))
+          .setText(getString(R.string.option_name, pair.first));
       long cost = pair.second;
       if (!getResources().getBoolean(R.bool.show_cents)) {
         cost = Math.round(cost / 100f);
