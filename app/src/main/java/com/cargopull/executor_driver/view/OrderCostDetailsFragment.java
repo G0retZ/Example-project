@@ -1,20 +1,31 @@
 package com.cargopull.executor_driver.view;
 
+import android.animation.Animator;
+import android.animation.Animator.AnimatorListener;
+import android.animation.ObjectAnimator;
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.view.animation.DecelerateInterpolator;
+import android.view.animation.LinearInterpolator;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import com.cargopull.executor_driver.R;
+import com.cargopull.executor_driver.backend.vibro.ShakeItPlayer;
 import com.cargopull.executor_driver.di.AppComponent;
+import com.cargopull.executor_driver.presentation.confirmorderpayment.ConfirmOrderPaymentViewActions;
+import com.cargopull.executor_driver.presentation.confirmorderpayment.ConfirmOrderPaymentViewModel;
 import com.cargopull.executor_driver.presentation.ordecostdetails.OrderCostDetailsViewActions;
 import com.cargopull.executor_driver.presentation.ordecostdetails.OrderCostDetailsViewModel;
 import com.cargopull.executor_driver.utils.Pair;
 import java.text.DecimalFormat;
+import java.util.Collections;
 import java.util.List;
 import javax.inject.Inject;
 import org.joda.time.LocalTime;
@@ -23,9 +34,12 @@ import org.joda.time.LocalTime;
  * Отображает детализацию расчета стоимости заказа.
  */
 
-public class OrderCostDetailsFragment extends BaseFragment implements OrderCostDetailsViewActions {
+public class OrderCostDetailsFragment extends BaseFragment implements OrderCostDetailsViewActions,
+    ConfirmOrderPaymentViewActions {
 
   private OrderCostDetailsViewModel orderCostDetailsViewModel;
+  private ConfirmOrderPaymentViewModel confirmOrderPaymentViewModel;
+  private ShakeItPlayer shakeItPlayer;
   private TextView totalPaymentText;
   private TextView estimatedPackageTitle;
   private TextView estimatedPackageCost;
@@ -48,8 +62,11 @@ public class OrderCostDetailsFragment extends BaseFragment implements OrderCostD
   private TextView overPackageTariffServiceCostTitle;
   private TextView overPackageTariffServiceCost;
   private LinearLayout overPackageTariffOptionsCosts;
-  @SuppressWarnings({"FieldCanBeLocal", "unused"})
-  private Button paidAction;
+  private ProgressBar paidAction;
+  @Nullable
+  private ObjectAnimator delayAnimator;
+  @Nullable
+  private ObjectAnimator resetAnimator;
 
   @Inject
   public void setOrderCostDetailsViewModel(
@@ -57,6 +74,18 @@ public class OrderCostDetailsFragment extends BaseFragment implements OrderCostD
     this.orderCostDetailsViewModel = orderCostDetailsViewModel;
   }
 
+  @Inject
+  public void setConfirmOrderPaymentViewModel(
+      @NonNull ConfirmOrderPaymentViewModel confirmOrderPaymentViewModel) {
+    this.confirmOrderPaymentViewModel = confirmOrderPaymentViewModel;
+  }
+
+  @Inject
+  public void setShakeItPlayer(@NonNull ShakeItPlayer shakeItPlayer) {
+    this.shakeItPlayer = shakeItPlayer;
+  }
+
+  @SuppressLint("ClickableViewAccessibility")
   @Nullable
   @Override
   public View onCreateView(@NonNull LayoutInflater inflater,
@@ -86,6 +115,55 @@ public class OrderCostDetailsFragment extends BaseFragment implements OrderCostD
     overPackageTariffServiceCost = view.findViewById(R.id.overPackageTariffServiceCost);
     overPackageTariffOptionsCosts = view.findViewById(R.id.overPackageTariffOptionsCosts);
     paidAction = view.findViewById(R.id.orderPaid);
+    delayAnimator = ObjectAnimator.ofInt(paidAction, "progress", 0, 100);
+    delayAnimator.setDuration(1500);
+    delayAnimator.setInterpolator(new DecelerateInterpolator());
+    delayAnimator.addListener(new AnimatorListener() {
+      private boolean canceled;
+
+      @Override
+      public void onAnimationStart(Animator animation) {
+        canceled = false;
+      }
+
+      @Override
+      public void onAnimationEnd(Animator animation) {
+        if (!canceled) {
+          confirmOrderPaymentViewModel.confirmPayment();
+          shakeItPlayer.shakeIt(Collections.singletonList(new Pair<>(200L, 255)));
+        }
+      }
+
+      @Override
+      public void onAnimationCancel(Animator animation) {
+        canceled = true;
+      }
+
+      @Override
+      public void onAnimationRepeat(Animator animation) {
+
+      }
+    });
+
+    paidAction.setOnTouchListener((v, event) -> {
+      int i = event.getAction();
+      if (i == MotionEvent.ACTION_DOWN) {
+        delayAnimator.start();
+        if (resetAnimator != null) {
+          resetAnimator.cancel();
+        }
+        return true;
+      } else if (i == MotionEvent.ACTION_UP) {
+        delayAnimator.cancel();
+        resetAnimator = ObjectAnimator
+            .ofInt(paidAction, "progress", paidAction.getProgress(), 0);
+        resetAnimator.setDuration(150);
+        resetAnimator.setInterpolator(new LinearInterpolator());
+        resetAnimator.start();
+        return true;
+      }
+      return false;
+    });
     return view;
   }
 
@@ -108,11 +186,32 @@ public class OrderCostDetailsFragment extends BaseFragment implements OrderCostD
         navigate(destination);
       }
     });
+    confirmOrderPaymentViewModel.getViewStateLiveData().observe(this, viewState -> {
+      if (viewState != null) {
+        viewState.apply(this);
+      }
+    });
+    confirmOrderPaymentViewModel.getNavigationLiveData().observe(this, destination -> {
+      if (destination != null) {
+        navigate(destination);
+      }
+    });
+  }
+
+  @Override
+  public void onDetach() {
+    if (resetAnimator != null) {
+      resetAnimator.cancel();
+    }
+    if (delayAnimator != null) {
+      delayAnimator.cancel();
+    }
+    super.onDetach();
   }
 
   @Override
   public void showOrderCostDetailsPending(boolean pending) {
-    showPending(pending, toString());
+    showPending(pending, toString() + "0");
   }
 
   @Override
@@ -254,21 +353,15 @@ public class OrderCostDetailsFragment extends BaseFragment implements OrderCostD
 
   @Override
   public void showOverPackageTariffCost(long tariff) {
-    if (!getResources().getBoolean(R.bool.show_cents)) {
-      tariff = Math.round(tariff / 100f);
-    }
     overPackageTariffCost.setText(
-        new DecimalFormat(getString(R.string.currency_per_min_format)).format(tariff)
+        new DecimalFormat(getString(R.string.currency_per_min_format)).format(tariff / 100d)
     );
   }
 
   @Override
   public void showOverPackageServiceTariff(long tariff) {
-    if (!getResources().getBoolean(R.bool.show_cents)) {
-      tariff = Math.round(tariff / 100f);
-    }
     overPackageTariffServiceCost.setText(
-        new DecimalFormat(getString(R.string.currency_per_min_format)).format(tariff)
+        new DecimalFormat(getString(R.string.currency_per_min_format)).format(tariff / 100d)
     );
   }
 
@@ -280,14 +373,15 @@ public class OrderCostDetailsFragment extends BaseFragment implements OrderCostD
           R.layout.fragment_order_cost_details_option_item, overPackageTariffOptionsCosts, false);
       ((TextView) view.findViewById(R.id.optionNameText))
           .setText(getString(R.string.option_name, pair.first));
-      long cost = pair.second;
-      if (!getResources().getBoolean(R.bool.show_cents)) {
-        cost = Math.round(cost / 100f);
-      }
       ((TextView) view.findViewById(R.id.optionCostText)).setText(
-          new DecimalFormat(getString(R.string.currency_format)).format(cost)
+          new DecimalFormat(getString(R.string.currency_per_min_format)).format(pair.second / 100d)
       );
       overPackageTariffOptionsCosts.addView(view);
     }
+  }
+
+  @Override
+  public void ConfirmOrderPaymentPending(boolean pending) {
+    showPending(pending, toString() + "1");
   }
 }
