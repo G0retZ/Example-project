@@ -389,6 +389,10 @@ public class MainApplication extends MultiDexApplication implements ServerConnec
         startService(R.string.working, R.string.order_fulfillment, PendingIntent
             .getActivity(this, 0, new Intent(this, OrderFulfillmentActivity.class), 0));
         break;
+      case ExecutorStateNavigate.PAYMENT_CONFIRMATION:
+        startService(R.string.working, R.string.order_fulfillment, PendingIntent
+            .getActivity(this, 0, new Intent(this, OrderCostDetailsActivity.class), 0));
+        break;
     }
     autoRouter.navigateTo(destination);
   }
