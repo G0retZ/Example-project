@@ -6,7 +6,7 @@ import io.reactivex.Flowable;
 /**
  * Юзкейс детального расчета заказа. Слушает детальный расчет заказа из гейтвея.
  */
-interface OrderCostDetailsUseCase {
+public interface OrderCostDetailsUseCase {
 
   /**
    * Запрашивает детальный расчет выполняемого заказа.
