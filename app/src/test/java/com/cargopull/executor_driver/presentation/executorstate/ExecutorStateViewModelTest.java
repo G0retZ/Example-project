@@ -398,13 +398,13 @@ public class ExecutorStateViewModelTest {
   public void navigateToPaymentAcceptance() {
     // Дано:
     when(executorStateUseCase.getExecutorStates(anyBoolean()))
-        .thenReturn(Flowable.just(ExecutorState.PAYMENT_ACCEPTANCE));
+        .thenReturn(Flowable.just(ExecutorState.PAYMENT_CONFIRMATION));
 
     // Действие:
     viewModel.getNavigationLiveData().observeForever(navigationObserver);
     viewModel.initializeExecutorState();
 
     // Результат:
-    verify(navigationObserver, only()).onChanged(ExecutorStateNavigate.PAYMENT_ACCEPTANCE);
+    verify(navigationObserver, only()).onChanged(ExecutorStateNavigate.PAYMENT_CONFIRMATION);
   }
 }

@@ -50,7 +50,7 @@ public enum ExecutorState {
   /**
    * Водитель "принимает оплату". В этом состоянии водитель расчитывается с клиентом.
    */
-  PAYMENT_ACCEPTANCE;
+  PAYMENT_CONFIRMATION;
 
   @Nullable
   private String data;

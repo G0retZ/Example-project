@@ -74,7 +74,7 @@ public class OrderGatewayTest {
         .thenReturn(Flowable.just(ExecutorState.SHIFT_CLOSED, ExecutorState.SHIFT_OPENED,
             ExecutorState.ONLINE, ExecutorState.CLIENT_ORDER_CONFIRMATION,
             ExecutorState.MOVING_TO_CLIENT, ExecutorState.WAITING_FOR_CLIENT,
-            ExecutorState.ORDER_FULFILLMENT, ExecutorState.PAYMENT_ACCEPTANCE));
+            ExecutorState.ORDER_FULFILLMENT, ExecutorState.PAYMENT_CONFIRMATION));
 
     // Действие:
     gateway.getOrders().test();
@@ -135,7 +135,7 @@ public class OrderGatewayTest {
         .thenReturn(Flowable.just(ExecutorState.SHIFT_CLOSED, ExecutorState.SHIFT_OPENED,
             ExecutorState.ONLINE, ExecutorState.CLIENT_ORDER_CONFIRMATION,
             ExecutorState.MOVING_TO_CLIENT, ExecutorState.WAITING_FOR_CLIENT,
-            ExecutorState.ORDER_FULFILLMENT, ExecutorState.PAYMENT_ACCEPTANCE));
+            ExecutorState.ORDER_FULFILLMENT, ExecutorState.PAYMENT_CONFIRMATION));
 
     // Действие:
     TestSubscriber<Order> testSubscriber = gateway.getOrders().test();

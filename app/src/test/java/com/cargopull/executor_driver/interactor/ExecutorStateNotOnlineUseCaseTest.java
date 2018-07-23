@@ -213,7 +213,7 @@ public class ExecutorStateNotOnlineUseCaseTest {
     when(executorStateUseCase.getExecutorStates(anyBoolean()))
         .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
     useCase.getExecutorStates().test();
-    publishSubject.onNext(ExecutorState.PAYMENT_ACCEPTANCE);
+    publishSubject.onNext(ExecutorState.PAYMENT_CONFIRMATION);
 
     // Действие:
     useCase.setExecutorNotOnline().test();
@@ -398,7 +398,7 @@ public class ExecutorStateNotOnlineUseCaseTest {
     when(executorStateUseCase.getExecutorStates(anyBoolean()))
         .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
     useCase.getExecutorStates().test();
-    publishSubject.onNext(ExecutorState.PAYMENT_ACCEPTANCE);
+    publishSubject.onNext(ExecutorState.PAYMENT_CONFIRMATION);
 
     // Действие:
     useCase.setExecutorNotOnline().test();
@@ -601,7 +601,7 @@ public class ExecutorStateNotOnlineUseCaseTest {
     when(executorStateUseCase.getExecutorStates(anyBoolean()))
         .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
     useCase.getExecutorStates().test();
-    publishSubject.onNext(ExecutorState.PAYMENT_ACCEPTANCE);
+    publishSubject.onNext(ExecutorState.PAYMENT_CONFIRMATION);
 
     // Действие:
     TestObserver<Void> testObserver = useCase.setExecutorNotOnline().test();

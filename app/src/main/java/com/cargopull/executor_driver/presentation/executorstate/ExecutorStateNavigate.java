@@ -16,7 +16,7 @@ import java.lang.annotation.RetentionPolicy;
     ExecutorStateNavigate.MOVING_TO_CLIENT,
     ExecutorStateNavigate.WAITING_FOR_CLIENT,
     ExecutorStateNavigate.ORDER_FULFILLMENT,
-    ExecutorStateNavigate.PAYMENT_ACCEPTANCE
+    ExecutorStateNavigate.PAYMENT_CONFIRMATION
 })
 @Retention(RetentionPolicy.SOURCE)
 public @interface ExecutorStateNavigate {
@@ -38,5 +38,5 @@ public @interface ExecutorStateNavigate {
   // Переход к выполнению заказа.
   String ORDER_FULFILLMENT = "ExecutorState.to.OrderFulfillment";
   // Переход к расчету с клиентом.
-  String PAYMENT_ACCEPTANCE = "ExecutorState.to.PaymentAcceptance";
+  String PAYMENT_CONFIRMATION = "ExecutorState.to.PaymentAcceptance";
 }

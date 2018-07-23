@@ -91,8 +91,8 @@ public class ExecutorStateViewModelImpl extends ViewModel implements ExecutorSta
                 case ORDER_FULFILLMENT:
                   navigateLiveData.postValue(ExecutorStateNavigate.ORDER_FULFILLMENT);
                   break;
-                case PAYMENT_ACCEPTANCE:
-                  navigateLiveData.postValue(ExecutorStateNavigate.PAYMENT_ACCEPTANCE);
+                case PAYMENT_CONFIRMATION:
+                  navigateLiveData.postValue(ExecutorStateNavigate.PAYMENT_CONFIRMATION);
                   break;
               }
             },

@@ -301,7 +301,7 @@ public class GeoLocationUseCaseTest {
   public void askGatewayForLocationsEvery15secIfGoToPaymentAcceptance() {
     // Дано:
     when(executorStateUseCase.getExecutorStates(anyBoolean()))
-        .thenReturn(Flowable.just(ExecutorState.PAYMENT_ACCEPTANCE));
+        .thenReturn(Flowable.just(ExecutorState.PAYMENT_CONFIRMATION));
 
     // Действие:
     useCase.getGeoLocations().test();
@@ -321,7 +321,7 @@ public class GeoLocationUseCaseTest {
         ExecutorState.SHIFT_CLOSED, ExecutorState.SHIFT_OPENED, ExecutorState.ONLINE,
         ExecutorState.DRIVER_ORDER_CONFIRMATION, ExecutorState.CLIENT_ORDER_CONFIRMATION,
         ExecutorState.MOVING_TO_CLIENT, ExecutorState.WAITING_FOR_CLIENT,
-        ExecutorState.ORDER_FULFILLMENT, ExecutorState.PAYMENT_ACCEPTANCE, ExecutorState.ONLINE,
+        ExecutorState.ORDER_FULFILLMENT, ExecutorState.PAYMENT_CONFIRMATION, ExecutorState.ONLINE,
         ExecutorState.SHIFT_OPENED, ExecutorState.SHIFT_CLOSED
     ));
 
@@ -349,7 +349,7 @@ public class GeoLocationUseCaseTest {
         ExecutorState.SHIFT_CLOSED, ExecutorState.SHIFT_OPENED, ExecutorState.ONLINE,
         ExecutorState.DRIVER_ORDER_CONFIRMATION, ExecutorState.CLIENT_ORDER_CONFIRMATION,
         ExecutorState.MOVING_TO_CLIENT, ExecutorState.WAITING_FOR_CLIENT,
-        ExecutorState.ORDER_FULFILLMENT, ExecutorState.PAYMENT_ACCEPTANCE, ExecutorState.ONLINE,
+        ExecutorState.ORDER_FULFILLMENT, ExecutorState.PAYMENT_CONFIRMATION, ExecutorState.ONLINE,
         ExecutorState.SHIFT_OPENED, ExecutorState.SHIFT_CLOSED
     ));
     when(geoLocationGateway.getGeoLocations(anyLong()))
