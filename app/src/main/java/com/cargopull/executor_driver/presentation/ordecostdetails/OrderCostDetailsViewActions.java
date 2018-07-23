@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * Действия для смены состояния вида окна заказа.
  */
-interface OrderCostDetailsViewActions {
+public interface OrderCostDetailsViewActions {
 
   /**
    * Показать индикатор процесса.

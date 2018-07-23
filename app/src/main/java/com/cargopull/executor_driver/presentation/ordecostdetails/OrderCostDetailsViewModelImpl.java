@@ -16,7 +16,7 @@ import io.reactivex.internal.disposables.EmptyDisposable;
 import io.reactivex.schedulers.Schedulers;
 import javax.inject.Inject;
 
-class OrderCostDetailsViewModelImpl extends ViewModel implements
+public class OrderCostDetailsViewModelImpl extends ViewModel implements
     OrderCostDetailsViewModel {
 
   @NonNull

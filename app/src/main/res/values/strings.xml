@@ -79,6 +79,7 @@
   <string name="do_not_cancel">Не отменять</string>
   <string name="calling_operator">Дистпечер скоро свяжется.\nБудьте готовы взять трубку!</string>
   <string name="currency_format">##,###,### ₽</string>
+  <string name="currency_per_min_format">##,###,### ₽/мин.</string>
   <string name="bonus_explained">Бонусные рубли не подлежат обмену на наличные денежные средства.</string>
   <string name="bonus_amount">Бонусных рублей</string>
   <string name="missed_order">Упущен заказ</string>
@@ -86,10 +87,22 @@
   <string name="service">Услуга</string>
   <string name="order_distance_and_duration">Пробег, длительность, стоимость</string>
   <string name="km_h_m_p">%1$s км, %2$d ч. %3$d мин. ≈ %4$s</string>
+  <string name="h_m">%1$d ч. %2$d мин.</string>
   <string name="address">Адрес</string>
   <string name="exit_confirmation">Вы уверены, что хотите выйти?\n</string>
   <string name="order_complete_question">Вы завершили работу не на всех точках. Вы уверены, что хотите завершить заказ?</string>
   <string name="next_address">Следующий адрес (%1$d из %2$d)</string>
   <string name="driver_blocked_message">Вы заблокированы.\nОбратитесь в офис обслуживания.</string>
   <string name="no_free_vehicle_message">Все транспортные средства заняты.\nОбратитесь к вашему руководителю.</string>
+  <string name="total_payment">Итого к оплате</string>
+  <string name="estimated_package">Предрасчёт</string>
+  <string name="pay_by_cash">Наличными</string>
+  <string name="estimated_package_time">Время пакета</string>
+  <string name="estimated_package_distance">Расстояние</string>
+  <string name="estimated_transport_cost">Перевозка</string>
+  <string name="over_package">Сверх пакета</string>
+  <string name="over_package_time">Время</string>
+  <string name="over_package_transport_cost">Перевозка</string>
+  <string name="over_package_tariff">Тариф сверх пакета</string>
+  <string name="paid">Оплачено</string>
 </resources>
