@@ -35,7 +35,7 @@ class PackageCostDetailsItem {
     return packageCostDetails.getServiceCost();
   }
 
-  public List<Pair<String, Integer>> getOptionsCosts() {
+  public List<Pair<String, Long>> getOptionsCosts() {
     return packageCostDetails.getOptionCosts();
   }
 

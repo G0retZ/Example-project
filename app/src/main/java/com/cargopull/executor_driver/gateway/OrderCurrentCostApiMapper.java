@@ -7,7 +7,7 @@ import ua.naiksoftware.stomp.client.StompMessage;
 /**
  * Извлекаем стоимость сверх пакета из ответа сервера.
  */
-public class OrderCurrentCostApiMapper implements Mapper<StompMessage, Integer> {
+public class OrderCurrentCostApiMapper implements Mapper<StompMessage, Long> {
 
   @Inject
   public OrderCurrentCostApiMapper() {
@@ -15,9 +15,9 @@ public class OrderCurrentCostApiMapper implements Mapper<StompMessage, Integer> 
 
   @NonNull
   @Override
-  public Integer map(@NonNull StompMessage from) throws Exception {
+  public Long map(@NonNull StompMessage from) throws Exception {
     try {
-      return Integer.valueOf(from.findHeader("TotalAmount").trim());
+      return Long.valueOf(from.findHeader("TotalAmount").trim());
     } catch (Exception e) {
       throw new DataMappingException("Ошибка маппинга: неверный формат стоимости!", e);
     }

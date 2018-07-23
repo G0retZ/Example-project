@@ -211,7 +211,7 @@ public class DriverOrderConfirmationFragment extends BaseFragment implements
   }
 
   @Override
-  public void showOrderConditions(@NonNull String routeDistance, int time, int cost) {
+  public void showOrderConditions(@NonNull String routeDistance, int time, long cost) {
     LocalTime localTime = LocalTime.fromMillisOfDay(time * 1000);
     if (!getResources().getBoolean(R.bool.show_cents)) {
       cost = Math.round(cost / 100f);

@@ -365,7 +365,7 @@ public class OrderFulfillmentFragment extends BaseFragment implements OrderCostV
   }
 
   @Override
-  public void setOrderCostText(int currentCost) {
+  public void setOrderCostText(long currentCost) {
     if (!getResources().getBoolean(R.bool.show_cents)) {
       currentCost = Math.round(currentCost / 100f);
     }

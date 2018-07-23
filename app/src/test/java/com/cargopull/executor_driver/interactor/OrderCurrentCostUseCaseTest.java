@@ -143,7 +143,7 @@ public class OrderCurrentCostUseCaseTest {
     when(loginReceiver.get()).thenReturn(Observable.just("1234567890"));
     when(orderGateway.getOrders())
         .thenReturn(Flowable.just(order, order2));
-    when(order.getTotalCost()).thenReturn(101);
+    when(order.getTotalCost()).thenReturn(101L);
     when(orderCurrentCostGateway.getOrderCurrentCost("1234567890"))
         .thenReturn(Flowable.error(new DataMappingException()));
 
@@ -167,7 +167,7 @@ public class OrderCurrentCostUseCaseTest {
         .thenReturn(Flowable.error(new DataMappingException()));
 
     // Действие:
-    TestSubscriber<Integer> test = useCase.getOrderCurrentCost().test();
+    TestSubscriber<Long> test = useCase.getOrderCurrentCost().test();
 
     // Результат:
     test.assertError(DataMappingException.class);
@@ -184,16 +184,16 @@ public class OrderCurrentCostUseCaseTest {
     when(loginReceiver.get()).thenReturn(Observable.just("1234567890"));
     when(orderGateway.getOrders())
         .thenReturn(Flowable.just(order, order2));
-    when(order.getTotalCost()).thenReturn(101);
+    when(order.getTotalCost()).thenReturn(101L);
     when(orderCurrentCostGateway.getOrderCurrentCost("1234567890"))
         .thenReturn(Flowable.error(new DataMappingException()));
 
     // Действие:
-    TestSubscriber<Integer> test = useCase.getOrderCurrentCost().test();
+    TestSubscriber<Long> test = useCase.getOrderCurrentCost().test();
 
     // Результат:
     test.assertError(DataMappingException.class);
-    test.assertValue(101);
+    test.assertValue(101L);
     test.assertNotComplete();
   }
 
@@ -206,14 +206,14 @@ public class OrderCurrentCostUseCaseTest {
     when(loginReceiver.get()).thenReturn(Observable.just("1234567890"));
     when(orderGateway.getOrders())
         .thenReturn(Flowable.just(order, order2));
-    when(order.getTotalCost()).thenReturn(110);
-    when(order2.getTotalCost()).thenReturn(12173);
+    when(order.getTotalCost()).thenReturn(110L);
+    when(order2.getTotalCost()).thenReturn(12173L);
 
     // Действие:
-    TestSubscriber<Integer> test = useCase.getOrderCurrentCost().test();
+    TestSubscriber<Long> test = useCase.getOrderCurrentCost().test();
 
     // Результат:
-    test.assertValues(110, 12173);
+    test.assertValues(110L, 12173L);
     test.assertNotComplete();
     test.assertNoErrors();
   }
@@ -228,18 +228,18 @@ public class OrderCurrentCostUseCaseTest {
     when(loginReceiver.get()).thenReturn(Observable.just("1234567890"));
     when(orderGateway.getOrders())
         .thenReturn(Flowable.just(order, order2));
-    when(order.getTotalCost()).thenReturn(100);
-    when(order2.getTotalCost()).thenReturn(12173);
+    when(order.getTotalCost()).thenReturn(100L);
+    when(order2.getTotalCost()).thenReturn(12173L);
     when(orderCurrentCostGateway.getOrderCurrentCost("1234567890")).thenReturn(
-        Flowable.just(123, 145, 139, 198, 202),
-        Flowable.just(8395, 8937, 17156, 9228)
+        Flowable.just(123L, 145L, 139L, 198L, 202L),
+        Flowable.just(8395L, 8937L, 17156L, 9228L)
     );
 
     // Действие:
-    TestSubscriber<Integer> test = useCase.getOrderCurrentCost().test();
+    TestSubscriber<Long> test = useCase.getOrderCurrentCost().test();
 
     // Результат:
-    test.assertValues(100, 123, 145, 139, 198, 202, 12173, 8395, 8937, 17156, 9228);
+    test.assertValues(100L, 123L, 145L, 139L, 198L, 202L, 12173L, 8395L, 8937L, 17156L, 9228L);
     test.assertComplete();
     test.assertNoErrors();
   }

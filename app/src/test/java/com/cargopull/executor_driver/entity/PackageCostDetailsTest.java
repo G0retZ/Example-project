@@ -13,15 +13,15 @@ import org.mockito.junit.MockitoJUnitRunner;
 public class PackageCostDetailsTest {
 
   @Mock
-  private Pair<String, Integer> optionCost0;
+  private Pair<String, Long> optionCost0;
   @Mock
-  private Pair<String, Integer> optionCost1;
+  private Pair<String, Long> optionCost1;
   @Mock
-  private Pair<String, Integer> optionCost2;
+  private Pair<String, Long> optionCost2;
   @Mock
-  private Pair<String, Integer> optionCost3;
+  private Pair<String, Long> optionCost3;
   @Mock
-  private Pair<String, Integer> optionCost4;
+  private Pair<String, Long> optionCost4;
 
   @Test
   public void testConstructor() {

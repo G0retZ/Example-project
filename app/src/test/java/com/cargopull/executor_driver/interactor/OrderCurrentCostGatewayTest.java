@@ -41,7 +41,7 @@ public class OrderCurrentCostGatewayTest {
   @Mock
   private StompClient stompClient;
   @Mock
-  private Mapper<StompMessage, Integer> mapper;
+  private Mapper<StompMessage, Long> mapper;
   @Captor
   private ArgumentCaptor<StompMessage> stompMessageCaptor;
 
@@ -253,7 +253,7 @@ public class OrderCurrentCostGatewayTest {
         ));
 
     // Действие:
-    TestSubscriber<Integer> testSubscriber =
+    TestSubscriber<Long> testSubscriber =
         gateway.getOrderCurrentCost("1234567890").test();
 
     // Результат:
@@ -277,7 +277,7 @@ public class OrderCurrentCostGatewayTest {
         ));
 
     // Действие:
-    TestSubscriber<Integer> testSubscriber =
+    TestSubscriber<Long> testSubscriber =
         gateway.getOrderCurrentCost("1234567890").test();
 
     // Результат:
@@ -292,7 +292,7 @@ public class OrderCurrentCostGatewayTest {
   @Test
   public void answerShiftOpenedForTotalCostIfConnected() throws Exception {
     // Дано:
-    when(mapper.map(any())).thenReturn(12345);
+    when(mapper.map(any())).thenReturn(12345L);
     when(stompClient.isConnected()).thenReturn(true);
     when(stompClient.topic("/queue/1234567890", StompClient.ACK_CLIENT_INDIVIDUAL))
         .thenReturn(Flowable.just(
@@ -301,11 +301,11 @@ public class OrderCurrentCostGatewayTest {
         ));
 
     // Действие:
-    TestSubscriber<Integer> testSubscriber =
+    TestSubscriber<Long> testSubscriber =
         gateway.getOrderCurrentCost("1234567890").test();
 
     // Результат:
-    testSubscriber.assertValue(12345);
+    testSubscriber.assertValue(12345L);
   }
 
   /**
@@ -319,7 +319,7 @@ public class OrderCurrentCostGatewayTest {
         .thenReturn(Flowable.error(new NoNetworkException()));
 
     // Действие:
-    TestSubscriber<Integer> testSubscriber =
+    TestSubscriber<Long> testSubscriber =
         gateway.getOrderCurrentCost("1234567890").test();
 
     // Результат:
@@ -334,7 +334,7 @@ public class OrderCurrentCostGatewayTest {
   @Test
   public void answerConnectionErrorIfNotConnectingAfterConnected() {
     // Действие:
-    TestSubscriber<Integer> testSubscriber =
+    TestSubscriber<Long> testSubscriber =
         gateway.getOrderCurrentCost("1234567890").test();
 
     // Результат:
@@ -359,7 +359,7 @@ public class OrderCurrentCostGatewayTest {
         ));
 
     // Действие:
-    TestSubscriber<Integer> testSubscriber =
+    TestSubscriber<Long> testSubscriber =
         gateway.getOrderCurrentCost("1234567890").test();
 
     // Результат:
@@ -384,7 +384,7 @@ public class OrderCurrentCostGatewayTest {
         ));
 
     // Действие:
-    TestSubscriber<Integer> testSubscriber =
+    TestSubscriber<Long> testSubscriber =
         gateway.getOrderCurrentCost("1234567890").test();
 
     // Результат:
@@ -400,7 +400,7 @@ public class OrderCurrentCostGatewayTest {
   @Test
   public void answerShiftOpenedForTotalCostIfConnectingAfterConnected() throws Exception {
     // Дано:
-    when(mapper.map(any())).thenReturn(54321);
+    when(mapper.map(any())).thenReturn(54321L);
     when(stompClient.isConnecting()).thenReturn(true);
     when(stompClient.topic("/queue/1234567890", StompClient.ACK_CLIENT_INDIVIDUAL))
         .thenReturn(Flowable.just(
@@ -409,11 +409,11 @@ public class OrderCurrentCostGatewayTest {
         ));
 
     // Действие:
-    TestSubscriber<Integer> testSubscriber =
+    TestSubscriber<Long> testSubscriber =
         gateway.getOrderCurrentCost("1234567890").test();
 
     // Результат:
-    testSubscriber.assertValue(54321);
+    testSubscriber.assertValue(54321L);
     testSubscriber.assertNoErrors();
   }
 
@@ -428,7 +428,7 @@ public class OrderCurrentCostGatewayTest {
         .thenReturn(Flowable.error(new ConnectionClosedException()));
 
     // Действие:
-    TestSubscriber<Integer> testSubscriber =
+    TestSubscriber<Long> testSubscriber =
         gateway.getOrderCurrentCost("1234567890").test();
 
     // Результат:

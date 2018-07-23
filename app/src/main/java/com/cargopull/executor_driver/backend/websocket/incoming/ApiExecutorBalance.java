@@ -5,11 +5,11 @@ import com.google.gson.annotations.SerializedName;
 public class ApiExecutorBalance {
 
   @SerializedName("mainAccount")
-  private int mainAccount;
+  private long mainAccount;
   @SerializedName("bonusAccount")
-  private int bonusAccount;
+  private long bonusAccount;
   @SerializedName("nonCashAccount")
-  private int nonCashAccount;
+  private long nonCashAccount;
 
   /**
    * Конструктор без параметров желателен для безопасной работы Gson.
@@ -18,21 +18,21 @@ public class ApiExecutorBalance {
   public ApiExecutorBalance() {
   }
 
-  ApiExecutorBalance(int mainAccount, int bonusAccount, int nonCashAccount) {
+  ApiExecutorBalance(long mainAccount, long bonusAccount, long nonCashAccount) {
     this.mainAccount = mainAccount;
     this.bonusAccount = bonusAccount;
     this.nonCashAccount = nonCashAccount;
   }
 
-  public int getMainAccount() {
+  public long getMainAccount() {
     return mainAccount;
   }
 
-  public int getBonusAccount() {
+  public long getBonusAccount() {
     return bonusAccount;
   }
 
-  public int getNonCashAccount() {
+  public long getNonCashAccount() {
     return nonCashAccount;
   }
 }

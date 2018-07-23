@@ -15,10 +15,10 @@ public class PackageCostDetails {
   private final long packageCost;
   private final long serviceCost;
   @NonNull
-  private final List<Pair<String, Integer>> optionCosts;
+  private final List<Pair<String, Long>> optionCosts;
 
   public PackageCostDetails(long packageTime, int packageDistance, long packageCost,
-      long serviceCost, @NonNull List<Pair<String, Integer>> optionCosts) {
+      long serviceCost, @NonNull List<Pair<String, Long>> optionCosts) {
     this.packageTime = packageTime;
     this.packageDistance = packageDistance;
     this.packageCost = packageCost;
@@ -43,7 +43,7 @@ public class PackageCostDetails {
   }
 
   @NonNull
-  public List<Pair<String, Integer>> getOptionCosts() {
+  public List<Pair<String, Long>> getOptionCosts() {
     return optionCosts;
   }
 }

@@ -169,13 +169,13 @@ public class OrderCostDetailsFragment extends BaseFragment implements OrderCostD
   }
 
   @Override
-  public void showEstimatedOrderOptionsCosts(@NonNull List<Pair<String, Integer>> optionsCosts) {
+  public void showEstimatedOrderOptionsCosts(@NonNull List<Pair<String, Long>> optionsCosts) {
     estimatedOptionsCosts.removeAllViews();
-    for (Pair<String, Integer> pair : optionsCosts) {
+    for (Pair<String, Long> pair : optionsCosts) {
       View view = getLayoutInflater().inflate(
           R.layout.fragment_order_cost_details_option_item, estimatedOptionsCosts, false);
       ((TextView) view.findViewById(R.id.optionNameText)).setText(pair.first);
-      int cost = pair.second;
+      long cost = pair.second;
       if (!getResources().getBoolean(R.bool.show_cents)) {
         cost = Math.round(cost / 100f);
       }
@@ -224,13 +224,13 @@ public class OrderCostDetailsFragment extends BaseFragment implements OrderCostD
   }
 
   @Override
-  public void showOverPackageOptionsCosts(@NonNull List<Pair<String, Integer>> optionsCosts) {
+  public void showOverPackageOptionsCosts(@NonNull List<Pair<String, Long>> optionsCosts) {
     overPackageOptionsCosts.removeAllViews();
-    for (Pair<String, Integer> pair : optionsCosts) {
+    for (Pair<String, Long> pair : optionsCosts) {
       View view = getLayoutInflater().inflate(
           R.layout.fragment_order_cost_details_option_item, overPackageOptionsCosts, false);
       ((TextView) view.findViewById(R.id.optionNameText)).setText(pair.first);
-      int cost = pair.second;
+      long cost = pair.second;
       if (!getResources().getBoolean(R.bool.show_cents)) {
         cost = Math.round(cost / 100f);
       }
@@ -270,13 +270,13 @@ public class OrderCostDetailsFragment extends BaseFragment implements OrderCostD
   }
 
   @Override
-  public void showOverPackageOptionsTariffs(@NonNull List<Pair<String, Integer>> optionsTariffs) {
+  public void showOverPackageOptionsTariffs(@NonNull List<Pair<String, Long>> optionsTariffs) {
     overPackageTariffOptionsCosts.removeAllViews();
-    for (Pair<String, Integer> pair : optionsTariffs) {
+    for (Pair<String, Long> pair : optionsTariffs) {
       View view = getLayoutInflater().inflate(
           R.layout.fragment_order_cost_details_option_item, overPackageTariffOptionsCosts, false);
       ((TextView) view.findViewById(R.id.optionNameText)).setText(pair.first);
-      int cost = pair.second;
+      long cost = pair.second;
       if (!getResources().getBoolean(R.bool.show_cents)) {
         cost = Math.round(cost / 100f);
       }

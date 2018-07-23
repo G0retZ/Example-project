@@ -21,10 +21,10 @@ public class Order {
   private final long distance;
   @NonNull
   private final String estimatedPriceText;
-  private final int estimatedPrice;
+  private final long estimatedPrice;
   private final long estimatedTime;
   private final long estimatedRouteLength;
-  private final int totalCost;
+  private final long totalCost;
   private final long timeout;
   private final long etaToStartPoint;
   private final long confirmationTime;
@@ -35,8 +35,8 @@ public class Order {
   private final List<RoutePoint> routePath = new ArrayList<>();
 
   public Order(long id, @NonNull String comment, @NonNull String serviceName, long distance,
-      @NonNull String estimatedPriceText, int estimatedPrice, long estimatedTime,
-      long estimatedRouteLength, int totalCost, long timeout, long etaToStartPoint,
+      @NonNull String estimatedPriceText, long estimatedPrice, long estimatedTime,
+      long estimatedRouteLength, long totalCost, long timeout, long etaToStartPoint,
       long confirmationTime, long orderStartTime) {
     this.id = id;
     this.comment = comment;
@@ -76,7 +76,7 @@ public class Order {
     return estimatedPriceText;
   }
 
-  public int getEstimatedPrice() {
+  public long getEstimatedPrice() {
     return estimatedPrice;
   }
 
@@ -88,7 +88,7 @@ public class Order {
     return estimatedRouteLength;
   }
 
-  public int getTotalCost() {
+  public long getTotalCost() {
     return totalCost;
   }
 

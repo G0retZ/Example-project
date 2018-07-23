@@ -26,13 +26,13 @@ public class OrderCostDetailsApiMapper implements Mapper<String, OrderCostDetail
             234, 345, 456, 567,
             Arrays.asList(
                 new Pair<>(
-                    "name1", 10
+                    "name1", 10L
                 ),
                 new Pair<>(
-                    "name2", 20
+                    "name2", 20L
                 ),
                 new Pair<>(
-                    "name3", 30
+                    "name3", 30L
                 )
             )
         ),
@@ -40,13 +40,13 @@ public class OrderCostDetailsApiMapper implements Mapper<String, OrderCostDetail
             117, 172, 228, 283,
             Arrays.asList(
                 new Pair<>(
-                    "name1", 5
+                    "name1", 5L
                 ),
                 new Pair<>(
-                    "name2", 10
+                    "name2", 10L
                 ),
                 new Pair<>(
-                    "name3", 15
+                    "name3", 15L
                 )
             )
         ),
@@ -54,13 +54,13 @@ public class OrderCostDetailsApiMapper implements Mapper<String, OrderCostDetail
             23, 35, 46, 57,
             Arrays.asList(
                 new Pair<>(
-                    "name1", 1
+                    "name1", 1L
                 ),
                 new Pair<>(
-                    "name2", 2
+                    "name2", 2L
                 ),
                 new Pair<>(
-                    "name3", 3
+                    "name3", 3L
                 )
             )
         )

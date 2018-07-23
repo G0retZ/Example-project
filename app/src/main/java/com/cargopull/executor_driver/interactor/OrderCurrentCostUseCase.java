@@ -11,8 +11,8 @@ public interface OrderCurrentCostUseCase {
   /**
    * Запрашивает текущую цену выполняемого заказа.
    *
-   * @return {@link Flowable<Integer>} результат запроса.
+   * @return {@link Flowable<Long>} результат запроса.
    */
   @NonNull
-  Flowable<Integer> getOrderCurrentCost();
+  Flowable<Long> getOrderCurrentCost();
 }

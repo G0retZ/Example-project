@@ -100,7 +100,7 @@ public interface OrderViewActions {
    * @param time - время заказа в секундах
    * @param cost - общая стоимость пакета в копейках
    */
-  void showOrderConditions(@NonNull String routeDistance, int time, int cost);
+  void showOrderConditions(@NonNull String routeDistance, int time, long cost);
 
   /**
    * Показать опции, необходимые для принятия заказа.

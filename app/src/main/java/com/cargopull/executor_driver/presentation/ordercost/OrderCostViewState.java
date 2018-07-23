@@ -8,9 +8,9 @@ import com.cargopull.executor_driver.presentation.ViewState;
  */
 class OrderCostViewState implements ViewState<OrderCostViewActions> {
 
-  private final int orderCost;
+  private final long orderCost;
 
-  OrderCostViewState(int orderCost) {
+  OrderCostViewState(long orderCost) {
     this.orderCost = orderCost;
   }
 
@@ -35,6 +35,6 @@ class OrderCostViewState implements ViewState<OrderCostViewActions> {
 
   @Override
   public int hashCode() {
-    return orderCost;
+    return (int) (orderCost ^ (orderCost >>> 32));
   }
 }

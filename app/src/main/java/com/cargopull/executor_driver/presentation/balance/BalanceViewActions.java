@@ -10,14 +10,14 @@ public interface BalanceViewActions {
    *
    * @param amount - сумма
    */
-  void showMainAccountAmount(int amount);
+  void showMainAccountAmount(long amount);
 
   /**
    * Показать сумму на бонусном счете.
    *
    * @param amount - сумма
    */
-  void showBonusAccountAmount(int amount);
+  void showBonusAccountAmount(long amount);
 
   /**
    * Показать индикатор процесса.

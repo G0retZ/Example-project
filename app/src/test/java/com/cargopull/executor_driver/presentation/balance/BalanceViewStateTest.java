@@ -27,8 +27,8 @@ public class BalanceViewStateTest {
 
   @Before
   public void setUp() {
-    when(executorBalance.getMainAccount()).thenReturn(1);
-    when(executorBalance.getBonusAccount()).thenReturn(2);
+    when(executorBalance.getMainAccount()).thenReturn(1L);
+    when(executorBalance.getBonusAccount()).thenReturn(2L);
     viewState = new BalanceViewState(executorBalance);
   }
 

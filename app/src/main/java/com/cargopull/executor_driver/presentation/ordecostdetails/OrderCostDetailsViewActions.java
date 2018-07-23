@@ -64,7 +64,7 @@ public interface OrderCostDetailsViewActions {
    *
    * @param optionsCosts - стоимости опций заказа
    */
-  void showEstimatedOrderOptionsCosts(@NonNull List<Pair<String, Integer>> optionsCosts);
+  void showEstimatedOrderOptionsCosts(@NonNull List<Pair<String, Long>> optionsCosts);
 
   /**
    * Показать пакет превышения.
@@ -99,7 +99,7 @@ public interface OrderCostDetailsViewActions {
    *
    * @param optionsCosts - стоимости опций заказа
    */
-  void showOverPackageOptionsCosts(@NonNull List<Pair<String, Integer>> optionsCosts);
+  void showOverPackageOptionsCosts(@NonNull List<Pair<String, Long>> optionsCosts);
 
   /**
    * Показать тарифы превышения.
@@ -127,5 +127,5 @@ public interface OrderCostDetailsViewActions {
    *
    * @param optionsTariffs - стоимости опций заказа
    */
-  void showOverPackageOptionsTariffs(@NonNull List<Pair<String, Integer>> optionsTariffs);
+  void showOverPackageOptionsTariffs(@NonNull List<Pair<String, Long>> optionsTariffs);
 }

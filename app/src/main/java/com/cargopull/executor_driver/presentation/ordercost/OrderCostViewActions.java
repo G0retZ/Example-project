@@ -10,5 +10,5 @@ public interface OrderCostViewActions {
    *
    * @param currentCost - текущая стоимость заказа.
    */
-  void setOrderCostText(int currentCost);
+  void setOrderCostText(long currentCost);
 }

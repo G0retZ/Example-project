@@ -31,7 +31,7 @@ public class OrderCurrentCostUseCaseImpl implements OrderCurrentCostUseCase {
 
   @NonNull
   @Override
-  public Flowable<Integer> getOrderCurrentCost() {
+  public Flowable<Long> getOrderCurrentCost() {
     return loginReceiver.get()
         .toFlowable(BackpressureStrategy.BUFFER)
         .switchMap(login -> orderGateway.getOrders()
