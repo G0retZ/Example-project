@@ -31,7 +31,7 @@ public class OrderCostDetailsViewModelImpl extends ViewModel implements
   private ViewState<OrderCostDetailsViewActions> lastViewState;
 
   @Inject
-  OrderCostDetailsViewModelImpl(@NonNull OrderCostDetailsUseCase orderCostDetailsUseCase) {
+  public OrderCostDetailsViewModelImpl(@NonNull OrderCostDetailsUseCase orderCostDetailsUseCase) {
     this.orderCostDetailsUseCase = orderCostDetailsUseCase;
     viewStateLiveData = new MutableLiveData<>();
     navigateLiveData = new SingleLiveEvent<>();

@@ -10,6 +10,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.cargopull.executor_driver.R;
+import com.cargopull.executor_driver.di.AppComponent;
 import com.cargopull.executor_driver.presentation.ordecostdetails.OrderCostDetailsViewActions;
 import com.cargopull.executor_driver.presentation.ordecostdetails.OrderCostDetailsViewModel;
 import com.cargopull.executor_driver.utils.Pair;
@@ -85,6 +86,12 @@ public class OrderCostDetailsFragment extends BaseFragment implements OrderCostD
     overPackageTariffOptionsCosts = view.findViewById(R.id.overPackageTariffOptionsCosts);
     paidAction = view.findViewById(R.id.orderPaid);
     return view;
+  }
+
+  @Override
+  protected void onDependencyInject(AppComponent appComponent) {
+    // Required by Dagger2 for field injection
+    appComponent.inject(this);
   }
 
   @Override
