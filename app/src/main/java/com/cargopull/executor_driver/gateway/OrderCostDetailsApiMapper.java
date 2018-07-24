@@ -54,14 +54,16 @@ public class OrderCostDetailsApiMapper implements Mapper<String, OrderCostDetail
       }
     }
     List<Pair<String, Long>> overPackageOptions = new ArrayList<>();
-    if (apiOrderCostDetails.getApiOrderOverPackage().getOverPackageMoverCostName() != null) {
+    if (apiOrderCostDetails.getApiOrderOverPackage().getOverPackageMoverCost() > 0 &&
+        apiOrderCostDetails.getApiOrderOverPackage().getOverPackageMoverCostName() != null) {
       overPackageOptions.add(new Pair<>(
           apiOrderCostDetails.getApiOrderOverPackage().getOverPackageMoverCostName(),
           apiOrderCostDetails.getApiOrderOverPackage().getOverPackageMoverCost()
       ));
     }
     List<Pair<String, Long>> overPackageOptionsTariffs = new ArrayList<>();
-    if (apiOrderCostDetails.getApiOrderOverPackage().getOverPackageMoverTariffName() != null) {
+    if (apiOrderCostDetails.getApiOrderOverPackage().getOverPackageMoverTariff() > 0 &&
+        apiOrderCostDetails.getApiOrderOverPackage().getOverPackageMoverTariffName() != null) {
       overPackageOptionsTariffs.add(new Pair<>(
           apiOrderCostDetails.getApiOrderOverPackage().getOverPackageMoverTariffName(),
           apiOrderCostDetails.getApiOrderOverPackage().getOverPackageMoverTariff()
