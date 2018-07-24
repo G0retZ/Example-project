@@ -31,7 +31,6 @@ public class AutoRouterImpl implements ActivityLifecycleCallbacks, AutoRouter,
    * Реестр активити, разбитых по группам, чтобы исключить нежелательные переходы по навигации.
    */
   private static final HashMap<String, List<Class<? extends Activity>>> statusGroups = new HashMap<>();
-  private boolean reset = false;
 
   static {
     statusGroups.put(ServerConnectionNavigate.AUTHORIZE, Arrays.asList(
@@ -79,6 +78,7 @@ public class AutoRouterImpl implements ActivityLifecycleCallbacks, AutoRouter,
   private final RingTonePlayer ringTonePlayer;
   @NonNull
   private final ShakeItPlayer shakeItPlayer;
+  private boolean reset = false;
   @Nullable
   private Activity currentActivity;
   @Nullable

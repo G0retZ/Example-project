@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.cargopull.executor_driver.entity.ExecutorState;
 import com.cargopull.executor_driver.interactor.ExecutorStateNotOnlineUseCase;
+import com.cargopull.executor_driver.interactor.ExecutorStateUseCase;
 import com.cargopull.executor_driver.presentation.CommonNavigate;
 import com.cargopull.executor_driver.presentation.SingleLiveEvent;
 import com.cargopull.executor_driver.presentation.ViewState;
@@ -21,6 +22,8 @@ public class OnlineSwitchViewModelImpl extends ViewModel implements OnlineSwitch
   @NonNull
   private final ExecutorStateNotOnlineUseCase executorStateNotOnlineUseCase;
   @NonNull
+  private final ExecutorStateUseCase executorStateUseCase;
+  @NonNull
   private final MutableLiveData<ViewState<OnlineSwitchViewActions>> viewStateLiveData;
   @NonNull
   private final SingleLiveEvent<String> navigateLiveData;
@@ -33,8 +36,10 @@ public class OnlineSwitchViewModelImpl extends ViewModel implements OnlineSwitch
 
   @Inject
   public OnlineSwitchViewModelImpl(
-      @NonNull ExecutorStateNotOnlineUseCase executorStateNotOnlineUseCase) {
+      @NonNull ExecutorStateNotOnlineUseCase executorStateNotOnlineUseCase,
+      @NonNull ExecutorStateUseCase executorStateUseCase) {
     this.executorStateNotOnlineUseCase = executorStateNotOnlineUseCase;
+    this.executorStateUseCase = executorStateUseCase;
     viewStateLiveData = new MutableLiveData<>();
     navigateLiveData = new SingleLiveEvent<>();
     loadExecutorState();
@@ -82,7 +87,7 @@ public class OnlineSwitchViewModelImpl extends ViewModel implements OnlineSwitch
   private void loadExecutorState() {
     viewStateLiveData.postValue(new OnlineSwitchViewStatePending(lastViewState));
     executorStatesDisposable.dispose();
-    executorStatesDisposable = executorStateNotOnlineUseCase.getExecutorStates()
+    executorStatesDisposable = executorStateUseCase.getExecutorStates(false)
         .subscribeOn(Schedulers.single())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(this::onNextState,

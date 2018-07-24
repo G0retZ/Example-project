@@ -1,12 +1,12 @@
 package com.cargopull.executor_driver.interactor;
 
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import com.cargopull.executor_driver.entity.ExecutorState;
 import com.cargopull.executor_driver.utils.ErrorReporter;
 import io.reactivex.Completable;
-import io.reactivex.Flowable;
-import io.reactivex.Single;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 public class ExecutorStateNotOnlineUseCaseImpl implements
     ExecutorStateNotOnlineUseCase {
@@ -17,37 +17,32 @@ public class ExecutorStateNotOnlineUseCaseImpl implements
   private final ExecutorStateSwitchGateway executorStateSwitchGateway;
   @NonNull
   private final ExecutorStateUseCase executorStateUseCase;
-  @Nullable
-  private ExecutorState currentExecutorState;
+  @NonNull
+  private final List<ExecutorState> allowedExecutorStates;
 
   public ExecutorStateNotOnlineUseCaseImpl(
       @NonNull ErrorReporter errorReporter,
       @NonNull ExecutorStateSwitchGateway executorStateSwitchGateway,
-      @NonNull ExecutorStateUseCase executorStateUseCase) {
+      @NonNull ExecutorStateUseCase executorStateUseCase,
+      @NonNull ExecutorState... allowed) {
     this.errorReporter = errorReporter;
     this.executorStateSwitchGateway = executorStateSwitchGateway;
     this.executorStateUseCase = executorStateUseCase;
-  }
-
-  @NonNull
-  @Override
-  public Flowable<ExecutorState> getExecutorStates() {
-    return executorStateUseCase.getExecutorStates(false)
-        .doOnNext(executorState -> currentExecutorState = executorState)
-        .doOnTerminate(() -> currentExecutorState = null)
-        .doOnError(errorReporter::reportError);
+    allowedExecutorStates = Collections.unmodifiableList(Arrays.asList(allowed));
   }
 
   @NonNull
   @Override
   public Completable setExecutorNotOnline() {
-    return Single.fromCallable(() -> {
-      if (currentExecutorState == null || currentExecutorState != ExecutorState.ONLINE) {
-        throw new IllegalArgumentException(
-            "Недопустимый статус перевозчика: " + currentExecutorState);
-      }
-      return ExecutorState.SHIFT_OPENED;
-    }).doOnError(errorReporter::reportError)
+    return executorStateUseCase.getExecutorStates(false)
+        .firstOrError()
+        .map(executorState -> {
+          if (!allowedExecutorStates.contains(executorState)) {
+            throw new IllegalArgumentException(
+                "Недопустимый статус перевозчика: " + executorState);
+          }
+          return ExecutorState.SHIFT_OPENED;
+        }).doOnError(errorReporter::reportError)
         .flatMapCompletable(executorStateSwitchGateway::sendNewExecutorState);
   }
 }

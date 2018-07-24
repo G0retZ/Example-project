@@ -1,7 +1,6 @@
 package com.cargopull.executor_driver.interactor;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
@@ -9,11 +8,9 @@ import static org.mockito.Mockito.when;
 
 import com.cargopull.executor_driver.entity.ExecutorState;
 import com.cargopull.executor_driver.utils.ErrorReporter;
-import io.reactivex.BackpressureStrategy;
 import io.reactivex.Completable;
 import io.reactivex.Flowable;
 import io.reactivex.observers.TestObserver;
-import io.reactivex.subjects.PublishSubject;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -36,7 +33,8 @@ public class ExecutorStateNotOnlineUseCaseTest {
   public void setUp() {
     when(gateway.sendNewExecutorState(any())).thenReturn(Completable.complete());
     when(executorStateUseCase.getExecutorStates(false)).thenReturn(Flowable.never());
-    useCase = new ExecutorStateNotOnlineUseCaseImpl(errorReporter, gateway, executorStateUseCase);
+    useCase = new ExecutorStateNotOnlineUseCaseImpl(errorReporter, gateway, executorStateUseCase,
+        ExecutorState.ONLINE, ExecutorState.PAYMENT_CONFIRMATION);
   }
 
   /* Проверяем работу с юзкейсом состояний */
@@ -47,7 +45,7 @@ public class ExecutorStateNotOnlineUseCaseTest {
   @Test
   public void getExecutorStates() {
     // Действие:
-    useCase.getExecutorStates().test();
+    useCase.setExecutorNotOnline().test();
 
     // Результат:
     verify(executorStateUseCase, only()).getExecutorStates(false);
@@ -56,13 +54,10 @@ public class ExecutorStateNotOnlineUseCaseTest {
   /* Проверяем работу с гейтвеем */
 
   /**
-   * Не должен трогать гейтвей передачи статусов, если текущего статуса нет.
+   * Не должен трогать гейтвей передачи статусов, если статуса еще нет.
    */
   @Test
   public void DoNotTouchGatewayWithoutStatus() {
-    // Дано:
-    useCase.getExecutorStates().test();
-
     // Действие:
     useCase.setExecutorNotOnline().test();
 
@@ -76,11 +71,8 @@ public class ExecutorStateNotOnlineUseCaseTest {
   @Test
   public void DoNotTouchGatewayIfShiftClosed() {
     // Дано:
-    PublishSubject<ExecutorState> publishSubject = PublishSubject.create();
-    when(executorStateUseCase.getExecutorStates(anyBoolean()))
-        .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
-    useCase.getExecutorStates().test();
-    publishSubject.onNext(ExecutorState.SHIFT_CLOSED);
+    when(executorStateUseCase.getExecutorStates(false))
+        .thenReturn(Flowable.just(ExecutorState.SHIFT_CLOSED).concatWith(Flowable.never()));
 
     // Действие:
     useCase.setExecutorNotOnline().test();
@@ -95,11 +87,8 @@ public class ExecutorStateNotOnlineUseCaseTest {
   @Test
   public void DoNotTouchGatewayIfShiftOpened() {
     // Дано:
-    PublishSubject<ExecutorState> publishSubject = PublishSubject.create();
-    when(executorStateUseCase.getExecutorStates(anyBoolean()))
-        .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
-    useCase.getExecutorStates().test();
-    publishSubject.onNext(ExecutorState.SHIFT_OPENED);
+    when(executorStateUseCase.getExecutorStates(false))
+        .thenReturn(Flowable.just(ExecutorState.SHIFT_OPENED).concatWith(Flowable.never()));
 
     // Действие:
     useCase.setExecutorNotOnline().test();
@@ -114,11 +103,8 @@ public class ExecutorStateNotOnlineUseCaseTest {
   @Test
   public void DoNotTouchGatewayIfOrderConfirmation() {
     // Дано:
-    PublishSubject<ExecutorState> publishSubject = PublishSubject.create();
-    when(executorStateUseCase.getExecutorStates(anyBoolean()))
-        .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
-    useCase.getExecutorStates().test();
-    publishSubject.onNext(ExecutorState.DRIVER_ORDER_CONFIRMATION);
+    when(executorStateUseCase.getExecutorStates(false)).thenReturn(
+        Flowable.just(ExecutorState.DRIVER_ORDER_CONFIRMATION).concatWith(Flowable.never()));
 
     // Действие:
     useCase.setExecutorNotOnline().test();
@@ -133,11 +119,8 @@ public class ExecutorStateNotOnlineUseCaseTest {
   @Test
   public void DoNotTouchGatewayIfWaitForClientConfirmation() {
     // Дано:
-    PublishSubject<ExecutorState> publishSubject = PublishSubject.create();
-    when(executorStateUseCase.getExecutorStates(anyBoolean()))
-        .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
-    useCase.getExecutorStates().test();
-    publishSubject.onNext(ExecutorState.CLIENT_ORDER_CONFIRMATION);
+    when(executorStateUseCase.getExecutorStates(false)).thenReturn(
+        Flowable.just(ExecutorState.CLIENT_ORDER_CONFIRMATION).concatWith(Flowable.never()));
 
     // Действие:
     useCase.setExecutorNotOnline().test();
@@ -152,11 +135,8 @@ public class ExecutorStateNotOnlineUseCaseTest {
   @Test
   public void DoNotTouchGatewayIfMovingToClient() {
     // Дано:
-    PublishSubject<ExecutorState> publishSubject = PublishSubject.create();
-    when(executorStateUseCase.getExecutorStates(anyBoolean()))
-        .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
-    useCase.getExecutorStates().test();
-    publishSubject.onNext(ExecutorState.MOVING_TO_CLIENT);
+    when(executorStateUseCase.getExecutorStates(false))
+        .thenReturn(Flowable.just(ExecutorState.MOVING_TO_CLIENT).concatWith(Flowable.never()));
 
     // Действие:
     useCase.setExecutorNotOnline().test();
@@ -171,11 +151,8 @@ public class ExecutorStateNotOnlineUseCaseTest {
   @Test
   public void DoNotTouchGatewayIfWaitingForClient() {
     // Дано:
-    PublishSubject<ExecutorState> publishSubject = PublishSubject.create();
-    when(executorStateUseCase.getExecutorStates(anyBoolean()))
-        .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
-    useCase.getExecutorStates().test();
-    publishSubject.onNext(ExecutorState.WAITING_FOR_CLIENT);
+    when(executorStateUseCase.getExecutorStates(false))
+        .thenReturn(Flowable.just(ExecutorState.WAITING_FOR_CLIENT).concatWith(Flowable.never()));
 
     // Действие:
     useCase.setExecutorNotOnline().test();
@@ -190,30 +167,8 @@ public class ExecutorStateNotOnlineUseCaseTest {
   @Test
   public void DoNotTouchGatewayIfOrderFulfillment() {
     // Дано:
-    PublishSubject<ExecutorState> publishSubject = PublishSubject.create();
-    when(executorStateUseCase.getExecutorStates(anyBoolean()))
-        .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
-    useCase.getExecutorStates().test();
-    publishSubject.onNext(ExecutorState.ORDER_FULFILLMENT);
-
-    // Действие:
-    useCase.setExecutorNotOnline().test();
-
-    // Результат:
-    verifyZeroInteractions(gateway);
-  }
-
-  /**
-   * Не должен трогать гейтвей передачи статусов, если последний статус был "прием оплаты".
-   */
-  @Test
-  public void DoNotTouchGatewayIfPaymentAcceptance() {
-    // Дано:
-    PublishSubject<ExecutorState> publishSubject = PublishSubject.create();
-    when(executorStateUseCase.getExecutorStates(anyBoolean()))
-        .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
-    useCase.getExecutorStates().test();
-    publishSubject.onNext(ExecutorState.PAYMENT_CONFIRMATION);
+    when(executorStateUseCase.getExecutorStates(false))
+        .thenReturn(Flowable.just(ExecutorState.ORDER_FULFILLMENT).concatWith(Flowable.never()));
 
     // Действие:
     useCase.setExecutorNotOnline().test();
@@ -226,13 +181,26 @@ public class ExecutorStateNotOnlineUseCaseTest {
    * Должен отправить статус "смена открыта" через гейтвей передачи статусов.
    */
   @Test
-  public void askGatewayToSendNewExecutorState() {
+  public void askGatewayToSendNewExecutorStateIfOnline() {
     // Дано:
-    PublishSubject<ExecutorState> publishSubject = PublishSubject.create();
-    when(executorStateUseCase.getExecutorStates(anyBoolean()))
-        .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
-    useCase.getExecutorStates().test();
-    publishSubject.onNext(ExecutorState.ONLINE);
+    when(executorStateUseCase.getExecutorStates(false))
+        .thenReturn(Flowable.just(ExecutorState.ONLINE).concatWith(Flowable.never()));
+
+    // Действие:
+    useCase.setExecutorNotOnline().test();
+
+    // Результат:
+    verify(gateway, only()).sendNewExecutorState(ExecutorState.SHIFT_OPENED);
+  }
+
+  /**
+   * Должен отправить статус "смена открыта" через гейтвей передачи статусов.
+   */
+  @Test
+  public void askGatewayToSendNewExecutorStateIfPaymentAcceptance() {
+    // Дано:
+    when(executorStateUseCase.getExecutorStates(false))
+        .thenReturn(Flowable.just(ExecutorState.PAYMENT_CONFIRMATION).concatWith(Flowable.never()));
 
     // Действие:
     useCase.setExecutorNotOnline().test();
@@ -244,28 +212,13 @@ public class ExecutorStateNotOnlineUseCaseTest {
   /* Проверяем отправку ошибок в репортер */
 
   /**
-   * Должен отправить ошибку неподходящего статуса, если статуса нет.
-   */
-  @Test
-  public void reportForbiddenStatusErrorIfNoStatus() {
-    // Действие:
-    useCase.setExecutorNotOnline().test();
-
-    // Результат:
-    verify(errorReporter, only()).reportError(any(IllegalArgumentException.class));
-  }
-
-  /**
    * Должен отправить ошибку неподходящего статуса, если статус "смена закрыта".
    */
   @Test
-  public void reportForbiddenStatusErrorIfShiftClosed() {
+  public void reportIllegalArgumentErrorIfShiftClosed() {
     // Дано:
-    PublishSubject<ExecutorState> publishSubject = PublishSubject.create();
-    when(executorStateUseCase.getExecutorStates(anyBoolean()))
-        .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
-    useCase.getExecutorStates().test();
-    publishSubject.onNext(ExecutorState.SHIFT_CLOSED);
+    when(executorStateUseCase.getExecutorStates(false))
+        .thenReturn(Flowable.just(ExecutorState.SHIFT_CLOSED).concatWith(Flowable.never()));
 
     // Действие:
     useCase.setExecutorNotOnline().test();
@@ -278,13 +231,10 @@ public class ExecutorStateNotOnlineUseCaseTest {
    * Должен отправить ошибку неподходящего статуса, если статус "смена открыта".
    */
   @Test
-  public void reportForbiddenStatusErrorIfOnline() {
+  public void reportIllegalArgumentErrorIfOnline() {
     // Дано:
-    PublishSubject<ExecutorState> publishSubject = PublishSubject.create();
-    when(executorStateUseCase.getExecutorStates(anyBoolean()))
-        .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
-    useCase.getExecutorStates().test();
-    publishSubject.onNext(ExecutorState.SHIFT_OPENED);
+    when(executorStateUseCase.getExecutorStates(false))
+        .thenReturn(Flowable.just(ExecutorState.SHIFT_OPENED).concatWith(Flowable.never()));
 
     // Действие:
     useCase.setExecutorNotOnline().test();
@@ -297,13 +247,10 @@ public class ExecutorStateNotOnlineUseCaseTest {
    * Должен отправить ошибку неподходящего статуса, если статус "принятие заказа".
    */
   @Test
-  public void reportForbiddenStatusErrorIfOrderConfirmation() {
+  public void reportIllegalArgumentErrorIfOrderConfirmation() {
     // Дано:
-    PublishSubject<ExecutorState> publishSubject = PublishSubject.create();
-    when(executorStateUseCase.getExecutorStates(anyBoolean()))
-        .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
-    useCase.getExecutorStates().test();
-    publishSubject.onNext(ExecutorState.DRIVER_ORDER_CONFIRMATION);
+    when(executorStateUseCase.getExecutorStates(false)).thenReturn(
+        Flowable.just(ExecutorState.DRIVER_ORDER_CONFIRMATION).concatWith(Flowable.never()));
 
     // Действие:
     useCase.setExecutorNotOnline().test();
@@ -316,13 +263,10 @@ public class ExecutorStateNotOnlineUseCaseTest {
    * Должен отправить ошибку неподходящего статуса, если статус "ожидания подтверждения клиентом".
    */
   @Test
-  public void reportForbiddenStatusErrorIfWaitForClientConfirmation() {
+  public void reportIllegalArgumentErrorIfWaitForClientConfirmation() {
     // Дано:
-    PublishSubject<ExecutorState> publishSubject = PublishSubject.create();
-    when(executorStateUseCase.getExecutorStates(anyBoolean()))
-        .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
-    useCase.getExecutorStates().test();
-    publishSubject.onNext(ExecutorState.CLIENT_ORDER_CONFIRMATION);
+    when(executorStateUseCase.getExecutorStates(false)).thenReturn(
+        Flowable.just(ExecutorState.CLIENT_ORDER_CONFIRMATION).concatWith(Flowable.never()));
 
     // Действие:
     useCase.setExecutorNotOnline().test();
@@ -335,13 +279,10 @@ public class ExecutorStateNotOnlineUseCaseTest {
    * Должен отправить ошибку неподходящего статуса, если статус "на пути к клиенту".
    */
   @Test
-  public void reportForbiddenStatusErrorIfMovingToClient() {
+  public void reportIllegalArgumentErrorIfMovingToClient() {
     // Дано:
-    PublishSubject<ExecutorState> publishSubject = PublishSubject.create();
-    when(executorStateUseCase.getExecutorStates(anyBoolean()))
-        .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
-    useCase.getExecutorStates().test();
-    publishSubject.onNext(ExecutorState.MOVING_TO_CLIENT);
+    when(executorStateUseCase.getExecutorStates(false))
+        .thenReturn(Flowable.just(ExecutorState.MOVING_TO_CLIENT).concatWith(Flowable.never()));
 
     // Действие:
     useCase.setExecutorNotOnline().test();
@@ -354,13 +295,10 @@ public class ExecutorStateNotOnlineUseCaseTest {
    * Должен отправить ошибку неподходящего статуса, если статус "ожидание клиента".
    */
   @Test
-  public void reportForbiddenStatusErrorIfWaitingForClient() {
+  public void reportIllegalArgumentErrorIfWaitingForClient() {
     // Дано:
-    PublishSubject<ExecutorState> publishSubject = PublishSubject.create();
-    when(executorStateUseCase.getExecutorStates(anyBoolean()))
-        .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
-    useCase.getExecutorStates().test();
-    publishSubject.onNext(ExecutorState.WAITING_FOR_CLIENT);
+    when(executorStateUseCase.getExecutorStates(false))
+        .thenReturn(Flowable.just(ExecutorState.WAITING_FOR_CLIENT).concatWith(Flowable.never()));
 
     // Действие:
     useCase.setExecutorNotOnline().test();
@@ -373,13 +311,10 @@ public class ExecutorStateNotOnlineUseCaseTest {
    * Должен отправить ошибку неподходящего статуса, если статус "выполнение заказа".
    */
   @Test
-  public void reportForbiddenStatusErrorIfOrderFulfillment() {
+  public void reportIllegalArgumentErrorIfOrderFulfillment() {
     // Дано:
-    PublishSubject<ExecutorState> publishSubject = PublishSubject.create();
-    when(executorStateUseCase.getExecutorStates(anyBoolean()))
-        .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
-    useCase.getExecutorStates().test();
-    publishSubject.onNext(ExecutorState.ORDER_FULFILLMENT);
+    when(executorStateUseCase.getExecutorStates(false))
+        .thenReturn(Flowable.just(ExecutorState.ORDER_FULFILLMENT).concatWith(Flowable.never()));
 
     // Действие:
     useCase.setExecutorNotOnline().test();
@@ -389,37 +324,31 @@ public class ExecutorStateNotOnlineUseCaseTest {
   }
 
   /**
-   * Должен отправить ошибку неподходящего статуса, если статус "прием оплаты".
-   */
-  @Test
-  public void reportForbiddenStatusErrorIfPaymentAcceptance() {
-    // Дано:
-    PublishSubject<ExecutorState> publishSubject = PublishSubject.create();
-    when(executorStateUseCase.getExecutorStates(anyBoolean()))
-        .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
-    useCase.getExecutorStates().test();
-    publishSubject.onNext(ExecutorState.PAYMENT_CONFIRMATION);
-
-    // Действие:
-    useCase.setExecutorNotOnline().test();
-
-    // Результат:
-    verify(errorReporter, only()).reportError(any(IllegalArgumentException.class));
-  }
-
-  /**
-   * Не должен отправлять ошибку при ошибке отправки статуса.
+   * Не должен отправлять ошибку при ошибке отправки статуса, если статус "онлайн".
    */
   @Test
   public void doNotReportError() {
     // Дано:
-    PublishSubject<ExecutorState> publishSubject = PublishSubject.create();
-    when(executorStateUseCase.getExecutorStates(anyBoolean()))
-        .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
-    useCase.getExecutorStates().test();
+    when(executorStateUseCase.getExecutorStates(false))
+        .thenReturn(Flowable.just(ExecutorState.ONLINE).concatWith(Flowable.never()));
     when(gateway.sendNewExecutorState(any()))
         .thenReturn(Completable.error(new Exception()));
-    publishSubject.onNext(ExecutorState.ONLINE);
+
+    // Действие:
+    useCase.setExecutorNotOnline().test();
+
+    // Результат:
+    verifyZeroInteractions(errorReporter);
+  }
+
+  /**
+   * Не должен отправлять ошибку при ошибке отправки статуса, если статус "прием оплаты".
+   */
+  @Test
+  public void reportIllegalArgumentErrorIfPaymentAcceptance() {
+    // Дано:
+    when(executorStateUseCase.getExecutorStates(false))
+        .thenReturn(Flowable.just(ExecutorState.PAYMENT_CONFIRMATION).concatWith(Flowable.never()));
 
     // Действие:
     useCase.setExecutorNotOnline().test();
@@ -431,30 +360,13 @@ public class ExecutorStateNotOnlineUseCaseTest {
   /* Проверяем ответы */
 
   /**
-   * Должен вернуть ошибку неподходящего статуса, если статуса нет.
-   */
-  @Test
-  public void answerForbiddenStatusErrorIfNoStatus() {
-    // Действие:
-    TestObserver<Void> testObserver = useCase.setExecutorNotOnline().test();
-
-    // Результат:
-    testObserver.assertNoValues();
-    testObserver.assertNotComplete();
-    testObserver.assertError(IllegalArgumentException.class);
-  }
-
-  /**
    * Должен вернуть ошибку неподходящего статуса, если статус "смена закрыта".
    */
   @Test
-  public void answerForbiddenStatusErrorIfShiftClosed() {
+  public void answerIllegalArgumentErrorIfShiftClosed() {
     // Дано:
-    PublishSubject<ExecutorState> publishSubject = PublishSubject.create();
-    when(executorStateUseCase.getExecutorStates(anyBoolean()))
-        .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
-    useCase.getExecutorStates().test();
-    publishSubject.onNext(ExecutorState.SHIFT_CLOSED);
+    when(executorStateUseCase.getExecutorStates(false))
+        .thenReturn(Flowable.just(ExecutorState.SHIFT_CLOSED).concatWith(Flowable.never()));
 
     // Действие:
     TestObserver<Void> testObserver = useCase.setExecutorNotOnline().test();
@@ -469,13 +381,10 @@ public class ExecutorStateNotOnlineUseCaseTest {
    * Должен вернуть ошибку неподходящего статуса, если статус "смена открыта".
    */
   @Test
-  public void answerForbiddenStatusErrorIfOnline() {
+  public void answerIllegalArgumentErrorIfOnline() {
     // Дано:
-    PublishSubject<ExecutorState> publishSubject = PublishSubject.create();
-    when(executorStateUseCase.getExecutorStates(anyBoolean()))
-        .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
-    useCase.getExecutorStates().test();
-    publishSubject.onNext(ExecutorState.SHIFT_OPENED);
+    when(executorStateUseCase.getExecutorStates(false))
+        .thenReturn(Flowable.just(ExecutorState.SHIFT_OPENED).concatWith(Flowable.never()));
 
     // Действие:
     TestObserver<Void> testObserver = useCase.setExecutorNotOnline().test();
@@ -490,13 +399,10 @@ public class ExecutorStateNotOnlineUseCaseTest {
    * Должен вернуть ошибку неподходящего статуса, если статус "принятие заказа".
    */
   @Test
-  public void answerForbiddenStatusErrorIfOrderConfirmation() {
+  public void answerIllegalArgumentErrorIfOrderConfirmation() {
     // Дано:
-    PublishSubject<ExecutorState> publishSubject = PublishSubject.create();
-    when(executorStateUseCase.getExecutorStates(anyBoolean()))
-        .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
-    useCase.getExecutorStates().test();
-    publishSubject.onNext(ExecutorState.DRIVER_ORDER_CONFIRMATION);
+    when(executorStateUseCase.getExecutorStates(false)).thenReturn(
+        Flowable.just(ExecutorState.DRIVER_ORDER_CONFIRMATION).concatWith(Flowable.never()));
 
     // Действие:
     TestObserver<Void> testObserver = useCase.setExecutorNotOnline().test();
@@ -511,13 +417,10 @@ public class ExecutorStateNotOnlineUseCaseTest {
    * Должен вернуть ошибку неподходящего статуса, если статус "ожидания подтверждения клиентом".
    */
   @Test
-  public void answerForbiddenStatusErrorIfWaitForClientConfirmation() {
+  public void answerIllegalArgumentErrorIfWaitForClientConfirmation() {
     // Дано:
-    PublishSubject<ExecutorState> publishSubject = PublishSubject.create();
-    when(executorStateUseCase.getExecutorStates(anyBoolean()))
-        .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
-    useCase.getExecutorStates().test();
-    publishSubject.onNext(ExecutorState.CLIENT_ORDER_CONFIRMATION);
+    when(executorStateUseCase.getExecutorStates(false)).thenReturn(
+        Flowable.just(ExecutorState.CLIENT_ORDER_CONFIRMATION).concatWith(Flowable.never()));
 
     // Действие:
     TestObserver<Void> testObserver = useCase.setExecutorNotOnline().test();
@@ -532,13 +435,10 @@ public class ExecutorStateNotOnlineUseCaseTest {
    * Должен вернуть ошибку неподходящего статуса, если статус "на пути к клиенту".
    */
   @Test
-  public void answerForbiddenStatusErrorIfMovingToClient() {
+  public void answerIllegalArgumentErrorIfMovingToClient() {
     // Дано:
-    PublishSubject<ExecutorState> publishSubject = PublishSubject.create();
-    when(executorStateUseCase.getExecutorStates(anyBoolean()))
-        .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
-    useCase.getExecutorStates().test();
-    publishSubject.onNext(ExecutorState.MOVING_TO_CLIENT);
+    when(executorStateUseCase.getExecutorStates(false))
+        .thenReturn(Flowable.just(ExecutorState.MOVING_TO_CLIENT).concatWith(Flowable.never()));
 
     // Действие:
     TestObserver<Void> testObserver = useCase.setExecutorNotOnline().test();
@@ -553,13 +453,10 @@ public class ExecutorStateNotOnlineUseCaseTest {
    * Должен вернуть ошибку неподходящего статуса, если статус "ожидание клиента".
    */
   @Test
-  public void answerForbiddenStatusErrorIfWaitingForClient() {
+  public void answerIllegalArgumentErrorIfWaitingForClient() {
     // Дано:
-    PublishSubject<ExecutorState> publishSubject = PublishSubject.create();
-    when(executorStateUseCase.getExecutorStates(anyBoolean()))
-        .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
-    useCase.getExecutorStates().test();
-    publishSubject.onNext(ExecutorState.WAITING_FOR_CLIENT);
+    when(executorStateUseCase.getExecutorStates(false))
+        .thenReturn(Flowable.just(ExecutorState.WAITING_FOR_CLIENT).concatWith(Flowable.never()));
 
     // Действие:
     TestObserver<Void> testObserver = useCase.setExecutorNotOnline().test();
@@ -574,13 +471,10 @@ public class ExecutorStateNotOnlineUseCaseTest {
    * Должен вернуть ошибку неподходящего статуса, если статус "выполнение заказа".
    */
   @Test
-  public void answerForbiddenStatusErrorIfOrderFulfillment() {
+  public void answerIllegalArgumentErrorIfOrderFulfillment() {
     // Дано:
-    PublishSubject<ExecutorState> publishSubject = PublishSubject.create();
-    when(executorStateUseCase.getExecutorStates(anyBoolean()))
-        .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
-    useCase.getExecutorStates().test();
-    publishSubject.onNext(ExecutorState.ORDER_FULFILLMENT);
+    when(executorStateUseCase.getExecutorStates(false))
+        .thenReturn(Flowable.just(ExecutorState.ORDER_FULFILLMENT).concatWith(Flowable.never()));
 
     // Действие:
     TestObserver<Void> testObserver = useCase.setExecutorNotOnline().test();
@@ -592,39 +486,15 @@ public class ExecutorStateNotOnlineUseCaseTest {
   }
 
   /**
-   * Должен вернуть ошибку неподходящего статуса, если статус "прием оплаты".
+   * Должен вернуть ошибку при ошибке отправки статуса, если статус "онлайн".
    */
   @Test
-  public void answerForbiddenStatusErrorIfPaymentAcceptance() {
+  public void answerWithErrorIfOnline() {
     // Дано:
-    PublishSubject<ExecutorState> publishSubject = PublishSubject.create();
-    when(executorStateUseCase.getExecutorStates(anyBoolean()))
-        .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
-    useCase.getExecutorStates().test();
-    publishSubject.onNext(ExecutorState.PAYMENT_CONFIRMATION);
-
-    // Действие:
-    TestObserver<Void> testObserver = useCase.setExecutorNotOnline().test();
-
-    // Результат:
-    testObserver.assertNoValues();
-    testObserver.assertNotComplete();
-    testObserver.assertError(IllegalArgumentException.class);
-  }
-
-  /**
-   * Должен вернуть ошибку при ошибке отправки статуса.
-   */
-  @Test
-  public void answerWithError() {
-    // Дано:
-    PublishSubject<ExecutorState> publishSubject = PublishSubject.create();
-    when(executorStateUseCase.getExecutorStates(anyBoolean()))
-        .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
-    useCase.getExecutorStates().test();
+    when(executorStateUseCase.getExecutorStates(false))
+        .thenReturn(Flowable.just(ExecutorState.ONLINE).concatWith(Flowable.never()));
     when(gateway.sendNewExecutorState(any()))
         .thenReturn(Completable.error(new Exception()));
-    publishSubject.onNext(ExecutorState.ONLINE);
 
     // Действие:
     TestObserver<Void> testObserver = useCase.setExecutorNotOnline().test();
@@ -636,17 +506,53 @@ public class ExecutorStateNotOnlineUseCaseTest {
   }
 
   /**
-   * Должен ответить завершением.
+   * Должен ответить завершением, если статус "онлайн".
    */
   @Test
-  public void answerWithComplete() {
+  public void answerWithCompleteIfOnline() {
     // Дано:
-    PublishSubject<ExecutorState> publishSubject = PublishSubject.create();
-    when(executorStateUseCase.getExecutorStates(anyBoolean()))
-        .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
-    useCase.getExecutorStates().test();
+    when(executorStateUseCase.getExecutorStates(false))
+        .thenReturn(Flowable.just(ExecutorState.ONLINE).concatWith(Flowable.never()));
     when(gateway.sendNewExecutorState(any())).thenReturn(Completable.complete());
-    publishSubject.onNext(ExecutorState.ONLINE);
+
+    // Действие:
+    TestObserver<Void> testObserver = useCase.setExecutorNotOnline().test();
+
+    // Результат:
+    testObserver.assertNoValues();
+    testObserver.assertNoErrors();
+    testObserver.assertComplete();
+  }
+
+  /**
+   * Должен вернуть ошибку при ошибке отправки статуса, если статус "прием оплаты".
+   */
+  @Test
+  public void answerWithErrorIfPaymentAcceptance() {
+    // Дано:
+    when(executorStateUseCase.getExecutorStates(false))
+        .thenReturn(Flowable.just(ExecutorState.PAYMENT_CONFIRMATION).concatWith(Flowable.never()));
+    when(gateway.sendNewExecutorState(any()))
+        .thenReturn(Completable.error(new Exception()));
+
+    // Действие:
+    TestObserver<Void> testObserver = useCase.setExecutorNotOnline().test();
+
+    // Результат:
+    testObserver.assertNoValues();
+    testObserver.assertNotComplete();
+    testObserver.assertError(Exception.class);
+  }
+
+  /**
+   * Должен ответить завершением, если статус "прием оплаты".
+   */
+  @Test
+  public void answerWithCompleteIfPaymentAcceptance() {
+    // Дано:
+    when(executorStateUseCase.getExecutorStates(false))
+        .thenReturn(Flowable.just(ExecutorState.PAYMENT_CONFIRMATION).concatWith(Flowable.never()));
+    when(gateway.sendNewExecutorState(any())).thenReturn(Completable.complete());
 
     // Действие:
     TestObserver<Void> testObserver = useCase.setExecutorNotOnline().test();

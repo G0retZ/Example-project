@@ -11,6 +11,7 @@ import android.arch.core.executor.testing.InstantTaskExecutorRule;
 import android.arch.lifecycle.Observer;
 import com.cargopull.executor_driver.entity.ExecutorState;
 import com.cargopull.executor_driver.interactor.ExecutorStateNotOnlineUseCase;
+import com.cargopull.executor_driver.interactor.ExecutorStateUseCase;
 import com.cargopull.executor_driver.presentation.CommonNavigate;
 import com.cargopull.executor_driver.presentation.ViewState;
 import io.reactivex.BackpressureStrategy;
@@ -38,6 +39,8 @@ public class OnlineSwitchViewModelTest {
   @Mock
   private ExecutorStateNotOnlineUseCase executorStateNotOnlineUseCase;
   @Mock
+  private ExecutorStateUseCase executorStateUseCase;
+  @Mock
   private Observer<ViewState<OnlineSwitchViewActions>> viewStateObserver;
   @Mock
   private Observer<String> navigateObserver;
@@ -49,9 +52,9 @@ public class OnlineSwitchViewModelTest {
     RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
     RxAndroidPlugins.setInitMainThreadSchedulerHandler(scheduler -> Schedulers.trampoline());
     when(executorStateNotOnlineUseCase.setExecutorNotOnline()).thenReturn(Completable.never());
-    when(executorStateNotOnlineUseCase.getExecutorStates())
+    when(executorStateUseCase.getExecutorStates(false))
         .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
-    viewModel = new OnlineSwitchViewModelImpl(executorStateNotOnlineUseCase);
+    viewModel = new OnlineSwitchViewModelImpl(executorStateNotOnlineUseCase, executorStateUseCase);
   }
 
   /* Тетсируем работу с юзкейсом. */
@@ -62,7 +65,7 @@ public class OnlineSwitchViewModelTest {
   @Test
   public void askExecutorStateUseCaseForSubscribeInitially() {
     // Результат:
-    verify(executorStateNotOnlineUseCase, only()).getExecutorStates();
+    verify(executorStateUseCase, only()).getExecutorStates(false);
   }
 
   /**
@@ -76,7 +79,7 @@ public class OnlineSwitchViewModelTest {
     viewModel.setNewState(true);
 
     // Результат:
-    verify(executorStateNotOnlineUseCase, only()).getExecutorStates();
+    verify(executorStateUseCase, only()).getExecutorStates(false);
   }
 
   /**
@@ -91,9 +94,9 @@ public class OnlineSwitchViewModelTest {
     viewModel.setNewState(false);
 
     // Результат:
-    verify(executorStateNotOnlineUseCase).getExecutorStates();
+    verify(executorStateUseCase).getExecutorStates(false);
     verify(executorStateNotOnlineUseCase).setExecutorNotOnline();
-    verifyNoMoreInteractions(executorStateNotOnlineUseCase);
+    verifyNoMoreInteractions(executorStateNotOnlineUseCase, executorStateUseCase);
   }
 
   /**
@@ -102,7 +105,7 @@ public class OnlineSwitchViewModelTest {
   @Test
   public void askUseCaseToSetNotOnline() {
     // Дано:
-    InOrder inOrder = Mockito.inOrder(executorStateNotOnlineUseCase);
+    InOrder inOrder = Mockito.inOrder(executorStateNotOnlineUseCase, executorStateUseCase);
     when(executorStateNotOnlineUseCase.setExecutorNotOnline()).thenReturn(
         Completable.complete(),
         Completable.error(new Exception()),
@@ -120,9 +123,9 @@ public class OnlineSwitchViewModelTest {
     viewModel.setNewState(false);
 
     // Результат:
-    inOrder.verify(executorStateNotOnlineUseCase).getExecutorStates();
+    inOrder.verify(executorStateUseCase).getExecutorStates(false);
     inOrder.verify(executorStateNotOnlineUseCase, times(6)).setExecutorNotOnline();
-    verifyNoMoreInteractions(executorStateNotOnlineUseCase);
+    verifyNoMoreInteractions(executorStateNotOnlineUseCase, executorStateUseCase);
   }
 
   /* Тетсируем переключение состояний */

@@ -464,9 +464,10 @@ public class AppComponentImpl implements AppComponent {
                     new ExecutorStateNotOnlineUseCaseImpl(
                         errorReporter,
                         new ExecutorStateSwitchGatewayImpl(stompClient),
-                        executorStateUseCase
-                    )
-                )
+                        executorStateUseCase,
+                        ExecutorState.ONLINE
+                    ),
+                    executorStateUseCase)
             )
         ).get(OnlineSwitchViewModelImpl.class)
     );
@@ -1147,9 +1148,18 @@ public class AppComponentImpl implements AppComponent {
                     new ExecutorStateNotOnlineUseCaseImpl(
                         errorReporter,
                         new ExecutorStateSwitchGatewayImpl(stompClient),
-                        executorStateUseCase
-                    )
-                )
+                        executorStateUseCase,
+                        ExecutorState.SHIFT_CLOSED,
+                        ExecutorState.SHIFT_OPENED,
+                        ExecutorState.ONLINE,
+                        ExecutorState.DRIVER_ORDER_CONFIRMATION,
+                        ExecutorState.CLIENT_ORDER_CONFIRMATION,
+                        ExecutorState.MOVING_TO_CLIENT,
+                        ExecutorState.WAITING_FOR_CLIENT,
+                        ExecutorState.ORDER_FULFILLMENT,
+                        ExecutorState.PAYMENT_CONFIRMATION
+                    ),
+                    executorStateUseCase)
             )
         ).get(OnlineSwitchViewModelImpl.class)
     );
