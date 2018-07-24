@@ -47,9 +47,7 @@ public class OrderCostViewModelImpl extends ViewModel implements OrderCostViewMo
   }
 
   private void loadOrderCosts() {
-    if (!disposable.isDisposed()) {
-      return;
-    }
+    disposable.dispose();
     disposable = orderCurrentCostUseCase.getOrderCurrentCost()
         .subscribeOn(Schedulers.single())
         .observeOn(AndroidSchedulers.mainThread())
