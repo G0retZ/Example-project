@@ -76,17 +76,17 @@ class VehicleOptionsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
       ((VehicleNumericOptionViewHolder) holder).seekBar
           .setMax(item.getMaxValue() - item.getMinValue());
       ((VehicleNumericOptionViewHolder) holder).seekBar
-          .setProgress(item.getValue() + item.getMinValue());
+          .setProgress(item.getValue() - item.getMinValue());
       ((VehicleNumericOptionViewHolder) holder).amountText.setText(
-          String.format(Locale.getDefault(), "%d", (item.getValue() + item.getMinValue())));
+          String.format(Locale.getDefault(), "%d", (item.getValue())));
       ((VehicleNumericOptionViewHolder) holder).seekBar
           .setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
               if (fromUser) {
                 item.setValue(item.getMinValue() + progress);
-                ((VehicleNumericOptionViewHolder) holder).amountText.setText(String
-                    .format(Locale.getDefault(), "%d", (item.getValue() + item.getMinValue())));
+                ((VehicleNumericOptionViewHolder) holder).amountText.setText(
+                    String.format(Locale.getDefault(), "%d", (item.getValue())));
               }
             }
 
