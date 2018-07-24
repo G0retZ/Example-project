@@ -46,7 +46,8 @@ public class SendVersionInterceptorTest {
 
     // Результат:
     verify(chain).proceed(request.capture());
-    assertEquals(request.getValue().headers("X-ea-app-version").size(), 1);
-    assertEquals(request.getValue().headers("X-ea-app-version").get(0), BuildConfig.VERSION_NAME);
+    assertEquals(request.getValue().headers("X-app-version").size(), 1);
+    assertEquals(request.getValue().headers("X-app-version").get(0),
+        "android-" + BuildConfig.VERSION_NAME);
   }
 }

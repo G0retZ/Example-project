@@ -12,7 +12,7 @@ import okhttp3.Response;
  */
 public class SendVersionInterceptor implements Interceptor {
 
-  private final static String HEADER_NAME = "X-ea-app-version";
+  private final static String HEADER_NAME = "X-app-version";
 
   @Inject
   public SendVersionInterceptor() {
@@ -21,8 +21,8 @@ public class SendVersionInterceptor implements Interceptor {
   @Override
   public Response intercept(Chain chain) throws IOException {
     Request.Builder builder = chain.request().newBuilder();
-    System.out.println("OkHttp Adding Header: " + BuildConfig.VERSION_NAME);
-    builder.addHeader(HEADER_NAME, BuildConfig.VERSION_NAME);
+    System.out.println("OkHttp Adding Header: android-" + BuildConfig.VERSION_NAME);
+    builder.addHeader(HEADER_NAME, "android-" + BuildConfig.VERSION_NAME);
     return chain.proceed(builder.build());
   }
 }
