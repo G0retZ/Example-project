@@ -211,9 +211,12 @@ public class AutoRouterImpl implements ActivityLifecycleCallbacks, AutoRouter,
     }
     // Получаем группу активити по направлению, с которых нельзя просто так перебрасывать.
     List<Class<? extends Activity>> group = statusGroups.get(lastRouteAction);
-    // Если такой группы нет или в ней нет текущей активити, то навигируем.
+    // Если такая группа есть и в ней есть текущая активити, то никуда не навигируем.
     if (group != null && group.contains(currentActivity.getClass())) {
+      // Если текущая активити является основной в группе, то обнуляем направление навигации.
       lastRouteAction = group.get(0) == currentActivity.getClass() ? null : lastRouteAction;
+      // Так как никуда не переходим, то пытаемся отобразить сообщения, если есть.
+      tryToShowMessage();
       return;
     }
     switch (lastRouteAction) {
