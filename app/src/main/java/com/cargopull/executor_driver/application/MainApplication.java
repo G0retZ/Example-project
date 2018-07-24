@@ -208,6 +208,8 @@ public class MainApplication extends MultiDexApplication implements ServerConnec
       missedOrderViewModel.initializeMissedOrderMessages();
       currentCostPollingViewModel.initializeCurrentCostPolling();
       initGeoLocation();
+    } else {
+      navigate(CommonNavigate.NO_CONNECTION);
     }
   }
 

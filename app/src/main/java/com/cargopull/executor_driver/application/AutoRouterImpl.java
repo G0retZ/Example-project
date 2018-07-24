@@ -31,6 +31,7 @@ public class AutoRouterImpl implements ActivityLifecycleCallbacks, AutoRouter,
    * Реестр активити, разбитых по группам, чтобы исключить нежелательные переходы по навигации.
    */
   private static final HashMap<String, List<Class<? extends Activity>>> statusGroups = new HashMap<>();
+  private boolean reset = false;
 
   static {
     statusGroups.put(ServerConnectionNavigate.AUTHORIZE, Arrays.asList(
@@ -140,31 +141,37 @@ public class AutoRouterImpl implements ActivityLifecycleCallbacks, AutoRouter,
 
   @Override
   public void navigateTo(@NonNull @ExecutorStateNavigate @GeoLocationNavigate String destination) {
-    if (destination.equals(GeoLocationNavigate.RESOLVE_GEO_PROBLEM)) {
-      goToGeoResolver = true;
-      tryToResolveGeo();
-    } else {
-      if (lastRouteAction == null || !lastRouteAction.equals(CommonNavigate.SERVER_DATA_ERROR)) {
-        if (splashRouteAction != null && destination.equals(ExecutorStateNavigate.MAP_ONLINE)) {
-          switch (splashRouteAction) {
-            case ExecutorStateNavigate.DRIVER_ORDER_CONFIRMATION:
-              ringTonePlayer.playRingTone(R.raw.decline_offer);
-              shakeItPlayer.shakeIt(Arrays.asList(
-                  new Pair<>(50L, 255),
-                  new Pair<>(50L, 0),
-                  new Pair<>(100L, 255),
-                  new Pair<>(50L, 0),
-                  new Pair<>(150L, 255),
-                  new Pair<>(50L, 0),
-                  new Pair<>(250L, 255)
-              ));
-              break;
-            default:
+    switch (destination) {
+      case CommonNavigate.NO_CONNECTION:
+        reset = true;
+        break;
+      case GeoLocationNavigate.RESOLVE_GEO_PROBLEM:
+        goToGeoResolver = true;
+        tryToResolveGeo();
+        break;
+      default:
+        if (lastRouteAction == null || !lastRouteAction.equals(CommonNavigate.SERVER_DATA_ERROR)) {
+          if (splashRouteAction != null && destination.equals(ExecutorStateNavigate.MAP_ONLINE)) {
+            switch (splashRouteAction) {
+              case ExecutorStateNavigate.DRIVER_ORDER_CONFIRMATION:
+                ringTonePlayer.playRingTone(R.raw.decline_offer);
+                shakeItPlayer.shakeIt(Arrays.asList(
+                    new Pair<>(50L, 255),
+                    new Pair<>(50L, 0),
+                    new Pair<>(100L, 255),
+                    new Pair<>(50L, 0),
+                    new Pair<>(150L, 255),
+                    new Pair<>(50L, 0),
+                    new Pair<>(250L, 255)
+                ));
+                break;
+              default:
+            }
           }
+          splashRouteAction = lastRouteAction = destination;
         }
-        splashRouteAction = lastRouteAction = destination;
-      }
-      tryToNavigate();
+        tryToNavigate();
+        break;
     }
   }
 
@@ -212,7 +219,7 @@ public class AutoRouterImpl implements ActivityLifecycleCallbacks, AutoRouter,
     // Получаем группу активити по направлению, с которых нельзя просто так перебрасывать.
     List<Class<? extends Activity>> group = statusGroups.get(lastRouteAction);
     // Если такая группа есть и в ней есть текущая активити, то никуда не навигируем.
-    if (group != null && group.contains(currentActivity.getClass())) {
+    if (!reset && group != null && group.contains(currentActivity.getClass())) {
       // Если текущая активити является основной в группе, то обнуляем направление навигации.
       lastRouteAction = group.get(0) == currentActivity.getClass() ? null : lastRouteAction;
       // Так как никуда не переходим, то пытаемся отобразить сообщения, если есть.
