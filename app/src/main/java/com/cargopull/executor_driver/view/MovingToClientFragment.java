@@ -21,7 +21,6 @@ import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.LinearInterpolator;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import com.cargopull.executor_driver.R;
@@ -32,7 +31,6 @@ import com.cargopull.executor_driver.presentation.movingtoclient.MovingToClientV
 import com.cargopull.executor_driver.presentation.order.OrderViewActions;
 import com.cargopull.executor_driver.presentation.order.OrderViewModel;
 import com.cargopull.executor_driver.utils.Pair;
-import com.squareup.picasso.Picasso;
 import java.util.Collections;
 import javax.inject.Inject;
 import org.joda.time.LocalTime;
@@ -48,7 +46,6 @@ public class MovingToClientFragment extends BaseFragment implements MovingToClie
   private MovingToClientViewModel movingToClientViewModel;
   private OrderViewModel orderViewModel;
   private ShakeItPlayer shakeItPlayer;
-  private ImageView mapImage;
   private TextView addressText;
   private TextView commentTitleText;
   private TextView commentText;
@@ -92,7 +89,6 @@ public class MovingToClientFragment extends BaseFragment implements MovingToClie
       @Nullable ViewGroup container,
       @Nullable Bundle savedInstanceState) {
     View view = inflater.inflate(R.layout.fragment_moving_to_client, container, false);
-    mapImage = view.findViewById(R.id.mapImage);
     addressText = view.findViewById(R.id.addressText);
     commentTitleText = view.findViewById(R.id.commentTitleText);
     commentText = view.findViewById(R.id.commentText);
@@ -216,7 +212,7 @@ public class MovingToClientFragment extends BaseFragment implements MovingToClie
 
   @Override
   public void showLoadPoint(@NonNull String url) {
-    Picasso.with(context).load(url).into(mapImage);
+
   }
 
   @Override
@@ -224,7 +220,7 @@ public class MovingToClientFragment extends BaseFragment implements MovingToClie
     addressText.setText(address);
     navigationAction.setOnClickListener(v -> {
       Intent navigationIntent = new Intent(Intent.ACTION_VIEW);
-      navigationIntent.setData(Uri.parse("geo:" + coordinates + "?q=" + address
+      navigationIntent.setData(Uri.parse("geo:" + coordinates + "?q=" + coordinates
           + "(" + getString(R.string.client) + ")"));
       if (navigationIntent.resolveActivity(context.getPackageManager()) != null) {
         startActivity(navigationIntent);
