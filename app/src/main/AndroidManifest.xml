@@ -1,29 +1,123 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    package="com.fasten.executor_driver">
+  xmlns:tools="http://schemas.android.com/tools"
+  package="com.cargopull.executor_driver">
 
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+  <uses-permission android:name="android.permission.INTERNET"/>
+  <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+  <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+  <uses-permission android:name="android.permission.RECEIVE_SMS"/>
+  <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+  <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+  <uses-permission android:name="android.permission.VIBRATE"/>
 
-    <application
-        android:name=".application.MainApplication"
-        android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
-        android:supportsRtl="true"
-        android:theme="@style/AppTheme"
-        tools:ignore="GoogleAppIndexingWarning"
-        android:fullBackupContent="@xml/backup_descriptor">
-        <activity android:name="com.fasten.executor_driver.application.MainActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+  <application
+    android:allowBackup="true"
+    android:fullBackupContent="@xml/backup_descriptor"
+    android:icon="@mipmap/ic_launcher"
+    android:label="@string/app_name"
+    android:name=".application.MainApplication"
+    android:roundIcon="@mipmap/ic_launcher_round"
+    android:supportsRtl="true"
+    android:theme="@style/AppTheme"
+    tools:ignore="GoogleAppIndexingWarning">
+    <activity
+      android:launchMode="singleTop"
+      android:name=".application.SplashScreenActivity">
+      <intent-filter>
+        <action android:name="android.intent.action.MAIN"/>
+        <category android:name="android.intent.category.LAUNCHER"/>
+      </intent-filter>
+    </activity>
+    <activity
+      android:launchMode="singleTop"
+      android:name=".application.MapActivity"/>
+    <activity
+      android:launchMode="singleTop"
+      android:name=".application.MenuActivity"/>
+    <activity
+      android:launchMode="singleTop"
+      android:name=".application.BalanceActivity"/>
+    <activity
+      android:launchMode="singleTop"
+      android:name=".application.LoginActivity"
+      android:windowSoftInputMode="stateAlwaysVisible|adjustResize"/>
+    <activity
+      android:launchMode="singleTop"
+      android:name=".application.PasswordActivity"
+      android:windowSoftInputMode="stateAlwaysVisible|adjustResize"/>
+    <activity
+      android:launchMode="singleTop"
+      android:name=".application.VehicleOptionsActivity"/>
+    <activity
+      android:launchMode="singleTop"
+      android:name=".application.SelectedVehicleOptionsActivity"/>
+    <activity
+      android:launchMode="singleTop"
+      android:name=".application.ChooseVehicleActivity"/>
+    <activity
+      android:launchMode="singleTop"
+      android:name=".application.ServicesActivity"/>
+    <activity
+      android:launchMode="singleTop"
+      android:name=".application.GeolocationResolutionActivity"/>
+    <activity
+      android:launchMode="singleTop"
+      android:name=".application.OnlineActivity"/>
+    <activity
+      android:launchMode="singleTop"
+      android:name=".application.DriverOrderConfirmationActivity"/>
+    <activity
+      android:launchMode="singleTop"
+      android:name=".application.ClientOrderConfirmationActivity"/>
+    <activity
+      android:launchMode="singleTop"
+      android:name=".application.MovingToClientActivity"/>
+    <activity
+      android:launchMode="singleTop"
+      android:name=".application.MovingToClientDetailsActivity"/>
+    <activity
+      android:launchMode="singleTop"
+      android:name=".application.MovingToClientRouteActivity"/>
+    <activity
+      android:launchMode="singleTop"
+      android:name=".application.WaitingForClientActivity"/>
+    <activity
+      android:launchMode="singleTop"
+      android:name=".application.WaitingForClientRouteActivity"/>
+    <activity
+      android:launchMode="singleTop"
+      android:name=".application.OrderFulfillmentActivity"/>
+    <activity
+      android:launchMode="singleTop"
+      android:name=".application.OrderFulfillmentDetailsActivity"/>
+    <activity
+      android:launchMode="singleTop"
+      android:name=".application.OrderRouteActivity"/>
+    <activity
+      android:launchMode="singleTop"
+      android:name=".application.OrderCostDetailsActivity"/>
+    <activity
+      android:launchMode="singleTop"
+      android:name=".application.OrderCostDetailsOrderDetailsActivity"/>
+    <activity
+      android:launchMode="singleTop"
+      android:name=".application.OrderCostDetailsRouteActivity"/>
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-    </application>
+    <service
+      android:enabled="true"
+      android:exported="false"
+      android:name=".application.PersistenceService"/>
+    <service
+      android:name=".application.FcmService"
+      tools:ignore="ExportedService">
+      <intent-filter>
+        <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+      </intent-filter>
+    </service>
 
+    <meta-data
+      android:name="com.google.android.geo.API_KEY"
+      android:value="@string/google_maps_key"/>
+  </application>
 </manifest>

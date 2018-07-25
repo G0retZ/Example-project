@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:tools="http://schemas.android.com/tools"
+  android:layout_width="match_parent"
+  android:layout_height="wrap_content"
+  android:background="?android:attr/selectableItemBackground">
+  <android.support.v7.widget.SwitchCompat
+    android:id="@+id/enableSwitch"
+    style="@style/AppTheme.CompoundButton.Switch"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="16dp"
+    android:layout_marginEnd="16dp"
+    android:layout_alignParentEnd="true"
+    android:layout_alignParentRight="true"
+    android:layout_centerVertical="true"
+    android:clickable="false"/>
+  <TextView
+    android:id="@+id/serviceName"
+    style="@style/TextAppearance.AppCompat.Subhead"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="16dp"
+    android:layout_marginStart="16dp"
+    android:layout_marginEnd="16dp"
+    android:layout_toLeftOf="@id/enableSwitch"
+    android:layout_toStartOf="@id/enableSwitch"
+    tools:text="Vehicle option"/>
+  <TextView
+    android:id="@+id/servicePrice"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="16dp"
+    android:layout_marginEnd="16dp"
+    android:layout_below="@id/serviceName"
+    android:layout_toLeftOf="@id/enableSwitch"
+    android:layout_toStartOf="@id/enableSwitch"
+    android:textColor="@color/colorAccentSecond"
+    tools:text="Description"/>
+  <View
+    android:id="@+id/view"
+    android:layout_width="match_parent"
+    android:layout_height="1dp"
+    android:layout_marginTop="16dp"
+    android:layout_marginStart="12dp"
+    android:layout_marginEnd="12dp"
+    android:layout_below="@id/servicePrice"
+    android:background="@color/colorDivider"/>
+</RelativeLayout>
