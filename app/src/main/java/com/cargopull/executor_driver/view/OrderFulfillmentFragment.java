@@ -321,7 +321,7 @@ public class OrderFulfillmentFragment extends BaseFragment implements OrderCostV
       getDirectionsAction.setVisibility(View.VISIBLE);
       getDirectionsAction.setOnClickListener(v -> {
         Intent navigationIntent = new Intent(Intent.ACTION_VIEW);
-        navigationIntent.setData(Uri.parse("geo:" + coordinates + "?q=" + address
+        navigationIntent.setData(Uri.parse("geo:" + coordinates + "?q=" + coordinates
             + "(" + getString(R.string.client) + ")"));
         if (navigationIntent.resolveActivity(context.getPackageManager()) != null) {
           startActivity(navigationIntent);
