@@ -20,6 +20,7 @@ import com.cargopull.executor_driver.backend.web.AuthorizationInterceptor;
 import com.cargopull.executor_driver.backend.web.ConnectivityInterceptor;
 import com.cargopull.executor_driver.backend.web.ReceiveTokenInterceptor;
 import com.cargopull.executor_driver.backend.web.SendTokenInterceptor;
+import com.cargopull.executor_driver.backend.web.SendVersionInterceptor;
 import com.cargopull.executor_driver.backend.web.TokenKeeper;
 import com.cargopull.executor_driver.entity.ExecutorState;
 import com.cargopull.executor_driver.entity.LoginValidator;
@@ -234,6 +235,7 @@ public class AppComponentImpl implements AppComponent {
     TokenKeeper tokenKeeper = new TokenKeeperImpl(appSettingsService);
     OkHttpClient okHttpClient = initHttpClient(
         new ConnectivityInterceptor(appContext),
+        new SendVersionInterceptor(),
         new AuthorizationInterceptor(),
         new SendTokenInterceptor(tokenKeeper),
         new ReceiveTokenInterceptor(tokenKeeper)
@@ -1257,6 +1259,7 @@ public class AppComponentImpl implements AppComponent {
 
   private OkHttpClient initHttpClient(
       @NonNull Interceptor connectivityInterceptor,
+      @NonNull Interceptor appVersionInterceptor,
       @NonNull Interceptor authorizationInterceptor,
       @NonNull Interceptor sendTokenInterceptor,
       @NonNull Interceptor receiveTokenInterceptor) {
@@ -1266,6 +1269,7 @@ public class AppComponentImpl implements AppComponent {
         .writeTimeout(10, TimeUnit.SECONDS)
         .pingInterval(30, TimeUnit.SECONDS)
         .addInterceptor(connectivityInterceptor)
+        .addInterceptor(appVersionInterceptor)
         .addInterceptor(authorizationInterceptor)
         .addInterceptor(receiveTokenInterceptor)
         .addInterceptor(sendTokenInterceptor);
