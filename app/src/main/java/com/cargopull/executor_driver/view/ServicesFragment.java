@@ -173,7 +173,9 @@ public class ServicesFragment extends BaseFragment implements ServicesViewAction
     if (!getResources().getBoolean(R.bool.show_cents)) {
       minPrice = Math.round(minPrice / 100f);
     }
-    minPriceText.setText(new DecimalFormat(getString(R.string.currency_format)).format(minPrice));
+    DecimalFormat decimalFormat = new DecimalFormat(getString(R.string.currency_format));
+    decimalFormat.setMaximumFractionDigits(0);
+    minPriceText.setText(decimalFormat.format(minPrice));
   }
 
   @Override
@@ -181,6 +183,8 @@ public class ServicesFragment extends BaseFragment implements ServicesViewAction
     if (!getResources().getBoolean(R.bool.show_cents)) {
       maxPrice = Math.round(maxPrice / 100f);
     }
-    maxPriceText.setText(new DecimalFormat(getString(R.string.currency_format)).format(maxPrice));
+    DecimalFormat decimalFormat = new DecimalFormat(getString(R.string.currency_format));
+    decimalFormat.setMaximumFractionDigits(0);
+    maxPriceText.setText(decimalFormat.format(maxPrice));
   }
 }

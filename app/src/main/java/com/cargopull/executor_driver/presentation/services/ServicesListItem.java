@@ -35,8 +35,10 @@ public class ServicesListItem {
     if (!resources.getBoolean(R.bool.show_cents)) {
       currentCost = Math.round(currentCost / 100f);
     }
+    DecimalFormat decimalFormat = new DecimalFormat(resources.getString(R.string.currency_format));
+    decimalFormat.setMaximumFractionDigits(0);
     return String.format(Locale.getDefault(), "от %s за первый час",
-        new DecimalFormat(resources.getString(R.string.currency_format)).format(currentCost));
+        decimalFormat.format(currentCost));
   }
 
   public int getPriceValue() {

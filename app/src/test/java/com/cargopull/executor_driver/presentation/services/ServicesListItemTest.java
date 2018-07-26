@@ -27,7 +27,7 @@ public class ServicesListItemTest {
 
   @Before
   public void setUp() {
-    when(resources.getString(R.string.currency_format)).thenReturn("##,###,### \u20BD");
+    when(resources.getString(R.string.currency_format)).thenReturn("##,###,### ¤");
     servicesListItem = new ServicesListItem(new Service(11, "name", 123_000, false));
     System.out.println(Locale.getDefault());
   }
@@ -35,27 +35,33 @@ public class ServicesListItemTest {
   @Test
   public void testGetters() {
     assertEquals(servicesListItem.getName(), "name");
+    DecimalFormat decimalFormat = new DecimalFormat("##,###,### ¤");
+    decimalFormat.setMaximumFractionDigits(0);
     assertEquals(servicesListItem.getPrice(resources),
-        "от " + new DecimalFormat("##,###,### \u20BD").format(1230) + " за первый час");
+        "от " + decimalFormat.format(1230) + " за первый час");
     assertEquals(servicesListItem.getPriceValue(), 123_000);
     assertFalse(servicesListItem.isChecked());
     when(resources.getString(R.string.currency_format)).thenReturn("##,###,### коп");
+    decimalFormat = new DecimalFormat("##,###,### коп");
+    decimalFormat.setMaximumFractionDigits(0);
     assertEquals(servicesListItem.getPrice(resources),
-        "от " + new DecimalFormat("##,###,### коп").format(1230) + " за первый час");
+        "от " + decimalFormat.format(1230) + " за первый час");
   }
 
   @Test
   public void testSetters() {
     servicesListItem.setChecked(true);
     assertEquals(servicesListItem.getName(), "name");
+    DecimalFormat decimalFormat = new DecimalFormat("##,###,### ¤");
+    decimalFormat.setMaximumFractionDigits(0);
     assertEquals(servicesListItem.getPrice(resources),
-        "от " + new DecimalFormat("##,###,### \u20BD").format(1230) + " за первый час");
+        "от " + decimalFormat.format(1230) + " за первый час");
     assertEquals(servicesListItem.getPriceValue(), 123_000);
     assertTrue(servicesListItem.isChecked());
     servicesListItem.setChecked(false);
     assertEquals(servicesListItem.getName(), "name");
     assertEquals(servicesListItem.getPrice(resources),
-        "от " + new DecimalFormat("##,###,### \u20BD").format(1230) + " за первый час");
+        "от " + decimalFormat.format(1230) + " за первый час");
     assertEquals(servicesListItem.getPriceValue(), 123_000);
     assertFalse(servicesListItem.isChecked());
   }
