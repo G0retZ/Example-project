@@ -317,6 +317,8 @@ public class AutoRouterImpl implements ActivityLifecycleCallbacks, AutoRouter,
     }
     // Если переход сработал, то обнуляем направление. Если нет, то следующее активити попробует его обработать
     lastRouteAction = null;
+    // Если переход сработал, то сбрасываем флаг сброса экрана
+    reset = false;
   }
 
   private void exitAndKill(Activity activity) {
