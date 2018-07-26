@@ -1,5 +1,5 @@
 <resources>
-  <string name="app_name">CargoPull</string>
+  <string name="app_name">Cargopull Исполнитель</string>
   <string name="authorization">Авторизация</string>
   <string name="phone_number">Номер телефона</string>
   <string name="server_data_format_error">Ошибка формата данных от сервера</string>
