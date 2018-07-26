@@ -164,11 +164,13 @@ public class ClientOrderConfirmationFragment extends BaseFragment implements Ord
     if (!getResources().getBoolean(R.bool.show_cents)) {
       cost = Math.round(cost / 100f);
     }
+    DecimalFormat decimalFormat = new DecimalFormat(getString(R.string.currency_format));
+    decimalFormat.setMaximumFractionDigits(0);
     estimationText.setText(getString(
         R.string.km_h_m_p, routeDistance,
         localTime.getHourOfDay(),
         localTime.getMinuteOfHour(),
-        new DecimalFormat(getString(R.string.currency_format)).format(cost))
+        decimalFormat.format(cost))
     );
   }
 

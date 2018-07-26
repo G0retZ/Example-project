@@ -369,9 +369,9 @@ public class OrderFulfillmentFragment extends BaseFragment implements OrderCostV
     if (!getResources().getBoolean(R.bool.show_cents)) {
       currentCost = Math.round(currentCost / 100f);
     }
-    totalCostText.setText(
-        new DecimalFormat(getString(R.string.currency_format)).format(currentCost)
-    );
+    DecimalFormat decimalFormat = new DecimalFormat(getString(R.string.currency_format));
+    decimalFormat.setMaximumFractionDigits(0);
+    totalCostText.setText(decimalFormat.format(currentCost));
   }
 
   @Override

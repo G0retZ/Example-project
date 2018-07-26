@@ -219,9 +219,9 @@ public class OrderCostDetailsFragment extends BaseFragment implements OrderCostD
     if (!getResources().getBoolean(R.bool.show_cents)) {
       totalCost = Math.round(totalCost / 100f);
     }
-    totalPaymentText.setText(
-        new DecimalFormat(getString(R.string.currency_format)).format(totalCost)
-    );
+    DecimalFormat decimalFormat = new DecimalFormat(getString(R.string.currency_format));
+    decimalFormat.setMaximumFractionDigits(0);
+    totalPaymentText.setText(decimalFormat.format(totalCost));
   }
 
   @Override
@@ -241,9 +241,9 @@ public class OrderCostDetailsFragment extends BaseFragment implements OrderCostD
     if (!getResources().getBoolean(R.bool.show_cents)) {
       cost = Math.round(cost / 100f);
     }
-    estimatedPackageCost.setText(
-        new DecimalFormat(getString(R.string.currency_format)).format(cost)
-    );
+    DecimalFormat decimalFormat = new DecimalFormat(getString(R.string.currency_format));
+    decimalFormat.setMaximumFractionDigits(0);
+    estimatedPackageCost.setText(decimalFormat.format(cost));
   }
 
   @Override
@@ -263,9 +263,9 @@ public class OrderCostDetailsFragment extends BaseFragment implements OrderCostD
     if (!getResources().getBoolean(R.bool.show_cents)) {
       cost = Math.round(cost / 100f);
     }
-    estimatedPackageServiceCost.setText(
-        new DecimalFormat(getString(R.string.currency_format)).format(cost)
-    );
+    DecimalFormat decimalFormat = new DecimalFormat(getString(R.string.currency_format));
+    decimalFormat.setMaximumFractionDigits(0);
+    estimatedPackageServiceCost.setText(decimalFormat.format(cost));
   }
 
   @Override
@@ -280,9 +280,9 @@ public class OrderCostDetailsFragment extends BaseFragment implements OrderCostD
       if (!getResources().getBoolean(R.bool.show_cents)) {
         cost = Math.round(cost / 100f);
       }
-      ((TextView) view.findViewById(R.id.optionCostText)).setText(
-          new DecimalFormat(getString(R.string.currency_format)).format(cost)
-      );
+      DecimalFormat decimalFormat = new DecimalFormat(getString(R.string.currency_format));
+      decimalFormat.setMaximumFractionDigits(0);
+      ((TextView) view.findViewById(R.id.optionCostText)).setText(decimalFormat.format(cost));
       estimatedOptionsCosts.addView(view);
     }
   }
@@ -302,9 +302,9 @@ public class OrderCostDetailsFragment extends BaseFragment implements OrderCostD
     if (!getResources().getBoolean(R.bool.show_cents)) {
       cost = Math.round(cost / 100f);
     }
-    overPackageCost.setText(
-        new DecimalFormat(getString(R.string.currency_format)).format(cost)
-    );
+    DecimalFormat decimalFormat = new DecimalFormat(getString(R.string.currency_format));
+    decimalFormat.setMaximumFractionDigits(0);
+    overPackageCost.setText(decimalFormat.format(cost));
   }
 
   @Override
@@ -319,9 +319,9 @@ public class OrderCostDetailsFragment extends BaseFragment implements OrderCostD
     if (!getResources().getBoolean(R.bool.show_cents)) {
       cost = Math.round(cost / 100f);
     }
-    overPackageServiceCost.setText(
-        new DecimalFormat(getString(R.string.currency_format)).format(cost)
-    );
+    DecimalFormat decimalFormat = new DecimalFormat(getString(R.string.currency_format));
+    decimalFormat.setMaximumFractionDigits(0);
+    overPackageServiceCost.setText(decimalFormat.format(cost));
   }
 
   @Override
@@ -336,9 +336,9 @@ public class OrderCostDetailsFragment extends BaseFragment implements OrderCostD
       if (!getResources().getBoolean(R.bool.show_cents)) {
         cost = Math.round(cost / 100f);
       }
-      ((TextView) view.findViewById(R.id.optionCostText)).setText(
-          new DecimalFormat(getString(R.string.currency_format)).format(cost)
-      );
+      DecimalFormat decimalFormat = new DecimalFormat(getString(R.string.currency_format));
+      decimalFormat.setMaximumFractionDigits(0);
+      ((TextView) view.findViewById(R.id.optionCostText)).setText(decimalFormat.format(cost));
       overPackageOptionsCosts.addView(view);
     }
   }
