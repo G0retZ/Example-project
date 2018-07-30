@@ -10,7 +10,7 @@ public interface MissedOrderViewActions {
   /**
    * Показать сообщение об упущенном заказе.
    *
-   * @param message текс сообщения
+   * @param message текст сообщения
    */
   void showMissedOrderMessage(@NonNull String message);
 }

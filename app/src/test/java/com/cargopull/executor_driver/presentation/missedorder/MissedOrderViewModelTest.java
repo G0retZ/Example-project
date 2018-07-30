@@ -9,7 +9,6 @@ import static org.mockito.Mockito.when;
 
 import android.arch.core.executor.testing.InstantTaskExecutorRule;
 import android.arch.lifecycle.Observer;
-import com.cargopull.executor_driver.entity.ExecutorState;
 import com.cargopull.executor_driver.interactor.MissedOrderUseCase;
 import com.cargopull.executor_driver.presentation.ViewState;
 import io.reactivex.Flowable;
@@ -44,7 +43,6 @@ public class MissedOrderViewModelTest {
 
   @Before
   public void setUp() {
-    ExecutorState.ONLINE.setData(null);
     RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
     RxAndroidPlugins.setInitMainThreadSchedulerHandler(scheduler -> Schedulers.trampoline());
     when(missedOrderUseCase.getMissedOrders()).thenReturn(Flowable.never());
