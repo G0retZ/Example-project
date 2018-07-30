@@ -13,7 +13,7 @@ import io.reactivex.internal.disposables.EmptyDisposable;
 import io.reactivex.schedulers.Schedulers;
 import javax.inject.Inject;
 
-class UpdateMessageViewModelImpl extends ViewModel implements
+public class UpdateMessageViewModelImpl extends ViewModel implements
     UpdateMessageViewModel {
 
   @NonNull
@@ -24,7 +24,7 @@ class UpdateMessageViewModelImpl extends ViewModel implements
   private Disposable disposable = EmptyDisposable.INSTANCE;
 
   @Inject
-  UpdateMessageViewModelImpl(@NonNull UpdateMessageUseCase updateMessageUseCase) {
+  public UpdateMessageViewModelImpl(@NonNull UpdateMessageUseCase updateMessageUseCase) {
     this.updateMessageUseCase = updateMessageUseCase;
     messageLiveData = new SingleLiveEvent<>();
   }

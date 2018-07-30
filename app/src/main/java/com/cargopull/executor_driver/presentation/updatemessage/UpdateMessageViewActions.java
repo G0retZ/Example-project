@@ -5,7 +5,7 @@ import android.support.annotation.NonNull;
 /**
  * Действия для смены состояния вида окна сообщений о новой версии приложения.
  */
-interface UpdateMessageViewActions {
+public interface UpdateMessageViewActions {
 
   /**
    * Показать сообщение о новой версии приложения.
