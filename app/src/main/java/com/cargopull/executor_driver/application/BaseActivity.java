@@ -64,6 +64,7 @@ public class BaseActivity extends AppCompatActivity implements ExecutorStateView
   private Dialog updateDialog;
   @Nullable
   private Dialog errorDialog;
+  private boolean resumed;
 
   @Inject
   public void setExecutorStateViewModel(@NonNull ExecutorStateViewModel executorStateViewModel) {
@@ -113,16 +114,17 @@ public class BaseActivity extends AppCompatActivity implements ExecutorStateView
   @Override
   public void onResume() {
     super.onResume();
-    if (onlineDialog != null && !onlineDialog.isShowing()) {
+    resumed = true;
+    if (onlineDialog != null) {
       onlineDialog.show();
     }
-    if (announcementDialog != null && !announcementDialog.isShowing()) {
+    if (announcementDialog != null) {
       announcementDialog.show();
     }
-    if (updateDialog != null && !updateDialog.isShowing()) {
+    if (updateDialog != null) {
       updateDialog.show();
     }
-    if (errorDialog != null && !errorDialog.isShowing()) {
+    if (errorDialog != null) {
       errorDialog.show();
     }
   }
@@ -130,6 +132,7 @@ public class BaseActivity extends AppCompatActivity implements ExecutorStateView
   @Override
   public void onPause() {
     super.onPause();
+    resumed = false;
     if (onlineDialog != null && onlineDialog.isShowing()) {
       onlineDialog.dismiss();
     }
@@ -209,6 +212,9 @@ public class BaseActivity extends AppCompatActivity implements ExecutorStateView
             .setCancelable(false)
             .setPositiveButton(getString(android.R.string.ok), (a, b) -> exitAndKill())
             .create();
+        if (resumed) {
+          errorDialog.show();
+        }
         break;
       case CommonNavigate.EXIT:
         ((MainApplication) getApplication()).navigate(destination);
@@ -258,6 +264,9 @@ public class BaseActivity extends AppCompatActivity implements ExecutorStateView
               }
             }))
         .create();
+    if (resumed) {
+      announcementDialog.show();
+    }
   }
 
   @Override
@@ -274,6 +283,9 @@ public class BaseActivity extends AppCompatActivity implements ExecutorStateView
               }
             }))
         .create();
+    if (resumed) {
+      onlineDialog.show();
+    }
   }
 
   @Override
@@ -304,6 +316,9 @@ public class BaseActivity extends AppCompatActivity implements ExecutorStateView
           }
         })
         .create();
+    if (resumed) {
+      updateDialog.show();
+    }
   }
 
   private void exitAndKill() {
