@@ -6,7 +6,7 @@ import io.reactivex.Flowable;
 /**
  * Гейтвей получения сообщений о новой версии.
  */
-interface UpdateMessageGateway {
+public interface UpdateMessageGateway {
 
   /**
    * Получать сообщения о доступности новой версии.
