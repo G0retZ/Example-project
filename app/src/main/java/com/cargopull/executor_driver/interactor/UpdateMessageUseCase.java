@@ -6,7 +6,7 @@ import io.reactivex.Flowable;
 /**
  * Юзкейс получения сообщений о новой версии.
  */
-interface UpdateMessageUseCase {
+public interface UpdateMessageUseCase {
 
   /**
    * Запрашивает сообщения о доступности новой версии.
