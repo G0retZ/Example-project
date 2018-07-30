@@ -12,5 +12,5 @@ public interface AnnouncementStateViewActions {
    *
    * @param message текст сообщения
    */
-  void showMessage(@NonNull String message);
+  void showAnnouncementMessage(@NonNull String message);
 }

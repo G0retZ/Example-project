@@ -5,7 +5,6 @@ import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
 import com.cargopull.executor_driver.interactor.UpdateMessageUseCase;
-import com.cargopull.executor_driver.presentation.SingleLiveEvent;
 import com.cargopull.executor_driver.presentation.ViewState;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
@@ -19,14 +18,14 @@ public class UpdateMessageViewModelImpl extends ViewModel implements
   @NonNull
   private final UpdateMessageUseCase updateMessageUseCase;
   @NonNull
-  private final SingleLiveEvent<ViewState<UpdateMessageViewActions>> messageLiveData;
+  private final MutableLiveData<ViewState<UpdateMessageViewActions>> messageLiveData;
   @NonNull
   private Disposable disposable = EmptyDisposable.INSTANCE;
 
   @Inject
   public UpdateMessageViewModelImpl(@NonNull UpdateMessageUseCase updateMessageUseCase) {
     this.updateMessageUseCase = updateMessageUseCase;
-    messageLiveData = new SingleLiveEvent<>();
+    messageLiveData = new MutableLiveData<>();
   }
 
   @NonNull
@@ -39,6 +38,11 @@ public class UpdateMessageViewModelImpl extends ViewModel implements
   @Override
   public LiveData<String> getNavigationLiveData() {
     return new MutableLiveData<>();
+  }
+
+  @Override
+  public void messageConsumed() {
+    messageLiveData.postValue(null);
   }
 
   @Override

@@ -8,6 +8,11 @@ import com.cargopull.executor_driver.presentation.ViewModel;
 public interface UpdateMessageViewModel extends ViewModel<UpdateMessageViewActions> {
 
   /**
+   * Сообщает о том что сообщение прочитано.
+   */
+  void messageConsumed();
+
+  /**
    * Запрашивает подписку на сообщения о новой версии приложения.
    */
   void initializeUpdateMessages();

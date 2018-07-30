@@ -1,5 +1,7 @@
 package com.cargopull.executor_driver.presentation.updatemessage;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -96,6 +98,28 @@ public class UpdateMessageViewModelTest {
     verify(viewStateObserver, only()).onChanged(viewStateCaptor.capture());
     viewStateCaptor.getValue().apply(viewActions);
     verify(viewActions, only()).showUpdateMessage("Message");
+  }
+
+  /**
+   * Должен показать сопутствующее онлайн сообщение, затем null после его прочтения.
+   */
+  @Test
+  public void showOnlineMessageThenNull() {
+    // Дано:
+    when(updateMessageUseCase.getUpdateMessages()).thenReturn(Flowable.just("Message"));
+
+    // Действие:
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.initializeUpdateMessages();
+    viewModel.messageConsumed();
+
+    // Результат:
+    verify(viewStateObserver, times(2)).onChanged(viewStateCaptor.capture());
+    assertEquals(2, viewStateCaptor.getAllValues().size());
+    assertNull(viewStateCaptor.getAllValues().get(1));
+    viewStateCaptor.getAllValues().get(0).apply(viewActions);
+    verify(viewActions, only()).showUpdateMessage("Message");
+    verifyNoMoreInteractions(viewStateObserver);
   }
 
   /**
