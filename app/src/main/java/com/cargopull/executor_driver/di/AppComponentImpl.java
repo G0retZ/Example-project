@@ -1257,22 +1257,12 @@ public class AppComponentImpl implements AppComponent {
     );
   }
 
-  private OkHttpClient initHttpClient(
-      @NonNull Interceptor connectivityInterceptor,
-      @NonNull Interceptor appVersionInterceptor,
-      @NonNull Interceptor authorizationInterceptor,
-      @NonNull Interceptor sendTokenInterceptor,
-      @NonNull Interceptor receiveTokenInterceptor) {
-    OkHttpClient.Builder builder = new OkHttpClient.Builder();
-    builder.readTimeout(10, TimeUnit.SECONDS)
-        .connectTimeout(10, TimeUnit.SECONDS)
-        .writeTimeout(10, TimeUnit.SECONDS)
-        .pingInterval(30, TimeUnit.SECONDS)
-        .addInterceptor(connectivityInterceptor)
-        .addInterceptor(appVersionInterceptor)
-        .addInterceptor(authorizationInterceptor)
-        .addInterceptor(receiveTokenInterceptor)
-        .addInterceptor(sendTokenInterceptor);
+  private OkHttpClient initHttpClient(@NonNull Interceptor... interceptors) {
+    OkHttpClient.Builder builder = new OkHttpClient.Builder()
+        .pingInterval(30, TimeUnit.SECONDS);
+    for (Interceptor interceptor : interceptors) {
+      builder.addInterceptor(interceptor);
+    }
     // Add logging interceptor for debug build only
     if (BuildConfig.DEBUG) {
       HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
