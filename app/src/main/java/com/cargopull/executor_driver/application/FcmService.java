@@ -1,7 +1,7 @@
 package com.cargopull.executor_driver.application;
 
 import android.support.annotation.Nullable;
-import com.cargopull.executor_driver.presentation.announcement.AnnouncementStateViewActions;
+import com.cargopull.executor_driver.presentation.announcement.AnnouncementViewModel;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import javax.inject.Inject;
@@ -9,12 +9,11 @@ import javax.inject.Inject;
 public class FcmService extends FirebaseMessagingService {
 
   @Nullable
-  private AnnouncementStateViewActions announcementStateViewActions;
+  private AnnouncementViewModel announcementViewModel;
 
   @Inject
-  public void setAnnouncementStateViewActions(
-      @Nullable AnnouncementStateViewActions announcementStateViewActions) {
-    this.announcementStateViewActions = announcementStateViewActions;
+  public void setAnnouncementViewModel(@Nullable AnnouncementViewModel announcementViewModel) {
+    this.announcementViewModel = announcementViewModel;
   }
 
   @Override
@@ -26,12 +25,12 @@ public class FcmService extends FirebaseMessagingService {
   @Override
   public void onMessageReceived(RemoteMessage remoteMessage) {
     super.onMessageReceived(remoteMessage);
-    if (announcementStateViewActions == null) {
+    if (announcementViewModel == null) {
       return;
     }
     if (remoteMessage != null && remoteMessage.getNotification() != null
         && remoteMessage.getNotification().getBody() != null) {
-      announcementStateViewActions.showMessage(remoteMessage.getNotification().getBody());
+      announcementViewModel.postMessage(remoteMessage.getNotification().getBody());
     }
   }
 }

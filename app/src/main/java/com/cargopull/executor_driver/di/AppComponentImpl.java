@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.cargopull.executor_driver.BuildConfig;
 import com.cargopull.executor_driver.application.AutoRouterImpl;
+import com.cargopull.executor_driver.application.BaseActivity;
 import com.cargopull.executor_driver.application.FcmService;
 import com.cargopull.executor_driver.application.MainApplication;
 import com.cargopull.executor_driver.backend.geolocation.GeolocationCenterImpl;
@@ -65,6 +66,7 @@ import com.cargopull.executor_driver.gateway.ServicesGatewayImpl;
 import com.cargopull.executor_driver.gateway.SmsCodeMapper;
 import com.cargopull.executor_driver.gateway.SmsGatewayImpl;
 import com.cargopull.executor_driver.gateway.TokenKeeperImpl;
+import com.cargopull.executor_driver.gateway.UpdateMessageGatewayImpl;
 import com.cargopull.executor_driver.gateway.VehicleApiMapper;
 import com.cargopull.executor_driver.gateway.VehicleOptionApiMapper;
 import com.cargopull.executor_driver.gateway.VehicleOptionsGatewayImpl;
@@ -93,6 +95,7 @@ import com.cargopull.executor_driver.interactor.OrderFulfillmentTimeUseCaseImpl;
 import com.cargopull.executor_driver.interactor.OrderRouteUseCaseImpl;
 import com.cargopull.executor_driver.interactor.OrderUseCaseImpl;
 import com.cargopull.executor_driver.interactor.ServerConnectionUseCaseImpl;
+import com.cargopull.executor_driver.interactor.UpdateMessageUseCaseImpl;
 import com.cargopull.executor_driver.interactor.WaitingForClientUseCaseImpl;
 import com.cargopull.executor_driver.interactor.auth.LoginSharer;
 import com.cargopull.executor_driver.interactor.auth.LoginUseCaseImpl;
@@ -108,6 +111,8 @@ import com.cargopull.executor_driver.interactor.vehicle.VehicleOptionsUseCaseImp
 import com.cargopull.executor_driver.interactor.vehicle.VehiclesAndOptionsGateway;
 import com.cargopull.executor_driver.interactor.vehicle.VehiclesAndOptionsUseCaseImpl;
 import com.cargopull.executor_driver.presentation.ViewModelFactory;
+import com.cargopull.executor_driver.presentation.announcement.AnnouncementViewModel;
+import com.cargopull.executor_driver.presentation.announcement.AnnouncementViewModelImpl;
 import com.cargopull.executor_driver.presentation.balance.BalanceViewModelImpl;
 import com.cargopull.executor_driver.presentation.calltoclient.CallToClientViewModelImpl;
 import com.cargopull.executor_driver.presentation.calltooperator.CallToOperatorViewModelImpl;
@@ -142,6 +147,7 @@ import com.cargopull.executor_driver.presentation.services.ServicesListItems;
 import com.cargopull.executor_driver.presentation.services.ServicesSliderViewModelImpl;
 import com.cargopull.executor_driver.presentation.services.ServicesViewModelImpl;
 import com.cargopull.executor_driver.presentation.smsbutton.SmsButtonViewModelImpl;
+import com.cargopull.executor_driver.presentation.updatemessage.UpdateMessageViewModelImpl;
 import com.cargopull.executor_driver.presentation.vehicleoptions.VehicleOptionsViewModelImpl;
 import com.cargopull.executor_driver.presentation.waitingforclient.WaitingForClientViewModelImpl;
 import com.cargopull.executor_driver.utils.ErrorReporter;
@@ -214,6 +220,10 @@ public class AppComponentImpl implements AppComponent {
   @NonNull
   private final GeoLocationUseCase geoLocationUseCase;
   @NonNull
+  private final ExecutorStateViewModelImpl executorStateViewModel;
+  @NonNull
+  private final UpdateMessageViewModelImpl updateMessageViewModel;
+  @NonNull
   private final SingleRingTonePlayer singleRingTonePlayer;
   @NonNull
   private final SingleShakePlayer singleShakePlayer;
@@ -223,6 +233,8 @@ public class AppComponentImpl implements AppComponent {
   private final MemoryDataSharer<Vehicle> vehicleChoiceSharer;
   @NonNull
   private final LastUsedVehicleGateway lastUsedVehicleGateway;
+  @NonNull
+  private final AnnouncementViewModel announcementViewModel;
   // Типа кастомный скоуп.
   @Nullable
   private VehiclesAndOptionsGateway vehiclesAndOptionsGateway;
@@ -284,6 +296,19 @@ public class AppComponentImpl implements AppComponent {
             stompClient
         ), executorStateUseCase
     );
+    executorStateViewModel = new ExecutorStateViewModelImpl(
+        executorStateUseCase
+    );
+    updateMessageViewModel = new UpdateMessageViewModelImpl(
+        new UpdateMessageUseCaseImpl(
+            errorReporter,
+            new UpdateMessageGatewayImpl(
+                stompClient
+            ),
+            loginSharer
+        )
+    );
+    announcementViewModel = new AnnouncementViewModelImpl();
     singleRingTonePlayer = new SingleRingTonePlayer(appContext);
     singleShakePlayer = new SingleShakePlayer(
         appContext,
@@ -315,9 +340,7 @@ public class AppComponentImpl implements AppComponent {
         )
     );
     mainApplication.setExecutorStateViewModel(
-        new ExecutorStateViewModelImpl(
-            executorStateUseCase
-        )
+        executorStateViewModel
     );
     mainApplication.setGeoLocationViewModel(
         new GeoLocationViewModelImpl(
@@ -335,6 +358,9 @@ public class AppComponentImpl implements AppComponent {
             )
         )
     );
+    mainApplication.setUpdateMessageViewModel(
+        updateMessageViewModel
+    );
     mainApplication.setCurrentCostPollingViewModel(
         new CurrentCostPollingViewModelImpl(
             new CurrentCostPollingUseCaseImpl(
@@ -347,13 +373,19 @@ public class AppComponentImpl implements AppComponent {
         )
     );
     mainApplication.setAutoRouter(autoRouter);
-    mainApplication.setExecutorStateViewActions(autoRouter);
     mainApplication.setLifeCycleCallbacks(autoRouter);
   }
 
   @Override
+  public void inject(BaseActivity baseActivity) {
+    baseActivity.setExecutorStateViewModel(executorStateViewModel);
+    baseActivity.setUpdateMessageViewModel(updateMessageViewModel);
+    baseActivity.setAnnouncementViewModel(announcementViewModel);
+  }
+
+  @Override
   public void inject(FcmService fcmService) {
-    fcmService.setAnnouncementStateViewActions(autoRouter);
+    fcmService.setAnnouncementViewModel(announcementViewModel);
   }
 
   @Override

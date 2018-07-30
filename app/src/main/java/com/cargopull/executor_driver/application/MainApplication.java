@@ -20,7 +20,6 @@ import com.cargopull.executor_driver.presentation.cancelorderreasons.CancelOrder
 import com.cargopull.executor_driver.presentation.corebalance.CoreBalanceViewModel;
 import com.cargopull.executor_driver.presentation.currentcostpolling.CurrentCostPollingViewModel;
 import com.cargopull.executor_driver.presentation.executorstate.ExecutorStateNavigate;
-import com.cargopull.executor_driver.presentation.executorstate.ExecutorStateViewActions;
 import com.cargopull.executor_driver.presentation.executorstate.ExecutorStateViewModel;
 import com.cargopull.executor_driver.presentation.geolocation.GeoLocationViewModel;
 import com.cargopull.executor_driver.presentation.missedorder.MissedOrderViewActions;
@@ -126,11 +125,6 @@ public class MainApplication extends MultiDexApplication implements ServerConnec
   public void setCurrentCostPollingViewModel(
       @NonNull CurrentCostPollingViewModel currentCostPollingViewModel) {
     this.currentCostPollingViewModel = currentCostPollingViewModel;
-  }
-
-  @Inject
-  public void setExecutorStateViewActions(
-      @NonNull ExecutorStateViewActions executorStateViewActions) {
   }
 
   @Inject
