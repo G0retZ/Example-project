@@ -7,7 +7,7 @@ import io.reactivex.BackpressureStrategy;
 import io.reactivex.Completable;
 import javax.inject.Inject;
 
-class ServerTimeUseCaseImpl implements ServerTimeUseCase {
+public class ServerTimeUseCaseImpl implements ServerTimeUseCase {
 
   @NonNull
   private final ErrorReporter errorReporter;
@@ -19,7 +19,7 @@ class ServerTimeUseCaseImpl implements ServerTimeUseCase {
   private final TimeUtils timeUtils;
 
   @Inject
-  ServerTimeUseCaseImpl(@NonNull ErrorReporter errorReporter,
+  public ServerTimeUseCaseImpl(@NonNull ErrorReporter errorReporter,
       @NonNull ServerTimeGateway gateway,
       @NonNull DataReceiver<String> loginReceiver,
       @NonNull TimeUtils timeUtils) {

@@ -24,7 +24,7 @@ public class ServerTimeViewModelImpl extends ViewModel implements ServerTimeView
   private Disposable disposable = EmptyDisposable.INSTANCE;
 
   @Inject
-  ServerTimeViewModelImpl(@NonNull ServerTimeUseCase serverTimeUseCase) {
+  public ServerTimeViewModelImpl(@NonNull ServerTimeUseCase serverTimeUseCase) {
     this.serverTimeUseCase = serverTimeUseCase;
     navigateLiveData = new MutableLiveData<>();
   }

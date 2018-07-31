@@ -62,6 +62,7 @@ import com.cargopull.executor_driver.gateway.PasswordGatewayImpl;
 import com.cargopull.executor_driver.gateway.RoutePointApiMapper;
 import com.cargopull.executor_driver.gateway.SelectedVehicleAndOptionsGatewayImpl;
 import com.cargopull.executor_driver.gateway.ServerConnectionGatewayImpl;
+import com.cargopull.executor_driver.gateway.ServerTimeGatewayImpl;
 import com.cargopull.executor_driver.gateway.ServiceApiMapper;
 import com.cargopull.executor_driver.gateway.ServicesGatewayImpl;
 import com.cargopull.executor_driver.gateway.SmsCodeMapper;
@@ -96,6 +97,7 @@ import com.cargopull.executor_driver.interactor.OrderFulfillmentTimeUseCaseImpl;
 import com.cargopull.executor_driver.interactor.OrderRouteUseCaseImpl;
 import com.cargopull.executor_driver.interactor.OrderUseCaseImpl;
 import com.cargopull.executor_driver.interactor.ServerConnectionUseCaseImpl;
+import com.cargopull.executor_driver.interactor.ServerTimeUseCaseImpl;
 import com.cargopull.executor_driver.interactor.UpdateMessageUseCaseImpl;
 import com.cargopull.executor_driver.interactor.WaitingForClientUseCaseImpl;
 import com.cargopull.executor_driver.interactor.auth.LoginSharer;
@@ -144,6 +146,8 @@ import com.cargopull.executor_driver.presentation.phone.PhoneViewModelImpl;
 import com.cargopull.executor_driver.presentation.selectedvehicle.SelectedVehicleViewModelImpl;
 import com.cargopull.executor_driver.presentation.serverconnection.ServerConnectionViewModel;
 import com.cargopull.executor_driver.presentation.serverconnection.ServerConnectionViewModelImpl;
+import com.cargopull.executor_driver.presentation.servertime.ServerTimeViewModel;
+import com.cargopull.executor_driver.presentation.servertime.ServerTimeViewModelImpl;
 import com.cargopull.executor_driver.presentation.services.ServicesListItems;
 import com.cargopull.executor_driver.presentation.services.ServicesSliderViewModelImpl;
 import com.cargopull.executor_driver.presentation.services.ServicesViewModelImpl;
@@ -153,6 +157,7 @@ import com.cargopull.executor_driver.presentation.vehicleoptions.VehicleOptionsV
 import com.cargopull.executor_driver.presentation.waitingforclient.WaitingForClientViewModelImpl;
 import com.cargopull.executor_driver.utils.ErrorReporter;
 import com.cargopull.executor_driver.utils.ErrorReporterImpl;
+import com.cargopull.executor_driver.utils.TimeUtils;
 import com.cargopull.executor_driver.utils.TimeUtilsImpl;
 import com.cargopull.executor_driver.view.BalanceFragment;
 import com.cargopull.executor_driver.view.BalanceSummaryFragment;
@@ -204,6 +209,8 @@ public class AppComponentImpl implements AppComponent {
   @NonNull
   private final ErrorReporter errorReporter;
   @NonNull
+  private final TimeUtils timeUtils;
+  @NonNull
   private final AppSettingsService appSettingsService;
   @NonNull
   private final ApiService apiService;
@@ -225,6 +232,8 @@ public class AppComponentImpl implements AppComponent {
   private final ExecutorStateViewModelImpl executorStateViewModel;
   @NonNull
   private final UpdateMessageViewModelImpl updateMessageViewModel;
+  @NonNull
+  private final ServerTimeViewModel serverTimeViewModel;
   @NonNull
   private final SingleRingTonePlayer singleRingTonePlayer;
   @NonNull
@@ -261,6 +270,7 @@ public class AppComponentImpl implements AppComponent {
     vehicleChoiceSharer = new VehicleChoiceSharer();
     lastUsedVehicleGateway = new LastUsedVehicleGatewayImpl(appSettingsService);
     errorReporter = new ErrorReporterImpl(loginSharer);
+    timeUtils = new TimeUtilsImpl();
     serverConnectionViewModel = new ServerConnectionViewModelImpl(
         new ServerConnectionUseCaseImpl(
             new ServerConnectionGatewayImpl(
@@ -309,6 +319,16 @@ public class AppComponentImpl implements AppComponent {
                 stompClient
             ),
             loginSharer
+        )
+    );
+    serverTimeViewModel = new ServerTimeViewModelImpl(
+        new ServerTimeUseCaseImpl(
+            errorReporter,
+            new ServerTimeGatewayImpl(
+                stompClient
+            ),
+            loginSharer,
+            timeUtils
         )
     );
     announcementViewModel = new AnnouncementViewModelImpl();
@@ -375,6 +395,9 @@ public class AppComponentImpl implements AppComponent {
             )
         )
     );
+    mainApplication.setServerTimeViewModel(
+        serverTimeViewModel
+    );
     mainApplication.setAutoRouter(autoRouter);
     mainApplication.setLifeCycleCallbacks(autoRouter);
   }
@@ -385,6 +408,7 @@ public class AppComponentImpl implements AppComponent {
     baseActivity.setUpdateMessageViewModel(updateMessageViewModel);
     baseActivity.setAnnouncementViewModel(announcementViewModel);
     baseActivity.setServerConnectionViewModel(serverConnectionViewModel);
+    baseActivity.setServerTimeViewModel(serverTimeViewModel);
   }
 
   @Override
@@ -750,7 +774,7 @@ public class AppComponentImpl implements AppComponent {
                             )
                         )
                     ),
-                    new TimeUtilsImpl()
+                    timeUtils
                 )
             )
         ).get(OrderViewModelImpl.class)
@@ -801,7 +825,7 @@ public class AppComponentImpl implements AppComponent {
                             )
                         )
                     ),
-                    new TimeUtilsImpl()
+                    timeUtils
                 )
             )
         ).get(OrderViewModelImpl.class)
@@ -829,7 +853,7 @@ public class AppComponentImpl implements AppComponent {
                             )
                         )
                     ),
-                    new TimeUtilsImpl()
+                    timeUtils
                 )
             )
         ).get(OrderViewModelImpl.class)
@@ -891,7 +915,7 @@ public class AppComponentImpl implements AppComponent {
                             )
                         )
                     ),
-                    new TimeUtilsImpl()
+                    timeUtils
                 )
             )
         ).get(OrderViewModelImpl.class)
@@ -943,7 +967,7 @@ public class AppComponentImpl implements AppComponent {
                                 new RoutePointApiMapper()
                             )
                         ),
-                        new TimeUtilsImpl()
+                        timeUtils
                     )
                 )
             )
@@ -1039,7 +1063,7 @@ public class AppComponentImpl implements AppComponent {
                             )
                         )
                     ),
-                    new TimeUtilsImpl()
+                    timeUtils
                 )
             )
         ).get(OrderViewModelImpl.class)
@@ -1261,7 +1285,7 @@ public class AppComponentImpl implements AppComponent {
                             )
                         )
                     ),
-                    new TimeUtilsImpl()
+                    timeUtils
                 )
             )
         ).get(OrderViewModelImpl.class)
