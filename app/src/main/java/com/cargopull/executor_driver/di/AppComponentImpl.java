@@ -19,6 +19,7 @@ import com.cargopull.executor_driver.backend.vibro.SingleShakePlayer;
 import com.cargopull.executor_driver.backend.web.ApiService;
 import com.cargopull.executor_driver.backend.web.AuthorizationInterceptor;
 import com.cargopull.executor_driver.backend.web.ConnectivityInterceptor;
+import com.cargopull.executor_driver.backend.web.DeprecatedVersionInterceptor;
 import com.cargopull.executor_driver.backend.web.ReceiveTokenInterceptor;
 import com.cargopull.executor_driver.backend.web.SendTokenInterceptor;
 import com.cargopull.executor_driver.backend.web.SendVersionInterceptor;
@@ -248,6 +249,7 @@ public class AppComponentImpl implements AppComponent {
     OkHttpClient okHttpClient = initHttpClient(
         new ConnectivityInterceptor(appContext),
         new SendVersionInterceptor(),
+        new DeprecatedVersionInterceptor(),
         new AuthorizationInterceptor(),
         new SendTokenInterceptor(tokenKeeper),
         new ReceiveTokenInterceptor(tokenKeeper)
@@ -381,6 +383,7 @@ public class AppComponentImpl implements AppComponent {
     baseActivity.setExecutorStateViewModel(executorStateViewModel);
     baseActivity.setUpdateMessageViewModel(updateMessageViewModel);
     baseActivity.setAnnouncementViewModel(announcementViewModel);
+    baseActivity.setServerConnectionViewModel(serverConnectionViewModel);
   }
 
   @Override

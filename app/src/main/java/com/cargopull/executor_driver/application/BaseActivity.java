@@ -20,6 +20,8 @@ import com.cargopull.executor_driver.presentation.announcement.AnnouncementState
 import com.cargopull.executor_driver.presentation.announcement.AnnouncementViewModel;
 import com.cargopull.executor_driver.presentation.executorstate.ExecutorStateViewActions;
 import com.cargopull.executor_driver.presentation.executorstate.ExecutorStateViewModel;
+import com.cargopull.executor_driver.presentation.serverconnection.ServerConnectionNavigate;
+import com.cargopull.executor_driver.presentation.serverconnection.ServerConnectionViewModel;
 import com.cargopull.executor_driver.presentation.updatemessage.UpdateMessageViewActions;
 import com.cargopull.executor_driver.presentation.updatemessage.UpdateMessageViewModel;
 import com.cargopull.executor_driver.view.PendingDialogFragment;
@@ -57,6 +59,8 @@ public class BaseActivity extends AppCompatActivity implements ExecutorStateView
   @Nullable
   private AnnouncementViewModel announcementViewModel;
   @Nullable
+  private ServerConnectionViewModel serverConnectionViewModel;
+  @Nullable
   private Dialog onlineDialog;
   @Nullable
   private Dialog announcementDialog;
@@ -81,6 +85,12 @@ public class BaseActivity extends AppCompatActivity implements ExecutorStateView
     this.announcementViewModel = announcementViewModel;
   }
 
+  @Inject
+  public void setServerConnectionViewModel(
+      @NonNull ServerConnectionViewModel serverConnectionViewModel) {
+    this.serverConnectionViewModel = serverConnectionViewModel;
+  }
+
   @Override
   protected void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -92,6 +102,9 @@ public class BaseActivity extends AppCompatActivity implements ExecutorStateView
       throw new IllegalStateException("Граф зависимостей поломан!");
     }
     if (announcementViewModel == null) {
+      throw new IllegalStateException("Граф зависимостей поломан!");
+    }
+    if (serverConnectionViewModel == null) {
       throw new IllegalStateException("Граф зависимостей поломан!");
     }
     executorStateViewModel.getViewStateLiveData().observe(this, viewState -> {
@@ -107,6 +120,11 @@ public class BaseActivity extends AppCompatActivity implements ExecutorStateView
     announcementViewModel.getViewStateLiveData().observe(this, viewState -> {
       if (viewState != null) {
         viewState.apply(this);
+      }
+    });
+    serverConnectionViewModel.getNavigationLiveData().observe(this, destination -> {
+      if (destination != null) {
+        navigate(destination);
       }
     });
   }
@@ -216,6 +234,29 @@ public class BaseActivity extends AppCompatActivity implements ExecutorStateView
           errorDialog.show();
         }
         break;
+      case ServerConnectionNavigate.VERSION_DEPRECATED:
+        ((MainApplication) getApplication()).navigate(destination);
+        errorDialog = new Builder(this)
+            .setTitle(R.string.error)
+            .setMessage(R.string.version_deprecated)
+            .setCancelable(false)
+            .setPositiveButton(getString(R.string.update), (a, b) -> {
+              try {
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(
+                    "market://details?id=com.cargopull.executor_driver"
+                )));
+              } catch (android.content.ActivityNotFoundException e) {
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(
+                    "https://play.google.com/store/apps/details?id=com.cargopull.executor_driver"
+                )));
+              }
+            })
+            .setNegativeButton(getString(R.string.exit_app), (a, b) -> exitAndKill())
+            .create();
+        if (resumed) {
+          errorDialog.show();
+        }
+        break;
       case CommonNavigate.EXIT:
         ((MainApplication) getApplication()).navigate(destination);
         blockWithPending(true, "exit");
@@ -291,7 +332,6 @@ public class BaseActivity extends AppCompatActivity implements ExecutorStateView
   @Override
   public void showUpdateMessage(@NonNull String message) {
     updateDialog = new Builder(this)
-        .setTitle(R.string.information)
         .setMessage(message)
         .setCancelable(false)
         .setPositiveButton(getString(R.string.update), (dialog, which) -> {

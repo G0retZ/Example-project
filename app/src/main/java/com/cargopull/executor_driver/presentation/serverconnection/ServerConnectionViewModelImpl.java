@@ -5,6 +5,7 @@ import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
 import com.cargopull.executor_driver.backend.web.AuthorizationException;
+import com.cargopull.executor_driver.backend.web.DeprecatedVersionException;
 import com.cargopull.executor_driver.interactor.ServerConnectionUseCase;
 import com.cargopull.executor_driver.presentation.ViewState;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -61,6 +62,8 @@ public class ServerConnectionViewModelImpl extends ViewModel implements ServerCo
             throwable -> {
               if ((throwable instanceof AuthorizationException)) {
                 navigateLiveData.postValue(ServerConnectionNavigate.AUTHORIZE);
+              } else if ((throwable instanceof DeprecatedVersionException)) {
+                navigateLiveData.postValue(ServerConnectionNavigate.VERSION_DEPRECATED);
               }
             }
         );

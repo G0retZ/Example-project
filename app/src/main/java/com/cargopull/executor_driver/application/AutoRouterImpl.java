@@ -196,6 +196,8 @@ public class AutoRouterImpl implements ActivityLifecycleCallbacks, AutoRouter {
                 .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK)
         );
         break;
+      case ServerConnectionNavigate.VERSION_DEPRECATED:
+        break;
       case CommonNavigate.SERVER_DATA_ERROR:
         return;
       case CommonNavigate.EXIT:
@@ -255,13 +257,15 @@ public class AutoRouterImpl implements ActivityLifecycleCallbacks, AutoRouter {
         );
         break;
       default:
-        new Builder(currentActivity)
-            .setTitle(R.string.error)
-            .setMessage(R.string.status_unknown)
-            .setCancelable(false)
-            .setPositiveButton(currentActivity.getString(android.R.string.ok), null)
-            .create()
-            .show();
+        if (currentActivity != null) {
+          new Builder(currentActivity)
+              .setTitle(R.string.error)
+              .setMessage(R.string.status_unknown)
+              .setCancelable(false)
+              .setPositiveButton(currentActivity.getString(android.R.string.ok), null)
+              .create()
+              .show();
+        }
         return;
     }
     // Если переход сработал, то обнуляем направление. Если нет, то следующее активити попробует его обработать

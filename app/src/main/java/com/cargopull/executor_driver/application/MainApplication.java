@@ -225,6 +225,9 @@ public class MainApplication extends MultiDexApplication implements ServerConnec
       case ServerConnectionNavigate.AUTHORIZE:
         stopService();
         break;
+      case ServerConnectionNavigate.VERSION_DEPRECATED:
+        stopService();
+        break;
       case CommonNavigate.SERVER_DATA_ERROR:
         stopService();
         break;
