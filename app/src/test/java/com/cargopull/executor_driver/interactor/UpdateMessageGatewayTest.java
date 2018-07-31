@@ -218,7 +218,7 @@ public class UpdateMessageGatewayTest {
             new StompMessage(
                 "MESSAGE",
                 Collections.singletonList(new StompHeader("message", "UpdateVersion")),
-                "Message this\n"
+                "\"Message this\n\""
             )
         ));
 
@@ -302,7 +302,7 @@ public class UpdateMessageGatewayTest {
             new StompMessage(
                 "MESSAGE",
                 Collections.singletonList(new StompHeader("message", "UpdateVersion")),
-                "Message this\n"
+                "Message this"
             )
         ));
 
