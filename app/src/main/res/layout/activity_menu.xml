@@ -17,7 +17,15 @@
   <fragment
     android:id="@+id/fragment_menu"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="0dp"
+    android:layout_weight="1"
     android:name="com.cargopull.executor_driver.view.MenuFragment"
     tools:layout="@layout/fragment_menu"/>
+  <fragment
+    android:id="@+id/fragment_profile"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="24dp"
+    android:name="com.cargopull.executor_driver.view.ProfileFragment"
+    tools:layout="@layout/fragment_profile"/>
 </LinearLayout>
