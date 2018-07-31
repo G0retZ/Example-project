@@ -1,5 +1,7 @@
 package com.cargopull.executor_driver.presentation.executorstate;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.times;
@@ -87,6 +89,20 @@ public class ExecutorStateViewModelTest {
     verifyNoMoreInteractions(executorStateUseCase);
   }
 
+  /**
+   * Не должен трогать юзкейса.
+   */
+  @Test
+  public void doNotTouchUseCaseForMessageReadEvent() {
+    // Действие:
+    viewModel.messageConsumed();
+    viewModel.messageConsumed();
+    viewModel.messageConsumed();
+
+    // Результат:
+    verifyZeroInteractions(executorStateUseCase);
+  }
+
   /* Тетсируем сообщение. */
 
   /**
@@ -107,6 +123,30 @@ public class ExecutorStateViewModelTest {
     verify(viewStateObserver, only()).onChanged(viewStateCaptor.capture());
     viewStateCaptor.getValue().apply(viewActions);
     verify(viewActions, only()).showOnlineMessage("Message");
+  }
+
+  /**
+   * Должен показать сопутствующее открытой смене сообщение, затем null после его прочтения.
+   */
+  @Test
+  public void showShiftOpenedMessageThenNull() {
+    // Дано:
+    ExecutorState.SHIFT_OPENED.setData("Message");
+    when(executorStateUseCase.getExecutorStates(anyBoolean()))
+        .thenReturn(Flowable.just(ExecutorState.SHIFT_OPENED));
+
+    // Действие:
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.initializeExecutorState();
+    viewModel.messageConsumed();
+
+    // Результат:
+    verify(viewStateObserver, times(2)).onChanged(viewStateCaptor.capture());
+    assertEquals(2, viewStateCaptor.getAllValues().size());
+    assertNull(viewStateCaptor.getAllValues().get(1));
+    viewStateCaptor.getAllValues().get(0).apply(viewActions);
+    verify(viewActions, only()).showOnlineMessage("Message");
+    verifyNoMoreInteractions(viewStateObserver);
   }
 
   /**
@@ -166,6 +206,30 @@ public class ExecutorStateViewModelTest {
   }
 
   /**
+   * Должен показать сопутствующее онлайн сообщение, затем null после его прочтения.
+   */
+  @Test
+  public void showOnlineMessageThenNull() {
+    // Дано:
+    ExecutorState.ONLINE.setData("Message");
+    when(executorStateUseCase.getExecutorStates(anyBoolean()))
+        .thenReturn(Flowable.just(ExecutorState.ONLINE));
+
+    // Действие:
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.initializeExecutorState();
+    viewModel.messageConsumed();
+
+    // Результат:
+    verify(viewStateObserver, times(2)).onChanged(viewStateCaptor.capture());
+    assertEquals(2, viewStateCaptor.getAllValues().size());
+    assertNull(viewStateCaptor.getAllValues().get(1));
+    viewStateCaptor.getAllValues().get(0).apply(viewActions);
+    verify(viewActions, only()).showOnlineMessage("Message");
+    verifyNoMoreInteractions(viewStateObserver);
+  }
+
+  /**
    * Не должен показывать null сообщение.
    */
   @Test
@@ -220,6 +284,21 @@ public class ExecutorStateViewModelTest {
   }
 
   /* Тетсируем навигацию. */
+
+  /**
+   * Не должен никуда переходить.
+   */
+  @Test
+  public void navigateToNowhere() {
+    // Действие:
+    viewModel.getNavigationLiveData().observeForever(navigationObserver);
+    viewModel.messageConsumed();
+    viewModel.messageConsumed();
+    viewModel.messageConsumed();
+
+    // Результат:
+    verifyZeroInteractions(navigationObserver);
+  }
 
   /**
    * Должен вернуть "перейти к отсутствию сети".

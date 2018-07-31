@@ -20,7 +20,6 @@ import com.cargopull.executor_driver.presentation.cancelorderreasons.CancelOrder
 import com.cargopull.executor_driver.presentation.corebalance.CoreBalanceViewModel;
 import com.cargopull.executor_driver.presentation.currentcostpolling.CurrentCostPollingViewModel;
 import com.cargopull.executor_driver.presentation.executorstate.ExecutorStateNavigate;
-import com.cargopull.executor_driver.presentation.executorstate.ExecutorStateViewActions;
 import com.cargopull.executor_driver.presentation.executorstate.ExecutorStateViewModel;
 import com.cargopull.executor_driver.presentation.geolocation.GeoLocationViewModel;
 import com.cargopull.executor_driver.presentation.missedorder.MissedOrderViewActions;
@@ -28,6 +27,7 @@ import com.cargopull.executor_driver.presentation.missedorder.MissedOrderViewMod
 import com.cargopull.executor_driver.presentation.serverconnection.ServerConnectionNavigate;
 import com.cargopull.executor_driver.presentation.serverconnection.ServerConnectionViewActions;
 import com.cargopull.executor_driver.presentation.serverconnection.ServerConnectionViewModel;
+import com.cargopull.executor_driver.presentation.updatemessage.UpdateMessageViewModel;
 import com.cargopull.executor_driver.utils.Pair;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -60,11 +60,11 @@ public class MainApplication extends MultiDexApplication implements ServerConnec
   @Nullable
   private MissedOrderViewModel missedOrderViewModel;
   @Nullable
+  private UpdateMessageViewModel updateMessageViewModel;
+  @Nullable
   private CurrentCostPollingViewModel currentCostPollingViewModel;
   @Nullable
   private AutoRouter autoRouter;
-  @Nullable
-  private ExecutorStateViewActions executorStateViewActions;
   private int missedOrdersCount;
   @Nullable
   private NotificationManager notificationManager;
@@ -117,15 +117,14 @@ public class MainApplication extends MultiDexApplication implements ServerConnec
   }
 
   @Inject
-  public void setCurrentCostPollingViewModel(
-      @NonNull CurrentCostPollingViewModel currentCostPollingViewModel) {
-    this.currentCostPollingViewModel = currentCostPollingViewModel;
+  public void setUpdateMessageViewModel(@NonNull UpdateMessageViewModel updateMessageViewModel) {
+    this.updateMessageViewModel = updateMessageViewModel;
   }
 
   @Inject
-  public void setExecutorStateViewActions(
-      @NonNull ExecutorStateViewActions executorStateViewActions) {
-    this.executorStateViewActions = executorStateViewActions;
+  public void setCurrentCostPollingViewModel(
+      @NonNull CurrentCostPollingViewModel currentCostPollingViewModel) {
+    this.currentCostPollingViewModel = currentCostPollingViewModel;
   }
 
   @Inject
@@ -142,8 +141,8 @@ public class MainApplication extends MultiDexApplication implements ServerConnec
     appComponent.inject(this);
     if (cancelOrderReasonsViewModel == null || coreBalanceViewModel == null ||
         executorStateViewModel == null || geoLocationViewModel == null
-        || missedOrderViewModel == null || serverConnectionViewModel == null
-        || currentCostPollingViewModel == null) {
+        || missedOrderViewModel == null || updateMessageViewModel == null
+        || serverConnectionViewModel == null || currentCostPollingViewModel == null) {
       throw new RuntimeException("Shit! WTF?!");
     }
     serverConnectionViewModel.getViewStateLiveData().observeForever(viewState -> {
@@ -151,13 +150,8 @@ public class MainApplication extends MultiDexApplication implements ServerConnec
         viewState.apply(this);
       }
     });
-    executorStateViewModel.getViewStateLiveData().observeForever(viewState -> {
-      if (viewState != null && executorStateViewActions != null) {
-        viewState.apply(executorStateViewActions);
-      }
-    });
     missedOrderViewModel.getViewStateLiveData().observeForever(viewState -> {
-      if (viewState != null && executorStateViewActions != null) {
+      if (viewState != null) {
         viewState.apply(this);
       }
     });
@@ -199,6 +193,9 @@ public class MainApplication extends MultiDexApplication implements ServerConnec
       if (missedOrderViewModel == null) {
         throw new IllegalStateException("Граф зависимостей поломан!");
       }
+      if (updateMessageViewModel == null) {
+        throw new IllegalStateException("Граф зависимостей поломан!");
+      }
       if (currentCostPollingViewModel == null) {
         throw new IllegalStateException("Граф зависимостей поломан!");
       }
@@ -206,6 +203,7 @@ public class MainApplication extends MultiDexApplication implements ServerConnec
       cancelOrderReasonsViewModel.initializeCancelOrderReasons();
       coreBalanceViewModel.initializeExecutorBalance();
       missedOrderViewModel.initializeMissedOrderMessages();
+      updateMessageViewModel.initializeUpdateMessages();
       currentCostPollingViewModel.initializeCurrentCostPolling();
       initGeoLocation();
     } else {
@@ -225,6 +223,9 @@ public class MainApplication extends MultiDexApplication implements ServerConnec
     }
     switch (destination) {
       case ServerConnectionNavigate.AUTHORIZE:
+        stopService();
+        break;
+      case ServerConnectionNavigate.VERSION_DEPRECATED:
         stopService();
         break;
       case CommonNavigate.SERVER_DATA_ERROR:

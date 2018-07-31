@@ -8,6 +8,11 @@ import com.cargopull.executor_driver.presentation.ViewModel;
 public interface ExecutorStateViewModel extends ViewModel<ExecutorStateViewActions> {
 
   /**
+   * Сообщает о том что сообщение прочитано.
+   */
+  void messageConsumed();
+
+  /**
    * Запрашивает подписку на статус исполнителя со сбросом.
    */
   void initializeExecutorState();

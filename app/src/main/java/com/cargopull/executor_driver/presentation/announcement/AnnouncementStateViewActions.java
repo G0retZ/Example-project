@@ -10,7 +10,7 @@ public interface AnnouncementStateViewActions {
   /**
    * Показать объявление.
    *
-   * @param message текс сообщения
+   * @param message текст сообщения
    */
-  void showMessage(@NonNull String message);
+  void showAnnouncementMessage(@NonNull String message);
 }
