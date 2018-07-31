@@ -6,7 +6,7 @@ import io.reactivex.Completable;
 /**
  * Юзкейс получения текущего времени сервера.
  */
-interface ServerTimeUseCase {
+public interface ServerTimeUseCase {
 
   /**
    * Запрашивает потребление текущих временных меток сервера.
