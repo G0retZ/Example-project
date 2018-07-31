@@ -6,7 +6,7 @@ import io.reactivex.Flowable;
 /**
  * Гейтвей получения текущего времени сервера.
  */
-interface ServerTimeGateway {
+public interface ServerTimeGateway {
 
   /**
    * Получать текущие временные метки сервера.
