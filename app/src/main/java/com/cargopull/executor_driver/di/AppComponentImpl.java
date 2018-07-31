@@ -177,6 +177,7 @@ import com.cargopull.executor_driver.view.OrderFulfillmentActionsDialogFragment;
 import com.cargopull.executor_driver.view.OrderFulfillmentDetailsFragment;
 import com.cargopull.executor_driver.view.OrderFulfillmentFragment;
 import com.cargopull.executor_driver.view.OrderRouteFragment;
+import com.cargopull.executor_driver.view.ProfileFragment;
 import com.cargopull.executor_driver.view.SelectedVehicleFragment;
 import com.cargopull.executor_driver.view.SelectedVehicleOptionsFragment;
 import com.cargopull.executor_driver.view.ServerConnectionFragment;
@@ -1290,6 +1291,11 @@ public class AppComponentImpl implements AppComponent {
             )
         ).get(OrderRouteViewModelImpl.class)
     );
+  }
+
+  @Override
+  public void inject(ProfileFragment profileFragment) {
+    profileFragment.setAppSettings(appSettingsService);
   }
 
   private OkHttpClient initHttpClient(@NonNull Interceptor... interceptors) {
