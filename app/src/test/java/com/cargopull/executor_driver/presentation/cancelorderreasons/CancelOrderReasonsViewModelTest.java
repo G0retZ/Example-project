@@ -40,7 +40,7 @@ public class CancelOrderReasonsViewModelTest {
   @Mock
   private Observer<String> navigationObserver;
   @Mock
-  private Observer<ViewState<CancelOrderReasonsViewActions>> viewStateObserver;
+  private Observer<ViewState<Runnable>> viewStateObserver;
   @Mock
   private CancelOrderUseCase cancelOrderUseCase;
   @Mock

@@ -5,7 +5,7 @@ import com.cargopull.executor_driver.presentation.ViewModel;
 /**
  * ViewModel основы баланса.
  */
-public interface CoreBalanceViewModel extends ViewModel<CoreBalanceViewActions> {
+public interface CoreBalanceViewModel extends ViewModel<Runnable> {
 
   /**
    * Запрашивает подписку на основу баланса со сбросом кеша.
