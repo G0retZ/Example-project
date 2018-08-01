@@ -22,6 +22,7 @@ import com.cargopull.executor_driver.presentation.executorstate.ExecutorStateVie
 import com.cargopull.executor_driver.presentation.executorstate.ExecutorStateViewModel;
 import com.cargopull.executor_driver.presentation.serverconnection.ServerConnectionNavigate;
 import com.cargopull.executor_driver.presentation.serverconnection.ServerConnectionViewModel;
+import com.cargopull.executor_driver.presentation.servertime.ServerTimeViewModel;
 import com.cargopull.executor_driver.presentation.updatemessage.UpdateMessageViewActions;
 import com.cargopull.executor_driver.presentation.updatemessage.UpdateMessageViewModel;
 import com.cargopull.executor_driver.view.PendingDialogFragment;
@@ -61,6 +62,8 @@ public class BaseActivity extends AppCompatActivity implements ExecutorStateView
   @Nullable
   private ServerConnectionViewModel serverConnectionViewModel;
   @Nullable
+  private ServerTimeViewModel serverTimeViewModel;
+  @Nullable
   private Dialog onlineDialog;
   @Nullable
   private Dialog announcementDialog;
@@ -91,6 +94,11 @@ public class BaseActivity extends AppCompatActivity implements ExecutorStateView
     this.serverConnectionViewModel = serverConnectionViewModel;
   }
 
+  @Inject
+  public void setServerTimeViewModel(@Nullable ServerTimeViewModel serverTimeViewModel) {
+    this.serverTimeViewModel = serverTimeViewModel;
+  }
+
   @Override
   protected void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -105,6 +113,9 @@ public class BaseActivity extends AppCompatActivity implements ExecutorStateView
       throw new IllegalStateException("Граф зависимостей поломан!");
     }
     if (serverConnectionViewModel == null) {
+      throw new IllegalStateException("Граф зависимостей поломан!");
+    }
+    if (serverTimeViewModel == null) {
       throw new IllegalStateException("Граф зависимостей поломан!");
     }
     executorStateViewModel.getViewStateLiveData().observe(this, viewState -> {
@@ -123,6 +134,11 @@ public class BaseActivity extends AppCompatActivity implements ExecutorStateView
       }
     });
     serverConnectionViewModel.getNavigationLiveData().observe(this, destination -> {
+      if (destination != null) {
+        navigate(destination);
+      }
+    });
+    serverTimeViewModel.getNavigationLiveData().observe(this, destination -> {
       if (destination != null) {
         navigate(destination);
       }

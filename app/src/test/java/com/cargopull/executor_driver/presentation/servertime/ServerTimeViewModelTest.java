@@ -1,4 +1,4 @@
-package com.cargopull.executor_driver.presentation.currentcostpolling;
+package com.cargopull.executor_driver.presentation.servertime;
 
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.times;
@@ -10,7 +10,7 @@ import static org.mockito.Mockito.when;
 import android.arch.core.executor.testing.InstantTaskExecutorRule;
 import android.arch.lifecycle.Observer;
 import com.cargopull.executor_driver.gateway.DataMappingException;
-import com.cargopull.executor_driver.interactor.CurrentCostPollingUseCase;
+import com.cargopull.executor_driver.interactor.ServerTimeUseCase;
 import com.cargopull.executor_driver.presentation.CommonNavigate;
 import com.cargopull.executor_driver.presentation.ViewState;
 import io.reactivex.Completable;
@@ -26,62 +26,61 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
-public class CurrentCostPollingViewModelTest {
+public class ServerTimeViewModelTest {
 
   @Rule
   public TestRule rule = new InstantTaskExecutorRule();
-  private CurrentCostPollingViewModel currentCostPollingViewModel;
+  private ServerTimeViewModel currentCostPollingViewModel;
   @Mock
   private Observer<String> navigationObserver;
   @Mock
   private Observer<ViewState<Runnable>> viewStateObserver;
 
   @Mock
-  private CurrentCostPollingUseCase useCase;
+  private ServerTimeUseCase useCase;
 
   @Before
   public void setUp() {
     RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
     RxAndroidPlugins.setInitMainThreadSchedulerHandler(scheduler -> Schedulers.trampoline());
-    when(useCase.listenForPolling()).thenReturn(Completable.never());
-    currentCostPollingViewModel = new CurrentCostPollingViewModelImpl(useCase);
+    when(useCase.getServerTime()).thenReturn(Completable.never());
+    currentCostPollingViewModel = new ServerTimeViewModelImpl(useCase);
   }
 
   /* Тетсируем работу с юзкейсом. */
 
   /**
-   * Должен просить у юзкейса начать поллинг, даже если уже подписан.
+   * Должен просить у юзкейса получать текущеее времея сервера, даже если уже подписан.
    */
   @Test
-  public void askUseCaseToSubscribeToCurrentCostPolling() {
+  public void askUseCaseToSubscribeToServerTime() {
     // Действие:
-    currentCostPollingViewModel.initializeCurrentCostPolling();
-    currentCostPollingViewModel.initializeCurrentCostPolling();
-    currentCostPollingViewModel.initializeCurrentCostPolling();
+    currentCostPollingViewModel.initializeServerTime();
+    currentCostPollingViewModel.initializeServerTime();
+    currentCostPollingViewModel.initializeServerTime();
 
     // Результат:
-    verify(useCase, times(3)).listenForPolling();
+    verify(useCase, times(3)).getServerTime();
     verifyNoMoreInteractions(useCase);
   }
 
   /**
-   * Должен просить у юзкейса начать поллинг снова после завершения.
+   * Не должен просить у юзкейса получать текущеее времея сервера снова после завершения.
    */
   @Test
-  public void askUseCaseToSubscribeToCurrentCostPollingAfterComplete() {
+  public void askUseCaseToSubscribeToServerTimeAfterComplete() {
     // Дано:
-    when(useCase.listenForPolling()).thenReturn(
+    when(useCase.getServerTime()).thenReturn(
         Completable.complete(),
         Completable.complete(),
         Completable.never()
     );
 
     // Действие:
-    currentCostPollingViewModel.initializeCurrentCostPolling();
+    currentCostPollingViewModel.initializeServerTime();
 
     // Результат:
-    verify(useCase, times(3)).listenForPolling();
-    verifyNoMoreInteractions(useCase);
+    verify(useCase, only()).getServerTime();
   }
 
   /* Тетсируем переключение состояния. */
@@ -92,14 +91,14 @@ public class CurrentCostPollingViewModelTest {
   @Test
   public void doNotTouchViewActionsOnComplete() {
     // Дано:
-    when(useCase.listenForPolling()).thenReturn(
+    when(useCase.getServerTime()).thenReturn(
         Completable.complete(),
         Completable.never()
     );
 
     // Действие:
     currentCostPollingViewModel.getViewStateLiveData().observeForever(viewStateObserver);
-    currentCostPollingViewModel.initializeCurrentCostPolling();
+    currentCostPollingViewModel.initializeServerTime();
 
     // Результат:
     verifyZeroInteractions(viewStateObserver);
@@ -111,11 +110,11 @@ public class CurrentCostPollingViewModelTest {
   @Test
   public void doNotTouchViewActionsOnNetworkError() {
     // Дано:
-    when(useCase.listenForPolling()).thenReturn(Completable.error(IllegalStateException::new));
+    when(useCase.getServerTime()).thenReturn(Completable.error(IllegalStateException::new));
 
     // Действие:
     currentCostPollingViewModel.getViewStateLiveData().observeForever(viewStateObserver);
-    currentCostPollingViewModel.initializeCurrentCostPolling();
+    currentCostPollingViewModel.initializeServerTime();
 
     // Результат:
     verifyZeroInteractions(viewStateObserver);
@@ -127,11 +126,11 @@ public class CurrentCostPollingViewModelTest {
   @Test
   public void doNotTouchViewActionsOnMappingError() {
     // Дано:
-    when(useCase.listenForPolling()).thenReturn(Completable.error(DataMappingException::new));
+    when(useCase.getServerTime()).thenReturn(Completable.error(DataMappingException::new));
 
     // Действие:
     currentCostPollingViewModel.getViewStateLiveData().observeForever(viewStateObserver);
-    currentCostPollingViewModel.initializeCurrentCostPolling();
+    currentCostPollingViewModel.initializeServerTime();
 
     // Результат:
     verifyZeroInteractions(viewStateObserver);
@@ -143,11 +142,11 @@ public class CurrentCostPollingViewModelTest {
   @Test
   public void doNotTouchViewActionsOnOtherError() {
     // Дано:
-    when(useCase.listenForPolling()).thenReturn(Completable.error(Exception::new));
+    when(useCase.getServerTime()).thenReturn(Completable.error(Exception::new));
 
     // Действие:
     currentCostPollingViewModel.getViewStateLiveData().observeForever(viewStateObserver);
-    currentCostPollingViewModel.initializeCurrentCostPolling();
+    currentCostPollingViewModel.initializeServerTime();
 
     // Результат:
     verifyZeroInteractions(viewStateObserver);
@@ -161,11 +160,11 @@ public class CurrentCostPollingViewModelTest {
   @Test
   public void navigateToServerDataError() {
     // Дано:
-    when(useCase.listenForPolling()).thenReturn(Completable.error(DataMappingException::new));
+    when(useCase.getServerTime()).thenReturn(Completable.error(DataMappingException::new));
 
     // Действие:
     currentCostPollingViewModel.getNavigationLiveData().observeForever(navigationObserver);
-    currentCostPollingViewModel.initializeCurrentCostPolling();
+    currentCostPollingViewModel.initializeServerTime();
 
     // Результат:
     verify(navigationObserver, only()).onChanged(CommonNavigate.SERVER_DATA_ERROR);
@@ -177,11 +176,11 @@ public class CurrentCostPollingViewModelTest {
   @Test
   public void doNotNavigateForOtherError() {
     // Дано:
-    when(useCase.listenForPolling()).thenReturn(Completable.error(InterruptedException::new));
+    when(useCase.getServerTime()).thenReturn(Completable.error(InterruptedException::new));
 
     // Действие:
     currentCostPollingViewModel.getNavigationLiveData().observeForever(navigationObserver);
-    currentCostPollingViewModel.initializeCurrentCostPolling();
+    currentCostPollingViewModel.initializeServerTime();
 
     // Результат:
     verifyZeroInteractions(navigationObserver);
@@ -193,14 +192,14 @@ public class CurrentCostPollingViewModelTest {
   @Test
   public void doNotNavigateForComplete() {
     // Дано:
-    when(useCase.listenForPolling()).thenReturn(
+    when(useCase.getServerTime()).thenReturn(
         Completable.complete(),
         Completable.never()
     );
 
     // Действие:
     currentCostPollingViewModel.getNavigationLiveData().observeForever(navigationObserver);
-    currentCostPollingViewModel.initializeCurrentCostPolling();
+    currentCostPollingViewModel.initializeServerTime();
 
     // Результат:
     verifyZeroInteractions(navigationObserver);
