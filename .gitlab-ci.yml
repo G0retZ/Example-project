@@ -16,10 +16,10 @@ debug_build:
     - android
   only:
     - dev
-    - /^feature\/RUCAP.*$/
-    - /^refactor\/RUCAP.*$/
-    - /^bugfix\/RUCAP.*$/
-    - /^performance\/RUCAP.*$/
+    - /^feature.*$/
+    - /^refactor.*$/
+    - /^bugfix.*$/
+    - /^performance.*$/
   except:
     - branches
   script:
@@ -38,7 +38,7 @@ staging_build:
     - android
   only:
     - /^release.*$/
-    - /^hotfix\/RUCAP.*$/
+    - /^hotfix.*$/
   except:
     - branches
   script:
@@ -89,10 +89,10 @@ feature_deploy:
   tags:
     - android
   only:
-    - /^feature\/RUCAP.*$/
-    - /^refactor\/RUCAP.*$/
-    - /^bugfix\/RUCAP.*$/
-    - /^performance\/RUCAP.*$/
+    - /^feature.*$/
+    - /^refactor.*$/
+    - /^bugfix.*$/
+    - /^performance.*$/
   except:
     - branches
   script:
@@ -131,7 +131,7 @@ staging_deploy:
     - android
   only:
     - /^release.*$/
-    - /^hotfix\/RUCAP.*$/
+    - /^hotfix.*$/
   except:
     - branches
   script:
