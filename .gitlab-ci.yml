@@ -1,9 +1,5 @@
 image: gitlab.capsrv.xyz:5000/android-ci:latest
 
-stages:
-- test
-- build
-
 before_script:
 - export GRADLE_USER_HOME=$(pwd)/.gradle
 - chmod +x ./gradlew
@@ -13,30 +9,156 @@ cache:
   paths:
   - .gradle/
 
-gradlew_test:
+# Зачищаем для сборок dev и веток юзер сторей
+debug_build:
+  stage: build
+  tags:
+    - android
+  only:
+    - dev
+    - /^feature\/RUCAP.*$/
+    - /^refactor\/RUCAP.*$/
+    - /^bugfix\/RUCAP.*$/
+    - /^performance\/RUCAP.*$/
+  except:
+    - branches
+  script:
+    - ./gradlew clean :app:generatePureDebugSources --no-daemon
+  artifacts:
+    name: "reports_${CI_PROJECT_NAME}_${CI_COMMIT_REF_NAME}_${CI_JOB_NAME}_${CI_JOB_ID}"
+    when: always
+    paths:
+      - app/build/reports/
+    expire_in: 1 day
+
+# Зачищаем для сборок release-*
+staging_build:
+  stage: build
+  tags:
+    - android
+  only:
+    - /^release.*$/
+    - /^hotfix\/RUCAP.*$/
+  except:
+    - branches
+  script:
+    - ./gradlew clean :app:generateStagingReleaseSources --no-daemon
+  artifacts:
+    name: "reports_${CI_PROJECT_NAME}_${CI_COMMIT_REF_NAME}_${CI_JOB_NAME}_${CI_JOB_ID}"
+    when: always
+    paths:
+      - app/build/reports/
+    expire_in: 1 day
+
+# Зачищаем для сборок выкаченных версий
+release_build:
+  stage: build
+  tags:
+    - android
+  only:
+    - tags
+    - /^\d+\.\d+\.\d+$/
+  except:
+    - branches
+  script:
+    - ./gradlew clean :app:generatePureReleaseSources --no-daemon
+  artifacts:
+    name: "reports_${CI_PROJECT_NAME}_${CI_COMMIT_REF_NAME}_${CI_JOB_NAME}_${CI_JOB_ID}"
+    when: always
+    paths:
+      - app/build/reports/
+    expire_in: 1 day
+
+# Запускаем юнит тесты всегда
+unit_test:
   stage: test
   tags:
-    - testing-apk
+    - android
   script:
   - ./gradlew test --no-daemon
   artifacts:
-    name: "reports_${CI_PROJECT_NAME}_${CI_BUILD_REF_NAME}_${CI_JOB_NAME}_${CI_JOB_ID}"
+    name: "reports_${CI_PROJECT_NAME}_${CI_COMMIT_REF_NAME}_${CI_JOB_NAME}_${CI_JOB_ID}"
     when: always
     paths:
       - app/build/reports/
     expire_in: 1 day
     
-android_build:
-  stage: build
+# Деплоим ветки юзер сторей в APK
+feature_deploy:
+  stage: deploy
   tags:
-    - testing-apk
+    - android
+  only:
+    - /^feature\/RUCAP.*$/
+    - /^refactor\/RUCAP.*$/
+    - /^bugfix\/RUCAP.*$/
+    - /^performance\/RUCAP.*$/
+  except:
+    - branches
   script:
-    - ./gradlew clean assembleDebug  --no-daemon
-    - cp app/build/outputs/apk/debug/*.apk /opt/build/
-    - ./gradlew clean assembleStaging  --no-daemon
-    - cp app/build/outputs/apk/staging/*.apk /opt/build/
+    - ./gradlew assemblePureDebug  --no-daemon
+    - "cp app/build/outputs/apk/pure/debug/app_pure_debug.apk /opt/build/executor_app-`git rev-parse --abbrev-ref HEAD | sed -e 's/.*\(RUCAP-[0-9]*\).*/\1/'`.apk"
   artifacts:
-    name: "build_${CI_PROJECT_NAME}_${CI_BUILD_REF_NAME}_${CI_JOB_NAME}_${CI_JOB_ID}"
+    name: "build_${CI_PROJECT_NAME}_${CI_COMMIT_REF_NAME}_${CI_JOB_NAME}_${CI_JOB_ID}"
+    when: always
+    paths:
+      - app/build/outputs/apk/
+    expire_in: 1 day
+
+# Деплоим dev в APK
+debug_deploy:
+  stage: deploy
+  tags:
+    - android
+  only:
+    - dev
+  except:
+    - branches
+  script:
+    - ./gradlew assemblePureDebug  --no-daemon
+    - cp app/build/outputs/apk/debug/app_pure_debug.apk /opt/build/executor_app_debug.apk
+  artifacts:
+    name: "build_${CI_PROJECT_NAME}_${CI_COMMIT_REF_NAME}_${CI_JOB_NAME}_${CI_JOB_ID}"
+    when: always
+    paths:
+      - app/build/outputs/apk/
+    expire_in: 1 day
+
+# Деплоим release-* в APK
+staging_deploy:
+  stage: deploy
+  tags:
+    - android
+  only:
+    - /^release.*$/
+    - /^hotfix\/RUCAP.*$/
+  except:
+    - branches
+  script:
+    - ./gradlew assembleStagingRelease  --no-daemon
+    - cp app/build/outputs/apk/debug/app_staging_release.apk /opt/build/executor_app_staging.apk
+  artifacts:
+    name: "build_${CI_PROJECT_NAME}_${CI_COMMIT_REF_NAME}_${CI_JOB_NAME}_${CI_JOB_ID}"
+    when: always
+    paths:
+      - app/build/outputs/apk/
+    expire_in: 1 day
+
+# Деплоим саму релизную сборку по новому тэгу для выкладывания на маркет
+release_deploy:
+  stage: deploy
+  tags:
+    - android
+  only:
+    - tags
+    - /^\d+\.\d+\.\d+$/
+  except:
+    - branches
+  script:
+    - ./gradlew assemblePureRelease  --no-daemon
+    - cp app/build/outputs/apk/debug/app_pure_release.apk /opt/build/executor_app_release.apk
+  artifacts:
+    name: "build_${CI_PROJECT_NAME}_${CI_COMMIT_REF_NAME}_${CI_JOB_NAME}_${CI_JOB_ID}"
     when: always
     paths:
       - app/build/outputs/apk/
