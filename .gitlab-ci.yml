@@ -15,7 +15,7 @@ cache:
   - .gradle/
 
 # Зачищаем для сборок dev и веток юзер сторей
-debug_build:
+debug_clean:
   stage: build
   tags:
     - android
@@ -35,7 +35,7 @@ debug_build:
     expire_in: 1 day
 
 # Зачищаем для сборок release-*
-staging_build:
+staging_clean:
   stage: build
   tags:
     - android
@@ -52,7 +52,7 @@ staging_build:
     expire_in: 1 day
 
 # Зачищаем для сборок выкаченных версий
-release_build:
+release_clean:
   stage: build
   tags:
     - android
@@ -104,7 +104,7 @@ feature_deploy:
     expire_in: 1 day
 
 # Деплоим dev в APK
-debug_deploy:
+develop_deploy:
   stage: deploy
   tags:
     - android
