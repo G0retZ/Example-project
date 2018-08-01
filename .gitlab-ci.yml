@@ -82,7 +82,7 @@ unit_test:
     paths:
       - app/build/reports/
     expire_in: 1 day
-    
+
 # Деплоим ветки юзер сторей в APK
 feature_deploy:
   stage: deploy
@@ -95,7 +95,7 @@ feature_deploy:
     - /^performance.*$/
   script:
     - ./gradlew assemblePureDebug  --no-daemon
-    - cp app/build/outputs/apk/pure/debug/app_pure_debug.apk "/opt/build/executor_app-`git rev-parse --abbrev-ref HEAD | sed -e 's/.*\(RUCAP-[0-9]*\).*/\1/'`.apk"
+    - cp app/build/outputs/apk/pure/debug/app-pure-debug.apk "/opt/build/executor-app-`git rev-parse --abbrev-ref HEAD | sed -e 's/.*\(RUCAP-[0-9]*\).*/\1/'`.apk"
   artifacts:
     name: "build_${CI_PROJECT_NAME}_${CI_COMMIT_REF_NAME}_${CI_JOB_NAME}_${CI_JOB_ID}"
     when: always
@@ -112,7 +112,7 @@ debug_deploy:
     - dev
   script:
     - ./gradlew assemblePureDebug  --no-daemon
-    - cp app/build/outputs/apk/debug/app_pure_debug.apk /opt/build/executor_app_debug.apk
+    - cp app/build/outputs/apk/debug/app-pure-debug.apk /opt/build/executor-app-debug.apk
   artifacts:
     name: "build_${CI_PROJECT_NAME}_${CI_COMMIT_REF_NAME}_${CI_JOB_NAME}_${CI_JOB_ID}"
     when: always
@@ -130,7 +130,7 @@ staging_deploy:
     - /^hotfix.*$/
   script:
     - ./gradlew assembleStagingRelease  --no-daemon
-    - cp app/build/outputs/apk/debug/app_staging_release.apk /opt/build/executor_app_staging.apk
+    - cp app/build/outputs/apk/debug/app-staging-release.apk /opt/build/executor-app-staging.apk
   artifacts:
     name: "build_${CI_PROJECT_NAME}_${CI_COMMIT_REF_NAME}_${CI_JOB_NAME}_${CI_JOB_ID}"
     when: always
@@ -149,7 +149,7 @@ release_deploy:
     - branches
   script:
     - ./gradlew assemblePureRelease  --no-daemon
-    - cp app/build/outputs/apk/debug/app_pure_release.apk /opt/build/executor_app_release.apk
+    - cp app/build/outputs/apk/debug/app-pure-release.apk /opt/build/executor-app-release.apk
   artifacts:
     name: "build_${CI_PROJECT_NAME}_${CI_COMMIT_REF_NAME}_${CI_JOB_NAME}_${CI_JOB_ID}"
     when: always
