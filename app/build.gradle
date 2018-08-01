@@ -30,7 +30,6 @@ android {
         applicationId "com.cargopull.executor_driver"
         minSdkVersion 16
         targetSdkVersion 27
-        multiDexEnabled true
         versionCode 2
         versionName "1.0.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -63,17 +62,6 @@ android {
             applicationIdSuffix ".debug"
             debuggable true
         }
-        /**
-         * The `initWith` property allows you to copy configurations from other build types,
-         * then configure just the settings you want to change. This one copies the debug build
-         * type, and then changes the manifest placeholder and application ID.
-         */
-        staging {
-            initWith debug
-            applicationIdSuffix ".staging"
-            buildConfigField 'String', 'BASE_URL', '"http://stg.capsrv.xyz:8080/executor/"'
-            buildConfigField 'String', 'SOCKET_URL', '"ws://stg.capsrv.xyz:8080/executor/ws"'
-        }
     }
     compileOptions {
         targetCompatibility JavaVersion.VERSION_1_8
@@ -81,6 +69,25 @@ android {
     }
     testOptions {
         unitTests.returnDefaultValues = true
+    }
+    flavorDimensions "main"
+    productFlavors {
+        pure {
+        }
+        staging {
+            applicationIdSuffix ".staging"
+            buildConfigField 'String', 'BASE_URL', '"http://stg.capsrv.xyz:8080/executor/"'
+            buildConfigField 'String', 'SOCKET_URL', '"ws://stg.capsrv.xyz:8080/executor/ws"'
+        }
+    }
+
+    variantFilter { variant ->
+        def names = variant.flavors*.name
+        // To check for a certain build type, use variant.buildType.name == "<buildType>"
+        if (names.contains("staging") && variant.buildType.name == "debug") {
+            // Gradle ignores any variants that satisfy the conditions above.
+            setIgnore(true)
+        }
     }
 }
 
@@ -124,8 +131,6 @@ dependencies {
     implementation 'com.google.firebase:firebase-core:16.0.1'
     // Analytics
     implementation 'com.crashlytics.sdk.android:crashlytics:2.9.4'
-    // Multi DEX
-    implementation 'com.android.support:multidex:1.0.3'
     // Testing
     testImplementation 'junit:junit:4.12'
     testImplementation 'org.mockito:mockito-core:2.13.0'
