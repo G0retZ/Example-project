@@ -1,5 +1,6 @@
 package com.cargopull.executor_driver.application;
 
+import android.app.Application;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
@@ -8,7 +9,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RawRes;
 import android.support.annotation.StringRes;
-import android.support.multidex.MultiDexApplication;
 import android.support.v4.app.NotificationCompat.Builder;
 import com.cargopull.executor_driver.R;
 import com.cargopull.executor_driver.backend.ringtone.RingTonePlayer;
@@ -38,7 +38,7 @@ import javax.inject.Inject;
  * Application.
  */
 
-public class MainApplication extends MultiDexApplication implements ServerConnectionViewActions,
+public class MainApplication extends Application implements ServerConnectionViewActions,
     MissedOrderViewActions {
 
   @Nullable

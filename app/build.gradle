@@ -30,7 +30,6 @@ android {
         applicationId "com.cargopull.executor_driver"
         minSdkVersion 16
         targetSdkVersion 27
-        multiDexEnabled true
         versionCode 2
         versionName "1.0.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -132,8 +131,6 @@ dependencies {
     implementation 'com.google.firebase:firebase-core:16.0.1'
     // Analytics
     implementation 'com.crashlytics.sdk.android:crashlytics:2.9.4'
-    // Multi DEX
-    implementation 'com.android.support:multidex:1.0.3'
     // Testing
     testImplementation 'junit:junit:4.12'
     testImplementation 'org.mockito:mockito-core:2.13.0'
