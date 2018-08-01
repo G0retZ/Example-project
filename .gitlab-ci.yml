@@ -25,8 +25,6 @@ debug_build:
     - /^refactor.*$/
     - /^bugfix.*$/
     - /^performance.*$/
-  except:
-    - branches
   script:
     - ./gradlew clean :app:generatePureDebugSources --no-daemon
   artifacts:
@@ -44,8 +42,6 @@ staging_build:
   only:
     - /^release.*$/
     - /^hotfix.*$/
-  except:
-    - branches
   script:
     - ./gradlew clean :app:generateStagingReleaseSources --no-daemon
   artifacts:
@@ -61,7 +57,6 @@ release_build:
   tags:
     - android
   only:
-    - tags
     - /^\d+\.\d+\.\d+$/
   except:
     - branches
@@ -98,8 +93,6 @@ feature_deploy:
     - /^refactor.*$/
     - /^bugfix.*$/
     - /^performance.*$/
-  except:
-    - branches
   script:
     - ./gradlew assemblePureDebug  --no-daemon
     - cp app/build/outputs/apk/pure/debug/app_pure_debug.apk "/opt/build/executor_app-`git rev-parse --abbrev-ref HEAD | sed -e 's/.*\(RUCAP-[0-9]*\).*/\1/'`.apk"
@@ -117,8 +110,6 @@ debug_deploy:
     - android
   only:
     - dev
-  except:
-    - branches
   script:
     - ./gradlew assemblePureDebug  --no-daemon
     - cp app/build/outputs/apk/debug/app_pure_debug.apk /opt/build/executor_app_debug.apk
@@ -137,8 +128,6 @@ staging_deploy:
   only:
     - /^release.*$/
     - /^hotfix.*$/
-  except:
-    - branches
   script:
     - ./gradlew assembleStagingRelease  --no-daemon
     - cp app/build/outputs/apk/debug/app_staging_release.apk /opt/build/executor_app_staging.apk
@@ -155,7 +144,6 @@ release_deploy:
   tags:
     - android
   only:
-    - tags
     - /^\d+\.\d+\.\d+$/
   except:
     - branches
