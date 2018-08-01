@@ -39,7 +39,7 @@ public class CoreBalanceViewModelTest {
   @Mock
   private Observer<String> navigationObserver;
   @Mock
-  private Observer<ViewState<CoreBalanceViewActions>> viewStateObserver;
+  private Observer<ViewState<Runnable>> viewStateObserver;
   @Mock
   private ExecutorBalanceUseCase executorBalanceUseCase;
   @Mock

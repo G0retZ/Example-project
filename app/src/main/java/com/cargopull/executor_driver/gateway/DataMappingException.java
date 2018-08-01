@@ -11,6 +11,10 @@ public class DataMappingException extends IOException {
     super();
   }
 
+  public DataMappingException(Throwable cause) {
+    super(cause);
+  }
+
   DataMappingException(String message) {
     super(message);
   }

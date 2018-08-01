@@ -1,11 +1,11 @@
-package com.cargopull.executor_driver.presentation.currentcostpolling;
+package com.cargopull.executor_driver.presentation.servertime;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
 import com.cargopull.executor_driver.gateway.DataMappingException;
-import com.cargopull.executor_driver.interactor.CurrentCostPollingUseCase;
+import com.cargopull.executor_driver.interactor.ServerTimeUseCase;
 import com.cargopull.executor_driver.presentation.CommonNavigate;
 import com.cargopull.executor_driver.presentation.ViewState;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -14,21 +14,18 @@ import io.reactivex.internal.disposables.EmptyDisposable;
 import io.reactivex.schedulers.Schedulers;
 import javax.inject.Inject;
 
-public class CurrentCostPollingViewModelImpl extends ViewModel implements
-    CurrentCostPollingViewModel {
+public class ServerTimeViewModelImpl extends ViewModel implements ServerTimeViewModel {
 
   @NonNull
-  private final CurrentCostPollingUseCase currentCostPollingUseCase;
+  private final ServerTimeUseCase serverTimeUseCase;
   @NonNull
   private final MutableLiveData<String> navigateLiveData;
   @NonNull
   private Disposable disposable = EmptyDisposable.INSTANCE;
-  private boolean completed;
 
   @Inject
-  public CurrentCostPollingViewModelImpl(
-      @NonNull CurrentCostPollingUseCase currentCostPollingUseCase) {
-    this.currentCostPollingUseCase = currentCostPollingUseCase;
+  public ServerTimeViewModelImpl(@NonNull ServerTimeUseCase serverTimeUseCase) {
+    this.serverTimeUseCase = serverTimeUseCase;
     navigateLiveData = new MutableLiveData<>();
   }
 
@@ -45,23 +42,20 @@ public class CurrentCostPollingViewModelImpl extends ViewModel implements
   }
 
   @Override
-  public void initializeCurrentCostPolling() {
+  public void initializeServerTime() {
     disposable.dispose();
-    disposable = currentCostPollingUseCase.listenForPolling()
+    disposable = serverTimeUseCase.getServerTime()
         .subscribeOn(Schedulers.single())
         .observeOn(AndroidSchedulers.mainThread())
-        .doAfterTerminate(() -> {
-          if (completed) {
-            completed = false;
-            initializeCurrentCostPolling();
-          }
-        }).subscribe(
-            () -> completed = true,
+        .subscribe(
+            () -> {
+            },
             throwable -> {
               if (throwable instanceof DataMappingException) {
                 navigateLiveData.postValue(CommonNavigate.SERVER_DATA_ERROR);
               }
-            });
+            }
+        );
   }
 
   @Override

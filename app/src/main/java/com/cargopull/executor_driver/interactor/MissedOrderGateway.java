@@ -4,7 +4,7 @@ import android.support.annotation.NonNull;
 import io.reactivex.Flowable;
 
 /**
- * Гейтвей упущенноых заказов.
+ * Гейтвей упущенных заказов.
  */
 public interface MissedOrderGateway {
 

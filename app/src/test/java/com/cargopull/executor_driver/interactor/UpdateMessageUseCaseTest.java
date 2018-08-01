@@ -9,7 +9,6 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
-import com.cargopull.executor_driver.backend.web.NoNetworkException;
 import com.cargopull.executor_driver.gateway.DataMappingException;
 import com.cargopull.executor_driver.utils.ErrorReporter;
 import io.reactivex.Flowable;
@@ -95,7 +94,7 @@ public class UpdateMessageUseCaseTest {
    * Не должен запрпрашивать у гейтвея сообщения о новой версии.
    */
   @Test
-  public void doNotAskGatewayForUpdateMessagesIfSocketError() {
+  public void doNotAskGatewayForUpdateMessagesIfNoLogin() {
     // Действие:
     useCase.getUpdateMessages().test();
 
@@ -107,9 +106,9 @@ public class UpdateMessageUseCaseTest {
    * Не должен запрпрашивать у гейтвея сообщения о новой версии.
    */
   @Test
-  public void doNotAskGatewayForUpdateMessages() {
+  public void doNotAskGatewayForUpdateMessagesIfLoginError() {
     // Дано:
-    when(loginReceiver.get()).thenReturn(Observable.error(NoNetworkException::new));
+    when(loginReceiver.get()).thenReturn(Observable.error(IOException::new));
 
     // Действие:
     useCase.getUpdateMessages().test();

@@ -32,7 +32,7 @@ public class CancelOrderReasonsViewModelImpl extends ViewModel implements
 
   @NonNull
   @Override
-  public LiveData<ViewState<CancelOrderReasonsViewActions>> getViewStateLiveData() {
+  public LiveData<ViewState<Runnable>> getViewStateLiveData() {
     return new MutableLiveData<>();
   }
 
