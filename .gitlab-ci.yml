@@ -112,7 +112,7 @@ develop_deploy:
     - dev
   script:
     - ./gradlew assemblePureDebug  --no-daemon
-    - cp app/build/outputs/apk/debug/app-pure-debug.apk /opt/build/executor-app-debug.apk
+    - cp app/build/outputs/apk/pure/debug/app-pure-debug.apk /opt/build/executor-app-debug.apk
   artifacts:
     name: "build_${CI_PROJECT_NAME}_${CI_COMMIT_REF_NAME}_${CI_JOB_NAME}_${CI_JOB_ID}"
     when: always
@@ -130,7 +130,7 @@ staging_deploy:
     - /^hotfix.*$/
   script:
     - ./gradlew assembleStagingRelease  --no-daemon
-    - cp app/build/outputs/apk/debug/app-staging-release.apk /opt/build/executor-app-staging.apk
+    - cp app/build/outputs/apk/staging/release/app-staging-release.apk /opt/build/executor-app-staging.apk
   artifacts:
     name: "build_${CI_PROJECT_NAME}_${CI_COMMIT_REF_NAME}_${CI_JOB_NAME}_${CI_JOB_ID}"
     when: always
@@ -149,7 +149,7 @@ release_deploy:
     - branches
   script:
     - ./gradlew assemblePureRelease  --no-daemon
-    - cp app/build/outputs/apk/debug/app-pure-release.apk /opt/build/executor-app-release.apk
+    - cp app/build/outputs/apk/pure/release/app-pure-release.apk /opt/build/executor-app-release.apk
   artifacts:
     name: "build_${CI_PROJECT_NAME}_${CI_COMMIT_REF_NAME}_${CI_JOB_NAME}_${CI_JOB_ID}"
     when: always
