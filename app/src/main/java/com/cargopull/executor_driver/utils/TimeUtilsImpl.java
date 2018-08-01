@@ -4,7 +4,7 @@ import javax.inject.Inject;
 
 public class TimeUtilsImpl implements TimeUtils {
 
-  private long serverTimeOffset;
+  private volatile long serverTimeOffset;
 
   @Inject
   public TimeUtilsImpl() {
