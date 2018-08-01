@@ -1,5 +1,10 @@
 image: gitlab.capsrv.xyz:5000/android-ci:latest
 
+stages:
+  - build
+  - test
+  - deploy
+
 before_script:
 - export GRADLE_USER_HOME=$(pwd)/.gradle
 - chmod +x ./gradlew
