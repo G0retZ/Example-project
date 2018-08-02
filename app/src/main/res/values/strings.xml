@@ -29,6 +29,7 @@
   <string name="no_services_selected">Не выбрано ни одной услуги</string>
   <string name="working">В работе</string>
   <string name="online">На линии</string>
+  <string name="resume_work">Возобновить работу</string>
   <string name="client_confirm">Ожидание подтверждения клиентом</string>
   <string name="moving_to_client">На встречу с клиентом!</string>
   <string name="order_fulfillment">Выполнение заказа</string>
@@ -109,4 +110,5 @@
   <string name="update">Обновить</string>
   <string name="not_now">Не сейчас</string>
   <string name="version_deprecated">Текущая версия устарела. Обновите приложение.</string>
+  <string name="take_break">Перерыв</string>
 </resources>

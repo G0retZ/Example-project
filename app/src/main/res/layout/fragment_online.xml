@@ -1,9 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.SwitchCompat
+<android.support.constraint.ConstraintLayout
   xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
   android:layout_width="match_parent"
-  android:layout_height="match_parent"
-  android:theme="@style/AppTheme.SeekBar.Theme.Green"
-  android:paddingStart="16dp"
-  android:paddingEnd="16dp"
-  android:text="@string/online"/>
+  android:layout_height="match_parent">
+  <Button
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/takeBreak"
+    style="@style/AppTheme.Button.Borderless.Filled.Yellow"
+    android:layout_width="0dp"
+    android:layout_height="64dp"
+    android:text="@string/take_break"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"/>
+  <Button
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/resumeWork"
+    style="@style/AppTheme.Button.Borderless.Filled"
+    android:layout_width="0dp"
+    android:layout_height="64dp"
+    android:text="@string/resume_work"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"/>
+  <android.support.constraint.Barrier
+    android:id="@+id/barrier"
+    android:layout_width="0dp"
+    android:layout_height="wrap_content"
+    app:barrierDirection="top"
+    app:constraint_referenced_ids="resumeWork,takeBreak"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"/>
+  <TextView
+    android:id="@+id/breakText"
+    style="@style/TextAppearance.AppCompat.Display1"
+    android:layout_width="0dp"
+    android:layout_height="0dp"
+    android:background="@drawable/ic_break_gradient"
+    android:gravity="center"
+    android:text="@string/take_break"
+    android:textColor="@color/colorAccentYellow"
+    app:layout_constraintBottom_toTopOf="@id/barrier"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent"/>
+</android.support.constraint.ConstraintLayout>

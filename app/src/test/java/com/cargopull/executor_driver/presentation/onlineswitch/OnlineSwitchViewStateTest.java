@@ -28,7 +28,9 @@ public class OnlineSwitchViewStateTest {
     viewState.apply(viewActions);
 
     // Результат:
-    verify(viewActions).checkSwitch(true);
+    verify(viewActions).showTakeBreakButton(true);
+    verify(viewActions).showBreakText(false);
+    verify(viewActions).showResumeWorkButton(false);
     verify(viewActions).showSwitchPending(false);
     verifyNoMoreInteractions(viewActions);
   }
@@ -42,7 +44,9 @@ public class OnlineSwitchViewStateTest {
     viewState.apply(viewActions);
 
     // Результат:
-    verify(viewActions).checkSwitch(false);
+    verify(viewActions).showTakeBreakButton(false);
+    verify(viewActions).showBreakText(true);
+    verify(viewActions).showResumeWorkButton(true);
     verify(viewActions).showSwitchPending(false);
     verifyNoMoreInteractions(viewActions);
   }

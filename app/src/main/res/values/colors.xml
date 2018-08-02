@@ -9,6 +9,9 @@
   <color name="colorAccentGreen">#47FF60</color>
   <color name="colorAccentGreenDisabled">#4D47FF60</color>
   <color name="colorAccentGreenTranslucent">#0047FF60</color>
+  <color name="colorAccentYellow">#FFD600</color>
+  <color name="colorAccentYellowDisabled">#66FFD600</color>
+  <color name="colorAccentYellowTranslucent">#00FFD600</color>
   <color name="colorDisabled">#1FFFFFFF</color>
   <color name="colorSmoke">#66000000</color>
   <color name="colorDivider">#FF212D3A</color>

@@ -275,7 +275,6 @@ public class BaseActivity extends AppCompatActivity implements ExecutorStateView
         break;
       case CommonNavigate.EXIT:
         ((MainApplication) getApplication()).navigate(destination);
-        blockWithPending(true, "exit");
         exitAndKill();
         break;
     }

@@ -14,6 +14,12 @@
     <item name="colorAccent">@android:color/white</item>
   </style>
 
+  <style name="AppTheme.Accent.Yellow" parent="Theme.AppCompat.Light.NoActionBar">
+    <item name="colorAccent">@color/colorAccentYellow</item>
+    <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+    <item name="android:windowBackground">@color/colorWindowBackground</item>
+  </style>
+
   <style name="AppTheme.Button.Theme" parent="AppTheme">
   </style>
 
@@ -25,9 +31,8 @@
     <item name="colorAccent">@color/colorAccentSecond</item>
   </style>
 
-  <style name="AppTheme.Button.Theme.Darker">
+  <style name="AppTheme.Button.Theme.Darker" parent="AppTheme.Button.Theme.Light">
     <item name="colorAccent">@color/colorPrimaryLight</item>
-    <item name="android:textColorPrimaryInverse">@android:color/primary_text_dark</item>
   </style>
 
   <style name="AppTheme.Button.Colored" parent="Widget.AppCompat.Button.Colored">
@@ -56,6 +61,11 @@
 
   <style name="AppTheme.Button.Borderless.Filled">
     <item name="android:background">@drawable/ic_button_background</item>
+  </style>
+
+  <style name="AppTheme.Button.Borderless.Filled.Yellow">
+    <item name="android:background">@drawable/ic_button_background_yellow</item>
+    <item name="android:theme">@style/AppTheme.Accent.Yellow</item>
   </style>
 
   <style name="AppTheme.CompoundButton.Switch" parent="Widget.AppCompat.CompoundButton.Switch">
