@@ -57,6 +57,7 @@ public class MenuFragment extends BaseFragment implements BalanceViewActions,
               if (nowOnline) {
                 onlineSwitchViewModel.setNewState(false);
               }
+              showPending(true, "exit");
               navigate(CommonNavigate.EXIT);
             }))
             .setNegativeButton(getString(android.R.string.cancel), null)
