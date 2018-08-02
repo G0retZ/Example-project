@@ -96,12 +96,22 @@ public class OnlineFragment extends BaseFragment implements OnlineSwitchViewActi
   }
 
   @Override
-  public void checkSwitch(boolean check) {
+  public void showBreakText(boolean show) {
+
+  }
+
+  @Override
+  public void showTakeBreakButton(boolean show) {
     if (switchCompat != null) {
       switchCompat.setOnCheckedChangeListener(null);
-      switchCompat.setChecked(check);
+      switchCompat.setChecked(show);
       switchCompat.setOnCheckedChangeListener(onCheckedChangeListener);
     }
+  }
+
+  @Override
+  public void showResumeWorkButton(boolean show) {
+
   }
 
   @Override

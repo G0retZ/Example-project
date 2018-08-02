@@ -125,8 +125,18 @@ public class MenuFragment extends BaseFragment implements BalanceViewActions,
   }
 
   @Override
-  public void checkSwitch(boolean check) {
-    nowOnline = check;
+  public void showBreakText(boolean show) {
+
+  }
+
+  @Override
+  public void showTakeBreakButton(boolean show) {
+    nowOnline = show;
+  }
+
+  @Override
+  public void showResumeWorkButton(boolean show) {
+
   }
 
   @Override

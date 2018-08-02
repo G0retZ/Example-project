@@ -6,11 +6,25 @@ package com.cargopull.executor_driver.presentation.onlineswitch;
 public interface OnlineSwitchViewActions {
 
   /**
-   * Включить/выключить переключатель онлайна.
+   * Показать текст "Перерыв".
    *
-   * @param check - включить или выключить?
+   * @param show - показать или нет?
    */
-  void checkSwitch(boolean check);
+  void showBreakText(boolean show);
+
+  /**
+   * Показать кнопку "Перерыв".
+   *
+   * @param show - показать или нет?
+   */
+  void showTakeBreakButton(boolean show);
+
+  /**
+   * Показать кнопку "Возобновить работу".
+   *
+   * @param show - показать или нет?
+   */
+  void showResumeWorkButton(boolean show);
 
   /**
    * Показать индикатор процесса.
