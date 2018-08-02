@@ -6,6 +6,7 @@ import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.cargopull.executor_driver.entity.OrderCostDetails;
+import com.cargopull.executor_driver.gateway.DataMappingException;
 import com.cargopull.executor_driver.interactor.OrderCostDetailsUseCase;
 import com.cargopull.executor_driver.presentation.CommonNavigate;
 import com.cargopull.executor_driver.presentation.SingleLiveEvent;
@@ -59,7 +60,12 @@ public class OrderCostDetailsViewModelImpl extends ViewModel implements
           .subscribeOn(Schedulers.single())
           .observeOn(AndroidSchedulers.mainThread())
           .subscribe(this::consumeOrder,
-              throwable -> navigateLiveData.postValue(CommonNavigate.SERVER_DATA_ERROR));
+              throwable -> {
+                if (throwable instanceof DataMappingException) {
+                  navigateLiveData.postValue(CommonNavigate.SERVER_DATA_ERROR);
+                }
+              }
+          );
     }
   }
 

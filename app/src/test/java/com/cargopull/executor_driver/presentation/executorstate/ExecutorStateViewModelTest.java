@@ -10,11 +10,10 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
-import android.accounts.AuthenticatorException;
 import android.arch.core.executor.testing.InstantTaskExecutorRule;
 import android.arch.lifecycle.Observer;
-import com.cargopull.executor_driver.backend.web.NoNetworkException;
 import com.cargopull.executor_driver.entity.ExecutorState;
+import com.cargopull.executor_driver.gateway.DataMappingException;
 import com.cargopull.executor_driver.interactor.ExecutorStateUseCase;
 import com.cargopull.executor_driver.presentation.CommonNavigate;
 import com.cargopull.executor_driver.presentation.ViewState;
@@ -307,7 +306,7 @@ public class ExecutorStateViewModelTest {
   public void navigateToNoNetwork() {
     // Дано:
     when(executorStateUseCase.getExecutorStates(anyBoolean()))
-        .thenReturn(Flowable.error(NoNetworkException::new));
+        .thenReturn(Flowable.error(DataMappingException::new));
 
     // Действие:
     viewModel.getNavigationLiveData().observeForever(navigationObserver);
@@ -324,7 +323,7 @@ public class ExecutorStateViewModelTest {
   public void navigateToAuthorize() {
     // Дано:
     when(executorStateUseCase.getExecutorStates(anyBoolean()))
-        .thenReturn(Flowable.error(AuthenticatorException::new));
+        .thenReturn(Flowable.error(DataMappingException::new));
 
     // Действие:
     viewModel.getNavigationLiveData().observeForever(navigationObserver);

@@ -4,6 +4,7 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
+import com.cargopull.executor_driver.gateway.DataMappingException;
 import com.cargopull.executor_driver.interactor.OrderCurrentCostUseCase;
 import com.cargopull.executor_driver.presentation.CommonNavigate;
 import com.cargopull.executor_driver.presentation.SingleLiveEvent;
@@ -53,7 +54,11 @@ public class OrderCostViewModelImpl extends ViewModel implements OrderCostViewMo
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(
             integer -> viewStateLiveData.postValue(new OrderCostViewState(integer)),
-            throwable -> navigateLiveData.postValue(CommonNavigate.SERVER_DATA_ERROR)
+            throwable -> {
+              if (throwable instanceof DataMappingException) {
+                navigateLiveData.postValue(CommonNavigate.SERVER_DATA_ERROR);
+              }
+            }
         );
   }
 
