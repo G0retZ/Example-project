@@ -52,7 +52,7 @@ public class PendingDialogFragment extends BaseDialogFragment {
             .create()
             .show()
     );
-    exitAction.postDelayed(runnable, 10_000);
+    exitAction.postDelayed(runnable, 30_000);
     return view;
   }
 
