@@ -32,17 +32,17 @@ public class AutoRouterImpl implements ActivityLifecycleCallbacks, AutoRouter {
         LoginActivity.class, PasswordActivity.class
     ));
     statusGroups.put(ExecutorStateNavigate.MAP_SHIFT_CLOSED, Arrays.asList(
-        MapActivity.class, GeolocationResolutionActivity.class, MenuActivity.class,
+        MapActivity.class, GeolocationResolutionActivity.class,
         BalanceActivity.class
     ));
     statusGroups.put(ExecutorStateNavigate.MAP_SHIFT_OPENED, Arrays.asList(
         OnlineActivity.class, VehicleOptionsActivity.class, ServicesActivity.class,
-        GeolocationResolutionActivity.class, MenuActivity.class, BalanceActivity.class,
+        GeolocationResolutionActivity.class, BalanceActivity.class,
         SelectedVehicleOptionsActivity.class
     ));
     statusGroups.put(ExecutorStateNavigate.MAP_ONLINE, Arrays.asList(
         OnlineActivity.class, VehicleOptionsActivity.class,
-        GeolocationResolutionActivity.class, MenuActivity.class, BalanceActivity.class,
+        GeolocationResolutionActivity.class, BalanceActivity.class,
         SelectedVehicleOptionsActivity.class
     ));
     statusGroups.put(ExecutorStateNavigate.DRIVER_ORDER_CONFIRMATION, Arrays.asList(
