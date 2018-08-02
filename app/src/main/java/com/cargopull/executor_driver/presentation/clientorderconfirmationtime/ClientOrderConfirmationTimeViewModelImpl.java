@@ -4,6 +4,7 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
+import com.cargopull.executor_driver.gateway.DataMappingException;
 import com.cargopull.executor_driver.interactor.ExecutorStateUseCase;
 import com.cargopull.executor_driver.presentation.CommonNavigate;
 import com.cargopull.executor_driver.presentation.SingleLiveEvent;
@@ -66,7 +67,11 @@ public class ClientOrderConfirmationTimeViewModelImpl extends ViewModel implemen
                 time > 0 ? new ClientOrderConfirmationTimeViewStateCounting(time) :
                     new ClientOrderConfirmationTimeViewStateNotCounting()
             ),
-            throwable -> navigateLiveData.postValue(CommonNavigate.SERVER_DATA_ERROR)
+            throwable -> {
+              if (throwable instanceof DataMappingException) {
+                navigateLiveData.postValue(CommonNavigate.SERVER_DATA_ERROR);
+              }
+            }
         );
   }
 

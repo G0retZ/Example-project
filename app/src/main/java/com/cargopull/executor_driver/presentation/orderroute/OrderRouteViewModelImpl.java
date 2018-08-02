@@ -5,6 +5,7 @@ import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import com.cargopull.executor_driver.gateway.DataMappingException;
 import com.cargopull.executor_driver.interactor.OrderRouteUseCase;
 import com.cargopull.executor_driver.presentation.CommonNavigate;
 import com.cargopull.executor_driver.presentation.SingleLiveEvent;
@@ -91,7 +92,11 @@ public class OrderRouteViewModelImpl extends ViewModel implements
               nextPointDisposable.dispose();
               viewStateLiveData.postValue(lastViewState = new OrderRouteViewState(routePointItems));
             },
-            throwable -> navigateLiveData.postValue(CommonNavigate.SERVER_DATA_ERROR)
+            throwable -> {
+              if (throwable instanceof DataMappingException) {
+                navigateLiveData.postValue(CommonNavigate.SERVER_DATA_ERROR);
+              }
+            }
         );
   }
 
