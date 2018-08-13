@@ -10,17 +10,15 @@ import com.cargopull.executor_driver.R;
 import com.cargopull.executor_driver.presentation.menu.MenuNavigate;
 import com.cargopull.executor_driver.presentation.onlinebutton.OnlineButtonNavigate;
 
-public class OnlineActivity extends BaseActivity {
+public class OnlineMenuActivity extends BaseActivity {
 
   @Override
   public void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_online);
+    setContentView(R.layout.activity_online_menu);
     Toolbar toolbar = findViewById(R.id.appBar);
     if (toolbar != null) {
-      toolbar.setNavigationOnClickListener(
-          v -> startActivity(new Intent(this, OnlineMenuActivity.class))
-      );
+      toolbar.setNavigationOnClickListener(v -> onBackPressed());
     }
   }
 
@@ -51,9 +49,11 @@ public class OnlineActivity extends BaseActivity {
         break;
       case OnlineButtonNavigate.VEHICLE_OPTIONS:
         startActivity(new Intent(this, SelectedVehicleOptionsActivity.class));
+        finish();
         break;
       case MenuNavigate.BALANCE:
         startActivity(new Intent(this, BalanceActivity.class));
+        finish();
         break;
       default:
         super.navigate(destination);
