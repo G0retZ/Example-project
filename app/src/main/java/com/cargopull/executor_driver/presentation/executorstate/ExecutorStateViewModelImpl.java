@@ -4,9 +4,9 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
+import com.cargopull.executor_driver.gateway.DataMappingException;
 import com.cargopull.executor_driver.interactor.ExecutorStateUseCase;
 import com.cargopull.executor_driver.presentation.CommonNavigate;
-import com.cargopull.executor_driver.presentation.SingleLiveEvent;
 import com.cargopull.executor_driver.presentation.ViewState;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
@@ -19,7 +19,7 @@ public class ExecutorStateViewModelImpl extends ViewModel implements ExecutorSta
   @NonNull
   private final ExecutorStateUseCase executorStateUseCase;
   @NonNull
-  private final SingleLiveEvent<ViewState<ExecutorStateViewActions>> messageLiveData;
+  private final MutableLiveData<ViewState<ExecutorStateViewActions>> messageLiveData;
   @NonNull
   private final MutableLiveData<String> navigateLiveData;
   @NonNull
@@ -28,7 +28,7 @@ public class ExecutorStateViewModelImpl extends ViewModel implements ExecutorSta
   @Inject
   public ExecutorStateViewModelImpl(@NonNull ExecutorStateUseCase executorStateUseCase) {
     this.executorStateUseCase = executorStateUseCase;
-    messageLiveData = new SingleLiveEvent<>();
+    messageLiveData = new MutableLiveData<>();
     navigateLiveData = new MutableLiveData<>();
   }
 
@@ -42,6 +42,11 @@ public class ExecutorStateViewModelImpl extends ViewModel implements ExecutorSta
   @Override
   public LiveData<String> getNavigationLiveData() {
     return navigateLiveData;
+  }
+
+  @Override
+  public void messageConsumed() {
+    messageLiveData.postValue(null);
   }
 
   @Override
@@ -96,7 +101,12 @@ public class ExecutorStateViewModelImpl extends ViewModel implements ExecutorSta
                   break;
               }
             },
-            throwable -> navigateLiveData.postValue(CommonNavigate.SERVER_DATA_ERROR));
+            throwable -> {
+              if (throwable instanceof DataMappingException) {
+                navigateLiveData.postValue(CommonNavigate.SERVER_DATA_ERROR);
+              }
+            }
+        );
   }
 
   @Override

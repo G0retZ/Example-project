@@ -10,7 +10,7 @@ public interface ExecutorStateViewActions {
   /**
    * Показать сопуствующее сообщение с объяснением (смены) статуса
    *
-   * @param message текс сообщения
+   * @param message текст сообщения
    */
   void showOnlineMessage(@NonNull String message);
 }

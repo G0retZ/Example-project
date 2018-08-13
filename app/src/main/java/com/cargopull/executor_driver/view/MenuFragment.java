@@ -57,6 +57,7 @@ public class MenuFragment extends BaseFragment implements BalanceViewActions,
               if (nowOnline) {
                 onlineSwitchViewModel.setNewState(false);
               }
+              showPending(true, "exit");
               navigate(CommonNavigate.EXIT);
             }))
             .setNegativeButton(getString(android.R.string.cancel), null)
@@ -124,8 +125,18 @@ public class MenuFragment extends BaseFragment implements BalanceViewActions,
   }
 
   @Override
-  public void checkSwitch(boolean check) {
-    nowOnline = check;
+  public void showBreakText(boolean show) {
+
+  }
+
+  @Override
+  public void showTakeBreakButton(boolean show) {
+    nowOnline = show;
+  }
+
+  @Override
+  public void showResumeWorkButton(boolean show) {
+
   }
 
   @Override

@@ -1,5 +1,6 @@
 package com.cargopull.executor_driver.application;
 
+import android.app.Application;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
@@ -8,7 +9,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RawRes;
 import android.support.annotation.StringRes;
-import android.support.multidex.MultiDexApplication;
 import android.support.v4.app.NotificationCompat.Builder;
 import com.cargopull.executor_driver.R;
 import com.cargopull.executor_driver.backend.ringtone.RingTonePlayer;
@@ -20,7 +20,6 @@ import com.cargopull.executor_driver.presentation.cancelorderreasons.CancelOrder
 import com.cargopull.executor_driver.presentation.corebalance.CoreBalanceViewModel;
 import com.cargopull.executor_driver.presentation.currentcostpolling.CurrentCostPollingViewModel;
 import com.cargopull.executor_driver.presentation.executorstate.ExecutorStateNavigate;
-import com.cargopull.executor_driver.presentation.executorstate.ExecutorStateViewActions;
 import com.cargopull.executor_driver.presentation.executorstate.ExecutorStateViewModel;
 import com.cargopull.executor_driver.presentation.geolocation.GeoLocationViewModel;
 import com.cargopull.executor_driver.presentation.missedorder.MissedOrderViewActions;
@@ -28,6 +27,8 @@ import com.cargopull.executor_driver.presentation.missedorder.MissedOrderViewMod
 import com.cargopull.executor_driver.presentation.serverconnection.ServerConnectionNavigate;
 import com.cargopull.executor_driver.presentation.serverconnection.ServerConnectionViewActions;
 import com.cargopull.executor_driver.presentation.serverconnection.ServerConnectionViewModel;
+import com.cargopull.executor_driver.presentation.servertime.ServerTimeViewModel;
+import com.cargopull.executor_driver.presentation.updatemessage.UpdateMessageViewModel;
 import com.cargopull.executor_driver.utils.Pair;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -38,7 +39,7 @@ import javax.inject.Inject;
  * Application.
  */
 
-public class MainApplication extends MultiDexApplication implements ServerConnectionViewActions,
+public class MainApplication extends Application implements ServerConnectionViewActions,
     MissedOrderViewActions {
 
   @Nullable
@@ -60,11 +61,13 @@ public class MainApplication extends MultiDexApplication implements ServerConnec
   @Nullable
   private MissedOrderViewModel missedOrderViewModel;
   @Nullable
+  private UpdateMessageViewModel updateMessageViewModel;
+  @Nullable
   private CurrentCostPollingViewModel currentCostPollingViewModel;
   @Nullable
-  private AutoRouter autoRouter;
+  private ServerTimeViewModel serverTimeViewModel;
   @Nullable
-  private ExecutorStateViewActions executorStateViewActions;
+  private AutoRouter autoRouter;
   private int missedOrdersCount;
   @Nullable
   private NotificationManager notificationManager;
@@ -117,15 +120,19 @@ public class MainApplication extends MultiDexApplication implements ServerConnec
   }
 
   @Inject
+  public void setUpdateMessageViewModel(@NonNull UpdateMessageViewModel updateMessageViewModel) {
+    this.updateMessageViewModel = updateMessageViewModel;
+  }
+
+  @Inject
   public void setCurrentCostPollingViewModel(
       @NonNull CurrentCostPollingViewModel currentCostPollingViewModel) {
     this.currentCostPollingViewModel = currentCostPollingViewModel;
   }
 
   @Inject
-  public void setExecutorStateViewActions(
-      @NonNull ExecutorStateViewActions executorStateViewActions) {
-    this.executorStateViewActions = executorStateViewActions;
+  public void setServerTimeViewModel(@NonNull ServerTimeViewModel serverTimeViewModel) {
+    this.serverTimeViewModel = serverTimeViewModel;
   }
 
   @Inject
@@ -142,8 +149,9 @@ public class MainApplication extends MultiDexApplication implements ServerConnec
     appComponent.inject(this);
     if (cancelOrderReasonsViewModel == null || coreBalanceViewModel == null ||
         executorStateViewModel == null || geoLocationViewModel == null
-        || missedOrderViewModel == null || serverConnectionViewModel == null
-        || currentCostPollingViewModel == null) {
+        || missedOrderViewModel == null || updateMessageViewModel == null
+        || serverConnectionViewModel == null || currentCostPollingViewModel == null
+        || serverTimeViewModel == null) {
       throw new RuntimeException("Shit! WTF?!");
     }
     serverConnectionViewModel.getViewStateLiveData().observeForever(viewState -> {
@@ -151,13 +159,8 @@ public class MainApplication extends MultiDexApplication implements ServerConnec
         viewState.apply(this);
       }
     });
-    executorStateViewModel.getViewStateLiveData().observeForever(viewState -> {
-      if (viewState != null && executorStateViewActions != null) {
-        viewState.apply(executorStateViewActions);
-      }
-    });
     missedOrderViewModel.getViewStateLiveData().observeForever(viewState -> {
-      if (viewState != null && executorStateViewActions != null) {
+      if (viewState != null) {
         viewState.apply(this);
       }
     });
@@ -167,6 +170,7 @@ public class MainApplication extends MultiDexApplication implements ServerConnec
     executorStateViewModel.getNavigationLiveData().observeForever(this::navigate);
     geoLocationViewModel.getNavigationLiveData().observeForever(this::navigate);
     currentCostPollingViewModel.getNavigationLiveData().observeForever(this::navigate);
+    serverTimeViewModel.getNavigationLiveData().observeForever(this::navigate);
     initServerConnection();
   }
 
@@ -199,14 +203,22 @@ public class MainApplication extends MultiDexApplication implements ServerConnec
       if (missedOrderViewModel == null) {
         throw new IllegalStateException("Граф зависимостей поломан!");
       }
+      if (updateMessageViewModel == null) {
+        throw new IllegalStateException("Граф зависимостей поломан!");
+      }
       if (currentCostPollingViewModel == null) {
+        throw new IllegalStateException("Граф зависимостей поломан!");
+      }
+      if (serverTimeViewModel == null) {
         throw new IllegalStateException("Граф зависимостей поломан!");
       }
       executorStateViewModel.initializeExecutorState();
       cancelOrderReasonsViewModel.initializeCancelOrderReasons();
       coreBalanceViewModel.initializeExecutorBalance();
       missedOrderViewModel.initializeMissedOrderMessages();
+      updateMessageViewModel.initializeUpdateMessages();
       currentCostPollingViewModel.initializeCurrentCostPolling();
+      serverTimeViewModel.initializeServerTime();
       initGeoLocation();
     } else {
       navigate(CommonNavigate.NO_CONNECTION);
@@ -225,6 +237,9 @@ public class MainApplication extends MultiDexApplication implements ServerConnec
     }
     switch (destination) {
       case ServerConnectionNavigate.AUTHORIZE:
+        stopService();
+        break;
+      case ServerConnectionNavigate.VERSION_DEPRECATED:
         stopService();
         break;
       case CommonNavigate.SERVER_DATA_ERROR:

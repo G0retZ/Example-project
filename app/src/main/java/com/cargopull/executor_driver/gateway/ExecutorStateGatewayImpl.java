@@ -8,7 +8,9 @@ import com.cargopull.executor_driver.entity.ExecutorState;
 import com.cargopull.executor_driver.interactor.ExecutorStateGateway;
 import io.reactivex.Flowable;
 import io.reactivex.schedulers.Schedulers;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import javax.inject.Inject;
 import ua.naiksoftware.stomp.StompHeader;
 import ua.naiksoftware.stomp.client.StompClient;
@@ -20,6 +22,9 @@ public class ExecutorStateGatewayImpl implements ExecutorStateGateway {
   private final StompClient stompClient;
   @NonNull
   private final Mapper<StompMessage, ExecutorState> mapper;
+
+  @NonNull
+  private final List<String> ackMessageIds = new ArrayList<>();
 
   @Inject
   public ExecutorStateGatewayImpl(@NonNull StompClient stompClient,
@@ -39,16 +44,23 @@ public class ExecutorStateGatewayImpl implements ExecutorStateGateway {
           .onErrorResumeNext(Flowable.empty())
           .filter(stompMessage -> stompMessage.findHeader("Status") != null)
           .doOnNext(
-              stompMessage -> stompClient.sendAfterConnection(
-                  new StompMessage("ACK",
-                      Arrays.asList(
-                          new StompHeader("subscription", stompMessage.findHeader("subscription")),
-                          new StompHeader("message-id", stompMessage.findHeader("message-id"))
-                      ),
-                      ""
-                  )
-              ).subscribe(() -> {
-              }, Throwable::printStackTrace)
+              stompMessage -> {
+                if (ackMessageIds.contains(stompMessage.findHeader("message-id"))) {
+                  return;
+                }
+                stompClient.sendAfterConnection(
+                    new StompMessage("ACK",
+                        Arrays.asList(
+                            new StompHeader("subscription",
+                                stompMessage.findHeader("subscription")),
+                            new StompHeader("message-id", stompMessage.findHeader("message-id"))
+                        ),
+                        ""
+                    )
+                ).subscribe(() -> {
+                }, Throwable::printStackTrace);
+                ackMessageIds.add(stompMessage.findHeader("message-id"));
+              }
           )
           .map(mapper::map)
           .observeOn(Schedulers.single());

@@ -31,7 +31,7 @@ public class CoreBalanceViewModelImpl extends ViewModel implements CoreBalanceVi
 
   @NonNull
   @Override
-  public LiveData<ViewState<CoreBalanceViewActions>> getViewStateLiveData() {
+  public LiveData<ViewState<Runnable>> getViewStateLiveData() {
     return new MutableLiveData<>();
   }
 

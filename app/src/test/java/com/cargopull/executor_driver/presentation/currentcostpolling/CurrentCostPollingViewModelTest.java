@@ -34,7 +34,7 @@ public class CurrentCostPollingViewModelTest {
   @Mock
   private Observer<String> navigationObserver;
   @Mock
-  private Observer<ViewState<CurrentCostPollingViewActions>> viewStateObserver;
+  private Observer<ViewState<Runnable>> viewStateObserver;
 
   @Mock
   private CurrentCostPollingUseCase useCase;

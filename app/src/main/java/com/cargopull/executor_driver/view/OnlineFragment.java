@@ -3,11 +3,11 @@ package com.cargopull.executor_driver.view;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v7.widget.SwitchCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.Button;
+import android.widget.TextView;
 import com.cargopull.executor_driver.R;
 import com.cargopull.executor_driver.di.AppComponent;
 import com.cargopull.executor_driver.presentation.onlinebutton.OnlineButtonViewActions;
@@ -21,12 +21,10 @@ public class OnlineFragment extends BaseFragment implements OnlineSwitchViewActi
     OnlineButtonViewActions {
 
   private OnlineSwitchViewModel onlineSwitchViewModel;
-  @NonNull
-  private final OnCheckedChangeListener onCheckedChangeListener =
-      (buttonView, isChecked) -> onlineSwitchViewModel.setNewState(isChecked);
   private OnlineButtonViewModel onlineButtonViewModel;
-  @Nullable
-  private SwitchCompat switchCompat;
+  private TextView breakText;
+  private Button takeBreakAction;
+  private Button resumeWorkAction;
 
   @Inject
   public void setOnlineSwitchViewModel(@NonNull OnlineSwitchViewModel onlineSwitchViewModel) {
@@ -43,8 +41,13 @@ public class OnlineFragment extends BaseFragment implements OnlineSwitchViewActi
   public View onCreateView(@NonNull LayoutInflater inflater,
       @Nullable ViewGroup container,
       @Nullable Bundle savedInstanceState) {
-    switchCompat = (SwitchCompat) inflater.inflate(R.layout.fragment_online, container, false);
-    return switchCompat;
+    View view = inflater.inflate(R.layout.fragment_online, container, false);
+    breakText = view.findViewById(R.id.breakText);
+    takeBreakAction = view.findViewById(R.id.takeBreak);
+    resumeWorkAction = view.findViewById(R.id.resumeWork);
+    takeBreakAction.setOnClickListener(v -> onlineSwitchViewModel.setNewState(false));
+    resumeWorkAction.setOnClickListener(v -> onlineSwitchViewModel.setNewState(true));
+    return view;
   }
 
   @Override
@@ -79,14 +82,6 @@ public class OnlineFragment extends BaseFragment implements OnlineSwitchViewActi
   }
 
   @Override
-  public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
-    super.onViewStateRestored(savedInstanceState);
-    if (switchCompat != null) {
-      switchCompat.setOnCheckedChangeListener(onCheckedChangeListener);
-    }
-  }
-
-  @Override
   protected void navigate(@NonNull String destination) {
     if (destination.equals(OnlineSwitchNavigate.VEHICLE_OPTIONS)) {
       onlineButtonViewModel.goOnline();
@@ -96,12 +91,18 @@ public class OnlineFragment extends BaseFragment implements OnlineSwitchViewActi
   }
 
   @Override
-  public void checkSwitch(boolean check) {
-    if (switchCompat != null) {
-      switchCompat.setOnCheckedChangeListener(null);
-      switchCompat.setChecked(check);
-      switchCompat.setOnCheckedChangeListener(onCheckedChangeListener);
-    }
+  public void showBreakText(boolean show) {
+    breakText.setVisibility(show ? View.VISIBLE : View.GONE);
+  }
+
+  @Override
+  public void showTakeBreakButton(boolean show) {
+    takeBreakAction.setVisibility(show ? View.VISIBLE : View.GONE);
+  }
+
+  @Override
+  public void showResumeWorkButton(boolean show) {
+    resumeWorkAction.setVisibility(show ? View.VISIBLE : View.GONE);
   }
 
   @Override
@@ -116,8 +117,7 @@ public class OnlineFragment extends BaseFragment implements OnlineSwitchViewActi
 
   @Override
   public void enableGoOnlineButton(boolean enable) {
-    if (switchCompat != null) {
-      switchCompat.setEnabled(enable);
-    }
+    takeBreakAction.setEnabled(enable);
+    resumeWorkAction.setEnabled(enable);
   }
 }

@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.cargopull.executor_driver.entity.RoutePoint;
 import com.cargopull.executor_driver.entity.RoutePointState;
+import com.cargopull.executor_driver.gateway.DataMappingException;
 import com.cargopull.executor_driver.interactor.OrderRouteUseCase;
 import com.cargopull.executor_driver.presentation.CommonNavigate;
 import com.cargopull.executor_driver.presentation.SingleLiveEvent;
@@ -116,7 +117,11 @@ public class NextRoutePointViewModelImpl extends ViewModel implements NextRouteP
                   lastViewState = new NextRoutePointViewStateNoRoute(routePoints.size() < 2)
               );
             },
-            throwable -> navigateLiveData.postValue(CommonNavigate.SERVER_DATA_ERROR)
+            throwable -> {
+              if (throwable instanceof DataMappingException) {
+                navigateLiveData.postValue(CommonNavigate.SERVER_DATA_ERROR);
+              }
+            }
         );
   }
 

@@ -12,16 +12,18 @@ class OnlineSwitchViewState implements ViewState<OnlineSwitchViewActions> {
   /**
    * Включен переключатель или выключен?
    */
-  private final boolean checked;
+  private final boolean online;
 
-  OnlineSwitchViewState(boolean checked) {
-    this.checked = checked;
+  OnlineSwitchViewState(boolean online) {
+    this.online = online;
   }
 
   @Override
   @CallSuper
   public void apply(@NonNull OnlineSwitchViewActions stateActions) {
-    stateActions.checkSwitch(checked);
+    stateActions.showTakeBreakButton(online);
+    stateActions.showBreakText(!online);
+    stateActions.showResumeWorkButton(!online);
     stateActions.showSwitchPending(false);
   }
 
@@ -36,11 +38,11 @@ class OnlineSwitchViewState implements ViewState<OnlineSwitchViewActions> {
 
     OnlineSwitchViewState that = (OnlineSwitchViewState) o;
 
-    return checked == that.checked;
+    return online == that.online;
   }
 
   @Override
   public int hashCode() {
-    return (checked ? 1 : 0);
+    return (online ? 1 : 0);
   }
 }

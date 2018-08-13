@@ -4,18 +4,14 @@ import android.app.Activity;
 import android.app.AlertDialog.Builder;
 import android.app.Application.ActivityLifecycleCallbacks;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.cargopull.executor_driver.R;
 import com.cargopull.executor_driver.backend.ringtone.RingTonePlayer;
 import com.cargopull.executor_driver.backend.vibro.ShakeItPlayer;
 import com.cargopull.executor_driver.presentation.CommonNavigate;
-import com.cargopull.executor_driver.presentation.announcement.AnnouncementStateViewActions;
 import com.cargopull.executor_driver.presentation.executorstate.ExecutorStateNavigate;
-import com.cargopull.executor_driver.presentation.executorstate.ExecutorStateViewActions;
 import com.cargopull.executor_driver.presentation.geolocation.GeoLocationNavigate;
 import com.cargopull.executor_driver.presentation.serverconnection.ServerConnectionNavigate;
 import com.cargopull.executor_driver.utils.Pair;
@@ -24,8 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import javax.inject.Inject;
 
-public class AutoRouterImpl implements ActivityLifecycleCallbacks, AutoRouter,
-    ExecutorStateViewActions, AnnouncementStateViewActions {
+public class AutoRouterImpl implements ActivityLifecycleCallbacks, AutoRouter {
 
   /**
    * Реестр активити, разбитых по группам, чтобы исключить нежелательные переходы по навигации.
@@ -37,17 +32,17 @@ public class AutoRouterImpl implements ActivityLifecycleCallbacks, AutoRouter,
         LoginActivity.class, PasswordActivity.class
     ));
     statusGroups.put(ExecutorStateNavigate.MAP_SHIFT_CLOSED, Arrays.asList(
-        MapActivity.class, GeolocationResolutionActivity.class, MenuActivity.class,
+        MapActivity.class, GeolocationResolutionActivity.class,
         BalanceActivity.class
     ));
     statusGroups.put(ExecutorStateNavigate.MAP_SHIFT_OPENED, Arrays.asList(
         OnlineActivity.class, VehicleOptionsActivity.class, ServicesActivity.class,
-        GeolocationResolutionActivity.class, MenuActivity.class, BalanceActivity.class,
+        GeolocationResolutionActivity.class, BalanceActivity.class,
         SelectedVehicleOptionsActivity.class
     ));
     statusGroups.put(ExecutorStateNavigate.MAP_ONLINE, Arrays.asList(
         OnlineActivity.class, VehicleOptionsActivity.class,
-        GeolocationResolutionActivity.class, MenuActivity.class, BalanceActivity.class,
+        GeolocationResolutionActivity.class, BalanceActivity.class,
         SelectedVehicleOptionsActivity.class
     ));
     statusGroups.put(ExecutorStateNavigate.DRIVER_ORDER_CONFIRMATION, Arrays.asList(
@@ -90,8 +85,6 @@ public class AutoRouterImpl implements ActivityLifecycleCallbacks, AutoRouter,
   @GeoLocationNavigate
   private String splashRouteAction;
   private boolean goToGeoResolver;
-  @Nullable
-  private Runnable messageRunnable;
 
   @Inject
   public AutoRouterImpl(@NonNull RingTonePlayer ringTonePlayer,
@@ -113,7 +106,6 @@ public class AutoRouterImpl implements ActivityLifecycleCallbacks, AutoRouter,
     }
     tryToNavigate();
     tryToResolveGeo();
-    tryToShowMessage();
   }
 
   @Override
@@ -175,34 +167,6 @@ public class AutoRouterImpl implements ActivityLifecycleCallbacks, AutoRouter,
     }
   }
 
-  @Override
-  public void showOnlineMessage(@NonNull String message) {
-    messageRunnable = () -> {
-      if (currentActivity != null) {
-        new Builder(currentActivity)
-            .setTitle(R.string.information)
-            .setMessage(message)
-            .setCancelable(false)
-            .setPositiveButton(currentActivity.getString(android.R.string.ok), null)
-            .create()
-            .show();
-        messageRunnable = null;
-      }
-    };
-  }
-
-  private void tryToShowMessage() {
-    if (currentActivity != null && messageRunnable != null) {
-      currentActivity.runOnUiThread(messageRunnable);
-    }
-  }
-
-  @Override
-  public void showMessage(@NonNull String message) {
-    showOnlineMessage(message);
-    tryToShowMessage();
-  }
-
   private void tryToResolveGeo() {
     if (currentActivity != null && goToGeoResolver) {
       currentActivity.startActivity(
@@ -223,7 +187,6 @@ public class AutoRouterImpl implements ActivityLifecycleCallbacks, AutoRouter,
       // Если текущая активити является основной в группе, то обнуляем направление навигации.
       lastRouteAction = group.get(0) == currentActivity.getClass() ? null : lastRouteAction;
       // Так как никуда не переходим, то пытаемся отобразить сообщения, если есть.
-      tryToShowMessage();
       return;
     }
     switch (lastRouteAction) {
@@ -233,20 +196,11 @@ public class AutoRouterImpl implements ActivityLifecycleCallbacks, AutoRouter,
                 .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK)
         );
         break;
+      case ServerConnectionNavigate.VERSION_DEPRECATED:
+        break;
       case CommonNavigate.SERVER_DATA_ERROR:
-        new Builder(currentActivity)
-            .setTitle(R.string.error)
-            .setMessage(R.string.server_data_format_error)
-            .setCancelable(false)
-            .setPositiveButton(
-                currentActivity.getString(android.R.string.ok),
-                (a, b) -> exitAndKill(currentActivity)
-            )
-            .create()
-            .show();
         return;
       case CommonNavigate.EXIT:
-        exitAndKill(currentActivity);
         return;
       case ExecutorStateNavigate.MAP_SHIFT_CLOSED:
         currentActivity.startActivity(
@@ -303,32 +257,20 @@ public class AutoRouterImpl implements ActivityLifecycleCallbacks, AutoRouter,
         );
         break;
       default:
-        new Builder(currentActivity)
-            .setTitle(R.string.error)
-            .setMessage(R.string.status_unknown)
-            .setCancelable(false)
-            .setPositiveButton(
-                currentActivity.getString(android.R.string.ok),
-                (a, b) -> exitAndKill(currentActivity)
-            )
-            .create()
-            .show();
+        if (currentActivity != null) {
+          new Builder(currentActivity)
+              .setTitle(R.string.error)
+              .setMessage(R.string.status_unknown)
+              .setCancelable(false)
+              .setPositiveButton(currentActivity.getString(android.R.string.ok), null)
+              .create()
+              .show();
+        }
         return;
     }
     // Если переход сработал, то обнуляем направление. Если нет, то следующее активити попробует его обработать
     lastRouteAction = null;
     // Если переход сработал, то сбрасываем флаг сброса экрана
     reset = false;
-  }
-
-  private void exitAndKill(Activity activity) {
-    if (Build.VERSION.SDK_INT >= 21) {
-      activity.finishAndRemoveTask();
-    } else {
-      activity.finishAffinity();
-    }
-    new Handler().postDelayed(
-        () -> android.os.Process.killProcess(android.os.Process.myPid()), 1000
-    );
   }
 }

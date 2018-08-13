@@ -7,7 +7,6 @@ import android.support.annotation.NonNull;
 import com.cargopull.executor_driver.gateway.DataMappingException;
 import com.cargopull.executor_driver.interactor.CurrentCostPollingUseCase;
 import com.cargopull.executor_driver.presentation.CommonNavigate;
-import com.cargopull.executor_driver.presentation.SingleLiveEvent;
 import com.cargopull.executor_driver.presentation.ViewState;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
@@ -21,8 +20,6 @@ public class CurrentCostPollingViewModelImpl extends ViewModel implements
   @NonNull
   private final CurrentCostPollingUseCase currentCostPollingUseCase;
   @NonNull
-  private final SingleLiveEvent<ViewState<CurrentCostPollingViewActions>> messageLiveData;
-  @NonNull
   private final MutableLiveData<String> navigateLiveData;
   @NonNull
   private Disposable disposable = EmptyDisposable.INSTANCE;
@@ -33,13 +30,12 @@ public class CurrentCostPollingViewModelImpl extends ViewModel implements
       @NonNull CurrentCostPollingUseCase currentCostPollingUseCase) {
     this.currentCostPollingUseCase = currentCostPollingUseCase;
     navigateLiveData = new MutableLiveData<>();
-    messageLiveData = new SingleLiveEvent<>();
   }
 
   @NonNull
   @Override
-  public LiveData<ViewState<CurrentCostPollingViewActions>> getViewStateLiveData() {
-    return messageLiveData;
+  public LiveData<ViewState<Runnable>> getViewStateLiveData() {
+    return new MutableLiveData<>();
   }
 
   @NonNull
