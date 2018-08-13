@@ -57,7 +57,7 @@ release_clean:
   tags:
     - android
   only:
-    - /^\d+\.\d+\.\d+$/
+    - /^\d+\.\d+(\.\d+){0,1}$/
   except:
     - branches
   script:
@@ -144,7 +144,7 @@ release_deploy:
   tags:
     - android
   only:
-    - /^\d+\.\d+\.\d+$/
+    - /^\d+\.\d+(\.\d+){0,1}$/
   except:
     - branches
   script:
