@@ -66,6 +66,9 @@
       android:name=".application.OnlineActivity"/>
     <activity
       android:launchMode="singleTop"
+      android:name=".application.OnlineMenuActivity"/>
+    <activity
+      android:launchMode="singleTop"
       android:name=".application.DriverOrderConfirmationActivity"/>
     <activity
       android:launchMode="singleTop"
