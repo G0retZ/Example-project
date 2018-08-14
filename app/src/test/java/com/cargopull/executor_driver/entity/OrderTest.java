@@ -35,7 +35,7 @@ public class OrderTest {
   @Before
   public void setUp() {
     order = new Order(7, "com", "service", 1200239, "7000", 7000, 7728_192_819L, 28_020,
-        9400, 20, 600, 1234567890, 9876543210L);
+        9400, 20, 600, 1234567890, 9876543210L, 123812983712L);
     order.addRoutePoints(routePoint);
   }
 
@@ -54,6 +54,7 @@ public class OrderTest {
     assertEquals(order.getEtaToStartPoint(), 600);
     assertEquals(order.getConfirmationTime(), 1234567890);
     assertEquals(order.getStartTime(), 9876543210L);
+    assertEquals(order.getScheduledStartTime(), 123812983712L);
     assertEquals(order.getRoutePath(), Collections.singletonList(routePoint));
     assertEquals(order.getOptions(), new ArrayList<Option>());
     assertEquals(order.getRoutePath(), Collections.singletonList(routePoint));

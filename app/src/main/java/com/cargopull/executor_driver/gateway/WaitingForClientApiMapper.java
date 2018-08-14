@@ -59,7 +59,8 @@ public class WaitingForClientApiMapper implements Mapper<String, Order> {
         apiOrder.getTimeout(),
         apiOrder.getEtaToStartPoint(),
         apiOrder.getConfirmationTime(),
-        apiOrder.getStartTime());
+        apiOrder.getStartTime(),
+        apiOrder.getScheduledStartTime());
     if (apiOrder.getOptions() != null) {
       for (ApiOptionItem vehicleOptionItem : apiOrder.getOptions()) {
         order.addOptions(apiOptionMapper.map(vehicleOptionItem));
