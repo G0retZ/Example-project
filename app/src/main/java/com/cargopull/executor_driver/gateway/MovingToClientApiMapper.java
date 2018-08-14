@@ -73,7 +73,7 @@ public class MovingToClientApiMapper implements Mapper<String, Order> {
         apiOrder.getTimeout(),
         apiOrder.getEtaToStartPoint(),
         apiOrder.getConfirmationTime(),
-        apiOrder.getOrderStartTime());
+        apiOrder.getStartTime());
     if (apiOrder.getOptions() != null) {
       for (ApiOptionItem vehicleOptionItem : apiOrder.getOptions()) {
         order.addOptions(apiOptionMapper.map(vehicleOptionItem));
