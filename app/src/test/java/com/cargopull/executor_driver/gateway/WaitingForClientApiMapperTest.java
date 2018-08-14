@@ -71,7 +71,7 @@ public class WaitingForClientApiMapperTest {
     assertEquals(order.getTimeout(), 25);
     assertEquals(order.getEtaToStartPoint(), 1234567890);
     assertEquals(order.getConfirmationTime(), 9876543210L);
-    assertEquals(order.getOrderStartTime(), 9876598760L);
+    assertEquals(order.getStartTime(), 9876598760L);
     assertEquals(order.getServiceName(), "service");
     assertEquals(order.getDistance(), 546);
     assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
@@ -101,7 +101,7 @@ public class WaitingForClientApiMapperTest {
     assertEquals(order.getTimeout(), 25);
     assertEquals(order.getEtaToStartPoint(), 1234567890);
     assertEquals(order.getConfirmationTime(), 9876543210L);
-    assertEquals(order.getOrderStartTime(), 9876598760L);
+    assertEquals(order.getStartTime(), 9876598760L);
     assertEquals(order.getServiceName(), "service");
     assertEquals(order.getDistance(), 546);
     assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
@@ -131,7 +131,7 @@ public class WaitingForClientApiMapperTest {
     assertEquals(order.getTimeout(), 25);
     assertEquals(order.getEtaToStartPoint(), 1234567890);
     assertEquals(order.getConfirmationTime(), 9876543210L);
-    assertEquals(order.getOrderStartTime(), 9876598760L);
+    assertEquals(order.getStartTime(), 9876598760L);
     assertEquals(order.getServiceName(), "service");
     assertEquals(order.getDistance(), 546);
     assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
@@ -161,7 +161,7 @@ public class WaitingForClientApiMapperTest {
     assertEquals(order.getTimeout(), 25);
     assertEquals(order.getEtaToStartPoint(), 1234567890);
     assertEquals(order.getConfirmationTime(), 9876543210L);
-    assertEquals(order.getOrderStartTime(), 9876598760L);
+    assertEquals(order.getStartTime(), 9876598760L);
     assertEquals(order.getServiceName(), "service");
     assertEquals(order.getDistance(), 546);
     assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
@@ -191,7 +191,7 @@ public class WaitingForClientApiMapperTest {
     assertEquals(order.getTimeout(), 25);
     assertEquals(order.getEtaToStartPoint(), 1234567890);
     assertEquals(order.getConfirmationTime(), 9876543210L);
-    assertEquals(order.getOrderStartTime(), 9876598760L);
+    assertEquals(order.getStartTime(), 9876598760L);
     assertEquals(order.getServiceName(), "service");
     assertEquals(order.getDistance(), 546);
     assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
@@ -221,7 +221,7 @@ public class WaitingForClientApiMapperTest {
     assertEquals(order.getTimeout(), 25);
     assertEquals(order.getEtaToStartPoint(), 1234567890);
     assertEquals(order.getConfirmationTime(), 9876543210L);
-    assertEquals(order.getOrderStartTime(), 9876598760L);
+    assertEquals(order.getStartTime(), 9876598760L);
     assertEquals(order.getServiceName(), "service");
     assertEquals(order.getDistance(), 546);
     assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
@@ -251,7 +251,7 @@ public class WaitingForClientApiMapperTest {
     assertEquals(order.getTimeout(), 25);
     assertEquals(order.getEtaToStartPoint(), 1234567890);
     assertEquals(order.getConfirmationTime(), 9876543210L);
-    assertEquals(order.getOrderStartTime(), 9876598760L);
+    assertEquals(order.getStartTime(), 9876598760L);
     assertEquals(order.getServiceName(), "service");
     assertEquals(order.getDistance(), 546);
     assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
@@ -281,7 +281,7 @@ public class WaitingForClientApiMapperTest {
     assertEquals(order.getTimeout(), 25);
     assertEquals(order.getEtaToStartPoint(), 1234567890);
     assertEquals(order.getConfirmationTime(), 9876543210L);
-    assertEquals(order.getOrderStartTime(), 9876598760L);
+    assertEquals(order.getStartTime(), 9876598760L);
     assertEquals(order.getServiceName(), "service");
     assertEquals(order.getDistance(), 546);
     assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
@@ -311,7 +311,7 @@ public class WaitingForClientApiMapperTest {
     assertEquals(order.getTimeout(), 0);
     assertEquals(order.getEtaToStartPoint(), 1234567890);
     assertEquals(order.getConfirmationTime(), 9876543210L);
-    assertEquals(order.getOrderStartTime(), 9876598760L);
+    assertEquals(order.getStartTime(), 9876598760L);
     assertEquals(order.getServiceName(), "service");
     assertEquals(order.getDistance(), 546);
     assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
@@ -341,7 +341,7 @@ public class WaitingForClientApiMapperTest {
     assertEquals(order.getTimeout(), 25);
     assertEquals(order.getEtaToStartPoint(), 0);
     assertEquals(order.getConfirmationTime(), 9876543210L);
-    assertEquals(order.getOrderStartTime(), 9876598760L);
+    assertEquals(order.getStartTime(), 9876598760L);
     assertEquals(order.getServiceName(), "service");
     assertEquals(order.getDistance(), 546);
     assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
@@ -371,7 +371,7 @@ public class WaitingForClientApiMapperTest {
     assertEquals(order.getTimeout(), 25);
     assertEquals(order.getEtaToStartPoint(), 1234567890);
     assertEquals(order.getConfirmationTime(), 0);
-    assertEquals(order.getOrderStartTime(), 9876598760L);
+    assertEquals(order.getStartTime(), 9876598760L);
     assertEquals(order.getServiceName(), "service");
     assertEquals(order.getDistance(), 546);
     assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
@@ -401,7 +401,7 @@ public class WaitingForClientApiMapperTest {
     assertEquals(order.getTimeout(), 25);
     assertEquals(order.getEtaToStartPoint(), 1234567890);
     assertEquals(order.getConfirmationTime(), 9876543210L);
-    assertEquals(order.getOrderStartTime(), 0);
+    assertEquals(order.getStartTime(), 0);
     assertEquals(order.getServiceName(), "service");
     assertEquals(order.getDistance(), 546);
     assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
@@ -431,7 +431,7 @@ public class WaitingForClientApiMapperTest {
     assertEquals(order.getTimeout(), 25);
     assertEquals(order.getEtaToStartPoint(), 1234567890);
     assertEquals(order.getConfirmationTime(), 9876543210L);
-    assertEquals(order.getOrderStartTime(), 9876598760L);
+    assertEquals(order.getStartTime(), 9876598760L);
     assertEquals(order.getServiceName(), "service");
     assertEquals(order.getDistance(), 546);
     assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
@@ -461,7 +461,7 @@ public class WaitingForClientApiMapperTest {
     assertEquals(order.getTimeout(), 25);
     assertEquals(order.getEtaToStartPoint(), 1234567890);
     assertEquals(order.getConfirmationTime(), 9876543210L);
-    assertEquals(order.getOrderStartTime(), 9876598760L);
+    assertEquals(order.getStartTime(), 9876598760L);
     assertEquals(order.getServiceName(), "service");
     assertEquals(order.getDistance(), 0);
     assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
@@ -491,7 +491,7 @@ public class WaitingForClientApiMapperTest {
     assertEquals(order.getTimeout(), 25);
     assertEquals(order.getEtaToStartPoint(), 1234567890);
     assertEquals(order.getConfirmationTime(), 9876543210L);
-    assertEquals(order.getOrderStartTime(), 9876598760L);
+    assertEquals(order.getStartTime(), 9876598760L);
     assertEquals(order.getServiceName(), "service");
     assertEquals(order.getDistance(), 0);
     assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
@@ -521,7 +521,7 @@ public class WaitingForClientApiMapperTest {
     assertEquals(order.getTimeout(), 25);
     assertEquals(order.getEtaToStartPoint(), 1234567890);
     assertEquals(order.getConfirmationTime(), 9876543210L);
-    assertEquals(order.getOrderStartTime(), 9876598760L);
+    assertEquals(order.getStartTime(), 9876598760L);
     assertEquals(order.getServiceName(), "service");
     assertEquals(order.getDistance(), 546);
     assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
@@ -551,7 +551,7 @@ public class WaitingForClientApiMapperTest {
     assertEquals(order.getTimeout(), 25);
     assertEquals(order.getEtaToStartPoint(), 1234567890);
     assertEquals(order.getConfirmationTime(), 9876543210L);
-    assertEquals(order.getOrderStartTime(), 9876598760L);
+    assertEquals(order.getStartTime(), 9876598760L);
     assertEquals(order.getServiceName(), "");
     assertEquals(order.getDistance(), 546);
     assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
@@ -581,7 +581,7 @@ public class WaitingForClientApiMapperTest {
     assertEquals(order.getTimeout(), 25);
     assertEquals(order.getEtaToStartPoint(), 1234567890);
     assertEquals(order.getConfirmationTime(), 9876543210L);
-    assertEquals(order.getOrderStartTime(), 9876598760L);
+    assertEquals(order.getStartTime(), 9876598760L);
     assertEquals(order.getServiceName(), "service");
     assertEquals(order.getDistance(), 546);
     assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
@@ -611,7 +611,7 @@ public class WaitingForClientApiMapperTest {
     assertEquals(order.getTimeout(), 25);
     assertEquals(order.getEtaToStartPoint(), 1234567890);
     assertEquals(order.getConfirmationTime(), 9876543210L);
-    assertEquals(order.getOrderStartTime(), 9876598760L);
+    assertEquals(order.getStartTime(), 9876598760L);
     assertEquals(order.getServiceName(), "");
     assertEquals(order.getDistance(), 546);
     assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
@@ -641,7 +641,7 @@ public class WaitingForClientApiMapperTest {
     assertEquals(order.getTimeout(), 25);
     assertEquals(order.getEtaToStartPoint(), 1234567890);
     assertEquals(order.getConfirmationTime(), 9876543210L);
-    assertEquals(order.getOrderStartTime(), 9876598760L);
+    assertEquals(order.getStartTime(), 9876598760L);
     assertEquals(order.getServiceName(), "service");
     assertEquals(order.getDistance(), 546);
     assertEquals(order.getRoutePath(), new ArrayList<>());
@@ -671,7 +671,7 @@ public class WaitingForClientApiMapperTest {
     assertEquals(order.getTimeout(), 25);
     assertEquals(order.getEtaToStartPoint(), 1234567890);
     assertEquals(order.getConfirmationTime(), 9876543210L);
-    assertEquals(order.getOrderStartTime(), 9876598760L);
+    assertEquals(order.getStartTime(), 9876598760L);
     assertEquals(order.getServiceName(), "service");
     assertEquals(order.getDistance(), 546);
     assertEquals(order.getRoutePath(), new ArrayList<>());
@@ -701,7 +701,7 @@ public class WaitingForClientApiMapperTest {
     assertEquals(order.getTimeout(), 25);
     assertEquals(order.getEtaToStartPoint(), 1234567890);
     assertEquals(order.getConfirmationTime(), 9876543210L);
-    assertEquals(order.getOrderStartTime(), 9876598760L);
+    assertEquals(order.getStartTime(), 9876598760L);
     assertEquals(order.getServiceName(), "service");
     assertEquals(order.getDistance(), 546);
     assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
@@ -729,7 +729,7 @@ public class WaitingForClientApiMapperTest {
     assertEquals(order.getTimeout(), 25);
     assertEquals(order.getEtaToStartPoint(), 1234567890);
     assertEquals(order.getConfirmationTime(), 9876543210L);
-    assertEquals(order.getOrderStartTime(), 9876598760L);
+    assertEquals(order.getStartTime(), 9876598760L);
     assertEquals(order.getServiceName(), "service");
     assertEquals(order.getDistance(), 546);
     assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));

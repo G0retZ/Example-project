@@ -53,7 +53,7 @@ public class OrderTest {
     assertEquals(order.getTimeout(), 20);
     assertEquals(order.getEtaToStartPoint(), 600);
     assertEquals(order.getConfirmationTime(), 1234567890);
-    assertEquals(order.getOrderStartTime(), 9876543210L);
+    assertEquals(order.getStartTime(), 9876543210L);
     assertEquals(order.getRoutePath(), Collections.singletonList(routePoint));
     assertEquals(order.getOptions(), new ArrayList<Option>());
     assertEquals(order.getRoutePath(), Collections.singletonList(routePoint));

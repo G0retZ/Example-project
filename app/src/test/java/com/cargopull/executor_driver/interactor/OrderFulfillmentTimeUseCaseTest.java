@@ -107,8 +107,8 @@ public class OrderFulfillmentTimeUseCaseTest {
     PublishSubject<Order> publishSubject = PublishSubject.create();
     when(gateway.getOrders())
         .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
-    when(order.getOrderStartTime()).thenReturn(12345000L);
-    when(order2.getOrderStartTime()).thenReturn(6789000L);
+    when(order.getStartTime()).thenReturn(12345000L);
+    when(order2.getStartTime()).thenReturn(6789000L);
     when(timeUtils.currentTimeMillis()).thenReturn(12350000L, 6801000L);
 
     // Действие:
