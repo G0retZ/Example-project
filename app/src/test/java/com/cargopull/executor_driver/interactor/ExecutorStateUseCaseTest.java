@@ -168,6 +168,7 @@ public class ExecutorStateUseCaseTest {
    */
   @Test
   public void reportGetLoginFailed() {
+    // Дано:
     when(loginReceiver.get()).thenReturn(Observable.error(IOException::new));
 
     // Действие:
@@ -182,6 +183,7 @@ public class ExecutorStateUseCaseTest {
    */
   @Test
   public void reportSubscriptionFailed() {
+    // Дано:
     when(loginReceiver.get()).thenReturn(Observable.just("1234567890"));
     when(gateway.getState("1234567890")).thenReturn(Flowable.error(DataMappingException::new));
 
