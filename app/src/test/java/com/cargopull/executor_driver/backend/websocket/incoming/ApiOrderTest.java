@@ -41,6 +41,7 @@ public class ApiOrderTest {
         1200,
         1234567890,
         9876543210L,
+        8197239812739L,
         apiDriverDistancePair,
         apiOrderService,
         Arrays.asList(apiRoutePoint, apiRoutePoint1),
@@ -58,7 +59,8 @@ public class ApiOrderTest {
     assertEquals(apiOrder.getTimeout(), 23);
     assertEquals(apiOrder.getEtaToStartPoint(), 1200);
     assertEquals(apiOrder.getConfirmationTime(), 1234567890);
-    assertEquals(apiOrder.getOrderStartTime(), 9876543210L);
+    assertEquals(apiOrder.getStartTime(), 9876543210L);
+    assertEquals(apiOrder.getScheduledStartTime(), 8197239812739L);
     assertNotNull(apiOrder.getExecutorDistance());
     assertEquals(apiOrder.getExecutorDistance(), apiDriverDistancePair);
     assertEquals(apiOrder.getApiOrderService(), apiOrderService);

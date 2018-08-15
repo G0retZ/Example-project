@@ -11,6 +11,7 @@ import com.cargopull.executor_driver.entity.RoutePoint;
 import com.cargopull.executor_driver.entity.RoutePointState;
 import com.cargopull.executor_driver.utils.TimeUtils;
 import java.util.Locale;
+import org.joda.time.format.DateTimeFormat;
 
 /**
  * Модель для отображения предложения заказа. Тестируемое форматирование.
@@ -94,6 +95,24 @@ class OrderItem {
 
   public int getEstimatedTimeSeconds() {
     return Math.round(order.getEstimatedTime() / 1000f);
+  }
+
+  public String getOccupationTime() {
+    long scheduledDate = order.getScheduledStartTime();
+    long etaDate = timeUtils.currentTimeMillis() + order.getEtaToStartPoint();
+    scheduledDate = scheduledDate < etaDate ? etaDate : scheduledDate;
+    return
+        DateTimeFormat.forPattern("HH:mm").print(scheduledDate)
+            + " - "
+            + DateTimeFormat.forPattern("HH:mm").print(scheduledDate + order.getEstimatedTime());
+  }
+
+  @SuppressWarnings("SpellCheckingInspection")
+  public String getOccupationDate() {
+    long scheduledDate = order.getScheduledStartTime();
+    long etaDate = timeUtils.currentTimeMillis() + order.getEtaToStartPoint();
+    return DateTimeFormat.forPattern("d MMMM, EEEE")
+        .print(scheduledDate < etaDate ? etaDate : scheduledDate);
   }
 
   public String getServiceName() {

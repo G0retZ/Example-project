@@ -67,7 +67,8 @@ public class OrderFulfillmentApiMapper implements Mapper<String, Order> {
         apiOrder.getTimeout(),
         apiOrder.getEtaToStartPoint(),
         apiOrder.getConfirmationTime(),
-        apiOrder.getOrderStartTime());
+        apiOrder.getStartTime(),
+        apiOrder.getScheduledStartTime());
     if (apiOrder.getOptions() != null) {
       for (ApiOptionItem vehicleOptionItem : apiOrder.getOptions()) {
         order.addOptions(apiOptionMapper.map(vehicleOptionItem));

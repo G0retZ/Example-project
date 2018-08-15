@@ -33,7 +33,7 @@ public class OrderFulfillmentTimeUseCaseImpl implements OrderFulfillmentTimeUseC
     return orderGateway.getOrders()
         .switchMap(order -> {
               long offset =
-                  Math.round((timeUtils.currentTimeMillis() - order.getOrderStartTime()) / 1000d);
+                  Math.round((timeUtils.currentTimeMillis() - order.getStartTime()) / 1000d);
               return Flowable.interval(0, 1, TimeUnit.SECONDS)
                   .map(count -> count + offset)
                   .observeOn(Schedulers.single());
