@@ -103,6 +103,22 @@ public interface OrderViewActions {
   void showOrderConditions(@NonNull String routeDistance, int time, long cost);
 
   /**
+   * Показать время занятости по заказу.
+   *
+   * @param occupationTime - время занятости
+   */
+  @SuppressWarnings({"unused", "EmptyMethod"})
+  void showOrderOccupationTime(@NonNull String occupationTime);
+
+  /**
+   * Показать дату занятости по заказу.
+   *
+   * @param occupationDate - дата занятости
+   */
+  @SuppressWarnings({"unused", "EmptyMethod"})
+  void showOrderOccupationDate(@NonNull String occupationDate);
+
+  /**
    * Показать опции, необходимые для принятия заказа.
    *
    * @param options - список опций, требуемых для выполнения заказа

@@ -315,6 +315,7 @@ public class OrderItemTest {
     assertEquals(orderItem.getOccupationTime(), "09:19 - 10:15");
   }
 
+  @SuppressWarnings("SpellCheckingInspection")
   @Test
   public void testGetOccupationDateInPast() {
     // Дано:
@@ -327,6 +328,7 @@ public class OrderItemTest {
     assertEquals(orderItem.getOccupationDate(), DateTimeFormat.forPattern("d MMMM, EEEE").print(0));
   }
 
+  @SuppressWarnings("SpellCheckingInspection")
   @Test
   public void testGetOccupationDateWithEtaStartsInPast() {
     // Дано:
@@ -339,6 +341,7 @@ public class OrderItemTest {
     assertEquals(orderItem.getOccupationDate(), DateTimeFormat.forPattern("d MMMM, EEEE").print(0));
   }
 
+  @SuppressWarnings("SpellCheckingInspection")
   @Test
   public void testGetOccupationDateInFuture() {
     // Дано:

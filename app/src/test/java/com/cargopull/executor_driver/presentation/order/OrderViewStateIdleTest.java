@@ -45,6 +45,8 @@ public class OrderViewStateIdleTest {
     when(orderItem.getRouteLength()).thenReturn("la-la-la");
     when(orderItem.getEstimatedTimeSeconds()).thenReturn(7929);
     when(orderItem.getEstimatedPrice()).thenReturn(6812L);
+    when(orderItem.getOccupationTime()).thenReturn("12:34");
+    when(orderItem.getOccupationDate()).thenReturn("34-12");
     when(orderItem.getServiceName()).thenReturn("service");
     when(orderItem.getSecondsToMeetClient()).thenReturn(654321);
     when(orderItem.getOrderComment()).thenReturn("comm");
@@ -64,6 +66,8 @@ public class OrderViewStateIdleTest {
     verify(viewActions).showRoutePointsCount(7);
     verify(viewActions).showLastPointAddress("add");
     verify(viewActions).showOrderConditions("la-la-la", 7929, 6812);
+    verify(viewActions).showOrderOccupationTime("12:34");
+    verify(viewActions).showOrderOccupationDate("34-12");
     verify(viewActions).showServiceName("service");
     verify(viewActions).showTimeout(654321);
     verify(viewActions).showComment("comm");

@@ -322,6 +322,16 @@ public class MovingToClientFragment extends BaseFragment implements MovingToClie
   }
 
   @Override
+  public void showOrderOccupationTime(@NonNull String occupationTime) {
+
+  }
+
+  @Override
+  public void showOrderOccupationDate(@NonNull String occupationDate) {
+
+  }
+
+  @Override
   public void showOrderOptionsRequirements(@NonNull String options) {
 
   }

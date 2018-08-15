@@ -107,6 +107,7 @@ class OrderItem {
             + DateTimeFormat.forPattern("HH:mm").print(scheduledDate + order.getEstimatedTime());
   }
 
+  @SuppressWarnings("SpellCheckingInspection")
   public String getOccupationDate() {
     long scheduledDate = order.getScheduledStartTime();
     long etaDate = timeUtils.currentTimeMillis() + order.getEtaToStartPoint();

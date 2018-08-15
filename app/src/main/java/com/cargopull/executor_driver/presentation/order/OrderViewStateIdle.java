@@ -32,6 +32,12 @@ final class OrderViewStateIdle implements ViewState<OrderViewActions> {
         orderItem.getEstimatedTimeSeconds(),
         orderItem.getEstimatedPrice()
     );
+    stateActions.showOrderOccupationTime(
+        orderItem.getOccupationTime()
+    );
+    stateActions.showOrderOccupationDate(
+        orderItem.getOccupationDate()
+    );
     stateActions.showServiceName(orderItem.getServiceName());
     stateActions.showTimeout(orderItem.getSecondsToMeetClient());
     stateActions.showComment(orderItem.getOrderComment());
