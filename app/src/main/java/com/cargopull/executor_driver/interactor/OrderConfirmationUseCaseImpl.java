@@ -1,7 +1,7 @@
 package com.cargopull.executor_driver.interactor;
 
 import android.support.annotation.NonNull;
-import io.reactivex.Completable;
+import io.reactivex.Single;
 import javax.inject.Inject;
 
 public class OrderConfirmationUseCaseImpl implements OrderConfirmationUseCase {
@@ -20,10 +20,8 @@ public class OrderConfirmationUseCaseImpl implements OrderConfirmationUseCase {
 
   @NonNull
   @Override
-  public Completable sendDecision(boolean confirmed) {
+  public Single<String> sendDecision(boolean confirmed) {
     return orderGateway.getOrders().firstOrError()
-        .flatMapCompletable(
-            order -> orderConfirmationGateway.sendDecision(order, confirmed)
-        );
+        .flatMap(order -> orderConfirmationGateway.sendDecision(order, confirmed));
   }
 }

@@ -14,7 +14,7 @@ import com.cargopull.executor_driver.backend.web.NoNetworkException;
 import com.cargopull.executor_driver.interactor.OrderConfirmationUseCase;
 import com.cargopull.executor_driver.presentation.CommonNavigate;
 import com.cargopull.executor_driver.presentation.ViewState;
-import io.reactivex.Completable;
+import io.reactivex.Single;
 import io.reactivex.android.plugins.RxAndroidPlugins;
 import io.reactivex.plugins.RxJavaPlugins;
 import io.reactivex.schedulers.Schedulers;
@@ -46,7 +46,7 @@ public class OrderConfirmationViewModelTest {
   public void setUp() {
     RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
     RxAndroidPlugins.setInitMainThreadSchedulerHandler(scheduler -> Schedulers.trampoline());
-    when(orderConfirmationUseCase.sendDecision(anyBoolean())).thenReturn(Completable.never());
+    when(orderConfirmationUseCase.sendDecision(anyBoolean())).thenReturn(Single.never());
     viewModel = new OrderConfirmationViewModelImpl(orderConfirmationUseCase);
   }
 
@@ -59,7 +59,7 @@ public class OrderConfirmationViewModelTest {
   public void askUseCaseToSendOrderAccepted() {
     // Дано:
     when(orderConfirmationUseCase.sendDecision(anyBoolean()))
-        .thenReturn(Completable.complete());
+        .thenReturn(Single.just(""));
 
     // Действие:
     viewModel.acceptOrder();
@@ -75,7 +75,7 @@ public class OrderConfirmationViewModelTest {
   public void askUseCaseToSendOrderDeclined() {
     // Дано:
     when(orderConfirmationUseCase.sendDecision(anyBoolean()))
-        .thenReturn(Completable.complete());
+        .thenReturn(Single.just(""));
 
     // Действие:
     viewModel.declineOrder();
@@ -160,7 +160,7 @@ public class OrderConfirmationViewModelTest {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     when(orderConfirmationUseCase.sendDecision(anyBoolean()))
-        .thenReturn(Completable.error(NoNetworkException::new));
+        .thenReturn(Single.error(NoNetworkException::new));
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
@@ -181,7 +181,7 @@ public class OrderConfirmationViewModelTest {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     when(orderConfirmationUseCase.sendDecision(anyBoolean()))
-        .thenReturn(Completable.error(NoNetworkException::new));
+        .thenReturn(Single.error(NoNetworkException::new));
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
@@ -202,7 +202,7 @@ public class OrderConfirmationViewModelTest {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     when(orderConfirmationUseCase.sendDecision(anyBoolean()))
-        .thenReturn(Completable.complete());
+        .thenReturn(Single.just(""));
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
@@ -222,7 +222,7 @@ public class OrderConfirmationViewModelTest {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     when(orderConfirmationUseCase.sendDecision(anyBoolean()))
-        .thenReturn(Completable.complete());
+        .thenReturn(Single.just(""));
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
@@ -270,7 +270,7 @@ public class OrderConfirmationViewModelTest {
   public void setNavigateToNoConnectionForDecline() {
     // Дано:
     when(orderConfirmationUseCase.sendDecision(false))
-        .thenReturn(Completable.error(IllegalStateException::new));
+        .thenReturn(Single.error(IllegalStateException::new));
     viewModel.getNavigationLiveData().observeForever(navigateObserver);
 
     // Действие:
@@ -286,7 +286,7 @@ public class OrderConfirmationViewModelTest {
   @Test
   public void doNotSetNavigateForDeclineSuccess() {
     // Дано:
-    when(orderConfirmationUseCase.sendDecision(false)).thenReturn(Completable.complete());
+    when(orderConfirmationUseCase.sendDecision(false)).thenReturn(Single.just(""));
     viewModel.getNavigationLiveData().observeForever(navigateObserver);
 
     // Действие:
@@ -318,7 +318,7 @@ public class OrderConfirmationViewModelTest {
   public void setNavigateToNoConnectionForAccept() {
     // Дано:
     when(orderConfirmationUseCase.sendDecision(true))
-        .thenReturn(Completable.error(IllegalStateException::new));
+        .thenReturn(Single.error(IllegalStateException::new));
     viewModel.getNavigationLiveData().observeForever(navigateObserver);
 
     // Действие:
@@ -334,7 +334,7 @@ public class OrderConfirmationViewModelTest {
   @Test
   public void doNotSetNavigateForAcceptSuccess() {
     // Дано:
-    when(orderConfirmationUseCase.sendDecision(true)).thenReturn(Completable.complete());
+    when(orderConfirmationUseCase.sendDecision(true)).thenReturn(Single.just(""));
     viewModel.getNavigationLiveData().observeForever(navigateObserver);
 
     // Действие:

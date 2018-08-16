@@ -73,11 +73,12 @@ public class OrderConfirmationGatewayTest {
     when(stompClient.send(anyString(), anyString())).thenReturn(Completable.complete());
 
     // Действие:
-    TestObserver<Void> testObserver = gateway.sendDecision(order, false).test();
+    TestObserver<String> testObserver = gateway.sendDecision(order, false).test();
 
     // Результат:
     testObserver.assertNoErrors();
     testObserver.assertComplete();
+    testObserver.assertValue("");
   }
 
   /**
@@ -90,10 +91,11 @@ public class OrderConfirmationGatewayTest {
         .thenReturn(Completable.error(new IllegalArgumentException()));
 
     // Действие:
-    TestObserver<Void> testObserver = gateway.sendDecision(order, false).test();
+    TestObserver<String> testObserver = gateway.sendDecision(order, false).test();
 
     // Результат:
     testObserver.assertNotComplete();
     testObserver.assertError(IllegalArgumentException.class);
+    testObserver.assertNoValues();
   }
 }

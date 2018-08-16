@@ -57,7 +57,7 @@ public class OrderConfirmationViewModelImpl extends ViewModel implements
         .subscribeOn(Schedulers.single())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(
-            () -> {
+            message -> {
             }, throwable -> {
               viewStateLiveData.postValue(new OrderConfirmationViewStateIdle());
               navigateLiveData.postValue(CommonNavigate.NO_CONNECTION);
@@ -75,7 +75,7 @@ public class OrderConfirmationViewModelImpl extends ViewModel implements
         .subscribeOn(Schedulers.single())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(
-            () -> {
+            message -> {
             }, throwable -> {
               viewStateLiveData.postValue(new OrderConfirmationViewStateIdle());
               navigateLiveData.postValue(CommonNavigate.NO_CONNECTION);

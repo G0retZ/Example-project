@@ -11,8 +11,8 @@ import static org.mockito.Mockito.when;
 import com.cargopull.executor_driver.backend.web.NoNetworkException;
 import com.cargopull.executor_driver.entity.Order;
 import com.cargopull.executor_driver.gateway.DataMappingException;
-import io.reactivex.Completable;
 import io.reactivex.Flowable;
+import io.reactivex.Single;
 import io.reactivex.observers.TestObserver;
 import org.junit.Before;
 import org.junit.Test;
@@ -37,8 +37,7 @@ public class OrderConfirmationUseCaseTest {
   @Before
   public void setUp() {
     when(orderGateway.getOrders()).thenReturn(Flowable.never());
-    when(orderConfirmationGateway.sendDecision(any(), anyBoolean()))
-        .thenReturn(Completable.never());
+    when(orderConfirmationGateway.sendDecision(any(), anyBoolean())).thenReturn(Single.never());
     useCase = new OrderConfirmationUseCaseImpl(orderGateway,
         orderConfirmationGateway);
   }
@@ -105,7 +104,7 @@ public class OrderConfirmationUseCaseTest {
     when(orderGateway.getOrders()).thenReturn(Flowable.error(new DataMappingException()));
 
     // Действие:
-    TestObserver<Void> test = useCase.sendDecision(true).test();
+    TestObserver<String> test = useCase.sendDecision(true).test();
 
     // Результат:
     test.assertError(DataMappingException.class);
@@ -121,10 +120,10 @@ public class OrderConfirmationUseCaseTest {
     // Дано:
     when(orderGateway.getOrders()).thenReturn(Flowable.just(order));
     when(orderConfirmationGateway.sendDecision(any(), anyBoolean()))
-        .thenReturn(Completable.error(new NoNetworkException()));
+        .thenReturn(Single.error(new NoNetworkException()));
 
     // Действие:
-    TestObserver<Void> test = useCase.sendDecision(true).test();
+    TestObserver<String> test = useCase.sendDecision(true).test();
 
     // Результат:
     test.assertError(NoNetworkException.class);
@@ -141,10 +140,10 @@ public class OrderConfirmationUseCaseTest {
     when(orderGateway.getOrders())
         .thenReturn(Flowable.just(order));
     when(orderConfirmationGateway.sendDecision(any(), anyBoolean()))
-        .thenReturn(Completable.error(new NoNetworkException()));
+        .thenReturn(Single.error(new NoNetworkException()));
 
     // Действие:
-    TestObserver<Void> test = useCase.sendDecision(false).test();
+    TestObserver<String> test = useCase.sendDecision(false).test();
 
     // Результат:
     test.assertError(NoNetworkException.class);
@@ -161,14 +160,15 @@ public class OrderConfirmationUseCaseTest {
     when(orderGateway.getOrders())
         .thenReturn(Flowable.just(order));
     when(orderConfirmationGateway.sendDecision(any(), anyBoolean()))
-        .thenReturn(Completable.complete());
+        .thenReturn(Single.just("success"));
 
     // Действие:
-    TestObserver<Void> test = useCase.sendDecision(true).test();
+    TestObserver<String> test = useCase.sendDecision(true).test();
 
     // Результат:
     test.assertComplete();
     test.assertNoErrors();
+    test.assertValue("success");
   }
 
   /**
@@ -180,13 +180,14 @@ public class OrderConfirmationUseCaseTest {
     when(orderGateway.getOrders())
         .thenReturn(Flowable.just(order));
     when(orderConfirmationGateway.sendDecision(any(), anyBoolean()))
-        .thenReturn(Completable.complete());
+        .thenReturn(Single.just("success"));
 
     // Действие:
-    TestObserver<Void> test = useCase.sendDecision(false).test();
+    TestObserver<String> test = useCase.sendDecision(false).test();
 
     // Результат:
     test.assertComplete();
-    test.assertNoErrors();
+    test.assertComplete();
+    test.assertValue("success");
   }
 }
