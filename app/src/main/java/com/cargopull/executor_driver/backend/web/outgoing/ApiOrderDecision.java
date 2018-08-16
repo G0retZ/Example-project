@@ -15,7 +15,7 @@ public class ApiOrderDecision {
   @Expose
   private final boolean approve;
 
-  ApiOrderDecision(long id, boolean approve) {
+  public ApiOrderDecision(long id, boolean approve) {
     this.id = id;
     this.approve = approve;
   }
