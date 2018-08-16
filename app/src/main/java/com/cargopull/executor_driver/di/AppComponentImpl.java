@@ -168,6 +168,7 @@ import com.cargopull.executor_driver.view.ChooseVehicleFragment;
 import com.cargopull.executor_driver.view.ClientOrderConfirmationFragment;
 import com.cargopull.executor_driver.view.ClientOrderConfirmationTimeFragment;
 import com.cargopull.executor_driver.view.DriverOrderConfirmationFragment;
+import com.cargopull.executor_driver.view.DriverPreOrderConfirmationFragment;
 import com.cargopull.executor_driver.view.GoOnlineFragment;
 import com.cargopull.executor_driver.view.MapFragment;
 import com.cargopull.executor_driver.view.MenuFragment;
@@ -1320,6 +1321,11 @@ public class AppComponentImpl implements AppComponent {
   @Override
   public void inject(ProfileFragment profileFragment) {
     profileFragment.setAppSettings(appSettingsService);
+  }
+
+  @Override
+  public void inject(DriverPreOrderConfirmationFragment driverPreOrderConfirmationFragment) {
+    driverPreOrderConfirmationFragment.setShakeItPlayer(singleShakePlayer);
   }
 
   private OkHttpClient initHttpClient(@NonNull Interceptor... interceptors) {
