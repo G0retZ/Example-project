@@ -3,8 +3,10 @@ package com.cargopull.executor_driver.backend.web;
 import android.support.annotation.NonNull;
 import com.cargopull.executor_driver.backend.web.incoming.ApiOptionsForOnline;
 import com.cargopull.executor_driver.backend.web.incoming.ApiServiceItem;
+import com.cargopull.executor_driver.backend.web.incoming.ApiSimpleResult;
 import com.cargopull.executor_driver.backend.web.outgoing.ApiLogin;
 import com.cargopull.executor_driver.backend.web.outgoing.ApiOptionItems;
+import com.cargopull.executor_driver.backend.web.outgoing.ApiOrderDecision;
 import io.reactivex.Completable;
 import io.reactivex.Single;
 import java.util.List;
@@ -85,5 +87,13 @@ public interface ApiService {
   @PUT("api/public/v1/mobile/car/vehicleOptionItem")
   Completable setSelectedVehicleOptions(
       @NonNull @Body ApiOptionItems apiOptionItems
+  );
+
+  /*
+   *  Запрос бронирования или отказа от предварительного заказа.
+   */
+  @POST("api/public/v1/mobile/order/assign")
+  Single<ApiSimpleResult> sendPreOrderDecision(
+      @NonNull @Body ApiOrderDecision decision
   );
 }
