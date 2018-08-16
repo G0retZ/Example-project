@@ -749,7 +749,7 @@ public class AppComponentImpl implements AppComponent {
                             )
                         )
                     ),
-                    new TimeUtilsImpl()
+                    timeUtils
                 )
             )
         ).get(OrderViewModelImpl.class)
