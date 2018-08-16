@@ -289,11 +289,11 @@ public class OrderItemTest {
 
     // Результат:
     System.out.println(DateTimeFormat.forPattern("HH:mm").print(12748182L)
-        + " - "
+        + "–"
         + DateTimeFormat.forPattern("HH:mm").print(16072521L));
     assertEquals(orderItem.getOccupationTime(),
         DateTimeFormat.forPattern("HH:mm").print(12748182L)
-            + " - "
+            + "–"
             + DateTimeFormat.forPattern("HH:mm").print(16072521L));
   }
 
@@ -307,11 +307,11 @@ public class OrderItemTest {
 
     // Результат:
     System.out.println(DateTimeFormat.forPattern("HH:mm").print(12748182L)
-        + " - "
+        + "–"
         + DateTimeFormat.forPattern("HH:mm").print(16072521L));
     assertEquals(orderItem.getOccupationTime(),
         DateTimeFormat.forPattern("HH:mm").print(12748182L)
-            + " - "
+            + "–"
             + DateTimeFormat.forPattern("HH:mm").print(16072521L));
   }
 
@@ -325,11 +325,11 @@ public class OrderItemTest {
 
     // Результат:
     System.out.println(DateTimeFormat.forPattern("HH:mm").print(22792192L)
-        + " - "
+        + "–"
         + DateTimeFormat.forPattern("HH:mm").print(26116531L));
     assertEquals(orderItem.getOccupationTime(),
         DateTimeFormat.forPattern("HH:mm").print(22792192L)
-            + " - "
+            + "–"
             + DateTimeFormat.forPattern("HH:mm").print(26116531L));
   }
 
