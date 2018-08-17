@@ -5,7 +5,7 @@ import android.support.annotation.Nullable;
 import com.cargopull.executor_driver.BuildConfig;
 import com.cargopull.executor_driver.backend.websocket.ConnectionClosedException;
 import com.cargopull.executor_driver.entity.Order;
-import com.cargopull.executor_driver.interactor.PreOrderGateway;
+import com.cargopull.executor_driver.interactor.OrderGateway;
 import io.reactivex.Flowable;
 import io.reactivex.schedulers.Schedulers;
 import java.util.Arrays;
@@ -14,7 +14,7 @@ import ua.naiksoftware.stomp.StompHeader;
 import ua.naiksoftware.stomp.client.StompClient;
 import ua.naiksoftware.stomp.client.StompMessage;
 
-public class PreOrderGatewayImpl implements PreOrderGateway {
+public class PreOrderGatewayImpl implements OrderGateway {
 
   @NonNull
   private final StompClient stompClient;
@@ -31,7 +31,7 @@ public class PreOrderGatewayImpl implements PreOrderGateway {
 
   @NonNull
   @Override
-  public Flowable<Order> getPreOrders(@Nullable String channelId) {
+  public Flowable<Order> getOrders(@Nullable String channelId) {
     if (stompClient.isConnected() || stompClient.isConnecting()) {
       return stompClient.topic(
           String.format(BuildConfig.STATUS_DESTINATION, channelId),

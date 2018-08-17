@@ -37,7 +37,7 @@ import ua.naiksoftware.stomp.client.StompMessage;
 @RunWith(MockitoJUnitRunner.class)
 public class PreOrderGatewayTest {
 
-  private PreOrderGateway gateway;
+  private OrderGateway gateway;
 
   @Mock
   private StompClient stompClient;
@@ -72,7 +72,7 @@ public class PreOrderGatewayTest {
     when(stompClient.isConnected()).thenReturn(true);
 
     // Действие:
-    gateway.getPreOrders("1234567890").test();
+    gateway.getOrders("1234567890").test();
 
     // Результат:
     inOrder.verify(stompClient).isConnected();
@@ -89,7 +89,7 @@ public class PreOrderGatewayTest {
     InOrder inOrder = Mockito.inOrder(stompClient);
 
     // Действие:
-    gateway.getPreOrders("1234567890").test();
+    gateway.getOrders("1234567890").test();
 
     // Результат:
     inOrder.verify(stompClient).isConnected();
@@ -108,7 +108,7 @@ public class PreOrderGatewayTest {
     when(stompClient.isConnecting()).thenReturn(true);
 
     // Действие:
-    gateway.getPreOrders("1234567890").test();
+    gateway.getOrders("1234567890").test();
 
     // Результат:
     inOrder.verify(stompClient).isConnected();
@@ -135,7 +135,7 @@ public class PreOrderGatewayTest {
         ));
 
     // Действие:
-    gateway.getPreOrders("1234567890").test();
+    gateway.getOrders("1234567890").test();
 
     // Результат:
     verify(mapper, only()).map(any());
@@ -157,7 +157,7 @@ public class PreOrderGatewayTest {
         ));
 
     // Действие:
-    gateway.getPreOrders("1234567890").test();
+    gateway.getOrders("1234567890").test();
 
     // Результат:
     verify(mapper, only()).map(any());
@@ -185,7 +185,7 @@ public class PreOrderGatewayTest {
         ));
 
     // Действие:
-    gateway.getPreOrders("1234567890").test();
+    gateway.getOrders("1234567890").test();
 
     // Результат:
     inOrder.verify(stompClient).isConnected();
@@ -220,7 +220,7 @@ public class PreOrderGatewayTest {
         ));
 
     // Действие:
-    gateway.getPreOrders("1234567890").test();
+    gateway.getOrders("1234567890").test();
 
     // Результат:
     inOrder.verify(stompClient).isConnected();
@@ -257,7 +257,7 @@ public class PreOrderGatewayTest {
 
     // Действие:
     TestSubscriber<Order> testSubscriber =
-        gateway.getPreOrders("1234567890").test();
+        gateway.getOrders("1234567890").test();
 
     // Результат:
     testSubscriber.assertNoValues();
@@ -281,7 +281,7 @@ public class PreOrderGatewayTest {
 
     // Действие:
     TestSubscriber<Order> testSubscriber =
-        gateway.getPreOrders("1234567890").test();
+        gateway.getOrders("1234567890").test();
 
     // Результат:
     testSubscriber.assertError(DataMappingException.class);
@@ -305,7 +305,7 @@ public class PreOrderGatewayTest {
 
     // Действие:
     TestSubscriber<Order> testSubscriber =
-        gateway.getPreOrders("1234567890").test();
+        gateway.getOrders("1234567890").test();
 
     // Результат:
     testSubscriber.assertValue(order);
@@ -323,7 +323,7 @@ public class PreOrderGatewayTest {
 
     // Действие:
     TestSubscriber<Order> testSubscriber =
-        gateway.getPreOrders("1234567890").test();
+        gateway.getOrders("1234567890").test();
 
     // Результат:
     testSubscriber.assertNoErrors();
@@ -338,7 +338,7 @@ public class PreOrderGatewayTest {
   public void answerConnectionErrorIfNotConnectingAfterConnected() {
     // Действие:
     TestSubscriber<Order> testSubscriber =
-        gateway.getPreOrders("1234567890").test();
+        gateway.getOrders("1234567890").test();
 
     // Результат:
     testSubscriber.assertError(ConnectionClosedException.class);
@@ -363,7 +363,7 @@ public class PreOrderGatewayTest {
 
     // Действие:
     TestSubscriber<Order> testSubscriber =
-        gateway.getPreOrders("1234567890").test();
+        gateway.getOrders("1234567890").test();
 
     // Результат:
     testSubscriber.assertNoValues();
@@ -388,7 +388,7 @@ public class PreOrderGatewayTest {
 
     // Действие:
     TestSubscriber<Order> testSubscriber =
-        gateway.getPreOrders("1234567890").test();
+        gateway.getOrders("1234567890").test();
 
     // Результат:
     testSubscriber.assertError(DataMappingException.class);
@@ -413,7 +413,7 @@ public class PreOrderGatewayTest {
 
     // Действие:
     TestSubscriber<Order> testSubscriber =
-        gateway.getPreOrders("1234567890").test();
+        gateway.getOrders("1234567890").test();
 
     // Результат:
     testSubscriber.assertValue(order);
@@ -432,7 +432,7 @@ public class PreOrderGatewayTest {
 
     // Действие:
     TestSubscriber<Order> testSubscriber =
-        gateway.getPreOrders("1234567890").test();
+        gateway.getOrders("1234567890").test();
 
     // Результат:
     testSubscriber.assertNoErrors();

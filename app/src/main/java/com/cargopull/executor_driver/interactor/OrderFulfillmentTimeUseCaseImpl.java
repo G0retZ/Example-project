@@ -3,6 +3,7 @@ package com.cargopull.executor_driver.interactor;
 import android.support.annotation.NonNull;
 import com.cargopull.executor_driver.utils.ErrorReporter;
 import com.cargopull.executor_driver.utils.TimeUtils;
+import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
 import io.reactivex.schedulers.Schedulers;
 import java.util.concurrent.TimeUnit;
@@ -15,22 +16,28 @@ public class OrderFulfillmentTimeUseCaseImpl implements OrderFulfillmentTimeUseC
   @NonNull
   private final OrderGateway orderGateway;
   @NonNull
+  private final DataReceiver<String> loginReceiver;
+  @NonNull
   private final TimeUtils timeUtils;
 
   @Inject
   public OrderFulfillmentTimeUseCaseImpl(
       @NonNull ErrorReporter errorReporter,
       @NonNull OrderGateway orderGateway,
+      @NonNull DataReceiver<String> loginReceiver,
       @NonNull TimeUtils timeUtils) {
     this.errorReporter = errorReporter;
     this.orderGateway = orderGateway;
+    this.loginReceiver = loginReceiver;
     this.timeUtils = timeUtils;
   }
 
   @NonNull
   @Override
   public Flowable<Long> getOrderElapsedTime() {
-    return orderGateway.getOrders()
+    return loginReceiver.get()
+        .toFlowable(BackpressureStrategy.BUFFER)
+        .switchMap(orderGateway::getOrders)
         .switchMap(order -> {
               long offset =
                   Math.round((timeUtils.currentTimeMillis() - order.getStartTime()) / 1000d);

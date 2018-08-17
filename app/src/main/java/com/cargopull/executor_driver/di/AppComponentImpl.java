@@ -728,7 +728,8 @@ public class AppComponentImpl implements AppComponent {
                                 new RoutePointApiMapper()
                             )
                         ),
-                        new OrderConfirmationGatewayImpl(stompClient)
+                        new OrderConfirmationGatewayImpl(stompClient),
+                        loginSharer
                     )
                 )
             )
@@ -748,7 +749,8 @@ public class AppComponentImpl implements AppComponent {
                                 new VehicleOptionApiMapper(),
                                 new RoutePointApiMapper()
                             )
-                        )
+                        ),
+                        loginSharer
                     ),
                     timeUtils
                 )
@@ -773,7 +775,8 @@ public class AppComponentImpl implements AppComponent {
                                 new VehicleOptionApiMapper(),
                                 new RoutePointApiMapper()
                             )
-                        )
+                        ),
+                        loginSharer
                     ),
                     timeUtils
                 )
@@ -824,7 +827,8 @@ public class AppComponentImpl implements AppComponent {
                                 new VehicleOptionApiMapper(),
                                 new RoutePointApiMapper()
                             )
-                        )
+                        ),
+                        loginSharer
                     ),
                     timeUtils
                 )
@@ -852,7 +856,8 @@ public class AppComponentImpl implements AppComponent {
                                 new VehicleOptionApiMapper(),
                                 new RoutePointApiMapper()
                             )
-                        )
+                        ),
+                        loginSharer
                     ),
                     timeUtils
                 )
@@ -878,6 +883,7 @@ public class AppComponentImpl implements AppComponent {
                                 new RoutePointApiMapper()
                             )
                         ),
+                        loginSharer,
                         new OrderRouteGatewayImpl(stompClient)
                     )
                 )
@@ -914,7 +920,8 @@ public class AppComponentImpl implements AppComponent {
                                 new VehicleOptionApiMapper(),
                                 new RoutePointApiMapper()
                             )
-                        )
+                        ),
+                        loginSharer
                     ),
                     timeUtils
                 )
@@ -943,6 +950,7 @@ public class AppComponentImpl implements AppComponent {
                                 new RoutePointApiMapper()
                             )
                         ),
+                        loginSharer,
                         new OrderRouteGatewayImpl(stompClient)
                     )
                 )
@@ -968,6 +976,7 @@ public class AppComponentImpl implements AppComponent {
                                 new RoutePointApiMapper()
                             )
                         ),
+                        loginSharer,
                         timeUtils
                     )
                 )
@@ -1014,6 +1023,7 @@ public class AppComponentImpl implements AppComponent {
                                 new RoutePointApiMapper()
                             )
                         ),
+                        loginSharer,
                         new OrderRouteGatewayImpl(stompClient)
                     )
                 )
@@ -1035,6 +1045,7 @@ public class AppComponentImpl implements AppComponent {
                                 new RoutePointApiMapper()
                             )
                         ),
+                        loginSharer,
                         new OrderRouteGatewayImpl(stompClient)
                     )
                 )
@@ -1062,7 +1073,8 @@ public class AppComponentImpl implements AppComponent {
                                 new VehicleOptionApiMapper(),
                                 new RoutePointApiMapper()
                             )
-                        )
+                        ),
+                        loginSharer
                     ),
                     timeUtils
                 )
@@ -1088,6 +1100,7 @@ public class AppComponentImpl implements AppComponent {
                                 new RoutePointApiMapper()
                             )
                         ),
+                        loginSharer,
                         new OrderRouteGatewayImpl(stompClient)
                     )
                 )
@@ -1113,6 +1126,7 @@ public class AppComponentImpl implements AppComponent {
                                 new RoutePointApiMapper()
                             )
                         ),
+                        loginSharer,
                         new OrderRouteGatewayImpl(stompClient)
                     )
                 )
@@ -1284,7 +1298,8 @@ public class AppComponentImpl implements AppComponent {
                                 new VehicleOptionApiMapper(),
                                 new RoutePointApiMapper()
                             )
-                        )
+                        ),
+                        loginSharer
                     ),
                     timeUtils
                 )
@@ -1310,6 +1325,7 @@ public class AppComponentImpl implements AppComponent {
                                 new RoutePointApiMapper()
                             )
                         ),
+                        loginSharer,
                         new OrderRouteGatewayImpl(stompClient)
                     )
                 )

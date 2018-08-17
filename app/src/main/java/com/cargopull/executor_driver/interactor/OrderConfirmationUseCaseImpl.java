@@ -10,18 +10,25 @@ public class OrderConfirmationUseCaseImpl implements OrderConfirmationUseCase {
   private final OrderGateway orderGateway;
   @NonNull
   private final OrderConfirmationGateway orderConfirmationGateway;
+  @NonNull
+  private final DataReceiver<String> loginReceiver;
 
   @Inject
   public OrderConfirmationUseCaseImpl(@NonNull OrderGateway orderGateway,
-      @NonNull OrderConfirmationGateway orderConfirmationGateway) {
+      @NonNull OrderConfirmationGateway orderConfirmationGateway,
+      @NonNull DataReceiver<String> loginReceiver) {
     this.orderGateway = orderGateway;
     this.orderConfirmationGateway = orderConfirmationGateway;
+    this.loginReceiver = loginReceiver;
   }
 
   @NonNull
   @Override
   public Single<String> sendDecision(boolean confirmed) {
-    return orderGateway.getOrders().firstOrError()
+    return loginReceiver.get()
+        .firstOrError()
+        .flatMapPublisher(orderGateway::getOrders)
+        .firstOrError()
         .flatMap(order -> orderConfirmationGateway.sendDecision(order, confirmed));
   }
 }

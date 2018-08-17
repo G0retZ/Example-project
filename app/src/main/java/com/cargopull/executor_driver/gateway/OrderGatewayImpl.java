@@ -30,7 +30,7 @@ public class OrderGatewayImpl implements OrderGateway {
 
   @NonNull
   @Override
-  public Flowable<Order> getOrders() {
+  public Flowable<Order> getOrders(@NonNull String channelId) {
     return executorStateUseCase
         .getExecutorStates(false)
         .subscribeOn(Schedulers.single())

@@ -2,6 +2,7 @@ package com.cargopull.executor_driver.interactor;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -12,6 +13,7 @@ import com.cargopull.executor_driver.backend.web.NoNetworkException;
 import com.cargopull.executor_driver.entity.Order;
 import com.cargopull.executor_driver.gateway.DataMappingException;
 import io.reactivex.Flowable;
+import io.reactivex.Observable;
 import io.reactivex.Single;
 import io.reactivex.observers.TestObserver;
 import org.junit.Before;
@@ -30,16 +32,35 @@ public class OrderConfirmationUseCaseTest {
   @Mock
   private OrderConfirmationGateway orderConfirmationGateway;
   @Mock
+  private DataReceiver<String> loginReceiver;
+  @Mock
   private Order order;
   @Mock
   private Order order2;
 
   @Before
   public void setUp() {
-    when(orderGateway.getOrders()).thenReturn(Flowable.never());
+    when(loginReceiver.get()).thenReturn(Observable.never());
+    when(orderGateway.getOrders(anyString())).thenReturn(Flowable.never());
     when(orderConfirmationGateway.sendDecision(any(), anyBoolean())).thenReturn(Single.never());
     useCase = new OrderConfirmationUseCaseImpl(orderGateway,
-        orderConfirmationGateway);
+        orderConfirmationGateway, loginReceiver);
+  }
+
+  /* Проверяем работу с публикатором логина */
+
+  /**
+   * Должен запросить у публикатора логин исполнителя.
+   */
+  @Test
+  public void askLoginPublisherForLogin() {
+    // Действие:
+    useCase.sendDecision(true).test();
+    useCase.sendDecision(false).test();
+
+    // Результат:
+    verify(loginReceiver, times(2)).get();
+    verifyNoMoreInteractions(loginReceiver);
   }
 
   /* Проверяем работу с гейтвеем */
@@ -49,12 +70,15 @@ public class OrderConfirmationUseCaseTest {
    */
   @Test
   public void askGatewayForOrders() {
+    // Дано:
+    when(loginReceiver.get()).thenReturn(Observable.just("1234567890", "0987654321"));
+
     // Действие:
     useCase.sendDecision(true).test();
     useCase.sendDecision(false).test();
 
     // Результат:
-    verify(orderGateway, times(2)).getOrders();
+    verify(orderGateway, times(2)).getOrders("1234567890");
     verifyNoMoreInteractions(orderGateway);
   }
 
@@ -64,7 +88,8 @@ public class OrderConfirmationUseCaseTest {
   @Test
   public void askGatewayToSendDecisionsForOrders() {
     // Дано:
-    when(orderGateway.getOrders()).thenReturn(Flowable.just(order));
+    when(loginReceiver.get()).thenReturn(Observable.just("1234567890"));
+    when(orderGateway.getOrders("1234567890")).thenReturn(Flowable.just(order));
 
     // Действие:
     useCase.sendDecision(true).test();
@@ -82,7 +107,8 @@ public class OrderConfirmationUseCaseTest {
   @Test
   public void askGatewayToSendDecisionsForLastOrderOnly() {
     // Дано:
-    when(orderGateway.getOrders()).thenReturn(Flowable.just(order, order2));
+    when(loginReceiver.get()).thenReturn(Observable.just("1234567890"));
+    when(orderGateway.getOrders("1234567890")).thenReturn(Flowable.just(order, order2));
 
     // Действие:
     useCase.sendDecision(true).test();
@@ -101,7 +127,9 @@ public class OrderConfirmationUseCaseTest {
   @Test
   public void answerNoOrdersErrorForAccept() {
     // Дано:
-    when(orderGateway.getOrders()).thenReturn(Flowable.error(new DataMappingException()));
+    when(loginReceiver.get()).thenReturn(Observable.just("1234567890"));
+    when(orderGateway.getOrders("1234567890"))
+        .thenReturn(Flowable.error(new DataMappingException()));
 
     // Действие:
     TestObserver<String> test = useCase.sendDecision(true).test();
@@ -118,7 +146,8 @@ public class OrderConfirmationUseCaseTest {
   @Test
   public void answerNoNetworkErrorForAccept() {
     // Дано:
-    when(orderGateway.getOrders()).thenReturn(Flowable.just(order));
+    when(loginReceiver.get()).thenReturn(Observable.just("1234567890"));
+    when(orderGateway.getOrders("1234567890")).thenReturn(Flowable.just(order));
     when(orderConfirmationGateway.sendDecision(any(), anyBoolean()))
         .thenReturn(Single.error(new NoNetworkException()));
 
@@ -137,8 +166,8 @@ public class OrderConfirmationUseCaseTest {
   @Test
   public void answerNoNetworkErrorForDecline() {
     // Дано:
-    when(orderGateway.getOrders())
-        .thenReturn(Flowable.just(order));
+    when(loginReceiver.get()).thenReturn(Observable.just("1234567890"));
+    when(orderGateway.getOrders("1234567890")).thenReturn(Flowable.just(order));
     when(orderConfirmationGateway.sendDecision(any(), anyBoolean()))
         .thenReturn(Single.error(new NoNetworkException()));
 
@@ -157,8 +186,8 @@ public class OrderConfirmationUseCaseTest {
   @Test
   public void answerSendAcceptSuccessful() {
     // Дано:
-    when(orderGateway.getOrders())
-        .thenReturn(Flowable.just(order));
+    when(loginReceiver.get()).thenReturn(Observable.just("1234567890"));
+    when(orderGateway.getOrders("1234567890")).thenReturn(Flowable.just(order));
     when(orderConfirmationGateway.sendDecision(any(), anyBoolean()))
         .thenReturn(Single.just("success"));
 
@@ -177,8 +206,8 @@ public class OrderConfirmationUseCaseTest {
   @Test
   public void answerSendDeclineSuccessful() {
     // Дано:
-    when(orderGateway.getOrders())
-        .thenReturn(Flowable.just(order));
+    when(loginReceiver.get()).thenReturn(Observable.just("1234567890"));
+    when(orderGateway.getOrders("1234567890")).thenReturn(Flowable.just(order));
     when(orderConfirmationGateway.sendDecision(any(), anyBoolean()))
         .thenReturn(Single.just("success"));
 

@@ -1,14 +1,17 @@
 package com.cargopull.executor_driver.interactor;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import com.cargopull.executor_driver.entity.Order;
 import com.cargopull.executor_driver.gateway.DataMappingException;
 import com.cargopull.executor_driver.utils.ErrorReporter;
 import io.reactivex.Flowable;
+import io.reactivex.Observable;
 import io.reactivex.subscribers.TestSubscriber;
 import org.junit.Before;
 import org.junit.Test;
@@ -24,6 +27,8 @@ public class OrderUseCaseTest {
   @Mock
   private ErrorReporter errorReporter;
   @Mock
+  private DataReceiver<String> loginReceiver;
+  @Mock
   private OrderGateway gateway;
   @Mock
   private Order order;
@@ -32,8 +37,21 @@ public class OrderUseCaseTest {
 
   @Before
   public void setUp() {
-    when(gateway.getOrders()).thenReturn(Flowable.never());
-    useCase = new OrderUseCaseImpl(errorReporter, gateway);
+    when(loginReceiver.get()).thenReturn(Observable.never());
+    when(gateway.getOrders(anyString())).thenReturn(Flowable.never());
+    useCase = new OrderUseCaseImpl(errorReporter, gateway, loginReceiver);
+  }
+
+  /**
+   * Должен запросить у публикатора логин исполнителя.
+   */
+  @Test
+  public void askLoginPublisherForLogin() {
+    // Действие:
+    useCase.getOrders().test();
+
+    // Результат:
+    verify(loginReceiver, only()).get();
   }
 
   /* Проверяем работу с гейтвеем */
@@ -43,11 +61,20 @@ public class OrderUseCaseTest {
    */
   @Test
   public void askGatewayForOrders() {
+    // Дано:
+    when(loginReceiver.get()).thenReturn(Observable.just(
+        "1234567890", "0987654321", "123454321", "09876567890"
+    ));
+
     // Действие:
     useCase.getOrders().test();
 
     // Результат:
-    verify(gateway, only()).getOrders();
+    verify(gateway).getOrders("1234567890");
+    verify(gateway).getOrders("0987654321");
+    verify(gateway).getOrders("123454321");
+    verify(gateway).getOrders("09876567890");
+    verifyNoMoreInteractions(gateway);
   }
 
   /* Проверяем отправку ошибок в репортер */
@@ -58,7 +85,8 @@ public class OrderUseCaseTest {
   @Test
   public void reportDataMappingError() {
     // Дано:
-    when(gateway.getOrders()).thenReturn(Flowable.error(new DataMappingException()));
+    when(loginReceiver.get()).thenReturn(Observable.just("1234567890"));
+    when(gateway.getOrders(anyString())).thenReturn(Flowable.error(new DataMappingException()));
 
     // Действие:
     useCase.getOrders().test();
@@ -75,7 +103,8 @@ public class OrderUseCaseTest {
   @Test
   public void answerDataMappingError() {
     // Дано:
-    when(gateway.getOrders()).thenReturn(Flowable.error(new DataMappingException()));
+    when(loginReceiver.get()).thenReturn(Observable.just("1234567890"));
+    when(gateway.getOrders("1234567890")).thenReturn(Flowable.error(new DataMappingException()));
 
     // Действие:
     TestSubscriber<Order> test = useCase.getOrders().test();
@@ -92,7 +121,8 @@ public class OrderUseCaseTest {
   @Test
   public void answerWithOrders() {
     // Дано:
-    when(gateway.getOrders()).thenReturn(Flowable.just(order, order2));
+    when(loginReceiver.get()).thenReturn(Observable.just("1234567890"));
+    when(gateway.getOrders("1234567890")).thenReturn(Flowable.just(order, order2));
 
     // Действие:
     TestSubscriber<Order> test = useCase.getOrders().test();
