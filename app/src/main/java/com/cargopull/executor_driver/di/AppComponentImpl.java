@@ -59,6 +59,7 @@ import com.cargopull.executor_driver.gateway.OrderFulfillmentApiMapper;
 import com.cargopull.executor_driver.gateway.OrderGatewayImpl;
 import com.cargopull.executor_driver.gateway.OrderRouteGatewayImpl;
 import com.cargopull.executor_driver.gateway.PasswordGatewayImpl;
+import com.cargopull.executor_driver.gateway.PreOrderApiMapper;
 import com.cargopull.executor_driver.gateway.PreOrderConfirmationGatewayImpl;
 import com.cargopull.executor_driver.gateway.PreOrderGatewayImpl;
 import com.cargopull.executor_driver.gateway.RoutePointApiMapper;
@@ -1352,7 +1353,7 @@ public class AppComponentImpl implements AppComponent {
                     new OrderConfirmationUseCaseImpl(
                         new PreOrderGatewayImpl(
                             stompClient,
-                            new OrderApiMapper(
+                            new PreOrderApiMapper(
                                 new VehicleOptionApiMapper(),
                                 new RoutePointApiMapper()
                             )
@@ -1375,7 +1376,7 @@ public class AppComponentImpl implements AppComponent {
                         errorReporter,
                         new PreOrderGatewayImpl(
                             stompClient,
-                            new OrderApiMapper(
+                            new PreOrderApiMapper(
                                 new VehicleOptionApiMapper(),
                                 new RoutePointApiMapper()
                             )
