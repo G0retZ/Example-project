@@ -59,6 +59,8 @@ import com.cargopull.executor_driver.gateway.OrderFulfillmentApiMapper;
 import com.cargopull.executor_driver.gateway.OrderGatewayImpl;
 import com.cargopull.executor_driver.gateway.OrderRouteGatewayImpl;
 import com.cargopull.executor_driver.gateway.PasswordGatewayImpl;
+import com.cargopull.executor_driver.gateway.PreOrderConfirmationGatewayImpl;
+import com.cargopull.executor_driver.gateway.PreOrderGatewayImpl;
 import com.cargopull.executor_driver.gateway.RoutePointApiMapper;
 import com.cargopull.executor_driver.gateway.SelectedVehicleAndOptionsGatewayImpl;
 import com.cargopull.executor_driver.gateway.ServerConnectionGatewayImpl;
@@ -1342,6 +1344,49 @@ public class AppComponentImpl implements AppComponent {
   @Override
   public void inject(DriverPreOrderConfirmationFragment driverPreOrderConfirmationFragment) {
     driverPreOrderConfirmationFragment.setShakeItPlayer(singleShakePlayer);
+    driverPreOrderConfirmationFragment.setOrderConfirmationViewModel(
+        ViewModelProviders.of(
+            driverPreOrderConfirmationFragment,
+            new ViewModelFactory<>(
+                new OrderConfirmationViewModelImpl(
+                    new OrderConfirmationUseCaseImpl(
+                        new PreOrderGatewayImpl(
+                            stompClient,
+                            new OrderApiMapper(
+                                new VehicleOptionApiMapper(),
+                                new RoutePointApiMapper()
+                            )
+                        ),
+                        new PreOrderConfirmationGatewayImpl(
+                            apiService
+                        ),
+                        loginSharer
+                    )
+                )
+            )
+        ).get(OrderConfirmationViewModelImpl.class)
+    );
+    driverPreOrderConfirmationFragment.setOrderViewModel(
+        ViewModelProviders.of(
+            driverPreOrderConfirmationFragment,
+            new ViewModelFactory<>(
+                new OrderViewModelImpl(
+                    new OrderUseCaseImpl(
+                        errorReporter,
+                        new PreOrderGatewayImpl(
+                            stompClient,
+                            new OrderApiMapper(
+                                new VehicleOptionApiMapper(),
+                                new RoutePointApiMapper()
+                            )
+                        ),
+                        loginSharer
+                    ),
+                    timeUtils
+                )
+            )
+        ).get(OrderViewModelImpl.class)
+    );
   }
 
   private OkHttpClient initHttpClient(@NonNull Interceptor... interceptors) {
