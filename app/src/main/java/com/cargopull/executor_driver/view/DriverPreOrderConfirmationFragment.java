@@ -4,6 +4,9 @@ import android.animation.Animator;
 import android.animation.Animator.AnimatorListener;
 import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -57,6 +60,9 @@ public class DriverPreOrderConfirmationFragment extends BaseFragment implements
   private ObjectAnimator acceptDelayAnimator;
   @Nullable
   private ObjectAnimator acceptResetAnimator;
+  @Nullable
+  private AlertDialog alertDialog;
+  private Context context;
 
   @Inject
   public void setShakeItPlayer(@NonNull ShakeItPlayer shakeItPlayer) {
@@ -72,6 +78,12 @@ public class DriverPreOrderConfirmationFragment extends BaseFragment implements
   @Inject
   public void setOrderViewModel(@NonNull OrderViewModel orderViewModel) {
     this.orderViewModel = orderViewModel;
+  }
+
+  @Override
+  public void onAttach(Context context) {
+    super.onAttach(context);
+    this.context = context;
   }
 
   @SuppressLint("ClickableViewAccessibility")
@@ -177,6 +189,9 @@ public class DriverPreOrderConfirmationFragment extends BaseFragment implements
 
   @Override
   public void onDetach() {
+    if (alertDialog != null) {
+      alertDialog.dismiss();
+    }
     if (acceptResetAnimator != null) {
       acceptResetAnimator.cancel();
     }
@@ -184,6 +199,7 @@ public class DriverPreOrderConfirmationFragment extends BaseFragment implements
       acceptDelayAnimator.cancel();
     }
     super.onDetach();
+    context = null;
   }
 
   @Override
@@ -310,5 +326,20 @@ public class DriverPreOrderConfirmationFragment extends BaseFragment implements
   public void enableAcceptButton(boolean enable) {
     acceptAction.setEnabled(enable);
     acceptActionText.setEnabled(enable);
+  }
+
+  @Override
+  public void showBlockingMessage(@Nullable String message) {
+    if (message != null) {
+      alertDialog = new Builder(context)
+          .setMessage(message)
+          .setPositiveButton(getString(android.R.string.ok), (a, b) -> onBackPressed())
+          .create();
+      alertDialog.show();
+    } else {
+      if (alertDialog != null) {
+        alertDialog.dismiss();
+      }
+    }
   }
 }

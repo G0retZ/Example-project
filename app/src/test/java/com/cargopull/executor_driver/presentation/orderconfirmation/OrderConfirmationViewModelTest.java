@@ -11,6 +11,7 @@ import static org.mockito.Mockito.when;
 import android.arch.core.executor.testing.InstantTaskExecutorRule;
 import android.arch.lifecycle.Observer;
 import com.cargopull.executor_driver.backend.web.NoNetworkException;
+import com.cargopull.executor_driver.entity.PreOrderExpiredException;
 import com.cargopull.executor_driver.interactor.OrderConfirmationUseCase;
 import com.cargopull.executor_driver.presentation.CommonNavigate;
 import com.cargopull.executor_driver.presentation.ViewState;
@@ -98,10 +99,23 @@ public class OrderConfirmationViewModelTest {
     verify(orderConfirmationUseCase, only()).sendDecision(true);
   }
 
+  /**
+   * Не должен трогать юзкейс для прочих операций.
+   */
+  @Test
+  public void DoNotTouchUseCaseForOther() {
+    // Действие:
+    viewModel.counterTimeOut();
+    viewModel.messageConsumed();
+
+    // Результат:
+    verifyZeroInteractions(orderConfirmationUseCase);
+  }
+
   /* Тетсируем переключение состояний. */
 
   /**
-   * Должен вернуть состояние вида бездействия изначально.
+   * Должен вернуть состояние вида бездействия без сообщения изначально.
    */
   @Test
   public void setPendingViewStateToLiveDataInitially() {
@@ -113,6 +127,24 @@ public class OrderConfirmationViewModelTest {
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(any(OrderConfirmationViewStateIdle.class));
+    verifyNoMoreInteractions(viewStateObserver);
+  }
+
+  /**
+   * Должен вернуть состояние вида "В процессе".
+   */
+  @Test
+  public void setPendingViewStateWithoutOrderToLiveDataForCounterTimeOut() {
+    // Дано:
+    InOrder inOrder = Mockito.inOrder(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
+
+    // Действие:
+    viewModel.counterTimeOut();
+
+    // Результат:
+    inOrder.verify(viewStateObserver).onChanged(any(OrderConfirmationViewStateIdle.class));
+    inOrder.verify(viewStateObserver).onChanged(any(OrderConfirmationViewStatePending.class));
     verifyNoMoreInteractions(viewStateObserver);
   }
 
@@ -195,14 +227,14 @@ public class OrderConfirmationViewModelTest {
   }
 
   /**
-   * Не должен возвращать никакого состояния вида.
+   * Должен вернуть состояние вида результата с сообщением для неуспешного принятия.
    */
   @Test
-  public void setNoViewStateToLiveDataForAcceptWithoutOrder() {
+  public void setResultViewStateToLiveDataForAcceptExpiredWithoutOrder() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     when(orderConfirmationUseCase.sendDecision(anyBoolean()))
-        .thenReturn(Single.just(""));
+        .thenReturn(Single.error(new PreOrderExpiredException("34")));
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
@@ -211,18 +243,19 @@ public class OrderConfirmationViewModelTest {
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(any(OrderConfirmationViewStateIdle.class));
     inOrder.verify(viewStateObserver).onChanged(any(OrderConfirmationViewStatePending.class));
+    inOrder.verify(viewStateObserver).onChanged(new OrderConfirmationViewStateResult("34"));
     verifyNoMoreInteractions(viewStateObserver);
   }
 
   /**
-   * Не должен возвращать никакого состояния вида.
+   * Должен вернуть состояние вида результата с сообщением для неуспешного отказа.
    */
   @Test
-  public void setNoViewStateToLiveDataForDeclineWithoutOrder() {
+  public void setResultViewStateToLiveDataForDeclineExpiredWithoutOrder() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     when(orderConfirmationUseCase.sendDecision(anyBoolean()))
-        .thenReturn(Single.just(""));
+        .thenReturn(Single.error(new PreOrderExpiredException("43")));
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
@@ -231,6 +264,47 @@ public class OrderConfirmationViewModelTest {
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(any(OrderConfirmationViewStateIdle.class));
     inOrder.verify(viewStateObserver).onChanged(any(OrderConfirmationViewStatePending.class));
+    inOrder.verify(viewStateObserver).onChanged(new OrderConfirmationViewStateResult("43"));
+    verifyNoMoreInteractions(viewStateObserver);
+  }
+
+  /**
+   * Должен вернуть состояние вида результата с сообщением для успешного принятия.
+   */
+  @Test
+  public void setResultViewStateToLiveDataForAcceptWithoutOrder() {
+    // Дано:
+    InOrder inOrder = Mockito.inOrder(viewStateObserver);
+    when(orderConfirmationUseCase.sendDecision(anyBoolean())).thenReturn(Single.just("21"));
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
+
+    // Действие:
+    viewModel.acceptOrder();
+
+    // Результат:
+    inOrder.verify(viewStateObserver).onChanged(any(OrderConfirmationViewStateIdle.class));
+    inOrder.verify(viewStateObserver).onChanged(any(OrderConfirmationViewStatePending.class));
+    inOrder.verify(viewStateObserver).onChanged(new OrderConfirmationViewStateResult("21"));
+    verifyNoMoreInteractions(viewStateObserver);
+  }
+
+  /**
+   * Должен вернуть состояние вида результата с сообщением для успешного отказа.
+   */
+  @Test
+  public void setResultViewStateToLiveDataForDeclineWithoutOrder() {
+    // Дано:
+    InOrder inOrder = Mockito.inOrder(viewStateObserver);
+    when(orderConfirmationUseCase.sendDecision(anyBoolean())).thenReturn(Single.just("12"));
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
+
+    // Действие:
+    viewModel.declineOrder();
+
+    // Результат:
+    inOrder.verify(viewStateObserver).onChanged(any(OrderConfirmationViewStateIdle.class));
+    inOrder.verify(viewStateObserver).onChanged(any(OrderConfirmationViewStatePending.class));
+    inOrder.verify(viewStateObserver).onChanged(new OrderConfirmationViewStateResult("12"));
     verifyNoMoreInteractions(viewStateObserver);
   }
 
@@ -246,6 +320,19 @@ public class OrderConfirmationViewModelTest {
 
     // Результат:
     verifyZeroInteractions(navigateObserver);
+  }
+
+  /**
+   * Должен перейти к закрытию карточки.
+   */
+  @Test
+  public void setNavigateToCloseForMessageConsumed() {
+    // Действие:
+    viewModel.getNavigationLiveData().observeForever(navigateObserver);
+    viewModel.messageConsumed();
+
+    // Результат:
+    verify(navigateObserver, only()).onChanged(OrderConfirmationNavigate.CLOSE);
   }
 
   /**

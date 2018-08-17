@@ -49,12 +49,6 @@ public class DriverOrderConfirmationFragment extends BaseFragment implements
   private Button acceptAction;
   private Context context;
 
-  @Override
-  public void onAttach(Context context) {
-    super.onAttach(context);
-    this.context = context;
-  }
-
   @Inject
   public void setOrderConfirmationViewModel(
       @NonNull OrderConfirmationViewModel orderConfirmationViewModel) {
@@ -64,6 +58,12 @@ public class DriverOrderConfirmationFragment extends BaseFragment implements
   @Inject
   public void setOrderViewModel(@NonNull OrderViewModel orderViewModel) {
     this.orderViewModel = orderViewModel;
+  }
+
+  @Override
+  public void onAttach(Context context) {
+    super.onAttach(context);
+    this.context = context;
   }
 
   @Nullable
@@ -254,5 +254,12 @@ public class DriverOrderConfirmationFragment extends BaseFragment implements
   @Override
   public void enableAcceptButton(boolean enable) {
     acceptAction.setEnabled(enable);
+  }
+
+  @Override
+  public void showBlockingMessage(@Nullable String message) {
+    if (message != null) {
+      showPending(true, toString() + "0");
+    }
   }
 }

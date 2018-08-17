@@ -13,5 +13,6 @@ final class OrderConfirmationViewStatePending implements ViewState<OrderConfirma
     stateActions.showDriverOrderConfirmationPending(true);
     stateActions.enableAcceptButton(false);
     stateActions.enableDeclineButton(false);
+    stateActions.showBlockingMessage(null);
   }
 }

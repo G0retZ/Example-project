@@ -23,6 +23,7 @@ public class OrderConfirmationViewStatePendingTest {
     verify(viewActions).showDriverOrderConfirmationPending(true);
     verify(viewActions).enableAcceptButton(false);
     verify(viewActions).enableDeclineButton(false);
+    verify(viewActions).showBlockingMessage(null);
     verifyNoMoreInteractions(viewActions);
   }
 }

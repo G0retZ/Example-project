@@ -21,4 +21,9 @@ public interface OrderConfirmationViewModel extends ViewModel<OrderConfirmationV
    * Сообщает, что таймер закончился.
    */
   void counterTimeOut();
+
+  /**
+   * Сообщает, что сообщение об прочитано.
+   */
+  void messageConsumed();
 }
