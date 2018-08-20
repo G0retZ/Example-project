@@ -5,7 +5,7 @@ apply plugin: 'com.getkeepsafe.dexcount'
 android {
     signingConfigs {
         upload {
-            storeFile file(System.properties['user.home'] + "/" + System.getenv('STORAGE_FILE'))
+            storeFile file(System.getenv('STORAGE_FILE').toString())
             keyAlias System.getenv('EXECUTOR_ALIAS')
             keyPassword System.getenv('EXECUTOR_PASSWORD')
             storePassword System.getenv('STORAGE_PASSWORD')
