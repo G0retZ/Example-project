@@ -2,26 +2,13 @@ apply plugin: 'com.android.application'
 apply plugin: 'io.fabric'
 apply plugin: 'com.getkeepsafe.dexcount'
 
-// Create a variable called keystorePropertiesFile, and initialize it to your
-// keystore.properties file, in the rootProject folder.
-def keystorePropertiesFile = new File(System.properties['user.home'], "cargopull.properties")
-if (!keystorePropertiesFile.exists()) {
-    keystorePropertiesFile = rootProject.file("cargopull.properties")
-}
-
-// Initialize a new Properties() object called keystoreProperties.
-def keystoreProperties = new Properties()
-
-// Load your keystore.properties file into the keystoreProperties object.
-keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
-
 android {
     signingConfigs {
         upload {
-            storeFile file(System.properties['user.home'] + "/" + keystoreProperties['storeFile'])
-            keyAlias keystoreProperties['executorAlias']
-            keyPassword keystoreProperties['executorPassword']
-            storePassword keystoreProperties['storePassword']
+            storeFile file(System.getenv('STORAGE_FILE').toString())
+            keyAlias System.getenv('EXECUTOR_ALIAS')
+            keyPassword System.getenv('EXECUTOR_PASSWORD')
+            storePassword System.getenv('STORAGE_PASSWORD')
         }
     }
     buildToolsVersion '28.0.2'
