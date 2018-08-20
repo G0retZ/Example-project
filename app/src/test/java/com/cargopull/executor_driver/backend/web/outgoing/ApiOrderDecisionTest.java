@@ -15,7 +15,7 @@ public class ApiOrderDecisionTest {
 
     // Результат:
     assertEquals(apiOrderDecision.getId(), 1);
-    assertFalse(apiOrderDecision.isApprove());
+    assertFalse(apiOrderDecision.isApproved());
   }
 
   @Test
@@ -25,6 +25,6 @@ public class ApiOrderDecisionTest {
 
     // Результат:
     assertEquals(apiOrderDecision.getId(), 5);
-    assertTrue(apiOrderDecision.isApprove());
+    assertTrue(apiOrderDecision.isApproved());
   }
 }

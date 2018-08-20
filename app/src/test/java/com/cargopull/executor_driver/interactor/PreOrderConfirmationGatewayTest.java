@@ -69,9 +69,9 @@ public class PreOrderConfirmationGatewayTest {
     inOrder.verify(apiService, times(2)).sendPreOrderDecision(orderDecisionCaptor.capture());
     verifyNoMoreInteractions(apiService);
     assertEquals(orderDecisionCaptor.getAllValues().get(0).getId(), 7);
-    assertFalse(orderDecisionCaptor.getAllValues().get(0).isApprove());
+    assertFalse(orderDecisionCaptor.getAllValues().get(0).isApproved());
     assertEquals(orderDecisionCaptor.getAllValues().get(1).getId(), 7);
-    assertTrue(orderDecisionCaptor.getAllValues().get(1).isApprove());
+    assertTrue(orderDecisionCaptor.getAllValues().get(1).isApproved());
   }
 
   /* Проверяем правильность потоков (добавить) */

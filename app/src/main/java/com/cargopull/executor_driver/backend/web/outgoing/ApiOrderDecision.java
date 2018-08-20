@@ -11,20 +11,20 @@ public class ApiOrderDecision {
   @SerializedName("id")
   @Expose
   private final long id;
-  @SerializedName("approve")
+  @SerializedName("approved")
   @Expose
-  private final boolean approve;
+  private final boolean approved;
 
-  public ApiOrderDecision(long id, boolean approve) {
+  public ApiOrderDecision(long id, boolean approved) {
     this.id = id;
-    this.approve = approve;
+    this.approved = approved;
   }
 
   public long getId() {
     return id;
   }
 
-  public boolean isApprove() {
-    return approve;
+  public boolean isApproved() {
+    return approved;
   }
 }
