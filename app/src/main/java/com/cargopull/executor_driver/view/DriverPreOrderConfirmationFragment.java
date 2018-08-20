@@ -333,7 +333,8 @@ public class DriverPreOrderConfirmationFragment extends BaseFragment implements
     if (message != null) {
       alertDialog = new Builder(context)
           .setMessage(message)
-          .setPositiveButton(getString(android.R.string.ok), (a, b) -> onBackPressed())
+          .setPositiveButton(getString(android.R.string.ok),
+              (a, b) -> orderConfirmationViewModel.messageConsumed())
           .create();
       alertDialog.show();
     } else {
