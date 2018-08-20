@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 import com.cargopull.executor_driver.entity.Order;
 import com.cargopull.executor_driver.entity.RoutePoint;
 import com.cargopull.executor_driver.utils.ErrorReporter;
+import io.reactivex.BackpressureStrategy;
 import io.reactivex.Completable;
 import io.reactivex.Flowable;
 import java.util.List;
@@ -16,21 +17,27 @@ public class OrderRouteUseCaseImpl implements OrderRouteUseCase {
   @NonNull
   private final OrderGateway orderGateway;
   @NonNull
+  private final DataReceiver<String> loginReceiver;
+  @NonNull
   private final OrderRouteGateway orderRouteGateway;
 
   @Inject
   public OrderRouteUseCaseImpl(@NonNull ErrorReporter errorReporter,
       @NonNull OrderGateway orderGateway,
+      @NonNull DataReceiver<String> loginReceiver,
       @NonNull OrderRouteGateway orderRouteGateway) {
     this.errorReporter = errorReporter;
     this.orderGateway = orderGateway;
+    this.loginReceiver = loginReceiver;
     this.orderRouteGateway = orderRouteGateway;
   }
 
   @NonNull
   @Override
   public Flowable<List<RoutePoint>> getOrderRoutePoints() {
-    return orderGateway.getOrders()
+    return loginReceiver.get()
+        .toFlowable(BackpressureStrategy.BUFFER)
+        .switchMap(orderGateway::getOrders)
         .map(Order::getRoutePath)
         .doOnError(errorReporter::reportError);
   }

@@ -1,5 +1,6 @@
 package com.cargopull.executor_driver.interactor;
 
+import android.support.annotation.NonNull;
 import com.cargopull.executor_driver.entity.Order;
 import io.reactivex.Flowable;
 
@@ -13,5 +14,6 @@ public interface OrderUseCase {
    *
    * @return {@link Flowable<Order>} результат запроса.
    */
+  @NonNull
   Flowable<Order> getOrders();
 }

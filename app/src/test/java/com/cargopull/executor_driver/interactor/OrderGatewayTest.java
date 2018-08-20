@@ -55,7 +55,7 @@ public class OrderGatewayTest {
     gateway = new OrderGatewayImpl(useCase, ExecutorState.DRIVER_ORDER_CONFIRMATION, mapper);
 
     // Действие:
-    gateway.getOrders().test();
+    gateway.getOrders("").test();
 
     // Результат:
     verify(useCase, only()).getExecutorStates(false);
@@ -77,7 +77,7 @@ public class OrderGatewayTest {
             ExecutorState.ORDER_FULFILLMENT, ExecutorState.PAYMENT_CONFIRMATION));
 
     // Действие:
-    gateway.getOrders().test();
+    gateway.getOrders("").test();
 
     // Результат:
     verifyZeroInteractions(mapper);
@@ -94,7 +94,7 @@ public class OrderGatewayTest {
         .thenReturn(Flowable.just(ExecutorState.CLIENT_ORDER_CONFIRMATION));
 
     // Действие:
-    gateway.getOrders().test();
+    gateway.getOrders("").test();
 
     // Результат:
     verifyZeroInteractions(mapper);
@@ -114,7 +114,7 @@ public class OrderGatewayTest {
         .thenReturn(Flowable.just(ExecutorState.MOVING_TO_CLIENT));
 
     // Действие:
-    gateway.getOrders().test();
+    gateway.getOrders("").test();
 
     // Результат:
     verify(mapper, only()).map("");
@@ -138,7 +138,7 @@ public class OrderGatewayTest {
             ExecutorState.ORDER_FULFILLMENT, ExecutorState.PAYMENT_CONFIRMATION));
 
     // Действие:
-    TestSubscriber<Order> testSubscriber = gateway.getOrders().test();
+    TestSubscriber<Order> testSubscriber = gateway.getOrders("").test();
 
     // Результат:
     testSubscriber.assertNoValues();
@@ -157,7 +157,7 @@ public class OrderGatewayTest {
         .thenReturn(Flowable.just(ExecutorState.CLIENT_ORDER_CONFIRMATION));
 
     // Действие:
-    TestSubscriber<Order> testSubscriber = gateway.getOrders().test();
+    TestSubscriber<Order> testSubscriber = gateway.getOrders("").test();
 
     // Результат:
     testSubscriber.assertNoValues();
@@ -180,7 +180,7 @@ public class OrderGatewayTest {
         .thenReturn(Flowable.just(ExecutorState.MOVING_TO_CLIENT));
 
     // Действие:
-    TestSubscriber<Order> testSubscriber = gateway.getOrders().test();
+    TestSubscriber<Order> testSubscriber = gateway.getOrders("").test();
 
     // Результат:
     testSubscriber.assertNoValues();
@@ -203,7 +203,7 @@ public class OrderGatewayTest {
         .thenReturn(Flowable.just(ExecutorState.WAITING_FOR_CLIENT));
 
     // Действие:
-    TestSubscriber<Order> testSubscriber = gateway.getOrders().test();
+    TestSubscriber<Order> testSubscriber = gateway.getOrders("").test();
 
     // Результат:
     testSubscriber.assertNoErrors();

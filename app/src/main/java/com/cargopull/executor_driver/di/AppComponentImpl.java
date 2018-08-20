@@ -59,6 +59,9 @@ import com.cargopull.executor_driver.gateway.OrderFulfillmentApiMapper;
 import com.cargopull.executor_driver.gateway.OrderGatewayImpl;
 import com.cargopull.executor_driver.gateway.OrderRouteGatewayImpl;
 import com.cargopull.executor_driver.gateway.PasswordGatewayImpl;
+import com.cargopull.executor_driver.gateway.PreOrderApiMapper;
+import com.cargopull.executor_driver.gateway.PreOrderConfirmationGatewayImpl;
+import com.cargopull.executor_driver.gateway.PreOrderGatewayImpl;
 import com.cargopull.executor_driver.gateway.RoutePointApiMapper;
 import com.cargopull.executor_driver.gateway.SelectedVehicleAndOptionsGatewayImpl;
 import com.cargopull.executor_driver.gateway.ServerConnectionGatewayImpl;
@@ -168,6 +171,7 @@ import com.cargopull.executor_driver.view.ChooseVehicleFragment;
 import com.cargopull.executor_driver.view.ClientOrderConfirmationFragment;
 import com.cargopull.executor_driver.view.ClientOrderConfirmationTimeFragment;
 import com.cargopull.executor_driver.view.DriverOrderConfirmationFragment;
+import com.cargopull.executor_driver.view.DriverPreOrderConfirmationFragment;
 import com.cargopull.executor_driver.view.GoOnlineFragment;
 import com.cargopull.executor_driver.view.MapFragment;
 import com.cargopull.executor_driver.view.MenuFragment;
@@ -727,7 +731,8 @@ public class AppComponentImpl implements AppComponent {
                                 new RoutePointApiMapper()
                             )
                         ),
-                        new OrderConfirmationGatewayImpl(stompClient)
+                        new OrderConfirmationGatewayImpl(stompClient),
+                        loginSharer
                     )
                 )
             )
@@ -747,9 +752,10 @@ public class AppComponentImpl implements AppComponent {
                                 new VehicleOptionApiMapper(),
                                 new RoutePointApiMapper()
                             )
-                        )
+                        ),
+                        loginSharer
                     ),
-                    new TimeUtilsImpl()
+                    timeUtils
                 )
             )
         ).get(OrderViewModelImpl.class)
@@ -772,7 +778,8 @@ public class AppComponentImpl implements AppComponent {
                                 new VehicleOptionApiMapper(),
                                 new RoutePointApiMapper()
                             )
-                        )
+                        ),
+                        loginSharer
                     ),
                     timeUtils
                 )
@@ -823,7 +830,8 @@ public class AppComponentImpl implements AppComponent {
                                 new VehicleOptionApiMapper(),
                                 new RoutePointApiMapper()
                             )
-                        )
+                        ),
+                        loginSharer
                     ),
                     timeUtils
                 )
@@ -851,7 +859,8 @@ public class AppComponentImpl implements AppComponent {
                                 new VehicleOptionApiMapper(),
                                 new RoutePointApiMapper()
                             )
-                        )
+                        ),
+                        loginSharer
                     ),
                     timeUtils
                 )
@@ -877,6 +886,7 @@ public class AppComponentImpl implements AppComponent {
                                 new RoutePointApiMapper()
                             )
                         ),
+                        loginSharer,
                         new OrderRouteGatewayImpl(stompClient)
                     )
                 )
@@ -913,7 +923,8 @@ public class AppComponentImpl implements AppComponent {
                                 new VehicleOptionApiMapper(),
                                 new RoutePointApiMapper()
                             )
-                        )
+                        ),
+                        loginSharer
                     ),
                     timeUtils
                 )
@@ -942,6 +953,7 @@ public class AppComponentImpl implements AppComponent {
                                 new RoutePointApiMapper()
                             )
                         ),
+                        loginSharer,
                         new OrderRouteGatewayImpl(stompClient)
                     )
                 )
@@ -967,6 +979,7 @@ public class AppComponentImpl implements AppComponent {
                                 new RoutePointApiMapper()
                             )
                         ),
+                        loginSharer,
                         timeUtils
                     )
                 )
@@ -1013,6 +1026,7 @@ public class AppComponentImpl implements AppComponent {
                                 new RoutePointApiMapper()
                             )
                         ),
+                        loginSharer,
                         new OrderRouteGatewayImpl(stompClient)
                     )
                 )
@@ -1034,6 +1048,7 @@ public class AppComponentImpl implements AppComponent {
                                 new RoutePointApiMapper()
                             )
                         ),
+                        loginSharer,
                         new OrderRouteGatewayImpl(stompClient)
                     )
                 )
@@ -1061,7 +1076,8 @@ public class AppComponentImpl implements AppComponent {
                                 new VehicleOptionApiMapper(),
                                 new RoutePointApiMapper()
                             )
-                        )
+                        ),
+                        loginSharer
                     ),
                     timeUtils
                 )
@@ -1087,6 +1103,7 @@ public class AppComponentImpl implements AppComponent {
                                 new RoutePointApiMapper()
                             )
                         ),
+                        loginSharer,
                         new OrderRouteGatewayImpl(stompClient)
                     )
                 )
@@ -1112,6 +1129,7 @@ public class AppComponentImpl implements AppComponent {
                                 new RoutePointApiMapper()
                             )
                         ),
+                        loginSharer,
                         new OrderRouteGatewayImpl(stompClient)
                     )
                 )
@@ -1283,7 +1301,8 @@ public class AppComponentImpl implements AppComponent {
                                 new VehicleOptionApiMapper(),
                                 new RoutePointApiMapper()
                             )
-                        )
+                        ),
+                        loginSharer
                     ),
                     timeUtils
                 )
@@ -1309,6 +1328,7 @@ public class AppComponentImpl implements AppComponent {
                                 new RoutePointApiMapper()
                             )
                         ),
+                        loginSharer,
                         new OrderRouteGatewayImpl(stompClient)
                     )
                 )
@@ -1320,6 +1340,54 @@ public class AppComponentImpl implements AppComponent {
   @Override
   public void inject(ProfileFragment profileFragment) {
     profileFragment.setAppSettings(appSettingsService);
+  }
+
+  @Override
+  public void inject(DriverPreOrderConfirmationFragment driverPreOrderConfirmationFragment) {
+    driverPreOrderConfirmationFragment.setShakeItPlayer(singleShakePlayer);
+    driverPreOrderConfirmationFragment.setOrderConfirmationViewModel(
+        ViewModelProviders.of(
+            driverPreOrderConfirmationFragment,
+            new ViewModelFactory<>(
+                new OrderConfirmationViewModelImpl(
+                    new OrderConfirmationUseCaseImpl(
+                        new PreOrderGatewayImpl(
+                            stompClient,
+                            new PreOrderApiMapper(
+                                new VehicleOptionApiMapper(),
+                                new RoutePointApiMapper()
+                            )
+                        ),
+                        new PreOrderConfirmationGatewayImpl(
+                            apiService
+                        ),
+                        loginSharer
+                    )
+                )
+            )
+        ).get(OrderConfirmationViewModelImpl.class)
+    );
+    driverPreOrderConfirmationFragment.setOrderViewModel(
+        ViewModelProviders.of(
+            driverPreOrderConfirmationFragment,
+            new ViewModelFactory<>(
+                new OrderViewModelImpl(
+                    new OrderUseCaseImpl(
+                        errorReporter,
+                        new PreOrderGatewayImpl(
+                            stompClient,
+                            new PreOrderApiMapper(
+                                new VehicleOptionApiMapper(),
+                                new RoutePointApiMapper()
+                            )
+                        ),
+                        loginSharer
+                    ),
+                    timeUtils
+                )
+            )
+        ).get(OrderViewModelImpl.class)
+    );
   }
 
   private OkHttpClient initHttpClient(@NonNull Interceptor... interceptors) {

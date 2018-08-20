@@ -111,4 +111,7 @@
   <string name="not_now">Не сейчас</string>
   <string name="version_deprecated">Текущая версия устарела. Обновите приложение.</string>
   <string name="take_break">Перерыв</string>
+  <string name="book">Бронировать</string>
+  <string name="reject">Отказаться</string>
+  <string name="time">Время</string>
 </resources>

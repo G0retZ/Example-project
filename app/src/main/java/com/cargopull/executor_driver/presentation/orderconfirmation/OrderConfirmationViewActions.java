@@ -1,5 +1,7 @@
 package com.cargopull.executor_driver.presentation.orderconfirmation;
 
+import android.support.annotation.Nullable;
+
 /**
  * Действия для смены состояния вида окна заказа.
  */
@@ -25,4 +27,11 @@ public interface OrderConfirmationViewActions {
    * @param enable - задействовать или нет?
    */
   void enableAcceptButton(boolean enable);
+
+  /**
+   * Показать Сообщение.
+   *
+   * @param message - текст сообщения или null, если не показывать
+   */
+  void showBlockingMessage(@Nullable String message);
 }

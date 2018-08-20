@@ -4,6 +4,7 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
+import com.cargopull.executor_driver.entity.PreOrderExpiredException;
 import com.cargopull.executor_driver.interactor.OrderConfirmationUseCase;
 import com.cargopull.executor_driver.presentation.CommonNavigate;
 import com.cargopull.executor_driver.presentation.SingleLiveEvent;
@@ -57,10 +58,14 @@ public class OrderConfirmationViewModelImpl extends ViewModel implements
         .subscribeOn(Schedulers.single())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(
-            () -> {
-            }, throwable -> {
-              viewStateLiveData.postValue(new OrderConfirmationViewStateIdle());
-              navigateLiveData.postValue(CommonNavigate.NO_CONNECTION);
+            message -> viewStateLiveData.postValue(new OrderConfirmationViewStateResult(message)),
+            t -> {
+              if (t instanceof PreOrderExpiredException) {
+                viewStateLiveData.postValue(new OrderConfirmationViewStateResult(t.getMessage()));
+              } else {
+                viewStateLiveData.postValue(new OrderConfirmationViewStateIdle());
+                navigateLiveData.postValue(CommonNavigate.NO_CONNECTION);
+              }
             }
         );
   }
@@ -75,10 +80,14 @@ public class OrderConfirmationViewModelImpl extends ViewModel implements
         .subscribeOn(Schedulers.single())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(
-            () -> {
-            }, throwable -> {
-              viewStateLiveData.postValue(new OrderConfirmationViewStateIdle());
-              navigateLiveData.postValue(CommonNavigate.NO_CONNECTION);
+            message -> viewStateLiveData.postValue(new OrderConfirmationViewStateResult(message)),
+            t -> {
+              if (t instanceof PreOrderExpiredException) {
+                viewStateLiveData.postValue(new OrderConfirmationViewStateResult(t.getMessage()));
+              } else {
+                viewStateLiveData.postValue(new OrderConfirmationViewStateIdle());
+                navigateLiveData.postValue(CommonNavigate.NO_CONNECTION);
+              }
             }
         );
   }
@@ -86,6 +95,11 @@ public class OrderConfirmationViewModelImpl extends ViewModel implements
   @Override
   public void counterTimeOut() {
     viewStateLiveData.postValue(new OrderConfirmationViewStatePending());
+  }
+
+  @Override
+  public void messageConsumed() {
+    navigateLiveData.postValue(OrderConfirmationNavigate.CLOSE);
   }
 
   @Override

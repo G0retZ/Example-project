@@ -103,7 +103,7 @@ class OrderItem {
     scheduledDate = scheduledDate < etaDate ? etaDate : scheduledDate;
     return
         DateTimeFormat.forPattern("HH:mm").print(scheduledDate)
-            + " - "
+            + "–"
             + DateTimeFormat.forPattern("HH:mm").print(scheduledDate + order.getEstimatedTime());
   }
 

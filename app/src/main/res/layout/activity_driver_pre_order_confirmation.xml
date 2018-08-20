@@ -15,35 +15,18 @@
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toTopOf="parent"
-    app:navigationIcon="@drawable/ic_menu_24dp">
-    <fragment
-      android:id="@+id/fragment_balance_summary"
-      android:layout_width="match_parent"
-      android:layout_height="match_parent"
-      android:layout_marginEnd="?android:attr/actionBarSize"
-      android:layout_marginRight="?android:attr/actionBarSize"
-      android:name="com.cargopull.executor_driver.view.BalanceSummaryFragment"
-      tools:layout="@layout/fragment_balance_summary"/>
-  </android.support.v7.widget.Toolbar>
+    app:navigationIcon="@drawable/ic_back_24dp"
+    app:title="Заказ ко времени"/>
   <fragment
-    android:id="@+id/fragment_map"
+    android:id="@+id/fragment_driver_preorder_confirmation"
     android:layout_width="0dp"
     android:layout_height="0dp"
-    android:name="com.cargopull.executor_driver.view.MapFragment"
-    app:layout_constraintBottom_toBottomOf="parent"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toBottomOf="@id/appBar"/>
-  <fragment
-    android:id="@+id/fragment_online"
-    android:layout_width="0dp"
-    android:layout_height="0dp"
-    android:name="com.cargopull.executor_driver.view.OnlineFragmentForMap"
+    android:name="com.cargopull.executor_driver.view.DriverPreOrderConfirmationFragment"
     app:layout_constraintBottom_toBottomOf="parent"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toBottomOf="@id/appBar"
-    tools:layout="@layout/fragment_online"/>
+    tools:layout="@layout/fragment_driver_pre_order_confirmation"/>
   <fragment
     android:id="@+id/fragment_server_connection"
     android:layout_width="0dp"

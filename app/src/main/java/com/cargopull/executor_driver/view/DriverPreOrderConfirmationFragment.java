@@ -3,27 +3,32 @@ package com.cargopull.executor_driver.view;
 import android.animation.Animator;
 import android.animation.Animator.AnimatorListener;
 import android.animation.ObjectAnimator;
+import android.annotation.SuppressLint;
+import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.DecelerateInterpolator;
 import android.view.animation.LinearInterpolator;
 import android.widget.Button;
-import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import com.cargopull.executor_driver.R;
+import com.cargopull.executor_driver.backend.vibro.ShakeItPlayer;
 import com.cargopull.executor_driver.di.AppComponent;
 import com.cargopull.executor_driver.presentation.order.OrderViewActions;
 import com.cargopull.executor_driver.presentation.order.OrderViewModel;
 import com.cargopull.executor_driver.presentation.orderconfirmation.OrderConfirmationViewActions;
 import com.cargopull.executor_driver.presentation.orderconfirmation.OrderConfirmationViewModel;
-import com.squareup.picasso.Picasso;
+import com.cargopull.executor_driver.utils.Pair;
 import java.text.DecimalFormat;
+import java.util.Collections;
 import javax.inject.Inject;
 import org.joda.time.LocalTime;
 
@@ -31,23 +36,38 @@ import org.joda.time.LocalTime;
  * Отображает заказ.
  */
 
-public class DriverOrderConfirmationFragment extends BaseFragment implements
+public class DriverPreOrderConfirmationFragment extends BaseFragment implements
     OrderConfirmationViewActions, OrderViewActions {
 
   private OrderConfirmationViewModel orderConfirmationViewModel;
   private OrderViewModel orderViewModel;
-  private ImageButton declineAction;
-  private ImageView mapImage;
-  private ProgressBar timeoutChart;
-  private TextView distanceText;
-  private TextView etaText;
+  private ShakeItPlayer shakeItPlayer;
+  private TextView scheduledTimeText;
+  private TextView scheduledDateText;
+  private TextView estimationText;
   private TextView addressText1;
   private TextView addressText2;
   private TextView positionText2;
-  private TextView estimationText;
   private TextView serviceText;
-  private Button acceptAction;
+  private TextView cargoDescTitleText;
+  private TextView cargoDescText;
+  private TextView optionsTitleText;
+  private TextView optionsText;
+  private Button declineAction;
+  private ProgressBar acceptAction;
+  private TextView acceptActionText;
+  @Nullable
+  private ObjectAnimator acceptDelayAnimator;
+  @Nullable
+  private ObjectAnimator acceptResetAnimator;
+  @Nullable
+  private AlertDialog alertDialog;
   private Context context;
+
+  @Inject
+  public void setShakeItPlayer(@NonNull ShakeItPlayer shakeItPlayer) {
+    this.shakeItPlayer = shakeItPlayer;
+  }
 
   @Inject
   public void setOrderConfirmationViewModel(
@@ -66,25 +86,78 @@ public class DriverOrderConfirmationFragment extends BaseFragment implements
     this.context = context;
   }
 
+  @SuppressLint("ClickableViewAccessibility")
   @Nullable
   @Override
   public View onCreateView(@NonNull LayoutInflater inflater,
       @Nullable ViewGroup container,
       @Nullable Bundle savedInstanceState) {
-    View view = inflater.inflate(R.layout.fragment_driver_order_confirmation, container, false);
-    declineAction = view.findViewById(R.id.declineButton);
-    mapImage = view.findViewById(R.id.mapImage);
-    timeoutChart = view.findViewById(R.id.timeoutChart);
-    distanceText = view.findViewById(R.id.distanceText);
-    etaText = view.findViewById(R.id.etaText);
+    View view = inflater.inflate(R.layout.fragment_driver_pre_order_confirmation, container, false);
+    scheduledTimeText = view.findViewById(R.id.timeText);
+    scheduledDateText = view.findViewById(R.id.dateText);
     addressText1 = view.findViewById(R.id.addressText1);
     addressText2 = view.findViewById(R.id.addressText2);
     positionText2 = view.findViewById(R.id.positionText2);
     estimationText = view.findViewById(R.id.estimationText);
     serviceText = view.findViewById(R.id.serviceText);
-    acceptAction = view.findViewById(R.id.acceptButton);
-    acceptAction.setOnClickListener(v -> orderConfirmationViewModel.acceptOrder());
+    cargoDescTitleText = view.findViewById(R.id.cargoDescTitleText);
+    cargoDescText = view.findViewById(R.id.cargoDescText);
+    optionsTitleText = view.findViewById(R.id.optionsTitleText);
+    optionsText = view.findViewById(R.id.optionsText);
+    declineAction = view.findViewById(R.id.declineButton);
+    acceptAction = view.findViewById(R.id.acceptChart);
+    acceptActionText = view.findViewById(R.id.acceptText);
     declineAction.setOnClickListener(v -> orderConfirmationViewModel.declineOrder());
+
+    acceptDelayAnimator = ObjectAnimator.ofInt(acceptAction, "progress", 0, 100);
+    acceptDelayAnimator.setDuration(1500);
+    acceptDelayAnimator.setInterpolator(new DecelerateInterpolator());
+    acceptDelayAnimator.addListener(new AnimatorListener() {
+      private boolean canceled;
+
+      @Override
+      public void onAnimationStart(Animator animation) {
+        canceled = false;
+      }
+
+      @Override
+      public void onAnimationEnd(Animator animation) {
+        if (!canceled) {
+          orderConfirmationViewModel.acceptOrder();
+          shakeItPlayer.shakeIt(Collections.singletonList(new Pair<>(200L, 255)));
+        }
+      }
+
+      @Override
+      public void onAnimationCancel(Animator animation) {
+        canceled = true;
+      }
+
+      @Override
+      public void onAnimationRepeat(Animator animation) {
+
+      }
+    });
+
+    acceptAction.setOnTouchListener((v, event) -> {
+      int i = event.getAction();
+      if (i == MotionEvent.ACTION_DOWN) {
+        acceptDelayAnimator.start();
+        if (acceptResetAnimator != null) {
+          acceptResetAnimator.cancel();
+        }
+        return true;
+      } else if (i == MotionEvent.ACTION_UP) {
+        acceptDelayAnimator.cancel();
+        acceptResetAnimator = ObjectAnimator
+            .ofInt(acceptAction, "progress", acceptAction.getProgress(), 0);
+        acceptResetAnimator.setDuration(150);
+        acceptResetAnimator.setInterpolator(new LinearInterpolator());
+        acceptResetAnimator.start();
+        return true;
+      }
+      return false;
+    });
     return view;
   }
 
@@ -116,6 +189,15 @@ public class DriverOrderConfirmationFragment extends BaseFragment implements
 
   @Override
   public void onDetach() {
+    if (alertDialog != null) {
+      alertDialog.dismiss();
+    }
+    if (acceptResetAnimator != null) {
+      acceptResetAnimator.cancel();
+    }
+    if (acceptDelayAnimator != null) {
+      acceptDelayAnimator.cancel();
+    }
     super.onDetach();
     context = null;
   }
@@ -132,7 +214,7 @@ public class DriverOrderConfirmationFragment extends BaseFragment implements
 
   @Override
   public void showLoadPoint(@NonNull String url) {
-    Picasso.with(context).load(url).into(mapImage);
+
   }
 
   @Override
@@ -167,42 +249,17 @@ public class DriverOrderConfirmationFragment extends BaseFragment implements
 
   @Override
   public void showFirstPointDistance(String distance) {
-    distanceText.setText(getString(R.string.km, distance));
+
   }
 
   @Override
   public void showFirstPointEta(int etaTime) {
-    etaText.setText(getString(R.string.eta, Math.round(etaTime / 60F)));
+
   }
 
   @Override
   public void showTimeout(int progress, long timeout) {
-    if (timeout > 0) {
-      ObjectAnimator animation = ObjectAnimator.ofInt(timeoutChart, "progress", progress, 0);
-      animation.setDuration(timeout);
-      animation.setInterpolator(new LinearInterpolator());
-      animation.addListener(new AnimatorListener() {
-        @Override
-        public void onAnimationStart(Animator animation) {
-        }
 
-        @Override
-        public void onAnimationEnd(Animator animation) {
-          orderConfirmationViewModel.counterTimeOut();
-        }
-
-        @Override
-        public void onAnimationCancel(Animator animation) {
-        }
-
-        @Override
-        public void onAnimationRepeat(Animator animation) {
-        }
-      });
-      animation.start();
-    } else {
-      orderConfirmationViewModel.counterTimeOut();
-    }
   }
 
   @Override
@@ -228,22 +285,36 @@ public class DriverOrderConfirmationFragment extends BaseFragment implements
 
   @Override
   public void showOrderOccupationTime(@NonNull String occupationTime) {
-
+    scheduledTimeText.setText(occupationTime);
   }
 
   @Override
   public void showOrderOccupationDate(@NonNull String occupationDate) {
-
+    scheduledDateText.setText(occupationDate);
   }
 
   @Override
   public void showOrderOptionsRequirements(@NonNull String options) {
-
+    if (options.trim().isEmpty()) {
+      optionsTitleText.setVisibility(View.GONE);
+      optionsText.setVisibility(View.GONE);
+    } else {
+      optionsTitleText.setVisibility(View.VISIBLE);
+      optionsText.setVisibility(View.VISIBLE);
+      optionsText.setText(options);
+    }
   }
 
   @Override
   public void showComment(@NonNull String comment) {
-
+    if (comment.trim().isEmpty()) {
+      cargoDescTitleText.setVisibility(View.GONE);
+      cargoDescText.setVisibility(View.GONE);
+    } else {
+      cargoDescTitleText.setVisibility(View.VISIBLE);
+      cargoDescText.setVisibility(View.VISIBLE);
+      cargoDescText.setText(comment);
+    }
   }
 
   @Override
@@ -254,12 +325,22 @@ public class DriverOrderConfirmationFragment extends BaseFragment implements
   @Override
   public void enableAcceptButton(boolean enable) {
     acceptAction.setEnabled(enable);
+    acceptActionText.setEnabled(enable);
   }
 
   @Override
   public void showBlockingMessage(@Nullable String message) {
     if (message != null) {
-      showPending(true, toString() + "0");
+      alertDialog = new Builder(context)
+          .setMessage(message)
+          .setPositiveButton(getString(android.R.string.ok),
+              (a, b) -> orderConfirmationViewModel.messageConsumed())
+          .create();
+      alertDialog.show();
+    } else {
+      if (alertDialog != null) {
+        alertDialog.dismiss();
+      }
     }
   }
 }
