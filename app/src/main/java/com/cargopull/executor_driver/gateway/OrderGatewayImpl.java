@@ -33,14 +33,13 @@ public class OrderGatewayImpl implements OrderGateway {
   public Flowable<Order> getOrders() {
     return executorStateUseCase
         .getExecutorStates(false)
-        .subscribeOn(Schedulers.single())
-        .observeOn(Schedulers.computation())
+        .observeOn(Schedulers.io())
         .filter(executorState1 -> executorState1 == executorState)
         .map(executorState1 -> {
           if (executorState1.getData() == null) {
             throw new DataMappingException("Ошибка маппинга: данные не должны быть null!");
           }
           return mapper.map(executorState1.getData());
-        }).observeOn(Schedulers.single());
+        });
   }
 }

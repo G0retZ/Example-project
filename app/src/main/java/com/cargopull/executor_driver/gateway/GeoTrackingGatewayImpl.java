@@ -32,7 +32,6 @@ public class GeoTrackingGatewayImpl implements GeoTrackingGateway {
             geoLocation.getLatitude(), geoLocation.getLongitude(), geoLocation.getTimestamp()
         )
     ))
-        .subscribeOn(Schedulers.io())
-        .observeOn(Schedulers.single());
+        .subscribeOn(Schedulers.io());
   }
 }

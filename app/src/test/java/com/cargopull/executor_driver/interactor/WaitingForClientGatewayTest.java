@@ -5,13 +5,13 @@ import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.cargopull.executor_driver.GatewayThreadTestRule;
 import com.cargopull.executor_driver.entity.ExecutorState;
 import com.cargopull.executor_driver.gateway.WaitingForClientGatewayImpl;
 import io.reactivex.Completable;
 import io.reactivex.observers.TestObserver;
-import io.reactivex.plugins.RxJavaPlugins;
-import io.reactivex.schedulers.Schedulers;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -21,15 +21,15 @@ import ua.naiksoftware.stomp.client.StompClient;
 @RunWith(MockitoJUnitRunner.class)
 public class WaitingForClientGatewayTest {
 
+  @ClassRule
+  public static final GatewayThreadTestRule classRule = new GatewayThreadTestRule();
+
   private WaitingForClientGateway gateway;
   @Mock
   private StompClient stompClient;
 
   @Before
   public void setUp() {
-    RxJavaPlugins.setComputationSchedulerHandler(scheduler -> Schedulers.trampoline());
-    RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
-    RxJavaPlugins.setIoSchedulerHandler(scheduler -> Schedulers.trampoline());
     ExecutorState.MOVING_TO_CLIENT.setData(null);
     when(stompClient.send(anyString(), anyString())).thenReturn(Completable.never());
     gateway = new WaitingForClientGatewayImpl(stompClient);
@@ -48,8 +48,6 @@ public class WaitingForClientGatewayTest {
     // Результат:
     verify(stompClient, only()).send("/mobile/trip", "\"START_ORDER\"");
   }
-
-  /* Проверяем правильность потоков (добавить) */
 
   /* Проверяем результаты обработки сообщений от сервера по статусам */
 
