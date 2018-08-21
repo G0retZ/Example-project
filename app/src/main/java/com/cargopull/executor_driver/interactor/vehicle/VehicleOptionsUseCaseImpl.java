@@ -9,6 +9,7 @@ import com.cargopull.executor_driver.utils.ErrorReporter;
 import io.reactivex.Completable;
 import io.reactivex.Observable;
 import io.reactivex.Single;
+import io.reactivex.schedulers.Schedulers;
 import java.util.Iterator;
 import java.util.List;
 import javax.inject.Inject;
@@ -63,6 +64,7 @@ public class VehicleOptionsUseCaseImpl implements VehicleOptionsUseCase {
   @Override
   public Single<List<Option>> getDriverOptions() {
     return vehiclesAndOptionsGateway.getExecutorOptions()
+        .observeOn(Schedulers.single())
         .flattenAsObservable(options -> options)
         .filter(Option::isVariable)
         .toList();
@@ -79,7 +81,9 @@ public class VehicleOptionsUseCaseImpl implements VehicleOptionsUseCase {
       return vehicle;
     }).flatMapCompletable(
         vehicle -> gateway.sendVehicleOptions(vehicle, driverOptions)
+            .observeOn(Schedulers.single())
             .concatWith(lastUsedVehicleGateway.saveLastUsedVehicleId(vehicle))
+            .observeOn(Schedulers.single())
     ).doOnError(throwable -> {
       if (throwable instanceof IllegalStateException
           || throwable instanceof IllegalArgumentException) {

@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 import com.cargopull.executor_driver.entity.Validator;
 import com.cargopull.executor_driver.interactor.DataReceiver;
 import io.reactivex.Completable;
+import io.reactivex.schedulers.Schedulers;
 import javax.inject.Inject;
 
 public class SmsUseCaseImpl implements SmsUseCase {
@@ -34,6 +35,7 @@ public class SmsUseCaseImpl implements SmsUseCase {
           return phoneNumber;
         }).flatMapCompletable(phoneNumber ->
             gateway.sendMeCode(phoneNumber == null ? "" : phoneNumber)
+                .observeOn(Schedulers.single())
         );
   }
 }

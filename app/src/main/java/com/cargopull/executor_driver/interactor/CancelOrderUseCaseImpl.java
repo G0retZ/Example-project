@@ -8,6 +8,7 @@ import io.reactivex.BackpressureStrategy;
 import io.reactivex.Completable;
 import io.reactivex.Flowable;
 import io.reactivex.Single;
+import io.reactivex.schedulers.Schedulers;
 import java.util.List;
 import javax.inject.Inject;
 
@@ -40,6 +41,7 @@ public class CancelOrderUseCaseImpl implements CancelOrderUseCase {
       cancelOrderReasonsFlowable = loginReceiver.get()
           .toFlowable(BackpressureStrategy.BUFFER)
           .switchMap(gateway::loadCancelOrderReasons)
+          .observeOn(Schedulers.single())
           .map(cancelOrderReasons1 -> cancelOrderReasons = cancelOrderReasons1)
           .doOnError(errorReporter::reportError)
           .replay(1)
@@ -59,7 +61,9 @@ public class CancelOrderUseCaseImpl implements CancelOrderUseCase {
             + "Доступные причины отказа: " + cancelOrderReasons);
       }
       return cancelOrderReason;
-    }).doOnError(errorReporter::reportError)
-        .flatMapCompletable(gateway::cancelOrder);
+    }).subscribeOn(Schedulers.single())
+        .doOnError(errorReporter::reportError)
+        .flatMapCompletable(gateway::cancelOrder)
+        .observeOn(Schedulers.single());
   }
 }

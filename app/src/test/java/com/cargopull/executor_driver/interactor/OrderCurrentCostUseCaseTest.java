@@ -9,6 +9,7 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
+import com.cargopull.executor_driver.UseCaseThreadTestRule;
 import com.cargopull.executor_driver.entity.Order;
 import com.cargopull.executor_driver.gateway.DataMappingException;
 import com.cargopull.executor_driver.utils.ErrorReporter;
@@ -16,6 +17,7 @@ import io.reactivex.Flowable;
 import io.reactivex.Observable;
 import io.reactivex.subscribers.TestSubscriber;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -23,6 +25,9 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
 public class OrderCurrentCostUseCaseTest {
+
+  @ClassRule
+  public static final UseCaseThreadTestRule classRule = new UseCaseThreadTestRule();
 
   private OrderCurrentCostUseCase useCase;
 

@@ -2,6 +2,7 @@ package com.cargopull.executor_driver.interactor;
 
 import android.support.annotation.NonNull;
 import io.reactivex.Completable;
+import io.reactivex.schedulers.Schedulers;
 import javax.inject.Inject;
 
 public class MovingToClientUseCaseImpl implements MovingToClientUseCase {
@@ -17,6 +18,6 @@ public class MovingToClientUseCaseImpl implements MovingToClientUseCase {
   @NonNull
   @Override
   public Completable reportArrival() {
-    return movingToClientGateway.reportArrival();
+    return movingToClientGateway.reportArrival().observeOn(Schedulers.single());
   }
 }

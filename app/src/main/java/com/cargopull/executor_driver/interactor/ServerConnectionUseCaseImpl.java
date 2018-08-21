@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 import com.cargopull.executor_driver.backend.web.AuthorizationException;
 import com.cargopull.executor_driver.backend.web.DeprecatedVersionException;
 import io.reactivex.Flowable;
+import io.reactivex.schedulers.Schedulers;
 import java.util.concurrent.TimeUnit;
 
 public class ServerConnectionUseCaseImpl implements ServerConnectionUseCase {
@@ -22,6 +23,7 @@ public class ServerConnectionUseCaseImpl implements ServerConnectionUseCase {
   public Flowable<Boolean> connect() {
     if (connectFlowable == null) {
       connectFlowable = serverConnectionGateway.openSocket()
+          .observeOn(Schedulers.single())
           .retryWhen(
               failed -> failed.concatMap(
                   throwable -> {
