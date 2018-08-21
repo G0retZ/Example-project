@@ -2,6 +2,7 @@ package com.cargopull.executor_driver.interactor;
 
 import android.support.annotation.NonNull;
 import io.reactivex.Single;
+import io.reactivex.schedulers.Schedulers;
 import javax.inject.Inject;
 
 public class OrderConfirmationUseCaseImpl implements OrderConfirmationUseCase {
@@ -29,6 +30,8 @@ public class OrderConfirmationUseCaseImpl implements OrderConfirmationUseCase {
         .firstOrError()
         .flatMapPublisher(orderGateway::getOrders)
         .firstOrError()
-        .flatMap(order -> orderConfirmationGateway.sendDecision(order, confirmed));
+        .observeOn(Schedulers.single())
+        .flatMap(order -> orderConfirmationGateway.sendDecision(order, confirmed))
+        .observeOn(Schedulers.single());
   }
 }

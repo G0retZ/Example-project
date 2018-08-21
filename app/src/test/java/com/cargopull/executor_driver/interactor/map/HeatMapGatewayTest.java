@@ -4,13 +4,13 @@ import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.cargopull.executor_driver.GatewayThreadTestRule;
 import com.cargopull.executor_driver.backend.web.ApiService;
 import com.cargopull.executor_driver.backend.web.NoNetworkException;
 import com.cargopull.executor_driver.gateway.HeatMapGatewayImpl;
 import io.reactivex.Single;
-import io.reactivex.plugins.RxJavaPlugins;
-import io.reactivex.schedulers.Schedulers;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -19,6 +19,9 @@ import org.mockito.junit.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class HeatMapGatewayTest {
 
+  @ClassRule
+  public static final GatewayThreadTestRule classRule = new GatewayThreadTestRule();
+
   private HeatMapGateway gateway;
 
   @Mock
@@ -26,8 +29,6 @@ public class HeatMapGatewayTest {
 
   @Before
   public void setUp() {
-    RxJavaPlugins.setIoSchedulerHandler(scheduler -> Schedulers.trampoline());
-    RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
     gateway = new HeatMapGatewayImpl(api);
     when(api.getHeatMap()).thenReturn(Single.never());
   }
@@ -45,8 +46,6 @@ public class HeatMapGatewayTest {
     // Результат:
     verify(api, only()).getHeatMap();
   }
-
-  /* Проверяем правильность потоков (добавить) */
 
   /* Проверяем ответы на АПИ */
 

@@ -11,6 +11,7 @@ import static org.mockito.Mockito.when;
 import android.arch.core.executor.testing.InstantTaskExecutorRule;
 import android.arch.lifecycle.Observer;
 import com.cargopull.executor_driver.R;
+import com.cargopull.executor_driver.ViewModelThreadTestRule;
 import com.cargopull.executor_driver.backend.web.NoNetworkException;
 import com.cargopull.executor_driver.entity.Option;
 import com.cargopull.executor_driver.entity.OptionBoolean;
@@ -18,9 +19,6 @@ import com.cargopull.executor_driver.entity.OptionNumeric;
 import com.cargopull.executor_driver.interactor.vehicle.VehicleOptionsUseCase;
 import com.cargopull.executor_driver.presentation.ViewState;
 import io.reactivex.Completable;
-import io.reactivex.android.plugins.RxAndroidPlugins;
-import io.reactivex.plugins.RxJavaPlugins;
-import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.PublishSubject;
 import io.reactivex.subjects.SingleSubject;
 import java.util.ArrayList;
@@ -28,6 +26,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestRule;
@@ -40,6 +39,8 @@ import org.mockito.junit.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class VehicleOptionsViewModelTest {
 
+  @ClassRule
+  public static final ViewModelThreadTestRule classRule = new ViewModelThreadTestRule();
   @Rule
   public TestRule rule = new InstantTaskExecutorRule();
   private VehicleOptionsViewModel viewModel;
@@ -57,8 +58,6 @@ public class VehicleOptionsViewModelTest {
 
   @Before
   public void setUp() {
-    RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
-    RxAndroidPlugins.setInitMainThreadSchedulerHandler(scheduler -> Schedulers.trampoline());
     publishSubject = PublishSubject.create();
     singleSubject = SingleSubject.create();
     when(vehicleOptionsUseCase.getVehicleOptions()).thenReturn(publishSubject);

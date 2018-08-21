@@ -38,6 +38,7 @@ public class OrderFulfillmentTimeUseCaseImpl implements OrderFulfillmentTimeUseC
     return loginReceiver.get()
         .toFlowable(BackpressureStrategy.BUFFER)
         .switchMap(orderGateway::getOrders)
+        .observeOn(Schedulers.single())
         .switchMap(order -> {
               long offset =
                   Math.round((timeUtils.currentTimeMillis() - order.getStartTime()) / 1000d);

@@ -5,6 +5,7 @@ import com.cargopull.executor_driver.utils.ErrorReporter;
 import com.cargopull.executor_driver.utils.TimeUtils;
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Completable;
+import io.reactivex.schedulers.Schedulers;
 import javax.inject.Inject;
 
 public class ServerTimeUseCaseImpl implements ServerTimeUseCase {
@@ -35,6 +36,7 @@ public class ServerTimeUseCaseImpl implements ServerTimeUseCase {
     return loginReceiver.get()
         .toFlowable(BackpressureStrategy.BUFFER)
         .switchMap(gateway::loadServerTime)
+        .observeOn(Schedulers.single())
         .doOnError(errorReporter::reportError)
         .flatMapCompletable(timeStamp -> Completable.fromAction(
             () -> timeUtils.setServerCurrentTime(timeStamp)

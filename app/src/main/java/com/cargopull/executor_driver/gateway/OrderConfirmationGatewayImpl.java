@@ -26,7 +26,6 @@ public class OrderConfirmationGatewayImpl implements OrderConfirmationGateway {
         BuildConfig.CONFIRM_OFFER_DESTINATION,
         "{\"id\":\"" + order.getId() + "\", \"approved\":\"" + accepted + "\"}"
     ).toSingle(() -> "")
-        .subscribeOn(Schedulers.io())
-        .observeOn(Schedulers.single());
+        .subscribeOn(Schedulers.io());
   }
 }

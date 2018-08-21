@@ -11,6 +11,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
+import com.cargopull.executor_driver.UseCaseThreadTestRule;
 import com.cargopull.executor_driver.backend.web.NoNetworkException;
 import com.cargopull.executor_driver.entity.LoginData;
 import com.cargopull.executor_driver.entity.ValidationException;
@@ -20,6 +21,7 @@ import io.reactivex.Completable;
 import io.reactivex.Observable;
 import io.reactivex.observers.TestObserver;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -27,6 +29,9 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PasswordUseCaseTest {
+
+  @ClassRule
+  public static final UseCaseThreadTestRule classRule = new UseCaseThreadTestRule();
 
   private PasswordUseCase useCase;
 
@@ -210,7 +215,6 @@ public class PasswordUseCaseTest {
   public void answerAfterValidationFailed() {
     // Дано:
     when(loginReceiver.get()).thenReturn(Observable.just(""));
-    when(gateway.authorize(any(LoginData.class))).thenReturn(Completable.complete());
 
     // Действие:
     TestObserver<Void> testObserver =

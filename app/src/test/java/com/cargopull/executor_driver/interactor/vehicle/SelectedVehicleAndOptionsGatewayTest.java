@@ -8,6 +8,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
+import com.cargopull.executor_driver.GatewayThreadTestRule;
 import com.cargopull.executor_driver.backend.web.ApiService;
 import com.cargopull.executor_driver.backend.web.NoNetworkException;
 import com.cargopull.executor_driver.backend.web.incoming.ApiOptionItem;
@@ -22,11 +23,10 @@ import com.cargopull.executor_driver.gateway.Mapper;
 import com.cargopull.executor_driver.gateway.SelectedVehicleAndOptionsGatewayImpl;
 import io.reactivex.Single;
 import io.reactivex.observers.TestObserver;
-import io.reactivex.plugins.RxJavaPlugins;
-import io.reactivex.schedulers.Schedulers;
 import java.util.Arrays;
 import java.util.List;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -36,6 +36,9 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SelectedVehicleAndOptionsGatewayTest {
+
+  @ClassRule
+  public static final GatewayThreadTestRule classRule = new GatewayThreadTestRule();
 
   private VehiclesAndOptionsGateway gateway;
 
@@ -56,8 +59,6 @@ public class SelectedVehicleAndOptionsGatewayTest {
 
   @Before
   public void setUp() throws Exception {
-    RxJavaPlugins.setIoSchedulerHandler(scheduler -> Schedulers.trampoline());
-    RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
     gateway = new SelectedVehicleAndOptionsGatewayImpl(api, apiOptionMapper, vehicleMapper,
         errorMapper);
     when(api.getSelectedOptionsForOnline()).thenReturn(Single.never());
@@ -275,8 +276,6 @@ public class SelectedVehicleAndOptionsGatewayTest {
     verify(errorMapper, only()).map(throwableCaptor.capture());
     assertTrue(throwableCaptor.getValue() instanceof NoNetworkException);
   }
-
-  /* Проверяем правильность потоков (добавить) */
 
   /* Проверяем ответы на АПИ */
 

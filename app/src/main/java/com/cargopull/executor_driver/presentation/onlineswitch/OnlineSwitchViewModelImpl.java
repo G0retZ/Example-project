@@ -15,7 +15,6 @@ import com.cargopull.executor_driver.presentation.ViewState;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.internal.disposables.EmptyDisposable;
-import io.reactivex.schedulers.Schedulers;
 import javax.inject.Inject;
 
 public class OnlineSwitchViewModelImpl extends ViewModel implements OnlineSwitchViewModel {
@@ -68,7 +67,6 @@ public class OnlineSwitchViewModelImpl extends ViewModel implements OnlineSwitch
         viewStateLiveData
             .postValue(new OnlineSwitchViewStatePending(new OnlineSwitchViewState(false)));
         setStateDisposable = executorStateNotOnlineUseCase.setExecutorNotOnline()
-            .subscribeOn(Schedulers.single())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
                 () -> {
@@ -89,7 +87,6 @@ public class OnlineSwitchViewModelImpl extends ViewModel implements OnlineSwitch
     viewStateLiveData.postValue(new OnlineSwitchViewStatePending(lastViewState));
     executorStatesDisposable.dispose();
     executorStatesDisposable = executorStateUseCase.getExecutorStates(false)
-        .subscribeOn(Schedulers.single())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(this::onNextState,
             throwable -> {

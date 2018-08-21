@@ -21,7 +21,6 @@ public class HeatMapGatewayImpl implements HeatMapGateway {
   @Override
   public Single<String> getHeatMap() {
     return api.getHeatMap()
-        .subscribeOn(Schedulers.io())
-        .observeOn(Schedulers.single());
+        .subscribeOn(Schedulers.io());
   }
 }

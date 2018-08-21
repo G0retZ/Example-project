@@ -44,7 +44,6 @@ public class VehiclesAndOptionsGatewayImpl implements VehiclesAndOptionsGateway 
     if (apiOptionsForOnlineSingle == null) {
       apiOptionsForOnlineSingle = api.getOptionsForOnline()
           .subscribeOn(Schedulers.io())
-          .observeOn(Schedulers.single())
           .doOnError(throwable -> apiOptionsForOnlineSingle = null)
           .cache();
     }
@@ -61,7 +60,6 @@ public class VehiclesAndOptionsGatewayImpl implements VehiclesAndOptionsGateway 
     if (apiOptionsForOnlineSingle == null) {
       apiOptionsForOnlineSingle = api.getOptionsForOnline()
           .subscribeOn(Schedulers.io())
-          .observeOn(Schedulers.single())
           .doOnError(throwable -> apiOptionsForOnlineSingle = null)
           .cache();
     }

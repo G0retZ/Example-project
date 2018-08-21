@@ -4,13 +4,13 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
+import com.cargopull.executor_driver.GatewayThreadTestRule;
 import com.cargopull.executor_driver.entity.Order;
 import com.cargopull.executor_driver.gateway.OrderConfirmationGatewayImpl;
 import io.reactivex.Completable;
 import io.reactivex.observers.TestObserver;
-import io.reactivex.plugins.RxJavaPlugins;
-import io.reactivex.schedulers.Schedulers;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InOrder;
@@ -22,6 +22,9 @@ import ua.naiksoftware.stomp.client.StompClient;
 @RunWith(MockitoJUnitRunner.class)
 public class OrderConfirmationGatewayTest {
 
+  @ClassRule
+  public static final GatewayThreadTestRule classRule = new GatewayThreadTestRule();
+
   private OrderConfirmationGateway gateway;
   @Mock
   private StompClient stompClient;
@@ -30,9 +33,6 @@ public class OrderConfirmationGatewayTest {
 
   @Before
   public void setUp() {
-    RxJavaPlugins.setComputationSchedulerHandler(scheduler -> Schedulers.trampoline());
-    RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
-    RxJavaPlugins.setIoSchedulerHandler(scheduler -> Schedulers.trampoline());
     when(stompClient.send(anyString(), anyString())).thenReturn(Completable.never());
     gateway = new OrderConfirmationGatewayImpl(stompClient);
   }
@@ -59,8 +59,6 @@ public class OrderConfirmationGatewayTest {
         .send("/mobile/order", "{\"id\":\"7\", \"approved\":\"true\"}");
     verifyNoMoreInteractions(stompClient);
   }
-
-  /* Проверяем правильность потоков (добавить) */
 
   /* Проверяем результаты обработки сообщений от сервера по статусам */
 

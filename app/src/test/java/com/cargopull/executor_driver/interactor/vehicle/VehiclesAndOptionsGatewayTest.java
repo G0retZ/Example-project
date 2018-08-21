@@ -8,6 +8,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
+import com.cargopull.executor_driver.GatewayThreadTestRule;
 import com.cargopull.executor_driver.backend.web.ApiService;
 import com.cargopull.executor_driver.backend.web.NoNetworkException;
 import com.cargopull.executor_driver.backend.web.incoming.ApiOptionItem;
@@ -22,11 +23,10 @@ import com.cargopull.executor_driver.gateway.Mapper;
 import com.cargopull.executor_driver.gateway.VehiclesAndOptionsGatewayImpl;
 import io.reactivex.Single;
 import io.reactivex.observers.TestObserver;
-import io.reactivex.plugins.RxJavaPlugins;
-import io.reactivex.schedulers.Schedulers;
 import java.util.Arrays;
 import java.util.List;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -36,6 +36,9 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
 public class VehiclesAndOptionsGatewayTest {
+
+  @ClassRule
+  public static final GatewayThreadTestRule classRule = new GatewayThreadTestRule();
 
   private VehiclesAndOptionsGateway gateway;
 
@@ -56,8 +59,6 @@ public class VehiclesAndOptionsGatewayTest {
 
   @Before
   public void setUp() throws Exception {
-    RxJavaPlugins.setIoSchedulerHandler(scheduler -> Schedulers.trampoline());
-    RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
     gateway = new VehiclesAndOptionsGatewayImpl(api, apiOptionMapper, vehicleMapper, errorMapper);
     when(api.getOptionsForOnline()).thenReturn(Single.never());
     when(vehicleMapper.map(any(ApiVehicle.class))).thenReturn(
@@ -270,8 +271,6 @@ public class VehiclesAndOptionsGatewayTest {
     verify(errorMapper, only()).map(throwableCaptor.capture());
     assertTrue(throwableCaptor.getValue() instanceof NoNetworkException);
   }
-
-  /* Проверяем правильность потоков (добавить) */
 
   /* Проверяем ответы на АПИ */
 

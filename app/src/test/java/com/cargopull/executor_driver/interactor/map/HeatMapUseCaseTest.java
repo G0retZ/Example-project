@@ -6,16 +6,17 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
+import com.cargopull.executor_driver.UseCaseThreadTestRule;
 import com.cargopull.executor_driver.backend.web.NoNetworkException;
 import io.reactivex.Single;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.plugins.RxJavaPlugins;
-import io.reactivex.schedulers.Schedulers;
 import io.reactivex.schedulers.TestScheduler;
 import io.reactivex.subscribers.TestSubscriber;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -23,6 +24,9 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
 public class HeatMapUseCaseTest {
+
+  @ClassRule
+  public static final UseCaseThreadTestRule classRule = new UseCaseThreadTestRule();
 
   private final static int REQUIRED_INTERVAL = 5;
 
@@ -40,7 +44,6 @@ public class HeatMapUseCaseTest {
   public void setUp() {
     testScheduler = new TestScheduler();
     RxJavaPlugins.setComputationSchedulerHandler(scheduler -> testScheduler);
-    RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
     when(gateway.getHeatMap()).thenReturn(Single.never());
     useCase = new HeatMapUseCaseImpl(gateway);
   }

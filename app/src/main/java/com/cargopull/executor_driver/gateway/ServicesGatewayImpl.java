@@ -30,12 +30,10 @@ public class ServicesGatewayImpl implements ServicesGateway {
   public Single<List<Service>> getServices() {
     return api.getMySelectedServices()
         .subscribeOn(Schedulers.io())
-        .observeOn(Schedulers.single())
         .flatMapObservable(selected -> {
           List<String> selectedIds = Arrays.asList(selected.split(","));
           return api.getMyServices()
               .subscribeOn(Schedulers.io())
-              .observeOn(Schedulers.single())
               .flattenAsObservable(apiServiceItems -> apiServiceItems)
               .map(apiServiceItem -> {
                 if (selectedIds.contains(String.valueOf(apiServiceItem.getId()))) {
@@ -56,7 +54,6 @@ public class ServicesGatewayImpl implements ServicesGateway {
       servicesIds.append("").append(service.getId()).append(",");
     }
     return api.setMyServices(servicesIds.subSequence(0, servicesIds.length() - 1).toString())
-        .subscribeOn(Schedulers.io())
-        .observeOn(Schedulers.single());
+        .subscribeOn(Schedulers.io());
   }
 }

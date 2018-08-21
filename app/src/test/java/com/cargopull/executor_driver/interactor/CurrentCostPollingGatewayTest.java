@@ -11,6 +11,7 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
+import com.cargopull.executor_driver.GatewayThreadTestRule;
 import com.cargopull.executor_driver.backend.websocket.ConnectionClosedException;
 import com.cargopull.executor_driver.entity.ExecutorState;
 import com.cargopull.executor_driver.gateway.CurrentCostPollingGatewayImpl;
@@ -21,13 +22,13 @@ import io.reactivex.Completable;
 import io.reactivex.Flowable;
 import io.reactivex.observers.TestObserver;
 import io.reactivex.plugins.RxJavaPlugins;
-import io.reactivex.schedulers.Schedulers;
 import io.reactivex.schedulers.TestScheduler;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.concurrent.TimeUnit;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -43,6 +44,9 @@ import ua.naiksoftware.stomp.client.StompMessage;
 @RunWith(MockitoJUnitRunner.class)
 public class CurrentCostPollingGatewayTest {
 
+  @ClassRule
+  public static final GatewayThreadTestRule classRule = new GatewayThreadTestRule();
+
   private CurrentCostPollingGateway gateway;
   @Mock
   private StompClient stompClient;
@@ -57,8 +61,6 @@ public class CurrentCostPollingGatewayTest {
   public void setUp() {
     testScheduler = new TestScheduler();
     RxJavaPlugins.setComputationSchedulerHandler(scheduler -> testScheduler);
-    RxJavaPlugins.setIoSchedulerHandler(scheduler -> Schedulers.trampoline());
-    RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
     ExecutorState.MOVING_TO_CLIENT.setData(null);
     when(stompClient.send(anyString(), anyString())).thenReturn(Completable.never());
     when(stompClient.topic("/queue/1234567890", StompClient.ACK_CLIENT_INDIVIDUAL))
@@ -491,8 +493,6 @@ public class CurrentCostPollingGatewayTest {
     inOrder.verify(stompClient, times(8)).send("/mobile/retrieveOverPackage", "\"\"");
     verifyNoMoreInteractions(stompClient);
   }
-
-  /* Проверяем правильность потоков (добавить) */
 
   /* Проверяем результаты отправки сообщений серверу */
 

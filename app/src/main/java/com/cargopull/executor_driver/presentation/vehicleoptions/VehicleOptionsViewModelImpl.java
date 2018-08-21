@@ -17,7 +17,6 @@ import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.internal.disposables.EmptyDisposable;
-import io.reactivex.schedulers.Schedulers;
 import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
@@ -78,7 +77,6 @@ public class VehicleOptionsViewModelImpl extends ViewModel implements
     }
     optionsDisposable = Observable.combineLatest(
         vehicleOptionsUseCase.getVehicleOptions()
-            .subscribeOn(Schedulers.single())
             .observeOn(AndroidSchedulers.mainThread())
             .switchMap(options -> Observable
                 .fromIterable(options)
@@ -87,7 +85,6 @@ public class VehicleOptionsViewModelImpl extends ViewModel implements
                 .toObservable()
             ),
         vehicleOptionsUseCase.getDriverOptions()
-            .subscribeOn(Schedulers.single())
             .observeOn(AndroidSchedulers.mainThread())
             .flattenAsObservable(options -> options)
             .<VehicleOptionsListItem<?>>map(this::map)
@@ -114,7 +111,6 @@ public class VehicleOptionsViewModelImpl extends ViewModel implements
     viewStateLiveData.postValue(new VehicleOptionsViewStatePending());
     occupyDisposable = vehicleOptionsUseCase
         .setSelectedVehicleAndOptions(vehicleOptions, driverOptions)
-        .subscribeOn(Schedulers.single())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(
             () -> navigateLiveData.postValue(VehicleOptionsNavigate.SERVICES),

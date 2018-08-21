@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 import com.cargopull.executor_driver.entity.OrderCostDetails;
 import com.cargopull.executor_driver.utils.ErrorReporter;
 import io.reactivex.Flowable;
+import io.reactivex.schedulers.Schedulers;
 
 public class OrderCostDetailsUseCaseImpl implements OrderCostDetailsUseCase {
 
@@ -21,6 +22,7 @@ public class OrderCostDetailsUseCaseImpl implements OrderCostDetailsUseCase {
   @Override
   public Flowable<OrderCostDetails> getOrderCostDetails() {
     return orderCostDetailsGateway.getOrderCostDetails()
+        .observeOn(Schedulers.single())
         .doOnError(errorReporter::reportError);
   }
 }

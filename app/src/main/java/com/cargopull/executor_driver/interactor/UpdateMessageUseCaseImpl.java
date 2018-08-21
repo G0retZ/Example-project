@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 import com.cargopull.executor_driver.utils.ErrorReporter;
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
+import io.reactivex.schedulers.Schedulers;
 import javax.inject.Inject;
 
 public class UpdateMessageUseCaseImpl implements UpdateMessageUseCase {
@@ -30,6 +31,7 @@ public class UpdateMessageUseCaseImpl implements UpdateMessageUseCase {
     return loginReceiver.get()
         .toFlowable(BackpressureStrategy.BUFFER)
         .switchMap(gateway::loadUpdateMessages)
+        .observeOn(Schedulers.single())
         .doOnError(errorReporter::reportError);
   }
 }

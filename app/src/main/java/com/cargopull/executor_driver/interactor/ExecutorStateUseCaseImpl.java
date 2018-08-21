@@ -5,6 +5,7 @@ import com.cargopull.executor_driver.entity.ExecutorState;
 import com.cargopull.executor_driver.utils.ErrorReporter;
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
+import io.reactivex.schedulers.Schedulers;
 import javax.inject.Inject;
 
 public class ExecutorStateUseCaseImpl implements ExecutorStateUseCase {
@@ -34,6 +35,7 @@ public class ExecutorStateUseCaseImpl implements ExecutorStateUseCase {
       executorStateFlowable = loginReceiver.get()
           .toFlowable(BackpressureStrategy.BUFFER)
           .switchMap(gateway::getState)
+          .observeOn(Schedulers.single())
           .doOnError(errorReporter::reportError)
           .replay(1)
           .refCount()

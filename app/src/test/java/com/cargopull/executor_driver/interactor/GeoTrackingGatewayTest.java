@@ -5,13 +5,13 @@ import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.cargopull.executor_driver.GatewayThreadTestRule;
 import com.cargopull.executor_driver.entity.GeoLocation;
 import com.cargopull.executor_driver.gateway.GeoTrackingGatewayImpl;
 import io.reactivex.Completable;
 import io.reactivex.observers.TestObserver;
-import io.reactivex.plugins.RxJavaPlugins;
-import io.reactivex.schedulers.Schedulers;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -21,6 +21,9 @@ import ua.naiksoftware.stomp.client.StompClient;
 @RunWith(MockitoJUnitRunner.class)
 public class GeoTrackingGatewayTest {
 
+  @ClassRule
+  public static final GatewayThreadTestRule classRule = new GatewayThreadTestRule();
+
   private GeoTrackingGateway gateway;
 
   @Mock
@@ -28,8 +31,6 @@ public class GeoTrackingGatewayTest {
 
   @Before
   public void setUp() {
-    RxJavaPlugins.setIoSchedulerHandler(scheduler -> Schedulers.trampoline());
-    RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
     gateway = new GeoTrackingGatewayImpl(stompClient);
     when(stompClient.send(anyString(), anyString())).thenReturn(Completable.never());
   }
@@ -48,8 +49,6 @@ public class GeoTrackingGatewayTest {
     verify(stompClient, only())
         .send("/mobile/online", "{\"latitude\":1.0,\"longitude\":2.0,\"regDate\":3}");
   }
-
-  /* Проверяем правильность потоков (добавить) */
 
   /* Проверяем ответы на попытку отправки сообщения */
 

@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 import com.cargopull.executor_driver.utils.ErrorReporter;
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
+import io.reactivex.schedulers.Schedulers;
 import javax.inject.Inject;
 
 public class OrderCurrentCostUseCaseImpl implements OrderCurrentCostUseCase {
@@ -35,8 +36,10 @@ public class OrderCurrentCostUseCaseImpl implements OrderCurrentCostUseCase {
     return loginReceiver.get()
         .toFlowable(BackpressureStrategy.BUFFER)
         .switchMap(login -> orderGateway.getOrders(login)
+            .observeOn(Schedulers.single())
             .switchMap(order ->
                 orderCurrentCostGateway.getOrderCurrentCost(login)
+                    .observeOn(Schedulers.single())
                     .startWith(order.getTotalCost())
             )
         ).doOnError(errorReporter::reportError);

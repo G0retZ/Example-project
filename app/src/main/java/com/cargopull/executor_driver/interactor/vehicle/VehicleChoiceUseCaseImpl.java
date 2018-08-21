@@ -8,6 +8,7 @@ import com.cargopull.executor_driver.utils.ErrorReporter;
 import io.reactivex.Completable;
 import io.reactivex.Observer;
 import io.reactivex.Single;
+import io.reactivex.schedulers.Schedulers;
 import java.util.List;
 import javax.inject.Inject;
 
@@ -36,6 +37,7 @@ public class VehicleChoiceUseCaseImpl implements VehicleChoiceUseCase {
   @Override
   public Single<List<Vehicle>> getVehicles() {
     return vehiclesAndOptionsGateway.getExecutorVehicles()
+        .observeOn(Schedulers.single())
         .map(list -> {
           if (list.isEmpty()) {
             throw new EmptyListException("Нет ТС доступных для исполнителя.");

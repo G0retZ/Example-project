@@ -5,6 +5,7 @@ import com.cargopull.executor_driver.entity.Order;
 import com.cargopull.executor_driver.utils.ErrorReporter;
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
+import io.reactivex.schedulers.Schedulers;
 import javax.inject.Inject;
 
 public class OrderUseCaseImpl implements OrderUseCase {
@@ -31,6 +32,7 @@ public class OrderUseCaseImpl implements OrderUseCase {
     return loginReceiver.get()
         .toFlowable(BackpressureStrategy.BUFFER)
         .switchMap(orderGateway::getOrders)
+        .observeOn(Schedulers.single())
         .doOnError(errorReporter::reportError);
   }
 }

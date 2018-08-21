@@ -22,7 +22,6 @@ public class ExecutorStateSwitchGatewayImpl implements ExecutorStateSwitchGatewa
   public Completable sendNewExecutorState(ExecutorState executorState) {
     return stompClient
         .send(BuildConfig.SET_STATUS_DESTINATION, "\"" + executorState.toString() + "\"")
-        .subscribeOn(Schedulers.io())
-        .observeOn(Schedulers.single());
+        .subscribeOn(Schedulers.io());
   }
 }

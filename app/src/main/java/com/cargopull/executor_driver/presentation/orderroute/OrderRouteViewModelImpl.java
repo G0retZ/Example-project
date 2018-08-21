@@ -14,7 +14,6 @@ import io.reactivex.Flowable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.internal.disposables.EmptyDisposable;
-import io.reactivex.schedulers.Schedulers;
 import javax.inject.Inject;
 
 public class OrderRouteViewModelImpl extends ViewModel implements
@@ -62,7 +61,6 @@ public class OrderRouteViewModelImpl extends ViewModel implements
     viewStateLiveData.postValue(new OrderRouteViewStatePending(lastViewState));
     nextPointDisposable = orderRouteUseCase
         .nextRoutePoint(routePointItem.getRoutePoint())
-        .subscribeOn(Schedulers.single())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(
             () -> {
@@ -79,7 +77,6 @@ public class OrderRouteViewModelImpl extends ViewModel implements
       return;
     }
     disposable = orderRouteUseCase.getOrderRoutePoints()
-        .subscribeOn(Schedulers.single())
         .observeOn(AndroidSchedulers.mainThread())
         .switchMap(routePoints -> Flowable
             .fromIterable(routePoints)

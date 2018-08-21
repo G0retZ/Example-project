@@ -15,7 +15,6 @@ import com.cargopull.executor_driver.presentation.ViewState;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.internal.disposables.EmptyDisposable;
-import io.reactivex.schedulers.Schedulers;
 import javax.inject.Inject;
 
 public class NextRoutePointViewModelImpl extends ViewModel implements NextRoutePointViewModel {
@@ -64,7 +63,6 @@ public class NextRoutePointViewModelImpl extends ViewModel implements NextRouteP
     viewStateLiveData.postValue(new NextRoutePointViewStatePending(lastViewState));
     completeDisposable = orderRouteUseCase
         .closeRoutePoint(lastRoutePoint)
-        .subscribeOn(Schedulers.single())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(
             () -> {
@@ -83,7 +81,6 @@ public class NextRoutePointViewModelImpl extends ViewModel implements NextRouteP
     viewStateLiveData.postValue(new NextRoutePointViewStatePending(lastViewState));
     completeDisposable = orderRouteUseCase
         .completeTheOrder()
-        .subscribeOn(Schedulers.single())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(
             () -> {
@@ -99,7 +96,6 @@ public class NextRoutePointViewModelImpl extends ViewModel implements NextRouteP
       return;
     }
     disposable = orderRouteUseCase.getOrderRoutePoints()
-        .subscribeOn(Schedulers.single())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(
             routePoints -> {

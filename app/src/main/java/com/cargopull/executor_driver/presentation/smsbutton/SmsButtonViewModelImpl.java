@@ -11,7 +11,6 @@ import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.internal.disposables.EmptyDisposable;
-import io.reactivex.schedulers.Schedulers;
 import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
 
@@ -53,7 +52,6 @@ public class SmsButtonViewModelImpl extends ViewModel implements SmsButtonViewMo
     }
     viewStateLiveData.postValue(new SmsButtonViewStatePending());
     sendDisposable = smsUseCase.sendMeCode()
-        .subscribeOn(Schedulers.single())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(
             this::holdButton,

@@ -9,6 +9,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
+import com.cargopull.executor_driver.UseCaseThreadTestRule;
 import com.cargopull.executor_driver.backend.web.NoNetworkException;
 import com.cargopull.executor_driver.entity.Order;
 import com.cargopull.executor_driver.gateway.DataMappingException;
@@ -17,6 +18,7 @@ import io.reactivex.Observable;
 import io.reactivex.Single;
 import io.reactivex.observers.TestObserver;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -24,6 +26,9 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
 public class OrderConfirmationUseCaseTest {
+
+  @ClassRule
+  public static final UseCaseThreadTestRule classRule = new UseCaseThreadTestRule();
 
   private OrderConfirmationUseCase useCase;
 

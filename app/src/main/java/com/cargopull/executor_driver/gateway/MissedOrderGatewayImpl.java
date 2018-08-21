@@ -44,8 +44,7 @@ public class MissedOrderGatewayImpl implements MissedOrderGateway {
               ).subscribe(() -> {
               }, Throwable::printStackTrace)
           )
-          .map(stompMessage -> stompMessage.getPayload().trim())
-          .observeOn(Schedulers.single());
+          .map(stompMessage -> stompMessage.getPayload().trim());
     }
     return Flowable.error(ConnectionClosedException::new);
   }

@@ -7,6 +7,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
+import com.cargopull.executor_driver.UseCaseThreadTestRule;
 import com.cargopull.executor_driver.backend.web.NoNetworkException;
 import com.cargopull.executor_driver.entity.Option;
 import com.cargopull.executor_driver.entity.OptionBoolean;
@@ -22,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -29,6 +31,9 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
 public class VehicleOptionsUseCaseTest {
+
+  @ClassRule
+  public static final UseCaseThreadTestRule classRule = new UseCaseThreadTestRule();
 
   private VehicleOptionsUseCase useCase;
 

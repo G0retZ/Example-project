@@ -6,15 +6,15 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import android.location.Location;
+import com.cargopull.executor_driver.GatewayThreadTestRule;
 import com.cargopull.executor_driver.backend.geolocation.GeolocationCenter;
 import com.cargopull.executor_driver.backend.web.NoNetworkException;
 import com.cargopull.executor_driver.entity.GeoLocation;
 import com.cargopull.executor_driver.gateway.GeoLocationGatewayImpl;
 import io.reactivex.Flowable;
-import io.reactivex.plugins.RxJavaPlugins;
-import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subscribers.TestSubscriber;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -23,6 +23,9 @@ import org.mockito.junit.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class GeoLocationGatewayTest {
 
+  @ClassRule
+  public static final GatewayThreadTestRule classRule = new GatewayThreadTestRule();
+
   private GeoLocationGateway gateway;
 
   @Mock
@@ -30,8 +33,6 @@ public class GeoLocationGatewayTest {
 
   @Before
   public void setUp() {
-    RxJavaPlugins.setIoSchedulerHandler(scheduler -> Schedulers.trampoline());
-    RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
     gateway = new GeoLocationGatewayImpl(geolocationCenter);
     when(geolocationCenter.getLocations(anyLong())).thenReturn(Flowable.never());
   }
@@ -49,8 +50,6 @@ public class GeoLocationGatewayTest {
     // Результат:
     verify(geolocationCenter, only()).getLocations(140);
   }
-
-  /* Проверяем правильность потоков (добавить) */
 
   /* Проверяем ответы на АПИ */
 

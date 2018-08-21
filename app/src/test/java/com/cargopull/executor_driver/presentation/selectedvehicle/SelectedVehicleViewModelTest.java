@@ -8,15 +8,14 @@ import static org.mockito.Mockito.when;
 
 import android.arch.core.executor.testing.InstantTaskExecutorRule;
 import android.arch.lifecycle.Observer;
+import com.cargopull.executor_driver.ViewModelThreadTestRule;
 import com.cargopull.executor_driver.entity.Vehicle;
 import com.cargopull.executor_driver.interactor.vehicle.SelectedVehicleUseCase;
 import com.cargopull.executor_driver.presentation.ViewState;
 import io.reactivex.Observable;
-import io.reactivex.android.plugins.RxAndroidPlugins;
-import io.reactivex.plugins.RxJavaPlugins;
-import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.PublishSubject;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestRule;
@@ -29,6 +28,8 @@ import org.mockito.junit.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class SelectedVehicleViewModelTest {
 
+  @ClassRule
+  public static final ViewModelThreadTestRule classRule = new ViewModelThreadTestRule();
   @Rule
   public TestRule rule = new InstantTaskExecutorRule();
   private SelectedVehicleViewModel viewModel;
@@ -43,8 +44,6 @@ public class SelectedVehicleViewModelTest {
 
   @Before
   public void setUp() {
-    RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
-    RxAndroidPlugins.setInitMainThreadSchedulerHandler(scheduler -> Schedulers.trampoline());
     when(selectedVehicleUseCase.getSelectedVehicle()).thenReturn(Observable.never());
     viewModel = new SelectedVehicleViewModelImpl(selectedVehicleUseCase);
   }

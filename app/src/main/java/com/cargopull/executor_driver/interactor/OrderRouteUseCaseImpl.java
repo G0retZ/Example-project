@@ -7,6 +7,7 @@ import com.cargopull.executor_driver.utils.ErrorReporter;
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Completable;
 import io.reactivex.Flowable;
+import io.reactivex.schedulers.Schedulers;
 import java.util.List;
 import javax.inject.Inject;
 
@@ -38,6 +39,7 @@ public class OrderRouteUseCaseImpl implements OrderRouteUseCase {
     return loginReceiver.get()
         .toFlowable(BackpressureStrategy.BUFFER)
         .switchMap(orderGateway::getOrders)
+        .observeOn(Schedulers.single())
         .map(Order::getRoutePath)
         .doOnError(errorReporter::reportError);
   }
@@ -45,18 +47,18 @@ public class OrderRouteUseCaseImpl implements OrderRouteUseCase {
   @NonNull
   @Override
   public Completable closeRoutePoint(@NonNull RoutePoint routePoint) {
-    return orderRouteGateway.closeRoutePoint(routePoint);
+    return orderRouteGateway.closeRoutePoint(routePoint).observeOn(Schedulers.single());
   }
 
   @NonNull
   @Override
   public Completable completeTheOrder() {
-    return orderRouteGateway.completeTheOrder();
+    return orderRouteGateway.completeTheOrder().observeOn(Schedulers.single());
   }
 
   @NonNull
   @Override
   public Completable nextRoutePoint(@NonNull RoutePoint routePoint) {
-    return orderRouteGateway.nextRoutePoint(routePoint);
+    return orderRouteGateway.nextRoutePoint(routePoint).observeOn(Schedulers.single());
   }
 }

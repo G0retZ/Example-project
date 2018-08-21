@@ -13,7 +13,6 @@ import com.cargopull.executor_driver.presentation.ViewState;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.internal.disposables.EmptyDisposable;
-import io.reactivex.schedulers.Schedulers;
 import javax.inject.Inject;
 
 public class SelectedVehicleViewModelImpl extends ViewModel implements SelectedVehicleViewModel {
@@ -50,7 +49,6 @@ public class SelectedVehicleViewModelImpl extends ViewModel implements SelectedV
   private void loadSelectedVehicle() {
     if (disposable.isDisposed()) {
       disposable = vehiclesUseCase.getSelectedVehicle()
-          .subscribeOn(Schedulers.single())
           .observeOn(AndroidSchedulers.mainThread())
           .doAfterTerminate(this::loadSelectedVehicle)
           .subscribe(this::consumeVehicle, this::consumeError);

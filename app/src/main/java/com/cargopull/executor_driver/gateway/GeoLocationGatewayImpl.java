@@ -23,7 +23,6 @@ public class GeoLocationGatewayImpl implements GeoLocationGateway {
   public Flowable<GeoLocation> getGeoLocations(long interval) {
     return geolocationCenter.getLocations(interval)
         .subscribeOn(Schedulers.io())
-        .observeOn(Schedulers.single())
         .map(location ->
             new GeoLocation(location.getLatitude(), location.getLongitude(), location.getTime()));
   }

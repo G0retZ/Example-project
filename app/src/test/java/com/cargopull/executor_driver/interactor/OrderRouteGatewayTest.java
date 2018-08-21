@@ -5,13 +5,13 @@ import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.cargopull.executor_driver.GatewayThreadTestRule;
 import com.cargopull.executor_driver.entity.RoutePoint;
 import com.cargopull.executor_driver.gateway.OrderRouteGatewayImpl;
 import io.reactivex.Completable;
 import io.reactivex.observers.TestObserver;
-import io.reactivex.plugins.RxJavaPlugins;
-import io.reactivex.schedulers.Schedulers;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -21,6 +21,9 @@ import ua.naiksoftware.stomp.client.StompClient;
 @RunWith(MockitoJUnitRunner.class)
 public class OrderRouteGatewayTest {
 
+  @ClassRule
+  public static final GatewayThreadTestRule classRule = new GatewayThreadTestRule();
+
   private OrderRouteGateway gateway;
   @Mock
   private StompClient stompClient;
@@ -29,9 +32,6 @@ public class OrderRouteGatewayTest {
 
   @Before
   public void setUp() {
-    RxJavaPlugins.setComputationSchedulerHandler(scheduler -> Schedulers.trampoline());
-    RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
-    RxJavaPlugins.setIoSchedulerHandler(scheduler -> Schedulers.trampoline());
     when(stompClient.send(anyString(), anyString())).thenReturn(Completable.never());
     gateway = new OrderRouteGatewayImpl(stompClient);
   }
@@ -79,8 +79,6 @@ public class OrderRouteGatewayTest {
     // Результат:
     verify(stompClient, only()).send("/mobile/changeRoutePoint", "{\"next\":\"7\"}");
   }
-
-  /* Проверяем правильность потоков (добавить) */
 
   /* Проверяем результаты отправки сообщений */
 

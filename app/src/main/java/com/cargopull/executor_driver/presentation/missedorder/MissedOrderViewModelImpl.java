@@ -10,7 +10,6 @@ import com.cargopull.executor_driver.presentation.ViewState;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.internal.disposables.EmptyDisposable;
-import io.reactivex.schedulers.Schedulers;
 import javax.inject.Inject;
 
 public class MissedOrderViewModelImpl extends ViewModel implements
@@ -45,7 +44,6 @@ public class MissedOrderViewModelImpl extends ViewModel implements
   public void initializeMissedOrderMessages() {
     disposable.dispose();
     disposable = missedOrderUseCase.getMissedOrders()
-        .subscribeOn(Schedulers.single())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(
             message -> {
