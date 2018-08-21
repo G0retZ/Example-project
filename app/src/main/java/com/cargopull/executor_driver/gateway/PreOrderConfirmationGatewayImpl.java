@@ -31,7 +31,6 @@ public class PreOrderConfirmationGatewayImpl implements OrderConfirmationGateway
           } else {
             throw new PreOrderExpiredException(apiSimpleResult.getMessage());
           }
-        })
-        .observeOn(Schedulers.single());
+        });
   }
 }

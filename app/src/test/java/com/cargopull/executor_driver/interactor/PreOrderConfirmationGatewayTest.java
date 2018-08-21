@@ -8,6 +8,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
+import com.cargopull.executor_driver.GatewayThreadTestRule;
 import com.cargopull.executor_driver.backend.web.ApiService;
 import com.cargopull.executor_driver.backend.web.incoming.ApiSimpleResult;
 import com.cargopull.executor_driver.backend.web.outgoing.ApiOrderDecision;
@@ -16,9 +17,8 @@ import com.cargopull.executor_driver.entity.PreOrderExpiredException;
 import com.cargopull.executor_driver.gateway.PreOrderConfirmationGatewayImpl;
 import io.reactivex.Single;
 import io.reactivex.observers.TestObserver;
-import io.reactivex.plugins.RxJavaPlugins;
-import io.reactivex.schedulers.Schedulers;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -30,6 +30,9 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PreOrderConfirmationGatewayTest {
+
+  @ClassRule
+  public static final GatewayThreadTestRule classRule = new GatewayThreadTestRule();
 
   private OrderConfirmationGateway gateway;
   @Mock
@@ -43,9 +46,6 @@ public class PreOrderConfirmationGatewayTest {
 
   @Before
   public void setUp() {
-    RxJavaPlugins.setComputationSchedulerHandler(scheduler -> Schedulers.trampoline());
-    RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
-    RxJavaPlugins.setIoSchedulerHandler(scheduler -> Schedulers.trampoline());
     when(apiService.sendPreOrderDecision(any())).thenReturn(Single.never());
     gateway = new PreOrderConfirmationGatewayImpl(apiService);
   }
@@ -73,8 +73,6 @@ public class PreOrderConfirmationGatewayTest {
     assertEquals(orderDecisionCaptor.getAllValues().get(1).getId(), 7);
     assertTrue(orderDecisionCaptor.getAllValues().get(1).isApproved());
   }
-
-  /* Проверяем правильность потоков (добавить) */
 
   /* Проверяем результаты обработки сообщений от сервера */
 

@@ -56,8 +56,7 @@ public class PreOrderGatewayImpl implements OrderGateway {
               throw new DataMappingException("Ошибка маппинга: данные не должны быть null!");
             }
             return mapper.map(from.getPayload());
-          })
-          .observeOn(Schedulers.single());
+          });
     }
     return Flowable.error(ConnectionClosedException::new);
   }
