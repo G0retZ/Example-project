@@ -12,7 +12,6 @@ import com.cargopull.executor_driver.presentation.ViewState;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.internal.disposables.EmptyDisposable;
-import io.reactivex.schedulers.Schedulers;
 import javax.inject.Inject;
 
 public class OrderCostViewModelImpl extends ViewModel implements OrderCostViewModel {
@@ -50,7 +49,6 @@ public class OrderCostViewModelImpl extends ViewModel implements OrderCostViewMo
   private void loadOrderCosts() {
     disposable.dispose();
     disposable = orderCurrentCostUseCase.getOrderCurrentCost()
-        .subscribeOn(Schedulers.single())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(
             integer -> viewStateLiveData.postValue(new OrderCostViewState(integer)),

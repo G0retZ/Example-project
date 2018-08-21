@@ -9,7 +9,6 @@ import com.cargopull.executor_driver.presentation.ViewState;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.internal.disposables.EmptyDisposable;
-import io.reactivex.schedulers.Schedulers;
 import javax.inject.Inject;
 
 public class CodeHeaderViewModelImpl extends ViewModel implements CodeHeaderViewModel {
@@ -37,7 +36,6 @@ public class CodeHeaderViewModelImpl extends ViewModel implements CodeHeaderView
   private void loadLogin() {
     if (disposable.isDisposed()) {
       disposable = loginReceiver.get()
-          .subscribeOn(Schedulers.single())
           .observeOn(AndroidSchedulers.mainThread())
           .doAfterTerminate(this::loadLogin)
           .subscribe(

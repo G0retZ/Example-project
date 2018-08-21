@@ -11,13 +11,12 @@ import static org.mockito.Mockito.when;
 
 import android.arch.core.executor.testing.InstantTaskExecutorRule;
 import android.arch.lifecycle.Observer;
+import com.cargopull.executor_driver.ViewModelThreadTestRule;
 import com.cargopull.executor_driver.interactor.UpdateMessageUseCase;
 import com.cargopull.executor_driver.presentation.ViewState;
 import io.reactivex.Flowable;
-import io.reactivex.android.plugins.RxAndroidPlugins;
-import io.reactivex.plugins.RxJavaPlugins;
-import io.reactivex.schedulers.Schedulers;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestRule;
@@ -30,6 +29,8 @@ import org.mockito.junit.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class UpdateMessageViewModelTest {
 
+  @ClassRule
+  public static final ViewModelThreadTestRule classRule = new ViewModelThreadTestRule();
   @Rule
   public TestRule rule = new InstantTaskExecutorRule();
   private UpdateMessageViewModel viewModel;
@@ -45,8 +46,6 @@ public class UpdateMessageViewModelTest {
 
   @Before
   public void setUp() {
-    RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
-    RxAndroidPlugins.setInitMainThreadSchedulerHandler(scheduler -> Schedulers.trampoline());
     when(updateMessageUseCase.getUpdateMessages()).thenReturn(Flowable.never());
     viewModel = new UpdateMessageViewModelImpl(updateMessageUseCase);
   }

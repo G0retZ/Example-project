@@ -11,7 +11,6 @@ import com.cargopull.executor_driver.presentation.ViewState;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.internal.disposables.EmptyDisposable;
-import io.reactivex.schedulers.Schedulers;
 import javax.inject.Inject;
 
 public class OrderConfirmationViewModelImpl extends ViewModel implements
@@ -54,7 +53,6 @@ public class OrderConfirmationViewModelImpl extends ViewModel implements
     }
     viewStateLiveData.postValue(new OrderConfirmationViewStatePending());
     disposable = orderConfirmationUseCase.sendDecision(true)
-        .subscribeOn(Schedulers.single())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(
             () -> {
@@ -72,7 +70,6 @@ public class OrderConfirmationViewModelImpl extends ViewModel implements
     }
     viewStateLiveData.postValue(new OrderConfirmationViewStatePending());
     disposable = orderConfirmationUseCase.sendDecision(false)
-        .subscribeOn(Schedulers.single())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(
             () -> {

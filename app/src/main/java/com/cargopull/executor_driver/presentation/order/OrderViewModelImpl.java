@@ -15,7 +15,6 @@ import com.cargopull.executor_driver.utils.TimeUtils;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.internal.disposables.EmptyDisposable;
-import io.reactivex.schedulers.Schedulers;
 import javax.inject.Inject;
 
 public class OrderViewModelImpl extends ViewModel implements
@@ -61,7 +60,6 @@ public class OrderViewModelImpl extends ViewModel implements
     if (disposable.isDisposed()) {
       viewStateLiveData.postValue(new OrderViewStatePending(lastViewState));
       disposable = orderUseCase.getOrders()
-          .subscribeOn(Schedulers.single())
           .observeOn(AndroidSchedulers.mainThread())
           .subscribe(this::consumeOrder,
               throwable -> {

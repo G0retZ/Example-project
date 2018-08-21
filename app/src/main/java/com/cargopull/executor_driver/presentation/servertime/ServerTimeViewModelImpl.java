@@ -11,7 +11,6 @@ import com.cargopull.executor_driver.presentation.ViewState;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.internal.disposables.EmptyDisposable;
-import io.reactivex.schedulers.Schedulers;
 import javax.inject.Inject;
 
 public class ServerTimeViewModelImpl extends ViewModel implements ServerTimeViewModel {
@@ -45,7 +44,6 @@ public class ServerTimeViewModelImpl extends ViewModel implements ServerTimeView
   public void initializeServerTime() {
     disposable.dispose();
     disposable = serverTimeUseCase.getServerTime()
-        .subscribeOn(Schedulers.single())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(
             () -> {

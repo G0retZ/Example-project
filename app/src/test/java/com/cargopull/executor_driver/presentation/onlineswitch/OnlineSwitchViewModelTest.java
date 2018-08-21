@@ -9,6 +9,7 @@ import static org.mockito.Mockito.when;
 
 import android.arch.core.executor.testing.InstantTaskExecutorRule;
 import android.arch.lifecycle.Observer;
+import com.cargopull.executor_driver.ViewModelThreadTestRule;
 import com.cargopull.executor_driver.entity.ExecutorState;
 import com.cargopull.executor_driver.gateway.DataMappingException;
 import com.cargopull.executor_driver.interactor.ExecutorStateNotOnlineUseCase;
@@ -17,11 +18,9 @@ import com.cargopull.executor_driver.presentation.CommonNavigate;
 import com.cargopull.executor_driver.presentation.ViewState;
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Completable;
-import io.reactivex.android.plugins.RxAndroidPlugins;
-import io.reactivex.plugins.RxJavaPlugins;
-import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.PublishSubject;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestRule;
@@ -34,6 +33,8 @@ import org.mockito.junit.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class OnlineSwitchViewModelTest {
 
+  @ClassRule
+  public static final ViewModelThreadTestRule classRule = new ViewModelThreadTestRule();
   @Rule
   public TestRule rule = new InstantTaskExecutorRule();
   private OnlineSwitchViewModel viewModel;
@@ -50,8 +51,6 @@ public class OnlineSwitchViewModelTest {
   @Before
   public void setUp() {
     publishSubject = PublishSubject.create();
-    RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
-    RxAndroidPlugins.setInitMainThreadSchedulerHandler(scheduler -> Schedulers.trampoline());
     when(executorStateNotOnlineUseCase.setExecutorNotOnline()).thenReturn(Completable.never());
     when(executorStateUseCase.getExecutorStates(false))
         .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
