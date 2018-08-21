@@ -62,8 +62,7 @@ public class ExecutorStateGatewayImpl implements ExecutorStateGateway {
                 ackMessageIds.add(stompMessage.findHeader("message-id"));
               }
           )
-          .map(mapper::map)
-          .observeOn(Schedulers.single());
+          .map(mapper::map);
     }
     return Flowable.error(ConnectionClosedException::new);
   }

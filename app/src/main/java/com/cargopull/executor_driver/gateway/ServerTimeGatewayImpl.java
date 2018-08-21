@@ -35,8 +35,7 @@ public class ServerTimeGatewayImpl implements ServerTimeGateway {
             } catch (Throwable t) {
               throw new DataMappingException(t);
             }
-          })
-          .observeOn(Schedulers.single());
+          });
     }
     return Flowable.error(ConnectionClosedException::new);
   }

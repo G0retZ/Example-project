@@ -7,6 +7,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
+import com.cargopull.executor_driver.GatewayThreadTestRule;
 import com.cargopull.executor_driver.backend.web.ApiService;
 import com.cargopull.executor_driver.backend.web.NoNetworkException;
 import com.cargopull.executor_driver.backend.web.incoming.ApiServiceItem;
@@ -17,11 +18,10 @@ import com.cargopull.executor_driver.gateway.ServicesGatewayImpl;
 import io.reactivex.Completable;
 import io.reactivex.Single;
 import io.reactivex.observers.TestObserver;
-import io.reactivex.plugins.RxJavaPlugins;
-import io.reactivex.schedulers.Schedulers;
 import java.util.Arrays;
 import java.util.List;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -29,6 +29,9 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ServicesGatewayTest {
+
+  @ClassRule
+  public static final GatewayThreadTestRule classRule = new GatewayThreadTestRule();
 
   private ServicesGateway gateway;
 
@@ -39,8 +42,6 @@ public class ServicesGatewayTest {
 
   @Before
   public void setUp() {
-    RxJavaPlugins.setIoSchedulerHandler(scheduler -> Schedulers.trampoline());
-    RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
     gateway = new ServicesGatewayImpl(api, mapper);
     when(api.getMyServices()).thenReturn(Single.never());
     when(api.getMySelectedServices()).thenReturn(Single.never());
@@ -148,8 +149,6 @@ public class ServicesGatewayTest {
     // Результат:
     verify(mapper, only()).map(new ApiServiceItem(0, "n1", 100).setSelected(true));
   }
-
-  /* Проверяем правильность потоков (добавить) */
 
   /* Проверяем ответы на АПИ */
 

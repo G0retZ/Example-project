@@ -10,16 +10,15 @@ import static org.mockito.Mockito.when;
 
 import android.arch.core.executor.testing.InstantTaskExecutorRule;
 import android.arch.lifecycle.Observer;
+import com.cargopull.executor_driver.ViewModelThreadTestRule;
 import com.cargopull.executor_driver.backend.web.NoNetworkException;
 import com.cargopull.executor_driver.entity.ValidationException;
 import com.cargopull.executor_driver.interactor.auth.PasswordUseCase;
 import com.cargopull.executor_driver.presentation.ViewState;
 import io.reactivex.Completable;
-import io.reactivex.android.plugins.RxAndroidPlugins;
-import io.reactivex.plugins.RxJavaPlugins;
-import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.CompletableSubject;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestRule;
@@ -34,6 +33,8 @@ import org.mockito.junit.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class CodeViewModelTest {
 
+  @ClassRule
+  public static final ViewModelThreadTestRule classRule = new ViewModelThreadTestRule();
   @Rule
   public TestRule rule = new InstantTaskExecutorRule();
   private CodeViewModel viewModel;
@@ -51,8 +52,6 @@ public class CodeViewModelTest {
 
   @Before
   public void setUp() {
-    RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
-    RxAndroidPlugins.setInitMainThreadSchedulerHandler(scheduler -> Schedulers.trampoline());
     when(passwordUseCase.authorize(anyString(), any(Completable.class)))
         .thenReturn(Completable.never());
     viewModel = new CodeViewModelImpl(passwordUseCase);

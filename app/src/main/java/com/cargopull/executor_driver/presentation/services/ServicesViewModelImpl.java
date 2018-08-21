@@ -12,7 +12,6 @@ import com.cargopull.executor_driver.presentation.ViewState;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.internal.disposables.EmptyDisposable;
-import io.reactivex.schedulers.Schedulers;
 import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
@@ -66,7 +65,6 @@ public class ServicesViewModelImpl extends ViewModel implements ServicesViewMode
     viewStateLiveData.postValue(new ServicesViewStatePending());
     setServicesDisposable = servicesUseCase
         .setSelectedServices(services)
-        .subscribeOn(Schedulers.single())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(
             () -> {
@@ -110,7 +108,6 @@ public class ServicesViewModelImpl extends ViewModel implements ServicesViewMode
     }
     viewStateLiveData.postValue(new ServicesViewStatePending());
     servicesDisposable = servicesUseCase.loadServices()
-        .subscribeOn(Schedulers.single())
         .observeOn(AndroidSchedulers.mainThread())
         .flattenAsObservable(services -> services)
         .map(ServicesListItem::new)

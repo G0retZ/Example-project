@@ -37,7 +37,6 @@ public class CurrentCostPollingGatewayImpl implements CurrentCostPollingGateway 
           String.format(BuildConfig.STATUS_DESTINATION, channelId),
           StompClient.ACK_CLIENT_INDIVIDUAL
       ).subscribeOn(Schedulers.io())
-          .observeOn(Schedulers.computation())
           .filter(stompMessage -> stompMessage.findHeader("OverPackage") != null)
           .takeWhile(stompMessage -> stompMessage.findHeader("OverPackage").equals("1"))
           .doOnNext(
@@ -56,7 +55,7 @@ public class CurrentCostPollingGatewayImpl implements CurrentCostPollingGateway 
           .switchMap(pair -> Flowable.interval(pair.first, pair.second, TimeUnit.MILLISECONDS))
           .flatMapCompletable(
               b -> stompClient.send(BuildConfig.POLLING_DESTINATION, "\"\"")
-          ).observeOn(Schedulers.single());
+          );
     }
     return Completable.error(ConnectionClosedException::new);
   }

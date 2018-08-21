@@ -54,8 +54,7 @@ public class CancelOrderGatewayImpl implements CancelOrderGateway {
               ).subscribe(() -> {
               }, Throwable::printStackTrace)
           )
-          .map(mapper::map)
-          .observeOn(Schedulers.single());
+          .map(mapper::map);
     }
     return Flowable.error(ConnectionClosedException::new);
   }
@@ -65,7 +64,6 @@ public class CancelOrderGatewayImpl implements CancelOrderGateway {
   public Completable cancelOrder(@NonNull CancelOrderReason cancelOrderReason) {
     return stompClient.send(BuildConfig.CANCEL_ORDER_DESTINATION,
         new Gson().toJson(new ApiCancelOrderReason(cancelOrderReason)))
-        .subscribeOn(Schedulers.io())
-        .observeOn(Schedulers.single());
+        .subscribeOn(Schedulers.io());
   }
 }

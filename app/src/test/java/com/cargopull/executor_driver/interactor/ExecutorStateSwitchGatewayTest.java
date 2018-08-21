@@ -5,13 +5,13 @@ import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.cargopull.executor_driver.GatewayThreadTestRule;
 import com.cargopull.executor_driver.entity.ExecutorState;
 import com.cargopull.executor_driver.gateway.ExecutorStateSwitchGatewayImpl;
 import io.reactivex.Completable;
 import io.reactivex.observers.TestObserver;
-import io.reactivex.plugins.RxJavaPlugins;
-import io.reactivex.schedulers.Schedulers;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -21,6 +21,9 @@ import ua.naiksoftware.stomp.client.StompClient;
 @RunWith(MockitoJUnitRunner.class)
 public class ExecutorStateSwitchGatewayTest {
 
+  @ClassRule
+  public static final GatewayThreadTestRule classRule = new GatewayThreadTestRule();
+
   private ExecutorStateSwitchGateway gateway;
 
   @Mock
@@ -28,8 +31,6 @@ public class ExecutorStateSwitchGatewayTest {
 
   @Before
   public void setUp() {
-    RxJavaPlugins.setIoSchedulerHandler(scheduler -> Schedulers.trampoline());
-    RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
     gateway = new ExecutorStateSwitchGatewayImpl(stompClient);
     when(stompClient.send(anyString(), anyString())).thenReturn(Completable.never());
   }
@@ -47,8 +48,6 @@ public class ExecutorStateSwitchGatewayTest {
     // Результат:
     verify(stompClient, only()).send("/mobile/status", "\"ONLINE\"");
   }
-
-  /* Проверяем правильность потоков (добавить) */
 
   /* Проверяем ответы на попытку отправки сообщения */
 

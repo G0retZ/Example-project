@@ -21,7 +21,6 @@ public class SmsGatewayImpl implements SmsGateway {
   @Override
   public Completable sendMeCode(@NonNull String phoneNumber) {
     return api.sendMeCode(phoneNumber)
-        .subscribeOn(Schedulers.io())
-        .observeOn(Schedulers.single());
+        .subscribeOn(Schedulers.io());
   }
 }

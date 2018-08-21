@@ -12,7 +12,6 @@ import io.reactivex.Completable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.internal.disposables.EmptyDisposable;
-import io.reactivex.schedulers.Schedulers;
 import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
 
@@ -74,7 +73,6 @@ public class MovingToClientViewModelImpl extends ViewModel implements MovingToCl
     }
     viewStateLiveData.postValue(new MovingToClientViewStatePending());
     disposable = movingToClientUseCase.reportArrival()
-        .subscribeOn(Schedulers.single())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(
             () -> {

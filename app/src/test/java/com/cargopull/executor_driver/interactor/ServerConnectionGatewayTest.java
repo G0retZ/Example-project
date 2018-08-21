@@ -3,13 +3,13 @@ package com.cargopull.executor_driver.interactor;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
+import com.cargopull.executor_driver.GatewayThreadTestRule;
 import com.cargopull.executor_driver.backend.web.NoNetworkException;
 import com.cargopull.executor_driver.gateway.ServerConnectionGatewayImpl;
 import io.reactivex.Flowable;
-import io.reactivex.plugins.RxJavaPlugins;
-import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subscribers.TestSubscriber;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InOrder;
@@ -23,6 +23,9 @@ import ua.naiksoftware.stomp.client.StompClient;
 @RunWith(MockitoJUnitRunner.class)
 public class ServerConnectionGatewayTest {
 
+  @ClassRule
+  public static final GatewayThreadTestRule classRule = new GatewayThreadTestRule();
+
   private ServerConnectionGateway gateway;
 
   @Mock
@@ -30,8 +33,6 @@ public class ServerConnectionGatewayTest {
 
   @Before
   public void setUp() {
-    RxJavaPlugins.setIoSchedulerHandler(scheduler -> Schedulers.trampoline());
-    RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
     gateway = new ServerConnectionGatewayImpl(stompClient);
     when(stompClient.lifecycle()).thenReturn(Flowable.never());
   }
@@ -99,8 +100,6 @@ public class ServerConnectionGatewayTest {
     inOrder.verify(stompClient).reconnect();
     verifyNoMoreInteractions(stompClient);
   }
-
-  /* Проверяем правильность потоков (добавить) */
 
   /* Проверяем ответы на попытку открытия сокета сообщения */
 

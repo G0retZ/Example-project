@@ -22,7 +22,6 @@ public class ConfirmOrderPaymentGatewayImpl implements ConfirmOrderPaymentGatewa
   @Override
   public Completable confirmOrderPayment() {
     return stompClient.send(BuildConfig.TRIP_DESTINATION, "\"COMPLETE_PAYMENT_CONFIRMATION\"")
-        .subscribeOn(Schedulers.io())
-        .observeOn(Schedulers.single());
+        .subscribeOn(Schedulers.io());
   }
 }

@@ -10,7 +10,6 @@ import com.cargopull.executor_driver.presentation.ViewState;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.internal.disposables.EmptyDisposable;
-import io.reactivex.schedulers.Schedulers;
 import javax.inject.Inject;
 
 public class PhoneViewModelImpl extends ViewModel implements PhoneViewModel {
@@ -51,7 +50,6 @@ public class PhoneViewModelImpl extends ViewModel implements PhoneViewModel {
       return;
     }
     disposable = loginUseCase.validateLogin(phoneNumber.replaceAll("[^\\d]", ""))
-        .subscribeOn(Schedulers.single())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(this::switchToSuccess, throwable -> switchToError());
   }
@@ -62,7 +60,6 @@ public class PhoneViewModelImpl extends ViewModel implements PhoneViewModel {
       return;
     }
     disposable = loginUseCase.rememberLogin()
-        .subscribeOn(Schedulers.single())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(
             () -> {

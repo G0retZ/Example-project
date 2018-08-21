@@ -31,6 +31,7 @@ public class OrderFulfillmentTimeUseCaseImpl implements OrderFulfillmentTimeUseC
   @Override
   public Flowable<Long> getOrderElapsedTime() {
     return orderGateway.getOrders()
+        .observeOn(Schedulers.single())
         .switchMap(order -> {
               long offset =
                   Math.round((timeUtils.currentTimeMillis() - order.getOrderStartTime()) / 1000d);

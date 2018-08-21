@@ -13,7 +13,6 @@ import io.reactivex.Flowable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.internal.disposables.EmptyDisposable;
-import io.reactivex.schedulers.Schedulers;
 import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
 
@@ -56,7 +55,6 @@ public class ClientOrderConfirmationTimeViewModelImpl extends ViewModel implemen
       return;
     }
     disposable = executorStateUseCase.getExecutorStates(false)
-        .subscribeOn(Schedulers.single())
         .observeOn(AndroidSchedulers.mainThread())
         .switchMap(executorState -> Flowable.interval(0, 1, TimeUnit.SECONDS)
             .map(count -> executorState.getCustomerTimer() - count * 1000)

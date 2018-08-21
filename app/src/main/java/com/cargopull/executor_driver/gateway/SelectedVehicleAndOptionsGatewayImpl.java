@@ -44,7 +44,6 @@ public class SelectedVehicleAndOptionsGatewayImpl implements VehiclesAndOptionsG
     if (apiOptionsForOnlineSingle == null) {
       apiOptionsForOnlineSingle = api.getSelectedOptionsForOnline()
           .subscribeOn(Schedulers.io())
-          .observeOn(Schedulers.single())
           .doOnError(throwable -> apiOptionsForOnlineSingle = null)
           .cache();
     }
@@ -61,7 +60,6 @@ public class SelectedVehicleAndOptionsGatewayImpl implements VehiclesAndOptionsG
     if (apiOptionsForOnlineSingle == null) {
       apiOptionsForOnlineSingle = api.getSelectedOptionsForOnline()
           .subscribeOn(Schedulers.io())
-          .observeOn(Schedulers.single())
           .doOnError(throwable -> apiOptionsForOnlineSingle = null)
           .cache();
     }

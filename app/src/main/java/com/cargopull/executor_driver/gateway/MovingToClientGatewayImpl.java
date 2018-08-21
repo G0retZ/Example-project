@@ -22,7 +22,6 @@ public class MovingToClientGatewayImpl implements MovingToClientGateway {
   @Override
   public Completable reportArrival() {
     return stompClient.send(BuildConfig.TRIP_DESTINATION, "\"DRIVER_ARRIVED\"")
-        .subscribeOn(Schedulers.io())
-        .observeOn(Schedulers.single());
+        .subscribeOn(Schedulers.io());
   }
 }

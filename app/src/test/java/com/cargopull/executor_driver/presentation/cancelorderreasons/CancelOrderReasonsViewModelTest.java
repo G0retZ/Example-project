@@ -11,6 +11,7 @@ import static org.mockito.Mockito.when;
 import android.accounts.AuthenticatorException;
 import android.arch.core.executor.testing.InstantTaskExecutorRule;
 import android.arch.lifecycle.Observer;
+import com.cargopull.executor_driver.ViewModelThreadTestRule;
 import com.cargopull.executor_driver.backend.web.NoNetworkException;
 import com.cargopull.executor_driver.entity.CancelOrderReason;
 import com.cargopull.executor_driver.entity.ExecutorState;
@@ -19,11 +20,9 @@ import com.cargopull.executor_driver.interactor.CancelOrderUseCase;
 import com.cargopull.executor_driver.presentation.CommonNavigate;
 import com.cargopull.executor_driver.presentation.ViewState;
 import io.reactivex.Flowable;
-import io.reactivex.android.plugins.RxAndroidPlugins;
-import io.reactivex.plugins.RxJavaPlugins;
-import io.reactivex.schedulers.Schedulers;
 import java.util.Collections;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestRule;
@@ -34,6 +33,8 @@ import org.mockito.junit.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class CancelOrderReasonsViewModelTest {
 
+  @ClassRule
+  public static final ViewModelThreadTestRule classRule = new ViewModelThreadTestRule();
   @Rule
   public TestRule rule = new InstantTaskExecutorRule();
   private CancelOrderReasonsViewModel viewModel;
@@ -49,8 +50,6 @@ public class CancelOrderReasonsViewModelTest {
   @Before
   public void setUp() {
     ExecutorState.ONLINE.setData(null);
-    RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
-    RxAndroidPlugins.setInitMainThreadSchedulerHandler(scheduler -> Schedulers.trampoline());
     when(cancelOrderUseCase.getCancelOrderReasons(anyBoolean())).thenReturn(Flowable.never());
     viewModel = new CancelOrderReasonsViewModelImpl(cancelOrderUseCase);
   }

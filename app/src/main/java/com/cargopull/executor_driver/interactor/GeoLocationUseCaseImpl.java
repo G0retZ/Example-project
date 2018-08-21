@@ -2,11 +2,31 @@ package com.cargopull.executor_driver.interactor;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import com.cargopull.executor_driver.entity.ExecutorState;
 import com.cargopull.executor_driver.entity.GeoLocation;
 import io.reactivex.Flowable;
+import io.reactivex.schedulers.Schedulers;
+import java.util.HashMap;
+import java.util.Map;
 import javax.inject.Inject;
 
 public class GeoLocationUseCaseImpl implements GeoLocationUseCase {
+
+  @NonNull
+  private static final Map<ExecutorState, Integer> delays;
+
+  static {
+    delays = new HashMap<>();
+    delays.put(ExecutorState.SHIFT_CLOSED, 3600000);
+    delays.put(ExecutorState.SHIFT_OPENED, 180000);
+    delays.put(ExecutorState.ONLINE, 15000);
+    delays.put(ExecutorState.DRIVER_ORDER_CONFIRMATION, 15000);
+    delays.put(ExecutorState.CLIENT_ORDER_CONFIRMATION, 15000);
+    delays.put(ExecutorState.MOVING_TO_CLIENT, 15000);
+    delays.put(ExecutorState.WAITING_FOR_CLIENT, 15000);
+    delays.put(ExecutorState.ORDER_FULFILLMENT, 15000);
+    delays.put(ExecutorState.PAYMENT_CONFIRMATION, 15000);
+  }
 
   @NonNull
   private final GeoLocationGateway geoLocationGateway;
@@ -32,34 +52,15 @@ public class GeoLocationUseCaseImpl implements GeoLocationUseCase {
     if (geoLocationFlowable == null) {
       geoLocationFlowable = executorStateUseCase.getExecutorStates(false)
           .onErrorResumeNext(Flowable.empty())
-          .switchMap(executorState -> {
-            switch (executorState) {
-              case SHIFT_CLOSED:
-                return geoLocationGateway.getGeoLocations(3600000);
-              case SHIFT_OPENED:
-                return geoLocationGateway.getGeoLocations(180000);
-              case ONLINE:
-                return geoLocationGateway.getGeoLocations(15000);
-              case DRIVER_ORDER_CONFIRMATION:
-                return geoLocationGateway.getGeoLocations(15000);
-              case CLIENT_ORDER_CONFIRMATION:
-                return geoLocationGateway.getGeoLocations(15000);
-              case MOVING_TO_CLIENT:
-                return geoLocationGateway.getGeoLocations(15000);
-              case WAITING_FOR_CLIENT:
-                return geoLocationGateway.getGeoLocations(15000);
-              case ORDER_FULFILLMENT:
-                return geoLocationGateway.getGeoLocations(15000);
-              case PAYMENT_CONFIRMATION:
-                return geoLocationGateway.getGeoLocations(15000);
-              default:
-                return Flowable.empty();
-            }
-          }).doOnTerminate(
+          .map(delays::get)
+          .switchMap(geoLocationGateway::getGeoLocations)
+          .subscribeOn(Schedulers.single())
+          .doOnTerminate(
               () -> geoLocationFlowable = null
           ).switchMap(
               geoLocation -> Flowable.just(geoLocation)
-                  .startWith(geoTrackingGateway.sendGeoLocation(geoLocation).toFlowable())
+                  .startWith(geoTrackingGateway.sendGeoLocation(geoLocation)
+                      .observeOn(Schedulers.single()).toFlowable())
           ).replay(1)
           .refCount();
     }

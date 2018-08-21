@@ -13,7 +13,6 @@ import com.cargopull.executor_driver.presentation.ViewState;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.internal.disposables.EmptyDisposable;
-import io.reactivex.schedulers.Schedulers;
 import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
@@ -58,7 +57,6 @@ public class ChooseVehicleViewModelImpl extends ViewModel implements ChooseVehic
       return;
     }
     choiceDisposable = vehicleChoiceUseCase.selectVehicle(chooseVehicleListItem.getVehicle())
-        .subscribeOn(Schedulers.single())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(
             () -> navigateLiveData.postValue(ChooseVehicleNavigate.VEHICLE_OPTIONS),
@@ -73,7 +71,6 @@ public class ChooseVehicleViewModelImpl extends ViewModel implements ChooseVehic
     }
     viewStateLiveData.postValue(new ChooseVehicleViewStatePending());
     vehiclesDisposable = vehicleChoiceUseCase.getVehicles()
-        .subscribeOn(Schedulers.single())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(this::consumeVehicles, this::consumeError);
   }

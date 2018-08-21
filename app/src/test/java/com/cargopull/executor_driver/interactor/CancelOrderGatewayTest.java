@@ -10,6 +10,7 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
+import com.cargopull.executor_driver.GatewayThreadTestRule;
 import com.cargopull.executor_driver.backend.web.NoNetworkException;
 import com.cargopull.executor_driver.backend.websocket.ConnectionClosedException;
 import com.cargopull.executor_driver.entity.CancelOrderReason;
@@ -19,13 +20,12 @@ import com.cargopull.executor_driver.gateway.Mapper;
 import io.reactivex.Completable;
 import io.reactivex.Flowable;
 import io.reactivex.observers.TestObserver;
-import io.reactivex.plugins.RxJavaPlugins;
-import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subscribers.TestSubscriber;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -40,6 +40,9 @@ import ua.naiksoftware.stomp.client.StompMessage;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CancelOrderGatewayTest {
+
+  @ClassRule
+  public static final GatewayThreadTestRule classRule = new GatewayThreadTestRule();
 
   private CancelOrderGateway gateway;
 
@@ -58,8 +61,6 @@ public class CancelOrderGatewayTest {
 
   @Before
   public void setUp() {
-    RxJavaPlugins.setIoSchedulerHandler(scheduler -> Schedulers.trampoline());
-    RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
     gateway = new CancelOrderGatewayImpl(stompClient, mapper);
     when(stompClient.topic("/queue/1234567890", StompClient.ACK_CLIENT_INDIVIDUAL))
         .thenReturn(Flowable.never());
@@ -317,8 +318,6 @@ public class CancelOrderGatewayTest {
     verify(stompClient, only())
         .send("/mobile/takeOffOrder", "{\"id\":7,\"description\":\"seven\"}");
   }
-
-  /* Проверяем правильность потоков (добавить) */
 
   /* Проверяем результаты обработки сообщений от сервера по причинам для отказа */
 

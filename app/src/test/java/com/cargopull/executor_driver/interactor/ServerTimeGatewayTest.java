@@ -3,16 +3,16 @@ package com.cargopull.executor_driver.interactor;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
+import com.cargopull.executor_driver.GatewayThreadTestRule;
 import com.cargopull.executor_driver.backend.web.NoNetworkException;
 import com.cargopull.executor_driver.backend.websocket.ConnectionClosedException;
 import com.cargopull.executor_driver.gateway.DataMappingException;
 import com.cargopull.executor_driver.gateway.ServerTimeGatewayImpl;
 import io.reactivex.Flowable;
-import io.reactivex.plugins.RxJavaPlugins;
-import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subscribers.TestSubscriber;
 import java.util.Collections;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InOrder;
@@ -26,6 +26,9 @@ import ua.naiksoftware.stomp.client.StompMessage;
 @RunWith(MockitoJUnitRunner.class)
 public class ServerTimeGatewayTest {
 
+  @ClassRule
+  public static final GatewayThreadTestRule classRule = new GatewayThreadTestRule();
+
   private ServerTimeGateway gateway;
 
   @Mock
@@ -33,8 +36,6 @@ public class ServerTimeGatewayTest {
 
   @Before
   public void setUp() {
-    RxJavaPlugins.setIoSchedulerHandler(scheduler -> Schedulers.trampoline());
-    RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
     gateway = new ServerTimeGatewayImpl(stompClient);
     when(stompClient.topic("/queue/1234567890", StompClient.ACK_CLIENT_INDIVIDUAL))
         .thenReturn(Flowable.never());
@@ -95,8 +96,6 @@ public class ServerTimeGatewayTest {
     inOrder.verify(stompClient).topic("/queue/1234567890", StompClient.ACK_CLIENT_INDIVIDUAL);
     verifyNoMoreInteractions(stompClient);
   }
-
-  /* Проверяем правильность потоков (добавить) */
 
   /* Проверяем результаты обработки сообщений от сервера по статусам */
 

@@ -23,7 +23,6 @@ public class PasswordGatewayImpl implements PasswordGateway {
   @Override
   public Completable authorize(@NonNull LoginData loginData) {
     return api.authorize(new ApiLogin(loginData.getLogin(), loginData.getPassword()))
-        .subscribeOn(Schedulers.io())
-        .observeOn(Schedulers.single());
+        .subscribeOn(Schedulers.io());
   }
 }

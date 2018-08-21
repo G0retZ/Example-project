@@ -1,8 +1,8 @@
 package com.cargopull.executor_driver.interactor;
 
 import android.support.annotation.NonNull;
-import io.reactivex.BackpressureStrategy;
 import io.reactivex.Completable;
+import io.reactivex.schedulers.Schedulers;
 
 public class CurrentCostPollingUseCaseImpl implements CurrentCostPollingUseCase {
 
@@ -22,8 +22,8 @@ public class CurrentCostPollingUseCaseImpl implements CurrentCostPollingUseCase 
   @Override
   public Completable listenForPolling() {
     return loginReceiver.get()
-        .toFlowable(BackpressureStrategy.BUFFER)
-        .switchMap(channelId -> currentCostPollingGateway.startPolling(channelId).toFlowable())
+        .switchMap(channelId -> currentCostPollingGateway.startPolling(channelId).toObservable())
+        .observeOn(Schedulers.single())
         .flatMapCompletable(a -> Completable.complete());
   }
 }

@@ -28,8 +28,7 @@ public class VehicleOptionsGatewayImpl implements VehicleOptionsGateway {
   public Completable sendVehicleOptions(@NonNull Vehicle vehicle,
       @NonNull List<Option> driverOptions) {
     return api.occupyCarWithOptions(vehicle.getId(), map(vehicle.getOptions(), driverOptions))
-        .subscribeOn(Schedulers.io())
-        .observeOn(Schedulers.single());
+        .subscribeOn(Schedulers.io());
   }
 
   private ApiOptionItems map(List<Option> vehicleOptions, List<Option> driverOptions) {

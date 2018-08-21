@@ -11,7 +11,6 @@ import com.cargopull.executor_driver.presentation.ViewState;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.internal.disposables.EmptyDisposable;
-import io.reactivex.schedulers.Schedulers;
 import javax.inject.Inject;
 
 public class CoreBalanceViewModelImpl extends ViewModel implements CoreBalanceViewModel {
@@ -45,7 +44,6 @@ public class CoreBalanceViewModelImpl extends ViewModel implements CoreBalanceVi
   public void initializeExecutorBalance() {
     disposable.dispose();
     disposable = executorBalanceUseCase.getExecutorBalance(true)
-        .subscribeOn(Schedulers.single())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(
             executorBalance -> {

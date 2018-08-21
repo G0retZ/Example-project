@@ -14,7 +14,6 @@ import com.cargopull.executor_driver.presentation.ViewState;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.internal.disposables.EmptyDisposable;
-import io.reactivex.schedulers.Schedulers;
 import javax.inject.Inject;
 
 public class CancelOrderViewModelImpl extends ViewModel implements CancelOrderViewModel {
@@ -59,7 +58,6 @@ public class CancelOrderViewModelImpl extends ViewModel implements CancelOrderVi
     }
     viewStateLiveData.postValue(new CancelOrderViewStatePending(lastViewState));
     choiceDisposable = cancelOrderUseCase.cancelOrder(cancelOrderReason)
-        .subscribeOn(Schedulers.single())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(
             () -> {
@@ -81,7 +79,6 @@ public class CancelOrderViewModelImpl extends ViewModel implements CancelOrderVi
     }
     viewStateLiveData.postValue(new CancelOrderViewStatePending(lastViewState));
     reasonsDisposable = cancelOrderUseCase.getCancelOrderReasons(false)
-        .subscribeOn(Schedulers.single())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(
             cancelOrderReasons -> viewStateLiveData
