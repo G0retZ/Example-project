@@ -115,6 +115,7 @@ public class CancelOrderReasonsGatewayImplTest {
 
     // Результат:
     testSubscriber.assertNoValues();
+    testSubscriber.assertNoErrors();
   }
 
   /**
@@ -135,6 +136,7 @@ public class CancelOrderReasonsGatewayImplTest {
 
     // Результат:
     testSubscriber.assertError(DataMappingException.class);
+    testSubscriber.assertNoValues();
   }
 
   /**

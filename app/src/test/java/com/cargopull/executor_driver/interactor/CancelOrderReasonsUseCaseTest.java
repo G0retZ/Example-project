@@ -72,6 +72,7 @@ public class CancelOrderReasonsUseCaseTest {
    */
   @Test
   public void reportError() {
+    // Дано:
     when(gateway.loadCancelOrderReasons()).thenReturn(Flowable.error(DataMappingException::new));
 
     // Действие:
@@ -113,6 +114,7 @@ public class CancelOrderReasonsUseCaseTest {
    */
   @Test
   public void answerWithError() {
+    // Дано:
     when(gateway.loadCancelOrderReasons()).thenReturn(Flowable.error(DataMappingException::new));
 
     // Действие:
@@ -129,6 +131,7 @@ public class CancelOrderReasonsUseCaseTest {
    */
   @Test
   public void answerComplete() {
+    // Дано:
     when(gateway.loadCancelOrderReasons()).thenReturn(Flowable.empty());
 
     // Действие:
