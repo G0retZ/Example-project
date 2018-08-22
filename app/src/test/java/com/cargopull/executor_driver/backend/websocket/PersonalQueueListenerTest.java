@@ -38,7 +38,7 @@ public class PersonalQueueListenerTest {
   @ClassRule
   public static final GatewayThreadTestRule classRule = new GatewayThreadTestRule();
 
-  private PersonalQueueListener queueListener;
+  private TopicListener queueListener;
 
   @Mock
   private StompClient stompClient;

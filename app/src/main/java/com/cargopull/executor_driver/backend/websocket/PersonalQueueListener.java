@@ -12,7 +12,7 @@ import ua.naiksoftware.stomp.StompHeader;
 import ua.naiksoftware.stomp.client.StompClient;
 import ua.naiksoftware.stomp.client.StompMessage;
 
-class PersonalQueueListener implements WebSocketListener {
+public class PersonalQueueListener implements TopicListener {
 
   @NonNull
   private final StompClient stompClient;
@@ -21,7 +21,7 @@ class PersonalQueueListener implements WebSocketListener {
   @Nullable
   private Flowable<StompMessage> stompMessageFlowable;
 
-  PersonalQueueListener(@NonNull StompClient stompClient,
+  public PersonalQueueListener(@NonNull StompClient stompClient,
       @NonNull DataReceiver<String> loginReceiver) {
     this.stompClient = stompClient;
     this.loginReceiver = loginReceiver;
