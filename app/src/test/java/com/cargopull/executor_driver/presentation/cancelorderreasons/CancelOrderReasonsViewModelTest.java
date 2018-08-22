@@ -1,8 +1,6 @@
 package com.cargopull.executor_driver.presentation.cancelorderreasons;
 
-import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.Mockito.only;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.verifyZeroInteractions;
@@ -14,20 +12,24 @@ import android.arch.lifecycle.Observer;
 import com.cargopull.executor_driver.ViewModelThreadTestRule;
 import com.cargopull.executor_driver.backend.web.NoNetworkException;
 import com.cargopull.executor_driver.entity.CancelOrderReason;
-import com.cargopull.executor_driver.entity.ExecutorState;
 import com.cargopull.executor_driver.gateway.DataMappingException;
-import com.cargopull.executor_driver.interactor.CancelOrderUseCase;
+import com.cargopull.executor_driver.interactor.CancelOrderReasonsUseCase;
 import com.cargopull.executor_driver.presentation.CommonNavigate;
 import com.cargopull.executor_driver.presentation.ViewState;
-import io.reactivex.Flowable;
+import io.reactivex.BackpressureStrategy;
+import io.reactivex.subjects.PublishSubject;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestRule;
 import org.junit.runner.RunWith;
+import org.mockito.InOrder;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -41,69 +43,133 @@ public class CancelOrderReasonsViewModelTest {
   @Mock
   private Observer<String> navigationObserver;
   @Mock
-  private Observer<ViewState<Runnable>> viewStateObserver;
+  private Observer<ViewState<CancelOrderReasonsViewActions>> viewStateObserver;
   @Mock
-  private CancelOrderUseCase cancelOrderUseCase;
+  private CancelOrderReasonsUseCase useCase;
   @Mock
   private CancelOrderReason cancelOrderReason;
+  @Mock
+  private CancelOrderReason cancelOrderReason1;
+  @Mock
+  private CancelOrderReason cancelOrderReason2;
+
+  private PublishSubject<List<CancelOrderReason>> publishSubject;
 
   @Before
   public void setUp() {
-    ExecutorState.ONLINE.setData(null);
-    when(cancelOrderUseCase.getCancelOrderReasons(anyBoolean())).thenReturn(Flowable.never());
-    viewModel = new CancelOrderReasonsViewModelImpl(cancelOrderUseCase);
+    publishSubject = PublishSubject.create();
+    when(useCase.getCancelOrderReasons())
+        .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
+    viewModel = new CancelOrderReasonsViewModelImpl(useCase);
   }
 
   /* Тетсируем работу с юзкейсом. */
 
   /**
-   * Должен попросить у юзкейса причины отказа от заказа со сбросом кеша.
+   * Должен просить юзкейс получать список причин отказа только при создании.
    */
   @Test
-  public void askDataReceiverToSubscribeToCancelOrderReasonsUpdatesWithCacheReset() {
-    // Действие:
-    viewModel.initializeCancelOrderReasons();
-
+  public void askUseCaseForCancelOrderReasonsInitially() {
     // Результат:
-    verify(cancelOrderUseCase, only()).getCancelOrderReasons(true);
+    verify(useCase, only()).getCancelOrderReasons();
   }
 
   /**
-   * Должен просить у юзкейса загрузить причины отказа от заказа, со сбросом кеша, даже если уже
-   * подписан.
+   * Не должен трогать юзкейс на подписках.
    */
   @Test
-  public void doNotTouchUseCaseBeforeFirstRequestComplete() {
+  public void doNotTouchUseCaseOnSubscriptions() {
     // Действие:
-    viewModel.initializeCancelOrderReasons();
-    viewModel.initializeCancelOrderReasons();
-    viewModel.initializeCancelOrderReasons();
+    viewModel.getViewStateLiveData();
+    viewModel.getNavigationLiveData();
+    viewModel.getViewStateLiveData();
+    viewModel.getNavigationLiveData();
 
     // Результат:
-    verify(cancelOrderUseCase, times(3)).getCancelOrderReasons(true);
-    verifyNoMoreInteractions(cancelOrderUseCase);
+    verify(useCase, only()).getCancelOrderReasons();
   }
 
-  /* Тетсируем сообщение. */
+  /* Тетсируем переключение состояний. */
 
   /**
-   * Не должен ничего показывать.
+   * Должен вернуть состояние вида ожидания изначально.
    */
   @Test
-  public void showNothing() {
+  public void setPendingViewStateToLiveDataInitially() {
     // Дано:
-    when(cancelOrderUseCase.getCancelOrderReasons(anyBoolean()))
-        .thenReturn(Flowable.just(Collections.singletonList(cancelOrderReason)));
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
+
+    // Действие и Результат:
+    verify(viewStateObserver, only()).onChanged(new CancelOrderReasonsViewStatePending(null));
+  }
+
+  /**
+   * Не должен давать иных состояний вида если была ошибка.
+   */
+  @Test
+  public void doNotSetAnyViewStateToLiveDataForError() {
+    // Дано:
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
-    viewModel.initializeCancelOrderReasons();
+    publishSubject.onError(new Exception());
 
     // Результат:
-    verifyZeroInteractions(viewStateObserver);
+    verify(viewStateObserver, only()).onChanged(new CancelOrderReasonsViewStatePending(null));
+  }
+
+  /**
+   * Должен вернуть состояние вида "списка причин отказа".
+   */
+  @Test
+  public void setCancelOrderViewStateToLiveData() {
+    // Дано:
+    InOrder inOrder = Mockito.inOrder(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
+
+    // Действие:
+    publishSubject.onNext(Collections.singletonList(cancelOrderReason));
+    publishSubject.onNext(Arrays.asList(cancelOrderReason, cancelOrderReason1, cancelOrderReason2));
+    publishSubject.onNext(Arrays.asList(cancelOrderReason1, cancelOrderReason, cancelOrderReason2));
+    publishSubject.onNext(Arrays.asList(cancelOrderReason2, cancelOrderReason1, cancelOrderReason));
+
+    // Результат:
+    inOrder.verify(viewStateObserver).onChanged(new CancelOrderReasonsViewStatePending(null));
+    inOrder.verify(viewStateObserver).onChanged(new CancelOrderReasonsViewState(
+        Collections.singletonList(cancelOrderReason)
+    ));
+    inOrder.verify(viewStateObserver).onChanged(new CancelOrderReasonsViewState(
+        Arrays.asList(cancelOrderReason, cancelOrderReason1, cancelOrderReason2)
+    ));
+    inOrder.verify(viewStateObserver).onChanged(new CancelOrderReasonsViewState(
+        Arrays.asList(cancelOrderReason1, cancelOrderReason, cancelOrderReason2)
+    ));
+    inOrder.verify(viewStateObserver).onChanged(new CancelOrderReasonsViewState(
+        Arrays.asList(cancelOrderReason2, cancelOrderReason1, cancelOrderReason)
+    ));
+    verifyNoMoreInteractions(viewStateObserver);
   }
 
   /* Тетсируем навигацию. */
+
+  /**
+   * Должен игнорировать данные от сервера.
+   */
+  @Test
+  public void setNothingToLiveDataForNewReasons() {
+    // Дано:
+    viewModel.getNavigationLiveData().observeForever(navigationObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
+
+    // Действие:
+    publishSubject.onNext(Collections.singletonList(cancelOrderReason));
+    publishSubject.onNext(Arrays.asList(cancelOrderReason, cancelOrderReason1, cancelOrderReason2));
+    publishSubject.onNext(Arrays.asList(cancelOrderReason1, cancelOrderReason, cancelOrderReason2));
+    publishSubject.onNext(Arrays.asList(cancelOrderReason2, cancelOrderReason1, cancelOrderReason));
+
+    // Результат:
+    verifyZeroInteractions(navigationObserver);
+  }
 
   /**
    * Не должен ничего вернуть.
@@ -111,12 +177,11 @@ public class CancelOrderReasonsViewModelTest {
   @Test
   public void navigateToNothingForError() {
     // Дано:
-    when(cancelOrderUseCase.getCancelOrderReasons(anyBoolean()))
-        .thenReturn(Flowable.error(NoNetworkException::new));
+    viewModel.getNavigationLiveData().observeForever(navigationObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    viewModel.getNavigationLiveData().observeForever(navigationObserver);
-    viewModel.initializeCancelOrderReasons();
+    publishSubject.onError(new NoNetworkException());
 
     // Результат:
     verifyZeroInteractions(navigationObserver);
@@ -128,46 +193,27 @@ public class CancelOrderReasonsViewModelTest {
   @Test
   public void navigateToNothingForAuthorize() {
     // Дано:
-    when(cancelOrderUseCase.getCancelOrderReasons(anyBoolean()))
-        .thenReturn(Flowable.error(AuthenticatorException::new));
+    viewModel.getNavigationLiveData().observeForever(navigationObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    viewModel.getNavigationLiveData().observeForever(navigationObserver);
-    viewModel.initializeCancelOrderReasons();
+    publishSubject.onError(new AuthenticatorException());
 
     // Результат:
     verifyZeroInteractions(navigationObserver);
   }
 
   /**
-   * Не должен ничего вернуть.
+   * Должен вернуть "перейти к ошибке данных сервера".
    */
   @Test
-  public void navigateToNothingForData() {
+  public void setNavigateToServerDataError() {
     // Дано:
-    when(cancelOrderUseCase.getCancelOrderReasons(anyBoolean()))
-        .thenReturn(Flowable.just(Collections.singletonList(cancelOrderReason)));
+    viewModel.getNavigationLiveData().observeForever(navigationObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    viewModel.getNavigationLiveData().observeForever(navigationObserver);
-    viewModel.initializeCancelOrderReasons();
-
-    // Результат:
-    verifyZeroInteractions(navigationObserver);
-  }
-
-  /**
-   * Должен вернуть ошибку данных сервера.
-   */
-  @Test
-  public void navigateToServerDataError() {
-    // Дано:
-    when(cancelOrderUseCase.getCancelOrderReasons(anyBoolean()))
-        .thenReturn(Flowable.error(DataMappingException::new));
-
-    // Действие:
-    viewModel.getNavigationLiveData().observeForever(navigationObserver);
-    viewModel.initializeCancelOrderReasons();
+    publishSubject.onError(new DataMappingException());
 
     // Результат:
     verify(navigationObserver, only()).onChanged(CommonNavigate.SERVER_DATA_ERROR);

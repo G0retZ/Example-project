@@ -1,8 +1,8 @@
 package com.cargopull.executor_driver.presentation.cancelorder;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.Mockito.only;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.verifyZeroInteractions;
@@ -16,18 +16,15 @@ import com.cargopull.executor_driver.gateway.DataMappingException;
 import com.cargopull.executor_driver.interactor.CancelOrderUseCase;
 import com.cargopull.executor_driver.presentation.CommonNavigate;
 import com.cargopull.executor_driver.presentation.ViewState;
-import io.reactivex.BackpressureStrategy;
 import io.reactivex.Completable;
-import io.reactivex.subjects.PublishSubject;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestRule;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -42,7 +39,7 @@ public class CancelOrderViewModelTest {
   public TestRule rule = new InstantTaskExecutorRule();
   private CancelOrderViewModel viewModel;
   @Mock
-  private CancelOrderUseCase cancelOrderUseCase;
+  private CancelOrderUseCase useCase;
   @Mock
   private CancelOrderReason cancelOrderReason;
   @Mock
@@ -51,46 +48,20 @@ public class CancelOrderViewModelTest {
   private CancelOrderReason cancelOrderReason2;
   @Mock
   private Observer<String> navigateObserver;
-
-  private PublishSubject<List<CancelOrderReason>> publishSubject;
-
+  @Mock
+  private CancelOrderViewActions viewActions;
   @Mock
   private Observer<ViewState<CancelOrderViewActions>> viewStateObserver;
+  @Captor
+  private ArgumentCaptor<ViewState<CancelOrderViewActions>> viewStateCaptor;
 
   @Before
   public void setUp() {
-    publishSubject = PublishSubject.create();
-    when(cancelOrderUseCase.getCancelOrderReasons(anyBoolean()))
-        .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
-    when(cancelOrderUseCase.cancelOrder(any())).thenReturn(Completable.never());
-    viewModel = new CancelOrderViewModelImpl(cancelOrderUseCase);
+    when(useCase.cancelOrder(any())).thenReturn(Completable.never());
+    viewModel = new CancelOrderViewModelImpl(useCase);
   }
 
-  /* Тетсируем работу с юзкейсом заказа. */
-
-  /**
-   * Должен просить юзкейс получать список причин отказа только при создании.
-   */
-  @Test
-  public void askUseCaseForCancelOrderReasonsInitially() {
-    // Результат:
-    verify(cancelOrderUseCase, only()).getCancelOrderReasons(false);
-  }
-
-  /**
-   * Не должен трогать юзкейс на подписках.
-   */
-  @Test
-  public void doNotTouchUseCaseOnSubscriptions() {
-    // Действие:
-    viewModel.getViewStateLiveData();
-    viewModel.getNavigationLiveData();
-    viewModel.getViewStateLiveData();
-    viewModel.getNavigationLiveData();
-
-    // Результат:
-    verify(cancelOrderUseCase, only()).getCancelOrderReasons(false);
-  }
+  /* Тетсируем работу с юзкейсом. */
 
   /**
    * Должен попросить юзкейс отказаться от заказа.
@@ -101,9 +72,7 @@ public class CancelOrderViewModelTest {
     viewModel.selectItem(cancelOrderReason1);
 
     // Результат:
-    verify(cancelOrderUseCase).getCancelOrderReasons(false);
-    verify(cancelOrderUseCase).cancelOrder(cancelOrderReason1);
-    verifyNoMoreInteractions(cancelOrderUseCase);
+    verify(useCase, only()).cancelOrder(cancelOrderReason1);
   }
 
   /**
@@ -117,77 +86,10 @@ public class CancelOrderViewModelTest {
     viewModel.selectItem(cancelOrderReason2);
 
     // Результат:
-    verify(cancelOrderUseCase).getCancelOrderReasons(false);
-    verify(cancelOrderUseCase).cancelOrder(cancelOrderReason);
-    verifyNoMoreInteractions(cancelOrderUseCase);
+    verify(useCase, only()).cancelOrder(cancelOrderReason);
   }
 
-  /* Тетсируем переключение состояний от сервера. */
-
-  /**
-   * Должен вернуть состояние вида ожидания изначально.
-   */
-  @Test
-  public void setPendingViewStateToLiveDataInitially() {
-    // Дано:
-    InOrder inOrder = Mockito.inOrder(viewStateObserver);
-
-    // Действие:
-    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
-
-    // Результат:
-    inOrder.verify(viewStateObserver).onChanged(new CancelOrderViewStatePending(null));
-    verifyNoMoreInteractions(viewStateObserver);
-  }
-
-  /**
-   * Не должен давать иных состояний вида если была ошибка.
-   */
-  @Test
-  public void doNotSetAnyViewStateToLiveDataForError() {
-    // Дано:
-    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
-
-    // Действие:
-    publishSubject.onError(new Exception());
-
-    // Результат:
-    verify(viewStateObserver, only()).onChanged(new CancelOrderViewStatePending(null));
-  }
-
-  /**
-   * Должен вернуть состояние вида "списка причин отказа".
-   */
-  @Test
-  public void setCancelOrderViewStateToLiveData() {
-    // Дано:
-    InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
-
-    // Действие:
-    publishSubject.onNext(Collections.singletonList(cancelOrderReason));
-    publishSubject.onNext(Arrays.asList(cancelOrderReason, cancelOrderReason1, cancelOrderReason2));
-    publishSubject.onNext(Arrays.asList(cancelOrderReason1, cancelOrderReason, cancelOrderReason2));
-    publishSubject.onNext(Arrays.asList(cancelOrderReason2, cancelOrderReason1, cancelOrderReason));
-
-    // Результат:
-    inOrder.verify(viewStateObserver).onChanged(new CancelOrderViewStatePending(null));
-    inOrder.verify(viewStateObserver).onChanged(new CancelOrderViewState(
-        Collections.singletonList(cancelOrderReason)
-    ));
-    inOrder.verify(viewStateObserver).onChanged(new CancelOrderViewState(
-        Arrays.asList(cancelOrderReason, cancelOrderReason1, cancelOrderReason2)
-    ));
-    inOrder.verify(viewStateObserver).onChanged(new CancelOrderViewState(
-        Arrays.asList(cancelOrderReason1, cancelOrderReason, cancelOrderReason2)
-    ));
-    inOrder.verify(viewStateObserver).onChanged(new CancelOrderViewState(
-        Arrays.asList(cancelOrderReason2, cancelOrderReason1, cancelOrderReason)
-    ));
-    verifyNoMoreInteractions(viewStateObserver);
-  }
-
-  /* Тетсируем переключение состояний при отказе от заказа. */
+  /* Тетсируем переключение состояний. */
 
   /**
    * Должен вернуть состояние вида "В процессе".
@@ -195,131 +97,95 @@ public class CancelOrderViewModelTest {
   @Test
   public void setPendingViewStateStateToLiveDataForCancelOrder() {
     // Дано:
-    InOrder inOrder = Mockito.inOrder(viewStateObserver);
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    publishSubject.onNext(Arrays.asList(cancelOrderReason, cancelOrderReason1, cancelOrderReason2));
     viewModel.selectItem(cancelOrderReason1);
 
     // Результат:
-    inOrder.verify(viewStateObserver).onChanged(new CancelOrderViewStatePending(null));
-    inOrder.verify(viewStateObserver).onChanged(new CancelOrderViewState(
-        Arrays.asList(cancelOrderReason, cancelOrderReason1, cancelOrderReason2)
-    ));
-    inOrder.verify(viewStateObserver).onChanged(new CancelOrderViewStatePending(
-        new CancelOrderViewState(
-            Arrays.asList(cancelOrderReason, cancelOrderReason1, cancelOrderReason2)
-        )
-    ));
-    verifyNoMoreInteractions(viewStateObserver);
+    verify(viewStateObserver, only()).onChanged(viewStateCaptor.capture());
+    for (ViewState<CancelOrderViewActions> viewState : viewStateCaptor.getAllValues()) {
+      viewState.apply(viewActions);
+    }
+    verify(viewActions, only()).showCancelOrderPending(true);
   }
 
   /**
-   * Должен вернуть предыдущее состояние вида.
+   * Должен вернуть состояние вида "не в процессе" при ошибке.
    */
   @Test
   public void setCancelOrderViewStateToLiveDataAfterPendingForCancelOrderError() {
     // Дано:
-    InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    when(cancelOrderUseCase.cancelOrder(any())).thenReturn(Completable.error(Exception::new));
+    InOrder inOrder = Mockito.inOrder(viewActions);
+    when(useCase.cancelOrder(any())).thenReturn(Completable.error(Exception::new));
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    publishSubject.onNext(Arrays.asList(cancelOrderReason, cancelOrderReason1, cancelOrderReason2));
     viewModel.selectItem(cancelOrderReason1);
 
     // Результат:
-    inOrder.verify(viewStateObserver).onChanged(new CancelOrderViewStatePending(null));
-    inOrder.verify(viewStateObserver).onChanged(new CancelOrderViewState(
-        Arrays.asList(cancelOrderReason, cancelOrderReason1, cancelOrderReason2)
-    ));
-    inOrder.verify(viewStateObserver).onChanged(new CancelOrderViewStatePending(
-        new CancelOrderViewState(
-            Arrays.asList(cancelOrderReason, cancelOrderReason1, cancelOrderReason2)
-        )
-    ));
-    inOrder.verify(viewStateObserver).onChanged(new CancelOrderViewState(
-        Arrays.asList(cancelOrderReason, cancelOrderReason1, cancelOrderReason2)
-    ));
+    verify(viewStateObserver, times(2)).onChanged(viewStateCaptor.capture());
     verifyNoMoreInteractions(viewStateObserver);
+    for (ViewState<CancelOrderViewActions> viewState : viewStateCaptor.getAllValues()) {
+      viewState.apply(viewActions);
+    }
+    inOrder.verify(viewActions).showCancelOrderPending(true);
+    inOrder.verify(viewActions).showCancelOrderPending(false);
+    verifyNoMoreInteractions(viewActions);
   }
 
   /**
-   * Должен вернуть предыдущее состояние вида.
+   * Должен вернуть состояние вида "не в процессе" при успехе.
    */
   @Test
   public void setCancelOrderViewStateToLiveDataAfterPendingForCancelOrderSuccess() {
     // Дано:
-    InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    when(cancelOrderUseCase.cancelOrder(any())).thenReturn(Completable.complete());
+    InOrder inOrder = Mockito.inOrder(viewActions);
+    when(useCase.cancelOrder(any())).thenReturn(Completable.complete());
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    publishSubject.onNext(Arrays.asList(cancelOrderReason, cancelOrderReason1, cancelOrderReason2));
     viewModel.selectItem(cancelOrderReason1);
 
     // Результат:
-    inOrder.verify(viewStateObserver).onChanged(new CancelOrderViewStatePending(null));
-    inOrder.verify(viewStateObserver).onChanged(new CancelOrderViewState(
-        Arrays.asList(cancelOrderReason, cancelOrderReason1, cancelOrderReason2)
-    ));
-    inOrder.verify(viewStateObserver).onChanged(new CancelOrderViewStatePending(
-        new CancelOrderViewState(
-            Arrays.asList(cancelOrderReason, cancelOrderReason1, cancelOrderReason2)
-        )
-    ));
-    inOrder.verify(viewStateObserver).onChanged(new CancelOrderViewState(
-        Arrays.asList(cancelOrderReason, cancelOrderReason1, cancelOrderReason2)
-    ));
+    verify(viewStateObserver, times(2)).onChanged(viewStateCaptor.capture());
     verifyNoMoreInteractions(viewStateObserver);
+    for (ViewState<CancelOrderViewActions> viewState : viewStateCaptor.getAllValues()) {
+      viewState.apply(viewActions);
+    }
+    inOrder.verify(viewActions).showCancelOrderPending(true);
+    inOrder.verify(viewActions).showCancelOrderPending(false);
+    verifyNoMoreInteractions(viewActions);
   }
 
   /* Тетсируем навигацию. */
 
   /**
-   * Должен игнорировать данные от сервера.
+   * Не игнорировать другие ошибки.
    */
   @Test
-  public void setNothingToLiveDataForNewReasons() {
+  public void setNothingToLiveDataForOtherErro() {
     // Дано:
+    when(useCase.cancelOrder(any())).thenReturn(Completable.error(new DataMappingException()));
     viewModel.getNavigationLiveData().observeForever(navigateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    // Действие:
-    publishSubject.onNext(Collections.singletonList(cancelOrderReason));
-    publishSubject.onNext(Arrays.asList(cancelOrderReason, cancelOrderReason1, cancelOrderReason2));
-    publishSubject.onNext(Arrays.asList(cancelOrderReason1, cancelOrderReason, cancelOrderReason2));
-    publishSubject.onNext(Arrays.asList(cancelOrderReason2, cancelOrderReason1, cancelOrderReason));
+    viewModel.selectItem(cancelOrderReason);
 
     // Результат:
     verifyZeroInteractions(navigateObserver);
   }
 
   /**
-   * Должен вернуть "перейти к ошибке данных сервера".
-   */
-  @Test
-  public void setNavigateToServerDataError() {
-    // Дано:
-    viewModel.getNavigationLiveData().observeForever(navigateObserver);
-
-    // Действие:
-    publishSubject.onError(new DataMappingException());
-
-    // Результат:
-    verify(navigateObserver, only()).onChanged(CommonNavigate.SERVER_DATA_ERROR);
-  }
-
-  /**
    * Должен игнорировать неуспешные выборы.
    */
   @Test
-  public void setNothingToLiveData() {
+  public void setNothingToLiveDataForWrongChoice() {
     // Дано:
-    when(cancelOrderUseCase.cancelOrder(any()))
-        .thenReturn(Completable.error(new IndexOutOfBoundsException()));
+    when(useCase.cancelOrder(any())).thenReturn(Completable.error(new IndexOutOfBoundsException()));
     viewModel.getNavigationLiveData().observeForever(navigateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
     viewModel.selectItem(cancelOrderReason);
@@ -334,9 +200,9 @@ public class CancelOrderViewModelTest {
   @Test
   public void setNoConnectionToLiveData() {
     // Дано:
-    when(cancelOrderUseCase.cancelOrder(any()))
-        .thenReturn(Completable.error(new IllegalStateException()));
+    when(useCase.cancelOrder(any())).thenReturn(Completable.error(new IllegalStateException()));
     viewModel.getNavigationLiveData().observeForever(navigateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
     viewModel.selectItem(cancelOrderReason);
@@ -351,8 +217,9 @@ public class CancelOrderViewModelTest {
   @Test
   public void setNavigateToOrderCanceledToLiveData() {
     // Дано:
-    when(cancelOrderUseCase.cancelOrder(any())).thenReturn(Completable.complete());
+    when(useCase.cancelOrder(any())).thenReturn(Completable.complete());
     viewModel.getNavigationLiveData().observeForever(navigateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
     viewModel.selectItem(cancelOrderReason);

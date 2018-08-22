@@ -1,4 +1,4 @@
-package com.cargopull.executor_driver.presentation.cancelorder;
+package com.cargopull.executor_driver.presentation.cancelorderreasons;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
@@ -13,27 +13,27 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
-public class CancelOrderViewStatePendingTest {
+public class CancelOrderReasonsViewStatePendingTest {
 
-  private CancelOrderViewStatePending viewState;
+  private CancelOrderReasonsViewStatePending viewState;
 
   @Mock
-  private CancelOrderViewActions viewActions;
+  private CancelOrderReasonsViewActions viewActions;
   @Mock
-  private ViewState<CancelOrderViewActions> parentViewState;
+  private ViewState<CancelOrderReasonsViewActions> parentViewState;
   @Mock
-  private ViewState<CancelOrderViewActions> parentViewState1;
+  private ViewState<CancelOrderReasonsViewActions> parentViewState1;
 
   @Test
   public void testActions() {
     // Дано:
-    viewState = new CancelOrderViewStatePending(parentViewState);
+    viewState = new CancelOrderReasonsViewStatePending(parentViewState);
 
     // Действие:
     viewState.apply(viewActions);
 
     // Результат:
-    verify(viewActions).showCancelOrderPending(true);
+    verify(viewActions).showCancelOrderReasonsPending(true);
     verify(viewActions).showCancelOrderReasons(true);
     verify(parentViewState, only()).apply(viewActions);
     verifyNoMoreInteractions(viewActions);
@@ -42,22 +42,22 @@ public class CancelOrderViewStatePendingTest {
   @Test
   public void testActionsWithNull() {
     // Дано:
-    viewState = new CancelOrderViewStatePending(null);
+    viewState = new CancelOrderReasonsViewStatePending(null);
 
     // Действие:
     viewState.apply(viewActions);
 
     // Результат:
-    verify(viewActions).showCancelOrderPending(true);
+    verify(viewActions).showCancelOrderReasonsPending(true);
     verify(viewActions).showCancelOrderReasons(false);
     verifyNoMoreInteractions(viewActions);
   }
 
   @Test
   public void testEquals() {
-    viewState = new CancelOrderViewStatePending(parentViewState);
-    assertEquals(viewState, new CancelOrderViewStatePending(parentViewState));
-    assertNotEquals(viewState, new CancelOrderViewStatePending(parentViewState1));
-    assertNotEquals(viewState, new CancelOrderViewStatePending(null));
+    viewState = new CancelOrderReasonsViewStatePending(parentViewState);
+    assertEquals(viewState, new CancelOrderReasonsViewStatePending(parentViewState));
+    assertNotEquals(viewState, new CancelOrderReasonsViewStatePending(parentViewState1));
+    assertNotEquals(viewState, new CancelOrderReasonsViewStatePending(null));
   }
 }

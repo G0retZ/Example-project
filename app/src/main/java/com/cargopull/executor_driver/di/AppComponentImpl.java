@@ -24,6 +24,7 @@ import com.cargopull.executor_driver.backend.web.ReceiveTokenInterceptor;
 import com.cargopull.executor_driver.backend.web.SendTokenInterceptor;
 import com.cargopull.executor_driver.backend.web.SendVersionInterceptor;
 import com.cargopull.executor_driver.backend.web.TokenKeeper;
+import com.cargopull.executor_driver.backend.websocket.PersonalQueueListener;
 import com.cargopull.executor_driver.entity.ExecutorState;
 import com.cargopull.executor_driver.entity.LoginValidator;
 import com.cargopull.executor_driver.entity.PasswordValidator;
@@ -32,6 +33,7 @@ import com.cargopull.executor_driver.entity.Vehicle;
 import com.cargopull.executor_driver.gateway.CallToClientGatewayImpl;
 import com.cargopull.executor_driver.gateway.CancelOrderGatewayImpl;
 import com.cargopull.executor_driver.gateway.CancelOrderReasonApiMapper;
+import com.cargopull.executor_driver.gateway.CancelOrderReasonsGatewayImpl;
 import com.cargopull.executor_driver.gateway.ConfirmOrderPaymentGatewayImpl;
 import com.cargopull.executor_driver.gateway.CurrentCostPollingGatewayImpl;
 import com.cargopull.executor_driver.gateway.CurrentCostPollingTimersApiMapper;
@@ -79,6 +81,8 @@ import com.cargopull.executor_driver.gateway.VehiclesAndOptionsGatewayImpl;
 import com.cargopull.executor_driver.gateway.WaitingForClientApiMapper;
 import com.cargopull.executor_driver.gateway.WaitingForClientGatewayImpl;
 import com.cargopull.executor_driver.interactor.CallToClientUseCaseImpl;
+import com.cargopull.executor_driver.interactor.CancelOrderReasonsUseCase;
+import com.cargopull.executor_driver.interactor.CancelOrderReasonsUseCaseImpl;
 import com.cargopull.executor_driver.interactor.CancelOrderUseCase;
 import com.cargopull.executor_driver.interactor.CancelOrderUseCaseImpl;
 import com.cargopull.executor_driver.interactor.ConfirmOrderPaymentUseCaseImpl;
@@ -229,6 +233,8 @@ public class AppComponentImpl implements AppComponent {
   @NonNull
   private final CancelOrderUseCase cancelOrderUseCase;
   @NonNull
+  private final CancelOrderReasonsUseCase cancelOrderReasonsUseCase;
+  @NonNull
   private final ExecutorBalanceUseCase executorBalanceUseCase;
   @NonNull
   private final GeoLocationUseCase geoLocationUseCase;
@@ -271,6 +277,7 @@ public class AppComponentImpl implements AppComponent {
     apiService = initApiService(okHttpClient);
     stompClient = initStompClient(okHttpClient);
     loginSharer = new LoginSharer(appSettingsService);
+    PersonalQueueListener pqListener = new PersonalQueueListener(stompClient, loginSharer);
     vehicleChoiceSharer = new VehicleChoiceSharer();
     lastUsedVehicleGateway = new LastUsedVehicleGatewayImpl(appSettingsService);
     errorReporter = new ErrorReporterImpl(loginSharer);
@@ -282,13 +289,18 @@ public class AppComponentImpl implements AppComponent {
             )
         )
     );
-    cancelOrderUseCase = new CancelOrderUseCaseImpl(
+    cancelOrderReasonsUseCase = new CancelOrderReasonsUseCaseImpl(
         errorReporter,
-        new CancelOrderGatewayImpl(
-            stompClient,
+        new CancelOrderReasonsGatewayImpl(
+            pqListener,
             new CancelOrderReasonApiMapper()
-        ),
-        loginSharer
+        )
+    );
+    cancelOrderUseCase = new CancelOrderUseCaseImpl(
+        cancelOrderReasonsUseCase, errorReporter,
+        new CancelOrderGatewayImpl(
+            stompClient
+        )
     );
     executorBalanceUseCase = new ExecutorBalanceUseCaseImpl(
         errorReporter,
@@ -358,7 +370,7 @@ public class AppComponentImpl implements AppComponent {
     );
     mainApplication.setCancelOrderReasonsViewModel(
         new CancelOrderReasonsViewModelImpl(
-            cancelOrderUseCase
+            cancelOrderReasonsUseCase
         )
     );
     mainApplication.setCoreBalanceViewModel(
@@ -1177,6 +1189,16 @@ public class AppComponentImpl implements AppComponent {
                 )
             )
         ).get(CancelOrderViewModelImpl.class)
+    );
+    cancelOrderDialogFragment.setCancelOrderReasonsViewModel(
+        ViewModelProviders.of(
+            cancelOrderDialogFragment,
+            new ViewModelFactory<>(
+                new CancelOrderReasonsViewModelImpl(
+                    cancelOrderReasonsUseCase
+                )
+            )
+        ).get(CancelOrderReasonsViewModelImpl.class)
     );
   }
 

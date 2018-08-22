@@ -1,4 +1,4 @@
-package com.cargopull.executor_driver.presentation.cancelorder;
+package com.cargopull.executor_driver.presentation.cancelorderreasons;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
@@ -13,12 +13,12 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
-public class CancelOrderViewStateTest {
+public class CancelOrderReasonsViewStateTest {
 
-  private CancelOrderViewState viewState;
+  private CancelOrderReasonsViewState viewState;
 
   @Mock
-  private CancelOrderViewActions viewActions;
+  private CancelOrderReasonsViewActions viewActions;
   @Mock
   private CancelOrderReason routePointItems;
   @Mock
@@ -27,7 +27,7 @@ public class CancelOrderViewStateTest {
   @Test
   public void testActions() {
     // Дано:
-    viewState = new CancelOrderViewState(Collections.singletonList(routePointItems));
+    viewState = new CancelOrderReasonsViewState(Collections.singletonList(routePointItems));
 
     // Действие:
     viewState.apply(viewActions);
@@ -35,15 +35,16 @@ public class CancelOrderViewStateTest {
     // Результат:
     verify(viewActions).setCancelOrderReasons(Collections.singletonList(routePointItems));
     verify(viewActions).showCancelOrderReasons(true);
-    verify(viewActions).showCancelOrderPending(false);
+    verify(viewActions).showCancelOrderReasonsPending(false);
     verifyNoMoreInteractions(viewActions);
   }
 
   @Test
   public void testEquals() {
-    viewState = new CancelOrderViewState(Collections.singletonList(routePointItems));
-    assertEquals(viewState, new CancelOrderViewState(Collections.singletonList(routePointItems)));
+    viewState = new CancelOrderReasonsViewState(Collections.singletonList(routePointItems));
+    assertEquals(viewState,
+        new CancelOrderReasonsViewState(Collections.singletonList(routePointItems)));
     assertNotEquals(viewState,
-        new CancelOrderViewState(Collections.singletonList(routePointItems1)));
+        new CancelOrderReasonsViewState(Collections.singletonList(routePointItems1)));
   }
 }

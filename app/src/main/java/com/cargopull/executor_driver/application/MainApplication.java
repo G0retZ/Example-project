@@ -191,9 +191,6 @@ public class MainApplication extends Application implements ServerConnectionView
   @Override
   public void showConnectionReady(boolean connected) {
     if (connected) {
-      if (cancelOrderReasonsViewModel == null) {
-        throw new IllegalStateException("Граф зависимостей поломан!");
-      }
       if (coreBalanceViewModel == null) {
         throw new IllegalStateException("Граф зависимостей поломан!");
       }
@@ -213,7 +210,6 @@ public class MainApplication extends Application implements ServerConnectionView
         throw new IllegalStateException("Граф зависимостей поломан!");
       }
       executorStateViewModel.initializeExecutorState();
-      cancelOrderReasonsViewModel.initializeCancelOrderReasons();
       coreBalanceViewModel.initializeExecutorBalance();
       missedOrderViewModel.initializeMissedOrderMessages();
       updateMessageViewModel.initializeUpdateMessages();
