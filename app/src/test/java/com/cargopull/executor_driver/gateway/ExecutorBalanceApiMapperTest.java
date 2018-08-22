@@ -1,17 +1,22 @@
 package com.cargopull.executor_driver.gateway;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.when;
 
 import com.cargopull.executor_driver.entity.ExecutorBalance;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import ua.naiksoftware.stomp.client.StompMessage;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ExecutorBalanceApiMapperTest {
 
-  private Mapper<String, ExecutorBalance> mapper;
+  private Mapper<StompMessage, ExecutorBalance> mapper;
+  @Mock
+  private StompMessage stompMessage;
 
   @Before
   public void setUp() {
@@ -19,16 +24,18 @@ public class ExecutorBalanceApiMapperTest {
   }
 
   /**
-   * Должен успешно преобразовать JSON в баланс.
+   * Должен успешно преобразовать JSON в пейлоаде сообщенияв баланс.
    *
    * @throws Exception ошибка
    */
   @Test
   public void mappingJsonStringToBalanceSuccess() throws Exception {
-    // Дано и Действие:
-    ExecutorBalance executorBalance = mapper.map(
-        "{\"mainAccount\":1,\"bonusAccount\":2,\"nonCashAccount\":3}"
-    );
+    // Дано
+    when(stompMessage.getPayload())
+        .thenReturn("{\"mainAccount\":1,\"bonusAccount\":2,\"nonCashAccount\":3}");
+
+    // Действие:
+    ExecutorBalance executorBalance = mapper.map(stompMessage);
 
     // Результат:
     assertEquals(executorBalance.getMainAccount(), 1);
@@ -37,16 +44,17 @@ public class ExecutorBalanceApiMapperTest {
   }
 
   /**
-   * Должен успешно преобразовать JSON без основного счета в баланс.
+   * Должен успешно преобразовать JSON в пейлоаде сообщениябез основного счета в баланс.
    *
    * @throws Exception ошибка
    */
   @Test
   public void mappingJsonStringWithoutMainAccountToBalanceSuccess() throws Exception {
-    // Дано и Действие:
-    ExecutorBalance executorBalance = mapper.map(
-        "{\"bonusAccount\":2,\"nonCashAccount\":3}"
-    );
+    // Дано
+    when(stompMessage.getPayload()).thenReturn("{\"bonusAccount\":2,\"nonCashAccount\":3}");
+
+    // Действие:
+    ExecutorBalance executorBalance = mapper.map(stompMessage);
 
     // Результат:
     assertEquals(executorBalance.getMainAccount(), 0);
@@ -55,16 +63,17 @@ public class ExecutorBalanceApiMapperTest {
   }
 
   /**
-   * Должен успешно преобразовать JSON без бонусного счета в баланс.
+   * Должен успешно преобразовать JSON в пейлоаде сообщениябез бонусного счета в баланс.
    *
    * @throws Exception ошибка
    */
   @Test
   public void mappingJsonStringWithoutBonusAccountToBalanceSuccess() throws Exception {
-    // Дано и Действие:
-    ExecutorBalance executorBalance = mapper.map(
-        "{\"mainAccount\":1,\"nonCashAccount\":3}"
-    );
+    // Дано
+    when(stompMessage.getPayload()).thenReturn("{\"mainAccount\":1,\"nonCashAccount\":3}");
+
+    // Действие:
+    ExecutorBalance executorBalance = mapper.map(stompMessage);
 
     // Результат:
     assertEquals(executorBalance.getMainAccount(), 1);
@@ -73,16 +82,17 @@ public class ExecutorBalanceApiMapperTest {
   }
 
   /**
-   * Должен успешно преобразовать JSON без безналичного счета в баланс.
+   * Должен успешно преобразовать JSON в пейлоаде сообщениябез безналичного счета в баланс.
    *
    * @throws Exception ошибка
    */
   @Test
   public void mappingJsonStringWithoutCashlessAccountToBalanceSuccess() throws Exception {
-    // Дано и Действие:
-    ExecutorBalance executorBalance = mapper.map(
-        "{\"mainAccount\":1,\"bonusAccount\":2}"
-    );
+    // Дано
+    when(stompMessage.getPayload()).thenReturn("{\"mainAccount\":1,\"bonusAccount\":2}");
+
+    // Действие:
+    ExecutorBalance executorBalance = mapper.map(stompMessage);
 
     // Результат:
     assertEquals(executorBalance.getMainAccount(), 1);
@@ -91,79 +101,114 @@ public class ExecutorBalanceApiMapperTest {
   }
 
   /**
-   * Должен дать ошибку, если пришел JSON с текстом в основном счете в баланс.
+   * Должен дать ошибку, если пришел JSON в пейлоаде сообщенияс текстом в основном счете в баланс.
    *
    * @throws Exception ошибка
    */
   @Test(expected = DataMappingException.class)
   public void mappingJsonStringWithMainAccountStringToBalanceFail() throws Exception {
-    // Дано и Действие:
-    mapper.map("{\"mainAccount\":\"a\",\"bonusAccount\":2,\"nonCashAccount\":3}");
+    // Дано
+    when(stompMessage.getPayload())
+        .thenReturn("{\"mainAccount\":\"a\",\"bonusAccount\":2,\"nonCashAccount\":3}");
+
+    // Действие:
+    mapper.map(stompMessage);
   }
 
   /**
-   * Должен дать ошибку, если пришел JSON с текстом в бонусном счете в баланс.
+   * Должен дать ошибку, если пришел JSON в пейлоаде сообщенияс текстом в бонусном счете в баланс.
    *
    * @throws Exception ошибка
    */
   @Test(expected = DataMappingException.class)
   public void mappingJsonStringWithBonusAccountStringToBalanceFail() throws Exception {
-    // Дано и Действие:
-    mapper.map("{\"mainAccount\":1,\"bonusAccount\":\"b\",\"nonCashAccount\":3}");
+    // Дано
+    when(stompMessage.getPayload())
+        .thenReturn("{\"mainAccount\":1,\"bonusAccount\":\"b\",\"nonCashAccount\":3}");
+
+    // Действие:
+    mapper.map(stompMessage);
   }
 
   /**
-   * Должен дать ошибку, если пришел JSON с текстом в безналичном счете в баланс.
+   * Должен дать ошибку, если пришел JSON в пейлоаде сообщенияс текстом в безналичном счете в баланс.
    *
    * @throws Exception ошибка
    */
   @Test(expected = DataMappingException.class)
   public void mappingJsonStringWithCashlessAccountStringToBalanceFail() throws Exception {
-    // Дано и Действие:
-    mapper.map("{\"mainAccount\":1,\"bonusAccount\":2,\"nonCashAccount\":\"c\"}");
+    // Дано
+    when(stompMessage.getPayload())
+        .thenReturn("{\"mainAccount\":1,\"bonusAccount\":2,\"nonCashAccount\":\"c\"}");
+
+    // Действие:
+    mapper.map(stompMessage);
   }
 
   /**
-   * Должен дать ошибку, если строка пустая.
+   * Должен дать ошибку, если в пейлоаде null.
+   *
+   * @throws Exception ошибка
+   */
+  @Test(expected = DataMappingException.class)
+  public void mappingNullFail() throws Exception {
+    // Действие:
+    mapper.map(stompMessage);
+  }
+
+  /**
+   * Должен дать ошибку, если в пейлоаде пустая строка.
    *
    * @throws Exception ошибка
    */
   @Test(expected = DataMappingException.class)
   public void mappingEmptyFail() throws Exception {
-    // Дано и Действие:
-    mapper.map("");
+    // Дано
+    when(stompMessage.getPayload()).thenReturn("");
+
+    // Действие:
+    mapper.map(stompMessage);
   }
 
   /**
-   * Должен дать ошибку, если пришла просто строка.
+   * Должен дать ошибку, если в пейлоаде просто строка.
    *
    * @throws Exception ошибка
    */
   @Test(expected = DataMappingException.class)
   public void mappingStringFail() throws Exception {
-    // Дано и Действие:
-    mapper.map("dasie");
+    // Дано
+    when(stompMessage.getPayload()).thenReturn("dasie");
+
+    // Действие:
+    mapper.map(stompMessage);
   }
 
   /**
-   * Должен дать ошибку, если пришло просто число.
+   * Должен дать ошибку, если в пейлоаде просто число.
    *
    * @throws Exception ошибка
    */
   @Test(expected = DataMappingException.class)
   public void mappingNumberFail() throws Exception {
-    // Дано и Действие:
-    mapper.map("12");
+    // Дано
+    when(stompMessage.getPayload()).thenReturn("12");
+
+    // Действие:
+    mapper.map(stompMessage);
   }
 
   /**
-   * Должен дать ошибку, если пришел массив.
+   * Должен дать ошибку, если в пейлоаде массив.
    *
    * @throws Exception ошибка
    */
   @Test(expected = DataMappingException.class)
   public void mappingArrayFail() throws Exception {
-    // Дано и Действие:
-    mapper.map("[]");
+    // Дано
+    when(stompMessage.getPayload()).thenReturn("[]");
+
+    // Действие:
+    mapper.map(stompMessage);
   }
 }

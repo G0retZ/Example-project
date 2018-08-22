@@ -133,7 +133,6 @@ import com.cargopull.executor_driver.presentation.clientorderconfirmationtime.Cl
 import com.cargopull.executor_driver.presentation.code.CodeViewModelImpl;
 import com.cargopull.executor_driver.presentation.codeheader.CodeHeaderViewModelImpl;
 import com.cargopull.executor_driver.presentation.confirmorderpayment.ConfirmOrderPaymentViewModelImpl;
-import com.cargopull.executor_driver.presentation.corebalance.CoreBalanceViewModelImpl;
 import com.cargopull.executor_driver.presentation.currentcostpolling.CurrentCostPollingViewModelImpl;
 import com.cargopull.executor_driver.presentation.executorstate.ExecutorStateViewModelImpl;
 import com.cargopull.executor_driver.presentation.geolocation.GeoLocationViewModelImpl;
@@ -305,10 +304,9 @@ public class AppComponentImpl implements AppComponent {
     executorBalanceUseCase = new ExecutorBalanceUseCaseImpl(
         errorReporter,
         new ExecutorBalanceGatewayImpl(
-            stompClient,
+            pqListener,
             new ExecutorBalanceApiMapper()
-        ),
-        loginSharer
+        )
     );
     executorStateUseCase = new ExecutorStateUseCaseImpl(
         errorReporter,
@@ -373,8 +371,8 @@ public class AppComponentImpl implements AppComponent {
             cancelOrderReasonsUseCase
         )
     );
-    mainApplication.setCoreBalanceViewModel(
-        new CoreBalanceViewModelImpl(
+    mainApplication.setBalanceViewModel(
+        new BalanceViewModelImpl(
             executorBalanceUseCase
         )
     );

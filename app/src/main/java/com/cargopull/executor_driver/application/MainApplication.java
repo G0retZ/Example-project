@@ -16,8 +16,8 @@ import com.cargopull.executor_driver.backend.vibro.ShakeItPlayer;
 import com.cargopull.executor_driver.di.AppComponent;
 import com.cargopull.executor_driver.di.AppComponentImpl;
 import com.cargopull.executor_driver.presentation.CommonNavigate;
+import com.cargopull.executor_driver.presentation.balance.BalanceViewModel;
 import com.cargopull.executor_driver.presentation.cancelorderreasons.CancelOrderReasonsViewModel;
-import com.cargopull.executor_driver.presentation.corebalance.CoreBalanceViewModel;
 import com.cargopull.executor_driver.presentation.currentcostpolling.CurrentCostPollingViewModel;
 import com.cargopull.executor_driver.presentation.executorstate.ExecutorStateNavigate;
 import com.cargopull.executor_driver.presentation.executorstate.ExecutorStateViewModel;
@@ -53,7 +53,7 @@ public class MainApplication extends Application implements ServerConnectionView
   @Nullable
   private CancelOrderReasonsViewModel cancelOrderReasonsViewModel;
   @Nullable
-  private CoreBalanceViewModel coreBalanceViewModel;
+  private BalanceViewModel balanceViewModel;
   @Nullable
   private ExecutorStateViewModel executorStateViewModel;
   @Nullable
@@ -110,8 +110,8 @@ public class MainApplication extends Application implements ServerConnectionView
   }
 
   @Inject
-  public void setCoreBalanceViewModel(@NonNull CoreBalanceViewModel coreBalanceViewModel) {
-    this.coreBalanceViewModel = coreBalanceViewModel;
+  public void setBalanceViewModel(@NonNull BalanceViewModel balanceViewModel) {
+    this.balanceViewModel = balanceViewModel;
   }
 
   @Inject
@@ -147,7 +147,7 @@ public class MainApplication extends Application implements ServerConnectionView
     notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
     appComponent = new AppComponentImpl(this.getApplicationContext());
     appComponent.inject(this);
-    if (cancelOrderReasonsViewModel == null || coreBalanceViewModel == null ||
+    if (cancelOrderReasonsViewModel == null || balanceViewModel == null ||
         executorStateViewModel == null || geoLocationViewModel == null
         || missedOrderViewModel == null || updateMessageViewModel == null
         || serverConnectionViewModel == null || currentCostPollingViewModel == null
@@ -166,7 +166,7 @@ public class MainApplication extends Application implements ServerConnectionView
     });
     serverConnectionViewModel.getNavigationLiveData().observeForever(this::navigate);
     cancelOrderReasonsViewModel.getNavigationLiveData().observeForever(this::navigate);
-    coreBalanceViewModel.getNavigationLiveData().observeForever(this::navigate);
+    balanceViewModel.getNavigationLiveData().observeForever(this::navigate);
     executorStateViewModel.getNavigationLiveData().observeForever(this::navigate);
     geoLocationViewModel.getNavigationLiveData().observeForever(this::navigate);
     currentCostPollingViewModel.getNavigationLiveData().observeForever(this::navigate);
@@ -191,9 +191,6 @@ public class MainApplication extends Application implements ServerConnectionView
   @Override
   public void showConnectionReady(boolean connected) {
     if (connected) {
-      if (coreBalanceViewModel == null) {
-        throw new IllegalStateException("Граф зависимостей поломан!");
-      }
       if (executorStateViewModel == null) {
         throw new IllegalStateException("Граф зависимостей поломан!");
       }
@@ -210,7 +207,6 @@ public class MainApplication extends Application implements ServerConnectionView
         throw new IllegalStateException("Граф зависимостей поломан!");
       }
       executorStateViewModel.initializeExecutorState();
-      coreBalanceViewModel.initializeExecutorBalance();
       missedOrderViewModel.initializeMissedOrderMessages();
       updateMessageViewModel.initializeUpdateMessages();
       currentCostPollingViewModel.initializeCurrentCostPolling();

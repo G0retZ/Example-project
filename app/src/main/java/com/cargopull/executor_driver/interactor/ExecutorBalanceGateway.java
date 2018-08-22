@@ -12,9 +12,8 @@ public interface ExecutorBalanceGateway {
   /**
    * Получать баланс исполнителя.
    *
-   * @param channelId - ID "канала", откуда брать баланс.
    * @return {@link Flowable<ExecutorBalanceGateway>} результат запроса.
    */
   @NonNull
-  Flowable<ExecutorBalance> loadExecutorBalance(@NonNull String channelId);
+  Flowable<ExecutorBalance> loadExecutorBalance();
 }
