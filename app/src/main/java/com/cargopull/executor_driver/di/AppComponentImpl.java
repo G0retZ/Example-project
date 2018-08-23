@@ -224,6 +224,8 @@ public class AppComponentImpl implements AppComponent {
   @NonNull
   private final StompClient stompClient;
   @NonNull
+  private final PersonalQueueListener personalQueueListener;
+  @NonNull
   private final AutoRouterImpl autoRouter;
   @NonNull
   private final ServerConnectionViewModel serverConnectionViewModel;
@@ -276,7 +278,7 @@ public class AppComponentImpl implements AppComponent {
     apiService = initApiService(okHttpClient);
     stompClient = initStompClient(okHttpClient);
     loginSharer = new LoginSharer(appSettingsService);
-    PersonalQueueListener pqListener = new PersonalQueueListener(stompClient, loginSharer);
+    personalQueueListener = new PersonalQueueListener(stompClient, loginSharer);
     vehicleChoiceSharer = new VehicleChoiceSharer();
     lastUsedVehicleGateway = new LastUsedVehicleGatewayImpl(appSettingsService);
     errorReporter = new ErrorReporterImpl(loginSharer);
@@ -291,7 +293,7 @@ public class AppComponentImpl implements AppComponent {
     cancelOrderReasonsUseCase = new CancelOrderReasonsUseCaseImpl(
         errorReporter,
         new CancelOrderReasonsGatewayImpl(
-            pqListener,
+            personalQueueListener,
             new CancelOrderReasonApiMapper()
         )
     );
@@ -304,7 +306,7 @@ public class AppComponentImpl implements AppComponent {
     executorBalanceUseCase = new ExecutorBalanceUseCaseImpl(
         errorReporter,
         new ExecutorBalanceGatewayImpl(
-            pqListener,
+            personalQueueListener,
             new ExecutorBalanceApiMapper()
         )
     );
@@ -402,6 +404,7 @@ public class AppComponentImpl implements AppComponent {
         new CurrentCostPollingViewModelImpl(
             new CurrentCostPollingUseCaseImpl(
                 new CurrentCostPollingGatewayImpl(
+                    personalQueueListener,
                     stompClient,
                     new CurrentCostPollingTimersApiMapper()
                 ),

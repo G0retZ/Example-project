@@ -99,7 +99,7 @@ public class ExecutorBalanceGatewayTest {
    * Должен игнорировать сообщение без нужных заголовков.
    */
   @Test
-  public void ignoreWrongHeaderIfConnectingAfterConnected() {
+  public void ignoreWrongHeader() {
     // Дано:
     when(topicListener.getAcknowledgedMessages()).thenReturn(Flowable.just(stompMessage));
 

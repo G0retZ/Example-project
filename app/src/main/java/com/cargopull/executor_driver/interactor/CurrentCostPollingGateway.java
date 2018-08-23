@@ -14,5 +14,5 @@ public interface CurrentCostPollingGateway {
    * @return {@link Completable} результат - окончание либо ошибка.
    */
   @NonNull
-  Completable startPolling(@NonNull String channelId);
+  Completable startPolling();
 }

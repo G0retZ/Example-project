@@ -22,7 +22,7 @@ public class CurrentCostPollingUseCaseImpl implements CurrentCostPollingUseCase 
   @Override
   public Completable listenForPolling() {
     return loginReceiver.get()
-        .switchMap(channelId -> currentCostPollingGateway.startPolling(channelId).toObservable())
+        .switchMap(channelId -> currentCostPollingGateway.startPolling().toObservable())
         .observeOn(Schedulers.single())
         .flatMapCompletable(a -> Completable.complete());
   }

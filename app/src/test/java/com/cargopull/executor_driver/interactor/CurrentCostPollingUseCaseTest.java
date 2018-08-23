@@ -1,6 +1,5 @@
 package com.cargopull.executor_driver.interactor;
 
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -42,7 +41,7 @@ public class CurrentCostPollingUseCaseTest {
 
   @Before
   public void setUp() {
-    when(gateway.startPolling(anyString())).thenReturn(Completable.never());
+    when(gateway.startPolling()).thenReturn(Completable.never());
     when(loginReceiver.get()).thenReturn(Observable.never());
     currentCostPollingUseCase = new CurrentCostPollingUseCaseImpl(gateway, loginReceiver);
   }
@@ -82,14 +81,7 @@ public class CurrentCostPollingUseCaseTest {
     currentCostPollingUseCase.listenForPolling().test();
 
     // Результат:
-    inOrder.verify(gateway).startPolling("1234567890");
-    inOrder.verify(gateway).startPolling("0987654321");
-    inOrder.verify(gateway).startPolling("123454321");
-    inOrder.verify(gateway).startPolling("09876567890");
-    inOrder.verify(gateway).startPolling("1234567890");
-    inOrder.verify(gateway).startPolling("0987654321");
-    inOrder.verify(gateway).startPolling("123454321");
-    inOrder.verify(gateway).startPolling("09876567890");
+    inOrder.verify(gateway, times(8)).startPolling();
     verifyNoMoreInteractions(gateway);
   }
 
@@ -104,8 +96,7 @@ public class CurrentCostPollingUseCaseTest {
     when(loginReceiver.get()).thenReturn(Observable.just(
         "1234567890", "0987654321", "123454321", "09876567890"
     ));
-    when(gateway.startPolling(anyString()))
-        .thenReturn(Completable.never().doOnDispose(action));
+    when(gateway.startPolling()).thenReturn(Completable.never().doOnDispose(action));
 
     // Действие:
     currentCostPollingUseCase.listenForPolling().test();
@@ -183,7 +174,7 @@ public class CurrentCostPollingUseCaseTest {
   @Test
   public void answerWithErrorIfSubscriptionFailed() {
     when(loginReceiver.get()).thenReturn(Observable.just("1234567890"));
-    when(gateway.startPolling("1234567890")).thenReturn(Completable.error(ConnectException::new));
+    when(gateway.startPolling()).thenReturn(Completable.error(ConnectException::new));
 
     // Действие:
     TestObserver<Void> testObserver =
@@ -201,7 +192,7 @@ public class CurrentCostPollingUseCaseTest {
   @Test
   public void answerComplete() {
     when(loginReceiver.get()).thenReturn(Observable.just("1234567890"));
-    when(gateway.startPolling("1234567890")).thenReturn(Completable.complete());
+    when(gateway.startPolling()).thenReturn(Completable.complete());
 
     // Действие:
     TestObserver<Void> testObserver =
