@@ -20,11 +20,11 @@ public class CurrentCostPollingGatewayImpl implements CurrentCostPollingGateway 
   @NonNull
   private final StompClient stompClient;
   @NonNull
-  private final Mapper<String, Pair<Long, Long>> mapper;
+  private final Mapper<StompMessage, Pair<Long, Long>> mapper;
 
   @Inject
   public CurrentCostPollingGatewayImpl(@NonNull StompClient stompClient,
-      @NonNull Mapper<String, Pair<Long, Long>> mapper) {
+      @NonNull Mapper<StompMessage, Pair<Long, Long>> mapper) {
     this.stompClient = stompClient;
     this.mapper = mapper;
   }
@@ -51,7 +51,7 @@ public class CurrentCostPollingGatewayImpl implements CurrentCostPollingGateway 
               ).subscribe(() -> {
               }, Throwable::printStackTrace)
           )
-          .map(stompMessage -> mapper.map(stompMessage.getPayload()))
+          .map(mapper::map)
           .switchMap(pair -> Flowable.interval(pair.first, pair.second, TimeUnit.MILLISECONDS))
           .flatMapCompletable(
               b -> stompClient.send(BuildConfig.POLLING_DESTINATION, "\"\"")

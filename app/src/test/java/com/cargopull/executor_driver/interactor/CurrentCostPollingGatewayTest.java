@@ -51,7 +51,7 @@ public class CurrentCostPollingGatewayTest {
   @Mock
   private StompClient stompClient;
   @Mock
-  private Mapper<String, Pair<Long, Long>> mapper;
+  private Mapper<StompMessage, Pair<Long, Long>> mapper;
   @Captor
   private ArgumentCaptor<StompMessage> stompMessageCaptor;
 
@@ -338,7 +338,7 @@ public class CurrentCostPollingGatewayTest {
     testScheduler.advanceTimeBy(1, TimeUnit.NANOSECONDS);
 
     // Результат:
-    verify(mapper, only()).map("\n");
+    verify(mapper, only()).map(any());
   }
 
   /* Проверяем работу с клиентом STOMP на отправку пинга */
@@ -394,7 +394,7 @@ public class CurrentCostPollingGatewayTest {
                 "\n"
             )
         ));
-    when(mapper.map(anyString())).thenReturn(new Pair<>(0L, 30_000L));
+    when(mapper.map(any())).thenReturn(new Pair<>(0L, 30_000L));
 
     // Действие:
     gateway.startPolling("1234567890").test();
@@ -434,7 +434,7 @@ public class CurrentCostPollingGatewayTest {
                 "\n"
             )
         ));
-    when(mapper.map(anyString())).thenReturn(new Pair<>(10_000L, 30_000L));
+    when(mapper.map(any())).thenReturn(new Pair<>(10_000L, 30_000L));
 
     // Действие:
     gateway.startPolling("1234567890").test();
@@ -476,7 +476,7 @@ public class CurrentCostPollingGatewayTest {
                 "\n"
             )
         ));
-    when(mapper.map(anyString())).thenReturn(new Pair<>(10_000L, 30_000L));
+    when(mapper.map(any())).thenReturn(new Pair<>(10_000L, 30_000L));
 
     // Действие:
     gateway.startPolling("1234567890").test();
