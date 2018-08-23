@@ -17,18 +17,17 @@ public class CurrentCostPollingViewModelImpl extends ViewModel implements
     CurrentCostPollingViewModel {
 
   @NonNull
-  private final CurrentCostPollingUseCase currentCostPollingUseCase;
+  private final CurrentCostPollingUseCase useCase;
   @NonNull
   private final MutableLiveData<String> navigateLiveData;
   @NonNull
   private Disposable disposable = EmptyDisposable.INSTANCE;
-  private boolean completed;
 
   @Inject
-  public CurrentCostPollingViewModelImpl(
-      @NonNull CurrentCostPollingUseCase currentCostPollingUseCase) {
-    this.currentCostPollingUseCase = currentCostPollingUseCase;
+  public CurrentCostPollingViewModelImpl(@NonNull CurrentCostPollingUseCase useCase) {
+    this.useCase = useCase;
     navigateLiveData = new MutableLiveData<>();
+    startCurrentCostPolling();
   }
 
   @NonNull
@@ -43,18 +42,13 @@ public class CurrentCostPollingViewModelImpl extends ViewModel implements
     return navigateLiveData;
   }
 
-  @Override
-  public void initializeCurrentCostPolling() {
+  private void startCurrentCostPolling() {
     disposable.dispose();
-    disposable = currentCostPollingUseCase.listenForPolling()
+    disposable = useCase.listenForPolling()
         .observeOn(AndroidSchedulers.mainThread())
-        .doAfterTerminate(() -> {
-          if (completed) {
-            completed = false;
-            initializeCurrentCostPolling();
-          }
-        }).subscribe(
-            () -> completed = true,
+        .subscribe(
+            () -> {
+            },
             throwable -> {
               if (throwable instanceof DataMappingException) {
                 navigateLiveData.postValue(CommonNavigate.SERVER_DATA_ERROR);

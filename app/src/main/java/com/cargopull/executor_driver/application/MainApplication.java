@@ -200,16 +200,12 @@ public class MainApplication extends Application implements ServerConnectionView
       if (updateMessageViewModel == null) {
         throw new IllegalStateException("Граф зависимостей поломан!");
       }
-      if (currentCostPollingViewModel == null) {
-        throw new IllegalStateException("Граф зависимостей поломан!");
-      }
       if (serverTimeViewModel == null) {
         throw new IllegalStateException("Граф зависимостей поломан!");
       }
       executorStateViewModel.initializeExecutorState();
       missedOrderViewModel.initializeMissedOrderMessages();
       updateMessageViewModel.initializeUpdateMessages();
-      currentCostPollingViewModel.initializeCurrentCostPolling();
       serverTimeViewModel.initializeServerTime();
       initGeoLocation();
     } else {
