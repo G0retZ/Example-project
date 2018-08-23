@@ -59,7 +59,7 @@ public class CurrentCostPollingUseCaseTest {
    * Должен отправить ошибку.
    */
   @Test
-  public void reportGetLoginFailed() {
+  public void reportError() {
     // Дано:
     when(gateway.startPolling()).thenReturn(Completable.error(DataMappingException::new));
 

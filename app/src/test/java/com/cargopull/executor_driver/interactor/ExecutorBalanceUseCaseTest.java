@@ -66,7 +66,7 @@ public class ExecutorBalanceUseCaseTest {
    * Должен отправить ошибку.
    */
   @Test
-  public void reportGetLoginFailed() {
+  public void reportError() {
     // Дано:
     when(gateway.loadExecutorBalance()).thenReturn(Flowable.error(DataMappingException::new));
 
