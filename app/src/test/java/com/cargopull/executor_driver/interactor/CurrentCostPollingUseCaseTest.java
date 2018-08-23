@@ -1,25 +1,20 @@
 package com.cargopull.executor_driver.interactor;
 
-import static org.mockito.Mockito.times;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 import com.cargopull.executor_driver.UseCaseThreadTestRule;
-import com.cargopull.executor_driver.backend.web.NoNetworkException;
+import com.cargopull.executor_driver.gateway.DataMappingException;
+import com.cargopull.executor_driver.utils.ErrorReporter;
 import io.reactivex.Completable;
-import io.reactivex.Observable;
-import io.reactivex.functions.Action;
 import io.reactivex.observers.TestObserver;
-import java.net.ConnectException;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InOrder;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -31,36 +26,14 @@ public class CurrentCostPollingUseCaseTest {
   private CurrentCostPollingUseCase currentCostPollingUseCase;
 
   @Mock
+  private ErrorReporter errorReporter;
+  @Mock
   private CurrentCostPollingGateway gateway;
-
-  @Mock
-  private DataReceiver<String> loginReceiver;
-
-  @Mock
-  private Action action;
 
   @Before
   public void setUp() {
     when(gateway.startPolling()).thenReturn(Completable.never());
-    when(loginReceiver.get()).thenReturn(Observable.never());
-    currentCostPollingUseCase = new CurrentCostPollingUseCaseImpl(gateway, loginReceiver);
-  }
-
-  /* Проверяем работу с публикатором логина */
-
-  /**
-   * Должен запросить у публикатора логин исполнителя.
-   */
-  @Test
-  public void askLoginPublisherForLogin() {
-    // Действие:
-    currentCostPollingUseCase.listenForPolling().test();
-    currentCostPollingUseCase.listenForPolling().test();
-    currentCostPollingUseCase.listenForPolling().test();
-
-    // Результат:
-    verify(loginReceiver, times(3)).get();
-    verifyNoMoreInteractions(loginReceiver);
+    currentCostPollingUseCase = new CurrentCostPollingUseCaseImpl(errorReporter, gateway);
   }
 
   /* Проверяем работу с гейтвеем */
@@ -70,66 +43,31 @@ public class CurrentCostPollingUseCaseTest {
    */
   @Test
   public void askGatewayForPollingTimers() {
-    // Дано:
-    InOrder inOrder = Mockito.inOrder(gateway);
-    when(loginReceiver.get()).thenReturn(Observable.just(
-        "1234567890", "0987654321", "123454321", "09876567890"
-    ));
-
     // Действие:
+    currentCostPollingUseCase.listenForPolling().test();
+    currentCostPollingUseCase.listenForPolling().test();
     currentCostPollingUseCase.listenForPolling().test();
     currentCostPollingUseCase.listenForPolling().test();
 
     // Результат:
-    inOrder.verify(gateway, times(8)).startPolling();
-    verifyNoMoreInteractions(gateway);
+    verify(gateway, only()).startPolling();
   }
 
+  /* Проверяем отправку ошибок в репортер */
+
   /**
-   * Должен отписаться от предыдущих запросов таймеров заказа.
-   *
-   * @throws Exception error
+   * Должен отправить ошибку.
    */
   @Test
-  public void ubSubscribeFromPreviousPollingTimersRequests() throws Exception {
+  public void reportGetLoginFailed() {
     // Дано:
-    when(loginReceiver.get()).thenReturn(Observable.just(
-        "1234567890", "0987654321", "123454321", "09876567890"
-    ));
-    when(gateway.startPolling()).thenReturn(Completable.never().doOnDispose(action));
+    when(gateway.startPolling()).thenReturn(Completable.error(DataMappingException::new));
 
     // Действие:
     currentCostPollingUseCase.listenForPolling().test();
 
     // Результат:
-    verify(action, times(3)).run();
-  }
-
-  /**
-   * Не должен запрпрашивать у гейтвея таймеры заказа.
-   */
-  @Test
-  public void doNotAskGatewayForPollingTimersIfSocketError() {
-    // Действие:
-    currentCostPollingUseCase.listenForPolling().test();
-
-    // Результат:
-    verifyZeroInteractions(gateway);
-  }
-
-  /**
-   * Не должен запрпрашивать у гейтвея таймеры заказа.
-   */
-  @Test
-  public void doNotAskGatewayForPollingTimers() {
-    // Дано:
-    when(loginReceiver.get()).thenReturn(Observable.error(NoNetworkException::new));
-
-    // Действие:
-    currentCostPollingUseCase.listenForPolling().test();
-
-    // Результат:
-    verifyZeroInteractions(gateway);
+    verify(errorReporter, only()).reportError(any(DataMappingException.class));
   }
 
   /* Проверяем ответы */
@@ -139,10 +77,6 @@ public class CurrentCostPollingUseCaseTest {
    */
   @Test
   public void waitForCompletionOrError() {
-    // Дано:
-    when(loginReceiver.get()).thenReturn(Observable.just(
-        "1234567890", "0987654321", "123454321", "09876567890"
-    ));
     // Действие:
     TestObserver<Void> testObserver = currentCostPollingUseCase.listenForPolling().test();
 
@@ -153,37 +87,20 @@ public class CurrentCostPollingUseCaseTest {
   }
 
   /**
-   * Должен вернуть ошибку, если была ошибка получения логина.
+   * Должен вернуть ошибку.
    */
   @Test
-  public void answerWithErrorIfGetLoginFailed() {
-    when(loginReceiver.get()).thenReturn(Observable.error(ConnectException::new));
+  public void answerWithErrorIfSubscriptionFailed() {
+    // Дано:
+    when(gateway.startPolling()).thenReturn(Completable.error(DataMappingException::new));
 
     // Действие:
     TestObserver<Void> testObserver = currentCostPollingUseCase.listenForPolling().test();
 
     // Результат:
-    testObserver.assertError(ConnectException.class);
-    testObserver.assertNoValues();
+    testObserver.assertError(DataMappingException.class);
     testObserver.assertNotComplete();
-  }
-
-  /**
-   * Должен вернуть ошибку, если подписка обломалась.
-   */
-  @Test
-  public void answerWithErrorIfSubscriptionFailed() {
-    when(loginReceiver.get()).thenReturn(Observable.just("1234567890"));
-    when(gateway.startPolling()).thenReturn(Completable.error(ConnectException::new));
-
-    // Действие:
-    TestObserver<Void> testObserver =
-        currentCostPollingUseCase.listenForPolling().test();
-
-    // Результат:
-    testObserver.assertError(ConnectException.class);
     testObserver.assertNoValues();
-    testObserver.assertNotComplete();
   }
 
   /**
@@ -191,12 +108,11 @@ public class CurrentCostPollingUseCaseTest {
    */
   @Test
   public void answerComplete() {
-    when(loginReceiver.get()).thenReturn(Observable.just("1234567890"));
+    // Дано:
     when(gateway.startPolling()).thenReturn(Completable.complete());
 
     // Действие:
-    TestObserver<Void> testObserver =
-        currentCostPollingUseCase.listenForPolling().test();
+    TestObserver<Void> testObserver = currentCostPollingUseCase.listenForPolling().test();
 
     // Результат:
     testObserver.assertComplete();

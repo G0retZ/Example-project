@@ -403,12 +403,12 @@ public class AppComponentImpl implements AppComponent {
     mainApplication.setCurrentCostPollingViewModel(
         new CurrentCostPollingViewModelImpl(
             new CurrentCostPollingUseCaseImpl(
+                errorReporter,
                 new CurrentCostPollingGatewayImpl(
                     personalQueueListener,
                     stompClient,
                     new CurrentCostPollingTimersApiMapper()
-                ),
-                loginSharer
+                )
             )
         )
     );
