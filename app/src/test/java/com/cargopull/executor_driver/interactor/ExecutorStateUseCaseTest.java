@@ -1,11 +1,9 @@
 package com.cargopull.executor_driver.interactor;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
@@ -23,9 +21,7 @@ import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InOrder;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -47,7 +43,7 @@ public class ExecutorStateUseCaseTest {
 
   @Before
   public void setUp() {
-    when(gateway.getState(anyString())).thenReturn(Flowable.never());
+    when(gateway.getState()).thenReturn(Flowable.never());
     when(loginReceiver.get()).thenReturn(Observable.never());
     useCase = new ExecutorStateUseCaseImpl(errorReporter, gateway, loginReceiver);
   }
@@ -88,7 +84,6 @@ public class ExecutorStateUseCaseTest {
   @Test
   public void askGatewayForStatus() {
     // Дано:
-    InOrder inOrder = Mockito.inOrder(gateway);
     when(loginReceiver.get()).thenReturn(Observable.just(
         "1234567890", "0987654321", "123454321", "09876567890"
     ));
@@ -97,11 +92,7 @@ public class ExecutorStateUseCaseTest {
     useCase.getExecutorStates(true).test();
 
     // Результат:
-    inOrder.verify(gateway).getState("1234567890");
-    inOrder.verify(gateway).getState("0987654321");
-    inOrder.verify(gateway).getState("123454321");
-    inOrder.verify(gateway).getState("09876567890");
-    verifyNoMoreInteractions(gateway);
+    verify(gateway, times(4)).getState();
   }
 
   /**
@@ -115,8 +106,7 @@ public class ExecutorStateUseCaseTest {
     when(loginReceiver.get()).thenReturn(Observable.just(
         "1234567890", "0987654321", "123454321", "09876567890"
     ));
-    when(gateway.getState(anyString()))
-        .thenReturn(Flowable.<ExecutorState>never().doOnCancel(action));
+    when(gateway.getState()).thenReturn(Flowable.<ExecutorState>never().doOnCancel(action));
 
     // Действие:
     useCase.getExecutorStates(true).test();
@@ -190,7 +180,7 @@ public class ExecutorStateUseCaseTest {
   public void reportSubscriptionFailed() {
     // Дано:
     when(loginReceiver.get()).thenReturn(Observable.just("1234567890"));
-    when(gateway.getState("1234567890")).thenReturn(Flowable.error(DataMappingException::new));
+    when(gateway.getState()).thenReturn(Flowable.error(DataMappingException::new));
 
     // Действие:
     useCase.getExecutorStates(true).test();
@@ -208,7 +198,7 @@ public class ExecutorStateUseCaseTest {
   public void answerWithStatuses() {
     // Дано:
     when(loginReceiver.get()).thenReturn(Observable.just("1234567890"));
-    when(gateway.getState("1234567890")).thenReturn(
+    when(gateway.getState()).thenReturn(
         Flowable.just(ExecutorState.SHIFT_CLOSED, ExecutorState.SHIFT_OPENED, ExecutorState.ONLINE,
             ExecutorState.DRIVER_ORDER_CONFIRMATION, ExecutorState.CLIENT_ORDER_CONFIRMATION,
             ExecutorState.MOVING_TO_CLIENT, ExecutorState.WAITING_FOR_CLIENT,
@@ -250,7 +240,7 @@ public class ExecutorStateUseCaseTest {
   @Test
   public void answerWithErrorIfSubscriptionFailed() {
     when(loginReceiver.get()).thenReturn(Observable.just("1234567890"));
-    when(gateway.getState("1234567890")).thenReturn(Flowable.error(DataMappingException::new));
+    when(gateway.getState()).thenReturn(Flowable.error(DataMappingException::new));
 
     // Действие:
     TestSubscriber<ExecutorState> testSubscriber =
@@ -267,7 +257,7 @@ public class ExecutorStateUseCaseTest {
   @Test
   public void answerComplete() {
     when(loginReceiver.get()).thenReturn(Observable.just("1234567890"));
-    when(gateway.getState("1234567890")).thenReturn(Flowable.empty());
+    when(gateway.getState()).thenReturn(Flowable.empty());
 
     // Действие:
     TestSubscriber<ExecutorState> testSubscriber =

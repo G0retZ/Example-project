@@ -12,9 +12,8 @@ public interface ExecutorStateGateway {
   /**
    * Запрашивает статус исполнителя у АПИ.
    *
-   * @param channelId - ID "канала", откуда брать статусы.
    * @return {@link Flowable<ExecutorState>} актуальный статус исполнителя.
    */
   @NonNull
-  Flowable<ExecutorState> getState(@NonNull String channelId);
+  Flowable<ExecutorState> getState();
 }

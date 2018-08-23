@@ -312,7 +312,10 @@ public class AppComponentImpl implements AppComponent {
     );
     executorStateUseCase = new ExecutorStateUseCaseImpl(
         errorReporter,
-        new ExecutorStateGatewayImpl(stompClient, new ExecutorStateApiMapper()),
+        new ExecutorStateGatewayImpl(
+            personalQueueListener,
+            new ExecutorStateApiMapper()
+        ),
         loginSharer
     );
     geoLocationUseCase = new GeoLocationUseCaseImpl(

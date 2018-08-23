@@ -34,7 +34,7 @@ public class ExecutorStateUseCaseImpl implements ExecutorStateUseCase {
     if (reset) {
       executorStateFlowable = loginReceiver.get()
           .toFlowable(BackpressureStrategy.BUFFER)
-          .switchMap(gateway::getState)
+          .switchMap(login -> gateway.getState())
           .observeOn(Schedulers.single())
           .doOnError(errorReporter::reportError)
           .replay(1)
