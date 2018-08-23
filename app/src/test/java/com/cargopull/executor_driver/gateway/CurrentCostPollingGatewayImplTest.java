@@ -32,7 +32,7 @@ import ua.naiksoftware.stomp.client.StompClient;
 import ua.naiksoftware.stomp.client.StompMessage;
 
 @RunWith(MockitoJUnitRunner.class)
-public class CurrentCostPollingGatewayTest {
+public class CurrentCostPollingGatewayImplTest {
 
   @ClassRule
   public static final GatewayThreadTestRule classRule = new GatewayThreadTestRule();

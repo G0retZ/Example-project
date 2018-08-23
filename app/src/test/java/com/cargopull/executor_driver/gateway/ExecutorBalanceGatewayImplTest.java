@@ -22,7 +22,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import ua.naiksoftware.stomp.client.StompMessage;
 
 @RunWith(MockitoJUnitRunner.class)
-public class ExecutorBalanceGatewayTest {
+public class ExecutorBalanceGatewayImplTest {
 
   @ClassRule
   public static final GatewayThreadTestRule classRule = new GatewayThreadTestRule();
