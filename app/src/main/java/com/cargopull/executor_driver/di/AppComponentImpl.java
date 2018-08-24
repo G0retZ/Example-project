@@ -394,8 +394,7 @@ public class AppComponentImpl implements AppComponent {
                 errorReporter,
                 new MissedOrderGatewayImpl(
                     personalQueueListener
-                ),
-                loginSharer
+                )
             )
         )
     );

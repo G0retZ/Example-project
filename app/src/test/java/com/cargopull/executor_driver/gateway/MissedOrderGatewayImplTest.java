@@ -39,10 +39,10 @@ public class MissedOrderGatewayImplTest {
   /* Проверяем работу с слушателем сокета */
 
   /**
-   * Должен запросить у слушателя топика баланс исполнителя.
+   * Должен запросить у слушателя топика сообщения о заказах упущенных исполнителем.
    */
   @Test
-  public void askWebTopicListenerForExecutorBalance() {
+  public void askWebTopicListenerForMissedOrderMessages() {
     // Действие:
     gateway.loadMissedOrdersMessages().test();
 
