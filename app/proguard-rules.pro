@@ -33,6 +33,9 @@
 # Не обфусцируем исключения
 -keep public class * extends java.lang.Exception
 
+# Support library
+-keep class android.support.v7.widget.** { *; }
+
 # Picasso
 -dontwarn com.squareup.picasso.OkHttpDownloader
 
