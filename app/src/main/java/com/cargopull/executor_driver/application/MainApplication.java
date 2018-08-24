@@ -191,9 +191,6 @@ public class MainApplication extends Application implements ServerConnectionView
   @Override
   public void showConnectionReady(boolean connected) {
     if (connected) {
-      if (executorStateViewModel == null) {
-        throw new IllegalStateException("Граф зависимостей поломан!");
-      }
       if (missedOrderViewModel == null) {
         throw new IllegalStateException("Граф зависимостей поломан!");
       }
@@ -203,7 +200,6 @@ public class MainApplication extends Application implements ServerConnectionView
       if (serverTimeViewModel == null) {
         throw new IllegalStateException("Граф зависимостей поломан!");
       }
-      executorStateViewModel.initializeExecutorState();
       missedOrderViewModel.initializeMissedOrderMessages();
       updateMessageViewModel.initializeUpdateMessages();
       serverTimeViewModel.initializeServerTime();
