@@ -2,7 +2,6 @@ package com.cargopull.executor_driver.interactor;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -46,7 +45,7 @@ public class OrderConfirmationUseCaseTest {
   @Before
   public void setUp() {
     when(loginReceiver.get()).thenReturn(Observable.never());
-    when(orderGateway.getOrders(anyString())).thenReturn(Flowable.never());
+    when(orderGateway.getOrders()).thenReturn(Flowable.never());
     when(orderConfirmationGateway.sendDecision(any(), anyBoolean())).thenReturn(Single.never());
     useCase = new OrderConfirmationUseCaseImpl(orderGateway,
         orderConfirmationGateway, loginReceiver);
@@ -83,7 +82,7 @@ public class OrderConfirmationUseCaseTest {
     useCase.sendDecision(false).test();
 
     // Результат:
-    verify(orderGateway, times(2)).getOrders("1234567890");
+    verify(orderGateway, times(2)).getOrders();
     verifyNoMoreInteractions(orderGateway);
   }
 
@@ -94,7 +93,7 @@ public class OrderConfirmationUseCaseTest {
   public void askGatewayToSendDecisionsForOrders() {
     // Дано:
     when(loginReceiver.get()).thenReturn(Observable.just("1234567890"));
-    when(orderGateway.getOrders("1234567890")).thenReturn(Flowable.just(order));
+    when(orderGateway.getOrders()).thenReturn(Flowable.just(order));
 
     // Действие:
     useCase.sendDecision(true).test();
@@ -113,7 +112,7 @@ public class OrderConfirmationUseCaseTest {
   public void askGatewayToSendDecisionsForLastOrderOnly() {
     // Дано:
     when(loginReceiver.get()).thenReturn(Observable.just("1234567890"));
-    when(orderGateway.getOrders("1234567890")).thenReturn(Flowable.just(order, order2));
+    when(orderGateway.getOrders()).thenReturn(Flowable.just(order, order2));
 
     // Действие:
     useCase.sendDecision(true).test();
@@ -133,7 +132,7 @@ public class OrderConfirmationUseCaseTest {
   public void answerNoOrdersErrorForAccept() {
     // Дано:
     when(loginReceiver.get()).thenReturn(Observable.just("1234567890"));
-    when(orderGateway.getOrders("1234567890"))
+    when(orderGateway.getOrders())
         .thenReturn(Flowable.error(new DataMappingException()));
 
     // Действие:
@@ -152,7 +151,7 @@ public class OrderConfirmationUseCaseTest {
   public void answerNoNetworkErrorForAccept() {
     // Дано:
     when(loginReceiver.get()).thenReturn(Observable.just("1234567890"));
-    when(orderGateway.getOrders("1234567890")).thenReturn(Flowable.just(order));
+    when(orderGateway.getOrders()).thenReturn(Flowable.just(order));
     when(orderConfirmationGateway.sendDecision(any(), anyBoolean()))
         .thenReturn(Single.error(new NoNetworkException()));
 
@@ -172,7 +171,7 @@ public class OrderConfirmationUseCaseTest {
   public void answerNoNetworkErrorForDecline() {
     // Дано:
     when(loginReceiver.get()).thenReturn(Observable.just("1234567890"));
-    when(orderGateway.getOrders("1234567890")).thenReturn(Flowable.just(order));
+    when(orderGateway.getOrders()).thenReturn(Flowable.just(order));
     when(orderConfirmationGateway.sendDecision(any(), anyBoolean()))
         .thenReturn(Single.error(new NoNetworkException()));
 
@@ -192,7 +191,7 @@ public class OrderConfirmationUseCaseTest {
   public void answerSendAcceptSuccessful() {
     // Дано:
     when(loginReceiver.get()).thenReturn(Observable.just("1234567890"));
-    when(orderGateway.getOrders("1234567890")).thenReturn(Flowable.just(order));
+    when(orderGateway.getOrders()).thenReturn(Flowable.just(order));
     when(orderConfirmationGateway.sendDecision(any(), anyBoolean()))
         .thenReturn(Single.just("success"));
 
@@ -212,7 +211,7 @@ public class OrderConfirmationUseCaseTest {
   public void answerSendDeclineSuccessful() {
     // Дано:
     when(loginReceiver.get()).thenReturn(Observable.just("1234567890"));
-    when(orderGateway.getOrders("1234567890")).thenReturn(Flowable.just(order));
+    when(orderGateway.getOrders()).thenReturn(Flowable.just(order));
     when(orderConfirmationGateway.sendDecision(any(), anyBoolean()))
         .thenReturn(Single.just("success"));
 

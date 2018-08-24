@@ -28,7 +28,7 @@ public class OrderConfirmationUseCaseImpl implements OrderConfirmationUseCase {
   public Single<String> sendDecision(boolean confirmed) {
     return loginReceiver.get()
         .firstOrError()
-        .flatMapPublisher(orderGateway::getOrders)
+        .flatMapPublisher(login -> orderGateway.getOrders())
         .firstOrError()
         .observeOn(Schedulers.single())
         .flatMap(order -> orderConfirmationGateway.sendDecision(order, confirmed))

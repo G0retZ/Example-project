@@ -37,7 +37,7 @@ public class OrderFulfillmentTimeUseCaseImpl implements OrderFulfillmentTimeUseC
   public Flowable<Long> getOrderElapsedTime() {
     return loginReceiver.get()
         .toFlowable(BackpressureStrategy.BUFFER)
-        .switchMap(orderGateway::getOrders)
+        .switchMap(login -> orderGateway.getOrders())
         .observeOn(Schedulers.single())
         .switchMap(order -> {
               long offset =

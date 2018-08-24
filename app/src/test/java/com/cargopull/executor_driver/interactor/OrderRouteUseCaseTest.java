@@ -1,8 +1,8 @@
 package com.cargopull.executor_driver.interactor;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.only;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
@@ -61,7 +61,7 @@ public class OrderRouteUseCaseTest {
   @Before
   public void setUp() {
     when(loginReceiver.get()).thenReturn(Observable.never());
-    when(orderGateway.getOrders(anyString())).thenReturn(Flowable.never());
+    when(orderGateway.getOrders()).thenReturn(Flowable.never());
     when(orderRouteGateway.closeRoutePoint(any())).thenReturn(Completable.never());
     when(orderRouteGateway.completeTheOrder()).thenReturn(Completable.never());
     when(orderRouteGateway.nextRoutePoint(any())).thenReturn(Completable.never());
@@ -97,10 +97,7 @@ public class OrderRouteUseCaseTest {
     useCase.getOrderRoutePoints().test();
 
     // Результат:
-    verify(orderGateway).getOrders("1234567890");
-    verify(orderGateway).getOrders("0987654321");
-    verify(orderGateway).getOrders("123454321");
-    verify(orderGateway).getOrders("09876567890");
+    verify(orderGateway, times(4)).getOrders();
     verifyNoMoreInteractions(orderGateway);
   }
 
@@ -151,7 +148,7 @@ public class OrderRouteUseCaseTest {
   public void reportDataMappingError() {
     // Дано:
     when(loginReceiver.get()).thenReturn(Observable.just("1234567890"));
-    when(orderGateway.getOrders("1234567890"))
+    when(orderGateway.getOrders())
         .thenReturn(Flowable.error(new DataMappingException()));
 
     // Действие:
@@ -170,7 +167,7 @@ public class OrderRouteUseCaseTest {
   public void answerDataMappingError() {
     // Дано:
     when(loginReceiver.get()).thenReturn(Observable.just("1234567890"));
-    when(orderGateway.getOrders("1234567890"))
+    when(orderGateway.getOrders())
         .thenReturn(Flowable.error(new DataMappingException()));
 
     // Действие:
@@ -189,7 +186,7 @@ public class OrderRouteUseCaseTest {
   public void answerWithOrders() {
     // Дано:
     when(loginReceiver.get()).thenReturn(Observable.just("1234567890"));
-    when(orderGateway.getOrders("1234567890")).thenReturn(Flowable.just(order, order2));
+    when(orderGateway.getOrders()).thenReturn(Flowable.just(order, order2));
     when(order.getRoutePath()).thenReturn(Arrays.asList(routePoint1, routePoint2, routePoint3));
     when(order2.getRoutePath()).thenReturn(Arrays.asList(routePoint4, routePoint, routePoint3));
 

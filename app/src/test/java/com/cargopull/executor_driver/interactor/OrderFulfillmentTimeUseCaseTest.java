@@ -1,8 +1,8 @@
 package com.cargopull.executor_driver.interactor;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.only;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
@@ -54,7 +54,7 @@ public class OrderFulfillmentTimeUseCaseTest {
     testScheduler = new TestScheduler();
     RxJavaPlugins.setComputationSchedulerHandler(scheduler -> testScheduler);
     when(loginReceiver.get()).thenReturn(Observable.never());
-    when(gateway.getOrders(anyString())).thenReturn(Flowable.never());
+    when(gateway.getOrders()).thenReturn(Flowable.never());
     useCase = new OrderFulfillmentTimeUseCaseImpl(errorReporter, gateway, loginReceiver, timeUtils);
   }
 
@@ -88,10 +88,7 @@ public class OrderFulfillmentTimeUseCaseTest {
     useCase.getOrderElapsedTime().test();
 
     // Результат:
-    verify(gateway).getOrders("1234567890");
-    verify(gateway).getOrders("0987654321");
-    verify(gateway).getOrders("123454321");
-    verify(gateway).getOrders("09876567890");
+    verify(gateway, times(4)).getOrders();
     verifyNoMoreInteractions(gateway);
   }
 
@@ -104,7 +101,7 @@ public class OrderFulfillmentTimeUseCaseTest {
   public void reportDataMappingError() {
     // Дано:
     when(loginReceiver.get()).thenReturn(Observable.just("1234567890"));
-    when(gateway.getOrders("1234567890")).thenReturn(Flowable.error(new DataMappingException()));
+    when(gateway.getOrders()).thenReturn(Flowable.error(new DataMappingException()));
 
     // Действие:
     useCase.getOrderElapsedTime().test();
@@ -122,7 +119,7 @@ public class OrderFulfillmentTimeUseCaseTest {
   public void answerDataMappingError() {
     // Дано:
     when(loginReceiver.get()).thenReturn(Observable.just("1234567890"));
-    when(gateway.getOrders("1234567890")).thenReturn(Flowable.error(new DataMappingException()));
+    when(gateway.getOrders()).thenReturn(Flowable.error(new DataMappingException()));
 
     // Действие:
     TestSubscriber<Long> test = useCase.getOrderElapsedTime().test();
@@ -141,7 +138,7 @@ public class OrderFulfillmentTimeUseCaseTest {
     // Дано:
     when(loginReceiver.get()).thenReturn(Observable.just("1234567890"));
     PublishSubject<Order> publishSubject = PublishSubject.create();
-    when(gateway.getOrders("1234567890"))
+    when(gateway.getOrders())
         .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
     when(order.getStartTime()).thenReturn(12345000L);
     when(order2.getStartTime()).thenReturn(6789000L);

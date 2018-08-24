@@ -38,7 +38,7 @@ public class OrderRouteUseCaseImpl implements OrderRouteUseCase {
   public Flowable<List<RoutePoint>> getOrderRoutePoints() {
     return loginReceiver.get()
         .toFlowable(BackpressureStrategy.BUFFER)
-        .switchMap(orderGateway::getOrders)
+        .switchMap(login -> orderGateway.getOrders())
         .observeOn(Schedulers.single())
         .map(Order::getRoutePath)
         .doOnError(errorReporter::reportError);

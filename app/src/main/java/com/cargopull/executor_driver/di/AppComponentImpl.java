@@ -738,7 +738,7 @@ public class AppComponentImpl implements AppComponent {
                 new OrderConfirmationViewModelImpl(
                     new OrderConfirmationUseCaseImpl(
                         new OrderGatewayImpl(
-                            executorStateUseCase,
+                            personalQueueListener,
                             ExecutorState.DRIVER_ORDER_CONFIRMATION,
                             new OrderApiMapper(
                                 new VehicleOptionApiMapper(),
@@ -760,7 +760,7 @@ public class AppComponentImpl implements AppComponent {
                     new OrderUseCaseImpl(
                         errorReporter,
                         new OrderGatewayImpl(
-                            executorStateUseCase,
+                            personalQueueListener,
                             ExecutorState.DRIVER_ORDER_CONFIRMATION,
                             new OrderApiMapper(
                                 new VehicleOptionApiMapper(),
@@ -786,7 +786,7 @@ public class AppComponentImpl implements AppComponent {
                     new OrderUseCaseImpl(
                         errorReporter,
                         new OrderGatewayImpl(
-                            executorStateUseCase,
+                            personalQueueListener,
                             ExecutorState.CLIENT_ORDER_CONFIRMATION,
                             new OrderApiMapper(
                                 new VehicleOptionApiMapper(),
@@ -838,7 +838,7 @@ public class AppComponentImpl implements AppComponent {
                     new OrderUseCaseImpl(
                         errorReporter,
                         new OrderGatewayImpl(
-                            executorStateUseCase,
+                            personalQueueListener,
                             ExecutorState.MOVING_TO_CLIENT,
                             new MovingToClientApiMapper(
                                 new VehicleOptionApiMapper(),
@@ -867,7 +867,7 @@ public class AppComponentImpl implements AppComponent {
                     new OrderUseCaseImpl(
                         errorReporter,
                         new OrderGatewayImpl(
-                            executorStateUseCase,
+                            personalQueueListener,
                             ExecutorState.MOVING_TO_CLIENT,
                             new WaitingForClientApiMapper(
                                 new VehicleOptionApiMapper(),
@@ -893,7 +893,7 @@ public class AppComponentImpl implements AppComponent {
                     new OrderRouteUseCaseImpl(
                         errorReporter,
                         new OrderGatewayImpl(
-                            executorStateUseCase,
+                            personalQueueListener,
                             ExecutorState.MOVING_TO_CLIENT,
                             new OrderFulfillmentApiMapper(
                                 new VehicleOptionApiMapper(),
@@ -931,7 +931,7 @@ public class AppComponentImpl implements AppComponent {
                     new OrderUseCaseImpl(
                         errorReporter,
                         new OrderGatewayImpl(
-                            executorStateUseCase,
+                            personalQueueListener,
                             ExecutorState.WAITING_FOR_CLIENT,
                             new WaitingForClientApiMapper(
                                 new VehicleOptionApiMapper(),
@@ -960,7 +960,7 @@ public class AppComponentImpl implements AppComponent {
                     new OrderRouteUseCaseImpl(
                         errorReporter,
                         new OrderGatewayImpl(
-                            executorStateUseCase,
+                            personalQueueListener,
                             ExecutorState.WAITING_FOR_CLIENT,
                             new OrderFulfillmentApiMapper(
                                 new VehicleOptionApiMapper(),
@@ -986,7 +986,7 @@ public class AppComponentImpl implements AppComponent {
                     new OrderFulfillmentTimeUseCaseImpl(
                         errorReporter,
                         new OrderGatewayImpl(
-                            executorStateUseCase,
+                            personalQueueListener,
                             ExecutorState.ORDER_FULFILLMENT,
                             new OrderFulfillmentApiMapper(
                                 new VehicleOptionApiMapper(),
@@ -1008,7 +1008,7 @@ public class AppComponentImpl implements AppComponent {
                     new OrderCurrentCostUseCaseImpl(
                         errorReporter,
                         new OrderGatewayImpl(
-                            executorStateUseCase,
+                            personalQueueListener,
                             ExecutorState.ORDER_FULFILLMENT,
                             new OrderFulfillmentApiMapper(
                                 new VehicleOptionApiMapper(),
@@ -1033,7 +1033,7 @@ public class AppComponentImpl implements AppComponent {
                     new OrderRouteUseCaseImpl(
                         errorReporter,
                         new OrderGatewayImpl(
-                            executorStateUseCase,
+                            personalQueueListener,
                             ExecutorState.ORDER_FULFILLMENT,
                             new OrderFulfillmentApiMapper(
                                 new VehicleOptionApiMapper(),
@@ -1055,7 +1055,7 @@ public class AppComponentImpl implements AppComponent {
                     new OrderRouteUseCaseImpl(
                         errorReporter,
                         new OrderGatewayImpl(
-                            executorStateUseCase,
+                            personalQueueListener,
                             ExecutorState.ORDER_FULFILLMENT,
                             new OrderFulfillmentApiMapper(
                                 new VehicleOptionApiMapper(),
@@ -1084,7 +1084,7 @@ public class AppComponentImpl implements AppComponent {
                     new OrderUseCaseImpl(
                         errorReporter,
                         new OrderGatewayImpl(
-                            executorStateUseCase,
+                            personalQueueListener,
                             ExecutorState.ORDER_FULFILLMENT,
                             new WaitingForClientApiMapper(
                                 new VehicleOptionApiMapper(),
@@ -1110,7 +1110,7 @@ public class AppComponentImpl implements AppComponent {
                     new OrderRouteUseCaseImpl(
                         errorReporter,
                         new OrderGatewayImpl(
-                            executorStateUseCase,
+                            personalQueueListener,
                             ExecutorState.ORDER_FULFILLMENT,
                             new OrderFulfillmentApiMapper(
                                 new VehicleOptionApiMapper(),
@@ -1136,7 +1136,7 @@ public class AppComponentImpl implements AppComponent {
                     new OrderRouteUseCaseImpl(
                         errorReporter,
                         new OrderGatewayImpl(
-                            executorStateUseCase,
+                            personalQueueListener,
                             ExecutorState.ORDER_FULFILLMENT,
                             new OrderFulfillmentApiMapper(
                                 new VehicleOptionApiMapper(),
@@ -1319,7 +1319,7 @@ public class AppComponentImpl implements AppComponent {
                     new OrderUseCaseImpl(
                         errorReporter,
                         new OrderGatewayImpl(
-                            executorStateUseCase,
+                            personalQueueListener,
                             ExecutorState.PAYMENT_CONFIRMATION,
                             new WaitingForClientApiMapper(
                                 new VehicleOptionApiMapper(),
@@ -1345,7 +1345,7 @@ public class AppComponentImpl implements AppComponent {
                     new OrderRouteUseCaseImpl(
                         errorReporter,
                         new OrderGatewayImpl(
-                            executorStateUseCase,
+                            personalQueueListener,
                             ExecutorState.PAYMENT_CONFIRMATION,
                             new OrderFulfillmentApiMapper(
                                 new VehicleOptionApiMapper(),
@@ -1376,7 +1376,7 @@ public class AppComponentImpl implements AppComponent {
                 new OrderConfirmationViewModelImpl(
                     new OrderConfirmationUseCaseImpl(
                         new PreOrderGatewayImpl(
-                            stompClient,
+                            personalQueueListener,
                             new PreOrderApiMapper(
                                 new VehicleOptionApiMapper(),
                                 new RoutePointApiMapper()
@@ -1399,7 +1399,7 @@ public class AppComponentImpl implements AppComponent {
                     new OrderUseCaseImpl(
                         errorReporter,
                         new PreOrderGatewayImpl(
-                            stompClient,
+                            personalQueueListener,
                             new PreOrderApiMapper(
                                 new VehicleOptionApiMapper(),
                                 new RoutePointApiMapper()

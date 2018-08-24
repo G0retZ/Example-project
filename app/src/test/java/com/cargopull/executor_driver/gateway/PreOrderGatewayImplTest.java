@@ -8,8 +8,8 @@ import static org.mockito.Mockito.when;
 
 import com.cargopull.executor_driver.GatewayThreadTestRule;
 import com.cargopull.executor_driver.backend.websocket.TopicListener;
-import com.cargopull.executor_driver.entity.ExecutorState;
-import com.cargopull.executor_driver.interactor.ExecutorStateGateway;
+import com.cargopull.executor_driver.entity.Order;
+import com.cargopull.executor_driver.interactor.OrderGateway;
 import io.reactivex.Flowable;
 import io.reactivex.subscribers.TestSubscriber;
 import org.junit.Before;
@@ -21,34 +21,36 @@ import org.mockito.junit.MockitoJUnitRunner;
 import ua.naiksoftware.stomp.client.StompMessage;
 
 @RunWith(MockitoJUnitRunner.class)
-public class ExecutorStateGatewayImplTest {
+public class PreOrderGatewayImplTest {
 
   @ClassRule
   public static final GatewayThreadTestRule classRule = new GatewayThreadTestRule();
 
-  private ExecutorStateGateway gateway;
+  private OrderGateway gateway;
   @Mock
   private TopicListener topicListener;
   @Mock
-  private Mapper<StompMessage, ExecutorState> mapper;
+  private Mapper<String, Order> mapper;
   @Mock
   private StompMessage stompMessage;
+  @Mock
+  private Order order;
 
   @Before
   public void setUp() {
-    gateway = new ExecutorStateGatewayImpl(topicListener, mapper);
+    gateway = new PreOrderGatewayImpl(topicListener, mapper);
     when(topicListener.getAcknowledgedMessages()).thenReturn(Flowable.never());
   }
 
-  /* Проверяем работу с слушателем сокета */
+  /* Проверяем работу с слушателем топика */
 
   /**
-   * Должен запросить у слушателя топика статусы.
+   * Должен запросить у слушателя топика предзаказы для исполнителя.
    */
   @Test
-  public void askWebTopicListenerForExecutorStatus() {
+  public void askStompClientForPreOrders() {
     // Действие:
-    gateway.getState().test();
+    gateway.getOrders().test();
 
     // Результат:
     verify(topicListener, only()).getAcknowledgedMessages();
@@ -65,31 +67,32 @@ public class ExecutorStateGatewayImplTest {
     when(topicListener.getAcknowledgedMessages()).thenReturn(Flowable.just(stompMessage));
 
     // Действие:
-    gateway.getState().test();
+    gateway.getOrders().test();
 
     // Результат:
     verifyZeroInteractions(mapper);
   }
 
   /**
-   * Должен запросить маппинг если сообщение с заголовком Status.
+   * Должен запросить маппинг если сообщение с заголовком Preliminary.
    *
    * @throws Exception error
    */
   @Test
-  public void askForMappingForStatusHeader() throws Exception {
+  public void askForMappingForPreliminaryHeader() throws Exception {
     // Дано:
-    when(stompMessage.findHeader("Status")).thenReturn("");
+    when(stompMessage.findHeader("Preliminary")).thenReturn("");
+    when(stompMessage.getPayload()).thenReturn("");
     when(topicListener.getAcknowledgedMessages()).thenReturn(Flowable.just(stompMessage));
 
     // Действие:
-    gateway.getState().test();
+    gateway.getOrders().test();
 
     // Результат:
-    verify(mapper, only()).map(stompMessage);
+    verify(mapper, only()).map("");
   }
 
-  /* Проверяем результаты обработки сообщений от сервера по статусам */
+  /* Проверяем результаты обработки сообщений от сервера по предзаказу */
 
   /**
    * Должен игнорировать сообщение без нужных заголовков.
@@ -100,7 +103,7 @@ public class ExecutorStateGatewayImplTest {
     when(topicListener.getAcknowledgedMessages()).thenReturn(Flowable.just(stompMessage));
 
     // Действие:
-    TestSubscriber<ExecutorState> testSubscriber = gateway.getState().test();
+    TestSubscriber<Order> testSubscriber = gateway.getOrders().test();
 
     // Результат:
     testSubscriber.assertNoValues();
@@ -108,19 +111,20 @@ public class ExecutorStateGatewayImplTest {
   }
 
   /**
-   * Должен ответить ошибкой для сообщения с заголовком Status.
+   * Должен ответить ошибкой маппинга для сообщения с заголовком Preliminary.
    *
    * @throws Exception error
    */
   @Test
-  public void answerDataMappingErrorForStatusHeader() throws Exception {
+  public void answerDataMappingErrorForPreliminaryHeader() throws Exception {
     // Дано:
-    doThrow(new DataMappingException()).when(mapper).map(stompMessage);
-    when(stompMessage.findHeader("Status")).thenReturn("");
+    doThrow(new DataMappingException()).when(mapper).map("");
+    when(stompMessage.findHeader("Preliminary")).thenReturn("");
+    when(stompMessage.getPayload()).thenReturn("");
     when(topicListener.getAcknowledgedMessages()).thenReturn(Flowable.just(stompMessage));
 
     // Действие:
-    TestSubscriber<ExecutorState> testSubscriber = gateway.getState().test();
+    TestSubscriber<Order> testSubscriber = gateway.getOrders().test();
 
     // Результат:
     testSubscriber.assertError(DataMappingException.class);
@@ -128,22 +132,23 @@ public class ExecutorStateGatewayImplTest {
   }
 
   /**
-   * Должен вернуть статус исполнителя для сообщения с заголовком Status.
+   * Должен вернуть предзаказ для сообщения с заголовком Preliminary.
    *
    * @throws Exception error
    */
   @Test
-  public void answerWithExecutorStatusForStatusHeader() throws Exception {
+  public void answerWithPreOrderForPreliminaryHeader() throws Exception {
     // Дано:
-    when(mapper.map(stompMessage)).thenReturn(ExecutorState.SHIFT_OPENED);
-    when(stompMessage.findHeader("Status")).thenReturn("payload");
+    when(mapper.map("")).thenReturn(order);
+    when(stompMessage.findHeader("Preliminary")).thenReturn("");
+    when(stompMessage.getPayload()).thenReturn("");
     when(topicListener.getAcknowledgedMessages()).thenReturn(Flowable.just(stompMessage));
 
     // Действие:
-    TestSubscriber<ExecutorState> testSubscriber = gateway.getState().test();
+    TestSubscriber<Order> testSubscriber = gateway.getOrders().test();
 
     // Результат:
-    testSubscriber.assertValue(ExecutorState.SHIFT_OPENED);
+    testSubscriber.assertValue(order);
     testSubscriber.assertNoErrors();
   }
 }

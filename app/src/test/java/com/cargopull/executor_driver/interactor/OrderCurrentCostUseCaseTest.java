@@ -47,7 +47,7 @@ public class OrderCurrentCostUseCaseTest {
   @Before
   public void setUp() {
     when(loginReceiver.get()).thenReturn(Observable.never());
-    when(orderGateway.getOrders(anyString())).thenReturn(Flowable.never());
+    when(orderGateway.getOrders()).thenReturn(Flowable.never());
     when(orderCurrentCostGateway.getOrderCurrentCost(anyString())).thenReturn(Flowable.never());
     useCase = new OrderCurrentCostUseCaseImpl(errorReporter, orderGateway, loginReceiver,
         orderCurrentCostGateway);
@@ -86,10 +86,7 @@ public class OrderCurrentCostUseCaseTest {
     useCase.getOrderCurrentCost().test();
 
     // Результат:
-    verify(orderGateway).getOrders("1234567890");
-    verify(orderGateway).getOrders("0987654321");
-    verify(orderGateway).getOrders("123454321");
-    verify(orderGateway).getOrders("09876567890");
+    verify(orderGateway, times(4)).getOrders();
     verifyNoMoreInteractions(orderGateway);
   }
 
@@ -117,7 +114,7 @@ public class OrderCurrentCostUseCaseTest {
   public void askCurrentCostGatewayForCostUpdates() {
     // Дано:
     when(loginReceiver.get()).thenReturn(Observable.just("1234567890"));
-    when(orderGateway.getOrders("1234567890")).thenReturn(Flowable.just(order));
+    when(orderGateway.getOrders()).thenReturn(Flowable.just(order));
 
     // Действие:
     useCase.getOrderCurrentCost().test();
@@ -135,7 +132,7 @@ public class OrderCurrentCostUseCaseTest {
   public void reportDataMappingError() {
     // Дано:
     when(loginReceiver.get()).thenReturn(Observable.just("1234567890"));
-    when(orderGateway.getOrders("1234567890"))
+    when(orderGateway.getOrders())
         .thenReturn(Flowable.error(new DataMappingException()));
 
     // Действие:
@@ -152,7 +149,7 @@ public class OrderCurrentCostUseCaseTest {
   public void reportDataMappingErrorInCurrentCost() {
     // Дано:
     when(loginReceiver.get()).thenReturn(Observable.just("1234567890"));
-    when(orderGateway.getOrders("1234567890"))
+    when(orderGateway.getOrders())
         .thenReturn(Flowable.just(order, order2));
     when(order.getTotalCost()).thenReturn(101L);
     when(orderCurrentCostGateway.getOrderCurrentCost("1234567890"))
@@ -174,7 +171,7 @@ public class OrderCurrentCostUseCaseTest {
   public void answerDataMappingError() {
     // Дано:
     when(loginReceiver.get()).thenReturn(Observable.just("1234567890"));
-    when(orderGateway.getOrders("1234567890"))
+    when(orderGateway.getOrders())
         .thenReturn(Flowable.error(new DataMappingException()));
 
     // Действие:
@@ -193,7 +190,7 @@ public class OrderCurrentCostUseCaseTest {
   public void answerDataMappingErrorInCurrentCost() {
     // Дано:
     when(loginReceiver.get()).thenReturn(Observable.just("1234567890"));
-    when(orderGateway.getOrders("1234567890"))
+    when(orderGateway.getOrders())
         .thenReturn(Flowable.just(order, order2));
     when(order.getTotalCost()).thenReturn(101L);
     when(orderCurrentCostGateway.getOrderCurrentCost("1234567890"))
@@ -215,7 +212,7 @@ public class OrderCurrentCostUseCaseTest {
   public void answerWithOrdersCostsOnly() {
     // Дано:
     when(loginReceiver.get()).thenReturn(Observable.just("1234567890"));
-    when(orderGateway.getOrders("1234567890"))
+    when(orderGateway.getOrders())
         .thenReturn(Flowable.just(order, order2));
     when(order.getTotalCost()).thenReturn(110L);
     when(order2.getTotalCost()).thenReturn(12173L);
@@ -237,7 +234,7 @@ public class OrderCurrentCostUseCaseTest {
   public void answerWithOrdersAndUpdatedCosts() {
     // Дано:
     when(loginReceiver.get()).thenReturn(Observable.just("1234567890"));
-    when(orderGateway.getOrders("1234567890"))
+    when(orderGateway.getOrders())
         .thenReturn(Flowable.just(order, order2));
     when(order.getTotalCost()).thenReturn(100L);
     when(order2.getTotalCost()).thenReturn(12173L);

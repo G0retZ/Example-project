@@ -31,7 +31,7 @@ public class OrderUseCaseImpl implements OrderUseCase {
   public Flowable<Order> getOrders() {
     return loginReceiver.get()
         .toFlowable(BackpressureStrategy.BUFFER)
-        .switchMap(orderGateway::getOrders)
+        .switchMap(login -> orderGateway.getOrders())
         .observeOn(Schedulers.single())
         .doOnError(errorReporter::reportError);
   }
