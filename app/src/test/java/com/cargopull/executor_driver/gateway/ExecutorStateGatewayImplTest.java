@@ -1,6 +1,5 @@
 package com.cargopull.executor_driver.gateway;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
@@ -28,7 +27,6 @@ public class ExecutorStateGatewayImplTest {
   public static final GatewayThreadTestRule classRule = new GatewayThreadTestRule();
 
   private ExecutorStateGateway gateway;
-
   @Mock
   private TopicListener topicListener;
   @Mock
@@ -88,7 +86,7 @@ public class ExecutorStateGatewayImplTest {
     gateway.getState().test();
 
     // Результат:
-    verify(mapper, only()).map(any());
+    verify(mapper, only()).map(stompMessage);
   }
 
   /* Проверяем результаты обработки сообщений от сервера по статусам */
@@ -117,7 +115,7 @@ public class ExecutorStateGatewayImplTest {
   @Test
   public void answerDataMappingErrorForBalanceHeader() throws Exception {
     // Дано:
-    doThrow(new DataMappingException()).when(mapper).map(any());
+    doThrow(new DataMappingException()).when(mapper).map(stompMessage);
     when(stompMessage.findHeader("Status")).thenReturn("");
     when(topicListener.getAcknowledgedMessages()).thenReturn(Flowable.just(stompMessage));
 
@@ -137,7 +135,7 @@ public class ExecutorStateGatewayImplTest {
   @Test
   public void answerWithExecutorBalanceForBalanceHeader() throws Exception {
     // Дано:
-    when(mapper.map(any())).thenReturn(ExecutorState.SHIFT_OPENED);
+    when(mapper.map(stompMessage)).thenReturn(ExecutorState.SHIFT_OPENED);
     when(stompMessage.findHeader("Status")).thenReturn("payload");
     when(topicListener.getAcknowledgedMessages()).thenReturn(Flowable.just(stompMessage));
 

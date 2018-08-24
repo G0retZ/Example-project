@@ -50,7 +50,7 @@ public class CancelOrderReasonsGatewayImplTest {
     when(topicListener.getAcknowledgedMessages()).thenReturn(Flowable.never());
   }
 
-  /* Проверяем работу с слушателем сокета */
+  /* Проверяем работу с слушателем топика */
 
   /**
    * Должен запросить у слушателя топика причины для отказа.

@@ -1,6 +1,5 @@
 package com.cargopull.executor_driver.gateway;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.only;
@@ -61,7 +60,7 @@ public class CurrentCostPollingGatewayImplTest {
     gateway = new CurrentCostPollingGatewayImpl(topicListener, stompClient, mapper);
   }
 
-  /* Проверяем работу с слушателем сокета */
+  /* Проверяем работу с слушателем топика */
 
   /**
    * Должен запросить у слушателя топика таймеры заказа.
@@ -126,7 +125,7 @@ public class CurrentCostPollingGatewayImplTest {
     gateway.startPolling().test();
 
     // Результат:
-    verify(mapper, only()).map(any());
+    verify(mapper, only()).map(stompMessage);
   }
 
   /* Проверяем работу с клиентом STOMP на отправку пинга */
@@ -160,7 +159,7 @@ public class CurrentCostPollingGatewayImplTest {
     when(stompMessage.findHeader("OverPackage")).thenReturn("1");
     when(topicListener.getAcknowledgedMessages())
         .thenReturn(Flowable.just(stompMessage).concatWith(Flowable.never()));
-    when(mapper.map(any())).thenReturn(new Pair<>(0L, 30_000L));
+    when(mapper.map(stompMessage)).thenReturn(new Pair<>(0L, 30_000L));
 
     // Действие:
     gateway.startPolling().test();
@@ -181,7 +180,7 @@ public class CurrentCostPollingGatewayImplTest {
     when(stompMessage.findHeader("OverPackage")).thenReturn("1");
     when(topicListener.getAcknowledgedMessages())
         .thenReturn(Flowable.just(stompMessage).concatWith(Flowable.never()));
-    when(mapper.map(any())).thenReturn(new Pair<>(600_000L, 30_000L));
+    when(mapper.map(stompMessage)).thenReturn(new Pair<>(600_000L, 30_000L));
 
     // Действие:
     gateway.startPolling().test();
@@ -204,7 +203,7 @@ public class CurrentCostPollingGatewayImplTest {
     when(stompMessage.findHeader("OverPackage")).thenReturn("1");
     when(topicListener.getAcknowledgedMessages())
         .thenReturn(Flowable.just(stompMessage).concatWith(Flowable.never()));
-    when(mapper.map(any())).thenReturn(new Pair<>(600_000L, 30_000L));
+    when(mapper.map(stompMessage)).thenReturn(new Pair<>(600_000L, 30_000L));
 
     // Действие:
     gateway.startPolling().test();
@@ -230,7 +229,7 @@ public class CurrentCostPollingGatewayImplTest {
         .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
     when(stompMessage.findHeader("OverPackage")).thenReturn("1");
     when(stompMessage1.findHeader("OverPackage")).thenReturn("0");
-    when(mapper.map(any())).thenReturn(new Pair<>(600_000L, 30_000L));
+    when(mapper.map(stompMessage)).thenReturn(new Pair<>(600_000L, 30_000L));
 
     // Действие:
     gateway.startPolling().test();
@@ -258,7 +257,7 @@ public class CurrentCostPollingGatewayImplTest {
         .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
     when(stompMessage.findHeader("OverPackage")).thenReturn("1");
     when(stompMessage1.findHeader("OverPackage")).thenReturn("0");
-    when(mapper.map(any())).thenReturn(new Pair<>(600_000L, 30_000L));
+    when(mapper.map(stompMessage)).thenReturn(new Pair<>(600_000L, 30_000L));
 
     // Действие:
     gateway.startPolling().test();
@@ -305,7 +304,7 @@ public class CurrentCostPollingGatewayImplTest {
   @Test
   public void answerDataMappingErrorForOverPackageHeader1() throws Exception {
     // Дано:
-    doThrow(new DataMappingException()).when(mapper).map(any());
+    doThrow(new DataMappingException()).when(mapper).map(stompMessage);
     when(stompMessage.findHeader("OverPackage")).thenReturn("1");
     when(topicListener.getAcknowledgedMessages())
         .thenReturn(Flowable.just(stompMessage).concatWith(Flowable.never()));
@@ -346,7 +345,7 @@ public class CurrentCostPollingGatewayImplTest {
   @Test
   public void answerWithTimersForOverPackageHeaderIfConnected() throws Exception {
     // Дано:
-    when(mapper.map(any())).thenReturn(new Pair<>(10_000L, 30_000L));
+    when(mapper.map(stompMessage)).thenReturn(new Pair<>(10_000L, 30_000L));
     when(stompMessage.findHeader("OverPackage")).thenReturn("1");
     when(topicListener.getAcknowledgedMessages())
         .thenReturn(Flowable.just(stompMessage).concatWith(Flowable.never()));
@@ -368,7 +367,7 @@ public class CurrentCostPollingGatewayImplTest {
   @Test
   public void waitForCompletionOrInterruption() throws Exception {
     // Дано:
-    when(mapper.map(any())).thenReturn(new Pair<>(600_000L, 30_000L));
+    when(mapper.map(stompMessage)).thenReturn(new Pair<>(600_000L, 30_000L));
     when(stompMessage.findHeader("OverPackage")).thenReturn("1");
     when(topicListener.getAcknowledgedMessages())
         .thenReturn(Flowable.just(stompMessage).concatWith(Flowable.never()));
@@ -391,7 +390,7 @@ public class CurrentCostPollingGatewayImplTest {
   @Test
   public void ingnorePollPingNetworkError() throws Exception {
     // Дано:
-    when(mapper.map(any())).thenReturn(new Pair<>(0L, 30_000L));
+    when(mapper.map(stompMessage)).thenReturn(new Pair<>(0L, 30_000L));
     when(stompMessage.findHeader("OverPackage")).thenReturn("1");
     when(topicListener.getAcknowledgedMessages())
         .thenReturn(Flowable.just(stompMessage).concatWith(Flowable.never()));

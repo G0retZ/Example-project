@@ -24,7 +24,6 @@ public class MissedOrderGatewayImplTest {
   public static final GatewayThreadTestRule classRule = new GatewayThreadTestRule();
 
   private MissedOrderGateway gateway;
-
   @Mock
   private TopicListener topicListener;
   @Mock

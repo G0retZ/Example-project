@@ -1,6 +1,5 @@
 package com.cargopull.executor_driver.gateway;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
@@ -28,7 +27,6 @@ public class ExecutorBalanceGatewayImplTest {
   public static final GatewayThreadTestRule classRule = new GatewayThreadTestRule();
 
   private ExecutorBalanceGateway gateway;
-
   @Mock
   private TopicListener topicListener;
   @Mock
@@ -44,7 +42,7 @@ public class ExecutorBalanceGatewayImplTest {
     when(topicListener.getAcknowledgedMessages()).thenReturn(Flowable.never());
   }
 
-  /* Проверяем работу с слушателем сокета */
+  /* Проверяем работу с слушателем топика */
 
   /**
    * Должен запросить у слушателя топика баланс исполнителя.
@@ -90,7 +88,7 @@ public class ExecutorBalanceGatewayImplTest {
     gateway.loadExecutorBalance().test();
 
     // Результат:
-    verify(mapper, only()).map(any());
+    verify(mapper, only()).map(stompMessage);
   }
 
   /* Проверяем результаты обработки сообщений от сервера по балансу */
@@ -112,14 +110,14 @@ public class ExecutorBalanceGatewayImplTest {
   }
 
   /**
-   * Должен ответить ошибкой для сообщения с заголовком Balance.
+   * Должен ответить ошибкой маппинга для сообщения с заголовком Balance.
    *
    * @throws Exception error
    */
   @Test
   public void answerDataMappingErrorForBalanceHeader() throws Exception {
     // Дано:
-    doThrow(new DataMappingException()).when(mapper).map(any());
+    doThrow(new DataMappingException()).when(mapper).map(stompMessage);
     when(stompMessage.findHeader("Balance")).thenReturn("");
     when(topicListener.getAcknowledgedMessages()).thenReturn(Flowable.just(stompMessage));
 
@@ -139,7 +137,7 @@ public class ExecutorBalanceGatewayImplTest {
   @Test
   public void answerWithExecutorBalanceForBalanceHeader() throws Exception {
     // Дано:
-    when(mapper.map(any())).thenReturn(executorBalance);
+    when(mapper.map(stompMessage)).thenReturn(executorBalance);
     when(stompMessage.findHeader("Balance")).thenReturn("payload");
     when(topicListener.getAcknowledgedMessages()).thenReturn(Flowable.just(stompMessage));
 
