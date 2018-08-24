@@ -59,7 +59,7 @@ public class BalanceViewModelTest {
     viewModel = new BalanceViewModelImpl(useCase);
   }
 
-  /* Тетсируем работу с юзкейсом заказа. */
+  /* Тетсируем работу с юзкейсом. */
 
   /**
    * Должен просить юзкейс получать список причин отказа только при создании.
