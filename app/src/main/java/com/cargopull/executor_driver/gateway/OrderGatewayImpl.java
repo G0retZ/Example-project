@@ -17,13 +17,13 @@ public class OrderGatewayImpl implements OrderGateway {
   @NonNull
   private final ExecutorState executorState;
   @NonNull
-  private final Mapper<String, Order> mapper;
+  private final Mapper<StompMessage, Order> mapper;
 
   @Inject
   public OrderGatewayImpl(
       @NonNull TopicListener topicListener,
       @NonNull ExecutorState executorState,
-      @NonNull Mapper<String, Order> mapper) {
+      @NonNull Mapper<StompMessage, Order> mapper) {
     this.topicListener = topicListener;
     this.executorState = executorState;
     this.mapper = mapper;
@@ -35,6 +35,6 @@ public class OrderGatewayImpl implements OrderGateway {
     return topicListener.getAcknowledgedMessages()
         .subscribeOn(Schedulers.io())
         .filter(stompMessage -> executorState.toString().equals(stompMessage.findHeader("Status")))
-        .map((StompMessage from) -> mapper.map(from.getPayload()));
+        .map(mapper::map);
   }
 }

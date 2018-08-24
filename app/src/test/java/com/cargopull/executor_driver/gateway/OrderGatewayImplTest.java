@@ -31,7 +31,7 @@ public class OrderGatewayImplTest {
   @Mock
   private TopicListener topicListener;
   @Mock
-  private Mapper<String, Order> mapper;
+  private Mapper<StompMessage, Order> mapper;
   @Mock
   private StompMessage stompMessage;
   @Mock
@@ -92,14 +92,13 @@ public class OrderGatewayImplTest {
     // Дано:
     gateway = new OrderGatewayImpl(topicListener, ExecutorState.MOVING_TO_CLIENT, mapper);
     when(stompMessage.findHeader("Status")).thenReturn("MOVING_TO_CLIENT");
-    when(stompMessage.getPayload()).thenReturn("");
     when(topicListener.getAcknowledgedMessages()).thenReturn(Flowable.just(stompMessage));
 
     // Действие:
     gateway.getOrders().test();
 
     // Результат:
-    verify(mapper, only()).map("");
+    verify(mapper, only()).map(stompMessage);
   }
 
   /* Проверяем результаты обработки сообщений от сервера по статусам */
@@ -136,9 +135,8 @@ public class OrderGatewayImplTest {
   public void answerDataMappingError() throws Exception {
     // Дано:
     gateway = new OrderGatewayImpl(topicListener, ExecutorState.MOVING_TO_CLIENT, mapper);
-    doThrow(new DataMappingException()).when(mapper).map("");
+    doThrow(new DataMappingException()).when(mapper).map(stompMessage);
     when(stompMessage.findHeader("Status")).thenReturn("MOVING_TO_CLIENT");
-    when(stompMessage.getPayload()).thenReturn("");
     when(topicListener.getAcknowledgedMessages()).thenReturn(Flowable.just(stompMessage));
 
     // Действие:
@@ -159,9 +157,8 @@ public class OrderGatewayImplTest {
   public void answerWithOrder() throws Exception {
     // Дано:
     gateway = new OrderGatewayImpl(topicListener, ExecutorState.WAITING_FOR_CLIENT, mapper);
-    when(mapper.map("")).thenReturn(order);
+    when(mapper.map(stompMessage)).thenReturn(order);
     when(stompMessage.findHeader("Status")).thenReturn("WAITING_FOR_CLIENT");
-    when(stompMessage.getPayload()).thenReturn("");
     when(topicListener.getAcknowledgedMessages()).thenReturn(Flowable.just(stompMessage));
 
     // Действие:

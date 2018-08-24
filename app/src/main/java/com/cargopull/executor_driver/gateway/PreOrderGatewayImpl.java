@@ -7,17 +7,18 @@ import com.cargopull.executor_driver.interactor.OrderGateway;
 import io.reactivex.Flowable;
 import io.reactivex.schedulers.Schedulers;
 import javax.inject.Inject;
+import ua.naiksoftware.stomp.client.StompMessage;
 
 public class PreOrderGatewayImpl implements OrderGateway {
 
   @NonNull
   private final TopicListener topicListener;
   @NonNull
-  private final Mapper<String, Order> mapper;
+  private final Mapper<StompMessage, Order> mapper;
 
   @Inject
   public PreOrderGatewayImpl(@NonNull TopicListener topicListener,
-      @NonNull Mapper<String, Order> mapper) {
+      @NonNull Mapper<StompMessage, Order> mapper) {
     this.topicListener = topicListener;
     this.mapper = mapper;
   }
@@ -28,6 +29,6 @@ public class PreOrderGatewayImpl implements OrderGateway {
     return topicListener.getAcknowledgedMessages()
         .subscribeOn(Schedulers.io())
         .filter(stompMessage -> stompMessage.findHeader("Preliminary") != null)
-        .map(from -> mapper.map(from.getPayload()));
+        .map(mapper::map);
   }
 }

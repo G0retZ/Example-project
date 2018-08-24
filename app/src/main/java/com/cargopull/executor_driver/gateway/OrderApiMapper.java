@@ -9,11 +9,12 @@ import com.cargopull.executor_driver.entity.Order;
 import com.cargopull.executor_driver.entity.RoutePoint;
 import com.google.gson.Gson;
 import javax.inject.Inject;
+import ua.naiksoftware.stomp.client.StompMessage;
 
 /**
  * Преобразуем статус из ответа сервера в бизнес объект статуса исполнителя.
  */
-public class OrderApiMapper implements Mapper<String, Order> {
+public class OrderApiMapper implements Mapper<StompMessage, Order> {
 
   @NonNull
   private final Mapper<ApiOptionItem, Option> apiOptionMapper;
@@ -29,14 +30,17 @@ public class OrderApiMapper implements Mapper<String, Order> {
 
   @NonNull
   @Override
-  public Order map(@NonNull String from) throws Exception {
-    if (from.isEmpty()) {
+  public Order map(@NonNull StompMessage from) throws Exception {
+    if (from.getPayload() == null) {
+      throw new DataMappingException("Ошибка маппинга: данные не должны быть null!");
+    }
+    if (from.getPayload().isEmpty()) {
       throw new DataMappingException("Ошибка маппинга: данные не должны быть пустыми!");
     }
     Gson gson = new Gson();
     ApiOrder apiOrder;
     try {
-      apiOrder = gson.fromJson(from, ApiOrder.class);
+      apiOrder = gson.fromJson(from.getPayload(), ApiOrder.class);
     } catch (Exception e) {
       throw new DataMappingException("Ошибка маппинга: не удалось распарсить JSON: " + from, e);
     }

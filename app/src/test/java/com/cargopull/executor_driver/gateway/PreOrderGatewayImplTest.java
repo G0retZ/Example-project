@@ -30,7 +30,7 @@ public class PreOrderGatewayImplTest {
   @Mock
   private TopicListener topicListener;
   @Mock
-  private Mapper<String, Order> mapper;
+  private Mapper<StompMessage, Order> mapper;
   @Mock
   private StompMessage stompMessage;
   @Mock
@@ -82,14 +82,13 @@ public class PreOrderGatewayImplTest {
   public void askForMappingForPreliminaryHeader() throws Exception {
     // Дано:
     when(stompMessage.findHeader("Preliminary")).thenReturn("");
-    when(stompMessage.getPayload()).thenReturn("");
     when(topicListener.getAcknowledgedMessages()).thenReturn(Flowable.just(stompMessage));
 
     // Действие:
     gateway.getOrders().test();
 
     // Результат:
-    verify(mapper, only()).map("");
+    verify(mapper, only()).map(stompMessage);
   }
 
   /* Проверяем результаты обработки сообщений от сервера по предзаказу */
@@ -118,9 +117,8 @@ public class PreOrderGatewayImplTest {
   @Test
   public void answerDataMappingErrorForPreliminaryHeader() throws Exception {
     // Дано:
-    doThrow(new DataMappingException()).when(mapper).map("");
+    doThrow(new DataMappingException()).when(mapper).map(stompMessage);
     when(stompMessage.findHeader("Preliminary")).thenReturn("");
-    when(stompMessage.getPayload()).thenReturn("");
     when(topicListener.getAcknowledgedMessages()).thenReturn(Flowable.just(stompMessage));
 
     // Действие:
@@ -139,9 +137,8 @@ public class PreOrderGatewayImplTest {
   @Test
   public void answerWithPreOrderForPreliminaryHeader() throws Exception {
     // Дано:
-    when(mapper.map("")).thenReturn(order);
+    when(mapper.map(stompMessage)).thenReturn(order);
     when(stompMessage.findHeader("Preliminary")).thenReturn("");
-    when(stompMessage.getPayload()).thenReturn("");
     when(topicListener.getAcknowledgedMessages()).thenReturn(Flowable.just(stompMessage));
 
     // Действие:
