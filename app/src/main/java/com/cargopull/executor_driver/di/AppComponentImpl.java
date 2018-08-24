@@ -1286,7 +1286,7 @@ public class AppComponentImpl implements AppComponent {
                     new OrderCostDetailsUseCaseImpl(
                         errorReporter,
                         new OrderCostDetailsGatewayImpl(
-                            executorStateUseCase,
+                            personalQueueListener,
                             new OrderCostDetailsApiMapper()
                         )
                     )
