@@ -37,7 +37,7 @@ public class ExecutorStateNotOnlineUseCaseTest {
   @Before
   public void setUp() {
     when(gateway.sendNewExecutorState(any())).thenReturn(Completable.complete());
-    when(executorStateUseCase.getExecutorStates(false)).thenReturn(Flowable.never());
+    when(executorStateUseCase.getExecutorStates()).thenReturn(Flowable.never());
     useCase = new ExecutorStateNotOnlineUseCaseImpl(errorReporter, gateway, executorStateUseCase,
         ExecutorState.ONLINE, ExecutorState.PAYMENT_CONFIRMATION);
   }
@@ -53,7 +53,7 @@ public class ExecutorStateNotOnlineUseCaseTest {
     useCase.setExecutorNotOnline().test();
 
     // Результат:
-    verify(executorStateUseCase, only()).getExecutorStates(false);
+    verify(executorStateUseCase, only()).getExecutorStates();
   }
 
   /* Проверяем работу с гейтвеем */
@@ -76,7 +76,7 @@ public class ExecutorStateNotOnlineUseCaseTest {
   @Test
   public void DoNotTouchGatewayIfShiftClosed() {
     // Дано:
-    when(executorStateUseCase.getExecutorStates(false))
+    when(executorStateUseCase.getExecutorStates())
         .thenReturn(Flowable.just(ExecutorState.SHIFT_CLOSED).concatWith(Flowable.never()));
 
     // Действие:
@@ -92,7 +92,7 @@ public class ExecutorStateNotOnlineUseCaseTest {
   @Test
   public void DoNotTouchGatewayIfShiftOpened() {
     // Дано:
-    when(executorStateUseCase.getExecutorStates(false))
+    when(executorStateUseCase.getExecutorStates())
         .thenReturn(Flowable.just(ExecutorState.SHIFT_OPENED).concatWith(Flowable.never()));
 
     // Действие:
@@ -108,7 +108,7 @@ public class ExecutorStateNotOnlineUseCaseTest {
   @Test
   public void DoNotTouchGatewayIfOrderConfirmation() {
     // Дано:
-    when(executorStateUseCase.getExecutorStates(false)).thenReturn(
+    when(executorStateUseCase.getExecutorStates()).thenReturn(
         Flowable.just(ExecutorState.DRIVER_ORDER_CONFIRMATION).concatWith(Flowable.never()));
 
     // Действие:
@@ -124,7 +124,7 @@ public class ExecutorStateNotOnlineUseCaseTest {
   @Test
   public void DoNotTouchGatewayIfWaitForClientConfirmation() {
     // Дано:
-    when(executorStateUseCase.getExecutorStates(false)).thenReturn(
+    when(executorStateUseCase.getExecutorStates()).thenReturn(
         Flowable.just(ExecutorState.CLIENT_ORDER_CONFIRMATION).concatWith(Flowable.never()));
 
     // Действие:
@@ -140,7 +140,7 @@ public class ExecutorStateNotOnlineUseCaseTest {
   @Test
   public void DoNotTouchGatewayIfMovingToClient() {
     // Дано:
-    when(executorStateUseCase.getExecutorStates(false))
+    when(executorStateUseCase.getExecutorStates())
         .thenReturn(Flowable.just(ExecutorState.MOVING_TO_CLIENT).concatWith(Flowable.never()));
 
     // Действие:
@@ -156,7 +156,7 @@ public class ExecutorStateNotOnlineUseCaseTest {
   @Test
   public void DoNotTouchGatewayIfWaitingForClient() {
     // Дано:
-    when(executorStateUseCase.getExecutorStates(false))
+    when(executorStateUseCase.getExecutorStates())
         .thenReturn(Flowable.just(ExecutorState.WAITING_FOR_CLIENT).concatWith(Flowable.never()));
 
     // Действие:
@@ -172,7 +172,7 @@ public class ExecutorStateNotOnlineUseCaseTest {
   @Test
   public void DoNotTouchGatewayIfOrderFulfillment() {
     // Дано:
-    when(executorStateUseCase.getExecutorStates(false))
+    when(executorStateUseCase.getExecutorStates())
         .thenReturn(Flowable.just(ExecutorState.ORDER_FULFILLMENT).concatWith(Flowable.never()));
 
     // Действие:
@@ -188,7 +188,7 @@ public class ExecutorStateNotOnlineUseCaseTest {
   @Test
   public void askGatewayToSendNewExecutorStateIfOnline() {
     // Дано:
-    when(executorStateUseCase.getExecutorStates(false))
+    when(executorStateUseCase.getExecutorStates())
         .thenReturn(Flowable.just(ExecutorState.ONLINE).concatWith(Flowable.never()));
 
     // Действие:
@@ -204,7 +204,7 @@ public class ExecutorStateNotOnlineUseCaseTest {
   @Test
   public void askGatewayToSendNewExecutorStateIfPaymentAcceptance() {
     // Дано:
-    when(executorStateUseCase.getExecutorStates(false))
+    when(executorStateUseCase.getExecutorStates())
         .thenReturn(Flowable.just(ExecutorState.PAYMENT_CONFIRMATION).concatWith(Flowable.never()));
 
     // Действие:
@@ -222,7 +222,7 @@ public class ExecutorStateNotOnlineUseCaseTest {
   @Test
   public void reportIllegalArgumentErrorIfShiftClosed() {
     // Дано:
-    when(executorStateUseCase.getExecutorStates(false))
+    when(executorStateUseCase.getExecutorStates())
         .thenReturn(Flowable.just(ExecutorState.SHIFT_CLOSED).concatWith(Flowable.never()));
 
     // Действие:
@@ -238,7 +238,7 @@ public class ExecutorStateNotOnlineUseCaseTest {
   @Test
   public void reportIllegalArgumentErrorIfOnline() {
     // Дано:
-    when(executorStateUseCase.getExecutorStates(false))
+    when(executorStateUseCase.getExecutorStates())
         .thenReturn(Flowable.just(ExecutorState.SHIFT_OPENED).concatWith(Flowable.never()));
 
     // Действие:
@@ -254,7 +254,7 @@ public class ExecutorStateNotOnlineUseCaseTest {
   @Test
   public void reportIllegalArgumentErrorIfOrderConfirmation() {
     // Дано:
-    when(executorStateUseCase.getExecutorStates(false)).thenReturn(
+    when(executorStateUseCase.getExecutorStates()).thenReturn(
         Flowable.just(ExecutorState.DRIVER_ORDER_CONFIRMATION).concatWith(Flowable.never()));
 
     // Действие:
@@ -270,7 +270,7 @@ public class ExecutorStateNotOnlineUseCaseTest {
   @Test
   public void reportIllegalArgumentErrorIfWaitForClientConfirmation() {
     // Дано:
-    when(executorStateUseCase.getExecutorStates(false)).thenReturn(
+    when(executorStateUseCase.getExecutorStates()).thenReturn(
         Flowable.just(ExecutorState.CLIENT_ORDER_CONFIRMATION).concatWith(Flowable.never()));
 
     // Действие:
@@ -286,7 +286,7 @@ public class ExecutorStateNotOnlineUseCaseTest {
   @Test
   public void reportIllegalArgumentErrorIfMovingToClient() {
     // Дано:
-    when(executorStateUseCase.getExecutorStates(false))
+    when(executorStateUseCase.getExecutorStates())
         .thenReturn(Flowable.just(ExecutorState.MOVING_TO_CLIENT).concatWith(Flowable.never()));
 
     // Действие:
@@ -302,7 +302,7 @@ public class ExecutorStateNotOnlineUseCaseTest {
   @Test
   public void reportIllegalArgumentErrorIfWaitingForClient() {
     // Дано:
-    when(executorStateUseCase.getExecutorStates(false))
+    when(executorStateUseCase.getExecutorStates())
         .thenReturn(Flowable.just(ExecutorState.WAITING_FOR_CLIENT).concatWith(Flowable.never()));
 
     // Действие:
@@ -318,7 +318,7 @@ public class ExecutorStateNotOnlineUseCaseTest {
   @Test
   public void reportIllegalArgumentErrorIfOrderFulfillment() {
     // Дано:
-    when(executorStateUseCase.getExecutorStates(false))
+    when(executorStateUseCase.getExecutorStates())
         .thenReturn(Flowable.just(ExecutorState.ORDER_FULFILLMENT).concatWith(Flowable.never()));
 
     // Действие:
@@ -334,7 +334,7 @@ public class ExecutorStateNotOnlineUseCaseTest {
   @Test
   public void doNotReportError() {
     // Дано:
-    when(executorStateUseCase.getExecutorStates(false))
+    when(executorStateUseCase.getExecutorStates())
         .thenReturn(Flowable.just(ExecutorState.ONLINE).concatWith(Flowable.never()));
     when(gateway.sendNewExecutorState(any()))
         .thenReturn(Completable.error(new Exception()));
@@ -352,7 +352,7 @@ public class ExecutorStateNotOnlineUseCaseTest {
   @Test
   public void reportIllegalArgumentErrorIfPaymentAcceptance() {
     // Дано:
-    when(executorStateUseCase.getExecutorStates(false))
+    when(executorStateUseCase.getExecutorStates())
         .thenReturn(Flowable.just(ExecutorState.PAYMENT_CONFIRMATION).concatWith(Flowable.never()));
 
     // Действие:
@@ -370,7 +370,7 @@ public class ExecutorStateNotOnlineUseCaseTest {
   @Test
   public void answerIllegalArgumentErrorIfShiftClosed() {
     // Дано:
-    when(executorStateUseCase.getExecutorStates(false))
+    when(executorStateUseCase.getExecutorStates())
         .thenReturn(Flowable.just(ExecutorState.SHIFT_CLOSED).concatWith(Flowable.never()));
 
     // Действие:
@@ -388,7 +388,7 @@ public class ExecutorStateNotOnlineUseCaseTest {
   @Test
   public void answerIllegalArgumentErrorIfOnline() {
     // Дано:
-    when(executorStateUseCase.getExecutorStates(false))
+    when(executorStateUseCase.getExecutorStates())
         .thenReturn(Flowable.just(ExecutorState.SHIFT_OPENED).concatWith(Flowable.never()));
 
     // Действие:
@@ -406,7 +406,7 @@ public class ExecutorStateNotOnlineUseCaseTest {
   @Test
   public void answerIllegalArgumentErrorIfOrderConfirmation() {
     // Дано:
-    when(executorStateUseCase.getExecutorStates(false)).thenReturn(
+    when(executorStateUseCase.getExecutorStates()).thenReturn(
         Flowable.just(ExecutorState.DRIVER_ORDER_CONFIRMATION).concatWith(Flowable.never()));
 
     // Действие:
@@ -424,7 +424,7 @@ public class ExecutorStateNotOnlineUseCaseTest {
   @Test
   public void answerIllegalArgumentErrorIfWaitForClientConfirmation() {
     // Дано:
-    when(executorStateUseCase.getExecutorStates(false)).thenReturn(
+    when(executorStateUseCase.getExecutorStates()).thenReturn(
         Flowable.just(ExecutorState.CLIENT_ORDER_CONFIRMATION).concatWith(Flowable.never()));
 
     // Действие:
@@ -442,7 +442,7 @@ public class ExecutorStateNotOnlineUseCaseTest {
   @Test
   public void answerIllegalArgumentErrorIfMovingToClient() {
     // Дано:
-    when(executorStateUseCase.getExecutorStates(false))
+    when(executorStateUseCase.getExecutorStates())
         .thenReturn(Flowable.just(ExecutorState.MOVING_TO_CLIENT).concatWith(Flowable.never()));
 
     // Действие:
@@ -460,7 +460,7 @@ public class ExecutorStateNotOnlineUseCaseTest {
   @Test
   public void answerIllegalArgumentErrorIfWaitingForClient() {
     // Дано:
-    when(executorStateUseCase.getExecutorStates(false))
+    when(executorStateUseCase.getExecutorStates())
         .thenReturn(Flowable.just(ExecutorState.WAITING_FOR_CLIENT).concatWith(Flowable.never()));
 
     // Действие:
@@ -478,7 +478,7 @@ public class ExecutorStateNotOnlineUseCaseTest {
   @Test
   public void answerIllegalArgumentErrorIfOrderFulfillment() {
     // Дано:
-    when(executorStateUseCase.getExecutorStates(false))
+    when(executorStateUseCase.getExecutorStates())
         .thenReturn(Flowable.just(ExecutorState.ORDER_FULFILLMENT).concatWith(Flowable.never()));
 
     // Действие:
@@ -496,7 +496,7 @@ public class ExecutorStateNotOnlineUseCaseTest {
   @Test
   public void answerWithErrorIfOnline() {
     // Дано:
-    when(executorStateUseCase.getExecutorStates(false))
+    when(executorStateUseCase.getExecutorStates())
         .thenReturn(Flowable.just(ExecutorState.ONLINE).concatWith(Flowable.never()));
     when(gateway.sendNewExecutorState(any()))
         .thenReturn(Completable.error(new Exception()));
@@ -516,7 +516,7 @@ public class ExecutorStateNotOnlineUseCaseTest {
   @Test
   public void answerWithCompleteIfOnline() {
     // Дано:
-    when(executorStateUseCase.getExecutorStates(false))
+    when(executorStateUseCase.getExecutorStates())
         .thenReturn(Flowable.just(ExecutorState.ONLINE).concatWith(Flowable.never()));
     when(gateway.sendNewExecutorState(any())).thenReturn(Completable.complete());
 
@@ -535,7 +535,7 @@ public class ExecutorStateNotOnlineUseCaseTest {
   @Test
   public void answerWithErrorIfPaymentAcceptance() {
     // Дано:
-    when(executorStateUseCase.getExecutorStates(false))
+    when(executorStateUseCase.getExecutorStates())
         .thenReturn(Flowable.just(ExecutorState.PAYMENT_CONFIRMATION).concatWith(Flowable.never()));
     when(gateway.sendNewExecutorState(any()))
         .thenReturn(Completable.error(new Exception()));
@@ -555,7 +555,7 @@ public class ExecutorStateNotOnlineUseCaseTest {
   @Test
   public void answerWithCompleteIfPaymentAcceptance() {
     // Дано:
-    when(executorStateUseCase.getExecutorStates(false))
+    when(executorStateUseCase.getExecutorStates())
         .thenReturn(Flowable.just(ExecutorState.PAYMENT_CONFIRMATION).concatWith(Flowable.never()));
     when(gateway.sendNewExecutorState(any())).thenReturn(Completable.complete());
 

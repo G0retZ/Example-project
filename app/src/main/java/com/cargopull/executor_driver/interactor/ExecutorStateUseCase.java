@@ -12,9 +12,8 @@ public interface ExecutorStateUseCase {
   /**
    * Запрашивает статусы исполнителя, выдает последний закешированный результат, если не сброшен.
    *
-   * @param reset - сбросить ли кеш? Сбрасывает кеш для всех последующих запросов к юзкейсу.
    * @return {@link Flowable<ExecutorState>} результат запроса.
    */
   @NonNull
-  Flowable<ExecutorState> getExecutorStates(boolean reset);
+  Flowable<ExecutorState> getExecutorStates();
 }

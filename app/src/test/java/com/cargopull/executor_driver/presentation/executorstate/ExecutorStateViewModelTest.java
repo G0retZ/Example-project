@@ -2,7 +2,6 @@ package com.cargopull.executor_driver.presentation.executorstate;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
-import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -53,7 +52,7 @@ public class ExecutorStateViewModelTest {
   @Before
   public void setUp() {
     ExecutorState.ONLINE.setData(null);
-    when(executorStateUseCase.getExecutorStates(anyBoolean())).thenReturn(Flowable.never());
+    when(executorStateUseCase.getExecutorStates()).thenReturn(Flowable.never());
     viewModel = new ExecutorStateViewModelImpl(executorStateUseCase);
   }
 
@@ -68,7 +67,7 @@ public class ExecutorStateViewModelTest {
     viewModel.initializeExecutorState();
 
     // Результат:
-    verify(executorStateUseCase, only()).getExecutorStates(true);
+    verify(executorStateUseCase, only()).getExecutorStates();
   }
 
   /**
@@ -83,7 +82,7 @@ public class ExecutorStateViewModelTest {
     viewModel.initializeExecutorState();
 
     // Результат:
-    verify(executorStateUseCase, times(3)).getExecutorStates(true);
+    verify(executorStateUseCase, times(3)).getExecutorStates();
     verifyNoMoreInteractions(executorStateUseCase);
   }
 
@@ -110,7 +109,7 @@ public class ExecutorStateViewModelTest {
   public void showShiftOpenedMessage() {
     // Дано:
     ExecutorState.SHIFT_OPENED.setData("Message");
-    when(executorStateUseCase.getExecutorStates(anyBoolean()))
+    when(executorStateUseCase.getExecutorStates())
         .thenReturn(Flowable.just(ExecutorState.SHIFT_OPENED));
 
     // Действие:
@@ -130,7 +129,7 @@ public class ExecutorStateViewModelTest {
   public void showShiftOpenedMessageThenNull() {
     // Дано:
     ExecutorState.SHIFT_OPENED.setData("Message");
-    when(executorStateUseCase.getExecutorStates(anyBoolean()))
+    when(executorStateUseCase.getExecutorStates())
         .thenReturn(Flowable.just(ExecutorState.SHIFT_OPENED));
 
     // Действие:
@@ -154,7 +153,7 @@ public class ExecutorStateViewModelTest {
   public void doNotShowNullShiftOpenedMessage() {
     // Дано:
     ExecutorState.SHIFT_OPENED.setData(null);
-    when(executorStateUseCase.getExecutorStates(anyBoolean()))
+    when(executorStateUseCase.getExecutorStates())
         .thenReturn(Flowable.just(ExecutorState.SHIFT_OPENED));
 
     // Действие:
@@ -172,7 +171,7 @@ public class ExecutorStateViewModelTest {
   public void doNotShowEmptyShiftOpenedMessage() {
     // Дано:
     ExecutorState.SHIFT_OPENED.setData("");
-    when(executorStateUseCase.getExecutorStates(anyBoolean()))
+    when(executorStateUseCase.getExecutorStates())
         .thenReturn(Flowable.just(ExecutorState.SHIFT_OPENED));
 
     // Действие:
@@ -190,7 +189,7 @@ public class ExecutorStateViewModelTest {
   public void showOnlineMessage() {
     // Дано:
     ExecutorState.ONLINE.setData("Message");
-    when(executorStateUseCase.getExecutorStates(anyBoolean()))
+    when(executorStateUseCase.getExecutorStates())
         .thenReturn(Flowable.just(ExecutorState.ONLINE));
 
     // Действие:
@@ -210,7 +209,7 @@ public class ExecutorStateViewModelTest {
   public void showOnlineMessageThenNull() {
     // Дано:
     ExecutorState.ONLINE.setData("Message");
-    when(executorStateUseCase.getExecutorStates(anyBoolean()))
+    when(executorStateUseCase.getExecutorStates())
         .thenReturn(Flowable.just(ExecutorState.ONLINE));
 
     // Действие:
@@ -234,7 +233,7 @@ public class ExecutorStateViewModelTest {
   public void doNotShowNullOnlineMessage() {
     // Дано:
     ExecutorState.ONLINE.setData(null);
-    when(executorStateUseCase.getExecutorStates(anyBoolean()))
+    when(executorStateUseCase.getExecutorStates())
         .thenReturn(Flowable.just(ExecutorState.ONLINE));
 
     // Действие:
@@ -252,7 +251,7 @@ public class ExecutorStateViewModelTest {
   public void doNotShowEmptyOnlineMessage() {
     // Дано:
     ExecutorState.ONLINE.setData("");
-    when(executorStateUseCase.getExecutorStates(anyBoolean()))
+    when(executorStateUseCase.getExecutorStates())
         .thenReturn(Flowable.just(ExecutorState.ONLINE));
 
     // Действие:
@@ -270,7 +269,7 @@ public class ExecutorStateViewModelTest {
   public void doNotShowSpaceMessage() {
     // Дано:
     ExecutorState.ONLINE.setData("\n");
-    when(executorStateUseCase.getExecutorStates(anyBoolean()))
+    when(executorStateUseCase.getExecutorStates())
         .thenReturn(Flowable.just(ExecutorState.ONLINE));
 
     // Действие:
@@ -304,7 +303,7 @@ public class ExecutorStateViewModelTest {
   @Test
   public void navigateToNoNetwork() {
     // Дано:
-    when(executorStateUseCase.getExecutorStates(anyBoolean()))
+    when(executorStateUseCase.getExecutorStates())
         .thenReturn(Flowable.error(DataMappingException::new));
 
     // Действие:
@@ -321,7 +320,7 @@ public class ExecutorStateViewModelTest {
   @Test
   public void navigateToAuthorize() {
     // Дано:
-    when(executorStateUseCase.getExecutorStates(anyBoolean()))
+    when(executorStateUseCase.getExecutorStates())
         .thenReturn(Flowable.error(DataMappingException::new));
 
     // Действие:
@@ -338,7 +337,7 @@ public class ExecutorStateViewModelTest {
   @Test
   public void navigateToShiftClosed() {
     // Дано:
-    when(executorStateUseCase.getExecutorStates(anyBoolean()))
+    when(executorStateUseCase.getExecutorStates())
         .thenReturn(Flowable.just(ExecutorState.SHIFT_CLOSED));
 
     // Действие:
@@ -355,7 +354,7 @@ public class ExecutorStateViewModelTest {
   @Test
   public void navigateToShiftOpened() {
     // Дано:
-    when(executorStateUseCase.getExecutorStates(anyBoolean()))
+    when(executorStateUseCase.getExecutorStates())
         .thenReturn(Flowable.just(ExecutorState.SHIFT_OPENED));
 
     // Действие:
@@ -372,7 +371,7 @@ public class ExecutorStateViewModelTest {
   @Test
   public void navigateToOnline() {
     // Дано:
-    when(executorStateUseCase.getExecutorStates(anyBoolean()))
+    when(executorStateUseCase.getExecutorStates())
         .thenReturn(Flowable.just(ExecutorState.ONLINE));
 
     // Действие:
@@ -389,7 +388,7 @@ public class ExecutorStateViewModelTest {
   @Test
   public void navigateToDriverOrderConfirmation() {
     // Дано:
-    when(executorStateUseCase.getExecutorStates(anyBoolean()))
+    when(executorStateUseCase.getExecutorStates())
         .thenReturn(Flowable.just(ExecutorState.DRIVER_ORDER_CONFIRMATION));
 
     // Действие:
@@ -406,7 +405,7 @@ public class ExecutorStateViewModelTest {
   @Test
   public void navigateToClientOrderConfirmation() {
     // Дано:
-    when(executorStateUseCase.getExecutorStates(anyBoolean()))
+    when(executorStateUseCase.getExecutorStates())
         .thenReturn(Flowable.just(ExecutorState.CLIENT_ORDER_CONFIRMATION));
 
     // Действие:
@@ -423,7 +422,7 @@ public class ExecutorStateViewModelTest {
   @Test
   public void navigateToMovingToClient() {
     // Дано:
-    when(executorStateUseCase.getExecutorStates(anyBoolean()))
+    when(executorStateUseCase.getExecutorStates())
         .thenReturn(Flowable.just(ExecutorState.MOVING_TO_CLIENT));
 
     // Действие:
@@ -440,7 +439,7 @@ public class ExecutorStateViewModelTest {
   @Test
   public void navigateToWaitingForClient() {
     // Дано:
-    when(executorStateUseCase.getExecutorStates(anyBoolean()))
+    when(executorStateUseCase.getExecutorStates())
         .thenReturn(Flowable.just(ExecutorState.WAITING_FOR_CLIENT));
 
     // Действие:
@@ -457,7 +456,7 @@ public class ExecutorStateViewModelTest {
   @Test
   public void navigateToOrderFulfillment() {
     // Дано:
-    when(executorStateUseCase.getExecutorStates(anyBoolean()))
+    when(executorStateUseCase.getExecutorStates())
         .thenReturn(Flowable.just(ExecutorState.ORDER_FULFILLMENT));
 
     // Действие:
@@ -474,7 +473,7 @@ public class ExecutorStateViewModelTest {
   @Test
   public void navigateToPaymentAcceptance() {
     // Дано:
-    when(executorStateUseCase.getExecutorStates(anyBoolean()))
+    when(executorStateUseCase.getExecutorStates())
         .thenReturn(Flowable.just(ExecutorState.PAYMENT_CONFIRMATION));
 
     // Действие:

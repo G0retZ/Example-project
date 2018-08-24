@@ -32,7 +32,7 @@ public class OrderGatewayImpl implements OrderGateway {
   @Override
   public Flowable<Order> getOrders(@NonNull String channelId) {
     return executorStateUseCase
-        .getExecutorStates(false)
+        .getExecutorStates()
         .observeOn(Schedulers.io())
         .filter(executorState1 -> executorState1 == executorState)
         .map(executorState1 -> {

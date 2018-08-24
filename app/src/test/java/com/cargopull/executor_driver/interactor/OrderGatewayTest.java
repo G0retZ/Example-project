@@ -1,6 +1,5 @@
 package com.cargopull.executor_driver.interactor;
 
-import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.only;
@@ -41,7 +40,7 @@ public class OrderGatewayTest {
   public void setUp() {
     ExecutorState.DRIVER_ORDER_CONFIRMATION.setData(null);
     ExecutorState.CLIENT_ORDER_CONFIRMATION.setData(null);
-    when(useCase.getExecutorStates(anyBoolean())).thenReturn(Flowable.never());
+    when(useCase.getExecutorStates()).thenReturn(Flowable.never());
   }
 
   /* Проверяем работу с юзкейсом статусов */
@@ -58,7 +57,7 @@ public class OrderGatewayTest {
     gateway.getOrders("").test();
 
     // Результат:
-    verify(useCase, only()).getExecutorStates(false);
+    verify(useCase, only()).getExecutorStates();
   }
 
   /* Проверяем работу с маппером */
@@ -70,7 +69,7 @@ public class OrderGatewayTest {
   public void doNotTouchMapperIfExecutorStateIncorrect() {
     // Дано:
     gateway = new OrderGatewayImpl(useCase, ExecutorState.DRIVER_ORDER_CONFIRMATION, mapper);
-    when(useCase.getExecutorStates(anyBoolean()))
+    when(useCase.getExecutorStates())
         .thenReturn(Flowable.just(ExecutorState.SHIFT_CLOSED, ExecutorState.SHIFT_OPENED,
             ExecutorState.ONLINE, ExecutorState.CLIENT_ORDER_CONFIRMATION,
             ExecutorState.MOVING_TO_CLIENT, ExecutorState.WAITING_FOR_CLIENT,
@@ -90,7 +89,7 @@ public class OrderGatewayTest {
   public void doNotTouchMapperIfNoData() {
     // Дано:
     gateway = new OrderGatewayImpl(useCase, ExecutorState.CLIENT_ORDER_CONFIRMATION, mapper);
-    when(useCase.getExecutorStates(anyBoolean()))
+    when(useCase.getExecutorStates())
         .thenReturn(Flowable.just(ExecutorState.CLIENT_ORDER_CONFIRMATION));
 
     // Действие:
@@ -110,7 +109,7 @@ public class OrderGatewayTest {
     // Дано:
     ExecutorState.MOVING_TO_CLIENT.setData("");
     gateway = new OrderGatewayImpl(useCase, ExecutorState.MOVING_TO_CLIENT, mapper);
-    when(useCase.getExecutorStates(anyBoolean()))
+    when(useCase.getExecutorStates())
         .thenReturn(Flowable.just(ExecutorState.MOVING_TO_CLIENT));
 
     // Действие:
@@ -129,7 +128,7 @@ public class OrderGatewayTest {
   public void ignoreForIncorrectExecutorState() {
     // Дано:
     gateway = new OrderGatewayImpl(useCase, ExecutorState.DRIVER_ORDER_CONFIRMATION, mapper);
-    when(useCase.getExecutorStates(anyBoolean()))
+    when(useCase.getExecutorStates())
         .thenReturn(Flowable.just(ExecutorState.SHIFT_CLOSED, ExecutorState.SHIFT_OPENED,
             ExecutorState.ONLINE, ExecutorState.CLIENT_ORDER_CONFIRMATION,
             ExecutorState.MOVING_TO_CLIENT, ExecutorState.WAITING_FOR_CLIENT,
@@ -151,7 +150,7 @@ public class OrderGatewayTest {
   public void answerNoOrdersAvailableForNoData() {
     // Дано:
     gateway = new OrderGatewayImpl(useCase, ExecutorState.CLIENT_ORDER_CONFIRMATION, mapper);
-    when(useCase.getExecutorStates(anyBoolean()))
+    when(useCase.getExecutorStates())
         .thenReturn(Flowable.just(ExecutorState.CLIENT_ORDER_CONFIRMATION));
 
     // Действие:
@@ -174,7 +173,7 @@ public class OrderGatewayTest {
     gateway = new OrderGatewayImpl(useCase, ExecutorState.MOVING_TO_CLIENT, mapper);
     doThrow(new DataMappingException()).when(mapper).map(anyString());
     ExecutorState.MOVING_TO_CLIENT.setData("");
-    when(useCase.getExecutorStates(anyBoolean()))
+    when(useCase.getExecutorStates())
         .thenReturn(Flowable.just(ExecutorState.MOVING_TO_CLIENT));
 
     // Действие:
@@ -197,7 +196,7 @@ public class OrderGatewayTest {
     gateway = new OrderGatewayImpl(useCase, ExecutorState.WAITING_FOR_CLIENT, mapper);
     when(mapper.map(anyString())).thenReturn(order);
     ExecutorState.WAITING_FOR_CLIENT.setData("");
-    when(useCase.getExecutorStates(anyBoolean()))
+    when(useCase.getExecutorStates())
         .thenReturn(Flowable.just(ExecutorState.WAITING_FOR_CLIENT));
 
     // Действие:

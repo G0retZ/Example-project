@@ -2,21 +2,15 @@ package com.cargopull.executor_driver.interactor;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.only;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 import com.cargopull.executor_driver.UseCaseThreadTestRule;
-import com.cargopull.executor_driver.backend.web.NoNetworkException;
 import com.cargopull.executor_driver.entity.ExecutorState;
 import com.cargopull.executor_driver.gateway.DataMappingException;
 import com.cargopull.executor_driver.utils.ErrorReporter;
 import io.reactivex.Flowable;
-import io.reactivex.Observable;
-import io.reactivex.functions.Action;
 import io.reactivex.subscribers.TestSubscriber;
-import java.io.IOException;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
@@ -36,168 +30,55 @@ public class ExecutorStateUseCaseTest {
   private ErrorReporter errorReporter;
   @Mock
   private ExecutorStateGateway gateway;
-  @Mock
-  private DataReceiver<String> loginReceiver;
-  @Mock
-  private Action action;
 
   @Before
   public void setUp() {
     when(gateway.getState()).thenReturn(Flowable.never());
-    when(loginReceiver.get()).thenReturn(Observable.never());
-    useCase = new ExecutorStateUseCaseImpl(errorReporter, gateway, loginReceiver);
-  }
-
-  /* Проверяем работу с публикатором логина */
-
-  /**
-   * Должен запросить у публикатора логин исполнителя.
-   */
-  @Test
-  public void askLoginPublisherForLogin() {
-    // Действие:
-    useCase.getExecutorStates(true).test();
-
-    // Результат:
-    verify(loginReceiver, only()).get();
-  }
-
-  /**
-   * Не должен запрашивать у публикатора логин исполнителя, если не было сброса.
-   */
-  @Test
-  public void doNotTouchLoginPublisherWithoutReset() {
-    // Действие:
-    useCase.getExecutorStates(false).test();
-    useCase.getExecutorStates(false).test();
-    useCase.getExecutorStates(false).test();
-
-    // Результат:
-    verifyZeroInteractions(loginReceiver);
+    useCase = new ExecutorStateUseCaseImpl(errorReporter, gateway);
   }
 
   /* Проверяем работу с гейтвеем */
 
   /**
-   * Должен запросить у гейтвея статус исполнителя.
+   * Должен запросить у гейтвея баланс исполнителя только раз.
    */
   @Test
-  public void askGatewayForStatus() {
-    // Дано:
-    when(loginReceiver.get()).thenReturn(Observable.just(
-        "1234567890", "0987654321", "123454321", "09876567890"
-    ));
-
+  public void askGatewayForExecutorState() {
     // Действие:
-    useCase.getExecutorStates(true).test();
+    useCase.getExecutorStates().test();
+    useCase.getExecutorStates().test();
+    useCase.getExecutorStates().test();
+    useCase.getExecutorStates().test();
 
     // Результат:
-    verify(gateway, times(4)).getState();
-  }
-
-  /**
-   * Должен отписаться от предыдущих запросов статусов исполнителя.
-   *
-   * @throws Exception error
-   */
-  @Test
-  public void ubSubscribeFromPreviousRequestsToGateway() throws Exception {
-    // Дано:
-    when(loginReceiver.get()).thenReturn(Observable.just(
-        "1234567890", "0987654321", "123454321", "09876567890"
-    ));
-    when(gateway.getState()).thenReturn(Flowable.<ExecutorState>never().doOnCancel(action));
-
-    // Действие:
-    useCase.getExecutorStates(true).test();
-
-    // Результат:
-    verify(action, times(3)).run();
-  }
-
-  /**
-   * Не должен запрпрашивать у гейтвея статус исполнителя.
-   */
-  @Test
-  public void doNotAskGatewayForStatusIfSocketError() {
-    // Действие:
-    useCase.getExecutorStates(true).test();
-
-    // Результат:
-    verifyZeroInteractions(gateway);
-  }
-
-  /**
-   * Не должен запрпрашивать у гейтвея статус исполнителя.
-   */
-  @Test
-  public void doNotAskGatewayForStatus() {
-    // Дано:
-    when(loginReceiver.get()).thenReturn(Observable.error(NoNetworkException::new));
-
-    // Действие:
-    useCase.getExecutorStates(true).test();
-
-    // Результат:
-    verifyZeroInteractions(gateway);
-  }
-
-  /**
-   * Не должен трогать гейтвей без сброса.
-   */
-  @Test
-  public void doNotTouchGatewayWithoutReset() {
-    // Действие:
-    useCase.getExecutorStates(false).test();
-    useCase.getExecutorStates(false).test();
-    useCase.getExecutorStates(false).test();
-
-    // Результат:
-    verifyZeroInteractions(gateway);
+    verify(gateway, only()).getState();
   }
 
   /* Проверяем отправку ошибок в репортер */
 
   /**
-   * Должен отправить ошибку, если была ошибка получения логина.
+   * Должен отправить ошибку.
    */
   @Test
-  public void reportGetLoginFailed() {
+  public void reportError() {
     // Дано:
-    when(loginReceiver.get()).thenReturn(Observable.error(IOException::new));
-
-    // Действие:
-    useCase.getExecutorStates(true).test();
-
-    // Результат:
-    verify(errorReporter).reportError(any(IOException.class));
-  }
-
-  /**
-   * Должен отправить ошибку, если подписка обломалась.
-   */
-  @Test
-  public void reportSubscriptionFailed() {
-    // Дано:
-    when(loginReceiver.get()).thenReturn(Observable.just("1234567890"));
     when(gateway.getState()).thenReturn(Flowable.error(DataMappingException::new));
 
     // Действие:
-    useCase.getExecutorStates(true).test();
+    useCase.getExecutorStates().test();
 
     // Результат:
-    verify(errorReporter).reportError(any(DataMappingException.class));
+    verify(errorReporter, only()).reportError(any(DataMappingException.class));
   }
 
   /* Проверяем ответы */
 
   /**
-   * Должен вернуть статусы.
+   * Должен вернуть баланс исполнителя.
    */
   @Test
-  public void answerWithStatuses() {
+  public void answerWithExecutorState() {
     // Дано:
-    when(loginReceiver.get()).thenReturn(Observable.just("1234567890"));
     when(gateway.getState()).thenReturn(
         Flowable.just(ExecutorState.SHIFT_CLOSED, ExecutorState.SHIFT_OPENED, ExecutorState.ONLINE,
             ExecutorState.DRIVER_ORDER_CONFIRMATION, ExecutorState.CLIENT_ORDER_CONFIRMATION,
@@ -206,77 +87,45 @@ public class ExecutorStateUseCaseTest {
     );
 
     // Действие:
-    TestSubscriber<ExecutorState> testSubscriber =
-        useCase.getExecutorStates(true).test();
+    TestSubscriber<ExecutorState> testSubscriber = useCase.getExecutorStates().test();
 
     // Результат:
-    testSubscriber
-        .assertValues(ExecutorState.SHIFT_CLOSED, ExecutorState.SHIFT_OPENED, ExecutorState.ONLINE,
-            ExecutorState.DRIVER_ORDER_CONFIRMATION, ExecutorState.CLIENT_ORDER_CONFIRMATION,
-            ExecutorState.MOVING_TO_CLIENT, ExecutorState.WAITING_FOR_CLIENT,
-            ExecutorState.ORDER_FULFILLMENT, ExecutorState.PAYMENT_CONFIRMATION);
+    testSubscriber.assertValues(
+        ExecutorState.SHIFT_CLOSED, ExecutorState.SHIFT_OPENED, ExecutorState.ONLINE,
+        ExecutorState.DRIVER_ORDER_CONFIRMATION, ExecutorState.CLIENT_ORDER_CONFIRMATION,
+        ExecutorState.MOVING_TO_CLIENT, ExecutorState.WAITING_FOR_CLIENT,
+        ExecutorState.ORDER_FULFILLMENT, ExecutorState.PAYMENT_CONFIRMATION
+    );
     testSubscriber.assertNoErrors();
   }
 
   /**
-   * Должен вернуть ошибку, если была ошибка получения логина.
+   * Должен вернуть ошибку.
    */
   @Test
-  public void answerWithErrorIfGetLoginFailed() {
-    when(loginReceiver.get()).thenReturn(Observable.error(IOException::new));
-
-    // Действие:
-    TestSubscriber<ExecutorState> testSubscriber =
-        useCase.getExecutorStates(true).test();
-
-    // Результат:
-    testSubscriber.assertError(IOException.class);
-    testSubscriber.assertNoValues();
-  }
-
-  /**
-   * Должен вернуть ошибку, если подписка обломалась.
-   */
-  @Test
-  public void answerWithErrorIfSubscriptionFailed() {
-    when(loginReceiver.get()).thenReturn(Observable.just("1234567890"));
+  public void answerWithError() {
+    // Дано:
     when(gateway.getState()).thenReturn(Flowable.error(DataMappingException::new));
 
     // Действие:
-    TestSubscriber<ExecutorState> testSubscriber =
-        useCase.getExecutorStates(true).test();
+    TestSubscriber<ExecutorState> testSubscriber = useCase.getExecutorStates().test();
 
     // Результат:
     testSubscriber.assertError(DataMappingException.class);
+    testSubscriber.assertNotComplete();
     testSubscriber.assertNoValues();
   }
 
   /**
-   * Должен завершить получение статусов.
+   * Должен завершить получение баланса исполнителя.
    */
   @Test
   public void answerComplete() {
-    when(loginReceiver.get()).thenReturn(Observable.just("1234567890"));
+    // Дано:
     when(gateway.getState()).thenReturn(Flowable.empty());
 
     // Действие:
-    TestSubscriber<ExecutorState> testSubscriber =
-        useCase.getExecutorStates(true).test();
-
-    // Результат:
-    testSubscriber.assertComplete();
-    testSubscriber.assertNoValues();
-    testSubscriber.assertNoErrors();
-  }
-
-  /**
-   * Должен ответить завершением без сброса.
-   */
-  @Test
-  public void answerCompleteWithoutReset() {
-    // Действие:
-    TestSubscriber<ExecutorState> testSubscriber =
-        useCase.getExecutorStates(false).test();
+    TestSubscriber<ExecutorState> testSubscriber = useCase.getExecutorStates().test();
 
     // Результат:
     testSubscriber.assertComplete();

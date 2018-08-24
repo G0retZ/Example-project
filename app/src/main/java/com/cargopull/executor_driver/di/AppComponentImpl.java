@@ -315,8 +315,7 @@ public class AppComponentImpl implements AppComponent {
         new ExecutorStateGatewayImpl(
             personalQueueListener,
             new ExecutorStateApiMapper()
-        ),
-        loginSharer
+        )
     );
     geoLocationUseCase = new GeoLocationUseCaseImpl(
         new GeoLocationGatewayImpl(

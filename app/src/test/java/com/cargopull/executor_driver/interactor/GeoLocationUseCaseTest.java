@@ -1,7 +1,6 @@
 package com.cargopull.executor_driver.interactor;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.times;
@@ -49,7 +48,7 @@ public class GeoLocationUseCaseTest {
   public void setUp() {
     when(geoLocationGateway.getGeoLocations(anyLong())).thenReturn(Flowable.never());
     when(geoTrackingGateway.sendGeoLocation(any())).thenReturn(Completable.never());
-    when(executorStateUseCase.getExecutorStates(anyBoolean())).thenReturn(Flowable.never());
+    when(executorStateUseCase.getExecutorStates()).thenReturn(Flowable.never());
     useCase = new GeoLocationUseCaseImpl(
         geoLocationGateway, geoTrackingGateway, executorStateUseCase
     );
@@ -66,7 +65,7 @@ public class GeoLocationUseCaseTest {
     useCase.getGeoLocations().test();
 
     // Результат:
-    verify(executorStateUseCase, only()).getExecutorStates(false);
+    verify(executorStateUseCase, only()).getExecutorStates();
   }
 
   /**
@@ -79,7 +78,7 @@ public class GeoLocationUseCaseTest {
     useCase.getGeoLocations().test();
 
     // Результат:
-    verify(executorStateUseCase, only()).getExecutorStates(false);
+    verify(executorStateUseCase, only()).getExecutorStates();
   }
 
   /**
@@ -88,7 +87,7 @@ public class GeoLocationUseCaseTest {
   @Test
   public void getExecutorStatesAgainAfterError() {
     // Дано:
-    when(executorStateUseCase.getExecutorStates(anyBoolean()))
+    when(executorStateUseCase.getExecutorStates())
         .thenReturn(Flowable.error(new ConnectionClosedException()));
 
     // Действие:
@@ -96,7 +95,7 @@ public class GeoLocationUseCaseTest {
     useCase.getGeoLocations().test();
 
     // Результат:
-    verify(executorStateUseCase, times(2)).getExecutorStates(false);
+    verify(executorStateUseCase, times(2)).getExecutorStates();
     verifyNoMoreInteractions(executorStateUseCase);
   }
 
@@ -106,14 +105,14 @@ public class GeoLocationUseCaseTest {
   @Test
   public void getExecutorStatesAgainAfterComplete() {
     // Дано:
-    when(executorStateUseCase.getExecutorStates(anyBoolean())).thenReturn(Flowable.empty());
+    when(executorStateUseCase.getExecutorStates()).thenReturn(Flowable.empty());
 
     // Действие:
     useCase.getGeoLocations().test();
     useCase.getGeoLocations().test();
 
     // Результат:
-    verify(executorStateUseCase, times(2)).getExecutorStates(false);
+    verify(executorStateUseCase, times(2)).getExecutorStates();
     verifyNoMoreInteractions(executorStateUseCase);
   }
 
@@ -137,7 +136,7 @@ public class GeoLocationUseCaseTest {
   @Test
   public void doNotTouchGatewayIfStatusError() {
     // Дано:
-    when(executorStateUseCase.getExecutorStates(anyBoolean()))
+    when(executorStateUseCase.getExecutorStates())
         .thenReturn(Flowable.error(new ConnectionClosedException()));
 
     // Действие:
@@ -153,7 +152,7 @@ public class GeoLocationUseCaseTest {
   @Test
   public void doNotTouchGatewayIfStatusComplete() {
     // Дано:
-    when(executorStateUseCase.getExecutorStates(anyBoolean())).thenReturn(Flowable.empty());
+    when(executorStateUseCase.getExecutorStates()).thenReturn(Flowable.empty());
 
     // Действие:
     useCase.getGeoLocations().test();
@@ -169,7 +168,7 @@ public class GeoLocationUseCaseTest {
   @Test
   public void askGatewayForLocationsEvery1HourIfGoToShiftClosed() {
     // Дано:
-    when(executorStateUseCase.getExecutorStates(anyBoolean()))
+    when(executorStateUseCase.getExecutorStates())
         .thenReturn(Flowable.just(ExecutorState.SHIFT_CLOSED));
 
     // Действие:
@@ -186,7 +185,7 @@ public class GeoLocationUseCaseTest {
   @Test
   public void askGatewayForLocationsEvery180secIfGoToShiftOpened() {
     // Дано:
-    when(executorStateUseCase.getExecutorStates(anyBoolean()))
+    when(executorStateUseCase.getExecutorStates())
         .thenReturn(Flowable.just(ExecutorState.SHIFT_OPENED));
 
     // Действие:
@@ -203,7 +202,7 @@ public class GeoLocationUseCaseTest {
   @Test
   public void askGatewayForLocationsEvery15secIfGoToOnline() {
     // Дано:
-    when(executorStateUseCase.getExecutorStates(anyBoolean()))
+    when(executorStateUseCase.getExecutorStates())
         .thenReturn(Flowable.just(ExecutorState.ONLINE));
 
     // Действие:
@@ -220,7 +219,7 @@ public class GeoLocationUseCaseTest {
   @Test
   public void askGatewayForLocationsEvery15secIfGoToDriverOrderConfirmation() {
     // Дано:
-    when(executorStateUseCase.getExecutorStates(anyBoolean()))
+    when(executorStateUseCase.getExecutorStates())
         .thenReturn(Flowable.just(ExecutorState.DRIVER_ORDER_CONFIRMATION));
 
     // Действие:
@@ -237,7 +236,7 @@ public class GeoLocationUseCaseTest {
   @Test
   public void askGatewayForLocationsEvery15secIfGoToClientOrderConfirmation() {
     // Дано:
-    when(executorStateUseCase.getExecutorStates(anyBoolean()))
+    when(executorStateUseCase.getExecutorStates())
         .thenReturn(Flowable.just(ExecutorState.CLIENT_ORDER_CONFIRMATION));
 
     // Действие:
@@ -254,7 +253,7 @@ public class GeoLocationUseCaseTest {
   @Test
   public void askGatewayForLocationsEvery15secIfGoToMovingToClient() {
     // Дано:
-    when(executorStateUseCase.getExecutorStates(anyBoolean()))
+    when(executorStateUseCase.getExecutorStates())
         .thenReturn(Flowable.just(ExecutorState.MOVING_TO_CLIENT));
 
     // Действие:
@@ -271,7 +270,7 @@ public class GeoLocationUseCaseTest {
   @Test
   public void askGatewayForLocationsEvery15secIfGoToWaitingForClient() {
     // Дано:
-    when(executorStateUseCase.getExecutorStates(anyBoolean()))
+    when(executorStateUseCase.getExecutorStates())
         .thenReturn(Flowable.just(ExecutorState.WAITING_FOR_CLIENT));
 
     // Действие:
@@ -288,7 +287,7 @@ public class GeoLocationUseCaseTest {
   @Test
   public void askGatewayForLocationsEvery15secIfGoToOrderFulfillment() {
     // Дано:
-    when(executorStateUseCase.getExecutorStates(anyBoolean()))
+    when(executorStateUseCase.getExecutorStates())
         .thenReturn(Flowable.just(ExecutorState.ORDER_FULFILLMENT));
 
     // Действие:
@@ -305,7 +304,7 @@ public class GeoLocationUseCaseTest {
   @Test
   public void askGatewayForLocationsEvery15secIfGoToPaymentAcceptance() {
     // Дано:
-    when(executorStateUseCase.getExecutorStates(anyBoolean()))
+    when(executorStateUseCase.getExecutorStates())
         .thenReturn(Flowable.just(ExecutorState.PAYMENT_CONFIRMATION));
 
     // Действие:
@@ -322,7 +321,7 @@ public class GeoLocationUseCaseTest {
   public void askGatewayForLocationsDependingOnNewStatesArrival() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(geoLocationGateway);
-    when(executorStateUseCase.getExecutorStates(anyBoolean())).thenReturn(Flowable.fromArray(
+    when(executorStateUseCase.getExecutorStates()).thenReturn(Flowable.fromArray(
         ExecutorState.SHIFT_CLOSED, ExecutorState.SHIFT_OPENED, ExecutorState.ONLINE,
         ExecutorState.DRIVER_ORDER_CONFIRMATION, ExecutorState.CLIENT_ORDER_CONFIRMATION,
         ExecutorState.MOVING_TO_CLIENT, ExecutorState.WAITING_FOR_CLIENT,
@@ -350,7 +349,7 @@ public class GeoLocationUseCaseTest {
   @Test
   public void disposePreviousGatewayQueriesOnNewStatesArrival() throws Exception {
     // Дано:
-    when(executorStateUseCase.getExecutorStates(anyBoolean())).thenReturn(Flowable.fromArray(
+    when(executorStateUseCase.getExecutorStates()).thenReturn(Flowable.fromArray(
         ExecutorState.SHIFT_CLOSED, ExecutorState.SHIFT_OPENED, ExecutorState.ONLINE,
         ExecutorState.DRIVER_ORDER_CONFIRMATION, ExecutorState.CLIENT_ORDER_CONFIRMATION,
         ExecutorState.MOVING_TO_CLIENT, ExecutorState.WAITING_FOR_CLIENT,
@@ -375,7 +374,7 @@ public class GeoLocationUseCaseTest {
   @Test
   public void doNotTouchTrackingGatewayOnEmptyStates() {
     // Дано:
-    when(executorStateUseCase.getExecutorStates(anyBoolean())).thenReturn(Flowable.empty());
+    when(executorStateUseCase.getExecutorStates()).thenReturn(Flowable.empty());
 
     // Действие:
     useCase.getGeoLocations().test();
@@ -390,7 +389,7 @@ public class GeoLocationUseCaseTest {
   @Test
   public void askTrackingGatewayToSendNewGeoLocation() {
     // Дано:
-    when(executorStateUseCase.getExecutorStates(anyBoolean()))
+    when(executorStateUseCase.getExecutorStates())
         .thenReturn(Flowable.just(ExecutorState.SHIFT_CLOSED));
     when(geoLocationGateway.getGeoLocations(anyLong()))
         .thenReturn(Flowable.just(
@@ -417,7 +416,7 @@ public class GeoLocationUseCaseTest {
   @Test
   public void doNotTouchTrackingGatewayOnGetStateError() {
     // Дано:
-    when(executorStateUseCase.getExecutorStates(anyBoolean()))
+    when(executorStateUseCase.getExecutorStates())
         .thenReturn(Flowable.error(ConnectException::new));
 
     // Действие:
@@ -433,7 +432,7 @@ public class GeoLocationUseCaseTest {
   @Test
   public void doNotTouchTrackingGatewayOnGetGeolocationError() {
     // Дано:
-    when(executorStateUseCase.getExecutorStates(anyBoolean()))
+    when(executorStateUseCase.getExecutorStates())
         .thenReturn(Flowable.just(ExecutorState.SHIFT_CLOSED));
     when(geoLocationGateway.getGeoLocations(anyLong())).thenReturn(Flowable.error(new Exception()));
 
@@ -452,7 +451,7 @@ public class GeoLocationUseCaseTest {
   @Test
   public void answerWithNewGeoLocations() {
     // Дано:
-    when(executorStateUseCase.getExecutorStates(anyBoolean()))
+    when(executorStateUseCase.getExecutorStates())
         .thenReturn(Flowable.just(ExecutorState.SHIFT_CLOSED));
     when(geoLocationGateway.getGeoLocations(anyLong())).thenReturn(Flowable.just(
         new GeoLocation(1, 2, 3),
@@ -480,7 +479,7 @@ public class GeoLocationUseCaseTest {
   @Test
   public void answerWithErrorOnGetStateError() {
     // Дано:
-    when(executorStateUseCase.getExecutorStates(anyBoolean()))
+    when(executorStateUseCase.getExecutorStates())
         .thenReturn(Flowable.error(ConnectException::new));
 
     // Действие:
@@ -498,7 +497,7 @@ public class GeoLocationUseCaseTest {
   @Test
   public void answerWithErrorOnGetGeolocationError() {
     // Дано:
-    when(executorStateUseCase.getExecutorStates(anyBoolean()))
+    when(executorStateUseCase.getExecutorStates())
         .thenReturn(Flowable.just(ExecutorState.SHIFT_CLOSED));
     when(geoLocationGateway.getGeoLocations(anyLong())).thenReturn(Flowable.error(new Exception()));
 
@@ -516,7 +515,7 @@ public class GeoLocationUseCaseTest {
   @Test
   public void answerWithErrorOnSendGeolocationError() {
     // Дано:
-    when(executorStateUseCase.getExecutorStates(anyBoolean()))
+    when(executorStateUseCase.getExecutorStates())
         .thenReturn(Flowable.just(ExecutorState.SHIFT_CLOSED));
     when(geoLocationGateway.getGeoLocations(anyLong())).thenReturn(Flowable.just(
         new GeoLocation(1, 2, 3),
@@ -539,7 +538,7 @@ public class GeoLocationUseCaseTest {
   @Test
   public void answerWithComplete() {
     // Дано:
-    when(executorStateUseCase.getExecutorStates(anyBoolean())).thenReturn(Flowable.empty());
+    when(executorStateUseCase.getExecutorStates()).thenReturn(Flowable.empty());
 
     // Действие:
     TestSubscriber<GeoLocation> testSubscriber = useCase.getGeoLocations().test();

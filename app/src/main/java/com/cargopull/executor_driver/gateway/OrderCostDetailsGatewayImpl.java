@@ -28,7 +28,7 @@ public class OrderCostDetailsGatewayImpl implements OrderCostDetailsGateway {
   @Override
   public Flowable<OrderCostDetails> getOrderCostDetails() {
     return executorStateUseCase
-        .getExecutorStates(false)
+        .getExecutorStates()
         .observeOn(Schedulers.io())
         .filter(executorState1 -> executorState1 == ExecutorState.PAYMENT_CONFIRMATION)
         .map(executorState1 -> {

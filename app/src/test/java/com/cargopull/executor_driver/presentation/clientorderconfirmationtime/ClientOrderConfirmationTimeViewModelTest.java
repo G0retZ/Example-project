@@ -52,7 +52,7 @@ public class ClientOrderConfirmationTimeViewModelTest {
     testScheduler = new TestScheduler();
     publishSubject = PublishSubject.create();
     RxJavaPlugins.setComputationSchedulerHandler(scheduler -> testScheduler);
-    when(useCase.getExecutorStates(false))
+    when(useCase.getExecutorStates())
         .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
     viewModel = new ClientOrderConfirmationTimeViewModelImpl(useCase);
   }
@@ -66,7 +66,7 @@ public class ClientOrderConfirmationTimeViewModelTest {
   @Test
   public void askUseCaseForOrderTimeInitially() {
     // Результат:
-    verify(useCase, only()).getExecutorStates(false);
+    verify(useCase, only()).getExecutorStates();
   }
 
   /**
@@ -81,7 +81,7 @@ public class ClientOrderConfirmationTimeViewModelTest {
     viewModel.getNavigationLiveData();
 
     // Результат:
-    verify(useCase, only()).getExecutorStates(false);
+    verify(useCase, only()).getExecutorStates();
   }
 
   /* Тетсируем переключение состояний */
