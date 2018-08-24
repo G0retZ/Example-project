@@ -30,7 +30,7 @@ public class MissedOrderUseCaseImpl implements MissedOrderUseCase {
   public Flowable<String> getMissedOrders() {
     return loginReceiver.get()
         .toFlowable(BackpressureStrategy.BUFFER)
-        .switchMap(gateway::loadMissedOrdersMessages)
+        .switchMap(login -> gateway.loadMissedOrdersMessages())
         .observeOn(Schedulers.single())
         .doOnError(errorReporter::reportError);
   }

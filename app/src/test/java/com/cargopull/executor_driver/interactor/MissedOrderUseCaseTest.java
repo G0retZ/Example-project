@@ -1,7 +1,6 @@
 package com.cargopull.executor_driver.interactor;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -46,7 +45,7 @@ public class MissedOrderUseCaseTest {
 
   @Before
   public void setUp() {
-    when(gateway.loadMissedOrdersMessages(anyString())).thenReturn(Flowable.never());
+    when(gateway.loadMissedOrdersMessages()).thenReturn(Flowable.never());
     when(loginReceiver.get()).thenReturn(Observable.never());
     useCase = new MissedOrderUseCaseImpl(errorReporter, gateway, loginReceiver);
   }
@@ -68,10 +67,7 @@ public class MissedOrderUseCaseTest {
     useCase.getMissedOrders().test();
 
     // Результат:
-    inOrder.verify(gateway).loadMissedOrdersMessages("1234567890");
-    inOrder.verify(gateway).loadMissedOrdersMessages("0987654321");
-    inOrder.verify(gateway).loadMissedOrdersMessages("123454321");
-    inOrder.verify(gateway).loadMissedOrdersMessages("09876567890");
+    inOrder.verify(gateway, times(4)).loadMissedOrdersMessages();
     verifyNoMoreInteractions(gateway);
   }
 
@@ -86,7 +82,7 @@ public class MissedOrderUseCaseTest {
     when(loginReceiver.get()).thenReturn(Observable.just(
         "1234567890", "0987654321", "123454321", "09876567890"
     ));
-    when(gateway.loadMissedOrdersMessages(anyString()))
+    when(gateway.loadMissedOrdersMessages())
         .thenReturn(Flowable.<String>never().doOnCancel(action));
 
     // Действие:
@@ -147,7 +143,7 @@ public class MissedOrderUseCaseTest {
   public void reportSubscriptionFailed() {
     // Дано:
     when(loginReceiver.get()).thenReturn(Observable.just("1234567890"));
-    when(gateway.loadMissedOrdersMessages("1234567890"))
+    when(gateway.loadMissedOrdersMessages())
         .thenReturn(Flowable.error(DataMappingException::new));
 
     // Действие:
@@ -167,7 +163,7 @@ public class MissedOrderUseCaseTest {
   public void answerWithMissedOrders() {
     // Дано:
     when(loginReceiver.get()).thenReturn(Observable.just("1234567890"));
-    when(gateway.loadMissedOrdersMessages("1234567890"))
+    when(gateway.loadMissedOrdersMessages())
         .thenReturn(Flowable.just("1", "2", "3"));
 
     // Действие:
@@ -201,7 +197,7 @@ public class MissedOrderUseCaseTest {
   public void answerWithErrorIfSubscriptionFailed() {
     // Дано:
     when(loginReceiver.get()).thenReturn(Observable.just("1234567890"));
-    when(gateway.loadMissedOrdersMessages("1234567890"))
+    when(gateway.loadMissedOrdersMessages())
         .thenReturn(Flowable.error(DataMappingException::new));
 
     // Действие:
@@ -219,7 +215,7 @@ public class MissedOrderUseCaseTest {
   public void answerComplete() {
     // Дано:
     when(loginReceiver.get()).thenReturn(Observable.just("1234567890"));
-    when(gateway.loadMissedOrdersMessages("1234567890")).thenReturn(Flowable.empty());
+    when(gateway.loadMissedOrdersMessages()).thenReturn(Flowable.empty());
 
     // Действие:
     TestSubscriber<String> testSubscriber = useCase.getMissedOrders().test();

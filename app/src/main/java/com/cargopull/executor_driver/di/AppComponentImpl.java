@@ -393,7 +393,7 @@ public class AppComponentImpl implements AppComponent {
             new MissedOrderUseCaseImpl(
                 errorReporter,
                 new MissedOrderGatewayImpl(
-                    stompClient
+                    personalQueueListener
                 ),
                 loginSharer
             )
