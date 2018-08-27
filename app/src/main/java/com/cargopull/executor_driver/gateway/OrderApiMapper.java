@@ -50,12 +50,6 @@ public class OrderApiMapper implements Mapper<StompMessage, Order> {
     if (apiOrder.getApiOrderService().getName() == null) {
       throw new DataMappingException("Ошибка маппинга: Имя услуги не должно быть null!");
     }
-    if (apiOrder.getExecutorDistance() == null) {
-      throw new DataMappingException("Ошибка маппинга: Дистанция не должна быть null!");
-    }
-    if (apiOrder.getEtaToStartPoint() == 0) {
-      throw new DataMappingException("Ошибка маппинга: ETA должно быть больше 0!");
-    }
     if (apiOrder.getRoute() == null) {
       throw new DataMappingException("Ошибка маппинга: маршрут не должен быть null!");
     }
@@ -68,7 +62,7 @@ public class OrderApiMapper implements Mapper<StompMessage, Order> {
         apiOrder.getId(),
         apiOrder.getComment() == null ? "" : apiOrder.getComment(),
         apiOrder.getApiOrderService().getName(),
-        apiOrder.getExecutorDistance().getDistance(),
+        apiOrder.getExecutorDistance() == null ? 0 : apiOrder.getExecutorDistance().getDistance(),
         apiOrder.getEstimatedAmountText() == null ? "" : apiOrder.getEstimatedAmountText(),
         apiOrder.getEstimatedAmount(),
         apiOrder.getEstimatedTime(),

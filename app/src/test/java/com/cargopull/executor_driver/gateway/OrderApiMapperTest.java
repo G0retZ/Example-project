@@ -360,12 +360,12 @@ public class OrderApiMapperTest {
   }
 
   /**
-   * Должен дать ошибку, если пришел JSON без ETA.
+   * Должен успешно преобразовать JSON без ETA в заказ.
    *
    * @throws Exception ошибка
    */
-  @Test(expected = DataMappingException.class)
-  public void mappingJsonStringWithoutEtaToOrderFail() throws Exception {
+  @Test
+  public void mappingJsonStringWithoutEtaToOrderSuccess() throws Exception {
     // Дано:
     when(stompMessage.getPayload()).thenReturn(rule.getOrderWithoutEta());
 
@@ -564,12 +564,12 @@ public class OrderApiMapperTest {
   }
 
   /**
-   * Должен дать ошибку, если пришел JSON без дистанции.
+   * Должен успешно преобразовать JSON без дистанции в заказ.
    *
    * @throws Exception ошибка
    */
-  @Test(expected = DataMappingException.class)
-  public void mappingJsonStringWithoutDistanceToOrderFail() throws Exception {
+  @Test
+  public void mappingJsonStringWithoutDistanceToOrderSuccess() throws Exception {
     // Дано:
     when(stompMessage.getPayload()).thenReturn(rule.getOrderWithoutDistance());
 

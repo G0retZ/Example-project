@@ -49,7 +49,6 @@ import com.cargopull.executor_driver.gateway.GeoTrackingGatewayImpl;
 import com.cargopull.executor_driver.gateway.HeatMapGatewayImpl;
 import com.cargopull.executor_driver.gateway.LastUsedVehicleGatewayImpl;
 import com.cargopull.executor_driver.gateway.MissedOrderGatewayImpl;
-import com.cargopull.executor_driver.gateway.MovingToClientApiMapper;
 import com.cargopull.executor_driver.gateway.MovingToClientGatewayImpl;
 import com.cargopull.executor_driver.gateway.OrderApiMapper;
 import com.cargopull.executor_driver.gateway.OrderConfirmationGatewayImpl;
@@ -57,11 +56,9 @@ import com.cargopull.executor_driver.gateway.OrderCostDetailsApiMapper;
 import com.cargopull.executor_driver.gateway.OrderCostDetailsGatewayImpl;
 import com.cargopull.executor_driver.gateway.OrderCurrentCostApiMapper;
 import com.cargopull.executor_driver.gateway.OrderCurrentCostGatewayImpl;
-import com.cargopull.executor_driver.gateway.OrderFulfillmentApiMapper;
 import com.cargopull.executor_driver.gateway.OrderGatewayImpl;
 import com.cargopull.executor_driver.gateway.OrderRouteGatewayImpl;
 import com.cargopull.executor_driver.gateway.PasswordGatewayImpl;
-import com.cargopull.executor_driver.gateway.PreOrderApiMapper;
 import com.cargopull.executor_driver.gateway.PreOrderConfirmationGatewayImpl;
 import com.cargopull.executor_driver.gateway.PreOrderGatewayImpl;
 import com.cargopull.executor_driver.gateway.RoutePointApiMapper;
@@ -78,7 +75,6 @@ import com.cargopull.executor_driver.gateway.VehicleApiMapper;
 import com.cargopull.executor_driver.gateway.VehicleOptionApiMapper;
 import com.cargopull.executor_driver.gateway.VehicleOptionsGatewayImpl;
 import com.cargopull.executor_driver.gateway.VehiclesAndOptionsGatewayImpl;
-import com.cargopull.executor_driver.gateway.WaitingForClientApiMapper;
 import com.cargopull.executor_driver.gateway.WaitingForClientGatewayImpl;
 import com.cargopull.executor_driver.interactor.CallToClientUseCaseImpl;
 import com.cargopull.executor_driver.interactor.CancelOrderReasonsUseCase;
@@ -840,7 +836,7 @@ public class AppComponentImpl implements AppComponent {
                         new OrderGatewayImpl(
                             personalQueueListener,
                             ExecutorState.MOVING_TO_CLIENT,
-                            new MovingToClientApiMapper(
+                            new OrderApiMapper(
                                 new VehicleOptionApiMapper(),
                                 new RoutePointApiMapper()
                             )
@@ -869,7 +865,7 @@ public class AppComponentImpl implements AppComponent {
                         new OrderGatewayImpl(
                             personalQueueListener,
                             ExecutorState.MOVING_TO_CLIENT,
-                            new WaitingForClientApiMapper(
+                            new OrderApiMapper(
                                 new VehicleOptionApiMapper(),
                                 new RoutePointApiMapper()
                             )
@@ -895,7 +891,7 @@ public class AppComponentImpl implements AppComponent {
                         new OrderGatewayImpl(
                             personalQueueListener,
                             ExecutorState.MOVING_TO_CLIENT,
-                            new OrderFulfillmentApiMapper(
+                            new OrderApiMapper(
                                 new VehicleOptionApiMapper(),
                                 new RoutePointApiMapper()
                             )
@@ -933,7 +929,7 @@ public class AppComponentImpl implements AppComponent {
                         new OrderGatewayImpl(
                             personalQueueListener,
                             ExecutorState.WAITING_FOR_CLIENT,
-                            new WaitingForClientApiMapper(
+                            new OrderApiMapper(
                                 new VehicleOptionApiMapper(),
                                 new RoutePointApiMapper()
                             )
@@ -962,7 +958,7 @@ public class AppComponentImpl implements AppComponent {
                         new OrderGatewayImpl(
                             personalQueueListener,
                             ExecutorState.WAITING_FOR_CLIENT,
-                            new OrderFulfillmentApiMapper(
+                            new OrderApiMapper(
                                 new VehicleOptionApiMapper(),
                                 new RoutePointApiMapper()
                             )
@@ -988,7 +984,7 @@ public class AppComponentImpl implements AppComponent {
                         new OrderGatewayImpl(
                             personalQueueListener,
                             ExecutorState.ORDER_FULFILLMENT,
-                            new OrderFulfillmentApiMapper(
+                            new OrderApiMapper(
                                 new VehicleOptionApiMapper(),
                                 new RoutePointApiMapper()
                             )
@@ -1010,7 +1006,7 @@ public class AppComponentImpl implements AppComponent {
                         new OrderGatewayImpl(
                             personalQueueListener,
                             ExecutorState.ORDER_FULFILLMENT,
-                            new OrderFulfillmentApiMapper(
+                            new OrderApiMapper(
                                 new VehicleOptionApiMapper(),
                                 new RoutePointApiMapper()
                             )
@@ -1035,7 +1031,7 @@ public class AppComponentImpl implements AppComponent {
                         new OrderGatewayImpl(
                             personalQueueListener,
                             ExecutorState.ORDER_FULFILLMENT,
-                            new OrderFulfillmentApiMapper(
+                            new OrderApiMapper(
                                 new VehicleOptionApiMapper(),
                                 new RoutePointApiMapper()
                             )
@@ -1057,7 +1053,7 @@ public class AppComponentImpl implements AppComponent {
                         new OrderGatewayImpl(
                             personalQueueListener,
                             ExecutorState.ORDER_FULFILLMENT,
-                            new OrderFulfillmentApiMapper(
+                            new OrderApiMapper(
                                 new VehicleOptionApiMapper(),
                                 new RoutePointApiMapper()
                             )
@@ -1086,7 +1082,7 @@ public class AppComponentImpl implements AppComponent {
                         new OrderGatewayImpl(
                             personalQueueListener,
                             ExecutorState.ORDER_FULFILLMENT,
-                            new WaitingForClientApiMapper(
+                            new OrderApiMapper(
                                 new VehicleOptionApiMapper(),
                                 new RoutePointApiMapper()
                             )
@@ -1112,7 +1108,7 @@ public class AppComponentImpl implements AppComponent {
                         new OrderGatewayImpl(
                             personalQueueListener,
                             ExecutorState.ORDER_FULFILLMENT,
-                            new OrderFulfillmentApiMapper(
+                            new OrderApiMapper(
                                 new VehicleOptionApiMapper(),
                                 new RoutePointApiMapper()
                             )
@@ -1138,7 +1134,7 @@ public class AppComponentImpl implements AppComponent {
                         new OrderGatewayImpl(
                             personalQueueListener,
                             ExecutorState.ORDER_FULFILLMENT,
-                            new OrderFulfillmentApiMapper(
+                            new OrderApiMapper(
                                 new VehicleOptionApiMapper(),
                                 new RoutePointApiMapper()
                             )
@@ -1321,7 +1317,7 @@ public class AppComponentImpl implements AppComponent {
                         new OrderGatewayImpl(
                             personalQueueListener,
                             ExecutorState.PAYMENT_CONFIRMATION,
-                            new WaitingForClientApiMapper(
+                            new OrderApiMapper(
                                 new VehicleOptionApiMapper(),
                                 new RoutePointApiMapper()
                             )
@@ -1347,7 +1343,7 @@ public class AppComponentImpl implements AppComponent {
                         new OrderGatewayImpl(
                             personalQueueListener,
                             ExecutorState.PAYMENT_CONFIRMATION,
-                            new OrderFulfillmentApiMapper(
+                            new OrderApiMapper(
                                 new VehicleOptionApiMapper(),
                                 new RoutePointApiMapper()
                             )
@@ -1377,7 +1373,7 @@ public class AppComponentImpl implements AppComponent {
                     new OrderConfirmationUseCaseImpl(
                         new PreOrderGatewayImpl(
                             personalQueueListener,
-                            new PreOrderApiMapper(
+                            new OrderApiMapper(
                                 new VehicleOptionApiMapper(),
                                 new RoutePointApiMapper()
                             )
@@ -1400,7 +1396,7 @@ public class AppComponentImpl implements AppComponent {
                         errorReporter,
                         new PreOrderGatewayImpl(
                             personalQueueListener,
-                            new PreOrderApiMapper(
+                            new OrderApiMapper(
                                 new VehicleOptionApiMapper(),
                                 new RoutePointApiMapper()
                             )
