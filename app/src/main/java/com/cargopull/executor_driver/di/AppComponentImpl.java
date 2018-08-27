@@ -356,8 +356,7 @@ public class AppComponentImpl implements AppComponent {
             errorReporter,
             new UpdateMessageGatewayImpl(
                 personalQueueListener
-            ),
-            loginSharer
+            )
         )
     );
     serverTimeViewModel = new ServerTimeViewModelImpl(
