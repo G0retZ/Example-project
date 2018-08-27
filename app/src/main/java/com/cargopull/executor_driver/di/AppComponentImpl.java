@@ -365,7 +365,6 @@ public class AppComponentImpl implements AppComponent {
             new ServerTimeGatewayImpl(
                 personalQueueListener
             ),
-            loginSharer,
             timeUtils
         )
     );
