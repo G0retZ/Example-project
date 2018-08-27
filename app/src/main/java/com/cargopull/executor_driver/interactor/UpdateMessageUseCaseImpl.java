@@ -30,7 +30,7 @@ public class UpdateMessageUseCaseImpl implements UpdateMessageUseCase {
   public Flowable<String> getUpdateMessages() {
     return loginReceiver.get()
         .toFlowable(BackpressureStrategy.BUFFER)
-        .switchMap(gateway::loadUpdateMessages)
+        .switchMap(login -> gateway.loadUpdateMessages())
         .observeOn(Schedulers.single())
         .doOnError(errorReporter::reportError);
   }

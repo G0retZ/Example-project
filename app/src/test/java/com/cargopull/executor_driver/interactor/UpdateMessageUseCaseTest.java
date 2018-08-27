@@ -1,7 +1,6 @@
 package com.cargopull.executor_driver.interactor;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -45,7 +44,7 @@ public class UpdateMessageUseCaseTest {
 
   @Before
   public void setUp() {
-    when(gateway.loadUpdateMessages(anyString())).thenReturn(Flowable.never());
+    when(gateway.loadUpdateMessages()).thenReturn(Flowable.never());
     when(loginReceiver.get()).thenReturn(Observable.never());
     useCase = new UpdateMessageUseCaseImpl(errorReporter, gateway, loginReceiver);
   }
@@ -67,10 +66,7 @@ public class UpdateMessageUseCaseTest {
     useCase.getUpdateMessages().test();
 
     // Результат:
-    inOrder.verify(gateway).loadUpdateMessages("1234567890");
-    inOrder.verify(gateway).loadUpdateMessages("0987654321");
-    inOrder.verify(gateway).loadUpdateMessages("123454321");
-    inOrder.verify(gateway).loadUpdateMessages("09876567890");
+    inOrder.verify(gateway, times(4)).loadUpdateMessages();
     verifyNoMoreInteractions(gateway);
   }
 
@@ -85,8 +81,7 @@ public class UpdateMessageUseCaseTest {
     when(loginReceiver.get()).thenReturn(Observable.just(
         "1234567890", "0987654321", "123454321", "09876567890"
     ));
-    when(gateway.loadUpdateMessages(anyString()))
-        .thenReturn(Flowable.<String>never().doOnCancel(action));
+    when(gateway.loadUpdateMessages()).thenReturn(Flowable.<String>never().doOnCancel(action));
 
     // Действие:
     useCase.getUpdateMessages().test();
@@ -146,8 +141,7 @@ public class UpdateMessageUseCaseTest {
   public void reportSubscriptionFailed() {
     // Дано:
     when(loginReceiver.get()).thenReturn(Observable.just("1234567890"));
-    when(gateway.loadUpdateMessages("1234567890"))
-        .thenReturn(Flowable.error(DataMappingException::new));
+    when(gateway.loadUpdateMessages()).thenReturn(Flowable.error(DataMappingException::new));
 
     // Действие:
     useCase.getUpdateMessages().test();
@@ -166,8 +160,7 @@ public class UpdateMessageUseCaseTest {
   public void answerWithUpdateMessages() {
     // Дано:
     when(loginReceiver.get()).thenReturn(Observable.just("1234567890"));
-    when(gateway.loadUpdateMessages("1234567890"))
-        .thenReturn(Flowable.just("1", "2", "3"));
+    when(gateway.loadUpdateMessages()).thenReturn(Flowable.just("1", "2", "3"));
 
     // Действие:
     TestSubscriber<String> testSubscriber = useCase.getUpdateMessages().test();
@@ -200,8 +193,7 @@ public class UpdateMessageUseCaseTest {
   public void answerWithErrorIfSubscriptionFailed() {
     // Дано:
     when(loginReceiver.get()).thenReturn(Observable.just("1234567890"));
-    when(gateway.loadUpdateMessages("1234567890"))
-        .thenReturn(Flowable.error(DataMappingException::new));
+    when(gateway.loadUpdateMessages()).thenReturn(Flowable.error(DataMappingException::new));
 
     // Действие:
     TestSubscriber<String> testSubscriber = useCase.getUpdateMessages().test();
@@ -218,7 +210,7 @@ public class UpdateMessageUseCaseTest {
   public void answerComplete() {
     // Дано:
     when(loginReceiver.get()).thenReturn(Observable.just("1234567890"));
-    when(gateway.loadUpdateMessages("1234567890")).thenReturn(Flowable.empty());
+    when(gateway.loadUpdateMessages()).thenReturn(Flowable.empty());
 
     // Действие:
     TestSubscriber<String> testSubscriber = useCase.getUpdateMessages().test();

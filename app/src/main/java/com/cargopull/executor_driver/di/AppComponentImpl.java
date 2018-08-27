@@ -355,7 +355,7 @@ public class AppComponentImpl implements AppComponent {
         new UpdateMessageUseCaseImpl(
             errorReporter,
             new UpdateMessageGatewayImpl(
-                stompClient
+                personalQueueListener
             ),
             loginSharer
         )

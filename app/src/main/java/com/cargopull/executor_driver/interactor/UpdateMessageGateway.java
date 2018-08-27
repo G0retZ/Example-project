@@ -11,9 +11,8 @@ public interface UpdateMessageGateway {
   /**
    * Получать сообщения о доступности новой версии.
    *
-   * @param channelId - ID "канала", откуда брать сообщения.
    * @return {@link Flowable<String>} результат запроса.
    */
   @NonNull
-  Flowable<String> loadUpdateMessages(@NonNull String channelId);
+  Flowable<String> loadUpdateMessages();
 }
