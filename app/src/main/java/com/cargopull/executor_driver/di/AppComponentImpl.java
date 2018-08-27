@@ -947,7 +947,7 @@ public class AppComponentImpl implements AppComponent {
                         ),
                         loginSharer,
                         new OrderCurrentCostGatewayImpl(
-                            stompClient,
+                            personalQueueListener,
                             new OrderCurrentCostApiMapper()
                         )
                     )

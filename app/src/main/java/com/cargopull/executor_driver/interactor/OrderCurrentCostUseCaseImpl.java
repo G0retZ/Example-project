@@ -38,7 +38,7 @@ public class OrderCurrentCostUseCaseImpl implements OrderCurrentCostUseCase {
         .switchMap(login -> orderGateway.getOrders()
             .observeOn(Schedulers.single())
             .switchMap(order ->
-                orderCurrentCostGateway.getOrderCurrentCost(login)
+                orderCurrentCostGateway.getOrderCurrentCost()
                     .observeOn(Schedulers.single())
                     .startWith(order.getTotalCost())
             )

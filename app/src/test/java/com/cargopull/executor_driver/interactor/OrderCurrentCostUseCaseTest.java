@@ -1,7 +1,6 @@
 package com.cargopull.executor_driver.interactor;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -48,7 +47,7 @@ public class OrderCurrentCostUseCaseTest {
   public void setUp() {
     when(loginReceiver.get()).thenReturn(Observable.never());
     when(orderGateway.getOrders()).thenReturn(Flowable.never());
-    when(orderCurrentCostGateway.getOrderCurrentCost(anyString())).thenReturn(Flowable.never());
+    when(orderCurrentCostGateway.getOrderCurrentCost()).thenReturn(Flowable.never());
     useCase = new OrderCurrentCostUseCaseImpl(errorReporter, orderGateway, loginReceiver,
         orderCurrentCostGateway);
   }
@@ -120,7 +119,7 @@ public class OrderCurrentCostUseCaseTest {
     useCase.getOrderCurrentCost().test();
 
     // Результат:
-    verify(orderCurrentCostGateway, only()).getOrderCurrentCost("1234567890");
+    verify(orderCurrentCostGateway, only()).getOrderCurrentCost();
   }
 
   /* Проверяем отправку ошибок в репортер */
@@ -152,7 +151,7 @@ public class OrderCurrentCostUseCaseTest {
     when(orderGateway.getOrders())
         .thenReturn(Flowable.just(order, order2));
     when(order.getTotalCost()).thenReturn(101L);
-    when(orderCurrentCostGateway.getOrderCurrentCost("1234567890"))
+    when(orderCurrentCostGateway.getOrderCurrentCost())
         .thenReturn(Flowable.error(new DataMappingException()));
 
     // Действие:
@@ -193,7 +192,7 @@ public class OrderCurrentCostUseCaseTest {
     when(orderGateway.getOrders())
         .thenReturn(Flowable.just(order, order2));
     when(order.getTotalCost()).thenReturn(101L);
-    when(orderCurrentCostGateway.getOrderCurrentCost("1234567890"))
+    when(orderCurrentCostGateway.getOrderCurrentCost())
         .thenReturn(Flowable.error(new DataMappingException()));
 
     // Действие:
@@ -238,7 +237,7 @@ public class OrderCurrentCostUseCaseTest {
         .thenReturn(Flowable.just(order, order2));
     when(order.getTotalCost()).thenReturn(100L);
     when(order2.getTotalCost()).thenReturn(12173L);
-    when(orderCurrentCostGateway.getOrderCurrentCost("1234567890")).thenReturn(
+    when(orderCurrentCostGateway.getOrderCurrentCost()).thenReturn(
         Flowable.just(123L, 145L, 139L, 198L, 202L),
         Flowable.just(8395L, 8937L, 17156L, 9228L)
     );
