@@ -860,15 +860,7 @@ public class AppComponentImpl implements AppComponent {
             new ViewModelFactory<>(
                 new OrderRouteViewModelImpl(
                     new OrderRouteUseCaseImpl(
-                        errorReporter,
-                        new OrderGatewayImpl(
-                            personalQueueListener,
-                            new OrderApiMapper(
-                                new VehicleOptionApiMapper(),
-                                new RoutePointApiMapper()
-                            )
-                        ),
-                        loginSharer,
+                        orderUseCase,
                         new OrderRouteGatewayImpl(stompClient)
                     )
                 )
@@ -915,15 +907,7 @@ public class AppComponentImpl implements AppComponent {
             new ViewModelFactory<>(
                 new OrderRouteViewModelImpl(
                     new OrderRouteUseCaseImpl(
-                        errorReporter,
-                        new OrderGatewayImpl(
-                            personalQueueListener,
-                            new OrderApiMapper(
-                                new VehicleOptionApiMapper(),
-                                new RoutePointApiMapper()
-                            )
-                        ),
-                        loginSharer,
+                        orderUseCase,
                         new OrderRouteGatewayImpl(stompClient)
                     )
                 )
@@ -985,15 +969,7 @@ public class AppComponentImpl implements AppComponent {
             new ViewModelFactory<>(
                 new NextRoutePointViewModelImpl(
                     new OrderRouteUseCaseImpl(
-                        errorReporter,
-                        new OrderGatewayImpl(
-                            personalQueueListener,
-                            new OrderApiMapper(
-                                new VehicleOptionApiMapper(),
-                                new RoutePointApiMapper()
-                            )
-                        ),
-                        loginSharer,
+                        orderUseCase,
                         new OrderRouteGatewayImpl(stompClient)
                     )
                 )
@@ -1006,15 +982,7 @@ public class AppComponentImpl implements AppComponent {
             new ViewModelFactory<>(
                 new OrderRouteViewModelImpl(
                     new OrderRouteUseCaseImpl(
-                        errorReporter,
-                        new OrderGatewayImpl(
-                            personalQueueListener,
-                            new OrderApiMapper(
-                                new VehicleOptionApiMapper(),
-                                new RoutePointApiMapper()
-                            )
-                        ),
-                        loginSharer,
+                        orderUseCase,
                         new OrderRouteGatewayImpl(stompClient)
                     )
                 )
@@ -1049,15 +1017,7 @@ public class AppComponentImpl implements AppComponent {
             new ViewModelFactory<>(
                 new NextRoutePointViewModelImpl(
                     new OrderRouteUseCaseImpl(
-                        errorReporter,
-                        new OrderGatewayImpl(
-                            personalQueueListener,
-                            new OrderApiMapper(
-                                new VehicleOptionApiMapper(),
-                                new RoutePointApiMapper()
-                            )
-                        ),
-                        loginSharer,
+                        orderUseCase,
                         new OrderRouteGatewayImpl(stompClient)
                     )
                 )
@@ -1074,15 +1034,7 @@ public class AppComponentImpl implements AppComponent {
             new ViewModelFactory<>(
                 new OrderRouteViewModelImpl(
                     new OrderRouteUseCaseImpl(
-                        errorReporter,
-                        new OrderGatewayImpl(
-                            personalQueueListener,
-                            new OrderApiMapper(
-                                new VehicleOptionApiMapper(),
-                                new RoutePointApiMapper()
-                            )
-                        ),
-                        loginSharer,
+                        orderUseCase,
                         new OrderRouteGatewayImpl(stompClient)
                     )
                 )
@@ -1271,15 +1223,7 @@ public class AppComponentImpl implements AppComponent {
             new ViewModelFactory<>(
                 new OrderRouteViewModelImpl(
                     new OrderRouteUseCaseImpl(
-                        errorReporter,
-                        new OrderGatewayImpl(
-                            personalQueueListener,
-                            new OrderApiMapper(
-                                new VehicleOptionApiMapper(),
-                                new RoutePointApiMapper()
-                            )
-                        ),
-                        loginSharer,
+                        orderUseCase,
                         new OrderRouteGatewayImpl(stompClient)
                     )
                 )
