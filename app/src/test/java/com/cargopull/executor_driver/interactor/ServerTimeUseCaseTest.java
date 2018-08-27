@@ -1,7 +1,6 @@
 package com.cargopull.executor_driver.interactor;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -48,7 +47,7 @@ public class ServerTimeUseCaseTest {
 
   @Before
   public void setUp() {
-    when(gateway.loadServerTime(anyString())).thenReturn(Flowable.never());
+    when(gateway.loadServerTime()).thenReturn(Flowable.never());
     when(loginReceiver.get()).thenReturn(Observable.never());
     useCase = new ServerTimeUseCaseImpl(errorReporter, gateway, loginReceiver, timeUtils);
   }
@@ -70,10 +69,7 @@ public class ServerTimeUseCaseTest {
     useCase.getServerTime().test();
 
     // Результат:
-    inOrder.verify(gateway).loadServerTime("1234567890");
-    inOrder.verify(gateway).loadServerTime("0987654321");
-    inOrder.verify(gateway).loadServerTime("123454321");
-    inOrder.verify(gateway).loadServerTime("09876567890");
+    inOrder.verify(gateway, times(4)).loadServerTime();
     verifyNoMoreInteractions(gateway);
   }
 
@@ -88,8 +84,7 @@ public class ServerTimeUseCaseTest {
     when(loginReceiver.get()).thenReturn(Observable.just(
         "1234567890", "0987654321", "123454321", "09876567890"
     ));
-    when(gateway.loadServerTime(anyString()))
-        .thenReturn(Flowable.<Long>never().doOnCancel(action));
+    when(gateway.loadServerTime()).thenReturn(Flowable.<Long>never().doOnCancel(action));
 
     // Действие:
     useCase.getServerTime().test();
@@ -149,8 +144,7 @@ public class ServerTimeUseCaseTest {
   public void reportSubscriptionFailed() {
     // Дано:
     when(loginReceiver.get()).thenReturn(Observable.just("1234567890"));
-    when(gateway.loadServerTime("1234567890"))
-        .thenReturn(Flowable.error(DataMappingException::new));
+    when(gateway.loadServerTime()).thenReturn(Flowable.error(DataMappingException::new));
 
     // Действие:
     useCase.getServerTime().test();
@@ -195,9 +189,7 @@ public class ServerTimeUseCaseTest {
   public void doNotSetServerTime() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(timeUtils);
-    when(gateway.loadServerTime(anyString())).thenReturn(Flowable.just(
-        1L, 2L, 3L
-    ));
+    when(gateway.loadServerTime()).thenReturn(Flowable.just(1L, 2L, 3L));
     when(loginReceiver.get()).thenReturn(Observable.just(
         "1234567890", "0987654321", "123454321", "09876567890"
     ));
@@ -230,8 +222,7 @@ public class ServerTimeUseCaseTest {
   public void answerWithServerTimes() {
     // Дано:
     when(loginReceiver.get()).thenReturn(Observable.just("1234567890"));
-    when(gateway.loadServerTime("1234567890"))
-        .thenReturn(Flowable.just(1L, 2L, 3L));
+    when(gateway.loadServerTime()).thenReturn(Flowable.just(1L, 2L, 3L));
 
     // Действие:
     TestObserver testObserver = useCase.getServerTime().test();
@@ -264,8 +255,7 @@ public class ServerTimeUseCaseTest {
   public void answerWithErrorIfSubscriptionFailed() {
     // Дано:
     when(loginReceiver.get()).thenReturn(Observable.just("1234567890"));
-    when(gateway.loadServerTime("1234567890"))
-        .thenReturn(Flowable.error(DataMappingException::new));
+    when(gateway.loadServerTime()).thenReturn(Flowable.error(DataMappingException::new));
 
     // Действие:
     TestObserver testObserver = useCase.getServerTime().test();
@@ -282,7 +272,7 @@ public class ServerTimeUseCaseTest {
   public void answerComplete() {
     // Дано:
     when(loginReceiver.get()).thenReturn(Observable.just("1234567890"));
-    when(gateway.loadServerTime("1234567890")).thenReturn(Flowable.empty());
+    when(gateway.loadServerTime()).thenReturn(Flowable.empty());
 
     // Действие:
     TestObserver testObserver = useCase.getServerTime().test();

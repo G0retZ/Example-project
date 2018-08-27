@@ -11,9 +11,8 @@ public interface ServerTimeGateway {
   /**
    * Получать текущие временные метки сервера.
    *
-   * @param channelId - ID "канала", откуда брать временные метки.
    * @return {@link Flowable<Long>} результат запроса.
    */
   @NonNull
-  Flowable<Long> loadServerTime(@NonNull String channelId);
+  Flowable<Long> loadServerTime();
 }

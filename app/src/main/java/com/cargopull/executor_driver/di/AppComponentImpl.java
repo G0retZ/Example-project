@@ -363,7 +363,7 @@ public class AppComponentImpl implements AppComponent {
         new ServerTimeUseCaseImpl(
             errorReporter,
             new ServerTimeGatewayImpl(
-                stompClient
+                personalQueueListener
             ),
             loginSharer,
             timeUtils

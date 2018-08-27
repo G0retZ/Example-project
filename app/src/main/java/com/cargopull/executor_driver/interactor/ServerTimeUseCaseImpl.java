@@ -35,7 +35,7 @@ public class ServerTimeUseCaseImpl implements ServerTimeUseCase {
   public Completable getServerTime() {
     return loginReceiver.get()
         .toFlowable(BackpressureStrategy.BUFFER)
-        .switchMap(gateway::loadServerTime)
+        .switchMap(login -> gateway.loadServerTime())
         .observeOn(Schedulers.single())
         .doOnError(errorReporter::reportError)
         .flatMapCompletable(timeStamp -> Completable.fromAction(

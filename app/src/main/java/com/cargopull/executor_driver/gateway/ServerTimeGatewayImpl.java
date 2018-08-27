@@ -1,42 +1,34 @@
 package com.cargopull.executor_driver.gateway;
 
 import android.support.annotation.NonNull;
-import com.cargopull.executor_driver.BuildConfig;
-import com.cargopull.executor_driver.backend.websocket.ConnectionClosedException;
+import com.cargopull.executor_driver.backend.websocket.TopicListener;
 import com.cargopull.executor_driver.interactor.ServerTimeGateway;
 import io.reactivex.Flowable;
 import io.reactivex.schedulers.Schedulers;
 import javax.inject.Inject;
-import ua.naiksoftware.stomp.client.StompClient;
 
 public class ServerTimeGatewayImpl implements ServerTimeGateway {
 
   @NonNull
-  private final StompClient stompClient;
+  private final TopicListener topicListener;
 
   @Inject
-  public ServerTimeGatewayImpl(@NonNull StompClient stompClient) {
-    this.stompClient = stompClient;
+  public ServerTimeGatewayImpl(@NonNull TopicListener topicListener) {
+    this.topicListener = topicListener;
   }
 
   @NonNull
   @Override
-  public Flowable<Long> loadServerTime(@NonNull String channelId) {
-    if (stompClient.isConnected() || stompClient.isConnecting()) {
-      return stompClient.topic(
-          String.format(BuildConfig.STATUS_DESTINATION, channelId),
-          StompClient.ACK_CLIENT_INDIVIDUAL
-      ).subscribeOn(Schedulers.io())
-          .onErrorResumeNext(Flowable.empty())
-          .filter(stompMessage -> stompMessage.findHeader("ServerTimeStamp") != null)
-          .map(stompMessage -> {
-            try {
-              return Long.valueOf(stompMessage.findHeader("ServerTimeStamp"));
-            } catch (Throwable t) {
-              throw new DataMappingException(t);
-            }
-          });
-    }
-    return Flowable.error(ConnectionClosedException::new);
+  public Flowable<Long> loadServerTime() {
+    return topicListener.getAcknowledgedMessages()
+        .subscribeOn(Schedulers.io())
+        .filter(stompMessage -> stompMessage.findHeader("ServerTimeStamp") != null)
+        .map(stompMessage -> {
+          try {
+            return Long.valueOf(stompMessage.findHeader("ServerTimeStamp"));
+          } catch (Throwable t) {
+            throw new DataMappingException(t);
+          }
+        });
   }
 }
