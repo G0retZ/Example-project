@@ -2,9 +2,7 @@ package com.cargopull.executor_driver.interactor;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.only;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import com.cargopull.executor_driver.UseCaseThreadTestRule;
@@ -12,7 +10,6 @@ import com.cargopull.executor_driver.entity.Order;
 import com.cargopull.executor_driver.gateway.DataMappingException;
 import com.cargopull.executor_driver.utils.ErrorReporter;
 import io.reactivex.Flowable;
-import io.reactivex.Observable;
 import io.reactivex.subscribers.TestSubscriber;
 import org.junit.Before;
 import org.junit.ClassRule;
@@ -32,63 +29,46 @@ public class OrderUseCaseTest {
   @Mock
   private ErrorReporter errorReporter;
   @Mock
-  private DataReceiver<String> loginReceiver;
-  @Mock
   private OrderGateway gateway;
   @Mock
   private Order order;
+  @Mock
+  private Order order1;
   @Mock
   private Order order2;
 
   @Before
   public void setUp() {
-    when(loginReceiver.get()).thenReturn(Observable.never());
     when(gateway.getOrders()).thenReturn(Flowable.never());
-    useCase = new OrderUseCaseImpl(errorReporter, gateway, loginReceiver);
-  }
-
-  /**
-   * Должен запросить у публикатора логин исполнителя.
-   */
-  @Test
-  public void askLoginPublisherForLogin() {
-    // Действие:
-    useCase.getOrders().test();
-
-    // Результат:
-    verify(loginReceiver, only()).get();
+    useCase = new OrderUseCaseImpl(errorReporter, gateway);
   }
 
   /* Проверяем работу с гейтвеем */
 
   /**
-   * Должен запросить у гейтвея получение выполняемого заказа.
+   * Должен запросить у гейтвея получение выполняемого заказа только раз.
    */
   @Test
   public void askGatewayForOrders() {
-    // Дано:
-    when(loginReceiver.get()).thenReturn(Observable.just(
-        "1234567890", "0987654321", "123454321", "09876567890"
-    ));
-
     // Действие:
+    useCase.getOrders().test();
+    useCase.getOrders().test();
+    useCase.getOrders().test();
     useCase.getOrders().test();
 
     // Результат:
-    verify(gateway, times(4)).getOrders();
-    verifyNoMoreInteractions(gateway);
+    verify(gateway, only()).getOrders();
   }
 
   /* Проверяем отправку ошибок в репортер */
 
   /**
-   * Должен отправить ошибку маппинга.
+   * Должен отправить ошибку.
    */
   @Test
-  public void reportDataMappingError() {
+  public void reportError() {
     // Дано:
-    when(loginReceiver.get()).thenReturn(Observable.just("1234567890"));
-    when(gateway.getOrders()).thenReturn(Flowable.error(new DataMappingException()));
+    when(gateway.getOrders()).thenReturn(Flowable.error(DataMappingException::new));
 
     // Действие:
     useCase.getOrders().test();
@@ -97,25 +77,7 @@ public class OrderUseCaseTest {
     verify(errorReporter, only()).reportError(any(DataMappingException.class));
   }
 
-  /* Проверяем ответы на запрос заказов */
-
-  /**
-   * Должен ответить ошибкой маппинга.
-   */
-  @Test
-  public void answerDataMappingError() {
-    // Дано:
-    when(loginReceiver.get()).thenReturn(Observable.just("1234567890"));
-    when(gateway.getOrders()).thenReturn(Flowable.error(new DataMappingException()));
-
-    // Действие:
-    TestSubscriber<Order> test = useCase.getOrders().test();
-
-    // Результат:
-    test.assertError(DataMappingException.class);
-    test.assertNoValues();
-    test.assertNotComplete();
-  }
+  /* Проверяем ответы */
 
   /**
    * Должен ответить заказами.
@@ -123,15 +85,47 @@ public class OrderUseCaseTest {
   @Test
   public void answerWithOrders() {
     // Дано:
-    when(loginReceiver.get()).thenReturn(Observable.just("1234567890"));
-    when(gateway.getOrders()).thenReturn(Flowable.just(order, order2));
+    when(gateway.getOrders()).thenReturn(Flowable.just(order, order1, order2));
 
     // Действие:
-    TestSubscriber<Order> test = useCase.getOrders().test();
+    TestSubscriber<Order> testSubscriber = useCase.getOrders().test();
 
     // Результат:
-    test.assertValues(order, order2);
-    test.assertComplete();
-    test.assertNoErrors();
+    testSubscriber.assertValues(order, order1, order2);
+    testSubscriber.assertNoErrors();
+  }
+
+  /**
+   * Должен вернуть ошибку.
+   */
+  @Test
+  public void answerError() {
+    // Дано:
+    when(gateway.getOrders()).thenReturn(Flowable.error(DataMappingException::new));
+
+    // Действие:
+    TestSubscriber<Order> testSubscriber = useCase.getOrders().test();
+
+    // Результат:
+    testSubscriber.assertError(DataMappingException.class);
+    testSubscriber.assertNotComplete();
+    testSubscriber.assertNoValues();
+  }
+
+  /**
+   * Должен завершить получение баланса исполнителя.
+   */
+  @Test
+  public void answerComplete() {
+    // Дано:
+    when(gateway.getOrders()).thenReturn(Flowable.empty());
+
+    // Действие:
+    TestSubscriber<Order> testSubscriber = useCase.getOrders().test();
+
+    // Результат:
+    testSubscriber.assertComplete();
+    testSubscriber.assertNoValues();
+    testSubscriber.assertNoErrors();
   }
 }

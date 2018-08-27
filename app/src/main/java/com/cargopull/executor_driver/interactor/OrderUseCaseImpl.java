@@ -1,9 +1,9 @@
 package com.cargopull.executor_driver.interactor;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import com.cargopull.executor_driver.entity.Order;
 import com.cargopull.executor_driver.utils.ErrorReporter;
-import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
 import io.reactivex.schedulers.Schedulers;
 import javax.inject.Inject;
@@ -13,26 +13,26 @@ public class OrderUseCaseImpl implements OrderUseCase {
   @NonNull
   private final ErrorReporter errorReporter;
   @NonNull
-  private final OrderGateway orderGateway;
-  @NonNull
-  private final DataReceiver<String> loginReceiver;
+  private final OrderGateway gateway;
+  @Nullable
+  private Flowable<Order> executorStateFlowable;
 
   @Inject
-  public OrderUseCaseImpl(@NonNull ErrorReporter errorReporter,
-      @NonNull OrderGateway orderGateway,
-      @NonNull DataReceiver<String> loginReceiver) {
+  public OrderUseCaseImpl(@NonNull ErrorReporter errorReporter, @NonNull OrderGateway gateway) {
     this.errorReporter = errorReporter;
-    this.orderGateway = orderGateway;
-    this.loginReceiver = loginReceiver;
+    this.gateway = gateway;
   }
 
   @NonNull
   @Override
   public Flowable<Order> getOrders() {
-    return loginReceiver.get()
-        .toFlowable(BackpressureStrategy.BUFFER)
-        .switchMap(login -> orderGateway.getOrders())
-        .observeOn(Schedulers.single())
-        .doOnError(errorReporter::reportError);
+    if (executorStateFlowable == null) {
+      executorStateFlowable = gateway.getOrders()
+          .observeOn(Schedulers.single())
+          .doOnError(errorReporter::reportError)
+          .replay(1)
+          .refCount();
+    }
+    return executorStateFlowable;
   }
 }

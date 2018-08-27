@@ -762,8 +762,7 @@ public class AppComponentImpl implements AppComponent {
                                 new VehicleOptionApiMapper(),
                                 new RoutePointApiMapper()
                             )
-                        ),
-                        loginSharer
+                        )
                     ),
                     timeUtils
                 )
@@ -788,8 +787,7 @@ public class AppComponentImpl implements AppComponent {
                                 new VehicleOptionApiMapper(),
                                 new RoutePointApiMapper()
                             )
-                        ),
-                        loginSharer
+                        )
                     ),
                     timeUtils
                 )
@@ -840,8 +838,7 @@ public class AppComponentImpl implements AppComponent {
                                 new VehicleOptionApiMapper(),
                                 new RoutePointApiMapper()
                             )
-                        ),
-                        loginSharer
+                        )
                     ),
                     timeUtils
                 )
@@ -869,8 +866,7 @@ public class AppComponentImpl implements AppComponent {
                                 new VehicleOptionApiMapper(),
                                 new RoutePointApiMapper()
                             )
-                        ),
-                        loginSharer
+                        )
                     ),
                     timeUtils
                 )
@@ -933,8 +929,7 @@ public class AppComponentImpl implements AppComponent {
                                 new VehicleOptionApiMapper(),
                                 new RoutePointApiMapper()
                             )
-                        ),
-                        loginSharer
+                        )
                     ),
                     timeUtils
                 )
@@ -1086,8 +1081,7 @@ public class AppComponentImpl implements AppComponent {
                                 new VehicleOptionApiMapper(),
                                 new RoutePointApiMapper()
                             )
-                        ),
-                        loginSharer
+                        )
                     ),
                     timeUtils
                 )
@@ -1321,8 +1315,7 @@ public class AppComponentImpl implements AppComponent {
                                 new VehicleOptionApiMapper(),
                                 new RoutePointApiMapper()
                             )
-                        ),
-                        loginSharer
+                        )
                     ),
                     timeUtils
                 )
@@ -1400,8 +1393,7 @@ public class AppComponentImpl implements AppComponent {
                                 new VehicleOptionApiMapper(),
                                 new RoutePointApiMapper()
                             )
-                        ),
-                        loginSharer
+                        )
                     ),
                     timeUtils
                 )
