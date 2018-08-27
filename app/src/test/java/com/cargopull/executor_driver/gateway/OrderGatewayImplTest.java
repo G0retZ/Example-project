@@ -8,7 +8,6 @@ import static org.mockito.Mockito.when;
 
 import com.cargopull.executor_driver.GatewayThreadTestRule;
 import com.cargopull.executor_driver.backend.websocket.TopicListener;
-import com.cargopull.executor_driver.entity.ExecutorState;
 import com.cargopull.executor_driver.entity.Order;
 import com.cargopull.executor_driver.interactor.OrderGateway;
 import io.reactivex.Flowable;
@@ -50,7 +49,7 @@ public class OrderGatewayImplTest {
   @Test
   public void askWebTopicListenerForOrder() {
     // Дано:
-    gateway = new OrderGatewayImpl(topicListener, ExecutorState.DRIVER_ORDER_CONFIRMATION, mapper);
+    gateway = new OrderGatewayImpl(topicListener, mapper);
 
     // Действие:
     gateway.getOrders().test();
@@ -67,10 +66,8 @@ public class OrderGatewayImplTest {
   @Test
   public void doNotTouchMapperIfExecutorStateIncorrect() {
     // Дано:
-    when(stompMessage.findHeader("Status")).thenReturn("SHIFT_CLOSED", "SHIFT_OPENED",
-        "ONLINE", "CLIENT_ORDER_CONFIRMATION", "MOVING_TO_CLIENT", "WAITING_FOR_CLIENT",
-        "ORDER_FULFILLMENT", "PAYMENT_CONFIRMATION");
-    gateway = new OrderGatewayImpl(topicListener, ExecutorState.DRIVER_ORDER_CONFIRMATION, mapper);
+    when(stompMessage.findHeader("Status")).thenReturn("SHIFT_CLOSED", "SHIFT_OPENED", "ONLINE");
+    gateway = new OrderGatewayImpl(topicListener, mapper);
     when(topicListener.getAcknowledgedMessages())
         .thenReturn(Flowable.just(stompMessage, stompMessage, stompMessage, stompMessage,
             stompMessage, stompMessage, stompMessage, stompMessage));
@@ -90,7 +87,7 @@ public class OrderGatewayImplTest {
   @Test
   public void askForMappingForData() throws Exception {
     // Дано:
-    gateway = new OrderGatewayImpl(topicListener, ExecutorState.MOVING_TO_CLIENT, mapper);
+    gateway = new OrderGatewayImpl(topicListener, mapper);
     when(stompMessage.findHeader("Status")).thenReturn("MOVING_TO_CLIENT");
     when(topicListener.getAcknowledgedMessages()).thenReturn(Flowable.just(stompMessage));
 
@@ -109,10 +106,8 @@ public class OrderGatewayImplTest {
   @Test
   public void ignoreForIncorrectExecutorState() {
     // Дано:
-    gateway = new OrderGatewayImpl(topicListener, ExecutorState.DRIVER_ORDER_CONFIRMATION, mapper);
-    when(stompMessage.findHeader("Status")).thenReturn("SHIFT_CLOSED", "SHIFT_OPENED",
-        "ONLINE", "CLIENT_ORDER_CONFIRMATION", "MOVING_TO_CLIENT", "WAITING_FOR_CLIENT",
-        "ORDER_FULFILLMENT", "PAYMENT_CONFIRMATION");
+    gateway = new OrderGatewayImpl(topicListener, mapper);
+    when(stompMessage.findHeader("Status")).thenReturn("SHIFT_CLOSED", "SHIFT_OPENED", "ONLINE");
     when(topicListener.getAcknowledgedMessages())
         .thenReturn(Flowable.just(stompMessage, stompMessage, stompMessage, stompMessage,
             stompMessage, stompMessage, stompMessage, stompMessage));
@@ -134,7 +129,7 @@ public class OrderGatewayImplTest {
   @Test
   public void answerDataMappingError() throws Exception {
     // Дано:
-    gateway = new OrderGatewayImpl(topicListener, ExecutorState.MOVING_TO_CLIENT, mapper);
+    gateway = new OrderGatewayImpl(topicListener, mapper);
     doThrow(new DataMappingException()).when(mapper).map(stompMessage);
     when(stompMessage.findHeader("Status")).thenReturn("MOVING_TO_CLIENT");
     when(topicListener.getAcknowledgedMessages()).thenReturn(Flowable.just(stompMessage));
@@ -156,7 +151,7 @@ public class OrderGatewayImplTest {
   @Test
   public void answerWithOrder() throws Exception {
     // Дано:
-    gateway = new OrderGatewayImpl(topicListener, ExecutorState.WAITING_FOR_CLIENT, mapper);
+    gateway = new OrderGatewayImpl(topicListener, mapper);
     when(mapper.map(stompMessage)).thenReturn(order);
     when(stompMessage.findHeader("Status")).thenReturn("WAITING_FOR_CLIENT");
     when(topicListener.getAcknowledgedMessages()).thenReturn(Flowable.just(stompMessage));
