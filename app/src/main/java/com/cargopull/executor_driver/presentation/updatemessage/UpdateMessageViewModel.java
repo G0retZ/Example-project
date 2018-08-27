@@ -11,9 +11,4 @@ public interface UpdateMessageViewModel extends ViewModel<UpdateMessageViewActio
    * Сообщает о том что сообщение прочитано.
    */
   void messageConsumed();
-
-  /**
-   * Запрашивает подписку на сообщения о новой версии приложения.
-   */
-  void initializeUpdateMessages();
 }

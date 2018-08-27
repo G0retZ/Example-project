@@ -108,7 +108,7 @@ public class CurrentCostPollingViewModelTest {
    * Не должен трогать вид при другой ошибке.
    */
   @Test
-  public void doNotTouchViewActionsOnNetworkError() {
+  public void doNotTouchViewActionsOnOtherError() {
     // Дано:
     currentCostPollingViewModel.getViewStateLiveData().observeForever(viewStateObserver);
 

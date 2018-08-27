@@ -1,9 +1,7 @@
 package com.cargopull.executor_driver.presentation.servertime;
 
 import static org.mockito.Mockito.only;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
@@ -14,7 +12,7 @@ import com.cargopull.executor_driver.gateway.DataMappingException;
 import com.cargopull.executor_driver.interactor.ServerTimeUseCase;
 import com.cargopull.executor_driver.presentation.CommonNavigate;
 import com.cargopull.executor_driver.presentation.ViewState;
-import io.reactivex.Completable;
+import io.reactivex.subjects.CompletableSubject;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
@@ -33,50 +31,42 @@ public class ServerTimeViewModelTest {
   public TestRule rule = new InstantTaskExecutorRule();
   private ServerTimeViewModel currentCostPollingViewModel;
   @Mock
+  private ServerTimeUseCase useCase;
+  @Mock
   private Observer<String> navigationObserver;
   @Mock
   private Observer<ViewState<Runnable>> viewStateObserver;
 
-  @Mock
-  private ServerTimeUseCase useCase;
+  private CompletableSubject completableSubject;
 
   @Before
   public void setUp() {
-    when(useCase.getServerTime()).thenReturn(Completable.never());
+    completableSubject = CompletableSubject.create();
+    when(useCase.getServerTime()).thenReturn(completableSubject);
     currentCostPollingViewModel = new ServerTimeViewModelImpl(useCase);
   }
 
   /* Тетсируем работу с юзкейсом. */
 
   /**
-   * Должен просить у юзкейса получать текущеее времея сервера, даже если уже подписан.
+   * Должен просить у юзкейса текущеее времея сервера только при создании.
    */
   @Test
-  public void askUseCaseToSubscribeToServerTime() {
-    // Действие:
-    currentCostPollingViewModel.initializeServerTime();
-    currentCostPollingViewModel.initializeServerTime();
-    currentCostPollingViewModel.initializeServerTime();
-
+  public void askUseCaseToSubscribeToServerTimeInitially() {
     // Результат:
-    verify(useCase, times(3)).getServerTime();
-    verifyNoMoreInteractions(useCase);
+    verify(useCase, only()).getServerTime();
   }
 
   /**
-   * Не должен просить у юзкейса получать текущеее времея сервера снова после завершения.
+   * Не должен трогать юзкейс на подписках.
    */
   @Test
-  public void askUseCaseToSubscribeToServerTimeAfterComplete() {
-    // Дано:
-    when(useCase.getServerTime()).thenReturn(
-        Completable.complete(),
-        Completable.complete(),
-        Completable.never()
-    );
-
+  public void doNotTouchUseCaseOnSubscriptions() {
     // Действие:
-    currentCostPollingViewModel.initializeServerTime();
+    currentCostPollingViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    currentCostPollingViewModel.getNavigationLiveData().observeForever(navigationObserver);
+    currentCostPollingViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    currentCostPollingViewModel.getNavigationLiveData().observeForever(navigationObserver);
 
     // Результат:
     verify(useCase, only()).getServerTime();
@@ -90,30 +80,10 @@ public class ServerTimeViewModelTest {
   @Test
   public void doNotTouchViewActionsOnComplete() {
     // Дано:
-    when(useCase.getServerTime()).thenReturn(
-        Completable.complete(),
-        Completable.never()
-    );
+    currentCostPollingViewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    currentCostPollingViewModel.getViewStateLiveData().observeForever(viewStateObserver);
-    currentCostPollingViewModel.initializeServerTime();
-
-    // Результат:
-    verifyZeroInteractions(viewStateObserver);
-  }
-
-  /**
-   * Не должен трогать вид при ошибке сети.
-   */
-  @Test
-  public void doNotTouchViewActionsOnNetworkError() {
-    // Дано:
-    when(useCase.getServerTime()).thenReturn(Completable.error(IllegalStateException::new));
-
-    // Действие:
-    currentCostPollingViewModel.getViewStateLiveData().observeForever(viewStateObserver);
-    currentCostPollingViewModel.initializeServerTime();
+    completableSubject.onComplete();
 
     // Результат:
     verifyZeroInteractions(viewStateObserver);
@@ -125,11 +95,10 @@ public class ServerTimeViewModelTest {
   @Test
   public void doNotTouchViewActionsOnMappingError() {
     // Дано:
-    when(useCase.getServerTime()).thenReturn(Completable.error(DataMappingException::new));
+    currentCostPollingViewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    currentCostPollingViewModel.getViewStateLiveData().observeForever(viewStateObserver);
-    currentCostPollingViewModel.initializeServerTime();
+    completableSubject.onError(new DataMappingException());
 
     // Результат:
     verifyZeroInteractions(viewStateObserver);
@@ -141,11 +110,10 @@ public class ServerTimeViewModelTest {
   @Test
   public void doNotTouchViewActionsOnOtherError() {
     // Дано:
-    when(useCase.getServerTime()).thenReturn(Completable.error(Exception::new));
+    currentCostPollingViewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    currentCostPollingViewModel.getViewStateLiveData().observeForever(viewStateObserver);
-    currentCostPollingViewModel.initializeServerTime();
+    completableSubject.onError(new Exception());
 
     // Результат:
     verifyZeroInteractions(viewStateObserver);
@@ -159,11 +127,10 @@ public class ServerTimeViewModelTest {
   @Test
   public void navigateToServerDataError() {
     // Дано:
-    when(useCase.getServerTime()).thenReturn(Completable.error(DataMappingException::new));
+    currentCostPollingViewModel.getNavigationLiveData().observeForever(navigationObserver);
 
     // Действие:
-    currentCostPollingViewModel.getNavigationLiveData().observeForever(navigationObserver);
-    currentCostPollingViewModel.initializeServerTime();
+    completableSubject.onError(new DataMappingException());
 
     // Результат:
     verify(navigationObserver, only()).onChanged(CommonNavigate.SERVER_DATA_ERROR);
@@ -175,11 +142,10 @@ public class ServerTimeViewModelTest {
   @Test
   public void doNotNavigateForOtherError() {
     // Дано:
-    when(useCase.getServerTime()).thenReturn(Completable.error(InterruptedException::new));
+    currentCostPollingViewModel.getNavigationLiveData().observeForever(navigationObserver);
 
     // Действие:
-    currentCostPollingViewModel.getNavigationLiveData().observeForever(navigationObserver);
-    currentCostPollingViewModel.initializeServerTime();
+    completableSubject.onError(new Exception());
 
     // Результат:
     verifyZeroInteractions(navigationObserver);
@@ -191,14 +157,10 @@ public class ServerTimeViewModelTest {
   @Test
   public void doNotNavigateForComplete() {
     // Дано:
-    when(useCase.getServerTime()).thenReturn(
-        Completable.complete(),
-        Completable.never()
-    );
+    currentCostPollingViewModel.getNavigationLiveData().observeForever(navigationObserver);
 
     // Действие:
-    currentCostPollingViewModel.getNavigationLiveData().observeForever(navigationObserver);
-    currentCostPollingViewModel.initializeServerTime();
+    completableSubject.onComplete();
 
     // Результат:
     verifyZeroInteractions(navigationObserver);
