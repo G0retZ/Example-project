@@ -13,7 +13,6 @@ import com.cargopull.executor_driver.entity.Order;
 import com.cargopull.executor_driver.gateway.DataMappingException;
 import com.cargopull.executor_driver.utils.ErrorReporter;
 import io.reactivex.Flowable;
-import io.reactivex.Observable;
 import io.reactivex.subscribers.TestSubscriber;
 import org.junit.Before;
 import org.junit.ClassRule;
@@ -33,9 +32,7 @@ public class OrderCurrentCostUseCaseTest {
   @Mock
   private ErrorReporter errorReporter;
   @Mock
-  private OrderGateway orderGateway;
-  @Mock
-  private DataReceiver<String> loginReceiver;
+  private OrderUseCase orderUseCase;
   @Mock
   private OrderCurrentCostGateway orderCurrentCostGateway;
   @Mock
@@ -45,48 +42,27 @@ public class OrderCurrentCostUseCaseTest {
 
   @Before
   public void setUp() {
-    when(loginReceiver.get()).thenReturn(Observable.never());
-    when(orderGateway.getOrders()).thenReturn(Flowable.never());
+    when(orderUseCase.getOrders()).thenReturn(Flowable.never());
     when(orderCurrentCostGateway.getOrderCurrentCost()).thenReturn(Flowable.never());
-    useCase = new OrderCurrentCostUseCaseImpl(errorReporter, orderGateway, loginReceiver,
-        orderCurrentCostGateway);
+    useCase = new OrderCurrentCostUseCaseImpl(errorReporter, orderUseCase, orderCurrentCostGateway);
   }
 
-  /* Проверяем работу с публикатором логина */
+  /* Проверяем работу с юзкейсом заказа */
 
   /**
-   * Не должен запрашивать у публикатора логин исполнителя, если не было сброса.
-   */
-  @Test
-  public void doNotTouchLoginPublisherWithoutReset() {
-    // Действие:
-    useCase.getOrderCurrentCost().test();
-    useCase.getOrderCurrentCost().test();
-    useCase.getOrderCurrentCost().test();
-
-    // Результат:
-    verify(loginReceiver, times(3)).get();
-    verifyNoMoreInteractions(loginReceiver);
-  }
-
-  /* Проверяем работу с гейтвеем заказа */
-
-  /**
-   * Должен запросить у гейтвея получение выполняемого заказа.
+   * Должен запросить у юзкейса получение выполняемого заказа.
    */
   @Test
   public void askOrderGatewayForOrders() {
-    // Дано:
-    when(loginReceiver.get()).thenReturn(Observable.just(
-        "1234567890", "0987654321", "123454321", "09876567890"
-    ));
-
     // Действие:
+    useCase.getOrderCurrentCost().test();
+    useCase.getOrderCurrentCost().test();
+    useCase.getOrderCurrentCost().test();
     useCase.getOrderCurrentCost().test();
 
     // Результат:
-    verify(orderGateway, times(4)).getOrders();
-    verifyNoMoreInteractions(orderGateway);
+    verify(orderUseCase, times(4)).getOrders();
+    verifyNoMoreInteractions(orderUseCase);
   }
 
   /* Проверяем работу с гейтвеем текущей цены заказа */
@@ -96,9 +72,6 @@ public class OrderCurrentCostUseCaseTest {
    */
   @Test
   public void doNotTouchCurrentCostGateway() {
-    // Дано:
-    when(loginReceiver.get()).thenReturn(Observable.just("1234567890"));
-
     // Действие:
     useCase.getOrderCurrentCost().test();
 
@@ -107,13 +80,12 @@ public class OrderCurrentCostUseCaseTest {
   }
 
   /**
-   * Должен сообщить гейтвею о начале погрузки.
+   * Должен запросить у гейтвея информацию о текущей цене.
    */
   @Test
   public void askCurrentCostGatewayForCostUpdates() {
     // Дано:
-    when(loginReceiver.get()).thenReturn(Observable.just("1234567890"));
-    when(orderGateway.getOrders()).thenReturn(Flowable.just(order));
+    when(orderUseCase.getOrders()).thenReturn(Flowable.just(order));
 
     // Действие:
     useCase.getOrderCurrentCost().test();
@@ -130,9 +102,7 @@ public class OrderCurrentCostUseCaseTest {
   @Test
   public void reportDataMappingError() {
     // Дано:
-    when(loginReceiver.get()).thenReturn(Observable.just("1234567890"));
-    when(orderGateway.getOrders())
-        .thenReturn(Flowable.error(new DataMappingException()));
+    when(orderUseCase.getOrders()).thenReturn(Flowable.error(new DataMappingException()));
 
     // Действие:
     useCase.getOrderCurrentCost().test();
@@ -147,9 +117,7 @@ public class OrderCurrentCostUseCaseTest {
   @Test
   public void reportDataMappingErrorInCurrentCost() {
     // Дано:
-    when(loginReceiver.get()).thenReturn(Observable.just("1234567890"));
-    when(orderGateway.getOrders())
-        .thenReturn(Flowable.just(order, order2));
+    when(orderUseCase.getOrders()).thenReturn(Flowable.just(order, order2));
     when(order.getTotalCost()).thenReturn(101L);
     when(orderCurrentCostGateway.getOrderCurrentCost())
         .thenReturn(Flowable.error(new DataMappingException()));
@@ -169,9 +137,7 @@ public class OrderCurrentCostUseCaseTest {
   @Test
   public void answerDataMappingError() {
     // Дано:
-    when(loginReceiver.get()).thenReturn(Observable.just("1234567890"));
-    when(orderGateway.getOrders())
-        .thenReturn(Flowable.error(new DataMappingException()));
+    when(orderUseCase.getOrders()).thenReturn(Flowable.error(new DataMappingException()));
 
     // Действие:
     TestSubscriber<Long> test = useCase.getOrderCurrentCost().test();
@@ -188,9 +154,7 @@ public class OrderCurrentCostUseCaseTest {
   @Test
   public void answerDataMappingErrorInCurrentCost() {
     // Дано:
-    when(loginReceiver.get()).thenReturn(Observable.just("1234567890"));
-    when(orderGateway.getOrders())
-        .thenReturn(Flowable.just(order, order2));
+    when(orderUseCase.getOrders()).thenReturn(Flowable.just(order, order2));
     when(order.getTotalCost()).thenReturn(101L);
     when(orderCurrentCostGateway.getOrderCurrentCost())
         .thenReturn(Flowable.error(new DataMappingException()));
@@ -210,9 +174,7 @@ public class OrderCurrentCostUseCaseTest {
   @Test
   public void answerWithOrdersCostsOnly() {
     // Дано:
-    when(loginReceiver.get()).thenReturn(Observable.just("1234567890"));
-    when(orderGateway.getOrders())
-        .thenReturn(Flowable.just(order, order2));
+    when(orderUseCase.getOrders()).thenReturn(Flowable.just(order, order2));
     when(order.getTotalCost()).thenReturn(110L);
     when(order2.getTotalCost()).thenReturn(12173L);
 
@@ -232,9 +194,7 @@ public class OrderCurrentCostUseCaseTest {
   @Test
   public void answerWithOrdersAndUpdatedCosts() {
     // Дано:
-    when(loginReceiver.get()).thenReturn(Observable.just("1234567890"));
-    when(orderGateway.getOrders())
-        .thenReturn(Flowable.just(order, order2));
+    when(orderUseCase.getOrders()).thenReturn(Flowable.just(order, order2));
     when(order.getTotalCost()).thenReturn(100L);
     when(order2.getTotalCost()).thenReturn(12173L);
     when(orderCurrentCostGateway.getOrderCurrentCost()).thenReturn(

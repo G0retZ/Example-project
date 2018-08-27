@@ -938,14 +938,7 @@ public class AppComponentImpl implements AppComponent {
                 new OrderCostViewModelImpl(
                     new OrderCurrentCostUseCaseImpl(
                         errorReporter,
-                        new OrderGatewayImpl(
-                            personalQueueListener,
-                            new OrderApiMapper(
-                                new VehicleOptionApiMapper(),
-                                new RoutePointApiMapper()
-                            )
-                        ),
-                        loginSharer,
+                        orderUseCase,
                         new OrderCurrentCostGatewayImpl(
                             personalQueueListener,
                             new OrderCurrentCostApiMapper()
