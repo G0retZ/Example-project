@@ -231,6 +231,8 @@ public class AppComponentImpl implements AppComponent {
   @NonNull
   private final OrderUseCase orderUseCase;
   @NonNull
+  private final OrderUseCase preOrderUseCase;
+  @NonNull
   private final CancelOrderUseCase cancelOrderUseCase;
   @NonNull
   private final CancelOrderReasonsUseCase cancelOrderReasonsUseCase;
@@ -319,6 +321,16 @@ public class AppComponentImpl implements AppComponent {
     orderUseCase = new OrderUseCaseImpl(
         errorReporter,
         new OrderGatewayImpl(
+            personalQueueListener,
+            new OrderApiMapper(
+                new VehicleOptionApiMapper(),
+                new RoutePointApiMapper()
+            )
+        )
+    );
+    preOrderUseCase = new OrderUseCaseImpl(
+        errorReporter,
+        new PreOrderGatewayImpl(
             personalQueueListener,
             new OrderApiMapper(
                 new VehicleOptionApiMapper(),
@@ -746,15 +758,8 @@ public class AppComponentImpl implements AppComponent {
             new ViewModelFactory<>(
                 new OrderConfirmationViewModelImpl(
                     new OrderConfirmationUseCaseImpl(
-                        new OrderGatewayImpl(
-                            personalQueueListener,
-                            new OrderApiMapper(
-                                new VehicleOptionApiMapper(),
-                                new RoutePointApiMapper()
-                            )
-                        ),
-                        new OrderConfirmationGatewayImpl(stompClient),
-                        loginSharer
+                        orderUseCase,
+                        new OrderConfirmationGatewayImpl(stompClient)
                     )
                 )
             )
@@ -1351,17 +1356,10 @@ public class AppComponentImpl implements AppComponent {
             new ViewModelFactory<>(
                 new OrderConfirmationViewModelImpl(
                     new OrderConfirmationUseCaseImpl(
-                        new PreOrderGatewayImpl(
-                            personalQueueListener,
-                            new OrderApiMapper(
-                                new VehicleOptionApiMapper(),
-                                new RoutePointApiMapper()
-                            )
-                        ),
+                        preOrderUseCase,
                         new PreOrderConfirmationGatewayImpl(
                             apiService
-                        ),
-                        loginSharer
+                        )
                     )
                 )
             )

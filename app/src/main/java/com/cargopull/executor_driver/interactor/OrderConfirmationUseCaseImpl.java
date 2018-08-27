@@ -8,27 +8,21 @@ import javax.inject.Inject;
 public class OrderConfirmationUseCaseImpl implements OrderConfirmationUseCase {
 
   @NonNull
-  private final OrderGateway orderGateway;
+  private final OrderUseCase orderGateway;
   @NonNull
   private final OrderConfirmationGateway orderConfirmationGateway;
-  @NonNull
-  private final DataReceiver<String> loginReceiver;
 
   @Inject
-  public OrderConfirmationUseCaseImpl(@NonNull OrderGateway orderGateway,
-      @NonNull OrderConfirmationGateway orderConfirmationGateway,
-      @NonNull DataReceiver<String> loginReceiver) {
+  public OrderConfirmationUseCaseImpl(@NonNull OrderUseCase orderGateway,
+      @NonNull OrderConfirmationGateway orderConfirmationGateway) {
     this.orderGateway = orderGateway;
     this.orderConfirmationGateway = orderConfirmationGateway;
-    this.loginReceiver = loginReceiver;
   }
 
   @NonNull
   @Override
   public Single<String> sendDecision(boolean confirmed) {
-    return loginReceiver.get()
-        .firstOrError()
-        .flatMapPublisher(login -> orderGateway.getOrders())
+    return orderGateway.getOrders()
         .firstOrError()
         .observeOn(Schedulers.single())
         .flatMap(order -> orderConfirmationGateway.sendDecision(order, confirmed))
