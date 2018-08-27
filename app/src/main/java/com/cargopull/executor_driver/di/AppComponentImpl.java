@@ -924,15 +924,7 @@ public class AppComponentImpl implements AppComponent {
             new ViewModelFactory<>(
                 new OrderTimeViewModelImpl(
                     new OrderFulfillmentTimeUseCaseImpl(
-                        errorReporter,
-                        new OrderGatewayImpl(
-                            personalQueueListener,
-                            new OrderApiMapper(
-                                new VehicleOptionApiMapper(),
-                                new RoutePointApiMapper()
-                            )
-                        ),
-                        loginSharer,
+                        orderUseCase,
                         timeUtils
                     )
                 )
