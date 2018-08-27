@@ -785,16 +785,7 @@ public class AppComponentImpl implements AppComponent {
             clientOrderConfirmationFragment,
             new ViewModelFactory<>(
                 new OrderViewModelImpl(
-                    new OrderUseCaseImpl(
-                        errorReporter,
-                        new OrderGatewayImpl(
-                            personalQueueListener,
-                            new OrderApiMapper(
-                                new VehicleOptionApiMapper(),
-                                new RoutePointApiMapper()
-                            )
-                        )
-                    ),
+                    orderUseCase,
                     timeUtils
                 )
             )
@@ -835,16 +826,7 @@ public class AppComponentImpl implements AppComponent {
             movingToClientFragment,
             new ViewModelFactory<>(
                 new OrderViewModelImpl(
-                    new OrderUseCaseImpl(
-                        errorReporter,
-                        new OrderGatewayImpl(
-                            personalQueueListener,
-                            new OrderApiMapper(
-                                new VehicleOptionApiMapper(),
-                                new RoutePointApiMapper()
-                            )
-                        )
-                    ),
+                    orderUseCase,
                     timeUtils
                 )
             )
@@ -862,16 +844,7 @@ public class AppComponentImpl implements AppComponent {
             movingToClientDetailsFragment,
             new ViewModelFactory<>(
                 new OrderViewModelImpl(
-                    new OrderUseCaseImpl(
-                        errorReporter,
-                        new OrderGatewayImpl(
-                            personalQueueListener,
-                            new OrderApiMapper(
-                                new VehicleOptionApiMapper(),
-                                new RoutePointApiMapper()
-                            )
-                        )
-                    ),
+                    orderUseCase,
                     timeUtils
                 )
             )
@@ -923,16 +896,7 @@ public class AppComponentImpl implements AppComponent {
             waitingForClientFragment,
             new ViewModelFactory<>(
                 new OrderViewModelImpl(
-                    new OrderUseCaseImpl(
-                        errorReporter,
-                        new OrderGatewayImpl(
-                            personalQueueListener,
-                            new OrderApiMapper(
-                                new VehicleOptionApiMapper(),
-                                new RoutePointApiMapper()
-                            )
-                        )
-                    ),
+                    orderUseCase,
                     timeUtils
                 )
             )
@@ -1069,16 +1033,7 @@ public class AppComponentImpl implements AppComponent {
             orderFulfillmentDetailsFragment,
             new ViewModelFactory<>(
                 new OrderViewModelImpl(
-                    new OrderUseCaseImpl(
-                        errorReporter,
-                        new OrderGatewayImpl(
-                            personalQueueListener,
-                            new OrderApiMapper(
-                                new VehicleOptionApiMapper(),
-                                new RoutePointApiMapper()
-                            )
-                        )
-                    ),
+                    orderUseCase,
                     timeUtils
                 )
             )
@@ -1300,16 +1255,7 @@ public class AppComponentImpl implements AppComponent {
             orderCostDetailsOrderDetailsFragment,
             new ViewModelFactory<>(
                 new OrderViewModelImpl(
-                    new OrderUseCaseImpl(
-                        errorReporter,
-                        new OrderGatewayImpl(
-                            personalQueueListener,
-                            new OrderApiMapper(
-                                new VehicleOptionApiMapper(),
-                                new RoutePointApiMapper()
-                            )
-                        )
-                    ),
+                    orderUseCase,
                     timeUtils
                 )
             )
@@ -1370,16 +1316,7 @@ public class AppComponentImpl implements AppComponent {
             driverPreOrderConfirmationFragment,
             new ViewModelFactory<>(
                 new OrderViewModelImpl(
-                    new OrderUseCaseImpl(
-                        errorReporter,
-                        new PreOrderGatewayImpl(
-                            personalQueueListener,
-                            new OrderApiMapper(
-                                new VehicleOptionApiMapper(),
-                                new RoutePointApiMapper()
-                            )
-                        )
-                    ),
+                    preOrderUseCase,
                     timeUtils
                 )
             )
