@@ -43,7 +43,8 @@ import com.cargopull.executor_driver.gateway.PreOrderFilter;
 import com.cargopull.executor_driver.gateway.RoutePointApiMapper;
 import com.cargopull.executor_driver.gateway.SelectedVehicleAndOptionsGatewayImpl;
 import com.cargopull.executor_driver.gateway.ServerConnectionGatewayImpl;
-import com.cargopull.executor_driver.gateway.ServerTimeGatewayImpl;
+import com.cargopull.executor_driver.gateway.ServerTimeApiMapper;
+import com.cargopull.executor_driver.gateway.ServerTimeFilter;
 import com.cargopull.executor_driver.gateway.ServiceApiMapper;
 import com.cargopull.executor_driver.gateway.ServicesGatewayImpl;
 import com.cargopull.executor_driver.gateway.SmsGatewayImpl;
@@ -66,7 +67,6 @@ import com.cargopull.executor_driver.interactor.MovingToClientGateway;
 import com.cargopull.executor_driver.interactor.OrderConfirmationGateway;
 import com.cargopull.executor_driver.interactor.OrderRouteGateway;
 import com.cargopull.executor_driver.interactor.ServerConnectionGateway;
-import com.cargopull.executor_driver.interactor.ServerTimeGateway;
 import com.cargopull.executor_driver.interactor.UpdateMessageGateway;
 import com.cargopull.executor_driver.interactor.WaitingForClientGateway;
 import com.cargopull.executor_driver.interactor.auth.PasswordGateway;
@@ -125,7 +125,7 @@ class RepositoryComponentImpl implements RepositoryComponent {
   @Nullable
   private ServerConnectionGateway serverConnectionGateway;
   @Nullable
-  private ServerTimeGateway serverTimeGateway;
+  private CommonGateway<Long> serverTimeGateway;
   @Nullable
   private UpdateMessageGateway updateMessageGateway;
   @Nullable
@@ -401,10 +401,12 @@ class RepositoryComponentImpl implements RepositoryComponent {
 
   @NonNull
   @Override
-  public ServerTimeGateway getServerTimeGateway() {
+  public CommonGateway<Long> getServerTimeGateway() {
     if (serverTimeGateway == null) {
-      serverTimeGateway = new ServerTimeGatewayImpl(
-          backendComponent.getPersonalTopicListener()
+      serverTimeGateway = new TopicGatewayImpl<>(
+          backendComponent.getPersonalTopicListener(),
+          new ServerTimeApiMapper(),
+          new ServerTimeFilter()
       );
     }
     return serverTimeGateway;

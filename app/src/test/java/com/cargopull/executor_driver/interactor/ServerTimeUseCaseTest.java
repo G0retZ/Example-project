@@ -33,13 +33,13 @@ public class ServerTimeUseCaseTest {
   @Mock
   private ErrorReporter errorReporter;
   @Mock
-  private ServerTimeGateway gateway;
+  private CommonGateway<Long> gateway;
   @Mock
   private TimeUtils timeUtils;
 
   @Before
   public void setUp() {
-    when(gateway.loadServerTime()).thenReturn(Flowable.never());
+    when(gateway.getData()).thenReturn(Flowable.never());
     useCase = new ServerTimeUseCaseImpl(errorReporter, gateway, timeUtils);
   }
 
@@ -54,7 +54,7 @@ public class ServerTimeUseCaseTest {
     useCase.getServerTime().test();
 
     // Результат:
-    verify(gateway, only()).loadServerTime();
+    verify(gateway, only()).getData();
   }
 
   /* Проверяем отправку ошибок в репортер */
@@ -65,7 +65,7 @@ public class ServerTimeUseCaseTest {
   @Test
   public void reportError() {
     // Дано:
-    when(gateway.loadServerTime()).thenReturn(Flowable.error(DataMappingException::new));
+    when(gateway.getData()).thenReturn(Flowable.error(DataMappingException::new));
 
     // Действие:
     useCase.getServerTime().test();
@@ -94,7 +94,7 @@ public class ServerTimeUseCaseTest {
   @Test
   public void doNotSetServerTimeIfError() {
     // Дано:
-    when(gateway.loadServerTime()).thenReturn(Flowable.error(DataMappingException::new));
+    when(gateway.getData()).thenReturn(Flowable.error(DataMappingException::new));
 
     // Действие:
     useCase.getServerTime().test();
@@ -110,7 +110,7 @@ public class ServerTimeUseCaseTest {
   public void doNotSetServerTime() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(timeUtils);
-    when(gateway.loadServerTime()).thenReturn(Flowable.just(1L, 2L, 3L));
+    when(gateway.getData()).thenReturn(Flowable.just(1L, 2L, 3L));
 
     // Действие:
     useCase.getServerTime().test();
@@ -130,7 +130,7 @@ public class ServerTimeUseCaseTest {
   @Test
   public void answerWithServerTimes() {
     // Дано:
-    when(gateway.loadServerTime()).thenReturn(Flowable.just(1L, 2L, 3L));
+    when(gateway.getData()).thenReturn(Flowable.just(1L, 2L, 3L));
 
     // Действие:
     TestObserver testObserver = useCase.getServerTime().test();
@@ -146,7 +146,7 @@ public class ServerTimeUseCaseTest {
   @Test
   public void answerWithError() {
     // Дано:
-    when(gateway.loadServerTime()).thenReturn(Flowable.error(DataMappingException::new));
+    when(gateway.getData()).thenReturn(Flowable.error(DataMappingException::new));
 
     // Действие:
     TestObserver testObserver = useCase.getServerTime().test();
@@ -162,7 +162,7 @@ public class ServerTimeUseCaseTest {
   @Test
   public void answerComplete() {
     // Дано:
-    when(gateway.loadServerTime()).thenReturn(Flowable.empty());
+    when(gateway.getData()).thenReturn(Flowable.empty());
 
     // Действие:
     TestObserver testObserver = useCase.getServerTime().test();

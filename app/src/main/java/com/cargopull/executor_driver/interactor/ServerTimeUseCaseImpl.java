@@ -12,13 +12,13 @@ public class ServerTimeUseCaseImpl implements ServerTimeUseCase {
   @NonNull
   private final ErrorReporter errorReporter;
   @NonNull
-  private final ServerTimeGateway gateway;
+  private final CommonGateway<Long> gateway;
   @NonNull
   private final TimeUtils timeUtils;
 
   @Inject
   public ServerTimeUseCaseImpl(@NonNull ErrorReporter errorReporter,
-      @NonNull ServerTimeGateway gateway,
+      @NonNull CommonGateway<Long> gateway,
       @NonNull TimeUtils timeUtils) {
     this.errorReporter = errorReporter;
     this.gateway = gateway;
@@ -28,7 +28,7 @@ public class ServerTimeUseCaseImpl implements ServerTimeUseCase {
   @NonNull
   @Override
   public Completable getServerTime() {
-    return gateway.loadServerTime()
+    return gateway.getData()
         .observeOn(Schedulers.single())
         .doOnError(errorReporter::reportError)
         .flatMapCompletable(timeStamp -> Completable.fromAction(
