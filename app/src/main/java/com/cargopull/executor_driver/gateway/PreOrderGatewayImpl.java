@@ -28,6 +28,7 @@ public class PreOrderGatewayImpl implements OrderGateway {
   public Flowable<Order> getOrders() {
     return topicListener.getAcknowledgedMessages()
         .subscribeOn(Schedulers.io())
+        .takeWhile(stompMessage -> !"true".equals(stompMessage.findHeader("PreliminaryExpired")))
         .filter(stompMessage -> stompMessage.findHeader("Preliminary") != null)
         .map(mapper::map);
   }

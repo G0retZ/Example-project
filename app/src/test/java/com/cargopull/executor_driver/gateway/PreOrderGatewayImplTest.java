@@ -64,7 +64,25 @@ public class PreOrderGatewayImplTest {
   @Test
   public void doNotTouchMapperIfWrongHeader() {
     // Дано:
-    when(topicListener.getAcknowledgedMessages()).thenReturn(Flowable.just(stompMessage));
+    when(topicListener.getAcknowledgedMessages())
+        .thenReturn(Flowable.just(stompMessage).concatWith(Flowable.never()));
+
+    // Действие:
+    gateway.getOrders().test();
+
+    // Результат:
+    verifyZeroInteractions(mapper);
+  }
+
+  /**
+   * Не должен трогать маппер, если сообщение с заголовком PreliminaryExpired = true.
+   */
+  @Test
+  public void doNotTouchMapperForPreliminaryExpiredTrueHeader() {
+    // Дано:
+    when(stompMessage.findHeader("PreliminaryExpired")).thenReturn("true");
+    when(topicListener.getAcknowledgedMessages())
+        .thenReturn(Flowable.just(stompMessage).concatWith(Flowable.never()));
 
     // Действие:
     gateway.getOrders().test();
@@ -82,7 +100,8 @@ public class PreOrderGatewayImplTest {
   public void askForMappingForPreliminaryHeader() throws Exception {
     // Дано:
     when(stompMessage.findHeader("Preliminary")).thenReturn("");
-    when(topicListener.getAcknowledgedMessages()).thenReturn(Flowable.just(stompMessage));
+    when(topicListener.getAcknowledgedMessages())
+        .thenReturn(Flowable.just(stompMessage).concatWith(Flowable.never()));
 
     // Действие:
     gateway.getOrders().test();
@@ -99,7 +118,8 @@ public class PreOrderGatewayImplTest {
   @Test
   public void ignoreWrongHeader() {
     // Дано:
-    when(topicListener.getAcknowledgedMessages()).thenReturn(Flowable.just(stompMessage));
+    when(topicListener.getAcknowledgedMessages())
+        .thenReturn(Flowable.just(stompMessage).concatWith(Flowable.never()));
 
     // Действие:
     TestSubscriber<Order> testSubscriber = gateway.getOrders().test();
@@ -107,6 +127,26 @@ public class PreOrderGatewayImplTest {
     // Результат:
     testSubscriber.assertNoValues();
     testSubscriber.assertNoErrors();
+    testSubscriber.assertNotComplete();
+  }
+
+  /**
+   * Должен завершить получение сообщений с заголовком PreliminaryExpired = true.
+   */
+  @Test
+  public void answerCompleteForPreliminaryExpiredTrueHeader() {
+    // Дано:
+    when(stompMessage.findHeader("PreliminaryExpired")).thenReturn("true");
+    when(topicListener.getAcknowledgedMessages())
+        .thenReturn(Flowable.just(stompMessage).concatWith(Flowable.never()));
+
+    // Действие:
+    TestSubscriber<Order> testSubscriber = gateway.getOrders().test();
+
+    // Результат:
+    testSubscriber.assertNoErrors();
+    testSubscriber.assertNoValues();
+    testSubscriber.assertComplete();
   }
 
   /**
@@ -119,7 +159,8 @@ public class PreOrderGatewayImplTest {
     // Дано:
     doThrow(new DataMappingException()).when(mapper).map(stompMessage);
     when(stompMessage.findHeader("Preliminary")).thenReturn("");
-    when(topicListener.getAcknowledgedMessages()).thenReturn(Flowable.just(stompMessage));
+    when(topicListener.getAcknowledgedMessages())
+        .thenReturn(Flowable.just(stompMessage).concatWith(Flowable.never()));
 
     // Действие:
     TestSubscriber<Order> testSubscriber = gateway.getOrders().test();
@@ -127,6 +168,7 @@ public class PreOrderGatewayImplTest {
     // Результат:
     testSubscriber.assertError(DataMappingException.class);
     testSubscriber.assertNoValues();
+    testSubscriber.assertNotComplete();
   }
 
   /**
@@ -139,7 +181,8 @@ public class PreOrderGatewayImplTest {
     // Дано:
     when(mapper.map(stompMessage)).thenReturn(order);
     when(stompMessage.findHeader("Preliminary")).thenReturn("");
-    when(topicListener.getAcknowledgedMessages()).thenReturn(Flowable.just(stompMessage));
+    when(topicListener.getAcknowledgedMessages())
+        .thenReturn(Flowable.just(stompMessage).concatWith(Flowable.never()));
 
     // Действие:
     TestSubscriber<Order> testSubscriber = gateway.getOrders().test();
@@ -147,5 +190,6 @@ public class PreOrderGatewayImplTest {
     // Результат:
     testSubscriber.assertValue(order);
     testSubscriber.assertNoErrors();
+    testSubscriber.assertNotComplete();
   }
 }
