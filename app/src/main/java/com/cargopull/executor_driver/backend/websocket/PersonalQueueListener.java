@@ -38,6 +38,9 @@ public class PersonalQueueListener implements TopicListener {
                   String.format(BuildConfig.STATUS_DESTINATION, login),
                   StompClient.ACK_CLIENT_INDIVIDUAL
               ).subscribeOn(Schedulers.io())
+                  .doOnComplete(() -> {
+                    throw new ConnectionClosedException();
+                  })
           ).retry()
           .switchMap(
               stompMessage -> stompClient.sendAfterConnection(

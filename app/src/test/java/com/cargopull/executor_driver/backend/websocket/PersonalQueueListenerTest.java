@@ -76,6 +76,52 @@ public class PersonalQueueListenerTest {
     verify(loginReceiver, only()).get();
   }
 
+  /**
+   * Должен перезапросить у клиента STOMP сообщения из топика после ошибки.
+   */
+  @SuppressWarnings("unchecked")
+  @Test
+  public void doNotAskLoginPublisherForLoginOnError() {
+    // Дано:
+    when(loginReceiver.get())
+        .thenReturn(Observable.just("1234567890").concatWith(Observable.never()));
+    when(stompClient.topic("/queue/1234567890", StompClient.ACK_CLIENT_INDIVIDUAL)).thenReturn(
+        Flowable.error(Exception::new),
+        Flowable.error(NoNetworkException::new),
+        Flowable.error(ConnectionClosedException::new),
+        Flowable.never()
+    );
+
+    // Действие:
+    queueListener.getAcknowledgedMessages().test();
+
+    // Результат:
+    verify(loginReceiver, only()).get();
+  }
+
+  /**
+   * Должен перезапросить у клиента STOMP сообщения из топика после завершения.
+   */
+  @SuppressWarnings("unchecked")
+  @Test
+  public void doNotAskLoginPublisherForLoginOnComplete() {
+    // Дано:
+    when(loginReceiver.get())
+        .thenReturn(Observable.just("1234567890").concatWith(Observable.never()));
+    when(stompClient.topic("/queue/1234567890", StompClient.ACK_CLIENT_INDIVIDUAL)).thenReturn(
+        Flowable.empty(),
+        Flowable.empty(),
+        Flowable.empty(),
+        Flowable.never()
+    );
+
+    // Действие:
+    queueListener.getAcknowledgedMessages().test();
+
+    // Результат:
+    verify(loginReceiver, only()).get();
+  }
+
   /* Проверяем работу с клиентом STOMP */
 
   /**
@@ -87,7 +133,7 @@ public class PersonalQueueListenerTest {
     InOrder inOrder = Mockito.inOrder(stompClient);
     when(loginReceiver.get()).thenReturn(Observable.just(
         "1234567890", "0987654321", "123454321", "09876567890"
-    ));
+    ).concatWith(Observable.never()));
 
     // Действие:
     queueListener.getAcknowledgedMessages().test();
@@ -104,13 +150,14 @@ public class PersonalQueueListenerTest {
   }
 
   /**
-   * Должен перезапросить у клиента STOMP сообщения из топика.
+   * Должен перезапросить у клиента STOMP сообщения из топика после ошибки.
    */
   @SuppressWarnings("unchecked")
   @Test
-  public void askStompClientForTopicMessages() {
+  public void askStompClientForTopicMessagesOnError() {
     // Дано:
-    when(loginReceiver.get()).thenReturn(Observable.just("1234567890"));
+    when(loginReceiver.get())
+        .thenReturn(Observable.just("1234567890").concatWith(Observable.never()));
     when(stompClient.topic("/queue/1234567890", StompClient.ACK_CLIENT_INDIVIDUAL)).thenReturn(
         Flowable.error(Exception::new),
         Flowable.error(NoNetworkException::new),
@@ -120,8 +167,29 @@ public class PersonalQueueListenerTest {
 
     // Действие:
     queueListener.getAcknowledgedMessages().test();
-    queueListener.getAcknowledgedMessages().test();
-    queueListener.getAcknowledgedMessages().test();
+
+    // Результат:
+    verify(stompClient, times(4)).topic("/queue/1234567890", StompClient.ACK_CLIENT_INDIVIDUAL);
+    verifyNoMoreInteractions(stompClient);
+  }
+
+  /**
+   * Должен перезапросить у клиента STOMP сообщения из топика после завершения.
+   */
+  @SuppressWarnings("unchecked")
+  @Test
+  public void askStompClientForTopicMessagesOnComplete() {
+    // Дано:
+    when(loginReceiver.get())
+        .thenReturn(Observable.just("1234567890").concatWith(Observable.never()));
+    when(stompClient.topic("/queue/1234567890", StompClient.ACK_CLIENT_INDIVIDUAL)).thenReturn(
+        Flowable.empty(),
+        Flowable.empty(),
+        Flowable.empty(),
+        Flowable.never()
+    );
+
+    // Действие:
     queueListener.getAcknowledgedMessages().test();
 
     // Результат:
@@ -137,7 +205,7 @@ public class PersonalQueueListenerTest {
     // Дано:
     when(loginReceiver.get()).thenReturn(Observable.just(
         "1234567890", "0987654321", "123454321", "09876567890"
-    ));
+    ).concatWith(Observable.never()));
     when(stompClient.topic(anyString(), eq(StompClient.ACK_CLIENT_INDIVIDUAL)))
         .thenReturn(Flowable.<StompMessage>never().doOnCancel(action));
 
@@ -157,7 +225,8 @@ public class PersonalQueueListenerTest {
   @Test
   public void ubSubscribeFromTopicIfNoMoreSubscribers() throws Exception {
     // Дано:
-    when(loginReceiver.get()).thenReturn(Observable.just("1234567890"));
+    when(loginReceiver.get())
+        .thenReturn(Observable.just("1234567890").concatWith(Observable.never()));
     when(stompClient.topic("/queue/1234567890", StompClient.ACK_CLIENT_INDIVIDUAL))
         .thenReturn(Flowable.<StompMessage>never().doOnCancel(action));
 
@@ -185,9 +254,11 @@ public class PersonalQueueListenerTest {
     InOrder inOrder = Mockito.inOrder(stompClient);
     when(stompMessage.findHeader("subscription")).thenReturn("subs0", "subs1", "subs2");
     when(stompMessage.findHeader("message-id")).thenReturn("mess0", "mess1", "mess2");
-    when(loginReceiver.get()).thenReturn(Observable.just("1234567890"));
+    when(loginReceiver.get())
+        .thenReturn(Observable.just("1234567890").concatWith(Observable.never()));
     when(stompClient.topic("/queue/1234567890", StompClient.ACK_CLIENT_INDIVIDUAL))
-        .thenReturn(Flowable.just(stompMessage, stompMessage, stompMessage));
+        .thenReturn(
+            Flowable.just(stompMessage, stompMessage, stompMessage).concatWith(Flowable.never()));
 
     // Действие:
     queueListener.getAcknowledgedMessages().test();
@@ -218,11 +289,12 @@ public class PersonalQueueListenerTest {
   @Test
   public void answerWithStompMessage() {
     // Дано:
-    when(loginReceiver.get()).thenReturn(Observable.just("1234567890"));
+    when(loginReceiver.get())
+        .thenReturn(Observable.just("1234567890").concatWith(Observable.never()));
     when(stompMessage.findHeader("subscription")).thenReturn("subs");
     when(stompMessage.findHeader("message-id")).thenReturn("mess");
     when(stompClient.topic("/queue/1234567890", StompClient.ACK_CLIENT_INDIVIDUAL))
-        .thenReturn(Flowable.just(stompMessage));
+        .thenReturn(Flowable.just(stompMessage).concatWith(Flowable.never()));
 
     // Действие:
     TestSubscriber<StompMessage> testSubscriber = queueListener.getAcknowledgedMessages().test();
@@ -230,7 +302,7 @@ public class PersonalQueueListenerTest {
     // Результат:
     testSubscriber.assertValue(stompMessage);
     testSubscriber.assertNoErrors();
-    testSubscriber.assertComplete();
+    testSubscriber.assertNotComplete();
   }
 
   /**
@@ -240,7 +312,8 @@ public class PersonalQueueListenerTest {
   @Test
   public void ignoreErrors() {
     // Дано:
-    when(loginReceiver.get()).thenReturn(Observable.just("1234567890"));
+    when(loginReceiver.get())
+        .thenReturn(Observable.just("1234567890").concatWith(Observable.never()));
     when(stompClient.topic("/queue/1234567890", StompClient.ACK_CLIENT_INDIVIDUAL)).thenReturn(
         Flowable.error(Exception::new),
         Flowable.error(NoNetworkException::new),
@@ -254,6 +327,60 @@ public class PersonalQueueListenerTest {
     // Результат:
     testSubscriber.assertNoErrors();
     testSubscriber.assertNoValues();
+    testSubscriber.assertNotComplete();
+  }
+
+  /**
+   * Должен вернуть сообщение.
+   */
+  @SuppressWarnings("unchecked")
+  @Test
+  public void answerWithStompMessageAfterErrors() {
+    // Дано:
+    when(loginReceiver.get())
+        .thenReturn(Observable.just("1234567890").concatWith(Observable.never()));
+    when(stompMessage.findHeader("subscription")).thenReturn("subs");
+    when(stompMessage.findHeader("message-id")).thenReturn("mess");
+    when(stompClient.topic("/queue/1234567890", StompClient.ACK_CLIENT_INDIVIDUAL)).thenReturn(
+        Flowable.error(Exception::new),
+        Flowable.error(NoNetworkException::new),
+        Flowable.error(ConnectionClosedException::new),
+        Flowable.just(stompMessage).concatWith(Flowable.never())
+    );
+
+    // Действие:
+    TestSubscriber<StompMessage> testSubscriber = queueListener.getAcknowledgedMessages().test();
+
+    // Результат:
+    testSubscriber.assertValue(stompMessage);
+    testSubscriber.assertNoErrors();
+    testSubscriber.assertNotComplete();
+  }
+
+  /**
+   * Должен вернуть сообщение.
+   */
+  @SuppressWarnings("unchecked")
+  @Test
+  public void answerWithStompMessageAfterCompletions() {
+    // Дано:
+    when(loginReceiver.get())
+        .thenReturn(Observable.just("1234567890").concatWith(Observable.never()));
+    when(stompMessage.findHeader("subscription")).thenReturn("subs");
+    when(stompMessage.findHeader("message-id")).thenReturn("mess");
+    when(stompClient.topic("/queue/1234567890", StompClient.ACK_CLIENT_INDIVIDUAL)).thenReturn(
+        Flowable.empty(),
+        Flowable.empty(),
+        Flowable.empty(),
+        Flowable.just(stompMessage).concatWith(Flowable.never())
+    );
+
+    // Действие:
+    TestSubscriber<StompMessage> testSubscriber = queueListener.getAcknowledgedMessages().test();
+
+    // Результат:
+    testSubscriber.assertValue(stompMessage);
+    testSubscriber.assertNoErrors();
     testSubscriber.assertNotComplete();
   }
 }
