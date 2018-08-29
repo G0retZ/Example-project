@@ -40,12 +40,12 @@ public class OrderViewModelImpl extends ViewModel implements
     viewStateLiveData = new MutableLiveData<>();
     navigateLiveData = new SingleLiveEvent<>();
     viewStateLiveData.postValue(new OrderViewStatePending(lastViewState));
+    loadOrders();
   }
 
   @NonNull
   @Override
   public LiveData<ViewState<OrderViewActions>> getViewStateLiveData() {
-    loadOrders();
     return viewStateLiveData;
   }
 
@@ -61,6 +61,8 @@ public class OrderViewModelImpl extends ViewModel implements
       viewStateLiveData.postValue(new OrderViewStatePending(lastViewState));
       disposable = orderUseCase.getOrders()
           .observeOn(AndroidSchedulers.mainThread())
+          .doOnComplete(() -> navigateLiveData.postValue(OrderNavigate.ORDER_EXPIRED))
+          .repeat()
           .subscribe(this::consumeOrder,
               throwable -> {
                 if (throwable instanceof DataMappingException) {

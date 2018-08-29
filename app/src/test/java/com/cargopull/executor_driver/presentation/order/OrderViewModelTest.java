@@ -17,6 +17,8 @@ import com.cargopull.executor_driver.presentation.ViewState;
 import com.cargopull.executor_driver.utils.TimeUtils;
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
+import io.reactivex.FlowableEmitter;
+import io.reactivex.FlowableOnSubscribe;
 import io.reactivex.subjects.PublishSubject;
 import org.junit.Before;
 import org.junit.ClassRule;
@@ -47,6 +49,7 @@ public class OrderViewModelTest {
   private Order order1;
   @Mock
   private Order order2;
+  private PublishSubject<Order> publishSubject;
 
   @Mock
   private Observer<ViewState<OrderViewActions>> viewStateObserver;
@@ -55,21 +58,33 @@ public class OrderViewModelTest {
 
   @Before
   public void setUp() {
-    when(orderUseCase.getOrders()).thenReturn(Flowable.never());
+    publishSubject = PublishSubject.create();
+    when(orderUseCase.getOrders())
+        .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
     viewModel = new OrderViewModelImpl(orderUseCase, timeUtils);
   }
 
   /* Тетсируем работу с юзкейсом заказа. */
 
   /**
-   * Должен просить юзкейс получать заказы, при первой и только при первой подписке.
+   * Должен просить юзкейс получать заказы при создании.
    */
   @Test
   public void askUseCaseForOrdersInitially() {
+    // Результат:
+    verify(orderUseCase, only()).getOrders();
+  }
+
+  /**
+   * Не должен просить юзкейс получать заказы на подписках.
+   */
+  @Test
+  public void doNotAskUseCaseForOrdersOnSubscriptions() {
     // Действие:
     viewModel.getViewStateLiveData();
+    viewModel.getNavigationLiveData();
     viewModel.getViewStateLiveData();
-    viewModel.getViewStateLiveData();
+    viewModel.getNavigationLiveData();
 
     // Результат:
     verify(orderUseCase, only()).getOrders();
@@ -99,9 +114,6 @@ public class OrderViewModelTest {
   @Test
   public void doNotSetAnyViewStateToLiveDataForError() {
     // Дано:
-    PublishSubject<Order> publishSubject = PublishSubject.create();
-    when(orderUseCase.getOrders())
-        .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
@@ -117,10 +129,7 @@ public class OrderViewModelTest {
   @Test
   public void setIdleViewStateToLiveData() {
     // Дано:
-    PublishSubject<Order> publishSubject = PublishSubject.create();
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    when(orderUseCase.getOrders())
-        .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
@@ -150,9 +159,6 @@ public class OrderViewModelTest {
   @Test
   public void setNavigateToServerDataError() {
     // Дано:
-    PublishSubject<Order> publishSubject = PublishSubject.create();
-    when(orderUseCase.getOrders())
-        .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
     viewModel.getNavigationLiveData().observeForever(navigateObserver);
 
@@ -161,5 +167,36 @@ public class OrderViewModelTest {
 
     // Результат:
     verify(navigateObserver, only()).onChanged(CommonNavigate.SERVER_DATA_ERROR);
+  }
+
+  /**
+   * Должен вернуть "перейти к заказ истек".
+   */
+  @Test
+  public void setNavigateToOrderExpired() {
+    // Дано:
+    when(orderUseCase.getOrders()).thenReturn(Flowable.create(
+        new FlowableOnSubscribe<Order>() {
+          private boolean run;
+
+          @Override
+          public void subscribe(FlowableEmitter<Order> emitter) {
+            if (!run) {
+              run = true;
+              emitter.onNext(order);
+              emitter.onComplete();
+            }
+          }
+        },
+        BackpressureStrategy.BUFFER
+    ));
+    viewModel = new OrderViewModelImpl(orderUseCase, timeUtils);
+    viewModel.getNavigationLiveData().observeForever(navigateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
+
+    // Действие:
+
+    // Результат:
+    verify(navigateObserver, only()).onChanged(OrderNavigate.ORDER_EXPIRED);
   }
 }
