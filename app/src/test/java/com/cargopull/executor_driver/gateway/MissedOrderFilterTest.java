@@ -12,15 +12,15 @@ import org.mockito.junit.MockitoJUnitRunner;
 import ua.naiksoftware.stomp.client.StompMessage;
 
 @RunWith(MockitoJUnitRunner.class)
-public class ExecutorBalanceFilterTest {
+public class MissedOrderFilterTest {
 
-  private ExecutorBalanceFilter filter;
+  private MissedOrderFilter filter;
   @Mock
   private StompMessage stompMessage;
 
   @Before
   public void setUp() {
-    filter = new ExecutorBalanceFilter();
+    filter = new MissedOrderFilter();
   }
 
   /**
@@ -33,12 +33,12 @@ public class ExecutorBalanceFilterTest {
   }
 
   /**
-   * Должен пропустить, если сообщение с заголовком Balance.
+   * Должен пропустить, если сообщение с заголовком MissedOrder.
    */
   @Test
   public void allowForHeaderWithCorrectValue() {
     // Дано:
-    when(stompMessage.findHeader("Balance")).thenReturn("");
+    when(stompMessage.findHeader("MissedOrder")).thenReturn("");
 
     // Действие и Результат:
     assertTrue(filter.test(stompMessage));

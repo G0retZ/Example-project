@@ -13,7 +13,6 @@ import com.cargopull.executor_driver.interactor.CurrentCostPollingGateway;
 import com.cargopull.executor_driver.interactor.ExecutorStateSwitchGateway;
 import com.cargopull.executor_driver.interactor.GeoLocationGateway;
 import com.cargopull.executor_driver.interactor.GeoTrackingGateway;
-import com.cargopull.executor_driver.interactor.MissedOrderGateway;
 import com.cargopull.executor_driver.interactor.MovingToClientGateway;
 import com.cargopull.executor_driver.interactor.OrderConfirmationGateway;
 import com.cargopull.executor_driver.interactor.OrderCurrentCostGateway;
@@ -65,7 +64,7 @@ interface RepositoryComponent {
   GeoTrackingGateway getGeoTrackingGateway();
 
   @NonNull
-  MissedOrderGateway getMissedOrderGateway();
+  CommonGateway<String> getMissedOrderGateway();
 
   @NonNull
   MovingToClientGateway getMovingToClientGateway();

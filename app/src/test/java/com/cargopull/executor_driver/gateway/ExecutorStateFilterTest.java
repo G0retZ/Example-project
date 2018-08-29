@@ -33,7 +33,7 @@ public class ExecutorStateFilterTest {
   }
 
   /**
-   * Должен пропустить, если сообщение с заголовком CancelReason.
+   * Должен пропустить, если сообщение с заголовком Status.
    */
   @Test
   public void allowForHeaderWithCorrectValue() {

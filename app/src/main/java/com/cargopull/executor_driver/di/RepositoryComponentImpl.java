@@ -25,7 +25,8 @@ import com.cargopull.executor_driver.gateway.GeoLocationGatewayImpl;
 import com.cargopull.executor_driver.gateway.GeoTrackingGatewayImpl;
 import com.cargopull.executor_driver.gateway.HeatMapGatewayImpl;
 import com.cargopull.executor_driver.gateway.LastUsedVehicleGatewayImpl;
-import com.cargopull.executor_driver.gateway.MissedOrderGatewayImpl;
+import com.cargopull.executor_driver.gateway.MissedOrderApiMapper;
+import com.cargopull.executor_driver.gateway.MissedOrderFilter;
 import com.cargopull.executor_driver.gateway.MovingToClientGatewayImpl;
 import com.cargopull.executor_driver.gateway.OrderApiMapper;
 import com.cargopull.executor_driver.gateway.OrderConfirmationGatewayImpl;
@@ -60,7 +61,6 @@ import com.cargopull.executor_driver.interactor.CurrentCostPollingGateway;
 import com.cargopull.executor_driver.interactor.ExecutorStateSwitchGateway;
 import com.cargopull.executor_driver.interactor.GeoLocationGateway;
 import com.cargopull.executor_driver.interactor.GeoTrackingGateway;
-import com.cargopull.executor_driver.interactor.MissedOrderGateway;
 import com.cargopull.executor_driver.interactor.MovingToClientGateway;
 import com.cargopull.executor_driver.interactor.OrderConfirmationGateway;
 import com.cargopull.executor_driver.interactor.OrderCurrentCostGateway;
@@ -106,7 +106,7 @@ class RepositoryComponentImpl implements RepositoryComponent {
   @Nullable
   private GeoTrackingGateway geoTrackingGateway;
   @Nullable
-  private MissedOrderGateway missedOrderGateway;
+  private CommonGateway<String> missedOrderGateway;
   @Nullable
   private MovingToClientGateway movingToClientGateway;
   @Nullable
@@ -276,10 +276,12 @@ class RepositoryComponentImpl implements RepositoryComponent {
 
   @NonNull
   @Override
-  public MissedOrderGateway getMissedOrderGateway() {
+  public CommonGateway<String> getMissedOrderGateway() {
     if (missedOrderGateway == null) {
-      missedOrderGateway = new MissedOrderGatewayImpl(
-          backendComponent.getPersonalTopicListener()
+      missedOrderGateway = new TopicGatewayImpl<>(
+          backendComponent.getPersonalTopicListener(),
+          new MissedOrderApiMapper(),
+          new MissedOrderFilter()
       );
     }
     return missedOrderGateway;

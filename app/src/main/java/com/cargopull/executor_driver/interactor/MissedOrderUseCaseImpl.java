@@ -12,13 +12,13 @@ public class MissedOrderUseCaseImpl implements MissedOrderUseCase {
   @NonNull
   private final ErrorReporter errorReporter;
   @NonNull
-  private final MissedOrderGateway gateway;
+  private final CommonGateway<String> gateway;
   @Nullable
   private Flowable<String> messagesFlowable;
 
   @Inject
   public MissedOrderUseCaseImpl(@NonNull ErrorReporter errorReporter,
-      @NonNull MissedOrderGateway gateway) {
+      @NonNull CommonGateway<String> gateway) {
     this.errorReporter = errorReporter;
     this.gateway = gateway;
   }
@@ -27,7 +27,7 @@ public class MissedOrderUseCaseImpl implements MissedOrderUseCase {
   @Override
   public Flowable<String> getMissedOrders() {
     if (messagesFlowable == null) {
-      messagesFlowable = gateway.loadMissedOrdersMessages()
+      messagesFlowable = gateway.getData()
           .observeOn(Schedulers.single())
           .doOnError(errorReporter::reportError)
           .replay(1)

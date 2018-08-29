@@ -28,11 +28,11 @@ public class MissedOrderUseCaseTest {
   @Mock
   private ErrorReporter errorReporter;
   @Mock
-  private MissedOrderGateway gateway;
+  private CommonGateway<String> gateway;
 
   @Before
   public void setUp() {
-    when(gateway.loadMissedOrdersMessages()).thenReturn(Flowable.never());
+    when(gateway.getData()).thenReturn(Flowable.never());
     useCase = new MissedOrderUseCaseImpl(errorReporter, gateway);
   }
 
@@ -50,7 +50,7 @@ public class MissedOrderUseCaseTest {
     useCase.getMissedOrders().test();
 
     // Результат:
-    verify(gateway, only()).loadMissedOrdersMessages();
+    verify(gateway, only()).getData();
   }
 
   /* Проверяем отправку ошибок в репортер */
@@ -61,7 +61,7 @@ public class MissedOrderUseCaseTest {
   @Test
   public void reportError() {
     // Дано:
-    when(gateway.loadMissedOrdersMessages()).thenReturn(Flowable.error(DataMappingException::new));
+    when(gateway.getData()).thenReturn(Flowable.error(DataMappingException::new));
 
     // Действие:
     useCase.getMissedOrders().test();
@@ -78,7 +78,7 @@ public class MissedOrderUseCaseTest {
   @Test
   public void answerWithMissedOrdersMessages() {
     // Дано:
-    when(gateway.loadMissedOrdersMessages()).thenReturn(Flowable.just("1", "2", "3"));
+    when(gateway.getData()).thenReturn(Flowable.just("1", "2", "3"));
 
     // Действие:
     TestSubscriber<String> testSubscriber = useCase.getMissedOrders().test();
@@ -94,7 +94,7 @@ public class MissedOrderUseCaseTest {
   @Test
   public void answerWithError() {
     // Дано:
-    when(gateway.loadMissedOrdersMessages()).thenReturn(Flowable.error(DataMappingException::new));
+    when(gateway.getData()).thenReturn(Flowable.error(DataMappingException::new));
 
     // Действие:
     TestSubscriber<String> testSubscriber = useCase.getMissedOrders().test();
@@ -111,7 +111,7 @@ public class MissedOrderUseCaseTest {
   @Test
   public void answerComplete() {
     // Дано:
-    when(gateway.loadMissedOrdersMessages()).thenReturn(Flowable.empty());
+    when(gateway.getData()).thenReturn(Flowable.empty());
 
     // Действие:
     TestSubscriber<String> testSubscriber = useCase.getMissedOrders().test();
