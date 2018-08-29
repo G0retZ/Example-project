@@ -131,4 +131,11 @@ public interface OrderViewActions {
    * @param comment - адрес
    */
   void showComment(@NonNull String comment);
+
+  /**
+   * показать сообщение о том, что заказ истек.
+   *
+   * @param show - показать или нет?
+   */
+  void showOrderExpired(boolean show);
 }

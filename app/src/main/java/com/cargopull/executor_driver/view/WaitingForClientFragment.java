@@ -308,4 +308,9 @@ public class WaitingForClientFragment extends BaseFragment implements
       cargoDescText.setText(comment);
     }
   }
+
+  @Override
+  public void showOrderExpired(boolean show) {
+
+  }
 }

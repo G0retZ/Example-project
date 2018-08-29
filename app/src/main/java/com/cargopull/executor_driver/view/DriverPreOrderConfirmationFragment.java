@@ -318,6 +318,11 @@ public class DriverPreOrderConfirmationFragment extends BaseFragment implements
   }
 
   @Override
+  public void showOrderExpired(boolean show) {
+
+  }
+
+  @Override
   public void enableDeclineButton(boolean enable) {
     declineAction.setEnabled(enable);
   }

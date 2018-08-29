@@ -340,4 +340,9 @@ public class MovingToClientFragment extends BaseFragment implements MovingToClie
   public void showComment(@NonNull String comment) {
 
   }
+
+  @Override
+  public void showOrderExpired(boolean show) {
+
+  }
 }

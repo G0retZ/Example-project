@@ -174,4 +174,9 @@ public class OrderCostDetailsOrderDetailsFragment extends BaseFragment implement
       commentText.setText(comment);
     }
   }
+
+  @Override
+  public void showOrderExpired(boolean show) {
+
+  }
 }

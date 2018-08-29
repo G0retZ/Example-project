@@ -16,9 +16,9 @@ import com.cargopull.executor_driver.presentation.CommonNavigate;
 import com.cargopull.executor_driver.presentation.ViewState;
 import com.cargopull.executor_driver.utils.TimeUtils;
 import io.reactivex.BackpressureStrategy;
-import io.reactivex.Flowable;
-import io.reactivex.FlowableEmitter;
-import io.reactivex.FlowableOnSubscribe;
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.subjects.PublishSubject;
 import org.junit.Before;
 import org.junit.ClassRule;
@@ -151,6 +151,55 @@ public class OrderViewModelTest {
     verifyNoMoreInteractions(viewStateObserver);
   }
 
+  /**
+   * Должен вернуть состояния вида "заказ истек" при завершении.
+   */
+  @Test
+  public void setExpiredViewStateToLiveData() {
+    // Дано:
+    InOrder inOrder = Mockito.inOrder(viewStateObserver);
+    PublishSubject<Order> publishSubject = PublishSubject.create();
+    when(orderUseCase.getOrders()).thenReturn(
+        Observable.create(
+            new ObservableOnSubscribe<Order>() {
+              private boolean run;
+
+              @Override
+              public void subscribe(ObservableEmitter<Order> emitter) {
+                if (!run) {
+                  run = true;
+                  emitter.onNext(order);
+                  emitter.onComplete();
+                } else {
+                  emitter.onNext(order2);
+                }
+              }
+            }
+//        )
+        ).startWith(publishSubject)
+            .toFlowable(BackpressureStrategy.BUFFER)
+    );
+    viewModel = new OrderViewModelImpl(orderUseCase, timeUtils);
+    viewModel.getNavigationLiveData().observeForever(navigateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
+
+    // Действие:
+    publishSubject.onComplete();
+
+    // Результат:
+    inOrder.verify(viewStateObserver).onChanged(new OrderViewStatePending(null));
+    inOrder.verify(viewStateObserver).onChanged(new OrderViewStateIdle(
+        new OrderItem(order, timeUtils))
+    );
+    inOrder.verify(viewStateObserver).onChanged(new OrderViewStateExpired(new OrderViewStateIdle(
+        new OrderItem(order, timeUtils)))
+    );
+    inOrder.verify(viewStateObserver).onChanged(new OrderViewStateIdle(
+        new OrderItem(order2, timeUtils))
+    );
+    verifyNoMoreInteractions(viewStateObserver);
+  }
+
   /* Тестируем навигацию. */
 
   /**
@@ -167,36 +216,5 @@ public class OrderViewModelTest {
 
     // Результат:
     verify(navigateObserver, only()).onChanged(CommonNavigate.SERVER_DATA_ERROR);
-  }
-
-  /**
-   * Должен вернуть "перейти к заказ истек".
-   */
-  @Test
-  public void setNavigateToOrderExpired() {
-    // Дано:
-    when(orderUseCase.getOrders()).thenReturn(Flowable.create(
-        new FlowableOnSubscribe<Order>() {
-          private boolean run;
-
-          @Override
-          public void subscribe(FlowableEmitter<Order> emitter) {
-            if (!run) {
-              run = true;
-              emitter.onNext(order);
-              emitter.onComplete();
-            }
-          }
-        },
-        BackpressureStrategy.BUFFER
-    ));
-    viewModel = new OrderViewModelImpl(orderUseCase, timeUtils);
-    viewModel.getNavigationLiveData().observeForever(navigateObserver);
-    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
-
-    // Действие:
-
-    // Результат:
-    verify(navigateObserver, only()).onChanged(OrderNavigate.ORDER_EXPIRED);
   }
 }

@@ -207,4 +207,9 @@ public class ClientOrderConfirmationFragment extends BaseFragment implements Ord
       cargoDescText.setText(comment);
     }
   }
+
+  @Override
+  public void showOrderExpired(boolean show) {
+
+  }
 }

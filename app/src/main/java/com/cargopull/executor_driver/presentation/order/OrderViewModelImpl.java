@@ -39,7 +39,6 @@ public class OrderViewModelImpl extends ViewModel implements
     this.timeUtils = timeUtils;
     viewStateLiveData = new MutableLiveData<>();
     navigateLiveData = new SingleLiveEvent<>();
-    viewStateLiveData.postValue(new OrderViewStatePending(lastViewState));
     loadOrders();
   }
 
@@ -61,7 +60,7 @@ public class OrderViewModelImpl extends ViewModel implements
       viewStateLiveData.postValue(new OrderViewStatePending(lastViewState));
       disposable = orderUseCase.getOrders()
           .observeOn(AndroidSchedulers.mainThread())
-          .doOnComplete(() -> navigateLiveData.postValue(OrderNavigate.ORDER_EXPIRED))
+          .doOnComplete(() -> viewStateLiveData.postValue(new OrderViewStateExpired(lastViewState)))
           .repeat()
           .subscribe(this::consumeOrder,
               throwable -> {

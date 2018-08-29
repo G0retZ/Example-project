@@ -75,6 +75,7 @@ public class OrderViewStateIdleTest {
     verify(viewActions).showEstimatedPrice("1000");
     verify(viewActions).showOrderOptionsRequirements("1,2,3");
     verify(viewActions).showOrderPending(false);
+    verify(viewActions).showOrderExpired(false);
     verifyNoMoreInteractions(viewActions);
   }
 
