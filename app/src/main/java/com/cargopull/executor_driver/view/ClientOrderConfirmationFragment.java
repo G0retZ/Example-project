@@ -105,7 +105,7 @@ public class ClientOrderConfirmationFragment extends BaseFragment implements Ord
 
   @Override
   public void showLoadPoint(@NonNull String url) {
-    Picasso.with(context).load(url).into(mapImage);
+    Picasso.get().load(url).into(mapImage);
   }
 
   @Override
