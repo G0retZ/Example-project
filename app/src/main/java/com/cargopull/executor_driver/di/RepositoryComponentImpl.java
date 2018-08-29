@@ -3,11 +3,12 @@ package com.cargopull.executor_driver.di;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.cargopull.executor_driver.backend.geolocation.GeolocationCenter;
+import com.cargopull.executor_driver.entity.CancelOrderReason;
 import com.cargopull.executor_driver.entity.OrderCostDetails;
 import com.cargopull.executor_driver.gateway.CallToClientGatewayImpl;
 import com.cargopull.executor_driver.gateway.CancelOrderGatewayImpl;
 import com.cargopull.executor_driver.gateway.CancelOrderReasonApiMapper;
-import com.cargopull.executor_driver.gateway.CancelOrderReasonsGatewayImpl;
+import com.cargopull.executor_driver.gateway.CancelOrderReasonsFilter;
 import com.cargopull.executor_driver.gateway.ConfirmOrderPaymentGatewayImpl;
 import com.cargopull.executor_driver.gateway.CurrentCostPollingGatewayImpl;
 import com.cargopull.executor_driver.gateway.CurrentCostPollingTimersApiMapper;
@@ -51,7 +52,6 @@ import com.cargopull.executor_driver.gateway.VehiclesAndOptionsGatewayImpl;
 import com.cargopull.executor_driver.gateway.WaitingForClientGatewayImpl;
 import com.cargopull.executor_driver.interactor.CallToClientGateway;
 import com.cargopull.executor_driver.interactor.CancelOrderGateway;
-import com.cargopull.executor_driver.interactor.CancelOrderReasonsGateway;
 import com.cargopull.executor_driver.interactor.CommonGateway;
 import com.cargopull.executor_driver.interactor.ConfirmOrderPaymentGateway;
 import com.cargopull.executor_driver.interactor.CurrentCostPollingGateway;
@@ -77,6 +77,7 @@ import com.cargopull.executor_driver.interactor.services.ServicesGateway;
 import com.cargopull.executor_driver.interactor.vehicle.LastUsedVehicleGateway;
 import com.cargopull.executor_driver.interactor.vehicle.VehicleOptionsGateway;
 import com.cargopull.executor_driver.interactor.vehicle.VehiclesAndOptionsGateway;
+import java.util.List;
 
 class RepositoryComponentImpl implements RepositoryComponent {
 
@@ -89,7 +90,7 @@ class RepositoryComponentImpl implements RepositoryComponent {
   @Nullable
   private CancelOrderGateway cancelOrderGateway;
   @Nullable
-  private CancelOrderReasonsGateway cancelOrderReasonsGateway;
+  private CommonGateway<List<CancelOrderReason>> cancelOrderReasonsGateway;
   @Nullable
   private ConfirmOrderPaymentGateway confirmOrderPaymentGateway;
   @Nullable
@@ -179,11 +180,12 @@ class RepositoryComponentImpl implements RepositoryComponent {
 
   @NonNull
   @Override
-  public CancelOrderReasonsGateway getCancelOrderReasonsGateway() {
+  public CommonGateway<List<CancelOrderReason>> getCancelOrderReasonsGateway() {
     if (cancelOrderReasonsGateway == null) {
-      cancelOrderReasonsGateway = new CancelOrderReasonsGatewayImpl(
+      cancelOrderReasonsGateway = new TopicGatewayImpl<>(
           backendComponent.getPersonalTopicListener(),
-          new CancelOrderReasonApiMapper()
+          new CancelOrderReasonApiMapper(),
+          new CancelOrderReasonsFilter()
       );
     }
     return cancelOrderReasonsGateway;

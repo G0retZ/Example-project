@@ -32,7 +32,7 @@ public class CancelOrderReasonsUseCaseTest {
   @Mock
   private ErrorReporter errorReporter;
   @Mock
-  private CancelOrderReasonsGateway gateway;
+  private CommonGateway<List<CancelOrderReason>> gateway;
   @Mock
   private CancelOrderReason cancelOrderReason;
   @Mock
@@ -44,7 +44,7 @@ public class CancelOrderReasonsUseCaseTest {
 
   @Before
   public void setUp() {
-    when(gateway.loadCancelOrderReasons()).thenReturn(Flowable.never());
+    when(gateway.getData()).thenReturn(Flowable.never());
     useCase = new CancelOrderReasonsUseCaseImpl(errorReporter, gateway);
   }
 
@@ -62,7 +62,7 @@ public class CancelOrderReasonsUseCaseTest {
     useCase.getCancelOrderReasons().test();
 
     // Результат:
-    verify(gateway, only()).loadCancelOrderReasons();
+    verify(gateway, only()).getData();
   }
 
   /* Проверяем отправку ошибок в репортер */
@@ -73,7 +73,7 @@ public class CancelOrderReasonsUseCaseTest {
   @Test
   public void reportError() {
     // Дано:
-    when(gateway.loadCancelOrderReasons()).thenReturn(Flowable.error(DataMappingException::new));
+    when(gateway.getData()).thenReturn(Flowable.error(DataMappingException::new));
 
     // Действие:
     useCase.getCancelOrderReasons().test();
@@ -91,7 +91,7 @@ public class CancelOrderReasonsUseCaseTest {
   @Test
   public void answerWithCancelOrderReasons() {
     // Дано:
-    when(gateway.loadCancelOrderReasons()).thenReturn(Flowable.just(
+    when(gateway.getData()).thenReturn(Flowable.just(
         new ArrayList<>(Arrays.asList(cancelOrderReason, cancelOrderReason2, cancelOrderReason3)),
         new ArrayList<>(Arrays.asList(cancelOrderReason, cancelOrderReason1, cancelOrderReason3)),
         new ArrayList<>(Arrays.asList(cancelOrderReason1, cancelOrderReason2, cancelOrderReason3))
@@ -115,7 +115,7 @@ public class CancelOrderReasonsUseCaseTest {
   @Test
   public void answerWithError() {
     // Дано:
-    when(gateway.loadCancelOrderReasons()).thenReturn(Flowable.error(DataMappingException::new));
+    when(gateway.getData()).thenReturn(Flowable.error(DataMappingException::new));
 
     // Действие:
     TestSubscriber<List<CancelOrderReason>> testSubscriber = useCase.getCancelOrderReasons().test();
@@ -132,7 +132,7 @@ public class CancelOrderReasonsUseCaseTest {
   @Test
   public void answerComplete() {
     // Дано:
-    when(gateway.loadCancelOrderReasons()).thenReturn(Flowable.empty());
+    when(gateway.getData()).thenReturn(Flowable.empty());
 
     // Действие:
     TestSubscriber<List<CancelOrderReason>> testSubscriber = useCase.getCancelOrderReasons().test();

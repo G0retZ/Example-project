@@ -14,13 +14,13 @@ public class CancelOrderReasonsUseCaseImpl implements CancelOrderReasonsUseCase 
   @NonNull
   private final ErrorReporter errorReporter;
   @NonNull
-  private final CancelOrderReasonsGateway gateway;
+  private final CommonGateway<List<CancelOrderReason>> gateway;
   @Nullable
   private Flowable<List<CancelOrderReason>> cancelOrderReasonsFlowable;
 
   @Inject
   public CancelOrderReasonsUseCaseImpl(@NonNull ErrorReporter errorReporter,
-      @NonNull CancelOrderReasonsGateway gateway) {
+      @NonNull CommonGateway<List<CancelOrderReason>> gateway) {
     this.errorReporter = errorReporter;
     this.gateway = gateway;
   }
@@ -29,7 +29,7 @@ public class CancelOrderReasonsUseCaseImpl implements CancelOrderReasonsUseCase 
   @Override
   public Flowable<List<CancelOrderReason>> getCancelOrderReasons() {
     if (cancelOrderReasonsFlowable == null) {
-      cancelOrderReasonsFlowable = gateway.loadCancelOrderReasons()
+      cancelOrderReasonsFlowable = gateway.getData()
           .observeOn(Schedulers.single())
           .doOnError(errorReporter::reportError)
           .replay(1)

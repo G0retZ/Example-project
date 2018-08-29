@@ -12,45 +12,33 @@ import org.mockito.junit.MockitoJUnitRunner;
 import ua.naiksoftware.stomp.client.StompMessage;
 
 @RunWith(MockitoJUnitRunner.class)
-public class OrderCostDetailsFilterTest {
+public class CancelOrderReasonsFilterTest {
 
-  private OrderCostDetailsFilter filter;
+  private CancelOrderReasonsFilter filter;
   @Mock
   private StompMessage stompMessage;
 
   @Before
   public void setUp() {
-    filter = new OrderCostDetailsFilter();
+    filter = new CancelOrderReasonsFilter();
   }
 
   /**
    * Должен отказать, если статус не соответствует фильтруемому.
    */
   @Test
-  public void filterIfExecutorStateIncorrect() {
+  public void FilterIfExecutorStateIncorrect() throws Exception {
     // Действие и Результат:
     assertFalse(filter.test(stompMessage));
   }
 
   /**
-   * Должен отказать, если сообщение с заголовком Status с неверным занчением.
+   * Должен пропустить, если сообщение с заголовком CancelReason.
    */
   @Test
-  public void filterForHeaderWithWrongValue() {
+  public void allowForHeaderWithCorrectValue() throws Exception {
     // Дано:
-    when(stompMessage.findHeader("Status")).thenReturn("");
-
-    // Действие и Результат:
-    assertFalse(filter.test(stompMessage));
-  }
-
-  /**
-   * Должен пропустить, если сообщение с заголовком Status с верным занчением.
-   */
-  @Test
-  public void allowForHeaderWithCorrectValue() {
-    // Дано:
-    when(stompMessage.findHeader("Status")).thenReturn("PAYMENT_CONFIRMATION");
+    when(stompMessage.findHeader("CancelReason")).thenReturn("");
 
     // Действие и Результат:
     assertTrue(filter.test(stompMessage));
