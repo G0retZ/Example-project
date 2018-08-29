@@ -33,7 +33,7 @@ import com.cargopull.executor_driver.gateway.OrderConfirmationGatewayImpl;
 import com.cargopull.executor_driver.gateway.OrderCostDetailsApiMapper;
 import com.cargopull.executor_driver.gateway.OrderCostDetailsFilter;
 import com.cargopull.executor_driver.gateway.OrderCurrentCostApiMapper;
-import com.cargopull.executor_driver.gateway.OrderCurrentCostGatewayImpl;
+import com.cargopull.executor_driver.gateway.OrderCurrentCostFilter;
 import com.cargopull.executor_driver.gateway.OrderGatewayImpl;
 import com.cargopull.executor_driver.gateway.OrderRouteGatewayImpl;
 import com.cargopull.executor_driver.gateway.PasswordGatewayImpl;
@@ -63,7 +63,6 @@ import com.cargopull.executor_driver.interactor.GeoLocationGateway;
 import com.cargopull.executor_driver.interactor.GeoTrackingGateway;
 import com.cargopull.executor_driver.interactor.MovingToClientGateway;
 import com.cargopull.executor_driver.interactor.OrderConfirmationGateway;
-import com.cargopull.executor_driver.interactor.OrderCurrentCostGateway;
 import com.cargopull.executor_driver.interactor.OrderGateway;
 import com.cargopull.executor_driver.interactor.OrderRouteGateway;
 import com.cargopull.executor_driver.interactor.ServerConnectionGateway;
@@ -116,7 +115,7 @@ class RepositoryComponentImpl implements RepositoryComponent {
   @Nullable
   private CommonGateway<OrderCostDetails> orderCostDetailsGateway;
   @Nullable
-  private OrderCurrentCostGateway orderCurrentCostGateway;
+  private CommonGateway<Long> orderCurrentCostGateway;
   @Nullable
   private OrderGateway orderGateway;
   @Nullable
@@ -335,11 +334,12 @@ class RepositoryComponentImpl implements RepositoryComponent {
 
   @NonNull
   @Override
-  public OrderCurrentCostGateway getOrderCurrentCostGateway() {
+  public CommonGateway<Long> getOrderCurrentCostGateway() {
     if (orderCurrentCostGateway == null) {
-      orderCurrentCostGateway = new OrderCurrentCostGatewayImpl(
+      orderCurrentCostGateway = new TopicGatewayImpl<>(
           backendComponent.getPersonalTopicListener(),
-          new OrderCurrentCostApiMapper()
+          new OrderCurrentCostApiMapper(),
+          new OrderCurrentCostFilter()
       );
     }
     return orderCurrentCostGateway;

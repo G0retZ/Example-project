@@ -34,7 +34,7 @@ public class OrderCurrentCostUseCaseTest {
   @Mock
   private OrderUseCase orderUseCase;
   @Mock
-  private OrderCurrentCostGateway orderCurrentCostGateway;
+  private CommonGateway<Long> orderCurrentCostGateway;
   @Mock
   private Order order;
   @Mock
@@ -43,7 +43,7 @@ public class OrderCurrentCostUseCaseTest {
   @Before
   public void setUp() {
     when(orderUseCase.getOrders()).thenReturn(Flowable.never());
-    when(orderCurrentCostGateway.getOrderCurrentCost()).thenReturn(Flowable.never());
+    when(orderCurrentCostGateway.getData()).thenReturn(Flowable.never());
     useCase = new OrderCurrentCostUseCaseImpl(errorReporter, orderUseCase, orderCurrentCostGateway);
   }
 
@@ -91,7 +91,7 @@ public class OrderCurrentCostUseCaseTest {
     useCase.getOrderCurrentCost().test();
 
     // Результат:
-    verify(orderCurrentCostGateway, only()).getOrderCurrentCost();
+    verify(orderCurrentCostGateway, only()).getData();
   }
 
   /* Проверяем отправку ошибок в репортер */
@@ -119,7 +119,7 @@ public class OrderCurrentCostUseCaseTest {
     // Дано:
     when(orderUseCase.getOrders()).thenReturn(Flowable.just(order, order2));
     when(order.getTotalCost()).thenReturn(101L);
-    when(orderCurrentCostGateway.getOrderCurrentCost())
+    when(orderCurrentCostGateway.getData())
         .thenReturn(Flowable.error(new DataMappingException()));
 
     // Действие:
@@ -156,7 +156,7 @@ public class OrderCurrentCostUseCaseTest {
     // Дано:
     when(orderUseCase.getOrders()).thenReturn(Flowable.just(order, order2));
     when(order.getTotalCost()).thenReturn(101L);
-    when(orderCurrentCostGateway.getOrderCurrentCost())
+    when(orderCurrentCostGateway.getData())
         .thenReturn(Flowable.error(new DataMappingException()));
 
     // Действие:
@@ -197,7 +197,7 @@ public class OrderCurrentCostUseCaseTest {
     when(orderUseCase.getOrders()).thenReturn(Flowable.just(order, order2));
     when(order.getTotalCost()).thenReturn(100L);
     when(order2.getTotalCost()).thenReturn(12173L);
-    when(orderCurrentCostGateway.getOrderCurrentCost()).thenReturn(
+    when(orderCurrentCostGateway.getData()).thenReturn(
         Flowable.just(123L, 145L, 139L, 198L, 202L),
         Flowable.just(8395L, 8937L, 17156L, 9228L)
     );

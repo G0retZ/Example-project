@@ -15,7 +15,6 @@ import com.cargopull.executor_driver.interactor.GeoLocationGateway;
 import com.cargopull.executor_driver.interactor.GeoTrackingGateway;
 import com.cargopull.executor_driver.interactor.MovingToClientGateway;
 import com.cargopull.executor_driver.interactor.OrderConfirmationGateway;
-import com.cargopull.executor_driver.interactor.OrderCurrentCostGateway;
 import com.cargopull.executor_driver.interactor.OrderGateway;
 import com.cargopull.executor_driver.interactor.OrderRouteGateway;
 import com.cargopull.executor_driver.interactor.ServerConnectionGateway;
@@ -79,7 +78,7 @@ interface RepositoryComponent {
   CommonGateway<OrderCostDetails> getOrderCostDetailsGateway();
 
   @NonNull
-  OrderCurrentCostGateway getOrderCurrentCostGateway();
+  CommonGateway<Long> getOrderCurrentCostGateway();
 
   @NonNull
   OrderGateway getOrderGateway();

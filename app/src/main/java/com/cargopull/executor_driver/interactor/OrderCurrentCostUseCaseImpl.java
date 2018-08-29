@@ -13,13 +13,13 @@ public class OrderCurrentCostUseCaseImpl implements OrderCurrentCostUseCase {
   @NonNull
   private final OrderUseCase orderUseCase;
   @NonNull
-  private final OrderCurrentCostGateway orderCurrentCostGateway;
+  private final CommonGateway<Long> orderCurrentCostGateway;
 
   @Inject
   public OrderCurrentCostUseCaseImpl(
       @NonNull ErrorReporter errorReporter,
       @NonNull OrderUseCase orderUseCase,
-      @NonNull OrderCurrentCostGateway orderCurrentCostGateway) {
+      @NonNull CommonGateway<Long> orderCurrentCostGateway) {
     this.errorReporter = errorReporter;
     this.orderUseCase = orderUseCase;
     this.orderCurrentCostGateway = orderCurrentCostGateway;
@@ -30,7 +30,7 @@ public class OrderCurrentCostUseCaseImpl implements OrderCurrentCostUseCase {
   public Flowable<Long> getOrderCurrentCost() {
     return orderUseCase.getOrders()
         .switchMap(order ->
-            orderCurrentCostGateway.getOrderCurrentCost()
+            orderCurrentCostGateway.getData()
                 .observeOn(Schedulers.single())
                 .startWith(order.getTotalCost())
         ).doOnError(errorReporter::reportError);
