@@ -61,7 +61,8 @@ public class DriverPreOrderConfirmationFragment extends BaseFragment implements
   @Nullable
   private ObjectAnimator acceptResetAnimator;
   @Nullable
-  private AlertDialog alertDialog;
+  private AlertDialog confirmationDialog;
+  private AlertDialog expirationDialog;
   private Context context;
 
   @Inject
@@ -189,8 +190,11 @@ public class DriverPreOrderConfirmationFragment extends BaseFragment implements
 
   @Override
   public void onDetach() {
-    if (alertDialog != null) {
-      alertDialog.dismiss();
+    if (confirmationDialog != null) {
+      confirmationDialog.dismiss();
+    }
+    if (expirationDialog != null) {
+      expirationDialog.dismiss();
     }
     if (acceptResetAnimator != null) {
       acceptResetAnimator.cancel();
@@ -319,7 +323,21 @@ public class DriverPreOrderConfirmationFragment extends BaseFragment implements
 
   @Override
   public void showOrderExpired(boolean show) {
-
+    if (show) {
+      if (confirmationDialog != null) {
+        confirmationDialog.dismiss();
+      }
+      expirationDialog = new Builder(context)
+          .setMessage(R.string.order_expired)
+          .setPositiveButton(getString(android.R.string.ok),
+              (a, b) -> orderViewModel.messageConsumed())
+          .create();
+      expirationDialog.show();
+    } else {
+      if (expirationDialog != null) {
+        expirationDialog.dismiss();
+      }
+    }
   }
 
   @Override
@@ -336,15 +354,18 @@ public class DriverPreOrderConfirmationFragment extends BaseFragment implements
   @Override
   public void showBlockingMessage(@Nullable String message) {
     if (message != null) {
-      alertDialog = new Builder(context)
+      if (expirationDialog != null) {
+        expirationDialog.dismiss();
+      }
+      confirmationDialog = new Builder(context)
           .setMessage(message)
           .setPositiveButton(getString(android.R.string.ok),
               (a, b) -> orderConfirmationViewModel.messageConsumed())
           .create();
-      alertDialog.show();
+      confirmationDialog.show();
     } else {
-      if (alertDialog != null) {
-        alertDialog.dismiss();
+      if (confirmationDialog != null) {
+        confirmationDialog.dismiss();
       }
     }
   }

@@ -114,4 +114,5 @@
   <string name="book">Бронировать</string>
   <string name="reject">Отказаться</string>
   <string name="time">Время</string>
+  <string name="order_expired">Извините, заказ был забронирован.</string>
 </resources>
