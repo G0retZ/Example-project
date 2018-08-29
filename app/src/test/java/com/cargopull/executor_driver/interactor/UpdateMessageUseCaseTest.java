@@ -30,11 +30,11 @@ public class UpdateMessageUseCaseTest {
   @Mock
   private ErrorReporter errorReporter;
   @Mock
-  private UpdateMessageGateway gateway;
+  private CommonGateway<String> gateway;
 
   @Before
   public void setUp() {
-    when(gateway.loadUpdateMessages()).thenReturn(Flowable.never());
+    when(gateway.getData()).thenReturn(Flowable.never());
     useCase = new UpdateMessageUseCaseImpl(errorReporter, gateway);
   }
 
@@ -52,7 +52,7 @@ public class UpdateMessageUseCaseTest {
     useCase.getUpdateMessages().test();
 
     // Результат:
-    verify(gateway, times(4)).loadUpdateMessages();
+    verify(gateway, times(4)).getData();
     verifyNoMoreInteractions(gateway);
   }
 
@@ -64,7 +64,7 @@ public class UpdateMessageUseCaseTest {
   @Test
   public void reportError() {
     // Дано:
-    when(gateway.loadUpdateMessages()).thenReturn(Flowable.error(DataMappingException::new));
+    when(gateway.getData()).thenReturn(Flowable.error(DataMappingException::new));
 
     // Действие:
     useCase.getUpdateMessages().test();
@@ -81,7 +81,7 @@ public class UpdateMessageUseCaseTest {
   @Test
   public void answerWithUpdateMessages() {
     // Дано:
-    when(gateway.loadUpdateMessages()).thenReturn(Flowable.just("1", "2", "3"));
+    when(gateway.getData()).thenReturn(Flowable.just("1", "2", "3"));
 
     // Действие:
     TestSubscriber<String> testSubscriber = useCase.getUpdateMessages().test();
@@ -97,7 +97,7 @@ public class UpdateMessageUseCaseTest {
   @Test
   public void answerWithError() {
     // Дано:
-    when(gateway.loadUpdateMessages()).thenReturn(Flowable.error(DataMappingException::new));
+    when(gateway.getData()).thenReturn(Flowable.error(DataMappingException::new));
 
     // Действие:
     TestSubscriber<String> testSubscriber = useCase.getUpdateMessages().test();
@@ -114,7 +114,7 @@ public class UpdateMessageUseCaseTest {
   @Test
   public void answerComplete() {
     // Дано:
-    when(gateway.loadUpdateMessages()).thenReturn(Flowable.empty());
+    when(gateway.getData()).thenReturn(Flowable.empty());
 
     // Действие:
     TestSubscriber<String> testSubscriber = useCase.getUpdateMessages().test();

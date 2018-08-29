@@ -11,11 +11,11 @@ public class UpdateMessageUseCaseImpl implements UpdateMessageUseCase {
   @NonNull
   private final ErrorReporter errorReporter;
   @NonNull
-  private final UpdateMessageGateway gateway;
+  private final CommonGateway<String> gateway;
 
   @Inject
   public UpdateMessageUseCaseImpl(@NonNull ErrorReporter errorReporter,
-      @NonNull UpdateMessageGateway gateway) {
+      @NonNull CommonGateway<String> gateway) {
     this.errorReporter = errorReporter;
     this.gateway = gateway;
   }
@@ -23,7 +23,7 @@ public class UpdateMessageUseCaseImpl implements UpdateMessageUseCase {
   @NonNull
   @Override
   public Flowable<String> getUpdateMessages() {
-    return gateway.loadUpdateMessages()
+    return gateway.getData()
         .observeOn(Schedulers.single())
         .doOnError(errorReporter::reportError);
   }

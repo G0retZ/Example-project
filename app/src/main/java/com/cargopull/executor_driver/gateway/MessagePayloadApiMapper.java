@@ -6,11 +6,11 @@ import ua.naiksoftware.stomp.client.StompMessage;
 /**
  * Извлекаем сообщение сервера.
  */
-public class MissedOrderApiMapper implements Mapper<StompMessage, String> {
+public class MessagePayloadApiMapper implements Mapper<StompMessage, String> {
 
   @NonNull
   @Override
   public String map(@NonNull StompMessage from) {
-    return from.getPayload().trim();
+    return from.getPayload().replace("\"", "").trim();
   }
 }

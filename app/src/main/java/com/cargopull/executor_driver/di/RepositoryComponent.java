@@ -18,7 +18,6 @@ import com.cargopull.executor_driver.interactor.MovingToClientGateway;
 import com.cargopull.executor_driver.interactor.OrderConfirmationGateway;
 import com.cargopull.executor_driver.interactor.OrderRouteGateway;
 import com.cargopull.executor_driver.interactor.ServerConnectionGateway;
-import com.cargopull.executor_driver.interactor.UpdateMessageGateway;
 import com.cargopull.executor_driver.interactor.WaitingForClientGateway;
 import com.cargopull.executor_driver.interactor.auth.PasswordGateway;
 import com.cargopull.executor_driver.interactor.auth.SmsGateway;
@@ -95,7 +94,7 @@ interface RepositoryComponent {
   CommonGateway<Long> getServerTimeGateway();
 
   @NonNull
-  UpdateMessageGateway getUpdateMessageGateway();
+  CommonGateway<String> getUpdateMessageGateway();
 
   @NonNull
   WaitingForClientGateway getWaitingForClientGateway();

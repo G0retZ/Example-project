@@ -26,7 +26,7 @@ import com.cargopull.executor_driver.gateway.GeoLocationGatewayImpl;
 import com.cargopull.executor_driver.gateway.GeoTrackingGatewayImpl;
 import com.cargopull.executor_driver.gateway.HeatMapGatewayImpl;
 import com.cargopull.executor_driver.gateway.LastUsedVehicleGatewayImpl;
-import com.cargopull.executor_driver.gateway.MissedOrderApiMapper;
+import com.cargopull.executor_driver.gateway.MessagePayloadApiMapper;
 import com.cargopull.executor_driver.gateway.MissedOrderFilter;
 import com.cargopull.executor_driver.gateway.MovingToClientGatewayImpl;
 import com.cargopull.executor_driver.gateway.OrderApiMapper;
@@ -49,7 +49,7 @@ import com.cargopull.executor_driver.gateway.ServiceApiMapper;
 import com.cargopull.executor_driver.gateway.ServicesGatewayImpl;
 import com.cargopull.executor_driver.gateway.SmsGatewayImpl;
 import com.cargopull.executor_driver.gateway.TopicGatewayImpl;
-import com.cargopull.executor_driver.gateway.UpdateMessageGatewayImpl;
+import com.cargopull.executor_driver.gateway.UpdateMessageFilter;
 import com.cargopull.executor_driver.gateway.VehicleApiMapper;
 import com.cargopull.executor_driver.gateway.VehicleOptionApiMapper;
 import com.cargopull.executor_driver.gateway.VehicleOptionsGatewayImpl;
@@ -67,7 +67,6 @@ import com.cargopull.executor_driver.interactor.MovingToClientGateway;
 import com.cargopull.executor_driver.interactor.OrderConfirmationGateway;
 import com.cargopull.executor_driver.interactor.OrderRouteGateway;
 import com.cargopull.executor_driver.interactor.ServerConnectionGateway;
-import com.cargopull.executor_driver.interactor.UpdateMessageGateway;
 import com.cargopull.executor_driver.interactor.WaitingForClientGateway;
 import com.cargopull.executor_driver.interactor.auth.PasswordGateway;
 import com.cargopull.executor_driver.interactor.auth.SmsGateway;
@@ -127,7 +126,7 @@ class RepositoryComponentImpl implements RepositoryComponent {
   @Nullable
   private CommonGateway<Long> serverTimeGateway;
   @Nullable
-  private UpdateMessageGateway updateMessageGateway;
+  private CommonGateway<String> updateMessageGateway;
   @Nullable
   private WaitingForClientGateway waitingForClientGateway;
   @Nullable
@@ -279,7 +278,7 @@ class RepositoryComponentImpl implements RepositoryComponent {
     if (missedOrderGateway == null) {
       missedOrderGateway = new TopicGatewayImpl<>(
           backendComponent.getPersonalTopicListener(),
-          new MissedOrderApiMapper(),
+          new MessagePayloadApiMapper(),
           new MissedOrderFilter()
       );
     }
@@ -414,10 +413,12 @@ class RepositoryComponentImpl implements RepositoryComponent {
 
   @NonNull
   @Override
-  public UpdateMessageGateway getUpdateMessageGateway() {
+  public CommonGateway<String> getUpdateMessageGateway() {
     if (updateMessageGateway == null) {
-      updateMessageGateway = new UpdateMessageGatewayImpl(
-          backendComponent.getPersonalTopicListener()
+      updateMessageGateway = new TopicGatewayImpl<>(
+          backendComponent.getPersonalTopicListener(),
+          new MessagePayloadApiMapper(),
+          new UpdateMessageFilter()
       );
     }
     return updateMessageGateway;
