@@ -79,6 +79,11 @@ public class OrderViewModelImpl extends ViewModel implements
   }
 
   @Override
+  public void messageConsumed() {
+    navigateLiveData.postValue(OrderNavigate.CLOSE);
+  }
+
+  @Override
   protected void onCleared() {
     super.onCleared();
     disposable.dispose();

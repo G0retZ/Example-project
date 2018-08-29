@@ -217,4 +217,20 @@ public class OrderViewModelTest {
     // Результат:
     verify(navigateObserver, only()).onChanged(CommonNavigate.SERVER_DATA_ERROR);
   }
+
+  /**
+   * Должен перейти к закрытию карточки.
+   */
+  @Test
+  public void setNavigateToCloseForMessageConsumed() {
+    // Дано:
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getNavigationLiveData().observeForever(navigateObserver);
+
+    // Действие:
+    viewModel.messageConsumed();
+
+    // Результат:
+    verify(navigateObserver, only()).onChanged(OrderNavigate.CLOSE);
+  }
 }
