@@ -1,14 +1,15 @@
 package com.cargopull.executor_driver.di;
 
+import android.arch.lifecycle.ViewModel;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import com.cargopull.executor_driver.BuildConfig;
+import android.support.v4.app.Fragment;
 import com.cargopull.executor_driver.application.AutoRouterImpl;
 import com.cargopull.executor_driver.application.BaseActivity;
 import com.cargopull.executor_driver.application.FcmService;
 import com.cargopull.executor_driver.application.MainApplication;
+import com.cargopull.executor_driver.backend.geolocation.GeolocationCenter;
 import com.cargopull.executor_driver.backend.geolocation.GeolocationCenterImpl;
 import com.cargopull.executor_driver.backend.ringtone.SingleRingTonePlayer;
 import com.cargopull.executor_driver.backend.settings.AppPreferences;
@@ -16,7 +17,6 @@ import com.cargopull.executor_driver.backend.settings.AppSettingsService;
 import com.cargopull.executor_driver.backend.vibro.NewPatternMapper;
 import com.cargopull.executor_driver.backend.vibro.OldPatternMapper;
 import com.cargopull.executor_driver.backend.vibro.SingleShakePlayer;
-import com.cargopull.executor_driver.backend.web.ApiService;
 import com.cargopull.executor_driver.backend.web.AuthorizationInterceptor;
 import com.cargopull.executor_driver.backend.web.ConnectivityInterceptor;
 import com.cargopull.executor_driver.backend.web.DeprecatedVersionInterceptor;
@@ -24,99 +24,9 @@ import com.cargopull.executor_driver.backend.web.ReceiveTokenInterceptor;
 import com.cargopull.executor_driver.backend.web.SendTokenInterceptor;
 import com.cargopull.executor_driver.backend.web.SendVersionInterceptor;
 import com.cargopull.executor_driver.backend.web.TokenKeeper;
-import com.cargopull.executor_driver.backend.websocket.PersonalQueueListener;
-import com.cargopull.executor_driver.entity.ExecutorState;
-import com.cargopull.executor_driver.entity.LoginValidator;
-import com.cargopull.executor_driver.entity.PasswordValidator;
-import com.cargopull.executor_driver.entity.PhoneNumberValidator;
-import com.cargopull.executor_driver.entity.Vehicle;
-import com.cargopull.executor_driver.gateway.CallToClientGatewayImpl;
-import com.cargopull.executor_driver.gateway.CancelOrderGatewayImpl;
-import com.cargopull.executor_driver.gateway.CancelOrderReasonApiMapper;
-import com.cargopull.executor_driver.gateway.CancelOrderReasonsGatewayImpl;
-import com.cargopull.executor_driver.gateway.ConfirmOrderPaymentGatewayImpl;
-import com.cargopull.executor_driver.gateway.CurrentCostPollingGatewayImpl;
-import com.cargopull.executor_driver.gateway.CurrentCostPollingTimersApiMapper;
-import com.cargopull.executor_driver.gateway.CurrentVehicleOptionsGatewayImpl;
-import com.cargopull.executor_driver.gateway.ErrorMapper;
-import com.cargopull.executor_driver.gateway.ExecutorBalanceApiMapper;
-import com.cargopull.executor_driver.gateway.ExecutorBalanceGatewayImpl;
-import com.cargopull.executor_driver.gateway.ExecutorStateApiMapper;
-import com.cargopull.executor_driver.gateway.ExecutorStateGatewayImpl;
-import com.cargopull.executor_driver.gateway.ExecutorStateSwitchGatewayImpl;
-import com.cargopull.executor_driver.gateway.GeoLocationGatewayImpl;
-import com.cargopull.executor_driver.gateway.GeoTrackingGatewayImpl;
-import com.cargopull.executor_driver.gateway.HeatMapGatewayImpl;
-import com.cargopull.executor_driver.gateway.LastUsedVehicleGatewayImpl;
-import com.cargopull.executor_driver.gateway.MissedOrderGatewayImpl;
-import com.cargopull.executor_driver.gateway.MovingToClientGatewayImpl;
-import com.cargopull.executor_driver.gateway.OrderApiMapper;
-import com.cargopull.executor_driver.gateway.OrderConfirmationGatewayImpl;
-import com.cargopull.executor_driver.gateway.OrderCostDetailsApiMapper;
-import com.cargopull.executor_driver.gateway.OrderCostDetailsGatewayImpl;
-import com.cargopull.executor_driver.gateway.OrderCurrentCostApiMapper;
-import com.cargopull.executor_driver.gateway.OrderCurrentCostGatewayImpl;
-import com.cargopull.executor_driver.gateway.OrderGatewayImpl;
-import com.cargopull.executor_driver.gateway.OrderRouteGatewayImpl;
-import com.cargopull.executor_driver.gateway.PasswordGatewayImpl;
-import com.cargopull.executor_driver.gateway.PreOrderConfirmationGatewayImpl;
-import com.cargopull.executor_driver.gateway.PreOrderGatewayImpl;
-import com.cargopull.executor_driver.gateway.RoutePointApiMapper;
-import com.cargopull.executor_driver.gateway.SelectedVehicleAndOptionsGatewayImpl;
-import com.cargopull.executor_driver.gateway.ServerConnectionGatewayImpl;
-import com.cargopull.executor_driver.gateway.ServerTimeGatewayImpl;
-import com.cargopull.executor_driver.gateway.ServiceApiMapper;
-import com.cargopull.executor_driver.gateway.ServicesGatewayImpl;
 import com.cargopull.executor_driver.gateway.SmsCodeMapper;
-import com.cargopull.executor_driver.gateway.SmsGatewayImpl;
 import com.cargopull.executor_driver.gateway.TokenKeeperImpl;
-import com.cargopull.executor_driver.gateway.UpdateMessageGatewayImpl;
-import com.cargopull.executor_driver.gateway.VehicleApiMapper;
-import com.cargopull.executor_driver.gateway.VehicleOptionApiMapper;
-import com.cargopull.executor_driver.gateway.VehicleOptionsGatewayImpl;
-import com.cargopull.executor_driver.gateway.VehiclesAndOptionsGatewayImpl;
-import com.cargopull.executor_driver.gateway.WaitingForClientGatewayImpl;
-import com.cargopull.executor_driver.interactor.CallToClientUseCaseImpl;
-import com.cargopull.executor_driver.interactor.CancelOrderReasonsUseCase;
-import com.cargopull.executor_driver.interactor.CancelOrderReasonsUseCaseImpl;
-import com.cargopull.executor_driver.interactor.CancelOrderUseCase;
-import com.cargopull.executor_driver.interactor.CancelOrderUseCaseImpl;
-import com.cargopull.executor_driver.interactor.ConfirmOrderPaymentUseCaseImpl;
-import com.cargopull.executor_driver.interactor.CurrentCostPollingUseCaseImpl;
-import com.cargopull.executor_driver.interactor.ExecutorBalanceUseCase;
-import com.cargopull.executor_driver.interactor.ExecutorBalanceUseCaseImpl;
-import com.cargopull.executor_driver.interactor.ExecutorStateNotOnlineUseCaseImpl;
-import com.cargopull.executor_driver.interactor.ExecutorStateUseCase;
-import com.cargopull.executor_driver.interactor.ExecutorStateUseCaseImpl;
-import com.cargopull.executor_driver.interactor.GeoLocationUseCase;
-import com.cargopull.executor_driver.interactor.GeoLocationUseCaseImpl;
-import com.cargopull.executor_driver.interactor.MemoryDataSharer;
-import com.cargopull.executor_driver.interactor.MissedOrderUseCaseImpl;
-import com.cargopull.executor_driver.interactor.MovingToClientUseCaseImpl;
-import com.cargopull.executor_driver.interactor.OrderConfirmationUseCaseImpl;
-import com.cargopull.executor_driver.interactor.OrderCostDetailsUseCaseImpl;
-import com.cargopull.executor_driver.interactor.OrderCurrentCostUseCaseImpl;
-import com.cargopull.executor_driver.interactor.OrderFulfillmentTimeUseCaseImpl;
-import com.cargopull.executor_driver.interactor.OrderRouteUseCaseImpl;
-import com.cargopull.executor_driver.interactor.OrderUseCase;
-import com.cargopull.executor_driver.interactor.OrderUseCaseImpl;
-import com.cargopull.executor_driver.interactor.ServerConnectionUseCaseImpl;
-import com.cargopull.executor_driver.interactor.ServerTimeUseCaseImpl;
-import com.cargopull.executor_driver.interactor.UpdateMessageUseCaseImpl;
-import com.cargopull.executor_driver.interactor.WaitingForClientUseCaseImpl;
 import com.cargopull.executor_driver.interactor.auth.LoginSharer;
-import com.cargopull.executor_driver.interactor.auth.LoginUseCaseImpl;
-import com.cargopull.executor_driver.interactor.auth.PasswordUseCaseImpl;
-import com.cargopull.executor_driver.interactor.auth.SmsUseCaseImpl;
-import com.cargopull.executor_driver.interactor.map.HeatMapUseCaseImpl;
-import com.cargopull.executor_driver.interactor.services.ServicesUseCaseImpl;
-import com.cargopull.executor_driver.interactor.vehicle.LastUsedVehicleGateway;
-import com.cargopull.executor_driver.interactor.vehicle.SelectedVehicleUseCaseImpl;
-import com.cargopull.executor_driver.interactor.vehicle.VehicleChoiceSharer;
-import com.cargopull.executor_driver.interactor.vehicle.VehicleChoiceUseCaseImpl;
-import com.cargopull.executor_driver.interactor.vehicle.VehicleOptionsUseCaseImpl;
-import com.cargopull.executor_driver.interactor.vehicle.VehiclesAndOptionsGateway;
-import com.cargopull.executor_driver.interactor.vehicle.VehiclesAndOptionsUseCaseImpl;
 import com.cargopull.executor_driver.presentation.ViewModelFactory;
 import com.cargopull.executor_driver.presentation.announcement.AnnouncementViewModel;
 import com.cargopull.executor_driver.presentation.announcement.AnnouncementViewModelImpl;
@@ -158,8 +68,6 @@ import com.cargopull.executor_driver.presentation.smsbutton.SmsButtonViewModelIm
 import com.cargopull.executor_driver.presentation.updatemessage.UpdateMessageViewModelImpl;
 import com.cargopull.executor_driver.presentation.vehicleoptions.VehicleOptionsViewModelImpl;
 import com.cargopull.executor_driver.presentation.waitingforclient.WaitingForClientViewModelImpl;
-import com.cargopull.executor_driver.utils.ErrorReporter;
-import com.cargopull.executor_driver.utils.ErrorReporterImpl;
 import com.cargopull.executor_driver.utils.TimeUtils;
 import com.cargopull.executor_driver.utils.TimeUtilsImpl;
 import com.cargopull.executor_driver.view.BalanceFragment;
@@ -197,49 +105,19 @@ import com.cargopull.executor_driver.view.WaitingForClientRouteFragment;
 import com.cargopull.executor_driver.view.auth.LoginFragment;
 import com.cargopull.executor_driver.view.auth.PasswordFragment;
 import com.cargopull.executor_driver.view.auth.SmsReceiver;
-import java.util.concurrent.TimeUnit;
-import okhttp3.Interceptor;
-import okhttp3.OkHttpClient;
-import okhttp3.logging.HttpLoggingInterceptor;
-import retrofit2.Retrofit;
-import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
-import retrofit2.converter.gson.GsonConverterFactory;
-import retrofit2.converter.scalars.ScalarsConverterFactory;
-import ua.naiksoftware.stomp.Stomp;
-import ua.naiksoftware.stomp.client.StompClient;
 
 public class AppComponentImpl implements AppComponent {
 
   @NonNull
-  private final ErrorReporter errorReporter;
+  private final InteractorComponent interactorComponent;
   @NonNull
   private final TimeUtils timeUtils;
   @NonNull
   private final AppSettingsService appSettingsService;
   @NonNull
-  private final ApiService apiService;
-  @NonNull
-  private final StompClient stompClient;
-  @NonNull
-  private final PersonalQueueListener personalQueueListener;
-  @NonNull
   private final AutoRouterImpl autoRouter;
   @NonNull
   private final ServerConnectionViewModel serverConnectionViewModel;
-  @NonNull
-  private final ExecutorStateUseCase executorStateUseCase;
-  @NonNull
-  private final OrderUseCase orderUseCase;
-  @NonNull
-  private final OrderUseCase preOrderUseCase;
-  @NonNull
-  private final CancelOrderUseCase cancelOrderUseCase;
-  @NonNull
-  private final CancelOrderReasonsUseCase cancelOrderReasonsUseCase;
-  @NonNull
-  private final ExecutorBalanceUseCase executorBalanceUseCase;
-  @NonNull
-  private final GeoLocationUseCase geoLocationUseCase;
   @NonNull
   private final ExecutorStateViewModelImpl executorStateViewModel;
   @NonNull
@@ -251,24 +129,17 @@ public class AppComponentImpl implements AppComponent {
   @NonNull
   private final SingleShakePlayer singleShakePlayer;
   @NonNull
-  private final MemoryDataSharer<String> loginSharer;
-  @NonNull
-  private final MemoryDataSharer<Vehicle> vehicleChoiceSharer;
-  @NonNull
-  private final LastUsedVehicleGateway lastUsedVehicleGateway;
-  @NonNull
   private final AnnouncementViewModel announcementViewModel;
-  // Типа кастомный скоуп.
-  @Nullable
-  private VehiclesAndOptionsGateway vehiclesAndOptionsGateway;
-  @Nullable
-  private VehiclesAndOptionsGateway selectedVehiclesAndOptionsGateway;
 
   public AppComponentImpl(@NonNull Context appContext) {
     appContext = appContext.getApplicationContext();
+    timeUtils = new TimeUtilsImpl();
     appSettingsService = new AppPreferences(appContext);
     TokenKeeper tokenKeeper = new TokenKeeperImpl(appSettingsService);
-    OkHttpClient okHttpClient = initHttpClient(
+    LoginSharer loginSharer = new LoginSharer(appSettingsService);
+    BackendComponent backendComponent = new BackendComponentImpl(
+        loginSharer,
+        appSettingsService,
         new ConnectivityInterceptor(appContext),
         new SendVersionInterceptor(),
         new DeprecatedVersionInterceptor(),
@@ -276,98 +147,24 @@ public class AppComponentImpl implements AppComponent {
         new SendTokenInterceptor(tokenKeeper),
         new ReceiveTokenInterceptor(tokenKeeper)
     );
-    apiService = initApiService(okHttpClient);
-    stompClient = initStompClient(okHttpClient);
-    loginSharer = new LoginSharer(appSettingsService);
-    personalQueueListener = new PersonalQueueListener(stompClient, loginSharer);
-    vehicleChoiceSharer = new VehicleChoiceSharer();
-    lastUsedVehicleGateway = new LastUsedVehicleGatewayImpl(appSettingsService);
-    errorReporter = new ErrorReporterImpl(loginSharer);
-    timeUtils = new TimeUtilsImpl();
+    GeolocationCenter geolocationCenter = new GeolocationCenterImpl(appContext);
+    RepositoryComponent repositoryComponent = new RepositoryComponentImpl(
+        backendComponent,
+        geolocationCenter
+    );
+    this.interactorComponent = new InteractorComponentImpl(
+        loginSharer, timeUtils, repositoryComponent
+    );
     serverConnectionViewModel = new ServerConnectionViewModelImpl(
-        new ServerConnectionUseCaseImpl(
-            new ServerConnectionGatewayImpl(
-                stompClient
-            )
-        )
-    );
-    cancelOrderReasonsUseCase = new CancelOrderReasonsUseCaseImpl(
-        errorReporter,
-        new CancelOrderReasonsGatewayImpl(
-            personalQueueListener,
-            new CancelOrderReasonApiMapper()
-        )
-    );
-    cancelOrderUseCase = new CancelOrderUseCaseImpl(
-        cancelOrderReasonsUseCase, errorReporter,
-        new CancelOrderGatewayImpl(
-            stompClient
-        )
-    );
-    executorBalanceUseCase = new ExecutorBalanceUseCaseImpl(
-        errorReporter,
-        new ExecutorBalanceGatewayImpl(
-            personalQueueListener,
-            new ExecutorBalanceApiMapper()
-        )
-    );
-    executorStateUseCase = new ExecutorStateUseCaseImpl(
-        errorReporter,
-        new ExecutorStateGatewayImpl(
-            personalQueueListener,
-            new ExecutorStateApiMapper()
-        )
-    );
-    orderUseCase = new OrderUseCaseImpl(
-        errorReporter,
-        new OrderGatewayImpl(
-            personalQueueListener,
-            new OrderApiMapper(
-                new VehicleOptionApiMapper(),
-                new RoutePointApiMapper()
-            )
-        )
-    );
-    preOrderUseCase = new OrderUseCaseImpl(
-        errorReporter,
-        new PreOrderGatewayImpl(
-            personalQueueListener,
-            new OrderApiMapper(
-                new VehicleOptionApiMapper(),
-                new RoutePointApiMapper()
-            )
-        )
-    );
-    geoLocationUseCase = new GeoLocationUseCaseImpl(
-        new GeoLocationGatewayImpl(
-            new GeolocationCenterImpl(
-                appContext
-            )
-        ),
-        new GeoTrackingGatewayImpl(
-            stompClient
-        ), executorStateUseCase
+        interactorComponent.getServerConnectionUseCase()
     );
     executorStateViewModel = new ExecutorStateViewModelImpl(
-        executorStateUseCase
+        interactorComponent.getExecutorStateUseCase()
     );
     updateMessageViewModel = new UpdateMessageViewModelImpl(
-        new UpdateMessageUseCaseImpl(
-            errorReporter,
-            new UpdateMessageGatewayImpl(
-                personalQueueListener
-            )
-        )
+        interactorComponent.getUpdateMessageUseCase()
     );
-    serverTimeViewModel = new ServerTimeViewModelImpl(
-        new ServerTimeUseCaseImpl(
-            errorReporter,
-            new ServerTimeGatewayImpl(
-                personalQueueListener
-            ),
-            timeUtils
-        )
-    );
+    serverTimeViewModel = new ServerTimeViewModelImpl(interactorComponent.getServerTimeUseCase());
     announcementViewModel = new AnnouncementViewModelImpl();
     singleRingTonePlayer = new SingleRingTonePlayer(appContext);
     singleShakePlayer = new SingleShakePlayer(
@@ -391,12 +188,12 @@ public class AppComponentImpl implements AppComponent {
     );
     mainApplication.setCancelOrderReasonsViewModel(
         new CancelOrderReasonsViewModelImpl(
-            cancelOrderReasonsUseCase
+            interactorComponent.getCancelOrderReasonsUseCase()
         )
     );
     mainApplication.setBalanceViewModel(
         new BalanceViewModelImpl(
-            executorBalanceUseCase
+            interactorComponent.getExecutorBalanceUseCase()
         )
     );
     mainApplication.setExecutorStateViewModel(
@@ -404,17 +201,12 @@ public class AppComponentImpl implements AppComponent {
     );
     mainApplication.setGeoLocationViewModel(
         new GeoLocationViewModelImpl(
-            geoLocationUseCase
+            interactorComponent.getGeoLocationUseCase()
         )
     );
     mainApplication.setMissedOrderViewModel(
         new MissedOrderViewModelImpl(
-            new MissedOrderUseCaseImpl(
-                errorReporter,
-                new MissedOrderGatewayImpl(
-                    personalQueueListener
-                )
-            )
+            interactorComponent.getMissedOrderUseCase()
         )
     );
     mainApplication.setUpdateMessageViewModel(
@@ -422,14 +214,7 @@ public class AppComponentImpl implements AppComponent {
     );
     mainApplication.setCurrentCostPollingViewModel(
         new CurrentCostPollingViewModelImpl(
-            new CurrentCostPollingUseCaseImpl(
-                errorReporter,
-                new CurrentCostPollingGatewayImpl(
-                    personalQueueListener,
-                    stompClient,
-                    new CurrentCostPollingTimersApiMapper()
-                )
-            )
+            interactorComponent.getCurrentCostPollingUseCase()
         )
     );
     mainApplication.setServerTimeViewModel(
@@ -457,61 +242,40 @@ public class AppComponentImpl implements AppComponent {
   public void inject(LoginFragment loginFragment) {
     loginFragment.setAppSettings(appSettingsService);
     loginFragment.setPhoneViewModel(
-        ViewModelProviders.of(
+        getViewModelInstance(
             loginFragment,
-            new ViewModelFactory<>(
-                new PhoneViewModelImpl(
-                    new LoginUseCaseImpl(
-                        loginSharer,
-                        new LoginValidator()
-                    )
-                )
-            )
-        ).get(PhoneViewModelImpl.class)
+            PhoneViewModelImpl.class,
+            new PhoneViewModelImpl(interactorComponent.getLoginUseCase())
+        )
     );
   }
 
   @Override
   public void inject(PasswordFragment passwordFragment) {
     passwordFragment.setSmsButtonViewModel(
-        ViewModelProviders.of(
+        getViewModelInstance(
             passwordFragment,
-            new ViewModelFactory<>(
-                new SmsButtonViewModelImpl(
-                    new SmsUseCaseImpl(
-                        new SmsGatewayImpl(apiService),
-                        loginSharer,
-                        new PhoneNumberValidator()
-                    )
-                )
-            )
-        ).get(SmsButtonViewModelImpl.class)
+            SmsButtonViewModelImpl.class,
+            new SmsButtonViewModelImpl(interactorComponent.getSmsUseCase())
+        )
     );
     passwordFragment.setCodeHeaderViewModel(
-        ViewModelProviders.of(
+        getViewModelInstance(
             passwordFragment,
-            new ViewModelFactory<>(
-                new CodeHeaderViewModelImpl(
-                    new LoginSharer(
-                        appSettingsService
-                    )
+            CodeHeaderViewModelImpl.class,
+            new CodeHeaderViewModelImpl(
+                new LoginSharer(
+                    appSettingsService
                 )
             )
-        ).get(CodeHeaderViewModelImpl.class)
+        )
     );
     passwordFragment.setCodeViewModel(
-        ViewModelProviders.of(
+        getViewModelInstance(
             passwordFragment,
-            new ViewModelFactory<>(
-                new CodeViewModelImpl(
-                    new PasswordUseCaseImpl(
-                        new PasswordGatewayImpl(apiService),
-                        loginSharer,
-                        new PasswordValidator()
-                    )
-                )
-            )
-        ).get(CodeViewModelImpl.class)
+            CodeViewModelImpl.class,
+            new CodeViewModelImpl(interactorComponent.getPasswordUseCase())
+        )
     );
     passwordFragment.setSmsReceiver(
         new SmsReceiver(
@@ -523,312 +287,187 @@ public class AppComponentImpl implements AppComponent {
   @Override
   public void inject(MapFragment mapFragment) {
     mapFragment.setMapViewModel(
-        ViewModelProviders.of(
+        getViewModelInstance(
             mapFragment,
-            new ViewModelFactory<>(
-                new MapViewModelImpl(
-                    new HeatMapUseCaseImpl(
-                        new HeatMapGatewayImpl(apiService)
-                    )
-                )
-            )).get(MapViewModelImpl.class)
+            MapViewModelImpl.class,
+            new MapViewModelImpl(interactorComponent.getHeatMapUseCase())
+        )
     );
     mapFragment.setGeoLocationViewModel(
-        ViewModelProviders.of(
+        getViewModelInstance(
             mapFragment,
-            new ViewModelFactory<>(
-                new GeoLocationViewModelImpl(
-                    geoLocationUseCase
-                )
-            )
-        ).get(GeoLocationViewModelImpl.class)
+            GeoLocationViewModelImpl.class,
+            new GeoLocationViewModelImpl(interactorComponent.getGeoLocationUseCase())
+        )
     );
   }
 
   @Override
   public void inject(OnlineFragment onlineFragment) {
-    selectedVehiclesAndOptionsGateway = new SelectedVehicleAndOptionsGatewayImpl(
-        apiService,
-        new VehicleOptionApiMapper(),
-        new VehicleApiMapper(
-            new VehicleOptionApiMapper()
-        ),
-        new ErrorMapper()
-    );
     onlineFragment.setOnlineSwitchViewModel(
-        ViewModelProviders.of(
+        getViewModelInstance(
             onlineFragment,
-            new ViewModelFactory<>(
-                new OnlineSwitchViewModelImpl(
-                    new ExecutorStateNotOnlineUseCaseImpl(
-                        errorReporter,
-                        new ExecutorStateSwitchGatewayImpl(stompClient),
-                        executorStateUseCase,
-                        ExecutorState.ONLINE
-                    ),
-                    executorStateUseCase)
+            OnlineSwitchViewModelImpl.class,
+            new OnlineSwitchViewModelImpl(
+                interactorComponent.getExecutorStateNotOnlineUseCase(),
+                interactorComponent.getExecutorStateUseCase()
             )
-        ).get(OnlineSwitchViewModelImpl.class)
+        )
     );
     onlineFragment.setOnlineButtonViewModel(
-        ViewModelProviders.of(
+        getViewModelInstance(
             onlineFragment,
-            new ViewModelFactory<>(
-                new OnlineButtonViewModelImpl(
-                    new VehiclesAndOptionsUseCaseImpl(
-                        errorReporter,
-                        selectedVehiclesAndOptionsGateway,
-                        vehicleChoiceSharer,
-                        lastUsedVehicleGateway
-                    )
-                )
+            OnlineButtonViewModelImpl.class,
+            new OnlineButtonViewModelImpl(
+                interactorComponent.getSelectedVehiclesAndOptionsUseCase()
             )
-        ).get(OnlineButtonViewModelImpl.class)
+        )
     );
   }
 
   @Override
   public void inject(GoOnlineFragment goOnlineFragment) {
-    vehiclesAndOptionsGateway = new VehiclesAndOptionsGatewayImpl(
-        apiService,
-        new VehicleOptionApiMapper(),
-        new VehicleApiMapper(
-            new VehicleOptionApiMapper()
-        ),
-        new ErrorMapper()
-    );
     goOnlineFragment.setOnlineButtonViewModel(
-        ViewModelProviders.of(
+        getViewModelInstance(
             goOnlineFragment,
-            new ViewModelFactory<>(
-                new OnlineButtonViewModelImpl(
-                    new VehiclesAndOptionsUseCaseImpl(
-                        errorReporter,
-                        vehiclesAndOptionsGateway,
-                        vehicleChoiceSharer,
-                        lastUsedVehicleGateway
-                    )
-                )
-            )
-        ).get(OnlineButtonViewModelImpl.class)
+            OnlineButtonViewModelImpl.class,
+            new OnlineButtonViewModelImpl(interactorComponent.getVehiclesAndOptionsUseCase())
+        )
     );
   }
 
   @Override
   public void inject(ChooseVehicleFragment chooseVehicleFragment) {
-    if (vehiclesAndOptionsGateway == null) {
-      throw new IllegalStateException("Граф зависимостей поломан!");
-    }
     chooseVehicleFragment.setChooseVehicleViewModel(
-        ViewModelProviders.of(
+        getViewModelInstance(
             chooseVehicleFragment,
-            new ViewModelFactory<>(
-                new ChooseVehicleViewModelImpl(
-                    new VehicleChoiceUseCaseImpl(
-                        errorReporter, vehiclesAndOptionsGateway, vehicleChoiceSharer
-                    )
-                )
-            )
-        ).get(ChooseVehicleViewModelImpl.class)
+            ChooseVehicleViewModelImpl.class,
+            new ChooseVehicleViewModelImpl(interactorComponent.getVehicleChoiceUseCase())
+        )
     );
   }
 
   @Override
   public void inject(VehicleOptionsFragment vehicleOptionsFragment) {
-    if (vehiclesAndOptionsGateway == null) {
-      throw new IllegalStateException("Граф зависимостей поломан!");
-    }
     vehicleOptionsFragment.setVehicleOptionsViewModel(
-        ViewModelProviders.of(
+        getViewModelInstance(
             vehicleOptionsFragment,
-            new ViewModelFactory<>(
-                new VehicleOptionsViewModelImpl(
-                    new VehicleOptionsUseCaseImpl(
-                        errorReporter,
-                        new VehicleOptionsGatewayImpl(
-                            apiService
-                        ),
-                        vehicleChoiceSharer,
-                        lastUsedVehicleGateway,
-                        vehiclesAndOptionsGateway
-                    )
-                )
-            )
-        ).get(VehicleOptionsViewModelImpl.class)
+            VehicleOptionsViewModelImpl.class,
+            new VehicleOptionsViewModelImpl(interactorComponent.getVehicleOptionsUseCase())
+        )
     );
   }
 
   @Override
   public void inject(SelectedVehicleOptionsFragment vehicleOptionsFragment) {
-    if (selectedVehiclesAndOptionsGateway == null) {
-      throw new IllegalStateException("Граф зависимостей поломан!");
-    }
     vehicleOptionsFragment.setVehicleOptionsViewModel(
-        ViewModelProviders.of(
+        getViewModelInstance(
             vehicleOptionsFragment,
-            new ViewModelFactory<>(
-                new VehicleOptionsViewModelImpl(
-                    new VehicleOptionsUseCaseImpl(
-                        errorReporter,
-                        new CurrentVehicleOptionsGatewayImpl(
-                            apiService
-                        ),
-                        vehicleChoiceSharer,
-                        lastUsedVehicleGateway,
-                        selectedVehiclesAndOptionsGateway
-                    )
-                )
-            )
-        ).get(VehicleOptionsViewModelImpl.class)
+            VehicleOptionsViewModelImpl.class,
+            new VehicleOptionsViewModelImpl(interactorComponent.getCurrentVehicleOptionsUseCase())
+        )
     );
   }
 
   @Override
   public void inject(SelectedVehicleFragment selectedVehicleFragment) {
-    if (vehiclesAndOptionsGateway == null && selectedVehiclesAndOptionsGateway == null) {
-      throw new IllegalStateException("Граф зависимостей поломан!");
-    }
     selectedVehicleFragment.setSelectedVehicleViewModel(
-        ViewModelProviders.of(
+        getViewModelInstance(
             selectedVehicleFragment,
-            new ViewModelFactory<>(
-                new SelectedVehicleViewModelImpl(
-                    new SelectedVehicleUseCaseImpl(
-                        vehicleChoiceSharer
-                    )
-                )
-            )
-        ).get(SelectedVehicleViewModelImpl.class)
+            SelectedVehicleViewModelImpl.class,
+            new SelectedVehicleViewModelImpl(interactorComponent.getSelectedVehicleUseCase())
+        )
     );
     selectedVehicleFragment.setChooseVehicleViewModel(
-        ViewModelProviders.of(
+        getViewModelInstance(
             selectedVehicleFragment,
-            new ViewModelFactory<>(
-                new ChooseVehicleViewModelImpl(
-                    new VehicleChoiceUseCaseImpl(
-                        errorReporter,
-                        selectedVehiclesAndOptionsGateway == null ?
-                            vehiclesAndOptionsGateway :
-                            selectedVehiclesAndOptionsGateway,
-                        vehicleChoiceSharer)
-                )
-            )
-        ).get(ChooseVehicleViewModelImpl.class)
+            ChooseVehicleViewModelImpl.class,
+            new ChooseVehicleViewModelImpl(interactorComponent.getCurrentVehicleChoiceUseCase())
+        )
     );
   }
 
   @Override
   public void inject(ServicesFragment servicesFragment) {
     ServicesListItems servicesListItems = new ServicesListItems();
-    ServicesSliderViewModelImpl servicesSliderViewModel = ViewModelProviders.of(
+    ServicesSliderViewModelImpl servicesSliderViewModel = getViewModelInstance(
         servicesFragment,
-        new ViewModelFactory<>(
-            new ServicesSliderViewModelImpl(
+        ServicesSliderViewModelImpl.class,
+        new ServicesSliderViewModelImpl(
+            servicesListItems
+        )
+    );
+    servicesFragment.setServicesSliderViewModel(servicesSliderViewModel);
+    servicesFragment.setServicesViewModel(
+        getViewModelInstance(
+            servicesFragment,
+            ServicesViewModelImpl.class,
+            new ServicesViewModelImpl(
+                interactorComponent.getServicesUseCase(),
+                servicesSliderViewModel,
                 servicesListItems
             )
         )
-    ).get(ServicesSliderViewModelImpl.class);
-    servicesFragment.setServicesSliderViewModel(servicesSliderViewModel);
-    servicesFragment.setServicesViewModel(
-        ViewModelProviders.of(
-            servicesFragment,
-            new ViewModelFactory<>(
-                new ServicesViewModelImpl(
-                    new ServicesUseCaseImpl(
-                        errorReporter,
-                        new ServicesGatewayImpl(
-                            apiService,
-                            new ServiceApiMapper()
-                        )
-                    ),
-                    servicesSliderViewModel,
-                    servicesListItems)
-            )
-        ).get(ServicesViewModelImpl.class)
     );
   }
 
   @Override
   public void inject(DriverOrderConfirmationFragment driverOrderConfirmationFragment) {
     driverOrderConfirmationFragment.setOrderConfirmationViewModel(
-        ViewModelProviders.of(
+        getViewModelInstance(
             driverOrderConfirmationFragment,
-            new ViewModelFactory<>(
-                new OrderConfirmationViewModelImpl(
-                    new OrderConfirmationUseCaseImpl(
-                        orderUseCase,
-                        new OrderConfirmationGatewayImpl(stompClient)
-                    )
-                )
-            )
-        ).get(OrderConfirmationViewModelImpl.class)
+            OrderConfirmationViewModelImpl.class,
+            new OrderConfirmationViewModelImpl(interactorComponent.getOrderConfirmationUseCase())
+        )
     );
     driverOrderConfirmationFragment.setOrderViewModel(
-        ViewModelProviders.of(
+        getViewModelInstance(
             driverOrderConfirmationFragment,
-            new ViewModelFactory<>(
-                new OrderViewModelImpl(
-                    orderUseCase,
-                    timeUtils
-                )
-            )
-        ).get(OrderViewModelImpl.class)
+            OrderViewModelImpl.class,
+            new OrderViewModelImpl(interactorComponent.getOrderUseCase(), timeUtils)
+        )
     );
   }
 
   @Override
   public void inject(ClientOrderConfirmationFragment clientOrderConfirmationFragment) {
     clientOrderConfirmationFragment.setOrderViewModel(
-        ViewModelProviders.of(
+        getViewModelInstance(
             clientOrderConfirmationFragment,
-            new ViewModelFactory<>(
-                new OrderViewModelImpl(
-                    orderUseCase,
-                    timeUtils
-                )
-            )
-        ).get(OrderViewModelImpl.class)
+            OrderViewModelImpl.class,
+            new OrderViewModelImpl(interactorComponent.getOrderUseCase(), timeUtils)
+        )
     );
   }
 
   @Override
   public void inject(ClientOrderConfirmationTimeFragment clientOrderConfirmationTimeFragment) {
     clientOrderConfirmationTimeFragment.setClientOrderConfirmationTimeViewModel(
-        ViewModelProviders.of(
+        getViewModelInstance(
             clientOrderConfirmationTimeFragment,
-            new ViewModelFactory<>(
-                new ClientOrderConfirmationTimeViewModelImpl(
-                    executorStateUseCase
-                )
+            ClientOrderConfirmationTimeViewModelImpl.class,
+            new ClientOrderConfirmationTimeViewModelImpl(
+                interactorComponent.getExecutorStateUseCase()
             )
-        ).get(ClientOrderConfirmationTimeViewModelImpl.class)
+        )
     );
   }
 
   @Override
   public void inject(MovingToClientFragment movingToClientFragment) {
     movingToClientFragment.setMovingToClientViewModel(
-        ViewModelProviders.of(
+        getViewModelInstance(
             movingToClientFragment,
-            new ViewModelFactory<>(
-                new MovingToClientViewModelImpl(
-                    new MovingToClientUseCaseImpl(
-                        new MovingToClientGatewayImpl(stompClient)
-                    )
-                )
-            )
-        ).get(MovingToClientViewModelImpl.class)
+            MovingToClientViewModelImpl.class,
+            new MovingToClientViewModelImpl(interactorComponent.getMovingToClientUseCase())
+        )
     );
     movingToClientFragment.setOrderViewModel(
-        ViewModelProviders.of(
+        getViewModelInstance(
             movingToClientFragment,
-            new ViewModelFactory<>(
-                new OrderViewModelImpl(
-                    orderUseCase,
-                    timeUtils
-                )
-            )
-        ).get(OrderViewModelImpl.class)
+            OrderViewModelImpl.class,
+            new OrderViewModelImpl(interactorComponent.getOrderUseCase(), timeUtils)
+        )
     );
     movingToClientFragment.setShakeItPlayer(
         singleShakePlayer
@@ -838,59 +477,40 @@ public class AppComponentImpl implements AppComponent {
   @Override
   public void inject(MovingToClientDetailsFragment movingToClientDetailsFragment) {
     movingToClientDetailsFragment.setOrderViewModel(
-        ViewModelProviders.of(
+        getViewModelInstance(
             movingToClientDetailsFragment,
-            new ViewModelFactory<>(
-                new OrderViewModelImpl(
-                    orderUseCase,
-                    timeUtils
-                )
-            )
-        ).get(OrderViewModelImpl.class)
+            OrderViewModelImpl.class,
+            new OrderViewModelImpl(interactorComponent.getOrderUseCase(), timeUtils)
+        )
     );
   }
 
   @Override
   public void inject(MovingToClientRouteFragment movingToClientRouteFragment) {
     movingToClientRouteFragment.setOrderRouteViewModel(
-        ViewModelProviders.of(
+        getViewModelInstance(
             movingToClientRouteFragment,
-            new ViewModelFactory<>(
-                new OrderRouteViewModelImpl(
-                    new OrderRouteUseCaseImpl(
-                        orderUseCase,
-                        new OrderRouteGatewayImpl(stompClient)
-                    )
-                )
-            )
-        ).get(OrderRouteViewModelImpl.class)
+            OrderRouteViewModelImpl.class,
+            new OrderRouteViewModelImpl(interactorComponent.getOrderRouteUseCase())
+        )
     );
   }
 
   @Override
   public void inject(WaitingForClientFragment waitingForClientFragment) {
     waitingForClientFragment.setWaitingForClientViewModel(
-        ViewModelProviders.of(
+        getViewModelInstance(
             waitingForClientFragment,
-            new ViewModelFactory<>(
-                new WaitingForClientViewModelImpl(
-                    new WaitingForClientUseCaseImpl(
-                        new WaitingForClientGatewayImpl(stompClient)
-                    )
-                )
-            )
-        ).get(WaitingForClientViewModelImpl.class)
+            WaitingForClientViewModelImpl.class,
+            new WaitingForClientViewModelImpl(interactorComponent.getWaitingForClientUseCase())
+        )
     );
     waitingForClientFragment.setOrderViewModel(
-        ViewModelProviders.of(
+        getViewModelInstance(
             waitingForClientFragment,
-            new ViewModelFactory<>(
-                new OrderViewModelImpl(
-                    orderUseCase,
-                    timeUtils
-                )
-            )
-        ).get(OrderViewModelImpl.class)
+            OrderViewModelImpl.class,
+            new OrderViewModelImpl(interactorComponent.getOrderUseCase(), timeUtils)
+        )
     );
     waitingForClientFragment.setShakeItPlayer(
         singleShakePlayer
@@ -900,77 +520,43 @@ public class AppComponentImpl implements AppComponent {
   @Override
   public void inject(WaitingForClientRouteFragment waitingForClientRouteFragment) {
     waitingForClientRouteFragment.setOrderRouteViewModel(
-        ViewModelProviders.of(
+        getViewModelInstance(
             waitingForClientRouteFragment,
-            new ViewModelFactory<>(
-                new OrderRouteViewModelImpl(
-                    new OrderRouteUseCaseImpl(
-                        orderUseCase,
-                        new OrderRouteGatewayImpl(stompClient)
-                    )
-                )
-            )
-        ).get(OrderRouteViewModelImpl.class)
+            OrderRouteViewModelImpl.class,
+            new OrderRouteViewModelImpl(interactorComponent.getOrderRouteUseCase())
+        )
     );
   }
 
   @Override
   public void inject(OrderFulfillmentFragment orderFulfillmentFragment) {
     orderFulfillmentFragment.setOrderTimeViewModel(
-        ViewModelProviders.of(
+        getViewModelInstance(
             orderFulfillmentFragment,
-            new ViewModelFactory<>(
-                new OrderTimeViewModelImpl(
-                    new OrderFulfillmentTimeUseCaseImpl(
-                        orderUseCase,
-                        timeUtils
-                    )
-                )
-            )
-        ).get(OrderTimeViewModelImpl.class)
+            OrderTimeViewModelImpl.class,
+            new OrderTimeViewModelImpl(interactorComponent.getOrderFulfillmentTimeUseCase())
+        )
     );
     orderFulfillmentFragment.setOrderCostViewModel(
-        ViewModelProviders.of(
+        getViewModelInstance(
             orderFulfillmentFragment,
-            new ViewModelFactory<>(
-                new OrderCostViewModelImpl(
-                    new OrderCurrentCostUseCaseImpl(
-                        errorReporter,
-                        orderUseCase,
-                        new OrderCurrentCostGatewayImpl(
-                            personalQueueListener,
-                            new OrderCurrentCostApiMapper()
-                        )
-                    )
-                )
-            )
-        ).get(OrderCostViewModelImpl.class)
+            OrderCostViewModelImpl.class,
+            new OrderCostViewModelImpl(interactorComponent.getOrderCurrentCostUseCase())
+        )
     );
     orderFulfillmentFragment.setNextRoutePointViewModel(
-        ViewModelProviders.of(
+        getViewModelInstance(
             orderFulfillmentFragment,
-            new ViewModelFactory<>(
-                new NextRoutePointViewModelImpl(
-                    new OrderRouteUseCaseImpl(
-                        orderUseCase,
-                        new OrderRouteGatewayImpl(stompClient)
-                    )
-                )
-            )
-        ).get(NextRoutePointViewModelImpl.class)
+            NextRoutePointViewModelImpl.class,
+            new NextRoutePointViewModelImpl(interactorComponent.getOrderRouteUseCase())
+        )
     );
     orderFulfillmentFragment.setOrderRouteViewModel(
-        ViewModelProviders.of(
+        getViewModelInstance(
             orderFulfillmentFragment,
-            new ViewModelFactory<>(
-                new OrderRouteViewModelImpl(
-                    new OrderRouteUseCaseImpl(
-                        orderUseCase,
-                        new OrderRouteGatewayImpl(stompClient)
-                    )
-                )
-            )
-        ).get(OrderRouteViewModelImpl.class)
+            OrderRouteViewModelImpl.class,
+            new OrderRouteViewModelImpl(interactorComponent.getOrderRouteUseCase())
+        )
     );
     orderFulfillmentFragment.setShakeItPlayer(
         singleShakePlayer
@@ -980,166 +566,116 @@ public class AppComponentImpl implements AppComponent {
   @Override
   public void inject(OrderFulfillmentDetailsFragment orderFulfillmentDetailsFragment) {
     orderFulfillmentDetailsFragment.setOrderViewModel(
-        ViewModelProviders.of(
+        getViewModelInstance(
             orderFulfillmentDetailsFragment,
-            new ViewModelFactory<>(
-                new OrderViewModelImpl(
-                    orderUseCase,
-                    timeUtils
-                )
-            )
-        ).get(OrderViewModelImpl.class)
+            OrderViewModelImpl.class,
+            new OrderViewModelImpl(interactorComponent.getOrderUseCase(), timeUtils)
+        )
     );
   }
 
   @Override
   public void inject(OrderFulfillmentActionsDialogFragment orderFulfillmentActionsDialogFragment) {
     orderFulfillmentActionsDialogFragment.setNextRoutePointViewModel(
-        ViewModelProviders.of(
+        getViewModelInstance(
             orderFulfillmentActionsDialogFragment,
-            new ViewModelFactory<>(
-                new NextRoutePointViewModelImpl(
-                    new OrderRouteUseCaseImpl(
-                        orderUseCase,
-                        new OrderRouteGatewayImpl(stompClient)
-                    )
-                )
-            )
-        ).get(NextRoutePointViewModelImpl.class)
+            NextRoutePointViewModelImpl.class,
+            new NextRoutePointViewModelImpl(interactorComponent.getOrderRouteUseCase())
+        )
     );
   }
 
   @Override
   public void inject(OrderRouteFragment orderRouteFragment) {
     orderRouteFragment.setOrderRouteViewModel(
-        ViewModelProviders.of(
+        getViewModelInstance(
             orderRouteFragment,
-            new ViewModelFactory<>(
-                new OrderRouteViewModelImpl(
-                    new OrderRouteUseCaseImpl(
-                        orderUseCase,
-                        new OrderRouteGatewayImpl(stompClient)
-                    )
-                )
-            )
-        ).get(OrderRouteViewModelImpl.class)
+            OrderRouteViewModelImpl.class,
+            new OrderRouteViewModelImpl(interactorComponent.getOrderRouteUseCase())
+        )
     );
   }
 
   @Override
   public void inject(CallToClientFragment callToClientFragment) {
     callToClientFragment.setCallToClientViewModel(
-        ViewModelProviders.of(
+        getViewModelInstance(
             callToClientFragment,
-            new ViewModelFactory<>(
-                new CallToClientViewModelImpl(
-                    new CallToClientUseCaseImpl(
-                        new CallToClientGatewayImpl(stompClient)
-                    )
-                )
-            )
-        ).get(CallToClientViewModelImpl.class)
+            CallToClientViewModelImpl.class,
+            new CallToClientViewModelImpl(interactorComponent.getCallToClientUseCase())
+        )
     );
   }
 
   @Override
   public void inject(CallToOperatorFragment callToOperatorFragment) {
     callToOperatorFragment.setCallToOperatorViewModel(
-        ViewModelProviders.of(
+        getViewModelInstance(
             callToOperatorFragment,
-            new ViewModelFactory<>(
-                new CallToOperatorViewModelImpl()
-            )
-        ).get(CallToOperatorViewModelImpl.class)
+            CallToOperatorViewModelImpl.class,
+            new CallToOperatorViewModelImpl()
+        )
     );
   }
 
   @Override
   public void inject(CancelOrderDialogFragment cancelOrderDialogFragment) {
     cancelOrderDialogFragment.setCancelOrderViewModel(
-        ViewModelProviders.of(
+        getViewModelInstance(
             cancelOrderDialogFragment,
-            new ViewModelFactory<>(
-                new CancelOrderViewModelImpl(
-                    cancelOrderUseCase
-                )
-            )
-        ).get(CancelOrderViewModelImpl.class)
+            CancelOrderViewModelImpl.class,
+            new CancelOrderViewModelImpl(interactorComponent.getCancelOrderUseCase())
+        )
     );
     cancelOrderDialogFragment.setCancelOrderReasonsViewModel(
-        ViewModelProviders.of(
+        getViewModelInstance(
             cancelOrderDialogFragment,
-            new ViewModelFactory<>(
-                new CancelOrderReasonsViewModelImpl(
-                    cancelOrderReasonsUseCase
-                )
-            )
-        ).get(CancelOrderReasonsViewModelImpl.class)
+            CancelOrderReasonsViewModelImpl.class,
+            new CancelOrderReasonsViewModelImpl(interactorComponent.getCancelOrderReasonsUseCase())
+        )
     );
   }
 
   @Override
   public void inject(BalanceFragment balanceFragment) {
     balanceFragment.setBalanceViewModel(
-        ViewModelProviders.of(
+        getViewModelInstance(
             balanceFragment,
-            new ViewModelFactory<>(
-                new BalanceViewModelImpl(
-                    executorBalanceUseCase
-                )
-            )
-        ).get(BalanceViewModelImpl.class)
+            BalanceViewModelImpl.class,
+            new BalanceViewModelImpl(interactorComponent.getExecutorBalanceUseCase())
+        )
     );
   }
 
   @Override
   public void inject(BalanceSummaryFragment balanceSummaryFragment) {
     balanceSummaryFragment.setBalanceViewModel(
-        ViewModelProviders.of(
+        getViewModelInstance(
             balanceSummaryFragment,
-            new ViewModelFactory<>(
-                new BalanceViewModelImpl(
-                    executorBalanceUseCase
-                )
-            )
-        ).get(BalanceViewModelImpl.class)
+            BalanceViewModelImpl.class,
+            new BalanceViewModelImpl(interactorComponent.getExecutorBalanceUseCase())
+        )
     );
   }
 
   @Override
   public void inject(MenuFragment menuFragment) {
     menuFragment.setBalanceViewModel(
-        ViewModelProviders.of(
+        getViewModelInstance(
             menuFragment,
-            new ViewModelFactory<>(
-                new BalanceViewModelImpl(
-                    executorBalanceUseCase
-                )
-            )
-        ).get(BalanceViewModelImpl.class)
+            BalanceViewModelImpl.class,
+            new BalanceViewModelImpl(interactorComponent.getExecutorBalanceUseCase())
+        )
     );
     menuFragment.setOnlineSwitchViewModel(
-        ViewModelProviders.of(
+        getViewModelInstance(
             menuFragment,
-            new ViewModelFactory<>(
-                new OnlineSwitchViewModelImpl(
-                    new ExecutorStateNotOnlineUseCaseImpl(
-                        errorReporter,
-                        new ExecutorStateSwitchGatewayImpl(stompClient),
-                        executorStateUseCase,
-                        ExecutorState.SHIFT_CLOSED,
-                        ExecutorState.SHIFT_OPENED,
-                        ExecutorState.ONLINE,
-                        ExecutorState.DRIVER_ORDER_CONFIRMATION,
-                        ExecutorState.CLIENT_ORDER_CONFIRMATION,
-                        ExecutorState.MOVING_TO_CLIENT,
-                        ExecutorState.WAITING_FOR_CLIENT,
-                        ExecutorState.ORDER_FULFILLMENT,
-                        ExecutorState.PAYMENT_CONFIRMATION
-                    ),
-                    executorStateUseCase)
+            OnlineSwitchViewModelImpl.class,
+            new OnlineSwitchViewModelImpl(
+                interactorComponent.getExecutorStateExitUseCase(),
+                interactorComponent.getExecutorStateUseCase()
             )
-        ).get(OnlineSwitchViewModelImpl.class)
+        )
     );
   }
 
@@ -1153,32 +689,20 @@ public class AppComponentImpl implements AppComponent {
   @Override
   public void inject(OrderCostDetailsFragment orderCostDetailsFragment) {
     orderCostDetailsFragment.setOrderCostDetailsViewModel(
-        ViewModelProviders.of(
+        getViewModelInstance(
             orderCostDetailsFragment,
-            new ViewModelFactory<>(
-                new OrderCostDetailsViewModelImpl(
-                    new OrderCostDetailsUseCaseImpl(
-                        errorReporter,
-                        new OrderCostDetailsGatewayImpl(
-                            personalQueueListener,
-                            new OrderCostDetailsApiMapper()
-                        )
-                    )
-                )
-            )
-        ).get(OrderCostDetailsViewModelImpl.class)
+            OrderCostDetailsViewModelImpl.class,
+            new OrderCostDetailsViewModelImpl(interactorComponent.getOrderCostDetailsUseCase())
+        )
     );
     orderCostDetailsFragment.setConfirmOrderPaymentViewModel(
-        ViewModelProviders.of(
+        getViewModelInstance(
             orderCostDetailsFragment,
-            new ViewModelFactory<>(
-                new ConfirmOrderPaymentViewModelImpl(
-                    new ConfirmOrderPaymentUseCaseImpl(
-                        new ConfirmOrderPaymentGatewayImpl(stompClient)
-                    )
-                )
+            ConfirmOrderPaymentViewModelImpl.class,
+            new ConfirmOrderPaymentViewModelImpl(
+                interactorComponent.getConfirmOrderPaymentUseCase()
             )
-        ).get(ConfirmOrderPaymentViewModelImpl.class)
+        )
     );
     orderCostDetailsFragment.setShakeItPlayer(singleShakePlayer);
   }
@@ -1186,32 +710,22 @@ public class AppComponentImpl implements AppComponent {
   @Override
   public void inject(OrderCostDetailsOrderDetailsFragment orderCostDetailsOrderDetailsFragment) {
     orderCostDetailsOrderDetailsFragment.setOrderViewModel(
-        ViewModelProviders.of(
+        getViewModelInstance(
             orderCostDetailsOrderDetailsFragment,
-            new ViewModelFactory<>(
-                new OrderViewModelImpl(
-                    orderUseCase,
-                    timeUtils
-                )
-            )
-        ).get(OrderViewModelImpl.class)
+            OrderViewModelImpl.class,
+            new OrderViewModelImpl(interactorComponent.getOrderUseCase(), timeUtils)
+        )
     );
   }
 
   @Override
   public void inject(OrderCostDetailsRouteFragment orderCostDetailsRouteFragment) {
     orderCostDetailsRouteFragment.setOrderRouteViewModel(
-        ViewModelProviders.of(
+        getViewModelInstance(
             orderCostDetailsRouteFragment,
-            new ViewModelFactory<>(
-                new OrderRouteViewModelImpl(
-                    new OrderRouteUseCaseImpl(
-                        orderUseCase,
-                        new OrderRouteGatewayImpl(stompClient)
-                    )
-                )
-            )
-        ).get(OrderRouteViewModelImpl.class)
+            OrderRouteViewModelImpl.class,
+            new OrderRouteViewModelImpl(interactorComponent.getOrderRouteUseCase())
+        )
     );
   }
 
@@ -1224,61 +738,28 @@ public class AppComponentImpl implements AppComponent {
   public void inject(DriverPreOrderConfirmationFragment driverPreOrderConfirmationFragment) {
     driverPreOrderConfirmationFragment.setShakeItPlayer(singleShakePlayer);
     driverPreOrderConfirmationFragment.setOrderConfirmationViewModel(
-        ViewModelProviders.of(
+        getViewModelInstance(
             driverPreOrderConfirmationFragment,
-            new ViewModelFactory<>(
-                new OrderConfirmationViewModelImpl(
-                    new OrderConfirmationUseCaseImpl(
-                        preOrderUseCase,
-                        new PreOrderConfirmationGatewayImpl(
-                            apiService
-                        )
-                    )
-                )
-            )
-        ).get(OrderConfirmationViewModelImpl.class)
+            OrderConfirmationViewModelImpl.class,
+            new OrderConfirmationViewModelImpl(interactorComponent.getPreOrderConfirmationUseCase())
+        )
     );
     driverPreOrderConfirmationFragment.setOrderViewModel(
-        ViewModelProviders.of(
+        getViewModelInstance(
             driverPreOrderConfirmationFragment,
-            new ViewModelFactory<>(
-                new OrderViewModelImpl(
-                    preOrderUseCase,
-                    timeUtils
-                )
-            )
-        ).get(OrderViewModelImpl.class)
+            OrderViewModelImpl.class,
+            new OrderViewModelImpl(interactorComponent.getPreOrderUseCase(), timeUtils)
+        )
     );
   }
 
-  private OkHttpClient initHttpClient(@NonNull Interceptor... interceptors) {
-    OkHttpClient.Builder builder = new OkHttpClient.Builder()
-        .pingInterval(30, TimeUnit.SECONDS);
-    for (Interceptor interceptor : interceptors) {
-      builder.addInterceptor(interceptor);
-    }
-    // Add logging interceptor for debug build only
-    if (BuildConfig.DEBUG) {
-      HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
-      logging.setLevel(HttpLoggingInterceptor.Level.BODY);
-      builder.addInterceptor(logging);
-    }
-    return builder.build();
-  }
-
-  private ApiService initApiService(OkHttpClient okHttpClient) {
-    // build OkHttpClient builder
-    return new Retrofit.Builder()
-        .baseUrl(BuildConfig.BASE_URL)
-        .client(okHttpClient)
-        .addConverterFactory(ScalarsConverterFactory.create())
-        .addConverterFactory(GsonConverterFactory.create())
-        .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-        .build()
-        .create(ApiService.class);
-  }
-
-  private StompClient initStompClient(OkHttpClient okHttpClient) {
-    return Stomp.over(Stomp.ConnectionProvider.OKHTTP, BuildConfig.SOCKET_URL, null, okHttpClient);
+  private <V extends ViewModel> V getViewModelInstance(
+      @NonNull Fragment fragment,
+      @NonNull Class<V> vClass,
+      @NonNull V viewModel) {
+    return ViewModelProviders.of(
+        fragment,
+        new ViewModelFactory<>(viewModel)
+    ).get(vClass);
   }
 }
