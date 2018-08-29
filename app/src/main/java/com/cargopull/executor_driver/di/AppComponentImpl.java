@@ -56,6 +56,7 @@ import com.cargopull.executor_driver.presentation.ordercost.OrderCostViewModelIm
 import com.cargopull.executor_driver.presentation.orderroute.OrderRouteViewModelImpl;
 import com.cargopull.executor_driver.presentation.ordertime.OrderTimeViewModelImpl;
 import com.cargopull.executor_driver.presentation.phone.PhoneViewModelImpl;
+import com.cargopull.executor_driver.presentation.preorder.PreOrderViewModelImpl;
 import com.cargopull.executor_driver.presentation.selectedvehicle.SelectedVehicleViewModelImpl;
 import com.cargopull.executor_driver.presentation.serverconnection.ServerConnectionViewModel;
 import com.cargopull.executor_driver.presentation.serverconnection.ServerConnectionViewModelImpl;
@@ -198,6 +199,17 @@ public class AppComponentImpl implements AppComponent {
     );
     mainApplication.setExecutorStateViewModel(
         executorStateViewModel
+    );
+    mainApplication.setOrderViewModel(
+        new OrderViewModelImpl(
+            interactorComponent.getOrderUseCase(),
+            timeUtils
+        )
+    );
+    mainApplication.setPreOrderViewModel(
+        new PreOrderViewModelImpl(
+            interactorComponent.getPreOrderUseCase()
+        )
     );
     mainApplication.setGeoLocationViewModel(
         new GeoLocationViewModelImpl(

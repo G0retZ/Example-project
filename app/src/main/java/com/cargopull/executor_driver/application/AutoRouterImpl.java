@@ -13,6 +13,7 @@ import com.cargopull.executor_driver.backend.vibro.ShakeItPlayer;
 import com.cargopull.executor_driver.presentation.CommonNavigate;
 import com.cargopull.executor_driver.presentation.executorstate.ExecutorStateNavigate;
 import com.cargopull.executor_driver.presentation.geolocation.GeoLocationNavigate;
+import com.cargopull.executor_driver.presentation.preorder.PreOrderNavigate;
 import com.cargopull.executor_driver.presentation.serverconnection.ServerConnectionNavigate;
 import com.cargopull.executor_driver.utils.Pair;
 import java.util.Arrays;
@@ -66,6 +67,16 @@ public class AutoRouterImpl implements ActivityLifecycleCallbacks, AutoRouter {
     statusGroups.put(ExecutorStateNavigate.PAYMENT_CONFIRMATION, Arrays.asList(
         OrderCostDetailsActivity.class, OrderCostDetailsOrderDetailsActivity.class,
         OrderCostDetailsRouteActivity.class, GeolocationResolutionActivity.class
+    ));
+    statusGroups.put(PreOrderNavigate.ORDER_APPROVAL, Arrays.asList(
+        DriverPreOrderConfirmationActivity.class, DriverOrderConfirmationActivity.class,
+        ClientOrderConfirmationActivity.class, MovingToClientActivity.class,
+        MovingToClientDetailsActivity.class, MovingToClientRouteActivity.class,
+        WaitingForClientActivity.class, WaitingForClientRouteActivity.class,
+        OrderFulfillmentActivity.class, OrderFulfillmentDetailsActivity.class,
+        OrderRouteActivity.class, OrderCostDetailsActivity.class,
+        OrderCostDetailsOrderDetailsActivity.class, OrderCostDetailsRouteActivity.class,
+        GeolocationResolutionActivity.class
     ));
   }
 
@@ -253,6 +264,12 @@ public class AutoRouterImpl implements ActivityLifecycleCallbacks, AutoRouter {
       case ExecutorStateNavigate.PAYMENT_CONFIRMATION:
         currentActivity.startActivity(
             new Intent(currentActivity, OrderCostDetailsActivity.class)
+                .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK)
+        );
+        break;
+      case PreOrderNavigate.ORDER_APPROVAL:
+        currentActivity.startActivity(
+            new Intent(currentActivity, DriverPreOrderConfirmationActivity.class)
                 .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK)
         );
         break;

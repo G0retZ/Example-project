@@ -24,6 +24,10 @@ import com.cargopull.executor_driver.presentation.executorstate.ExecutorStateVie
 import com.cargopull.executor_driver.presentation.geolocation.GeoLocationViewModel;
 import com.cargopull.executor_driver.presentation.missedorder.MissedOrderViewActions;
 import com.cargopull.executor_driver.presentation.missedorder.MissedOrderViewModel;
+import com.cargopull.executor_driver.presentation.order.OrderViewModel;
+import com.cargopull.executor_driver.presentation.preorder.PreOrderNavigate;
+import com.cargopull.executor_driver.presentation.preorder.PreOrderViewActions;
+import com.cargopull.executor_driver.presentation.preorder.PreOrderViewModel;
 import com.cargopull.executor_driver.presentation.serverconnection.ServerConnectionNavigate;
 import com.cargopull.executor_driver.presentation.serverconnection.ServerConnectionViewActions;
 import com.cargopull.executor_driver.presentation.serverconnection.ServerConnectionViewModel;
@@ -40,7 +44,7 @@ import javax.inject.Inject;
  */
 
 public class MainApplication extends Application implements ServerConnectionViewActions,
-    MissedOrderViewActions {
+    MissedOrderViewActions, PreOrderViewActions {
 
   @Nullable
   private AppComponent appComponent;
@@ -56,6 +60,10 @@ public class MainApplication extends Application implements ServerConnectionView
   private BalanceViewModel balanceViewModel;
   @Nullable
   private ExecutorStateViewModel executorStateViewModel;
+  @Nullable
+  private OrderViewModel orderViewModel;
+  @Nullable
+  private PreOrderViewModel preOrderViewModel;
   @Nullable
   private GeoLocationViewModel geoLocationViewModel;
   @Nullable
@@ -91,6 +99,16 @@ public class MainApplication extends Application implements ServerConnectionView
   @Inject
   public void setExecutorStateViewModel(@NonNull ExecutorStateViewModel executorStateViewModel) {
     this.executorStateViewModel = executorStateViewModel;
+  }
+
+  @Inject
+  public void setOrderViewModel(@Nullable OrderViewModel orderViewModel) {
+    this.orderViewModel = orderViewModel;
+  }
+
+  @Inject
+  public void setPreOrderViewModel(@Nullable PreOrderViewModel preOrderViewModel) {
+    this.preOrderViewModel = preOrderViewModel;
   }
 
   @Inject
@@ -151,7 +169,7 @@ public class MainApplication extends Application implements ServerConnectionView
         executorStateViewModel == null || geoLocationViewModel == null
         || missedOrderViewModel == null || updateMessageViewModel == null
         || serverConnectionViewModel == null || currentCostPollingViewModel == null
-        || serverTimeViewModel == null) {
+        || serverTimeViewModel == null || orderViewModel == null || preOrderViewModel == null) {
       throw new RuntimeException("Shit! WTF?!");
     }
     serverConnectionViewModel.getViewStateLiveData().observeForever(viewState -> {
@@ -164,10 +182,17 @@ public class MainApplication extends Application implements ServerConnectionView
         viewState.apply(this);
       }
     });
+    preOrderViewModel.getViewStateLiveData().observeForever(viewState -> {
+      if (viewState != null) {
+        viewState.apply(this);
+      }
+    });
     serverConnectionViewModel.getNavigationLiveData().observeForever(this::navigate);
     cancelOrderReasonsViewModel.getNavigationLiveData().observeForever(this::navigate);
     balanceViewModel.getNavigationLiveData().observeForever(this::navigate);
     executorStateViewModel.getNavigationLiveData().observeForever(this::navigate);
+    orderViewModel.getNavigationLiveData().observeForever(this::navigate);
+    preOrderViewModel.getNavigationLiveData().observeForever(this::navigate);
     geoLocationViewModel.getNavigationLiveData().observeForever(this::navigate);
     currentCostPollingViewModel.getNavigationLiveData().observeForever(this::navigate);
     serverTimeViewModel.getNavigationLiveData().observeForever(this::navigate);
@@ -382,6 +407,22 @@ public class MainApplication extends Application implements ServerConnectionView
         startService(R.string.working, R.string.order_fulfillment, PendingIntent
             .getActivity(this, 0, new Intent(this, OrderCostDetailsActivity.class), 0));
         break;
+      case PreOrderNavigate.ORDER_APPROVAL:
+        playSound(R.raw.accept_offer);
+        shakeIt(Arrays.asList(
+            new Pair<>(100L, 255),
+            new Pair<>(50L, 0),
+            new Pair<>(50L, 255),
+            new Pair<>(50L, 0),
+            new Pair<>(50L, 255),
+            new Pair<>(50L, 0),
+            new Pair<>(100L, 255),
+            new Pair<>(50L, 0),
+            new Pair<>(50L, 255),
+            new Pair<>(50L, 0),
+            new Pair<>(100L, 255)
+        ));
+        break;
     }
     autoRouter.navigateTo(destination);
   }
@@ -457,5 +498,29 @@ public class MainApplication extends Application implements ServerConnectionView
       throw new IllegalStateException("Граф зависимостей поломан!");
     }
     shakeItPlayer.shakeIt(patternItems);
+  }
+
+  @Override
+  public void showPreOrderAvailable(boolean show) {
+    if (notificationManager != null) {
+      if (show) {
+        Builder builder = new Builder(this, "state_channel")
+            .setContentText(getString(R.string.new_pre_order))
+            .setContentTitle(getString(R.string.new_pre_order_message))
+            .setSound(null)
+            .setVibrate(new long[0])
+            .setAutoCancel(true)
+            .setContentIntent(
+                PendingIntent.getActivity(this, 0,
+                    new Intent(this, DriverPreOrderConfirmationActivity.class), 0)
+            )
+            .setSmallIcon(R.mipmap.ic_launcher)
+            .setTicker(getString(R.string.new_pre_order))
+            .setWhen(System.currentTimeMillis());
+        notificationManager.notify(7, builder.build());
+      } else {
+        notificationManager.cancel(7);
+      }
+    }
   }
 }
