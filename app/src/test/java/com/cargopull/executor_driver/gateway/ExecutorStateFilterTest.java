@@ -12,15 +12,15 @@ import org.mockito.junit.MockitoJUnitRunner;
 import ua.naiksoftware.stomp.client.StompMessage;
 
 @RunWith(MockitoJUnitRunner.class)
-public class CancelOrderReasonsFilterTest {
+public class ExecutorStateFilterTest {
 
-  private CancelOrderReasonsFilter filter;
+  private ExecutorStateFilter filter;
   @Mock
   private StompMessage stompMessage;
 
   @Before
   public void setUp() {
-    filter = new CancelOrderReasonsFilter();
+    filter = new ExecutorStateFilter();
   }
 
   /**
@@ -38,7 +38,7 @@ public class CancelOrderReasonsFilterTest {
   @Test
   public void allowForHeaderWithCorrectValue() {
     // Дано:
-    when(stompMessage.findHeader("CancelReason")).thenReturn("");
+    when(stompMessage.findHeader("Status")).thenReturn("");
 
     // Действие и Результат:
     assertTrue(filter.test(stompMessage));

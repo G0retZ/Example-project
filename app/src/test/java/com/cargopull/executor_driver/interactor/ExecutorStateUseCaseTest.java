@@ -29,11 +29,11 @@ public class ExecutorStateUseCaseTest {
   @Mock
   private ErrorReporter errorReporter;
   @Mock
-  private ExecutorStateGateway gateway;
+  private CommonGateway<ExecutorState> gateway;
 
   @Before
   public void setUp() {
-    when(gateway.getState()).thenReturn(Flowable.never());
+    when(gateway.getData()).thenReturn(Flowable.never());
     useCase = new ExecutorStateUseCaseImpl(errorReporter, gateway);
   }
 
@@ -51,7 +51,7 @@ public class ExecutorStateUseCaseTest {
     useCase.getExecutorStates().test();
 
     // Результат:
-    verify(gateway, only()).getState();
+    verify(gateway, only()).getData();
   }
 
   /* Проверяем отправку ошибок в репортер */
@@ -62,7 +62,7 @@ public class ExecutorStateUseCaseTest {
   @Test
   public void reportError() {
     // Дано:
-    when(gateway.getState()).thenReturn(Flowable.error(DataMappingException::new));
+    when(gateway.getData()).thenReturn(Flowable.error(DataMappingException::new));
 
     // Действие:
     useCase.getExecutorStates().test();
@@ -79,7 +79,7 @@ public class ExecutorStateUseCaseTest {
   @Test
   public void answerWithExecutorState() {
     // Дано:
-    when(gateway.getState()).thenReturn(
+    when(gateway.getData()).thenReturn(
         Flowable.just(ExecutorState.SHIFT_CLOSED, ExecutorState.SHIFT_OPENED, ExecutorState.ONLINE,
             ExecutorState.DRIVER_ORDER_CONFIRMATION, ExecutorState.CLIENT_ORDER_CONFIRMATION,
             ExecutorState.MOVING_TO_CLIENT, ExecutorState.WAITING_FOR_CLIENT,
@@ -105,7 +105,7 @@ public class ExecutorStateUseCaseTest {
   @Test
   public void answerWithError() {
     // Дано:
-    when(gateway.getState()).thenReturn(Flowable.error(DataMappingException::new));
+    when(gateway.getData()).thenReturn(Flowable.error(DataMappingException::new));
 
     // Действие:
     TestSubscriber<ExecutorState> testSubscriber = useCase.getExecutorStates().test();
@@ -122,7 +122,7 @@ public class ExecutorStateUseCaseTest {
   @Test
   public void answerComplete() {
     // Дано:
-    when(gateway.getState()).thenReturn(Flowable.empty());
+    when(gateway.getData()).thenReturn(Flowable.empty());
 
     // Действие:
     TestSubscriber<ExecutorState> testSubscriber = useCase.getExecutorStates().test();

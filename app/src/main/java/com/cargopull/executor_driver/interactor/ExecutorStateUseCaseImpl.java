@@ -13,13 +13,13 @@ public class ExecutorStateUseCaseImpl implements ExecutorStateUseCase {
   @NonNull
   private final ErrorReporter errorReporter;
   @NonNull
-  private final ExecutorStateGateway gateway;
+  private final CommonGateway<ExecutorState> gateway;
   @Nullable
   private Flowable<ExecutorState> executorStateFlowable;
 
   @Inject
   public ExecutorStateUseCaseImpl(@NonNull ErrorReporter errorReporter,
-      @NonNull ExecutorStateGateway gateway) {
+      @NonNull CommonGateway<ExecutorState> gateway) {
     this.errorReporter = errorReporter;
     this.gateway = gateway;
   }
@@ -28,7 +28,7 @@ public class ExecutorStateUseCaseImpl implements ExecutorStateUseCase {
   @Override
   public Flowable<ExecutorState> getExecutorStates() {
     if (executorStateFlowable == null) {
-      executorStateFlowable = gateway.getState()
+      executorStateFlowable = gateway.getData()
           .observeOn(Schedulers.single())
           .doOnError(errorReporter::reportError)
           .replay(1)
