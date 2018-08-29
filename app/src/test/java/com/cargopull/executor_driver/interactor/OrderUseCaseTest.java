@@ -32,7 +32,7 @@ public class OrderUseCaseTest {
   @Mock
   private ErrorReporter errorReporter;
   @Mock
-  private OrderGateway gateway;
+  private CommonGateway<Order> gateway;
   @Mock
   private Order order;
   @Mock
@@ -42,7 +42,7 @@ public class OrderUseCaseTest {
 
   @Before
   public void setUp() {
-    when(gateway.getOrders()).thenReturn(Flowable.never());
+    when(gateway.getData()).thenReturn(Flowable.never());
     useCase = new OrderUseCaseImpl(errorReporter, gateway);
   }
 
@@ -60,7 +60,7 @@ public class OrderUseCaseTest {
     useCase.getOrders().test();
 
     // Результат:
-    verify(gateway, only()).getOrders();
+    verify(gateway, only()).getData();
   }
 
   /* Проверяем отправку ошибок в репортер */
@@ -71,7 +71,7 @@ public class OrderUseCaseTest {
   @Test
   public void reportError() {
     // Дано:
-    when(gateway.getOrders()).thenReturn(Flowable.error(DataMappingException::new));
+    when(gateway.getData()).thenReturn(Flowable.error(DataMappingException::new));
 
     // Действие:
     useCase.getOrders().test();
@@ -88,7 +88,7 @@ public class OrderUseCaseTest {
   @Test
   public void answerWithOrders() {
     // Дано:
-    when(gateway.getOrders())
+    when(gateway.getData())
         .thenReturn(Flowable.just(order, order1, order2).concatWith(Flowable.never()));
 
     // Действие:
@@ -106,7 +106,7 @@ public class OrderUseCaseTest {
   @Test
   public void answerError() {
     // Дано:
-    when(gateway.getOrders()).thenReturn(Flowable.error(DataMappingException::new));
+    when(gateway.getData()).thenReturn(Flowable.error(DataMappingException::new));
 
     // Действие:
     TestSubscriber<Order> testSubscriber = useCase.getOrders().test();
@@ -123,7 +123,7 @@ public class OrderUseCaseTest {
   @Test
   public void answerComplete() {
     // Дано:
-    when(gateway.getOrders()).thenReturn(Flowable.empty());
+    when(gateway.getData()).thenReturn(Flowable.empty());
 
     // Действие:
     TestSubscriber<Order> testSubscriber = useCase.getOrders().test();
@@ -140,7 +140,7 @@ public class OrderUseCaseTest {
   @Test
   public void answerNothingAfterComplete() {
     // Дано:
-    when(gateway.getOrders()).thenReturn(Flowable.create(new FlowableOnSubscribe<Order>() {
+    when(gateway.getData()).thenReturn(Flowable.create(new FlowableOnSubscribe<Order>() {
       private boolean run;
 
       @Override

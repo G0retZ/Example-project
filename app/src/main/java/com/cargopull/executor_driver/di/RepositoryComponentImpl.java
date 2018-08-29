@@ -6,6 +6,7 @@ import com.cargopull.executor_driver.backend.geolocation.GeolocationCenter;
 import com.cargopull.executor_driver.entity.CancelOrderReason;
 import com.cargopull.executor_driver.entity.ExecutorBalance;
 import com.cargopull.executor_driver.entity.ExecutorState;
+import com.cargopull.executor_driver.entity.Order;
 import com.cargopull.executor_driver.entity.OrderCostDetails;
 import com.cargopull.executor_driver.gateway.CallToClientGatewayImpl;
 import com.cargopull.executor_driver.gateway.CancelOrderGatewayImpl;
@@ -34,11 +35,11 @@ import com.cargopull.executor_driver.gateway.OrderCostDetailsApiMapper;
 import com.cargopull.executor_driver.gateway.OrderCostDetailsFilter;
 import com.cargopull.executor_driver.gateway.OrderCurrentCostApiMapper;
 import com.cargopull.executor_driver.gateway.OrderCurrentCostFilter;
-import com.cargopull.executor_driver.gateway.OrderGatewayImpl;
+import com.cargopull.executor_driver.gateway.OrderFilter;
 import com.cargopull.executor_driver.gateway.OrderRouteGatewayImpl;
 import com.cargopull.executor_driver.gateway.PasswordGatewayImpl;
 import com.cargopull.executor_driver.gateway.PreOrderConfirmationGatewayImpl;
-import com.cargopull.executor_driver.gateway.PreOrderGatewayImpl;
+import com.cargopull.executor_driver.gateway.PreOrderFilter;
 import com.cargopull.executor_driver.gateway.RoutePointApiMapper;
 import com.cargopull.executor_driver.gateway.SelectedVehicleAndOptionsGatewayImpl;
 import com.cargopull.executor_driver.gateway.ServerConnectionGatewayImpl;
@@ -63,7 +64,6 @@ import com.cargopull.executor_driver.interactor.GeoLocationGateway;
 import com.cargopull.executor_driver.interactor.GeoTrackingGateway;
 import com.cargopull.executor_driver.interactor.MovingToClientGateway;
 import com.cargopull.executor_driver.interactor.OrderConfirmationGateway;
-import com.cargopull.executor_driver.interactor.OrderGateway;
 import com.cargopull.executor_driver.interactor.OrderRouteGateway;
 import com.cargopull.executor_driver.interactor.ServerConnectionGateway;
 import com.cargopull.executor_driver.interactor.ServerTimeGateway;
@@ -117,9 +117,9 @@ class RepositoryComponentImpl implements RepositoryComponent {
   @Nullable
   private CommonGateway<Long> orderCurrentCostGateway;
   @Nullable
-  private OrderGateway orderGateway;
+  private CommonGateway<Order> orderGateway;
   @Nullable
-  private OrderGateway preOrderGateway;
+  private CommonGateway<Order> preOrderGateway;
   @Nullable
   private OrderRouteGateway orderRouteGateway;
   @Nullable
@@ -347,14 +347,15 @@ class RepositoryComponentImpl implements RepositoryComponent {
 
   @NonNull
   @Override
-  public OrderGateway getOrderGateway() {
+  public CommonGateway<Order> getOrderGateway() {
     if (orderGateway == null) {
-      orderGateway = new OrderGatewayImpl(
+      orderGateway = new TopicGatewayImpl<>(
           backendComponent.getPersonalTopicListener(),
           new OrderApiMapper(
               new VehicleOptionApiMapper(),
               new RoutePointApiMapper()
-          )
+          ),
+          new OrderFilter()
       );
     }
     return orderGateway;
@@ -362,14 +363,15 @@ class RepositoryComponentImpl implements RepositoryComponent {
 
   @NonNull
   @Override
-  public OrderGateway getPreOrderGateway() {
+  public CommonGateway<Order> getPreOrderGateway() {
     if (preOrderGateway == null) {
-      preOrderGateway = new PreOrderGatewayImpl(
+      preOrderGateway = new TopicGatewayImpl<>(
           backendComponent.getPersonalTopicListener(),
           new OrderApiMapper(
               new VehicleOptionApiMapper(),
               new RoutePointApiMapper()
-          )
+          ),
+          new PreOrderFilter()
       );
     }
     return preOrderGateway;

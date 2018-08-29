@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 import com.cargopull.executor_driver.entity.CancelOrderReason;
 import com.cargopull.executor_driver.entity.ExecutorBalance;
 import com.cargopull.executor_driver.entity.ExecutorState;
+import com.cargopull.executor_driver.entity.Order;
 import com.cargopull.executor_driver.entity.OrderCostDetails;
 import com.cargopull.executor_driver.interactor.CallToClientGateway;
 import com.cargopull.executor_driver.interactor.CancelOrderGateway;
@@ -15,7 +16,6 @@ import com.cargopull.executor_driver.interactor.GeoLocationGateway;
 import com.cargopull.executor_driver.interactor.GeoTrackingGateway;
 import com.cargopull.executor_driver.interactor.MovingToClientGateway;
 import com.cargopull.executor_driver.interactor.OrderConfirmationGateway;
-import com.cargopull.executor_driver.interactor.OrderGateway;
 import com.cargopull.executor_driver.interactor.OrderRouteGateway;
 import com.cargopull.executor_driver.interactor.ServerConnectionGateway;
 import com.cargopull.executor_driver.interactor.ServerTimeGateway;
@@ -81,10 +81,10 @@ interface RepositoryComponent {
   CommonGateway<Long> getOrderCurrentCostGateway();
 
   @NonNull
-  OrderGateway getOrderGateway();
+  CommonGateway<Order> getOrderGateway();
 
   @NonNull
-  OrderGateway getPreOrderGateway();
+  CommonGateway<Order> getPreOrderGateway();
 
   @NonNull
   OrderRouteGateway getOrderRouteGateway();
