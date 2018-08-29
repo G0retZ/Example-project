@@ -5,15 +5,15 @@ import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.cargopull.executor_driver.GatewayThreadTestRule;
 import com.cargopull.executor_driver.backend.web.ApiService;
 import com.cargopull.executor_driver.backend.web.NoNetworkException;
 import com.cargopull.executor_driver.backend.web.outgoing.ApiLogin;
 import com.cargopull.executor_driver.entity.LoginData;
 import com.cargopull.executor_driver.gateway.PasswordGatewayImpl;
 import io.reactivex.Completable;
-import io.reactivex.plugins.RxJavaPlugins;
-import io.reactivex.schedulers.Schedulers;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -22,6 +22,9 @@ import org.mockito.junit.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class PasswordGatewayTest {
 
+  @ClassRule
+  public static final GatewayThreadTestRule classRule = new GatewayThreadTestRule();
+
   private PasswordGateway gateway;
 
   @Mock
@@ -29,8 +32,6 @@ public class PasswordGatewayTest {
 
   @Before
   public void setUp() {
-    RxJavaPlugins.setIoSchedulerHandler(scheduler -> Schedulers.trampoline());
-    RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
     gateway = new PasswordGatewayImpl(api);
     when(api.authorize(any(ApiLogin.class))).thenReturn(Completable.never());
   }
@@ -48,8 +49,6 @@ public class PasswordGatewayTest {
     // Результат:
     verify(api, only()).authorize(new ApiLogin("Login", "Password"));
   }
-
-  /* Проверяем правильность потоков (добавить) */
 
   /* Проверяем ответы на АПИ */
 

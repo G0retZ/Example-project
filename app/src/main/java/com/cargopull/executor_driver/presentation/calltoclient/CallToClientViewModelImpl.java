@@ -11,7 +11,6 @@ import com.cargopull.executor_driver.presentation.ViewState;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.internal.disposables.EmptyDisposable;
-import io.reactivex.schedulers.Schedulers;
 import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
 
@@ -53,7 +52,6 @@ public class CallToClientViewModelImpl extends ViewModel implements CallToClient
     }
     viewStateLiveData.postValue(new CallToClientViewStatePending());
     disposable = callToClientUseCase.callToClient()
-        .subscribeOn(Schedulers.single())
         .observeOn(AndroidSchedulers.mainThread())
         .doOnComplete(() -> viewStateLiveData.postValue(new CallToClientViewStateCalling()))
         .delay(10, TimeUnit.SECONDS)

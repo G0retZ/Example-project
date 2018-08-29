@@ -5,17 +5,17 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
+import com.cargopull.executor_driver.GatewayThreadTestRule;
 import com.cargopull.executor_driver.backend.web.NoNetworkException;
 import com.cargopull.executor_driver.backend.websocket.ConnectionClosedException;
 import com.cargopull.executor_driver.gateway.MissedOrderGatewayImpl;
 import io.reactivex.Completable;
 import io.reactivex.Flowable;
-import io.reactivex.plugins.RxJavaPlugins;
-import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subscribers.TestSubscriber;
 import java.util.Arrays;
 import java.util.Collections;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -31,6 +31,9 @@ import ua.naiksoftware.stomp.client.StompMessage;
 @RunWith(MockitoJUnitRunner.class)
 public class MissedOrderGatewayTest {
 
+  @ClassRule
+  public static final GatewayThreadTestRule classRule = new GatewayThreadTestRule();
+
   private MissedOrderGateway gateway;
 
   @Mock
@@ -40,8 +43,6 @@ public class MissedOrderGatewayTest {
 
   @Before
   public void setUp() {
-    RxJavaPlugins.setIoSchedulerHandler(scheduler -> Schedulers.trampoline());
-    RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
     gateway = new MissedOrderGatewayImpl(stompClient);
     when(stompClient.topic("/queue/1234567890", StompClient.ACK_CLIENT_INDIVIDUAL))
         .thenReturn(Flowable.never());
@@ -175,8 +176,6 @@ public class MissedOrderGatewayTest {
     assertEquals(stompMessageCaptor.getValue().getPayload(), "");
     verifyNoMoreInteractions(stompClient);
   }
-
-  /* Проверяем правильность потоков (добавить) */
 
   /* Проверяем результаты обработки сообщений от сервера по статусам */
 

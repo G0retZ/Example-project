@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 import com.cargopull.executor_driver.entity.ExecutorState;
 import com.cargopull.executor_driver.utils.ErrorReporter;
 import io.reactivex.Completable;
+import io.reactivex.schedulers.Schedulers;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -14,7 +15,7 @@ public class ExecutorStateNotOnlineUseCaseImpl implements
   @NonNull
   private final ErrorReporter errorReporter;
   @NonNull
-  private final ExecutorStateSwitchGateway executorStateSwitchGateway;
+  private final ExecutorStateSwitchGateway gateway;
   @NonNull
   private final ExecutorStateUseCase executorStateUseCase;
   @NonNull
@@ -22,11 +23,11 @@ public class ExecutorStateNotOnlineUseCaseImpl implements
 
   public ExecutorStateNotOnlineUseCaseImpl(
       @NonNull ErrorReporter errorReporter,
-      @NonNull ExecutorStateSwitchGateway executorStateSwitchGateway,
+      @NonNull ExecutorStateSwitchGateway gateway,
       @NonNull ExecutorStateUseCase executorStateUseCase,
       @NonNull ExecutorState... allowed) {
     this.errorReporter = errorReporter;
-    this.executorStateSwitchGateway = executorStateSwitchGateway;
+    this.gateway = gateway;
     this.executorStateUseCase = executorStateUseCase;
     allowedExecutorStates = Collections.unmodifiableList(Arrays.asList(allowed));
   }
@@ -43,6 +44,7 @@ public class ExecutorStateNotOnlineUseCaseImpl implements
           }
           return ExecutorState.SHIFT_OPENED;
         }).doOnError(errorReporter::reportError)
-        .flatMapCompletable(executorStateSwitchGateway::sendNewExecutorState);
+        .flatMapCompletable(gateway::sendNewExecutorState)
+        .observeOn(Schedulers.single());
   }
 }

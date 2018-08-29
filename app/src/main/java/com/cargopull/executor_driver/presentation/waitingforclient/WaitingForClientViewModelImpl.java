@@ -11,7 +11,6 @@ import com.cargopull.executor_driver.presentation.ViewState;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.internal.disposables.EmptyDisposable;
-import io.reactivex.schedulers.Schedulers;
 import javax.inject.Inject;
 
 public class WaitingForClientViewModelImpl extends ViewModel implements WaitingForClientViewModel {
@@ -52,7 +51,6 @@ public class WaitingForClientViewModelImpl extends ViewModel implements WaitingF
     }
     viewStateLiveData.postValue(new WaitingForClientViewStatePending());
     actionsDisposable = waitingForClientUseCase.startTheOrder()
-        .subscribeOn(Schedulers.single())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(
             () -> {

@@ -8,16 +8,16 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
+import com.cargopull.executor_driver.GatewayThreadTestRule;
 import com.cargopull.executor_driver.entity.ExecutorState;
 import com.cargopull.executor_driver.entity.OrderCostDetails;
 import com.cargopull.executor_driver.gateway.DataMappingException;
 import com.cargopull.executor_driver.gateway.Mapper;
 import com.cargopull.executor_driver.gateway.OrderCostDetailsGatewayImpl;
 import io.reactivex.Flowable;
-import io.reactivex.plugins.RxJavaPlugins;
-import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subscribers.TestSubscriber;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -25,6 +25,9 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
 public class OrderCostDetailsGatewayTest {
+
+  @ClassRule
+  public static final GatewayThreadTestRule classRule = new GatewayThreadTestRule();
 
   private OrderCostDetailsGateway gateway;
   @Mock
@@ -36,9 +39,6 @@ public class OrderCostDetailsGatewayTest {
 
   @Before
   public void setUp() {
-    RxJavaPlugins.setComputationSchedulerHandler(scheduler -> Schedulers.trampoline());
-    RxJavaPlugins.setSingleSchedulerHandler(scheduler -> Schedulers.trampoline());
-    RxJavaPlugins.setIoSchedulerHandler(scheduler -> Schedulers.trampoline());
     ExecutorState.PAYMENT_CONFIRMATION.setData(null);
     when(useCase.getExecutorStates(anyBoolean())).thenReturn(Flowable.never());
   }
@@ -118,8 +118,6 @@ public class OrderCostDetailsGatewayTest {
     // Результат:
     verify(mapper, only()).map("");
   }
-
-  /* Проверяем правильность потоков (добавить) */
 
   /* Проверяем результаты обработки сообщений от сервера по статусам */
 

@@ -51,7 +51,6 @@ public class ServerConnectionGatewayImpl implements ServerConnectionGateway {
             stompClient.reconnect();
           }
           emitter.onComplete();
-        }, BackpressureStrategy.BUFFER))
-        .observeOn(Schedulers.single());
+        }, BackpressureStrategy.BUFFER));
   }
 }

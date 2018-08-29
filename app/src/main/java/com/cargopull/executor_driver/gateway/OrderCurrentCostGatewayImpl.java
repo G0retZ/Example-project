@@ -48,8 +48,7 @@ public class OrderCurrentCostGatewayImpl implements OrderCurrentCostGateway {
               ).subscribe(() -> {
               }, Throwable::printStackTrace)
           )
-          .map(mapper::map)
-          .observeOn(Schedulers.single());
+          .map(mapper::map);
     }
     return Flowable.error(ConnectionClosedException::new);
   }

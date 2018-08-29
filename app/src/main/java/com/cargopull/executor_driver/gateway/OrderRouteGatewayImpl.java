@@ -26,16 +26,14 @@ public class OrderRouteGatewayImpl implements OrderRouteGateway {
         BuildConfig.ROUTE_DESTINATION,
         "{\"complete\":\"" + routePoint.getId() + "\"}"
     )
-        .subscribeOn(Schedulers.io())
-        .observeOn(Schedulers.single());
+        .subscribeOn(Schedulers.io());
   }
 
   @NonNull
   @Override
   public Completable completeTheOrder() {
     return stompClient.send(BuildConfig.TRIP_DESTINATION, "\"COMPLETE_ORDER\"")
-        .subscribeOn(Schedulers.io())
-        .observeOn(Schedulers.single());
+        .subscribeOn(Schedulers.io());
   }
 
   @NonNull
@@ -45,7 +43,6 @@ public class OrderRouteGatewayImpl implements OrderRouteGateway {
         BuildConfig.ROUTE_DESTINATION,
         "{\"next\":\"" + routePoint.getId() + "\"}"
     )
-        .subscribeOn(Schedulers.io())
-        .observeOn(Schedulers.single());
+        .subscribeOn(Schedulers.io());
   }
 }

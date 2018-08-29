@@ -6,6 +6,7 @@ import com.cargopull.executor_driver.entity.Service;
 import com.cargopull.executor_driver.utils.ErrorReporter;
 import io.reactivex.Completable;
 import io.reactivex.Single;
+import io.reactivex.schedulers.Schedulers;
 import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
@@ -27,7 +28,7 @@ public class ServicesUseCaseImpl implements ServicesUseCase {
   @NonNull
   @Override
   public Single<List<Service>> loadServices() {
-    return gateway.getServices().map(services -> {
+    return gateway.getServices().observeOn(Schedulers.single()).map(services -> {
       if (services.isEmpty()) {
         throw new EmptyListException("Нет доступных услуг.");
       }
@@ -52,11 +53,12 @@ public class ServicesUseCaseImpl implements ServicesUseCase {
         throw new EmptyListException("Не выбрано услуг для on-line.");
       }
       return selectedServices;
-    }).flatMapCompletable(gateway::sendSelectedServices)
-        .doOnError(throwable -> {
-          if (throwable instanceof EmptyListException) {
-            errorReporter.reportError(throwable);
-          }
-        });
+    }).flatMapCompletable(
+        services1 -> gateway.sendSelectedServices(services1).observeOn(Schedulers.single())
+    ).doOnError(throwable -> {
+      if (throwable instanceof EmptyListException) {
+        errorReporter.reportError(throwable);
+      }
+    });
   }
 }

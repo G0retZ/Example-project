@@ -22,7 +22,6 @@ public class CallToClientGatewayImpl implements CallToClientGateway {
   @Override
   public Completable callToClient() {
     return stompClient.send(BuildConfig.TRIP_DESTINATION, "\"CALL_TO_CLIENT\"")
-        .subscribeOn(Schedulers.io())
-        .observeOn(Schedulers.single());
+        .subscribeOn(Schedulers.io());
   }
 }

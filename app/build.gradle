@@ -30,8 +30,8 @@ android {
         applicationId "com.cargopull.executor_driver"
         minSdkVersion 16
         targetSdkVersion 27
-        versionCode 4
-        versionName "1.1.1"
+        versionCode 5
+        versionName "1.1.2"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         buildConfigField 'String', 'BASE_URL', '"http://tst.capsrv.xyz:9080/executor/"'
         buildConfigField 'String', 'SOCKET_URL', '"ws://tst.capsrv.xyz:9080/executor/ws"'
@@ -55,6 +55,12 @@ android {
             buildConfigField 'String', 'SOCKET_URL', '"wss://gate.cargopull.host:8443/executor/ws"'
             signingConfig signingConfigs.upload
         }
+        staging {
+            initWith(release)
+            buildConfigField 'String', 'BASE_URL', '"http://stg.capsrv.xyz:8080/executor/"'
+            buildConfigField 'String', 'SOCKET_URL', '"ws://stg.capsrv.xyz:8080/executor/ws"'
+            applicationIdSuffix ".staging"
+        }
         debug {
             minifyEnabled true
             shrinkResources true
@@ -69,25 +75,6 @@ android {
     }
     testOptions {
         unitTests.returnDefaultValues = true
-    }
-    flavorDimensions "main"
-    productFlavors {
-        pure {
-        }
-        staging {
-            applicationIdSuffix ".staging"
-            buildConfigField 'String', 'BASE_URL', '"http://stg.capsrv.xyz:8080/executor/"'
-            buildConfigField 'String', 'SOCKET_URL', '"ws://stg.capsrv.xyz:8080/executor/ws"'
-        }
-    }
-
-    variantFilter { variant ->
-        def names = variant.flavors*.name
-        // To check for a certain build type, use variant.buildType.name == "<buildType>"
-        if (names.contains("staging") && variant.buildType.name == "debug") {
-            // Gradle ignores any variants that satisfy the conditions above.
-            setIgnore(true)
-        }
     }
 }
 

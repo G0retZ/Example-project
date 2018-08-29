@@ -44,8 +44,7 @@ public class UpdateMessageGatewayImpl implements UpdateMessageGateway {
               ).subscribe(() -> {
               }, Throwable::printStackTrace)
           )
-          .map(stompMessage -> stompMessage.getPayload().replace("\"", "").trim())
-          .observeOn(Schedulers.single());
+          .map(stompMessage -> stompMessage.getPayload().replace("\"", "").trim());
     }
     return Flowable.error(ConnectionClosedException::new);
   }

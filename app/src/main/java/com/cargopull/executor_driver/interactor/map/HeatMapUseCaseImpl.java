@@ -3,6 +3,7 @@ package com.cargopull.executor_driver.interactor.map;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import io.reactivex.Flowable;
+import io.reactivex.schedulers.Schedulers;
 import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
 
@@ -25,6 +26,7 @@ public class HeatMapUseCaseImpl implements HeatMapUseCase {
   public Flowable<String> loadHeatMap() {
     if (heatMapEmitter == null) {
       heatMapEmitter = gateway.getHeatMap()
+          .observeOn(Schedulers.single())
           .repeatWhen(completed -> completed
               .concatMap(v -> Flowable.timer(POLLING_INTERVAL, TimeUnit.MINUTES)))
           .retryWhen(failed -> failed

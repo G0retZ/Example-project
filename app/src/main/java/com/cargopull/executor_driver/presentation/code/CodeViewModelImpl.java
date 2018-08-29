@@ -13,7 +13,6 @@ import io.reactivex.Completable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.internal.disposables.EmptyDisposable;
-import io.reactivex.schedulers.Schedulers;
 import javax.inject.Inject;
 
 public class CodeViewModelImpl extends ViewModel implements CodeViewModel {
@@ -54,13 +53,10 @@ public class CodeViewModelImpl extends ViewModel implements CodeViewModel {
     }
     disposable = passwordUseCase.authorize(
         code.replaceAll("[^\\d]", ""),
-        Completable.create(e -> {
-          viewStateLiveData.postValue(new CodeViewStatePending());
-          e.onComplete();
-        }).subscribeOn(AndroidSchedulers.mainThread()).observeOn(Schedulers.single())
-    )
-        .subscribeOn(Schedulers.single())
-        .observeOn(AndroidSchedulers.mainThread())
+        Completable.fromAction(
+            () -> viewStateLiveData.postValue(new CodeViewStatePending())
+        ).subscribeOn(AndroidSchedulers.mainThread())
+    ).observeOn(AndroidSchedulers.mainThread())
         .subscribe(
             () -> navigateLiveData.postValue(CodeNavigate.ENTER_APP),
             throwable -> {

@@ -2,6 +2,7 @@ package com.cargopull.executor_driver.interactor;
 
 import android.support.annotation.NonNull;
 import io.reactivex.Completable;
+import io.reactivex.schedulers.Schedulers;
 import javax.inject.Inject;
 
 public class ConfirmOrderPaymentUseCaseImpl implements ConfirmOrderPaymentUseCase {
@@ -18,6 +19,6 @@ public class ConfirmOrderPaymentUseCaseImpl implements ConfirmOrderPaymentUseCas
   @NonNull
   @Override
   public Completable confirmPayment() {
-    return confirmOrderPaymentGateway.confirmOrderPayment();
+    return confirmOrderPaymentGateway.confirmOrderPayment().observeOn(Schedulers.single());
   }
 }

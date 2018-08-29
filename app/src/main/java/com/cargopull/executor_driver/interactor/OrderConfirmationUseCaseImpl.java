@@ -2,6 +2,7 @@ package com.cargopull.executor_driver.interactor;
 
 import android.support.annotation.NonNull;
 import io.reactivex.Completable;
+import io.reactivex.schedulers.Schedulers;
 import javax.inject.Inject;
 
 public class OrderConfirmationUseCaseImpl implements OrderConfirmationUseCase {
@@ -22,8 +23,9 @@ public class OrderConfirmationUseCaseImpl implements OrderConfirmationUseCase {
   @Override
   public Completable sendDecision(boolean confirmed) {
     return orderGateway.getOrders().firstOrError()
+        .observeOn(Schedulers.single())
         .flatMapCompletable(
             order -> orderConfirmationGateway.sendDecision(order, confirmed)
-        );
+        ).observeOn(Schedulers.single());
   }
 }

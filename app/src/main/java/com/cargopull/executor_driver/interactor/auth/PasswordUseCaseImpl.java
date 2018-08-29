@@ -6,6 +6,7 @@ import com.cargopull.executor_driver.entity.LoginData;
 import com.cargopull.executor_driver.entity.Validator;
 import com.cargopull.executor_driver.interactor.DataReceiver;
 import io.reactivex.Completable;
+import io.reactivex.schedulers.Schedulers;
 import javax.inject.Inject;
 
 public class PasswordUseCaseImpl implements PasswordUseCase {
@@ -36,7 +37,8 @@ public class PasswordUseCaseImpl implements PasswordUseCase {
           return new LoginData(login, password == null ? "" : password);
         })
         .flatMapCompletable(loginData ->
-            afterValidation.concatWith(gateway.authorize(loginData))
+            afterValidation.observeOn(Schedulers.single())
+                .concatWith(gateway.authorize(loginData).observeOn(Schedulers.single()))
         );
   }
 }

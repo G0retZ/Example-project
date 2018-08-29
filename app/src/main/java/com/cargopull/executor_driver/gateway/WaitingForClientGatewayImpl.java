@@ -22,7 +22,6 @@ public class WaitingForClientGatewayImpl implements WaitingForClientGateway {
   @Override
   public Completable startTheOrder() {
     return stompClient.send(BuildConfig.TRIP_DESTINATION, "\"START_ORDER\"")
-        .subscribeOn(Schedulers.io())
-        .observeOn(Schedulers.single());
+        .subscribeOn(Schedulers.io());
   }
 }

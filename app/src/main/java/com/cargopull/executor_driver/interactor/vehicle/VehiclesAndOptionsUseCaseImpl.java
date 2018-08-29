@@ -8,6 +8,7 @@ import com.cargopull.executor_driver.utils.ErrorReporter;
 import io.reactivex.Completable;
 import io.reactivex.Observer;
 import io.reactivex.Single;
+import io.reactivex.schedulers.Schedulers;
 import java.util.NoSuchElementException;
 import javax.inject.Inject;
 
@@ -38,10 +39,12 @@ public class VehiclesAndOptionsUseCaseImpl implements VehiclesAndOptionsUseCase 
   @Override
   public Completable loadVehiclesAndOptions() {
     return lastUsedVehicleGateway.getLastUsedVehicleId()
+        .observeOn(Schedulers.single())
         .onErrorResumeNext(Single.just(-1L))
         .flatMapCompletable(
             vehicleId -> gateway
                 .getExecutorVehicles()
+                .observeOn(Schedulers.single())
                 .doOnSuccess(list -> {
                   if (list.isEmpty()) {
                     throw new EmptyListException("Нет ТС доступных для исполнителя.");

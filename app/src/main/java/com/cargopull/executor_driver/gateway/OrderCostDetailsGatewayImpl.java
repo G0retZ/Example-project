@@ -29,14 +29,13 @@ public class OrderCostDetailsGatewayImpl implements OrderCostDetailsGateway {
   public Flowable<OrderCostDetails> getOrderCostDetails() {
     return executorStateUseCase
         .getExecutorStates(false)
-        .subscribeOn(Schedulers.single())
-        .observeOn(Schedulers.computation())
+        .observeOn(Schedulers.io())
         .filter(executorState1 -> executorState1 == ExecutorState.PAYMENT_CONFIRMATION)
         .map(executorState1 -> {
           if (executorState1.getData() == null) {
             throw new DataMappingException("Ошибка маппинга: данные не должны быть null!");
           }
           return mapper.map(executorState1.getData());
-        }).observeOn(Schedulers.single());
+        });
   }
 }
