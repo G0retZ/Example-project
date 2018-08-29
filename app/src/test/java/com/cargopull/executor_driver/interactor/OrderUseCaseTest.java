@@ -9,7 +9,10 @@ import com.cargopull.executor_driver.UseCaseThreadTestRule;
 import com.cargopull.executor_driver.entity.Order;
 import com.cargopull.executor_driver.gateway.DataMappingException;
 import com.cargopull.executor_driver.utils.ErrorReporter;
+import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
+import io.reactivex.FlowableEmitter;
+import io.reactivex.FlowableOnSubscribe;
 import io.reactivex.subscribers.TestSubscriber;
 import org.junit.Before;
 import org.junit.ClassRule;
@@ -49,7 +52,7 @@ public class OrderUseCaseTest {
    * Должен запросить у гейтвея получение выполняемого заказа только раз.
    */
   @Test
-  public void askGatewayForOrders() {
+  public void askGatewayForOrdersOnlyOnce() {
     // Действие:
     useCase.getOrders().test();
     useCase.getOrders().test();
@@ -85,7 +88,8 @@ public class OrderUseCaseTest {
   @Test
   public void answerWithOrders() {
     // Дано:
-    when(gateway.getOrders()).thenReturn(Flowable.just(order, order1, order2));
+    when(gateway.getOrders())
+        .thenReturn(Flowable.just(order, order1, order2).concatWith(Flowable.never()));
 
     // Действие:
     TestSubscriber<Order> testSubscriber = useCase.getOrders().test();
@@ -93,6 +97,7 @@ public class OrderUseCaseTest {
     // Результат:
     testSubscriber.assertValues(order, order1, order2);
     testSubscriber.assertNoErrors();
+    testSubscriber.assertNotComplete();
   }
 
   /**
@@ -113,7 +118,7 @@ public class OrderUseCaseTest {
   }
 
   /**
-   * Должен завершить получение баланса исполнителя.
+   * Должен завершить получение заказов.
    */
   @Test
   public void answerComplete() {
@@ -127,5 +132,39 @@ public class OrderUseCaseTest {
     testSubscriber.assertComplete();
     testSubscriber.assertNoValues();
     testSubscriber.assertNoErrors();
+  }
+
+  /**
+   * Не должен возвращать полученые ранее заказы после завершения.
+   */
+  @Test
+  public void answerNothingAfterComplete() {
+    // Дано:
+    when(gateway.getOrders()).thenReturn(Flowable.create(new FlowableOnSubscribe<Order>() {
+      private boolean run;
+
+      @Override
+      public void subscribe(FlowableEmitter<Order> emitter) {
+        if (!run) {
+          emitter.onNext(order);
+          emitter.onNext(order1);
+          emitter.onNext(order2);
+          emitter.onComplete();
+          run = true;
+        }
+      }
+    }, BackpressureStrategy.BUFFER));
+
+    // Действие:
+    TestSubscriber<Order> testSubscriber = useCase.getOrders().test();
+    TestSubscriber<Order> testSubscriber1 = useCase.getOrders().test();
+
+    // Результат:
+    testSubscriber.assertValues(order, order1, order2);
+    testSubscriber.assertNoErrors();
+    testSubscriber.assertComplete();
+    testSubscriber1.assertNoValues();
+    testSubscriber1.assertNoErrors();
+    testSubscriber1.assertNotComplete();
   }
 }

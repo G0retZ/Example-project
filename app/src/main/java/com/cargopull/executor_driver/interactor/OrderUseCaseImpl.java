@@ -15,7 +15,7 @@ public class OrderUseCaseImpl implements OrderUseCase {
   @NonNull
   private final OrderGateway gateway;
   @Nullable
-  private Flowable<Order> executorStateFlowable;
+  private Flowable<Order> orderFlowable;
 
   @Inject
   public OrderUseCaseImpl(@NonNull ErrorReporter errorReporter, @NonNull OrderGateway gateway) {
@@ -26,13 +26,13 @@ public class OrderUseCaseImpl implements OrderUseCase {
   @NonNull
   @Override
   public Flowable<Order> getOrders() {
-    if (executorStateFlowable == null) {
-      executorStateFlowable = gateway.getOrders()
+    if (orderFlowable == null) {
+      orderFlowable = gateway.getOrders()
           .observeOn(Schedulers.single())
           .doOnError(errorReporter::reportError)
           .replay(1)
           .refCount();
     }
-    return executorStateFlowable;
+    return orderFlowable;
   }
 }
