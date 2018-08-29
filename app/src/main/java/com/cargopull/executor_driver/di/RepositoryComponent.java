@@ -1,9 +1,11 @@
 package com.cargopull.executor_driver.di;
 
 import android.support.annotation.NonNull;
+import com.cargopull.executor_driver.entity.OrderCostDetails;
 import com.cargopull.executor_driver.interactor.CallToClientGateway;
 import com.cargopull.executor_driver.interactor.CancelOrderGateway;
 import com.cargopull.executor_driver.interactor.CancelOrderReasonsGateway;
+import com.cargopull.executor_driver.interactor.CommonGateway;
 import com.cargopull.executor_driver.interactor.ConfirmOrderPaymentGateway;
 import com.cargopull.executor_driver.interactor.CurrentCostPollingGateway;
 import com.cargopull.executor_driver.interactor.ExecutorBalanceGateway;
@@ -14,7 +16,6 @@ import com.cargopull.executor_driver.interactor.GeoTrackingGateway;
 import com.cargopull.executor_driver.interactor.MissedOrderGateway;
 import com.cargopull.executor_driver.interactor.MovingToClientGateway;
 import com.cargopull.executor_driver.interactor.OrderConfirmationGateway;
-import com.cargopull.executor_driver.interactor.OrderCostDetailsGateway;
 import com.cargopull.executor_driver.interactor.OrderCurrentCostGateway;
 import com.cargopull.executor_driver.interactor.OrderGateway;
 import com.cargopull.executor_driver.interactor.OrderRouteGateway;
@@ -75,7 +76,7 @@ interface RepositoryComponent {
   OrderConfirmationGateway getPreOrderConfirmationGateway();
 
   @NonNull
-  OrderCostDetailsGateway getOrderCostDetailsGateway();
+  CommonGateway<OrderCostDetails> getOrderCostDetailsGateway();
 
   @NonNull
   OrderCurrentCostGateway getOrderCurrentCostGateway();

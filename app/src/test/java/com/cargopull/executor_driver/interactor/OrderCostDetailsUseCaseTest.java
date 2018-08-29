@@ -29,7 +29,7 @@ public class OrderCostDetailsUseCaseTest {
   @Mock
   private ErrorReporter errorReporter;
   @Mock
-  private OrderCostDetailsGateway gateway;
+  private CommonGateway<OrderCostDetails> gateway;
   @Mock
   private OrderCostDetails orderCostDetails;
   @Mock
@@ -37,7 +37,7 @@ public class OrderCostDetailsUseCaseTest {
 
   @Before
   public void setUp() {
-    when(gateway.getOrderCostDetails()).thenReturn(Flowable.never());
+    when(gateway.getData()).thenReturn(Flowable.never());
     useCase = new OrderCostDetailsUseCaseImpl(errorReporter, gateway);
   }
 
@@ -52,7 +52,7 @@ public class OrderCostDetailsUseCaseTest {
     useCase.getOrderCostDetails().test();
 
     // Результат:
-    verify(gateway, only()).getOrderCostDetails();
+    verify(gateway, only()).getData();
   }
 
   /* Проверяем отправку ошибок в репортер */
@@ -63,7 +63,7 @@ public class OrderCostDetailsUseCaseTest {
   @Test
   public void reportDataMappingError() {
     // Дано:
-    when(gateway.getOrderCostDetails()).thenReturn(Flowable.error(new DataMappingException()));
+    when(gateway.getData()).thenReturn(Flowable.error(new DataMappingException()));
 
     // Действие:
     useCase.getOrderCostDetails().test();
@@ -80,7 +80,7 @@ public class OrderCostDetailsUseCaseTest {
   @Test
   public void answerDataMappingError() {
     // Дано:
-    when(gateway.getOrderCostDetails()).thenReturn(Flowable.error(new DataMappingException()));
+    when(gateway.getData()).thenReturn(Flowable.error(new DataMappingException()));
 
     // Действие:
     TestSubscriber<OrderCostDetails> test = useCase.getOrderCostDetails().test();
@@ -97,7 +97,7 @@ public class OrderCostDetailsUseCaseTest {
   @Test
   public void answerWithOrders() {
     // Дано:
-    when(gateway.getOrderCostDetails()).thenReturn(Flowable.just(orderCostDetails,
+    when(gateway.getData()).thenReturn(Flowable.just(orderCostDetails,
         orderCostDetails1));
 
     // Действие:
