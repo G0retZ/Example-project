@@ -29,7 +29,7 @@ public class ExecutorBalanceUseCaseTest {
   @Mock
   private ErrorReporter errorReporter;
   @Mock
-  private ExecutorBalanceGateway gateway;
+  private CommonGateway<ExecutorBalance> gateway;
   @Mock
   private ExecutorBalance executorBalance;
   @Mock
@@ -39,7 +39,7 @@ public class ExecutorBalanceUseCaseTest {
 
   @Before
   public void setUp() {
-    when(gateway.loadExecutorBalance()).thenReturn(Flowable.never());
+    when(gateway.getData()).thenReturn(Flowable.never());
     useCase = new ExecutorBalanceUseCaseImpl(errorReporter, gateway);
   }
 
@@ -57,7 +57,7 @@ public class ExecutorBalanceUseCaseTest {
     useCase.getExecutorBalance().test();
 
     // Результат:
-    verify(gateway, only()).loadExecutorBalance();
+    verify(gateway, only()).getData();
   }
 
   /* Проверяем отправку ошибок в репортер */
@@ -68,7 +68,7 @@ public class ExecutorBalanceUseCaseTest {
   @Test
   public void reportError() {
     // Дано:
-    when(gateway.loadExecutorBalance()).thenReturn(Flowable.error(DataMappingException::new));
+    when(gateway.getData()).thenReturn(Flowable.error(DataMappingException::new));
 
     // Действие:
     useCase.getExecutorBalance().test();
@@ -85,7 +85,7 @@ public class ExecutorBalanceUseCaseTest {
   @Test
   public void answerWithExecutorBalance() {
     // Дано:
-    when(gateway.loadExecutorBalance())
+    when(gateway.getData())
         .thenReturn(Flowable.just(executorBalance, executorBalance2, executorBalance1));
 
     // Действие:
@@ -102,7 +102,7 @@ public class ExecutorBalanceUseCaseTest {
   @Test
   public void answerWithError() {
     // Дано:
-    when(gateway.loadExecutorBalance()).thenReturn(Flowable.error(DataMappingException::new));
+    when(gateway.getData()).thenReturn(Flowable.error(DataMappingException::new));
 
     // Действие:
     TestSubscriber<ExecutorBalance> testSubscriber = useCase.getExecutorBalance().test();
@@ -119,7 +119,7 @@ public class ExecutorBalanceUseCaseTest {
   @Test
   public void answerComplete() {
     // Дано:
-    when(gateway.loadExecutorBalance()).thenReturn(Flowable.empty());
+    when(gateway.getData()).thenReturn(Flowable.empty());
 
     // Действие:
     TestSubscriber<ExecutorBalance> testSubscriber = useCase.getExecutorBalance().test();

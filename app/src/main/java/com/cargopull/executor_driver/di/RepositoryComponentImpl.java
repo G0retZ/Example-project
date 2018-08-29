@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.cargopull.executor_driver.backend.geolocation.GeolocationCenter;
 import com.cargopull.executor_driver.entity.CancelOrderReason;
+import com.cargopull.executor_driver.entity.ExecutorBalance;
 import com.cargopull.executor_driver.entity.OrderCostDetails;
 import com.cargopull.executor_driver.gateway.CallToClientGatewayImpl;
 import com.cargopull.executor_driver.gateway.CancelOrderGatewayImpl;
@@ -15,7 +16,7 @@ import com.cargopull.executor_driver.gateway.CurrentCostPollingTimersApiMapper;
 import com.cargopull.executor_driver.gateway.CurrentVehicleOptionsGatewayImpl;
 import com.cargopull.executor_driver.gateway.ErrorMapper;
 import com.cargopull.executor_driver.gateway.ExecutorBalanceApiMapper;
-import com.cargopull.executor_driver.gateway.ExecutorBalanceGatewayImpl;
+import com.cargopull.executor_driver.gateway.ExecutorBalanceFilter;
 import com.cargopull.executor_driver.gateway.ExecutorStateApiMapper;
 import com.cargopull.executor_driver.gateway.ExecutorStateGatewayImpl;
 import com.cargopull.executor_driver.gateway.ExecutorStateSwitchGatewayImpl;
@@ -55,7 +56,6 @@ import com.cargopull.executor_driver.interactor.CancelOrderGateway;
 import com.cargopull.executor_driver.interactor.CommonGateway;
 import com.cargopull.executor_driver.interactor.ConfirmOrderPaymentGateway;
 import com.cargopull.executor_driver.interactor.CurrentCostPollingGateway;
-import com.cargopull.executor_driver.interactor.ExecutorBalanceGateway;
 import com.cargopull.executor_driver.interactor.ExecutorStateGateway;
 import com.cargopull.executor_driver.interactor.ExecutorStateSwitchGateway;
 import com.cargopull.executor_driver.interactor.GeoLocationGateway;
@@ -96,7 +96,7 @@ class RepositoryComponentImpl implements RepositoryComponent {
   @Nullable
   private CurrentCostPollingGateway currentCostPollingGateway;
   @Nullable
-  private ExecutorBalanceGateway executorBalanceGateway;
+  private CommonGateway<ExecutorBalance> executorBalanceGateway;
   @Nullable
   private ExecutorStateGateway executorStateGateway;
   @Nullable
@@ -217,11 +217,12 @@ class RepositoryComponentImpl implements RepositoryComponent {
 
   @NonNull
   @Override
-  public ExecutorBalanceGateway getExecutorBalanceGateway() {
+  public CommonGateway<ExecutorBalance> getExecutorBalanceGateway() {
     if (executorBalanceGateway == null) {
-      executorBalanceGateway = new ExecutorBalanceGatewayImpl(
+      executorBalanceGateway = new TopicGatewayImpl<>(
           backendComponent.getPersonalTopicListener(),
-          new ExecutorBalanceApiMapper()
+          new ExecutorBalanceApiMapper(),
+          new ExecutorBalanceFilter()
       );
     }
     return executorBalanceGateway;

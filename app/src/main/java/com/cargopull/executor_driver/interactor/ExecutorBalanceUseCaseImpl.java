@@ -13,13 +13,13 @@ public class ExecutorBalanceUseCaseImpl implements ExecutorBalanceUseCase {
   @NonNull
   private final ErrorReporter errorReporter;
   @NonNull
-  private final ExecutorBalanceGateway gateway;
+  private final CommonGateway<ExecutorBalance> gateway;
   @Nullable
   private Flowable<ExecutorBalance> cancelOrderReasonsFlowable;
 
   @Inject
   public ExecutorBalanceUseCaseImpl(@NonNull ErrorReporter errorReporter,
-      @NonNull ExecutorBalanceGateway gateway) {
+      @NonNull CommonGateway<ExecutorBalance> gateway) {
     this.errorReporter = errorReporter;
     this.gateway = gateway;
   }
@@ -28,7 +28,7 @@ public class ExecutorBalanceUseCaseImpl implements ExecutorBalanceUseCase {
   @Override
   public Flowable<ExecutorBalance> getExecutorBalance() {
     if (cancelOrderReasonsFlowable == null) {
-      cancelOrderReasonsFlowable = gateway.loadExecutorBalance()
+      cancelOrderReasonsFlowable = gateway.getData()
           .observeOn(Schedulers.single())
           .doOnError(errorReporter::reportError)
           .replay(1)

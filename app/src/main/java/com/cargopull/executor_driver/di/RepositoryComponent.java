@@ -2,13 +2,13 @@ package com.cargopull.executor_driver.di;
 
 import android.support.annotation.NonNull;
 import com.cargopull.executor_driver.entity.CancelOrderReason;
+import com.cargopull.executor_driver.entity.ExecutorBalance;
 import com.cargopull.executor_driver.entity.OrderCostDetails;
 import com.cargopull.executor_driver.interactor.CallToClientGateway;
 import com.cargopull.executor_driver.interactor.CancelOrderGateway;
 import com.cargopull.executor_driver.interactor.CommonGateway;
 import com.cargopull.executor_driver.interactor.ConfirmOrderPaymentGateway;
 import com.cargopull.executor_driver.interactor.CurrentCostPollingGateway;
-import com.cargopull.executor_driver.interactor.ExecutorBalanceGateway;
 import com.cargopull.executor_driver.interactor.ExecutorStateGateway;
 import com.cargopull.executor_driver.interactor.ExecutorStateSwitchGateway;
 import com.cargopull.executor_driver.interactor.GeoLocationGateway;
@@ -50,7 +50,7 @@ interface RepositoryComponent {
   CurrentCostPollingGateway getCurrentCostPollingGateway();
 
   @NonNull
-  ExecutorBalanceGateway getExecutorBalanceGateway();
+  CommonGateway<ExecutorBalance> getExecutorBalanceGateway();
 
   @NonNull
   ExecutorStateGateway getExecutorStateGateway();
