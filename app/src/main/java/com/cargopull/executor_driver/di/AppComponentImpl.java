@@ -119,40 +119,40 @@ public class AppComponentImpl implements AppComponent {
         singleShakePlayer
     );
     mainApplication.setServerConnectionViewModel(
-        presentationComponent.getServerConnectionViewModel(null)
+        presentationComponent.getServerConnectionViewModel()
     );
     mainApplication.setCancelOrderReasonsViewModel(
-        presentationComponent.getCancelOrderReasonsViewModel(null)
+        presentationComponent.getCancelOrderReasonsViewModel()
     );
     mainApplication.setBalanceViewModel(
-        presentationComponent.getBalanceViewModel(null)
+        presentationComponent.getBalanceViewModel()
     );
     mainApplication.setExecutorStateViewModel(
-        presentationComponent.getExecutorStateViewModel(null)
+        presentationComponent.getExecutorStateViewModel()
     );
     mainApplication.setOrderViewModel(
-        presentationComponent.getOrderViewModel(null)
+        presentationComponent.getOrderViewModel()
     );
     mainApplication.setPreOrderViewModel(
-        presentationComponent.getPreOrderViewModel(null)
+        presentationComponent.getPreOrderViewModel()
     );
     mainApplication.setOrderCostDetailsViewModel(
-        presentationComponent.getOrderCostDetailsViewModel(null)
+        presentationComponent.getOrderCostDetailsViewModel()
     );
     mainApplication.setGeoLocationViewModel(
-        presentationComponent.getGeoLocationViewModel(null)
+        presentationComponent.getGeoLocationViewModel()
     );
     mainApplication.setMissedOrderViewModel(
-        presentationComponent.getMissedOrderViewModel(null)
+        presentationComponent.getMissedOrderViewModel()
     );
     mainApplication.setUpdateMessageViewModel(
-        presentationComponent.getUpdateMessageViewModel(null)
+        presentationComponent.getUpdateMessageViewModel()
     );
     mainApplication.setCurrentCostPollingViewModel(
-        presentationComponent.getCurrentCostPollingViewModel(null)
+        presentationComponent.getCurrentCostPollingViewModel()
     );
     mainApplication.setServerTimeViewModel(
-        presentationComponent.getServerTimeViewModel(null)
+        presentationComponent.getServerTimeViewModel()
     );
     mainApplication.setAutoRouter(autoRouter);
     mainApplication.setLifeCycleCallbacks(autoRouter);
@@ -161,35 +161,31 @@ public class AppComponentImpl implements AppComponent {
   @Override
   public void inject(BaseActivity baseActivity) {
     baseActivity.setExecutorStateViewModel(
-        presentationComponent.getExecutorStateViewModel(null)
+        presentationComponent.getExecutorStateViewModel()
     );
     baseActivity.setUpdateMessageViewModel(
-        presentationComponent.getUpdateMessageViewModel(null)
+        presentationComponent.getUpdateMessageViewModel()
     );
     baseActivity.setAnnouncementViewModel(
-        presentationComponent.getAnnouncementViewModel(null)
+        presentationComponent.getAnnouncementViewModel()
     );
     baseActivity.setServerConnectionViewModel(
-        presentationComponent.getServerConnectionViewModel(null)
+        presentationComponent.getServerConnectionViewModel()
     );
     baseActivity.setServerTimeViewModel(
-        presentationComponent.getServerTimeViewModel(null)
+        presentationComponent.getServerTimeViewModel()
     );
   }
 
   @Override
   public void inject(FcmService fcmService) {
-    fcmService.setAnnouncementViewModel(
-        presentationComponent.getAnnouncementViewModel(null)
-    );
+    fcmService.setAnnouncementViewModel(presentationComponent.getAnnouncementViewModel());
   }
 
   @Override
   public void inject(LoginFragment loginFragment) {
     loginFragment.setAppSettings(appSettingsService);
-    loginFragment.setPhoneViewModel(
-        presentationComponent.getPhoneViewModel(loginFragment)
-    );
+    loginFragment.setPhoneViewModel(presentationComponent.getPhoneViewModel(loginFragment));
   }
 
   @Override
@@ -212,12 +208,8 @@ public class AppComponentImpl implements AppComponent {
 
   @Override
   public void inject(MapFragment mapFragment) {
-    mapFragment.setMapViewModel(
-        presentationComponent.getMapViewModel(mapFragment)
-    );
-    mapFragment.setGeoLocationViewModel(
-        presentationComponent.getGeoLocationViewModel(mapFragment)
-    );
+    mapFragment.setMapViewModel(presentationComponent.getMapViewModel(mapFragment));
+    mapFragment.setGeoLocationViewModel(presentationComponent.getGeoLocationViewModel());
   }
 
   @Override
@@ -270,9 +262,7 @@ public class AppComponentImpl implements AppComponent {
 
   @Override
   public void inject(ServicesFragment servicesFragment) {
-    servicesFragment.setServicesSliderViewModel(
-        presentationComponent.getServicesSliderViewModel(servicesFragment)
-    );
+    servicesFragment.setServicesSliderViewModel(presentationComponent.getServicesSliderViewModel());
     servicesFragment.setServicesViewModel(
         presentationComponent.getServicesViewModel(servicesFragment)
     );
@@ -283,16 +273,12 @@ public class AppComponentImpl implements AppComponent {
     driverOrderConfirmationFragment.setOrderConfirmationViewModel(
         presentationComponent.getOrderConfirmationViewModel(driverOrderConfirmationFragment)
     );
-    driverOrderConfirmationFragment.setOrderViewModel(
-        presentationComponent.getOrderViewModel(driverOrderConfirmationFragment)
-    );
+    driverOrderConfirmationFragment.setOrderViewModel(presentationComponent.getOrderViewModel());
   }
 
   @Override
   public void inject(ClientOrderConfirmationFragment clientOrderConfirmationFragment) {
-    clientOrderConfirmationFragment.setOrderViewModel(
-        presentationComponent.getOrderViewModel(clientOrderConfirmationFragment)
-    );
+    clientOrderConfirmationFragment.setOrderViewModel(presentationComponent.getOrderViewModel());
   }
 
   @Override
@@ -309,17 +295,13 @@ public class AppComponentImpl implements AppComponent {
     movingToClientFragment.setMovingToClientViewModel(
         presentationComponent.getMovingToClientViewModel(movingToClientFragment)
     );
-    movingToClientFragment.setOrderViewModel(
-        presentationComponent.getOrderViewModel(movingToClientFragment)
-    );
+    movingToClientFragment.setOrderViewModel(presentationComponent.getOrderViewModel());
     movingToClientFragment.setShakeItPlayer(singleShakePlayer);
   }
 
   @Override
   public void inject(MovingToClientDetailsFragment movingToClientDetailsFragment) {
-    movingToClientDetailsFragment.setOrderViewModel(
-        presentationComponent.getOrderViewModel(movingToClientDetailsFragment)
-    );
+    movingToClientDetailsFragment.setOrderViewModel(presentationComponent.getOrderViewModel());
   }
 
   @Override
@@ -334,9 +316,7 @@ public class AppComponentImpl implements AppComponent {
     waitingForClientFragment.setWaitingForClientViewModel(
         presentationComponent.getWaitingForClientViewModel(waitingForClientFragment)
     );
-    waitingForClientFragment.setOrderViewModel(
-        presentationComponent.getOrderViewModel(waitingForClientFragment)
-    );
+    waitingForClientFragment.setOrderViewModel(presentationComponent.getOrderViewModel());
     waitingForClientFragment.setShakeItPlayer(singleShakePlayer);
   }
 
@@ -366,9 +346,7 @@ public class AppComponentImpl implements AppComponent {
 
   @Override
   public void inject(OrderFulfillmentDetailsFragment orderFulfillmentDetailsFragment) {
-    orderFulfillmentDetailsFragment.setOrderViewModel(
-        presentationComponent.getOrderViewModel(orderFulfillmentDetailsFragment)
-    );
+    orderFulfillmentDetailsFragment.setOrderViewModel(presentationComponent.getOrderViewModel());
   }
 
   @Override
@@ -405,29 +383,23 @@ public class AppComponentImpl implements AppComponent {
         presentationComponent.getCancelOrderViewModel(cancelOrderDialogFragment)
     );
     cancelOrderDialogFragment.setCancelOrderReasonsViewModel(
-        presentationComponent.getCancelOrderReasonsViewModel(cancelOrderDialogFragment)
+        presentationComponent.getCancelOrderReasonsViewModel()
     );
   }
 
   @Override
   public void inject(BalanceFragment balanceFragment) {
-    balanceFragment.setBalanceViewModel(
-        presentationComponent.getBalanceViewModel(balanceFragment)
-    );
+    balanceFragment.setBalanceViewModel(presentationComponent.getBalanceViewModel());
   }
 
   @Override
   public void inject(BalanceSummaryFragment balanceSummaryFragment) {
-    balanceSummaryFragment.setBalanceViewModel(
-        presentationComponent.getBalanceViewModel(balanceSummaryFragment)
-    );
+    balanceSummaryFragment.setBalanceViewModel(presentationComponent.getBalanceViewModel());
   }
 
   @Override
   public void inject(MenuFragment menuFragment) {
-    menuFragment.setBalanceViewModel(
-        presentationComponent.getBalanceViewModel(menuFragment)
-    );
+    menuFragment.setBalanceViewModel(presentationComponent.getBalanceViewModel());
     menuFragment.setOnlineSwitchViewModel(
         presentationComponent.getExitOnlineSwitchViewModel(menuFragment)
     );
@@ -436,14 +408,14 @@ public class AppComponentImpl implements AppComponent {
   @Override
   public void inject(ServerConnectionFragment serverConnectionFragment) {
     serverConnectionFragment.setServerConnectionViewModel(
-        presentationComponent.getServerConnectionViewModel(serverConnectionFragment)
+        presentationComponent.getServerConnectionViewModel()
     );
   }
 
   @Override
   public void inject(OrderCostDetailsFragment orderCostDetailsFragment) {
     orderCostDetailsFragment.setOrderCostDetailsViewModel(
-        presentationComponent.getOrderCostDetailsViewModel(orderCostDetailsFragment)
+        presentationComponent.getOrderCostDetailsViewModel()
     );
     orderCostDetailsFragment.setConfirmOrderPaymentViewModel(
         presentationComponent.getConfirmOrderPaymentViewModel(orderCostDetailsFragment)
@@ -454,7 +426,7 @@ public class AppComponentImpl implements AppComponent {
   @Override
   public void inject(OrderCostDetailsOrderDetailsFragment orderCostDetailsOrderDetailsFragment) {
     orderCostDetailsOrderDetailsFragment.setOrderViewModel(
-        presentationComponent.getOrderViewModel(orderCostDetailsOrderDetailsFragment)
+        presentationComponent.getOrderViewModel()
     );
   }
 
@@ -474,7 +446,7 @@ public class AppComponentImpl implements AppComponent {
   public void inject(DriverPreOrderConfirmationFragment driverPreOrderConfirmationFragment) {
     driverPreOrderConfirmationFragment.setShakeItPlayer(singleShakePlayer);
     driverPreOrderConfirmationFragment.setOrderConfirmationViewModel(
-        presentationComponent.getOrderConfirmationViewModel(driverPreOrderConfirmationFragment)
+        presentationComponent.getPreOrderConfirmationViewModel(driverPreOrderConfirmationFragment)
     );
     driverPreOrderConfirmationFragment.setOrderViewModel(
         presentationComponent.getPOrderViewModel(driverPreOrderConfirmationFragment)

@@ -3,7 +3,6 @@ package com.cargopull.executor_driver.view;
 import android.animation.Animator;
 import android.animation.Animator.AnimatorListener;
 import android.animation.ObjectAnimator;
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -47,7 +46,6 @@ public class DriverOrderConfirmationFragment extends BaseFragment implements
   private TextView estimationText;
   private TextView serviceText;
   private Button acceptAction;
-  private Context context;
 
   @Inject
   public void setOrderConfirmationViewModel(
@@ -58,12 +56,6 @@ public class DriverOrderConfirmationFragment extends BaseFragment implements
   @Inject
   public void setOrderViewModel(@NonNull OrderViewModel orderViewModel) {
     this.orderViewModel = orderViewModel;
-  }
-
-  @Override
-  public void onAttach(Context context) {
-    super.onAttach(context);
-    this.context = context;
   }
 
   @Nullable
@@ -112,12 +104,6 @@ public class DriverOrderConfirmationFragment extends BaseFragment implements
         viewState.apply(this);
       }
     });
-  }
-
-  @Override
-  public void onDetach() {
-    super.onDetach();
-    context = null;
   }
 
   @Override

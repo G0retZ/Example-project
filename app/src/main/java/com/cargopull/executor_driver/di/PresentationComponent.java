@@ -44,10 +44,10 @@ import com.cargopull.executor_driver.presentation.waitingforclient.WaitingForCli
 interface PresentationComponent {
 
   @NonNull
-  AnnouncementViewModel getAnnouncementViewModel(@Nullable Fragment fragment);
+  AnnouncementViewModel getAnnouncementViewModel();
 
   @NonNull
-  BalanceViewModel getBalanceViewModel(@Nullable Fragment fragment);
+  BalanceViewModel getBalanceViewModel();
 
   @NonNull
   CallToClientViewModel getCallToClientViewModel(@Nullable Fragment fragment);
@@ -59,7 +59,7 @@ interface PresentationComponent {
   CancelOrderViewModel getCancelOrderViewModel(@Nullable Fragment fragment);
 
   @NonNull
-  CancelOrderReasonsViewModel getCancelOrderReasonsViewModel(@Nullable Fragment fragment);
+  CancelOrderReasonsViewModel getCancelOrderReasonsViewModel();
 
   @NonNull
   ChooseVehicleViewModel getChooseVehicleViewModel(@Nullable Fragment fragment);
@@ -81,19 +81,19 @@ interface PresentationComponent {
   ConfirmOrderPaymentViewModel getConfirmOrderPaymentViewModel(@Nullable Fragment fragment);
 
   @NonNull
-  CurrentCostPollingViewModel getCurrentCostPollingViewModel(@Nullable Fragment fragment);
+  CurrentCostPollingViewModel getCurrentCostPollingViewModel();
 
   @NonNull
-  ExecutorStateViewModel getExecutorStateViewModel(@Nullable Fragment fragment);
+  ExecutorStateViewModel getExecutorStateViewModel();
 
   @NonNull
-  GeoLocationViewModel getGeoLocationViewModel(@Nullable Fragment fragment);
+  GeoLocationViewModel getGeoLocationViewModel();
 
   @NonNull
   MapViewModel getMapViewModel(@Nullable Fragment fragment);
 
   @NonNull
-  MissedOrderViewModel getMissedOrderViewModel(@Nullable Fragment fragment);
+  MissedOrderViewModel getMissedOrderViewModel();
 
   @NonNull
   MovingToClientViewModel getMovingToClientViewModel(@Nullable Fragment fragment);
@@ -114,10 +114,10 @@ interface PresentationComponent {
   OnlineSwitchViewModel getExitOnlineSwitchViewModel(@Nullable Fragment fragment);
 
   @NonNull
-  OrderCostDetailsViewModel getOrderCostDetailsViewModel(@Nullable Fragment fragment);
+  OrderCostDetailsViewModel getOrderCostDetailsViewModel();
 
   @NonNull
-  OrderViewModel getOrderViewModel(@Nullable Fragment fragment);
+  OrderViewModel getOrderViewModel();
 
   @NonNull
   OrderViewModel getPOrderViewModel(@Nullable Fragment fragment);
@@ -141,19 +141,19 @@ interface PresentationComponent {
   PhoneViewModel getPhoneViewModel(@Nullable Fragment fragment);
 
   @NonNull
-  PreOrderViewModel getPreOrderViewModel(@Nullable Fragment fragment);
+  PreOrderViewModel getPreOrderViewModel();
 
   @NonNull
   SelectedVehicleViewModel getSelectedVehicleViewModel(@Nullable Fragment fragment);
 
   @NonNull
-  ServerConnectionViewModel getServerConnectionViewModel(@Nullable Fragment fragment);
+  ServerConnectionViewModel getServerConnectionViewModel();
 
   @NonNull
-  ServerTimeViewModel getServerTimeViewModel(@Nullable Fragment fragment);
+  ServerTimeViewModel getServerTimeViewModel();
 
   @NonNull
-  ServicesSliderViewModel getServicesSliderViewModel(@Nullable Fragment fragment);
+  ServicesSliderViewModel getServicesSliderViewModel();
 
   @NonNull
   ServicesViewModel getServicesViewModel(@Nullable Fragment fragment);
@@ -162,7 +162,7 @@ interface PresentationComponent {
   SmsButtonViewModel getSmsButtonViewModel(@Nullable Fragment fragment);
 
   @NonNull
-  UpdateMessageViewModel getUpdateMessageViewModel(@Nullable Fragment fragment);
+  UpdateMessageViewModel getUpdateMessageViewModel();
 
   @NonNull
   VehicleOptionsViewModel getVehicleOptionsViewModel(@Nullable Fragment fragment);

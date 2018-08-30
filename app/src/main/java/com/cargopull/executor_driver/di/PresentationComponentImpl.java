@@ -134,7 +134,7 @@ class PresentationComponentImpl implements PresentationComponent {
 
   @NonNull
   @Override
-  public AnnouncementViewModel getAnnouncementViewModel(@Nullable Fragment fragment) {
+  public AnnouncementViewModel getAnnouncementViewModel() {
     if (announcementViewModel == null) {
       announcementViewModel = new AnnouncementViewModelImpl();
     }
@@ -143,7 +143,7 @@ class PresentationComponentImpl implements PresentationComponent {
 
   @NonNull
   @Override
-  public BalanceViewModel getBalanceViewModel(@Nullable Fragment fragment) {
+  public BalanceViewModel getBalanceViewModel() {
     if (balanceViewModel == null) {
       balanceViewModel = new BalanceViewModelImpl(interactorComponent.getExecutorBalanceUseCase());
     }
@@ -191,7 +191,7 @@ class PresentationComponentImpl implements PresentationComponent {
 
   @NonNull
   @Override
-  public CancelOrderReasonsViewModel getCancelOrderReasonsViewModel(@Nullable Fragment fragment) {
+  public CancelOrderReasonsViewModel getCancelOrderReasonsViewModel() {
     if (cancelOrderReasonsViewModel == null) {
       cancelOrderReasonsViewModel = new CancelOrderReasonsViewModelImpl(
           interactorComponent.getCancelOrderReasonsUseCase()
@@ -281,7 +281,7 @@ class PresentationComponentImpl implements PresentationComponent {
 
   @NonNull
   @Override
-  public CurrentCostPollingViewModel getCurrentCostPollingViewModel(@Nullable Fragment fragment) {
+  public CurrentCostPollingViewModel getCurrentCostPollingViewModel() {
     if (currentCostPollingViewModel == null) {
       currentCostPollingViewModel = new CurrentCostPollingViewModelImpl(
           interactorComponent.getCurrentCostPollingUseCase()
@@ -292,7 +292,7 @@ class PresentationComponentImpl implements PresentationComponent {
 
   @NonNull
   @Override
-  public ExecutorStateViewModel getExecutorStateViewModel(@Nullable Fragment fragment) {
+  public ExecutorStateViewModel getExecutorStateViewModel() {
     if (executorStateViewModel == null) {
       executorStateViewModel = new ExecutorStateViewModelImpl(
           interactorComponent.getExecutorStateUseCase()
@@ -303,7 +303,7 @@ class PresentationComponentImpl implements PresentationComponent {
 
   @NonNull
   @Override
-  public GeoLocationViewModel getGeoLocationViewModel(@Nullable Fragment fragment) {
+  public GeoLocationViewModel getGeoLocationViewModel() {
     if (geoLocationViewModel == null) {
       geoLocationViewModel = new GeoLocationViewModelImpl(
           interactorComponent.getGeoLocationUseCase()
@@ -327,7 +327,7 @@ class PresentationComponentImpl implements PresentationComponent {
 
   @NonNull
   @Override
-  public MissedOrderViewModel getMissedOrderViewModel(@Nullable Fragment fragment) {
+  public MissedOrderViewModel getMissedOrderViewModel() {
     if (missedOrderViewModel == null) {
       missedOrderViewModel = new MissedOrderViewModelImpl(
           interactorComponent.getMissedOrderUseCase()
@@ -422,7 +422,7 @@ class PresentationComponentImpl implements PresentationComponent {
 
   @NonNull
   @Override
-  public OrderCostDetailsViewModel getOrderCostDetailsViewModel(@Nullable Fragment fragment) {
+  public OrderCostDetailsViewModel getOrderCostDetailsViewModel() {
     if (orderCostDetailsViewModel == null) {
       orderCostDetailsViewModel = new OrderCostDetailsViewModelImpl(
           interactorComponent.getOrderCostDetailsUseCase()
@@ -433,7 +433,7 @@ class PresentationComponentImpl implements PresentationComponent {
 
   @NonNull
   @Override
-  public OrderViewModel getOrderViewModel(@Nullable Fragment fragment) {
+  public OrderViewModel getOrderViewModel() {
     if (orderViewModel == null) {
       orderViewModel = new OrderViewModelImpl(
           interactorComponent.getOrderUseCase(),
@@ -536,7 +536,7 @@ class PresentationComponentImpl implements PresentationComponent {
 
   @NonNull
   @Override
-  public PreOrderViewModel getPreOrderViewModel(@Nullable Fragment fragment) {
+  public PreOrderViewModel getPreOrderViewModel() {
     if (preOrderViewModel == null) {
       preOrderViewModel = new PreOrderViewModelImpl(interactorComponent.getPreOrderUseCase());
     }
@@ -558,7 +558,7 @@ class PresentationComponentImpl implements PresentationComponent {
 
   @NonNull
   @Override
-  public ServerConnectionViewModel getServerConnectionViewModel(@Nullable Fragment fragment) {
+  public ServerConnectionViewModel getServerConnectionViewModel() {
     if (serverConnectionViewModel == null) {
       serverConnectionViewModel = new ServerConnectionViewModelImpl(
           interactorComponent.getServerConnectionUseCase()
@@ -569,7 +569,7 @@ class PresentationComponentImpl implements PresentationComponent {
 
   @NonNull
   @Override
-  public ServerTimeViewModel getServerTimeViewModel(@Nullable Fragment fragment) {
+  public ServerTimeViewModel getServerTimeViewModel() {
     if (serverTimeViewModel == null) {
       serverTimeViewModel = new ServerTimeViewModelImpl(interactorComponent.getServerTimeUseCase());
     }
@@ -578,7 +578,7 @@ class PresentationComponentImpl implements PresentationComponent {
 
   @NonNull
   @Override
-  public ServicesSliderViewModel getServicesSliderViewModel(@Nullable Fragment fragment) {
+  public ServicesSliderViewModel getServicesSliderViewModel() {
     if (servicesSliderViewModel == null) {
       servicesSliderViewModel = new ServicesSliderViewModelImpl(servicesListItems);
     }
@@ -596,7 +596,7 @@ class PresentationComponentImpl implements PresentationComponent {
         ServicesViewModelImpl.class,
         new ServicesViewModelImpl(
             interactorComponent.getServicesUseCase(),
-            getServicesSliderViewModel(fragment),
+            getServicesSliderViewModel(),
             servicesListItems
         )
     );
@@ -617,7 +617,7 @@ class PresentationComponentImpl implements PresentationComponent {
 
   @NonNull
   @Override
-  public UpdateMessageViewModel getUpdateMessageViewModel(@Nullable Fragment fragment) {
+  public UpdateMessageViewModel getUpdateMessageViewModel() {
     if (updateMessageViewModel == null) {
       updateMessageViewModel = new UpdateMessageViewModelImpl(
           interactorComponent.getUpdateMessageUseCase()

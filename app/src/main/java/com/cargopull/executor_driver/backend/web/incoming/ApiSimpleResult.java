@@ -6,6 +6,7 @@ import com.google.gson.annotations.SerializedName;
 /**
  * Объект простого ответа из АПИ об успешной или неуспешной операции с текстом сообщения.
  */
+@SuppressWarnings("unused")
 public class ApiSimpleResult {
 
   @SerializedName("code")

@@ -6,7 +6,7 @@ import com.cargopull.executor_driver.backend.websocket.TopicListener;
 import io.reactivex.annotations.NonNull;
 import ua.naiksoftware.stomp.client.StompClient;
 
-public interface BackendComponent {
+interface BackendComponent {
 
   @NonNull
   ApiService getApiService();

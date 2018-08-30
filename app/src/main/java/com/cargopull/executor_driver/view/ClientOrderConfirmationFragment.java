@@ -1,6 +1,5 @@
 package com.cargopull.executor_driver.view;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -37,13 +36,6 @@ public class ClientOrderConfirmationFragment extends BaseFragment implements Ord
   private TextView cargoDescText;
   private TextView optionsTitleText;
   private TextView optionsText;
-  private Context context;
-
-  @Override
-  public void onAttach(Context context) {
-    super.onAttach(context);
-    this.context = context;
-  }
 
   @Inject
   public void setOrderViewModel(@NonNull OrderViewModel orderViewModel) {
@@ -90,12 +82,6 @@ public class ClientOrderConfirmationFragment extends BaseFragment implements Ord
         navigate(destination);
       }
     });
-  }
-
-  @Override
-  public void onDetach() {
-    super.onDetach();
-    context = null;
   }
 
   @Override
