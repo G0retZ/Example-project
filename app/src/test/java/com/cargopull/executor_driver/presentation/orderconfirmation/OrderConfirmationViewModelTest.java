@@ -288,7 +288,7 @@ public class OrderConfirmationViewModelTest {
   }
 
   /**
-   * Должен вернуть состояние вида результата с сообщением для успешного отказа.
+   * Не должен давать новых состояний вида для успешного отказа.
    */
   @Test
   public void setResultViewStateToLiveDataForDeclineWithoutOrder() {
@@ -303,7 +303,6 @@ public class OrderConfirmationViewModelTest {
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(any(OrderConfirmationViewStateIdle.class));
     inOrder.verify(viewStateObserver).onChanged(any(OrderConfirmationViewStatePending.class));
-    inOrder.verify(viewStateObserver).onChanged(new OrderConfirmationViewStateResult("12"));
     verifyNoMoreInteractions(viewStateObserver);
   }
 
@@ -367,7 +366,7 @@ public class OrderConfirmationViewModelTest {
   }
 
   /**
-   * Не должен никуда переходить после отказа.
+   * Должен сразу перейти к закрытию карточки после успешного отказа.
    */
   @Test
   public void doNotSetNavigateForDeclineSuccess() {
@@ -379,7 +378,7 @@ public class OrderConfirmationViewModelTest {
     viewModel.declineOrder();
 
     // Результат:
-    verifyZeroInteractions(navigateObserver);
+    verify(navigateObserver, only()).onChanged(OrderConfirmationNavigate.CLOSE);
   }
 
   /**

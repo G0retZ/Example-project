@@ -77,7 +77,7 @@ public class OrderConfirmationViewModelImpl extends ViewModel implements
     disposable = orderConfirmationUseCase.sendDecision(false)
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(
-            message -> viewStateLiveData.postValue(new OrderConfirmationViewStateResult(message)),
+            message -> navigateLiveData.postValue(OrderConfirmationNavigate.CLOSE),
             t -> {
               if (t instanceof PreOrderExpiredException) {
                 viewStateLiveData.postValue(new OrderConfirmationViewStateResult(t.getMessage()));

@@ -24,10 +24,10 @@ public class DriverPreOrderConfirmationActivity extends BaseActivity {
   public void navigate(@NonNull String destination) {
     switch (destination) {
       case OrderConfirmationNavigate.CLOSE:
-        onBackPressed();
+        finish();
         break;
       case OrderNavigate.CLOSE:
-        onBackPressed();
+        finish();
         break;
       default:
         super.navigate(destination);
