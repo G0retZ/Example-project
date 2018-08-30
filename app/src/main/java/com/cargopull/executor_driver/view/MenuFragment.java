@@ -17,6 +17,8 @@ import com.cargopull.executor_driver.presentation.balance.BalanceViewModel;
 import com.cargopull.executor_driver.presentation.menu.MenuNavigate;
 import com.cargopull.executor_driver.presentation.onlineswitch.OnlineSwitchViewActions;
 import com.cargopull.executor_driver.presentation.onlineswitch.OnlineSwitchViewModel;
+import com.cargopull.executor_driver.presentation.preorder.PreOrderViewActions;
+import com.cargopull.executor_driver.presentation.preorder.PreOrderViewModel;
 import java.text.DecimalFormat;
 import javax.inject.Inject;
 
@@ -25,11 +27,13 @@ import javax.inject.Inject;
  */
 
 public class MenuFragment extends BaseFragment implements BalanceViewActions,
-    OnlineSwitchViewActions {
+    OnlineSwitchViewActions, PreOrderViewActions {
 
   private BalanceViewModel balanceViewModel;
   private OnlineSwitchViewModel onlineSwitchViewModel;
+  private PreOrderViewModel preOrderViewModel;
   private TextView balanceAmount;
+  private TextView preOrderAction;
   private boolean nowOnline;
 
   @Inject
@@ -40,6 +44,11 @@ public class MenuFragment extends BaseFragment implements BalanceViewActions,
   @Inject
   public void setOnlineSwitchViewModel(@NonNull OnlineSwitchViewModel onlineSwitchViewModel) {
     this.onlineSwitchViewModel = onlineSwitchViewModel;
+  }
+
+  @Inject
+  public void setPreOrderViewModel(PreOrderViewModel preOrderViewModel) {
+    this.preOrderViewModel = preOrderViewModel;
   }
 
   @Nullable
@@ -65,6 +74,8 @@ public class MenuFragment extends BaseFragment implements BalanceViewActions,
             .show()
     );
     balanceAmount = view.findViewById(R.id.balanceAmount);
+    preOrderAction = view.findViewById(R.id.preOrder);
+    preOrderAction.setOnClickListener(v -> preOrderViewModel.preOrderConsumed());
     return view;
   }
 
@@ -93,6 +104,16 @@ public class MenuFragment extends BaseFragment implements BalanceViewActions,
       }
     });
     onlineSwitchViewModel.getNavigationLiveData().observe(this, destination -> {
+      if (destination != null) {
+        navigate(destination);
+      }
+    });
+    preOrderViewModel.getViewStateLiveData().observe(this, viewState -> {
+      if (viewState != null) {
+        viewState.apply(this);
+      }
+    });
+    preOrderViewModel.getNavigationLiveData().observe(this, destination -> {
       if (destination != null) {
         navigate(destination);
       }
@@ -142,5 +163,10 @@ public class MenuFragment extends BaseFragment implements BalanceViewActions,
   @Override
   public void showSwitchPending(boolean pending) {
     showPending(pending, toString() + "1");
+  }
+
+  @Override
+  public void showPreOrderAvailable(boolean show) {
+    preOrderAction.setEnabled(show);
   }
 }

@@ -403,6 +403,7 @@ public class AppComponentImpl implements AppComponent {
     menuFragment.setOnlineSwitchViewModel(
         presentationComponent.getExitOnlineSwitchViewModel(menuFragment)
     );
+    menuFragment.setPreOrderViewModel(presentationComponent.getPreOrderViewModel());
   }
 
   @Override
