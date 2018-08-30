@@ -24,6 +24,7 @@ import com.cargopull.executor_driver.presentation.executorstate.ExecutorStateVie
 import com.cargopull.executor_driver.presentation.geolocation.GeoLocationViewModel;
 import com.cargopull.executor_driver.presentation.missedorder.MissedOrderViewActions;
 import com.cargopull.executor_driver.presentation.missedorder.MissedOrderViewModel;
+import com.cargopull.executor_driver.presentation.ordecostdetails.OrderCostDetailsViewModel;
 import com.cargopull.executor_driver.presentation.order.OrderViewModel;
 import com.cargopull.executor_driver.presentation.preorder.PreOrderNavigate;
 import com.cargopull.executor_driver.presentation.preorder.PreOrderViewActions;
@@ -64,6 +65,8 @@ public class MainApplication extends Application implements ServerConnectionView
   private OrderViewModel orderViewModel;
   @Nullable
   private PreOrderViewModel preOrderViewModel;
+  @Nullable
+  private OrderCostDetailsViewModel orderCostDetailsViewModel;
   @Nullable
   private GeoLocationViewModel geoLocationViewModel;
   @Nullable
@@ -109,6 +112,12 @@ public class MainApplication extends Application implements ServerConnectionView
   @Inject
   public void setPreOrderViewModel(@Nullable PreOrderViewModel preOrderViewModel) {
     this.preOrderViewModel = preOrderViewModel;
+  }
+
+  @Inject
+  public void setOrderCostDetailsViewModel(
+      @Nullable OrderCostDetailsViewModel orderCostDetailsViewModel) {
+    this.orderCostDetailsViewModel = orderCostDetailsViewModel;
   }
 
   @Inject
@@ -169,7 +178,8 @@ public class MainApplication extends Application implements ServerConnectionView
         executorStateViewModel == null || geoLocationViewModel == null
         || missedOrderViewModel == null || updateMessageViewModel == null
         || serverConnectionViewModel == null || currentCostPollingViewModel == null
-        || serverTimeViewModel == null || orderViewModel == null || preOrderViewModel == null) {
+        || serverTimeViewModel == null || orderViewModel == null || preOrderViewModel == null
+        || orderCostDetailsViewModel == null) {
       throw new RuntimeException("Shit! WTF?!");
     }
     serverConnectionViewModel.getViewStateLiveData().observeForever(viewState -> {
@@ -193,6 +203,7 @@ public class MainApplication extends Application implements ServerConnectionView
     executorStateViewModel.getNavigationLiveData().observeForever(this::navigate);
     orderViewModel.getNavigationLiveData().observeForever(this::navigate);
     preOrderViewModel.getNavigationLiveData().observeForever(this::navigate);
+    orderCostDetailsViewModel.getNavigationLiveData().observeForever(this::navigate);
     geoLocationViewModel.getNavigationLiveData().observeForever(this::navigate);
     currentCostPollingViewModel.getNavigationLiveData().observeForever(this::navigate);
     serverTimeViewModel.getNavigationLiveData().observeForever(this::navigate);

@@ -136,6 +136,9 @@ public class AppComponentImpl implements AppComponent {
     mainApplication.setPreOrderViewModel(
         presentationComponent.getPreOrderViewModel(null)
     );
+    mainApplication.setOrderCostDetailsViewModel(
+        presentationComponent.getOrderCostDetailsViewModel(null)
+    );
     mainApplication.setGeoLocationViewModel(
         presentationComponent.getGeoLocationViewModel(null)
     );
