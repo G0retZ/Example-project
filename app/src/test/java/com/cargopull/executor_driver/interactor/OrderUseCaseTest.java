@@ -135,7 +135,7 @@ public class OrderUseCaseTest {
   }
 
   /**
-   * Не должен возвращать полученые ранее заказы после завершения.
+   * Не должен возвращать полученые ранее заказы после ошибки.
    */
   @Test
   public void answerNothingAfterComplete() {
@@ -149,7 +149,7 @@ public class OrderUseCaseTest {
           emitter.onNext(order);
           emitter.onNext(order1);
           emitter.onNext(order2);
-          emitter.onComplete();
+          emitter.onError(new Exception());
           run = true;
         }
       }
@@ -161,8 +161,8 @@ public class OrderUseCaseTest {
 
     // Результат:
     testSubscriber.assertValues(order, order1, order2);
-    testSubscriber.assertNoErrors();
-    testSubscriber.assertComplete();
+    testSubscriber.assertError(Exception.class);
+    testSubscriber.assertNotComplete();
     testSubscriber1.assertNoValues();
     testSubscriber1.assertNoErrors();
     testSubscriber1.assertNotComplete();

@@ -10,6 +10,7 @@ import android.arch.core.executor.testing.InstantTaskExecutorRule;
 import android.arch.lifecycle.Observer;
 import com.cargopull.executor_driver.ViewModelThreadTestRule;
 import com.cargopull.executor_driver.entity.Order;
+import com.cargopull.executor_driver.entity.PreOrderExpiredException;
 import com.cargopull.executor_driver.gateway.DataMappingException;
 import com.cargopull.executor_driver.interactor.OrderUseCase;
 import com.cargopull.executor_driver.presentation.CommonNavigate;
@@ -152,7 +153,7 @@ public class OrderViewModelTest {
   }
 
   /**
-   * Должен вернуть состояния вида "заказ истек" при завершении.
+   * Должен вернуть состояния вида "заказ истек" при получении соответствующей ошибки.
    */
   @Test
   public void setExpiredViewStateToLiveData() {
@@ -169,13 +170,12 @@ public class OrderViewModelTest {
                 if (!run) {
                   run = true;
                   emitter.onNext(order);
-                  emitter.onComplete();
+                  emitter.onError(new PreOrderExpiredException());
                 } else {
                   emitter.onNext(order2);
                 }
               }
             }
-//        )
         ).startWith(publishSubject)
             .toFlowable(BackpressureStrategy.BUFFER)
     );
