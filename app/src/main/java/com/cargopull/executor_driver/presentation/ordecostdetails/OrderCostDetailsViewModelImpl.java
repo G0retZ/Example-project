@@ -36,12 +36,12 @@ public class OrderCostDetailsViewModelImpl extends ViewModel implements
     viewStateLiveData = new MutableLiveData<>();
     navigateLiveData = new SingleLiveEvent<>();
     viewStateLiveData.postValue(new OrderCostDetailsViewStatePending(lastViewState));
+    loadOrders();
   }
 
   @NonNull
   @Override
   public LiveData<ViewState<OrderCostDetailsViewActions>> getViewStateLiveData() {
-    loadOrders();
     return viewStateLiveData;
   }
 
