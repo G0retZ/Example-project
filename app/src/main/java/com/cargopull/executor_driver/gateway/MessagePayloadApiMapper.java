@@ -6,6 +6,7 @@ import ua.naiksoftware.stomp.client.StompMessage;
 /**
  * Извлекаем сообщение сервера.
  */
+// TODO: https://jira.capsrv.xyz/browse/RUCAP-1917
 public class MessagePayloadApiMapper implements Mapper<StompMessage, String> {
 
   @NonNull

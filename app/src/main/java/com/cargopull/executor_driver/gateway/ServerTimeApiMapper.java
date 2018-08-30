@@ -6,6 +6,7 @@ import ua.naiksoftware.stomp.client.StompMessage;
 /**
  * Преобразуем текст из хедера ответа сервера в число.
  */
+// TODO: https://jira.capsrv.xyz/browse/RUCAP-1918
 public class ServerTimeApiMapper implements Mapper<StompMessage, Long> {
 
   @NonNull

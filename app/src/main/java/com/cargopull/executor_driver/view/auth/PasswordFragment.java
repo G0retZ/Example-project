@@ -237,7 +237,7 @@ public class PasswordFragment extends BaseFragment implements CodeViewActions,
     if (show) {
       networkErrorText.setText(R.string.sms_network_error);
     }
-    // TODO: далее костылек временный
+    // TODO: https://jira.capsrv.xyz/browse/RUCAP-1920
     codeInputCaption.setVisibility(show ? View.GONE : View.VISIBLE);
     codeInput.setVisibility(show ? View.GONE : View.VISIBLE);
     codeInputUnderline.setVisibility(show ? View.GONE : View.VISIBLE);
