@@ -202,7 +202,6 @@ public class MainApplication extends Application implements ServerConnectionView
     balanceViewModel.getNavigationLiveData().observeForever(this::navigate);
     executorStateViewModel.getNavigationLiveData().observeForever(this::navigate);
     orderViewModel.getNavigationLiveData().observeForever(this::navigate);
-    preOrderViewModel.getNavigationLiveData().observeForever(this::navigate);
     orderCostDetailsViewModel.getNavigationLiveData().observeForever(this::navigate);
     geoLocationViewModel.getNavigationLiveData().observeForever(this::navigate);
     currentCostPollingViewModel.getNavigationLiveData().observeForever(this::navigate);
@@ -515,6 +514,7 @@ public class MainApplication extends Application implements ServerConnectionView
   public void showPreOrderAvailable(boolean show) {
     if (notificationManager != null) {
       if (show) {
+        navigate(PreOrderNavigate.ORDER_APPROVAL);
         Builder builder = new Builder(this, "state_channel")
             .setContentText(getString(R.string.new_pre_order))
             .setContentTitle(getString(R.string.new_pre_order_message))

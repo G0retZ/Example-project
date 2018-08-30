@@ -152,6 +152,12 @@ public class AutoRouterImpl implements ActivityLifecycleCallbacks, AutoRouter {
         goToGeoResolver = true;
         tryToResolveGeo();
         break;
+      case PreOrderNavigate.ORDER_APPROVAL:
+        if (lastRouteAction == null || !lastRouteAction.equals(CommonNavigate.SERVER_DATA_ERROR)) {
+          lastRouteAction = destination;
+        }
+        tryToNavigate();
+        break;
       default:
         if (lastRouteAction == null || !lastRouteAction.equals(CommonNavigate.SERVER_DATA_ERROR)) {
           if (splashRouteAction != null && destination.equals(ExecutorStateNavigate.MAP_ONLINE)) {
@@ -270,7 +276,6 @@ public class AutoRouterImpl implements ActivityLifecycleCallbacks, AutoRouter {
       case PreOrderNavigate.ORDER_APPROVAL:
         currentActivity.startActivity(
             new Intent(currentActivity, DriverPreOrderConfirmationActivity.class)
-                .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK)
         );
         break;
       default:
