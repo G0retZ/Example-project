@@ -35,7 +35,7 @@ public interface ApiService {
   /*
    *  Запрос тепловой карты.
    */
-  @GET("geoMap")
+  @GET("api/public/v1/geoMap")
   Single<String> getHeatMap();
 
   /*
