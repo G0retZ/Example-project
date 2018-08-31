@@ -175,10 +175,28 @@ public class OrderConfirmationUseCaseTest {
    * Должен ответить ошибкой не актуальности заказа на подтверждение.
    */
   @Test
-  public void answerOrderExpiredErrorForAccept() {
+  public void answerOrderExpiredErrorForAcceptIfSecondValue() {
     // Дано:
     when(orderUseCase.getOrders())
         .thenReturn(Flowable.just(order, order2).concatWith(Flowable.never()));
+
+    // Действие:
+    TestObserver<String> test = useCase.sendDecision(true).test();
+
+    // Результат:
+    test.assertError(PreOrderExpiredException.class);
+    test.assertNoValues();
+    test.assertNotComplete();
+  }
+
+  /**
+   * Должен ответить ошибкой не актуальности заказа на подтверждение.
+   */
+  @Test
+  public void answerOrderExpiredErrorForAcceptIfErrorAfterValue() {
+    // Дано:
+    when(orderUseCase.getOrders())
+        .thenReturn(Flowable.just(order).concatWith(Flowable.error(PreOrderExpiredException::new)));
 
     // Действие:
     TestObserver<String> test = useCase.sendDecision(true).test();
