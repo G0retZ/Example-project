@@ -175,7 +175,6 @@ public class OrderFulfillmentDetailsFragment extends BaseFragment implements Ord
   }
 
   @Override
-  public void showOrderExpired(boolean show) {
-
+  public void showOrderExpiredMessage(@Nullable String message) {
   }
 }

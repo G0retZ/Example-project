@@ -63,7 +63,10 @@ public class OrderViewModelImpl extends ViewModel implements
           .observeOn(AndroidSchedulers.mainThread())
           .doOnError(throwable -> {
             if (throwable instanceof PreOrderExpiredException) {
-              viewStateLiveData.postValue(new OrderViewStateExpired(lastViewState));
+              String message = throwable.getMessage();
+              if (message != null) {
+                viewStateLiveData.postValue(new OrderViewStateExpired(lastViewState, message));
+              }
             }
           })
           .retry(throwable -> throwable instanceof PreOrderExpiredException)

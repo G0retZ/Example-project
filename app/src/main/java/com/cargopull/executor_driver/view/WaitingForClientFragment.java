@@ -310,7 +310,6 @@ public class WaitingForClientFragment extends BaseFragment implements
   }
 
   @Override
-  public void showOrderExpired(boolean show) {
-
+  public void showOrderExpiredMessage(@Nullable String message) {
   }
 }

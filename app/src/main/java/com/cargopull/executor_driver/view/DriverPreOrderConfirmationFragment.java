@@ -322,13 +322,13 @@ public class DriverPreOrderConfirmationFragment extends BaseFragment implements
   }
 
   @Override
-  public void showOrderExpired(boolean show) {
-    if (show) {
+  public void showOrderExpiredMessage(@Nullable String message) {
+    if (message != null) {
       if (confirmationDialog != null) {
         confirmationDialog.dismiss();
       }
       expirationDialog = new Builder(context)
-          .setMessage(R.string.order_expired)
+          .setMessage(message)
           .setPositiveButton(getString(android.R.string.ok),
               (a, b) -> orderViewModel.messageConsumed())
           .create();

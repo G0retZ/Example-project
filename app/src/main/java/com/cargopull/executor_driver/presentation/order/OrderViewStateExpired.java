@@ -11,9 +11,13 @@ final class OrderViewStateExpired implements ViewState<OrderViewActions> {
 
   @Nullable
   private final ViewState<OrderViewActions> parentViewState;
+  @NonNull
+  private final String message;
 
-  OrderViewStateExpired(@Nullable ViewState<OrderViewActions> parentViewState) {
+  OrderViewStateExpired(@Nullable ViewState<OrderViewActions> parentViewState,
+      @NonNull String message) {
     this.parentViewState = parentViewState;
+    this.message = message;
   }
 
   @Override
@@ -21,9 +25,10 @@ final class OrderViewStateExpired implements ViewState<OrderViewActions> {
     if (parentViewState != null) {
       parentViewState.apply(stateActions);
     }
-    stateActions.showOrderExpired(true);
+    stateActions.showOrderExpiredMessage(message);
   }
 
+  @SuppressWarnings("SimplifiableIfStatement")
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -35,12 +40,17 @@ final class OrderViewStateExpired implements ViewState<OrderViewActions> {
 
     OrderViewStateExpired that = (OrderViewStateExpired) o;
 
-    return parentViewState != null ? parentViewState.equals(that.parentViewState)
-        : that.parentViewState == null;
+    if (parentViewState != null ? !parentViewState.equals(that.parentViewState)
+        : that.parentViewState != null) {
+      return false;
+    }
+    return message.equals(that.message);
   }
 
   @Override
   public int hashCode() {
-    return parentViewState != null ? parentViewState.hashCode() : 0;
+    int result = parentViewState != null ? parentViewState.hashCode() : 0;
+    result = 31 * result + message.hashCode();
+    return result;
   }
 }

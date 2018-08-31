@@ -8,7 +8,6 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.verifyZeroInteractions;
 
 import com.cargopull.executor_driver.presentation.ViewState;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -27,18 +26,16 @@ public class OrderViewStateExpiredTest {
   @Mock
   private ViewState<OrderViewActions> parentViewState1;
 
-  @Before
-  public void setUp() {
-    viewState = new OrderViewStateExpired(parentViewState);
-  }
-
   @Test
   public void testActions() {
+    // Дано:
+    viewState = new OrderViewStateExpired(parentViewState, "message");
+
     // Действие:
     viewState.apply(viewActions);
 
     // Результат:
-    verify(viewActions).showOrderExpired(true);
+    verify(viewActions).showOrderExpiredMessage("message");
     verifyNoMoreInteractions(viewActions);
     verify(parentViewState, only()).apply(viewActions);
   }
@@ -46,22 +43,23 @@ public class OrderViewStateExpiredTest {
   @Test
   public void testNoActions() {
     // Дано:
-    viewState = new OrderViewStateExpired(null);
+    viewState = new OrderViewStateExpired(null, "mess");
 
     // Действие:
     viewState.apply(viewActions);
 
     // Результат:
-    verify(viewActions).showOrderExpired(true);
+    verify(viewActions).showOrderExpiredMessage("mess");
     verifyNoMoreInteractions(viewActions);
     verifyZeroInteractions(parentViewState);
   }
 
   @Test
   public void testEquals() {
-    viewState = new OrderViewStateExpired(parentViewState);
-    assertEquals(viewState, new OrderViewStateExpired(parentViewState));
-    assertNotEquals(viewState, new OrderViewStateExpired(parentViewState1));
-    assertNotEquals(viewState, new OrderViewStateExpired(null));
+    viewState = new OrderViewStateExpired(parentViewState, "message");
+    assertEquals(viewState, new OrderViewStateExpired(parentViewState, "message"));
+    assertNotEquals(viewState, new OrderViewStateExpired(parentViewState, "mess"));
+    assertNotEquals(viewState, new OrderViewStateExpired(parentViewState1, "message"));
+    assertNotEquals(viewState, new OrderViewStateExpired(null, "message"));
   }
 }

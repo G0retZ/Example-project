@@ -342,7 +342,6 @@ public class MovingToClientFragment extends BaseFragment implements MovingToClie
   }
 
   @Override
-  public void showOrderExpired(boolean show) {
-
+  public void showOrderExpiredMessage(@Nullable String message) {
   }
 }
