@@ -5,6 +5,7 @@ import com.cargopull.executor_driver.BuildConfig;
 import com.cargopull.executor_driver.backend.web.AuthorizationException;
 import com.cargopull.executor_driver.backend.web.NoNetworkException;
 import com.cargopull.executor_driver.backend.websocket.ConnectionClosedException;
+import com.cargopull.executor_driver.entity.PreOrderExpiredException;
 import com.cargopull.executor_driver.interactor.DataReceiver;
 import com.crashlytics.android.Crashlytics;
 import javax.inject.Inject;
@@ -26,7 +27,8 @@ public class ErrorReporterImpl implements ErrorReporter {
     }
     // Игнорируем сетевые ошибки
     if (throwable instanceof AuthorizationException || throwable instanceof NoNetworkException
-        || throwable instanceof ConnectionClosedException) {
+        || throwable instanceof ConnectionClosedException
+        || throwable instanceof PreOrderExpiredException) {
       return;
     }
     loginReceiver.get()

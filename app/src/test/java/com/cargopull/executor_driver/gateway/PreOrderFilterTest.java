@@ -34,12 +34,25 @@ public class PreOrderFilterTest {
   }
 
   /**
-   * Должен пропустить, если сообщение с заголовком PreliminaryExpired.
+   * Должен пропустить, если сообщение с заголовком PreliminaryExpired и пайлоадом.
    */
   @Test(expected = PreOrderExpiredException.class)
   public void errorForHeaderWithPreliminaryExpiredTrue() throws Exception {
     // Дано:
     when(stompMessage.findHeader("PreliminaryExpired")).thenReturn("true");
+
+    // Действие и Результат:
+    filter.test(stompMessage);
+  }
+
+  /**
+   * Должен пропустить, если сообщение с заголовком PreliminaryExpired и пайлоадом.
+   */
+  @Test(expected = PreOrderExpiredException.class)
+  public void errorForHeaderWithPreliminaryExpiredTrueAndPayload() throws Exception {
+    // Дано:
+    when(stompMessage.findHeader("PreliminaryExpired")).thenReturn("true");
+    when(stompMessage.getPayload()).thenReturn("\n");
 
     // Действие и Результат:
     filter.test(stompMessage);
