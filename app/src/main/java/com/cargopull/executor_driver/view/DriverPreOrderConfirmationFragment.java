@@ -22,6 +22,7 @@ import android.widget.TextView;
 import com.cargopull.executor_driver.R;
 import com.cargopull.executor_driver.backend.vibro.ShakeItPlayer;
 import com.cargopull.executor_driver.di.AppComponent;
+import com.cargopull.executor_driver.presentation.CommonNavigate;
 import com.cargopull.executor_driver.presentation.order.OrderViewActions;
 import com.cargopull.executor_driver.presentation.order.OrderViewModel;
 import com.cargopull.executor_driver.presentation.orderconfirmation.OrderConfirmationViewActions;
@@ -61,8 +62,7 @@ public class DriverPreOrderConfirmationFragment extends BaseFragment implements
   @Nullable
   private ObjectAnimator acceptResetAnimator;
   @Nullable
-  private AlertDialog confirmationDialog;
-  private AlertDialog expirationDialog;
+  private AlertDialog alertDialog;
   private Context context;
 
   @Inject
@@ -190,11 +190,8 @@ public class DriverPreOrderConfirmationFragment extends BaseFragment implements
 
   @Override
   public void onDetach() {
-    if (confirmationDialog != null) {
-      confirmationDialog.dismiss();
-    }
-    if (expirationDialog != null) {
-      expirationDialog.dismiss();
+    if (alertDialog != null) {
+      alertDialog.dismiss();
     }
     if (acceptResetAnimator != null) {
       acceptResetAnimator.cancel();
@@ -204,6 +201,22 @@ public class DriverPreOrderConfirmationFragment extends BaseFragment implements
     }
     super.onDetach();
     context = null;
+  }
+
+  @Override
+  protected void navigate(@NonNull String destination) {
+    if (destination.equals(CommonNavigate.NO_CONNECTION)) {
+      if (alertDialog != null) {
+        alertDialog.dismiss();
+      }
+      alertDialog = new Builder(context)
+          .setMessage(getString(R.string.sms_network_error))
+          .setPositiveButton(getString(android.R.string.ok),
+              (a, b) -> orderConfirmationViewModel.messageConsumed())
+          .create();
+      alertDialog.show();
+    }
+    super.navigate(destination);
   }
 
   @Override
@@ -323,20 +336,16 @@ public class DriverPreOrderConfirmationFragment extends BaseFragment implements
 
   @Override
   public void showOrderExpiredMessage(@Nullable String message) {
+    if (alertDialog != null) {
+      alertDialog.dismiss();
+    }
     if (message != null) {
-      if (confirmationDialog != null) {
-        confirmationDialog.dismiss();
-      }
-      expirationDialog = new Builder(context)
+      alertDialog = new Builder(context)
           .setMessage(message)
           .setPositiveButton(getString(android.R.string.ok),
               (a, b) -> orderViewModel.messageConsumed())
           .create();
-      expirationDialog.show();
-    } else {
-      if (expirationDialog != null) {
-        expirationDialog.dismiss();
-      }
+      alertDialog.show();
     }
   }
 
@@ -353,20 +362,16 @@ public class DriverPreOrderConfirmationFragment extends BaseFragment implements
 
   @Override
   public void showBlockingMessage(@Nullable String message) {
+    if (alertDialog != null) {
+      alertDialog.dismiss();
+    }
     if (message != null) {
-      if (expirationDialog != null) {
-        expirationDialog.dismiss();
-      }
-      confirmationDialog = new Builder(context)
+      alertDialog = new Builder(context)
           .setMessage(message)
           .setPositiveButton(getString(android.R.string.ok),
               (a, b) -> orderConfirmationViewModel.messageConsumed())
           .create();
-      confirmationDialog.show();
-    } else {
-      if (confirmationDialog != null) {
-        confirmationDialog.dismiss();
-      }
+      alertDialog.show();
     }
   }
 }
