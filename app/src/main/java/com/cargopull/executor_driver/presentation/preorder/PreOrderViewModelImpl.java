@@ -4,7 +4,8 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
-import com.cargopull.executor_driver.entity.PreOrderExpiredException;
+import com.cargopull.executor_driver.entity.OrderOfferDecisionException;
+import com.cargopull.executor_driver.entity.OrderOfferExpiredException;
 import com.cargopull.executor_driver.gateway.DataMappingException;
 import com.cargopull.executor_driver.interactor.OrderUseCase;
 import com.cargopull.executor_driver.presentation.CommonNavigate;
@@ -54,11 +55,13 @@ public class PreOrderViewModelImpl extends ViewModel implements
       disposable = orderUseCase.getOrders()
           .observeOn(AndroidSchedulers.mainThread())
           .doOnError(throwable -> {
-            if (throwable instanceof PreOrderExpiredException) {
+            if (throwable instanceof OrderOfferExpiredException
+                || throwable instanceof OrderOfferDecisionException) {
               viewStateLiveData.postValue(new PreOrderViewStateUnAvailable());
             }
           })
-          .retry(throwable -> throwable instanceof PreOrderExpiredException)
+          .retry(throwable -> throwable instanceof OrderOfferExpiredException
+              || throwable instanceof OrderOfferDecisionException)
           .subscribe(order -> viewStateLiveData.postValue(new PreOrderViewStateAvailable()),
               throwable -> {
                 if (throwable instanceof DataMappingException) {

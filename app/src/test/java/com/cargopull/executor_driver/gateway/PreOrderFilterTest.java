@@ -4,7 +4,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
-import com.cargopull.executor_driver.entity.PreOrderExpiredException;
+import com.cargopull.executor_driver.entity.OrderOfferExpiredException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -36,7 +36,7 @@ public class PreOrderFilterTest {
   /**
    * Должен пропустить, если сообщение с заголовком PreliminaryExpired и пайлоадом.
    */
-  @Test(expected = PreOrderExpiredException.class)
+  @Test(expected = OrderOfferExpiredException.class)
   public void errorForHeaderWithPreliminaryExpiredTrue() throws Exception {
     // Дано:
     when(stompMessage.findHeader("PreliminaryExpired")).thenReturn("true");
@@ -48,7 +48,7 @@ public class PreOrderFilterTest {
   /**
    * Должен пропустить, если сообщение с заголовком PreliminaryExpired и пайлоадом.
    */
-  @Test(expected = PreOrderExpiredException.class)
+  @Test(expected = OrderOfferExpiredException.class)
   public void errorForHeaderWithPreliminaryExpiredTrueAndPayload() throws Exception {
     // Дано:
     when(stompMessage.findHeader("PreliminaryExpired")).thenReturn("true");

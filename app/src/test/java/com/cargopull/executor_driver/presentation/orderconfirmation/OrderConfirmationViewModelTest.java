@@ -12,7 +12,8 @@ import android.arch.core.executor.testing.InstantTaskExecutorRule;
 import android.arch.lifecycle.Observer;
 import com.cargopull.executor_driver.ViewModelThreadTestRule;
 import com.cargopull.executor_driver.backend.web.NoNetworkException;
-import com.cargopull.executor_driver.entity.PreOrderExpiredException;
+import com.cargopull.executor_driver.entity.OrderOfferDecisionException;
+import com.cargopull.executor_driver.entity.OrderOfferExpiredException;
 import com.cargopull.executor_driver.gateway.DataMappingException;
 import com.cargopull.executor_driver.interactor.OrderConfirmationUseCase;
 import com.cargopull.executor_driver.presentation.CommonNavigate;
@@ -276,7 +277,7 @@ public class OrderConfirmationViewModelTest {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     when(orderConfirmationUseCase.sendDecision(anyBoolean()))
-        .thenReturn(Single.error(new PreOrderExpiredException("34")));
+        .thenReturn(Single.error(new OrderOfferExpiredException("34")));
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
@@ -297,7 +298,7 @@ public class OrderConfirmationViewModelTest {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     when(orderConfirmationUseCase.sendDecision(anyBoolean()))
-        .thenReturn(Single.error(new PreOrderExpiredException("43")));
+        .thenReturn(Single.error(new OrderOfferExpiredException("43")));
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
@@ -318,7 +319,7 @@ public class OrderConfirmationViewModelTest {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     when(orderConfirmationUseCase.sendDecision(anyBoolean()))
-        .thenReturn(Single.error(new PreOrderExpiredException()));
+        .thenReturn(Single.error(new OrderOfferDecisionException()));
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
@@ -339,7 +340,7 @@ public class OrderConfirmationViewModelTest {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     when(orderConfirmationUseCase.sendDecision(anyBoolean()))
-        .thenReturn(Single.error(new PreOrderExpiredException()));
+        .thenReturn(Single.error(new OrderOfferDecisionException()));
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:

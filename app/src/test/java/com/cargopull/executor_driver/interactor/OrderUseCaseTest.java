@@ -7,7 +7,8 @@ import static org.mockito.Mockito.when;
 
 import com.cargopull.executor_driver.UseCaseThreadTestRule;
 import com.cargopull.executor_driver.entity.Order;
-import com.cargopull.executor_driver.entity.PreOrderExpiredException;
+import com.cargopull.executor_driver.entity.OrderOfferDecisionException;
+import com.cargopull.executor_driver.entity.OrderOfferExpiredException;
 import com.cargopull.executor_driver.gateway.DataMappingException;
 import com.cargopull.executor_driver.utils.ErrorReporter;
 import io.reactivex.BackpressureStrategy;
@@ -57,10 +58,10 @@ public class OrderUseCaseTest {
     // Действие:
     useCase.getOrders().test();
     useCase.getOrders().test();
-    useCase.setOrderExpired();
+    useCase.setOrderOfferDecisionMade();
     useCase.getOrders().test();
     useCase.getOrders().test();
-    useCase.setOrderExpired();
+    useCase.setOrderOfferDecisionMade();
 
     // Результат:
     verify(gateway, only()).getData();
@@ -90,10 +91,10 @@ public class OrderUseCaseTest {
   public void reportPreOrderExpiredError() {
     // Действие:
     useCase.getOrders().test();
-    useCase.setOrderExpired();
+    useCase.setOrderOfferDecisionMade();
 
     // Результат:
-    verify(errorReporter, only()).reportError(any(PreOrderExpiredException.class));
+    verify(errorReporter, only()).reportError(any(OrderOfferDecisionException.class));
   }
 
   /* Проверяем ответы */
@@ -139,16 +140,35 @@ public class OrderUseCaseTest {
   @Test
   public void answerPreOrderExpiredError() {
     // Дано:
+    when(gateway.getData()).thenReturn(Flowable.just(order, order1, order2)
+        .concatWith(Flowable.error(new OrderOfferExpiredException(""))));
+
+    // Действие:
+    TestSubscriber<Order> testSubscriber = useCase.getOrders().test();
+    useCase.setOrderOfferDecisionMade();
+
+    // Результат:
+    testSubscriber.assertValues(order, order1, order2);
+    testSubscriber.assertError(OrderOfferExpiredException.class);
+    testSubscriber.assertNotComplete();
+  }
+
+  /**
+   * Должен вернуть ошибку.
+   */
+  @Test
+  public void answerOrderOfferDecisionError() {
+    // Дано:
     when(gateway.getData())
         .thenReturn(Flowable.just(order, order1, order2).concatWith(Flowable.never()));
 
     // Действие:
     TestSubscriber<Order> testSubscriber = useCase.getOrders().test();
-    useCase.setOrderExpired();
+    useCase.setOrderOfferDecisionMade();
 
     // Результат:
     testSubscriber.assertValues(order, order1, order2);
-    testSubscriber.assertError(PreOrderExpiredException.class);
+    testSubscriber.assertError(OrderOfferDecisionException.class);
     testSubscriber.assertNotComplete();
   }
 
@@ -204,7 +224,7 @@ public class OrderUseCaseTest {
   }
 
   /**
-   * Не должен возвращать полученые ранее заказы после потери актуальности.
+   * Не должен возвращать полученые ранее заказы после принятия решения.
    */
   @Test
   public void answerNothingAfterPreOrderExpiredError() {
@@ -225,12 +245,12 @@ public class OrderUseCaseTest {
 
     // Действие:
     TestSubscriber<Order> testSubscriber = useCase.getOrders().test();
-    useCase.setOrderExpired();
+    useCase.setOrderOfferDecisionMade();
     TestSubscriber<Order> testSubscriber1 = useCase.getOrders().test();
 
     // Результат:
     testSubscriber.assertValues(order, order1, order2);
-    testSubscriber.assertError(PreOrderExpiredException.class);
+    testSubscriber.assertError(OrderOfferDecisionException.class);
     testSubscriber.assertNotComplete();
     testSubscriber1.assertNoValues();
     testSubscriber1.assertNoErrors();

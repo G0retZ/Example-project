@@ -10,7 +10,8 @@ import android.arch.core.executor.testing.InstantTaskExecutorRule;
 import android.arch.lifecycle.Observer;
 import com.cargopull.executor_driver.ViewModelThreadTestRule;
 import com.cargopull.executor_driver.entity.Order;
-import com.cargopull.executor_driver.entity.PreOrderExpiredException;
+import com.cargopull.executor_driver.entity.OrderOfferDecisionException;
+import com.cargopull.executor_driver.entity.OrderOfferExpiredException;
 import com.cargopull.executor_driver.gateway.DataMappingException;
 import com.cargopull.executor_driver.interactor.OrderUseCase;
 import com.cargopull.executor_driver.presentation.CommonNavigate;
@@ -170,7 +171,7 @@ public class OrderViewModelTest {
                 if (!run) {
                   run = true;
                   emitter.onNext(order);
-                  emitter.onError(new PreOrderExpiredException("message"));
+                  emitter.onError(new OrderOfferExpiredException("message"));
                 } else {
                   emitter.onNext(order2);
                 }
@@ -218,7 +219,7 @@ public class OrderViewModelTest {
                 if (!run) {
                   run = true;
                   emitter.onNext(order);
-                  emitter.onError(new PreOrderExpiredException());
+                  emitter.onError(new OrderOfferDecisionException());
                 } else {
                   emitter.onNext(order2);
                 }

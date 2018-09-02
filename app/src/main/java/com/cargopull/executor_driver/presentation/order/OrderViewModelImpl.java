@@ -6,7 +6,8 @@ import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.cargopull.executor_driver.entity.Order;
-import com.cargopull.executor_driver.entity.PreOrderExpiredException;
+import com.cargopull.executor_driver.entity.OrderOfferDecisionException;
+import com.cargopull.executor_driver.entity.OrderOfferExpiredException;
 import com.cargopull.executor_driver.gateway.DataMappingException;
 import com.cargopull.executor_driver.interactor.OrderUseCase;
 import com.cargopull.executor_driver.presentation.CommonNavigate;
@@ -62,14 +63,14 @@ public class OrderViewModelImpl extends ViewModel implements
       disposable = orderUseCase.getOrders()
           .observeOn(AndroidSchedulers.mainThread())
           .doOnError(throwable -> {
-            if (throwable instanceof PreOrderExpiredException) {
-              String message = throwable.getMessage();
-              if (message != null) {
-                viewStateLiveData.postValue(new OrderViewStateExpired(lastViewState, message));
-              }
+            if (throwable instanceof OrderOfferExpiredException) {
+              viewStateLiveData.postValue(
+                  new OrderViewStateExpired(lastViewState, throwable.getMessage())
+              );
             }
           })
-          .retry(throwable -> throwable instanceof PreOrderExpiredException)
+          .retry(throwable -> throwable instanceof OrderOfferExpiredException
+              || throwable instanceof OrderOfferDecisionException)
           .subscribe(this::consumeOrder,
               throwable -> {
                 if (throwable instanceof DataMappingException) {

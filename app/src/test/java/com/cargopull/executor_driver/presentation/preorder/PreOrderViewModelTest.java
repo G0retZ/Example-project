@@ -11,7 +11,8 @@ import android.arch.core.executor.testing.InstantTaskExecutorRule;
 import android.arch.lifecycle.Observer;
 import com.cargopull.executor_driver.ViewModelThreadTestRule;
 import com.cargopull.executor_driver.entity.Order;
-import com.cargopull.executor_driver.entity.PreOrderExpiredException;
+import com.cargopull.executor_driver.entity.OrderOfferDecisionException;
+import com.cargopull.executor_driver.entity.OrderOfferExpiredException;
 import com.cargopull.executor_driver.gateway.DataMappingException;
 import com.cargopull.executor_driver.interactor.OrderUseCase;
 import com.cargopull.executor_driver.presentation.CommonNavigate;
@@ -143,7 +144,49 @@ public class PreOrderViewModelTest {
   }
 
   /**
-   * Должен вернуть состояния вида "недоступности" при завершении.
+   * Должен вернуть состояния вида "заказ истек" после ошибки принятия решения по заказу.
+   */
+  @Test
+  public void setExpiredViewStateToLiveDataForOrderOfferDecision() {
+    // Дано:
+    InOrder inOrder = Mockito.inOrder(viewStateObserver);
+    PublishSubject<Order> publishSubject = PublishSubject.create();
+    when(orderUseCase.getOrders()).thenReturn(
+        Observable.create(
+            new ObservableOnSubscribe<Order>() {
+              private boolean run;
+
+              @Override
+              public void subscribe(ObservableEmitter<Order> emitter) {
+                if (!run) {
+                  run = true;
+                  emitter.onNext(order);
+                  emitter.onError(new OrderOfferDecisionException());
+                } else {
+                  emitter.onNext(order2);
+                }
+              }
+            }
+        ).startWith(publishSubject)
+            .toFlowable(BackpressureStrategy.BUFFER)
+    );
+    viewModel = new PreOrderViewModelImpl(orderUseCase);
+    viewModel.getNavigationLiveData().observeForever(navigateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
+
+    // Действие:
+    publishSubject.onComplete();
+
+    // Результат:
+    inOrder.verify(viewStateObserver).onChanged(any(PreOrderViewStateUnAvailable.class));
+    inOrder.verify(viewStateObserver).onChanged(any(PreOrderViewStateAvailable.class));
+    inOrder.verify(viewStateObserver).onChanged(any(PreOrderViewStateUnAvailable.class));
+    inOrder.verify(viewStateObserver).onChanged(any(PreOrderViewStateAvailable.class));
+    verifyNoMoreInteractions(viewStateObserver);
+  }
+
+  /**
+   * Должен вернуть состояния вида "заказ истек" после ошибки актуальности заказа.
    */
   @Test
   public void setExpiredViewStateToLiveData() {
@@ -160,7 +203,7 @@ public class PreOrderViewModelTest {
                 if (!run) {
                   run = true;
                   emitter.onNext(order);
-                  emitter.onError(new PreOrderExpiredException());
+                  emitter.onError(new OrderOfferExpiredException(""));
                 } else {
                   emitter.onNext(order2);
                 }

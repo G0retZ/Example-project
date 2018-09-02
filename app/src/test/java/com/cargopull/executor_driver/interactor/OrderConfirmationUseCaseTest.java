@@ -11,7 +11,8 @@ import static org.mockito.Mockito.when;
 import com.cargopull.executor_driver.UseCaseThreadTestRule;
 import com.cargopull.executor_driver.backend.web.NoNetworkException;
 import com.cargopull.executor_driver.entity.Order;
-import com.cargopull.executor_driver.entity.PreOrderExpiredException;
+import com.cargopull.executor_driver.entity.OrderOfferDecisionException;
+import com.cargopull.executor_driver.entity.OrderOfferExpiredException;
 import com.cargopull.executor_driver.gateway.DataMappingException;
 import io.reactivex.Flowable;
 import io.reactivex.Single;
@@ -84,9 +85,9 @@ public class OrderConfirmationUseCaseTest {
 
     // Результат:
     inOrder.verify(orderUseCase).getOrders();
-    inOrder.verify(orderUseCase).setOrderExpired();
+    inOrder.verify(orderUseCase).setOrderOfferDecisionMade();
     inOrder.verify(orderUseCase).getOrders();
-    inOrder.verify(orderUseCase).setOrderExpired();
+    inOrder.verify(orderUseCase).setOrderOfferDecisionMade();
     verifyNoMoreInteractions(orderUseCase);
   }
 
@@ -114,7 +115,7 @@ public class OrderConfirmationUseCaseTest {
    * Должен запросить у гейтвея передачу решений только для первого свежего заказа.
    */
   @Test
-  public void askGatewayToSendDecisionsForLastOrderOnly() {
+  public void askGatewayToSendDecisionsForFirstOrderOnly() {
     // Дано:
     when(orderUseCase.getOrders())
         .thenReturn(Flowable.just(order, order2).concatWith(Flowable.never()));
@@ -132,11 +133,35 @@ public class OrderConfirmationUseCaseTest {
    * Должен отменить запрос у гейтвея на передачу решений если пришел новый заказ.
    */
   @Test
-  public void cancelGatewayToSendDecisionsForLastOrderOnly() throws Exception {
+  public void cancelGatewayToSendDecisionsForNextOrder() throws Exception {
     // Дано:
     InOrder inOrder = Mockito.inOrder(orderConfirmationGateway, action);
     when(orderUseCase.getOrders())
         .thenReturn(Flowable.just(order, order2).concatWith(Flowable.never()));
+    when(orderConfirmationGateway.sendDecision(any(), anyBoolean()))
+        .thenReturn(Single.<String>never().doOnDispose(action));
+
+    // Действие:
+    useCase.sendDecision(true).test();
+    useCase.sendDecision(false).test();
+
+    // Результат:
+    inOrder.verify(orderConfirmationGateway).sendDecision(order, true);
+    inOrder.verify(action).run();
+    inOrder.verify(orderConfirmationGateway).sendDecision(order, false);
+    inOrder.verify(action).run();
+    verifyNoMoreInteractions(orderConfirmationGateway, action);
+  }
+
+  /**
+   * Должен отменить запрос у гейтвея на передачу решений если заказ истек.
+   */
+  @Test
+  public void cancelGatewayToSendDecisionsForOrderExpired() throws Exception {
+    // Дано:
+    InOrder inOrder = Mockito.inOrder(orderConfirmationGateway, action);
+    when(orderUseCase.getOrders()).thenReturn(
+        Flowable.just(order).concatWith(Flowable.error(new OrderOfferExpiredException(""))));
     when(orderConfirmationGateway.sendDecision(any(), anyBoolean()))
         .thenReturn(Single.<String>never().doOnDispose(action));
 
@@ -184,7 +209,7 @@ public class OrderConfirmationUseCaseTest {
     TestObserver<String> test = useCase.sendDecision(true).test();
 
     // Результат:
-    test.assertError(PreOrderExpiredException.class);
+    test.assertError(OrderOfferDecisionException.class);
     test.assertNoValues();
     test.assertNotComplete();
   }
@@ -195,14 +220,15 @@ public class OrderConfirmationUseCaseTest {
   @Test
   public void answerOrderExpiredErrorForAcceptIfErrorAfterValue() {
     // Дано:
-    when(orderUseCase.getOrders())
-        .thenReturn(Flowable.just(order).concatWith(Flowable.error(PreOrderExpiredException::new)));
+    when(orderUseCase.getOrders()).thenReturn(
+        Flowable.just(order).concatWith(Flowable.error(new OrderOfferExpiredException("")))
+    );
 
     // Действие:
     TestObserver<String> test = useCase.sendDecision(true).test();
 
     // Результат:
-    test.assertError(PreOrderExpiredException.class);
+    test.assertError(OrderOfferExpiredException.class);
     test.assertNoValues();
     test.assertNotComplete();
   }

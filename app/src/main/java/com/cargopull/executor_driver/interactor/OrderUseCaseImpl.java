@@ -3,7 +3,7 @@ package com.cargopull.executor_driver.interactor;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.cargopull.executor_driver.entity.Order;
-import com.cargopull.executor_driver.entity.PreOrderExpiredException;
+import com.cargopull.executor_driver.entity.OrderOfferDecisionException;
 import com.cargopull.executor_driver.utils.ErrorReporter;
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Emitter;
@@ -59,7 +59,7 @@ public class OrderUseCaseImpl implements OrderUseCase {
   }
 
   @Override
-  public void setOrderExpired() {
-    emitter.onError(new PreOrderExpiredException());
+  public void setOrderOfferDecisionMade() {
+    emitter.onError(new OrderOfferDecisionException());
   }
 }

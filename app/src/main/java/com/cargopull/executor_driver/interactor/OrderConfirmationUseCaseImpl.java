@@ -2,7 +2,7 @@ package com.cargopull.executor_driver.interactor;
 
 import android.support.annotation.NonNull;
 import com.cargopull.executor_driver.entity.Order;
-import com.cargopull.executor_driver.entity.PreOrderExpiredException;
+import com.cargopull.executor_driver.entity.OrderOfferDecisionException;
 import io.reactivex.Single;
 import io.reactivex.SingleSource;
 import io.reactivex.functions.Function;
@@ -29,18 +29,18 @@ public class OrderConfirmationUseCaseImpl implements OrderConfirmationUseCase {
     return orderUseCase.getOrders()
         .observeOn(Schedulers.single())
         .flatMapSingle(new Function<Order, SingleSource<? extends String>>() {
-          boolean orderExpired;
+          boolean orderDecisionMade;
 
           @Override
           public SingleSource<? extends String> apply(Order order) throws Exception {
-            if (orderExpired) {
-              throw new PreOrderExpiredException();
+            if (orderDecisionMade) {
+              throw new OrderOfferDecisionException();
             }
-            orderExpired = true;
+            orderDecisionMade = true;
             return orderConfirmationGateway.sendDecision(order, confirmed);
           }
         }).observeOn(Schedulers.single())
         .firstOrError()
-        .doOnSuccess(s -> orderUseCase.setOrderExpired());
+        .doOnSuccess(s -> orderUseCase.setOrderOfferDecisionMade());
   }
 }
