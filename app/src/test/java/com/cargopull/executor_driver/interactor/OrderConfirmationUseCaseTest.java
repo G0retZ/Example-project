@@ -207,7 +207,7 @@ public class OrderConfirmationUseCaseTest {
    * Не должен передавать юзкейсу успешно отвергнутый заказа.
    */
   @Test
-  public void doNotPassRefusedOrderToConsumer() {
+  public void doNotPassRefusedOrderToOrdersUseCase() {
     // Дано:
     when(orderUseCase.getOrders()).thenReturn(Flowable.just(order).concatWith(Flowable.never()));
     when(orderConfirmationGateway.sendDecision(order, false)).thenReturn(Single.just("success"));
@@ -223,7 +223,7 @@ public class OrderConfirmationUseCaseTest {
    * Должен передать юзкейсу успешно принятый заказа.
    */
   @Test
-  public void passConfirmedOrderToConsumer() {
+  public void passConfirmedOrderToOrdersUseCase() {
     // Дано:
     when(orderUseCase.getOrders()).thenReturn(Flowable.just(order).concatWith(Flowable.never()));
     when(orderConfirmationGateway.sendDecision(order, true)).thenReturn(Single.just("success"));
@@ -239,7 +239,7 @@ public class OrderConfirmationUseCaseTest {
    * Не должен трогать юзкейс если пришел новый заказ.
    */
   @Test
-  public void doNotTouchConsumerIfNextOrder() {
+  public void doNotTouchOrdersUseCaseIfNextOrder() {
     // Дано:
     when(orderUseCase.getOrders())
         .thenReturn(Flowable.just(order, order2).concatWith(Flowable.never()));
@@ -255,7 +255,7 @@ public class OrderConfirmationUseCaseTest {
    * Не должен трогать юзкейс если заказ истек.
    */
   @Test
-  public void doNotTouchConsumerIfOrderExpired() {
+  public void doNotTouchOrdersUseCaseIfOrderExpired() {
     // Дано:
     when(orderUseCase.getOrders()).thenReturn(
         Flowable.just(order).concatWith(Flowable.error(new OrderOfferExpiredException(""))));
