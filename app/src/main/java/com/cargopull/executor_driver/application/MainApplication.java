@@ -516,8 +516,8 @@ public class MainApplication extends Application implements ServerConnectionView
       if (show) {
         navigate(PreOrderNavigate.ORDER_APPROVAL);
         Builder builder = new Builder(this, "state_channel")
-            .setContentText(getString(R.string.new_pre_order))
-            .setContentTitle(getString(R.string.new_pre_order_message))
+            .setContentTitle(getString(R.string.new_pre_order))
+            .setContentText(getString(R.string.new_pre_order_message))
             .setSound(null)
             .setVibrate(new long[0])
             .setAutoCancel(true)
