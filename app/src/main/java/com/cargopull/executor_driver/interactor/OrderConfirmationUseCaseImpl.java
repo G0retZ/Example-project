@@ -5,6 +5,7 @@ import com.cargopull.executor_driver.entity.Order;
 import com.cargopull.executor_driver.entity.OrderOfferDecisionException;
 import io.reactivex.Single;
 import io.reactivex.SingleSource;
+import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 import javax.inject.Inject;
@@ -15,12 +16,16 @@ public class OrderConfirmationUseCaseImpl implements OrderConfirmationUseCase {
   private final OrderUseCase orderUseCase;
   @NonNull
   private final OrderConfirmationGateway orderConfirmationGateway;
+  @NonNull
+  private final Consumer<Order> acceptOrderConsumer;
 
   @Inject
   public OrderConfirmationUseCaseImpl(@NonNull OrderUseCase orderUseCase,
-      @NonNull OrderConfirmationGateway orderConfirmationGateway) {
+      @NonNull OrderConfirmationGateway orderConfirmationGateway,
+      @NonNull Consumer<Order> acceptOrderConsumer) {
     this.orderUseCase = orderUseCase;
     this.orderConfirmationGateway = orderConfirmationGateway;
+    this.acceptOrderConsumer = acceptOrderConsumer;
   }
 
   @NonNull
@@ -37,9 +42,15 @@ public class OrderConfirmationUseCaseImpl implements OrderConfirmationUseCase {
               throw new OrderOfferDecisionException();
             }
             orderDecisionMade = true;
-            return orderConfirmationGateway.sendDecision(order, confirmed);
+            return orderConfirmationGateway.sendDecision(order, confirmed)
+                .observeOn(Schedulers.single())
+                .doOnSuccess(str -> {
+                  if (confirmed) {
+                    acceptOrderConsumer.accept(order);
+                  }
+                });
           }
-        }).observeOn(Schedulers.single())
+        })
         .firstOrError()
         .doOnSuccess(s -> orderUseCase.setOrderOfferDecisionMade());
   }

@@ -3,9 +3,11 @@ package com.cargopull.executor_driver.interactor;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 import com.cargopull.executor_driver.UseCaseThreadTestRule;
@@ -17,6 +19,7 @@ import com.cargopull.executor_driver.gateway.DataMappingException;
 import io.reactivex.Flowable;
 import io.reactivex.Single;
 import io.reactivex.functions.Action;
+import io.reactivex.functions.Consumer;
 import io.reactivex.observers.TestObserver;
 import org.junit.Before;
 import org.junit.ClassRule;
@@ -45,12 +48,15 @@ public class OrderConfirmationUseCaseTest {
   private Order order2;
   @Mock
   private Action action;
+  @Mock
+  private Consumer<Order> acceptOrderConsumer;
 
   @Before
   public void setUp() {
     when(orderUseCase.getOrders()).thenReturn(Flowable.never());
     when(orderConfirmationGateway.sendDecision(any(), anyBoolean())).thenReturn(Single.never());
-    useCase = new OrderConfirmationUseCaseImpl(orderUseCase, orderConfirmationGateway);
+    useCase = new OrderConfirmationUseCaseImpl(orderUseCase, orderConfirmationGateway,
+        acceptOrderConsumer);
   }
 
   /* Проверяем работу с юзкейсом заказа */
@@ -175,6 +181,72 @@ public class OrderConfirmationUseCaseTest {
     inOrder.verify(orderConfirmationGateway).sendDecision(order, false);
     inOrder.verify(action).run();
     verifyNoMoreInteractions(orderConfirmationGateway, action);
+  }
+
+  /* Проверяем работу с консюмером принятия заказа */
+
+  /**
+   * Не должен передавать консюмеру успешно отвергнутый заказа.
+   */
+  @Test
+  public void doNotPassRefusedOrderToConsumer() {
+    // Дано:
+    when(orderUseCase.getOrders()).thenReturn(Flowable.just(order).concatWith(Flowable.never()));
+    when(orderConfirmationGateway.sendDecision(order, false)).thenReturn(Single.just("success"));
+
+    // Действие:
+    useCase.sendDecision(false).test();
+
+    // Результат:
+    verifyZeroInteractions(acceptOrderConsumer);
+  }
+
+  /**
+   * Должен передать консюмеру успешно принятый заказа.
+   */
+  @Test
+  public void passConfirmedOrderToConsumer() throws Exception {
+    // Дано:
+    when(orderUseCase.getOrders()).thenReturn(Flowable.just(order).concatWith(Flowable.never()));
+    when(orderConfirmationGateway.sendDecision(order, true)).thenReturn(Single.just("success"));
+
+    // Действие:
+    useCase.sendDecision(true).test();
+
+    // Результат:
+    verify(acceptOrderConsumer, only()).accept(order);
+  }
+
+  /**
+   * Не должен трогать консюмера если пришел новый заказ.
+   */
+  @Test
+  public void doNotTouchConsumerIfNextOrder() {
+    // Дано:
+    when(orderUseCase.getOrders())
+        .thenReturn(Flowable.just(order, order2).concatWith(Flowable.never()));
+
+    // Действие:
+    useCase.sendDecision(true).test();
+
+    // Результат:
+    verifyZeroInteractions(acceptOrderConsumer);
+  }
+
+  /**
+   * Не должен трогать консюмера если заказ истек.
+   */
+  @Test
+  public void doNotTouchConsumerIfOrderExpired() {
+    // Дано:
+    when(orderUseCase.getOrders()).thenReturn(
+        Flowable.just(order).concatWith(Flowable.error(new OrderOfferExpiredException(""))));
+
+    // Действие:
+    useCase.sendDecision(true).test();
+
+    // Результат:
+    verifyZeroInteractions(acceptOrderConsumer);
   }
 
   /* Проверяем ответы на запрос отправки решения */
