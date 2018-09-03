@@ -329,8 +329,8 @@ class InteractorComponentImpl implements InteractorComponent {
     if (orderConfirmationUseCase == null) {
       orderConfirmationUseCase = new OrderConfirmationUseCaseImpl(
           getOrderUseCase(),
-          repositoryComponent.getOrderConfirmationGateway()
-      );
+          repositoryComponent.getOrderConfirmationGateway(),
+          null);
     }
     return orderConfirmationUseCase;
   }
@@ -341,8 +341,8 @@ class InteractorComponentImpl implements InteractorComponent {
     if (preOrderConfirmationUseCase == null) {
       preOrderConfirmationUseCase = new OrderConfirmationUseCaseImpl(
           getPreOrderUseCase(),
-          repositoryComponent.getPreOrderConfirmationGateway()
-      );
+          repositoryComponent.getPreOrderConfirmationGateway(),
+          null);
     }
     return preOrderConfirmationUseCase;
   }
