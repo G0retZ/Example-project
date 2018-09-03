@@ -26,12 +26,12 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
-public class PreOrdersUseCaseTest {
+public class OrdersUseCaseTest {
 
   @ClassRule
   public static final UseCaseThreadTestRule classRule = new UseCaseThreadTestRule();
 
-  private PreOrdersUseCase useCase;
+  private OrdersUseCase useCase;
 
   @Mock
   private ErrorReporter errorReporter;
@@ -49,7 +49,7 @@ public class PreOrdersUseCaseTest {
   @Before
   public void setUp() {
     when(gateway.getData()).thenReturn(Flowable.never());
-    useCase = new PreOrdersUseCaseImpl(errorReporter, gateway);
+    useCase = new OrdersUseCaseImpl(errorReporter, gateway);
   }
 
   /* Проверяем работу с гейтвеем */
@@ -60,12 +60,12 @@ public class PreOrdersUseCaseTest {
   @Test
   public void askGatewayForOrdersOnlyOnce() {
     // Действие:
-    useCase.getPreOrders().test();
-    useCase.getPreOrders().test();
-    useCase.unSchedulePreOrder(order1);
-    useCase.getPreOrders().test();
-    useCase.getPreOrders().test();
-    useCase.schedulePreOrder(order3);
+    useCase.getOrdersList().test();
+    useCase.getOrdersList().test();
+    useCase.addOrder(order1);
+    useCase.getOrdersList().test();
+    useCase.getOrdersList().test();
+    useCase.removeOrder(order3);
 
     // Результат:
     verify(gateway, only()).getData();
@@ -82,7 +82,7 @@ public class PreOrdersUseCaseTest {
     when(gateway.getData()).thenReturn(Flowable.error(DataMappingException::new));
 
     // Действие:
-    useCase.getPreOrders().test();
+    useCase.getOrdersList().test();
 
     // Результат:
     verify(errorReporter, only()).reportError(any(DataMappingException.class));
@@ -102,7 +102,7 @@ public class PreOrdersUseCaseTest {
     );
 
     // Действие:
-    TestSubscriber<List<Order>> testSubscriber = useCase.getPreOrders().test();
+    TestSubscriber<List<Order>> testSubscriber = useCase.getOrdersList().test();
 
     // Результат:
     assertEquals(1, testSubscriber.values().size());
@@ -123,7 +123,7 @@ public class PreOrdersUseCaseTest {
     when(gateway.getData()).thenReturn(Flowable.error(DataMappingException::new));
 
     // Действие:
-    TestSubscriber<List<Order>> testSubscriber = useCase.getPreOrders().test();
+    TestSubscriber<List<Order>> testSubscriber = useCase.getOrdersList().test();
 
     // Результат:
     testSubscriber.assertError(DataMappingException.class);
@@ -143,8 +143,8 @@ public class PreOrdersUseCaseTest {
     );
 
     // Действие:
-    TestSubscriber<List<Order>> testSubscriber = useCase.getPreOrders().test();
-    useCase.unSchedulePreOrder(order2);
+    TestSubscriber<List<Order>> testSubscriber = useCase.getOrdersList().test();
+    useCase.addOrder(order2);
 
     // Результат:
     assertEquals(2, testSubscriber.values().size());
@@ -171,8 +171,8 @@ public class PreOrdersUseCaseTest {
     );
 
     // Действие:
-    TestSubscriber<List<Order>> testSubscriber = useCase.getPreOrders().test();
-    useCase.schedulePreOrder(order2);
+    TestSubscriber<List<Order>> testSubscriber = useCase.getOrdersList().test();
+    useCase.removeOrder(order2);
 
     // Результат:
     assertEquals(2, testSubscriber.values().size());
@@ -199,8 +199,8 @@ public class PreOrdersUseCaseTest {
     );
 
     // Действие:
-    TestSubscriber<List<Order>> testSubscriber = useCase.getPreOrders().test();
-    useCase.unSchedulePreOrder(order2);
+    TestSubscriber<List<Order>> testSubscriber = useCase.getOrdersList().test();
+    useCase.addOrder(order2);
 
     // Результат:
     assertEquals(2, testSubscriber.values().size());
@@ -227,8 +227,8 @@ public class PreOrdersUseCaseTest {
     );
 
     // Действие:
-    TestSubscriber<List<Order>> testSubscriber = useCase.getPreOrders().test();
-    useCase.schedulePreOrder(order2);
+    TestSubscriber<List<Order>> testSubscriber = useCase.getOrdersList().test();
+    useCase.removeOrder(order2);
 
     // Результат:
     assertEquals(2, testSubscriber.values().size());
@@ -252,7 +252,7 @@ public class PreOrdersUseCaseTest {
     when(gateway.getData()).thenReturn(Flowable.empty());
 
     // Действие:
-    TestSubscriber<List<Order>> testSubscriber = useCase.getPreOrders().test();
+    TestSubscriber<List<Order>> testSubscriber = useCase.getOrdersList().test();
 
     // Результат:
     testSubscriber.assertComplete();
@@ -280,8 +280,8 @@ public class PreOrdersUseCaseTest {
     }, BackpressureStrategy.BUFFER));
 
     // Действие:
-    TestSubscriber<List<Order>> testSubscriber = useCase.getPreOrders().test();
-    TestSubscriber<List<Order>> testSubscriber1 = useCase.getPreOrders().test();
+    TestSubscriber<List<Order>> testSubscriber = useCase.getOrdersList().test();
+    TestSubscriber<List<Order>> testSubscriber1 = useCase.getOrdersList().test();
 
     // Результат:
     assertEquals(1, testSubscriber.values().size());
@@ -316,8 +316,8 @@ public class PreOrdersUseCaseTest {
     }, BackpressureStrategy.BUFFER));
 
     // Действие:
-    TestSubscriber<List<Order>> testSubscriber = useCase.getPreOrders().test();
-    TestSubscriber<List<Order>> testSubscriber1 = useCase.getPreOrders().test();
+    TestSubscriber<List<Order>> testSubscriber = useCase.getOrdersList().test();
+    TestSubscriber<List<Order>> testSubscriber1 = useCase.getOrdersList().test();
 
     // Результат:
     assertEquals(1, testSubscriber.values().size());

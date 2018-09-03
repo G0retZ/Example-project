@@ -19,7 +19,6 @@ import com.cargopull.executor_driver.gateway.DataMappingException;
 import io.reactivex.Flowable;
 import io.reactivex.Single;
 import io.reactivex.functions.Action;
-import io.reactivex.functions.Consumer;
 import io.reactivex.observers.TestObserver;
 import org.junit.Before;
 import org.junit.ClassRule;
@@ -49,14 +48,14 @@ public class OrderConfirmationUseCaseTest {
   @Mock
   private Action action;
   @Mock
-  private Consumer<Order> acceptOrderConsumer;
+  private OrdersUseCase ordersUseCase;
 
   @Before
   public void setUp() {
     when(orderUseCase.getOrders()).thenReturn(Flowable.never());
     when(orderConfirmationGateway.sendDecision(any(), anyBoolean())).thenReturn(Single.never());
     useCase = new OrderConfirmationUseCaseImpl(orderUseCase, orderConfirmationGateway,
-        acceptOrderConsumer);
+        ordersUseCase);
   }
 
   /* Проверяем работу с юзкейсом заказа */
@@ -183,10 +182,29 @@ public class OrderConfirmationUseCaseTest {
     verifyNoMoreInteractions(orderConfirmationGateway, action);
   }
 
-  /* Проверяем работу с консюмером принятия заказа */
+  /* Проверяем работу с юзкейсом списка заказов */
 
   /**
-   * Не должен передавать консюмеру успешно отвергнутый заказа.
+   * Не должно ничего сломаться, если юзкейса заказов нет.
+   */
+  @Test
+  public void shouldNotCrashIfNoUseCaseSet() {
+    // Дано:
+    when(orderUseCase.getOrders()).thenReturn(Flowable.just(order).concatWith(Flowable.never()));
+    when(orderConfirmationGateway.sendDecision(order, false)).thenReturn(Single.just("success"));
+    when(orderConfirmationGateway.sendDecision(order, true)).thenReturn(Single.just("success"));
+    useCase = new OrderConfirmationUseCaseImpl(orderUseCase, orderConfirmationGateway, null);
+
+    // Действие:
+    useCase.sendDecision(false).test();
+    useCase.sendDecision(true).test();
+
+    // Результат:
+    verifyZeroInteractions(ordersUseCase);
+  }
+
+  /**
+   * Не должен передавать юзкейсу успешно отвергнутый заказа.
    */
   @Test
   public void doNotPassRefusedOrderToConsumer() {
@@ -198,14 +216,14 @@ public class OrderConfirmationUseCaseTest {
     useCase.sendDecision(false).test();
 
     // Результат:
-    verifyZeroInteractions(acceptOrderConsumer);
+    verifyZeroInteractions(ordersUseCase);
   }
 
   /**
-   * Должен передать консюмеру успешно принятый заказа.
+   * Должен передать юзкейсу успешно принятый заказа.
    */
   @Test
-  public void passConfirmedOrderToConsumer() throws Exception {
+  public void passConfirmedOrderToConsumer() {
     // Дано:
     when(orderUseCase.getOrders()).thenReturn(Flowable.just(order).concatWith(Flowable.never()));
     when(orderConfirmationGateway.sendDecision(order, true)).thenReturn(Single.just("success"));
@@ -214,11 +232,11 @@ public class OrderConfirmationUseCaseTest {
     useCase.sendDecision(true).test();
 
     // Результат:
-    verify(acceptOrderConsumer, only()).accept(order);
+    verify(ordersUseCase, only()).addOrder(order);
   }
 
   /**
-   * Не должен трогать консюмера если пришел новый заказ.
+   * Не должен трогать юзкейс если пришел новый заказ.
    */
   @Test
   public void doNotTouchConsumerIfNextOrder() {
@@ -230,11 +248,11 @@ public class OrderConfirmationUseCaseTest {
     useCase.sendDecision(true).test();
 
     // Результат:
-    verifyZeroInteractions(acceptOrderConsumer);
+    verifyZeroInteractions(ordersUseCase);
   }
 
   /**
-   * Не должен трогать консюмера если заказ истек.
+   * Не должен трогать юзкейс если заказ истек.
    */
   @Test
   public void doNotTouchConsumerIfOrderExpired() {
@@ -246,7 +264,7 @@ public class OrderConfirmationUseCaseTest {
     useCase.sendDecision(true).test();
 
     // Результат:
-    verifyZeroInteractions(acceptOrderConsumer);
+    verifyZeroInteractions(ordersUseCase);
   }
 
   /* Проверяем ответы на запрос отправки решения */

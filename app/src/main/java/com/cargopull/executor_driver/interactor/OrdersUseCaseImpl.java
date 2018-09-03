@@ -11,7 +11,7 @@ import io.reactivex.schedulers.Schedulers;
 import java.util.ArrayList;
 import java.util.List;
 
-class PreOrdersUseCaseImpl implements PreOrdersUseCase {
+class OrdersUseCaseImpl implements OrdersUseCase {
 
   @NonNull
   private final ErrorReporter errorReporter;
@@ -21,9 +21,9 @@ class PreOrdersUseCaseImpl implements PreOrdersUseCase {
   @NonNull
   private final Order dumbOrder = new Order(0, "", "", 0, "", 0, 0, 0, 0, 0, 0, 0, 0, 0);
   @Nullable
-  private Flowable<List<Order>> preOrderFlowable;
+  private Flowable<List<Order>> ordersFlowable;
   @NonNull
-  private Emitter<Order> scheduleEmitter = new Emitter<Order>() {
+  private Emitter<Order> addEmitter = new Emitter<Order>() {
     @Override
     public void onNext(Order value) {
     }
@@ -37,7 +37,7 @@ class PreOrdersUseCaseImpl implements PreOrdersUseCase {
     }
   };
   @NonNull
-  private Emitter<Order> unScheduleEmitter = new Emitter<Order>() {
+  private Emitter<Order> removeEmitter = new Emitter<Order>() {
     @Override
     public void onNext(Order value) {
     }
@@ -51,7 +51,7 @@ class PreOrdersUseCaseImpl implements PreOrdersUseCase {
     }
   };
 
-  PreOrdersUseCaseImpl(@NonNull ErrorReporter errorReporter,
+  OrdersUseCaseImpl(@NonNull ErrorReporter errorReporter,
       @NonNull CommonGateway<List<Order>> gateway) {
     this.errorReporter = errorReporter;
     this.gateway = gateway;
@@ -59,22 +59,22 @@ class PreOrdersUseCaseImpl implements PreOrdersUseCase {
 
   @NonNull
   @Override
-  public Flowable<List<Order>> getPreOrders() {
-    if (preOrderFlowable == null) {
-      preOrderFlowable = Flowable.combineLatest(
+  public Flowable<List<Order>> getOrdersList() {
+    if (ordersFlowable == null) {
+      ordersFlowable = Flowable.combineLatest(
           Flowable.<Order>create(
-              emitter -> this.scheduleEmitter = emitter,
+              emitter -> this.addEmitter = emitter,
               BackpressureStrategy.BUFFER
           ).startWith(dumbOrder),
           Flowable.<Order>create(
-              emitter -> this.unScheduleEmitter = emitter,
+              emitter -> this.removeEmitter = emitter,
               BackpressureStrategy.BUFFER
           ).startWith(dumbOrder),
           gateway.<Order>getData()
               .observeOn(Schedulers.single())
               .doOnComplete(() -> {
-                scheduleEmitter.onComplete();
-                unScheduleEmitter.onComplete();
+                addEmitter.onComplete();
+                removeEmitter.onComplete();
               }),
           (scheduledOrder, unScheduledOrder, preOrders) -> {
             preOrders = new ArrayList<>(preOrders);
@@ -89,16 +89,16 @@ class PreOrdersUseCaseImpl implements PreOrdersUseCase {
           .replay(1)
           .refCount();
     }
-    return preOrderFlowable;
+    return ordersFlowable;
   }
 
   @Override
-  public void unSchedulePreOrder(@NonNull Order order) {
-    unScheduleEmitter.onNext(order);
+  public void addOrder(@NonNull Order order) {
+    removeEmitter.onNext(order);
   }
 
   @Override
-  public void schedulePreOrder(@NonNull Order order) {
-    scheduleEmitter.onNext(order);
+  public void removeOrder(@NonNull Order order) {
+    addEmitter.onNext(order);
   }
 }
