@@ -28,6 +28,7 @@ public class VehicleOptionsFragment extends BaseFragment implements VehicleOptio
   private RecyclerView recyclerView;
   private TextView errorText;
   private Button readyButton;
+  private VehicleOptionsAdapter vehicleOptionsAdapter;
 
   @Inject
   public void setVehicleOptionsViewModel(@NonNull VehicleOptionsViewModel vehicleOptionsViewModel) {
@@ -44,9 +45,11 @@ public class VehicleOptionsFragment extends BaseFragment implements VehicleOptio
     errorText = view.findViewById(R.id.errorText);
     readyButton = view.findViewById(R.id.readyButton);
     recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-    recyclerView.setAdapter(new ChooseVehicleAdapter(new ArrayList<>()));
-    readyButton.setOnClickListener(v -> vehicleOptionsViewModel.setOptions(
-        ((VehicleOptionsAdapter) recyclerView.getAdapter()).getVehicleOptionsListItems())
+    vehicleOptionsAdapter = new VehicleOptionsAdapter(
+        new VehicleOptionsListItems(new ArrayList<>(), new ArrayList<>()));
+    recyclerView.setAdapter(vehicleOptionsAdapter);
+    readyButton.setOnClickListener(
+        v -> vehicleOptionsViewModel.setOptions(vehicleOptionsAdapter.getVehicleOptionsListItems())
     );
     return view;
   }
@@ -89,8 +92,8 @@ public class VehicleOptionsFragment extends BaseFragment implements VehicleOptio
 
   @Override
   public void setVehicleOptionsListItems(@NonNull VehicleOptionsListItems vehicleOptionsListItems) {
-    VehicleOptionsAdapter adapter = new VehicleOptionsAdapter(vehicleOptionsListItems);
-    recyclerView.setAdapter(adapter);
+    vehicleOptionsAdapter = new VehicleOptionsAdapter(vehicleOptionsListItems);
+    recyclerView.setAdapter(vehicleOptionsAdapter);
   }
 
   @Override

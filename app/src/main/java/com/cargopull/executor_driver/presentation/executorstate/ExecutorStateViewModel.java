@@ -11,9 +11,4 @@ public interface ExecutorStateViewModel extends ViewModel<ExecutorStateViewActio
    * Сообщает о том что сообщение прочитано.
    */
   void messageConsumed();
-
-  /**
-   * Запрашивает подписку на статус исполнителя со сбросом.
-   */
-  void initializeExecutorState();
 }

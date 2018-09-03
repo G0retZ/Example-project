@@ -26,6 +26,7 @@ public class ServerTimeViewModelImpl extends ViewModel implements ServerTimeView
   public ServerTimeViewModelImpl(@NonNull ServerTimeUseCase serverTimeUseCase) {
     this.serverTimeUseCase = serverTimeUseCase;
     navigateLiveData = new MutableLiveData<>();
+    loadServerTime();
   }
 
   @NonNull
@@ -40,8 +41,7 @@ public class ServerTimeViewModelImpl extends ViewModel implements ServerTimeView
     return navigateLiveData;
   }
 
-  @Override
-  public void initializeServerTime() {
+  private void loadServerTime() {
     disposable.dispose();
     disposable = serverTimeUseCase.getServerTime()
         .observeOn(AndroidSchedulers.mainThread())

@@ -29,6 +29,7 @@ public class ExecutorStateViewModelImpl extends ViewModel implements ExecutorSta
     this.executorStateUseCase = executorStateUseCase;
     messageLiveData = new MutableLiveData<>();
     navigateLiveData = new MutableLiveData<>();
+    loadExecutorState();
   }
 
   @NonNull
@@ -48,10 +49,9 @@ public class ExecutorStateViewModelImpl extends ViewModel implements ExecutorSta
     messageLiveData.postValue(null);
   }
 
-  @Override
-  public void initializeExecutorState() {
+  private void loadExecutorState() {
     disposable.dispose();
-    disposable = executorStateUseCase.getExecutorStates(true)
+    disposable = executorStateUseCase.getExecutorStates()
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(
             executorState -> {

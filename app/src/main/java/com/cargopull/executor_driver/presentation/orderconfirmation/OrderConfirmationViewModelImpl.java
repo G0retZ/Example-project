@@ -4,7 +4,9 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
-import com.cargopull.executor_driver.entity.PreOrderExpiredException;
+import com.cargopull.executor_driver.entity.OrderOfferDecisionException;
+import com.cargopull.executor_driver.entity.OrderOfferExpiredException;
+import com.cargopull.executor_driver.gateway.DataMappingException;
 import com.cargopull.executor_driver.interactor.OrderConfirmationUseCase;
 import com.cargopull.executor_driver.presentation.CommonNavigate;
 import com.cargopull.executor_driver.presentation.SingleLiveEvent;
@@ -58,8 +60,13 @@ public class OrderConfirmationViewModelImpl extends ViewModel implements
         .subscribe(
             message -> viewStateLiveData.postValue(new OrderConfirmationViewStateResult(message)),
             t -> {
-              if (t instanceof PreOrderExpiredException) {
+              if (t instanceof OrderOfferExpiredException) {
                 viewStateLiveData.postValue(new OrderConfirmationViewStateResult(t.getMessage()));
+              } else if (t instanceof OrderOfferDecisionException) {
+                viewStateLiveData.postValue(new OrderConfirmationViewStateIdle());
+              } else if (t instanceof DataMappingException) {
+                viewStateLiveData.postValue(new OrderConfirmationViewStateIdle());
+                navigateLiveData.postValue(CommonNavigate.SERVER_DATA_ERROR);
               } else {
                 viewStateLiveData.postValue(new OrderConfirmationViewStateIdle());
                 navigateLiveData.postValue(CommonNavigate.NO_CONNECTION);
@@ -77,10 +84,15 @@ public class OrderConfirmationViewModelImpl extends ViewModel implements
     disposable = orderConfirmationUseCase.sendDecision(false)
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(
-            message -> viewStateLiveData.postValue(new OrderConfirmationViewStateResult(message)),
+            message -> navigateLiveData.postValue(OrderConfirmationNavigate.CLOSE),
             t -> {
-              if (t instanceof PreOrderExpiredException) {
+              if (t instanceof OrderOfferExpiredException) {
                 viewStateLiveData.postValue(new OrderConfirmationViewStateResult(t.getMessage()));
+              } else if (t instanceof OrderOfferDecisionException) {
+                viewStateLiveData.postValue(new OrderConfirmationViewStateIdle());
+              } else if (t instanceof DataMappingException) {
+                viewStateLiveData.postValue(new OrderConfirmationViewStateIdle());
+                navigateLiveData.postValue(CommonNavigate.SERVER_DATA_ERROR);
               } else {
                 viewStateLiveData.postValue(new OrderConfirmationViewStateIdle());
                 navigateLiveData.postValue(CommonNavigate.NO_CONNECTION);

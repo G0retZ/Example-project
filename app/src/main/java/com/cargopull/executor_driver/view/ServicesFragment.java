@@ -39,6 +39,7 @@ public class ServicesFragment extends BaseFragment implements ServicesViewAction
   private TextView minPriceText;
   private TextView maxPriceText;
   private RecyclerView recyclerView;
+  private ServicesAdapter servicesAdapter;
   private TextView errorText;
   private Button readyButton;
   private Context context;
@@ -72,9 +73,10 @@ public class ServicesFragment extends BaseFragment implements ServicesViewAction
     errorText = view.findViewById(R.id.errorText);
     readyButton = view.findViewById(R.id.readyButton);
     recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-    recyclerView.setAdapter(new ServicesAdapter(() -> recyclerView.scrollToPosition(0)));
-    readyButton.setOnClickListener(v -> servicesViewModel.setServices(
-        ((ServicesAdapter) recyclerView.getAdapter()).getServicesListItems())
+    servicesAdapter = new ServicesAdapter(() -> recyclerView.scrollToPosition(0));
+    recyclerView.setAdapter(servicesAdapter);
+    readyButton.setOnClickListener(
+        v -> servicesViewModel.setServices(servicesAdapter.getServicesListItems())
     );
     priceSeekBar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
       @Override
@@ -139,7 +141,7 @@ public class ServicesFragment extends BaseFragment implements ServicesViewAction
 
   @Override
   public void setServicesListItems(@NonNull List<ServicesListItem> servicesListItems) {
-    ((ServicesAdapter) recyclerView.getAdapter()).submitList(servicesListItems);
+    servicesAdapter.submitList(servicesListItems);
   }
 
   @Override

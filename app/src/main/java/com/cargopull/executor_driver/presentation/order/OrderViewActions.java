@@ -1,6 +1,7 @@
 package com.cargopull.executor_driver.presentation.order;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 /**
  * Действия для смены состояния вида окна заказа.
@@ -131,4 +132,11 @@ public interface OrderViewActions {
    * @param comment - адрес
    */
   void showComment(@NonNull String comment);
+
+  /**
+   * показать сообщение о том, что заказ истек.
+   *
+   * @param message - текст сообщения или null, если не показывать
+   */
+  void showOrderExpiredMessage(@Nullable String message);
 }

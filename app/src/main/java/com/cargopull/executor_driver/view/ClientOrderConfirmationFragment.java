@@ -1,6 +1,5 @@
 package com.cargopull.executor_driver.view;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -37,13 +36,6 @@ public class ClientOrderConfirmationFragment extends BaseFragment implements Ord
   private TextView cargoDescText;
   private TextView optionsTitleText;
   private TextView optionsText;
-  private Context context;
-
-  @Override
-  public void onAttach(Context context) {
-    super.onAttach(context);
-    this.context = context;
-  }
 
   @Inject
   public void setOrderViewModel(@NonNull OrderViewModel orderViewModel) {
@@ -93,19 +85,13 @@ public class ClientOrderConfirmationFragment extends BaseFragment implements Ord
   }
 
   @Override
-  public void onDetach() {
-    super.onDetach();
-    context = null;
-  }
-
-  @Override
   public void showOrderPending(boolean pending) {
     showPending(pending, toString());
   }
 
   @Override
   public void showLoadPoint(@NonNull String url) {
-    Picasso.with(context).load(url).into(mapImage);
+    Picasso.get().load(url).into(mapImage);
   }
 
   @Override
@@ -206,5 +192,9 @@ public class ClientOrderConfirmationFragment extends BaseFragment implements Ord
       cargoDescText.setVisibility(View.VISIBLE);
       cargoDescText.setText(comment);
     }
+  }
+
+  @Override
+  public void showOrderExpiredMessage(@Nullable String message) {
   }
 }

@@ -1,8 +1,8 @@
 package com.cargopull.executor_driver.interactor;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.only;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
@@ -12,10 +12,8 @@ import com.cargopull.executor_driver.backend.web.NoNetworkException;
 import com.cargopull.executor_driver.entity.Order;
 import com.cargopull.executor_driver.entity.RoutePoint;
 import com.cargopull.executor_driver.gateway.DataMappingException;
-import com.cargopull.executor_driver.utils.ErrorReporter;
 import io.reactivex.Completable;
 import io.reactivex.Flowable;
-import io.reactivex.Observable;
 import io.reactivex.observers.TestObserver;
 import io.reactivex.subscribers.TestSubscriber;
 import java.util.Arrays;
@@ -36,11 +34,7 @@ public class OrderRouteUseCaseTest {
   private OrderRouteUseCase useCase;
 
   @Mock
-  private ErrorReporter errorReporter;
-  @Mock
-  private OrderGateway orderGateway;
-  @Mock
-  private DataReceiver<String> loginReceiver;
+  private OrderUseCase orderUseCase;
   @Mock
   private OrderRouteGateway orderRouteGateway;
   @Mock
@@ -60,48 +54,29 @@ public class OrderRouteUseCaseTest {
 
   @Before
   public void setUp() {
-    when(loginReceiver.get()).thenReturn(Observable.never());
-    when(orderGateway.getOrders(anyString())).thenReturn(Flowable.never());
+    when(orderUseCase.getOrders()).thenReturn(Flowable.never());
     when(orderRouteGateway.closeRoutePoint(any())).thenReturn(Completable.never());
     when(orderRouteGateway.completeTheOrder()).thenReturn(Completable.never());
     when(orderRouteGateway.nextRoutePoint(any())).thenReturn(Completable.never());
-    useCase = new OrderRouteUseCaseImpl(errorReporter, orderGateway, loginReceiver,
-        orderRouteGateway);
+    useCase = new OrderRouteUseCaseImpl(orderUseCase, orderRouteGateway);
   }
 
-  /**
-   * Должен запросить у публикатора логин исполнителя.
-   */
-  @Test
-  public void askLoginPublisherForLogin() {
-    // Действие:
-    useCase.getOrderRoutePoints().test();
-
-    // Результат:
-    verify(loginReceiver, only()).get();
-  }
-
-  /* Проверяем работу с гейтвеем заказа */
+  /* Проверяем работу с юзкейсом заказа */
 
   /**
-   * Должен запросить у гейтвея получение выполняемого заказа.
+   * Должен запросить у юзкейсом получение выполняемого заказа.
    */
   @Test
   public void askGatewayForOrders() {
-    // Дано:
-    when(loginReceiver.get()).thenReturn(Observable.just(
-        "1234567890", "0987654321", "123454321", "09876567890"
-    ));
-
     // Действие:
+    useCase.getOrderRoutePoints().test();
+    useCase.getOrderRoutePoints().test();
+    useCase.getOrderRoutePoints().test();
     useCase.getOrderRoutePoints().test();
 
     // Результат:
-    verify(orderGateway).getOrders("1234567890");
-    verify(orderGateway).getOrders("0987654321");
-    verify(orderGateway).getOrders("123454321");
-    verify(orderGateway).getOrders("09876567890");
-    verifyNoMoreInteractions(orderGateway);
+    verify(orderUseCase, times(4)).getOrders();
+    verifyNoMoreInteractions(orderUseCase);
   }
 
   /* Проверяем работу с гейтвеем маршрута заказа */
@@ -142,25 +117,6 @@ public class OrderRouteUseCaseTest {
     verify(orderRouteGateway, only()).nextRoutePoint(routePoint);
   }
 
-  /* Проверяем отправку ошибок в репортер */
-
-  /**
-   * Должен отправить ошибку маппинга.
-   */
-  @Test
-  public void reportDataMappingError() {
-    // Дано:
-    when(loginReceiver.get()).thenReturn(Observable.just("1234567890"));
-    when(orderGateway.getOrders("1234567890"))
-        .thenReturn(Flowable.error(new DataMappingException()));
-
-    // Действие:
-    useCase.getOrderRoutePoints().test();
-
-    // Результат:
-    verify(errorReporter, only()).reportError(any(DataMappingException.class));
-  }
-
   /* Проверяем ответы на запрос маршрута */
 
   /**
@@ -169,9 +125,7 @@ public class OrderRouteUseCaseTest {
   @Test
   public void answerDataMappingError() {
     // Дано:
-    when(loginReceiver.get()).thenReturn(Observable.just("1234567890"));
-    when(orderGateway.getOrders("1234567890"))
-        .thenReturn(Flowable.error(new DataMappingException()));
+    when(orderUseCase.getOrders()).thenReturn(Flowable.error(new DataMappingException()));
 
     // Действие:
     TestSubscriber<List<RoutePoint>> test = useCase.getOrderRoutePoints().test();
@@ -188,8 +142,7 @@ public class OrderRouteUseCaseTest {
   @Test
   public void answerWithOrders() {
     // Дано:
-    when(loginReceiver.get()).thenReturn(Observable.just("1234567890"));
-    when(orderGateway.getOrders("1234567890")).thenReturn(Flowable.just(order, order2));
+    when(orderUseCase.getOrders()).thenReturn(Flowable.just(order, order2));
     when(order.getRoutePath()).thenReturn(Arrays.asList(routePoint1, routePoint2, routePoint3));
     when(order2.getRoutePath()).thenReturn(Arrays.asList(routePoint4, routePoint, routePoint3));
 

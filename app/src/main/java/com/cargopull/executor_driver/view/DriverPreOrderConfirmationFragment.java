@@ -22,6 +22,7 @@ import android.widget.TextView;
 import com.cargopull.executor_driver.R;
 import com.cargopull.executor_driver.backend.vibro.ShakeItPlayer;
 import com.cargopull.executor_driver.di.AppComponent;
+import com.cargopull.executor_driver.presentation.CommonNavigate;
 import com.cargopull.executor_driver.presentation.order.OrderViewActions;
 import com.cargopull.executor_driver.presentation.order.OrderViewModel;
 import com.cargopull.executor_driver.presentation.orderconfirmation.OrderConfirmationViewActions;
@@ -185,6 +186,11 @@ public class DriverPreOrderConfirmationFragment extends BaseFragment implements
         viewState.apply(this);
       }
     });
+    orderConfirmationViewModel.getNavigationLiveData().observe(this, destination -> {
+      if (destination != null) {
+        navigate(destination);
+      }
+    });
   }
 
   @Override
@@ -200,6 +206,21 @@ public class DriverPreOrderConfirmationFragment extends BaseFragment implements
     }
     super.onDetach();
     context = null;
+  }
+
+  @Override
+  protected void navigate(@NonNull String destination) {
+    if (destination.equals(CommonNavigate.NO_CONNECTION)) {
+      if (alertDialog != null) {
+        alertDialog.dismiss();
+      }
+      alertDialog = new Builder(context)
+          .setMessage(getString(R.string.sms_network_error))
+          .setPositiveButton(getString(android.R.string.ok), null)
+          .create();
+      alertDialog.show();
+    }
+    super.navigate(destination);
   }
 
   @Override
@@ -318,6 +339,22 @@ public class DriverPreOrderConfirmationFragment extends BaseFragment implements
   }
 
   @Override
+  public void showOrderExpiredMessage(@Nullable String message) {
+    if (alertDialog != null) {
+      alertDialog.dismiss();
+    }
+    if (message != null) {
+      alertDialog = new Builder(context)
+          .setMessage(message)
+          .setCancelable(false)
+          .setPositiveButton(getString(android.R.string.ok),
+              (a, b) -> orderViewModel.messageConsumed())
+          .create();
+      alertDialog.show();
+    }
+  }
+
+  @Override
   public void enableDeclineButton(boolean enable) {
     declineAction.setEnabled(enable);
   }
@@ -330,17 +367,17 @@ public class DriverPreOrderConfirmationFragment extends BaseFragment implements
 
   @Override
   public void showBlockingMessage(@Nullable String message) {
+    if (alertDialog != null) {
+      alertDialog.dismiss();
+    }
     if (message != null) {
       alertDialog = new Builder(context)
           .setMessage(message)
+          .setCancelable(false)
           .setPositiveButton(getString(android.R.string.ok),
               (a, b) -> orderConfirmationViewModel.messageConsumed())
           .create();
       alertDialog.show();
-    } else {
-      if (alertDialog != null) {
-        alertDialog.dismiss();
-      }
     }
   }
 }

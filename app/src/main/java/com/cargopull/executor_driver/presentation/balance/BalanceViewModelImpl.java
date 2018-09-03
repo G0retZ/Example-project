@@ -49,11 +49,9 @@ public class BalanceViewModelImpl extends ViewModel implements BalanceViewModel 
   }
 
   private void loadBalance() {
-    if (!disposable.isDisposed()) {
-      return;
-    }
+    disposable.dispose();
     viewStateLiveData.postValue(new BalanceViewStatePending(lastViewState));
-    disposable = executorBalanceUseCase.getExecutorBalance(false)
+    disposable = executorBalanceUseCase.getExecutorBalance()
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(
             executorBalance -> viewStateLiveData

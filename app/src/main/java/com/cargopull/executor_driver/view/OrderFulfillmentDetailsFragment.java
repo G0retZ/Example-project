@@ -173,4 +173,8 @@ public class OrderFulfillmentDetailsFragment extends BaseFragment implements Ord
       commentText.setText(comment);
     }
   }
+
+  @Override
+  public void showOrderExpiredMessage(@Nullable String message) {
+  }
 }

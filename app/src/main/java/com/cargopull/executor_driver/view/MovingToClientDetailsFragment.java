@@ -173,4 +173,8 @@ public class MovingToClientDetailsFragment extends BaseFragment implements Order
       commentText.setText(comment);
     }
   }
+
+  @Override
+  public void showOrderExpiredMessage(@Nullable String message) {
+  }
 }

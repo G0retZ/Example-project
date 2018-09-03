@@ -40,6 +40,27 @@
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toBottomOf="@id/balance"/>
   <TextView
+    android:id="@+id/preOrder"
+    style="@style/TextAppearance.AppCompat.Subhead"
+    android:layout_width="0dp"
+    android:layout_height="56dp"
+    android:paddingStart="16dp"
+    android:paddingEnd="16dp"
+    android:background="?android:attr/selectableItemBackground"
+    android:gravity="center_vertical"
+    android:text="@string/available_pre_order"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@id/balanceLine"/>
+  <View
+    android:id="@+id/preOrderLine"
+    android:layout_width="0dp"
+    android:layout_height="1dp"
+    android:background="@color/colorDivider"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@id/preOrder"/>
+  <TextView
     android:id="@+id/exit"
     style="@style/TextAppearance.AppCompat.Subhead"
     android:layout_width="0dp"
@@ -51,7 +72,7 @@
     android:text="@string/exit_app"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toBottomOf="@id/balanceLine"/>
+    app:layout_constraintTop_toBottomOf="@id/preOrderLine"/>
   <View
     android:id="@+id/exitLine"
     android:layout_width="0dp"

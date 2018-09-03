@@ -10,11 +10,12 @@ import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
+import ua.naiksoftware.stomp.client.StompMessage;
 
 /**
  * Преобразуем строку из ответа сервера в бизнес объект детального расчета заказа.
  */
-public class OrderCostDetailsApiMapper implements Mapper<String, OrderCostDetails> {
+public class OrderCostDetailsApiMapper implements Mapper<StompMessage, OrderCostDetails> {
 
   @Inject
   public OrderCostDetailsApiMapper() {
@@ -23,14 +24,17 @@ public class OrderCostDetailsApiMapper implements Mapper<String, OrderCostDetail
 
   @NonNull
   @Override
-  public OrderCostDetails map(@NonNull String from) throws Exception {
-    if (from.isEmpty()) {
+  public OrderCostDetails map(@NonNull StompMessage from) throws Exception {
+    if (from.getPayload() == null) {
+      throw new DataMappingException("Ошибка маппинга: данные не должны быть null!");
+    }
+    if (from.getPayload().isEmpty()) {
       throw new DataMappingException("Ошибка маппинга: данные не должны быть пустыми!");
     }
     Gson gson = new Gson();
     ApiOrderCostDetails apiOrderCostDetails;
     try {
-      apiOrderCostDetails = gson.fromJson(from, ApiOrderCostDetails.class);
+      apiOrderCostDetails = gson.fromJson(from.getPayload(), ApiOrderCostDetails.class);
     } catch (Exception e) {
       throw new DataMappingException("Ошибка маппинга: не удалось распарсить JSON: " + from, e);
     }

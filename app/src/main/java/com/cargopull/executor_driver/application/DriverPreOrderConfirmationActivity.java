@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
 import com.cargopull.executor_driver.R;
+import com.cargopull.executor_driver.presentation.order.OrderNavigate;
 import com.cargopull.executor_driver.presentation.orderconfirmation.OrderConfirmationNavigate;
 
 public class DriverPreOrderConfirmationActivity extends BaseActivity {
@@ -23,6 +24,9 @@ public class DriverPreOrderConfirmationActivity extends BaseActivity {
   public void navigate(@NonNull String destination) {
     switch (destination) {
       case OrderConfirmationNavigate.CLOSE:
+        finish();
+        break;
+      case OrderNavigate.CLOSE:
         finish();
         break;
       default:

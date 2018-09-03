@@ -54,7 +54,7 @@ public class ClientOrderConfirmationTimeViewModelImpl extends ViewModel implemen
     if (!disposable.isDisposed()) {
       return;
     }
-    disposable = executorStateUseCase.getExecutorStates(false)
+    disposable = executorStateUseCase.getExecutorStates()
         .observeOn(AndroidSchedulers.mainThread())
         .switchMap(executorState -> Flowable.interval(0, 1, TimeUnit.SECONDS)
             .map(count -> executorState.getCustomerTimer() - count * 1000)

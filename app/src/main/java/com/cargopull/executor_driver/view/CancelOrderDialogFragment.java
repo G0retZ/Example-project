@@ -13,6 +13,8 @@ import com.cargopull.executor_driver.di.AppComponent;
 import com.cargopull.executor_driver.entity.CancelOrderReason;
 import com.cargopull.executor_driver.presentation.cancelorder.CancelOrderViewActions;
 import com.cargopull.executor_driver.presentation.cancelorder.CancelOrderViewModel;
+import com.cargopull.executor_driver.presentation.cancelorderreasons.CancelOrderReasonsViewActions;
+import com.cargopull.executor_driver.presentation.cancelorderreasons.CancelOrderReasonsViewModel;
 import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
@@ -22,14 +24,21 @@ import javax.inject.Inject;
  */
 
 public class CancelOrderDialogFragment extends BaseDialogFragment implements
-    CancelOrderViewActions {
+    CancelOrderViewActions, CancelOrderReasonsViewActions {
 
   private CancelOrderViewModel cancelOrderViewModel;
+  private CancelOrderReasonsViewModel cancelOrderReasonsViewModel;
   private RecyclerView recyclerView;
 
   @Inject
   public void setCancelOrderViewModel(@NonNull CancelOrderViewModel cancelOrderViewModel) {
     this.cancelOrderViewModel = cancelOrderViewModel;
+  }
+
+  @Inject
+  public void setCancelOrderReasonsViewModel(
+      @NonNull CancelOrderReasonsViewModel cancelOrderReasonsViewModel) {
+    this.cancelOrderReasonsViewModel = cancelOrderReasonsViewModel;
   }
 
   @Nullable
@@ -64,11 +73,27 @@ public class CancelOrderDialogFragment extends BaseDialogFragment implements
         viewState.apply(this);
       }
     });
+    cancelOrderReasonsViewModel.getNavigationLiveData().observe(this, destination -> {
+      dismiss();
+      if (destination != null) {
+        navigate(destination);
+      }
+    });
+    cancelOrderReasonsViewModel.getViewStateLiveData().observe(this, viewState -> {
+      if (viewState != null) {
+        viewState.apply(this);
+      }
+    });
   }
 
   @Override
   public void showCancelOrderPending(boolean pending) {
-    showPending(pending, getClass().getSimpleName() + hashCode());
+    showPending(pending, getClass().getSimpleName() + hashCode() + "0");
+  }
+
+  @Override
+  public void showCancelOrderReasonsPending(boolean pending) {
+    showPending(pending, getClass().getSimpleName() + hashCode() + "1");
   }
 
   @Override

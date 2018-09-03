@@ -1,37 +1,46 @@
 package com.cargopull.executor_driver.interactor;
 
 import android.support.annotation.NonNull;
+import com.cargopull.executor_driver.entity.Order;
+import com.cargopull.executor_driver.entity.OrderOfferDecisionException;
 import io.reactivex.Single;
+import io.reactivex.SingleSource;
+import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 import javax.inject.Inject;
 
 public class OrderConfirmationUseCaseImpl implements OrderConfirmationUseCase {
 
   @NonNull
-  private final OrderGateway orderGateway;
+  private final OrderUseCase orderUseCase;
   @NonNull
   private final OrderConfirmationGateway orderConfirmationGateway;
-  @NonNull
-  private final DataReceiver<String> loginReceiver;
 
   @Inject
-  public OrderConfirmationUseCaseImpl(@NonNull OrderGateway orderGateway,
-      @NonNull OrderConfirmationGateway orderConfirmationGateway,
-      @NonNull DataReceiver<String> loginReceiver) {
-    this.orderGateway = orderGateway;
+  public OrderConfirmationUseCaseImpl(@NonNull OrderUseCase orderUseCase,
+      @NonNull OrderConfirmationGateway orderConfirmationGateway) {
+    this.orderUseCase = orderUseCase;
     this.orderConfirmationGateway = orderConfirmationGateway;
-    this.loginReceiver = loginReceiver;
   }
 
   @NonNull
   @Override
   public Single<String> sendDecision(boolean confirmed) {
-    return loginReceiver.get()
-        .firstOrError()
-        .flatMapPublisher(orderGateway::getOrders)
-        .firstOrError()
+    return orderUseCase.getOrders()
         .observeOn(Schedulers.single())
-        .flatMap(order -> orderConfirmationGateway.sendDecision(order, confirmed))
-        .observeOn(Schedulers.single());
+        .flatMapSingle(new Function<Order, SingleSource<? extends String>>() {
+          boolean orderDecisionMade;
+
+          @Override
+          public SingleSource<? extends String> apply(Order order) throws Exception {
+            if (orderDecisionMade) {
+              throw new OrderOfferDecisionException();
+            }
+            orderDecisionMade = true;
+            return orderConfirmationGateway.sendDecision(order, confirmed);
+          }
+        }).observeOn(Schedulers.single())
+        .firstOrError()
+        .doOnSuccess(s -> orderUseCase.setOrderOfferDecisionMade());
   }
 }

@@ -3,7 +3,6 @@ package com.cargopull.executor_driver.view;
 import android.animation.Animator;
 import android.animation.Animator.AnimatorListener;
 import android.animation.ObjectAnimator;
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -47,7 +46,6 @@ public class DriverOrderConfirmationFragment extends BaseFragment implements
   private TextView estimationText;
   private TextView serviceText;
   private Button acceptAction;
-  private Context context;
 
   @Inject
   public void setOrderConfirmationViewModel(
@@ -58,12 +56,6 @@ public class DriverOrderConfirmationFragment extends BaseFragment implements
   @Inject
   public void setOrderViewModel(@NonNull OrderViewModel orderViewModel) {
     this.orderViewModel = orderViewModel;
-  }
-
-  @Override
-  public void onAttach(Context context) {
-    super.onAttach(context);
-    this.context = context;
   }
 
   @Nullable
@@ -115,12 +107,6 @@ public class DriverOrderConfirmationFragment extends BaseFragment implements
   }
 
   @Override
-  public void onDetach() {
-    super.onDetach();
-    context = null;
-  }
-
-  @Override
   public void showDriverOrderConfirmationPending(boolean pending) {
     showPending(pending, toString() + "0");
   }
@@ -132,7 +118,7 @@ public class DriverOrderConfirmationFragment extends BaseFragment implements
 
   @Override
   public void showLoadPoint(@NonNull String url) {
-    Picasso.with(context).load(url).into(mapImage);
+    Picasso.get().load(url).into(mapImage);
   }
 
   @Override
@@ -244,6 +230,10 @@ public class DriverOrderConfirmationFragment extends BaseFragment implements
   @Override
   public void showComment(@NonNull String comment) {
 
+  }
+
+  @Override
+  public void showOrderExpiredMessage(@Nullable String message) {
   }
 
   @Override
