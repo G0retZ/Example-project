@@ -330,8 +330,7 @@ class InteractorComponentImpl implements InteractorComponent {
       orderConfirmationUseCase = new OrderConfirmationUseCaseImpl(
           getOrderUseCase(),
           repositoryComponent.getOrderConfirmationGateway(),
-          order -> {
-          });
+          null);
     }
     return orderConfirmationUseCase;
   }
@@ -343,8 +342,7 @@ class InteractorComponentImpl implements InteractorComponent {
       preOrderConfirmationUseCase = new OrderConfirmationUseCaseImpl(
           getPreOrderUseCase(),
           repositoryComponent.getPreOrderConfirmationGateway(),
-          order -> {
-          });
+          null);
     }
     return preOrderConfirmationUseCase;
   }
