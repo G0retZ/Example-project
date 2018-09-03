@@ -186,6 +186,11 @@ public class DriverPreOrderConfirmationFragment extends BaseFragment implements
         viewState.apply(this);
       }
     });
+    orderConfirmationViewModel.getNavigationLiveData().observe(this, destination -> {
+      if (destination != null) {
+        navigate(destination);
+      }
+    });
   }
 
   @Override
@@ -211,8 +216,7 @@ public class DriverPreOrderConfirmationFragment extends BaseFragment implements
       }
       alertDialog = new Builder(context)
           .setMessage(getString(R.string.sms_network_error))
-          .setPositiveButton(getString(android.R.string.ok),
-              (a, b) -> orderConfirmationViewModel.messageConsumed())
+          .setPositiveButton(getString(android.R.string.ok), null)
           .create();
       alertDialog.show();
     }
@@ -342,6 +346,7 @@ public class DriverPreOrderConfirmationFragment extends BaseFragment implements
     if (message != null) {
       alertDialog = new Builder(context)
           .setMessage(message)
+          .setCancelable(false)
           .setPositiveButton(getString(android.R.string.ok),
               (a, b) -> orderViewModel.messageConsumed())
           .create();
@@ -368,6 +373,7 @@ public class DriverPreOrderConfirmationFragment extends BaseFragment implements
     if (message != null) {
       alertDialog = new Builder(context)
           .setMessage(message)
+          .setCancelable(false)
           .setPositiveButton(getString(android.R.string.ok),
               (a, b) -> orderConfirmationViewModel.messageConsumed())
           .create();
