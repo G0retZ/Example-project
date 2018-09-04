@@ -76,6 +76,8 @@ import com.cargopull.executor_driver.presentation.services.ServicesViewModel;
 import com.cargopull.executor_driver.presentation.services.ServicesViewModelImpl;
 import com.cargopull.executor_driver.presentation.smsbutton.SmsButtonViewModel;
 import com.cargopull.executor_driver.presentation.smsbutton.SmsButtonViewModelImpl;
+import com.cargopull.executor_driver.presentation.upcomingpreorder.UpcomingPreOrderViewModel;
+import com.cargopull.executor_driver.presentation.upcomingpreorder.UpcomingPreOrderViewModelImpl;
 import com.cargopull.executor_driver.presentation.updatemessage.UpdateMessageViewModel;
 import com.cargopull.executor_driver.presentation.updatemessage.UpdateMessageViewModelImpl;
 import com.cargopull.executor_driver.presentation.vehicleoptions.VehicleOptionsViewModel;
@@ -120,6 +122,8 @@ class PresentationComponentImpl implements PresentationComponent {
   private ServerTimeViewModel serverTimeViewModel;
   @Nullable
   private ServicesSliderViewModel servicesSliderViewModel;
+  @Nullable
+  private UpcomingPreOrderViewModel upcomingPreOrderViewModel;
   @Nullable
   private UpdateMessageViewModel updateMessageViewModel;
 
@@ -613,6 +617,17 @@ class PresentationComponentImpl implements PresentationComponent {
         SmsButtonViewModelImpl.class,
         new SmsButtonViewModelImpl(interactorComponent.getSmsUseCase())
     );
+  }
+
+  @NonNull
+  @Override
+  public UpcomingPreOrderViewModel getUpcomingPreOrderViewModel() {
+    if (upcomingPreOrderViewModel == null) {
+      upcomingPreOrderViewModel = new UpcomingPreOrderViewModelImpl(
+          interactorComponent.getUpcomingPreOrderMessagesUseCase()
+      );
+    }
+    return upcomingPreOrderViewModel;
   }
 
   @NonNull

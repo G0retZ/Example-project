@@ -33,6 +33,8 @@ import com.cargopull.executor_driver.presentation.serverconnection.ServerConnect
 import com.cargopull.executor_driver.presentation.serverconnection.ServerConnectionViewActions;
 import com.cargopull.executor_driver.presentation.serverconnection.ServerConnectionViewModel;
 import com.cargopull.executor_driver.presentation.servertime.ServerTimeViewModel;
+import com.cargopull.executor_driver.presentation.upcomingpreorder.UpcomingPreOrderViewActions;
+import com.cargopull.executor_driver.presentation.upcomingpreorder.UpcomingPreOrderViewModel;
 import com.cargopull.executor_driver.presentation.updatemessage.UpdateMessageViewModel;
 import com.cargopull.executor_driver.utils.Pair;
 import java.util.ArrayList;
@@ -45,7 +47,7 @@ import javax.inject.Inject;
  */
 
 public class MainApplication extends Application implements ServerConnectionViewActions,
-    MissedOrderViewActions, PreOrderViewActions {
+    MissedOrderViewActions, PreOrderViewActions, UpcomingPreOrderViewActions {
 
   @Nullable
   private AppComponent appComponent;
@@ -71,6 +73,8 @@ public class MainApplication extends Application implements ServerConnectionView
   private GeoLocationViewModel geoLocationViewModel;
   @Nullable
   private MissedOrderViewModel missedOrderViewModel;
+  @Nullable
+  private UpcomingPreOrderViewModel upcomingPreOrderViewModel;
   @Nullable
   private UpdateMessageViewModel updateMessageViewModel;
   @Nullable
@@ -147,6 +151,12 @@ public class MainApplication extends Application implements ServerConnectionView
   }
 
   @Inject
+  public void setUpcomingPreOrderViewModel(
+      @Nullable UpcomingPreOrderViewModel upcomingPreOrderViewModel) {
+    this.upcomingPreOrderViewModel = upcomingPreOrderViewModel;
+  }
+
+  @Inject
   public void setUpdateMessageViewModel(@NonNull UpdateMessageViewModel updateMessageViewModel) {
     this.updateMessageViewModel = updateMessageViewModel;
   }
@@ -179,7 +189,7 @@ public class MainApplication extends Application implements ServerConnectionView
         || missedOrderViewModel == null || updateMessageViewModel == null
         || serverConnectionViewModel == null || currentCostPollingViewModel == null
         || serverTimeViewModel == null || orderViewModel == null || preOrderViewModel == null
-        || orderCostDetailsViewModel == null) {
+        || orderCostDetailsViewModel == null || upcomingPreOrderViewModel == null) {
       throw new RuntimeException("Shit! WTF?!");
     }
     serverConnectionViewModel.getViewStateLiveData().observeForever(viewState -> {
@@ -188,6 +198,11 @@ public class MainApplication extends Application implements ServerConnectionView
       }
     });
     missedOrderViewModel.getViewStateLiveData().observeForever(viewState -> {
+      if (viewState != null) {
+        viewState.apply(this);
+      }
+    });
+    upcomingPreOrderViewModel.getViewStateLiveData().observeForever(viewState -> {
       if (viewState != null) {
         viewState.apply(this);
       }
@@ -532,6 +547,35 @@ public class MainApplication extends Application implements ServerConnectionView
       } else {
         notificationManager.cancel(7);
       }
+    }
+  }
+
+  @Override
+  public void showUpcomingPreOrderMessage(@NonNull String message) {
+    shakeIt(Arrays.asList(
+        new Pair<>(100L, 255),
+        new Pair<>(50L, 0),
+        new Pair<>(50L, 255),
+        new Pair<>(50L, 0),
+        new Pair<>(50L, 255),
+        new Pair<>(50L, 0),
+        new Pair<>(100L, 255),
+        new Pair<>(50L, 0),
+        new Pair<>(50L, 255),
+        new Pair<>(50L, 0),
+        new Pair<>(100L, 255)
+    ));
+    if (notificationManager != null) {
+      Builder builder = new Builder(this, "state_channel")
+          .setContentText(getString(R.string.upcoming_pre_order))
+          .setContentTitle(message)
+          .setSound(null)
+          .setVibrate(new long[0])
+          .setAutoCancel(true)
+          .setSmallIcon(R.mipmap.ic_launcher)
+          .setTicker(getString(R.string.upcoming_pre_order))
+          .setWhen(System.currentTimeMillis());
+      notificationManager.notify(8, builder.build());
     }
   }
 }
