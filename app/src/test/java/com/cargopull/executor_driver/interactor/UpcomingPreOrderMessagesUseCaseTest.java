@@ -106,7 +106,7 @@ public class UpcomingPreOrderMessagesUseCaseTest {
   }
 
   /**
-   * Должен завершить получение сообщений о о предстоящих предзаказах.
+   * Должен завершить получение сообщений о предстоящих предзаказах.
    */
   @Test
   public void answerComplete() {
