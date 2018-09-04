@@ -46,6 +46,8 @@ import com.cargopull.executor_driver.interactor.ServerConnectionUseCase;
 import com.cargopull.executor_driver.interactor.ServerConnectionUseCaseImpl;
 import com.cargopull.executor_driver.interactor.ServerTimeUseCase;
 import com.cargopull.executor_driver.interactor.ServerTimeUseCaseImpl;
+import com.cargopull.executor_driver.interactor.UpcomingPreOrderMessagesUseCase;
+import com.cargopull.executor_driver.interactor.UpcomingPreOrderMessagesUseCaseImpl;
 import com.cargopull.executor_driver.interactor.UpdateMessageUseCase;
 import com.cargopull.executor_driver.interactor.UpdateMessageUseCaseImpl;
 import com.cargopull.executor_driver.interactor.WaitingForClientUseCase;
@@ -145,6 +147,8 @@ class InteractorComponentImpl implements InteractorComponent {
   private ServicesUseCase servicesUseCase;
   @Nullable
   private SelectedVehicleUseCase selectedVehicleUseCase;
+  @Nullable
+  private UpcomingPreOrderMessagesUseCase upcomingPreOrderMessagesUseCase;
   @Nullable
   private VehicleChoiceUseCase vehicleChoiceUseCase;
   @Nullable
@@ -538,6 +542,18 @@ class InteractorComponentImpl implements InteractorComponent {
       );
     }
     return selectedVehicleUseCase;
+  }
+
+  @NonNull
+  @Override
+  public UpcomingPreOrderMessagesUseCase getUpcomingPreOrderMessagesUseCase() {
+    if (upcomingPreOrderMessagesUseCase == null) {
+      upcomingPreOrderMessagesUseCase = new UpcomingPreOrderMessagesUseCaseImpl(
+          errorReporter,
+          repositoryComponent.UpcomingPreOrderMessagesGateway()
+      );
+    }
+    return upcomingPreOrderMessagesUseCase;
   }
 
   @NonNull

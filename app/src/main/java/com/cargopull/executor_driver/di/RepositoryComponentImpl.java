@@ -49,6 +49,7 @@ import com.cargopull.executor_driver.gateway.ServiceApiMapper;
 import com.cargopull.executor_driver.gateway.ServicesGatewayImpl;
 import com.cargopull.executor_driver.gateway.SmsGatewayImpl;
 import com.cargopull.executor_driver.gateway.TopicGatewayImpl;
+import com.cargopull.executor_driver.gateway.UpcomingPreOrderMessagesFilter;
 import com.cargopull.executor_driver.gateway.UpdateMessageFilter;
 import com.cargopull.executor_driver.gateway.VehicleApiMapper;
 import com.cargopull.executor_driver.gateway.VehicleOptionApiMapper;
@@ -139,6 +140,8 @@ class RepositoryComponentImpl implements RepositoryComponent {
   private ServicesGateway servicesGateway;
   @Nullable
   private LastUsedVehicleGateway lastUsedVehicleGateway;
+  @Nullable
+  private CommonGateway<String> upcomingPreOrderMessagesGateway;
   @Nullable
   private VehicleOptionsGateway vehicleOptionsGateway;
   @Nullable
@@ -489,6 +492,19 @@ class RepositoryComponentImpl implements RepositoryComponent {
       );
     }
     return lastUsedVehicleGateway;
+  }
+
+  @NonNull
+  @Override
+  public CommonGateway<String> UpcomingPreOrderMessagesGateway() {
+    if (upcomingPreOrderMessagesGateway == null) {
+      upcomingPreOrderMessagesGateway = new TopicGatewayImpl<>(
+          backendComponent.getPersonalTopicListener(),
+          new MessagePayloadApiMapper(),
+          new UpcomingPreOrderMessagesFilter()
+      );
+    }
+    return upcomingPreOrderMessagesGateway;
   }
 
   @NonNull
