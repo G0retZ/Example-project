@@ -1,10 +1,13 @@
 package com.cargopull.executor_driver.presentation.preorderslist;
 
+import android.content.res.Resources;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import com.cargopull.executor_driver.R;
 import com.cargopull.executor_driver.entity.Order;
 import com.cargopull.executor_driver.entity.RoutePoint;
 import com.cargopull.executor_driver.entity.RoutePointState;
+import java.text.DecimalFormat;
 import java.util.Locale;
 import org.joda.time.format.DateTimeFormat;
 
@@ -43,8 +46,14 @@ public class PreOrdersListItem {
     return String.format(Locale.getDefault(), "%.2f", order.getEstimatedRouteLength() / 1000d);
   }
 
-  public long getEstimatedPrice() {
-    return order.getEstimatedPrice();
+  public String getEstimatedPrice(Resources resources) {
+    long currentCost = order.getEstimatedPrice();
+    if (!resources.getBoolean(R.bool.show_cents)) {
+      currentCost = Math.round(currentCost / 100f);
+    }
+    DecimalFormat decimalFormat = new DecimalFormat(resources.getString(R.string.currency_format));
+    decimalFormat.setMaximumFractionDigits(0);
+    return decimalFormat.format(currentCost);
   }
 
   @Nullable

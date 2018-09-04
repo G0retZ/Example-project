@@ -3,9 +3,12 @@ package com.cargopull.executor_driver.presentation.preorderslist;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
 
+import android.content.res.Resources;
+import com.cargopull.executor_driver.R;
 import com.cargopull.executor_driver.entity.Order;
 import com.cargopull.executor_driver.entity.RoutePoint;
 import com.cargopull.executor_driver.entity.RoutePointState;
+import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.Locale;
 import org.joda.time.format.DateTimeFormat;
@@ -28,6 +31,8 @@ public class PreOrdersListItemTest {
   private RoutePoint routePoint1;
   @Mock
   private RoutePoint routePoint2;
+  @Mock
+  private Resources resources;
 
   @Before
   public void setUp() {
@@ -73,10 +78,13 @@ public class PreOrdersListItemTest {
   @Test
   public void testGetEstimatedPrice() {
     // Дано:
-    when(order.getEstimatedPrice()).thenReturn(7000L);
+    when(resources.getString(R.string.currency_format)).thenReturn("##,###,### ¤");
+    when(order.getEstimatedPrice()).thenReturn(700000L);
 
     // Результат:
-    assertEquals(preOrdersListItem.getEstimatedPrice(), 7000);
+    DecimalFormat decimalFormat = new DecimalFormat("##,###,### ¤");
+    decimalFormat.setMaximumFractionDigits(0);
+    assertEquals(preOrdersListItem.getEstimatedPrice(resources), decimalFormat.format(7000));
   }
 
   @Test
