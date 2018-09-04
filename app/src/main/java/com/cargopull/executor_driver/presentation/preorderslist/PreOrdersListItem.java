@@ -6,6 +6,9 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.cargopull.executor_driver.entity.Order;
 
+/**
+ * Модель элемента списка предзаказов исполнителя.
+ */
 interface PreOrdersListItem {
 
   @Nullable

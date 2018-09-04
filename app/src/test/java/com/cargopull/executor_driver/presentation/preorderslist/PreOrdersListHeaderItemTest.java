@@ -1,6 +1,7 @@
 package com.cargopull.executor_driver.presentation.preorderslist;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.when;
 
@@ -203,5 +204,14 @@ public class PreOrdersListHeaderItemTest {
         ),
         preOrdersListItem.getOccupationDayOfWeek()
     );
+  }
+
+  @Test
+  public void testEquals() {
+    assertEquals(preOrdersListItem, preOrdersListItem);
+    assertEquals(preOrdersListItem, new PreOrdersListHeaderItem(0));
+    assertNotEquals(preOrdersListItem, new PreOrdersListHeaderItem(1));
+    assertNotEquals(preOrdersListItem, null);
+    assertNotEquals(preOrdersListItem, "");
   }
 }
