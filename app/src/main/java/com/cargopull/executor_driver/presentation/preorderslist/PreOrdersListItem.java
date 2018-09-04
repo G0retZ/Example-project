@@ -9,6 +9,7 @@ import com.cargopull.executor_driver.entity.RoutePoint;
 import com.cargopull.executor_driver.entity.RoutePointState;
 import java.text.DecimalFormat;
 import java.util.Locale;
+import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 
 /**
@@ -26,6 +27,28 @@ public class PreOrdersListItem {
   @NonNull
   public Order getOrder() {
     return order;
+  }
+
+  public String getOccupationDayOfMonth() {
+    DateTime dateTime = new DateTime(order.getScheduledStartTime());
+    if (dateTime.isBefore(DateTime.now().plusDays(2).withMillisOfDay(0))) {
+      return "";
+    }
+    return DateTimeFormat.forPattern("d").print(dateTime);
+  }
+
+  public String getOccupationMonth(Resources resources) {
+    DateTime dateTime = new DateTime(order.getScheduledStartTime());
+    if (dateTime.isBefore(DateTime.now().plusDays(1).withMillisOfDay(0))) {
+      return resources.getString(R.string.today);
+    } else if (dateTime.isBefore(DateTime.now().plusDays(2).withMillisOfDay(0))) {
+      return resources.getString(R.string.tomorrow);
+    }
+    return DateTimeFormat.forPattern("MMMM").print(dateTime);
+  }
+
+  public String getOccupationDayOfWeek() {
+    return DateTimeFormat.forPattern("EEEE").print(order.getScheduledStartTime());
   }
 
   public String getOccupationTime() {

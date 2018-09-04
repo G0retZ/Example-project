@@ -11,6 +11,7 @@ import com.cargopull.executor_driver.entity.RoutePointState;
 import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.Locale;
+import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.junit.Before;
 import org.junit.Test;
@@ -111,5 +112,155 @@ public class PreOrdersListItemTest {
         DateTimeFormat.forPattern("HH:mm").print(22792192L)
             + "–"
             + DateTimeFormat.forPattern("HH:mm").print(26116531L));
+  }
+
+  @Test
+  public void testGetOccupationDayOfMonthToday() {
+    // Дано:
+    when(order.getScheduledStartTime()).thenReturn(
+        DateTime.now().plusDays(1).withMillisOfDay(0).minusMillis(1).getMillis()
+    );
+
+    // Результат:
+    System.out.println(DateTimeFormat.forPattern("d HH:mm")
+        .print(DateTime.now().plusDays(1).withMillisOfDay(0).minusMillis(1).getMillis()));
+    assertEquals("", preOrdersListItem.getOccupationDayOfMonth());
+  }
+
+  @Test
+  public void testGetOccupationDayOfMonthTomorrow() {
+    // Дано:
+    when(order.getScheduledStartTime()).thenReturn(
+        DateTime.now().plusDays(2).withMillisOfDay(0).minusMillis(1).getMillis()
+    );
+
+    // Результат:
+    System.out.println(DateTimeFormat.forPattern("d HH:mm")
+        .print(DateTime.now().plusDays(2).withMillisOfDay(0).minusMillis(1).getMillis()));
+    assertEquals("", preOrdersListItem.getOccupationDayOfMonth());
+  }
+
+  @Test
+  public void testGetOccupationDayOfMonthDayAfterTomorrow() {
+    // Дано:
+    when(order.getScheduledStartTime()).thenReturn(
+        DateTime.now().plusDays(2).withMillisOfDay(0).getMillis()
+    );
+
+    // Результат:
+    System.out.println(DateTimeFormat.forPattern("d HH:mm")
+        .print(DateTime.now().plusDays(2).withMillisOfDay(0).getMillis()));
+    assertEquals(
+        DateTimeFormat.forPattern("d").print(
+            DateTime.now().plusDays(2).withMillisOfDay(0).getMillis()
+        ),
+        preOrdersListItem.getOccupationDayOfMonth()
+    );
+  }
+
+  @Test
+  public void testGetOccupationMonthToday() {
+    // Дано:
+    when(resources.getString(R.string.today)).thenReturn("today 1");
+    when(order.getScheduledStartTime()).thenReturn(
+        DateTime.now().plusDays(1).withMillisOfDay(0).minusMillis(1).getMillis()
+    );
+
+    // Результат:
+    System.out.println(DateTimeFormat.forPattern("MMMM HH:mm").print(
+        DateTime.now().plusDays(1).withMillisOfDay(0).minusMillis(1).getMillis())
+    );
+    assertEquals("today 1", preOrdersListItem.getOccupationMonth(resources));
+  }
+
+  @Test
+  public void testGetOccupationMonthTomorrow() {
+    // Дано:
+    when(resources.getString(R.string.tomorrow)).thenReturn("tomorrow 1");
+    when(order.getScheduledStartTime()).thenReturn(
+        DateTime.now().plusDays(2).withMillisOfDay(0).minusMillis(1).getMillis()
+    );
+
+    // Результат:
+    System.out.println(DateTimeFormat.forPattern("MMMM HH:mm").print(
+        DateTime.now().plusDays(2).withMillisOfDay(0).minusMillis(1).getMillis())
+    );
+    assertEquals("tomorrow 1", preOrdersListItem.getOccupationMonth(resources));
+  }
+
+  @Test
+  public void testGetOccupationMonthDayAfterTomorrow() {
+    // Дано:
+    when(order.getScheduledStartTime()).thenReturn(
+        DateTime.now().plusDays(2).withMillisOfDay(0).getMillis()
+    );
+
+    // Результат:
+    System.out.println(DateTimeFormat.forPattern("MMMM HH:mm").print(
+        DateTime.now().plusDays(2).withMillisOfDay(0).getMillis())
+    );
+    assertEquals(
+        DateTimeFormat.forPattern("MMMM").print(
+            DateTime.now().plusDays(2).withMillisOfDay(0).getMillis()
+        ),
+        preOrdersListItem.getOccupationMonth(resources)
+    );
+  }
+
+  @Test
+  public void testGetOccupationDayOfWeekToday() {
+    // Дано:
+    when(order.getScheduledStartTime()).thenReturn(
+        DateTime.now().plusDays(1).withMillisOfDay(0).minusMillis(1).getMillis()
+    );
+
+    // Результат:
+    System.out.println(DateTimeFormat.forPattern("EEEE HH:mm").print(
+        DateTime.now().plusDays(1).withMillisOfDay(0).minusMillis(1).getMillis())
+    );
+    assertEquals(
+        DateTimeFormat.forPattern("EEEE").print(
+            DateTime.now().plusDays(1).withMillisOfDay(0).minusMillis(1).getMillis()
+        ),
+        preOrdersListItem.getOccupationDayOfWeek()
+    );
+  }
+
+  @Test
+  public void testGetOccupationDayOfWeekTomorrow() {
+    // Дано:
+    when(order.getScheduledStartTime()).thenReturn(
+        DateTime.now().plusDays(2).withMillisOfDay(0).minusMillis(1).getMillis()
+    );
+
+    // Результат:
+    System.out.println(DateTimeFormat.forPattern("EEEE HH:mm").print(
+        DateTime.now().plusDays(2).withMillisOfDay(0).minusMillis(1).getMillis())
+    );
+    assertEquals(
+        DateTimeFormat.forPattern("EEEE").print(
+            DateTime.now().plusDays(2).withMillisOfDay(0).minusMillis(1).getMillis()
+        ),
+        preOrdersListItem.getOccupationDayOfWeek()
+    );
+  }
+
+  @Test
+  public void testGetOccupationDayOfWeekDayAfterTomorrow() {
+    // Дано:
+    when(order.getScheduledStartTime()).thenReturn(
+        DateTime.now().plusDays(2).withMillisOfDay(0).getMillis()
+    );
+
+    // Результат:
+    System.out.println(DateTimeFormat.forPattern("EEEE HH:mm").print(
+        DateTime.now().plusDays(2).withMillisOfDay(0).getMillis())
+    );
+    assertEquals(
+        DateTimeFormat.forPattern("EEEE").print(
+            DateTime.now().plusDays(2).withMillisOfDay(0).getMillis()
+        ),
+        preOrdersListItem.getOccupationDayOfWeek()
+    );
   }
 }
