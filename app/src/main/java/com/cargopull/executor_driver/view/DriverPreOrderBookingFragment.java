@@ -33,7 +33,7 @@ import javax.inject.Inject;
  * Отображает заказ.
  */
 
-public class DriverPreOrderConfirmationFragment extends BaseFragment implements
+public class DriverPreOrderBookingFragment extends BaseFragment implements
     OrderConfirmationViewActions {
 
   private OrderConfirmationViewModel orderConfirmationViewModel;
@@ -72,7 +72,7 @@ public class DriverPreOrderConfirmationFragment extends BaseFragment implements
   public View onCreateView(@NonNull LayoutInflater inflater,
       @Nullable ViewGroup container,
       @Nullable Bundle savedInstanceState) {
-    View view = inflater.inflate(R.layout.fragment_driver_pre_order_confirmation, container, false);
+    View view = inflater.inflate(R.layout.fragment_driver_pre_order_booking, container, false);
     declineAction = view.findViewById(R.id.declineButton);
     acceptAction = view.findViewById(R.id.acceptChart);
     acceptActionText = view.findViewById(R.id.acceptText);

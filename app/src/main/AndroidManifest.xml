@@ -76,7 +76,7 @@
       android:name=".application.DriverOrderConfirmationActivity"/>
     <activity
       android:launchMode="singleTop"
-      android:name=".application.DriverPreOrderConfirmationActivity"/>
+      android:name=".application.DriverPreOrderBookingActivity"/>
     <activity
       android:launchMode="singleTop"
       android:name=".application.ClientOrderConfirmationActivity"/>

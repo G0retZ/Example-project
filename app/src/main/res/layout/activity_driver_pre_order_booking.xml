@@ -31,12 +31,12 @@
     android:id="@+id/fragment_driver_pre_order_confirmation"
     android:layout_width="0dp"
     android:layout_height="wrap_content"
-    android:name="com.cargopull.executor_driver.view.DriverPreOrderConfirmationFragment"
+    android:name="com.cargopull.executor_driver.view.DriverPreOrderBookingFragment"
     app:layout_constraintBottom_toBottomOf="parent"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toBottomOf="@id/fragment_pre_order"
-    tools:layout="@layout/fragment_driver_pre_order_confirmation"/>
+    tools:layout="@layout/fragment_driver_pre_order_booking"/>
   <fragment
     android:id="@+id/fragment_server_connection"
     android:layout_width="0dp"

@@ -39,13 +39,13 @@ class PreOrdersAdapter extends ListAdapter<PreOrdersListItem, RecyclerView.ViewH
   public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
     if (viewType == PreOrdersListItem.TYPE_HEADER) {
       return new HeaderViewHolder(LayoutInflater.from(parent.getContext())
-          .inflate(R.layout.fragment_preorders_list_header, parent, false));
+          .inflate(R.layout.fragment_pre_orders_list_header, parent, false));
     } else if (viewType == PreOrdersListItem.TYPE_ITEM) {
       return new ItemViewHolder(LayoutInflater.from(parent.getContext())
-          .inflate(R.layout.fragment_preorders_list_item, parent, false));
+          .inflate(R.layout.fragment_pre_orders_list_item, parent, false));
     }
     return new HeaderViewHolder(LayoutInflater.from(parent.getContext())
-        .inflate(R.layout.fragment_preorders_list_header, parent, false));
+        .inflate(R.layout.fragment_pre_orders_list_header, parent, false));
   }
 
   @Override

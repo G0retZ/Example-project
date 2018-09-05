@@ -532,7 +532,7 @@ public class MainApplication extends Application implements ServerConnectionView
             .setAutoCancel(true)
             .setContentIntent(
                 PendingIntent.getActivity(this, 0,
-                    new Intent(this, DriverPreOrderConfirmationActivity.class), 0)
+                    new Intent(this, DriverPreOrderBookingActivity.class), 0)
             )
             .setSmallIcon(R.mipmap.ic_launcher)
             .setTicker(getString(R.string.new_pre_order))

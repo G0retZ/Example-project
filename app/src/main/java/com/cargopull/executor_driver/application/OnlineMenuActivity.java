@@ -61,7 +61,7 @@ public class OnlineMenuActivity extends BaseActivity {
         finish();
         break;
       case PreOrderNavigate.ORDER_APPROVAL:
-        startActivity(new Intent(this, DriverPreOrderConfirmationActivity.class));
+        startActivity(new Intent(this, DriverPreOrderBookingActivity.class));
         finish();
         break;
       default:
