@@ -457,6 +457,8 @@ public class AppComponentImpl implements AppComponent {
 
   @Override
   public void inject(PreOrdersFragment preOrdersFragment) {
-
+    preOrdersFragment.setPreOrdersListViewModel(
+        presentationComponent.getPreOrdersListViewModel()
+    );
   }
 }

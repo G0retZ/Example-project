@@ -31,6 +31,7 @@ import com.cargopull.executor_driver.presentation.orderroute.OrderRouteViewModel
 import com.cargopull.executor_driver.presentation.ordertime.OrderTimeViewModel;
 import com.cargopull.executor_driver.presentation.phone.PhoneViewModel;
 import com.cargopull.executor_driver.presentation.preorder.PreOrderViewModel;
+import com.cargopull.executor_driver.presentation.preorderslist.PreOrdersListViewModel;
 import com.cargopull.executor_driver.presentation.selectedvehicle.SelectedVehicleViewModel;
 import com.cargopull.executor_driver.presentation.serverconnection.ServerConnectionViewModel;
 import com.cargopull.executor_driver.presentation.servertime.ServerTimeViewModel;
@@ -142,6 +143,9 @@ interface PresentationComponent {
 
   @NonNull
   PreOrderViewModel getPreOrderViewModel();
+
+  @NonNull
+  PreOrdersListViewModel getPreOrdersListViewModel();
 
   @NonNull
   SelectedVehicleViewModel getSelectedVehicleViewModel(@Nullable Fragment fragment);

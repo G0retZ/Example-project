@@ -63,6 +63,9 @@ import com.cargopull.executor_driver.presentation.phone.PhoneViewModel;
 import com.cargopull.executor_driver.presentation.phone.PhoneViewModelImpl;
 import com.cargopull.executor_driver.presentation.preorder.PreOrderViewModel;
 import com.cargopull.executor_driver.presentation.preorder.PreOrderViewModelImpl;
+import com.cargopull.executor_driver.presentation.preorderslist.PreOrdersListItemsMapper;
+import com.cargopull.executor_driver.presentation.preorderslist.PreOrdersListViewModel;
+import com.cargopull.executor_driver.presentation.preorderslist.PreOrdersListViewModelImpl;
 import com.cargopull.executor_driver.presentation.selectedvehicle.SelectedVehicleViewModel;
 import com.cargopull.executor_driver.presentation.selectedvehicle.SelectedVehicleViewModelImpl;
 import com.cargopull.executor_driver.presentation.serverconnection.ServerConnectionViewModel;
@@ -114,6 +117,8 @@ class PresentationComponentImpl implements PresentationComponent {
   private OrderViewModel orderViewModel;
   @Nullable
   private PreOrderViewModel preOrderViewModel;
+  @Nullable
+  private PreOrdersListViewModel preOrdersListViewModel;
   @Nullable
   private ServerConnectionViewModel serverConnectionViewModel;
   @Nullable
@@ -541,6 +546,18 @@ class PresentationComponentImpl implements PresentationComponent {
       preOrderViewModel = new PreOrderViewModelImpl(interactorComponent.getPreOrderUseCase());
     }
     return preOrderViewModel;
+  }
+
+  @NonNull
+  @Override
+  public PreOrdersListViewModel getPreOrdersListViewModel() {
+    if (preOrdersListViewModel == null) {
+      preOrdersListViewModel = new PreOrdersListViewModelImpl(
+          interactorComponent.getPreOrdersListUseCase(),
+          new PreOrdersListItemsMapper()
+      );
+    }
+    return preOrdersListViewModel;
   }
 
   @NonNull

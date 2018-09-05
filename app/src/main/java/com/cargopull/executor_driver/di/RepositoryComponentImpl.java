@@ -40,6 +40,8 @@ import com.cargopull.executor_driver.gateway.OrderRouteGatewayImpl;
 import com.cargopull.executor_driver.gateway.PasswordGatewayImpl;
 import com.cargopull.executor_driver.gateway.PreOrderConfirmationGatewayImpl;
 import com.cargopull.executor_driver.gateway.PreOrderFilter;
+import com.cargopull.executor_driver.gateway.PreOrdersListApiMapper;
+import com.cargopull.executor_driver.gateway.PreOrdersListFilter;
 import com.cargopull.executor_driver.gateway.RoutePointApiMapper;
 import com.cargopull.executor_driver.gateway.SelectedVehicleAndOptionsGatewayImpl;
 import com.cargopull.executor_driver.gateway.ServerConnectionGatewayImpl;
@@ -147,6 +149,8 @@ class RepositoryComponentImpl implements RepositoryComponent {
   private VehiclesAndOptionsGateway vehiclesAndOptionsGateway;
   @Nullable
   private VehiclesAndOptionsGateway selectedVehiclesAndOptionsGateway;
+  @Nullable
+  private CommonGateway<List<Order>> preOrdersListGateway;
 
   RepositoryComponentImpl(@NonNull BackendComponent backendComponent,
       @NonNull GeolocationCenter geolocationCenter) {
@@ -543,5 +547,21 @@ class RepositoryComponentImpl implements RepositoryComponent {
       );
     }
     return selectedVehiclesAndOptionsGateway;
+  }
+
+  @NonNull
+  @Override
+  public CommonGateway<List<Order>> getPreOrdersListGateway() {
+    if (preOrdersListGateway == null) {
+      preOrdersListGateway = new TopicGatewayImpl<>(
+          backendComponent.getPersonalTopicListener(),
+          new PreOrdersListApiMapper(
+              new VehicleOptionApiMapper(),
+              new RoutePointApiMapper()
+          ),
+          new PreOrdersListFilter()
+      );
+    }
+    return preOrdersListGateway;
   }
 }
