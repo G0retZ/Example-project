@@ -113,6 +113,9 @@
     <activity
       android:launchMode="singleTop"
       android:name=".application.OrderCostDetailsRouteActivity"/>
+    <activity
+      android:launchMode="singleTop"
+      android:name=".application.PreOrdersActivity"/>
 
     <service
       android:enabled="true"
