@@ -24,12 +24,12 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
-public class OrderUseCaseTest {
+public class OrderUseCaseImplTest {
 
   @ClassRule
   public static final UseCaseThreadTestRule classRule = new UseCaseThreadTestRule();
 
-  private OrderUseCase useCase;
+  private OrderUseCaseImpl useCase;
 
   @Mock
   private ErrorReporter errorReporter;

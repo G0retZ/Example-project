@@ -11,7 +11,7 @@ import io.reactivex.subjects.PublishSubject;
 import java.util.NoSuchElementException;
 import javax.inject.Inject;
 
-public class SelectedOrderUseCaseImpl implements SelectedOrderUseCase {
+public class SelectedOrderUseCaseImpl implements OrderUseCase, SelectedOrderUseCase {
 
   @NonNull
   private final ErrorReporter errorReporter;
@@ -34,7 +34,7 @@ public class SelectedOrderUseCaseImpl implements SelectedOrderUseCase {
 
   @NonNull
   @Override
-  public Flowable<Order> getSelectedOrder() {
+  public Flowable<Order> getOrders() {
     if (orderFlowable == null) {
       orderFlowable = ordersUseCase.getOrdersList()
           .doOnTerminate(() -> lastOrderCache = Flowable.empty())

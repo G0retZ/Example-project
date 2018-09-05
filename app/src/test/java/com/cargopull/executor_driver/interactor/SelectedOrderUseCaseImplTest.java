@@ -30,12 +30,12 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
-public class SelectedOrderUseCaseTest {
+public class SelectedOrderUseCaseImplTest {
 
   @ClassRule
   public static final UseCaseThreadTestRule classRule = new UseCaseThreadTestRule();
 
-  private SelectedOrderUseCase useCase;
+  private SelectedOrderUseCaseImpl useCase;
 
   @Mock
   private ErrorReporter errorReporter;
@@ -65,10 +65,10 @@ public class SelectedOrderUseCaseTest {
   @Test
   public void askUseCaseForOrdersListForGet() {
     // Действие:
-    useCase.getSelectedOrder().test();
-    useCase.getSelectedOrder().test();
-    useCase.getSelectedOrder().test();
-    useCase.getSelectedOrder().test();
+    useCase.getOrders().test();
+    useCase.getOrders().test();
+    useCase.getOrders().test();
+    useCase.getOrders().test();
 
     // Результат:
     verify(ordersUseCase, only()).getOrdersList();
@@ -101,7 +101,7 @@ public class SelectedOrderUseCaseTest {
     when(ordersUseCase.getOrdersList()).thenReturn(Flowable.error(DataMappingException::new));
 
     // Действие:
-    useCase.getSelectedOrder().test();
+    useCase.getOrders().test();
 
     // Результат:
     verifyZeroInteractions(errorReporter);
@@ -152,7 +152,7 @@ public class SelectedOrderUseCaseTest {
     );
 
     // Действие:
-    TestSubscriber<Order> testSubscriber = useCase.getSelectedOrder().test();
+    TestSubscriber<Order> testSubscriber = useCase.getOrders().test();
 
     // Результат:
     testSubscriber.assertNoValues();
@@ -171,7 +171,7 @@ public class SelectedOrderUseCaseTest {
     );
 
     // Действие:
-    TestSubscriber<Order> testSubscriber = useCase.getSelectedOrder().test();
+    TestSubscriber<Order> testSubscriber = useCase.getOrders().test();
     useCase.setSelectedOrder(order1).test();
     useCase.setSelectedOrder(order2).test();
     useCase.setSelectedOrder(order1).test();
@@ -198,7 +198,7 @@ public class SelectedOrderUseCaseTest {
     useCase.setSelectedOrder(order2).test();
     useCase.setSelectedOrder(order1).test();
     useCase.setSelectedOrder(order).test();
-    TestSubscriber<Order> testSubscriber = useCase.getSelectedOrder().test();
+    TestSubscriber<Order> testSubscriber = useCase.getOrders().test();
 
     // Результат:
     testSubscriber.assertValues(order);
@@ -217,7 +217,7 @@ public class SelectedOrderUseCaseTest {
     );
 
     // Действие:
-    useCase.getSelectedOrder().test();
+    useCase.getOrders().test();
 
     // Результат:
     useCase.setSelectedOrder(order1).test().assertComplete();
@@ -238,7 +238,7 @@ public class SelectedOrderUseCaseTest {
     );
 
     // Действие:
-    TestSubscriber<Order> testSubscriber = useCase.getSelectedOrder().test();
+    TestSubscriber<Order> testSubscriber = useCase.getOrders().test();
     publishSubject.onNext(new ArrayList<>(Arrays.asList(order, order1, order2)));
     useCase.setSelectedOrder(order1).test();
     publishSubject.onNext(new ArrayList<>(Arrays.asList(order, order1, order2)));
@@ -262,7 +262,7 @@ public class SelectedOrderUseCaseTest {
     when(ordersUseCase.getOrdersList()).thenReturn(Flowable.error(DataMappingException::new));
 
     // Действие:
-    TestSubscriber<Order> testSubscriber = useCase.getSelectedOrder().test();
+    TestSubscriber<Order> testSubscriber = useCase.getOrders().test();
 
     // Результат:
     testSubscriber.assertError(DataMappingException.class);
@@ -298,7 +298,7 @@ public class SelectedOrderUseCaseTest {
     );
 
     // Действие:
-    TestSubscriber<Order> testSubscriber = useCase.getSelectedOrder().test();
+    TestSubscriber<Order> testSubscriber = useCase.getOrders().test();
     useCase.setSelectedOrder(order2).test();
 
     // Результат:
@@ -318,7 +318,7 @@ public class SelectedOrderUseCaseTest {
     );
 
     // Действие:
-    useCase.getSelectedOrder().test();
+    useCase.getOrders().test();
     TestObserver<Void> testObserver = useCase.setSelectedOrder(order2).test();
 
     // Результат:
@@ -339,7 +339,7 @@ public class SelectedOrderUseCaseTest {
     );
 
     // Действие:
-    TestSubscriber<Order> testSubscriber = useCase.getSelectedOrder().test();
+    TestSubscriber<Order> testSubscriber = useCase.getOrders().test();
     publishSubject.onNext(new ArrayList<>(Arrays.asList(order, order1, order2)));
     useCase.setSelectedOrder(order1).test();
     publishSubject.onNext(new ArrayList<>(Arrays.asList(order, order1, order2)));
@@ -360,7 +360,7 @@ public class SelectedOrderUseCaseTest {
     when(ordersUseCase.getOrdersList()).thenReturn(Flowable.empty());
 
     // Действие:
-    TestSubscriber<Order> testSubscriber = useCase.getSelectedOrder().test();
+    TestSubscriber<Order> testSubscriber = useCase.getOrders().test();
 
     // Результат:
     testSubscriber.assertComplete();
@@ -380,12 +380,12 @@ public class SelectedOrderUseCaseTest {
         Flowable.just(Arrays.asList(order, order1, order2)).concatWith(Flowable.never()));
 
     // Действие:
-    TestSubscriber<Order> testSubscriber = useCase.getSelectedOrder().test();
-    TestSubscriber<Order> testSubscriber0 = useCase.getSelectedOrder().test();
+    TestSubscriber<Order> testSubscriber = useCase.getOrders().test();
+    TestSubscriber<Order> testSubscriber0 = useCase.getOrders().test();
     emitter.onNext(new ArrayList<>(Arrays.asList(order, order1, order2)));
     useCase.setSelectedOrder(order1).test();
     emitter.onError(new Exception());
-    TestSubscriber<Order> testSubscriber1 = useCase.getSelectedOrder().test();
+    TestSubscriber<Order> testSubscriber1 = useCase.getOrders().test();
     emitter.onNext(new ArrayList<>(Arrays.asList(order, order1, order2)));
 
     // Результат:
@@ -413,12 +413,12 @@ public class SelectedOrderUseCaseTest {
     );
 
     // Действие:
-    TestSubscriber<Order> testSubscriber = useCase.getSelectedOrder().test();
-    TestSubscriber<Order> testSubscriber0 = useCase.getSelectedOrder().test();
+    TestSubscriber<Order> testSubscriber = useCase.getOrders().test();
+    TestSubscriber<Order> testSubscriber0 = useCase.getOrders().test();
     emitter.onNext(new ArrayList<>(Arrays.asList(order, order1, order2)));
     useCase.setSelectedOrder(order1).test();
     emitter.onComplete();
-    TestSubscriber<Order> testSubscriber1 = useCase.getSelectedOrder().test();
+    TestSubscriber<Order> testSubscriber1 = useCase.getOrders().test();
     emitter.onNext(new ArrayList<>(Arrays.asList(order, order1, order2)));
 
     // Результат:
