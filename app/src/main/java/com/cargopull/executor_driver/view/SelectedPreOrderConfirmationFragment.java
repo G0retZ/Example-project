@@ -92,7 +92,7 @@ public class SelectedPreOrderConfirmationFragment extends BaseFragment implement
       @Override
       public void onAnimationEnd(Animator animation) {
         if (!canceled) {
-          orderConfirmationViewModel.acceptOrder();
+          orderConfirmationViewModel.declineOrder();
           shakeItPlayer.shakeIt(Collections.singletonList(new Pair<>(200L, 255)));
         }
       }
