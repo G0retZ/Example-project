@@ -9,11 +9,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import com.cargopull.executor_driver.R;
+import com.cargopull.executor_driver.entity.Order;
 import com.cargopull.executor_driver.presentation.preorderslist.PreOrdersListItem;
+import io.reactivex.functions.Consumer;
 
 class PreOrdersAdapter extends ListAdapter<PreOrdersListItem, RecyclerView.ViewHolder> {
 
-  PreOrdersAdapter() {
+  @NonNull
+  private final Consumer<Order> selectionConsumer;
+
+  PreOrdersAdapter(@NonNull Consumer<Order> selectionConsumer) {
     super(new ItemCallback<PreOrdersListItem>() {
       @Override
       public boolean areContentsTheSame(@NonNull PreOrdersListItem oldItem,
@@ -27,6 +32,7 @@ class PreOrdersAdapter extends ListAdapter<PreOrdersListItem, RecyclerView.ViewH
         return item1.equals(item2);
       }
     });
+    this.selectionConsumer = selectionConsumer;
   }
 
   @Override
@@ -59,12 +65,20 @@ class PreOrdersAdapter extends ListAdapter<PreOrdersListItem, RecyclerView.ViewH
         headerViewHolder.dayOfWeekText.setText(item.getOccupationDayOfWeek());
         break;
       case PreOrdersListItem.TYPE_ITEM:
+        holder.itemView.setOnClickListener(null);
         ItemViewHolder itemViewHolder = (ItemViewHolder) holder;
         itemViewHolder.occupationTimeText.setText(item.getOccupationTime());
         itemViewHolder.addressText.setText(item.getNextAddress());
         itemViewHolder.distanceText
             .setText(holder.itemView.getResources().getString(R.string.km, item.getRouteLength()));
         itemViewHolder.priceText.setText(item.getEstimatedPrice(holder.itemView.getResources()));
+        holder.itemView.setOnClickListener(v -> {
+          try {
+            selectionConsumer.accept(item.getOrder());
+          } catch (Exception e) {
+            e.printStackTrace();
+          }
+        });
         break;
     }
   }

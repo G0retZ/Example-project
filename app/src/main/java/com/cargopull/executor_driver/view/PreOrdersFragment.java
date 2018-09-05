@@ -42,7 +42,8 @@ public class PreOrdersFragment extends BaseFragment implements PreOrdersListView
     recyclerView = view.findViewById(R.id.recyclerView);
     emptyText = view.findViewById(R.id.emptyText);
     recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-    preOrdersAdapter = new PreOrdersAdapter();
+    preOrdersAdapter = new PreOrdersAdapter(
+        order -> preOrdersListViewModel.setSelectedOrder(order));
     recyclerView.setAdapter(preOrdersAdapter);
     return view;
   }
