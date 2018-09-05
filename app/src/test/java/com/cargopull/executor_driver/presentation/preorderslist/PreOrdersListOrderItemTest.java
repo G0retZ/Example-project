@@ -47,9 +47,9 @@ public class PreOrdersListOrderItemTest {
   }
 
   @Test
-  public void testGetLayoutType() {
+  public void testGetViewType() {
     // Результат:
-    assertEquals(preOrdersListItem.getLayoutType(), R.layout.fragment_preorders_list_item);
+    assertEquals(preOrdersListItem.getViewType(), PreOrdersListItem.TYPE_ITEM);
   }
 
   @Test

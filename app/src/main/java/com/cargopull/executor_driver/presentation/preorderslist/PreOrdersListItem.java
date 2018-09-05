@@ -1,7 +1,6 @@
 package com.cargopull.executor_driver.presentation.preorderslist;
 
 import android.content.res.Resources;
-import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.cargopull.executor_driver.entity.Order;
@@ -9,13 +8,15 @@ import com.cargopull.executor_driver.entity.Order;
 /**
  * Модель элемента списка предзаказов исполнителя.
  */
-interface PreOrdersListItem {
+public interface PreOrdersListItem {
+
+  int TYPE_HEADER = 0;
+  int TYPE_ITEM = 1;
 
   @Nullable
   Order getOrder();
 
-  @LayoutRes
-  int getLayoutType();
+  int getViewType();
 
   @NonNull
   String getOccupationDayOfMonth();

@@ -35,9 +35,9 @@ public class PreOrdersListHeaderItemTest {
   }
 
   @Test
-  public void testGetLayoutType() {
+  public void testGetViewType() {
     // Результат:
-    assertEquals(preOrdersListItem.getLayoutType(), R.layout.fragment_preorders_list_header);
+    assertEquals(preOrdersListItem.getViewType(), PreOrdersListItem.TYPE_HEADER);
   }
 
   @Test
