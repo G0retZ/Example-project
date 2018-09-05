@@ -119,4 +119,5 @@
   <string name="available_pre_order">Доступный предзаказ</string>
   <string name="today">Сегодня</string>
   <string name="tomorrow">Завтра</string>
+  <string name="no_pre_orders_available">Нет запланированных предзаказов</string>
 </resources>

@@ -50,6 +50,7 @@ import com.cargopull.executor_driver.view.OrderFulfillmentActionsDialogFragment;
 import com.cargopull.executor_driver.view.OrderFulfillmentDetailsFragment;
 import com.cargopull.executor_driver.view.OrderFulfillmentFragment;
 import com.cargopull.executor_driver.view.OrderRouteFragment;
+import com.cargopull.executor_driver.view.PreOrdersFragment;
 import com.cargopull.executor_driver.view.ProfileFragment;
 import com.cargopull.executor_driver.view.SelectedVehicleFragment;
 import com.cargopull.executor_driver.view.SelectedVehicleOptionsFragment;
@@ -452,5 +453,10 @@ public class AppComponentImpl implements AppComponent {
     driverPreOrderConfirmationFragment.setOrderViewModel(
         presentationComponent.getPOrderViewModel(driverPreOrderConfirmationFragment)
     );
+  }
+
+  @Override
+  public void inject(PreOrdersFragment preOrdersFragment) {
+
   }
 }
