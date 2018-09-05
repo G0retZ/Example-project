@@ -116,6 +116,9 @@
     <activity
       android:launchMode="singleTop"
       android:name=".application.PreOrdersActivity"/>
+    <activity
+      android:launchMode="singleTop"
+      android:name=".application.SelectedPreOrderActivity"/>
 
     <service
       android:enabled="true"
