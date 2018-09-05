@@ -62,7 +62,8 @@ class PreOrdersAdapter extends ListAdapter<PreOrdersListItem, RecyclerView.ViewH
         ItemViewHolder itemViewHolder = (ItemViewHolder) holder;
         itemViewHolder.occupationTimeText.setText(item.getOccupationTime());
         itemViewHolder.addressText.setText(item.getNextAddress());
-        itemViewHolder.distanceText.setText(item.getRouteLength());
+        itemViewHolder.distanceText
+            .setText(holder.itemView.getResources().getString(R.string.km, item.getRouteLength()));
         itemViewHolder.priceText.setText(item.getEstimatedPrice(holder.itemView.getResources()));
         break;
     }
