@@ -683,6 +683,19 @@ class PresentationComponentImpl implements PresentationComponent {
     );
   }
 
+  @NonNull
+  @Override
+  public OrderViewModel getSelectedPreOrderViewModel(@Nullable Fragment fragment) {
+    if (fragment == null) {
+      throw new NullPointerException("Фрагмент не должен быть null");
+    }
+    return getViewModelInstance(
+        fragment,
+        OrderViewModelImpl.class,
+        new OrderViewModelImpl(interactorComponent.getSelectedPreOrderUseCase(), timeUtils)
+    );
+  }
+
   private <V extends ViewModel> V getViewModelInstance(
       @NonNull Fragment fragment,
       @NonNull Class<V> vClass,

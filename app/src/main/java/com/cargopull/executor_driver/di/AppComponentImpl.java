@@ -53,6 +53,7 @@ import com.cargopull.executor_driver.view.OrderRouteFragment;
 import com.cargopull.executor_driver.view.PreOrderFragment;
 import com.cargopull.executor_driver.view.PreOrdersFragment;
 import com.cargopull.executor_driver.view.ProfileFragment;
+import com.cargopull.executor_driver.view.SelectedPreOrderFragment;
 import com.cargopull.executor_driver.view.SelectedVehicleFragment;
 import com.cargopull.executor_driver.view.SelectedVehicleOptionsFragment;
 import com.cargopull.executor_driver.view.ServerConnectionFragment;
@@ -467,6 +468,13 @@ public class AppComponentImpl implements AppComponent {
   public void inject(PreOrderFragment preOrderFragment) {
     preOrderFragment.setOrderViewModel(
         presentationComponent.getPOrderViewModel(preOrderFragment)
+    );
+  }
+
+  @Override
+  public void inject(SelectedPreOrderFragment selectedPreOrderFragment) {
+    selectedPreOrderFragment.setOrderViewModel(
+        presentationComponent.getSelectedPreOrderViewModel(selectedPreOrderFragment)
     );
   }
 }

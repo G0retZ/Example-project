@@ -30,6 +30,7 @@ import com.cargopull.executor_driver.view.OrderRouteFragment;
 import com.cargopull.executor_driver.view.PreOrderFragment;
 import com.cargopull.executor_driver.view.PreOrdersFragment;
 import com.cargopull.executor_driver.view.ProfileFragment;
+import com.cargopull.executor_driver.view.SelectedPreOrderFragment;
 import com.cargopull.executor_driver.view.SelectedVehicleFragment;
 import com.cargopull.executor_driver.view.SelectedVehicleOptionsFragment;
 import com.cargopull.executor_driver.view.ServerConnectionFragment;
@@ -119,4 +120,6 @@ public interface AppComponent {
   void inject(PreOrdersFragment preOrdersFragment);
 
   void inject(PreOrderFragment preOrderFragment);
+
+  void inject(SelectedPreOrderFragment selectedPreOrderFragment);
 }

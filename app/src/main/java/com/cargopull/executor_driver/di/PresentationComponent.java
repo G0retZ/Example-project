@@ -176,4 +176,7 @@ interface PresentationComponent {
 
   @NonNull
   WaitingForClientViewModel getWaitingForClientViewModel(@Nullable Fragment fragment);
+
+  @NonNull
+  OrderViewModel getSelectedPreOrderViewModel(@Nullable Fragment fragment);
 }

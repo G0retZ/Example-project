@@ -658,6 +658,18 @@ class InteractorComponentImpl implements InteractorComponent {
     return selectedOrderUseCase;
   }
 
+  @NonNull
+  @Override
+  public OrderUseCase getSelectedPreOrderUseCase() {
+    if (selectedOrderUseCase == null) {
+      selectedOrderUseCase = new SelectedOrderUseCaseImpl(
+          errorReporter,
+          getPreOrdersListUseCase()
+      );
+    }
+    return selectedOrderUseCase;
+  }
+
   private OrderDecisionUseCase getOrderDecisionUseCase() {
     if (orderUseCase == null) {
       orderUseCase = new OrderUseCaseImpl(
