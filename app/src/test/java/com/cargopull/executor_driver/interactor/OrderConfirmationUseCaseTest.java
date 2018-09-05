@@ -207,10 +207,10 @@ public class OrderConfirmationUseCaseTest {
   }
 
   /**
-   * Не должен передавать юзкейсу успешно отвергнутый заказа.
+   * Должен передать юзкейсу успешно отвергнутый заказа.
    */
   @Test
-  public void doNotPassRefusedOrderToOrdersUseCase() {
+  public void passRefusedOrderToOrdersUseCase() {
     // Дано:
     when(orderUseCase.getOrders()).thenReturn(Flowable.just(order).concatWith(Flowable.never()));
     when(orderConfirmationGateway.sendDecision(order, false)).thenReturn(Single.just("success"));
@@ -219,7 +219,7 @@ public class OrderConfirmationUseCaseTest {
     useCase.sendDecision(false).test();
 
     // Результат:
-    verifyZeroInteractions(ordersUseCase);
+    verify(ordersUseCase, only()).removeOrder(order);
   }
 
   /**
