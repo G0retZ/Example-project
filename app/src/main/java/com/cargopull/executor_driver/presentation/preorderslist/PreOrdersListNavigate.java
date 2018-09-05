@@ -14,5 +14,5 @@ import java.lang.annotation.RetentionPolicy;
 public @interface PreOrdersListNavigate {
 
   // Переход к выбранному предзаказу.
-  String PRE_ORDER = "ChooseVehicle.to.PreOrder";
+  String PRE_ORDER = "PreOrdersList.to.PreOrder";
 }
