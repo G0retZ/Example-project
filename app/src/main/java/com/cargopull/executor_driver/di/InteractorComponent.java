@@ -18,6 +18,7 @@ import com.cargopull.executor_driver.interactor.OrderCurrentCostUseCase;
 import com.cargopull.executor_driver.interactor.OrderFulfillmentTimeUseCase;
 import com.cargopull.executor_driver.interactor.OrderRouteUseCase;
 import com.cargopull.executor_driver.interactor.OrderUseCase;
+import com.cargopull.executor_driver.interactor.OrdersUseCase;
 import com.cargopull.executor_driver.interactor.ServerConnectionUseCase;
 import com.cargopull.executor_driver.interactor.ServerTimeUseCase;
 import com.cargopull.executor_driver.interactor.UpdateMessageUseCase;
@@ -108,6 +109,9 @@ interface InteractorComponent {
 
   @NonNull
   LoginUseCase getLoginUseCase();
+
+  @NonNull
+  OrdersUseCase getPreOrdersListUseCase();
 
   @NonNull
   PasswordUseCase getPasswordUseCase();

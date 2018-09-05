@@ -26,8 +26,8 @@ class PreOrdersListHeaderItem implements PreOrdersListItem {
   }
 
   @Override
-  public int getLayoutType() {
-    return R.layout.fragment_preorders_list_header;
+  public int getViewType() {
+    return TYPE_HEADER;
   }
 
   @NonNull

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  xmlns:tools="http://schemas.android.com/tools"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  android:animateLayoutChanges="true"
+  android:keepScreenOn="true">
+  <android.support.v7.widget.Toolbar
+    android:id="@+id/appBar"
+    style="@style/AppTheme.AppBar"
+    android:layout_width="0dp"
+    android:layout_height="?android:attr/actionBarSize"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent"
+    app:navigationIcon="@drawable/ic_back_24dp"
+    app:title="@string/upcoming_preorders"/>
+  <fragment
+    android:id="@+id/fragment_server_connection"
+    android:layout_width="0dp"
+    android:layout_height="wrap_content"
+    android:name="com.cargopull.executor_driver.view.ServerConnectionFragment"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@id/appBar"
+    tools:layout="@layout/fragment_server_connection"/>
+  <fragment
+    android:id="@+id/fragment_pre_orders"
+    android:layout_width="0dp"
+    android:layout_height="0dp"
+    android:name="com.cargopull.executor_driver.view.PreOrdersFragment"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@id/fragment_server_connection"
+    tools:layout="@layout/fragment_preorders"/>
+</android.support.constraint.ConstraintLayout>

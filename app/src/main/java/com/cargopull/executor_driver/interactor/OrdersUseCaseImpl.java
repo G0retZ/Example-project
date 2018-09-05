@@ -11,7 +11,7 @@ import io.reactivex.schedulers.Schedulers;
 import java.util.ArrayList;
 import java.util.List;
 
-class OrdersUseCaseImpl implements OrdersUseCase {
+public class OrdersUseCaseImpl implements OrdersUseCase {
 
   @NonNull
   private final ErrorReporter errorReporter;
@@ -51,7 +51,7 @@ class OrdersUseCaseImpl implements OrdersUseCase {
     }
   };
 
-  OrdersUseCaseImpl(@NonNull ErrorReporter errorReporter,
+  public OrdersUseCaseImpl(@NonNull ErrorReporter errorReporter,
       @NonNull CommonGateway<List<Order>> gateway) {
     this.errorReporter = errorReporter;
     this.gateway = gateway;
@@ -94,11 +94,11 @@ class OrdersUseCaseImpl implements OrdersUseCase {
 
   @Override
   public void addOrder(@NonNull Order order) {
-    removeEmitter.onNext(order);
+    addEmitter.onNext(order);
   }
 
   @Override
   public void removeOrder(@NonNull Order order) {
-    addEmitter.onNext(order);
+    removeEmitter.onNext(order);
   }
 }

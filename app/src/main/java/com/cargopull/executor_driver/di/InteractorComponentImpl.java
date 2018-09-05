@@ -42,6 +42,8 @@ import com.cargopull.executor_driver.interactor.OrderRouteUseCase;
 import com.cargopull.executor_driver.interactor.OrderRouteUseCaseImpl;
 import com.cargopull.executor_driver.interactor.OrderUseCase;
 import com.cargopull.executor_driver.interactor.OrderUseCaseImpl;
+import com.cargopull.executor_driver.interactor.OrdersUseCase;
+import com.cargopull.executor_driver.interactor.OrdersUseCaseImpl;
 import com.cargopull.executor_driver.interactor.ServerConnectionUseCase;
 import com.cargopull.executor_driver.interactor.ServerConnectionUseCaseImpl;
 import com.cargopull.executor_driver.interactor.ServerTimeUseCase;
@@ -135,6 +137,8 @@ class InteractorComponentImpl implements InteractorComponent {
   private WaitingForClientUseCase waitingForClientUseCase;
   @Nullable
   private LoginUseCase loginUseCase;
+  @Nullable
+  private OrdersUseCase preOrdersListUseCase;
   @Nullable
   private PasswordUseCase passwordUseCase;
   @Nullable
@@ -342,7 +346,7 @@ class InteractorComponentImpl implements InteractorComponent {
       preOrderConfirmationUseCase = new OrderConfirmationUseCaseImpl(
           getPreOrderUseCase(),
           repositoryComponent.getPreOrderConfirmationGateway(),
-          null);
+          getPreOrdersListUseCase());
     }
     return preOrderConfirmationUseCase;
   }
@@ -478,6 +482,18 @@ class InteractorComponentImpl implements InteractorComponent {
       );
     }
     return loginUseCase;
+  }
+
+  @NonNull
+  @Override
+  public OrdersUseCase getPreOrdersListUseCase() {
+    if (preOrdersListUseCase == null) {
+      preOrdersListUseCase = new OrdersUseCaseImpl(
+          errorReporter,
+          repositoryComponent.getPreOrdersListGateway()
+      );
+    }
+    return preOrdersListUseCase;
   }
 
   @NonNull

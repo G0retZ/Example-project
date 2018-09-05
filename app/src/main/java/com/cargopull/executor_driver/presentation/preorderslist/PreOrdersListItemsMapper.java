@@ -11,10 +11,10 @@ import org.joda.time.DateTime;
 /**
  * Маппер списка предзаказов в сортированный список моделей.
  */
-class PreOrdersListItemsMapper implements Function<List<Order>, List<PreOrdersListItem>> {
+public class PreOrdersListItemsMapper implements Function<List<Order>, List<PreOrdersListItem>> {
 
   @Inject
-  PreOrdersListItemsMapper() {
+  public PreOrdersListItemsMapper() {
   }
 
   @Override

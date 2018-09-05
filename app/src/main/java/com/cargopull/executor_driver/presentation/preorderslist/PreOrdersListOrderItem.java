@@ -1,7 +1,6 @@
 package com.cargopull.executor_driver.presentation.preorderslist;
 
 import android.content.res.Resources;
-import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.cargopull.executor_driver.R;
@@ -31,9 +30,8 @@ public class PreOrdersListOrderItem implements PreOrdersListItem {
   }
 
   @Override
-  @LayoutRes
-  public int getLayoutType() {
-    return R.layout.fragment_preorders_list_item;
+  public int getViewType() {
+    return TYPE_ITEM;
   }
 
   @Override
