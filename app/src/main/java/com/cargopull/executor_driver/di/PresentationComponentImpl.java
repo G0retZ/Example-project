@@ -696,6 +696,21 @@ class PresentationComponentImpl implements PresentationComponent {
     );
   }
 
+  @NonNull
+  @Override
+  public OrderConfirmationViewModel getSelectedPreOrderConfirmationViewModel(
+      @Nullable Fragment fragment) {
+    if (fragment == null) {
+      throw new NullPointerException("Фрагмент не должен быть null");
+    }
+    return getViewModelInstance(
+        fragment,
+        OrderConfirmationViewModelImpl.class,
+        new OrderConfirmationViewModelImpl(
+            interactorComponent.getSelectedPreOrderConfirmationUseCase())
+    );
+  }
+
   private <V extends ViewModel> V getViewModelInstance(
       @NonNull Fragment fragment,
       @NonNull Class<V> vClass,

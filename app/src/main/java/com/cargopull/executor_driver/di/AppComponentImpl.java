@@ -483,7 +483,8 @@ public class AppComponentImpl implements AppComponent {
   public void inject(SelectedPreOrderConfirmationFragment selectedPreOrderConfirmationFragment) {
     selectedPreOrderConfirmationFragment.setShakeItPlayer(singleShakePlayer);
     selectedPreOrderConfirmationFragment.setOrderConfirmationViewModel(
-        presentationComponent.getPreOrderBookingViewModel(selectedPreOrderConfirmationFragment)
+        presentationComponent
+            .getSelectedPreOrderConfirmationViewModel(selectedPreOrderConfirmationFragment)
     );
   }
 }

@@ -119,6 +119,8 @@ class InteractorComponentImpl implements InteractorComponent {
   @Nullable
   private OrderConfirmationUseCase preOrderConfirmationUseCase;
   @Nullable
+  private OrderConfirmationUseCase selectedPreOrderConfirmationUseCase;
+  @Nullable
   private OrderCostDetailsUseCase orderCostDetailsUseCase;
   @Nullable
   private OrderCurrentCostUseCase orderCurrentCostUseCase;
@@ -351,7 +353,8 @@ class InteractorComponentImpl implements InteractorComponent {
     if (preOrderConfirmationUseCase == null) {
       preOrderConfirmationUseCase = new OrderConfirmationUseCaseImpl(
           getPreOrderUseCase(),
-          getOrderDecisionUseCase(), repositoryComponent.getPreOrderConfirmationGateway(),
+          getOrderDecisionUseCase(),
+          repositoryComponent.getPreOrderConfirmationGateway(),
           getPreOrdersListUseCase());
     }
     return preOrderConfirmationUseCase;
@@ -668,6 +671,19 @@ class InteractorComponentImpl implements InteractorComponent {
       );
     }
     return selectedOrderUseCase;
+  }
+
+  @NonNull
+  @Override
+  public OrderConfirmationUseCase getSelectedPreOrderConfirmationUseCase() {
+    if (selectedPreOrderConfirmationUseCase == null) {
+      selectedPreOrderConfirmationUseCase = new OrderConfirmationUseCaseImpl(
+          getSelectedPreOrderUseCase(),
+          getOrderDecisionUseCase(),
+          repositoryComponent.getPreOrderConfirmationGateway(),
+          getPreOrdersListUseCase());
+    }
+    return selectedPreOrderConfirmationUseCase;
   }
 
   private OrderDecisionUseCase getOrderDecisionUseCase() {

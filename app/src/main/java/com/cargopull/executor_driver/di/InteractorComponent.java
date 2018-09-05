@@ -152,4 +152,7 @@ interface InteractorComponent {
 
   @NonNull
   OrderUseCase getSelectedPreOrderUseCase();
+
+  @NonNull
+  OrderConfirmationUseCase getSelectedPreOrderConfirmationUseCase();
 }

@@ -179,4 +179,7 @@ interface PresentationComponent {
 
   @NonNull
   OrderViewModel getSelectedPreOrderViewModel(@Nullable Fragment fragment);
+
+  @NonNull
+  OrderConfirmationViewModel getSelectedPreOrderConfirmationViewModel(@Nullable Fragment fragment);
 }
