@@ -94,11 +94,11 @@ public class OrdersUseCaseImpl implements OrdersUseCase {
 
   @Override
   public void addOrder(@NonNull Order order) {
-    removeEmitter.onNext(order);
+    addEmitter.onNext(order);
   }
 
   @Override
   public void removeOrder(@NonNull Order order) {
-    addEmitter.onNext(order);
+    removeEmitter.onNext(order);
   }
 }

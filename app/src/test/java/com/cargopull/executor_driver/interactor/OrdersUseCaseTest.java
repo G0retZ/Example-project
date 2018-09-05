@@ -144,7 +144,7 @@ public class OrdersUseCaseTest {
 
     // Действие:
     TestSubscriber<List<Order>> testSubscriber = useCase.getOrdersList().test();
-    useCase.addOrder(order2);
+    useCase.removeOrder(order2);
 
     // Результат:
     assertEquals(2, testSubscriber.values().size());
@@ -172,7 +172,7 @@ public class OrdersUseCaseTest {
 
     // Действие:
     TestSubscriber<List<Order>> testSubscriber = useCase.getOrdersList().test();
-    useCase.removeOrder(order2);
+    useCase.addOrder(order2);
 
     // Результат:
     assertEquals(2, testSubscriber.values().size());
@@ -200,7 +200,7 @@ public class OrdersUseCaseTest {
 
     // Действие:
     TestSubscriber<List<Order>> testSubscriber = useCase.getOrdersList().test();
-    useCase.addOrder(order2);
+    useCase.removeOrder(order2);
 
     // Результат:
     assertEquals(2, testSubscriber.values().size());
@@ -228,7 +228,7 @@ public class OrdersUseCaseTest {
 
     // Действие:
     TestSubscriber<List<Order>> testSubscriber = useCase.getOrdersList().test();
-    useCase.removeOrder(order2);
+    useCase.addOrder(order2);
 
     // Результат:
     assertEquals(2, testSubscriber.values().size());
