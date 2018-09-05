@@ -554,6 +554,7 @@ class PresentationComponentImpl implements PresentationComponent {
     if (preOrdersListViewModel == null) {
       preOrdersListViewModel = new PreOrdersListViewModelImpl(
           interactorComponent.getPreOrdersListUseCase(),
+          interactorComponent.getSelectedOrderUseCase(),
           new PreOrdersListItemsMapper()
       );
     }
