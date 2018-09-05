@@ -476,7 +476,7 @@ class PresentationComponentImpl implements PresentationComponent {
 
   @NonNull
   @Override
-  public OrderConfirmationViewModel getPreOrderConfirmationViewModel(@Nullable Fragment fragment) {
+  public OrderConfirmationViewModel getPreOrderBookingViewModel(@Nullable Fragment fragment) {
     if (fragment == null) {
       throw new NullPointerException("Фрагмент не должен быть null");
     }

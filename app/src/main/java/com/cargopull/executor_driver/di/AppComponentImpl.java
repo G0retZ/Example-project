@@ -53,6 +53,7 @@ import com.cargopull.executor_driver.view.OrderRouteFragment;
 import com.cargopull.executor_driver.view.PreOrderFragment;
 import com.cargopull.executor_driver.view.PreOrdersFragment;
 import com.cargopull.executor_driver.view.ProfileFragment;
+import com.cargopull.executor_driver.view.SelectedPreOrderConfirmationFragment;
 import com.cargopull.executor_driver.view.SelectedPreOrderFragment;
 import com.cargopull.executor_driver.view.SelectedVehicleFragment;
 import com.cargopull.executor_driver.view.SelectedVehicleOptionsFragment;
@@ -453,7 +454,7 @@ public class AppComponentImpl implements AppComponent {
   public void inject(DriverPreOrderBookingFragment driverPreOrderBookingFragment) {
     driverPreOrderBookingFragment.setShakeItPlayer(singleShakePlayer);
     driverPreOrderBookingFragment.setOrderConfirmationViewModel(
-        presentationComponent.getPreOrderConfirmationViewModel(driverPreOrderBookingFragment)
+        presentationComponent.getPreOrderBookingViewModel(driverPreOrderBookingFragment)
     );
   }
 
@@ -475,6 +476,14 @@ public class AppComponentImpl implements AppComponent {
   public void inject(SelectedPreOrderFragment selectedPreOrderFragment) {
     selectedPreOrderFragment.setOrderViewModel(
         presentationComponent.getSelectedPreOrderViewModel(selectedPreOrderFragment)
+    );
+  }
+
+  @Override
+  public void inject(SelectedPreOrderConfirmationFragment selectedPreOrderConfirmationFragment) {
+    selectedPreOrderConfirmationFragment.setShakeItPlayer(singleShakePlayer);
+    selectedPreOrderConfirmationFragment.setOrderConfirmationViewModel(
+        presentationComponent.getPreOrderBookingViewModel(selectedPreOrderConfirmationFragment)
     );
   }
 }
