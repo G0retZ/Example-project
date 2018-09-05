@@ -346,7 +346,7 @@ class InteractorComponentImpl implements InteractorComponent {
       preOrderConfirmationUseCase = new OrderConfirmationUseCaseImpl(
           getPreOrderUseCase(),
           repositoryComponent.getPreOrderConfirmationGateway(),
-          null);
+          getPreOrdersListUseCase());
     }
     return preOrderConfirmationUseCase;
   }
