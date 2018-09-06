@@ -21,7 +21,7 @@
     android:id="@+id/fragment_pre_order"
     android:layout_width="0dp"
     android:layout_height="0dp"
-    android:name="com.cargopull.executor_driver.view.PreOrderFragment"
+    android:name="com.cargopull.executor_driver.view.PreOrderConfirmationFragment"
     app:layout_constraintBottom_toTopOf="@id/fragment_driver_pre_order_confirmation"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"

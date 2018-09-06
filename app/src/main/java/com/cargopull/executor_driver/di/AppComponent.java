@@ -30,6 +30,7 @@ import com.cargopull.executor_driver.view.OrderFulfillmentActionsDialogFragment;
 import com.cargopull.executor_driver.view.OrderFulfillmentDetailsFragment;
 import com.cargopull.executor_driver.view.OrderFulfillmentFragment;
 import com.cargopull.executor_driver.view.OrderRouteFragment;
+import com.cargopull.executor_driver.view.PreOrderConfirmationFragment;
 import com.cargopull.executor_driver.view.PreOrderFragment;
 import com.cargopull.executor_driver.view.PreOrdersFragment;
 import com.cargopull.executor_driver.view.ProfileFragment;
@@ -134,4 +135,6 @@ public interface AppComponent {
   void inject(NewPreOrderButtonFragment newPreOrderButtonFragment);
 
   void inject(DriverPreOrderConfirmationFragment driverPreOrderConfirmationFragment);
+
+  void inject(PreOrderConfirmationFragment preOrderConfirmationFragment);
 }
