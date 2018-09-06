@@ -596,8 +596,8 @@ public class MainApplication extends Application implements ServerConnectionView
     ));
     if (notificationManager != null) {
       Builder builder = new Builder(this, "state_channel")
-          .setContentText(getString(R.string.upcoming_pre_order))
-          .setContentTitle(message)
+          .setContentText(message)
+          .setContentTitle(getString(R.string.upcoming_pre_order))
           .setSound(null)
           .setVibrate(new long[0])
           .setAutoCancel(true)
