@@ -73,13 +73,13 @@ public class AutoRouterImpl implements ActivityLifecycleCallbacks, AutoRouter {
     ));
     statusGroups.put(PreOrderNavigate.ORDER_APPROVAL, Arrays.asList(
         DriverPreOrderBookingActivity.class, DriverOrderConfirmationActivity.class,
-        ClientOrderConfirmationActivity.class, MovingToClientActivity.class,
-        MovingToClientDetailsActivity.class, MovingToClientRouteActivity.class,
-        WaitingForClientActivity.class, WaitingForClientRouteActivity.class,
-        OrderFulfillmentActivity.class, OrderFulfillmentDetailsActivity.class,
-        OrderRouteActivity.class, OrderCostDetailsActivity.class,
-        OrderCostDetailsOrderDetailsActivity.class, OrderCostDetailsRouteActivity.class,
-        GeolocationResolutionActivity.class
+        DriverPreOrderConfirmationActivity.class, ClientOrderConfirmationActivity.class,
+        MovingToClientActivity.class, MovingToClientDetailsActivity.class,
+        MovingToClientRouteActivity.class, WaitingForClientActivity.class,
+        WaitingForClientRouteActivity.class, OrderFulfillmentActivity.class,
+        OrderFulfillmentDetailsActivity.class, OrderRouteActivity.class,
+        OrderCostDetailsActivity.class, OrderCostDetailsOrderDetailsActivity.class,
+        OrderCostDetailsRouteActivity.class, GeolocationResolutionActivity.class
     ));
   }
 
