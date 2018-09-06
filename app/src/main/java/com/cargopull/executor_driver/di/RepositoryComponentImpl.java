@@ -79,7 +79,7 @@ import com.cargopull.executor_driver.interactor.services.ServicesGateway;
 import com.cargopull.executor_driver.interactor.vehicle.LastUsedVehicleGateway;
 import com.cargopull.executor_driver.interactor.vehicle.VehicleOptionsGateway;
 import com.cargopull.executor_driver.interactor.vehicle.VehiclesAndOptionsGateway;
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 
 class RepositoryComponentImpl implements RepositoryComponent {
@@ -578,7 +578,7 @@ class RepositoryComponentImpl implements RepositoryComponent {
               new RoutePointApiMapper()
           ),
           new PreOrdersListFilter(),
-          Collections.emptyList()
+          new ArrayList<>()
       );
     }
     return preOrdersListGateway;
