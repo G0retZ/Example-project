@@ -129,9 +129,9 @@ class InteractorComponentImpl implements InteractorComponent {
   @Nullable
   private OrderRouteUseCase orderRouteUseCase;
   @Nullable
-  private OrderUseCaseImpl orderUseCase;
+  private OrderUseCase orderUseCase;
   @Nullable
-  private OrderUseCase preOrderUseCase;
+  private OrderUseCaseImpl preOrderUseCaseImpl;
   @Nullable
   private ServerConnectionUseCase serverConnectionUseCase;
   @Nullable
@@ -340,8 +340,8 @@ class InteractorComponentImpl implements InteractorComponent {
     if (orderConfirmationUseCase == null) {
       orderConfirmationUseCase = new OrderConfirmationUseCaseImpl(
           getOrderUseCase(),
-          getOrderDecisionUseCase(),
           repositoryComponent.getOrderConfirmationGateway(),
+          null,
           null);
     }
     return orderConfirmationUseCase;
@@ -349,12 +349,12 @@ class InteractorComponentImpl implements InteractorComponent {
 
   @NonNull
   @Override
-  public OrderConfirmationUseCase getPreOrderConfirmationUseCase() {
+  public OrderConfirmationUseCase getPreOrderBookingUseCase() {
     if (preOrderConfirmationUseCase == null) {
       preOrderConfirmationUseCase = new OrderConfirmationUseCaseImpl(
           getPreOrderUseCase(),
-          getOrderDecisionUseCase(),
           repositoryComponent.getPreOrderConfirmationGateway(),
+          getPreOrderDecisionUseCase(),
           getPreOrdersListUseCase());
     }
     return preOrderConfirmationUseCase;
@@ -425,13 +425,7 @@ class InteractorComponentImpl implements InteractorComponent {
   @NonNull
   @Override
   public OrderUseCase getPreOrderUseCase() {
-    if (preOrderUseCase == null) {
-      preOrderUseCase = new OrderUseCaseImpl(
-          errorReporter,
-          repositoryComponent.getPreOrderGateway()
-      );
-    }
-    return preOrderUseCase;
+    return getPreOrderUseCaseImpl();
   }
 
   @NonNull
@@ -679,21 +673,25 @@ class InteractorComponentImpl implements InteractorComponent {
     if (selectedPreOrderConfirmationUseCase == null) {
       selectedPreOrderConfirmationUseCase = new OrderConfirmationUseCaseImpl(
           getSelectedPreOrderUseCase(),
-          getOrderDecisionUseCase(),
           repositoryComponent.getPreOrderConfirmationGateway(),
+          null,
           getPreOrdersListUseCase());
     }
     return selectedPreOrderConfirmationUseCase;
   }
 
-  private OrderDecisionUseCase getOrderDecisionUseCase() {
-    if (orderUseCase == null) {
-      orderUseCase = new OrderUseCaseImpl(
-          errorReporter,
-          repositoryComponent.getOrderGateway()
-      );
+  private OrderDecisionUseCase getPreOrderDecisionUseCase() {
+    return getPreOrderUseCaseImpl();
+  }
 
+  @NonNull
+  private OrderUseCaseImpl getPreOrderUseCaseImpl() {
+    if (preOrderUseCaseImpl == null) {
+      preOrderUseCaseImpl = new OrderUseCaseImpl(
+          errorReporter,
+          repositoryComponent.getPreOrderGateway()
+      );
     }
-    return orderUseCase;
+    return preOrderUseCaseImpl;
   }
 }

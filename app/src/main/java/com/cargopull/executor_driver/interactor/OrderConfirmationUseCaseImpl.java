@@ -15,20 +15,21 @@ public class OrderConfirmationUseCaseImpl implements OrderConfirmationUseCase {
   @NonNull
   private final OrderUseCase orderUseCase;
   @NonNull
-  private final OrderDecisionUseCase orderDecisionUseCase;
-  @NonNull
   private final OrderConfirmationGateway orderConfirmationGateway;
+  @Nullable
+  private final OrderDecisionUseCase orderDecisionUseCase;
   @Nullable
   private final OrdersUseCase ordersUseCase;
 
   @Inject
-  public OrderConfirmationUseCaseImpl(@NonNull OrderUseCase orderUseCase,
-      @NonNull OrderDecisionUseCase orderDecisionUseCase,
+  public OrderConfirmationUseCaseImpl(
+      @NonNull OrderUseCase orderUseCase,
       @NonNull OrderConfirmationGateway orderConfirmationGateway,
+      @Nullable OrderDecisionUseCase orderDecisionUseCase,
       @Nullable OrdersUseCase ordersUseCase) {
     this.orderUseCase = orderUseCase;
-    this.orderDecisionUseCase = orderDecisionUseCase;
     this.orderConfirmationGateway = orderConfirmationGateway;
+    this.orderDecisionUseCase = orderDecisionUseCase;
     this.ordersUseCase = ordersUseCase;
   }
 
@@ -60,6 +61,10 @@ public class OrderConfirmationUseCaseImpl implements OrderConfirmationUseCase {
           }
         })
         .firstOrError()
-        .doOnSuccess(s -> orderDecisionUseCase.setOrderOfferDecisionMade());
+        .doOnSuccess(s -> {
+          if (orderDecisionUseCase != null) {
+            orderDecisionUseCase.setOrderOfferDecisionMade();
+          }
+        });
   }
 }

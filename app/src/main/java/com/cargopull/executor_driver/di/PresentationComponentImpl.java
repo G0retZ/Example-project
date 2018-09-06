@@ -483,7 +483,7 @@ class PresentationComponentImpl implements PresentationComponent {
     return getViewModelInstance(
         fragment,
         OrderConfirmationViewModelImpl.class,
-        new OrderConfirmationViewModelImpl(interactorComponent.getPreOrderConfirmationUseCase())
+        new OrderConfirmationViewModelImpl(interactorComponent.getPreOrderBookingUseCase())
     );
   }
 

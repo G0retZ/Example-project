@@ -19,6 +19,8 @@ import com.cargopull.executor_driver.view.MenuFragment;
 import com.cargopull.executor_driver.view.MovingToClientDetailsFragment;
 import com.cargopull.executor_driver.view.MovingToClientFragment;
 import com.cargopull.executor_driver.view.MovingToClientRouteFragment;
+import com.cargopull.executor_driver.view.NewPreOrderButtonFragment;
+import com.cargopull.executor_driver.view.NewPreOrderFragment;
 import com.cargopull.executor_driver.view.OnlineFragment;
 import com.cargopull.executor_driver.view.OrderCostDetailsFragment;
 import com.cargopull.executor_driver.view.OrderCostDetailsOrderDetailsFragment;
@@ -125,4 +127,8 @@ public interface AppComponent {
   void inject(SelectedPreOrderFragment selectedPreOrderFragment);
 
   void inject(SelectedPreOrderConfirmationFragment selectedPreOrderConfirmationFragment);
+
+  void inject(NewPreOrderFragment newPreOrderFragment);
+
+  void inject(NewPreOrderButtonFragment newPreOrderButtonFragment);
 }

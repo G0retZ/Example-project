@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:id="@+id/goToPreOrder"
+  style="@style/TextAppearance.AppCompat.Subhead"
+  android:layout_width="match_parent"
+  android:layout_height="wrap_content"
+  android:paddingTop="10dp"
+  android:paddingBottom="10dp"
+  android:paddingStart="10dp"
+  android:paddingEnd="16dp"
+  android:paddingLeft="10dp"
+  android:paddingRight="16dp"
+  android:background="@drawable/ic_pre_order_card"
+  android:drawableEnd="@drawable/ic_chevron_right"
+  android:drawableLeft="@drawable/ic_flash"
+  android:drawableRight="@drawable/ic_chevron_right"
+  android:drawableStart="@drawable/ic_flash"
+  android:gravity="center_vertical"
+  android:text="@string/new_order_available"/>

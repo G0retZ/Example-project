@@ -76,7 +76,7 @@ interface InteractorComponent {
   OrderConfirmationUseCase getOrderConfirmationUseCase();
 
   @NonNull
-  OrderConfirmationUseCase getPreOrderConfirmationUseCase();
+  OrderConfirmationUseCase getPreOrderBookingUseCase();
 
   @NonNull
   OrderCostDetailsUseCase getOrderCostDetailsUseCase();

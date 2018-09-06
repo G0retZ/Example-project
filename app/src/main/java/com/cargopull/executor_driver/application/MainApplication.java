@@ -532,7 +532,6 @@ public class MainApplication extends Application implements ServerConnectionView
             .setContentText(getString(R.string.new_pre_order_message))
             .setSound(null)
             .setVibrate(new long[0])
-            .setAutoCancel(true)
             .setContentIntent(
                 PendingIntent.getActivity(this, 0,
                     new Intent(this, DriverPreOrderBookingActivity.class), 0)

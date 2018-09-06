@@ -122,4 +122,5 @@
   <string name="no_pre_orders_available">Нет запланированных предзаказов</string>
   <string name="upcoming_preorders">Заказы к исполнению</string>
   <string name="set_out">Выехать</string>
+  <string name="new_order_available">Доступен новый заказ</string>
 </resources>
