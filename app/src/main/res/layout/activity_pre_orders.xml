@@ -16,7 +16,7 @@
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toTopOf="parent"
     app:navigationIcon="@drawable/ic_back_24dp"
-    app:title="@string/upcoming_preorders"/>
+    app:title="@string/upcoming_pre_orders"/>
   <fragment
     android:id="@+id/fragment_new_pre_order"
     android:layout_width="0dp"

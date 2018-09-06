@@ -48,7 +48,7 @@
     android:paddingEnd="16dp"
     android:background="?android:attr/selectableItemBackground"
     android:gravity="center_vertical"
-    android:text="@string/upcoming_preorders"
+    android:text="@string/upcoming_pre_orders"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toBottomOf="@id/balanceLine"/>
