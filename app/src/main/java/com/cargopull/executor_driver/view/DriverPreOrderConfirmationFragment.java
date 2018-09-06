@@ -165,12 +165,11 @@ public class DriverPreOrderConfirmationFragment extends BaseFragment implements
 
   @Override
   public void showDriverOrderConfirmationPending(boolean pending) {
-    showPending(pending, toString() + "0");
+    showPending(pending, toString());
   }
 
   @Override
   public void showOrderPending(boolean pending) {
-    showPending(pending, toString() + "1");
   }
 
   @Override
@@ -282,7 +281,7 @@ public class DriverPreOrderConfirmationFragment extends BaseFragment implements
   @Override
   public void showBlockingMessage(@Nullable String message) {
     if (message != null) {
-      showPending(true, toString() + "0");
+      showPending(true, toString());
     }
   }
 }
