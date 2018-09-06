@@ -17,7 +17,6 @@ import android.view.ViewGroup;
 import android.view.Window;
 import com.cargopull.executor_driver.R;
 import com.cargopull.executor_driver.presentation.CommonNavigate;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Отображает индикатор процесса.
@@ -25,15 +24,23 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class PendingDialogFragment extends BaseDialogFragment {
 
-  @NonNull
-  private final AtomicBoolean isShowing = new AtomicBoolean(false);
+  private volatile boolean isShowing = false;
   private FloatingActionButton exitAction;
   private final Runnable runnable = () -> exitAction.show();
 
   @Override
   public void show(FragmentManager manager, String tag) {
-    isShowing.set(true); // апдейтим флаг показа фрагмента
-    super.show(manager, tag);
+    if (!isShowing) {
+      isShowing = true; // апдейтим флаг показа фрагмента
+      super.show(manager, tag);
+    }
+  }
+
+  @Override
+  public void dismiss() {
+    if (isShowing) {
+      super.dismiss();
+    }
   }
 
   @Nullable
@@ -75,21 +82,14 @@ public class PendingDialogFragment extends BaseDialogFragment {
   @Override
   public void onResume() {
     super.onResume();
-    isShowing.set(true);
+    isShowing = true;
   }
 
   @Override
   public void onDismiss(DialogInterface dialog) {
     super.onDismiss(dialog);
-    isShowing.set(false);
+    isShowing = false;
     exitAction.hide();
     exitAction.removeCallbacks(runnable);
-  }
-
-  /**
-   * Проверяем, если фрагмент показывается или был запланирован для показа
-   */
-  public boolean isShowing() {
-    return isShowing.get();
   }
 }
