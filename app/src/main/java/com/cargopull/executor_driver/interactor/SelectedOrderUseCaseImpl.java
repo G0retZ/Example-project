@@ -18,7 +18,7 @@ public class SelectedOrderUseCaseImpl implements OrderUseCase, SelectedOrderUseC
   @NonNull
   private final OrdersUseCase ordersUseCase;
   @NonNull
-  private PublishSubject<Order> publishSubject;
+  private final PublishSubject<Order> publishSubject;
   @Nullable
   private Flowable<Order> orderFlowable;
   @NonNull
