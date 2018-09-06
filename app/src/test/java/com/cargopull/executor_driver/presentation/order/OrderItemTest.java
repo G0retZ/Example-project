@@ -46,8 +46,6 @@ public class OrderItemTest {
     when(timeUtils.currentTimeMillis()).thenReturn(12390182L);
     orderItem = new OrderItem(order, timeUtils);
     when(order.getRoutePath()).thenReturn(Arrays.asList(routePoint, routePoint1, routePoint2));
-//    when(routePoint1.getLatitude()).thenReturn(15.421);
-//    when(routePoint1.getLongitude()).thenReturn(20.2341);
   }
 
   @Test

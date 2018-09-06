@@ -31,6 +31,7 @@ import com.cargopull.executor_driver.presentation.orderroute.OrderRouteViewModel
 import com.cargopull.executor_driver.presentation.ordertime.OrderTimeViewModel;
 import com.cargopull.executor_driver.presentation.phone.PhoneViewModel;
 import com.cargopull.executor_driver.presentation.preorder.PreOrderViewModel;
+import com.cargopull.executor_driver.presentation.preorderslist.PreOrdersListViewModel;
 import com.cargopull.executor_driver.presentation.selectedvehicle.SelectedVehicleViewModel;
 import com.cargopull.executor_driver.presentation.serverconnection.ServerConnectionViewModel;
 import com.cargopull.executor_driver.presentation.servertime.ServerTimeViewModel;
@@ -127,7 +128,7 @@ interface PresentationComponent {
   OrderConfirmationViewModel getOrderConfirmationViewModel(@Nullable Fragment fragment);
 
   @NonNull
-  OrderConfirmationViewModel getPreOrderConfirmationViewModel(@Nullable Fragment fragment);
+  OrderConfirmationViewModel getPreOrderBookingViewModel(@Nullable Fragment fragment);
 
   @NonNull
   OrderCostViewModel getOrderCostViewModel(@Nullable Fragment fragment);
@@ -143,6 +144,9 @@ interface PresentationComponent {
 
   @NonNull
   PreOrderViewModel getPreOrderViewModel();
+
+  @NonNull
+  PreOrdersListViewModel getPreOrdersListViewModel();
 
   @NonNull
   SelectedVehicleViewModel getSelectedVehicleViewModel(@Nullable Fragment fragment);
@@ -176,4 +180,10 @@ interface PresentationComponent {
 
   @NonNull
   WaitingForClientViewModel getWaitingForClientViewModel(@Nullable Fragment fragment);
+
+  @NonNull
+  OrderViewModel getSelectedPreOrderViewModel(@Nullable Fragment fragment);
+
+  @NonNull
+  OrderConfirmationViewModel getSelectedPreOrderConfirmationViewModel(@Nullable Fragment fragment);
 }

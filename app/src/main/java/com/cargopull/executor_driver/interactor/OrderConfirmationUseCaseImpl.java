@@ -1,6 +1,7 @@
 package com.cargopull.executor_driver.interactor;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import com.cargopull.executor_driver.entity.Order;
 import com.cargopull.executor_driver.entity.OrderOfferDecisionException;
 import io.reactivex.Single;
@@ -15,12 +16,21 @@ public class OrderConfirmationUseCaseImpl implements OrderConfirmationUseCase {
   private final OrderUseCase orderUseCase;
   @NonNull
   private final OrderConfirmationGateway orderConfirmationGateway;
+  @Nullable
+  private final OrderDecisionUseCase orderDecisionUseCase;
+  @Nullable
+  private final OrdersUseCase ordersUseCase;
 
   @Inject
-  public OrderConfirmationUseCaseImpl(@NonNull OrderUseCase orderUseCase,
-      @NonNull OrderConfirmationGateway orderConfirmationGateway) {
+  public OrderConfirmationUseCaseImpl(
+      @NonNull OrderUseCase orderUseCase,
+      @NonNull OrderConfirmationGateway orderConfirmationGateway,
+      @Nullable OrderDecisionUseCase orderDecisionUseCase,
+      @Nullable OrdersUseCase ordersUseCase) {
     this.orderUseCase = orderUseCase;
     this.orderConfirmationGateway = orderConfirmationGateway;
+    this.orderDecisionUseCase = orderDecisionUseCase;
+    this.ordersUseCase = ordersUseCase;
   }
 
   @NonNull
@@ -37,10 +47,24 @@ public class OrderConfirmationUseCaseImpl implements OrderConfirmationUseCase {
               throw new OrderOfferDecisionException();
             }
             orderDecisionMade = true;
-            return orderConfirmationGateway.sendDecision(order, confirmed);
+            return orderConfirmationGateway.sendDecision(order, confirmed)
+                .observeOn(Schedulers.single())
+                .doOnSuccess(str -> {
+                  if (ordersUseCase != null) {
+                    if (confirmed) {
+                      ordersUseCase.addOrder(order);
+                    } else {
+                      ordersUseCase.removeOrder(order);
+                    }
+                  }
+                });
           }
-        }).observeOn(Schedulers.single())
+        })
         .firstOrError()
-        .doOnSuccess(s -> orderUseCase.setOrderOfferDecisionMade());
+        .doOnSuccess(s -> {
+          if (orderDecisionUseCase != null) {
+            orderDecisionUseCase.setOrderOfferDecisionMade();
+          }
+        });
   }
 }

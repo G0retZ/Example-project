@@ -3,9 +3,11 @@ package com.cargopull.executor_driver.interactor;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 import com.cargopull.executor_driver.UseCaseThreadTestRule;
@@ -38,6 +40,8 @@ public class OrderConfirmationUseCaseTest {
   @Mock
   private OrderUseCase orderUseCase;
   @Mock
+  private OrderDecisionUseCase orderDecisionUseCase;
+  @Mock
   private OrderConfirmationGateway orderConfirmationGateway;
   @Mock
   private Order order;
@@ -45,12 +49,15 @@ public class OrderConfirmationUseCaseTest {
   private Order order2;
   @Mock
   private Action action;
+  @Mock
+  private OrdersUseCase ordersUseCase;
 
   @Before
   public void setUp() {
     when(orderUseCase.getOrders()).thenReturn(Flowable.never());
     when(orderConfirmationGateway.sendDecision(any(), anyBoolean())).thenReturn(Single.never());
-    useCase = new OrderConfirmationUseCaseImpl(orderUseCase, orderConfirmationGateway);
+    useCase = new OrderConfirmationUseCaseImpl(orderUseCase, orderConfirmationGateway,
+        orderDecisionUseCase, ordersUseCase);
   }
 
   /* Проверяем работу с юзкейсом заказа */
@@ -69,13 +76,34 @@ public class OrderConfirmationUseCaseTest {
     verifyNoMoreInteractions(orderUseCase);
   }
 
+  /* Проверяем работу с юзкейсом принятия решения по заказу */
+
+  /**
+   * Не должно ничего сломаться, если юзкейса принятия решения нет.
+   */
+  @Test
+  public void shouldNotCrashIfNoDecisionUseCaseSet() {
+    // Дано:
+    when(orderUseCase.getOrders()).thenReturn(Flowable.just(order).concatWith(Flowable.never()));
+    when(orderConfirmationGateway.sendDecision(order, false)).thenReturn(Single.just("success"));
+    when(orderConfirmationGateway.sendDecision(order, true)).thenReturn(Single.just("success"));
+    useCase = new OrderConfirmationUseCaseImpl(orderUseCase, orderConfirmationGateway, null,
+        ordersUseCase);
+
+    // Действие:
+    useCase.sendDecision(false).test();
+    useCase.sendDecision(true).test();
+
+    // Результат:
+    verifyZeroInteractions(orderDecisionUseCase);
+  }
+
   /**
    * Должен запросить у юзкейса заказа деактуализацию заказов.
    */
   @Test
-  public void askOrderUseCaseToSetCurrentOrderExpired() {
+  public void askOrderDecisionUseCaseToSetCurrentOrderExpired() {
     // Дано:
-    InOrder inOrder = Mockito.inOrder(orderUseCase);
     when(orderUseCase.getOrders()).thenReturn(Flowable.just(order).concatWith(Flowable.never()));
     when(orderConfirmationGateway.sendDecision(any(), anyBoolean())).thenReturn(Single.just(""));
 
@@ -84,11 +112,8 @@ public class OrderConfirmationUseCaseTest {
     useCase.sendDecision(false).test();
 
     // Результат:
-    inOrder.verify(orderUseCase).getOrders();
-    inOrder.verify(orderUseCase).setOrderOfferDecisionMade();
-    inOrder.verify(orderUseCase).getOrders();
-    inOrder.verify(orderUseCase).setOrderOfferDecisionMade();
-    verifyNoMoreInteractions(orderUseCase);
+    verify(orderDecisionUseCase, times(2)).setOrderOfferDecisionMade();
+    verifyNoMoreInteractions(orderDecisionUseCase);
   }
 
   /* Проверяем работу с гейтвеем */
@@ -175,6 +200,92 @@ public class OrderConfirmationUseCaseTest {
     inOrder.verify(orderConfirmationGateway).sendDecision(order, false);
     inOrder.verify(action).run();
     verifyNoMoreInteractions(orderConfirmationGateway, action);
+  }
+
+  /* Проверяем работу с юзкейсом списка заказов */
+
+  /**
+   * Не должно ничего сломаться, если юзкейса заказов нет.
+   */
+  @Test
+  public void shouldNotCrashIfNoUseCaseSet() {
+    // Дано:
+    when(orderUseCase.getOrders()).thenReturn(Flowable.just(order).concatWith(Flowable.never()));
+    when(orderConfirmationGateway.sendDecision(order, false)).thenReturn(Single.just("success"));
+    when(orderConfirmationGateway.sendDecision(order, true)).thenReturn(Single.just("success"));
+    useCase = new OrderConfirmationUseCaseImpl(orderUseCase, orderConfirmationGateway,
+        orderDecisionUseCase, null);
+
+    // Действие:
+    useCase.sendDecision(false).test();
+    useCase.sendDecision(true).test();
+
+    // Результат:
+    verifyZeroInteractions(ordersUseCase);
+  }
+
+  /**
+   * Должен передать юзкейсу успешно отвергнутый заказа.
+   */
+  @Test
+  public void passRefusedOrderToOrdersUseCase() {
+    // Дано:
+    when(orderUseCase.getOrders()).thenReturn(Flowable.just(order).concatWith(Flowable.never()));
+    when(orderConfirmationGateway.sendDecision(order, false)).thenReturn(Single.just("success"));
+
+    // Действие:
+    useCase.sendDecision(false).test();
+
+    // Результат:
+    verify(ordersUseCase, only()).removeOrder(order);
+  }
+
+  /**
+   * Должен передать юзкейсу успешно принятый заказа.
+   */
+  @Test
+  public void passConfirmedOrderToOrdersUseCase() {
+    // Дано:
+    when(orderUseCase.getOrders()).thenReturn(Flowable.just(order).concatWith(Flowable.never()));
+    when(orderConfirmationGateway.sendDecision(order, true)).thenReturn(Single.just("success"));
+
+    // Действие:
+    useCase.sendDecision(true).test();
+
+    // Результат:
+    verify(ordersUseCase, only()).addOrder(order);
+  }
+
+  /**
+   * Не должен трогать юзкейс если пришел новый заказ.
+   */
+  @Test
+  public void doNotTouchOrdersUseCaseIfNextOrder() {
+    // Дано:
+    when(orderUseCase.getOrders())
+        .thenReturn(Flowable.just(order, order2).concatWith(Flowable.never()));
+
+    // Действие:
+    useCase.sendDecision(true).test();
+
+    // Результат:
+    verifyZeroInteractions(ordersUseCase);
+  }
+
+  /**
+   * Не должен трогать юзкейс если заказ истек.
+   */
+  @Test
+  public void doNotTouchOrdersUseCaseIfOrderExpired() {
+    // Дано:
+    when(orderUseCase.getOrders()).thenReturn(
+        Flowable.just(order).concatWith(Flowable.error(new OrderOfferExpiredException(""))));
+
+    // Действие:
+    useCase.sendDecision(true).test();
+
+    // Результат:
+    verifyZeroInteractions(ordersUseCase);
   }
 
   /* Проверяем ответы на запрос отправки решения */

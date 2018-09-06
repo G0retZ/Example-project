@@ -128,4 +128,7 @@ interface RepositoryComponent {
 
   @NonNull
   VehiclesAndOptionsGateway getSelectedVehiclesAndOptionsGateway();
+
+  @NonNull
+  CommonGateway<List<Order>> getPreOrdersListGateway();
 }

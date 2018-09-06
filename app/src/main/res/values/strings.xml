@@ -117,5 +117,11 @@
   <string name="new_pre_order">Новый предзаказ!</string>
   <string name="new_pre_order_message">Для рассмотрения доступен новый предварительный заказ.</string>
   <string name="available_pre_order">Доступный предзаказ</string>
+  <string name="today">Сегодня</string>
+  <string name="tomorrow">Завтра</string>
+  <string name="no_pre_orders_available">Нет запланированных предзаказов</string>
+  <string name="upcoming_preorders">Заказы к исполнению</string>
+  <string name="set_out">Выехать</string>
+  <string name="new_order_available">Доступен новый заказ</string>
   <string name="upcoming_pre_order">Предстоящий заказ</string>
 </resources>
