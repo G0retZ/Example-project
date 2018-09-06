@@ -122,43 +122,7 @@ public class DriverOrderConfirmationFragment extends BaseFragment implements
   }
 
   @Override
-  public void showNextPointAddress(@NonNull String coordinates, @NonNull String address) {
-    addressText1.setText(address);
-  }
-
-  @Override
-  public void showNextPointComment(@NonNull String comment) {
-
-  }
-
-  @Override
-  public void showLastPointAddress(@NonNull String address) {
-    addressText2.setText(address.isEmpty() ? getString(R.string.free_ride) : address);
-  }
-
-  @Override
-  public void showRoutePointsCount(int count) {
-    positionText2.setText(String.valueOf(count < 2 ? 2 : count));
-  }
-
-  @Override
-  public void showServiceName(@NonNull String serviceName) {
-    serviceText.setText(serviceName);
-  }
-
-  @Override
   public void showTimeout(int timeout) {
-
-  }
-
-  @Override
-  public void showFirstPointDistance(String distance) {
-    distanceText.setText(getString(R.string.km, distance));
-  }
-
-  @Override
-  public void showFirstPointEta(int etaTime) {
-    etaText.setText(getString(R.string.eta, Math.round(etaTime / 60F)));
   }
 
   @Override
@@ -192,8 +156,41 @@ public class DriverOrderConfirmationFragment extends BaseFragment implements
   }
 
   @Override
-  public void showEstimatedPrice(@NonNull String priceText) {
+  public void showFirstPointDistance(String distance) {
+    distanceText.setText(getString(R.string.km, distance));
+  }
 
+  @Override
+  public void showFirstPointEta(int etaTime) {
+    etaText.setText(getString(R.string.eta, Math.round(etaTime / 60F)));
+  }
+
+  @Override
+  public void showNextPointAddress(@NonNull String coordinates, @NonNull String address) {
+    addressText1.setText(address);
+  }
+
+  @Override
+  public void showNextPointComment(@NonNull String comment) {
+  }
+
+  @Override
+  public void showLastPointAddress(@NonNull String address) {
+    addressText2.setText(address.isEmpty() ? getString(R.string.free_ride) : address);
+  }
+
+  @Override
+  public void showRoutePointsCount(int count) {
+    positionText2.setText(String.valueOf(count < 2 ? 2 : count));
+  }
+
+  @Override
+  public void showServiceName(@NonNull String serviceName) {
+    serviceText.setText(serviceName);
+  }
+
+  @Override
+  public void showEstimatedPrice(@NonNull String priceText) {
   }
 
   @Override
@@ -214,22 +211,18 @@ public class DriverOrderConfirmationFragment extends BaseFragment implements
 
   @Override
   public void showOrderOccupationTime(@NonNull String occupationTime) {
-
   }
 
   @Override
   public void showOrderOccupationDate(@NonNull String occupationDate) {
-
   }
 
   @Override
   public void showOrderOptionsRequirements(@NonNull String options) {
-
   }
 
   @Override
   public void showComment(@NonNull String comment) {
-
   }
 
   @Override

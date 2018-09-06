@@ -212,7 +212,6 @@ public class MovingToClientFragment extends BaseFragment implements MovingToClie
 
   @Override
   public void showLoadPoint(@NonNull String url) {
-
   }
 
   @Override
@@ -249,17 +248,14 @@ public class MovingToClientFragment extends BaseFragment implements MovingToClie
 
   @Override
   public void showLastPointAddress(@NonNull String address) {
-
   }
 
   @Override
   public void showRoutePointsCount(int count) {
-
   }
 
   @Override
   public void showServiceName(@NonNull String serviceName) {
-
   }
 
   @Override
@@ -298,47 +294,38 @@ public class MovingToClientFragment extends BaseFragment implements MovingToClie
 
   @Override
   public void showTimeout(int progress, long timeout) {
-
   }
 
   @Override
   public void showFirstPointDistance(String distance) {
-
   }
 
   @Override
   public void showFirstPointEta(int etaTime) {
-
   }
 
   @Override
   public void showEstimatedPrice(@NonNull String priceText) {
-
   }
 
   @Override
   public void showOrderConditions(@NonNull String routeDistance, int time, long cost) {
-
   }
 
   @Override
   public void showOrderOccupationTime(@NonNull String occupationTime) {
-
   }
 
   @Override
   public void showOrderOccupationDate(@NonNull String occupationDate) {
-
   }
 
   @Override
   public void showOrderOptionsRequirements(@NonNull String options) {
-
   }
 
   @Override
   public void showComment(@NonNull String comment) {
-
   }
 
   @Override

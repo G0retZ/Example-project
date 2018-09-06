@@ -139,7 +139,6 @@ public class MenuFragment extends BaseFragment implements BalanceViewActions,
 
   @Override
   public void showBonusAccountAmount(long amount) {
-
   }
 
   @Override
@@ -149,7 +148,6 @@ public class MenuFragment extends BaseFragment implements BalanceViewActions,
 
   @Override
   public void showBreakText(boolean show) {
-
   }
 
   @Override
@@ -159,7 +157,6 @@ public class MenuFragment extends BaseFragment implements BalanceViewActions,
 
   @Override
   public void showResumeWorkButton(boolean show) {
-
   }
 
   @Override
@@ -169,12 +166,10 @@ public class MenuFragment extends BaseFragment implements BalanceViewActions,
 
   @Override
   public void showPreOrdersListPending(boolean pending) {
-
   }
 
   @Override
   public void showPreOrdersList(boolean show) {
-
   }
 
   @Override
@@ -188,6 +183,5 @@ public class MenuFragment extends BaseFragment implements BalanceViewActions,
 
   @Override
   public void showEmptyPreOrdersList(boolean show) {
-
   }
 }

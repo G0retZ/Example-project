@@ -137,22 +137,18 @@ public class OrderFulfillmentActionsDialogFragment extends BaseDialogFragment im
 
   @Override
   public void showNextRoutePoint(@NonNull String url) {
-
   }
 
   @Override
   public void showNextRoutePointAddress(@NonNull String coordinates, @NonNull String address) {
-
   }
 
   @Override
   public void showNextRoutePointComment(@NonNull String comment) {
-
   }
 
   @Override
   public void showCloseNextRoutePointAction(boolean show) {
-
   }
 
   @Override
@@ -162,6 +158,5 @@ public class OrderFulfillmentActionsDialogFragment extends BaseDialogFragment im
 
   @Override
   public void showNoRouteRide(boolean show) {
-
   }
 }

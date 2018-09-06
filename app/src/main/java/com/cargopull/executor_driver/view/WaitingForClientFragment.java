@@ -199,7 +199,6 @@ public class WaitingForClientFragment extends BaseFragment implements
 
   @Override
   public void showLoadPoint(@NonNull String url) {
-
   }
 
   @Override
@@ -221,12 +220,10 @@ public class WaitingForClientFragment extends BaseFragment implements
 
   @Override
   public void showLastPointAddress(@NonNull String address) {
-
   }
 
   @Override
   public void showRoutePointsCount(int count) {
-
   }
 
   @Override
@@ -236,27 +233,22 @@ public class WaitingForClientFragment extends BaseFragment implements
 
   @Override
   public void showTimeout(int timeout) {
-
   }
 
   @Override
   public void showFirstPointDistance(String distance) {
-
   }
 
   @Override
   public void showFirstPointEta(int etaTime) {
-
   }
 
   @Override
   public void showTimeout(int progress, long timeout) {
-
   }
 
   @Override
   public void showEstimatedPrice(@NonNull String priceText) {
-
   }
 
   @Override
@@ -277,12 +269,10 @@ public class WaitingForClientFragment extends BaseFragment implements
 
   @Override
   public void showOrderOccupationTime(@NonNull String occupationTime) {
-
   }
 
   @Override
   public void showOrderOccupationDate(@NonNull String occupationDate) {
-
   }
 
   @Override

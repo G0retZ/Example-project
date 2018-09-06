@@ -96,7 +96,6 @@ public class SelectedVehicleFragment extends BaseFragment implements SelectedVeh
 
   @Override
   public void showVehicleListPending(boolean pending) {
-
   }
 
   @Override
@@ -111,11 +110,9 @@ public class SelectedVehicleFragment extends BaseFragment implements SelectedVeh
 
   @Override
   public void showVehicleListErrorMessage(boolean show) {
-
   }
 
   @Override
   public void setVehicleListErrorMessage(int messageId) {
-
   }
 }

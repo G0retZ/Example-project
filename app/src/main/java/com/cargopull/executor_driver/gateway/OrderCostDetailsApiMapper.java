@@ -19,7 +19,6 @@ public class OrderCostDetailsApiMapper implements Mapper<StompMessage, OrderCost
 
   @Inject
   public OrderCostDetailsApiMapper() {
-
   }
 
   @NonNull

@@ -112,7 +112,6 @@ public class PreOrderFragment extends BaseFragment implements OrderViewActions {
 
   @Override
   public void showLoadPoint(@NonNull String url) {
-
   }
 
   @Override
@@ -122,7 +121,6 @@ public class PreOrderFragment extends BaseFragment implements OrderViewActions {
 
   @Override
   public void showNextPointComment(@NonNull String comment) {
-
   }
 
   @Override
@@ -142,7 +140,6 @@ public class PreOrderFragment extends BaseFragment implements OrderViewActions {
 
   @Override
   public void showTimeout(int timeout) {
-
   }
 
   @Override
@@ -157,12 +154,10 @@ public class PreOrderFragment extends BaseFragment implements OrderViewActions {
 
   @Override
   public void showTimeout(int progress, long timeout) {
-
   }
 
   @Override
   public void showEstimatedPrice(@NonNull String priceText) {
-
   }
 
   @Override
