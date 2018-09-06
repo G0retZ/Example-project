@@ -18,14 +18,17 @@
     app:navigationIcon="@drawable/ic_back_24dp"
     app:title="@string/upcoming_preorders"/>
   <fragment
-    android:id="@+id/fragment_server_connection"
+    android:id="@+id/fragment_new_pre_order"
     android:layout_width="0dp"
     android:layout_height="wrap_content"
-    android:name="com.cargopull.executor_driver.view.ServerConnectionFragment"
+    android:layout_marginTop="16dp"
+    android:layout_marginBottom="16dp"
+    android:name="com.cargopull.executor_driver.view.NewPreOrderFragment"
+    app:layout_constraintBottom_toTopOf="@id/fragment_pre_orders"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toBottomOf="@id/appBar"
-    tools:layout="@layout/fragment_server_connection"/>
+    tools:layout="@layout/fragment_new_pre_order"/>
   <fragment
     android:id="@+id/fragment_pre_orders"
     android:layout_width="0dp"
@@ -34,6 +37,15 @@
     app:layout_constraintBottom_toBottomOf="parent"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toBottomOf="@id/fragment_server_connection"
+    app:layout_constraintTop_toBottomOf="@id/fragment_new_pre_order"
     tools:layout="@layout/fragment_pre_orders"/>
+  <fragment
+    android:id="@+id/fragment_server_connection"
+    android:layout_width="0dp"
+    android:layout_height="wrap_content"
+    android:name="com.cargopull.executor_driver.view.ServerConnectionFragment"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@id/appBar"
+    tools:layout="@layout/fragment_server_connection"/>
 </android.support.constraint.ConstraintLayout>
