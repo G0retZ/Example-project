@@ -362,6 +362,23 @@ public class ExecutorStateViewModelTest {
   }
 
   /**
+   * Должен вернуть "перейти к подтверждению предварительного заказа".
+   */
+  @Test
+  public void navigateToDriverPreOrderConfirmation() {
+    // Дано:
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getNavigationLiveData().observeForever(navigationObserver);
+
+    // Действие:
+    publishSubject.onNext(ExecutorState.DRIVER_PRELIMINARY_ORDER_CONFIRMATION);
+
+    // Результат:
+    verify(navigationObserver, only())
+        .onChanged(ExecutorStateNavigate.DRIVER_PRELIMINARY_ORDER_CONFIRMATION);
+  }
+
+  /**
    * Должен вернуть "перейти к ожиданию подтверждения клиента".
    */
   @Test

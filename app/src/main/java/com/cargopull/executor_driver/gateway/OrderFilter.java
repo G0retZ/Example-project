@@ -12,6 +12,7 @@ public class OrderFilter implements Predicate<StompMessage> {
   @NonNull
   private final List<String> allowedStates = Arrays.asList(
       ExecutorState.DRIVER_ORDER_CONFIRMATION.toString(),
+      ExecutorState.DRIVER_PRELIMINARY_ORDER_CONFIRMATION.toString(),
       ExecutorState.CLIENT_ORDER_CONFIRMATION.toString(),
       ExecutorState.MOVING_TO_CLIENT.toString(),
       ExecutorState.WAITING_FOR_CLIENT.toString(),

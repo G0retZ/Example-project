@@ -12,6 +12,7 @@ import java.lang.annotation.RetentionPolicy;
     ExecutorStateNavigate.MAP_SHIFT_OPENED,
     ExecutorStateNavigate.MAP_ONLINE,
     ExecutorStateNavigate.DRIVER_ORDER_CONFIRMATION,
+    ExecutorStateNavigate.DRIVER_PRELIMINARY_ORDER_CONFIRMATION,
     ExecutorStateNavigate.CLIENT_ORDER_CONFIRMATION,
     ExecutorStateNavigate.MOVING_TO_CLIENT,
     ExecutorStateNavigate.WAITING_FOR_CLIENT,
@@ -27,8 +28,10 @@ public @interface ExecutorStateNavigate {
   String MAP_SHIFT_OPENED = "ExecutorState.to.MapShiftOpened";
   // Переход к получению заказов.
   String MAP_ONLINE = "ExecutorState.to.MapOnline";
-  // Переход к исполнению заказа.
+  // Переход к подтверждению заказа.
   String DRIVER_ORDER_CONFIRMATION = "ExecutorState.to.DriverOrderConfirmation";
+  // Переход к подтверждению предварительного заказа.
+  String DRIVER_PRELIMINARY_ORDER_CONFIRMATION = "ExecutorState.to.DriverPreliminaryOrderConfirmation";
   // Переход к ожиданию подтверждения клиентом.
   String CLIENT_ORDER_CONFIRMATION = "ExecutorState.to.ClientOrderConfirmation";
   // Переход к движению к клиенту.

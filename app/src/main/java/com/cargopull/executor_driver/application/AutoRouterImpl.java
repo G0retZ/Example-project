@@ -49,6 +49,9 @@ public class AutoRouterImpl implements ActivityLifecycleCallbacks, AutoRouter {
     statusGroups.put(ExecutorStateNavigate.DRIVER_ORDER_CONFIRMATION, Arrays.asList(
         DriverOrderConfirmationActivity.class, GeolocationResolutionActivity.class
     ));
+    statusGroups.put(ExecutorStateNavigate.DRIVER_PRELIMINARY_ORDER_CONFIRMATION, Arrays.asList(
+        DriverOrderConfirmationActivity.class, GeolocationResolutionActivity.class
+    ));
     statusGroups.put(ExecutorStateNavigate.CLIENT_ORDER_CONFIRMATION, Arrays.asList(
         ClientOrderConfirmationActivity.class, GeolocationResolutionActivity.class
     ));
@@ -174,6 +177,18 @@ public class AutoRouterImpl implements ActivityLifecycleCallbacks, AutoRouter {
                     new Pair<>(250L, 255)
                 ));
                 break;
+              case ExecutorStateNavigate.DRIVER_PRELIMINARY_ORDER_CONFIRMATION:
+                ringTonePlayer.playRingTone(R.raw.decline_offer);
+                shakeItPlayer.shakeIt(Arrays.asList(
+                    new Pair<>(50L, 255),
+                    new Pair<>(50L, 0),
+                    new Pair<>(100L, 255),
+                    new Pair<>(50L, 0),
+                    new Pair<>(150L, 255),
+                    new Pair<>(50L, 0),
+                    new Pair<>(250L, 255)
+                ));
+                break;
               default:
             }
           }
@@ -238,6 +253,12 @@ public class AutoRouterImpl implements ActivityLifecycleCallbacks, AutoRouter {
         );
         break;
       case ExecutorStateNavigate.DRIVER_ORDER_CONFIRMATION:
+        currentActivity.startActivity(
+            new Intent(currentActivity, DriverOrderConfirmationActivity.class)
+                .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK)
+        );
+        break;
+      case ExecutorStateNavigate.DRIVER_PRELIMINARY_ORDER_CONFIRMATION:
         currentActivity.startActivity(
             new Intent(currentActivity, DriverOrderConfirmationActivity.class)
                 .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK)
