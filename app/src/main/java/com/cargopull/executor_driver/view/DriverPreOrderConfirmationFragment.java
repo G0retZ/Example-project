@@ -3,49 +3,52 @@ package com.cargopull.executor_driver.view;
 import android.animation.Animator;
 import android.animation.Animator.AnimatorListener;
 import android.animation.ObjectAnimator;
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.DecelerateInterpolator;
 import android.view.animation.LinearInterpolator;
-import android.widget.Button;
-import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import com.cargopull.executor_driver.R;
+import com.cargopull.executor_driver.backend.vibro.ShakeItPlayer;
 import com.cargopull.executor_driver.di.AppComponent;
 import com.cargopull.executor_driver.presentation.order.OrderViewActions;
 import com.cargopull.executor_driver.presentation.order.OrderViewModel;
 import com.cargopull.executor_driver.presentation.orderconfirmation.OrderConfirmationViewActions;
 import com.cargopull.executor_driver.presentation.orderconfirmation.OrderConfirmationViewModel;
-import com.squareup.picasso.Picasso;
-import java.text.DecimalFormat;
+import com.cargopull.executor_driver.utils.Pair;
+import java.util.Collections;
 import javax.inject.Inject;
-import org.joda.time.LocalTime;
 
 /**
  * Отображает заказ.
  */
 
-public class DriverOrderConfirmationFragment extends BaseFragment implements
+public class DriverPreOrderConfirmationFragment extends BaseFragment implements
     OrderConfirmationViewActions, OrderViewActions {
 
   private OrderConfirmationViewModel orderConfirmationViewModel;
   private OrderViewModel orderViewModel;
-  private ImageButton declineAction;
-  private ImageView mapImage;
-  private ProgressBar timeoutChart;
-  private TextView distanceText;
-  private TextView etaText;
-  private TextView addressText1;
-  private TextView addressText2;
-  private TextView positionText2;
-  private TextView estimationText;
-  private TextView serviceText;
-  private Button acceptAction;
+  private ShakeItPlayer shakeItPlayer;
+  private ProgressBar declineAction;
+  private TextView declineActionText;
+  private ProgressBar setOutAction;
+  private TextView setOutActionText;
+  @Nullable
+  private ObjectAnimator declineDelayAnimator;
+  @Nullable
+  private ObjectAnimator declineResetAnimator;
+
+  @Inject
+  public void setShakeItPlayer(@NonNull ShakeItPlayer shakeItPlayer) {
+    this.shakeItPlayer = shakeItPlayer;
+  }
 
   @Inject
   public void setOrderConfirmationViewModel(
@@ -58,25 +61,68 @@ public class DriverOrderConfirmationFragment extends BaseFragment implements
     this.orderViewModel = orderViewModel;
   }
 
+  @SuppressLint("ClickableViewAccessibility")
   @Nullable
   @Override
   public View onCreateView(@NonNull LayoutInflater inflater,
       @Nullable ViewGroup container,
       @Nullable Bundle savedInstanceState) {
-    View view = inflater.inflate(R.layout.fragment_driver_order_confirmation, container, false);
-    declineAction = view.findViewById(R.id.declineButton);
-    mapImage = view.findViewById(R.id.mapImage);
-    timeoutChart = view.findViewById(R.id.timeoutChart);
-    distanceText = view.findViewById(R.id.distanceText);
-    etaText = view.findViewById(R.id.etaText);
-    addressText1 = view.findViewById(R.id.addressText1);
-    addressText2 = view.findViewById(R.id.addressText2);
-    positionText2 = view.findViewById(R.id.positionText2);
-    estimationText = view.findViewById(R.id.estimationText);
-    serviceText = view.findViewById(R.id.serviceText);
-    acceptAction = view.findViewById(R.id.acceptButton);
-    acceptAction.setOnClickListener(v -> orderConfirmationViewModel.acceptOrder());
-    declineAction.setOnClickListener(v -> orderConfirmationViewModel.declineOrder());
+    View view = inflater.inflate(R.layout.fragment_driver_pre_order_confirmation, container, false);
+    declineAction = view.findViewById(R.id.declineChart);
+    declineActionText = view.findViewById(R.id.declineText);
+    setOutAction = view.findViewById(R.id.setOutChart);
+    setOutActionText = view.findViewById(R.id.setOutText);
+    setOutAction.setOnClickListener(v -> orderConfirmationViewModel.acceptOrder());
+
+    declineDelayAnimator = ObjectAnimator.ofInt(declineAction, "progress", 0, 100);
+    declineDelayAnimator.setDuration(1500);
+    declineDelayAnimator.setInterpolator(new DecelerateInterpolator());
+    declineDelayAnimator.addListener(new AnimatorListener() {
+      private boolean canceled;
+
+      @Override
+      public void onAnimationStart(Animator animation) {
+        canceled = false;
+      }
+
+      @Override
+      public void onAnimationEnd(Animator animation) {
+        if (!canceled) {
+          orderConfirmationViewModel.declineOrder();
+          shakeItPlayer.shakeIt(Collections.singletonList(new Pair<>(200L, 255)));
+        }
+      }
+
+      @Override
+      public void onAnimationCancel(Animator animation) {
+        canceled = true;
+      }
+
+      @Override
+      public void onAnimationRepeat(Animator animation) {
+
+      }
+    });
+
+    declineAction.setOnTouchListener((v, event) -> {
+      int i = event.getAction();
+      if (i == MotionEvent.ACTION_DOWN) {
+        declineDelayAnimator.start();
+        if (declineResetAnimator != null) {
+          declineResetAnimator.cancel();
+        }
+        return true;
+      } else if (i == MotionEvent.ACTION_UP) {
+        declineDelayAnimator.cancel();
+        declineResetAnimator = ObjectAnimator
+            .ofInt(declineAction, "progress", declineAction.getProgress(), 0);
+        declineResetAnimator.setDuration(150);
+        declineResetAnimator.setInterpolator(new LinearInterpolator());
+        declineResetAnimator.start();
+        return true;
+      }
+      return false;
+    });
     return view;
   }
 
@@ -107,18 +153,27 @@ public class DriverOrderConfirmationFragment extends BaseFragment implements
   }
 
   @Override
+  public void onDetach() {
+    if (declineResetAnimator != null) {
+      declineResetAnimator.cancel();
+    }
+    if (declineDelayAnimator != null) {
+      declineDelayAnimator.cancel();
+    }
+    super.onDetach();
+  }
+
+  @Override
   public void showDriverOrderConfirmationPending(boolean pending) {
-    showPending(pending, toString() + "0");
+    showPending(pending, toString());
   }
 
   @Override
   public void showOrderPending(boolean pending) {
-    showPending(pending, toString() + "1");
   }
 
   @Override
   public void showLoadPoint(@NonNull String url) {
-    Picasso.get().load(url).into(mapImage);
   }
 
   @Override
@@ -128,7 +183,7 @@ public class DriverOrderConfirmationFragment extends BaseFragment implements
   @Override
   public void showTimeout(int progress, long timeout) {
     if (timeout > 0) {
-      ObjectAnimator animation = ObjectAnimator.ofInt(timeoutChart, "progress", progress, 0);
+      ObjectAnimator animation = ObjectAnimator.ofInt(setOutAction, "progress", progress, 0);
       animation.setDuration(timeout);
       animation.setInterpolator(new LinearInterpolator());
       animation.addListener(new AnimatorListener() {
@@ -157,17 +212,14 @@ public class DriverOrderConfirmationFragment extends BaseFragment implements
 
   @Override
   public void showFirstPointDistance(String distance) {
-    distanceText.setText(getString(R.string.km, distance));
   }
 
   @Override
   public void showFirstPointEta(int etaTime) {
-    etaText.setText(getString(R.string.eta, Math.round(etaTime / 60F)));
   }
 
   @Override
   public void showNextPointAddress(@NonNull String coordinates, @NonNull String address) {
-    addressText1.setText(address);
   }
 
   @Override
@@ -176,17 +228,14 @@ public class DriverOrderConfirmationFragment extends BaseFragment implements
 
   @Override
   public void showLastPointAddress(@NonNull String address) {
-    addressText2.setText(address.isEmpty() ? getString(R.string.free_ride) : address);
   }
 
   @Override
   public void showRoutePointsCount(int count) {
-    positionText2.setText(String.valueOf(count < 2 ? 2 : count));
   }
 
   @Override
   public void showServiceName(@NonNull String serviceName) {
-    serviceText.setText(serviceName);
   }
 
   @Override
@@ -195,18 +244,6 @@ public class DriverOrderConfirmationFragment extends BaseFragment implements
 
   @Override
   public void showOrderConditions(@NonNull String routeDistance, int time, long cost) {
-    LocalTime localTime = LocalTime.fromMillisOfDay(time * 1000);
-    if (!getResources().getBoolean(R.bool.show_cents)) {
-      cost = Math.round(cost / 100f);
-    }
-    DecimalFormat decimalFormat = new DecimalFormat(getString(R.string.currency_format));
-    decimalFormat.setMaximumFractionDigits(0);
-    estimationText.setText(getString(
-        R.string.km_h_m_p, routeDistance,
-        localTime.getHourOfDay(),
-        localTime.getMinuteOfHour(),
-        decimalFormat.format(cost))
-    );
   }
 
   @Override
@@ -232,17 +269,19 @@ public class DriverOrderConfirmationFragment extends BaseFragment implements
   @Override
   public void enableDeclineButton(boolean enable) {
     declineAction.setEnabled(enable);
+    declineActionText.setEnabled(enable);
   }
 
   @Override
   public void enableAcceptButton(boolean enable) {
-    acceptAction.setEnabled(enable);
+    setOutAction.setEnabled(enable);
+    setOutActionText.setEnabled(enable);
   }
 
   @Override
   public void showBlockingMessage(@Nullable String message) {
     if (message != null) {
-      showPending(true, toString() + "0");
+      showPending(true, toString());
     }
   }
 }

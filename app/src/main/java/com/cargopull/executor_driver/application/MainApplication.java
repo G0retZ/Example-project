@@ -424,8 +424,8 @@ public class MainApplication extends Application implements ServerConnectionView
             new Pair<>(50L, 0),
             new Pair<>(100L, 255)
         ));
-        startService(R.string.offer, R.string.new_order, PendingIntent
-            .getActivity(this, 0, new Intent(this, DriverOrderConfirmationActivity.class), 0));
+        startService(R.string.preliminary_order, R.string.time_to_set_out, PendingIntent
+            .getActivity(this, 0, new Intent(this, DriverPreOrderConfirmationActivity.class), 0));
       case ExecutorStateNavigate.CLIENT_ORDER_CONFIRMATION:
         playSound(R.raw.accept_offer);
         shakeIt(Arrays.asList(

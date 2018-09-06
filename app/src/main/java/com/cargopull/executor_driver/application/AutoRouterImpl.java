@@ -50,7 +50,7 @@ public class AutoRouterImpl implements ActivityLifecycleCallbacks, AutoRouter {
         DriverOrderConfirmationActivity.class, GeolocationResolutionActivity.class
     ));
     statusGroups.put(ExecutorStateNavigate.DRIVER_PRELIMINARY_ORDER_CONFIRMATION, Arrays.asList(
-        DriverOrderConfirmationActivity.class, GeolocationResolutionActivity.class
+        DriverPreOrderConfirmationActivity.class, GeolocationResolutionActivity.class
     ));
     statusGroups.put(ExecutorStateNavigate.CLIENT_ORDER_CONFIRMATION, Arrays.asList(
         ClientOrderConfirmationActivity.class, GeolocationResolutionActivity.class
@@ -73,13 +73,13 @@ public class AutoRouterImpl implements ActivityLifecycleCallbacks, AutoRouter {
     ));
     statusGroups.put(PreOrderNavigate.ORDER_APPROVAL, Arrays.asList(
         DriverPreOrderBookingActivity.class, DriverOrderConfirmationActivity.class,
-        ClientOrderConfirmationActivity.class, MovingToClientActivity.class,
-        MovingToClientDetailsActivity.class, MovingToClientRouteActivity.class,
-        WaitingForClientActivity.class, WaitingForClientRouteActivity.class,
-        OrderFulfillmentActivity.class, OrderFulfillmentDetailsActivity.class,
-        OrderRouteActivity.class, OrderCostDetailsActivity.class,
-        OrderCostDetailsOrderDetailsActivity.class, OrderCostDetailsRouteActivity.class,
-        GeolocationResolutionActivity.class
+        DriverPreOrderConfirmationActivity.class, ClientOrderConfirmationActivity.class,
+        MovingToClientActivity.class, MovingToClientDetailsActivity.class,
+        MovingToClientRouteActivity.class, WaitingForClientActivity.class,
+        WaitingForClientRouteActivity.class, OrderFulfillmentActivity.class,
+        OrderFulfillmentDetailsActivity.class, OrderRouteActivity.class,
+        OrderCostDetailsActivity.class, OrderCostDetailsOrderDetailsActivity.class,
+        OrderCostDetailsRouteActivity.class, GeolocationResolutionActivity.class
     ));
   }
 
@@ -260,7 +260,7 @@ public class AutoRouterImpl implements ActivityLifecycleCallbacks, AutoRouter {
         break;
       case ExecutorStateNavigate.DRIVER_PRELIMINARY_ORDER_CONFIRMATION:
         currentActivity.startActivity(
-            new Intent(currentActivity, DriverOrderConfirmationActivity.class)
+            new Intent(currentActivity, DriverPreOrderConfirmationActivity.class)
                 .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK)
         );
         break;

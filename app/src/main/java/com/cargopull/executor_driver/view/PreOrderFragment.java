@@ -19,7 +19,7 @@ import javax.inject.Inject;
 import org.joda.time.LocalTime;
 
 /**
- * Отображает заказ.
+ * Отображает предварительный заказ.
  */
 
 public class PreOrderFragment extends BaseFragment implements OrderViewActions {
@@ -28,6 +28,8 @@ public class PreOrderFragment extends BaseFragment implements OrderViewActions {
   private TextView scheduledTimeText;
   private TextView scheduledDateText;
   private TextView estimationText;
+  private TextView distanceText;
+  private TextView etaText;
   private TextView addressText1;
   private TextView addressText2;
   private TextView positionText2;
@@ -63,6 +65,8 @@ public class PreOrderFragment extends BaseFragment implements OrderViewActions {
     addressText2 = view.findViewById(R.id.addressText2);
     positionText2 = view.findViewById(R.id.positionText2);
     estimationText = view.findViewById(R.id.estimationText);
+    distanceText = view.findViewById(R.id.distanceText);
+    etaText = view.findViewById(R.id.etaText);
     serviceText = view.findViewById(R.id.serviceText);
     cargoDescTitleText = view.findViewById(R.id.cargoDescTitleText);
     cargoDescText = view.findViewById(R.id.cargoDescText);
@@ -108,7 +112,6 @@ public class PreOrderFragment extends BaseFragment implements OrderViewActions {
 
   @Override
   public void showLoadPoint(@NonNull String url) {
-
   }
 
   @Override
@@ -118,7 +121,6 @@ public class PreOrderFragment extends BaseFragment implements OrderViewActions {
 
   @Override
   public void showNextPointComment(@NonNull String comment) {
-
   }
 
   @Override
@@ -138,27 +140,24 @@ public class PreOrderFragment extends BaseFragment implements OrderViewActions {
 
   @Override
   public void showTimeout(int timeout) {
-
   }
 
   @Override
   public void showFirstPointDistance(String distance) {
-
+    distanceText.setText(getString(R.string.km, distance));
   }
 
   @Override
   public void showFirstPointEta(int etaTime) {
-
+    etaText.setText(getString(R.string.eta, Math.round(etaTime / 60F)));
   }
 
   @Override
   public void showTimeout(int progress, long timeout) {
-
   }
 
   @Override
   public void showEstimatedPrice(@NonNull String priceText) {
-
   }
 
   @Override

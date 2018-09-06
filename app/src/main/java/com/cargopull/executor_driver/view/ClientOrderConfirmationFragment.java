@@ -101,7 +101,6 @@ public class ClientOrderConfirmationFragment extends BaseFragment implements Ord
 
   @Override
   public void showNextPointComment(@NonNull String comment) {
-
   }
 
   @Override
@@ -121,7 +120,6 @@ public class ClientOrderConfirmationFragment extends BaseFragment implements Ord
 
   @Override
   public void showTimeout(int timeout) {
-
   }
 
   @Override
@@ -136,12 +134,10 @@ public class ClientOrderConfirmationFragment extends BaseFragment implements Ord
 
   @Override
   public void showTimeout(int progress, long timeout) {
-
   }
 
   @Override
   public void showEstimatedPrice(@NonNull String priceText) {
-
   }
 
   @Override
@@ -162,12 +158,10 @@ public class ClientOrderConfirmationFragment extends BaseFragment implements Ord
 
   @Override
   public void showOrderOccupationTime(@NonNull String occupationTime) {
-
   }
 
   @Override
   public void showOrderOccupationDate(@NonNull String occupationDate) {
-
   }
 
   @Override
