@@ -124,4 +124,5 @@
   <string name="set_out">Выехать</string>
   <string name="new_order_available">Доступен новый заказ</string>
   <string name="upcoming_pre_order">Предстоящий заказ</string>
+  <string name="distance_to_order">Расстояние до заказа</string>
 </resources>
