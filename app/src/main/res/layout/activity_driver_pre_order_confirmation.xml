@@ -15,27 +15,8 @@
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toTopOf="parent"
-    app:navigationIcon="@drawable/ic_menu_24dp">
-    <LinearLayout
-      android:layout_width="match_parent"
-      android:layout_height="match_parent"
-      android:gravity="center_vertical|end"
-      android:orientation="horizontal">
-      <TextView
-        style="@style/TextAppearance.AppCompat.Title"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:text="@string/preliminary_order"/>
-      <ImageButton
-        android:id="@+id/orderActions"
-        style="@style/Widget.AppCompat.ActionButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:contentDescription="@null"
-        app:srcCompat="@drawable/ic_more_24dp"/>
-    </LinearLayout>
-  </android.support.v7.widget.Toolbar>
+    app:navigationIcon="@drawable/ic_menu_24dp"
+    app:title="@string/preliminary_order"/>
   <fragment
     android:id="@+id/fragment_pre_order"
     android:layout_width="0dp"
