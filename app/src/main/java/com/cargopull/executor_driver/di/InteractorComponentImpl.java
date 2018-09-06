@@ -36,6 +36,7 @@ import com.cargopull.executor_driver.interactor.OrderCostDetailsUseCase;
 import com.cargopull.executor_driver.interactor.OrderCostDetailsUseCaseImpl;
 import com.cargopull.executor_driver.interactor.OrderCurrentCostUseCase;
 import com.cargopull.executor_driver.interactor.OrderCurrentCostUseCaseImpl;
+import com.cargopull.executor_driver.interactor.OrderDecisionUseCase;
 import com.cargopull.executor_driver.interactor.OrderFulfillmentTimeUseCase;
 import com.cargopull.executor_driver.interactor.OrderFulfillmentTimeUseCaseImpl;
 import com.cargopull.executor_driver.interactor.OrderRouteUseCase;
@@ -44,6 +45,8 @@ import com.cargopull.executor_driver.interactor.OrderUseCase;
 import com.cargopull.executor_driver.interactor.OrderUseCaseImpl;
 import com.cargopull.executor_driver.interactor.OrdersUseCase;
 import com.cargopull.executor_driver.interactor.OrdersUseCaseImpl;
+import com.cargopull.executor_driver.interactor.SelectedOrderUseCase;
+import com.cargopull.executor_driver.interactor.SelectedOrderUseCaseImpl;
 import com.cargopull.executor_driver.interactor.ServerConnectionUseCase;
 import com.cargopull.executor_driver.interactor.ServerConnectionUseCaseImpl;
 import com.cargopull.executor_driver.interactor.ServerTimeUseCase;
@@ -116,6 +119,8 @@ class InteractorComponentImpl implements InteractorComponent {
   @Nullable
   private OrderConfirmationUseCase preOrderConfirmationUseCase;
   @Nullable
+  private OrderConfirmationUseCase selectedPreOrderConfirmationUseCase;
+  @Nullable
   private OrderCostDetailsUseCase orderCostDetailsUseCase;
   @Nullable
   private OrderCurrentCostUseCase orderCurrentCostUseCase;
@@ -124,7 +129,7 @@ class InteractorComponentImpl implements InteractorComponent {
   @Nullable
   private OrderRouteUseCase orderRouteUseCase;
   @Nullable
-  private OrderUseCase orderUseCase;
+  private OrderUseCaseImpl orderUseCase;
   @Nullable
   private OrderUseCase preOrderUseCase;
   @Nullable
@@ -161,6 +166,8 @@ class InteractorComponentImpl implements InteractorComponent {
   private VehiclesAndOptionsUseCase vehiclesAndOptionsUseCase;
   @Nullable
   private VehiclesAndOptionsUseCase selectedVehiclesAndOptionsUseCase;
+  @Nullable
+  private SelectedOrderUseCaseImpl selectedOrderUseCase;
 
   InteractorComponentImpl(@NonNull MemoryDataSharer<String> loginSharer,
       @NonNull TimeUtils timeUtils,
@@ -333,6 +340,7 @@ class InteractorComponentImpl implements InteractorComponent {
     if (orderConfirmationUseCase == null) {
       orderConfirmationUseCase = new OrderConfirmationUseCaseImpl(
           getOrderUseCase(),
+          getOrderDecisionUseCase(),
           repositoryComponent.getOrderConfirmationGateway(),
           null);
     }
@@ -345,6 +353,7 @@ class InteractorComponentImpl implements InteractorComponent {
     if (preOrderConfirmationUseCase == null) {
       preOrderConfirmationUseCase = new OrderConfirmationUseCaseImpl(
           getPreOrderUseCase(),
+          getOrderDecisionUseCase(),
           repositoryComponent.getPreOrderConfirmationGateway(),
           getPreOrdersListUseCase());
     }
@@ -638,5 +647,53 @@ class InteractorComponentImpl implements InteractorComponent {
       );
     }
     return selectedVehiclesAndOptionsUseCase;
+  }
+
+  @NonNull
+  @Override
+  public SelectedOrderUseCase getSelectedOrderUseCase() {
+    if (selectedOrderUseCase == null) {
+      selectedOrderUseCase = new SelectedOrderUseCaseImpl(
+          errorReporter,
+          getPreOrdersListUseCase()
+      );
+    }
+    return selectedOrderUseCase;
+  }
+
+  @NonNull
+  @Override
+  public OrderUseCase getSelectedPreOrderUseCase() {
+    if (selectedOrderUseCase == null) {
+      selectedOrderUseCase = new SelectedOrderUseCaseImpl(
+          errorReporter,
+          getPreOrdersListUseCase()
+      );
+    }
+    return selectedOrderUseCase;
+  }
+
+  @NonNull
+  @Override
+  public OrderConfirmationUseCase getSelectedPreOrderConfirmationUseCase() {
+    if (selectedPreOrderConfirmationUseCase == null) {
+      selectedPreOrderConfirmationUseCase = new OrderConfirmationUseCaseImpl(
+          getSelectedPreOrderUseCase(),
+          getOrderDecisionUseCase(),
+          repositoryComponent.getPreOrderConfirmationGateway(),
+          getPreOrdersListUseCase());
+    }
+    return selectedPreOrderConfirmationUseCase;
+  }
+
+  private OrderDecisionUseCase getOrderDecisionUseCase() {
+    if (orderUseCase == null) {
+      orderUseCase = new OrderUseCaseImpl(
+          errorReporter,
+          repositoryComponent.getOrderGateway()
+      );
+
+    }
+    return orderUseCase;
   }
 }

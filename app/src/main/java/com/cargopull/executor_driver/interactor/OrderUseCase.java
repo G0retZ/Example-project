@@ -5,7 +5,7 @@ import com.cargopull.executor_driver.entity.Order;
 import io.reactivex.Flowable;
 
 /**
- * Юзкейс заказа. Слушает заказ из гейтвея.
+ * Юзкейс заказа. Слушает заказ из источника.
  */
 public interface OrderUseCase {
 
@@ -16,10 +16,4 @@ public interface OrderUseCase {
    */
   @NonNull
   Flowable<Order> getOrders();
-
-  /**
-   * Сообщает, что заказ более не актуален, чтобы все подписчики обговили свое состояние.
-   * Нужно для случаев, когда вместо сообщения от сервера обрабатывается результат принятия или отказа.
-   */
-  void setOrderOfferDecisionMade();
 }

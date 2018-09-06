@@ -77,11 +77,11 @@ public class OrdersUseCaseImpl implements OrdersUseCase {
                 removeEmitter.onComplete();
               }),
           (scheduledOrder, unScheduledOrder, preOrders) -> {
-            preOrders = new ArrayList<>(preOrders);
             if (scheduledOrder != dumbOrder && !preOrders.contains(scheduledOrder)) {
               preOrders.add(scheduledOrder);
             }
             preOrders.remove(unScheduledOrder);
+            preOrders = new ArrayList<>(preOrders);
             return preOrders;
           }
       )

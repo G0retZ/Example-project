@@ -476,7 +476,7 @@ class PresentationComponentImpl implements PresentationComponent {
 
   @NonNull
   @Override
-  public OrderConfirmationViewModel getPreOrderConfirmationViewModel(@Nullable Fragment fragment) {
+  public OrderConfirmationViewModel getPreOrderBookingViewModel(@Nullable Fragment fragment) {
     if (fragment == null) {
       throw new NullPointerException("Фрагмент не должен быть null");
     }
@@ -554,6 +554,7 @@ class PresentationComponentImpl implements PresentationComponent {
     if (preOrdersListViewModel == null) {
       preOrdersListViewModel = new PreOrdersListViewModelImpl(
           interactorComponent.getPreOrdersListUseCase(),
+          interactorComponent.getSelectedOrderUseCase(),
           new PreOrdersListItemsMapper()
       );
     }
@@ -679,6 +680,34 @@ class PresentationComponentImpl implements PresentationComponent {
         fragment,
         WaitingForClientViewModelImpl.class,
         new WaitingForClientViewModelImpl(interactorComponent.getWaitingForClientUseCase())
+    );
+  }
+
+  @NonNull
+  @Override
+  public OrderViewModel getSelectedPreOrderViewModel(@Nullable Fragment fragment) {
+    if (fragment == null) {
+      throw new NullPointerException("Фрагмент не должен быть null");
+    }
+    return getViewModelInstance(
+        fragment,
+        OrderViewModelImpl.class,
+        new OrderViewModelImpl(interactorComponent.getSelectedPreOrderUseCase(), timeUtils)
+    );
+  }
+
+  @NonNull
+  @Override
+  public OrderConfirmationViewModel getSelectedPreOrderConfirmationViewModel(
+      @Nullable Fragment fragment) {
+    if (fragment == null) {
+      throw new NullPointerException("Фрагмент не должен быть null");
+    }
+    return getViewModelInstance(
+        fragment,
+        OrderConfirmationViewModelImpl.class,
+        new OrderConfirmationViewModelImpl(
+            interactorComponent.getSelectedPreOrderConfirmationUseCase())
     );
   }
 

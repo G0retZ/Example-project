@@ -29,6 +29,7 @@ import com.cargopull.executor_driver.presentation.order.OrderViewModel;
 import com.cargopull.executor_driver.presentation.preorder.PreOrderNavigate;
 import com.cargopull.executor_driver.presentation.preorder.PreOrderViewActions;
 import com.cargopull.executor_driver.presentation.preorder.PreOrderViewModel;
+import com.cargopull.executor_driver.presentation.preorderslist.PreOrdersListNavigate;
 import com.cargopull.executor_driver.presentation.preorderslist.PreOrdersListViewModel;
 import com.cargopull.executor_driver.presentation.serverconnection.ServerConnectionNavigate;
 import com.cargopull.executor_driver.presentation.serverconnection.ServerConnectionViewActions;
@@ -442,6 +443,8 @@ public class MainApplication extends Application implements ServerConnectionView
             new Pair<>(100L, 255)
         ));
         break;
+      case PreOrdersListNavigate.PRE_ORDER:
+        return;
     }
     autoRouter.navigateTo(destination);
   }
@@ -532,7 +535,7 @@ public class MainApplication extends Application implements ServerConnectionView
             .setAutoCancel(true)
             .setContentIntent(
                 PendingIntent.getActivity(this, 0,
-                    new Intent(this, DriverPreOrderConfirmationActivity.class), 0)
+                    new Intent(this, DriverPreOrderBookingActivity.class), 0)
             )
             .setSmallIcon(R.mipmap.ic_launcher)
             .setTicker(getString(R.string.new_pre_order))

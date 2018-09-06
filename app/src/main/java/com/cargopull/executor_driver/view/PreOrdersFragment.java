@@ -38,11 +38,12 @@ public class PreOrdersFragment extends BaseFragment implements PreOrdersListView
   public View onCreateView(@NonNull LayoutInflater inflater,
       @Nullable ViewGroup container,
       @Nullable Bundle savedInstanceState) {
-    View view = inflater.inflate(R.layout.fragment_preorders, container, false);
+    View view = inflater.inflate(R.layout.fragment_pre_orders, container, false);
     recyclerView = view.findViewById(R.id.recyclerView);
     emptyText = view.findViewById(R.id.emptyText);
     recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-    preOrdersAdapter = new PreOrdersAdapter();
+    preOrdersAdapter = new PreOrdersAdapter(
+        order -> preOrdersListViewModel.setSelectedOrder(order));
     recyclerView.setAdapter(preOrdersAdapter);
     return view;
   }

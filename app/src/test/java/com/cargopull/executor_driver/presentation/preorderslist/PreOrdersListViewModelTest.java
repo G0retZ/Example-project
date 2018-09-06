@@ -13,11 +13,14 @@ import com.cargopull.executor_driver.ViewModelThreadTestRule;
 import com.cargopull.executor_driver.entity.Order;
 import com.cargopull.executor_driver.gateway.DataMappingException;
 import com.cargopull.executor_driver.interactor.OrdersUseCase;
+import com.cargopull.executor_driver.interactor.SelectedOrderUseCase;
 import com.cargopull.executor_driver.presentation.CommonNavigate;
 import com.cargopull.executor_driver.presentation.ViewState;
 import io.reactivex.BackpressureStrategy;
+import io.reactivex.Completable;
 import io.reactivex.subjects.PublishSubject;
 import java.util.List;
+import java.util.NoSuchElementException;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
@@ -40,11 +43,15 @@ public class PreOrdersListViewModelTest {
   @Mock
   private OrdersUseCase useCase;
   @Mock
+  private SelectedOrderUseCase selectedOrderUseCase;
+  @Mock
   private PreOrdersListItemsMapper preOrdersListItemsMapper;
   @Mock
   private Observer<ViewState<PreOrdersListViewActions>> viewStateObserver;
   @Mock
   private Observer<String> navigateObserver;
+  @Mock
+  private Order order;
   @Mock
   private List<Order> ordersList;
   @Mock
@@ -67,16 +74,18 @@ public class PreOrdersListViewModelTest {
     when(preOrdersListItemsMapper.apply(ordersList2)).thenReturn(preOrdersListItems2);
     when(useCase.getOrdersList())
         .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
-    viewModel = new PreOrdersListViewModelImpl(useCase, preOrdersListItemsMapper);
+    when(selectedOrderUseCase.setSelectedOrder(any())).thenReturn(Completable.never());
+    viewModel = new PreOrdersListViewModelImpl(useCase, selectedOrderUseCase,
+        preOrdersListItemsMapper);
   }
 
-  /* Тетсируем работу с юзкейсом. */
+  /* Тетсируем работу с юзкейсом списка предзаказов. */
 
   /**
    * Должен просить юзкейс получить список предзаказов изначально.
    */
   @Test
-  public void askUseCaseForPreOrdersListInitially() {
+  public void askOrdersUseCaseForPreOrdersListInitially() {
     // Результат:
     verify(useCase, only()).getOrdersList();
   }
@@ -85,7 +94,7 @@ public class PreOrdersListViewModelTest {
    * Не должен трогать юзкейс при подписках.
    */
   @Test
-  public void doNotTouchUseCaseOnSubscriptions() {
+  public void doNotTouchOrdersUseCaseOnSubscriptions() {
     // Дано:
     publishSubject.onNext(ordersList);
 
@@ -97,6 +106,38 @@ public class PreOrdersListViewModelTest {
 
     // Результат:
     verify(useCase, only()).getOrdersList();
+  }
+
+  /* Тетсируем работу с юзкейсом выбора предзаказа. */
+
+  /**
+   * Не должен трогать юзкейс при подписках.
+   */
+  @Test
+  public void doNotTouchSelectedOrdersUseCaseOnSubscriptions() {
+    // Дано:
+    publishSubject.onNext(ordersList);
+
+    // Действие:
+    viewModel.getViewStateLiveData();
+    viewModel.getNavigationLiveData();
+    viewModel.getViewStateLiveData();
+    viewModel.getNavigationLiveData();
+
+    // Результат:
+    verifyZeroInteractions(selectedOrderUseCase);
+  }
+
+  /**
+   * Должен просить юзкейс передать выбранный предзаказ.
+   */
+  @Test
+  public void askSelectedOrdersUseCaseForSetSelectedOrder() {
+    // Действие:
+    viewModel.setSelectedOrder(order);
+
+    // Результат:
+    verify(selectedOrderUseCase, only()).setSelectedOrder(order);
   }
 
   /* Тетсируем работу с маппером. */
@@ -180,7 +221,42 @@ public class PreOrdersListViewModelTest {
         .onChanged(new PreOrdersListViewStateReady(preOrdersListItems1));
     inOrder.verify(viewStateObserver)
         .onChanged(new PreOrdersListViewStateReady(preOrdersListItems2));
-    verifyZeroInteractions(viewStateObserver);
+    verifyNoMoreInteractions(viewStateObserver);
+  }
+
+  /**
+   * Не должен возвращать иных состояний вида для ошибки выбора заказа.
+   */
+  @Test
+  public void setNoViewStateToLiveDataForSelectionFail() {
+    // Дано:
+    when(selectedOrderUseCase.setSelectedOrder(any()))
+        .thenReturn(Completable.error(NoSuchElementException::new));
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
+
+    // Действие:
+    viewModel.setSelectedOrder(order);
+
+    // Результат:
+    verify(viewStateObserver, only()).onChanged(new PreOrdersListViewStatePending(null));
+    verifyNoMoreInteractions(viewStateObserver);
+  }
+
+  /**
+   * Не должен возвращать иных состояний вида для успешного выбора заказа.
+   */
+  @Test
+  public void setNoViewStateToLiveDataForSelectionSuccess() {
+    // Дано:
+    when(selectedOrderUseCase.setSelectedOrder(any())).thenReturn(Completable.complete());
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
+
+    // Действие:
+    viewModel.setSelectedOrder(order);
+
+    // Результат:
+    verify(viewStateObserver, only()).onChanged(new PreOrdersListViewStatePending(null));
+    verifyNoMoreInteractions(viewStateObserver);
   }
 
   /**
@@ -264,5 +340,38 @@ public class PreOrdersListViewModelTest {
 
     // Результат:
     verify(navigateObserver, only()).onChanged(CommonNavigate.SERVER_DATA_ERROR);
+  }
+
+  /**
+   * Не должен никуда переходить при ошибке выбора.
+   */
+  @Test
+  public void setNothingToLiveDataForSelectionFail() {
+    // Дано:
+    when(selectedOrderUseCase.setSelectedOrder(any()))
+        .thenReturn(Completable.error(NoSuchElementException::new));
+    viewModel.getNavigationLiveData().observeForever(navigateObserver);
+
+    // Действие:
+    viewModel.setSelectedOrder(order);
+
+    // Результат:
+    verifyZeroInteractions(navigateObserver);
+  }
+
+  /**
+   * Должен вернуть "перейти к предзаказу" при успешном выборе.
+   */
+  @Test
+  public void setNothingToLiveDataForSelectionSuccess() {
+    // Дано:
+    when(selectedOrderUseCase.setSelectedOrder(any())).thenReturn(Completable.complete());
+    viewModel.getNavigationLiveData().observeForever(navigateObserver);
+
+    // Действие:
+    viewModel.setSelectedOrder(order);
+
+    // Результат:
+    verify(navigateObserver, only()).onChanged(PreOrdersListNavigate.PRE_ORDER);
   }
 }

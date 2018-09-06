@@ -5,8 +5,10 @@ import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import com.cargopull.executor_driver.entity.Order;
 import com.cargopull.executor_driver.gateway.DataMappingException;
 import com.cargopull.executor_driver.interactor.OrdersUseCase;
+import com.cargopull.executor_driver.interactor.SelectedOrderUseCase;
 import com.cargopull.executor_driver.presentation.CommonNavigate;
 import com.cargopull.executor_driver.presentation.SingleLiveEvent;
 import com.cargopull.executor_driver.presentation.ViewState;
@@ -20,20 +22,26 @@ public class PreOrdersListViewModelImpl extends ViewModel implements PreOrdersLi
   @NonNull
   private final OrdersUseCase ordersUseCase;
   @NonNull
+  private final SelectedOrderUseCase selectedOrderUseCase;
+  @NonNull
   private final PreOrdersListItemsMapper mapper;
   @NonNull
   private final MutableLiveData<ViewState<PreOrdersListViewActions>> viewStateLiveData;
   @NonNull
   private final SingleLiveEvent<String> navigateLiveData;
   @NonNull
-  private Disposable optionsDisposable = EmptyDisposable.INSTANCE;
+  private Disposable preOrdersDisposable = EmptyDisposable.INSTANCE;
+  @NonNull
+  private Disposable orderSelectionDisposable = EmptyDisposable.INSTANCE;
   @Nullable
   private ViewState<PreOrdersListViewActions> lastViewState;
 
   @Inject
   public PreOrdersListViewModelImpl(@NonNull OrdersUseCase ordersUseCase,
+      @NonNull SelectedOrderUseCase selectedOrderUseCase,
       @NonNull PreOrdersListItemsMapper mapper) {
     this.ordersUseCase = ordersUseCase;
+    this.selectedOrderUseCase = selectedOrderUseCase;
     this.mapper = mapper;
     viewStateLiveData = new MutableLiveData<>();
     navigateLiveData = new SingleLiveEvent<>();
@@ -53,11 +61,11 @@ public class PreOrdersListViewModelImpl extends ViewModel implements PreOrdersLi
   }
 
   private void loadPreOrders() {
-    if (!optionsDisposable.isDisposed()) {
+    if (!preOrdersDisposable.isDisposed()) {
       return;
     }
     viewStateLiveData.postValue(new PreOrdersListViewStatePending(lastViewState));
-    optionsDisposable = ordersUseCase.getOrdersList()
+    preOrdersDisposable = ordersUseCase.getOrdersList()
         .observeOn(AndroidSchedulers.mainThread())
         .map(mapper)
         .subscribe(
@@ -81,8 +89,21 @@ public class PreOrdersListViewModelImpl extends ViewModel implements PreOrdersLi
   }
 
   @Override
+  public void setSelectedOrder(Order selectedOrder) {
+    orderSelectionDisposable.dispose();
+    orderSelectionDisposable = selectedOrderUseCase.setSelectedOrder(selectedOrder)
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe(
+            () -> navigateLiveData.postValue(PreOrdersListNavigate.PRE_ORDER),
+            throwable -> {
+            }
+        );
+  }
+
+  @Override
   protected void onCleared() {
     super.onCleared();
-    optionsDisposable.dispose();
+    preOrdersDisposable.dispose();
+    orderSelectionDisposable.dispose();
   }
 }

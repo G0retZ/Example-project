@@ -15,15 +15,19 @@ public class OrderConfirmationUseCaseImpl implements OrderConfirmationUseCase {
   @NonNull
   private final OrderUseCase orderUseCase;
   @NonNull
+  private final OrderDecisionUseCase orderDecisionUseCase;
+  @NonNull
   private final OrderConfirmationGateway orderConfirmationGateway;
   @Nullable
   private final OrdersUseCase ordersUseCase;
 
   @Inject
   public OrderConfirmationUseCaseImpl(@NonNull OrderUseCase orderUseCase,
+      @NonNull OrderDecisionUseCase orderDecisionUseCase,
       @NonNull OrderConfirmationGateway orderConfirmationGateway,
       @Nullable OrdersUseCase ordersUseCase) {
     this.orderUseCase = orderUseCase;
+    this.orderDecisionUseCase = orderDecisionUseCase;
     this.orderConfirmationGateway = orderConfirmationGateway;
     this.ordersUseCase = ordersUseCase;
   }
@@ -45,13 +49,17 @@ public class OrderConfirmationUseCaseImpl implements OrderConfirmationUseCase {
             return orderConfirmationGateway.sendDecision(order, confirmed)
                 .observeOn(Schedulers.single())
                 .doOnSuccess(str -> {
-                  if (confirmed && ordersUseCase != null) {
-                    ordersUseCase.addOrder(order);
+                  if (ordersUseCase != null) {
+                    if (confirmed) {
+                      ordersUseCase.addOrder(order);
+                    } else {
+                      ordersUseCase.removeOrder(order);
+                    }
                   }
                 });
           }
         })
         .firstOrError()
-        .doOnSuccess(s -> orderUseCase.setOrderOfferDecisionMade());
+        .doOnSuccess(s -> orderDecisionUseCase.setOrderOfferDecisionMade());
   }
 }
