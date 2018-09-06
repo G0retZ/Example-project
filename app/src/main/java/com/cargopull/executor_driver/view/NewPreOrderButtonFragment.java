@@ -6,7 +6,7 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
+import android.widget.ImageButton;
 import com.cargopull.executor_driver.R;
 import com.cargopull.executor_driver.di.AppComponent;
 import com.cargopull.executor_driver.presentation.preorder.PreOrderViewActions;
@@ -14,13 +14,13 @@ import com.cargopull.executor_driver.presentation.preorder.PreOrderViewModel;
 import javax.inject.Inject;
 
 /**
- * Отображает большую кнопку рассмотрения предложения предварительного заказа.
+ * Отображает кнопку рассмотрения предложения предварительного заказа.
  */
 
-public class NewPreOrderFragment extends BaseFragment implements PreOrderViewActions {
+public class NewPreOrderButtonFragment extends BaseFragment implements PreOrderViewActions {
 
   private PreOrderViewModel preOrderViewModel;
-  private TextView goToPreOrder;
+  private ImageButton goToPreOrder;
 
   @Inject
   public void setPreOrderViewModel(@NonNull PreOrderViewModel preOrderViewModel) {
@@ -32,7 +32,7 @@ public class NewPreOrderFragment extends BaseFragment implements PreOrderViewAct
   public View onCreateView(@NonNull LayoutInflater inflater,
       @Nullable ViewGroup container,
       @Nullable Bundle savedInstanceState) {
-    View view = inflater.inflate(R.layout.fragment_new_pre_order, container, false);
+    View view = inflater.inflate(R.layout.fragment_new_pre_order_button, container, false);
     goToPreOrder = view.findViewById(R.id.goToPreOrder);
     goToPreOrder.setOnClickListener(v -> preOrderViewModel.preOrderConsumed());
     return view;
