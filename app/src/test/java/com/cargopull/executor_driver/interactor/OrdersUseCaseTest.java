@@ -145,9 +145,10 @@ public class OrdersUseCaseTest {
     // Действие:
     TestSubscriber<List<Order>> testSubscriber = useCase.getOrdersList().test();
     useCase.removeOrder(order2);
+    useCase.removeOrder(order);
 
     // Результат:
-    assertEquals(2, testSubscriber.values().size());
+    assertEquals(3, testSubscriber.values().size());
     assertEquals(
         new ArrayList<>(Arrays.asList(order, order1, order2, order3)),
         testSubscriber.values().get(0)
@@ -155,6 +156,10 @@ public class OrdersUseCaseTest {
     assertEquals(
         new ArrayList<>(Arrays.asList(order, order1, order3)),
         testSubscriber.values().get(1)
+    );
+    assertEquals(
+        new ArrayList<>(Arrays.asList(order1, order3)),
+        testSubscriber.values().get(2)
     );
     testSubscriber.assertNotComplete();
   }
@@ -166,23 +171,28 @@ public class OrdersUseCaseTest {
   public void answerWithUpdatedListOnSchedule() {
     // Дано:
     when(gateway.getData()).thenReturn(
-        Flowable.<List<Order>>just(new ArrayList<>(Arrays.asList(order, order1, order3)))
+        Flowable.<List<Order>>just(new ArrayList<>(Arrays.asList(order, order3)))
             .concatWith(Flowable.never())
     );
 
     // Действие:
     TestSubscriber<List<Order>> testSubscriber = useCase.getOrdersList().test();
     useCase.addOrder(order2);
+    useCase.addOrder(order1);
 
     // Результат:
-    assertEquals(2, testSubscriber.values().size());
+    assertEquals(3, testSubscriber.values().size());
     assertEquals(
-        new ArrayList<>(Arrays.asList(order, order1, order3)),
+        new ArrayList<>(Arrays.asList(order, order3)),
         testSubscriber.values().get(0)
     );
     assertEquals(
-        new ArrayList<>(Arrays.asList(order, order1, order3, order2)),
+        new ArrayList<>(Arrays.asList(order, order3, order2)),
         testSubscriber.values().get(1)
+    );
+    assertEquals(
+        new ArrayList<>(Arrays.asList(order, order3, order2, order1)),
+        testSubscriber.values().get(2)
     );
     testSubscriber.assertNotComplete();
   }
@@ -194,23 +204,28 @@ public class OrdersUseCaseTest {
   public void answerWithSameListOnUnSchedule() {
     // Дано:
     when(gateway.getData()).thenReturn(
-        Flowable.<List<Order>>just(new ArrayList<>(Arrays.asList(order, order1, order3)))
+        Flowable.<List<Order>>just(new ArrayList<>(Arrays.asList(order, order1)))
             .concatWith(Flowable.never())
     );
 
     // Действие:
     TestSubscriber<List<Order>> testSubscriber = useCase.getOrdersList().test();
     useCase.removeOrder(order2);
+    useCase.removeOrder(order3);
 
     // Результат:
-    assertEquals(2, testSubscriber.values().size());
+    assertEquals(3, testSubscriber.values().size());
     assertEquals(
-        new ArrayList<>(Arrays.asList(order, order1, order3)),
+        new ArrayList<>(Arrays.asList(order, order1)),
         testSubscriber.values().get(0)
     );
     assertEquals(
-        new ArrayList<>(Arrays.asList(order, order1, order3)),
+        new ArrayList<>(Arrays.asList(order, order1)),
         testSubscriber.values().get(1)
+    );
+    assertEquals(
+        new ArrayList<>(Arrays.asList(order, order1)),
+        testSubscriber.values().get(2)
     );
     testSubscriber.assertNotComplete();
   }
@@ -229,9 +244,10 @@ public class OrdersUseCaseTest {
     // Действие:
     TestSubscriber<List<Order>> testSubscriber = useCase.getOrdersList().test();
     useCase.addOrder(order2);
+    useCase.addOrder(order3);
 
     // Результат:
-    assertEquals(2, testSubscriber.values().size());
+    assertEquals(3, testSubscriber.values().size());
     assertEquals(
         new ArrayList<>(Arrays.asList(order, order1, order2, order3)),
         testSubscriber.values().get(0)
@@ -239,6 +255,10 @@ public class OrdersUseCaseTest {
     assertEquals(
         new ArrayList<>(Arrays.asList(order, order1, order2, order3)),
         testSubscriber.values().get(1)
+    );
+    assertEquals(
+        new ArrayList<>(Arrays.asList(order, order1, order2, order3)),
+        testSubscriber.values().get(2)
     );
     testSubscriber.assertNotComplete();
   }
