@@ -409,6 +409,23 @@ public class MainApplication extends Application implements ServerConnectionView
         startService(R.string.offer, R.string.new_order, PendingIntent
             .getActivity(this, 0, new Intent(this, DriverOrderConfirmationActivity.class), 0));
         break;
+      case ExecutorStateNavigate.DRIVER_PRELIMINARY_ORDER_CONFIRMATION:
+        playSound(R.raw.accept_offer);
+        shakeIt(Arrays.asList(
+            new Pair<>(100L, 255),
+            new Pair<>(50L, 0),
+            new Pair<>(50L, 255),
+            new Pair<>(50L, 0),
+            new Pair<>(50L, 255),
+            new Pair<>(50L, 0),
+            new Pair<>(100L, 255),
+            new Pair<>(50L, 0),
+            new Pair<>(50L, 255),
+            new Pair<>(50L, 0),
+            new Pair<>(100L, 255)
+        ));
+        startService(R.string.offer, R.string.new_order, PendingIntent
+            .getActivity(this, 0, new Intent(this, DriverOrderConfirmationActivity.class), 0));
       case ExecutorStateNavigate.CLIENT_ORDER_CONFIRMATION:
         playSound(R.raw.accept_offer);
         shakeIt(Arrays.asList(

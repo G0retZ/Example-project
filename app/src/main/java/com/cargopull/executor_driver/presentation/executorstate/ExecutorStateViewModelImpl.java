@@ -82,6 +82,10 @@ public class ExecutorStateViewModelImpl extends ViewModel implements ExecutorSta
                 case DRIVER_ORDER_CONFIRMATION:
                   navigateLiveData.postValue(ExecutorStateNavigate.DRIVER_ORDER_CONFIRMATION);
                   break;
+                case DRIVER_PRELIMINARY_ORDER_CONFIRMATION:
+                  navigateLiveData
+                      .postValue(ExecutorStateNavigate.DRIVER_PRELIMINARY_ORDER_CONFIRMATION);
+                  break;
                 case CLIENT_ORDER_CONFIRMATION:
                   navigateLiveData.postValue(ExecutorStateNavigate.CLIENT_ORDER_CONFIRMATION);
                   break;
