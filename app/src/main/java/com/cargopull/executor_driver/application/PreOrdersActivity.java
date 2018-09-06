@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
 import com.cargopull.executor_driver.R;
+import com.cargopull.executor_driver.presentation.preorder.PreOrderNavigate;
 import com.cargopull.executor_driver.presentation.preorderslist.PreOrdersListNavigate;
 
 public class PreOrdersActivity extends BaseActivity {
@@ -25,6 +26,9 @@ public class PreOrdersActivity extends BaseActivity {
     switch (destination) {
       case PreOrdersListNavigate.PRE_ORDER:
         startActivity(new Intent(this, SelectedPreOrderActivity.class));
+        break;
+      case PreOrderNavigate.ORDER_APPROVAL:
+        startActivity(new Intent(this, DriverPreOrderBookingActivity.class));
         break;
       default:
         super.navigate(destination);
