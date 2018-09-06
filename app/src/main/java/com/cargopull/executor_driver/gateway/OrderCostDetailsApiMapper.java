@@ -27,7 +27,7 @@ public class OrderCostDetailsApiMapper implements Mapper<StompMessage, OrderCost
     if (from.getPayload() == null) {
       throw new DataMappingException("Ошибка маппинга: данные не должны быть null!");
     }
-    if (from.getPayload().isEmpty()) {
+    if (from.getPayload().trim().isEmpty()) {
       throw new DataMappingException("Ошибка маппинга: данные не должны быть пустыми!");
     }
     Gson gson = new Gson();

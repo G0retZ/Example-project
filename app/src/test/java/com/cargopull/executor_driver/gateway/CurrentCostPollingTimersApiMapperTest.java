@@ -137,7 +137,7 @@ public class CurrentCostPollingTimersApiMapperTest {
   @Test(expected = DataMappingException.class)
   public void mappingEmptyFail() throws Exception {
     // Дано
-    when(stompMessage.getPayload()).thenReturn("");
+    when(stompMessage.getPayload()).thenReturn("\n");
 
     // Действие:
     mapper.map(stompMessage);
