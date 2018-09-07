@@ -9,6 +9,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RawRes;
 import android.support.annotation.StringRes;
+import android.support.v4.app.NotificationCompat.BigTextStyle;
 import android.support.v4.app.NotificationCompat.Builder;
 import com.cargopull.executor_driver.R;
 import com.cargopull.executor_driver.backend.ringtone.RingTonePlayer;
@@ -507,6 +508,7 @@ public class MainApplication extends Application implements ServerConnectionView
       Builder builder = new Builder(this, "state_channel")
           .setContentText(getString(R.string.missed_order))
           .setContentTitle(message)
+          .setStyle(new BigTextStyle().bigText(message))
           .setSound(null)
           .setVibrate(new long[0])
           .setAutoCancel(true)
@@ -563,6 +565,7 @@ public class MainApplication extends Application implements ServerConnectionView
         Builder builder = new Builder(this, "state_channel")
             .setContentTitle(getString(R.string.new_pre_order))
             .setContentText(getString(R.string.new_pre_order_message))
+            .setStyle(new BigTextStyle().bigText(getString(R.string.new_pre_order_message)))
             .setSound(null)
             .setVibrate(new long[0])
             .setContentIntent(
@@ -597,6 +600,7 @@ public class MainApplication extends Application implements ServerConnectionView
     if (notificationManager != null) {
       Builder builder = new Builder(this, "state_channel")
           .setContentText(message)
+          .setStyle(new BigTextStyle().bigText(message))
           .setContentTitle(getString(R.string.upcoming_pre_order))
           .setSound(null)
           .setVibrate(new long[0])
