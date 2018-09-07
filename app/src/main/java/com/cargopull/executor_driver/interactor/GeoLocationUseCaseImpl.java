@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.inject.Inject;
 
+// TODO: https://jira.capsrv.xyz/browse/RUCAP-1993
 public class GeoLocationUseCaseImpl implements GeoLocationUseCase {
 
   @NonNull
