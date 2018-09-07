@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.inject.Inject;
 
+// TODO: https://jira.capsrv.xyz/browse/RUCAP-1993
 public class GeoLocationUseCaseImpl implements GeoLocationUseCase {
 
   @NonNull
@@ -21,6 +22,7 @@ public class GeoLocationUseCaseImpl implements GeoLocationUseCase {
     delays.put(ExecutorState.SHIFT_OPENED, 180000);
     delays.put(ExecutorState.ONLINE, 15000);
     delays.put(ExecutorState.DRIVER_ORDER_CONFIRMATION, 15000);
+    delays.put(ExecutorState.DRIVER_PRELIMINARY_ORDER_CONFIRMATION, 15000);
     delays.put(ExecutorState.CLIENT_ORDER_CONFIRMATION, 15000);
     delays.put(ExecutorState.MOVING_TO_CLIENT, 15000);
     delays.put(ExecutorState.WAITING_FOR_CLIENT, 15000);

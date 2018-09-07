@@ -102,6 +102,7 @@ public class BaseActivity extends AppCompatActivity implements ExecutorStateView
   @Override
   protected void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+    pendingDialogFragment.setCancelable(false);
     getDiComponent().inject(this);
     if (executorStateViewModel == null) {
       throw new IllegalStateException("Граф зависимостей поломан!");
@@ -295,14 +296,9 @@ public class BaseActivity extends AppCompatActivity implements ExecutorStateView
       blockers.remove(blockerId);
     }
     if (blockers.isEmpty()) {
-      if (pendingDialogFragment.isShowing()) {
-        pendingDialogFragment.dismiss();
-      }
+      pendingDialogFragment.dismiss();
     } else {
-      if (!pendingDialogFragment.isShowing()) {
-        pendingDialogFragment.setCancelable(false);
-        pendingDialogFragment.show(getSupportFragmentManager(), "pending");
-      }
+      pendingDialogFragment.show(getSupportFragmentManager(), "pending");
     }
   }
 

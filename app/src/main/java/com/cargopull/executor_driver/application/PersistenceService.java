@@ -16,6 +16,7 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationCompat.BigTextStyle;
 import com.cargopull.executor_driver.R;
 
 /**
@@ -139,6 +140,7 @@ public class PersistenceService extends Service {
       builder.setContentIntent(activityPendingIntent);
     }
     builder.setContentText(getString(text))
+        .setStyle(new BigTextStyle().bigText(getString(text)))
         .setContentTitle(getString(title))
         .setOngoing(true)
         .setSound(null)

@@ -511,6 +511,7 @@ public class AppComponentImpl implements AppComponent {
 
   @Override
   public void inject(DriverPreOrderConfirmationFragment driverPreOrderConfirmationFragment) {
+    driverPreOrderConfirmationFragment.setShakeItPlayer(singleShakePlayer);
     driverPreOrderConfirmationFragment.setOrderConfirmationViewModel(
         presentationComponent.getOrderConfirmationViewModel(driverPreOrderConfirmationFragment)
     );

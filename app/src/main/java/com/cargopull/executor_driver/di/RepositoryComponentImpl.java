@@ -51,6 +51,7 @@ import com.cargopull.executor_driver.gateway.ServiceApiMapper;
 import com.cargopull.executor_driver.gateway.ServicesGatewayImpl;
 import com.cargopull.executor_driver.gateway.SmsGatewayImpl;
 import com.cargopull.executor_driver.gateway.TopicGatewayImpl;
+import com.cargopull.executor_driver.gateway.TopicGatewayWithDefaultImpl;
 import com.cargopull.executor_driver.gateway.UpcomingPreOrderMessagesFilter;
 import com.cargopull.executor_driver.gateway.UpdateMessageFilter;
 import com.cargopull.executor_driver.gateway.VehicleApiMapper;
@@ -78,6 +79,7 @@ import com.cargopull.executor_driver.interactor.services.ServicesGateway;
 import com.cargopull.executor_driver.interactor.vehicle.LastUsedVehicleGateway;
 import com.cargopull.executor_driver.interactor.vehicle.VehicleOptionsGateway;
 import com.cargopull.executor_driver.interactor.vehicle.VehiclesAndOptionsGateway;
+import java.util.ArrayList;
 import java.util.List;
 
 class RepositoryComponentImpl implements RepositoryComponent {
@@ -569,13 +571,14 @@ class RepositoryComponentImpl implements RepositoryComponent {
   @Override
   public CommonGateway<List<Order>> getPreOrdersListGateway() {
     if (preOrdersListGateway == null) {
-      preOrdersListGateway = new TopicGatewayImpl<>(
+      preOrdersListGateway = new TopicGatewayWithDefaultImpl<>(
           backendComponent.getPersonalTopicListener(),
           new PreOrdersListApiMapper(
               new VehicleOptionApiMapper(),
               new RoutePointApiMapper()
           ),
-          new PreOrdersListFilter()
+          new PreOrdersListFilter(),
+          new ArrayList<>()
       );
     }
     return preOrdersListGateway;
