@@ -43,7 +43,7 @@ public class PersonalQueueListener implements TopicListener {
                   })
           ).retry()
           .switchMap(
-              stompMessage -> stompClient.sendAfterConnection(
+              stompMessage -> stompClient.send(
                   new StompMessage("ACK",
                       Arrays.asList(
                           new StompHeader("subscription", stompMessage.findHeader("subscription")),

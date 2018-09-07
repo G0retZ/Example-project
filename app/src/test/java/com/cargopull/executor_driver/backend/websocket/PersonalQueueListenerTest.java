@@ -57,7 +57,7 @@ public class PersonalQueueListenerTest {
     when(loginReceiver.get()).thenReturn(Observable.never());
     when(stompClient.topic(anyString(), eq(StompClient.ACK_CLIENT_INDIVIDUAL)))
         .thenReturn(Flowable.never());
-    when(stompClient.sendAfterConnection(any(StompMessage.class)))
+    when(stompClient.send(any(StompMessage.class)))
         .thenReturn(Completable.complete());
   }
 
@@ -265,7 +265,7 @@ public class PersonalQueueListenerTest {
 
     // Результат:
     inOrder.verify(stompClient).topic("/queue/1234567890", StompClient.ACK_CLIENT_INDIVIDUAL);
-    inOrder.verify(stompClient, times(3)).sendAfterConnection(stompMessageCaptor.capture());
+    inOrder.verify(stompClient, times(3)).send(stompMessageCaptor.capture());
     assertEquals(stompMessageCaptor.getAllValues().get(0).getStompCommand(), "ACK");
     assertEquals(stompMessageCaptor.getAllValues().get(0).findHeader("subscription"), "subs0");
     assertEquals(stompMessageCaptor.getAllValues().get(0).findHeader("message-id"), "mess0");
