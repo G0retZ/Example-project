@@ -20,6 +20,7 @@ import io.reactivex.Flowable;
 import io.reactivex.Single;
 import io.reactivex.functions.Action;
 import io.reactivex.observers.TestObserver;
+import io.reactivex.subscribers.TestSubscriber;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
@@ -63,13 +64,27 @@ public class OrderConfirmationUseCaseTest {
   /* Проверяем работу с юзкейсом заказа */
 
   /**
-   * Должен запросить у юзкейса заказа получение заказов.
+   * Должен запросить у юзкейса заказа получение заказов при отправке решения.
    */
   @Test
-  public void askOrderUseCaseForOrders() {
+  public void askOrderUseCaseForOrdersOnSendDecision() {
     // Действие:
     useCase.sendDecision(true).test();
     useCase.sendDecision(false).test();
+
+    // Результат:
+    verify(orderUseCase, times(2)).getOrders();
+    verifyNoMoreInteractions(orderUseCase);
+  }
+
+  /**
+   * Должен запросить у юзкейса заказа получение заказов при запросе таймаутов.
+   */
+  @Test
+  public void askOrderUseCaseForOrdersOnGetTimeout() {
+    // Действие:
+    useCase.getOrderDecisionTimeout().test();
+    useCase.getOrderDecisionTimeout().test();
 
     // Результат:
     verify(orderUseCase, times(2)).getOrders();
@@ -289,6 +304,63 @@ public class OrderConfirmationUseCaseTest {
   }
 
   /* Проверяем ответы на запрос отправки решения */
+
+  /**
+   * Должен ответить ошибкой маппинга на запрос таймаутов.
+   */
+  @Test
+  public void answerDataMappingErrorForGetTimeouts() {
+    // Дано:
+    when(orderUseCase.getOrders()).thenReturn(Flowable.error(new DataMappingException()));
+
+    // Действие:
+    TestSubscriber<Long> test = useCase.getOrderDecisionTimeout().test();
+
+    // Результат:
+    test.assertError(DataMappingException.class);
+    test.assertNoValues();
+    test.assertNotComplete();
+  }
+
+  /**
+   * Должен ответить ошибкой не актуальности заказа на запрос таймаутов.
+   */
+  @Test
+  public void answerOrderExpiredErrorForGetTimeoutsIfErrorAfterValue() {
+    // Дано:
+    when(order.getTimeout()).thenReturn(12345L);
+    when(orderUseCase.getOrders()).thenReturn(
+        Flowable.just(order).concatWith(Flowable.error(new OrderOfferExpiredException("")))
+    );
+
+    // Действие:
+    TestSubscriber<Long> test = useCase.getOrderDecisionTimeout().test();
+
+    // Результат:
+    test.assertError(OrderOfferExpiredException.class);
+    test.assertValue(12345L);
+    test.assertNotComplete();
+  }
+
+  /**
+   * Должен ответить ошибкой не актуальности заказа на подтверждение.
+   */
+  @Test
+  public void answerWithTimeoutsForGetTimeouts() {
+    // Дано:
+    when(order.getTimeout()).thenReturn(12345L, 54321L);
+    when(order2.getTimeout()).thenReturn(34543L);
+    when(orderUseCase.getOrders())
+        .thenReturn(Flowable.just(order, order2, order).concatWith(Flowable.never()));
+
+    // Действие:
+    TestSubscriber<Long> test = useCase.getOrderDecisionTimeout().test();
+
+    // Результат:
+    test.assertNoErrors();
+    test.assertValues(12345L, 34543L, 54321L);
+    test.assertNotComplete();
+  }
 
   /**
    * Должен ответить ошибкой маппинга на подтверждение.

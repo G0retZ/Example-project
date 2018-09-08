@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.cargopull.executor_driver.entity.Order;
 import com.cargopull.executor_driver.entity.OrderOfferDecisionException;
+import io.reactivex.Flowable;
 import io.reactivex.Single;
 import io.reactivex.SingleSource;
 import io.reactivex.functions.Function;
@@ -35,9 +36,14 @@ public class OrderConfirmationUseCaseImpl implements OrderConfirmationUseCase {
 
   @NonNull
   @Override
+  public Flowable<Long> getOrderDecisionTimeout() {
+    return orderUseCase.getOrders().map(Order::getTimeout);
+  }
+
+  @NonNull
+  @Override
   public Single<String> sendDecision(boolean confirmed) {
     return orderUseCase.getOrders()
-        .observeOn(Schedulers.single())
         .flatMapSingle(new Function<Order, SingleSource<? extends String>>() {
           boolean orderDecisionMade;
 
