@@ -189,10 +189,10 @@ public class OrderConfirmationViewModelTest {
   }
 
   /**
-   * Не должен возвращать иных состояний вида при получении ошибки истечения заказа ссообщением.
+   * Не должен возвращать иных состояний вида при получении ошибки истечения заказа с сообщением.
    */
   @Test
-  public void setPendingViewStateToLiveDataForExpiredError() {
+  public void setNoViewStateToLiveDataForExpiredError() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     when(useCase.getOrderDecisionTimeout()).thenReturn(
@@ -226,7 +226,6 @@ public class OrderConfirmationViewModelTest {
     inOrder.verify(viewStateObserver).onChanged(new OrderConfirmationViewStateIdle(
         new OrderConfirmationTimeoutItem(15_000L, timeUtils))
     );
-    inOrder.verify(viewStateObserver).onChanged(any(OrderConfirmationViewStatePending.class));
     inOrder.verify(viewStateObserver).onChanged(new OrderConfirmationViewStateIdle(
         new OrderConfirmationTimeoutItem(17_000L, timeUtils))
     );
@@ -234,7 +233,7 @@ public class OrderConfirmationViewModelTest {
   }
 
   /**
-   * Должен вернуть состояние вида ожидания при получении ошибки истечения заказа без сообщения.
+   * Не должен возвращать иных состояний вида при получении ошибки истечения заказа без сообщения.
    */
   @Test
   public void setNoViewStateToLiveDataForExpiredErrorWithoutMessage() {

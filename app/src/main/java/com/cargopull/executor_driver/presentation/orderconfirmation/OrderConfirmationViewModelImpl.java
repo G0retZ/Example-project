@@ -126,11 +126,6 @@ public class OrderConfirmationViewModelImpl extends ViewModel implements
       viewStateLiveData.postValue(new OrderConfirmationViewStatePending());
       timeoutDisposable = orderConfirmationUseCase.getOrderDecisionTimeout()
           .observeOn(AndroidSchedulers.mainThread())
-          .doOnError(throwable -> {
-            if (throwable instanceof OrderOfferExpiredException) {
-              viewStateLiveData.postValue(new OrderConfirmationViewStatePending());
-            }
-          })
           .retry(throwable -> throwable instanceof OrderOfferExpiredException
               || throwable instanceof OrderOfferDecisionException)
           .subscribe(timeout -> viewStateLiveData.postValue(
