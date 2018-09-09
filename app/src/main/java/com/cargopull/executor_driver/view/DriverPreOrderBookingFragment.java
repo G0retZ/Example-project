@@ -91,6 +91,11 @@ public class DriverPreOrderBookingFragment extends BaseFragment implements
 
       @Override
       public void onAnimationEnd(Animator animation) {
+        acceptResetAnimator = ObjectAnimator
+            .ofInt(acceptAction, "progress", acceptAction.getProgress(), 0);
+        acceptResetAnimator.setDuration(150);
+        acceptResetAnimator.setInterpolator(new LinearInterpolator());
+        acceptResetAnimator.start();
         if (!canceled) {
           orderConfirmationViewModel.acceptOrder();
           shakeItPlayer.shakeIt(Collections.singletonList(new Pair<>(200L, 255)));
@@ -118,11 +123,6 @@ public class DriverPreOrderBookingFragment extends BaseFragment implements
         return true;
       } else if (i == MotionEvent.ACTION_UP) {
         acceptDelayAnimator.cancel();
-        acceptResetAnimator = ObjectAnimator
-            .ofInt(acceptAction, "progress", acceptAction.getProgress(), 0);
-        acceptResetAnimator.setDuration(150);
-        acceptResetAnimator.setInterpolator(new LinearInterpolator());
-        acceptResetAnimator.start();
         return true;
       }
       return false;

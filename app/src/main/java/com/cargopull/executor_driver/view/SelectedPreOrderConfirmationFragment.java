@@ -91,6 +91,11 @@ public class SelectedPreOrderConfirmationFragment extends BaseFragment implement
 
       @Override
       public void onAnimationEnd(Animator animation) {
+        declineResetAnimator = ObjectAnimator
+            .ofInt(declineAction, "progress", declineAction.getProgress(), 0);
+        declineResetAnimator.setDuration(150);
+        declineResetAnimator.setInterpolator(new LinearInterpolator());
+        declineResetAnimator.start();
         if (!canceled) {
           orderConfirmationViewModel.declineOrder();
           shakeItPlayer.shakeIt(Collections.singletonList(new Pair<>(200L, 255)));
@@ -118,11 +123,6 @@ public class SelectedPreOrderConfirmationFragment extends BaseFragment implement
         return true;
       } else if (i == MotionEvent.ACTION_UP) {
         declineDelayAnimator.cancel();
-        declineResetAnimator = ObjectAnimator
-            .ofInt(declineAction, "progress", declineAction.getProgress(), 0);
-        declineResetAnimator.setDuration(150);
-        declineResetAnimator.setInterpolator(new LinearInterpolator());
-        declineResetAnimator.start();
         return true;
       }
       return false;
