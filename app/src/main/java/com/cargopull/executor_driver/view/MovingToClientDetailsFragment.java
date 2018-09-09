@@ -102,10 +102,6 @@ public class MovingToClientDetailsFragment extends BaseFragment implements Order
   }
 
   @Override
-  public void showTimeout(int progress, long timeout) {
-  }
-
-  @Override
   public void showFirstPointDistance(String distance) {
   }
 

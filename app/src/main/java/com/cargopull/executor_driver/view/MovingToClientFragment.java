@@ -293,10 +293,6 @@ public class MovingToClientFragment extends BaseFragment implements MovingToClie
   }
 
   @Override
-  public void showTimeout(int progress, long timeout) {
-  }
-
-  @Override
   public void showFirstPointDistance(String distance) {
   }
 

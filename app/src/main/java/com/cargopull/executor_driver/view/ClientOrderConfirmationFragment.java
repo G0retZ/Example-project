@@ -133,10 +133,6 @@ public class ClientOrderConfirmationFragment extends BaseFragment implements Ord
   }
 
   @Override
-  public void showTimeout(int progress, long timeout) {
-  }
-
-  @Override
   public void showEstimatedPrice(@NonNull String priceText) {
   }
 
