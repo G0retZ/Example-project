@@ -137,17 +137,22 @@ public class DriverOrderConfirmationFragment extends BaseFragment implements
       animation.setDuration(timeout);
       animation.setInterpolator(new LinearInterpolator());
       animation.addListener(new AnimatorListener() {
+        private boolean canceled;
+
         @Override
         public void onAnimationStart(Animator animation) {
         }
 
         @Override
         public void onAnimationEnd(Animator animation) {
-          orderConfirmationViewModel.counterTimeOut();
+          if (!canceled) {
+            orderConfirmationViewModel.counterTimeOut();
+          }
         }
 
         @Override
         public void onAnimationCancel(Animator animation) {
+          canceled = true;
         }
 
         @Override
