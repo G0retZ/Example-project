@@ -30,14 +30,6 @@ public interface OrderViewActions {
   void showTimeout(int timeout);
 
   /**
-   * Показать индикатор таймаута приниятия решения по заказу.
-   *
-   * @param progress - сколько процентов осталось до окончания
-   * @param timeout - время оставшееся до таймаут
-   */
-  void showTimeout(int progress, long timeout);
-
-  /**
    * Показать растояние до первой точки маршрута.
    *
    * @param distance - расстояние

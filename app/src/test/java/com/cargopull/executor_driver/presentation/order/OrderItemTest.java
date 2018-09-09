@@ -1,6 +1,5 @@
 package com.cargopull.executor_driver.presentation.order;
 
-import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.mockito.Mockito.when;
@@ -407,17 +406,6 @@ public class OrderItemTest {
     assertEquals(orderItem.getSecondsToMeetClient(), 352);
     assertEquals(orderItem.getSecondsToMeetClient(), 347);
     assertEquals(orderItem.getSecondsToMeetClient(), 342);
-  }
-
-  @Test
-  public void testGetProgressLeft() {
-    // Дано:
-    when(timeUtils.currentTimeMillis()).thenReturn(12395182L, 12400182L);
-    when(order.getTimeout()).thenReturn(20_000L);
-
-    // Результат:
-    assertArrayEquals(orderItem.getProgressLeft(), new long[]{75, 15000});
-    assertArrayEquals(orderItem.getProgressLeft(), new long[]{50, 10000});
   }
 
   @Test

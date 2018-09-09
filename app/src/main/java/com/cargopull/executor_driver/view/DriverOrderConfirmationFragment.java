@@ -46,6 +46,8 @@ public class DriverOrderConfirmationFragment extends BaseFragment implements
   private TextView estimationText;
   private TextView serviceText;
   private Button acceptAction;
+  @Nullable
+  private ObjectAnimator timeoutAnimation;
 
   @Inject
   public void setOrderConfirmationViewModel(
@@ -127,30 +129,38 @@ public class DriverOrderConfirmationFragment extends BaseFragment implements
 
   @Override
   public void showTimeout(int progress, long timeout) {
+    if (timeoutAnimation != null) {
+      timeoutAnimation.cancel();
+    }
     if (timeout > 0) {
-      ObjectAnimator animation = ObjectAnimator.ofInt(timeoutChart, "progress", progress, 0);
-      animation.setDuration(timeout);
-      animation.setInterpolator(new LinearInterpolator());
-      animation.addListener(new AnimatorListener() {
+      timeoutAnimation = ObjectAnimator.ofInt(timeoutChart, "progress", progress, 0);
+      timeoutAnimation.setDuration(timeout);
+      timeoutAnimation.setInterpolator(new LinearInterpolator());
+      timeoutAnimation.addListener(new AnimatorListener() {
+        private boolean canceled;
+
         @Override
         public void onAnimationStart(Animator animation) {
         }
 
         @Override
         public void onAnimationEnd(Animator animation) {
-          orderConfirmationViewModel.counterTimeOut();
+          if (!canceled) {
+            orderConfirmationViewModel.counterTimeOut();
+          }
         }
 
         @Override
         public void onAnimationCancel(Animator animation) {
+          canceled = true;
         }
 
         @Override
         public void onAnimationRepeat(Animator animation) {
         }
       });
-      animation.start();
-    } else {
+      timeoutAnimation.start();
+    } else if (timeout == 0) {
       orderConfirmationViewModel.counterTimeOut();
     }
   }
@@ -241,8 +251,5 @@ public class DriverOrderConfirmationFragment extends BaseFragment implements
 
   @Override
   public void showBlockingMessage(@Nullable String message) {
-    if (message != null) {
-      showPending(true, toString() + "0");
-    }
   }
 }

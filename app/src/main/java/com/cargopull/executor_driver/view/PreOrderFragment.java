@@ -153,10 +153,6 @@ public class PreOrderFragment extends BaseFragment implements OrderViewActions {
   }
 
   @Override
-  public void showTimeout(int progress, long timeout) {
-  }
-
-  @Override
   public void showEstimatedPrice(@NonNull String priceText) {
   }
 

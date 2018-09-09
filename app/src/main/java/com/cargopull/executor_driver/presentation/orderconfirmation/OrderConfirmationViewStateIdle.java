@@ -4,9 +4,17 @@ import android.support.annotation.NonNull;
 import com.cargopull.executor_driver.presentation.ViewState;
 
 /**
- * Состояние бездействия вида заказа.
+ * Состояние вида бездействия подтверждения заказа.
  */
 final class OrderConfirmationViewStateIdle implements ViewState<OrderConfirmationViewActions> {
+
+  @NonNull
+  private final OrderConfirmationTimeoutItem orderConfirmationTimeoutItem;
+
+  OrderConfirmationViewStateIdle(
+      @NonNull OrderConfirmationTimeoutItem orderConfirmationTimeoutItem) {
+    this.orderConfirmationTimeoutItem = orderConfirmationTimeoutItem;
+  }
 
   @Override
   public void apply(@NonNull OrderConfirmationViewActions stateActions) {
@@ -14,5 +22,28 @@ final class OrderConfirmationViewStateIdle implements ViewState<OrderConfirmatio
     stateActions.enableAcceptButton(true);
     stateActions.enableDeclineButton(true);
     stateActions.showBlockingMessage(null);
+    stateActions.showTimeout(
+        orderConfirmationTimeoutItem.getProgressLeft(),
+        orderConfirmationTimeoutItem.getTimeout()
+    );
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+
+    OrderConfirmationViewStateIdle that = (OrderConfirmationViewStateIdle) o;
+
+    return orderConfirmationTimeoutItem.equals(that.orderConfirmationTimeoutItem);
+  }
+
+  @Override
+  public int hashCode() {
+    return orderConfirmationTimeoutItem.hashCode();
   }
 }

@@ -102,10 +102,6 @@ public class OrderFulfillmentDetailsFragment extends BaseFragment implements Ord
   }
 
   @Override
-  public void showTimeout(int progress, long timeout) {
-  }
-
-  @Override
   public void showFirstPointDistance(String distance) {
   }
 

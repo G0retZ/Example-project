@@ -24,6 +24,7 @@ public class OrderConfirmationViewStatePendingTest {
     verify(viewActions).enableAcceptButton(false);
     verify(viewActions).enableDeclineButton(false);
     verify(viewActions).showBlockingMessage(null);
+    verify(viewActions).showTimeout(-1, -1);
     verifyNoMoreInteractions(viewActions);
   }
 }

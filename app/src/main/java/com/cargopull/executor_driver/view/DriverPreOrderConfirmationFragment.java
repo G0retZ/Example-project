@@ -44,6 +44,8 @@ public class DriverPreOrderConfirmationFragment extends BaseFragment implements
   private ObjectAnimator declineDelayAnimator;
   @Nullable
   private ObjectAnimator declineResetAnimator;
+  @Nullable
+  private ObjectAnimator timeoutAnimation;
 
   @Inject
   public void setShakeItPlayer(@NonNull ShakeItPlayer shakeItPlayer) {
@@ -87,6 +89,11 @@ public class DriverPreOrderConfirmationFragment extends BaseFragment implements
 
       @Override
       public void onAnimationEnd(Animator animation) {
+        declineResetAnimator = ObjectAnimator
+            .ofInt(declineAction, "progress", declineAction.getProgress(), 0);
+        declineResetAnimator.setDuration(150);
+        declineResetAnimator.setInterpolator(new LinearInterpolator());
+        declineResetAnimator.start();
         if (!canceled) {
           orderConfirmationViewModel.declineOrder();
           shakeItPlayer.shakeIt(Collections.singletonList(new Pair<>(200L, 255)));
@@ -114,11 +121,6 @@ public class DriverPreOrderConfirmationFragment extends BaseFragment implements
         return true;
       } else if (i == MotionEvent.ACTION_UP) {
         declineDelayAnimator.cancel();
-        declineResetAnimator = ObjectAnimator
-            .ofInt(declineAction, "progress", declineAction.getProgress(), 0);
-        declineResetAnimator.setDuration(150);
-        declineResetAnimator.setInterpolator(new LinearInterpolator());
-        declineResetAnimator.start();
         return true;
       }
       return false;
@@ -182,30 +184,38 @@ public class DriverPreOrderConfirmationFragment extends BaseFragment implements
 
   @Override
   public void showTimeout(int progress, long timeout) {
+    if (timeoutAnimation != null) {
+      timeoutAnimation.cancel();
+    }
     if (timeout > 0) {
-      ObjectAnimator animation = ObjectAnimator.ofInt(setOutAction, "progress", progress, 0);
-      animation.setDuration(timeout);
-      animation.setInterpolator(new LinearInterpolator());
-      animation.addListener(new AnimatorListener() {
+      timeoutAnimation = ObjectAnimator.ofInt(setOutAction, "progress", progress, 0);
+      timeoutAnimation.setDuration(timeout);
+      timeoutAnimation.setInterpolator(new LinearInterpolator());
+      timeoutAnimation.addListener(new AnimatorListener() {
+        private boolean canceled;
+
         @Override
         public void onAnimationStart(Animator animation) {
         }
 
         @Override
         public void onAnimationEnd(Animator animation) {
-          orderConfirmationViewModel.counterTimeOut();
+          if (!canceled) {
+            orderConfirmationViewModel.counterTimeOut();
+          }
         }
 
         @Override
         public void onAnimationCancel(Animator animation) {
+          canceled = true;
         }
 
         @Override
         public void onAnimationRepeat(Animator animation) {
         }
       });
-      animation.start();
-    } else {
+      timeoutAnimation.start();
+    } else if (timeout == 0) {
       orderConfirmationViewModel.counterTimeOut();
     }
   }
@@ -280,8 +290,5 @@ public class DriverPreOrderConfirmationFragment extends BaseFragment implements
 
   @Override
   public void showBlockingMessage(@Nullable String message) {
-    if (message != null) {
-      showPending(true, toString());
-    }
   }
 }

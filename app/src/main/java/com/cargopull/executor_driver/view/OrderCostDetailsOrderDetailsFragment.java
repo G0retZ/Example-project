@@ -103,10 +103,6 @@ public class OrderCostDetailsOrderDetailsFragment extends BaseFragment implement
   }
 
   @Override
-  public void showTimeout(int progress, long timeout) {
-  }
-
-  @Override
   public void showFirstPointDistance(String distance) {
   }
 

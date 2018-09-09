@@ -22,7 +22,7 @@ public class OrderConfirmationViewStateResultTest {
     new OrderConfirmationViewStateResult("message").apply(viewActions);
 
     // Результат:
-    verify(viewActions).showDriverOrderConfirmationPending(false);
+    verify(viewActions).showDriverOrderConfirmationPending(true);
     verify(viewActions).enableAcceptButton(false);
     verify(viewActions).enableDeclineButton(false);
     verify(viewActions).showBlockingMessage("message");
@@ -35,7 +35,7 @@ public class OrderConfirmationViewStateResultTest {
     assertEquals(viewState, viewState);
     assertEquals(viewState, new OrderConfirmationViewStateResult("message"));
     assertNotEquals(viewState, new OrderConfirmationViewStateResult(""));
-    assertNotEquals(viewState, new OrderConfirmationViewStateIdle());
+    assertNotEquals(viewState, "");
     assertNotEquals(viewState, null);
   }
 
