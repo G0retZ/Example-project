@@ -241,8 +241,5 @@ public class DriverOrderConfirmationFragment extends BaseFragment implements
 
   @Override
   public void showBlockingMessage(@Nullable String message) {
-    if (message != null) {
-      showPending(true, toString() + "0");
-    }
   }
 }
