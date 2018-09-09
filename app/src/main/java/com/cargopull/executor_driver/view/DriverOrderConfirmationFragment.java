@@ -46,6 +46,8 @@ public class DriverOrderConfirmationFragment extends BaseFragment implements
   private TextView estimationText;
   private TextView serviceText;
   private Button acceptAction;
+  @Nullable
+  private ObjectAnimator animation;
 
   @Inject
   public void setOrderConfirmationViewModel(
@@ -127,8 +129,11 @@ public class DriverOrderConfirmationFragment extends BaseFragment implements
 
   @Override
   public void showTimeout(int progress, long timeout) {
+    if (animation != null) {
+      animation.cancel();
+    }
     if (timeout > 0) {
-      ObjectAnimator animation = ObjectAnimator.ofInt(timeoutChart, "progress", progress, 0);
+      animation = ObjectAnimator.ofInt(timeoutChart, "progress", progress, 0);
       animation.setDuration(timeout);
       animation.setInterpolator(new LinearInterpolator());
       animation.addListener(new AnimatorListener() {
@@ -150,7 +155,7 @@ public class DriverOrderConfirmationFragment extends BaseFragment implements
         }
       });
       animation.start();
-    } else {
+    } else if (timeout == 0) {
       orderConfirmationViewModel.counterTimeOut();
     }
   }
