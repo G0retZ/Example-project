@@ -182,6 +182,10 @@ public class DriverPreOrderBookingFragment extends BaseFragment implements
   }
 
   @Override
+  public void showTimeout(int progress, long timeout) {
+  }
+
+  @Override
   public void showDriverOrderConfirmationPending(boolean pending) {
     showPending(pending, toString());
   }

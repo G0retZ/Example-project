@@ -4,7 +4,7 @@ import android.support.annotation.NonNull;
 import com.cargopull.executor_driver.presentation.ViewState;
 
 /**
- * Состояние бездействия результата запроса.
+ * Состояние вида результата подтверждения заказа.
  */
 final class OrderConfirmationViewStateResult implements ViewState<OrderConfirmationViewActions> {
 
@@ -17,7 +17,7 @@ final class OrderConfirmationViewStateResult implements ViewState<OrderConfirmat
 
   @Override
   public void apply(@NonNull OrderConfirmationViewActions stateActions) {
-    stateActions.showDriverOrderConfirmationPending(false);
+    stateActions.showDriverOrderConfirmationPending(true);
     stateActions.enableAcceptButton(false);
     stateActions.enableDeclineButton(false);
     stateActions.showBlockingMessage(message);

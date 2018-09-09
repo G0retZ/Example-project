@@ -474,7 +474,10 @@ class PresentationComponentImpl implements PresentationComponent {
     return getViewModelInstance(
         fragment,
         OrderConfirmationViewModelImpl.class,
-        new OrderConfirmationViewModelImpl(interactorComponent.getOrderConfirmationUseCase())
+        new OrderConfirmationViewModelImpl(
+            interactorComponent.getOrderConfirmationUseCase(),
+            timeUtils
+        )
     );
   }
 
@@ -487,7 +490,10 @@ class PresentationComponentImpl implements PresentationComponent {
     return getViewModelInstance(
         fragment,
         OrderConfirmationViewModelImpl.class,
-        new OrderConfirmationViewModelImpl(interactorComponent.getPreOrderBookingUseCase())
+        new OrderConfirmationViewModelImpl(
+            interactorComponent.getPreOrderBookingUseCase(),
+            timeUtils
+        )
     );
   }
 
@@ -722,7 +728,9 @@ class PresentationComponentImpl implements PresentationComponent {
         fragment,
         OrderConfirmationViewModelImpl.class,
         new OrderConfirmationViewModelImpl(
-            interactorComponent.getSelectedPreOrderConfirmationUseCase())
+            interactorComponent.getSelectedPreOrderConfirmationUseCase(),
+            timeUtils
+        )
     );
   }
 

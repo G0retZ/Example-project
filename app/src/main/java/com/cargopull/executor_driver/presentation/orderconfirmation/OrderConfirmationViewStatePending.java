@@ -14,5 +14,6 @@ final class OrderConfirmationViewStatePending implements ViewState<OrderConfirma
     stateActions.enableAcceptButton(false);
     stateActions.enableDeclineButton(false);
     stateActions.showBlockingMessage(null);
+    stateActions.showTimeout(-1, -1);
   }
 }

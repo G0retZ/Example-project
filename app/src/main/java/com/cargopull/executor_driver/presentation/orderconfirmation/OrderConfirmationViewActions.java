@@ -8,6 +8,14 @@ import android.support.annotation.Nullable;
 public interface OrderConfirmationViewActions {
 
   /**
+   * Показать индикатор таймаута приниятия решения по заказу. (-1;-1) для заморозки таймера
+   *
+   * @param progress - сколько процентов осталось до окончания
+   * @param timeout - время оставшееся до таймаута
+   */
+  void showTimeout(int progress, long timeout);
+
+  /**
    * Показать индикатор процесса.
    *
    * @param pending - показать или нет?

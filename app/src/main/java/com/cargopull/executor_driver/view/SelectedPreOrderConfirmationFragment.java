@@ -182,6 +182,10 @@ public class SelectedPreOrderConfirmationFragment extends BaseFragment implement
   }
 
   @Override
+  public void showTimeout(int progress, long timeout) {
+  }
+
+  @Override
   public void showDriverOrderConfirmationPending(boolean pending) {
     showPending(pending, toString());
   }

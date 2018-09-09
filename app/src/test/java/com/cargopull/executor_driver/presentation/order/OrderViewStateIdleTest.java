@@ -27,7 +27,6 @@ public class OrderViewStateIdleTest {
 
   @Before
   public void setUp() {
-    when(orderItem.getNextAddress()).thenReturn("address");
     viewState = new OrderViewStateIdle(orderItem);
   }
 

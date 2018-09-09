@@ -56,7 +56,6 @@ public class OrderViewModelImpl extends ViewModel implements
     return navigateLiveData;
   }
 
-
   private void loadOrders() {
     if (disposable.isDisposed()) {
       viewStateLiveData.postValue(new OrderViewStatePending(lastViewState));
@@ -80,7 +79,6 @@ public class OrderViewModelImpl extends ViewModel implements
           );
     }
   }
-
 
   private void consumeOrder(@NonNull Order order) {
     lastViewState = new OrderViewStateIdle(new OrderItem(order, timeUtils));
