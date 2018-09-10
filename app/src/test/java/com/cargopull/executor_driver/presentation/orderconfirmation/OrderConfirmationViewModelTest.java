@@ -463,10 +463,10 @@ public class OrderConfirmationViewModelTest {
   }
 
   /**
-   * Должен вернуть состояние вида результата с сообщением для неуспешного принятия.
+   * Должен вернуть состояние вида "просрочки" с сообщением для неуспешного принятия.
    */
   @Test
-  public void setResultViewStateToLiveDataForAcceptExpiredWithoutOrder() {
+  public void setExpiredViewStateToLiveDataForAcceptExpiredWithoutOrder() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     when(useCase.sendDecision(anyBoolean()))
@@ -483,15 +483,15 @@ public class OrderConfirmationViewModelTest {
         new OrderConfirmationTimeoutItem(12_000L, timeUtils))
     );
     inOrder.verify(viewStateObserver).onChanged(any(OrderConfirmationViewStatePending.class));
-    inOrder.verify(viewStateObserver).onChanged(new OrderConfirmationViewStateResult("34"));
+    inOrder.verify(viewStateObserver).onChanged(new OrderConfirmationViewStateExpired("34"));
     verifyNoMoreInteractions(viewStateObserver);
   }
 
   /**
-   * Должен вернуть состояние вида результата с сообщением для неуспешного отказа.
+   * Должен вернуть состояние вида "просрочки" с сообщением для неуспешного отказа.
    */
   @Test
-  public void setResultViewStateToLiveDataForDeclineExpiredWithoutOrder() {
+  public void setExpiredViewStateToLiveDataForDeclineExpiredWithoutOrder() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     when(useCase.sendDecision(anyBoolean()))
@@ -508,7 +508,7 @@ public class OrderConfirmationViewModelTest {
         new OrderConfirmationTimeoutItem(12_000L, timeUtils))
     );
     inOrder.verify(viewStateObserver).onChanged(any(OrderConfirmationViewStatePending.class));
-    inOrder.verify(viewStateObserver).onChanged(new OrderConfirmationViewStateResult("43"));
+    inOrder.verify(viewStateObserver).onChanged(new OrderConfirmationViewStateExpired("43"));
     verifyNoMoreInteractions(viewStateObserver);
   }
 
@@ -567,10 +567,10 @@ public class OrderConfirmationViewModelTest {
   }
 
   /**
-   * Должен вернуть состояние вида результата с сообщением для успешного принятия.
+   * Должен вернуть состояние вида "принял" с сообщением для успешного принятия.
    */
   @Test
-  public void setResultViewStateToLiveDataForAcceptWithoutOrder() {
+  public void setAcceptedViewStateToLiveDataForAcceptWithoutOrder() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     when(useCase.sendDecision(anyBoolean())).thenReturn(Single.just("21"));
@@ -586,15 +586,15 @@ public class OrderConfirmationViewModelTest {
         new OrderConfirmationTimeoutItem(12_000L, timeUtils))
     );
     inOrder.verify(viewStateObserver).onChanged(any(OrderConfirmationViewStatePending.class));
-    inOrder.verify(viewStateObserver).onChanged(new OrderConfirmationViewStateResult("21"));
+    inOrder.verify(viewStateObserver).onChanged(new OrderConfirmationViewStateAccepted("21"));
     verifyNoMoreInteractions(viewStateObserver);
   }
 
   /**
-   * Не должен давать новых состояний вида для успешного отказа.
+   * Должен вернуть состояние вида "отказался" с сообщением для успешного принятия.
    */
   @Test
-  public void setResultViewStateToLiveDataForDeclineWithoutOrder() {
+  public void setDeclinedViewStateToLiveDataForDeclineWithoutOrder() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     when(useCase.sendDecision(anyBoolean())).thenReturn(Single.just("12"));
@@ -610,6 +610,7 @@ public class OrderConfirmationViewModelTest {
         new OrderConfirmationTimeoutItem(12_000L, timeUtils))
     );
     inOrder.verify(viewStateObserver).onChanged(any(OrderConfirmationViewStatePending.class));
+    inOrder.verify(viewStateObserver).onChanged(new OrderConfirmationViewStateDeclined("12"));
     verifyNoMoreInteractions(viewStateObserver);
   }
 
@@ -673,7 +674,7 @@ public class OrderConfirmationViewModelTest {
   }
 
   /**
-   * Должен сразу перейти к закрытию карточки после успешного отказа.
+   * Не должен никуда переходить после успешного отказа.
    */
   @Test
   public void doNotSetNavigateForDeclineSuccess() {
@@ -685,7 +686,7 @@ public class OrderConfirmationViewModelTest {
     viewModel.declineOrder();
 
     // Результат:
-    verify(navigateObserver, only()).onChanged(OrderConfirmationNavigate.CLOSE);
+    verifyZeroInteractions(navigateObserver);
   }
 
   /**

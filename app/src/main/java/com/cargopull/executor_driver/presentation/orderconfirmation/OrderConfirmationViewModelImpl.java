@@ -68,10 +68,10 @@ public class OrderConfirmationViewModelImpl extends ViewModel implements
     decisionDisposable = orderConfirmationUseCase.sendDecision(true)
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(
-            message -> viewStateLiveData.postValue(new OrderConfirmationViewStateResult(message)),
+            message -> viewStateLiveData.postValue(new OrderConfirmationViewStateAccepted(message)),
             t -> {
               if (t instanceof OrderOfferExpiredException) {
-                viewStateLiveData.postValue(new OrderConfirmationViewStateResult(t.getMessage()));
+                viewStateLiveData.postValue(new OrderConfirmationViewStateExpired(t.getMessage()));
               } else if (t instanceof OrderOfferDecisionException) {
                 viewStateLiveData.postValue(lastViewState);
               } else if (t instanceof DataMappingException) {
@@ -94,10 +94,10 @@ public class OrderConfirmationViewModelImpl extends ViewModel implements
     decisionDisposable = orderConfirmationUseCase.sendDecision(false)
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(
-            message -> navigateLiveData.postValue(OrderConfirmationNavigate.CLOSE),
+            message -> viewStateLiveData.postValue(new OrderConfirmationViewStateDeclined(message)),
             t -> {
               if (t instanceof OrderOfferExpiredException) {
-                viewStateLiveData.postValue(new OrderConfirmationViewStateResult(t.getMessage()));
+                viewStateLiveData.postValue(new OrderConfirmationViewStateExpired(t.getMessage()));
               } else if (t instanceof OrderOfferDecisionException) {
                 viewStateLiveData.postValue(lastViewState);
               } else if (t instanceof DataMappingException) {

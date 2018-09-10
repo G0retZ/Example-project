@@ -4,14 +4,14 @@ import android.support.annotation.NonNull;
 import com.cargopull.executor_driver.presentation.ViewState;
 
 /**
- * Состояние вида результата подтверждения заказа.
+ * Состояние вида результата успешного отказа от заказа.
  */
-final class OrderConfirmationViewStateResult implements ViewState<OrderConfirmationViewActions> {
+final class OrderConfirmationViewStateDeclined implements ViewState<OrderConfirmationViewActions> {
 
   @NonNull
   private final String message;
 
-  OrderConfirmationViewStateResult(@NonNull String message) {
+  OrderConfirmationViewStateDeclined(@NonNull String message) {
     this.message = message;
   }
 
@@ -20,7 +20,9 @@ final class OrderConfirmationViewStateResult implements ViewState<OrderConfirmat
     stateActions.showDriverOrderConfirmationPending(true);
     stateActions.enableAcceptButton(false);
     stateActions.enableDeclineButton(false);
-    stateActions.showBlockingMessage(message);
+    stateActions.showAcceptedMessage(null);
+    stateActions.showExpiredMessage(null);
+    stateActions.showDeclinedMessage(message);
   }
 
   @Override
@@ -32,7 +34,7 @@ final class OrderConfirmationViewStateResult implements ViewState<OrderConfirmat
       return false;
     }
 
-    OrderConfirmationViewStateResult that = (OrderConfirmationViewStateResult) o;
+    OrderConfirmationViewStateDeclined that = (OrderConfirmationViewStateDeclined) o;
 
     return message.equals(that.message);
   }
