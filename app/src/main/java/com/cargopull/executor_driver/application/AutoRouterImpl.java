@@ -163,33 +163,21 @@ public class AutoRouterImpl implements ActivityLifecycleCallbacks, AutoRouter {
         break;
       default:
         if (lastRouteAction == null || !lastRouteAction.equals(CommonNavigate.SERVER_DATA_ERROR)) {
-          if (splashRouteAction != null && destination.equals(ExecutorStateNavigate.MAP_ONLINE)) {
-            switch (splashRouteAction) {
-              case ExecutorStateNavigate.DRIVER_ORDER_CONFIRMATION:
-                ringTonePlayer.playRingTone(R.raw.decline_offer);
-                shakeItPlayer.shakeIt(Arrays.asList(
-                    new Pair<>(50L, 255),
-                    new Pair<>(50L, 0),
-                    new Pair<>(100L, 255),
-                    new Pair<>(50L, 0),
-                    new Pair<>(150L, 255),
-                    new Pair<>(50L, 0),
-                    new Pair<>(250L, 255)
-                ));
-                break;
-              case ExecutorStateNavigate.DRIVER_PRELIMINARY_ORDER_CONFIRMATION:
-                ringTonePlayer.playRingTone(R.raw.decline_offer);
-                shakeItPlayer.shakeIt(Arrays.asList(
-                    new Pair<>(50L, 255),
-                    new Pair<>(50L, 0),
-                    new Pair<>(100L, 255),
-                    new Pair<>(50L, 0),
-                    new Pair<>(150L, 255),
-                    new Pair<>(50L, 0),
-                    new Pair<>(250L, 255)
-                ));
-                break;
-              default:
+          if (splashRouteAction != null && (destination.equals(ExecutorStateNavigate.MAP_ONLINE)
+              || destination.equals(ExecutorStateNavigate.MAP_SHIFT_OPENED))) {
+            if (ExecutorStateNavigate.DRIVER_ORDER_CONFIRMATION.equals(splashRouteAction)
+                || ExecutorStateNavigate.DRIVER_PRELIMINARY_ORDER_CONFIRMATION
+                .equals(splashRouteAction)) {
+              ringTonePlayer.playRingTone(R.raw.decline_offer);
+              shakeItPlayer.shakeIt(Arrays.asList(
+                  new Pair<>(50L, 255),
+                  new Pair<>(50L, 0),
+                  new Pair<>(100L, 255),
+                  new Pair<>(50L, 0),
+                  new Pair<>(150L, 255),
+                  new Pair<>(50L, 0),
+                  new Pair<>(250L, 255)
+              ));
             }
           }
           splashRouteAction = lastRouteAction = destination;
