@@ -294,11 +294,9 @@ public class DriverPreOrderConfirmationFragment extends BaseFragment implements
 
   @Override
   public void showDeclinedMessage(@Nullable String message) {
-
   }
 
   @Override
   public void showExpiredMessage(@Nullable String message) {
-
   }
 }

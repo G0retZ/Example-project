@@ -219,11 +219,24 @@ public class SelectedPreOrderConfirmationFragment extends BaseFragment implement
 
   @Override
   public void showDeclinedMessage(@Nullable String message) {
-
+    if (message != null) {
+      orderConfirmationViewModel.messageConsumed();
+    }
   }
 
   @Override
   public void showExpiredMessage(@Nullable String message) {
-
+    if (alertDialog != null) {
+      alertDialog.dismiss();
+    }
+    if (message != null) {
+      alertDialog = new Builder(context)
+          .setMessage(message)
+          .setCancelable(false)
+          .setPositiveButton(getString(android.R.string.ok),
+              (a, b) -> orderConfirmationViewModel.messageConsumed())
+          .create();
+      alertDialog.show();
+    }
   }
 }
