@@ -324,8 +324,8 @@ public class MainApplication extends Application implements ServerConnectionView
             .getActivity(this, 0, new Intent(this, OrderCostDetailsActivity.class), 0));
         break;
       case PreOrderNavigate.ORDER_APPROVAL:
-        playSound(R.raw.accept_offer);
-        shakeIt(R.raw.accept_offer_vibro);
+        playSound(R.raw.new_pre_order);
+        shakeIt(R.raw.new_pre_order_vibro);
         break;
       case PreOrdersListNavigate.PRE_ORDER:
         return;

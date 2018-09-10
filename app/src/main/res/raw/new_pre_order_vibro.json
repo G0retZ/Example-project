@@ -1,0 +1,54 @@
+[
+  {
+    "duration": 100,
+    "volume": 255
+  },
+  {
+    "duration": 50,
+    "volume": 0
+  },
+  {
+    "duration": 100,
+    "volume": 255
+  },
+  {
+    "duration": 50,
+    "volume": 0
+  },
+  {
+    "duration": 150,
+    "volume": 255
+  },
+  {
+    "duration": 200,
+    "volume": 0
+  },
+  {
+    "duration": 200,
+    "volume": 255
+  },
+  {
+    "duration": 300,
+    "volume": 0
+  },
+  {
+    "duration": 100,
+    "volume": 255
+  },
+  {
+    "duration": 50,
+    "volume": 0
+  },
+  {
+    "duration": 100,
+    "volume": 255
+  },
+  {
+    "duration": 50,
+    "volume": 0
+  },
+  {
+    "duration": 150,
+    "volume": 255
+  }
+]
