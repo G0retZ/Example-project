@@ -55,7 +55,7 @@ public class OrderConfirmationUseCaseImpl implements OrderConfirmationUseCase {
             orderDecisionMade = true;
             return orderConfirmationGateway.sendDecision(order, confirmed)
                 .observeOn(Schedulers.single())
-                .doOnSuccess(str -> {
+                .doAfterSuccess(str -> {
                   if (ordersUseCase != null) {
                     if (confirmed) {
                       ordersUseCase.addOrder(order);
