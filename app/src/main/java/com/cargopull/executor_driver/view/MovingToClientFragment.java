@@ -30,8 +30,6 @@ import com.cargopull.executor_driver.presentation.movingtoclient.MovingToClientV
 import com.cargopull.executor_driver.presentation.movingtoclient.MovingToClientViewModel;
 import com.cargopull.executor_driver.presentation.order.OrderViewActions;
 import com.cargopull.executor_driver.presentation.order.OrderViewModel;
-import com.cargopull.executor_driver.utils.Pair;
-import java.util.Collections;
 import javax.inject.Inject;
 import org.joda.time.LocalTime;
 import org.joda.time.format.DateTimeFormat;
@@ -112,7 +110,7 @@ public class MovingToClientFragment extends BaseFragment implements MovingToClie
       public void onAnimationEnd(Animator animation) {
         if (!canceled) {
           movingToClientViewModel.reportArrival();
-          shakeItPlayer.shakeIt(Collections.singletonList(new Pair<>(200L, 255)));
+          shakeItPlayer.shakeIt(R.raw.single_shot_vibro);
         }
       }
 

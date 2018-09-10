@@ -22,8 +22,6 @@ import com.cargopull.executor_driver.presentation.order.OrderViewActions;
 import com.cargopull.executor_driver.presentation.order.OrderViewModel;
 import com.cargopull.executor_driver.presentation.orderconfirmation.OrderConfirmationViewActions;
 import com.cargopull.executor_driver.presentation.orderconfirmation.OrderConfirmationViewModel;
-import com.cargopull.executor_driver.utils.Pair;
-import java.util.Collections;
 import javax.inject.Inject;
 
 /**
@@ -96,7 +94,7 @@ public class DriverPreOrderConfirmationFragment extends BaseFragment implements
         declineResetAnimator.start();
         if (!canceled) {
           orderConfirmationViewModel.declineOrder();
-          shakeItPlayer.shakeIt(Collections.singletonList(new Pair<>(200L, 255)));
+          shakeItPlayer.shakeIt(R.raw.single_shot_vibro);
         }
       }
 

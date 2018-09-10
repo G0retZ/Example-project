@@ -15,7 +15,6 @@ import com.cargopull.executor_driver.presentation.executorstate.ExecutorStateNav
 import com.cargopull.executor_driver.presentation.geolocation.GeoLocationNavigate;
 import com.cargopull.executor_driver.presentation.preorder.PreOrderNavigate;
 import com.cargopull.executor_driver.presentation.serverconnection.ServerConnectionNavigate;
-import com.cargopull.executor_driver.utils.Pair;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -169,15 +168,7 @@ public class AutoRouterImpl implements ActivityLifecycleCallbacks, AutoRouter {
                 || ExecutorStateNavigate.DRIVER_PRELIMINARY_ORDER_CONFIRMATION
                 .equals(splashRouteAction)) {
               ringTonePlayer.playRingTone(R.raw.decline_offer);
-              shakeItPlayer.shakeIt(Arrays.asList(
-                  new Pair<>(50L, 255),
-                  new Pair<>(50L, 0),
-                  new Pair<>(100L, 255),
-                  new Pair<>(50L, 0),
-                  new Pair<>(150L, 255),
-                  new Pair<>(50L, 0),
-                  new Pair<>(250L, 255)
-              ));
+              shakeItPlayer.shakeIt(R.raw.decline_offer_vibro);
             }
           }
           splashRouteAction = lastRouteAction = destination;
