@@ -171,7 +171,7 @@ class InteractorComponentImpl implements InteractorComponent {
   @Nullable
   private VehiclesAndOptionsUseCase selectedVehiclesAndOptionsUseCase;
   @Nullable
-  private SelectedOrderUseCaseImpl selectedOrderUseCase;
+  private SelectedOrderUseCaseImpl selectedOrderUseCaseImpl;
 
   InteractorComponentImpl(@NonNull MemoryDataSharer<String> loginSharer,
       @NonNull TimeUtils timeUtils,
@@ -662,25 +662,13 @@ class InteractorComponentImpl implements InteractorComponent {
   @NonNull
   @Override
   public SelectedOrderUseCase getSelectedOrderUseCase() {
-    if (selectedOrderUseCase == null) {
-      selectedOrderUseCase = new SelectedOrderUseCaseImpl(
-          errorReporter,
-          getPreOrdersListUseCase()
-      );
-    }
-    return selectedOrderUseCase;
+    return getSelectedOrderUseCaseImpl();
   }
 
   @NonNull
   @Override
   public OrderUseCase getSelectedPreOrderUseCase() {
-    if (selectedOrderUseCase == null) {
-      selectedOrderUseCase = new SelectedOrderUseCaseImpl(
-          errorReporter,
-          getPreOrdersListUseCase()
-      );
-    }
-    return selectedOrderUseCase;
+    return getSelectedOrderUseCaseImpl();
   }
 
   @NonNull
@@ -709,5 +697,16 @@ class InteractorComponentImpl implements InteractorComponent {
       );
     }
     return preOrderUseCaseImpl;
+  }
+
+  @NonNull
+  private SelectedOrderUseCaseImpl getSelectedOrderUseCaseImpl() {
+    if (selectedOrderUseCaseImpl == null) {
+      selectedOrderUseCaseImpl = new SelectedOrderUseCaseImpl(
+          errorReporter,
+          getPreOrdersListUseCase()
+      );
+    }
+    return selectedOrderUseCaseImpl;
   }
 }
