@@ -39,10 +39,6 @@ import com.cargopull.executor_driver.presentation.servertime.ServerTimeViewModel
 import com.cargopull.executor_driver.presentation.upcomingpreorder.UpcomingPreOrderViewActions;
 import com.cargopull.executor_driver.presentation.upcomingpreorder.UpcomingPreOrderViewModel;
 import com.cargopull.executor_driver.presentation.updatemessage.UpdateMessageViewModel;
-import com.cargopull.executor_driver.utils.Pair;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import javax.inject.Inject;
 
 /**
@@ -295,154 +291,19 @@ public class MainApplication extends Application implements ServerConnectionView
         break;
       case ExecutorStateNavigate.DRIVER_ORDER_CONFIRMATION:
         playSound(R.raw.new_offer);
-        List<Pair<Long, Integer>> pairs = new ArrayList<>();
-        pairs.add(new Pair<>(50L, 255));
-        pairs.add(new Pair<>(50L, 0));
-        pairs.add(new Pair<>(100L, 255));
-        pairs.add(new Pair<>(50L, 0));
-        pairs.add(new Pair<>(150L, 255));
-        pairs.add(new Pair<>(50L, 0));
-        pairs.add(new Pair<>(200L, 255));
-        pairs.add(new Pair<>(50L, 0));
-        pairs.add(new Pair<>(200L, 255));
-        pairs.add(new Pair<>(50L, 0));
-        pairs.add(new Pair<>(150L, 255));
-        pairs.add(new Pair<>(50L, 0));
-        pairs.add(new Pair<>(50L, 255));
-        pairs.add(new Pair<>(1800L, 0));
-        pairs.add(new Pair<>(50L, 255));
-        pairs.add(new Pair<>(50L, 0));
-        pairs.add(new Pair<>(100L, 255));
-        pairs.add(new Pair<>(50L, 0));
-        pairs.add(new Pair<>(150L, 255));
-        pairs.add(new Pair<>(50L, 0));
-        pairs.add(new Pair<>(200L, 255));
-        pairs.add(new Pair<>(50L, 0));
-        pairs.add(new Pair<>(200L, 255));
-        pairs.add(new Pair<>(50L, 0));
-        pairs.add(new Pair<>(150L, 255));
-        pairs.add(new Pair<>(50L, 0));
-        pairs.add(new Pair<>(50L, 255));
-        pairs.add(new Pair<>(1800L, 0));
-        pairs.add(new Pair<>(50L, 255));
-        pairs.add(new Pair<>(50L, 0));
-        pairs.add(new Pair<>(100L, 255));
-        pairs.add(new Pair<>(50L, 0));
-        pairs.add(new Pair<>(150L, 255));
-        pairs.add(new Pair<>(50L, 0));
-        pairs.add(new Pair<>(200L, 255));
-        pairs.add(new Pair<>(50L, 0));
-        pairs.add(new Pair<>(200L, 255));
-        pairs.add(new Pair<>(50L, 0));
-        pairs.add(new Pair<>(150L, 255));
-        pairs.add(new Pair<>(50L, 0));
-        pairs.add(new Pair<>(50L, 255));
-        pairs.add(new Pair<>(1800L, 0));
-        pairs.add(new Pair<>(50L, 255));
-        pairs.add(new Pair<>(50L, 0));
-        pairs.add(new Pair<>(100L, 255));
-        pairs.add(new Pair<>(50L, 0));
-        pairs.add(new Pair<>(150L, 255));
-        pairs.add(new Pair<>(50L, 0));
-        pairs.add(new Pair<>(200L, 255));
-        pairs.add(new Pair<>(50L, 0));
-        pairs.add(new Pair<>(200L, 255));
-        pairs.add(new Pair<>(50L, 0));
-        pairs.add(new Pair<>(150L, 255));
-        pairs.add(new Pair<>(50L, 0));
-        pairs.add(new Pair<>(50L, 255));
-        pairs.add(new Pair<>(1800L, 0));
-        pairs.add(new Pair<>(50L, 255));
-        pairs.add(new Pair<>(50L, 0));
-        pairs.add(new Pair<>(100L, 255));
-        pairs.add(new Pair<>(50L, 0));
-        pairs.add(new Pair<>(150L, 255));
-        pairs.add(new Pair<>(50L, 0));
-        pairs.add(new Pair<>(200L, 255));
-        pairs.add(new Pair<>(50L, 0));
-        pairs.add(new Pair<>(200L, 255));
-        pairs.add(new Pair<>(50L, 0));
-        pairs.add(new Pair<>(150L, 255));
-        pairs.add(new Pair<>(50L, 0));
-        pairs.add(new Pair<>(50L, 255));
-        pairs.add(new Pair<>(1800L, 0));
-        pairs.add(new Pair<>(50L, 255));
-        pairs.add(new Pair<>(50L, 0));
-        pairs.add(new Pair<>(100L, 255));
-        pairs.add(new Pair<>(50L, 0));
-        pairs.add(new Pair<>(150L, 255));
-        pairs.add(new Pair<>(50L, 0));
-        pairs.add(new Pair<>(200L, 255));
-        pairs.add(new Pair<>(50L, 0));
-        pairs.add(new Pair<>(200L, 255));
-        pairs.add(new Pair<>(50L, 0));
-        pairs.add(new Pair<>(150L, 255));
-        pairs.add(new Pair<>(50L, 0));
-        pairs.add(new Pair<>(50L, 255));
-        pairs.add(new Pair<>(1800L, 0));
-        pairs.add(new Pair<>(50L, 255));
-        pairs.add(new Pair<>(50L, 0));
-        pairs.add(new Pair<>(100L, 255));
-        pairs.add(new Pair<>(50L, 0));
-        pairs.add(new Pair<>(150L, 255));
-        pairs.add(new Pair<>(50L, 0));
-        pairs.add(new Pair<>(200L, 255));
-        pairs.add(new Pair<>(50L, 0));
-        pairs.add(new Pair<>(200L, 255));
-        pairs.add(new Pair<>(50L, 0));
-        pairs.add(new Pair<>(150L, 255));
-        pairs.add(new Pair<>(50L, 0));
-        pairs.add(new Pair<>(50L, 255));
-        pairs.add(new Pair<>(1800L, 0));
-        pairs.add(new Pair<>(50L, 255));
-        pairs.add(new Pair<>(50L, 0));
-        pairs.add(new Pair<>(100L, 255));
-        pairs.add(new Pair<>(50L, 0));
-        pairs.add(new Pair<>(150L, 255));
-        pairs.add(new Pair<>(50L, 0));
-        pairs.add(new Pair<>(200L, 255));
-        pairs.add(new Pair<>(50L, 0));
-        pairs.add(new Pair<>(200L, 255));
-        pairs.add(new Pair<>(50L, 0));
-        pairs.add(new Pair<>(150L, 255));
-        pairs.add(new Pair<>(50L, 0));
-        shakeIt(pairs);
+        shakeIt(R.raw.new_offer_vibro);
         startService(R.string.offer, R.string.new_order, PendingIntent
             .getActivity(this, 0, new Intent(this, DriverOrderConfirmationActivity.class), 0));
         break;
       case ExecutorStateNavigate.DRIVER_PRELIMINARY_ORDER_CONFIRMATION:
-        playSound(R.raw.accept_offer);
-        shakeIt(Arrays.asList(
-            new Pair<>(100L, 255),
-            new Pair<>(50L, 0),
-            new Pair<>(50L, 255),
-            new Pair<>(50L, 0),
-            new Pair<>(50L, 255),
-            new Pair<>(50L, 0),
-            new Pair<>(100L, 255),
-            new Pair<>(50L, 0),
-            new Pair<>(50L, 255),
-            new Pair<>(50L, 0),
-            new Pair<>(100L, 255)
-        ));
+        playSound(R.raw.new_offer);
+        shakeIt(R.raw.new_offer_vibro);
         startService(R.string.preliminary_order, R.string.time_to_set_out, PendingIntent
             .getActivity(this, 0, new Intent(this, DriverPreOrderConfirmationActivity.class), 0));
         break;
       case ExecutorStateNavigate.CLIENT_ORDER_CONFIRMATION:
         playSound(R.raw.accept_offer);
-        shakeIt(Arrays.asList(
-            new Pair<>(100L, 255),
-            new Pair<>(50L, 0),
-            new Pair<>(50L, 255),
-            new Pair<>(50L, 0),
-            new Pair<>(50L, 255),
-            new Pair<>(50L, 0),
-            new Pair<>(100L, 255),
-            new Pair<>(50L, 0),
-            new Pair<>(50L, 255),
-            new Pair<>(50L, 0),
-            new Pair<>(100L, 255)
-        ));
+        shakeIt(R.raw.accept_offer_vibro);
         startService(R.string.working, R.string.client_confirm, PendingIntent
             .getActivity(this, 0, new Intent(this, ClientOrderConfirmationActivity.class), 0));
         break;
@@ -464,19 +325,7 @@ public class MainApplication extends Application implements ServerConnectionView
         break;
       case PreOrderNavigate.ORDER_APPROVAL:
         playSound(R.raw.accept_offer);
-        shakeIt(Arrays.asList(
-            new Pair<>(100L, 255),
-            new Pair<>(50L, 0),
-            new Pair<>(50L, 255),
-            new Pair<>(50L, 0),
-            new Pair<>(50L, 255),
-            new Pair<>(50L, 0),
-            new Pair<>(100L, 255),
-            new Pair<>(50L, 0),
-            new Pair<>(50L, 255),
-            new Pair<>(50L, 0),
-            new Pair<>(100L, 255)
-        ));
+        shakeIt(R.raw.accept_offer_vibro);
         break;
       case PreOrdersListNavigate.PRE_ORDER:
         return;
@@ -495,16 +344,7 @@ public class MainApplication extends Application implements ServerConnectionView
   @Override
   public void showMissedOrderMessage(@NonNull String message) {
     playSound(R.raw.missed_offer);
-    shakeIt(Arrays.asList(
-        new Pair<>(50L, 255),
-        new Pair<>(50L, 0),
-        new Pair<>(100L, 255),
-        new Pair<>(50L, 0),
-        new Pair<>(150L, 255),
-        new Pair<>(50L, 0),
-        new Pair<>(200L, 255),
-        new Pair<>(50L, 0)
-    ));
+    shakeIt(R.raw.missed_order_vibro);
     if (notificationManager != null) {
       Builder builder = new Builder(this, "state_channel")
           .setContentText(getString(R.string.missed_order))
@@ -551,11 +391,11 @@ public class MainApplication extends Application implements ServerConnectionView
     ringTonePlayer.playRingTone(rawId);
   }
 
-  private void shakeIt(@NonNull List<Pair<Long, Integer>> patternItems) {
+  private void shakeIt(@RawRes int patternId) {
     if (shakeItPlayer == null) {
       throw new IllegalStateException("Граф зависимостей поломан!");
     }
-    shakeItPlayer.shakeIt(patternItems);
+    shakeItPlayer.shakeIt(patternId);
   }
 
   @Override
@@ -585,19 +425,7 @@ public class MainApplication extends Application implements ServerConnectionView
 
   @Override
   public void showUpcomingPreOrderMessage(@NonNull String message) {
-    shakeIt(Arrays.asList(
-        new Pair<>(100L, 255),
-        new Pair<>(50L, 0),
-        new Pair<>(50L, 255),
-        new Pair<>(50L, 0),
-        new Pair<>(50L, 255),
-        new Pair<>(50L, 0),
-        new Pair<>(100L, 255),
-        new Pair<>(50L, 0),
-        new Pair<>(50L, 255),
-        new Pair<>(50L, 0),
-        new Pair<>(100L, 255)
-    ));
+    shakeIt(R.raw.accept_offer_vibro);
     if (notificationManager != null) {
       Builder builder = new Builder(this, "state_channel")
           .setContentText(message)
