@@ -250,6 +250,14 @@ public class DriverOrderConfirmationFragment extends BaseFragment implements
   }
 
   @Override
-  public void showBlockingMessage(@Nullable String message) {
+  public void showAcceptedMessage(@Nullable String message) {
+  }
+
+  @Override
+  public void showDeclinedMessage(@Nullable String message) {
+  }
+
+  @Override
+  public void showExpiredMessage(@Nullable String message) {
   }
 }

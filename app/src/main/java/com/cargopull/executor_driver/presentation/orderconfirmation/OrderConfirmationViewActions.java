@@ -37,9 +37,23 @@ public interface OrderConfirmationViewActions {
   void enableAcceptButton(boolean enable);
 
   /**
-   * Показать Сообщение.
+   * Показать сообщение об успешном принятии заказа.
    *
    * @param message - текст сообщения или null, если не показывать
    */
-  void showBlockingMessage(@Nullable String message);
+  void showAcceptedMessage(@Nullable String message);
+
+  /**
+   * Показать сообщение об успешном отказе от заказа.
+   *
+   * @param message - текст сообщения или null, если не показывать
+   */
+  void showDeclinedMessage(@Nullable String message);
+
+  /**
+   * Показать сообщение о просроченном заказе.
+   *
+   * @param message - текст сообщения или null, если не показывать
+   */
+  void showExpiredMessage(@Nullable String message);
 }

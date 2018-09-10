@@ -20,6 +20,7 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import com.cargopull.executor_driver.R;
+import com.cargopull.executor_driver.backend.ringtone.RingTonePlayer;
 import com.cargopull.executor_driver.backend.vibro.ShakeItPlayer;
 import com.cargopull.executor_driver.di.AppComponent;
 import com.cargopull.executor_driver.presentation.CommonNavigate;
@@ -38,6 +39,7 @@ public class SelectedPreOrderConfirmationFragment extends BaseFragment implement
 
   private OrderConfirmationViewModel orderConfirmationViewModel;
   private ShakeItPlayer shakeItPlayer;
+  private RingTonePlayer ringTonePlayer;
   private Button setOutAction;
   private ProgressBar declineAction;
   private TextView declineActionText;
@@ -52,6 +54,10 @@ public class SelectedPreOrderConfirmationFragment extends BaseFragment implement
   @Inject
   public void setShakeItPlayer(@NonNull ShakeItPlayer shakeItPlayer) {
     this.shakeItPlayer = shakeItPlayer;
+  }
+
+  public void setRingTonePlayer(@NonNull RingTonePlayer ringTonePlayer) {
+    this.ringTonePlayer = ringTonePlayer;
   }
 
   @Inject
@@ -202,7 +208,31 @@ public class SelectedPreOrderConfirmationFragment extends BaseFragment implement
   }
 
   @Override
-  public void showBlockingMessage(@Nullable String message) {
+  public void showAcceptedMessage(@Nullable String message) {
+    if (alertDialog != null) {
+      alertDialog.dismiss();
+    }
+    if (message != null) {
+      alertDialog = new Builder(context)
+          .setMessage(message)
+          .setCancelable(false)
+          .setPositiveButton(getString(android.R.string.ok),
+              (a, b) -> orderConfirmationViewModel.messageConsumed())
+          .create();
+      alertDialog.show();
+    }
+  }
+
+  @Override
+  public void showDeclinedMessage(@Nullable String message) {
+    if (message != null) {
+      ringTonePlayer.playRingTone(R.raw.decline_offer);
+      orderConfirmationViewModel.messageConsumed();
+    }
+  }
+
+  @Override
+  public void showExpiredMessage(@Nullable String message) {
     if (alertDialog != null) {
       alertDialog.dismiss();
     }
