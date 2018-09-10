@@ -411,20 +411,119 @@ public class MainApplication extends Application implements ServerConnectionView
             .getActivity(this, 0, new Intent(this, DriverOrderConfirmationActivity.class), 0));
         break;
       case ExecutorStateNavigate.DRIVER_PRELIMINARY_ORDER_CONFIRMATION:
-        playSound(R.raw.accept_offer);
-        shakeIt(Arrays.asList(
-            new Pair<>(100L, 255),
-            new Pair<>(50L, 0),
-            new Pair<>(50L, 255),
-            new Pair<>(50L, 0),
-            new Pair<>(50L, 255),
-            new Pair<>(50L, 0),
-            new Pair<>(100L, 255),
-            new Pair<>(50L, 0),
-            new Pair<>(50L, 255),
-            new Pair<>(50L, 0),
-            new Pair<>(100L, 255)
-        ));
+        playSound(R.raw.new_offer);
+        List<Pair<Long, Integer>> pairs1 = new ArrayList<>();
+        pairs1.add(new Pair<>(50L, 255));
+        pairs1.add(new Pair<>(50L, 0));
+        pairs1.add(new Pair<>(100L, 255));
+        pairs1.add(new Pair<>(50L, 0));
+        pairs1.add(new Pair<>(150L, 255));
+        pairs1.add(new Pair<>(50L, 0));
+        pairs1.add(new Pair<>(200L, 255));
+        pairs1.add(new Pair<>(50L, 0));
+        pairs1.add(new Pair<>(200L, 255));
+        pairs1.add(new Pair<>(50L, 0));
+        pairs1.add(new Pair<>(150L, 255));
+        pairs1.add(new Pair<>(50L, 0));
+        pairs1.add(new Pair<>(50L, 255));
+        pairs1.add(new Pair<>(1800L, 0));
+        pairs1.add(new Pair<>(50L, 255));
+        pairs1.add(new Pair<>(50L, 0));
+        pairs1.add(new Pair<>(100L, 255));
+        pairs1.add(new Pair<>(50L, 0));
+        pairs1.add(new Pair<>(150L, 255));
+        pairs1.add(new Pair<>(50L, 0));
+        pairs1.add(new Pair<>(200L, 255));
+        pairs1.add(new Pair<>(50L, 0));
+        pairs1.add(new Pair<>(200L, 255));
+        pairs1.add(new Pair<>(50L, 0));
+        pairs1.add(new Pair<>(150L, 255));
+        pairs1.add(new Pair<>(50L, 0));
+        pairs1.add(new Pair<>(50L, 255));
+        pairs1.add(new Pair<>(1800L, 0));
+        pairs1.add(new Pair<>(50L, 255));
+        pairs1.add(new Pair<>(50L, 0));
+        pairs1.add(new Pair<>(100L, 255));
+        pairs1.add(new Pair<>(50L, 0));
+        pairs1.add(new Pair<>(150L, 255));
+        pairs1.add(new Pair<>(50L, 0));
+        pairs1.add(new Pair<>(200L, 255));
+        pairs1.add(new Pair<>(50L, 0));
+        pairs1.add(new Pair<>(200L, 255));
+        pairs1.add(new Pair<>(50L, 0));
+        pairs1.add(new Pair<>(150L, 255));
+        pairs1.add(new Pair<>(50L, 0));
+        pairs1.add(new Pair<>(50L, 255));
+        pairs1.add(new Pair<>(1800L, 0));
+        pairs1.add(new Pair<>(50L, 255));
+        pairs1.add(new Pair<>(50L, 0));
+        pairs1.add(new Pair<>(100L, 255));
+        pairs1.add(new Pair<>(50L, 0));
+        pairs1.add(new Pair<>(150L, 255));
+        pairs1.add(new Pair<>(50L, 0));
+        pairs1.add(new Pair<>(200L, 255));
+        pairs1.add(new Pair<>(50L, 0));
+        pairs1.add(new Pair<>(200L, 255));
+        pairs1.add(new Pair<>(50L, 0));
+        pairs1.add(new Pair<>(150L, 255));
+        pairs1.add(new Pair<>(50L, 0));
+        pairs1.add(new Pair<>(50L, 255));
+        pairs1.add(new Pair<>(1800L, 0));
+        pairs1.add(new Pair<>(50L, 255));
+        pairs1.add(new Pair<>(50L, 0));
+        pairs1.add(new Pair<>(100L, 255));
+        pairs1.add(new Pair<>(50L, 0));
+        pairs1.add(new Pair<>(150L, 255));
+        pairs1.add(new Pair<>(50L, 0));
+        pairs1.add(new Pair<>(200L, 255));
+        pairs1.add(new Pair<>(50L, 0));
+        pairs1.add(new Pair<>(200L, 255));
+        pairs1.add(new Pair<>(50L, 0));
+        pairs1.add(new Pair<>(150L, 255));
+        pairs1.add(new Pair<>(50L, 0));
+        pairs1.add(new Pair<>(50L, 255));
+        pairs1.add(new Pair<>(1800L, 0));
+        pairs1.add(new Pair<>(50L, 255));
+        pairs1.add(new Pair<>(50L, 0));
+        pairs1.add(new Pair<>(100L, 255));
+        pairs1.add(new Pair<>(50L, 0));
+        pairs1.add(new Pair<>(150L, 255));
+        pairs1.add(new Pair<>(50L, 0));
+        pairs1.add(new Pair<>(200L, 255));
+        pairs1.add(new Pair<>(50L, 0));
+        pairs1.add(new Pair<>(200L, 255));
+        pairs1.add(new Pair<>(50L, 0));
+        pairs1.add(new Pair<>(150L, 255));
+        pairs1.add(new Pair<>(50L, 0));
+        pairs1.add(new Pair<>(50L, 255));
+        pairs1.add(new Pair<>(1800L, 0));
+        pairs1.add(new Pair<>(50L, 255));
+        pairs1.add(new Pair<>(50L, 0));
+        pairs1.add(new Pair<>(100L, 255));
+        pairs1.add(new Pair<>(50L, 0));
+        pairs1.add(new Pair<>(150L, 255));
+        pairs1.add(new Pair<>(50L, 0));
+        pairs1.add(new Pair<>(200L, 255));
+        pairs1.add(new Pair<>(50L, 0));
+        pairs1.add(new Pair<>(200L, 255));
+        pairs1.add(new Pair<>(50L, 0));
+        pairs1.add(new Pair<>(150L, 255));
+        pairs1.add(new Pair<>(50L, 0));
+        pairs1.add(new Pair<>(50L, 255));
+        pairs1.add(new Pair<>(1800L, 0));
+        pairs1.add(new Pair<>(50L, 255));
+        pairs1.add(new Pair<>(50L, 0));
+        pairs1.add(new Pair<>(100L, 255));
+        pairs1.add(new Pair<>(50L, 0));
+        pairs1.add(new Pair<>(150L, 255));
+        pairs1.add(new Pair<>(50L, 0));
+        pairs1.add(new Pair<>(200L, 255));
+        pairs1.add(new Pair<>(50L, 0));
+        pairs1.add(new Pair<>(200L, 255));
+        pairs1.add(new Pair<>(50L, 0));
+        pairs1.add(new Pair<>(150L, 255));
+        pairs1.add(new Pair<>(50L, 0));
+        shakeIt(pairs1);
         startService(R.string.preliminary_order, R.string.time_to_set_out, PendingIntent
             .getActivity(this, 0, new Intent(this, DriverPreOrderConfirmationActivity.class), 0));
         break;
