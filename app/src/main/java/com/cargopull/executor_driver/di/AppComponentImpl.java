@@ -460,6 +460,7 @@ public class AppComponentImpl implements AppComponent {
   @Override
   public void inject(DriverPreOrderBookingFragment driverPreOrderBookingFragment) {
     driverPreOrderBookingFragment.setShakeItPlayer(singleShakePlayer);
+    driverPreOrderBookingFragment.setRingTonePlayer(singleRingTonePlayer);
     driverPreOrderBookingFragment.setOrderConfirmationViewModel(
         presentationComponent.getPreOrderBookingViewModel(driverPreOrderBookingFragment)
     );
@@ -489,6 +490,7 @@ public class AppComponentImpl implements AppComponent {
   @Override
   public void inject(SelectedPreOrderConfirmationFragment selectedPreOrderConfirmationFragment) {
     selectedPreOrderConfirmationFragment.setShakeItPlayer(singleShakePlayer);
+    selectedPreOrderConfirmationFragment.setRingTonePlayer(singleRingTonePlayer);
     selectedPreOrderConfirmationFragment.setOrderConfirmationViewModel(
         presentationComponent
             .getSelectedPreOrderConfirmationViewModel(selectedPreOrderConfirmationFragment)

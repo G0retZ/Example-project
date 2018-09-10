@@ -20,6 +20,7 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import com.cargopull.executor_driver.R;
+import com.cargopull.executor_driver.backend.ringtone.RingTonePlayer;
 import com.cargopull.executor_driver.backend.vibro.ShakeItPlayer;
 import com.cargopull.executor_driver.di.AppComponent;
 import com.cargopull.executor_driver.presentation.CommonNavigate;
@@ -38,6 +39,7 @@ public class DriverPreOrderBookingFragment extends BaseFragment implements
 
   private OrderConfirmationViewModel orderConfirmationViewModel;
   private ShakeItPlayer shakeItPlayer;
+  private RingTonePlayer ringTonePlayer;
   private Button declineAction;
   private ProgressBar acceptAction;
   private TextView acceptActionText;
@@ -52,6 +54,10 @@ public class DriverPreOrderBookingFragment extends BaseFragment implements
   @Inject
   public void setShakeItPlayer(@NonNull ShakeItPlayer shakeItPlayer) {
     this.shakeItPlayer = shakeItPlayer;
+  }
+
+  public void setRingTonePlayer(@NonNull RingTonePlayer ringTonePlayer) {
+    this.ringTonePlayer = ringTonePlayer;
   }
 
   @Inject
@@ -220,6 +226,7 @@ public class DriverPreOrderBookingFragment extends BaseFragment implements
   @Override
   public void showDeclinedMessage(@Nullable String message) {
     if (message != null) {
+      ringTonePlayer.playRingTone(R.raw.decline_offer);
       orderConfirmationViewModel.messageConsumed();
     }
   }
