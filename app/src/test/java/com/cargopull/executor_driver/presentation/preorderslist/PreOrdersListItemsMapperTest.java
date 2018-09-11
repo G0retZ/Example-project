@@ -109,4 +109,58 @@ public class PreOrdersListItemsMapperTest {
     assertEquals(preOrdersListItems.get(5), new PreOrdersListHeaderItem(2));
     assertEquals(preOrdersListItems.get(6).getOrder(), order3);
   }
+
+  @Test
+  public void testSortWithThreeHeadersStartingFromTheDayAfterTomorrow() {
+    // Дано:
+    when(order.getScheduledStartTime())
+        .thenReturn(DateTime.now().withTimeAtStartOfDay().plusDays(1).plusHours(3).getMillis());
+    when(order1.getScheduledStartTime())
+        .thenReturn(DateTime.now().withTimeAtStartOfDay().plusDays(1).plusHours(35).getMillis());
+    when(order2.getScheduledStartTime())
+        .thenReturn(DateTime.now().withTimeAtStartOfDay().plusDays(1).plusHours(19).getMillis());
+    when(order3.getScheduledStartTime())
+        .thenReturn(DateTime.now().withTimeAtStartOfDay().plusDays(1).plusHours(51).getMillis());
+
+    // Действие:
+    List<PreOrdersListItem> preOrdersListItems =
+        preOrdersListItemsMapper.apply(new HashSet<>(Arrays.asList(order, order1, order2, order3)));
+
+    // Результат:
+    assertEquals(preOrdersListItems.size(), 7);
+    assertEquals(preOrdersListItems.get(0), new PreOrdersListHeaderItem(1));
+    assertEquals(preOrdersListItems.get(1).getOrder(), order);
+    assertEquals(preOrdersListItems.get(2).getOrder(), order2);
+    assertEquals(preOrdersListItems.get(3), new PreOrdersListHeaderItem(2));
+    assertEquals(preOrdersListItems.get(4).getOrder(), order1);
+    assertEquals(preOrdersListItems.get(5), new PreOrdersListHeaderItem(3));
+    assertEquals(preOrdersListItems.get(6).getOrder(), order3);
+  }
+
+  @Test
+  public void testSortWithThreeHeadersStartingFromYesterday() {
+    // Дано:
+    when(order.getScheduledStartTime())
+        .thenReturn(DateTime.now().withTimeAtStartOfDay().minusDays(1).plusHours(3).getMillis());
+    when(order1.getScheduledStartTime())
+        .thenReturn(DateTime.now().withTimeAtStartOfDay().minusDays(1).plusHours(35).getMillis());
+    when(order2.getScheduledStartTime())
+        .thenReturn(DateTime.now().withTimeAtStartOfDay().minusDays(1).plusHours(19).getMillis());
+    when(order3.getScheduledStartTime())
+        .thenReturn(DateTime.now().withTimeAtStartOfDay().minusDays(1).plusHours(51).getMillis());
+
+    // Действие:
+    List<PreOrdersListItem> preOrdersListItems =
+        preOrdersListItemsMapper.apply(new HashSet<>(Arrays.asList(order, order1, order2, order3)));
+
+    // Результат:
+    assertEquals(preOrdersListItems.size(), 7);
+    assertEquals(preOrdersListItems.get(0), new PreOrdersListHeaderItem(-1));
+    assertEquals(preOrdersListItems.get(1).getOrder(), order);
+    assertEquals(preOrdersListItems.get(2).getOrder(), order2);
+    assertEquals(preOrdersListItems.get(3), new PreOrdersListHeaderItem(0));
+    assertEquals(preOrdersListItems.get(4).getOrder(), order1);
+    assertEquals(preOrdersListItems.get(5), new PreOrdersListHeaderItem(1));
+    assertEquals(preOrdersListItems.get(6).getOrder(), order3);
+  }
 }

@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Set;
 import javax.inject.Inject;
 import org.joda.time.DateTime;
+import org.joda.time.Days;
 
 /**
  * Маппер списка предзаказов в сортированный список моделей.
@@ -25,7 +26,10 @@ public class PreOrdersListItemsMapper implements Function<Set<Order>, List<PreOr
     ArrayList<Order> ordersList = new ArrayList<>(orders);
     Collections.sort(ordersList,
         (o1, o2) -> Long.compare(o1.getScheduledStartTime(), o2.getScheduledStartTime()));
-    int offset = -1;
+    int offset = Days.daysBetween(
+        today,
+        new DateTime(ordersList.get(0).getScheduledStartTime()).withTimeAtStartOfDay()
+    ).getDays() - 1;
     for (Order order : ordersList) {
       DateTime preOrderStartDate = new DateTime(order.getScheduledStartTime())
           .withTimeAtStartOfDay();
