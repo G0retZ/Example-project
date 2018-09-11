@@ -1,6 +1,7 @@
 package com.cargopull.executor_driver.entity;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -95,5 +96,36 @@ public class OrderTest {
         Arrays.asList(routePoint, routePoint1, routePoint2, routePoint3, routePoint3, routePoint2,
             routePoint1)
     ));
+  }
+
+  @Test
+  public void testEquals() {
+    Order order1 = new Order(7, "com", "service", 1200239, "7000", 7000, 7728_192_819L, 28_020,
+        9400, 20, 600, 1234567890, 9876543210L, 123812983712L);
+    assertEquals(order, order);
+    assertEquals(order, order1);
+    order1 = new Order(7, "", "", 0, "", 0, 0, 0, 0, 0, 0, 0, 0, 0);
+    assertEquals(order, order1);
+    order1 = new Order(7, "", "", 0, "", 0, 0, 0, 0, 0, 0, 0, 0, 0);
+    order1.setOptions(option0, option1, option2, option3);
+    assertEquals(order, order1);
+    order1 = new Order(7, "", "", 0, "", 0, 0, 0, 0, 0, 0, 0, 0, 0);
+    order1.setRoutePoints(routePoint1, routePoint2, routePoint3);
+    assertEquals(order, order1);
+    order1.addRoutePoints(routePoint1, routePoint2, routePoint3);
+    assertEquals(order, order1);
+    order1.setOptions(option0, option1, option2, option3);
+    assertEquals(order, order1);
+    order1 = new Order(6, "com", "service", 1200239, "7000", 7000, 7728_192_819L, 28_020,
+        9400, 20, 600, 1234567890, 9876543210L, 123812983712L);
+    assertNotEquals(order, order1);
+    assertNotEquals(order, "");
+    assertNotEquals(order, null);
+  }
+
+  @Test
+  public void testHashCode() {
+    assertEquals(order.hashCode(), 7);
+    assertNotEquals(order.hashCode(), 8);
   }
 }
