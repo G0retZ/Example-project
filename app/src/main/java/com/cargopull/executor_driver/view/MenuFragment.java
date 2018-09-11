@@ -17,9 +17,11 @@ import com.cargopull.executor_driver.presentation.balance.BalanceViewModel;
 import com.cargopull.executor_driver.presentation.menu.MenuNavigate;
 import com.cargopull.executor_driver.presentation.onlineswitch.OnlineSwitchViewActions;
 import com.cargopull.executor_driver.presentation.onlineswitch.OnlineSwitchViewModel;
-import com.cargopull.executor_driver.presentation.preorder.PreOrderViewActions;
-import com.cargopull.executor_driver.presentation.preorder.PreOrderViewModel;
+import com.cargopull.executor_driver.presentation.preorderslist.PreOrdersListItem;
+import com.cargopull.executor_driver.presentation.preorderslist.PreOrdersListViewActions;
+import com.cargopull.executor_driver.presentation.preorderslist.PreOrdersListViewModel;
 import java.text.DecimalFormat;
+import java.util.List;
 import javax.inject.Inject;
 
 /**
@@ -27,13 +29,13 @@ import javax.inject.Inject;
  */
 
 public class MenuFragment extends BaseFragment implements BalanceViewActions,
-    OnlineSwitchViewActions, PreOrderViewActions {
+    OnlineSwitchViewActions, PreOrdersListViewActions {
 
   private BalanceViewModel balanceViewModel;
   private OnlineSwitchViewModel onlineSwitchViewModel;
-  private PreOrderViewModel preOrderViewModel;
+  private PreOrdersListViewModel preOrdersListViewModel;
   private TextView balanceAmount;
-  private TextView preOrderAction;
+  private TextView preOrdersAmount;
   private boolean nowOnline;
 
   @Inject
@@ -47,8 +49,8 @@ public class MenuFragment extends BaseFragment implements BalanceViewActions,
   }
 
   @Inject
-  public void setPreOrderViewModel(PreOrderViewModel preOrderViewModel) {
-    this.preOrderViewModel = preOrderViewModel;
+  public void setPreOrdersListViewModel(PreOrdersListViewModel preOrdersListViewModel) {
+    this.preOrdersListViewModel = preOrdersListViewModel;
   }
 
   @Nullable
@@ -74,8 +76,8 @@ public class MenuFragment extends BaseFragment implements BalanceViewActions,
             .show()
     );
     balanceAmount = view.findViewById(R.id.balanceAmount);
-    preOrderAction = view.findViewById(R.id.preOrder);
-    preOrderAction.setOnClickListener(v -> preOrderViewModel.preOrderConsumed());
+    view.findViewById(R.id.preOrders).setOnClickListener(v -> navigate(MenuNavigate.PRE_ORDERS));
+    preOrdersAmount = view.findViewById(R.id.preOrdersAmount);
     return view;
   }
 
@@ -108,12 +110,12 @@ public class MenuFragment extends BaseFragment implements BalanceViewActions,
         navigate(destination);
       }
     });
-    preOrderViewModel.getViewStateLiveData().observe(this, viewState -> {
+    preOrdersListViewModel.getViewStateLiveData().observe(this, viewState -> {
       if (viewState != null) {
         viewState.apply(this);
       }
     });
-    preOrderViewModel.getNavigationLiveData().observe(this, destination -> {
+    preOrdersListViewModel.getNavigationLiveData().observe(this, destination -> {
       if (destination != null) {
         navigate(destination);
       }
@@ -166,7 +168,26 @@ public class MenuFragment extends BaseFragment implements BalanceViewActions,
   }
 
   @Override
-  public void showPreOrderAvailable(boolean show) {
-    preOrderAction.setEnabled(show);
+  public void showPreOrdersListPending(boolean pending) {
+
+  }
+
+  @Override
+  public void showPreOrdersList(boolean show) {
+
+  }
+
+  @Override
+  public void setPreOrdersListItems(@NonNull List<PreOrdersListItem> preOrdersListItems) {
+    int count = 0;
+    for (PreOrdersListItem preOrdersListItem : preOrdersListItems) {
+      count += preOrdersListItem.getViewType() == 1 ? 1 : 0;
+    }
+    preOrdersAmount.setText(String.valueOf(count));
+  }
+
+  @Override
+  public void showEmptyPreOrdersList(boolean show) {
+
   }
 }

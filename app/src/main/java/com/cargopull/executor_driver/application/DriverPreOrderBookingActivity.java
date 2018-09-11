@@ -8,12 +8,12 @@ import com.cargopull.executor_driver.R;
 import com.cargopull.executor_driver.presentation.order.OrderNavigate;
 import com.cargopull.executor_driver.presentation.orderconfirmation.OrderConfirmationNavigate;
 
-public class DriverPreOrderConfirmationActivity extends BaseActivity {
+public class DriverPreOrderBookingActivity extends BaseActivity {
 
   @Override
   protected void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_driver_pre_order_confirmation);
+    setContentView(R.layout.activity_driver_pre_order_booking);
     Toolbar toolbar = findViewById(R.id.appBar);
     if (toolbar != null) {
       toolbar.setNavigationOnClickListener(v -> onBackPressed());

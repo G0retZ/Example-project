@@ -69,7 +69,7 @@ public class AutoRouterImpl implements ActivityLifecycleCallbacks, AutoRouter {
         OrderCostDetailsRouteActivity.class, GeolocationResolutionActivity.class
     ));
     statusGroups.put(PreOrderNavigate.ORDER_APPROVAL, Arrays.asList(
-        DriverPreOrderConfirmationActivity.class, DriverOrderConfirmationActivity.class,
+        DriverPreOrderBookingActivity.class, DriverOrderConfirmationActivity.class,
         ClientOrderConfirmationActivity.class, MovingToClientActivity.class,
         MovingToClientDetailsActivity.class, MovingToClientRouteActivity.class,
         WaitingForClientActivity.class, WaitingForClientRouteActivity.class,
@@ -275,7 +275,7 @@ public class AutoRouterImpl implements ActivityLifecycleCallbacks, AutoRouter {
         break;
       case PreOrderNavigate.ORDER_APPROVAL:
         currentActivity.startActivity(
-            new Intent(currentActivity, DriverPreOrderConfirmationActivity.class)
+            new Intent(currentActivity, DriverPreOrderBookingActivity.class)
         );
         break;
       default:

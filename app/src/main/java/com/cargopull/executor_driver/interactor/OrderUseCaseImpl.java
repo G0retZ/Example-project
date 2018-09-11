@@ -11,7 +11,7 @@ import io.reactivex.Flowable;
 import io.reactivex.schedulers.Schedulers;
 import javax.inject.Inject;
 
-public class OrderUseCaseImpl implements OrderUseCase {
+public class OrderUseCaseImpl implements OrderUseCase, OrderDecisionUseCase {
 
   @NonNull
   private final ErrorReporter errorReporter;

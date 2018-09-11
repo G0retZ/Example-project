@@ -29,6 +29,8 @@ import com.cargopull.executor_driver.presentation.order.OrderViewModel;
 import com.cargopull.executor_driver.presentation.preorder.PreOrderNavigate;
 import com.cargopull.executor_driver.presentation.preorder.PreOrderViewActions;
 import com.cargopull.executor_driver.presentation.preorder.PreOrderViewModel;
+import com.cargopull.executor_driver.presentation.preorderslist.PreOrdersListNavigate;
+import com.cargopull.executor_driver.presentation.preorderslist.PreOrdersListViewModel;
 import com.cargopull.executor_driver.presentation.serverconnection.ServerConnectionNavigate;
 import com.cargopull.executor_driver.presentation.serverconnection.ServerConnectionViewActions;
 import com.cargopull.executor_driver.presentation.serverconnection.ServerConnectionViewModel;
@@ -66,6 +68,8 @@ public class MainApplication extends Application implements ServerConnectionView
   @Nullable
   private PreOrderViewModel preOrderViewModel;
   @Nullable
+  private PreOrdersListViewModel preOrdersListViewModel;
+  @Nullable
   private OrderCostDetailsViewModel orderCostDetailsViewModel;
   @Nullable
   private GeoLocationViewModel geoLocationViewModel;
@@ -84,12 +88,12 @@ public class MainApplication extends Application implements ServerConnectionView
   private NotificationManager notificationManager;
 
   @Inject
-  public void setRingTonePlayer(@Nullable RingTonePlayer ringTonePlayer) {
+  public void setRingTonePlayer(@NonNull RingTonePlayer ringTonePlayer) {
     this.ringTonePlayer = ringTonePlayer;
   }
 
   @Inject
-  public void setShakeItPlayer(@Nullable ShakeItPlayer shakeItPlayer) {
+  public void setShakeItPlayer(@NonNull ShakeItPlayer shakeItPlayer) {
     this.shakeItPlayer = shakeItPlayer;
   }
 
@@ -105,18 +109,23 @@ public class MainApplication extends Application implements ServerConnectionView
   }
 
   @Inject
-  public void setOrderViewModel(@Nullable OrderViewModel orderViewModel) {
+  public void setOrderViewModel(@NonNull OrderViewModel orderViewModel) {
     this.orderViewModel = orderViewModel;
   }
 
   @Inject
-  public void setPreOrderViewModel(@Nullable PreOrderViewModel preOrderViewModel) {
+  public void setPreOrderViewModel(@NonNull PreOrderViewModel preOrderViewModel) {
     this.preOrderViewModel = preOrderViewModel;
   }
 
   @Inject
+  public void setPreOrdersListViewModel(@NonNull PreOrdersListViewModel preOrdersListViewModel) {
+    this.preOrdersListViewModel = preOrdersListViewModel;
+  }
+
+  @Inject
   public void setOrderCostDetailsViewModel(
-      @Nullable OrderCostDetailsViewModel orderCostDetailsViewModel) {
+      @NonNull OrderCostDetailsViewModel orderCostDetailsViewModel) {
     this.orderCostDetailsViewModel = orderCostDetailsViewModel;
   }
 
@@ -164,7 +173,7 @@ public class MainApplication extends Application implements ServerConnectionView
 
   @Inject
   public void setLifeCycleCallbacks(
-      @Nullable ActivityLifecycleCallbacks activityLifecycleCallbacks) {
+      @NonNull ActivityLifecycleCallbacks activityLifecycleCallbacks) {
     registerActivityLifecycleCallbacks(activityLifecycleCallbacks);
   }
 
@@ -179,7 +188,7 @@ public class MainApplication extends Application implements ServerConnectionView
         || missedOrderViewModel == null || updateMessageViewModel == null
         || serverConnectionViewModel == null || currentCostPollingViewModel == null
         || serverTimeViewModel == null || orderViewModel == null || preOrderViewModel == null
-        || orderCostDetailsViewModel == null) {
+        || orderCostDetailsViewModel == null || preOrdersListViewModel == null) {
       throw new RuntimeException("Shit! WTF?!");
     }
     serverConnectionViewModel.getViewStateLiveData().observeForever(viewState -> {
@@ -203,6 +212,7 @@ public class MainApplication extends Application implements ServerConnectionView
     executorStateViewModel.getNavigationLiveData().observeForever(this::navigate);
     orderViewModel.getNavigationLiveData().observeForever(this::navigate);
     orderCostDetailsViewModel.getNavigationLiveData().observeForever(this::navigate);
+    preOrdersListViewModel.getNavigationLiveData().observeForever(this::navigate);
     geoLocationViewModel.getNavigationLiveData().observeForever(this::navigate);
     currentCostPollingViewModel.getNavigationLiveData().observeForever(this::navigate);
     serverTimeViewModel.getNavigationLiveData().observeForever(this::navigate);
@@ -433,6 +443,8 @@ public class MainApplication extends Application implements ServerConnectionView
             new Pair<>(100L, 255)
         ));
         break;
+      case PreOrdersListNavigate.PRE_ORDER:
+        return;
     }
     autoRouter.navigateTo(destination);
   }
@@ -520,10 +532,9 @@ public class MainApplication extends Application implements ServerConnectionView
             .setContentText(getString(R.string.new_pre_order_message))
             .setSound(null)
             .setVibrate(new long[0])
-            .setAutoCancel(true)
             .setContentIntent(
                 PendingIntent.getActivity(this, 0,
-                    new Intent(this, DriverPreOrderConfirmationActivity.class), 0)
+                    new Intent(this, DriverPreOrderBookingActivity.class), 0)
             )
             .setSmallIcon(R.mipmap.ic_launcher)
             .setTicker(getString(R.string.new_pre_order))

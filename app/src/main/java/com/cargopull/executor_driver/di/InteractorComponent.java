@@ -18,6 +18,8 @@ import com.cargopull.executor_driver.interactor.OrderCurrentCostUseCase;
 import com.cargopull.executor_driver.interactor.OrderFulfillmentTimeUseCase;
 import com.cargopull.executor_driver.interactor.OrderRouteUseCase;
 import com.cargopull.executor_driver.interactor.OrderUseCase;
+import com.cargopull.executor_driver.interactor.OrdersUseCase;
+import com.cargopull.executor_driver.interactor.SelectedOrderUseCase;
 import com.cargopull.executor_driver.interactor.ServerConnectionUseCase;
 import com.cargopull.executor_driver.interactor.ServerTimeUseCase;
 import com.cargopull.executor_driver.interactor.UpdateMessageUseCase;
@@ -74,7 +76,7 @@ interface InteractorComponent {
   OrderConfirmationUseCase getOrderConfirmationUseCase();
 
   @NonNull
-  OrderConfirmationUseCase getPreOrderConfirmationUseCase();
+  OrderConfirmationUseCase getPreOrderBookingUseCase();
 
   @NonNull
   OrderCostDetailsUseCase getOrderCostDetailsUseCase();
@@ -110,6 +112,9 @@ interface InteractorComponent {
   LoginUseCase getLoginUseCase();
 
   @NonNull
+  OrdersUseCase getPreOrdersListUseCase();
+
+  @NonNull
   PasswordUseCase getPasswordUseCase();
 
   @NonNull
@@ -141,4 +146,13 @@ interface InteractorComponent {
 
   @NonNull
   VehiclesAndOptionsUseCase getSelectedVehiclesAndOptionsUseCase();
+
+  @NonNull
+  SelectedOrderUseCase getSelectedOrderUseCase();
+
+  @NonNull
+  OrderUseCase getSelectedPreOrderUseCase();
+
+  @NonNull
+  OrderConfirmationUseCase getSelectedPreOrderConfirmationUseCase();
 }
