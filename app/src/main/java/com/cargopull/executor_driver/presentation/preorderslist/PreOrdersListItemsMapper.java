@@ -20,13 +20,16 @@ public class PreOrdersListItemsMapper implements Function<Set<Order>, List<PreOr
 
   @Override
   public List<PreOrdersListItem> apply(Set<Order> orders) {
+    DateTime today = DateTime.now().withTimeAtStartOfDay();
     List<PreOrdersListItem> preOrdersListItems = new ArrayList<>();
-    Collections.sort(new ArrayList<>(orders),
+    ArrayList<Order> ordersList = new ArrayList<>(orders);
+    Collections.sort(ordersList,
         (o1, o2) -> Long.compare(o1.getScheduledStartTime(), o2.getScheduledStartTime()));
     int offset = -1;
-    for (Order order : orders) {
-      DateTime preOrderStartDate = new DateTime(order.getScheduledStartTime());
-      if (preOrderStartDate.withMillisOfDay(0).compareTo(DateTime.now().plusDays(offset)) > 0) {
+    for (Order order : ordersList) {
+      DateTime preOrderStartDate = new DateTime(order.getScheduledStartTime())
+          .withTimeAtStartOfDay();
+      if (preOrderStartDate.compareTo(today.plusDays(offset)) > 0) {
         offset++;
         preOrdersListItems.add(new PreOrdersListHeaderItem(offset));
       }

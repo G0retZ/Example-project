@@ -36,13 +36,13 @@ public class PreOrdersListItemsMapperTest {
   public void testSortWithOneHeader() {
     // Дано:
     when(order.getScheduledStartTime())
-        .thenReturn(DateTime.now().withMillisOfDay(0).plusHours(3).getMillis());
+        .thenReturn(DateTime.now().withTimeAtStartOfDay().plusHours(3).getMillis());
     when(order1.getScheduledStartTime())
-        .thenReturn(DateTime.now().withMillisOfDay(0).plusHours(11).getMillis());
+        .thenReturn(DateTime.now().withTimeAtStartOfDay().plusHours(11).getMillis());
     when(order2.getScheduledStartTime())
-        .thenReturn(DateTime.now().withMillisOfDay(0).plusHours(7).getMillis());
+        .thenReturn(DateTime.now().withTimeAtStartOfDay().plusHours(7).getMillis());
     when(order3.getScheduledStartTime())
-        .thenReturn(DateTime.now().withMillisOfDay(0).plusHours(15).getMillis());
+        .thenReturn(DateTime.now().withTimeAtStartOfDay().plusHours(15).getMillis());
 
     // Действие:
     List<PreOrdersListItem> preOrdersListItems =
@@ -61,13 +61,13 @@ public class PreOrdersListItemsMapperTest {
   public void testSortWithTwoHeaders() {
     // Дано:
     when(order.getScheduledStartTime())
-        .thenReturn(DateTime.now().withMillisOfDay(0).plusHours(3).getMillis());
+        .thenReturn(DateTime.now().withTimeAtStartOfDay().plusHours(3).getMillis());
     when(order1.getScheduledStartTime())
-        .thenReturn(DateTime.now().withMillisOfDay(0).plusHours(19).getMillis());
+        .thenReturn(DateTime.now().withTimeAtStartOfDay().plusHours(19).getMillis());
     when(order2.getScheduledStartTime())
-        .thenReturn(DateTime.now().withMillisOfDay(0).plusHours(11).getMillis());
+        .thenReturn(DateTime.now().withTimeAtStartOfDay().plusHours(11).getMillis());
     when(order3.getScheduledStartTime())
-        .thenReturn(DateTime.now().withMillisOfDay(0).plusHours(27).getMillis());
+        .thenReturn(DateTime.now().withTimeAtStartOfDay().plusHours(27).getMillis());
 
     // Действие:
     List<PreOrdersListItem> preOrdersListItems =
@@ -87,13 +87,13 @@ public class PreOrdersListItemsMapperTest {
   public void testSortWithThreeHeaders() {
     // Дано:
     when(order.getScheduledStartTime())
-        .thenReturn(DateTime.now().withMillisOfDay(0).plusHours(3).getMillis());
+        .thenReturn(DateTime.now().withTimeAtStartOfDay().plusHours(3).getMillis());
     when(order1.getScheduledStartTime())
-        .thenReturn(DateTime.now().withMillisOfDay(0).plusHours(35).getMillis());
+        .thenReturn(DateTime.now().withTimeAtStartOfDay().plusHours(35).getMillis());
     when(order2.getScheduledStartTime())
-        .thenReturn(DateTime.now().withMillisOfDay(0).plusHours(19).getMillis());
+        .thenReturn(DateTime.now().withTimeAtStartOfDay().plusHours(19).getMillis());
     when(order3.getScheduledStartTime())
-        .thenReturn(DateTime.now().withMillisOfDay(0).plusHours(51).getMillis());
+        .thenReturn(DateTime.now().withTimeAtStartOfDay().plusHours(51).getMillis());
 
     // Действие:
     List<PreOrdersListItem> preOrdersListItems =
