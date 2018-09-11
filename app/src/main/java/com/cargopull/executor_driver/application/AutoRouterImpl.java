@@ -156,9 +156,8 @@ public class AutoRouterImpl implements ActivityLifecycleCallbacks, AutoRouter {
         break;
       case PreOrderNavigate.ORDER_APPROVAL:
         if (lastRouteAction == null || !lastRouteAction.equals(CommonNavigate.SERVER_DATA_ERROR)) {
-          lastRouteAction = destination;
+          tryToResolvePreOrder();
         }
-        tryToNavigate();
         break;
       default:
         if (lastRouteAction == null || !lastRouteAction.equals(CommonNavigate.SERVER_DATA_ERROR)) {
@@ -187,17 +186,33 @@ public class AutoRouterImpl implements ActivityLifecycleCallbacks, AutoRouter {
     }
   }
 
+  private void tryToResolvePreOrder() {
+    if (currentActivity == null) {
+      return;
+    }
+    // Получаем группу активити по направлению, с которых нельзя просто так перебрасывать.
+    List<Class<? extends Activity>> group = statusGroups.get(PreOrderNavigate.ORDER_APPROVAL);
+    // Если такая группа есть и в ней есть текущая активити.
+    if (!reset && group != null && group.contains(currentActivity.getClass())) {
+      // Никуда не переходим.
+      return;
+    }
+    currentActivity.startActivity(
+        new Intent(currentActivity, DriverPreOrderBookingActivity.class)
+    );
+  }
+
   private void tryToNavigate() {
     if (currentActivity == null || lastRouteAction == null) {
       return;
     }
     // Получаем группу активити по направлению, с которых нельзя просто так перебрасывать.
     List<Class<? extends Activity>> group = statusGroups.get(lastRouteAction);
-    // Если такая группа есть и в ней есть текущая активити, то никуда не навигируем.
+    // Если такая группа есть и в ней есть текущая активити.
     if (!reset && group != null && group.contains(currentActivity.getClass())) {
       // Если текущая активити является основной в группе, то обнуляем направление навигации.
       lastRouteAction = group.get(0) == currentActivity.getClass() ? null : lastRouteAction;
-      // Так как никуда не переходим, то пытаемся отобразить сообщения, если есть.
+      // Никуда не переходим.
       return;
     }
     switch (lastRouteAction) {
@@ -271,11 +286,6 @@ public class AutoRouterImpl implements ActivityLifecycleCallbacks, AutoRouter {
         currentActivity.startActivity(
             new Intent(currentActivity, OrderCostDetailsActivity.class)
                 .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK)
-        );
-        break;
-      case PreOrderNavigate.ORDER_APPROVAL:
-        currentActivity.startActivity(
-            new Intent(currentActivity, DriverPreOrderBookingActivity.class)
         );
         break;
       default:
