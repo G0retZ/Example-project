@@ -22,6 +22,7 @@ import com.cargopull.executor_driver.interactor.OrdersUseCase;
 import com.cargopull.executor_driver.interactor.SelectedOrderUseCase;
 import com.cargopull.executor_driver.interactor.ServerConnectionUseCase;
 import com.cargopull.executor_driver.interactor.ServerTimeUseCase;
+import com.cargopull.executor_driver.interactor.UpcomingPreOrderMessagesUseCase;
 import com.cargopull.executor_driver.interactor.UpdateMessageUseCase;
 import com.cargopull.executor_driver.interactor.WaitingForClientUseCase;
 import com.cargopull.executor_driver.interactor.auth.LoginUseCase;
@@ -112,7 +113,7 @@ interface InteractorComponent {
   LoginUseCase getLoginUseCase();
 
   @NonNull
-  OrdersUseCase getPreOrdersListUseCase();
+  OrdersUseCase getPreOrdersSetUseCase();
 
   @NonNull
   PasswordUseCase getPasswordUseCase();
@@ -128,6 +129,9 @@ interface InteractorComponent {
 
   @NonNull
   SelectedVehicleUseCase getSelectedVehicleUseCase();
+
+  @NonNull
+  UpcomingPreOrderMessagesUseCase getUpcomingPreOrderMessagesUseCase();
 
   @NonNull
   VehicleChoiceUseCase getVehicleChoiceUseCase();

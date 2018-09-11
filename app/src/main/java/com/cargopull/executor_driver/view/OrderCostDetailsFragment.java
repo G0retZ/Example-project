@@ -25,7 +25,6 @@ import com.cargopull.executor_driver.presentation.ordecostdetails.OrderCostDetai
 import com.cargopull.executor_driver.presentation.ordecostdetails.OrderCostDetailsViewModel;
 import com.cargopull.executor_driver.utils.Pair;
 import java.text.DecimalFormat;
-import java.util.Collections;
 import java.util.List;
 import javax.inject.Inject;
 import org.joda.time.LocalTime;
@@ -130,7 +129,7 @@ public class OrderCostDetailsFragment extends BaseFragment implements OrderCostD
       public void onAnimationEnd(Animator animation) {
         if (!canceled) {
           confirmOrderPaymentViewModel.confirmPayment();
-          shakeItPlayer.shakeIt(Collections.singletonList(new Pair<>(200L, 255)));
+          shakeItPlayer.shakeIt(R.raw.single_shot_vibro);
         }
       }
 

@@ -27,7 +27,6 @@ public class OrderViewStateIdleTest {
 
   @Before
   public void setUp() {
-    when(orderItem.getNextAddress()).thenReturn("address");
     viewState = new OrderViewStateIdle(orderItem);
   }
 
@@ -52,7 +51,6 @@ public class OrderViewStateIdleTest {
     when(orderItem.getOrderComment()).thenReturn("comm");
     when(orderItem.getEstimatedPriceText()).thenReturn("1000");
     when(orderItem.getOrderOptionsRequired()).thenReturn("1,2,3");
-    when(orderItem.getProgressLeft()).thenReturn(new long[]{3, 5});
 
     // Действие:
     viewState.apply(viewActions);
@@ -71,7 +69,6 @@ public class OrderViewStateIdleTest {
     verify(viewActions).showServiceName("service");
     verify(viewActions).showTimeout(654321);
     verify(viewActions).showComment("comm");
-    verify(viewActions).showTimeout(3, 5);
     verify(viewActions).showEstimatedPrice("1000");
     verify(viewActions).showOrderOptionsRequirements("1,2,3");
     verify(viewActions).showOrderPending(false);

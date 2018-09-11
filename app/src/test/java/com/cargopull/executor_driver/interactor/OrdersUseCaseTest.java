@@ -15,9 +15,9 @@ import io.reactivex.Flowable;
 import io.reactivex.FlowableEmitter;
 import io.reactivex.FlowableOnSubscribe;
 import io.reactivex.subscribers.TestSubscriber;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
@@ -36,7 +36,7 @@ public class OrdersUseCaseTest {
   @Mock
   private ErrorReporter errorReporter;
   @Mock
-  private CommonGateway<List<Order>> gateway;
+  private CommonGateway<Set<Order>> gateway;
   @Mock
   private Order order;
   @Mock
@@ -60,11 +60,11 @@ public class OrdersUseCaseTest {
   @Test
   public void askGatewayForOrdersOnlyOnce() {
     // Действие:
-    useCase.getOrdersList().test();
-    useCase.getOrdersList().test();
+    useCase.getOrdersSet().test();
+    useCase.getOrdersSet().test();
     useCase.addOrder(order1);
-    useCase.getOrdersList().test();
-    useCase.getOrdersList().test();
+    useCase.getOrdersSet().test();
+    useCase.getOrdersSet().test();
     useCase.removeOrder(order3);
 
     // Результат:
@@ -82,7 +82,7 @@ public class OrdersUseCaseTest {
     when(gateway.getData()).thenReturn(Flowable.error(DataMappingException::new));
 
     // Действие:
-    useCase.getOrdersList().test();
+    useCase.getOrdersSet().test();
 
     // Результат:
     verify(errorReporter, only()).reportError(any(DataMappingException.class));
@@ -97,17 +97,17 @@ public class OrdersUseCaseTest {
   public void answerWithOrders() {
     // Дано:
     when(gateway.getData()).thenReturn(
-        Flowable.<List<Order>>just(new ArrayList<>(Arrays.asList(order, order1, order2)))
+        Flowable.<Set<Order>>just(new HashSet<>(Arrays.asList(order, order1, order2)))
             .concatWith(Flowable.never())
     );
 
     // Действие:
-    TestSubscriber<List<Order>> testSubscriber = useCase.getOrdersList().test();
+    TestSubscriber<Set<Order>> testSubscriber = useCase.getOrdersSet().test();
 
     // Результат:
     assertEquals(1, testSubscriber.values().size());
     assertEquals(
-        new ArrayList<>(Arrays.asList(order, order1, order2)),
+        new HashSet<>(Arrays.asList(order, order1, order2)),
         testSubscriber.values().get(0)
     );
     testSubscriber.assertNoErrors();
@@ -123,7 +123,7 @@ public class OrdersUseCaseTest {
     when(gateway.getData()).thenReturn(Flowable.error(DataMappingException::new));
 
     // Действие:
-    TestSubscriber<List<Order>> testSubscriber = useCase.getOrdersList().test();
+    TestSubscriber<Set<Order>> testSubscriber = useCase.getOrdersSet().test();
 
     // Результат:
     testSubscriber.assertError(DataMappingException.class);
@@ -138,27 +138,27 @@ public class OrdersUseCaseTest {
   public void answerWithUpdatedListOnUnSchedule() {
     // Дано:
     when(gateway.getData()).thenReturn(
-        Flowable.<List<Order>>just(new ArrayList<>(Arrays.asList(order, order1, order2, order3)))
+        Flowable.<Set<Order>>just(new HashSet<>(Arrays.asList(order, order1, order2, order3)))
             .concatWith(Flowable.never())
     );
 
     // Действие:
-    TestSubscriber<List<Order>> testSubscriber = useCase.getOrdersList().test();
+    TestSubscriber<Set<Order>> testSubscriber = useCase.getOrdersSet().test();
     useCase.removeOrder(order2);
     useCase.removeOrder(order);
 
     // Результат:
     assertEquals(3, testSubscriber.values().size());
     assertEquals(
-        new ArrayList<>(Arrays.asList(order, order1, order2, order3)),
+        new HashSet<>(Arrays.asList(order, order1, order2, order3)),
         testSubscriber.values().get(0)
     );
     assertEquals(
-        new ArrayList<>(Arrays.asList(order, order1, order3)),
+        new HashSet<>(Arrays.asList(order, order1, order3)),
         testSubscriber.values().get(1)
     );
     assertEquals(
-        new ArrayList<>(Arrays.asList(order1, order3)),
+        new HashSet<>(Arrays.asList(order1, order3)),
         testSubscriber.values().get(2)
     );
     testSubscriber.assertNotComplete();
@@ -171,27 +171,27 @@ public class OrdersUseCaseTest {
   public void answerWithUpdatedListOnSchedule() {
     // Дано:
     when(gateway.getData()).thenReturn(
-        Flowable.<List<Order>>just(new ArrayList<>(Arrays.asList(order, order3)))
+        Flowable.<Set<Order>>just(new HashSet<>(Arrays.asList(order, order3)))
             .concatWith(Flowable.never())
     );
 
     // Действие:
-    TestSubscriber<List<Order>> testSubscriber = useCase.getOrdersList().test();
+    TestSubscriber<Set<Order>> testSubscriber = useCase.getOrdersSet().test();
     useCase.addOrder(order2);
     useCase.addOrder(order1);
 
     // Результат:
     assertEquals(3, testSubscriber.values().size());
     assertEquals(
-        new ArrayList<>(Arrays.asList(order, order3)),
+        new HashSet<>(Arrays.asList(order, order3)),
         testSubscriber.values().get(0)
     );
     assertEquals(
-        new ArrayList<>(Arrays.asList(order, order3, order2)),
+        new HashSet<>(Arrays.asList(order, order3, order2)),
         testSubscriber.values().get(1)
     );
     assertEquals(
-        new ArrayList<>(Arrays.asList(order, order3, order2, order1)),
+        new HashSet<>(Arrays.asList(order, order3, order2, order1)),
         testSubscriber.values().get(2)
     );
     testSubscriber.assertNotComplete();
@@ -204,27 +204,27 @@ public class OrdersUseCaseTest {
   public void answerWithSameListOnUnSchedule() {
     // Дано:
     when(gateway.getData()).thenReturn(
-        Flowable.<List<Order>>just(new ArrayList<>(Arrays.asList(order, order1)))
+        Flowable.<Set<Order>>just(new HashSet<>(Arrays.asList(order, order1)))
             .concatWith(Flowable.never())
     );
 
     // Действие:
-    TestSubscriber<List<Order>> testSubscriber = useCase.getOrdersList().test();
+    TestSubscriber<Set<Order>> testSubscriber = useCase.getOrdersSet().test();
     useCase.removeOrder(order2);
     useCase.removeOrder(order3);
 
     // Результат:
     assertEquals(3, testSubscriber.values().size());
     assertEquals(
-        new ArrayList<>(Arrays.asList(order, order1)),
+        new HashSet<>(Arrays.asList(order, order1)),
         testSubscriber.values().get(0)
     );
     assertEquals(
-        new ArrayList<>(Arrays.asList(order, order1)),
+        new HashSet<>(Arrays.asList(order, order1)),
         testSubscriber.values().get(1)
     );
     assertEquals(
-        new ArrayList<>(Arrays.asList(order, order1)),
+        new HashSet<>(Arrays.asList(order, order1)),
         testSubscriber.values().get(2)
     );
     testSubscriber.assertNotComplete();
@@ -237,27 +237,27 @@ public class OrdersUseCaseTest {
   public void answerWithSameListOnSchedule() {
     // Дано:
     when(gateway.getData()).thenReturn(
-        Flowable.<List<Order>>just(new ArrayList<>(Arrays.asList(order, order1, order2, order3)))
+        Flowable.<Set<Order>>just(new HashSet<>(Arrays.asList(order, order1, order2, order3)))
             .concatWith(Flowable.never())
     );
 
     // Действие:
-    TestSubscriber<List<Order>> testSubscriber = useCase.getOrdersList().test();
+    TestSubscriber<Set<Order>> testSubscriber = useCase.getOrdersSet().test();
     useCase.addOrder(order2);
     useCase.addOrder(order3);
 
     // Результат:
     assertEquals(3, testSubscriber.values().size());
     assertEquals(
-        new ArrayList<>(Arrays.asList(order, order1, order2, order3)),
+        new HashSet<>(Arrays.asList(order, order1, order2, order3)),
         testSubscriber.values().get(0)
     );
     assertEquals(
-        new ArrayList<>(Arrays.asList(order, order1, order2, order3)),
+        new HashSet<>(Arrays.asList(order, order1, order2, order3)),
         testSubscriber.values().get(1)
     );
     assertEquals(
-        new ArrayList<>(Arrays.asList(order, order1, order2, order3)),
+        new HashSet<>(Arrays.asList(order, order1, order2, order3)),
         testSubscriber.values().get(2)
     );
     testSubscriber.assertNotComplete();
@@ -272,7 +272,7 @@ public class OrdersUseCaseTest {
     when(gateway.getData()).thenReturn(Flowable.empty());
 
     // Действие:
-    TestSubscriber<List<Order>> testSubscriber = useCase.getOrdersList().test();
+    TestSubscriber<Set<Order>> testSubscriber = useCase.getOrdersSet().test();
 
     // Результат:
     testSubscriber.assertComplete();
@@ -286,13 +286,13 @@ public class OrdersUseCaseTest {
   @Test
   public void answerNothingAfterError() {
     // Дано:
-    when(gateway.getData()).thenReturn(Flowable.create(new FlowableOnSubscribe<List<Order>>() {
+    when(gateway.getData()).thenReturn(Flowable.create(new FlowableOnSubscribe<Set<Order>>() {
       private boolean run;
 
       @Override
-      public void subscribe(FlowableEmitter<List<Order>> emitter) {
+      public void subscribe(FlowableEmitter<Set<Order>> emitter) {
         if (!run) {
-          emitter.onNext(new ArrayList<>(Arrays.asList(order, order1, order2)));
+          emitter.onNext(new HashSet<>(Arrays.asList(order, order1, order2)));
           emitter.onError(new Exception());
           run = true;
         }
@@ -300,13 +300,13 @@ public class OrdersUseCaseTest {
     }, BackpressureStrategy.BUFFER));
 
     // Действие:
-    TestSubscriber<List<Order>> testSubscriber = useCase.getOrdersList().test();
-    TestSubscriber<List<Order>> testSubscriber1 = useCase.getOrdersList().test();
+    TestSubscriber<Set<Order>> testSubscriber = useCase.getOrdersSet().test();
+    TestSubscriber<Set<Order>> testSubscriber1 = useCase.getOrdersSet().test();
 
     // Результат:
     assertEquals(1, testSubscriber.values().size());
     assertEquals(
-        new ArrayList<>(Arrays.asList(order, order1, order2)),
+        new HashSet<>(Arrays.asList(order, order1, order2)),
         testSubscriber.values().get(0)
     );
     testSubscriber.assertError(Exception.class);
@@ -322,13 +322,13 @@ public class OrdersUseCaseTest {
   @Test
   public void answerNothingAfterPreOrderExpiredError() {
     // Дано:
-    when(gateway.getData()).thenReturn(Flowable.create(new FlowableOnSubscribe<List<Order>>() {
+    when(gateway.getData()).thenReturn(Flowable.create(new FlowableOnSubscribe<Set<Order>>() {
       private boolean run;
 
       @Override
-      public void subscribe(FlowableEmitter<List<Order>> emitter) {
+      public void subscribe(FlowableEmitter<Set<Order>> emitter) {
         if (!run) {
-          emitter.onNext(new ArrayList<>(Arrays.asList(order, order1, order2)));
+          emitter.onNext(new HashSet<>(Arrays.asList(order, order1, order2)));
           emitter.onComplete();
           run = true;
         }
@@ -336,13 +336,13 @@ public class OrdersUseCaseTest {
     }, BackpressureStrategy.BUFFER));
 
     // Действие:
-    TestSubscriber<List<Order>> testSubscriber = useCase.getOrdersList().test();
-    TestSubscriber<List<Order>> testSubscriber1 = useCase.getOrdersList().test();
+    TestSubscriber<Set<Order>> testSubscriber = useCase.getOrdersSet().test();
+    TestSubscriber<Set<Order>> testSubscriber1 = useCase.getOrdersSet().test();
 
     // Результат:
     assertEquals(1, testSubscriber.values().size());
     assertEquals(
-        new ArrayList<>(Arrays.asList(order, order1, order2)),
+        new HashSet<>(Arrays.asList(order, order1, order2)),
         testSubscriber.values().get(0)
     );
     testSubscriber.assertNoErrors();

@@ -51,6 +51,8 @@ import com.cargopull.executor_driver.gateway.ServiceApiMapper;
 import com.cargopull.executor_driver.gateway.ServicesGatewayImpl;
 import com.cargopull.executor_driver.gateway.SmsGatewayImpl;
 import com.cargopull.executor_driver.gateway.TopicGatewayImpl;
+import com.cargopull.executor_driver.gateway.TopicGatewayWithDefaultImpl;
+import com.cargopull.executor_driver.gateway.UpcomingPreOrderMessagesFilter;
 import com.cargopull.executor_driver.gateway.UpdateMessageFilter;
 import com.cargopull.executor_driver.gateway.VehicleApiMapper;
 import com.cargopull.executor_driver.gateway.VehicleOptionApiMapper;
@@ -77,7 +79,9 @@ import com.cargopull.executor_driver.interactor.services.ServicesGateway;
 import com.cargopull.executor_driver.interactor.vehicle.LastUsedVehicleGateway;
 import com.cargopull.executor_driver.interactor.vehicle.VehicleOptionsGateway;
 import com.cargopull.executor_driver.interactor.vehicle.VehiclesAndOptionsGateway;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 class RepositoryComponentImpl implements RepositoryComponent {
 
@@ -142,6 +146,8 @@ class RepositoryComponentImpl implements RepositoryComponent {
   @Nullable
   private LastUsedVehicleGateway lastUsedVehicleGateway;
   @Nullable
+  private CommonGateway<String> upcomingPreOrderMessagesGateway;
+  @Nullable
   private VehicleOptionsGateway vehicleOptionsGateway;
   @Nullable
   private VehicleOptionsGateway currentVehicleOptionsGateway;
@@ -150,7 +156,7 @@ class RepositoryComponentImpl implements RepositoryComponent {
   @Nullable
   private VehiclesAndOptionsGateway selectedVehiclesAndOptionsGateway;
   @Nullable
-  private CommonGateway<List<Order>> preOrdersListGateway;
+  private CommonGateway<Set<Order>> preOrdersListGateway;
 
   RepositoryComponentImpl(@NonNull BackendComponent backendComponent,
       @NonNull GeolocationCenter geolocationCenter) {
@@ -497,6 +503,19 @@ class RepositoryComponentImpl implements RepositoryComponent {
 
   @NonNull
   @Override
+  public CommonGateway<String> UpcomingPreOrderMessagesGateway() {
+    if (upcomingPreOrderMessagesGateway == null) {
+      upcomingPreOrderMessagesGateway = new TopicGatewayImpl<>(
+          backendComponent.getPersonalTopicListener(),
+          new MessagePayloadApiMapper(),
+          new UpcomingPreOrderMessagesFilter()
+      );
+    }
+    return upcomingPreOrderMessagesGateway;
+  }
+
+  @NonNull
+  @Override
   public VehicleOptionsGateway getVehicleOptionsGateway() {
     if (vehicleOptionsGateway == null) {
       vehicleOptionsGateway = new VehicleOptionsGatewayImpl(
@@ -551,15 +570,16 @@ class RepositoryComponentImpl implements RepositoryComponent {
 
   @NonNull
   @Override
-  public CommonGateway<List<Order>> getPreOrdersListGateway() {
+  public CommonGateway<Set<Order>> getPreOrdersSetGateway() {
     if (preOrdersListGateway == null) {
-      preOrdersListGateway = new TopicGatewayImpl<>(
+      preOrdersListGateway = new TopicGatewayWithDefaultImpl<>(
           backendComponent.getPersonalTopicListener(),
           new PreOrdersListApiMapper(
               new VehicleOptionApiMapper(),
               new RoutePointApiMapper()
           ),
-          new PreOrdersListFilter()
+          new PreOrdersListFilter(),
+          new HashSet<>()
       );
     }
     return preOrdersListGateway;

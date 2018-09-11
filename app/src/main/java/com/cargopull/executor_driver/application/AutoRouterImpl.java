@@ -15,7 +15,6 @@ import com.cargopull.executor_driver.presentation.executorstate.ExecutorStateNav
 import com.cargopull.executor_driver.presentation.geolocation.GeoLocationNavigate;
 import com.cargopull.executor_driver.presentation.preorder.PreOrderNavigate;
 import com.cargopull.executor_driver.presentation.serverconnection.ServerConnectionNavigate;
-import com.cargopull.executor_driver.utils.Pair;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -49,6 +48,9 @@ public class AutoRouterImpl implements ActivityLifecycleCallbacks, AutoRouter {
     statusGroups.put(ExecutorStateNavigate.DRIVER_ORDER_CONFIRMATION, Arrays.asList(
         DriverOrderConfirmationActivity.class, GeolocationResolutionActivity.class
     ));
+    statusGroups.put(ExecutorStateNavigate.DRIVER_PRELIMINARY_ORDER_CONFIRMATION, Arrays.asList(
+        DriverPreOrderConfirmationActivity.class, GeolocationResolutionActivity.class
+    ));
     statusGroups.put(ExecutorStateNavigate.CLIENT_ORDER_CONFIRMATION, Arrays.asList(
         ClientOrderConfirmationActivity.class, GeolocationResolutionActivity.class
     ));
@@ -70,13 +72,13 @@ public class AutoRouterImpl implements ActivityLifecycleCallbacks, AutoRouter {
     ));
     statusGroups.put(PreOrderNavigate.ORDER_APPROVAL, Arrays.asList(
         DriverPreOrderBookingActivity.class, DriverOrderConfirmationActivity.class,
-        ClientOrderConfirmationActivity.class, MovingToClientActivity.class,
-        MovingToClientDetailsActivity.class, MovingToClientRouteActivity.class,
-        WaitingForClientActivity.class, WaitingForClientRouteActivity.class,
-        OrderFulfillmentActivity.class, OrderFulfillmentDetailsActivity.class,
-        OrderRouteActivity.class, OrderCostDetailsActivity.class,
-        OrderCostDetailsOrderDetailsActivity.class, OrderCostDetailsRouteActivity.class,
-        GeolocationResolutionActivity.class
+        DriverPreOrderConfirmationActivity.class, ClientOrderConfirmationActivity.class,
+        MovingToClientActivity.class, MovingToClientDetailsActivity.class,
+        MovingToClientRouteActivity.class, WaitingForClientActivity.class,
+        WaitingForClientRouteActivity.class, OrderFulfillmentActivity.class,
+        OrderFulfillmentDetailsActivity.class, OrderRouteActivity.class,
+        OrderCostDetailsActivity.class, OrderCostDetailsOrderDetailsActivity.class,
+        OrderCostDetailsRouteActivity.class, GeolocationResolutionActivity.class
     ));
   }
 
@@ -154,27 +156,18 @@ public class AutoRouterImpl implements ActivityLifecycleCallbacks, AutoRouter {
         break;
       case PreOrderNavigate.ORDER_APPROVAL:
         if (lastRouteAction == null || !lastRouteAction.equals(CommonNavigate.SERVER_DATA_ERROR)) {
-          lastRouteAction = destination;
+          tryToResolvePreOrder();
         }
-        tryToNavigate();
         break;
       default:
         if (lastRouteAction == null || !lastRouteAction.equals(CommonNavigate.SERVER_DATA_ERROR)) {
-          if (splashRouteAction != null && destination.equals(ExecutorStateNavigate.MAP_ONLINE)) {
-            switch (splashRouteAction) {
-              case ExecutorStateNavigate.DRIVER_ORDER_CONFIRMATION:
-                ringTonePlayer.playRingTone(R.raw.decline_offer);
-                shakeItPlayer.shakeIt(Arrays.asList(
-                    new Pair<>(50L, 255),
-                    new Pair<>(50L, 0),
-                    new Pair<>(100L, 255),
-                    new Pair<>(50L, 0),
-                    new Pair<>(150L, 255),
-                    new Pair<>(50L, 0),
-                    new Pair<>(250L, 255)
-                ));
-                break;
-              default:
+          if (splashRouteAction != null && (destination.equals(ExecutorStateNavigate.MAP_ONLINE)
+              || destination.equals(ExecutorStateNavigate.MAP_SHIFT_OPENED))) {
+            if (ExecutorStateNavigate.DRIVER_ORDER_CONFIRMATION.equals(splashRouteAction)
+                || ExecutorStateNavigate.DRIVER_PRELIMINARY_ORDER_CONFIRMATION
+                .equals(splashRouteAction)) {
+              ringTonePlayer.playRingTone(R.raw.decline_offer);
+              shakeItPlayer.shakeIt(R.raw.decline_offer_vibro);
             }
           }
           splashRouteAction = lastRouteAction = destination;
@@ -193,17 +186,33 @@ public class AutoRouterImpl implements ActivityLifecycleCallbacks, AutoRouter {
     }
   }
 
+  private void tryToResolvePreOrder() {
+    if (currentActivity == null) {
+      return;
+    }
+    // Получаем группу активити по направлению, с которых нельзя просто так перебрасывать.
+    List<Class<? extends Activity>> group = statusGroups.get(PreOrderNavigate.ORDER_APPROVAL);
+    // Если такая группа есть и в ней есть текущая активити.
+    if (!reset && group != null && group.contains(currentActivity.getClass())) {
+      // Никуда не переходим.
+      return;
+    }
+    currentActivity.startActivity(
+        new Intent(currentActivity, DriverPreOrderBookingActivity.class)
+    );
+  }
+
   private void tryToNavigate() {
     if (currentActivity == null || lastRouteAction == null) {
       return;
     }
     // Получаем группу активити по направлению, с которых нельзя просто так перебрасывать.
     List<Class<? extends Activity>> group = statusGroups.get(lastRouteAction);
-    // Если такая группа есть и в ней есть текущая активити, то никуда не навигируем.
+    // Если такая группа есть и в ней есть текущая активити.
     if (!reset && group != null && group.contains(currentActivity.getClass())) {
       // Если текущая активити является основной в группе, то обнуляем направление навигации.
       lastRouteAction = group.get(0) == currentActivity.getClass() ? null : lastRouteAction;
-      // Так как никуда не переходим, то пытаемся отобразить сообщения, если есть.
+      // Никуда не переходим.
       return;
     }
     switch (lastRouteAction) {
@@ -243,6 +252,12 @@ public class AutoRouterImpl implements ActivityLifecycleCallbacks, AutoRouter {
                 .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK)
         );
         break;
+      case ExecutorStateNavigate.DRIVER_PRELIMINARY_ORDER_CONFIRMATION:
+        currentActivity.startActivity(
+            new Intent(currentActivity, DriverPreOrderConfirmationActivity.class)
+                .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK)
+        );
+        break;
       case ExecutorStateNavigate.CLIENT_ORDER_CONFIRMATION:
         currentActivity.startActivity(
             new Intent(currentActivity, ClientOrderConfirmationActivity.class)
@@ -271,11 +286,6 @@ public class AutoRouterImpl implements ActivityLifecycleCallbacks, AutoRouter {
         currentActivity.startActivity(
             new Intent(currentActivity, OrderCostDetailsActivity.class)
                 .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK)
-        );
-        break;
-      case PreOrderNavigate.ORDER_APPROVAL:
-        currentActivity.startActivity(
-            new Intent(currentActivity, DriverPreOrderBookingActivity.class)
         );
         break;
       default:

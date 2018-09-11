@@ -36,6 +36,7 @@ import com.cargopull.executor_driver.view.ClientOrderConfirmationFragment;
 import com.cargopull.executor_driver.view.ClientOrderConfirmationTimeFragment;
 import com.cargopull.executor_driver.view.DriverOrderConfirmationFragment;
 import com.cargopull.executor_driver.view.DriverPreOrderBookingFragment;
+import com.cargopull.executor_driver.view.DriverPreOrderConfirmationFragment;
 import com.cargopull.executor_driver.view.GoOnlineFragment;
 import com.cargopull.executor_driver.view.MapFragment;
 import com.cargopull.executor_driver.view.MenuFragment;
@@ -52,6 +53,7 @@ import com.cargopull.executor_driver.view.OrderFulfillmentActionsDialogFragment;
 import com.cargopull.executor_driver.view.OrderFulfillmentDetailsFragment;
 import com.cargopull.executor_driver.view.OrderFulfillmentFragment;
 import com.cargopull.executor_driver.view.OrderRouteFragment;
+import com.cargopull.executor_driver.view.PreOrderConfirmationFragment;
 import com.cargopull.executor_driver.view.PreOrderFragment;
 import com.cargopull.executor_driver.view.PreOrdersFragment;
 import com.cargopull.executor_driver.view.ProfileFragment;
@@ -153,6 +155,9 @@ public class AppComponentImpl implements AppComponent {
     );
     mainApplication.setMissedOrderViewModel(
         presentationComponent.getMissedOrderViewModel()
+    );
+    mainApplication.setUpcomingPreOrderViewModel(
+        presentationComponent.getUpcomingPreOrderViewModel()
     );
     mainApplication.setUpdateMessageViewModel(
         presentationComponent.getUpdateMessageViewModel()
@@ -455,6 +460,7 @@ public class AppComponentImpl implements AppComponent {
   @Override
   public void inject(DriverPreOrderBookingFragment driverPreOrderBookingFragment) {
     driverPreOrderBookingFragment.setShakeItPlayer(singleShakePlayer);
+    driverPreOrderBookingFragment.setRingTonePlayer(singleRingTonePlayer);
     driverPreOrderBookingFragment.setOrderConfirmationViewModel(
         presentationComponent.getPreOrderBookingViewModel(driverPreOrderBookingFragment)
     );
@@ -484,6 +490,7 @@ public class AppComponentImpl implements AppComponent {
   @Override
   public void inject(SelectedPreOrderConfirmationFragment selectedPreOrderConfirmationFragment) {
     selectedPreOrderConfirmationFragment.setShakeItPlayer(singleShakePlayer);
+    selectedPreOrderConfirmationFragment.setRingTonePlayer(singleRingTonePlayer);
     selectedPreOrderConfirmationFragment.setOrderConfirmationViewModel(
         presentationComponent
             .getSelectedPreOrderConfirmationViewModel(selectedPreOrderConfirmationFragment)
@@ -502,5 +509,19 @@ public class AppComponentImpl implements AppComponent {
     newPreOrderButtonFragment.setPreOrderViewModel(
         presentationComponent.getPreOrderViewModel()
     );
+  }
+
+  @Override
+  public void inject(DriverPreOrderConfirmationFragment driverPreOrderConfirmationFragment) {
+    driverPreOrderConfirmationFragment.setShakeItPlayer(singleShakePlayer);
+    driverPreOrderConfirmationFragment.setOrderConfirmationViewModel(
+        presentationComponent.getOrderConfirmationViewModel(driverPreOrderConfirmationFragment)
+    );
+    driverPreOrderConfirmationFragment.setOrderViewModel(presentationComponent.getOrderViewModel());
+  }
+
+  @Override
+  public void inject(PreOrderConfirmationFragment preOrderConfirmationFragment) {
+    preOrderConfirmationFragment.setOrderViewModel(presentationComponent.getOrderViewModel());
   }
 }

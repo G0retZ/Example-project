@@ -78,7 +78,6 @@ public class BalanceSummaryFragment extends BaseFragment implements BalanceViewA
 
   @Override
   public void showBonusAccountAmount(long amount) {
-
   }
 
   @Override

@@ -1,8 +1,6 @@
 package com.cargopull.executor_driver.backend.vibro;
 
-import android.support.annotation.NonNull;
-import com.cargopull.executor_driver.utils.Pair;
-import java.util.List;
+import android.support.annotation.RawRes;
 
 /**
  * Проигрыватель вибро.
@@ -12,7 +10,7 @@ public interface ShakeItPlayer {
   /**
    * Вибрировать.
    *
-   * @param patternItems - набор таймингов с аплитудами
+   * @param patternId - id RAW ресурса с JSON с набором таймингов с аплитудами
    */
-  void shakeIt(@NonNull List<Pair<Long, Integer>> patternItems);
+  void shakeIt(@RawRes int patternId);
 }

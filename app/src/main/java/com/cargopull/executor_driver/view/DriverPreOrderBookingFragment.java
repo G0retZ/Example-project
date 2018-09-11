@@ -20,13 +20,12 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import com.cargopull.executor_driver.R;
+import com.cargopull.executor_driver.backend.ringtone.RingTonePlayer;
 import com.cargopull.executor_driver.backend.vibro.ShakeItPlayer;
 import com.cargopull.executor_driver.di.AppComponent;
 import com.cargopull.executor_driver.presentation.CommonNavigate;
 import com.cargopull.executor_driver.presentation.orderconfirmation.OrderConfirmationViewActions;
 import com.cargopull.executor_driver.presentation.orderconfirmation.OrderConfirmationViewModel;
-import com.cargopull.executor_driver.utils.Pair;
-import java.util.Collections;
 import javax.inject.Inject;
 
 /**
@@ -38,6 +37,7 @@ public class DriverPreOrderBookingFragment extends BaseFragment implements
 
   private OrderConfirmationViewModel orderConfirmationViewModel;
   private ShakeItPlayer shakeItPlayer;
+  private RingTonePlayer ringTonePlayer;
   private Button declineAction;
   private ProgressBar acceptAction;
   private TextView acceptActionText;
@@ -52,6 +52,10 @@ public class DriverPreOrderBookingFragment extends BaseFragment implements
   @Inject
   public void setShakeItPlayer(@NonNull ShakeItPlayer shakeItPlayer) {
     this.shakeItPlayer = shakeItPlayer;
+  }
+
+  public void setRingTonePlayer(@NonNull RingTonePlayer ringTonePlayer) {
+    this.ringTonePlayer = ringTonePlayer;
   }
 
   @Inject
@@ -91,9 +95,14 @@ public class DriverPreOrderBookingFragment extends BaseFragment implements
 
       @Override
       public void onAnimationEnd(Animator animation) {
+        acceptResetAnimator = ObjectAnimator
+            .ofInt(acceptAction, "progress", acceptAction.getProgress(), 0);
+        acceptResetAnimator.setDuration(150);
+        acceptResetAnimator.setInterpolator(new LinearInterpolator());
+        acceptResetAnimator.start();
         if (!canceled) {
           orderConfirmationViewModel.acceptOrder();
-          shakeItPlayer.shakeIt(Collections.singletonList(new Pair<>(200L, 255)));
+          shakeItPlayer.shakeIt(R.raw.single_shot_vibro);
         }
       }
 
@@ -118,11 +127,6 @@ public class DriverPreOrderBookingFragment extends BaseFragment implements
         return true;
       } else if (i == MotionEvent.ACTION_UP) {
         acceptDelayAnimator.cancel();
-        acceptResetAnimator = ObjectAnimator
-            .ofInt(acceptAction, "progress", acceptAction.getProgress(), 0);
-        acceptResetAnimator.setDuration(150);
-        acceptResetAnimator.setInterpolator(new LinearInterpolator());
-        acceptResetAnimator.start();
         return true;
       }
       return false;
@@ -182,6 +186,10 @@ public class DriverPreOrderBookingFragment extends BaseFragment implements
   }
 
   @Override
+  public void showTimeout(int progress, long timeout) {
+  }
+
+  @Override
   public void showDriverOrderConfirmationPending(boolean pending) {
     showPending(pending, toString());
   }
@@ -198,7 +206,31 @@ public class DriverPreOrderBookingFragment extends BaseFragment implements
   }
 
   @Override
-  public void showBlockingMessage(@Nullable String message) {
+  public void showAcceptedMessage(@Nullable String message) {
+    if (alertDialog != null) {
+      alertDialog.dismiss();
+    }
+    if (message != null) {
+      alertDialog = new Builder(context)
+          .setMessage(message)
+          .setCancelable(false)
+          .setPositiveButton(getString(android.R.string.ok),
+              (a, b) -> orderConfirmationViewModel.messageConsumed())
+          .create();
+      alertDialog.show();
+    }
+  }
+
+  @Override
+  public void showDeclinedMessage(@Nullable String message) {
+    if (message != null) {
+      ringTonePlayer.playRingTone(R.raw.decline_offer);
+      orderConfirmationViewModel.messageConsumed();
+    }
+  }
+
+  @Override
+  public void showExpiredMessage(@Nullable String message) {
     if (alertDialog != null) {
       alertDialog.dismiss();
     }

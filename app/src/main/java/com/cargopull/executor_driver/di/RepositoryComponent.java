@@ -27,6 +27,7 @@ import com.cargopull.executor_driver.interactor.vehicle.LastUsedVehicleGateway;
 import com.cargopull.executor_driver.interactor.vehicle.VehicleOptionsGateway;
 import com.cargopull.executor_driver.interactor.vehicle.VehiclesAndOptionsGateway;
 import java.util.List;
+import java.util.Set;
 
 interface RepositoryComponent {
 
@@ -115,6 +116,9 @@ interface RepositoryComponent {
   LastUsedVehicleGateway getLastUsedVehicleGateway();
 
   @NonNull
+  CommonGateway<String> UpcomingPreOrderMessagesGateway();
+
+  @NonNull
   VehicleOptionsGateway getVehicleOptionsGateway();
 
   @NonNull
@@ -127,5 +131,5 @@ interface RepositoryComponent {
   VehiclesAndOptionsGateway getSelectedVehiclesAndOptionsGateway();
 
   @NonNull
-  CommonGateway<List<Order>> getPreOrdersListGateway();
+  CommonGateway<Set<Order>> getPreOrdersSetGateway();
 }

@@ -46,6 +46,8 @@ public class DriverOrderConfirmationFragment extends BaseFragment implements
   private TextView estimationText;
   private TextView serviceText;
   private Button acceptAction;
+  @Nullable
+  private ObjectAnimator timeoutAnimation;
 
   @Inject
   public void setOrderConfirmationViewModel(
@@ -122,13 +124,64 @@ public class DriverOrderConfirmationFragment extends BaseFragment implements
   }
 
   @Override
+  public void showTimeout(int timeout) {
+  }
+
+  @Override
+  public void showTimeout(int progress, long timeout) {
+    if (timeoutAnimation != null) {
+      timeoutAnimation.cancel();
+    }
+    if (timeout > 0) {
+      timeoutAnimation = ObjectAnimator.ofInt(timeoutChart, "progress", progress, 0);
+      timeoutAnimation.setDuration(timeout);
+      timeoutAnimation.setInterpolator(new LinearInterpolator());
+      timeoutAnimation.addListener(new AnimatorListener() {
+        private boolean canceled;
+
+        @Override
+        public void onAnimationStart(Animator animation) {
+        }
+
+        @Override
+        public void onAnimationEnd(Animator animation) {
+          if (!canceled) {
+            orderConfirmationViewModel.counterTimeOut();
+          }
+        }
+
+        @Override
+        public void onAnimationCancel(Animator animation) {
+          canceled = true;
+        }
+
+        @Override
+        public void onAnimationRepeat(Animator animation) {
+        }
+      });
+      timeoutAnimation.start();
+    } else if (timeout == 0) {
+      orderConfirmationViewModel.counterTimeOut();
+    }
+  }
+
+  @Override
+  public void showFirstPointDistance(String distance) {
+    distanceText.setText(getString(R.string.km, distance));
+  }
+
+  @Override
+  public void showFirstPointEta(int etaTime) {
+    etaText.setText(getString(R.string.eta, Math.round(etaTime / 60F)));
+  }
+
+  @Override
   public void showNextPointAddress(@NonNull String coordinates, @NonNull String address) {
     addressText1.setText(address);
   }
 
   @Override
   public void showNextPointComment(@NonNull String comment) {
-
   }
 
   @Override
@@ -147,53 +200,7 @@ public class DriverOrderConfirmationFragment extends BaseFragment implements
   }
 
   @Override
-  public void showTimeout(int timeout) {
-
-  }
-
-  @Override
-  public void showFirstPointDistance(String distance) {
-    distanceText.setText(getString(R.string.km, distance));
-  }
-
-  @Override
-  public void showFirstPointEta(int etaTime) {
-    etaText.setText(getString(R.string.eta, Math.round(etaTime / 60F)));
-  }
-
-  @Override
-  public void showTimeout(int progress, long timeout) {
-    if (timeout > 0) {
-      ObjectAnimator animation = ObjectAnimator.ofInt(timeoutChart, "progress", progress, 0);
-      animation.setDuration(timeout);
-      animation.setInterpolator(new LinearInterpolator());
-      animation.addListener(new AnimatorListener() {
-        @Override
-        public void onAnimationStart(Animator animation) {
-        }
-
-        @Override
-        public void onAnimationEnd(Animator animation) {
-          orderConfirmationViewModel.counterTimeOut();
-        }
-
-        @Override
-        public void onAnimationCancel(Animator animation) {
-        }
-
-        @Override
-        public void onAnimationRepeat(Animator animation) {
-        }
-      });
-      animation.start();
-    } else {
-      orderConfirmationViewModel.counterTimeOut();
-    }
-  }
-
-  @Override
   public void showEstimatedPrice(@NonNull String priceText) {
-
   }
 
   @Override
@@ -214,22 +221,18 @@ public class DriverOrderConfirmationFragment extends BaseFragment implements
 
   @Override
   public void showOrderOccupationTime(@NonNull String occupationTime) {
-
   }
 
   @Override
   public void showOrderOccupationDate(@NonNull String occupationDate) {
-
   }
 
   @Override
   public void showOrderOptionsRequirements(@NonNull String options) {
-
   }
 
   @Override
   public void showComment(@NonNull String comment) {
-
   }
 
   @Override
@@ -247,9 +250,14 @@ public class DriverOrderConfirmationFragment extends BaseFragment implements
   }
 
   @Override
-  public void showBlockingMessage(@Nullable String message) {
-    if (message != null) {
-      showPending(true, toString() + "0");
-    }
+  public void showAcceptedMessage(@Nullable String message) {
+  }
+
+  @Override
+  public void showDeclinedMessage(@Nullable String message) {
+  }
+
+  @Override
+  public void showExpiredMessage(@Nullable String message) {
   }
 }

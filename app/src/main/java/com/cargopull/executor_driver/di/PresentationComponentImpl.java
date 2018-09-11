@@ -79,6 +79,8 @@ import com.cargopull.executor_driver.presentation.services.ServicesViewModel;
 import com.cargopull.executor_driver.presentation.services.ServicesViewModelImpl;
 import com.cargopull.executor_driver.presentation.smsbutton.SmsButtonViewModel;
 import com.cargopull.executor_driver.presentation.smsbutton.SmsButtonViewModelImpl;
+import com.cargopull.executor_driver.presentation.upcomingpreorder.UpcomingPreOrderViewModel;
+import com.cargopull.executor_driver.presentation.upcomingpreorder.UpcomingPreOrderViewModelImpl;
 import com.cargopull.executor_driver.presentation.updatemessage.UpdateMessageViewModel;
 import com.cargopull.executor_driver.presentation.updatemessage.UpdateMessageViewModelImpl;
 import com.cargopull.executor_driver.presentation.vehicleoptions.VehicleOptionsViewModel;
@@ -125,6 +127,8 @@ class PresentationComponentImpl implements PresentationComponent {
   private ServerTimeViewModel serverTimeViewModel;
   @Nullable
   private ServicesSliderViewModel servicesSliderViewModel;
+  @Nullable
+  private UpcomingPreOrderViewModel upcomingPreOrderViewModel;
   @Nullable
   private UpdateMessageViewModel updateMessageViewModel;
 
@@ -470,7 +474,10 @@ class PresentationComponentImpl implements PresentationComponent {
     return getViewModelInstance(
         fragment,
         OrderConfirmationViewModelImpl.class,
-        new OrderConfirmationViewModelImpl(interactorComponent.getOrderConfirmationUseCase())
+        new OrderConfirmationViewModelImpl(
+            interactorComponent.getOrderConfirmationUseCase(),
+            timeUtils
+        )
     );
   }
 
@@ -483,7 +490,10 @@ class PresentationComponentImpl implements PresentationComponent {
     return getViewModelInstance(
         fragment,
         OrderConfirmationViewModelImpl.class,
-        new OrderConfirmationViewModelImpl(interactorComponent.getPreOrderBookingUseCase())
+        new OrderConfirmationViewModelImpl(
+            interactorComponent.getPreOrderBookingUseCase(),
+            timeUtils
+        )
     );
   }
 
@@ -553,7 +563,7 @@ class PresentationComponentImpl implements PresentationComponent {
   public PreOrdersListViewModel getPreOrdersListViewModel() {
     if (preOrdersListViewModel == null) {
       preOrdersListViewModel = new PreOrdersListViewModelImpl(
-          interactorComponent.getPreOrdersListUseCase(),
+          interactorComponent.getPreOrdersSetUseCase(),
           interactorComponent.getSelectedOrderUseCase(),
           new PreOrdersListItemsMapper()
       );
@@ -635,6 +645,17 @@ class PresentationComponentImpl implements PresentationComponent {
 
   @NonNull
   @Override
+  public UpcomingPreOrderViewModel getUpcomingPreOrderViewModel() {
+    if (upcomingPreOrderViewModel == null) {
+      upcomingPreOrderViewModel = new UpcomingPreOrderViewModelImpl(
+          interactorComponent.getUpcomingPreOrderMessagesUseCase()
+      );
+    }
+    return upcomingPreOrderViewModel;
+  }
+
+  @NonNull
+  @Override
   public UpdateMessageViewModel getUpdateMessageViewModel() {
     if (updateMessageViewModel == null) {
       updateMessageViewModel = new UpdateMessageViewModelImpl(
@@ -707,7 +728,9 @@ class PresentationComponentImpl implements PresentationComponent {
         fragment,
         OrderConfirmationViewModelImpl.class,
         new OrderConfirmationViewModelImpl(
-            interactorComponent.getSelectedPreOrderConfirmationUseCase())
+            interactorComponent.getSelectedPreOrderConfirmationUseCase(),
+            timeUtils
+        )
     );
   }
 
