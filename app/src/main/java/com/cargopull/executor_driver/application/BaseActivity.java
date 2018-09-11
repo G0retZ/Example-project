@@ -268,7 +268,7 @@ public class BaseActivity extends AppCompatActivity implements ExecutorStateView
                 )));
               }
             })
-            .setNegativeButton(getString(R.string.exit_app), (a, b) -> exitAndKill())
+            .setNegativeButton(getString(R.string.exit), (a, b) -> exitAndKill())
             .create();
         if (resumed) {
           errorDialog.show();

@@ -126,4 +126,5 @@
   <string name="distance_to_order">Расстояние до заказа</string>
   <string name="preliminary_order">Заказ ко времени</string>
   <string name="time_to_set_out">Пора! Выезжайте к клиенту или откажитесь.</string>
+  <string name="exit">Выйти</string>
 </resources>
