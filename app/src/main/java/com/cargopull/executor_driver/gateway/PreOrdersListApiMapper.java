@@ -10,15 +10,15 @@ import com.cargopull.executor_driver.entity.RoutePoint;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 import javax.inject.Inject;
 import ua.naiksoftware.stomp.client.StompMessage;
 
 /**
  * Преобразуем сообщение сервера в бизнес объект списка предзаказов.
  */
-public class PreOrdersListApiMapper implements Mapper<StompMessage, List<Order>> {
+public class PreOrdersListApiMapper implements Mapper<StompMessage, Set<Order>> {
 
   @NonNull
   private final Mapper<ApiOptionItem, Option> apiOptionMapper;
@@ -34,7 +34,7 @@ public class PreOrdersListApiMapper implements Mapper<StompMessage, List<Order>>
 
   @NonNull
   @Override
-  public List<Order> map(@NonNull StompMessage from) throws Exception {
+  public Set<Order> map(@NonNull StompMessage from) throws Exception {
     if (from.getPayload() == null) {
       throw new DataMappingException("Ошибка маппинга: данные не должны быть null!");
     }
@@ -42,15 +42,15 @@ public class PreOrdersListApiMapper implements Mapper<StompMessage, List<Order>>
       throw new DataMappingException("Ошибка маппинга: данные не должны быть пустыми!");
     }
     Gson gson = new Gson();
-    Type type = new TypeToken<List<ApiOrder>>() {
+    Type type = new TypeToken<Set<ApiOrder>>() {
     }.getType();
-    List<ApiOrder> apiOrders;
+    Set<ApiOrder> apiOrders;
     try {
       apiOrders = gson.fromJson(from.getPayload(), type);
     } catch (Exception e) {
       throw new DataMappingException("Ошибка маппинга: не удалось распарсить JSON: " + from, e);
     }
-    List<Order> orders = new ArrayList<>();
+    Set<Order> orders = new HashSet<>();
     for (ApiOrder apiOrder : apiOrders) {
       orders.add(map(apiOrder));
     }

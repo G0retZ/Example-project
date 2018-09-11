@@ -8,20 +8,20 @@ import io.reactivex.BackpressureStrategy;
 import io.reactivex.Emitter;
 import io.reactivex.Flowable;
 import io.reactivex.schedulers.Schedulers;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 public class OrdersUseCaseImpl implements OrdersUseCase {
 
   @NonNull
   private final ErrorReporter errorReporter;
   @NonNull
-  private final CommonGateway<List<Order>> gateway;
+  private final CommonGateway<Set<Order>> gateway;
   // Это для того чтобы combineLatest стартовал сразу.
   @NonNull
-  private final Order dumbOrder = new Order(0, "", "", 0, "", 0, 0, 0, 0, 0, 0, 0, 0, 0);
+  private final Order dumbOrder = new Order(-1, "", "", 0, "", 0, 0, 0, 0, 0, 0, 0, 0, 0);
   @Nullable
-  private Flowable<List<Order>> ordersFlowable;
+  private Flowable<Set<Order>> ordersFlowable;
   @NonNull
   private Emitter<Order> addEmitter = new Emitter<Order>() {
     @Override
@@ -52,14 +52,14 @@ public class OrdersUseCaseImpl implements OrdersUseCase {
   };
 
   public OrdersUseCaseImpl(@NonNull ErrorReporter errorReporter,
-      @NonNull CommonGateway<List<Order>> gateway) {
+      @NonNull CommonGateway<Set<Order>> gateway) {
     this.errorReporter = errorReporter;
     this.gateway = gateway;
   }
 
   @NonNull
   @Override
-  public Flowable<List<Order>> getOrdersList() {
+  public Flowable<Set<Order>> getOrdersSet() {
     if (ordersFlowable == null) {
       ordersFlowable = Flowable.combineLatest(
           Flowable.<Order>create(
@@ -76,20 +76,24 @@ public class OrdersUseCaseImpl implements OrdersUseCase {
                 addEmitter.onComplete();
                 removeEmitter.onComplete();
               }),
-          (scheduledOrder, unScheduledOrder, preOrders) -> {
-            if (scheduledOrder != dumbOrder && !preOrders.contains(scheduledOrder)) {
-              preOrders.add(scheduledOrder);
-            }
-            preOrders.remove(unScheduledOrder);
-            preOrders = new ArrayList<>(preOrders);
-            return preOrders;
-          }
+          this::merge
       )
           .doOnError(errorReporter::reportError)
           .replay(1)
           .refCount();
     }
     return ordersFlowable;
+  }
+
+  private Set<Order> merge(Order addPreOrder, Order removePreOrder, Set<Order> preOrders) {
+    // Удаляем старое и то что нужно удалить
+    preOrders.remove(addPreOrder);
+    preOrders.remove(removePreOrder);
+    // Добавляем то что нужно добавить, если это не заказ-заглушка
+    if (addPreOrder != dumbOrder) {
+      preOrders.add(addPreOrder);
+    }
+    return new HashSet<>(preOrders);
   }
 
   @Override

@@ -497,7 +497,7 @@ class InteractorComponentImpl implements InteractorComponent {
     if (preOrdersListUseCase == null) {
       preOrdersListUseCase = new OrdersUseCaseImpl(
           errorReporter,
-          repositoryComponent.getPreOrdersListGateway()
+          repositoryComponent.getPreOrdersSetGateway()
       );
     }
     return preOrdersListUseCase;

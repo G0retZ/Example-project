@@ -79,8 +79,9 @@ import com.cargopull.executor_driver.interactor.services.ServicesGateway;
 import com.cargopull.executor_driver.interactor.vehicle.LastUsedVehicleGateway;
 import com.cargopull.executor_driver.interactor.vehicle.VehicleOptionsGateway;
 import com.cargopull.executor_driver.interactor.vehicle.VehiclesAndOptionsGateway;
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 class RepositoryComponentImpl implements RepositoryComponent {
 
@@ -155,7 +156,7 @@ class RepositoryComponentImpl implements RepositoryComponent {
   @Nullable
   private VehiclesAndOptionsGateway selectedVehiclesAndOptionsGateway;
   @Nullable
-  private CommonGateway<List<Order>> preOrdersListGateway;
+  private CommonGateway<Set<Order>> preOrdersListGateway;
 
   RepositoryComponentImpl(@NonNull BackendComponent backendComponent,
       @NonNull GeolocationCenter geolocationCenter) {
@@ -569,7 +570,7 @@ class RepositoryComponentImpl implements RepositoryComponent {
 
   @NonNull
   @Override
-  public CommonGateway<List<Order>> getPreOrdersListGateway() {
+  public CommonGateway<Set<Order>> getPreOrdersSetGateway() {
     if (preOrdersListGateway == null) {
       preOrdersListGateway = new TopicGatewayWithDefaultImpl<>(
           backendComponent.getPersonalTopicListener(),
@@ -578,7 +579,7 @@ class RepositoryComponentImpl implements RepositoryComponent {
               new RoutePointApiMapper()
           ),
           new PreOrdersListFilter(),
-          new ArrayList<>()
+          new HashSet<>()
       );
     }
     return preOrdersListGateway;

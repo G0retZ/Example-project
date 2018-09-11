@@ -5,22 +5,23 @@ import io.reactivex.functions.Function;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import javax.inject.Inject;
 import org.joda.time.DateTime;
 
 /**
  * Маппер списка предзаказов в сортированный список моделей.
  */
-public class PreOrdersListItemsMapper implements Function<List<Order>, List<PreOrdersListItem>> {
+public class PreOrdersListItemsMapper implements Function<Set<Order>, List<PreOrdersListItem>> {
 
   @Inject
   public PreOrdersListItemsMapper() {
   }
 
   @Override
-  public List<PreOrdersListItem> apply(List<Order> orders) {
+  public List<PreOrdersListItem> apply(Set<Order> orders) {
     List<PreOrdersListItem> preOrdersListItems = new ArrayList<>();
-    Collections.sort(orders,
+    Collections.sort(new ArrayList<>(orders),
         (o1, o2) -> Long.compare(o1.getScheduledStartTime(), o2.getScheduledStartTime()));
     int offset = -1;
     for (Order order : orders) {

@@ -65,7 +65,7 @@ public class PreOrdersListViewModelImpl extends ViewModel implements PreOrdersLi
       return;
     }
     viewStateLiveData.postValue(new PreOrdersListViewStatePending(lastViewState));
-    preOrdersDisposable = ordersUseCase.getOrdersList()
+    preOrdersDisposable = ordersUseCase.getOrdersSet()
         .observeOn(AndroidSchedulers.mainThread())
         .map(mapper)
         .subscribe(

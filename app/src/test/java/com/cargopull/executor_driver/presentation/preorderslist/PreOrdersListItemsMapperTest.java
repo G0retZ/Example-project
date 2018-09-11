@@ -5,6 +5,7 @@ import static org.mockito.Mockito.when;
 
 import com.cargopull.executor_driver.entity.Order;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import org.joda.time.DateTime;
 import org.junit.Before;
@@ -45,7 +46,7 @@ public class PreOrdersListItemsMapperTest {
 
     // Действие:
     List<PreOrdersListItem> preOrdersListItems =
-        preOrdersListItemsMapper.apply(Arrays.asList(order, order1, order2, order3));
+        preOrdersListItemsMapper.apply(new HashSet<>(Arrays.asList(order, order1, order2, order3)));
 
     // Результат:
     assertEquals(preOrdersListItems.size(), 5);
@@ -70,7 +71,7 @@ public class PreOrdersListItemsMapperTest {
 
     // Действие:
     List<PreOrdersListItem> preOrdersListItems =
-        preOrdersListItemsMapper.apply(Arrays.asList(order, order1, order2, order3));
+        preOrdersListItemsMapper.apply(new HashSet<>(Arrays.asList(order, order1, order2, order3)));
 
     // Результат:
     assertEquals(preOrdersListItems.size(), 6);
@@ -96,7 +97,7 @@ public class PreOrdersListItemsMapperTest {
 
     // Действие:
     List<PreOrdersListItem> preOrdersListItems =
-        preOrdersListItemsMapper.apply(Arrays.asList(order, order1, order2, order3));
+        preOrdersListItemsMapper.apply(new HashSet<>(Arrays.asList(order, order1, order2, order3)));
 
     // Результат:
     assertEquals(preOrdersListItems.size(), 7);
