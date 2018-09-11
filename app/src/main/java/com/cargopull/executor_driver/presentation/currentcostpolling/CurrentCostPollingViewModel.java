@@ -7,8 +7,4 @@ import com.cargopull.executor_driver.presentation.ViewModel;
  */
 public interface CurrentCostPollingViewModel extends ViewModel<Runnable> {
 
-  /**
-   * Запрашивает подписку на статус исполнителя со сбросом.
-   */
-  void initializeCurrentCostPolling();
 }

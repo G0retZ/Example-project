@@ -25,6 +25,7 @@ public class UpdateMessageViewModelImpl extends ViewModel implements
   public UpdateMessageViewModelImpl(@NonNull UpdateMessageUseCase updateMessageUseCase) {
     this.updateMessageUseCase = updateMessageUseCase;
     messageLiveData = new MutableLiveData<>();
+    loadUpdateMessages();
   }
 
   @NonNull
@@ -44,8 +45,7 @@ public class UpdateMessageViewModelImpl extends ViewModel implements
     messageLiveData.postValue(null);
   }
 
-  @Override
-  public void initializeUpdateMessages() {
+  private void loadUpdateMessages() {
     disposable.dispose();
     disposable = updateMessageUseCase.getUpdateMessages()
         .observeOn(AndroidSchedulers.mainThread())

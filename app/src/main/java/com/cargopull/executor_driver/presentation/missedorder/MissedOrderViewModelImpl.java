@@ -26,6 +26,7 @@ public class MissedOrderViewModelImpl extends ViewModel implements
   public MissedOrderViewModelImpl(@NonNull MissedOrderUseCase missedOrderUseCase) {
     this.missedOrderUseCase = missedOrderUseCase;
     messageLiveData = new SingleLiveEvent<>();
+    loadMissedOrderMessages();
   }
 
   @NonNull
@@ -40,8 +41,7 @@ public class MissedOrderViewModelImpl extends ViewModel implements
     return new MutableLiveData<>();
   }
 
-  @Override
-  public void initializeMissedOrderMessages() {
+  private void loadMissedOrderMessages() {
     disposable.dispose();
     disposable = missedOrderUseCase.getMissedOrders()
         .observeOn(AndroidSchedulers.mainThread())

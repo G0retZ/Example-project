@@ -35,7 +35,7 @@ public class ExecutorStateNotOnlineUseCaseImpl implements
   @NonNull
   @Override
   public Completable setExecutorNotOnline() {
-    return executorStateUseCase.getExecutorStates(false)
+    return executorStateUseCase.getExecutorStates()
         .firstOrError()
         .map(executorState -> {
           if (!allowedExecutorStates.contains(executorState)) {

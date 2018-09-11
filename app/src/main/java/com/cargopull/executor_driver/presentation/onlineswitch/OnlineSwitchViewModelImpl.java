@@ -86,7 +86,7 @@ public class OnlineSwitchViewModelImpl extends ViewModel implements OnlineSwitch
   private void loadExecutorState() {
     viewStateLiveData.postValue(new OnlineSwitchViewStatePending(lastViewState));
     executorStatesDisposable.dispose();
-    executorStatesDisposable = executorStateUseCase.getExecutorStates(false)
+    executorStatesDisposable = executorStateUseCase.getExecutorStates()
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(this::onNextState,
             throwable -> {

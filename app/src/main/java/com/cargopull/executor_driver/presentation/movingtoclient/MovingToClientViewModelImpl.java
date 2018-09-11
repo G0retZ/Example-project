@@ -53,11 +53,10 @@ public class MovingToClientViewModelImpl extends ViewModel implements MovingToCl
     if (!callingDisposable.isDisposed()) {
       return;
     }
-    callingDisposable = Completable.complete()
-        .doOnComplete(() -> {
-          viewStateLiveData.postValue(new MovingToClientViewStateCalling());
-          navigateLiveData.postValue(MovingToClientNavigate.CALL_TO_CLIENT);
-        })
+    callingDisposable = Completable.fromAction(() -> {
+      viewStateLiveData.postValue(new MovingToClientViewStateCalling());
+      navigateLiveData.postValue(MovingToClientNavigate.CALL_TO_CLIENT);
+    })
         .delay(10, TimeUnit.SECONDS)
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(

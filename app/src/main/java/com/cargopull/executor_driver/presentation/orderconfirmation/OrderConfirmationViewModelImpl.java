@@ -4,6 +4,9 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
+import com.cargopull.executor_driver.entity.OrderOfferDecisionException;
+import com.cargopull.executor_driver.entity.OrderOfferExpiredException;
+import com.cargopull.executor_driver.gateway.DataMappingException;
 import com.cargopull.executor_driver.interactor.OrderConfirmationUseCase;
 import com.cargopull.executor_driver.presentation.CommonNavigate;
 import com.cargopull.executor_driver.presentation.SingleLiveEvent;
@@ -55,10 +58,19 @@ public class OrderConfirmationViewModelImpl extends ViewModel implements
     disposable = orderConfirmationUseCase.sendDecision(true)
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(
-            () -> {
-            }, throwable -> {
-              viewStateLiveData.postValue(new OrderConfirmationViewStateIdle());
-              navigateLiveData.postValue(CommonNavigate.NO_CONNECTION);
+            message -> viewStateLiveData.postValue(new OrderConfirmationViewStateResult(message)),
+            t -> {
+              if (t instanceof OrderOfferExpiredException) {
+                viewStateLiveData.postValue(new OrderConfirmationViewStateResult(t.getMessage()));
+              } else if (t instanceof OrderOfferDecisionException) {
+                viewStateLiveData.postValue(new OrderConfirmationViewStateIdle());
+              } else if (t instanceof DataMappingException) {
+                viewStateLiveData.postValue(new OrderConfirmationViewStateIdle());
+                navigateLiveData.postValue(CommonNavigate.SERVER_DATA_ERROR);
+              } else {
+                viewStateLiveData.postValue(new OrderConfirmationViewStateIdle());
+                navigateLiveData.postValue(CommonNavigate.NO_CONNECTION);
+              }
             }
         );
   }
@@ -72,10 +84,19 @@ public class OrderConfirmationViewModelImpl extends ViewModel implements
     disposable = orderConfirmationUseCase.sendDecision(false)
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(
-            () -> {
-            }, throwable -> {
-              viewStateLiveData.postValue(new OrderConfirmationViewStateIdle());
-              navigateLiveData.postValue(CommonNavigate.NO_CONNECTION);
+            message -> navigateLiveData.postValue(OrderConfirmationNavigate.CLOSE),
+            t -> {
+              if (t instanceof OrderOfferExpiredException) {
+                viewStateLiveData.postValue(new OrderConfirmationViewStateResult(t.getMessage()));
+              } else if (t instanceof OrderOfferDecisionException) {
+                viewStateLiveData.postValue(new OrderConfirmationViewStateIdle());
+              } else if (t instanceof DataMappingException) {
+                viewStateLiveData.postValue(new OrderConfirmationViewStateIdle());
+                navigateLiveData.postValue(CommonNavigate.SERVER_DATA_ERROR);
+              } else {
+                viewStateLiveData.postValue(new OrderConfirmationViewStateIdle());
+                navigateLiveData.postValue(CommonNavigate.NO_CONNECTION);
+              }
             }
         );
   }
@@ -83,6 +104,11 @@ public class OrderConfirmationViewModelImpl extends ViewModel implements
   @Override
   public void counterTimeOut() {
     viewStateLiveData.postValue(new OrderConfirmationViewStatePending());
+  }
+
+  @Override
+  public void messageConsumed() {
+    navigateLiveData.postValue(OrderConfirmationNavigate.CLOSE);
   }
 
   @Override

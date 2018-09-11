@@ -111,5 +111,11 @@
   <string name="not_now">Не сейчас</string>
   <string name="version_deprecated">Текущая версия устарела. Обновите приложение.</string>
   <string name="take_break">Перерыв</string>
+  <string name="book">Бронировать</string>
+  <string name="reject">Отказаться</string>
+  <string name="time">Время</string>
+  <string name="new_pre_order">Новый предзаказ!</string>
+  <string name="new_pre_order_message">Для рассмотрения доступен новый предварительный заказ.</string>
+  <string name="available_pre_order">Доступный предзаказ</string>
   <string name="exit">Выйти</string>
 </resources>

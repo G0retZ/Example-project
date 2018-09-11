@@ -14,7 +14,7 @@ public class ApiOrder {
   private String estimatedAmountText;
   @SerializedName("estimatedAmount")
   private long estimatedAmount;
-  @SerializedName("overPackageStartCalculationTime")
+  @SerializedName(value = "overPackageStartCalculationTime", alternate = {"estimatedTime"})
   private long estimatedTime;
   @SerializedName("estimatedRouteDistance")
   private int estimatedRouteDistance;
@@ -30,7 +30,9 @@ public class ApiOrder {
   @SerializedName("confirmationTime")
   private long confirmationTime;
   @SerializedName("startDate")
-  private long orderStartTime;
+  private long startTime;
+  @SerializedName("preliminaryDate")
+  private long scheduledStartTime;
   @Nullable
   @SerializedName("executorDistance")
   private ApiDriverDistancePair executorDistance;
@@ -54,7 +56,7 @@ public class ApiOrder {
   @SuppressWarnings("SameParameterValue")
   ApiOrder(long id, @Nullable String estimatedAmountText, long estimatedAmount, long estimatedTime,
       int estimatedRouteDistance, long totalAmount, @Nullable String comment, long timeout,
-      long etaToStartPoint, long confirmationTime, long orderStartTime,
+      long etaToStartPoint, long confirmationTime, long startTime, long scheduledStartTime,
       @Nullable ApiDriverDistancePair executorDistance,
       @Nullable ApiOrderService apiOrderService,
       @Nullable List<ApiRoutePoint> route,
@@ -69,7 +71,8 @@ public class ApiOrder {
     this.timeout = timeout;
     this.etaToStartPoint = etaToStartPoint;
     this.confirmationTime = confirmationTime;
-    this.orderStartTime = orderStartTime;
+    this.startTime = startTime;
+    this.scheduledStartTime = scheduledStartTime;
     this.executorDistance = executorDistance;
     this.apiOrderService = apiOrderService;
     this.route = route;
@@ -118,8 +121,12 @@ public class ApiOrder {
     return confirmationTime;
   }
 
-  public long getOrderStartTime() {
-    return orderStartTime;
+  public long getStartTime() {
+    return startTime;
+  }
+
+  public long getScheduledStartTime() {
+    return scheduledStartTime;
   }
 
   @Nullable

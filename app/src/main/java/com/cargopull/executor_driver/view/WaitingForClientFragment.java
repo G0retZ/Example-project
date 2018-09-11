@@ -276,6 +276,16 @@ public class WaitingForClientFragment extends BaseFragment implements
   }
 
   @Override
+  public void showOrderOccupationTime(@NonNull String occupationTime) {
+
+  }
+
+  @Override
+  public void showOrderOccupationDate(@NonNull String occupationDate) {
+
+  }
+
+  @Override
   public void showOrderOptionsRequirements(@NonNull String options) {
     if (options.trim().isEmpty()) {
       optionsTitleText.setVisibility(View.GONE);
@@ -297,5 +307,9 @@ public class WaitingForClientFragment extends BaseFragment implements
       cargoDescText.setVisibility(View.VISIBLE);
       cargoDescText.setText(comment);
     }
+  }
+
+  @Override
+  public void showOrderExpiredMessage(@Nullable String message) {
   }
 }

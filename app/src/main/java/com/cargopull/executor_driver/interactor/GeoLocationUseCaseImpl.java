@@ -50,7 +50,7 @@ public class GeoLocationUseCaseImpl implements GeoLocationUseCase {
   @Override
   public Flowable<GeoLocation> getGeoLocations() {
     if (geoLocationFlowable == null) {
-      geoLocationFlowable = executorStateUseCase.getExecutorStates(false)
+      geoLocationFlowable = executorStateUseCase.getExecutorStates()
           .onErrorResumeNext(Flowable.empty())
           .map(delays::get)
           .switchMap(geoLocationGateway::getGeoLocations)

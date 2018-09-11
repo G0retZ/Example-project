@@ -28,7 +28,7 @@ public class PendingDialogFragment extends BaseDialogFragment {
   @NonNull
   private final AtomicBoolean isShowing = new AtomicBoolean(false);
   private FloatingActionButton exitAction;
-  private final Runnable runnable = () -> exitAction.setVisibility(View.VISIBLE);
+  private final Runnable runnable = () -> exitAction.show();
 
   @Override
   public void show(FragmentManager manager, String tag) {
@@ -82,7 +82,7 @@ public class PendingDialogFragment extends BaseDialogFragment {
   public void onDismiss(DialogInterface dialog) {
     super.onDismiss(dialog);
     isShowing.set(false);
-    exitAction.setVisibility(View.GONE);
+    exitAction.hide();
     exitAction.removeCallbacks(runnable);
   }
 

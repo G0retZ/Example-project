@@ -3,7 +3,6 @@ package com.cargopull.executor_driver.view;
 import android.animation.Animator;
 import android.animation.Animator.AnimatorListener;
 import android.animation.ObjectAnimator;
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -47,13 +46,6 @@ public class DriverOrderConfirmationFragment extends BaseFragment implements
   private TextView estimationText;
   private TextView serviceText;
   private Button acceptAction;
-  private Context context;
-
-  @Override
-  public void onAttach(Context context) {
-    super.onAttach(context);
-    this.context = context;
-  }
 
   @Inject
   public void setOrderConfirmationViewModel(
@@ -115,12 +107,6 @@ public class DriverOrderConfirmationFragment extends BaseFragment implements
   }
 
   @Override
-  public void onDetach() {
-    super.onDetach();
-    context = null;
-  }
-
-  @Override
   public void showDriverOrderConfirmationPending(boolean pending) {
     showPending(pending, toString() + "0");
   }
@@ -132,7 +118,7 @@ public class DriverOrderConfirmationFragment extends BaseFragment implements
 
   @Override
   public void showLoadPoint(@NonNull String url) {
-    Picasso.with(context).load(url).into(mapImage);
+    Picasso.get().load(url).into(mapImage);
   }
 
   @Override
@@ -227,6 +213,16 @@ public class DriverOrderConfirmationFragment extends BaseFragment implements
   }
 
   @Override
+  public void showOrderOccupationTime(@NonNull String occupationTime) {
+
+  }
+
+  @Override
+  public void showOrderOccupationDate(@NonNull String occupationDate) {
+
+  }
+
+  @Override
   public void showOrderOptionsRequirements(@NonNull String options) {
 
   }
@@ -237,6 +233,10 @@ public class DriverOrderConfirmationFragment extends BaseFragment implements
   }
 
   @Override
+  public void showOrderExpiredMessage(@Nullable String message) {
+  }
+
+  @Override
   public void enableDeclineButton(boolean enable) {
     declineAction.setEnabled(enable);
   }
@@ -244,5 +244,12 @@ public class DriverOrderConfirmationFragment extends BaseFragment implements
   @Override
   public void enableAcceptButton(boolean enable) {
     acceptAction.setEnabled(enable);
+  }
+
+  @Override
+  public void showBlockingMessage(@Nullable String message) {
+    if (message != null) {
+      showPending(true, toString() + "0");
+    }
   }
 }

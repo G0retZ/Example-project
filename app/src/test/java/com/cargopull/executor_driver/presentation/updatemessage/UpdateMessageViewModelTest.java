@@ -14,7 +14,8 @@ import android.arch.lifecycle.Observer;
 import com.cargopull.executor_driver.ViewModelThreadTestRule;
 import com.cargopull.executor_driver.interactor.UpdateMessageUseCase;
 import com.cargopull.executor_driver.presentation.ViewState;
-import io.reactivex.Flowable;
+import io.reactivex.BackpressureStrategy;
+import io.reactivex.subjects.PublishSubject;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
@@ -39,44 +40,44 @@ public class UpdateMessageViewModelTest {
   @Captor
   private ArgumentCaptor<ViewState<UpdateMessageViewActions>> viewStateCaptor;
   @Mock
+  private UpdateMessageUseCase useCase;
+  @Mock
   private UpdateMessageViewActions viewActions;
 
-  @Mock
-  private UpdateMessageUseCase updateMessageUseCase;
+  private PublishSubject<String> publishSubject;
 
   @Before
   public void setUp() {
-    when(updateMessageUseCase.getUpdateMessages()).thenReturn(Flowable.never());
-    viewModel = new UpdateMessageViewModelImpl(updateMessageUseCase);
+    publishSubject = PublishSubject.create();
+    when(useCase.getUpdateMessages())
+        .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
+    viewModel = new UpdateMessageViewModelImpl(useCase);
   }
 
   /* Тетсируем работу с юзкейсом. */
 
   /**
-   * Должен попросить у юзкейса загрузить сообщения о новой версии приложения.
+   * Должен просить юзкейс получать сообщения о новой версии приложения только при создании.
    */
   @Test
-  public void askDataReceiverToSubscribeToUpdateMessages() {
-    // Действие:
-    viewModel.initializeUpdateMessages();
-
+  public void askUseCaseToSubscribeToUpdateMessagesInitially() {
     // Результат:
-    verify(updateMessageUseCase, only()).getUpdateMessages();
+    verify(useCase, only()).getUpdateMessages();
   }
 
   /**
-   * Должен просить у юзкейса загрузить сообщения о новой версии приложения, даже если уже подписан.
+   * Не должен трогать юзкейс на подписках.
    */
   @Test
-  public void askDataReceiverToSubscribeToUpdateMessagesIfAlreadyAsked() {
+  public void doNotTouchUseCaseOnSubscriptions() {
     // Действие:
-    viewModel.initializeUpdateMessages();
-    viewModel.initializeUpdateMessages();
-    viewModel.initializeUpdateMessages();
+    viewModel.getViewStateLiveData();
+    viewModel.getNavigationLiveData();
+    viewModel.getViewStateLiveData();
+    viewModel.getNavigationLiveData();
 
     // Результат:
-    verify(updateMessageUseCase, times(3)).getUpdateMessages();
-    verifyNoMoreInteractions(updateMessageUseCase);
+    verify(useCase, only()).getUpdateMessages();
   }
 
   /* Тетсируем сообщение. */
@@ -87,11 +88,10 @@ public class UpdateMessageViewModelTest {
   @Test
   public void showUpdateMessageMessage() {
     // Дано:
-    when(updateMessageUseCase.getUpdateMessages()).thenReturn(Flowable.just("Message"));
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
-    viewModel.initializeUpdateMessages();
+    publishSubject.onNext("Message");
 
     // Результат:
     verify(viewStateObserver, only()).onChanged(viewStateCaptor.capture());
@@ -105,11 +105,10 @@ public class UpdateMessageViewModelTest {
   @Test
   public void showOnlineMessageThenNull() {
     // Дано:
-    when(updateMessageUseCase.getUpdateMessages()).thenReturn(Flowable.just("Message"));
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
-    viewModel.initializeUpdateMessages();
+    publishSubject.onNext("Message");
     viewModel.messageConsumed();
 
     // Результат:
@@ -127,11 +126,10 @@ public class UpdateMessageViewModelTest {
   @Test
   public void doNotShowEmptyMessage() {
     // Дано:
-    when(updateMessageUseCase.getUpdateMessages()).thenReturn(Flowable.just(""));
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
-    viewModel.initializeUpdateMessages();
+    publishSubject.onNext("");
 
     // Результат:
     verifyZeroInteractions(viewStateObserver);
@@ -143,11 +141,10 @@ public class UpdateMessageViewModelTest {
   @Test
   public void doNotShowSpaceMessage() {
     // Дано:
-    when(updateMessageUseCase.getUpdateMessages()).thenReturn(Flowable.just("\n"));
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
-    viewModel.initializeUpdateMessages();
+    publishSubject.onNext("\n");
 
     // Результат:
     verifyZeroInteractions(viewStateObserver);

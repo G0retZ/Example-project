@@ -1,6 +1,5 @@
 package com.cargopull.executor_driver.presentation.balance;
 
-import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -55,12 +54,12 @@ public class BalanceViewModelTest {
   @Before
   public void setUp() {
     publishSubject = PublishSubject.create();
-    when(useCase.getExecutorBalance(anyBoolean()))
+    when(useCase.getExecutorBalance())
         .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
     viewModel = new BalanceViewModelImpl(useCase);
   }
 
-  /* Тетсируем работу с юзкейсом заказа. */
+  /* Тетсируем работу с юзкейсом. */
 
   /**
    * Должен просить юзкейс получать список причин отказа только при создании.
@@ -68,7 +67,7 @@ public class BalanceViewModelTest {
   @Test
   public void askUseCaseForExecutorBalancesInitially() {
     // Результат:
-    verify(useCase, only()).getExecutorBalance(false);
+    verify(useCase, only()).getExecutorBalance();
   }
 
   /**
@@ -83,7 +82,7 @@ public class BalanceViewModelTest {
     viewModel.getNavigationLiveData();
 
     // Результат:
-    verify(useCase, only()).getExecutorBalance(false);
+    verify(useCase, only()).getExecutorBalance();
   }
 
   /* Тетсируем переключение состояний от сервера. */

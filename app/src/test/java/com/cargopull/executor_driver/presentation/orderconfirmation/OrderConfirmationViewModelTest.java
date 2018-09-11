@@ -12,10 +12,13 @@ import android.arch.core.executor.testing.InstantTaskExecutorRule;
 import android.arch.lifecycle.Observer;
 import com.cargopull.executor_driver.ViewModelThreadTestRule;
 import com.cargopull.executor_driver.backend.web.NoNetworkException;
+import com.cargopull.executor_driver.entity.OrderOfferDecisionException;
+import com.cargopull.executor_driver.entity.OrderOfferExpiredException;
+import com.cargopull.executor_driver.gateway.DataMappingException;
 import com.cargopull.executor_driver.interactor.OrderConfirmationUseCase;
 import com.cargopull.executor_driver.presentation.CommonNavigate;
 import com.cargopull.executor_driver.presentation.ViewState;
-import io.reactivex.Completable;
+import io.reactivex.Single;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
@@ -45,7 +48,7 @@ public class OrderConfirmationViewModelTest {
 
   @Before
   public void setUp() {
-    when(orderConfirmationUseCase.sendDecision(anyBoolean())).thenReturn(Completable.never());
+    when(orderConfirmationUseCase.sendDecision(anyBoolean())).thenReturn(Single.never());
     viewModel = new OrderConfirmationViewModelImpl(orderConfirmationUseCase);
   }
 
@@ -58,7 +61,7 @@ public class OrderConfirmationViewModelTest {
   public void askUseCaseToSendOrderAccepted() {
     // Дано:
     when(orderConfirmationUseCase.sendDecision(anyBoolean()))
-        .thenReturn(Completable.complete());
+        .thenReturn(Single.just(""));
 
     // Действие:
     viewModel.acceptOrder();
@@ -74,7 +77,7 @@ public class OrderConfirmationViewModelTest {
   public void askUseCaseToSendOrderDeclined() {
     // Дано:
     when(orderConfirmationUseCase.sendDecision(anyBoolean()))
-        .thenReturn(Completable.complete());
+        .thenReturn(Single.just(""));
 
     // Действие:
     viewModel.declineOrder();
@@ -97,10 +100,23 @@ public class OrderConfirmationViewModelTest {
     verify(orderConfirmationUseCase, only()).sendDecision(true);
   }
 
+  /**
+   * Не должен трогать юзкейс для прочих операций.
+   */
+  @Test
+  public void DoNotTouchUseCaseForOther() {
+    // Действие:
+    viewModel.counterTimeOut();
+    viewModel.messageConsumed();
+
+    // Результат:
+    verifyZeroInteractions(orderConfirmationUseCase);
+  }
+
   /* Тетсируем переключение состояний. */
 
   /**
-   * Должен вернуть состояние вида бездействия изначально.
+   * Должен вернуть состояние вида бездействия без сообщения изначально.
    */
   @Test
   public void setPendingViewStateToLiveDataInitially() {
@@ -112,6 +128,24 @@ public class OrderConfirmationViewModelTest {
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(any(OrderConfirmationViewStateIdle.class));
+    verifyNoMoreInteractions(viewStateObserver);
+  }
+
+  /**
+   * Должен вернуть состояние вида "В процессе".
+   */
+  @Test
+  public void setPendingViewStateWithoutOrderToLiveDataForCounterTimeOut() {
+    // Дано:
+    InOrder inOrder = Mockito.inOrder(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
+
+    // Действие:
+    viewModel.counterTimeOut();
+
+    // Результат:
+    inOrder.verify(viewStateObserver).onChanged(any(OrderConfirmationViewStateIdle.class));
+    inOrder.verify(viewStateObserver).onChanged(any(OrderConfirmationViewStatePending.class));
     verifyNoMoreInteractions(viewStateObserver);
   }
 
@@ -152,14 +186,14 @@ public class OrderConfirmationViewModelTest {
   }
 
   /**
-   * Должен вернуть состояние вида "Ошибка" сети.
+   * Должен вернуть состояние вида бездействия при ошибке сети.
    */
   @Test
-  public void setNoNetworkErrorViewStateWithoutOrderToLiveDataForAccept() {
+  public void setIdleViewStateWithoutOrderToLiveDataForAcceptOnNoNetworkError() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     when(orderConfirmationUseCase.sendDecision(anyBoolean()))
-        .thenReturn(Completable.error(NoNetworkException::new));
+        .thenReturn(Single.error(NoNetworkException::new));
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
@@ -173,14 +207,14 @@ public class OrderConfirmationViewModelTest {
   }
 
   /**
-   * Должен вернуть состояние вида "Ошибка" сети.
+   * Должен вернуть состояние вида бездействия при ошибке сети.
    */
   @Test
-  public void setNoNetworkErrorViewStateWithoutOrderToLiveDataForDecline() {
+  public void setIdleViewStateWithoutOrderToLiveDataForDeclineOnNoNetworkError() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     when(orderConfirmationUseCase.sendDecision(anyBoolean()))
-        .thenReturn(Completable.error(NoNetworkException::new));
+        .thenReturn(Single.error(NoNetworkException::new));
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
@@ -194,14 +228,14 @@ public class OrderConfirmationViewModelTest {
   }
 
   /**
-   * Не должен возвращать никакого состояния вида.
+   * Должен вернуть состояние вида бездействия при ошибке в данных.
    */
   @Test
-  public void setNoViewStateToLiveDataForAcceptWithoutOrder() {
+  public void setIdleViewStateWithoutOrderToLiveDataForAcceptOnDataMappingError() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     when(orderConfirmationUseCase.sendDecision(anyBoolean()))
-        .thenReturn(Completable.complete());
+        .thenReturn(Single.error(DataMappingException::new));
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
@@ -210,18 +244,143 @@ public class OrderConfirmationViewModelTest {
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(any(OrderConfirmationViewStateIdle.class));
     inOrder.verify(viewStateObserver).onChanged(any(OrderConfirmationViewStatePending.class));
+    inOrder.verify(viewStateObserver).onChanged(any(OrderConfirmationViewStateIdle.class));
     verifyNoMoreInteractions(viewStateObserver);
   }
 
   /**
-   * Не должен возвращать никакого состояния вида.
+   * Должен вернуть состояние вида бездействия при ошибке в данных.
    */
   @Test
-  public void setNoViewStateToLiveDataForDeclineWithoutOrder() {
+  public void setIdleViewStateWithoutOrderToLiveDataForDeclineOnDataMappingError() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     when(orderConfirmationUseCase.sendDecision(anyBoolean()))
-        .thenReturn(Completable.complete());
+        .thenReturn(Single.error(DataMappingException::new));
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
+
+    // Действие:
+    viewModel.declineOrder();
+
+    // Результат:
+    inOrder.verify(viewStateObserver).onChanged(any(OrderConfirmationViewStateIdle.class));
+    inOrder.verify(viewStateObserver).onChanged(any(OrderConfirmationViewStatePending.class));
+    inOrder.verify(viewStateObserver).onChanged(any(OrderConfirmationViewStateIdle.class));
+    verifyNoMoreInteractions(viewStateObserver);
+  }
+
+  /**
+   * Должен вернуть состояние вида результата с сообщением для неуспешного принятия.
+   */
+  @Test
+  public void setResultViewStateToLiveDataForAcceptExpiredWithoutOrder() {
+    // Дано:
+    InOrder inOrder = Mockito.inOrder(viewStateObserver);
+    when(orderConfirmationUseCase.sendDecision(anyBoolean()))
+        .thenReturn(Single.error(new OrderOfferExpiredException("34")));
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
+
+    // Действие:
+    viewModel.acceptOrder();
+
+    // Результат:
+    inOrder.verify(viewStateObserver).onChanged(any(OrderConfirmationViewStateIdle.class));
+    inOrder.verify(viewStateObserver).onChanged(any(OrderConfirmationViewStatePending.class));
+    inOrder.verify(viewStateObserver).onChanged(new OrderConfirmationViewStateResult("34"));
+    verifyNoMoreInteractions(viewStateObserver);
+  }
+
+  /**
+   * Должен вернуть состояние вида результата с сообщением для неуспешного отказа.
+   */
+  @Test
+  public void setResultViewStateToLiveDataForDeclineExpiredWithoutOrder() {
+    // Дано:
+    InOrder inOrder = Mockito.inOrder(viewStateObserver);
+    when(orderConfirmationUseCase.sendDecision(anyBoolean()))
+        .thenReturn(Single.error(new OrderOfferExpiredException("43")));
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
+
+    // Действие:
+    viewModel.declineOrder();
+
+    // Результат:
+    inOrder.verify(viewStateObserver).onChanged(any(OrderConfirmationViewStateIdle.class));
+    inOrder.verify(viewStateObserver).onChanged(any(OrderConfirmationViewStatePending.class));
+    inOrder.verify(viewStateObserver).onChanged(new OrderConfirmationViewStateResult("43"));
+    verifyNoMoreInteractions(viewStateObserver);
+  }
+
+  /**
+   * Должен вернуть состояние вида бездействия без сообщения для неуспешного принятия.
+   */
+  @Test
+  public void setIdleViewStateToLiveDataForAcceptExpiredWithoutOrder() {
+    // Дано:
+    InOrder inOrder = Mockito.inOrder(viewStateObserver);
+    when(orderConfirmationUseCase.sendDecision(anyBoolean()))
+        .thenReturn(Single.error(new OrderOfferDecisionException()));
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
+
+    // Действие:
+    viewModel.acceptOrder();
+
+    // Результат:
+    inOrder.verify(viewStateObserver).onChanged(any(OrderConfirmationViewStateIdle.class));
+    inOrder.verify(viewStateObserver).onChanged(any(OrderConfirmationViewStatePending.class));
+    inOrder.verify(viewStateObserver).onChanged(any(OrderConfirmationViewStateIdle.class));
+    verifyNoMoreInteractions(viewStateObserver);
+  }
+
+  /**
+   * Должен вернуть состояние вида результата без сообщения для неуспешного отказа.
+   */
+  @Test
+  public void setIdleViewStateToLiveDataForDeclineExpiredWithoutOrder() {
+    // Дано:
+    InOrder inOrder = Mockito.inOrder(viewStateObserver);
+    when(orderConfirmationUseCase.sendDecision(anyBoolean()))
+        .thenReturn(Single.error(new OrderOfferDecisionException()));
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
+
+    // Действие:
+    viewModel.declineOrder();
+
+    // Результат:
+    inOrder.verify(viewStateObserver).onChanged(any(OrderConfirmationViewStateIdle.class));
+    inOrder.verify(viewStateObserver).onChanged(any(OrderConfirmationViewStatePending.class));
+    inOrder.verify(viewStateObserver).onChanged(any(OrderConfirmationViewStateIdle.class));
+    verifyNoMoreInteractions(viewStateObserver);
+  }
+
+  /**
+   * Должен вернуть состояние вида результата с сообщением для успешного принятия.
+   */
+  @Test
+  public void setResultViewStateToLiveDataForAcceptWithoutOrder() {
+    // Дано:
+    InOrder inOrder = Mockito.inOrder(viewStateObserver);
+    when(orderConfirmationUseCase.sendDecision(anyBoolean())).thenReturn(Single.just("21"));
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
+
+    // Действие:
+    viewModel.acceptOrder();
+
+    // Результат:
+    inOrder.verify(viewStateObserver).onChanged(any(OrderConfirmationViewStateIdle.class));
+    inOrder.verify(viewStateObserver).onChanged(any(OrderConfirmationViewStatePending.class));
+    inOrder.verify(viewStateObserver).onChanged(new OrderConfirmationViewStateResult("21"));
+    verifyNoMoreInteractions(viewStateObserver);
+  }
+
+  /**
+   * Не должен давать новых состояний вида для успешного отказа.
+   */
+  @Test
+  public void setResultViewStateToLiveDataForDeclineWithoutOrder() {
+    // Дано:
+    InOrder inOrder = Mockito.inOrder(viewStateObserver);
+    when(orderConfirmationUseCase.sendDecision(anyBoolean())).thenReturn(Single.just("12"));
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
@@ -248,6 +407,19 @@ public class OrderConfirmationViewModelTest {
   }
 
   /**
+   * Должен перейти к закрытию карточки.
+   */
+  @Test
+  public void setNavigateToCloseForMessageConsumed() {
+    // Действие:
+    viewModel.getNavigationLiveData().observeForever(navigateObserver);
+    viewModel.messageConsumed();
+
+    // Результат:
+    verify(navigateObserver, only()).onChanged(OrderConfirmationNavigate.CLOSE);
+  }
+
+  /**
    * Не должен никуда переходить для вида "В процессе отказа".
    */
   @Test
@@ -269,7 +441,7 @@ public class OrderConfirmationViewModelTest {
   public void setNavigateToNoConnectionForDecline() {
     // Дано:
     when(orderConfirmationUseCase.sendDecision(false))
-        .thenReturn(Completable.error(IllegalStateException::new));
+        .thenReturn(Single.error(IllegalStateException::new));
     viewModel.getNavigationLiveData().observeForever(navigateObserver);
 
     // Действие:
@@ -280,19 +452,19 @@ public class OrderConfirmationViewModelTest {
   }
 
   /**
-   * Не должен никуда переходить после отказа.
+   * Должен сразу перейти к закрытию карточки после успешного отказа.
    */
   @Test
   public void doNotSetNavigateForDeclineSuccess() {
     // Дано:
-    when(orderConfirmationUseCase.sendDecision(false)).thenReturn(Completable.complete());
+    when(orderConfirmationUseCase.sendDecision(false)).thenReturn(Single.just(""));
     viewModel.getNavigationLiveData().observeForever(navigateObserver);
 
     // Действие:
     viewModel.declineOrder();
 
     // Результат:
-    verifyZeroInteractions(navigateObserver);
+    verify(navigateObserver, only()).onChanged(OrderConfirmationNavigate.CLOSE);
   }
 
   /**
@@ -311,13 +483,30 @@ public class OrderConfirmationViewModelTest {
   }
 
   /**
+   * Должен вернуть "перейти к ошибке в данных сервера" для отказа.
+   */
+  @Test
+  public void setNavigateToServerDataErrorForAccept() {
+    // Дано:
+    when(orderConfirmationUseCase.sendDecision(true))
+        .thenReturn(Single.error(DataMappingException::new));
+    viewModel.getNavigationLiveData().observeForever(navigateObserver);
+
+    // Действие:
+    viewModel.acceptOrder();
+
+    // Результат:
+    verify(navigateObserver, only()).onChanged(CommonNavigate.SERVER_DATA_ERROR);
+  }
+
+  /**
    * Должен вернуть "перейти к ошибке соединения" для отказа.
    */
   @Test
   public void setNavigateToNoConnectionForAccept() {
     // Дано:
     when(orderConfirmationUseCase.sendDecision(true))
-        .thenReturn(Completable.error(IllegalStateException::new));
+        .thenReturn(Single.error(IllegalStateException::new));
     viewModel.getNavigationLiveData().observeForever(navigateObserver);
 
     // Действие:
@@ -333,7 +522,7 @@ public class OrderConfirmationViewModelTest {
   @Test
   public void doNotSetNavigateForAcceptSuccess() {
     // Дано:
-    when(orderConfirmationUseCase.sendDecision(true)).thenReturn(Completable.complete());
+    when(orderConfirmationUseCase.sendDecision(true)).thenReturn(Single.just(""));
     viewModel.getNavigationLiveData().observeForever(navigateObserver);
 
     // Действие:

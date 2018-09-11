@@ -15,7 +15,7 @@ public class OrderConfirmationViewStateIdleTest {
   private OrderConfirmationViewActions viewActions;
 
   @Test
-  public void testActions() {
+  public void testActionsWithNull() {
     // Действие:
     new OrderConfirmationViewStateIdle().apply(viewActions);
 
@@ -23,6 +23,7 @@ public class OrderConfirmationViewStateIdleTest {
     verify(viewActions).showDriverOrderConfirmationPending(false);
     verify(viewActions).enableAcceptButton(true);
     verify(viewActions).enableDeclineButton(true);
+    verify(viewActions).showBlockingMessage(null);
     verifyNoMoreInteractions(viewActions);
   }
 }

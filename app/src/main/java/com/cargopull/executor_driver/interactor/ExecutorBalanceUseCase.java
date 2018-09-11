@@ -13,9 +13,8 @@ public interface ExecutorBalanceUseCase {
   /**
    * Запрашивает баланс исполнителя, выдает последний закешированный результат, если не сброшен.
    *
-   * @param reset - сбросить ли кеш? Сбрасывает кеш для всех последующих запросов к юзкейсу.
    * @return {@link Flowable<CancelOrderReason>} результат запроса.
    */
   @NonNull
-  Flowable<ExecutorBalance> getExecutorBalance(boolean reset);
+  Flowable<ExecutorBalance> getExecutorBalance();
 }
