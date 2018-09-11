@@ -36,7 +36,7 @@ public class SelectedOrderUseCaseImpl implements OrderUseCase, SelectedOrderUseC
   @Override
   public Flowable<Order> getOrders() {
     if (orderFlowable == null) {
-      orderFlowable = ordersUseCase.getOrdersList()
+      orderFlowable = ordersUseCase.getOrdersSet()
           .doOnTerminate(() -> lastOrderCache = Flowable.empty())
           .switchMap(orders ->
               publishSubject.toFlowable(BackpressureStrategy.BUFFER)
@@ -55,7 +55,7 @@ public class SelectedOrderUseCaseImpl implements OrderUseCase, SelectedOrderUseC
 
   @Override
   public Completable setSelectedOrder(@NonNull Order order) {
-    return ordersUseCase.getOrdersList()
+    return ordersUseCase.getOrdersSet()
         .firstOrError()
         .flatMapCompletable(orders -> Completable.fromAction(() -> {
           if (!orders.contains(order)) {

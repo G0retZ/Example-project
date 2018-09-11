@@ -113,7 +113,7 @@ interface InteractorComponent {
   LoginUseCase getLoginUseCase();
 
   @NonNull
-  OrdersUseCase getPreOrdersListUseCase();
+  OrdersUseCase getPreOrdersSetUseCase();
 
   @NonNull
   PasswordUseCase getPasswordUseCase();

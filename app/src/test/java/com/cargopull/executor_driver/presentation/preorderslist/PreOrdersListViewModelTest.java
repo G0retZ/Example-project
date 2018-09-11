@@ -21,6 +21,7 @@ import io.reactivex.Completable;
 import io.reactivex.subjects.PublishSubject;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Set;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
@@ -53,26 +54,26 @@ public class PreOrdersListViewModelTest {
   @Mock
   private Order order;
   @Mock
-  private List<Order> ordersList;
+  private Set<Order> orderSet;
   @Mock
-  private List<Order> ordersList1;
+  private Set<Order> orderSet1;
   @Mock
-  private List<Order> ordersList2;
+  private Set<Order> orderSet2;
   @Mock
   private List<PreOrdersListItem> preOrdersListItems;
   @Mock
   private List<PreOrdersListItem> preOrdersListItems1;
   @Mock
   private List<PreOrdersListItem> preOrdersListItems2;
-  private PublishSubject<List<Order>> publishSubject;
+  private PublishSubject<Set<Order>> publishSubject;
 
   @Before
   public void setUp() {
     publishSubject = PublishSubject.create();
-    when(preOrdersListItemsMapper.apply(ordersList)).thenReturn(preOrdersListItems);
-    when(preOrdersListItemsMapper.apply(ordersList1)).thenReturn(preOrdersListItems1);
-    when(preOrdersListItemsMapper.apply(ordersList2)).thenReturn(preOrdersListItems2);
-    when(useCase.getOrdersList())
+    when(preOrdersListItemsMapper.apply(orderSet)).thenReturn(preOrdersListItems);
+    when(preOrdersListItemsMapper.apply(orderSet1)).thenReturn(preOrdersListItems1);
+    when(preOrdersListItemsMapper.apply(orderSet2)).thenReturn(preOrdersListItems2);
+    when(useCase.getOrdersSet())
         .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
     when(selectedOrderUseCase.setSelectedOrder(any())).thenReturn(Completable.never());
     viewModel = new PreOrdersListViewModelImpl(useCase, selectedOrderUseCase,
@@ -87,7 +88,7 @@ public class PreOrdersListViewModelTest {
   @Test
   public void askOrdersUseCaseForPreOrdersListInitially() {
     // Результат:
-    verify(useCase, only()).getOrdersList();
+    verify(useCase, only()).getOrdersSet();
   }
 
   /**
@@ -96,7 +97,7 @@ public class PreOrdersListViewModelTest {
   @Test
   public void doNotTouchOrdersUseCaseOnSubscriptions() {
     // Дано:
-    publishSubject.onNext(ordersList);
+    publishSubject.onNext(orderSet);
 
     // Действие:
     viewModel.getViewStateLiveData();
@@ -105,7 +106,7 @@ public class PreOrdersListViewModelTest {
     viewModel.getNavigationLiveData();
 
     // Результат:
-    verify(useCase, only()).getOrdersList();
+    verify(useCase, only()).getOrdersSet();
   }
 
   /* Тетсируем работу с юзкейсом выбора предзаказа. */
@@ -116,7 +117,7 @@ public class PreOrdersListViewModelTest {
   @Test
   public void doNotTouchSelectedOrdersUseCaseOnSubscriptions() {
     // Дано:
-    publishSubject.onNext(ordersList);
+    publishSubject.onNext(orderSet);
 
     // Действие:
     viewModel.getViewStateLiveData();
@@ -157,10 +158,10 @@ public class PreOrdersListViewModelTest {
   @Test
   public void askMapperToMapTheList() {
     // Действие:
-    publishSubject.onNext(ordersList);
+    publishSubject.onNext(orderSet);
 
     // Результат:
-    verify(preOrdersListItemsMapper, only()).apply(ordersList);
+    verify(preOrdersListItemsMapper, only()).apply(orderSet);
   }
 
   /**
@@ -169,7 +170,7 @@ public class PreOrdersListViewModelTest {
   @Test
   public void doNotTouchMapperOnSubscriptions() {
     // Дано:
-    publishSubject.onNext(ordersList);
+    publishSubject.onNext(orderSet);
 
     // Действие:
     viewModel.getViewStateLiveData();
@@ -178,7 +179,7 @@ public class PreOrdersListViewModelTest {
     viewModel.getNavigationLiveData();
 
     // Результат:
-    verify(preOrdersListItemsMapper, only()).apply(ordersList);
+    verify(preOrdersListItemsMapper, only()).apply(orderSet);
   }
 
   /* Тетсируем переключение состояний. */
@@ -209,9 +210,9 @@ public class PreOrdersListViewModelTest {
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    publishSubject.onNext(ordersList);
-    publishSubject.onNext(ordersList1);
-    publishSubject.onNext(ordersList2);
+    publishSubject.onNext(orderSet);
+    publishSubject.onNext(orderSet1);
+    publishSubject.onNext(orderSet2);
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(new PreOrdersListViewStatePending(null));
@@ -270,7 +271,7 @@ public class PreOrdersListViewModelTest {
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    publishSubject.onNext(ordersList);
+    publishSubject.onNext(orderSet);
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(new PreOrdersListViewStatePending(null));
@@ -289,9 +290,9 @@ public class PreOrdersListViewModelTest {
     viewModel.getNavigationLiveData().observeForever(navigateObserver);
 
     // Действие:
-    publishSubject.onNext(ordersList);
-    publishSubject.onNext(ordersList1);
-    publishSubject.onNext(ordersList2);
+    publishSubject.onNext(orderSet);
+    publishSubject.onNext(orderSet1);
+    publishSubject.onNext(orderSet2);
 
     // Результат:
     verifyZeroInteractions(navigateObserver);
