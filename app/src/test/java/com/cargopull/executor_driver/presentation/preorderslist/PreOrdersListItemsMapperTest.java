@@ -61,6 +61,15 @@ public class PreOrdersListItemsMapperTest {
   }
 
   @Test
+  public void testSortWithEmptySet() {
+    // Действие:
+    List<PreOrdersListItem> preOrdersListItems = preOrdersListItemsMapper.apply(new HashSet<>());
+
+    // Результат:
+    assertEquals(preOrdersListItems.size(), 0);
+  }
+
+  @Test
   public void testSortWithOneHeader() {
     // Дано:
     when(order.getScheduledStartTime()).thenReturn(today.plusHours(3).getMillis());
