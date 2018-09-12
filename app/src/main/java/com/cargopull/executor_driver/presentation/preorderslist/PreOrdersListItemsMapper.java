@@ -21,6 +21,9 @@ public class PreOrdersListItemsMapper implements Function<Set<Order>, List<PreOr
 
   @Override
   public List<PreOrdersListItem> apply(Set<Order> orders) {
+    if (orders.isEmpty()) {
+      return new ArrayList<>();
+    }
     List<PreOrdersListItem> preOrdersListItems = new ArrayList<>();
     ArrayList<Order> ordersList = new ArrayList<>(orders);
     Collections.sort(ordersList,
