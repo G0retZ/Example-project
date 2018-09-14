@@ -10,6 +10,7 @@ import static org.mockito.Mockito.when;
 
 import com.cargopull.executor_driver.UseCaseThreadTestRule;
 import com.cargopull.executor_driver.entity.Order;
+import com.cargopull.executor_driver.entity.OrderCancelledException;
 import com.cargopull.executor_driver.gateway.DataMappingException;
 import com.cargopull.executor_driver.utils.ErrorReporter;
 import io.reactivex.BackpressureStrategy;
@@ -335,7 +336,7 @@ public class SelectedOrderUseCaseImplTest {
   }
 
   /**
-   * Должен вернуть подписчикам ошибку, если выбранного заказа больше нет в списке.
+   * Должен вернуть подписчикам ошибку отмененного выбранного заказа, если его больше нет в списке.
    */
   @Test
   public void answerWrongSelectionErrorForNewList() {
@@ -354,7 +355,7 @@ public class SelectedOrderUseCaseImplTest {
 
     // Результат:
     testSubscriber.assertValues(order1);
-    testSubscriber.assertError(NoSuchElementException.class);
+    testSubscriber.assertError(OrderCancelledException.class);
     testSubscriber.assertNotComplete();
   }
 

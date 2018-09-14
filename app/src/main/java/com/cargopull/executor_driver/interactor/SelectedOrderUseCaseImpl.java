@@ -3,6 +3,7 @@ package com.cargopull.executor_driver.interactor;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.cargopull.executor_driver.entity.Order;
+import com.cargopull.executor_driver.entity.OrderCancelledException;
 import com.cargopull.executor_driver.utils.ErrorReporter;
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Completable;
@@ -45,7 +46,7 @@ public class SelectedOrderUseCaseImpl implements OrderUseCase, SelectedOrderUseC
                     if (orders.contains(order)) {
                       return order;
                     }
-                    throw new NoSuchElementException();
+                    throw new OrderCancelledException();
                   }))
           .doOnError(throwable -> lastOrderCache = Flowable.empty())
           .share();
