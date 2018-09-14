@@ -45,6 +45,7 @@ final class OrderViewStateIdle implements ViewState<OrderViewActions> {
     stateActions.showOrderOptionsRequirements(orderItem.getOrderOptionsRequired());
     stateActions.showOrderPending(false);
     stateActions.showOrderExpiredMessage(null);
+    stateActions.showOrderCancelledMessage(false);
   }
 
   @Override
