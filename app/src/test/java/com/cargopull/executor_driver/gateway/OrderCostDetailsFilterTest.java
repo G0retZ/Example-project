@@ -24,7 +24,7 @@ public class OrderCostDetailsFilterTest {
   }
 
   /**
-   * Должен отказать, если статус не соответствует фильтруемому.
+   * Должен отказать, если заголовок не соответствует фильтруемому.
    */
   @Test
   public void filterIfExecutorStateIncorrect() {
