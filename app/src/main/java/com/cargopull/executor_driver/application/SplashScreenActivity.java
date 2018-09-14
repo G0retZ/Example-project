@@ -2,6 +2,8 @@ package com.cargopull.executor_driver.application;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.widget.TextView;
+import com.cargopull.executor_driver.BuildConfig;
 import com.cargopull.executor_driver.R;
 
 public class SplashScreenActivity extends BaseActivity {
@@ -10,5 +12,7 @@ public class SplashScreenActivity extends BaseActivity {
   public void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_splash);
+    TextView textView = findViewById(R.id.versionText);
+    textView.setText(getString(R.string.version, BuildConfig.VERSION_NAME));
   }
 }
