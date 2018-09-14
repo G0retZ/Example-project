@@ -10,6 +10,7 @@ import android.arch.core.executor.testing.InstantTaskExecutorRule;
 import android.arch.lifecycle.Observer;
 import com.cargopull.executor_driver.ViewModelThreadTestRule;
 import com.cargopull.executor_driver.entity.Order;
+import com.cargopull.executor_driver.entity.OrderCancelledException;
 import com.cargopull.executor_driver.entity.OrderOfferDecisionException;
 import com.cargopull.executor_driver.entity.OrderOfferExpiredException;
 import com.cargopull.executor_driver.gateway.DataMappingException;
@@ -192,8 +193,10 @@ public class OrderViewModelTest {
     inOrder.verify(viewStateObserver).onChanged(new OrderViewStateIdle(
         new OrderItem(order, timeUtils))
     );
-    inOrder.verify(viewStateObserver).onChanged(new OrderViewStateExpired(new OrderViewStateIdle(
-        new OrderItem(order, timeUtils)), "message")
+    inOrder.verify(viewStateObserver).onChanged(new OrderViewStateExpired(
+            new OrderViewStateIdle(new OrderItem(order, timeUtils)),
+            "message"
+        )
     );
     inOrder.verify(viewStateObserver).onChanged(new OrderViewStateIdle(
         new OrderItem(order2, timeUtils))
@@ -202,7 +205,55 @@ public class OrderViewModelTest {
   }
 
   /**
-   * Не должен возвращать иных состояний вида при получении соответствующей ошибки истечения заказа без сообщения.
+   * Должен вернуть состояния вида "заказ отменен" при получении соответствующей ошибки.
+   */
+  @Test
+  public void setCancelledViewStateToLiveDataForExpiredError() {
+    // Дано:
+    InOrder inOrder = Mockito.inOrder(viewStateObserver);
+    PublishSubject<Order> publishSubject = PublishSubject.create();
+    when(orderUseCase.getOrders()).thenReturn(
+        Observable.create(
+            new ObservableOnSubscribe<Order>() {
+              private boolean run;
+
+              @Override
+              public void subscribe(ObservableEmitter<Order> emitter) {
+                if (!run) {
+                  run = true;
+                  emitter.onNext(order);
+                  emitter.onError(new OrderCancelledException());
+                } else {
+                  emitter.onNext(order2);
+                }
+              }
+            }
+        ).startWith(publishSubject)
+            .toFlowable(BackpressureStrategy.BUFFER)
+    );
+    viewModel = new OrderViewModelImpl(orderUseCase, timeUtils);
+    viewModel.getNavigationLiveData().observeForever(navigateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
+
+    // Действие:
+    publishSubject.onComplete();
+
+    // Результат:
+    inOrder.verify(viewStateObserver).onChanged(new OrderViewStatePending(null));
+    inOrder.verify(viewStateObserver).onChanged(new OrderViewStateIdle(
+        new OrderItem(order, timeUtils))
+    );
+    inOrder.verify(viewStateObserver).onChanged(new OrderViewStateCancelled(
+        new OrderViewStateIdle(new OrderItem(order, timeUtils)))
+    );
+    inOrder.verify(viewStateObserver).onChanged(new OrderViewStateIdle(
+        new OrderItem(order2, timeUtils))
+    );
+    verifyNoMoreInteractions(viewStateObserver);
+  }
+
+  /**
+   * Не должен возвращать иных состояний вида при получении ошибки о принятии решения по заказу.
    */
   @Test
   public void setIdleViewStateToLiveDataForExpiredErrorWithoutMessage() {
