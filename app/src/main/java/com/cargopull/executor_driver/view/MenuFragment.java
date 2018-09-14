@@ -5,6 +5,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +23,7 @@ import com.cargopull.executor_driver.presentation.preorderslist.PreOrdersListVie
 import com.cargopull.executor_driver.presentation.preorderslist.PreOrdersListViewModel;
 import java.text.DecimalFormat;
 import java.util.List;
+import java.util.Objects;
 import javax.inject.Inject;
 
 /**
@@ -37,6 +39,7 @@ public class MenuFragment extends BaseFragment implements BalanceViewActions,
   private TextView balanceAmount;
   private TextView preOrdersAmount;
   private boolean nowOnline;
+  private DialogFragment aboutFragment;
 
   @Inject
   public void setBalanceViewModel(@NonNull BalanceViewModel balanceViewModel) {
@@ -78,6 +81,10 @@ public class MenuFragment extends BaseFragment implements BalanceViewActions,
     balanceAmount = view.findViewById(R.id.balanceAmount);
     view.findViewById(R.id.preOrders).setOnClickListener(v -> navigate(MenuNavigate.PRE_ORDERS));
     preOrdersAmount = view.findViewById(R.id.preOrdersAmount);
+    aboutFragment = new AboutDialogFragment();
+    view.findViewById(R.id.about).setOnClickListener(
+        v -> aboutFragment.show(Objects.requireNonNull(getFragmentManager()), "about")
+    );
     return view;
   }
 

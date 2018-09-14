@@ -127,4 +127,7 @@
   <string name="preliminary_order">Заказ ко времени</string>
   <string name="time_to_set_out">Пора! Выезжайте к клиенту или откажитесь.</string>
   <string name="exit">Выйти</string>
+  <string name="version">Версия %1$s</string>
+  <string name="app_version">Версия приложения %1$s</string>
+  <string name="about">О приложении</string>
 </resources>
