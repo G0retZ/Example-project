@@ -10,7 +10,7 @@ import io.reactivex.Flowable;
 public interface OrderUseCase {
 
   /**
-   * Запрашивает данные о выполняемом заказе.
+   * Запрашивает данные о заказе.
    *
    * @return {@link Flowable<Order>} результат запроса.
    */

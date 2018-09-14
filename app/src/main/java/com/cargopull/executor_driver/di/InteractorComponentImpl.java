@@ -13,6 +13,7 @@ import com.cargopull.executor_driver.interactor.CancelOrderReasonsUseCase;
 import com.cargopull.executor_driver.interactor.CancelOrderReasonsUseCaseImpl;
 import com.cargopull.executor_driver.interactor.CancelOrderUseCase;
 import com.cargopull.executor_driver.interactor.CancelOrderUseCaseImpl;
+import com.cargopull.executor_driver.interactor.CancelledOrderUseCaseImpl;
 import com.cargopull.executor_driver.interactor.ConfirmOrderPaymentUseCase;
 import com.cargopull.executor_driver.interactor.ConfirmOrderPaymentUseCaseImpl;
 import com.cargopull.executor_driver.interactor.CurrentCostPollingUseCase;
@@ -95,6 +96,8 @@ class InteractorComponentImpl implements InteractorComponent {
   private final TimeUtils timeUtils;
   @Nullable
   private CallToClientUseCase callToClientUseCase;
+  @Nullable
+  private OrderUseCase cancelledOrderUseCase;
   @Nullable
   private CancelOrderReasonsUseCase cancelOrderReasonsUseCase;
   @Nullable
@@ -501,8 +504,8 @@ class InteractorComponentImpl implements InteractorComponent {
     if (preOrdersSetUseCase == null) {
       preOrdersSetUseCase = new OrdersUseCaseImpl(
           errorReporter,
-          repositoryComponent.getPreOrdersSetGateway()
-      );
+          repositoryComponent.getPreOrdersSetGateway(),
+          getCancelledOrderUseCase());
     }
     return preOrdersSetUseCase;
   }
@@ -688,6 +691,18 @@ class InteractorComponentImpl implements InteractorComponent {
     return selectedPreOrderConfirmationUseCase;
   }
 
+  @NonNull
+  private OrderUseCase getCancelledOrderUseCase() {
+    if (cancelledOrderUseCase == null) {
+      cancelledOrderUseCase = new CancelledOrderUseCaseImpl(
+          errorReporter,
+          repositoryComponent.getCancelledOrderGateway()
+      );
+    }
+    return cancelledOrderUseCase;
+  }
+
+  @NonNull
   private OrderDecisionUseCase getPreOrderDecisionUseCase() {
     return getPreOrderUseCaseImpl();
   }

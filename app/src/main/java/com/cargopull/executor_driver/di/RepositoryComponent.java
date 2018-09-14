@@ -35,6 +35,9 @@ interface RepositoryComponent {
   CallToClientGateway getCallToClientGateway();
 
   @NonNull
+  CommonGateway<Order> getCancelledOrderGateway();
+
+  @NonNull
   CancelOrderGateway getCancelOrderGateway();
 
   @NonNull

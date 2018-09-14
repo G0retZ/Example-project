@@ -12,6 +12,8 @@ import com.cargopull.executor_driver.gateway.CallToClientGatewayImpl;
 import com.cargopull.executor_driver.gateway.CancelOrderGatewayImpl;
 import com.cargopull.executor_driver.gateway.CancelOrderReasonApiMapper;
 import com.cargopull.executor_driver.gateway.CancelOrderReasonsFilter;
+import com.cargopull.executor_driver.gateway.CancelledOrderApiMapper;
+import com.cargopull.executor_driver.gateway.CancelledOrderFilter;
 import com.cargopull.executor_driver.gateway.ConfirmOrderPaymentGatewayImpl;
 import com.cargopull.executor_driver.gateway.CurrentCostPollingGatewayImpl;
 import com.cargopull.executor_driver.gateway.CurrentCostPollingTimersApiMapper;
@@ -91,6 +93,8 @@ class RepositoryComponentImpl implements RepositoryComponent {
   private final GeolocationCenter geolocationCenter;
   @Nullable
   private CallToClientGateway callToClientGateway;
+  @Nullable
+  private CommonGateway<Order> cancelledOrderGateway;
   @Nullable
   private CancelOrderGateway cancelOrderGateway;
   @Nullable
@@ -173,6 +177,19 @@ class RepositoryComponentImpl implements RepositoryComponent {
       );
     }
     return callToClientGateway;
+  }
+
+  @NonNull
+  @Override
+  public CommonGateway<Order> getCancelledOrderGateway() {
+    if (cancelledOrderGateway == null) {
+      cancelledOrderGateway = new TopicGatewayImpl<>(
+          backendComponent.getPersonalTopicListener(),
+          new CancelledOrderApiMapper(),
+          new CancelledOrderFilter()
+      );
+    }
+    return cancelledOrderGateway;
   }
 
   @NonNull
