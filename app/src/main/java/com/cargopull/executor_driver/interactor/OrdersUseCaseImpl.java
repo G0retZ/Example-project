@@ -5,9 +5,9 @@ import android.support.annotation.Nullable;
 import com.cargopull.executor_driver.entity.Order;
 import com.cargopull.executor_driver.utils.ErrorReporter;
 import io.reactivex.BackpressureStrategy;
-import io.reactivex.Emitter;
 import io.reactivex.Flowable;
 import io.reactivex.schedulers.Schedulers;
+import io.reactivex.subjects.PublishSubject;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -17,44 +17,24 @@ public class OrdersUseCaseImpl implements OrdersUseCase {
   private final ErrorReporter errorReporter;
   @NonNull
   private final CommonGateway<Set<Order>> gateway;
+  @NonNull
+  private final OrderUseCase cancelledOrderUseCase;
   // Это для того чтобы combineLatest стартовал сразу.
   @NonNull
   private final Order dumbOrder = new Order(-1, "", "", 0, "", 0, 0, 0, 0, 0, 0, 0, 0, 0);
   @Nullable
   private Flowable<Set<Order>> ordersFlowable;
   @NonNull
-  private Emitter<Order> addEmitter = new Emitter<Order>() {
-    @Override
-    public void onNext(Order value) {
-    }
-
-    @Override
-    public void onError(Throwable error) {
-    }
-
-    @Override
-    public void onComplete() {
-    }
-  };
+  private PublishSubject<Order> addSubject = PublishSubject.create();
   @NonNull
-  private Emitter<Order> removeEmitter = new Emitter<Order>() {
-    @Override
-    public void onNext(Order value) {
-    }
-
-    @Override
-    public void onError(Throwable error) {
-    }
-
-    @Override
-    public void onComplete() {
-    }
-  };
+  private PublishSubject<Order> removeSubject = PublishSubject.create();
 
   public OrdersUseCaseImpl(@NonNull ErrorReporter errorReporter,
-      @NonNull CommonGateway<Set<Order>> gateway) {
+      @NonNull CommonGateway<Set<Order>> gateway,
+      @NonNull OrderUseCase cancelledOrderUseCase) {
     this.errorReporter = errorReporter;
     this.gateway = gateway;
+    this.cancelledOrderUseCase = cancelledOrderUseCase;
   }
 
   @NonNull
@@ -62,22 +42,24 @@ public class OrdersUseCaseImpl implements OrdersUseCase {
   public Flowable<Set<Order>> getOrdersSet() {
     if (ordersFlowable == null) {
       ordersFlowable = Flowable.combineLatest(
-          Flowable.<Order>create(
-              emitter -> this.addEmitter = emitter,
-              BackpressureStrategy.BUFFER
-          ).startWith(dumbOrder),
-          Flowable.<Order>create(
-              emitter -> this.removeEmitter = emitter,
-              BackpressureStrategy.BUFFER
-          ).startWith(dumbOrder),
+          addSubject.toFlowable(BackpressureStrategy.BUFFER)
+              .startWith(dumbOrder),
+          removeSubject.toFlowable(BackpressureStrategy.BUFFER)
+              .startWith(dumbOrder)
+              .mergeWith(cancelledOrderUseCase.getOrders()),
           gateway.<Order>getData()
               .observeOn(Schedulers.single())
               .doOnComplete(() -> {
-                addEmitter.onComplete();
-                removeEmitter.onComplete();
+                throw new InterruptedException();
               }),
           this::merge
       )
+          .onErrorResumeNext(throwable -> {
+            if (throwable instanceof InterruptedException) {
+              return Flowable.empty();
+            }
+            return Flowable.error(throwable);
+          })
           .doOnError(errorReporter::reportError)
           .replay(1)
           .refCount();
@@ -98,11 +80,11 @@ public class OrdersUseCaseImpl implements OrdersUseCase {
 
   @Override
   public void addOrder(@NonNull Order order) {
-    addEmitter.onNext(order);
+    addSubject.onNext(order);
   }
 
   @Override
   public void removeOrder(@NonNull Order order) {
-    removeEmitter.onNext(order);
+    removeSubject.onNext(order);
   }
 }
