@@ -520,7 +520,7 @@ class RepositoryComponentImpl implements RepositoryComponent {
 
   @NonNull
   @Override
-  public CommonGateway<String> UpcomingPreOrderMessagesGateway() {
+  public CommonGateway<String> getUpcomingPreOrderMessagesGateway() {
     if (upcomingPreOrderMessagesGateway == null) {
       upcomingPreOrderMessagesGateway = new TopicGatewayImpl<>(
           backendComponent.getPersonalTopicListener(),

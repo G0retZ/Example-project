@@ -7,7 +7,7 @@ import io.reactivex.Flowable;
 import io.reactivex.schedulers.Schedulers;
 import javax.inject.Inject;
 
-public class MissedOrderUseCaseImpl implements MissedOrderUseCase {
+public class NotificationMessageUseCaseImpl implements NotificationMessageUseCase {
 
   @NonNull
   private final ErrorReporter errorReporter;
@@ -17,7 +17,7 @@ public class MissedOrderUseCaseImpl implements MissedOrderUseCase {
   private Flowable<String> messagesFlowable;
 
   @Inject
-  public MissedOrderUseCaseImpl(@NonNull ErrorReporter errorReporter,
+  public NotificationMessageUseCaseImpl(@NonNull ErrorReporter errorReporter,
       @NonNull CommonGateway<String> gateway) {
     this.errorReporter = errorReporter;
     this.gateway = gateway;
@@ -25,7 +25,7 @@ public class MissedOrderUseCaseImpl implements MissedOrderUseCase {
 
   @NonNull
   @Override
-  public Flowable<String> getMissedOrders() {
+  public Flowable<String> getNotificationMessages() {
     if (messagesFlowable == null) {
       messagesFlowable = gateway.getData()
           .observeOn(Schedulers.single())

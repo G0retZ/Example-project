@@ -119,7 +119,7 @@ interface RepositoryComponent {
   LastUsedVehicleGateway getLastUsedVehicleGateway();
 
   @NonNull
-  CommonGateway<String> UpcomingPreOrderMessagesGateway();
+  CommonGateway<String> getUpcomingPreOrderMessagesGateway();
 
   @NonNull
   VehicleOptionsGateway getVehicleOptionsGateway();

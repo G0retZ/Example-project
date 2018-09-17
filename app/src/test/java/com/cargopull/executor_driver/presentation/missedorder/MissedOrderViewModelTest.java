@@ -8,7 +8,7 @@ import static org.mockito.Mockito.when;
 import android.arch.core.executor.testing.InstantTaskExecutorRule;
 import android.arch.lifecycle.Observer;
 import com.cargopull.executor_driver.ViewModelThreadTestRule;
-import com.cargopull.executor_driver.interactor.MissedOrderUseCase;
+import com.cargopull.executor_driver.interactor.NotificationMessageUseCase;
 import com.cargopull.executor_driver.presentation.ViewState;
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.subjects.PublishSubject;
@@ -32,7 +32,7 @@ public class MissedOrderViewModelTest {
   public TestRule rule = new InstantTaskExecutorRule();
   private MissedOrderViewModel viewModel;
   @Mock
-  private MissedOrderUseCase useCase;
+  private NotificationMessageUseCase useCase;
   @Mock
   private Observer<ViewState<MissedOrderViewActions>> viewStateObserver;
   @Captor
@@ -45,7 +45,7 @@ public class MissedOrderViewModelTest {
   @Before
   public void setUp() {
     publishSubject = PublishSubject.create();
-    when(useCase.getMissedOrders())
+    when(useCase.getNotificationMessages())
         .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
     viewModel = new MissedOrderViewModelImpl(useCase);
   }
@@ -58,7 +58,7 @@ public class MissedOrderViewModelTest {
   @Test
   public void askDataReceiverToSubscribeToMissedOrdersMessages() {
     // Результат:
-    verify(useCase, only()).getMissedOrders();
+    verify(useCase, only()).getNotificationMessages();
   }
 
   /**
@@ -73,7 +73,7 @@ public class MissedOrderViewModelTest {
     viewModel.getNavigationLiveData();
 
     // Результат:
-    verify(useCase, only()).getMissedOrders();
+    verify(useCase, only()).getNotificationMessages();
   }
 
   /* Тетсируем сообщение. */
