@@ -467,6 +467,7 @@ public class MainApplication extends Application implements ServerConnectionView
           .setSound(null)
           .setVibrate(new long[0])
           .setAutoCancel(true)
+          .setContentIntent(PendingIntent.getActivity(getApplicationContext(), 0, new Intent(), 0))
           .setSmallIcon(R.mipmap.ic_launcher)
           .setTicker(getString(R.string.order_cancelled))
           .setWhen(System.currentTimeMillis());
