@@ -25,9 +25,9 @@ public class OrdersUseCaseImpl implements OrdersUseCase {
   @Nullable
   private Flowable<Set<Order>> ordersFlowable;
   @NonNull
-  private PublishSubject<Order> addSubject = PublishSubject.create();
+  private final PublishSubject<Order> addSubject = PublishSubject.create();
   @NonNull
-  private PublishSubject<Order> removeSubject = PublishSubject.create();
+  private final PublishSubject<Order> removeSubject = PublishSubject.create();
 
   public OrdersUseCaseImpl(@NonNull ErrorReporter errorReporter,
       @NonNull CommonGateway<Set<Order>> gateway,
