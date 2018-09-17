@@ -161,4 +161,8 @@ public class OrderCostDetailsOrderDetailsFragment extends BaseFragment implement
   @Override
   public void showOrderExpiredMessage(@Nullable String message) {
   }
+
+  @Override
+  public void showOrderCancelledMessage(boolean show) {
+  }
 }

@@ -221,4 +221,20 @@ public class PreOrderFragment extends BaseFragment implements OrderViewActions {
       alertDialog.show();
     }
   }
+
+  @Override
+  public void showOrderCancelledMessage(boolean show) {
+    if (alertDialog != null) {
+      alertDialog.dismiss();
+    }
+    if (show) {
+      alertDialog = new Builder(context)
+          .setMessage(R.string.order_cancelled)
+          .setCancelable(false)
+          .setPositiveButton(getString(android.R.string.ok),
+              (a, b) -> orderViewModel.messageConsumed())
+          .create();
+      alertDialog.show();
+    }
+  }
 }

@@ -3,6 +3,7 @@ package com.cargopull.executor_driver.interactor;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.cargopull.executor_driver.entity.Order;
+import com.cargopull.executor_driver.entity.OrderCancelledException;
 import com.cargopull.executor_driver.utils.ErrorReporter;
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Completable;
@@ -21,8 +22,8 @@ public class SelectedOrderUseCaseImpl implements OrderUseCase, SelectedOrderUseC
   private final PublishSubject<Order> publishSubject;
   @Nullable
   private Flowable<Order> orderFlowable;
-  @NonNull
-  private Flowable<Order> lastOrderCache = Flowable.empty();
+  @Nullable
+  private Order lastOrder;
 
   @Inject
   public SelectedOrderUseCaseImpl(@NonNull ErrorReporter errorReporter,
@@ -37,20 +38,34 @@ public class SelectedOrderUseCaseImpl implements OrderUseCase, SelectedOrderUseC
   public Flowable<Order> getOrders() {
     if (orderFlowable == null) {
       orderFlowable = ordersUseCase.getOrdersSet()
-          .doOnTerminate(() -> lastOrderCache = Flowable.empty())
+          .doOnComplete(() -> {
+            throw new InterruptedException();
+          })
           .switchMap(orders ->
               publishSubject.toFlowable(BackpressureStrategy.BUFFER)
-                  .startWith(lastOrderCache)
+                  .startWith(Flowable.create(e -> {
+                    if (lastOrder != null) {
+                      e.onNext(lastOrder);
+                    }
+                    e.onComplete();
+                  }, BackpressureStrategy.BUFFER))
                   .map(order -> {
                     if (orders.contains(order)) {
                       return order;
                     }
-                    throw new NoSuchElementException();
-                  }))
-          .doOnError(throwable -> lastOrderCache = Flowable.empty())
-          .share();
+                    throw new OrderCancelledException();
+                  })).distinctUntilChanged()
+          .onErrorResumeNext(throwable -> {
+            if (throwable instanceof InterruptedException) {
+              return Flowable.empty();
+            }
+            return Flowable.error(throwable);
+          })
+          .doOnTerminate(() -> lastOrder = null)
+          .replay(1)
+          .refCount();
     }
-    return orderFlowable.startWith(lastOrderCache).distinctUntilChanged();
+    return orderFlowable;
   }
 
   @Override
@@ -61,7 +76,7 @@ public class SelectedOrderUseCaseImpl implements OrderUseCase, SelectedOrderUseC
           if (!orders.contains(order)) {
             throw new NoSuchElementException("Нет такого заказа в списке");
           }
-          lastOrderCache = Flowable.just(order);
+          lastOrder = order;
           publishSubject.onNext(order);
         })).doOnError(errorReporter::reportError);
   }
