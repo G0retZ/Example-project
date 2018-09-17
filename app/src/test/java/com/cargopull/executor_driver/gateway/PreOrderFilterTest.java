@@ -60,7 +60,7 @@ public class PreOrderFilterTest {
   }
 
   /**
-   * Должен ошибку отмены заказа клиентом, если сообщение с заголовком PreliminaryCancelled.
+   * Должен выдать ошибку отмены заказа клиентом, если сообщение с заголовком PreliminaryCancelled.
    */
   @Test(expected = OrderCancelledException.class)
   public void errorForHeaderWithPreliminaryCancelledTrue() throws Exception {
@@ -72,7 +72,7 @@ public class PreOrderFilterTest {
   }
 
   /**
-   * Должен ошибку отмены заказа клиентом, если сообщение с заголовком PreliminaryCancelled и пайлоадом.
+   * Должен выдать ошибку отмены заказа клиентом, если сообщение с заголовком PreliminaryCancelled и пайлоадом.
    */
   @Test(expected = OrderCancelledException.class)
   public void errorForHeaderWithPreliminaryCancelledTrueAndPayload() throws Exception {
