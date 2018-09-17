@@ -389,20 +389,23 @@ public class SelectedOrderUseCaseImplTest {
             .concatWith(Flowable.never()));
 
     // Действие:
-    TestSubscriber<Order> testSubscriber = useCase.getOrders().test();
-    TestSubscriber<Order> testSubscriber0 = useCase.getOrders().test();
+    Flowable<Order> orders = useCase.getOrders();
+    TestSubscriber<Order> testSubscriber = orders.test();
     emitter.onNext(new HashSet<>(Arrays.asList(order, order1, order2)));
     useCase.setSelectedOrder(order1).test();
+    useCase.setSelectedOrder(order).test();
+    useCase.setSelectedOrder(order2).test();
+    TestSubscriber<Order> testSubscriber0 = orders.test();
     emitter.onError(new Exception());
-    TestSubscriber<Order> testSubscriber1 = useCase.getOrders().test();
+    TestSubscriber<Order> testSubscriber1 = orders.test();
     emitter.onNext(new HashSet<>(Arrays.asList(order, order1, order2)));
 
     // Результат:
     testSubscriber.assertError(Exception.class);
-    testSubscriber.assertValues(order1);
+    testSubscriber.assertValues(order1, order, order2);
     testSubscriber.assertNotComplete();
     testSubscriber0.assertError(Exception.class);
-    testSubscriber0.assertValues(order1);
+    testSubscriber0.assertValues(order2);
     testSubscriber0.assertNotComplete();
     testSubscriber1.assertNoValues();
     testSubscriber1.assertNoErrors();
@@ -423,21 +426,24 @@ public class SelectedOrderUseCaseImplTest {
     );
 
     // Действие:
-    TestSubscriber<Order> testSubscriber = useCase.getOrders().test();
-    TestSubscriber<Order> testSubscriber0 = useCase.getOrders().test();
+    Flowable<Order> orders = useCase.getOrders().doOnNext(System.out::println);
+    TestSubscriber<Order> testSubscriber = orders.test();
     emitter.onNext(new HashSet<>(Arrays.asList(order, order1, order2)));
     useCase.setSelectedOrder(order1).test();
+    useCase.setSelectedOrder(order).test();
+    useCase.setSelectedOrder(order2).test();
+    TestSubscriber<Order> testSubscriber0 = orders.test();
     emitter.onComplete();
-    TestSubscriber<Order> testSubscriber1 = useCase.getOrders().test();
+    TestSubscriber<Order> testSubscriber1 = orders.test();
     emitter.onNext(new HashSet<>(Arrays.asList(order, order1, order2)));
 
     // Результат:
     testSubscriber.assertNoErrors();
-    testSubscriber.assertValues(order1);
-    testSubscriber.assertNotComplete();
+    testSubscriber.assertValues(order1, order, order2);
+    testSubscriber.assertComplete();
     testSubscriber0.assertNoErrors();
-    testSubscriber0.assertValues(order1);
-    testSubscriber0.assertNotComplete();
+    testSubscriber0.assertValues(order2);
+    testSubscriber0.assertComplete();
     testSubscriber1.assertNoValues();
     testSubscriber1.assertNoErrors();
     testSubscriber1.assertNotComplete();
