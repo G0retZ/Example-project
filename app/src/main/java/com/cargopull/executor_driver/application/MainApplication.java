@@ -467,11 +467,8 @@ public class MainApplication extends Application implements ServerConnectionView
           .setSound(null)
           .setVibrate(new long[0])
           .setAutoCancel(true)
-          .setContentIntent(
-              PendingIntent.getActivity(this, 0, new Intent(this, BalanceActivity.class), 0)
-          )
           .setSmallIcon(R.mipmap.ic_launcher)
-          .setTicker(getString(R.string.missed_order))
+          .setTicker(getString(R.string.order_cancelled))
           .setWhen(System.currentTimeMillis());
       notificationManager.notify(11, builder.build());
     }
