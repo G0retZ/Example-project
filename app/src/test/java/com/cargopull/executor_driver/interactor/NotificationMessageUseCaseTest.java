@@ -18,12 +18,12 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
-public class UpcomingPreOrderMessagesUseCaseTest {
+public class NotificationMessageUseCaseTest {
 
   @ClassRule
   public static final UseCaseThreadTestRule classRule = new UseCaseThreadTestRule();
 
-  private UpcomingPreOrderMessagesUseCase useCase;
+  private NotificationMessageUseCase useCase;
 
   @Mock
   private ErrorReporter errorReporter;
@@ -33,21 +33,21 @@ public class UpcomingPreOrderMessagesUseCaseTest {
   @Before
   public void setUp() {
     when(gateway.getData()).thenReturn(Flowable.never());
-    useCase = new UpcomingPreOrderMessagesUseCaseImpl(errorReporter, gateway);
+    useCase = new NotificationMessageUseCaseImpl(errorReporter, gateway);
   }
 
   /* Проверяем работу с гейтвеем */
 
   /**
-   * Должен запросить у гейтвея сообщения о предстоящих предзаказах только раз.
+   * Должен запросить у гейтвея сообщения о заказах упущенных исполнителем только раз.
    */
   @Test
   public void askGatewayForMissedOrdersMessages() {
     // Действие:
-    useCase.getUpcomingPreOrderMessages().test();
-    useCase.getUpcomingPreOrderMessages().test();
-    useCase.getUpcomingPreOrderMessages().test();
-    useCase.getUpcomingPreOrderMessages().test();
+    useCase.getNotificationMessages().test();
+    useCase.getNotificationMessages().test();
+    useCase.getNotificationMessages().test();
+    useCase.getNotificationMessages().test();
 
     // Результат:
     verify(gateway, only()).getData();
@@ -64,7 +64,7 @@ public class UpcomingPreOrderMessagesUseCaseTest {
     when(gateway.getData()).thenReturn(Flowable.error(DataMappingException::new));
 
     // Действие:
-    useCase.getUpcomingPreOrderMessages().test();
+    useCase.getNotificationMessages().test();
 
     // Результат:
     verify(errorReporter, only()).reportError(any(DataMappingException.class));
@@ -73,7 +73,7 @@ public class UpcomingPreOrderMessagesUseCaseTest {
   /* Проверяем ответы */
 
   /**
-   * Должен вернуть сообщения о предстоящих предзаказах.
+   * Должен вернуть сообщения о заказах упущенных исполнителем.
    */
   @Test
   public void answerWithMissedOrdersMessages() {
@@ -81,7 +81,7 @@ public class UpcomingPreOrderMessagesUseCaseTest {
     when(gateway.getData()).thenReturn(Flowable.just("1", "2", "3"));
 
     // Действие:
-    TestSubscriber<String> testSubscriber = useCase.getUpcomingPreOrderMessages().test();
+    TestSubscriber<String> testSubscriber = useCase.getNotificationMessages().test();
 
     // Результат:
     testSubscriber.assertValues("1", "2", "3");
@@ -97,7 +97,7 @@ public class UpcomingPreOrderMessagesUseCaseTest {
     when(gateway.getData()).thenReturn(Flowable.error(DataMappingException::new));
 
     // Действие:
-    TestSubscriber<String> testSubscriber = useCase.getUpcomingPreOrderMessages().test();
+    TestSubscriber<String> testSubscriber = useCase.getNotificationMessages().test();
 
     // Результат:
     testSubscriber.assertError(DataMappingException.class);
@@ -106,7 +106,7 @@ public class UpcomingPreOrderMessagesUseCaseTest {
   }
 
   /**
-   * Должен завершить получение сообщений о предстоящих предзаказах.
+   * Должен завершить получение сообщений о заказах упущенных исполнителем.
    */
   @Test
   public void answerComplete() {
@@ -114,7 +114,7 @@ public class UpcomingPreOrderMessagesUseCaseTest {
     when(gateway.getData()).thenReturn(Flowable.empty());
 
     // Действие:
-    TestSubscriber<String> testSubscriber = useCase.getUpcomingPreOrderMessages().test();
+    TestSubscriber<String> testSubscriber = useCase.getNotificationMessages().test();
 
     // Результат:
     testSubscriber.assertComplete();

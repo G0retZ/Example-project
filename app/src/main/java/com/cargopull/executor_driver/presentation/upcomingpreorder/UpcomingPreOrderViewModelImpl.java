@@ -4,7 +4,7 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
-import com.cargopull.executor_driver.interactor.UpcomingPreOrderMessagesUseCase;
+import com.cargopull.executor_driver.interactor.NotificationMessageUseCase;
 import com.cargopull.executor_driver.presentation.SingleLiveEvent;
 import com.cargopull.executor_driver.presentation.ViewState;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -12,11 +12,10 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.internal.disposables.EmptyDisposable;
 import javax.inject.Inject;
 
-public class UpcomingPreOrderViewModelImpl extends ViewModel implements
-    UpcomingPreOrderViewModel {
+public class UpcomingPreOrderViewModelImpl extends ViewModel implements UpcomingPreOrderViewModel {
 
   @NonNull
-  private final UpcomingPreOrderMessagesUseCase upcomingPreOrderMessagesUseCase;
+  private final NotificationMessageUseCase upcomingPreOrderMessagesUseCase;
   @NonNull
   private final SingleLiveEvent<ViewState<UpcomingPreOrderViewActions>> messageLiveData;
   @NonNull
@@ -24,7 +23,7 @@ public class UpcomingPreOrderViewModelImpl extends ViewModel implements
 
   @Inject
   public UpcomingPreOrderViewModelImpl(
-      @NonNull UpcomingPreOrderMessagesUseCase upcomingPreOrderMessagesUseCase) {
+      @NonNull NotificationMessageUseCase upcomingPreOrderMessagesUseCase) {
     this.upcomingPreOrderMessagesUseCase = upcomingPreOrderMessagesUseCase;
     messageLiveData = new SingleLiveEvent<>();
     loadMissedOrderMessages();
@@ -44,7 +43,7 @@ public class UpcomingPreOrderViewModelImpl extends ViewModel implements
 
   private void loadMissedOrderMessages() {
     disposable.dispose();
-    disposable = upcomingPreOrderMessagesUseCase.getUpcomingPreOrderMessages()
+    disposable = upcomingPreOrderMessagesUseCase.getNotificationMessages()
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(
             message -> {

@@ -1,4 +1,4 @@
-package com.cargopull.executor_driver.presentation.missedorder;
+package com.cargopull.executor_driver.presentation.cancelledorder;
 
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
@@ -24,21 +24,22 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
-public class MissedOrderViewModelTest {
+public class CancelledOrderViewModelTest {
+
 
   @ClassRule
   public static final ViewModelThreadTestRule classRule = new ViewModelThreadTestRule();
   @Rule
   public TestRule rule = new InstantTaskExecutorRule();
-  private MissedOrderViewModel viewModel;
+  private CancelledOrderViewModel viewModel;
   @Mock
   private NotificationMessageUseCase useCase;
   @Mock
-  private Observer<ViewState<MissedOrderViewActions>> viewStateObserver;
+  private Observer<ViewState<CancelledOrderViewActions>> viewStateObserver;
   @Captor
-  private ArgumentCaptor<ViewState<MissedOrderViewActions>> viewStateCaptor;
+  private ArgumentCaptor<ViewState<CancelledOrderViewActions>> viewStateCaptor;
   @Mock
-  private MissedOrderViewActions viewActions;
+  private CancelledOrderViewActions viewActions;
 
   private PublishSubject<String> publishSubject;
 
@@ -47,16 +48,16 @@ public class MissedOrderViewModelTest {
     publishSubject = PublishSubject.create();
     when(useCase.getNotificationMessages())
         .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
-    viewModel = new MissedOrderViewModelImpl(useCase);
+    viewModel = new CancelledOrderViewModelImpl(useCase);
   }
 
   /* Тетсируем работу с юзкейсом. */
 
   /**
-   * Должен попросить у юзкейса загрузить сообщения об упущенных заказах только при создании.
+   * Должен попросить у юзкейса загрузить сообщения о предстоящих предзаказах только при создании.
    */
   @Test
-  public void askDataReceiverToSubscribeToMissedOrdersMessages() {
+  public void askDataReceiverToSubscribeToUpcomingPreOrdersMessages() {
     // Результат:
     verify(useCase, only()).getNotificationMessages();
   }
@@ -65,7 +66,7 @@ public class MissedOrderViewModelTest {
    * Не должен трогать юзкейс на подписках.
    */
   @Test
-  public void askDataReceiverToSubscribeToMissedOrdersMessagesIfAlreadyAsked() {
+  public void askDataReceiverToSubscribeToUpcomingPreOrdersMessagesIfAlreadyAsked() {
     // Действие:
     viewModel.getViewStateLiveData();
     viewModel.getNavigationLiveData();
@@ -79,10 +80,10 @@ public class MissedOrderViewModelTest {
   /* Тетсируем сообщение. */
 
   /**
-   * Должен показать сообщение об упущенном заказе.
+   * Должен показать сообщение о предстоящем предзаказе.
    */
   @Test
-  public void showMissedOrderMessage() {
+  public void showUpcomingPreOrderMessage() {
     // Дано:
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
@@ -92,7 +93,7 @@ public class MissedOrderViewModelTest {
     // Результат:
     verify(viewStateObserver, only()).onChanged(viewStateCaptor.capture());
     viewStateCaptor.getValue().apply(viewActions);
-    verify(viewActions, only()).showMissedOrderMessage("Message");
+    verify(viewActions, only()).showCancelledOrderMessage("Message");
   }
 
   /**

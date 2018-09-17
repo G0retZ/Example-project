@@ -8,7 +8,7 @@ import static org.mockito.Mockito.when;
 import android.arch.core.executor.testing.InstantTaskExecutorRule;
 import android.arch.lifecycle.Observer;
 import com.cargopull.executor_driver.ViewModelThreadTestRule;
-import com.cargopull.executor_driver.interactor.UpcomingPreOrderMessagesUseCase;
+import com.cargopull.executor_driver.interactor.NotificationMessageUseCase;
 import com.cargopull.executor_driver.presentation.ViewState;
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.subjects.PublishSubject;
@@ -32,7 +32,7 @@ public class UpcomingPreOrderViewModelTest {
   public TestRule rule = new InstantTaskExecutorRule();
   private UpcomingPreOrderViewModel viewModel;
   @Mock
-  private UpcomingPreOrderMessagesUseCase useCase;
+  private NotificationMessageUseCase useCase;
   @Mock
   private Observer<ViewState<UpcomingPreOrderViewActions>> viewStateObserver;
   @Captor
@@ -45,7 +45,7 @@ public class UpcomingPreOrderViewModelTest {
   @Before
   public void setUp() {
     publishSubject = PublishSubject.create();
-    when(useCase.getUpcomingPreOrderMessages())
+    when(useCase.getNotificationMessages())
         .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
     viewModel = new UpcomingPreOrderViewModelImpl(useCase);
   }
@@ -58,7 +58,7 @@ public class UpcomingPreOrderViewModelTest {
   @Test
   public void askDataReceiverToSubscribeToUpcomingPreOrdersMessages() {
     // Результат:
-    verify(useCase, only()).getUpcomingPreOrderMessages();
+    verify(useCase, only()).getNotificationMessages();
   }
 
   /**
@@ -73,7 +73,7 @@ public class UpcomingPreOrderViewModelTest {
     viewModel.getNavigationLiveData();
 
     // Результат:
-    verify(useCase, only()).getUpcomingPreOrderMessages();
+    verify(useCase, only()).getNotificationMessages();
   }
 
   /* Тетсируем сообщение. */
