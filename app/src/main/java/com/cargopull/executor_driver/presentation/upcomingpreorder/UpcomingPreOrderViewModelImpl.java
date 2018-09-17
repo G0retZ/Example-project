@@ -12,8 +12,7 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.internal.disposables.EmptyDisposable;
 import javax.inject.Inject;
 
-public class UpcomingPreOrderViewModelImpl extends ViewModel implements
-    UpcomingPreOrderViewModel {
+public class UpcomingPreOrderViewModelImpl extends ViewModel implements UpcomingPreOrderViewModel {
 
   @NonNull
   private final NotificationMessageUseCase upcomingPreOrderMessagesUseCase;

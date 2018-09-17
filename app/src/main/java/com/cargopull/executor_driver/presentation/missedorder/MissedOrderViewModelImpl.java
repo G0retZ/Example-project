@@ -12,8 +12,7 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.internal.disposables.EmptyDisposable;
 import javax.inject.Inject;
 
-public class MissedOrderViewModelImpl extends ViewModel implements
-    MissedOrderViewModel {
+public class MissedOrderViewModelImpl extends ViewModel implements MissedOrderViewModel {
 
   @NonNull
   private final NotificationMessageUseCase missedOrderUseCase;
