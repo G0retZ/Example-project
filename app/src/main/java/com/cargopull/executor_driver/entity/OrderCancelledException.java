@@ -8,4 +8,8 @@ public class OrderCancelledException extends Exception {
   public OrderCancelledException() {
     super();
   }
+
+  public OrderCancelledException(String message) {
+    super(message);
+  }
 }
