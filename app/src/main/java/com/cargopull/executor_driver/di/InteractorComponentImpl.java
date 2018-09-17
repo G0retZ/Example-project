@@ -95,6 +95,8 @@ class InteractorComponentImpl implements InteractorComponent {
   @Nullable
   private CallToClientUseCase callToClientUseCase;
   @Nullable
+  private NotificationMessageUseCase cancelledOrderMessageUseCase;
+  @Nullable
   private OrderUseCase cancelledOrderUseCase;
   @Nullable
   private CancelOrderReasonsUseCase cancelOrderReasonsUseCase;
@@ -194,6 +196,18 @@ class InteractorComponentImpl implements InteractorComponent {
       );
     }
     return callToClientUseCase;
+  }
+
+  @NonNull
+  @Override
+  public NotificationMessageUseCase getCancelledOrderMessageUseCase() {
+    if (cancelledOrderMessageUseCase == null) {
+      cancelledOrderMessageUseCase = new NotificationMessageUseCaseImpl(
+          errorReporter,
+          repositoryComponent.getCancelledOrderMessageGateway()
+      );
+    }
+    return cancelledOrderMessageUseCase;
   }
 
   @NonNull

@@ -40,6 +40,9 @@ interface InteractorComponent {
   CallToClientUseCase getCallToClientUseCase();
 
   @NonNull
+  NotificationMessageUseCase getCancelledOrderMessageUseCase();
+
+  @NonNull
   CancelOrderReasonsUseCase getCancelOrderReasonsUseCase();
 
   @NonNull

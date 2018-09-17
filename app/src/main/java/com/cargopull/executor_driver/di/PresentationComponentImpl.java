@@ -15,6 +15,8 @@ import com.cargopull.executor_driver.presentation.calltoclient.CallToClientViewM
 import com.cargopull.executor_driver.presentation.calltoclient.CallToClientViewModelImpl;
 import com.cargopull.executor_driver.presentation.calltooperator.CallToOperatorViewModel;
 import com.cargopull.executor_driver.presentation.calltooperator.CallToOperatorViewModelImpl;
+import com.cargopull.executor_driver.presentation.cancelledorder.CancelledOrderViewModel;
+import com.cargopull.executor_driver.presentation.cancelledorder.CancelledOrderViewModelImpl;
 import com.cargopull.executor_driver.presentation.cancelorder.CancelOrderViewModel;
 import com.cargopull.executor_driver.presentation.cancelorder.CancelOrderViewModelImpl;
 import com.cargopull.executor_driver.presentation.cancelorderreasons.CancelOrderReasonsViewModel;
@@ -116,6 +118,8 @@ class PresentationComponentImpl implements PresentationComponent {
   @Nullable
   private OrderCostDetailsViewModel orderCostDetailsViewModel;
   @Nullable
+  private CancelledOrderViewModel cancelledOrderViewModel;
+  @Nullable
   private OrderViewModel orderViewModel;
   @Nullable
   private PreOrderViewModel preOrderViewModel;
@@ -183,6 +187,17 @@ class PresentationComponentImpl implements PresentationComponent {
         CallToOperatorViewModelImpl.class,
         new CallToOperatorViewModelImpl()
     );
+  }
+
+  @NonNull
+  @Override
+  public CancelledOrderViewModel getCancelledOrderViewModel() {
+    if (cancelledOrderViewModel == null) {
+      cancelledOrderViewModel = new CancelledOrderViewModelImpl(
+          interactorComponent.getCancelledOrderMessageUseCase()
+      );
+    }
+    return cancelledOrderViewModel;
   }
 
   @NonNull

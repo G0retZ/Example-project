@@ -18,6 +18,8 @@ import com.cargopull.executor_driver.di.AppComponent;
 import com.cargopull.executor_driver.di.AppComponentImpl;
 import com.cargopull.executor_driver.presentation.CommonNavigate;
 import com.cargopull.executor_driver.presentation.balance.BalanceViewModel;
+import com.cargopull.executor_driver.presentation.cancelledorder.CancelledOrderViewActions;
+import com.cargopull.executor_driver.presentation.cancelledorder.CancelledOrderViewModel;
 import com.cargopull.executor_driver.presentation.cancelorderreasons.CancelOrderReasonsViewModel;
 import com.cargopull.executor_driver.presentation.currentcostpolling.CurrentCostPollingViewModel;
 import com.cargopull.executor_driver.presentation.executorstate.ExecutorStateNavigate;
@@ -46,7 +48,8 @@ import javax.inject.Inject;
  */
 
 public class MainApplication extends Application implements ServerConnectionViewActions,
-    MissedOrderViewActions, PreOrderViewActions, UpcomingPreOrderViewActions {
+    MissedOrderViewActions, PreOrderViewActions, UpcomingPreOrderViewActions,
+    CancelledOrderViewActions {
 
   @Nullable
   private AppComponent appComponent;
@@ -76,6 +79,8 @@ public class MainApplication extends Application implements ServerConnectionView
   private MissedOrderViewModel missedOrderViewModel;
   @Nullable
   private UpcomingPreOrderViewModel upcomingPreOrderViewModel;
+  @Nullable
+  private CancelledOrderViewModel cancelledOrderViewModel;
   @Nullable
   private UpdateMessageViewModel updateMessageViewModel;
   @Nullable
@@ -163,6 +168,11 @@ public class MainApplication extends Application implements ServerConnectionView
   }
 
   @Inject
+  public void setCancelledOrderViewModel(@NonNull CancelledOrderViewModel cancelledOrderViewModel) {
+    this.cancelledOrderViewModel = cancelledOrderViewModel;
+  }
+
+  @Inject
   public void setUpdateMessageViewModel(@NonNull UpdateMessageViewModel updateMessageViewModel) {
     this.updateMessageViewModel = updateMessageViewModel;
   }
@@ -193,10 +203,10 @@ public class MainApplication extends Application implements ServerConnectionView
     if (cancelOrderReasonsViewModel == null || balanceViewModel == null ||
         executorStateViewModel == null || geoLocationViewModel == null
         || missedOrderViewModel == null || updateMessageViewModel == null
-        || serverConnectionViewModel == null || currentCostPollingViewModel == null
-        || serverTimeViewModel == null || orderViewModel == null || preOrderViewModel == null
-        || orderCostDetailsViewModel == null || upcomingPreOrderViewModel == null
-        || preOrdersListViewModel == null) {
+        || cancelledOrderViewModel == null || serverConnectionViewModel == null
+        || currentCostPollingViewModel == null || serverTimeViewModel == null
+        || orderViewModel == null || preOrderViewModel == null || orderCostDetailsViewModel == null
+        || upcomingPreOrderViewModel == null || preOrdersListViewModel == null) {
       throw new RuntimeException("Shit! WTF?!");
     }
     serverConnectionViewModel.getViewStateLiveData().observeForever(viewState -> {
@@ -210,6 +220,11 @@ public class MainApplication extends Application implements ServerConnectionView
       }
     });
     upcomingPreOrderViewModel.getViewStateLiveData().observeForever(viewState -> {
+      if (viewState != null) {
+        viewState.apply(this);
+      }
+    });
+    cancelledOrderViewModel.getViewStateLiveData().observeForever(viewState -> {
       if (viewState != null) {
         viewState.apply(this);
       }
@@ -347,8 +362,8 @@ public class MainApplication extends Application implements ServerConnectionView
     shakeIt(R.raw.missed_order_vibro);
     if (notificationManager != null) {
       Builder builder = new Builder(this, "state_channel")
-          .setContentText(getString(R.string.missed_order))
-          .setContentTitle(message)
+          .setContentTitle(getString(R.string.missed_order))
+          .setContentText(message)
           .setStyle(new BigTextStyle().bigText(message))
           .setSound(null)
           .setVibrate(new long[0])
@@ -438,6 +453,27 @@ public class MainApplication extends Application implements ServerConnectionView
           .setTicker(getString(R.string.upcoming_pre_order))
           .setWhen(System.currentTimeMillis());
       notificationManager.notify(8, builder.build());
+    }
+  }
+
+  @Override
+  public void showCancelledOrderMessage(@NonNull String message) {
+    playSound(R.raw.missed_offer);
+    if (notificationManager != null) {
+      Builder builder = new Builder(this, "state_channel")
+          .setContentTitle(getString(R.string.order_cancelled))
+          .setContentText(message)
+          .setStyle(new BigTextStyle().bigText(message))
+          .setSound(null)
+          .setVibrate(new long[0])
+          .setAutoCancel(true)
+          .setContentIntent(
+              PendingIntent.getActivity(this, 0, new Intent(this, BalanceActivity.class), 0)
+          )
+          .setSmallIcon(R.mipmap.ic_launcher)
+          .setTicker(getString(R.string.missed_order))
+          .setWhen(System.currentTimeMillis());
+      notificationManager.notify(11, builder.build());
     }
   }
 }

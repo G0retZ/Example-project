@@ -94,6 +94,8 @@ class RepositoryComponentImpl implements RepositoryComponent {
   @Nullable
   private CallToClientGateway callToClientGateway;
   @Nullable
+  private CommonGateway<String> cancelledOrderMessageGateway;
+  @Nullable
   private CommonGateway<Order> cancelledOrderGateway;
   @Nullable
   private CancelOrderGateway cancelOrderGateway;
@@ -190,6 +192,19 @@ class RepositoryComponentImpl implements RepositoryComponent {
       );
     }
     return cancelledOrderGateway;
+  }
+
+  @NonNull
+  @Override
+  public CommonGateway<String> getCancelledOrderMessageGateway() {
+    if (cancelledOrderMessageGateway == null) {
+      cancelledOrderMessageGateway = new TopicGatewayImpl<>(
+          backendComponent.getPersonalTopicListener(),
+          new MessagePayloadApiMapper(),
+          new CancelledOrderFilter()
+      );
+    }
+    return cancelledOrderMessageGateway;
   }
 
   @NonNull
