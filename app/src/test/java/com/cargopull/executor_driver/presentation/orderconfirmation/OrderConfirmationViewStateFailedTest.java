@@ -12,7 +12,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
-public class OrderConfirmationViewStateAcceptedTest {
+public class OrderConfirmationViewStateFailedTest {
 
   @Mock
   private OrderConfirmationViewActions viewActions;
@@ -21,33 +21,31 @@ public class OrderConfirmationViewStateAcceptedTest {
   public void testActionsWithMessage() {
     // Действие:
     InOrder inOrder = Mockito.inOrder(viewActions);
-    new OrderConfirmationViewStateAccepted("message").apply(viewActions);
+    new OrderConfirmationViewStateFailed("message").apply(viewActions);
 
     // Результат:
-    inOrder.verify(viewActions).showDriverOrderConfirmationPending(true);
+    inOrder.verify(viewActions).showDriverOrderConfirmationPending(false);
     inOrder.verify(viewActions).enableAcceptButton(false);
     inOrder.verify(viewActions).enableDeclineButton(false);
+    inOrder.verify(viewActions).showAcceptedMessage(null);
     inOrder.verify(viewActions).showDeclinedMessage(null);
-    inOrder.verify(viewActions).showFailedMessage(null);
-    inOrder.verify(viewActions).showAcceptedMessage("message");
+    inOrder.verify(viewActions).showFailedMessage("message");
     verifyNoMoreInteractions(viewActions);
   }
 
   @Test
   public void testEquals() {
-    OrderConfirmationViewStateAccepted viewState = new OrderConfirmationViewStateAccepted(
-        "message");
+    OrderConfirmationViewStateFailed viewState = new OrderConfirmationViewStateFailed("message");
     assertEquals(viewState, viewState);
-    assertEquals(viewState, new OrderConfirmationViewStateAccepted("message"));
-    assertNotEquals(viewState, new OrderConfirmationViewStateAccepted(""));
+    assertEquals(viewState, new OrderConfirmationViewStateFailed("message"));
+    assertNotEquals(viewState, new OrderConfirmationViewStateFailed(""));
     assertNotEquals(viewState, "");
     assertNotEquals(viewState, null);
   }
 
   @Test
   public void testHashCode() {
-    OrderConfirmationViewStateAccepted viewState = new OrderConfirmationViewStateAccepted(
-        "message");
+    OrderConfirmationViewStateFailed viewState = new OrderConfirmationViewStateFailed("message");
     assertEquals(viewState.hashCode(), "message".hashCode());
   }
 }

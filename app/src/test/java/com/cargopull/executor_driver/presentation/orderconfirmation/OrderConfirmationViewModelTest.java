@@ -12,6 +12,7 @@ import android.arch.core.executor.testing.InstantTaskExecutorRule;
 import android.arch.lifecycle.Observer;
 import com.cargopull.executor_driver.ViewModelThreadTestRule;
 import com.cargopull.executor_driver.backend.web.NoNetworkException;
+import com.cargopull.executor_driver.entity.OrderConfirmationFailedException;
 import com.cargopull.executor_driver.entity.OrderOfferDecisionException;
 import com.cargopull.executor_driver.entity.OrderOfferExpiredException;
 import com.cargopull.executor_driver.gateway.DataMappingException;
@@ -20,11 +21,9 @@ import com.cargopull.executor_driver.presentation.CommonNavigate;
 import com.cargopull.executor_driver.presentation.ViewState;
 import com.cargopull.executor_driver.utils.TimeUtils;
 import io.reactivex.BackpressureStrategy;
-import io.reactivex.Observable;
-import io.reactivex.ObservableEmitter;
-import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.Flowable;
+import io.reactivex.FlowableEmitter;
 import io.reactivex.Single;
-import io.reactivex.subjects.PublishSubject;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
@@ -48,19 +47,18 @@ public class OrderConfirmationViewModelTest {
   private OrderConfirmationUseCase useCase;
   @Mock
   private TimeUtils timeUtils;
-  private PublishSubject<Long> publishSubject;
-
   @Mock
   private Observer<ViewState<OrderConfirmationViewActions>> viewStateObserver;
   @Mock
   private Observer<String> navigateObserver;
+  private FlowableEmitter<Long> emitter;
 
   @Before
   public void setUp() {
-    publishSubject = PublishSubject.create();
     when(useCase.sendDecision(anyBoolean())).thenReturn(Single.never());
-    when(useCase.getOrderDecisionTimeout())
-        .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
+    when(useCase.getOrderDecisionTimeout()).thenReturn(
+        Flowable.create(e -> emitter = e, BackpressureStrategy.BUFFER)
+    );
     viewModel = new OrderConfirmationViewModelImpl(useCase, timeUtils);
   }
 
@@ -170,108 +168,75 @@ public class OrderConfirmationViewModelTest {
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    publishSubject.onNext(15_000L);
-    publishSubject.onNext(17_000L);
-    publishSubject.onNext(12_000L);
+    emitter.onNext(15_000L);
+    emitter.onNext(17_000L);
+    emitter.onNext(12_000L);
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(any(OrderConfirmationViewStatePending.class));
-    inOrder.verify(viewStateObserver).onChanged(new OrderConfirmationViewStateIdle(
-        new OrderConfirmationTimeoutItem(15_000L, timeUtils))
+    inOrder.verify(viewStateObserver).onChanged(
+        new OrderConfirmationViewStateIdle(new OrderConfirmationTimeoutItem(15_000L, timeUtils))
     );
-    inOrder.verify(viewStateObserver).onChanged(new OrderConfirmationViewStateIdle(
-        new OrderConfirmationTimeoutItem(17_000L, timeUtils))
+    inOrder.verify(viewStateObserver).onChanged(
+        new OrderConfirmationViewStateIdle(new OrderConfirmationTimeoutItem(17_000L, timeUtils))
     );
-    inOrder.verify(viewStateObserver).onChanged(new OrderConfirmationViewStateIdle(
-        new OrderConfirmationTimeoutItem(12_000L, timeUtils))
+    inOrder.verify(viewStateObserver).onChanged(
+        new OrderConfirmationViewStateIdle(new OrderConfirmationTimeoutItem(12_000L, timeUtils))
     );
     verifyNoMoreInteractions(viewStateObserver);
   }
 
   /**
-   * Не должен возвращать иных состояний вида при получении ошибки истечения заказа с сообщением.
+   * Должен вернуть состояние вида "просрочки" с сообщением при получении ошибки истечения заказа.
    */
   @Test
   public void setNoViewStateToLiveDataForExpiredError() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    when(useCase.getOrderDecisionTimeout()).thenReturn(
-        Observable.create(
-            new ObservableOnSubscribe<Long>() {
-              private boolean run;
-
-              @Override
-              public void subscribe(ObservableEmitter<Long> emitter) {
-                if (!run) {
-                  run = true;
-                  emitter.onNext(15_000L);
-                  emitter.onError(new OrderOfferExpiredException("message"));
-                } else {
-                  emitter.onNext(17_000L);
-                }
-              }
-            }
-        ).startWith(publishSubject)
-            .toFlowable(BackpressureStrategy.BUFFER)
-    );
     viewModel = new OrderConfirmationViewModelImpl(useCase, timeUtils);
     viewModel.getNavigationLiveData().observeForever(navigateObserver);
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    publishSubject.onComplete();
+    emitter.onNext(15_000L);
+    emitter.onError(new OrderOfferExpiredException("message"));
+    emitter.onNext(17_000L);
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(any(OrderConfirmationViewStatePending.class));
-    inOrder.verify(viewStateObserver).onChanged(new OrderConfirmationViewStateIdle(
-        new OrderConfirmationTimeoutItem(15_000L, timeUtils))
+    inOrder.verify(viewStateObserver).onChanged(
+        new OrderConfirmationViewStateIdle(new OrderConfirmationTimeoutItem(15_000L, timeUtils))
     );
-    inOrder.verify(viewStateObserver).onChanged(new OrderConfirmationViewStateIdle(
-        new OrderConfirmationTimeoutItem(17_000L, timeUtils))
+    inOrder.verify(viewStateObserver).onChanged(any(OrderConfirmationViewStateExpired.class));
+    inOrder.verify(viewStateObserver).onChanged(
+        new OrderConfirmationViewStateIdle(new OrderConfirmationTimeoutItem(17_000L, timeUtils))
     );
     verifyNoMoreInteractions(viewStateObserver);
   }
 
   /**
-   * Не должен возвращать иных состояний вида при получении ошибки истечения заказа без сообщения.
+   * Не должен возвращать иных состояний вида при получении ошибки принятия решения по заказу.
    */
   @Test
-  public void setNoViewStateToLiveDataForExpiredErrorWithoutMessage() {
+  public void setNoViewStateToLiveDataForOfferDecisionErrorWithoutMessage() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    when(useCase.getOrderDecisionTimeout()).thenReturn(
-        Observable.create(
-            new ObservableOnSubscribe<Long>() {
-              private boolean run;
-
-              @Override
-              public void subscribe(ObservableEmitter<Long> emitter) {
-                if (!run) {
-                  run = true;
-                  emitter.onNext(15_000L);
-                  emitter.onError(new OrderOfferDecisionException());
-                } else {
-                  emitter.onNext(17_000L);
-                }
-              }
-            }
-        ).startWith(publishSubject)
-            .toFlowable(BackpressureStrategy.BUFFER)
-    );
     viewModel = new OrderConfirmationViewModelImpl(useCase, timeUtils);
     viewModel.getNavigationLiveData().observeForever(navigateObserver);
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    publishSubject.onComplete();
+    emitter.onNext(15_000L);
+    emitter.onError(new OrderOfferDecisionException());
+    emitter.onNext(17_000L);
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(any(OrderConfirmationViewStatePending.class));
-    inOrder.verify(viewStateObserver).onChanged(new OrderConfirmationViewStateIdle(
-        new OrderConfirmationTimeoutItem(15_000L, timeUtils))
+    inOrder.verify(viewStateObserver).onChanged(
+        new OrderConfirmationViewStateIdle(new OrderConfirmationTimeoutItem(15_000L, timeUtils))
     );
-    inOrder.verify(viewStateObserver).onChanged(new OrderConfirmationViewStateIdle(
-        new OrderConfirmationTimeoutItem(17_000L, timeUtils))
+    inOrder.verify(viewStateObserver).onChanged(
+        new OrderConfirmationViewStateIdle(new OrderConfirmationTimeoutItem(17_000L, timeUtils))
     );
     verifyNoMoreInteractions(viewStateObserver);
   }
@@ -285,7 +250,7 @@ public class OrderConfirmationViewModelTest {
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    publishSubject.onError(new Exception());
+    emitter.onError(new Exception());
 
     // Результат:
     verify(viewStateObserver, only()).onChanged(any(OrderConfirmationViewStatePending.class));
@@ -301,13 +266,13 @@ public class OrderConfirmationViewModelTest {
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    publishSubject.onNext(12_000L);
+    emitter.onNext(12_000L);
     viewModel.counterTimeOut();
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(any(OrderConfirmationViewStatePending.class));
-    inOrder.verify(viewStateObserver).onChanged(new OrderConfirmationViewStateIdle(
-        new OrderConfirmationTimeoutItem(12_000L, timeUtils))
+    inOrder.verify(viewStateObserver).onChanged(
+        new OrderConfirmationViewStateIdle(new OrderConfirmationTimeoutItem(12_000L, timeUtils))
     );
     inOrder.verify(viewStateObserver).onChanged(any(OrderConfirmationViewStatePending.class));
     verifyNoMoreInteractions(viewStateObserver);
@@ -323,13 +288,13 @@ public class OrderConfirmationViewModelTest {
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    publishSubject.onNext(12_000L);
+    emitter.onNext(12_000L);
     viewModel.acceptOrder();
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(any(OrderConfirmationViewStatePending.class));
-    inOrder.verify(viewStateObserver).onChanged(new OrderConfirmationViewStateIdle(
-        new OrderConfirmationTimeoutItem(12_000L, timeUtils))
+    inOrder.verify(viewStateObserver).onChanged(
+        new OrderConfirmationViewStateIdle(new OrderConfirmationTimeoutItem(12_000L, timeUtils))
     );
     inOrder.verify(viewStateObserver).onChanged(any(OrderConfirmationViewStatePending.class));
     verifyNoMoreInteractions(viewStateObserver);
@@ -345,13 +310,13 @@ public class OrderConfirmationViewModelTest {
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    publishSubject.onNext(12_000L);
+    emitter.onNext(12_000L);
     viewModel.declineOrder();
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(any(OrderConfirmationViewStatePending.class));
-    inOrder.verify(viewStateObserver).onChanged(new OrderConfirmationViewStateIdle(
-        new OrderConfirmationTimeoutItem(12_000L, timeUtils))
+    inOrder.verify(viewStateObserver).onChanged(
+        new OrderConfirmationViewStateIdle(new OrderConfirmationTimeoutItem(12_000L, timeUtils))
     );
     inOrder.verify(viewStateObserver).onChanged(any(OrderConfirmationViewStatePending.class));
     verifyNoMoreInteractions(viewStateObserver);
@@ -368,17 +333,17 @@ public class OrderConfirmationViewModelTest {
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    publishSubject.onNext(12_000L);
+    emitter.onNext(12_000L);
     viewModel.acceptOrder();
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(any(OrderConfirmationViewStatePending.class));
-    inOrder.verify(viewStateObserver).onChanged(new OrderConfirmationViewStateIdle(
-        new OrderConfirmationTimeoutItem(12_000L, timeUtils))
+    inOrder.verify(viewStateObserver).onChanged(
+        new OrderConfirmationViewStateIdle(new OrderConfirmationTimeoutItem(12_000L, timeUtils))
     );
     inOrder.verify(viewStateObserver).onChanged(any(OrderConfirmationViewStatePending.class));
-    inOrder.verify(viewStateObserver).onChanged(new OrderConfirmationViewStateIdle(
-        new OrderConfirmationTimeoutItem(12_000L, timeUtils))
+    inOrder.verify(viewStateObserver).onChanged(
+        new OrderConfirmationViewStateIdle(new OrderConfirmationTimeoutItem(12_000L, timeUtils))
     );
     verifyNoMoreInteractions(viewStateObserver);
   }
@@ -394,17 +359,17 @@ public class OrderConfirmationViewModelTest {
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    publishSubject.onNext(12_000L);
+    emitter.onNext(12_000L);
     viewModel.declineOrder();
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(any(OrderConfirmationViewStatePending.class));
-    inOrder.verify(viewStateObserver).onChanged(new OrderConfirmationViewStateIdle(
-        new OrderConfirmationTimeoutItem(12_000L, timeUtils))
+    inOrder.verify(viewStateObserver).onChanged(
+        new OrderConfirmationViewStateIdle(new OrderConfirmationTimeoutItem(12_000L, timeUtils))
     );
     inOrder.verify(viewStateObserver).onChanged(any(OrderConfirmationViewStatePending.class));
-    inOrder.verify(viewStateObserver).onChanged(new OrderConfirmationViewStateIdle(
-        new OrderConfirmationTimeoutItem(12_000L, timeUtils))
+    inOrder.verify(viewStateObserver).onChanged(
+        new OrderConfirmationViewStateIdle(new OrderConfirmationTimeoutItem(12_000L, timeUtils))
     );
     verifyNoMoreInteractions(viewStateObserver);
   }
@@ -421,17 +386,17 @@ public class OrderConfirmationViewModelTest {
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    publishSubject.onNext(12_000L);
+    emitter.onNext(12_000L);
     viewModel.acceptOrder();
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(any(OrderConfirmationViewStatePending.class));
-    inOrder.verify(viewStateObserver).onChanged(new OrderConfirmationViewStateIdle(
-        new OrderConfirmationTimeoutItem(12_000L, timeUtils))
+    inOrder.verify(viewStateObserver).onChanged(
+        new OrderConfirmationViewStateIdle(new OrderConfirmationTimeoutItem(12_000L, timeUtils))
     );
     inOrder.verify(viewStateObserver).onChanged(any(OrderConfirmationViewStatePending.class));
-    inOrder.verify(viewStateObserver).onChanged(new OrderConfirmationViewStateIdle(
-        new OrderConfirmationTimeoutItem(12_000L, timeUtils))
+    inOrder.verify(viewStateObserver).onChanged(
+        new OrderConfirmationViewStateIdle(new OrderConfirmationTimeoutItem(12_000L, timeUtils))
     );
     verifyNoMoreInteractions(viewStateObserver);
   }
@@ -447,23 +412,23 @@ public class OrderConfirmationViewModelTest {
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    publishSubject.onNext(12_000L);
+    emitter.onNext(12_000L);
     viewModel.declineOrder();
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(any(OrderConfirmationViewStatePending.class));
-    inOrder.verify(viewStateObserver).onChanged(new OrderConfirmationViewStateIdle(
-        new OrderConfirmationTimeoutItem(12_000L, timeUtils))
+    inOrder.verify(viewStateObserver).onChanged(
+        new OrderConfirmationViewStateIdle(new OrderConfirmationTimeoutItem(12_000L, timeUtils))
     );
     inOrder.verify(viewStateObserver).onChanged(any(OrderConfirmationViewStatePending.class));
-    inOrder.verify(viewStateObserver).onChanged(new OrderConfirmationViewStateIdle(
-        new OrderConfirmationTimeoutItem(12_000L, timeUtils))
+    inOrder.verify(viewStateObserver).onChanged(
+        new OrderConfirmationViewStateIdle(new OrderConfirmationTimeoutItem(12_000L, timeUtils))
     );
     verifyNoMoreInteractions(viewStateObserver);
   }
 
   /**
-   * Должен вернуть состояние вида "просрочки" с сообщением для неуспешного принятия.
+   * Должен вернуть предыдущее состояние вида при получении ошибки истечения заказа.
    */
   @Test
   public void setExpiredViewStateToLiveDataForAcceptExpiredWithoutOrder() {
@@ -474,21 +439,23 @@ public class OrderConfirmationViewModelTest {
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    publishSubject.onNext(12_000L);
+    emitter.onNext(12_000L);
     viewModel.acceptOrder();
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(any(OrderConfirmationViewStatePending.class));
-    inOrder.verify(viewStateObserver).onChanged(new OrderConfirmationViewStateIdle(
-        new OrderConfirmationTimeoutItem(12_000L, timeUtils))
+    inOrder.verify(viewStateObserver).onChanged(
+        new OrderConfirmationViewStateIdle(new OrderConfirmationTimeoutItem(12_000L, timeUtils))
     );
     inOrder.verify(viewStateObserver).onChanged(any(OrderConfirmationViewStatePending.class));
-    inOrder.verify(viewStateObserver).onChanged(new OrderConfirmationViewStateExpired("34"));
+    inOrder.verify(viewStateObserver).onChanged(
+        new OrderConfirmationViewStateIdle(new OrderConfirmationTimeoutItem(12_000L, timeUtils))
+    );
     verifyNoMoreInteractions(viewStateObserver);
   }
 
   /**
-   * Должен вернуть состояние вида "просрочки" с сообщением для неуспешного отказа.
+   * Должен вернуть предыдущее состояние вида при получении ошибки истечения заказа.
    */
   @Test
   public void setExpiredViewStateToLiveDataForDeclineExpiredWithoutOrder() {
@@ -499,16 +466,68 @@ public class OrderConfirmationViewModelTest {
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    publishSubject.onNext(12_000L);
+    emitter.onNext(12_000L);
     viewModel.declineOrder();
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(any(OrderConfirmationViewStatePending.class));
-    inOrder.verify(viewStateObserver).onChanged(new OrderConfirmationViewStateIdle(
-        new OrderConfirmationTimeoutItem(12_000L, timeUtils))
+    inOrder.verify(viewStateObserver).onChanged(
+        new OrderConfirmationViewStateIdle(new OrderConfirmationTimeoutItem(12_000L, timeUtils))
     );
     inOrder.verify(viewStateObserver).onChanged(any(OrderConfirmationViewStatePending.class));
-    inOrder.verify(viewStateObserver).onChanged(new OrderConfirmationViewStateExpired("43"));
+    inOrder.verify(viewStateObserver).onChanged(
+        new OrderConfirmationViewStateIdle(new OrderConfirmationTimeoutItem(12_000L, timeUtils))
+    );
+    verifyNoMoreInteractions(viewStateObserver);
+  }
+
+  /**
+   * Должен вернуть состояние вида "провала" с сообщением для неуспешного принятия.
+   */
+  @Test
+  public void setFailedViewStateToLiveDataForAcceptExpiredWithoutOrder() {
+    // Дано:
+    InOrder inOrder = Mockito.inOrder(viewStateObserver);
+    when(useCase.sendDecision(anyBoolean()))
+        .thenReturn(Single.error(new OrderConfirmationFailedException("34")));
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
+
+    // Действие:
+    emitter.onNext(12_000L);
+    viewModel.acceptOrder();
+
+    // Результат:
+    inOrder.verify(viewStateObserver).onChanged(any(OrderConfirmationViewStatePending.class));
+    inOrder.verify(viewStateObserver).onChanged(
+        new OrderConfirmationViewStateIdle(new OrderConfirmationTimeoutItem(12_000L, timeUtils))
+    );
+    inOrder.verify(viewStateObserver).onChanged(any(OrderConfirmationViewStatePending.class));
+    inOrder.verify(viewStateObserver).onChanged(new OrderConfirmationViewStateFailed("34"));
+    verifyNoMoreInteractions(viewStateObserver);
+  }
+
+  /**
+   * Должен вернуть состояние вида "провала" с сообщением для неуспешного отказа.
+   */
+  @Test
+  public void setFailedViewStateToLiveDataForDeclineExpiredWithoutOrder() {
+    // Дано:
+    InOrder inOrder = Mockito.inOrder(viewStateObserver);
+    when(useCase.sendDecision(anyBoolean()))
+        .thenReturn(Single.error(new OrderConfirmationFailedException("43")));
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
+
+    // Действие:
+    emitter.onNext(12_000L);
+    viewModel.declineOrder();
+
+    // Результат:
+    inOrder.verify(viewStateObserver).onChanged(any(OrderConfirmationViewStatePending.class));
+    inOrder.verify(viewStateObserver).onChanged(
+        new OrderConfirmationViewStateIdle(new OrderConfirmationTimeoutItem(12_000L, timeUtils))
+    );
+    inOrder.verify(viewStateObserver).onChanged(any(OrderConfirmationViewStatePending.class));
+    inOrder.verify(viewStateObserver).onChanged(new OrderConfirmationViewStateFailed("43"));
     verifyNoMoreInteractions(viewStateObserver);
   }
 
@@ -524,17 +543,17 @@ public class OrderConfirmationViewModelTest {
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    publishSubject.onNext(12_000L);
+    emitter.onNext(12_000L);
     viewModel.acceptOrder();
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(any(OrderConfirmationViewStatePending.class));
-    inOrder.verify(viewStateObserver).onChanged(new OrderConfirmationViewStateIdle(
-        new OrderConfirmationTimeoutItem(12_000L, timeUtils))
+    inOrder.verify(viewStateObserver).onChanged(
+        new OrderConfirmationViewStateIdle(new OrderConfirmationTimeoutItem(12_000L, timeUtils))
     );
     inOrder.verify(viewStateObserver).onChanged(any(OrderConfirmationViewStatePending.class));
-    inOrder.verify(viewStateObserver).onChanged(new OrderConfirmationViewStateIdle(
-        new OrderConfirmationTimeoutItem(12_000L, timeUtils))
+    inOrder.verify(viewStateObserver).onChanged(
+        new OrderConfirmationViewStateIdle(new OrderConfirmationTimeoutItem(12_000L, timeUtils))
     );
     verifyNoMoreInteractions(viewStateObserver);
   }
@@ -551,17 +570,17 @@ public class OrderConfirmationViewModelTest {
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    publishSubject.onNext(12_000L);
+    emitter.onNext(12_000L);
     viewModel.declineOrder();
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(any(OrderConfirmationViewStatePending.class));
-    inOrder.verify(viewStateObserver).onChanged(new OrderConfirmationViewStateIdle(
-        new OrderConfirmationTimeoutItem(12_000L, timeUtils))
+    inOrder.verify(viewStateObserver).onChanged(
+        new OrderConfirmationViewStateIdle(new OrderConfirmationTimeoutItem(12_000L, timeUtils))
     );
     inOrder.verify(viewStateObserver).onChanged(any(OrderConfirmationViewStatePending.class));
-    inOrder.verify(viewStateObserver).onChanged(new OrderConfirmationViewStateIdle(
-        new OrderConfirmationTimeoutItem(12_000L, timeUtils))
+    inOrder.verify(viewStateObserver).onChanged(
+        new OrderConfirmationViewStateIdle(new OrderConfirmationTimeoutItem(12_000L, timeUtils))
     );
     verifyNoMoreInteractions(viewStateObserver);
   }
@@ -577,13 +596,13 @@ public class OrderConfirmationViewModelTest {
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    publishSubject.onNext(12_000L);
+    emitter.onNext(12_000L);
     viewModel.acceptOrder();
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(any(OrderConfirmationViewStatePending.class));
-    inOrder.verify(viewStateObserver).onChanged(new OrderConfirmationViewStateIdle(
-        new OrderConfirmationTimeoutItem(12_000L, timeUtils))
+    inOrder.verify(viewStateObserver).onChanged(
+        new OrderConfirmationViewStateIdle(new OrderConfirmationTimeoutItem(12_000L, timeUtils))
     );
     inOrder.verify(viewStateObserver).onChanged(any(OrderConfirmationViewStatePending.class));
     inOrder.verify(viewStateObserver).onChanged(new OrderConfirmationViewStateAccepted("21"));
@@ -601,13 +620,13 @@ public class OrderConfirmationViewModelTest {
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    publishSubject.onNext(12_000L);
+    emitter.onNext(12_000L);
     viewModel.declineOrder();
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(any(OrderConfirmationViewStatePending.class));
-    inOrder.verify(viewStateObserver).onChanged(new OrderConfirmationViewStateIdle(
-        new OrderConfirmationTimeoutItem(12_000L, timeUtils))
+    inOrder.verify(viewStateObserver).onChanged(
+        new OrderConfirmationViewStateIdle(new OrderConfirmationTimeoutItem(12_000L, timeUtils))
     );
     inOrder.verify(viewStateObserver).onChanged(any(OrderConfirmationViewStatePending.class));
     inOrder.verify(viewStateObserver).onChanged(new OrderConfirmationViewStateDeclined("12"));
@@ -713,7 +732,7 @@ public class OrderConfirmationViewModelTest {
     viewModel.getNavigationLiveData().observeForever(navigateObserver);
 
     // Действие:
-    publishSubject.onError(new DataMappingException());
+    emitter.onError(new DataMappingException());
 
     // Результат:
     verify(navigateObserver, only()).onChanged(CommonNavigate.SERVER_DATA_ERROR);

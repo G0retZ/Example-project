@@ -15,7 +15,7 @@ final class OrderConfirmationViewStatePending implements ViewState<OrderConfirma
     stateActions.enableDeclineButton(false);
     stateActions.showAcceptedMessage(null);
     stateActions.showDeclinedMessage(null);
-    stateActions.showExpiredMessage(null);
+    stateActions.showFailedMessage(null);
     stateActions.showTimeout(-1, -1);
   }
 }

@@ -258,6 +258,6 @@ public class DriverOrderConfirmationFragment extends BaseFragment implements
   }
 
   @Override
-  public void showExpiredMessage(@Nullable String message) {
+  public void showFailedMessage(@Nullable String message) {
   }
 }

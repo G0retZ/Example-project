@@ -230,7 +230,7 @@ public class DriverPreOrderBookingFragment extends BaseFragment implements
   }
 
   @Override
-  public void showExpiredMessage(@Nullable String message) {
+  public void showFailedMessage(@Nullable String message) {
     if (alertDialog != null) {
       alertDialog.dismiss();
     }

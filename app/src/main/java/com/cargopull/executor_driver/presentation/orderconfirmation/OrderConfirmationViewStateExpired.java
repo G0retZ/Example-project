@@ -8,39 +8,13 @@ import com.cargopull.executor_driver.presentation.ViewState;
  */
 final class OrderConfirmationViewStateExpired implements ViewState<OrderConfirmationViewActions> {
 
-  @NonNull
-  private final String message;
-
-  OrderConfirmationViewStateExpired(@NonNull String message) {
-    this.message = message;
-  }
-
   @Override
   public void apply(@NonNull OrderConfirmationViewActions stateActions) {
-    stateActions.showDriverOrderConfirmationPending(true);
+    stateActions.showDriverOrderConfirmationPending(false);
     stateActions.enableAcceptButton(false);
     stateActions.enableDeclineButton(false);
     stateActions.showAcceptedMessage(null);
     stateActions.showDeclinedMessage(null);
-    stateActions.showExpiredMessage(message);
-  }
-
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
-    }
-
-    OrderConfirmationViewStateExpired that = (OrderConfirmationViewStateExpired) o;
-
-    return message.equals(that.message);
-  }
-
-  @Override
-  public int hashCode() {
-    return message.hashCode();
+    stateActions.showFailedMessage(null);
   }
 }

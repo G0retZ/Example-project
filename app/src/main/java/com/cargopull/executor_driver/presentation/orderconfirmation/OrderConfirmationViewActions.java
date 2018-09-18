@@ -55,5 +55,5 @@ public interface OrderConfirmationViewActions {
    *
    * @param message - текст сообщения или null, если не показывать
    */
-  void showExpiredMessage(@Nullable String message);
+  void showFailedMessage(@Nullable String message);
 }
