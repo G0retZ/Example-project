@@ -196,6 +196,9 @@ public class SelectedPreOrderConfirmationFragment extends BaseFragment implement
 
   @Override
   public void enableDeclineButton(boolean enable) {
+    if (!enable && declineDelayAnimator != null) {
+      declineDelayAnimator.cancel();
+    }
     declineAction.setEnabled(enable);
     declineActionText.setEnabled(enable);
   }

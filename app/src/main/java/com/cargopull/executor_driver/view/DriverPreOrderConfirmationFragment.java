@@ -276,6 +276,9 @@ public class DriverPreOrderConfirmationFragment extends BaseFragment implements
 
   @Override
   public void enableDeclineButton(boolean enable) {
+    if (!enable && declineDelayAnimator != null) {
+      declineDelayAnimator.cancel();
+    }
     declineAction.setEnabled(enable);
     declineActionText.setEnabled(enable);
   }

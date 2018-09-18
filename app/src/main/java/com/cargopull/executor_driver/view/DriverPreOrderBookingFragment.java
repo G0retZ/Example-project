@@ -201,6 +201,9 @@ public class DriverPreOrderBookingFragment extends BaseFragment implements
 
   @Override
   public void enableAcceptButton(boolean enable) {
+    if (!enable && acceptDelayAnimator != null) {
+      acceptDelayAnimator.cancel();
+    }
     acceptAction.setEnabled(enable);
     acceptActionText.setEnabled(enable);
   }
