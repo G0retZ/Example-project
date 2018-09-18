@@ -13,7 +13,7 @@ import com.cargopull.executor_driver.backend.web.ApiService;
 import com.cargopull.executor_driver.backend.web.incoming.ApiSimpleResult;
 import com.cargopull.executor_driver.backend.web.outgoing.ApiOrderDecision;
 import com.cargopull.executor_driver.entity.Order;
-import com.cargopull.executor_driver.entity.OrderOfferExpiredException;
+import com.cargopull.executor_driver.entity.OrderConfirmationFailedException;
 import com.cargopull.executor_driver.gateway.PreOrderConfirmationGatewayImpl;
 import io.reactivex.Single;
 import io.reactivex.observers.TestObserver;
@@ -110,7 +110,7 @@ public class PreOrderConfirmationGatewayTest {
 
     // Результат:
     testObserver.assertNotComplete();
-    testObserver.assertError(OrderOfferExpiredException.class);
+    testObserver.assertError(OrderConfirmationFailedException.class);
     testObserver.assertNoValues();
     assertEquals(testObserver.errors().size(), 1);
     assertEquals(testObserver.errors().get(0).getMessage(), "error");
