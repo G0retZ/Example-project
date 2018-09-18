@@ -4,6 +4,12 @@ apply plugin: 'com.getkeepsafe.dexcount'
 
 android {
     signingConfigs {
+        debug {
+            storeFile file("debug.keystore")
+            keyAlias "androiddebugkey"
+            keyPassword "android"
+            storePassword "android"
+        }
         upload {
             storeFile file(System.getenv('STORAGE_FILE').toString())
             keyAlias System.getenv('EXECUTOR_ALIAS')
@@ -53,6 +59,7 @@ android {
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro', 'proguard-rules-debug.pro'
             applicationIdSuffix ".debug"
+            signingConfig signingConfigs.debug
             debuggable true
         }
     }
