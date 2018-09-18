@@ -11,6 +11,7 @@ import android.arch.core.executor.testing.InstantTaskExecutorRule;
 import android.arch.lifecycle.Observer;
 import com.cargopull.executor_driver.ViewModelThreadTestRule;
 import com.cargopull.executor_driver.entity.Order;
+import com.cargopull.executor_driver.entity.OrderCancelledException;
 import com.cargopull.executor_driver.entity.OrderOfferDecisionException;
 import com.cargopull.executor_driver.entity.OrderOfferExpiredException;
 import com.cargopull.executor_driver.gateway.DataMappingException;
@@ -18,10 +19,8 @@ import com.cargopull.executor_driver.interactor.OrderUseCase;
 import com.cargopull.executor_driver.presentation.CommonNavigate;
 import com.cargopull.executor_driver.presentation.ViewState;
 import io.reactivex.BackpressureStrategy;
-import io.reactivex.Observable;
-import io.reactivex.ObservableEmitter;
-import io.reactivex.ObservableOnSubscribe;
-import io.reactivex.subjects.PublishSubject;
+import io.reactivex.Flowable;
+import io.reactivex.FlowableEmitter;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
@@ -49,7 +48,7 @@ public class PreOrderViewModelTest {
   private Order order1;
   @Mock
   private Order order2;
-  private PublishSubject<Order> publishSubject;
+  private FlowableEmitter<Order> emitter;
 
   @Mock
   private Observer<ViewState<PreOrderViewActions>> viewStateObserver;
@@ -58,9 +57,9 @@ public class PreOrderViewModelTest {
 
   @Before
   public void setUp() {
-    publishSubject = PublishSubject.create();
-    when(orderUseCase.getOrders())
-        .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
+    when(orderUseCase.getOrders()).thenReturn(
+        Flowable.create(e -> emitter = e, BackpressureStrategy.BUFFER)
+    );
     viewModel = new PreOrderViewModelImpl(orderUseCase);
   }
 
@@ -117,7 +116,7 @@ public class PreOrderViewModelTest {
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    publishSubject.onError(new Exception());
+    emitter.onError(new Exception());
 
     // Результат:
     verify(viewStateObserver, only()).onChanged(any(PreOrderViewStateUnAvailable.class));
@@ -133,9 +132,9 @@ public class PreOrderViewModelTest {
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    publishSubject.onNext(order);
-    publishSubject.onNext(order1);
-    publishSubject.onNext(order2);
+    emitter.onNext(order);
+    emitter.onNext(order1);
+    emitter.onNext(order2);
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(any(PreOrderViewStateUnAvailable.class));
@@ -150,32 +149,14 @@ public class PreOrderViewModelTest {
   public void setExpiredViewStateToLiveDataForOrderOfferDecision() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    PublishSubject<Order> publishSubject = PublishSubject.create();
-    when(orderUseCase.getOrders()).thenReturn(
-        Observable.create(
-            new ObservableOnSubscribe<Order>() {
-              private boolean run;
-
-              @Override
-              public void subscribe(ObservableEmitter<Order> emitter) {
-                if (!run) {
-                  run = true;
-                  emitter.onNext(order);
-                  emitter.onError(new OrderOfferDecisionException());
-                } else {
-                  emitter.onNext(order2);
-                }
-              }
-            }
-        ).startWith(publishSubject)
-            .toFlowable(BackpressureStrategy.BUFFER)
-    );
     viewModel = new PreOrderViewModelImpl(orderUseCase);
     viewModel.getNavigationLiveData().observeForever(navigateObserver);
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    publishSubject.onComplete();
+    emitter.onNext(order);
+    emitter.onError(new OrderOfferDecisionException());
+    emitter.onNext(order2);
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(any(PreOrderViewStateUnAvailable.class));
@@ -192,32 +173,38 @@ public class PreOrderViewModelTest {
   public void setExpiredViewStateToLiveData() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    PublishSubject<Order> publishSubject = PublishSubject.create();
-    when(orderUseCase.getOrders()).thenReturn(
-        Observable.create(
-            new ObservableOnSubscribe<Order>() {
-              private boolean run;
-
-              @Override
-              public void subscribe(ObservableEmitter<Order> emitter) {
-                if (!run) {
-                  run = true;
-                  emitter.onNext(order);
-                  emitter.onError(new OrderOfferExpiredException(""));
-                } else {
-                  emitter.onNext(order2);
-                }
-              }
-            }
-        ).startWith(publishSubject)
-            .toFlowable(BackpressureStrategy.BUFFER)
-    );
     viewModel = new PreOrderViewModelImpl(orderUseCase);
     viewModel.getNavigationLiveData().observeForever(navigateObserver);
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    publishSubject.onComplete();
+    emitter.onNext(order);
+    emitter.onError(new OrderOfferExpiredException(""));
+    emitter.onNext(order2);
+
+    // Результат:
+    inOrder.verify(viewStateObserver).onChanged(any(PreOrderViewStateUnAvailable.class));
+    inOrder.verify(viewStateObserver).onChanged(any(PreOrderViewStateAvailable.class));
+    inOrder.verify(viewStateObserver).onChanged(any(PreOrderViewStateUnAvailable.class));
+    inOrder.verify(viewStateObserver).onChanged(any(PreOrderViewStateAvailable.class));
+    verifyNoMoreInteractions(viewStateObserver);
+  }
+
+  /**
+   * Должен вернуть состояния вида "заказ истек" после ошибки отмены заказа.
+   */
+  @Test
+  public void setCancelledViewStateToLiveData() {
+    // Дано:
+    InOrder inOrder = Mockito.inOrder(viewStateObserver);
+    viewModel = new PreOrderViewModelImpl(orderUseCase);
+    viewModel.getNavigationLiveData().observeForever(navigateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
+
+    // Действие:
+    emitter.onNext(order);
+    emitter.onError(new OrderCancelledException(""));
+    emitter.onNext(order2);
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(any(PreOrderViewStateUnAvailable.class));
@@ -239,7 +226,7 @@ public class PreOrderViewModelTest {
     viewModel.getNavigationLiveData().observeForever(navigateObserver);
 
     // Действие:
-    publishSubject.onError(new DataMappingException());
+    emitter.onError(new DataMappingException());
 
     // Результат:
     verify(navigateObserver, only()).onChanged(CommonNavigate.SERVER_DATA_ERROR);
