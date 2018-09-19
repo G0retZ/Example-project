@@ -2,7 +2,10 @@ package com.cargopull.executor_driver.interactor;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.only;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 import com.cargopull.executor_driver.UseCaseThreadTestRule;
@@ -46,13 +49,16 @@ public class OrdersUseCaseTest {
   @Mock
   private Order order3;
   private FlowableEmitter<Set<Order>> emitter;
+  private FlowableEmitter<Order> cancelledEmitter;
 
   @Before
   public void setUp() {
     when(gateway.getData()).thenReturn(
         Flowable.create(e -> emitter = e, BackpressureStrategy.BUFFER)
     );
-    when(cancelledOrdersUseCase.getOrders()).thenReturn(Flowable.never());
+    when(cancelledOrdersUseCase.getOrders()).thenReturn(
+        Flowable.create(e -> cancelledEmitter = e, BackpressureStrategy.BUFFER)
+    );
     useCase = new OrdersUseCaseImpl(errorReporter, gateway, cancelledOrdersUseCase);
   }
 
@@ -78,10 +84,10 @@ public class OrdersUseCaseTest {
   /* Проверяем работу с юзкейсом отмененного предзаказа */
 
   /**
-   * Должен запросить у юзкейса получение отмененных предзаказов только раз.
+   * Не должен запрашивать у юзкейса получение отмененных предзаказов если еще не было списков заказов.
    */
   @Test
-  public void askUseCaseForCancelledOrdersOnlyOnce() {
+  public void doNotAskUseCaseForCancelledOrders() {
     // Действие:
     useCase.getOrdersSet().test();
     useCase.getOrdersSet().test();
@@ -91,7 +97,26 @@ public class OrdersUseCaseTest {
     useCase.removeOrder(order3);
 
     // Результат:
-    verify(cancelledOrdersUseCase, only()).getOrders();
+    verifyZeroInteractions(cancelledOrdersUseCase);
+  }
+
+  /**
+   * Должен запросить у юзкейса получение отмененных предзаказов только раз.
+   */
+  @Test
+  public void askUseCaseForCancelledOrdersforEveryAdd() {
+    // Действие:
+    useCase.getOrdersSet().test();
+    emitter.onNext(new HashSet<>(Arrays.asList(order, order1, order2, order3)));
+    useCase.getOrdersSet().test();
+    useCase.addOrder(order1);
+    useCase.getOrdersSet().test();
+    useCase.getOrdersSet().test();
+    useCase.removeOrder(order3);
+
+    // Результат:
+    verify(cancelledOrdersUseCase, times(2)).getOrders();
+    verifyNoMoreInteractions(cancelledOrdersUseCase);
   }
 
   /* Проверяем отправку ошибок в репортер */
@@ -114,12 +139,10 @@ public class OrdersUseCaseTest {
    */
   @Test
   public void reportErrorForCancelledOrder() {
-    // Дано:
-    when(cancelledOrdersUseCase.getOrders()).thenReturn(Flowable.error(DataMappingException::new));
-
     // Действие:
     useCase.getOrdersSet().test();
-    emitter.onError(new DataMappingException());
+    emitter.onNext(new HashSet<>(Arrays.asList(order, order1, order2, order3)));
+    cancelledEmitter.onError(new DataMappingException());
 
     // Результат:
     verify(errorReporter, only()).reportError(any(DataMappingException.class));
@@ -186,19 +209,11 @@ public class OrdersUseCaseTest {
    */
   @Test
   public void answerWithUpdatedListOnCancelledOrder() {
-    // Дано:
-    PublishSubject<Order> orderPublishSubject = PublishSubject.create();
-    when(cancelledOrdersUseCase.getOrders())
-        .thenReturn(orderPublishSubject.toFlowable(BackpressureStrategy.BUFFER));
-    when(gateway.getData()).thenReturn(
-        Flowable.<Set<Order>>just(new HashSet<>(Arrays.asList(order, order1, order2, order3)))
-            .concatWith(Flowable.never())
-    );
-
     // Действие:
     TestSubscriber<Set<Order>> testSubscriber = useCase.getOrdersSet().test();
-    orderPublishSubject.onNext(order2);
-    orderPublishSubject.onNext(order);
+    emitter.onNext(new HashSet<>(Arrays.asList(order, order1, order2, order3)));
+    cancelledEmitter.onNext(order2);
+    cancelledEmitter.onNext(order);
 
     // Результат:
     testSubscriber.assertValueCount(3);
@@ -213,18 +228,10 @@ public class OrdersUseCaseTest {
    */
   @Test
   public void answerWithUpdatedListOnUnScheduleAndCancelledOrder() {
-    // Дано:
-    PublishSubject<Order> orderPublishSubject = PublishSubject.create();
-    when(cancelledOrdersUseCase.getOrders())
-        .thenReturn(orderPublishSubject.toFlowable(BackpressureStrategy.BUFFER));
-    when(gateway.getData()).thenReturn(
-        Flowable.<Set<Order>>just(new HashSet<>(Arrays.asList(order, order1, order2, order3)))
-            .concatWith(Flowable.never())
-    );
-
     // Действие:
     TestSubscriber<Set<Order>> testSubscriber = useCase.getOrdersSet().test();
-    orderPublishSubject.onNext(order2);
+    emitter.onNext(new HashSet<>(Arrays.asList(order, order1, order2, order3)));
+    cancelledEmitter.onNext(order2);
     useCase.removeOrder(order);
 
     // Результат:
@@ -293,7 +300,7 @@ public class OrdersUseCaseTest {
   }
 
   /**
-   * Должен вернуть новый список, после добавлений и удаления элементов.
+   * Должен вернуть новый список, после добавлений, удалений и отмен заказов.
    */
   @Test
   public void answerWithNewListAfterSchedulesAndUnSchedules() {
@@ -304,14 +311,15 @@ public class OrdersUseCaseTest {
     useCase.removeOrder(order2);
     useCase.addOrder(order1);
     useCase.addOrder(order2);
-    useCase.removeOrder(order1);
+    cancelledEmitter.onNext(order1);
     useCase.removeOrder(order3);
     useCase.addOrder(order1);
     useCase.addOrder(order3);
+    cancelledEmitter.onNext(order1);
     emitter.onNext(new HashSet<>(Arrays.asList(order1, order2)));
 
     // Результат:
-    testSubscriber.assertValueCount(10);
+    testSubscriber.assertValueCount(11);
     testSubscriber.assertValueAt(0, new HashSet<>(Arrays.asList(order, order3)));
     testSubscriber.assertValueAt(1, new HashSet<>(Arrays.asList(order, order3, order2)));
     testSubscriber.assertValueAt(2, new HashSet<>(Arrays.asList(order, order3)));
@@ -321,7 +329,8 @@ public class OrdersUseCaseTest {
     testSubscriber.assertValueAt(6, new HashSet<>(Arrays.asList(order, order2)));
     testSubscriber.assertValueAt(7, new HashSet<>(Arrays.asList(order, order1, order2)));
     testSubscriber.assertValueAt(8, new HashSet<>(Arrays.asList(order, order1, order2, order3)));
-    testSubscriber.assertValueAt(9, new HashSet<>(Arrays.asList(order1, order2)));
+    testSubscriber.assertValueAt(9, new HashSet<>(Arrays.asList(order, order2, order3)));
+    testSubscriber.assertValueAt(10, new HashSet<>(Arrays.asList(order1, order2)));
     testSubscriber.assertNotComplete();
   }
 
@@ -349,19 +358,11 @@ public class OrdersUseCaseTest {
    */
   @Test
   public void answerWithSameListOnCancelledOrder() {
-    // Дано:
-    PublishSubject<Order> orderPublishSubject = PublishSubject.create();
-    when(cancelledOrdersUseCase.getOrders())
-        .thenReturn(orderPublishSubject.toFlowable(BackpressureStrategy.BUFFER));
-    when(gateway.getData()).thenReturn(
-        Flowable.<Set<Order>>just(new HashSet<>(Arrays.asList(order, order1)))
-            .concatWith(Flowable.never())
-    );
-
     // Действие:
     TestSubscriber<Set<Order>> testSubscriber = useCase.getOrdersSet().test();
-    orderPublishSubject.onNext(order2);
-    orderPublishSubject.onNext(order3);
+    emitter.onNext(new HashSet<>(Arrays.asList(order, order1)));
+    cancelledEmitter.onNext(order2);
+    cancelledEmitter.onNext(order3);
 
     // Результат:
     testSubscriber.assertValueCount(3);
@@ -372,22 +373,14 @@ public class OrdersUseCaseTest {
   }
 
   /**
-   * Должен вернуть тот же список, если запрошено удаленние и отменены отсутствующию заказы.
+   * Должен вернуть тот же список, если запрошены удаленние и отменена отсутствующих заказов.
    */
   @Test
   public void answerWithSameListOnUnScheduleAndCancelledOrder() {
-    // Дано:
-    PublishSubject<Order> orderPublishSubject = PublishSubject.create();
-    when(cancelledOrdersUseCase.getOrders())
-        .thenReturn(orderPublishSubject.toFlowable(BackpressureStrategy.BUFFER));
-    when(gateway.getData()).thenReturn(
-        Flowable.<Set<Order>>just(new HashSet<>(Arrays.asList(order, order1)))
-            .concatWith(Flowable.never())
-    );
-
     // Действие:
     TestSubscriber<Set<Order>> testSubscriber = useCase.getOrdersSet().test();
-    orderPublishSubject.onNext(order2);
+    emitter.onNext(new HashSet<>(Arrays.asList(order, order1)));
+    cancelledEmitter.onNext(order2);
     useCase.removeOrder(order3);
 
     // Результат:
