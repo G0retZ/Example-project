@@ -17,9 +17,6 @@ public class OrdersUseCaseImpl implements OrdersUseCase {
   private final ErrorReporter errorReporter;
   @NonNull
   private final CommonGateway<Set<Order>> gateway;
-  // Это для того чтобы результат выдавался сразу.
-  @NonNull
-  private final Order dumbOrder = new Order(-1, "", "", 0, "", 0, 0, 0, 0, 0, 0, 0, 0, 0);
   @Nullable
   private Flowable<Set<Order>> ordersFlowable;
   @NonNull
@@ -43,12 +40,12 @@ public class OrdersUseCaseImpl implements OrdersUseCase {
             throw new InterruptedException();
           }).switchMap(
               orders -> addSubject.toFlowable(BackpressureStrategy.BUFFER)
-                  .startWith(dumbOrder)
                   .map(order -> addOrderToSet(order, orders))
+                  .startWith(orders)
           ).switchMap(
               orders -> removeSubject.toFlowable(BackpressureStrategy.BUFFER)
-                  .startWith(dumbOrder)
                   .map(order -> removeOrderFromSet(order, orders))
+                  .startWith(orders)
           )
           // Фиксируем сет для неизменяемости далее
           .<Set<Order>>map(HashSet::new)
@@ -66,13 +63,10 @@ public class OrdersUseCaseImpl implements OrdersUseCase {
   }
 
   private Set<Order> addOrderToSet(Order order, Set<Order> orders) {
-    // Удаляем старое
+    // Удаляем старое, если есть
     orders.remove(order);
-    // Если это не заказ-заглушка
-    if (order != dumbOrder) {
-      // Добавляем то что нужно добавить
-      orders.add(order);
-    }
+    // Добавляем то что нужно добавить
+    orders.add(order);
     return orders;
   }
 
