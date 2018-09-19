@@ -12,15 +12,15 @@ import org.mockito.junit.MockitoJUnitRunner;
 import ua.naiksoftware.stomp.client.StompMessage;
 
 @RunWith(MockitoJUnitRunner.class)
-public class UpcomingPreOrderMessagesFilterTest {
+public class UpcomingPreOrderFilterTest {
 
-  private UpcomingPreOrderMessagesFilter filter;
+  private UpcomingPreOrderFilter filter;
   @Mock
   private StompMessage stompMessage;
 
   @Before
   public void setUp() {
-    filter = new UpcomingPreOrderMessagesFilter();
+    filter = new UpcomingPreOrderFilter();
   }
 
   /**
