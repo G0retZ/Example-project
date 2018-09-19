@@ -28,7 +28,7 @@ public class OrderConfirmationViewStateDeclinedTest {
     inOrder.verify(viewActions).enableAcceptButton(false);
     inOrder.verify(viewActions).enableDeclineButton(false);
     inOrder.verify(viewActions).showAcceptedMessage(null);
-    inOrder.verify(viewActions).showExpiredMessage(null);
+    inOrder.verify(viewActions).showFailedMessage(null);
     inOrder.verify(viewActions).showDeclinedMessage("message");
     verifyNoMoreInteractions(viewActions);
   }

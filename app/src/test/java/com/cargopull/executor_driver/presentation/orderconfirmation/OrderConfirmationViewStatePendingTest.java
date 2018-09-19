@@ -29,7 +29,7 @@ public class OrderConfirmationViewStatePendingTest {
     inOrder.verify(viewActions).enableDeclineButton(false);
     inOrder.verify(viewActions).showAcceptedMessage(null);
     inOrder.verify(viewActions).showDeclinedMessage(null);
-    inOrder.verify(viewActions).showExpiredMessage(null);
+    inOrder.verify(viewActions).showFailedMessage(null);
     inOrder.verify(viewActions).showTimeout(-1, -1);
     verifyNoMoreInteractions(viewActions);
   }

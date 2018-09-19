@@ -23,7 +23,7 @@ final class OrderConfirmationViewStateIdle implements ViewState<OrderConfirmatio
     stateActions.enableDeclineButton(true);
     stateActions.showAcceptedMessage(null);
     stateActions.showDeclinedMessage(null);
-    stateActions.showExpiredMessage(null);
+    stateActions.showFailedMessage(null);
     stateActions.showTimeout(
         orderConfirmationTimeoutItem.getProgressLeft(),
         orderConfirmationTimeoutItem.getTimeout()

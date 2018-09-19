@@ -21,7 +21,7 @@ final class OrderConfirmationViewStateAccepted implements ViewState<OrderConfirm
     stateActions.enableAcceptButton(false);
     stateActions.enableDeclineButton(false);
     stateActions.showDeclinedMessage(null);
-    stateActions.showExpiredMessage(null);
+    stateActions.showFailedMessage(null);
     stateActions.showAcceptedMessage(message);
   }
 

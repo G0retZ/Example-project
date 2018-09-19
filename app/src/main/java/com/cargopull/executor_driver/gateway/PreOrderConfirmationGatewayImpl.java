@@ -4,7 +4,7 @@ import android.support.annotation.NonNull;
 import com.cargopull.executor_driver.backend.web.ApiService;
 import com.cargopull.executor_driver.backend.web.outgoing.ApiOrderDecision;
 import com.cargopull.executor_driver.entity.Order;
-import com.cargopull.executor_driver.entity.OrderOfferExpiredException;
+import com.cargopull.executor_driver.entity.OrderConfirmationFailedException;
 import com.cargopull.executor_driver.interactor.OrderConfirmationGateway;
 import io.reactivex.Single;
 import io.reactivex.schedulers.Schedulers;
@@ -30,7 +30,7 @@ public class PreOrderConfirmationGatewayImpl implements OrderConfirmationGateway
           if ("200".equals(apiSimpleResult.getCode())) {
             return message == null ? "" : message;
           } else {
-            throw new OrderOfferExpiredException(message == null ? "" : message);
+            throw new OrderConfirmationFailedException(message == null ? "" : message);
           }
         });
   }

@@ -196,6 +196,9 @@ public class SelectedPreOrderConfirmationFragment extends BaseFragment implement
 
   @Override
   public void enableDeclineButton(boolean enable) {
+    if (!enable && declineDelayAnimator != null) {
+      declineDelayAnimator.cancel();
+    }
     declineAction.setEnabled(enable);
     declineActionText.setEnabled(enable);
   }
@@ -230,7 +233,7 @@ public class SelectedPreOrderConfirmationFragment extends BaseFragment implement
   }
 
   @Override
-  public void showExpiredMessage(@Nullable String message) {
+  public void showFailedMessage(@Nullable String message) {
     if (alertDialog != null) {
       alertDialog.dismiss();
     }

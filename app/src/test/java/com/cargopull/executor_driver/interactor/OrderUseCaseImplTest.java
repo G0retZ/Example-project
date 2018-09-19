@@ -14,7 +14,6 @@ import com.cargopull.executor_driver.utils.ErrorReporter;
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
 import io.reactivex.FlowableEmitter;
-import io.reactivex.FlowableOnSubscribe;
 import io.reactivex.subscribers.TestSubscriber;
 import org.junit.Before;
 import org.junit.ClassRule;
@@ -41,6 +40,7 @@ public class OrderUseCaseImplTest {
   private Order order1;
   @Mock
   private Order order2;
+  private FlowableEmitter<Order> emitter;
 
   @Before
   public void setUp() {
@@ -195,29 +195,27 @@ public class OrderUseCaseImplTest {
   @Test
   public void answerNothingAfterError() {
     // Дано:
-    when(gateway.getData()).thenReturn(Flowable.create(new FlowableOnSubscribe<Order>() {
-      private boolean run;
-
-      @Override
-      public void subscribe(FlowableEmitter<Order> emitter) {
-        if (!run) {
-          emitter.onNext(order);
-          emitter.onNext(order1);
-          emitter.onNext(order2);
-          emitter.onError(new Exception());
-          run = true;
-        }
-      }
-    }, BackpressureStrategy.BUFFER));
+    when(gateway.getData()).thenReturn(
+        Flowable.create(emitter -> this.emitter = emitter, BackpressureStrategy.BUFFER)
+    );
 
     // Действие:
-    TestSubscriber<Order> testSubscriber = useCase.getOrders().test();
-    TestSubscriber<Order> testSubscriber1 = useCase.getOrders().test();
+    Flowable<Order> orders = useCase.getOrders();
+    TestSubscriber<Order> testSubscriber = orders.test();
+    emitter.onNext(order);
+    emitter.onNext(order1);
+    emitter.onNext(order2);
+    TestSubscriber<Order> testSubscriber0 = orders.test();
+    emitter.onError(new Exception());
+    TestSubscriber<Order> testSubscriber1 = orders.test();
 
     // Результат:
     testSubscriber.assertValues(order, order1, order2);
     testSubscriber.assertError(Exception.class);
     testSubscriber.assertNotComplete();
+    testSubscriber0.assertValues(order2);
+    testSubscriber0.assertError(Exception.class);
+    testSubscriber0.assertNotComplete();
     testSubscriber1.assertNoValues();
     testSubscriber1.assertNoErrors();
     testSubscriber1.assertNotComplete();
@@ -229,29 +227,27 @@ public class OrderUseCaseImplTest {
   @Test
   public void answerNothingAfterPreOrderExpiredError() {
     // Дано:
-    when(gateway.getData()).thenReturn(Flowable.create(new FlowableOnSubscribe<Order>() {
-      private boolean run;
-
-      @Override
-      public void subscribe(FlowableEmitter<Order> emitter) {
-        if (!run) {
-          emitter.onNext(order);
-          emitter.onNext(order1);
-          emitter.onNext(order2);
-          run = true;
-        }
-      }
-    }, BackpressureStrategy.BUFFER));
+    when(gateway.getData()).thenReturn(
+        Flowable.create(emitter -> this.emitter = emitter, BackpressureStrategy.BUFFER)
+    );
 
     // Действие:
-    TestSubscriber<Order> testSubscriber = useCase.getOrders().test();
+    Flowable<Order> orders = useCase.getOrders();
+    TestSubscriber<Order> testSubscriber = orders.test();
+    emitter.onNext(order);
+    emitter.onNext(order1);
+    emitter.onNext(order2);
+    TestSubscriber<Order> testSubscriber0 = orders.test();
     useCase.setOrderOfferDecisionMade();
-    TestSubscriber<Order> testSubscriber1 = useCase.getOrders().test();
+    TestSubscriber<Order> testSubscriber1 = orders.test();
 
     // Результат:
     testSubscriber.assertValues(order, order1, order2);
     testSubscriber.assertError(OrderOfferDecisionException.class);
     testSubscriber.assertNotComplete();
+    testSubscriber0.assertValues(order2);
+    testSubscriber0.assertError(OrderOfferDecisionException.class);
+    testSubscriber0.assertNotComplete();
     testSubscriber1.assertNoValues();
     testSubscriber1.assertNoErrors();
     testSubscriber1.assertNotComplete();
