@@ -6,12 +6,16 @@ import ua.naiksoftware.stomp.client.StompMessage;
 /**
  * Извлекаем сообщение сервера.
  */
-// TODO: https://jira.capsrv.xyz/browse/RUCAP-1917
 public class MessagePayloadApiMapper implements Mapper<StompMessage, String> {
 
   @NonNull
   @Override
   public String map(@NonNull StompMessage from) {
-    return from.getPayload().replace("\"", "").trim();
+    String payload = from.getPayload();
+    int stringLength = payload.length();
+    if (payload.charAt(0) == '"' && payload.charAt(stringLength - 1) == '"') {
+      payload = payload.substring(1, stringLength - 1);
+    }
+    return payload.trim();
   }
 }
