@@ -9,13 +9,13 @@ import org.junit.Test;
 import ua.naiksoftware.stomp.StompHeader;
 import ua.naiksoftware.stomp.client.StompMessage;
 
-public class OrderCurrentCostApiMapperTest {
+public class ServerTimeApiMapperTest {
 
   private Mapper<StompMessage, Long> mapper;
 
   @Before
   public void setUp() {
-    mapper = new OrderCurrentCostApiMapper();
+    mapper = new ServerTimeApiMapper();
   }
 
   /**
@@ -27,7 +27,7 @@ public class OrderCurrentCostApiMapperTest {
   public void mappingPayLoadToInteger() throws Exception {
     // Дано и Действие:
     long excessiveCost = mapper.map(new StompMessage("MESSAGE",
-        Collections.singletonList(new StompHeader("TotalAmount", "1234567890")), "\n"));
+        Collections.singletonList(new StompHeader("ServerTimeStamp", "1234567890")), "\n"));
 
     // Результат:
     assertEquals(excessiveCost, 1234567890L);
@@ -53,7 +53,7 @@ public class OrderCurrentCostApiMapperTest {
   public void mappingEmptyPayloadFail() throws Exception {
     // Дано и Действие:
     mapper.map(new StompMessage("MESSAGE",
-        Collections.singletonList(new StompHeader("TotalAmount", "")), "\n"));
+        Collections.singletonList(new StompHeader("ServerTimeStamp", "")), "\n"));
   }
 
   /**
@@ -65,7 +65,7 @@ public class OrderCurrentCostApiMapperTest {
   public void mappingFloatPayloadFail() throws Exception {
     // Дано и Действие:
     mapper.map(new StompMessage("MESSAGE",
-        Collections.singletonList(new StompHeader("TotalAmount", "123.345")), "\n"));
+        Collections.singletonList(new StompHeader("ServerTimeStamp", "123.345")), "\n"));
   }
 
   /**
@@ -77,7 +77,8 @@ public class OrderCurrentCostApiMapperTest {
   public void mappingLongNumberPayloadFail() throws Exception {
     // Дано и Действие:
     mapper.map(new StompMessage("MESSAGE",
-        Collections.singletonList(new StompHeader("TotalAmount", "9999999999999999999999")), "\n"));
+        Collections.singletonList(new StompHeader("ServerTimeStamp", "9999999999999999999999")),
+        "\n"));
   }
 
   /**
@@ -89,6 +90,6 @@ public class OrderCurrentCostApiMapperTest {
   public void mappingNotANumberPayloadFail() throws Exception {
     // Дано и Действие:
     mapper.map(new StompMessage("MESSAGE",
-        Collections.singletonList(new StompHeader("TotalAmount", "a9876543210")), "\n"));
+        Collections.singletonList(new StompHeader("ServerTimeStamp", "a9876543210")), "\n"));
   }
 }
