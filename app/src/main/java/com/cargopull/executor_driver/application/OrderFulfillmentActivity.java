@@ -9,6 +9,7 @@ import android.support.v7.widget.Toolbar;
 import com.cargopull.executor_driver.R;
 import com.cargopull.executor_driver.presentation.cancelorder.CancelOrderNavigate;
 import com.cargopull.executor_driver.presentation.oderfulfillmentactions.OrderFulfillmentActionsNavigate;
+import com.cargopull.executor_driver.presentation.preorder.PreOrderNavigate;
 import com.cargopull.executor_driver.view.CallToClientFragment;
 import com.cargopull.executor_driver.view.CallToOperatorFragment;
 import com.cargopull.executor_driver.view.CancelOrderDialogFragment;
@@ -59,6 +60,9 @@ public class OrderFulfillmentActivity extends BaseActivity {
         if (fragment != null && fragment instanceof CallToOperatorFragment) {
           ((CallToOperatorFragment) fragment).callToOperator();
         }
+        break;
+      case PreOrderNavigate.ORDER_APPROVAL:
+        startActivity(new Intent(this, DriverPreOrderBookingActivity.class));
         break;
       default:
         super.navigate(destination);
