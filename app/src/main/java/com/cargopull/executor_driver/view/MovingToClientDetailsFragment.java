@@ -160,4 +160,8 @@ public class MovingToClientDetailsFragment extends BaseFragment implements Order
   @Override
   public void showOrderExpiredMessage(@Nullable String message) {
   }
+
+  @Override
+  public void showOrderCancelledMessage(boolean show) {
+  }
 }

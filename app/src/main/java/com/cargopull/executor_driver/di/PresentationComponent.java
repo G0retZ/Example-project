@@ -7,6 +7,7 @@ import com.cargopull.executor_driver.presentation.announcement.AnnouncementViewM
 import com.cargopull.executor_driver.presentation.balance.BalanceViewModel;
 import com.cargopull.executor_driver.presentation.calltoclient.CallToClientViewModel;
 import com.cargopull.executor_driver.presentation.calltooperator.CallToOperatorViewModel;
+import com.cargopull.executor_driver.presentation.cancelledorder.CancelledOrderViewModel;
 import com.cargopull.executor_driver.presentation.cancelorder.CancelOrderViewModel;
 import com.cargopull.executor_driver.presentation.cancelorderreasons.CancelOrderReasonsViewModel;
 import com.cargopull.executor_driver.presentation.choosevehicle.ChooseVehicleViewModel;
@@ -56,6 +57,9 @@ interface PresentationComponent {
 
   @NonNull
   CallToOperatorViewModel getCallToOperatorViewModel(@Nullable Fragment fragment);
+
+  @NonNull
+  CancelledOrderViewModel getCancelledOrderViewModel();
 
   @NonNull
   CancelOrderViewModel getCancelOrderViewModel(@Nullable Fragment fragment);

@@ -12,15 +12,15 @@ import org.mockito.junit.MockitoJUnitRunner;
 import ua.naiksoftware.stomp.client.StompMessage;
 
 @RunWith(MockitoJUnitRunner.class)
-public class CancelOrderReasonsFilterTest {
+public class CancelledOrderFilterTest {
 
-  private CancelOrderReasonsFilter filter;
+  private CancelledOrderFilter filter;
   @Mock
   private StompMessage stompMessage;
 
   @Before
   public void setUp() {
-    filter = new CancelOrderReasonsFilter();
+    filter = new CancelledOrderFilter();
   }
 
   /**
@@ -33,12 +33,24 @@ public class CancelOrderReasonsFilterTest {
   }
 
   /**
-   * Должен пропустить, если сообщение с заголовком CancelReason.
+   * Должен отказать, если сообщение с заголовком PreliminaryCancelled = true.
    */
   @Test
-  public void allowForHeaderWithCorrectValue() {
+  public void denyForHeaderWithWrongValue() {
     // Дано:
-    when(stompMessage.findHeader("CancelReason")).thenReturn("");
+    when(stompMessage.findHeader("PreliminaryCancelled")).thenReturn("true");
+
+    // Действие и Результат:
+    assertFalse(filter.test(stompMessage));
+  }
+
+  /**
+   * Должен пропустить, если сообщение с заголовком PreliminaryCancelled.
+   */
+  @Test
+  public void allowForHeaderWithOtherValue() {
+    // Дано:
+    when(stompMessage.findHeader("PreliminaryCancelled")).thenReturn("");
 
     // Действие и Результат:
     assertTrue(filter.test(stompMessage));

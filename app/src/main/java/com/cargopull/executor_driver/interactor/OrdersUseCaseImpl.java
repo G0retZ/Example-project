@@ -17,6 +17,8 @@ public class OrdersUseCaseImpl implements OrdersUseCase {
   private final ErrorReporter errorReporter;
   @NonNull
   private final CommonGateway<Set<Order>> gateway;
+  @NonNull
+  private final OrderUseCase cancelledOrderUseCase;
   @Nullable
   private Flowable<Set<Order>> ordersFlowable;
   @NonNull
@@ -25,9 +27,11 @@ public class OrdersUseCaseImpl implements OrdersUseCase {
   private final PublishSubject<Order> removeSubject = PublishSubject.create();
 
   public OrdersUseCaseImpl(@NonNull ErrorReporter errorReporter,
-      @NonNull CommonGateway<Set<Order>> gateway) {
+      @NonNull CommonGateway<Set<Order>> gateway,
+      @NonNull OrderUseCase cancelledOrderUseCase) {
     this.errorReporter = errorReporter;
     this.gateway = gateway;
+    this.cancelledOrderUseCase = cancelledOrderUseCase;
   }
 
   @NonNull
@@ -44,6 +48,7 @@ public class OrdersUseCaseImpl implements OrdersUseCase {
                   .startWith(orders)
           ).switchMap(
               orders -> removeSubject.toFlowable(BackpressureStrategy.BUFFER)
+                  .mergeWith(cancelledOrderUseCase.getOrders())
                   .map(order -> removeOrderFromSet(order, orders))
                   .startWith(orders)
           )

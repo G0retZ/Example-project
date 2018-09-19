@@ -2,37 +2,37 @@ package com.cargopull.executor_driver.interactor;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import com.cargopull.executor_driver.entity.Order;
 import com.cargopull.executor_driver.utils.ErrorReporter;
 import io.reactivex.Flowable;
 import io.reactivex.schedulers.Schedulers;
 import javax.inject.Inject;
 
-public class UpcomingPreOrderMessagesUseCaseImpl implements UpcomingPreOrderMessagesUseCase {
+public class CancelledOrderUseCaseImpl implements OrderUseCase {
 
   @NonNull
   private final ErrorReporter errorReporter;
   @NonNull
-  private final CommonGateway<String> gateway;
+  private final CommonGateway<Order> gateway;
   @Nullable
-  private Flowable<String> messagesFlowable;
+  private Flowable<Order> orderFlowable;
 
   @Inject
-  public UpcomingPreOrderMessagesUseCaseImpl(@NonNull ErrorReporter errorReporter,
-      @NonNull CommonGateway<String> gateway) {
+  public CancelledOrderUseCaseImpl(@NonNull ErrorReporter errorReporter,
+      @NonNull CommonGateway<Order> gateway) {
     this.errorReporter = errorReporter;
     this.gateway = gateway;
   }
 
   @NonNull
   @Override
-  public Flowable<String> getUpcomingPreOrderMessages() {
-    if (messagesFlowable == null) {
-      messagesFlowable = gateway.getData()
+  public Flowable<Order> getOrders() {
+    if (orderFlowable == null) {
+      orderFlowable = gateway.getData()
           .observeOn(Schedulers.single())
           .doOnError(errorReporter::reportError)
-          .replay(1)
-          .refCount();
+          .share();
     }
-    return messagesFlowable;
+    return orderFlowable;
   }
 }

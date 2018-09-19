@@ -13,6 +13,7 @@ import com.cargopull.executor_driver.interactor.CancelOrderReasonsUseCase;
 import com.cargopull.executor_driver.interactor.CancelOrderReasonsUseCaseImpl;
 import com.cargopull.executor_driver.interactor.CancelOrderUseCase;
 import com.cargopull.executor_driver.interactor.CancelOrderUseCaseImpl;
+import com.cargopull.executor_driver.interactor.CancelledOrderUseCaseImpl;
 import com.cargopull.executor_driver.interactor.ConfirmOrderPaymentUseCase;
 import com.cargopull.executor_driver.interactor.ConfirmOrderPaymentUseCaseImpl;
 import com.cargopull.executor_driver.interactor.CurrentCostPollingUseCase;
@@ -26,10 +27,10 @@ import com.cargopull.executor_driver.interactor.ExecutorStateUseCaseImpl;
 import com.cargopull.executor_driver.interactor.GeoLocationUseCase;
 import com.cargopull.executor_driver.interactor.GeoLocationUseCaseImpl;
 import com.cargopull.executor_driver.interactor.MemoryDataSharer;
-import com.cargopull.executor_driver.interactor.MissedOrderUseCase;
-import com.cargopull.executor_driver.interactor.MissedOrderUseCaseImpl;
 import com.cargopull.executor_driver.interactor.MovingToClientUseCase;
 import com.cargopull.executor_driver.interactor.MovingToClientUseCaseImpl;
+import com.cargopull.executor_driver.interactor.NotificationMessageUseCase;
+import com.cargopull.executor_driver.interactor.NotificationMessageUseCaseImpl;
 import com.cargopull.executor_driver.interactor.OrderConfirmationUseCase;
 import com.cargopull.executor_driver.interactor.OrderConfirmationUseCaseImpl;
 import com.cargopull.executor_driver.interactor.OrderCostDetailsUseCase;
@@ -52,8 +53,6 @@ import com.cargopull.executor_driver.interactor.ServerConnectionUseCase;
 import com.cargopull.executor_driver.interactor.ServerConnectionUseCaseImpl;
 import com.cargopull.executor_driver.interactor.ServerTimeUseCase;
 import com.cargopull.executor_driver.interactor.ServerTimeUseCaseImpl;
-import com.cargopull.executor_driver.interactor.UpcomingPreOrderMessagesUseCase;
-import com.cargopull.executor_driver.interactor.UpcomingPreOrderMessagesUseCaseImpl;
 import com.cargopull.executor_driver.interactor.UpdateMessageUseCase;
 import com.cargopull.executor_driver.interactor.UpdateMessageUseCaseImpl;
 import com.cargopull.executor_driver.interactor.WaitingForClientUseCase;
@@ -96,6 +95,10 @@ class InteractorComponentImpl implements InteractorComponent {
   @Nullable
   private CallToClientUseCase callToClientUseCase;
   @Nullable
+  private NotificationMessageUseCase cancelledOrderMessageUseCase;
+  @Nullable
+  private OrderUseCase cancelledOrderUseCase;
+  @Nullable
   private CancelOrderReasonsUseCase cancelOrderReasonsUseCase;
   @Nullable
   private CancelOrderUseCase cancelOrderUseCase;
@@ -114,7 +117,7 @@ class InteractorComponentImpl implements InteractorComponent {
   @Nullable
   private GeoLocationUseCase geoLocationUseCase;
   @Nullable
-  private MissedOrderUseCase missedOrderUseCase;
+  private NotificationMessageUseCase missedOrderUseCase;
   @Nullable
   private MovingToClientUseCase movingToClientUseCase;
   @Nullable
@@ -158,7 +161,7 @@ class InteractorComponentImpl implements InteractorComponent {
   @Nullable
   private SelectedVehicleUseCase selectedVehicleUseCase;
   @Nullable
-  private UpcomingPreOrderMessagesUseCase upcomingPreOrderMessagesUseCase;
+  private NotificationMessageUseCase upcomingPreOrderMessagesUseCase;
   @Nullable
   private VehicleChoiceUseCase vehicleChoiceUseCase;
   @Nullable
@@ -193,6 +196,18 @@ class InteractorComponentImpl implements InteractorComponent {
       );
     }
     return callToClientUseCase;
+  }
+
+  @NonNull
+  @Override
+  public NotificationMessageUseCase getCancelledOrderMessageUseCase() {
+    if (cancelledOrderMessageUseCase == null) {
+      cancelledOrderMessageUseCase = new NotificationMessageUseCaseImpl(
+          errorReporter,
+          repositoryComponent.getCancelledOrderMessageGateway()
+      );
+    }
+    return cancelledOrderMessageUseCase;
   }
 
   @NonNull
@@ -318,9 +333,9 @@ class InteractorComponentImpl implements InteractorComponent {
 
   @NonNull
   @Override
-  public MissedOrderUseCase getMissedOrderUseCase() {
+  public NotificationMessageUseCase getMissedOrderUseCase() {
     if (missedOrderUseCase == null) {
-      missedOrderUseCase = new MissedOrderUseCaseImpl(
+      missedOrderUseCase = new NotificationMessageUseCaseImpl(
           errorReporter,
           repositoryComponent.getMissedOrderGateway()
       );
@@ -501,8 +516,8 @@ class InteractorComponentImpl implements InteractorComponent {
     if (preOrdersSetUseCase == null) {
       preOrdersSetUseCase = new OrdersUseCaseImpl(
           errorReporter,
-          repositoryComponent.getPreOrdersSetGateway()
-      );
+          repositoryComponent.getPreOrdersSetGateway(),
+          getCancelledOrderUseCase());
     }
     return preOrdersSetUseCase;
   }
@@ -569,11 +584,11 @@ class InteractorComponentImpl implements InteractorComponent {
 
   @NonNull
   @Override
-  public UpcomingPreOrderMessagesUseCase getUpcomingPreOrderMessagesUseCase() {
+  public NotificationMessageUseCase getUpcomingPreOrderMessagesUseCase() {
     if (upcomingPreOrderMessagesUseCase == null) {
-      upcomingPreOrderMessagesUseCase = new UpcomingPreOrderMessagesUseCaseImpl(
+      upcomingPreOrderMessagesUseCase = new NotificationMessageUseCaseImpl(
           errorReporter,
-          repositoryComponent.UpcomingPreOrderMessagesGateway()
+          repositoryComponent.getUpcomingPreOrderMessagesGateway()
       );
     }
     return upcomingPreOrderMessagesUseCase;
@@ -688,6 +703,18 @@ class InteractorComponentImpl implements InteractorComponent {
     return selectedPreOrderConfirmationUseCase;
   }
 
+  @NonNull
+  private OrderUseCase getCancelledOrderUseCase() {
+    if (cancelledOrderUseCase == null) {
+      cancelledOrderUseCase = new CancelledOrderUseCaseImpl(
+          errorReporter,
+          repositoryComponent.getCancelledOrderGateway()
+      );
+    }
+    return cancelledOrderUseCase;
+  }
+
+  @NonNull
   private OrderDecisionUseCase getPreOrderDecisionUseCase() {
     return getPreOrderUseCaseImpl();
   }

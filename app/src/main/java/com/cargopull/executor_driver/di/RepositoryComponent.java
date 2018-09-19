@@ -35,6 +35,12 @@ interface RepositoryComponent {
   CallToClientGateway getCallToClientGateway();
 
   @NonNull
+  CommonGateway<Order> getCancelledOrderGateway();
+
+  @NonNull
+  CommonGateway<String> getCancelledOrderMessageGateway();
+
+  @NonNull
   CancelOrderGateway getCancelOrderGateway();
 
   @NonNull
@@ -116,7 +122,7 @@ interface RepositoryComponent {
   LastUsedVehicleGateway getLastUsedVehicleGateway();
 
   @NonNull
-  CommonGateway<String> UpcomingPreOrderMessagesGateway();
+  CommonGateway<String> getUpcomingPreOrderMessagesGateway();
 
   @NonNull
   VehicleOptionsGateway getVehicleOptionsGateway();

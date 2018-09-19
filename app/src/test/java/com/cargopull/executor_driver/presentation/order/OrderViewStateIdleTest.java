@@ -73,6 +73,7 @@ public class OrderViewStateIdleTest {
     verify(viewActions).showOrderOptionsRequirements("1,2,3");
     verify(viewActions).showOrderPending(false);
     verify(viewActions).showOrderExpiredMessage(null);
+    verify(viewActions).showOrderCancelledMessage(false);
     verifyNoMoreInteractions(viewActions);
   }
 

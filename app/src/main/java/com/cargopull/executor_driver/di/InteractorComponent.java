@@ -10,8 +10,8 @@ import com.cargopull.executor_driver.interactor.ExecutorBalanceUseCase;
 import com.cargopull.executor_driver.interactor.ExecutorStateNotOnlineUseCase;
 import com.cargopull.executor_driver.interactor.ExecutorStateUseCase;
 import com.cargopull.executor_driver.interactor.GeoLocationUseCase;
-import com.cargopull.executor_driver.interactor.MissedOrderUseCase;
 import com.cargopull.executor_driver.interactor.MovingToClientUseCase;
+import com.cargopull.executor_driver.interactor.NotificationMessageUseCase;
 import com.cargopull.executor_driver.interactor.OrderConfirmationUseCase;
 import com.cargopull.executor_driver.interactor.OrderCostDetailsUseCase;
 import com.cargopull.executor_driver.interactor.OrderCurrentCostUseCase;
@@ -22,7 +22,6 @@ import com.cargopull.executor_driver.interactor.OrdersUseCase;
 import com.cargopull.executor_driver.interactor.SelectedOrderUseCase;
 import com.cargopull.executor_driver.interactor.ServerConnectionUseCase;
 import com.cargopull.executor_driver.interactor.ServerTimeUseCase;
-import com.cargopull.executor_driver.interactor.UpcomingPreOrderMessagesUseCase;
 import com.cargopull.executor_driver.interactor.UpdateMessageUseCase;
 import com.cargopull.executor_driver.interactor.WaitingForClientUseCase;
 import com.cargopull.executor_driver.interactor.auth.LoginUseCase;
@@ -39,6 +38,9 @@ interface InteractorComponent {
 
   @NonNull
   CallToClientUseCase getCallToClientUseCase();
+
+  @NonNull
+  NotificationMessageUseCase getCancelledOrderMessageUseCase();
 
   @NonNull
   CancelOrderReasonsUseCase getCancelOrderReasonsUseCase();
@@ -68,7 +70,7 @@ interface InteractorComponent {
   GeoLocationUseCase getGeoLocationUseCase();
 
   @NonNull
-  MissedOrderUseCase getMissedOrderUseCase();
+  NotificationMessageUseCase getMissedOrderUseCase();
 
   @NonNull
   MovingToClientUseCase getMovingToClientUseCase();
@@ -131,7 +133,7 @@ interface InteractorComponent {
   SelectedVehicleUseCase getSelectedVehicleUseCase();
 
   @NonNull
-  UpcomingPreOrderMessagesUseCase getUpcomingPreOrderMessagesUseCase();
+  NotificationMessageUseCase getUpcomingPreOrderMessagesUseCase();
 
   @NonNull
   VehicleChoiceUseCase getVehicleChoiceUseCase();

@@ -131,4 +131,11 @@ public interface OrderViewActions {
    * @param message - текст сообщения или null, если не показывать
    */
   void showOrderExpiredMessage(@Nullable String message);
+
+  /**
+   * показать сообщение о том, что заказ истек.
+   *
+   * @param show - показать или нет?
+   */
+  void showOrderCancelledMessage(boolean show);
 }

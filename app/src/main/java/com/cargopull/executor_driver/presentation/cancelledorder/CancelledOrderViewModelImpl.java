@@ -1,4 +1,4 @@
-package com.cargopull.executor_driver.presentation.missedorder;
+package com.cargopull.executor_driver.presentation.cancelledorder;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
@@ -12,25 +12,26 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.internal.disposables.EmptyDisposable;
 import javax.inject.Inject;
 
-public class MissedOrderViewModelImpl extends ViewModel implements MissedOrderViewModel {
+public class CancelledOrderViewModelImpl extends ViewModel implements CancelledOrderViewModel {
 
   @NonNull
-  private final NotificationMessageUseCase missedOrderUseCase;
+  private final NotificationMessageUseCase cancelledOrderMessageUseCase;
   @NonNull
-  private final SingleLiveEvent<ViewState<MissedOrderViewActions>> messageLiveData;
+  private final SingleLiveEvent<ViewState<CancelledOrderViewActions>> messageLiveData;
   @NonNull
   private Disposable disposable = EmptyDisposable.INSTANCE;
 
   @Inject
-  public MissedOrderViewModelImpl(@NonNull NotificationMessageUseCase missedOrderUseCase) {
-    this.missedOrderUseCase = missedOrderUseCase;
+  public CancelledOrderViewModelImpl(
+      @NonNull NotificationMessageUseCase cancelledOrderMessageUseCase) {
+    this.cancelledOrderMessageUseCase = cancelledOrderMessageUseCase;
     messageLiveData = new SingleLiveEvent<>();
     loadMissedOrderMessages();
   }
 
   @NonNull
   @Override
-  public LiveData<ViewState<MissedOrderViewActions>> getViewStateLiveData() {
+  public LiveData<ViewState<CancelledOrderViewActions>> getViewStateLiveData() {
     return messageLiveData;
   }
 
@@ -42,13 +43,14 @@ public class MissedOrderViewModelImpl extends ViewModel implements MissedOrderVi
 
   private void loadMissedOrderMessages() {
     disposable.dispose();
-    disposable = missedOrderUseCase.getNotificationMessages()
+    disposable = cancelledOrderMessageUseCase.getNotificationMessages()
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(
             message -> {
               if (message != null && !message.trim().isEmpty()) {
                 messageLiveData.postValue(
-                    missedOrderViewActions -> missedOrderViewActions.showMissedOrderMessage(message)
+                    cancelledOrderViewActions -> cancelledOrderViewActions
+                        .showCancelledOrderMessage(message)
                 );
               }
             },
