@@ -55,6 +55,14 @@ public class Order {
     this.scheduledStartTime = scheduledStartTime;
   }
 
+  // Возвращаем копию заказа с измененным ETA до первой точки.
+  @NonNull
+  public Order withEtaToStartPoint(long etaToStartPoint) {
+    return new Order(id, comment, serviceName, distance, estimatedPriceText, estimatedPrice,
+        estimatedTime, estimatedRouteLength, totalCost, timeout, etaToStartPoint, confirmationTime,
+        startTime, scheduledStartTime).setOptions(options).setRoutePoints(routePath);
+  }
+
   public long getId() {
     return id;
   }
@@ -140,6 +148,18 @@ public class Order {
 
   public void addRoutePoints(@NonNull RoutePoint... routePoints) {
     routePath.addAll(Arrays.asList(routePoints));
+  }
+
+  private Order setOptions(@NonNull List<Option> options) {
+    this.options.clear();
+    this.options.addAll(options);
+    return this;
+  }
+
+  private Order setRoutePoints(@NonNull List<RoutePoint> routePoints) {
+    routePath.clear();
+    routePath.addAll(routePoints);
+    return this;
   }
 
   @Override
