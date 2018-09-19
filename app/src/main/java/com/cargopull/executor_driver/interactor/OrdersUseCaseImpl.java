@@ -5,9 +5,9 @@ import android.support.annotation.Nullable;
 import com.cargopull.executor_driver.entity.Order;
 import com.cargopull.executor_driver.utils.ErrorReporter;
 import io.reactivex.BackpressureStrategy;
-import io.reactivex.Emitter;
 import io.reactivex.Flowable;
 import io.reactivex.schedulers.Schedulers;
+import io.reactivex.subjects.PublishSubject;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -17,39 +17,12 @@ public class OrdersUseCaseImpl implements OrdersUseCase {
   private final ErrorReporter errorReporter;
   @NonNull
   private final CommonGateway<Set<Order>> gateway;
-  // Это для того чтобы combineLatest стартовал сразу.
-  @NonNull
-  private final Order dumbOrder = new Order(-1, "", "", 0, "", 0, 0, 0, 0, 0, 0, 0, 0, 0);
   @Nullable
   private Flowable<Set<Order>> ordersFlowable;
   @NonNull
-  private Emitter<Order> addEmitter = new Emitter<Order>() {
-    @Override
-    public void onNext(Order value) {
-    }
-
-    @Override
-    public void onError(Throwable error) {
-    }
-
-    @Override
-    public void onComplete() {
-    }
-  };
+  private final PublishSubject<Order> addSubject = PublishSubject.create();
   @NonNull
-  private Emitter<Order> removeEmitter = new Emitter<Order>() {
-    @Override
-    public void onNext(Order value) {
-    }
-
-    @Override
-    public void onError(Throwable error) {
-    }
-
-    @Override
-    public void onComplete() {
-    }
-  };
+  private final PublishSubject<Order> removeSubject = PublishSubject.create();
 
   public OrdersUseCaseImpl(@NonNull ErrorReporter errorReporter,
       @NonNull CommonGateway<Set<Order>> gateway) {
@@ -61,23 +34,27 @@ public class OrdersUseCaseImpl implements OrdersUseCase {
   @Override
   public Flowable<Set<Order>> getOrdersSet() {
     if (ordersFlowable == null) {
-      ordersFlowable = Flowable.combineLatest(
-          Flowable.<Order>create(
-              emitter -> this.addEmitter = emitter,
-              BackpressureStrategy.BUFFER
-          ).startWith(dumbOrder),
-          Flowable.<Order>create(
-              emitter -> this.removeEmitter = emitter,
-              BackpressureStrategy.BUFFER
-          ).startWith(dumbOrder),
-          gateway.<Order>getData()
-              .observeOn(Schedulers.single())
-              .doOnComplete(() -> {
-                addEmitter.onComplete();
-                removeEmitter.onComplete();
-              }),
-          this::merge
-      )
+      ordersFlowable = gateway.<Order>getData()
+          .observeOn(Schedulers.single())
+          .doOnComplete(() -> {
+            throw new InterruptedException();
+          }).switchMap(
+              orders -> addSubject.toFlowable(BackpressureStrategy.BUFFER)
+                  .map(order -> addOrderToSet(order, orders))
+                  .startWith(orders)
+          ).switchMap(
+              orders -> removeSubject.toFlowable(BackpressureStrategy.BUFFER)
+                  .map(order -> removeOrderFromSet(order, orders))
+                  .startWith(orders)
+          )
+          // Фиксируем сет для неизменяемости далее
+          .<Set<Order>>map(HashSet::new)
+          .onErrorResumeNext(throwable -> {
+            if (throwable instanceof InterruptedException) {
+              return Flowable.empty();
+            }
+            return Flowable.error(throwable);
+          })
           .doOnError(errorReporter::reportError)
           .replay(1)
           .refCount();
@@ -85,24 +62,27 @@ public class OrdersUseCaseImpl implements OrdersUseCase {
     return ordersFlowable;
   }
 
-  private Set<Order> merge(Order addPreOrder, Order removePreOrder, Set<Order> preOrders) {
-    // Удаляем старое и то что нужно удалить
-    preOrders.remove(addPreOrder);
-    preOrders.remove(removePreOrder);
-    // Добавляем то что нужно добавить, если это не заказ-заглушка
-    if (addPreOrder != dumbOrder) {
-      preOrders.add(addPreOrder);
-    }
-    return new HashSet<>(preOrders);
+  private Set<Order> addOrderToSet(Order order, Set<Order> orders) {
+    // Удаляем старое, если есть
+    orders.remove(order);
+    // Добавляем то что нужно добавить
+    orders.add(order);
+    return orders;
+  }
+
+  private Set<Order> removeOrderFromSet(Order order, Set<Order> orders) {
+    // Удаляем то что нужно удалить
+    orders.remove(order);
+    return orders;
   }
 
   @Override
   public void addOrder(@NonNull Order order) {
-    addEmitter.onNext(order);
+    addSubject.onNext(order);
   }
 
   @Override
   public void removeOrder(@NonNull Order order) {
-    removeEmitter.onNext(order);
+    removeSubject.onNext(order);
   }
 }
