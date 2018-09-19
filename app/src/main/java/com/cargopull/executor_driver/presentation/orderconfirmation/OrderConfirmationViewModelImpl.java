@@ -5,6 +5,7 @@ import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import com.cargopull.executor_driver.entity.OrderConfirmationFailedException;
 import com.cargopull.executor_driver.entity.OrderOfferDecisionException;
 import com.cargopull.executor_driver.entity.OrderOfferExpiredException;
 import com.cargopull.executor_driver.gateway.DataMappingException;
@@ -70,8 +71,10 @@ public class OrderConfirmationViewModelImpl extends ViewModel implements
         .subscribe(
             message -> viewStateLiveData.postValue(new OrderConfirmationViewStateAccepted(message)),
             t -> {
-              if (t instanceof OrderOfferExpiredException) {
-                viewStateLiveData.postValue(new OrderConfirmationViewStateExpired(t.getMessage()));
+              if (t instanceof OrderConfirmationFailedException) {
+                viewStateLiveData.postValue(new OrderConfirmationViewStateFailed(t.getMessage()));
+              } else if (t instanceof OrderOfferExpiredException) {
+                viewStateLiveData.postValue(lastViewState);
               } else if (t instanceof OrderOfferDecisionException) {
                 viewStateLiveData.postValue(lastViewState);
               } else if (t instanceof DataMappingException) {
@@ -96,8 +99,10 @@ public class OrderConfirmationViewModelImpl extends ViewModel implements
         .subscribe(
             message -> viewStateLiveData.postValue(new OrderConfirmationViewStateDeclined(message)),
             t -> {
-              if (t instanceof OrderOfferExpiredException) {
-                viewStateLiveData.postValue(new OrderConfirmationViewStateExpired(t.getMessage()));
+              if (t instanceof OrderConfirmationFailedException) {
+                viewStateLiveData.postValue(new OrderConfirmationViewStateFailed(t.getMessage()));
+              } else if (t instanceof OrderOfferExpiredException) {
+                viewStateLiveData.postValue(lastViewState);
               } else if (t instanceof OrderOfferDecisionException) {
                 viewStateLiveData.postValue(lastViewState);
               } else if (t instanceof DataMappingException) {
@@ -126,6 +131,13 @@ public class OrderConfirmationViewModelImpl extends ViewModel implements
       viewStateLiveData.postValue(new OrderConfirmationViewStatePending());
       timeoutDisposable = orderConfirmationUseCase.getOrderDecisionTimeout()
           .observeOn(AndroidSchedulers.mainThread())
+          .doOnError(throwable -> {
+            if (throwable instanceof OrderOfferExpiredException) {
+              viewStateLiveData.postValue(
+                  new OrderConfirmationViewStateExpired()
+              );
+            }
+          })
           .retry(throwable -> throwable instanceof OrderOfferExpiredException
               || throwable instanceof OrderOfferDecisionException)
           .subscribe(timeout -> viewStateLiveData.postValue(

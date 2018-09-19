@@ -46,7 +46,7 @@ public class OrderConfirmationViewStateIdleTest {
     inOrder.verify(viewActions).enableDeclineButton(true);
     inOrder.verify(viewActions).showAcceptedMessage(null);
     inOrder.verify(viewActions).showDeclinedMessage(null);
-    inOrder.verify(viewActions).showExpiredMessage(null);
+    inOrder.verify(viewActions).showFailedMessage(null);
     inOrder.verify(viewActions).showTimeout(73, 13_000);
     verifyNoMoreInteractions(viewActions);
   }

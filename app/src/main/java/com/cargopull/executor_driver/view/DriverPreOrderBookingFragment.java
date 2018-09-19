@@ -201,6 +201,9 @@ public class DriverPreOrderBookingFragment extends BaseFragment implements
 
   @Override
   public void enableAcceptButton(boolean enable) {
+    if (!enable && acceptDelayAnimator != null) {
+      acceptDelayAnimator.cancel();
+    }
     acceptAction.setEnabled(enable);
     acceptActionText.setEnabled(enable);
   }
@@ -230,7 +233,7 @@ public class DriverPreOrderBookingFragment extends BaseFragment implements
   }
 
   @Override
-  public void showExpiredMessage(@Nullable String message) {
+  public void showFailedMessage(@Nullable String message) {
     if (alertDialog != null) {
       alertDialog.dismiss();
     }

@@ -19,9 +19,6 @@ public class OrdersUseCaseImpl implements OrdersUseCase {
   private final CommonGateway<Set<Order>> gateway;
   @NonNull
   private final OrderUseCase cancelledOrderUseCase;
-  // Это для того чтобы combineLatest стартовал сразу.
-  @NonNull
-  private final Order dumbOrder = new Order(-1, "", "", 0, "", 0, 0, 0, 0, 0, 0, 0, 0, 0);
   @Nullable
   private Flowable<Set<Order>> ordersFlowable;
   @NonNull
@@ -41,19 +38,22 @@ public class OrdersUseCaseImpl implements OrdersUseCase {
   @Override
   public Flowable<Set<Order>> getOrdersSet() {
     if (ordersFlowable == null) {
-      ordersFlowable = Flowable.combineLatest(
-          addSubject.toFlowable(BackpressureStrategy.BUFFER)
-              .startWith(dumbOrder),
-          removeSubject.toFlowable(BackpressureStrategy.BUFFER)
-              .startWith(dumbOrder)
-              .mergeWith(cancelledOrderUseCase.getOrders()),
-          gateway.<Order>getData()
-              .observeOn(Schedulers.single())
-              .doOnComplete(() -> {
-                throw new InterruptedException();
-              }),
-          this::merge
-      )
+      ordersFlowable = gateway.<Order>getData()
+          .observeOn(Schedulers.single())
+          .doOnComplete(() -> {
+            throw new InterruptedException();
+          }).switchMap(
+              orders -> addSubject.toFlowable(BackpressureStrategy.BUFFER)
+                  .map(order -> addOrderToSet(order, orders))
+                  .startWith(orders)
+          ).switchMap(
+              orders -> removeSubject.toFlowable(BackpressureStrategy.BUFFER)
+                  .mergeWith(cancelledOrderUseCase.getOrders())
+                  .map(order -> removeOrderFromSet(order, orders))
+                  .startWith(orders)
+          )
+          // Фиксируем сет для неизменяемости далее
+          .<Set<Order>>map(HashSet::new)
           .onErrorResumeNext(throwable -> {
             if (throwable instanceof InterruptedException) {
               return Flowable.empty();
@@ -67,15 +67,18 @@ public class OrdersUseCaseImpl implements OrdersUseCase {
     return ordersFlowable;
   }
 
-  private Set<Order> merge(Order addPreOrder, Order removePreOrder, Set<Order> preOrders) {
-    // Удаляем старое и то что нужно удалить
-    preOrders.remove(addPreOrder);
-    preOrders.remove(removePreOrder);
-    // Добавляем то что нужно добавить, если это не заказ-заглушка
-    if (addPreOrder != dumbOrder) {
-      preOrders.add(addPreOrder);
-    }
-    return new HashSet<>(preOrders);
+  private Set<Order> addOrderToSet(Order order, Set<Order> orders) {
+    // Удаляем старое, если есть
+    orders.remove(order);
+    // Добавляем то что нужно добавить
+    orders.add(order);
+    return orders;
+  }
+
+  private Set<Order> removeOrderFromSet(Order order, Set<Order> orders) {
+    // Удаляем то что нужно удалить
+    orders.remove(order);
+    return orders;
   }
 
   @Override
