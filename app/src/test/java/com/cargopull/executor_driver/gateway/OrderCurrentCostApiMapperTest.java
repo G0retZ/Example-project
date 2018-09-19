@@ -19,7 +19,7 @@ public class OrderCurrentCostApiMapperTest {
   }
 
   /**
-   * Должен успешно преобразовать строку из сообщения в число.
+   * Должен успешно преобразовать строку из хедера в число.
    *
    * @throws Exception ошибка
    */
@@ -34,57 +34,61 @@ public class OrderCurrentCostApiMapperTest {
   }
 
   /**
-   * Должен дать ошибку, если сообщения нет.
+   * Должен дать ошибку, если хедера нет.
    *
    * @throws Exception ошибка
    */
   @Test(expected = DataMappingException.class)
   public void mappingNullPayloadFail() throws Exception {
     // Дано и Действие:
-    mapper.map(new StompMessage("MESSAGE", new ArrayList<>(), null));
+    mapper.map(new StompMessage("MESSAGE", new ArrayList<>(), "\n"));
   }
 
   /**
-   * Должен дать ошибку, если сообщение пустое.
+   * Должен дать ошибку, если хедер пустой.
    *
    * @throws Exception ошибка
    */
   @Test(expected = DataMappingException.class)
   public void mappingEmptyPayloadFail() throws Exception {
     // Дано и Действие:
-    mapper.map(new StompMessage("MESSAGE", new ArrayList<>(), "\n"));
+    mapper.map(new StompMessage("MESSAGE",
+        Collections.singletonList(new StompHeader("TotalAmount", "")), "\n"));
   }
 
   /**
-   * Должен дать ошибку, если в сообщении дробное число.
+   * Должен дать ошибку, если в хедере дробное число.
    *
    * @throws Exception ошибка
    */
   @Test(expected = DataMappingException.class)
   public void mappingFloatPayloadFail() throws Exception {
     // Дано и Действие:
-    mapper.map(new StompMessage("MESSAGE", new ArrayList<>(), "\n123.345"));
+    mapper.map(new StompMessage("MESSAGE",
+        Collections.singletonList(new StompHeader("TotalAmount", "123.345")), "\n"));
   }
 
   /**
-   * Должен дать ошибку, если в сообщении число больше чем int.
+   * Должен дать ошибку, если в хедере число больше чем long.
    *
    * @throws Exception ошибка
    */
   @Test(expected = DataMappingException.class)
   public void mappingLongNumberPayloadFail() throws Exception {
     // Дано и Действие:
-    mapper.map(new StompMessage("MESSAGE", new ArrayList<>(), "\n9876543210"));
+    mapper.map(new StompMessage("MESSAGE",
+        Collections.singletonList(new StompHeader("TotalAmount", "9999999999999999999999")), "\n"));
   }
 
   /**
-   * Должен дать ошибку, если в сообщении не число.
+   * Должен дать ошибку, если в хедере не число.
    *
    * @throws Exception ошибка
    */
   @Test(expected = DataMappingException.class)
   public void mappingNotANumberPayloadFail() throws Exception {
     // Дано и Действие:
-    mapper.map(new StompMessage("MESSAGE", new ArrayList<>(), "\na9876543210"));
+    mapper.map(new StompMessage("MESSAGE",
+        Collections.singletonList(new StompHeader("TotalAmount", "a9876543210")), "\n"));
   }
 }
