@@ -1,21 +1,25 @@
 package com.cargopull.executor_driver.gateway;
 
 import android.support.annotation.NonNull;
+import javax.inject.Inject;
 import ua.naiksoftware.stomp.client.StompMessage;
 
 /**
- * Преобразуем текст из хедера ответа сервера в число.
+ * Извлекаем время сервера из ответа сервера.
  */
-// TODO: https://jira.capsrv.xyz/browse/RUCAP-1918
 public class ServerTimeApiMapper implements Mapper<StompMessage, Long> {
+
+  @Inject
+  public ServerTimeApiMapper() {
+  }
 
   @NonNull
   @Override
   public Long map(@NonNull StompMessage from) throws Exception {
     try {
       return Long.valueOf(from.findHeader("ServerTimeStamp"));
-    } catch (Throwable t) {
-      throw new DataMappingException(t);
+    } catch (Exception e) {
+      throw new DataMappingException("Ошибка маппинга: неверный формат стоимости!", e);
     }
   }
 }
