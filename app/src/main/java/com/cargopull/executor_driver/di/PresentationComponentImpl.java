@@ -138,8 +138,6 @@ class PresentationComponentImpl implements PresentationComponent {
   @Nullable
   private UpdateMessageViewModel updateMessageViewModel;
   @Nullable
-  private OrderViewModel upcomingPreOrderViewModel;
-  @Nullable
   private UpcomingPreOrderViewModel upcomingPreOrderAvailabilityViewModel;
 
   PresentationComponentImpl(@NonNull MemoryDataSharer<String> loginSharer,
@@ -757,14 +755,15 @@ class PresentationComponentImpl implements PresentationComponent {
 
   @NonNull
   @Override
-  public OrderViewModel getUpcomingPreOrderViewModel() {
-    if (upcomingPreOrderViewModel == null) {
-      upcomingPreOrderViewModel = new OrderViewModelImpl(
-          interactorComponent.getUpcomingPreOrderUseCase(),
-          timeUtils
-      );
+  public OrderViewModel getUpcomingPreOrderViewModel(@Nullable Fragment fragment) {
+    if (fragment == null) {
+      throw new NullPointerException("Фрагмент не должен быть null");
     }
-    return upcomingPreOrderViewModel;
+    return getViewModelInstance(
+        fragment,
+        OrderViewModelImpl.class,
+        new OrderViewModelImpl(interactorComponent.getUpcomingPreOrderUseCase(), timeUtils)
+    );
   }
 
   @NonNull

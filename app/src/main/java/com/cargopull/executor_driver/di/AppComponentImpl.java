@@ -197,9 +197,6 @@ public class AppComponentImpl implements AppComponent {
     baseActivity.setServerTimeViewModel(
         presentationComponent.getServerTimeViewModel()
     );
-    baseActivity.setUpcomingPreOrderViewModel(
-        presentationComponent.getUpcomingPreOrderViewModel()
-    );
   }
 
   @Override
@@ -539,7 +536,7 @@ public class AppComponentImpl implements AppComponent {
   @Override
   public void inject(UpcomingPreOrderFragment upcomingPreOrderFragment) {
     upcomingPreOrderFragment.setOrderViewModel(
-        presentationComponent.getUpcomingPreOrderViewModel()
+        presentationComponent.getUpcomingPreOrderViewModel(upcomingPreOrderFragment)
     );
   }
 

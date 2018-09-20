@@ -193,7 +193,7 @@ interface PresentationComponent {
   OrderConfirmationViewModel getSelectedPreOrderConfirmationViewModel(@Nullable Fragment fragment);
 
   @NonNull
-  OrderViewModel getUpcomingPreOrderViewModel();
+  OrderViewModel getUpcomingPreOrderViewModel(@Nullable Fragment fragment);
 
   @NonNull
   OrderConfirmationViewModel getUpcomingPreOrderConfirmationViewModel(@Nullable Fragment fragment);
