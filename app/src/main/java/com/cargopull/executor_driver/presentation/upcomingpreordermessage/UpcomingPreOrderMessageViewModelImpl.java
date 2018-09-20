@@ -1,4 +1,4 @@
-package com.cargopull.executor_driver.presentation.upcomingpreorder;
+package com.cargopull.executor_driver.presentation.upcomingpreordermessage;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
@@ -12,17 +12,18 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.internal.disposables.EmptyDisposable;
 import javax.inject.Inject;
 
-public class UpcomingPreOrderViewModelImpl extends ViewModel implements UpcomingPreOrderViewModel {
+public class UpcomingPreOrderMessageViewModelImpl extends ViewModel implements
+    UpcomingPreOrderMessageViewModel {
 
   @NonNull
   private final NotificationMessageUseCase upcomingPreOrderMessagesUseCase;
   @NonNull
-  private final SingleLiveEvent<ViewState<UpcomingPreOrderViewActions>> messageLiveData;
+  private final SingleLiveEvent<ViewState<UpcomingPreOrderMessageViewActions>> messageLiveData;
   @NonNull
   private Disposable disposable = EmptyDisposable.INSTANCE;
 
   @Inject
-  public UpcomingPreOrderViewModelImpl(
+  public UpcomingPreOrderMessageViewModelImpl(
       @NonNull NotificationMessageUseCase upcomingPreOrderMessagesUseCase) {
     this.upcomingPreOrderMessagesUseCase = upcomingPreOrderMessagesUseCase;
     messageLiveData = new SingleLiveEvent<>();
@@ -31,7 +32,7 @@ public class UpcomingPreOrderViewModelImpl extends ViewModel implements Upcoming
 
   @NonNull
   @Override
-  public LiveData<ViewState<UpcomingPreOrderViewActions>> getViewStateLiveData() {
+  public LiveData<ViewState<UpcomingPreOrderMessageViewActions>> getViewStateLiveData() {
     return messageLiveData;
   }
 
@@ -49,7 +50,7 @@ public class UpcomingPreOrderViewModelImpl extends ViewModel implements Upcoming
             message -> {
               if (message != null && !message.trim().isEmpty()) {
                 messageLiveData.postValue(
-                    upcomingPreOrderViewActions -> upcomingPreOrderViewActions
+                    upcomingPreOrderMessageViewActions -> upcomingPreOrderMessageViewActions
                         .showUpcomingPreOrderMessage(message)
                 );
               }

@@ -81,8 +81,8 @@ import com.cargopull.executor_driver.presentation.services.ServicesViewModel;
 import com.cargopull.executor_driver.presentation.services.ServicesViewModelImpl;
 import com.cargopull.executor_driver.presentation.smsbutton.SmsButtonViewModel;
 import com.cargopull.executor_driver.presentation.smsbutton.SmsButtonViewModelImpl;
-import com.cargopull.executor_driver.presentation.upcomingpreorder.UpcomingPreOrderViewModel;
-import com.cargopull.executor_driver.presentation.upcomingpreorder.UpcomingPreOrderViewModelImpl;
+import com.cargopull.executor_driver.presentation.upcomingpreordermessage.UpcomingPreOrderMessageViewModel;
+import com.cargopull.executor_driver.presentation.upcomingpreordermessage.UpcomingPreOrderMessageViewModelImpl;
 import com.cargopull.executor_driver.presentation.updatemessage.UpdateMessageViewModel;
 import com.cargopull.executor_driver.presentation.updatemessage.UpdateMessageViewModelImpl;
 import com.cargopull.executor_driver.presentation.vehicleoptions.VehicleOptionsViewModel;
@@ -132,7 +132,7 @@ class PresentationComponentImpl implements PresentationComponent {
   @Nullable
   private ServicesSliderViewModel servicesSliderViewModel;
   @Nullable
-  private UpcomingPreOrderViewModel upcomingPreOrderMessagesViewModel;
+  private UpcomingPreOrderMessageViewModel upcomingPreOrderMessagesViewModel;
   @Nullable
   private UpdateMessageViewModel updateMessageViewModel;
   @Nullable
@@ -662,9 +662,9 @@ class PresentationComponentImpl implements PresentationComponent {
 
   @NonNull
   @Override
-  public UpcomingPreOrderViewModel getUpcomingPreOrderMessagesViewModel() {
+  public UpcomingPreOrderMessageViewModel getUpcomingPreOrderMessagesViewModel() {
     if (upcomingPreOrderMessagesViewModel == null) {
-      upcomingPreOrderMessagesViewModel = new UpcomingPreOrderViewModelImpl(
+      upcomingPreOrderMessagesViewModel = new UpcomingPreOrderMessageViewModelImpl(
           interactorComponent.getUpcomingPreOrderMessagesUseCase()
       );
     }

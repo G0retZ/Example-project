@@ -1,11 +1,11 @@
-package com.cargopull.executor_driver.presentation.upcomingpreorder;
+package com.cargopull.executor_driver.presentation.upcomingpreordermessage;
 
 import android.support.annotation.NonNull;
 
 /**
  * Действия для смены состояния вида окна сообщения о предстоящем предзаказе.
  */
-public interface UpcomingPreOrderViewActions {
+public interface UpcomingPreOrderMessageViewActions {
 
   /**
    * Показать сообщение о предстоящем предзаказе.

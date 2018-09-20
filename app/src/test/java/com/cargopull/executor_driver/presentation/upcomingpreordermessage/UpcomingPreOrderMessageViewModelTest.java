@@ -1,4 +1,4 @@
-package com.cargopull.executor_driver.presentation.upcomingpreorder;
+package com.cargopull.executor_driver.presentation.upcomingpreordermessage;
 
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
@@ -24,21 +24,21 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
-public class UpcomingPreOrderViewModelTest {
+public class UpcomingPreOrderMessageViewModelTest {
 
   @ClassRule
   public static final ViewModelThreadTestRule classRule = new ViewModelThreadTestRule();
   @Rule
   public TestRule rule = new InstantTaskExecutorRule();
-  private UpcomingPreOrderViewModel viewModel;
+  private UpcomingPreOrderMessageViewModel viewModel;
   @Mock
   private NotificationMessageUseCase useCase;
   @Mock
-  private Observer<ViewState<UpcomingPreOrderViewActions>> viewStateObserver;
+  private Observer<ViewState<UpcomingPreOrderMessageViewActions>> viewStateObserver;
   @Captor
-  private ArgumentCaptor<ViewState<UpcomingPreOrderViewActions>> viewStateCaptor;
+  private ArgumentCaptor<ViewState<UpcomingPreOrderMessageViewActions>> viewStateCaptor;
   @Mock
-  private UpcomingPreOrderViewActions viewActions;
+  private UpcomingPreOrderMessageViewActions viewActions;
 
   private PublishSubject<String> publishSubject;
 
@@ -47,7 +47,7 @@ public class UpcomingPreOrderViewModelTest {
     publishSubject = PublishSubject.create();
     when(useCase.getNotificationMessages())
         .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
-    viewModel = new UpcomingPreOrderViewModelImpl(useCase);
+    viewModel = new UpcomingPreOrderMessageViewModelImpl(useCase);
   }
 
   /* Тетсируем работу с юзкейсом. */

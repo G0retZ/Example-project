@@ -38,8 +38,8 @@ import com.cargopull.executor_driver.presentation.serverconnection.ServerConnect
 import com.cargopull.executor_driver.presentation.serverconnection.ServerConnectionViewActions;
 import com.cargopull.executor_driver.presentation.serverconnection.ServerConnectionViewModel;
 import com.cargopull.executor_driver.presentation.servertime.ServerTimeViewModel;
-import com.cargopull.executor_driver.presentation.upcomingpreorder.UpcomingPreOrderViewActions;
-import com.cargopull.executor_driver.presentation.upcomingpreorder.UpcomingPreOrderViewModel;
+import com.cargopull.executor_driver.presentation.upcomingpreordermessage.UpcomingPreOrderMessageViewActions;
+import com.cargopull.executor_driver.presentation.upcomingpreordermessage.UpcomingPreOrderMessageViewModel;
 import com.cargopull.executor_driver.presentation.updatemessage.UpdateMessageViewModel;
 import javax.inject.Inject;
 
@@ -48,7 +48,7 @@ import javax.inject.Inject;
  */
 
 public class MainApplication extends Application implements ServerConnectionViewActions,
-    MissedOrderViewActions, PreOrderViewActions, UpcomingPreOrderViewActions,
+    MissedOrderViewActions, PreOrderViewActions, UpcomingPreOrderMessageViewActions,
     CancelledOrderViewActions {
 
   @Nullable
@@ -78,7 +78,7 @@ public class MainApplication extends Application implements ServerConnectionView
   @Nullable
   private MissedOrderViewModel missedOrderViewModel;
   @Nullable
-  private UpcomingPreOrderViewModel upcomingPreOrderViewModel;
+  private UpcomingPreOrderMessageViewModel upcomingPreOrderMessageViewModel;
   @Nullable
   private CancelledOrderViewModel cancelledOrderViewModel;
   @Nullable
@@ -162,9 +162,9 @@ public class MainApplication extends Application implements ServerConnectionView
   }
 
   @Inject
-  public void setUpcomingPreOrderViewModel(
-      @Nullable UpcomingPreOrderViewModel upcomingPreOrderViewModel) {
-    this.upcomingPreOrderViewModel = upcomingPreOrderViewModel;
+  public void setUpcomingPreOrderMessageViewModel(
+      @Nullable UpcomingPreOrderMessageViewModel upcomingPreOrderMessageViewModel) {
+    this.upcomingPreOrderMessageViewModel = upcomingPreOrderMessageViewModel;
   }
 
   @Inject
@@ -206,7 +206,7 @@ public class MainApplication extends Application implements ServerConnectionView
         || cancelledOrderViewModel == null || serverConnectionViewModel == null
         || currentCostPollingViewModel == null || serverTimeViewModel == null
         || orderViewModel == null || preOrderViewModel == null || orderCostDetailsViewModel == null
-        || upcomingPreOrderViewModel == null || preOrdersListViewModel == null) {
+        || upcomingPreOrderMessageViewModel == null || preOrdersListViewModel == null) {
       throw new RuntimeException("Shit! WTF?!");
     }
     serverConnectionViewModel.getViewStateLiveData().observeForever(viewState -> {
@@ -219,7 +219,7 @@ public class MainApplication extends Application implements ServerConnectionView
         viewState.apply(this);
       }
     });
-    upcomingPreOrderViewModel.getViewStateLiveData().observeForever(viewState -> {
+    upcomingPreOrderMessageViewModel.getViewStateLiveData().observeForever(viewState -> {
       if (viewState != null) {
         viewState.apply(this);
       }
