@@ -243,7 +243,7 @@ public class UpcomingPreOrderViewModelTest {
     viewModel.getNavigationLiveData().observeForever(navigateObserver);
 
     // Действие:
-    viewModel.preOrderConsumed();
+    viewModel.upcomingPreOrderConsumed();
 
     // Результат:
     verify(navigateObserver, only()).onChanged(UpcomingPreOrderNavigate.UPCOMING_PRE_ORDER);

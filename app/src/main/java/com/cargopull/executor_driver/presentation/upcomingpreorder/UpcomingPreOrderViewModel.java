@@ -10,5 +10,5 @@ public interface UpcomingPreOrderViewModel extends ViewModel<UpcomingPreOrderVie
   /**
    * Сообщает, что сообщение об прочитано.
    */
-  void preOrderConsumed();
+  void upcomingPreOrderConsumed();
 }

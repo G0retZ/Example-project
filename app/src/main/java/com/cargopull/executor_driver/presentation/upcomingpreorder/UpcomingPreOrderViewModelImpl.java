@@ -76,7 +76,7 @@ public class UpcomingPreOrderViewModelImpl extends ViewModel implements
   }
 
   @Override
-  public void preOrderConsumed() {
+  public void upcomingPreOrderConsumed() {
     navigateLiveData.postValue(UpcomingPreOrderNavigate.UPCOMING_PRE_ORDER);
   }
 
