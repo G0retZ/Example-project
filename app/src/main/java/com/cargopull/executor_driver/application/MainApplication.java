@@ -38,6 +38,8 @@ import com.cargopull.executor_driver.presentation.serverconnection.ServerConnect
 import com.cargopull.executor_driver.presentation.serverconnection.ServerConnectionViewActions;
 import com.cargopull.executor_driver.presentation.serverconnection.ServerConnectionViewModel;
 import com.cargopull.executor_driver.presentation.servertime.ServerTimeViewModel;
+import com.cargopull.executor_driver.presentation.upcomingpreorder.UpcomingPreOrderViewActions;
+import com.cargopull.executor_driver.presentation.upcomingpreorder.UpcomingPreOrderViewModel;
 import com.cargopull.executor_driver.presentation.upcomingpreordermessage.UpcomingPreOrderMessageViewActions;
 import com.cargopull.executor_driver.presentation.upcomingpreordermessage.UpcomingPreOrderMessageViewModel;
 import com.cargopull.executor_driver.presentation.updatemessage.UpdateMessageViewModel;
@@ -49,7 +51,7 @@ import javax.inject.Inject;
 
 public class MainApplication extends Application implements ServerConnectionViewActions,
     MissedOrderViewActions, PreOrderViewActions, UpcomingPreOrderMessageViewActions,
-    CancelledOrderViewActions {
+    CancelledOrderViewActions, UpcomingPreOrderViewActions {
 
   @Nullable
   private AppComponent appComponent;
@@ -69,6 +71,8 @@ public class MainApplication extends Application implements ServerConnectionView
   private OrderViewModel orderViewModel;
   @Nullable
   private PreOrderViewModel preOrderViewModel;
+  @Nullable
+  private UpcomingPreOrderViewModel upcomingPreOrderViewModel;
   @Nullable
   private PreOrdersListViewModel preOrdersListViewModel;
   @Nullable
@@ -122,6 +126,12 @@ public class MainApplication extends Application implements ServerConnectionView
   @Inject
   public void setPreOrderViewModel(@NonNull PreOrderViewModel preOrderViewModel) {
     this.preOrderViewModel = preOrderViewModel;
+  }
+
+  @Inject
+  public void setUpcomingPreOrderViewModel(
+      @Nullable UpcomingPreOrderViewModel upcomingPreOrderViewModel) {
+    this.upcomingPreOrderViewModel = upcomingPreOrderViewModel;
   }
 
   @Inject
@@ -206,7 +216,8 @@ public class MainApplication extends Application implements ServerConnectionView
         || cancelledOrderViewModel == null || serverConnectionViewModel == null
         || currentCostPollingViewModel == null || serverTimeViewModel == null
         || orderViewModel == null || preOrderViewModel == null || orderCostDetailsViewModel == null
-        || upcomingPreOrderMessageViewModel == null || preOrdersListViewModel == null) {
+        || upcomingPreOrderMessageViewModel == null || preOrdersListViewModel == null
+        || upcomingPreOrderViewModel == null) {
       throw new RuntimeException("Shit! WTF?!");
     }
     serverConnectionViewModel.getViewStateLiveData().observeForever(viewState -> {
@@ -230,6 +241,11 @@ public class MainApplication extends Application implements ServerConnectionView
       }
     });
     preOrderViewModel.getViewStateLiveData().observeForever(viewState -> {
+      if (viewState != null) {
+        viewState.apply(this);
+      }
+    });
+    upcomingPreOrderViewModel.getViewStateLiveData().observeForever(viewState -> {
       if (viewState != null) {
         viewState.apply(this);
       }
@@ -440,7 +456,8 @@ public class MainApplication extends Application implements ServerConnectionView
 
   @Override
   public void showUpcomingPreOrderMessage(@NonNull String message) {
-    shakeIt(R.raw.accept_offer_vibro);
+    shakeIt(R.raw.new_pre_order_vibro);
+    playSound(R.raw.new_pre_order);
     if (notificationManager != null) {
       Builder builder = new Builder(this, "state_channel")
           .setContentText(message)
@@ -457,6 +474,15 @@ public class MainApplication extends Application implements ServerConnectionView
           .setTicker(getString(R.string.upcoming_pre_order))
           .setWhen(System.currentTimeMillis());
       notificationManager.notify(8, builder.build());
+    }
+  }
+
+  @Override
+  public void showUpcomingPreOrderAvailable(boolean show) {
+    if (notificationManager != null) {
+      if (!show) {
+        notificationManager.cancel(8);
+      }
     }
   }
 

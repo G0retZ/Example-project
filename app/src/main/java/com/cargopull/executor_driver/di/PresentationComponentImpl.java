@@ -81,6 +81,8 @@ import com.cargopull.executor_driver.presentation.services.ServicesViewModel;
 import com.cargopull.executor_driver.presentation.services.ServicesViewModelImpl;
 import com.cargopull.executor_driver.presentation.smsbutton.SmsButtonViewModel;
 import com.cargopull.executor_driver.presentation.smsbutton.SmsButtonViewModelImpl;
+import com.cargopull.executor_driver.presentation.upcomingpreorder.UpcomingPreOrderViewModel;
+import com.cargopull.executor_driver.presentation.upcomingpreorder.UpcomingPreOrderViewModelImpl;
 import com.cargopull.executor_driver.presentation.upcomingpreordermessage.UpcomingPreOrderMessageViewModel;
 import com.cargopull.executor_driver.presentation.upcomingpreordermessage.UpcomingPreOrderMessageViewModelImpl;
 import com.cargopull.executor_driver.presentation.updatemessage.UpdateMessageViewModel;
@@ -137,6 +139,8 @@ class PresentationComponentImpl implements PresentationComponent {
   private UpdateMessageViewModel updateMessageViewModel;
   @Nullable
   private OrderViewModel upcomingPreOrderViewModel;
+  @Nullable
+  private UpcomingPreOrderViewModel upcomingPreOrderAvailabilityViewModel;
 
   PresentationComponentImpl(@NonNull MemoryDataSharer<String> loginSharer,
       @NonNull InteractorComponent interactorComponent,
@@ -778,6 +782,16 @@ class PresentationComponentImpl implements PresentationComponent {
             timeUtils
         )
     );
+  }
+
+  @Override
+  public UpcomingPreOrderViewModel getUpcomingPreOrderAvailabilityViewModel() {
+    if (upcomingPreOrderAvailabilityViewModel == null) {
+      upcomingPreOrderAvailabilityViewModel = new UpcomingPreOrderViewModelImpl(
+          interactorComponent.getUpcomingPreOrderUseCase()
+      );
+    }
+    return upcomingPreOrderAvailabilityViewModel;
   }
 
   private <V extends ViewModel> V getViewModelInstance(

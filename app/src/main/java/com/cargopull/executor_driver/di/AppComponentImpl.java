@@ -146,6 +146,9 @@ public class AppComponentImpl implements AppComponent {
     mainApplication.setPreOrderViewModel(
         presentationComponent.getPreOrderViewModel()
     );
+    mainApplication.setUpcomingPreOrderViewModel(
+        presentationComponent.getUpcomingPreOrderAvailabilityViewModel()
+    );
     mainApplication.setPreOrdersListViewModel(
         presentationComponent.getPreOrdersListViewModel()
     );
