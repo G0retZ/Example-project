@@ -448,7 +448,10 @@ public class MainApplication extends Application implements ServerConnectionView
           .setContentTitle(getString(R.string.upcoming_pre_order))
           .setSound(null)
           .setVibrate(new long[0])
-          .setAutoCancel(true)
+          .setContentIntent(
+              PendingIntent.getActivity(this, 0,
+                  new Intent(this, UpcomingPreOrderActivity.class), 0)
+          )
           .setSmallIcon(R.mipmap.ic_launcher)
           .setTicker(getString(R.string.upcoming_pre_order))
           .setWhen(System.currentTimeMillis());
