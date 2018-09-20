@@ -40,6 +40,7 @@ import com.cargopull.executor_driver.presentation.services.ServicesSliderViewMod
 import com.cargopull.executor_driver.presentation.services.ServicesViewModel;
 import com.cargopull.executor_driver.presentation.smsbutton.SmsButtonViewModel;
 import com.cargopull.executor_driver.presentation.upcomingpreorder.UpcomingPreOrderViewModel;
+import com.cargopull.executor_driver.presentation.upcomingpreordermessage.UpcomingPreOrderMessageViewModel;
 import com.cargopull.executor_driver.presentation.updatemessage.UpdateMessageViewModel;
 import com.cargopull.executor_driver.presentation.vehicleoptions.VehicleOptionsViewModel;
 import com.cargopull.executor_driver.presentation.waitingforclient.WaitingForClientViewModel;
@@ -171,7 +172,7 @@ interface PresentationComponent {
   SmsButtonViewModel getSmsButtonViewModel(@Nullable Fragment fragment);
 
   @NonNull
-  UpcomingPreOrderViewModel getUpcomingPreOrderViewModel();
+  UpcomingPreOrderMessageViewModel getUpcomingPreOrderMessagesViewModel();
 
   @NonNull
   UpdateMessageViewModel getUpdateMessageViewModel();
@@ -190,4 +191,12 @@ interface PresentationComponent {
 
   @NonNull
   OrderConfirmationViewModel getSelectedPreOrderConfirmationViewModel(@Nullable Fragment fragment);
+
+  @NonNull
+  OrderViewModel getUpcomingPreOrderViewModel(@Nullable Fragment fragment);
+
+  @NonNull
+  OrderConfirmationViewModel getUpcomingPreOrderConfirmationViewModel(@Nullable Fragment fragment);
+
+  UpcomingPreOrderViewModel getUpcomingPreOrderAvailabilityViewModel();
 }

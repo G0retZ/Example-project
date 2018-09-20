@@ -1,16 +1,14 @@
 package com.cargopull.executor_driver.presentation.upcomingpreorder;
 
-import android.support.annotation.NonNull;
-
 /**
- * Действия для смены состояния вида окна сообщения о предстоящем предзаказе.
+ * Действия для смены состояния вида окна предстоящего предзаказа.
  */
 public interface UpcomingPreOrderViewActions {
 
   /**
-   * Показать сообщение о предстоящем предзаказе.
+   * показать сообщение о том, что доступен предстоящий предзаказ.
    *
-   * @param message текст сообщения
+   * @param show - показать или нет?
    */
-  void showUpcomingPreOrderMessage(@NonNull String message);
+  void showUpcomingPreOrderAvailable(boolean show);
 }

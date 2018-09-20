@@ -138,4 +138,6 @@ interface RepositoryComponent {
 
   @NonNull
   CommonGateway<Set<Order>> getPreOrdersSetGateway();
+
+  CommonGateway<Order> getUpcomingPreOrderGateway();
 }

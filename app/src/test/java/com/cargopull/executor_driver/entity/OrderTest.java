@@ -17,7 +17,7 @@ public class OrderTest {
 
   private Order order;
   @Mock
-  private OptionNumeric option0;
+  private OptionNumeric option;
   @Mock
   private OptionNumeric option1;
   @Mock
@@ -37,6 +37,7 @@ public class OrderTest {
   public void setUp() {
     order = new Order(7, "com", "service", 1200239, "7000", 7000, 7728_192_819L, 28_020,
         9400, 20, 600, 1234567890, 9876543210L, 123812983712L);
+    order.addOptions(option);
     order.addRoutePoints(routePoint);
   }
 
@@ -57,25 +58,24 @@ public class OrderTest {
     assertEquals(order.getStartTime(), 9876543210L);
     assertEquals(order.getScheduledStartTime(), 123812983712L);
     assertEquals(order.getRoutePath(), Collections.singletonList(routePoint));
-    assertEquals(order.getOptions(), new ArrayList<Option>());
-    assertEquals(order.getRoutePath(), Collections.singletonList(routePoint));
+    assertEquals(order.getOptions(), Collections.singletonList(option));
   }
 
   @Test
   public void testSetOptions() {
-    order.setOptions(option0, option1, option2, option3);
-    order.setOptions(option3, option1, option0, option2);
+    order.setOptions(option1, option2, option3);
+    order.setOptions(option3, option1, option2);
     assertEquals(order.getOptions(), new ArrayList<>(
-        Arrays.asList(option3, option1, option0, option2)
+        Arrays.asList(option3, option1, option2)
     ));
   }
 
   @Test
   public void testAddOptions() {
-    order.addOptions(option0, option1, option2, option3);
-    order.addOptions(option3, option1, option0, option2);
+    order.addOptions(option1, option2, option3);
+    order.addOptions(option3, option1, option2);
     assertEquals(order.getOptions(), new ArrayList<>(
-        Arrays.asList(option0, option1, option2, option3, option3, option1, option0, option2)
+        Arrays.asList(option, option1, option2, option3, option3, option1, option2)
     ));
   }
 
@@ -99,6 +99,38 @@ public class OrderTest {
   }
 
   @Test
+  public void testWithEtaToStartPoint() {
+    // Дано:
+    order.setOptions(option1, option2, option3);
+    order.setRoutePoints(routePoint1, routePoint2, routePoint3);
+
+    // Действие:
+    Order order1 = order.withEtaToStartPoint(800);
+
+    // Результат:
+    assertEquals(order1.getId(), 7);
+    assertEquals(order1.getComment(), "com");
+    assertEquals(order1.getServiceName(), "service");
+    assertEquals(order1.getDistance(), 1200239);
+    assertEquals(order1.getEstimatedPriceText(), "7000");
+    assertEquals(order1.getEstimatedPrice(), 7000);
+    assertEquals(order1.getEstimatedTime(), 7728_192_819L);
+    assertEquals(order1.getEstimatedRouteLength(), 28_020);
+    assertEquals(order1.getTotalCost(), 9400);
+    assertEquals(order1.getTimeout(), 20);
+    assertEquals(order1.getEtaToStartPoint(), 800);
+    assertEquals(order1.getConfirmationTime(), 1234567890);
+    assertEquals(order1.getStartTime(), 9876543210L);
+    assertEquals(order1.getScheduledStartTime(), 123812983712L);
+    assertEquals(order1.getRoutePath(), new ArrayList<>(
+        Arrays.asList(routePoint1, routePoint2, routePoint3)
+    ));
+    assertEquals(order1.getOptions(), new ArrayList<>(
+        Arrays.asList(option1, option2, option3)
+    ));
+  }
+
+  @Test
   public void testEquals() {
     Order order1 = new Order(7, "com", "service", 1200239, "7000", 7000, 7728_192_819L, 28_020,
         9400, 20, 600, 1234567890, 9876543210L, 123812983712L);
@@ -107,14 +139,14 @@ public class OrderTest {
     order1 = new Order(7, "", "", 0, "", 0, 0, 0, 0, 0, 0, 0, 0, 0);
     assertEquals(order, order1);
     order1 = new Order(7, "", "", 0, "", 0, 0, 0, 0, 0, 0, 0, 0, 0);
-    order1.setOptions(option0, option1, option2, option3);
+    order1.setOptions(option1, option2, option3);
     assertEquals(order, order1);
     order1 = new Order(7, "", "", 0, "", 0, 0, 0, 0, 0, 0, 0, 0, 0);
     order1.setRoutePoints(routePoint1, routePoint2, routePoint3);
     assertEquals(order, order1);
     order1.addRoutePoints(routePoint1, routePoint2, routePoint3);
     assertEquals(order, order1);
-    order1.setOptions(option0, option1, option2, option3);
+    order1.setOptions(option1, option2, option3);
     assertEquals(order, order1);
     order1 = new Order(6, "com", "service", 1200239, "7000", 7000, 7728_192_819L, 28_020,
         9400, 20, 600, 1234567890, 9876543210L, 123812983712L);

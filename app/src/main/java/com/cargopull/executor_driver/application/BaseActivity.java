@@ -95,7 +95,7 @@ public class BaseActivity extends AppCompatActivity implements ExecutorStateView
   }
 
   @Inject
-  public void setServerTimeViewModel(@Nullable ServerTimeViewModel serverTimeViewModel) {
+  public void setServerTimeViewModel(@NonNull ServerTimeViewModel serverTimeViewModel) {
     this.serverTimeViewModel = serverTimeViewModel;
   }
 

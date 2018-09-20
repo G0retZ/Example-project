@@ -83,6 +83,8 @@ import com.cargopull.executor_driver.presentation.smsbutton.SmsButtonViewModel;
 import com.cargopull.executor_driver.presentation.smsbutton.SmsButtonViewModelImpl;
 import com.cargopull.executor_driver.presentation.upcomingpreorder.UpcomingPreOrderViewModel;
 import com.cargopull.executor_driver.presentation.upcomingpreorder.UpcomingPreOrderViewModelImpl;
+import com.cargopull.executor_driver.presentation.upcomingpreordermessage.UpcomingPreOrderMessageViewModel;
+import com.cargopull.executor_driver.presentation.upcomingpreordermessage.UpcomingPreOrderMessageViewModelImpl;
 import com.cargopull.executor_driver.presentation.updatemessage.UpdateMessageViewModel;
 import com.cargopull.executor_driver.presentation.updatemessage.UpdateMessageViewModelImpl;
 import com.cargopull.executor_driver.presentation.vehicleoptions.VehicleOptionsViewModel;
@@ -132,9 +134,11 @@ class PresentationComponentImpl implements PresentationComponent {
   @Nullable
   private ServicesSliderViewModel servicesSliderViewModel;
   @Nullable
-  private UpcomingPreOrderViewModel upcomingPreOrderViewModel;
+  private UpcomingPreOrderMessageViewModel upcomingPreOrderMessagesViewModel;
   @Nullable
   private UpdateMessageViewModel updateMessageViewModel;
+  @Nullable
+  private UpcomingPreOrderViewModel upcomingPreOrderAvailabilityViewModel;
 
   PresentationComponentImpl(@NonNull MemoryDataSharer<String> loginSharer,
       @NonNull InteractorComponent interactorComponent,
@@ -660,13 +664,13 @@ class PresentationComponentImpl implements PresentationComponent {
 
   @NonNull
   @Override
-  public UpcomingPreOrderViewModel getUpcomingPreOrderViewModel() {
-    if (upcomingPreOrderViewModel == null) {
-      upcomingPreOrderViewModel = new UpcomingPreOrderViewModelImpl(
+  public UpcomingPreOrderMessageViewModel getUpcomingPreOrderMessagesViewModel() {
+    if (upcomingPreOrderMessagesViewModel == null) {
+      upcomingPreOrderMessagesViewModel = new UpcomingPreOrderMessageViewModelImpl(
           interactorComponent.getUpcomingPreOrderMessagesUseCase()
       );
     }
-    return upcomingPreOrderViewModel;
+    return upcomingPreOrderMessagesViewModel;
   }
 
   @NonNull
@@ -747,6 +751,46 @@ class PresentationComponentImpl implements PresentationComponent {
             timeUtils
         )
     );
+  }
+
+  @NonNull
+  @Override
+  public OrderViewModel getUpcomingPreOrderViewModel(@Nullable Fragment fragment) {
+    if (fragment == null) {
+      throw new NullPointerException("Фрагмент не должен быть null");
+    }
+    return getViewModelInstance(
+        fragment,
+        OrderViewModelImpl.class,
+        new OrderViewModelImpl(interactorComponent.getUpcomingPreOrderUseCase(), timeUtils)
+    );
+  }
+
+  @NonNull
+  @Override
+  public OrderConfirmationViewModel getUpcomingPreOrderConfirmationViewModel(
+      @Nullable Fragment fragment) {
+    if (fragment == null) {
+      throw new NullPointerException("Фрагмент не должен быть null");
+    }
+    return getViewModelInstance(
+        fragment,
+        OrderConfirmationViewModelImpl.class,
+        new OrderConfirmationViewModelImpl(
+            interactorComponent.getUpcomingPreOrderConfirmationUseCase(),
+            timeUtils
+        )
+    );
+  }
+
+  @Override
+  public UpcomingPreOrderViewModel getUpcomingPreOrderAvailabilityViewModel() {
+    if (upcomingPreOrderAvailabilityViewModel == null) {
+      upcomingPreOrderAvailabilityViewModel = new UpcomingPreOrderViewModelImpl(
+          interactorComponent.getUpcomingPreOrderUseCase()
+      );
+    }
+    return upcomingPreOrderAvailabilityViewModel;
   }
 
   private <V extends ViewModel> V getViewModelInstance(

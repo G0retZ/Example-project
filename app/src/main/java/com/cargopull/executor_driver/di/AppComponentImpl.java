@@ -63,6 +63,8 @@ import com.cargopull.executor_driver.view.SelectedVehicleFragment;
 import com.cargopull.executor_driver.view.SelectedVehicleOptionsFragment;
 import com.cargopull.executor_driver.view.ServerConnectionFragment;
 import com.cargopull.executor_driver.view.ServicesFragment;
+import com.cargopull.executor_driver.view.UpcomingPreOrderConfirmationFragment;
+import com.cargopull.executor_driver.view.UpcomingPreOrderFragment;
 import com.cargopull.executor_driver.view.VehicleOptionsFragment;
 import com.cargopull.executor_driver.view.WaitingForClientFragment;
 import com.cargopull.executor_driver.view.WaitingForClientRouteFragment;
@@ -144,6 +146,9 @@ public class AppComponentImpl implements AppComponent {
     mainApplication.setPreOrderViewModel(
         presentationComponent.getPreOrderViewModel()
     );
+    mainApplication.setUpcomingPreOrderViewModel(
+        presentationComponent.getUpcomingPreOrderAvailabilityViewModel()
+    );
     mainApplication.setPreOrdersListViewModel(
         presentationComponent.getPreOrdersListViewModel()
     );
@@ -156,8 +161,8 @@ public class AppComponentImpl implements AppComponent {
     mainApplication.setMissedOrderViewModel(
         presentationComponent.getMissedOrderViewModel()
     );
-    mainApplication.setUpcomingPreOrderViewModel(
-        presentationComponent.getUpcomingPreOrderViewModel()
+    mainApplication.setUpcomingPreOrderMessageViewModel(
+        presentationComponent.getUpcomingPreOrderMessagesViewModel()
     );
     mainApplication.setCancelledOrderViewModel(
         presentationComponent.getCancelledOrderViewModel()
@@ -526,5 +531,22 @@ public class AppComponentImpl implements AppComponent {
   @Override
   public void inject(PreOrderConfirmationFragment preOrderConfirmationFragment) {
     preOrderConfirmationFragment.setOrderViewModel(presentationComponent.getOrderViewModel());
+  }
+
+  @Override
+  public void inject(UpcomingPreOrderFragment upcomingPreOrderFragment) {
+    upcomingPreOrderFragment.setOrderViewModel(
+        presentationComponent.getUpcomingPreOrderViewModel(upcomingPreOrderFragment)
+    );
+  }
+
+  @Override
+  public void inject(UpcomingPreOrderConfirmationFragment upcomingPreOrderConfirmationFragment) {
+    upcomingPreOrderConfirmationFragment.setShakeItPlayer(singleShakePlayer);
+    upcomingPreOrderConfirmationFragment.setRingTonePlayer(singleRingTonePlayer);
+    upcomingPreOrderConfirmationFragment.setOrderConfirmationViewModel(
+        presentationComponent
+            .getUpcomingPreOrderConfirmationViewModel(upcomingPreOrderConfirmationFragment)
+    );
   }
 }

@@ -1,26 +1,35 @@
 package com.cargopull.executor_driver.presentation.upcomingpreorder;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.only;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import android.arch.core.executor.testing.InstantTaskExecutorRule;
 import android.arch.lifecycle.Observer;
 import com.cargopull.executor_driver.ViewModelThreadTestRule;
-import com.cargopull.executor_driver.interactor.NotificationMessageUseCase;
+import com.cargopull.executor_driver.entity.Order;
+import com.cargopull.executor_driver.entity.OrderCancelledException;
+import com.cargopull.executor_driver.entity.OrderOfferDecisionException;
+import com.cargopull.executor_driver.entity.OrderOfferExpiredException;
+import com.cargopull.executor_driver.gateway.DataMappingException;
+import com.cargopull.executor_driver.interactor.OrderUseCase;
+import com.cargopull.executor_driver.presentation.CommonNavigate;
 import com.cargopull.executor_driver.presentation.ViewState;
 import io.reactivex.BackpressureStrategy;
-import io.reactivex.subjects.PublishSubject;
+import io.reactivex.Flowable;
+import io.reactivex.FlowableEmitter;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestRule;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
+import org.mockito.InOrder;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -32,40 +41,44 @@ public class UpcomingPreOrderViewModelTest {
   public TestRule rule = new InstantTaskExecutorRule();
   private UpcomingPreOrderViewModel viewModel;
   @Mock
-  private NotificationMessageUseCase useCase;
+  private OrderUseCase orderUseCase;
+  @Mock
+  private Order order;
+  @Mock
+  private Order order1;
+  @Mock
+  private Order order2;
+  private FlowableEmitter<Order> emitter;
+
   @Mock
   private Observer<ViewState<UpcomingPreOrderViewActions>> viewStateObserver;
-  @Captor
-  private ArgumentCaptor<ViewState<UpcomingPreOrderViewActions>> viewStateCaptor;
   @Mock
-  private UpcomingPreOrderViewActions viewActions;
-
-  private PublishSubject<String> publishSubject;
+  private Observer<String> navigateObserver;
 
   @Before
   public void setUp() {
-    publishSubject = PublishSubject.create();
-    when(useCase.getNotificationMessages())
-        .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
-    viewModel = new UpcomingPreOrderViewModelImpl(useCase);
+    when(orderUseCase.getOrders()).thenReturn(
+        Flowable.create(e -> emitter = e, BackpressureStrategy.BUFFER)
+    );
+    viewModel = new UpcomingPreOrderViewModelImpl(orderUseCase);
   }
 
-  /* Тетсируем работу с юзкейсом. */
+  /* Тетсируем работу с юзкейсом заказа. */
 
   /**
-   * Должен попросить у юзкейса загрузить сообщения о предстоящих предзаказах только при создании.
+   * Должен просить юзкейс получать заказы при создании.
    */
   @Test
-  public void askDataReceiverToSubscribeToUpcomingPreOrdersMessages() {
+  public void askUseCaseForOrdersInitially() {
     // Результат:
-    verify(useCase, only()).getNotificationMessages();
+    verify(orderUseCase, only()).getOrders();
   }
 
   /**
-   * Не должен трогать юзкейс на подписках.
+   * Не должен просить юзкейс получать заказы на подписках.
    */
   @Test
-  public void askDataReceiverToSubscribeToUpcomingPreOrdersMessagesIfAlreadyAsked() {
+  public void doNotAskUseCaseForOrdersOnSubscriptions() {
     // Действие:
     viewModel.getViewStateLiveData();
     viewModel.getNavigationLiveData();
@@ -73,55 +86,166 @@ public class UpcomingPreOrderViewModelTest {
     viewModel.getNavigationLiveData();
 
     // Результат:
-    verify(useCase, only()).getNotificationMessages();
+    verify(orderUseCase, only()).getOrders();
   }
 
-  /* Тетсируем сообщение. */
+  /* Тетсируем переключение состояний. */
 
   /**
-   * Должен показать сообщение о предстоящем предзаказе.
+   * Должен вернуть состояние вида недоступности изначально.
    */
   @Test
-  public void showUpcomingPreOrderMessage() {
+  public void setUnAvailableViewStateToLiveDataInitially() {
+    // Дано:
+    InOrder inOrder = Mockito.inOrder(viewStateObserver);
+
+    // Действие:
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
+
+    // Результат:
+    inOrder.verify(viewStateObserver).onChanged(any(UpcomingPreOrderViewStateUnAvailable.class));
+    verifyNoMoreInteractions(viewStateObserver);
+  }
+
+  /**
+   * Не должен давать иных состояний вида если была ошибка.
+   */
+  @Test
+  public void doNotSetAnyViewStateToLiveDataForError() {
     // Дано:
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    publishSubject.onNext("Message");
+    emitter.onError(new Exception());
 
     // Результат:
-    verify(viewStateObserver, only()).onChanged(viewStateCaptor.capture());
-    viewStateCaptor.getValue().apply(viewActions);
-    verify(viewActions, only()).showUpcomingPreOrderMessage("Message");
+    verify(viewStateObserver, only()).onChanged(any(UpcomingPreOrderViewStateUnAvailable.class));
   }
 
   /**
-   * Не должен показывать пустое сообщение.
+   * Должен вернуть состояния вида доступности полученными заказами.
    */
   @Test
-  public void doNotShowEmptyMessage() {
+  public void setIdleViewStateToLiveData() {
     // Дано:
+    InOrder inOrder = Mockito.inOrder(viewStateObserver);
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    publishSubject.onNext("");
+    emitter.onNext(order);
+    emitter.onNext(order1);
+    emitter.onNext(order2);
 
     // Результат:
-    verifyZeroInteractions(viewStateObserver);
+    inOrder.verify(viewStateObserver).onChanged(any(UpcomingPreOrderViewStateUnAvailable.class));
+    inOrder.verify(viewStateObserver, times(3))
+        .onChanged(any(UpcomingPreOrderViewStateAvailable.class));
+    verifyNoMoreInteractions(viewStateObserver);
   }
 
   /**
-   * Не должен показывать сообщение из пробелов.
+   * Должен вернуть состояния вида "заказ истек" после ошибки принятия решения по заказу.
    */
   @Test
-  public void doNotShowSpaceMessage() {
+  public void setExpiredViewStateToLiveDataForOrderOfferDecision() {
     // Дано:
+    InOrder inOrder = Mockito.inOrder(viewStateObserver);
+    viewModel = new UpcomingPreOrderViewModelImpl(orderUseCase);
+    viewModel.getNavigationLiveData().observeForever(navigateObserver);
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    publishSubject.onNext("\n");
+    emitter.onNext(order);
+    emitter.onError(new OrderOfferDecisionException());
+    emitter.onNext(order2);
 
     // Результат:
-    verifyZeroInteractions(viewStateObserver);
+    inOrder.verify(viewStateObserver).onChanged(any(UpcomingPreOrderViewStateUnAvailable.class));
+    inOrder.verify(viewStateObserver).onChanged(any(UpcomingPreOrderViewStateAvailable.class));
+    inOrder.verify(viewStateObserver).onChanged(any(UpcomingPreOrderViewStateUnAvailable.class));
+    inOrder.verify(viewStateObserver).onChanged(any(UpcomingPreOrderViewStateAvailable.class));
+    verifyNoMoreInteractions(viewStateObserver);
+  }
+
+  /**
+   * Должен вернуть состояния вида "заказ истек" после ошибки актуальности заказа.
+   */
+  @Test
+  public void setExpiredViewStateToLiveData() {
+    // Дано:
+    InOrder inOrder = Mockito.inOrder(viewStateObserver);
+    viewModel = new UpcomingPreOrderViewModelImpl(orderUseCase);
+    viewModel.getNavigationLiveData().observeForever(navigateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
+
+    // Действие:
+    emitter.onNext(order);
+    emitter.onError(new OrderOfferExpiredException(""));
+    emitter.onNext(order2);
+
+    // Результат:
+    inOrder.verify(viewStateObserver).onChanged(any(UpcomingPreOrderViewStateUnAvailable.class));
+    inOrder.verify(viewStateObserver).onChanged(any(UpcomingPreOrderViewStateAvailable.class));
+    inOrder.verify(viewStateObserver).onChanged(any(UpcomingPreOrderViewStateUnAvailable.class));
+    inOrder.verify(viewStateObserver).onChanged(any(UpcomingPreOrderViewStateAvailable.class));
+    verifyNoMoreInteractions(viewStateObserver);
+  }
+
+  /**
+   * Должен вернуть состояния вида "заказ истек" после ошибки отмены заказа.
+   */
+  @Test
+  public void setCancelledViewStateToLiveData() {
+    // Дано:
+    InOrder inOrder = Mockito.inOrder(viewStateObserver);
+    viewModel = new UpcomingPreOrderViewModelImpl(orderUseCase);
+    viewModel.getNavigationLiveData().observeForever(navigateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
+
+    // Действие:
+    emitter.onNext(order);
+    emitter.onError(new OrderCancelledException(""));
+    emitter.onNext(order2);
+
+    // Результат:
+    inOrder.verify(viewStateObserver).onChanged(any(UpcomingPreOrderViewStateUnAvailable.class));
+    inOrder.verify(viewStateObserver).onChanged(any(UpcomingPreOrderViewStateAvailable.class));
+    inOrder.verify(viewStateObserver).onChanged(any(UpcomingPreOrderViewStateUnAvailable.class));
+    inOrder.verify(viewStateObserver).onChanged(any(UpcomingPreOrderViewStateAvailable.class));
+    verifyNoMoreInteractions(viewStateObserver);
+  }
+
+  /* Тестируем навигацию. */
+
+  /**
+   * Должен вернуть "перейти к ошибке данных сервера".
+   */
+  @Test
+  public void setNavigateToServerDataError() {
+    // Дано:
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getNavigationLiveData().observeForever(navigateObserver);
+
+    // Действие:
+    emitter.onError(new DataMappingException());
+
+    // Результат:
+    verify(navigateObserver, only()).onChanged(CommonNavigate.SERVER_DATA_ERROR);
+  }
+
+  /**
+   * Должен перейти к подтверждению заказа.
+   */
+  @Test
+  public void setNavigateToCloseForMessageConsumed() {
+    // Дано:
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getNavigationLiveData().observeForever(navigateObserver);
+
+    // Действие:
+    viewModel.upcomingPreOrderConsumed();
+
+    // Результат:
+    verify(navigateObserver, only()).onChanged(UpcomingPreOrderNavigate.UPCOMING_PRE_ORDER);
   }
 }
