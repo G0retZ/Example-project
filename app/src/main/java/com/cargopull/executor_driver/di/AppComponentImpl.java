@@ -194,6 +194,9 @@ public class AppComponentImpl implements AppComponent {
     baseActivity.setServerTimeViewModel(
         presentationComponent.getServerTimeViewModel()
     );
+    baseActivity.setUpcomingPreOrderViewModel(
+        presentationComponent.getUpcomingPreOrderViewModel()
+    );
   }
 
   @Override

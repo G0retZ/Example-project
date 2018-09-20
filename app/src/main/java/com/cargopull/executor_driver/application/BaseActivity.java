@@ -20,6 +20,7 @@ import com.cargopull.executor_driver.presentation.announcement.AnnouncementState
 import com.cargopull.executor_driver.presentation.announcement.AnnouncementViewModel;
 import com.cargopull.executor_driver.presentation.executorstate.ExecutorStateViewActions;
 import com.cargopull.executor_driver.presentation.executorstate.ExecutorStateViewModel;
+import com.cargopull.executor_driver.presentation.order.OrderViewModel;
 import com.cargopull.executor_driver.presentation.serverconnection.ServerConnectionNavigate;
 import com.cargopull.executor_driver.presentation.serverconnection.ServerConnectionViewModel;
 import com.cargopull.executor_driver.presentation.servertime.ServerTimeViewModel;
@@ -64,6 +65,8 @@ public class BaseActivity extends AppCompatActivity implements ExecutorStateView
   @Nullable
   private ServerTimeViewModel serverTimeViewModel;
   @Nullable
+  private OrderViewModel upcomingPreOrderViewModel;
+  @Nullable
   private Dialog onlineDialog;
   @Nullable
   private Dialog announcementDialog;
@@ -95,8 +98,13 @@ public class BaseActivity extends AppCompatActivity implements ExecutorStateView
   }
 
   @Inject
-  public void setServerTimeViewModel(@Nullable ServerTimeViewModel serverTimeViewModel) {
+  public void setServerTimeViewModel(@NonNull ServerTimeViewModel serverTimeViewModel) {
     this.serverTimeViewModel = serverTimeViewModel;
+  }
+
+  @Inject
+  public void setUpcomingPreOrderViewModel(@NonNull OrderViewModel upcomingPreOrderViewModel) {
+    this.upcomingPreOrderViewModel = upcomingPreOrderViewModel;
   }
 
   @Override
@@ -117,6 +125,9 @@ public class BaseActivity extends AppCompatActivity implements ExecutorStateView
       throw new IllegalStateException("Граф зависимостей поломан!");
     }
     if (serverTimeViewModel == null) {
+      throw new IllegalStateException("Граф зависимостей поломан!");
+    }
+    if (upcomingPreOrderViewModel == null) {
       throw new IllegalStateException("Граф зависимостей поломан!");
     }
     executorStateViewModel.getViewStateLiveData().observe(this, viewState -> {
@@ -140,6 +151,11 @@ public class BaseActivity extends AppCompatActivity implements ExecutorStateView
       }
     });
     serverTimeViewModel.getNavigationLiveData().observe(this, destination -> {
+      if (destination != null) {
+        navigate(destination);
+      }
+    });
+    upcomingPreOrderViewModel.getNavigationLiveData().observe(this, destination -> {
       if (destination != null) {
         navigate(destination);
       }
