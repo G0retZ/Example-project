@@ -171,7 +171,7 @@ interface PresentationComponent {
   SmsButtonViewModel getSmsButtonViewModel(@Nullable Fragment fragment);
 
   @NonNull
-  UpcomingPreOrderViewModel getUpcomingPreOrderViewModel();
+  UpcomingPreOrderViewModel getUpcomingPreOrderMessagesViewModel();
 
   @NonNull
   UpdateMessageViewModel getUpdateMessageViewModel();
@@ -190,4 +190,10 @@ interface PresentationComponent {
 
   @NonNull
   OrderConfirmationViewModel getSelectedPreOrderConfirmationViewModel(@Nullable Fragment fragment);
+
+  @NonNull
+  OrderViewModel getUpcomingPreOrderViewModel();
+
+  @NonNull
+  OrderConfirmationViewModel getUpcomingPreOrderConfirmationViewModel(@Nullable Fragment fragment);
 }

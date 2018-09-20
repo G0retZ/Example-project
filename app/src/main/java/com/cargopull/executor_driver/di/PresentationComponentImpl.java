@@ -132,9 +132,11 @@ class PresentationComponentImpl implements PresentationComponent {
   @Nullable
   private ServicesSliderViewModel servicesSliderViewModel;
   @Nullable
-  private UpcomingPreOrderViewModel upcomingPreOrderViewModel;
+  private UpcomingPreOrderViewModel upcomingPreOrderMessagesViewModel;
   @Nullable
   private UpdateMessageViewModel updateMessageViewModel;
+  @Nullable
+  private OrderViewModel upcomingPreOrderViewModel;
 
   PresentationComponentImpl(@NonNull MemoryDataSharer<String> loginSharer,
       @NonNull InteractorComponent interactorComponent,
@@ -660,13 +662,13 @@ class PresentationComponentImpl implements PresentationComponent {
 
   @NonNull
   @Override
-  public UpcomingPreOrderViewModel getUpcomingPreOrderViewModel() {
-    if (upcomingPreOrderViewModel == null) {
-      upcomingPreOrderViewModel = new UpcomingPreOrderViewModelImpl(
+  public UpcomingPreOrderViewModel getUpcomingPreOrderMessagesViewModel() {
+    if (upcomingPreOrderMessagesViewModel == null) {
+      upcomingPreOrderMessagesViewModel = new UpcomingPreOrderViewModelImpl(
           interactorComponent.getUpcomingPreOrderMessagesUseCase()
       );
     }
-    return upcomingPreOrderViewModel;
+    return upcomingPreOrderMessagesViewModel;
   }
 
   @NonNull
@@ -744,6 +746,35 @@ class PresentationComponentImpl implements PresentationComponent {
         OrderConfirmationViewModelImpl.class,
         new OrderConfirmationViewModelImpl(
             interactorComponent.getSelectedPreOrderConfirmationUseCase(),
+            timeUtils
+        )
+    );
+  }
+
+  @NonNull
+  @Override
+  public OrderViewModel getUpcomingPreOrderViewModel() {
+    if (upcomingPreOrderViewModel == null) {
+      upcomingPreOrderViewModel = new OrderViewModelImpl(
+          interactorComponent.getUpcomingPreOrderUseCase(),
+          timeUtils
+      );
+    }
+    return upcomingPreOrderViewModel;
+  }
+
+  @NonNull
+  @Override
+  public OrderConfirmationViewModel getUpcomingPreOrderConfirmationViewModel(
+      @Nullable Fragment fragment) {
+    if (fragment == null) {
+      throw new NullPointerException("Фрагмент не должен быть null");
+    }
+    return getViewModelInstance(
+        fragment,
+        OrderConfirmationViewModelImpl.class,
+        new OrderConfirmationViewModelImpl(
+            interactorComponent.getUpcomingPreOrderConfirmationUseCase(),
             timeUtils
         )
     );

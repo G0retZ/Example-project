@@ -53,6 +53,7 @@ import com.cargopull.executor_driver.interactor.ServerConnectionUseCase;
 import com.cargopull.executor_driver.interactor.ServerConnectionUseCaseImpl;
 import com.cargopull.executor_driver.interactor.ServerTimeUseCase;
 import com.cargopull.executor_driver.interactor.ServerTimeUseCaseImpl;
+import com.cargopull.executor_driver.interactor.UpcomingPreOrderUseCaseImpl;
 import com.cargopull.executor_driver.interactor.UpdateMessageUseCase;
 import com.cargopull.executor_driver.interactor.UpdateMessageUseCaseImpl;
 import com.cargopull.executor_driver.interactor.WaitingForClientUseCase;
@@ -176,6 +177,8 @@ class InteractorComponentImpl implements InteractorComponent {
   private VehiclesAndOptionsUseCase selectedVehiclesAndOptionsUseCase;
   @Nullable
   private SelectedOrderUseCaseImpl selectedOrderUseCaseImpl;
+  @Nullable
+  private UpcomingPreOrderUseCaseImpl upcomingPreOrderUseCase;
 
   InteractorComponentImpl(@NonNull MemoryDataSharer<String> loginSharer,
       @NonNull TimeUtils timeUtils,
@@ -704,6 +707,25 @@ class InteractorComponentImpl implements InteractorComponent {
   }
 
   @NonNull
+  @Override
+  public OrderUseCase getUpcomingPreOrderUseCase() {
+    return getUpcomingPreOrderUseCaseImpl();
+  }
+
+  @NonNull
+  @Override
+  public OrderConfirmationUseCase getUpcomingPreOrderConfirmationUseCase() {
+    if (selectedPreOrderConfirmationUseCase == null) {
+      selectedPreOrderConfirmationUseCase = new OrderConfirmationUseCaseImpl(
+          getUpcomingPreOrderUseCase(),
+          repositoryComponent.getPreOrderConfirmationGateway(),
+          null,
+          null);
+    }
+    return selectedPreOrderConfirmationUseCase;
+  }
+
+  @NonNull
   private OrderUseCase getCancelledOrderUseCase() {
     if (cancelledOrderUseCase == null) {
       cancelledOrderUseCase = new CancelledOrderUseCaseImpl(
@@ -739,5 +761,17 @@ class InteractorComponentImpl implements InteractorComponent {
       );
     }
     return selectedOrderUseCaseImpl;
+  }
+
+  @NonNull
+  private UpcomingPreOrderUseCaseImpl getUpcomingPreOrderUseCaseImpl() {
+    if (upcomingPreOrderUseCase == null) {
+      upcomingPreOrderUseCase = new UpcomingPreOrderUseCaseImpl(
+          errorReporter,
+          repositoryComponent.getUpcomingPreOrderGateway(),
+          getPreOrdersSetUseCase()
+      );
+    }
+    return upcomingPreOrderUseCase;
   }
 }

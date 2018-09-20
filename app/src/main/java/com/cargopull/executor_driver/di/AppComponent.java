@@ -40,6 +40,8 @@ import com.cargopull.executor_driver.view.SelectedVehicleFragment;
 import com.cargopull.executor_driver.view.SelectedVehicleOptionsFragment;
 import com.cargopull.executor_driver.view.ServerConnectionFragment;
 import com.cargopull.executor_driver.view.ServicesFragment;
+import com.cargopull.executor_driver.view.UpcomingPreOrderConfirmationFragment;
+import com.cargopull.executor_driver.view.UpcomingPreOrderFragment;
 import com.cargopull.executor_driver.view.VehicleOptionsFragment;
 import com.cargopull.executor_driver.view.WaitingForClientFragment;
 import com.cargopull.executor_driver.view.WaitingForClientRouteFragment;
@@ -137,4 +139,8 @@ public interface AppComponent {
   void inject(DriverPreOrderConfirmationFragment driverPreOrderConfirmationFragment);
 
   void inject(PreOrderConfirmationFragment preOrderConfirmationFragment);
+
+  void inject(UpcomingPreOrderFragment upcomingPreOrderFragment);
+
+  void inject(UpcomingPreOrderConfirmationFragment upcomingPreOrderConfirmationFragment);
 }
