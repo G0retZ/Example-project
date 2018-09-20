@@ -179,6 +179,8 @@ class InteractorComponentImpl implements InteractorComponent {
   private SelectedOrderUseCaseImpl selectedOrderUseCaseImpl;
   @Nullable
   private UpcomingPreOrderUseCaseImpl upcomingPreOrderUseCase;
+  @Nullable
+  private OrderConfirmationUseCase upcomingPreOrderConfirmationUseCase;
 
   InteractorComponentImpl(@NonNull MemoryDataSharer<String> loginSharer,
       @NonNull TimeUtils timeUtils,
@@ -715,14 +717,14 @@ class InteractorComponentImpl implements InteractorComponent {
   @NonNull
   @Override
   public OrderConfirmationUseCase getUpcomingPreOrderConfirmationUseCase() {
-    if (selectedPreOrderConfirmationUseCase == null) {
-      selectedPreOrderConfirmationUseCase = new OrderConfirmationUseCaseImpl(
+    if (upcomingPreOrderConfirmationUseCase == null) {
+      upcomingPreOrderConfirmationUseCase = new OrderConfirmationUseCaseImpl(
           getUpcomingPreOrderUseCase(),
           repositoryComponent.getPreOrderConfirmationGateway(),
           null,
-          null);
+          getPreOrdersSetUseCase());
     }
-    return selectedPreOrderConfirmationUseCase;
+    return upcomingPreOrderConfirmationUseCase;
   }
 
   @NonNull
