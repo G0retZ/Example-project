@@ -11,7 +11,7 @@ import static org.mockito.Mockito.when;
 
 import com.cargopull.executor_driver.UseCaseThreadTestRule;
 import com.cargopull.executor_driver.entity.Order;
-import com.cargopull.executor_driver.entity.OrderOfferDecisionException;
+import com.cargopull.executor_driver.entity.OrderCancelledException;
 import com.cargopull.executor_driver.gateway.DataMappingException;
 import com.cargopull.executor_driver.utils.ErrorReporter;
 import io.reactivex.BackpressureStrategy;
@@ -288,7 +288,7 @@ public class UpcomingPreOrderUseCaseImplTest {
    * Должен вернуть ошибку, если пришедшего предзаказа больше нет в списке.
    */
   @Test
-  public void answerOrderOfferDecisionError() {
+  public void answerOrderCancelledError() {
     // Дано:
     when(order2.withEtaToStartPoint(anyLong()))
         .thenReturn(order, order1, order, order3, order2, order);
@@ -304,7 +304,7 @@ public class UpcomingPreOrderUseCaseImplTest {
     ordersEmitter.onNext(new HashSet<>(Arrays.asList(order2, order)));
 
     // Результат:
-    testSubscriber.assertError(OrderOfferDecisionException.class);
+    testSubscriber.assertError(OrderCancelledException.class);
     testSubscriber.assertNotComplete();
     testSubscriber.assertValues(order, order1);
   }

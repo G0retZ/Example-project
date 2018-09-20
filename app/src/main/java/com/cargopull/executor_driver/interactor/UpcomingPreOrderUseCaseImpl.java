@@ -3,7 +3,7 @@ package com.cargopull.executor_driver.interactor;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.cargopull.executor_driver.entity.Order;
-import com.cargopull.executor_driver.entity.OrderOfferDecisionException;
+import com.cargopull.executor_driver.entity.OrderCancelledException;
 import com.cargopull.executor_driver.utils.ErrorReporter;
 import io.reactivex.Flowable;
 import io.reactivex.schedulers.Schedulers;
@@ -47,7 +47,7 @@ public class UpcomingPreOrderUseCaseImpl implements OrderUseCase {
                         return preOrder.withEtaToStartPoint(order.getEtaToStartPoint());
                       }
                     }
-                    throw new OrderOfferDecisionException();
+                    throw new OrderCancelledException();
                   }))
           .onErrorResumeNext(throwable -> {
             if (throwable instanceof InterruptedException) {
