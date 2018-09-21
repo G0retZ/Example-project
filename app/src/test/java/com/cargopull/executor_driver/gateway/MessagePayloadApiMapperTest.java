@@ -18,6 +18,76 @@ public class MessagePayloadApiMapperTest {
   }
 
   /**
+   * Должен успешно извлечь пустую строку из сообщения.
+   *
+   * @throws Exception ошибка
+   */
+  @Test
+  public void extractEmptyStringSuccess() throws Exception {
+    // Действие:
+    String message = mapper.map(new StompMessage("", new ArrayList<>(), ""));
+
+    // Результат:
+    assertEquals("", message);
+  }
+
+  /**
+   * Должен успешно извлечь строку в 1 символ из сообщения.
+   *
+   * @throws Exception ошибка
+   */
+  @Test
+  public void extractOneCharStringSuccess() throws Exception {
+    // Действие:
+    String message = mapper.map(new StompMessage("", new ArrayList<>(), "\""));
+
+    // Результат:
+    assertEquals("\"", message);
+  }
+
+  /**
+   * Должен успешно извлечь пустую строку из сообщения из двух кавычек.
+   *
+   * @throws Exception ошибка
+   */
+  @Test
+  public void extractEmptyStringWithouQuotesSuccess() throws Exception {
+    // Действие:
+    String message = mapper.map(new StompMessage("", new ArrayList<>(), "\"\""));
+
+    // Результат:
+    assertEquals("", message);
+  }
+
+  /**
+   * Должен успешно извлечь пустую строку из сообщения из 1 пробела.
+   *
+   * @throws Exception ошибка
+   */
+  @Test
+  public void extractEmptyStringWithouSpaceSuccess() throws Exception {
+    // Действие:
+    String message = mapper.map(new StompMessage("", new ArrayList<>(), " "));
+
+    // Результат:
+    assertEquals("", message);
+  }
+
+  /**
+   * Должен успешно извлечь пустую строку из сообщения из 1 переноса строки.
+   *
+   * @throws Exception ошибка
+   */
+  @Test
+  public void extractEmptyStringWithouNewLineSuccess() throws Exception {
+    // Действие:
+    String message = mapper.map(new StompMessage("", new ArrayList<>(), "\n"));
+
+    // Результат:
+    assertEquals("", message);
+  }
+
+  /**
    * Должен успешно извлечь строку из сообщения.
    *
    * @throws Exception ошибка

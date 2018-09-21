@@ -65,6 +65,7 @@ import com.cargopull.executor_driver.view.ServerConnectionFragment;
 import com.cargopull.executor_driver.view.ServicesFragment;
 import com.cargopull.executor_driver.view.UpcomingPreOrderConfirmationFragment;
 import com.cargopull.executor_driver.view.UpcomingPreOrderFragment;
+import com.cargopull.executor_driver.view.UpcomingPreOrderNotificationFragment;
 import com.cargopull.executor_driver.view.VehicleOptionsFragment;
 import com.cargopull.executor_driver.view.WaitingForClientFragment;
 import com.cargopull.executor_driver.view.WaitingForClientRouteFragment;
@@ -547,6 +548,16 @@ public class AppComponentImpl implements AppComponent {
     upcomingPreOrderConfirmationFragment.setOrderConfirmationViewModel(
         presentationComponent
             .getUpcomingPreOrderConfirmationViewModel(upcomingPreOrderConfirmationFragment)
+    );
+  }
+
+  @Override
+  public void inject(UpcomingPreOrderNotificationFragment upcomingPreOrderNotificationFragment) {
+    upcomingPreOrderNotificationFragment.setUpcomingPreOrderViewModel(
+        presentationComponent.getUpcomingPreOrderViewModel(upcomingPreOrderNotificationFragment)
+    );
+    upcomingPreOrderNotificationFragment.setUpcomingPreOrderNotificationViewModel(
+        presentationComponent.getUpcomingPreOrderAvailabilityViewModel()
     );
   }
 }
