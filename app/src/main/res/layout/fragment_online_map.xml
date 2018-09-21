@@ -34,7 +34,7 @@
   <Button
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/resumeWork"
-    style="@style/AppTheme.Button.Colored"
+    style="@style/AppTheme.Button.Colored.Compact"
     android:layout_width="240dp"
     android:layout_height="68dp"
     android:text="@string/resume_work"
