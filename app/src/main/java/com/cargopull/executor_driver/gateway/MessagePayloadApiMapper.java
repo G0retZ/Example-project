@@ -13,7 +13,7 @@ public class MessagePayloadApiMapper implements Mapper<StompMessage, String> {
   public String map(@NonNull StompMessage from) {
     String payload = from.getPayload();
     int stringLength = payload.length();
-    if (payload.charAt(0) == '"' && payload.charAt(stringLength - 1) == '"') {
+    if (stringLength > 1 && payload.charAt(0) == '"' && payload.charAt(stringLength - 1) == '"') {
       payload = payload.substring(1, stringLength - 1);
     }
     return payload.trim();
