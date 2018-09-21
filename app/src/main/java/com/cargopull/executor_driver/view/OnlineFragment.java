@@ -57,9 +57,9 @@ public abstract class OnlineFragment extends BaseFragment implements OnlineSwitc
         viewState.apply(this);
       }
     });
-    View breakText = getBreakText();
-    if (breakText != null) {
-      breakText.setOnClickListener(v -> onlineSwitchViewModel.setNewState(false));
+    View takeBreakAction = getTakeBreakAction();
+    if (takeBreakAction != null) {
+      takeBreakAction.setOnClickListener(v -> onlineSwitchViewModel.setNewState(false));
     }
     View resumeWorkAction = getResumeWorkAction();
     if (resumeWorkAction != null) {
