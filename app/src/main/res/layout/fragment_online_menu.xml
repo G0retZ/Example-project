@@ -9,7 +9,7 @@
     style="@style/AppTheme.Button.Borderless.Filled.Yellow"
     android:layout_width="match_parent"
     android:layout_height="64dp"
-    android:text="@string/take_break"/>
+    android:text="@string/stop_work"/>
   <Button
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/resumeWork"
