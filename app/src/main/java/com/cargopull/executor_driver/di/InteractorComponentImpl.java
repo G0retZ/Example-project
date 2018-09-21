@@ -301,6 +301,7 @@ class InteractorComponentImpl implements InteractorComponent {
           ExecutorState.SHIFT_OPENED,
           ExecutorState.ONLINE,
           ExecutorState.DRIVER_ORDER_CONFIRMATION,
+          ExecutorState.DRIVER_PRELIMINARY_ORDER_CONFIRMATION,
           ExecutorState.CLIENT_ORDER_CONFIRMATION,
           ExecutorState.MOVING_TO_CLIENT,
           ExecutorState.WAITING_FOR_CLIENT,

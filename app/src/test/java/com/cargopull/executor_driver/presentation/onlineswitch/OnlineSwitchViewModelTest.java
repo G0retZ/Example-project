@@ -181,6 +181,25 @@ public class OnlineSwitchViewModelTest {
   }
 
   /**
+   * Должен вернуть состояние ожидания с активным переключателем для "принятие заказа".
+   */
+  @Test
+  public void setCheckedPendingViewStateForPreOrderConfirmation() {
+    // Дано:
+    InOrder inOrder = Mockito.inOrder(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
+
+    // Действие:
+    publishSubject.onNext(ExecutorState.DRIVER_PRELIMINARY_ORDER_CONFIRMATION);
+
+    // Результат:
+    inOrder.verify(viewStateObserver).onChanged(new OnlineSwitchViewStatePending(null));
+    inOrder.verify(viewStateObserver)
+        .onChanged(new OnlineSwitchViewStatePending(new OnlineSwitchViewState(true)));
+    verifyNoMoreInteractions(viewStateObserver);
+  }
+
+  /**
    * Должен вернуть состояние ожидания с активным переключателем для "ожидание подтверждения клиента".
    */
   @Test
