@@ -13,13 +13,13 @@ import org.junit.Test;
 import retrofit2.HttpException;
 import retrofit2.Response;
 
-public class ErrorMapperTest {
+public class VehiclesAndOptionsErrorMapperTest {
 
   private Mapper<Throwable, Throwable> mapper;
 
   @Before
   public void setUp() {
-    mapper = new ErrorMapper();
+    mapper = new VehiclesAndOptionsErrorMapper();
   }
 
   /**

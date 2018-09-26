@@ -18,7 +18,6 @@ import com.cargopull.executor_driver.gateway.ConfirmOrderPaymentGatewayImpl;
 import com.cargopull.executor_driver.gateway.CurrentCostPollingGatewayImpl;
 import com.cargopull.executor_driver.gateway.CurrentCostPollingTimersApiMapper;
 import com.cargopull.executor_driver.gateway.CurrentVehicleOptionsGatewayImpl;
-import com.cargopull.executor_driver.gateway.ErrorMapper;
 import com.cargopull.executor_driver.gateway.ExecutorBalanceApiMapper;
 import com.cargopull.executor_driver.gateway.ExecutorBalanceFilter;
 import com.cargopull.executor_driver.gateway.ExecutorStateApiMapper;
@@ -60,6 +59,7 @@ import com.cargopull.executor_driver.gateway.UpdateMessageFilter;
 import com.cargopull.executor_driver.gateway.VehicleApiMapper;
 import com.cargopull.executor_driver.gateway.VehicleOptionApiMapper;
 import com.cargopull.executor_driver.gateway.VehicleOptionsGatewayImpl;
+import com.cargopull.executor_driver.gateway.VehiclesAndOptionsErrorMapper;
 import com.cargopull.executor_driver.gateway.VehiclesAndOptionsGatewayImpl;
 import com.cargopull.executor_driver.gateway.WaitingForClientGatewayImpl;
 import com.cargopull.executor_driver.interactor.CallToClientGateway;
@@ -581,7 +581,7 @@ class RepositoryComponentImpl implements RepositoryComponent {
           new VehicleApiMapper(
               new VehicleOptionApiMapper()
           ),
-          new ErrorMapper()
+          new VehiclesAndOptionsErrorMapper()
       );
     }
     return vehiclesAndOptionsGateway;
@@ -597,7 +597,7 @@ class RepositoryComponentImpl implements RepositoryComponent {
           new VehicleApiMapper(
               new VehicleOptionApiMapper()
           ),
-          new ErrorMapper()
+          new VehiclesAndOptionsErrorMapper()
       );
     }
     return selectedVehiclesAndOptionsGateway;

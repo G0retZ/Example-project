@@ -8,12 +8,12 @@ import retrofit2.HttpException;
 /**
  * Преобразуем ошибку от сервера в ошибку бизнес логики.
  */
-public class ErrorMapper implements Mapper<Throwable, Throwable> {
+public class VehiclesAndOptionsErrorMapper implements Mapper<Throwable, Throwable> {
 
   private static final String ERROR_CODE_HEADER_NAME = "Code";
 
   @Inject
-  public ErrorMapper() {
+  public VehiclesAndOptionsErrorMapper() {
   }
 
   @NonNull
