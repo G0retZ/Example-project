@@ -608,11 +608,11 @@ class RepositoryComponentImpl implements RepositoryComponent {
     if (preOrdersListGateway == null) {
       preOrdersListGateway = new TopicGatewayImpl<>(
           backendComponent.getPersonalTopicListener(),
+          new PreOrdersListFilter(),
           new PreOrdersListApiMapper(
               new VehicleOptionApiMapper(),
               new RoutePointApiMapper()
           ),
-          new PreOrdersListFilter(),
           new HashSet<>()
       );
     }

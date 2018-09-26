@@ -33,8 +33,8 @@ public class TopicGatewayImpl<D> implements CommonGateway<D> {
 
   @Inject
   public TopicGatewayImpl(@NonNull TopicListener topicListener,
-      @NonNull Mapper<StompMessage, D> mapper,
       @NonNull Predicate<StompMessage> filter,
+      @NonNull Mapper<StompMessage, D> mapper,
       @NonNull D defaultValue) {
     this.topicListener = topicListener;
     this.mapper = mapper;
