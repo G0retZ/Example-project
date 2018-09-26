@@ -52,7 +52,6 @@ import com.cargopull.executor_driver.gateway.ServiceApiMapper;
 import com.cargopull.executor_driver.gateway.ServicesGatewayImpl;
 import com.cargopull.executor_driver.gateway.SmsGatewayImpl;
 import com.cargopull.executor_driver.gateway.TopicGatewayImpl;
-import com.cargopull.executor_driver.gateway.TopicGatewayWithDefaultImpl;
 import com.cargopull.executor_driver.gateway.UpcomingPreOrderApiMapper;
 import com.cargopull.executor_driver.gateway.UpcomingPreOrderFilter;
 import com.cargopull.executor_driver.gateway.UpdateMessageFilter;
@@ -607,7 +606,7 @@ class RepositoryComponentImpl implements RepositoryComponent {
   @Override
   public CommonGateway<Set<Order>> getPreOrdersSetGateway() {
     if (preOrdersListGateway == null) {
-      preOrdersListGateway = new TopicGatewayWithDefaultImpl<>(
+      preOrdersListGateway = new TopicGatewayImpl<>(
           backendComponent.getPersonalTopicListener(),
           new PreOrdersListApiMapper(
               new VehicleOptionApiMapper(),
