@@ -15,16 +15,16 @@ public class TopicGatewayImpl<D> implements CommonGateway<D> {
   @NonNull
   private final TopicListener topicListener;
   @NonNull
-  private final Mapper<StompMessage, D> mapper;
-  @NonNull
   private final Predicate<StompMessage> filter;
+  @NonNull
+  private final Mapper<StompMessage, D> mapper;
   @Nullable
   private final D defaultValue;
 
   @Inject
   public TopicGatewayImpl(@NonNull TopicListener topicListener,
-      @NonNull Mapper<StompMessage, D> mapper,
-      @NonNull Predicate<StompMessage> filter) {
+      @NonNull Predicate<StompMessage> filter,
+      @NonNull Mapper<StompMessage, D> mapper) {
     this.topicListener = topicListener;
     this.mapper = mapper;
     this.filter = filter;

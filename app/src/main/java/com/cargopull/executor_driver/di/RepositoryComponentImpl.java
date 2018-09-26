@@ -189,8 +189,8 @@ class RepositoryComponentImpl implements RepositoryComponent {
     if (cancelledOrderGateway == null) {
       cancelledOrderGateway = new TopicGatewayImpl<>(
           backendComponent.getPersonalTopicListener(),
-          new CancelledOrderApiMapper(),
-          new CancelledOrderFilter()
+          new CancelledOrderFilter(),
+          new CancelledOrderApiMapper()
       );
     }
     return cancelledOrderGateway;
@@ -202,8 +202,8 @@ class RepositoryComponentImpl implements RepositoryComponent {
     if (cancelledOrderMessageGateway == null) {
       cancelledOrderMessageGateway = new TopicGatewayImpl<>(
           backendComponent.getPersonalTopicListener(),
-          new MessagePayloadApiMapper(),
-          new CancelledOrderFilter()
+          new CancelledOrderFilter(),
+          new MessagePayloadApiMapper()
       );
     }
     return cancelledOrderMessageGateway;
@@ -226,8 +226,8 @@ class RepositoryComponentImpl implements RepositoryComponent {
     if (cancelOrderReasonsGateway == null) {
       cancelOrderReasonsGateway = new TopicGatewayImpl<>(
           backendComponent.getPersonalTopicListener(),
-          new CancelOrderReasonApiMapper(),
-          new CancelOrderReasonsFilter()
+          new CancelOrderReasonsFilter(),
+          new CancelOrderReasonApiMapper()
       );
     }
     return cancelOrderReasonsGateway;
@@ -263,8 +263,8 @@ class RepositoryComponentImpl implements RepositoryComponent {
     if (executorBalanceGateway == null) {
       executorBalanceGateway = new TopicGatewayImpl<>(
           backendComponent.getPersonalTopicListener(),
-          new ExecutorBalanceApiMapper(),
-          new ExecutorBalanceFilter()
+          new ExecutorBalanceFilter(),
+          new ExecutorBalanceApiMapper()
       );
     }
     return executorBalanceGateway;
@@ -276,8 +276,8 @@ class RepositoryComponentImpl implements RepositoryComponent {
     if (executorStateGateway == null) {
       executorStateGateway = new TopicGatewayImpl<>(
           backendComponent.getPersonalTopicListener(),
-          new ExecutorStateApiMapper(),
-          new ExecutorStateFilter()
+          new ExecutorStateFilter(),
+          new ExecutorStateApiMapper()
       );
     }
     return executorStateGateway;
@@ -322,8 +322,8 @@ class RepositoryComponentImpl implements RepositoryComponent {
     if (missedOrderGateway == null) {
       missedOrderGateway = new TopicGatewayImpl<>(
           backendComponent.getPersonalTopicListener(),
-          new MessagePayloadApiMapper(),
-          new MissedOrderFilter()
+          new MissedOrderFilter(),
+          new MessagePayloadApiMapper()
       );
     }
     return missedOrderGateway;
@@ -368,8 +368,8 @@ class RepositoryComponentImpl implements RepositoryComponent {
     if (orderCostDetailsGateway == null) {
       orderCostDetailsGateway = new TopicGatewayImpl<>(
           backendComponent.getPersonalTopicListener(),
-          new OrderCostDetailsApiMapper(),
-          new OrderCostDetailsFilter()
+          new OrderCostDetailsFilter(),
+          new OrderCostDetailsApiMapper()
       );
     }
     return orderCostDetailsGateway;
@@ -381,8 +381,8 @@ class RepositoryComponentImpl implements RepositoryComponent {
     if (orderCurrentCostGateway == null) {
       orderCurrentCostGateway = new TopicGatewayImpl<>(
           backendComponent.getPersonalTopicListener(),
-          new OrderCurrentCostApiMapper(),
-          new OrderCurrentCostFilter()
+          new OrderCurrentCostFilter(),
+          new OrderCurrentCostApiMapper()
       );
     }
     return orderCurrentCostGateway;
@@ -394,11 +394,11 @@ class RepositoryComponentImpl implements RepositoryComponent {
     if (orderGateway == null) {
       orderGateway = new TopicGatewayImpl<>(
           backendComponent.getPersonalTopicListener(),
+          new OrderFilter(),
           new OrderApiMapper(
               new VehicleOptionApiMapper(),
               new RoutePointApiMapper()
-          ),
-          new OrderFilter()
+          )
       );
     }
     return orderGateway;
@@ -410,11 +410,11 @@ class RepositoryComponentImpl implements RepositoryComponent {
     if (preOrderGateway == null) {
       preOrderGateway = new TopicGatewayImpl<>(
           backendComponent.getPersonalTopicListener(),
+          new PreOrderFilter(),
           new OrderApiMapper(
               new VehicleOptionApiMapper(),
               new RoutePointApiMapper()
-          ),
-          new PreOrderFilter()
+          )
       );
     }
     return preOrderGateway;
@@ -448,8 +448,8 @@ class RepositoryComponentImpl implements RepositoryComponent {
     if (serverTimeGateway == null) {
       serverTimeGateway = new TopicGatewayImpl<>(
           backendComponent.getPersonalTopicListener(),
-          new ServerTimeApiMapper(),
-          new ServerTimeFilter()
+          new ServerTimeFilter(),
+          new ServerTimeApiMapper()
       );
     }
     return serverTimeGateway;
@@ -461,8 +461,8 @@ class RepositoryComponentImpl implements RepositoryComponent {
     if (updateMessageGateway == null) {
       updateMessageGateway = new TopicGatewayImpl<>(
           backendComponent.getPersonalTopicListener(),
-          new MessagePayloadApiMapper(),
-          new UpdateMessageFilter()
+          new UpdateMessageFilter(),
+          new MessagePayloadApiMapper()
       );
     }
     return updateMessageGateway;
@@ -541,8 +541,8 @@ class RepositoryComponentImpl implements RepositoryComponent {
     if (upcomingPreOrderMessagesGateway == null) {
       upcomingPreOrderMessagesGateway = new TopicGatewayImpl<>(
           backendComponent.getPersonalTopicListener(),
-          new MessagePayloadApiMapper(),
-          new UpcomingPreOrderFilter()
+          new UpcomingPreOrderFilter(),
+          new MessagePayloadApiMapper()
       );
     }
     return upcomingPreOrderMessagesGateway;
@@ -624,8 +624,8 @@ class RepositoryComponentImpl implements RepositoryComponent {
     if (upcomingPreOrderGateway == null) {
       upcomingPreOrderGateway = new TopicGatewayImpl<>(
           backendComponent.getPersonalTopicListener(),
-          new UpcomingPreOrderApiMapper(),
-          new UpcomingPreOrderFilter()
+          new UpcomingPreOrderFilter(),
+          new UpcomingPreOrderApiMapper()
       );
     }
     return upcomingPreOrderGateway;
