@@ -60,7 +60,7 @@ public class TopicGatewayImplTest {
   @Before
   public void setUp() {
     if (withDefault) {
-      gateway = new TopicGatewayWithDefaultImpl<>(topicListener, mapper, filter, "defaultValue");
+      gateway = new TopicGatewayImpl<>(topicListener, mapper, filter, "defaultValue");
     } else {
       gateway = new TopicGatewayImpl<>(topicListener, mapper, filter);
     }
