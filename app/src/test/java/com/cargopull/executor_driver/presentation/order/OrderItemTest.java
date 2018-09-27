@@ -277,6 +277,24 @@ public class OrderItemTest {
   }
 
   @Test
+  public void testGetOccupationTime0() {
+    // Дано:
+    when(timeUtils.currentTimeMillis()).thenReturn(12390182L);
+    when(order.getScheduledStartTime()).thenReturn(0L);
+    when(order.getEtaToStartPoint()).thenReturn(358000L);
+    when(order.getEstimatedTime()).thenReturn(3324339L);
+
+    // Результат:
+    System.out.println(DateTimeFormat.forPattern("HH:mm").print(12748182L)
+        + "–"
+        + DateTimeFormat.forPattern("HH:mm").print(16072521L));
+    assertEquals(orderItem.getOccupationTime(),
+        DateTimeFormat.forPattern("HH:mm").print(12748182L)
+            + "–"
+            + DateTimeFormat.forPattern("HH:mm").print(16072521L));
+  }
+
+  @Test
   public void testGetOccupationTimeInPast() {
     // Дано:
     when(timeUtils.currentTimeMillis()).thenReturn(12390182L);
@@ -289,9 +307,9 @@ public class OrderItemTest {
         + "–"
         + DateTimeFormat.forPattern("HH:mm").print(16072521L));
     assertEquals(orderItem.getOccupationTime(),
-        DateTimeFormat.forPattern("HH:mm").print(12748182L)
+        DateTimeFormat.forPattern("HH:mm").print(11792192L)
             + "–"
-            + DateTimeFormat.forPattern("HH:mm").print(16072521L));
+            + DateTimeFormat.forPattern("HH:mm").print(15116531L));
   }
 
   @Test
@@ -307,9 +325,9 @@ public class OrderItemTest {
         + "–"
         + DateTimeFormat.forPattern("HH:mm").print(16072521L));
     assertEquals(orderItem.getOccupationTime(),
-        DateTimeFormat.forPattern("HH:mm").print(12748182L)
+        DateTimeFormat.forPattern("HH:mm").print(12692192L)
             + "–"
-            + DateTimeFormat.forPattern("HH:mm").print(16072521L));
+            + DateTimeFormat.forPattern("HH:mm").print(16016531L));
   }
 
   @Test
