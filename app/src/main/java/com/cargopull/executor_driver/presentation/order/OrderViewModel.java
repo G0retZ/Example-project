@@ -5,7 +5,10 @@ import com.cargopull.executor_driver.presentation.ViewModel;
 /**
  * ViewModel окна заказа.
  */
-public interface OrderViewModel extends
-    ViewModel<OrderViewActions> {
+public interface OrderViewModel extends ViewModel<OrderViewActions> {
 
+  /**
+   * Сообщает, что сообщение об прочитано.
+   */
+  void messageConsumed();
 }

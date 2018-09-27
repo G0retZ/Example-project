@@ -53,12 +53,13 @@ public class ServicesUseCaseImpl implements ServicesUseCase {
         throw new EmptyListException("Не выбрано услуг для on-line.");
       }
       return selectedServices;
-    }).flatMapCompletable(
-        services1 -> gateway.sendSelectedServices(services1).observeOn(Schedulers.single())
-    ).doOnError(throwable -> {
-      if (throwable instanceof EmptyListException) {
-        errorReporter.reportError(throwable);
-      }
-    });
+    }).subscribeOn(Schedulers.single())
+        .flatMapCompletable(gateway::sendSelectedServices)
+        .observeOn(Schedulers.single())
+        .doOnError(throwable -> {
+          if (throwable instanceof EmptyListException) {
+            errorReporter.reportError(throwable);
+          }
+        });
   }
 }

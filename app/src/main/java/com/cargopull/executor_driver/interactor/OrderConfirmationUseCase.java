@@ -1,7 +1,8 @@
 package com.cargopull.executor_driver.interactor;
 
 import android.support.annotation.NonNull;
-import io.reactivex.Completable;
+import io.reactivex.Flowable;
+import io.reactivex.Single;
 
 /**
  * Юзкейс принятия заказов. Принимает или отвергает последний полученный заказ.
@@ -9,11 +10,20 @@ import io.reactivex.Completable;
 public interface OrderConfirmationUseCase {
 
   /**
+   * Получает таймаут для решения исполнителя по принятию пришедших заказов, из расчета один таймаут
+   * на один заказ.
+   *
+   * @return {@link Flowable<Long>} результат - успех либо ошибка с текстом.
+   */
+  @NonNull
+  Flowable<Long> getOrderDecisionTimeout();
+
+  /**
    * Передает решение исполнителя по принятию заказа.
    *
    * @param confirmed согласие исполнителя на прием заказа.
-   * @return {@link Completable} результат - успех либо ошибка таймаута ожидания решения на сервере.
+   * @return {@link Single<String>} результат - успех либо ошибка с текстом.
    */
   @NonNull
-  Completable sendDecision(boolean confirmed);
+  Single<String> sendDecision(boolean confirmed);
 }

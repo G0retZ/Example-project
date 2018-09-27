@@ -1,9 +1,7 @@
 package com.cargopull.executor_driver.presentation.currentcostpolling;
 
 import static org.mockito.Mockito.only;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
@@ -14,7 +12,7 @@ import com.cargopull.executor_driver.gateway.DataMappingException;
 import com.cargopull.executor_driver.interactor.CurrentCostPollingUseCase;
 import com.cargopull.executor_driver.presentation.CommonNavigate;
 import com.cargopull.executor_driver.presentation.ViewState;
-import io.reactivex.Completable;
+import io.reactivex.subjects.CompletableSubject;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
@@ -33,54 +31,45 @@ public class CurrentCostPollingViewModelTest {
   public TestRule rule = new InstantTaskExecutorRule();
   private CurrentCostPollingViewModel currentCostPollingViewModel;
   @Mock
+  private CurrentCostPollingUseCase useCase;
+  @Mock
   private Observer<String> navigationObserver;
   @Mock
   private Observer<ViewState<Runnable>> viewStateObserver;
 
-  @Mock
-  private CurrentCostPollingUseCase useCase;
+  private CompletableSubject completableSubject;
 
   @Before
   public void setUp() {
-    when(useCase.listenForPolling()).thenReturn(Completable.never());
+    completableSubject = CompletableSubject.create();
+    when(useCase.listenForPolling()).thenReturn(completableSubject);
     currentCostPollingViewModel = new CurrentCostPollingViewModelImpl(useCase);
   }
 
   /* Тетсируем работу с юзкейсом. */
 
   /**
-   * Должен просить у юзкейса начать поллинг, даже если уже подписан.
+   * Должен просить у юзкейса начать поллинг только при создании.
    */
   @Test
-  public void askUseCaseToSubscribeToCurrentCostPolling() {
-    // Действие:
-    currentCostPollingViewModel.initializeCurrentCostPolling();
-    currentCostPollingViewModel.initializeCurrentCostPolling();
-    currentCostPollingViewModel.initializeCurrentCostPolling();
-
+  public void askUseCaseForExecutorBalancesInitially() {
     // Результат:
-    verify(useCase, times(3)).listenForPolling();
-    verifyNoMoreInteractions(useCase);
+    verify(useCase, only()).listenForPolling();
   }
 
   /**
-   * Должен просить у юзкейса начать поллинг снова после завершения.
+   * Не должен трогать юзкейс на подписках.
    */
   @Test
-  public void askUseCaseToSubscribeToCurrentCostPollingAfterComplete() {
-    // Дано:
-    when(useCase.listenForPolling()).thenReturn(
-        Completable.complete(),
-        Completable.complete(),
-        Completable.never()
-    );
-
+  public void doNotTouchUseCaseOnSubscriptions() {
     // Действие:
-    currentCostPollingViewModel.initializeCurrentCostPolling();
+    currentCostPollingViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    currentCostPollingViewModel.getNavigationLiveData().observeForever(navigationObserver);
+    currentCostPollingViewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    currentCostPollingViewModel.getNavigationLiveData().observeForever(navigationObserver);
 
     // Результат:
-    verify(useCase, times(3)).listenForPolling();
-    verifyNoMoreInteractions(useCase);
+    verify(useCase, only()).listenForPolling();
   }
 
   /* Тетсируем переключение состояния. */
@@ -91,30 +80,10 @@ public class CurrentCostPollingViewModelTest {
   @Test
   public void doNotTouchViewActionsOnComplete() {
     // Дано:
-    when(useCase.listenForPolling()).thenReturn(
-        Completable.complete(),
-        Completable.never()
-    );
+    currentCostPollingViewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    currentCostPollingViewModel.getViewStateLiveData().observeForever(viewStateObserver);
-    currentCostPollingViewModel.initializeCurrentCostPolling();
-
-    // Результат:
-    verifyZeroInteractions(viewStateObserver);
-  }
-
-  /**
-   * Не должен трогать вид при ошибке сети.
-   */
-  @Test
-  public void doNotTouchViewActionsOnNetworkError() {
-    // Дано:
-    when(useCase.listenForPolling()).thenReturn(Completable.error(IllegalStateException::new));
-
-    // Действие:
-    currentCostPollingViewModel.getViewStateLiveData().observeForever(viewStateObserver);
-    currentCostPollingViewModel.initializeCurrentCostPolling();
+    completableSubject.onComplete();
 
     // Результат:
     verifyZeroInteractions(viewStateObserver);
@@ -126,11 +95,10 @@ public class CurrentCostPollingViewModelTest {
   @Test
   public void doNotTouchViewActionsOnMappingError() {
     // Дано:
-    when(useCase.listenForPolling()).thenReturn(Completable.error(DataMappingException::new));
+    currentCostPollingViewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    currentCostPollingViewModel.getViewStateLiveData().observeForever(viewStateObserver);
-    currentCostPollingViewModel.initializeCurrentCostPolling();
+    completableSubject.onError(new DataMappingException());
 
     // Результат:
     verifyZeroInteractions(viewStateObserver);
@@ -142,11 +110,10 @@ public class CurrentCostPollingViewModelTest {
   @Test
   public void doNotTouchViewActionsOnOtherError() {
     // Дано:
-    when(useCase.listenForPolling()).thenReturn(Completable.error(Exception::new));
+    currentCostPollingViewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    currentCostPollingViewModel.getViewStateLiveData().observeForever(viewStateObserver);
-    currentCostPollingViewModel.initializeCurrentCostPolling();
+    completableSubject.onError(new Exception());
 
     // Результат:
     verifyZeroInteractions(viewStateObserver);
@@ -160,11 +127,10 @@ public class CurrentCostPollingViewModelTest {
   @Test
   public void navigateToServerDataError() {
     // Дано:
-    when(useCase.listenForPolling()).thenReturn(Completable.error(DataMappingException::new));
+    currentCostPollingViewModel.getNavigationLiveData().observeForever(navigationObserver);
 
     // Действие:
-    currentCostPollingViewModel.getNavigationLiveData().observeForever(navigationObserver);
-    currentCostPollingViewModel.initializeCurrentCostPolling();
+    completableSubject.onError(new DataMappingException());
 
     // Результат:
     verify(navigationObserver, only()).onChanged(CommonNavigate.SERVER_DATA_ERROR);
@@ -176,11 +142,10 @@ public class CurrentCostPollingViewModelTest {
   @Test
   public void doNotNavigateForOtherError() {
     // Дано:
-    when(useCase.listenForPolling()).thenReturn(Completable.error(InterruptedException::new));
+    currentCostPollingViewModel.getNavigationLiveData().observeForever(navigationObserver);
 
     // Действие:
-    currentCostPollingViewModel.getNavigationLiveData().observeForever(navigationObserver);
-    currentCostPollingViewModel.initializeCurrentCostPolling();
+    completableSubject.onError(new Exception());
 
     // Результат:
     verifyZeroInteractions(navigationObserver);
@@ -192,14 +157,10 @@ public class CurrentCostPollingViewModelTest {
   @Test
   public void doNotNavigateForComplete() {
     // Дано:
-    when(useCase.listenForPolling()).thenReturn(
-        Completable.complete(),
-        Completable.never()
-    );
+    currentCostPollingViewModel.getNavigationLiveData().observeForever(navigationObserver);
 
     // Действие:
-    currentCostPollingViewModel.getNavigationLiveData().observeForever(navigationObserver);
-    currentCostPollingViewModel.initializeCurrentCostPolling();
+    completableSubject.onComplete();
 
     // Результат:
     verifyZeroInteractions(navigationObserver);

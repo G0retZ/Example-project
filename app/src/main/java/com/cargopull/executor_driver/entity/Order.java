@@ -28,7 +28,8 @@ public class Order {
   private final long timeout;
   private final long etaToStartPoint;
   private final long confirmationTime;
-  private final long orderStartTime;
+  private final long startTime;
+  private final long scheduledStartTime;
   @NonNull
   private final List<Option> options = new ArrayList<>();
   @NonNull
@@ -37,7 +38,7 @@ public class Order {
   public Order(long id, @NonNull String comment, @NonNull String serviceName, int distance,
       @NonNull String estimatedPriceText, long estimatedPrice, long estimatedTime,
       long estimatedRouteLength, long totalCost, long timeout, long etaToStartPoint,
-      long confirmationTime, long orderStartTime) {
+      long confirmationTime, long startTime, long scheduledStartTime) {
     this.id = id;
     this.comment = comment;
     this.serviceName = serviceName;
@@ -50,7 +51,16 @@ public class Order {
     this.timeout = timeout;
     this.etaToStartPoint = etaToStartPoint;
     this.confirmationTime = confirmationTime;
-    this.orderStartTime = orderStartTime;
+    this.startTime = startTime;
+    this.scheduledStartTime = scheduledStartTime;
+  }
+
+  // Возвращаем копию заказа с измененным ETA до первой точки.
+  @NonNull
+  public Order withEtaToStartPoint(long etaToStartPoint) {
+    return new Order(id, comment, serviceName, distance, estimatedPriceText, estimatedPrice,
+        estimatedTime, estimatedRouteLength, totalCost, timeout, etaToStartPoint, confirmationTime,
+        startTime, scheduledStartTime).setOptions(options).setRoutePoints(routePath);
   }
 
   public long getId() {
@@ -104,8 +114,12 @@ public class Order {
     return confirmationTime;
   }
 
-  public long getOrderStartTime() {
-    return orderStartTime;
+  public long getStartTime() {
+    return startTime;
+  }
+
+  public long getScheduledStartTime() {
+    return scheduledStartTime;
   }
 
   @NonNull
@@ -134,5 +148,36 @@ public class Order {
 
   public void addRoutePoints(@NonNull RoutePoint... routePoints) {
     routePath.addAll(Arrays.asList(routePoints));
+  }
+
+  private Order setOptions(@NonNull List<Option> options) {
+    this.options.clear();
+    this.options.addAll(options);
+    return this;
+  }
+
+  private Order setRoutePoints(@NonNull List<RoutePoint> routePoints) {
+    routePath.clear();
+    routePath.addAll(routePoints);
+    return this;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+
+    Order order = (Order) o;
+
+    return id == order.id;
+  }
+
+  @Override
+  public int hashCode() {
+    return (int) (id ^ (id >>> 32));
   }
 }

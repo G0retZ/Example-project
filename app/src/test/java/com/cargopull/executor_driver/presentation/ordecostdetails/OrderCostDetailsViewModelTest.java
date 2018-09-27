@@ -15,7 +15,6 @@ import com.cargopull.executor_driver.interactor.OrderCostDetailsUseCase;
 import com.cargopull.executor_driver.presentation.CommonNavigate;
 import com.cargopull.executor_driver.presentation.ViewState;
 import io.reactivex.BackpressureStrategy;
-import io.reactivex.Flowable;
 import io.reactivex.subjects.PublishSubject;
 import org.junit.Before;
 import org.junit.ClassRule;
@@ -49,24 +48,37 @@ public class OrderCostDetailsViewModelTest {
   private Observer<ViewState<OrderCostDetailsViewActions>> viewStateObserver;
   @Mock
   private Observer<String> navigateObserver;
+  private PublishSubject<OrderCostDetails> publishSubject;
 
   @Before
   public void setUp() {
-    when(orderCostDetailsUseCase.getOrderCostDetails()).thenReturn(Flowable.never());
+    publishSubject = PublishSubject.create();
+    when(orderCostDetailsUseCase.getOrderCostDetails())
+        .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
     viewModel = new OrderCostDetailsViewModelImpl(orderCostDetailsUseCase);
   }
 
   /* Тетсируем работу с юзкейсом заказа. */
 
   /**
-   * Должен просить юзкейс получать заказы, при первой и только при первой подписке.
+   * Должен просить юзкейс получать заказы при создании.
    */
   @Test
   public void askUseCaseForOrderCostDetailsInitially() {
+    // Результат:
+    verify(orderCostDetailsUseCase, only()).getOrderCostDetails();
+  }
+
+  /**
+   * Не должен трогать юзкейс при подписках
+   */
+  @Test
+  public void doNotouchUseCaseOnSubscriptions() {
     // Действие:
     viewModel.getViewStateLiveData();
+    viewModel.getNavigationLiveData();
     viewModel.getViewStateLiveData();
-    viewModel.getViewStateLiveData();
+    viewModel.getNavigationLiveData();
 
     // Результат:
     verify(orderCostDetailsUseCase, only()).getOrderCostDetails();
@@ -97,9 +109,6 @@ public class OrderCostDetailsViewModelTest {
   @Test
   public void doNotSetAnyViewStateToLiveDataForError() {
     // Дано:
-    PublishSubject<OrderCostDetails> publishSubject = PublishSubject.create();
-    when(orderCostDetailsUseCase.getOrderCostDetails())
-        .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
@@ -115,10 +124,7 @@ public class OrderCostDetailsViewModelTest {
   @Test
   public void setIdleViewStateToLiveData() {
     // Дано:
-    PublishSubject<OrderCostDetails> publishSubject = PublishSubject.create();
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    when(orderCostDetailsUseCase.getOrderCostDetails())
-        .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
@@ -149,9 +155,6 @@ public class OrderCostDetailsViewModelTest {
   @Test
   public void setNavigateToServerDataError() {
     // Дано:
-    PublishSubject<OrderCostDetails> publishSubject = PublishSubject.create();
-    when(orderCostDetailsUseCase.getOrderCostDetails())
-        .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
     viewModel.getNavigationLiveData().observeForever(navigateObserver);
 

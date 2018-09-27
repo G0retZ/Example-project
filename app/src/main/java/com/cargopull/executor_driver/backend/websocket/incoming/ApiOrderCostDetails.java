@@ -1,12 +1,18 @@
 package com.cargopull.executor_driver.backend.websocket.incoming;
 
 import android.support.annotation.Nullable;
-import com.cargopull.executor_driver.backend.web.incoming.ApiOptionItem;
 import com.google.gson.annotations.SerializedName;
-import java.util.List;
 
-public class ApiOrderCostDetails extends ApiOrder {
+public class ApiOrderCostDetails {
 
+  @SerializedName("totalAmount")
+  private long totalAmount;
+  @SerializedName("estimatedAmount")
+  private long estimatedAmount;
+  @SerializedName(value = "overPackageStartCalculationTime", alternate = {"estimatedTime"})
+  private long estimatedTime;
+  @SerializedName("estimatedRouteDistance")
+  private int estimatedRouteDistance;
   @Nullable
   @SerializedName("estimatedAmountDetalization")
   private ApiOrderOptionsCostDetails apiOrderOptionsCostDetails;
@@ -21,21 +27,33 @@ public class ApiOrderCostDetails extends ApiOrder {
   public ApiOrderCostDetails() {
   }
 
-  public ApiOrderCostDetails(long id, @Nullable String estimatedAmountText, int estimatedAmount,
-      long estimatedTime, int estimatedRouteDistance, int totalAmount,
-      @Nullable String comment, long timeout, long etaToStartPoint, long confirmationTime,
-      long orderStartTime,
-      @Nullable ApiDriverDistancePair executorDistance,
-      @Nullable ApiOrderService apiOrderService,
-      @Nullable List<ApiRoutePoint> route,
-      @Nullable List<ApiOptionItem> options,
+  public ApiOrderCostDetails(
+      long totalAmount, long estimatedAmount,
+      long estimatedTime, int estimatedRouteDistance,
       @Nullable ApiOrderOptionsCostDetails apiOrderOptionsCostDetails,
       @Nullable ApiOrderOverPackage apiOrderOverPackage) {
-    super(id, estimatedAmountText, estimatedAmount, estimatedTime, estimatedRouteDistance,
-        totalAmount, comment, timeout, etaToStartPoint, confirmationTime, orderStartTime,
-        executorDistance, apiOrderService, route, options);
+    this.totalAmount = totalAmount;
+    this.estimatedAmount = estimatedAmount;
+    this.estimatedTime = estimatedTime;
+    this.estimatedRouteDistance = estimatedRouteDistance;
     this.apiOrderOptionsCostDetails = apiOrderOptionsCostDetails;
     this.apiOrderOverPackage = apiOrderOverPackage;
+  }
+
+  public long getTotalAmount() {
+    return totalAmount;
+  }
+
+  public long getEstimatedAmount() {
+    return estimatedAmount;
+  }
+
+  public long getEstimatedTime() {
+    return estimatedTime;
+  }
+
+  public int getEstimatedRouteDistance() {
+    return estimatedRouteDistance;
   }
 
   @Nullable

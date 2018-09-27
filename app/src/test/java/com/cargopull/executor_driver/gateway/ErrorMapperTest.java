@@ -55,7 +55,7 @@ public class ErrorMapperTest {
    * @throws Exception ошибка
    */
   @Test
-  public void map422_2toInsufficientCreditsException() throws Exception {
+  public void map422_2toHttpException() throws Exception {
     // Дано:
     Response response = Response.error(
         ResponseBody

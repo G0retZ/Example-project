@@ -1,14 +1,13 @@
 package com.cargopull.executor_driver.interactor;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.only;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import com.cargopull.executor_driver.UseCaseThreadTestRule;
 import com.cargopull.executor_driver.entity.Order;
 import com.cargopull.executor_driver.gateway.DataMappingException;
-import com.cargopull.executor_driver.utils.ErrorReporter;
 import com.cargopull.executor_driver.utils.TimeUtils;
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
@@ -33,9 +32,7 @@ public class OrderFulfillmentTimeUseCaseTest {
   private OrderFulfillmentTimeUseCase useCase;
 
   @Mock
-  private ErrorReporter errorReporter;
-  @Mock
-  private OrderGateway gateway;
+  private OrderUseCase orderUseCase;
   @Mock
   private TimeUtils timeUtils;
   @Mock
@@ -48,39 +45,26 @@ public class OrderFulfillmentTimeUseCaseTest {
   public void setUp() {
     testScheduler = new TestScheduler();
     RxJavaPlugins.setComputationSchedulerHandler(scheduler -> testScheduler);
-    when(gateway.getOrders()).thenReturn(Flowable.never());
-    useCase = new OrderFulfillmentTimeUseCaseImpl(errorReporter, gateway, timeUtils);
+    when(orderUseCase.getOrders()).thenReturn(Flowable.never());
+    useCase = new OrderFulfillmentTimeUseCaseImpl(orderUseCase, timeUtils);
   }
 
-  /* Проверяем работу с гейтвеем */
+  /* Проверяем работу с юзкейсом заказа */
 
   /**
-   * Должен запросить у гейтвея получение времени выполняемого заказа.
+   * Должен запросить у юзкейса получение времени выполняемого заказа.
    */
   @Test
   public void askGatewayForOrders() {
     // Действие:
     useCase.getOrderElapsedTime().test();
-
-    // Результат:
-    verify(gateway, only()).getOrders();
-  }
-
-  /* Проверяем отправку ошибок в репортер */
-
-  /**
-   * Должен отправить ошибку маппинга.
-   */
-  @Test
-  public void reportDataMappingError() {
-    // Дано:
-    when(gateway.getOrders()).thenReturn(Flowable.error(new DataMappingException()));
-
-    // Действие:
+    useCase.getOrderElapsedTime().test();
+    useCase.getOrderElapsedTime().test();
     useCase.getOrderElapsedTime().test();
 
     // Результат:
-    verify(errorReporter, only()).reportError(any(DataMappingException.class));
+    verify(orderUseCase, times(4)).getOrders();
+    verifyNoMoreInteractions(orderUseCase);
   }
 
   /* Проверяем ответы на запрос времени заказа */
@@ -91,8 +75,7 @@ public class OrderFulfillmentTimeUseCaseTest {
   @Test
   public void answerDataMappingError() {
     // Дано:
-    when(gateway.getOrders())
-        .thenReturn(Flowable.error(new DataMappingException()));
+    when(orderUseCase.getOrders()).thenReturn(Flowable.error(new DataMappingException()));
 
     // Действие:
     TestSubscriber<Long> test = useCase.getOrderElapsedTime().test();
@@ -110,10 +93,10 @@ public class OrderFulfillmentTimeUseCaseTest {
   public void answerWithTimeUpdates() {
     // Дано:
     PublishSubject<Order> publishSubject = PublishSubject.create();
-    when(gateway.getOrders())
+    when(orderUseCase.getOrders())
         .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
-    when(order.getOrderStartTime()).thenReturn(12345000L);
-    when(order2.getOrderStartTime()).thenReturn(6789000L);
+    when(order.getStartTime()).thenReturn(12345000L);
+    when(order2.getStartTime()).thenReturn(6789000L);
     when(timeUtils.currentTimeMillis()).thenReturn(12350000L, 6801000L);
 
     // Действие:

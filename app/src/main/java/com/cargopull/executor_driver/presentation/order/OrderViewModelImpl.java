@@ -6,6 +6,9 @@ import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.cargopull.executor_driver.entity.Order;
+import com.cargopull.executor_driver.entity.OrderCancelledException;
+import com.cargopull.executor_driver.entity.OrderOfferDecisionException;
+import com.cargopull.executor_driver.entity.OrderOfferExpiredException;
 import com.cargopull.executor_driver.gateway.DataMappingException;
 import com.cargopull.executor_driver.interactor.OrderUseCase;
 import com.cargopull.executor_driver.presentation.CommonNavigate;
@@ -39,13 +42,12 @@ public class OrderViewModelImpl extends ViewModel implements
     this.timeUtils = timeUtils;
     viewStateLiveData = new MutableLiveData<>();
     navigateLiveData = new SingleLiveEvent<>();
-    viewStateLiveData.postValue(new OrderViewStatePending(lastViewState));
+    loadOrders();
   }
 
   @NonNull
   @Override
   public LiveData<ViewState<OrderViewActions>> getViewStateLiveData() {
-    loadOrders();
     return viewStateLiveData;
   }
 
@@ -55,12 +57,23 @@ public class OrderViewModelImpl extends ViewModel implements
     return navigateLiveData;
   }
 
-
   private void loadOrders() {
     if (disposable.isDisposed()) {
       viewStateLiveData.postValue(new OrderViewStatePending(lastViewState));
       disposable = orderUseCase.getOrders()
           .observeOn(AndroidSchedulers.mainThread())
+          .doOnError(throwable -> {
+            if (throwable instanceof OrderOfferExpiredException) {
+              viewStateLiveData.postValue(
+                  new OrderViewStateExpired(lastViewState, throwable.getMessage())
+              );
+            } else if (throwable instanceof OrderCancelledException) {
+              viewStateLiveData.postValue(new OrderViewStateCancelled(lastViewState));
+            }
+          })
+          .retry(throwable -> throwable instanceof OrderOfferExpiredException
+              || throwable instanceof OrderOfferDecisionException
+              || throwable instanceof OrderCancelledException)
           .subscribe(this::consumeOrder,
               throwable -> {
                 if (throwable instanceof DataMappingException) {
@@ -71,10 +84,14 @@ public class OrderViewModelImpl extends ViewModel implements
     }
   }
 
-
   private void consumeOrder(@NonNull Order order) {
     lastViewState = new OrderViewStateIdle(new OrderItem(order, timeUtils));
     viewStateLiveData.postValue(lastViewState);
+  }
+
+  @Override
+  public void messageConsumed() {
+    navigateLiveData.postValue(OrderNavigate.CLOSE);
   }
 
   @Override

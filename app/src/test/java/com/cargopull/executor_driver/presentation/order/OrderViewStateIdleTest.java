@@ -27,7 +27,6 @@ public class OrderViewStateIdleTest {
 
   @Before
   public void setUp() {
-    when(orderItem.getNextAddress()).thenReturn("address");
     viewState = new OrderViewStateIdle(orderItem);
   }
 
@@ -45,12 +44,13 @@ public class OrderViewStateIdleTest {
     when(orderItem.getRouteLength()).thenReturn("la-la-la");
     when(orderItem.getEstimatedTimeSeconds()).thenReturn(7929);
     when(orderItem.getEstimatedPrice()).thenReturn(6812L);
+    when(orderItem.getOccupationTime()).thenReturn("12:34");
+    when(orderItem.getOccupationDate()).thenReturn("34-12");
     when(orderItem.getServiceName()).thenReturn("service");
     when(orderItem.getSecondsToMeetClient()).thenReturn(654321);
     when(orderItem.getOrderComment()).thenReturn("comm");
     when(orderItem.getEstimatedPriceText()).thenReturn("1000");
     when(orderItem.getOrderOptionsRequired()).thenReturn("1,2,3");
-    when(orderItem.getProgressLeft()).thenReturn(new long[]{3, 5});
 
     // Действие:
     viewState.apply(viewActions);
@@ -64,13 +64,16 @@ public class OrderViewStateIdleTest {
     verify(viewActions).showRoutePointsCount(7);
     verify(viewActions).showLastPointAddress("add");
     verify(viewActions).showOrderConditions("la-la-la", 7929, 6812);
+    verify(viewActions).showOrderOccupationTime("12:34");
+    verify(viewActions).showOrderOccupationDate("34-12");
     verify(viewActions).showServiceName("service");
     verify(viewActions).showTimeout(654321);
     verify(viewActions).showComment("comm");
-    verify(viewActions).showTimeout(3, 5);
     verify(viewActions).showEstimatedPrice("1000");
     verify(viewActions).showOrderOptionsRequirements("1,2,3");
     verify(viewActions).showOrderPending(false);
+    verify(viewActions).showOrderExpiredMessage(null);
+    verify(viewActions).showOrderCancelledMessage(false);
     verifyNoMoreInteractions(viewActions);
   }
 

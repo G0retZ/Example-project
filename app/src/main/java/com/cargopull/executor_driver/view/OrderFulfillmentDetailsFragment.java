@@ -75,52 +75,38 @@ public class OrderFulfillmentDetailsFragment extends BaseFragment implements Ord
 
   @Override
   public void showLoadPoint(@NonNull String url) {
-
   }
 
   @Override
   public void showNextPointAddress(@NonNull String coordinates, @NonNull String address) {
-
   }
 
   @Override
   public void showNextPointComment(@NonNull String comment) {
-
   }
 
   @Override
   public void showLastPointAddress(@NonNull String address) {
-
   }
 
   @Override
   public void showRoutePointsCount(int count) {
-
   }
 
   @Override
   public void showServiceName(@NonNull String serviceName) {
-
   }
 
   @Override
   public void showTimeout(int timeout) {
-
-  }
-
-  @Override
-  public void showTimeout(int progress, long timeout) {
-
   }
 
   @Override
   public void showFirstPointDistance(String distance) {
-
   }
 
   @Override
   public void showFirstPointEta(int etaTime) {
-
   }
 
   @Override
@@ -137,7 +123,14 @@ public class OrderFulfillmentDetailsFragment extends BaseFragment implements Ord
 
   @Override
   public void showOrderConditions(@NonNull String routeDistance, int time, long cost) {
+  }
 
+  @Override
+  public void showOrderOccupationTime(@NonNull String occupationTime) {
+  }
+
+  @Override
+  public void showOrderOccupationDate(@NonNull String occupationDate) {
   }
 
   @Override
@@ -162,5 +155,13 @@ public class OrderFulfillmentDetailsFragment extends BaseFragment implements Ord
       commentText.setVisibility(View.VISIBLE);
       commentText.setText(comment);
     }
+  }
+
+  @Override
+  public void showOrderExpiredMessage(@Nullable String message) {
+  }
+
+  @Override
+  public void showOrderCancelledMessage(boolean show) {
   }
 }

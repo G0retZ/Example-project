@@ -52,7 +52,7 @@ public class OnlineSwitchViewModelTest {
   public void setUp() {
     publishSubject = PublishSubject.create();
     when(executorStateNotOnlineUseCase.setExecutorNotOnline()).thenReturn(Completable.never());
-    when(executorStateUseCase.getExecutorStates(false))
+    when(executorStateUseCase.getExecutorStates())
         .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
     viewModel = new OnlineSwitchViewModelImpl(executorStateNotOnlineUseCase, executorStateUseCase);
   }
@@ -65,7 +65,7 @@ public class OnlineSwitchViewModelTest {
   @Test
   public void askExecutorStateUseCaseForSubscribeInitially() {
     // Результат:
-    verify(executorStateUseCase, only()).getExecutorStates(false);
+    verify(executorStateUseCase, only()).getExecutorStates();
   }
 
   /**
@@ -79,7 +79,7 @@ public class OnlineSwitchViewModelTest {
     viewModel.setNewState(true);
 
     // Результат:
-    verify(executorStateUseCase, only()).getExecutorStates(false);
+    verify(executorStateUseCase, only()).getExecutorStates();
   }
 
   /**
@@ -94,7 +94,7 @@ public class OnlineSwitchViewModelTest {
     viewModel.setNewState(false);
 
     // Результат:
-    verify(executorStateUseCase).getExecutorStates(false);
+    verify(executorStateUseCase).getExecutorStates();
     verify(executorStateNotOnlineUseCase).setExecutorNotOnline();
     verifyNoMoreInteractions(executorStateNotOnlineUseCase, executorStateUseCase);
   }
@@ -123,7 +123,7 @@ public class OnlineSwitchViewModelTest {
     viewModel.setNewState(false);
 
     // Результат:
-    inOrder.verify(executorStateUseCase).getExecutorStates(false);
+    inOrder.verify(executorStateUseCase).getExecutorStates();
     inOrder.verify(executorStateNotOnlineUseCase, times(6)).setExecutorNotOnline();
     verifyNoMoreInteractions(executorStateNotOnlineUseCase, executorStateUseCase);
   }
@@ -172,6 +172,25 @@ public class OnlineSwitchViewModelTest {
 
     // Действие:
     publishSubject.onNext(ExecutorState.DRIVER_ORDER_CONFIRMATION);
+
+    // Результат:
+    inOrder.verify(viewStateObserver).onChanged(new OnlineSwitchViewStatePending(null));
+    inOrder.verify(viewStateObserver)
+        .onChanged(new OnlineSwitchViewStatePending(new OnlineSwitchViewState(true)));
+    verifyNoMoreInteractions(viewStateObserver);
+  }
+
+  /**
+   * Должен вернуть состояние ожидания с активным переключателем для "принятие заказа".
+   */
+  @Test
+  public void setCheckedPendingViewStateForPreOrderConfirmation() {
+    // Дано:
+    InOrder inOrder = Mockito.inOrder(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
+
+    // Действие:
+    publishSubject.onNext(ExecutorState.DRIVER_PRELIMINARY_ORDER_CONFIRMATION);
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(new OnlineSwitchViewStatePending(null));

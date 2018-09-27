@@ -20,6 +20,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import ua.naiksoftware.stomp.client.StompMessage;
 
 @RunWith(MockitoJUnitRunner.class)
 public class OrderApiMapperTest {
@@ -27,12 +28,14 @@ public class OrderApiMapperTest {
   @Rule
   public final ApiOrderRule rule = new ApiOrderRule();
 
-  private Mapper<String, Order> mapper;
+  private Mapper<StompMessage, Order> mapper;
 
   @Mock
   private Mapper<ApiOptionItem, Option> apiOptionMapper;
   @Mock
   private Mapper<ApiRoutePoint, RoutePoint> routePointMapper;
+  @Mock
+  private StompMessage stompMessage;
   @Mock
   private OptionBoolean optionBoolean;
   @Mock
@@ -57,8 +60,11 @@ public class OrderApiMapperTest {
    */
   @Test
   public void mappingJsonStringToOrderSuccess() throws Exception {
-    // Дано и Действие:
-    Order order = mapper.map(rule.getFullOrder());
+    // Дано:
+    when(stompMessage.getPayload()).thenReturn(rule.getFullOrder());
+
+    // Действие:
+    Order order = mapper.map(stompMessage);
 
     // Результат:
     assertEquals(order.getId(), 7);
@@ -71,7 +77,8 @@ public class OrderApiMapperTest {
     assertEquals(order.getTimeout(), 25);
     assertEquals(order.getEtaToStartPoint(), 1234567890);
     assertEquals(order.getConfirmationTime(), 9876543210L);
-    assertEquals(order.getOrderStartTime(), 9876598760L);
+    assertEquals(order.getStartTime(), 9876598760L);
+    assertEquals(order.getScheduledStartTime(), 128937981273L);
     assertEquals(order.getServiceName(), "service");
     assertEquals(order.getDistance(), 546);
     assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
@@ -87,8 +94,11 @@ public class OrderApiMapperTest {
    */
   @Test
   public void mappingJsonStringWithoutIdToOrderSuccess() throws Exception {
-    // Дано и Действие:
-    Order order = mapper.map(rule.getOrderWithoutId());
+    // Дано:
+    when(stompMessage.getPayload()).thenReturn(rule.getOrderWithoutId());
+
+    // Действие:
+    Order order = mapper.map(stompMessage);
 
     // Результат:
     assertEquals(order.getId(), 0);
@@ -101,7 +111,8 @@ public class OrderApiMapperTest {
     assertEquals(order.getTimeout(), 25);
     assertEquals(order.getEtaToStartPoint(), 1234567890);
     assertEquals(order.getConfirmationTime(), 9876543210L);
-    assertEquals(order.getOrderStartTime(), 9876598760L);
+    assertEquals(order.getStartTime(), 9876598760L);
+    assertEquals(order.getScheduledStartTime(), 128937981273L);
     assertEquals(order.getServiceName(), "service");
     assertEquals(order.getDistance(), 546);
     assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
@@ -117,8 +128,11 @@ public class OrderApiMapperTest {
    */
   @Test
   public void mappingJsonStringWithoutCommentToOrderSuccess() throws Exception {
-    // Дано и Действие:
-    Order order = mapper.map(rule.getOrderWithoutComment());
+    // Дано:
+    when(stompMessage.getPayload()).thenReturn(rule.getOrderWithoutComment());
+
+    // Действие:
+    Order order = mapper.map(stompMessage);
 
     // Результат:
     assertEquals(order.getId(), 7);
@@ -131,7 +145,8 @@ public class OrderApiMapperTest {
     assertEquals(order.getTimeout(), 25);
     assertEquals(order.getEtaToStartPoint(), 1234567890);
     assertEquals(order.getConfirmationTime(), 9876543210L);
-    assertEquals(order.getOrderStartTime(), 9876598760L);
+    assertEquals(order.getStartTime(), 9876598760L);
+    assertEquals(order.getScheduledStartTime(), 128937981273L);
     assertEquals(order.getServiceName(), "service");
     assertEquals(order.getDistance(), 546);
     assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
@@ -147,8 +162,11 @@ public class OrderApiMapperTest {
    */
   @Test
   public void mappingJsonStringWithoutEstimatedAmountTextToOrderSuccess() throws Exception {
-    // Дано и Действие:
-    Order order = mapper.map(rule.getOrderWithoutEstimatedAmountText());
+    // Дано:
+    when(stompMessage.getPayload()).thenReturn(rule.getOrderWithoutEstimatedAmountText());
+
+    // Действие:
+    Order order = mapper.map(stompMessage);
 
     // Результат:
     assertEquals(order.getId(), 7);
@@ -161,7 +179,8 @@ public class OrderApiMapperTest {
     assertEquals(order.getTimeout(), 25);
     assertEquals(order.getEtaToStartPoint(), 1234567890);
     assertEquals(order.getConfirmationTime(), 9876543210L);
-    assertEquals(order.getOrderStartTime(), 9876598760L);
+    assertEquals(order.getStartTime(), 9876598760L);
+    assertEquals(order.getScheduledStartTime(), 128937981273L);
     assertEquals(order.getServiceName(), "service");
     assertEquals(order.getDistance(), 546);
     assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
@@ -177,8 +196,11 @@ public class OrderApiMapperTest {
    */
   @Test
   public void mappingJsonStringWithoutEstimatedAmountToOrderSuccess() throws Exception {
-    // Дано и Действие:
-    Order order = mapper.map(rule.getOrderWithoutEstimatedAmount());
+    // Дано:
+    when(stompMessage.getPayload()).thenReturn(rule.getOrderWithoutEstimatedAmount());
+
+    // Действие:
+    Order order = mapper.map(stompMessage);
 
     // Результат:
     assertEquals(order.getId(), 7);
@@ -191,7 +213,8 @@ public class OrderApiMapperTest {
     assertEquals(order.getTimeout(), 25);
     assertEquals(order.getEtaToStartPoint(), 1234567890);
     assertEquals(order.getConfirmationTime(), 9876543210L);
-    assertEquals(order.getOrderStartTime(), 9876598760L);
+    assertEquals(order.getStartTime(), 9876598760L);
+    assertEquals(order.getScheduledStartTime(), 128937981273L);
     assertEquals(order.getServiceName(), "service");
     assertEquals(order.getDistance(), 546);
     assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
@@ -207,8 +230,11 @@ public class OrderApiMapperTest {
    */
   @Test
   public void mappingJsonStringWithoutEstimatedTimeToOrderSuccess() throws Exception {
-    // Дано и Действие:
-    Order order = mapper.map(rule.getOrderWithoutEstimatedTime());
+    // Дано:
+    when(stompMessage.getPayload()).thenReturn(rule.getOrderWithoutEstimatedTime());
+
+    // Действие:
+    Order order = mapper.map(stompMessage);
 
     // Результат:
     assertEquals(order.getId(), 7);
@@ -221,7 +247,8 @@ public class OrderApiMapperTest {
     assertEquals(order.getTimeout(), 25);
     assertEquals(order.getEtaToStartPoint(), 1234567890);
     assertEquals(order.getConfirmationTime(), 9876543210L);
-    assertEquals(order.getOrderStartTime(), 9876598760L);
+    assertEquals(order.getStartTime(), 9876598760L);
+    assertEquals(order.getScheduledStartTime(), 128937981273L);
     assertEquals(order.getServiceName(), "service");
     assertEquals(order.getDistance(), 546);
     assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
@@ -237,8 +264,11 @@ public class OrderApiMapperTest {
    */
   @Test
   public void mappingJsonStringWithoutEstimatedRouteLengthToOrderSuccess() throws Exception {
-    // Дано и Действие:
-    Order order = mapper.map(rule.getOrderWithoutEstimatedRouteDistance());
+    // Дано:
+    when(stompMessage.getPayload()).thenReturn(rule.getOrderWithoutEstimatedRouteDistance());
+
+    // Действие:
+    Order order = mapper.map(stompMessage);
 
     // Результат:
     assertEquals(order.getId(), 7);
@@ -251,7 +281,8 @@ public class OrderApiMapperTest {
     assertEquals(order.getTimeout(), 25);
     assertEquals(order.getEtaToStartPoint(), 1234567890);
     assertEquals(order.getConfirmationTime(), 9876543210L);
-    assertEquals(order.getOrderStartTime(), 9876598760L);
+    assertEquals(order.getStartTime(), 9876598760L);
+    assertEquals(order.getScheduledStartTime(), 128937981273L);
     assertEquals(order.getServiceName(), "service");
     assertEquals(order.getDistance(), 546);
     assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
@@ -267,8 +298,11 @@ public class OrderApiMapperTest {
    */
   @Test
   public void mappingJsonStringWithoutCostToOrderSuccess() throws Exception {
-    // Дано и Действие:
-    Order order = mapper.map(rule.getOrderWithoutCost());
+    // Дано:
+    when(stompMessage.getPayload()).thenReturn(rule.getOrderWithoutCost());
+
+    // Действие:
+    Order order = mapper.map(stompMessage);
 
     // Результат:
     assertEquals(order.getId(), 7);
@@ -281,7 +315,8 @@ public class OrderApiMapperTest {
     assertEquals(order.getTimeout(), 25);
     assertEquals(order.getEtaToStartPoint(), 1234567890);
     assertEquals(order.getConfirmationTime(), 9876543210L);
-    assertEquals(order.getOrderStartTime(), 9876598760L);
+    assertEquals(order.getStartTime(), 9876598760L);
+    assertEquals(order.getScheduledStartTime(), 128937981273L);
     assertEquals(order.getServiceName(), "service");
     assertEquals(order.getDistance(), 546);
     assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
@@ -297,8 +332,11 @@ public class OrderApiMapperTest {
    */
   @Test
   public void mappingJsonStringWithoutTimeoutToOrderSuccess() throws Exception {
-    // Дано и Действие:
-    Order order = mapper.map(rule.getOrderWithoutTimeout());
+    // Дано:
+    when(stompMessage.getPayload()).thenReturn(rule.getOrderWithoutTimeout());
+
+    // Действие:
+    Order order = mapper.map(stompMessage);
 
     // Результат:
     assertEquals(order.getId(), 7);
@@ -311,7 +349,8 @@ public class OrderApiMapperTest {
     assertEquals(order.getTimeout(), 0);
     assertEquals(order.getEtaToStartPoint(), 1234567890);
     assertEquals(order.getConfirmationTime(), 9876543210L);
-    assertEquals(order.getOrderStartTime(), 9876598760L);
+    assertEquals(order.getStartTime(), 9876598760L);
+    assertEquals(order.getScheduledStartTime(), 128937981273L);
     assertEquals(order.getServiceName(), "service");
     assertEquals(order.getDistance(), 546);
     assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
@@ -321,14 +360,17 @@ public class OrderApiMapperTest {
   }
 
   /**
-   * Должен дать ошибку, если пришел JSON без ETA.
+   * Должен успешно преобразовать JSON без ETA в заказ.
    *
    * @throws Exception ошибка
    */
-  @Test(expected = DataMappingException.class)
-  public void mappingJsonStringWithoutEtaToOrderFail() throws Exception {
-    // Дано и Действие:
-    Order order = mapper.map(rule.getOrderWithoutEta());
+  @Test
+  public void mappingJsonStringWithoutEtaToOrderSuccess() throws Exception {
+    // Дано:
+    when(stompMessage.getPayload()).thenReturn(rule.getOrderWithoutEta());
+
+    // Действие:
+    Order order = mapper.map(stompMessage);
 
     // Результат:
     assertEquals(order.getId(), 7);
@@ -341,7 +383,8 @@ public class OrderApiMapperTest {
     assertEquals(order.getTimeout(), 25);
     assertEquals(order.getEtaToStartPoint(), 0);
     assertEquals(order.getConfirmationTime(), 9876543210L);
-    assertEquals(order.getOrderStartTime(), 9876598760L);
+    assertEquals(order.getStartTime(), 9876598760L);
+    assertEquals(order.getScheduledStartTime(), 128937981273L);
     assertEquals(order.getServiceName(), "service");
     assertEquals(order.getDistance(), 546);
     assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
@@ -357,8 +400,11 @@ public class OrderApiMapperTest {
    */
   @Test
   public void mappingJsonStringWithoutConfirmationTimeToOrderSuccess() throws Exception {
-    // Дано и Действие:
-    Order order = mapper.map(rule.getOrderWithoutConfirmationTime());
+    // Дано:
+    when(stompMessage.getPayload()).thenReturn(rule.getOrderWithoutConfirmationTime());
+
+    // Действие:
+    Order order = mapper.map(stompMessage);
 
     // Результат:
     assertEquals(order.getId(), 7);
@@ -371,7 +417,8 @@ public class OrderApiMapperTest {
     assertEquals(order.getTimeout(), 25);
     assertEquals(order.getEtaToStartPoint(), 1234567890);
     assertEquals(order.getConfirmationTime(), 0);
-    assertEquals(order.getOrderStartTime(), 9876598760L);
+    assertEquals(order.getStartTime(), 9876598760L);
+    assertEquals(order.getScheduledStartTime(), 128937981273L);
     assertEquals(order.getServiceName(), "service");
     assertEquals(order.getDistance(), 546);
     assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
@@ -387,8 +434,11 @@ public class OrderApiMapperTest {
    */
   @Test
   public void mappingJsonStringWithoutStartTimeToOrderSuccess() throws Exception {
-    // Дано и Действие:
-    Order order = mapper.map(rule.getOrderWithoutStartTime());
+    // Дано:
+    when(stompMessage.getPayload()).thenReturn(rule.getOrderWithoutStartTime());
+
+    // Действие:
+    Order order = mapper.map(stompMessage);
 
     // Результат:
     assertEquals(order.getId(), 7);
@@ -401,7 +451,42 @@ public class OrderApiMapperTest {
     assertEquals(order.getTimeout(), 25);
     assertEquals(order.getEtaToStartPoint(), 1234567890);
     assertEquals(order.getConfirmationTime(), 9876543210L);
-    assertEquals(order.getOrderStartTime(), 0);
+    assertEquals(order.getStartTime(), 0);
+    assertEquals(order.getScheduledStartTime(), 128937981273L);
+    assertEquals(order.getServiceName(), "service");
+    assertEquals(order.getDistance(), 546);
+    assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
+    assertEquals(order.getOptions(),
+        Arrays.asList(optionNumeric, optionBoolean, optionBoolean, optionNumeric)
+    );
+  }
+
+  /**
+   * Должен успешно преобразовать JSON без планируемого времени начала в заказ.
+   *
+   * @throws Exception ошибка
+   */
+  @Test
+  public void mappingJsonStringWithoutScheduledStartTimeToOrderSuccess() throws Exception {
+    // Дано:
+    when(stompMessage.getPayload()).thenReturn(rule.getOrderWithoutScheduledStartTime());
+
+    // Действие:
+    Order order = mapper.map(stompMessage);
+
+    // Результат:
+    assertEquals(order.getId(), 7);
+    assertEquals(order.getComment(), "some comment");
+    assertEquals(order.getEstimatedPriceText(), "over 9999 BTC");
+    assertEquals(order.getEstimatedPrice(), 9999);
+    assertEquals(order.getEstimatedTime(), 234_532_000);
+    assertEquals(order.getEstimatedRouteLength(), 35_213);
+    assertEquals(order.getTotalCost(), 10_352);
+    assertEquals(order.getTimeout(), 25);
+    assertEquals(order.getEtaToStartPoint(), 1234567890);
+    assertEquals(order.getConfirmationTime(), 9876543210L);
+    assertEquals(order.getStartTime(), 9876598760L);
+    assertEquals(order.getScheduledStartTime(), 0);
     assertEquals(order.getServiceName(), "service");
     assertEquals(order.getDistance(), 546);
     assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
@@ -417,8 +502,11 @@ public class OrderApiMapperTest {
    */
   @Test
   public void mappingJsonStringWithoutDistanceIdToOrderSuccess() throws Exception {
-    // Дано и Действие:
-    Order order = mapper.map(rule.getOrderWithoutDistanceId());
+    // Дано:
+    when(stompMessage.getPayload()).thenReturn(rule.getOrderWithoutDistanceId());
+
+    // Действие:
+    Order order = mapper.map(stompMessage);
 
     // Результат:
     assertEquals(order.getId(), 7);
@@ -431,7 +519,8 @@ public class OrderApiMapperTest {
     assertEquals(order.getTimeout(), 25);
     assertEquals(order.getEtaToStartPoint(), 1234567890);
     assertEquals(order.getConfirmationTime(), 9876543210L);
-    assertEquals(order.getOrderStartTime(), 9876598760L);
+    assertEquals(order.getStartTime(), 9876598760L);
+    assertEquals(order.getScheduledStartTime(), 128937981273L);
     assertEquals(order.getServiceName(), "service");
     assertEquals(order.getDistance(), 546);
     assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
@@ -447,8 +536,11 @@ public class OrderApiMapperTest {
    */
   @Test(expected = DataMappingException.class)
   public void mappingJsonStringWithoutDistanceValueToOrderFail() throws Exception {
-    // Дано и Действие:
-    Order order = mapper.map(rule.getOrderWithoutDistanceValue());
+    // Дано:
+    when(stompMessage.getPayload()).thenReturn(rule.getOrderWithoutDistanceValue());
+
+    // Действие:
+    Order order = mapper.map(stompMessage);
 
     // Результат:
     assertEquals(order.getId(), 7);
@@ -461,7 +553,8 @@ public class OrderApiMapperTest {
     assertEquals(order.getTimeout(), 25);
     assertEquals(order.getEtaToStartPoint(), 1234567890);
     assertEquals(order.getConfirmationTime(), 9876543210L);
-    assertEquals(order.getOrderStartTime(), 9876598760L);
+    assertEquals(order.getStartTime(), 9876598760L);
+    assertEquals(order.getScheduledStartTime(), 128937981273L);
     assertEquals(order.getServiceName(), "service");
     assertEquals(order.getDistance(), 0);
     assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
@@ -471,14 +564,17 @@ public class OrderApiMapperTest {
   }
 
   /**
-   * Должен дать ошибку, если пришел JSON без дистанции.
+   * Должен успешно преобразовать JSON без дистанции в заказ.
    *
    * @throws Exception ошибка
    */
-  @Test(expected = DataMappingException.class)
-  public void mappingJsonStringWithoutDistanceToOrderFail() throws Exception {
-    // Дано и Действие:
-    Order order = mapper.map(rule.getOrderWithoutDistance());
+  @Test
+  public void mappingJsonStringWithoutDistanceToOrderSuccess() throws Exception {
+    // Дано:
+    when(stompMessage.getPayload()).thenReturn(rule.getOrderWithoutDistance());
+
+    // Действие:
+    Order order = mapper.map(stompMessage);
 
     // Результат:
     assertEquals(order.getId(), 7);
@@ -491,7 +587,8 @@ public class OrderApiMapperTest {
     assertEquals(order.getTimeout(), 25);
     assertEquals(order.getEtaToStartPoint(), 1234567890);
     assertEquals(order.getConfirmationTime(), 9876543210L);
-    assertEquals(order.getOrderStartTime(), 9876598760L);
+    assertEquals(order.getStartTime(), 9876598760L);
+    assertEquals(order.getScheduledStartTime(), 128937981273L);
     assertEquals(order.getServiceName(), "service");
     assertEquals(order.getDistance(), 0);
     assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
@@ -507,8 +604,11 @@ public class OrderApiMapperTest {
    */
   @Test
   public void mappingJsonStringWithoutServiceIdToOrderSuccess() throws Exception {
-    // Дано и Действие:
-    Order order = mapper.map(rule.getOrderWithoutServiceId());
+    // Дано:
+    when(stompMessage.getPayload()).thenReturn(rule.getOrderWithoutServiceId());
+
+    // Действие:
+    Order order = mapper.map(stompMessage);
 
     // Результат:
     assertEquals(order.getId(), 7);
@@ -521,7 +621,8 @@ public class OrderApiMapperTest {
     assertEquals(order.getTimeout(), 25);
     assertEquals(order.getEtaToStartPoint(), 1234567890);
     assertEquals(order.getConfirmationTime(), 9876543210L);
-    assertEquals(order.getOrderStartTime(), 9876598760L);
+    assertEquals(order.getStartTime(), 9876598760L);
+    assertEquals(order.getScheduledStartTime(), 128937981273L);
     assertEquals(order.getServiceName(), "service");
     assertEquals(order.getDistance(), 546);
     assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
@@ -537,8 +638,11 @@ public class OrderApiMapperTest {
    */
   @Test(expected = DataMappingException.class)
   public void mappingJsonStringWithoutServiceNameToOrderFail() throws Exception {
-    // Дано и Действие:
-    Order order = mapper.map(rule.getOrderWithoutServiceName());
+    // Дано:
+    when(stompMessage.getPayload()).thenReturn(rule.getOrderWithoutServiceName());
+
+    // Действие:
+    Order order = mapper.map(stompMessage);
 
     // Результат:
     assertEquals(order.getId(), 7);
@@ -551,7 +655,8 @@ public class OrderApiMapperTest {
     assertEquals(order.getTimeout(), 25);
     assertEquals(order.getEtaToStartPoint(), 1234567890);
     assertEquals(order.getConfirmationTime(), 9876543210L);
-    assertEquals(order.getOrderStartTime(), 9876598760L);
+    assertEquals(order.getStartTime(), 9876598760L);
+    assertEquals(order.getScheduledStartTime(), 128937981273L);
     assertEquals(order.getServiceName(), "");
     assertEquals(order.getDistance(), 546);
     assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
@@ -567,8 +672,11 @@ public class OrderApiMapperTest {
    */
   @Test
   public void mappingJsonStringWithoutServicePriceToOrderSuccess() throws Exception {
-    // Дано и Действие:
-    Order order = mapper.map(rule.getOrderWithoutServicePrice());
+    // Дано:
+    when(stompMessage.getPayload()).thenReturn(rule.getOrderWithoutServicePrice());
+
+    // Действие:
+    Order order = mapper.map(stompMessage);
 
     // Результат:
     assertEquals(order.getId(), 7);
@@ -581,7 +689,8 @@ public class OrderApiMapperTest {
     assertEquals(order.getTimeout(), 25);
     assertEquals(order.getEtaToStartPoint(), 1234567890);
     assertEquals(order.getConfirmationTime(), 9876543210L);
-    assertEquals(order.getOrderStartTime(), 9876598760L);
+    assertEquals(order.getStartTime(), 9876598760L);
+    assertEquals(order.getScheduledStartTime(), 128937981273L);
     assertEquals(order.getServiceName(), "service");
     assertEquals(order.getDistance(), 546);
     assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
@@ -597,8 +706,11 @@ public class OrderApiMapperTest {
    */
   @Test(expected = DataMappingException.class)
   public void mappingJsonStringWithoutServiceToOrderFail() throws Exception {
-    // Дано и Действие:
-    Order order = mapper.map(rule.getOrderWithoutService());
+    // Дано:
+    when(stompMessage.getPayload()).thenReturn(rule.getOrderWithoutService());
+
+    // Действие:
+    Order order = mapper.map(stompMessage);
 
     // Результат:
     assertEquals(order.getId(), 7);
@@ -611,7 +723,8 @@ public class OrderApiMapperTest {
     assertEquals(order.getTimeout(), 25);
     assertEquals(order.getEtaToStartPoint(), 1234567890);
     assertEquals(order.getConfirmationTime(), 9876543210L);
-    assertEquals(order.getOrderStartTime(), 9876598760L);
+    assertEquals(order.getStartTime(), 9876598760L);
+    assertEquals(order.getScheduledStartTime(), 128937981273L);
     assertEquals(order.getServiceName(), "");
     assertEquals(order.getDistance(), 546);
     assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
@@ -627,8 +740,11 @@ public class OrderApiMapperTest {
    */
   @Test(expected = DataMappingException.class)
   public void mappingJsonStringWithEmptyRouteToOrderFail() throws Exception {
-    // Дано и Действие:
-    Order order = mapper.map(rule.getOrderWithEmptyRoute());
+    // Дано:
+    when(stompMessage.getPayload()).thenReturn(rule.getOrderWithEmptyRoute());
+
+    // Действие:
+    Order order = mapper.map(stompMessage);
 
     // Результат:
     assertEquals(order.getId(), 7);
@@ -641,7 +757,8 @@ public class OrderApiMapperTest {
     assertEquals(order.getTimeout(), 25);
     assertEquals(order.getEtaToStartPoint(), 1234567890);
     assertEquals(order.getConfirmationTime(), 9876543210L);
-    assertEquals(order.getOrderStartTime(), 9876598760L);
+    assertEquals(order.getStartTime(), 9876598760L);
+    assertEquals(order.getScheduledStartTime(), 128937981273L);
     assertEquals(order.getServiceName(), "service");
     assertEquals(order.getDistance(), 546);
     assertEquals(order.getRoutePath(), new ArrayList<>());
@@ -657,8 +774,11 @@ public class OrderApiMapperTest {
    */
   @Test(expected = DataMappingException.class)
   public void mappingJsonStringWithoutRouteToOrderFail() throws Exception {
-    // Дано и Действие:
-    Order order = mapper.map(rule.getOrderWithoutRoute());
+    // Дано:
+    when(stompMessage.getPayload()).thenReturn(rule.getOrderWithoutRoute());
+
+    // Действие:
+    Order order = mapper.map(stompMessage);
 
     // Результат:
     assertEquals(order.getId(), 7);
@@ -671,7 +791,8 @@ public class OrderApiMapperTest {
     assertEquals(order.getTimeout(), 25);
     assertEquals(order.getEtaToStartPoint(), 1234567890);
     assertEquals(order.getConfirmationTime(), 9876543210L);
-    assertEquals(order.getOrderStartTime(), 9876598760L);
+    assertEquals(order.getStartTime(), 9876598760L);
+    assertEquals(order.getScheduledStartTime(), 128937981273L);
     assertEquals(order.getServiceName(), "service");
     assertEquals(order.getDistance(), 546);
     assertEquals(order.getRoutePath(), new ArrayList<>());
@@ -687,8 +808,11 @@ public class OrderApiMapperTest {
    */
   @Test
   public void mappingJsonStringWithEmptyOptionsToOrderSuccess() throws Exception {
-    // Дано и Действие:
-    Order order = mapper.map(rule.getOrderWithEmptyOptions());
+    // Дано:
+    when(stompMessage.getPayload()).thenReturn(rule.getOrderWithEmptyOptions());
+
+    // Действие:
+    Order order = mapper.map(stompMessage);
 
     // Результат:
     assertEquals(order.getId(), 7);
@@ -701,7 +825,8 @@ public class OrderApiMapperTest {
     assertEquals(order.getTimeout(), 25);
     assertEquals(order.getEtaToStartPoint(), 1234567890);
     assertEquals(order.getConfirmationTime(), 9876543210L);
-    assertEquals(order.getOrderStartTime(), 9876598760L);
+    assertEquals(order.getStartTime(), 9876598760L);
+    assertEquals(order.getScheduledStartTime(), 128937981273L);
     assertEquals(order.getServiceName(), "service");
     assertEquals(order.getDistance(), 546);
     assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
@@ -715,8 +840,11 @@ public class OrderApiMapperTest {
    */
   @Test
   public void mappingJsonStringWithoutOptionsToOrderSuccess() throws Exception {
-    // Дано и Действие:
-    Order order = mapper.map(rule.getOrderWithoutOptions());
+    // Дано:
+    when(stompMessage.getPayload()).thenReturn(rule.getOrderWithoutOptions());
+
+    // Действие:
+    Order order = mapper.map(stompMessage);
 
     // Результат:
     assertEquals(order.getId(), 7);
@@ -729,7 +857,8 @@ public class OrderApiMapperTest {
     assertEquals(order.getTimeout(), 25);
     assertEquals(order.getEtaToStartPoint(), 1234567890);
     assertEquals(order.getConfirmationTime(), 9876543210L);
-    assertEquals(order.getOrderStartTime(), 9876598760L);
+    assertEquals(order.getStartTime(), 9876598760L);
+    assertEquals(order.getScheduledStartTime(), 128937981273L);
     assertEquals(order.getServiceName(), "service");
     assertEquals(order.getDistance(), 546);
     assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
@@ -743,11 +872,12 @@ public class OrderApiMapperTest {
    */
   @Test(expected = DataMappingException.class)
   public void mappingFailForRoutePointMappingError() throws Exception {
-    // Дано
+    // Дано:
+    when(stompMessage.getPayload()).thenReturn(rule.getFullOrder());
     doThrow(new DataMappingException()).when(routePointMapper).map(any(ApiRoutePoint.class));
 
     // Действие:
-    mapper.map(rule.getFullOrder());
+    mapper.map(stompMessage);
   }
 
   /**
@@ -757,11 +887,12 @@ public class OrderApiMapperTest {
    */
   @Test(expected = DataMappingException.class)
   public void mappingFailForOptionMappingError() throws Exception {
-    // Дано
+    // Дано:
+    when(stompMessage.getPayload()).thenReturn(rule.getFullOrder());
     doThrow(new DataMappingException()).when(apiOptionMapper).map(any(ApiOptionItem.class));
 
     // Действие:
-    mapper.map(rule.getFullOrder());
+    mapper.map(stompMessage);
   }
 
   /**
@@ -771,8 +902,11 @@ public class OrderApiMapperTest {
    */
   @Test(expected = DataMappingException.class)
   public void mappingEmptyFail() throws Exception {
-    // Дано и Действие:
-    mapper.map("");
+    // Дано:
+    when(stompMessage.getPayload()).thenReturn("\n");
+
+    // Действие:
+    mapper.map(stompMessage);
   }
 
   /**
@@ -782,8 +916,11 @@ public class OrderApiMapperTest {
    */
   @Test(expected = DataMappingException.class)
   public void mappingStringFail() throws Exception {
-    // Дано и Действие:
-    mapper.map("dasie");
+    // Дано:
+    when(stompMessage.getPayload()).thenReturn("dasie");
+
+    // Действие:
+    mapper.map(stompMessage);
   }
 
   /**
@@ -793,8 +930,11 @@ public class OrderApiMapperTest {
    */
   @Test(expected = DataMappingException.class)
   public void mappingNumberFail() throws Exception {
-    // Дано и Действие:
-    mapper.map("12");
+    // Дано:
+    when(stompMessage.getPayload()).thenReturn("12");
+
+    // Действие:
+    mapper.map(stompMessage);
   }
 
   /**
@@ -804,7 +944,21 @@ public class OrderApiMapperTest {
    */
   @Test(expected = DataMappingException.class)
   public void mappingArrayFail() throws Exception {
-    // Дано и Действие:
-    mapper.map("[]");
+    // Дано:
+    when(stompMessage.getPayload()).thenReturn("[]");
+
+    // Действие:
+    mapper.map(stompMessage);
+  }
+
+  /**
+   * Должен дать ошибку, если пришел null.
+   *
+   * @throws Exception ошибка
+   */
+  @Test(expected = DataMappingException.class)
+  public void mappingNullFail() throws Exception {
+    // Действие:
+    mapper.map(stompMessage);
   }
 }

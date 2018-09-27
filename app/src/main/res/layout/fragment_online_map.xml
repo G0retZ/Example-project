@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  android:background="@color/colorTwilight">
+  <TextView
+    android:id="@+id/breakText"
+    style="@style/TextAppearance.AppCompat.Title"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    android:text="@string/rest"
+    android:textSize="40sp"
+    app:layout_constraintBottom_toTopOf="@id/breakDisclaimerText"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent"
+    app:layout_constraintVertical_chainStyle="packed"/>
+  <TextView
+    android:id="@+id/breakDisclaimerText"
+    style="@style/TextAppearance.AppCompat.Subhead"
+    android:layout_width="240dp"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="32dp"
+    android:layout_marginBottom="24dp"
+    android:gravity="center"
+    android:text="@string/break_disclimer"
+    app:layout_constraintBottom_toTopOf="@id/resumeWork"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@id/breakText"/>
+  <Button
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/resumeWork"
+    style="@style/AppTheme.Button.Colored.Compact"
+    android:layout_width="240dp"
+    android:layout_height="wrap_content"
+    android:minHeight="68dp"
+    android:text="@string/resume_work"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@id/breakDisclaimerText"/>
+</android.support.constraint.ConstraintLayout>

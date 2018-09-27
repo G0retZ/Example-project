@@ -1,17 +1,19 @@
 package com.cargopull.executor_driver.interactor;
 
+import android.support.annotation.NonNull;
 import com.cargopull.executor_driver.entity.Order;
 import io.reactivex.Flowable;
 
 /**
- * Юзкейс заказа. Слушает заказ из гейтвея.
+ * Юзкейс заказа. Слушает заказ из источника.
  */
 public interface OrderUseCase {
 
   /**
-   * Запрашивает данные о выполняемом заказе.
+   * Запрашивает данные о заказе.
    *
    * @return {@link Flowable<Order>} результат запроса.
    */
+  @NonNull
   Flowable<Order> getOrders();
 }

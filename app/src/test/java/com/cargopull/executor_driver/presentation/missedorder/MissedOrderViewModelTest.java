@@ -1,18 +1,17 @@
 package com.cargopull.executor_driver.presentation.missedorder;
 
 import static org.mockito.Mockito.only;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 import android.arch.core.executor.testing.InstantTaskExecutorRule;
 import android.arch.lifecycle.Observer;
 import com.cargopull.executor_driver.ViewModelThreadTestRule;
-import com.cargopull.executor_driver.interactor.MissedOrderUseCase;
+import com.cargopull.executor_driver.interactor.NotificationMessageUseCase;
 import com.cargopull.executor_driver.presentation.ViewState;
-import io.reactivex.Flowable;
+import io.reactivex.BackpressureStrategy;
+import io.reactivex.subjects.PublishSubject;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
@@ -33,48 +32,48 @@ public class MissedOrderViewModelTest {
   public TestRule rule = new InstantTaskExecutorRule();
   private MissedOrderViewModel viewModel;
   @Mock
+  private NotificationMessageUseCase useCase;
+  @Mock
   private Observer<ViewState<MissedOrderViewActions>> viewStateObserver;
   @Captor
   private ArgumentCaptor<ViewState<MissedOrderViewActions>> viewStateCaptor;
   @Mock
   private MissedOrderViewActions viewActions;
 
-  @Mock
-  private MissedOrderUseCase missedOrderUseCase;
+  private PublishSubject<String> publishSubject;
 
   @Before
   public void setUp() {
-    when(missedOrderUseCase.getMissedOrders()).thenReturn(Flowable.never());
-    viewModel = new MissedOrderViewModelImpl(missedOrderUseCase);
+    publishSubject = PublishSubject.create();
+    when(useCase.getNotificationMessages())
+        .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
+    viewModel = new MissedOrderViewModelImpl(useCase);
   }
 
   /* Тетсируем работу с юзкейсом. */
 
   /**
-   * Должен попросить у юзкейса загрузить сообщения об упущенных заказах.
+   * Должен попросить у юзкейса загрузить сообщения об упущенных заказах только при создании.
    */
   @Test
   public void askDataReceiverToSubscribeToMissedOrdersMessages() {
-    // Действие:
-    viewModel.initializeMissedOrderMessages();
-
     // Результат:
-    verify(missedOrderUseCase, only()).getMissedOrders();
+    verify(useCase, only()).getNotificationMessages();
   }
 
   /**
-   * Должен просить у юзкейса загрузить сообщения об упущенных заказах, даже если уже подписан.
+   * Не должен трогать юзкейс на подписках.
    */
   @Test
   public void askDataReceiverToSubscribeToMissedOrdersMessagesIfAlreadyAsked() {
     // Действие:
-    viewModel.initializeMissedOrderMessages();
-    viewModel.initializeMissedOrderMessages();
-    viewModel.initializeMissedOrderMessages();
+    viewModel.getViewStateLiveData();
+    viewModel.getNavigationLiveData();
+    viewModel.getViewStateLiveData();
+    viewModel.getNavigationLiveData();
 
     // Результат:
-    verify(missedOrderUseCase, times(3)).getMissedOrders();
-    verifyNoMoreInteractions(missedOrderUseCase);
+    verify(useCase, only()).getNotificationMessages();
   }
 
   /* Тетсируем сообщение. */
@@ -85,11 +84,10 @@ public class MissedOrderViewModelTest {
   @Test
   public void showMissedOrderMessage() {
     // Дано:
-    when(missedOrderUseCase.getMissedOrders()).thenReturn(Flowable.just("Message"));
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
-    viewModel.initializeMissedOrderMessages();
+    publishSubject.onNext("Message");
 
     // Результат:
     verify(viewStateObserver, only()).onChanged(viewStateCaptor.capture());
@@ -103,11 +101,10 @@ public class MissedOrderViewModelTest {
   @Test
   public void doNotShowEmptyMessage() {
     // Дано:
-    when(missedOrderUseCase.getMissedOrders()).thenReturn(Flowable.just(""));
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
-    viewModel.initializeMissedOrderMessages();
+    publishSubject.onNext("");
 
     // Результат:
     verifyZeroInteractions(viewStateObserver);
@@ -119,11 +116,10 @@ public class MissedOrderViewModelTest {
   @Test
   public void doNotShowSpaceMessage() {
     // Дано:
-    when(missedOrderUseCase.getMissedOrders()).thenReturn(Flowable.just("\n"));
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
-    viewModel.initializeMissedOrderMessages();
+    publishSubject.onNext("\n");
 
     // Результат:
     verifyZeroInteractions(viewStateObserver);

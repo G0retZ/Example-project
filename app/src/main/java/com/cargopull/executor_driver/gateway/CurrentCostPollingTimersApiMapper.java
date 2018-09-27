@@ -5,11 +5,12 @@ import com.cargopull.executor_driver.backend.websocket.incoming.ApiOrderTimers;
 import com.cargopull.executor_driver.utils.Pair;
 import com.google.gson.Gson;
 import javax.inject.Inject;
+import ua.naiksoftware.stomp.client.StompMessage;
 
 /**
  * Преобразуем статус из ответа сервера в бизнес объект статуса исполнителя.
  */
-public class CurrentCostPollingTimersApiMapper implements Mapper<String, Pair<Long, Long>> {
+public class CurrentCostPollingTimersApiMapper implements Mapper<StompMessage, Pair<Long, Long>> {
 
   @Inject
   public CurrentCostPollingTimersApiMapper() {
@@ -17,14 +18,17 @@ public class CurrentCostPollingTimersApiMapper implements Mapper<String, Pair<Lo
 
   @NonNull
   @Override
-  public Pair<Long, Long> map(@NonNull String from) throws Exception {
-    if (from.isEmpty()) {
+  public Pair<Long, Long> map(@NonNull StompMessage from) throws Exception {
+    if (from.getPayload() == null) {
+      throw new DataMappingException("Ошибка маппинга: данные не должны быть null!");
+    }
+    if (from.getPayload().trim().isEmpty()) {
       throw new DataMappingException("Ошибка маппинга: данные не должны быть пустыми!");
     }
     Gson gson = new Gson();
     ApiOrderTimers apiOrderTimers;
     try {
-      apiOrderTimers = gson.fromJson(from, ApiOrderTimers.class);
+      apiOrderTimers = gson.fromJson(from.getPayload(), ApiOrderTimers.class);
     } catch (Exception e) {
       throw new DataMappingException("Ошибка маппинга: не удалось распарсить JSON: " + from, e);
     }

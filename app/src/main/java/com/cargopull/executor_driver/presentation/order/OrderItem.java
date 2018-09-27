@@ -11,6 +11,7 @@ import com.cargopull.executor_driver.entity.RoutePoint;
 import com.cargopull.executor_driver.entity.RoutePointState;
 import com.cargopull.executor_driver.utils.TimeUtils;
 import java.util.Locale;
+import org.joda.time.format.DateTimeFormat;
 
 /**
  * Модель для отображения предложения заказа. Тестируемое форматирование.
@@ -21,12 +22,10 @@ class OrderItem {
   private final Order order;
   @NonNull
   private final TimeUtils timeUtils;
-  private final long timestamp;
 
   OrderItem(@NonNull Order order, @NonNull TimeUtils timeUtils) {
     this.order = order;
     this.timeUtils = timeUtils;
-    timestamp = timeUtils.currentTimeMillis();
   }
 
   @SuppressWarnings("SpellCheckingInspection")
@@ -96,6 +95,24 @@ class OrderItem {
     return Math.round(order.getEstimatedTime() / 1000f);
   }
 
+  public String getOccupationTime() {
+    long scheduledDate = order.getScheduledStartTime();
+    long etaDate = timeUtils.currentTimeMillis() + order.getEtaToStartPoint();
+    scheduledDate = scheduledDate == 0 ? etaDate : scheduledDate;
+    return
+        DateTimeFormat.forPattern("HH:mm").print(scheduledDate)
+            + "–"
+            + DateTimeFormat.forPattern("HH:mm").print(scheduledDate + order.getEstimatedTime());
+  }
+
+  @SuppressWarnings("SpellCheckingInspection")
+  public String getOccupationDate() {
+    long scheduledDate = order.getScheduledStartTime();
+    long etaDate = timeUtils.currentTimeMillis() + order.getEtaToStartPoint();
+    return DateTimeFormat.forPattern("d MMMM, EEEE")
+        .print(scheduledDate < etaDate ? etaDate : scheduledDate);
+  }
+
   public String getServiceName() {
     return order.getServiceName();
   }
@@ -127,17 +144,6 @@ class OrderItem {
   @NonNull
   public String getOrderComment() {
     return order.getComment().trim();
-  }
-
-  @NonNull
-  public long[] getProgressLeft() {
-    long[] res = new long[2];
-    res[1] = timeUtils.currentTimeMillis() - timestamp;
-    res[1] = order.getTimeout() - res[1];
-    if (order.getTimeout() > 0) {
-      res[0] = res[1] * 100L / (order.getTimeout());
-    }
-    return res;
   }
 
   @Nullable

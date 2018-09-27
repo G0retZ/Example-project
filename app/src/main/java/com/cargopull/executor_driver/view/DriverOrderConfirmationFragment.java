@@ -3,7 +3,6 @@ package com.cargopull.executor_driver.view;
 import android.animation.Animator;
 import android.animation.Animator.AnimatorListener;
 import android.animation.ObjectAnimator;
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -47,13 +46,8 @@ public class DriverOrderConfirmationFragment extends BaseFragment implements
   private TextView estimationText;
   private TextView serviceText;
   private Button acceptAction;
-  private Context context;
-
-  @Override
-  public void onAttach(Context context) {
-    super.onAttach(context);
-    this.context = context;
-  }
+  @Nullable
+  private ObjectAnimator timeoutAnimation;
 
   @Inject
   public void setOrderConfirmationViewModel(
@@ -115,12 +109,6 @@ public class DriverOrderConfirmationFragment extends BaseFragment implements
   }
 
   @Override
-  public void onDetach() {
-    super.onDetach();
-    context = null;
-  }
-
-  @Override
   public void showDriverOrderConfirmationPending(boolean pending) {
     showPending(pending, toString() + "0");
   }
@@ -132,7 +120,59 @@ public class DriverOrderConfirmationFragment extends BaseFragment implements
 
   @Override
   public void showLoadPoint(@NonNull String url) {
-    Picasso.with(context).load(url).into(mapImage);
+    Picasso.get().load(url).into(mapImage);
+  }
+
+  @Override
+  public void showTimeout(int timeout) {
+  }
+
+  @Override
+  public void showTimeout(int progress, long timeout) {
+    if (timeoutAnimation != null) {
+      timeoutAnimation.cancel();
+    }
+    if (timeout > 0) {
+      timeoutAnimation = ObjectAnimator.ofInt(timeoutChart, "progress", progress, 0);
+      timeoutAnimation.setDuration(timeout);
+      timeoutAnimation.setInterpolator(new LinearInterpolator());
+      timeoutAnimation.addListener(new AnimatorListener() {
+        private boolean canceled;
+
+        @Override
+        public void onAnimationStart(Animator animation) {
+        }
+
+        @Override
+        public void onAnimationEnd(Animator animation) {
+          if (!canceled) {
+            orderConfirmationViewModel.counterTimeOut();
+          }
+        }
+
+        @Override
+        public void onAnimationCancel(Animator animation) {
+          canceled = true;
+        }
+
+        @Override
+        public void onAnimationRepeat(Animator animation) {
+        }
+      });
+      timeoutAnimation.start();
+    } else if (timeout == 0) {
+      orderConfirmationViewModel.counterTimeOut();
+    }
+  }
+
+  @Override
+  public void showFirstPointDistance(String distance) {
+    distanceText.setText(getString(R.string.km, distance));
+  }
+
+  @Override
+  public void showFirstPointEta(int etaTime) {
+    etaText.setText(getString(R.string.eta, Math.round(etaTime / 60F)));
   }
 
   @Override
@@ -142,7 +182,6 @@ public class DriverOrderConfirmationFragment extends BaseFragment implements
 
   @Override
   public void showNextPointComment(@NonNull String comment) {
-
   }
 
   @Override
@@ -161,53 +200,7 @@ public class DriverOrderConfirmationFragment extends BaseFragment implements
   }
 
   @Override
-  public void showTimeout(int timeout) {
-
-  }
-
-  @Override
-  public void showFirstPointDistance(String distance) {
-    distanceText.setText(getString(R.string.km, distance));
-  }
-
-  @Override
-  public void showFirstPointEta(int etaTime) {
-    etaText.setText(getString(R.string.eta, Math.round(etaTime / 60F)));
-  }
-
-  @Override
-  public void showTimeout(int progress, long timeout) {
-    if (timeout > 0) {
-      ObjectAnimator animation = ObjectAnimator.ofInt(timeoutChart, "progress", progress, 0);
-      animation.setDuration(timeout);
-      animation.setInterpolator(new LinearInterpolator());
-      animation.addListener(new AnimatorListener() {
-        @Override
-        public void onAnimationStart(Animator animation) {
-        }
-
-        @Override
-        public void onAnimationEnd(Animator animation) {
-          orderConfirmationViewModel.counterTimeOut();
-        }
-
-        @Override
-        public void onAnimationCancel(Animator animation) {
-        }
-
-        @Override
-        public void onAnimationRepeat(Animator animation) {
-        }
-      });
-      animation.start();
-    } else {
-      orderConfirmationViewModel.counterTimeOut();
-    }
-  }
-
-  @Override
   public void showEstimatedPrice(@NonNull String priceText) {
-
   }
 
   @Override
@@ -227,13 +220,27 @@ public class DriverOrderConfirmationFragment extends BaseFragment implements
   }
 
   @Override
-  public void showOrderOptionsRequirements(@NonNull String options) {
+  public void showOrderOccupationTime(@NonNull String occupationTime) {
+  }
 
+  @Override
+  public void showOrderOccupationDate(@NonNull String occupationDate) {
+  }
+
+  @Override
+  public void showOrderOptionsRequirements(@NonNull String options) {
   }
 
   @Override
   public void showComment(@NonNull String comment) {
+  }
 
+  @Override
+  public void showOrderExpiredMessage(@Nullable String message) {
+  }
+
+  @Override
+  public void showOrderCancelledMessage(boolean show) {
   }
 
   @Override
@@ -244,5 +251,17 @@ public class DriverOrderConfirmationFragment extends BaseFragment implements
   @Override
   public void enableAcceptButton(boolean enable) {
     acceptAction.setEnabled(enable);
+  }
+
+  @Override
+  public void showAcceptedMessage(@Nullable String message) {
+  }
+
+  @Override
+  public void showDeclinedMessage(@Nullable String message) {
+  }
+
+  @Override
+  public void showFailedMessage(@Nullable String message) {
   }
 }

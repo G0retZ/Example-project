@@ -30,8 +30,6 @@ import com.cargopull.executor_driver.presentation.movingtoclient.MovingToClientV
 import com.cargopull.executor_driver.presentation.movingtoclient.MovingToClientViewModel;
 import com.cargopull.executor_driver.presentation.order.OrderViewActions;
 import com.cargopull.executor_driver.presentation.order.OrderViewModel;
-import com.cargopull.executor_driver.utils.Pair;
-import java.util.Collections;
 import javax.inject.Inject;
 import org.joda.time.LocalTime;
 import org.joda.time.format.DateTimeFormat;
@@ -112,7 +110,7 @@ public class MovingToClientFragment extends BaseFragment implements MovingToClie
       public void onAnimationEnd(Animator animation) {
         if (!canceled) {
           movingToClientViewModel.reportArrival();
-          shakeItPlayer.shakeIt(Collections.singletonList(new Pair<>(200L, 255)));
+          shakeItPlayer.shakeIt(R.raw.single_shot_vibro);
         }
       }
 
@@ -212,7 +210,6 @@ public class MovingToClientFragment extends BaseFragment implements MovingToClie
 
   @Override
   public void showLoadPoint(@NonNull String url) {
-
   }
 
   @Override
@@ -249,17 +246,14 @@ public class MovingToClientFragment extends BaseFragment implements MovingToClie
 
   @Override
   public void showLastPointAddress(@NonNull String address) {
-
   }
 
   @Override
   public void showRoutePointsCount(int count) {
-
   }
 
   @Override
   public void showServiceName(@NonNull String serviceName) {
-
   }
 
   @Override
@@ -297,37 +291,42 @@ public class MovingToClientFragment extends BaseFragment implements MovingToClie
   }
 
   @Override
-  public void showTimeout(int progress, long timeout) {
-
-  }
-
-  @Override
   public void showFirstPointDistance(String distance) {
-
   }
 
   @Override
   public void showFirstPointEta(int etaTime) {
-
   }
 
   @Override
   public void showEstimatedPrice(@NonNull String priceText) {
-
   }
 
   @Override
   public void showOrderConditions(@NonNull String routeDistance, int time, long cost) {
+  }
 
+  @Override
+  public void showOrderOccupationTime(@NonNull String occupationTime) {
+  }
+
+  @Override
+  public void showOrderOccupationDate(@NonNull String occupationDate) {
   }
 
   @Override
   public void showOrderOptionsRequirements(@NonNull String options) {
-
   }
 
   @Override
   public void showComment(@NonNull String comment) {
+  }
 
+  @Override
+  public void showOrderExpiredMessage(@Nullable String message) {
+  }
+
+  @Override
+  public void showOrderCancelledMessage(boolean show) {
   }
 }

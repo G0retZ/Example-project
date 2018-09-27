@@ -1,6 +1,8 @@
 package com.cargopull.executor_driver.utils;
 
 import android.support.annotation.NonNull;
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
 /**
  * Container to ease passing around a tuple of two objects. This object provides a sensible
@@ -9,10 +11,14 @@ import android.support.annotation.NonNull;
  */
 public class Pair<F, S> {
 
-  public final @NonNull
-  F first;
-  public final @NonNull
-  S second;
+  @SerializedName("duration")
+  @Expose
+  @NonNull
+  public final F first;
+  @SerializedName("volume")
+  @Expose
+  @NonNull
+  public final S second;
 
   /**
    * Constructor for a Pair.

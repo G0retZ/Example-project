@@ -4,7 +4,7 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
-import com.cargopull.executor_driver.interactor.MissedOrderUseCase;
+import com.cargopull.executor_driver.interactor.NotificationMessageUseCase;
 import com.cargopull.executor_driver.presentation.SingleLiveEvent;
 import com.cargopull.executor_driver.presentation.ViewState;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -12,20 +12,20 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.internal.disposables.EmptyDisposable;
 import javax.inject.Inject;
 
-public class MissedOrderViewModelImpl extends ViewModel implements
-    MissedOrderViewModel {
+public class MissedOrderViewModelImpl extends ViewModel implements MissedOrderViewModel {
 
   @NonNull
-  private final MissedOrderUseCase missedOrderUseCase;
+  private final NotificationMessageUseCase missedOrderUseCase;
   @NonNull
   private final SingleLiveEvent<ViewState<MissedOrderViewActions>> messageLiveData;
   @NonNull
   private Disposable disposable = EmptyDisposable.INSTANCE;
 
   @Inject
-  public MissedOrderViewModelImpl(@NonNull MissedOrderUseCase missedOrderUseCase) {
+  public MissedOrderViewModelImpl(@NonNull NotificationMessageUseCase missedOrderUseCase) {
     this.missedOrderUseCase = missedOrderUseCase;
     messageLiveData = new SingleLiveEvent<>();
+    loadMissedOrderMessages();
   }
 
   @NonNull
@@ -40,10 +40,9 @@ public class MissedOrderViewModelImpl extends ViewModel implements
     return new MutableLiveData<>();
   }
 
-  @Override
-  public void initializeMissedOrderMessages() {
+  private void loadMissedOrderMessages() {
     disposable.dispose();
-    disposable = missedOrderUseCase.getMissedOrders()
+    disposable = missedOrderUseCase.getNotificationMessages()
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(
             message -> {

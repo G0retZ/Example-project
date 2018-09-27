@@ -2,7 +2,6 @@ package com.cargopull.executor_driver.presentation.executorstate;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
-import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -18,7 +17,8 @@ import com.cargopull.executor_driver.gateway.DataMappingException;
 import com.cargopull.executor_driver.interactor.ExecutorStateUseCase;
 import com.cargopull.executor_driver.presentation.CommonNavigate;
 import com.cargopull.executor_driver.presentation.ViewState;
-import io.reactivex.Flowable;
+import io.reactivex.BackpressureStrategy;
+import io.reactivex.subjects.PublishSubject;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
@@ -39,6 +39,8 @@ public class ExecutorStateViewModelTest {
   public TestRule rule = new InstantTaskExecutorRule();
   private ExecutorStateViewModel viewModel;
   @Mock
+  private ExecutorStateUseCase useCase;
+  @Mock
   private Observer<String> navigationObserver;
   @Mock
   private Observer<ViewState<ExecutorStateViewActions>> viewStateObserver;
@@ -47,48 +49,46 @@ public class ExecutorStateViewModelTest {
   @Mock
   private ExecutorStateViewActions viewActions;
 
-  @Mock
-  private ExecutorStateUseCase executorStateUseCase;
+  private PublishSubject<ExecutorState> publishSubject;
 
   @Before
   public void setUp() {
     ExecutorState.ONLINE.setData(null);
-    when(executorStateUseCase.getExecutorStates(anyBoolean())).thenReturn(Flowable.never());
-    viewModel = new ExecutorStateViewModelImpl(executorStateUseCase);
+    ExecutorState.SHIFT_OPENED.setData(null);
+    publishSubject = PublishSubject.create();
+    when(useCase.getExecutorStates())
+        .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
+    viewModel = new ExecutorStateViewModelImpl(useCase);
   }
 
   /* Тетсируем работу с юзкейсом. */
 
   /**
-   * Должен попросить у юзкейса статусы исполнителя со сбросом кеша.
+   * Должен попросить у юзкейса статусы исполнителя только при создании.
    */
   @Test
-  public void askUseCaseToSubscribeToExecutorStateUpdatesWithCacheReset() {
-    // Действие:
-    viewModel.initializeExecutorState();
-
+  public void askUseCaseToSubscribeToExecutorStateUpdatesInitially() {
     // Результат:
-    verify(executorStateUseCase, only()).getExecutorStates(true);
+    verify(useCase, only()).getExecutorStates();
   }
 
   /**
-   * Должен просить у юзкейса загрузить статусы исполнителя, без сброса кеша, даже если уже
-   * подписан.
+   * Не должен трогать юзкейс на подписках.
    */
   @Test
-  public void doNotTouchUseCaseBeforeFirstRequestComplete() {
+  public void doNotTouchUseCaseOnSubscriptions() {
     // Действие:
-    viewModel.initializeExecutorState();
-    viewModel.initializeExecutorState();
-    viewModel.initializeExecutorState();
+    viewModel.getViewStateLiveData();
+    viewModel.getNavigationLiveData();
+    viewModel.getViewStateLiveData();
+    viewModel.getNavigationLiveData();
 
     // Результат:
-    verify(executorStateUseCase, times(3)).getExecutorStates(true);
-    verifyNoMoreInteractions(executorStateUseCase);
+    verify(useCase, only()).getExecutorStates();
   }
 
   /**
-   * Не должен трогать юзкейса.
+   * Не должен трогать юзкейс на прочтении сообщений.
    */
   @Test
   public void doNotTouchUseCaseForMessageReadEvent() {
@@ -98,7 +98,7 @@ public class ExecutorStateViewModelTest {
     viewModel.messageConsumed();
 
     // Результат:
-    verifyZeroInteractions(executorStateUseCase);
+    verify(useCase, only()).getExecutorStates();
   }
 
   /* Тетсируем сообщение. */
@@ -110,12 +110,10 @@ public class ExecutorStateViewModelTest {
   public void showShiftOpenedMessage() {
     // Дано:
     ExecutorState.SHIFT_OPENED.setData("Message");
-    when(executorStateUseCase.getExecutorStates(anyBoolean()))
-        .thenReturn(Flowable.just(ExecutorState.SHIFT_OPENED));
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
-    viewModel.initializeExecutorState();
+    publishSubject.onNext(ExecutorState.SHIFT_OPENED);
 
     // Результат:
     verify(viewStateObserver, only()).onChanged(viewStateCaptor.capture());
@@ -130,12 +128,10 @@ public class ExecutorStateViewModelTest {
   public void showShiftOpenedMessageThenNull() {
     // Дано:
     ExecutorState.SHIFT_OPENED.setData("Message");
-    when(executorStateUseCase.getExecutorStates(anyBoolean()))
-        .thenReturn(Flowable.just(ExecutorState.SHIFT_OPENED));
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
-    viewModel.initializeExecutorState();
+    publishSubject.onNext(ExecutorState.SHIFT_OPENED);
     viewModel.messageConsumed();
 
     // Результат:
@@ -154,12 +150,10 @@ public class ExecutorStateViewModelTest {
   public void doNotShowNullShiftOpenedMessage() {
     // Дано:
     ExecutorState.SHIFT_OPENED.setData(null);
-    when(executorStateUseCase.getExecutorStates(anyBoolean()))
-        .thenReturn(Flowable.just(ExecutorState.SHIFT_OPENED));
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
-    viewModel.initializeExecutorState();
+    publishSubject.onNext(ExecutorState.SHIFT_OPENED);
 
     // Результат:
     verifyZeroInteractions(viewStateObserver);
@@ -172,12 +166,10 @@ public class ExecutorStateViewModelTest {
   public void doNotShowEmptyShiftOpenedMessage() {
     // Дано:
     ExecutorState.SHIFT_OPENED.setData("");
-    when(executorStateUseCase.getExecutorStates(anyBoolean()))
-        .thenReturn(Flowable.just(ExecutorState.SHIFT_OPENED));
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
-    viewModel.initializeExecutorState();
+    publishSubject.onNext(ExecutorState.SHIFT_OPENED);
 
     // Результат:
     verifyZeroInteractions(viewStateObserver);
@@ -190,12 +182,10 @@ public class ExecutorStateViewModelTest {
   public void showOnlineMessage() {
     // Дано:
     ExecutorState.ONLINE.setData("Message");
-    when(executorStateUseCase.getExecutorStates(anyBoolean()))
-        .thenReturn(Flowable.just(ExecutorState.ONLINE));
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
-    viewModel.initializeExecutorState();
+    publishSubject.onNext(ExecutorState.ONLINE);
 
     // Результат:
     verify(viewStateObserver, only()).onChanged(viewStateCaptor.capture());
@@ -210,12 +200,10 @@ public class ExecutorStateViewModelTest {
   public void showOnlineMessageThenNull() {
     // Дано:
     ExecutorState.ONLINE.setData("Message");
-    when(executorStateUseCase.getExecutorStates(anyBoolean()))
-        .thenReturn(Flowable.just(ExecutorState.ONLINE));
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
-    viewModel.initializeExecutorState();
+    publishSubject.onNext(ExecutorState.ONLINE);
     viewModel.messageConsumed();
 
     // Результат:
@@ -234,12 +222,10 @@ public class ExecutorStateViewModelTest {
   public void doNotShowNullOnlineMessage() {
     // Дано:
     ExecutorState.ONLINE.setData(null);
-    when(executorStateUseCase.getExecutorStates(anyBoolean()))
-        .thenReturn(Flowable.just(ExecutorState.ONLINE));
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
-    viewModel.initializeExecutorState();
+    publishSubject.onNext(ExecutorState.ONLINE);
 
     // Результат:
     verifyZeroInteractions(viewStateObserver);
@@ -252,12 +238,10 @@ public class ExecutorStateViewModelTest {
   public void doNotShowEmptyOnlineMessage() {
     // Дано:
     ExecutorState.ONLINE.setData("");
-    when(executorStateUseCase.getExecutorStates(anyBoolean()))
-        .thenReturn(Flowable.just(ExecutorState.ONLINE));
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
-    viewModel.initializeExecutorState();
+    publishSubject.onNext(ExecutorState.ONLINE);
 
     // Результат:
     verifyZeroInteractions(viewStateObserver);
@@ -270,12 +254,10 @@ public class ExecutorStateViewModelTest {
   public void doNotShowSpaceMessage() {
     // Дано:
     ExecutorState.ONLINE.setData("\n");
-    when(executorStateUseCase.getExecutorStates(anyBoolean()))
-        .thenReturn(Flowable.just(ExecutorState.ONLINE));
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
-    viewModel.initializeExecutorState();
+    publishSubject.onNext(ExecutorState.ONLINE);
 
     // Результат:
     verifyZeroInteractions(viewStateObserver);
@@ -289,6 +271,7 @@ public class ExecutorStateViewModelTest {
   @Test
   public void navigateToNowhere() {
     // Действие:
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
     viewModel.getNavigationLiveData().observeForever(navigationObserver);
     viewModel.messageConsumed();
     viewModel.messageConsumed();
@@ -299,34 +282,16 @@ public class ExecutorStateViewModelTest {
   }
 
   /**
-   * Должен вернуть "перейти к отсутствию сети".
+   * Должен вернуть "перейти к ошибке в данных сервера".
    */
   @Test
   public void navigateToNoNetwork() {
     // Дано:
-    when(executorStateUseCase.getExecutorStates(anyBoolean()))
-        .thenReturn(Flowable.error(DataMappingException::new));
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getNavigationLiveData().observeForever(navigationObserver);
 
     // Действие:
-    viewModel.getNavigationLiveData().observeForever(navigationObserver);
-    viewModel.initializeExecutorState();
-
-    // Результат:
-    verify(navigationObserver, only()).onChanged(CommonNavigate.SERVER_DATA_ERROR);
-  }
-
-  /**
-   * Должен вернуть "перейти к отсутствию сети".
-   */
-  @Test
-  public void navigateToAuthorize() {
-    // Дано:
-    when(executorStateUseCase.getExecutorStates(anyBoolean()))
-        .thenReturn(Flowable.error(DataMappingException::new));
-
-    // Действие:
-    viewModel.getNavigationLiveData().observeForever(navigationObserver);
-    viewModel.initializeExecutorState();
+    publishSubject.onError(new DataMappingException());
 
     // Результат:
     verify(navigationObserver, only()).onChanged(CommonNavigate.SERVER_DATA_ERROR);
@@ -338,12 +303,11 @@ public class ExecutorStateViewModelTest {
   @Test
   public void navigateToShiftClosed() {
     // Дано:
-    when(executorStateUseCase.getExecutorStates(anyBoolean()))
-        .thenReturn(Flowable.just(ExecutorState.SHIFT_CLOSED));
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getNavigationLiveData().observeForever(navigationObserver);
 
     // Действие:
-    viewModel.getNavigationLiveData().observeForever(navigationObserver);
-    viewModel.initializeExecutorState();
+    publishSubject.onNext(ExecutorState.SHIFT_CLOSED);
 
     // Результат:
     verify(navigationObserver, only()).onChanged(ExecutorStateNavigate.MAP_SHIFT_CLOSED);
@@ -355,12 +319,11 @@ public class ExecutorStateViewModelTest {
   @Test
   public void navigateToShiftOpened() {
     // Дано:
-    when(executorStateUseCase.getExecutorStates(anyBoolean()))
-        .thenReturn(Flowable.just(ExecutorState.SHIFT_OPENED));
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getNavigationLiveData().observeForever(navigationObserver);
 
     // Действие:
-    viewModel.getNavigationLiveData().observeForever(navigationObserver);
-    viewModel.initializeExecutorState();
+    publishSubject.onNext(ExecutorState.SHIFT_OPENED);
 
     // Результат:
     verify(navigationObserver, only()).onChanged(ExecutorStateNavigate.MAP_SHIFT_OPENED);
@@ -372,12 +335,11 @@ public class ExecutorStateViewModelTest {
   @Test
   public void navigateToOnline() {
     // Дано:
-    when(executorStateUseCase.getExecutorStates(anyBoolean()))
-        .thenReturn(Flowable.just(ExecutorState.ONLINE));
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getNavigationLiveData().observeForever(navigationObserver);
 
     // Действие:
-    viewModel.getNavigationLiveData().observeForever(navigationObserver);
-    viewModel.initializeExecutorState();
+    publishSubject.onNext(ExecutorState.ONLINE);
 
     // Результат:
     verify(navigationObserver, only()).onChanged(ExecutorStateNavigate.MAP_ONLINE);
@@ -389,15 +351,31 @@ public class ExecutorStateViewModelTest {
   @Test
   public void navigateToDriverOrderConfirmation() {
     // Дано:
-    when(executorStateUseCase.getExecutorStates(anyBoolean()))
-        .thenReturn(Flowable.just(ExecutorState.DRIVER_ORDER_CONFIRMATION));
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getNavigationLiveData().observeForever(navigationObserver);
 
     // Действие:
-    viewModel.getNavigationLiveData().observeForever(navigationObserver);
-    viewModel.initializeExecutorState();
+    publishSubject.onNext(ExecutorState.DRIVER_ORDER_CONFIRMATION);
 
     // Результат:
     verify(navigationObserver, only()).onChanged(ExecutorStateNavigate.DRIVER_ORDER_CONFIRMATION);
+  }
+
+  /**
+   * Должен вернуть "перейти к подтверждению предварительного заказа".
+   */
+  @Test
+  public void navigateToDriverPreOrderConfirmation() {
+    // Дано:
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getNavigationLiveData().observeForever(navigationObserver);
+
+    // Действие:
+    publishSubject.onNext(ExecutorState.DRIVER_PRELIMINARY_ORDER_CONFIRMATION);
+
+    // Результат:
+    verify(navigationObserver, only())
+        .onChanged(ExecutorStateNavigate.DRIVER_PRELIMINARY_ORDER_CONFIRMATION);
   }
 
   /**
@@ -406,12 +384,11 @@ public class ExecutorStateViewModelTest {
   @Test
   public void navigateToClientOrderConfirmation() {
     // Дано:
-    when(executorStateUseCase.getExecutorStates(anyBoolean()))
-        .thenReturn(Flowable.just(ExecutorState.CLIENT_ORDER_CONFIRMATION));
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getNavigationLiveData().observeForever(navigationObserver);
 
     // Действие:
-    viewModel.getNavigationLiveData().observeForever(navigationObserver);
-    viewModel.initializeExecutorState();
+    publishSubject.onNext(ExecutorState.CLIENT_ORDER_CONFIRMATION);
 
     // Результат:
     verify(navigationObserver, only()).onChanged(ExecutorStateNavigate.CLIENT_ORDER_CONFIRMATION);
@@ -423,12 +400,11 @@ public class ExecutorStateViewModelTest {
   @Test
   public void navigateToMovingToClient() {
     // Дано:
-    when(executorStateUseCase.getExecutorStates(anyBoolean()))
-        .thenReturn(Flowable.just(ExecutorState.MOVING_TO_CLIENT));
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getNavigationLiveData().observeForever(navigationObserver);
 
     // Действие:
-    viewModel.getNavigationLiveData().observeForever(navigationObserver);
-    viewModel.initializeExecutorState();
+    publishSubject.onNext(ExecutorState.MOVING_TO_CLIENT);
 
     // Результат:
     verify(navigationObserver, only()).onChanged(ExecutorStateNavigate.MOVING_TO_CLIENT);
@@ -440,12 +416,11 @@ public class ExecutorStateViewModelTest {
   @Test
   public void navigateToWaitingForClient() {
     // Дано:
-    when(executorStateUseCase.getExecutorStates(anyBoolean()))
-        .thenReturn(Flowable.just(ExecutorState.WAITING_FOR_CLIENT));
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getNavigationLiveData().observeForever(navigationObserver);
 
     // Действие:
-    viewModel.getNavigationLiveData().observeForever(navigationObserver);
-    viewModel.initializeExecutorState();
+    publishSubject.onNext(ExecutorState.WAITING_FOR_CLIENT);
 
     // Результат:
     verify(navigationObserver, only()).onChanged(ExecutorStateNavigate.WAITING_FOR_CLIENT);
@@ -457,12 +432,11 @@ public class ExecutorStateViewModelTest {
   @Test
   public void navigateToOrderFulfillment() {
     // Дано:
-    when(executorStateUseCase.getExecutorStates(anyBoolean()))
-        .thenReturn(Flowable.just(ExecutorState.ORDER_FULFILLMENT));
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getNavigationLiveData().observeForever(navigationObserver);
 
     // Действие:
-    viewModel.getNavigationLiveData().observeForever(navigationObserver);
-    viewModel.initializeExecutorState();
+    publishSubject.onNext(ExecutorState.ORDER_FULFILLMENT);
 
     // Результат:
     verify(navigationObserver, only()).onChanged(ExecutorStateNavigate.ORDER_FULFILLMENT);
@@ -474,12 +448,11 @@ public class ExecutorStateViewModelTest {
   @Test
   public void navigateToPaymentAcceptance() {
     // Дано:
-    when(executorStateUseCase.getExecutorStates(anyBoolean()))
-        .thenReturn(Flowable.just(ExecutorState.PAYMENT_CONFIRMATION));
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getNavigationLiveData().observeForever(navigationObserver);
 
     // Действие:
-    viewModel.getNavigationLiveData().observeForever(navigationObserver);
-    viewModel.initializeExecutorState();
+    publishSubject.onNext(ExecutorState.PAYMENT_CONFIRMATION);
 
     // Результат:
     verify(navigationObserver, only()).onChanged(ExecutorStateNavigate.PAYMENT_CONFIRMATION);

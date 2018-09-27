@@ -12,12 +12,16 @@ import com.cargopull.executor_driver.view.ChooseVehicleFragment;
 import com.cargopull.executor_driver.view.ClientOrderConfirmationFragment;
 import com.cargopull.executor_driver.view.ClientOrderConfirmationTimeFragment;
 import com.cargopull.executor_driver.view.DriverOrderConfirmationFragment;
+import com.cargopull.executor_driver.view.DriverPreOrderBookingFragment;
+import com.cargopull.executor_driver.view.DriverPreOrderConfirmationFragment;
 import com.cargopull.executor_driver.view.GoOnlineFragment;
 import com.cargopull.executor_driver.view.MapFragment;
 import com.cargopull.executor_driver.view.MenuFragment;
 import com.cargopull.executor_driver.view.MovingToClientDetailsFragment;
 import com.cargopull.executor_driver.view.MovingToClientFragment;
 import com.cargopull.executor_driver.view.MovingToClientRouteFragment;
+import com.cargopull.executor_driver.view.NewPreOrderButtonFragment;
+import com.cargopull.executor_driver.view.NewPreOrderFragment;
 import com.cargopull.executor_driver.view.OnlineFragment;
 import com.cargopull.executor_driver.view.OrderCostDetailsFragment;
 import com.cargopull.executor_driver.view.OrderCostDetailsOrderDetailsFragment;
@@ -26,11 +30,19 @@ import com.cargopull.executor_driver.view.OrderFulfillmentActionsDialogFragment;
 import com.cargopull.executor_driver.view.OrderFulfillmentDetailsFragment;
 import com.cargopull.executor_driver.view.OrderFulfillmentFragment;
 import com.cargopull.executor_driver.view.OrderRouteFragment;
+import com.cargopull.executor_driver.view.PreOrderConfirmationFragment;
+import com.cargopull.executor_driver.view.PreOrderFragment;
+import com.cargopull.executor_driver.view.PreOrdersFragment;
 import com.cargopull.executor_driver.view.ProfileFragment;
+import com.cargopull.executor_driver.view.SelectedPreOrderConfirmationFragment;
+import com.cargopull.executor_driver.view.SelectedPreOrderFragment;
 import com.cargopull.executor_driver.view.SelectedVehicleFragment;
 import com.cargopull.executor_driver.view.SelectedVehicleOptionsFragment;
 import com.cargopull.executor_driver.view.ServerConnectionFragment;
 import com.cargopull.executor_driver.view.ServicesFragment;
+import com.cargopull.executor_driver.view.UpcomingPreOrderConfirmationFragment;
+import com.cargopull.executor_driver.view.UpcomingPreOrderFragment;
+import com.cargopull.executor_driver.view.UpcomingPreOrderNotificationFragment;
 import com.cargopull.executor_driver.view.VehicleOptionsFragment;
 import com.cargopull.executor_driver.view.WaitingForClientFragment;
 import com.cargopull.executor_driver.view.WaitingForClientRouteFragment;
@@ -110,4 +122,28 @@ public interface AppComponent {
   void inject(OrderCostDetailsRouteFragment orderCostDetailsRouteFragment);
 
   void inject(ProfileFragment profileFragment);
+
+  void inject(DriverPreOrderBookingFragment driverPreOrderBookingFragment);
+
+  void inject(PreOrdersFragment preOrdersFragment);
+
+  void inject(PreOrderFragment preOrderFragment);
+
+  void inject(SelectedPreOrderFragment selectedPreOrderFragment);
+
+  void inject(SelectedPreOrderConfirmationFragment selectedPreOrderConfirmationFragment);
+
+  void inject(NewPreOrderFragment newPreOrderFragment);
+
+  void inject(NewPreOrderButtonFragment newPreOrderButtonFragment);
+
+  void inject(DriverPreOrderConfirmationFragment driverPreOrderConfirmationFragment);
+
+  void inject(PreOrderConfirmationFragment preOrderConfirmationFragment);
+
+  void inject(UpcomingPreOrderFragment upcomingPreOrderFragment);
+
+  void inject(UpcomingPreOrderConfirmationFragment upcomingPreOrderConfirmationFragment);
+
+  void inject(UpcomingPreOrderNotificationFragment upcomingPreOrderNotificationFragment);
 }

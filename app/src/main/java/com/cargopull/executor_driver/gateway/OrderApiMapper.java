@@ -9,11 +9,12 @@ import com.cargopull.executor_driver.entity.Order;
 import com.cargopull.executor_driver.entity.RoutePoint;
 import com.google.gson.Gson;
 import javax.inject.Inject;
+import ua.naiksoftware.stomp.client.StompMessage;
 
 /**
  * Преобразуем статус из ответа сервера в бизнес объект статуса исполнителя.
  */
-public class OrderApiMapper implements Mapper<String, Order> {
+public class OrderApiMapper implements Mapper<StompMessage, Order> {
 
   @NonNull
   private final Mapper<ApiOptionItem, Option> apiOptionMapper;
@@ -29,14 +30,17 @@ public class OrderApiMapper implements Mapper<String, Order> {
 
   @NonNull
   @Override
-  public Order map(@NonNull String from) throws Exception {
-    if (from.isEmpty()) {
+  public Order map(@NonNull StompMessage from) throws Exception {
+    if (from.getPayload() == null) {
+      throw new DataMappingException("Ошибка маппинга: данные не должны быть null!");
+    }
+    if (from.getPayload().trim().isEmpty()) {
       throw new DataMappingException("Ошибка маппинга: данные не должны быть пустыми!");
     }
     Gson gson = new Gson();
     ApiOrder apiOrder;
     try {
-      apiOrder = gson.fromJson(from, ApiOrder.class);
+      apiOrder = gson.fromJson(from.getPayload(), ApiOrder.class);
     } catch (Exception e) {
       throw new DataMappingException("Ошибка маппинга: не удалось распарсить JSON: " + from, e);
     }
@@ -45,12 +49,6 @@ public class OrderApiMapper implements Mapper<String, Order> {
     }
     if (apiOrder.getApiOrderService().getName() == null) {
       throw new DataMappingException("Ошибка маппинга: Имя услуги не должно быть null!");
-    }
-    if (apiOrder.getExecutorDistance() == null) {
-      throw new DataMappingException("Ошибка маппинга: Дистанция не должна быть null!");
-    }
-    if (apiOrder.getEtaToStartPoint() == 0) {
-      throw new DataMappingException("Ошибка маппинга: ETA должно быть больше 0!");
     }
     if (apiOrder.getRoute() == null) {
       throw new DataMappingException("Ошибка маппинга: маршрут не должен быть null!");
@@ -64,7 +62,7 @@ public class OrderApiMapper implements Mapper<String, Order> {
         apiOrder.getId(),
         apiOrder.getComment() == null ? "" : apiOrder.getComment(),
         apiOrder.getApiOrderService().getName(),
-        apiOrder.getExecutorDistance().getDistance(),
+        apiOrder.getExecutorDistance() == null ? 0 : apiOrder.getExecutorDistance().getDistance(),
         apiOrder.getEstimatedAmountText() == null ? "" : apiOrder.getEstimatedAmountText(),
         apiOrder.getEstimatedAmount(),
         apiOrder.getEstimatedTime(),
@@ -73,7 +71,8 @@ public class OrderApiMapper implements Mapper<String, Order> {
         apiOrder.getTimeout(),
         apiOrder.getEtaToStartPoint(),
         apiOrder.getConfirmationTime(),
-        apiOrder.getOrderStartTime());
+        apiOrder.getStartTime(),
+        apiOrder.getScheduledStartTime());
     if (apiOrder.getOptions() != null) {
       for (ApiOptionItem vehicleOptionItem : apiOrder.getOptions()) {
         order.addOptions(apiOptionMapper.map(vehicleOptionItem));

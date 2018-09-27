@@ -32,9 +32,7 @@ import com.cargopull.executor_driver.presentation.orderroute.OrderRouteViewModel
 import com.cargopull.executor_driver.presentation.orderroute.RoutePointItem;
 import com.cargopull.executor_driver.presentation.ordertime.OrderTimeViewActions;
 import com.cargopull.executor_driver.presentation.ordertime.OrderTimeViewModel;
-import com.cargopull.executor_driver.utils.Pair;
 import java.text.DecimalFormat;
-import java.util.Collections;
 import java.util.List;
 import javax.inject.Inject;
 import org.joda.time.LocalTime;
@@ -140,7 +138,7 @@ public class OrderFulfillmentFragment extends BaseFragment implements OrderCostV
       public void onAnimationEnd(Animator animation) {
         if (!canceled) {
           nextRoutePointViewModel.closeRoutePoint();
-          shakeItPlayer.shakeIt(Collections.singletonList(new Pair<>(200L, 255)));
+          shakeItPlayer.shakeIt(R.raw.single_shot_vibro);
         }
       }
 
@@ -191,7 +189,7 @@ public class OrderFulfillmentFragment extends BaseFragment implements OrderCostV
       public void onAnimationEnd(Animator animation) {
         if (!canceled) {
           nextRoutePointViewModel.completeTheOrder();
-          shakeItPlayer.shakeIt(Collections.singletonList(new Pair<>(200L, 255)));
+          shakeItPlayer.shakeIt(R.raw.single_shot_vibro);
         }
       }
 
@@ -304,7 +302,6 @@ public class OrderFulfillmentFragment extends BaseFragment implements OrderCostV
 
   @Override
   public void showNextRoutePoint(@NonNull String url) {
-
   }
 
   @Override

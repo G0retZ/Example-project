@@ -5,7 +5,7 @@
   xmlns:tools="http://schemas.android.com/tools"
   android:layout_width="match_parent"
   android:layout_height="match_parent"
-  android:paddingBottom="4dp">
+  android:paddingBottom="2dp">
   <ScrollView
     android:layout_width="0dp"
     android:layout_height="0dp"
@@ -117,46 +117,45 @@
     android:id="@+id/openNavigator"
     style="@style/AppTheme.Button.Colored.Compact"
     android:layout_width="0dp"
-    android:layout_height="wrap_content"
+    android:layout_height="64dp"
     android:layout_marginStart="4dp"
     android:layout_marginLeft="4dp"
     android:text="@string/get_directions"
     app:layout_constraintBottom_toBottomOf="parent"
-    app:layout_constraintEnd_toStartOf="@+id/closeRoutePointText"
+    app:layout_constraintEnd_toStartOf="@+id/closeRoutePoint"
     app:layout_constraintHorizontal_chainStyle="spread"
     app:layout_constraintStart_toStartOf="parent"/>
   <ProgressBar
     android:id="@+id/closeRoutePoint"
     style="@style/Widget.AppCompat.ProgressBar.Horizontal"
     android:layout_width="0dp"
-    android:layout_height="0dp"
-    android:progressDrawable="@drawable/button_progressbar"
-    app:layout_constraintBottom_toBottomOf="@id/closeRoutePointText"
-    app:layout_constraintEnd_toEndOf="@id/closeRoutePointText"
-    app:layout_constraintStart_toStartOf="@id/closeRoutePointText"
-    app:layout_constraintTop_toTopOf="@id/closeRoutePointText"/>
-  <TextView
-    android:id="@+id/closeRoutePointText"
-    style="@style/TextAppearance.AppCompat.Widget.Button.Colored"
-    android:layout_width="0dp"
-    android:layout_height="wrap_content"
+    android:layout_height="52dp"
+    android:layout_marginTop="6dp"
     android:layout_marginBottom="6dp"
     android:layout_marginStart="4dp"
     android:layout_marginEnd="8dp"
     android:layout_marginLeft="4dp"
     android:layout_marginRight="8dp"
-    android:paddingTop="4dp"
-    android:paddingBottom="4dp"
+    android:progressDrawable="@drawable/button_progressbar"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toEndOf="@+id/openNavigator"
+    />
+  <TextView
+    android:id="@+id/closeRoutePointText"
+    style="@style/TextAppearance.AppCompat.Widget.Button.Colored"
+    android:layout_width="0dp"
+    android:layout_height="0dp"
     android:paddingStart="8dp"
     android:paddingEnd="8dp"
     android:gravity="center"
-    android:minHeight="36dp"
     android:text="@string/arrived"
     android:textColor="@android:color/primary_text_dark"
     android:textSize="16sp"
-    app:layout_constraintBottom_toBottomOf="parent"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintStart_toEndOf="@+id/openNavigator"/>
+    app:layout_constraintBottom_toBottomOf="@id/closeRoutePoint"
+    app:layout_constraintEnd_toEndOf="@id/closeRoutePoint"
+    app:layout_constraintStart_toStartOf="@id/closeRoutePoint"
+    app:layout_constraintTop_toTopOf="@id/closeRoutePoint"/>
   <ProgressBar
     android:id="@+id/completeTheOrder"
     style="@style/Widget.AppCompat.ProgressBar.Horizontal"

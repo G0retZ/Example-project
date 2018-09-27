@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="match_parent"
+  android:layout_height="wrap_content">
+  <Button
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/takeBreak"
+    style="@style/AppTheme.Button.Borderless.Filled.Yellow"
+    android:layout_width="match_parent"
+    android:layout_height="64dp"
+    android:text="@string/stop_work"/>
+  <Button
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/resumeWork"
+    style="@style/AppTheme.Button.Borderless.Filled"
+    android:layout_width="match_parent"
+    android:layout_height="64dp"
+    android:text="@string/resume_work"/>
+</FrameLayout>

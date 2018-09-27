@@ -9,6 +9,8 @@ import android.support.v7.widget.Toolbar;
 import com.cargopull.executor_driver.R;
 import com.cargopull.executor_driver.presentation.menu.MenuNavigate;
 import com.cargopull.executor_driver.presentation.onlinebutton.OnlineButtonNavigate;
+import com.cargopull.executor_driver.presentation.preorder.PreOrderNavigate;
+import com.cargopull.executor_driver.presentation.upcomingpreorder.UpcomingPreOrderNavigate;
 
 public class OnlineActivity extends BaseActivity {
 
@@ -54,6 +56,12 @@ public class OnlineActivity extends BaseActivity {
         break;
       case MenuNavigate.BALANCE:
         startActivity(new Intent(this, BalanceActivity.class));
+        break;
+      case PreOrderNavigate.ORDER_APPROVAL:
+        startActivity(new Intent(this, DriverPreOrderBookingActivity.class));
+        break;
+      case UpcomingPreOrderNavigate.UPCOMING_PRE_ORDER:
+        startActivity(new Intent(this, UpcomingPreOrderActivity.class));
         break;
       default:
         super.navigate(destination);

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,7 +18,12 @@ import com.cargopull.executor_driver.presentation.balance.BalanceViewModel;
 import com.cargopull.executor_driver.presentation.menu.MenuNavigate;
 import com.cargopull.executor_driver.presentation.onlineswitch.OnlineSwitchViewActions;
 import com.cargopull.executor_driver.presentation.onlineswitch.OnlineSwitchViewModel;
+import com.cargopull.executor_driver.presentation.preorderslist.PreOrdersListItem;
+import com.cargopull.executor_driver.presentation.preorderslist.PreOrdersListViewActions;
+import com.cargopull.executor_driver.presentation.preorderslist.PreOrdersListViewModel;
 import java.text.DecimalFormat;
+import java.util.List;
+import java.util.Objects;
 import javax.inject.Inject;
 
 /**
@@ -25,12 +31,15 @@ import javax.inject.Inject;
  */
 
 public class MenuFragment extends BaseFragment implements BalanceViewActions,
-    OnlineSwitchViewActions {
+    OnlineSwitchViewActions, PreOrdersListViewActions {
 
   private BalanceViewModel balanceViewModel;
   private OnlineSwitchViewModel onlineSwitchViewModel;
+  private PreOrdersListViewModel preOrdersListViewModel;
   private TextView balanceAmount;
+  private TextView preOrdersAmount;
   private boolean nowOnline;
+  private DialogFragment aboutFragment;
 
   @Inject
   public void setBalanceViewModel(@NonNull BalanceViewModel balanceViewModel) {
@@ -40,6 +49,11 @@ public class MenuFragment extends BaseFragment implements BalanceViewActions,
   @Inject
   public void setOnlineSwitchViewModel(@NonNull OnlineSwitchViewModel onlineSwitchViewModel) {
     this.onlineSwitchViewModel = onlineSwitchViewModel;
+  }
+
+  @Inject
+  public void setPreOrdersListViewModel(PreOrdersListViewModel preOrdersListViewModel) {
+    this.preOrdersListViewModel = preOrdersListViewModel;
   }
 
   @Nullable
@@ -65,6 +79,12 @@ public class MenuFragment extends BaseFragment implements BalanceViewActions,
             .show()
     );
     balanceAmount = view.findViewById(R.id.balanceAmount);
+    view.findViewById(R.id.preOrders).setOnClickListener(v -> navigate(MenuNavigate.PRE_ORDERS));
+    preOrdersAmount = view.findViewById(R.id.preOrdersAmount);
+    aboutFragment = new AboutDialogFragment();
+    view.findViewById(R.id.about).setOnClickListener(
+        v -> aboutFragment.show(Objects.requireNonNull(getFragmentManager()), "about")
+    );
     return view;
   }
 
@@ -97,6 +117,16 @@ public class MenuFragment extends BaseFragment implements BalanceViewActions,
         navigate(destination);
       }
     });
+    preOrdersListViewModel.getViewStateLiveData().observe(this, viewState -> {
+      if (viewState != null) {
+        viewState.apply(this);
+      }
+    });
+    preOrdersListViewModel.getNavigationLiveData().observe(this, destination -> {
+      if (destination != null) {
+        navigate(destination);
+      }
+    });
   }
 
   @Override
@@ -116,7 +146,6 @@ public class MenuFragment extends BaseFragment implements BalanceViewActions,
 
   @Override
   public void showBonusAccountAmount(long amount) {
-
   }
 
   @Override
@@ -126,7 +155,6 @@ public class MenuFragment extends BaseFragment implements BalanceViewActions,
 
   @Override
   public void showBreakText(boolean show) {
-
   }
 
   @Override
@@ -136,11 +164,31 @@ public class MenuFragment extends BaseFragment implements BalanceViewActions,
 
   @Override
   public void showResumeWorkButton(boolean show) {
-
   }
 
   @Override
   public void showSwitchPending(boolean pending) {
     showPending(pending, toString() + "1");
+  }
+
+  @Override
+  public void showPreOrdersListPending(boolean pending) {
+  }
+
+  @Override
+  public void showPreOrdersList(boolean show) {
+  }
+
+  @Override
+  public void setPreOrdersListItems(@NonNull List<PreOrdersListItem> preOrdersListItems) {
+    int count = 0;
+    for (PreOrdersListItem preOrdersListItem : preOrdersListItems) {
+      count += preOrdersListItem.getViewType() == 1 ? 1 : 0;
+    }
+    preOrdersAmount.setText(String.valueOf(count));
+  }
+
+  @Override
+  public void showEmptyPreOrdersList(boolean show) {
   }
 }

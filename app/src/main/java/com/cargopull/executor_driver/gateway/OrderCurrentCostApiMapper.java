@@ -17,7 +17,7 @@ public class OrderCurrentCostApiMapper implements Mapper<StompMessage, Long> {
   @Override
   public Long map(@NonNull StompMessage from) throws Exception {
     try {
-      return Long.valueOf(from.findHeader("TotalAmount").trim());
+      return Long.valueOf(from.findHeader("TotalAmount"));
     } catch (Exception e) {
       throw new DataMappingException("Ошибка маппинга: неверный формат стоимости!", e);
     }

@@ -24,9 +24,7 @@ import com.cargopull.executor_driver.presentation.order.OrderViewModel;
 import com.cargopull.executor_driver.presentation.waitingforclient.WaitingForClientNavigate;
 import com.cargopull.executor_driver.presentation.waitingforclient.WaitingForClientViewActions;
 import com.cargopull.executor_driver.presentation.waitingforclient.WaitingForClientViewModel;
-import com.cargopull.executor_driver.utils.Pair;
 import java.text.DecimalFormat;
-import java.util.Collections;
 import javax.inject.Inject;
 import org.joda.time.LocalTime;
 
@@ -108,7 +106,7 @@ public class WaitingForClientFragment extends BaseFragment implements
       public void onAnimationEnd(Animator animation) {
         if (!canceled) {
           waitingForClientViewModel.startLoading();
-          shakeItPlayer.shakeIt(Collections.singletonList(new Pair<>(200L, 255)));
+          shakeItPlayer.shakeIt(R.raw.single_shot_vibro);
         }
       }
 
@@ -199,7 +197,6 @@ public class WaitingForClientFragment extends BaseFragment implements
 
   @Override
   public void showLoadPoint(@NonNull String url) {
-
   }
 
   @Override
@@ -221,12 +218,10 @@ public class WaitingForClientFragment extends BaseFragment implements
 
   @Override
   public void showLastPointAddress(@NonNull String address) {
-
   }
 
   @Override
   public void showRoutePointsCount(int count) {
-
   }
 
   @Override
@@ -236,27 +231,18 @@ public class WaitingForClientFragment extends BaseFragment implements
 
   @Override
   public void showTimeout(int timeout) {
-
   }
 
   @Override
   public void showFirstPointDistance(String distance) {
-
   }
 
   @Override
   public void showFirstPointEta(int etaTime) {
-
-  }
-
-  @Override
-  public void showTimeout(int progress, long timeout) {
-
   }
 
   @Override
   public void showEstimatedPrice(@NonNull String priceText) {
-
   }
 
   @Override
@@ -273,6 +259,14 @@ public class WaitingForClientFragment extends BaseFragment implements
         localTime.getMinuteOfHour(),
         decimalFormat.format(cost))
     );
+  }
+
+  @Override
+  public void showOrderOccupationTime(@NonNull String occupationTime) {
+  }
+
+  @Override
+  public void showOrderOccupationDate(@NonNull String occupationDate) {
   }
 
   @Override
@@ -297,5 +291,13 @@ public class WaitingForClientFragment extends BaseFragment implements
       cargoDescText.setVisibility(View.VISIBLE);
       cargoDescText.setText(comment);
     }
+  }
+
+  @Override
+  public void showOrderExpiredMessage(@Nullable String message) {
+  }
+
+  @Override
+  public void showOrderCancelledMessage(boolean show) {
   }
 }

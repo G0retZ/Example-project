@@ -1,6 +1,7 @@
 package com.cargopull.executor_driver.presentation.order;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 /**
  * Действия для смены состояния вида окна заказа.
@@ -27,14 +28,6 @@ public interface OrderViewActions {
    * @param timeout - время оставшееся до таймаута в секундах
    */
   void showTimeout(int timeout);
-
-  /**
-   * Показать индикатор таймаута приниятия решения по заказу.
-   *
-   * @param progress - сколько процентов осталось до окончания
-   * @param timeout - время оставшееся до таймаут
-   */
-  void showTimeout(int progress, long timeout);
 
   /**
    * Показать растояние до первой точки маршрута.
@@ -103,6 +96,22 @@ public interface OrderViewActions {
   void showOrderConditions(@NonNull String routeDistance, int time, long cost);
 
   /**
+   * Показать время занятости по заказу.
+   *
+   * @param occupationTime - время занятости
+   */
+  @SuppressWarnings({"unused", "EmptyMethod"})
+  void showOrderOccupationTime(@NonNull String occupationTime);
+
+  /**
+   * Показать дату занятости по заказу.
+   *
+   * @param occupationDate - дата занятости
+   */
+  @SuppressWarnings({"unused", "EmptyMethod"})
+  void showOrderOccupationDate(@NonNull String occupationDate);
+
+  /**
    * Показать опции, необходимые для принятия заказа.
    *
    * @param options - список опций, требуемых для выполнения заказа
@@ -115,4 +124,18 @@ public interface OrderViewActions {
    * @param comment - адрес
    */
   void showComment(@NonNull String comment);
+
+  /**
+   * показать сообщение о том, что заказ истек.
+   *
+   * @param message - текст сообщения или null, если не показывать
+   */
+  void showOrderExpiredMessage(@Nullable String message);
+
+  /**
+   * показать сообщение о том, что заказ истек.
+   *
+   * @param show - показать или нет?
+   */
+  void showOrderCancelledMessage(boolean show);
 }

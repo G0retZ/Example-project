@@ -5,6 +5,7 @@
   xmlns:tools="http://schemas.android.com/tools"
   android:layout_width="match_parent"
   android:layout_height="match_parent"
+  android:animateLayoutChanges="true"
   android:keepScreenOn="true"
   android:orientation="vertical">
   <android.support.v7.widget.Toolbar
@@ -14,6 +15,12 @@
     android:layout_height="?android:attr/actionBarSize"
     app:navigationIcon="@drawable/ic_back_24dp"
     app:title="@string/menu"/>
+  <fragment
+    android:id="@+id/fragment_new_pre_order"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:name="com.cargopull.executor_driver.view.NewPreOrderFragment"
+    tools:layout="@layout/fragment_new_pre_order"/>
   <fragment
     android:id="@+id/fragment_menu"
     android:layout_width="match_parent"
@@ -37,5 +44,5 @@
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toBottomOf="@id/appBar"
-    tools:layout="@layout/fragment_online"/>
+    tools:layout="@layout/fragment_online_menu"/>
 </LinearLayout>

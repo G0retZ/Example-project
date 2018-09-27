@@ -1,9 +1,19 @@
 package com.cargopull.executor_driver.presentation.orderconfirmation;
 
+import android.support.annotation.Nullable;
+
 /**
  * Действия для смены состояния вида окна заказа.
  */
 public interface OrderConfirmationViewActions {
+
+  /**
+   * Показать индикатор таймаута приниятия решения по заказу. (-1;-1) для заморозки таймера
+   *
+   * @param progress - сколько процентов осталось до окончания
+   * @param timeout - время оставшееся до таймаута
+   */
+  void showTimeout(int progress, long timeout);
 
   /**
    * Показать индикатор процесса.
@@ -25,4 +35,25 @@ public interface OrderConfirmationViewActions {
    * @param enable - задействовать или нет?
    */
   void enableAcceptButton(boolean enable);
+
+  /**
+   * Показать сообщение об успешном принятии заказа.
+   *
+   * @param message - текст сообщения или null, если не показывать
+   */
+  void showAcceptedMessage(@Nullable String message);
+
+  /**
+   * Показать сообщение об успешном отказе от заказа.
+   *
+   * @param message - текст сообщения или null, если не показывать
+   */
+  void showDeclinedMessage(@Nullable String message);
+
+  /**
+   * Показать сообщение о просроченном заказе.
+   *
+   * @param message - текст сообщения или null, если не показывать
+   */
+  void showFailedMessage(@Nullable String message);
 }

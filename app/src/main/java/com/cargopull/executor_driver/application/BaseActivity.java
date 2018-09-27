@@ -95,13 +95,14 @@ public class BaseActivity extends AppCompatActivity implements ExecutorStateView
   }
 
   @Inject
-  public void setServerTimeViewModel(@Nullable ServerTimeViewModel serverTimeViewModel) {
+  public void setServerTimeViewModel(@NonNull ServerTimeViewModel serverTimeViewModel) {
     this.serverTimeViewModel = serverTimeViewModel;
   }
 
   @Override
   protected void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+    pendingDialogFragment.setCancelable(false);
     getDiComponent().inject(this);
     if (executorStateViewModel == null) {
       throw new IllegalStateException("Граф зависимостей поломан!");
@@ -267,7 +268,7 @@ public class BaseActivity extends AppCompatActivity implements ExecutorStateView
                 )));
               }
             })
-            .setNegativeButton(getString(R.string.exit_app), (a, b) -> exitAndKill())
+            .setNegativeButton(getString(R.string.exit), (a, b) -> exitAndKill())
             .create();
         if (resumed) {
           errorDialog.show();
@@ -295,14 +296,9 @@ public class BaseActivity extends AppCompatActivity implements ExecutorStateView
       blockers.remove(blockerId);
     }
     if (blockers.isEmpty()) {
-      if (pendingDialogFragment.isShowing()) {
-        pendingDialogFragment.dismiss();
-      }
+      pendingDialogFragment.dismiss();
     } else {
-      if (!pendingDialogFragment.isShowing()) {
-        pendingDialogFragment.setCancelable(false);
-        pendingDialogFragment.show(getSupportFragmentManager(), "pending");
-      }
+      pendingDialogFragment.show(getSupportFragmentManager(), "pending");
     }
   }
 
