@@ -56,6 +56,9 @@ public class ExecutorStateViewModelImpl extends ViewModel implements ExecutorSta
         .subscribe(
             executorState -> {
               switch (executorState) {
+                case BLOCKED:
+                  navigateLiveData.postValue(ExecutorStateNavigate.BLOCKED);
+                  break;
                 case SHIFT_CLOSED:
                   navigateLiveData.postValue(ExecutorStateNavigate.MAP_SHIFT_CLOSED);
                   break;
