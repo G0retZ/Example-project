@@ -99,6 +99,10 @@ public class OnlineSwitchViewModelImpl extends ViewModel implements OnlineSwitch
 
   private void onNextState(ExecutorState executorState) {
     switch (executorState) {
+      case BLOCKED:
+        viewStateLiveData
+            .postValue(new OnlineSwitchViewStatePending(new OnlineSwitchViewState(false)));
+        break;
       case SHIFT_CLOSED:
         viewStateLiveData
             .postValue(new OnlineSwitchViewStatePending(new OnlineSwitchViewState(false)));
