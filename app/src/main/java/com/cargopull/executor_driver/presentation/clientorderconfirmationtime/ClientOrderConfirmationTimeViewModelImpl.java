@@ -16,6 +16,7 @@ import io.reactivex.internal.disposables.EmptyDisposable;
 import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
 
+// TODO: https://jira.capsrv.xyz/browse/RUCAP-2122
 public class ClientOrderConfirmationTimeViewModelImpl extends ViewModel implements
     ClientOrderConfirmationTimeViewModel {
 
