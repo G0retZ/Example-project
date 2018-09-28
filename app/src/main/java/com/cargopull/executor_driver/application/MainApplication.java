@@ -310,6 +310,8 @@ public class MainApplication extends Application implements ServerConnectionView
         serverConnectionViewModel.disconnectServer();
         stopService();
         break;
+      case ExecutorStateNavigate.BLOCKED:
+        stopService();
       case ExecutorStateNavigate.MAP_SHIFT_CLOSED:
         stopService();
         break;
