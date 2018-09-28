@@ -1,932 +1,204 @@
 package com.cargopull.executor_driver.gateway;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.mockito.Mockito.only;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.when;
 
 import com.cargopull.executor_driver.entity.ExecutorState;
-import java.util.Arrays;
-import java.util.Collections;
+import com.cargopull.executor_driver.utils.Pair;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map.Entry;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnit;
+import org.mockito.junit.MockitoRule;
 import ua.naiksoftware.stomp.StompHeader;
 import ua.naiksoftware.stomp.client.StompMessage;
 
+@RunWith(Parameterized.class)
 public class ExecutorStateApiMapperTest {
 
+  @Rule
+  public MockitoRule rule = MockitoJUnit.rule();
+  @Rule
+  public ExpectedException thrown = ExpectedException.none();
   private Mapper<StompMessage, ExecutorState> mapper;
+  @Mock
+  private Mapper<StompMessage, String> payloadMapper;
+  private StompMessage conditionStompMessage;
+  private Class<? extends Exception> expectedException;
+  private ExecutorState expectedExecutorState;
+  private String expectedMessage;
+  private long expectedTimer;
+
+  // Each parameter should be placed as an argument here
+  // Every time runner triggers, it will pass the arguments
+  // from parameters we defined in primeNumbers() method
+
+  public ExecutorStateApiMapperTest(Pair<StompMessage, Expectations> conditions) {
+    conditionStompMessage = conditions.first;
+    expectedException = conditions.second.exception;
+    expectedExecutorState = conditions.second.executorState;
+    expectedMessage = conditions.second.message;
+    expectedTimer = conditions.second.timer;
+  }
+
+  @Parameterized.Parameters
+  public static Iterable primeNumbers() {
+    ArrayList<Pair<StompMessage, Expectations>> conditions = new ArrayList<>();
+    // Соответствия значений хедера статуса эксепшенам
+    HashMap<String, Class<? extends Exception>> statusHeadersToExceptions = new HashMap<>();
+    statusHeadersToExceptions.put(null, DataMappingException.class);
+    statusHeadersToExceptions.put("", DataMappingException.class);
+    statusHeadersToExceptions.put("SHIFT", DataMappingException.class);
+    // Соответствия значений хедера статуса статусам исполнителя
+    HashMap<String, ExecutorState> statusHeadersToStates = new HashMap<>();
+    statusHeadersToStates.put(null, null);
+    statusHeadersToStates.put("", null);
+    statusHeadersToStates.put("SHIFT", null);
+    statusHeadersToStates.put("BLOCKED", ExecutorState.BLOCKED);
+    statusHeadersToStates.put("SHIFT_CLOSED", ExecutorState.SHIFT_CLOSED);
+    statusHeadersToStates.put("SHIFT_OPENED", ExecutorState.SHIFT_OPENED);
+    statusHeadersToStates.put("ONLINE", ExecutorState.ONLINE);
+    statusHeadersToStates.put("DRIVER_ORDER_CONFIRMATION", ExecutorState.DRIVER_ORDER_CONFIRMATION);
+    statusHeadersToStates.put("CLIENT_ORDER_CONFIRMATION", ExecutorState.CLIENT_ORDER_CONFIRMATION);
+    statusHeadersToStates.put("MOVING_TO_CLIENT", ExecutorState.MOVING_TO_CLIENT);
+    statusHeadersToStates.put("WAITING_FOR_CLIENT", ExecutorState.WAITING_FOR_CLIENT);
+    statusHeadersToStates.put("ORDER_FULFILLMENT", ExecutorState.ORDER_FULFILLMENT);
+    statusHeadersToStates.put("PAYMENT_CONFIRMATION", ExecutorState.PAYMENT_CONFIRMATION);
+    // Соответствия значений хедера пейлоада сообщениям
+    HashMap<String, String> payloadsToMessages = new HashMap<>();
+    payloadsToMessages.put(null, null);
+    payloadsToMessages.put("\npayload", "payload");
+    // Соответствия значений хедера таймера эксепшенам
+    HashMap<String, Class<? extends Exception>> timeHeadersToExceptions = new HashMap<>();
+    timeHeadersToExceptions.put("", DataMappingException.class);
+    timeHeadersToExceptions.put("jdi1293", DataMappingException.class);
+    // Соответствия значений хедера таймера значениям таймера
+    HashMap<String, Long> timerHeadersToTimers = new HashMap<>();
+    timerHeadersToTimers.put(null, null);
+    timerHeadersToTimers.put("", null);
+    timerHeadersToTimers.put("jdi1293", null);
+    timerHeadersToTimers.put("1345", 1345L);
+    // Соответствия значений хедера статуса эксепшенам
+    HashMap<String, ExecutorState> blockedHeadersToStates = new HashMap<>();
+    blockedHeadersToStates.put(null, null);
+    blockedHeadersToStates.put("", null);
+    blockedHeadersToStates.put("true", ExecutorState.BLOCKED);
+    for (Entry<String, ExecutorState> executorStateEntry : statusHeadersToStates.entrySet()) {
+      for (Entry<String, String> payloadEntry : payloadsToMessages.entrySet()) {
+        for (Entry<String, Long> timerEntry : timerHeadersToTimers.entrySet()) {
+          for (Entry<String, ExecutorState> block : blockedHeadersToStates.entrySet()) {
+            Class<? extends Exception> exceptionClass = null;
+            // Если нет соответствия хедеров статуса и блокировки
+            if (executorStateEntry.getValue() == null && block.getValue() == null) {
+              // Берем ошибку соответствующую хедеру статуса
+              exceptionClass = statusHeadersToExceptions.get(executorStateEntry.getKey());
+            }
+            // Если нет ошибки соответствующей хедеру статуса
+            if (exceptionClass == null) {
+              // Берем ошибку от соответствующую хедеру таймера
+              exceptionClass = timeHeadersToExceptions.get(timerEntry.getKey());
+            }
+            List<StompHeader> headers = new ArrayList<>();
+            // Если есть статус соответствующий хедеру
+            if (executorStateEntry.getKey() != null) {
+              // Добавляем в хедер его ключ
+              headers.add(new StompHeader("Status", executorStateEntry.getKey()));
+            }
+            // Если есть таймер соответствующий хедеру
+            if (timerEntry.getKey() != null) {
+              // Добавляем в хедер его ключ
+              headers.add(new StompHeader("CustomerConfirmationTimer", timerEntry.getKey()));
+            }
+            // Если есть флаг соответствующий хедеру
+            if (block.getKey() != null) {
+              // Добавляем в хедер его ключ
+              headers.add(new StompHeader("Blocked", block.getKey()));
+            }
+            conditions.add(new Pair<>(
+                    new StompMessage("MESSAGE", headers, payloadEntry.getKey()),
+                    new Expectations(
+                        exceptionClass,
+                        block.getValue() != null ? block.getValue() : executorStateEntry.getValue(),
+                        payloadEntry.getValue(),
+                        timerEntry.getValue() == null ? 0 : timerEntry.getValue()
+                    )
+                )
+            );
+          }
+        }
+      }
+    }
+    return conditions;
+  }
 
   @Before
-  public void setUp() {
-    mapper = new ExecutorStateApiMapper();
+  public void setUp() throws Exception {
+    // Дано:
+    when(payloadMapper.map(conditionStompMessage)).thenReturn(expectedMessage);
+    if (expectedException != null) {
+      thrown.expect(expectedException);
+    }
+    mapper = new ExecutorStateApiMapper(payloadMapper);
   }
 
   /**
-   * Должен успешно преобразовать строку из хедера в статус "смена закрыта".
+   * Должен запросить у маппера сообщения из пейлоада STOMP фрейма извлечь текст сообщения, если не было ошибок маппинга.
    *
    * @throws Exception ошибка
    */
   @Test
-  public void mappingHeaderToShiftClosed() throws Exception {
-    // Дано и Действие:
-    ExecutorState executorState = mapper.map(new StompMessage(
-        "MESSAGE",
-        Collections.singletonList(
-            new StompHeader("Status", "SHIFT_CLOSED")
-        ),
-        null
-    ));
+  public void shouldAskPayloadMapperToMapStompMessageToMessage() throws Exception {
+    // Действие:
+    mapper.map(conditionStompMessage);
 
     // Результат:
-    assertEquals(executorState, ExecutorState.SHIFT_CLOSED);
-    assertEquals(executorState.getCustomerTimer(), 0);
-    assertNull(executorState.getData());
+    if (expectedException == null) {
+      verify(payloadMapper, only()).map(conditionStompMessage);
+    } else {
+      verifyZeroInteractions(payloadMapper);
+    }
   }
 
   /**
-   * Должен успешно преобразовать строку из хедера и тело в статус "смена закрыта" с данными.
+   * Должен преобразовать STOMP сообщение в соответствующий результат.
    *
    * @throws Exception ошибка
    */
   @Test
-  public void mappingHeaderWithPayloadToShiftClosedWithData() throws Exception {
-    // Дано и Действие:
-    ExecutorState executorState = mapper.map(new StompMessage(
-        "MESSAGE",
-        Collections.singletonList(
-            new StompHeader("Status", "SHIFT_CLOSED")
-        ),
-        "\npayload"
-    ));
+  public void mappingConditionsStompMessageToExpectedState() throws Exception {
+    // Действие:
+    ExecutorState executorState = mapper.map(conditionStompMessage);
 
     // Результат:
-    assertEquals(executorState, ExecutorState.SHIFT_CLOSED);
-    assertEquals(executorState.getCustomerTimer(), 0);
-    assertEquals(executorState.getData(), "\npayload");
+    assertEquals(expectedExecutorState, executorState);
+    assertEquals(expectedMessage, executorState.getData());
+    assertEquals(expectedTimer, executorState.getCustomerTimer());
   }
 
-  /**
-   * Должен успешно преобразовать строки из хедеров в статус "смена закрыта" с не-нулевым таймером.
-   *
-   * @throws Exception ошибка
-   */
-  @Test
-  public void mappingHeadersToShiftClosedWithTimer() throws Exception {
-    // Дано и Действие:
-    ExecutorState executorState = mapper.map(new StompMessage(
-        "MESSAGE",
-        Arrays.asList(
-            new StompHeader("Status", "SHIFT_CLOSED"),
-            new StompHeader("CustomerConfirmationTimer", "1345")
-        ),
-        null
-    ));
-
-    // Результат:
-    assertEquals(executorState, ExecutorState.SHIFT_CLOSED);
-    assertNull(executorState.getData());
-    assertEquals(executorState.getCustomerTimer(), 1345);
-  }
-
-  /**
-   * Должен успешно преобразовать строку из хедера и тело в статус "смена закрыта" с данными и не-нулевым таймером.
-   *
-   * @throws Exception ошибка
-   */
-  @Test
-  public void mappingHeadersWithPayloadToShiftClosedWithDataAndTimer() throws Exception {
-    // Дано и Действие:
-    ExecutorState executorState = mapper.map(new StompMessage(
-        "MESSAGE",
-        Arrays.asList(
-            new StompHeader("Status", "SHIFT_CLOSED"),
-            new StompHeader("CustomerConfirmationTimer", "1345")
-        ),
-        "\npayload"
-    ));
-
-    // Результат:
-    assertEquals(executorState, ExecutorState.SHIFT_CLOSED);
-    assertEquals(executorState.getCustomerTimer(), 1345);
-    assertEquals(executorState.getData(), "\npayload");
-  }
-
-  /**
-   * Должен успешно преобразовать строку из хедера в статус "смена открыта".
-   *
-   * @throws Exception ошибка
-   */
-  @Test
-  public void mappingHeaderToShiftOpened() throws Exception {
-    // Дано и Действие:
-    ExecutorState executorState = mapper.map(new StompMessage(
-        "MESSAGE",
-        Collections.singletonList(
-            new StompHeader("Status", "SHIFT_OPENED")
-        ),
-        null
-    ));
-
-    // Результат:
-    assertEquals(executorState, ExecutorState.SHIFT_OPENED);
-    assertEquals(executorState.getCustomerTimer(), 0);
-    assertNull(executorState.getData());
-  }
-
-  /**
-   * Должен успешно преобразовать строку из хедера и тело в статус "смена открыта" с данными.
-   *
-   * @throws Exception ошибка
-   */
-  @Test
-  public void mappingHeaderWithPayloadToShiftOpenedWithData() throws Exception {
-    // Дано и Действие:
-    ExecutorState executorState = mapper.map(new StompMessage(
-        "MESSAGE",
-        Collections.singletonList(
-            new StompHeader("Status", "SHIFT_OPENED")
-        ),
-        "\npayload"
-    ));
-
-    // Результат:
-    assertEquals(executorState, ExecutorState.SHIFT_OPENED);
-    assertEquals(executorState.getCustomerTimer(), 0);
-    assertEquals(executorState.getData(), "\npayload");
-  }
-
-  /**
-   * Должен успешно преобразовать строки из хедеров в статус "смена открыта" с не-нулевым таймером.
-   *
-   * @throws Exception ошибка
-   */
-  @Test
-  public void mappingHeadersToShiftOpenedWithTimer() throws Exception {
-    // Дано и Действие:
-    ExecutorState executorState = mapper.map(new StompMessage(
-        "MESSAGE",
-        Arrays.asList(
-            new StompHeader("Status", "SHIFT_OPENED"),
-            new StompHeader("CustomerConfirmationTimer", "1345")
-        ),
-        null
-    ));
-
-    // Результат:
-    assertEquals(executorState, ExecutorState.SHIFT_OPENED);
-    assertNull(executorState.getData());
-    assertEquals(executorState.getCustomerTimer(), 1345);
-  }
-
-  /**
-   * Должен успешно преобразовать строку из хедера и тело в статус "смена открыта" с данными и не-нулевым таймером.
-   *
-   * @throws Exception ошибка
-   */
-  @Test
-  public void mappingHeadersWithPayloadToShiftOpenedWithDataAndTimer() throws Exception {
-    // Дано и Действие:
-    ExecutorState executorState = mapper.map(new StompMessage(
-        "MESSAGE",
-        Arrays.asList(
-            new StompHeader("Status", "SHIFT_OPENED"),
-            new StompHeader("CustomerConfirmationTimer", "1345")
-        ),
-        "\npayload"
-    ));
-
-    // Результат:
-    assertEquals(executorState, ExecutorState.SHIFT_OPENED);
-    assertEquals(executorState.getCustomerTimer(), 1345);
-    assertEquals(executorState.getData(), "\npayload");
-  }
-
-  /**
-   * Должен успешно преобразовать строку из хедера в статус "онлайн".
-   *
-   * @throws Exception ошибка
-   */
-  @Test
-  public void mappingHeaderToOnline() throws Exception {
-    // Дано и Действие:
-    ExecutorState executorState = mapper.map(new StompMessage(
-        "MESSAGE",
-        Collections.singletonList(
-            new StompHeader("Status", "ONLINE")
-        ),
-        null
-    ));
-
-    // Результат:
-    assertEquals(executorState, ExecutorState.ONLINE);
-    assertEquals(executorState.getCustomerTimer(), 0);
-    assertNull(executorState.getData());
-  }
-
-  /**
-   * Должен успешно преобразовать строку из хедера и тело в статус "онлайн" с данными.
-   *
-   * @throws Exception ошибка
-   */
-  @Test
-  public void mappingHeaderWithPayloadToOnlineWithData() throws Exception {
-    // Дано и Действие:
-    ExecutorState executorState = mapper.map(new StompMessage(
-        "MESSAGE",
-        Collections.singletonList(
-            new StompHeader("Status", "ONLINE")
-        ),
-        "\npayload"
-    ));
-
-    // Результат:
-    assertEquals(executorState, ExecutorState.ONLINE);
-    assertEquals(executorState.getCustomerTimer(), 0);
-    assertEquals(executorState.getData(), "\npayload");
-  }
-
-  /**
-   * Должен успешно преобразовать строки из хедеров в статус "онлайн" с не-нулевым таймером.
-   *
-   * @throws Exception ошибка
-   */
-  @Test
-  public void mappingHeadersToOnlineWithTimer() throws Exception {
-    // Дано и Действие:
-    ExecutorState executorState = mapper.map(new StompMessage(
-        "MESSAGE",
-        Arrays.asList(
-            new StompHeader("Status", "ONLINE"),
-            new StompHeader("CustomerConfirmationTimer", "1345")
-        ),
-        null
-    ));
-
-    // Результат:
-    assertEquals(executorState, ExecutorState.ONLINE);
-    assertNull(executorState.getData());
-    assertEquals(executorState.getCustomerTimer(), 1345);
-  }
-
-  /**
-   * Должен успешно преобразовать строку из хедера и тело в статус "онлайн" с данными и не-нулевым таймером.
-   *
-   * @throws Exception ошибка
-   */
-  @Test
-  public void mappingHeadersWithPayloadToOnlineWithDataAndTimer() throws Exception {
-    // Дано и Действие:
-    ExecutorState executorState = mapper.map(new StompMessage(
-        "MESSAGE",
-        Arrays.asList(
-            new StompHeader("Status", "ONLINE"),
-            new StompHeader("CustomerConfirmationTimer", "1345")
-        ),
-        "\npayload"
-    ));
-
-    // Результат:
-    assertEquals(executorState, ExecutorState.ONLINE);
-    assertEquals(executorState.getCustomerTimer(), 1345);
-    assertEquals(executorState.getData(), "\npayload");
-  }
-
-  /**
-   * Должен успешно преобразовать строку из хедера в статус "подтверждение заказа".
-   *
-   * @throws Exception ошибка
-   */
-  @Test
-  public void mappingHeaderToDriverOrderConfirmation() throws Exception {
-    // Дано и Действие:
-    ExecutorState executorState = mapper.map(new StompMessage(
-        "MESSAGE",
-        Collections.singletonList(
-            new StompHeader("Status", "DRIVER_ORDER_CONFIRMATION")
-        ),
-        null
-    ));
-
-    // Результат:
-    assertEquals(executorState, ExecutorState.DRIVER_ORDER_CONFIRMATION);
-    assertEquals(executorState.getCustomerTimer(), 0);
-    assertNull(executorState.getData());
-  }
-
-  /**
-   * Должен успешно преобразовать строку из хедера и тело в статус "подтверждение заказа" с данными.
-   *
-   * @throws Exception ошибка
-   */
-  @Test
-  public void mappingHeaderWithPayloadToDriverOrderConfirmationWithData() throws Exception {
-    // Дано и Действие:
-    ExecutorState executorState = mapper.map(new StompMessage(
-        "MESSAGE",
-        Collections.singletonList(
-            new StompHeader("Status", "DRIVER_ORDER_CONFIRMATION")
-        ),
-        "\npayload"
-    ));
-
-    // Результат:
-    assertEquals(executorState, ExecutorState.DRIVER_ORDER_CONFIRMATION);
-    assertEquals(executorState.getCustomerTimer(), 0);
-    assertEquals(executorState.getData(), "\npayload");
-  }
-
-  /**
-   * Должен успешно преобразовать строки из хедеров в статус "подтверждение заказа" с не-нулевым таймером.
-   *
-   * @throws Exception ошибка
-   */
-  @Test
-  public void mappingHeadersToDriverOrderConfirmationWithTimer() throws Exception {
-    // Дано и Действие:
-    ExecutorState executorState = mapper.map(new StompMessage(
-        "MESSAGE",
-        Arrays.asList(
-            new StompHeader("Status", "DRIVER_ORDER_CONFIRMATION"),
-            new StompHeader("CustomerConfirmationTimer", "1345")
-        ),
-        null
-    ));
-
-    // Результат:
-    assertEquals(executorState, ExecutorState.DRIVER_ORDER_CONFIRMATION);
-    assertNull(executorState.getData());
-    assertEquals(executorState.getCustomerTimer(), 1345);
-  }
-
-  /**
-   * Должен успешно преобразовать строку из хедера и тело в статус "подтверждение заказа" с данными и не-нулевым таймером.
-   *
-   * @throws Exception ошибка
-   */
-  @Test
-  public void mappingHeadersWithPayloadToDriverOrderConfirmationWithDataAndTimer()
-      throws Exception {
-    // Дано и Действие:
-    ExecutorState executorState = mapper.map(new StompMessage(
-        "MESSAGE",
-        Arrays.asList(
-            new StompHeader("Status", "DRIVER_ORDER_CONFIRMATION"),
-            new StompHeader("CustomerConfirmationTimer", "1345")
-        ),
-        "\npayload"
-    ));
-
-    // Результат:
-    assertEquals(executorState, ExecutorState.DRIVER_ORDER_CONFIRMATION);
-    assertEquals(executorState.getCustomerTimer(), 1345);
-    assertEquals(executorState.getData(), "\npayload");
-  }
-
-  /**
-   * Должен успешно преобразовать строку из хедера в статус "ожидание подтверждения клиента".
-   *
-   * @throws Exception ошибка
-   */
-  @Test
-  public void mappingHeaderToClientOrderConfirmation() throws Exception {
-    // Дано и Действие:
-    ExecutorState executorState = mapper.map(new StompMessage(
-        "MESSAGE",
-        Collections.singletonList(
-            new StompHeader("Status", "CLIENT_ORDER_CONFIRMATION")
-        ),
-        null
-    ));
-
-    // Результат:
-    assertEquals(executorState, ExecutorState.CLIENT_ORDER_CONFIRMATION);
-    assertEquals(executorState.getCustomerTimer(), 0);
-    assertNull(executorState.getData());
-  }
-
-  /**
-   * Должен успешно преобразовать строку из хедера и тело в статус "ожидание подтверждения клиента" с данными.
-   *
-   * @throws Exception ошибка
-   */
-  @Test
-  public void mappingHeaderWithPayloadToClientOrderConfirmation() throws Exception {
-    // Дано и Действие:
-    ExecutorState executorState = mapper.map(new StompMessage(
-        "MESSAGE",
-        Collections.singletonList(
-            new StompHeader("Status", "CLIENT_ORDER_CONFIRMATION")
-        ),
-        "\npayload"
-    ));
-
-    // Результат:
-    assertEquals(executorState, ExecutorState.CLIENT_ORDER_CONFIRMATION);
-    assertEquals(executorState.getCustomerTimer(), 0);
-    assertEquals(executorState.getData(), "\npayload");
-  }
-
-  /**
-   * Должен успешно преобразовать строки из хедеров в статус "ожидание подтверждения клиента" с не-нулевым таймером.
-   *
-   * @throws Exception ошибка
-   */
-  @Test
-  public void mappingHeadersToClientOrderConfirmationWithTimer() throws Exception {
-    // Дано и Действие:
-    ExecutorState executorState = mapper.map(new StompMessage(
-        "MESSAGE",
-        Arrays.asList(
-            new StompHeader("Status", "CLIENT_ORDER_CONFIRMATION"),
-            new StompHeader("CustomerConfirmationTimer", "1345")
-        ),
-        null
-    ));
-
-    // Результат:
-    assertEquals(executorState, ExecutorState.CLIENT_ORDER_CONFIRMATION);
-    assertNull(executorState.getData());
-    assertEquals(executorState.getCustomerTimer(), 1345);
-  }
-
-  /**
-   * Должен успешно преобразовать строку из хедера и тело в статус "ожидание подтверждения клиента" с данными и не-нулевым таймером.
-   *
-   * @throws Exception ошибка
-   */
-  @Test
-  public void mappingHeadersWithPayloadToClientOrderConfirmationWithDataAndTimer()
-      throws Exception {
-    // Дано и Действие:
-    ExecutorState executorState = mapper.map(new StompMessage(
-        "MESSAGE",
-        Arrays.asList(
-            new StompHeader("Status", "CLIENT_ORDER_CONFIRMATION"),
-            new StompHeader("CustomerConfirmationTimer", "1345")
-        ),
-        "\npayload"
-    ));
-
-    // Результат:
-    assertEquals(executorState, ExecutorState.CLIENT_ORDER_CONFIRMATION);
-    assertEquals(executorState.getCustomerTimer(), 1345);
-    assertEquals(executorState.getData(), "\npayload");
-  }
-
-  /**
-   * Должен успешно преобразовать строку из хедера в статус "на пути к клиенту".
-   *
-   * @throws Exception ошибка
-   */
-  @Test
-  public void mappingHeaderToMovingToClient() throws Exception {
-    // Дано и Действие:
-    ExecutorState executorState = mapper.map(new StompMessage(
-        "MESSAGE",
-        Collections.singletonList(
-            new StompHeader("Status", "MOVING_TO_CLIENT")
-        ),
-        null
-    ));
-
-    // Результат:
-    assertEquals(executorState, ExecutorState.MOVING_TO_CLIENT);
-    assertEquals(executorState.getCustomerTimer(), 0);
-    assertNull(executorState.getData());
-  }
-
-  /**
-   * Должен успешно преобразовать строку из хедера и тело в статус "на пути к клиенту" с данными.
-   *
-   * @throws Exception ошибка
-   */
-  @Test
-  public void mappingHeaderWithPayloadToMovingToClient() throws Exception {
-    // Дано и Действие:
-    ExecutorState executorState = mapper.map(new StompMessage(
-        "MESSAGE",
-        Collections.singletonList(
-            new StompHeader("Status", "MOVING_TO_CLIENT")
-        ),
-        "\npayload"
-    ));
-
-    // Результат:
-    assertEquals(executorState, ExecutorState.MOVING_TO_CLIENT);
-    assertEquals(executorState.getCustomerTimer(), 0);
-    assertEquals(executorState.getData(), "\npayload");
-  }
-
-  /**
-   * Должен успешно преобразовать строки из хедеров в статус "на пути к клиенту" с не-нулевым таймером.
-   *
-   * @throws Exception ошибка
-   */
-  @Test
-  public void mappingHeadersToMovingToClientWithTimer() throws Exception {
-    // Дано и Действие:
-    ExecutorState executorState = mapper.map(new StompMessage(
-        "MESSAGE",
-        Arrays.asList(
-            new StompHeader("Status", "MOVING_TO_CLIENT"),
-            new StompHeader("CustomerConfirmationTimer", "1345")
-        ),
-        null
-    ));
-
-    // Результат:
-    assertEquals(executorState, ExecutorState.MOVING_TO_CLIENT);
-    assertNull(executorState.getData());
-    assertEquals(executorState.getCustomerTimer(), 1345);
-  }
-
-  /**
-   * Должен успешно преобразовать строку из хедера и тело в статус "на пути к клиенту" с данными и не-нулевым таймером.
-   *
-   * @throws Exception ошибка
-   */
-  @Test
-  public void mappingHeadersWithPayloadToMovingToClientWithDataAndTimer() throws Exception {
-    // Дано и Действие:
-    ExecutorState executorState = mapper.map(new StompMessage(
-        "MESSAGE",
-        Arrays.asList(
-            new StompHeader("Status", "MOVING_TO_CLIENT"),
-            new StompHeader("CustomerConfirmationTimer", "1345")
-        ),
-        "\npayload"
-    ));
-
-    // Результат:
-    assertEquals(executorState, ExecutorState.MOVING_TO_CLIENT);
-    assertEquals(executorState.getCustomerTimer(), 1345);
-    assertEquals(executorState.getData(), "\npayload");
-  }
-
-  /**
-   * Должен успешно преобразовать строку из хедера в статус "ожидание клиента".
-   *
-   * @throws Exception ошибка
-   */
-  @Test
-  public void mappingHeaderToWaitingForClient() throws Exception {
-    // Дано и Действие:
-    ExecutorState executorState = mapper.map(new StompMessage(
-        "MESSAGE",
-        Collections.singletonList(
-            new StompHeader("Status", "WAITING_FOR_CLIENT")
-        ),
-        null
-    ));
-
-    // Результат:
-    assertEquals(executorState, ExecutorState.WAITING_FOR_CLIENT);
-    assertEquals(executorState.getCustomerTimer(), 0);
-    assertNull(executorState.getData());
-  }
-
-  /**
-   * Должен успешно преобразовать строку из хедера и тело в статус "ожидание клиента" с данными.
-   *
-   * @throws Exception ошибка
-   */
-  @Test
-  public void mappingHeaderWithPayloadToWaitingForClient() throws Exception {
-    // Дано и Действие:
-    ExecutorState executorState = mapper.map(new StompMessage(
-        "MESSAGE",
-        Collections.singletonList(
-            new StompHeader("Status", "WAITING_FOR_CLIENT")
-        ),
-        "\npayload"
-    ));
-
-    // Результат:
-    assertEquals(executorState, ExecutorState.WAITING_FOR_CLIENT);
-    assertEquals(executorState.getCustomerTimer(), 0);
-    assertEquals(executorState.getData(), "\npayload");
-  }
-
-  /**
-   * Должен успешно преобразовать строки из хедеров в статус "ожидание клиента" с не-нулевым таймером.
-   *
-   * @throws Exception ошибка
-   */
-  @Test
-  public void mappingHeadersToWaitingForClientWithTimer() throws Exception {
-    // Дано и Действие:
-    ExecutorState executorState = mapper.map(new StompMessage(
-        "MESSAGE",
-        Arrays.asList(
-            new StompHeader("Status", "WAITING_FOR_CLIENT"),
-            new StompHeader("CustomerConfirmationTimer", "1345")
-        ),
-        null
-    ));
-
-    // Результат:
-    assertEquals(executorState, ExecutorState.WAITING_FOR_CLIENT);
-    assertNull(executorState.getData());
-    assertEquals(executorState.getCustomerTimer(), 1345);
-  }
-
-  /**
-   * Должен успешно преобразовать строку из хедера и тело в статус "ожидание клиента" с данными и не-нулевым таймером.
-   *
-   * @throws Exception ошибка
-   */
-  @Test
-  public void mappingHeadersWithPayloadToWaitingForClientWithDataAndTimer() throws Exception {
-    // Дано и Действие:
-    ExecutorState executorState = mapper.map(new StompMessage(
-        "MESSAGE",
-        Arrays.asList(
-            new StompHeader("Status", "WAITING_FOR_CLIENT"),
-            new StompHeader("CustomerConfirmationTimer", "1345")
-        ),
-        "\npayload"
-    ));
-
-    // Результат:
-    assertEquals(executorState, ExecutorState.WAITING_FOR_CLIENT);
-    assertEquals(executorState.getCustomerTimer(), 1345);
-    assertEquals(executorState.getData(), "\npayload");
-  }
-
-  /**
-   * Должен успешно преобразовать строку из хедера в статус "выполнение заказа".
-   *
-   * @throws Exception ошибка
-   */
-  @Test
-  public void mappingHeaderToOrderFulfillment() throws Exception {
-    // Дано и Действие:
-    ExecutorState executorState = mapper.map(new StompMessage(
-        "MESSAGE",
-        Collections.singletonList(
-            new StompHeader("Status", "ORDER_FULFILLMENT")
-        ),
-        null
-    ));
-
-    // Результат:
-    assertEquals(executorState, ExecutorState.ORDER_FULFILLMENT);
-    assertEquals(executorState.getCustomerTimer(), 0);
-    assertNull(executorState.getData());
-  }
-
-  /**
-   * Должен успешно преобразовать строку из хедера и тело в статус "выполнение заказа" с данными.
-   *
-   * @throws Exception ошибка
-   */
-  @Test
-  public void mappingHeaderWithPayloadToOrderFulfillment() throws Exception {
-    // Дано и Действие:
-    ExecutorState executorState = mapper.map(new StompMessage(
-        "MESSAGE",
-        Collections.singletonList(
-            new StompHeader("Status", "ORDER_FULFILLMENT")
-        ),
-        "\npayload"
-    ));
-
-    // Результат:
-    assertEquals(executorState, ExecutorState.ORDER_FULFILLMENT);
-    assertEquals(executorState.getCustomerTimer(), 0);
-    assertEquals(executorState.getData(), "\npayload");
-  }
-
-  /**
-   * Должен успешно преобразовать строки из хедеров в статус "выполнение заказа" с не-нулевым таймером.
-   *
-   * @throws Exception ошибка
-   */
-  @Test
-  public void mappingHeadersToOrderFulfillmentWithTimer() throws Exception {
-    // Дано и Действие:
-    ExecutorState executorState = mapper.map(new StompMessage(
-        "MESSAGE",
-        Arrays.asList(
-            new StompHeader("Status", "ORDER_FULFILLMENT"),
-            new StompHeader("CustomerConfirmationTimer", "1345")
-        ),
-        null
-    ));
-
-    // Результат:
-    assertEquals(executorState, ExecutorState.ORDER_FULFILLMENT);
-    assertNull(executorState.getData());
-    assertEquals(executorState.getCustomerTimer(), 1345);
-  }
-
-  /**
-   * Должен успешно преобразовать строку из хедера и тело в статус "выполнение заказа" с данными и не-нулевым таймером.
-   *
-   * @throws Exception ошибка
-   */
-  @Test
-  public void mappingHeadersWithPayloadToOrderFulfillmentWithDataAndTimer() throws Exception {
-    // Дано и Действие:
-    ExecutorState executorState = mapper.map(new StompMessage(
-        "MESSAGE",
-        Arrays.asList(
-            new StompHeader("Status", "ORDER_FULFILLMENT"),
-            new StompHeader("CustomerConfirmationTimer", "1345")
-        ),
-        "\npayload"
-    ));
-
-    // Результат:
-    assertEquals(executorState, ExecutorState.ORDER_FULFILLMENT);
-    assertEquals(executorState.getCustomerTimer(), 1345);
-    assertEquals(executorState.getData(), "\npayload");
-  }
-
-  /**
-   * Должен успешно преобразовать строку из хедера в статус "прием оплаты".
-   *
-   * @throws Exception ошибка
-   */
-  @Test
-  public void mappingHeaderToPaymentAcceptance() throws Exception {
-    // Дано и Действие:
-    ExecutorState executorState = mapper.map(new StompMessage(
-        "MESSAGE",
-        Collections.singletonList(
-            new StompHeader("Status", "PAYMENT_CONFIRMATION")
-        ),
-        null
-    ));
-
-    // Результат:
-    assertEquals(executorState, ExecutorState.PAYMENT_CONFIRMATION);
-    assertEquals(executorState.getCustomerTimer(), 0);
-    assertNull(executorState.getData());
-  }
-
-  /**
-   * Должен успешно преобразовать строку из хедера и тело в статус "прием оплаты" с данными.
-   *
-   * @throws Exception ошибка
-   */
-  @Test
-  public void mappingHeaderWithPayloadToPaymentAcceptance() throws Exception {
-    // Дано и Действие:
-    ExecutorState executorState = mapper.map(new StompMessage(
-        "MESSAGE",
-        Collections.singletonList(
-            new StompHeader("Status", "PAYMENT_CONFIRMATION")
-        ),
-        "\npayload"
-    ));
-
-    // Результат:
-    assertEquals(executorState, ExecutorState.PAYMENT_CONFIRMATION);
-    assertEquals(executorState.getCustomerTimer(), 0);
-    assertEquals(executorState.getData(), "\npayload");
-  }
-
-  /**
-   * Должен успешно преобразовать строки из хедеров в статус "прием оплаты" с не-нулевым таймером.
-   *
-   * @throws Exception ошибка
-   */
-  @Test
-  public void mappingHeadersToOrderPaymentAcceptanceWithTimer() throws Exception {
-    // Дано и Действие:
-    ExecutorState executorState = mapper.map(new StompMessage(
-        "MESSAGE",
-        Arrays.asList(
-            new StompHeader("Status", "PAYMENT_CONFIRMATION"),
-            new StompHeader("CustomerConfirmationTimer", "1345")
-        ),
-        null
-    ));
-
-    // Результат:
-    assertEquals(executorState, ExecutorState.PAYMENT_CONFIRMATION);
-    assertNull(executorState.getData());
-    assertEquals(executorState.getCustomerTimer(), 1345);
-  }
-
-  /**
-   * Должен успешно преобразовать строку из хедера и тело в статус "прием оплаты" с данными и не-нулевым таймером.
-   *
-   * @throws Exception ошибка
-   */
-  @Test
-  public void mappingHeadersWithPayloadToPaymentAcceptanceWithDataAndTimer() throws Exception {
-    // Дано и Действие:
-    ExecutorState executorState = mapper.map(new StompMessage(
-        "MESSAGE",
-        Arrays.asList(
-            new StompHeader("Status", "PAYMENT_CONFIRMATION"),
-            new StompHeader("CustomerConfirmationTimer", "1345")
-        ),
-        "\npayload"
-    ));
-
-    // Результат:
-    assertEquals(executorState, ExecutorState.PAYMENT_CONFIRMATION);
-    assertEquals(executorState.getCustomerTimer(), 1345);
-    assertEquals(executorState.getData(), "\npayload");
-  }
-
-  /**
-   * Должен дать ошибку, если нужных хедеров нет.
-   *
-   * @throws Exception ошибка
-   */
-  @Test(expected = DataMappingException.class)
-  public void mappingEmptyHeaderFail() throws Exception {
-    // Дано и Действие:
-    mapper.map(new StompMessage("MESSAGE", null, null));
-  }
-
-  /**
-   * Должен дать ошибку, если заголовок Status null.
-   *
-   * @throws Exception ошибка
-   */
-  @Test(expected = DataMappingException.class)
-  public void mappingNullStatusHeaderFail() throws Exception {
-    // Дано и Действие:
-    mapper.map(new StompMessage(
-        "MESSAGE",
-        Collections.singletonList(
-            new StompHeader("Status", null)
-        ),
-        null
-    ));
-  }
-
-  /**
-   * Должен дать ошибку, если заголовок Status пустой.
-   *
-   * @throws Exception ошибка
-   */
-  @Test(expected = DataMappingException.class)
-  public void mappingEmptyStatusHeaderFail() throws Exception {
-    // Дано и Действие:
-    mapper.map(new StompMessage(
-        "MESSAGE",
-        Collections.singletonList(
-            new StompHeader("Status", "")
-        ),
-        ""
-    ));
-  }
-
-  /**
-   * Должен дать ошибку, если значение заголовка Status неверное.
-   *
-   * @throws Exception ошибка
-   */
-  @Test(expected = DataMappingException.class)
-  public void mappingNonexistentForStatusHeaderFail() throws Exception {
-    // Дано и Действие:
-    mapper.map(new StompMessage(
-        "MESSAGE",
-        Collections.singletonList(
-            new StompHeader("Status", "SHIFT")
-        ),
-        null
-    ));
-  }
-
-  /**
-   * Должен дать ошибку, если значение заголовка CustomerConfirmationTimer пустое.
-   *
-   * @throws Exception ошибка
-   */
-  @Test(expected = DataMappingException.class)
-  public void mappingEmptyStringForCustomerConfirmationTimerHeaderFail() throws Exception {
-    // Дано и Действие:
-    mapper.map(new StompMessage(
-        "MESSAGE",
-        Arrays.asList(
-            new StompHeader("Status", "WAITING_FOR_CLIENT"),
-            new StompHeader("CustomerConfirmationTimer", "")
-        ),
-        null
-    ));
-  }
-
-  /**
-   * Должен дать ошибку, если значение заголовка CustomerConfirmationTimer не числовое.
-   *
-   * @throws Exception ошибка
-   */
-  @Test(expected = DataMappingException.class)
-  public void mappingNotNumberStringForCustomerConfirmationTimerHeaderFail() throws Exception {
-    // Дано и Действие:
-    mapper.map(new StompMessage(
-        "MESSAGE",
-        Arrays.asList(
-            new StompHeader("Status", "ORDER_FULFILLMENT"),
-            new StompHeader("CustomerConfirmationTimer", "jdi1293")
-        ),
-        null
-    ));
+  private static class Expectations {
+
+    Class<? extends Exception> exception;
+    ExecutorState executorState;
+    String message;
+    long timer;
+
+    Expectations(Class<? extends Exception> exception, ExecutorState executorState, String message,
+        long timer) {
+      this.exception = exception;
+      this.executorState = executorState;
+      this.message = message;
+      this.timer = timer;
+    }
   }
 }

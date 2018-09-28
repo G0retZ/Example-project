@@ -277,7 +277,7 @@ class RepositoryComponentImpl implements RepositoryComponent {
     if (executorStateGateway == null) {
       executorStateGateway = new TopicGatewayImpl<>(
           backendComponent.getPersonalTopicListener(),
-          new ExecutorStateApiMapper(),
+          new ExecutorStateApiMapper(new MessagePayloadApiMapper()),
           new ExecutorStateFilter()
       );
     }
