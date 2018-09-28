@@ -71,6 +71,22 @@ public class ExecutorStateNotOnlineUseCaseTest {
   }
 
   /**
+   * Не должен трогать гейтвей передачи статусов, если последний статус был "заблокирован".
+   */
+  @Test
+  public void DoNotTouchGatewayIfBlocked() {
+    // Дано:
+    when(executorStateUseCase.getExecutorStates())
+        .thenReturn(Flowable.just(ExecutorState.BLOCKED).concatWith(Flowable.never()));
+
+    // Действие:
+    useCase.setExecutorNotOnline().test();
+
+    // Результат:
+    verifyZeroInteractions(gateway);
+  }
+
+  /**
    * Не должен трогать гейтвей передачи статусов, если последний статус был "смена закрыта".
    */
   @Test
@@ -215,6 +231,22 @@ public class ExecutorStateNotOnlineUseCaseTest {
   }
 
   /* Проверяем отправку ошибок в репортер */
+
+  /**
+   * Должен отправить ошибку неподходящего статуса, если статус "заблокирован".
+   */
+  @Test
+  public void reportIllegalArgumentErrorIfBlocked() {
+    // Дано:
+    when(executorStateUseCase.getExecutorStates())
+        .thenReturn(Flowable.just(ExecutorState.BLOCKED).concatWith(Flowable.never()));
+
+    // Действие:
+    useCase.setExecutorNotOnline().test();
+
+    // Результат:
+    verify(errorReporter, only()).reportError(any(IllegalArgumentException.class));
+  }
 
   /**
    * Должен отправить ошибку неподходящего статуса, если статус "смена закрыта".
@@ -363,6 +395,24 @@ public class ExecutorStateNotOnlineUseCaseTest {
   }
 
   /* Проверяем ответы */
+
+  /**
+   * Должен вернуть ошибку неподходящего статуса, если статус "заблокирован".
+   */
+  @Test
+  public void answerIllegalArgumentErrorIfBlocked() {
+    // Дано:
+    when(executorStateUseCase.getExecutorStates())
+        .thenReturn(Flowable.just(ExecutorState.BLOCKED).concatWith(Flowable.never()));
+
+    // Действие:
+    TestObserver<Void> testObserver = useCase.setExecutorNotOnline().test();
+
+    // Результат:
+    testObserver.assertNoValues();
+    testObserver.assertNotComplete();
+    testObserver.assertError(IllegalArgumentException.class);
+  }
 
   /**
    * Должен вернуть ошибку неподходящего статуса, если статус "смена закрыта".
