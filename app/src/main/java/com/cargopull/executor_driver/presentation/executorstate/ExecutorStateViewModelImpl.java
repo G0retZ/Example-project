@@ -57,6 +57,13 @@ public class ExecutorStateViewModelImpl extends ViewModel implements ExecutorSta
             executorState -> {
               switch (executorState) {
                 case BLOCKED:
+                  if (executorState.getData() != null
+                      && !executorState.getData().trim().isEmpty()) {
+                    messageLiveData.postValue(
+                        executorStateViewActions -> executorStateViewActions
+                            .showExecutorStatusMessage(executorState.getData())
+                    );
+                  }
                   navigateLiveData.postValue(ExecutorStateNavigate.BLOCKED);
                   break;
                 case SHIFT_CLOSED:
