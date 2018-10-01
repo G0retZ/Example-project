@@ -30,15 +30,15 @@ public class ExecutorStateApiMapperTest {
   @Rule
   public MockitoRule rule = MockitoJUnit.rule();
   @Rule
-  public ExpectedException thrown = ExpectedException.none();
+  public final ExpectedException thrown = ExpectedException.none();
   private Mapper<StompMessage, ExecutorState> mapper;
   @Mock
   private Mapper<StompMessage, String> payloadMapper;
-  private StompMessage conditionStompMessage;
-  private Class<? extends Exception> expectedException;
-  private ExecutorState expectedExecutorState;
-  private String expectedMessage;
-  private long expectedTimer;
+  private final StompMessage conditionStompMessage;
+  private final Class<? extends Exception> expectedException;
+  private final ExecutorState expectedExecutorState;
+  private final String expectedMessage;
+  private final long expectedTimer;
 
   // Each parameter should be placed as an argument here
   // Every time runner triggers, it will pass the arguments
@@ -188,10 +188,10 @@ public class ExecutorStateApiMapperTest {
 
   private static class Expectations {
 
-    Class<? extends Exception> exception;
-    ExecutorState executorState;
-    String message;
-    long timer;
+    final Class<? extends Exception> exception;
+    final ExecutorState executorState;
+    final String message;
+    final long timer;
 
     Expectations(Class<? extends Exception> exception, ExecutorState executorState, String message,
         long timer) {
