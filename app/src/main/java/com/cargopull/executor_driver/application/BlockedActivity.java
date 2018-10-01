@@ -14,7 +14,7 @@ public class BlockedActivity extends BaseActivity {
   @Override
   public void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_map);
+    setContentView(R.layout.activity_blocked);
     Toolbar toolbar = findViewById(R.id.appBar);
     if (toolbar != null) {
       toolbar.setNavigationOnClickListener(
