@@ -118,7 +118,7 @@ public class ExecutorStateViewModelTest {
     // Результат:
     verify(viewStateObserver, only()).onChanged(viewStateCaptor.capture());
     viewStateCaptor.getValue().apply(viewActions);
-    verify(viewActions, only()).showOnlineMessage("Message");
+    verify(viewActions, only()).showExecutorStatusMessage("Message");
   }
 
   /**
@@ -139,7 +139,7 @@ public class ExecutorStateViewModelTest {
     assertEquals(2, viewStateCaptor.getAllValues().size());
     assertNull(viewStateCaptor.getAllValues().get(1));
     viewStateCaptor.getAllValues().get(0).apply(viewActions);
-    verify(viewActions, only()).showOnlineMessage("Message");
+    verify(viewActions, only()).showExecutorStatusMessage("Message");
     verifyNoMoreInteractions(viewStateObserver);
   }
 
@@ -190,7 +190,7 @@ public class ExecutorStateViewModelTest {
     // Результат:
     verify(viewStateObserver, only()).onChanged(viewStateCaptor.capture());
     viewStateCaptor.getValue().apply(viewActions);
-    verify(viewActions, only()).showOnlineMessage("Message");
+    verify(viewActions, only()).showExecutorStatusMessage("Message");
   }
 
   /**
@@ -211,7 +211,7 @@ public class ExecutorStateViewModelTest {
     assertEquals(2, viewStateCaptor.getAllValues().size());
     assertNull(viewStateCaptor.getAllValues().get(1));
     viewStateCaptor.getAllValues().get(0).apply(viewActions);
-    verify(viewActions, only()).showOnlineMessage("Message");
+    verify(viewActions, only()).showExecutorStatusMessage("Message");
     verifyNoMoreInteractions(viewStateObserver);
   }
 

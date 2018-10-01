@@ -322,7 +322,7 @@ public class BaseActivity extends AppCompatActivity implements ExecutorStateView
   }
 
   @Override
-  public void showOnlineMessage(@NonNull String message) {
+  public void showExecutorStatusMessage(@NonNull String message) {
     onlineDialog = new Builder(this)
         .setTitle(R.string.information)
         .setMessage(message)

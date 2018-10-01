@@ -12,5 +12,5 @@ public interface ExecutorStateViewActions {
    *
    * @param message текст сообщения
    */
-  void showOnlineMessage(@NonNull String message);
+  void showExecutorStatusMessage(@NonNull String message);
 }

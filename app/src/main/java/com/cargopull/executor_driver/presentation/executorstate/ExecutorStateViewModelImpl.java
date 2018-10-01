@@ -67,7 +67,7 @@ public class ExecutorStateViewModelImpl extends ViewModel implements ExecutorSta
                       && !executorState.getData().trim().isEmpty()) {
                     messageLiveData.postValue(
                         executorStateViewActions -> executorStateViewActions
-                            .showOnlineMessage(executorState.getData())
+                            .showExecutorStatusMessage(executorState.getData())
                     );
                   }
                   navigateLiveData.postValue(ExecutorStateNavigate.MAP_SHIFT_OPENED);
@@ -77,7 +77,7 @@ public class ExecutorStateViewModelImpl extends ViewModel implements ExecutorSta
                       && !executorState.getData().trim().isEmpty()) {
                     messageLiveData.postValue(
                         executorStateViewActions -> executorStateViewActions
-                            .showOnlineMessage(executorState.getData())
+                            .showExecutorStatusMessage(executorState.getData())
                     );
                   }
                   navigateLiveData.postValue(ExecutorStateNavigate.MAP_ONLINE);
