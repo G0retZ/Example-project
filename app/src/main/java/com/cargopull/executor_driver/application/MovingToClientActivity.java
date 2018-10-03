@@ -11,12 +11,23 @@ import com.cargopull.executor_driver.presentation.cancelorder.CancelOrderNavigat
 import com.cargopull.executor_driver.presentation.movingtoclient.MovingToClientNavigate;
 import com.cargopull.executor_driver.presentation.movingtoclientactions.MovingToClientActionsNavigate;
 import com.cargopull.executor_driver.presentation.preorder.PreOrderNavigate;
+import com.cargopull.executor_driver.utils.EventLogger;
 import com.cargopull.executor_driver.view.CallToClientFragment;
 import com.cargopull.executor_driver.view.CallToOperatorFragment;
 import com.cargopull.executor_driver.view.CancelOrderDialogFragment;
 import com.cargopull.executor_driver.view.MovingToClientActionsDialogFragment;
+import java.util.HashMap;
+import javax.inject.Inject;
 
 public class MovingToClientActivity extends BaseActivity {
+
+  @Nullable
+  private EventLogger eventLogger;
+
+  @Inject
+  public void setEventLogger(@NonNull EventLogger eventLogger) {
+    this.eventLogger = eventLogger;
+  }
 
   @Override
   protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -29,10 +40,15 @@ public class MovingToClientActivity extends BaseActivity {
       );
       toolbar.findViewById(R.id.orderActions).setOnClickListener(v -> {
         if (getSupportFragmentManager().findFragmentByTag("menu") == null) {
+          if (eventLogger == null) {
+            throw new IllegalStateException("Граф зависимостей поломан!");
+          }
+          eventLogger.reportEvent("moving_to_client_actions", new HashMap<>());
           new MovingToClientActionsDialogFragment().show(getSupportFragmentManager(), "menu");
         }
       });
     }
+    getDiComponent().inject(this);
   }
 
   @Override

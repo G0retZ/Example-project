@@ -6,6 +6,7 @@ import com.cargopull.executor_driver.application.AutoRouterImpl;
 import com.cargopull.executor_driver.application.BaseActivity;
 import com.cargopull.executor_driver.application.FcmService;
 import com.cargopull.executor_driver.application.MainApplication;
+import com.cargopull.executor_driver.application.MovingToClientActivity;
 import com.cargopull.executor_driver.backend.geolocation.GeolocationCenter;
 import com.cargopull.executor_driver.backend.geolocation.GeolocationCenterImpl;
 import com.cargopull.executor_driver.backend.ringtone.SingleRingTonePlayer;
@@ -80,7 +81,7 @@ public class AppComponentImpl implements AppComponent {
 
   @SuppressWarnings("FieldCanBeLocal")
   @NonNull
-  private final EventLogger mEventLogger;
+  private final EventLogger eventLogger;
   @NonNull
   private final PresentationComponent presentationComponent;
   @NonNull
@@ -98,7 +99,7 @@ public class AppComponentImpl implements AppComponent {
     appSettingsService = new AppPreferences(appContext);
     TokenKeeper tokenKeeper = new TokenKeeperImpl(appSettingsService);
     LoginSharer loginSharer = new LoginSharer(appSettingsService);
-    mEventLogger = new EventLoggerImpl(loginSharer, FirebaseAnalytics.getInstance(appContext));
+    eventLogger = new EventLoggerImpl(loginSharer, FirebaseAnalytics.getInstance(appContext));
     BackendComponent backendComponent = new BackendComponentImpl(
         loginSharer,
         appSettingsService,
@@ -118,7 +119,7 @@ public class AppComponentImpl implements AppComponent {
         loginSharer, timeUtils, repositoryComponent
     );
     presentationComponent = new PresentationComponentImpl(
-        mEventLogger, loginSharer, interactorComponent, timeUtils
+        eventLogger, loginSharer, interactorComponent, timeUtils
     );
     singleRingTonePlayer = new SingleRingTonePlayer(appContext);
     singleShakePlayer = new SingleShakePlayer(
@@ -206,6 +207,11 @@ public class AppComponentImpl implements AppComponent {
     baseActivity.setServerTimeViewModel(
         presentationComponent.getServerTimeViewModel()
     );
+  }
+
+  @Override
+  public void inject(MovingToClientActivity movingToClientActivity) {
+    movingToClientActivity.setEventLogger(eventLogger);
   }
 
   @Override
