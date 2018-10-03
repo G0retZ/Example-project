@@ -7,15 +7,27 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
 import com.cargopull.executor_driver.R;
+import com.cargopull.executor_driver.di.AppComponent;
 import com.cargopull.executor_driver.presentation.cancelorder.CancelOrderNavigate;
 import com.cargopull.executor_driver.presentation.oderfulfillmentactions.OrderFulfillmentActionsNavigate;
 import com.cargopull.executor_driver.presentation.preorder.PreOrderNavigate;
+import com.cargopull.executor_driver.utils.EventLogger;
 import com.cargopull.executor_driver.view.CallToClientFragment;
 import com.cargopull.executor_driver.view.CallToOperatorFragment;
 import com.cargopull.executor_driver.view.CancelOrderDialogFragment;
 import com.cargopull.executor_driver.view.OrderFulfillmentActionsDialogFragment;
+import java.util.HashMap;
+import javax.inject.Inject;
 
 public class OrderFulfillmentActivity extends BaseActivity {
+
+  @Nullable
+  private EventLogger eventLogger;
+
+  @Inject
+  public void setEventLogger(@NonNull EventLogger eventLogger) {
+    this.eventLogger = eventLogger;
+  }
 
   @Override
   protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -28,10 +40,20 @@ public class OrderFulfillmentActivity extends BaseActivity {
       );
       toolbar.findViewById(R.id.orderActions).setOnClickListener(v -> {
         if (getSupportFragmentManager().findFragmentByTag("menu") == null) {
+          if (eventLogger == null) {
+            throw new IllegalStateException("Граф зависимостей поломан!");
+          }
+          eventLogger.reportEvent("order_fulfillment_actions", new HashMap<>());
           new OrderFulfillmentActionsDialogFragment().show(getSupportFragmentManager(), "menu");
         }
       });
     }
+  }
+
+  @Override
+  protected void onDependencyInject(AppComponent appComponent) {
+    super.onDependencyInject(appComponent);
+    appComponent.inject(this);
   }
 
   @Override
