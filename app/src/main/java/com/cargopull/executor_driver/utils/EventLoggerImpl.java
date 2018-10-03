@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 import javax.inject.Inject;
 
+@SuppressWarnings("unused")
 public class EventLoggerImpl implements EventLogger {
 
   @NonNull

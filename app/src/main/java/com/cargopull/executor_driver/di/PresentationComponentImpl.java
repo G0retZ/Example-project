@@ -96,6 +96,7 @@ import com.google.firebase.analytics.FirebaseAnalytics;
 
 class PresentationComponentImpl implements PresentationComponent {
 
+  @SuppressWarnings({"FieldCanBeLocal", "unused"})
   @NonNull
   private final FirebaseAnalytics mFirebaseAnalytics;
   @NonNull

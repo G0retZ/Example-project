@@ -76,6 +76,7 @@ import com.google.firebase.analytics.FirebaseAnalytics;
 
 public class AppComponentImpl implements AppComponent {
 
+  @SuppressWarnings("FieldCanBeLocal")
   @NonNull
   private final FirebaseAnalytics mFirebaseAnalytics;
   @NonNull

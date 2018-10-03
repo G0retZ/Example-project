@@ -6,6 +6,7 @@ import java.util.HashMap;
 /**
  * Отправитель отчетов о событиях
  */
+@SuppressWarnings("WeakerAccess")
 public interface EventLogger {
 
   /**
@@ -14,5 +15,6 @@ public interface EventLogger {
    * @param event - имя события
    * @param params - параметры события
    */
+  @SuppressWarnings("unused")
   void reportEvent(@NonNull String event, @NonNull HashMap<String, String> params);
 }
