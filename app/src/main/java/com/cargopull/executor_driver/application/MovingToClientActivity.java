@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
 import com.cargopull.executor_driver.R;
+import com.cargopull.executor_driver.di.AppComponent;
 import com.cargopull.executor_driver.presentation.cancelorder.CancelOrderNavigate;
 import com.cargopull.executor_driver.presentation.movingtoclient.MovingToClientNavigate;
 import com.cargopull.executor_driver.presentation.movingtoclientactions.MovingToClientActionsNavigate;
@@ -48,7 +49,12 @@ public class MovingToClientActivity extends BaseActivity {
         }
       });
     }
-    getDiComponent().inject(this);
+  }
+
+  @Override
+  protected void onDependencyInject(AppComponent appComponent) {
+    super.onDependencyInject(appComponent);
+    appComponent.inject(this);
   }
 
   @Override

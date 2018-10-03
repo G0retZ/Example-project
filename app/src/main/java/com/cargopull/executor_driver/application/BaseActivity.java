@@ -103,7 +103,7 @@ public class BaseActivity extends AppCompatActivity implements ExecutorStateView
   protected void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     pendingDialogFragment.setCancelable(false);
-    getDiComponent().inject(this);
+    onDependencyInject(getDiComponent());
     if (executorStateViewModel == null) {
       throw new IllegalStateException("Граф зависимостей поломан!");
     }
@@ -144,6 +144,15 @@ public class BaseActivity extends AppCompatActivity implements ExecutorStateView
         navigate(destination);
       }
     });
+  }
+
+  /**
+   * Колбэк для внедрения зависимостей.
+   *
+   * @param appComponent - компонент, который может произвести внедрение
+   */
+  protected void onDependencyInject(AppComponent appComponent) {
+    appComponent.inject(this);
   }
 
   @Override
