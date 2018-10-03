@@ -23,7 +23,7 @@ public class ErrorReporterImpl implements ErrorReporter {
   }
 
   @Override
-  public void reportError(Throwable throwable) {
+  public void reportError(@NonNull Throwable throwable) {
     if (BuildConfig.DEBUG) {
       Log.w(getClass().getSimpleName(), throwable);
     }

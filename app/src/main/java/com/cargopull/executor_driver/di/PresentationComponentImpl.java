@@ -92,9 +92,13 @@ import com.cargopull.executor_driver.presentation.vehicleoptions.VehicleOptionsV
 import com.cargopull.executor_driver.presentation.waitingforclient.WaitingForClientViewModel;
 import com.cargopull.executor_driver.presentation.waitingforclient.WaitingForClientViewModelImpl;
 import com.cargopull.executor_driver.utils.TimeUtils;
+import com.google.firebase.analytics.FirebaseAnalytics;
 
 class PresentationComponentImpl implements PresentationComponent {
 
+  @SuppressWarnings({"FieldCanBeLocal", "unused"})
+  @NonNull
+  private final FirebaseAnalytics mFirebaseAnalytics;
   @NonNull
   private final MemoryDataSharer<String> loginSharer;
   @NonNull
@@ -140,9 +144,11 @@ class PresentationComponentImpl implements PresentationComponent {
   @Nullable
   private UpcomingPreOrderViewModel upcomingPreOrderAvailabilityViewModel;
 
-  PresentationComponentImpl(@NonNull MemoryDataSharer<String> loginSharer,
+  PresentationComponentImpl(@NonNull FirebaseAnalytics mFirebaseAnalytics,
+      @NonNull MemoryDataSharer<String> loginSharer,
       @NonNull InteractorComponent interactorComponent,
       @NonNull TimeUtils timeUtils) {
+    this.mFirebaseAnalytics = mFirebaseAnalytics;
     this.loginSharer = loginSharer;
     this.interactorComponent = interactorComponent;
     this.timeUtils = timeUtils;
