@@ -2,6 +2,8 @@ package com.cargopull.executor_driver.utils;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.util.Log;
+import com.cargopull.executor_driver.BuildConfig;
 import com.cargopull.executor_driver.interactor.DataReceiver;
 import com.crashlytics.android.Crashlytics;
 import com.google.firebase.analytics.FirebaseAnalytics;
@@ -36,6 +38,10 @@ public class EventLoggerImpl implements EventLogger {
                 bundle.putString(entry.getKey(), entry.getValue());
               }
               bundle.putString(Param.CHARACTER, login);
+              if (BuildConfig.DEBUG) {
+                Log.d(getClass().getSimpleName(),
+                    "Sending log: " + event + "; " + bundle.toString());
+              }
               mFirebaseAnalytics.logEvent(event, bundle);
             },
             throwable1 -> {
@@ -45,6 +51,10 @@ public class EventLoggerImpl implements EventLogger {
               Bundle bundle = new Bundle();
               for (Entry<String, String> entry : params.entrySet()) {
                 bundle.putString(entry.getKey(), entry.getValue());
+              }
+              if (BuildConfig.DEBUG) {
+                Log.d(getClass().getSimpleName(),
+                    "Sending log: " + event + "; " + bundle.toString());
               }
               mFirebaseAnalytics.logEvent(event, bundle);
             }
