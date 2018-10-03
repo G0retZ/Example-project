@@ -72,9 +72,12 @@ import com.cargopull.executor_driver.view.WaitingForClientRouteFragment;
 import com.cargopull.executor_driver.view.auth.LoginFragment;
 import com.cargopull.executor_driver.view.auth.PasswordFragment;
 import com.cargopull.executor_driver.view.auth.SmsReceiver;
+import com.google.firebase.analytics.FirebaseAnalytics;
 
 public class AppComponentImpl implements AppComponent {
 
+  @NonNull
+  private final FirebaseAnalytics mFirebaseAnalytics;
   @NonNull
   private final PresentationComponent presentationComponent;
   @NonNull
@@ -88,6 +91,7 @@ public class AppComponentImpl implements AppComponent {
 
   public AppComponentImpl(@NonNull Context appContext) {
     appContext = appContext.getApplicationContext();
+    mFirebaseAnalytics = FirebaseAnalytics.getInstance(appContext);
     TimeUtils timeUtils = new TimeUtilsImpl();
     appSettingsService = new AppPreferences(appContext);
     TokenKeeper tokenKeeper = new TokenKeeperImpl(appSettingsService);
@@ -110,8 +114,9 @@ public class AppComponentImpl implements AppComponent {
     InteractorComponent interactorComponent = new InteractorComponentImpl(
         loginSharer, timeUtils, repositoryComponent
     );
-    presentationComponent = new PresentationComponentImpl(loginSharer, interactorComponent,
-        timeUtils);
+    presentationComponent = new PresentationComponentImpl(
+        mFirebaseAnalytics, loginSharer, interactorComponent, timeUtils
+    );
     singleRingTonePlayer = new SingleRingTonePlayer(appContext);
     singleShakePlayer = new SingleShakePlayer(
         appContext,
