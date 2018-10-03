@@ -4,6 +4,7 @@ import com.cargopull.executor_driver.application.BaseActivity;
 import com.cargopull.executor_driver.application.FcmService;
 import com.cargopull.executor_driver.application.MainApplication;
 import com.cargopull.executor_driver.application.MovingToClientActivity;
+import com.cargopull.executor_driver.application.OrderCostDetailsActivity;
 import com.cargopull.executor_driver.application.OrderFulfillmentActivity;
 import com.cargopull.executor_driver.application.WaitingForClientActivity;
 import com.cargopull.executor_driver.view.BalanceFragment;
@@ -63,6 +64,8 @@ public interface AppComponent {
   void inject(WaitingForClientActivity waitingForClientActivity);
 
   void inject(OrderFulfillmentActivity orderFulfillmentActivity);
+
+  void inject(OrderCostDetailsActivity orderCostDetailsActivity);
 
   void inject(FcmService fcmService);
 
