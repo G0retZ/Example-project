@@ -8,6 +8,7 @@ import com.cargopull.executor_driver.application.FcmService;
 import com.cargopull.executor_driver.application.MainApplication;
 import com.cargopull.executor_driver.application.MovingToClientActivity;
 import com.cargopull.executor_driver.application.OrderFulfillmentActivity;
+import com.cargopull.executor_driver.application.WaitingForClientActivity;
 import com.cargopull.executor_driver.backend.geolocation.GeolocationCenter;
 import com.cargopull.executor_driver.backend.geolocation.GeolocationCenterImpl;
 import com.cargopull.executor_driver.backend.ringtone.SingleRingTonePlayer;
@@ -213,6 +214,11 @@ public class AppComponentImpl implements AppComponent {
   @Override
   public void inject(MovingToClientActivity movingToClientActivity) {
     movingToClientActivity.setEventLogger(eventLogger);
+  }
+
+  @Override
+  public void inject(WaitingForClientActivity waitingForClientActivity) {
+    waitingForClientActivity.setEventLogger(eventLogger);
   }
 
   @Override
