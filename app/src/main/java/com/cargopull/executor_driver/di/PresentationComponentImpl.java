@@ -96,9 +96,8 @@ import com.cargopull.executor_driver.utils.TimeUtils;
 
 class PresentationComponentImpl implements PresentationComponent {
 
-  @SuppressWarnings({"FieldCanBeLocal", "unused"})
   @NonNull
-  private final EventLogger mEventLogger;
+  private final EventLogger eventLogger;
   @NonNull
   private final MemoryDataSharer<String> loginSharer;
   @NonNull
@@ -148,7 +147,7 @@ class PresentationComponentImpl implements PresentationComponent {
       @NonNull MemoryDataSharer<String> loginSharer,
       @NonNull InteractorComponent interactorComponent,
       @NonNull TimeUtils timeUtils) {
-    this.mEventLogger = eventLogger;
+    this.eventLogger = eventLogger;
     this.loginSharer = loginSharer;
     this.interactorComponent = interactorComponent;
     this.timeUtils = timeUtils;
@@ -283,7 +282,7 @@ class PresentationComponentImpl implements PresentationComponent {
     return getViewModelInstance(
         fragment,
         CodeViewModelImpl.class,
-        new CodeViewModelImpl(interactorComponent.getPasswordUseCase())
+        new CodeViewModelImpl(interactorComponent.getPasswordUseCase(), timeUtils, eventLogger)
     );
   }
 
