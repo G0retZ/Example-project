@@ -24,6 +24,8 @@ import com.cargopull.executor_driver.backend.web.TokenKeeper;
 import com.cargopull.executor_driver.gateway.SmsCodeMapper;
 import com.cargopull.executor_driver.gateway.TokenKeeperImpl;
 import com.cargopull.executor_driver.interactor.auth.LoginSharer;
+import com.cargopull.executor_driver.utils.EventLogger;
+import com.cargopull.executor_driver.utils.EventLoggerImpl;
 import com.cargopull.executor_driver.utils.TimeUtils;
 import com.cargopull.executor_driver.utils.TimeUtilsImpl;
 import com.cargopull.executor_driver.view.BalanceFragment;
@@ -78,7 +80,7 @@ public class AppComponentImpl implements AppComponent {
 
   @SuppressWarnings("FieldCanBeLocal")
   @NonNull
-  private final FirebaseAnalytics mFirebaseAnalytics;
+  private final EventLogger mEventLogger;
   @NonNull
   private final PresentationComponent presentationComponent;
   @NonNull
@@ -92,11 +94,11 @@ public class AppComponentImpl implements AppComponent {
 
   public AppComponentImpl(@NonNull Context appContext) {
     appContext = appContext.getApplicationContext();
-    mFirebaseAnalytics = FirebaseAnalytics.getInstance(appContext);
     TimeUtils timeUtils = new TimeUtilsImpl();
     appSettingsService = new AppPreferences(appContext);
     TokenKeeper tokenKeeper = new TokenKeeperImpl(appSettingsService);
     LoginSharer loginSharer = new LoginSharer(appSettingsService);
+    mEventLogger = new EventLoggerImpl(loginSharer, FirebaseAnalytics.getInstance(appContext));
     BackendComponent backendComponent = new BackendComponentImpl(
         loginSharer,
         appSettingsService,
@@ -116,7 +118,7 @@ public class AppComponentImpl implements AppComponent {
         loginSharer, timeUtils, repositoryComponent
     );
     presentationComponent = new PresentationComponentImpl(
-        mFirebaseAnalytics, loginSharer, interactorComponent, timeUtils
+        mEventLogger, loginSharer, interactorComponent, timeUtils
     );
     singleRingTonePlayer = new SingleRingTonePlayer(appContext);
     singleShakePlayer = new SingleShakePlayer(

@@ -91,14 +91,13 @@ import com.cargopull.executor_driver.presentation.vehicleoptions.VehicleOptionsV
 import com.cargopull.executor_driver.presentation.vehicleoptions.VehicleOptionsViewModelImpl;
 import com.cargopull.executor_driver.presentation.waitingforclient.WaitingForClientViewModel;
 import com.cargopull.executor_driver.presentation.waitingforclient.WaitingForClientViewModelImpl;
+import com.cargopull.executor_driver.utils.EventLogger;
 import com.cargopull.executor_driver.utils.TimeUtils;
-import com.google.firebase.analytics.FirebaseAnalytics;
 
 class PresentationComponentImpl implements PresentationComponent {
 
-  @SuppressWarnings({"FieldCanBeLocal", "unused"})
   @NonNull
-  private final FirebaseAnalytics mFirebaseAnalytics;
+  private final EventLogger eventLogger;
   @NonNull
   private final MemoryDataSharer<String> loginSharer;
   @NonNull
@@ -144,11 +143,11 @@ class PresentationComponentImpl implements PresentationComponent {
   @Nullable
   private UpcomingPreOrderViewModel upcomingPreOrderAvailabilityViewModel;
 
-  PresentationComponentImpl(@NonNull FirebaseAnalytics mFirebaseAnalytics,
+  PresentationComponentImpl(@NonNull EventLogger eventLogger,
       @NonNull MemoryDataSharer<String> loginSharer,
       @NonNull InteractorComponent interactorComponent,
       @NonNull TimeUtils timeUtils) {
-    this.mFirebaseAnalytics = mFirebaseAnalytics;
+    this.eventLogger = eventLogger;
     this.loginSharer = loginSharer;
     this.interactorComponent = interactorComponent;
     this.timeUtils = timeUtils;
@@ -283,7 +282,7 @@ class PresentationComponentImpl implements PresentationComponent {
     return getViewModelInstance(
         fragment,
         CodeViewModelImpl.class,
-        new CodeViewModelImpl(interactorComponent.getPasswordUseCase())
+        new CodeViewModelImpl(interactorComponent.getPasswordUseCase(), timeUtils, eventLogger)
     );
   }
 
