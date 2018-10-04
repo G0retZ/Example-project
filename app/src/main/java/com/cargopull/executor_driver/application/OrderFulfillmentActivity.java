@@ -80,6 +80,7 @@ public class OrderFulfillmentActivity extends BaseActivity {
         }
         break;
       case PreOrderNavigate.ORDER_APPROVAL:
+        eventLogger.reportEvent("order_fulfillment_pre_order_notification", new HashMap<>());
         startActivity(new Intent(this, DriverPreOrderBookingActivity.class));
         break;
       default:
