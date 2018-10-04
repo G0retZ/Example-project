@@ -140,9 +140,9 @@ public class OrderConfirmationViewModelImpl extends ViewModel implements
           })
           .retry(throwable -> throwable instanceof OrderOfferExpiredException
               || throwable instanceof OrderOfferDecisionException)
-          .subscribe(timeout -> viewStateLiveData.postValue(
+          .subscribe(pair -> viewStateLiveData.postValue(
               lastViewState = new OrderConfirmationViewStateIdle(
-                  new OrderConfirmationTimeoutItem(timeout, timeUtils))
+                  new OrderConfirmationTimeoutItem(pair.second, timeUtils))
               ),
               throwable -> {
                 if (throwable instanceof DataMappingException) {

@@ -19,6 +19,7 @@ import com.cargopull.executor_driver.gateway.DataMappingException;
 import com.cargopull.executor_driver.interactor.OrderConfirmationUseCase;
 import com.cargopull.executor_driver.presentation.CommonNavigate;
 import com.cargopull.executor_driver.presentation.ViewState;
+import com.cargopull.executor_driver.utils.Pair;
 import com.cargopull.executor_driver.utils.TimeUtils;
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
@@ -51,7 +52,7 @@ public class OrderConfirmationViewModelTest {
   private Observer<ViewState<OrderConfirmationViewActions>> viewStateObserver;
   @Mock
   private Observer<String> navigateObserver;
-  private FlowableEmitter<Long> emitter;
+  private FlowableEmitter<Pair<Long, Long>> emitter;
 
   @Before
   public void setUp() {
@@ -168,9 +169,9 @@ public class OrderConfirmationViewModelTest {
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    emitter.onNext(15_000L);
-    emitter.onNext(17_000L);
-    emitter.onNext(12_000L);
+    emitter.onNext(new Pair<>(1L, 15_000L));
+    emitter.onNext(new Pair<>(2L, 17_000L));
+    emitter.onNext(new Pair<>(1L, 12_000L));
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(any(OrderConfirmationViewStatePending.class));
@@ -198,9 +199,9 @@ public class OrderConfirmationViewModelTest {
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    emitter.onNext(15_000L);
+    emitter.onNext(new Pair<>(1L, 15_000L));
     emitter.onError(new OrderOfferExpiredException("message"));
-    emitter.onNext(17_000L);
+    emitter.onNext(new Pair<>(1L, 17_000L));
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(any(OrderConfirmationViewStatePending.class));
@@ -226,9 +227,9 @@ public class OrderConfirmationViewModelTest {
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    emitter.onNext(15_000L);
+    emitter.onNext(new Pair<>(1L, 15_000L));
     emitter.onError(new OrderOfferDecisionException());
-    emitter.onNext(17_000L);
+    emitter.onNext(new Pair<>(1L, 17_000L));
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(any(OrderConfirmationViewStatePending.class));
@@ -266,7 +267,7 @@ public class OrderConfirmationViewModelTest {
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    emitter.onNext(12_000L);
+    emitter.onNext(new Pair<>(1L, 12_000L));
     viewModel.counterTimeOut();
 
     // Результат:
@@ -288,7 +289,7 @@ public class OrderConfirmationViewModelTest {
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    emitter.onNext(12_000L);
+    emitter.onNext(new Pair<>(1L, 12_000L));
     viewModel.acceptOrder();
 
     // Результат:
@@ -310,7 +311,7 @@ public class OrderConfirmationViewModelTest {
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    emitter.onNext(12_000L);
+    emitter.onNext(new Pair<>(1L, 12_000L));
     viewModel.declineOrder();
 
     // Результат:
@@ -333,7 +334,7 @@ public class OrderConfirmationViewModelTest {
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    emitter.onNext(12_000L);
+    emitter.onNext(new Pair<>(1L, 12_000L));
     viewModel.acceptOrder();
 
     // Результат:
@@ -359,7 +360,7 @@ public class OrderConfirmationViewModelTest {
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    emitter.onNext(12_000L);
+    emitter.onNext(new Pair<>(1L, 12_000L));
     viewModel.declineOrder();
 
     // Результат:
@@ -386,7 +387,7 @@ public class OrderConfirmationViewModelTest {
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    emitter.onNext(12_000L);
+    emitter.onNext(new Pair<>(1L, 12_000L));
     viewModel.acceptOrder();
 
     // Результат:
@@ -412,7 +413,7 @@ public class OrderConfirmationViewModelTest {
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    emitter.onNext(12_000L);
+    emitter.onNext(new Pair<>(1L, 12_000L));
     viewModel.declineOrder();
 
     // Результат:
@@ -439,7 +440,7 @@ public class OrderConfirmationViewModelTest {
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    emitter.onNext(12_000L);
+    emitter.onNext(new Pair<>(1L, 12_000L));
     viewModel.acceptOrder();
 
     // Результат:
@@ -466,7 +467,7 @@ public class OrderConfirmationViewModelTest {
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    emitter.onNext(12_000L);
+    emitter.onNext(new Pair<>(1L, 12_000L));
     viewModel.declineOrder();
 
     // Результат:
@@ -493,7 +494,7 @@ public class OrderConfirmationViewModelTest {
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    emitter.onNext(12_000L);
+    emitter.onNext(new Pair<>(1L, 12_000L));
     viewModel.acceptOrder();
 
     // Результат:
@@ -518,7 +519,7 @@ public class OrderConfirmationViewModelTest {
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    emitter.onNext(12_000L);
+    emitter.onNext(new Pair<>(1L, 12_000L));
     viewModel.declineOrder();
 
     // Результат:
@@ -543,7 +544,7 @@ public class OrderConfirmationViewModelTest {
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    emitter.onNext(12_000L);
+    emitter.onNext(new Pair<>(1L, 12_000L));
     viewModel.acceptOrder();
 
     // Результат:
@@ -570,7 +571,7 @@ public class OrderConfirmationViewModelTest {
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    emitter.onNext(12_000L);
+    emitter.onNext(new Pair<>(1L, 12_000L));
     viewModel.declineOrder();
 
     // Результат:
@@ -596,7 +597,7 @@ public class OrderConfirmationViewModelTest {
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    emitter.onNext(12_000L);
+    emitter.onNext(new Pair<>(1L, 12_000L));
     viewModel.acceptOrder();
 
     // Результат:
@@ -620,7 +621,7 @@ public class OrderConfirmationViewModelTest {
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    emitter.onNext(12_000L);
+    emitter.onNext(new Pair<>(1L, 12_000L));
     viewModel.declineOrder();
 
     // Результат:
