@@ -20,7 +20,6 @@ import javax.inject.Inject;
 
 public class OrderCostDetailsActivity extends BaseActivity {
 
-  @Nullable
   private EventLogger eventLogger;
 
   @Inject
@@ -39,9 +38,6 @@ public class OrderCostDetailsActivity extends BaseActivity {
       );
       toolbar.findViewById(R.id.orderActions).setOnClickListener(v -> {
         if (getSupportFragmentManager().findFragmentByTag("menu") == null) {
-          if (eventLogger == null) {
-            throw new IllegalStateException("Граф зависимостей поломан!");
-          }
           eventLogger.reportEvent("order_cost_details_actions", new HashMap<>());
           new OrderCostDetailsActionsDialogFragment().show(getSupportFragmentManager(), "menu");
         }
