@@ -11,7 +11,6 @@
     android:layout_height="0dp"
     android:layout_weight="1"/>
   <TextView
-    android:id="@+id/balanceAmountTitle"
     style="@style/TextAppearance.AppCompat.Title"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
@@ -30,7 +29,6 @@
     android:textSize="50sp"
     tools:text="@string/currency_format"/>
   <TextView
-    android:id="@+id/bonusAmountTitle"
     style="@style/TextAppearance.AppCompat.Title"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
@@ -50,7 +48,6 @@
     android:textSize="50sp"
     tools:text="@string/currency_format"/>
   <TextView
-    android:id="@+id/bonusAmountExplained"
     style="@style/TextAppearance.AppCompat.Subhead"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
