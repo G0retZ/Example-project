@@ -3,6 +3,7 @@ package com.cargopull.executor_driver.presentation.orderconfirmation;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.Mockito.only;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.verifyZeroInteractions;
@@ -19,11 +20,14 @@ import com.cargopull.executor_driver.gateway.DataMappingException;
 import com.cargopull.executor_driver.interactor.OrderConfirmationUseCase;
 import com.cargopull.executor_driver.presentation.CommonNavigate;
 import com.cargopull.executor_driver.presentation.ViewState;
+import com.cargopull.executor_driver.utils.EventLogger;
+import com.cargopull.executor_driver.utils.Pair;
 import com.cargopull.executor_driver.utils.TimeUtils;
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
 import io.reactivex.FlowableEmitter;
 import io.reactivex.Single;
+import java.util.HashMap;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
@@ -48,10 +52,12 @@ public class OrderConfirmationViewModelTest {
   @Mock
   private TimeUtils timeUtils;
   @Mock
+  private EventLogger eventLogger;
+  @Mock
   private Observer<ViewState<OrderConfirmationViewActions>> viewStateObserver;
   @Mock
   private Observer<String> navigateObserver;
-  private FlowableEmitter<Long> emitter;
+  private FlowableEmitter<Pair<Long, Long>> emitter;
 
   @Before
   public void setUp() {
@@ -59,7 +65,7 @@ public class OrderConfirmationViewModelTest {
     when(useCase.getOrderDecisionTimeout()).thenReturn(
         Flowable.create(e -> emitter = e, BackpressureStrategy.BUFFER)
     );
-    viewModel = new OrderConfirmationViewModelImpl(useCase, timeUtils);
+    viewModel = new OrderConfirmationViewModelImpl(useCase, timeUtils, eventLogger);
   }
 
   /* Тетсируем работу с юзкейсом принятия заказа. */
@@ -94,8 +100,7 @@ public class OrderConfirmationViewModelTest {
   @Test
   public void askUseCaseToSendOrderAccepted() {
     // Дано:
-    when(useCase.sendDecision(anyBoolean()))
-        .thenReturn(Single.just(""));
+    when(useCase.sendDecision(anyBoolean())).thenReturn(Single.just(""));
 
     // Действие:
     viewModel.acceptOrder();
@@ -112,8 +117,7 @@ public class OrderConfirmationViewModelTest {
   @Test
   public void askUseCaseToSendOrderDeclined() {
     // Дано:
-    when(useCase.sendDecision(anyBoolean()))
-        .thenReturn(Single.just(""));
+    when(useCase.sendDecision(anyBoolean())).thenReturn(Single.just(""));
 
     // Действие:
     viewModel.declineOrder();
@@ -138,6 +142,214 @@ public class OrderConfirmationViewModelTest {
     verify(useCase).getOrderDecisionTimeout();
     verify(useCase).sendDecision(true);
     verifyNoMoreInteractions(useCase);
+  }
+
+  /* Тетсируем работу со временем. */
+
+  /**
+   * Не должен просить текущий таймстамп изначально.
+   */
+  @Test
+  public void DoNotAskForCurrentTimeStampInitially() {
+    // Результат:
+    verifyZeroInteractions(timeUtils);
+  }
+
+  /**
+   * Должен запросить текущий таймстамп на новые данные.
+   */
+  @Test
+  public void askForCurrentTimeStampOnNewData() {
+    // Действие:
+    emitter.onNext(new Pair<>(1L, 12_000L));
+    emitter.onNext(new Pair<>(3L, 10_000L));
+    emitter.onNext(new Pair<>(101L, 2_000L));
+
+    // Результат:
+    verify(timeUtils, times(3)).currentTimeMillis();
+  }
+
+  /**
+   * Должен запросить текущий таймстамп повторно при успешном принятии заказа.
+   */
+  @Test
+  public void askForCurrentTimeStampAgainIfAccepted() {
+    // Дано:
+    when(useCase.sendDecision(true)).thenReturn(Single.just(""));
+
+    // Действие:
+    viewModel.acceptOrder();
+    viewModel.acceptOrder();
+    viewModel.acceptOrder();
+
+    // Результат:
+    verify(timeUtils, times(3)).currentTimeMillis();
+    verifyNoMoreInteractions(timeUtils);
+  }
+
+  /**
+   * Не должен запрашивать текущий таймстамп повторно при ошибках принятия заказа.
+   */
+  @Test
+  public void doNotAskForCurrentTimeStampOnAcceptErrors() {
+    // Дано:
+    when(useCase.sendDecision(true)).thenReturn(Single.error(IllegalStateException::new));
+
+    // Действие:
+    viewModel.acceptOrder();
+    viewModel.acceptOrder();
+    viewModel.acceptOrder();
+
+    // Результат:
+    verifyZeroInteractions(timeUtils);
+  }
+
+  /**
+   * Должен запросить текущий таймстамп повторно при успешном отказе от заказа.
+   */
+  @Test
+  public void askForCurrentTimeStampAgainIfDeclined() {
+    // Дано:
+    when(useCase.sendDecision(false)).thenReturn(Single.just(""));
+
+    // Действие:
+    viewModel.declineOrder();
+    viewModel.declineOrder();
+    viewModel.declineOrder();
+
+    // Результат:
+    verify(timeUtils, times(3)).currentTimeMillis();
+    verifyNoMoreInteractions(timeUtils);
+  }
+
+  /**
+   * Не должен запрашивать текущий таймстамп повторно при ошибках отказа от заказа.
+   */
+  @Test
+  public void doNotAskForCurrentTimeStampOnDecineErrors() {
+    // Дано:
+    when(useCase.sendDecision(false)).thenReturn(Single.error(IllegalStateException::new));
+
+    // Действие:
+    viewModel.declineOrder();
+    viewModel.declineOrder();
+    viewModel.declineOrder();
+
+    // Результат:
+    verifyZeroInteractions(timeUtils);
+  }
+
+  /* Тетсируем работу с логгером событий. */
+
+  /**
+   * Не должен трогать логгер изначально.
+   */
+  @Test
+  public void doNotTouchEventLoggerInitially() {
+    // Результат:
+    verifyZeroInteractions(eventLogger);
+  }
+
+  /**
+   * Должен передать данные для лога при успешном принятии заказа.
+   */
+  @Test
+  public void askLoggerToLogEventIfAccepted() {
+    // Дано:
+    InOrder inOrder = Mockito.inOrder(eventLogger);
+    when(timeUtils.currentTimeMillis()).thenReturn(0L, 12345L, 0L, 67890L, 0L, 1234567890L);
+    when(useCase.sendDecision(true)).thenReturn(Single.just(""));
+
+    // Действие:
+    emitter.onNext(new Pair<>(1L, 12_000L));
+    viewModel.acceptOrder();
+    emitter.onNext(new Pair<>(3L, 10_000L));
+    viewModel.acceptOrder();
+    emitter.onNext(new Pair<>(101L, 2_000L));
+    viewModel.acceptOrder();
+
+    // Результат:
+    HashMap<String, String> hashMap = new HashMap<>();
+    hashMap.put("order_id", "1");
+    hashMap.put("decision_duration", "12345");
+    inOrder.verify(eventLogger).reportEvent("order_offer_accepted", hashMap);
+    hashMap.clear();
+    hashMap.put("order_id", "3");
+    hashMap.put("decision_duration", "67890");
+    inOrder.verify(eventLogger).reportEvent("order_offer_accepted", hashMap);
+    hashMap.clear();
+    hashMap.put("order_id", "101");
+    hashMap.put("decision_duration", "1234567890");
+    inOrder.verify(eventLogger).reportEvent("order_offer_accepted", hashMap);
+    verifyNoMoreInteractions(eventLogger);
+  }
+
+  /**
+   * Не должен передать данные для лога при ошибках принятии заказа.
+   */
+  @Test
+  public void doNotTouchLoggerOnAcceptErrors() {
+    // Дано:
+    when(useCase.sendDecision(true)).thenReturn(Single.error(IllegalStateException::new));
+
+    // Действие:
+    viewModel.acceptOrder();
+    viewModel.acceptOrder();
+    viewModel.acceptOrder();
+
+    // Результат:
+    verifyZeroInteractions(eventLogger);
+  }
+
+  /**
+   * Должен передать данные для лога при успешном принятии заказа.
+   */
+  @Test
+  public void askLoggerToLogEventIfDeclined() {
+    // Дано:
+    InOrder inOrder = Mockito.inOrder(eventLogger);
+    when(timeUtils.currentTimeMillis()).thenReturn(0L, 12345L, 0L, 67890L, 0L, 1234567890L);
+    when(useCase.sendDecision(false)).thenReturn(Single.just(""));
+
+    // Действие:
+    emitter.onNext(new Pair<>(1L, 12_000L));
+    viewModel.declineOrder();
+    emitter.onNext(new Pair<>(3L, 10_000L));
+    viewModel.declineOrder();
+    emitter.onNext(new Pair<>(101L, 2_000L));
+    viewModel.declineOrder();
+
+    // Результат:
+    HashMap<String, String> hashMap = new HashMap<>();
+    hashMap.put("order_id", "1");
+    hashMap.put("decision_duration", "12345");
+    inOrder.verify(eventLogger).reportEvent("order_offer_declined", hashMap);
+    hashMap.clear();
+    hashMap.put("order_id", "3");
+    hashMap.put("decision_duration", "67890");
+    inOrder.verify(eventLogger).reportEvent("order_offer_declined", hashMap);
+    hashMap.clear();
+    hashMap.put("order_id", "101");
+    hashMap.put("decision_duration", "1234567890");
+    inOrder.verify(eventLogger).reportEvent("order_offer_declined", hashMap);
+    verifyNoMoreInteractions(eventLogger);
+  }
+
+  /**
+   * Не должен передать данные для лога при ошибках принятии заказа.
+   */
+  @Test
+  public void doNotTouchLoggerOnDeclineErrors() {
+    // Дано:
+    when(useCase.sendDecision(false)).thenReturn(Single.error(IllegalStateException::new));
+
+    // Действие:
+    viewModel.declineOrder();
+    viewModel.declineOrder();
+    viewModel.declineOrder();
+
+    // Результат:
+    verifyZeroInteractions(eventLogger);
   }
 
   /* Тетсируем переключение состояний. */
@@ -168,9 +380,9 @@ public class OrderConfirmationViewModelTest {
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    emitter.onNext(15_000L);
-    emitter.onNext(17_000L);
-    emitter.onNext(12_000L);
+    emitter.onNext(new Pair<>(1L, 15_000L));
+    emitter.onNext(new Pair<>(2L, 17_000L));
+    emitter.onNext(new Pair<>(1L, 12_000L));
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(any(OrderConfirmationViewStatePending.class));
@@ -193,14 +405,14 @@ public class OrderConfirmationViewModelTest {
   public void setNoViewStateToLiveDataForExpiredError() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    viewModel = new OrderConfirmationViewModelImpl(useCase, timeUtils);
+    viewModel = new OrderConfirmationViewModelImpl(useCase, timeUtils, eventLogger);
     viewModel.getNavigationLiveData().observeForever(navigateObserver);
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    emitter.onNext(15_000L);
+    emitter.onNext(new Pair<>(1L, 15_000L));
     emitter.onError(new OrderOfferExpiredException("message"));
-    emitter.onNext(17_000L);
+    emitter.onNext(new Pair<>(1L, 17_000L));
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(any(OrderConfirmationViewStatePending.class));
@@ -221,14 +433,14 @@ public class OrderConfirmationViewModelTest {
   public void setNoViewStateToLiveDataForOfferDecisionErrorWithoutMessage() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    viewModel = new OrderConfirmationViewModelImpl(useCase, timeUtils);
+    viewModel = new OrderConfirmationViewModelImpl(useCase, timeUtils, eventLogger);
     viewModel.getNavigationLiveData().observeForever(navigateObserver);
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    emitter.onNext(15_000L);
+    emitter.onNext(new Pair<>(1L, 15_000L));
     emitter.onError(new OrderOfferDecisionException());
-    emitter.onNext(17_000L);
+    emitter.onNext(new Pair<>(1L, 17_000L));
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(any(OrderConfirmationViewStatePending.class));
@@ -266,7 +478,7 @@ public class OrderConfirmationViewModelTest {
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    emitter.onNext(12_000L);
+    emitter.onNext(new Pair<>(1L, 12_000L));
     viewModel.counterTimeOut();
 
     // Результат:
@@ -288,7 +500,7 @@ public class OrderConfirmationViewModelTest {
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    emitter.onNext(12_000L);
+    emitter.onNext(new Pair<>(1L, 12_000L));
     viewModel.acceptOrder();
 
     // Результат:
@@ -310,7 +522,7 @@ public class OrderConfirmationViewModelTest {
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    emitter.onNext(12_000L);
+    emitter.onNext(new Pair<>(1L, 12_000L));
     viewModel.declineOrder();
 
     // Результат:
@@ -333,7 +545,7 @@ public class OrderConfirmationViewModelTest {
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    emitter.onNext(12_000L);
+    emitter.onNext(new Pair<>(1L, 12_000L));
     viewModel.acceptOrder();
 
     // Результат:
@@ -359,7 +571,7 @@ public class OrderConfirmationViewModelTest {
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    emitter.onNext(12_000L);
+    emitter.onNext(new Pair<>(1L, 12_000L));
     viewModel.declineOrder();
 
     // Результат:
@@ -381,12 +593,11 @@ public class OrderConfirmationViewModelTest {
   public void setIdleViewStateWithoutOrderToLiveDataForAcceptOnDataMappingError() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    when(useCase.sendDecision(anyBoolean()))
-        .thenReturn(Single.error(DataMappingException::new));
+    when(useCase.sendDecision(anyBoolean())).thenReturn(Single.error(DataMappingException::new));
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    emitter.onNext(12_000L);
+    emitter.onNext(new Pair<>(1L, 12_000L));
     viewModel.acceptOrder();
 
     // Результат:
@@ -412,7 +623,7 @@ public class OrderConfirmationViewModelTest {
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    emitter.onNext(12_000L);
+    emitter.onNext(new Pair<>(1L, 12_000L));
     viewModel.declineOrder();
 
     // Результат:
@@ -439,7 +650,7 @@ public class OrderConfirmationViewModelTest {
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    emitter.onNext(12_000L);
+    emitter.onNext(new Pair<>(1L, 12_000L));
     viewModel.acceptOrder();
 
     // Результат:
@@ -466,7 +677,7 @@ public class OrderConfirmationViewModelTest {
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    emitter.onNext(12_000L);
+    emitter.onNext(new Pair<>(1L, 12_000L));
     viewModel.declineOrder();
 
     // Результат:
@@ -493,7 +704,7 @@ public class OrderConfirmationViewModelTest {
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    emitter.onNext(12_000L);
+    emitter.onNext(new Pair<>(1L, 12_000L));
     viewModel.acceptOrder();
 
     // Результат:
@@ -518,7 +729,7 @@ public class OrderConfirmationViewModelTest {
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    emitter.onNext(12_000L);
+    emitter.onNext(new Pair<>(1L, 12_000L));
     viewModel.declineOrder();
 
     // Результат:
@@ -543,7 +754,7 @@ public class OrderConfirmationViewModelTest {
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    emitter.onNext(12_000L);
+    emitter.onNext(new Pair<>(1L, 12_000L));
     viewModel.acceptOrder();
 
     // Результат:
@@ -570,7 +781,7 @@ public class OrderConfirmationViewModelTest {
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    emitter.onNext(12_000L);
+    emitter.onNext(new Pair<>(1L, 12_000L));
     viewModel.declineOrder();
 
     // Результат:
@@ -596,7 +807,7 @@ public class OrderConfirmationViewModelTest {
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    emitter.onNext(12_000L);
+    emitter.onNext(new Pair<>(1L, 12_000L));
     viewModel.acceptOrder();
 
     // Результат:
@@ -620,7 +831,7 @@ public class OrderConfirmationViewModelTest {
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    emitter.onNext(12_000L);
+    emitter.onNext(new Pair<>(1L, 12_000L));
     viewModel.declineOrder();
 
     // Результат:
@@ -681,8 +892,7 @@ public class OrderConfirmationViewModelTest {
   @Test
   public void setNavigateToNoConnectionForDecline() {
     // Дано:
-    when(useCase.sendDecision(false))
-        .thenReturn(Single.error(IllegalStateException::new));
+    when(useCase.sendDecision(false)).thenReturn(Single.error(IllegalStateException::new));
     viewModel.getNavigationLiveData().observeForever(navigateObserver);
 
     // Действие:
@@ -744,8 +954,7 @@ public class OrderConfirmationViewModelTest {
   @Test
   public void setNavigateToServerDataErrorForAccept() {
     // Дано:
-    when(useCase.sendDecision(true))
-        .thenReturn(Single.error(DataMappingException::new));
+    when(useCase.sendDecision(true)).thenReturn(Single.error(DataMappingException::new));
     viewModel.getNavigationLiveData().observeForever(navigateObserver);
 
     // Действие:
@@ -761,8 +970,7 @@ public class OrderConfirmationViewModelTest {
   @Test
   public void setNavigateToServerDataErrorForDecline() {
     // Дано:
-    when(useCase.sendDecision(false))
-        .thenReturn(Single.error(DataMappingException::new));
+    when(useCase.sendDecision(false)).thenReturn(Single.error(DataMappingException::new));
     viewModel.getNavigationLiveData().observeForever(navigateObserver);
 
     // Действие:
@@ -778,8 +986,7 @@ public class OrderConfirmationViewModelTest {
   @Test
   public void setNavigateToNoConnectionForAccept() {
     // Дано:
-    when(useCase.sendDecision(true))
-        .thenReturn(Single.error(IllegalStateException::new));
+    when(useCase.sendDecision(true)).thenReturn(Single.error(IllegalStateException::new));
     viewModel.getNavigationLiveData().observeForever(navigateObserver);
 
     // Действие:

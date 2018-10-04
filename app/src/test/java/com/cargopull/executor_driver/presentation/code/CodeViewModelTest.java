@@ -206,7 +206,7 @@ public class CodeViewModelTest {
     viewModel.setCode("1   2   3   4");
 
     // Результат:
-    verify(timeUtils, only()).currentTimeMillis();
+    verifyZeroInteractions(eventLogger);
   }
 
   /* Тетсируем переключение состояний. */
