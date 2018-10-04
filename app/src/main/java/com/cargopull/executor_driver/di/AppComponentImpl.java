@@ -12,6 +12,7 @@ import com.cargopull.executor_driver.application.OnlineActivity;
 import com.cargopull.executor_driver.application.OnlineMenuActivity;
 import com.cargopull.executor_driver.application.OrderCostDetailsActivity;
 import com.cargopull.executor_driver.application.OrderFulfillmentActivity;
+import com.cargopull.executor_driver.application.PreOrdersActivity;
 import com.cargopull.executor_driver.application.WaitingForClientActivity;
 import com.cargopull.executor_driver.backend.geolocation.GeolocationCenter;
 import com.cargopull.executor_driver.backend.geolocation.GeolocationCenterImpl;
@@ -251,6 +252,11 @@ public class AppComponentImpl implements AppComponent {
   @Override
   public void inject(OnlineActivity onlineActivity) {
     onlineActivity.setEventLogger(eventLogger);
+  }
+
+  @Override
+  public void inject(PreOrdersActivity preOrdersActivity) {
+    preOrdersActivity.setEventLogger(eventLogger);
   }
 
   @Override
