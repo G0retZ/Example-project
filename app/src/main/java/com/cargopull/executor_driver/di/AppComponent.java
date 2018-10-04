@@ -3,6 +3,7 @@ package com.cargopull.executor_driver.di;
 import com.cargopull.executor_driver.application.BaseActivity;
 import com.cargopull.executor_driver.application.FcmService;
 import com.cargopull.executor_driver.application.MainApplication;
+import com.cargopull.executor_driver.application.MenuActivity;
 import com.cargopull.executor_driver.application.MovingToClientActivity;
 import com.cargopull.executor_driver.application.OrderCostDetailsActivity;
 import com.cargopull.executor_driver.application.OrderFulfillmentActivity;
@@ -69,6 +70,8 @@ public interface AppComponent {
   void inject(OrderFulfillmentActivity orderFulfillmentActivity);
 
   void inject(OrderCostDetailsActivity orderCostDetailsActivity);
+
+  void inject(MenuActivity menuActivity);
 
   void inject(FcmService fcmService);
 

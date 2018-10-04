@@ -6,6 +6,7 @@ import com.cargopull.executor_driver.application.AutoRouterImpl;
 import com.cargopull.executor_driver.application.BaseActivity;
 import com.cargopull.executor_driver.application.FcmService;
 import com.cargopull.executor_driver.application.MainApplication;
+import com.cargopull.executor_driver.application.MenuActivity;
 import com.cargopull.executor_driver.application.MovingToClientActivity;
 import com.cargopull.executor_driver.application.OrderCostDetailsActivity;
 import com.cargopull.executor_driver.application.OrderFulfillmentActivity;
@@ -233,6 +234,11 @@ public class AppComponentImpl implements AppComponent {
   @Override
   public void inject(OrderCostDetailsActivity orderCostDetailsActivity) {
     orderCostDetailsActivity.setEventLogger(eventLogger);
+  }
+
+  @Override
+  public void inject(MenuActivity menuActivity) {
+    menuActivity.setEventLogger(eventLogger);
   }
 
   @Override
