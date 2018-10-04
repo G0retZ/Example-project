@@ -388,7 +388,7 @@ public class CurrentCostPollingGatewayImplTest {
    * @throws Exception error
    */
   @Test
-  public void ingnorePollPingNetworkError() throws Exception {
+  public void ignorePollPingNetworkError() throws Exception {
     // Дано:
     when(mapper.map(stompMessage)).thenReturn(new Pair<>(0L, 30_000L));
     when(stompMessage.findHeader("OverPackage")).thenReturn("1");

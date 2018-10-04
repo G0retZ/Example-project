@@ -21,12 +21,14 @@ import com.cargopull.executor_driver.view.DriverPreOrderConfirmationFragment;
 import com.cargopull.executor_driver.view.GoOnlineFragment;
 import com.cargopull.executor_driver.view.MapFragment;
 import com.cargopull.executor_driver.view.MenuFragment;
+import com.cargopull.executor_driver.view.MovingToClientActionsDialogFragment;
 import com.cargopull.executor_driver.view.MovingToClientDetailsFragment;
 import com.cargopull.executor_driver.view.MovingToClientFragment;
 import com.cargopull.executor_driver.view.MovingToClientRouteFragment;
 import com.cargopull.executor_driver.view.NewPreOrderButtonFragment;
 import com.cargopull.executor_driver.view.NewPreOrderFragment;
 import com.cargopull.executor_driver.view.OnlineFragment;
+import com.cargopull.executor_driver.view.OrderCostDetailsActionsDialogFragment;
 import com.cargopull.executor_driver.view.OrderCostDetailsFragment;
 import com.cargopull.executor_driver.view.OrderCostDetailsOrderDetailsFragment;
 import com.cargopull.executor_driver.view.OrderCostDetailsRouteFragment;
@@ -48,6 +50,7 @@ import com.cargopull.executor_driver.view.UpcomingPreOrderConfirmationFragment;
 import com.cargopull.executor_driver.view.UpcomingPreOrderFragment;
 import com.cargopull.executor_driver.view.UpcomingPreOrderNotificationFragment;
 import com.cargopull.executor_driver.view.VehicleOptionsFragment;
+import com.cargopull.executor_driver.view.WaitingForClientActionsDialogFragment;
 import com.cargopull.executor_driver.view.WaitingForClientFragment;
 import com.cargopull.executor_driver.view.WaitingForClientRouteFragment;
 import com.cargopull.executor_driver.view.auth.LoginFragment;
@@ -97,11 +100,15 @@ public interface AppComponent {
 
   void inject(MovingToClientFragment movingToClientFragment);
 
+  void inject(MovingToClientActionsDialogFragment movingToClientActionsDialogFragment);
+
   void inject(MovingToClientDetailsFragment movingToClientDetailsFragment);
 
   void inject(MovingToClientRouteFragment movingToClientRouteFragment);
 
   void inject(WaitingForClientFragment waitingForClientFragment);
+
+  void inject(WaitingForClientActionsDialogFragment waitingForClientActionsDialogFragment);
 
   void inject(WaitingForClientRouteFragment waitingForClientRouteFragment);
 
@@ -132,6 +139,8 @@ public interface AppComponent {
   void inject(OrderCostDetailsOrderDetailsFragment orderCostDetailsOrderDetailsFragment);
 
   void inject(OrderCostDetailsRouteFragment orderCostDetailsRouteFragment);
+
+  void inject(OrderCostDetailsActionsDialogFragment orderCostDetailsActionsDialogFragment);
 
   void inject(ProfileFragment profileFragment);
 

@@ -195,7 +195,7 @@ public class CodeViewModelTest {
    * Не должен передать данные для лога при ошибках.
    */
   @Test
-  public void doNotThouchLoggerOnErrors() {
+  public void doNotTouchLoggerOnErrors() {
     // Дано:
     when(passwordUseCase.authorize(anyString(), any(Completable.class)))
         .thenReturn(Completable.error(new Exception()));

@@ -21,7 +21,6 @@ import javax.inject.Inject;
 
 public class OrderFulfillmentActivity extends BaseActivity {
 
-  @Nullable
   private EventLogger eventLogger;
 
   @Inject
@@ -40,9 +39,6 @@ public class OrderFulfillmentActivity extends BaseActivity {
       );
       toolbar.findViewById(R.id.orderActions).setOnClickListener(v -> {
         if (getSupportFragmentManager().findFragmentByTag("menu") == null) {
-          if (eventLogger == null) {
-            throw new IllegalStateException("Граф зависимостей поломан!");
-          }
           eventLogger.reportEvent("order_fulfillment_actions", new HashMap<>());
           new OrderFulfillmentActionsDialogFragment().show(getSupportFragmentManager(), "menu");
         }

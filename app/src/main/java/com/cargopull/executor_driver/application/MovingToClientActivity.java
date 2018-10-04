@@ -22,7 +22,6 @@ import javax.inject.Inject;
 
 public class MovingToClientActivity extends BaseActivity {
 
-  @Nullable
   private EventLogger eventLogger;
 
   @Inject
@@ -41,9 +40,6 @@ public class MovingToClientActivity extends BaseActivity {
       );
       toolbar.findViewById(R.id.orderActions).setOnClickListener(v -> {
         if (getSupportFragmentManager().findFragmentByTag("menu") == null) {
-          if (eventLogger == null) {
-            throw new IllegalStateException("Граф зависимостей поломан!");
-          }
           eventLogger.reportEvent("moving_to_client_actions", new HashMap<>());
           new MovingToClientActionsDialogFragment().show(getSupportFragmentManager(), "menu");
         }

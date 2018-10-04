@@ -51,7 +51,7 @@ public class MessagePayloadApiMapperTest {
    * @throws Exception ошибка
    */
   @Test
-  public void extractEmptyStringWithouQuotesSuccess() throws Exception {
+  public void extractEmptyStringWithoutQuotesSuccess() throws Exception {
     // Действие:
     String message = mapper.map(new StompMessage("", new ArrayList<>(), "\"\""));
 
@@ -65,7 +65,7 @@ public class MessagePayloadApiMapperTest {
    * @throws Exception ошибка
    */
   @Test
-  public void extractEmptyStringWithouSpaceSuccess() throws Exception {
+  public void extractEmptyStringWithoutSpaceSuccess() throws Exception {
     // Действие:
     String message = mapper.map(new StompMessage("", new ArrayList<>(), " "));
 
@@ -79,7 +79,7 @@ public class MessagePayloadApiMapperTest {
    * @throws Exception ошибка
    */
   @Test
-  public void extractEmptyStringWithouNewLineSuccess() throws Exception {
+  public void extractEmptyStringWithoutNewLineSuccess() throws Exception {
     // Действие:
     String message = mapper.map(new StompMessage("", new ArrayList<>(), "\n"));
 
@@ -167,7 +167,7 @@ public class MessagePayloadApiMapperTest {
    * @throws Exception ошибка
    */
   @Test
-  public void extractStringWithQuotesWithoutLEadingAndTrailingOnesSuccess() throws Exception {
+  public void extractStringWithQuotesWithoutLeadingAndTrailingOnesSuccess() throws Exception {
     // Действие:
     String message = mapper
         .map(new StompMessage("", new ArrayList<>(), "\"Message \"test super\" nova\""));
@@ -182,7 +182,7 @@ public class MessagePayloadApiMapperTest {
    * @throws Exception ошибка
    */
   @Test
-  public void extractTrimmedStringWithQuotesWithoutLEadingAndTrailingOnesSuccess()
+  public void extractTrimmedStringWithQuotesWithoutLeadingAndTrailingOnesSuccess()
       throws Exception {
     // Действие:
     String message = mapper
