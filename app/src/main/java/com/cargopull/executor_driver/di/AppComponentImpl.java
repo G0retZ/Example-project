@@ -8,6 +8,7 @@ import com.cargopull.executor_driver.application.FcmService;
 import com.cargopull.executor_driver.application.MainApplication;
 import com.cargopull.executor_driver.application.MenuActivity;
 import com.cargopull.executor_driver.application.MovingToClientActivity;
+import com.cargopull.executor_driver.application.OnlineActivity;
 import com.cargopull.executor_driver.application.OnlineMenuActivity;
 import com.cargopull.executor_driver.application.OrderCostDetailsActivity;
 import com.cargopull.executor_driver.application.OrderFulfillmentActivity;
@@ -245,6 +246,11 @@ public class AppComponentImpl implements AppComponent {
   @Override
   public void inject(OnlineMenuActivity onlineMenuActivity) {
     onlineMenuActivity.setEventLogger(eventLogger);
+  }
+
+  @Override
+  public void inject(OnlineActivity onlineActivity) {
+    onlineActivity.setEventLogger(eventLogger);
   }
 
   @Override
