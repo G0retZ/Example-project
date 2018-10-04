@@ -151,7 +151,7 @@ public class BaseActivity extends AppCompatActivity implements ExecutorStateView
    *
    * @param appComponent - компонент, который может произвести внедрение
    */
-  protected void onDependencyInject(AppComponent appComponent) {
+  void onDependencyInject(AppComponent appComponent) {
     appComponent.inject(this);
   }
 
