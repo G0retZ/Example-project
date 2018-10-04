@@ -81,6 +81,7 @@ public class MovingToClientActivity extends BaseActivity {
         }
         break;
       case PreOrderNavigate.ORDER_APPROVAL:
+        eventLogger.reportEvent("moving_to_client_pre_order_notification", new HashMap<>());
         startActivity(new Intent(this, DriverPreOrderBookingActivity.class));
         break;
       default:

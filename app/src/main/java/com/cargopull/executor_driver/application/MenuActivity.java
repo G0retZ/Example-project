@@ -51,6 +51,7 @@ public class MenuActivity extends BaseActivity {
         finish();
         break;
       case PreOrderNavigate.ORDER_APPROVAL:
+        eventLogger.reportEvent("menu_pre_order_notification", new HashMap<>());
         startActivity(new Intent(this, DriverPreOrderBookingActivity.class));
         finish();
         break;

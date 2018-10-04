@@ -78,6 +78,7 @@ public class WaitingForClientActivity extends BaseActivity {
         }
         break;
       case PreOrderNavigate.ORDER_APPROVAL:
+        eventLogger.reportEvent("waiting_for_client_pre_order_notification", new HashMap<>());
         startActivity(new Intent(this, DriverPreOrderBookingActivity.class));
         break;
       default:
