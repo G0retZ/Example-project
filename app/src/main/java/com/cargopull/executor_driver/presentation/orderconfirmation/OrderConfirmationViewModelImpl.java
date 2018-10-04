@@ -13,10 +13,12 @@ import com.cargopull.executor_driver.interactor.OrderConfirmationUseCase;
 import com.cargopull.executor_driver.presentation.CommonNavigate;
 import com.cargopull.executor_driver.presentation.SingleLiveEvent;
 import com.cargopull.executor_driver.presentation.ViewState;
+import com.cargopull.executor_driver.utils.EventLogger;
 import com.cargopull.executor_driver.utils.TimeUtils;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.internal.disposables.EmptyDisposable;
+import java.util.HashMap;
 import javax.inject.Inject;
 
 public class OrderConfirmationViewModelImpl extends ViewModel implements
@@ -30,19 +32,25 @@ public class OrderConfirmationViewModelImpl extends ViewModel implements
   private final SingleLiveEvent<String> navigateLiveData;
   @NonNull
   private final TimeUtils timeUtils;
+  @Nullable
+  private final EventLogger eventLogger;
   @NonNull
   private Disposable decisionDisposable = EmptyDisposable.INSTANCE;
   @NonNull
   private Disposable timeoutDisposable = EmptyDisposable.INSTANCE;
   @Nullable
   private ViewState<OrderConfirmationViewActions> lastViewState;
+  private long timeStamp;
+  private long orderId;
 
   @Inject
   public OrderConfirmationViewModelImpl(
       @NonNull OrderConfirmationUseCase orderConfirmationUseCase,
-      @NonNull TimeUtils timeUtils) {
+      @NonNull TimeUtils timeUtils,
+      @Nullable EventLogger eventLogger) {
     this.orderConfirmationUseCase = orderConfirmationUseCase;
     this.timeUtils = timeUtils;
+    this.eventLogger = eventLogger;
     viewStateLiveData = new MutableLiveData<>();
     navigateLiveData = new SingleLiveEvent<>();
     loadOrderTimeout();
@@ -69,7 +77,16 @@ public class OrderConfirmationViewModelImpl extends ViewModel implements
     decisionDisposable = orderConfirmationUseCase.sendDecision(true)
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(
-            message -> viewStateLiveData.postValue(new OrderConfirmationViewStateAccepted(message)),
+            message -> {
+              if (eventLogger != null) {
+                HashMap<String, String> params = new HashMap<>();
+                params.put("order_id", String.valueOf(orderId));
+                params.put("decision_duration",
+                    String.valueOf(timeUtils.currentTimeMillis() - timeStamp));
+                eventLogger.reportEvent("order_offer_accepted", params);
+              }
+              viewStateLiveData.postValue(new OrderConfirmationViewStateAccepted(message));
+            },
             t -> {
               if (t instanceof OrderConfirmationFailedException) {
                 viewStateLiveData.postValue(new OrderConfirmationViewStateFailed(t.getMessage()));
@@ -97,7 +114,16 @@ public class OrderConfirmationViewModelImpl extends ViewModel implements
     decisionDisposable = orderConfirmationUseCase.sendDecision(false)
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(
-            message -> viewStateLiveData.postValue(new OrderConfirmationViewStateDeclined(message)),
+            message -> {
+              if (eventLogger != null) {
+                HashMap<String, String> params = new HashMap<>();
+                params.put("order_id", String.valueOf(orderId));
+                params.put("decision_duration",
+                    String.valueOf(timeUtils.currentTimeMillis() - timeStamp));
+                eventLogger.reportEvent("order_offer_declined", params);
+              }
+              viewStateLiveData.postValue(new OrderConfirmationViewStateDeclined(message));
+            },
             t -> {
               if (t instanceof OrderConfirmationFailedException) {
                 viewStateLiveData.postValue(new OrderConfirmationViewStateFailed(t.getMessage()));
@@ -140,10 +166,15 @@ public class OrderConfirmationViewModelImpl extends ViewModel implements
           })
           .retry(throwable -> throwable instanceof OrderOfferExpiredException
               || throwable instanceof OrderOfferDecisionException)
-          .subscribe(pair -> viewStateLiveData.postValue(
-              lastViewState = new OrderConfirmationViewStateIdle(
-                  new OrderConfirmationTimeoutItem(pair.second, timeUtils))
-              ),
+          .subscribe(pair -> {
+                OrderConfirmationTimeoutItem orderConfirmationTimeoutItem =
+                    new OrderConfirmationTimeoutItem(pair.second, timeUtils);
+                orderId = pair.first;
+                timeStamp = orderConfirmationTimeoutItem.getItemTimestamp();
+                viewStateLiveData.postValue(
+                    lastViewState = new OrderConfirmationViewStateIdle(orderConfirmationTimeoutItem)
+                );
+              },
               throwable -> {
                 if (throwable instanceof DataMappingException) {
                   navigateLiveData.postValue(CommonNavigate.SERVER_DATA_ERROR);
