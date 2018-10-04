@@ -7,12 +7,23 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
 import com.cargopull.executor_driver.R;
+import com.cargopull.executor_driver.di.AppComponent;
 import com.cargopull.executor_driver.presentation.menu.MenuNavigate;
 import com.cargopull.executor_driver.presentation.onlinebutton.OnlineButtonNavigate;
 import com.cargopull.executor_driver.presentation.preorder.PreOrderNavigate;
 import com.cargopull.executor_driver.presentation.upcomingpreorder.UpcomingPreOrderNavigate;
+import com.cargopull.executor_driver.utils.EventLogger;
+import java.util.HashMap;
+import javax.inject.Inject;
 
 public class OnlineActivity extends BaseActivity {
+
+  private EventLogger eventLogger;
+
+  @Inject
+  public void setEventLogger(@NonNull EventLogger eventLogger) {
+    this.eventLogger = eventLogger;
+  }
 
   @Override
   public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -24,6 +35,12 @@ public class OnlineActivity extends BaseActivity {
           v -> startActivity(new Intent(this, OnlineMenuActivity.class))
       );
     }
+  }
+
+  @Override
+  protected void onDependencyInject(AppComponent appComponent) {
+    super.onDependencyInject(appComponent);
+    appComponent.inject(this);
   }
 
   @Override
@@ -58,6 +75,7 @@ public class OnlineActivity extends BaseActivity {
         startActivity(new Intent(this, BalanceActivity.class));
         break;
       case PreOrderNavigate.ORDER_APPROVAL:
+        eventLogger.reportEvent("online_map_pre_order_notification", new HashMap<>());
         startActivity(new Intent(this, DriverPreOrderBookingActivity.class));
         break;
       case UpcomingPreOrderNavigate.UPCOMING_PRE_ORDER:

@@ -80,7 +80,7 @@ public class ServerTimeUseCaseTest {
    * Не должен задавать текущее время сервера.
    */
   @Test
-  public void doNotSetServerTimeIfNodata() {
+  public void doNotSetServerTimeIfNoData() {
     // Действие:
     useCase.getServerTime().test();
 

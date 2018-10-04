@@ -6,6 +6,14 @@ import com.cargopull.executor_driver.application.AutoRouterImpl;
 import com.cargopull.executor_driver.application.BaseActivity;
 import com.cargopull.executor_driver.application.FcmService;
 import com.cargopull.executor_driver.application.MainApplication;
+import com.cargopull.executor_driver.application.MenuActivity;
+import com.cargopull.executor_driver.application.MovingToClientActivity;
+import com.cargopull.executor_driver.application.OnlineActivity;
+import com.cargopull.executor_driver.application.OnlineMenuActivity;
+import com.cargopull.executor_driver.application.OrderCostDetailsActivity;
+import com.cargopull.executor_driver.application.OrderFulfillmentActivity;
+import com.cargopull.executor_driver.application.PreOrdersActivity;
+import com.cargopull.executor_driver.application.WaitingForClientActivity;
 import com.cargopull.executor_driver.backend.geolocation.GeolocationCenter;
 import com.cargopull.executor_driver.backend.geolocation.GeolocationCenterImpl;
 import com.cargopull.executor_driver.backend.ringtone.SingleRingTonePlayer;
@@ -24,6 +32,8 @@ import com.cargopull.executor_driver.backend.web.TokenKeeper;
 import com.cargopull.executor_driver.gateway.SmsCodeMapper;
 import com.cargopull.executor_driver.gateway.TokenKeeperImpl;
 import com.cargopull.executor_driver.interactor.auth.LoginSharer;
+import com.cargopull.executor_driver.utils.EventLogger;
+import com.cargopull.executor_driver.utils.EventLoggerImpl;
 import com.cargopull.executor_driver.utils.TimeUtils;
 import com.cargopull.executor_driver.utils.TimeUtilsImpl;
 import com.cargopull.executor_driver.view.BalanceFragment;
@@ -40,12 +50,14 @@ import com.cargopull.executor_driver.view.DriverPreOrderConfirmationFragment;
 import com.cargopull.executor_driver.view.GoOnlineFragment;
 import com.cargopull.executor_driver.view.MapFragment;
 import com.cargopull.executor_driver.view.MenuFragment;
+import com.cargopull.executor_driver.view.MovingToClientActionsDialogFragment;
 import com.cargopull.executor_driver.view.MovingToClientDetailsFragment;
 import com.cargopull.executor_driver.view.MovingToClientFragment;
 import com.cargopull.executor_driver.view.MovingToClientRouteFragment;
 import com.cargopull.executor_driver.view.NewPreOrderButtonFragment;
 import com.cargopull.executor_driver.view.NewPreOrderFragment;
 import com.cargopull.executor_driver.view.OnlineFragment;
+import com.cargopull.executor_driver.view.OrderCostDetailsActionsDialogFragment;
 import com.cargopull.executor_driver.view.OrderCostDetailsFragment;
 import com.cargopull.executor_driver.view.OrderCostDetailsOrderDetailsFragment;
 import com.cargopull.executor_driver.view.OrderCostDetailsRouteFragment;
@@ -67,14 +79,19 @@ import com.cargopull.executor_driver.view.UpcomingPreOrderConfirmationFragment;
 import com.cargopull.executor_driver.view.UpcomingPreOrderFragment;
 import com.cargopull.executor_driver.view.UpcomingPreOrderNotificationFragment;
 import com.cargopull.executor_driver.view.VehicleOptionsFragment;
+import com.cargopull.executor_driver.view.WaitingForClientActionsDialogFragment;
 import com.cargopull.executor_driver.view.WaitingForClientFragment;
 import com.cargopull.executor_driver.view.WaitingForClientRouteFragment;
 import com.cargopull.executor_driver.view.auth.LoginFragment;
 import com.cargopull.executor_driver.view.auth.PasswordFragment;
 import com.cargopull.executor_driver.view.auth.SmsReceiver;
+import com.google.firebase.analytics.FirebaseAnalytics;
 
 public class AppComponentImpl implements AppComponent {
 
+  @SuppressWarnings("FieldCanBeLocal")
+  @NonNull
+  private final EventLogger eventLogger;
   @NonNull
   private final PresentationComponent presentationComponent;
   @NonNull
@@ -92,6 +109,7 @@ public class AppComponentImpl implements AppComponent {
     appSettingsService = new AppPreferences(appContext);
     TokenKeeper tokenKeeper = new TokenKeeperImpl(appSettingsService);
     LoginSharer loginSharer = new LoginSharer(appSettingsService);
+    eventLogger = new EventLoggerImpl(loginSharer, FirebaseAnalytics.getInstance(appContext));
     BackendComponent backendComponent = new BackendComponentImpl(
         loginSharer,
         appSettingsService,
@@ -110,8 +128,9 @@ public class AppComponentImpl implements AppComponent {
     InteractorComponent interactorComponent = new InteractorComponentImpl(
         loginSharer, timeUtils, repositoryComponent
     );
-    presentationComponent = new PresentationComponentImpl(loginSharer, interactorComponent,
-        timeUtils);
+    presentationComponent = new PresentationComponentImpl(
+        eventLogger, loginSharer, interactorComponent, timeUtils
+    );
     singleRingTonePlayer = new SingleRingTonePlayer(appContext);
     singleShakePlayer = new SingleShakePlayer(
         appContext,
@@ -198,6 +217,46 @@ public class AppComponentImpl implements AppComponent {
     baseActivity.setServerTimeViewModel(
         presentationComponent.getServerTimeViewModel()
     );
+  }
+
+  @Override
+  public void inject(MovingToClientActivity movingToClientActivity) {
+    movingToClientActivity.setEventLogger(eventLogger);
+  }
+
+  @Override
+  public void inject(WaitingForClientActivity waitingForClientActivity) {
+    waitingForClientActivity.setEventLogger(eventLogger);
+  }
+
+  @Override
+  public void inject(OrderFulfillmentActivity orderFulfillmentActivity) {
+    orderFulfillmentActivity.setEventLogger(eventLogger);
+  }
+
+  @Override
+  public void inject(OrderCostDetailsActivity orderCostDetailsActivity) {
+    orderCostDetailsActivity.setEventLogger(eventLogger);
+  }
+
+  @Override
+  public void inject(MenuActivity menuActivity) {
+    menuActivity.setEventLogger(eventLogger);
+  }
+
+  @Override
+  public void inject(OnlineMenuActivity onlineMenuActivity) {
+    onlineMenuActivity.setEventLogger(eventLogger);
+  }
+
+  @Override
+  public void inject(OnlineActivity onlineActivity) {
+    onlineActivity.setEventLogger(eventLogger);
+  }
+
+  @Override
+  public void inject(PreOrdersActivity preOrdersActivity) {
+    preOrdersActivity.setEventLogger(eventLogger);
   }
 
   @Override
@@ -323,6 +382,11 @@ public class AppComponentImpl implements AppComponent {
   }
 
   @Override
+  public void inject(MovingToClientActionsDialogFragment movingToClientActionsDialogFragment) {
+    movingToClientActionsDialogFragment.setEventLogger(eventLogger);
+  }
+
+  @Override
   public void inject(MovingToClientDetailsFragment movingToClientDetailsFragment) {
     movingToClientDetailsFragment.setOrderViewModel(presentationComponent.getOrderViewModel());
   }
@@ -341,6 +405,11 @@ public class AppComponentImpl implements AppComponent {
     );
     waitingForClientFragment.setOrderViewModel(presentationComponent.getOrderViewModel());
     waitingForClientFragment.setShakeItPlayer(singleShakePlayer);
+  }
+
+  @Override
+  public void inject(WaitingForClientActionsDialogFragment waitingForClientActionsDialogFragment) {
+    waitingForClientActionsDialogFragment.setEventLogger(eventLogger);
   }
 
   @Override
@@ -374,6 +443,7 @@ public class AppComponentImpl implements AppComponent {
 
   @Override
   public void inject(OrderFulfillmentActionsDialogFragment orderFulfillmentActionsDialogFragment) {
+    orderFulfillmentActionsDialogFragment.setEventLogger(eventLogger);
     orderFulfillmentActionsDialogFragment.setNextRoutePointViewModel(
         presentationComponent.getNextRoutePointViewModel(orderFulfillmentActionsDialogFragment)
     );
@@ -459,6 +529,11 @@ public class AppComponentImpl implements AppComponent {
     orderCostDetailsRouteFragment.setOrderRouteViewModel(
         presentationComponent.getOrderRouteViewModel(orderCostDetailsRouteFragment)
     );
+  }
+
+  @Override
+  public void inject(OrderCostDetailsActionsDialogFragment orderCostDetailsActionsDialogFragment) {
+    orderCostDetailsActionsDialogFragment.setEventLogger(eventLogger);
   }
 
   @Override

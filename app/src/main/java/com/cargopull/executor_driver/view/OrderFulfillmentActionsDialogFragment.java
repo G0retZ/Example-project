@@ -19,6 +19,8 @@ import com.cargopull.executor_driver.di.AppComponent;
 import com.cargopull.executor_driver.presentation.nextroutepoint.NextRoutePointViewActions;
 import com.cargopull.executor_driver.presentation.nextroutepoint.NextRoutePointViewModel;
 import com.cargopull.executor_driver.presentation.oderfulfillmentactions.OrderFulfillmentActionsNavigate;
+import com.cargopull.executor_driver.utils.EventLogger;
+import java.util.HashMap;
 import javax.inject.Inject;
 
 /**
@@ -28,6 +30,7 @@ import javax.inject.Inject;
 public class OrderFulfillmentActionsDialogFragment extends BaseDialogFragment implements
     NextRoutePointViewActions {
 
+  private EventLogger eventLogger;
   private NextRoutePointViewModel nextRoutePointViewModel;
   private View completeTheOrderAction;
   private Context context;
@@ -35,6 +38,11 @@ public class OrderFulfillmentActionsDialogFragment extends BaseDialogFragment im
   @Inject
   public void setNextRoutePointViewModel(@NonNull NextRoutePointViewModel nextRoutePointViewModel) {
     this.nextRoutePointViewModel = nextRoutePointViewModel;
+  }
+
+  @Inject
+  public void setEventLogger(@NonNull EventLogger eventLogger) {
+    this.eventLogger = eventLogger;
   }
 
   @Override
@@ -72,28 +80,46 @@ public class OrderFulfillmentActionsDialogFragment extends BaseDialogFragment im
     }
     ((Toolbar) view.findViewById(R.id.appBar)).setNavigationOnClickListener(v -> dismiss());
     view.findViewById(R.id.orderRoute).setOnClickListener(
-        v -> navigate(OrderFulfillmentActionsNavigate.ORDER_ROUTE)
+        v -> {
+          eventLogger.reportEvent("order_fulfillment_action_route", new HashMap<>());
+          navigate(OrderFulfillmentActionsNavigate.ORDER_ROUTE);
+        }
     );
     view.findViewById(R.id.orderDetails).setOnClickListener(
-        v -> navigate(OrderFulfillmentActionsNavigate.ORDER_INFORMATION)
+        v -> {
+          eventLogger.reportEvent("order_fulfillment_action_order_info", new HashMap<>());
+          navigate(OrderFulfillmentActionsNavigate.ORDER_INFORMATION);
+        }
     );
     view.findViewById(R.id.callToClient).setOnClickListener(
-        v -> navigate(OrderFulfillmentActionsNavigate.CALL_TO_CLIENT)
+        v -> {
+          eventLogger.reportEvent("order_fulfillment_action_call", new HashMap<>());
+          navigate(OrderFulfillmentActionsNavigate.CALL_TO_CLIENT);
+        }
     );
     view.findViewById(R.id.reportAProblem).setOnClickListener(
-        v -> navigate(OrderFulfillmentActionsNavigate.REPORT_A_PROBLEM)
+        v -> {
+          eventLogger.reportEvent("order_fulfillment_action_problems", new HashMap<>());
+          navigate(OrderFulfillmentActionsNavigate.REPORT_A_PROBLEM);
+        }
     );
     completeTheOrderAction = view.findViewById(R.id.completeTheOrder);
     completeTheOrderAction.setOnClickListener(
-        v -> new Builder(context)
-            .setMessage(R.string.order_complete_question)
-            .setPositiveButton(
-                getString(android.R.string.ok),
-                ((dialog, which) -> nextRoutePointViewModel.completeTheOrder())
-            ).setNegativeButton(getString(android.R.string.cancel), null)
-            .create()
-            .show()
-
+        v -> {
+          eventLogger.reportEvent("order_fulfillment_action_incomplete", new HashMap<>());
+          new Builder(context)
+              .setMessage(R.string.order_complete_question)
+              .setPositiveButton(
+                  getString(android.R.string.ok),
+                  ((dialog, which) -> {
+                    eventLogger.reportEvent("order_fulfillment_action_incomplete_completed",
+                        new HashMap<>());
+                    nextRoutePointViewModel.completeTheOrder();
+                  })
+              ).setNegativeButton(getString(android.R.string.cancel), null)
+              .create()
+              .show();
+        }
     );
   }
 

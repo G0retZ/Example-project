@@ -124,7 +124,6 @@
       app:layout_constraintTop_toBottomOf="@id/gradient"
       app:srcCompat="@drawable/ic_route_point"/>
     <TextView
-      android:id="@+id/positionText1"
       style="@style/TextAppearance.AppCompat.Subhead"
       android:textStyle="bold"
       android:layout_width="0dp"

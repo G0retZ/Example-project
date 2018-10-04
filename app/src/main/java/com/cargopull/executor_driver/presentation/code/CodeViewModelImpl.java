@@ -9,10 +9,13 @@ import com.cargopull.executor_driver.entity.ValidationException;
 import com.cargopull.executor_driver.interactor.auth.PasswordUseCase;
 import com.cargopull.executor_driver.presentation.SingleLiveEvent;
 import com.cargopull.executor_driver.presentation.ViewState;
+import com.cargopull.executor_driver.utils.EventLogger;
+import com.cargopull.executor_driver.utils.TimeUtils;
 import io.reactivex.Completable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.internal.disposables.EmptyDisposable;
+import java.util.HashMap;
 import javax.inject.Inject;
 
 public class CodeViewModelImpl extends ViewModel implements CodeViewModel {
@@ -25,10 +28,19 @@ public class CodeViewModelImpl extends ViewModel implements CodeViewModel {
   private final SingleLiveEvent<String> navigateLiveData;
   @NonNull
   private Disposable disposable = EmptyDisposable.INSTANCE;
+  @NonNull
+  private final TimeUtils timeUtils;
+  @NonNull
+  private final EventLogger eventLogger;
+  private final long timeStamp;
 
   @Inject
-  public CodeViewModelImpl(@NonNull PasswordUseCase passwordUseCase) {
+  public CodeViewModelImpl(@NonNull PasswordUseCase passwordUseCase,
+      @NonNull TimeUtils timeUtils, @NonNull EventLogger eventLogger) {
     this.passwordUseCase = passwordUseCase;
+    this.timeUtils = timeUtils;
+    this.eventLogger = eventLogger;
+    timeStamp = timeUtils.currentTimeMillis();
     viewStateLiveData = new MutableLiveData<>();
     navigateLiveData = new SingleLiveEvent<>();
     viewStateLiveData.postValue(new CodeViewStateInitial());
@@ -53,12 +65,16 @@ public class CodeViewModelImpl extends ViewModel implements CodeViewModel {
     }
     disposable = passwordUseCase.authorize(
         code.replaceAll("[^\\d]", ""),
-        Completable.fromAction(
-            () -> viewStateLiveData.postValue(new CodeViewStatePending())
+        Completable.fromAction(() -> viewStateLiveData.postValue(new CodeViewStatePending())
         ).subscribeOn(AndroidSchedulers.mainThread())
     ).observeOn(AndroidSchedulers.mainThread())
         .subscribe(
-            () -> navigateLiveData.postValue(CodeNavigate.ENTER_APP),
+            () -> {
+              HashMap<String, String> params = new HashMap<>();
+              params.put("login_delay", String.valueOf(timeUtils.currentTimeMillis() - timeStamp));
+              eventLogger.reportEvent("executor_login", params);
+              navigateLiveData.postValue(CodeNavigate.ENTER_APP);
+            },
             throwable -> {
               if (throwable instanceof NoNetworkException) {
                 viewStateLiveData.postValue(new CodeViewStateNetworkError());
