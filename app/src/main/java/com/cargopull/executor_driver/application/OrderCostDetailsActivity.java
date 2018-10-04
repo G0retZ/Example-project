@@ -73,6 +73,7 @@ public class OrderCostDetailsActivity extends BaseActivity {
         }
         break;
       case PreOrderNavigate.ORDER_APPROVAL:
+        eventLogger.reportEvent("order_cost_details_pre_order_notification", new HashMap<>());
         startActivity(new Intent(this, DriverPreOrderBookingActivity.class));
         break;
       default:
