@@ -5,6 +5,7 @@ import com.cargopull.executor_driver.application.FcmService;
 import com.cargopull.executor_driver.application.MainApplication;
 import com.cargopull.executor_driver.application.MenuActivity;
 import com.cargopull.executor_driver.application.MovingToClientActivity;
+import com.cargopull.executor_driver.application.OnlineMenuActivity;
 import com.cargopull.executor_driver.application.OrderCostDetailsActivity;
 import com.cargopull.executor_driver.application.OrderFulfillmentActivity;
 import com.cargopull.executor_driver.application.WaitingForClientActivity;
@@ -72,6 +73,8 @@ public interface AppComponent {
   void inject(OrderCostDetailsActivity orderCostDetailsActivity);
 
   void inject(MenuActivity menuActivity);
+
+  void inject(OnlineMenuActivity onlineMenuActivity);
 
   void inject(FcmService fcmService);
 
