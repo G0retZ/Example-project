@@ -4,15 +4,17 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.cargopull.executor_driver.entity.ExecutorState;
 import com.cargopull.executor_driver.entity.GeoLocation;
+import com.cargopull.executor_driver.utils.ErrorReporter;
 import io.reactivex.Flowable;
 import io.reactivex.schedulers.Schedulers;
 import java.util.HashMap;
 import java.util.Map;
 import javax.inject.Inject;
 
-// TODO: https://jira.capsrv.xyz/browse/RUCAP-1993
 public class GeoLocationUseCaseImpl implements GeoLocationUseCase {
 
+  @NonNull
+  private final ErrorReporter errorReporter;
   @NonNull
   private static final Map<ExecutorState, Integer> delays;
 
@@ -41,9 +43,11 @@ public class GeoLocationUseCaseImpl implements GeoLocationUseCase {
   private Flowable<GeoLocation> geoLocationFlowable;
 
   @Inject
-  public GeoLocationUseCaseImpl(@NonNull GeoLocationGateway geoLocationGateway,
+  public GeoLocationUseCaseImpl(@NonNull ErrorReporter errorReporter,
+      @NonNull GeoLocationGateway geoLocationGateway,
       @NonNull GeoTrackingGateway geoTrackingGateway,
       @NonNull ExecutorStateUseCase executorStateUseCase) {
+    this.errorReporter = errorReporter;
     this.geoLocationGateway = geoLocationGateway;
     this.geoTrackingGateway = geoTrackingGateway;
     this.executorStateUseCase = executorStateUseCase;
@@ -62,8 +66,12 @@ public class GeoLocationUseCaseImpl implements GeoLocationUseCase {
           ).switchMap(
               geoLocation -> Flowable.just(geoLocation)
                   .startWith(geoTrackingGateway.sendGeoLocation(geoLocation)
-                      .observeOn(Schedulers.single()).toFlowable())
-          ).replay(1)
+                      .observeOn(Schedulers.single())
+                      .onErrorComplete()
+                      .toFlowable()
+                  )
+          ).doOnError(errorReporter::reportError)
+          .replay(1)
           .refCount();
     }
     return geoLocationFlowable;

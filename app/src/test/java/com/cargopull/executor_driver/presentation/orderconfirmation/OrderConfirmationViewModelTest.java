@@ -226,7 +226,7 @@ public class OrderConfirmationViewModelTest {
    * Не должен запрашивать текущий таймстамп повторно при ошибках отказа от заказа.
    */
   @Test
-  public void doNotAskForCurrentTimeStampOnDecineErrors() {
+  public void doNotAskForCurrentTimeStampOnDeclineErrors() {
     // Дано:
     when(useCase.sendDecision(false)).thenReturn(Single.error(IllegalStateException::new));
 
