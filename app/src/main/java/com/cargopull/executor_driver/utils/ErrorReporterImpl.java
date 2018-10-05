@@ -27,8 +27,10 @@ public class ErrorReporterImpl implements ErrorReporter {
     if (BuildConfig.DEBUG) {
       Log.w(getClass().getSimpleName(), throwable);
     }
-    // Игнорируем сетевые ошибки
-    if (throwable instanceof AuthorizationException || throwable instanceof NoNetworkException
+    // Игнорируем ошибки доступа и сетевые ошибки
+    if (throwable instanceof SecurityException
+        || throwable instanceof AuthorizationException
+        || throwable instanceof NoNetworkException
         || throwable instanceof ConnectionClosedException
         || throwable instanceof OrderOfferExpiredException
         || throwable instanceof OrderOfferDecisionException) {
