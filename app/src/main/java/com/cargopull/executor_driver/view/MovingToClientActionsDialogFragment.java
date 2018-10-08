@@ -13,7 +13,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import com.cargopull.executor_driver.R;
+import com.cargopull.executor_driver.di.AppComponent;
 import com.cargopull.executor_driver.presentation.movingtoclientactions.MovingToClientActionsNavigate;
+import com.cargopull.executor_driver.utils.EventLogger;
+import java.util.HashMap;
+import javax.inject.Inject;
 
 /**
  * Отображает меню действий во время выполнения заказа.
@@ -21,10 +25,17 @@ import com.cargopull.executor_driver.presentation.movingtoclientactions.MovingTo
 
 public class MovingToClientActionsDialogFragment extends BaseDialogFragment {
 
+  private EventLogger eventLogger;
+
   @Override
   public void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setStyle(DialogFragment.STYLE_NO_FRAME, R.style.AppTheme);
+  }
+
+  @Inject
+  public void setEventLogger(@NonNull EventLogger eventLogger) {
+    this.eventLogger = eventLogger;
   }
 
   @Nullable
@@ -32,6 +43,11 @@ public class MovingToClientActionsDialogFragment extends BaseDialogFragment {
   public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
       @Nullable Bundle savedInstanceState) {
     return inflater.inflate(R.layout.fragment_moving_to_client_actions, container, false);
+  }
+
+  @Override
+  void onDependencyInject(AppComponent appComponent) {
+    appComponent.inject(this);
   }
 
   @Override
@@ -50,13 +66,22 @@ public class MovingToClientActionsDialogFragment extends BaseDialogFragment {
     }
     ((Toolbar) view.findViewById(R.id.appBar)).setNavigationOnClickListener(v -> dismiss());
     view.findViewById(R.id.orderRoute).setOnClickListener(
-        v -> navigate(MovingToClientActionsNavigate.ORDER_ROUTE)
+        v -> {
+          eventLogger.reportEvent("moving_to_client_action_route", new HashMap<>());
+          navigate(MovingToClientActionsNavigate.ORDER_ROUTE);
+        }
     );
     view.findViewById(R.id.orderDetails).setOnClickListener(
-        v -> navigate(MovingToClientActionsNavigate.ORDER_INFORMATION)
+        v -> {
+          eventLogger.reportEvent("moving_to_client_action_order_info", new HashMap<>());
+          navigate(MovingToClientActionsNavigate.ORDER_INFORMATION);
+        }
     );
     view.findViewById(R.id.reportAProblem).setOnClickListener(
-        v -> navigate(MovingToClientActionsNavigate.REPORT_A_PROBLEM)
+        v -> {
+          eventLogger.reportEvent("moving_to_client_action_problems", new HashMap<>());
+          navigate(MovingToClientActionsNavigate.REPORT_A_PROBLEM);
+        }
     );
   }
 

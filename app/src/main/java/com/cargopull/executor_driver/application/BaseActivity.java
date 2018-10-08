@@ -103,7 +103,7 @@ public class BaseActivity extends AppCompatActivity implements ExecutorStateView
   protected void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     pendingDialogFragment.setCancelable(false);
-    getDiComponent().inject(this);
+    onDependencyInject(getDiComponent());
     if (executorStateViewModel == null) {
       throw new IllegalStateException("Граф зависимостей поломан!");
     }
@@ -144,6 +144,15 @@ public class BaseActivity extends AppCompatActivity implements ExecutorStateView
         navigate(destination);
       }
     });
+  }
+
+  /**
+   * Колбэк для внедрения зависимостей.
+   *
+   * @param appComponent - компонент, который может произвести внедрение
+   */
+  void onDependencyInject(AppComponent appComponent) {
+    appComponent.inject(this);
   }
 
   @Override
@@ -311,9 +320,10 @@ public class BaseActivity extends AppCompatActivity implements ExecutorStateView
         .setPositiveButton(getString(android.R.string.ok),
             ((dialog, which) -> {
               announcementDialog = null;
-              if (announcementViewModel != null) {
-                announcementViewModel.announcementConsumed();
+              if (announcementViewModel == null) {
+                throw new IllegalStateException("Граф зависимостей поломан!");
               }
+              announcementViewModel.announcementConsumed();
             }))
         .create();
     if (resumed) {
@@ -330,9 +340,10 @@ public class BaseActivity extends AppCompatActivity implements ExecutorStateView
         .setPositiveButton(getString(android.R.string.ok),
             ((dialog, which) -> {
               onlineDialog = null;
-              if (executorStateViewModel != null) {
-                executorStateViewModel.messageConsumed();
+              if (executorStateViewModel == null) {
+                throw new IllegalStateException("Граф зависимостей поломан!");
               }
+              executorStateViewModel.messageConsumed();
             }))
         .create();
     if (resumed) {
@@ -347,9 +358,10 @@ public class BaseActivity extends AppCompatActivity implements ExecutorStateView
         .setCancelable(false)
         .setPositiveButton(getString(R.string.update), (dialog, which) -> {
           updateDialog = null;
-          if (updateMessageViewModel != null) {
-            updateMessageViewModel.messageConsumed();
+          if (updateMessageViewModel == null) {
+            throw new IllegalStateException("Граф зависимостей поломан!");
           }
+          updateMessageViewModel.messageConsumed();
           try {
             startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(
                 "market://details?id=com.cargopull.executor_driver"
@@ -362,9 +374,10 @@ public class BaseActivity extends AppCompatActivity implements ExecutorStateView
         })
         .setNegativeButton(getString(R.string.not_now), (dialog, which) -> {
           updateDialog = null;
-          if (updateMessageViewModel != null) {
-            updateMessageViewModel.messageConsumed();
+          if (updateMessageViewModel == null) {
+            throw new IllegalStateException("Граф зависимостей поломан!");
           }
+          updateMessageViewModel.messageConsumed();
         })
         .create();
     if (resumed) {

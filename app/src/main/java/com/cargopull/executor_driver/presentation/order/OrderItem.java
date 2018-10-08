@@ -98,7 +98,7 @@ class OrderItem {
   public String getOccupationTime() {
     long scheduledDate = order.getScheduledStartTime();
     long etaDate = timeUtils.currentTimeMillis() + order.getEtaToStartPoint();
-    scheduledDate = scheduledDate < etaDate ? etaDate : scheduledDate;
+    scheduledDate = scheduledDate == 0 ? etaDate : scheduledDate;
     return
         DateTimeFormat.forPattern("HH:mm").print(scheduledDate)
             + "–"

@@ -91,10 +91,13 @@ import com.cargopull.executor_driver.presentation.vehicleoptions.VehicleOptionsV
 import com.cargopull.executor_driver.presentation.vehicleoptions.VehicleOptionsViewModelImpl;
 import com.cargopull.executor_driver.presentation.waitingforclient.WaitingForClientViewModel;
 import com.cargopull.executor_driver.presentation.waitingforclient.WaitingForClientViewModelImpl;
+import com.cargopull.executor_driver.utils.EventLogger;
 import com.cargopull.executor_driver.utils.TimeUtils;
 
 class PresentationComponentImpl implements PresentationComponent {
 
+  @NonNull
+  private final EventLogger eventLogger;
   @NonNull
   private final MemoryDataSharer<String> loginSharer;
   @NonNull
@@ -140,9 +143,11 @@ class PresentationComponentImpl implements PresentationComponent {
   @Nullable
   private UpcomingPreOrderViewModel upcomingPreOrderAvailabilityViewModel;
 
-  PresentationComponentImpl(@NonNull MemoryDataSharer<String> loginSharer,
+  PresentationComponentImpl(@NonNull EventLogger eventLogger,
+      @NonNull MemoryDataSharer<String> loginSharer,
       @NonNull InteractorComponent interactorComponent,
       @NonNull TimeUtils timeUtils) {
+    this.eventLogger = eventLogger;
     this.loginSharer = loginSharer;
     this.interactorComponent = interactorComponent;
     this.timeUtils = timeUtils;
@@ -277,7 +282,7 @@ class PresentationComponentImpl implements PresentationComponent {
     return getViewModelInstance(
         fragment,
         CodeViewModelImpl.class,
-        new CodeViewModelImpl(interactorComponent.getPasswordUseCase())
+        new CodeViewModelImpl(interactorComponent.getPasswordUseCase(), timeUtils, eventLogger)
     );
   }
 
@@ -495,7 +500,8 @@ class PresentationComponentImpl implements PresentationComponent {
         OrderConfirmationViewModelImpl.class,
         new OrderConfirmationViewModelImpl(
             interactorComponent.getOrderConfirmationUseCase(),
-            timeUtils
+            timeUtils,
+            eventLogger
         )
     );
   }
@@ -511,7 +517,8 @@ class PresentationComponentImpl implements PresentationComponent {
         OrderConfirmationViewModelImpl.class,
         new OrderConfirmationViewModelImpl(
             interactorComponent.getPreOrderBookingUseCase(),
-            timeUtils
+            timeUtils,
+            null
         )
     );
   }
@@ -748,7 +755,8 @@ class PresentationComponentImpl implements PresentationComponent {
         OrderConfirmationViewModelImpl.class,
         new OrderConfirmationViewModelImpl(
             interactorComponent.getSelectedPreOrderConfirmationUseCase(),
-            timeUtils
+            timeUtils,
+            null
         )
     );
   }
@@ -778,7 +786,8 @@ class PresentationComponentImpl implements PresentationComponent {
         OrderConfirmationViewModelImpl.class,
         new OrderConfirmationViewModelImpl(
             interactorComponent.getUpcomingPreOrderConfirmationUseCase(),
-            timeUtils
+            timeUtils,
+            null
         )
     );
   }

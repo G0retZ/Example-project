@@ -164,7 +164,7 @@ public class CancelOrderViewModelTest {
    * Не игнорировать другие ошибки.
    */
   @Test
-  public void setNothingToLiveDataForOtherErro() {
+  public void setNothingToLiveDataForOtherError() {
     // Дано:
     when(useCase.cancelOrder(any())).thenReturn(Completable.error(new DataMappingException()));
     viewModel.getNavigationLiveData().observeForever(navigateObserver);

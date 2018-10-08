@@ -24,12 +24,13 @@ public class ErrorReporterImpl implements ErrorReporter {
   }
 
   @Override
-  public void reportError(Throwable throwable) {
+  public void reportError(@NonNull Throwable throwable) {
     if (BuildConfig.DEBUG) {
       Log.w(getClass().getSimpleName(), throwable);
     }
-    // Игнорируем сетевые ошибки
-    if (throwable instanceof AuthorizationException
+    // Игнорируем ошибки доступа исетевые ошибки
+    if (throwable instanceof SecurityException
+        || throwable instanceof AuthorizationException
         || throwable instanceof ServerResponseException
         || throwable instanceof NoNetworkException
         || throwable instanceof ConnectionClosedException

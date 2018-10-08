@@ -69,7 +69,7 @@ public class UpcomingPreOrderApiMapperTest {
     // Дано и Действие:
     mapper.map(new StompMessage("MESSAGE",
         Collections.singletonList(new StompHeader("OrderId", "1234567890")),
-        "sdfjfowe\nfwujasdb\n"));
+        "super\npower\n"));
   }
 
   /**
