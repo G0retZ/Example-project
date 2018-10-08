@@ -297,6 +297,7 @@ class InteractorComponentImpl implements InteractorComponent {
           errorReporter,
           repositoryComponent.getExecutorStateSwitchGateway(),
           getExecutorStateUseCase(),
+          ExecutorState.BLOCKED,
           ExecutorState.SHIFT_CLOSED,
           ExecutorState.SHIFT_OPENED,
           ExecutorState.ONLINE,

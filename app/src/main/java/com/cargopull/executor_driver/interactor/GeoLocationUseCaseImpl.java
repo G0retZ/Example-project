@@ -20,6 +20,7 @@ public class GeoLocationUseCaseImpl implements GeoLocationUseCase {
 
   static {
     delays = new HashMap<>();
+    delays.put(ExecutorState.BLOCKED, 3600000);
     delays.put(ExecutorState.SHIFT_CLOSED, 3600000);
     delays.put(ExecutorState.SHIFT_OPENED, 180000);
     delays.put(ExecutorState.ONLINE, 15000);

@@ -298,6 +298,22 @@ public class ExecutorStateViewModelTest {
   }
 
   /**
+   * Должен вернуть "перейти к экрану блокировки".
+   */
+  @Test
+  public void navigateToBlocked() {
+    // Дано:
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getNavigationLiveData().observeForever(navigationObserver);
+
+    // Действие:
+    publishSubject.onNext(ExecutorState.BLOCKED);
+
+    // Результат:
+    verify(navigationObserver, only()).onChanged(ExecutorStateNavigate.BLOCKED);
+  }
+
+  /**
    * Должен вернуть "перейти к карте".
    */
   @Test
