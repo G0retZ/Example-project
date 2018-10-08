@@ -13,7 +13,7 @@ public class ServerResponseException extends IOException {
   @NonNull
   private final String code;
 
-  ServerResponseException(@NonNull String code, @NonNull String message) {
+  public ServerResponseException(@NonNull String code, @NonNull String message) {
     super(message);
     this.code = code;
   }
