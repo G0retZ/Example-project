@@ -28,6 +28,7 @@ import com.cargopull.executor_driver.backend.web.DeprecatedVersionInterceptor;
 import com.cargopull.executor_driver.backend.web.ReceiveTokenInterceptor;
 import com.cargopull.executor_driver.backend.web.SendTokenInterceptor;
 import com.cargopull.executor_driver.backend.web.SendVersionInterceptor;
+import com.cargopull.executor_driver.backend.web.ServerResponseInterceptor;
 import com.cargopull.executor_driver.backend.web.TokenKeeper;
 import com.cargopull.executor_driver.gateway.SmsCodeMapper;
 import com.cargopull.executor_driver.gateway.TokenKeeperImpl;
@@ -117,6 +118,7 @@ public class AppComponentImpl implements AppComponent {
         new SendVersionInterceptor(),
         new DeprecatedVersionInterceptor(),
         new AuthorizationInterceptor(),
+        new ServerResponseInterceptor(),
         new SendTokenInterceptor(tokenKeeper),
         new ReceiveTokenInterceptor(tokenKeeper)
     );
