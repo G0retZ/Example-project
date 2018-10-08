@@ -1,6 +1,7 @@
 package com.cargopull.executor_driver.interactor;
 
 import android.support.annotation.NonNull;
+import com.cargopull.executor_driver.utils.Pair;
 import io.reactivex.Flowable;
 import io.reactivex.Single;
 
@@ -13,10 +14,10 @@ public interface OrderConfirmationUseCase {
    * Получает таймаут для решения исполнителя по принятию пришедших заказов, из расчета один таймаут
    * на один заказ.
    *
-   * @return {@link Flowable<Long>} результат - успех либо ошибка с текстом.
+   * @return {@link Flowable<Pair>} результат - успех с ID заказа и таймаутом либо ошибка с текстом.
    */
   @NonNull
-  Flowable<Long> getOrderDecisionTimeout();
+  Flowable<Pair<Long, Long>> getOrderDecisionTimeout();
 
   /**
    * Передает решение исполнителя по принятию заказа.

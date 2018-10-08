@@ -16,6 +16,7 @@ import com.cargopull.executor_driver.entity.Order;
 import com.cargopull.executor_driver.entity.OrderOfferDecisionException;
 import com.cargopull.executor_driver.entity.OrderOfferExpiredException;
 import com.cargopull.executor_driver.gateway.DataMappingException;
+import com.cargopull.executor_driver.utils.Pair;
 import io.reactivex.Flowable;
 import io.reactivex.Single;
 import io.reactivex.functions.Action;
@@ -314,7 +315,7 @@ public class OrderConfirmationUseCaseTest {
     when(orderUseCase.getOrders()).thenReturn(Flowable.error(new DataMappingException()));
 
     // Действие:
-    TestSubscriber<Long> test = useCase.getOrderDecisionTimeout().test();
+    TestSubscriber<Pair<Long, Long>> test = useCase.getOrderDecisionTimeout().test();
 
     // Результат:
     test.assertError(DataMappingException.class);
@@ -328,17 +329,18 @@ public class OrderConfirmationUseCaseTest {
   @Test
   public void answerOrderExpiredErrorForGetTimeoutsIfErrorAfterValue() {
     // Дано:
+    when(order.getId()).thenReturn(101L);
     when(order.getTimeout()).thenReturn(12345L);
     when(orderUseCase.getOrders()).thenReturn(
         Flowable.just(order).concatWith(Flowable.error(new OrderOfferExpiredException("")))
     );
 
     // Действие:
-    TestSubscriber<Long> test = useCase.getOrderDecisionTimeout().test();
+    TestSubscriber<Pair<Long, Long>> test = useCase.getOrderDecisionTimeout().test();
 
     // Результат:
     test.assertError(OrderOfferExpiredException.class);
-    test.assertValue(12345L);
+    test.assertValue(new Pair<>(101L, 12345L));
     test.assertNotComplete();
   }
 
@@ -348,17 +350,22 @@ public class OrderConfirmationUseCaseTest {
   @Test
   public void answerWithTimeoutsForGetTimeouts() {
     // Дано:
+    when(order.getId()).thenReturn(101L, 202L);
     when(order.getTimeout()).thenReturn(12345L, 54321L);
+    when(order2.getId()).thenReturn(303L);
     when(order2.getTimeout()).thenReturn(34543L);
     when(orderUseCase.getOrders())
         .thenReturn(Flowable.just(order, order2, order).concatWith(Flowable.never()));
 
     // Действие:
-    TestSubscriber<Long> test = useCase.getOrderDecisionTimeout().test();
+    TestSubscriber<Pair<Long, Long>> test = useCase.getOrderDecisionTimeout().test();
 
     // Результат:
     test.assertNoErrors();
-    test.assertValues(12345L, 34543L, 54321L);
+    test.assertValueCount(3);
+    test.assertValueAt(0, new Pair<>(101L, 12345L));
+    test.assertValueAt(1, new Pair<>(303L, 34543L));
+    test.assertValueAt(2, new Pair<>(202L, 54321L));
     test.assertNotComplete();
   }
 

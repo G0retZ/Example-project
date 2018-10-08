@@ -26,7 +26,7 @@
     android:layout_marginTop="32dp"
     android:layout_marginBottom="24dp"
     android:gravity="center"
-    android:text="@string/break_disclimer"
+    android:text="@string/break_description"
     app:layout_constraintBottom_toTopOf="@id/resumeWork"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"

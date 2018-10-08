@@ -4,8 +4,10 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.only;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 import android.arch.core.executor.testing.InstantTaskExecutorRule;
@@ -15,8 +17,11 @@ import com.cargopull.executor_driver.backend.web.NoNetworkException;
 import com.cargopull.executor_driver.entity.ValidationException;
 import com.cargopull.executor_driver.interactor.auth.PasswordUseCase;
 import com.cargopull.executor_driver.presentation.ViewState;
+import com.cargopull.executor_driver.utils.EventLogger;
+import com.cargopull.executor_driver.utils.TimeUtils;
 import io.reactivex.Completable;
 import io.reactivex.subjects.CompletableSubject;
+import java.util.HashMap;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
@@ -40,6 +45,10 @@ public class CodeViewModelTest {
   private CodeViewModel viewModel;
   @Mock
   private PasswordUseCase passwordUseCase;
+  @Mock
+  private TimeUtils timeUtils;
+  @Mock
+  private EventLogger eventLogger;
 
   @Mock
   private Observer<ViewState<CodeViewActions>> viewStateObserver;
@@ -54,7 +63,7 @@ public class CodeViewModelTest {
   public void setUp() {
     when(passwordUseCase.authorize(anyString(), any(Completable.class)))
         .thenReturn(Completable.never());
-    viewModel = new CodeViewModelImpl(passwordUseCase);
+    viewModel = new CodeViewModelImpl(passwordUseCase, timeUtils, eventLogger);
   }
 
   /* Тетсируем работу с юзкейсом кода. */
@@ -92,6 +101,112 @@ public class CodeViewModelTest {
     verify(passwordUseCase).authorize(eq("123"), afterValidationCaptor.capture());
     verify(passwordUseCase).authorize(eq("1234"), afterValidationCaptor.capture());
     verifyNoMoreInteractions(passwordUseCase);
+  }
+
+  /* Тетсируем работу со временем. */
+
+  /**
+   * Должен запросить текущий таймстамп изначально.
+   */
+  @Test
+  public void askForCurrentTimeStampInitially() {
+    // Результат:
+    verify(timeUtils, only()).currentTimeMillis();
+  }
+
+  /**
+   * Должен запросить текущий таймстамп повторно при успешном вводе кода.
+   */
+  @Test
+  public void askForCurrentTimeStampAgainIfLoggedIn() {
+    // Дано:
+    when(passwordUseCase.authorize(anyString(), any(Completable.class)))
+        .thenReturn(Completable.complete());
+
+    // Действие:
+    viewModel.setCode("1   2   ");
+    viewModel.setCode("1   2   3   ");
+    viewModel.setCode("1   2   3   4");
+
+    // Результат:
+    verify(timeUtils, times(4)).currentTimeMillis();
+    verifyNoMoreInteractions(timeUtils);
+  }
+
+  /**
+   * Не должен запрашивать текущий таймстамп повторно при ошибках.
+   */
+  @Test
+  public void doNotAskForCurrentTimeStampOnErrors() {
+    // Дано:
+    when(passwordUseCase.authorize(anyString(), any(Completable.class)))
+        .thenReturn(Completable.error(new Exception()));
+
+    // Действие:
+    viewModel.setCode("1   2   ");
+    viewModel.setCode("1   2   3   ");
+    viewModel.setCode("1   2   3   4");
+
+    // Результат:
+    verify(timeUtils, only()).currentTimeMillis();
+  }
+
+  /* Тетсируем работу с логгером событий. */
+
+  /**
+   * Не должен трогать логгер изначально.
+   */
+  @Test
+  public void doNotTouchEventLoggerInitially() {
+    // Результат:
+    verifyZeroInteractions(eventLogger);
+  }
+
+  /**
+   * Должен передать данные для лога при успешном вводе кода.
+   */
+  @Test
+  public void askLoggerToLogEventIfLoggedIn() {
+    // Дано:
+    InOrder inOrder = Mockito.inOrder(eventLogger);
+    when(timeUtils.currentTimeMillis()).thenReturn(12345L, 67890L, 1234567890L);
+    when(passwordUseCase.authorize(anyString(), any(Completable.class)))
+        .thenReturn(Completable.complete());
+
+    // Действие:
+    viewModel.setCode("1   2   ");
+    viewModel.setCode("1   2   3   ");
+    viewModel.setCode("1   2   3   4");
+
+    // Результат:
+    HashMap<String, String> hashMap = new HashMap<>();
+    hashMap.put("login_delay", "12345");
+    inOrder.verify(eventLogger).reportEvent("executor_login", hashMap);
+    hashMap.clear();
+    hashMap.put("login_delay", "67890");
+    inOrder.verify(eventLogger).reportEvent("executor_login", hashMap);
+    hashMap.clear();
+    hashMap.put("login_delay", "1234567890");
+    inOrder.verify(eventLogger).reportEvent("executor_login", hashMap);
+    verifyNoMoreInteractions(eventLogger);
+  }
+
+  /**
+   * Не должен передать данные для лога при ошибках.
+   */
+  @Test
+  public void doNotTouchLoggerOnErrors() {
+    // Дано:
+    when(passwordUseCase.authorize(anyString(), any(Completable.class)))
+        .thenReturn(Completable.error(new Exception()));
+
+    // Действие:
+    viewModel.setCode("1   2   ");
+    viewModel.setCode("1   2   3   ");
+    viewModel.setCode("1   2   3   4");
+
+    // Результат:
+    verifyZeroInteractions(eventLogger);
   }
 
   /* Тетсируем переключение состояний. */

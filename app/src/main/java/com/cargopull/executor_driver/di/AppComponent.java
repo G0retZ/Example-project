@@ -3,6 +3,14 @@ package com.cargopull.executor_driver.di;
 import com.cargopull.executor_driver.application.BaseActivity;
 import com.cargopull.executor_driver.application.FcmService;
 import com.cargopull.executor_driver.application.MainApplication;
+import com.cargopull.executor_driver.application.MenuActivity;
+import com.cargopull.executor_driver.application.MovingToClientActivity;
+import com.cargopull.executor_driver.application.OnlineActivity;
+import com.cargopull.executor_driver.application.OnlineMenuActivity;
+import com.cargopull.executor_driver.application.OrderCostDetailsActivity;
+import com.cargopull.executor_driver.application.OrderFulfillmentActivity;
+import com.cargopull.executor_driver.application.PreOrdersActivity;
+import com.cargopull.executor_driver.application.WaitingForClientActivity;
 import com.cargopull.executor_driver.view.BalanceFragment;
 import com.cargopull.executor_driver.view.BalanceSummaryFragment;
 import com.cargopull.executor_driver.view.CallToClientFragment;
@@ -17,12 +25,14 @@ import com.cargopull.executor_driver.view.DriverPreOrderConfirmationFragment;
 import com.cargopull.executor_driver.view.GoOnlineFragment;
 import com.cargopull.executor_driver.view.MapFragment;
 import com.cargopull.executor_driver.view.MenuFragment;
+import com.cargopull.executor_driver.view.MovingToClientActionsDialogFragment;
 import com.cargopull.executor_driver.view.MovingToClientDetailsFragment;
 import com.cargopull.executor_driver.view.MovingToClientFragment;
 import com.cargopull.executor_driver.view.MovingToClientRouteFragment;
 import com.cargopull.executor_driver.view.NewPreOrderButtonFragment;
 import com.cargopull.executor_driver.view.NewPreOrderFragment;
 import com.cargopull.executor_driver.view.OnlineFragment;
+import com.cargopull.executor_driver.view.OrderCostDetailsActionsDialogFragment;
 import com.cargopull.executor_driver.view.OrderCostDetailsFragment;
 import com.cargopull.executor_driver.view.OrderCostDetailsOrderDetailsFragment;
 import com.cargopull.executor_driver.view.OrderCostDetailsRouteFragment;
@@ -44,6 +54,7 @@ import com.cargopull.executor_driver.view.UpcomingPreOrderConfirmationFragment;
 import com.cargopull.executor_driver.view.UpcomingPreOrderFragment;
 import com.cargopull.executor_driver.view.UpcomingPreOrderNotificationFragment;
 import com.cargopull.executor_driver.view.VehicleOptionsFragment;
+import com.cargopull.executor_driver.view.WaitingForClientActionsDialogFragment;
 import com.cargopull.executor_driver.view.WaitingForClientFragment;
 import com.cargopull.executor_driver.view.WaitingForClientRouteFragment;
 import com.cargopull.executor_driver.view.auth.LoginFragment;
@@ -54,6 +65,22 @@ public interface AppComponent {
   void inject(MainApplication mainApplication);
 
   void inject(BaseActivity baseActivity);
+
+  void inject(MovingToClientActivity movingToClientActivity);
+
+  void inject(WaitingForClientActivity waitingForClientActivity);
+
+  void inject(OrderFulfillmentActivity orderFulfillmentActivity);
+
+  void inject(OrderCostDetailsActivity orderCostDetailsActivity);
+
+  void inject(MenuActivity menuActivity);
+
+  void inject(OnlineMenuActivity onlineMenuActivity);
+
+  void inject(OnlineActivity onlineActivity);
+
+  void inject(PreOrdersActivity preOrdersActivity);
 
   void inject(FcmService fcmService);
 
@@ -85,11 +112,15 @@ public interface AppComponent {
 
   void inject(MovingToClientFragment movingToClientFragment);
 
+  void inject(MovingToClientActionsDialogFragment movingToClientActionsDialogFragment);
+
   void inject(MovingToClientDetailsFragment movingToClientDetailsFragment);
 
   void inject(MovingToClientRouteFragment movingToClientRouteFragment);
 
   void inject(WaitingForClientFragment waitingForClientFragment);
+
+  void inject(WaitingForClientActionsDialogFragment waitingForClientActionsDialogFragment);
 
   void inject(WaitingForClientRouteFragment waitingForClientRouteFragment);
 
@@ -120,6 +151,8 @@ public interface AppComponent {
   void inject(OrderCostDetailsOrderDetailsFragment orderCostDetailsOrderDetailsFragment);
 
   void inject(OrderCostDetailsRouteFragment orderCostDetailsRouteFragment);
+
+  void inject(OrderCostDetailsActionsDialogFragment orderCostDetailsActionsDialogFragment);
 
   void inject(ProfileFragment profileFragment);
 

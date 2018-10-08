@@ -131,7 +131,7 @@
   <string name="app_version">Версия приложения %1$s</string>
   <string name="about">О приложении</string>
   <string name="order_cancelled">Заказ был отменен</string>
-  <string name="break_disclimer">Вы не принимаете срочные заказы, но вам по-прежнему будут предлагаться предварительные заказы.</string>
+  <string name="break_description">Вы не принимаете срочные заказы, но вам по-прежнему будут предлагаться предварительные заказы.</string>
   <string name="rest">Отдых</string>
   <string name="block">Блокировка</string>
 </resources>

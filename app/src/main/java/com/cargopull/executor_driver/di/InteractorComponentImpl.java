@@ -330,6 +330,7 @@ class InteractorComponentImpl implements InteractorComponent {
   public GeoLocationUseCase getGeoLocationUseCase() {
     if (geoLocationUseCase == null) {
       geoLocationUseCase = new GeoLocationUseCaseImpl(
+          errorReporter,
           repositoryComponent.getGeoLocationGateway(),
           repositoryComponent.getGeoTrackingGateway(),
           getExecutorStateUseCase()
