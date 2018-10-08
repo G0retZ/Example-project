@@ -60,9 +60,9 @@ public class TopicGatewayImplTest {
   @Before
   public void setUp() {
     if (withDefault) {
-      gateway = new TopicGatewayImpl<>(topicListener, mapper, filter, "defaultValue");
+      gateway = new TopicGatewayImpl<>(topicListener, filter, mapper, "defaultValue");
     } else {
-      gateway = new TopicGatewayImpl<>(topicListener, mapper, filter);
+      gateway = new TopicGatewayImpl<>(topicListener, filter, mapper);
     }
     when(topicListener.getAcknowledgedMessages()).thenReturn(Flowable.never());
   }
