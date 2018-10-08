@@ -27,7 +27,7 @@ public class ServerResponseInterceptor implements Interceptor {
     Response response = chain.proceed(chain.request());
     ResponseBody body = response.body();
     int httpCode = response.code();
-    if (body != null && httpCode >= 400 && httpCode < 600) {
+    if (body != null && httpCode >= 400 && httpCode != 401 && httpCode < 600) {
       ServerResponseException serverResponseException;
       try {
         ApiSimpleResult apiSimpleResult = gson.fromJson(body.string(), ApiSimpleResult.class);
