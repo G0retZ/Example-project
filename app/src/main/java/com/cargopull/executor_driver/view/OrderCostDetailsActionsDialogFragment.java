@@ -13,13 +13,24 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import com.cargopull.executor_driver.R;
+import com.cargopull.executor_driver.di.AppComponent;
 import com.cargopull.executor_driver.presentation.ordercostdetailsactions.OrderCostDetailsActionsNavigate;
+import com.cargopull.executor_driver.utils.EventLogger;
+import java.util.HashMap;
+import javax.inject.Inject;
 
 /**
  * Отображает меню действий во время выполнения заказа.
  */
 
 public class OrderCostDetailsActionsDialogFragment extends BaseDialogFragment {
+
+  private EventLogger eventLogger;
+
+  @Inject
+  public void setEventLogger(@NonNull EventLogger eventLogger) {
+    this.eventLogger = eventLogger;
+  }
 
   @Override
   public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -32,6 +43,11 @@ public class OrderCostDetailsActionsDialogFragment extends BaseDialogFragment {
   public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
       @Nullable Bundle savedInstanceState) {
     return inflater.inflate(R.layout.fragment_order_cost_details_actions, container, false);
+  }
+
+  @Override
+  void onDependencyInject(AppComponent appComponent) {
+    appComponent.inject(this);
   }
 
   @Override
@@ -50,13 +66,22 @@ public class OrderCostDetailsActionsDialogFragment extends BaseDialogFragment {
     }
     ((Toolbar) view.findViewById(R.id.appBar)).setNavigationOnClickListener(v -> dismiss());
     view.findViewById(R.id.orderRoute).setOnClickListener(
-        v -> navigate(OrderCostDetailsActionsNavigate.ORDER_ROUTE)
+        v -> {
+          eventLogger.reportEvent("order_cost_details_action_route", new HashMap<>());
+          navigate(OrderCostDetailsActionsNavigate.ORDER_ROUTE);
+        }
     );
     view.findViewById(R.id.orderDetails).setOnClickListener(
-        v -> navigate(OrderCostDetailsActionsNavigate.ORDER_INFORMATION)
+        v -> {
+          eventLogger.reportEvent("order_cost_details_action_order_info", new HashMap<>());
+          navigate(OrderCostDetailsActionsNavigate.ORDER_INFORMATION);
+        }
     );
     view.findViewById(R.id.reportAProblem).setOnClickListener(
-        v -> navigate(OrderCostDetailsActionsNavigate.REPORT_A_PROBLEM)
+        v -> {
+          eventLogger.reportEvent("order_cost_details_action_problems", new HashMap<>());
+          navigate(OrderCostDetailsActionsNavigate.REPORT_A_PROBLEM);
+        }
     );
   }
 

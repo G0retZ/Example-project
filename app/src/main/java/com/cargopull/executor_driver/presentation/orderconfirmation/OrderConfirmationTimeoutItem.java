@@ -19,6 +19,10 @@ class OrderConfirmationTimeoutItem {
     timestamp = timeUtils.currentTimeMillis();
   }
 
+  public long getItemTimestamp() {
+    return timestamp;
+  }
+
   public int getProgressLeft() {
     if (timeout < 0) {
       return 0;

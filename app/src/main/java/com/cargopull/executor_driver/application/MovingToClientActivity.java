@@ -7,16 +7,27 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
 import com.cargopull.executor_driver.R;
+import com.cargopull.executor_driver.di.AppComponent;
 import com.cargopull.executor_driver.presentation.cancelorder.CancelOrderNavigate;
 import com.cargopull.executor_driver.presentation.movingtoclient.MovingToClientNavigate;
 import com.cargopull.executor_driver.presentation.movingtoclientactions.MovingToClientActionsNavigate;
 import com.cargopull.executor_driver.presentation.preorder.PreOrderNavigate;
+import com.cargopull.executor_driver.utils.EventLogger;
 import com.cargopull.executor_driver.view.CallToClientFragment;
 import com.cargopull.executor_driver.view.CallToOperatorFragment;
 import com.cargopull.executor_driver.view.CancelOrderDialogFragment;
 import com.cargopull.executor_driver.view.MovingToClientActionsDialogFragment;
+import java.util.HashMap;
+import javax.inject.Inject;
 
 public class MovingToClientActivity extends BaseActivity {
+
+  private EventLogger eventLogger;
+
+  @Inject
+  public void setEventLogger(@NonNull EventLogger eventLogger) {
+    this.eventLogger = eventLogger;
+  }
 
   @Override
   protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -29,10 +40,17 @@ public class MovingToClientActivity extends BaseActivity {
       );
       toolbar.findViewById(R.id.orderActions).setOnClickListener(v -> {
         if (getSupportFragmentManager().findFragmentByTag("menu") == null) {
+          eventLogger.reportEvent("moving_to_client_actions", new HashMap<>());
           new MovingToClientActionsDialogFragment().show(getSupportFragmentManager(), "menu");
         }
       });
     }
+  }
+
+  @Override
+  protected void onDependencyInject(AppComponent appComponent) {
+    super.onDependencyInject(appComponent);
+    appComponent.inject(this);
   }
 
   @Override
@@ -63,6 +81,7 @@ public class MovingToClientActivity extends BaseActivity {
         }
         break;
       case PreOrderNavigate.ORDER_APPROVAL:
+        eventLogger.reportEvent("moving_to_client_pre_order_notification", new HashMap<>());
         startActivity(new Intent(this, DriverPreOrderBookingActivity.class));
         break;
       default:
