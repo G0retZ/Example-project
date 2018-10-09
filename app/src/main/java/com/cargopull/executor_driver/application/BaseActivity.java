@@ -352,6 +352,11 @@ public class BaseActivity extends AppCompatActivity implements ExecutorStateView
   }
 
   @Override
+  public void showExecutorStatusInfo(@NonNull String message) {
+
+  }
+
+  @Override
   public void showUpdateMessage(@NonNull String message) {
     updateDialog = new Builder(this)
         .setMessage(message)

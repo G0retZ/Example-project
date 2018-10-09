@@ -24,7 +24,7 @@ public class BlockedActivity extends BaseActivity {
   }
 
   @Override
-  public void showExecutorStatusMessage(@NonNull String message) {
+  public void showExecutorStatusInfo(@NonNull String message) {
     ((TextView) findViewById(R.id.blockText)).setText(message);
   }
 

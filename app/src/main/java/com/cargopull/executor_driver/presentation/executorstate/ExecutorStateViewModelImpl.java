@@ -61,7 +61,7 @@ public class ExecutorStateViewModelImpl extends ViewModel implements ExecutorSta
                       && !executorState.getData().trim().isEmpty()) {
                     messageLiveData.postValue(
                         executorStateViewActions -> executorStateViewActions
-                            .showExecutorStatusMessage(executorState.getData())
+                            .showExecutorStatusInfo(executorState.getData())
                     );
                   }
                   navigateLiveData.postValue(ExecutorStateNavigate.BLOCKED);
