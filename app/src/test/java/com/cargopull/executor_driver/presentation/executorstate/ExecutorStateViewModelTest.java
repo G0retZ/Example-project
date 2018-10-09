@@ -107,6 +107,78 @@ public class ExecutorStateViewModelTest {
    * Должен показать сопутствующее открытой смене сообщение.
    */
   @Test
+  public void showBlockedMessage() {
+    // Дано:
+    ExecutorState.BLOCKED.setData("Message");
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
+
+    // Действие:
+    publishSubject.onNext(ExecutorState.BLOCKED);
+
+    // Результат:
+    verify(viewStateObserver, only()).onChanged(viewStateCaptor.capture());
+    viewStateCaptor.getValue().apply(viewActions);
+    verify(viewActions, only()).showExecutorStatusInfo("Message");
+  }
+
+  /**
+   * Должен показать сопутствующее открытой смене сообщение, затем null после его прочтения.
+   */
+  @Test
+  public void showBlockedMessageThenNull() {
+    // Дано:
+    ExecutorState.BLOCKED.setData("Message");
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
+
+    // Действие:
+    publishSubject.onNext(ExecutorState.BLOCKED);
+    viewModel.messageConsumed();
+
+    // Результат:
+    verify(viewStateObserver, times(2)).onChanged(viewStateCaptor.capture());
+    assertEquals(2, viewStateCaptor.getAllValues().size());
+    assertNull(viewStateCaptor.getAllValues().get(1));
+    viewStateCaptor.getAllValues().get(0).apply(viewActions);
+    verify(viewActions, only()).showExecutorStatusInfo("Message");
+    verifyNoMoreInteractions(viewStateObserver);
+  }
+
+  /**
+   * Не должен показывать null сообщение.
+   */
+  @Test
+  public void doNotShowNullBlockedMessage() {
+    // Дано:
+    ExecutorState.BLOCKED.setData(null);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
+
+    // Действие:
+    publishSubject.onNext(ExecutorState.BLOCKED);
+
+    // Результат:
+    verifyZeroInteractions(viewStateObserver);
+  }
+
+  /**
+   * Не должен показывать пустое сообщение.
+   */
+  @Test
+  public void doNotShowEmptyBlockedMessage() {
+    // Дано:
+    ExecutorState.BLOCKED.setData("");
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
+
+    // Действие:
+    publishSubject.onNext(ExecutorState.BLOCKED);
+
+    // Результат:
+    verifyZeroInteractions(viewStateObserver);
+  }
+
+  /**
+   * Должен показать сопутствующее открытой смене сообщение.
+   */
+  @Test
   public void showShiftOpenedMessage() {
     // Дано:
     ExecutorState.SHIFT_OPENED.setData("Message");
@@ -118,7 +190,7 @@ public class ExecutorStateViewModelTest {
     // Результат:
     verify(viewStateObserver, only()).onChanged(viewStateCaptor.capture());
     viewStateCaptor.getValue().apply(viewActions);
-    verify(viewActions, only()).showOnlineMessage("Message");
+    verify(viewActions, only()).showExecutorStatusMessage("Message");
   }
 
   /**
@@ -139,7 +211,7 @@ public class ExecutorStateViewModelTest {
     assertEquals(2, viewStateCaptor.getAllValues().size());
     assertNull(viewStateCaptor.getAllValues().get(1));
     viewStateCaptor.getAllValues().get(0).apply(viewActions);
-    verify(viewActions, only()).showOnlineMessage("Message");
+    verify(viewActions, only()).showExecutorStatusMessage("Message");
     verifyNoMoreInteractions(viewStateObserver);
   }
 
@@ -190,7 +262,7 @@ public class ExecutorStateViewModelTest {
     // Результат:
     verify(viewStateObserver, only()).onChanged(viewStateCaptor.capture());
     viewStateCaptor.getValue().apply(viewActions);
-    verify(viewActions, only()).showOnlineMessage("Message");
+    verify(viewActions, only()).showExecutorStatusMessage("Message");
   }
 
   /**
@@ -211,7 +283,7 @@ public class ExecutorStateViewModelTest {
     assertEquals(2, viewStateCaptor.getAllValues().size());
     assertNull(viewStateCaptor.getAllValues().get(1));
     viewStateCaptor.getAllValues().get(0).apply(viewActions);
-    verify(viewActions, only()).showOnlineMessage("Message");
+    verify(viewActions, only()).showExecutorStatusMessage("Message");
     verifyNoMoreInteractions(viewStateObserver);
   }
 

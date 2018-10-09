@@ -32,7 +32,7 @@ public class AutoRouterImpl implements ActivityLifecycleCallbacks, AutoRouter {
         LoginActivity.class, PasswordActivity.class
     ));
     statusGroups.put(ExecutorStateNavigate.BLOCKED, Arrays.asList(
-        GeolocationResolutionActivity.class,
+        BlockedActivity.class, GeolocationResolutionActivity.class,
         BalanceActivity.class
     ));
     statusGroups.put(ExecutorStateNavigate.MAP_SHIFT_CLOSED, Arrays.asList(
@@ -233,6 +233,10 @@ public class AutoRouterImpl implements ActivityLifecycleCallbacks, AutoRouter {
       case CommonNavigate.EXIT:
         return;
       case ExecutorStateNavigate.BLOCKED:
+        currentActivity.startActivity(
+            new Intent(currentActivity, BlockedActivity.class)
+                .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK)
+        );
         break;
       case ExecutorStateNavigate.MAP_SHIFT_CLOSED:
         currentActivity.startActivity(
