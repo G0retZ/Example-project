@@ -8,9 +8,16 @@ import android.support.annotation.NonNull;
 public interface ExecutorStateViewActions {
 
   /**
-   * Показать сопуствующее сообщение с объяснением (смены) статуса
+   * Показать сопуствующее сообщение смены статуса
    *
    * @param message текст сообщения
    */
-  void showOnlineMessage(@NonNull String message);
+  void showExecutorStatusMessage(@NonNull String message);
+
+  /**
+   * Показать расшифровку статуса
+   *
+   * @param message текст сообщения
+   */
+  void showExecutorStatusInfo(@NonNull String message);
 }

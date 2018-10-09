@@ -127,6 +127,9 @@
     <activity
       android:launchMode="singleTop"
       android:name=".application.UpcomingPreOrderActivity"/>
+    <activity
+      android:launchMode="singleTop"
+      android:name=".application.BlockedActivity"/>
 
     <service
       android:enabled="true"
