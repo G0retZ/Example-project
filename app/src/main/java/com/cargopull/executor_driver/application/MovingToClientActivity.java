@@ -70,13 +70,13 @@ public class MovingToClientActivity extends BaseActivity {
         break;
       case MovingToClientNavigate.CALL_TO_CLIENT:
         fragment = getSupportFragmentManager().findFragmentById(R.id.fragment_call_to_client);
-        if (fragment != null && fragment instanceof CallToClientFragment) {
+        if (fragment instanceof CallToClientFragment) {
           ((CallToClientFragment) fragment).callToClient();
         }
         break;
       case CancelOrderNavigate.ORDER_CANCELED:
         fragment = getSupportFragmentManager().findFragmentById(R.id.fragment_call_to_operator);
-        if (fragment != null && fragment instanceof CallToOperatorFragment) {
+        if (fragment instanceof CallToOperatorFragment) {
           ((CallToOperatorFragment) fragment).callToOperator();
         }
         break;

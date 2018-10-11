@@ -1,6 +1,7 @@
 package com.cargopull.executor_driver.entity;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 /**
  * Бизнес сущность причины отказа от заказа. Immutable.
@@ -11,10 +12,10 @@ public class CancelOrderReason {
   private final int id;
   @NonNull
   private final String name;
-  @NonNull
+  @Nullable
   private final String unusedName;
 
-  public CancelOrderReason(int id, @NonNull String name, @NonNull String unusedName) {
+  public CancelOrderReason(int id, @NonNull String name, @Nullable String unusedName) {
     this.id = id;
     this.name = name;
     this.unusedName = unusedName;
@@ -29,7 +30,7 @@ public class CancelOrderReason {
     return name;
   }
 
-  @NonNull
+  @Nullable
   public String getUnusedName() {
     return unusedName;
   }

@@ -1,6 +1,7 @@
 package com.cargopull.executor_driver.backend.websocket.outgoing;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import com.cargopull.executor_driver.entity.CancelOrderReason;
 import com.google.gson.annotations.SerializedName;
 
@@ -12,7 +13,7 @@ public class ApiCancelOrderReason {
   @NonNull
   private final String description;
   @SerializedName("name")
-  @NonNull
+  @Nullable
   private final String name;
 
   public ApiCancelOrderReason(@NonNull CancelOrderReason cancelOrderReason) {
@@ -30,7 +31,7 @@ public class ApiCancelOrderReason {
     return description;
   }
 
-  @NonNull
+  @Nullable
   public String getName() {
     return name;
   }

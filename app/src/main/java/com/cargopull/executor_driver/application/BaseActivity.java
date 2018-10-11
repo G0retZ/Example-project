@@ -244,7 +244,7 @@ public class BaseActivity extends AppCompatActivity implements ExecutorStateView
       case CommonNavigate.NO_CONNECTION:
         Fragment fragment = getSupportFragmentManager()
             .findFragmentById(R.id.fragment_server_connection);
-        if (fragment != null && fragment instanceof ServerConnectionFragment) {
+        if (fragment instanceof ServerConnectionFragment) {
           ((ServerConnectionFragment) fragment).blink();
         }
         break;
