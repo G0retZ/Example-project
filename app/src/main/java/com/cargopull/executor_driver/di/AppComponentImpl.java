@@ -1,6 +1,8 @@
 package com.cargopull.executor_driver.di;
 
 import android.content.Context;
+import android.os.Build.VERSION;
+import android.os.Build.VERSION_CODES;
 import android.support.annotation.NonNull;
 import com.cargopull.executor_driver.application.AutoRouterImpl;
 import com.cargopull.executor_driver.application.BaseActivity;
@@ -21,6 +23,8 @@ import com.cargopull.executor_driver.backend.settings.AppPreferences;
 import com.cargopull.executor_driver.backend.settings.AppSettingsService;
 import com.cargopull.executor_driver.backend.vibro.NewPatternMapper;
 import com.cargopull.executor_driver.backend.vibro.OldPatternMapper;
+import com.cargopull.executor_driver.backend.vibro.OldSingleShakePlayer;
+import com.cargopull.executor_driver.backend.vibro.ShakeItPlayer;
 import com.cargopull.executor_driver.backend.vibro.SingleShakePlayer;
 import com.cargopull.executor_driver.backend.web.AuthorizationInterceptor;
 import com.cargopull.executor_driver.backend.web.ConnectivityInterceptor;
@@ -102,7 +106,7 @@ public class AppComponentImpl implements AppComponent {
   @NonNull
   private final SingleRingTonePlayer singleRingTonePlayer;
   @NonNull
-  private final SingleShakePlayer singleShakePlayer;
+  private final ShakeItPlayer shakeItPlayer;
 
   public AppComponentImpl(@NonNull Context appContext) {
     appContext = appContext.getApplicationContext();
@@ -134,12 +138,18 @@ public class AppComponentImpl implements AppComponent {
         eventLogger, loginSharer, interactorComponent, timeUtils
     );
     singleRingTonePlayer = new SingleRingTonePlayer(appContext);
-    singleShakePlayer = new SingleShakePlayer(
-        appContext,
-        new NewPatternMapper(),
-        new OldPatternMapper()
-    );
-    autoRouter = new AutoRouterImpl(singleRingTonePlayer, singleShakePlayer);
+    if (VERSION.SDK_INT >= VERSION_CODES.O) {
+      shakeItPlayer = new SingleShakePlayer(
+          appContext,
+          new NewPatternMapper()
+      );
+    } else {
+      shakeItPlayer = new OldSingleShakePlayer(
+          appContext,
+          new OldPatternMapper()
+      );
+    }
+    autoRouter = new AutoRouterImpl(singleRingTonePlayer, shakeItPlayer);
   }
 
   @Override
@@ -148,7 +158,7 @@ public class AppComponentImpl implements AppComponent {
         singleRingTonePlayer
     );
     mainApplication.setShakeItPlayer(
-        singleShakePlayer
+        shakeItPlayer
     );
     mainApplication.setServerConnectionViewModel(
         presentationComponent.getServerConnectionViewModel()
@@ -380,7 +390,7 @@ public class AppComponentImpl implements AppComponent {
         presentationComponent.getMovingToClientViewModel(movingToClientFragment)
     );
     movingToClientFragment.setOrderViewModel(presentationComponent.getOrderViewModel());
-    movingToClientFragment.setShakeItPlayer(singleShakePlayer);
+    movingToClientFragment.setShakeItPlayer(shakeItPlayer);
   }
 
   @Override
@@ -406,7 +416,7 @@ public class AppComponentImpl implements AppComponent {
         presentationComponent.getWaitingForClientViewModel(waitingForClientFragment)
     );
     waitingForClientFragment.setOrderViewModel(presentationComponent.getOrderViewModel());
-    waitingForClientFragment.setShakeItPlayer(singleShakePlayer);
+    waitingForClientFragment.setShakeItPlayer(shakeItPlayer);
   }
 
   @Override
@@ -435,7 +445,7 @@ public class AppComponentImpl implements AppComponent {
     orderFulfillmentFragment.setOrderRouteViewModel(
         presentationComponent.getOrderRouteViewModel(orderFulfillmentFragment)
     );
-    orderFulfillmentFragment.setShakeItPlayer(singleShakePlayer);
+    orderFulfillmentFragment.setShakeItPlayer(shakeItPlayer);
   }
 
   @Override
@@ -516,7 +526,7 @@ public class AppComponentImpl implements AppComponent {
     orderCostDetailsFragment.setConfirmOrderPaymentViewModel(
         presentationComponent.getConfirmOrderPaymentViewModel(orderCostDetailsFragment)
     );
-    orderCostDetailsFragment.setShakeItPlayer(singleShakePlayer);
+    orderCostDetailsFragment.setShakeItPlayer(shakeItPlayer);
   }
 
   @Override
@@ -545,7 +555,7 @@ public class AppComponentImpl implements AppComponent {
 
   @Override
   public void inject(DriverPreOrderBookingFragment driverPreOrderBookingFragment) {
-    driverPreOrderBookingFragment.setShakeItPlayer(singleShakePlayer);
+    driverPreOrderBookingFragment.setShakeItPlayer(shakeItPlayer);
     driverPreOrderBookingFragment.setRingTonePlayer(singleRingTonePlayer);
     driverPreOrderBookingFragment.setOrderConfirmationViewModel(
         presentationComponent.getPreOrderBookingViewModel(driverPreOrderBookingFragment)
@@ -575,7 +585,7 @@ public class AppComponentImpl implements AppComponent {
 
   @Override
   public void inject(SelectedPreOrderConfirmationFragment selectedPreOrderConfirmationFragment) {
-    selectedPreOrderConfirmationFragment.setShakeItPlayer(singleShakePlayer);
+    selectedPreOrderConfirmationFragment.setShakeItPlayer(shakeItPlayer);
     selectedPreOrderConfirmationFragment.setRingTonePlayer(singleRingTonePlayer);
     selectedPreOrderConfirmationFragment.setOrderConfirmationViewModel(
         presentationComponent
@@ -599,7 +609,7 @@ public class AppComponentImpl implements AppComponent {
 
   @Override
   public void inject(DriverPreOrderConfirmationFragment driverPreOrderConfirmationFragment) {
-    driverPreOrderConfirmationFragment.setShakeItPlayer(singleShakePlayer);
+    driverPreOrderConfirmationFragment.setShakeItPlayer(shakeItPlayer);
     driverPreOrderConfirmationFragment.setOrderConfirmationViewModel(
         presentationComponent.getOrderConfirmationViewModel(driverPreOrderConfirmationFragment)
     );
@@ -620,7 +630,7 @@ public class AppComponentImpl implements AppComponent {
 
   @Override
   public void inject(UpcomingPreOrderConfirmationFragment upcomingPreOrderConfirmationFragment) {
-    upcomingPreOrderConfirmationFragment.setShakeItPlayer(singleShakePlayer);
+    upcomingPreOrderConfirmationFragment.setShakeItPlayer(shakeItPlayer);
     upcomingPreOrderConfirmationFragment.setRingTonePlayer(singleRingTonePlayer);
     upcomingPreOrderConfirmationFragment.setOrderConfirmationViewModel(
         presentationComponent

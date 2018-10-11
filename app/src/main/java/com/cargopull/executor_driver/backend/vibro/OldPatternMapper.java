@@ -2,42 +2,40 @@ package com.cargopull.executor_driver.backend.vibro;
 
 import android.support.annotation.NonNull;
 import com.cargopull.executor_driver.gateway.Mapper;
-import com.cargopull.executor_driver.utils.Pair;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class OldPatternMapper implements Mapper<List<Pair<Long, Integer>>, long[]> {
+public class OldPatternMapper implements Mapper<List<VibeBeat>, VibeBeats> {
 
   @NonNull
   @Override
-  public long[] map(@NonNull List<Pair<Long, Integer>> from) {
+  public VibeBeats map(@NonNull List<VibeBeat> from) {
     List<Long> list = new ArrayList<>();
-    Iterator<Pair<Long, Integer>> patternItemIterator = from.iterator();
-    Pair<Long, Integer> previousPair = null;
+    Iterator<VibeBeat> patternItemIterator = from.iterator();
+    VibeBeat previousVibeBeat = null;
     while (patternItemIterator.hasNext()) {
-      Pair<Long, Integer> pair = patternItemIterator.next();
-      if (previousPair == null) {
-        if (pair.second != 0) {
+      VibeBeat vibeBeat = patternItemIterator.next();
+      if (previousVibeBeat == null) {
+        if (vibeBeat.volume != 0) {
           list.add(0L);
         }
-        list.add(0, pair.first);
+        list.add(0, vibeBeat.duration);
       } else {
-        if ((pair.second == 0 && previousPair.second == 0)
-            || (pair.second != 0 && previousPair.second != 0)) {
-          list.set(0, list.get(0) + pair.first);
+        if ((vibeBeat.volume == 0 && previousVibeBeat.volume == 0)
+            || (vibeBeat.volume != 0 && previousVibeBeat.volume != 0)) {
+          list.set(0, list.get(0) + vibeBeat.duration);
         } else {
-          list.add(0, pair.first);
+          list.add(0, vibeBeat.duration);
         }
       }
-      previousPair = pair;
+      previousVibeBeat = vibeBeat;
     }
-    long[] range = new long[list.size()];
-    Iterator<Long> iterator = list.iterator();
+    VibeBeats vibeBeats = new VibeBeats(list.size());
     int size = list.size();
     for (int i = 0; i < size; i++) {
-      range[size - i - 1] = iterator.next();
+      vibeBeats.durations[size - i - 1] = list.get(i);
     }
-    return range;
+    return vibeBeats;
   }
 }
