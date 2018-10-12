@@ -1,6 +1,6 @@
 package com.cargopull.executor_driver.interactor.map;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import io.reactivex.Single;
 
 /**

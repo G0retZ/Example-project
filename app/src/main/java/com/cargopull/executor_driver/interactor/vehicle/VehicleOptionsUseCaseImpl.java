@@ -1,7 +1,7 @@
 package com.cargopull.executor_driver.interactor.vehicle;
 
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import com.cargopull.executor_driver.entity.Option;
 import com.cargopull.executor_driver.entity.Vehicle;
 import com.cargopull.executor_driver.interactor.DataReceiver;
@@ -77,7 +77,7 @@ public class VehicleOptionsUseCaseImpl implements VehicleOptionsUseCase {
       if (vehicle == null) {
         throw new IllegalStateException("Не было выбрано ни одного ТС.");
       }
-      vehicle.setOptions(options.toArray(new Option[options.size()]));
+      vehicle.setOptions(options.toArray(new Option[0]));
       return vehicle;
     }).flatMapCompletable(
         vehicle -> gateway.sendVehicleOptions(vehicle, driverOptions)

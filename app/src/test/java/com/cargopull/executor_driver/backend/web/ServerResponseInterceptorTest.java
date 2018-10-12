@@ -36,10 +36,10 @@ public class ServerResponseInterceptorTest {
   @Mock
   private Interceptor.Chain chain;
 
-  private int code;
-  private String body;
-  private boolean isMyException;
-  private String resultCode;
+  private final int code;
+  private final String body;
+  private final boolean isMyException;
+  private final String resultCode;
 
   // Each parameter should be placed as an argument here
   // Every time runner triggers, it will pass the arguments

@@ -1,6 +1,6 @@
 package com.cargopull.executor_driver.presentation.geolocation;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import com.cargopull.executor_driver.entity.GeoLocation;
 import com.cargopull.executor_driver.presentation.ViewState;
 

@@ -1,6 +1,6 @@
 package com.cargopull.executor_driver.entity;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 /**
  * Ошибка подтверждения/бронирования или отказа от заказ.

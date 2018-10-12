@@ -1,14 +1,14 @@
 package com.cargopull.executor_driver.view;
 
-import android.support.annotation.NonNull;
-import android.support.v7.util.SortedList;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SwitchCompat;
-import android.support.v7.widget.util.SortedListAdapterCallback;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import androidx.annotation.NonNull;
+import androidx.appcompat.widget.SwitchCompat;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.SortedList;
+import androidx.recyclerview.widget.SortedListAdapterCallback;
 import com.cargopull.executor_driver.R;
 import com.cargopull.executor_driver.presentation.services.ServicesListItem;
 import com.cargopull.executor_driver.view.ServicesAdapter.ServiceViewHolder;

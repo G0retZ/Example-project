@@ -1,6 +1,6 @@
 package com.cargopull.executor_driver.gateway;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import com.cargopull.executor_driver.entity.ExecutorState;
 import io.reactivex.functions.Predicate;
 import java.util.Arrays;

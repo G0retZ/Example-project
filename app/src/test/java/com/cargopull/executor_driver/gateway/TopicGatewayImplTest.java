@@ -32,7 +32,7 @@ public class TopicGatewayImplTest {
   @ClassRule
   public static final GatewayThreadTestRule classRule = new GatewayThreadTestRule();
 
-  private boolean withDefault;
+  private final boolean withDefault;
 
   private CommonGateway<String> gateway;
   @Mock

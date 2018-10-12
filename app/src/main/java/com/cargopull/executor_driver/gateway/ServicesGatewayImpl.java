@@ -1,6 +1,6 @@
 package com.cargopull.executor_driver.gateway;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import com.cargopull.executor_driver.backend.web.ApiService;
 import com.cargopull.executor_driver.backend.web.incoming.ApiServiceItem;
 import com.cargopull.executor_driver.entity.Service;

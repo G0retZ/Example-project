@@ -7,16 +7,16 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.FragmentManager;
 import com.cargopull.executor_driver.R;
 import com.cargopull.executor_driver.presentation.CommonNavigate;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 /**
  * Отображает индикатор процесса.

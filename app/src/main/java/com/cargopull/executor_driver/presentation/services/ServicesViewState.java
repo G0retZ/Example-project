@@ -1,7 +1,7 @@
 package com.cargopull.executor_driver.presentation.services;
 
-import android.support.annotation.CallSuper;
-import android.support.annotation.NonNull;
+import androidx.annotation.CallSuper;
+import androidx.annotation.NonNull;
 import com.cargopull.executor_driver.presentation.ViewState;
 import java.util.List;
 

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
+<androidx.constraintlayout.widget.ConstraintLayout
   xmlns:android="http://schemas.android.com/apk/res/android"
   xmlns:app="http://schemas.android.com/apk/res-auto"
   xmlns:tools="http://schemas.android.com/tools"
@@ -15,7 +15,7 @@
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toTopOf="parent">
-    <android.support.constraint.ConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
       android:layout_width="match_parent"
       android:layout_height="wrap_content">
       <TextView
@@ -297,7 +297,7 @@
         app:layout_constraintTop_toBottomOf="@id/overPackageTariffServiceCostTitle">
         <include layout="@layout/fragment_order_cost_details_option_item"/>
       </LinearLayout>
-    </android.support.constraint.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
   </ScrollView>
   <ProgressBar
     android:id="@+id/orderPaid"
@@ -323,4 +323,4 @@
     app:layout_constraintEnd_toEndOf="@id/orderPaid"
     app:layout_constraintStart_toStartOf="@id/orderPaid"
     app:layout_constraintTop_toTopOf="@id/orderPaid"/>
-</android.support.constraint.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

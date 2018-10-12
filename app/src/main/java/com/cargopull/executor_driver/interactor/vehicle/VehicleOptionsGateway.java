@@ -1,6 +1,6 @@
 package com.cargopull.executor_driver.interactor.vehicle;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import com.cargopull.executor_driver.entity.Option;
 import com.cargopull.executor_driver.entity.Vehicle;
 import io.reactivex.Completable;

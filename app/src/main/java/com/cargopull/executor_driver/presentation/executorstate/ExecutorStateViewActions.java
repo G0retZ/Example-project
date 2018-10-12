@@ -1,6 +1,6 @@
 package com.cargopull.executor_driver.presentation.executorstate;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 /**
  * Действия для смены состояния вида окна заставки.

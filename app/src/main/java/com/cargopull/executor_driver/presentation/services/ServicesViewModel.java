@@ -1,6 +1,6 @@
 package com.cargopull.executor_driver.presentation.services;
 
-import android.support.annotation.IntRange;
+import androidx.annotation.IntRange;
 import com.cargopull.executor_driver.presentation.ViewModel;
 import java.util.List;
 

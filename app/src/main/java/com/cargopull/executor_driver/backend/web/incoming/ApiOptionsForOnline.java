@@ -1,5 +1,6 @@
 package com.cargopull.executor_driver.backend.web.incoming;
 
+import androidx.annotation.Nullable;
 import com.google.gson.annotations.SerializedName;
 import java.util.List;
 
@@ -9,8 +10,10 @@ import java.util.List;
 public class ApiOptionsForOnline {
 
   @SerializedName("cars")
+  @Nullable
   private List<ApiVehicle> cars;
   @SerializedName("driverOptions")
+  @Nullable
   private List<ApiOptionItem> driverOptions;
 
   /**
@@ -20,15 +23,18 @@ public class ApiOptionsForOnline {
   public ApiOptionsForOnline() {
   }
 
-  public ApiOptionsForOnline(List<ApiVehicle> cars, List<ApiOptionItem> driverOptions) {
+  public ApiOptionsForOnline(@Nullable List<ApiVehicle> cars,
+      @Nullable List<ApiOptionItem> driverOptions) {
     this.cars = cars;
     this.driverOptions = driverOptions;
   }
 
+  @Nullable
   public List<ApiVehicle> getCars() {
     return cars;
   }
 
+  @Nullable
   public List<ApiOptionItem> getDriverOptions() {
     return driverOptions;
   }

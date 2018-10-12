@@ -5,8 +5,8 @@ import static org.junit.Assert.assertNull;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.support.test.InstrumentationRegistry;
-import android.support.test.runner.AndroidJUnit4;
+import androidx.test.ext.junit.runners.AndroidJUnit4;
+import androidx.test.platform.app.InstrumentationRegistry;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,10 +24,11 @@ public class AppSettingsServiceTest {
 
   @Before
   public void createService() {
-    SharedPreferences preferences = InstrumentationRegistry.getTargetContext()
+    SharedPreferences preferences = InstrumentationRegistry.getInstrumentation().getTargetContext()
         .getSharedPreferences("settings", Context.MODE_PRIVATE);
     preferences.edit().clear().apply();
-    appSettingsService = new AppPreferences(InstrumentationRegistry.getTargetContext());
+    appSettingsService = new AppPreferences(
+        InstrumentationRegistry.getInstrumentation().getTargetContext());
   }
 
   @Test

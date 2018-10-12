@@ -1,6 +1,6 @@
 package com.cargopull.executor_driver.backend.web;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import java.io.IOException;
 import java.util.List;
 import javax.inject.Inject;

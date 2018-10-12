@@ -1,8 +1,8 @@
 package com.cargopull.executor_driver.application;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.widget.Toolbar;
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
 import com.cargopull.executor_driver.R;
 
 public class MovingToClientDetailsActivity extends BaseActivity {

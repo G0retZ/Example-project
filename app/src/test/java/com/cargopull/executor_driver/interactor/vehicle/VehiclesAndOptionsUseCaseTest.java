@@ -19,12 +19,16 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.NoSuchElementException;
+import okhttp3.MediaType;
+import okhttp3.ResponseBody;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import retrofit2.HttpException;
+import retrofit2.Response;
 
 @RunWith(MockitoJUnitRunner.class)
 public class VehiclesAndOptionsUseCaseTest {
@@ -287,7 +291,11 @@ public class VehiclesAndOptionsUseCaseTest {
   public void doNotReportNoNetworkError() {
     // Дано:
     when(lastUsedVehicleGateway.getLastUsedVehicleId()).thenReturn(Single.just(-1L));
-    when(gateway.getExecutorVehicles()).thenReturn(Single.error(new NoNetworkException()));
+    when(gateway.getExecutorVehicles()).thenReturn(Single.error(
+        new HttpException(
+            Response.error(404, ResponseBody.create(MediaType.get("applocation/json"), ""))
+        )
+    ));
 
     // Действие:
     useCase.loadVehiclesAndOptions().test();

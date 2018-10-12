@@ -1,6 +1,6 @@
 package com.cargopull.executor_driver.presentation.announcement;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 /**
  * Действия для смены состояния вида объявлений.
