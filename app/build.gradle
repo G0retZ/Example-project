@@ -116,6 +116,7 @@ dependencies {
     testImplementation 'androidx.arch.core:core-testing:2.0.0'
     androidTestImplementation 'androidx.annotation:annotation:1.0.0'
     androidTestImplementation 'androidx.test:runner:1.1.0-beta01'
+    androidTestImplementation 'androidx.test.ext:junit:1.0.0-beta02'
 }
 
 // ADD THIS AT THE BOTTOM
