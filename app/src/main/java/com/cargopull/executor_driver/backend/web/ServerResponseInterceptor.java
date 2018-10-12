@@ -1,6 +1,6 @@
 package com.cargopull.executor_driver.backend.web;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import com.cargopull.executor_driver.backend.web.incoming.ApiSimpleResult;
 import com.google.gson.Gson;
 import java.io.IOException;

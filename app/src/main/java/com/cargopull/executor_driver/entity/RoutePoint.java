@@ -1,6 +1,6 @@
 package com.cargopull.executor_driver.entity;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 /**
  * Неизменная бизнес сущность точки маршрута. Содержит в себе долготу, широту, адрес и комментарий.

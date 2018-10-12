@@ -1,8 +1,8 @@
 package com.cargopull.executor_driver.utils;
 
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.util.Log;
+import androidx.annotation.NonNull;
 import com.cargopull.executor_driver.BuildConfig;
 import com.cargopull.executor_driver.interactor.DataReceiver;
 import com.crashlytics.android.Crashlytics;

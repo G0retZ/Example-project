@@ -1,6 +1,6 @@
 package com.cargopull.executor_driver.presentation.preorderslist;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import java.util.List;
 
 /**

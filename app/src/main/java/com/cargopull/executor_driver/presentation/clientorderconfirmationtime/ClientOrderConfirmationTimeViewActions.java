@@ -1,6 +1,6 @@
 package com.cargopull.executor_driver.presentation.clientorderconfirmationtime;
 
-import android.support.annotation.StringRes;
+import androidx.annotation.StringRes;
 
 /**
  * Действия для смены состояния вида текущего времени ожидания подтверждения клиента.

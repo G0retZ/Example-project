@@ -1,6 +1,6 @@
 package com.cargopull.executor_driver.backend.vibro;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 class VibeBeats {
 

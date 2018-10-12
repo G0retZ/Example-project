@@ -1,7 +1,7 @@
 package com.cargopull.executor_driver.gateway;
 
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import com.cargopull.executor_driver.backend.web.ApiService;
 import com.cargopull.executor_driver.backend.web.incoming.ApiOptionItem;
 import com.cargopull.executor_driver.backend.web.incoming.ApiOptionsForOnline;

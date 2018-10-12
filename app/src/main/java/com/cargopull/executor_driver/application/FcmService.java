@@ -1,6 +1,6 @@
 package com.cargopull.executor_driver.application;
 
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import com.cargopull.executor_driver.presentation.announcement.AnnouncementViewModel;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;

@@ -1,6 +1,6 @@
 package com.cargopull.executor_driver.backend.web.outgoing;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 

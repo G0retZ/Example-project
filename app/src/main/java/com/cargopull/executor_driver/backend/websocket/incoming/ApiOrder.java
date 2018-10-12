@@ -1,6 +1,6 @@
 package com.cargopull.executor_driver.backend.websocket.incoming;
 
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import com.cargopull.executor_driver.backend.web.incoming.ApiOptionItem;
 import com.google.gson.annotations.SerializedName;
 import java.util.List;

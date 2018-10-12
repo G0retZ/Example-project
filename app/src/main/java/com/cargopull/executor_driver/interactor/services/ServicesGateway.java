@@ -1,6 +1,6 @@
 package com.cargopull.executor_driver.interactor.services;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import com.cargopull.executor_driver.entity.Service;
 import io.reactivex.Completable;
 import io.reactivex.Single;

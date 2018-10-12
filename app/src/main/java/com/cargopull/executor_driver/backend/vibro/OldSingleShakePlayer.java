@@ -2,9 +2,9 @@ package com.cargopull.executor_driver.backend.vibro;
 
 import android.content.Context;
 import android.os.Vibrator;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.annotation.RawRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.RawRes;
 import com.cargopull.executor_driver.gateway.Mapper;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;

@@ -1,6 +1,6 @@
 package com.cargopull.executor_driver.backend.ringtone;
 
-import android.support.annotation.RawRes;
+import androidx.annotation.RawRes;
 
 /**
  * Проигрыватель звуков.

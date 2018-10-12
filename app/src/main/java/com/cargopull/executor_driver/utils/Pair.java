@@ -1,6 +1,6 @@
 package com.cargopull.executor_driver.utils;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 /**
  * Container to ease passing around a tuple of two objects. This object provides a sensible

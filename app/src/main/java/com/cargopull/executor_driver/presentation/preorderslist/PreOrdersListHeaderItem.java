@@ -1,8 +1,8 @@
 package com.cargopull.executor_driver.presentation.preorderslist;
 
 import android.content.res.Resources;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import com.cargopull.executor_driver.R;
 import com.cargopull.executor_driver.entity.Order;
 import org.joda.time.DateTime;

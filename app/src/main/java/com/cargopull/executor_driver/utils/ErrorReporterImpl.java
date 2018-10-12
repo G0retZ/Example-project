@@ -1,7 +1,7 @@
 package com.cargopull.executor_driver.utils;
 
-import android.support.annotation.NonNull;
 import android.util.Log;
+import androidx.annotation.NonNull;
 import com.cargopull.executor_driver.BuildConfig;
 import com.cargopull.executor_driver.backend.web.AuthorizationException;
 import com.cargopull.executor_driver.backend.web.NoNetworkException;

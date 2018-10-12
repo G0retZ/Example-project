@@ -1,7 +1,7 @@
 package com.cargopull.executor_driver.presentation.vehicleoptions;
 
-import android.support.annotation.NonNull;
-import android.support.annotation.StringRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.StringRes;
 
 /**
  * Действия для смены состояния вида окна списка опций ТС исполнителя.

@@ -1,6 +1,6 @@
 package com.cargopull.executor_driver.entity;
 
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 /**
  * Взимоисключающие состояния водителя.

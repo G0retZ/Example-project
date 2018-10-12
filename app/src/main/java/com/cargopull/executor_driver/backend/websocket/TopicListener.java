@@ -1,6 +1,6 @@
 package com.cargopull.executor_driver.backend.websocket;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import io.reactivex.Flowable;
 import ua.naiksoftware.stomp.client.StompMessage;
 
