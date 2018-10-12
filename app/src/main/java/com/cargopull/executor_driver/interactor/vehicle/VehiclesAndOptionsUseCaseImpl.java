@@ -1,7 +1,6 @@
 package com.cargopull.executor_driver.interactor.vehicle;
 
 import androidx.annotation.NonNull;
-import com.cargopull.executor_driver.entity.DriverBlockedException;
 import com.cargopull.executor_driver.entity.EmptyListException;
 import com.cargopull.executor_driver.entity.Vehicle;
 import com.cargopull.executor_driver.utils.ErrorReporter;
@@ -11,6 +10,7 @@ import io.reactivex.Single;
 import io.reactivex.schedulers.Schedulers;
 import java.util.NoSuchElementException;
 import javax.inject.Inject;
+import retrofit2.HttpException;
 
 public class VehiclesAndOptionsUseCaseImpl implements VehiclesAndOptionsUseCase {
 
@@ -65,9 +65,7 @@ public class VehiclesAndOptionsUseCaseImpl implements VehiclesAndOptionsUseCase 
                   }
                 }).toCompletable()
         ).doOnError(throwable -> {
-          if (throwable instanceof DriverBlockedException
-              || throwable instanceof EmptyListException
-              || throwable instanceof NoSuchElementException) {
+          if (!(throwable instanceof HttpException)) {
             errorReporter.reportError(throwable);
           }
         });
