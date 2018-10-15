@@ -13,6 +13,8 @@ import com.cargopull.executor_driver.UseCaseThreadTestRule;
 import com.cargopull.executor_driver.backend.websocket.ConnectionClosedException;
 import com.cargopull.executor_driver.entity.ExecutorState;
 import com.cargopull.executor_driver.entity.GeoLocation;
+import com.cargopull.executor_driver.gateway.DataMappingException;
+import com.cargopull.executor_driver.utils.ErrorReporter;
 import io.reactivex.Completable;
 import io.reactivex.Flowable;
 import io.reactivex.functions.Action;
@@ -36,6 +38,8 @@ public class GeoLocationUseCaseTest {
   private GeoLocationUseCase useCase;
 
   @Mock
+  private ErrorReporter errorReporter;
+  @Mock
   private GeoLocationGateway geoLocationGateway;
   @Mock
   private GeoTrackingGateway geoTrackingGateway;
@@ -50,7 +54,7 @@ public class GeoLocationUseCaseTest {
     when(geoTrackingGateway.sendGeoLocation(any())).thenReturn(Completable.never());
     when(executorStateUseCase.getExecutorStates()).thenReturn(Flowable.never());
     useCase = new GeoLocationUseCaseImpl(
-        geoLocationGateway, geoTrackingGateway, executorStateUseCase
+        errorReporter, geoLocationGateway, geoTrackingGateway, executorStateUseCase
     );
   }
 
@@ -159,6 +163,23 @@ public class GeoLocationUseCaseTest {
 
     // Результат:
     verifyZeroInteractions(geoLocationGateway);
+  }
+
+  /**
+   * Должен запросить гейтвей получать локации с интервалом 1 час,
+   * при переходе в состояние "Заблокирован".
+   */
+  @Test
+  public void askGatewayForLocationsEvery1HourIfGoToBlocked() {
+    // Дано:
+    when(executorStateUseCase.getExecutorStates())
+        .thenReturn(Flowable.just(ExecutorState.BLOCKED));
+
+    // Действие:
+    useCase.getGeoLocations().test();
+
+    // Результат:
+    verify(geoLocationGateway, only()).getGeoLocations(3600000);
   }
 
   /**
@@ -326,7 +347,7 @@ public class GeoLocationUseCaseTest {
         ExecutorState.DRIVER_ORDER_CONFIRMATION, ExecutorState.CLIENT_ORDER_CONFIRMATION,
         ExecutorState.MOVING_TO_CLIENT, ExecutorState.WAITING_FOR_CLIENT,
         ExecutorState.ORDER_FULFILLMENT, ExecutorState.PAYMENT_CONFIRMATION, ExecutorState.ONLINE,
-        ExecutorState.SHIFT_OPENED, ExecutorState.SHIFT_CLOSED
+        ExecutorState.SHIFT_OPENED, ExecutorState.SHIFT_CLOSED, ExecutorState.BLOCKED
     ));
 
     // Действие:
@@ -337,7 +358,7 @@ public class GeoLocationUseCaseTest {
     inOrder.verify(geoLocationGateway).getGeoLocations(180000);
     inOrder.verify(geoLocationGateway, times(8)).getGeoLocations(15000);
     inOrder.verify(geoLocationGateway).getGeoLocations(180000);
-    inOrder.verify(geoLocationGateway).getGeoLocations(3600000);
+    inOrder.verify(geoLocationGateway, times(2)).getGeoLocations(3600000);
     verifyNoMoreInteractions(geoLocationGateway);
   }
 
@@ -354,7 +375,7 @@ public class GeoLocationUseCaseTest {
         ExecutorState.DRIVER_ORDER_CONFIRMATION, ExecutorState.CLIENT_ORDER_CONFIRMATION,
         ExecutorState.MOVING_TO_CLIENT, ExecutorState.WAITING_FOR_CLIENT,
         ExecutorState.ORDER_FULFILLMENT, ExecutorState.PAYMENT_CONFIRMATION, ExecutorState.ONLINE,
-        ExecutorState.SHIFT_OPENED, ExecutorState.SHIFT_CLOSED
+        ExecutorState.SHIFT_OPENED, ExecutorState.SHIFT_CLOSED, ExecutorState.BLOCKED
     ));
     when(geoLocationGateway.getGeoLocations(anyLong()))
         .thenReturn(Flowable.<GeoLocation>never().doOnCancel(action));
@@ -363,7 +384,7 @@ public class GeoLocationUseCaseTest {
     useCase.getGeoLocations().test();
 
     // Результат:
-    verify(action, times(11)).run();
+    verify(action, times(12)).run();
   }
 
   /* Проверяем работу с гейтвеем отправки геопозиции в ответ на ответы гейтвея геопозиции */
@@ -443,6 +464,65 @@ public class GeoLocationUseCaseTest {
     verifyZeroInteractions(geoTrackingGateway);
   }
 
+  /* Проверяем отправку ошибок в репортер */
+
+  /**
+   * Не должен отправлять ошибку в статусах исполнителя.
+   */
+  @Test
+  public void doNotReportExecutorStatusError() {
+    // Дано:
+    when(executorStateUseCase.getExecutorStates())
+        .thenReturn(Flowable.error(DataMappingException::new));
+
+    // Действие:
+    useCase.getGeoLocations().test();
+
+    // Результат:
+    verifyZeroInteractions(errorReporter);
+  }
+
+  /**
+   * Должен отправить ошибку в получении геолокации.
+   */
+  @Test
+  public void reportGeoLocationError() {
+    // Дано:
+    when(executorStateUseCase.getExecutorStates())
+        .thenReturn(Flowable.just(ExecutorState.SHIFT_CLOSED));
+    when(geoLocationGateway.getGeoLocations(anyLong()))
+        .thenReturn(Flowable.error(DataMappingException::new));
+
+    // Действие:
+    useCase.getGeoLocations().test();
+
+    // Результат:
+    verify(errorReporter, only()).reportError(any(DataMappingException.class));
+  }
+
+  /**
+   * Не должен отправлять ошибку отправки геопозици в сокет.
+   */
+  @Test
+  public void doNotReportSendGeolocationError() {
+    // Дано:
+    when(executorStateUseCase.getExecutorStates())
+        .thenReturn(Flowable.just(ExecutorState.SHIFT_CLOSED));
+    when(geoLocationGateway.getGeoLocations(anyLong())).thenReturn(Flowable.just(
+        new GeoLocation(1, 2, 3),
+        new GeoLocation(4, 5, 6),
+        new GeoLocation(7, 8, 9)
+    ));
+    when(geoTrackingGateway.sendGeoLocation(any()))
+        .thenReturn(Completable.error(DataMappingException::new));
+
+    // Действие:
+    useCase.getGeoLocations().test();
+
+    // Результат:
+    verifyZeroInteractions(errorReporter);
+  }
+
   /* Проверяем ответы гейтвея геопозиции */
 
   /**
@@ -510,7 +590,7 @@ public class GeoLocationUseCaseTest {
   }
 
   /**
-   * Должен вернуть ошибку при ошибке отправки статуса.
+   * Должен игнорировать ошибку отправки статуса в сокет.
    */
   @Test
   public void answerWithErrorOnSendGeolocationError() {
@@ -528,8 +608,13 @@ public class GeoLocationUseCaseTest {
     TestSubscriber<GeoLocation> testSubscriber = useCase.getGeoLocations().test();
 
     // Результат:
-    testSubscriber.assertNoValues();
-    testSubscriber.assertError(Exception.class);
+    testSubscriber.assertValues(
+        new GeoLocation(1, 2, 3),
+        new GeoLocation(4, 5, 6),
+        new GeoLocation(7, 8, 9)
+    );
+    testSubscriber.assertNoErrors();
+    testSubscriber.assertComplete();
   }
 
   /**

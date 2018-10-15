@@ -57,20 +57,20 @@ public class OrderCostDetailsApiMapper implements Mapper<StompMessage, OrderCost
       }
     }
     List<Pair<String, Long>> overPackageOptions = new ArrayList<>();
-    if (apiOrderCostDetails.getApiOrderOverPackage().getOverPackageMoverCost() > 0 &&
-        apiOrderCostDetails.getApiOrderOverPackage().getOverPackageMoverCostName() != null) {
-      overPackageOptions.add(new Pair<>(
-          apiOrderCostDetails.getApiOrderOverPackage().getOverPackageMoverCostName(),
-          apiOrderCostDetails.getApiOrderOverPackage().getOverPackageMoverCost()
-      ));
+    String overPackageMoverCostName = apiOrderCostDetails.getApiOrderOverPackage()
+        .getOverPackageMoverCostName();
+    long overPackageMoverCost = apiOrderCostDetails.getApiOrderOverPackage()
+        .getOverPackageMoverCost();
+    if (overPackageMoverCost > 0 && overPackageMoverCostName != null) {
+      overPackageOptions.add(new Pair<>(overPackageMoverCostName, overPackageMoverCost));
     }
     List<Pair<String, Long>> overPackageOptionsTariffs = new ArrayList<>();
-    if (apiOrderCostDetails.getApiOrderOverPackage().getOverPackageMoverTariff() > 0 &&
-        apiOrderCostDetails.getApiOrderOverPackage().getOverPackageMoverTariffName() != null) {
-      overPackageOptionsTariffs.add(new Pair<>(
-          apiOrderCostDetails.getApiOrderOverPackage().getOverPackageMoverTariffName(),
-          apiOrderCostDetails.getApiOrderOverPackage().getOverPackageMoverTariff()
-      ));
+    String overPackageMoverTariffName = apiOrderCostDetails.getApiOrderOverPackage()
+        .getOverPackageMoverTariffName();
+    long overPackageMoverTariff = apiOrderCostDetails.getApiOrderOverPackage()
+        .getOverPackageMoverTariff();
+    if (overPackageMoverTariff > 0 && overPackageMoverTariffName != null) {
+      overPackageOptionsTariffs.add(new Pair<>(overPackageMoverTariffName, overPackageMoverTariff));
     }
     return new OrderCostDetails(
         apiOrderCostDetails.getTotalAmount(),
@@ -87,7 +87,7 @@ public class OrderCostDetailsApiMapper implements Mapper<StompMessage, OrderCost
                 apiOrderCostDetails.getApiOrderOverPackage().getOverPackageTime(),
                 0,
                 apiOrderCostDetails.getApiOrderOverPackage().getOverPackageCost()
-                    + apiOrderCostDetails.getApiOrderOverPackage().getOverPackageMoverCost(),
+                    + (overPackageMoverCostName == null ? 0 : overPackageMoverCost),
                 apiOrderCostDetails.getApiOrderOverPackage().getOverPackageCost(),
                 overPackageOptions
             ),
@@ -95,7 +95,7 @@ public class OrderCostDetailsApiMapper implements Mapper<StompMessage, OrderCost
             new PackageCostDetails(
                 0, 0,
                 apiOrderCostDetails.getApiOrderOverPackage().getOverPackageTariff()
-                    + apiOrderCostDetails.getApiOrderOverPackage().getOverPackageMoverTariff(),
+                    + (overPackageMoverTariffName == null ? 0 : overPackageMoverTariff),
                 apiOrderCostDetails.getApiOrderOverPackage().getOverPackageTariff(),
                 overPackageOptionsTariffs
             )

@@ -10,8 +10,12 @@ import ua.naiksoftware.stomp.client.StompMessage;
  */
 public class ExecutorStateApiMapper implements Mapper<StompMessage, ExecutorState> {
 
+  @NonNull
+  private final Mapper<StompMessage, String> payloadMapper;
+
   @Inject
-  public ExecutorStateApiMapper() {
+  public ExecutorStateApiMapper(@NonNull Mapper<StompMessage, String> payloadMapper) {
+    this.payloadMapper = payloadMapper;
   }
 
   @NonNull
@@ -19,14 +23,18 @@ public class ExecutorStateApiMapper implements Mapper<StompMessage, ExecutorStat
   public ExecutorState map(@NonNull StompMessage from) throws Exception {
     ExecutorState executorState;
     try {
-      executorState = ExecutorState.valueOf(from.findHeader("Status").trim());
-      executorState.setData(from.getPayload());
+      if ("true".equals(from.findHeader("Blocked"))) {
+        executorState = ExecutorState.BLOCKED;
+      } else {
+        executorState = ExecutorState.valueOf(from.findHeader("Status").trim());
+      }
       String customerTimer = from.findHeader("CustomerConfirmationTimer");
       if (customerTimer != null) {
         executorState.setCustomerTimer(Long.valueOf(customerTimer));
       } else {
         executorState.setCustomerTimer(0);
       }
+      executorState.setData(payloadMapper.map(from));
     } catch (Exception e) {
       throw new DataMappingException("Ошибка маппинга: неверный формат статуса!", e);
     }

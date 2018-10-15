@@ -28,6 +28,14 @@ public class OrderConfirmationTimeoutItemTest {
   }
 
   @Test
+  public void testGetItemTimestamp() {
+    // Результат:
+    assertEquals(ocTimeoutItem.getItemTimestamp(), 12390182L);
+    assertEquals(ocTimeoutItem.getItemTimestamp(), 12390182L);
+    assertEquals(ocTimeoutItem.getItemTimestamp(), 12390182L);
+  }
+
+  @Test
   public void testGetProgressLeft() {
     // Дано:
     when(timeUtils.currentTimeMillis()).thenReturn(12395182L, 12400182L);

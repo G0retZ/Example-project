@@ -8,6 +8,7 @@ import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
+import android.support.constraint.ConstraintLayout;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -49,6 +50,7 @@ public class PasswordFragment extends BaseFragment implements CodeViewActions,
   private CodeHeaderViewModel codeHeaderViewModel;
   private SmsButtonViewModel smsButtonViewModel;
   private TextView networkErrorText;
+  private ConstraintLayout codeInputLayout;
   private TextView codeErrorText;
   private TextView codeInputCaption;
   private ImageView codeInputUnderline;
@@ -60,9 +62,6 @@ public class PasswordFragment extends BaseFragment implements CodeViewActions,
   @NonNull
   private Disposable smsCodeDisposable = EmptyDisposable.INSTANCE;
   private boolean smsSent;
-  private boolean smsNetworkError;
-  private boolean codeNetworkError;
-  private boolean codeError;
 
   @Inject
   public void setCodeViewModel(@NonNull CodeViewModel codeViewModel) {
@@ -97,10 +96,11 @@ public class PasswordFragment extends BaseFragment implements CodeViewActions,
       @Nullable Bundle savedInstanceState) {
     View view = inflater.inflate(R.layout.fragment_auth_password, container, false);
     networkErrorText = view.findViewById(R.id.networkErrorText);
-    codeErrorText = view.findViewById(R.id.codeErrorText);
-    codeInputCaption = view.findViewById(R.id.codeInputCaption);
-    codeInputUnderline = view.findViewById(R.id.codeInputUnderline);
-    codeInput = view.findViewById(R.id.codeInput);
+    codeInputLayout = view.findViewById(R.id.codeInputLayout);
+    codeErrorText = codeInputLayout.findViewById(R.id.codeErrorText);
+    codeInputCaption = codeInputLayout.findViewById(R.id.codeInputCaption);
+    codeInputUnderline = codeInputLayout.findViewById(R.id.codeInputUnderline);
+    codeInput = codeInputLayout.findViewById(R.id.codeInput);
     sendSmsRequest = view.findViewById(R.id.sendSms);
     sendSmsRequest.setOnClickListener(v -> sendSmsRequest());
     setTextListener();
@@ -204,17 +204,15 @@ public class PasswordFragment extends BaseFragment implements CodeViewActions,
 
   @Override
   public void showCodeCheckError(boolean show) {
-    codeError = show;
     codeErrorText.setVisibility(show ? View.VISIBLE : View.GONE);
   }
 
   @Override
   public void showCodeCheckNetworkErrorMessage(boolean show) {
-    codeNetworkError = show;
     if (show) {
       networkErrorText.setText(R.string.code_network_error);
     }
-    networkErrorText.setVisibility(codeNetworkError || smsNetworkError ? View.VISIBLE : View.GONE);
+    networkErrorText.setVisibility(show ? View.VISIBLE : View.GONE);
   }
 
   @Override
@@ -233,17 +231,11 @@ public class PasswordFragment extends BaseFragment implements CodeViewActions,
 
   @Override
   public void showSmsSendNetworkErrorMessage(boolean show) {
-    smsNetworkError = show;
     if (show) {
       networkErrorText.setText(R.string.sms_network_error);
     }
-    // TODO: https://jira.capsrv.xyz/browse/RUCAP-1920
-    codeInputCaption.setVisibility(show ? View.GONE : View.VISIBLE);
-    codeInput.setVisibility(show ? View.GONE : View.VISIBLE);
-    codeInputUnderline.setVisibility(show ? View.GONE : View.VISIBLE);
-    codeErrorText.setVisibility(codeError && !show ? View.VISIBLE : View.GONE);
-
-    networkErrorText.setVisibility(codeNetworkError || smsNetworkError ? View.VISIBLE : View.GONE);
+    codeInputLayout.setVisibility(show ? View.GONE : View.VISIBLE);
+    networkErrorText.setVisibility(show ? View.VISIBLE : View.GONE);
   }
 
   @Override

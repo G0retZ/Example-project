@@ -56,6 +56,16 @@ public class ExecutorStateViewModelImpl extends ViewModel implements ExecutorSta
         .subscribe(
             executorState -> {
               switch (executorState) {
+                case BLOCKED:
+                  if (executorState.getData() != null
+                      && !executorState.getData().trim().isEmpty()) {
+                    messageLiveData.postValue(
+                        executorStateViewActions -> executorStateViewActions
+                            .showExecutorStatusInfo(executorState.getData())
+                    );
+                  }
+                  navigateLiveData.postValue(ExecutorStateNavigate.BLOCKED);
+                  break;
                 case SHIFT_CLOSED:
                   navigateLiveData.postValue(ExecutorStateNavigate.MAP_SHIFT_CLOSED);
                   break;
@@ -64,7 +74,7 @@ public class ExecutorStateViewModelImpl extends ViewModel implements ExecutorSta
                       && !executorState.getData().trim().isEmpty()) {
                     messageLiveData.postValue(
                         executorStateViewActions -> executorStateViewActions
-                            .showOnlineMessage(executorState.getData())
+                            .showExecutorStatusMessage(executorState.getData())
                     );
                   }
                   navigateLiveData.postValue(ExecutorStateNavigate.MAP_SHIFT_OPENED);
@@ -74,7 +84,7 @@ public class ExecutorStateViewModelImpl extends ViewModel implements ExecutorSta
                       && !executorState.getData().trim().isEmpty()) {
                     messageLiveData.postValue(
                         executorStateViewActions -> executorStateViewActions
-                            .showOnlineMessage(executorState.getData())
+                            .showExecutorStatusMessage(executorState.getData())
                     );
                   }
                   navigateLiveData.postValue(ExecutorStateNavigate.MAP_ONLINE);

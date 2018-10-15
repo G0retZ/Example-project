@@ -8,6 +8,7 @@ import java.lang.annotation.RetentionPolicy;
  * Направления навигации при изменении статуса исполнителя.
  */
 @StringDef({
+    ExecutorStateNavigate.BLOCKED,
     ExecutorStateNavigate.MAP_SHIFT_CLOSED,
     ExecutorStateNavigate.MAP_SHIFT_OPENED,
     ExecutorStateNavigate.MAP_ONLINE,
@@ -22,6 +23,8 @@ import java.lang.annotation.RetentionPolicy;
 @Retention(RetentionPolicy.SOURCE)
 public @interface ExecutorStateNavigate {
 
+  // Переход к экрану бллокировки.
+  String BLOCKED = "ExecutorState.to.Blocked";
   // Переход к карте.
   String MAP_SHIFT_CLOSED = "ExecutorState.to.MapShiftClosed";
   // Переход к карте.

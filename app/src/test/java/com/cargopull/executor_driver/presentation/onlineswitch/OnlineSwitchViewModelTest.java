@@ -143,6 +143,25 @@ public class OnlineSwitchViewModelTest {
   }
 
   /**
+   * Должен вернуть состояние ожидания с неактивным переключателем для "заблокирован".
+   */
+  @Test
+  public void setUncheckedPendingViewStateForBlocked() {
+    // Дано:
+    InOrder inOrder = Mockito.inOrder(viewStateObserver);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
+
+    // Действие:
+    publishSubject.onNext(ExecutorState.BLOCKED);
+
+    // Результат:
+    inOrder.verify(viewStateObserver).onChanged(new OnlineSwitchViewStatePending(null));
+    inOrder.verify(viewStateObserver)
+        .onChanged(new OnlineSwitchViewStatePending(new OnlineSwitchViewState(false)));
+    verifyNoMoreInteractions(viewStateObserver);
+  }
+
+  /**
    * Должен вернуть состояние ожидания с неактивным переключателем для "смена закрыта".
    */
   @Test

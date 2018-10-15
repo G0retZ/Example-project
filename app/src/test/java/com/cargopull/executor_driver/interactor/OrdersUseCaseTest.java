@@ -104,7 +104,7 @@ public class OrdersUseCaseTest {
    * Должен запросить у юзкейса получение отмененных предзаказов только раз.
    */
   @Test
-  public void askUseCaseForCancelledOrdersforEveryAdd() {
+  public void askUseCaseForCancelledOrdersForEveryAdd() {
     // Действие:
     useCase.getOrdersSet().test();
     emitter.onNext(new HashSet<>(Arrays.asList(order, order1, order2, order3)));

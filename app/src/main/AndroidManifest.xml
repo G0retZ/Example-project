@@ -12,6 +12,8 @@
   <uses-permission android:name="android.permission.VIBRATE"/>
   <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
 
+  <uses-feature android:name="android.hardware.location.gps"/>
+
   <application
     android:allowBackup="true"
     android:fullBackupContent="@xml/backup_descriptor"
@@ -125,6 +127,9 @@
     <activity
       android:launchMode="singleTop"
       android:name=".application.UpcomingPreOrderActivity"/>
+    <activity
+      android:launchMode="singleTop"
+      android:name=".application.BlockedActivity"/>
 
     <service
       android:enabled="true"

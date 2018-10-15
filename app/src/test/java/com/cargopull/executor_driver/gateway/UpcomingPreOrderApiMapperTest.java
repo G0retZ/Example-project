@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 
 import com.cargopull.executor_driver.entity.Order;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import org.junit.Before;
 import org.junit.Test;
@@ -28,109 +29,164 @@ public class UpcomingPreOrderApiMapperTest {
   public void mappingHeaderAndPayLoadToOrder() throws Exception {
     // Дано и Действие:
     Order order = mapper.map(new StompMessage("MESSAGE",
-        Collections.singletonList(new StompHeader("OrderId", "1234567890")), "khd\ns13:40i\nhq\n"));
+            Arrays.asList(
+                new StompHeader("OrderId", "1234567890"),
+                new StompHeader("ETA", "0987654321")
+            ),
+            "\n"
+        )
+    );
 
     // Результат:
     assertEquals(order.getId(), 1234567890L);
-    assertEquals(order.getEtaToStartPoint(), 49200000L);
+    assertEquals(order.getEtaToStartPoint(), 987654321L);
   }
 
   /**
-   * Должен дать ошибку, если формат времени неверный.
+   * Должен дать ошибку, если хедера OrderId нет.
    *
    * @throws Exception ошибка
    */
   @Test(expected = DataMappingException.class)
-  public void mappingPayLoadWithWrongTimeFail() throws Exception {
+  public void mappingNullOrderIdHeaderFail() throws Exception {
+    // Дано и Действие:
+    mapper.map(new StompMessage("MESSAGE", new ArrayList<>(), "\n"));
+  }
+
+  /**
+   * Должен дать ошибку, если хедер OrderId пустой.
+   *
+   * @throws Exception ошибка
+   */
+  @Test(expected = DataMappingException.class)
+  public void mappingEmptyOrderIdHeaderFail() throws Exception {
     // Дано и Действие:
     mapper.map(new StompMessage("MESSAGE",
-        Collections.singletonList(new StompHeader("OrderId", "1234567890")), "khd\ns33:40i\nhq\n"));
+        Collections.singletonList(new StompHeader("OrderId", "")), "\n"));
   }
 
   /**
-   * Должен дать ошибку, если пэйлоад пустой.
+   * Должен дать ошибку, если в хедере OrderId дробное число.
    *
    * @throws Exception ошибка
    */
   @Test(expected = DataMappingException.class)
-  public void mappingEmptyPayloadFail() throws Exception {
+  public void mappingFloatOrderIdHeaderFail() throws Exception {
     // Дано и Действие:
     mapper.map(new StompMessage("MESSAGE",
-        Collections.singletonList(new StompHeader("OrderId", "1234567890")), ""));
+        Collections.singletonList(new StompHeader("OrderId", "123.345")), "\n"));
   }
 
   /**
-   * Должен дать ошибку, если в пэйлоаде нет времени.
+   * Должен дать ошибку, если в хедере OrderId число больше чем long.
    *
    * @throws Exception ошибка
    */
   @Test(expected = DataMappingException.class)
-  public void mappingWrongPayloadFail() throws Exception {
-    // Дано и Действие:
-    mapper.map(new StompMessage("MESSAGE",
-        Collections.singletonList(new StompHeader("OrderId", "1234567890")),
-        "sdfjfowe\nfwujasdb\n"));
-  }
-
-  /**
-   * Должен дать ошибку, если хедера нет.
-   *
-   * @throws Exception ошибка
-   */
-  @Test(expected = DataMappingException.class)
-  public void mappingNullHeaderFail() throws Exception {
-    // Дано и Действие:
-    mapper.map(new StompMessage("MESSAGE", new ArrayList<>(), "khd\ns13:40i\nhq\n"));
-  }
-
-  /**
-   * Должен дать ошибку, если хедер пустой.
-   *
-   * @throws Exception ошибка
-   */
-  @Test(expected = DataMappingException.class)
-  public void mappingEmptyHeaderFail() throws Exception {
-    // Дано и Действие:
-    mapper.map(new StompMessage("MESSAGE",
-        Collections.singletonList(new StompHeader("OrderId", "")), "khd\ns13:40i\nhq\n"));
-  }
-
-  /**
-   * Должен дать ошибку, если в хедере дробное число.
-   *
-   * @throws Exception ошибка
-   */
-  @Test(expected = DataMappingException.class)
-  public void mappingFloatHeaderFail() throws Exception {
-    // Дано и Действие:
-    mapper.map(new StompMessage("MESSAGE",
-        Collections.singletonList(new StompHeader("OrderId", "123.345")), "khd\ns13:40i\nhq\n"));
-  }
-
-  /**
-   * Должен дать ошибку, если в хедере число больше чем long.
-   *
-   * @throws Exception ошибка
-   */
-  @Test(expected = DataMappingException.class)
-  public void mappingLongNumberHeaderFail() throws Exception {
+  public void mappingLongNumberOrderIdHeaderFail() throws Exception {
     // Дано и Действие:
     mapper.map(new StompMessage("MESSAGE",
         Collections.singletonList(new StompHeader("OrderId", "9999999999999999999999")),
-        "khd\ns13:40i\nhq\n"));
+        "\n"));
   }
 
   /**
-   * Должен дать ошибку, если в хедере не число.
+   * Должен дать ошибку, если в хедере OrderId не число.
    *
    * @throws Exception ошибка
    */
   @Test(expected = DataMappingException.class)
-  public void mappingNotANumberHeaderFail() throws Exception {
+  public void mappingNotANumberOrderIdHeaderFail() throws Exception {
     // Дано и Действие:
     mapper.map(new StompMessage("MESSAGE",
         Collections.singletonList(new StompHeader("OrderId", "a9876543210")),
-        "khd\ns13:40i\nhq\n"));
+        "\n"));
   }
 
+  /**
+   * Должен дать ошибку, если хедера ETA нет.
+   *
+   * @throws Exception ошибка
+   */
+  @Test(expected = DataMappingException.class)
+  public void mappingNullEtaHeaderFail() throws Exception {
+    // Дано и Действие:
+    mapper.map(new StompMessage("MESSAGE",
+            Collections.singletonList(new StompHeader("OrderId", "1234567890")),
+            "\n"
+        )
+    );
+  }
+
+  /**
+   * Должен дать ошибку, если хедер ETA пустой.
+   *
+   * @throws Exception ошибка
+   */
+  @Test(expected = DataMappingException.class)
+  public void mappingEmptyEtaHeaderFail() throws Exception {
+    // Дано и Действие:
+    mapper.map(new StompMessage("MESSAGE",
+            Arrays.asList(
+                new StompHeader("OrderId", "1234567890"),
+                new StompHeader("ETA", "")
+            ),
+            "\n"
+        )
+    );
+  }
+
+  /**
+   * Должен дать ошибку, если в хедере ETA дробное число.
+   *
+   * @throws Exception ошибка
+   */
+  @Test(expected = DataMappingException.class)
+  public void mappingFloatEtaHeaderFail() throws Exception {
+    // Дано и Действие:
+    mapper.map(new StompMessage("MESSAGE",
+            Arrays.asList(
+                new StompHeader("OrderId", "1234567890"),
+                new StompHeader("ETA", "123.345")
+            ),
+            "\n"
+        )
+    );
+  }
+
+  /**
+   * Должен дать ошибку, если в хедере ETA число больше чем long.
+   *
+   * @throws Exception ошибка
+   */
+  @Test(expected = DataMappingException.class)
+  public void mappingLongNumberEtaHeaderFail() throws Exception {
+    // Дано и Действие:
+    mapper.map(new StompMessage("MESSAGE",
+            Arrays.asList(
+                new StompHeader("OrderId", "1234567890"),
+                new StompHeader("ETA", "9999999999999999999999")
+            ),
+            "\n"
+        )
+    );
+  }
+
+  /**
+   * Должен дать ошибку, если в хедере ETA не число.
+   *
+   * @throws Exception ошибка
+   */
+  @Test(expected = DataMappingException.class)
+  public void mappingNotANumberEtaHeaderFail() throws Exception {
+    // Дано и Действие:
+    mapper.map(new StompMessage("MESSAGE",
+            Arrays.asList(
+                new StompHeader("OrderId", "1234567890"),
+                new StompHeader("ETA", "a9876543210")
+            ),
+            "\n"
+        )
+    );
+  }
 }

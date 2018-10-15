@@ -12,19 +12,27 @@ import com.cargopull.executor_driver.interactor.CommonGateway;
 import io.reactivex.Flowable;
 import io.reactivex.functions.Predicate;
 import io.reactivex.subscribers.TestSubscriber;
+import java.util.Arrays;
 import org.junit.Before;
 import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnit;
+import org.mockito.junit.MockitoRule;
 import ua.naiksoftware.stomp.client.StompMessage;
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(Parameterized.class)
 public class TopicGatewayImplTest {
 
+  @Rule
+  public MockitoRule rule = MockitoJUnit.rule();
   @ClassRule
   public static final GatewayThreadTestRule classRule = new GatewayThreadTestRule();
+
+  private boolean withDefault;
 
   private CommonGateway<String> gateway;
   @Mock
@@ -36,9 +44,26 @@ public class TopicGatewayImplTest {
   @Mock
   private StompMessage stompMessage;
 
+  // Each parameter should be placed as an argument here
+  // Every time runner triggers, it will pass the arguments
+  // from parameters we defined in primeNumbers() method
+
+  public TopicGatewayImplTest(boolean conditions) {
+    withDefault = conditions;
+  }
+
+  @Parameterized.Parameters
+  public static Iterable<Boolean> primeConditions() {
+    return Arrays.asList(false, true);
+  }
+
   @Before
   public void setUp() {
-    gateway = new TopicGatewayImpl<>(topicListener, mapper, filter);
+    if (withDefault) {
+      gateway = new TopicGatewayImpl<>(topicListener, filter, mapper, "defaultValue");
+    } else {
+      gateway = new TopicGatewayImpl<>(topicListener, filter, mapper);
+    }
     when(topicListener.getAcknowledgedMessages()).thenReturn(Flowable.never());
   }
 
@@ -125,7 +150,7 @@ public class TopicGatewayImplTest {
   /* Проверяем результаты обработки сообщений от сервера */
 
   /**
-   * Должен игнорировать отфильтрованные сообщение.
+   * Должен игнорировать отфильтрованные сообщение, выдав только значение по-умолчанию, если оно задано.
    */
   @Test
   public void ignoreFilteredMessages() {
@@ -136,12 +161,16 @@ public class TopicGatewayImplTest {
     TestSubscriber<String> testSubscriber = gateway.getData().test();
 
     // Результат:
-    testSubscriber.assertNoValues();
+    if (withDefault) {
+      testSubscriber.assertValue("defaultValue");
+    } else {
+      testSubscriber.assertNoValues();
+    }
     testSubscriber.assertNoErrors();
   }
 
   /**
-   * Должен ответить ошибкой маппинга.
+   * Должен ответить ошибкой маппинга, выдав только значение по-умолчанию, если оно задано.
    *
    * @throws Exception error
    */
@@ -157,11 +186,15 @@ public class TopicGatewayImplTest {
 
     // Результат:
     testSubscriber.assertError(DataMappingException.class);
-    testSubscriber.assertNoValues();
+    if (withDefault) {
+      testSubscriber.assertValue("defaultValue");
+    } else {
+      testSubscriber.assertNoValues();
+    }
   }
 
   /**
-   * Должен вернуть данные.
+   * Должен вернуть данные, после значения по-умолчанию, если оно задано.
    *
    * @throws Exception error
    */
@@ -176,7 +209,11 @@ public class TopicGatewayImplTest {
     TestSubscriber<String> testSubscriber = gateway.getData().test();
 
     // Результат:
-    testSubscriber.assertValue("Data");
+    if (withDefault) {
+      testSubscriber.assertValues("defaultValue", "Data");
+    } else {
+      testSubscriber.assertValue("Data");
+    }
     testSubscriber.assertNoErrors();
   }
 }

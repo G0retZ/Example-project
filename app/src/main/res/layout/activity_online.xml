@@ -64,7 +64,6 @@
     app:layout_constraintBottom_toBottomOf="parent"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toBottomOf="@id/fragment_online"
     tools:layout="@layout/fragment_upcoming_pre_order"/>
   <fragment
     android:id="@+id/fragment_server_connection"

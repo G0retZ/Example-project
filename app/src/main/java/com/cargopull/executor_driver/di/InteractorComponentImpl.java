@@ -297,6 +297,7 @@ class InteractorComponentImpl implements InteractorComponent {
           errorReporter,
           repositoryComponent.getExecutorStateSwitchGateway(),
           getExecutorStateUseCase(),
+          ExecutorState.BLOCKED,
           ExecutorState.SHIFT_CLOSED,
           ExecutorState.SHIFT_OPENED,
           ExecutorState.ONLINE,
@@ -329,6 +330,7 @@ class InteractorComponentImpl implements InteractorComponent {
   public GeoLocationUseCase getGeoLocationUseCase() {
     if (geoLocationUseCase == null) {
       geoLocationUseCase = new GeoLocationUseCaseImpl(
+          errorReporter,
           repositoryComponent.getGeoLocationGateway(),
           repositoryComponent.getGeoTrackingGateway(),
           getExecutorStateUseCase()
