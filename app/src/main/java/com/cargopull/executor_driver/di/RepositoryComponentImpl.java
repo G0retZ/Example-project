@@ -2,7 +2,6 @@ package com.cargopull.executor_driver.di;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import com.cargopull.executor_driver.backend.geolocation.GeolocationCenter;
 import com.cargopull.executor_driver.entity.CancelOrderReason;
 import com.cargopull.executor_driver.entity.ExecutorBalance;
 import com.cargopull.executor_driver.entity.ExecutorState;
@@ -89,8 +88,6 @@ class RepositoryComponentImpl implements RepositoryComponent {
 
   @NonNull
   private final BackendComponent backendComponent;
-  @NonNull
-  private final GeolocationCenter geolocationCenter;
   @Nullable
   private CallToClientGateway callToClientGateway;
   @Nullable
@@ -166,10 +163,8 @@ class RepositoryComponentImpl implements RepositoryComponent {
   @Nullable
   private CommonGateway<Order> upcomingPreOrderGateway;
 
-  RepositoryComponentImpl(@NonNull BackendComponent backendComponent,
-      @NonNull GeolocationCenter geolocationCenter) {
+  RepositoryComponentImpl(@NonNull BackendComponent backendComponent) {
     this.backendComponent = backendComponent;
-    this.geolocationCenter = geolocationCenter;
   }
 
   @NonNull
@@ -299,7 +294,7 @@ class RepositoryComponentImpl implements RepositoryComponent {
   public GeoLocationGateway getGeoLocationGateway() {
     if (geoLocationGateway == null) {
       geoLocationGateway = new GeoLocationGatewayImpl(
-          geolocationCenter
+          backendComponent.getGeolocationCenter()
       );
     }
     return geoLocationGateway;

@@ -1,6 +1,7 @@
 package com.cargopull.executor_driver.di;
 
 import android.content.Context;
+import android.net.ConnectivityManager;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import androidx.annotation.NonNull;
@@ -16,7 +17,6 @@ import com.cargopull.executor_driver.application.OrderCostDetailsActivity;
 import com.cargopull.executor_driver.application.OrderFulfillmentActivity;
 import com.cargopull.executor_driver.application.PreOrdersActivity;
 import com.cargopull.executor_driver.application.WaitingForClientActivity;
-import com.cargopull.executor_driver.backend.geolocation.GeolocationCenter;
 import com.cargopull.executor_driver.backend.geolocation.GeolocationCenterImpl;
 import com.cargopull.executor_driver.backend.ringtone.SingleRingTonePlayer;
 import com.cargopull.executor_driver.backend.settings.AppPreferences;
@@ -26,16 +26,7 @@ import com.cargopull.executor_driver.backend.vibro.OldPatternMapper;
 import com.cargopull.executor_driver.backend.vibro.OldSingleShakePlayer;
 import com.cargopull.executor_driver.backend.vibro.ShakeItPlayer;
 import com.cargopull.executor_driver.backend.vibro.SingleShakePlayer;
-import com.cargopull.executor_driver.backend.web.AuthorizationInterceptor;
-import com.cargopull.executor_driver.backend.web.ConnectivityInterceptor;
-import com.cargopull.executor_driver.backend.web.DeprecatedVersionInterceptor;
-import com.cargopull.executor_driver.backend.web.ReceiveTokenInterceptor;
-import com.cargopull.executor_driver.backend.web.SendTokenInterceptor;
-import com.cargopull.executor_driver.backend.web.SendVersionInterceptor;
-import com.cargopull.executor_driver.backend.web.ServerResponseInterceptor;
-import com.cargopull.executor_driver.backend.web.TokenKeeper;
 import com.cargopull.executor_driver.gateway.SmsCodeMapper;
-import com.cargopull.executor_driver.gateway.TokenKeeperImpl;
 import com.cargopull.executor_driver.interactor.auth.LoginSharer;
 import com.cargopull.executor_driver.utils.EventLogger;
 import com.cargopull.executor_driver.utils.EventLoggerImpl;
@@ -112,30 +103,16 @@ public class AppComponentImpl implements AppComponent {
     appContext = appContext.getApplicationContext();
     TimeUtils timeUtils = new TimeUtilsImpl();
     appSettingsService = new AppPreferences(appContext);
-    TokenKeeper tokenKeeper = new TokenKeeperImpl(appSettingsService);
     LoginSharer loginSharer = new LoginSharer(appSettingsService);
     eventLogger = new EventLoggerImpl(loginSharer, FirebaseAnalytics.getInstance(appContext));
     BackendComponent backendComponent = new BackendComponentImpl(
         loginSharer,
         appSettingsService,
-        new ConnectivityInterceptor(appContext),
-        new SendVersionInterceptor(),
-        new DeprecatedVersionInterceptor(),
-        new AuthorizationInterceptor(),
-        new ServerResponseInterceptor(),
-        new SendTokenInterceptor(tokenKeeper),
-        new ReceiveTokenInterceptor(tokenKeeper)
-    );
-    GeolocationCenter geolocationCenter = new GeolocationCenterImpl(appContext);
-    RepositoryComponent repositoryComponent = new RepositoryComponentImpl(
-        backendComponent,
-        geolocationCenter
-    );
-    InteractorComponent interactorComponent = new InteractorComponentImpl(
-        loginSharer, timeUtils, repositoryComponent
+        new GeolocationCenterImpl(appContext),
+        (ConnectivityManager) appContext.getSystemService(Context.CONNECTIVITY_SERVICE)
     );
     presentationComponent = new PresentationComponentImpl(
-        eventLogger, loginSharer, interactorComponent, timeUtils
+        eventLogger, loginSharer, backendComponent, timeUtils
     );
     singleRingTonePlayer = new SingleRingTonePlayer(appContext);
     if (VERSION.SDK_INT >= VERSION_CODES.O) {

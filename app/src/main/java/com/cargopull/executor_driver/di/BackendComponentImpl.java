@@ -1,12 +1,23 @@
 package com.cargopull.executor_driver.di;
 
+import android.net.ConnectivityManager;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.cargopull.executor_driver.BuildConfig;
+import com.cargopull.executor_driver.backend.geolocation.GeolocationCenter;
 import com.cargopull.executor_driver.backend.settings.AppSettingsService;
 import com.cargopull.executor_driver.backend.web.ApiService;
+import com.cargopull.executor_driver.backend.web.AuthorizationInterceptor;
+import com.cargopull.executor_driver.backend.web.ConnectivityInterceptor;
+import com.cargopull.executor_driver.backend.web.DeprecatedVersionInterceptor;
+import com.cargopull.executor_driver.backend.web.ReceiveTokenInterceptor;
+import com.cargopull.executor_driver.backend.web.SendTokenInterceptor;
+import com.cargopull.executor_driver.backend.web.SendVersionInterceptor;
+import com.cargopull.executor_driver.backend.web.ServerResponseInterceptor;
+import com.cargopull.executor_driver.backend.web.TokenKeeper;
 import com.cargopull.executor_driver.backend.websocket.PersonalQueueListener;
 import com.cargopull.executor_driver.backend.websocket.TopicListener;
+import com.cargopull.executor_driver.gateway.TokenKeeperImpl;
 import com.cargopull.executor_driver.interactor.DataReceiver;
 import java.util.concurrent.TimeUnit;
 import okhttp3.Interceptor;
@@ -27,6 +38,8 @@ class BackendComponentImpl implements BackendComponent {
   private final Interceptor[] interceptors;
   @NonNull
   private final AppSettingsService appSettingsService;
+  @NonNull
+  private final GeolocationCenter geolocationCenter;
   @Nullable
   private ApiService apiService;
   @Nullable
@@ -38,10 +51,21 @@ class BackendComponentImpl implements BackendComponent {
 
   BackendComponentImpl(@NonNull DataReceiver<String> loginSharer,
       @NonNull AppSettingsService appSettingsService,
-      @NonNull Interceptor... interceptors) {
+      @NonNull GeolocationCenter geolocationCenter,
+      @NonNull ConnectivityManager connectivityManager) {
     this.loginSharer = loginSharer;
     this.appSettingsService = appSettingsService;
-    this.interceptors = interceptors;
+    this.geolocationCenter = geolocationCenter;
+    TokenKeeper tokenKeeper = new TokenKeeperImpl(appSettingsService);
+    this.interceptors = new Interceptor[]{
+        new ConnectivityInterceptor(connectivityManager),
+        new SendVersionInterceptor(),
+        new DeprecatedVersionInterceptor(),
+        new AuthorizationInterceptor(),
+        new ServerResponseInterceptor(),
+        new SendTokenInterceptor(tokenKeeper),
+        new ReceiveTokenInterceptor(tokenKeeper)
+    };
   }
 
   @Override
@@ -91,6 +115,12 @@ class BackendComponentImpl implements BackendComponent {
   @NonNull
   public AppSettingsService getAppSettingsService() {
     return appSettingsService;
+  }
+
+  @Override
+  @NonNull
+  public GeolocationCenter getGeolocationCenter() {
+    return geolocationCenter;
   }
 
   @NonNull

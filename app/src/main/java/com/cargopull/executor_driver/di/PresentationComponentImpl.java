@@ -145,11 +145,14 @@ class PresentationComponentImpl implements PresentationComponent {
 
   PresentationComponentImpl(@NonNull EventLogger eventLogger,
       @NonNull MemoryDataSharer<String> loginSharer,
-      @NonNull InteractorComponent interactorComponent,
+      @NonNull BackendComponent backendComponent,
       @NonNull TimeUtils timeUtils) {
     this.eventLogger = eventLogger;
     this.loginSharer = loginSharer;
-    this.interactorComponent = interactorComponent;
+    RepositoryComponent repositoryComponent = new RepositoryComponentImpl(backendComponent);
+    this.interactorComponent = new InteractorComponentImpl(
+        loginSharer, timeUtils, repositoryComponent
+    );
     this.timeUtils = timeUtils;
     servicesListItems = new ServicesListItems();
   }

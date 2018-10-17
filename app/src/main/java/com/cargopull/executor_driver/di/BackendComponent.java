@@ -1,5 +1,6 @@
 package com.cargopull.executor_driver.di;
 
+import com.cargopull.executor_driver.backend.geolocation.GeolocationCenter;
 import com.cargopull.executor_driver.backend.settings.AppSettingsService;
 import com.cargopull.executor_driver.backend.web.ApiService;
 import com.cargopull.executor_driver.backend.websocket.TopicListener;
@@ -19,4 +20,7 @@ interface BackendComponent {
 
   @NonNull
   AppSettingsService getAppSettingsService();
+
+  @NonNull
+  GeolocationCenter getGeolocationCenter();
 }
