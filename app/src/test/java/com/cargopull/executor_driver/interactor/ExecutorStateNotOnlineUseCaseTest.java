@@ -119,7 +119,7 @@ public class ExecutorStateNotOnlineUseCaseTest {
   }
 
   @Test
-  public void DoNotTouchGatewayIfBlocked() {
+  public void touchOrNotGateway() {
     // Дано:
     when(executorStateUseCase.getExecutorStates())
         .thenReturn(Flowable.just(conditionExecutorState).concatWith(Flowable.never()));
@@ -140,7 +140,7 @@ public class ExecutorStateNotOnlineUseCaseTest {
   /* Проверяем ответы */
 
   @Test
-  public void answerIllegalArgumentErrorIfBlocked() {
+  public void answerIllegalArgumentErrorOrComplete() {
     // Дано:
     when(executorStateUseCase.getExecutorStates())
         .thenReturn(Flowable.just(conditionExecutorState).concatWith(Flowable.never()));
@@ -165,7 +165,7 @@ public class ExecutorStateNotOnlineUseCaseTest {
    * Должен вернуть ошибку при ошибке отправки статуса.
    */
   @Test
-  public void answerWithErrorIfPaymentAcceptance() {
+  public void answerWithErrorIfSendFailed() {
     // Дано:
     when(executorStateUseCase.getExecutorStates())
         .thenReturn(Flowable.just(conditionExecutorState).concatWith(Flowable.never()));
