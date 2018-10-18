@@ -1,12 +1,10 @@
 package com.cargopull.executor_driver.interactor;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.cargopull.executor_driver.UseCaseThreadTestRule;
-import com.cargopull.executor_driver.backend.analytics.ErrorReporter;
 import com.cargopull.executor_driver.entity.ExecutorBalance;
 import com.cargopull.executor_driver.gateway.DataMappingException;
 import io.reactivex.Flowable;
@@ -27,8 +25,6 @@ public class ExecutorBalanceUseCaseTest {
   private ExecutorBalanceUseCase useCase;
 
   @Mock
-  private ErrorReporter errorReporter;
-  @Mock
   private CommonGateway<ExecutorBalance> gateway;
   @Mock
   private ExecutorBalance executorBalance;
@@ -40,7 +36,7 @@ public class ExecutorBalanceUseCaseTest {
   @Before
   public void setUp() {
     when(gateway.getData()).thenReturn(Flowable.never());
-    useCase = new ExecutorBalanceUseCaseImpl(errorReporter, gateway);
+    useCase = new ExecutorBalanceUseCaseImpl(gateway);
   }
 
   /* Проверяем работу с гейтвеем */
@@ -58,23 +54,6 @@ public class ExecutorBalanceUseCaseTest {
 
     // Результат:
     verify(gateway, only()).getData();
-  }
-
-  /* Проверяем отправку ошибок в репортер */
-
-  /**
-   * Должен отправить ошибку.
-   */
-  @Test
-  public void reportError() {
-    // Дано:
-    when(gateway.getData()).thenReturn(Flowable.error(DataMappingException::new));
-
-    // Действие:
-    useCase.getExecutorBalance().test();
-
-    // Результат:
-    verify(errorReporter, only()).reportError(any(DataMappingException.class));
   }
 
   /* Проверяем ответы */

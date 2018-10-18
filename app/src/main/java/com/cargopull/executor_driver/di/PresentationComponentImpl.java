@@ -175,7 +175,8 @@ class PresentationComponentImpl implements PresentationComponent {
   @Override
   public BalanceViewModel getBalanceViewModel() {
     if (balanceViewModel == null) {
-      balanceViewModel = new BalanceViewModelImpl(interactorComponent.getExecutorBalanceUseCase());
+      balanceViewModel = new BalanceViewModelImpl(errorReporter,
+          interactorComponent.getExecutorBalanceUseCase());
     }
     return balanceViewModel;
   }

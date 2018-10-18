@@ -264,7 +264,6 @@ class InteractorComponentImpl implements InteractorComponent {
   public ExecutorBalanceUseCase getExecutorBalanceUseCase() {
     if (executorBalanceUseCase == null) {
       executorBalanceUseCase = new ExecutorBalanceUseCaseImpl(
-          errorReporter,
           repositoryComponent.getExecutorBalanceGateway()
       );
     }

@@ -5,6 +5,7 @@ import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
+import com.cargopull.executor_driver.backend.analytics.ErrorReporter;
 import com.cargopull.executor_driver.gateway.DataMappingException;
 import com.cargopull.executor_driver.interactor.ExecutorBalanceUseCase;
 import com.cargopull.executor_driver.presentation.CommonNavigate;
@@ -18,6 +19,8 @@ import javax.inject.Inject;
 public class BalanceViewModelImpl extends ViewModel implements BalanceViewModel {
 
   @NonNull
+  private final ErrorReporter errorReporter;
+  @NonNull
   private final ExecutorBalanceUseCase executorBalanceUseCase;
   @NonNull
   private final MutableLiveData<ViewState<BalanceViewActions>> viewStateLiveData;
@@ -29,7 +32,9 @@ public class BalanceViewModelImpl extends ViewModel implements BalanceViewModel 
   private ViewState<BalanceViewActions> lastViewState;
 
   @Inject
-  public BalanceViewModelImpl(@NonNull ExecutorBalanceUseCase executorBalanceUseCase) {
+  public BalanceViewModelImpl(@NonNull ErrorReporter errorReporter,
+      @NonNull ExecutorBalanceUseCase executorBalanceUseCase) {
+    this.errorReporter = errorReporter;
     this.executorBalanceUseCase = executorBalanceUseCase;
     viewStateLiveData = new MutableLiveData<>();
     navigateLiveData = new SingleLiveEvent<>();
@@ -57,6 +62,7 @@ public class BalanceViewModelImpl extends ViewModel implements BalanceViewModel 
             executorBalance -> viewStateLiveData
                 .postValue(lastViewState = new BalanceViewState(executorBalance)),
             throwable -> {
+              errorReporter.reportError(throwable);
               if (throwable instanceof DataMappingException) {
                 navigateLiveData.postValue(CommonNavigate.SERVER_DATA_ERROR);
               }
