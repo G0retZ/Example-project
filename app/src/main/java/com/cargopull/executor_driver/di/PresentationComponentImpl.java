@@ -5,6 +5,8 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProviders;
+import com.cargopull.executor_driver.backend.analytics.ErrorReporter;
+import com.cargopull.executor_driver.backend.analytics.EventLogger;
 import com.cargopull.executor_driver.interactor.MemoryDataSharer;
 import com.cargopull.executor_driver.presentation.ViewModelFactory;
 import com.cargopull.executor_driver.presentation.announcement.AnnouncementViewModel;
@@ -91,13 +93,14 @@ import com.cargopull.executor_driver.presentation.vehicleoptions.VehicleOptionsV
 import com.cargopull.executor_driver.presentation.vehicleoptions.VehicleOptionsViewModelImpl;
 import com.cargopull.executor_driver.presentation.waitingforclient.WaitingForClientViewModel;
 import com.cargopull.executor_driver.presentation.waitingforclient.WaitingForClientViewModelImpl;
-import com.cargopull.executor_driver.utils.EventLogger;
 import com.cargopull.executor_driver.utils.TimeUtils;
 
 class PresentationComponentImpl implements PresentationComponent {
 
   @NonNull
   private final EventLogger eventLogger;
+  @NonNull
+  private final ErrorReporter errorReporter;
   @NonNull
   private final MemoryDataSharer<String> loginSharer;
   @NonNull
@@ -144,14 +147,16 @@ class PresentationComponentImpl implements PresentationComponent {
   private UpcomingPreOrderViewModel upcomingPreOrderAvailabilityViewModel;
 
   PresentationComponentImpl(@NonNull EventLogger eventLogger,
+      @NonNull ErrorReporter errorReporter,
       @NonNull MemoryDataSharer<String> loginSharer,
       @NonNull BackendComponent backendComponent,
       @NonNull TimeUtils timeUtils) {
     this.eventLogger = eventLogger;
+    this.errorReporter = errorReporter;
     this.loginSharer = loginSharer;
     RepositoryComponent repositoryComponent = new RepositoryComponentImpl(backendComponent);
     this.interactorComponent = new InteractorComponentImpl(
-        loginSharer, timeUtils, repositoryComponent
+        loginSharer, timeUtils, errorReporter, repositoryComponent
     );
     this.timeUtils = timeUtils;
     servicesListItems = new ServicesListItems();

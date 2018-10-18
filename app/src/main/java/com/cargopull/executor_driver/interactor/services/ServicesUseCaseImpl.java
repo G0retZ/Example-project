@@ -1,9 +1,9 @@
 package com.cargopull.executor_driver.interactor.services;
 
 import androidx.annotation.NonNull;
+import com.cargopull.executor_driver.backend.analytics.ErrorReporter;
 import com.cargopull.executor_driver.entity.EmptyListException;
 import com.cargopull.executor_driver.entity.Service;
-import com.cargopull.executor_driver.utils.ErrorReporter;
 import io.reactivex.Completable;
 import io.reactivex.Single;
 import io.reactivex.schedulers.Schedulers;

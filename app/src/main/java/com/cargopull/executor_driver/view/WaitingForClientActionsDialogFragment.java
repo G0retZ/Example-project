@@ -13,9 +13,9 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.DialogFragment;
 import com.cargopull.executor_driver.R;
+import com.cargopull.executor_driver.backend.analytics.EventLogger;
 import com.cargopull.executor_driver.di.AppComponent;
 import com.cargopull.executor_driver.presentation.waitingforclientactions.WaitingForClientActionsNavigate;
-import com.cargopull.executor_driver.utils.EventLogger;
 import java.util.HashMap;
 import javax.inject.Inject;
 

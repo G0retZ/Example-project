@@ -1,5 +1,6 @@
-package com.cargopull.executor_driver.utils;
+package com.cargopull.executor_driver.backend.analytics;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import androidx.annotation.NonNull;
@@ -12,7 +13,6 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 import javax.inject.Inject;
 
-@SuppressWarnings("unused")
 public class EventLoggerImpl implements EventLogger {
 
   @NonNull
@@ -21,10 +21,9 @@ public class EventLoggerImpl implements EventLogger {
   private final FirebaseAnalytics mFirebaseAnalytics;
 
   @Inject
-  public EventLoggerImpl(@NonNull DataReceiver<String> loginReceiver,
-      @NonNull FirebaseAnalytics mFirebaseAnalytics) {
+  public EventLoggerImpl(@NonNull DataReceiver<String> loginReceiver, @NonNull Context context) {
     this.loginReceiver = loginReceiver;
-    this.mFirebaseAnalytics = mFirebaseAnalytics;
+    this.mFirebaseAnalytics = FirebaseAnalytics.getInstance(context);
   }
 
   @Override

@@ -1,4 +1,4 @@
-package com.cargopull.executor_driver.utils;
+package com.cargopull.executor_driver.backend.analytics;
 
 import android.util.Log;
 import androidx.annotation.NonNull;

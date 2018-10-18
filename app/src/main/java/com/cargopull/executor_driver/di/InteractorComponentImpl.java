@@ -2,6 +2,7 @@ package com.cargopull.executor_driver.di;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import com.cargopull.executor_driver.backend.analytics.ErrorReporter;
 import com.cargopull.executor_driver.entity.ExecutorState;
 import com.cargopull.executor_driver.entity.LoginValidator;
 import com.cargopull.executor_driver.entity.PasswordValidator;
@@ -77,8 +78,6 @@ import com.cargopull.executor_driver.interactor.vehicle.VehicleOptionsUseCase;
 import com.cargopull.executor_driver.interactor.vehicle.VehicleOptionsUseCaseImpl;
 import com.cargopull.executor_driver.interactor.vehicle.VehiclesAndOptionsUseCase;
 import com.cargopull.executor_driver.interactor.vehicle.VehiclesAndOptionsUseCaseImpl;
-import com.cargopull.executor_driver.utils.ErrorReporter;
-import com.cargopull.executor_driver.utils.ErrorReporterImpl;
 import com.cargopull.executor_driver.utils.TimeUtils;
 
 class InteractorComponentImpl implements InteractorComponent {
@@ -184,11 +183,12 @@ class InteractorComponentImpl implements InteractorComponent {
 
   InteractorComponentImpl(@NonNull MemoryDataSharer<String> loginSharer,
       @NonNull TimeUtils timeUtils,
+      @NonNull ErrorReporter errorReporter,
       @NonNull RepositoryComponent repositoryComponent) {
     this.timeUtils = timeUtils;
     this.repositoryComponent = repositoryComponent;
     this.loginSharer = loginSharer;
-    errorReporter = new ErrorReporterImpl(loginSharer);
+    this.errorReporter = errorReporter;
     vehicleChoiceSharer = new VehicleChoiceSharer();
   }
 

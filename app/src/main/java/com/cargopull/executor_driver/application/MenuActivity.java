@@ -6,10 +6,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import com.cargopull.executor_driver.R;
+import com.cargopull.executor_driver.backend.analytics.EventLogger;
 import com.cargopull.executor_driver.di.AppComponent;
 import com.cargopull.executor_driver.presentation.menu.MenuNavigate;
 import com.cargopull.executor_driver.presentation.preorder.PreOrderNavigate;
-import com.cargopull.executor_driver.utils.EventLogger;
 import java.util.HashMap;
 import javax.inject.Inject;
 

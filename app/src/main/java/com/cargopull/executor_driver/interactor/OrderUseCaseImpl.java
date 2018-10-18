@@ -2,9 +2,9 @@ package com.cargopull.executor_driver.interactor;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import com.cargopull.executor_driver.backend.analytics.ErrorReporter;
 import com.cargopull.executor_driver.entity.Order;
 import com.cargopull.executor_driver.entity.OrderOfferDecisionException;
-import com.cargopull.executor_driver.utils.ErrorReporter;
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Emitter;
 import io.reactivex.Flowable;

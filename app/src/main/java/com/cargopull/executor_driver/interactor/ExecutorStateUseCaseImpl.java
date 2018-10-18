@@ -2,8 +2,8 @@ package com.cargopull.executor_driver.interactor;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import com.cargopull.executor_driver.backend.analytics.ErrorReporter;
 import com.cargopull.executor_driver.entity.ExecutorState;
-import com.cargopull.executor_driver.utils.ErrorReporter;
 import io.reactivex.Flowable;
 import io.reactivex.schedulers.Schedulers;
 import javax.inject.Inject;

@@ -1,8 +1,8 @@
 package com.cargopull.executor_driver.interactor;
 
 import androidx.annotation.NonNull;
+import com.cargopull.executor_driver.backend.analytics.ErrorReporter;
 import com.cargopull.executor_driver.entity.OrderCostDetails;
-import com.cargopull.executor_driver.utils.ErrorReporter;
 import io.reactivex.Flowable;
 import io.reactivex.schedulers.Schedulers;
 

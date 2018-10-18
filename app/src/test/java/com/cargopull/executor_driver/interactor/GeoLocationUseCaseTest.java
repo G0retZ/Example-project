@@ -10,11 +10,11 @@ import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 import com.cargopull.executor_driver.UseCaseThreadTestRule;
+import com.cargopull.executor_driver.backend.analytics.ErrorReporter;
 import com.cargopull.executor_driver.backend.websocket.ConnectionClosedException;
 import com.cargopull.executor_driver.entity.ExecutorState;
 import com.cargopull.executor_driver.entity.GeoLocation;
 import com.cargopull.executor_driver.gateway.DataMappingException;
-import com.cargopull.executor_driver.utils.ErrorReporter;
 import io.reactivex.Completable;
 import io.reactivex.Flowable;
 import io.reactivex.functions.Action;

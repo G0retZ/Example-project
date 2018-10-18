@@ -17,6 +17,9 @@ import com.cargopull.executor_driver.application.OrderCostDetailsActivity;
 import com.cargopull.executor_driver.application.OrderFulfillmentActivity;
 import com.cargopull.executor_driver.application.PreOrdersActivity;
 import com.cargopull.executor_driver.application.WaitingForClientActivity;
+import com.cargopull.executor_driver.backend.analytics.ErrorReporterImpl;
+import com.cargopull.executor_driver.backend.analytics.EventLogger;
+import com.cargopull.executor_driver.backend.analytics.EventLoggerImpl;
 import com.cargopull.executor_driver.backend.geolocation.GeolocationCenterImpl;
 import com.cargopull.executor_driver.backend.ringtone.SingleRingTonePlayer;
 import com.cargopull.executor_driver.backend.settings.AppPreferences;
@@ -28,8 +31,6 @@ import com.cargopull.executor_driver.backend.vibro.ShakeItPlayer;
 import com.cargopull.executor_driver.backend.vibro.SingleShakePlayer;
 import com.cargopull.executor_driver.gateway.SmsCodeMapper;
 import com.cargopull.executor_driver.interactor.auth.LoginSharer;
-import com.cargopull.executor_driver.utils.EventLogger;
-import com.cargopull.executor_driver.utils.EventLoggerImpl;
 import com.cargopull.executor_driver.utils.TimeUtils;
 import com.cargopull.executor_driver.utils.TimeUtilsImpl;
 import com.cargopull.executor_driver.view.BalanceFragment;
@@ -81,11 +82,9 @@ import com.cargopull.executor_driver.view.WaitingForClientRouteFragment;
 import com.cargopull.executor_driver.view.auth.LoginFragment;
 import com.cargopull.executor_driver.view.auth.PasswordFragment;
 import com.cargopull.executor_driver.view.auth.SmsReceiver;
-import com.google.firebase.analytics.FirebaseAnalytics;
 
 public class AppComponentImpl implements AppComponent {
 
-  @SuppressWarnings("FieldCanBeLocal")
   @NonNull
   private final EventLogger eventLogger;
   @NonNull
@@ -104,7 +103,7 @@ public class AppComponentImpl implements AppComponent {
     TimeUtils timeUtils = new TimeUtilsImpl();
     appSettingsService = new AppPreferences(appContext);
     LoginSharer loginSharer = new LoginSharer(appSettingsService);
-    eventLogger = new EventLoggerImpl(loginSharer, FirebaseAnalytics.getInstance(appContext));
+    eventLogger = new EventLoggerImpl(loginSharer, appContext);
     BackendComponent backendComponent = new BackendComponentImpl(
         loginSharer,
         appSettingsService,
@@ -112,7 +111,7 @@ public class AppComponentImpl implements AppComponent {
         (ConnectivityManager) appContext.getSystemService(Context.CONNECTIVITY_SERVICE)
     );
     presentationComponent = new PresentationComponentImpl(
-        eventLogger, loginSharer, backendComponent, timeUtils
+        eventLogger, new ErrorReporterImpl(loginSharer), loginSharer, backendComponent, timeUtils
     );
     singleRingTonePlayer = new SingleRingTonePlayer(appContext);
     if (VERSION.SDK_INT >= VERSION_CODES.O) {

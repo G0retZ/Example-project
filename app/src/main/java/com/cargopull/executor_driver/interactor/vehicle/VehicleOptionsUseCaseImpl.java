@@ -2,10 +2,10 @@ package com.cargopull.executor_driver.interactor.vehicle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import com.cargopull.executor_driver.backend.analytics.ErrorReporter;
 import com.cargopull.executor_driver.entity.Option;
 import com.cargopull.executor_driver.entity.Vehicle;
 import com.cargopull.executor_driver.interactor.DataReceiver;
-import com.cargopull.executor_driver.utils.ErrorReporter;
 import io.reactivex.Completable;
 import io.reactivex.Observable;
 import io.reactivex.Single;

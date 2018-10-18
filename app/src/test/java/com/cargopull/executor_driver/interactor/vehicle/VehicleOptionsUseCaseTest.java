@@ -8,13 +8,13 @@ import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 import com.cargopull.executor_driver.UseCaseThreadTestRule;
+import com.cargopull.executor_driver.backend.analytics.ErrorReporter;
 import com.cargopull.executor_driver.backend.web.NoNetworkException;
 import com.cargopull.executor_driver.entity.Option;
 import com.cargopull.executor_driver.entity.OptionBoolean;
 import com.cargopull.executor_driver.entity.OptionNumeric;
 import com.cargopull.executor_driver.entity.Vehicle;
 import com.cargopull.executor_driver.interactor.DataReceiver;
-import com.cargopull.executor_driver.utils.ErrorReporter;
 import io.reactivex.Completable;
 import io.reactivex.Observable;
 import io.reactivex.Single;

@@ -9,11 +9,11 @@ import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 import com.cargopull.executor_driver.UseCaseThreadTestRule;
+import com.cargopull.executor_driver.backend.analytics.ErrorReporter;
 import com.cargopull.executor_driver.backend.web.NoNetworkException;
 import com.cargopull.executor_driver.entity.DriverBlockedException;
 import com.cargopull.executor_driver.entity.EmptyListException;
 import com.cargopull.executor_driver.entity.Vehicle;
-import com.cargopull.executor_driver.utils.ErrorReporter;
 import io.reactivex.Observer;
 import io.reactivex.Single;
 import java.util.ArrayList;
