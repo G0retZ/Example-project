@@ -253,7 +253,6 @@ class InteractorComponentImpl implements InteractorComponent {
   public CurrentCostPollingUseCase getCurrentCostPollingUseCase() {
     if (currentCostPollingUseCase == null) {
       currentCostPollingUseCase = new CurrentCostPollingUseCaseImpl(
-          errorReporter,
           repositoryComponent.getCurrentCostPollingGateway()
       );
     }

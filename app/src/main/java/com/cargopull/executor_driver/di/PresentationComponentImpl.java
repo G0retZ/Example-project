@@ -327,6 +327,7 @@ class PresentationComponentImpl implements PresentationComponent {
   public CurrentCostPollingViewModel getCurrentCostPollingViewModel() {
     if (currentCostPollingViewModel == null) {
       currentCostPollingViewModel = new CurrentCostPollingViewModelImpl(
+          errorReporter,
           interactorComponent.getCurrentCostPollingUseCase()
       );
     }

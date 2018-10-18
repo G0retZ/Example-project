@@ -1,5 +1,6 @@
 package com.cargopull.executor_driver.presentation.currentcostpolling;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
@@ -8,6 +9,7 @@ import static org.mockito.Mockito.when;
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
 import androidx.lifecycle.Observer;
 import com.cargopull.executor_driver.ViewModelThreadTestRule;
+import com.cargopull.executor_driver.backend.analytics.ErrorReporter;
 import com.cargopull.executor_driver.gateway.DataMappingException;
 import com.cargopull.executor_driver.interactor.CurrentCostPollingUseCase;
 import com.cargopull.executor_driver.presentation.CommonNavigate;
@@ -31,6 +33,8 @@ public class CurrentCostPollingViewModelTest {
   public TestRule rule = new InstantTaskExecutorRule();
   private CurrentCostPollingViewModel currentCostPollingViewModel;
   @Mock
+  private ErrorReporter errorReporter;
+  @Mock
   private CurrentCostPollingUseCase useCase;
   @Mock
   private Observer<String> navigationObserver;
@@ -43,7 +47,21 @@ public class CurrentCostPollingViewModelTest {
   public void setUp() {
     completableSubject = CompletableSubject.create();
     when(useCase.listenForPolling()).thenReturn(completableSubject);
-    currentCostPollingViewModel = new CurrentCostPollingViewModelImpl(useCase);
+    currentCostPollingViewModel = new CurrentCostPollingViewModelImpl(errorReporter, useCase);
+  }
+
+  /* Проверяем отправку ошибок в репортер */
+
+  /**
+   * Должен отправить ошибку.
+   */
+  @Test
+  public void reportError() {
+    // Действие:
+    completableSubject.onError(new DataMappingException());
+
+    // Результат:
+    verify(errorReporter, only()).reportError(any(DataMappingException.class));
   }
 
   /* Тетсируем работу с юзкейсом. */
