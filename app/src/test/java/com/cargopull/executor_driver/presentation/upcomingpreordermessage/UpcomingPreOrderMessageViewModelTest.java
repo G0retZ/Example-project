@@ -1,5 +1,6 @@
 package com.cargopull.executor_driver.presentation.upcomingpreordermessage;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
@@ -8,6 +9,8 @@ import static org.mockito.Mockito.when;
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
 import androidx.lifecycle.Observer;
 import com.cargopull.executor_driver.ViewModelThreadTestRule;
+import com.cargopull.executor_driver.backend.analytics.ErrorReporter;
+import com.cargopull.executor_driver.gateway.DataMappingException;
 import com.cargopull.executor_driver.interactor.NotificationMessageUseCase;
 import com.cargopull.executor_driver.presentation.ViewState;
 import io.reactivex.BackpressureStrategy;
@@ -32,6 +35,8 @@ public class UpcomingPreOrderMessageViewModelTest {
   public TestRule rule = new InstantTaskExecutorRule();
   private UpcomingPreOrderMessageViewModel viewModel;
   @Mock
+  private ErrorReporter errorReporter;
+  @Mock
   private NotificationMessageUseCase useCase;
   @Mock
   private Observer<ViewState<UpcomingPreOrderMessageViewActions>> viewStateObserver;
@@ -47,7 +52,21 @@ public class UpcomingPreOrderMessageViewModelTest {
     publishSubject = PublishSubject.create();
     when(useCase.getNotificationMessages())
         .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
-    viewModel = new UpcomingPreOrderMessageViewModelImpl(useCase);
+    viewModel = new UpcomingPreOrderMessageViewModelImpl(errorReporter, useCase);
+  }
+
+  /* Проверяем отправку ошибок в репортер */
+
+  /**
+   * Должен отправить ошибку.
+   */
+  @Test
+  public void reportError() {
+    // Действие:
+    publishSubject.onError(new DataMappingException());
+
+    // Результат:
+    verify(errorReporter, only()).reportError(any(DataMappingException.class));
   }
 
   /* Тетсируем работу с юзкейсом. */

@@ -208,7 +208,6 @@ class InteractorComponentImpl implements InteractorComponent {
   public NotificationMessageUseCase getCancelledOrderMessageUseCase() {
     if (cancelledOrderMessageUseCase == null) {
       cancelledOrderMessageUseCase = new NotificationMessageUseCaseImpl(
-          errorReporter,
           repositoryComponent.getCancelledOrderMessageGateway()
       );
     }
@@ -344,7 +343,6 @@ class InteractorComponentImpl implements InteractorComponent {
   public NotificationMessageUseCase getMissedOrderUseCase() {
     if (missedOrderUseCase == null) {
       missedOrderUseCase = new NotificationMessageUseCaseImpl(
-          errorReporter,
           repositoryComponent.getMissedOrderGateway()
       );
     }
@@ -595,7 +593,6 @@ class InteractorComponentImpl implements InteractorComponent {
   public NotificationMessageUseCase getUpcomingPreOrderMessagesUseCase() {
     if (upcomingPreOrderMessagesUseCase == null) {
       upcomingPreOrderMessagesUseCase = new NotificationMessageUseCaseImpl(
-          errorReporter,
           repositoryComponent.getUpcomingPreOrderMessagesGateway()
       );
     }

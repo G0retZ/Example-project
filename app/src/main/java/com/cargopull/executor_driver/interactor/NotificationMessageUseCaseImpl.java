@@ -2,7 +2,6 @@ package com.cargopull.executor_driver.interactor;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import com.cargopull.executor_driver.backend.analytics.ErrorReporter;
 import io.reactivex.Flowable;
 import io.reactivex.schedulers.Schedulers;
 import javax.inject.Inject;
@@ -10,16 +9,12 @@ import javax.inject.Inject;
 public class NotificationMessageUseCaseImpl implements NotificationMessageUseCase {
 
   @NonNull
-  private final ErrorReporter errorReporter;
-  @NonNull
   private final CommonGateway<String> gateway;
   @Nullable
   private Flowable<String> messagesFlowable;
 
   @Inject
-  public NotificationMessageUseCaseImpl(@NonNull ErrorReporter errorReporter,
-      @NonNull CommonGateway<String> gateway) {
-    this.errorReporter = errorReporter;
+  public NotificationMessageUseCaseImpl(@NonNull CommonGateway<String> gateway) {
     this.gateway = gateway;
   }
 
@@ -29,7 +24,6 @@ public class NotificationMessageUseCaseImpl implements NotificationMessageUseCas
     if (messagesFlowable == null) {
       messagesFlowable = gateway.getData()
           .observeOn(Schedulers.single())
-          .doOnError(errorReporter::reportError)
           .replay(1)
           .refCount();
     }

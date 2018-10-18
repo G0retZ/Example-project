@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
+import com.cargopull.executor_driver.backend.analytics.ErrorReporter;
 import com.cargopull.executor_driver.interactor.NotificationMessageUseCase;
 import com.cargopull.executor_driver.presentation.SingleLiveEvent;
 import com.cargopull.executor_driver.presentation.ViewState;
@@ -16,6 +17,8 @@ public class UpcomingPreOrderMessageViewModelImpl extends ViewModel implements
     UpcomingPreOrderMessageViewModel {
 
   @NonNull
+  private final ErrorReporter errorReporter;
+  @NonNull
   private final NotificationMessageUseCase upcomingPreOrderMessagesUseCase;
   @NonNull
   private final SingleLiveEvent<ViewState<UpcomingPreOrderMessageViewActions>> messageLiveData;
@@ -23,8 +26,9 @@ public class UpcomingPreOrderMessageViewModelImpl extends ViewModel implements
   private Disposable disposable = EmptyDisposable.INSTANCE;
 
   @Inject
-  public UpcomingPreOrderMessageViewModelImpl(
+  public UpcomingPreOrderMessageViewModelImpl(@NonNull ErrorReporter errorReporter,
       @NonNull NotificationMessageUseCase upcomingPreOrderMessagesUseCase) {
+    this.errorReporter = errorReporter;
     this.upcomingPreOrderMessagesUseCase = upcomingPreOrderMessagesUseCase;
     messageLiveData = new SingleLiveEvent<>();
     loadMissedOrderMessages();
@@ -55,8 +59,7 @@ public class UpcomingPreOrderMessageViewModelImpl extends ViewModel implements
                 );
               }
             },
-            throwable -> {
-            }
+            errorReporter::reportError
         );
   }
 

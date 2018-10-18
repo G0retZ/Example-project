@@ -211,6 +211,7 @@ class PresentationComponentImpl implements PresentationComponent {
   public CancelledOrderViewModel getCancelledOrderViewModel() {
     if (cancelledOrderViewModel == null) {
       cancelledOrderViewModel = new CancelledOrderViewModelImpl(
+          errorReporter,
           interactorComponent.getCancelledOrderMessageUseCase()
       );
     }
@@ -371,6 +372,7 @@ class PresentationComponentImpl implements PresentationComponent {
   public MissedOrderViewModel getMissedOrderViewModel() {
     if (missedOrderViewModel == null) {
       missedOrderViewModel = new MissedOrderViewModelImpl(
+          errorReporter,
           interactorComponent.getMissedOrderUseCase()
       );
     }
@@ -682,6 +684,7 @@ class PresentationComponentImpl implements PresentationComponent {
   public UpcomingPreOrderMessageViewModel getUpcomingPreOrderMessagesViewModel() {
     if (upcomingPreOrderMessagesViewModel == null) {
       upcomingPreOrderMessagesViewModel = new UpcomingPreOrderMessageViewModelImpl(
+          errorReporter,
           interactorComponent.getUpcomingPreOrderMessagesUseCase()
       );
     }

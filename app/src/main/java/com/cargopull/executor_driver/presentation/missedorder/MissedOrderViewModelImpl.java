@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
+import com.cargopull.executor_driver.backend.analytics.ErrorReporter;
 import com.cargopull.executor_driver.interactor.NotificationMessageUseCase;
 import com.cargopull.executor_driver.presentation.SingleLiveEvent;
 import com.cargopull.executor_driver.presentation.ViewState;
@@ -15,6 +16,8 @@ import javax.inject.Inject;
 public class MissedOrderViewModelImpl extends ViewModel implements MissedOrderViewModel {
 
   @NonNull
+  private final ErrorReporter errorReporter;
+  @NonNull
   private final NotificationMessageUseCase missedOrderUseCase;
   @NonNull
   private final SingleLiveEvent<ViewState<MissedOrderViewActions>> messageLiveData;
@@ -22,7 +25,9 @@ public class MissedOrderViewModelImpl extends ViewModel implements MissedOrderVi
   private Disposable disposable = EmptyDisposable.INSTANCE;
 
   @Inject
-  public MissedOrderViewModelImpl(@NonNull NotificationMessageUseCase missedOrderUseCase) {
+  public MissedOrderViewModelImpl(@NonNull ErrorReporter errorReporter,
+      @NonNull NotificationMessageUseCase missedOrderUseCase) {
+    this.errorReporter = errorReporter;
     this.missedOrderUseCase = missedOrderUseCase;
     messageLiveData = new SingleLiveEvent<>();
     loadMissedOrderMessages();
@@ -52,8 +57,7 @@ public class MissedOrderViewModelImpl extends ViewModel implements MissedOrderVi
                 );
               }
             },
-            throwable -> {
-            }
+            errorReporter::reportError
         );
   }
 
