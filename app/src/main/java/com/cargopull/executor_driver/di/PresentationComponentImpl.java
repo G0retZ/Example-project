@@ -227,7 +227,7 @@ class PresentationComponentImpl implements PresentationComponent {
     return getViewModelInstance(
         fragment,
         CancelOrderViewModelImpl.class,
-        new CancelOrderViewModelImpl(interactorComponent.getCancelOrderUseCase())
+        new CancelOrderViewModelImpl(errorReporter, interactorComponent.getCancelOrderUseCase())
     );
   }
 
