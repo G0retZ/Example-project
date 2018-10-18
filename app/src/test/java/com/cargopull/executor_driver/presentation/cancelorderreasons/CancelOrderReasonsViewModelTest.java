@@ -1,5 +1,6 @@
 package com.cargopull.executor_driver.presentation.cancelorderreasons;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -9,6 +10,7 @@ import static org.mockito.Mockito.when;
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
 import androidx.lifecycle.Observer;
 import com.cargopull.executor_driver.ViewModelThreadTestRule;
+import com.cargopull.executor_driver.backend.analytics.ErrorReporter;
 import com.cargopull.executor_driver.backend.web.AuthorizationException;
 import com.cargopull.executor_driver.backend.web.NoNetworkException;
 import com.cargopull.executor_driver.entity.CancelOrderReason;
@@ -45,6 +47,8 @@ public class CancelOrderReasonsViewModelTest {
   @Mock
   private Observer<ViewState<CancelOrderReasonsViewActions>> viewStateObserver;
   @Mock
+  private ErrorReporter errorReporter;
+  @Mock
   private CancelOrderReasonsUseCase useCase;
   @Mock
   private CancelOrderReason cancelOrderReason;
@@ -60,7 +64,21 @@ public class CancelOrderReasonsViewModelTest {
     publishSubject = PublishSubject.create();
     when(useCase.getCancelOrderReasons())
         .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
-    viewModel = new CancelOrderReasonsViewModelImpl(useCase);
+    viewModel = new CancelOrderReasonsViewModelImpl(errorReporter, useCase);
+  }
+
+  /* Проверяем отправку ошибок в репортер */
+
+  /**
+   * Должен отправить ошибку.
+   */
+  @Test
+  public void reportError() {
+    // Действие:
+    publishSubject.onError(new DataMappingException());
+
+    // Результат:
+    verify(errorReporter, only()).reportError(any(DataMappingException.class));
   }
 
   /* Тетсируем работу с юзкейсом. */

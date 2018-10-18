@@ -1,12 +1,10 @@
 package com.cargopull.executor_driver.interactor;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.cargopull.executor_driver.UseCaseThreadTestRule;
-import com.cargopull.executor_driver.backend.analytics.ErrorReporter;
 import com.cargopull.executor_driver.entity.CancelOrderReason;
 import com.cargopull.executor_driver.gateway.DataMappingException;
 import io.reactivex.Flowable;
@@ -30,8 +28,6 @@ public class CancelOrderReasonsUseCaseTest {
   private CancelOrderReasonsUseCase useCase;
 
   @Mock
-  private ErrorReporter errorReporter;
-  @Mock
   private CommonGateway<List<CancelOrderReason>> gateway;
   @Mock
   private CancelOrderReason cancelOrderReason;
@@ -45,7 +41,7 @@ public class CancelOrderReasonsUseCaseTest {
   @Before
   public void setUp() {
     when(gateway.getData()).thenReturn(Flowable.never());
-    useCase = new CancelOrderReasonsUseCaseImpl(errorReporter, gateway);
+    useCase = new CancelOrderReasonsUseCaseImpl(gateway);
   }
 
   /* Проверяем работу с гейтвеем */
@@ -63,23 +59,6 @@ public class CancelOrderReasonsUseCaseTest {
 
     // Результат:
     verify(gateway, only()).getData();
-  }
-
-  /* Проверяем отправку ошибок в репортер */
-
-  /**
-   * Должен отправить ошибку.
-   */
-  @Test
-  public void reportError() {
-    // Дано:
-    when(gateway.getData()).thenReturn(Flowable.error(DataMappingException::new));
-
-    // Действие:
-    useCase.getCancelOrderReasons().test();
-
-    // Результат:
-    verify(errorReporter, only()).reportError(any(DataMappingException.class));
   }
 
   /* Проверяем ответы */

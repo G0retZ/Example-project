@@ -219,7 +219,6 @@ class InteractorComponentImpl implements InteractorComponent {
   public CancelOrderReasonsUseCase getCancelOrderReasonsUseCase() {
     if (cancelOrderReasonsUseCase == null) {
       cancelOrderReasonsUseCase = new CancelOrderReasonsUseCaseImpl(
-          errorReporter,
           repositoryComponent.getCancelOrderReasonsGateway()
       );
     }

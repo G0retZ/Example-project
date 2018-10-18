@@ -236,6 +236,7 @@ class PresentationComponentImpl implements PresentationComponent {
   public CancelOrderReasonsViewModel getCancelOrderReasonsViewModel() {
     if (cancelOrderReasonsViewModel == null) {
       cancelOrderReasonsViewModel = new CancelOrderReasonsViewModelImpl(
+          errorReporter,
           interactorComponent.getCancelOrderReasonsUseCase()
       );
     }
