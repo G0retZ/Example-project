@@ -444,6 +444,7 @@ class PresentationComponentImpl implements PresentationComponent {
         fragment,
         OnlineSwitchViewModelImpl.class,
         new OnlineSwitchViewModelImpl(
+            errorReporter,
             interactorComponent.getExecutorStateNotOnlineUseCase(),
             interactorComponent.getExecutorStateUseCase()
         )
@@ -460,6 +461,7 @@ class PresentationComponentImpl implements PresentationComponent {
         fragment,
         OnlineSwitchViewModelImpl.class,
         new OnlineSwitchViewModelImpl(
+            errorReporter,
             interactorComponent.getExecutorStateExitUseCase(),
             interactorComponent.getExecutorStateUseCase()
         )

@@ -275,7 +275,6 @@ class InteractorComponentImpl implements InteractorComponent {
   public ExecutorStateNotOnlineUseCase getExecutorStateNotOnlineUseCase() {
     if (executorStateNotOnlineUseCase == null) {
       executorStateNotOnlineUseCase = new ExecutorStateNotOnlineUseCaseImpl(
-          errorReporter,
           repositoryComponent.getExecutorStateSwitchGateway(),
           getExecutorStateUseCase(),
           ExecutorState.ONLINE
@@ -289,7 +288,6 @@ class InteractorComponentImpl implements InteractorComponent {
   public ExecutorStateNotOnlineUseCase getExecutorStateExitUseCase() {
     if (executorStateExitUseCase == null) {
       executorStateExitUseCase = new ExecutorStateNotOnlineUseCaseImpl(
-          errorReporter,
           repositoryComponent.getExecutorStateSwitchGateway(),
           getExecutorStateUseCase(),
           ExecutorState.BLOCKED,
