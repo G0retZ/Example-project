@@ -650,7 +650,10 @@ class PresentationComponentImpl implements PresentationComponent {
   @Override
   public ServerTimeViewModel getServerTimeViewModel() {
     if (serverTimeViewModel == null) {
-      serverTimeViewModel = new ServerTimeViewModelImpl(interactorComponent.getServerTimeUseCase());
+      serverTimeViewModel = new ServerTimeViewModelImpl(
+          errorReporter,
+          interactorComponent.getServerTimeUseCase()
+      );
     }
     return serverTimeViewModel;
   }

@@ -462,7 +462,6 @@ class InteractorComponentImpl implements InteractorComponent {
   public ServerTimeUseCase getServerTimeUseCase() {
     if (serverTimeUseCase == null) {
       serverTimeUseCase = new ServerTimeUseCaseImpl(
-          errorReporter,
           repositoryComponent.getServerTimeGateway(),
           timeUtils
       );
