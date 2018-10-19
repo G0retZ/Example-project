@@ -613,7 +613,6 @@ class InteractorComponentImpl implements InteractorComponent {
   public VehicleOptionsUseCase getVehicleOptionsUseCase() {
     if (vehicleOptionsUseCase == null) {
       vehicleOptionsUseCase = new VehicleOptionsUseCaseImpl(
-          errorReporter,
           repositoryComponent.getVehicleOptionsGateway(),
           vehicleChoiceSharer,
           repositoryComponent.getLastUsedVehicleGateway(),
@@ -628,7 +627,6 @@ class InteractorComponentImpl implements InteractorComponent {
   public VehicleOptionsUseCase getCurrentVehicleOptionsUseCase() {
     if (currentVehicleOptionsUseCase == null) {
       currentVehicleOptionsUseCase = new VehicleOptionsUseCaseImpl(
-          errorReporter,
           repositoryComponent.getCurrentVehicleOptionsGateway(),
           vehicleChoiceSharer,
           repositoryComponent.getLastUsedVehicleGateway(),

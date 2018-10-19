@@ -733,7 +733,10 @@ class PresentationComponentImpl implements PresentationComponent {
     return getViewModelInstance(
         fragment,
         VehicleOptionsViewModelImpl.class,
-        new VehicleOptionsViewModelImpl(interactorComponent.getVehicleOptionsUseCase())
+        new VehicleOptionsViewModelImpl(
+            errorReporter,
+            interactorComponent.getVehicleOptionsUseCase()
+        )
     );
   }
 
@@ -746,7 +749,10 @@ class PresentationComponentImpl implements PresentationComponent {
     return getViewModelInstance(
         fragment,
         VehicleOptionsViewModelImpl.class,
-        new VehicleOptionsViewModelImpl(interactorComponent.getCurrentVehicleOptionsUseCase())
+        new VehicleOptionsViewModelImpl(
+            errorReporter,
+            interactorComponent.getCurrentVehicleOptionsUseCase()
+        )
     );
   }
 
