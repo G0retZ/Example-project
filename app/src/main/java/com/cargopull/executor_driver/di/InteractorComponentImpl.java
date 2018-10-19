@@ -710,7 +710,6 @@ class InteractorComponentImpl implements InteractorComponent {
   private OrderUseCase getCancelledOrderUseCase() {
     if (cancelledOrderUseCase == null) {
       cancelledOrderUseCase = new CancelledOrderUseCaseImpl(
-          errorReporter,
           repositoryComponent.getCancelledOrderGateway()
       );
     }
