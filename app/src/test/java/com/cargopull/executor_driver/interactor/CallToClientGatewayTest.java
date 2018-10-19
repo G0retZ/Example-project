@@ -43,7 +43,7 @@ public class CallToClientGatewayTest {
   @Test
   public void askStompClientToSendCallToClient() {
     // Действие:
-    gateway.callToClient().test();
+    gateway.callToClient().test().isDisposed();
 
     // Результат:
     verify(stompClient, only()).send("/mobile/trip", "\"CALL_TO_CLIENT\"");

@@ -1,6 +1,5 @@
 package com.cargopull.executor_driver.interactor;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -8,7 +7,6 @@ import static org.mockito.Mockito.when;
 import com.cargopull.executor_driver.UseCaseThreadTestRule;
 import com.cargopull.executor_driver.entity.Order;
 import com.cargopull.executor_driver.gateway.DataMappingException;
-import com.cargopull.executor_driver.utils.ErrorReporter;
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
 import io.reactivex.FlowableEmitter;
@@ -30,8 +28,6 @@ public class CancelledOrderUseCaseImplTest {
   private CancelledOrderUseCaseImpl useCase;
 
   @Mock
-  private ErrorReporter errorReporter;
-  @Mock
   private CommonGateway<Order> gateway;
   @Mock
   private Order order;
@@ -43,7 +39,7 @@ public class CancelledOrderUseCaseImplTest {
   @Before
   public void setUp() {
     when(gateway.getData()).thenReturn(Flowable.never());
-    useCase = new CancelledOrderUseCaseImpl(errorReporter, gateway);
+    useCase = new CancelledOrderUseCaseImpl(gateway);
   }
 
   /* Проверяем работу с гейтвеем */
@@ -54,30 +50,13 @@ public class CancelledOrderUseCaseImplTest {
   @Test
   public void askGatewayForOrdersOnlyOnce() {
     // Действие:
-    useCase.getOrders().test();
-    useCase.getOrders().test();
-    useCase.getOrders().test();
-    useCase.getOrders().test();
+    useCase.getOrders().test().isDisposed();
+    useCase.getOrders().test().isDisposed();
+    useCase.getOrders().test().isDisposed();
+    useCase.getOrders().test().isDisposed();
 
     // Результат:
     verify(gateway, only()).getData();
-  }
-
-  /* Проверяем отправку ошибок в репортер */
-
-  /**
-   * Должен отправить ошибку.
-   */
-  @Test
-  public void reportError() {
-    // Дано:
-    when(gateway.getData()).thenReturn(Flowable.error(DataMappingException::new));
-
-    // Действие:
-    useCase.getOrders().test();
-
-    // Результат:
-    verify(errorReporter, only()).reportError(any(DataMappingException.class));
   }
 
   /* Проверяем ответы */

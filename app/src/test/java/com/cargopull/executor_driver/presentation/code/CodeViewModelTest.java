@@ -13,11 +13,11 @@ import static org.mockito.Mockito.when;
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
 import androidx.lifecycle.Observer;
 import com.cargopull.executor_driver.ViewModelThreadTestRule;
+import com.cargopull.executor_driver.backend.analytics.EventLogger;
 import com.cargopull.executor_driver.backend.web.NoNetworkException;
 import com.cargopull.executor_driver.entity.ValidationException;
 import com.cargopull.executor_driver.interactor.auth.PasswordUseCase;
 import com.cargopull.executor_driver.presentation.ViewState;
-import com.cargopull.executor_driver.utils.EventLogger;
 import com.cargopull.executor_driver.utils.TimeUtils;
 import io.reactivex.Completable;
 import io.reactivex.subjects.CompletableSubject;
@@ -270,7 +270,7 @@ public class CodeViewModelTest {
 
     // Результат:
     verify(passwordUseCase).authorize(eq("12457"), afterValidationCaptor.capture());
-    afterValidationCaptor.getValue().test();
+    afterValidationCaptor.getValue().test().isDisposed();
     inOrder.verify(viewStateObserver).onChanged(any(CodeViewStateInitial.class));
     inOrder.verify(viewStateObserver).onChanged(any(CodeViewStatePending.class));
     verifyNoMoreInteractions(viewStateObserver);
@@ -296,7 +296,7 @@ public class CodeViewModelTest {
     afterValidationCaptor.getValue().subscribe(
         () -> completableSubject.onError(new IllegalArgumentException()),
         e -> completableSubject.onComplete()
-    );
+    ).isDisposed();
     inOrder.verify(viewStateObserver).onChanged(any(CodeViewStateInitial.class));
     inOrder.verify(viewStateObserver).onChanged(any(CodeViewStatePending.class));
     inOrder.verify(viewStateObserver).onChanged(any(CodeViewStateError.class));
@@ -321,7 +321,7 @@ public class CodeViewModelTest {
     afterValidationCaptor.getValue().subscribe(
         () -> completableSubject.onError(new IllegalArgumentException()),
         e -> completableSubject.onComplete()
-    );
+    ).isDisposed();
     when(passwordUseCase.authorize(anyString(), any(Completable.class)))
         .thenReturn(Completable.error(new ValidationException()));
     viewModel.setCode("1   2   4   ");
@@ -354,7 +354,7 @@ public class CodeViewModelTest {
     afterValidationCaptor.getValue().subscribe(
         () -> completableSubject.onError(new NoNetworkException()),
         e -> completableSubject.onComplete()
-    );
+    ).isDisposed();
     inOrder.verify(viewStateObserver).onChanged(any(CodeViewStateInitial.class));
     inOrder.verify(viewStateObserver).onChanged(any(CodeViewStatePending.class));
     inOrder.verify(viewStateObserver).onChanged(any(CodeViewStateNetworkError.class));
@@ -382,7 +382,7 @@ public class CodeViewModelTest {
     afterValidationCaptor.getValue().subscribe(
         completableSubject::onComplete,
         e -> completableSubject.onComplete()
-    );
+    ).isDisposed();
     verify(navigateObserver, only()).onChanged(CodeNavigate.ENTER_APP);
   }
 }

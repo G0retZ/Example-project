@@ -1,6 +1,16 @@
 package com.cargopull.executor_driver.interactor;
 
-import static org.mockito.ArgumentMatchers.any;
+import static com.cargopull.executor_driver.entity.ExecutorState.BLOCKED;
+import static com.cargopull.executor_driver.entity.ExecutorState.CLIENT_ORDER_CONFIRMATION;
+import static com.cargopull.executor_driver.entity.ExecutorState.DRIVER_ORDER_CONFIRMATION;
+import static com.cargopull.executor_driver.entity.ExecutorState.DRIVER_PRELIMINARY_ORDER_CONFIRMATION;
+import static com.cargopull.executor_driver.entity.ExecutorState.MOVING_TO_CLIENT;
+import static com.cargopull.executor_driver.entity.ExecutorState.ONLINE;
+import static com.cargopull.executor_driver.entity.ExecutorState.ORDER_FULFILLMENT;
+import static com.cargopull.executor_driver.entity.ExecutorState.PAYMENT_CONFIRMATION;
+import static com.cargopull.executor_driver.entity.ExecutorState.SHIFT_CLOSED;
+import static com.cargopull.executor_driver.entity.ExecutorState.SHIFT_OPENED;
+import static com.cargopull.executor_driver.entity.ExecutorState.WAITING_FOR_CLIENT;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
@@ -8,37 +18,75 @@ import static org.mockito.Mockito.when;
 
 import com.cargopull.executor_driver.UseCaseThreadTestRule;
 import com.cargopull.executor_driver.entity.ExecutorState;
-import com.cargopull.executor_driver.utils.ErrorReporter;
+import com.cargopull.executor_driver.utils.Pair;
 import io.reactivex.Completable;
 import io.reactivex.Flowable;
 import io.reactivex.observers.TestObserver;
+import java.util.Arrays;
 import org.junit.Before;
 import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnit;
+import org.mockito.junit.MockitoRule;
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(Parameterized.class)
 public class ExecutorStateNotOnlineUseCaseTest {
 
+  @Rule
+  public MockitoRule rule = MockitoJUnit.rule();
   @ClassRule
   public static final UseCaseThreadTestRule classRule = new UseCaseThreadTestRule();
 
   private ExecutorStateNotOnlineUseCase useCase;
 
   @Mock
-  private ErrorReporter errorReporter;
-  @Mock
   private ExecutorStateSwitchGateway gateway;
   @Mock
   private ExecutorStateUseCase executorStateUseCase;
 
+  private final boolean expectedArgumentException;
+  private final ExecutorState conditionExecutorState;
+  private final boolean expectedGatewayInvocation;
+
+  // Each parameter should be placed as an argument here
+  // Every time runner triggers, it will pass the arguments
+  // from parameters we defined in primeNumbers() method
+
+  public ExecutorStateNotOnlineUseCaseTest(
+      Pair<ExecutorState, Pair<Boolean, Boolean>> conditions) {
+    conditionExecutorState = conditions.first;
+    expectedArgumentException = conditions.second.first;
+    expectedGatewayInvocation = conditions.second.second;
+  }
+
+  @Parameterized.Parameters
+  public static Iterable primeNumbers() {
+    // Соответствия значений статуса эксепшенам и действиям гейтвея
+    return Arrays.asList(
+        new Pair<>(BLOCKED, new Pair<>(true, false)),
+        new Pair<>(SHIFT_CLOSED, new Pair<>(true, false)),
+        new Pair<>(SHIFT_OPENED, new Pair<>(true, false)),
+        new Pair<>(ONLINE, new Pair<>(false, true)),
+        new Pair<>(DRIVER_ORDER_CONFIRMATION, new Pair<>(true, false)),
+        new Pair<>(DRIVER_PRELIMINARY_ORDER_CONFIRMATION, new Pair<>(true, false)),
+        new Pair<>(CLIENT_ORDER_CONFIRMATION, new Pair<>(true, false)),
+        new Pair<>(MOVING_TO_CLIENT, new Pair<>(true, false)),
+        new Pair<>(WAITING_FOR_CLIENT, new Pair<>(true, false)),
+        new Pair<>(ORDER_FULFILLMENT, new Pair<>(true, false)),
+        new Pair<>(PAYMENT_CONFIRMATION, new Pair<>(false, true))
+    );
+  }
+
   @Before
   public void setUp() {
-    when(gateway.sendNewExecutorState(any())).thenReturn(Completable.complete());
+    when(gateway.sendNewExecutorState(ExecutorState.SHIFT_OPENED))
+        .thenReturn(Completable.complete());
     when(executorStateUseCase.getExecutorStates()).thenReturn(Flowable.never());
-    useCase = new ExecutorStateNotOnlineUseCaseImpl(errorReporter, gateway, executorStateUseCase,
+    useCase = new ExecutorStateNotOnlineUseCaseImpl(gateway, executorStateUseCase,
         ExecutorState.ONLINE, ExecutorState.PAYMENT_CONFIRMATION);
   }
 
@@ -50,7 +98,7 @@ public class ExecutorStateNotOnlineUseCaseTest {
   @Test
   public void getExecutorStates() {
     // Действие:
-    useCase.setExecutorNotOnline().test();
+    useCase.setExecutorNotOnline().test().isDisposed();
 
     // Результат:
     verify(executorStateUseCase, only()).getExecutorStates();
@@ -64,491 +112,64 @@ public class ExecutorStateNotOnlineUseCaseTest {
   @Test
   public void DoNotTouchGatewayWithoutStatus() {
     // Действие:
-    useCase.setExecutorNotOnline().test();
+    useCase.setExecutorNotOnline().test().isDisposed();
 
     // Результат:
     verifyZeroInteractions(gateway);
   }
 
-  /**
-   * Не должен трогать гейтвей передачи статусов, если последний статус был "заблокирован".
-   */
   @Test
-  public void DoNotTouchGatewayIfBlocked() {
+  public void touchOrNotGateway() {
     // Дано:
     when(executorStateUseCase.getExecutorStates())
-        .thenReturn(Flowable.just(ExecutorState.BLOCKED).concatWith(Flowable.never()));
+        .thenReturn(Flowable.just(conditionExecutorState).concatWith(Flowable.never()));
 
     // Действие:
-    useCase.setExecutorNotOnline().test();
+    useCase.setExecutorNotOnline().test().isDisposed();
 
     // Результат:
-    verifyZeroInteractions(gateway);
-  }
-
-  /**
-   * Не должен трогать гейтвей передачи статусов, если последний статус был "смена закрыта".
-   */
-  @Test
-  public void DoNotTouchGatewayIfShiftClosed() {
-    // Дано:
-    when(executorStateUseCase.getExecutorStates())
-        .thenReturn(Flowable.just(ExecutorState.SHIFT_CLOSED).concatWith(Flowable.never()));
-
-    // Действие:
-    useCase.setExecutorNotOnline().test();
-
-    // Результат:
-    verifyZeroInteractions(gateway);
-  }
-
-  /**
-   * Не должен трогать гейтвей передачи статусов, если последний статус был "смена открыта".
-   */
-  @Test
-  public void DoNotTouchGatewayIfShiftOpened() {
-    // Дано:
-    when(executorStateUseCase.getExecutorStates())
-        .thenReturn(Flowable.just(ExecutorState.SHIFT_OPENED).concatWith(Flowable.never()));
-
-    // Действие:
-    useCase.setExecutorNotOnline().test();
-
-    // Результат:
-    verifyZeroInteractions(gateway);
-  }
-
-  /**
-   * Не должен трогать гейтвей передачи статусов, если последний статус был "принятие заказа".
-   */
-  @Test
-  public void DoNotTouchGatewayIfOrderConfirmation() {
-    // Дано:
-    when(executorStateUseCase.getExecutorStates()).thenReturn(
-        Flowable.just(ExecutorState.DRIVER_ORDER_CONFIRMATION).concatWith(Flowable.never()));
-
-    // Действие:
-    useCase.setExecutorNotOnline().test();
-
-    // Результат:
-    verifyZeroInteractions(gateway);
-  }
-
-  /**
-   * Не должен трогать гейтвей передачи статусов, если последний статус был "ожидание подтверждения клиента".
-   */
-  @Test
-  public void DoNotTouchGatewayIfWaitForClientConfirmation() {
-    // Дано:
-    when(executorStateUseCase.getExecutorStates()).thenReturn(
-        Flowable.just(ExecutorState.CLIENT_ORDER_CONFIRMATION).concatWith(Flowable.never()));
-
-    // Действие:
-    useCase.setExecutorNotOnline().test();
-
-    // Результат:
-    verifyZeroInteractions(gateway);
-  }
-
-  /**
-   * Не должен трогать гейтвей передачи статусов, если последний статус был "на пути к клиенту".
-   */
-  @Test
-  public void DoNotTouchGatewayIfMovingToClient() {
-    // Дано:
-    when(executorStateUseCase.getExecutorStates())
-        .thenReturn(Flowable.just(ExecutorState.MOVING_TO_CLIENT).concatWith(Flowable.never()));
-
-    // Действие:
-    useCase.setExecutorNotOnline().test();
-
-    // Результат:
-    verifyZeroInteractions(gateway);
-  }
-
-  /**
-   * Не должен трогать гейтвей передачи статусов, если последний статус был "ожидание клиента".
-   */
-  @Test
-  public void DoNotTouchGatewayIfWaitingForClient() {
-    // Дано:
-    when(executorStateUseCase.getExecutorStates())
-        .thenReturn(Flowable.just(ExecutorState.WAITING_FOR_CLIENT).concatWith(Flowable.never()));
-
-    // Действие:
-    useCase.setExecutorNotOnline().test();
-
-    // Результат:
-    verifyZeroInteractions(gateway);
-  }
-
-  /**
-   * Не должен трогать гейтвей передачи статусов, если последний статус был "выполнение заказа".
-   */
-  @Test
-  public void DoNotTouchGatewayIfOrderFulfillment() {
-    // Дано:
-    when(executorStateUseCase.getExecutorStates())
-        .thenReturn(Flowable.just(ExecutorState.ORDER_FULFILLMENT).concatWith(Flowable.never()));
-
-    // Действие:
-    useCase.setExecutorNotOnline().test();
-
-    // Результат:
-    verifyZeroInteractions(gateway);
-  }
-
-  /**
-   * Должен отправить статус "смена открыта" через гейтвей передачи статусов.
-   */
-  @Test
-  public void askGatewayToSendNewExecutorStateIfOnline() {
-    // Дано:
-    when(executorStateUseCase.getExecutorStates())
-        .thenReturn(Flowable.just(ExecutorState.ONLINE).concatWith(Flowable.never()));
-
-    // Действие:
-    useCase.setExecutorNotOnline().test();
-
-    // Результат:
-    verify(gateway, only()).sendNewExecutorState(ExecutorState.SHIFT_OPENED);
-  }
-
-  /**
-   * Должен отправить статус "смена открыта" через гейтвей передачи статусов.
-   */
-  @Test
-  public void askGatewayToSendNewExecutorStateIfPaymentAcceptance() {
-    // Дано:
-    when(executorStateUseCase.getExecutorStates())
-        .thenReturn(Flowable.just(ExecutorState.PAYMENT_CONFIRMATION).concatWith(Flowable.never()));
-
-    // Действие:
-    useCase.setExecutorNotOnline().test();
-
-    // Результат:
-    verify(gateway, only()).sendNewExecutorState(ExecutorState.SHIFT_OPENED);
-  }
-
-  /* Проверяем отправку ошибок в репортер */
-
-  /**
-   * Должен отправить ошибку неподходящего статуса, если статус "заблокирован".
-   */
-  @Test
-  public void reportIllegalArgumentErrorIfBlocked() {
-    // Дано:
-    when(executorStateUseCase.getExecutorStates())
-        .thenReturn(Flowable.just(ExecutorState.BLOCKED).concatWith(Flowable.never()));
-
-    // Действие:
-    useCase.setExecutorNotOnline().test();
-
-    // Результат:
-    verify(errorReporter, only()).reportError(any(IllegalArgumentException.class));
-  }
-
-  /**
-   * Должен отправить ошибку неподходящего статуса, если статус "смена закрыта".
-   */
-  @Test
-  public void reportIllegalArgumentErrorIfShiftClosed() {
-    // Дано:
-    when(executorStateUseCase.getExecutorStates())
-        .thenReturn(Flowable.just(ExecutorState.SHIFT_CLOSED).concatWith(Flowable.never()));
-
-    // Действие:
-    useCase.setExecutorNotOnline().test();
-
-    // Результат:
-    verify(errorReporter, only()).reportError(any(IllegalArgumentException.class));
-  }
-
-  /**
-   * Должен отправить ошибку неподходящего статуса, если статус "смена открыта".
-   */
-  @Test
-  public void reportIllegalArgumentErrorIfOnline() {
-    // Дано:
-    when(executorStateUseCase.getExecutorStates())
-        .thenReturn(Flowable.just(ExecutorState.SHIFT_OPENED).concatWith(Flowable.never()));
-
-    // Действие:
-    useCase.setExecutorNotOnline().test();
-
-    // Результат:
-    verify(errorReporter, only()).reportError(any(IllegalArgumentException.class));
-  }
-
-  /**
-   * Должен отправить ошибку неподходящего статуса, если статус "принятие заказа".
-   */
-  @Test
-  public void reportIllegalArgumentErrorIfOrderConfirmation() {
-    // Дано:
-    when(executorStateUseCase.getExecutorStates()).thenReturn(
-        Flowable.just(ExecutorState.DRIVER_ORDER_CONFIRMATION).concatWith(Flowable.never()));
-
-    // Действие:
-    useCase.setExecutorNotOnline().test();
-
-    // Результат:
-    verify(errorReporter, only()).reportError(any(IllegalArgumentException.class));
-  }
-
-  /**
-   * Должен отправить ошибку неподходящего статуса, если статус "ожидания подтверждения клиентом".
-   */
-  @Test
-  public void reportIllegalArgumentErrorIfWaitForClientConfirmation() {
-    // Дано:
-    when(executorStateUseCase.getExecutorStates()).thenReturn(
-        Flowable.just(ExecutorState.CLIENT_ORDER_CONFIRMATION).concatWith(Flowable.never()));
-
-    // Действие:
-    useCase.setExecutorNotOnline().test();
-
-    // Результат:
-    verify(errorReporter, only()).reportError(any(IllegalArgumentException.class));
-  }
-
-  /**
-   * Должен отправить ошибку неподходящего статуса, если статус "на пути к клиенту".
-   */
-  @Test
-  public void reportIllegalArgumentErrorIfMovingToClient() {
-    // Дано:
-    when(executorStateUseCase.getExecutorStates())
-        .thenReturn(Flowable.just(ExecutorState.MOVING_TO_CLIENT).concatWith(Flowable.never()));
-
-    // Действие:
-    useCase.setExecutorNotOnline().test();
-
-    // Результат:
-    verify(errorReporter, only()).reportError(any(IllegalArgumentException.class));
-  }
-
-  /**
-   * Должен отправить ошибку неподходящего статуса, если статус "ожидание клиента".
-   */
-  @Test
-  public void reportIllegalArgumentErrorIfWaitingForClient() {
-    // Дано:
-    when(executorStateUseCase.getExecutorStates())
-        .thenReturn(Flowable.just(ExecutorState.WAITING_FOR_CLIENT).concatWith(Flowable.never()));
-
-    // Действие:
-    useCase.setExecutorNotOnline().test();
-
-    // Результат:
-    verify(errorReporter, only()).reportError(any(IllegalArgumentException.class));
-  }
-
-  /**
-   * Должен отправить ошибку неподходящего статуса, если статус "выполнение заказа".
-   */
-  @Test
-  public void reportIllegalArgumentErrorIfOrderFulfillment() {
-    // Дано:
-    when(executorStateUseCase.getExecutorStates())
-        .thenReturn(Flowable.just(ExecutorState.ORDER_FULFILLMENT).concatWith(Flowable.never()));
-
-    // Действие:
-    useCase.setExecutorNotOnline().test();
-
-    // Результат:
-    verify(errorReporter, only()).reportError(any(IllegalArgumentException.class));
-  }
-
-  /**
-   * Не должен отправлять ошибку при ошибке отправки статуса, если статус "онлайн".
-   */
-  @Test
-  public void doNotReportError() {
-    // Дано:
-    when(executorStateUseCase.getExecutorStates())
-        .thenReturn(Flowable.just(ExecutorState.ONLINE).concatWith(Flowable.never()));
-    when(gateway.sendNewExecutorState(any()))
-        .thenReturn(Completable.error(new Exception()));
-
-    // Действие:
-    useCase.setExecutorNotOnline().test();
-
-    // Результат:
-    verifyZeroInteractions(errorReporter);
-  }
-
-  /**
-   * Не должен отправлять ошибку при ошибке отправки статуса, если статус "прием оплаты".
-   */
-  @Test
-  public void reportIllegalArgumentErrorIfPaymentAcceptance() {
-    // Дано:
-    when(executorStateUseCase.getExecutorStates())
-        .thenReturn(Flowable.just(ExecutorState.PAYMENT_CONFIRMATION).concatWith(Flowable.never()));
-
-    // Действие:
-    useCase.setExecutorNotOnline().test();
-
-    // Результат:
-    verifyZeroInteractions(errorReporter);
+    if (expectedGatewayInvocation) {
+      // Должен отправить статус "смена открыта" через гейтвей передачи статусов.
+      verify(gateway, only()).sendNewExecutorState(ExecutorState.SHIFT_OPENED);
+    } else {
+      // Не должен трогать гейтвей передачи статусов
+      verifyZeroInteractions(gateway);
+    }
   }
 
   /* Проверяем ответы */
 
-  /**
-   * Должен вернуть ошибку неподходящего статуса, если статус "заблокирован".
-   */
   @Test
-  public void answerIllegalArgumentErrorIfBlocked() {
+  public void answerIllegalArgumentErrorOrComplete() {
     // Дано:
     when(executorStateUseCase.getExecutorStates())
-        .thenReturn(Flowable.just(ExecutorState.BLOCKED).concatWith(Flowable.never()));
+        .thenReturn(Flowable.just(conditionExecutorState).concatWith(Flowable.never()));
 
     // Действие:
     TestObserver<Void> testObserver = useCase.setExecutorNotOnline().test();
 
     // Результат:
     testObserver.assertNoValues();
-    testObserver.assertNotComplete();
-    testObserver.assertError(IllegalArgumentException.class);
+    if (expectedArgumentException) {
+      // Должен вернуть ошибку неподходящего статуса
+      testObserver.assertNotComplete();
+      testObserver.assertError(IllegalArgumentException.class);
+    } else {
+      // Должен ответить завершением
+      testObserver.assertNoErrors();
+      testObserver.assertComplete();
+    }
   }
 
   /**
-   * Должен вернуть ошибку неподходящего статуса, если статус "смена закрыта".
+   * Должен вернуть ошибку при ошибке отправки статуса.
    */
   @Test
-  public void answerIllegalArgumentErrorIfShiftClosed() {
+  public void answerWithErrorIfSendFailed() {
     // Дано:
     when(executorStateUseCase.getExecutorStates())
-        .thenReturn(Flowable.just(ExecutorState.SHIFT_CLOSED).concatWith(Flowable.never()));
-
-    // Действие:
-    TestObserver<Void> testObserver = useCase.setExecutorNotOnline().test();
-
-    // Результат:
-    testObserver.assertNoValues();
-    testObserver.assertNotComplete();
-    testObserver.assertError(IllegalArgumentException.class);
-  }
-
-  /**
-   * Должен вернуть ошибку неподходящего статуса, если статус "смена открыта".
-   */
-  @Test
-  public void answerIllegalArgumentErrorIfOnline() {
-    // Дано:
-    when(executorStateUseCase.getExecutorStates())
-        .thenReturn(Flowable.just(ExecutorState.SHIFT_OPENED).concatWith(Flowable.never()));
-
-    // Действие:
-    TestObserver<Void> testObserver = useCase.setExecutorNotOnline().test();
-
-    // Результат:
-    testObserver.assertNoValues();
-    testObserver.assertNotComplete();
-    testObserver.assertError(IllegalArgumentException.class);
-  }
-
-  /**
-   * Должен вернуть ошибку неподходящего статуса, если статус "принятие заказа".
-   */
-  @Test
-  public void answerIllegalArgumentErrorIfOrderConfirmation() {
-    // Дано:
-    when(executorStateUseCase.getExecutorStates()).thenReturn(
-        Flowable.just(ExecutorState.DRIVER_ORDER_CONFIRMATION).concatWith(Flowable.never()));
-
-    // Действие:
-    TestObserver<Void> testObserver = useCase.setExecutorNotOnline().test();
-
-    // Результат:
-    testObserver.assertNoValues();
-    testObserver.assertNotComplete();
-    testObserver.assertError(IllegalArgumentException.class);
-  }
-
-  /**
-   * Должен вернуть ошибку неподходящего статуса, если статус "ожидания подтверждения клиентом".
-   */
-  @Test
-  public void answerIllegalArgumentErrorIfWaitForClientConfirmation() {
-    // Дано:
-    when(executorStateUseCase.getExecutorStates()).thenReturn(
-        Flowable.just(ExecutorState.CLIENT_ORDER_CONFIRMATION).concatWith(Flowable.never()));
-
-    // Действие:
-    TestObserver<Void> testObserver = useCase.setExecutorNotOnline().test();
-
-    // Результат:
-    testObserver.assertNoValues();
-    testObserver.assertNotComplete();
-    testObserver.assertError(IllegalArgumentException.class);
-  }
-
-  /**
-   * Должен вернуть ошибку неподходящего статуса, если статус "на пути к клиенту".
-   */
-  @Test
-  public void answerIllegalArgumentErrorIfMovingToClient() {
-    // Дано:
-    when(executorStateUseCase.getExecutorStates())
-        .thenReturn(Flowable.just(ExecutorState.MOVING_TO_CLIENT).concatWith(Flowable.never()));
-
-    // Действие:
-    TestObserver<Void> testObserver = useCase.setExecutorNotOnline().test();
-
-    // Результат:
-    testObserver.assertNoValues();
-    testObserver.assertNotComplete();
-    testObserver.assertError(IllegalArgumentException.class);
-  }
-
-  /**
-   * Должен вернуть ошибку неподходящего статуса, если статус "ожидание клиента".
-   */
-  @Test
-  public void answerIllegalArgumentErrorIfWaitingForClient() {
-    // Дано:
-    when(executorStateUseCase.getExecutorStates())
-        .thenReturn(Flowable.just(ExecutorState.WAITING_FOR_CLIENT).concatWith(Flowable.never()));
-
-    // Действие:
-    TestObserver<Void> testObserver = useCase.setExecutorNotOnline().test();
-
-    // Результат:
-    testObserver.assertNoValues();
-    testObserver.assertNotComplete();
-    testObserver.assertError(IllegalArgumentException.class);
-  }
-
-  /**
-   * Должен вернуть ошибку неподходящего статуса, если статус "выполнение заказа".
-   */
-  @Test
-  public void answerIllegalArgumentErrorIfOrderFulfillment() {
-    // Дано:
-    when(executorStateUseCase.getExecutorStates())
-        .thenReturn(Flowable.just(ExecutorState.ORDER_FULFILLMENT).concatWith(Flowable.never()));
-
-    // Действие:
-    TestObserver<Void> testObserver = useCase.setExecutorNotOnline().test();
-
-    // Результат:
-    testObserver.assertNoValues();
-    testObserver.assertNotComplete();
-    testObserver.assertError(IllegalArgumentException.class);
-  }
-
-  /**
-   * Должен вернуть ошибку при ошибке отправки статуса, если статус "онлайн".
-   */
-  @Test
-  public void answerWithErrorIfOnline() {
-    // Дано:
-    when(executorStateUseCase.getExecutorStates())
-        .thenReturn(Flowable.just(ExecutorState.ONLINE).concatWith(Flowable.never()));
-    when(gateway.sendNewExecutorState(any()))
+        .thenReturn(Flowable.just(conditionExecutorState).concatWith(Flowable.never()));
+    when(gateway.sendNewExecutorState(ExecutorState.SHIFT_OPENED))
         .thenReturn(Completable.error(new Exception()));
 
     // Действие:
@@ -557,64 +178,7 @@ public class ExecutorStateNotOnlineUseCaseTest {
     // Результат:
     testObserver.assertNoValues();
     testObserver.assertNotComplete();
-    testObserver.assertError(Exception.class);
-  }
-
-  /**
-   * Должен ответить завершением, если статус "онлайн".
-   */
-  @Test
-  public void answerWithCompleteIfOnline() {
-    // Дано:
-    when(executorStateUseCase.getExecutorStates())
-        .thenReturn(Flowable.just(ExecutorState.ONLINE).concatWith(Flowable.never()));
-    when(gateway.sendNewExecutorState(any())).thenReturn(Completable.complete());
-
-    // Действие:
-    TestObserver<Void> testObserver = useCase.setExecutorNotOnline().test();
-
-    // Результат:
-    testObserver.assertNoValues();
-    testObserver.assertNoErrors();
-    testObserver.assertComplete();
-  }
-
-  /**
-   * Должен вернуть ошибку при ошибке отправки статуса, если статус "прием оплаты".
-   */
-  @Test
-  public void answerWithErrorIfPaymentAcceptance() {
-    // Дано:
-    when(executorStateUseCase.getExecutorStates())
-        .thenReturn(Flowable.just(ExecutorState.PAYMENT_CONFIRMATION).concatWith(Flowable.never()));
-    when(gateway.sendNewExecutorState(any()))
-        .thenReturn(Completable.error(new Exception()));
-
-    // Действие:
-    TestObserver<Void> testObserver = useCase.setExecutorNotOnline().test();
-
-    // Результат:
-    testObserver.assertNoValues();
-    testObserver.assertNotComplete();
-    testObserver.assertError(Exception.class);
-  }
-
-  /**
-   * Должен ответить завершением, если статус "прием оплаты".
-   */
-  @Test
-  public void answerWithCompleteIfPaymentAcceptance() {
-    // Дано:
-    when(executorStateUseCase.getExecutorStates())
-        .thenReturn(Flowable.just(ExecutorState.PAYMENT_CONFIRMATION).concatWith(Flowable.never()));
-    when(gateway.sendNewExecutorState(any())).thenReturn(Completable.complete());
-
-    // Действие:
-    TestObserver<Void> testObserver = useCase.setExecutorNotOnline().test();
-
-    // Результат:
-    testObserver.assertNoValues();
-    testObserver.assertNoErrors();
-    testObserver.assertComplete();
+    testObserver
+        .assertError(expectedArgumentException ? IllegalArgumentException.class : Exception.class);
   }
 }

@@ -68,7 +68,7 @@ public class CurrentCostPollingGatewayImplTest {
   @Test
   public void askWebTopicListenerForOverPackage() {
     // Действие:
-    gateway.startPolling().test();
+    gateway.startPolling().test().isDisposed();
 
     // Результат:
     verify(topicListener, only()).getAcknowledgedMessages();
@@ -86,7 +86,7 @@ public class CurrentCostPollingGatewayImplTest {
         .thenReturn(Flowable.just(stompMessage).concatWith(Flowable.never()));
 
     // Действие:
-    gateway.startPolling().test();
+    gateway.startPolling().test().isDisposed();
 
     // Результат:
     verifyZeroInteractions(mapper);
@@ -103,7 +103,7 @@ public class CurrentCostPollingGatewayImplTest {
         .thenReturn(Flowable.just(stompMessage).concatWith(Flowable.never()));
 
     // Действие:
-    gateway.startPolling().test();
+    gateway.startPolling().test().isDisposed();
 
     // Результат:
     verifyZeroInteractions(mapper);
@@ -122,7 +122,7 @@ public class CurrentCostPollingGatewayImplTest {
         .thenReturn(Flowable.just(stompMessage).concatWith(Flowable.never()));
 
     // Действие:
-    gateway.startPolling().test();
+    gateway.startPolling().test().isDisposed();
 
     // Результат:
     verify(mapper, only()).map(stompMessage);
@@ -142,7 +142,7 @@ public class CurrentCostPollingGatewayImplTest {
         .thenReturn(Flowable.just(stompMessage), Flowable.never());
 
     // Действие:
-    gateway.startPolling().test();
+    gateway.startPolling().test().isDisposed();
 
     // Результат:
     verifyZeroInteractions(stompClient);
@@ -162,7 +162,7 @@ public class CurrentCostPollingGatewayImplTest {
     when(mapper.map(stompMessage)).thenReturn(new Pair<>(0L, 30_000L));
 
     // Действие:
-    gateway.startPolling().test();
+    gateway.startPolling().test().isDisposed();
     testScheduler.advanceTimeBy(1, TimeUnit.NANOSECONDS);
 
     // Результат:
@@ -183,7 +183,7 @@ public class CurrentCostPollingGatewayImplTest {
     when(mapper.map(stompMessage)).thenReturn(new Pair<>(600_000L, 30_000L));
 
     // Действие:
-    gateway.startPolling().test();
+    gateway.startPolling().test().isDisposed();
     testScheduler.advanceTimeBy(9, TimeUnit.MINUTES);
 
     // Результат:
@@ -206,7 +206,7 @@ public class CurrentCostPollingGatewayImplTest {
     when(mapper.map(stompMessage)).thenReturn(new Pair<>(600_000L, 30_000L));
 
     // Действие:
-    gateway.startPolling().test();
+    gateway.startPolling().test().isDisposed();
     testScheduler.advanceTimeBy(15, TimeUnit.MINUTES);
 
     // Результат:
@@ -232,7 +232,7 @@ public class CurrentCostPollingGatewayImplTest {
     when(mapper.map(stompMessage)).thenReturn(new Pair<>(600_000L, 30_000L));
 
     // Действие:
-    gateway.startPolling().test();
+    gateway.startPolling().test().isDisposed();
 
     // Результат:
     publishSubject.onNext(stompMessage);
@@ -260,7 +260,7 @@ public class CurrentCostPollingGatewayImplTest {
     when(mapper.map(stompMessage)).thenReturn(new Pair<>(600_000L, 30_000L));
 
     // Действие:
-    gateway.startPolling().test();
+    gateway.startPolling().test().isDisposed();
 
     // Результат:
     publishSubject.onNext(stompMessage);

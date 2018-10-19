@@ -43,7 +43,7 @@ public class ConfirmOrderPaymentGatewayTest {
   @Test
   public void askStompClientToSendConfirmOrderPayment() {
     // Действие:
-    gateway.confirmOrderPayment().test();
+    gateway.confirmOrderPayment().test().isDisposed();
 
     // Результат:
     verify(stompClient, only()).send("/mobile/trip", "\"COMPLETE_PAYMENT_CONFIRMATION\"");

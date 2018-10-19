@@ -1,12 +1,30 @@
 package com.cargopull.executor_driver.di;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.cargopull.executor_driver.BuildConfig;
+import com.cargopull.executor_driver.backend.analytics.ErrorReporter;
+import com.cargopull.executor_driver.backend.analytics.ErrorReporterImpl;
+import com.cargopull.executor_driver.backend.analytics.EventLogger;
+import com.cargopull.executor_driver.backend.analytics.EventLoggerImpl;
+import com.cargopull.executor_driver.backend.geolocation.GeolocationCenter;
+import com.cargopull.executor_driver.backend.geolocation.GeolocationCenterImpl;
+import com.cargopull.executor_driver.backend.settings.AppPreferences;
 import com.cargopull.executor_driver.backend.settings.AppSettingsService;
 import com.cargopull.executor_driver.backend.web.ApiService;
+import com.cargopull.executor_driver.backend.web.AuthorizationInterceptor;
+import com.cargopull.executor_driver.backend.web.ConnectivityInterceptor;
+import com.cargopull.executor_driver.backend.web.DeprecatedVersionInterceptor;
+import com.cargopull.executor_driver.backend.web.ReceiveTokenInterceptor;
+import com.cargopull.executor_driver.backend.web.SendTokenInterceptor;
+import com.cargopull.executor_driver.backend.web.SendVersionInterceptor;
+import com.cargopull.executor_driver.backend.web.ServerResponseInterceptor;
+import com.cargopull.executor_driver.backend.web.TokenKeeper;
 import com.cargopull.executor_driver.backend.websocket.PersonalQueueListener;
 import com.cargopull.executor_driver.backend.websocket.TopicListener;
+import com.cargopull.executor_driver.gateway.TokenKeeperImpl;
 import com.cargopull.executor_driver.interactor.DataReceiver;
 import java.util.concurrent.TimeUnit;
 import okhttp3.Interceptor;
@@ -22,11 +40,15 @@ import ua.naiksoftware.stomp.client.StompClient;
 class BackendComponentImpl implements BackendComponent {
 
   @NonNull
-  private final DataReceiver<String> loginSharer;
+  private final EventLogger eventLogger;
+  @NonNull
+  private final ErrorReporter errorReporter;
   @NonNull
   private final Interceptor[] interceptors;
   @NonNull
   private final AppSettingsService appSettingsService;
+  @NonNull
+  private final GeolocationCenter geolocationCenter;
   @Nullable
   private ApiService apiService;
   @Nullable
@@ -36,12 +58,35 @@ class BackendComponentImpl implements BackendComponent {
   @Nullable
   private OkHttpClient okHttpClient;
 
-  BackendComponentImpl(@NonNull DataReceiver<String> loginSharer,
-      @NonNull AppSettingsService appSettingsService,
-      @NonNull Interceptor... interceptors) {
-    this.loginSharer = loginSharer;
-    this.appSettingsService = appSettingsService;
-    this.interceptors = interceptors;
+  BackendComponentImpl(@NonNull Context appContext) {
+    appSettingsService = new AppPreferences(appContext);
+    eventLogger = new EventLoggerImpl(appSettingsService, appContext);
+    errorReporter = new ErrorReporterImpl(appSettingsService);
+    this.geolocationCenter = new GeolocationCenterImpl(appContext);
+    TokenKeeper tokenKeeper = new TokenKeeperImpl(appSettingsService);
+    this.interceptors = new Interceptor[]{
+        new ConnectivityInterceptor(
+            (ConnectivityManager) appContext.getSystemService(Context.CONNECTIVITY_SERVICE)
+        ),
+        new SendVersionInterceptor(),
+        new DeprecatedVersionInterceptor(),
+        new AuthorizationInterceptor(),
+        new ServerResponseInterceptor(),
+        new SendTokenInterceptor(tokenKeeper),
+        new ReceiveTokenInterceptor(tokenKeeper)
+    };
+  }
+
+  @Override
+  @NonNull
+  public EventLogger getEventLogger() {
+    return eventLogger;
+  }
+
+  @Override
+  @NonNull
+  public ErrorReporter getErrorReporter() {
+    return errorReporter;
   }
 
   @Override
@@ -77,11 +122,11 @@ class BackendComponentImpl implements BackendComponent {
 
   @Override
   @NonNull
-  public TopicListener getPersonalTopicListener() {
+  public TopicListener getPersonalTopicListener(@NonNull DataReceiver<String> loginReceiver) {
     if (personalQueueListener == null) {
       personalQueueListener = new PersonalQueueListener(
           getStompClient(),
-          loginSharer
+          loginReceiver
       );
     }
     return personalQueueListener;
@@ -91,6 +136,12 @@ class BackendComponentImpl implements BackendComponent {
   @NonNull
   public AppSettingsService getAppSettingsService() {
     return appSettingsService;
+  }
+
+  @Override
+  @NonNull
+  public GeolocationCenter getGeolocationCenter() {
+    return geolocationCenter;
   }
 
   @NonNull

@@ -1,6 +1,5 @@
 package com.cargopull.executor_driver.interactor;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -11,7 +10,6 @@ import static org.mockito.Mockito.when;
 import com.cargopull.executor_driver.UseCaseThreadTestRule;
 import com.cargopull.executor_driver.entity.Order;
 import com.cargopull.executor_driver.gateway.DataMappingException;
-import com.cargopull.executor_driver.utils.ErrorReporter;
 import io.reactivex.Flowable;
 import io.reactivex.subscribers.TestSubscriber;
 import org.junit.Before;
@@ -30,8 +28,6 @@ public class OrderCurrentCostUseCaseTest {
   private OrderCurrentCostUseCase useCase;
 
   @Mock
-  private ErrorReporter errorReporter;
-  @Mock
   private OrderUseCase orderUseCase;
   @Mock
   private CommonGateway<Long> orderCurrentCostGateway;
@@ -44,7 +40,7 @@ public class OrderCurrentCostUseCaseTest {
   public void setUp() {
     when(orderUseCase.getOrders()).thenReturn(Flowable.never());
     when(orderCurrentCostGateway.getData()).thenReturn(Flowable.never());
-    useCase = new OrderCurrentCostUseCaseImpl(errorReporter, orderUseCase, orderCurrentCostGateway);
+    useCase = new OrderCurrentCostUseCaseImpl(orderUseCase, orderCurrentCostGateway);
   }
 
   /* Проверяем работу с юзкейсом заказа */
@@ -55,10 +51,10 @@ public class OrderCurrentCostUseCaseTest {
   @Test
   public void askOrderGatewayForOrders() {
     // Действие:
-    useCase.getOrderCurrentCost().test();
-    useCase.getOrderCurrentCost().test();
-    useCase.getOrderCurrentCost().test();
-    useCase.getOrderCurrentCost().test();
+    useCase.getOrderCurrentCost().test().isDisposed();
+    useCase.getOrderCurrentCost().test().isDisposed();
+    useCase.getOrderCurrentCost().test().isDisposed();
+    useCase.getOrderCurrentCost().test().isDisposed();
 
     // Результат:
     verify(orderUseCase, times(4)).getOrders();
@@ -73,7 +69,7 @@ public class OrderCurrentCostUseCaseTest {
   @Test
   public void doNotTouchCurrentCostGateway() {
     // Действие:
-    useCase.getOrderCurrentCost().test();
+    useCase.getOrderCurrentCost().test().isDisposed();
 
     // Результат:
     verifyZeroInteractions(orderCurrentCostGateway);
@@ -88,45 +84,10 @@ public class OrderCurrentCostUseCaseTest {
     when(orderUseCase.getOrders()).thenReturn(Flowable.just(order));
 
     // Действие:
-    useCase.getOrderCurrentCost().test();
+    useCase.getOrderCurrentCost().test().isDisposed();
 
     // Результат:
     verify(orderCurrentCostGateway, only()).getData();
-  }
-
-  /* Проверяем отправку ошибок в репортер */
-
-  /**
-   * Должен отправить ошибку маппинга.
-   */
-  @Test
-  public void reportDataMappingError() {
-    // Дано:
-    when(orderUseCase.getOrders()).thenReturn(Flowable.error(new DataMappingException()));
-
-    // Действие:
-    useCase.getOrderCurrentCost().test();
-
-    // Результат:
-    verify(errorReporter, only()).reportError(any(DataMappingException.class));
-  }
-
-  /**
-   * Должен отправить ошибку маппинга.
-   */
-  @Test
-  public void reportDataMappingErrorInCurrentCost() {
-    // Дано:
-    when(orderUseCase.getOrders()).thenReturn(Flowable.just(order, order2));
-    when(order.getTotalCost()).thenReturn(101L);
-    when(orderCurrentCostGateway.getData())
-        .thenReturn(Flowable.error(new DataMappingException()));
-
-    // Действие:
-    useCase.getOrderCurrentCost().test();
-
-    // Результат:
-    verify(errorReporter, only()).reportError(any(DataMappingException.class));
   }
 
   /* Проверяем ответы на запрос цены заказа */

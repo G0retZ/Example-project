@@ -6,7 +6,7 @@ import io.reactivex.Flowable;
 import java.util.List;
 
 /**
- * Юзкейс отмены заказа.
+ * Юзкейс причин отмены заказа.
  */
 public interface CancelOrderReasonsUseCase {
 

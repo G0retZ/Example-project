@@ -43,7 +43,7 @@ public class MovingToClientGatewayTest {
   @Test
   public void askStompClientToSendReportArrival() {
     // Действие:
-    gateway.reportArrival().test();
+    gateway.reportArrival().test().isDisposed();
 
     // Результат:
     verify(stompClient, only()).send("/mobile/trip", "\"DRIVER_ARRIVED\"");

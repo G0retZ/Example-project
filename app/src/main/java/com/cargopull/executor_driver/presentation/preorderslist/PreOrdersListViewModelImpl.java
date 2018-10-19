@@ -5,6 +5,7 @@ import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
+import com.cargopull.executor_driver.backend.analytics.ErrorReporter;
 import com.cargopull.executor_driver.entity.Order;
 import com.cargopull.executor_driver.gateway.DataMappingException;
 import com.cargopull.executor_driver.interactor.OrdersUseCase;
@@ -19,6 +20,8 @@ import javax.inject.Inject;
 
 public class PreOrdersListViewModelImpl extends ViewModel implements PreOrdersListViewModel {
 
+  @NonNull
+  private final ErrorReporter errorReporter;
   @NonNull
   private final OrdersUseCase ordersUseCase;
   @NonNull
@@ -37,9 +40,12 @@ public class PreOrdersListViewModelImpl extends ViewModel implements PreOrdersLi
   private ViewState<PreOrdersListViewActions> lastViewState;
 
   @Inject
-  public PreOrdersListViewModelImpl(@NonNull OrdersUseCase ordersUseCase,
+  public PreOrdersListViewModelImpl(
+      @NonNull ErrorReporter errorReporter,
+      @NonNull OrdersUseCase ordersUseCase,
       @NonNull SelectedOrderUseCase selectedOrderUseCase,
       @NonNull PreOrdersListItemsMapper mapper) {
+    this.errorReporter = errorReporter;
     this.ordersUseCase = ordersUseCase;
     this.selectedOrderUseCase = selectedOrderUseCase;
     this.mapper = mapper;
@@ -78,6 +84,7 @@ public class PreOrdersListViewModelImpl extends ViewModel implements PreOrdersLi
               viewStateLiveData.postValue(lastViewState);
             },
             throwable -> {
+              errorReporter.reportError(throwable);
               if (throwable instanceof DataMappingException) {
                 navigateLiveData.postValue(CommonNavigate.SERVER_DATA_ERROR);
               } else {
@@ -95,8 +102,7 @@ public class PreOrdersListViewModelImpl extends ViewModel implements PreOrdersLi
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(
             () -> navigateLiveData.postValue(PreOrdersListNavigate.PRE_ORDER),
-            throwable -> {
-            }
+            errorReporter::reportError
         );
   }
 

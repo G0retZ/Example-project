@@ -1,18 +1,15 @@
 package com.cargopull.executor_driver.interactor;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 import com.cargopull.executor_driver.UseCaseThreadTestRule;
 import com.cargopull.executor_driver.entity.Order;
 import com.cargopull.executor_driver.entity.OrderCancelledException;
 import com.cargopull.executor_driver.gateway.DataMappingException;
-import com.cargopull.executor_driver.utils.ErrorReporter;
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
 import io.reactivex.FlowableEmitter;
@@ -39,8 +36,6 @@ public class SelectedOrderUseCaseImplTest {
   private SelectedOrderUseCaseImpl useCase;
 
   @Mock
-  private ErrorReporter errorReporter;
-  @Mock
   private OrdersUseCase ordersUseCase;
   @Mock
   private Order order;
@@ -55,7 +50,7 @@ public class SelectedOrderUseCaseImplTest {
   @Before
   public void setUp() {
     when(ordersUseCase.getOrdersSet()).thenReturn(Flowable.never());
-    useCase = new SelectedOrderUseCaseImpl(errorReporter, ordersUseCase);
+    useCase = new SelectedOrderUseCaseImpl(ordersUseCase);
   }
 
   /* Проверяем работу с юзкейсом списка заказов */
@@ -66,10 +61,10 @@ public class SelectedOrderUseCaseImplTest {
   @Test
   public void askUseCaseForOrdersListForGet() {
     // Действие:
-    useCase.getOrders().test();
-    useCase.getOrders().test();
-    useCase.getOrders().test();
-    useCase.getOrders().test();
+    useCase.getOrders().test().isDisposed();
+    useCase.getOrders().test().isDisposed();
+    useCase.getOrders().test().isDisposed();
+    useCase.getOrders().test().isDisposed();
 
     // Результат:
     verify(ordersUseCase, only()).getOrdersSet();
@@ -82,63 +77,13 @@ public class SelectedOrderUseCaseImplTest {
   @Test
   public void askUseCaseForOrdersListForSet() {
     // Действие:
-    useCase.setSelectedOrder(order1).test();
-    useCase.setSelectedOrder(order2).test();
-    useCase.setSelectedOrder(order3).test();
+    useCase.setSelectedOrder(order1).test().isDisposed();
+    useCase.setSelectedOrder(order2).test().isDisposed();
+    useCase.setSelectedOrder(order3).test().isDisposed();
 
     // Результат:
     verify(ordersUseCase, times(3)).getOrdersSet();
     verifyNoMoreInteractions(ordersUseCase);
-  }
-
-  /* Проверяем отправку ошибок в репортер */
-
-  /**
-   * Не должен отправлять ошибку при подписке (должны отправлена вышестоящим юзкейсом).
-   */
-  @Test
-  public void reportErrorOnGet() {
-    // Дано:
-    when(ordersUseCase.getOrdersSet()).thenReturn(Flowable.error(DataMappingException::new));
-
-    // Действие:
-    useCase.getOrders().test();
-
-    // Результат:
-    verifyZeroInteractions(errorReporter);
-  }
-
-  /**
-   * Должен отправить ошибку при установке выбора.
-   */
-  @Test
-  public void reportErrorOnSet() {
-    // Дано:
-    when(ordersUseCase.getOrdersSet()).thenReturn(Flowable.error(DataMappingException::new));
-
-    // Действие:
-    useCase.setSelectedOrder(order).test();
-
-    // Результат:
-    verify(errorReporter, only()).reportError(any(DataMappingException.class));
-  }
-
-  /**
-   * Должен отправить ошибку при неверном выборе.
-   */
-  @Test
-  public void reportErrorOnSetWrong() {
-    // Дано:
-    when(ordersUseCase.getOrdersSet()).thenReturn(
-        Flowable.<Set<Order>>just(new HashSet<>(Arrays.asList(order, order1)))
-            .concatWith(Flowable.never())
-    );
-
-    // Действие:
-    useCase.setSelectedOrder(order2).test();
-
-    // Результат:
-    verify(errorReporter, only()).reportError(any(NoSuchElementException.class));
   }
 
   /* Проверяем ответы */
@@ -176,10 +121,10 @@ public class SelectedOrderUseCaseImplTest {
 
     // Действие:
     TestSubscriber<Order> testSubscriber = useCase.getOrders().test();
-    useCase.setSelectedOrder(order1).test();
-    useCase.setSelectedOrder(order2).test();
-    useCase.setSelectedOrder(order1).test();
-    useCase.setSelectedOrder(order).test();
+    useCase.setSelectedOrder(order1).test().isDisposed();
+    useCase.setSelectedOrder(order2).test().isDisposed();
+    useCase.setSelectedOrder(order1).test().isDisposed();
+    useCase.setSelectedOrder(order).test().isDisposed();
 
     // Результат:
     testSubscriber.assertValues(order1, order2, order1, order);
@@ -199,10 +144,10 @@ public class SelectedOrderUseCaseImplTest {
     );
 
     // Действие:
-    useCase.setSelectedOrder(order1).test();
-    useCase.setSelectedOrder(order2).test();
-    useCase.setSelectedOrder(order1).test();
-    useCase.setSelectedOrder(order).test();
+    useCase.setSelectedOrder(order1).test().isDisposed();
+    useCase.setSelectedOrder(order2).test().isDisposed();
+    useCase.setSelectedOrder(order1).test().isDisposed();
+    useCase.setSelectedOrder(order).test().isDisposed();
     TestSubscriber<Order> testSubscriber = useCase.getOrders().test();
 
     // Результат:
@@ -223,7 +168,7 @@ public class SelectedOrderUseCaseImplTest {
     );
 
     // Действие:
-    useCase.getOrders().test();
+    useCase.getOrders().test().isDisposed();
 
     // Результат:
     useCase.setSelectedOrder(order1).test().assertComplete();
@@ -246,7 +191,7 @@ public class SelectedOrderUseCaseImplTest {
     // Действие:
     TestSubscriber<Order> testSubscriber = useCase.getOrders().test();
     publishSubject.onNext(new HashSet<>(Arrays.asList(order, order1, order2)));
-    useCase.setSelectedOrder(order1).test();
+    useCase.setSelectedOrder(order1).test().isDisposed();
     publishSubject.onNext(new HashSet<>(Arrays.asList(order, order1, order2)));
     publishSubject.onNext(new HashSet<>(Arrays.asList(order, order1)));
     publishSubject.onNext(new HashSet<>(Arrays.asList(order1, order2)));
@@ -306,7 +251,7 @@ public class SelectedOrderUseCaseImplTest {
 
     // Действие:
     TestSubscriber<Order> testSubscriber = useCase.getOrders().test();
-    useCase.setSelectedOrder(order2).test();
+    useCase.setSelectedOrder(order2).test().isDisposed();
 
     // Результат:
     testSubscriber.assertNoValues();
@@ -326,7 +271,7 @@ public class SelectedOrderUseCaseImplTest {
     );
 
     // Действие:
-    useCase.getOrders().test();
+    useCase.getOrders().test().isDisposed();
     TestObserver<Void> testObserver = useCase.setSelectedOrder(order2).test();
 
     // Результат:
@@ -349,7 +294,7 @@ public class SelectedOrderUseCaseImplTest {
     // Действие:
     TestSubscriber<Order> testSubscriber = useCase.getOrders().test();
     publishSubject.onNext(new HashSet<>(Arrays.asList(order, order1, order2)));
-    useCase.setSelectedOrder(order1).test();
+    useCase.setSelectedOrder(order1).test().isDisposed();
     publishSubject.onNext(new HashSet<>(Arrays.asList(order, order1, order2)));
     publishSubject.onNext(new HashSet<>(Arrays.asList(order, order2, order3)));
 
@@ -392,9 +337,9 @@ public class SelectedOrderUseCaseImplTest {
     Flowable<Order> orders = useCase.getOrders();
     TestSubscriber<Order> testSubscriber = orders.test();
     emitter.onNext(new HashSet<>(Arrays.asList(order, order1, order2)));
-    useCase.setSelectedOrder(order1).test();
-    useCase.setSelectedOrder(order).test();
-    useCase.setSelectedOrder(order2).test();
+    useCase.setSelectedOrder(order1).test().isDisposed();
+    useCase.setSelectedOrder(order).test().isDisposed();
+    useCase.setSelectedOrder(order2).test().isDisposed();
     TestSubscriber<Order> testSubscriber0 = orders.test();
     emitter.onError(new Exception());
     TestSubscriber<Order> testSubscriber1 = orders.test();
@@ -429,9 +374,9 @@ public class SelectedOrderUseCaseImplTest {
     Flowable<Order> orders = useCase.getOrders().doOnNext(System.out::println);
     TestSubscriber<Order> testSubscriber = orders.test();
     emitter.onNext(new HashSet<>(Arrays.asList(order, order1, order2)));
-    useCase.setSelectedOrder(order1).test();
-    useCase.setSelectedOrder(order).test();
-    useCase.setSelectedOrder(order2).test();
+    useCase.setSelectedOrder(order1).test().isDisposed();
+    useCase.setSelectedOrder(order).test().isDisposed();
+    useCase.setSelectedOrder(order2).test().isDisposed();
     TestSubscriber<Order> testSubscriber0 = orders.test();
     emitter.onComplete();
     TestSubscriber<Order> testSubscriber1 = orders.test();

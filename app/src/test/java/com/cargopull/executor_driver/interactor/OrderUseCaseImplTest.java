@@ -1,6 +1,5 @@
 package com.cargopull.executor_driver.interactor;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -10,7 +9,6 @@ import com.cargopull.executor_driver.entity.Order;
 import com.cargopull.executor_driver.entity.OrderOfferDecisionException;
 import com.cargopull.executor_driver.entity.OrderOfferExpiredException;
 import com.cargopull.executor_driver.gateway.DataMappingException;
-import com.cargopull.executor_driver.utils.ErrorReporter;
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
 import io.reactivex.FlowableEmitter;
@@ -31,8 +29,6 @@ public class OrderUseCaseImplTest {
   private OrderUseCaseImpl useCase;
 
   @Mock
-  private ErrorReporter errorReporter;
-  @Mock
   private CommonGateway<Order> gateway;
   @Mock
   private Order order;
@@ -45,7 +41,7 @@ public class OrderUseCaseImplTest {
   @Before
   public void setUp() {
     when(gateway.getData()).thenReturn(Flowable.never());
-    useCase = new OrderUseCaseImpl(errorReporter, gateway);
+    useCase = new OrderUseCaseImpl(gateway);
   }
 
   /* Проверяем работу с гейтвеем */
@@ -56,45 +52,15 @@ public class OrderUseCaseImplTest {
   @Test
   public void askGatewayForOrdersOnlyOnce() {
     // Действие:
-    useCase.getOrders().test();
-    useCase.getOrders().test();
+    useCase.getOrders().test().isDisposed();
+    useCase.getOrders().test().isDisposed();
     useCase.setOrderOfferDecisionMade();
-    useCase.getOrders().test();
-    useCase.getOrders().test();
+    useCase.getOrders().test().isDisposed();
+    useCase.getOrders().test().isDisposed();
     useCase.setOrderOfferDecisionMade();
 
     // Результат:
     verify(gateway, only()).getData();
-  }
-
-  /* Проверяем отправку ошибок в репортер */
-
-  /**
-   * Должен отправить ошибку.
-   */
-  @Test
-  public void reportError() {
-    // Дано:
-    when(gateway.getData()).thenReturn(Flowable.error(DataMappingException::new));
-
-    // Действие:
-    useCase.getOrders().test();
-
-    // Результат:
-    verify(errorReporter, only()).reportError(any(DataMappingException.class));
-  }
-
-  /**
-   * Должен отправить ошибку потери актуальности заказа.
-   */
-  @Test
-  public void reportPreOrderExpiredError() {
-    // Действие:
-    useCase.getOrders().test();
-    useCase.setOrderOfferDecisionMade();
-
-    // Результат:
-    verify(errorReporter, only()).reportError(any(OrderOfferDecisionException.class));
   }
 
   /* Проверяем ответы */

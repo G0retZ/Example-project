@@ -67,10 +67,10 @@ public class PersonalQueueListenerTest {
   @Test
   public void askLoginPublisherForLogin() {
     // Действие:
-    queueListener.getAcknowledgedMessages().test();
-    queueListener.getAcknowledgedMessages().test();
-    queueListener.getAcknowledgedMessages().test();
-    queueListener.getAcknowledgedMessages().test();
+    queueListener.getAcknowledgedMessages().test().isDisposed();
+    queueListener.getAcknowledgedMessages().test().isDisposed();
+    queueListener.getAcknowledgedMessages().test().isDisposed();
+    queueListener.getAcknowledgedMessages().test().isDisposed();
 
     // Результат:
     verify(loginReceiver, only()).get();
@@ -93,7 +93,7 @@ public class PersonalQueueListenerTest {
     );
 
     // Действие:
-    queueListener.getAcknowledgedMessages().test();
+    queueListener.getAcknowledgedMessages().test().isDisposed();
 
     // Результат:
     verify(loginReceiver, only()).get();
@@ -116,7 +116,7 @@ public class PersonalQueueListenerTest {
     );
 
     // Действие:
-    queueListener.getAcknowledgedMessages().test();
+    queueListener.getAcknowledgedMessages().test().isDisposed();
 
     // Результат:
     verify(loginReceiver, only()).get();
@@ -136,10 +136,10 @@ public class PersonalQueueListenerTest {
     ).concatWith(Observable.never()));
 
     // Действие:
-    queueListener.getAcknowledgedMessages().test();
-    queueListener.getAcknowledgedMessages().test();
-    queueListener.getAcknowledgedMessages().test();
-    queueListener.getAcknowledgedMessages().test();
+    queueListener.getAcknowledgedMessages().test().isDisposed();
+    queueListener.getAcknowledgedMessages().test().isDisposed();
+    queueListener.getAcknowledgedMessages().test().isDisposed();
+    queueListener.getAcknowledgedMessages().test().isDisposed();
 
     // Результат:
     inOrder.verify(stompClient).topic("/queue/1234567890", StompClient.ACK_CLIENT_INDIVIDUAL);
@@ -166,7 +166,7 @@ public class PersonalQueueListenerTest {
     );
 
     // Действие:
-    queueListener.getAcknowledgedMessages().test();
+    queueListener.getAcknowledgedMessages().test().isDisposed();
 
     // Результат:
     verify(stompClient, times(4)).topic("/queue/1234567890", StompClient.ACK_CLIENT_INDIVIDUAL);
@@ -190,7 +190,7 @@ public class PersonalQueueListenerTest {
     );
 
     // Действие:
-    queueListener.getAcknowledgedMessages().test();
+    queueListener.getAcknowledgedMessages().test().isDisposed();
 
     // Результат:
     verify(stompClient, times(4)).topic("/queue/1234567890", StompClient.ACK_CLIENT_INDIVIDUAL);
@@ -210,10 +210,10 @@ public class PersonalQueueListenerTest {
         .thenReturn(Flowable.<StompMessage>never().doOnCancel(action));
 
     // Действие:
-    queueListener.getAcknowledgedMessages().test();
-    queueListener.getAcknowledgedMessages().test();
-    queueListener.getAcknowledgedMessages().test();
-    queueListener.getAcknowledgedMessages().test();
+    queueListener.getAcknowledgedMessages().test().isDisposed();
+    queueListener.getAcknowledgedMessages().test().isDisposed();
+    queueListener.getAcknowledgedMessages().test().isDisposed();
+    queueListener.getAcknowledgedMessages().test().isDisposed();
 
     // Результат:
     verify(action, times(3)).run();
@@ -261,7 +261,7 @@ public class PersonalQueueListenerTest {
             Flowable.just(stompMessage, stompMessage, stompMessage).concatWith(Flowable.never()));
 
     // Действие:
-    queueListener.getAcknowledgedMessages().test();
+    queueListener.getAcknowledgedMessages().test().isDisposed();
 
     // Результат:
     inOrder.verify(stompClient).topic("/queue/1234567890", StompClient.ACK_CLIENT_INDIVIDUAL);

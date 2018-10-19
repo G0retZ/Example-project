@@ -9,6 +9,7 @@ import static org.mockito.Mockito.when;
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
 import androidx.lifecycle.Observer;
 import com.cargopull.executor_driver.ViewModelThreadTestRule;
+import com.cargopull.executor_driver.backend.analytics.ErrorReporter;
 import com.cargopull.executor_driver.entity.ExecutorState;
 import com.cargopull.executor_driver.gateway.DataMappingException;
 import com.cargopull.executor_driver.interactor.ExecutorStateUseCase;
@@ -39,6 +40,8 @@ public class ClientOrderConfirmationTimeViewModelTest {
   public TestRule rule = new InstantTaskExecutorRule();
   private ClientOrderConfirmationTimeViewModel viewModel;
   @Mock
+  private ErrorReporter errorReporter;
+  @Mock
   private ExecutorStateUseCase useCase;
   @Mock
   private Observer<ViewState<ClientOrderConfirmationTimeViewActions>> viewStateObserver;
@@ -54,9 +57,22 @@ public class ClientOrderConfirmationTimeViewModelTest {
     RxJavaPlugins.setComputationSchedulerHandler(scheduler -> testScheduler);
     when(useCase.getExecutorStates())
         .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
-    viewModel = new ClientOrderConfirmationTimeViewModelImpl(useCase);
+    viewModel = new ClientOrderConfirmationTimeViewModelImpl(errorReporter, useCase);
   }
 
+  /* Проверяем отправку ошибок в репортер */
+
+  /**
+   * Должен отправить ошибку.
+   */
+  @Test
+  public void reportError() {
+    // Действие:
+    publishSubject.onError(new DataMappingException());
+
+    // Результат:
+    verify(errorReporter, only()).reportError(any(DataMappingException.class));
+  }
 
   /* Тетсируем работу с юзкейсом. */
 
@@ -193,33 +209,16 @@ public class ClientOrderConfirmationTimeViewModelTest {
     // Результат:
     inOrder.verify(viewStateObserver)
         .onChanged(new ClientOrderConfirmationTimeViewStateCounting(0));
-    inOrder.verify(viewStateObserver)
-        .onChanged(new ClientOrderConfirmationTimeViewStateCounting(20_000));
-    inOrder.verify(viewStateObserver)
-        .onChanged(new ClientOrderConfirmationTimeViewStateCounting(19_000));
-    inOrder.verify(viewStateObserver)
-        .onChanged(new ClientOrderConfirmationTimeViewStateCounting(18_000));
-    inOrder.verify(viewStateObserver)
-        .onChanged(new ClientOrderConfirmationTimeViewStateCounting(17_000));
-    inOrder.verify(viewStateObserver)
-        .onChanged(new ClientOrderConfirmationTimeViewStateCounting(16_000));
-    inOrder.verify(viewStateObserver)
-        .onChanged(new ClientOrderConfirmationTimeViewStateCounting(15_000));
-    inOrder.verify(viewStateObserver)
-        .onChanged(new ClientOrderConfirmationTimeViewStateCounting(14_000));
-    inOrder.verify(viewStateObserver)
-        .onChanged(new ClientOrderConfirmationTimeViewStateCounting(13_000));
-    inOrder.verify(viewStateObserver)
-        .onChanged(new ClientOrderConfirmationTimeViewStateCounting(12_000));
-    inOrder.verify(viewStateObserver)
-        .onChanged(new ClientOrderConfirmationTimeViewStateCounting(11_000));
-    inOrder.verify(viewStateObserver)
-        .onChanged(new ClientOrderConfirmationTimeViewStateCounting(10_000));
+    for (int i = 20_000; i > 9000; i -= 1000) {
+      inOrder.verify(viewStateObserver)
+          .onChanged(new ClientOrderConfirmationTimeViewStateCounting(i));
+    }
     verifyNoMoreInteractions(viewStateObserver);
   }
 
   /**
-   * Должен вернуть состояния вида с отсчетом таймаута и состояние вида окончания отсчета после таймаута.
+   * Должен вернуть состояния вида с отсчетом таймаута и состояние вида окончания отсчета после
+   * таймаута.
    */
   @Test
   public void setCountingViewStatesToLiveDataUntilItEndsAndNotCountingAfter() {
@@ -235,46 +234,10 @@ public class ClientOrderConfirmationTimeViewModelTest {
     // Результат:
     inOrder.verify(viewStateObserver)
         .onChanged(new ClientOrderConfirmationTimeViewStateCounting(0));
-    inOrder.verify(viewStateObserver)
-        .onChanged(new ClientOrderConfirmationTimeViewStateCounting(20_000));
-    inOrder.verify(viewStateObserver)
-        .onChanged(new ClientOrderConfirmationTimeViewStateCounting(19_000));
-    inOrder.verify(viewStateObserver)
-        .onChanged(new ClientOrderConfirmationTimeViewStateCounting(18_000));
-    inOrder.verify(viewStateObserver)
-        .onChanged(new ClientOrderConfirmationTimeViewStateCounting(17_000));
-    inOrder.verify(viewStateObserver)
-        .onChanged(new ClientOrderConfirmationTimeViewStateCounting(16_000));
-    inOrder.verify(viewStateObserver)
-        .onChanged(new ClientOrderConfirmationTimeViewStateCounting(15_000));
-    inOrder.verify(viewStateObserver)
-        .onChanged(new ClientOrderConfirmationTimeViewStateCounting(14_000));
-    inOrder.verify(viewStateObserver)
-        .onChanged(new ClientOrderConfirmationTimeViewStateCounting(13_000));
-    inOrder.verify(viewStateObserver)
-        .onChanged(new ClientOrderConfirmationTimeViewStateCounting(12_000));
-    inOrder.verify(viewStateObserver)
-        .onChanged(new ClientOrderConfirmationTimeViewStateCounting(11_000));
-    inOrder.verify(viewStateObserver)
-        .onChanged(new ClientOrderConfirmationTimeViewStateCounting(10_000));
-    inOrder.verify(viewStateObserver)
-        .onChanged(new ClientOrderConfirmationTimeViewStateCounting(9_000));
-    inOrder.verify(viewStateObserver)
-        .onChanged(new ClientOrderConfirmationTimeViewStateCounting(8_000));
-    inOrder.verify(viewStateObserver)
-        .onChanged(new ClientOrderConfirmationTimeViewStateCounting(7_000));
-    inOrder.verify(viewStateObserver)
-        .onChanged(new ClientOrderConfirmationTimeViewStateCounting(6_000));
-    inOrder.verify(viewStateObserver)
-        .onChanged(new ClientOrderConfirmationTimeViewStateCounting(5_000));
-    inOrder.verify(viewStateObserver)
-        .onChanged(new ClientOrderConfirmationTimeViewStateCounting(4_000));
-    inOrder.verify(viewStateObserver)
-        .onChanged(new ClientOrderConfirmationTimeViewStateCounting(3_000));
-    inOrder.verify(viewStateObserver)
-        .onChanged(new ClientOrderConfirmationTimeViewStateCounting(2_000));
-    inOrder.verify(viewStateObserver)
-        .onChanged(new ClientOrderConfirmationTimeViewStateCounting(1_000));
+    for (int i = 20_000; i > 0; i -= 1000) {
+      inOrder.verify(viewStateObserver)
+          .onChanged(new ClientOrderConfirmationTimeViewStateCounting(i));
+    }
     inOrder.verify(viewStateObserver)
         .onChanged(any(ClientOrderConfirmationTimeViewStateNotCounting.class));
     verifyNoMoreInteractions(viewStateObserver);

@@ -1,5 +1,6 @@
 package com.cargopull.executor_driver.presentation.balance;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -9,6 +10,7 @@ import static org.mockito.Mockito.when;
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
 import androidx.lifecycle.Observer;
 import com.cargopull.executor_driver.ViewModelThreadTestRule;
+import com.cargopull.executor_driver.backend.analytics.ErrorReporter;
 import com.cargopull.executor_driver.entity.ExecutorBalance;
 import com.cargopull.executor_driver.gateway.DataMappingException;
 import com.cargopull.executor_driver.interactor.ExecutorBalanceUseCase;
@@ -36,6 +38,8 @@ public class BalanceViewModelTest {
   public TestRule rule = new InstantTaskExecutorRule();
   private BalanceViewModel viewModel;
   @Mock
+  private ErrorReporter errorReporter;
+  @Mock
   private ExecutorBalanceUseCase useCase;
   @Mock
   private ExecutorBalance executorBalance;
@@ -56,7 +60,21 @@ public class BalanceViewModelTest {
     publishSubject = PublishSubject.create();
     when(useCase.getExecutorBalance())
         .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
-    viewModel = new BalanceViewModelImpl(useCase);
+    viewModel = new BalanceViewModelImpl(errorReporter, useCase);
+  }
+
+  /* Проверяем отправку ошибок в репортер */
+
+  /**
+   * Должен отправить ошибку.
+   */
+  @Test
+  public void reportError() {
+    // Действие:
+    publishSubject.onError(new DataMappingException());
+
+    // Результат:
+    verify(errorReporter, only()).reportError(any(DataMappingException.class));
   }
 
   /* Тетсируем работу с юзкейсом. */

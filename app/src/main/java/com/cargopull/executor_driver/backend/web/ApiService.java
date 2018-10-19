@@ -96,4 +96,12 @@ public interface ApiService {
   Single<ApiSimpleResult> sendPreOrderDecision(
       @NonNull @Body ApiOrderDecision decision
   );
+
+  /*
+   *  Запрос отправки FCM токена.
+   */
+  @PUT("api/public/v1/mobile/fireBase/registrationToken")
+  Completable sendFcmInstanceID(
+      @Query("registrationToken") String carId
+  );
 }

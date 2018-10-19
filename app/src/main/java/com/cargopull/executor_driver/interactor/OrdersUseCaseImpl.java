@@ -3,7 +3,6 @@ package com.cargopull.executor_driver.interactor;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.cargopull.executor_driver.entity.Order;
-import com.cargopull.executor_driver.utils.ErrorReporter;
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
 import io.reactivex.schedulers.Schedulers;
@@ -13,8 +12,6 @@ import java.util.Set;
 
 public class OrdersUseCaseImpl implements OrdersUseCase {
 
-  @NonNull
-  private final ErrorReporter errorReporter;
   @NonNull
   private final CommonGateway<Set<Order>> gateway;
   @NonNull
@@ -26,10 +23,8 @@ public class OrdersUseCaseImpl implements OrdersUseCase {
   @NonNull
   private final PublishSubject<Order> removeSubject = PublishSubject.create();
 
-  public OrdersUseCaseImpl(@NonNull ErrorReporter errorReporter,
-      @NonNull CommonGateway<Set<Order>> gateway,
+  public OrdersUseCaseImpl(@NonNull CommonGateway<Set<Order>> gateway,
       @NonNull OrderUseCase cancelledOrderUseCase) {
-    this.errorReporter = errorReporter;
     this.gateway = gateway;
     this.cancelledOrderUseCase = cancelledOrderUseCase;
   }
@@ -60,7 +55,6 @@ public class OrdersUseCaseImpl implements OrdersUseCase {
             }
             return Flowable.error(throwable);
           })
-          .doOnError(errorReporter::reportError)
           .replay(1)
           .refCount();
     }

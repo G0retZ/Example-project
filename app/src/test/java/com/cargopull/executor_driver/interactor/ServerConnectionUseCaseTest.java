@@ -52,7 +52,7 @@ public class ServerConnectionUseCaseTest {
   @Test
   public void askGatewayToOpenSocket() {
     // Действие:
-    useCase.connect().test();
+    useCase.connect().test().isDisposed();
 
     // Результат:
     verify(gateway, only()).openSocket();
@@ -64,9 +64,9 @@ public class ServerConnectionUseCaseTest {
   @Test
   public void doNotAskGatewayToOpenSocketAgain() {
     // Действие:
-    useCase.connect().test();
-    useCase.connect().test();
-    useCase.connect().test();
+    useCase.connect().test().isDisposed();
+    useCase.connect().test().isDisposed();
+    useCase.connect().test().isDisposed();
 
     // Результат:
     verify(gateway, only()).openSocket();
@@ -81,9 +81,9 @@ public class ServerConnectionUseCaseTest {
     when(gateway.openSocket()).thenReturn(Flowable.empty());
 
     // Действие:
-    useCase.connect().test();
-    useCase.connect().test();
-    useCase.connect().test();
+    useCase.connect().test().isDisposed();
+    useCase.connect().test().isDisposed();
+    useCase.connect().test().isDisposed();
 
     // Результат:
     verify(gateway, times(3)).openSocket();
@@ -98,9 +98,9 @@ public class ServerConnectionUseCaseTest {
     when(gateway.openSocket()).thenReturn(Flowable.error(new AuthorizationException()));
 
     // Действие:
-    useCase.connect().test();
-    useCase.connect().test();
-    useCase.connect().test();
+    useCase.connect().test().isDisposed();
+    useCase.connect().test().isDisposed();
+    useCase.connect().test().isDisposed();
 
     // Результат:
     verify(gateway, times(3)).openSocket();
@@ -115,9 +115,9 @@ public class ServerConnectionUseCaseTest {
     when(gateway.openSocket()).thenReturn(Flowable.error(new Exception()));
 
     // Действие:
-    useCase.connect().test();
-    useCase.connect().test();
-    useCase.connect().test();
+    useCase.connect().test().isDisposed();
+    useCase.connect().test().isDisposed();
+    useCase.connect().test().isDisposed();
 
     // Результат:
     verify(gateway, only()).openSocket();
@@ -136,7 +136,7 @@ public class ServerConnectionUseCaseTest {
     );
 
     // Действие:
-    useCase.connect().test();
+    useCase.connect().test().isDisposed();
     testScheduler.advanceTimeBy(60, TimeUnit.MINUTES);
 
     // Результат:

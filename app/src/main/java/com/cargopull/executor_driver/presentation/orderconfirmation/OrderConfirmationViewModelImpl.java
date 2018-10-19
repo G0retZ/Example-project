@@ -5,6 +5,8 @@ import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
+import com.cargopull.executor_driver.backend.analytics.ErrorReporter;
+import com.cargopull.executor_driver.backend.analytics.EventLogger;
 import com.cargopull.executor_driver.entity.OrderConfirmationFailedException;
 import com.cargopull.executor_driver.entity.OrderOfferDecisionException;
 import com.cargopull.executor_driver.entity.OrderOfferExpiredException;
@@ -13,17 +15,19 @@ import com.cargopull.executor_driver.interactor.OrderConfirmationUseCase;
 import com.cargopull.executor_driver.presentation.CommonNavigate;
 import com.cargopull.executor_driver.presentation.SingleLiveEvent;
 import com.cargopull.executor_driver.presentation.ViewState;
-import com.cargopull.executor_driver.utils.EventLogger;
 import com.cargopull.executor_driver.utils.TimeUtils;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.internal.disposables.EmptyDisposable;
 import java.util.HashMap;
 import javax.inject.Inject;
+import retrofit2.HttpException;
 
 public class OrderConfirmationViewModelImpl extends ViewModel implements
     OrderConfirmationViewModel {
 
+  @NonNull
+  private final ErrorReporter errorReporter;
   @NonNull
   private final OrderConfirmationUseCase orderConfirmationUseCase;
   @NonNull
@@ -45,9 +49,11 @@ public class OrderConfirmationViewModelImpl extends ViewModel implements
 
   @Inject
   public OrderConfirmationViewModelImpl(
+      @NonNull ErrorReporter errorReporter,
       @NonNull OrderConfirmationUseCase orderConfirmationUseCase,
       @NonNull TimeUtils timeUtils,
       @Nullable EventLogger eventLogger) {
+    this.errorReporter = errorReporter;
     this.orderConfirmationUseCase = orderConfirmationUseCase;
     this.timeUtils = timeUtils;
     this.eventLogger = eventLogger;
@@ -95,9 +101,13 @@ public class OrderConfirmationViewModelImpl extends ViewModel implements
               } else if (t instanceof OrderOfferDecisionException) {
                 viewStateLiveData.postValue(lastViewState);
               } else if (t instanceof DataMappingException) {
+                errorReporter.reportError(t);
                 viewStateLiveData.postValue(lastViewState);
                 navigateLiveData.postValue(CommonNavigate.SERVER_DATA_ERROR);
               } else {
+                if (!(t instanceof HttpException)) {
+                  errorReporter.reportError(t);
+                }
                 viewStateLiveData.postValue(lastViewState);
                 navigateLiveData.postValue(CommonNavigate.NO_CONNECTION);
               }
@@ -132,9 +142,13 @@ public class OrderConfirmationViewModelImpl extends ViewModel implements
               } else if (t instanceof OrderOfferDecisionException) {
                 viewStateLiveData.postValue(lastViewState);
               } else if (t instanceof DataMappingException) {
+                errorReporter.reportError(t);
                 viewStateLiveData.postValue(lastViewState);
                 navigateLiveData.postValue(CommonNavigate.SERVER_DATA_ERROR);
               } else {
+                if (!(t instanceof HttpException)) {
+                  errorReporter.reportError(t);
+                }
                 viewStateLiveData.postValue(lastViewState);
                 navigateLiveData.postValue(CommonNavigate.NO_CONNECTION);
               }
@@ -176,6 +190,9 @@ public class OrderConfirmationViewModelImpl extends ViewModel implements
                 );
               },
               throwable -> {
+                if (!(throwable instanceof HttpException)) {
+                  errorReporter.reportError(throwable);
+                }
                 if (throwable instanceof DataMappingException) {
                   navigateLiveData.postValue(CommonNavigate.SERVER_DATA_ERROR);
                 }

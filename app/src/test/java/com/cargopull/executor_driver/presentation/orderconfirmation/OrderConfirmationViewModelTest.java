@@ -12,6 +12,8 @@ import static org.mockito.Mockito.when;
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
 import androidx.lifecycle.Observer;
 import com.cargopull.executor_driver.ViewModelThreadTestRule;
+import com.cargopull.executor_driver.backend.analytics.ErrorReporter;
+import com.cargopull.executor_driver.backend.analytics.EventLogger;
 import com.cargopull.executor_driver.backend.web.NoNetworkException;
 import com.cargopull.executor_driver.entity.OrderConfirmationFailedException;
 import com.cargopull.executor_driver.entity.OrderOfferDecisionException;
@@ -20,7 +22,6 @@ import com.cargopull.executor_driver.gateway.DataMappingException;
 import com.cargopull.executor_driver.interactor.OrderConfirmationUseCase;
 import com.cargopull.executor_driver.presentation.CommonNavigate;
 import com.cargopull.executor_driver.presentation.ViewState;
-import com.cargopull.executor_driver.utils.EventLogger;
 import com.cargopull.executor_driver.utils.Pair;
 import com.cargopull.executor_driver.utils.TimeUtils;
 import io.reactivex.BackpressureStrategy;
@@ -28,6 +29,8 @@ import io.reactivex.Flowable;
 import io.reactivex.FlowableEmitter;
 import io.reactivex.Single;
 import java.util.HashMap;
+import okhttp3.MediaType;
+import okhttp3.ResponseBody;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
@@ -38,6 +41,8 @@ import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
+import retrofit2.HttpException;
+import retrofit2.Response;
 
 @RunWith(MockitoJUnitRunner.class)
 public class OrderConfirmationViewModelTest {
@@ -47,6 +52,8 @@ public class OrderConfirmationViewModelTest {
   @Rule
   public TestRule rule = new InstantTaskExecutorRule();
   private OrderConfirmationViewModel viewModel;
+  @Mock
+  private ErrorReporter errorReporter;
   @Mock
   private OrderConfirmationUseCase useCase;
   @Mock
@@ -65,7 +72,277 @@ public class OrderConfirmationViewModelTest {
     when(useCase.getOrderDecisionTimeout()).thenReturn(
         Flowable.create(e -> emitter = e, BackpressureStrategy.BUFFER)
     );
-    viewModel = new OrderConfirmationViewModelImpl(useCase, timeUtils, eventLogger);
+    viewModel = new OrderConfirmationViewModelImpl(errorReporter, useCase, timeUtils, eventLogger);
+  }
+
+  /* Проверяем отправку ошибок в репортер */
+
+  /**
+   * Должен отправить ошибку полуения таймаута подиверждения заказа.
+   */
+  @Test
+  public void reportErrorForOrderTimeout() {
+    // Действие:
+    emitter.onError(new DataMappingException());
+
+    // Результат:
+    verify(errorReporter, only()).reportError(any(DataMappingException.class));
+  }
+
+  /**
+   * Не должен отправлять сетевую ошибку.
+   */
+  @Test
+  public void doNotReportOrderTimeoutNetworkError() {
+    // Действие:
+    emitter.onError(new HttpException(
+        Response.error(404, ResponseBody.create(MediaType.get("applocation/json"), ""))
+    ));
+
+    // Результат:
+    verifyZeroInteractions(errorReporter);
+  }
+
+  /**
+   * Должен отправить ошибку сети.
+   */
+  @Test
+  public void reportOrderTimeoutNoNetworkError() {
+    // Действие:
+    emitter.onError(new NoNetworkException());
+
+    // Результат:
+    verify(errorReporter, only()).reportError(any(NoNetworkException.class));
+  }
+
+  /**
+   * Не должен отправлять сетевую ошибку.
+   */
+  @Test
+  public void doNotReportAcceptNetworkError() {
+    // Дано:
+    when(useCase.sendDecision(anyBoolean())).thenReturn(Single.error(
+        new HttpException(
+            Response.error(404, ResponseBody.create(MediaType.get("applocation/json"), ""))
+        )
+    ));
+
+    // Действие:
+    viewModel.acceptOrder();
+
+    // Результат:
+    verifyZeroInteractions(errorReporter);
+  }
+
+  /**
+   * Должен отправить ошибку сети.
+   */
+  @Test
+  public void reportAcceptNoNetworkError() {
+    // Дано:
+    when(useCase.sendDecision(anyBoolean())).thenReturn(Single.error(new NoNetworkException()));
+
+    // Действие:
+    viewModel.acceptOrder();
+
+    // Результат:
+    verify(errorReporter, only()).reportError(any(NoNetworkException.class));
+  }
+
+  /**
+   * Должен отправить ошибку маппинга данных.
+   */
+  @Test
+  public void reportAcceptDataMapingError() {
+    // Дано:
+    when(useCase.sendDecision(anyBoolean())).thenReturn(Single.error(new DataMappingException()));
+
+    // Действие:
+    viewModel.acceptOrder();
+
+    // Результат:
+    verify(errorReporter, only()).reportError(any(DataMappingException.class));
+  }
+
+  /**
+   * Должен отправить другую ошибку.
+   */
+  @Test
+  public void reportAcceptOtherError() {
+    // Дано:
+    when(useCase.sendDecision(anyBoolean())).thenReturn(Single.error(new Exception()));
+
+    // Действие:
+    viewModel.acceptOrder();
+
+    // Результат:
+    verify(errorReporter, only()).reportError(any(Exception.class));
+  }
+
+  /**
+   * Не должен отправлять ошибку принятия заказа.
+   */
+  @Test
+  public void doNotReportAcceptOrderConfirmationFailedError() {
+    // Дано:
+    when(useCase.sendDecision(anyBoolean())).thenReturn(Single.error(
+        new OrderConfirmationFailedException("")
+    ));
+
+    // Действие:
+    viewModel.acceptOrder();
+
+    // Результат:
+    verifyZeroInteractions(errorReporter);
+  }
+
+  /**
+   * Не должен отправлять ошибку принятия заказа.
+   */
+  @Test
+  public void doNotReportAcceptOrderOfferExpiredError() {
+    // Дано:
+    when(useCase.sendDecision(anyBoolean())).thenReturn(Single.error(
+        new OrderOfferExpiredException("")
+    ));
+
+    // Действие:
+    viewModel.acceptOrder();
+
+    // Результат:
+    verifyZeroInteractions(errorReporter);
+  }
+
+  /**
+   * Не должен отправлять ошибку принятия заказа.
+   */
+  @Test
+  public void doNotReportAcceptOrderOfferDecisionError() {
+    // Дано:
+    when(useCase.sendDecision(anyBoolean())).thenReturn(Single.error(
+        new OrderOfferDecisionException()
+    ));
+
+    // Действие:
+    viewModel.acceptOrder();
+
+    // Результат:
+    verifyZeroInteractions(errorReporter);
+  }
+
+  /**
+   * Не должен отправлять сетевую ошибку.
+   */
+  @Test
+  public void doNotReportDeclineNetworkError() {
+    // Дано:
+    when(useCase.sendDecision(anyBoolean())).thenReturn(Single.error(
+        new HttpException(
+            Response.error(404, ResponseBody.create(MediaType.get("applocation/json"), ""))
+        )
+    ));
+
+    // Действие:
+    viewModel.declineOrder();
+
+    // Результат:
+    verifyZeroInteractions(errorReporter);
+  }
+
+  /**
+   * Должен отправить ошибку сети.
+   */
+  @Test
+  public void reportDeclineNoNetworkError() {
+    // Дано:
+    when(useCase.sendDecision(anyBoolean())).thenReturn(Single.error(new NoNetworkException()));
+
+    // Действие:
+    viewModel.declineOrder();
+
+    // Результат:
+    verify(errorReporter, only()).reportError(any(NoNetworkException.class));
+  }
+
+  /**
+   * Должен отправить ошибку маппинга данных.
+   */
+  @Test
+  public void reportDeclineDataMapingError() {
+    // Дано:
+    when(useCase.sendDecision(anyBoolean())).thenReturn(Single.error(new DataMappingException()));
+
+    // Действие:
+    viewModel.declineOrder();
+
+    // Результат:
+    verify(errorReporter, only()).reportError(any(DataMappingException.class));
+  }
+
+  /**
+   * Должен отправить другую ошибку.
+   */
+  @Test
+  public void reportDeclineOtherError() {
+    // Дано:
+    when(useCase.sendDecision(anyBoolean())).thenReturn(Single.error(new Exception()));
+
+    // Действие:
+    viewModel.declineOrder();
+
+    // Результат:
+    verify(errorReporter, only()).reportError(any(Exception.class));
+  }
+
+  /**
+   * Не должен отправлять ошибку отказа от заказа.
+   */
+  @Test
+  public void doNotReportDeclineOrderConfirmationFailedError() {
+    // Дано:
+    when(useCase.sendDecision(anyBoolean())).thenReturn(Single.error(
+        new OrderConfirmationFailedException("")
+    ));
+
+    // Действие:
+    viewModel.declineOrder();
+
+    // Результат:
+    verifyZeroInteractions(errorReporter);
+  }
+
+  /**
+   * Не должен отправлять ошибку принятия заказа.
+   */
+  @Test
+  public void doNotReportDeclineOrderOfferExpiredError() {
+    // Дано:
+    when(useCase.sendDecision(anyBoolean())).thenReturn(Single.error(
+        new OrderOfferExpiredException("")
+    ));
+
+    // Действие:
+    viewModel.declineOrder();
+
+    // Результат:
+    verifyZeroInteractions(errorReporter);
+  }
+
+  /**
+   * Не должен отправлять ошибку принятия заказа.
+   */
+  @Test
+  public void doNotReportDeclineOrderOfferDecisionError() {
+    // Дано:
+    when(useCase.sendDecision(anyBoolean())).thenReturn(Single.error(
+        new OrderOfferDecisionException()
+    ));
+
+    // Действие:
+    viewModel.declineOrder();
+
+    // Результат:
+    verifyZeroInteractions(errorReporter);
   }
 
   /* Тетсируем работу с юзкейсом принятия заказа. */
@@ -405,7 +682,7 @@ public class OrderConfirmationViewModelTest {
   public void setNoViewStateToLiveDataForExpiredError() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    viewModel = new OrderConfirmationViewModelImpl(useCase, timeUtils, eventLogger);
+    viewModel = new OrderConfirmationViewModelImpl(errorReporter, useCase, timeUtils, eventLogger);
     viewModel.getNavigationLiveData().observeForever(navigateObserver);
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
@@ -433,7 +710,7 @@ public class OrderConfirmationViewModelTest {
   public void setNoViewStateToLiveDataForOfferDecisionErrorWithoutMessage() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    viewModel = new OrderConfirmationViewModelImpl(useCase, timeUtils, eventLogger);
+    viewModel = new OrderConfirmationViewModelImpl(errorReporter, useCase, timeUtils, eventLogger);
     viewModel.getNavigationLiveData().observeForever(navigateObserver);
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 

@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
+import com.cargopull.executor_driver.backend.analytics.ErrorReporter;
 import com.cargopull.executor_driver.backend.web.NoNetworkException;
 import com.cargopull.executor_driver.entity.DriverBlockedException;
 import com.cargopull.executor_driver.entity.EmptyListException;
@@ -18,11 +19,14 @@ import io.reactivex.internal.disposables.EmptyDisposable;
 import java.util.NoSuchElementException;
 import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
+import retrofit2.HttpException;
 
 public class OnlineButtonViewModelImpl extends ViewModel implements OnlineButtonViewModel {
 
   private static final int DURATION_AFTER_SUCCESS = 5;
   private static final int DURATION_AFTER_FAIL = 5;
+  @NonNull
+  private final ErrorReporter errorReporter;
   @NonNull
   private final VehiclesAndOptionsUseCase vehiclesAndOptionsUseCase;
   @NonNull
@@ -35,7 +39,10 @@ public class OnlineButtonViewModelImpl extends ViewModel implements OnlineButton
   private Disposable timerDisposable = EmptyDisposable.INSTANCE;
 
   @Inject
-  public OnlineButtonViewModelImpl(@NonNull VehiclesAndOptionsUseCase vehiclesAndOptionsUseCase) {
+  public OnlineButtonViewModelImpl(
+      @NonNull ErrorReporter errorReporter,
+      @NonNull VehiclesAndOptionsUseCase vehiclesAndOptionsUseCase) {
+    this.errorReporter = errorReporter;
     this.vehiclesAndOptionsUseCase = vehiclesAndOptionsUseCase;
     viewStateLiveData = new MutableLiveData<>();
     navigateLiveData = new SingleLiveEvent<>();
@@ -68,6 +75,9 @@ public class OnlineButtonViewModelImpl extends ViewModel implements OnlineButton
               holdButton(DURATION_AFTER_SUCCESS);
             },
             throwable -> {
+              if (!(throwable instanceof HttpException)) {
+                errorReporter.reportError(throwable);
+              }
               if (throwable instanceof DriverBlockedException) {
                 navigateLiveData.postValue(OnlineButtonNavigate.DRIVER_BLOCKED);
               } else if (throwable instanceof NoSuchElementException) {
@@ -75,6 +85,8 @@ public class OnlineButtonViewModelImpl extends ViewModel implements OnlineButton
               } else if (throwable instanceof EmptyListException) {
                 navigateLiveData.postValue(OnlineButtonNavigate.NO_VEHICLES);
               } else if (throwable instanceof NoNetworkException) {
+                navigateLiveData.postValue(CommonNavigate.NO_CONNECTION);
+              } else if (throwable instanceof HttpException) {
                 navigateLiveData.postValue(CommonNavigate.NO_CONNECTION);
               } else {
                 navigateLiveData.postValue(CommonNavigate.SERVER_DATA_ERROR);

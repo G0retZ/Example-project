@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
+import com.cargopull.executor_driver.backend.analytics.ErrorReporter;
 import com.cargopull.executor_driver.interactor.NotificationMessageUseCase;
 import com.cargopull.executor_driver.presentation.SingleLiveEvent;
 import com.cargopull.executor_driver.presentation.ViewState;
@@ -15,6 +16,8 @@ import javax.inject.Inject;
 public class CancelledOrderViewModelImpl extends ViewModel implements CancelledOrderViewModel {
 
   @NonNull
+  private final ErrorReporter errorReporter;
+  @NonNull
   private final NotificationMessageUseCase cancelledOrderMessageUseCase;
   @NonNull
   private final SingleLiveEvent<ViewState<CancelledOrderViewActions>> messageLiveData;
@@ -22,8 +25,9 @@ public class CancelledOrderViewModelImpl extends ViewModel implements CancelledO
   private Disposable disposable = EmptyDisposable.INSTANCE;
 
   @Inject
-  public CancelledOrderViewModelImpl(
+  public CancelledOrderViewModelImpl(@NonNull ErrorReporter errorReporter,
       @NonNull NotificationMessageUseCase cancelledOrderMessageUseCase) {
+    this.errorReporter = errorReporter;
     this.cancelledOrderMessageUseCase = cancelledOrderMessageUseCase;
     messageLiveData = new SingleLiveEvent<>();
     loadMissedOrderMessages();
@@ -54,8 +58,7 @@ public class CancelledOrderViewModelImpl extends ViewModel implements CancelledO
                 );
               }
             },
-            throwable -> {
-            }
+            errorReporter::reportError
         );
   }
 

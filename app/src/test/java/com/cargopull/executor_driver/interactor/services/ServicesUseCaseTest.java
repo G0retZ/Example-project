@@ -1,6 +1,5 @@
 package com.cargopull.executor_driver.interactor.services;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
@@ -11,7 +10,6 @@ import com.cargopull.executor_driver.UseCaseThreadTestRule;
 import com.cargopull.executor_driver.backend.web.NoNetworkException;
 import com.cargopull.executor_driver.entity.EmptyListException;
 import com.cargopull.executor_driver.entity.Service;
-import com.cargopull.executor_driver.utils.ErrorReporter;
 import io.reactivex.Completable;
 import io.reactivex.Single;
 import java.util.ArrayList;
@@ -32,15 +30,13 @@ public class ServicesUseCaseTest {
   private ServicesUseCase useCase;
 
   @Mock
-  private ErrorReporter errorReporter;
-  @Mock
   private ServicesGateway gateway;
 
   @Before
   public void setUp() {
     when(gateway.getServices()).thenReturn(Single.never());
     when(gateway.sendSelectedServices(anyList())).thenReturn(Completable.never());
-    useCase = new ServicesUseCaseImpl(errorReporter, gateway);
+    useCase = new ServicesUseCaseImpl(gateway);
   }
 
   /* Проверяем работу с гейтвеем */
@@ -51,7 +47,7 @@ public class ServicesUseCaseTest {
   @Test
   public void askGatewayForServices() {
     // Действие:
-    useCase.loadServices().test();
+    useCase.loadServices().test().isDisposed();
 
     // Результат:
     verify(gateway, only()).getServices();
@@ -63,7 +59,7 @@ public class ServicesUseCaseTest {
   @Test
   public void doNotTouchGatewayIfNoServices() {
     // Действие:
-    useCase.setSelectedServices(new ArrayList<>()).test();
+    useCase.setSelectedServices(new ArrayList<>()).test().isDisposed();
 
     // Результат:
     verifyZeroInteractions(gateway);
@@ -81,7 +77,7 @@ public class ServicesUseCaseTest {
             new Service(1, "n2", 10, false),
             new Service(2, "n3", 130, false)
         )
-    ).test();
+    ).test().isDisposed();
 
     // Результат:
     verifyZeroInteractions(gateway);
@@ -99,7 +95,7 @@ public class ServicesUseCaseTest {
             new Service(1, "n2", 10, false),
             new Service(2, "n3", 130, true)
         )
-    ).test();
+    ).test().isDisposed();
 
     // Результат:
     verify(gateway, only()).sendSelectedServices(
@@ -108,132 +104,6 @@ public class ServicesUseCaseTest {
             new Service(2, "n3", 130, true)
         )
     );
-  }
-
-  /* Проверяем отправку ошибок в репортер */
-
-  /**
-   * Не должен отправлять ошибку сети.
-   */
-  @Test
-  public void doNotReportNoNetworkErrorForServices() {
-    // Дано:
-    when(gateway.getServices()).thenReturn(Single.error(new NoNetworkException()));
-
-    // Действие:
-    useCase.loadServices().test();
-
-    // Результат:
-    verifyZeroInteractions(errorReporter);
-  }
-
-  /**
-   * Должен отправить ошибку отсуствствия доступных услуг.
-   */
-  @Test
-  public void reportNoVehiclesAvailableError() {
-    // Дано:
-    when(gateway.getServices()).thenReturn(Single.just(new ArrayList<>()));
-
-    // Действие:
-    useCase.loadServices().test();
-
-    // Результат:
-    verify(errorReporter, only()).reportError(any(EmptyListException.class));
-  }
-
-  /**
-   * Не должен отправлять ошибку.
-   */
-  @Test
-  public void doNotReportForServicesListSuccess() {
-    // Дано:
-    when(gateway.getServices()).thenReturn(Single.just(
-        Arrays.asList(
-            new Service(0, "n1", 100, true),
-            new Service(1, "n2", 10, false),
-            new Service(2, "n3", 130, true)
-        )
-    ));
-
-    // Действие:
-    useCase.loadServices().test();
-
-    // Результат:
-    verifyZeroInteractions(errorReporter);
-  }
-
-  /**
-   * Должен отправить ошибку отсуствствия выбранных услуг.
-   */
-  @Test
-  public void reportNoVehiclesAvailableErrorForEmptyList() {
-    // Действие и Результат:
-    useCase.setSelectedServices(new ArrayList<>()).test();
-
-    // Результат:
-    verify(errorReporter, only()).reportError(any(EmptyListException.class));
-  }
-
-  /**
-   * Должен отправить ошибку отсуствствия выбранных услуг.
-   */
-  @Test
-  public void reportNoVehiclesAvailableErrorForNoSelectedServices() {
-    // Действие и Результат:
-    useCase.setSelectedServices(
-        Arrays.asList(
-            new Service(0, "n1", 100, false),
-            new Service(1, "n2", 10, false),
-            new Service(2, "n3", 130, false)
-        )
-    ).test();
-
-    // Результат:
-    verify(errorReporter, only()).reportError(any(EmptyListException.class));
-  }
-
-  /**
-   * Не должен отправлять ошибку сети.
-   */
-  @Test
-  public void doNotReportNoNetworkErrorForSetServices() {
-    // Дано:
-    when(gateway.sendSelectedServices(anyList()))
-        .thenReturn(Completable.error(new NoNetworkException()));
-
-    // Действие:
-    useCase.setSelectedServices(
-        Arrays.asList(
-            new Service(0, "n1", 100, true),
-            new Service(1, "n2", 10, false),
-            new Service(2, "n3", 130, true)
-        )
-    ).test();
-
-    // Результат:
-    verifyZeroInteractions(errorReporter);
-  }
-
-  /**
-   * Не должен отправлять ошибку.
-   */
-  @Test
-  public void doNotReportForSuccessToSetServices() {
-    // Дано:
-    when(gateway.sendSelectedServices(anyList())).thenReturn(Completable.complete());
-
-    // Действие:
-    useCase.setSelectedServices(
-        Arrays.asList(
-            new Service(0, "n1", 100, true),
-            new Service(1, "n2", 10, false),
-            new Service(2, "n3", 130, true)
-        )
-    ).test();
-
-    // Результат:
-    verifyZeroInteractions(errorReporter);
   }
 
   /* Проверяем ответы на запрос загрузки списка услуг */

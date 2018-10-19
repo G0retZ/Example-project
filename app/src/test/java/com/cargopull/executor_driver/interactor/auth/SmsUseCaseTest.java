@@ -57,7 +57,7 @@ public class SmsUseCaseTest {
   @Test
   public void doNotTouchDataSharer() {
     // Действие:
-    useCase.sendMeCode().test();
+    useCase.sendMeCode().test().isDisposed();
 
     // Результат:
     verify(phoneNumberReceiver, only()).get();
@@ -76,7 +76,7 @@ public class SmsUseCaseTest {
     when(phoneNumberReceiver.get()).thenReturn(Observable.just("1", "2", "3"));
 
     // Действие:
-    useCase.sendMeCode().test();
+    useCase.sendMeCode().test().isDisposed();
 
     // Результат:
     verify(phoneNumberValidator, only()).validate("1");
@@ -132,7 +132,7 @@ public class SmsUseCaseTest {
     when(phoneNumberReceiver.get()).thenReturn(Observable.just("012345", "2", "3"));
 
     // Действие:
-    useCase.sendMeCode().test();
+    useCase.sendMeCode().test().isDisposed();
 
     // Результат:
     verifyZeroInteractions(gateway);
@@ -147,7 +147,7 @@ public class SmsUseCaseTest {
     when(phoneNumberReceiver.get()).thenReturn(Observable.just("0123456", "2", "3"));
 
     // Действие:
-    useCase.sendMeCode().test();
+    useCase.sendMeCode().test().isDisposed();
 
     // Результат:
     verify(gateway, only()).sendMeCode("0123456");

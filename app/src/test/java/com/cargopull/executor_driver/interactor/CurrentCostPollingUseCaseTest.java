@@ -1,13 +1,11 @@
 package com.cargopull.executor_driver.interactor;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.cargopull.executor_driver.UseCaseThreadTestRule;
 import com.cargopull.executor_driver.gateway.DataMappingException;
-import com.cargopull.executor_driver.utils.ErrorReporter;
 import io.reactivex.Completable;
 import io.reactivex.observers.TestObserver;
 import org.junit.Before;
@@ -26,14 +24,12 @@ public class CurrentCostPollingUseCaseTest {
   private CurrentCostPollingUseCase currentCostPollingUseCase;
 
   @Mock
-  private ErrorReporter errorReporter;
-  @Mock
   private CurrentCostPollingGateway gateway;
 
   @Before
   public void setUp() {
     when(gateway.startPolling()).thenReturn(Completable.never());
-    currentCostPollingUseCase = new CurrentCostPollingUseCaseImpl(errorReporter, gateway);
+    currentCostPollingUseCase = new CurrentCostPollingUseCaseImpl(gateway);
   }
 
   /* Проверяем работу с гейтвеем */
@@ -44,30 +40,13 @@ public class CurrentCostPollingUseCaseTest {
   @Test
   public void askGatewayForPollingTimers() {
     // Действие:
-    currentCostPollingUseCase.listenForPolling().test();
-    currentCostPollingUseCase.listenForPolling().test();
-    currentCostPollingUseCase.listenForPolling().test();
-    currentCostPollingUseCase.listenForPolling().test();
+    currentCostPollingUseCase.listenForPolling().test().isDisposed();
+    currentCostPollingUseCase.listenForPolling().test().isDisposed();
+    currentCostPollingUseCase.listenForPolling().test().isDisposed();
+    currentCostPollingUseCase.listenForPolling().test().isDisposed();
 
     // Результат:
     verify(gateway, only()).startPolling();
-  }
-
-  /* Проверяем отправку ошибок в репортер */
-
-  /**
-   * Должен отправить ошибку.
-   */
-  @Test
-  public void reportError() {
-    // Дано:
-    when(gateway.startPolling()).thenReturn(Completable.error(DataMappingException::new));
-
-    // Действие:
-    currentCostPollingUseCase.listenForPolling().test();
-
-    // Результат:
-    verify(errorReporter, only()).reportError(any(DataMappingException.class));
   }
 
   /* Проверяем ответы */

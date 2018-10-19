@@ -10,6 +10,7 @@ import static org.mockito.Mockito.when;
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
 import androidx.lifecycle.Observer;
 import com.cargopull.executor_driver.ViewModelThreadTestRule;
+import com.cargopull.executor_driver.backend.analytics.ErrorReporter;
 import com.cargopull.executor_driver.entity.Order;
 import com.cargopull.executor_driver.entity.OrderCancelledException;
 import com.cargopull.executor_driver.entity.OrderOfferDecisionException;
@@ -41,6 +42,8 @@ public class UpcomingPreOrderViewModelTest {
   public TestRule rule = new InstantTaskExecutorRule();
   private UpcomingPreOrderViewModel viewModel;
   @Mock
+  private ErrorReporter errorReporter;
+  @Mock
   private OrderUseCase orderUseCase;
   @Mock
   private Order order;
@@ -60,7 +63,21 @@ public class UpcomingPreOrderViewModelTest {
     when(orderUseCase.getOrders()).thenReturn(
         Flowable.create(e -> emitter = e, BackpressureStrategy.BUFFER)
     );
-    viewModel = new UpcomingPreOrderViewModelImpl(orderUseCase);
+    viewModel = new UpcomingPreOrderViewModelImpl(errorReporter, orderUseCase);
+  }
+
+  /* Проверяем отправку ошибок в репортер */
+
+  /**
+   * Должен отправить ошибку.
+   */
+  @Test
+  public void reportError() {
+    // Действие:
+    emitter.onError(new DataMappingException());
+
+    // Результат:
+    verify(errorReporter, only()).reportError(any(DataMappingException.class));
   }
 
   /* Тетсируем работу с юзкейсом заказа. */
@@ -150,7 +167,7 @@ public class UpcomingPreOrderViewModelTest {
   public void setExpiredViewStateToLiveDataForOrderOfferDecision() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    viewModel = new UpcomingPreOrderViewModelImpl(orderUseCase);
+    viewModel = new UpcomingPreOrderViewModelImpl(errorReporter, orderUseCase);
     viewModel.getNavigationLiveData().observeForever(navigateObserver);
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
@@ -174,7 +191,7 @@ public class UpcomingPreOrderViewModelTest {
   public void setExpiredViewStateToLiveData() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    viewModel = new UpcomingPreOrderViewModelImpl(orderUseCase);
+    viewModel = new UpcomingPreOrderViewModelImpl(errorReporter, orderUseCase);
     viewModel.getNavigationLiveData().observeForever(navigateObserver);
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
@@ -198,7 +215,7 @@ public class UpcomingPreOrderViewModelTest {
   public void setCancelledViewStateToLiveData() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    viewModel = new UpcomingPreOrderViewModelImpl(orderUseCase);
+    viewModel = new UpcomingPreOrderViewModelImpl(errorReporter, orderUseCase);
     viewModel.getNavigationLiveData().observeForever(navigateObserver);
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 

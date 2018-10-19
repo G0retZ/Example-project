@@ -5,6 +5,7 @@ import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
+import com.cargopull.executor_driver.backend.analytics.ErrorReporter;
 import com.cargopull.executor_driver.entity.ExecutorState;
 import com.cargopull.executor_driver.gateway.DataMappingException;
 import com.cargopull.executor_driver.interactor.ExecutorStateNotOnlineUseCase;
@@ -19,6 +20,8 @@ import javax.inject.Inject;
 
 public class OnlineSwitchViewModelImpl extends ViewModel implements OnlineSwitchViewModel {
 
+  @NonNull
+  private final ErrorReporter errorReporter;
   @NonNull
   private final ExecutorStateNotOnlineUseCase executorStateNotOnlineUseCase;
   @NonNull
@@ -36,8 +39,10 @@ public class OnlineSwitchViewModelImpl extends ViewModel implements OnlineSwitch
 
   @Inject
   public OnlineSwitchViewModelImpl(
+      @NonNull ErrorReporter errorReporter,
       @NonNull ExecutorStateNotOnlineUseCase executorStateNotOnlineUseCase,
       @NonNull ExecutorStateUseCase executorStateUseCase) {
+    this.errorReporter = errorReporter;
     this.executorStateNotOnlineUseCase = executorStateNotOnlineUseCase;
     this.executorStateUseCase = executorStateUseCase;
     viewStateLiveData = new MutableLiveData<>();
@@ -72,6 +77,7 @@ public class OnlineSwitchViewModelImpl extends ViewModel implements OnlineSwitch
                 () -> {
                 },
                 throwable -> {
+                  errorReporter.reportError(throwable);
                   if (throwable instanceof IllegalStateException) {
                     viewStateLiveData.postValue(new OnlineSwitchViewState(true));
                     navigateLiveData.postValue(CommonNavigate.NO_CONNECTION);
@@ -90,6 +96,7 @@ public class OnlineSwitchViewModelImpl extends ViewModel implements OnlineSwitch
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(this::onNextState,
             throwable -> {
+              errorReporter.reportError(throwable);
               if (throwable instanceof DataMappingException) {
                 navigateLiveData.postValue(CommonNavigate.SERVER_DATA_ERROR);
               }

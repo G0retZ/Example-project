@@ -1,4 +1,4 @@
-package com.cargopull.executor_driver.interactor.auth;
+package com.cargopull.executor_driver.gateway;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -6,10 +6,10 @@ import com.cargopull.executor_driver.backend.settings.AppSettingsService;
 import com.cargopull.executor_driver.interactor.PersistentDataSharer;
 import javax.inject.Inject;
 
-public class LoginSharer extends PersistentDataSharer<String> {
+public class LoginGateway extends PersistentDataSharer<String> {
 
   @Inject
-  public LoginSharer(@NonNull AppSettingsService appSettingsService) {
+  public LoginGateway(@NonNull AppSettingsService appSettingsService) {
     super(appSettingsService);
   }
 

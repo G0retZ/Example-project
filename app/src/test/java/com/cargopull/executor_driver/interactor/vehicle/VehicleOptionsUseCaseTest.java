@@ -14,7 +14,6 @@ import com.cargopull.executor_driver.entity.OptionBoolean;
 import com.cargopull.executor_driver.entity.OptionNumeric;
 import com.cargopull.executor_driver.entity.Vehicle;
 import com.cargopull.executor_driver.interactor.DataReceiver;
-import com.cargopull.executor_driver.utils.ErrorReporter;
 import io.reactivex.Completable;
 import io.reactivex.Observable;
 import io.reactivex.Single;
@@ -38,8 +37,6 @@ public class VehicleOptionsUseCaseTest {
   private VehicleOptionsUseCase useCase;
 
   @Mock
-  private ErrorReporter errorReporter;
-  @Mock
   private VehicleOptionsGateway gateway;
   @Mock
   private DataReceiver<Vehicle> vehicleChoiceReceiver;
@@ -50,8 +47,8 @@ public class VehicleOptionsUseCaseTest {
 
   @Before
   public void setUp() {
-    useCase = new VehicleOptionsUseCaseImpl(errorReporter, gateway, vehicleChoiceReceiver,
-        lastUsedVehicleGateway, vehiclesAndOptionsGateway);
+    useCase = new VehicleOptionsUseCaseImpl(gateway, vehicleChoiceReceiver, lastUsedVehicleGateway,
+        vehiclesAndOptionsGateway);
     when(gateway.sendVehicleOptions(any(Vehicle.class), anyList())).thenReturn(Completable.never());
     when(vehicleChoiceReceiver.get()).thenReturn(Observable.never());
     when(lastUsedVehicleGateway.saveLastUsedVehicleId(any())).thenReturn(Completable.never());
@@ -66,7 +63,7 @@ public class VehicleOptionsUseCaseTest {
   @Test
   public void askDataSharerForSelectedVehicle() {
     // Действие:
-    useCase.getVehicleOptions().test();
+    useCase.getVehicleOptions().test().isDisposed();
 
     // Результат:
     verify(vehicleChoiceReceiver, only()).get();
@@ -83,7 +80,7 @@ public class VehicleOptionsUseCaseTest {
             new OptionNumeric(1, "name1", "desc1", true, -5, -18, 0),
             new OptionBoolean(2, "name2", "desc2", true, false)
         )), new ArrayList<>()
-    ).test();
+    ).test().isDisposed();
 
     // Результат:
     verifyZeroInteractions(vehicleChoiceReceiver);
@@ -97,7 +94,7 @@ public class VehicleOptionsUseCaseTest {
   @Test
   public void askVehiclesAndOptionsGatewayForVehicles() {
     // Действие:
-    useCase.getDriverOptions().test();
+    useCase.getDriverOptions().test().isDisposed();
 
     // Результат:
     verify(vehiclesAndOptionsGateway, only()).getExecutorOptions();
@@ -114,7 +111,7 @@ public class VehicleOptionsUseCaseTest {
             new OptionNumeric(1, "name1", "desc1", true, -5, -18, 0),
             new OptionBoolean(2, "name2", "desc2", true, false)
         )), new ArrayList<>()
-    ).test();
+    ).test().isDisposed();
 
     // Результат:
     verifyZeroInteractions(vehiclesAndOptionsGateway);
@@ -204,8 +201,7 @@ public class VehicleOptionsUseCaseTest {
     when(vehicleChoiceReceiver.get()).thenReturn(Observable.fromIterable(vehicles));
 
     // Действие
-    TestObserver<List<Option>> testObserver =
-        useCase.getVehicleOptions().test();
+    TestObserver<List<Option>> testObserver = useCase.getVehicleOptions().test();
 
     // Результат:
     testObserver.assertValues(
@@ -288,7 +284,7 @@ public class VehicleOptionsUseCaseTest {
             new OptionNumeric(1, "name1", "desc1", true, -5, -18, 0),
             new OptionBoolean(2, "name2", "desc2", true, false)
         )), new ArrayList<>()
-    ).test();
+    ).test().isDisposed();
 
     // Результат:
     verifyZeroInteractions(gateway);
@@ -310,7 +306,7 @@ public class VehicleOptionsUseCaseTest {
     when(vehicleChoiceReceiver.get()).thenReturn(Observable.just(vehicle));
 
     // Действие:
-    useCase.getVehicleOptions().test();
+    useCase.getVehicleOptions().test().isDisposed();
     useCase.setSelectedVehicleAndOptions(
         new ArrayList<>(Arrays.asList(
             new OptionNumeric(0, "name0", "desc0", true, 40, 0, 120),
@@ -320,7 +316,7 @@ public class VehicleOptionsUseCaseTest {
             new OptionNumeric(1, "name1", "desc1", true, -5, -18, 0),
             new OptionBoolean(2, "name2", "desc2", true, false)
         )
-    ).test();
+    ).test().isDisposed();
 
     // Результат:
     vehicle = new Vehicle(12, "manufacturer", "model", "color", "license", false);
@@ -353,7 +349,7 @@ public class VehicleOptionsUseCaseTest {
     when(vehicleChoiceReceiver.get()).thenReturn(Observable.just(vehicle));
 
     // Действие:
-    useCase.getVehicleOptions().test();
+    useCase.getVehicleOptions().test().isDisposed();
     useCase.setSelectedVehicleAndOptions(
         new ArrayList<>(Arrays.asList(
             new OptionNumeric(0, "name0", "desc0", true, 40, 0, 120),
@@ -363,125 +359,10 @@ public class VehicleOptionsUseCaseTest {
             new OptionNumeric(1, "name1", "desc1", true, -5, -18, 0),
             new OptionBoolean(2, "name2", "desc2", true, false)
         )
-    ).test();
+    ).test().isDisposed();
 
     // Результат:
     verify(lastUsedVehicleGateway, only()).saveLastUsedVehicleId(vehicle);
-  }
-
-  /* Проверяем отправку ошибок в репортер */
-
-  /**
-   * Должет отправить ошибку преобразования данных.
-   */
-  @Test
-  public void reportDataMappingError() {
-    // Действие:
-    useCase.setSelectedVehicleAndOptions(
-        new ArrayList<>(Arrays.asList(
-            new OptionNumeric(1, "name1", "desc1", true, -5, -18, 0),
-            new OptionBoolean(2, "name2", "desc2", true, false)
-        )), new ArrayList<>()
-    ).test();
-
-    // Результат:
-    verify(errorReporter, only()).reportError(any(IllegalStateException.class));
-  }
-
-  /**
-   * Не должен отправлять ошибку сети.
-   */
-  @Test
-  public void reportNoNetworkError() {
-    // Дано:
-    Vehicle vehicle = new Vehicle(12, "manufacturer", "model", "color", "license", false);
-    vehicle.addVehicleOptions(
-        new OptionNumeric(0, "name0", "desc0", false, 10, 0, 20),
-        new OptionNumeric(1, "name1", "desc1", true, -5, -18, 0),
-        new OptionBoolean(2, "name2", "desc2", true, false),
-        new OptionBoolean(3, "name3", "desc3", false, true)
-    );
-    when(vehicleChoiceReceiver.get()).thenReturn(Observable.just(vehicle));
-    when(gateway.sendVehicleOptions(any(Vehicle.class), anyList()))
-        .thenReturn(Completable.error(NoNetworkException::new));
-
-    // Действие:
-    useCase.getVehicleOptions().test();
-    useCase.setSelectedVehicleAndOptions(
-        Arrays.asList(
-            new OptionNumeric(0, "name0", "desc0", true, 40, 0, 120),
-            new OptionNumeric(1, "name1", "desc1", true, -50, 20, 30),
-            new OptionBoolean(2, "name2", "desc2", true, false)
-        ), new ArrayList<>()
-    ).test();
-
-    // Результат:
-    verifyZeroInteractions(errorReporter);
-  }
-
-  /**
-   * Должен отправить ошибку аргумента.
-   */
-  @Test
-  public void reportArgumentError() {
-    // Дано:
-    Vehicle vehicle = new Vehicle(12, "manufacturer", "model", "color", "license", false);
-    vehicle.addVehicleOptions(
-        new OptionNumeric(0, "name0", "desc0", false, 10, 0, 20),
-        new OptionNumeric(1, "name1", "desc1", true, -5, -18, 0),
-        new OptionBoolean(2, "name2", "desc2", true, false),
-        new OptionBoolean(3, "name3", "desc3", false, true)
-    );
-    when(vehicleChoiceReceiver.get()).thenReturn(Observable.just(vehicle));
-    when(gateway.sendVehicleOptions(any(Vehicle.class), anyList()))
-        .thenReturn(Completable.complete());
-    when(lastUsedVehicleGateway.saveLastUsedVehicleId(any()))
-        .thenReturn(Completable.error(new IllegalArgumentException()));
-
-    // Действие:
-    useCase.getVehicleOptions().test();
-    useCase.setSelectedVehicleAndOptions(
-        Arrays.asList(
-            new OptionNumeric(0, "name0", "desc0", true, 40, 0, 120),
-            new OptionNumeric(1, "name1", "desc1", true, -50, 20, 30),
-            new OptionBoolean(2, "name2", "desc2", true, false)
-        ), new ArrayList<>()
-    ).test();
-
-    // Результат:
-    verify(errorReporter, only()).reportError(any(IllegalArgumentException.class));
-  }
-
-  /**
-   * Не должен отправлять ошибку.
-   */
-  @Test
-  public void reportSetSelectedVehicleOptionsSuccessful() {
-    // Дано:
-    Vehicle vehicle = new Vehicle(12, "manufacturer", "model", "color", "license", false);
-    vehicle.addVehicleOptions(
-        new OptionNumeric(0, "name0", "desc0", false, 10, 0, 20),
-        new OptionNumeric(1, "name1", "desc1", true, -5, -18, 0),
-        new OptionBoolean(2, "name2", "desc2", true, false),
-        new OptionBoolean(3, "name3", "desc3", false, true)
-    );
-    when(vehicleChoiceReceiver.get()).thenReturn(Observable.just(vehicle));
-    when(gateway.sendVehicleOptions(any(Vehicle.class), anyList()))
-        .thenReturn(Completable.complete());
-    when(lastUsedVehicleGateway.saveLastUsedVehicleId(any())).thenReturn(Completable.complete());
-
-    // Действие:
-    useCase.getVehicleOptions().test();
-    useCase.setSelectedVehicleAndOptions(
-        Arrays.asList(
-            new OptionNumeric(0, "name0", "desc0", true, 40, 0, 120),
-            new OptionNumeric(1, "name1", "desc1", true, -50, 20, 30),
-            new OptionBoolean(2, "name2", "desc2", true, false)
-        ), new ArrayList<>()
-    ).test();
-
-    // Результат:
-    verifyZeroInteractions(errorReporter);
   }
 
   /* Проверяем ответы на передачу опций ТС для выхода на линию */
@@ -518,7 +399,7 @@ public class VehicleOptionsUseCaseTest {
         .thenReturn(Completable.error(NoNetworkException::new));
 
     // Действие:
-    useCase.getVehicleOptions().test();
+    useCase.getVehicleOptions().test().isDisposed();
 
     // Результат:
     useCase.setSelectedVehicleAndOptions(
@@ -550,7 +431,7 @@ public class VehicleOptionsUseCaseTest {
         .thenReturn(Completable.error(new IllegalArgumentException()));
 
     // Действие:
-    useCase.getVehicleOptions().test();
+    useCase.getVehicleOptions().test().isDisposed();
 
     // Результат:
     useCase.setSelectedVehicleAndOptions(
@@ -581,7 +462,7 @@ public class VehicleOptionsUseCaseTest {
     when(lastUsedVehicleGateway.saveLastUsedVehicleId(any())).thenReturn(Completable.complete());
 
     // Действие:
-    useCase.getVehicleOptions().test();
+    useCase.getVehicleOptions().test().isDisposed();
 
     // Результат:
     useCase.setSelectedVehicleAndOptions(

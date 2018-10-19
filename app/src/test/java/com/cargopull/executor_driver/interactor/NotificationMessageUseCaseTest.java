@@ -1,13 +1,11 @@
 package com.cargopull.executor_driver.interactor;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.cargopull.executor_driver.UseCaseThreadTestRule;
 import com.cargopull.executor_driver.gateway.DataMappingException;
-import com.cargopull.executor_driver.utils.ErrorReporter;
 import io.reactivex.Flowable;
 import io.reactivex.subscribers.TestSubscriber;
 import org.junit.Before;
@@ -22,18 +20,14 @@ public class NotificationMessageUseCaseTest {
 
   @ClassRule
   public static final UseCaseThreadTestRule classRule = new UseCaseThreadTestRule();
-
   private NotificationMessageUseCase useCase;
-
-  @Mock
-  private ErrorReporter errorReporter;
   @Mock
   private CommonGateway<String> gateway;
 
   @Before
   public void setUp() {
     when(gateway.getData()).thenReturn(Flowable.never());
-    useCase = new NotificationMessageUseCaseImpl(errorReporter, gateway);
+    useCase = new NotificationMessageUseCaseImpl(gateway);
   }
 
   /* Проверяем работу с гейтвеем */
@@ -44,30 +38,13 @@ public class NotificationMessageUseCaseTest {
   @Test
   public void askGatewayForMissedOrdersMessages() {
     // Действие:
-    useCase.getNotificationMessages().test();
-    useCase.getNotificationMessages().test();
-    useCase.getNotificationMessages().test();
-    useCase.getNotificationMessages().test();
+    useCase.getNotificationMessages().test().isDisposed();
+    useCase.getNotificationMessages().test().isDisposed();
+    useCase.getNotificationMessages().test().isDisposed();
+    useCase.getNotificationMessages().test().isDisposed();
 
     // Результат:
     verify(gateway, only()).getData();
-  }
-
-  /* Проверяем отправку ошибок в репортер */
-
-  /**
-   * Должен отправить ошибку.
-   */
-  @Test
-  public void reportError() {
-    // Дано:
-    when(gateway.getData()).thenReturn(Flowable.error(DataMappingException::new));
-
-    // Действие:
-    useCase.getNotificationMessages().test();
-
-    // Результат:
-    verify(errorReporter, only()).reportError(any(DataMappingException.class));
   }
 
   /* Проверяем ответы */

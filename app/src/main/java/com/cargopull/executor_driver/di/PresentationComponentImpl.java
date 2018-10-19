@@ -5,7 +5,6 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProviders;
-import com.cargopull.executor_driver.interactor.MemoryDataSharer;
 import com.cargopull.executor_driver.presentation.ViewModelFactory;
 import com.cargopull.executor_driver.presentation.announcement.AnnouncementViewModel;
 import com.cargopull.executor_driver.presentation.announcement.AnnouncementViewModelImpl;
@@ -91,17 +90,16 @@ import com.cargopull.executor_driver.presentation.vehicleoptions.VehicleOptionsV
 import com.cargopull.executor_driver.presentation.vehicleoptions.VehicleOptionsViewModelImpl;
 import com.cargopull.executor_driver.presentation.waitingforclient.WaitingForClientViewModel;
 import com.cargopull.executor_driver.presentation.waitingforclient.WaitingForClientViewModelImpl;
-import com.cargopull.executor_driver.utils.EventLogger;
 import com.cargopull.executor_driver.utils.TimeUtils;
 
 class PresentationComponentImpl implements PresentationComponent {
 
   @NonNull
-  private final EventLogger eventLogger;
-  @NonNull
-  private final MemoryDataSharer<String> loginSharer;
+  private final BackendComponent backendComponent;
   @NonNull
   private final InteractorComponent interactorComponent;
+  @NonNull
+  private final RepositoryComponent repositoryComponent;
   @NonNull
   private final TimeUtils timeUtils;
   @NonNull
@@ -143,13 +141,12 @@ class PresentationComponentImpl implements PresentationComponent {
   @Nullable
   private UpcomingPreOrderViewModel upcomingPreOrderAvailabilityViewModel;
 
-  PresentationComponentImpl(@NonNull EventLogger eventLogger,
-      @NonNull MemoryDataSharer<String> loginSharer,
-      @NonNull InteractorComponent interactorComponent,
+  PresentationComponentImpl(
+      @NonNull BackendComponent backendComponent,
       @NonNull TimeUtils timeUtils) {
-    this.eventLogger = eventLogger;
-    this.loginSharer = loginSharer;
-    this.interactorComponent = interactorComponent;
+    this.backendComponent = backendComponent;
+    this.repositoryComponent = new RepositoryComponentImpl(backendComponent);
+    this.interactorComponent = new InteractorComponentImpl(timeUtils, repositoryComponent);
     this.timeUtils = timeUtils;
     servicesListItems = new ServicesListItems();
   }
@@ -167,7 +164,9 @@ class PresentationComponentImpl implements PresentationComponent {
   @Override
   public BalanceViewModel getBalanceViewModel() {
     if (balanceViewModel == null) {
-      balanceViewModel = new BalanceViewModelImpl(interactorComponent.getExecutorBalanceUseCase());
+      balanceViewModel = new BalanceViewModelImpl(
+          backendComponent.getErrorReporter(),
+          interactorComponent.getExecutorBalanceUseCase());
     }
     return balanceViewModel;
   }
@@ -203,6 +202,7 @@ class PresentationComponentImpl implements PresentationComponent {
   public CancelledOrderViewModel getCancelledOrderViewModel() {
     if (cancelledOrderViewModel == null) {
       cancelledOrderViewModel = new CancelledOrderViewModelImpl(
+          backendComponent.getErrorReporter(),
           interactorComponent.getCancelledOrderMessageUseCase()
       );
     }
@@ -218,7 +218,8 @@ class PresentationComponentImpl implements PresentationComponent {
     return getViewModelInstance(
         fragment,
         CancelOrderViewModelImpl.class,
-        new CancelOrderViewModelImpl(interactorComponent.getCancelOrderUseCase())
+        new CancelOrderViewModelImpl(backendComponent.getErrorReporter(),
+            interactorComponent.getCancelOrderUseCase())
     );
   }
 
@@ -227,6 +228,7 @@ class PresentationComponentImpl implements PresentationComponent {
   public CancelOrderReasonsViewModel getCancelOrderReasonsViewModel() {
     if (cancelOrderReasonsViewModel == null) {
       cancelOrderReasonsViewModel = new CancelOrderReasonsViewModelImpl(
+          backendComponent.getErrorReporter(),
           interactorComponent.getCancelOrderReasonsUseCase()
       );
     }
@@ -242,7 +244,8 @@ class PresentationComponentImpl implements PresentationComponent {
     return getViewModelInstance(
         fragment,
         ChooseVehicleViewModelImpl.class,
-        new ChooseVehicleViewModelImpl(interactorComponent.getVehicleChoiceUseCase())
+        new ChooseVehicleViewModelImpl(backendComponent.getErrorReporter(),
+            interactorComponent.getVehicleChoiceUseCase())
     );
   }
 
@@ -255,7 +258,8 @@ class PresentationComponentImpl implements PresentationComponent {
     return getViewModelInstance(
         fragment,
         ChooseVehicleViewModelImpl.class,
-        new ChooseVehicleViewModelImpl(interactorComponent.getCurrentVehicleChoiceUseCase())
+        new ChooseVehicleViewModelImpl(backendComponent.getErrorReporter(),
+            interactorComponent.getCurrentVehicleChoiceUseCase())
     );
   }
 
@@ -269,7 +273,10 @@ class PresentationComponentImpl implements PresentationComponent {
     return getViewModelInstance(
         fragment,
         ClientOrderConfirmationTimeViewModelImpl.class,
-        new ClientOrderConfirmationTimeViewModelImpl(interactorComponent.getExecutorStateUseCase())
+        new ClientOrderConfirmationTimeViewModelImpl(
+            backendComponent.getErrorReporter(),
+            interactorComponent.getExecutorStateUseCase()
+        )
     );
   }
 
@@ -282,7 +289,11 @@ class PresentationComponentImpl implements PresentationComponent {
     return getViewModelInstance(
         fragment,
         CodeViewModelImpl.class,
-        new CodeViewModelImpl(interactorComponent.getPasswordUseCase(), timeUtils, eventLogger)
+        new CodeViewModelImpl(
+            interactorComponent.getPasswordUseCase(),
+            timeUtils,
+            backendComponent.getEventLogger()
+        )
     );
   }
 
@@ -295,7 +306,7 @@ class PresentationComponentImpl implements PresentationComponent {
     return getViewModelInstance(
         fragment,
         CodeHeaderViewModelImpl.class,
-        new CodeHeaderViewModelImpl(loginSharer)
+        new CodeHeaderViewModelImpl(repositoryComponent.getLoginGateway())
     );
   }
 
@@ -317,6 +328,7 @@ class PresentationComponentImpl implements PresentationComponent {
   public CurrentCostPollingViewModel getCurrentCostPollingViewModel() {
     if (currentCostPollingViewModel == null) {
       currentCostPollingViewModel = new CurrentCostPollingViewModelImpl(
+          backendComponent.getErrorReporter(),
           interactorComponent.getCurrentCostPollingUseCase()
       );
     }
@@ -328,6 +340,7 @@ class PresentationComponentImpl implements PresentationComponent {
   public ExecutorStateViewModel getExecutorStateViewModel() {
     if (executorStateViewModel == null) {
       executorStateViewModel = new ExecutorStateViewModelImpl(
+          backendComponent.getErrorReporter(),
           interactorComponent.getExecutorStateUseCase()
       );
     }
@@ -339,6 +352,7 @@ class PresentationComponentImpl implements PresentationComponent {
   public GeoLocationViewModel getGeoLocationViewModel() {
     if (geoLocationViewModel == null) {
       geoLocationViewModel = new GeoLocationViewModelImpl(
+          backendComponent.getErrorReporter(),
           interactorComponent.getGeoLocationUseCase()
       );
     }
@@ -363,6 +377,7 @@ class PresentationComponentImpl implements PresentationComponent {
   public MissedOrderViewModel getMissedOrderViewModel() {
     if (missedOrderViewModel == null) {
       missedOrderViewModel = new MissedOrderViewModelImpl(
+          backendComponent.getErrorReporter(),
           interactorComponent.getMissedOrderUseCase()
       );
     }
@@ -404,7 +419,10 @@ class PresentationComponentImpl implements PresentationComponent {
     return getViewModelInstance(
         fragment,
         OnlineButtonViewModelImpl.class,
-        new OnlineButtonViewModelImpl(interactorComponent.getVehiclesAndOptionsUseCase())
+        new OnlineButtonViewModelImpl(
+            backendComponent.getErrorReporter(),
+            interactorComponent.getVehiclesAndOptionsUseCase()
+        )
     );
   }
 
@@ -417,7 +435,10 @@ class PresentationComponentImpl implements PresentationComponent {
     return getViewModelInstance(
         fragment,
         OnlineButtonViewModelImpl.class,
-        new OnlineButtonViewModelImpl(interactorComponent.getSelectedVehiclesAndOptionsUseCase())
+        new OnlineButtonViewModelImpl(
+            backendComponent.getErrorReporter(),
+            interactorComponent.getSelectedVehiclesAndOptionsUseCase()
+        )
     );
   }
 
@@ -431,6 +452,7 @@ class PresentationComponentImpl implements PresentationComponent {
         fragment,
         OnlineSwitchViewModelImpl.class,
         new OnlineSwitchViewModelImpl(
+            backendComponent.getErrorReporter(),
             interactorComponent.getExecutorStateNotOnlineUseCase(),
             interactorComponent.getExecutorStateUseCase()
         )
@@ -447,6 +469,7 @@ class PresentationComponentImpl implements PresentationComponent {
         fragment,
         OnlineSwitchViewModelImpl.class,
         new OnlineSwitchViewModelImpl(
+            backendComponent.getErrorReporter(),
             interactorComponent.getExecutorStateExitUseCase(),
             interactorComponent.getExecutorStateUseCase()
         )
@@ -458,6 +481,7 @@ class PresentationComponentImpl implements PresentationComponent {
   public OrderCostDetailsViewModel getOrderCostDetailsViewModel() {
     if (orderCostDetailsViewModel == null) {
       orderCostDetailsViewModel = new OrderCostDetailsViewModelImpl(
+          backendComponent.getErrorReporter(),
           interactorComponent.getOrderCostDetailsUseCase()
       );
     }
@@ -469,6 +493,7 @@ class PresentationComponentImpl implements PresentationComponent {
   public OrderViewModel getOrderViewModel() {
     if (orderViewModel == null) {
       orderViewModel = new OrderViewModelImpl(
+          backendComponent.getErrorReporter(),
           interactorComponent.getOrderUseCase(),
           timeUtils
       );
@@ -485,7 +510,8 @@ class PresentationComponentImpl implements PresentationComponent {
     return getViewModelInstance(
         fragment,
         OrderViewModelImpl.class,
-        new OrderViewModelImpl(interactorComponent.getPreOrderUseCase(), timeUtils)
+        new OrderViewModelImpl(backendComponent.getErrorReporter(),
+            interactorComponent.getPreOrderUseCase(), timeUtils)
     );
   }
 
@@ -499,9 +525,10 @@ class PresentationComponentImpl implements PresentationComponent {
         fragment,
         OrderConfirmationViewModelImpl.class,
         new OrderConfirmationViewModelImpl(
+            backendComponent.getErrorReporter(),
             interactorComponent.getOrderConfirmationUseCase(),
             timeUtils,
-            eventLogger
+            backendComponent.getEventLogger()
         )
     );
   }
@@ -516,6 +543,7 @@ class PresentationComponentImpl implements PresentationComponent {
         fragment,
         OrderConfirmationViewModelImpl.class,
         new OrderConfirmationViewModelImpl(
+            backendComponent.getErrorReporter(),
             interactorComponent.getPreOrderBookingUseCase(),
             timeUtils,
             null
@@ -532,7 +560,8 @@ class PresentationComponentImpl implements PresentationComponent {
     return getViewModelInstance(
         fragment,
         OrderCostViewModelImpl.class,
-        new OrderCostViewModelImpl(interactorComponent.getOrderCurrentCostUseCase())
+        new OrderCostViewModelImpl(backendComponent.getErrorReporter(),
+            interactorComponent.getOrderCurrentCostUseCase())
     );
   }
 
@@ -579,7 +608,10 @@ class PresentationComponentImpl implements PresentationComponent {
   @Override
   public PreOrderViewModel getPreOrderViewModel() {
     if (preOrderViewModel == null) {
-      preOrderViewModel = new PreOrderViewModelImpl(interactorComponent.getPreOrderUseCase());
+      preOrderViewModel = new PreOrderViewModelImpl(
+          backendComponent.getErrorReporter(),
+          interactorComponent.getPreOrderUseCase()
+      );
     }
     return preOrderViewModel;
   }
@@ -589,6 +621,7 @@ class PresentationComponentImpl implements PresentationComponent {
   public PreOrdersListViewModel getPreOrdersListViewModel() {
     if (preOrdersListViewModel == null) {
       preOrdersListViewModel = new PreOrdersListViewModelImpl(
+          backendComponent.getErrorReporter(),
           interactorComponent.getPreOrdersSetUseCase(),
           interactorComponent.getSelectedOrderUseCase(),
           new PreOrdersListItemsMapper()
@@ -625,7 +658,10 @@ class PresentationComponentImpl implements PresentationComponent {
   @Override
   public ServerTimeViewModel getServerTimeViewModel() {
     if (serverTimeViewModel == null) {
-      serverTimeViewModel = new ServerTimeViewModelImpl(interactorComponent.getServerTimeUseCase());
+      serverTimeViewModel = new ServerTimeViewModelImpl(
+          backendComponent.getErrorReporter(),
+          interactorComponent.getServerTimeUseCase()
+      );
     }
     return serverTimeViewModel;
   }
@@ -649,6 +685,7 @@ class PresentationComponentImpl implements PresentationComponent {
         fragment,
         ServicesViewModelImpl.class,
         new ServicesViewModelImpl(
+            backendComponent.getErrorReporter(),
             interactorComponent.getServicesUseCase(),
             getServicesSliderViewModel(),
             servicesListItems
@@ -674,6 +711,7 @@ class PresentationComponentImpl implements PresentationComponent {
   public UpcomingPreOrderMessageViewModel getUpcomingPreOrderMessagesViewModel() {
     if (upcomingPreOrderMessagesViewModel == null) {
       upcomingPreOrderMessagesViewModel = new UpcomingPreOrderMessageViewModelImpl(
+          backendComponent.getErrorReporter(),
           interactorComponent.getUpcomingPreOrderMessagesUseCase()
       );
     }
@@ -685,6 +723,7 @@ class PresentationComponentImpl implements PresentationComponent {
   public UpdateMessageViewModel getUpdateMessageViewModel() {
     if (updateMessageViewModel == null) {
       updateMessageViewModel = new UpdateMessageViewModelImpl(
+          backendComponent.getErrorReporter(),
           interactorComponent.getUpdateMessageUseCase()
       );
     }
@@ -700,7 +739,10 @@ class PresentationComponentImpl implements PresentationComponent {
     return getViewModelInstance(
         fragment,
         VehicleOptionsViewModelImpl.class,
-        new VehicleOptionsViewModelImpl(interactorComponent.getVehicleOptionsUseCase())
+        new VehicleOptionsViewModelImpl(
+            backendComponent.getErrorReporter(),
+            interactorComponent.getVehicleOptionsUseCase()
+        )
     );
   }
 
@@ -713,7 +755,10 @@ class PresentationComponentImpl implements PresentationComponent {
     return getViewModelInstance(
         fragment,
         VehicleOptionsViewModelImpl.class,
-        new VehicleOptionsViewModelImpl(interactorComponent.getCurrentVehicleOptionsUseCase())
+        new VehicleOptionsViewModelImpl(
+            backendComponent.getErrorReporter(),
+            interactorComponent.getCurrentVehicleOptionsUseCase()
+        )
     );
   }
 
@@ -739,7 +784,11 @@ class PresentationComponentImpl implements PresentationComponent {
     return getViewModelInstance(
         fragment,
         OrderViewModelImpl.class,
-        new OrderViewModelImpl(interactorComponent.getSelectedPreOrderUseCase(), timeUtils)
+        new OrderViewModelImpl(
+            backendComponent.getErrorReporter(),
+            interactorComponent.getSelectedPreOrderUseCase(),
+            timeUtils
+        )
     );
   }
 
@@ -754,6 +803,7 @@ class PresentationComponentImpl implements PresentationComponent {
         fragment,
         OrderConfirmationViewModelImpl.class,
         new OrderConfirmationViewModelImpl(
+            backendComponent.getErrorReporter(),
             interactorComponent.getSelectedPreOrderConfirmationUseCase(),
             timeUtils,
             null
@@ -770,7 +820,11 @@ class PresentationComponentImpl implements PresentationComponent {
     return getViewModelInstance(
         fragment,
         OrderViewModelImpl.class,
-        new OrderViewModelImpl(interactorComponent.getUpcomingPreOrderUseCase(), timeUtils)
+        new OrderViewModelImpl(
+            backendComponent.getErrorReporter(),
+            interactorComponent.getUpcomingPreOrderUseCase(),
+            timeUtils
+        )
     );
   }
 
@@ -785,6 +839,7 @@ class PresentationComponentImpl implements PresentationComponent {
         fragment,
         OrderConfirmationViewModelImpl.class,
         new OrderConfirmationViewModelImpl(
+            backendComponent.getErrorReporter(),
             interactorComponent.getUpcomingPreOrderConfirmationUseCase(),
             timeUtils,
             null
@@ -796,6 +851,7 @@ class PresentationComponentImpl implements PresentationComponent {
   public UpcomingPreOrderViewModel getUpcomingPreOrderAvailabilityViewModel() {
     if (upcomingPreOrderAvailabilityViewModel == null) {
       upcomingPreOrderAvailabilityViewModel = new UpcomingPreOrderViewModelImpl(
+          backendComponent.getErrorReporter(),
           interactorComponent.getUpcomingPreOrderUseCase()
       );
     }

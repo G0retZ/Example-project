@@ -33,7 +33,7 @@ public class LastUsedVehicleGatewayTest {
   @Test
   public void askSettingsForLasUsedVehicleId() {
     // Действие:
-    gateway.getLastUsedVehicleId().test();
+    gateway.getLastUsedVehicleId().test().isDisposed();
 
     // Результат:
     verify(appSettings, only()).getData("lastUsedVehicle");
@@ -45,11 +45,11 @@ public class LastUsedVehicleGatewayTest {
   @Test
   public void doNotAskSettingsForLasUsedVehicleIdAfterFirstRequest() {
     // Действие:
-    gateway.getLastUsedVehicleId().test();
-    gateway.getLastUsedVehicleId().test();
-    gateway.getLastUsedVehicleId().test();
-    gateway.getLastUsedVehicleId().test();
-    gateway.getLastUsedVehicleId().test();
+    gateway.getLastUsedVehicleId().test().isDisposed();
+    gateway.getLastUsedVehicleId().test().isDisposed();
+    gateway.getLastUsedVehicleId().test().isDisposed();
+    gateway.getLastUsedVehicleId().test().isDisposed();
+    gateway.getLastUsedVehicleId().test().isDisposed();
 
     // Результат:
     verify(appSettings, only()).getData("lastUsedVehicle");
@@ -63,7 +63,7 @@ public class LastUsedVehicleGatewayTest {
     // Действие:
     gateway.saveLastUsedVehicleId(
         new Vehicle(123456, "manufacturer", "model", "color", "license", false)
-    ).test();
+    ).test().isDisposed();
 
     // Результат:
     verify(appSettings, only()).saveData(eq("lastUsedVehicle"), eq("123456"));
@@ -77,12 +77,12 @@ public class LastUsedVehicleGatewayTest {
     // Действие:
     gateway.saveLastUsedVehicleId(
         new Vehicle(123456, "manufacturer", "model", "color", "license", false)
-    ).test();
-    gateway.getLastUsedVehicleId().test();
-    gateway.getLastUsedVehicleId().test();
-    gateway.getLastUsedVehicleId().test();
-    gateway.getLastUsedVehicleId().test();
-    gateway.getLastUsedVehicleId().test();
+    ).test().isDisposed();
+    gateway.getLastUsedVehicleId().test().isDisposed();
+    gateway.getLastUsedVehicleId().test().isDisposed();
+    gateway.getLastUsedVehicleId().test().isDisposed();
+    gateway.getLastUsedVehicleId().test().isDisposed();
+    gateway.getLastUsedVehicleId().test().isDisposed();
 
     // Результат:
     verify(appSettings, only()).saveData(eq("lastUsedVehicle"), eq("123456"));

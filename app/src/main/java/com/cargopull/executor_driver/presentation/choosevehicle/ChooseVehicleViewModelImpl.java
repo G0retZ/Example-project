@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 import com.cargopull.executor_driver.R;
+import com.cargopull.executor_driver.backend.analytics.ErrorReporter;
 import com.cargopull.executor_driver.entity.EmptyListException;
 import com.cargopull.executor_driver.entity.Vehicle;
 import com.cargopull.executor_driver.interactor.vehicle.VehicleChoiceUseCase;
@@ -20,6 +21,8 @@ import javax.inject.Inject;
 public class ChooseVehicleViewModelImpl extends ViewModel implements ChooseVehicleViewModel {
 
   @NonNull
+  private final ErrorReporter errorReporter;
+  @NonNull
   private final VehicleChoiceUseCase vehicleChoiceUseCase;
   @NonNull
   private final MutableLiveData<ViewState<ChooseVehicleViewActions>> viewStateLiveData;
@@ -31,7 +34,9 @@ public class ChooseVehicleViewModelImpl extends ViewModel implements ChooseVehic
   private Disposable choiceDisposable = EmptyDisposable.INSTANCE;
 
   @Inject
-  public ChooseVehicleViewModelImpl(@NonNull VehicleChoiceUseCase vehicleChoiceUseCase) {
+  public ChooseVehicleViewModelImpl(@NonNull ErrorReporter errorReporter,
+      @NonNull VehicleChoiceUseCase vehicleChoiceUseCase) {
+    this.errorReporter = errorReporter;
     this.vehicleChoiceUseCase = vehicleChoiceUseCase;
     viewStateLiveData = new MutableLiveData<>();
     navigateLiveData = new SingleLiveEvent<>();
@@ -61,6 +66,11 @@ public class ChooseVehicleViewModelImpl extends ViewModel implements ChooseVehic
         .subscribe(
             () -> navigateLiveData.postValue(ChooseVehicleNavigate.VEHICLE_OPTIONS),
             throwable -> {
+              if (throwable instanceof IllegalArgumentException
+                  || throwable instanceof EmptyListException
+                  || throwable instanceof IndexOutOfBoundsException) {
+                errorReporter.reportError(throwable);
+              }
             }
         );
   }
@@ -84,6 +94,7 @@ public class ChooseVehicleViewModelImpl extends ViewModel implements ChooseVehic
   }
 
   private void consumeError(Throwable error) {
+    errorReporter.reportError(error);
     if (error instanceof EmptyListException) {
       viewStateLiveData.postValue(new ChooseVehicleViewStateError(R.string.no_vehicles_message));
     } else {

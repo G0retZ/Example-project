@@ -1,5 +1,6 @@
 package com.cargopull.executor_driver.presentation.ordercost;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -8,6 +9,7 @@ import static org.mockito.Mockito.when;
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
 import androidx.lifecycle.Observer;
 import com.cargopull.executor_driver.ViewModelThreadTestRule;
+import com.cargopull.executor_driver.backend.analytics.ErrorReporter;
 import com.cargopull.executor_driver.gateway.DataMappingException;
 import com.cargopull.executor_driver.interactor.OrderCurrentCostUseCase;
 import com.cargopull.executor_driver.presentation.CommonNavigate;
@@ -34,6 +36,8 @@ public class OrderCostViewModelTest {
   public TestRule rule = new InstantTaskExecutorRule();
   private OrderCostViewModel viewModel;
   @Mock
+  private ErrorReporter errorReporter;
+  @Mock
   private OrderCurrentCostUseCase orderCurrentCostUseCase;
   @Mock
   private Observer<ViewState<OrderCostViewActions>> viewStateObserver;
@@ -46,9 +50,22 @@ public class OrderCostViewModelTest {
     publishSubject = PublishSubject.create();
     when(orderCurrentCostUseCase.getOrderCurrentCost())
         .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
-    viewModel = new OrderCostViewModelImpl(orderCurrentCostUseCase);
+    viewModel = new OrderCostViewModelImpl(errorReporter, orderCurrentCostUseCase);
   }
 
+  /* Проверяем отправку ошибок в репортер */
+
+  /**
+   * Должен отправить ошибку маппинга.
+   */
+  @Test
+  public void reportDataMappingError() {
+    // Действие:
+    publishSubject.onError(new DataMappingException());
+
+    // Результат:
+    verify(errorReporter, only()).reportError(any(DataMappingException.class));
+  }
 
   /* Тетсируем работу с юзкейсом текущей цены выполнения заказа. */
 

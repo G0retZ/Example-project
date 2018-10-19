@@ -1,4 +1,4 @@
-package com.cargopull.executor_driver.utils;
+package com.cargopull.executor_driver.backend.analytics;
 
 import androidx.annotation.NonNull;
 import java.util.HashMap;
@@ -6,7 +6,6 @@ import java.util.HashMap;
 /**
  * Отправитель отчетов о событиях
  */
-@SuppressWarnings("WeakerAccess")
 public interface EventLogger {
 
   /**
@@ -15,6 +14,5 @@ public interface EventLogger {
    * @param event - имя события
    * @param params - параметры события
    */
-  @SuppressWarnings("unused")
   void reportEvent(@NonNull String event, @NonNull HashMap<String, String> params);
 }
