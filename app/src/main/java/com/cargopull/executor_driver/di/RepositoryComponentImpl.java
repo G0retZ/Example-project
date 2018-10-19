@@ -206,7 +206,7 @@ class RepositoryComponentImpl implements RepositoryComponent {
   public CommonGateway<Order> getCancelledOrderGateway() {
     if (cancelledOrderGateway == null) {
       cancelledOrderGateway = new TopicGatewayImpl<>(
-          backendComponent.getPersonalTopicListener(loginGateway),
+          backendComponent.getPersonalTopicListener(getLoginGateway()),
           new CancelledOrderFilter(),
           new CancelledOrderApiMapper()
       );
@@ -219,7 +219,7 @@ class RepositoryComponentImpl implements RepositoryComponent {
   public CommonGateway<String> getCancelledOrderMessageGateway() {
     if (cancelledOrderMessageGateway == null) {
       cancelledOrderMessageGateway = new TopicGatewayImpl<>(
-          backendComponent.getPersonalTopicListener(loginGateway),
+          backendComponent.getPersonalTopicListener(getLoginGateway()),
           new CancelledOrderFilter(),
           new MessagePayloadApiMapper()
       );
@@ -243,7 +243,7 @@ class RepositoryComponentImpl implements RepositoryComponent {
   public CommonGateway<List<CancelOrderReason>> getCancelOrderReasonsGateway() {
     if (cancelOrderReasonsGateway == null) {
       cancelOrderReasonsGateway = new TopicGatewayImpl<>(
-          backendComponent.getPersonalTopicListener(loginGateway),
+          backendComponent.getPersonalTopicListener(getLoginGateway()),
           new CancelOrderReasonsFilter(),
           new CancelOrderReasonApiMapper()
       );
@@ -267,7 +267,7 @@ class RepositoryComponentImpl implements RepositoryComponent {
   public CurrentCostPollingGateway getCurrentCostPollingGateway() {
     if (currentCostPollingGateway == null) {
       currentCostPollingGateway = new CurrentCostPollingGatewayImpl(
-          backendComponent.getPersonalTopicListener(loginGateway),
+          backendComponent.getPersonalTopicListener(getLoginGateway()),
           backendComponent.getStompClient(),
           new CurrentCostPollingTimersApiMapper()
       );
@@ -280,7 +280,7 @@ class RepositoryComponentImpl implements RepositoryComponent {
   public CommonGateway<ExecutorBalance> getExecutorBalanceGateway() {
     if (executorBalanceGateway == null) {
       executorBalanceGateway = new TopicGatewayImpl<>(
-          backendComponent.getPersonalTopicListener(loginGateway),
+          backendComponent.getPersonalTopicListener(getLoginGateway()),
           new ExecutorBalanceFilter(),
           new ExecutorBalanceApiMapper()
       );
@@ -293,7 +293,7 @@ class RepositoryComponentImpl implements RepositoryComponent {
   public CommonGateway<ExecutorState> getExecutorStateGateway() {
     if (executorStateGateway == null) {
       executorStateGateway = new TopicGatewayImpl<>(
-          backendComponent.getPersonalTopicListener(loginGateway),
+          backendComponent.getPersonalTopicListener(getLoginGateway()),
           new ExecutorStateFilter(),
           new ExecutorStateApiMapper(new MessagePayloadApiMapper())
       );
@@ -339,7 +339,7 @@ class RepositoryComponentImpl implements RepositoryComponent {
   public CommonGateway<String> getMissedOrderGateway() {
     if (missedOrderGateway == null) {
       missedOrderGateway = new TopicGatewayImpl<>(
-          backendComponent.getPersonalTopicListener(loginGateway),
+          backendComponent.getPersonalTopicListener(getLoginGateway()),
           new MissedOrderFilter(),
           new MessagePayloadApiMapper()
       );
@@ -385,7 +385,7 @@ class RepositoryComponentImpl implements RepositoryComponent {
   public CommonGateway<OrderCostDetails> getOrderCostDetailsGateway() {
     if (orderCostDetailsGateway == null) {
       orderCostDetailsGateway = new TopicGatewayImpl<>(
-          backendComponent.getPersonalTopicListener(loginGateway),
+          backendComponent.getPersonalTopicListener(getLoginGateway()),
           new OrderCostDetailsFilter(),
           new OrderCostDetailsApiMapper()
       );
@@ -398,7 +398,7 @@ class RepositoryComponentImpl implements RepositoryComponent {
   public CommonGateway<Long> getOrderCurrentCostGateway() {
     if (orderCurrentCostGateway == null) {
       orderCurrentCostGateway = new TopicGatewayImpl<>(
-          backendComponent.getPersonalTopicListener(loginGateway),
+          backendComponent.getPersonalTopicListener(getLoginGateway()),
           new OrderCurrentCostFilter(),
           new OrderCurrentCostApiMapper()
       );
@@ -411,7 +411,7 @@ class RepositoryComponentImpl implements RepositoryComponent {
   public CommonGateway<Order> getOrderGateway() {
     if (orderGateway == null) {
       orderGateway = new TopicGatewayImpl<>(
-          backendComponent.getPersonalTopicListener(loginGateway),
+          backendComponent.getPersonalTopicListener(getLoginGateway()),
           new OrderFilter(),
           new OrderApiMapper(
               new VehicleOptionApiMapper(),
@@ -427,7 +427,7 @@ class RepositoryComponentImpl implements RepositoryComponent {
   public CommonGateway<Order> getPreOrderGateway() {
     if (preOrderGateway == null) {
       preOrderGateway = new TopicGatewayImpl<>(
-          backendComponent.getPersonalTopicListener(loginGateway),
+          backendComponent.getPersonalTopicListener(getLoginGateway()),
           new PreOrderFilter(),
           new OrderApiMapper(
               new VehicleOptionApiMapper(),
@@ -465,7 +465,7 @@ class RepositoryComponentImpl implements RepositoryComponent {
   public CommonGateway<Long> getServerTimeGateway() {
     if (serverTimeGateway == null) {
       serverTimeGateway = new TopicGatewayImpl<>(
-          backendComponent.getPersonalTopicListener(loginGateway),
+          backendComponent.getPersonalTopicListener(getLoginGateway()),
           new ServerTimeFilter(),
           new ServerTimeApiMapper()
       );
@@ -478,7 +478,7 @@ class RepositoryComponentImpl implements RepositoryComponent {
   public CommonGateway<String> getUpdateMessageGateway() {
     if (updateMessageGateway == null) {
       updateMessageGateway = new TopicGatewayImpl<>(
-          backendComponent.getPersonalTopicListener(loginGateway),
+          backendComponent.getPersonalTopicListener(getLoginGateway()),
           new UpdateMessageFilter(),
           new MessagePayloadApiMapper()
       );
@@ -558,7 +558,7 @@ class RepositoryComponentImpl implements RepositoryComponent {
   public CommonGateway<String> getUpcomingPreOrderMessagesGateway() {
     if (upcomingPreOrderMessagesGateway == null) {
       upcomingPreOrderMessagesGateway = new TopicGatewayImpl<>(
-          backendComponent.getPersonalTopicListener(loginGateway),
+          backendComponent.getPersonalTopicListener(getLoginGateway()),
           new UpcomingPreOrderFilter(),
           new MessagePayloadApiMapper()
       );
@@ -625,7 +625,7 @@ class RepositoryComponentImpl implements RepositoryComponent {
   public CommonGateway<Set<Order>> getPreOrdersSetGateway() {
     if (preOrdersListGateway == null) {
       preOrdersListGateway = new TopicGatewayImpl<>(
-          backendComponent.getPersonalTopicListener(loginGateway),
+          backendComponent.getPersonalTopicListener(getLoginGateway()),
           new PreOrdersListFilter(),
           new PreOrdersListApiMapper(
               new VehicleOptionApiMapper(),
@@ -641,7 +641,7 @@ class RepositoryComponentImpl implements RepositoryComponent {
   public CommonGateway<Order> getUpcomingPreOrderGateway() {
     if (upcomingPreOrderGateway == null) {
       upcomingPreOrderGateway = new TopicGatewayImpl<>(
-          backendComponent.getPersonalTopicListener(loginGateway),
+          backendComponent.getPersonalTopicListener(getLoginGateway()),
           new UpcomingPreOrderFilter(),
           new UpcomingPreOrderApiMapper()
       );
