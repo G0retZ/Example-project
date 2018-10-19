@@ -678,6 +678,7 @@ class PresentationComponentImpl implements PresentationComponent {
         fragment,
         ServicesViewModelImpl.class,
         new ServicesViewModelImpl(
+            errorReporter,
             interactorComponent.getServicesUseCase(),
             getServicesSliderViewModel(),
             servicesListItems

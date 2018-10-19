@@ -556,7 +556,6 @@ class InteractorComponentImpl implements InteractorComponent {
   public ServicesUseCase getServicesUseCase() {
     if (servicesUseCase == null) {
       servicesUseCase = new ServicesUseCaseImpl(
-          errorReporter,
           repositoryComponent.getServicesGateway()
       );
     }
