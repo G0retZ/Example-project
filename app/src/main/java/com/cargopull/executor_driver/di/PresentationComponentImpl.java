@@ -478,6 +478,7 @@ class PresentationComponentImpl implements PresentationComponent {
   public OrderCostDetailsViewModel getOrderCostDetailsViewModel() {
     if (orderCostDetailsViewModel == null) {
       orderCostDetailsViewModel = new OrderCostDetailsViewModelImpl(
+          errorReporter,
           interactorComponent.getOrderCostDetailsUseCase()
       );
     }

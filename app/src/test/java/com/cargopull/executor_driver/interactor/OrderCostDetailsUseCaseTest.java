@@ -1,12 +1,10 @@
 package com.cargopull.executor_driver.interactor;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.cargopull.executor_driver.UseCaseThreadTestRule;
-import com.cargopull.executor_driver.backend.analytics.ErrorReporter;
 import com.cargopull.executor_driver.entity.OrderCostDetails;
 import com.cargopull.executor_driver.gateway.DataMappingException;
 import io.reactivex.Flowable;
@@ -27,8 +25,6 @@ public class OrderCostDetailsUseCaseTest {
   private OrderCostDetailsUseCase useCase;
 
   @Mock
-  private ErrorReporter errorReporter;
-  @Mock
   private CommonGateway<OrderCostDetails> gateway;
   @Mock
   private OrderCostDetails orderCostDetails;
@@ -38,7 +34,7 @@ public class OrderCostDetailsUseCaseTest {
   @Before
   public void setUp() {
     when(gateway.getData()).thenReturn(Flowable.never());
-    useCase = new OrderCostDetailsUseCaseImpl(errorReporter, gateway);
+    useCase = new OrderCostDetailsUseCaseImpl(gateway);
   }
 
   /* Проверяем работу с гейтвеем */
@@ -53,23 +49,6 @@ public class OrderCostDetailsUseCaseTest {
 
     // Результат:
     verify(gateway, only()).getData();
-  }
-
-  /* Проверяем отправку ошибок в репортер */
-
-  /**
-   * Должен отправить ошибку маппинга.
-   */
-  @Test
-  public void reportDataMappingError() {
-    // Дано:
-    when(gateway.getData()).thenReturn(Flowable.error(new DataMappingException()));
-
-    // Действие:
-    useCase.getOrderCostDetails().test();
-
-    // Результат:
-    verify(errorReporter, only()).reportError(any(DataMappingException.class));
   }
 
   /* Проверяем ответы на запрос заказов */

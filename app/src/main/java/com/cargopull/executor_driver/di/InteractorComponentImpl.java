@@ -386,7 +386,6 @@ class InteractorComponentImpl implements InteractorComponent {
   public OrderCostDetailsUseCase getOrderCostDetailsUseCase() {
     if (orderCostDetailsUseCase == null) {
       orderCostDetailsUseCase = new OrderCostDetailsUseCaseImpl(
-          errorReporter,
           repositoryComponent.getOrderCostDetailsGateway()
       );
     }
