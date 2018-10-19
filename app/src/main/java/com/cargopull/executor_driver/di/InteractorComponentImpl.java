@@ -397,7 +397,6 @@ class InteractorComponentImpl implements InteractorComponent {
   public OrderCurrentCostUseCase getOrderCurrentCostUseCase() {
     if (orderCurrentCostUseCase == null) {
       orderCurrentCostUseCase = new OrderCurrentCostUseCaseImpl(
-          errorReporter,
           getOrderUseCase(),
           repositoryComponent.getOrderCurrentCostGateway()
       );

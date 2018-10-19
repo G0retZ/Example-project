@@ -553,7 +553,7 @@ class PresentationComponentImpl implements PresentationComponent {
     return getViewModelInstance(
         fragment,
         OrderCostViewModelImpl.class,
-        new OrderCostViewModelImpl(interactorComponent.getOrderCurrentCostUseCase())
+        new OrderCostViewModelImpl(errorReporter, interactorComponent.getOrderCurrentCostUseCase())
     );
   }
 

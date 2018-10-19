@@ -1,6 +1,5 @@
 package com.cargopull.executor_driver.interactor;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -9,7 +8,6 @@ import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 import com.cargopull.executor_driver.UseCaseThreadTestRule;
-import com.cargopull.executor_driver.backend.analytics.ErrorReporter;
 import com.cargopull.executor_driver.entity.Order;
 import com.cargopull.executor_driver.gateway.DataMappingException;
 import io.reactivex.Flowable;
@@ -30,8 +28,6 @@ public class OrderCurrentCostUseCaseTest {
   private OrderCurrentCostUseCase useCase;
 
   @Mock
-  private ErrorReporter errorReporter;
-  @Mock
   private OrderUseCase orderUseCase;
   @Mock
   private CommonGateway<Long> orderCurrentCostGateway;
@@ -44,7 +40,7 @@ public class OrderCurrentCostUseCaseTest {
   public void setUp() {
     when(orderUseCase.getOrders()).thenReturn(Flowable.never());
     when(orderCurrentCostGateway.getData()).thenReturn(Flowable.never());
-    useCase = new OrderCurrentCostUseCaseImpl(errorReporter, orderUseCase, orderCurrentCostGateway);
+    useCase = new OrderCurrentCostUseCaseImpl(orderUseCase, orderCurrentCostGateway);
   }
 
   /* Проверяем работу с юзкейсом заказа */
@@ -92,41 +88,6 @@ public class OrderCurrentCostUseCaseTest {
 
     // Результат:
     verify(orderCurrentCostGateway, only()).getData();
-  }
-
-  /* Проверяем отправку ошибок в репортер */
-
-  /**
-   * Должен отправить ошибку маппинга.
-   */
-  @Test
-  public void reportDataMappingError() {
-    // Дано:
-    when(orderUseCase.getOrders()).thenReturn(Flowable.error(new DataMappingException()));
-
-    // Действие:
-    useCase.getOrderCurrentCost().test();
-
-    // Результат:
-    verify(errorReporter, only()).reportError(any(DataMappingException.class));
-  }
-
-  /**
-   * Должен отправить ошибку маппинга.
-   */
-  @Test
-  public void reportDataMappingErrorInCurrentCost() {
-    // Дано:
-    when(orderUseCase.getOrders()).thenReturn(Flowable.just(order, order2));
-    when(order.getTotalCost()).thenReturn(101L);
-    when(orderCurrentCostGateway.getData())
-        .thenReturn(Flowable.error(new DataMappingException()));
-
-    // Действие:
-    useCase.getOrderCurrentCost().test();
-
-    // Результат:
-    verify(errorReporter, only()).reportError(any(DataMappingException.class));
   }
 
   /* Проверяем ответы на запрос цены заказа */
