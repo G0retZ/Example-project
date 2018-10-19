@@ -280,7 +280,10 @@ class PresentationComponentImpl implements PresentationComponent {
     return getViewModelInstance(
         fragment,
         ClientOrderConfirmationTimeViewModelImpl.class,
-        new ClientOrderConfirmationTimeViewModelImpl(interactorComponent.getExecutorStateUseCase())
+        new ClientOrderConfirmationTimeViewModelImpl(
+            errorReporter,
+            interactorComponent.getExecutorStateUseCase()
+        )
     );
   }
 
@@ -340,6 +343,7 @@ class PresentationComponentImpl implements PresentationComponent {
   public ExecutorStateViewModel getExecutorStateViewModel() {
     if (executorStateViewModel == null) {
       executorStateViewModel = new ExecutorStateViewModelImpl(
+          errorReporter,
           interactorComponent.getExecutorStateUseCase()
       );
     }

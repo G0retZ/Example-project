@@ -311,7 +311,6 @@ class InteractorComponentImpl implements InteractorComponent {
   public ExecutorStateUseCase getExecutorStateUseCase() {
     if (executorStateUseCase == null) {
       executorStateUseCase = new ExecutorStateUseCaseImpl(
-          errorReporter,
           repositoryComponent.getExecutorStateGateway()
       );
     }

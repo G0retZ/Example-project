@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
+import com.cargopull.executor_driver.backend.analytics.ErrorReporter;
 import com.cargopull.executor_driver.gateway.DataMappingException;
 import com.cargopull.executor_driver.interactor.ExecutorStateUseCase;
 import com.cargopull.executor_driver.presentation.CommonNavigate;
@@ -16,6 +17,8 @@ import javax.inject.Inject;
 public class ExecutorStateViewModelImpl extends ViewModel implements ExecutorStateViewModel {
 
   @NonNull
+  private final ErrorReporter errorReporter;
+  @NonNull
   private final ExecutorStateUseCase executorStateUseCase;
   @NonNull
   private final MutableLiveData<ViewState<ExecutorStateViewActions>> messageLiveData;
@@ -25,7 +28,9 @@ public class ExecutorStateViewModelImpl extends ViewModel implements ExecutorSta
   private Disposable disposable = EmptyDisposable.INSTANCE;
 
   @Inject
-  public ExecutorStateViewModelImpl(@NonNull ExecutorStateUseCase executorStateUseCase) {
+  public ExecutorStateViewModelImpl(@NonNull ErrorReporter errorReporter,
+      @NonNull ExecutorStateUseCase executorStateUseCase) {
+    this.errorReporter = errorReporter;
     this.executorStateUseCase = executorStateUseCase;
     messageLiveData = new MutableLiveData<>();
     navigateLiveData = new MutableLiveData<>();
@@ -73,8 +78,10 @@ public class ExecutorStateViewModelImpl extends ViewModel implements ExecutorSta
                   if (executorState.getData() != null
                       && !executorState.getData().trim().isEmpty()) {
                     messageLiveData.postValue(
-                        executorStateViewActions -> executorStateViewActions
-                            .showExecutorStatusMessage(executorState.getData())
+                        executorStateViewActions -> {
+                          executorStateViewActions
+                              .showExecutorStatusMessage(executorState.getData());
+                        }
                     );
                   }
                   navigateLiveData.postValue(ExecutorStateNavigate.MAP_SHIFT_OPENED);
@@ -114,6 +121,7 @@ public class ExecutorStateViewModelImpl extends ViewModel implements ExecutorSta
               }
             },
             throwable -> {
+              errorReporter.reportError(throwable);
               if (throwable instanceof DataMappingException) {
                 navigateLiveData.postValue(CommonNavigate.SERVER_DATA_ERROR);
               }
