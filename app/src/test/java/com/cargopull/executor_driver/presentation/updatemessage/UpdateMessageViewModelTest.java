@@ -2,6 +2,7 @@ package com.cargopull.executor_driver.presentation.updatemessage;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -12,6 +13,8 @@ import static org.mockito.Mockito.when;
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
 import androidx.lifecycle.Observer;
 import com.cargopull.executor_driver.ViewModelThreadTestRule;
+import com.cargopull.executor_driver.backend.analytics.ErrorReporter;
+import com.cargopull.executor_driver.gateway.DataMappingException;
 import com.cargopull.executor_driver.interactor.UpdateMessageUseCase;
 import com.cargopull.executor_driver.presentation.ViewState;
 import io.reactivex.BackpressureStrategy;
@@ -40,6 +43,8 @@ public class UpdateMessageViewModelTest {
   @Captor
   private ArgumentCaptor<ViewState<UpdateMessageViewActions>> viewStateCaptor;
   @Mock
+  private ErrorReporter errorReporter;
+  @Mock
   private UpdateMessageUseCase useCase;
   @Mock
   private UpdateMessageViewActions viewActions;
@@ -51,7 +56,21 @@ public class UpdateMessageViewModelTest {
     publishSubject = PublishSubject.create();
     when(useCase.getUpdateMessages())
         .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
-    viewModel = new UpdateMessageViewModelImpl(useCase);
+    viewModel = new UpdateMessageViewModelImpl(errorReporter, useCase);
+  }
+
+  /* Проверяем отправку ошибок в репортер */
+
+  /**
+   * Должен отправить ошибку.
+   */
+  @Test
+  public void reportError() {
+    // Действие:
+    publishSubject.onError(new DataMappingException());
+
+    // Результат:
+    verify(errorReporter, only()).reportError(any(DataMappingException.class));
   }
 
   /* Тетсируем работу с юзкейсом. */

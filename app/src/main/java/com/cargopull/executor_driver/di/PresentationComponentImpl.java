@@ -714,6 +714,7 @@ class PresentationComponentImpl implements PresentationComponent {
   public UpdateMessageViewModel getUpdateMessageViewModel() {
     if (updateMessageViewModel == null) {
       updateMessageViewModel = new UpdateMessageViewModelImpl(
+          errorReporter,
           interactorComponent.getUpdateMessageUseCase()
       );
     }

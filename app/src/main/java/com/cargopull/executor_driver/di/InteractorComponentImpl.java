@@ -474,7 +474,6 @@ class InteractorComponentImpl implements InteractorComponent {
   public UpdateMessageUseCase getUpdateMessageUseCase() {
     if (updateMessageUseCase == null) {
       updateMessageUseCase = new UpdateMessageUseCaseImpl(
-          errorReporter,
           repositoryComponent.getUpdateMessageGateway()
       );
     }
