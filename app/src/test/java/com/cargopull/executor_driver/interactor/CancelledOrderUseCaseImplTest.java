@@ -50,10 +50,10 @@ public class CancelledOrderUseCaseImplTest {
   @Test
   public void askGatewayForOrdersOnlyOnce() {
     // Действие:
-    useCase.getOrders().test();
-    useCase.getOrders().test();
-    useCase.getOrders().test();
-    useCase.getOrders().test();
+    useCase.getOrders().test().isDisposed();
+    useCase.getOrders().test().isDisposed();
+    useCase.getOrders().test().isDisposed();
+    useCase.getOrders().test().isDisposed();
 
     // Результат:
     verify(gateway, only()).getData();

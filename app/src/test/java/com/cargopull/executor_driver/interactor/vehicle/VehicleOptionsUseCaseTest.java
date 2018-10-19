@@ -63,7 +63,7 @@ public class VehicleOptionsUseCaseTest {
   @Test
   public void askDataSharerForSelectedVehicle() {
     // Действие:
-    useCase.getVehicleOptions().test();
+    useCase.getVehicleOptions().test().isDisposed();
 
     // Результат:
     verify(vehicleChoiceReceiver, only()).get();
@@ -80,7 +80,7 @@ public class VehicleOptionsUseCaseTest {
             new OptionNumeric(1, "name1", "desc1", true, -5, -18, 0),
             new OptionBoolean(2, "name2", "desc2", true, false)
         )), new ArrayList<>()
-    ).test();
+    ).test().isDisposed();
 
     // Результат:
     verifyZeroInteractions(vehicleChoiceReceiver);
@@ -94,7 +94,7 @@ public class VehicleOptionsUseCaseTest {
   @Test
   public void askVehiclesAndOptionsGatewayForVehicles() {
     // Действие:
-    useCase.getDriverOptions().test();
+    useCase.getDriverOptions().test().isDisposed();
 
     // Результат:
     verify(vehiclesAndOptionsGateway, only()).getExecutorOptions();
@@ -111,7 +111,7 @@ public class VehicleOptionsUseCaseTest {
             new OptionNumeric(1, "name1", "desc1", true, -5, -18, 0),
             new OptionBoolean(2, "name2", "desc2", true, false)
         )), new ArrayList<>()
-    ).test();
+    ).test().isDisposed();
 
     // Результат:
     verifyZeroInteractions(vehiclesAndOptionsGateway);
@@ -201,8 +201,7 @@ public class VehicleOptionsUseCaseTest {
     when(vehicleChoiceReceiver.get()).thenReturn(Observable.fromIterable(vehicles));
 
     // Действие
-    TestObserver<List<Option>> testObserver =
-        useCase.getVehicleOptions().test();
+    TestObserver<List<Option>> testObserver = useCase.getVehicleOptions().test();
 
     // Результат:
     testObserver.assertValues(
@@ -285,7 +284,7 @@ public class VehicleOptionsUseCaseTest {
             new OptionNumeric(1, "name1", "desc1", true, -5, -18, 0),
             new OptionBoolean(2, "name2", "desc2", true, false)
         )), new ArrayList<>()
-    ).test();
+    ).test().isDisposed();
 
     // Результат:
     verifyZeroInteractions(gateway);
@@ -307,7 +306,7 @@ public class VehicleOptionsUseCaseTest {
     when(vehicleChoiceReceiver.get()).thenReturn(Observable.just(vehicle));
 
     // Действие:
-    useCase.getVehicleOptions().test();
+    useCase.getVehicleOptions().test().isDisposed();
     useCase.setSelectedVehicleAndOptions(
         new ArrayList<>(Arrays.asList(
             new OptionNumeric(0, "name0", "desc0", true, 40, 0, 120),
@@ -317,7 +316,7 @@ public class VehicleOptionsUseCaseTest {
             new OptionNumeric(1, "name1", "desc1", true, -5, -18, 0),
             new OptionBoolean(2, "name2", "desc2", true, false)
         )
-    ).test();
+    ).test().isDisposed();
 
     // Результат:
     vehicle = new Vehicle(12, "manufacturer", "model", "color", "license", false);
@@ -350,7 +349,7 @@ public class VehicleOptionsUseCaseTest {
     when(vehicleChoiceReceiver.get()).thenReturn(Observable.just(vehicle));
 
     // Действие:
-    useCase.getVehicleOptions().test();
+    useCase.getVehicleOptions().test().isDisposed();
     useCase.setSelectedVehicleAndOptions(
         new ArrayList<>(Arrays.asList(
             new OptionNumeric(0, "name0", "desc0", true, 40, 0, 120),
@@ -360,7 +359,7 @@ public class VehicleOptionsUseCaseTest {
             new OptionNumeric(1, "name1", "desc1", true, -5, -18, 0),
             new OptionBoolean(2, "name2", "desc2", true, false)
         )
-    ).test();
+    ).test().isDisposed();
 
     // Результат:
     verify(lastUsedVehicleGateway, only()).saveLastUsedVehicleId(vehicle);
@@ -400,7 +399,7 @@ public class VehicleOptionsUseCaseTest {
         .thenReturn(Completable.error(NoNetworkException::new));
 
     // Действие:
-    useCase.getVehicleOptions().test();
+    useCase.getVehicleOptions().test().isDisposed();
 
     // Результат:
     useCase.setSelectedVehicleAndOptions(
@@ -432,7 +431,7 @@ public class VehicleOptionsUseCaseTest {
         .thenReturn(Completable.error(new IllegalArgumentException()));
 
     // Действие:
-    useCase.getVehicleOptions().test();
+    useCase.getVehicleOptions().test().isDisposed();
 
     // Результат:
     useCase.setSelectedVehicleAndOptions(
@@ -463,7 +462,7 @@ public class VehicleOptionsUseCaseTest {
     when(lastUsedVehicleGateway.saveLastUsedVehicleId(any())).thenReturn(Completable.complete());
 
     // Действие:
-    useCase.getVehicleOptions().test();
+    useCase.getVehicleOptions().test().isDisposed();
 
     // Результат:
     useCase.setSelectedVehicleAndOptions(

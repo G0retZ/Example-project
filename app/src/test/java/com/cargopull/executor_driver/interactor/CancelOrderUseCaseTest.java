@@ -60,9 +60,9 @@ public class CancelOrderUseCaseTest {
   @Test
   public void askCancelOrderReasonsUseCaseForCancelReasons() {
     // Действие:
-    useCase.cancelOrder(cancelOrderReason).test();
-    useCase.cancelOrder(cancelOrderReason1).test();
-    useCase.cancelOrder(cancelOrderReason2).test();
+    useCase.cancelOrder(cancelOrderReason).test().isDisposed();
+    useCase.cancelOrder(cancelOrderReason1).test().isDisposed();
+    useCase.cancelOrder(cancelOrderReason2).test().isDisposed();
 
     // Результат:
     verify(cancelOrderReasonsUseCase, times(3)).getCancelOrderReasons();
@@ -77,9 +77,9 @@ public class CancelOrderUseCaseTest {
   @Test
   public void doNotTouchGatewayWithoutCancelReasons() {
     // Действие:
-    useCase.cancelOrder(cancelOrderReason).test();
-    useCase.cancelOrder(cancelOrderReason1).test();
-    useCase.cancelOrder(cancelOrderReason2).test();
+    useCase.cancelOrder(cancelOrderReason).test().isDisposed();
+    useCase.cancelOrder(cancelOrderReason1).test().isDisposed();
+    useCase.cancelOrder(cancelOrderReason2).test().isDisposed();
 
     // Результат:
     verifyZeroInteractions(gateway);
@@ -96,7 +96,7 @@ public class CancelOrderUseCaseTest {
     ));
 
     // Действие:
-    useCase.cancelOrder(cancelOrderReason1).test();
+    useCase.cancelOrder(cancelOrderReason1).test().isDisposed();
 
     // Результат:
     verifyZeroInteractions(gateway);
@@ -113,7 +113,7 @@ public class CancelOrderUseCaseTest {
     ));
 
     // Действие:
-    useCase.cancelOrder(cancelOrderReason1).test();
+    useCase.cancelOrder(cancelOrderReason1).test().isDisposed();
 
     // Результат:
     verify(gateway, only()).cancelOrder(cancelOrderReason1);

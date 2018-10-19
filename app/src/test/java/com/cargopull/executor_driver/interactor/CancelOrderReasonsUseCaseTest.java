@@ -52,10 +52,10 @@ public class CancelOrderReasonsUseCaseTest {
   @Test
   public void askGatewayForCancelReasons() {
     // Действие:
-    useCase.getCancelOrderReasons().test();
-    useCase.getCancelOrderReasons().test();
-    useCase.getCancelOrderReasons().test();
-    useCase.getCancelOrderReasons().test();
+    useCase.getCancelOrderReasons().test().isDisposed();
+    useCase.getCancelOrderReasons().test().isDisposed();
+    useCase.getCancelOrderReasons().test().isDisposed();
+    useCase.getCancelOrderReasons().test().isDisposed();
 
     // Результат:
     verify(gateway, only()).getData();

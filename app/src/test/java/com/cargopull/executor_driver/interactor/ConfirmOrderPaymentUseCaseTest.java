@@ -40,7 +40,7 @@ public class ConfirmOrderPaymentUseCaseTest {
   @Test
   public void askGatewayToToCallClientForOrder() {
     // Действие:
-    useCase.confirmPayment().test();
+    useCase.confirmPayment().test().isDisposed();
 
     // Результат:
     verify(gateway, only()).confirmOrderPayment();

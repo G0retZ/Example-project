@@ -49,7 +49,7 @@ public class CancelOrderGatewayImplTest {
     when(cancelOrderReason.getName()).thenReturn("seven");
 
     // Действие:
-    gateway.cancelOrder(cancelOrderReason).test();
+    gateway.cancelOrder(cancelOrderReason).test().isDisposed();
 
     // Результат:
     verify(stompClient, only())

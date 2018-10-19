@@ -57,10 +57,10 @@ public class OrderFulfillmentTimeUseCaseTest {
   @Test
   public void askGatewayForOrders() {
     // Действие:
-    useCase.getOrderElapsedTime().test();
-    useCase.getOrderElapsedTime().test();
-    useCase.getOrderElapsedTime().test();
-    useCase.getOrderElapsedTime().test();
+    useCase.getOrderElapsedTime().test().isDisposed();
+    useCase.getOrderElapsedTime().test().isDisposed();
+    useCase.getOrderElapsedTime().test().isDisposed();
+    useCase.getOrderElapsedTime().test().isDisposed();
 
     // Результат:
     verify(orderUseCase, times(4)).getOrders();

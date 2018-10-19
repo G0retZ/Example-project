@@ -55,7 +55,7 @@ public class VehiclesAndOptionsUseCaseTest {
   @Test
   public void askLastUsedVehiclesDataSharerForLastUsedVehicleInitially() {
     // Действие:
-    useCase.loadVehiclesAndOptions().test();
+    useCase.loadVehiclesAndOptions().test().isDisposed();
 
     // Результат:
     verify(lastUsedVehicleGateway, only()).getLastUsedVehicleId();
@@ -72,7 +72,7 @@ public class VehiclesAndOptionsUseCaseTest {
     when(lastUsedVehicleGateway.getLastUsedVehicleId()).thenReturn(Single.just(10L));
 
     // Действие:
-    useCase.loadVehiclesAndOptions().test();
+    useCase.loadVehiclesAndOptions().test().isDisposed();
 
     // Результат:
     verify(gateway).getExecutorVehicles();
@@ -88,19 +88,19 @@ public class VehiclesAndOptionsUseCaseTest {
   public void doNotTouchVehicleChoiceSharer() {
     // Действие:
     when(lastUsedVehicleGateway.getLastUsedVehicleId()).thenReturn(Single.just(10L));
-    useCase.loadVehiclesAndOptions().test();
+    useCase.loadVehiclesAndOptions().test().isDisposed();
     when(gateway.getExecutorVehicles()).thenReturn(Single.error(new NoNetworkException()));
-    useCase.loadVehiclesAndOptions().test();
+    useCase.loadVehiclesAndOptions().test().isDisposed();
     when(gateway.getExecutorVehicles()).thenReturn(Single.error(new DriverBlockedException()));
-    useCase.loadVehiclesAndOptions().test();
+    useCase.loadVehiclesAndOptions().test().isDisposed();
     when(gateway.getExecutorVehicles()).thenReturn(Single.just(
         new ArrayList<>(Collections.singletonList(
             new Vehicle(12, "manufacturer", "model", "color", "license", true)
         ))
     ));
-    useCase.loadVehiclesAndOptions().test();
+    useCase.loadVehiclesAndOptions().test().isDisposed();
     when(gateway.getExecutorVehicles()).thenReturn(Single.just(new ArrayList<>()));
-    useCase.loadVehiclesAndOptions().test();
+    useCase.loadVehiclesAndOptions().test().isDisposed();
 
     // Результат:
     verifyZeroInteractions(vehicleChoiceObserver);
@@ -123,7 +123,7 @@ public class VehiclesAndOptionsUseCaseTest {
     ));
 
     // Действие:
-    useCase.loadVehiclesAndOptions().test();
+    useCase.loadVehiclesAndOptions().test().isDisposed();
 
     // Результат:
     verify(vehicleChoiceObserver, only())
@@ -149,7 +149,7 @@ public class VehiclesAndOptionsUseCaseTest {
     ));
 
     // Действие:
-    useCase.loadVehiclesAndOptions().test();
+    useCase.loadVehiclesAndOptions().test().isDisposed();
 
     // Результат:
     verify(vehicleChoiceObserver, only())
@@ -174,7 +174,7 @@ public class VehiclesAndOptionsUseCaseTest {
     ));
 
     // Действие:
-    useCase.loadVehiclesAndOptions().test();
+    useCase.loadVehiclesAndOptions().test().isDisposed();
 
     // Результат:
     verify(vehicleChoiceObserver, only())
@@ -198,7 +198,7 @@ public class VehiclesAndOptionsUseCaseTest {
     ));
 
     // Действие:
-    useCase.loadVehiclesAndOptions().test();
+    useCase.loadVehiclesAndOptions().test().isDisposed();
 
     // Результат:
     verify(vehicleChoiceObserver, only())
@@ -222,7 +222,7 @@ public class VehiclesAndOptionsUseCaseTest {
     ));
 
     // Действие:
-    useCase.loadVehiclesAndOptions().test();
+    useCase.loadVehiclesAndOptions().test().isDisposed();
 
     // Результат:
     verify(vehicleChoiceObserver, only())
@@ -246,7 +246,7 @@ public class VehiclesAndOptionsUseCaseTest {
     ));
 
     // Действие:
-    useCase.loadVehiclesAndOptions().test();
+    useCase.loadVehiclesAndOptions().test().isDisposed();
 
     // Результат:
     verify(vehicleChoiceObserver, only())
@@ -267,7 +267,7 @@ public class VehiclesAndOptionsUseCaseTest {
     ));
 
     // Действие:
-    useCase.loadVehiclesAndOptions().test();
+    useCase.loadVehiclesAndOptions().test().isDisposed();
 
     // Результат:
     verify(vehicleChoiceObserver, only())

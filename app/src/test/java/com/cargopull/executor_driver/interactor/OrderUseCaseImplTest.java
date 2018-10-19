@@ -52,11 +52,11 @@ public class OrderUseCaseImplTest {
   @Test
   public void askGatewayForOrdersOnlyOnce() {
     // Действие:
-    useCase.getOrders().test();
-    useCase.getOrders().test();
+    useCase.getOrders().test().isDisposed();
+    useCase.getOrders().test().isDisposed();
     useCase.setOrderOfferDecisionMade();
-    useCase.getOrders().test();
-    useCase.getOrders().test();
+    useCase.getOrders().test().isDisposed();
+    useCase.getOrders().test().isDisposed();
     useCase.setOrderOfferDecisionMade();
 
     // Результат:

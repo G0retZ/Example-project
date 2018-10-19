@@ -40,7 +40,7 @@ public class MovingToClientUseCaseTest {
   @Test
   public void askGatewayToReportArrivalForOrder() {
     // Действие:
-    useCase.reportArrival().test();
+    useCase.reportArrival().test().isDisposed();
 
     // Результат:
     verify(gateway, only()).reportArrival();

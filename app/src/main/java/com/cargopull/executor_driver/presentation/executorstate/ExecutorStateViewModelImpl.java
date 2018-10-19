@@ -78,10 +78,8 @@ public class ExecutorStateViewModelImpl extends ViewModel implements ExecutorSta
                   if (executorState.getData() != null
                       && !executorState.getData().trim().isEmpty()) {
                     messageLiveData.postValue(
-                        executorStateViewActions -> {
-                          executorStateViewActions
-                              .showExecutorStatusMessage(executorState.getData());
-                        }
+                        executorStateViewActions -> executorStateViewActions
+                            .showExecutorStatusMessage(executorState.getData())
                     );
                   }
                   navigateLiveData.postValue(ExecutorStateNavigate.MAP_SHIFT_OPENED);

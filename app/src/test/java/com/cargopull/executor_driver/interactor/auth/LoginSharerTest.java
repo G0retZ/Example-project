@@ -41,11 +41,11 @@ public class LoginSharerTest {
   @Test
   public void doNotAskSettingsForLogin() {
     // Действие:
-    loginSharer.get().test();
-    loginSharer.get().test();
-    loginSharer.get().test();
-    loginSharer.get().test();
-    loginSharer.get().test();
+    loginSharer.get().test().isDisposed();
+    loginSharer.get().test().isDisposed();
+    loginSharer.get().test().isDisposed();
+    loginSharer.get().test().isDisposed();
+    loginSharer.get().test().isDisposed();
 
     // Результат:
     verify(appSettings, only()).getData("authorizationLogin");

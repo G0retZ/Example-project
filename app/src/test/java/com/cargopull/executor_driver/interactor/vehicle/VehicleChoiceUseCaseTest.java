@@ -49,7 +49,7 @@ public class VehicleChoiceUseCaseTest {
   @Test
   public void askVehiclesDataSharerForVehicles() {
     // Действие:
-    useCase.getVehicles().test();
+    useCase.getVehicles().test().isDisposed();
 
     // Результат:
     verify(gateway, only()).getExecutorVehicles();
@@ -117,10 +117,10 @@ public class VehicleChoiceUseCaseTest {
   @Test
   public void doNotTouchVehicleChoiceDataSharer() {
     // Действие:
-    useCase.getVehicles().test();
+    useCase.getVehicles().test().isDisposed();
     when(gateway.getExecutorVehicles())
         .thenReturn(Single.error(new NoNetworkException()));
-    useCase.getVehicles().test();
+    useCase.getVehicles().test().isDisposed();
     when(gateway.getExecutorVehicles()).thenReturn(Single.just(
         new ArrayList<>(Arrays.asList(
             new Vehicle(12, "manufacturer", "model", "color", "license", false),
@@ -129,13 +129,13 @@ public class VehicleChoiceUseCaseTest {
             new Vehicle(15, "manufactures", "modelers", "colo", "licensee", true)
         ))
     ));
-    useCase.getVehicles().test();
+    useCase.getVehicles().test().isDisposed();
     when(gateway.getExecutorVehicles()).thenReturn(Single.just(
         new ArrayList<>(Collections.singletonList(
             new Vehicle(12, "manufacturer", "model", "color", "license", true)
         ))
     ));
-    useCase.getVehicles().test();
+    useCase.getVehicles().test().isDisposed();
 
     // Результат:
     verifyZeroInteractions(vehicleChoiceObserver);
@@ -157,10 +157,10 @@ public class VehicleChoiceUseCaseTest {
     ));
 
     // Действие:
-    useCase.getVehicles().test();
+    useCase.getVehicles().test().isDisposed();
     useCase.selectVehicle(
         new Vehicle(14, "manufacturers", "modeler", "color", "licensees", false)
-    ).test();
+    ).test().isDisposed();
 
     // Результат:
     verify(vehicleChoiceObserver, only())
@@ -183,16 +183,16 @@ public class VehicleChoiceUseCaseTest {
     ));
 
     // Действие:
-    useCase.getVehicles().test();
+    useCase.getVehicles().test().isDisposed();
     useCase.selectVehicle(
         new Vehicle(11, "manufacturer", "model", "color", "license", false)
-    ).test();
+    ).test().isDisposed();
     useCase.selectVehicle(
         new Vehicle(13, "manufacture", "models", "colo", "licenses", true)
-    ).test();
+    ).test().isDisposed();
     useCase.selectVehicle(
         new Vehicle(15, "manufactures", "modelers", "colo", "licensee", true)
-    ).test();
+    ).test().isDisposed();
 
     // Результат:
     verifyZeroInteractions(vehicleChoiceObserver);
@@ -216,7 +216,7 @@ public class VehicleChoiceUseCaseTest {
     ));
 
     // Действие и Результат:
-    useCase.getVehicles().test();
+    useCase.getVehicles().test().isDisposed();
     useCase.selectVehicle(
         new Vehicle(11, "manufacturer", "model", "color", "license", false)
     ).test().assertError(IndexOutOfBoundsException.class);
@@ -238,7 +238,7 @@ public class VehicleChoiceUseCaseTest {
     ));
 
     // Действие и Результат:
-    useCase.getVehicles().test();
+    useCase.getVehicles().test().isDisposed();
     useCase.selectVehicle(
         new Vehicle(13, "manufacture", "models", "colo", "licenses", true)
     ).test().assertError(IllegalArgumentException.class);
@@ -263,7 +263,7 @@ public class VehicleChoiceUseCaseTest {
     ));
 
     // Действие и Результат:
-    useCase.getVehicles().test();
+    useCase.getVehicles().test().isDisposed();
     useCase.selectVehicle(
         new Vehicle(12, "manufacturer", "model", "color", "license", false)
     ).test().assertComplete();

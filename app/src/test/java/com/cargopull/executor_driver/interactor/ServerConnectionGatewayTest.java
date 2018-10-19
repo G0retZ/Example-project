@@ -50,7 +50,7 @@ public class ServerConnectionGatewayTest {
     when(stompClient.isConnected()).thenReturn(true);
 
     // Действие:
-    gateway.openSocket().test();
+    gateway.openSocket().test().isDisposed();
 
     // Результат:
     inOrder.verify(stompClient).setHeartbeat(25_000, 1.2F);
@@ -70,7 +70,7 @@ public class ServerConnectionGatewayTest {
     when(stompClient.isConnecting()).thenReturn(true);
 
     // Действие:
-    gateway.openSocket().test();
+    gateway.openSocket().test().isDisposed();
 
     // Результат:
     inOrder.verify(stompClient).setHeartbeat(25_000, 1.2F);
@@ -90,7 +90,7 @@ public class ServerConnectionGatewayTest {
     InOrder inOrder = Mockito.inOrder(stompClient);
 
     // Действие:
-    gateway.openSocket().test();
+    gateway.openSocket().test().isDisposed();
 
     // Результат:
     inOrder.verify(stompClient).setHeartbeat(25_000, 1.2F);

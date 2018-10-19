@@ -40,10 +40,10 @@ public class CurrentCostPollingUseCaseTest {
   @Test
   public void askGatewayForPollingTimers() {
     // Действие:
-    currentCostPollingUseCase.listenForPolling().test();
-    currentCostPollingUseCase.listenForPolling().test();
-    currentCostPollingUseCase.listenForPolling().test();
-    currentCostPollingUseCase.listenForPolling().test();
+    currentCostPollingUseCase.listenForPolling().test().isDisposed();
+    currentCostPollingUseCase.listenForPolling().test().isDisposed();
+    currentCostPollingUseCase.listenForPolling().test().isDisposed();
+    currentCostPollingUseCase.listenForPolling().test().isDisposed();
 
     // Результат:
     verify(gateway, only()).startPolling();

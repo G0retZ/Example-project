@@ -98,7 +98,7 @@ public class ExecutorStateNotOnlineUseCaseTest {
   @Test
   public void getExecutorStates() {
     // Действие:
-    useCase.setExecutorNotOnline().test();
+    useCase.setExecutorNotOnline().test().isDisposed();
 
     // Результат:
     verify(executorStateUseCase, only()).getExecutorStates();
@@ -112,7 +112,7 @@ public class ExecutorStateNotOnlineUseCaseTest {
   @Test
   public void DoNotTouchGatewayWithoutStatus() {
     // Действие:
-    useCase.setExecutorNotOnline().test();
+    useCase.setExecutorNotOnline().test().isDisposed();
 
     // Результат:
     verifyZeroInteractions(gateway);
@@ -125,7 +125,7 @@ public class ExecutorStateNotOnlineUseCaseTest {
         .thenReturn(Flowable.just(conditionExecutorState).concatWith(Flowable.never()));
 
     // Действие:
-    useCase.setExecutorNotOnline().test();
+    useCase.setExecutorNotOnline().test().isDisposed();
 
     // Результат:
     if (expectedGatewayInvocation) {

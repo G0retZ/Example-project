@@ -47,10 +47,10 @@ public class ExecutorBalanceUseCaseTest {
   @Test
   public void askGatewayForExecutorBalance() {
     // Действие:
-    useCase.getExecutorBalance().test();
-    useCase.getExecutorBalance().test();
-    useCase.getExecutorBalance().test();
-    useCase.getExecutorBalance().test();
+    useCase.getExecutorBalance().test().isDisposed();
+    useCase.getExecutorBalance().test().isDisposed();
+    useCase.getExecutorBalance().test().isDisposed();
+    useCase.getExecutorBalance().test().isDisposed();
 
     // Результат:
     verify(gateway, only()).getData();

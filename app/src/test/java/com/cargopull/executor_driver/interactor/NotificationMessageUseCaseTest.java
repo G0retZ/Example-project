@@ -38,10 +38,10 @@ public class NotificationMessageUseCaseTest {
   @Test
   public void askGatewayForMissedOrdersMessages() {
     // Действие:
-    useCase.getNotificationMessages().test();
-    useCase.getNotificationMessages().test();
-    useCase.getNotificationMessages().test();
-    useCase.getNotificationMessages().test();
+    useCase.getNotificationMessages().test().isDisposed();
+    useCase.getNotificationMessages().test().isDisposed();
+    useCase.getNotificationMessages().test().isDisposed();
+    useCase.getNotificationMessages().test().isDisposed();
 
     // Результат:
     verify(gateway, only()).getData();

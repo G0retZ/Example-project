@@ -51,10 +51,10 @@ public class OrderCurrentCostUseCaseTest {
   @Test
   public void askOrderGatewayForOrders() {
     // Действие:
-    useCase.getOrderCurrentCost().test();
-    useCase.getOrderCurrentCost().test();
-    useCase.getOrderCurrentCost().test();
-    useCase.getOrderCurrentCost().test();
+    useCase.getOrderCurrentCost().test().isDisposed();
+    useCase.getOrderCurrentCost().test().isDisposed();
+    useCase.getOrderCurrentCost().test().isDisposed();
+    useCase.getOrderCurrentCost().test().isDisposed();
 
     // Результат:
     verify(orderUseCase, times(4)).getOrders();
@@ -69,7 +69,7 @@ public class OrderCurrentCostUseCaseTest {
   @Test
   public void doNotTouchCurrentCostGateway() {
     // Действие:
-    useCase.getOrderCurrentCost().test();
+    useCase.getOrderCurrentCost().test().isDisposed();
 
     // Результат:
     verifyZeroInteractions(orderCurrentCostGateway);
@@ -84,7 +84,7 @@ public class OrderCurrentCostUseCaseTest {
     when(orderUseCase.getOrders()).thenReturn(Flowable.just(order));
 
     // Действие:
-    useCase.getOrderCurrentCost().test();
+    useCase.getOrderCurrentCost().test().isDisposed();
 
     // Результат:
     verify(orderCurrentCostGateway, only()).getData();

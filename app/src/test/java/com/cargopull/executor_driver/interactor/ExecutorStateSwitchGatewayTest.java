@@ -43,7 +43,7 @@ public class ExecutorStateSwitchGatewayTest {
   @Test
   public void askStompClientToSendMessage() {
     // Действие:
-    gateway.sendNewExecutorState(ExecutorState.ONLINE).test();
+    gateway.sendNewExecutorState(ExecutorState.ONLINE).test().isDisposed();
 
     // Результат:
     verify(stompClient, only()).send("/mobile/status", "\"ONLINE\"");
@@ -60,8 +60,7 @@ public class ExecutorStateSwitchGatewayTest {
     when(stompClient.send(anyString(), anyString())).thenReturn(Completable.complete());
 
     // Действие:
-    TestObserver<Void> testObserver =
-        gateway.sendNewExecutorState(ExecutorState.ONLINE).test();
+    TestObserver<Void> testObserver = gateway.sendNewExecutorState(ExecutorState.ONLINE).test();
 
     // Результат:
     testObserver.assertComplete();
@@ -77,8 +76,7 @@ public class ExecutorStateSwitchGatewayTest {
         .thenReturn(Completable.error(new IllegalArgumentException()));
 
     // Действие:
-    TestObserver<Void> testObserver =
-        gateway.sendNewExecutorState(ExecutorState.ONLINE).test();
+    TestObserver<Void> testObserver = gateway.sendNewExecutorState(ExecutorState.ONLINE).test();
 
     // Результат:
     testObserver.assertError(IllegalArgumentException.class);

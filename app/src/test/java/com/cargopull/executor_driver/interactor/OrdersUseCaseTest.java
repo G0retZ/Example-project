@@ -66,11 +66,11 @@ public class OrdersUseCaseTest {
   @Test
   public void askGatewayForOrdersOnlyOnce() {
     // Действие:
-    useCase.getOrdersSet().test();
-    useCase.getOrdersSet().test();
+    useCase.getOrdersSet().test().isDisposed();
+    useCase.getOrdersSet().test().isDisposed();
     useCase.addOrder(order1);
-    useCase.getOrdersSet().test();
-    useCase.getOrdersSet().test();
+    useCase.getOrdersSet().test().isDisposed();
+    useCase.getOrdersSet().test().isDisposed();
     useCase.removeOrder(order3);
 
     // Результат:
@@ -86,11 +86,11 @@ public class OrdersUseCaseTest {
   @Test
   public void doNotAskUseCaseForCancelledOrders() {
     // Действие:
-    useCase.getOrdersSet().test();
-    useCase.getOrdersSet().test();
+    useCase.getOrdersSet().test().isDisposed();
+    useCase.getOrdersSet().test().isDisposed();
     useCase.addOrder(order1);
-    useCase.getOrdersSet().test();
-    useCase.getOrdersSet().test();
+    useCase.getOrdersSet().test().isDisposed();
+    useCase.getOrdersSet().test().isDisposed();
     useCase.removeOrder(order3);
 
     // Результат:
@@ -103,12 +103,12 @@ public class OrdersUseCaseTest {
   @Test
   public void askUseCaseForCancelledOrdersForEveryAdd() {
     // Действие:
-    useCase.getOrdersSet().test();
+    useCase.getOrdersSet().test().isDisposed();
     emitter.onNext(new HashSet<>(Arrays.asList(order, order1, order2, order3)));
-    useCase.getOrdersSet().test();
+    useCase.getOrdersSet().test().isDisposed();
     useCase.addOrder(order1);
-    useCase.getOrdersSet().test();
-    useCase.getOrdersSet().test();
+    useCase.getOrdersSet().test().isDisposed();
+    useCase.getOrdersSet().test().isDisposed();
     useCase.removeOrder(order3);
 
     // Результат:

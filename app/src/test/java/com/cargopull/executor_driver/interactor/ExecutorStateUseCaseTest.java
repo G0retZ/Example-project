@@ -41,10 +41,10 @@ public class ExecutorStateUseCaseTest {
   @Test
   public void askGatewayForExecutorState() {
     // Действие:
-    useCase.getExecutorStates().test();
-    useCase.getExecutorStates().test();
-    useCase.getExecutorStates().test();
-    useCase.getExecutorStates().test();
+    useCase.getExecutorStates().test().isDisposed();
+    useCase.getExecutorStates().test().isDisposed();
+    useCase.getExecutorStates().test().isDisposed();
+    useCase.getExecutorStates().test().isDisposed();
 
     // Результат:
     verify(gateway, only()).getData();

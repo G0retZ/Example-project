@@ -47,7 +47,7 @@ public class ServerTimeUseCaseTest {
   @Test
   public void askGatewayForServerTime() {
     // Действие:
-    useCase.getServerTime().test();
+    useCase.getServerTime().test().isDisposed();
 
     // Результат:
     verify(gateway, only()).getData();
@@ -61,7 +61,7 @@ public class ServerTimeUseCaseTest {
   @Test
   public void doNotSetServerTimeIfNoData() {
     // Действие:
-    useCase.getServerTime().test();
+    useCase.getServerTime().test().isDisposed();
 
     // Результат:
     verifyZeroInteractions(timeUtils);
@@ -76,7 +76,7 @@ public class ServerTimeUseCaseTest {
     when(gateway.getData()).thenReturn(Flowable.error(DataMappingException::new));
 
     // Действие:
-    useCase.getServerTime().test();
+    useCase.getServerTime().test().isDisposed();
 
     // Результат:
     verifyZeroInteractions(timeUtils);
@@ -92,7 +92,7 @@ public class ServerTimeUseCaseTest {
     when(gateway.getData()).thenReturn(Flowable.just(1L, 2L, 3L));
 
     // Действие:
-    useCase.getServerTime().test();
+    useCase.getServerTime().test().isDisposed();
 
     // Результат:
     inOrder.verify(timeUtils).setServerCurrentTime(1L);

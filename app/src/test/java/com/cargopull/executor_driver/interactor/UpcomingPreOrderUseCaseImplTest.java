@@ -70,10 +70,10 @@ public class UpcomingPreOrderUseCaseImplTest {
   @Test
   public void askGatewayForOrdersOnlyOnce() {
     // Действие:
-    useCase.getOrders().test();
-    useCase.getOrders().test();
-    useCase.getOrders().test();
-    useCase.getOrders().test();
+    useCase.getOrders().test().isDisposed();
+    useCase.getOrders().test().isDisposed();
+    useCase.getOrders().test().isDisposed();
+    useCase.getOrders().test().isDisposed();
 
     // Результат:
     verify(gateway, only()).getData();
@@ -87,10 +87,10 @@ public class UpcomingPreOrderUseCaseImplTest {
   @Test
   public void doNotAskUseCaseForOrdersListForGet() {
     // Действие:
-    useCase.getOrders().test();
-    useCase.getOrders().test();
-    useCase.getOrders().test();
-    useCase.getOrders().test();
+    useCase.getOrders().test().isDisposed();
+    useCase.getOrders().test().isDisposed();
+    useCase.getOrders().test().isDisposed();
+    useCase.getOrders().test().isDisposed();
 
     // Результат:
     verifyZeroInteractions(ordersUseCase);
@@ -102,14 +102,14 @@ public class UpcomingPreOrderUseCaseImplTest {
   @Test
   public void askUseCaseForOrdersListForEveryValue() {
     // Действие:
-    useCase.getOrders().test();
-    useCase.getOrders().test();
+    useCase.getOrders().test().isDisposed();
+    useCase.getOrders().test().isDisposed();
     orderEmitter.onNext(order);
-    useCase.getOrders().test();
-    useCase.getOrders().test();
+    useCase.getOrders().test().isDisposed();
+    useCase.getOrders().test().isDisposed();
     orderEmitter.onNext(order2);
-    useCase.getOrders().test();
-    useCase.getOrders().test();
+    useCase.getOrders().test().isDisposed();
+    useCase.getOrders().test().isDisposed();
 
     // Результат:
     verify(ordersUseCase, times(2)).getOrdersSet();
@@ -134,7 +134,7 @@ public class UpcomingPreOrderUseCaseImplTest {
     );
 
     // Действие:
-    useCase.getOrders().test();
+    useCase.getOrders().test().isDisposed();
     orderEmitter.onNext(order);
     orderEmitter.onNext(order2);
     orderEmitter.onNext(order3);

@@ -43,7 +43,7 @@ public class WaitingForClientGatewayTest {
   @Test
   public void askStompClientToSendStartOrder() {
     // Действие:
-    gateway.startTheOrder().test();
+    gateway.startTheOrder().test().isDisposed();
 
     // Результат:
     verify(stompClient, only()).send("/mobile/trip", "\"START_ORDER\"");

@@ -45,7 +45,7 @@ public class OrderCostDetailsUseCaseTest {
   @Test
   public void askGatewayForOrders() {
     // Действие:
-    useCase.getOrderCostDetails().test();
+    useCase.getOrderCostDetails().test().isDisposed();
 
     // Результат:
     verify(gateway, only()).getData();

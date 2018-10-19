@@ -75,7 +75,7 @@ public class TopicGatewayImplTest {
   @Test
   public void askExecutorStateUseCaseForStatusUpdates() {
     // Действие:
-    gateway.getData().test();
+    gateway.getData().test().isDisposed();
 
     // Результат:
     verify(topicListener, only()).getAcknowledgedMessages();
@@ -89,7 +89,7 @@ public class TopicGatewayImplTest {
   @Test
   public void doNotTouchFilterIfNoDataYet() {
     // Действие:
-    gateway.getData().test();
+    gateway.getData().test().isDisposed();
 
     // Результат:
     verifyZeroInteractions(filter);
@@ -106,7 +106,7 @@ public class TopicGatewayImplTest {
     when(topicListener.getAcknowledgedMessages()).thenReturn(Flowable.just(stompMessage));
 
     // Действие:
-    gateway.getData().test();
+    gateway.getData().test().isDisposed();
 
     // Результат:
     verify(filter, only()).test(stompMessage);
@@ -123,7 +123,7 @@ public class TopicGatewayImplTest {
     when(topicListener.getAcknowledgedMessages()).thenReturn(Flowable.just(stompMessage));
 
     // Действие:
-    gateway.getData().test();
+    gateway.getData().test().isDisposed();
 
     // Результат:
     verifyZeroInteractions(mapper);
@@ -141,7 +141,7 @@ public class TopicGatewayImplTest {
     when(topicListener.getAcknowledgedMessages()).thenReturn(Flowable.just(stompMessage));
 
     // Действие:
-    gateway.getData().test();
+    gateway.getData().test().isDisposed();
 
     // Результат:
     verify(mapper, only()).map(stompMessage);

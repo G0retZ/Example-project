@@ -47,7 +47,7 @@ public class ServicesUseCaseTest {
   @Test
   public void askGatewayForServices() {
     // Действие:
-    useCase.loadServices().test();
+    useCase.loadServices().test().isDisposed();
 
     // Результат:
     verify(gateway, only()).getServices();
@@ -59,7 +59,7 @@ public class ServicesUseCaseTest {
   @Test
   public void doNotTouchGatewayIfNoServices() {
     // Действие:
-    useCase.setSelectedServices(new ArrayList<>()).test();
+    useCase.setSelectedServices(new ArrayList<>()).test().isDisposed();
 
     // Результат:
     verifyZeroInteractions(gateway);
@@ -77,7 +77,7 @@ public class ServicesUseCaseTest {
             new Service(1, "n2", 10, false),
             new Service(2, "n3", 130, false)
         )
-    ).test();
+    ).test().isDisposed();
 
     // Результат:
     verifyZeroInteractions(gateway);
@@ -95,7 +95,7 @@ public class ServicesUseCaseTest {
             new Service(1, "n2", 10, false),
             new Service(2, "n3", 130, true)
         )
-    ).test();
+    ).test().isDisposed();
 
     // Результат:
     verify(gateway, only()).sendSelectedServices(

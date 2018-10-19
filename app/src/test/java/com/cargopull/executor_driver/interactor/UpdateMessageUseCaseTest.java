@@ -41,10 +41,10 @@ public class UpdateMessageUseCaseTest {
   @Test
   public void askGatewayForUpdateMessages() {
     // Действие:
-    useCase.getUpdateMessages().test();
-    useCase.getUpdateMessages().test();
-    useCase.getUpdateMessages().test();
-    useCase.getUpdateMessages().test();
+    useCase.getUpdateMessages().test().isDisposed();
+    useCase.getUpdateMessages().test().isDisposed();
+    useCase.getUpdateMessages().test().isDisposed();
+    useCase.getUpdateMessages().test().isDisposed();
 
     // Результат:
     verify(gateway, times(4)).getData();
