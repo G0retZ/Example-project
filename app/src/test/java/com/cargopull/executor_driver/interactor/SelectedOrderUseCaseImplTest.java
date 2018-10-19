@@ -1,15 +1,12 @@
 package com.cargopull.executor_driver.interactor;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 import com.cargopull.executor_driver.UseCaseThreadTestRule;
-import com.cargopull.executor_driver.backend.analytics.ErrorReporter;
 import com.cargopull.executor_driver.entity.Order;
 import com.cargopull.executor_driver.entity.OrderCancelledException;
 import com.cargopull.executor_driver.gateway.DataMappingException;
@@ -39,8 +36,6 @@ public class SelectedOrderUseCaseImplTest {
   private SelectedOrderUseCaseImpl useCase;
 
   @Mock
-  private ErrorReporter errorReporter;
-  @Mock
   private OrdersUseCase ordersUseCase;
   @Mock
   private Order order;
@@ -55,7 +50,7 @@ public class SelectedOrderUseCaseImplTest {
   @Before
   public void setUp() {
     when(ordersUseCase.getOrdersSet()).thenReturn(Flowable.never());
-    useCase = new SelectedOrderUseCaseImpl(errorReporter, ordersUseCase);
+    useCase = new SelectedOrderUseCaseImpl(ordersUseCase);
   }
 
   /* Проверяем работу с юзкейсом списка заказов */
@@ -89,56 +84,6 @@ public class SelectedOrderUseCaseImplTest {
     // Результат:
     verify(ordersUseCase, times(3)).getOrdersSet();
     verifyNoMoreInteractions(ordersUseCase);
-  }
-
-  /* Проверяем отправку ошибок в репортер */
-
-  /**
-   * Не должен отправлять ошибку при подписке (должны отправлена вышестоящим юзкейсом).
-   */
-  @Test
-  public void reportErrorOnGet() {
-    // Дано:
-    when(ordersUseCase.getOrdersSet()).thenReturn(Flowable.error(DataMappingException::new));
-
-    // Действие:
-    useCase.getOrders().test();
-
-    // Результат:
-    verifyZeroInteractions(errorReporter);
-  }
-
-  /**
-   * Должен отправить ошибку при установке выбора.
-   */
-  @Test
-  public void reportErrorOnSet() {
-    // Дано:
-    when(ordersUseCase.getOrdersSet()).thenReturn(Flowable.error(DataMappingException::new));
-
-    // Действие:
-    useCase.setSelectedOrder(order).test();
-
-    // Результат:
-    verify(errorReporter, only()).reportError(any(DataMappingException.class));
-  }
-
-  /**
-   * Должен отправить ошибку при неверном выборе.
-   */
-  @Test
-  public void reportErrorOnSetWrong() {
-    // Дано:
-    when(ordersUseCase.getOrdersSet()).thenReturn(
-        Flowable.<Set<Order>>just(new HashSet<>(Arrays.asList(order, order1)))
-            .concatWith(Flowable.never())
-    );
-
-    // Действие:
-    useCase.setSelectedOrder(order2).test();
-
-    // Результат:
-    verify(errorReporter, only()).reportError(any(NoSuchElementException.class));
   }
 
   /* Проверяем ответы */

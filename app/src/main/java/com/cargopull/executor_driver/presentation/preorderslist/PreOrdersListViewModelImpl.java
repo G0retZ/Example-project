@@ -40,7 +40,8 @@ public class PreOrdersListViewModelImpl extends ViewModel implements PreOrdersLi
   private ViewState<PreOrdersListViewActions> lastViewState;
 
   @Inject
-  public PreOrdersListViewModelImpl(@NonNull ErrorReporter errorReporter,
+  public PreOrdersListViewModelImpl(
+      @NonNull ErrorReporter errorReporter,
       @NonNull OrdersUseCase ordersUseCase,
       @NonNull SelectedOrderUseCase selectedOrderUseCase,
       @NonNull PreOrdersListItemsMapper mapper) {
@@ -101,8 +102,7 @@ public class PreOrdersListViewModelImpl extends ViewModel implements PreOrdersLi
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(
             () -> navigateLiveData.postValue(PreOrdersListNavigate.PRE_ORDER),
-            throwable -> {
-            }
+            errorReporter::reportError
         );
   }
 

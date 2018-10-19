@@ -735,7 +735,6 @@ class InteractorComponentImpl implements InteractorComponent {
   private SelectedOrderUseCaseImpl getSelectedOrderUseCaseImpl() {
     if (selectedOrderUseCaseImpl == null) {
       selectedOrderUseCaseImpl = new SelectedOrderUseCaseImpl(
-          errorReporter,
           getPreOrdersSetUseCase()
       );
     }

@@ -97,6 +97,38 @@ public class PreOrdersListViewModelTest {
     verify(errorReporter, only()).reportError(any(DataMappingException.class));
   }
 
+  /**
+   * Должен отправить ошибку при установке выбора.
+   */
+  @Test
+  public void reportErrorOnSet() {
+    // Дано:
+    when(selectedOrderUseCase.setSelectedOrder(any()))
+        .thenReturn(Completable.error(DataMappingException::new));
+
+    // Действие:
+    viewModel.setSelectedOrder(order);
+
+    // Результат:
+    verify(errorReporter, only()).reportError(any(DataMappingException.class));
+  }
+
+  /**
+   * Должен отправить ошибку при неверном выборе.
+   */
+  @Test
+  public void reportErrorOnSetWrong() {
+    // Дано:
+    when(selectedOrderUseCase.setSelectedOrder(any()))
+        .thenReturn(Completable.error(NoSuchElementException::new));
+
+    // Действие:
+    viewModel.setSelectedOrder(order);
+
+    // Результат:
+    verify(errorReporter, only()).reportError(any(NoSuchElementException.class));
+  }
+
   /* Тетсируем работу с юзкейсом списка предзаказов. */
 
   /**
