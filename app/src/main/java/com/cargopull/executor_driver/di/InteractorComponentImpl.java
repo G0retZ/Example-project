@@ -84,8 +84,6 @@ class InteractorComponentImpl implements InteractorComponent {
   @NonNull
   private final RepositoryComponent repositoryComponent;
   @NonNull
-  private final MemoryDataSharer<String> loginSharer;
-  @NonNull
   private final MemoryDataSharer<Vehicle> vehicleChoiceSharer;
   @NonNull
   private final TimeUtils timeUtils;
@@ -178,12 +176,11 @@ class InteractorComponentImpl implements InteractorComponent {
   @Nullable
   private OrderConfirmationUseCase upcomingPreOrderConfirmationUseCase;
 
-  InteractorComponentImpl(@NonNull MemoryDataSharer<String> loginSharer,
+  InteractorComponentImpl(
       @NonNull TimeUtils timeUtils,
       @NonNull RepositoryComponent repositoryComponent) {
     this.timeUtils = timeUtils;
     this.repositoryComponent = repositoryComponent;
-    this.loginSharer = loginSharer;
     vehicleChoiceSharer = new VehicleChoiceSharer();
   }
 
@@ -491,7 +488,7 @@ class InteractorComponentImpl implements InteractorComponent {
   public LoginUseCase getLoginUseCase() {
     if (loginUseCase == null) {
       loginUseCase = new LoginUseCaseImpl(
-          loginSharer,
+          repositoryComponent.getLoginStorage(),
           new LoginValidator()
       );
     }
@@ -515,7 +512,7 @@ class InteractorComponentImpl implements InteractorComponent {
     if (passwordUseCase == null) {
       passwordUseCase = new PasswordUseCaseImpl(
           repositoryComponent.getPasswordGateway(),
-          loginSharer,
+          repositoryComponent.getLoginGateway(),
           new PasswordValidator()
       );
     }
@@ -528,7 +525,7 @@ class InteractorComponentImpl implements InteractorComponent {
     if (smsUseCase == null) {
       smsUseCase = new SmsUseCaseImpl(
           repositoryComponent.getSmsGateway(),
-          loginSharer,
+          repositoryComponent.getLoginGateway(),
           new PhoneNumberValidator()
       );
     }

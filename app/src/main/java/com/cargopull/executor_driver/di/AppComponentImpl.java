@@ -1,7 +1,6 @@
 package com.cargopull.executor_driver.di;
 
 import android.content.Context;
-import android.net.ConnectivityManager;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import androidx.annotation.NonNull;
@@ -17,20 +16,13 @@ import com.cargopull.executor_driver.application.OrderCostDetailsActivity;
 import com.cargopull.executor_driver.application.OrderFulfillmentActivity;
 import com.cargopull.executor_driver.application.PreOrdersActivity;
 import com.cargopull.executor_driver.application.WaitingForClientActivity;
-import com.cargopull.executor_driver.backend.analytics.ErrorReporterImpl;
-import com.cargopull.executor_driver.backend.analytics.EventLogger;
-import com.cargopull.executor_driver.backend.analytics.EventLoggerImpl;
-import com.cargopull.executor_driver.backend.geolocation.GeolocationCenterImpl;
 import com.cargopull.executor_driver.backend.ringtone.SingleRingTonePlayer;
-import com.cargopull.executor_driver.backend.settings.AppPreferences;
-import com.cargopull.executor_driver.backend.settings.AppSettingsService;
 import com.cargopull.executor_driver.backend.vibro.NewPatternMapper;
 import com.cargopull.executor_driver.backend.vibro.OldPatternMapper;
 import com.cargopull.executor_driver.backend.vibro.OldSingleShakePlayer;
 import com.cargopull.executor_driver.backend.vibro.ShakeItPlayer;
 import com.cargopull.executor_driver.backend.vibro.SingleShakePlayer;
 import com.cargopull.executor_driver.gateway.SmsCodeMapper;
-import com.cargopull.executor_driver.interactor.auth.LoginSharer;
 import com.cargopull.executor_driver.utils.TimeUtils;
 import com.cargopull.executor_driver.utils.TimeUtilsImpl;
 import com.cargopull.executor_driver.view.BalanceFragment;
@@ -86,11 +78,9 @@ import com.cargopull.executor_driver.view.auth.SmsReceiver;
 public class AppComponentImpl implements AppComponent {
 
   @NonNull
-  private final EventLogger eventLogger;
-  @NonNull
   private final PresentationComponent presentationComponent;
   @NonNull
-  private final AppSettingsService appSettingsService;
+  private final BackendComponent backendComponent;
   @NonNull
   private final AutoRouterImpl autoRouter;
   @NonNull
@@ -101,18 +91,8 @@ public class AppComponentImpl implements AppComponent {
   public AppComponentImpl(@NonNull Context appContext) {
     appContext = appContext.getApplicationContext();
     TimeUtils timeUtils = new TimeUtilsImpl();
-    appSettingsService = new AppPreferences(appContext);
-    LoginSharer loginSharer = new LoginSharer(appSettingsService);
-    eventLogger = new EventLoggerImpl(loginSharer, appContext);
-    BackendComponent backendComponent = new BackendComponentImpl(
-        loginSharer,
-        appSettingsService,
-        new GeolocationCenterImpl(appContext),
-        (ConnectivityManager) appContext.getSystemService(Context.CONNECTIVITY_SERVICE)
-    );
-    presentationComponent = new PresentationComponentImpl(
-        eventLogger, new ErrorReporterImpl(loginSharer), loginSharer, backendComponent, timeUtils
-    );
+    backendComponent = new BackendComponentImpl(appContext);
+    presentationComponent = new PresentationComponentImpl(backendComponent, timeUtils);
     singleRingTonePlayer = new SingleRingTonePlayer(appContext);
     if (VERSION.SDK_INT >= VERSION_CODES.O) {
       shakeItPlayer = new SingleShakePlayer(
@@ -209,42 +189,42 @@ public class AppComponentImpl implements AppComponent {
 
   @Override
   public void inject(MovingToClientActivity movingToClientActivity) {
-    movingToClientActivity.setEventLogger(eventLogger);
+    movingToClientActivity.setEventLogger(backendComponent.getEventLogger());
   }
 
   @Override
   public void inject(WaitingForClientActivity waitingForClientActivity) {
-    waitingForClientActivity.setEventLogger(eventLogger);
+    waitingForClientActivity.setEventLogger(backendComponent.getEventLogger());
   }
 
   @Override
   public void inject(OrderFulfillmentActivity orderFulfillmentActivity) {
-    orderFulfillmentActivity.setEventLogger(eventLogger);
+    orderFulfillmentActivity.setEventLogger(backendComponent.getEventLogger());
   }
 
   @Override
   public void inject(OrderCostDetailsActivity orderCostDetailsActivity) {
-    orderCostDetailsActivity.setEventLogger(eventLogger);
+    orderCostDetailsActivity.setEventLogger(backendComponent.getEventLogger());
   }
 
   @Override
   public void inject(MenuActivity menuActivity) {
-    menuActivity.setEventLogger(eventLogger);
+    menuActivity.setEventLogger(backendComponent.getEventLogger());
   }
 
   @Override
   public void inject(OnlineMenuActivity onlineMenuActivity) {
-    onlineMenuActivity.setEventLogger(eventLogger);
+    onlineMenuActivity.setEventLogger(backendComponent.getEventLogger());
   }
 
   @Override
   public void inject(OnlineActivity onlineActivity) {
-    onlineActivity.setEventLogger(eventLogger);
+    onlineActivity.setEventLogger(backendComponent.getEventLogger());
   }
 
   @Override
   public void inject(PreOrdersActivity preOrdersActivity) {
-    preOrdersActivity.setEventLogger(eventLogger);
+    preOrdersActivity.setEventLogger(backendComponent.getEventLogger());
   }
 
   @Override
@@ -254,7 +234,7 @@ public class AppComponentImpl implements AppComponent {
 
   @Override
   public void inject(LoginFragment loginFragment) {
-    loginFragment.setAppSettings(appSettingsService);
+    loginFragment.setAppSettings(backendComponent.getAppSettingsService());
     loginFragment.setPhoneViewModel(presentationComponent.getPhoneViewModel(loginFragment));
   }
 
@@ -371,7 +351,7 @@ public class AppComponentImpl implements AppComponent {
 
   @Override
   public void inject(MovingToClientActionsDialogFragment movingToClientActionsDialogFragment) {
-    movingToClientActionsDialogFragment.setEventLogger(eventLogger);
+    movingToClientActionsDialogFragment.setEventLogger(backendComponent.getEventLogger());
   }
 
   @Override
@@ -397,7 +377,7 @@ public class AppComponentImpl implements AppComponent {
 
   @Override
   public void inject(WaitingForClientActionsDialogFragment waitingForClientActionsDialogFragment) {
-    waitingForClientActionsDialogFragment.setEventLogger(eventLogger);
+    waitingForClientActionsDialogFragment.setEventLogger(backendComponent.getEventLogger());
   }
 
   @Override
@@ -431,7 +411,7 @@ public class AppComponentImpl implements AppComponent {
 
   @Override
   public void inject(OrderFulfillmentActionsDialogFragment orderFulfillmentActionsDialogFragment) {
-    orderFulfillmentActionsDialogFragment.setEventLogger(eventLogger);
+    orderFulfillmentActionsDialogFragment.setEventLogger(backendComponent.getEventLogger());
     orderFulfillmentActionsDialogFragment.setNextRoutePointViewModel(
         presentationComponent.getNextRoutePointViewModel(orderFulfillmentActionsDialogFragment)
     );
@@ -521,12 +501,12 @@ public class AppComponentImpl implements AppComponent {
 
   @Override
   public void inject(OrderCostDetailsActionsDialogFragment orderCostDetailsActionsDialogFragment) {
-    orderCostDetailsActionsDialogFragment.setEventLogger(eventLogger);
+    orderCostDetailsActionsDialogFragment.setEventLogger(backendComponent.getEventLogger());
   }
 
   @Override
   public void inject(ProfileFragment profileFragment) {
-    profileFragment.setAppSettings(appSettingsService);
+    profileFragment.setAppSettings(backendComponent.getAppSettingsService());
   }
 
   @Override

@@ -7,6 +7,7 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import com.cargopull.executor_driver.backend.settings.AppSettingsService;
+import com.cargopull.executor_driver.gateway.LoginGateway;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -14,16 +15,16 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
-public class LoginSharerTest {
+public class LoginGatewayTest {
 
-  private LoginSharer loginSharer;
+  private LoginGateway loginGateway;
 
   @Mock
   private AppSettingsService appSettings;
 
   @Before
   public void setUp() {
-    loginSharer = new LoginSharer(appSettings);
+    loginGateway = new LoginGateway(appSettings);
   }
 
   /**
@@ -41,11 +42,11 @@ public class LoginSharerTest {
   @Test
   public void doNotAskSettingsForLogin() {
     // Действие:
-    loginSharer.get().test().isDisposed();
-    loginSharer.get().test().isDisposed();
-    loginSharer.get().test().isDisposed();
-    loginSharer.get().test().isDisposed();
-    loginSharer.get().test().isDisposed();
+    loginGateway.get().test().isDisposed();
+    loginGateway.get().test().isDisposed();
+    loginGateway.get().test().isDisposed();
+    loginGateway.get().test().isDisposed();
+    loginGateway.get().test().isDisposed();
 
     // Результат:
     verify(appSettings, only()).getData("authorizationLogin");
@@ -57,7 +58,7 @@ public class LoginSharerTest {
   @Test
   public void askSettingsForSaveLogin() {
     // Действие:
-    loginSharer.onNext("123456");
+    loginGateway.onNext("123456");
 
     // Результат:
     verify(appSettings).getData("authorizationLogin");
@@ -72,9 +73,9 @@ public class LoginSharerTest {
   public void valueUnchangedForRead() {
     // Дано:
     when(appSettings.getData("authorizationLogin")).thenReturn("654321");
-    loginSharer = new LoginSharer(appSettings);
+    loginGateway = new LoginGateway(appSettings);
 
     // Результат:
-    loginSharer.get().test().assertValue("654321");
+    loginGateway.get().test().assertValue("654321");
   }
 }

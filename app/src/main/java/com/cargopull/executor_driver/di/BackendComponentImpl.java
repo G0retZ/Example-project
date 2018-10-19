@@ -1,10 +1,17 @@
 package com.cargopull.executor_driver.di;
 
+import android.content.Context;
 import android.net.ConnectivityManager;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.cargopull.executor_driver.BuildConfig;
+import com.cargopull.executor_driver.backend.analytics.ErrorReporter;
+import com.cargopull.executor_driver.backend.analytics.ErrorReporterImpl;
+import com.cargopull.executor_driver.backend.analytics.EventLogger;
+import com.cargopull.executor_driver.backend.analytics.EventLoggerImpl;
 import com.cargopull.executor_driver.backend.geolocation.GeolocationCenter;
+import com.cargopull.executor_driver.backend.geolocation.GeolocationCenterImpl;
+import com.cargopull.executor_driver.backend.settings.AppPreferences;
 import com.cargopull.executor_driver.backend.settings.AppSettingsService;
 import com.cargopull.executor_driver.backend.web.ApiService;
 import com.cargopull.executor_driver.backend.web.AuthorizationInterceptor;
@@ -33,7 +40,9 @@ import ua.naiksoftware.stomp.client.StompClient;
 class BackendComponentImpl implements BackendComponent {
 
   @NonNull
-  private final DataReceiver<String> loginSharer;
+  private final EventLogger eventLogger;
+  @NonNull
+  private final ErrorReporter errorReporter;
   @NonNull
   private final Interceptor[] interceptors;
   @NonNull
@@ -49,16 +58,16 @@ class BackendComponentImpl implements BackendComponent {
   @Nullable
   private OkHttpClient okHttpClient;
 
-  BackendComponentImpl(@NonNull DataReceiver<String> loginSharer,
-      @NonNull AppSettingsService appSettingsService,
-      @NonNull GeolocationCenter geolocationCenter,
-      @NonNull ConnectivityManager connectivityManager) {
-    this.loginSharer = loginSharer;
-    this.appSettingsService = appSettingsService;
-    this.geolocationCenter = geolocationCenter;
+  BackendComponentImpl(@NonNull Context appContext) {
+    appSettingsService = new AppPreferences(appContext);
+    eventLogger = new EventLoggerImpl(appSettingsService, appContext);
+    errorReporter = new ErrorReporterImpl(appSettingsService);
+    this.geolocationCenter = new GeolocationCenterImpl(appContext);
     TokenKeeper tokenKeeper = new TokenKeeperImpl(appSettingsService);
     this.interceptors = new Interceptor[]{
-        new ConnectivityInterceptor(connectivityManager),
+        new ConnectivityInterceptor(
+            (ConnectivityManager) appContext.getSystemService(Context.CONNECTIVITY_SERVICE)
+        ),
         new SendVersionInterceptor(),
         new DeprecatedVersionInterceptor(),
         new AuthorizationInterceptor(),
@@ -66,6 +75,18 @@ class BackendComponentImpl implements BackendComponent {
         new SendTokenInterceptor(tokenKeeper),
         new ReceiveTokenInterceptor(tokenKeeper)
     };
+  }
+
+  @Override
+  @NonNull
+  public EventLogger getEventLogger() {
+    return eventLogger;
+  }
+
+  @Override
+  @NonNull
+  public ErrorReporter getErrorReporter() {
+    return errorReporter;
   }
 
   @Override
@@ -101,11 +122,11 @@ class BackendComponentImpl implements BackendComponent {
 
   @Override
   @NonNull
-  public TopicListener getPersonalTopicListener() {
+  public TopicListener getPersonalTopicListener(@NonNull DataReceiver<String> loginReceiver) {
     if (personalQueueListener == null) {
       personalQueueListener = new PersonalQueueListener(
           getStompClient(),
-          loginSharer
+          loginReceiver
       );
     }
     return personalQueueListener;
