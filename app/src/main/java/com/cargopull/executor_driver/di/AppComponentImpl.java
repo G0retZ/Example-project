@@ -14,6 +14,7 @@ import com.cargopull.executor_driver.application.OnlineActivity;
 import com.cargopull.executor_driver.application.OnlineMenuActivity;
 import com.cargopull.executor_driver.application.OrderCostDetailsActivity;
 import com.cargopull.executor_driver.application.OrderFulfillmentActivity;
+import com.cargopull.executor_driver.application.PasswordActivity;
 import com.cargopull.executor_driver.application.PreOrdersActivity;
 import com.cargopull.executor_driver.application.WaitingForClientActivity;
 import com.cargopull.executor_driver.backend.ringtone.SingleRingTonePlayer;
@@ -228,8 +229,15 @@ public class AppComponentImpl implements AppComponent {
   }
 
   @Override
+  public void inject(PasswordActivity passwordActivity) {
+    passwordActivity.setApiService(backendComponent.getApiService());
+    passwordActivity.setErrorReporter(backendComponent.getErrorReporter());
+  }
+
+  @Override
   public void inject(FcmService fcmService) {
     fcmService.setAnnouncementViewModel(presentationComponent.getAnnouncementViewModel());
+    fcmService.setApiService(backendComponent.getApiService());
   }
 
   @Override
