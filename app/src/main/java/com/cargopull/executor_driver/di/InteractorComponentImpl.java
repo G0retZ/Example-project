@@ -433,7 +433,6 @@ class InteractorComponentImpl implements InteractorComponent {
   public OrderUseCase getOrderUseCase() {
     if (orderUseCase == null) {
       orderUseCase = new OrderUseCaseImpl(
-          errorReporter,
           repositoryComponent.getOrderGateway()
       );
 
@@ -737,7 +736,6 @@ class InteractorComponentImpl implements InteractorComponent {
   private OrderUseCaseImpl getPreOrderUseCaseImpl() {
     if (preOrderUseCaseImpl == null) {
       preOrderUseCaseImpl = new OrderUseCaseImpl(
-          errorReporter,
           repositoryComponent.getPreOrderGateway()
       );
     }

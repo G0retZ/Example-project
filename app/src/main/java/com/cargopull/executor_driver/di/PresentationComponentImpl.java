@@ -490,6 +490,7 @@ class PresentationComponentImpl implements PresentationComponent {
   public OrderViewModel getOrderViewModel() {
     if (orderViewModel == null) {
       orderViewModel = new OrderViewModelImpl(
+          errorReporter,
           interactorComponent.getOrderUseCase(),
           timeUtils
       );
@@ -506,7 +507,7 @@ class PresentationComponentImpl implements PresentationComponent {
     return getViewModelInstance(
         fragment,
         OrderViewModelImpl.class,
-        new OrderViewModelImpl(interactorComponent.getPreOrderUseCase(), timeUtils)
+        new OrderViewModelImpl(errorReporter, interactorComponent.getPreOrderUseCase(), timeUtils)
     );
   }
 
@@ -600,7 +601,10 @@ class PresentationComponentImpl implements PresentationComponent {
   @Override
   public PreOrderViewModel getPreOrderViewModel() {
     if (preOrderViewModel == null) {
-      preOrderViewModel = new PreOrderViewModelImpl(interactorComponent.getPreOrderUseCase());
+      preOrderViewModel = new PreOrderViewModelImpl(
+          errorReporter,
+          interactorComponent.getPreOrderUseCase()
+      );
     }
     return preOrderViewModel;
   }
@@ -761,7 +765,11 @@ class PresentationComponentImpl implements PresentationComponent {
     return getViewModelInstance(
         fragment,
         OrderViewModelImpl.class,
-        new OrderViewModelImpl(interactorComponent.getSelectedPreOrderUseCase(), timeUtils)
+        new OrderViewModelImpl(
+            errorReporter,
+            interactorComponent.getSelectedPreOrderUseCase(),
+            timeUtils
+        )
     );
   }
 
@@ -792,7 +800,11 @@ class PresentationComponentImpl implements PresentationComponent {
     return getViewModelInstance(
         fragment,
         OrderViewModelImpl.class,
-        new OrderViewModelImpl(interactorComponent.getUpcomingPreOrderUseCase(), timeUtils)
+        new OrderViewModelImpl(
+            errorReporter,
+            interactorComponent.getUpcomingPreOrderUseCase(),
+            timeUtils
+        )
     );
   }
 
@@ -818,6 +830,7 @@ class PresentationComponentImpl implements PresentationComponent {
   public UpcomingPreOrderViewModel getUpcomingPreOrderAvailabilityViewModel() {
     if (upcomingPreOrderAvailabilityViewModel == null) {
       upcomingPreOrderAvailabilityViewModel = new UpcomingPreOrderViewModelImpl(
+          errorReporter,
           interactorComponent.getUpcomingPreOrderUseCase()
       );
     }

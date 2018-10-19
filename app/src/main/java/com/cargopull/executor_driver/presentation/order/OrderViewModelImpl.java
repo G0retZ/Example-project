@@ -5,6 +5,7 @@ import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
+import com.cargopull.executor_driver.backend.analytics.ErrorReporter;
 import com.cargopull.executor_driver.entity.Order;
 import com.cargopull.executor_driver.entity.OrderCancelledException;
 import com.cargopull.executor_driver.entity.OrderOfferDecisionException;
@@ -24,6 +25,8 @@ public class OrderViewModelImpl extends ViewModel implements
     OrderViewModel {
 
   @NonNull
+  private final ErrorReporter errorReporter;
+  @NonNull
   private final OrderUseCase orderUseCase;
   @NonNull
   private final MutableLiveData<ViewState<OrderViewActions>> viewStateLiveData;
@@ -37,7 +40,10 @@ public class OrderViewModelImpl extends ViewModel implements
   private ViewState<OrderViewActions> lastViewState;
 
   @Inject
-  public OrderViewModelImpl(@NonNull OrderUseCase orderUseCase, @NonNull TimeUtils timeUtils) {
+  public OrderViewModelImpl(@NonNull ErrorReporter errorReporter,
+      @NonNull OrderUseCase orderUseCase,
+      @NonNull TimeUtils timeUtils) {
+    this.errorReporter = errorReporter;
     this.orderUseCase = orderUseCase;
     this.timeUtils = timeUtils;
     viewStateLiveData = new MutableLiveData<>();
@@ -76,6 +82,7 @@ public class OrderViewModelImpl extends ViewModel implements
               || throwable instanceof OrderCancelledException)
           .subscribe(this::consumeOrder,
               throwable -> {
+                errorReporter.reportError(throwable);
                 if (throwable instanceof DataMappingException) {
                   navigateLiveData.postValue(CommonNavigate.SERVER_DATA_ERROR);
                 }

@@ -2,7 +2,6 @@ package com.cargopull.executor_driver.interactor;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import com.cargopull.executor_driver.backend.analytics.ErrorReporter;
 import com.cargopull.executor_driver.entity.Order;
 import com.cargopull.executor_driver.entity.OrderOfferDecisionException;
 import io.reactivex.BackpressureStrategy;
@@ -13,8 +12,6 @@ import javax.inject.Inject;
 
 public class OrderUseCaseImpl implements OrderUseCase, OrderDecisionUseCase {
 
-  @NonNull
-  private final ErrorReporter errorReporter;
   @NonNull
   private final CommonGateway<Order> gateway;
   @Nullable
@@ -35,9 +32,7 @@ public class OrderUseCaseImpl implements OrderUseCase, OrderDecisionUseCase {
   };
 
   @Inject
-  public OrderUseCaseImpl(@NonNull ErrorReporter errorReporter,
-      @NonNull CommonGateway<Order> gateway) {
-    this.errorReporter = errorReporter;
+  public OrderUseCaseImpl(@NonNull CommonGateway<Order> gateway) {
     this.gateway = gateway;
   }
 
@@ -50,9 +45,7 @@ public class OrderUseCaseImpl implements OrderUseCase, OrderDecisionUseCase {
           gateway.getData()
               .observeOn(Schedulers.single())
               .doOnComplete(() -> emitter.onComplete())
-      )
-          .doOnError(errorReporter::reportError)
-          .replay(1)
+      ).replay(1)
           .refCount();
     }
     return orderFlowable;
