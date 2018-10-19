@@ -423,7 +423,10 @@ class PresentationComponentImpl implements PresentationComponent {
     return getViewModelInstance(
         fragment,
         OnlineButtonViewModelImpl.class,
-        new OnlineButtonViewModelImpl(interactorComponent.getVehiclesAndOptionsUseCase())
+        new OnlineButtonViewModelImpl(
+            errorReporter,
+            interactorComponent.getVehiclesAndOptionsUseCase()
+        )
     );
   }
 
@@ -436,7 +439,10 @@ class PresentationComponentImpl implements PresentationComponent {
     return getViewModelInstance(
         fragment,
         OnlineButtonViewModelImpl.class,
-        new OnlineButtonViewModelImpl(interactorComponent.getSelectedVehiclesAndOptionsUseCase())
+        new OnlineButtonViewModelImpl(
+            errorReporter,
+            interactorComponent.getSelectedVehiclesAndOptionsUseCase()
+        )
     );
   }
 
