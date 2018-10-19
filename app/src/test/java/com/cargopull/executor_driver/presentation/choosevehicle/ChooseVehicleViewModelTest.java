@@ -11,8 +11,10 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
 import androidx.lifecycle.Observer;
 import com.cargopull.executor_driver.R;
 import com.cargopull.executor_driver.ViewModelThreadTestRule;
+import com.cargopull.executor_driver.backend.analytics.ErrorReporter;
 import com.cargopull.executor_driver.entity.EmptyListException;
 import com.cargopull.executor_driver.entity.Vehicle;
+import com.cargopull.executor_driver.gateway.DataMappingException;
 import com.cargopull.executor_driver.interactor.vehicle.VehicleChoiceUseCase;
 import com.cargopull.executor_driver.presentation.ViewState;
 import io.reactivex.Completable;
@@ -39,6 +41,8 @@ public class ChooseVehicleViewModelTest {
   public TestRule rule = new InstantTaskExecutorRule();
   private ChooseVehicleViewModel viewModel;
   @Mock
+  private ErrorReporter errorReporter;
+  @Mock
   private VehicleChoiceUseCase vehicleChoiceUseCase;
 
   @Mock
@@ -54,7 +58,85 @@ public class ChooseVehicleViewModelTest {
     vehicleSingleSubject = SingleSubject.create();
     when(vehicleChoiceUseCase.getVehicles()).thenReturn(vehicleSingleSubject);
     when(vehicleChoiceUseCase.selectVehicle(any())).thenReturn(Completable.never());
-    viewModel = new ChooseVehicleViewModelImpl(vehicleChoiceUseCase);
+    viewModel = new ChooseVehicleViewModelImpl(errorReporter, vehicleChoiceUseCase);
+  }
+
+  /* Проверяем отправку ошибок в репортер */
+
+  /**
+   * Должен отправить ошибку.
+   */
+  @Test
+  public void reportError() {
+    // Действие:
+    vehicleSingleSubject.onError(new DataMappingException());
+
+    // Результат:
+    verify(errorReporter, only()).reportError(any(DataMappingException.class));
+  }
+
+  /**
+   * Должен отправить ошибку, если выбраного ТС нет в списке.
+   */
+  @Test
+  public void reportOutOfBoundsError() {
+    // Дано:
+    when(vehicleChoiceUseCase.selectVehicle(any()))
+        .thenReturn(Completable.error(IndexOutOfBoundsException::new));
+
+    // Действие:
+    viewModel.selectItem(new ChooseVehicleListItem(new Vehicle(3, "m", "m", "co", "l", false)));
+
+    // Результат:
+    verify(errorReporter, only()).reportError(any(IndexOutOfBoundsException.class));
+  }
+
+  /**
+   * Должен отправить ошибку, если выбрано занятое ТС или его нет в списке.
+   */
+  @Test
+  public void reportArgumentError() {
+    // Дано:
+    when(vehicleChoiceUseCase.selectVehicle(any()))
+        .thenReturn(Completable.error(IllegalArgumentException::new));
+
+    // Действие:
+    viewModel.selectItem(new ChooseVehicleListItem(new Vehicle(3, "m", "m", "co", "l", false)));
+
+    // Результат:
+    verify(errorReporter, only()).reportError(any(IllegalArgumentException.class));
+  }
+
+  /**
+   * Должен отправить ошибку, если список пуст.
+   */
+  @Test
+  public void reportEmptyListError() {
+    // Дано:
+    when(vehicleChoiceUseCase.selectVehicle(any()))
+        .thenReturn(Completable.error(EmptyListException::new));
+
+    // Действие:
+    viewModel.selectItem(new ChooseVehicleListItem(new Vehicle(3, "m", "m", "co", "l", false)));
+
+    // Результат:
+    verify(errorReporter, only()).reportError(any(EmptyListException.class));
+  }
+
+  /**
+   * Должен отправить ошибку, если список пуст.
+   */
+  @Test
+  public void doNotReportOtherError() {
+    // Дано:
+    when(vehicleChoiceUseCase.selectVehicle(any()))
+        .thenReturn(Completable.error(Exception::new));
+
+    // Действие:
+    viewModel.selectItem(new ChooseVehicleListItem(new Vehicle(3, "m", "m", "co", "l", false)));
+
+    // Результат:
+    verifyZeroInteractions(errorReporter);
   }
 
   /* Тетсируем работу с юзкейсом выбора ТС. */
@@ -98,12 +180,9 @@ public class ChooseVehicleViewModelTest {
     when(vehicleChoiceUseCase.selectVehicle(any())).thenReturn(Completable.complete());
 
     // Действие:
-    viewModel
-        .selectItem(new ChooseVehicleListItem(new Vehicle(1, "m", "m", "c", "l", false)));
-    viewModel
-        .selectItem(new ChooseVehicleListItem(new Vehicle(2, "ma", "m", "co", "l", true)));
-    viewModel
-        .selectItem(new ChooseVehicleListItem(new Vehicle(3, "m", "m", "co", "l", false)));
+    viewModel.selectItem(new ChooseVehicleListItem(new Vehicle(1, "m", "m", "c", "l", false)));
+    viewModel.selectItem(new ChooseVehicleListItem(new Vehicle(2, "ma", "m", "co", "l", true)));
+    viewModel.selectItem(new ChooseVehicleListItem(new Vehicle(3, "m", "m", "co", "l", false)));
 
     // Результат:
     verify(vehicleChoiceUseCase).getVehicles();
@@ -119,12 +198,9 @@ public class ChooseVehicleViewModelTest {
   @Test
   public void DoNotTouchChooseVehicleUseCaseDuringVehicleChoosing() {
     // Действие:
-    viewModel
-        .selectItem(new ChooseVehicleListItem(new Vehicle(1, "m", "m", "c", "l", false)));
-    viewModel
-        .selectItem(new ChooseVehicleListItem(new Vehicle(2, "ma", "m", "co", "l", true)));
-    viewModel
-        .selectItem(new ChooseVehicleListItem(new Vehicle(3, "m", "m", "co", "l", false)));
+    viewModel.selectItem(new ChooseVehicleListItem(new Vehicle(1, "m", "m", "c", "l", false)));
+    viewModel.selectItem(new ChooseVehicleListItem(new Vehicle(2, "ma", "m", "co", "l", true)));
+    viewModel.selectItem(new ChooseVehicleListItem(new Vehicle(3, "m", "m", "co", "l", false)));
 
     // Результат:
     verify(vehicleChoiceUseCase).getVehicles();
@@ -208,18 +284,10 @@ public class ChooseVehicleViewModelTest {
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(any(ChooseVehicleViewStatePending.class));
     inOrder.verify(viewStateObserver).onChanged(new ChooseVehicleViewStateReady(Arrays.asList(
-        new ChooseVehicleListItem(
-            new Vehicle(1, "m", "m", "c", "l", false)
-        ),
-        new ChooseVehicleListItem(
-            new Vehicle(2, "ma", "m", "co", "l", true)
-        ),
-        new ChooseVehicleListItem(
-            new Vehicle(3, "m", "m", "co", "l", false)
-        ),
-        new ChooseVehicleListItem(
-            new Vehicle(4, "ma", "m", "c", "l", true)
-        )
+        new ChooseVehicleListItem(new Vehicle(1, "m", "m", "c", "l", false)),
+        new ChooseVehicleListItem(new Vehicle(2, "ma", "m", "co", "l", true)),
+        new ChooseVehicleListItem(new Vehicle(3, "m", "m", "co", "l", false)),
+        new ChooseVehicleListItem(new Vehicle(4, "ma", "m", "c", "l", true))
     )));
     verifyNoMoreInteractions(viewStateObserver);
   }
@@ -237,8 +305,7 @@ public class ChooseVehicleViewModelTest {
     viewModel.getNavigationLiveData().observeForever(navigateObserver);
 
     // Действие:
-    viewModel
-        .selectItem(new ChooseVehicleListItem(new Vehicle(1, "m", "m", "c", "l", false)));
+    viewModel.selectItem(new ChooseVehicleListItem(new Vehicle(1, "m", "m", "c", "l", false)));
 
     // Результат:
     verifyZeroInteractions(navigateObserver);
@@ -254,8 +321,7 @@ public class ChooseVehicleViewModelTest {
     viewModel.getNavigationLiveData().observeForever(navigateObserver);
 
     // Действие:
-    viewModel
-        .selectItem(new ChooseVehicleListItem(new Vehicle(1, "m", "m", "c", "l", false)));
+    viewModel.selectItem(new ChooseVehicleListItem(new Vehicle(1, "m", "m", "c", "l", false)));
 
     // Результат:
     verify(navigateObserver, only()).onChanged(ChooseVehicleNavigate.VEHICLE_OPTIONS);

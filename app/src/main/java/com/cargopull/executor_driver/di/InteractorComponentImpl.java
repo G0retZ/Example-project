@@ -589,7 +589,6 @@ class InteractorComponentImpl implements InteractorComponent {
   public VehicleChoiceUseCase getVehicleChoiceUseCase() {
     if (vehicleChoiceUseCase == null) {
       vehicleChoiceUseCase = new VehicleChoiceUseCaseImpl(
-          errorReporter,
           repositoryComponent.getVehiclesAndOptionsGateway(),
           vehicleChoiceSharer
       );
@@ -602,7 +601,6 @@ class InteractorComponentImpl implements InteractorComponent {
   public VehicleChoiceUseCase getCurrentVehicleChoiceUseCase() {
     if (currentVehicleChoiceUseCase == null) {
       currentVehicleChoiceUseCase = new VehicleChoiceUseCaseImpl(
-          errorReporter,
           repositoryComponent.getSelectedVehiclesAndOptionsGateway(),
           vehicleChoiceSharer
       );

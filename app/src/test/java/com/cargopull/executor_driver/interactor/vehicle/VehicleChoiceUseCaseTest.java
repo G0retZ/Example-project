@@ -1,15 +1,11 @@
 package com.cargopull.executor_driver.interactor.vehicle;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.only;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 import com.cargopull.executor_driver.UseCaseThreadTestRule;
-import com.cargopull.executor_driver.backend.analytics.ErrorReporter;
 import com.cargopull.executor_driver.backend.web.NoNetworkException;
 import com.cargopull.executor_driver.entity.DriverBlockedException;
 import com.cargopull.executor_driver.entity.EmptyListException;
@@ -35,15 +31,13 @@ public class VehicleChoiceUseCaseTest {
   private VehicleChoiceUseCase useCase;
 
   @Mock
-  private ErrorReporter errorReporter;
-  @Mock
   private VehiclesAndOptionsGateway gateway;
   @Mock
   private Observer<Vehicle> vehicleChoiceObserver;
 
   @Before
   public void setUp() {
-    useCase = new VehicleChoiceUseCaseImpl(errorReporter, gateway, vehicleChoiceObserver);
+    useCase = new VehicleChoiceUseCaseImpl(gateway, vehicleChoiceObserver);
     when(gateway.getExecutorVehicles()).thenReturn(Single.never());
   }
 
@@ -202,90 +196,6 @@ public class VehicleChoiceUseCaseTest {
 
     // Результат:
     verifyZeroInteractions(vehicleChoiceObserver);
-  }
-
-  /* Проверяем отправку ошибок в репортер */
-
-  /**
-   * Должен отправить ошибку, если выбраного ТС нет в списке.
-   */
-  @Test
-  public void reportOutOfBoundsError() {
-    // Дано:
-    when(gateway.getExecutorVehicles()).thenReturn(Single.just(
-        new ArrayList<>(Arrays.asList(
-            new Vehicle(12, "manufacturer", "model", "color", "license", false),
-            new Vehicle(13, "manufacture", "models", "colo", "licenses", true),
-            new Vehicle(14, "manufacturers", "modeler", "color", "licensees", false),
-            new Vehicle(15, "manufactures", "modelers", "colo", "licensee", true)
-        ))
-    ));
-
-    // Действие и Результат:
-    useCase.getVehicles().test();
-    useCase.selectVehicle(
-        new Vehicle(11, "manufacturer", "model", "color", "license", false)
-    ).test();
-
-    // Результат:
-    verify(errorReporter, only()).reportError(any(IndexOutOfBoundsException.class));
-  }
-
-  /**
-   * Должен отправить ошибку, если выбрано занятое ТС или его нет в списке.
-   */
-  @Test
-  public void reportArgumentError() {
-    // Дано:
-    when(gateway.getExecutorVehicles()).thenReturn(Single.just(
-        new ArrayList<>(Arrays.asList(
-            new Vehicle(12, "manufacturer", "model", "color", "license", false),
-            new Vehicle(13, "manufacture", "models", "colo", "licenses", true),
-            new Vehicle(14, "manufacturers", "modeler", "color", "licensees", false),
-            new Vehicle(15, "manufactures", "modelers", "colo", "licensee", true)
-        ))
-    ));
-
-    // Действие и Результат:
-    useCase.getVehicles().test();
-    useCase.selectVehicle(
-        new Vehicle(13, "manufacture", "models", "colo", "licenses", true)
-    ).test();
-    useCase.selectVehicle(
-        new Vehicle(15, "manufactures", "modelers", "colo", "licensee", true)
-    ).test();
-
-    // Результат:
-    verify(errorReporter, times(2)).reportError(any(IllegalArgumentException.class));
-    verifyNoMoreInteractions(errorReporter);
-  }
-
-  /**
-   * Не должен отправлять ошибку.
-   */
-  @Test
-  public void doNotReportErrorIfSuccess() {
-    // Дано:
-    when(gateway.getExecutorVehicles()).thenReturn(Single.just(
-        new ArrayList<>(Arrays.asList(
-            new Vehicle(12, "manufacturer", "model", "color", "license", false),
-            new Vehicle(13, "manufacture", "models", "colo", "licenses", true),
-            new Vehicle(14, "manufacturers", "modeler", "color", "licensees", false),
-            new Vehicle(15, "manufactures", "modelers", "colo", "licensee", true)
-        ))
-    ));
-
-    // Действие и Результат:
-    useCase.getVehicles().test();
-    useCase.selectVehicle(
-        new Vehicle(12, "manufacturer", "model", "color", "license", false)
-    ).test();
-    useCase.selectVehicle(
-        new Vehicle(14, "manufacturers", "modeler", "color", "licensees", false)
-    ).test();
-
-    // Результат:
-    verifyZeroInteractions(errorReporter);
   }
 
   /* Проверяем ответы на публикацию */
