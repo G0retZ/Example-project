@@ -508,7 +508,6 @@ class InteractorComponentImpl implements InteractorComponent {
   public OrdersUseCase getPreOrdersSetUseCase() {
     if (preOrdersSetUseCase == null) {
       preOrdersSetUseCase = new OrdersUseCaseImpl(
-          errorReporter,
           repositoryComponent.getPreOrdersSetGateway(),
           getCancelledOrderUseCase());
     }

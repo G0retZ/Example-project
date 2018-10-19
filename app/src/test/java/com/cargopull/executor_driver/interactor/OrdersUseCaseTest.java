@@ -1,6 +1,5 @@
 package com.cargopull.executor_driver.interactor;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -9,7 +8,6 @@ import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 import com.cargopull.executor_driver.UseCaseThreadTestRule;
-import com.cargopull.executor_driver.backend.analytics.ErrorReporter;
 import com.cargopull.executor_driver.entity.Order;
 import com.cargopull.executor_driver.gateway.DataMappingException;
 import io.reactivex.BackpressureStrategy;
@@ -35,8 +33,6 @@ public class OrdersUseCaseTest {
   private OrdersUseCase useCase;
 
   @Mock
-  private ErrorReporter errorReporter;
-  @Mock
   private CommonGateway<Set<Order>> gateway;
   @Mock
   private OrderUseCase cancelledOrdersUseCase;
@@ -59,7 +55,7 @@ public class OrdersUseCaseTest {
     when(cancelledOrdersUseCase.getOrders()).thenReturn(
         Flowable.create(e -> cancelledEmitter = e, BackpressureStrategy.BUFFER)
     );
-    useCase = new OrdersUseCaseImpl(errorReporter, gateway, cancelledOrdersUseCase);
+    useCase = new OrdersUseCaseImpl(gateway, cancelledOrdersUseCase);
   }
 
   /* Проверяем работу с гейтвеем */
@@ -84,7 +80,8 @@ public class OrdersUseCaseTest {
   /* Проверяем работу с юзкейсом отмененного предзаказа */
 
   /**
-   * Не должен запрашивать у юзкейса получение отмененных предзаказов если еще не было списков заказов.
+   * Не должен запрашивать у юзкейса получение отмененных предзаказов если еще не было списков
+   * заказов.
    */
   @Test
   public void doNotAskUseCaseForCancelledOrders() {
@@ -117,35 +114,6 @@ public class OrdersUseCaseTest {
     // Результат:
     verify(cancelledOrdersUseCase, times(2)).getOrders();
     verifyNoMoreInteractions(cancelledOrdersUseCase);
-  }
-
-  /* Проверяем отправку ошибок в репортер */
-
-  /**
-   * Должен отправить ошибку.
-   */
-  @Test
-  public void reportError() {
-    // Действие:
-    useCase.getOrdersSet().test();
-    emitter.onError(new DataMappingException());
-
-    // Результат:
-    verify(errorReporter, only()).reportError(any(DataMappingException.class));
-  }
-
-  /**
-   * Должен отправить ошибку.
-   */
-  @Test
-  public void reportErrorForCancelledOrder() {
-    // Действие:
-    useCase.getOrdersSet().test();
-    emitter.onNext(new HashSet<>(Arrays.asList(order, order1, order2, order3)));
-    cancelledEmitter.onError(new DataMappingException());
-
-    // Результат:
-    verify(errorReporter, only()).reportError(any(DataMappingException.class));
   }
 
   /* Проверяем ответы */
@@ -262,7 +230,8 @@ public class OrdersUseCaseTest {
   }
 
   /**
-   * Должен вернуть список, затем его без удаленного элемента, затем его же с тем же добавленным элементом.
+   * Должен вернуть список, затем его без удаленного элемента, затем его же с тем же добавленным
+   * элементом.
    */
   @Test
   public void answerWithUpdatedListOnUnScheduleThenSchedule() {
@@ -281,7 +250,8 @@ public class OrdersUseCaseTest {
   }
 
   /**
-   * Должен вернуть список, затем с добавленным элементом, затем его же с без того же удаленного элемента.
+   * Должен вернуть список, затем с добавленным элементом, затем его же с без того же удаленного
+   * элемента.
    */
   @Test
   public void answerWithUpdatedListOnScheduleThenUnSchedule() {
