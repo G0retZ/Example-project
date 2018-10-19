@@ -156,7 +156,7 @@ class PresentationComponentImpl implements PresentationComponent {
     this.loginSharer = loginSharer;
     RepositoryComponent repositoryComponent = new RepositoryComponentImpl(backendComponent);
     this.interactorComponent = new InteractorComponentImpl(
-        loginSharer, timeUtils, errorReporter, repositoryComponent
+        loginSharer, timeUtils, repositoryComponent
     );
     this.timeUtils = timeUtils;
     servicesListItems = new ServicesListItems();
@@ -528,6 +528,7 @@ class PresentationComponentImpl implements PresentationComponent {
         fragment,
         OrderConfirmationViewModelImpl.class,
         new OrderConfirmationViewModelImpl(
+            errorReporter,
             interactorComponent.getOrderConfirmationUseCase(),
             timeUtils,
             eventLogger
@@ -545,6 +546,7 @@ class PresentationComponentImpl implements PresentationComponent {
         fragment,
         OrderConfirmationViewModelImpl.class,
         new OrderConfirmationViewModelImpl(
+            errorReporter,
             interactorComponent.getPreOrderBookingUseCase(),
             timeUtils,
             null
@@ -803,6 +805,7 @@ class PresentationComponentImpl implements PresentationComponent {
         fragment,
         OrderConfirmationViewModelImpl.class,
         new OrderConfirmationViewModelImpl(
+            errorReporter,
             interactorComponent.getSelectedPreOrderConfirmationUseCase(),
             timeUtils,
             null
@@ -838,6 +841,7 @@ class PresentationComponentImpl implements PresentationComponent {
         fragment,
         OrderConfirmationViewModelImpl.class,
         new OrderConfirmationViewModelImpl(
+            errorReporter,
             interactorComponent.getUpcomingPreOrderConfirmationUseCase(),
             timeUtils,
             null

@@ -2,7 +2,6 @@ package com.cargopull.executor_driver.interactor;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import com.cargopull.executor_driver.backend.analytics.ErrorReporter;
 import com.cargopull.executor_driver.entity.Order;
 import com.cargopull.executor_driver.entity.OrderCancelledException;
 import io.reactivex.Flowable;
@@ -12,8 +11,6 @@ import javax.inject.Inject;
 public class UpcomingPreOrderUseCaseImpl implements OrderUseCase {
 
   @NonNull
-  private final ErrorReporter errorReporter;
-  @NonNull
   private final CommonGateway<Order> gateway;
   @NonNull
   private final OrdersUseCase ordersUseCase;
@@ -21,10 +18,9 @@ public class UpcomingPreOrderUseCaseImpl implements OrderUseCase {
   private Flowable<Order> orderFlowable;
 
   @Inject
-  public UpcomingPreOrderUseCaseImpl(@NonNull ErrorReporter errorReporter,
+  public UpcomingPreOrderUseCaseImpl(
       @NonNull CommonGateway<Order> gateway,
       @NonNull OrdersUseCase ordersUseCase) {
-    this.errorReporter = errorReporter;
     this.gateway = gateway;
     this.ordersUseCase = ordersUseCase;
   }
@@ -35,7 +31,6 @@ public class UpcomingPreOrderUseCaseImpl implements OrderUseCase {
     if (orderFlowable == null) {
       orderFlowable = gateway.getData()
           .observeOn(Schedulers.single())
-          .doOnError(errorReporter::reportError)
           .doOnComplete(() -> {
             throw new InterruptedException();
           })

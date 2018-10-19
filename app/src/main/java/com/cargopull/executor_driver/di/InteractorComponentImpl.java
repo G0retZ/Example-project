@@ -2,7 +2,6 @@ package com.cargopull.executor_driver.di;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import com.cargopull.executor_driver.backend.analytics.ErrorReporter;
 import com.cargopull.executor_driver.entity.ExecutorState;
 import com.cargopull.executor_driver.entity.LoginValidator;
 import com.cargopull.executor_driver.entity.PasswordValidator;
@@ -84,8 +83,6 @@ class InteractorComponentImpl implements InteractorComponent {
 
   @NonNull
   private final RepositoryComponent repositoryComponent;
-  @NonNull
-  private final ErrorReporter errorReporter;
   @NonNull
   private final MemoryDataSharer<String> loginSharer;
   @NonNull
@@ -183,12 +180,10 @@ class InteractorComponentImpl implements InteractorComponent {
 
   InteractorComponentImpl(@NonNull MemoryDataSharer<String> loginSharer,
       @NonNull TimeUtils timeUtils,
-      @NonNull ErrorReporter errorReporter,
       @NonNull RepositoryComponent repositoryComponent) {
     this.timeUtils = timeUtils;
     this.repositoryComponent = repositoryComponent;
     this.loginSharer = loginSharer;
-    this.errorReporter = errorReporter;
     vehicleChoiceSharer = new VehicleChoiceSharer();
   }
 
@@ -745,7 +740,6 @@ class InteractorComponentImpl implements InteractorComponent {
   private UpcomingPreOrderUseCaseImpl getUpcomingPreOrderUseCaseImpl() {
     if (upcomingPreOrderUseCase == null) {
       upcomingPreOrderUseCase = new UpcomingPreOrderUseCaseImpl(
-          errorReporter,
           repositoryComponent.getUpcomingPreOrderGateway(),
           getPreOrdersSetUseCase()
       );
