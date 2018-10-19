@@ -10,11 +10,9 @@ import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 import com.cargopull.executor_driver.UseCaseThreadTestRule;
-import com.cargopull.executor_driver.backend.analytics.ErrorReporter;
 import com.cargopull.executor_driver.backend.websocket.ConnectionClosedException;
 import com.cargopull.executor_driver.entity.ExecutorState;
 import com.cargopull.executor_driver.entity.GeoLocation;
-import com.cargopull.executor_driver.gateway.DataMappingException;
 import io.reactivex.Completable;
 import io.reactivex.Flowable;
 import io.reactivex.functions.Action;
@@ -38,8 +36,6 @@ public class GeoLocationUseCaseTest {
   private GeoLocationUseCase useCase;
 
   @Mock
-  private ErrorReporter errorReporter;
-  @Mock
   private GeoLocationGateway geoLocationGateway;
   @Mock
   private GeoTrackingGateway geoTrackingGateway;
@@ -54,7 +50,7 @@ public class GeoLocationUseCaseTest {
     when(geoTrackingGateway.sendGeoLocation(any())).thenReturn(Completable.never());
     when(executorStateUseCase.getExecutorStates()).thenReturn(Flowable.never());
     useCase = new GeoLocationUseCaseImpl(
-        errorReporter, geoLocationGateway, geoTrackingGateway, executorStateUseCase
+        geoLocationGateway, geoTrackingGateway, executorStateUseCase
     );
   }
 
@@ -166,8 +162,8 @@ public class GeoLocationUseCaseTest {
   }
 
   /**
-   * Должен запросить гейтвей получать локации с интервалом 1 час,
-   * при переходе в состояние "Заблокирован".
+   * Должен запросить гейтвей получать локации с интервалом 1 час, при переходе в состояние
+   * "Заблокирован".
    */
   @Test
   public void askGatewayForLocationsEvery1HourIfGoToBlocked() {
@@ -183,8 +179,8 @@ public class GeoLocationUseCaseTest {
   }
 
   /**
-   * Должен запросить гейтвей получать локации с интервалом 1 час,
-   * при переходе в состояние "Смена закрыта".
+   * Должен запросить гейтвей получать локации с интервалом 1 час, при переходе в состояние "Смена
+   * закрыта".
    */
   @Test
   public void askGatewayForLocationsEvery1HourIfGoToShiftClosed() {
@@ -200,8 +196,8 @@ public class GeoLocationUseCaseTest {
   }
 
   /**
-   * Должен запросить гейтвей получать локации с интервалом 180 сек,
-   * при переходе в состояние "Смена открыта".
+   * Должен запросить гейтвей получать локации с интервалом 180 сек, при переходе в состояние "Смена
+   * открыта".
    */
   @Test
   public void askGatewayForLocationsEvery180secIfGoToShiftOpened() {
@@ -217,8 +213,8 @@ public class GeoLocationUseCaseTest {
   }
 
   /**
-   * Должен запросить гейтвей получать локации с интервалом 15 сек,
-   * при переходе в состояние "На линии".
+   * Должен запросить гейтвей получать локации с интервалом 15 сек, при переходе в состояние "На
+   * линии".
    */
   @Test
   public void askGatewayForLocationsEvery15secIfGoToOnline() {
@@ -234,8 +230,8 @@ public class GeoLocationUseCaseTest {
   }
 
   /**
-   * Должен запросить гейтвей получать локации с интервалом 15 сек,
-   * при переходе в состояние "Подтверждение заказа".
+   * Должен запросить гейтвей получать локации с интервалом 15 сек, при переходе в состояние
+   * "Подтверждение заказа".
    */
   @Test
   public void askGatewayForLocationsEvery15secIfGoToDriverOrderConfirmation() {
@@ -251,8 +247,8 @@ public class GeoLocationUseCaseTest {
   }
 
   /**
-   * Должен запросить гейтвей получать локации с интервалом 15 сек,
-   * при переходе в состояние "Подтверждение заказа клиентом".
+   * Должен запросить гейтвей получать локации с интервалом 15 сек, при переходе в состояние
+   * "Подтверждение заказа клиентом".
    */
   @Test
   public void askGatewayForLocationsEvery15secIfGoToClientOrderConfirmation() {
@@ -268,8 +264,8 @@ public class GeoLocationUseCaseTest {
   }
 
   /**
-   * Должен запросить гейтвей получать локации с интервалом 15 сек,
-   * при переходе в состояние "На пути к клиету".
+   * Должен запросить гейтвей получать локации с интервалом 15 сек, при переходе в состояние "На
+   * пути к клиету".
    */
   @Test
   public void askGatewayForLocationsEvery15secIfGoToMovingToClient() {
@@ -285,8 +281,8 @@ public class GeoLocationUseCaseTest {
   }
 
   /**
-   * Должен запросить гейтвей получать локации с интервалом 15 сек,
-   * при переходе в состояние "Ожидание клиета".
+   * Должен запросить гейтвей получать локации с интервалом 15 сек, при переходе в состояние
+   * "Ожидание клиета".
    */
   @Test
   public void askGatewayForLocationsEvery15secIfGoToWaitingForClient() {
@@ -302,8 +298,8 @@ public class GeoLocationUseCaseTest {
   }
 
   /**
-   * Должен запросить гейтвей получать локации с интервалом 15 сек,
-   * при переходе в состояние "Выполнение заказа".
+   * Должен запросить гейтвей получать локации с интервалом 15 сек, при переходе в состояние
+   * "Выполнение заказа".
    */
   @Test
   public void askGatewayForLocationsEvery15secIfGoToOrderFulfillment() {
@@ -319,8 +315,8 @@ public class GeoLocationUseCaseTest {
   }
 
   /**
-   * Должен запросить гейтвей получать локации с интервалом 15 сек,
-   * при переходе в состояние "Прием оплаты".
+   * Должен запросить гейтвей получать локации с интервалом 15 сек, при переходе в состояние "Прием
+   * оплаты".
    */
   @Test
   public void askGatewayForLocationsEvery15secIfGoToPaymentAcceptance() {
@@ -464,65 +460,6 @@ public class GeoLocationUseCaseTest {
     verifyZeroInteractions(geoTrackingGateway);
   }
 
-  /* Проверяем отправку ошибок в репортер */
-
-  /**
-   * Не должен отправлять ошибку в статусах исполнителя.
-   */
-  @Test
-  public void doNotReportExecutorStatusError() {
-    // Дано:
-    when(executorStateUseCase.getExecutorStates())
-        .thenReturn(Flowable.error(DataMappingException::new));
-
-    // Действие:
-    useCase.getGeoLocations().test();
-
-    // Результат:
-    verifyZeroInteractions(errorReporter);
-  }
-
-  /**
-   * Должен отправить ошибку в получении геолокации.
-   */
-  @Test
-  public void reportGeoLocationError() {
-    // Дано:
-    when(executorStateUseCase.getExecutorStates())
-        .thenReturn(Flowable.just(ExecutorState.SHIFT_CLOSED));
-    when(geoLocationGateway.getGeoLocations(anyLong()))
-        .thenReturn(Flowable.error(DataMappingException::new));
-
-    // Действие:
-    useCase.getGeoLocations().test();
-
-    // Результат:
-    verify(errorReporter, only()).reportError(any(DataMappingException.class));
-  }
-
-  /**
-   * Не должен отправлять ошибку отправки геопозици в сокет.
-   */
-  @Test
-  public void doNotReportSendGeolocationError() {
-    // Дано:
-    when(executorStateUseCase.getExecutorStates())
-        .thenReturn(Flowable.just(ExecutorState.SHIFT_CLOSED));
-    when(geoLocationGateway.getGeoLocations(anyLong())).thenReturn(Flowable.just(
-        new GeoLocation(1, 2, 3),
-        new GeoLocation(4, 5, 6),
-        new GeoLocation(7, 8, 9)
-    ));
-    when(geoTrackingGateway.sendGeoLocation(any()))
-        .thenReturn(Completable.error(DataMappingException::new));
-
-    // Действие:
-    useCase.getGeoLocations().test();
-
-    // Результат:
-    verifyZeroInteractions(errorReporter);
-  }
-
   /* Проверяем ответы гейтвея геопозиции */
 
   /**
@@ -554,10 +491,10 @@ public class GeoLocationUseCaseTest {
   }
 
   /**
-   * Должен вернуть ошибку при ошибке получения статусов.
+   * Не должен веозвращать ошибку при ошибке получения статусов.
    */
   @Test
-  public void answerWithErrorOnGetStateError() {
+  public void answerWithCompleteOnGetStateError() {
     // Дано:
     when(executorStateUseCase.getExecutorStates())
         .thenReturn(Flowable.error(ConnectException::new));
@@ -593,7 +530,7 @@ public class GeoLocationUseCaseTest {
    * Должен игнорировать ошибку отправки статуса в сокет.
    */
   @Test
-  public void answerWithErrorOnSendGeolocationError() {
+  public void answerWithCompleteOnSendGeolocationError() {
     // Дано:
     when(executorStateUseCase.getExecutorStates())
         .thenReturn(Flowable.just(ExecutorState.SHIFT_CLOSED));

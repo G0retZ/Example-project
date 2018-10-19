@@ -355,6 +355,7 @@ class PresentationComponentImpl implements PresentationComponent {
   public GeoLocationViewModel getGeoLocationViewModel() {
     if (geoLocationViewModel == null) {
       geoLocationViewModel = new GeoLocationViewModelImpl(
+          errorReporter,
           interactorComponent.getGeoLocationUseCase()
       );
     }

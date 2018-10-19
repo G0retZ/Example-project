@@ -2,7 +2,6 @@ package com.cargopull.executor_driver.interactor;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import com.cargopull.executor_driver.backend.analytics.ErrorReporter;
 import com.cargopull.executor_driver.entity.ExecutorState;
 import com.cargopull.executor_driver.entity.GeoLocation;
 import io.reactivex.Flowable;
@@ -13,8 +12,6 @@ import javax.inject.Inject;
 
 public class GeoLocationUseCaseImpl implements GeoLocationUseCase {
 
-  @NonNull
-  private final ErrorReporter errorReporter;
   @NonNull
   private static final Map<ExecutorState, Integer> delays;
 
@@ -44,11 +41,9 @@ public class GeoLocationUseCaseImpl implements GeoLocationUseCase {
   private Flowable<GeoLocation> geoLocationFlowable;
 
   @Inject
-  public GeoLocationUseCaseImpl(@NonNull ErrorReporter errorReporter,
-      @NonNull GeoLocationGateway geoLocationGateway,
+  public GeoLocationUseCaseImpl(@NonNull GeoLocationGateway geoLocationGateway,
       @NonNull GeoTrackingGateway geoTrackingGateway,
       @NonNull ExecutorStateUseCase executorStateUseCase) {
-    this.errorReporter = errorReporter;
     this.geoLocationGateway = geoLocationGateway;
     this.geoTrackingGateway = geoTrackingGateway;
     this.executorStateUseCase = executorStateUseCase;
@@ -71,8 +66,7 @@ public class GeoLocationUseCaseImpl implements GeoLocationUseCase {
                       .onErrorComplete()
                       .toFlowable()
                   )
-          ).doOnError(errorReporter::reportError)
-          .replay(1)
+          ).replay(1)
           .refCount();
     }
     return geoLocationFlowable;
