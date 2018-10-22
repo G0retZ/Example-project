@@ -111,6 +111,9 @@ public class AppComponentImpl implements AppComponent {
 
   @Override
   public void inject(MainApplication mainApplication) {
+    mainApplication.setAppSettingsService(
+        backendComponent.getAppSettingsService()
+    );
     mainApplication.setRingTonePlayer(
         singleRingTonePlayer
     );

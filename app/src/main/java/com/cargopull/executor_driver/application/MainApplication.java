@@ -9,10 +9,12 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RawRes;
 import androidx.annotation.StringRes;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.app.NotificationCompat.BigTextStyle;
 import androidx.core.app.NotificationCompat.Builder;
 import com.cargopull.executor_driver.R;
 import com.cargopull.executor_driver.backend.ringtone.RingTonePlayer;
+import com.cargopull.executor_driver.backend.settings.AppSettingsService;
 import com.cargopull.executor_driver.backend.vibro.ShakeItPlayer;
 import com.cargopull.executor_driver.di.AppComponent;
 import com.cargopull.executor_driver.di.AppComponentImpl;
@@ -56,6 +58,8 @@ public class MainApplication extends Application implements ServerConnectionView
   @Nullable
   private AppComponent appComponent;
   @Nullable
+  private AppSettingsService appSettingsService;
+  @Nullable
   private RingTonePlayer ringTonePlayer;
   @Nullable
   private ShakeItPlayer shakeItPlayer;
@@ -96,6 +100,11 @@ public class MainApplication extends Application implements ServerConnectionView
   private int missedOrdersCount;
   @Nullable
   private NotificationManager notificationManager;
+
+  @Inject
+  public void setAppSettingsService(@NonNull AppSettingsService appSettingsService) {
+    this.appSettingsService = appSettingsService;
+  }
 
   @Inject
   public void setRingTonePlayer(@NonNull RingTonePlayer ringTonePlayer) {
@@ -206,20 +215,21 @@ public class MainApplication extends Application implements ServerConnectionView
 
   @Override
   public void onCreate() {
+    if (appSettingsService == null || cancelOrderReasonsViewModel == null
+        || balanceViewModel == null || executorStateViewModel == null
+        || geoLocationViewModel == null || missedOrderViewModel == null
+        || updateMessageViewModel == null || cancelledOrderViewModel == null
+        || serverConnectionViewModel == null || currentCostPollingViewModel == null
+        || serverTimeViewModel == null || orderViewModel == null || preOrderViewModel == null
+        || orderCostDetailsViewModel == null || upcomingPreOrderMessageViewModel == null
+        || preOrdersListViewModel == null || upcomingPreOrderViewModel == null) {
+      throw new RuntimeException("Shit! WTF?!");
+    }
+    AppCompatDelegate.setDefaultNightMode(appSettingsService.getNumber("mode"));
     super.onCreate();
     notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
     appComponent = new AppComponentImpl(this.getApplicationContext());
     appComponent.inject(this);
-    if (cancelOrderReasonsViewModel == null || balanceViewModel == null ||
-        executorStateViewModel == null || geoLocationViewModel == null
-        || missedOrderViewModel == null || updateMessageViewModel == null
-        || cancelledOrderViewModel == null || serverConnectionViewModel == null
-        || currentCostPollingViewModel == null || serverTimeViewModel == null
-        || orderViewModel == null || preOrderViewModel == null || orderCostDetailsViewModel == null
-        || upcomingPreOrderMessageViewModel == null || preOrdersListViewModel == null
-        || upcomingPreOrderViewModel == null) {
-      throw new RuntimeException("Shit! WTF?!");
-    }
     serverConnectionViewModel.getViewStateLiveData().observeForever(viewState -> {
       if (viewState != null) {
         viewState.apply(this);

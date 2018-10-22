@@ -73,6 +73,70 @@
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toBottomOf="@id/preOrders"/>
   <TextView
+    android:id="@+id/colorModeTitle"
+    style="@style/TextAppearance.AppCompat.Subhead"
+    android:layout_width="0dp"
+    android:layout_height="wrap_content"
+    android:paddingTop="16dp"
+    android:paddingStart="16dp"
+    android:paddingEnd="16dp"
+    android:background="?android:attr/selectableItemBackground"
+    android:gravity="center_vertical"
+    android:text="@string/color_scheme"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@id/preOrderLine"/>
+  <RadioGroup
+    android:id="@+id/colorMode"
+    android:layout_width="0dp"
+    android:layout_height="wrap_content"
+    android:padding="16dp"
+    android:orientation="horizontal"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@id/colorModeTitle">
+    <Space
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      android:layout_weight="1"/>
+    <RadioButton
+      android:id="@+id/colorModeNight"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:text="@string/color_scheme_night"/>
+    <Space
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      android:layout_weight="1"/>
+    <RadioButton
+      android:checked="true"
+      android:id="@+id/colorModeAuto"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:text="@string/color_scheme_auto"/>
+    <Space
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      android:layout_weight="1"/>
+    <RadioButton
+      android:id="@+id/colorModeDay"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:text="@string/color_scheme_daylight"/>
+    <Space
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      android:layout_weight="1"/>
+  </RadioGroup>
+  <View
+    android:id="@+id/colorModeLine"
+    android:layout_width="0dp"
+    android:layout_height="1dp"
+    android:background="@color/colorDivider"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@id/colorMode"/>
+  <TextView
     android:id="@+id/about"
     style="@style/TextAppearance.AppCompat.Subhead"
     android:layout_width="0dp"
@@ -84,7 +148,7 @@
     android:text="@string/about"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toBottomOf="@id/preOrderLine"/>
+    app:layout_constraintTop_toBottomOf="@id/colorModeLine"/>
   <View
     android:id="@+id/aboutLine"
     android:layout_width="0dp"
