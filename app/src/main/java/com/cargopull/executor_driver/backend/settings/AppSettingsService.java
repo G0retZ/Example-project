@@ -10,6 +10,21 @@ import androidx.annotation.Nullable;
 public interface AppSettingsService {
 
   /**
+   * Получить число.
+   *
+   * @param key - ключ
+   */
+  int getNumber(@NonNull String key);
+
+  /**
+   * Сохранить число.
+   *
+   * @param key - ключ
+   * @param number - само число
+   */
+  void saveNumber(@NonNull String key, int number);
+
+  /**
    * Получить строковые данные.
    *
    * @param key - ключ данных
