@@ -35,7 +35,7 @@ android {
         buildConfigField 'String', 'CANCEL_ORDER_DESTINATION', '"/mobile/takeOffOrder"'
         buildConfigField 'String', 'STATUS_DESTINATION', '"/queue/%s"'
         buildConfigField 'String', 'POLLING_DESTINATION', '"/mobile/retrieveOverPackage"'
-        buildConfigField 'String', 'STATIC_MAP_KEY', '"AIzaSyC20FZNHJqrQH5UhypeUy3thpqII33QBPI"'
+        buildConfigField 'String', 'STATIC_MAP_KEY', '"AIzaSyBwlubLyqI6z_ivfAWcTCfyTXkoRHTagMk"'
         vectorDrawables.useSupportLibrary = true
     }
     buildTypes {
