@@ -10,24 +10,21 @@
     android:layout_height="0dp"
     android:layout_weight="1"/>
   <TextView
+    style="@style/TextAppearance.AppTheme.Subhead"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginStart="16dp"
     android:layout_marginEnd="16dp"
-    android:text="@string/phone_number"
-    android:textColor="@color/colorAccentSecond"/>
+    android:text="@string/phone_number"/>
   <EditText
     android:id="@+id/phoneInput"
+    style="@style/TextAppearance.AppTheme.PhoneNumber"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="16dp"
     android:layout_marginStart="16dp"
     android:layout_marginEnd="16dp"
-    android:digits="0123456789+"
     android:hint="@null"
-    android:inputType="phone"
-    android:maxLength="18"
-    android:textSize="28sp"
     tools:text="+7 (000) 000-00-00"/>
   <Button
     android:id="@+id/goNext"

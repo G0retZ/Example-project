@@ -19,7 +19,7 @@
       android:layout_marginStart="16dp"
       android:layout_marginEnd="16dp"
       android:text="@string/time"
-      android:textColor="@color/colorAccentSecond"
+      android:textColor="@color/colorAccentDark"
       app:layout_constraintStart_toStartOf="parent"
       app:layout_constraintTop_toTopOf="parent"/>
     <TextView
@@ -51,7 +51,7 @@
       android:layout_marginStart="16dp"
       android:layout_marginEnd="16dp"
       android:text="@string/order_distance_and_duration"
-      android:textColor="@color/colorAccentSecond"
+      android:textColor="@color/colorAccentDark"
       app:layout_constraintStart_toStartOf="parent"
       app:layout_constraintTop_toBottomOf="@id/dateText"/>
     <TextView
@@ -74,7 +74,7 @@
       android:layout_marginStart="16dp"
       android:layout_marginEnd="16dp"
       android:text="@string/distance_to_order"
-      android:textColor="@color/colorAccentSecond"
+      android:textColor="@color/colorAccentDark"
       app:layout_constraintStart_toStartOf="parent"
       app:layout_constraintTop_toBottomOf="@id/estimationText"/>
     <TextView
@@ -108,7 +108,7 @@
       android:layout_marginEnd="16dp"
       android:paddingBottom="8dp"
       android:text="@string/route"
-      android:textColor="@color/colorAccentSecond"
+      android:textColor="@color/colorAccentDark"
       app:layout_constraintStart_toStartOf="parent"
       app:layout_constraintTop_toBottomOf="@id/distanceText"/>
     <ImageView
@@ -206,7 +206,7 @@
       android:layout_marginStart="16dp"
       android:layout_marginEnd="16dp"
       android:text="@string/service"
-      android:textColor="@color/colorAccentSecond"
+      android:textColor="@color/colorAccentDark"
       app:layout_constraintStart_toStartOf="parent"
       app:layout_constraintTop_toBottomOf="@+id/barrier2"/>
     <TextView
@@ -228,7 +228,7 @@
       android:layout_marginStart="16dp"
       android:layout_marginEnd="16dp"
       android:text="@string/cargo_description"
-      android:textColor="@color/colorAccentSecond"
+      android:textColor="@color/colorAccentDark"
       app:layout_constraintStart_toStartOf="parent"
       app:layout_constraintTop_toBottomOf="@id/serviceText"/>
     <TextView
@@ -250,7 +250,7 @@
       android:layout_marginStart="16dp"
       android:layout_marginEnd="16dp"
       android:text="@string/options"
-      android:textColor="@color/colorAccentSecond"
+      android:textColor="@color/colorAccentDark"
       app:layout_constraintStart_toStartOf="parent"
       app:layout_constraintTop_toBottomOf="@id/cargoDescText"/>
     <TextView

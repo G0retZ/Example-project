@@ -36,7 +36,7 @@
     android:layout_below="@id/serviceName"
     android:layout_toLeftOf="@id/enableSwitch"
     android:layout_toStartOf="@id/enableSwitch"
-    android:textColor="@color/colorAccentSecond"
+    android:textColor="@color/colorAccentDark"
     tools:text="Description"/>
   <View
     android:id="@+id/view"

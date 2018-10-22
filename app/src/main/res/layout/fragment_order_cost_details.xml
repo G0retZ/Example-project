@@ -27,7 +27,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
         android:text="@string/total_payment"
-        android:textColor="@color/colorAccentSecond"
+        android:textColor="@color/colorAccentDark"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>
       <TextView

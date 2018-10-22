@@ -36,7 +36,7 @@
     android:layout_below="@id/optionName"
     android:layout_toLeftOf="@id/optionSwitch"
     android:layout_toStartOf="@id/optionSwitch"
-    android:textColor="@color/colorAccentSecond"
+    android:textColor="@color/colorAccentDark"
     tools:text="Description"/>
   <View
     android:id="@+id/view"

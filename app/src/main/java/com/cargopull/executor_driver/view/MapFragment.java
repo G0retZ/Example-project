@@ -93,7 +93,7 @@ public class MapFragment extends SupportMapFragment implements OnMapReadyCallbac
     this.googleMap = googleMap;
     try {
       googleMap.setMapStyle(
-          MapStyleOptions.loadRawResourceStyle(baseActivity, R.raw.mapstyle_aubergine)
+          MapStyleOptions.loadRawResourceStyle(baseActivity, R.raw.map_style)
       );
     } catch (Resources.NotFoundException e) {
       e.printStackTrace();
