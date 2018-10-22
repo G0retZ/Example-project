@@ -12,6 +12,8 @@ import com.cargopull.executor_driver.application.OrderFulfillmentActivity;
 import com.cargopull.executor_driver.application.PasswordActivity;
 import com.cargopull.executor_driver.application.PreOrdersActivity;
 import com.cargopull.executor_driver.application.WaitingForClientActivity;
+import com.cargopull.executor_driver.backend.settings.AppSettingsService;
+import com.cargopull.executor_driver.utils.Consumer;
 import com.cargopull.executor_driver.view.BalanceFragment;
 import com.cargopull.executor_driver.view.BalanceSummaryFragment;
 import com.cargopull.executor_driver.view.CallToClientFragment;
@@ -62,6 +64,8 @@ import com.cargopull.executor_driver.view.auth.LoginFragment;
 import com.cargopull.executor_driver.view.auth.PasswordFragment;
 
 public interface AppComponent {
+
+  void inject(Consumer<AppSettingsService> appSettingsServiceConsumer);
 
   void inject(MainApplication mainApplication);
 

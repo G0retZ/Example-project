@@ -17,7 +17,6 @@ import androidx.core.app.NotificationCompat.BigTextStyle;
 import androidx.core.app.NotificationCompat.Builder;
 import com.cargopull.executor_driver.R;
 import com.cargopull.executor_driver.backend.ringtone.RingTonePlayer;
-import com.cargopull.executor_driver.backend.settings.AppSettingsService;
 import com.cargopull.executor_driver.backend.vibro.ShakeItPlayer;
 import com.cargopull.executor_driver.di.AppComponent;
 import com.cargopull.executor_driver.di.AppComponentImpl;
@@ -61,7 +60,6 @@ public class MainApplication extends Application implements ServerConnectionView
   @Nullable
   private Activity currentActivity;
   private AppComponent appComponent;
-  private AppSettingsService appSettingsService;
   private RingTonePlayer ringTonePlayer;
   private ShakeItPlayer shakeItPlayer;
   private ServerConnectionViewModel serverConnectionViewModel;
@@ -83,10 +81,6 @@ public class MainApplication extends Application implements ServerConnectionView
   private int missedOrdersCount;
   @Nullable
   private NotificationManager notificationManager;
-
-  public void setAppSettingsService(@NonNull AppSettingsService appSettingsService) {
-    this.appSettingsService = appSettingsService;
-  }
 
   @Inject
   public void setRingTonePlayer(@NonNull RingTonePlayer ringTonePlayer) {
@@ -188,6 +182,11 @@ public class MainApplication extends Application implements ServerConnectionView
   public void onCreate() {
     super.onCreate();
     appComponent = new AppComponentImpl(this.getApplicationContext());
+    appComponent.inject(
+        appSettingsService -> AppCompatDelegate.setDefaultNightMode(
+            appSettingsService.getNumber("mode")
+        )
+    );
     registerActivityLifecycleCallbacks(new ActivityLifecycleCallbacks() {
 
       @Override
@@ -232,7 +231,6 @@ public class MainApplication extends Application implements ServerConnectionView
   private void initApplication() {
     notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
     appComponent.inject(this);
-    AppCompatDelegate.setDefaultNightMode(appSettingsService.getNumber("mode"));
     serverConnectionViewModel.getViewStateLiveData().observeForever(viewState -> {
       if (viewState != null) {
         viewState.apply(this);

@@ -20,12 +20,14 @@ import com.cargopull.executor_driver.application.PasswordActivity;
 import com.cargopull.executor_driver.application.PreOrdersActivity;
 import com.cargopull.executor_driver.application.WaitingForClientActivity;
 import com.cargopull.executor_driver.backend.ringtone.SingleRingTonePlayer;
+import com.cargopull.executor_driver.backend.settings.AppSettingsService;
 import com.cargopull.executor_driver.backend.vibro.NewPatternMapper;
 import com.cargopull.executor_driver.backend.vibro.OldPatternMapper;
 import com.cargopull.executor_driver.backend.vibro.OldSingleShakePlayer;
 import com.cargopull.executor_driver.backend.vibro.ShakeItPlayer;
 import com.cargopull.executor_driver.backend.vibro.SingleShakePlayer;
 import com.cargopull.executor_driver.gateway.SmsCodeMapper;
+import com.cargopull.executor_driver.utils.Consumer;
 import com.cargopull.executor_driver.utils.TimeUtils;
 import com.cargopull.executor_driver.utils.TimeUtilsImpl;
 import com.cargopull.executor_driver.view.BalanceFragment;
@@ -100,10 +102,14 @@ public class AppComponentImpl implements AppComponent {
   }
 
   @Override
-  public void inject(MainApplication mainApplication) {
-    mainApplication.setAppSettingsService(
+  public void inject(Consumer<AppSettingsService> appSettingsServiceConsumer) {
+    appSettingsServiceConsumer.accept(
         getBackendComponent().getAppSettingsService()
     );
+  }
+
+  @Override
+  public void inject(MainApplication mainApplication) {
     mainApplication.setRingTonePlayer(
         getSingleRingTonePlayer()
     );
