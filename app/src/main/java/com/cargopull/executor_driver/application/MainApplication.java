@@ -215,6 +215,10 @@ public class MainApplication extends Application implements ServerConnectionView
 
   @Override
   public void onCreate() {
+    super.onCreate();
+    notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+    appComponent = new AppComponentImpl(this.getApplicationContext());
+    appComponent.inject(this);
     if (appSettingsService == null || cancelOrderReasonsViewModel == null
         || balanceViewModel == null || executorStateViewModel == null
         || geoLocationViewModel == null || missedOrderViewModel == null
@@ -226,10 +230,6 @@ public class MainApplication extends Application implements ServerConnectionView
       throw new RuntimeException("Shit! WTF?!");
     }
     AppCompatDelegate.setDefaultNightMode(appSettingsService.getNumber("mode"));
-    super.onCreate();
-    notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-    appComponent = new AppComponentImpl(this.getApplicationContext());
-    appComponent.inject(this);
     serverConnectionViewModel.getViewStateLiveData().observeForever(viewState -> {
       if (viewState != null) {
         viewState.apply(this);

@@ -105,36 +105,7 @@ public class MenuFragment extends BaseFragment implements BalanceViewActions,
         v -> aboutFragment.show(Objects.requireNonNull(getFragmentManager()), "about")
     );
     nightMode = rootView.findViewById(R.id.colorMode);
-    switch (appSettingsService.getNumber("mode")) {
-      case AppCompatDelegate.MODE_NIGHT_YES:
-        nightMode.check(R.id.colorModeNight);
-      case AppCompatDelegate.MODE_NIGHT_NO:
-        nightMode.check(R.id.colorModeDay);
-      default:
-        nightMode.check(R.id.colorModeAuto);
-    }
     return rootView;
-  }
-
-  @Override
-  public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
-    super.onViewStateRestored(savedInstanceState);
-    nightMode.setOnCheckedChangeListener((group, checkedId) -> {
-      int mode;
-      switch (checkedId) {
-        case R.id.colorModeNight:
-          mode = AppCompatDelegate.MODE_NIGHT_YES;
-          break;
-        case R.id.colorModeDay:
-          mode = AppCompatDelegate.MODE_NIGHT_NO;
-          break;
-        default:
-          mode = AppCompatDelegate.MODE_NIGHT_AUTO;
-      }
-      appSettingsService.saveNumber("mode", mode);
-      AppCompatDelegate.setDefaultNightMode(mode);
-      activity.recreate();
-    });
   }
 
   @Override
@@ -146,6 +117,14 @@ public class MenuFragment extends BaseFragment implements BalanceViewActions,
   @Override
   public void onActivityCreated(@Nullable Bundle savedInstanceState) {
     super.onActivityCreated(savedInstanceState);
+    switch (appSettingsService.getNumber("mode")) {
+      case AppCompatDelegate.MODE_NIGHT_YES:
+        nightMode.check(R.id.colorModeNight);
+      case AppCompatDelegate.MODE_NIGHT_NO:
+        nightMode.check(R.id.colorModeDay);
+      default:
+        nightMode.check(R.id.colorModeAuto);
+    }
     balanceViewModel.getNavigationLiveData().observe(this, destination -> {
       if (destination != null) {
         navigate(destination);
@@ -175,6 +154,27 @@ public class MenuFragment extends BaseFragment implements BalanceViewActions,
       if (destination != null) {
         navigate(destination);
       }
+    });
+  }
+
+  @Override
+  public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+    super.onViewStateRestored(savedInstanceState);
+    nightMode.setOnCheckedChangeListener((group, checkedId) -> {
+      int mode;
+      switch (checkedId) {
+        case R.id.colorModeNight:
+          mode = AppCompatDelegate.MODE_NIGHT_YES;
+          break;
+        case R.id.colorModeDay:
+          mode = AppCompatDelegate.MODE_NIGHT_NO;
+          break;
+        default:
+          mode = AppCompatDelegate.MODE_NIGHT_AUTO;
+      }
+      appSettingsService.saveNumber("mode", mode);
+      AppCompatDelegate.setDefaultNightMode(mode);
+      activity.recreate();
     });
   }
 

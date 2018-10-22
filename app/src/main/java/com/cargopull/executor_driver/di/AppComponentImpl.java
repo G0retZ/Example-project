@@ -471,6 +471,7 @@ public class AppComponentImpl implements AppComponent {
 
   @Override
   public void inject(MenuFragment menuFragment) {
+    menuFragment.setAppSettingsService(backendComponent.getAppSettingsService());
     menuFragment.setBalanceViewModel(presentationComponent.getBalanceViewModel());
     menuFragment.setOnlineSwitchViewModel(
         presentationComponent.getExitOnlineSwitchViewModel(menuFragment)
