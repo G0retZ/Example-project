@@ -120,8 +120,10 @@ public class MenuFragment extends BaseFragment implements BalanceViewActions,
     switch (appSettingsService.getNumber("mode")) {
       case AppCompatDelegate.MODE_NIGHT_YES:
         nightMode.check(R.id.colorModeNight);
+        break;
       case AppCompatDelegate.MODE_NIGHT_NO:
         nightMode.check(R.id.colorModeDay);
+        break;
       default:
         nightMode.check(R.id.colorModeAuto);
     }
