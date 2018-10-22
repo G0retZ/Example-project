@@ -210,8 +210,8 @@ public class BaseActivity extends AppCompatActivity implements ExecutorStateView
   }
 
   /**
-   * Пробегает по реестру перехватчиков пока кто либо не обработает нажатие "назад".
-   * Если никто не обработал то вызывает воплощение метода в родителе (super).
+   * Пробегает по реестру перехватчиков пока кто либо не обработает нажатие "назад". Если никто не
+   * обработал то вызывает воплощение метода в родителе (super).
    */
   @Override
   public void onBackPressed() {
@@ -234,8 +234,8 @@ public class BaseActivity extends AppCompatActivity implements ExecutorStateView
   }
 
   /**
-   * Метод перехода куда либо.
-   * Позволяет отвязать {@link android.app.Fragment} от конкретных {@link Activity}.
+   * Метод перехода куда либо. Позволяет отвязать {@link android.app.Fragment} от конкретных {@link
+   * Activity}.
    *
    * @param destination пункт назначения
    */

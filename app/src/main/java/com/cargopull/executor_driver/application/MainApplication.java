@@ -1,10 +1,12 @@
 package com.cargopull.executor_driver.application;
 
+import android.app.Activity;
 import android.app.Application;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.Handler;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -45,6 +47,7 @@ import com.cargopull.executor_driver.presentation.upcomingpreorder.UpcomingPreOr
 import com.cargopull.executor_driver.presentation.upcomingpreorder.UpcomingPreOrderViewModel;
 import com.cargopull.executor_driver.presentation.upcomingpreordermessage.UpcomingPreOrderMessageViewActions;
 import com.cargopull.executor_driver.presentation.upcomingpreordermessage.UpcomingPreOrderMessageViewModel;
+import com.cargopull.executor_driver.utils.Consumer;
 import javax.inject.Inject;
 
 /**
@@ -55,6 +58,8 @@ public class MainApplication extends Application implements ServerConnectionView
     MissedOrderViewActions, PreOrderViewActions, UpcomingPreOrderMessageViewActions,
     CancelledOrderViewActions, UpcomingPreOrderViewActions {
 
+  @Nullable
+  private Activity currentActivity;
   private AppComponent appComponent;
   private AppSettingsService appSettingsService;
   private RingTonePlayer ringTonePlayer;
@@ -74,7 +79,7 @@ public class MainApplication extends Application implements ServerConnectionView
   private CancelledOrderViewModel cancelledOrderViewModel;
   private CurrentCostPollingViewModel currentCostPollingViewModel;
   private ServerTimeViewModel serverTimeViewModel;
-  private AutoRouter autoRouter;
+  private NavigationMapper navigationMapper;
   private int missedOrdersCount;
   @Nullable
   private NotificationManager notificationManager;
@@ -137,8 +142,8 @@ public class MainApplication extends Application implements ServerConnectionView
   }
 
   @Inject
-  public void setAutoRouter(@NonNull AutoRouter autoRouter) {
-    this.autoRouter = autoRouter;
+  public void setNavigationMapper(@NonNull NavigationMapper navigationMapper) {
+    this.navigationMapper = navigationMapper;
   }
 
   @Inject
@@ -179,16 +184,47 @@ public class MainApplication extends Application implements ServerConnectionView
     this.serverTimeViewModel = serverTimeViewModel;
   }
 
-  @Inject
-  public void setLifeCycleCallbacks(
-      @NonNull ActivityLifecycleCallbacks activityLifecycleCallbacks) {
-    registerActivityLifecycleCallbacks(activityLifecycleCallbacks);
-  }
-
   @Override
   public void onCreate() {
     super.onCreate();
     appComponent = new AppComponentImpl(this.getApplicationContext());
+    registerActivityLifecycleCallbacks(new ActivityLifecycleCallbacks() {
+
+      @Override
+      public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
+      }
+
+      @Override
+      public void onActivityStarted(Activity activity) {
+        currentActivity = activity;
+        if (navigationMapper != null) {
+          navigationMapper.navigateToRecent().accept(activity);
+        }
+      }
+
+      @Override
+      public void onActivityResumed(Activity activity) {
+      }
+
+      @Override
+      public void onActivityPaused(Activity activity) {
+      }
+
+      @Override
+      public void onActivityStopped(Activity activity) {
+      }
+
+      @Override
+      public void onActivitySaveInstanceState(Activity activity, Bundle outState) {
+      }
+
+      @Override
+      public void onActivityDestroyed(Activity activity) {
+        if (currentActivity == activity) {
+          currentActivity = null;
+        }
+      }
+    });
     // Постим инициализацию, чтобы не задерживать само приложение
     new Handler().post(this::initApplication);
   }
@@ -328,7 +364,10 @@ public class MainApplication extends Application implements ServerConnectionView
       case PreOrdersListNavigate.PRE_ORDER:
         return;
     }
-    autoRouter.navigateTo(destination);
+    Consumer<Activity> consumer = navigationMapper.navigateTo(destination);
+    if (currentActivity != null) {
+      consumer.accept(currentActivity);
+    }
   }
 
   @NonNull

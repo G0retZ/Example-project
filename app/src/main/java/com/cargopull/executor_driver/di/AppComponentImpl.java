@@ -5,12 +5,13 @@ import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import com.cargopull.executor_driver.application.AutoRouterImpl;
 import com.cargopull.executor_driver.application.BaseActivity;
 import com.cargopull.executor_driver.application.FcmService;
 import com.cargopull.executor_driver.application.MainApplication;
 import com.cargopull.executor_driver.application.MenuActivity;
 import com.cargopull.executor_driver.application.MovingToClientActivity;
+import com.cargopull.executor_driver.application.NavigationMapper;
+import com.cargopull.executor_driver.application.NavigationMapperImpl;
 import com.cargopull.executor_driver.application.OnlineActivity;
 import com.cargopull.executor_driver.application.OnlineMenuActivity;
 import com.cargopull.executor_driver.application.OrderCostDetailsActivity;
@@ -88,7 +89,7 @@ public class AppComponentImpl implements AppComponent {
   @Nullable
   private BackendComponent backendComponent;
   @Nullable
-  private AutoRouterImpl autoRouter;
+  private NavigationMapper navigationMapper;
   @Nullable
   private SingleRingTonePlayer singleRingTonePlayer;
   @Nullable
@@ -154,11 +155,8 @@ public class AppComponentImpl implements AppComponent {
     mainApplication.setServerTimeViewModel(
         getPresentationComponent().getServerTimeViewModel()
     );
-    mainApplication.setAutoRouter(
-        getAutoRouter()
-    );
-    mainApplication.setLifeCycleCallbacks(
-        getAutoRouter()
+    mainApplication.setNavigationMapper(
+        getNavigationMapper()
     );
   }
 
@@ -727,14 +725,14 @@ public class AppComponentImpl implements AppComponent {
   }
 
   @NonNull
-  private AutoRouterImpl getAutoRouter() {
-    if (autoRouter == null) {
-      autoRouter = new AutoRouterImpl(
+  private NavigationMapper getNavigationMapper() {
+    if (navigationMapper == null) {
+      navigationMapper = new NavigationMapperImpl(
           getSingleRingTonePlayer(),
           getShakeItPlayer()
       );
     }
-    return autoRouter;
+    return navigationMapper;
   }
 
   @NonNull
