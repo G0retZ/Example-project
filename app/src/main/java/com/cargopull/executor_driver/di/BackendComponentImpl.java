@@ -40,15 +40,17 @@ import ua.naiksoftware.stomp.client.StompClient;
 class BackendComponentImpl implements BackendComponent {
 
   @NonNull
-  private final EventLogger eventLogger;
-  @NonNull
-  private final ErrorReporter errorReporter;
-  @NonNull
-  private final Interceptor[] interceptors;
-  @NonNull
-  private final AppSettingsService appSettingsService;
-  @NonNull
-  private final GeolocationCenter geolocationCenter;
+  private final Context appContext;
+  @Nullable
+  private EventLogger eventLogger;
+  @Nullable
+  private ErrorReporter errorReporter;
+  @Nullable
+  private Interceptor[] interceptors;
+  @Nullable
+  private AppSettingsService appSettingsService;
+  @Nullable
+  private GeolocationCenter geolocationCenter;
   @Nullable
   private ApiService apiService;
   @Nullable
@@ -59,33 +61,24 @@ class BackendComponentImpl implements BackendComponent {
   private OkHttpClient okHttpClient;
 
   BackendComponentImpl(@NonNull Context appContext) {
-    appSettingsService = new AppPreferences(appContext);
-    eventLogger = new EventLoggerImpl(appSettingsService, appContext);
-    errorReporter = new ErrorReporterImpl(appSettingsService);
-    this.geolocationCenter = new GeolocationCenterImpl(appContext);
-    TokenKeeper tokenKeeper = new TokenKeeperImpl(appSettingsService);
-    this.interceptors = new Interceptor[]{
-        new ConnectivityInterceptor(
-            (ConnectivityManager) appContext.getSystemService(Context.CONNECTIVITY_SERVICE)
-        ),
-        new SendVersionInterceptor(),
-        new DeprecatedVersionInterceptor(),
-        new AuthorizationInterceptor(),
-        new ServerResponseInterceptor(),
-        new SendTokenInterceptor(tokenKeeper),
-        new ReceiveTokenInterceptor(tokenKeeper)
-    };
+    this.appContext = appContext;
   }
 
   @Override
   @NonNull
   public EventLogger getEventLogger() {
+    if (eventLogger == null) {
+      eventLogger = new EventLoggerImpl(getAppSettingsService(), appContext);
+    }
     return eventLogger;
   }
 
   @Override
   @NonNull
   public ErrorReporter getErrorReporter() {
+    if (errorReporter == null) {
+      errorReporter = new ErrorReporterImpl(getAppSettingsService());
+    }
     return errorReporter;
   }
 
@@ -96,7 +89,7 @@ class BackendComponentImpl implements BackendComponent {
       // build OkHttpClient builder
       apiService = new Retrofit.Builder()
           .baseUrl(BuildConfig.BASE_URL)
-          .client(getOkHttpClient(interceptors))
+          .client(getOkHttpClient(getInterceptors()))
           .addConverterFactory(ScalarsConverterFactory.create())
           .addConverterFactory(GsonConverterFactory.create())
           .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
@@ -114,7 +107,7 @@ class BackendComponentImpl implements BackendComponent {
           Stomp.ConnectionProvider.OKHTTP,
           BuildConfig.SOCKET_URL,
           null,
-          getOkHttpClient(interceptors)
+          getOkHttpClient(getInterceptors())
       );
     }
     return stompClient;
@@ -135,13 +128,38 @@ class BackendComponentImpl implements BackendComponent {
   @Override
   @NonNull
   public AppSettingsService getAppSettingsService() {
+    if (appSettingsService == null) {
+      appSettingsService = new AppPreferences(appContext);
+    }
     return appSettingsService;
   }
 
   @Override
   @NonNull
   public GeolocationCenter getGeolocationCenter() {
+    if (geolocationCenter == null) {
+      this.geolocationCenter = new GeolocationCenterImpl(appContext);
+    }
     return geolocationCenter;
+  }
+
+  @NonNull
+  private Interceptor[] getInterceptors() {
+    if (interceptors == null) {
+      TokenKeeper tokenKeeper = new TokenKeeperImpl(getAppSettingsService());
+      this.interceptors = new Interceptor[]{
+          new ConnectivityInterceptor(
+              (ConnectivityManager) appContext.getSystemService(Context.CONNECTIVITY_SERVICE)
+          ),
+          new SendVersionInterceptor(),
+          new DeprecatedVersionInterceptor(),
+          new AuthorizationInterceptor(),
+          new ServerResponseInterceptor(),
+          new SendTokenInterceptor(tokenKeeper),
+          new ReceiveTokenInterceptor(tokenKeeper)
+      };
+    }
+    return interceptors;
   }
 
   @NonNull
