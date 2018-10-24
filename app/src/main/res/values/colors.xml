@@ -19,7 +19,6 @@
   <color name="colorWindowBackground">#eff2f6</color>
   <color name="colorWindowBackgroundTranslucent">#00eceff1</color>
   <color name="colorError">#f986a3</color>
-  <color name="textColorAppBar">#fff</color>
   <color name="textColorPrimary">#000</color>
   <color name="textColorPrimaryInverse">#fff</color>
   <color name="textColorSecondary">#5078a0</color>

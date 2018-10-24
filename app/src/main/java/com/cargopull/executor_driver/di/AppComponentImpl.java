@@ -84,7 +84,7 @@ import com.cargopull.executor_driver.view.auth.SmsReceiver;
 public class AppComponentImpl implements AppComponent {
 
   @NonNull
-  private Context appContext;
+  private final Context appContext;
   @Nullable
   private TimeUtils timeUtils;
   @Nullable

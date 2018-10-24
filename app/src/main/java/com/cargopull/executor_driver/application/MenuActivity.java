@@ -5,17 +5,20 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.DialogFragment;
 import com.cargopull.executor_driver.R;
 import com.cargopull.executor_driver.backend.analytics.EventLogger;
 import com.cargopull.executor_driver.di.AppComponent;
 import com.cargopull.executor_driver.presentation.menu.MenuNavigate;
 import com.cargopull.executor_driver.presentation.preorder.PreOrderNavigate;
+import com.cargopull.executor_driver.view.AboutDialogFragment;
 import java.util.HashMap;
 import javax.inject.Inject;
 
 public class MenuActivity extends BaseActivity {
 
   private EventLogger eventLogger;
+  private DialogFragment aboutFragment;
 
   @Inject
   public void setEventLogger(@NonNull EventLogger eventLogger) {
@@ -30,6 +33,7 @@ public class MenuActivity extends BaseActivity {
     if (toolbar != null) {
       toolbar.setNavigationOnClickListener(v -> onBackPressed());
     }
+    aboutFragment = new AboutDialogFragment();
   }
 
   @Override
@@ -52,6 +56,9 @@ public class MenuActivity extends BaseActivity {
         break;
       case MenuNavigate.NIGHT_MODE:
         startActivity(new Intent(this, NightModeActivity.class));
+        break;
+      case MenuNavigate.ABOUT:
+        aboutFragment.show(getSupportFragmentManager(), "about");
         break;
       case PreOrderNavigate.ORDER_APPROVAL:
         eventLogger.reportEvent("menu_pre_order_notification", new HashMap<>());

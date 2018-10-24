@@ -887,7 +887,7 @@ class PresentationComponentImpl implements PresentationComponent {
   }
 
   @NonNull
-  public ServicesListItems getServicesListItems() {
+  private ServicesListItems getServicesListItems() {
     if (servicesListItems == null) {
       servicesListItems = new ServicesListItems();
     }

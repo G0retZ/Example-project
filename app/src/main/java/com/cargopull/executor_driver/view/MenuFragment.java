@@ -10,7 +10,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatDelegate;
-import androidx.fragment.app.DialogFragment;
 import com.cargopull.executor_driver.R;
 import com.cargopull.executor_driver.backend.settings.AppSettingsService;
 import com.cargopull.executor_driver.di.AppComponent;
@@ -25,7 +24,6 @@ import com.cargopull.executor_driver.presentation.preorderslist.PreOrdersListVie
 import com.cargopull.executor_driver.presentation.preorderslist.PreOrdersListViewModel;
 import java.text.DecimalFormat;
 import java.util.List;
-import java.util.Objects;
 import javax.inject.Inject;
 
 /**
@@ -43,7 +41,6 @@ public class MenuFragment extends BaseFragment implements BalanceViewActions,
   private TextView preOrdersAmount;
   private TextView nightModeValue;
   private boolean nowOnline;
-  private DialogFragment aboutFragment;
 
   @Inject
   public void setAppSettingsService(@NonNull AppSettingsService appSettingsService) {
@@ -91,10 +88,7 @@ public class MenuFragment extends BaseFragment implements BalanceViewActions,
     rootView.findViewById(R.id.preOrders)
         .setOnClickListener(v -> navigate(MenuNavigate.PRE_ORDERS));
     preOrdersAmount = rootView.findViewById(R.id.preOrdersAmount);
-    aboutFragment = new AboutDialogFragment();
-    rootView.findViewById(R.id.about).setOnClickListener(
-        v -> aboutFragment.show(Objects.requireNonNull(getFragmentManager()), "about")
-    );
+    rootView.findViewById(R.id.about).setOnClickListener(v -> navigate(MenuNavigate.ABOUT));
     rootView.findViewById(R.id.nightMode)
         .setOnClickListener(v -> navigate(MenuNavigate.NIGHT_MODE));
     nightModeValue = rootView.findViewById(R.id.nightModeValue);
