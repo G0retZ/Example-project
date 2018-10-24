@@ -8,7 +8,7 @@
   android:background="?android:attr/selectableItemBackground">
   <TextView
     android:id="@+id/optionAmount"
-    style="@style/TextAppearance.AppCompat.Subhead"
+    style="@style/TextAppearance.AppTheme.SubTitle"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_marginTop="16dp"
@@ -20,7 +20,7 @@
     tools:text="2"/>
   <TextView
     android:id="@+id/optionName"
-    style="@style/TextAppearance.AppCompat.Subhead"
+    style="@style/TextAppearance.AppTheme.SubTitle"
     android:layout_width="0dp"
     android:layout_height="wrap_content"
     android:layout_marginTop="16dp"
@@ -35,11 +35,11 @@
     tools:text="Vehicle option"/>
   <TextView
     android:id="@+id/optionDescription"
+    style="@style/TextAppearance.AppTheme.Regular.Secondary"
     android:layout_width="0dp"
     android:layout_height="wrap_content"
     android:layout_marginStart="16dp"
     android:layout_marginEnd="16dp"
-    android:textColor="@color/colorAccentDark"
     app:layout_constraintBottom_toTopOf="@+id/optionSeekBar"
     app:layout_constraintEnd_toStartOf="@id/optionAmount"
     app:layout_constraintStart_toStartOf="parent"

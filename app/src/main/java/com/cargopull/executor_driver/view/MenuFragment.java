@@ -191,7 +191,7 @@ public class MenuFragment extends BaseFragment implements BalanceViewActions,
     if (amount < 0) {
       balanceAmount.setTextColor(getResources().getColor(R.color.colorError));
     } else {
-      balanceAmount.setTextColor(getResources().getColor(android.R.color.white));
+      balanceAmount.setTextColor(getResources().getColor(R.color.textColorPrimary));
     }
   }
 

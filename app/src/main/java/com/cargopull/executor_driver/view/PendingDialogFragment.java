@@ -3,16 +3,13 @@ package com.cargopull.executor_driver.view;
 import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.graphics.drawable.ColorDrawable;
-import android.os.Build.VERSION;
-import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentManager;
 import com.cargopull.executor_driver.R;
 import com.cargopull.executor_driver.presentation.CommonNavigate;
@@ -43,6 +40,12 @@ public class PendingDialogFragment extends BaseDialogFragment {
     }
   }
 
+  @Override
+  public void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    setStyle(DialogFragment.STYLE_NO_FRAME, R.style.AppTheme_Dialog);
+  }
+
   @Nullable
   @Override
   public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -61,22 +64,6 @@ public class PendingDialogFragment extends BaseDialogFragment {
     );
     exitAction.postDelayed(runnable, 30_000);
     return view;
-  }
-
-  @Override
-  public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-    super.onViewCreated(view, savedInstanceState);
-    Window window = getDialog().getWindow();
-    if (window != null) {
-      if (VERSION.SDK_INT >= VERSION_CODES.M) {
-        window.setBackgroundDrawable(
-            new ColorDrawable(getResources().getColor(R.color.colorSmoke, null)));
-      } else {
-        window.setBackgroundDrawable(
-            new ColorDrawable(getResources().getColor(R.color.colorSmoke))
-        );
-      }
-    }
   }
 
   @Override

@@ -19,47 +19,40 @@
       android:layout_height="wrap_content"
       android:orientation="vertical">
       <TextView
-        style="@style/TextAppearance.AppCompat.Title"
+        style="@style/TextAppearance.AppTheme.Title.Secondary"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
-        android:text="@string/elapsed_time"
-        android:textColor="@color/colorAccentDark"/>
+        android:text="@string/elapsed_time"/>
       <TextView
         android:id="@+id/timeText"
-        style="@style/TextAppearance.AppCompat.Subhead"
-        android:textStyle="bold"
+        style="@style/TextAppearance.AppTheme.Block"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
-        android:textSize="40sp"
         tools:text="00:32:43"/>
       <TextView
-        style="@style/TextAppearance.AppCompat.Title"
+        style="@style/TextAppearance.AppTheme.Title.Secondary"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
-        android:text="@string/total_cost"
-        android:textColor="@color/colorAccentDark"/>
+        android:text="@string/total_cost"/>
       <TextView
         android:id="@+id/costText"
-        style="@style/TextAppearance.AppCompat.Subhead"
-        android:textStyle="bold"
+        style="@style/TextAppearance.AppTheme.Block"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
-        android:textSize="40sp"
         tools:text="10 028 ₽"/>
       <TextView
         android:id="@+id/freeRideText"
-        style="@style/TextAppearance.AppCompat.Headline"
-        android:textStyle="bold"
+        style="@style/TextAppearance.AppTheme.Headline"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="48dp"
@@ -69,17 +62,16 @@
         android:visibility="gone"/>
       <TextView
         android:id="@+id/addressTitleText"
-        style="@style/TextAppearance.AppCompat.Title"
+        style="@style/TextAppearance.AppTheme.Title.Secondary"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="48dp"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
-        android:text="@string/next_address"
-        android:textColor="@color/colorAccentDark"/>
+        android:text="@string/next_address"/>
       <TextView
         android:id="@+id/addressText"
-        style="@style/TextAppearance.AppCompat.Headline"
+        style="@style/TextAppearance.AppTheme.Headline"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -87,17 +79,16 @@
         tools:text="Москва, ул. Академика Пилюгина, 14 корпус 4, кв. 1122, П2, Э8"/>
       <TextView
         android:id="@+id/commentTitleText"
-        style="@style/TextAppearance.AppCompat.Title"
+        style="@style/TextAppearance.AppTheme.Title.Secondary"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
-        android:text="@string/comment"
-        android:textColor="@color/colorAccentDark"/>
+        android:text="@string/comment"/>
       <TextView
         android:id="@+id/commentText"
-        style="@style/TextAppearance.AppCompat.Headline"
+        style="@style/TextAppearance.AppTheme.Headline"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -127,7 +118,7 @@
     app:layout_constraintStart_toStartOf="parent"/>
   <ProgressBar
     android:id="@+id/closeRoutePoint"
-    style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+    style="@style/AppTheme.ProgressBar.Threshold"
     android:layout_width="0dp"
     android:layout_height="52dp"
     android:layout_marginTop="6dp"
@@ -136,50 +127,44 @@
     android:layout_marginEnd="8dp"
     android:layout_marginLeft="4dp"
     android:layout_marginRight="8dp"
-    android:progressDrawable="@drawable/button_progressbar"
     app:layout_constraintBottom_toBottomOf="parent"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toEndOf="@+id/openNavigator"
     />
   <TextView
     android:id="@+id/closeRoutePointText"
-    style="@style/TextAppearance.AppCompat.Widget.Button.Colored"
+    style="@style/TextAppearance.AppTheme.Button.Colored"
     android:layout_width="0dp"
     android:layout_height="0dp"
     android:paddingStart="8dp"
     android:paddingEnd="8dp"
     android:gravity="center"
     android:text="@string/arrived"
-    android:textColor="@android:color/primary_text_dark"
-    android:textSize="16sp"
     app:layout_constraintBottom_toBottomOf="@id/closeRoutePoint"
     app:layout_constraintEnd_toEndOf="@id/closeRoutePoint"
     app:layout_constraintStart_toStartOf="@id/closeRoutePoint"
     app:layout_constraintTop_toTopOf="@id/closeRoutePoint"/>
   <ProgressBar
     android:id="@+id/completeTheOrder"
-    style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+    style="@style/AppTheme.ProgressBar.Threshold"
     android:layout_width="0dp"
     android:layout_height="52dp"
     android:layout_marginTop="6dp"
     android:layout_marginBottom="6dp"
     android:layout_marginStart="8dp"
     android:layout_marginEnd="8dp"
-    android:progressDrawable="@drawable/button_progressbar"
     app:layout_constraintBottom_toBottomOf="parent"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"/>
   <TextView
     android:id="@+id/completeTheOrderText"
-    style="@style/TextAppearance.AppCompat.Widget.Button.Colored"
+    style="@style/TextAppearance.AppTheme.Button.Colored"
     android:layout_width="0dp"
     android:layout_height="0dp"
     android:paddingStart="8dp"
     android:paddingEnd="8dp"
     android:gravity="center"
     android:text="@string/complete_the_order"
-    android:textColor="@android:color/primary_text_dark"
-    android:textSize="16sp"
     app:layout_constraintBottom_toBottomOf="@id/completeTheOrder"
     app:layout_constraintEnd_toEndOf="@id/completeTheOrder"
     app:layout_constraintStart_toStartOf="@id/completeTheOrder"

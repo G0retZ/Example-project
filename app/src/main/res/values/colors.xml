@@ -1,22 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-  <color name="colorPrimaryLight">#90a4ae</color>
-  <color name="colorPrimary">#607d8b</color>
-  <color name="colorPrimaryDark">#455a64</color>
-  <color name="colorAccent">#80bdff</color>
+  <color name="colorPrimaryLight">#c3cfd5</color>
+  <color name="colorPrimary">#b4c3cb</color>
+  <color name="colorPrimaryDark">#879fab</color>
+  <color name="colorAccent">#66b0ff</color>
+  <color name="colorAccent2">#99b9ff</color>
+  <color name="colorAccent2Translucent">#6699b9ff</color>
   <color name="colorAccentTranslucent">#0080bdff</color>
   <color name="colorAccentDark">#668cb2</color>
-  <color name="colorAccentGreen">#80ff91</color>
-  <color name="colorAccentGreenDisabled">#4d80ff91</color>
+  <color name="colorAccentGreen">#00b318</color>
+  <color name="colorAccentGreenDisabled">#4d00b318</color>
   <color name="colorAccentGreenTranslucent">#0080ff91</color>
-  <color name="colorAccentYellow">#ffea80</color>
+  <color name="colorAccentYellow">#ffd966</color>
   <color name="colorDisabled">#1f000000</color>
   <color name="colorSmoke">#66ffffff</color>
   <color name="colorTwilight">#c0ffffff</color>
-  <color name="colorDivider">#90a4ae</color>
-  <color name="colorWindowBackground">#eceff1</color>
+  <color name="colorDivider">#40212d3b</color>
+  <color name="colorWindowBackground">#eff2f6</color>
   <color name="colorWindowBackgroundTranslucent">#00eceff1</color>
   <color name="colorError">#f986a3</color>
+  <color name="textColorAppBar">#fff</color>
   <color name="textColorPrimary">#000</color>
-  <color name="textColorSecondary">#668cb2</color>
+  <color name="textColorPrimaryInverse">#fff</color>
+  <color name="textColorSecondary">#5078a0</color>
 </resources>

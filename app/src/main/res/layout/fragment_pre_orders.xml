@@ -17,13 +17,13 @@
     tools:listitem="@layout/fragment_pre_orders_list_item"/>
   <TextView
     android:id="@+id/emptyText"
+    style="@style/TextAppearance.AppTheme.Empty"
     android:layout_width="0dp"
     android:layout_height="wrap_content"
     android:layout_margin="24dp"
     android:enabled="false"
     android:gravity="center"
     android:text="@string/no_pre_orders_available"
-    android:textAppearance="@style/TextAppearance.AppCompat.Headline"
     app:layout_constraintBottom_toBottomOf="parent"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"

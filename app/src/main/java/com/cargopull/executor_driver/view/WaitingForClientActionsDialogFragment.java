@@ -1,13 +1,9 @@
 package com.cargopull.executor_driver.view;
 
-import android.graphics.drawable.ColorDrawable;
-import android.os.Build.VERSION;
-import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
@@ -53,17 +49,6 @@ public class WaitingForClientActionsDialogFragment extends BaseDialogFragment {
   @Override
   public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
-    Window window = getDialog().getWindow();
-    if (window != null) {
-      if (VERSION.SDK_INT >= VERSION_CODES.M) {
-        window.setBackgroundDrawable(
-            new ColorDrawable(getResources().getColor(R.color.colorWindowBackground, null)));
-      } else {
-        window.setBackgroundDrawable(
-            new ColorDrawable(getResources().getColor(R.color.colorWindowBackground))
-        );
-      }
-    }
     ((Toolbar) view.findViewById(R.id.appBar)).setNavigationOnClickListener(v -> dismiss());
     view.findViewById(R.id.orderRoute).setOnClickListener(
         v -> {

@@ -52,7 +52,7 @@
       app:layout_constraintTop_toTopOf="@id/circles"
       app:srcCompat="@drawable/ic_route_point"/>
     <TextView
-      style="@style/TextAppearance.AppCompat.Subhead"
+      style="@style/TextAppearance.AppTheme.SubTitle"
       android:textStyle="bold"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
@@ -73,12 +73,11 @@
       app:srcCompat="@drawable/ic_navigation_arrow"/>
     <TextView
       android:id="@+id/distanceText"
-      style="@style/TextAppearance.AppCompat.Subhead"
+      style="@style/TextAppearance.AppTheme.Subhead"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:layout_margin="4dp"
       android:text="@string/km"
-      android:textColor="@color/colorAccentDark"
       app:layout_constraintBottom_toBottomOf="@id/gradient"
       app:layout_constraintStart_toEndOf="@id/navigationArrow"/>
     <ImageView
@@ -94,12 +93,11 @@
       app:srcCompat="@drawable/ic_navigation_timer"/>
     <TextView
       android:id="@+id/etaText"
-      style="@style/TextAppearance.AppCompat.Subhead"
+      style="@style/TextAppearance.AppTheme.Subhead"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:layout_margin="4dp"
       android:text="@string/eta"
-      android:textColor="@color/colorAccentDark"
       app:layout_constraintBottom_toBottomOf="@+id/gradient"
       app:layout_constraintStart_toEndOf="@id/navigationTimer"/>
     <ImageView
@@ -124,7 +122,7 @@
       app:layout_constraintTop_toBottomOf="@id/gradient"
       app:srcCompat="@drawable/ic_route_point"/>
     <TextView
-      style="@style/TextAppearance.AppCompat.Subhead"
+      style="@style/TextAppearance.AppTheme.SubTitle"
       android:textStyle="bold"
       android:layout_width="0dp"
       android:layout_height="wrap_content"
@@ -136,7 +134,7 @@
       app:layout_constraintTop_toTopOf="@id/routePointMark1"/>
     <TextView
       android:id="@+id/addressText1"
-      style="@style/TextAppearance.AppCompat.Subhead"
+      style="@style/TextAppearance.AppTheme.SubTitle"
       android:layout_width="0dp"
       android:layout_height="wrap_content"
       android:layout_marginStart="16dp"
@@ -158,7 +156,7 @@
       app:srcCompat="@drawable/ic_route_point"/>
     <TextView
       android:id="@+id/positionText2"
-      style="@style/TextAppearance.AppCompat.Subhead"
+      style="@style/TextAppearance.AppTheme.SubTitle"
       android:textStyle="bold"
       android:layout_width="0dp"
       android:layout_height="wrap_content"
@@ -170,7 +168,7 @@
       tools:text="2"/>
     <TextView
       android:id="@+id/addressText2"
-      style="@style/TextAppearance.AppCompat.Subhead"
+      style="@style/TextAppearance.AppTheme.SubTitle"
       android:layout_width="0dp"
       android:layout_height="wrap_content"
       android:layout_marginTop="32dp"
@@ -182,19 +180,18 @@
       tools:text="Москва, ул. Академика Пилюгина, 14 корпус 4, кв. 1122, П2, Э8"/>
     <TextView
       android:id="@+id/estimationTitleText"
-      style="@style/TextAppearance.AppCompat.Subhead"
+      style="@style/TextAppearance.AppTheme.Subhead"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:layout_marginTop="24dp"
       android:layout_marginStart="16dp"
       android:layout_marginEnd="16dp"
       android:text="@string/order_distance_and_duration"
-      android:textColor="@color/colorAccentDark"
       app:layout_constraintStart_toStartOf="parent"
       app:layout_constraintTop_toBottomOf="@+id/addressText2"/>
     <TextView
       android:id="@+id/estimationText"
-      style="@style/TextAppearance.AppCompat.Title"
+      style="@style/TextAppearance.AppTheme.Title"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:layout_marginStart="16dp"
@@ -204,19 +201,18 @@
       tools:text="@string/km_h_m_p"/>
     <TextView
       android:id="@+id/serviceTitleText"
-      style="@style/TextAppearance.AppCompat.Subhead"
+      style="@style/TextAppearance.AppTheme.Subhead"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:layout_marginTop="16dp"
       android:layout_marginStart="16dp"
       android:layout_marginEnd="16dp"
       android:text="@string/service"
-      android:textColor="@color/colorAccentDark"
       app:layout_constraintStart_toStartOf="parent"
       app:layout_constraintTop_toBottomOf="@+id/estimationText"/>
     <TextView
       android:id="@+id/serviceText"
-      style="@style/TextAppearance.AppCompat.Title"
+      style="@style/TextAppearance.AppTheme.Title"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:layout_marginStart="16dp"
@@ -226,19 +222,18 @@
       tools:text="Грузоперевозка"/>
     <TextView
       android:id="@+id/cargoDescTitleText"
-      style="@style/TextAppearance.AppCompat.Subhead"
+      style="@style/TextAppearance.AppTheme.Subhead"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:layout_marginTop="16dp"
       android:layout_marginStart="16dp"
       android:layout_marginEnd="16dp"
       android:text="@string/cargo_description"
-      android:textColor="@color/colorAccentDark"
       app:layout_constraintStart_toStartOf="parent"
       app:layout_constraintTop_toBottomOf="@id/serviceText"/>
     <TextView
       android:id="@+id/cargoDescText"
-      style="@style/TextAppearance.AppCompat.Title"
+      style="@style/TextAppearance.AppTheme.Title"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:layout_marginStart="16dp"
@@ -248,19 +243,18 @@
       tools:text="Заехать купить 10 коробок. Чистая машина. Не курить!"/>
     <TextView
       android:id="@+id/optionsTitleText"
-      style="@style/TextAppearance.AppCompat.Subhead"
+      style="@style/TextAppearance.AppTheme.Subhead"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:layout_marginTop="16dp"
       android:layout_marginStart="16dp"
       android:layout_marginEnd="16dp"
       android:text="@string/options"
-      android:textColor="@color/colorAccentDark"
       app:layout_constraintStart_toStartOf="parent"
       app:layout_constraintTop_toBottomOf="@id/cargoDescText"/>
     <TextView
       android:id="@+id/optionsText"
-      style="@style/TextAppearance.AppCompat.Title"
+      style="@style/TextAppearance.AppTheme.Title"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:layout_marginStart="16dp"
