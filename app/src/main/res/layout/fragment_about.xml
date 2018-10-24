@@ -20,7 +20,7 @@
     app:srcCompat="@mipmap/ic_launcher"/>
   <TextView
     android:id="@+id/nameText"
-    style="@style/TextAppearance.AppCompat.Title"
+    style="@style/TextAppearance.AppTheme.Title"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_marginTop="16dp"
@@ -32,6 +32,7 @@
     app:layout_constraintTop_toBottomOf="@id/logo"/>
   <TextView
     android:id="@+id/versionText"
+    style="@style/TextAppearance.AppTheme.Regular"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:text="@string/app_version"
@@ -41,7 +42,7 @@
     app:layout_constraintTop_toBottomOf="@id/nameText"/>
   <Button
     android:id="@+id/okButton"
-    style="@style/Widget.AppCompat.Button.Borderless"
+    style="@style/AppTheme.Button.Borderless.Colored"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_marginTop="24dp"

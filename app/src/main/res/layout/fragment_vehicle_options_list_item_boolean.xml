@@ -18,7 +18,7 @@
     android:clickable="false"/>
   <TextView
     android:id="@+id/optionName"
-    style="@style/TextAppearance.AppCompat.Subhead"
+    style="@style/TextAppearance.AppTheme.SubTitle"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginTop="16dp"
@@ -29,6 +29,7 @@
     tools:text="Vehicle option"/>
   <TextView
     android:id="@+id/optionDescription"
+    style="@style/TextAppearance.AppTheme.Regular.Secondary"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginStart="16dp"
@@ -36,7 +37,6 @@
     android:layout_below="@id/optionName"
     android:layout_toLeftOf="@id/optionSwitch"
     android:layout_toStartOf="@id/optionSwitch"
-    android:textColor="@color/colorAccentSecond"
     tools:text="Description"/>
   <View
     android:id="@+id/view"

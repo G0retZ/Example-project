@@ -1,52 +1,145 @@
 <resources>
 
   <!-- Base application theme. -->
-  <style name="AppTheme" parent="Theme.AppCompat.NoActionBar">
-    <!-- Customize your theme here. -->
+  <style name="AppTheme" parent="Theme.AppCompat.DayNight.NoActionBar">
     <item name="colorPrimary">@color/colorPrimary</item>
     <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
     <item name="colorAccent">@color/colorAccent</item>
     <item name="android:windowBackground">@color/colorWindowBackground</item>
   </style>
 
-  <!-- Button styles -->
-  <style name="AppTheme.Accent.White" parent="AppTheme">
-    <item name="colorAccent">@android:color/white</item>
+  <!-- Color themes. -->
+  <style name="AppTheme.Dialog" parent="AppTheme">
+    <item name="android:windowBackground">@color/colorSmoke</item>
   </style>
 
-  <style name="AppTheme.Accent.Yellow" parent="Theme.AppCompat.Light.NoActionBar">
-    <item name="colorAccent">@color/colorAccentYellow</item>
-    <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-    <item name="android:windowBackground">@color/colorWindowBackground</item>
+  <style name="AppTheme.Accent.Contrast" parent="AppTheme">
+    <item name="colorAccent">@color/textColorPrimary</item>
+  </style>
+
+  <style name="AppTheme.Accent.Green" parent="AppTheme">
+    <item name="colorAccent">@color/colorAccentGreen</item>
   </style>
 
   <style name="AppTheme.Button.Theme" parent="AppTheme">
   </style>
 
-  <style name="AppTheme.Button.Theme.Light">
-    <item name="android:textColorPrimaryInverse">@android:color/primary_text_dark</item>
+  <style name="AppTheme.Button.Theme.Regular">
+    <item name="android:textColorPrimaryInverse">@color/textColorPrimary</item>
+  </style>
+
+  <style name="AppTheme.Button.Theme.Black">
+    <item name="android:textColorPrimary">#000</item>
   </style>
 
   <style name="AppTheme.Button.Theme.Dark">
-    <item name="colorAccent">@color/colorAccentSecond</item>
+    <item name="colorAccent">@color/colorAccentDark</item>
   </style>
 
-  <style name="AppTheme.Button.Theme.Darker" parent="AppTheme.Button.Theme.Light">
+  <style name="AppTheme.Button.Theme.Darker" parent="AppTheme.Button.Theme.Regular">
     <item name="colorAccent">@color/colorPrimaryLight</item>
   </style>
 
-  <style name="AppTheme.Button.Theme.Red" parent="AppTheme.Button.Theme.Light">
+  <style name="AppTheme.Button.Theme.Red" parent="AppTheme.Button.Theme.Regular">
     <item name="colorAccent">@color/colorError</item>
   </style>
 
+  <!-- Text styles -->
+
+  <style name="TextAppearance.AppTheme.Error" parent="TextAppearance.AppCompat.Body1">
+    <item name="android:textColor">@color/colorError</item>
+  </style>
+
+  <style name="TextAppearance.AppTheme.Headline" parent="TextAppearance.AppCompat.Headline">
+    <item name="android:textColor">@color/textColorPrimary</item>
+  </style>
+
+  <style name="TextAppearance.AppTheme.Title" parent="TextAppearance.AppCompat.Title">
+    <item name="android:textColor">@color/textColorPrimary</item>
+  </style>
+
+  <style name="TextAppearance.AppTheme.Title.Secondary" parent="TextAppearance.AppCompat.Title">
+    <item name="android:textColor">@color/textColorSecondary</item>
+  </style>
+
+  <style name="TextAppearance.AppTheme.SubTitle" parent="TextAppearance.AppCompat.Subhead">
+    <item name="android:textColor">@color/textColorPrimary</item>
+  </style>
+
+  <style name="TextAppearance.AppTheme.SubTitle.Touchable">
+    <item name="android:background">?android:attr/selectableItemBackground</item>
+  </style>
+
+  <style name="TextAppearance.AppTheme.SubTitle.Inverse" parent="TextAppearance.AppCompat.Subhead.Inverse">
+    <item name="android:textColorPrimaryInverse">@color/textColorPrimaryInverse</item>
+  </style>
+
+  <style name="TextAppearance.AppTheme.Subhead" parent="TextAppearance.AppCompat.Subhead">
+    <item name="android:textColor">@color/textColorSecondary</item>
+  </style>
+
+  <style name="TextAppearance.AppTheme.Regular" parent="TextAppearance.AppCompat.Body1">
+    <item name="android:textColor">@color/textColorPrimary</item>
+  </style>
+
+  <style name="TextAppearance.AppTheme.Regular.Secondary" parent="TextAppearance.AppCompat.Body1">
+    <item name="android:textColor">@color/textColorSecondary</item>
+  </style>
+
+  <style name="TextAppearance.AppTheme.Balance" parent="TextAppearance.AppCompat.Headline">
+    <item name="android:textColor">@color/textColorPrimary</item>
+    <item name="android:textSize">50sp</item>
+  </style>
+
+  <style name="TextAppearance.AppTheme.Empty" parent="TextAppearance.AppCompat.Headline">
+    <item name="android:textColor">@color/textColorSecondary</item>
+    <item name="android:enabled">false</item>
+  </style>
+
+  <style name="TextAppearance.AppTheme.Block" parent="TextAppearance.AppCompat.Title">
+    <item name="android:textColor">@color/textColorPrimary</item>
+    <item name="android:textSize">40sp</item>
+  </style>
+
+  <style name="TextAppearance.AppTheme.Price" parent="TextAppearance.AppCompat.Headline">
+    <item name="android:background">@drawable/ic_pre_order_price</item>
+    <item name="android:textColor">#000</item>
+    <item name="android:textStyle">bold</item>
+    <item name="android:paddingTop">8dp</item>
+    <item name="android:paddingBottom">8dp</item>
+    <item name="android:paddingStart">16dp</item>
+    <item name="android:paddingLeft">16dp</item>
+    <item name="android:paddingEnd">16dp</item>
+    <item name="android:paddingRight">16dp</item>
+  </style>
+
+  <style name="TextAppearance.AppTheme.PhoneNumber" parent="TextAppearance.AppCompat.Body1">
+    <item name="android:textColor">@color/textColorPrimary</item>
+    <item name="android:textSize">28sp</item>
+    <item name="android:inputType">phone</item>
+    <item name="android:digits">0123456789+</item>
+    <item name="android:maxLength">18</item>
+  </style>
+
+  <style name="TextAppearance.AppTheme.Button.Colored" parent="TextAppearance.AppCompat.Widget.Button.Colored">
+    <item name="android:textSize">16sp</item>
+    <item name="android:theme">@style/AppTheme.Button.Theme.Regular</item>
+  </style>
+
+  <style name="TextAppearance.AppTheme.Button.Colored.Big">
+    <item name="android:textSize">19sp</item>
+  </style>
+
+  <!-- Button styles -->
+
   <style name="AppTheme.Button.Colored" parent="Widget.AppCompat.Button.Colored">
     <item name="android:textSize">19sp</item>
-    <item name="android:theme">@style/AppTheme.Button.Theme.Light</item>
+    <item name="android:theme">@style/AppTheme.Button.Theme.Regular</item>
   </style>
 
   <style name="AppTheme.Button.Colored.Compact" parent="Widget.AppCompat.Button.Colored">
     <item name="android:textSize">16sp</item>
-    <item name="android:theme">@style/AppTheme.Button.Theme.Light</item>
+    <item name="android:theme">@style/AppTheme.Button.Theme.Regular</item>
   </style>
 
   <style name="AppTheme.Button.Colored.Darker" parent="Widget.AppCompat.Button.Colored">
@@ -69,16 +162,17 @@
 
   <style name="AppTheme.Button.Borderless.Filled">
     <item name="android:background">@drawable/ic_button_background</item>
+    <item name="android:theme">@style/AppTheme.Button.Theme.Regular</item>
   </style>
 
   <style name="AppTheme.Button.Borderless.Filled.Yellow">
     <item name="android:background">@drawable/ic_button_background_yellow</item>
-    <item name="android:theme">@style/AppTheme.Accent.Yellow</item>
+    <item name="android:theme">@style/AppTheme.Button.Theme.Black</item>
   </style>
 
   <style name="AppTheme.CompoundButton.Switch" parent="Widget.AppCompat.CompoundButton.Switch">
     <item name="android:textSize">16sp</item>
-    <item name="android:thumb">@drawable/ic_thumb_big</item>
+    <item name="android:theme">@style/AppTheme.Accent.Green</item>
   </style>
 
   <style name="AppTheme.SeekBar.Discrete" parent="Widget.AppCompat.SeekBar.Discrete">
@@ -86,13 +180,14 @@
     <item name="tickMark">@drawable/ic_tick_mark</item>
   </style>
 
-  <style name="AppTheme.SeekBar.Theme.Green" parent="AppTheme">
-    <item name="colorAccent">@color/colorAccentGreen</item>
-  </style>
-
   <style name="AppTheme.SeekBar.Green" parent="Widget.AppCompat.SeekBar">
     <item name="android:thumb">@drawable/ic_thumb</item>
-    <item name="android:theme">@style/AppTheme.SeekBar.Theme.Green</item>
+    <item name="android:theme">@style/AppTheme.Accent.Green</item>
+  </style>
+
+  <style name="AppTheme.SeekBar.Green.Inverse">
+    <item name="android:progressDrawable">@drawable/mirrored_progress</item>
+    <item name="android:scaleX">-1</item>
   </style>
 
   <style name="AppTheme.AppBar" parent="Widget.AppCompat.Toolbar">
@@ -101,8 +196,24 @@
     <item name="contentInsetStartWithNavigation">0dp</item>
   </style>
 
-  <style name="AppTheme.ProgressBar.White" parent="Widget.AppCompat.ProgressBar">
-    <item name="android:theme">@style/AppTheme.Accent.White</item>
+  <style name="AppTheme.ProgressBar" parent="Widget.AppCompat.ProgressBar">
+    <item name="android:theme">@style/AppTheme.Accent.Contrast</item>
   </style>
 
+  <style name="AppTheme.ProgressBar.Timeout" parent="Widget.AppCompat.ProgressBar.Horizontal">
+    <item name="android:progressDrawable">@drawable/plain_progressbar</item>
+    <item name="android:scaleX">-1</item>
+  </style>
+
+  <style name="AppTheme.ProgressBar.Timeout.Rounded">
+    <item name="android:progressDrawable">@drawable/plain_progressbar_rounded</item>
+  </style>
+
+  <style name="AppTheme.ProgressBar.Threshold" parent="Widget.AppCompat.ProgressBar.Horizontal">
+    <item name="android:progressDrawable">@drawable/button_progressbar</item>
+  </style>
+
+  <style name="AppTheme.ProgressBar.Error" parent="Widget.AppCompat.ProgressBar.Horizontal">
+    <item name="android:progressDrawable">@drawable/red_button_progressbar</item>
+  </style>
 </resources>

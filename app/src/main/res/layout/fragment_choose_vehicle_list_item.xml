@@ -8,7 +8,7 @@
   android:background="?android:attr/selectableItemBackground">
   <TextView
     android:id="@+id/vehicleNameText"
-    style="@style/TextAppearance.AppCompat.Subhead"
+    style="@style/TextAppearance.AppTheme.SubTitle"
     android:layout_width="0dp"
     android:layout_height="wrap_content"
     android:layout_marginTop="16dp"
@@ -22,7 +22,7 @@
     tools:text="Газель Шмаразель"/>
   <TextView
     android:id="@+id/vehicleStatusText"
-    style="@style/TextAppearance.AppCompat.Subhead"
+    style="@style/TextAppearance.AppTheme.SubTitle"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_marginTop="16dp"

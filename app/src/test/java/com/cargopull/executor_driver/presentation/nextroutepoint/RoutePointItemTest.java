@@ -36,7 +36,7 @@ public class RoutePointItemTest {
 
     // Результат:
     assertEquals(routeItem.getMapUrl(),
-        "https://maps.googleapis.com/maps/api/staticmap?key=AIzaSyC20FZNHJqrQH5UhypeUy3thpqII33QBPI&center=5.421,10.2341&maptype=roadmap&zoom=16&size=360x200");
+        "https://maps.googleapis.com/maps/api/staticmap?key=AIzaSyBwlubLyqI6z_ivfAWcTCfyTXkoRHTagMk&center=5.421,10.2341&maptype=roadmap&zoom=16&size=360x200");
     assertEquals(routeItem.getCoordinatesString(), "5.421,10.2341");
     assertEquals(routeItem.getAddress(), "add");
     assertEquals(routeItem.getComment(), "com");

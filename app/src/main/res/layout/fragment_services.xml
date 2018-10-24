@@ -7,7 +7,7 @@
   android:layout_height="match_parent">
   <TextView
     android:id="@+id/sliderText"
-    style="@style/Base.TextAppearance.AppCompat.Subhead"
+    style="@style/TextAppearance.AppTheme.SubTitle"
     android:layout_width="0dp"
     android:layout_height="wrap_content"
     android:layout_marginTop="16dp"
@@ -21,7 +21,7 @@
     app:layout_constraintTop_toTopOf="parent"/>
   <TextView
     android:id="@+id/minPriceText"
-    style="@style/Base.TextAppearance.AppCompat.Subhead"
+    style="@style/TextAppearance.AppTheme.SubTitle"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_margin="8dp"
@@ -30,7 +30,7 @@
     app:layout_constraintTop_toBottomOf="@id/sliderText"/>
   <TextView
     android:id="@+id/minMaxPriceMinus"
-    style="@style/Base.TextAppearance.AppCompat.Subhead"
+    style="@style/TextAppearance.AppTheme.SubTitle"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_margin="8dp"
@@ -39,7 +39,7 @@
     app:layout_constraintTop_toBottomOf="@id/sliderText"/>
   <TextView
     android:id="@+id/maxPriceText"
-    style="@style/Base.TextAppearance.AppCompat.Subhead"
+    style="@style/TextAppearance.AppTheme.SubTitle"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_marginTop="8dp"
@@ -72,21 +72,19 @@
     app:srcCompat="@drawable/ic_circle"/>
   <androidx.appcompat.widget.AppCompatSeekBar
     android:id="@+id/priceSeekBar"
-    style="@style/AppTheme.SeekBar.Green"
+    style="@style/AppTheme.SeekBar.Green.Inverse"
     android:layout_width="0dp"
     android:layout_height="wrap_content"
     android:layout_marginTop="16dp"
     android:paddingTop="20dp"
     android:paddingBottom="20dp"
     android:progress="10"
-    android:progressDrawable="@drawable/mirrored_progress"
-    android:scaleX="-1"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toBottomOf="@+id/sliderText"/>
   <TextView
     android:id="@+id/servicesText"
-    style="@style/Base.TextAppearance.AppCompat.Subhead"
+    style="@style/TextAppearance.AppTheme.SubTitle"
     android:layout_width="0dp"
     android:layout_height="wrap_content"
     android:layout_marginStart="16dp"
@@ -115,7 +113,7 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:enabled="false"
-    android:textAppearance="@style/TextAppearance.AppCompat.Headline"
+    android:textAppearance="@style/TextAppearance.AppTheme.Empty"
     app:layout_constraintBottom_toTopOf="@+id/readyButton"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"

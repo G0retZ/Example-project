@@ -7,12 +7,11 @@
   android:background="@color/colorTwilight">
   <TextView
     android:id="@+id/breakText"
-    style="@style/TextAppearance.AppCompat.Title"
+    style="@style/TextAppearance.AppTheme.Block"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:gravity="center"
     android:text="@string/rest"
-    android:textSize="40sp"
     app:layout_constraintBottom_toTopOf="@id/breakDisclaimerText"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
@@ -20,7 +19,7 @@
     app:layout_constraintVertical_chainStyle="packed"/>
   <TextView
     android:id="@+id/breakDisclaimerText"
-    style="@style/TextAppearance.AppCompat.Subhead"
+    style="@style/TextAppearance.AppTheme.SubTitle"
     android:layout_width="240dp"
     android:layout_height="wrap_content"
     android:layout_marginTop="32dp"

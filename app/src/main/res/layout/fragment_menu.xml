@@ -8,12 +8,11 @@
   android:orientation="vertical">
   <TextView
     android:id="@+id/balance"
-    style="@style/TextAppearance.AppCompat.Subhead"
+    style="@style/TextAppearance.AppTheme.SubTitle.Touchable"
     android:layout_width="0dp"
     android:layout_height="56dp"
     android:paddingStart="16dp"
     android:paddingEnd="16dp"
-    android:background="?android:attr/selectableItemBackground"
     android:gravity="center_vertical"
     android:text="@string/balance"
     app:layout_constraintEnd_toEndOf="parent"
@@ -21,12 +20,11 @@
     app:layout_constraintTop_toTopOf="parent"/>
   <TextView
     android:id="@+id/balanceAmount"
-    style="@style/TextAppearance.AppCompat.Title"
+    style="@style/TextAppearance.AppTheme.Title"
     android:layout_width="wrap_content"
     android:layout_height="56dp"
     android:paddingStart="16dp"
     android:paddingEnd="16dp"
-    android:background="?android:attr/selectableItemBackground"
     android:gravity="center_vertical"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintTop_toTopOf="parent"
@@ -41,12 +39,11 @@
     app:layout_constraintTop_toBottomOf="@id/balance"/>
   <TextView
     android:id="@+id/preOrders"
-    style="@style/TextAppearance.AppCompat.Subhead"
+    style="@style/TextAppearance.AppTheme.SubTitle.Touchable"
     android:layout_width="0dp"
     android:layout_height="56dp"
     android:paddingStart="16dp"
     android:paddingEnd="16dp"
-    android:background="?android:attr/selectableItemBackground"
     android:gravity="center_vertical"
     android:text="@string/upcoming_pre_orders"
     app:layout_constraintEnd_toEndOf="parent"
@@ -54,12 +51,11 @@
     app:layout_constraintTop_toBottomOf="@id/balanceLine"/>
   <TextView
     android:id="@+id/preOrdersAmount"
-    style="@style/TextAppearance.AppCompat.Title"
+    style="@style/TextAppearance.AppTheme.Title"
     android:layout_width="wrap_content"
     android:layout_height="56dp"
     android:paddingStart="16dp"
     android:paddingEnd="16dp"
-    android:background="?android:attr/selectableItemBackground"
     android:gravity="center_vertical"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintTop_toBottomOf="@id/balanceLine"
@@ -73,18 +69,48 @@
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toBottomOf="@id/preOrders"/>
   <TextView
-    android:id="@+id/about"
-    style="@style/TextAppearance.AppCompat.Subhead"
+    android:id="@+id/nightMode"
+    style="@style/TextAppearance.AppTheme.SubTitle.Touchable"
     android:layout_width="0dp"
     android:layout_height="56dp"
     android:paddingStart="16dp"
     android:paddingEnd="16dp"
-    android:background="?android:attr/selectableItemBackground"
+    android:gravity="center_vertical"
+    android:text="@string/night_mode"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@id/preOrderLine"/>
+  <TextView
+    android:id="@+id/nightModeValue"
+    style="@style/TextAppearance.AppTheme.Subhead"
+    android:layout_width="wrap_content"
+    android:layout_height="56dp"
+    android:paddingStart="16dp"
+    android:paddingEnd="16dp"
+    android:gravity="center_vertical"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintTop_toBottomOf="@id/preOrderLine"
+    tools:text="Авто"/>
+  <View
+    android:id="@+id/colorModeLine"
+    android:layout_width="0dp"
+    android:layout_height="1dp"
+    android:background="@color/colorDivider"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@id/nightMode"/>
+  <TextView
+    android:id="@+id/about"
+    style="@style/TextAppearance.AppTheme.SubTitle.Touchable"
+    android:layout_width="0dp"
+    android:layout_height="56dp"
+    android:paddingStart="16dp"
+    android:paddingEnd="16dp"
     android:gravity="center_vertical"
     android:text="@string/about"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toBottomOf="@id/preOrderLine"/>
+    app:layout_constraintTop_toBottomOf="@id/colorModeLine"/>
   <View
     android:id="@+id/aboutLine"
     android:layout_width="0dp"
@@ -95,12 +121,11 @@
     app:layout_constraintTop_toBottomOf="@id/about"/>
   <TextView
     android:id="@+id/exit"
-    style="@style/TextAppearance.AppCompat.Subhead"
+    style="@style/TextAppearance.AppTheme.SubTitle.Touchable"
     android:layout_width="0dp"
     android:layout_height="56dp"
     android:paddingStart="16dp"
     android:paddingEnd="16dp"
-    android:background="?android:attr/selectableItemBackground"
     android:gravity="center_vertical"
     android:text="@string/exit_app"
     app:layout_constraintEnd_toEndOf="parent"

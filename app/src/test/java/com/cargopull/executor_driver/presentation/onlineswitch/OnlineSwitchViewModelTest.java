@@ -191,8 +191,7 @@ public class OnlineSwitchViewModelTest {
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(new OnlineSwitchViewStatePending(null));
-    inOrder.verify(viewStateObserver)
-        .onChanged(new OnlineSwitchViewStatePending(new OnlineSwitchViewState(false)));
+    inOrder.verify(viewStateObserver).onChanged(new OnlineSwitchViewState(false));
     verifyNoMoreInteractions(viewStateObserver);
   }
 
@@ -210,8 +209,7 @@ public class OnlineSwitchViewModelTest {
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(new OnlineSwitchViewStatePending(null));
-    inOrder.verify(viewStateObserver)
-        .onChanged(new OnlineSwitchViewStatePending(new OnlineSwitchViewState(false)));
+    inOrder.verify(viewStateObserver).onChanged(new OnlineSwitchViewState(false));
     verifyNoMoreInteractions(viewStateObserver);
   }
 
@@ -229,8 +227,7 @@ public class OnlineSwitchViewModelTest {
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(new OnlineSwitchViewStatePending(null));
-    inOrder.verify(viewStateObserver)
-        .onChanged(new OnlineSwitchViewStatePending(new OnlineSwitchViewState(true)));
+    inOrder.verify(viewStateObserver).onChanged(new OnlineSwitchViewState(true));
     verifyNoMoreInteractions(viewStateObserver);
   }
 
@@ -248,8 +245,7 @@ public class OnlineSwitchViewModelTest {
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(new OnlineSwitchViewStatePending(null));
-    inOrder.verify(viewStateObserver)
-        .onChanged(new OnlineSwitchViewStatePending(new OnlineSwitchViewState(true)));
+    inOrder.verify(viewStateObserver).onChanged(new OnlineSwitchViewState(true));
     verifyNoMoreInteractions(viewStateObserver);
   }
 
@@ -268,8 +264,7 @@ public class OnlineSwitchViewModelTest {
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(new OnlineSwitchViewStatePending(null));
-    inOrder.verify(viewStateObserver)
-        .onChanged(new OnlineSwitchViewStatePending(new OnlineSwitchViewState(true)));
+    inOrder.verify(viewStateObserver).onChanged(new OnlineSwitchViewState(true));
     verifyNoMoreInteractions(viewStateObserver);
   }
 
@@ -287,8 +282,7 @@ public class OnlineSwitchViewModelTest {
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(new OnlineSwitchViewStatePending(null));
-    inOrder.verify(viewStateObserver)
-        .onChanged(new OnlineSwitchViewStatePending(new OnlineSwitchViewState(true)));
+    inOrder.verify(viewStateObserver).onChanged(new OnlineSwitchViewState(true));
     verifyNoMoreInteractions(viewStateObserver);
   }
 
@@ -306,8 +300,7 @@ public class OnlineSwitchViewModelTest {
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(new OnlineSwitchViewStatePending(null));
-    inOrder.verify(viewStateObserver)
-        .onChanged(new OnlineSwitchViewStatePending(new OnlineSwitchViewState(true)));
+    inOrder.verify(viewStateObserver).onChanged(new OnlineSwitchViewState(true));
     verifyNoMoreInteractions(viewStateObserver);
   }
 
@@ -325,8 +318,7 @@ public class OnlineSwitchViewModelTest {
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(new OnlineSwitchViewStatePending(null));
-    inOrder.verify(viewStateObserver)
-        .onChanged(new OnlineSwitchViewStatePending(new OnlineSwitchViewState(true)));
+    inOrder.verify(viewStateObserver).onChanged(new OnlineSwitchViewState(true));
     verifyNoMoreInteractions(viewStateObserver);
   }
 
@@ -344,8 +336,7 @@ public class OnlineSwitchViewModelTest {
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(new OnlineSwitchViewStatePending(null));
-    inOrder.verify(viewStateObserver)
-        .onChanged(new OnlineSwitchViewStatePending(new OnlineSwitchViewState(true)));
+    inOrder.verify(viewStateObserver).onChanged(new OnlineSwitchViewState(true));
     verifyNoMoreInteractions(viewStateObserver);
   }
 

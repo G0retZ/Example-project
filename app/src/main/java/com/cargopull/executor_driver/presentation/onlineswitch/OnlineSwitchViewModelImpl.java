@@ -107,49 +107,41 @@ public class OnlineSwitchViewModelImpl extends ViewModel implements OnlineSwitch
   private void onNextState(ExecutorState executorState) {
     switch (executorState) {
       case BLOCKED:
-        viewStateLiveData
-            .postValue(new OnlineSwitchViewStatePending(new OnlineSwitchViewState(false)));
+        lastViewState = new OnlineSwitchViewState(false);
         break;
       case SHIFT_CLOSED:
-        viewStateLiveData
-            .postValue(new OnlineSwitchViewStatePending(new OnlineSwitchViewState(false)));
+        lastViewState = new OnlineSwitchViewState(false);
         break;
       case SHIFT_OPENED:
-        viewStateLiveData.postValue(lastViewState = new OnlineSwitchViewState(false));
+        lastViewState = new OnlineSwitchViewState(false);
         break;
       case ONLINE:
-        viewStateLiveData.postValue(lastViewState = new OnlineSwitchViewState(true));
+        lastViewState = new OnlineSwitchViewState(true);
         break;
       case DRIVER_ORDER_CONFIRMATION:
-        viewStateLiveData
-            .postValue(new OnlineSwitchViewStatePending(new OnlineSwitchViewState(true)));
+        lastViewState = new OnlineSwitchViewState(true);
         break;
       case DRIVER_PRELIMINARY_ORDER_CONFIRMATION:
-        viewStateLiveData
-            .postValue(new OnlineSwitchViewStatePending(new OnlineSwitchViewState(true)));
+        lastViewState = new OnlineSwitchViewState(true);
         break;
       case CLIENT_ORDER_CONFIRMATION:
-        viewStateLiveData
-            .postValue(new OnlineSwitchViewStatePending(new OnlineSwitchViewState(true)));
+        lastViewState = new OnlineSwitchViewState(true);
         break;
       case MOVING_TO_CLIENT:
-        viewStateLiveData
-            .postValue(new OnlineSwitchViewStatePending(new OnlineSwitchViewState(true)));
+        lastViewState = new OnlineSwitchViewState(true);
         break;
       case WAITING_FOR_CLIENT:
-        viewStateLiveData
-            .postValue(new OnlineSwitchViewStatePending(new OnlineSwitchViewState(true)));
+        lastViewState = new OnlineSwitchViewState(true);
         break;
       case ORDER_FULFILLMENT:
-        viewStateLiveData
-            .postValue(new OnlineSwitchViewStatePending(new OnlineSwitchViewState(true)));
+        lastViewState = new OnlineSwitchViewState(true);
         break;
       case PAYMENT_CONFIRMATION:
-        viewStateLiveData
-            .postValue(new OnlineSwitchViewStatePending(new OnlineSwitchViewState(true)));
+        lastViewState = new OnlineSwitchViewState(true);
         break;
       default:
     }
+    viewStateLiveData.postValue(lastViewState);
   }
 
   @Override

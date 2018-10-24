@@ -24,6 +24,16 @@ public class AppPreferences implements AppSettingsService {
   }
 
   @Override
+  public int getNumber(@NonNull String key) {
+    return preferences.getInt(key, 0);
+  }
+
+  @Override
+  public void saveNumber(@NonNull String key, int number) {
+    preferences.edit().putInt(key, number).apply();
+  }
+
+  @Override
   @Nullable
   public String getData(@NonNull String key) {
     return preferences.getString(key, null);

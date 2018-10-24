@@ -33,7 +33,7 @@
       app:srcCompat="@drawable/ic_route_point"/>
     <TextView
       android:id="@+id/positionText"
-      style="@style/TextAppearance.AppCompat.Subhead"
+      style="@style/TextAppearance.AppTheme.SubTitle"
       android:textStyle="bold"
       android:layout_width="0dp"
       android:layout_height="wrap_content"
@@ -45,7 +45,7 @@
       tools:text="2"/>
     <TextView
       android:id="@+id/addressText"
-      style="@style/TextAppearance.AppCompat.Subhead"
+      style="@style/TextAppearance.AppTheme.SubTitle"
       android:layout_width="0dp"
       android:layout_height="wrap_content"
       android:layout_marginBottom="16dp"

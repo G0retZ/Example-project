@@ -9,8 +9,9 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.DialogFragment;
+import androidx.appcompat.app.AppCompatDelegate;
 import com.cargopull.executor_driver.R;
+import com.cargopull.executor_driver.backend.settings.AppSettingsService;
 import com.cargopull.executor_driver.di.AppComponent;
 import com.cargopull.executor_driver.presentation.CommonNavigate;
 import com.cargopull.executor_driver.presentation.balance.BalanceViewActions;
@@ -23,7 +24,6 @@ import com.cargopull.executor_driver.presentation.preorderslist.PreOrdersListVie
 import com.cargopull.executor_driver.presentation.preorderslist.PreOrdersListViewModel;
 import java.text.DecimalFormat;
 import java.util.List;
-import java.util.Objects;
 import javax.inject.Inject;
 
 /**
@@ -33,13 +33,19 @@ import javax.inject.Inject;
 public class MenuFragment extends BaseFragment implements BalanceViewActions,
     OnlineSwitchViewActions, PreOrdersListViewActions {
 
+  private AppSettingsService appSettingsService;
   private BalanceViewModel balanceViewModel;
   private OnlineSwitchViewModel onlineSwitchViewModel;
   private PreOrdersListViewModel preOrdersListViewModel;
   private TextView balanceAmount;
   private TextView preOrdersAmount;
+  private TextView nightModeValue;
   private boolean nowOnline;
-  private DialogFragment aboutFragment;
+
+  @Inject
+  public void setAppSettingsService(@NonNull AppSettingsService appSettingsService) {
+    this.appSettingsService = appSettingsService;
+  }
 
   @Inject
   public void setBalanceViewModel(@NonNull BalanceViewModel balanceViewModel) {
@@ -61,10 +67,10 @@ public class MenuFragment extends BaseFragment implements BalanceViewActions,
   public View onCreateView(@NonNull LayoutInflater inflater,
       @Nullable ViewGroup container,
       @Nullable Bundle savedInstanceState) {
-    View view = inflater.inflate(R.layout.fragment_menu, container, false);
-    view.findViewById(R.id.balance).setOnClickListener(v -> navigate(MenuNavigate.BALANCE));
+    View rootView = inflater.inflate(R.layout.fragment_menu, container, false);
+    rootView.findViewById(R.id.balance).setOnClickListener(v -> navigate(MenuNavigate.BALANCE));
     Context context = getContext();
-    view.findViewById(R.id.exit).setOnClickListener(
+    rootView.findViewById(R.id.exit).setOnClickListener(
         v -> new Builder(context)
             .setMessage(R.string.exit_confirmation)
             .setPositiveButton(getString(android.R.string.ok), ((dialog, which) -> {
@@ -78,14 +84,15 @@ public class MenuFragment extends BaseFragment implements BalanceViewActions,
             .create()
             .show()
     );
-    balanceAmount = view.findViewById(R.id.balanceAmount);
-    view.findViewById(R.id.preOrders).setOnClickListener(v -> navigate(MenuNavigate.PRE_ORDERS));
-    preOrdersAmount = view.findViewById(R.id.preOrdersAmount);
-    aboutFragment = new AboutDialogFragment();
-    view.findViewById(R.id.about).setOnClickListener(
-        v -> aboutFragment.show(Objects.requireNonNull(getFragmentManager()), "about")
-    );
-    return view;
+    balanceAmount = rootView.findViewById(R.id.balanceAmount);
+    rootView.findViewById(R.id.preOrders)
+        .setOnClickListener(v -> navigate(MenuNavigate.PRE_ORDERS));
+    preOrdersAmount = rootView.findViewById(R.id.preOrdersAmount);
+    rootView.findViewById(R.id.about).setOnClickListener(v -> navigate(MenuNavigate.ABOUT));
+    rootView.findViewById(R.id.nightMode)
+        .setOnClickListener(v -> navigate(MenuNavigate.NIGHT_MODE));
+    nightModeValue = rootView.findViewById(R.id.nightModeValue);
+    return rootView;
   }
 
   @Override
@@ -97,6 +104,16 @@ public class MenuFragment extends BaseFragment implements BalanceViewActions,
   @Override
   public void onActivityCreated(@Nullable Bundle savedInstanceState) {
     super.onActivityCreated(savedInstanceState);
+    switch (appSettingsService.getNumber("mode")) {
+      case AppCompatDelegate.MODE_NIGHT_YES:
+        nightModeValue.setText(R.string.night_mode_on);
+        break;
+      case AppCompatDelegate.MODE_NIGHT_NO:
+        nightModeValue.setText(R.string.night_mode_off);
+        break;
+      default:
+        nightModeValue.setText(R.string.night_mode_auto);
+    }
     balanceViewModel.getNavigationLiveData().observe(this, destination -> {
       if (destination != null) {
         navigate(destination);
@@ -140,7 +157,7 @@ public class MenuFragment extends BaseFragment implements BalanceViewActions,
     if (amount < 0) {
       balanceAmount.setTextColor(getResources().getColor(R.color.colorError));
     } else {
-      balanceAmount.setTextColor(getResources().getColor(android.R.color.white));
+      balanceAmount.setTextColor(getResources().getColor(R.color.textColorPrimary));
     }
   }
 

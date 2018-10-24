@@ -15,6 +15,6 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_gravity="center"
-    android:enabled="false"
-    android:textAppearance="@style/TextAppearance.AppCompat.Headline"/>
+    android:textAppearance="@style/TextAppearance.AppTheme.Empty"
+    tools:text="Нету нифига"/>
 </FrameLayout>

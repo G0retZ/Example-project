@@ -37,6 +37,15 @@ public class AppSettingsServiceTest {
   }
 
   @Test
+  public void saveAndReadNumber() {
+    // given:
+    appSettingsService.saveNumber("key", 123456);
+
+    // then:
+    assertEquals(appSettingsService.getNumber("key"), 123456);
+  }
+
+  @Test
   public void saveAndReadValue() {
     // given:
     appSettingsService.saveData("key", "value");

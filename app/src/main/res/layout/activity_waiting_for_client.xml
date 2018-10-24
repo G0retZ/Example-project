@@ -44,7 +44,7 @@
   </androidx.appcompat.widget.Toolbar>
   <TextView
     android:id="@+id/stateMessage"
-    style="@style/TextAppearance.AppCompat.Subhead.Inverse"
+    style="@style/TextAppearance.AppTheme.SubTitle.Inverse"
     android:layout_width="0dp"
     android:layout_height="wrap_content"
     android:padding="16dp"

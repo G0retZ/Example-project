@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <color name="colorPrimaryLight">#2D3C4D</color>
+  <color name="colorPrimary">#212D3B</color>
+  <color name="colorPrimaryDark">#171E26</color>
+  <color name="colorAccent">#3194FF</color>
+  <color name="colorAccent2">#1A61FF</color>
+  <color name="colorAccent2Translucent">#661A61FF</color>
+  <color name="colorAccentTranslucent">#003194FF</color>
+  <color name="colorAccentDark">#5078A0</color>
+  <color name="colorAccentGreen">#47FF60</color>
+  <color name="colorAccentGreenDisabled">#4D47FF60</color>
+  <color name="colorAccentGreenTranslucent">#0047FF60</color>
+  <color name="colorAccentYellow">#ffbf00</color>
+  <color name="colorDisabled">#1FFFFFFF</color>
+  <color name="colorSmoke">#66000000</color>
+  <color name="colorTwilight">#C0000000</color>
+  <color name="colorDivider">#40b4c3cb</color>
+  <color name="colorWindowBackground">#131A22</color>
+  <color name="colorWindowBackgroundTranslucent">#00131A22</color>
+  <color name="colorError">#F2144C</color>
+  <color name="textColorPrimary">#fff</color>
+  <color name="textColorPrimaryInverse">#000</color>
+  <color name="textColorSecondary">#668cb2</color>
+</resources>
