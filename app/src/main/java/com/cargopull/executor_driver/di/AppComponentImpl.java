@@ -169,6 +169,9 @@ public class AppComponentImpl implements AppComponent {
 
   @Override
   public void inject(BaseActivity baseActivity) {
+    baseActivity.setAppSettingsService(
+        getBackendComponent().getAppSettingsService()
+    );
     baseActivity.setExecutorStateViewModel(
         getPresentationComponent().getExecutorStateViewModel()
     );

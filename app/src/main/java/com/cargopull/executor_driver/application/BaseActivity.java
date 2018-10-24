@@ -14,6 +14,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import com.cargopull.executor_driver.R;
+import com.cargopull.executor_driver.backend.settings.AppSettingsService;
 import com.cargopull.executor_driver.di.AppComponent;
 import com.cargopull.executor_driver.presentation.CommonNavigate;
 import com.cargopull.executor_driver.presentation.announcement.AnnouncementStateViewActions;
@@ -52,16 +53,12 @@ public class BaseActivity extends AppCompatActivity implements ExecutorStateView
   private final PendingDialogFragment pendingDialogFragment = new PendingDialogFragment();
   @NonNull
   private final LinkedList<OnBackPressedInterceptor> onBackPressedInterceptors = new LinkedList<>();
+  private AppSettingsService appSettingsService;
   private final Set<String> blockers = new HashSet<>();
-  @Nullable
   private ExecutorStateViewModel executorStateViewModel;
-  @Nullable
   private UpdateMessageViewModel updateMessageViewModel;
-  @Nullable
   private AnnouncementViewModel announcementViewModel;
-  @Nullable
   private ServerConnectionViewModel serverConnectionViewModel;
-  @Nullable
   private ServerTimeViewModel serverTimeViewModel;
   @Nullable
   private Dialog onlineDialog;
@@ -72,6 +69,13 @@ public class BaseActivity extends AppCompatActivity implements ExecutorStateView
   @Nullable
   private Dialog errorDialog;
   private boolean resumed;
+  // FIXME: https://jira.capsrv.xyz/browse/RUCAP-2244
+  private int nightMode = -1;
+
+  @Inject
+  public void setAppSettingsService(@NonNull AppSettingsService appSettingsService) {
+    this.appSettingsService = appSettingsService;
+  }
 
   @Inject
   public void setExecutorStateViewModel(@NonNull ExecutorStateViewModel executorStateViewModel) {
@@ -104,20 +108,9 @@ public class BaseActivity extends AppCompatActivity implements ExecutorStateView
     super.onCreate(savedInstanceState);
     pendingDialogFragment.setCancelable(false);
     onDependencyInject(getDiComponent());
-    if (executorStateViewModel == null) {
-      throw new IllegalStateException("Граф зависимостей поломан!");
-    }
-    if (updateMessageViewModel == null) {
-      throw new IllegalStateException("Граф зависимостей поломан!");
-    }
-    if (announcementViewModel == null) {
-      throw new IllegalStateException("Граф зависимостей поломан!");
-    }
-    if (serverConnectionViewModel == null) {
-      throw new IllegalStateException("Граф зависимостей поломан!");
-    }
-    if (serverTimeViewModel == null) {
-      throw new IllegalStateException("Граф зависимостей поломан!");
+    // FIXME: https://jira.capsrv.xyz/browse/RUCAP-2244
+    if (appSettingsService != null) {
+      nightMode = appSettingsService.getNumber("mode");
     }
     executorStateViewModel.getViewStateLiveData().observe(this, viewState -> {
       if (viewState != null) {
@@ -158,6 +151,10 @@ public class BaseActivity extends AppCompatActivity implements ExecutorStateView
   @Override
   public void onResume() {
     super.onResume();
+    // FIXME: https://jira.capsrv.xyz/browse/RUCAP-2244
+    if (appSettingsService != null && appSettingsService.getNumber("mode") != nightMode) {
+      recreate();
+    }
     resumed = true;
     if (onlineDialog != null) {
       onlineDialog.show();
@@ -320,9 +317,6 @@ public class BaseActivity extends AppCompatActivity implements ExecutorStateView
         .setPositiveButton(getString(android.R.string.ok),
             ((dialog, which) -> {
               announcementDialog = null;
-              if (announcementViewModel == null) {
-                throw new IllegalStateException("Граф зависимостей поломан!");
-              }
               announcementViewModel.announcementConsumed();
             }))
         .create();
@@ -340,9 +334,6 @@ public class BaseActivity extends AppCompatActivity implements ExecutorStateView
         .setPositiveButton(getString(android.R.string.ok),
             ((dialog, which) -> {
               onlineDialog = null;
-              if (executorStateViewModel == null) {
-                throw new IllegalStateException("Граф зависимостей поломан!");
-              }
               executorStateViewModel.messageConsumed();
             }))
         .create();
@@ -363,9 +354,6 @@ public class BaseActivity extends AppCompatActivity implements ExecutorStateView
         .setCancelable(false)
         .setPositiveButton(getString(R.string.update), (dialog, which) -> {
           updateDialog = null;
-          if (updateMessageViewModel == null) {
-            throw new IllegalStateException("Граф зависимостей поломан!");
-          }
           updateMessageViewModel.messageConsumed();
           try {
             startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(
@@ -379,9 +367,6 @@ public class BaseActivity extends AppCompatActivity implements ExecutorStateView
         })
         .setNegativeButton(getString(R.string.not_now), (dialog, which) -> {
           updateDialog = null;
-          if (updateMessageViewModel == null) {
-            throw new IllegalStateException("Граф зависимостей поломан!");
-          }
           updateMessageViewModel.messageConsumed();
         })
         .create();
