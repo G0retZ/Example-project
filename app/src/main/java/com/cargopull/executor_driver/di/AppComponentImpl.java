@@ -12,6 +12,7 @@ import com.cargopull.executor_driver.application.MenuActivity;
 import com.cargopull.executor_driver.application.MovingToClientActivity;
 import com.cargopull.executor_driver.application.NavigationMapper;
 import com.cargopull.executor_driver.application.NavigationMapperImpl;
+import com.cargopull.executor_driver.application.NightModeActivity;
 import com.cargopull.executor_driver.application.OnlineActivity;
 import com.cargopull.executor_driver.application.OnlineMenuActivity;
 import com.cargopull.executor_driver.application.OrderCostDetailsActivity;
@@ -224,6 +225,13 @@ public class AppComponentImpl implements AppComponent {
   public void inject(OnlineMenuActivity onlineMenuActivity) {
     onlineMenuActivity.setEventLogger(
         getBackendComponent().getEventLogger()
+    );
+  }
+
+  @Override
+  public void inject(NightModeActivity nightModeActivity) {
+    nightModeActivity.setAppSettingsService(
+        getBackendComponent().getAppSettingsService()
     );
   }
 

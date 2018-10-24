@@ -134,8 +134,8 @@
   <string name="break_description">Вы не принимаете срочные заказы, но вам по-прежнему будут предлагаться предварительные заказы.</string>
   <string name="rest">Отдых</string>
   <string name="block">Блокировка</string>
-  <string name="color_scheme">Цветовая схема</string>
-  <string name="color_scheme_night">Ночь</string>
-  <string name="color_scheme_auto">Авто</string>
-  <string name="color_scheme_daylight">День</string>
+  <string name="night_mode">Ночной режим</string>
+  <string name="night_mode_on">Включен</string>
+  <string name="night_mode_off">Выключен</string>
+  <string name="night_mode_auto">Авто</string>
 </resources>

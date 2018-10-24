@@ -1,13 +1,11 @@
 package com.cargopull.executor_driver.view;
 
-import android.app.Activity;
 import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.RadioGroup;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -43,10 +41,9 @@ public class MenuFragment extends BaseFragment implements BalanceViewActions,
   private PreOrdersListViewModel preOrdersListViewModel;
   private TextView balanceAmount;
   private TextView preOrdersAmount;
+  private TextView nightModeValue;
   private boolean nowOnline;
   private DialogFragment aboutFragment;
-  private Activity activity;
-  private RadioGroup nightMode;
 
   @Inject
   public void setAppSettingsService(@NonNull AppSettingsService appSettingsService) {
@@ -66,12 +63,6 @@ public class MenuFragment extends BaseFragment implements BalanceViewActions,
   @Inject
   public void setPreOrdersListViewModel(PreOrdersListViewModel preOrdersListViewModel) {
     this.preOrdersListViewModel = preOrdersListViewModel;
-  }
-
-  @Override
-  public void onAttach(Context context) {
-    super.onAttach(context);
-    activity = (Activity) context;
   }
 
   @Nullable
@@ -104,7 +95,9 @@ public class MenuFragment extends BaseFragment implements BalanceViewActions,
     rootView.findViewById(R.id.about).setOnClickListener(
         v -> aboutFragment.show(Objects.requireNonNull(getFragmentManager()), "about")
     );
-    nightMode = rootView.findViewById(R.id.colorMode);
+    rootView.findViewById(R.id.nightMode)
+        .setOnClickListener(v -> navigate(MenuNavigate.NIGHT_MODE));
+    nightModeValue = rootView.findViewById(R.id.nightModeValue);
     return rootView;
   }
 
@@ -119,13 +112,13 @@ public class MenuFragment extends BaseFragment implements BalanceViewActions,
     super.onActivityCreated(savedInstanceState);
     switch (appSettingsService.getNumber("mode")) {
       case AppCompatDelegate.MODE_NIGHT_YES:
-        nightMode.check(R.id.colorModeNight);
+        nightModeValue.setText(R.string.night_mode_on);
         break;
       case AppCompatDelegate.MODE_NIGHT_NO:
-        nightMode.check(R.id.colorModeDay);
+        nightModeValue.setText(R.string.night_mode_off);
         break;
       default:
-        nightMode.check(R.id.colorModeAuto);
+        nightModeValue.setText(R.string.night_mode_auto);
     }
     balanceViewModel.getNavigationLiveData().observe(this, destination -> {
       if (destination != null) {
@@ -156,27 +149,6 @@ public class MenuFragment extends BaseFragment implements BalanceViewActions,
       if (destination != null) {
         navigate(destination);
       }
-    });
-  }
-
-  @Override
-  public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
-    super.onViewStateRestored(savedInstanceState);
-    nightMode.setOnCheckedChangeListener((group, checkedId) -> {
-      int mode;
-      switch (checkedId) {
-        case R.id.colorModeNight:
-          mode = AppCompatDelegate.MODE_NIGHT_YES;
-          break;
-        case R.id.colorModeDay:
-          mode = AppCompatDelegate.MODE_NIGHT_NO;
-          break;
-        default:
-          mode = AppCompatDelegate.MODE_NIGHT_AUTO;
-      }
-      appSettingsService.saveNumber("mode", mode);
-      AppCompatDelegate.setDefaultNightMode(mode);
-      activity.recreate();
     });
   }
 

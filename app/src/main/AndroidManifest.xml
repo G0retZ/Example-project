@@ -130,6 +130,9 @@
     <activity
       android:launchMode="singleTop"
       android:name=".application.BlockedActivity"/>
+    <activity
+      android:launchMode="singleTop"
+      android:name=".application.NightModeActivity"/>
 
     <service
       android:enabled="true"

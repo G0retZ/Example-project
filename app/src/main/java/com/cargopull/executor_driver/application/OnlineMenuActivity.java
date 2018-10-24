@@ -78,6 +78,9 @@ public class OnlineMenuActivity extends BaseActivity {
         startActivity(new Intent(this, PreOrdersActivity.class));
         finish();
         break;
+      case MenuNavigate.NIGHT_MODE:
+        startActivity(new Intent(this, NightModeActivity.class));
+        break;
       case PreOrderNavigate.ORDER_APPROVAL:
         eventLogger.reportEvent("online_menu_pre_order_notification", new HashMap<>());
         startActivity(new Intent(this, DriverPreOrderBookingActivity.class));
