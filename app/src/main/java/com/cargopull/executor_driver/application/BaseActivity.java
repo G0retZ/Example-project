@@ -28,6 +28,7 @@ import com.cargopull.executor_driver.presentation.serverconnection.ServerConnect
 import com.cargopull.executor_driver.presentation.servertime.ServerTimeViewModel;
 import com.cargopull.executor_driver.presentation.updatemessage.UpdateMessageViewActions;
 import com.cargopull.executor_driver.presentation.updatemessage.UpdateMessageViewModel;
+import com.cargopull.executor_driver.view.GeoEngagementDialogFragment;
 import com.cargopull.executor_driver.view.PendingDialogFragment;
 import com.cargopull.executor_driver.view.ServerConnectionFragment;
 import java.util.HashSet;
@@ -53,6 +54,8 @@ public class BaseActivity extends AppCompatActivity implements GeoLocationStateV
 
   @NonNull
   private final PendingDialogFragment pendingDialogFragment = new PendingDialogFragment();
+  @NonNull
+  private final GeoEngagementDialogFragment geoEngagementDialogFragment = new GeoEngagementDialogFragment();
   @NonNull
   private final LinkedList<OnBackPressedInterceptor> onBackPressedInterceptors = new LinkedList<>();
   private final Set<String> blockers = new HashSet<>();
@@ -116,6 +119,7 @@ public class BaseActivity extends AppCompatActivity implements GeoLocationStateV
   protected void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     pendingDialogFragment.setCancelable(false);
+    geoEngagementDialogFragment.setCancelable(false);
     onDependencyInject(getDiComponent());
     // FIXME: https://jira.capsrv.xyz/browse/RUCAP-2244
     if (appSettingsService != null) {
@@ -389,6 +393,19 @@ public class BaseActivity extends AppCompatActivity implements GeoLocationStateV
     }
   }
 
+  @Override
+  public void showGeolocationState(boolean available) {
+    if (available) {
+      geoEngagementDialogFragment.dismiss();
+    } else if (showGeolocationStateAllowed()) {
+      geoEngagementDialogFragment.show(getSupportFragmentManager(), "geoEngagement");
+    }
+  }
+
+  protected boolean showGeolocationStateAllowed() {
+    return false;
+  }
+
   private void exitAndKill() {
     if (Build.VERSION.SDK_INT >= 21) {
       finishAndRemoveTask();
@@ -398,10 +415,5 @@ public class BaseActivity extends AppCompatActivity implements GeoLocationStateV
     new Handler().postDelayed(
         () -> android.os.Process.killProcess(android.os.Process.myPid()), 1000
     );
-  }
-
-  @Override
-  public void showGeolocationState(boolean available) {
-
   }
 }
