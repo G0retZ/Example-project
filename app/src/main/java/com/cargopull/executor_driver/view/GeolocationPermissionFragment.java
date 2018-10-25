@@ -13,10 +13,10 @@ import com.cargopull.executor_driver.R;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.internal.disposables.EmptyDisposable;
 
-public class GeolocationResolutionFragment extends BaseFragment {
+public class GeolocationPermissionFragment extends BaseFragment {
 
-  public static final String NAVIGATE_TO_SETTINGS = "to.App.Permissions.Settings";
-  public static final String NAVIGATE_TO_RESOLVED = "to.App.Permissions.Resolved";
+  public static final String NAVIGATE_TO_PERMISSION_SETTINGS = "to.App.Permissions.Settings";
+  public static final String NAVIGATE_TO_PERMISSION_GRANTED = "to.App.Permissions.Resolved";
 
   private static final String[] PERMISSIONS = new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
       Manifest.permission.ACCESS_COARSE_LOCATION};
@@ -39,7 +39,7 @@ public class GeolocationResolutionFragment extends BaseFragment {
   public View onCreateView(@NonNull LayoutInflater inflater,
       @Nullable ViewGroup container,
       @Nullable Bundle savedInstanceState) {
-    View view = inflater.inflate(R.layout.fragment_geo_resolution, container, false);
+    View view = inflater.inflate(R.layout.fragment_geo_permission, container, false);
     view.findViewById(R.id.resolve).setOnClickListener(v -> resolvePermissions());
     return view;
   }
@@ -82,7 +82,7 @@ public class GeolocationResolutionFragment extends BaseFragment {
     boolean showRationaleBefore = bool;
     permissionDisposable = permissionChecker.check(this, activity, PERMISSIONS)
         .doFinally(() -> permissionChecker = null)
-        .subscribe(() -> navigate(NAVIGATE_TO_RESOLVED),
+        .subscribe(() -> navigate(NAVIGATE_TO_PERMISSION_GRANTED),
             throwable -> {
               // user rejected the permission
               boolean showRationale = true;
@@ -96,7 +96,7 @@ public class GeolocationResolutionFragment extends BaseFragment {
                 // or open another dialog explaining
                 // again the permission and directing to
                 // the app setting
-                navigate(NAVIGATE_TO_SETTINGS);
+                navigate(NAVIGATE_TO_PERMISSION_SETTINGS);
               }
             }
         );

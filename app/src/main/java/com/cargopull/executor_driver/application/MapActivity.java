@@ -69,4 +69,9 @@ public class MapActivity extends BaseActivity {
         super.navigate(destination);
     }
   }
+
+  @Override
+  protected boolean showGeolocationStateAllowed() {
+    return true;
+  }
 }

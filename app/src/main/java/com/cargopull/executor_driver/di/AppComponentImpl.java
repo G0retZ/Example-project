@@ -172,6 +172,9 @@ public class AppComponentImpl implements AppComponent {
     baseActivity.setAppSettingsService(
         getBackendComponent().getAppSettingsService()
     );
+    baseActivity.setGeoLocationStateViewModel(
+        getPresentationComponent().getGeoLocationStateViewModel(baseActivity)
+    );
     baseActivity.setExecutorStateViewModel(
         getPresentationComponent().getExecutorStateViewModel()
     );

@@ -2,6 +2,7 @@ package com.cargopull.executor_driver.di;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import com.cargopull.executor_driver.presentation.announcement.AnnouncementViewModel;
 import com.cargopull.executor_driver.presentation.balance.BalanceViewModel;
@@ -18,6 +19,7 @@ import com.cargopull.executor_driver.presentation.confirmorderpayment.ConfirmOrd
 import com.cargopull.executor_driver.presentation.currentcostpolling.CurrentCostPollingViewModel;
 import com.cargopull.executor_driver.presentation.executorstate.ExecutorStateViewModel;
 import com.cargopull.executor_driver.presentation.geolocation.GeoLocationViewModel;
+import com.cargopull.executor_driver.presentation.geolocationstate.GeoLocationStateViewModel;
 import com.cargopull.executor_driver.presentation.map.MapViewModel;
 import com.cargopull.executor_driver.presentation.missedorder.MissedOrderViewModel;
 import com.cargopull.executor_driver.presentation.movingtoclient.MovingToClientViewModel;
@@ -199,4 +201,6 @@ interface PresentationComponent {
   OrderConfirmationViewModel getUpcomingPreOrderConfirmationViewModel(@Nullable Fragment fragment);
 
   UpcomingPreOrderViewModel getUpcomingPreOrderAvailabilityViewModel();
+
+  GeoLocationStateViewModel getGeoLocationStateViewModel(AppCompatActivity appCompatActivity);
 }

@@ -52,4 +52,9 @@ public class PreOrdersActivity extends BaseActivity {
         super.navigate(destination);
     }
   }
+
+  @Override
+  protected boolean showGeolocationStateAllowed() {
+    return true;
+  }
 }

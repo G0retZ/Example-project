@@ -1,4 +1,4 @@
-package com.cargopull.executor_driver.gateway;
+package com.cargopull.executor_driver.interactor;
 
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doThrow;
@@ -11,7 +11,9 @@ import static org.mockito.Mockito.when;
 
 import com.cargopull.executor_driver.GatewayThreadTestRule;
 import com.cargopull.executor_driver.backend.websocket.TopicListener;
-import com.cargopull.executor_driver.interactor.CurrentCostPollingGateway;
+import com.cargopull.executor_driver.gateway.CurrentCostPollingGatewayImpl;
+import com.cargopull.executor_driver.gateway.DataMappingException;
+import com.cargopull.executor_driver.gateway.Mapper;
 import com.cargopull.executor_driver.utils.Pair;
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Completable;
@@ -31,7 +33,7 @@ import ua.naiksoftware.stomp.client.StompClient;
 import ua.naiksoftware.stomp.client.StompMessage;
 
 @RunWith(MockitoJUnitRunner.class)
-public class CurrentCostPollingGatewayImplTest {
+public class CurrentCostPollingGatewayTest {
 
   @ClassRule
   public static final GatewayThreadTestRule classRule = new GatewayThreadTestRule();

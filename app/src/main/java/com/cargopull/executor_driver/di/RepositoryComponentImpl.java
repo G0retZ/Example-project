@@ -22,6 +22,7 @@ import com.cargopull.executor_driver.gateway.ExecutorBalanceFilter;
 import com.cargopull.executor_driver.gateway.ExecutorStateApiMapper;
 import com.cargopull.executor_driver.gateway.ExecutorStateFilter;
 import com.cargopull.executor_driver.gateway.ExecutorStateSwitchGatewayImpl;
+import com.cargopull.executor_driver.gateway.GeoLocationAvailabilityGatewayImpl;
 import com.cargopull.executor_driver.gateway.GeoLocationGatewayImpl;
 import com.cargopull.executor_driver.gateway.GeoTrackingGatewayImpl;
 import com.cargopull.executor_driver.gateway.HeatMapGatewayImpl;
@@ -637,6 +638,7 @@ class RepositoryComponentImpl implements RepositoryComponent {
     return preOrdersListGateway;
   }
 
+  @NonNull
   @Override
   public CommonGateway<Order> getUpcomingPreOrderGateway() {
     if (upcomingPreOrderGateway == null) {
@@ -647,5 +649,13 @@ class RepositoryComponentImpl implements RepositoryComponent {
       );
     }
     return upcomingPreOrderGateway;
+  }
+
+  @NonNull
+  @Override
+  public CommonGateway<Boolean> getGeoLocationStateGateway() {
+    return new GeoLocationAvailabilityGatewayImpl(
+        backendComponent.getGeolocationCenter()
+    );
   }
 }

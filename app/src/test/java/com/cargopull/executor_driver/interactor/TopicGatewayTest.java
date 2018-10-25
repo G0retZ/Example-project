@@ -1,4 +1,4 @@
-package com.cargopull.executor_driver.gateway;
+package com.cargopull.executor_driver.interactor;
 
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.only;
@@ -8,7 +8,9 @@ import static org.mockito.Mockito.when;
 
 import com.cargopull.executor_driver.GatewayThreadTestRule;
 import com.cargopull.executor_driver.backend.websocket.TopicListener;
-import com.cargopull.executor_driver.interactor.CommonGateway;
+import com.cargopull.executor_driver.gateway.DataMappingException;
+import com.cargopull.executor_driver.gateway.Mapper;
+import com.cargopull.executor_driver.gateway.TopicGatewayImpl;
 import io.reactivex.Flowable;
 import io.reactivex.functions.Predicate;
 import io.reactivex.subscribers.TestSubscriber;
@@ -25,7 +27,7 @@ import org.mockito.junit.MockitoRule;
 import ua.naiksoftware.stomp.client.StompMessage;
 
 @RunWith(Parameterized.class)
-public class TopicGatewayImplTest {
+public class TopicGatewayTest {
 
   @Rule
   public MockitoRule rule = MockitoJUnit.rule();
@@ -48,7 +50,7 @@ public class TopicGatewayImplTest {
   // Every time runner triggers, it will pass the arguments
   // from parameters we defined in primeNumbers() method
 
-  public TopicGatewayImplTest(boolean conditions) {
+  public TopicGatewayTest(boolean conditions) {
     withDefault = conditions;
   }
 
@@ -150,7 +152,8 @@ public class TopicGatewayImplTest {
   /* Проверяем результаты обработки сообщений от сервера */
 
   /**
-   * Должен игнорировать отфильтрованные сообщение, выдав только значение по-умолчанию, если оно задано.
+   * Должен игнорировать отфильтрованные сообщение, выдав только значение по-умолчанию, если оно
+   * задано.
    */
   @Test
   public void ignoreFilteredMessages() {

@@ -21,11 +21,14 @@ import com.cargopull.executor_driver.presentation.announcement.AnnouncementState
 import com.cargopull.executor_driver.presentation.announcement.AnnouncementViewModel;
 import com.cargopull.executor_driver.presentation.executorstate.ExecutorStateViewActions;
 import com.cargopull.executor_driver.presentation.executorstate.ExecutorStateViewModel;
+import com.cargopull.executor_driver.presentation.geolocationstate.GeoLocationStateViewActions;
+import com.cargopull.executor_driver.presentation.geolocationstate.GeoLocationStateViewModel;
 import com.cargopull.executor_driver.presentation.serverconnection.ServerConnectionNavigate;
 import com.cargopull.executor_driver.presentation.serverconnection.ServerConnectionViewModel;
 import com.cargopull.executor_driver.presentation.servertime.ServerTimeViewModel;
 import com.cargopull.executor_driver.presentation.updatemessage.UpdateMessageViewActions;
 import com.cargopull.executor_driver.presentation.updatemessage.UpdateMessageViewModel;
+import com.cargopull.executor_driver.view.GeoEngagementDialogFragment;
 import com.cargopull.executor_driver.view.PendingDialogFragment;
 import com.cargopull.executor_driver.view.ServerConnectionFragment;
 import java.util.HashSet;
@@ -46,15 +49,18 @@ import javax.inject.Inject;
  */
 
 @SuppressLint("Registered")
-public class BaseActivity extends AppCompatActivity implements ExecutorStateViewActions,
-    AnnouncementStateViewActions, UpdateMessageViewActions {
+public class BaseActivity extends AppCompatActivity implements GeoLocationStateViewActions,
+    ExecutorStateViewActions, AnnouncementStateViewActions, UpdateMessageViewActions {
 
   @NonNull
   private final PendingDialogFragment pendingDialogFragment = new PendingDialogFragment();
   @NonNull
+  private final GeoEngagementDialogFragment geoEngagementDialogFragment = new GeoEngagementDialogFragment();
+  @NonNull
   private final LinkedList<OnBackPressedInterceptor> onBackPressedInterceptors = new LinkedList<>();
-  private AppSettingsService appSettingsService;
   private final Set<String> blockers = new HashSet<>();
+  private AppSettingsService appSettingsService;
+  private GeoLocationStateViewModel geoLocationStateViewModel;
   private ExecutorStateViewModel executorStateViewModel;
   private UpdateMessageViewModel updateMessageViewModel;
   private AnnouncementViewModel announcementViewModel;
@@ -75,6 +81,12 @@ public class BaseActivity extends AppCompatActivity implements ExecutorStateView
   @Inject
   public void setAppSettingsService(@NonNull AppSettingsService appSettingsService) {
     this.appSettingsService = appSettingsService;
+  }
+
+  @Inject
+  public void setGeoLocationStateViewModel(
+      @NonNull GeoLocationStateViewModel geoLocationStateViewModel) {
+    this.geoLocationStateViewModel = geoLocationStateViewModel;
   }
 
   @Inject
@@ -107,11 +119,17 @@ public class BaseActivity extends AppCompatActivity implements ExecutorStateView
   protected void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     pendingDialogFragment.setCancelable(false);
+    geoEngagementDialogFragment.setCancelable(false);
     onDependencyInject(getDiComponent());
     // FIXME: https://jira.capsrv.xyz/browse/RUCAP-2244
     if (appSettingsService != null) {
       nightMode = appSettingsService.getNumber("mode");
     }
+    geoLocationStateViewModel.getViewStateLiveData().observe(this, viewState -> {
+      if (viewState != null) {
+        viewState.apply(this);
+      }
+    });
     executorStateViewModel.getViewStateLiveData().observe(this, viewState -> {
       if (viewState != null) {
         viewState.apply(this);
@@ -373,6 +391,19 @@ public class BaseActivity extends AppCompatActivity implements ExecutorStateView
     if (resumed) {
       updateDialog.show();
     }
+  }
+
+  @Override
+  public void showGeolocationState(boolean available) {
+    if (available) {
+      geoEngagementDialogFragment.dismiss();
+    } else if (showGeolocationStateAllowed()) {
+      geoEngagementDialogFragment.show(getSupportFragmentManager(), "geoEngagement");
+    }
+  }
+
+  protected boolean showGeolocationStateAllowed() {
+    return false;
   }
 
   private void exitAndKill() {
