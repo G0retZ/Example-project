@@ -97,4 +97,9 @@ public class OnlineMenuActivity extends BaseActivity {
         super.navigate(destination);
     }
   }
+
+  @Override
+  protected boolean showGeolocationStateAllowed() {
+    return true;
+  }
 }
