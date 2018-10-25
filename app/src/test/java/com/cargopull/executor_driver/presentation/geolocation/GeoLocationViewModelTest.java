@@ -291,7 +291,7 @@ public class GeoLocationViewModelTest {
     viewModel.updateGeoLocations();
 
     // Результат:
-    verify(navigationObserver, only()).onChanged(GeoLocationNavigate.RESOLVE_GEO_PROBLEM);
+    verify(navigationObserver, only()).onChanged(GeoLocationNavigate.RESOLVE_GEO_PERMISSIONS);
   }
 
   /**

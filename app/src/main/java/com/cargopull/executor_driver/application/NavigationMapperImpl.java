@@ -115,7 +115,7 @@ public class NavigationMapperImpl implements NavigationMapper {
       case CommonNavigate.NO_CONNECTION:
         reset = true;
         break;
-      case GeoLocationNavigate.RESOLVE_GEO_PROBLEM:
+      case GeoLocationNavigate.RESOLVE_GEO_PERMISSIONS:
         goToGeoResolver = true;
         return this::tryToResolveGeo;
       case PreOrderNavigate.ORDER_APPROVAL:
