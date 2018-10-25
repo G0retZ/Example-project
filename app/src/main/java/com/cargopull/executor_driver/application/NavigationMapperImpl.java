@@ -31,47 +31,47 @@ public class NavigationMapperImpl implements NavigationMapper {
         LoginActivity.class, PasswordActivity.class
     ));
     statusGroups.put(ExecutorStateNavigate.BLOCKED, Arrays.asList(
-        BlockedActivity.class, GeolocationResolutionActivity.class,
+        BlockedActivity.class, GeolocationPermissionActivity.class,
         BalanceActivity.class
     ));
     statusGroups.put(ExecutorStateNavigate.MAP_SHIFT_CLOSED, Arrays.asList(
-        MapActivity.class, GeolocationResolutionActivity.class,
+        MapActivity.class, GeolocationPermissionActivity.class,
         BalanceActivity.class
     ));
     statusGroups.put(ExecutorStateNavigate.MAP_SHIFT_OPENED, Arrays.asList(
         OnlineActivity.class, VehicleOptionsActivity.class, ServicesActivity.class,
-        GeolocationResolutionActivity.class, BalanceActivity.class,
+        GeolocationPermissionActivity.class, BalanceActivity.class,
         SelectedVehicleOptionsActivity.class
     ));
     statusGroups.put(ExecutorStateNavigate.MAP_ONLINE, Arrays.asList(
         OnlineActivity.class, VehicleOptionsActivity.class,
-        GeolocationResolutionActivity.class, BalanceActivity.class,
+        GeolocationPermissionActivity.class, BalanceActivity.class,
         SelectedVehicleOptionsActivity.class
     ));
     statusGroups.put(ExecutorStateNavigate.DRIVER_ORDER_CONFIRMATION, Arrays.asList(
-        DriverOrderConfirmationActivity.class, GeolocationResolutionActivity.class
+        DriverOrderConfirmationActivity.class, GeolocationPermissionActivity.class
     ));
     statusGroups.put(ExecutorStateNavigate.DRIVER_PRELIMINARY_ORDER_CONFIRMATION, Arrays.asList(
-        DriverPreOrderConfirmationActivity.class, GeolocationResolutionActivity.class
+        DriverPreOrderConfirmationActivity.class, GeolocationPermissionActivity.class
     ));
     statusGroups.put(ExecutorStateNavigate.CLIENT_ORDER_CONFIRMATION, Arrays.asList(
-        ClientOrderConfirmationActivity.class, GeolocationResolutionActivity.class
+        ClientOrderConfirmationActivity.class, GeolocationPermissionActivity.class
     ));
     statusGroups.put(ExecutorStateNavigate.MOVING_TO_CLIENT, Arrays.asList(
         MovingToClientActivity.class, MovingToClientDetailsActivity.class,
-        MovingToClientRouteActivity.class, GeolocationResolutionActivity.class
+        MovingToClientRouteActivity.class, GeolocationPermissionActivity.class
     ));
     statusGroups.put(ExecutorStateNavigate.WAITING_FOR_CLIENT, Arrays.asList(
         WaitingForClientActivity.class, WaitingForClientRouteActivity.class,
-        GeolocationResolutionActivity.class
+        GeolocationPermissionActivity.class
     ));
     statusGroups.put(ExecutorStateNavigate.ORDER_FULFILLMENT, Arrays.asList(
         OrderFulfillmentActivity.class, OrderFulfillmentDetailsActivity.class,
-        OrderRouteActivity.class, GeolocationResolutionActivity.class
+        OrderRouteActivity.class, GeolocationPermissionActivity.class
     ));
     statusGroups.put(ExecutorStateNavigate.PAYMENT_CONFIRMATION, Arrays.asList(
         OrderCostDetailsActivity.class, OrderCostDetailsOrderDetailsActivity.class,
-        OrderCostDetailsRouteActivity.class, GeolocationResolutionActivity.class
+        OrderCostDetailsRouteActivity.class, GeolocationPermissionActivity.class
     ));
     statusGroups.put(PreOrderNavigate.ORDER_APPROVAL, Arrays.asList(
         DriverPreOrderBookingActivity.class, DriverOrderConfirmationActivity.class,
@@ -81,7 +81,7 @@ public class NavigationMapperImpl implements NavigationMapper {
         WaitingForClientRouteActivity.class, OrderFulfillmentActivity.class,
         OrderFulfillmentDetailsActivity.class, OrderRouteActivity.class,
         OrderCostDetailsActivity.class, OrderCostDetailsOrderDetailsActivity.class,
-        OrderCostDetailsRouteActivity.class, GeolocationResolutionActivity.class
+        OrderCostDetailsRouteActivity.class, GeolocationPermissionActivity.class
     ));
   }
 
@@ -154,7 +154,7 @@ public class NavigationMapperImpl implements NavigationMapper {
   private void tryToResolveGeo(@NonNull Activity activity) {
     if (goToGeoResolver) {
       activity.startActivity(
-          new Intent(activity, GeolocationResolutionActivity.class)
+          new Intent(activity, GeolocationPermissionActivity.class)
       );
       goToGeoResolver = false;
     }

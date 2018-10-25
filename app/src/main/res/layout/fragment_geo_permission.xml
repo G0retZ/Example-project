@@ -18,7 +18,7 @@
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toTopOf="parent"
     app:layout_constraintVertical_chainStyle="packed"
-    app:srcCompat="@drawable/ic_map_icon"/>
+    app:srcCompat="@drawable/ic_geo_icon"/>
   <TextView
     android:id="@+id/titleText"
     style="@style/TextAppearance.AppTheme.Title"
@@ -26,7 +26,7 @@
     android:layout_height="wrap_content"
     android:layout_marginBottom="4dp"
     android:gravity="center"
-    android:text="@string/turn_on_geolocation"
+    android:text="@string/grant_access_to_geolocation"
     app:layout_constraintBottom_toTopOf="@id/explainText"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
@@ -37,7 +37,7 @@
     android:layout_width="320dp"
     android:layout_height="wrap_content"
     android:gravity="center"
-    android:text="@string/permissions_required"
+    android:text="@string/geo_permissions_required"
     app:layout_constraintBottom_toTopOf="@id/resolve"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"

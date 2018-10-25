@@ -7,20 +7,20 @@ import android.provider.Settings;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.cargopull.executor_driver.R;
-import com.cargopull.executor_driver.view.GeolocationResolutionFragment;
+import com.cargopull.executor_driver.view.GeolocationPermissionFragment;
 
-public class GeolocationResolutionActivity extends BaseActivity {
+public class GeolocationPermissionActivity extends BaseActivity {
 
   @Override
   protected void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_geo_resolution);
+    setContentView(R.layout.activity_geo_permission);
   }
 
   @Override
   public void navigate(@NonNull String destination) {
     switch (destination) {
-      case GeolocationResolutionFragment.NAVIGATE_TO_SETTINGS:
+      case GeolocationPermissionFragment.NAVIGATE_TO_PERMISSION_SETTINGS:
         startActivity(
             new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
                 .setData(
@@ -28,7 +28,7 @@ public class GeolocationResolutionActivity extends BaseActivity {
                 )
         );
         break;
-      case GeolocationResolutionFragment.NAVIGATE_TO_RESOLVED:
+      case GeolocationPermissionFragment.NAVIGATE_TO_PERMISSION_GRANTED:
         ((MainApplication) getApplication()).initGeoLocation();
         super.onBackPressed();
         break;
