@@ -1,4 +1,4 @@
-package com.cargopull.executor_driver.gateway;
+package com.cargopull.executor_driver.interactor;
 
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.only;
@@ -7,7 +7,7 @@ import static org.mockito.Mockito.when;
 
 import com.cargopull.executor_driver.GatewayThreadTestRule;
 import com.cargopull.executor_driver.entity.CancelOrderReason;
-import com.cargopull.executor_driver.interactor.CancelOrderGateway;
+import com.cargopull.executor_driver.gateway.CancelOrderGatewayImpl;
 import io.reactivex.Completable;
 import io.reactivex.observers.TestObserver;
 import org.junit.Before;
@@ -19,7 +19,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import ua.naiksoftware.stomp.client.StompClient;
 
 @RunWith(MockitoJUnitRunner.class)
-public class CancelOrderGatewayImplTest {
+public class CancelOrderGatewayTest {
 
   @ClassRule
   public static final GatewayThreadTestRule classRule = new GatewayThreadTestRule();
