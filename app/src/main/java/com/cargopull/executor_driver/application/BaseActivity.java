@@ -21,6 +21,8 @@ import com.cargopull.executor_driver.presentation.announcement.AnnouncementState
 import com.cargopull.executor_driver.presentation.announcement.AnnouncementViewModel;
 import com.cargopull.executor_driver.presentation.executorstate.ExecutorStateViewActions;
 import com.cargopull.executor_driver.presentation.executorstate.ExecutorStateViewModel;
+import com.cargopull.executor_driver.presentation.geolocationstate.GeoLocationStateViewActions;
+import com.cargopull.executor_driver.presentation.geolocationstate.GeoLocationStateViewModel;
 import com.cargopull.executor_driver.presentation.serverconnection.ServerConnectionNavigate;
 import com.cargopull.executor_driver.presentation.serverconnection.ServerConnectionViewModel;
 import com.cargopull.executor_driver.presentation.servertime.ServerTimeViewModel;
@@ -46,15 +48,16 @@ import javax.inject.Inject;
  */
 
 @SuppressLint("Registered")
-public class BaseActivity extends AppCompatActivity implements ExecutorStateViewActions,
-    AnnouncementStateViewActions, UpdateMessageViewActions {
+public class BaseActivity extends AppCompatActivity implements GeoLocationStateViewActions,
+    ExecutorStateViewActions, AnnouncementStateViewActions, UpdateMessageViewActions {
 
   @NonNull
   private final PendingDialogFragment pendingDialogFragment = new PendingDialogFragment();
   @NonNull
   private final LinkedList<OnBackPressedInterceptor> onBackPressedInterceptors = new LinkedList<>();
-  private AppSettingsService appSettingsService;
   private final Set<String> blockers = new HashSet<>();
+  private AppSettingsService appSettingsService;
+  private GeoLocationStateViewModel geoLocationStateViewModel;
   private ExecutorStateViewModel executorStateViewModel;
   private UpdateMessageViewModel updateMessageViewModel;
   private AnnouncementViewModel announcementViewModel;
@@ -75,6 +78,12 @@ public class BaseActivity extends AppCompatActivity implements ExecutorStateView
   @Inject
   public void setAppSettingsService(@NonNull AppSettingsService appSettingsService) {
     this.appSettingsService = appSettingsService;
+  }
+
+  @Inject
+  public void setGeoLocationStateViewModel(
+      @NonNull GeoLocationStateViewModel geoLocationStateViewModel) {
+    this.geoLocationStateViewModel = geoLocationStateViewModel;
   }
 
   @Inject
@@ -112,6 +121,11 @@ public class BaseActivity extends AppCompatActivity implements ExecutorStateView
     if (appSettingsService != null) {
       nightMode = appSettingsService.getNumber("mode");
     }
+    geoLocationStateViewModel.getViewStateLiveData().observe(this, viewState -> {
+      if (viewState != null) {
+        viewState.apply(this);
+      }
+    });
     executorStateViewModel.getViewStateLiveData().observe(this, viewState -> {
       if (viewState != null) {
         viewState.apply(this);
@@ -384,5 +398,10 @@ public class BaseActivity extends AppCompatActivity implements ExecutorStateView
     new Handler().postDelayed(
         () -> android.os.Process.killProcess(android.os.Process.myPid()), 1000
     );
+  }
+
+  @Override
+  public void showGeolocationState(boolean available) {
+
   }
 }

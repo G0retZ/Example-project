@@ -147,5 +147,9 @@ interface RepositoryComponent {
   @NonNull
   CommonGateway<Set<Order>> getPreOrdersSetGateway();
 
+  @NonNull
   CommonGateway<Order> getUpcomingPreOrderGateway();
+
+  @NonNull
+  CommonGateway<Boolean> getGeoLocationStateGateway();
 }

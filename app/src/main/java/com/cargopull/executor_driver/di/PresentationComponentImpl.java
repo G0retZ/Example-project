@@ -2,6 +2,7 @@ package com.cargopull.executor_driver.di;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProviders;
@@ -36,6 +37,8 @@ import com.cargopull.executor_driver.presentation.executorstate.ExecutorStateVie
 import com.cargopull.executor_driver.presentation.executorstate.ExecutorStateViewModelImpl;
 import com.cargopull.executor_driver.presentation.geolocation.GeoLocationViewModel;
 import com.cargopull.executor_driver.presentation.geolocation.GeoLocationViewModelImpl;
+import com.cargopull.executor_driver.presentation.geolocationstate.GeoLocationStateViewModel;
+import com.cargopull.executor_driver.presentation.geolocationstate.GeoLocationStateViewModelImpl;
 import com.cargopull.executor_driver.presentation.map.MapViewModel;
 import com.cargopull.executor_driver.presentation.map.MapViewModelImpl;
 import com.cargopull.executor_driver.presentation.missedorder.MissedOrderViewModel;
@@ -886,6 +889,21 @@ class PresentationComponentImpl implements PresentationComponent {
     return upcomingPreOrderAvailabilityViewModel;
   }
 
+  @Override
+  public GeoLocationStateViewModel getGeoLocationStateViewModel(
+      @Nullable AppCompatActivity appCompatActivity) {
+    if (appCompatActivity == null) {
+      throw new NullPointerException("Активити не должно быть null");
+    }
+    return getViewModelInstance(
+        appCompatActivity,
+        GeoLocationStateViewModelImpl.class,
+        new GeoLocationStateViewModelImpl(
+            getRepositoryComponent().getGeoLocationStateGateway()
+        )
+    );
+  }
+
   @NonNull
   private ServicesListItems getServicesListItems() {
     if (servicesListItems == null) {
@@ -916,6 +934,17 @@ class PresentationComponentImpl implements PresentationComponent {
       @NonNull V viewModel) {
     return ViewModelProviders.of(
         fragment,
+        new ViewModelFactory<>(viewModel)
+    ).get(vClass);
+  }
+
+  @SuppressWarnings("SameParameterValue")
+  private <V extends ViewModel> V getViewModelInstance(
+      @NonNull AppCompatActivity appCompatActivity,
+      @NonNull Class<V> vClass,
+      @NonNull V viewModel) {
+    return ViewModelProviders.of(
+        appCompatActivity,
         new ViewModelFactory<>(viewModel)
     ).get(vClass);
   }
