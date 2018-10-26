@@ -273,13 +273,13 @@ public class MovingToClientFragment extends BaseFragment implements MovingToClie
       if (VERSION.SDK_INT >= VERSION_CODES.M) {
         timerText.setTextColor(
             getResources()
-                .getColor(time < 0 ? R.color.colorError : android.R.color.primary_text_dark,
+                .getColor(time < 0 ? R.color.colorError : R.color.textColorPrimary,
                     null)
         );
       } else {
         timerText.setTextColor(
             getResources()
-                .getColor(time < 0 ? R.color.colorError : android.R.color.primary_text_dark)
+                .getColor(time < 0 ? R.color.colorError : R.color.textColorPrimary)
         );
       }
       timerText.setText(
