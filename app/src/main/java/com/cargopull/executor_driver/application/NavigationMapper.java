@@ -1,6 +1,6 @@
 package com.cargopull.executor_driver.application;
 
-import android.app.Activity;
+import android.content.Context;
 import androidx.annotation.NonNull;
 import com.cargopull.executor_driver.presentation.executorstate.ExecutorStateNavigate;
 import com.cargopull.executor_driver.presentation.geolocation.GeoLocationNavigate;
@@ -17,7 +17,7 @@ public interface NavigationMapper {
    * @param destination направление навигации.
    */
   @NonNull
-  Consumer<Activity> navigateTo(
+  Consumer<Context> navigateTo(
       @NonNull @ExecutorStateNavigate @GeoLocationNavigate String destination);
 
   /**
@@ -25,5 +25,5 @@ public interface NavigationMapper {
    * навигации.
    */
   @NonNull
-  Consumer<Activity> navigateToRecent();
+  Consumer<Context> navigateToRecent();
 }
