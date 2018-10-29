@@ -4,22 +4,38 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.SparseArray;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
+import androidx.annotation.ColorRes;
+import androidx.annotation.IdRes;
+import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
 import androidx.fragment.app.Fragment;
 import com.cargopull.executor_driver.application.BaseActivity;
 import com.cargopull.executor_driver.application.OnBackPressedInterceptor;
 import com.cargopull.executor_driver.di.AppComponent;
+import com.cargopull.executor_driver.presentation.ViewActions;
 
 /**
  * {@link Fragment} с поддержкой:
  * <ul>
  * <li>onBackPressed()</li>
  * <li>Отображения процесса</li>
+ * <li>Получения View с кешированием</li>
  * </ul>
  */
 
-public class BaseFragment extends Fragment implements OnBackPressedInterceptor {
+public class BaseFragment extends Fragment implements OnBackPressedInterceptor, ViewActions {
+
+  private View rootView;
+  @NonNull
+  private final SparseArray<View> foundViews = new SparseArray<>();
 
   @Nullable
   private BaseActivity baseActivity;
@@ -33,6 +49,23 @@ public class BaseFragment extends Fragment implements OnBackPressedInterceptor {
       Log.w(this.getClass().getName(), context.getClass().getName() +
           " не наследует BaseActivity. OnBackPressed никогда не будет вызван.");
     }
+  }
+
+
+  /**
+   * Колбэк для указания ресурса лайаута фрагмента. Вызывается при {@link
+   * #onCreateView(LayoutInflater, ViewGroup, Bundle)}.
+   */
+  @LayoutRes
+  protected int getLayoutRes() {
+    return -1;
+  }
+
+  @Nullable
+  @Override
+  public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
+      @Nullable Bundle savedInstanceState) {
+    return rootView = inflater.inflate(getLayoutRes(), container, false);
   }
 
   @Override
@@ -101,5 +134,89 @@ public class BaseFragment extends Fragment implements OnBackPressedInterceptor {
     if (baseActivity != null) {
       baseActivity.blockWithPending(show, blockerId);
     }
+  }
+
+  /**
+   * Получить View по его ИД для каких-либо действий.
+   *
+   * @param id - ИД View для поиска.
+   */
+  @SuppressWarnings("unchecked")
+  @NonNull
+  protected <T extends View> T findView(@IdRes int id) {
+    if (foundViews.get(id) == null) {
+      foundViews.put(id, rootView.findViewById(id));
+    }
+    return (T) foundViews.get(id);
+  }
+
+  @Override
+  public void blockWithPending(@NonNull String blockerId) {
+    if (baseActivity != null) {
+      baseActivity.blockWithPending(toString() + ">" + blockerId);
+    }
+  }
+
+  @Override
+  public void unblockWithPending(@NonNull String blockerId) {
+    if (baseActivity != null) {
+      baseActivity.unblockWithPending(toString() + ">" + blockerId);
+    }
+  }
+
+  @Override
+  public void showView(@IdRes int id) {
+    if (foundViews.get(id) == null) {
+      foundViews.put(id, rootView.findViewById(id));
+    }
+    foundViews.get(id).setVisibility(View.VISIBLE);
+  }
+
+  @Override
+  public void hideView(@IdRes int id) {
+    if (foundViews.get(id) == null) {
+      foundViews.put(id, rootView.findViewById(id));
+    }
+    foundViews.get(id).setVisibility(View.GONE);
+  }
+
+  @Override
+  public void setText(@IdRes int id, @NonNull String text) {
+    if (foundViews.get(id) == null) {
+      foundViews.put(id, rootView.findViewById(id));
+    }
+    ((TextView) foundViews.get(id)).setText(text);
+  }
+
+  @Override
+  public void setText(@IdRes int id, @StringRes int stringId) {
+    if (foundViews.get(id) == null) {
+      foundViews.put(id, rootView.findViewById(id));
+    }
+    ((TextView) foundViews.get(id)).setText(stringId);
+  }
+
+  @Override
+  public void setFormattedText(@IdRes int id, @StringRes int stringId, Object... formatArgs) {
+    if (foundViews.get(id) == null) {
+      foundViews.put(id, rootView.findViewById(id));
+    }
+    ((TextView) foundViews.get(id)).setText(getString(stringId, formatArgs));
+  }
+
+  @Override
+  public void setTextColor(@IdRes int id, @ColorRes int colorId) {
+    if (foundViews.get(id) == null) {
+      foundViews.put(id, rootView.findViewById(id));
+    }
+    ((TextView) foundViews.get(id)).setTextColor(getResources().getColor(colorId));
+  }
+
+  @Override
+  public void setImage(int id, int drawableId) {
+    if (foundViews.get(id) == null) {
+      foundViews.put(id, rootView.findViewById(id));
+    }
+    ((ImageView) foundViews.get(id)).setImageResource(drawableId);
   }
 }

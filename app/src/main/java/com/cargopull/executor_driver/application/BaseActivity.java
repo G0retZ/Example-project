@@ -326,6 +326,30 @@ public class BaseActivity extends AppCompatActivity implements GeoLocationStateV
     }
   }
 
+  /**
+   * Заблокировать ЮИ экраном процесса. блокирует экран диалого процесса. Ведет учет запросов
+   * блкоировки.
+   *
+   * @param blockerId - Уникальный ИД блокирующего.
+   */
+  public void blockWithPending(@NonNull String blockerId) {
+    blockers.add(blockerId);
+    pendingDialogFragment.show(getSupportFragmentManager(), "pending");
+  }
+
+  /**
+   * Разблокировать ЮИ экраном процесса. блокирует экран диалого процесса. Ведет учет запросов
+   * разблокировки. Если число запросов блокировки меньше запросов разблокировки, то не отображаем.
+   *
+   * @param blockerId - Уникальный ИД блокирующего.
+   */
+  public void unblockWithPending(@NonNull String blockerId) {
+    blockers.remove(blockerId);
+    if (blockers.isEmpty()) {
+      pendingDialogFragment.dismiss();
+    }
+  }
+
   @Override
   public void showAnnouncementMessage(@NonNull String message) {
     announcementDialog = new Builder(this)
@@ -402,7 +426,7 @@ public class BaseActivity extends AppCompatActivity implements GeoLocationStateV
     }
   }
 
-  protected boolean showGeolocationStateAllowed() {
+  boolean showGeolocationStateAllowed() {
     return false;
   }
 
