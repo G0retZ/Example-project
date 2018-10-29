@@ -5,14 +5,11 @@ import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.SparseArray;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.ColorRes;
 import androidx.annotation.IdRes;
-import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
@@ -51,21 +48,10 @@ public class BaseFragment extends Fragment implements OnBackPressedInterceptor, 
     }
   }
 
-
-  /**
-   * Колбэк для указания ресурса лайаута фрагмента. Вызывается при {@link
-   * #onCreateView(LayoutInflater, ViewGroup, Bundle)}.
-   */
-  @LayoutRes
-  protected int getLayoutRes() {
-    return -1;
-  }
-
-  @Nullable
   @Override
-  public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
-      @Nullable Bundle savedInstanceState) {
-    return rootView = inflater.inflate(getLayoutRes(), container, false);
+  public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+    super.onViewCreated(view, savedInstanceState);
+    rootView = view;
   }
 
   @Override
@@ -147,7 +133,7 @@ public class BaseFragment extends Fragment implements OnBackPressedInterceptor, 
    */
   @SuppressWarnings("unchecked")
   @NonNull
-  protected <T extends View> T findView(@IdRes int id) {
+  <T extends View> T findView(@IdRes int id) {
     if (foundViews.get(id) == null) {
       foundViews.put(id, rootView.findViewById(id));
     }
