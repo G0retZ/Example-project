@@ -136,6 +136,10 @@ public class BaseFragment extends Fragment implements OnBackPressedInterceptor, 
     }
   }
 
+  protected boolean isViewPresent(@IdRes int id) {
+    return true;
+  }
+
   /**
    * Получить View по его ИД для каких-либо действий.
    *
@@ -166,57 +170,71 @@ public class BaseFragment extends Fragment implements OnBackPressedInterceptor, 
 
   @Override
   public void showView(@IdRes int id) {
-    if (foundViews.get(id) == null) {
-      foundViews.put(id, rootView.findViewById(id));
+    if (isViewPresent(id)) {
+      if (foundViews.get(id) == null) {
+        foundViews.put(id, rootView.findViewById(id));
+      }
+      foundViews.get(id).setVisibility(View.VISIBLE);
     }
-    foundViews.get(id).setVisibility(View.VISIBLE);
   }
 
   @Override
   public void hideView(@IdRes int id) {
-    if (foundViews.get(id) == null) {
-      foundViews.put(id, rootView.findViewById(id));
+    if (isViewPresent(id)) {
+      if (foundViews.get(id) == null) {
+        foundViews.put(id, rootView.findViewById(id));
+      }
+      foundViews.get(id).setVisibility(View.GONE);
     }
-    foundViews.get(id).setVisibility(View.GONE);
   }
 
   @Override
   public void setText(@IdRes int id, @NonNull String text) {
-    if (foundViews.get(id) == null) {
-      foundViews.put(id, rootView.findViewById(id));
+    if (isViewPresent(id)) {
+      if (foundViews.get(id) == null) {
+        foundViews.put(id, rootView.findViewById(id));
+      }
+      ((TextView) foundViews.get(id)).setText(text);
     }
-    ((TextView) foundViews.get(id)).setText(text);
   }
 
   @Override
   public void setText(@IdRes int id, @StringRes int stringId) {
-    if (foundViews.get(id) == null) {
-      foundViews.put(id, rootView.findViewById(id));
+    if (isViewPresent(id)) {
+      if (foundViews.get(id) == null) {
+        foundViews.put(id, rootView.findViewById(id));
+      }
+      ((TextView) foundViews.get(id)).setText(stringId);
     }
-    ((TextView) foundViews.get(id)).setText(stringId);
   }
 
   @Override
   public void setFormattedText(@IdRes int id, @StringRes int stringId, Object... formatArgs) {
-    if (foundViews.get(id) == null) {
-      foundViews.put(id, rootView.findViewById(id));
+    if (isViewPresent(id)) {
+      if (foundViews.get(id) == null) {
+        foundViews.put(id, rootView.findViewById(id));
+      }
+      ((TextView) foundViews.get(id)).setText(getString(stringId, formatArgs));
     }
-    ((TextView) foundViews.get(id)).setText(getString(stringId, formatArgs));
   }
 
   @Override
   public void setTextColor(@IdRes int id, @ColorRes int colorId) {
-    if (foundViews.get(id) == null) {
-      foundViews.put(id, rootView.findViewById(id));
+    if (isViewPresent(id)) {
+      if (foundViews.get(id) == null) {
+        foundViews.put(id, rootView.findViewById(id));
+      }
+      ((TextView) foundViews.get(id)).setTextColor(getResources().getColor(colorId));
     }
-    ((TextView) foundViews.get(id)).setTextColor(getResources().getColor(colorId));
   }
 
   @Override
   public void setImage(int id, int drawableId) {
-    if (foundViews.get(id) == null) {
-      foundViews.put(id, rootView.findViewById(id));
+    if (isViewPresent(id)) {
+      if (foundViews.get(id) == null) {
+        foundViews.put(id, rootView.findViewById(id));
+      }
+      ((ImageView) foundViews.get(id)).setImageResource(drawableId);
     }
-    ((ImageView) foundViews.get(id)).setImageResource(drawableId);
   }
 }
