@@ -1,10 +1,10 @@
 package com.cargopull.executor_driver.view;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
-import android.util.SparseArray;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -18,6 +18,8 @@ import com.cargopull.executor_driver.application.BaseActivity;
 import com.cargopull.executor_driver.application.OnBackPressedInterceptor;
 import com.cargopull.executor_driver.di.AppComponent;
 import com.cargopull.executor_driver.presentation.ViewActions;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * {@link Fragment} с поддержкой:
@@ -31,8 +33,9 @@ import com.cargopull.executor_driver.presentation.ViewActions;
 public class BaseFragment extends Fragment implements OnBackPressedInterceptor, ViewActions {
 
   private View rootView;
+  @SuppressLint("UseSparseArrays")
   @NonNull
-  private final SparseArray<View> foundViews = new SparseArray<>();
+  private final Map<Integer, View> foundViews = new HashMap<>();
 
   @Nullable
   private BaseActivity baseActivity;
@@ -122,19 +125,15 @@ public class BaseFragment extends Fragment implements OnBackPressedInterceptor, 
     }
   }
 
-  protected boolean isViewPresent(@IdRes int id) {
-    return true;
-  }
-
   /**
    * Получить View по его ИД для каких-либо действий.
    *
    * @param id - ИД View для поиска.
    */
   @SuppressWarnings("unchecked")
-  @NonNull
-  <T extends View> T findView(@IdRes int id) {
-    if (foundViews.get(id) == null) {
+  @Nullable
+  <T extends View> T findViewById(@IdRes int id) {
+    if (!foundViews.containsKey(id)) {
       foundViews.put(id, rootView.findViewById(id));
     }
     return (T) foundViews.get(id);
@@ -156,71 +155,57 @@ public class BaseFragment extends Fragment implements OnBackPressedInterceptor, 
 
   @Override
   public void showView(@IdRes int id) {
-    if (isViewPresent(id)) {
-      if (foundViews.get(id) == null) {
-        foundViews.put(id, rootView.findViewById(id));
-      }
-      foundViews.get(id).setVisibility(View.VISIBLE);
+    View view = findViewById(id);
+    if (view != null) {
+      view.setVisibility(View.VISIBLE);
     }
   }
 
   @Override
   public void hideView(@IdRes int id) {
-    if (isViewPresent(id)) {
-      if (foundViews.get(id) == null) {
-        foundViews.put(id, rootView.findViewById(id));
-      }
-      foundViews.get(id).setVisibility(View.GONE);
+    View view = findViewById(id);
+    if (view != null) {
+      view.setVisibility(View.GONE);
     }
   }
 
   @Override
   public void setText(@IdRes int id, @NonNull String text) {
-    if (isViewPresent(id)) {
-      if (foundViews.get(id) == null) {
-        foundViews.put(id, rootView.findViewById(id));
-      }
-      ((TextView) foundViews.get(id)).setText(text);
+    TextView textView = findViewById(id);
+    if (textView != null) {
+      textView.setText(text);
     }
   }
 
   @Override
   public void setText(@IdRes int id, @StringRes int stringId) {
-    if (isViewPresent(id)) {
-      if (foundViews.get(id) == null) {
-        foundViews.put(id, rootView.findViewById(id));
-      }
-      ((TextView) foundViews.get(id)).setText(stringId);
+    TextView textView = findViewById(id);
+    if (textView != null) {
+      textView.setText(stringId);
     }
   }
 
   @Override
   public void setFormattedText(@IdRes int id, @StringRes int stringId, Object... formatArgs) {
-    if (isViewPresent(id)) {
-      if (foundViews.get(id) == null) {
-        foundViews.put(id, rootView.findViewById(id));
-      }
-      ((TextView) foundViews.get(id)).setText(getString(stringId, formatArgs));
+    TextView textView = findViewById(id);
+    if (textView != null) {
+      textView.setText(getString(stringId, formatArgs));
     }
   }
 
   @Override
   public void setTextColor(@IdRes int id, @ColorRes int colorId) {
-    if (isViewPresent(id)) {
-      if (foundViews.get(id) == null) {
-        foundViews.put(id, rootView.findViewById(id));
-      }
-      ((TextView) foundViews.get(id)).setTextColor(getResources().getColor(colorId));
+    TextView textView = findViewById(id);
+    if (textView != null) {
+      textView.setTextColor(getResources().getColor(colorId));
     }
   }
 
   @Override
   public void setImage(int id, int drawableId) {
-    if (isViewPresent(id)) {
-      if (foundViews.get(id) == null) {
-        foundViews.put(id, rootView.findViewById(id));
-      }
-      ((ImageView) foundViews.get(id)).setImageResource(drawableId);
+    ImageView imageView = findViewById(id);
+    if (imageView != null) {
+      imageView.setImageResource(drawableId);
     }
   }
 }
