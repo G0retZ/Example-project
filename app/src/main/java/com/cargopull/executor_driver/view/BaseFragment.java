@@ -154,18 +154,10 @@ public class BaseFragment extends Fragment implements OnBackPressedInterceptor, 
   }
 
   @Override
-  public void showView(@IdRes int id) {
+  public void setVisible(int id, boolean visible) {
     View view = findViewById(id);
     if (view != null) {
-      view.setVisibility(View.VISIBLE);
-    }
-  }
-
-  @Override
-  public void hideView(@IdRes int id) {
-    View view = findViewById(id);
-    if (view != null) {
-      view.setVisibility(View.GONE);
+      view.setVisibility(visible ? View.VISIBLE : View.GONE);
     }
   }
 

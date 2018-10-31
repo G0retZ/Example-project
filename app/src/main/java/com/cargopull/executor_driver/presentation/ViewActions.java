@@ -26,18 +26,12 @@ public interface ViewActions {
   void unblockWithPending(@NonNull String blockerId);
 
   /**
-   * Показать элемент вида.
+   * Задать видимость элемента вида.
    *
    * @param id - ИД вида элемента
+   * @param visible - показать или спрятать?
    */
-  void showView(@IdRes int id);
-
-  /**
-   * Спрятать элемент вида.
-   *
-   * @param id - ИД вида элемента
-   */
-  void hideView(@IdRes int id);
+  void setVisible(@IdRes int id, boolean visible);
 
   /**
    * Задать текст в элементе.
