@@ -4,6 +4,7 @@ import androidx.annotation.ColorRes;
 import androidx.annotation.DrawableRes;
 import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 
 /**
@@ -73,4 +74,23 @@ public interface ViewActions {
    * @param drawableId - ИД ресурса картинки
    */
   void setImage(@IdRes int id, @DrawableRes int drawableId);
+
+  /**
+   * Спрятать диалог.
+   */
+  void dismissDialog();
+
+  /**
+   * Показать диалог.
+   *
+   * @param stringId - ИД текстового ресурса для сообщения
+   */
+  void showPersistentDialog(@StringRes int stringId, @Nullable Runnable okAction);
+
+  /**
+   * Показать диалог.
+   *
+   * @param message - текст для сообщения
+   */
+  void showPersistentDialog(@NonNull String message, @Nullable Runnable okAction);
 }

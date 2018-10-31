@@ -2,6 +2,8 @@ package com.cargopull.executor_driver.view;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
@@ -36,6 +38,8 @@ public class BaseFragment extends Fragment implements OnBackPressedInterceptor, 
   @SuppressLint("UseSparseArrays")
   @NonNull
   private final Map<Integer, View> foundViews = new HashMap<>();
+  @Nullable
+  private AlertDialog alertDialog;
 
   @Nullable
   private BaseActivity baseActivity;
@@ -199,5 +203,34 @@ public class BaseFragment extends Fragment implements OnBackPressedInterceptor, 
     if (imageView != null) {
       imageView.setImageResource(drawableId);
     }
+  }
+
+  @Override
+  public void dismissDialog() {
+    if (alertDialog != null) {
+      alertDialog.dismiss();
+    }
+  }
+
+  @Override
+  public void showPersistentDialog(int stringId, @Nullable Runnable okAction) {
+    dismissDialog();
+    alertDialog = new Builder(baseActivity)
+        .setMessage(stringId)
+        .setCancelable(false)
+        .setPositiveButton(android.R.string.ok, okAction == null ? null : (a, b) -> okAction.run())
+        .create();
+    alertDialog.show();
+  }
+
+  @Override
+  public void showPersistentDialog(@NonNull String message, @Nullable Runnable okAction) {
+    dismissDialog();
+    alertDialog = new Builder(baseActivity)
+        .setMessage(message)
+        .setCancelable(false)
+        .setPositiveButton(android.R.string.ok, okAction == null ? null : (a, b) -> okAction.run())
+        .create();
+    alertDialog.show();
   }
 }
