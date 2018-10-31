@@ -72,6 +72,9 @@ public class BaseFragment extends Fragment implements OnBackPressedInterceptor, 
 
   @Override
   public void onDetach() {
+    if (alertDialog != null) {
+      alertDialog.dismiss();
+    }
     super.onDetach();
     baseActivity = null;
   }
