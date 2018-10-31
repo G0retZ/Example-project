@@ -2,9 +2,9 @@ package com.cargopull.executor_driver.backend.settings;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.util.Base64;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
@@ -21,6 +21,16 @@ public class AppPreferences implements AppSettingsService {
   @Inject
   public AppPreferences(@NonNull Context context) {
     this.preferences = context.getSharedPreferences(PREFERENCE_FILE_NAME, Context.MODE_PRIVATE);
+  }
+
+  @Override
+  public int getNumber(@NonNull String key) {
+    return preferences.getInt(key, 0);
+  }
+
+  @Override
+  public void saveNumber(@NonNull String key, int number) {
+    preferences.edit().putInt(key, number).apply();
   }
 
   @Override

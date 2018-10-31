@@ -2,17 +2,17 @@ package com.cargopull.executor_driver.application;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v7.widget.Toolbar;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
 import com.cargopull.executor_driver.R;
+import com.cargopull.executor_driver.backend.analytics.EventLogger;
 import com.cargopull.executor_driver.di.AppComponent;
 import com.cargopull.executor_driver.presentation.cancelorder.CancelOrderNavigate;
 import com.cargopull.executor_driver.presentation.preorder.PreOrderNavigate;
 import com.cargopull.executor_driver.presentation.waitingforclient.WaitingForClientNavigate;
 import com.cargopull.executor_driver.presentation.waitingforclientactions.WaitingForClientActionsNavigate;
-import com.cargopull.executor_driver.utils.EventLogger;
 import com.cargopull.executor_driver.view.CallToClientFragment;
 import com.cargopull.executor_driver.view.CallToOperatorFragment;
 import com.cargopull.executor_driver.view.CancelOrderDialogFragment;
@@ -67,13 +67,13 @@ public class WaitingForClientActivity extends BaseActivity {
         break;
       case WaitingForClientNavigate.CALL_TO_CLIENT:
         fragment = getSupportFragmentManager().findFragmentById(R.id.fragment_call_to_client);
-        if (fragment != null && fragment instanceof CallToClientFragment) {
+        if (fragment instanceof CallToClientFragment) {
           ((CallToClientFragment) fragment).callToClient();
         }
         break;
       case CancelOrderNavigate.ORDER_CANCELED:
         fragment = getSupportFragmentManager().findFragmentById(R.id.fragment_call_to_operator);
-        if (fragment != null && fragment instanceof CallToOperatorFragment) {
+        if (fragment instanceof CallToOperatorFragment) {
           ((CallToOperatorFragment) fragment).callToOperator();
         }
         break;

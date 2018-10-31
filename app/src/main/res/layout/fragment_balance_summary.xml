@@ -3,10 +3,9 @@
   xmlns:android="http://schemas.android.com/apk/res/android"
   xmlns:tools="http://schemas.android.com/tools"
   android:id="@+id/balanceAmount"
-  style="@style/TextAppearance.AppCompat.Subhead"
+  style="@style/TextAppearance.AppTheme.SubTitle.Touchable"
   android:layout_width="match_parent"
   android:layout_height="wrap_content"
-  android:background="?selectableItemBackground"
   android:gravity="center"
   android:minHeight="48dp"
   tools:text="@string/currency_format"/>

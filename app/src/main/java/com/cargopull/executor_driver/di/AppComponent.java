@@ -5,12 +5,16 @@ import com.cargopull.executor_driver.application.FcmService;
 import com.cargopull.executor_driver.application.MainApplication;
 import com.cargopull.executor_driver.application.MenuActivity;
 import com.cargopull.executor_driver.application.MovingToClientActivity;
+import com.cargopull.executor_driver.application.NightModeActivity;
 import com.cargopull.executor_driver.application.OnlineActivity;
 import com.cargopull.executor_driver.application.OnlineMenuActivity;
 import com.cargopull.executor_driver.application.OrderCostDetailsActivity;
 import com.cargopull.executor_driver.application.OrderFulfillmentActivity;
+import com.cargopull.executor_driver.application.PasswordActivity;
 import com.cargopull.executor_driver.application.PreOrdersActivity;
 import com.cargopull.executor_driver.application.WaitingForClientActivity;
+import com.cargopull.executor_driver.backend.settings.AppSettingsService;
+import com.cargopull.executor_driver.utils.Consumer;
 import com.cargopull.executor_driver.view.BalanceFragment;
 import com.cargopull.executor_driver.view.BalanceSummaryFragment;
 import com.cargopull.executor_driver.view.CallToClientFragment;
@@ -62,6 +66,8 @@ import com.cargopull.executor_driver.view.auth.PasswordFragment;
 
 public interface AppComponent {
 
+  void inject(Consumer<AppSettingsService> appSettingsServiceConsumer);
+
   void inject(MainApplication mainApplication);
 
   void inject(BaseActivity baseActivity);
@@ -78,9 +84,13 @@ public interface AppComponent {
 
   void inject(OnlineMenuActivity onlineMenuActivity);
 
+  void inject(NightModeActivity nightModeActivity);
+
   void inject(OnlineActivity onlineActivity);
 
   void inject(PreOrdersActivity preOrdersActivity);
+
+  void inject(PasswordActivity passwordActivity);
 
   void inject(FcmService fcmService);
 

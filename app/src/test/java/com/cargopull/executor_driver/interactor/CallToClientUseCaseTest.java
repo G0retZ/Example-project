@@ -40,7 +40,7 @@ public class CallToClientUseCaseTest {
   @Test
   public void askGatewayToToCallClientForOrder() {
     // Действие:
-    useCase.callToClient().test();
+    useCase.callToClient().test().isDisposed();
 
     // Результат:
     verify(gateway, only()).callToClient();

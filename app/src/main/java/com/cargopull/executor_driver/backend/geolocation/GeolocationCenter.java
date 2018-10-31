@@ -16,4 +16,12 @@ public interface GeolocationCenter {
    * @return {@link Flowable<Location>} полученные геопозиции.
    */
   Flowable<Location> getLocations(long maxInterval);
+
+  /**
+   * Начать получать доступность геопозиции. При подписке возвращает последнее актуальное состояние,
+   * если было с последней подписки на геопозицию, и все последующие.
+   *
+   * @return {@link Flowable<Boolean>} полученные доступности геопозиции.
+   */
+  Flowable<Boolean> getLocationsAvailability();
 }

@@ -7,9 +7,10 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
-import android.arch.core.executor.testing.InstantTaskExecutorRule;
-import android.arch.lifecycle.Observer;
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
+import androidx.lifecycle.Observer;
 import com.cargopull.executor_driver.ViewModelThreadTestRule;
+import com.cargopull.executor_driver.backend.analytics.ErrorReporter;
 import com.cargopull.executor_driver.entity.Order;
 import com.cargopull.executor_driver.gateway.DataMappingException;
 import com.cargopull.executor_driver.interactor.OrdersUseCase;
@@ -41,6 +42,8 @@ public class PreOrdersListViewModelTest {
   @Rule
   public TestRule rule = new InstantTaskExecutorRule();
   private PreOrdersListViewModel viewModel;
+  @Mock
+  private ErrorReporter errorReporter;
   @Mock
   private OrdersUseCase useCase;
   @Mock
@@ -76,8 +79,54 @@ public class PreOrdersListViewModelTest {
     when(useCase.getOrdersSet())
         .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
     when(selectedOrderUseCase.setSelectedOrder(any())).thenReturn(Completable.never());
-    viewModel = new PreOrdersListViewModelImpl(useCase, selectedOrderUseCase,
+    viewModel = new PreOrdersListViewModelImpl(errorReporter, useCase, selectedOrderUseCase,
         preOrdersListItemsMapper);
+  }
+
+  /* Проверяем отправку ошибок в репортер */
+
+  /**
+   * Должен отправить ошибку.
+   */
+  @Test
+  public void reportError() {
+    // Действие:
+    publishSubject.onError(new DataMappingException());
+
+    // Результат:
+    verify(errorReporter, only()).reportError(any(DataMappingException.class));
+  }
+
+  /**
+   * Должен отправить ошибку при установке выбора.
+   */
+  @Test
+  public void reportErrorOnSet() {
+    // Дано:
+    when(selectedOrderUseCase.setSelectedOrder(any()))
+        .thenReturn(Completable.error(DataMappingException::new));
+
+    // Действие:
+    viewModel.setSelectedOrder(order);
+
+    // Результат:
+    verify(errorReporter, only()).reportError(any(DataMappingException.class));
+  }
+
+  /**
+   * Должен отправить ошибку при неверном выборе.
+   */
+  @Test
+  public void reportErrorOnSetWrong() {
+    // Дано:
+    when(selectedOrderUseCase.setSelectedOrder(any()))
+        .thenReturn(Completable.error(NoSuchElementException::new));
+
+    // Действие:
+    viewModel.setSelectedOrder(order);
+
+    // Результат:
+    verify(errorReporter, only()).reportError(any(NoSuchElementException.class));
   }
 
   /* Тетсируем работу с юзкейсом списка предзаказов. */

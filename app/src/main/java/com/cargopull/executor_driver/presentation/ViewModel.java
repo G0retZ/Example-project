@@ -1,7 +1,7 @@
 package com.cargopull.executor_driver.presentation;
 
-import android.arch.lifecycle.LiveData;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
+import androidx.lifecycle.LiveData;
 
 /**
  * ViewModel который представляет собой модель вида на экране. Выделен для высушивания (DRY) кода.

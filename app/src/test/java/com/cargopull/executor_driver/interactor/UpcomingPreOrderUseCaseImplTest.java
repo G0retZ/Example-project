@@ -1,6 +1,5 @@
 package com.cargopull.executor_driver.interactor;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.times;
@@ -13,7 +12,6 @@ import com.cargopull.executor_driver.UseCaseThreadTestRule;
 import com.cargopull.executor_driver.entity.Order;
 import com.cargopull.executor_driver.entity.OrderCancelledException;
 import com.cargopull.executor_driver.gateway.DataMappingException;
-import com.cargopull.executor_driver.utils.ErrorReporter;
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
 import io.reactivex.FlowableEmitter;
@@ -36,8 +34,6 @@ public class UpcomingPreOrderUseCaseImplTest {
 
   private UpcomingPreOrderUseCaseImpl useCase;
 
-  @Mock
-  private ErrorReporter errorReporter;
   @Mock
   private CommonGateway<Order> gateway;
   @Mock
@@ -63,7 +59,7 @@ public class UpcomingPreOrderUseCaseImplTest {
         .thenReturn(Flowable.create(e -> orderEmitter = e, BackpressureStrategy.BUFFER));
     when(ordersUseCase.getOrdersSet())
         .thenReturn(Flowable.create(e -> ordersEmitter = e, BackpressureStrategy.BUFFER));
-    useCase = new UpcomingPreOrderUseCaseImpl(errorReporter, gateway, ordersUseCase);
+    useCase = new UpcomingPreOrderUseCaseImpl(gateway, ordersUseCase);
   }
 
   /* Проверяем работу с гейтвеем */
@@ -74,42 +70,13 @@ public class UpcomingPreOrderUseCaseImplTest {
   @Test
   public void askGatewayForOrdersOnlyOnce() {
     // Действие:
-    useCase.getOrders().test();
-    useCase.getOrders().test();
-    useCase.getOrders().test();
-    useCase.getOrders().test();
+    useCase.getOrders().test().isDisposed();
+    useCase.getOrders().test().isDisposed();
+    useCase.getOrders().test().isDisposed();
+    useCase.getOrders().test().isDisposed();
 
     // Результат:
     verify(gateway, only()).getData();
-  }
-
-  /* Проверяем отправку ошибок в репортер */
-
-  /**
-   * Должен отправить ошибку полуения предстоящего предзаказа.
-   */
-  @Test
-  public void reportErrorForUpcoming() {
-    // Действие:
-    useCase.getOrders().test();
-    orderEmitter.onError(new DataMappingException());
-
-    // Результат:
-    verify(errorReporter, only()).reportError(any(DataMappingException.class));
-  }
-
-  /**
-   * Должен отправить ошибку полуения списка предзаказов.
-   */
-  @Test
-  public void reportErrorForOrdersList() {
-    // Действие:
-    useCase.getOrders().test();
-    orderEmitter.onNext(order);
-    orderEmitter.onError(new DataMappingException());
-
-    // Результат:
-    verify(errorReporter, only()).reportError(any(DataMappingException.class));
   }
 
   /* Проверяем работу с юзкейсом списка заказов */
@@ -120,10 +87,10 @@ public class UpcomingPreOrderUseCaseImplTest {
   @Test
   public void doNotAskUseCaseForOrdersListForGet() {
     // Действие:
-    useCase.getOrders().test();
-    useCase.getOrders().test();
-    useCase.getOrders().test();
-    useCase.getOrders().test();
+    useCase.getOrders().test().isDisposed();
+    useCase.getOrders().test().isDisposed();
+    useCase.getOrders().test().isDisposed();
+    useCase.getOrders().test().isDisposed();
 
     // Результат:
     verifyZeroInteractions(ordersUseCase);
@@ -135,14 +102,14 @@ public class UpcomingPreOrderUseCaseImplTest {
   @Test
   public void askUseCaseForOrdersListForEveryValue() {
     // Действие:
-    useCase.getOrders().test();
-    useCase.getOrders().test();
+    useCase.getOrders().test().isDisposed();
+    useCase.getOrders().test().isDisposed();
     orderEmitter.onNext(order);
-    useCase.getOrders().test();
-    useCase.getOrders().test();
+    useCase.getOrders().test().isDisposed();
+    useCase.getOrders().test().isDisposed();
     orderEmitter.onNext(order2);
-    useCase.getOrders().test();
-    useCase.getOrders().test();
+    useCase.getOrders().test().isDisposed();
+    useCase.getOrders().test().isDisposed();
 
     // Результат:
     verify(ordersUseCase, times(2)).getOrdersSet();
@@ -167,7 +134,7 @@ public class UpcomingPreOrderUseCaseImplTest {
     );
 
     // Действие:
-    useCase.getOrders().test();
+    useCase.getOrders().test().isDisposed();
     orderEmitter.onNext(order);
     orderEmitter.onNext(order2);
     orderEmitter.onNext(order3);
@@ -360,7 +327,8 @@ public class UpcomingPreOrderUseCaseImplTest {
   }
 
   /**
-   * Не должен возвращать полученые ранее предстоящие предзаказы после ошибки получения списка предзаказов.
+   * Не должен возвращать полученые ранее предстоящие предзаказы после ошибки получения списка
+   * предзаказов.
    */
   @Test
   public void answerNothingAfterPreOrdersListError() {
@@ -390,7 +358,8 @@ public class UpcomingPreOrderUseCaseImplTest {
   }
 
   /**
-   * Не должен возвращать полученые ранее предстоящие предзаказы после завершения получения предстоящих предзаказов.
+   * Не должен возвращать полученые ранее предстоящие предзаказы после завершения получения
+   * предстоящих предзаказов.
    */
   @Test
   public void answerNothingAfterUpComingPreOrdersComplete() {

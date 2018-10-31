@@ -1,9 +1,10 @@
 package com.cargopull.executor_driver.presentation.currentcostpolling;
 
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.MutableLiveData;
-import android.arch.lifecycle.ViewModel;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.ViewModel;
+import com.cargopull.executor_driver.backend.analytics.ErrorReporter;
 import com.cargopull.executor_driver.gateway.DataMappingException;
 import com.cargopull.executor_driver.interactor.CurrentCostPollingUseCase;
 import com.cargopull.executor_driver.presentation.CommonNavigate;
@@ -17,6 +18,8 @@ public class CurrentCostPollingViewModelImpl extends ViewModel implements
     CurrentCostPollingViewModel {
 
   @NonNull
+  private final ErrorReporter errorReporter;
+  @NonNull
   private final CurrentCostPollingUseCase useCase;
   @NonNull
   private final MutableLiveData<String> navigateLiveData;
@@ -24,7 +27,9 @@ public class CurrentCostPollingViewModelImpl extends ViewModel implements
   private Disposable disposable = EmptyDisposable.INSTANCE;
 
   @Inject
-  public CurrentCostPollingViewModelImpl(@NonNull CurrentCostPollingUseCase useCase) {
+  public CurrentCostPollingViewModelImpl(@NonNull ErrorReporter errorReporter,
+      @NonNull CurrentCostPollingUseCase useCase) {
+    this.errorReporter = errorReporter;
     this.useCase = useCase;
     navigateLiveData = new MutableLiveData<>();
     startCurrentCostPolling();
@@ -50,6 +55,7 @@ public class CurrentCostPollingViewModelImpl extends ViewModel implements
             () -> {
             },
             throwable -> {
+              errorReporter.reportError(throwable);
               if (throwable instanceof DataMappingException) {
                 navigateLiveData.postValue(CommonNavigate.SERVER_DATA_ERROR);
               }

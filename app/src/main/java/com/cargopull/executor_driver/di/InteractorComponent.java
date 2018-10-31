@@ -1,6 +1,6 @@
 package com.cargopull.executor_driver.di;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import com.cargopull.executor_driver.interactor.CallToClientUseCase;
 import com.cargopull.executor_driver.interactor.CancelOrderReasonsUseCase;
 import com.cargopull.executor_driver.interactor.CancelOrderUseCase;

@@ -1,6 +1,6 @@
 package com.cargopull.executor_driver.presentation.code;
 
-import android.support.annotation.DrawableRes;
+import androidx.annotation.DrawableRes;
 
 /**
  * Действия для смены состояния вида окна ввода кода.

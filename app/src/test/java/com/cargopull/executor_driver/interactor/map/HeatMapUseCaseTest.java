@@ -56,7 +56,7 @@ public class HeatMapUseCaseTest {
   @Test
   public void askGatewayForHeatMap() {
     // Действие:
-    useCase.loadHeatMap().test();
+    useCase.loadHeatMap().test().isDisposed();
 
     // Результат:
     verify(gateway, only()).getHeatMap();
@@ -68,8 +68,8 @@ public class HeatMapUseCaseTest {
   @Test
   public void doNotAskGatewayForHeatMap() {
     // Действие:
-    useCase.loadHeatMap().test();
-    useCase.loadHeatMap().test();
+    useCase.loadHeatMap().test().isDisposed();
+    useCase.loadHeatMap().test().isDisposed();
 
     // Результат:
     verify(gateway, only()).getHeatMap();

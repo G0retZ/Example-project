@@ -1,10 +1,9 @@
 package com.cargopull.executor_driver.interactor;
 
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import com.cargopull.executor_driver.entity.Order;
 import com.cargopull.executor_driver.entity.OrderCancelledException;
-import com.cargopull.executor_driver.utils.ErrorReporter;
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Completable;
 import io.reactivex.Flowable;
@@ -15,8 +14,6 @@ import javax.inject.Inject;
 public class SelectedOrderUseCaseImpl implements OrderUseCase, SelectedOrderUseCase {
 
   @NonNull
-  private final ErrorReporter errorReporter;
-  @NonNull
   private final OrdersUseCase ordersUseCase;
   @NonNull
   private final PublishSubject<Order> publishSubject;
@@ -26,9 +23,7 @@ public class SelectedOrderUseCaseImpl implements OrderUseCase, SelectedOrderUseC
   private Order lastOrder;
 
   @Inject
-  public SelectedOrderUseCaseImpl(@NonNull ErrorReporter errorReporter,
-      @NonNull OrdersUseCase ordersUseCase) {
-    this.errorReporter = errorReporter;
+  public SelectedOrderUseCaseImpl(@NonNull OrdersUseCase ordersUseCase) {
     this.ordersUseCase = ordersUseCase;
     publishSubject = PublishSubject.create();
   }
@@ -78,6 +73,6 @@ public class SelectedOrderUseCaseImpl implements OrderUseCase, SelectedOrderUseC
           }
           lastOrder = order;
           publishSubject.onNext(order);
-        })).doOnError(errorReporter::reportError);
+        }));
   }
 }

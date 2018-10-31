@@ -37,10 +37,10 @@ public class GeoLocationGatewayTest {
     when(geolocationCenter.getLocations(anyLong())).thenReturn(Flowable.never());
   }
 
-  /* Проверяем работу с АПИ */
+  /* Проверяем работу с центром геолокаций */
 
   /**
-   * Должен запросить у АПИ тепловую карту.
+   * Должен запросить у центра геолокаций геопозиции.
    */
   @Test
   public void askGeolocationCenterForLocations() {
@@ -51,7 +51,7 @@ public class GeoLocationGatewayTest {
     verify(geolocationCenter, only()).getLocations(140);
   }
 
-  /* Проверяем ответы на АПИ */
+  /* Проверяем ответы центра геолокаций */
 
   /**
    * Должен ответить ошибкой сети.
@@ -67,7 +67,7 @@ public class GeoLocationGatewayTest {
   }
 
   /**
-   * Должен вернуть строку тепловой карты.
+   * Должен вернуть геопозицию.
    */
   @Test
   public void answerWithGeoLocationData() {

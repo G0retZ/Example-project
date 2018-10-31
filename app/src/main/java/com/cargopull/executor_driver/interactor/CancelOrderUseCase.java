@@ -1,6 +1,6 @@
 package com.cargopull.executor_driver.interactor;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import com.cargopull.executor_driver.entity.CancelOrderReason;
 import io.reactivex.Completable;
 

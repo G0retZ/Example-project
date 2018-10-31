@@ -12,7 +12,6 @@ import com.cargopull.executor_driver.UseCaseThreadTestRule;
 import com.cargopull.executor_driver.backend.web.NoNetworkException;
 import com.cargopull.executor_driver.entity.CancelOrderReason;
 import com.cargopull.executor_driver.gateway.DataMappingException;
-import com.cargopull.executor_driver.utils.ErrorReporter;
 import io.reactivex.Completable;
 import io.reactivex.Flowable;
 import io.reactivex.observers.TestObserver;
@@ -36,8 +35,6 @@ public class CancelOrderUseCaseTest {
   @Mock
   private CancelOrderReasonsUseCase cancelOrderReasonsUseCase;
   @Mock
-  private ErrorReporter errorReporter;
-  @Mock
   private CancelOrderGateway gateway;
   @Mock
   private CancelOrderReason cancelOrderReason;
@@ -52,7 +49,7 @@ public class CancelOrderUseCaseTest {
   public void setUp() {
     when(cancelOrderReasonsUseCase.getCancelOrderReasons()).thenReturn(Flowable.never());
     when(gateway.cancelOrder(any())).thenReturn(Completable.never());
-    useCase = new CancelOrderUseCaseImpl(cancelOrderReasonsUseCase, errorReporter, gateway);
+    useCase = new CancelOrderUseCaseImpl(cancelOrderReasonsUseCase, gateway);
   }
 
   /* Проверяем работу с юзейсом причин отказа */
@@ -63,9 +60,9 @@ public class CancelOrderUseCaseTest {
   @Test
   public void askCancelOrderReasonsUseCaseForCancelReasons() {
     // Действие:
-    useCase.cancelOrder(cancelOrderReason).test();
-    useCase.cancelOrder(cancelOrderReason1).test();
-    useCase.cancelOrder(cancelOrderReason2).test();
+    useCase.cancelOrder(cancelOrderReason).test().isDisposed();
+    useCase.cancelOrder(cancelOrderReason1).test().isDisposed();
+    useCase.cancelOrder(cancelOrderReason2).test().isDisposed();
 
     // Результат:
     verify(cancelOrderReasonsUseCase, times(3)).getCancelOrderReasons();
@@ -80,9 +77,9 @@ public class CancelOrderUseCaseTest {
   @Test
   public void doNotTouchGatewayWithoutCancelReasons() {
     // Действие:
-    useCase.cancelOrder(cancelOrderReason).test();
-    useCase.cancelOrder(cancelOrderReason1).test();
-    useCase.cancelOrder(cancelOrderReason2).test();
+    useCase.cancelOrder(cancelOrderReason).test().isDisposed();
+    useCase.cancelOrder(cancelOrderReason1).test().isDisposed();
+    useCase.cancelOrder(cancelOrderReason2).test().isDisposed();
 
     // Результат:
     verifyZeroInteractions(gateway);
@@ -99,7 +96,7 @@ public class CancelOrderUseCaseTest {
     ));
 
     // Действие:
-    useCase.cancelOrder(cancelOrderReason1).test();
+    useCase.cancelOrder(cancelOrderReason1).test().isDisposed();
 
     // Результат:
     verifyZeroInteractions(gateway);
@@ -116,64 +113,10 @@ public class CancelOrderUseCaseTest {
     ));
 
     // Действие:
-    useCase.cancelOrder(cancelOrderReason1).test();
+    useCase.cancelOrder(cancelOrderReason1).test().isDisposed();
 
     // Результат:
     verify(gateway, only()).cancelOrder(cancelOrderReason1);
-  }
-
-  /* Проверяем отправку ошибок в репортер */
-
-  /**
-   * Должен отправить ошибку получения причин отказа.
-   */
-  @Test
-  public void reportGetSelectedReasonsError() {
-    when(cancelOrderReasonsUseCase.getCancelOrderReasons())
-        .thenReturn(Flowable.error(DataMappingException::new));
-
-    // Действие:
-    useCase.cancelOrder(cancelOrderReason2).test();
-
-    // Результат:
-    verify(errorReporter, only()).reportError(any(DataMappingException.class));
-  }
-
-  /**
-   * Должен отправить ошибку, если выбраной причины нет в списке.
-   */
-  @Test
-  public void reportOutOfBoundsError() {
-    when(cancelOrderReasonsUseCase.getCancelOrderReasons()).thenReturn(Flowable.just(
-        new ArrayList<>(Arrays.asList(
-            cancelOrderReason, cancelOrderReason1, cancelOrderReason3
-        ))
-    ));
-
-    // Действие:
-    useCase.cancelOrder(cancelOrderReason2).test();
-
-    // Результат:
-    verify(errorReporter, only()).reportError(any(IndexOutOfBoundsException.class));
-  }
-
-  /**
-   * Не должен отправлять ошибку, если отправка отмены заказа обломалась.
-   */
-  @Test
-  public void doNotReportCancelOrderFailed() {
-    when(cancelOrderReasonsUseCase.getCancelOrderReasons()).thenReturn(Flowable.just(
-        new ArrayList<>(Arrays.asList(
-            cancelOrderReason, cancelOrderReason1, cancelOrderReason2, cancelOrderReason3
-        ))
-    ));
-    when(gateway.cancelOrder(any())).thenReturn(Completable.error(NoNetworkException::new));
-
-    // Действие:
-    useCase.cancelOrder(cancelOrderReason2).test();
-
-    // Результат:
-    verifyZeroInteractions(errorReporter);
   }
 
   /* Проверяем ответы */

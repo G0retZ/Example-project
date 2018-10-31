@@ -1,10 +1,8 @@
 package com.cargopull.executor_driver.interactor.vehicle;
 
-import android.support.annotation.NonNull;
-import com.cargopull.executor_driver.entity.DriverBlockedException;
+import androidx.annotation.NonNull;
 import com.cargopull.executor_driver.entity.EmptyListException;
 import com.cargopull.executor_driver.entity.Vehicle;
-import com.cargopull.executor_driver.utils.ErrorReporter;
 import io.reactivex.Completable;
 import io.reactivex.Observer;
 import io.reactivex.Single;
@@ -15,8 +13,6 @@ import javax.inject.Inject;
 public class VehiclesAndOptionsUseCaseImpl implements VehiclesAndOptionsUseCase {
 
   @NonNull
-  private final ErrorReporter errorReporter;
-  @NonNull
   private final VehiclesAndOptionsGateway gateway;
   @NonNull
   private final Observer<Vehicle> vehicleChoiceObserver;
@@ -25,11 +21,9 @@ public class VehiclesAndOptionsUseCaseImpl implements VehiclesAndOptionsUseCase 
 
   @Inject
   public VehiclesAndOptionsUseCaseImpl(
-      @NonNull ErrorReporter errorReporter,
       @NonNull VehiclesAndOptionsGateway gateway,
       @NonNull Observer<Vehicle> vehicleChoiceObserver,
       @NonNull LastUsedVehicleGateway lastUsedVehicleGateway) {
-    this.errorReporter = errorReporter;
     this.gateway = gateway;
     this.vehicleChoiceObserver = vehicleChoiceObserver;
     this.lastUsedVehicleGateway = lastUsedVehicleGateway;
@@ -64,12 +58,6 @@ public class VehiclesAndOptionsUseCaseImpl implements VehiclesAndOptionsUseCase 
                     vehicleChoiceObserver.onNext(freeVehicle);
                   }
                 }).toCompletable()
-        ).doOnError(throwable -> {
-          if (throwable instanceof DriverBlockedException
-              || throwable instanceof EmptyListException
-              || throwable instanceof NoSuchElementException) {
-            errorReporter.reportError(throwable);
-          }
-        });
+        );
   }
 }

@@ -1,9 +1,10 @@
 package com.cargopull.executor_driver.presentation.servertime;
 
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.MutableLiveData;
-import android.arch.lifecycle.ViewModel;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.ViewModel;
+import com.cargopull.executor_driver.backend.analytics.ErrorReporter;
 import com.cargopull.executor_driver.gateway.DataMappingException;
 import com.cargopull.executor_driver.interactor.ServerTimeUseCase;
 import com.cargopull.executor_driver.presentation.CommonNavigate;
@@ -16,6 +17,8 @@ import javax.inject.Inject;
 public class ServerTimeViewModelImpl extends ViewModel implements ServerTimeViewModel {
 
   @NonNull
+  private final ErrorReporter errorReporter;
+  @NonNull
   private final ServerTimeUseCase serverTimeUseCase;
   @NonNull
   private final MutableLiveData<String> navigateLiveData;
@@ -23,7 +26,9 @@ public class ServerTimeViewModelImpl extends ViewModel implements ServerTimeView
   private Disposable disposable = EmptyDisposable.INSTANCE;
 
   @Inject
-  public ServerTimeViewModelImpl(@NonNull ServerTimeUseCase serverTimeUseCase) {
+  public ServerTimeViewModelImpl(@NonNull ErrorReporter errorReporter,
+      @NonNull ServerTimeUseCase serverTimeUseCase) {
+    this.errorReporter = errorReporter;
     this.serverTimeUseCase = serverTimeUseCase;
     navigateLiveData = new MutableLiveData<>();
     loadServerTime();
@@ -49,6 +54,7 @@ public class ServerTimeViewModelImpl extends ViewModel implements ServerTimeView
             () -> {
             },
             throwable -> {
+              errorReporter.reportError(throwable);
               if (throwable instanceof DataMappingException) {
                 navigateLiveData.postValue(CommonNavigate.SERVER_DATA_ERROR);
               }

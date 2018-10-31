@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
+<androidx.constraintlayout.widget.ConstraintLayout
   xmlns:android="http://schemas.android.com/apk/res/android"
   xmlns:app="http://schemas.android.com/apk/res-auto"
   xmlns:tools="http://schemas.android.com/tools"
@@ -7,7 +7,7 @@
   android:layout_height="match_parent">
   <TextView
     android:id="@+id/sliderText"
-    style="@style/Base.TextAppearance.AppCompat.Subhead"
+    style="@style/TextAppearance.AppTheme.SubTitle"
     android:layout_width="0dp"
     android:layout_height="wrap_content"
     android:layout_marginTop="16dp"
@@ -21,7 +21,7 @@
     app:layout_constraintTop_toTopOf="parent"/>
   <TextView
     android:id="@+id/minPriceText"
-    style="@style/Base.TextAppearance.AppCompat.Subhead"
+    style="@style/TextAppearance.AppTheme.SubTitle"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_margin="8dp"
@@ -30,7 +30,7 @@
     app:layout_constraintTop_toBottomOf="@id/sliderText"/>
   <TextView
     android:id="@+id/minMaxPriceMinus"
-    style="@style/Base.TextAppearance.AppCompat.Subhead"
+    style="@style/TextAppearance.AppTheme.SubTitle"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_margin="8dp"
@@ -39,7 +39,7 @@
     app:layout_constraintTop_toBottomOf="@id/sliderText"/>
   <TextView
     android:id="@+id/maxPriceText"
-    style="@style/Base.TextAppearance.AppCompat.Subhead"
+    style="@style/TextAppearance.AppTheme.SubTitle"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_marginTop="8dp"
@@ -70,23 +70,21 @@
     app:layout_constraintEnd_toEndOf="@id/priceSeekBar"
     app:layout_constraintTop_toTopOf="@id/priceSeekBar"
     app:srcCompat="@drawable/ic_circle"/>
-  <android.support.v7.widget.AppCompatSeekBar
+  <androidx.appcompat.widget.AppCompatSeekBar
     android:id="@+id/priceSeekBar"
-    style="@style/AppTheme.SeekBar.Green"
+    style="@style/AppTheme.SeekBar.Green.Inverse"
     android:layout_width="0dp"
     android:layout_height="wrap_content"
     android:layout_marginTop="16dp"
     android:paddingTop="20dp"
     android:paddingBottom="20dp"
     android:progress="10"
-    android:progressDrawable="@drawable/mirrored_progress"
-    android:scaleX="-1"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toBottomOf="@+id/sliderText"/>
   <TextView
     android:id="@+id/servicesText"
-    style="@style/Base.TextAppearance.AppCompat.Subhead"
+    style="@style/TextAppearance.AppTheme.SubTitle"
     android:layout_width="0dp"
     android:layout_height="wrap_content"
     android:layout_marginStart="16dp"
@@ -98,7 +96,7 @@
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toBottomOf="@id/priceSeekBar"/>
-  <android.support.v7.widget.RecyclerView
+  <androidx.recyclerview.widget.RecyclerView
     android:id="@+id/recyclerView"
     android:layout_width="0dp"
     android:layout_height="0dp"
@@ -115,7 +113,7 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:enabled="false"
-    android:textAppearance="@style/TextAppearance.AppCompat.Headline"
+    android:textAppearance="@style/TextAppearance.AppTheme.Empty"
     app:layout_constraintBottom_toTopOf="@+id/readyButton"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
@@ -129,4 +127,4 @@
     app:layout_constraintBottom_toBottomOf="parent"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"/>
-</android.support.constraint.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
+<androidx.constraintlayout.widget.ConstraintLayout
   xmlns:android="http://schemas.android.com/apk/res/android"
   xmlns:app="http://schemas.android.com/apk/res-auto"
   xmlns:tools="http://schemas.android.com/tools"
@@ -15,36 +15,33 @@
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toTopOf="parent">
-    <android.support.constraint.ConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
       android:layout_width="match_parent"
       android:layout_height="wrap_content">
       <TextView
         android:id="@+id/totalPaymentTitle"
-        style="@style/TextAppearance.AppCompat.Title"
+        style="@style/TextAppearance.AppTheme.Title.Secondary"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
         android:text="@string/total_payment"
-        android:textColor="@color/colorAccentSecond"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>
       <TextView
         android:id="@+id/totalPaymentText"
-        style="@style/TextAppearance.AppCompat.Subhead"
-        android:textStyle="bold"
+        style="@style/TextAppearance.AppTheme.Block"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
-        android:textSize="36sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/totalPaymentTitle"
         tools:text="10 028 ₽"/>
       <TextView
         android:id="@+id/paymentType"
-        style="@style/Base.TextAppearance.AppCompat.Body1"
+        style="@style/TextAppearance.AppTheme.Regular"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="64dp"
@@ -77,7 +74,7 @@
         app:layout_constraintTop_toBottomOf="@id/totalPaymentText"/>
       <TextView
         android:id="@+id/estimatedPackageTitle"
-        style="@style/TextAppearance.AppCompat.Title"
+        style="@style/TextAppearance.AppTheme.Title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
@@ -88,7 +85,7 @@
         app:layout_constraintTop_toBottomOf="@id/divider"/>
       <TextView
         android:id="@+id/estimatedPackageCost"
-        style="@style/TextAppearance.AppCompat.Title"
+        style="@style/TextAppearance.AppTheme.Title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
@@ -99,7 +96,7 @@
         tools:text="1350 ₽"/>
       <TextView
         android:id="@+id/estimatedPackageTimeTitle"
-        style="@style/TextAppearance.AppCompat.Subhead"
+        style="@style/TextAppearance.AppTheme.SubTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
@@ -110,7 +107,7 @@
         app:layout_constraintTop_toBottomOf="@id/estimatedPackageCost"/>
       <TextView
         android:id="@+id/estimatedPackageTime"
-        style="@style/TextAppearance.AppCompat.Subhead"
+        style="@style/TextAppearance.AppTheme.SubTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
@@ -121,7 +118,7 @@
         tools:text="50 мин."/>
       <TextView
         android:id="@+id/estimatedPackageDistanceTitle"
-        style="@style/TextAppearance.AppCompat.Subhead"
+        style="@style/TextAppearance.AppTheme.SubTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -131,7 +128,7 @@
         app:layout_constraintTop_toBottomOf="@id/estimatedPackageTimeTitle"/>
       <TextView
         android:id="@+id/estimatedPackageDistance"
-        style="@style/TextAppearance.AppCompat.Subhead"
+        style="@style/TextAppearance.AppTheme.SubTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -141,7 +138,7 @@
         tools:text="5,8 км"/>
       <TextView
         android:id="@+id/estimatedPackageServiceCostTitle"
-        style="@style/TextAppearance.AppCompat.Subhead"
+        style="@style/TextAppearance.AppTheme.SubTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -151,7 +148,7 @@
         app:layout_constraintTop_toBottomOf="@id/estimatedPackageDistanceTitle"/>
       <TextView
         android:id="@+id/estimatedPackageServiceCost"
-        style="@style/TextAppearance.AppCompat.Subhead"
+        style="@style/TextAppearance.AppTheme.SubTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -171,7 +168,7 @@
       </LinearLayout>
       <TextView
         android:id="@+id/overPackageTitle"
-        style="@style/TextAppearance.AppCompat.Title"
+        style="@style/TextAppearance.AppTheme.Title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
@@ -182,7 +179,7 @@
         app:layout_constraintTop_toBottomOf="@id/estimatedOptionsCosts"/>
       <TextView
         android:id="@+id/overPackageCost"
-        style="@style/TextAppearance.AppCompat.Title"
+        style="@style/TextAppearance.AppTheme.Title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
@@ -193,7 +190,7 @@
         tools:text="1350 ₽"/>
       <TextView
         android:id="@+id/overPackageTimeTitle"
-        style="@style/TextAppearance.AppCompat.Subhead"
+        style="@style/TextAppearance.AppTheme.SubTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
@@ -204,7 +201,7 @@
         app:layout_constraintTop_toBottomOf="@id/overPackageTitle"/>
       <TextView
         android:id="@+id/overPackageTime"
-        style="@style/TextAppearance.AppCompat.Subhead"
+        style="@style/TextAppearance.AppTheme.SubTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
@@ -215,7 +212,7 @@
         tools:text="20 мин."/>
       <TextView
         android:id="@+id/overPackageServiceCostTitle"
-        style="@style/TextAppearance.AppCompat.Subhead"
+        style="@style/TextAppearance.AppTheme.SubTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -225,7 +222,7 @@
         app:layout_constraintTop_toBottomOf="@id/overPackageTimeTitle"/>
       <TextView
         android:id="@+id/overPackageServiceCost"
-        style="@style/TextAppearance.AppCompat.Subhead"
+        style="@style/TextAppearance.AppTheme.SubTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -245,7 +242,7 @@
       </LinearLayout>
       <TextView
         android:id="@+id/overPackageTariffTitle"
-        style="@style/TextAppearance.AppCompat.Title"
+        style="@style/TextAppearance.AppTheme.Title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
@@ -256,7 +253,7 @@
         app:layout_constraintTop_toBottomOf="@id/overPackageOptionsCosts"/>
       <TextView
         android:id="@+id/overPackageTariffCost"
-        style="@style/TextAppearance.AppCompat.Title"
+        style="@style/TextAppearance.AppTheme.Title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
@@ -267,7 +264,7 @@
         tools:text="1350 ₽"/>
       <TextView
         android:id="@+id/overPackageTariffServiceCostTitle"
-        style="@style/TextAppearance.AppCompat.Subhead"
+        style="@style/TextAppearance.AppTheme.SubTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
@@ -278,7 +275,7 @@
         app:layout_constraintTop_toBottomOf="@id/overPackageTariffTitle"/>
       <TextView
         android:id="@+id/overPackageTariffServiceCost"
-        style="@style/TextAppearance.AppCompat.Subhead"
+        style="@style/TextAppearance.AppTheme.SubTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
@@ -297,30 +294,27 @@
         app:layout_constraintTop_toBottomOf="@id/overPackageTariffServiceCostTitle">
         <include layout="@layout/fragment_order_cost_details_option_item"/>
       </LinearLayout>
-    </android.support.constraint.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
   </ScrollView>
   <ProgressBar
     android:id="@+id/orderPaid"
-    style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+    style="@style/AppTheme.ProgressBar.Threshold"
     android:layout_width="0dp"
     android:layout_height="52dp"
     android:layout_marginBottom="8dp"
     android:layout_marginStart="8dp"
     android:layout_marginEnd="8dp"
-    android:progressDrawable="@drawable/button_progressbar"
     app:layout_constraintBottom_toBottomOf="parent"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"/>
   <TextView
-    style="@style/TextAppearance.AppCompat.Widget.Button.Colored"
+    style="@style/TextAppearance.AppTheme.Button.Colored.Big"
     android:layout_width="0dp"
     android:layout_height="0dp"
     android:gravity="center"
     android:text="@string/paid"
-    android:textColor="@android:color/primary_text_dark"
-    android:textSize="19sp"
     app:layout_constraintBottom_toBottomOf="@id/orderPaid"
     app:layout_constraintEnd_toEndOf="@id/orderPaid"
     app:layout_constraintStart_toStartOf="@id/orderPaid"
     app:layout_constraintTop_toTopOf="@id/orderPaid"/>
-</android.support.constraint.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

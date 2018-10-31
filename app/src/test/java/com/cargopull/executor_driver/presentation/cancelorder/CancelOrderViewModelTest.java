@@ -8,9 +8,10 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
-import android.arch.core.executor.testing.InstantTaskExecutorRule;
-import android.arch.lifecycle.Observer;
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
+import androidx.lifecycle.Observer;
 import com.cargopull.executor_driver.ViewModelThreadTestRule;
+import com.cargopull.executor_driver.backend.analytics.ErrorReporter;
 import com.cargopull.executor_driver.entity.CancelOrderReason;
 import com.cargopull.executor_driver.gateway.DataMappingException;
 import com.cargopull.executor_driver.interactor.CancelOrderUseCase;
@@ -39,6 +40,8 @@ public class CancelOrderViewModelTest {
   public TestRule rule = new InstantTaskExecutorRule();
   private CancelOrderViewModel viewModel;
   @Mock
+  private ErrorReporter errorReporter;
+  @Mock
   private CancelOrderUseCase useCase;
   @Mock
   private CancelOrderReason cancelOrderReason;
@@ -58,7 +61,39 @@ public class CancelOrderViewModelTest {
   @Before
   public void setUp() {
     when(useCase.cancelOrder(any())).thenReturn(Completable.never());
-    viewModel = new CancelOrderViewModelImpl(useCase);
+    viewModel = new CancelOrderViewModelImpl(errorReporter, useCase);
+  }
+
+  /* Проверяем отправку ошибок в репортер */
+
+  /**
+   * Должен отправить ошибку получения причин отказа.
+   */
+  @Test
+  public void reportGetSelectedReasonsError() {
+    when(useCase.cancelOrder(cancelOrderReason1))
+        .thenReturn(Completable.error(DataMappingException::new));
+
+    // Действие:
+    viewModel.selectItem(cancelOrderReason1);
+
+    // Результат:
+    verify(errorReporter, only()).reportError(any(DataMappingException.class));
+  }
+
+  /**
+   * Должен отправить ошибку, если выбраной причины нет в списке.
+   */
+  @Test
+  public void reportOutOfBoundsError() {
+    when(useCase.cancelOrder(cancelOrderReason2))
+        .thenReturn(Completable.error(IndexOutOfBoundsException::new));
+
+    // Действие:
+    viewModel.selectItem(cancelOrderReason2);
+
+    // Результат:
+    verify(errorReporter, only()).reportError(any(IndexOutOfBoundsException.class));
   }
 
   /* Тетсируем работу с юзкейсом. */

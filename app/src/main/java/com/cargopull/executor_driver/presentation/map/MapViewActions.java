@@ -1,6 +1,6 @@
 package com.cargopull.executor_driver.presentation.map;
 
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 /**
  * Действия для смены состояния вида карты.

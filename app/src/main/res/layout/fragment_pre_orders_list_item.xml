@@ -1,52 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
+<androidx.constraintlayout.widget.ConstraintLayout
   xmlns:android="http://schemas.android.com/apk/res/android"
   xmlns:app="http://schemas.android.com/apk/res-auto"
   xmlns:tools="http://schemas.android.com/tools"
   android:layout_width="match_parent"
   android:layout_height="wrap_content"
   android:layout_margin="16dp"
-  android:padding="16dp"
   android:background="@drawable/ic_pre_order_card">
   <TextView
     android:id="@+id/occupationTime"
-    style="@style/TextAppearance.AppCompat.Title"
+    style="@style/TextAppearance.AppTheme.Title.Secondary"
     android:layout_width="0dp"
     android:layout_height="wrap_content"
-    android:textColor="@android:color/secondary_text_dark"
+    android:layout_marginTop="16dp"
+    android:layout_marginStart="16dp"
+    android:layout_marginEnd="16dp"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toTopOf="parent"
     tools:text="15:20 - 17:10"/>
   <TextView
     android:id="@+id/address"
-    style="@style/TextAppearance.AppCompat.Headline"
+    style="@style/TextAppearance.AppTheme.Headline"
     android:textStyle="bold"
     android:layout_width="0dp"
     android:layout_height="wrap_content"
+    android:layout_marginStart="16dp"
+    android:layout_marginEnd="16dp"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toBottomOf="@id/occupationTime"
     tools:text="ул.Академика Пилюгина, 14 корпус 4"/>
   <TextView
     android:id="@+id/distanceText"
-    style="@style/TextAppearance.AppCompat.Headline"
+    style="@style/TextAppearance.AppTheme.Headline"
     android:textStyle="bold"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_marginTop="40dp"
+    android:layout_marginBottom="16dp"
+    android:layout_marginStart="16dp"
+    android:layout_marginEnd="16dp"
+    app:layout_constraintBottom_toBottomOf="parent"
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toBottomOf="@id/address"
     tools:text="40,2 км"/>
   <TextView
     android:id="@+id/priceText"
-    style="@style/TextAppearance.AppCompat.Headline"
-    android:textStyle="bold"
+    style="@style/TextAppearance.AppTheme.Price"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:textColor="@color/colorAccentYellow"
-    android:textSize="32sp"
     app:layout_constraintBottom_toBottomOf="parent"
     app:layout_constraintEnd_toEndOf="parent"
     tools:text="2 450 ₽"/>
-</android.support.constraint.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

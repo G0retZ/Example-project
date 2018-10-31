@@ -1,14 +1,14 @@
 package com.cargopull.executor_driver.backend.vibro;
 
 import android.content.Context;
-import android.os.Build.VERSION;
+import android.os.Build.VERSION_CODES;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.annotation.RawRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.RawRes;
+import androidx.annotation.RequiresApi;
 import com.cargopull.executor_driver.gateway.Mapper;
-import com.cargopull.executor_driver.utils.Pair;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import io.reactivex.Completable;
@@ -37,23 +37,20 @@ public class SingleShakePlayer implements ShakeItPlayer {
   @NonNull
   private final Context context;
   @NonNull
-  private final Mapper<List<Pair<Long, Integer>>, Pair<long[], int[]>> newPatternMapper;
-  @NonNull
-  private final Mapper<List<Pair<Long, Integer>>, long[]> oldPatternMapper;
+  private final Mapper<List<VibeBeat>, VibeBeats> patternMapper;
   @NonNull
   private Disposable disposable = Disposables.empty();
 
   @Inject
   public SingleShakePlayer(@NonNull Context context,
-      @NonNull Mapper<List<Pair<Long, Integer>>, Pair<long[], int[]>> newPatternMapper,
-      @NonNull Mapper<List<Pair<Long, Integer>>, long[]> oldPatternMapper) {
+      @NonNull Mapper<List<VibeBeat>, VibeBeats> patternMapper) {
     gson = new Gson();
     this.context = context;
     this.vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
-    this.newPatternMapper = newPatternMapper;
-    this.oldPatternMapper = oldPatternMapper;
+    this.patternMapper = patternMapper;
   }
 
+  @RequiresApi(api = VERSION_CODES.O)
   @Override
   public void shakeIt(@RawRes int patternId) {
     InputStream is = context.getResources().openRawResource(patternId);
@@ -66,7 +63,7 @@ public class SingleShakePlayer implements ShakeItPlayer {
         writer.write(buffer, 0, n);
       }
       String jsonString = writer.toString();
-      Type type = new TypeToken<List<Pair<Long, Integer>>>() {
+      Type type = new TypeToken<List<VibeBeat>>() {
       }.getType();
       shakeIt(gson.fromJson(jsonString, type));
     } catch (Exception e) {
@@ -80,48 +77,36 @@ public class SingleShakePlayer implements ShakeItPlayer {
     }
   }
 
-  private void shakeIt(@NonNull List<Pair<Long, Integer>> patternItems) {
+  @RequiresApi(api = VERSION_CODES.O)
+  private void shakeIt(@NonNull List<VibeBeat> patternItems) {
     disposable.dispose();
     if (vibrator == null || !vibrator.hasVibrator()) {
       return;
     }
     vibrator.cancel();
-    if (VERSION.SDK_INT >= 26) {
-      disposable = Single.just(patternItems)
-          .subscribeOn(Schedulers.io())
-          .map(newPatternMapper::map)
-          .map(pair -> {
-            if (!vibrator.hasAmplitudeControl()) {
-              for (int i = 0; i < pair.second.length; i++) {
-                if (pair.second[i] != 0) {
-                  pair.second[i] = -1;
-                }
+    disposable = Single.just(patternItems)
+        .subscribeOn(Schedulers.io())
+        .map(patternMapper::map)
+        .map(vibeBeats -> {
+          if (!vibrator.hasAmplitudeControl()) {
+            for (int i = 0; i < vibeBeats.volumes.length; i++) {
+              if (vibeBeats.volumes[i] != 0) {
+                vibeBeats.volumes[i] = -1;
               }
             }
-            return pair;
-          })
-          .observeOn(AndroidSchedulers.mainThread())
-          .flatMapCompletable(
-              pair -> Completable.fromAction(
-                  () -> vibrator.vibrate(
-                      VibrationEffect.createWaveform(pair.first, pair.second, -1)
-                  )
-              )
-          ).subscribe(
-              () -> {
-              }, Throwable::printStackTrace
-          );
-    } else {
-      disposable = Single.just(patternItems)
-          .subscribeOn(Schedulers.io())
-          .map(oldPatternMapper::map)
-          .observeOn(AndroidSchedulers.mainThread())
-          .flatMapCompletable(
-              longs -> Completable.fromAction(() -> vibrator.vibrate(longs, -1))
-          ).subscribe(
-              () -> {
-              }, Throwable::printStackTrace
-          );
-    }
+          }
+          return vibeBeats;
+        })
+        .observeOn(AndroidSchedulers.mainThread())
+        .flatMapCompletable(
+            vibeBeats -> Completable.fromAction(
+                () -> vibrator.vibrate(
+                    VibrationEffect.createWaveform(vibeBeats.durations, vibeBeats.volumes, -1)
+                )
+            )
+        ).subscribe(
+            () -> {
+            }, Throwable::printStackTrace
+        );
   }
 }

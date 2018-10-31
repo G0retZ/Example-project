@@ -1,15 +1,15 @@
 package com.cargopull.executor_driver.presentation.code;
 
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.MutableLiveData;
-import android.arch.lifecycle.ViewModel;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.ViewModel;
+import com.cargopull.executor_driver.backend.analytics.EventLogger;
 import com.cargopull.executor_driver.backend.web.NoNetworkException;
 import com.cargopull.executor_driver.entity.ValidationException;
 import com.cargopull.executor_driver.interactor.auth.PasswordUseCase;
 import com.cargopull.executor_driver.presentation.SingleLiveEvent;
 import com.cargopull.executor_driver.presentation.ViewState;
-import com.cargopull.executor_driver.utils.EventLogger;
 import com.cargopull.executor_driver.utils.TimeUtils;
 import io.reactivex.Completable;
 import io.reactivex.android.schedulers.AndroidSchedulers;

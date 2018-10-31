@@ -69,10 +69,10 @@ public class OrderRouteUseCaseTest {
   @Test
   public void askGatewayForOrders() {
     // Действие:
-    useCase.getOrderRoutePoints().test();
-    useCase.getOrderRoutePoints().test();
-    useCase.getOrderRoutePoints().test();
-    useCase.getOrderRoutePoints().test();
+    useCase.getOrderRoutePoints().test().isDisposed();
+    useCase.getOrderRoutePoints().test().isDisposed();
+    useCase.getOrderRoutePoints().test().isDisposed();
+    useCase.getOrderRoutePoints().test().isDisposed();
 
     // Результат:
     verify(orderUseCase, times(4)).getOrders();
@@ -87,7 +87,7 @@ public class OrderRouteUseCaseTest {
   @Test
   public void askGatewayToCheckRoutePoint() {
     // Действие:
-    useCase.closeRoutePoint(routePoint).test();
+    useCase.closeRoutePoint(routePoint).test().isDisposed();
 
     // Результат:
     verify(orderRouteGateway, only()).closeRoutePoint(routePoint);
@@ -99,7 +99,7 @@ public class OrderRouteUseCaseTest {
   @Test
   public void askGatewayToCompleteTheOrder() {
     // Действие:
-    useCase.completeTheOrder().test();
+    useCase.completeTheOrder().test().isDisposed();
 
     // Результат:
     verify(orderRouteGateway, only()).completeTheOrder();
@@ -111,7 +111,7 @@ public class OrderRouteUseCaseTest {
   @Test
   public void askGatewayToUseNextRoutePoint() {
     // Действие:
-    useCase.nextRoutePoint(routePoint).test();
+    useCase.nextRoutePoint(routePoint).test().isDisposed();
 
     // Результат:
     verify(orderRouteGateway, only()).nextRoutePoint(routePoint);

@@ -4,7 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.Canvas;
 import android.graphics.Rect;
-import android.support.annotation.IntDef;
+import androidx.annotation.IntDef;
 import com.squareup.picasso.Transformation;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

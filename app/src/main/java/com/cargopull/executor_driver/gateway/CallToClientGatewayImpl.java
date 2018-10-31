@@ -1,6 +1,6 @@
 package com.cargopull.executor_driver.gateway;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import com.cargopull.executor_driver.BuildConfig;
 import com.cargopull.executor_driver.interactor.CallToClientGateway;
 import io.reactivex.Completable;

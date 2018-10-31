@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
+<androidx.constraintlayout.widget.ConstraintLayout
   xmlns:android="http://schemas.android.com/apk/res/android"
   xmlns:app="http://schemas.android.com/apk/res-auto"
   xmlns:tools="http://schemas.android.com/tools"
   android:layout_width="match_parent"
   android:layout_height="wrap_content"
-  android:background="@color/colorDivider">
+  android:background="@color/colorPrimaryLight">
   <TextView
     android:id="@+id/dayOfMonth"
-    style="@style/TextAppearance.AppCompat.Headline"
+    style="@style/TextAppearance.AppTheme.Headline"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_marginStart="16dp"
@@ -20,7 +20,7 @@
     tools:text="19"/>
   <TextView
     android:id="@+id/month"
-    style="@style/TextAppearance.AppCompat.Subhead"
+    style="@style/TextAppearance.AppTheme.SubTitle"
     android:textStyle="bold"
     android:layout_width="0dp"
     android:layout_height="wrap_content"
@@ -33,7 +33,7 @@
     tools:text="Августа"/>
   <TextView
     android:id="@+id/dayOfWeek"
-    style="@style/TextAppearance.AppCompat.Subhead"
+    style="@style/TextAppearance.AppTheme.SubTitle"
     android:layout_width="0dp"
     android:layout_height="wrap_content"
     android:layout_marginBottom="8dp"
@@ -43,4 +43,4 @@
     app:layout_constraintStart_toEndOf="@id/dayOfMonth"
     app:layout_constraintTop_toBottomOf="@id/month"
     tools:text="Воскресенье"/>
-</android.support.constraint.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

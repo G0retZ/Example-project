@@ -1,6 +1,5 @@
 package com.cargopull.executor_driver.interactor;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -9,7 +8,6 @@ import static org.mockito.Mockito.when;
 
 import com.cargopull.executor_driver.UseCaseThreadTestRule;
 import com.cargopull.executor_driver.gateway.DataMappingException;
-import com.cargopull.executor_driver.utils.ErrorReporter;
 import com.cargopull.executor_driver.utils.TimeUtils;
 import io.reactivex.Flowable;
 import io.reactivex.observers.TestObserver;
@@ -31,8 +29,6 @@ public class ServerTimeUseCaseTest {
   private ServerTimeUseCase useCase;
 
   @Mock
-  private ErrorReporter errorReporter;
-  @Mock
   private CommonGateway<Long> gateway;
   @Mock
   private TimeUtils timeUtils;
@@ -40,7 +36,7 @@ public class ServerTimeUseCaseTest {
   @Before
   public void setUp() {
     when(gateway.getData()).thenReturn(Flowable.never());
-    useCase = new ServerTimeUseCaseImpl(errorReporter, gateway, timeUtils);
+    useCase = new ServerTimeUseCaseImpl(gateway, timeUtils);
   }
 
   /* Проверяем работу с гейтвеем */
@@ -51,27 +47,10 @@ public class ServerTimeUseCaseTest {
   @Test
   public void askGatewayForServerTime() {
     // Действие:
-    useCase.getServerTime().test();
+    useCase.getServerTime().test().isDisposed();
 
     // Результат:
     verify(gateway, only()).getData();
-  }
-
-  /* Проверяем отправку ошибок в репортер */
-
-  /**
-   * Должен отправить ошибку.
-   */
-  @Test
-  public void reportError() {
-    // Дано:
-    when(gateway.getData()).thenReturn(Flowable.error(DataMappingException::new));
-
-    // Действие:
-    useCase.getServerTime().test();
-
-    // Результат:
-    verify(errorReporter, only()).reportError(any(DataMappingException.class));
   }
 
   /* Проверяем работу с временем */
@@ -82,7 +61,7 @@ public class ServerTimeUseCaseTest {
   @Test
   public void doNotSetServerTimeIfNoData() {
     // Действие:
-    useCase.getServerTime().test();
+    useCase.getServerTime().test().isDisposed();
 
     // Результат:
     verifyZeroInteractions(timeUtils);
@@ -97,7 +76,7 @@ public class ServerTimeUseCaseTest {
     when(gateway.getData()).thenReturn(Flowable.error(DataMappingException::new));
 
     // Действие:
-    useCase.getServerTime().test();
+    useCase.getServerTime().test().isDisposed();
 
     // Результат:
     verifyZeroInteractions(timeUtils);
@@ -113,7 +92,7 @@ public class ServerTimeUseCaseTest {
     when(gateway.getData()).thenReturn(Flowable.just(1L, 2L, 3L));
 
     // Действие:
-    useCase.getServerTime().test();
+    useCase.getServerTime().test().isDisposed();
 
     // Результат:
     inOrder.verify(timeUtils).setServerCurrentTime(1L);

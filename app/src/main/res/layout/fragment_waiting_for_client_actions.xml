@@ -6,7 +6,7 @@
   android:layout_height="match_parent"
   android:orientation="vertical"
   >
-  <android.support.v7.widget.Toolbar
+  <androidx.appcompat.widget.Toolbar
     android:id="@+id/appBar"
     style="@style/AppTheme.AppBar"
     android:layout_width="match_parent"
@@ -22,12 +22,11 @@
       android:orientation="vertical">
       <TextView
         android:id="@+id/orderRoute"
-        style="@style/TextAppearance.AppCompat.Subhead"
+        style="@style/TextAppearance.AppTheme.SubTitle.Touchable"
         android:layout_width="match_parent"
         android:layout_height="56dp"
         android:paddingStart="16dp"
         android:paddingEnd="16dp"
-        android:background="?android:attr/selectableItemBackground"
         android:gravity="center_vertical"
         android:text="@string/route"/>
       <View
@@ -36,12 +35,11 @@
         android:background="@color/colorDivider"/>
       <TextView
         android:id="@+id/reportAProblem"
-        style="@style/TextAppearance.AppCompat.Subhead"
+        style="@style/TextAppearance.AppTheme.SubTitle.Touchable"
         android:layout_width="match_parent"
         android:layout_height="56dp"
         android:paddingStart="16dp"
         android:paddingEnd="16dp"
-        android:background="?android:attr/selectableItemBackground"
         android:gravity="center_vertical"
         android:text="@string/report_a_problem"/>
       <View

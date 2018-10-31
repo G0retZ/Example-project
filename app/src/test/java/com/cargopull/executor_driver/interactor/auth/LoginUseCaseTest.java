@@ -44,7 +44,7 @@ public class LoginUseCaseTest {
   @Test
   public void askLoginValidatorForResult() throws Exception {
     // Действие:
-    useCase.validateLogin("").test();
+    useCase.validateLogin("").test().isDisposed();
 
     // Результат:
     verify(loginValidator, only()).validate("");
@@ -85,9 +85,9 @@ public class LoginUseCaseTest {
   @Test
   public void doNotTouchDataSharer() throws Exception {
     // Действие:
-    useCase.validateLogin("checkLogin").test();
+    useCase.validateLogin("checkLogin").test().isDisposed();
     doNothing().when(loginValidator).validate(anyString());
-    useCase.validateLogin("checkLogin").test();
+    useCase.validateLogin("checkLogin").test().isDisposed();
 
     // Результат:
     verifyZeroInteractions(loginObserver);
@@ -105,7 +105,7 @@ public class LoginUseCaseTest {
 
     // Действие:
     useCase.rememberLogin().test().assertComplete();
-    useCase.validateLogin("checkLogin").test();
+    useCase.validateLogin("checkLogin").test().isDisposed();
     useCase.rememberLogin().test().assertComplete();
 
     // Результат:

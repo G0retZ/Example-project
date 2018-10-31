@@ -1,10 +1,11 @@
 package com.cargopull.executor_driver.presentation.ordecostdetails;
 
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.MutableLiveData;
-import android.arch.lifecycle.ViewModel;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.ViewModel;
+import com.cargopull.executor_driver.backend.analytics.ErrorReporter;
 import com.cargopull.executor_driver.entity.OrderCostDetails;
 import com.cargopull.executor_driver.gateway.DataMappingException;
 import com.cargopull.executor_driver.interactor.OrderCostDetailsUseCase;
@@ -20,6 +21,8 @@ public class OrderCostDetailsViewModelImpl extends ViewModel implements
     OrderCostDetailsViewModel {
 
   @NonNull
+  private final ErrorReporter errorReporter;
+  @NonNull
   private final OrderCostDetailsUseCase orderCostDetailsUseCase;
   @NonNull
   private final MutableLiveData<ViewState<OrderCostDetailsViewActions>> viewStateLiveData;
@@ -31,7 +34,9 @@ public class OrderCostDetailsViewModelImpl extends ViewModel implements
   private ViewState<OrderCostDetailsViewActions> lastViewState;
 
   @Inject
-  public OrderCostDetailsViewModelImpl(@NonNull OrderCostDetailsUseCase orderCostDetailsUseCase) {
+  public OrderCostDetailsViewModelImpl(@NonNull ErrorReporter errorReporter,
+      @NonNull OrderCostDetailsUseCase orderCostDetailsUseCase) {
+    this.errorReporter = errorReporter;
     this.orderCostDetailsUseCase = orderCostDetailsUseCase;
     viewStateLiveData = new MutableLiveData<>();
     navigateLiveData = new SingleLiveEvent<>();
@@ -59,6 +64,7 @@ public class OrderCostDetailsViewModelImpl extends ViewModel implements
           .observeOn(AndroidSchedulers.mainThread())
           .subscribe(this::consumeOrder,
               throwable -> {
+                errorReporter.reportError(throwable);
                 if (throwable instanceof DataMappingException) {
                   navigateLiveData.postValue(CommonNavigate.SERVER_DATA_ERROR);
                 }

@@ -1,6 +1,6 @@
 package com.cargopull.executor_driver.entity;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 /**
  * Неизменная бизнес сущность услуги. Содержит в себе ID, имя, цену и выбор пользователя.

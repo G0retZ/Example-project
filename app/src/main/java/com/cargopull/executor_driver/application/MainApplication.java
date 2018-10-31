@@ -1,16 +1,21 @@
 package com.cargopull.executor_driver.application;
 
+import android.app.Activity;
 import android.app.Application;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.annotation.RawRes;
-import android.support.annotation.StringRes;
-import android.support.v4.app.NotificationCompat.BigTextStyle;
-import android.support.v4.app.NotificationCompat.Builder;
+import android.os.Bundle;
+import android.os.Handler;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.RawRes;
+import androidx.annotation.StringRes;
+import androidx.appcompat.app.AppCompatDelegate;
+import androidx.core.app.NotificationCompat.BigTextStyle;
+import androidx.core.app.NotificationCompat.Builder;
 import com.cargopull.executor_driver.R;
 import com.cargopull.executor_driver.backend.ringtone.RingTonePlayer;
 import com.cargopull.executor_driver.backend.vibro.ShakeItPlayer;
@@ -42,7 +47,7 @@ import com.cargopull.executor_driver.presentation.upcomingpreorder.UpcomingPreOr
 import com.cargopull.executor_driver.presentation.upcomingpreorder.UpcomingPreOrderViewModel;
 import com.cargopull.executor_driver.presentation.upcomingpreordermessage.UpcomingPreOrderMessageViewActions;
 import com.cargopull.executor_driver.presentation.upcomingpreordermessage.UpcomingPreOrderMessageViewModel;
-import com.cargopull.executor_driver.presentation.updatemessage.UpdateMessageViewModel;
+import com.cargopull.executor_driver.utils.Consumer;
 import javax.inject.Inject;
 
 /**
@@ -54,45 +59,26 @@ public class MainApplication extends Application implements ServerConnectionView
     CancelledOrderViewActions, UpcomingPreOrderViewActions {
 
   @Nullable
+  private Activity currentActivity;
   private AppComponent appComponent;
-  @Nullable
   private RingTonePlayer ringTonePlayer;
-  @Nullable
   private ShakeItPlayer shakeItPlayer;
-  @Nullable
   private ServerConnectionViewModel serverConnectionViewModel;
-  @Nullable
   private CancelOrderReasonsViewModel cancelOrderReasonsViewModel;
-  @Nullable
   private BalanceViewModel balanceViewModel;
-  @Nullable
   private ExecutorStateViewModel executorStateViewModel;
-  @Nullable
   private OrderViewModel orderViewModel;
-  @Nullable
   private PreOrderViewModel preOrderViewModel;
-  @Nullable
   private UpcomingPreOrderViewModel upcomingPreOrderViewModel;
-  @Nullable
   private PreOrdersListViewModel preOrdersListViewModel;
-  @Nullable
   private OrderCostDetailsViewModel orderCostDetailsViewModel;
-  @Nullable
   private GeoLocationViewModel geoLocationViewModel;
-  @Nullable
   private MissedOrderViewModel missedOrderViewModel;
-  @Nullable
   private UpcomingPreOrderMessageViewModel upcomingPreOrderMessageViewModel;
-  @Nullable
   private CancelledOrderViewModel cancelledOrderViewModel;
-  @Nullable
-  private UpdateMessageViewModel updateMessageViewModel;
-  @Nullable
   private CurrentCostPollingViewModel currentCostPollingViewModel;
-  @Nullable
   private ServerTimeViewModel serverTimeViewModel;
-  @Nullable
-  private AutoRouter autoRouter;
+  private NavigationMapper navigationMapper;
   private int missedOrdersCount;
   @Nullable
   private NotificationManager notificationManager;
@@ -130,7 +116,7 @@ public class MainApplication extends Application implements ServerConnectionView
 
   @Inject
   public void setUpcomingPreOrderViewModel(
-      @Nullable UpcomingPreOrderViewModel upcomingPreOrderViewModel) {
+      @NonNull UpcomingPreOrderViewModel upcomingPreOrderViewModel) {
     this.upcomingPreOrderViewModel = upcomingPreOrderViewModel;
   }
 
@@ -151,8 +137,8 @@ public class MainApplication extends Application implements ServerConnectionView
   }
 
   @Inject
-  public void setAutoRouter(@NonNull AutoRouter autoRouter) {
-    this.autoRouter = autoRouter;
+  public void setNavigationMapper(@NonNull NavigationMapper navigationMapper) {
+    this.navigationMapper = navigationMapper;
   }
 
   @Inject
@@ -173,18 +159,13 @@ public class MainApplication extends Application implements ServerConnectionView
 
   @Inject
   public void setUpcomingPreOrderMessageViewModel(
-      @Nullable UpcomingPreOrderMessageViewModel upcomingPreOrderMessageViewModel) {
+      @NonNull UpcomingPreOrderMessageViewModel upcomingPreOrderMessageViewModel) {
     this.upcomingPreOrderMessageViewModel = upcomingPreOrderMessageViewModel;
   }
 
   @Inject
   public void setCancelledOrderViewModel(@NonNull CancelledOrderViewModel cancelledOrderViewModel) {
     this.cancelledOrderViewModel = cancelledOrderViewModel;
-  }
-
-  @Inject
-  public void setUpdateMessageViewModel(@NonNull UpdateMessageViewModel updateMessageViewModel) {
-    this.updateMessageViewModel = updateMessageViewModel;
   }
 
   @Inject
@@ -198,28 +179,59 @@ public class MainApplication extends Application implements ServerConnectionView
     this.serverTimeViewModel = serverTimeViewModel;
   }
 
-  @Inject
-  public void setLifeCycleCallbacks(
-      @NonNull ActivityLifecycleCallbacks activityLifecycleCallbacks) {
-    registerActivityLifecycleCallbacks(activityLifecycleCallbacks);
-  }
-
   @Override
   public void onCreate() {
     super.onCreate();
-    notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
     appComponent = new AppComponentImpl(this.getApplicationContext());
+    appComponent.inject(
+        appSettingsService -> AppCompatDelegate.setDefaultNightMode(
+            appSettingsService.getNumber("mode")
+        )
+    );
+    registerActivityLifecycleCallbacks(new ActivityLifecycleCallbacks() {
+
+      @Override
+      public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
+      }
+
+      @Override
+      public void onActivityStarted(Activity activity) {
+        currentActivity = activity;
+        if (navigationMapper != null) {
+          navigationMapper.navigateToRecent().accept(activity);
+        }
+      }
+
+      @Override
+      public void onActivityResumed(Activity activity) {
+      }
+
+      @Override
+      public void onActivityPaused(Activity activity) {
+      }
+
+      @Override
+      public void onActivityStopped(Activity activity) {
+        if (currentActivity == activity) {
+          currentActivity = null;
+        }
+      }
+
+      @Override
+      public void onActivitySaveInstanceState(Activity activity, Bundle outState) {
+      }
+
+      @Override
+      public void onActivityDestroyed(Activity activity) {
+      }
+    });
+    // Постим инициализацию, чтобы не задерживать само приложение
+    new Handler().post(this::initApplication);
+  }
+
+  private void initApplication() {
+    notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
     appComponent.inject(this);
-    if (cancelOrderReasonsViewModel == null || balanceViewModel == null ||
-        executorStateViewModel == null || geoLocationViewModel == null
-        || missedOrderViewModel == null || updateMessageViewModel == null
-        || cancelledOrderViewModel == null || serverConnectionViewModel == null
-        || currentCostPollingViewModel == null || serverTimeViewModel == null
-        || orderViewModel == null || preOrderViewModel == null || orderCostDetailsViewModel == null
-        || upcomingPreOrderMessageViewModel == null || preOrdersListViewModel == null
-        || upcomingPreOrderViewModel == null) {
-      throw new RuntimeException("Shit! WTF?!");
-    }
     serverConnectionViewModel.getViewStateLiveData().observeForever(viewState -> {
       if (viewState != null) {
         viewState.apply(this);
@@ -264,16 +276,10 @@ public class MainApplication extends Application implements ServerConnectionView
   }
 
   public void initServerConnection() {
-    if (serverConnectionViewModel == null) {
-      throw new IllegalStateException("Граф зависимостей поломан!");
-    }
     serverConnectionViewModel.connectServer();
   }
 
   public void initGeoLocation() {
-    if (geoLocationViewModel == null) {
-      throw new IllegalStateException("Граф зависимостей поломан!");
-    }
     geoLocationViewModel.updateGeoLocations();
   }
 
@@ -287,12 +293,6 @@ public class MainApplication extends Application implements ServerConnectionView
   }
 
   void navigate(@Nullable String destination) {
-    if (autoRouter == null) {
-      throw new IllegalStateException("Граф зависимостей поломан!");
-    }
-    if (serverConnectionViewModel == null) {
-      throw new IllegalStateException("Граф зависимостей поломан!");
-    }
     if (destination == null) {
       return;
     }
@@ -327,7 +327,8 @@ public class MainApplication extends Application implements ServerConnectionView
         shakeIt(R.raw.new_offer_vibro);
         startService(R.string.offer, R.string.new_order, PendingIntent
             .getActivity(this, 0, new Intent(this, DriverOrderConfirmationActivity.class), 0));
-        break;
+        navigationMapper.navigateTo(destination).accept(this);
+        return;
       case ExecutorStateNavigate.DRIVER_PRELIMINARY_ORDER_CONFIRMATION:
         playSound(R.raw.new_offer);
         shakeIt(R.raw.new_offer_vibro);
@@ -343,7 +344,8 @@ public class MainApplication extends Application implements ServerConnectionView
       case ExecutorStateNavigate.MOVING_TO_CLIENT:
         startService(R.string.working, R.string.moving_to_client, PendingIntent
             .getActivity(this, 0, new Intent(this, MovingToClientActivity.class), 0));
-        break;
+        navigationMapper.navigateTo(destination).accept(this);
+        return;
       case ExecutorStateNavigate.WAITING_FOR_CLIENT:
         startService(R.string.working, R.string.wait_for_client, PendingIntent
             .getActivity(this, 0, new Intent(this, WaitingForClientActivity.class), 0));
@@ -363,13 +365,16 @@ public class MainApplication extends Application implements ServerConnectionView
       case PreOrdersListNavigate.PRE_ORDER:
         return;
     }
-    autoRouter.navigateTo(destination);
+    Consumer<Context> consumer = navigationMapper.navigateTo(destination);
+    if (currentActivity != null) {
+      consumer.accept(currentActivity);
+    }
   }
 
   @NonNull
   public AppComponent getAppComponent() {
     if (appComponent == null) {
-      throw new RuntimeException("Shit! WTF?!");
+      throw new RuntimeException("Граф зависимостей поломан!");
     }
     return appComponent;
   }
@@ -418,16 +423,10 @@ public class MainApplication extends Application implements ServerConnectionView
   }
 
   private void playSound(@RawRes int rawId) {
-    if (ringTonePlayer == null) {
-      throw new IllegalStateException("Граф зависимостей поломан!");
-    }
     ringTonePlayer.playRingTone(rawId);
   }
 
   private void shakeIt(@RawRes int patternId) {
-    if (shakeItPlayer == null) {
-      throw new IllegalStateException("Граф зависимостей поломан!");
-    }
     shakeItPlayer.shakeIt(patternId);
   }
 
@@ -459,7 +458,7 @@ public class MainApplication extends Application implements ServerConnectionView
   @Override
   public void showUpcomingPreOrderMessage(@NonNull String message) {
     shakeIt(R.raw.new_pre_order_vibro);
-    playSound(R.raw.new_pre_order);
+    playSound(R.raw.pre_order_reminder);
     if (notificationManager != null) {
       Builder builder = new Builder(this, "state_channel")
           .setContentText(message)

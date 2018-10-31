@@ -1,10 +1,11 @@
 package com.cargopull.executor_driver.presentation.vehicleoptions;
 
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.MutableLiveData;
-import android.arch.lifecycle.ViewModel;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.ViewModel;
 import com.cargopull.executor_driver.R;
+import com.cargopull.executor_driver.backend.analytics.ErrorReporter;
 import com.cargopull.executor_driver.entity.Option;
 import com.cargopull.executor_driver.entity.OptionBoolean;
 import com.cargopull.executor_driver.entity.OptionNumeric;
@@ -25,6 +26,8 @@ public class VehicleOptionsViewModelImpl extends ViewModel implements
     VehicleOptionsViewModel {
 
   @NonNull
+  private final ErrorReporter errorReporter;
+  @NonNull
   private final VehicleOptionsUseCase vehicleOptionsUseCase;
   @NonNull
   private final MutableLiveData<ViewState<VehicleOptionsViewActions>> viewStateLiveData;
@@ -36,7 +39,10 @@ public class VehicleOptionsViewModelImpl extends ViewModel implements
   private Disposable occupyDisposable = EmptyDisposable.INSTANCE;
 
   @Inject
-  public VehicleOptionsViewModelImpl(@NonNull VehicleOptionsUseCase vehicleOptionsUseCase) {
+  public VehicleOptionsViewModelImpl(
+      @NonNull ErrorReporter errorReporter,
+      @NonNull VehicleOptionsUseCase vehicleOptionsUseCase) {
+    this.errorReporter = errorReporter;
     this.vehicleOptionsUseCase = vehicleOptionsUseCase;
     viewStateLiveData = new MutableLiveData<>();
     navigateLiveData = new SingleLiveEvent<>();
@@ -95,6 +101,7 @@ public class VehicleOptionsViewModelImpl extends ViewModel implements
         items -> viewStateLiveData.postValue(new VehicleOptionsViewStateReady(items)),
         throwable -> {
           if (throwable instanceof DataMappingException) {
+            errorReporter.reportError(throwable);
             navigateLiveData.postValue(CommonNavigate.SERVER_DATA_ERROR);
           } else {
             navigateLiveData.postValue(CommonNavigate.NO_CONNECTION);
@@ -114,8 +121,14 @@ public class VehicleOptionsViewModelImpl extends ViewModel implements
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(
             () -> navigateLiveData.postValue(VehicleOptionsNavigate.SERVICES),
-            throwable -> viewStateLiveData
-                .postValue(new VehicleOptionsViewStateError(R.string.no_network_connection))
+            throwable -> {
+              if (throwable instanceof IllegalStateException
+                  || throwable instanceof IllegalArgumentException) {
+                errorReporter.reportError(throwable);
+              }
+              viewStateLiveData
+                  .postValue(new VehicleOptionsViewStateError(R.string.no_network_connection));
+            }
         );
   }
 

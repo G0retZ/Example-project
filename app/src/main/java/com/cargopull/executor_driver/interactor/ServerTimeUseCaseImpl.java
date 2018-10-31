@@ -1,7 +1,6 @@
 package com.cargopull.executor_driver.interactor;
 
-import android.support.annotation.NonNull;
-import com.cargopull.executor_driver.utils.ErrorReporter;
+import androidx.annotation.NonNull;
 import com.cargopull.executor_driver.utils.TimeUtils;
 import io.reactivex.Completable;
 import io.reactivex.schedulers.Schedulers;
@@ -10,17 +9,13 @@ import javax.inject.Inject;
 public class ServerTimeUseCaseImpl implements ServerTimeUseCase {
 
   @NonNull
-  private final ErrorReporter errorReporter;
-  @NonNull
   private final CommonGateway<Long> gateway;
   @NonNull
   private final TimeUtils timeUtils;
 
   @Inject
-  public ServerTimeUseCaseImpl(@NonNull ErrorReporter errorReporter,
-      @NonNull CommonGateway<Long> gateway,
+  public ServerTimeUseCaseImpl(@NonNull CommonGateway<Long> gateway,
       @NonNull TimeUtils timeUtils) {
-    this.errorReporter = errorReporter;
     this.gateway = gateway;
     this.timeUtils = timeUtils;
   }
@@ -30,7 +25,6 @@ public class ServerTimeUseCaseImpl implements ServerTimeUseCase {
   public Completable getServerTime() {
     return gateway.getData()
         .observeOn(Schedulers.single())
-        .doOnError(errorReporter::reportError)
         .flatMapCompletable(timeStamp -> Completable.fromAction(
             () -> timeUtils.setServerCurrentTime(timeStamp)
         ));

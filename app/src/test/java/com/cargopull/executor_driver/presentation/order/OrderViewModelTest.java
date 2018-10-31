@@ -6,9 +6,10 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
-import android.arch.core.executor.testing.InstantTaskExecutorRule;
-import android.arch.lifecycle.Observer;
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
+import androidx.lifecycle.Observer;
 import com.cargopull.executor_driver.ViewModelThreadTestRule;
+import com.cargopull.executor_driver.backend.analytics.ErrorReporter;
 import com.cargopull.executor_driver.entity.Order;
 import com.cargopull.executor_driver.entity.OrderCancelledException;
 import com.cargopull.executor_driver.entity.OrderOfferDecisionException;
@@ -43,6 +44,8 @@ public class OrderViewModelTest {
   public TestRule rule = new InstantTaskExecutorRule();
   private OrderViewModel viewModel;
   @Mock
+  private ErrorReporter errorReporter;
+  @Mock
   private OrderUseCase orderUseCase;
   @Mock
   private TimeUtils timeUtils;
@@ -64,7 +67,21 @@ public class OrderViewModelTest {
     publishSubject = PublishSubject.create();
     when(orderUseCase.getOrders())
         .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
-    viewModel = new OrderViewModelImpl(orderUseCase, timeUtils);
+    viewModel = new OrderViewModelImpl(errorReporter, orderUseCase, timeUtils);
+  }
+
+  /* Проверяем отправку ошибок в репортер */
+
+  /**
+   * Должен отправить ошибку.
+   */
+  @Test
+  public void reportError() {
+    // Действие:
+    publishSubject.onError(new DataMappingException());
+
+    // Результат:
+    verify(errorReporter, only()).reportError(any(DataMappingException.class));
   }
 
   /* Тетсируем работу с юзкейсом заказа. */
@@ -181,7 +198,7 @@ public class OrderViewModelTest {
         ).startWith(publishSubject)
             .toFlowable(BackpressureStrategy.BUFFER)
     );
-    viewModel = new OrderViewModelImpl(orderUseCase, timeUtils);
+    viewModel = new OrderViewModelImpl(errorReporter, orderUseCase, timeUtils);
     viewModel.getNavigationLiveData().observeForever(navigateObserver);
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
@@ -231,7 +248,7 @@ public class OrderViewModelTest {
         ).startWith(publishSubject)
             .toFlowable(BackpressureStrategy.BUFFER)
     );
-    viewModel = new OrderViewModelImpl(orderUseCase, timeUtils);
+    viewModel = new OrderViewModelImpl(errorReporter, orderUseCase, timeUtils);
     viewModel.getNavigationLiveData().observeForever(navigateObserver);
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
@@ -279,7 +296,7 @@ public class OrderViewModelTest {
         ).startWith(publishSubject)
             .toFlowable(BackpressureStrategy.BUFFER)
     );
-    viewModel = new OrderViewModelImpl(orderUseCase, timeUtils);
+    viewModel = new OrderViewModelImpl(errorReporter, orderUseCase, timeUtils);
     viewModel.getNavigationLiveData().observeForever(navigateObserver);
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 

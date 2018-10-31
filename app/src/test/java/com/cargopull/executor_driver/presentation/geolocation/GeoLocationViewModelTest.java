@@ -1,14 +1,16 @@
 package com.cargopull.executor_driver.presentation.geolocation;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
-import android.arch.core.executor.testing.InstantTaskExecutorRule;
-import android.arch.lifecycle.Observer;
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
+import androidx.lifecycle.Observer;
 import com.cargopull.executor_driver.ViewModelThreadTestRule;
+import com.cargopull.executor_driver.backend.analytics.ErrorReporter;
 import com.cargopull.executor_driver.entity.GeoLocation;
 import com.cargopull.executor_driver.interactor.GeoLocationUseCase;
 import com.cargopull.executor_driver.presentation.CommonNavigate;
@@ -34,6 +36,8 @@ public class GeoLocationViewModelTest {
   public TestRule rule = new InstantTaskExecutorRule();
   private GeoLocationViewModel viewModel;
   @Mock
+  private ErrorReporter errorReporter;
+  @Mock
   private Observer<ViewState<GeoLocationViewActions>> viewStateObserver;
   @Mock
   private Observer<String> navigationObserver;
@@ -44,7 +48,24 @@ public class GeoLocationViewModelTest {
   @Before
   public void setUp() {
     when(geoLocationUseCase.getGeoLocations()).thenReturn(Flowable.never());
-    viewModel = new GeoLocationViewModelImpl(geoLocationUseCase);
+    viewModel = new GeoLocationViewModelImpl(errorReporter, geoLocationUseCase);
+  }
+
+  /* Проверяем отправку ошибок в репортер */
+
+  /**
+   * Должен отправить ошибку в получении геолокации.
+   */
+  @Test
+  public void reportGeoLocationError() {
+    // Дано:
+    when(geoLocationUseCase.getGeoLocations()).thenReturn(Flowable.error(SecurityException::new));
+
+    // Действие:
+    viewModel.updateGeoLocations();
+
+    // Результат:
+    verify(errorReporter, only()).reportError(any(SecurityException.class));
   }
 
   /* Тетсируем работу с публикатором местоположения. */
@@ -270,7 +291,7 @@ public class GeoLocationViewModelTest {
     viewModel.updateGeoLocations();
 
     // Результат:
-    verify(navigationObserver, only()).onChanged(GeoLocationNavigate.RESOLVE_GEO_PROBLEM);
+    verify(navigationObserver, only()).onChanged(GeoLocationNavigate.RESOLVE_GEO_PERMISSIONS);
   }
 
   /**

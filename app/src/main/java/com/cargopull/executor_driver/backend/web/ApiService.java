@@ -1,6 +1,6 @@
 package com.cargopull.executor_driver.backend.web;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import com.cargopull.executor_driver.backend.web.incoming.ApiOptionsForOnline;
 import com.cargopull.executor_driver.backend.web.incoming.ApiServiceItem;
 import com.cargopull.executor_driver.backend.web.incoming.ApiSimpleResult;
@@ -95,5 +95,13 @@ public interface ApiService {
   @POST("api/public/v1/mobile/order/assign")
   Single<ApiSimpleResult> sendPreOrderDecision(
       @NonNull @Body ApiOrderDecision decision
+  );
+
+  /*
+   *  Запрос отправки FCM токена.
+   */
+  @PUT("api/public/v1/mobile/fireBase/registrationToken")
+  Completable sendFcmInstanceID(
+      @Query("registrationToken") String carId
   );
 }

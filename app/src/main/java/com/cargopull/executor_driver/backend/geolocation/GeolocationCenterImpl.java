@@ -5,10 +5,11 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Looper;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationAvailability;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
@@ -16,6 +17,7 @@ import com.google.android.gms.location.LocationServices;
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Emitter;
 import io.reactivex.Flowable;
+import io.reactivex.subjects.PublishSubject;
 import javax.inject.Inject;
 
 /**
@@ -29,6 +31,10 @@ public class GeolocationCenterImpl implements GeolocationCenter {
   private final LocationRequest mLocationRequest;
   @NonNull
   private final Context appContext;
+  @NonNull
+  private final PublishSubject<Boolean> availabilitySubject;
+  @Nullable
+  private volatile Boolean lastState;
 
   // Создаем тут клиента для либы короче
   @Inject
@@ -37,6 +43,7 @@ public class GeolocationCenterImpl implements GeolocationCenter {
     mLocationRequest = LocationRequest.create();
     mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
     appContext = context.getApplicationContext();
+    availabilitySubject = PublishSubject.create();
   }
 
   // А тут короче плод двухдневных мозговых штурмов:
@@ -58,10 +65,25 @@ public class GeolocationCenterImpl implements GeolocationCenter {
       mFusedLocationClient.requestLocationUpdates(mLocationRequest.setInterval(maxInterval),
           locationCallback.setEmitter(emitter), Looper.getMainLooper());
     }, BackpressureStrategy.BUFFER)
-        .doOnCancel(() -> mFusedLocationClient.removeLocationUpdates(locationCallback)
-            .addOnCompleteListener(command -> new Thread(command).start(), task -> {
-            })
+        .doOnCancel(() -> {
+              lastState = null;
+              mFusedLocationClient.removeLocationUpdates(locationCallback)
+                  .addOnCompleteListener(command -> new Thread(command).start(), task -> {
+                  });
+            }
         );
+  }
+
+  @Override
+  public Flowable<Boolean> getLocationsAvailability() {
+    return Flowable.<Boolean>create(
+        emitter -> {
+          if (lastState != null) {
+            emitter.onNext(lastState);
+          }
+          emitter.onComplete();
+        }, BackpressureStrategy.BUFFER
+    ).concatWith(availabilitySubject.toFlowable(BackpressureStrategy.BUFFER));
   }
 
   // А это колбэк геопозиций с эмиттером.
@@ -83,6 +105,13 @@ public class GeolocationCenterImpl implements GeolocationCenter {
           emitter.onNext(location);
         }
       }
+    }
+
+    @Override
+    public void onLocationAvailability(LocationAvailability locationAvailability) {
+      super.onLocationAvailability(locationAvailability);
+      lastState = locationAvailability.isLocationAvailable();
+      availabilitySubject.onNext(lastState);
     }
   }
 }

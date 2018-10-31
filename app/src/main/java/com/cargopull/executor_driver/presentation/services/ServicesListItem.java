@@ -1,7 +1,7 @@
 package com.cargopull.executor_driver.presentation.services;
 
 import android.content.res.Resources;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import com.cargopull.executor_driver.R;
 import com.cargopull.executor_driver.entity.Service;
 import java.text.DecimalFormat;

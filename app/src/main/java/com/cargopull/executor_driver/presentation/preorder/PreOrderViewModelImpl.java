@@ -1,9 +1,10 @@
 package com.cargopull.executor_driver.presentation.preorder;
 
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.MutableLiveData;
-import android.arch.lifecycle.ViewModel;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.ViewModel;
+import com.cargopull.executor_driver.backend.analytics.ErrorReporter;
 import com.cargopull.executor_driver.entity.OrderCancelledException;
 import com.cargopull.executor_driver.entity.OrderOfferDecisionException;
 import com.cargopull.executor_driver.entity.OrderOfferExpiredException;
@@ -21,6 +22,8 @@ public class PreOrderViewModelImpl extends ViewModel implements
     PreOrderViewModel {
 
   @NonNull
+  private final ErrorReporter errorReporter;
+  @NonNull
   private final OrderUseCase orderUseCase;
   @NonNull
   private final MutableLiveData<ViewState<PreOrderViewActions>> viewStateLiveData;
@@ -30,7 +33,9 @@ public class PreOrderViewModelImpl extends ViewModel implements
   private Disposable disposable = EmptyDisposable.INSTANCE;
 
   @Inject
-  public PreOrderViewModelImpl(@NonNull OrderUseCase orderUseCase) {
+  public PreOrderViewModelImpl(@NonNull ErrorReporter errorReporter,
+      @NonNull OrderUseCase orderUseCase) {
+    this.errorReporter = errorReporter;
     this.orderUseCase = orderUseCase;
     viewStateLiveData = new MutableLiveData<>();
     navigateLiveData = new SingleLiveEvent<>();
@@ -67,6 +72,7 @@ public class PreOrderViewModelImpl extends ViewModel implements
               || throwable instanceof OrderOfferDecisionException)
           .subscribe(order -> viewStateLiveData.postValue(new PreOrderViewStateAvailable()),
               throwable -> {
+                errorReporter.reportError(throwable);
                 if (throwable instanceof DataMappingException) {
                   navigateLiveData.postValue(CommonNavigate.SERVER_DATA_ERROR);
                 }

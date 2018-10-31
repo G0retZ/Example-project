@@ -1,9 +1,10 @@
 package com.cargopull.executor_driver.presentation.clientorderconfirmationtime;
 
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.MutableLiveData;
-import android.arch.lifecycle.ViewModel;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.ViewModel;
+import com.cargopull.executor_driver.backend.analytics.ErrorReporter;
 import com.cargopull.executor_driver.gateway.DataMappingException;
 import com.cargopull.executor_driver.interactor.ExecutorStateUseCase;
 import com.cargopull.executor_driver.presentation.CommonNavigate;
@@ -21,6 +22,8 @@ public class ClientOrderConfirmationTimeViewModelImpl extends ViewModel implemen
     ClientOrderConfirmationTimeViewModel {
 
   @NonNull
+  private final ErrorReporter errorReporter;
+  @NonNull
   private final ExecutorStateUseCase executorStateUseCase;
   @NonNull
   private final MutableLiveData<ViewState<ClientOrderConfirmationTimeViewActions>> viewStateLiveData;
@@ -30,8 +33,9 @@ public class ClientOrderConfirmationTimeViewModelImpl extends ViewModel implemen
   private Disposable disposable = EmptyDisposable.INSTANCE;
 
   @Inject
-  public ClientOrderConfirmationTimeViewModelImpl(
+  public ClientOrderConfirmationTimeViewModelImpl(@NonNull ErrorReporter errorReporter,
       @NonNull ExecutorStateUseCase executorStateUseCase) {
+    this.errorReporter = errorReporter;
     this.executorStateUseCase = executorStateUseCase;
     viewStateLiveData = new MutableLiveData<>();
     navigateLiveData = new SingleLiveEvent<>();
@@ -67,6 +71,7 @@ public class ClientOrderConfirmationTimeViewModelImpl extends ViewModel implemen
                     new ClientOrderConfirmationTimeViewStateNotCounting()
             ),
             throwable -> {
+              errorReporter.reportError(throwable);
               if (throwable instanceof DataMappingException) {
                 navigateLiveData.postValue(CommonNavigate.SERVER_DATA_ERROR);
               }

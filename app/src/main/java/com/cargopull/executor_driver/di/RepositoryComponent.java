@@ -1,6 +1,6 @@
 package com.cargopull.executor_driver.di;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import com.cargopull.executor_driver.entity.CancelOrderReason;
 import com.cargopull.executor_driver.entity.ExecutorBalance;
 import com.cargopull.executor_driver.entity.ExecutorState;
@@ -11,6 +11,7 @@ import com.cargopull.executor_driver.interactor.CancelOrderGateway;
 import com.cargopull.executor_driver.interactor.CommonGateway;
 import com.cargopull.executor_driver.interactor.ConfirmOrderPaymentGateway;
 import com.cargopull.executor_driver.interactor.CurrentCostPollingGateway;
+import com.cargopull.executor_driver.interactor.DataReceiver;
 import com.cargopull.executor_driver.interactor.ExecutorStateSwitchGateway;
 import com.cargopull.executor_driver.interactor.GeoLocationGateway;
 import com.cargopull.executor_driver.interactor.GeoTrackingGateway;
@@ -26,10 +27,17 @@ import com.cargopull.executor_driver.interactor.services.ServicesGateway;
 import com.cargopull.executor_driver.interactor.vehicle.LastUsedVehicleGateway;
 import com.cargopull.executor_driver.interactor.vehicle.VehicleOptionsGateway;
 import com.cargopull.executor_driver.interactor.vehicle.VehiclesAndOptionsGateway;
+import io.reactivex.Observer;
 import java.util.List;
 import java.util.Set;
 
 interface RepositoryComponent {
+
+  @NonNull
+  DataReceiver<String> getLoginGateway();
+
+  @NonNull
+  Observer<String> getLoginStorage();
 
   @NonNull
   CallToClientGateway getCallToClientGateway();
@@ -139,5 +147,9 @@ interface RepositoryComponent {
   @NonNull
   CommonGateway<Set<Order>> getPreOrdersSetGateway();
 
+  @NonNull
   CommonGateway<Order> getUpcomingPreOrderGateway();
+
+  @NonNull
+  CommonGateway<Boolean> getGeoLocationStateGateway();
 }

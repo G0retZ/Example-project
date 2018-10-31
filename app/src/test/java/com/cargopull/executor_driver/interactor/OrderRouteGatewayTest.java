@@ -47,7 +47,7 @@ public class OrderRouteGatewayTest {
     when(routePoint.getId()).thenReturn(7L);
 
     // Действие:
-    gateway.closeRoutePoint(routePoint).test();
+    gateway.closeRoutePoint(routePoint).test().isDisposed();
 
     // Результат:
     verify(stompClient, only()).send("/mobile/changeRoutePoint", "{\"complete\":\"7\"}");
@@ -59,7 +59,7 @@ public class OrderRouteGatewayTest {
   @Test
   public void askStompClientToSendCompleteTheOrderMessage() {
     // Действие:
-    gateway.completeTheOrder().test();
+    gateway.completeTheOrder().test().isDisposed();
 
     // Результат:
     verify(stompClient, only()).send("/mobile/trip", "\"COMPLETE_ORDER\"");
@@ -74,7 +74,7 @@ public class OrderRouteGatewayTest {
     when(routePoint.getId()).thenReturn(7L);
 
     // Действие:
-    gateway.nextRoutePoint(routePoint).test();
+    gateway.nextRoutePoint(routePoint).test().isDisposed();
 
     // Результат:
     verify(stompClient, only()).send("/mobile/changeRoutePoint", "{\"next\":\"7\"}");

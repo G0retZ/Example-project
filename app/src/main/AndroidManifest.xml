@@ -66,7 +66,7 @@
       android:name=".application.ServicesActivity"/>
     <activity
       android:launchMode="singleTop"
-      android:name=".application.GeolocationResolutionActivity"/>
+      android:name=".application.GeolocationPermissionActivity"/>
     <activity
       android:launchMode="singleTop"
       android:name=".application.OnlineActivity"/>
@@ -130,6 +130,9 @@
     <activity
       android:launchMode="singleTop"
       android:name=".application.BlockedActivity"/>
+    <activity
+      android:launchMode="singleTop"
+      android:name=".application.NightModeActivity"/>
 
     <service
       android:enabled="true"

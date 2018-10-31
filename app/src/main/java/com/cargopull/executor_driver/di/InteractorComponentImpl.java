@@ -1,7 +1,7 @@
 package com.cargopull.executor_driver.di;
 
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import com.cargopull.executor_driver.entity.ExecutorState;
 import com.cargopull.executor_driver.entity.LoginValidator;
 import com.cargopull.executor_driver.entity.PasswordValidator;
@@ -77,18 +77,12 @@ import com.cargopull.executor_driver.interactor.vehicle.VehicleOptionsUseCase;
 import com.cargopull.executor_driver.interactor.vehicle.VehicleOptionsUseCaseImpl;
 import com.cargopull.executor_driver.interactor.vehicle.VehiclesAndOptionsUseCase;
 import com.cargopull.executor_driver.interactor.vehicle.VehiclesAndOptionsUseCaseImpl;
-import com.cargopull.executor_driver.utils.ErrorReporter;
-import com.cargopull.executor_driver.utils.ErrorReporterImpl;
 import com.cargopull.executor_driver.utils.TimeUtils;
 
 class InteractorComponentImpl implements InteractorComponent {
 
   @NonNull
   private final RepositoryComponent repositoryComponent;
-  @NonNull
-  private final ErrorReporter errorReporter;
-  @NonNull
-  private final MemoryDataSharer<String> loginSharer;
   @NonNull
   private final MemoryDataSharer<Vehicle> vehicleChoiceSharer;
   @NonNull
@@ -182,13 +176,11 @@ class InteractorComponentImpl implements InteractorComponent {
   @Nullable
   private OrderConfirmationUseCase upcomingPreOrderConfirmationUseCase;
 
-  InteractorComponentImpl(@NonNull MemoryDataSharer<String> loginSharer,
+  InteractorComponentImpl(
       @NonNull TimeUtils timeUtils,
       @NonNull RepositoryComponent repositoryComponent) {
     this.timeUtils = timeUtils;
     this.repositoryComponent = repositoryComponent;
-    this.loginSharer = loginSharer;
-    errorReporter = new ErrorReporterImpl(loginSharer);
     vehicleChoiceSharer = new VehicleChoiceSharer();
   }
 
@@ -208,7 +200,6 @@ class InteractorComponentImpl implements InteractorComponent {
   public NotificationMessageUseCase getCancelledOrderMessageUseCase() {
     if (cancelledOrderMessageUseCase == null) {
       cancelledOrderMessageUseCase = new NotificationMessageUseCaseImpl(
-          errorReporter,
           repositoryComponent.getCancelledOrderMessageGateway()
       );
     }
@@ -220,7 +211,6 @@ class InteractorComponentImpl implements InteractorComponent {
   public CancelOrderReasonsUseCase getCancelOrderReasonsUseCase() {
     if (cancelOrderReasonsUseCase == null) {
       cancelOrderReasonsUseCase = new CancelOrderReasonsUseCaseImpl(
-          errorReporter,
           repositoryComponent.getCancelOrderReasonsGateway()
       );
     }
@@ -233,7 +223,6 @@ class InteractorComponentImpl implements InteractorComponent {
     if (cancelOrderUseCase == null) {
       cancelOrderUseCase = new CancelOrderUseCaseImpl(
           getCancelOrderReasonsUseCase(),
-          errorReporter,
           repositoryComponent.getCancelOrderGateway()
       );
     }
@@ -256,7 +245,6 @@ class InteractorComponentImpl implements InteractorComponent {
   public CurrentCostPollingUseCase getCurrentCostPollingUseCase() {
     if (currentCostPollingUseCase == null) {
       currentCostPollingUseCase = new CurrentCostPollingUseCaseImpl(
-          errorReporter,
           repositoryComponent.getCurrentCostPollingGateway()
       );
     }
@@ -268,7 +256,6 @@ class InteractorComponentImpl implements InteractorComponent {
   public ExecutorBalanceUseCase getExecutorBalanceUseCase() {
     if (executorBalanceUseCase == null) {
       executorBalanceUseCase = new ExecutorBalanceUseCaseImpl(
-          errorReporter,
           repositoryComponent.getExecutorBalanceGateway()
       );
     }
@@ -280,7 +267,6 @@ class InteractorComponentImpl implements InteractorComponent {
   public ExecutorStateNotOnlineUseCase getExecutorStateNotOnlineUseCase() {
     if (executorStateNotOnlineUseCase == null) {
       executorStateNotOnlineUseCase = new ExecutorStateNotOnlineUseCaseImpl(
-          errorReporter,
           repositoryComponent.getExecutorStateSwitchGateway(),
           getExecutorStateUseCase(),
           ExecutorState.ONLINE
@@ -294,7 +280,6 @@ class InteractorComponentImpl implements InteractorComponent {
   public ExecutorStateNotOnlineUseCase getExecutorStateExitUseCase() {
     if (executorStateExitUseCase == null) {
       executorStateExitUseCase = new ExecutorStateNotOnlineUseCaseImpl(
-          errorReporter,
           repositoryComponent.getExecutorStateSwitchGateway(),
           getExecutorStateUseCase(),
           ExecutorState.BLOCKED,
@@ -318,7 +303,6 @@ class InteractorComponentImpl implements InteractorComponent {
   public ExecutorStateUseCase getExecutorStateUseCase() {
     if (executorStateUseCase == null) {
       executorStateUseCase = new ExecutorStateUseCaseImpl(
-          errorReporter,
           repositoryComponent.getExecutorStateGateway()
       );
     }
@@ -330,7 +314,6 @@ class InteractorComponentImpl implements InteractorComponent {
   public GeoLocationUseCase getGeoLocationUseCase() {
     if (geoLocationUseCase == null) {
       geoLocationUseCase = new GeoLocationUseCaseImpl(
-          errorReporter,
           repositoryComponent.getGeoLocationGateway(),
           repositoryComponent.getGeoTrackingGateway(),
           getExecutorStateUseCase()
@@ -344,7 +327,6 @@ class InteractorComponentImpl implements InteractorComponent {
   public NotificationMessageUseCase getMissedOrderUseCase() {
     if (missedOrderUseCase == null) {
       missedOrderUseCase = new NotificationMessageUseCaseImpl(
-          errorReporter,
           repositoryComponent.getMissedOrderGateway()
       );
     }
@@ -396,7 +378,6 @@ class InteractorComponentImpl implements InteractorComponent {
   public OrderCostDetailsUseCase getOrderCostDetailsUseCase() {
     if (orderCostDetailsUseCase == null) {
       orderCostDetailsUseCase = new OrderCostDetailsUseCaseImpl(
-          errorReporter,
           repositoryComponent.getOrderCostDetailsGateway()
       );
     }
@@ -408,7 +389,6 @@ class InteractorComponentImpl implements InteractorComponent {
   public OrderCurrentCostUseCase getOrderCurrentCostUseCase() {
     if (orderCurrentCostUseCase == null) {
       orderCurrentCostUseCase = new OrderCurrentCostUseCaseImpl(
-          errorReporter,
           getOrderUseCase(),
           repositoryComponent.getOrderCurrentCostGateway()
       );
@@ -445,7 +425,6 @@ class InteractorComponentImpl implements InteractorComponent {
   public OrderUseCase getOrderUseCase() {
     if (orderUseCase == null) {
       orderUseCase = new OrderUseCaseImpl(
-          errorReporter,
           repositoryComponent.getOrderGateway()
       );
 
@@ -475,7 +454,6 @@ class InteractorComponentImpl implements InteractorComponent {
   public ServerTimeUseCase getServerTimeUseCase() {
     if (serverTimeUseCase == null) {
       serverTimeUseCase = new ServerTimeUseCaseImpl(
-          errorReporter,
           repositoryComponent.getServerTimeGateway(),
           timeUtils
       );
@@ -488,7 +466,6 @@ class InteractorComponentImpl implements InteractorComponent {
   public UpdateMessageUseCase getUpdateMessageUseCase() {
     if (updateMessageUseCase == null) {
       updateMessageUseCase = new UpdateMessageUseCaseImpl(
-          errorReporter,
           repositoryComponent.getUpdateMessageGateway()
       );
     }
@@ -511,7 +488,7 @@ class InteractorComponentImpl implements InteractorComponent {
   public LoginUseCase getLoginUseCase() {
     if (loginUseCase == null) {
       loginUseCase = new LoginUseCaseImpl(
-          loginSharer,
+          repositoryComponent.getLoginStorage(),
           new LoginValidator()
       );
     }
@@ -523,7 +500,6 @@ class InteractorComponentImpl implements InteractorComponent {
   public OrdersUseCase getPreOrdersSetUseCase() {
     if (preOrdersSetUseCase == null) {
       preOrdersSetUseCase = new OrdersUseCaseImpl(
-          errorReporter,
           repositoryComponent.getPreOrdersSetGateway(),
           getCancelledOrderUseCase());
     }
@@ -536,7 +512,7 @@ class InteractorComponentImpl implements InteractorComponent {
     if (passwordUseCase == null) {
       passwordUseCase = new PasswordUseCaseImpl(
           repositoryComponent.getPasswordGateway(),
-          loginSharer,
+          repositoryComponent.getLoginGateway(),
           new PasswordValidator()
       );
     }
@@ -549,7 +525,7 @@ class InteractorComponentImpl implements InteractorComponent {
     if (smsUseCase == null) {
       smsUseCase = new SmsUseCaseImpl(
           repositoryComponent.getSmsGateway(),
-          loginSharer,
+          repositoryComponent.getLoginGateway(),
           new PhoneNumberValidator()
       );
     }
@@ -572,7 +548,6 @@ class InteractorComponentImpl implements InteractorComponent {
   public ServicesUseCase getServicesUseCase() {
     if (servicesUseCase == null) {
       servicesUseCase = new ServicesUseCaseImpl(
-          errorReporter,
           repositoryComponent.getServicesGateway()
       );
     }
@@ -595,7 +570,6 @@ class InteractorComponentImpl implements InteractorComponent {
   public NotificationMessageUseCase getUpcomingPreOrderMessagesUseCase() {
     if (upcomingPreOrderMessagesUseCase == null) {
       upcomingPreOrderMessagesUseCase = new NotificationMessageUseCaseImpl(
-          errorReporter,
           repositoryComponent.getUpcomingPreOrderMessagesGateway()
       );
     }
@@ -607,7 +581,6 @@ class InteractorComponentImpl implements InteractorComponent {
   public VehicleChoiceUseCase getVehicleChoiceUseCase() {
     if (vehicleChoiceUseCase == null) {
       vehicleChoiceUseCase = new VehicleChoiceUseCaseImpl(
-          errorReporter,
           repositoryComponent.getVehiclesAndOptionsGateway(),
           vehicleChoiceSharer
       );
@@ -620,7 +593,6 @@ class InteractorComponentImpl implements InteractorComponent {
   public VehicleChoiceUseCase getCurrentVehicleChoiceUseCase() {
     if (currentVehicleChoiceUseCase == null) {
       currentVehicleChoiceUseCase = new VehicleChoiceUseCaseImpl(
-          errorReporter,
           repositoryComponent.getSelectedVehiclesAndOptionsGateway(),
           vehicleChoiceSharer
       );
@@ -633,7 +605,6 @@ class InteractorComponentImpl implements InteractorComponent {
   public VehicleOptionsUseCase getVehicleOptionsUseCase() {
     if (vehicleOptionsUseCase == null) {
       vehicleOptionsUseCase = new VehicleOptionsUseCaseImpl(
-          errorReporter,
           repositoryComponent.getVehicleOptionsGateway(),
           vehicleChoiceSharer,
           repositoryComponent.getLastUsedVehicleGateway(),
@@ -648,7 +619,6 @@ class InteractorComponentImpl implements InteractorComponent {
   public VehicleOptionsUseCase getCurrentVehicleOptionsUseCase() {
     if (currentVehicleOptionsUseCase == null) {
       currentVehicleOptionsUseCase = new VehicleOptionsUseCaseImpl(
-          errorReporter,
           repositoryComponent.getCurrentVehicleOptionsGateway(),
           vehicleChoiceSharer,
           repositoryComponent.getLastUsedVehicleGateway(),
@@ -663,7 +633,6 @@ class InteractorComponentImpl implements InteractorComponent {
   public VehiclesAndOptionsUseCase getVehiclesAndOptionsUseCase() {
     if (vehiclesAndOptionsUseCase == null) {
       vehiclesAndOptionsUseCase = new VehiclesAndOptionsUseCaseImpl(
-          errorReporter,
           repositoryComponent.getVehiclesAndOptionsGateway(),
           vehicleChoiceSharer,
           repositoryComponent.getLastUsedVehicleGateway()
@@ -677,7 +646,6 @@ class InteractorComponentImpl implements InteractorComponent {
   public VehiclesAndOptionsUseCase getSelectedVehiclesAndOptionsUseCase() {
     if (selectedVehiclesAndOptionsUseCase == null) {
       selectedVehiclesAndOptionsUseCase = new VehiclesAndOptionsUseCaseImpl(
-          errorReporter,
           repositoryComponent.getSelectedVehiclesAndOptionsGateway(),
           vehicleChoiceSharer,
           repositoryComponent.getLastUsedVehicleGateway()
@@ -734,7 +702,6 @@ class InteractorComponentImpl implements InteractorComponent {
   private OrderUseCase getCancelledOrderUseCase() {
     if (cancelledOrderUseCase == null) {
       cancelledOrderUseCase = new CancelledOrderUseCaseImpl(
-          errorReporter,
           repositoryComponent.getCancelledOrderGateway()
       );
     }
@@ -750,7 +717,6 @@ class InteractorComponentImpl implements InteractorComponent {
   private OrderUseCaseImpl getPreOrderUseCaseImpl() {
     if (preOrderUseCaseImpl == null) {
       preOrderUseCaseImpl = new OrderUseCaseImpl(
-          errorReporter,
           repositoryComponent.getPreOrderGateway()
       );
     }
@@ -761,7 +727,6 @@ class InteractorComponentImpl implements InteractorComponent {
   private SelectedOrderUseCaseImpl getSelectedOrderUseCaseImpl() {
     if (selectedOrderUseCaseImpl == null) {
       selectedOrderUseCaseImpl = new SelectedOrderUseCaseImpl(
-          errorReporter,
           getPreOrdersSetUseCase()
       );
     }
@@ -772,7 +737,6 @@ class InteractorComponentImpl implements InteractorComponent {
   private UpcomingPreOrderUseCaseImpl getUpcomingPreOrderUseCaseImpl() {
     if (upcomingPreOrderUseCase == null) {
       upcomingPreOrderUseCase = new UpcomingPreOrderUseCaseImpl(
-          errorReporter,
           repositoryComponent.getUpcomingPreOrderGateway(),
           getPreOrdersSetUseCase()
       );

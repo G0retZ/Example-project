@@ -147,7 +147,7 @@ public class VehiclesAndOptionsGatewayTest {
     ))));
 
     // Действие:
-    gateway.getExecutorVehicles().test();
+    gateway.getExecutorVehicles().test().isDisposed();
 
     // Результат:
     verify(vehicleMapper, times(3)).map(new ApiVehicle());
@@ -174,7 +174,7 @@ public class VehiclesAndOptionsGatewayTest {
     ))));
 
     // Действие:
-    gateway.getExecutorVehicles().test();
+    gateway.getExecutorVehicles().test().isDisposed();
 
     // Результат:
     verify(vehicleMapper, only()).map(new ApiVehicle());
@@ -201,7 +201,7 @@ public class VehiclesAndOptionsGatewayTest {
     ))));
 
     // Действие:
-    gateway.getExecutorOptions().test();
+    gateway.getExecutorOptions().test().isDisposed();
 
     // Результат:
     verify(apiOptionMapper, times(3)).map(new ApiOptionItem());
@@ -228,7 +228,7 @@ public class VehiclesAndOptionsGatewayTest {
     ))));
 
     // Действие:
-    gateway.getExecutorOptions().test();
+    gateway.getExecutorOptions().test().isDisposed();
 
     // Результат:
     verify(apiOptionMapper, only()).map(new ApiOptionItem());
@@ -247,7 +247,7 @@ public class VehiclesAndOptionsGatewayTest {
     when(api.getOptionsForOnline()).thenReturn(Single.error(new NoNetworkException()));
 
     // Действие:
-    gateway.getExecutorVehicles().test();
+    gateway.getExecutorVehicles().test().isDisposed();
 
     // Результат:
     verify(errorMapper, only()).map(throwableCaptor.capture());
@@ -265,7 +265,7 @@ public class VehiclesAndOptionsGatewayTest {
     when(api.getOptionsForOnline()).thenReturn(Single.error(new NoNetworkException()));
 
     // Действие:
-    gateway.getExecutorOptions().test();
+    gateway.getExecutorOptions().test().isDisposed();
 
     // Результат:
     verify(errorMapper, only()).map(throwableCaptor.capture());
@@ -379,8 +379,7 @@ public class VehiclesAndOptionsGatewayTest {
     ))));
 
     // Действие:
-    TestObserver<List<Vehicle>> testObserver = gateway.getExecutorVehicles()
-        .test();
+    TestObserver<List<Vehicle>> testObserver = gateway.getExecutorVehicles().test();
 
     // Результат:
     testObserver.assertComplete();
@@ -409,8 +408,7 @@ public class VehiclesAndOptionsGatewayTest {
     ))));
 
     // Действие:
-    TestObserver<List<Option>> testObserver = gateway.getExecutorOptions()
-        .test();
+    TestObserver<List<Option>> testObserver = gateway.getExecutorOptions().test();
 
     // Результат:
     testObserver.assertComplete();

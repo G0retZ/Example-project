@@ -1,10 +1,11 @@
 package com.cargopull.executor_driver.presentation.services;
 
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.MutableLiveData;
-import android.arch.lifecycle.ViewModel;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.ViewModel;
 import com.cargopull.executor_driver.R;
+import com.cargopull.executor_driver.backend.analytics.ErrorReporter;
 import com.cargopull.executor_driver.entity.EmptyListException;
 import com.cargopull.executor_driver.entity.Service;
 import com.cargopull.executor_driver.interactor.services.ServicesUseCase;
@@ -18,6 +19,9 @@ import javax.inject.Inject;
 
 public class ServicesViewModelImpl extends ViewModel implements ServicesViewModel {
 
+  @NonNull
+  private final ErrorReporter errorReporter;
+  @NonNull
   private final ServicesUseCase servicesUseCase;
   @NonNull
   private final MutableLiveData<ViewState<ServicesViewActions>> viewStateLiveData;
@@ -31,9 +35,11 @@ public class ServicesViewModelImpl extends ViewModel implements ServicesViewMode
   private Disposable setServicesDisposable = EmptyDisposable.INSTANCE;
 
   @Inject
-  public ServicesViewModelImpl(ServicesUseCase servicesUseCase,
+  public ServicesViewModelImpl(@NonNull ErrorReporter errorReporter,
+      @NonNull ServicesUseCase servicesUseCase,
       @NonNull ServicesSliderViewModel servicesSliderViewModel,
       @NonNull ServicesListItems servicesListItems) {
+    this.errorReporter = errorReporter;
     this.servicesUseCase = servicesUseCase;
     this.servicesSliderViewModel = servicesSliderViewModel;
     this.servicesListItems = servicesListItems;
@@ -70,6 +76,9 @@ public class ServicesViewModelImpl extends ViewModel implements ServicesViewMode
             () -> {
             },
             throwable -> {
+              if (throwable instanceof EmptyListException) {
+                errorReporter.reportError(throwable);
+              }
               ServicesViewStateResolvableError servicesViewStateError;
               if (throwable instanceof EmptyListException) {
                 servicesViewStateError = new ServicesViewStateResolvableError(
@@ -130,6 +139,9 @@ public class ServicesViewModelImpl extends ViewModel implements ServicesViewMode
               }
             },
             throwable -> {
+              if (throwable instanceof EmptyListException) {
+                errorReporter.reportError(throwable);
+              }
               ServicesViewStateError servicesViewStateError;
               if (throwable instanceof EmptyListException) {
                 servicesViewStateError = new ServicesViewStateError(R.string.no_services_available);

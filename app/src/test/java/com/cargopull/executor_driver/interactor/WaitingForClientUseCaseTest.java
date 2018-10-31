@@ -40,7 +40,7 @@ public class WaitingForClientUseCaseTest {
   @Test
   public void askGatewayToStartOrder() {
     // Действие:
-    useCase.startTheOrder().test();
+    useCase.startTheOrder().test().isDisposed();
 
     // Результат:
     verify(gateway, only()).startTheOrder();

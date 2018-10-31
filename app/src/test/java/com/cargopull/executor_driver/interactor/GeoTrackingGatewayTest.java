@@ -43,7 +43,7 @@ public class GeoTrackingGatewayTest {
   @Test
   public void askStompClientToSendMessage() {
     // Действие:
-    gateway.sendGeoLocation(new GeoLocation(1, 2, 3)).test();
+    gateway.sendGeoLocation(new GeoLocation(1, 2, 3)).test().isDisposed();
 
     // Результат:
     verify(stompClient, only())
@@ -61,8 +61,7 @@ public class GeoTrackingGatewayTest {
     when(stompClient.send(anyString(), anyString())).thenReturn(Completable.complete());
 
     // Действие:
-    TestObserver<Void> testObserver =
-        gateway.sendGeoLocation(new GeoLocation(1, 2, 3)).test();
+    TestObserver<Void> testObserver = gateway.sendGeoLocation(new GeoLocation(1, 2, 3)).test();
 
     // Результат:
     testObserver.assertComplete();
@@ -78,8 +77,7 @@ public class GeoTrackingGatewayTest {
         .thenReturn(Completable.error(new IllegalArgumentException()));
 
     // Действие:
-    TestObserver<Void> testObserver =
-        gateway.sendGeoLocation(new GeoLocation(1, 2, 3)).test();
+    TestObserver<Void> testObserver = gateway.sendGeoLocation(new GeoLocation(1, 2, 3)).test();
 
     // Результат:
     testObserver.assertError(IllegalArgumentException.class);

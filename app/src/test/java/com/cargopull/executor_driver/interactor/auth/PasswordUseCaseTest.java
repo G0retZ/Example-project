@@ -65,14 +65,14 @@ public class PasswordUseCaseTest {
     when(loginReceiver.get()).thenReturn(Observable.just(""));
 
     // Действие:
-    useCase.authorize("passwor", Completable.complete()).test();
-    useCase.authorize("password", Completable.never()).test();
-    useCase.authorize("password", Completable.complete()).test();
+    useCase.authorize("passwor", Completable.complete()).test().isDisposed();
+    useCase.authorize("password", Completable.never()).test().isDisposed();
+    useCase.authorize("password", Completable.complete()).test().isDisposed();
     when(gateway.authorize(any(LoginData.class)))
         .thenReturn(Completable.error(new NoNetworkException()));
-    useCase.authorize("password", Completable.complete()).test();
+    useCase.authorize("password", Completable.complete()).test().isDisposed();
     when(gateway.authorize(any(LoginData.class))).thenReturn(Completable.complete());
-    useCase.authorize("password", Completable.complete()).test();
+    useCase.authorize("password", Completable.complete()).test().isDisposed();
 
     // Результат:
     verify(loginReceiver, times(5)).get();
@@ -91,7 +91,7 @@ public class PasswordUseCaseTest {
     when(loginReceiver.get()).thenReturn(Observable.just(""));
 
     // Действие:
-    useCase.authorize("", Completable.complete()).test();
+    useCase.authorize("", Completable.complete()).test().isDisposed();
 
     // Результат:
     verify(passwordValidator, only()).validate("");
@@ -108,8 +108,7 @@ public class PasswordUseCaseTest {
     when(loginReceiver.get()).thenReturn(Observable.just(""));
 
     // Действие:
-    TestObserver<Void> testObserver =
-        useCase.authorize("", Completable.complete()).test();
+    TestObserver<Void> testObserver = useCase.authorize("", Completable.complete()).test();
 
     // Результат:
     testObserver.assertError(ValidationException.class);
@@ -121,8 +120,7 @@ public class PasswordUseCaseTest {
   @Test
   public void answerSuccessIfPasswordValid() {
     // Действие:
-    TestObserver<Void> testObserver =
-        useCase.authorize("password", Completable.complete()).test();
+    TestObserver<Void> testObserver = useCase.authorize("password", Completable.complete()).test();
 
     // Результат:
     testObserver.assertNoErrors();
@@ -138,7 +136,7 @@ public class PasswordUseCaseTest {
   @Test
   public void doNotAskGatewayForAuth() {
     // Действие:
-    useCase.authorize("passwor", Completable.complete()).test();
+    useCase.authorize("passwor", Completable.complete()).test().isDisposed();
 
     // Результат:
     verifyZeroInteractions(gateway);
@@ -151,7 +149,7 @@ public class PasswordUseCaseTest {
   @Test
   public void doNotAskGatewayForAuthIfAfterValidationNotComplete() {
     // Действие:
-    useCase.authorize("password", Completable.never()).test();
+    useCase.authorize("password", Completable.never()).test().isDisposed();
 
     // Результат:
     verifyZeroInteractions(gateway);
@@ -164,7 +162,7 @@ public class PasswordUseCaseTest {
   @Test
   public void doNotAskGatewayForAuthIfAfterValidationFailed() {
     // Действие:
-    useCase.authorize("password", Completable.error(new Exception())).test();
+    useCase.authorize("password", Completable.error(new Exception())).test().isDisposed();
 
     // Результат:
     verifyZeroInteractions(gateway);
@@ -181,7 +179,7 @@ public class PasswordUseCaseTest {
     useCase = new PasswordUseCaseImpl(gateway, loginReceiver, passwordValidator);
 
     // Действие:
-    useCase.authorize("password", Completable.complete()).test();
+    useCase.authorize("password", Completable.complete()).test().isDisposed();
 
     // Результат:
     verify(gateway, only()).authorize(new LoginData("login", "password"));
@@ -200,8 +198,7 @@ public class PasswordUseCaseTest {
         .thenReturn(Completable.error(new NoNetworkException()));
 
     // Действие:
-    TestObserver<Void> testObserver =
-        useCase.authorize("password", Completable.complete()).test();
+    TestObserver<Void> testObserver = useCase.authorize("password", Completable.complete()).test();
 
     // Результат:
     testObserver.assertNotComplete();
@@ -235,8 +232,7 @@ public class PasswordUseCaseTest {
     when(gateway.authorize(any(LoginData.class))).thenReturn(Completable.complete());
 
     // Действие:
-    TestObserver<Void> testObserver =
-        useCase.authorize("password", Completable.complete()).test();
+    TestObserver<Void> testObserver = useCase.authorize("password", Completable.complete()).test();
 
     // Результат:
     testObserver.assertComplete();

@@ -5,11 +5,13 @@ import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
-import android.arch.core.executor.testing.InstantTaskExecutorRule;
-import android.arch.lifecycle.Observer;
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
+import androidx.lifecycle.Observer;
 import com.cargopull.executor_driver.ViewModelThreadTestRule;
+import com.cargopull.executor_driver.backend.analytics.ErrorReporter;
 import com.cargopull.executor_driver.backend.web.NoNetworkException;
 import com.cargopull.executor_driver.entity.DriverBlockedException;
 import com.cargopull.executor_driver.entity.EmptyListException;
@@ -21,6 +23,8 @@ import io.reactivex.plugins.RxJavaPlugins;
 import io.reactivex.schedulers.TestScheduler;
 import java.util.NoSuchElementException;
 import java.util.concurrent.TimeUnit;
+import okhttp3.MediaType;
+import okhttp3.ResponseBody;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
@@ -31,6 +35,8 @@ import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
+import retrofit2.HttpException;
+import retrofit2.Response;
 
 @RunWith(MockitoJUnitRunner.class)
 public class OnlineButtonViewModelTest {
@@ -41,6 +47,8 @@ public class OnlineButtonViewModelTest {
   public TestRule rule = new InstantTaskExecutorRule();
   private OnlineButtonViewModel viewModel;
   private TestScheduler testScheduler;
+  @Mock
+  private ErrorReporter errorReporter;
   @Mock
   private VehiclesAndOptionsUseCase vehiclesAndOptionsUseCase;
   @Mock
@@ -53,7 +61,92 @@ public class OnlineButtonViewModelTest {
     testScheduler = new TestScheduler();
     RxJavaPlugins.setComputationSchedulerHandler(scheduler -> testScheduler);
     when(vehiclesAndOptionsUseCase.loadVehiclesAndOptions()).thenReturn(Completable.never());
-    viewModel = new OnlineButtonViewModelImpl(vehiclesAndOptionsUseCase);
+    viewModel = new OnlineButtonViewModelImpl(errorReporter, vehiclesAndOptionsUseCase);
+  }
+
+  /* Проверяем отправку ошибок в репортер */
+
+  /**
+   * Не должен отправлять сетевую ошибку.
+   */
+  @Test
+  public void doNotReportNetworkError() {
+    // Дано:
+    when(vehiclesAndOptionsUseCase.loadVehiclesAndOptions()).thenReturn(Completable.error(
+        new HttpException(
+            Response.error(404, ResponseBody.create(MediaType.get("applocation/json"), ""))
+        )
+    ));
+
+    // Действие:
+    viewModel.goOnline();
+
+    // Результат:
+    verifyZeroInteractions(errorReporter);
+  }
+
+  /**
+   * Не должен отправлять ошибку сети.
+   */
+  @Test
+  public void doNotReportNoNetworkError() {
+    // Дано:
+    when(vehiclesAndOptionsUseCase.loadVehiclesAndOptions())
+        .thenReturn(Completable.error(new NoNetworkException()));
+
+    // Действие:
+    viewModel.goOnline();
+
+    // Результат:
+    verify(errorReporter, only()).reportError(any(NoNetworkException.class));
+  }
+
+  /**
+   * Должен отправить ошибку блокировки.
+   */
+  @Test
+  public void reportDriverBlockedError() {
+    // Дано:
+    when(vehiclesAndOptionsUseCase.loadVehiclesAndOptions())
+        .thenReturn(Completable.error(new DriverBlockedException()));
+
+    // Действие:
+    viewModel.goOnline();
+
+    // Результат:
+    verify(errorReporter, only()).reportError(any(DriverBlockedException.class));
+  }
+
+  /**
+   * Должен отправить ошибку отсуствствия доступных ТС.
+   */
+  @Test
+  public void reportNoVehiclesAvailableError() {
+    // Дано:
+    when(vehiclesAndOptionsUseCase.loadVehiclesAndOptions())
+        .thenReturn(Completable.error(new EmptyListException()));
+
+    // Действие:
+    viewModel.goOnline();
+
+    // Результат:
+    verify(errorReporter, only()).reportError(any(EmptyListException.class));
+  }
+
+  /**
+   * Должен отправить ошибку отсуствствия свободных ТС.
+   */
+  @Test
+  public void reportNoFreeVehiclesError() {
+    // Дано:
+    when(vehiclesAndOptionsUseCase.loadVehiclesAndOptions())
+        .thenReturn(Completable.error(new NoSuchElementException()));
+
+    // Действие:
+    viewModel.goOnline();
+
+    // Результат:
+    verify(errorReporter, only()).reportError(any(NoSuchElementException.class));
   }
 
   /* Тетсируем работу с юзкейсом выхода на линию. */

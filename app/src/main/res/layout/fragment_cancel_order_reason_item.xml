@@ -6,7 +6,6 @@
   android:layout_height="56dp"
   android:paddingStart="24dp"
   android:paddingEnd="24dp"
-  android:background="?selectableItemBackground"
   android:gravity="center_vertical"
   android:text="@string/cancel_reason"
-  android:textAppearance="@style/TextAppearance.AppCompat.Subhead"/>
+  android:textAppearance="@style/TextAppearance.AppTheme.SubTitle.Touchable"/>

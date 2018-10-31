@@ -1,9 +1,10 @@
 package com.cargopull.executor_driver.presentation.geolocation;
 
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.MutableLiveData;
-import android.arch.lifecycle.ViewModel;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.ViewModel;
+import com.cargopull.executor_driver.backend.analytics.ErrorReporter;
 import com.cargopull.executor_driver.interactor.GeoLocationUseCase;
 import com.cargopull.executor_driver.presentation.CommonNavigate;
 import com.cargopull.executor_driver.presentation.SingleLiveEvent;
@@ -16,6 +17,8 @@ import javax.inject.Inject;
 public class GeoLocationViewModelImpl extends ViewModel implements GeoLocationViewModel {
 
   @NonNull
+  private final ErrorReporter errorReporter;
+  @NonNull
   private final GeoLocationUseCase geoLocationUseCase;
 
   @NonNull
@@ -26,7 +29,9 @@ public class GeoLocationViewModelImpl extends ViewModel implements GeoLocationVi
   private Disposable disposable = EmptyDisposable.INSTANCE;
 
   @Inject
-  public GeoLocationViewModelImpl(@NonNull GeoLocationUseCase geoLocationUseCase) {
+  public GeoLocationViewModelImpl(@NonNull ErrorReporter errorReporter,
+      @NonNull GeoLocationUseCase geoLocationUseCase) {
+    this.errorReporter = errorReporter;
     this.geoLocationUseCase = geoLocationUseCase;
     viewStateLiveData = new MutableLiveData<>();
     navigateLiveData = new SingleLiveEvent<>();
@@ -55,8 +60,9 @@ public class GeoLocationViewModelImpl extends ViewModel implements GeoLocationVi
             location -> viewStateLiveData
                 .postValue(new GeoLocationViewState(location)),
             throwable -> {
+              errorReporter.reportError(throwable);
               if (throwable instanceof SecurityException) {
-                navigateLiveData.postValue(GeoLocationNavigate.RESOLVE_GEO_PROBLEM);
+                navigateLiveData.postValue(GeoLocationNavigate.RESOLVE_GEO_PERMISSIONS);
               } else if (!(throwable instanceof IllegalStateException)) {
                 navigateLiveData.postValue(CommonNavigate.SERVER_DATA_ERROR);
               }

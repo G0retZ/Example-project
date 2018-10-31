@@ -8,14 +8,16 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
-import android.arch.core.executor.testing.InstantTaskExecutorRule;
-import android.arch.lifecycle.Observer;
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
+import androidx.lifecycle.Observer;
 import com.cargopull.executor_driver.R;
 import com.cargopull.executor_driver.ViewModelThreadTestRule;
+import com.cargopull.executor_driver.backend.analytics.ErrorReporter;
 import com.cargopull.executor_driver.backend.web.NoNetworkException;
 import com.cargopull.executor_driver.entity.Option;
 import com.cargopull.executor_driver.entity.OptionBoolean;
 import com.cargopull.executor_driver.entity.OptionNumeric;
+import com.cargopull.executor_driver.gateway.DataMappingException;
 import com.cargopull.executor_driver.interactor.vehicle.VehicleOptionsUseCase;
 import com.cargopull.executor_driver.presentation.ViewState;
 import io.reactivex.Completable;
@@ -45,6 +47,8 @@ public class VehicleOptionsViewModelTest {
   public TestRule rule = new InstantTaskExecutorRule();
   private VehicleOptionsViewModel viewModel;
   @Mock
+  private ErrorReporter errorReporter;
+  @Mock
   private VehicleOptionsUseCase vehicleOptionsUseCase;
 
   @Mock
@@ -64,7 +68,123 @@ public class VehicleOptionsViewModelTest {
     when(vehicleOptionsUseCase.getDriverOptions()).thenReturn(singleSubject);
     when(vehicleOptionsUseCase.setSelectedVehicleAndOptions(anyList(), anyList()))
         .thenReturn(Completable.never());
-    viewModel = new VehicleOptionsViewModelImpl(vehicleOptionsUseCase);
+    viewModel = new VehicleOptionsViewModelImpl(errorReporter, vehicleOptionsUseCase);
+  }
+
+  /* Проверяем отправку ошибок в репортер */
+
+  /**
+   * Должет отправить ошибку преобразования данных ТС.
+   */
+  @Test
+  public void reportVehicleDataMappingError() {
+    // Действие:
+    publishSubject.onError(new DataMappingException());
+
+    // Результат:
+    verify(errorReporter, only()).reportError(any(DataMappingException.class));
+  }
+
+  /**
+   * Должет отправить ошибку преобразования данных исполнителя.
+   */
+  @Test
+  public void reportDriverDataMappingError() {
+    // Действие:
+    singleSubject.onError(new DataMappingException());
+
+    // Результат:
+    verify(errorReporter, only()).reportError(any(DataMappingException.class));
+  }
+
+  /**
+   * Не должет отправлять ошибку данных ТС.
+   */
+  @Test
+  public void doNotReportVehicleDataError() {
+    // Действие:
+    publishSubject.onError(new Exception());
+
+    // Результат:
+    verifyZeroInteractions(errorReporter);
+  }
+
+  /**
+   * Не должет отправлять ошибку данных исполнителя.
+   */
+  @Test
+  public void doNotReportDriverDataError() {
+    // Действие:
+    singleSubject.onError(new Exception());
+
+    // Результат:
+    verifyZeroInteractions(errorReporter);
+  }
+
+  /**
+   * Должет отправить ошибку неверных данных.
+   */
+  @Test
+  public void reportStateError() {
+    // Дано:
+    when(vehicleOptionsUseCase.setSelectedVehicleAndOptions(anyList(), anyList()))
+        .thenReturn(Completable.error(IllegalStateException::new));
+
+    // Действие:
+    viewModel.setOptions(new VehicleOptionsListItems(Arrays.asList(
+        new VehicleOptionsListItem<>(new OptionBoolean(1, "name", "description", true, false)),
+        new VehicleOptionsListItem<>(new OptionBoolean(2, "emacs", "description", true, true))
+    ), Arrays.asList(
+        new VehicleOptionsListItem<>(new OptionNumeric(3, "names", "description", true, 5, 0, 10)),
+        new VehicleOptionsListItem<>(new OptionNumeric(4, "nam", "description", false, 1, -1, 2))
+    )));
+
+    // Результат:
+    verify(errorReporter, only()).reportError(any(IllegalStateException.class));
+  }
+
+  /**
+   * Не должен отправлять ошибку сети.
+   */
+  @Test
+  public void doNotReportNoNetworkError() {
+    // Дано:
+    when(vehicleOptionsUseCase.setSelectedVehicleAndOptions(anyList(), anyList()))
+        .thenReturn(Completable.error(NoNetworkException::new));
+
+    // Действие:
+    viewModel.setOptions(new VehicleOptionsListItems(Arrays.asList(
+        new VehicleOptionsListItem<>(new OptionBoolean(1, "name", "description", true, false)),
+        new VehicleOptionsListItem<>(new OptionBoolean(2, "emacs", "description", true, true))
+    ), Arrays.asList(
+        new VehicleOptionsListItem<>(new OptionNumeric(3, "names", "description", true, 5, 0, 10)),
+        new VehicleOptionsListItem<>(new OptionNumeric(4, "nam", "description", false, 1, -1, 2))
+    )));
+
+    // Результат:
+    verifyZeroInteractions(errorReporter);
+  }
+
+  /**
+   * Должен отправить ошибку аргумента.
+   */
+  @Test
+  public void reportArgumentError() {
+    // Дано:
+    when(vehicleOptionsUseCase.setSelectedVehicleAndOptions(anyList(), anyList()))
+        .thenReturn(Completable.error(IllegalArgumentException::new));
+
+    // Действие:
+    viewModel.setOptions(new VehicleOptionsListItems(Arrays.asList(
+        new VehicleOptionsListItem<>(new OptionBoolean(1, "name", "description", true, false)),
+        new VehicleOptionsListItem<>(new OptionBoolean(2, "emacs", "description", true, true))
+    ), Arrays.asList(
+        new VehicleOptionsListItem<>(new OptionNumeric(3, "names", "description", true, 5, 0, 10)),
+        new VehicleOptionsListItem<>(new OptionNumeric(4, "nam", "description", false, 1, -1, 2))
+    )));
+
+    // Результат:
+    verify(errorReporter, only()).reportError(any(IllegalArgumentException.class));
   }
 
   /* Тетсируем работу с юзкейсом выбора опций ТС. */
@@ -118,40 +238,22 @@ public class VehicleOptionsViewModelTest {
     // Действие:
     viewModel.setOptions(new VehicleOptionsListItems(
         Collections.singletonList(
-            new VehicleOptionsListItem<>(
-                new OptionBoolean(1, "name", "description", true, false)
-            )
+            new VehicleOptionsListItem<>(new OptionBoolean(1, "name", "description", true, false))
         ), Collections.singletonList(
-        new VehicleOptionsListItem<>(
-            new OptionNumeric(3, "names", "description", true, 5, 0, 10)
-        )
+        new VehicleOptionsListItem<>(new OptionNumeric(3, "names", "description", true, 5, 0, 10))
     )));
     viewModel.setOptions(new VehicleOptionsListItems(Arrays.asList(
-        new VehicleOptionsListItem<>(
-            new OptionBoolean(1, "name", "description", true, false)
-        ),
-        new VehicleOptionsListItem<>(
-            new OptionBoolean(2, "emacs", "description", true, true)
-        )
+        new VehicleOptionsListItem<>(new OptionBoolean(1, "name", "description", true, false)),
+        new VehicleOptionsListItem<>(new OptionBoolean(2, "emacs", "description", true, true))
     ), Collections.singletonList(
-        new VehicleOptionsListItem<>(
-            new OptionNumeric(3, "names", "description", true, 5, 0, 10)
-        )
+        new VehicleOptionsListItem<>(new OptionNumeric(3, "names", "description", true, 5, 0, 10))
     )));
     viewModel.setOptions(new VehicleOptionsListItems(Arrays.asList(
-        new VehicleOptionsListItem<>(
-            new OptionBoolean(1, "name", "description", true, false)
-        ),
-        new VehicleOptionsListItem<>(
-            new OptionBoolean(2, "emacs", "description", true, true)
-        )
+        new VehicleOptionsListItem<>(new OptionBoolean(1, "name", "description", true, false)),
+        new VehicleOptionsListItem<>(new OptionBoolean(2, "emacs", "description", true, true))
     ), Arrays.asList(
-        new VehicleOptionsListItem<>(
-            new OptionNumeric(3, "names", "description", true, 5, 0, 10)
-        ),
-        new VehicleOptionsListItem<>(
-            new OptionNumeric(4, "nam", "description", false, 1, -1, 2)
-        )
+        new VehicleOptionsListItem<>(new OptionNumeric(3, "names", "description", true, 5, 0, 10)),
+        new VehicleOptionsListItem<>(new OptionNumeric(4, "nam", "description", false, 1, -1, 2))
     )));
 
     // Результат:
@@ -186,40 +288,22 @@ public class VehicleOptionsViewModelTest {
     // Действие:
     viewModel.setOptions(new VehicleOptionsListItems(
         Collections.singletonList(
-            new VehicleOptionsListItem<>(
-                new OptionBoolean(1, "name", "description", true, false)
-            )
+            new VehicleOptionsListItem<>(new OptionBoolean(1, "name", "description", true, false))
         ), Collections.singletonList(
-        new VehicleOptionsListItem<>(
-            new OptionNumeric(3, "names", "description", true, 5, 0, 10)
-        )
+        new VehicleOptionsListItem<>(new OptionNumeric(3, "names", "description", true, 5, 0, 10))
     )));
     viewModel.setOptions(new VehicleOptionsListItems(Arrays.asList(
-        new VehicleOptionsListItem<>(
-            new OptionBoolean(1, "name", "description", true, false)
-        ),
-        new VehicleOptionsListItem<>(
-            new OptionBoolean(2, "emacs", "description", true, true)
-        )
+        new VehicleOptionsListItem<>(new OptionBoolean(1, "name", "description", true, false)),
+        new VehicleOptionsListItem<>(new OptionBoolean(2, "emacs", "description", true, true))
     ), Collections.singletonList(
-        new VehicleOptionsListItem<>(
-            new OptionNumeric(3, "names", "description", true, 5, 0, 10)
-        )
+        new VehicleOptionsListItem<>(new OptionNumeric(3, "names", "description", true, 5, 0, 10))
     )));
     viewModel.setOptions(new VehicleOptionsListItems(Arrays.asList(
-        new VehicleOptionsListItem<>(
-            new OptionBoolean(1, "name", "description", true, false)
-        ),
-        new VehicleOptionsListItem<>(
-            new OptionBoolean(2, "emacs", "description", true, true)
-        )
+        new VehicleOptionsListItem<>(new OptionBoolean(1, "name", "description", true, false)),
+        new VehicleOptionsListItem<>(new OptionBoolean(2, "emacs", "description", true, true))
     ), Arrays.asList(
-        new VehicleOptionsListItem<>(
-            new OptionNumeric(3, "names", "description", true, 5, 0, 10)
-        ),
-        new VehicleOptionsListItem<>(
-            new OptionNumeric(4, "nam", "description", false, 1, -1, 2)
-        )
+        new VehicleOptionsListItem<>(new OptionNumeric(3, "names", "description", true, 5, 0, 10)),
+        new VehicleOptionsListItem<>(new OptionNumeric(4, "nam", "description", false, 1, -1, 2))
     )));
 
     // Результат:
@@ -282,33 +366,20 @@ public class VehicleOptionsViewModelTest {
     inOrder.verify(viewStateObserver).onChanged(any(VehicleOptionsViewStateInitial.class));
     inOrder.verify(viewStateObserver).onChanged(new VehicleOptionsViewStateReady(
         new VehicleOptionsListItems(Arrays.asList(
-            new VehicleOptionsListItem<>(
-                new OptionBoolean(1, "name", "description", true, false)
-            ),
-            new VehicleOptionsListItem<>(
-                new OptionBoolean(2, "emacs", "descriptions", true, true)
-            )
+            new VehicleOptionsListItem<>(new OptionBoolean(1, "name", "description", true, false)),
+            new VehicleOptionsListItem<>(new OptionBoolean(2, "emacs", "descriptions", true, true))
         ), Arrays.asList(
-            new VehicleOptionsListItem<>(
-                new OptionNumeric(3, "names", "desc", true, 5, 0, 10)
-            ),
-            new VehicleOptionsListItem<>(
-                new OptionNumeric(4, "nam", "script", true, 1, -1, 2)
-            )
+            new VehicleOptionsListItem<>(new OptionNumeric(3, "names", "desc", true, 5, 0, 10)),
+            new VehicleOptionsListItem<>(new OptionNumeric(4, "nam", "script", true, 1, -1, 2))
         ))
     ));
     inOrder.verify(viewStateObserver).onChanged(new VehicleOptionsViewStateReady(
         new VehicleOptionsListItems(Arrays.asList(
+            new VehicleOptionsListItem<>(new OptionBoolean(5, "name1", "description1", true, true)),
             new VehicleOptionsListItem<>(
-                new OptionBoolean(5, "name1", "description1", true, true)
-            ),
-            new VehicleOptionsListItem<>(
-                new OptionBoolean(6, "emacs1", "descriptions1", true, false)
-            )
+                new OptionBoolean(6, "emacs1", "descriptions1", true, false))
         ), Arrays.asList(
-            new VehicleOptionsListItem<>(
-                new OptionNumeric(3, "names", "desc", true, 5, 0, 10)
-            ),
+            new VehicleOptionsListItem<>(new OptionNumeric(3, "names", "desc", true, 5, 0, 10)),
             new VehicleOptionsListItem<>(
                 new OptionNumeric(4, "nam", "script", true, 1, -1, 2)
             )

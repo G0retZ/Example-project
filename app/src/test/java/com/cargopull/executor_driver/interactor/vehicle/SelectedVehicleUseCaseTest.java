@@ -36,7 +36,7 @@ public class SelectedVehicleUseCaseTest {
   @Test
   public void askVehicleDataSharerForVehicles() {
     // Действие:
-    useCase.getSelectedVehicle().test();
+    useCase.getSelectedVehicle().test().isDisposed();
 
     // Результат:
     verify(vehicleChoiceReceiver, only()).get();

@@ -4,9 +4,9 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.Resources;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.util.Log;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import com.cargopull.executor_driver.R;
 import com.cargopull.executor_driver.application.BaseActivity;
 import com.cargopull.executor_driver.entity.GeoLocation;
@@ -93,7 +93,7 @@ public class MapFragment extends SupportMapFragment implements OnMapReadyCallbac
     this.googleMap = googleMap;
     try {
       googleMap.setMapStyle(
-          MapStyleOptions.loadRawResourceStyle(baseActivity, R.raw.mapstyle_aubergine)
+          MapStyleOptions.loadRawResourceStyle(baseActivity, R.raw.map_style)
       );
     } catch (Resources.NotFoundException e) {
       e.printStackTrace();

@@ -70,8 +70,8 @@ public class OrderConfirmationUseCaseTest {
   @Test
   public void askOrderUseCaseForOrdersOnSendDecision() {
     // Действие:
-    useCase.sendDecision(true).test();
-    useCase.sendDecision(false).test();
+    useCase.sendDecision(true).test().isDisposed();
+    useCase.sendDecision(false).test().isDisposed();
 
     // Результат:
     verify(orderUseCase, times(2)).getOrders();
@@ -84,8 +84,8 @@ public class OrderConfirmationUseCaseTest {
   @Test
   public void askOrderUseCaseForOrdersOnGetTimeout() {
     // Действие:
-    useCase.getOrderDecisionTimeout().test();
-    useCase.getOrderDecisionTimeout().test();
+    useCase.getOrderDecisionTimeout().test().isDisposed();
+    useCase.getOrderDecisionTimeout().test().isDisposed();
 
     // Результат:
     verify(orderUseCase, times(2)).getOrders();
@@ -107,8 +107,8 @@ public class OrderConfirmationUseCaseTest {
         ordersUseCase);
 
     // Действие:
-    useCase.sendDecision(false).test();
-    useCase.sendDecision(true).test();
+    useCase.sendDecision(false).test().isDisposed();
+    useCase.sendDecision(true).test().isDisposed();
 
     // Результат:
     verifyZeroInteractions(orderDecisionUseCase);
@@ -124,8 +124,8 @@ public class OrderConfirmationUseCaseTest {
     when(orderConfirmationGateway.sendDecision(any(), anyBoolean())).thenReturn(Single.just(""));
 
     // Действие:
-    useCase.sendDecision(true).test();
-    useCase.sendDecision(false).test();
+    useCase.sendDecision(true).test().isDisposed();
+    useCase.sendDecision(false).test().isDisposed();
 
     // Результат:
     verify(orderDecisionUseCase, times(2)).setOrderOfferDecisionMade();
@@ -143,8 +143,8 @@ public class OrderConfirmationUseCaseTest {
     when(orderUseCase.getOrders()).thenReturn(Flowable.just(order).concatWith(Flowable.never()));
 
     // Действие:
-    useCase.sendDecision(true).test();
-    useCase.sendDecision(false).test();
+    useCase.sendDecision(true).test().isDisposed();
+    useCase.sendDecision(false).test().isDisposed();
 
     // Результат:
     verify(orderConfirmationGateway).sendDecision(order, true);
@@ -162,8 +162,8 @@ public class OrderConfirmationUseCaseTest {
         .thenReturn(Flowable.just(order, order2).concatWith(Flowable.never()));
 
     // Действие:
-    useCase.sendDecision(true).test();
-    useCase.sendDecision(false).test();
+    useCase.sendDecision(true).test().isDisposed();
+    useCase.sendDecision(false).test().isDisposed();
 
     // Результат:
     verify(orderConfirmationGateway, times(2)).sendDecision(eq(order), anyBoolean());
@@ -183,8 +183,8 @@ public class OrderConfirmationUseCaseTest {
         .thenReturn(Single.<String>never().doOnDispose(action));
 
     // Действие:
-    useCase.sendDecision(true).test();
-    useCase.sendDecision(false).test();
+    useCase.sendDecision(true).test().isDisposed();
+    useCase.sendDecision(false).test().isDisposed();
 
     // Результат:
     inOrder.verify(orderConfirmationGateway).sendDecision(order, true);
@@ -207,8 +207,8 @@ public class OrderConfirmationUseCaseTest {
         .thenReturn(Single.<String>never().doOnDispose(action));
 
     // Действие:
-    useCase.sendDecision(true).test();
-    useCase.sendDecision(false).test();
+    useCase.sendDecision(true).test().isDisposed();
+    useCase.sendDecision(false).test().isDisposed();
 
     // Результат:
     inOrder.verify(orderConfirmationGateway).sendDecision(order, true);
@@ -233,8 +233,8 @@ public class OrderConfirmationUseCaseTest {
         orderDecisionUseCase, null);
 
     // Действие:
-    useCase.sendDecision(false).test();
-    useCase.sendDecision(true).test();
+    useCase.sendDecision(false).test().isDisposed();
+    useCase.sendDecision(true).test().isDisposed();
 
     // Результат:
     verifyZeroInteractions(ordersUseCase);
@@ -250,7 +250,7 @@ public class OrderConfirmationUseCaseTest {
     when(orderConfirmationGateway.sendDecision(order, false)).thenReturn(Single.just("success"));
 
     // Действие:
-    useCase.sendDecision(false).test();
+    useCase.sendDecision(false).test().isDisposed();
 
     // Результат:
     verify(ordersUseCase, only()).removeOrder(order);
@@ -266,7 +266,7 @@ public class OrderConfirmationUseCaseTest {
     when(orderConfirmationGateway.sendDecision(order, true)).thenReturn(Single.just("success"));
 
     // Действие:
-    useCase.sendDecision(true).test();
+    useCase.sendDecision(true).test().isDisposed();
 
     // Результат:
     verify(ordersUseCase, only()).addOrder(order);
@@ -282,7 +282,7 @@ public class OrderConfirmationUseCaseTest {
         .thenReturn(Flowable.just(order, order2).concatWith(Flowable.never()));
 
     // Действие:
-    useCase.sendDecision(true).test();
+    useCase.sendDecision(true).test().isDisposed();
 
     // Результат:
     verifyZeroInteractions(ordersUseCase);
@@ -298,7 +298,7 @@ public class OrderConfirmationUseCaseTest {
         Flowable.just(order).concatWith(Flowable.error(new OrderOfferExpiredException(""))));
 
     // Действие:
-    useCase.sendDecision(true).test();
+    useCase.sendDecision(true).test().isDisposed();
 
     // Результат:
     verifyZeroInteractions(ordersUseCase);

@@ -49,8 +49,8 @@ public class OrderConfirmationGatewayTest {
     when(order.getId()).thenReturn(7L);
 
     // Действие:
-    gateway.sendDecision(order, false).test();
-    gateway.sendDecision(order, true).test();
+    gateway.sendDecision(order, false).test().isDisposed();
+    gateway.sendDecision(order, true).test().isDisposed();
 
     // Результат:
     inOrder.verify(stompClient)

@@ -1,13 +1,13 @@
 package com.cargopull.executor_driver.view;
 
-import android.support.annotation.NonNull;
-import android.support.v7.recyclerview.extensions.ListAdapter;
-import android.support.v7.util.DiffUtil.ItemCallback;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.DiffUtil.ItemCallback;
+import androidx.recyclerview.widget.ListAdapter;
+import androidx.recyclerview.widget.RecyclerView;
 import com.cargopull.executor_driver.R;
 import com.cargopull.executor_driver.entity.Order;
 import com.cargopull.executor_driver.presentation.preorderslist.PreOrdersListItem;

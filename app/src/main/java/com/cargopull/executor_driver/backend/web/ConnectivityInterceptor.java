@@ -1,9 +1,7 @@
 package com.cargopull.executor_driver.backend.web;
 
-import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.support.annotation.NonNull;
 import java.io.IOException;
 import javax.inject.Inject;
 import okhttp3.Interceptor;
@@ -16,12 +14,11 @@ import okhttp3.Response;
  */
 public class ConnectivityInterceptor implements Interceptor {
 
-  @NonNull
-  private final Context context;
+  private final ConnectivityManager connectivityManager;
 
   @Inject
-  public ConnectivityInterceptor(@NonNull Context context) {
-    this.context = context;
+  public ConnectivityInterceptor(ConnectivityManager connectivityManager) {
+    this.connectivityManager = connectivityManager;
   }
 
   @Override
@@ -34,8 +31,6 @@ public class ConnectivityInterceptor implements Interceptor {
   }
 
   private boolean isOnline() {
-    ConnectivityManager connectivityManager = (ConnectivityManager)
-        context.getSystemService(Context.CONNECTIVITY_SERVICE);
     if (connectivityManager == null) {
       return false;
     }

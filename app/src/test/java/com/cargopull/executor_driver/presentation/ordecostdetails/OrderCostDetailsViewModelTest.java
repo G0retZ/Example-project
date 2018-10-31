@@ -6,9 +6,10 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
-import android.arch.core.executor.testing.InstantTaskExecutorRule;
-import android.arch.lifecycle.Observer;
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
+import androidx.lifecycle.Observer;
 import com.cargopull.executor_driver.ViewModelThreadTestRule;
+import com.cargopull.executor_driver.backend.analytics.ErrorReporter;
 import com.cargopull.executor_driver.entity.OrderCostDetails;
 import com.cargopull.executor_driver.gateway.DataMappingException;
 import com.cargopull.executor_driver.interactor.OrderCostDetailsUseCase;
@@ -36,6 +37,8 @@ public class OrderCostDetailsViewModelTest {
   public TestRule rule = new InstantTaskExecutorRule();
   private OrderCostDetailsViewModel viewModel;
   @Mock
+  private ErrorReporter errorReporter;
+  @Mock
   private OrderCostDetailsUseCase orderCostDetailsUseCase;
   @Mock
   private OrderCostDetails orderCostDetails;
@@ -55,7 +58,21 @@ public class OrderCostDetailsViewModelTest {
     publishSubject = PublishSubject.create();
     when(orderCostDetailsUseCase.getOrderCostDetails())
         .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
-    viewModel = new OrderCostDetailsViewModelImpl(orderCostDetailsUseCase);
+    viewModel = new OrderCostDetailsViewModelImpl(errorReporter, orderCostDetailsUseCase);
+  }
+
+  /* Проверяем отправку ошибок в репортер */
+
+  /**
+   * Должен отправить ошибку маппинга.
+   */
+  @Test
+  public void reportDataMappingError() {
+    // Действие:
+    publishSubject.onError(new DataMappingException());
+
+    // Результат:
+    verify(errorReporter, only()).reportError(any(DataMappingException.class));
   }
 
   /* Тетсируем работу с юзкейсом заказа. */

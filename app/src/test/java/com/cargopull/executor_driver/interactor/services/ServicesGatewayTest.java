@@ -56,7 +56,7 @@ public class ServicesGatewayTest {
   @Test
   public void askGatewayForSelectedServices() {
     // Действие:
-    gateway.getServices().test();
+    gateway.getServices().test().isDisposed();
 
     // Результат:
     verify(api).getMySelectedServices();
@@ -72,7 +72,7 @@ public class ServicesGatewayTest {
     when(api.getMySelectedServices()).thenReturn(Single.just("5,6"));
 
     // Действие:
-    gateway.getServices().test();
+    gateway.getServices().test().isDisposed();
 
     // Результат:
     verify(api).getMySelectedServices();
@@ -118,7 +118,7 @@ public class ServicesGatewayTest {
     )));
 
     // Действие:
-    gateway.getServices().test();
+    gateway.getServices().test().isDisposed();
 
     // Результат:
     verify(mapper).map(new ApiServiceItem(0, "n1", 100).setSelected(true));
@@ -144,7 +144,7 @@ public class ServicesGatewayTest {
     )));
 
     // Действие:
-    gateway.getServices().test();
+    gateway.getServices().test().isDisposed();
 
     // Результат:
     verify(mapper, only()).map(new ApiServiceItem(0, "n1", 100).setSelected(true));

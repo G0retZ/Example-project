@@ -1,6 +1,6 @@
 package com.cargopull.executor_driver.gateway;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 /**
  * Однонаправленный преобразователь данных из формы {@link F} в форму {@link T}.

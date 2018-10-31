@@ -1,9 +1,10 @@
 package com.cargopull.executor_driver.presentation.updatemessage;
 
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.MutableLiveData;
-import android.arch.lifecycle.ViewModel;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.ViewModel;
+import com.cargopull.executor_driver.backend.analytics.ErrorReporter;
 import com.cargopull.executor_driver.interactor.UpdateMessageUseCase;
 import com.cargopull.executor_driver.presentation.ViewState;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -15,6 +16,8 @@ public class UpdateMessageViewModelImpl extends ViewModel implements
     UpdateMessageViewModel {
 
   @NonNull
+  private final ErrorReporter errorReporter;
+  @NonNull
   private final UpdateMessageUseCase updateMessageUseCase;
   @NonNull
   private final MutableLiveData<ViewState<UpdateMessageViewActions>> messageLiveData;
@@ -22,7 +25,9 @@ public class UpdateMessageViewModelImpl extends ViewModel implements
   private Disposable disposable = EmptyDisposable.INSTANCE;
 
   @Inject
-  public UpdateMessageViewModelImpl(@NonNull UpdateMessageUseCase updateMessageUseCase) {
+  public UpdateMessageViewModelImpl(@NonNull ErrorReporter errorReporter,
+      @NonNull UpdateMessageUseCase updateMessageUseCase) {
+    this.errorReporter = errorReporter;
     this.updateMessageUseCase = updateMessageUseCase;
     messageLiveData = new MutableLiveData<>();
     loadUpdateMessages();
@@ -57,8 +62,7 @@ public class UpdateMessageViewModelImpl extends ViewModel implements
                 );
               }
             },
-            throwable -> {
-            }
+            errorReporter::reportError
         );
   }
 

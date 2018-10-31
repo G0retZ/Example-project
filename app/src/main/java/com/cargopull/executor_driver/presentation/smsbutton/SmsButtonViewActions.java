@@ -1,7 +1,7 @@
 package com.cargopull.executor_driver.presentation.smsbutton;
 
-import android.support.annotation.Nullable;
-import android.support.annotation.StringRes;
+import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
 
 /**
  * Действия для смены состояния вида кнопки отправки СМС с таймаутом.

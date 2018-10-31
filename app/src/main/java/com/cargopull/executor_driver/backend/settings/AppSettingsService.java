@@ -1,13 +1,28 @@
 package com.cargopull.executor_driver.backend.settings;
 
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 /**
  * Хранитель настроек.
  */
 
 public interface AppSettingsService {
+
+  /**
+   * Получить число.
+   *
+   * @param key - ключ
+   */
+  int getNumber(@NonNull String key);
+
+  /**
+   * Сохранить число.
+   *
+   * @param key - ключ
+   * @param number - само число
+   */
+  void saveNumber(@NonNull String key, int number);
 
   /**
    * Получить строковые данные.

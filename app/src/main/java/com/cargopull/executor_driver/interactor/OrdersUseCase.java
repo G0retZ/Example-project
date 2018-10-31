@@ -1,12 +1,12 @@
 package com.cargopull.executor_driver.interactor;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import com.cargopull.executor_driver.entity.Order;
 import io.reactivex.Flowable;
 import java.util.Set;
 
 /**
- * Юзкейс заказа. Слушает принятые заказы из гейтвея, а так же добавляет и удаляет заказы в список задач.
+ * Юзкейс принятых заказов. Слушает принятые заказы из гейтвея, а так же добавляет и удаляет заказы в список задач.
  */
 public interface OrdersUseCase {
 

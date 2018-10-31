@@ -12,8 +12,6 @@ import android.net.Uri;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -23,6 +21,8 @@ import android.view.animation.LinearInterpolator;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import com.cargopull.executor_driver.R;
 import com.cargopull.executor_driver.backend.vibro.ShakeItPlayer;
 import com.cargopull.executor_driver.di.AppComponent;
@@ -273,13 +273,12 @@ public class MovingToClientFragment extends BaseFragment implements MovingToClie
       if (VERSION.SDK_INT >= VERSION_CODES.M) {
         timerText.setTextColor(
             getResources()
-                .getColor(time < 0 ? R.color.colorError : android.R.color.primary_text_dark,
-                    null)
+                .getColor(time < 0 ? R.color.colorError : R.color.textColorPrimary, null)
         );
       } else {
         timerText.setTextColor(
             getResources()
-                .getColor(time < 0 ? R.color.colorError : android.R.color.primary_text_dark)
+                .getColor(time < 0 ? R.color.colorError : R.color.textColorPrimary)
         );
       }
       timerText.setText(

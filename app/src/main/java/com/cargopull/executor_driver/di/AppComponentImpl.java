@@ -1,40 +1,34 @@
 package com.cargopull.executor_driver.di;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
-import com.cargopull.executor_driver.application.AutoRouterImpl;
+import android.os.Build.VERSION;
+import android.os.Build.VERSION_CODES;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import com.cargopull.executor_driver.application.BaseActivity;
 import com.cargopull.executor_driver.application.FcmService;
 import com.cargopull.executor_driver.application.MainApplication;
 import com.cargopull.executor_driver.application.MenuActivity;
 import com.cargopull.executor_driver.application.MovingToClientActivity;
+import com.cargopull.executor_driver.application.NavigationMapper;
+import com.cargopull.executor_driver.application.NavigationMapperImpl;
+import com.cargopull.executor_driver.application.NightModeActivity;
 import com.cargopull.executor_driver.application.OnlineActivity;
 import com.cargopull.executor_driver.application.OnlineMenuActivity;
 import com.cargopull.executor_driver.application.OrderCostDetailsActivity;
 import com.cargopull.executor_driver.application.OrderFulfillmentActivity;
+import com.cargopull.executor_driver.application.PasswordActivity;
 import com.cargopull.executor_driver.application.PreOrdersActivity;
 import com.cargopull.executor_driver.application.WaitingForClientActivity;
-import com.cargopull.executor_driver.backend.geolocation.GeolocationCenter;
-import com.cargopull.executor_driver.backend.geolocation.GeolocationCenterImpl;
 import com.cargopull.executor_driver.backend.ringtone.SingleRingTonePlayer;
-import com.cargopull.executor_driver.backend.settings.AppPreferences;
 import com.cargopull.executor_driver.backend.settings.AppSettingsService;
 import com.cargopull.executor_driver.backend.vibro.NewPatternMapper;
 import com.cargopull.executor_driver.backend.vibro.OldPatternMapper;
+import com.cargopull.executor_driver.backend.vibro.OldSingleShakePlayer;
+import com.cargopull.executor_driver.backend.vibro.ShakeItPlayer;
 import com.cargopull.executor_driver.backend.vibro.SingleShakePlayer;
-import com.cargopull.executor_driver.backend.web.AuthorizationInterceptor;
-import com.cargopull.executor_driver.backend.web.ConnectivityInterceptor;
-import com.cargopull.executor_driver.backend.web.DeprecatedVersionInterceptor;
-import com.cargopull.executor_driver.backend.web.ReceiveTokenInterceptor;
-import com.cargopull.executor_driver.backend.web.SendTokenInterceptor;
-import com.cargopull.executor_driver.backend.web.SendVersionInterceptor;
-import com.cargopull.executor_driver.backend.web.ServerResponseInterceptor;
-import com.cargopull.executor_driver.backend.web.TokenKeeper;
 import com.cargopull.executor_driver.gateway.SmsCodeMapper;
-import com.cargopull.executor_driver.gateway.TokenKeeperImpl;
-import com.cargopull.executor_driver.interactor.auth.LoginSharer;
-import com.cargopull.executor_driver.utils.EventLogger;
-import com.cargopull.executor_driver.utils.EventLoggerImpl;
+import com.cargopull.executor_driver.utils.Consumer;
 import com.cargopull.executor_driver.utils.TimeUtils;
 import com.cargopull.executor_driver.utils.TimeUtilsImpl;
 import com.cargopull.executor_driver.view.BalanceFragment;
@@ -86,202 +80,221 @@ import com.cargopull.executor_driver.view.WaitingForClientRouteFragment;
 import com.cargopull.executor_driver.view.auth.LoginFragment;
 import com.cargopull.executor_driver.view.auth.PasswordFragment;
 import com.cargopull.executor_driver.view.auth.SmsReceiver;
-import com.google.firebase.analytics.FirebaseAnalytics;
 
 public class AppComponentImpl implements AppComponent {
 
-  @SuppressWarnings("FieldCanBeLocal")
   @NonNull
-  private final EventLogger eventLogger;
-  @NonNull
-  private final PresentationComponent presentationComponent;
-  @NonNull
-  private final AppSettingsService appSettingsService;
-  @NonNull
-  private final AutoRouterImpl autoRouter;
-  @NonNull
-  private final SingleRingTonePlayer singleRingTonePlayer;
-  @NonNull
-  private final SingleShakePlayer singleShakePlayer;
+  private final Context appContext;
+  @Nullable
+  private TimeUtils timeUtils;
+  @Nullable
+  private PresentationComponent presentationComponent;
+  @Nullable
+  private BackendComponent backendComponent;
+  @Nullable
+  private NavigationMapper navigationMapper;
+  @Nullable
+  private SingleRingTonePlayer singleRingTonePlayer;
+  @Nullable
+  private ShakeItPlayer shakeItPlayer;
 
   public AppComponentImpl(@NonNull Context appContext) {
-    appContext = appContext.getApplicationContext();
-    TimeUtils timeUtils = new TimeUtilsImpl();
-    appSettingsService = new AppPreferences(appContext);
-    TokenKeeper tokenKeeper = new TokenKeeperImpl(appSettingsService);
-    LoginSharer loginSharer = new LoginSharer(appSettingsService);
-    eventLogger = new EventLoggerImpl(loginSharer, FirebaseAnalytics.getInstance(appContext));
-    BackendComponent backendComponent = new BackendComponentImpl(
-        loginSharer,
-        appSettingsService,
-        new ConnectivityInterceptor(appContext),
-        new SendVersionInterceptor(),
-        new DeprecatedVersionInterceptor(),
-        new AuthorizationInterceptor(),
-        new ServerResponseInterceptor(),
-        new SendTokenInterceptor(tokenKeeper),
-        new ReceiveTokenInterceptor(tokenKeeper)
+    this.appContext = appContext.getApplicationContext();
+  }
+
+  @Override
+  public void inject(Consumer<AppSettingsService> appSettingsServiceConsumer) {
+    appSettingsServiceConsumer.accept(
+        getBackendComponent().getAppSettingsService()
     );
-    GeolocationCenter geolocationCenter = new GeolocationCenterImpl(appContext);
-    RepositoryComponent repositoryComponent = new RepositoryComponentImpl(
-        backendComponent,
-        geolocationCenter
-    );
-    InteractorComponent interactorComponent = new InteractorComponentImpl(
-        loginSharer, timeUtils, repositoryComponent
-    );
-    presentationComponent = new PresentationComponentImpl(
-        eventLogger, loginSharer, interactorComponent, timeUtils
-    );
-    singleRingTonePlayer = new SingleRingTonePlayer(appContext);
-    singleShakePlayer = new SingleShakePlayer(
-        appContext,
-        new NewPatternMapper(),
-        new OldPatternMapper()
-    );
-    autoRouter = new AutoRouterImpl(singleRingTonePlayer, singleShakePlayer);
   }
 
   @Override
   public void inject(MainApplication mainApplication) {
     mainApplication.setRingTonePlayer(
-        singleRingTonePlayer
+        getSingleRingTonePlayer()
     );
     mainApplication.setShakeItPlayer(
-        singleShakePlayer
+        getShakeItPlayer()
     );
     mainApplication.setServerConnectionViewModel(
-        presentationComponent.getServerConnectionViewModel()
+        getPresentationComponent().getServerConnectionViewModel()
     );
     mainApplication.setCancelOrderReasonsViewModel(
-        presentationComponent.getCancelOrderReasonsViewModel()
+        getPresentationComponent().getCancelOrderReasonsViewModel()
     );
     mainApplication.setBalanceViewModel(
-        presentationComponent.getBalanceViewModel()
+        getPresentationComponent().getBalanceViewModel()
     );
     mainApplication.setExecutorStateViewModel(
-        presentationComponent.getExecutorStateViewModel()
+        getPresentationComponent().getExecutorStateViewModel()
     );
     mainApplication.setOrderViewModel(
-        presentationComponent.getOrderViewModel()
+        getPresentationComponent().getOrderViewModel()
     );
     mainApplication.setPreOrderViewModel(
-        presentationComponent.getPreOrderViewModel()
+        getPresentationComponent().getPreOrderViewModel()
     );
     mainApplication.setUpcomingPreOrderViewModel(
-        presentationComponent.getUpcomingPreOrderAvailabilityViewModel()
+        getPresentationComponent().getUpcomingPreOrderAvailabilityViewModel()
     );
     mainApplication.setPreOrdersListViewModel(
-        presentationComponent.getPreOrdersListViewModel()
+        getPresentationComponent().getPreOrdersListViewModel()
     );
     mainApplication.setOrderCostDetailsViewModel(
-        presentationComponent.getOrderCostDetailsViewModel()
+        getPresentationComponent().getOrderCostDetailsViewModel()
     );
     mainApplication.setGeoLocationViewModel(
-        presentationComponent.getGeoLocationViewModel()
+        getPresentationComponent().getGeoLocationViewModel()
     );
     mainApplication.setMissedOrderViewModel(
-        presentationComponent.getMissedOrderViewModel()
+        getPresentationComponent().getMissedOrderViewModel()
     );
     mainApplication.setUpcomingPreOrderMessageViewModel(
-        presentationComponent.getUpcomingPreOrderMessagesViewModel()
+        getPresentationComponent().getUpcomingPreOrderMessagesViewModel()
     );
     mainApplication.setCancelledOrderViewModel(
-        presentationComponent.getCancelledOrderViewModel()
-    );
-    mainApplication.setUpdateMessageViewModel(
-        presentationComponent.getUpdateMessageViewModel()
+        getPresentationComponent().getCancelledOrderViewModel()
     );
     mainApplication.setCurrentCostPollingViewModel(
-        presentationComponent.getCurrentCostPollingViewModel()
+        getPresentationComponent().getCurrentCostPollingViewModel()
     );
     mainApplication.setServerTimeViewModel(
-        presentationComponent.getServerTimeViewModel()
+        getPresentationComponent().getServerTimeViewModel()
     );
-    mainApplication.setAutoRouter(autoRouter);
-    mainApplication.setLifeCycleCallbacks(autoRouter);
+    mainApplication.setNavigationMapper(
+        getNavigationMapper()
+    );
   }
 
   @Override
   public void inject(BaseActivity baseActivity) {
+    baseActivity.setAppSettingsService(
+        getBackendComponent().getAppSettingsService()
+    );
+    baseActivity.setGeoLocationStateViewModel(
+        getPresentationComponent().getGeoLocationStateViewModel(baseActivity)
+    );
     baseActivity.setExecutorStateViewModel(
-        presentationComponent.getExecutorStateViewModel()
+        getPresentationComponent().getExecutorStateViewModel()
     );
     baseActivity.setUpdateMessageViewModel(
-        presentationComponent.getUpdateMessageViewModel()
+        getPresentationComponent().getUpdateMessageViewModel()
     );
     baseActivity.setAnnouncementViewModel(
-        presentationComponent.getAnnouncementViewModel()
+        getPresentationComponent().getAnnouncementViewModel()
     );
     baseActivity.setServerConnectionViewModel(
-        presentationComponent.getServerConnectionViewModel()
+        getPresentationComponent().getServerConnectionViewModel()
     );
     baseActivity.setServerTimeViewModel(
-        presentationComponent.getServerTimeViewModel()
+        getPresentationComponent().getServerTimeViewModel()
     );
   }
 
   @Override
   public void inject(MovingToClientActivity movingToClientActivity) {
-    movingToClientActivity.setEventLogger(eventLogger);
+    movingToClientActivity.setEventLogger(
+        getBackendComponent().getEventLogger()
+    );
   }
 
   @Override
   public void inject(WaitingForClientActivity waitingForClientActivity) {
-    waitingForClientActivity.setEventLogger(eventLogger);
+    waitingForClientActivity.setEventLogger(
+        getBackendComponent().getEventLogger()
+    );
   }
 
   @Override
   public void inject(OrderFulfillmentActivity orderFulfillmentActivity) {
-    orderFulfillmentActivity.setEventLogger(eventLogger);
+    orderFulfillmentActivity.setEventLogger(
+        getBackendComponent().getEventLogger()
+    );
   }
 
   @Override
   public void inject(OrderCostDetailsActivity orderCostDetailsActivity) {
-    orderCostDetailsActivity.setEventLogger(eventLogger);
+    orderCostDetailsActivity.setEventLogger(
+        getBackendComponent().getEventLogger()
+    );
   }
 
   @Override
   public void inject(MenuActivity menuActivity) {
-    menuActivity.setEventLogger(eventLogger);
+    menuActivity.setEventLogger(
+        getBackendComponent().getEventLogger()
+    );
   }
 
   @Override
   public void inject(OnlineMenuActivity onlineMenuActivity) {
-    onlineMenuActivity.setEventLogger(eventLogger);
+    onlineMenuActivity.setEventLogger(
+        getBackendComponent().getEventLogger()
+    );
+  }
+
+  @Override
+  public void inject(NightModeActivity nightModeActivity) {
+    nightModeActivity.setAppSettingsService(
+        getBackendComponent().getAppSettingsService()
+    );
   }
 
   @Override
   public void inject(OnlineActivity onlineActivity) {
-    onlineActivity.setEventLogger(eventLogger);
+    onlineActivity.setEventLogger(
+        getBackendComponent().getEventLogger()
+    );
   }
 
   @Override
   public void inject(PreOrdersActivity preOrdersActivity) {
-    preOrdersActivity.setEventLogger(eventLogger);
+    preOrdersActivity.setEventLogger(
+        getBackendComponent().getEventLogger()
+    );
+  }
+
+  @Override
+  public void inject(PasswordActivity passwordActivity) {
+    passwordActivity.setApiService(
+        getBackendComponent().getApiService()
+    );
+    passwordActivity.setErrorReporter(
+        getBackendComponent().getErrorReporter()
+    );
   }
 
   @Override
   public void inject(FcmService fcmService) {
-    fcmService.setAnnouncementViewModel(presentationComponent.getAnnouncementViewModel());
+    fcmService.setAnnouncementViewModel(
+        getPresentationComponent().getAnnouncementViewModel()
+    );
+    fcmService.setApiService(
+        getBackendComponent().getApiService()
+    );
   }
 
   @Override
   public void inject(LoginFragment loginFragment) {
-    loginFragment.setAppSettings(appSettingsService);
-    loginFragment.setPhoneViewModel(presentationComponent.getPhoneViewModel(loginFragment));
+    loginFragment.setAppSettings(
+        getBackendComponent().getAppSettingsService()
+    );
+    loginFragment.setPhoneViewModel(
+        getPresentationComponent().getPhoneViewModel(loginFragment)
+    );
   }
 
   @Override
   public void inject(PasswordFragment passwordFragment) {
     passwordFragment.setSmsButtonViewModel(
-        presentationComponent.getSmsButtonViewModel(passwordFragment)
+        getPresentationComponent().getSmsButtonViewModel(passwordFragment)
     );
     passwordFragment.setCodeHeaderViewModel(
-        presentationComponent.getCodeHeaderViewModel(passwordFragment)
+        getPresentationComponent().getCodeHeaderViewModel(passwordFragment)
     );
     passwordFragment.setCodeViewModel(
-        presentationComponent.getCodeViewModel(passwordFragment)
+        getPresentationComponent().getCodeViewModel(passwordFragment)
     );
     passwordFragment.setSmsReceiver(
         new SmsReceiver(
@@ -292,83 +305,93 @@ public class AppComponentImpl implements AppComponent {
 
   @Override
   public void inject(MapFragment mapFragment) {
-    mapFragment.setMapViewModel(presentationComponent.getMapViewModel(mapFragment));
-    mapFragment.setGeoLocationViewModel(presentationComponent.getGeoLocationViewModel());
+    mapFragment.setMapViewModel(
+        getPresentationComponent().getMapViewModel(mapFragment)
+    );
+    mapFragment.setGeoLocationViewModel(
+        getPresentationComponent().getGeoLocationViewModel()
+    );
   }
 
   @Override
   public void inject(OnlineFragment onlineFragment) {
     onlineFragment.setOnlineSwitchViewModel(
-        presentationComponent.getOnlineSwitchViewModel(onlineFragment)
+        getPresentationComponent().getOnlineSwitchViewModel(onlineFragment)
     );
     onlineFragment.setOnlineButtonViewModel(
-        presentationComponent.getSelectedOnlineButtonViewModel(onlineFragment)
+        getPresentationComponent().getSelectedOnlineButtonViewModel(onlineFragment)
     );
   }
 
   @Override
   public void inject(GoOnlineFragment goOnlineFragment) {
     goOnlineFragment.setOnlineButtonViewModel(
-        presentationComponent.getOnlineButtonViewModel(goOnlineFragment)
+        getPresentationComponent().getOnlineButtonViewModel(goOnlineFragment)
     );
   }
 
   @Override
   public void inject(ChooseVehicleFragment chooseVehicleFragment) {
     chooseVehicleFragment.setChooseVehicleViewModel(
-        presentationComponent.getChooseVehicleViewModel(chooseVehicleFragment)
+        getPresentationComponent().getChooseVehicleViewModel(chooseVehicleFragment)
     );
   }
 
   @Override
   public void inject(VehicleOptionsFragment vehicleOptionsFragment) {
     vehicleOptionsFragment.setVehicleOptionsViewModel(
-        presentationComponent.getVehicleOptionsViewModel(vehicleOptionsFragment)
+        getPresentationComponent().getVehicleOptionsViewModel(vehicleOptionsFragment)
     );
   }
 
   @Override
   public void inject(SelectedVehicleOptionsFragment vehicleOptionsFragment) {
     vehicleOptionsFragment.setVehicleOptionsViewModel(
-        presentationComponent.getSelectedVehicleOptionsViewModel(vehicleOptionsFragment)
+        getPresentationComponent().getSelectedVehicleOptionsViewModel(vehicleOptionsFragment)
     );
   }
 
   @Override
   public void inject(SelectedVehicleFragment selectedVehicleFragment) {
     selectedVehicleFragment.setSelectedVehicleViewModel(
-        presentationComponent.getSelectedVehicleViewModel(selectedVehicleFragment)
+        getPresentationComponent().getSelectedVehicleViewModel(selectedVehicleFragment)
     );
     selectedVehicleFragment.setChooseVehicleViewModel(
-        presentationComponent.getCurrentChooseVehicleViewModel(selectedVehicleFragment)
+        getPresentationComponent().getCurrentChooseVehicleViewModel(selectedVehicleFragment)
     );
   }
 
   @Override
   public void inject(ServicesFragment servicesFragment) {
-    servicesFragment.setServicesSliderViewModel(presentationComponent.getServicesSliderViewModel());
+    servicesFragment.setServicesSliderViewModel(
+        getPresentationComponent().getServicesSliderViewModel()
+    );
     servicesFragment.setServicesViewModel(
-        presentationComponent.getServicesViewModel(servicesFragment)
+        getPresentationComponent().getServicesViewModel(servicesFragment)
     );
   }
 
   @Override
   public void inject(DriverOrderConfirmationFragment driverOrderConfirmationFragment) {
     driverOrderConfirmationFragment.setOrderConfirmationViewModel(
-        presentationComponent.getOrderConfirmationViewModel(driverOrderConfirmationFragment)
+        getPresentationComponent().getOrderConfirmationViewModel(driverOrderConfirmationFragment)
     );
-    driverOrderConfirmationFragment.setOrderViewModel(presentationComponent.getOrderViewModel());
+    driverOrderConfirmationFragment.setOrderViewModel(
+        getPresentationComponent().getOrderViewModel()
+    );
   }
 
   @Override
   public void inject(ClientOrderConfirmationFragment clientOrderConfirmationFragment) {
-    clientOrderConfirmationFragment.setOrderViewModel(presentationComponent.getOrderViewModel());
+    clientOrderConfirmationFragment.setOrderViewModel(
+        getPresentationComponent().getOrderViewModel()
+    );
   }
 
   @Override
   public void inject(ClientOrderConfirmationTimeFragment clientOrderConfirmationTimeFragment) {
     clientOrderConfirmationTimeFragment.setClientOrderConfirmationTimeViewModel(
-        presentationComponent.getClientOrderConfirmationTimeViewModel(
+        getPresentationComponent().getClientOrderConfirmationTimeViewModel(
             clientOrderConfirmationTimeFragment
         )
     );
@@ -377,208 +400,253 @@ public class AppComponentImpl implements AppComponent {
   @Override
   public void inject(MovingToClientFragment movingToClientFragment) {
     movingToClientFragment.setMovingToClientViewModel(
-        presentationComponent.getMovingToClientViewModel(movingToClientFragment)
+        getPresentationComponent().getMovingToClientViewModel(movingToClientFragment)
     );
-    movingToClientFragment.setOrderViewModel(presentationComponent.getOrderViewModel());
-    movingToClientFragment.setShakeItPlayer(singleShakePlayer);
+    movingToClientFragment.setOrderViewModel(
+        getPresentationComponent().getOrderViewModel()
+    );
+    movingToClientFragment.setShakeItPlayer(
+        getShakeItPlayer()
+    );
   }
 
   @Override
   public void inject(MovingToClientActionsDialogFragment movingToClientActionsDialogFragment) {
-    movingToClientActionsDialogFragment.setEventLogger(eventLogger);
+    movingToClientActionsDialogFragment.setEventLogger(
+        getBackendComponent().getEventLogger()
+    );
   }
 
   @Override
   public void inject(MovingToClientDetailsFragment movingToClientDetailsFragment) {
-    movingToClientDetailsFragment.setOrderViewModel(presentationComponent.getOrderViewModel());
+    movingToClientDetailsFragment.setOrderViewModel(
+        getPresentationComponent().getOrderViewModel()
+    );
   }
 
   @Override
   public void inject(MovingToClientRouteFragment movingToClientRouteFragment) {
     movingToClientRouteFragment.setOrderRouteViewModel(
-        presentationComponent.getOrderRouteViewModel(movingToClientRouteFragment)
+        getPresentationComponent().getOrderRouteViewModel(movingToClientRouteFragment)
     );
   }
 
   @Override
   public void inject(WaitingForClientFragment waitingForClientFragment) {
     waitingForClientFragment.setWaitingForClientViewModel(
-        presentationComponent.getWaitingForClientViewModel(waitingForClientFragment)
+        getPresentationComponent().getWaitingForClientViewModel(waitingForClientFragment)
     );
-    waitingForClientFragment.setOrderViewModel(presentationComponent.getOrderViewModel());
-    waitingForClientFragment.setShakeItPlayer(singleShakePlayer);
+    waitingForClientFragment.setOrderViewModel(
+        getPresentationComponent().getOrderViewModel()
+    );
+    waitingForClientFragment.setShakeItPlayer(
+        getShakeItPlayer()
+    );
   }
 
   @Override
   public void inject(WaitingForClientActionsDialogFragment waitingForClientActionsDialogFragment) {
-    waitingForClientActionsDialogFragment.setEventLogger(eventLogger);
+    waitingForClientActionsDialogFragment.setEventLogger(
+        getBackendComponent().getEventLogger()
+    );
   }
 
   @Override
   public void inject(WaitingForClientRouteFragment waitingForClientRouteFragment) {
     waitingForClientRouteFragment.setOrderRouteViewModel(
-        presentationComponent.getOrderRouteViewModel(waitingForClientRouteFragment)
+        getPresentationComponent().getOrderRouteViewModel(waitingForClientRouteFragment)
     );
   }
 
   @Override
   public void inject(OrderFulfillmentFragment orderFulfillmentFragment) {
     orderFulfillmentFragment.setOrderTimeViewModel(
-        presentationComponent.getOrderTimeViewModel(orderFulfillmentFragment)
+        getPresentationComponent().getOrderTimeViewModel(orderFulfillmentFragment)
     );
     orderFulfillmentFragment.setOrderCostViewModel(
-        presentationComponent.getOrderCostViewModel(orderFulfillmentFragment)
+        getPresentationComponent().getOrderCostViewModel(orderFulfillmentFragment)
     );
     orderFulfillmentFragment.setNextRoutePointViewModel(
-        presentationComponent.getNextRoutePointViewModel(orderFulfillmentFragment)
+        getPresentationComponent().getNextRoutePointViewModel(orderFulfillmentFragment)
     );
     orderFulfillmentFragment.setOrderRouteViewModel(
-        presentationComponent.getOrderRouteViewModel(orderFulfillmentFragment)
+        getPresentationComponent().getOrderRouteViewModel(orderFulfillmentFragment)
     );
-    orderFulfillmentFragment.setShakeItPlayer(singleShakePlayer);
+    orderFulfillmentFragment.setShakeItPlayer(
+        getShakeItPlayer()
+    );
   }
 
   @Override
   public void inject(OrderFulfillmentDetailsFragment orderFulfillmentDetailsFragment) {
-    orderFulfillmentDetailsFragment.setOrderViewModel(presentationComponent.getOrderViewModel());
+    orderFulfillmentDetailsFragment.setOrderViewModel(
+        getPresentationComponent().getOrderViewModel()
+    );
   }
 
   @Override
   public void inject(OrderFulfillmentActionsDialogFragment orderFulfillmentActionsDialogFragment) {
-    orderFulfillmentActionsDialogFragment.setEventLogger(eventLogger);
+    orderFulfillmentActionsDialogFragment.setEventLogger(
+        getBackendComponent().getEventLogger()
+    );
     orderFulfillmentActionsDialogFragment.setNextRoutePointViewModel(
-        presentationComponent.getNextRoutePointViewModel(orderFulfillmentActionsDialogFragment)
+        getPresentationComponent().getNextRoutePointViewModel(orderFulfillmentActionsDialogFragment)
     );
   }
 
   @Override
   public void inject(OrderRouteFragment orderRouteFragment) {
     orderRouteFragment.setOrderRouteViewModel(
-        presentationComponent.getOrderRouteViewModel(orderRouteFragment)
+        getPresentationComponent().getOrderRouteViewModel(orderRouteFragment)
     );
   }
 
   @Override
   public void inject(CallToClientFragment callToClientFragment) {
     callToClientFragment.setCallToClientViewModel(
-        presentationComponent.getCallToClientViewModel(callToClientFragment)
+        getPresentationComponent().getCallToClientViewModel(callToClientFragment)
     );
   }
 
   @Override
   public void inject(CallToOperatorFragment callToOperatorFragment) {
     callToOperatorFragment.setCallToOperatorViewModel(
-        presentationComponent.getCallToOperatorViewModel(callToOperatorFragment)
+        getPresentationComponent().getCallToOperatorViewModel(callToOperatorFragment)
     );
   }
 
   @Override
   public void inject(CancelOrderDialogFragment cancelOrderDialogFragment) {
     cancelOrderDialogFragment.setCancelOrderViewModel(
-        presentationComponent.getCancelOrderViewModel(cancelOrderDialogFragment)
+        getPresentationComponent().getCancelOrderViewModel(cancelOrderDialogFragment)
     );
     cancelOrderDialogFragment.setCancelOrderReasonsViewModel(
-        presentationComponent.getCancelOrderReasonsViewModel()
+        getPresentationComponent().getCancelOrderReasonsViewModel()
     );
   }
 
   @Override
   public void inject(BalanceFragment balanceFragment) {
-    balanceFragment.setBalanceViewModel(presentationComponent.getBalanceViewModel());
+    balanceFragment.setBalanceViewModel(
+        getPresentationComponent().getBalanceViewModel()
+    );
   }
 
   @Override
   public void inject(BalanceSummaryFragment balanceSummaryFragment) {
-    balanceSummaryFragment.setBalanceViewModel(presentationComponent.getBalanceViewModel());
+    balanceSummaryFragment.setBalanceViewModel(
+        getPresentationComponent().getBalanceViewModel()
+    );
   }
 
   @Override
   public void inject(MenuFragment menuFragment) {
-    menuFragment.setBalanceViewModel(presentationComponent.getBalanceViewModel());
-    menuFragment.setOnlineSwitchViewModel(
-        presentationComponent.getExitOnlineSwitchViewModel(menuFragment)
+    menuFragment.setAppSettingsService(
+        getBackendComponent().getAppSettingsService()
     );
-    menuFragment.setPreOrdersListViewModel(presentationComponent.getPreOrdersListViewModel());
+    menuFragment.setBalanceViewModel(
+        getPresentationComponent().getBalanceViewModel()
+    );
+    menuFragment.setOnlineSwitchViewModel(
+        getPresentationComponent().getExitOnlineSwitchViewModel(menuFragment)
+    );
+    menuFragment.setPreOrdersListViewModel(
+        getPresentationComponent().getPreOrdersListViewModel()
+    );
   }
 
   @Override
   public void inject(ServerConnectionFragment serverConnectionFragment) {
     serverConnectionFragment.setServerConnectionViewModel(
-        presentationComponent.getServerConnectionViewModel()
+        getPresentationComponent().getServerConnectionViewModel()
     );
   }
 
   @Override
   public void inject(OrderCostDetailsFragment orderCostDetailsFragment) {
     orderCostDetailsFragment.setOrderCostDetailsViewModel(
-        presentationComponent.getOrderCostDetailsViewModel()
+        getPresentationComponent().getOrderCostDetailsViewModel()
     );
     orderCostDetailsFragment.setConfirmOrderPaymentViewModel(
-        presentationComponent.getConfirmOrderPaymentViewModel(orderCostDetailsFragment)
+        getPresentationComponent().getConfirmOrderPaymentViewModel(orderCostDetailsFragment)
     );
-    orderCostDetailsFragment.setShakeItPlayer(singleShakePlayer);
+    orderCostDetailsFragment.setShakeItPlayer(
+        getShakeItPlayer()
+    );
   }
 
   @Override
   public void inject(OrderCostDetailsOrderDetailsFragment orderCostDetailsOrderDetailsFragment) {
     orderCostDetailsOrderDetailsFragment.setOrderViewModel(
-        presentationComponent.getOrderViewModel()
+        getPresentationComponent().getOrderViewModel()
     );
   }
 
   @Override
   public void inject(OrderCostDetailsRouteFragment orderCostDetailsRouteFragment) {
     orderCostDetailsRouteFragment.setOrderRouteViewModel(
-        presentationComponent.getOrderRouteViewModel(orderCostDetailsRouteFragment)
+        getPresentationComponent().getOrderRouteViewModel(orderCostDetailsRouteFragment)
     );
   }
 
   @Override
   public void inject(OrderCostDetailsActionsDialogFragment orderCostDetailsActionsDialogFragment) {
-    orderCostDetailsActionsDialogFragment.setEventLogger(eventLogger);
+    orderCostDetailsActionsDialogFragment.setEventLogger(
+        getBackendComponent().getEventLogger()
+    );
   }
 
   @Override
   public void inject(ProfileFragment profileFragment) {
-    profileFragment.setAppSettings(appSettingsService);
+    profileFragment.setAppSettings(
+        getBackendComponent().getAppSettingsService()
+    );
   }
 
   @Override
   public void inject(DriverPreOrderBookingFragment driverPreOrderBookingFragment) {
-    driverPreOrderBookingFragment.setShakeItPlayer(singleShakePlayer);
-    driverPreOrderBookingFragment.setRingTonePlayer(singleRingTonePlayer);
+    driverPreOrderBookingFragment.setShakeItPlayer(
+        getShakeItPlayer()
+    );
+    driverPreOrderBookingFragment.setRingTonePlayer(
+        getSingleRingTonePlayer()
+    );
     driverPreOrderBookingFragment.setOrderConfirmationViewModel(
-        presentationComponent.getPreOrderBookingViewModel(driverPreOrderBookingFragment)
+        getPresentationComponent().getPreOrderBookingViewModel(driverPreOrderBookingFragment)
     );
   }
 
   @Override
   public void inject(PreOrdersFragment preOrdersFragment) {
     preOrdersFragment.setPreOrdersListViewModel(
-        presentationComponent.getPreOrdersListViewModel()
+        getPresentationComponent().getPreOrdersListViewModel()
     );
   }
 
   @Override
   public void inject(PreOrderFragment preOrderFragment) {
     preOrderFragment.setOrderViewModel(
-        presentationComponent.getPOrderViewModel(preOrderFragment)
+        getPresentationComponent().getPOrderViewModel(preOrderFragment)
     );
   }
 
   @Override
   public void inject(SelectedPreOrderFragment selectedPreOrderFragment) {
     selectedPreOrderFragment.setOrderViewModel(
-        presentationComponent.getSelectedPreOrderViewModel(selectedPreOrderFragment)
+        getPresentationComponent().getSelectedPreOrderViewModel(selectedPreOrderFragment)
     );
   }
 
   @Override
   public void inject(SelectedPreOrderConfirmationFragment selectedPreOrderConfirmationFragment) {
-    selectedPreOrderConfirmationFragment.setShakeItPlayer(singleShakePlayer);
-    selectedPreOrderConfirmationFragment.setRingTonePlayer(singleRingTonePlayer);
+    selectedPreOrderConfirmationFragment.setShakeItPlayer(
+        getShakeItPlayer()
+    );
+    selectedPreOrderConfirmationFragment.setRingTonePlayer(
+        getSingleRingTonePlayer()
+    );
     selectedPreOrderConfirmationFragment.setOrderConfirmationViewModel(
-        presentationComponent
+        getPresentationComponent()
             .getSelectedPreOrderConfirmationViewModel(selectedPreOrderConfirmationFragment)
     );
   }
@@ -586,44 +654,54 @@ public class AppComponentImpl implements AppComponent {
   @Override
   public void inject(NewPreOrderFragment newPreOrderFragment) {
     newPreOrderFragment.setPreOrderViewModel(
-        presentationComponent.getPreOrderViewModel()
+        getPresentationComponent().getPreOrderViewModel()
     );
   }
 
   @Override
   public void inject(NewPreOrderButtonFragment newPreOrderButtonFragment) {
     newPreOrderButtonFragment.setPreOrderViewModel(
-        presentationComponent.getPreOrderViewModel()
+        getPresentationComponent().getPreOrderViewModel()
     );
   }
 
   @Override
   public void inject(DriverPreOrderConfirmationFragment driverPreOrderConfirmationFragment) {
-    driverPreOrderConfirmationFragment.setShakeItPlayer(singleShakePlayer);
-    driverPreOrderConfirmationFragment.setOrderConfirmationViewModel(
-        presentationComponent.getOrderConfirmationViewModel(driverPreOrderConfirmationFragment)
+    driverPreOrderConfirmationFragment.setShakeItPlayer(
+        getShakeItPlayer()
     );
-    driverPreOrderConfirmationFragment.setOrderViewModel(presentationComponent.getOrderViewModel());
+    driverPreOrderConfirmationFragment.setOrderConfirmationViewModel(
+        getPresentationComponent().getOrderConfirmationViewModel(driverPreOrderConfirmationFragment)
+    );
+    driverPreOrderConfirmationFragment.setOrderViewModel(
+        getPresentationComponent().getOrderViewModel()
+    );
   }
 
   @Override
   public void inject(PreOrderConfirmationFragment preOrderConfirmationFragment) {
-    preOrderConfirmationFragment.setOrderViewModel(presentationComponent.getOrderViewModel());
+    preOrderConfirmationFragment.setOrderViewModel(
+        getPresentationComponent().getOrderViewModel()
+    );
   }
 
   @Override
   public void inject(UpcomingPreOrderFragment upcomingPreOrderFragment) {
     upcomingPreOrderFragment.setOrderViewModel(
-        presentationComponent.getUpcomingPreOrderViewModel(upcomingPreOrderFragment)
+        getPresentationComponent().getUpcomingPreOrderViewModel(upcomingPreOrderFragment)
     );
   }
 
   @Override
   public void inject(UpcomingPreOrderConfirmationFragment upcomingPreOrderConfirmationFragment) {
-    upcomingPreOrderConfirmationFragment.setShakeItPlayer(singleShakePlayer);
-    upcomingPreOrderConfirmationFragment.setRingTonePlayer(singleRingTonePlayer);
+    upcomingPreOrderConfirmationFragment.setShakeItPlayer(
+        getShakeItPlayer()
+    );
+    upcomingPreOrderConfirmationFragment.setRingTonePlayer(
+        getSingleRingTonePlayer()
+    );
     upcomingPreOrderConfirmationFragment.setOrderConfirmationViewModel(
-        presentationComponent
+        getPresentationComponent()
             .getUpcomingPreOrderConfirmationViewModel(upcomingPreOrderConfirmationFragment)
     );
   }
@@ -631,10 +709,75 @@ public class AppComponentImpl implements AppComponent {
   @Override
   public void inject(UpcomingPreOrderNotificationFragment upcomingPreOrderNotificationFragment) {
     upcomingPreOrderNotificationFragment.setUpcomingPreOrderViewModel(
-        presentationComponent.getUpcomingPreOrderViewModel(upcomingPreOrderNotificationFragment)
+        getPresentationComponent()
+            .getUpcomingPreOrderViewModel(upcomingPreOrderNotificationFragment)
     );
     upcomingPreOrderNotificationFragment.setUpcomingPreOrderNotificationViewModel(
-        presentationComponent.getUpcomingPreOrderAvailabilityViewModel()
+        getPresentationComponent().getUpcomingPreOrderAvailabilityViewModel()
     );
+  }
+
+  @NonNull
+  private TimeUtils getTimeUtils() {
+    if (timeUtils == null) {
+      timeUtils = new TimeUtilsImpl();
+    }
+    return timeUtils;
+  }
+
+  @NonNull
+  private PresentationComponent getPresentationComponent() {
+    if (presentationComponent == null) {
+      presentationComponent = new PresentationComponentImpl(
+          getBackendComponent(),
+          getTimeUtils()
+      );
+    }
+    return presentationComponent;
+  }
+
+  @NonNull
+  private BackendComponent getBackendComponent() {
+    if (backendComponent == null) {
+      backendComponent = new BackendComponentImpl(appContext);
+    }
+    return backendComponent;
+  }
+
+  @NonNull
+  private NavigationMapper getNavigationMapper() {
+    if (navigationMapper == null) {
+      navigationMapper = new NavigationMapperImpl(
+          getSingleRingTonePlayer(),
+          getShakeItPlayer()
+      );
+    }
+    return navigationMapper;
+  }
+
+  @NonNull
+  private SingleRingTonePlayer getSingleRingTonePlayer() {
+    if (singleRingTonePlayer == null) {
+      singleRingTonePlayer = new SingleRingTonePlayer(appContext);
+    }
+    return singleRingTonePlayer;
+  }
+
+  @NonNull
+  private ShakeItPlayer getShakeItPlayer() {
+    if (shakeItPlayer == null) {
+      if (VERSION.SDK_INT >= VERSION_CODES.O) {
+        shakeItPlayer = new SingleShakePlayer(
+            appContext,
+            new NewPatternMapper()
+        );
+      } else {
+        shakeItPlayer = new OldSingleShakePlayer(
+            appContext,
+            new OldPatternMapper()
+        );
+      }
+    }
+    return shakeItPlayer;
   }
 }

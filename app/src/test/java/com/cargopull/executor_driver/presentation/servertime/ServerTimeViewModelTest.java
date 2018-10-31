@@ -1,13 +1,15 @@
 package com.cargopull.executor_driver.presentation.servertime;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
-import android.arch.core.executor.testing.InstantTaskExecutorRule;
-import android.arch.lifecycle.Observer;
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
+import androidx.lifecycle.Observer;
 import com.cargopull.executor_driver.ViewModelThreadTestRule;
+import com.cargopull.executor_driver.backend.analytics.ErrorReporter;
 import com.cargopull.executor_driver.gateway.DataMappingException;
 import com.cargopull.executor_driver.interactor.ServerTimeUseCase;
 import com.cargopull.executor_driver.presentation.CommonNavigate;
@@ -31,6 +33,8 @@ public class ServerTimeViewModelTest {
   public TestRule rule = new InstantTaskExecutorRule();
   private ServerTimeViewModel currentCostPollingViewModel;
   @Mock
+  private ErrorReporter errorReporter;
+  @Mock
   private ServerTimeUseCase useCase;
   @Mock
   private Observer<String> navigationObserver;
@@ -43,7 +47,21 @@ public class ServerTimeViewModelTest {
   public void setUp() {
     completableSubject = CompletableSubject.create();
     when(useCase.getServerTime()).thenReturn(completableSubject);
-    currentCostPollingViewModel = new ServerTimeViewModelImpl(useCase);
+    currentCostPollingViewModel = new ServerTimeViewModelImpl(errorReporter, useCase);
+  }
+
+  /* Проверяем отправку ошибок в репортер */
+
+  /**
+   * Должен отправить ошибку.
+   */
+  @Test
+  public void reportError() {
+    // Действие:
+    completableSubject.onError(new DataMappingException());
+
+    // Результат:
+    verify(errorReporter, only()).reportError(any(DataMappingException.class));
   }
 
   /* Тетсируем работу с юзкейсом. */

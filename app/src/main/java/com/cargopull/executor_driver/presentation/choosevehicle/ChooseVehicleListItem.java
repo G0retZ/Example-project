@@ -1,7 +1,7 @@
 package com.cargopull.executor_driver.presentation.choosevehicle;
 
-import android.support.annotation.NonNull;
-import android.support.annotation.StringRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.StringRes;
 import com.cargopull.executor_driver.R;
 import com.cargopull.executor_driver.entity.Vehicle;
 

@@ -1,11 +1,10 @@
 package com.cargopull.executor_driver.interactor.vehicle;
 
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import com.cargopull.executor_driver.entity.Option;
 import com.cargopull.executor_driver.entity.Vehicle;
 import com.cargopull.executor_driver.interactor.DataReceiver;
-import com.cargopull.executor_driver.utils.ErrorReporter;
 import io.reactivex.Completable;
 import io.reactivex.Observable;
 import io.reactivex.Single;
@@ -16,8 +15,6 @@ import javax.inject.Inject;
 
 public class VehicleOptionsUseCaseImpl implements VehicleOptionsUseCase {
 
-  @NonNull
-  private final ErrorReporter errorReporter;
   @NonNull
   private final VehicleOptionsGateway gateway;
   @NonNull
@@ -31,12 +28,10 @@ public class VehicleOptionsUseCaseImpl implements VehicleOptionsUseCase {
 
   @Inject
   public VehicleOptionsUseCaseImpl(
-      @NonNull ErrorReporter errorReporter,
       @NonNull VehicleOptionsGateway gateway,
       @NonNull DataReceiver<Vehicle> vehicleChoiceReceiver,
       @NonNull LastUsedVehicleGateway lastUsedVehicleGateway,
       @NonNull VehiclesAndOptionsGateway vehiclesAndOptionsGateway) {
-    this.errorReporter = errorReporter;
     this.gateway = gateway;
     this.vehicleChoiceReceiver = vehicleChoiceReceiver;
     this.lastUsedVehicleGateway = lastUsedVehicleGateway;
@@ -77,18 +72,13 @@ public class VehicleOptionsUseCaseImpl implements VehicleOptionsUseCase {
       if (vehicle == null) {
         throw new IllegalStateException("Не было выбрано ни одного ТС.");
       }
-      vehicle.setOptions(options.toArray(new Option[options.size()]));
+      vehicle.setOptions(options.toArray(new Option[0]));
       return vehicle;
     }).flatMapCompletable(
         vehicle -> gateway.sendVehicleOptions(vehicle, driverOptions)
             .observeOn(Schedulers.single())
             .concatWith(lastUsedVehicleGateway.saveLastUsedVehicleId(vehicle))
             .observeOn(Schedulers.single())
-    ).doOnError(throwable -> {
-      if (throwable instanceof IllegalStateException
-          || throwable instanceof IllegalArgumentException) {
-        errorReporter.reportError(throwable);
-      }
-    });
+    );
   }
 }

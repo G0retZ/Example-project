@@ -5,9 +5,10 @@ import android.content.Context;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.annotation.RawRes;
+import android.os.Handler;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.RawRes;
 import javax.inject.Inject;
 
 /**
@@ -19,6 +20,8 @@ public class SingleRingTonePlayer implements RingTonePlayer {
   private final Context context;
   @Nullable
   private Ringtone ringtone;
+  @Nullable
+  private Integer soundRes;
 
   @Inject
   public SingleRingTonePlayer(@NonNull Context context) {
@@ -26,7 +29,8 @@ public class SingleRingTonePlayer implements RingTonePlayer {
   }
 
   @Override
-  public void playRingTone(@RawRes int soundRes) {
+  public void playRingTone(@NonNull @RawRes Integer soundRes) {
+    this.soundRes = soundRes;
     Uri uri = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://"
         + context.getPackageName() + "/" + soundRes);
     if (ringtone != null && ringtone.isPlaying()) {
@@ -34,5 +38,15 @@ public class SingleRingTonePlayer implements RingTonePlayer {
     }
     ringtone = RingtoneManager.getRingtone(context, uri);
     ringtone.play();
+  }
+
+  @Override
+  public void stopRingTone(@NonNull @RawRes Integer soundRes) {
+    if (soundRes.equals(this.soundRes) && ringtone != null && ringtone.isPlaying()) {
+      this.soundRes = null;
+      new Handler(context.getMainLooper()).postDelayed(() -> {
+        ringtone.stop();
+      }, 2000);
+    }
   }
 }

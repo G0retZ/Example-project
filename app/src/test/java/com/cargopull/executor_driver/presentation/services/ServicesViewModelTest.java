@@ -9,10 +9,11 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
-import android.arch.core.executor.testing.InstantTaskExecutorRule;
-import android.arch.lifecycle.Observer;
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
+import androidx.lifecycle.Observer;
 import com.cargopull.executor_driver.R;
 import com.cargopull.executor_driver.ViewModelThreadTestRule;
+import com.cargopull.executor_driver.backend.analytics.ErrorReporter;
 import com.cargopull.executor_driver.backend.web.NoNetworkException;
 import com.cargopull.executor_driver.entity.EmptyListException;
 import com.cargopull.executor_driver.entity.Service;
@@ -45,6 +46,8 @@ public class ServicesViewModelTest {
   public TestRule rule = new InstantTaskExecutorRule();
   private ServicesViewModel viewModel;
   @Mock
+  private ErrorReporter errorReporter;
+  @Mock
   private ServicesUseCase servicesUseCase;
   @Mock
   private ServicesSliderViewModel servicesSliderViewModel;
@@ -66,8 +69,74 @@ public class ServicesViewModelTest {
             new ServicesListItem(new Service(2, "n3", 130, false))
         )
     );
-    viewModel = new ServicesViewModelImpl(servicesUseCase, servicesSliderViewModel,
+    viewModel = new ServicesViewModelImpl(errorReporter, servicesUseCase, servicesSliderViewModel,
         servicesListItems);
+  }
+
+  /* Проверяем отправку ошибок в репортер */
+
+  /**
+   * Не должен отправлять ошибку сети.
+   */
+  @Test
+  public void doNotReportNoNetworkErrorForServices() {
+    // Действие:
+    serviceSingleSubject.onError(new NoNetworkException());
+
+    // Результат:
+    verifyZeroInteractions(errorReporter);
+  }
+
+  /**
+   * Должен отправить ошибку отсуствствия доступных услуг.
+   */
+  @Test
+  public void reportNoVehiclesAvailableError() {
+    // Действие:
+    serviceSingleSubject.onError(new EmptyListException());
+
+    // Результат:
+    verify(errorReporter, only()).reportError(any(EmptyListException.class));
+  }
+
+  /**
+   * Должен отправить ошибку отсуствствия выбранных услуг.
+   */
+  @Test
+  public void reportNoVehiclesAvailableErrorForEmptyList() {
+    // Дано:
+    when(servicesUseCase.setSelectedServices(anyList()))
+        .thenReturn(Completable.error(EmptyListException::new));
+
+    // Действие:
+    viewModel.setServices(Arrays.asList(
+        new ServicesListItem(new Service(0, "n1", 100, false)),
+        new ServicesListItem(new Service(1, "n2", 10, false)),
+        new ServicesListItem(new Service(2, "n3", 130, false))
+    ));
+
+    // Результат:
+    verify(errorReporter, only()).reportError(any(EmptyListException.class));
+  }
+
+  /**
+   * Не должен отправлять ошибку сети.
+   */
+  @Test
+  public void doNotReportNoNetworkErrorForSetServices() {
+    // Дано:
+    when(servicesUseCase.setSelectedServices(anyList()))
+        .thenReturn(Completable.error(new NoNetworkException()));
+
+    // Действие:
+    viewModel.setServices(Arrays.asList(
+        new ServicesListItem(new Service(0, "n1", 100, false)),
+        new ServicesListItem(new Service(1, "n2", 10, false)),
+        new ServicesListItem(new Service(2, "n3", 130, false))
+    ));
+
+    // Результат:
+    verifyZeroInteractions(errorReporter);
   }
 
   /* Тетсируем работу с юзкейсом выбора услуг. */
@@ -142,7 +211,8 @@ public class ServicesViewModelTest {
   }
 
   /**
-   * Не должен трогать юзкейс, если предыдущий запрос запоминания указанных услуг еще не завершился.
+   * Не должен трогать юзкейс, если предыдущий запрос запоминания указанных услуг еще не
+   * завершился.
    */
   @Test
   public void DoNotTouchServicesUseCaseDuringServicesSetting() {
