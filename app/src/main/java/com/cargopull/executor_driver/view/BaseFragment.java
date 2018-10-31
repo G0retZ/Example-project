@@ -20,6 +20,7 @@ import com.cargopull.executor_driver.application.BaseActivity;
 import com.cargopull.executor_driver.application.OnBackPressedInterceptor;
 import com.cargopull.executor_driver.di.AppComponent;
 import com.cargopull.executor_driver.presentation.ViewActions;
+import com.squareup.picasso.Picasso;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -202,6 +203,14 @@ public class BaseFragment extends Fragment implements OnBackPressedInterceptor, 
     ImageView imageView = findViewById(id);
     if (imageView != null) {
       imageView.setImageResource(drawableId);
+    }
+  }
+
+  @Override
+  public void setImage(int id, @NonNull String drawableUrl) {
+    ImageView imageView = findViewById(id);
+    if (imageView != null) {
+      Picasso.get().load(drawableUrl).into(imageView);
     }
   }
 

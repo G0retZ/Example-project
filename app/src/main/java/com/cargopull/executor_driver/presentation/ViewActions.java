@@ -68,12 +68,20 @@ public interface ViewActions {
   void setTextColor(@IdRes int id, @ColorRes int colorId);
 
   /**
-   * Показать число в элементе.
+   * Показать картинку из ресурса в элементе.
    *
    * @param id - ИД вида элемента
    * @param drawableId - ИД ресурса картинки
    */
   void setImage(@IdRes int id, @DrawableRes int drawableId);
+
+  /**
+   * Показать картинку из веба в элементе.
+   *
+   * @param id - ИД вида элемента
+   * @param drawableUrl - URL картинки
+   */
+  void setImage(@IdRes int id, @NonNull String drawableUrl);
 
   /**
    * Спрятать диалог.
