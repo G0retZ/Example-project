@@ -5,6 +5,8 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.content.Context;
+import android.os.Build.VERSION;
+import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -197,7 +199,11 @@ public class BaseFragment extends Fragment implements OnBackPressedInterceptor, 
   public void setTextColor(@IdRes int id, @ColorRes int colorId) {
     TextView textView = findViewById(id);
     if (textView != null) {
-      textView.setTextColor(getResources().getColor(colorId));
+      if (VERSION.SDK_INT >= VERSION_CODES.M) {
+        textView.setTextColor(getResources().getColor(colorId, null));
+      } else {
+        textView.setTextColor(getResources().getColor(colorId));
+      }
     }
   }
 
