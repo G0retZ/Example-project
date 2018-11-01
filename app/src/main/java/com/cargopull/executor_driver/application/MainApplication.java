@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Application;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -211,6 +212,9 @@ public class MainApplication extends Application implements ServerConnectionView
 
       @Override
       public void onActivityStopped(Activity activity) {
+        if (currentActivity == activity) {
+          currentActivity = null;
+        }
       }
 
       @Override
@@ -219,9 +223,6 @@ public class MainApplication extends Application implements ServerConnectionView
 
       @Override
       public void onActivityDestroyed(Activity activity) {
-        if (currentActivity == activity) {
-          currentActivity = null;
-        }
       }
     });
     // Постим инициализацию, чтобы не задерживать само приложение
@@ -326,7 +327,8 @@ public class MainApplication extends Application implements ServerConnectionView
         shakeIt(R.raw.new_offer_vibro);
         startService(R.string.offer, R.string.new_order, PendingIntent
             .getActivity(this, 0, new Intent(this, DriverOrderConfirmationActivity.class), 0));
-        break;
+        navigationMapper.navigateTo(destination).accept(this);
+        return;
       case ExecutorStateNavigate.DRIVER_PRELIMINARY_ORDER_CONFIRMATION:
         playSound(R.raw.new_offer);
         shakeIt(R.raw.new_offer_vibro);
@@ -342,7 +344,8 @@ public class MainApplication extends Application implements ServerConnectionView
       case ExecutorStateNavigate.MOVING_TO_CLIENT:
         startService(R.string.working, R.string.moving_to_client, PendingIntent
             .getActivity(this, 0, new Intent(this, MovingToClientActivity.class), 0));
-        break;
+        navigationMapper.navigateTo(destination).accept(this);
+        return;
       case ExecutorStateNavigate.WAITING_FOR_CLIENT:
         startService(R.string.working, R.string.wait_for_client, PendingIntent
             .getActivity(this, 0, new Intent(this, WaitingForClientActivity.class), 0));
@@ -362,7 +365,7 @@ public class MainApplication extends Application implements ServerConnectionView
       case PreOrdersListNavigate.PRE_ORDER:
         return;
     }
-    Consumer<Activity> consumer = navigationMapper.navigateTo(destination);
+    Consumer<Context> consumer = navigationMapper.navigateTo(destination);
     if (currentActivity != null) {
       consumer.accept(currentActivity);
     }
@@ -455,7 +458,7 @@ public class MainApplication extends Application implements ServerConnectionView
   @Override
   public void showUpcomingPreOrderMessage(@NonNull String message) {
     shakeIt(R.raw.new_pre_order_vibro);
-    playSound(R.raw.new_pre_order);
+    playSound(R.raw.pre_order_reminder);
     if (notificationManager != null) {
       Builder builder = new Builder(this, "state_channel")
           .setContentText(message)

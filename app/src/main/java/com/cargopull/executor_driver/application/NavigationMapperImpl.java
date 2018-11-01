@@ -1,7 +1,7 @@
 package com.cargopull.executor_driver.application;
 
-import android.app.Activity;
 import android.app.AlertDialog.Builder;
+import android.content.Context;
 import android.content.Intent;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -24,7 +24,7 @@ public class NavigationMapperImpl implements NavigationMapper {
   /**
    * Реестр активити, разбитых по группам, чтобы исключить нежелательные переходы по навигации.
    */
-  private static final HashMap<String, List<Class<? extends Activity>>> statusGroups = new HashMap<>();
+  private static final HashMap<String, List<Class<? extends Context>>> statusGroups = new HashMap<>();
 
   static {
     statusGroups.put(ServerConnectionNavigate.AUTHORIZE, Arrays.asList(
@@ -109,7 +109,7 @@ public class NavigationMapperImpl implements NavigationMapper {
 
   @Override
   @NonNull
-  public Consumer<Activity> navigateTo(
+  public Consumer<Context> navigateTo(
       @NonNull @ExecutorStateNavigate @GeoLocationNavigate String destination) {
     switch (destination) {
       case CommonNavigate.NO_CONNECTION:
@@ -120,7 +120,8 @@ public class NavigationMapperImpl implements NavigationMapper {
         return this::tryToResolveGeo;
       case PreOrderNavigate.ORDER_APPROVAL:
         if (lastRouteAction == null || !lastRouteAction.equals(CommonNavigate.SERVER_DATA_ERROR)) {
-          return this::tryToResolvePreOrder;
+          lastRouteAction = destination;
+          return this::tryToNavigate;
         }
         break;
       default:
@@ -144,56 +145,43 @@ public class NavigationMapperImpl implements NavigationMapper {
 
   @Override
   @NonNull
-  public Consumer<Activity> navigateToRecent() {
-    return activity -> {
-      tryToNavigate(activity);
-      tryToResolveGeo(activity);
+  public Consumer<Context> navigateToRecent() {
+    return context -> {
+      tryToNavigate(context);
+      tryToResolveGeo(context);
     };
   }
 
-  private void tryToResolveGeo(@NonNull Activity activity) {
+  private void tryToResolveGeo(@NonNull Context context) {
     if (goToGeoResolver) {
-      activity.startActivity(
-          new Intent(activity, GeolocationPermissionActivity.class)
+      context.startActivity(
+          new Intent(context, GeolocationPermissionActivity.class)
       );
       goToGeoResolver = false;
     }
   }
 
-  private void tryToResolvePreOrder(@NonNull Activity currentActivity) {
-    // Получаем группу активити по направлению, с которых нельзя просто так перебрасывать.
-    List<Class<? extends Activity>> group = statusGroups.get(PreOrderNavigate.ORDER_APPROVAL);
-    // Если такая группа есть и в ней есть текущая активити.
-    if (!reset && group != null && group.contains(currentActivity.getClass())) {
-      // Никуда не переходим.
-      return;
-    }
-    currentActivity.startActivity(
-        new Intent(currentActivity, DriverPreOrderBookingActivity.class)
-    );
-  }
-
-  private void tryToNavigate(@NonNull Activity activity) {
+  private void tryToNavigate(@NonNull Context context) {
     // Если это сплеш-скрин, то планируем ему последний переход по статусу, если такой был.
-    if (activity instanceof SplashScreenActivity) {
+    if (context instanceof SplashScreenActivity) {
       lastRouteAction = splashRouteAction;
     }
     if (lastRouteAction == null) {
       return;
     }
     // Получаем группу активити по направлению, с которых нельзя просто так перебрасывать.
-    List<Class<? extends Activity>> group = statusGroups.get(lastRouteAction);
+    List<Class<? extends Context>> group = statusGroups.get(lastRouteAction);
     // Если такая группа есть и в ней есть текущая активити.
-    if (!reset && group != null && group.contains(activity.getClass())) {
+    if (!reset && group != null && group.contains(context.getClass())) {
       // Если текущая активити является основной в группе, то обнуляем направление навигации.
-      lastRouteAction = group.get(0) == activity.getClass() ? null : lastRouteAction;
+      lastRouteAction = group.get(0) == context.getClass() ? null : lastRouteAction;
       // Никуда не переходим.
       return;
     }
     switch (lastRouteAction) {
       case ServerConnectionNavigate.AUTHORIZE:
-        activity.startActivity(
-            new Intent(activity, LoginActivity.class)
+        context.startActivity(
+            new Intent(context, LoginActivity.class)
                 .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK)
         );
         break;
@@ -203,78 +191,83 @@ public class NavigationMapperImpl implements NavigationMapper {
         return;
       case CommonNavigate.EXIT:
         return;
+      case PreOrderNavigate.ORDER_APPROVAL:
+        context.startActivity(
+            new Intent(context, DriverPreOrderBookingActivity.class)
+        );
+        return;
       case ExecutorStateNavigate.BLOCKED:
-        activity.startActivity(
-            new Intent(activity, BlockedActivity.class)
+        context.startActivity(
+            new Intent(context, BlockedActivity.class)
                 .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK)
         );
         break;
       case ExecutorStateNavigate.MAP_SHIFT_CLOSED:
-        activity.startActivity(
-            new Intent(activity, MapActivity.class)
+        context.startActivity(
+            new Intent(context, MapActivity.class)
                 .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK)
         );
         break;
       case ExecutorStateNavigate.MAP_SHIFT_OPENED:
-        activity.startActivity(
-            new Intent(activity, OnlineActivity.class)
+        context.startActivity(
+            new Intent(context, OnlineActivity.class)
                 .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK)
         );
         break;
       case ExecutorStateNavigate.MAP_ONLINE:
-        activity.startActivity(
-            new Intent(activity, OnlineActivity.class)
+        context.startActivity(
+            new Intent(context, OnlineActivity.class)
                 .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK)
         );
         break;
       case ExecutorStateNavigate.DRIVER_ORDER_CONFIRMATION:
-        activity.startActivity(
-            new Intent(activity, DriverOrderConfirmationActivity.class)
+        context.startActivity(
+            new Intent(context, DriverOrderConfirmationActivity.class)
                 .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK)
         );
         break;
       case ExecutorStateNavigate.DRIVER_PRELIMINARY_ORDER_CONFIRMATION:
-        activity.startActivity(
-            new Intent(activity, DriverPreOrderConfirmationActivity.class)
+        context.startActivity(
+            new Intent(context, DriverPreOrderConfirmationActivity.class)
                 .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK)
         );
         break;
       case ExecutorStateNavigate.CLIENT_ORDER_CONFIRMATION:
-        activity.startActivity(
-            new Intent(activity, ClientOrderConfirmationActivity.class)
+        context.startActivity(
+            new Intent(context, ClientOrderConfirmationActivity.class)
                 .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK)
         );
         break;
       case ExecutorStateNavigate.MOVING_TO_CLIENT:
-        activity.startActivity(
-            new Intent(activity, MovingToClientActivity.class)
+        context.startActivity(
+            new Intent(context, MovingToClientActivity.class)
                 .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK)
         );
         break;
       case ExecutorStateNavigate.WAITING_FOR_CLIENT:
-        activity.startActivity(
-            new Intent(activity, WaitingForClientActivity.class)
+        context.startActivity(
+            new Intent(context, WaitingForClientActivity.class)
                 .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK)
         );
         break;
       case ExecutorStateNavigate.ORDER_FULFILLMENT:
-        activity.startActivity(
-            new Intent(activity, OrderFulfillmentActivity.class)
+        context.startActivity(
+            new Intent(context, OrderFulfillmentActivity.class)
                 .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK)
         );
         break;
       case ExecutorStateNavigate.PAYMENT_CONFIRMATION:
-        activity.startActivity(
-            new Intent(activity, OrderCostDetailsActivity.class)
+        context.startActivity(
+            new Intent(context, OrderCostDetailsActivity.class)
                 .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK)
         );
         break;
       default:
-        new Builder(activity)
+        new Builder(context)
             .setTitle(R.string.error)
             .setMessage(R.string.status_unknown)
             .setCancelable(false)
-            .setPositiveButton(activity.getString(android.R.string.ok), null)
+            .setPositiveButton(context.getString(android.R.string.ok), null)
             .create()
             .show();
         return;

@@ -1,5 +1,6 @@
 package com.cargopull.executor_driver.backend.ringtone;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.RawRes;
 
 /**
@@ -12,5 +13,12 @@ public interface RingTonePlayer {
    *
    * @param soundRes ИД ресурса звука.
    */
-  void playRingTone(@RawRes int soundRes);
+  void playRingTone(@NonNull @RawRes Integer soundRes);
+
+  /**
+   * Остановить звук с затуханием в 2 с.
+   *
+   * @param soundRes ИД ресурса звука.
+   */
+  void stopRingTone(@NonNull @RawRes Integer soundRes);
 }
