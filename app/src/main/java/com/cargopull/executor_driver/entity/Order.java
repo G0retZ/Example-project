@@ -123,6 +123,16 @@ public class Order {
   }
 
   @NonNull
+  public RoutePoint getNextActiveRoutePoint() {
+    for (RoutePoint routePoint : routePath) {
+      if (routePoint.getRoutePointState() == RoutePointState.ACTIVE) {
+        return routePoint;
+      }
+    }
+    return routePath.get(0);
+  }
+
+  @NonNull
   public List<Option> getOptions() {
     return options;
   }
@@ -141,7 +151,7 @@ public class Order {
     return routePath;
   }
 
-  public void setRoutePoints(@NonNull RoutePoint... routePoints) {
+  void setRoutePoints(@NonNull RoutePoint... routePoints) {
     routePath.clear();
     addRoutePoints(routePoints);
   }
