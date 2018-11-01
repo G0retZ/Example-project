@@ -14,10 +14,10 @@ import com.cargopull.executor_driver.presentation.order.OrderViewModel;
 import javax.inject.Inject;
 
 /**
- * Отображает ожидание клиента.
+ * Отображает детали заказа из меню действий.
  */
 
-public class OrderCostDetailsOrderDetailsFragment extends BaseFragment implements OrderViewActions {
+public class ActionOrderDetailsFragment extends BaseFragment implements OrderViewActions {
 
   private OrderViewModel orderViewModel;
   private TextView commentTitleText;
@@ -37,15 +37,18 @@ public class OrderCostDetailsOrderDetailsFragment extends BaseFragment implement
   public View onCreateView(@NonNull LayoutInflater inflater,
       @Nullable ViewGroup container,
       @Nullable Bundle savedInstanceState) {
-    View view = inflater
-        .inflate(R.layout.fragment_order_cost_details_order_details, container, false);
-    commentTitleText = view.findViewById(R.id.commentTitleText);
-    commentText = view.findViewById(R.id.commentText);
+    return inflater.inflate(R.layout.fragment_action_order_details, container, false);
+  }
+
+  @Override
+  public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+    super.onViewCreated(view, savedInstanceState);
+    commentTitleText = view.findViewById(R.id.cargoDescTitleText);
+    commentText = view.findViewById(R.id.cargoDescText);
     optionsTitleText = view.findViewById(R.id.optionsTitleText);
     optionsText = view.findViewById(R.id.optionsText);
-    priceTitleText = view.findViewById(R.id.priceTitleText);
-    priceText = view.findViewById(R.id.priceText);
-    return view;
+    priceTitleText = view.findViewById(R.id.estimationTitleText);
+    priceText = view.findViewById(R.id.estimationText);
   }
 
   @Override
