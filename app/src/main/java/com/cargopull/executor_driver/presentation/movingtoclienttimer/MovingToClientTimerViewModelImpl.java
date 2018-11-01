@@ -1,4 +1,4 @@
-package com.cargopull.executor_driver.presentation.order;
+package com.cargopull.executor_driver.presentation.movingtoclienttimer;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -6,6 +6,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 import com.cargopull.executor_driver.backend.analytics.ErrorReporter;
+import com.cargopull.executor_driver.entity.Order;
 import com.cargopull.executor_driver.entity.OrderCancelledException;
 import com.cargopull.executor_driver.entity.OrderOfferDecisionException;
 import com.cargopull.executor_driver.entity.OrderOfferExpiredException;
@@ -13,33 +14,43 @@ import com.cargopull.executor_driver.gateway.DataMappingException;
 import com.cargopull.executor_driver.interactor.OrderUseCase;
 import com.cargopull.executor_driver.presentation.CommonNavigate;
 import com.cargopull.executor_driver.presentation.SingleLiveEvent;
+import com.cargopull.executor_driver.presentation.ViewActions;
 import com.cargopull.executor_driver.presentation.ViewState;
+import com.cargopull.executor_driver.utils.TimeUtils;
+import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.internal.disposables.EmptyDisposable;
+import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
 
-public class OrderViewModelImpl extends ViewModel implements
-    OrderViewModel {
+public class MovingToClientTimerViewModelImpl extends ViewModel implements
+    MovingToClientTimerViewModel {
 
   @NonNull
   private final ErrorReporter errorReporter;
   @NonNull
   private final OrderUseCase orderUseCase;
   @NonNull
-  private final MutableLiveData<ViewState<OrderViewActions>> viewStateLiveData;
+  private final MutableLiveData<ViewState<ViewActions>> viewStateLiveData;
   @NonNull
   private final SingleLiveEvent<String> navigateLiveData;
   @NonNull
+  private final TimeUtils timeUtils;
+  @NonNull
   private Disposable disposable = EmptyDisposable.INSTANCE;
+  @NonNull
+  private Disposable timerDisposable = EmptyDisposable.INSTANCE;
   @Nullable
-  private ViewState<OrderViewActions> lastViewState;
+  private ViewState<ViewActions> lastViewState;
 
   @Inject
-  public OrderViewModelImpl(@NonNull ErrorReporter errorReporter,
-      @NonNull OrderUseCase orderUseCase) {
+  public MovingToClientTimerViewModelImpl(@NonNull ErrorReporter errorReporter,
+      @NonNull OrderUseCase orderUseCase,
+      @NonNull TimeUtils timeUtils) {
     this.errorReporter = errorReporter;
     this.orderUseCase = orderUseCase;
+    this.timeUtils = timeUtils;
     viewStateLiveData = new MutableLiveData<>();
     navigateLiveData = new SingleLiveEvent<>();
     loadOrders();
@@ -47,7 +58,7 @@ public class OrderViewModelImpl extends ViewModel implements
 
   @NonNull
   @Override
-  public LiveData<ViewState<OrderViewActions>> getViewStateLiveData() {
+  public LiveData<ViewState<ViewActions>> getViewStateLiveData() {
     return viewStateLiveData;
   }
 
@@ -59,32 +70,19 @@ public class OrderViewModelImpl extends ViewModel implements
 
   private void loadOrders() {
     if (disposable.isDisposed()) {
-      viewStateLiveData.postValue(new OrderViewStatePending(lastViewState));
+      viewStateLiveData.postValue(new MovingToClientTimerViewStatePending(lastViewState));
       disposable = orderUseCase.getOrders()
           .observeOn(AndroidSchedulers.mainThread())
           .doOnError(throwable -> {
-            if (throwable instanceof OrderOfferExpiredException) {
-              viewStateLiveData.postValue(
-                  new OrderViewStateExpired(
-                      lastViewState,
-                      throwable.getMessage(),
-                      () -> navigateLiveData.postValue(OrderNavigate.CLOSE)
-                  )
-              );
-            } else if (throwable instanceof OrderCancelledException) {
-              viewStateLiveData.postValue(
-                  new OrderViewStateCancelled(
-                      lastViewState,
-                      () -> navigateLiveData.postValue(OrderNavigate.CLOSE)
-                  )
-              );
-            }
+            timerDisposable.dispose();
+            viewStateLiveData.postValue(
+                lastViewState = new MovingToClientTimerViewStateCounting(0)
+            );
           })
           .retry(throwable -> throwable instanceof OrderOfferExpiredException
               || throwable instanceof OrderOfferDecisionException
               || throwable instanceof OrderCancelledException)
-          .subscribe(
-              order -> viewStateLiveData.postValue(lastViewState = new OrderViewStateIdle(order)),
+          .subscribe(this::consumeOrder,
               throwable -> {
                 errorReporter.reportError(throwable);
                 if (throwable instanceof DataMappingException) {
@@ -95,9 +93,27 @@ public class OrderViewModelImpl extends ViewModel implements
     }
   }
 
+  private void consumeOrder(@NonNull Order order) {
+    timerDisposable.dispose();
+    long start =
+        timeUtils.currentTimeMillis() - order.getConfirmationTime() - order.getEtaToStartPoint();
+    long amount = Math.round((order.getEtaToStartPoint() - start) / 1000d);
+    timerDisposable = Observable.intervalRange(0, Math.max(amount, 600), 0, 1, TimeUnit.SECONDS)
+        .map(aLong -> start + aLong * 1000)
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe(
+            count -> viewStateLiveData.postValue(
+                lastViewState = new MovingToClientTimerViewStateCounting(-count)
+            ),
+            throwable -> {
+            }
+        );
+  }
+
   @Override
   protected void onCleared() {
     super.onCleared();
     disposable.dispose();
+    timerDisposable.dispose();
   }
 }

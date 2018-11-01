@@ -1,4 +1,4 @@
-package com.cargopull.executor_driver.presentation.order;
+package com.cargopull.executor_driver.presentation.movingtoclienttimer;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
@@ -7,6 +7,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.verifyZeroInteractions;
 
+import com.cargopull.executor_driver.presentation.ViewActions;
 import com.cargopull.executor_driver.presentation.ViewState;
 import org.junit.Before;
 import org.junit.Test;
@@ -15,21 +16,21 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
-public class OrderViewStatePendingTest {
+public class MovingToClientTimerViewStatePendingTest {
 
-  private OrderViewStatePending viewState;
-
-  @Mock
-  private OrderViewActions viewActions;
+  private MovingToClientTimerViewStatePending viewState;
 
   @Mock
-  private ViewState<OrderViewActions> parentViewState;
+  private ViewActions viewActions;
+
   @Mock
-  private ViewState<OrderViewActions> parentViewState1;
+  private ViewState<ViewActions> parentViewState;
+  @Mock
+  private ViewState<ViewActions> parentViewState1;
 
   @Before
   public void setUp() {
-    viewState = new OrderViewStatePending(parentViewState);
+    viewState = new MovingToClientTimerViewStatePending(parentViewState);
   }
 
   @Test
@@ -38,7 +39,7 @@ public class OrderViewStatePendingTest {
     viewState.apply(viewActions);
 
     // Результат:
-    verify(viewActions).blockWithPending("OrderViewState");
+    verify(viewActions).blockWithPending("MovingToClientTimerViewState");
     verifyNoMoreInteractions(viewActions);
     verify(parentViewState, only()).apply(viewActions);
   }
@@ -46,22 +47,23 @@ public class OrderViewStatePendingTest {
   @Test
   public void testNoActions() {
     // Дано:
-    viewState = new OrderViewStatePending(null);
+    viewState = new MovingToClientTimerViewStatePending(null);
 
     // Действие:
     viewState.apply(viewActions);
 
     // Результат:
-    verify(viewActions).blockWithPending("OrderViewState");
+    verify(viewActions).blockWithPending("MovingToClientTimerViewState");
     verifyNoMoreInteractions(viewActions);
     verifyZeroInteractions(parentViewState);
   }
 
   @Test
   public void testEquals() {
-    viewState = new OrderViewStatePending(parentViewState);
-    assertEquals(viewState, new OrderViewStatePending(parentViewState));
-    assertNotEquals(viewState, new OrderViewStatePending(parentViewState1));
-    assertNotEquals(viewState, new OrderViewStatePending(null));
+    viewState = new MovingToClientTimerViewStatePending(parentViewState);
+    assertEquals(viewState, new MovingToClientTimerViewStatePending(parentViewState));
+    assertNotEquals(viewState, new MovingToClientTimerViewStatePending(parentViewState1));
+    assertNotEquals(viewState, new MovingToClientTimerViewStatePending(null));
   }
+
 }

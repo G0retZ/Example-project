@@ -13,11 +13,15 @@ final class OrderViewStateExpired implements ViewState<OrderViewActions> {
   private final ViewState<OrderViewActions> parentViewState;
   @NonNull
   private final String message;
+  @NonNull
+  private final Runnable consumeAction;
 
   OrderViewStateExpired(@Nullable ViewState<OrderViewActions> parentViewState,
-      @NonNull String message) {
+      @NonNull String message,
+      @NonNull Runnable consumeAction) {
     this.parentViewState = parentViewState;
     this.message = message;
+    this.consumeAction = consumeAction;
   }
 
   @Override
@@ -25,10 +29,9 @@ final class OrderViewStateExpired implements ViewState<OrderViewActions> {
     if (parentViewState != null) {
       parentViewState.apply(stateActions);
     }
-    stateActions.showOrderExpiredMessage(message);
+    stateActions.showPersistentDialog(message, consumeAction);
   }
 
-  @SuppressWarnings("SimplifiableIfStatement")
   @Override
   public boolean equals(Object o) {
     if (this == o) {

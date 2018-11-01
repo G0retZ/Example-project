@@ -1,7 +1,6 @@
 package com.cargopull.executor_driver.presentation.ordecostdetails;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import com.cargopull.executor_driver.utils.Pair;
 import java.util.List;
 
@@ -50,7 +49,7 @@ public interface OrderCostDetailsViewActions {
    *
    * @param distance - расстояние
    */
-  void showEstimatedOrderDistance(@Nullable String distance);
+  void showEstimatedOrderDistance(double distance);
 
   /**
    * Показать предрасчетную стоимость услуги заказа.

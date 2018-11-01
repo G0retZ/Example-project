@@ -2,6 +2,7 @@ package com.cargopull.executor_driver.entity;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -58,6 +59,7 @@ public class OrderTest {
     assertEquals(order.getStartTime(), 9876543210L);
     assertEquals(order.getScheduledStartTime(), 123812983712L);
     assertEquals(order.getRoutePath(), Collections.singletonList(routePoint));
+    assertEquals(order.getNextActiveRoutePoint(), routePoint);
     assertEquals(order.getOptions(), Collections.singletonList(option));
   }
 
@@ -81,11 +83,13 @@ public class OrderTest {
 
   @Test
   public void testSetRoutePoints() {
+    when(routePoint2.getRoutePointState()).thenReturn(RoutePointState.ACTIVE);
     order.setRoutePoints(routePoint1, routePoint2, routePoint3);
     order.setRoutePoints(routePoint3, routePoint2, routePoint1);
     assertEquals(order.getRoutePath(), new ArrayList<>(
         Arrays.asList(routePoint3, routePoint2, routePoint1)
     ));
+    assertEquals(order.getNextActiveRoutePoint(), routePoint2);
   }
 
   @Test
@@ -96,6 +100,7 @@ public class OrderTest {
         Arrays.asList(routePoint, routePoint1, routePoint2, routePoint3, routePoint3, routePoint2,
             routePoint1)
     ));
+    assertEquals(order.getNextActiveRoutePoint(), routePoint);
   }
 
   @Test

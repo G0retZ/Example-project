@@ -56,7 +56,7 @@
       android:textStyle="bold"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:text="1"
+      android:text="@string/_1"
       app:layout_constraintEnd_toEndOf="@id/routePointMark"
       app:layout_constraintStart_toStartOf="@id/routePointMark"
       app:layout_constraintTop_toTopOf="@id/routePointMark"/>
@@ -128,12 +128,12 @@
       android:layout_height="wrap_content"
       android:layout_marginTop="2dp"
       android:gravity="center"
-      android:text="1"
+      android:text="@string/_1"
       app:layout_constraintEnd_toEndOf="@id/routePointMark1"
       app:layout_constraintStart_toStartOf="@id/routePointMark1"
       app:layout_constraintTop_toTopOf="@id/routePointMark1"/>
     <TextView
-      android:id="@+id/addressText1"
+      android:id="@+id/nextAddressText"
       style="@style/TextAppearance.AppTheme.SubTitle"
       android:layout_width="0dp"
       android:layout_height="wrap_content"
@@ -152,10 +152,10 @@
       android:layout_marginLeft="16dp"
       android:contentDescription="@null"
       app:layout_constraintStart_toStartOf="parent"
-      app:layout_constraintTop_toBottomOf="@id/addressText1"
+      app:layout_constraintTop_toBottomOf="@id/nextAddressText"
       app:srcCompat="@drawable/ic_route_point"/>
     <TextView
-      android:id="@+id/positionText2"
+      android:id="@+id/routePointsCount"
       style="@style/TextAppearance.AppTheme.SubTitle"
       android:textStyle="bold"
       android:layout_width="0dp"
@@ -167,7 +167,7 @@
       app:layout_constraintTop_toTopOf="@id/routePointMark2"
       tools:text="2"/>
     <TextView
-      android:id="@+id/addressText2"
+      android:id="@+id/lastAddressText"
       style="@style/TextAppearance.AppTheme.SubTitle"
       android:layout_width="0dp"
       android:layout_height="wrap_content"
@@ -176,7 +176,7 @@
       android:layout_marginEnd="16dp"
       app:layout_constraintEnd_toEndOf="parent"
       app:layout_constraintStart_toEndOf="@id/routePointMark1"
-      app:layout_constraintTop_toBottomOf="@id/addressText1"
+      app:layout_constraintTop_toBottomOf="@id/nextAddressText"
       tools:text="Москва, ул. Академика Пилюгина, 14 корпус 4, кв. 1122, П2, Э8"/>
     <TextView
       android:id="@+id/estimationTitleText"
@@ -188,7 +188,7 @@
       android:layout_marginEnd="16dp"
       android:text="@string/order_distance_and_duration"
       app:layout_constraintStart_toStartOf="parent"
-      app:layout_constraintTop_toBottomOf="@+id/addressText2"/>
+      app:layout_constraintTop_toBottomOf="@+id/lastAddressText"/>
     <TextView
       android:id="@+id/estimationText"
       style="@style/TextAppearance.AppTheme.Title"

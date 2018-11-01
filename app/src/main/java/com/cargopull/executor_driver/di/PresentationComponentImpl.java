@@ -45,6 +45,8 @@ import com.cargopull.executor_driver.presentation.missedorder.MissedOrderViewMod
 import com.cargopull.executor_driver.presentation.missedorder.MissedOrderViewModelImpl;
 import com.cargopull.executor_driver.presentation.movingtoclient.MovingToClientViewModel;
 import com.cargopull.executor_driver.presentation.movingtoclient.MovingToClientViewModelImpl;
+import com.cargopull.executor_driver.presentation.movingtoclienttimer.MovingToClientTimerViewModel;
+import com.cargopull.executor_driver.presentation.movingtoclienttimer.MovingToClientTimerViewModelImpl;
 import com.cargopull.executor_driver.presentation.nextroutepoint.NextRoutePointViewModel;
 import com.cargopull.executor_driver.presentation.nextroutepoint.NextRoutePointViewModelImpl;
 import com.cargopull.executor_driver.presentation.onlinebutton.OnlineButtonViewModel;
@@ -510,8 +512,7 @@ class PresentationComponentImpl implements PresentationComponent {
     if (orderViewModel == null) {
       orderViewModel = new OrderViewModelImpl(
           backendComponent.getErrorReporter(),
-          getInteractorComponent().getOrderUseCase(),
-          timeUtils
+          getInteractorComponent().getOrderUseCase()
       );
     }
     return orderViewModel;
@@ -526,8 +527,10 @@ class PresentationComponentImpl implements PresentationComponent {
     return getViewModelInstance(
         fragment,
         OrderViewModelImpl.class,
-        new OrderViewModelImpl(backendComponent.getErrorReporter(),
-            getInteractorComponent().getPreOrderUseCase(), timeUtils)
+        new OrderViewModelImpl(
+            backendComponent.getErrorReporter(),
+            getInteractorComponent().getPreOrderUseCase()
+        )
     );
   }
 
@@ -817,8 +820,7 @@ class PresentationComponentImpl implements PresentationComponent {
         OrderViewModelImpl.class,
         new OrderViewModelImpl(
             backendComponent.getErrorReporter(),
-            getInteractorComponent().getSelectedPreOrderUseCase(),
-            timeUtils
+            getInteractorComponent().getSelectedPreOrderUseCase()
         )
     );
   }
@@ -853,8 +855,7 @@ class PresentationComponentImpl implements PresentationComponent {
         OrderViewModelImpl.class,
         new OrderViewModelImpl(
             backendComponent.getErrorReporter(),
-            getInteractorComponent().getUpcomingPreOrderUseCase(),
-            timeUtils
+            getInteractorComponent().getUpcomingPreOrderUseCase()
         )
     );
   }
@@ -878,6 +879,7 @@ class PresentationComponentImpl implements PresentationComponent {
     );
   }
 
+  @NonNull
   @Override
   public UpcomingPreOrderViewModel getUpcomingPreOrderAvailabilityViewModel() {
     if (upcomingPreOrderAvailabilityViewModel == null) {
@@ -889,6 +891,7 @@ class PresentationComponentImpl implements PresentationComponent {
     return upcomingPreOrderAvailabilityViewModel;
   }
 
+  @NonNull
   @Override
   public GeoLocationStateViewModel getGeoLocationStateViewModel(
       @Nullable AppCompatActivity appCompatActivity) {
@@ -900,6 +903,23 @@ class PresentationComponentImpl implements PresentationComponent {
         GeoLocationStateViewModelImpl.class,
         new GeoLocationStateViewModelImpl(
             getRepositoryComponent().getGeoLocationStateGateway()
+        )
+    );
+  }
+
+  @NonNull
+  @Override
+  public MovingToClientTimerViewModel getMovingToClientTimerViewModel(Fragment fragment) {
+    if (fragment == null) {
+      throw new NullPointerException("Фрагмент не должен быть null");
+    }
+    return getViewModelInstance(
+        fragment,
+        MovingToClientTimerViewModelImpl.class,
+        new MovingToClientTimerViewModelImpl(
+            backendComponent.getErrorReporter(),
+            getInteractorComponent().getOrderUseCase(),
+            timeUtils
         )
     );
   }

@@ -10,7 +10,6 @@ import com.cargopull.executor_driver.entity.RoutePoint;
 import com.cargopull.executor_driver.entity.RoutePointState;
 import java.text.DecimalFormat;
 import java.util.Arrays;
-import java.util.Locale;
 import org.joda.time.format.DateTimeFormat;
 import org.junit.Before;
 import org.junit.Test;
@@ -105,8 +104,7 @@ public class PreOrdersListOrderItemTest {
     when(order.getEstimatedRouteLength()).thenReturn(33239L);
 
     // Результат:
-    assertEquals(preOrdersListItem.getRouteLength(),
-        String.format(Locale.getDefault(), "%.2f", 33239 / 1000d));
+    assertEquals(preOrdersListItem.getRouteLength(), 33.239f, 0);
   }
 
   @Test

@@ -1,32 +1,28 @@
-package com.cargopull.executor_driver.presentation.order;
+package com.cargopull.executor_driver.presentation.movingtoclienttimer;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import com.cargopull.executor_driver.R;
+import com.cargopull.executor_driver.presentation.ViewActions;
 import com.cargopull.executor_driver.presentation.ViewState;
 
 /**
- * Состояние отмененного заказа.
+ * Состояние ожидания при подтверждении или отказе от заказа.
  */
-final class OrderViewStateCancelled implements ViewState<OrderViewActions> {
+final class MovingToClientTimerViewStatePending implements ViewState<ViewActions> {
 
   @Nullable
-  private final ViewState<OrderViewActions> parentViewState;
-  @NonNull
-  private final Runnable consumeAction;
+  private final ViewState<ViewActions> parentViewState;
 
-  OrderViewStateCancelled(@Nullable ViewState<OrderViewActions> parentViewState,
-      @NonNull Runnable consumeAction) {
+  MovingToClientTimerViewStatePending(@Nullable ViewState<ViewActions> parentViewState) {
     this.parentViewState = parentViewState;
-    this.consumeAction = consumeAction;
   }
 
   @Override
-  public void apply(@NonNull OrderViewActions stateActions) {
+  public void apply(@NonNull ViewActions stateActions) {
     if (parentViewState != null) {
       parentViewState.apply(stateActions);
     }
-    stateActions.showPersistentDialog(R.string.order_cancelled, consumeAction);
+    stateActions.blockWithPending("MovingToClientTimerViewState");
   }
 
   @Override
@@ -38,7 +34,7 @@ final class OrderViewStateCancelled implements ViewState<OrderViewActions> {
       return false;
     }
 
-    OrderViewStateCancelled that = (OrderViewStateCancelled) o;
+    MovingToClientTimerViewStatePending that = (MovingToClientTimerViewStatePending) o;
 
     return parentViewState != null ? parentViewState.equals(that.parentViewState)
         : that.parentViewState == null;

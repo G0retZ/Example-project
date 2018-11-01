@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.cargopull.executor_driver.R;
@@ -25,8 +24,6 @@ public class UpcomingPreOrderNotificationFragment extends BaseFragment implement
   private OrderViewModel upcomingPreOrderViewModel;
   private UpcomingPreOrderViewModel upcomingPreOrderNotificationViewModel;
   private View rootView;
-  private TextView addressText;
-  private TextView occupationTimeText;
 
   @Inject
   public void setUpcomingPreOrderViewModel(@NonNull OrderViewModel upcomingPreOrderViewModel) {
@@ -45,10 +42,9 @@ public class UpcomingPreOrderNotificationFragment extends BaseFragment implement
       @Nullable ViewGroup container,
       @Nullable Bundle savedInstanceState) {
     rootView = inflater.inflate(R.layout.fragment_upcoming_pre_order, container, false);
-    rootView
-        .setOnClickListener(v -> upcomingPreOrderNotificationViewModel.upcomingPreOrderConsumed());
-    addressText = rootView.findViewById(R.id.addressText);
-    occupationTimeText = rootView.findViewById(R.id.occupationTime);
+    rootView.setOnClickListener(
+        v -> upcomingPreOrderNotificationViewModel.upcomingPreOrderConsumed()
+    );
     return rootView;
   }
 
@@ -89,76 +85,17 @@ public class UpcomingPreOrderNotificationFragment extends BaseFragment implement
   }
 
   @Override
-  public void showOrderPending(boolean pending) {
+  public void blockWithPending(@NonNull String blockerId) {
   }
 
   @Override
-  public void showLoadPoint(@NonNull String url) {
+  public boolean isShowCents() {
+    return getResources().getBoolean(R.bool.show_cents);
   }
 
   @Override
-  public void showTimeout(int timeout) {
-  }
-
-  @Override
-  public void showFirstPointDistance(String distance) {
-  }
-
-  @Override
-  public void showFirstPointEta(int etaTime) {
-  }
-
-  @Override
-  public void showNextPointAddress(@NonNull String coordinates, @NonNull String address) {
-    addressText.setText(address);
-  }
-
-  @Override
-  public void showNextPointComment(@NonNull String comment) {
-  }
-
-  @Override
-  public void showLastPointAddress(@NonNull String address) {
-  }
-
-  @Override
-  public void showRoutePointsCount(int count) {
-  }
-
-  @Override
-  public void showServiceName(@NonNull String serviceName) {
-  }
-
-  @Override
-  public void showEstimatedPrice(@NonNull String priceText) {
-  }
-
-  @Override
-  public void showOrderConditions(@NonNull String routeDistance, int time, long cost) {
-  }
-
-  @Override
-  public void showOrderOccupationTime(@NonNull String occupationTime) {
-    occupationTimeText.setText(occupationTime);
-  }
-
-  @Override
-  public void showOrderOccupationDate(@NonNull String occupationDate) {
-  }
-
-  @Override
-  public void showOrderOptionsRequirements(@NonNull String options) {
-  }
-
-  @Override
-  public void showComment(@NonNull String comment) {
-  }
-
-  @Override
-  public void showOrderExpiredMessage(@Nullable String message) {
-  }
-
-  @Override
-  public void showOrderCancelledMessage(boolean show) {
+  @NonNull
+  public String getCurrencyFormat() {
+    return getString(R.string.currency_format);
   }
 }

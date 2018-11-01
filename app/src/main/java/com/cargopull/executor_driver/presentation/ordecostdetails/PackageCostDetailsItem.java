@@ -4,7 +4,6 @@ import androidx.annotation.NonNull;
 import com.cargopull.executor_driver.entity.PackageCostDetails;
 import com.cargopull.executor_driver.utils.Pair;
 import java.util.List;
-import java.util.Locale;
 
 /**
  * Модель для отображения детального расчета пакета заказа. Тестируемое форматирование.
@@ -26,9 +25,8 @@ class PackageCostDetailsItem {
     return packageCostDetails.getPackageTime();
   }
 
-  public String getDistance() {
-    return String
-        .format(Locale.getDefault(), "%.2f", packageCostDetails.getPackageDistance() / 1000d);
+  public double getDistance() {
+    return packageCostDetails.getPackageDistance() / 1000d;
   }
 
   public long getServiceCost() {

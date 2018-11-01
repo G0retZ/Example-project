@@ -1,7 +1,10 @@
 package com.cargopull.executor_driver.presentation.order;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.only;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
@@ -18,7 +21,6 @@ import com.cargopull.executor_driver.gateway.DataMappingException;
 import com.cargopull.executor_driver.interactor.OrderUseCase;
 import com.cargopull.executor_driver.presentation.CommonNavigate;
 import com.cargopull.executor_driver.presentation.ViewState;
-import com.cargopull.executor_driver.utils.TimeUtils;
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
@@ -30,6 +32,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestRule;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -48,13 +52,17 @@ public class OrderViewModelTest {
   @Mock
   private OrderUseCase orderUseCase;
   @Mock
-  private TimeUtils timeUtils;
-  @Mock
   private Order order;
   @Mock
   private Order order1;
   @Mock
   private Order order2;
+  @Mock
+  private OrderViewActions orderViewActions;
+  @Captor
+  private ArgumentCaptor<ViewState<OrderViewActions>> viewStateCaptor;
+  @Captor
+  private ArgumentCaptor<Runnable> runnableCaptor;
   private PublishSubject<Order> publishSubject;
 
   @Mock
@@ -67,7 +75,7 @@ public class OrderViewModelTest {
     publishSubject = PublishSubject.create();
     when(orderUseCase.getOrders())
         .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
-    viewModel = new OrderViewModelImpl(errorReporter, orderUseCase, timeUtils);
+    viewModel = new OrderViewModelImpl(errorReporter, orderUseCase);
   }
 
   /* Проверяем отправку ошибок в репортер */
@@ -159,15 +167,9 @@ public class OrderViewModelTest {
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(new OrderViewStatePending(null));
-    inOrder.verify(viewStateObserver).onChanged(new OrderViewStateIdle(
-        new OrderItem(order, timeUtils))
-    );
-    inOrder.verify(viewStateObserver).onChanged(new OrderViewStateIdle(
-        new OrderItem(order1, timeUtils))
-    );
-    inOrder.verify(viewStateObserver).onChanged(new OrderViewStateIdle(
-        new OrderItem(order2, timeUtils))
-    );
+    inOrder.verify(viewStateObserver).onChanged(new OrderViewStateIdle(order));
+    inOrder.verify(viewStateObserver).onChanged(new OrderViewStateIdle(order1));
+    inOrder.verify(viewStateObserver).onChanged(new OrderViewStateIdle(order2));
     verifyNoMoreInteractions(viewStateObserver);
   }
 
@@ -198,7 +200,7 @@ public class OrderViewModelTest {
         ).startWith(publishSubject)
             .toFlowable(BackpressureStrategy.BUFFER)
     );
-    viewModel = new OrderViewModelImpl(errorReporter, orderUseCase, timeUtils);
+    viewModel = new OrderViewModelImpl(errorReporter, orderUseCase);
     viewModel.getNavigationLiveData().observeForever(navigateObserver);
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
@@ -207,17 +209,15 @@ public class OrderViewModelTest {
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(new OrderViewStatePending(null));
-    inOrder.verify(viewStateObserver).onChanged(new OrderViewStateIdle(
-        new OrderItem(order, timeUtils))
-    );
+    inOrder.verify(viewStateObserver).onChanged(new OrderViewStateIdle(order));
     inOrder.verify(viewStateObserver).onChanged(new OrderViewStateExpired(
-            new OrderViewStateIdle(new OrderItem(order, timeUtils)),
-            "message"
+            new OrderViewStateIdle(order),
+            "message",
+            () -> {
+            }
         )
     );
-    inOrder.verify(viewStateObserver).onChanged(new OrderViewStateIdle(
-        new OrderItem(order2, timeUtils))
-    );
+    inOrder.verify(viewStateObserver).onChanged(new OrderViewStateIdle(order2));
     verifyNoMoreInteractions(viewStateObserver);
   }
 
@@ -248,7 +248,7 @@ public class OrderViewModelTest {
         ).startWith(publishSubject)
             .toFlowable(BackpressureStrategy.BUFFER)
     );
-    viewModel = new OrderViewModelImpl(errorReporter, orderUseCase, timeUtils);
+    viewModel = new OrderViewModelImpl(errorReporter, orderUseCase);
     viewModel.getNavigationLiveData().observeForever(navigateObserver);
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
@@ -257,15 +257,14 @@ public class OrderViewModelTest {
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(new OrderViewStatePending(null));
-    inOrder.verify(viewStateObserver).onChanged(new OrderViewStateIdle(
-        new OrderItem(order, timeUtils))
-    );
+    inOrder.verify(viewStateObserver).onChanged(new OrderViewStateIdle(order));
     inOrder.verify(viewStateObserver).onChanged(new OrderViewStateCancelled(
-        new OrderViewStateIdle(new OrderItem(order, timeUtils)))
+            new OrderViewStateIdle(order),
+            () -> {
+            }
+        )
     );
-    inOrder.verify(viewStateObserver).onChanged(new OrderViewStateIdle(
-        new OrderItem(order2, timeUtils))
-    );
+    inOrder.verify(viewStateObserver).onChanged(new OrderViewStateIdle(order2));
     verifyNoMoreInteractions(viewStateObserver);
   }
 
@@ -296,7 +295,7 @@ public class OrderViewModelTest {
         ).startWith(publishSubject)
             .toFlowable(BackpressureStrategy.BUFFER)
     );
-    viewModel = new OrderViewModelImpl(errorReporter, orderUseCase, timeUtils);
+    viewModel = new OrderViewModelImpl(errorReporter, orderUseCase);
     viewModel.getNavigationLiveData().observeForever(navigateObserver);
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
@@ -305,12 +304,8 @@ public class OrderViewModelTest {
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(new OrderViewStatePending(null));
-    inOrder.verify(viewStateObserver).onChanged(new OrderViewStateIdle(
-        new OrderItem(order, timeUtils))
-    );
-    inOrder.verify(viewStateObserver).onChanged(new OrderViewStateIdle(
-        new OrderItem(order2, timeUtils))
-    );
+    inOrder.verify(viewStateObserver).onChanged(new OrderViewStateIdle(order));
+    inOrder.verify(viewStateObserver).onChanged(new OrderViewStateIdle(order2));
     verifyNoMoreInteractions(viewStateObserver);
   }
 
@@ -336,13 +331,73 @@ public class OrderViewModelTest {
    * Должен перейти к закрытию карточки.
    */
   @Test
-  public void setNavigateToCloseForMessageConsumed() {
+  public void setNavigateToCloseForCancelledMessageConsumed() {
     // Дано:
+    PublishSubject<Order> publishSubject = PublishSubject.create();
+    when(orderUseCase.getOrders()).thenReturn(
+        Observable.create(
+            new ObservableOnSubscribe<Order>() {
+              private boolean run;
+
+              @Override
+              public void subscribe(ObservableEmitter<Order> emitter) {
+                if (!run) {
+                  run = true;
+                  emitter.onError(new OrderCancelledException());
+                }
+              }
+            }
+        ).startWith(publishSubject)
+            .toFlowable(BackpressureStrategy.BUFFER)
+    );
+    viewModel = new OrderViewModelImpl(errorReporter, orderUseCase);
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
     viewModel.getNavigationLiveData().observeForever(navigateObserver);
 
     // Действие:
-    viewModel.messageConsumed();
+    publishSubject.onComplete();
+    verify(viewStateObserver, times(2)).onChanged(viewStateCaptor.capture());
+    viewStateCaptor.getAllValues().get(1).apply(orderViewActions);
+    verify(orderViewActions).showPersistentDialog(anyInt(), runnableCaptor.capture());
+    runnableCaptor.getValue().run();
+
+    // Результат:
+    verify(navigateObserver, only()).onChanged(OrderNavigate.CLOSE);
+  }
+
+  /**
+   * Должен перейти к закрытию карточки.
+   */
+  @Test
+  public void setNavigateToCloseForExpiredMessageConsumed() {
+    // Дано:
+    PublishSubject<Order> publishSubject = PublishSubject.create();
+    when(orderUseCase.getOrders()).thenReturn(
+        Observable.create(
+            new ObservableOnSubscribe<Order>() {
+              private boolean run;
+
+              @Override
+              public void subscribe(ObservableEmitter<Order> emitter) {
+                if (!run) {
+                  run = true;
+                  emitter.onError(new OrderOfferExpiredException("message"));
+                }
+              }
+            }
+        ).startWith(publishSubject)
+            .toFlowable(BackpressureStrategy.BUFFER)
+    );
+    viewModel = new OrderViewModelImpl(errorReporter, orderUseCase);
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
+    viewModel.getNavigationLiveData().observeForever(navigateObserver);
+
+    // Действие:
+    publishSubject.onComplete();
+    verify(viewStateObserver, times(2)).onChanged(viewStateCaptor.capture());
+    viewStateCaptor.getAllValues().get(1).apply(orderViewActions);
+    verify(orderViewActions).showPersistentDialog(anyString(), runnableCaptor.capture());
+    runnableCaptor.getValue().run();
 
     // Результат:
     verify(navigateObserver, only()).onChanged(OrderNavigate.CLOSE);

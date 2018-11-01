@@ -13,10 +13,10 @@ import com.cargopull.executor_driver.presentation.order.OrderViewModel;
 import javax.inject.Inject;
 
 /**
- * Отображает подтверждение заказа.
+ * Отображает детали заказа из меню действий.
  */
 
-public class ClientOrderConfirmationFragment extends BaseFragment implements OrderViewActions {
+public class ActionOrderDetailsFragment extends BaseFragment implements OrderViewActions {
 
   private OrderViewModel orderViewModel;
 
@@ -30,7 +30,7 @@ public class ClientOrderConfirmationFragment extends BaseFragment implements Ord
   public View onCreateView(@NonNull LayoutInflater inflater,
       @Nullable ViewGroup container,
       @Nullable Bundle savedInstanceState) {
-    return inflater.inflate(R.layout.fragment_client_order_confirmation, container, false);
+    return inflater.inflate(R.layout.fragment_action_order_details, container, false);
   }
 
   @Override
