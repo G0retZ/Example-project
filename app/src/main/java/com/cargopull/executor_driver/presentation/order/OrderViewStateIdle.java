@@ -45,6 +45,9 @@ final class OrderViewStateIdle implements ViewState<OrderViewActions> {
     stateActions.setFormattedText(
         R.id.etaText, R.string.eta, Math.round(order.getEtaToStartPoint() / 60_000f)
     );
+    // Длинна маршрута
+    stateActions.setFormattedText(R.id.routeTitleText, R.string.route_distance,
+        order.getEstimatedRouteLength() / 1000d);
     // Следующий адрес
     stateActions.setText(R.id.nextAddressText, routePoint.getAddress().trim());
     stateActions.setFormattedText(R.id.openNavigator, R.string.client_location,
@@ -116,7 +119,7 @@ final class OrderViewStateIdle implements ViewState<OrderViewActions> {
         DateTimeFormat.forPattern("HH:mm").print(scheduledDate));
     // Время занятости на предзаказе
     scheduledDate = scheduledDate.plus(estimatedTime);
-    stateActions.setFormattedText(R.id.startTimeText, R.string.h_m_d,
+    stateActions.setFormattedText(R.id.occupationTimeText, R.string.h_m_d,
         scheduledDate.getHourOfDay(),
         scheduledDate.getMinuteOfDay(),
         DateTimeFormat.forPattern("HH:mm").print(scheduledDate));

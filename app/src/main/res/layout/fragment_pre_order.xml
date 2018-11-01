@@ -42,7 +42,7 @@
       app:layout_constraintTop_toBottomOf="@+id/startDateText"
       tools:text="16:30"/>
     <TextView
-      android:id="@+id/occupationTitleText"
+      android:id="@+id/occupationTimeTitleText"
       style="@style/TextAppearance.AppTheme.Subhead"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
@@ -61,7 +61,7 @@
       android:layout_marginEnd="16dp"
       app:layout_constraintEnd_toEndOf="parent"
       app:layout_constraintStart_toStartOf="parent"
-      app:layout_constraintTop_toBottomOf="@+id/occupationTitleText"
+      app:layout_constraintTop_toBottomOf="@+id/occupationTimeTitleText"
       tools:text="@string/h_m_d"/>
     <TextView
       android:id="@+id/estimatedPriceTitleText"

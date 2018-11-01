@@ -60,9 +60,9 @@ public class OrderViewStateIdleTest {
     when(order.getNextActiveRoutePoint()).thenReturn(routePoint);
     when(order.getDistance()).thenReturn(12239);
     when(order.getEtaToStartPoint()).thenReturn(3264132L);
+    when(order.getEstimatedRouteLength()).thenReturn(31278L);
     when(order.getStartTime()).thenReturn(1238403200L);
     when(order.getRoutePath()).thenReturn(Arrays.asList(routePoint, routePoint1, routePoint2));
-    when(order.getEstimatedRouteLength()).thenReturn(10_000L);
     when(order.getEstimatedTime()).thenReturn(7929000L);
     when(order.getEstimatedPrice()).thenReturn(681250L);
     when(order.getServiceName()).thenReturn("service");
@@ -81,6 +81,7 @@ public class OrderViewStateIdleTest {
         + "&key=AIzaSyBwlubLyqI6z_ivfAWcTCfyTXkoRHTagMk");
     verify(viewActions).setFormattedText(R.id.distanceText, R.string.km, 12.239d);
     verify(viewActions).setFormattedText(R.id.etaText, R.string.eta, 54);
+    verify(viewActions).setFormattedText(R.id.routeTitleText, R.string.route_distance, 31.278d);
     verify(viewActions).setText(R.id.nextAddressText, "address");
     verify(viewActions)
         .setFormattedText(R.id.openNavigator, R.string.client_location, 5.421, 10.2341);
@@ -94,7 +95,7 @@ public class OrderViewStateIdleTest {
     DecimalFormat decimalFormat = new DecimalFormat("##,###,### ¤");
     decimalFormat.setMaximumFractionDigits(0);
     decimalFormat.setMinimumFractionDigits(0);
-    verify(viewActions).setFormattedText(R.id.estimationText, R.string.km_h_m_p, 10d, 2, 12,
+    verify(viewActions).setFormattedText(R.id.estimationText, R.string.km_h_m_p, 31.278d, 2, 12,
         decimalFormat.format(6813)
     );
     verify(viewActions).setFormattedText(R.id.estimatedPriceText, R.string.price,
@@ -105,7 +106,7 @@ public class OrderViewStateIdleTest {
     verify(viewActions).setText(R.id.startTimeText,
         DateTimeFormat.forPattern("HH:mm").print(DateTime.now().withMillis(1238403200L)));
     DateTime dateTime = DateTime.now().withMillis(1238403200L + 7929000L);
-    verify(viewActions).setFormattedText(R.id.startTimeText, R.string.h_m_d,
+    verify(viewActions).setFormattedText(R.id.occupationTimeText, R.string.h_m_d,
         dateTime.getHourOfDay(), dateTime.getMinuteOfDay(),
         DateTimeFormat.forPattern("HH:mm").print(dateTime));
     verify(viewActions).setVisible(R.id.cargoDescTitleText, true);
@@ -133,9 +134,9 @@ public class OrderViewStateIdleTest {
     when(order.getNextActiveRoutePoint()).thenReturn(routePoint);
     when(order.getDistance()).thenReturn(12239);
     when(order.getEtaToStartPoint()).thenReturn(3264132L);
+    when(order.getEstimatedRouteLength()).thenReturn(31278L);
     when(order.getStartTime()).thenReturn(1238403200L);
     when(order.getRoutePath()).thenReturn(Arrays.asList(routePoint, routePoint1, routePoint2));
-    when(order.getEstimatedRouteLength()).thenReturn(10_000L);
     when(order.getEstimatedTime()).thenReturn(7929000L);
     when(order.getEstimatedPrice()).thenReturn(681250L);
     when(order.getServiceName()).thenReturn("service");
@@ -161,6 +162,7 @@ public class OrderViewStateIdleTest {
         + "&key=AIzaSyBwlubLyqI6z_ivfAWcTCfyTXkoRHTagMk");
     verify(viewActions).setFormattedText(R.id.distanceText, R.string.km, 12.239d);
     verify(viewActions).setFormattedText(R.id.etaText, R.string.eta, 54);
+    verify(viewActions).setFormattedText(R.id.routeTitleText, R.string.route_distance, 31.278d);
     verify(viewActions).setText(R.id.nextAddressText, "address");
     verify(viewActions)
         .setFormattedText(R.id.openNavigator, R.string.client_location, 5.421, 10.2341);
@@ -174,7 +176,7 @@ public class OrderViewStateIdleTest {
     DecimalFormat decimalFormat = new DecimalFormat("##,###,### ¤");
     decimalFormat.setMaximumFractionDigits(2);
     decimalFormat.setMinimumFractionDigits(2);
-    verify(viewActions).setFormattedText(R.id.estimationText, R.string.km_h_m_p, 10d, 2, 12,
+    verify(viewActions).setFormattedText(R.id.estimationText, R.string.km_h_m_p, 31.278d, 2, 12,
         decimalFormat.format(6812.50)
     );
     verify(viewActions).setFormattedText(R.id.estimatedPriceText, R.string.price,
@@ -185,7 +187,7 @@ public class OrderViewStateIdleTest {
     verify(viewActions).setText(R.id.startTimeText,
         DateTimeFormat.forPattern("HH:mm").print(DateTime.now().withMillis(1238403200L)));
     DateTime dateTime = DateTime.now().withMillis(1238403200L + 7929000L);
-    verify(viewActions).setFormattedText(R.id.startTimeText, R.string.h_m_d,
+    verify(viewActions).setFormattedText(R.id.occupationTimeText, R.string.h_m_d,
         dateTime.getHourOfDay(), dateTime.getMinuteOfDay(),
         DateTimeFormat.forPattern("HH:mm").print(dateTime));
     verify(viewActions).setVisible(R.id.cargoDescTitleText, false);
@@ -212,9 +214,9 @@ public class OrderViewStateIdleTest {
     when(order.getNextActiveRoutePoint()).thenReturn(routePoint);
     when(order.getDistance()).thenReturn(12239);
     when(order.getEtaToStartPoint()).thenReturn(3264132L);
+    when(order.getEstimatedRouteLength()).thenReturn(31278L);
     when(order.getStartTime()).thenReturn(1238403200L);
     when(order.getRoutePath()).thenReturn(Collections.singletonList(routePoint));
-    when(order.getEstimatedRouteLength()).thenReturn(10_000L);
     when(order.getEstimatedTime()).thenReturn(7929000L);
     when(order.getEstimatedPrice()).thenReturn(681254L);
     when(order.getServiceName()).thenReturn("service");
@@ -240,6 +242,7 @@ public class OrderViewStateIdleTest {
         + "&key=AIzaSyBwlubLyqI6z_ivfAWcTCfyTXkoRHTagMk");
     verify(viewActions).setFormattedText(R.id.distanceText, R.string.km, 12.239d);
     verify(viewActions).setFormattedText(R.id.etaText, R.string.eta, 54);
+    verify(viewActions).setFormattedText(R.id.routeTitleText, R.string.route_distance, 31.278d);
     verify(viewActions).setText(R.id.nextAddressText, "address");
     verify(viewActions)
         .setFormattedText(R.id.openNavigator, R.string.client_location, 5.421, 10.2341);
@@ -253,7 +256,7 @@ public class OrderViewStateIdleTest {
     DecimalFormat decimalFormat = new DecimalFormat("##,###,### ¤");
     decimalFormat.setMaximumFractionDigits(0);
     decimalFormat.setMinimumFractionDigits(0);
-    verify(viewActions).setFormattedText(R.id.estimationText, R.string.km_h_m_p, 10d, 2, 12,
+    verify(viewActions).setFormattedText(R.id.estimationText, R.string.km_h_m_p, 31.278d, 2, 12,
         decimalFormat.format(6813)
     );
     verify(viewActions).setFormattedText(R.id.estimatedPriceText, R.string.price,
@@ -264,7 +267,7 @@ public class OrderViewStateIdleTest {
     verify(viewActions).setText(R.id.startTimeText,
         DateTimeFormat.forPattern("HH:mm").print(DateTime.now().withMillis(1238403200L)));
     DateTime dateTime = DateTime.now().withMillis(1238403200L + 7929000L);
-    verify(viewActions).setFormattedText(R.id.startTimeText, R.string.h_m_d,
+    verify(viewActions).setFormattedText(R.id.occupationTimeText, R.string.h_m_d,
         dateTime.getHourOfDay(), dateTime.getMinuteOfDay(),
         DateTimeFormat.forPattern("HH:mm").print(dateTime));
     verify(viewActions).setVisible(R.id.cargoDescTitleText, true);
@@ -292,8 +295,8 @@ public class OrderViewStateIdleTest {
     when(order.getNextActiveRoutePoint()).thenReturn(routePoint);
     when(order.getDistance()).thenReturn(12239);
     when(order.getEtaToStartPoint()).thenReturn(3264132L);
+    when(order.getEstimatedRouteLength()).thenReturn(31278L);
     when(order.getStartTime()).thenReturn(1238403200L);
-    when(order.getEstimatedRouteLength()).thenReturn(10_000L);
     when(order.getEstimatedTime()).thenReturn(7929000L);
     when(order.getEstimatedPrice()).thenReturn(681254L);
     when(order.getServiceName()).thenReturn("service");
@@ -319,6 +322,7 @@ public class OrderViewStateIdleTest {
         + "&key=AIzaSyBwlubLyqI6z_ivfAWcTCfyTXkoRHTagMk");
     verify(viewActions).setFormattedText(R.id.distanceText, R.string.km, 12.239d);
     verify(viewActions).setFormattedText(R.id.etaText, R.string.eta, 54);
+    verify(viewActions).setFormattedText(R.id.routeTitleText, R.string.route_distance, 31.278d);
     verify(viewActions).setText(R.id.nextAddressText, "address");
     verify(viewActions)
         .setFormattedText(R.id.openNavigator, R.string.client_location, 5.421, 10.2341);
@@ -332,7 +336,7 @@ public class OrderViewStateIdleTest {
     DecimalFormat decimalFormat = new DecimalFormat("##,###,### ¤");
     decimalFormat.setMaximumFractionDigits(2);
     decimalFormat.setMinimumFractionDigits(2);
-    verify(viewActions).setFormattedText(R.id.estimationText, R.string.km_h_m_p, 10d, 2, 12,
+    verify(viewActions).setFormattedText(R.id.estimationText, R.string.km_h_m_p, 31.278d, 2, 12,
         decimalFormat.format(6812.54)
     );
     verify(viewActions).setFormattedText(R.id.estimatedPriceText, R.string.price,
@@ -343,7 +347,7 @@ public class OrderViewStateIdleTest {
     verify(viewActions).setText(R.id.startTimeText,
         DateTimeFormat.forPattern("HH:mm").print(DateTime.now().withMillis(1238403200L)));
     DateTime dateTime = DateTime.now().withMillis(1238403200L + 7929000L);
-    verify(viewActions).setFormattedText(R.id.startTimeText, R.string.h_m_d,
+    verify(viewActions).setFormattedText(R.id.occupationTimeText, R.string.h_m_d,
         dateTime.getHourOfDay(), dateTime.getMinuteOfDay(),
         DateTimeFormat.forPattern("HH:mm").print(dateTime));
     verify(viewActions).setVisible(R.id.cargoDescTitleText, false);
