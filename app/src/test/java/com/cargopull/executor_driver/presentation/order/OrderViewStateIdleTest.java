@@ -116,7 +116,7 @@ public class OrderViewStateIdleTest {
     verify(viewActions).setVisible(R.id.optionsText, false);
     verify(viewActions).setText(R.id.optionsText, "");
     verify(viewActions).setText(R.id.serviceText, "service");
-    verify(viewActions).unblockWithPending("OrderViewStateIdle");
+    verify(viewActions).unblockWithPending("OrderViewState");
     verify(viewActions).dismissDialog();
     verifyNoMoreInteractions(viewActions);
   }
@@ -197,7 +197,7 @@ public class OrderViewStateIdleTest {
     verify(viewActions).setVisible(R.id.optionsText, true);
     verify(viewActions).setText(R.id.optionsText, "bool2\nbool4\nnum1: 3\nnum2: 7");
     verify(viewActions).setText(R.id.serviceText, "service");
-    verify(viewActions).unblockWithPending("OrderViewStateIdle");
+    verify(viewActions).unblockWithPending("OrderViewState");
     verify(viewActions).dismissDialog();
     verifyNoMoreInteractions(viewActions);
   }
@@ -277,7 +277,7 @@ public class OrderViewStateIdleTest {
     verify(viewActions).setVisible(R.id.optionsText, true);
     verify(viewActions).setText(R.id.optionsText, "bool2\nbool4\nnum1: 3\nnum2: 7");
     verify(viewActions).setText(R.id.serviceText, "service");
-    verify(viewActions).unblockWithPending("OrderViewStateIdle");
+    verify(viewActions).unblockWithPending("OrderViewState");
     verify(viewActions).dismissDialog();
     verifyNoMoreInteractions(viewActions);
   }
@@ -357,7 +357,7 @@ public class OrderViewStateIdleTest {
     verify(viewActions).setVisible(R.id.optionsText, true);
     verify(viewActions).setText(R.id.optionsText, "bool2\nbool4\nnum1: 3\nnum2: 7");
     verify(viewActions).setText(R.id.serviceText, "service");
-    verify(viewActions).unblockWithPending("OrderViewStateIdle");
+    verify(viewActions).unblockWithPending("OrderViewState");
     verify(viewActions).dismissDialog();
     verifyNoMoreInteractions(viewActions);
   }

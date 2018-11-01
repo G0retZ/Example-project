@@ -21,7 +21,7 @@ final class OrderViewStatePending implements ViewState<OrderViewActions> {
     if (parentViewState != null) {
       parentViewState.apply(stateActions);
     }
-    stateActions.blockWithPending(getClass().getSimpleName());
+    stateActions.blockWithPending("OrderViewState");
   }
 
   @Override
