@@ -107,7 +107,7 @@ public class OrderViewStateIdleTest {
         DateTimeFormat.forPattern("HH:mm").print(DateTime.now().withMillis(1238403200L)));
     DateTime dateTime = DateTime.now().withMillis(1238403200L + 7929000L);
     verify(viewActions).setFormattedText(R.id.occupationTimeText, R.string.h_m_d,
-        dateTime.getHourOfDay(), dateTime.getMinuteOfDay(),
+        dateTime.getHourOfDay(), dateTime.getMinuteOfHour(),
         DateTimeFormat.forPattern("HH:mm").print(dateTime));
     verify(viewActions).setVisible(R.id.cargoDescTitleText, true);
     verify(viewActions).setVisible(R.id.cargoDescText, true);
@@ -188,7 +188,7 @@ public class OrderViewStateIdleTest {
         DateTimeFormat.forPattern("HH:mm").print(DateTime.now().withMillis(1238403200L)));
     DateTime dateTime = DateTime.now().withMillis(1238403200L + 7929000L);
     verify(viewActions).setFormattedText(R.id.occupationTimeText, R.string.h_m_d,
-        dateTime.getHourOfDay(), dateTime.getMinuteOfDay(),
+        dateTime.getHourOfDay(), dateTime.getMinuteOfHour(),
         DateTimeFormat.forPattern("HH:mm").print(dateTime));
     verify(viewActions).setVisible(R.id.cargoDescTitleText, false);
     verify(viewActions).setVisible(R.id.cargoDescText, false);
@@ -268,7 +268,7 @@ public class OrderViewStateIdleTest {
         DateTimeFormat.forPattern("HH:mm").print(DateTime.now().withMillis(1238403200L)));
     DateTime dateTime = DateTime.now().withMillis(1238403200L + 7929000L);
     verify(viewActions).setFormattedText(R.id.occupationTimeText, R.string.h_m_d,
-        dateTime.getHourOfDay(), dateTime.getMinuteOfDay(),
+        dateTime.getHourOfDay(), dateTime.getMinuteOfHour(),
         DateTimeFormat.forPattern("HH:mm").print(dateTime));
     verify(viewActions).setVisible(R.id.cargoDescTitleText, true);
     verify(viewActions).setVisible(R.id.cargoDescText, true);
@@ -348,7 +348,7 @@ public class OrderViewStateIdleTest {
         DateTimeFormat.forPattern("HH:mm").print(DateTime.now().withMillis(1238403200L)));
     DateTime dateTime = DateTime.now().withMillis(1238403200L + 7929000L);
     verify(viewActions).setFormattedText(R.id.occupationTimeText, R.string.h_m_d,
-        dateTime.getHourOfDay(), dateTime.getMinuteOfDay(),
+        dateTime.getHourOfDay(), dateTime.getMinuteOfHour(),
         DateTimeFormat.forPattern("HH:mm").print(dateTime));
     verify(viewActions).setVisible(R.id.cargoDescTitleText, false);
     verify(viewActions).setVisible(R.id.cargoDescText, false);

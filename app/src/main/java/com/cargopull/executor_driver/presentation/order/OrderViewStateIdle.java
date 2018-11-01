@@ -121,7 +121,7 @@ final class OrderViewStateIdle implements ViewState<OrderViewActions> {
     scheduledDate = scheduledDate.plus(estimatedTime);
     stateActions.setFormattedText(R.id.occupationTimeText, R.string.h_m_d,
         scheduledDate.getHourOfDay(),
-        scheduledDate.getMinuteOfDay(),
+        scheduledDate.getMinuteOfHour(),
         DateTimeFormat.forPattern("HH:mm").print(scheduledDate));
     // Разблокируем экран
     stateActions.unblockWithPending(getClass().getSimpleName());
