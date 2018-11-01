@@ -70,10 +70,9 @@ class PreOrdersListHeaderItem implements PreOrdersListItem {
     return "";
   }
 
-  @NonNull
   @Override
-  public String getRouteLength() {
-    return "";
+  public float getRouteLength() {
+    return 0;
   }
 
   @NonNull
