@@ -16,7 +16,7 @@
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toTopOf="parent"
     app:navigationIcon="@drawable/ic_back_24dp"
-    app:title="Заказ ко времени"/>
+    app:title="@string/preliminary_order"/>
   <fragment
     android:id="@+id/fragment_pre_order"
     android:layout_width="0dp"

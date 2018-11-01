@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.cargopull.executor_driver.R;
@@ -20,12 +19,6 @@ import javax.inject.Inject;
 public class ActionOrderDetailsFragment extends BaseFragment implements OrderViewActions {
 
   private OrderViewModel orderViewModel;
-  private TextView commentTitleText;
-  private TextView commentText;
-  private TextView optionsTitleText;
-  private TextView optionsText;
-  private TextView priceTitleText;
-  private TextView priceText;
 
   @Inject
   public void setOrderViewModel(@NonNull OrderViewModel orderViewModel) {
@@ -38,17 +31,6 @@ public class ActionOrderDetailsFragment extends BaseFragment implements OrderVie
       @Nullable ViewGroup container,
       @Nullable Bundle savedInstanceState) {
     return inflater.inflate(R.layout.fragment_action_order_details, container, false);
-  }
-
-  @Override
-  public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-    super.onViewCreated(view, savedInstanceState);
-    commentTitleText = view.findViewById(R.id.cargoDescTitleText);
-    commentText = view.findViewById(R.id.cargoDescText);
-    optionsTitleText = view.findViewById(R.id.optionsTitleText);
-    optionsText = view.findViewById(R.id.optionsText);
-    priceTitleText = view.findViewById(R.id.estimationTitleText);
-    priceText = view.findViewById(R.id.estimationText);
   }
 
   @Override
@@ -73,99 +55,13 @@ public class ActionOrderDetailsFragment extends BaseFragment implements OrderVie
   }
 
   @Override
-  public void showOrderPending(boolean pending) {
-    showPending(pending, toString());
+  public boolean isShowCents() {
+    return getResources().getBoolean(R.bool.show_cents);
   }
 
   @Override
-  public void showLoadPoint(@NonNull String url) {
-  }
-
-  @Override
-  public void showNextPointAddress(@NonNull String coordinates, @NonNull String address) {
-  }
-
-  @Override
-  public void showNextPointComment(@NonNull String comment) {
-  }
-
-  @Override
-  public void showLastPointAddress(@NonNull String address) {
-  }
-
-  @Override
-  public void showRoutePointsCount(int count) {
-  }
-
-  @Override
-  public void showServiceName(@NonNull String serviceName) {
-  }
-
-  @Override
-  public void showTimeout(int timeout) {
-  }
-
-  @Override
-  public void showFirstPointDistance(String distance) {
-  }
-
-  @Override
-  public void showFirstPointEta(int etaTime) {
-  }
-
-  @Override
-  public void showEstimatedPrice(@NonNull String priceText) {
-    if (priceText.trim().isEmpty()) {
-      priceTitleText.setVisibility(View.GONE);
-      this.priceText.setVisibility(View.GONE);
-    } else {
-      priceTitleText.setVisibility(View.VISIBLE);
-      this.priceText.setVisibility(View.VISIBLE);
-      this.priceText.setText(priceText);
-    }
-  }
-
-  @Override
-  public void showOrderConditions(@NonNull String routeDistance, int time, long cost) {
-  }
-
-  @Override
-  public void showOrderOccupationTime(@NonNull String occupationTime) {
-  }
-
-  @Override
-  public void showOrderOccupationDate(@NonNull String occupationDate) {
-  }
-
-  @Override
-  public void showOrderOptionsRequirements(@NonNull String options) {
-    if (options.trim().isEmpty()) {
-      optionsTitleText.setVisibility(View.GONE);
-      optionsText.setVisibility(View.GONE);
-    } else {
-      optionsTitleText.setVisibility(View.VISIBLE);
-      optionsText.setVisibility(View.VISIBLE);
-      optionsText.setText(options);
-    }
-  }
-
-  @Override
-  public void showComment(@NonNull String comment) {
-    if (comment.trim().isEmpty()) {
-      commentTitleText.setVisibility(View.GONE);
-      commentText.setVisibility(View.GONE);
-    } else {
-      commentTitleText.setVisibility(View.VISIBLE);
-      commentText.setVisibility(View.VISIBLE);
-      commentText.setText(comment);
-    }
-  }
-
-  @Override
-  public void showOrderExpiredMessage(@Nullable String message) {
-  }
-
-  @Override
-  public void showOrderCancelledMessage(boolean show) {
+  @NonNull
+  public String getCurrencyFormat() {
+    return getString(R.string.currency_format);
   }
 }

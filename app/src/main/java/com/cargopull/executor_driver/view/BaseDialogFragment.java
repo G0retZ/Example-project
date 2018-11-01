@@ -80,8 +80,8 @@ public class BaseDialogFragment extends DialogFragment implements OnBackPressedI
   }
 
   /**
-   * Метод перехода куда либо.
-   * Позволяет отвязать {@link android.app.Fragment} от конкретных {@link Activity}.
+   * Метод перехода куда либо. Позволяет отвязать {@link android.app.Fragment} от конкретных {@link
+   * Activity}.
    *
    * @param destination пункт назначения
    */

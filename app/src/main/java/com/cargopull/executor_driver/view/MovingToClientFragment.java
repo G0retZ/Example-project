@@ -3,14 +3,11 @@ package com.cargopull.executor_driver.view;
 import android.animation.Animator;
 import android.animation.Animator.AnimatorListener;
 import android.animation.ObjectAnimator;
-import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Build.VERSION;
-import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -20,7 +17,6 @@ import android.view.animation.DecelerateInterpolator;
 import android.view.animation.LinearInterpolator;
 import android.widget.Button;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.cargopull.executor_driver.R;
@@ -31,8 +27,6 @@ import com.cargopull.executor_driver.presentation.movingtoclient.MovingToClientV
 import com.cargopull.executor_driver.presentation.order.OrderViewActions;
 import com.cargopull.executor_driver.presentation.order.OrderViewModel;
 import javax.inject.Inject;
-import org.joda.time.LocalTime;
-import org.joda.time.format.DateTimeFormat;
 
 /**
  * Отображает движение к клиенту.
@@ -44,15 +38,8 @@ public class MovingToClientFragment extends BaseFragment implements MovingToClie
   private MovingToClientViewModel movingToClientViewModel;
   private OrderViewModel orderViewModel;
   private ShakeItPlayer shakeItPlayer;
-  private TextView addressText;
-  private TextView commentTitleText;
-  private TextView commentText;
-  private TextView timerText;
   private Button callAction;
-  private Button navigationAction;
   private Context context;
-  @Nullable
-  private ValueAnimator timeoutAnimator;
   @Nullable
   private ObjectAnimator delayAnimator;
   @Nullable
@@ -87,11 +74,6 @@ public class MovingToClientFragment extends BaseFragment implements MovingToClie
       @Nullable ViewGroup container,
       @Nullable Bundle savedInstanceState) {
     View view = inflater.inflate(R.layout.fragment_moving_to_client, container, false);
-    addressText = view.findViewById(R.id.addressText);
-    commentTitleText = view.findViewById(R.id.commentTitleText);
-    commentText = view.findViewById(R.id.commentText);
-    timerText = view.findViewById(R.id.timerText);
-    navigationAction = view.findViewById(R.id.openNavigator);
     callAction = view.findViewById(R.id.callToClient);
     ProgressBar arrivedAction = view.findViewById(R.id.reportArrived);
     callAction.setOnClickListener(v -> movingToClientViewModel.callToClient());
@@ -154,6 +136,31 @@ public class MovingToClientFragment extends BaseFragment implements MovingToClie
   }
 
   @Override
+  public void setFormattedText(int id, int stringId, Object... formatArgs) {
+    if (id == R.id.openNavigator) {
+      View view = findViewById(id);
+      if (view != null) {
+        view.setOnClickListener(v -> {
+          Intent navigationIntent = new Intent(Intent.ACTION_VIEW);
+          navigationIntent.setData(Uri.parse(getString(stringId, formatArgs)));
+          if (navigationIntent.resolveActivity(context.getPackageManager()) != null) {
+            startActivity(navigationIntent);
+          } else {
+            new Builder(context)
+                .setTitle(R.string.error)
+                .setMessage(R.string.install_geo_app)
+                .setPositiveButton(getString(android.R.string.ok), null)
+                .create()
+                .show();
+          }
+        });
+      }
+      return;
+    }
+    super.setFormattedText(id, stringId, formatArgs);
+  }
+
+  @Override
   public void onActivityCreated(@Nullable Bundle savedInstanceState) {
     super.onActivityCreated(savedInstanceState);
     orderViewModel.getViewStateLiveData().observe(this, viewState -> {
@@ -180,9 +187,6 @@ public class MovingToClientFragment extends BaseFragment implements MovingToClie
 
   @Override
   public void onDetach() {
-    if (timeoutAnimator != null) {
-      timeoutAnimator.cancel();
-    }
     if (resetAnimator != null) {
       resetAnimator.cancel();
     }
@@ -204,129 +208,13 @@ public class MovingToClientFragment extends BaseFragment implements MovingToClie
   }
 
   @Override
-  public void showOrderPending(boolean pending) {
-    showPending(pending, toString() + "1");
+  public boolean isShowCents() {
+    return getResources().getBoolean(R.bool.show_cents);
   }
 
   @Override
-  public void showLoadPoint(@NonNull String url) {
-  }
-
-  @Override
-  public void showNextPointAddress(@NonNull String coordinates, @NonNull String address) {
-    addressText.setText(address);
-    navigationAction.setOnClickListener(v -> {
-      Intent navigationIntent = new Intent(Intent.ACTION_VIEW);
-      navigationIntent.setData(Uri.parse("geo:" + coordinates + "?q=" + coordinates
-          + "(" + getString(R.string.client) + ")"));
-      if (navigationIntent.resolveActivity(context.getPackageManager()) != null) {
-        startActivity(navigationIntent);
-      } else {
-        new Builder(context)
-            .setTitle(R.string.error)
-            .setMessage(R.string.install_geo_app)
-            .setPositiveButton(getString(android.R.string.ok), null)
-            .create()
-            .show();
-      }
-    });
-  }
-
-  @Override
-  public void showNextPointComment(@NonNull String comment) {
-    if (comment.trim().isEmpty()) {
-      commentTitleText.setVisibility(View.GONE);
-      commentText.setVisibility(View.GONE);
-    } else {
-      commentTitleText.setVisibility(View.VISIBLE);
-      commentText.setVisibility(View.VISIBLE);
-      commentText.setText(comment);
-    }
-  }
-
-  @Override
-  public void showLastPointAddress(@NonNull String address) {
-  }
-
-  @Override
-  public void showRoutePointsCount(int count) {
-  }
-
-  @Override
-  public void showServiceName(@NonNull String serviceName) {
-  }
-
-  @Override
-  public void showTimeout(int timeout) {
-    if (timeoutAnimator != null && timeoutAnimator.isStarted()) {
-      timeoutAnimator.cancel();
-    }
-    int toTime = -7200;
-    if (timeout < 0) {
-      toTime = timeout + toTime;
-    }
-    timeoutAnimator = ValueAnimator.ofInt(timeout, toTime);
-    timeoutAnimator.setDuration((timeout - toTime) * 1000);
-    timeoutAnimator.setInterpolator(new LinearInterpolator());
-    timeoutAnimator.addUpdateListener(animation -> {
-      int time = (int) animation.getAnimatedValue();
-      if (VERSION.SDK_INT >= VERSION_CODES.M) {
-        timerText.setTextColor(
-            getResources()
-                .getColor(time < 0 ? R.color.colorError : android.R.color.primary_text_dark,
-                    null)
-        );
-      } else {
-        timerText.setTextColor(
-            getResources()
-                .getColor(time < 0 ? R.color.colorError : android.R.color.primary_text_dark)
-        );
-      }
-      timerText.setText(
-          DateTimeFormat.forPattern((time < 0 ? "-" : "") + "HH:mm:ss")
-              .print(LocalTime.fromMillisOfDay(Math.abs(time) * 1000))
-      );
-    });
-    timeoutAnimator.start();
-  }
-
-  @Override
-  public void showFirstPointDistance(String distance) {
-  }
-
-  @Override
-  public void showFirstPointEta(int etaTime) {
-  }
-
-  @Override
-  public void showEstimatedPrice(@NonNull String priceText) {
-  }
-
-  @Override
-  public void showOrderConditions(@NonNull String routeDistance, int time, long cost) {
-  }
-
-  @Override
-  public void showOrderOccupationTime(@NonNull String occupationTime) {
-  }
-
-  @Override
-  public void showOrderOccupationDate(@NonNull String occupationDate) {
-  }
-
-  @Override
-  public void showOrderOptionsRequirements(@NonNull String options) {
-  }
-
-  @Override
-  public void showComment(@NonNull String comment) {
-  }
-
-  @Override
-  public void showOrderExpiredMessage(@Nullable String message) {
-  }
-
-  @Override
-  public void showOrderCancelledMessage(boolean show) {
+  @NonNull
+  public String getCurrencyFormat() {
+    return getString(R.string.currency_format);
   }
 }

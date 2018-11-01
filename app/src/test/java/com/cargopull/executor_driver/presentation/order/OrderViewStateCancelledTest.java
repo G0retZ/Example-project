@@ -7,6 +7,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.verifyZeroInteractions;
 
+import com.cargopull.executor_driver.R;
 import com.cargopull.executor_driver.presentation.ViewState;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,17 +26,21 @@ public class OrderViewStateCancelledTest {
   private ViewState<OrderViewActions> parentViewState;
   @Mock
   private ViewState<OrderViewActions> parentViewState1;
+  @Mock
+  private Runnable action;
+  @Mock
+  private Runnable action1;
 
   @Test
   public void testActions() {
     // Дано:
-    viewState = new OrderViewStateCancelled(parentViewState);
+    viewState = new OrderViewStateCancelled(parentViewState, action);
 
     // Действие:
     viewState.apply(viewActions);
 
     // Результат:
-    verify(viewActions).showOrderCancelledMessage(true);
+    verify(viewActions).showPersistentDialog(R.string.order_cancelled, action);
     verifyNoMoreInteractions(viewActions);
     verify(parentViewState, only()).apply(viewActions);
   }
@@ -43,22 +48,23 @@ public class OrderViewStateCancelledTest {
   @Test
   public void testNoActions() {
     // Дано:
-    viewState = new OrderViewStateCancelled(null);
+    viewState = new OrderViewStateCancelled(null, action);
 
     // Действие:
     viewState.apply(viewActions);
 
     // Результат:
-    verify(viewActions).showOrderCancelledMessage(true);
+    verify(viewActions).showPersistentDialog(R.string.order_cancelled, action);
     verifyNoMoreInteractions(viewActions);
     verifyZeroInteractions(parentViewState);
   }
 
   @Test
   public void testEquals() {
-    viewState = new OrderViewStateCancelled(parentViewState);
-    assertEquals(viewState, new OrderViewStateCancelled(parentViewState));
-    assertNotEquals(viewState, new OrderViewStateCancelled(parentViewState1));
-    assertNotEquals(viewState, new OrderViewStateCancelled(null));
+    viewState = new OrderViewStateCancelled(parentViewState, action);
+    assertEquals(viewState, new OrderViewStateCancelled(parentViewState, action));
+    assertEquals(viewState, new OrderViewStateCancelled(parentViewState, action1));
+    assertNotEquals(viewState, new OrderViewStateCancelled(null, action));
+    assertNotEquals(viewState, new OrderViewStateCancelled(parentViewState1, action));
   }
 }

@@ -37,10 +37,10 @@ import java.util.Map;
 
 public class BaseFragment extends Fragment implements OnBackPressedInterceptor, ViewActions {
 
-  private View rootView;
   @SuppressLint("UseSparseArrays")
   @NonNull
   private final Map<Integer, View> foundViews = new HashMap<>();
+  private View rootView;
   @Nullable
   private AlertDialog alertDialog;
 
@@ -112,8 +112,8 @@ public class BaseFragment extends Fragment implements OnBackPressedInterceptor, 
   }
 
   /**
-   * Метод перехода куда либо.
-   * Позволяет отвязать {@link android.app.Fragment} от конкретных {@link Activity}.
+   * Метод перехода куда либо. Позволяет отвязать {@link android.app.Fragment} от конкретных {@link
+   * Activity}.
    *
    * @param destination пункт назначения
    */

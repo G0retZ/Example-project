@@ -7,8 +7,4 @@ import com.cargopull.executor_driver.presentation.ViewModel;
  */
 public interface OrderViewModel extends ViewModel<OrderViewActions> {
 
-  /**
-   * Сообщает, что сообщение об прочитано.
-   */
-  void messageConsumed();
 }

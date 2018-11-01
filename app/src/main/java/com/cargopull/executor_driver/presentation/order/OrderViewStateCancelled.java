@@ -2,6 +2,7 @@ package com.cargopull.executor_driver.presentation.order;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import com.cargopull.executor_driver.R;
 import com.cargopull.executor_driver.presentation.ViewState;
 
 /**
@@ -11,9 +12,13 @@ final class OrderViewStateCancelled implements ViewState<OrderViewActions> {
 
   @Nullable
   private final ViewState<OrderViewActions> parentViewState;
+  @NonNull
+  private final Runnable consumeAction;
 
-  OrderViewStateCancelled(@Nullable ViewState<OrderViewActions> parentViewState) {
+  OrderViewStateCancelled(@Nullable ViewState<OrderViewActions> parentViewState,
+      @NonNull Runnable consumeAction) {
     this.parentViewState = parentViewState;
+    this.consumeAction = consumeAction;
   }
 
   @Override
@@ -21,7 +26,7 @@ final class OrderViewStateCancelled implements ViewState<OrderViewActions> {
     if (parentViewState != null) {
       parentViewState.apply(stateActions);
     }
-    stateActions.showOrderCancelledMessage(true);
+    stateActions.showPersistentDialog(R.string.order_cancelled, consumeAction);
   }
 
   @Override

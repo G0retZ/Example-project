@@ -45,7 +45,7 @@
   <string name="exit_app">Выйти из приложения</string>
   <string name="tariff_range">Тарифы, по которым вы готовы работать</string>
   <string name="deselect_unwanted_services">Выключите услуги, которые вам не подходят</string>
-  <string name="km">%1$s км</string>
+  <string name="km">%1$.2f км</string>
   <string name="eta">≈ %1$d мин.</string>
   <string name="cargo_description">Описание груза</string>
   <string name="comment">Коментарий</string>
@@ -62,7 +62,8 @@
   <string name="before_meet_client">До встречи с клиентом</string>
   <string name="call_client">Позвонить клиенту</string>
   <string name="calling_client">Идет вызов клиенту.\nБудьте готовы взять трубку!</string>
-  <string name="client">Клиент</string>
+  <string name="client_location">geo:%1$f,%2$f?q=%1$f,%2$f(Клиент)</string>
+  <string name="destination_location">geo:%1$f,%2$f?q=%1$f,%2$f(Пункт назначения)</string>
   <string name="install_geo_app">Сначала установите приложение для навигации.</string>
   <string name="information">Информация</string>
   <string name="start_order">Начать выполнение</string>
@@ -75,7 +76,7 @@
   <string name="free_ride">По городу</string>
   <string name="select">Выбрать</string>
   <string name="in_progress">В работе</string>
-  <string name="route">Маршрут</string>
+  <string name="route">Маршрут %1$s км</string>
   <string name="order_details">Информация о заказе</string>
   <string name="report_a_problem">Сообщить о проблеме</string>
   <string name="minus_sign">–</string>
@@ -90,7 +91,9 @@
   <string name="server_connection">Связь с сервером</string>
   <string name="service">Услуга</string>
   <string name="order_distance_and_duration">Пробег, длительность, стоимость</string>
-  <string name="km_h_m_p">%1$s км, %2$d ч. %3$d мин. ≈ %4$s</string>
+  <string name="km_h_m_p">%1$.2f км, %2$d ч. %3$d мин. ≈ %4$s</string>
+  <string name="h_m_d">%1$d ч. %2$d мин. (до %3$s)</string>
+  <string name="price">≈ %1$s</string>
   <string name="h_m">%1$d ч. %2$d мин.</string>
   <string name="address">Адрес</string>
   <string name="exit_confirmation">Вы уверены, что хотите выйти?\n</string>
@@ -116,7 +119,7 @@
   <string name="stop_work">Закончить работу</string>
   <string name="book">Бронировать</string>
   <string name="reject">Отказаться</string>
-  <string name="time">Время</string>
+  <string name="arrival_date">Быть у клиента</string>
   <string name="new_pre_order">Новый предзаказ!</string>
   <string name="new_pre_order_message">Для рассмотрения доступен новый предварительный заказ.</string>
   <string name="today">Сегодня</string>
@@ -127,7 +130,7 @@
   <string name="new_order_available">Доступен новый заказ</string>
   <string name="upcoming_pre_order">Предстоящий заказ</string>
   <string name="distance_to_order">Расстояние до заказа</string>
-  <string name="preliminary_order">Заказ ко времени</string>
+  <string name="preliminary_order">Предварительный заказ</string>
   <string name="time_to_set_out">Пора! Выезжайте к клиенту или откажитесь.</string>
   <string name="exit">Выйти</string>
   <string name="version">Версия %1$s</string>
@@ -141,4 +144,6 @@
   <string name="night_mode_on">Включен</string>
   <string name="night_mode_off">Выключен</string>
   <string name="night_mode_auto">Авто</string>
+  <string name="work_time">Время работы</string>
+  <string name="_1">1</string>
 </resources>
