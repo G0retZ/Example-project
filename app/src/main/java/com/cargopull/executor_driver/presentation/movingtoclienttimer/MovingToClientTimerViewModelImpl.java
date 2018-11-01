@@ -98,7 +98,7 @@ public class MovingToClientTimerViewModelImpl extends ViewModel implements
     long start =
         timeUtils.currentTimeMillis() - order.getConfirmationTime() - order.getEtaToStartPoint();
     long amount = Math.round((order.getEtaToStartPoint() - start) / 1000d);
-    timerDisposable = Observable.intervalRange(0, amount, 0, 1, TimeUnit.SECONDS)
+    timerDisposable = Observable.intervalRange(0, Math.max(amount, 600), 0, 1, TimeUnit.SECONDS)
         .map(aLong -> start + aLong * 1000)
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(

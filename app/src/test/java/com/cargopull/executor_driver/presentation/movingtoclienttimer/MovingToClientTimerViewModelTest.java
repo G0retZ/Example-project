@@ -61,6 +61,8 @@ public class MovingToClientTimerViewModelTest {
   private Order order1;
   @Mock
   private Order order2;
+  @Mock
+  private Order order3;
   private PublishSubject<Order> publishSubject;
 
   @Before
@@ -164,6 +166,8 @@ public class MovingToClientTimerViewModelTest {
     when(order1.getEtaToStartPoint()).thenReturn(4171929L);
     when(order2.getConfirmationTime()).thenReturn(12333555083L);
     when(order2.getEtaToStartPoint()).thenReturn(4171929L);
+    when(order3.getConfirmationTime()).thenReturn(12333555083L);
+    when(order3.getEtaToStartPoint()).thenReturn(4171L);
 
     // Действие:
     publishSubject.onNext(order);
@@ -172,12 +176,15 @@ public class MovingToClientTimerViewModelTest {
     testScheduler.advanceTimeBy(1, TimeUnit.NANOSECONDS);
     publishSubject.onNext(order2);
     testScheduler.advanceTimeBy(1, TimeUnit.NANOSECONDS);
+    publishSubject.onNext(order3);
+    testScheduler.advanceTimeBy(1, TimeUnit.NANOSECONDS);
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(new MovingToClientTimerViewStatePending(null));
     inOrder.verify(viewStateObserver).onChanged(new MovingToClientTimerViewStateCounting(4162929));
     inOrder.verify(viewStateObserver).onChanged(new MovingToClientTimerViewStateCounting(0));
     inOrder.verify(viewStateObserver).onChanged(new MovingToClientTimerViewStateCounting(-100_000));
+    inOrder.verify(viewStateObserver).onChanged(new MovingToClientTimerViewStateCounting(-4267758));
     verifyNoMoreInteractions(viewStateObserver);
   }
 
@@ -196,6 +203,8 @@ public class MovingToClientTimerViewModelTest {
     when(order1.getEtaToStartPoint()).thenReturn(4171929L);
     when(order2.getConfirmationTime()).thenReturn(12333555083L);
     when(order2.getEtaToStartPoint()).thenReturn(4171929L);
+    when(order3.getConfirmationTime()).thenReturn(12333555083L);
+    when(order3.getEtaToStartPoint()).thenReturn(4171L);
 
     // Действие:
     publishSubject.onNext(order);
@@ -204,6 +213,8 @@ public class MovingToClientTimerViewModelTest {
     testScheduler.advanceTimeBy(5, TimeUnit.MINUTES);
     publishSubject.onNext(order2);
     testScheduler.advanceTimeBy(5, TimeUnit.MINUTES);
+    publishSubject.onNext(order3);
+    testScheduler.advanceTimeBy(15, TimeUnit.MINUTES);
 
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(new MovingToClientTimerViewStatePending(null));
@@ -214,6 +225,9 @@ public class MovingToClientTimerViewModelTest {
       inOrder.verify(viewStateObserver).onChanged(new MovingToClientTimerViewStateCounting(i));
     }
     for (int i = -100_000; i >= -400_000; i -= 1000) {
+      inOrder.verify(viewStateObserver).onChanged(new MovingToClientTimerViewStateCounting(i));
+    }
+    for (int i = -4267758; i >= -4866758; i -= 1000) {
       inOrder.verify(viewStateObserver).onChanged(new MovingToClientTimerViewStateCounting(i));
     }
     verifyNoMoreInteractions(viewStateObserver);
