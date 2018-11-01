@@ -77,7 +77,7 @@
   <string name="select">Выбрать</string>
   <string name="in_progress">В работе</string>
   <string name="route">Маршрут</string>
-  <string name="route_distance">Маршрут %1$s км</string>
+  <string name="route_distance">Маршрут %1$.2f км</string>
   <string name="order_details">Информация о заказе</string>
   <string name="report_a_problem">Сообщить о проблеме</string>
   <string name="minus_sign">–</string>
