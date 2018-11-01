@@ -24,6 +24,7 @@ import com.cargopull.executor_driver.backend.vibro.ShakeItPlayer;
 import com.cargopull.executor_driver.di.AppComponent;
 import com.cargopull.executor_driver.presentation.movingtoclient.MovingToClientViewActions;
 import com.cargopull.executor_driver.presentation.movingtoclient.MovingToClientViewModel;
+import com.cargopull.executor_driver.presentation.movingtoclienttimer.MovingToClientTimerViewModel;
 import com.cargopull.executor_driver.presentation.order.OrderViewActions;
 import com.cargopull.executor_driver.presentation.order.OrderViewModel;
 import javax.inject.Inject;
@@ -35,8 +36,9 @@ import javax.inject.Inject;
 public class MovingToClientFragment extends BaseFragment implements MovingToClientViewActions,
     OrderViewActions {
 
-  private MovingToClientViewModel movingToClientViewModel;
   private OrderViewModel orderViewModel;
+  private MovingToClientTimerViewModel movingToClientTimerViewModel;
+  private MovingToClientViewModel movingToClientViewModel;
   private ShakeItPlayer shakeItPlayer;
   private Button callAction;
   private Context context;
@@ -55,6 +57,12 @@ public class MovingToClientFragment extends BaseFragment implements MovingToClie
   @Inject
   public void setOrderViewModel(@NonNull OrderViewModel orderViewModel) {
     this.orderViewModel = orderViewModel;
+  }
+
+  @Inject
+  public void setMovingToClientTimerViewModel(
+      @NonNull MovingToClientTimerViewModel movingToClientTimerViewModel) {
+    this.movingToClientTimerViewModel = movingToClientTimerViewModel;
   }
 
   @Inject
@@ -171,6 +179,11 @@ public class MovingToClientFragment extends BaseFragment implements MovingToClie
     orderViewModel.getNavigationLiveData().observe(this, destination -> {
       if (destination != null) {
         navigate(destination);
+      }
+    });
+    movingToClientTimerViewModel.getViewStateLiveData().observe(this, viewState -> {
+      if (viewState != null) {
+        viewState.apply(this);
       }
     });
     movingToClientViewModel.getViewStateLiveData().observe(this, viewState -> {

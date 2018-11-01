@@ -23,6 +23,7 @@ import com.cargopull.executor_driver.presentation.geolocationstate.GeoLocationSt
 import com.cargopull.executor_driver.presentation.map.MapViewModel;
 import com.cargopull.executor_driver.presentation.missedorder.MissedOrderViewModel;
 import com.cargopull.executor_driver.presentation.movingtoclient.MovingToClientViewModel;
+import com.cargopull.executor_driver.presentation.movingtoclienttimer.MovingToClientTimerViewModel;
 import com.cargopull.executor_driver.presentation.nextroutepoint.NextRoutePointViewModel;
 import com.cargopull.executor_driver.presentation.onlinebutton.OnlineButtonViewModel;
 import com.cargopull.executor_driver.presentation.onlineswitch.OnlineSwitchViewModel;
@@ -200,7 +201,12 @@ interface PresentationComponent {
   @NonNull
   OrderConfirmationViewModel getUpcomingPreOrderConfirmationViewModel(@Nullable Fragment fragment);
 
+  @NonNull
   UpcomingPreOrderViewModel getUpcomingPreOrderAvailabilityViewModel();
 
+  @NonNull
   GeoLocationStateViewModel getGeoLocationStateViewModel(AppCompatActivity appCompatActivity);
+
+  @NonNull
+  MovingToClientTimerViewModel getMovingToClientTimerViewModel(Fragment fragment);
 }

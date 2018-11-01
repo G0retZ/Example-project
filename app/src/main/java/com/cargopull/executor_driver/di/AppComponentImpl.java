@@ -397,11 +397,14 @@ public class AppComponentImpl implements AppComponent {
 
   @Override
   public void inject(MovingToClientFragment movingToClientFragment) {
-    movingToClientFragment.setMovingToClientViewModel(
-        getPresentationComponent().getMovingToClientViewModel(movingToClientFragment)
-    );
     movingToClientFragment.setOrderViewModel(
         getPresentationComponent().getOrderViewModel()
+    );
+    movingToClientFragment.setMovingToClientTimerViewModel(
+        getPresentationComponent().getMovingToClientTimerViewModel(movingToClientFragment)
+    );
+    movingToClientFragment.setMovingToClientViewModel(
+        getPresentationComponent().getMovingToClientViewModel(movingToClientFragment)
     );
     movingToClientFragment.setShakeItPlayer(
         getShakeItPlayer()
