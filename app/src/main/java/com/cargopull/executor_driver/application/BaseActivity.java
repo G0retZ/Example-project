@@ -9,8 +9,11 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import androidx.annotation.DrawableRes;
+import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import com.cargopull.executor_driver.R;
@@ -394,7 +397,7 @@ public class BaseActivity extends AppCompatActivity implements GeoLocationStateV
   }
 
   @Override
-  public void setVisible(int id, boolean visible) {
+  public void setVisible(@IdRes int id, boolean visible) {
     if (!visible) {
       geoEngagementDialogFragment.dismiss();
     } else if (showGeolocationStateAllowed()) {
@@ -403,12 +406,12 @@ public class BaseActivity extends AppCompatActivity implements GeoLocationStateV
   }
 
   @Override
-  public void setText(int id, int stringId) {
+  public void setText(@IdRes int id, @StringRes int stringId) {
 
   }
 
   @Override
-  public void setImage(int id, int drawableId) {
+  public void setImage(@IdRes int id, @DrawableRes int drawableId) {
 
   }
 

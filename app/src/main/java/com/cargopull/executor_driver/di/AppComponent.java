@@ -26,6 +26,7 @@ import com.cargopull.executor_driver.view.ClientOrderConfirmationTimeFragment;
 import com.cargopull.executor_driver.view.DriverOrderConfirmationFragment;
 import com.cargopull.executor_driver.view.DriverPreOrderBookingFragment;
 import com.cargopull.executor_driver.view.DriverPreOrderConfirmationFragment;
+import com.cargopull.executor_driver.view.GeoEngagementDialogFragment;
 import com.cargopull.executor_driver.view.GoOnlineFragment;
 import com.cargopull.executor_driver.view.MapFragment;
 import com.cargopull.executor_driver.view.MenuFragment;
@@ -189,4 +190,6 @@ public interface AppComponent {
   void inject(UpcomingPreOrderConfirmationFragment upcomingPreOrderConfirmationFragment);
 
   void inject(UpcomingPreOrderNotificationFragment upcomingPreOrderNotificationFragment);
+
+  void inject(GeoEngagementDialogFragment geoEngagementDialogFragment);
 }

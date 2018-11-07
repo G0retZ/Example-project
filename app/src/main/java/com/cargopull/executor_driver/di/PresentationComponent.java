@@ -203,4 +203,7 @@ interface PresentationComponent {
   UpcomingPreOrderViewModel getUpcomingPreOrderAvailabilityViewModel();
 
   GeoLocationStateViewModel getGeoLocationStateViewModel(AppCompatActivity appCompatActivity);
+
+  @NonNull
+  GeoLocationStateViewModel getGeoLocationStateViewModel(Fragment fragment);
 }
