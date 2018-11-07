@@ -1,6 +1,7 @@
 package com.cargopull.executor_driver.di;
 
 import android.content.Context;
+import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -41,6 +42,8 @@ class BackendComponentImpl implements BackendComponent {
 
   @NonNull
   private final Context appContext;
+  @Nullable
+  private LocationManager locationManager;
   @Nullable
   private EventLogger eventLogger;
   @Nullable
@@ -138,16 +141,25 @@ class BackendComponentImpl implements BackendComponent {
   @NonNull
   public GeolocationCenter getGeolocationCenter() {
     if (geolocationCenter == null) {
-      this.geolocationCenter = new GeolocationCenterImpl(appContext);
+      geolocationCenter = new GeolocationCenterImpl(appContext);
     }
     return geolocationCenter;
+  }
+
+  @Override
+  @NonNull
+  public LocationManager getLocationManager() {
+    if (locationManager == null) {
+      locationManager = (LocationManager) appContext.getSystemService(Context.LOCATION_SERVICE);
+    }
+    return locationManager;
   }
 
   @NonNull
   private Interceptor[] getInterceptors() {
     if (interceptors == null) {
       TokenKeeper tokenKeeper = new TokenKeeperImpl(getAppSettingsService());
-      this.interceptors = new Interceptor[]{
+      interceptors = new Interceptor[]{
           new ConnectivityInterceptor(
               (ConnectivityManager) appContext.getSystemService(Context.CONNECTIVITY_SERVICE)
           ),

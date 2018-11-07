@@ -899,6 +899,9 @@ class PresentationComponentImpl implements PresentationComponent {
         appCompatActivity,
         GeoLocationStateViewModelImpl.class,
         new GeoLocationStateViewModelImpl(
+            backendComponent.getEventLogger(),
+            backendComponent.getLocationManager(),
+            timeUtils,
             getRepositoryComponent().getGeoLocationStateGateway()
         )
     );
