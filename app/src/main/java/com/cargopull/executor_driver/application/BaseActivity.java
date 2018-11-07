@@ -398,9 +398,7 @@ public class BaseActivity extends AppCompatActivity implements GeoLocationStateV
 
   @Override
   public void setVisible(@IdRes int id, boolean visible) {
-    if (!visible) {
-      geoEngagementDialogFragment.dismiss();
-    } else if (showGeolocationStateAllowed()) {
+    if (visible && showGeolocationStateAllowed()) {
       geoEngagementDialogFragment.show(getSupportFragmentManager(), "geoEngagement");
     }
   }

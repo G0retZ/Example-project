@@ -101,7 +101,9 @@ public class GeoEngagementDialogFragment extends BaseDialogFragment implements
 
   @Override
   public void setVisible(@IdRes int id, boolean visible) {
-
+    if (!visible) {
+      dismiss();
+    }
   }
 
   @Override
