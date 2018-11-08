@@ -50,7 +50,7 @@ public class GeoEngagementDialogFragment extends BaseDialogFragment implements
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setStyle(DialogFragment.STYLE_NO_FRAME, R.style.AppTheme);
+    setStyle(DialogFragment.STYLE_NO_FRAME, R.style.AppThemeNew);
   }
 
   @Nullable
