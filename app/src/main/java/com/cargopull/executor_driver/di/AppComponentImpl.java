@@ -265,8 +265,8 @@ public class AppComponentImpl implements AppComponent {
 
   @Override
   public void inject(FcmService fcmService) {
-    fcmService.setAnnouncementViewModel(
-        getPresentationComponent().getAnnouncementViewModel()
+    fcmService.setFcmObserver(
+        getBackendComponent().getFcmReceiver()
     );
     fcmService.setApiService(
         getBackendComponent().getApiService()
