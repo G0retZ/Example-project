@@ -1,4 +1,4 @@
-package com.cargopull.executor_driver.interactor;
+package com.cargopull.executor_driver.gateway;
 
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.only;
@@ -7,81 +7,32 @@ import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 import com.cargopull.executor_driver.GatewayThreadTestRule;
-import com.cargopull.executor_driver.backend.websocket.TopicListener;
-import com.cargopull.executor_driver.gateway.DataMappingException;
-import com.cargopull.executor_driver.gateway.Mapper;
-import com.cargopull.executor_driver.gateway.TopicGateway;
-import io.reactivex.Flowable;
+import com.cargopull.executor_driver.interactor.CommonGateway;
+import io.reactivex.Observable;
 import io.reactivex.functions.Predicate;
 import io.reactivex.subscribers.TestSubscriber;
-import java.util.Arrays;
-import org.junit.Before;
+import java.util.Map;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
-import ua.naiksoftware.stomp.client.StompMessage;
 
-@RunWith(Parameterized.class)
-public class TopicGatewayTest {
+public class FcmGatewayTest {
 
   @Rule
   public MockitoRule rule = MockitoJUnit.rule();
   @ClassRule
   public static final GatewayThreadTestRule classRule = new GatewayThreadTestRule();
 
-  private final boolean withDefault;
-
   private CommonGateway<String> gateway;
   @Mock
-  private TopicListener topicListener;
+  private Mapper<Map<String, String>, String> mapper;
   @Mock
-  private Mapper<StompMessage, String> mapper;
+  private Predicate<Map<String, String>> filter;
   @Mock
-  private Predicate<StompMessage> filter;
-  @Mock
-  private StompMessage stompMessage;
-
-  // Each parameter should be placed as an argument here
-  // Every time runner triggers, it will pass the arguments
-  // from parameters we defined in primeNumbers() method
-
-  public TopicGatewayTest(boolean conditions) {
-    withDefault = conditions;
-  }
-
-  @Parameterized.Parameters
-  public static Iterable<Boolean> primeConditions() {
-    return Arrays.asList(false, true);
-  }
-
-  @Before
-  public void setUp() {
-    if (withDefault) {
-      gateway = new TopicGateway<>(topicListener, filter, mapper, "defaultValue");
-    } else {
-      gateway = new TopicGateway<>(topicListener, filter, mapper);
-    }
-    when(topicListener.getAcknowledgedMessages()).thenReturn(Flowable.never());
-  }
-
-  /* Проверяем работу с слушателем сокета */
-
-  /**
-   * Должен запросить у слушателя топика текущий заказ.
-   */
-  @Test
-  public void askExecutorStateUseCaseForStatusUpdates() {
-    // Действие:
-    gateway.getData().test().isDisposed();
-
-    // Результат:
-    verify(topicListener, only()).getAcknowledgedMessages();
-  }
+  private Map<String, String> dataMap;
 
   /* Проверяем работу с фильтром */
 
@@ -90,6 +41,9 @@ public class TopicGatewayTest {
    */
   @Test
   public void doNotTouchFilterIfNoDataYet() {
+    // Дано:
+    gateway = new FcmGateway<>(Observable.never(), filter, mapper);
+
     // Действие:
     gateway.getData().test().isDisposed();
 
@@ -105,13 +59,13 @@ public class TopicGatewayTest {
   @Test
   public void askFilterForCheck() throws Exception {
     // Дано:
-    when(topicListener.getAcknowledgedMessages()).thenReturn(Flowable.just(stompMessage));
+    gateway = new FcmGateway<>(Observable.just(dataMap), filter, mapper);
 
     // Действие:
     gateway.getData().test().isDisposed();
 
     // Результат:
-    verify(filter, only()).test(stompMessage);
+    verify(filter, only()).test(dataMap);
   }
 
   /* Проверяем работу с маппером */
@@ -122,7 +76,7 @@ public class TopicGatewayTest {
   @Test
   public void doNotTouchMapperIfFiltered() {
     // Дано:
-    when(topicListener.getAcknowledgedMessages()).thenReturn(Flowable.just(stompMessage));
+    gateway = new FcmGateway<>(Observable.just(dataMap), filter, mapper);
 
     // Действие:
     gateway.getData().test().isDisposed();
@@ -139,14 +93,14 @@ public class TopicGatewayTest {
   @Test
   public void askMapperForForDataMapping() throws Exception {
     // Дано:
-    when(filter.test(stompMessage)).thenReturn(true);
-    when(topicListener.getAcknowledgedMessages()).thenReturn(Flowable.just(stompMessage));
+    when(filter.test(dataMap)).thenReturn(true);
+    gateway = new FcmGateway<>(Observable.just(dataMap), filter, mapper);
 
     // Действие:
     gateway.getData().test().isDisposed();
 
     // Результат:
-    verify(mapper, only()).map(stompMessage);
+    verify(mapper, only()).map(dataMap);
   }
 
   /* Проверяем результаты обработки сообщений от сервера */
@@ -158,17 +112,13 @@ public class TopicGatewayTest {
   @Test
   public void ignoreFilteredMessages() {
     // Дано:
-    when(topicListener.getAcknowledgedMessages()).thenReturn(Flowable.just(stompMessage));
+    gateway = new FcmGateway<>(Observable.just(dataMap), filter, mapper);
 
     // Действие:
     TestSubscriber<String> testSubscriber = gateway.getData().test();
 
     // Результат:
-    if (withDefault) {
-      testSubscriber.assertValue("defaultValue");
-    } else {
-      testSubscriber.assertNoValues();
-    }
+    testSubscriber.assertNoValues();
     testSubscriber.assertNoErrors();
   }
 
@@ -180,20 +130,16 @@ public class TopicGatewayTest {
   @Test
   public void answerNoStringAvailableForNoData() throws Exception {
     // Дано:
-    doThrow(new DataMappingException()).when(mapper).map(stompMessage);
-    when(filter.test(stompMessage)).thenReturn(true);
-    when(topicListener.getAcknowledgedMessages()).thenReturn(Flowable.just(stompMessage));
+    doThrow(new DataMappingException()).when(mapper).map(dataMap);
+    when(filter.test(dataMap)).thenReturn(true);
+    gateway = new FcmGateway<>(Observable.just(dataMap), filter, mapper);
 
     // Действие:
     TestSubscriber<String> testSubscriber = gateway.getData().test();
 
     // Результат:
     testSubscriber.assertError(DataMappingException.class);
-    if (withDefault) {
-      testSubscriber.assertValue("defaultValue");
-    } else {
-      testSubscriber.assertNoValues();
-    }
+    testSubscriber.assertNoValues();
   }
 
   /**
@@ -204,19 +150,15 @@ public class TopicGatewayTest {
   @Test
   public void answerWithData() throws Exception {
     // Дано:
-    when(mapper.map(stompMessage)).thenReturn("Data");
-    when(filter.test(stompMessage)).thenReturn(true);
-    when(topicListener.getAcknowledgedMessages()).thenReturn(Flowable.just(stompMessage));
+    when(mapper.map(dataMap)).thenReturn("Data");
+    when(filter.test(dataMap)).thenReturn(true);
+    gateway = new FcmGateway<>(Observable.just(dataMap), filter, mapper);
 
     // Действие:
     TestSubscriber<String> testSubscriber = gateway.getData().test();
 
     // Результат:
-    if (withDefault) {
-      testSubscriber.assertValues("defaultValue", "Data");
-    } else {
-      testSubscriber.assertValue("Data");
-    }
+    testSubscriber.assertValue("Data");
     testSubscriber.assertNoErrors();
   }
 }
