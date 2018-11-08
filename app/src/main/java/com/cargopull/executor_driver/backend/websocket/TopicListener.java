@@ -5,7 +5,7 @@ import io.reactivex.Flowable;
 import ua.naiksoftware.stomp.client.StompMessage;
 
 /**
- * Пролучение сообщений из WebSocket.
+ * Получение сообщений из WebSocket.
  */
 public interface TopicListener {
 

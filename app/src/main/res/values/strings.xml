@@ -90,6 +90,7 @@
   <string name="bonus_amount">Бонусных рублей</string>
   <string name="missed_order">Упущен заказ</string>
   <string name="server_connection">Связь с сервером</string>
+  <string name="important_info">Важная информация</string>
   <string name="service">Услуга</string>
   <string name="order_distance_and_duration">Пробег, длительность, стоимость</string>
   <string name="km_h_m_p">%1$.2f км, %2$d ч. %3$d мин. ≈ %4$s</string>
@@ -147,4 +148,6 @@
   <string name="night_mode_auto">Авто</string>
   <string name="work_time">Время работы</string>
   <string name="_1">1</string>
+  <string name="server_connection_desc">Необходимые для нормальной работы оповещения</string>
+  <string name="important_info_desc">Важные информационные оповещения общего характера</string>
 </resources>

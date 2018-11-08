@@ -25,6 +25,8 @@ android {
         versionCode 9
         versionName "1.4.1"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        buildConfigField 'String', 'QUIET_CHANNEL_ID', '"state_channel"'
+        buildConfigField 'String', 'ANNOUNCEMENT_CHANNEL_ID', '"announcement_channel"'
         buildConfigField 'String', 'BASE_URL', '"http://tst.capsrv.xyz:9080/executor/"'
         buildConfigField 'String', 'SOCKET_URL', '"ws://tst.capsrv.xyz:9080/executor/ws"'
         buildConfigField 'String', 'GOLOCATION_DESTINATION', '"/mobile/online"'
