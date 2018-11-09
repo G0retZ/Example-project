@@ -1,7 +1,7 @@
 package com.cargopull.executor_driver.di;
 
-import androidx.annotation.NonNull;
 import android.location.LocationManager;
+import androidx.annotation.NonNull;
 import com.cargopull.executor_driver.backend.analytics.ErrorReporter;
 import com.cargopull.executor_driver.backend.analytics.EventLogger;
 import com.cargopull.executor_driver.backend.geolocation.GeolocationCenter;
@@ -11,7 +11,6 @@ import com.cargopull.executor_driver.backend.websocket.TopicListener;
 import com.cargopull.executor_driver.interactor.DataReceiver;
 import io.reactivex.Observer;
 import java.util.Map;
-import io.reactivex.annotations.Nullable;
 import ua.naiksoftware.stomp.client.StompClient;
 
 interface BackendComponent {
@@ -37,7 +36,7 @@ interface BackendComponent {
   @NonNull
   GeolocationCenter getGeolocationCenter();
 
-  @Nullable
+  @NonNull
   LocationManager getLocationManager();
 
   @NonNull
