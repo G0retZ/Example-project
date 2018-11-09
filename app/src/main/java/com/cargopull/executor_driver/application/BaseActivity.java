@@ -17,6 +17,7 @@ import com.cargopull.executor_driver.R;
 import com.cargopull.executor_driver.backend.settings.AppSettingsService;
 import com.cargopull.executor_driver.di.AppComponent;
 import com.cargopull.executor_driver.presentation.CommonNavigate;
+import com.cargopull.executor_driver.presentation.NoViewActions;
 import com.cargopull.executor_driver.presentation.announcement.AnnouncementStateViewActions;
 import com.cargopull.executor_driver.presentation.announcement.AnnouncementViewModel;
 import com.cargopull.executor_driver.presentation.executorstate.ExecutorStateViewActions;
@@ -74,6 +75,15 @@ public class BaseActivity extends AppCompatActivity implements
   @Nullable
   private Dialog errorDialog;
   private boolean resumed;
+  private final NoViewActions geoEngagementViewActions = new NoViewActions() {
+    @Override
+    public void setVisible(int id, boolean visible) {
+      if (visible && showGeolocationStateAllowed()) {
+        geoEngagementDialogFragment.show(getSupportFragmentManager(), "geoEngagement");
+      }
+    }
+  };
+
   // FIXME: https://jira.capsrv.xyz/browse/RUCAP-2244
   private int nightMode = -1;
 
@@ -125,12 +135,9 @@ public class BaseActivity extends AppCompatActivity implements
       nightMode = appSettingsService.getNumber("mode");
     }
     geoLocationStateViewModel.getViewStateLiveData().observe(this, viewState -> {
-//      if (viewState != null) {
-//        viewState.apply(this);
-//        if (visible && showGeolocationStateAllowed()) {
-//          geoEngagementDialogFragment.show(getSupportFragmentManager(), "geoEngagement");
-//        }
-//      }
+      if (viewState != null) {
+        viewState.apply(geoEngagementViewActions);
+      }
     });
     executorStateViewModel.getViewStateLiveData().observe(this, viewState -> {
       if (viewState != null) {
