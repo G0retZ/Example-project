@@ -84,24 +84,24 @@ class ApiOrderRule extends CommonTestRule {
         + ORDER_ROUTE_START
         + OBJECT_START
         + String.format(ROUTE_ID, 7) + FIELD_DIVIDER
-        + String.format(ROUTE_LATITUDE, 12.34) + FIELD_DIVIDER
-        + String.format(ROUTE_LONGITUDE, 34.12) + FIELD_DIVIDER
+        + String.format(ROUTE_LATITUDE, "12.34") + FIELD_DIVIDER
+        + String.format(ROUTE_LONGITUDE, "34.12") + FIELD_DIVIDER
         + String.format(ROUTE_COMMENT, "comment 1") + FIELD_DIVIDER
         + String.format(ROUTE_ADDRESS, "address 1") + FIELD_DIVIDER
         + ROUTE_UNCHECKED
         + OBJECT_END + FIELD_DIVIDER
         + OBJECT_START
         + String.format(ROUTE_ID, 8) + FIELD_DIVIDER
-        + String.format(ROUTE_LATITUDE, 56.78) + FIELD_DIVIDER
-        + String.format(ROUTE_LONGITUDE, 78.56) + FIELD_DIVIDER
+        + String.format(ROUTE_LATITUDE, "56.78") + FIELD_DIVIDER
+        + String.format(ROUTE_LONGITUDE, "78.56") + FIELD_DIVIDER
         + String.format(ROUTE_COMMENT, "comment 2") + FIELD_DIVIDER
         + String.format(ROUTE_ADDRESS, "address 2") + FIELD_DIVIDER
         + ROUTE_CHECKED
         + OBJECT_END + FIELD_DIVIDER
         + OBJECT_START
         + String.format(ROUTE_ID, 9) + FIELD_DIVIDER
-        + String.format(ROUTE_LATITUDE, 90.12) + FIELD_DIVIDER
-        + String.format(ROUTE_LONGITUDE, 12.90) + FIELD_DIVIDER
+        + String.format(ROUTE_LATITUDE, "90.12") + FIELD_DIVIDER
+        + String.format(ROUTE_LONGITUDE, "12.90") + FIELD_DIVIDER
         + String.format(ROUTE_COMMENT, "comment 3") + FIELD_DIVIDER
         + String.format(ROUTE_ADDRESS, "address 3") + FIELD_DIVIDER
         + ROUTE_UNCHECKED
@@ -170,24 +170,24 @@ class ApiOrderRule extends CommonTestRule {
         + ORDER_ROUTE_START
         + OBJECT_START
         + String.format(ROUTE_ID, 7) + FIELD_DIVIDER
-        + String.format(ROUTE_LATITUDE, 12.34) + FIELD_DIVIDER
-        + String.format(ROUTE_LONGITUDE, 34.12) + FIELD_DIVIDER
+        + String.format(ROUTE_LATITUDE, "12.34") + FIELD_DIVIDER
+        + String.format(ROUTE_LONGITUDE, "34.12") + FIELD_DIVIDER
         + String.format(ROUTE_COMMENT, "comment 1") + FIELD_DIVIDER
         + String.format(ROUTE_ADDRESS, "address 1") + FIELD_DIVIDER
         + ROUTE_UNCHECKED
         + OBJECT_END + FIELD_DIVIDER
         + OBJECT_START
         + String.format(ROUTE_ID, 8) + FIELD_DIVIDER
-        + String.format(ROUTE_LATITUDE, 56.78) + FIELD_DIVIDER
-        + String.format(ROUTE_LONGITUDE, 78.56) + FIELD_DIVIDER
+        + String.format(ROUTE_LATITUDE, "56.78") + FIELD_DIVIDER
+        + String.format(ROUTE_LONGITUDE, "78.56") + FIELD_DIVIDER
         + String.format(ROUTE_COMMENT, "comment 2") + FIELD_DIVIDER
         + String.format(ROUTE_ADDRESS, "address 2") + FIELD_DIVIDER
         + ROUTE_CHECKED
         + OBJECT_END + FIELD_DIVIDER
         + OBJECT_START
         + String.format(ROUTE_ID, 9) + FIELD_DIVIDER
-        + String.format(ROUTE_LATITUDE, 90.12) + FIELD_DIVIDER
-        + String.format(ROUTE_LONGITUDE, 12.90) + FIELD_DIVIDER
+        + String.format(ROUTE_LATITUDE, "90.12") + FIELD_DIVIDER
+        + String.format(ROUTE_LONGITUDE, "12.90") + FIELD_DIVIDER
         + String.format(ROUTE_COMMENT, "comment 3") + FIELD_DIVIDER
         + String.format(ROUTE_ADDRESS, "address 3") + FIELD_DIVIDER
         + ROUTE_UNCHECKED
@@ -256,24 +256,24 @@ class ApiOrderRule extends CommonTestRule {
         + ORDER_ROUTE_START
         + OBJECT_START
         + String.format(ROUTE_ID, 7) + FIELD_DIVIDER
-        + String.format(ROUTE_LATITUDE, 12.34) + FIELD_DIVIDER
-        + String.format(ROUTE_LONGITUDE, 34.12) + FIELD_DIVIDER
+        + String.format(ROUTE_LATITUDE, "12.34") + FIELD_DIVIDER
+        + String.format(ROUTE_LONGITUDE, "34.12") + FIELD_DIVIDER
         + String.format(ROUTE_COMMENT, "comment 1") + FIELD_DIVIDER
         + String.format(ROUTE_ADDRESS, "address 1") + FIELD_DIVIDER
         + ROUTE_UNCHECKED
         + OBJECT_END + FIELD_DIVIDER
         + OBJECT_START
         + String.format(ROUTE_ID, 8) + FIELD_DIVIDER
-        + String.format(ROUTE_LATITUDE, 56.78) + FIELD_DIVIDER
-        + String.format(ROUTE_LONGITUDE, 78.56) + FIELD_DIVIDER
+        + String.format(ROUTE_LATITUDE, "56.78") + FIELD_DIVIDER
+        + String.format(ROUTE_LONGITUDE, "78.56") + FIELD_DIVIDER
         + String.format(ROUTE_COMMENT, "comment 2") + FIELD_DIVIDER
         + String.format(ROUTE_ADDRESS, "address 2") + FIELD_DIVIDER
         + ROUTE_CHECKED
         + OBJECT_END + FIELD_DIVIDER
         + OBJECT_START
         + String.format(ROUTE_ID, 9) + FIELD_DIVIDER
-        + String.format(ROUTE_LATITUDE, 90.12) + FIELD_DIVIDER
-        + String.format(ROUTE_LONGITUDE, 12.90) + FIELD_DIVIDER
+        + String.format(ROUTE_LATITUDE, "90.12") + FIELD_DIVIDER
+        + String.format(ROUTE_LONGITUDE, "12.90") + FIELD_DIVIDER
         + String.format(ROUTE_COMMENT, "comment 3") + FIELD_DIVIDER
         + String.format(ROUTE_ADDRESS, "address 3") + FIELD_DIVIDER
         + ROUTE_UNCHECKED
@@ -342,24 +342,24 @@ class ApiOrderRule extends CommonTestRule {
         + ORDER_ROUTE_START
         + OBJECT_START
         + String.format(ROUTE_ID, 7) + FIELD_DIVIDER
-        + String.format(ROUTE_LATITUDE, 12.34) + FIELD_DIVIDER
-        + String.format(ROUTE_LONGITUDE, 34.12) + FIELD_DIVIDER
+        + String.format(ROUTE_LATITUDE, "12.34") + FIELD_DIVIDER
+        + String.format(ROUTE_LONGITUDE, "34.12") + FIELD_DIVIDER
         + String.format(ROUTE_COMMENT, "comment 1") + FIELD_DIVIDER
         + String.format(ROUTE_ADDRESS, "address 1") + FIELD_DIVIDER
         + ROUTE_UNCHECKED
         + OBJECT_END + FIELD_DIVIDER
         + OBJECT_START
         + String.format(ROUTE_ID, 8) + FIELD_DIVIDER
-        + String.format(ROUTE_LATITUDE, 56.78) + FIELD_DIVIDER
-        + String.format(ROUTE_LONGITUDE, 78.56) + FIELD_DIVIDER
+        + String.format(ROUTE_LATITUDE, "56.78") + FIELD_DIVIDER
+        + String.format(ROUTE_LONGITUDE, "78.56") + FIELD_DIVIDER
         + String.format(ROUTE_COMMENT, "comment 2") + FIELD_DIVIDER
         + String.format(ROUTE_ADDRESS, "address 2") + FIELD_DIVIDER
         + ROUTE_CHECKED
         + OBJECT_END + FIELD_DIVIDER
         + OBJECT_START
         + String.format(ROUTE_ID, 9) + FIELD_DIVIDER
-        + String.format(ROUTE_LATITUDE, 90.12) + FIELD_DIVIDER
-        + String.format(ROUTE_LONGITUDE, 12.90) + FIELD_DIVIDER
+        + String.format(ROUTE_LATITUDE, "90.12") + FIELD_DIVIDER
+        + String.format(ROUTE_LONGITUDE, "12.90") + FIELD_DIVIDER
         + String.format(ROUTE_COMMENT, "comment 3") + FIELD_DIVIDER
         + String.format(ROUTE_ADDRESS, "address 3") + FIELD_DIVIDER
         + ROUTE_UNCHECKED
@@ -428,24 +428,24 @@ class ApiOrderRule extends CommonTestRule {
         + ORDER_ROUTE_START
         + OBJECT_START
         + String.format(ROUTE_ID, 7) + FIELD_DIVIDER
-        + String.format(ROUTE_LATITUDE, 12.34) + FIELD_DIVIDER
-        + String.format(ROUTE_LONGITUDE, 34.12) + FIELD_DIVIDER
+        + String.format(ROUTE_LATITUDE, "12.34") + FIELD_DIVIDER
+        + String.format(ROUTE_LONGITUDE, "34.12") + FIELD_DIVIDER
         + String.format(ROUTE_COMMENT, "comment 1") + FIELD_DIVIDER
         + String.format(ROUTE_ADDRESS, "address 1") + FIELD_DIVIDER
         + ROUTE_UNCHECKED
         + OBJECT_END + FIELD_DIVIDER
         + OBJECT_START
         + String.format(ROUTE_ID, 8) + FIELD_DIVIDER
-        + String.format(ROUTE_LATITUDE, 56.78) + FIELD_DIVIDER
-        + String.format(ROUTE_LONGITUDE, 78.56) + FIELD_DIVIDER
+        + String.format(ROUTE_LATITUDE, "56.78") + FIELD_DIVIDER
+        + String.format(ROUTE_LONGITUDE, "78.56") + FIELD_DIVIDER
         + String.format(ROUTE_COMMENT, "comment 2") + FIELD_DIVIDER
         + String.format(ROUTE_ADDRESS, "address 2") + FIELD_DIVIDER
         + ROUTE_CHECKED
         + OBJECT_END + FIELD_DIVIDER
         + OBJECT_START
         + String.format(ROUTE_ID, 9) + FIELD_DIVIDER
-        + String.format(ROUTE_LATITUDE, 90.12) + FIELD_DIVIDER
-        + String.format(ROUTE_LONGITUDE, 12.90) + FIELD_DIVIDER
+        + String.format(ROUTE_LATITUDE, "90.12") + FIELD_DIVIDER
+        + String.format(ROUTE_LONGITUDE, "12.90") + FIELD_DIVIDER
         + String.format(ROUTE_COMMENT, "comment 3") + FIELD_DIVIDER
         + String.format(ROUTE_ADDRESS, "address 3") + FIELD_DIVIDER
         + ROUTE_UNCHECKED
@@ -514,24 +514,24 @@ class ApiOrderRule extends CommonTestRule {
         + ORDER_ROUTE_START
         + OBJECT_START
         + String.format(ROUTE_ID, 7) + FIELD_DIVIDER
-        + String.format(ROUTE_LATITUDE, 12.34) + FIELD_DIVIDER
-        + String.format(ROUTE_LONGITUDE, 34.12) + FIELD_DIVIDER
+        + String.format(ROUTE_LATITUDE, "12.34") + FIELD_DIVIDER
+        + String.format(ROUTE_LONGITUDE, "34.12") + FIELD_DIVIDER
         + String.format(ROUTE_COMMENT, "comment 1") + FIELD_DIVIDER
         + String.format(ROUTE_ADDRESS, "address 1") + FIELD_DIVIDER
         + ROUTE_UNCHECKED
         + OBJECT_END + FIELD_DIVIDER
         + OBJECT_START
         + String.format(ROUTE_ID, 8) + FIELD_DIVIDER
-        + String.format(ROUTE_LATITUDE, 56.78) + FIELD_DIVIDER
-        + String.format(ROUTE_LONGITUDE, 78.56) + FIELD_DIVIDER
+        + String.format(ROUTE_LATITUDE, "56.78") + FIELD_DIVIDER
+        + String.format(ROUTE_LONGITUDE, "78.56") + FIELD_DIVIDER
         + String.format(ROUTE_COMMENT, "comment 2") + FIELD_DIVIDER
         + String.format(ROUTE_ADDRESS, "address 2") + FIELD_DIVIDER
         + ROUTE_CHECKED
         + OBJECT_END + FIELD_DIVIDER
         + OBJECT_START
         + String.format(ROUTE_ID, 9) + FIELD_DIVIDER
-        + String.format(ROUTE_LATITUDE, 90.12) + FIELD_DIVIDER
-        + String.format(ROUTE_LONGITUDE, 12.90) + FIELD_DIVIDER
+        + String.format(ROUTE_LATITUDE, "90.12") + FIELD_DIVIDER
+        + String.format(ROUTE_LONGITUDE, "12.90") + FIELD_DIVIDER
         + String.format(ROUTE_COMMENT, "comment 3") + FIELD_DIVIDER
         + String.format(ROUTE_ADDRESS, "address 3") + FIELD_DIVIDER
         + ROUTE_UNCHECKED
@@ -600,24 +600,24 @@ class ApiOrderRule extends CommonTestRule {
         + ORDER_ROUTE_START
         + OBJECT_START
         + String.format(ROUTE_ID, 7) + FIELD_DIVIDER
-        + String.format(ROUTE_LATITUDE, 12.34) + FIELD_DIVIDER
-        + String.format(ROUTE_LONGITUDE, 34.12) + FIELD_DIVIDER
+        + String.format(ROUTE_LATITUDE, "12.34") + FIELD_DIVIDER
+        + String.format(ROUTE_LONGITUDE, "34.12") + FIELD_DIVIDER
         + String.format(ROUTE_COMMENT, "comment 1") + FIELD_DIVIDER
         + String.format(ROUTE_ADDRESS, "address 1") + FIELD_DIVIDER
         + ROUTE_UNCHECKED
         + OBJECT_END + FIELD_DIVIDER
         + OBJECT_START
         + String.format(ROUTE_ID, 8) + FIELD_DIVIDER
-        + String.format(ROUTE_LATITUDE, 56.78) + FIELD_DIVIDER
-        + String.format(ROUTE_LONGITUDE, 78.56) + FIELD_DIVIDER
+        + String.format(ROUTE_LATITUDE, "56.78") + FIELD_DIVIDER
+        + String.format(ROUTE_LONGITUDE, "78.56") + FIELD_DIVIDER
         + String.format(ROUTE_COMMENT, "comment 2") + FIELD_DIVIDER
         + String.format(ROUTE_ADDRESS, "address 2") + FIELD_DIVIDER
         + ROUTE_CHECKED
         + OBJECT_END + FIELD_DIVIDER
         + OBJECT_START
         + String.format(ROUTE_ID, 9) + FIELD_DIVIDER
-        + String.format(ROUTE_LATITUDE, 90.12) + FIELD_DIVIDER
-        + String.format(ROUTE_LONGITUDE, 12.90) + FIELD_DIVIDER
+        + String.format(ROUTE_LATITUDE, "90.12") + FIELD_DIVIDER
+        + String.format(ROUTE_LONGITUDE, "12.90") + FIELD_DIVIDER
         + String.format(ROUTE_COMMENT, "comment 3") + FIELD_DIVIDER
         + String.format(ROUTE_ADDRESS, "address 3") + FIELD_DIVIDER
         + ROUTE_UNCHECKED

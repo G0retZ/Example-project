@@ -208,5 +208,8 @@ interface PresentationComponent {
   GeoLocationStateViewModel getGeoLocationStateViewModel(AppCompatActivity appCompatActivity);
 
   @NonNull
+  GeoLocationStateViewModel getGeoLocationStateViewModel(Fragment fragment);
+
+  @NonNull
   MovingToClientTimerViewModel getMovingToClientTimerViewModel(Fragment fragment);
 }

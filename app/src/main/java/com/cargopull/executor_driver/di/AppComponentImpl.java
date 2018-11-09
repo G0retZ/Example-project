@@ -43,6 +43,7 @@ import com.cargopull.executor_driver.view.ClientOrderConfirmationTimeFragment;
 import com.cargopull.executor_driver.view.DriverOrderConfirmationFragment;
 import com.cargopull.executor_driver.view.DriverPreOrderBookingFragment;
 import com.cargopull.executor_driver.view.DriverPreOrderConfirmationFragment;
+import com.cargopull.executor_driver.view.GeoEngagementDialogFragment;
 import com.cargopull.executor_driver.view.GoOnlineFragment;
 import com.cargopull.executor_driver.view.MapFragment;
 import com.cargopull.executor_driver.view.MenuFragment;
@@ -701,6 +702,15 @@ public class AppComponentImpl implements AppComponent {
     );
     upcomingPreOrderNotificationFragment.setUpcomingPreOrderNotificationViewModel(
         getPresentationComponent().getUpcomingPreOrderAvailabilityViewModel()
+    );
+  }
+
+  @Override
+  public void inject(GeoEngagementDialogFragment geoEngagementDialogFragment) {
+    geoEngagementDialogFragment.setGeoLocationStateViewModel(
+        getPresentationComponent().getGeoLocationStateViewModel(
+            geoEngagementDialogFragment
+        )
     );
   }
 
