@@ -9,11 +9,8 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import androidx.annotation.DrawableRes;
-import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.StringRes;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import com.cargopull.executor_driver.R;
@@ -24,7 +21,6 @@ import com.cargopull.executor_driver.presentation.announcement.AnnouncementState
 import com.cargopull.executor_driver.presentation.announcement.AnnouncementViewModel;
 import com.cargopull.executor_driver.presentation.executorstate.ExecutorStateViewActions;
 import com.cargopull.executor_driver.presentation.executorstate.ExecutorStateViewModel;
-import com.cargopull.executor_driver.presentation.geolocationstate.GeoLocationStateViewActions;
 import com.cargopull.executor_driver.presentation.geolocationstate.GeoLocationStateViewModel;
 import com.cargopull.executor_driver.presentation.serverconnection.ServerConnectionNavigate;
 import com.cargopull.executor_driver.presentation.serverconnection.ServerConnectionViewModel;
@@ -52,7 +48,7 @@ import javax.inject.Inject;
  */
 
 @SuppressLint("Registered")
-public class BaseActivity extends AppCompatActivity implements GeoLocationStateViewActions,
+public class BaseActivity extends AppCompatActivity implements
     ExecutorStateViewActions, AnnouncementStateViewActions, UpdateMessageViewActions {
 
   @NonNull
@@ -129,9 +125,12 @@ public class BaseActivity extends AppCompatActivity implements GeoLocationStateV
       nightMode = appSettingsService.getNumber("mode");
     }
     geoLocationStateViewModel.getViewStateLiveData().observe(this, viewState -> {
-      if (viewState != null) {
-        viewState.apply(this);
-      }
+//      if (viewState != null) {
+//        viewState.apply(this);
+//        if (visible && showGeolocationStateAllowed()) {
+//          geoEngagementDialogFragment.show(getSupportFragmentManager(), "geoEngagement");
+//        }
+//      }
     });
     executorStateViewModel.getViewStateLiveData().observe(this, viewState -> {
       if (viewState != null) {
@@ -418,23 +417,6 @@ public class BaseActivity extends AppCompatActivity implements GeoLocationStateV
     if (resumed) {
       updateDialog.show();
     }
-  }
-
-  @Override
-  public void setVisible(@IdRes int id, boolean visible) {
-    if (visible && showGeolocationStateAllowed()) {
-      geoEngagementDialogFragment.show(getSupportFragmentManager(), "geoEngagement");
-    }
-  }
-
-  @Override
-  public void setText(@IdRes int id, @StringRes int stringId) {
-
-  }
-
-  @Override
-  public void setImage(@IdRes int id, @DrawableRes int drawableId) {
-
   }
 
   protected boolean showGeolocationStateAllowed() {
