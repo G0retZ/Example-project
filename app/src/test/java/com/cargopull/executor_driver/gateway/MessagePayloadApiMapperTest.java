@@ -9,7 +9,6 @@ import ua.naiksoftware.stomp.client.StompMessage;
 
 public class MessagePayloadApiMapperTest {
 
-
   private Mapper<StompMessage, String> mapper;
 
   @Before
