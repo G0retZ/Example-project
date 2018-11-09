@@ -902,6 +902,28 @@ class PresentationComponentImpl implements PresentationComponent {
         appCompatActivity,
         GeoLocationStateViewModelImpl.class,
         new GeoLocationStateViewModelImpl(
+            backendComponent.getEventLogger(),
+            backendComponent.getLocationManager(),
+            timeUtils,
+            getRepositoryComponent().getGeoLocationStateGateway()
+        )
+    );
+  }
+
+  @NonNull
+  @Override
+  public GeoLocationStateViewModel getGeoLocationStateViewModel(
+      @Nullable Fragment fragment) {
+    if (fragment == null) {
+      throw new NullPointerException("Фрагмент не должен быть null");
+    }
+    return getViewModelInstance(
+        fragment,
+        GeoLocationStateViewModelImpl.class,
+        new GeoLocationStateViewModelImpl(
+            backendComponent.getEventLogger(),
+            backendComponent.getLocationManager(),
+            timeUtils,
             getRepositoryComponent().getGeoLocationStateGateway()
         )
     );

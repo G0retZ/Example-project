@@ -9,8 +9,11 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import androidx.annotation.DrawableRes;
+import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import com.cargopull.executor_driver.R;
@@ -418,15 +421,23 @@ public class BaseActivity extends AppCompatActivity implements GeoLocationStateV
   }
 
   @Override
-  public void showGeolocationState(boolean available) {
-    if (available) {
-      geoEngagementDialogFragment.dismiss();
-    } else if (showGeolocationStateAllowed()) {
+  public void setVisible(@IdRes int id, boolean visible) {
+    if (visible && showGeolocationStateAllowed()) {
       geoEngagementDialogFragment.show(getSupportFragmentManager(), "geoEngagement");
     }
   }
 
-  boolean showGeolocationStateAllowed() {
+  @Override
+  public void setText(@IdRes int id, @StringRes int stringId) {
+
+  }
+
+  @Override
+  public void setImage(@IdRes int id, @DrawableRes int drawableId) {
+
+  }
+
+  protected boolean showGeolocationStateAllowed() {
     return false;
   }
 
