@@ -9,6 +9,7 @@ import com.cargopull.executor_driver.backend.settings.AppSettingsService;
 import com.cargopull.executor_driver.backend.web.ApiService;
 import com.cargopull.executor_driver.backend.websocket.TopicListener;
 import com.cargopull.executor_driver.interactor.DataReceiver;
+import io.reactivex.Observable;
 import io.reactivex.Observer;
 import java.util.Map;
 import ua.naiksoftware.stomp.client.StompClient;
@@ -41,4 +42,7 @@ interface BackendComponent {
 
   @NonNull
   Observer<Map<String, String>> getFcmReceiver();
+
+  @NonNull
+  Observable<Map<String, String>> getFcmSender();
 }

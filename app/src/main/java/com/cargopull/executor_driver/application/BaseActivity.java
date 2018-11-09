@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -18,7 +19,6 @@ import com.cargopull.executor_driver.backend.settings.AppSettingsService;
 import com.cargopull.executor_driver.di.AppComponent;
 import com.cargopull.executor_driver.presentation.CommonNavigate;
 import com.cargopull.executor_driver.presentation.NoViewActions;
-import com.cargopull.executor_driver.presentation.announcement.AnnouncementStateViewActions;
 import com.cargopull.executor_driver.presentation.announcement.AnnouncementViewModel;
 import com.cargopull.executor_driver.presentation.executorstate.ExecutorStateViewActions;
 import com.cargopull.executor_driver.presentation.executorstate.ExecutorStateViewModel;
@@ -31,8 +31,10 @@ import com.cargopull.executor_driver.presentation.updatemessage.UpdateMessageVie
 import com.cargopull.executor_driver.view.GeoEngagementDialogFragment;
 import com.cargopull.executor_driver.view.PendingDialogFragment;
 import com.cargopull.executor_driver.view.ServerConnectionFragment;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.Set;
 import javax.inject.Inject;
 
@@ -49,9 +51,11 @@ import javax.inject.Inject;
  */
 
 @SuppressLint("Registered")
-public class BaseActivity extends AppCompatActivity implements
-    ExecutorStateViewActions, AnnouncementStateViewActions, UpdateMessageViewActions {
+public class BaseActivity extends AppCompatActivity implements ExecutorStateViewActions, UpdateMessageViewActions {
 
+  @SuppressLint("UseSparseArrays")
+  @NonNull
+  private final Map<Integer, View> foundViews = new HashMap<>();
   @NonNull
   private final PendingDialogFragment pendingDialogFragment = new PendingDialogFragment();
   @NonNull
@@ -80,6 +84,28 @@ public class BaseActivity extends AppCompatActivity implements
     public void setVisible(int id, boolean visible) {
       if (visible && showGeolocationStateAllowed()) {
         geoEngagementDialogFragment.show(getSupportFragmentManager(), "geoEngagement");
+      }
+    }
+  };
+  private final NoViewActions announcementViewActions = new NoViewActions() {
+    @Override
+    public void showPersistentDialog(@NonNull String message, @Nullable Runnable okAction) {
+      if (announcementDialog != null) {
+        announcementDialog.dismiss();
+      }
+      announcementDialog = new Builder(BaseActivity.this)
+          .setTitle(R.string.information)
+          .setMessage(message)
+          .setCancelable(false)
+          .setPositiveButton(getString(android.R.string.ok),
+              okAction == null ? null :
+              ((dialog, which) -> {
+                announcementDialog = null;
+                okAction.run();
+              }))
+          .create();
+      if (resumed) {
+        announcementDialog.show();
       }
     }
   };
@@ -151,7 +177,7 @@ public class BaseActivity extends AppCompatActivity implements
     });
     announcementViewModel.getViewStateLiveData().observe(this, viewState -> {
       if (viewState != null) {
-        viewState.apply(this);
+        viewState.apply(announcementViewActions);
       }
     });
     serverConnectionViewModel.getNavigationLiveData().observe(this, destination -> {
@@ -356,23 +382,6 @@ public class BaseActivity extends AppCompatActivity implements
     blockers.remove(blockerId);
     if (blockers.isEmpty()) {
       pendingDialogFragment.dismiss();
-    }
-  }
-
-  @Override
-  public void showAnnouncementMessage(@NonNull String message) {
-    announcementDialog = new Builder(this)
-        .setTitle(R.string.information)
-        .setMessage(message)
-        .setCancelable(false)
-        .setPositiveButton(getString(android.R.string.ok),
-            ((dialog, which) -> {
-              announcementDialog = null;
-              announcementViewModel.announcementConsumed();
-            }))
-        .create();
-    if (resumed) {
-      announcementDialog.show();
     }
   }
 

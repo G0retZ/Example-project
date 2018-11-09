@@ -10,7 +10,7 @@ import io.reactivex.schedulers.Schedulers;
 import java.util.Map;
 import javax.inject.Inject;
 
-class FcmGateway<D> implements CommonGateway<D> {
+public class FcmGateway<D> implements CommonGateway<D> {
 
   @NonNull
   private final Observable<Map<String, String>> fcmListener;
@@ -20,7 +20,7 @@ class FcmGateway<D> implements CommonGateway<D> {
   private final Mapper<Map<String, String>, D> mapper;
 
   @Inject
-  FcmGateway(@NonNull Observable<Map<String, String>> fcmListener,
+  public FcmGateway(@NonNull Observable<Map<String, String>> fcmListener,
       @NonNull Predicate<Map<String, String>> filter,
       @NonNull Mapper<Map<String, String>, D> mapper) {
     this.fcmListener = fcmListener;

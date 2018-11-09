@@ -22,12 +22,15 @@ import com.cargopull.executor_driver.gateway.ExecutorBalanceFilter;
 import com.cargopull.executor_driver.gateway.ExecutorStateApiMapper;
 import com.cargopull.executor_driver.gateway.ExecutorStateFilter;
 import com.cargopull.executor_driver.gateway.ExecutorStateSwitchGatewayImpl;
+import com.cargopull.executor_driver.gateway.FcmGateway;
 import com.cargopull.executor_driver.gateway.GeoLocationAvailabilityGatewayImpl;
 import com.cargopull.executor_driver.gateway.GeoLocationGatewayImpl;
 import com.cargopull.executor_driver.gateway.GeoTrackingGatewayImpl;
 import com.cargopull.executor_driver.gateway.HeatMapGatewayImpl;
 import com.cargopull.executor_driver.gateway.LastUsedVehicleGatewayImpl;
 import com.cargopull.executor_driver.gateway.LoginGateway;
+import com.cargopull.executor_driver.gateway.MessageFcmFilter;
+import com.cargopull.executor_driver.gateway.MessageFcmMapper;
 import com.cargopull.executor_driver.gateway.MessagePayloadApiMapper;
 import com.cargopull.executor_driver.gateway.MissedOrderFilter;
 import com.cargopull.executor_driver.gateway.MovingToClientGatewayImpl;
@@ -168,6 +171,8 @@ class RepositoryComponentImpl implements RepositoryComponent {
   private CommonGateway<Set<Order>> preOrdersListGateway;
   @Nullable
   private CommonGateway<Order> upcomingPreOrderGateway;
+  @Nullable
+  private CommonGateway<String> announcementsOrderGateway;
 
   RepositoryComponentImpl(@NonNull BackendComponent backendComponent) {
     this.backendComponent = backendComponent;
@@ -657,5 +662,18 @@ class RepositoryComponentImpl implements RepositoryComponent {
     return new GeoLocationAvailabilityGatewayImpl(
         backendComponent.getGeolocationCenter()
     );
+  }
+
+  @NonNull
+  @Override
+  public CommonGateway<String> getAnnouncementsGateway() {
+    if (announcementsOrderGateway == null) {
+      announcementsOrderGateway = new FcmGateway<>(
+          backendComponent.getFcmSender(),
+          new MessageFcmFilter(),
+          new MessageFcmMapper()
+      );
+    }
+    return announcementsOrderGateway;
   }
 }

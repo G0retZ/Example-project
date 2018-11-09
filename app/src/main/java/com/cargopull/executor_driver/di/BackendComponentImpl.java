@@ -27,6 +27,7 @@ import com.cargopull.executor_driver.backend.websocket.PersonalQueueListener;
 import com.cargopull.executor_driver.backend.websocket.TopicListener;
 import com.cargopull.executor_driver.gateway.TokenKeeperImpl;
 import com.cargopull.executor_driver.interactor.DataReceiver;
+import io.reactivex.Observable;
 import io.reactivex.Observer;
 import io.reactivex.subjects.PublishSubject;
 import java.util.Map;
@@ -163,6 +164,15 @@ class BackendComponentImpl implements BackendComponent {
   @NonNull
   @Override
   public Observer<Map<String, String>> getFcmReceiver() {
+    if (fcmSubject == null) {
+      fcmSubject = PublishSubject.create();
+    }
+    return fcmSubject;
+  }
+
+  @NonNull
+  @Override
+  public Observable<Map<String, String>> getFcmSender() {
     if (fcmSubject == null) {
       fcmSubject = PublishSubject.create();
     }
