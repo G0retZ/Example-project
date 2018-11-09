@@ -7,4 +7,8 @@ import com.cargopull.executor_driver.presentation.ViewModel;
  */
 public interface GeoLocationStateViewModel extends ViewModel<GeoLocationStateViewActions> {
 
+  /**
+   * Запрашивает повторную проверку настроек.
+   */
+  void checkSettings();
 }
