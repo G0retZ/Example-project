@@ -2,6 +2,7 @@ package com.cargopull.executor_driver.backend.web;
 
 import androidx.annotation.NonNull;
 import com.cargopull.executor_driver.backend.web.incoming.ApiOptionsForOnline;
+import com.cargopull.executor_driver.backend.web.incoming.ApiOrdersHistorySummary;
 import com.cargopull.executor_driver.backend.web.incoming.ApiServiceItem;
 import com.cargopull.executor_driver.backend.web.incoming.ApiSimpleResult;
 import com.cargopull.executor_driver.backend.web.outgoing.ApiLogin;
@@ -103,5 +104,14 @@ public interface ApiService {
   @PUT("api/public/v1/mobile/fireBase/registrationToken")
   Completable sendFcmInstanceID(
       @Query("registrationToken") String carId
+  );
+
+  /*
+   *  Запрос истории заказов.
+   */
+  @GET("api/public/v1/orderHistoryDetalization/forPeriod")
+  Single<ApiOrdersHistorySummary> getOrdersHistory(
+      @Query("dateFrom") long fromDate,
+      @Query("dateTo") long toDate
   );
 }
