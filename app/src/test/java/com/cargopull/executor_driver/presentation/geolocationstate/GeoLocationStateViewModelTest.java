@@ -14,7 +14,7 @@ import androidx.lifecycle.Observer;
 import com.cargopull.executor_driver.ViewModelThreadTestRule;
 import com.cargopull.executor_driver.backend.analytics.EventLogger;
 import com.cargopull.executor_driver.interactor.CommonGateway;
-import com.cargopull.executor_driver.presentation.ViewActions;
+import com.cargopull.executor_driver.presentation.ImageTextViewActions;
 import com.cargopull.executor_driver.presentation.ViewState;
 import com.cargopull.executor_driver.utils.Pair;
 import com.cargopull.executor_driver.utils.TimeUtils;
@@ -60,7 +60,7 @@ public class GeoLocationStateViewModelTest {
     @Mock
     private TimeUtils timeUtils;
     @Mock
-    private Observer<ViewState<ViewActions>> viewStateObserver;
+    private Observer<ViewState<ImageTextViewActions>> viewStateObserver;
 
     private PublishSubject<Boolean> publishSubject;
 

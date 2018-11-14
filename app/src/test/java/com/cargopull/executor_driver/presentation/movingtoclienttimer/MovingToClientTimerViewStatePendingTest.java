@@ -7,7 +7,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.verifyZeroInteractions;
 
-import com.cargopull.executor_driver.presentation.ViewActions;
+import com.cargopull.executor_driver.presentation.FragmentViewActions;
 import com.cargopull.executor_driver.presentation.ViewState;
 import org.junit.Before;
 import org.junit.Test;
@@ -21,12 +21,12 @@ public class MovingToClientTimerViewStatePendingTest {
   private MovingToClientTimerViewStatePending viewState;
 
   @Mock
-  private ViewActions viewActions;
+  private FragmentViewActions viewActions;
 
   @Mock
-  private ViewState<ViewActions> parentViewState;
+  private ViewState<FragmentViewActions> parentViewState;
   @Mock
-  private ViewState<ViewActions> parentViewState1;
+  private ViewState<FragmentViewActions> parentViewState1;
 
   @Before
   public void setUp() {

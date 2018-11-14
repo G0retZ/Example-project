@@ -14,6 +14,7 @@ import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentManager;
 import com.cargopull.executor_driver.R;
 import com.cargopull.executor_driver.di.AppComponent;
+import com.cargopull.executor_driver.presentation.ImageTextViewActions;
 import com.cargopull.executor_driver.presentation.geolocationstate.GeoLocationStateViewModel;
 import javax.inject.Inject;
 
@@ -21,7 +22,8 @@ import javax.inject.Inject;
  * Отображает запрос включения геолокации.
  */
 
-public class GeoEngagementDialogFragment extends BaseDialogFragment {
+public class GeoEngagementDialogFragment extends BaseDialogFragment implements
+    ImageTextViewActions {
 
   private volatile boolean isShowing = false;
   private GeoLocationStateViewModel geoLocationStateViewModel;

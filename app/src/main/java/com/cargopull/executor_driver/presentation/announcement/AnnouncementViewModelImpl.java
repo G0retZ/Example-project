@@ -5,7 +5,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 import com.cargopull.executor_driver.interactor.CommonGateway;
-import com.cargopull.executor_driver.presentation.ViewActions;
+import com.cargopull.executor_driver.presentation.DialogViewActions;
 import com.cargopull.executor_driver.presentation.ViewState;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
@@ -14,7 +14,7 @@ import javax.inject.Inject;
 public class AnnouncementViewModelImpl extends ViewModel implements AnnouncementViewModel {
 
   @NonNull
-  private final MutableLiveData<ViewState<ViewActions>> messageLiveData;
+  private final MutableLiveData<ViewState<DialogViewActions>> messageLiveData;
   @NonNull
   private final Disposable disposable;
 
@@ -28,7 +28,7 @@ public class AnnouncementViewModelImpl extends ViewModel implements Announcement
 
   @NonNull
   @Override
-  public LiveData<ViewState<ViewActions>> getViewStateLiveData() {
+  public LiveData<ViewState<DialogViewActions>> getViewStateLiveData() {
     return messageLiveData;
   }
 

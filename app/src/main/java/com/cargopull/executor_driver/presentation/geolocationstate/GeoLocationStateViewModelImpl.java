@@ -7,7 +7,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 import com.cargopull.executor_driver.backend.analytics.EventLogger;
 import com.cargopull.executor_driver.interactor.CommonGateway;
-import com.cargopull.executor_driver.presentation.ViewActions;
+import com.cargopull.executor_driver.presentation.ImageTextViewActions;
 import com.cargopull.executor_driver.presentation.ViewState;
 import com.cargopull.executor_driver.utils.TimeUtils;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -24,7 +24,7 @@ public class GeoLocationStateViewModelImpl extends ViewModel implements GeoLocat
   @NonNull
   private final TimeUtils timeUtils;
   @NonNull
-  private final MutableLiveData<ViewState<ViewActions>> viewStateLiveData;
+  private final MutableLiveData<ViewState<ImageTextViewActions>> viewStateLiveData;
   @NonNull
   private final Disposable disposable;
   private boolean wasAvailable = false;
@@ -52,7 +52,7 @@ public class GeoLocationStateViewModelImpl extends ViewModel implements GeoLocat
 
   @NonNull
   @Override
-  public LiveData<ViewState<ViewActions>> getViewStateLiveData() {
+  public LiveData<ViewState<ImageTextViewActions>> getViewStateLiveData() {
     return viewStateLiveData;
   }
 

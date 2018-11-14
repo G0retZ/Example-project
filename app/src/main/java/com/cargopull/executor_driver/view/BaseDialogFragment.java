@@ -21,7 +21,7 @@ import androidx.fragment.app.DialogFragment;
 import com.cargopull.executor_driver.application.BaseActivity;
 import com.cargopull.executor_driver.application.OnBackPressedInterceptor;
 import com.cargopull.executor_driver.di.AppComponent;
-import com.cargopull.executor_driver.presentation.ViewActions;
+import com.cargopull.executor_driver.presentation.FragmentViewActions;
 import com.squareup.picasso.Picasso;
 import java.util.HashMap;
 import java.util.Map;
@@ -36,7 +36,7 @@ import java.util.Map;
  */
 
 public class BaseDialogFragment extends DialogFragment implements OnBackPressedInterceptor,
-    ViewActions {
+    FragmentViewActions {
 
   @SuppressLint("UseSparseArrays")
   @NonNull

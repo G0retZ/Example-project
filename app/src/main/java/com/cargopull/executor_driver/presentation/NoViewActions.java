@@ -1,19 +1,8 @@
 package com.cargopull.executor_driver.presentation;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
-public abstract class NoViewActions implements ViewActions {
-
-  @Override
-  public void blockWithPending(@NonNull String blockerId) {
-
-  }
-
-  @Override
-  public void unblockWithPending(@NonNull String blockerId) {
-
-  }
+public abstract class NoViewActions implements ImageTextViewActions {
 
   @Override
   public void setVisible(int id, boolean visible) {
@@ -47,21 +36,6 @@ public abstract class NoViewActions implements ViewActions {
 
   @Override
   public void setImage(int id, @NonNull String drawableUrl) {
-
-  }
-
-  @Override
-  public void dismissDialog() {
-
-  }
-
-  @Override
-  public void showPersistentDialog(int stringId, @Nullable Runnable okAction) {
-
-  }
-
-  @Override
-  public void showPersistentDialog(@NonNull String message, @Nullable Runnable okAction) {
 
   }
 }
