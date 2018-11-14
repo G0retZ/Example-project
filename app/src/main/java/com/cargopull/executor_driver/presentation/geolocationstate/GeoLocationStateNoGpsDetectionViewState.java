@@ -7,7 +7,8 @@ import com.cargopull.executor_driver.presentation.ViewState;
 /**
  * Состояние недоступности обнаружения по GPS.
  */
-final class GeoLocationStateNoGpsDetectionViewState implements ViewState<GeoLocationStateViewActions> {
+final class GeoLocationStateNoGpsDetectionViewState implements
+    ViewState<GeoLocationStateViewActions> {
 
   @Override
   public void apply(@NonNull GeoLocationStateViewActions stateActions) {

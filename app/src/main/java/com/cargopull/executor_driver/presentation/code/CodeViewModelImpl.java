@@ -27,12 +27,12 @@ public class CodeViewModelImpl extends ViewModel implements CodeViewModel {
   @NonNull
   private final SingleLiveEvent<String> navigateLiveData;
   @NonNull
-  private Disposable disposable = EmptyDisposable.INSTANCE;
-  @NonNull
   private final TimeUtils timeUtils;
   @NonNull
   private final EventLogger eventLogger;
   private final long timeStamp;
+  @NonNull
+  private Disposable disposable = EmptyDisposable.INSTANCE;
 
   @Inject
   public CodeViewModelImpl(@NonNull PasswordUseCase passwordUseCase,

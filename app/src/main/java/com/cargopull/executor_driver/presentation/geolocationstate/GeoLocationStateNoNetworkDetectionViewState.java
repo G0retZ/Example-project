@@ -7,7 +7,8 @@ import com.cargopull.executor_driver.presentation.ViewState;
 /**
  * Состояние недоступности обнаружения по Wi-Fi и мобильным сетям.
  */
-final class GeoLocationStateNoNetworkDetectionViewState implements ViewState<GeoLocationStateViewActions> {
+final class GeoLocationStateNoNetworkDetectionViewState implements
+    ViewState<GeoLocationStateViewActions> {
 
   @Override
   public void apply(@NonNull GeoLocationStateViewActions stateActions) {

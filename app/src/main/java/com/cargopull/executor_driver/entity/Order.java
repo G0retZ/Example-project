@@ -7,9 +7,9 @@ import java.util.List;
 
 /**
  * Неизменная бизнес сущность заказа. Содержит в себе ID, комментарий, расстояние до клиента,
- * предполагаемую цену, список опций и таймуат предложения.
- * Список опций неизменен, но его содержимое может изменяться - дополняться или заменяться.
- * Список точек маршрута неизменен, но его содержимое может изменяться - дополняться или заменяться.
+ * предполагаемую цену, список опций и таймуат предложения. Список опций неизменен, но его
+ * содержимое может изменяться - дополняться или заменяться. Список точек маршрута неизменен, но его
+ * содержимое может изменяться - дополняться или заменяться.
  */
 public class Order {
 
@@ -137,6 +137,12 @@ public class Order {
     return options;
   }
 
+  private Order setOptions(@NonNull List<Option> options) {
+    this.options.clear();
+    this.options.addAll(options);
+    return this;
+  }
+
   public void setOptions(@NonNull Option... options) {
     this.options.clear();
     addOptions(options);
@@ -158,12 +164,6 @@ public class Order {
 
   public void addRoutePoints(@NonNull RoutePoint... routePoints) {
     routePath.addAll(Arrays.asList(routePoints));
-  }
-
-  private Order setOptions(@NonNull List<Option> options) {
-    this.options.clear();
-    this.options.addAll(options);
-    return this;
   }
 
   private Order setRoutePoints(@NonNull List<RoutePoint> routePoints) {

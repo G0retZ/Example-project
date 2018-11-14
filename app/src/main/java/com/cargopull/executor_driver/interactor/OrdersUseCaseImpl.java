@@ -16,12 +16,12 @@ public class OrdersUseCaseImpl implements OrdersUseCase {
   private final CommonGateway<Set<Order>> gateway;
   @NonNull
   private final OrderUseCase cancelledOrderUseCase;
-  @Nullable
-  private Flowable<Set<Order>> ordersFlowable;
   @NonNull
   private final PublishSubject<Order> addSubject = PublishSubject.create();
   @NonNull
   private final PublishSubject<Order> removeSubject = PublishSubject.create();
+  @Nullable
+  private Flowable<Set<Order>> ordersFlowable;
 
   public OrdersUseCaseImpl(@NonNull CommonGateway<Set<Order>> gateway,
       @NonNull OrderUseCase cancelledOrderUseCase) {
