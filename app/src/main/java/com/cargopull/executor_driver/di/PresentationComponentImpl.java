@@ -157,7 +157,9 @@ class PresentationComponentImpl implements PresentationComponent {
   @Override
   public AnnouncementViewModel getAnnouncementViewModel() {
     if (announcementViewModel == null) {
-      announcementViewModel = new AnnouncementViewModelImpl();
+      announcementViewModel = new AnnouncementViewModelImpl(
+          getRepositoryComponent().getAnnouncementsGateway()
+      );
     }
     return announcementViewModel;
   }

@@ -1,6 +1,6 @@
 package com.cargopull.executor_driver.entity;
 
-import io.reactivex.annotations.Nullable;
+import androidx.annotation.Nullable;
 
 /**
  * Валидатор входных данных.

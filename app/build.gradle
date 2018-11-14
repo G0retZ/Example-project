@@ -25,6 +25,8 @@ android {
         versionCode 10
         versionName "1.4.2"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        buildConfigField 'String', 'QUIET_CHANNEL_ID', '"state_channel"'
+        buildConfigField 'String', 'ANNOUNCEMENT_CHANNEL_ID', '"announcement_channel"'
         buildConfigField 'String', 'BASE_URL', '"http://tst.capsrv.xyz:9080/executor/"'
         buildConfigField 'String', 'SOCKET_URL', '"ws://tst.capsrv.xyz:9080/executor/ws"'
         buildConfigField 'String', 'GOLOCATION_DESTINATION', '"/mobile/online"'
@@ -76,7 +78,7 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.0.0-alpha2'
     implementation 'androidx.recyclerview:recyclerview:1.0.0'
     implementation 'com.google.android.material:material:1.0.0'
-    implementation 'androidx.vectordrawable:vectordrawable:1.0.0'
+    implementation 'androidx.vectordrawable:vectordrawable:1.0.1'
     implementation 'androidx.cardview:cardview:1.0.0'
     // Android Architecture Components : Lifecycle
     implementation 'androidx.lifecycle:lifecycle-runtime:2.0.0'
@@ -109,14 +111,14 @@ dependencies {
     implementation 'com.google.firebase:firebase-messaging:17.3.4'
     implementation 'com.google.firebase:firebase-core:16.0.4'
     // Analytics
-    implementation 'com.crashlytics.sdk.android:crashlytics:2.9.5'
+    implementation 'com.crashlytics.sdk.android:crashlytics:2.9.6'
     // Testing
     testImplementation 'junit:junit:4.12'
     testImplementation 'org.mockito:mockito-core:2.19.0'
     testImplementation 'androidx.arch.core:core-testing:2.0.0'
     androidTestImplementation 'androidx.annotation:annotation:1.0.0'
-    androidTestImplementation 'androidx.test:runner:1.1.0-beta02'
-    androidTestImplementation 'androidx.test.ext:junit:1.0.0-beta02'
+    androidTestImplementation 'androidx.test:runner:1.1.0'
+    androidTestImplementation 'androidx.test.ext:junit:1.0.0'
 }
 
 // ADD THIS AT THE BOTTOM
