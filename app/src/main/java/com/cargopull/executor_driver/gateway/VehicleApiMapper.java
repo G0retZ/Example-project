@@ -46,7 +46,9 @@ public class VehicleApiMapper implements Mapper<ApiVehicle, Vehicle> {
         from.isBusy()
     );
     for (ApiOptionItem vehicleOptionItem : from.getVehicleOptionItems()) {
-      vehicle.addVehicleOptions(apiOptionMapper.map(vehicleOptionItem));
+      if (vehicleOptionItem.isDynamic()) {
+        vehicle.addVehicleOptions(apiOptionMapper.map(vehicleOptionItem));
+      }
     }
     return vehicle;
   }

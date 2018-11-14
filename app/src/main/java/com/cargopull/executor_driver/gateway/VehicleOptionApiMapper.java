@@ -48,7 +48,6 @@ public class VehicleOptionApiMapper implements Mapper<ApiOptionItem, Option> {
             from.getId(),
             from.getName(),
             from.getDescription(),
-            from.isDynamic(),
             Integer.valueOf(from.getValue()),
             minValue,
             maxValue
@@ -64,7 +63,6 @@ public class VehicleOptionApiMapper implements Mapper<ApiOptionItem, Option> {
           from.getId(),
           from.getName(),
           from.getDescription(),
-          from.isDynamic(),
           Boolean.valueOf(from.getValue())
       );
     }

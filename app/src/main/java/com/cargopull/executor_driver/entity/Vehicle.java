@@ -3,12 +3,12 @@ package com.cargopull.executor_driver.entity;
 import androidx.annotation.NonNull;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 /**
- * Бизнес сущность средства исполнения. Неизменный.
- * Создается через конструктор с не нулевыми полями.
- * Список опций неизменен, но его содержимое может изменяться - дополняться или заменяться.
+ * Бизнес сущность средства исполнения. Неизменный. Создается через конструктор с не нулевыми
+ * полями. Список опций неизменен, но его содержимое может изменяться - дополняться или заменяться.
  */
 public class Vehicle {
 
@@ -68,9 +68,9 @@ public class Vehicle {
     return options;
   }
 
-  public void setOptions(@NonNull Option... options) {
+  public void setOptions(@NonNull Collection<Option> options) {
     this.options.clear();
-    addVehicleOptions(options);
+    this.options.addAll(options);
   }
 
   public void addVehicleOptions(@NonNull Option... options) {

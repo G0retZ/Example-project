@@ -142,12 +142,12 @@ public class OrderViewStateIdleTest {
     when(order.getServiceName()).thenReturn("service");
     when(order.getComment()).thenReturn("");
     when(order.getOptions()).thenReturn(new ArrayList<>(Arrays.asList(
-        new OptionBoolean(0, "bool1", "bd", false, false),
-        new OptionBoolean(1, "bool2", "bd", false, true),
-        new OptionBoolean(2, "bool3", "bd", false, false),
-        new OptionBoolean(3, "bool4", "bd", false, true),
-        new OptionNumeric(4, "num1", "nd", false, 3, 0, 5),
-        new OptionNumeric(5, "num2", "nd", false, 7, 0, 5)
+        new OptionBoolean(0, "bool1", "bd", false),
+        new OptionBoolean(1, "bool2", "bd", true),
+        new OptionBoolean(2, "bool3", "bd", false),
+        new OptionBoolean(3, "bool4", "bd", true),
+        new OptionNumeric(4, "num1", "nd", 3, 0, 5),
+        new OptionNumeric(5, "num2", "nd", 7, 0, 5)
     )));
 
     // Действие:
@@ -222,12 +222,12 @@ public class OrderViewStateIdleTest {
     when(order.getServiceName()).thenReturn("service");
     when(order.getComment()).thenReturn("comm");
     when(order.getOptions()).thenReturn(new ArrayList<>(Arrays.asList(
-        new OptionBoolean(0, "bool1", "bd", false, false),
-        new OptionBoolean(1, "bool2", "bd", false, true),
-        new OptionBoolean(2, "bool3", "bd", true, false),
-        new OptionBoolean(3, "bool4", "bd", true, true),
-        new OptionNumeric(4, "num1", "nd", false, 3, 0, 5),
-        new OptionNumeric(5, "num2", "nd", true, 7, 0, 5)
+        new OptionBoolean(0, "bool1", "bd", false),
+        new OptionBoolean(1, "bool2", "bd", true),
+        new OptionBoolean(2, "bool3", "bd", false),
+        new OptionBoolean(3, "bool4", "bd", true),
+        new OptionNumeric(4, "num1", "nd", 3, 0, 5),
+        new OptionNumeric(5, "num2", "nd", 7, 0, 5)
     )));
 
     // Действие:
@@ -302,12 +302,12 @@ public class OrderViewStateIdleTest {
     when(order.getServiceName()).thenReturn("service");
     when(order.getComment()).thenReturn("");
     when(order.getOptions()).thenReturn(new ArrayList<>(Arrays.asList(
-        new OptionBoolean(0, "bool1", "bd", false, false),
-        new OptionBoolean(1, "bool2", "bd", false, true),
-        new OptionBoolean(2, "bool3", "bd", true, false),
-        new OptionBoolean(3, "bool4", "bd", true, true),
-        new OptionNumeric(4, "num1", "nd", false, 3, 0, 5),
-        new OptionNumeric(5, "num2", "nd", true, 7, 0, 5)
+        new OptionBoolean(0, "bool1", "bd", false),
+        new OptionBoolean(1, "bool2", "bd", true),
+        new OptionBoolean(2, "bool3", "bd", false),
+        new OptionBoolean(3, "bool4", "bd", true),
+        new OptionNumeric(4, "num1", "nd", 3, 0, 5),
+        new OptionNumeric(5, "num2", "nd", 7, 0, 5)
     )));
 
     // Действие:
