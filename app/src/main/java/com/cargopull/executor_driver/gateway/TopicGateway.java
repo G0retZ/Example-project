@@ -10,7 +10,7 @@ import io.reactivex.schedulers.Schedulers;
 import javax.inject.Inject;
 import ua.naiksoftware.stomp.client.StompMessage;
 
-public class TopicGatewayImpl<D> implements CommonGateway<D> {
+public class TopicGateway<D> implements CommonGateway<D> {
 
   @NonNull
   private final TopicListener topicListener;
@@ -22,7 +22,7 @@ public class TopicGatewayImpl<D> implements CommonGateway<D> {
   private final D defaultValue;
 
   @Inject
-  public TopicGatewayImpl(@NonNull TopicListener topicListener,
+  public TopicGateway(@NonNull TopicListener topicListener,
       @NonNull Predicate<StompMessage> filter,
       @NonNull Mapper<StompMessage, D> mapper) {
     this.topicListener = topicListener;
@@ -32,7 +32,7 @@ public class TopicGatewayImpl<D> implements CommonGateway<D> {
   }
 
   @Inject
-  public TopicGatewayImpl(@NonNull TopicListener topicListener,
+  public TopicGateway(@NonNull TopicListener topicListener,
       @NonNull Predicate<StompMessage> filter,
       @NonNull Mapper<StompMessage, D> mapper,
       @NonNull D defaultValue) {

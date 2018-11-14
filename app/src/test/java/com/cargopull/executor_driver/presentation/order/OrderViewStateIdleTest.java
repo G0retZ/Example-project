@@ -61,7 +61,7 @@ public class OrderViewStateIdleTest {
     when(order.getDistance()).thenReturn(12239);
     when(order.getEtaToStartPoint()).thenReturn(3264132L);
     when(order.getEstimatedRouteLength()).thenReturn(31278L);
-    when(order.getStartTime()).thenReturn(1238403200L);
+    when(order.getScheduledStartTime()).thenReturn(1238403200L);
     when(order.getRoutePath()).thenReturn(Arrays.asList(routePoint, routePoint1, routePoint2));
     when(order.getEstimatedTime()).thenReturn(7929000L);
     when(order.getEstimatedPrice()).thenReturn(681250L);
@@ -106,8 +106,7 @@ public class OrderViewStateIdleTest {
     verify(viewActions).setText(R.id.startTimeText,
         DateTimeFormat.forPattern("HH:mm").print(DateTime.now().withMillis(1238403200L)));
     DateTime dateTime = DateTime.now().withMillis(1238403200L + 7929000L);
-    verify(viewActions).setFormattedText(R.id.occupationTimeText, R.string.h_m_d,
-        dateTime.getHourOfDay(), dateTime.getMinuteOfHour(),
+    verify(viewActions).setFormattedText(R.id.occupationTimeText, R.string.h_m_d, 2, 12,
         DateTimeFormat.forPattern("HH:mm").print(dateTime));
     verify(viewActions).setVisible(R.id.cargoDescTitleText, true);
     verify(viewActions).setVisible(R.id.cargoDescText, true);
@@ -135,7 +134,7 @@ public class OrderViewStateIdleTest {
     when(order.getDistance()).thenReturn(12239);
     when(order.getEtaToStartPoint()).thenReturn(3264132L);
     when(order.getEstimatedRouteLength()).thenReturn(31278L);
-    when(order.getStartTime()).thenReturn(1238403200L);
+    when(order.getScheduledStartTime()).thenReturn(1238403200L);
     when(order.getRoutePath()).thenReturn(Arrays.asList(routePoint, routePoint1, routePoint2));
     when(order.getEstimatedTime()).thenReturn(7929000L);
     when(order.getEstimatedPrice()).thenReturn(681250L);
@@ -187,8 +186,7 @@ public class OrderViewStateIdleTest {
     verify(viewActions).setText(R.id.startTimeText,
         DateTimeFormat.forPattern("HH:mm").print(DateTime.now().withMillis(1238403200L)));
     DateTime dateTime = DateTime.now().withMillis(1238403200L + 7929000L);
-    verify(viewActions).setFormattedText(R.id.occupationTimeText, R.string.h_m_d,
-        dateTime.getHourOfDay(), dateTime.getMinuteOfHour(),
+    verify(viewActions).setFormattedText(R.id.occupationTimeText, R.string.h_m_d, 2, 12,
         DateTimeFormat.forPattern("HH:mm").print(dateTime));
     verify(viewActions).setVisible(R.id.cargoDescTitleText, false);
     verify(viewActions).setVisible(R.id.cargoDescText, false);
@@ -215,7 +213,7 @@ public class OrderViewStateIdleTest {
     when(order.getDistance()).thenReturn(12239);
     when(order.getEtaToStartPoint()).thenReturn(3264132L);
     when(order.getEstimatedRouteLength()).thenReturn(31278L);
-    when(order.getStartTime()).thenReturn(1238403200L);
+    when(order.getScheduledStartTime()).thenReturn(1238403200L);
     when(order.getRoutePath()).thenReturn(Collections.singletonList(routePoint));
     when(order.getEstimatedTime()).thenReturn(7929000L);
     when(order.getEstimatedPrice()).thenReturn(681254L);
@@ -267,8 +265,7 @@ public class OrderViewStateIdleTest {
     verify(viewActions).setText(R.id.startTimeText,
         DateTimeFormat.forPattern("HH:mm").print(DateTime.now().withMillis(1238403200L)));
     DateTime dateTime = DateTime.now().withMillis(1238403200L + 7929000L);
-    verify(viewActions).setFormattedText(R.id.occupationTimeText, R.string.h_m_d,
-        dateTime.getHourOfDay(), dateTime.getMinuteOfHour(),
+    verify(viewActions).setFormattedText(R.id.occupationTimeText, R.string.h_m_d, 2, 12,
         DateTimeFormat.forPattern("HH:mm").print(dateTime));
     verify(viewActions).setVisible(R.id.cargoDescTitleText, true);
     verify(viewActions).setVisible(R.id.cargoDescText, true);
@@ -296,7 +293,7 @@ public class OrderViewStateIdleTest {
     when(order.getDistance()).thenReturn(12239);
     when(order.getEtaToStartPoint()).thenReturn(3264132L);
     when(order.getEstimatedRouteLength()).thenReturn(31278L);
-    when(order.getStartTime()).thenReturn(1238403200L);
+    when(order.getScheduledStartTime()).thenReturn(1238403200L);
     when(order.getEstimatedTime()).thenReturn(7929000L);
     when(order.getEstimatedPrice()).thenReturn(681254L);
     when(order.getServiceName()).thenReturn("service");
@@ -347,8 +344,7 @@ public class OrderViewStateIdleTest {
     verify(viewActions).setText(R.id.startTimeText,
         DateTimeFormat.forPattern("HH:mm").print(DateTime.now().withMillis(1238403200L)));
     DateTime dateTime = DateTime.now().withMillis(1238403200L + 7929000L);
-    verify(viewActions).setFormattedText(R.id.occupationTimeText, R.string.h_m_d,
-        dateTime.getHourOfDay(), dateTime.getMinuteOfHour(),
+    verify(viewActions).setFormattedText(R.id.occupationTimeText, R.string.h_m_d, 2, 12,
         DateTimeFormat.forPattern("HH:mm").print(dateTime));
     verify(viewActions).setVisible(R.id.cargoDescTitleText, false);
     verify(viewActions).setVisible(R.id.cargoDescText, false);
