@@ -111,7 +111,7 @@ final class OrderViewStateIdle implements ViewState<OrderViewActions> {
     stateActions.setVisible(R.id.optionsText, !options.isEmpty());
     stateActions.setText(R.id.optionsText, options);
     // Дата начала предзаказа
-    DateTime scheduledDate = DateTime.now().withMillis(order.getStartTime());
+    DateTime scheduledDate = DateTime.now().withMillis(order.getScheduledStartTime());
     stateActions.setText(R.id.startDateText,
         DateTimeFormat.forPattern("d MMMM, EEEE").print(scheduledDate));
     // Время начала предзаказа
@@ -120,8 +120,8 @@ final class OrderViewStateIdle implements ViewState<OrderViewActions> {
     // Время занятости на предзаказе
     scheduledDate = scheduledDate.plus(estimatedTime);
     stateActions.setFormattedText(R.id.occupationTimeText, R.string.h_m_d,
-        scheduledDate.getHourOfDay(),
-        scheduledDate.getMinuteOfHour(),
+        localTime.getHourOfDay(),
+        localTime.getMinuteOfHour(),
         DateTimeFormat.forPattern("HH:mm").print(scheduledDate));
     // Разблокируем экран
     stateActions.unblockWithPending("OrderViewState");
