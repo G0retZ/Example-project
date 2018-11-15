@@ -328,17 +328,17 @@ public class GeoLocationStateViewModelTest {
     private TimeUtils timeUtils;
 
     private PublishSubject<Boolean> publishSubject;
-    private boolean fromAvailability;
-    private boolean toAvailability;
-    private boolean toAvailability1;
-    private boolean fromGps;
-    private boolean toGps;
-    private boolean toGps1;
-    private boolean fromNetwork;
-    private boolean toNetwork;
-    private boolean toNetwork1;
-    private int sendReport;
-    private int tuInvocations;
+    private final boolean fromAvailability;
+    private final boolean toAvailability;
+    private final boolean toAvailability1;
+    private final boolean fromGps;
+    private final boolean toGps;
+    private final boolean toGps1;
+    private final boolean fromNetwork;
+    private final boolean toNetwork;
+    private final boolean toNetwork1;
+    private final int sendReport;
+    private final int tuInvocations;
 
     public LogEventsTests(Pair<List<Boolean>, Pair<Integer, Integer>> conditions) {
       fromAvailability = conditions.first.get(0);

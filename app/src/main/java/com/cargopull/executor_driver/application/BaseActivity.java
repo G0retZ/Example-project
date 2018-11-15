@@ -440,7 +440,7 @@ public class BaseActivity extends AppCompatActivity implements ExecutorStateView
     }
   }
 
-  protected boolean showGeolocationStateAllowed() {
+  boolean showGeolocationStateAllowed() {
     return false;
   }
 

@@ -143,7 +143,7 @@ public class BaseDialogFragment extends DialogFragment implements OnBackPressedI
    */
   @SuppressWarnings("unchecked")
   @Nullable
-  <T extends View> T findViewById(@IdRes int id) {
+  private <T extends View> T findViewById(@IdRes int id) {
     if (!foundViews.containsKey(id)) {
       foundViews.put(id, rootView.findViewById(id));
     }
