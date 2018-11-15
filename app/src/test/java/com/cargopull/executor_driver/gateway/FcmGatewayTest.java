@@ -21,11 +21,10 @@ import org.mockito.junit.MockitoRule;
 
 public class FcmGatewayTest {
 
-  @Rule
-  public MockitoRule rule = MockitoJUnit.rule();
   @ClassRule
   public static final GatewayThreadTestRule classRule = new GatewayThreadTestRule();
-
+  @Rule
+  public MockitoRule rule = MockitoJUnit.rule();
   private CommonGateway<String> gateway;
   @Mock
   private Mapper<Map<String, String>, String> mapper;

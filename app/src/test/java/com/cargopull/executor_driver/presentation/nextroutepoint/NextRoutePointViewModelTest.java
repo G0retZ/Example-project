@@ -430,7 +430,8 @@ public class NextRoutePointViewModelTest {
   }
 
   /**
-   * Должен вернуть предыдущее состояние вида "после маршрута" после "В процессе" для закрытия точки.
+   * Должен вернуть предыдущее состояние вида "после маршрута" после "В процессе" для закрытия
+   * точки.
    */
   @Test
   public void setNoRouteFalseViewStateToLiveDataAfterPendingForCloseRoutePoint() {
@@ -668,7 +669,8 @@ public class NextRoutePointViewModelTest {
   }
 
   /**
-   * Должен вернуть предыдущее состояние вида "после маршрута" после "В процессе" для закрытия точки.
+   * Должен вернуть предыдущее состояние вида "после маршрута" после "В процессе" для закрытия
+   * точки.
    */
   @Test
   public void setNoRouteFalseViewStateToLiveDataAfterPendingForCompleteTheOrder() {

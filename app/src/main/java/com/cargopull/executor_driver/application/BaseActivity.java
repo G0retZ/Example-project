@@ -60,6 +60,14 @@ public class BaseActivity extends AppCompatActivity implements ExecutorStateView
   @NonNull
   private final LinkedList<OnBackPressedInterceptor> onBackPressedInterceptors = new LinkedList<>();
   private final Set<String> blockers = new HashSet<>();
+  private final ImageTextViewActions geoEngagementViewActions = new NoViewActions() {
+    @Override
+    public void setVisible(int id, boolean visible) {
+      if (visible && showGeolocationStateAllowed()) {
+        geoEngagementDialogFragment.show(getSupportFragmentManager(), "geoEngagement");
+      }
+    }
+  };
   private AppSettingsService appSettingsService;
   private GeoLocationStateViewModel geoLocationStateViewModel;
   private ExecutorStateViewModel executorStateViewModel;
@@ -76,14 +84,6 @@ public class BaseActivity extends AppCompatActivity implements ExecutorStateView
   @Nullable
   private Dialog errorDialog;
   private boolean resumed;
-  private final ImageTextViewActions geoEngagementViewActions = new NoViewActions() {
-    @Override
-    public void setVisible(int id, boolean visible) {
-      if (visible && showGeolocationStateAllowed()) {
-        geoEngagementDialogFragment.show(getSupportFragmentManager(), "geoEngagement");
-      }
-    }
-  };
   private final DialogViewActions announcementViewActions = new DialogViewActions() {
     @Override
     public void dismissDialog() {

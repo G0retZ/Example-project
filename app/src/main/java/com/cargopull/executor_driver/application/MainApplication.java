@@ -292,7 +292,8 @@ public class MainApplication extends Application implements ServerConnectionView
 
       // Обычный канал для информационных сообщений общего характера
       mChannel =
-          new NotificationChannel(BuildConfig.ANNOUNCEMENT_CHANNEL_ID, getString(R.string.important_info),
+          new NotificationChannel(BuildConfig.ANNOUNCEMENT_CHANNEL_ID,
+              getString(R.string.important_info),
               NotificationManager.IMPORTANCE_DEFAULT);
       mChannel.setDescription(getString(R.string.important_info_desc));
       notificationManager.createNotificationChannel(mChannel);

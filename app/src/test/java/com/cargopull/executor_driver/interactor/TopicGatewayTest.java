@@ -29,13 +29,11 @@ import ua.naiksoftware.stomp.client.StompMessage;
 @RunWith(Parameterized.class)
 public class TopicGatewayTest {
 
-  @Rule
-  public MockitoRule rule = MockitoJUnit.rule();
   @ClassRule
   public static final GatewayThreadTestRule classRule = new GatewayThreadTestRule();
-
   private final boolean withDefault;
-
+  @Rule
+  public MockitoRule rule = MockitoJUnit.rule();
   private CommonGateway<String> gateway;
   @Mock
   private TopicListener topicListener;

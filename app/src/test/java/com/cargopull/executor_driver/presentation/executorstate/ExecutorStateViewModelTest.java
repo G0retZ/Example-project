@@ -53,6 +53,11 @@ public class ExecutorStateViewModelTest {
 
   @ClassRule
   public static final ViewModelThreadTestRule classRule = new ViewModelThreadTestRule();
+  private final ExecutorState conditionExecutorState;
+  private final String conditionMessage;
+  private final String expectedNavigation;
+  private final String expectedInfo;
+  private final String expectedMessage;
   @Rule
   public TestRule rule = new InstantTaskExecutorRule();
   @Rule
@@ -70,14 +75,7 @@ public class ExecutorStateViewModelTest {
   private ArgumentCaptor<ViewState<ExecutorStateViewActions>> viewStateCaptor;
   @Mock
   private ExecutorStateViewActions viewActions;
-
   private PublishSubject<ExecutorState> publishSubject;
-
-  private final ExecutorState conditionExecutorState;
-  private final String conditionMessage;
-  private final String expectedNavigation;
-  private final String expectedInfo;
-  private final String expectedMessage;
 
   // Each parameter should be placed as an argument here
   // Every time runner triggers, it will pass the arguments
