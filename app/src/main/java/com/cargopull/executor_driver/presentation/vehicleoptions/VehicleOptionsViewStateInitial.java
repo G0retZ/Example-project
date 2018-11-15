@@ -18,5 +18,7 @@ public final class VehicleOptionsViewStateInitial implements ViewState<VehicleOp
     stateActions.setVehicleOptionsListItems(
         new VehicleOptionsListItems(new ArrayList<>(), new ArrayList<>())
     );
+    // Убираем диалог
+    stateActions.dismissDialog();
   }
 }

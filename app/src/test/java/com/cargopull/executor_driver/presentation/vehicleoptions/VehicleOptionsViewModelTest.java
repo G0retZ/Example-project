@@ -3,6 +3,7 @@ package com.cargopull.executor_driver.presentation.vehicleoptions;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.only;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.verifyZeroInteractions;
@@ -14,10 +15,12 @@ import com.cargopull.executor_driver.R;
 import com.cargopull.executor_driver.ViewModelThreadTestRule;
 import com.cargopull.executor_driver.backend.analytics.ErrorReporter;
 import com.cargopull.executor_driver.backend.web.NoNetworkException;
+import com.cargopull.executor_driver.entity.EmptyListException;
 import com.cargopull.executor_driver.entity.Option;
 import com.cargopull.executor_driver.entity.OptionBoolean;
 import com.cargopull.executor_driver.entity.OptionNumeric;
 import com.cargopull.executor_driver.gateway.DataMappingException;
+import com.cargopull.executor_driver.interactor.services.ServicesUseCase;
 import com.cargopull.executor_driver.interactor.vehicle.VehicleOptionsUseCase;
 import com.cargopull.executor_driver.presentation.ViewState;
 import io.reactivex.Completable;
@@ -50,6 +53,8 @@ public class VehicleOptionsViewModelTest {
   private ErrorReporter errorReporter;
   @Mock
   private VehicleOptionsUseCase vehicleOptionsUseCase;
+  @Mock
+  private ServicesUseCase servicesUseCase;
 
   @Mock
   private Observer<ViewState<VehicleOptionsViewActions>> viewStateObserver;
@@ -68,7 +73,9 @@ public class VehicleOptionsViewModelTest {
     when(vehicleOptionsUseCase.getDriverOptions()).thenReturn(singleSubject);
     when(vehicleOptionsUseCase.setSelectedVehicleAndOptions(anyList(), anyList()))
         .thenReturn(Completable.never());
-    viewModel = new VehicleOptionsViewModelImpl(errorReporter, vehicleOptionsUseCase);
+    when(servicesUseCase.autoAssignServices()).thenReturn(Completable.never());
+    viewModel = new VehicleOptionsViewModelImpl(errorReporter, vehicleOptionsUseCase,
+        servicesUseCase);
   }
 
   /* Проверяем отправку ошибок в репортер */
@@ -144,10 +151,10 @@ public class VehicleOptionsViewModelTest {
   }
 
   /**
-   * Не должен отправлять ошибку сети.
+   * Должен отправить ошибку сети.
    */
   @Test
-  public void doNotReportNoNetworkError() {
+  public void reportNoNetworkError() {
     // Дано:
     when(vehicleOptionsUseCase.setSelectedVehicleAndOptions(anyList(), anyList()))
         .thenReturn(Completable.error(NoNetworkException::new));
@@ -162,7 +169,7 @@ public class VehicleOptionsViewModelTest {
     )));
 
     // Результат:
-    verifyZeroInteractions(errorReporter);
+    verify(errorReporter, only()).reportError(any(NoNetworkException.class));
   }
 
   /**
@@ -187,6 +194,54 @@ public class VehicleOptionsViewModelTest {
     verify(errorReporter, only()).reportError(any(IllegalArgumentException.class));
   }
 
+  /**
+   * Должен отправить ошибку пустого списка.
+   */
+  @Test
+  public void reportEmptyListError() {
+    // Дано:
+    when(vehicleOptionsUseCase.setSelectedVehicleAndOptions(anyList(), anyList()))
+        .thenReturn(Completable.complete());
+    when(servicesUseCase.autoAssignServices())
+        .thenReturn(Completable.error(EmptyListException::new));
+
+    // Действие:
+    viewModel.setOptions(new VehicleOptionsListItems(Arrays.asList(
+        new VehicleOptionsListItem<>(new OptionBoolean(1, "name", "description", false)),
+        new VehicleOptionsListItem<>(new OptionBoolean(2, "emacs", "description", true))
+    ), Arrays.asList(
+        new VehicleOptionsListItem<>(new OptionNumeric(3, "names", "description", 5, 0, 10)),
+        new VehicleOptionsListItem<>(new OptionNumeric(4, "nam", "description", 1, -1, 2))
+    )));
+
+    // Результат:
+    verify(errorReporter, only()).reportError(any(EmptyListException.class));
+  }
+
+  /**
+   * Должен отправить ошибку сети.
+   */
+  @Test
+  public void reportNoNetworkErrorAgain() {
+    // Дано:
+    when(vehicleOptionsUseCase.setSelectedVehicleAndOptions(anyList(), anyList()))
+        .thenReturn(Completable.complete());
+    when(servicesUseCase.autoAssignServices())
+        .thenReturn(Completable.error(NoNetworkException::new));
+
+    // Действие:
+    viewModel.setOptions(new VehicleOptionsListItems(Arrays.asList(
+        new VehicleOptionsListItem<>(new OptionBoolean(1, "name", "description", false)),
+        new VehicleOptionsListItem<>(new OptionBoolean(2, "emacs", "description", true))
+    ), Arrays.asList(
+        new VehicleOptionsListItem<>(new OptionNumeric(3, "names", "description", 5, 0, 10)),
+        new VehicleOptionsListItem<>(new OptionNumeric(4, "nam", "description", 1, -1, 2))
+    )));
+
+    // Результат:
+    verify(errorReporter, only()).reportError(any(NoNetworkException.class));
+  }
+
   /* Тетсируем работу с юзкейсом выбора опций ТС. */
 
   /**
@@ -204,7 +259,7 @@ public class VehicleOptionsViewModelTest {
    * Не должен трогать юзкейс при подписках.
    */
   @Test
-  public void doNotTouchUseCaseOnSubscriptions() {
+  public void doNotTouchVehicleOptionsUseCaseOnSubscriptions() {
     // Дано:
     publishSubject.onNext(Arrays.asList(
         new OptionBoolean(1, "name", "description", false),
@@ -234,6 +289,7 @@ public class VehicleOptionsViewModelTest {
     // Дано:
     when(vehicleOptionsUseCase.setSelectedVehicleAndOptions(anyList(), anyList()))
         .thenReturn(Completable.complete());
+    when(servicesUseCase.autoAssignServices()).thenReturn(Completable.complete());
 
     // Действие:
     viewModel.setOptions(new VehicleOptionsListItems(
@@ -315,6 +371,107 @@ public class VehicleOptionsViewModelTest {
         new OptionNumeric(3, "names", "description", 5, 0, 10)
     ));
     verifyNoMoreInteractions(vehicleOptionsUseCase);
+  }
+
+  /* Тетсируем работу с юзкейсом услуг. */
+
+  /**
+   * Не должен трогать юзкейс изначально.
+   */
+  @Test
+  public void doNotTouchServicesUseCaseForOptionsInitially() {
+    // Результат:
+    verifyZeroInteractions(servicesUseCase);
+  }
+
+  /**
+   * Не должен трогать юзкейс при подписках.
+   */
+  @Test
+  public void doNotTouchServicesUseCaseOnSubscriptions() {
+    // Дано:
+    publishSubject.onNext(Arrays.asList(
+        new OptionBoolean(1, "name", "description", false),
+        new OptionBoolean(2, "emacs", "descriptions", true)
+    ));
+    singleSubject.onSuccess(Arrays.asList(
+        new OptionNumeric(3, "names", "desc", 5, 0, 10),
+        new OptionNumeric(4, "nam", "script", 1, -1, 2)
+    ));
+
+    // Действие:
+    viewModel.getViewStateLiveData();
+    viewModel.getNavigationLiveData();
+    viewModel.getViewStateLiveData();
+
+    // Результат:
+    verifyZeroInteractions(servicesUseCase);
+  }
+
+  /**
+   * Должен попросить юзкейс автоназначить услуги.
+   */
+  @Test
+  public void askServicesUseCaseToAutoAssignServices() {
+    // Дано:
+    when(vehicleOptionsUseCase.setSelectedVehicleAndOptions(anyList(), anyList()))
+        .thenReturn(Completable.complete());
+    when(servicesUseCase.autoAssignServices()).thenReturn(Completable.complete());
+
+    // Действие:
+    viewModel.setOptions(new VehicleOptionsListItems(
+        Collections.singletonList(
+            new VehicleOptionsListItem<>(new OptionBoolean(1, "name", "description", false))
+        ), Collections.singletonList(
+        new VehicleOptionsListItem<>(new OptionNumeric(3, "names", "description", 5, 0, 10))
+    )));
+    viewModel.setOptions(new VehicleOptionsListItems(Arrays.asList(
+        new VehicleOptionsListItem<>(new OptionBoolean(1, "name", "description", false)),
+        new VehicleOptionsListItem<>(new OptionBoolean(2, "emacs", "description", true))
+    ), Collections.singletonList(
+        new VehicleOptionsListItem<>(new OptionNumeric(3, "names", "description", 5, 0, 10))
+    )));
+    viewModel.setOptions(new VehicleOptionsListItems(Arrays.asList(
+        new VehicleOptionsListItem<>(new OptionBoolean(1, "name", "description", false)),
+        new VehicleOptionsListItem<>(new OptionBoolean(2, "emacs", "description", true))
+    ), Arrays.asList(
+        new VehicleOptionsListItem<>(new OptionNumeric(3, "names", "description", 5, 0, 10)),
+        new VehicleOptionsListItem<>(new OptionNumeric(4, "nam", "description", 1, -1, 2))
+    )));
+
+    // Результат:
+    verify(servicesUseCase, times(3)).autoAssignServices();
+    verifyNoMoreInteractions(servicesUseCase);
+  }
+
+  /**
+   * Не должен трогать юзкейс, если предыдущий запрос занятия ТС еще не завершился.
+   */
+  @Test
+  public void DoNotTouchServicesUseCaseDuringVehicleOccupying() {
+    // Действие:
+    viewModel.setOptions(new VehicleOptionsListItems(
+        Collections.singletonList(
+            new VehicleOptionsListItem<>(new OptionBoolean(1, "name", "description", false))
+        ), Collections.singletonList(
+        new VehicleOptionsListItem<>(new OptionNumeric(3, "names", "description", 5, 0, 10))
+    )));
+    viewModel.setOptions(new VehicleOptionsListItems(Arrays.asList(
+        new VehicleOptionsListItem<>(new OptionBoolean(1, "name", "description", false)),
+        new VehicleOptionsListItem<>(new OptionBoolean(2, "emacs", "description", true))
+    ), Collections.singletonList(
+        new VehicleOptionsListItem<>(new OptionNumeric(3, "names", "description", 5, 0, 10))
+    )));
+    viewModel.setOptions(new VehicleOptionsListItems(Arrays.asList(
+        new VehicleOptionsListItem<>(new OptionBoolean(1, "name", "description", false)),
+        new VehicleOptionsListItem<>(new OptionBoolean(2, "emacs", "description", true))
+    ), Arrays.asList(
+        new VehicleOptionsListItem<>(new OptionNumeric(3, "names", "description", 5, 0, 10)),
+        new VehicleOptionsListItem<>(new OptionNumeric(4, "nam", "description", 1, -1, 2))
+    )));
+
+    // Результат:
+    verify(servicesUseCase, only()).autoAssignServices();
   }
 
   /* Тетсируем переключение состояний. */
@@ -434,7 +591,7 @@ public class VehicleOptionsViewModelTest {
   }
 
   /**
-   * Должен вернуть состояние вида "Ошибка" сети.
+   * Должен вернуть состояние вида "Решаемая Ошибка" сети.
    */
   @Test
   public void setNetworkErrorViewStateToLiveData() {
@@ -470,7 +627,82 @@ public class VehicleOptionsViewModelTest {
     ));
     inOrder.verify(viewStateObserver).onChanged(any(VehicleOptionsViewStatePending.class));
     inOrder.verify(viewStateObserver)
-        .onChanged(new VehicleOptionsViewStateError(R.string.no_network_connection));
+        .onChanged(new VehicleOptionsViewStateResolvableError(
+                R.string.sms_network_error,
+                new VehicleOptionsViewStateReady(
+                    new VehicleOptionsListItems(Arrays.asList(
+                        new VehicleOptionsListItem<>(
+                            new OptionBoolean(1, "name", "description", false)),
+                        new VehicleOptionsListItem<>(
+                            new OptionBoolean(2, "emacs", "descriptions", true))
+                    ), Arrays.asList(
+                        new VehicleOptionsListItem<>(new OptionNumeric(3, "names", "desc", 5, 0, 10)),
+                        new VehicleOptionsListItem<>(new OptionNumeric(4, "nam", "script", 1, -1, 2))
+                    ))
+                ),
+                () -> {
+                }
+            )
+        );
+    verifyNoMoreInteractions(viewStateObserver);
+  }
+
+  /**
+   * Должен вернуть состояние вида "Решаемая Ошибка" сети.
+   */
+  @Test
+  public void setNetworkErrorViewStateToLiveDataForServicesAutoAssign() {
+    // Дано:
+    InOrder inOrder = Mockito.inOrder(viewStateObserver);
+    when(vehicleOptionsUseCase.setSelectedVehicleAndOptions(anyList(), anyList()))
+        .thenReturn(Completable.complete());
+    when(servicesUseCase.autoAssignServices())
+        .thenReturn(Completable.error(NoNetworkException::new));
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
+
+    // Действие:
+    publishSubject.onNext(Arrays.asList(
+        new OptionBoolean(1, "name", "description", false),
+        new OptionBoolean(2, "emacs", "descriptions", true)
+    ));
+    singleSubject.onSuccess(Arrays.asList(
+        new OptionNumeric(3, "names", "desc", 5, 0, 10),
+        new OptionNumeric(4, "nam", "script", 1, -1, 2)
+    ));
+    viewModel.setOptions(
+        new VehicleOptionsListItems(new ArrayList<>(), new ArrayList<>())
+    );
+
+    // Результат:
+    inOrder.verify(viewStateObserver).onChanged(any(VehicleOptionsViewStateInitial.class));
+    inOrder.verify(viewStateObserver).onChanged(new VehicleOptionsViewStateReady(
+        new VehicleOptionsListItems(Arrays.asList(
+            new VehicleOptionsListItem<>(new OptionBoolean(1, "name", "description", false)),
+            new VehicleOptionsListItem<>(new OptionBoolean(2, "emacs", "descriptions", true))
+        ), Arrays.asList(
+            new VehicleOptionsListItem<>(new OptionNumeric(3, "names", "desc", 5, 0, 10)),
+            new VehicleOptionsListItem<>(new OptionNumeric(4, "nam", "script", 1, -1, 2))
+        ))
+    ));
+    inOrder.verify(viewStateObserver).onChanged(any(VehicleOptionsViewStatePending.class));
+    inOrder.verify(viewStateObserver)
+        .onChanged(new VehicleOptionsViewStateResolvableError(
+                R.string.sms_network_error,
+                new VehicleOptionsViewStateReady(
+                    new VehicleOptionsListItems(Arrays.asList(
+                        new VehicleOptionsListItem<>(
+                            new OptionBoolean(1, "name", "description", false)),
+                        new VehicleOptionsListItem<>(
+                            new OptionBoolean(2, "emacs", "descriptions", true))
+                    ), Arrays.asList(
+                        new VehicleOptionsListItem<>(new OptionNumeric(3, "names", "desc", 5, 0, 10)),
+                        new VehicleOptionsListItem<>(new OptionNumeric(4, "nam", "script", 1, -1, 2))
+                    ))
+                ),
+                () -> {
+                }
+            )
+        );
     verifyNoMoreInteractions(viewStateObserver);
   }
 
@@ -511,6 +743,6 @@ public class VehicleOptionsViewModelTest {
     );
 
     // Результат:
-    verify(navigateObserver, only()).onChanged(VehicleOptionsNavigate.SERVICES);
+    verifyZeroInteractions(navigateObserver);
   }
 }

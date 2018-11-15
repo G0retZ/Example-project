@@ -10,6 +10,7 @@ import com.cargopull.executor_driver.entity.Option;
 import com.cargopull.executor_driver.entity.OptionBoolean;
 import com.cargopull.executor_driver.entity.OptionNumeric;
 import com.cargopull.executor_driver.gateway.DataMappingException;
+import com.cargopull.executor_driver.interactor.services.ServicesUseCase;
 import com.cargopull.executor_driver.interactor.vehicle.VehicleOptionsUseCase;
 import com.cargopull.executor_driver.presentation.CommonNavigate;
 import com.cargopull.executor_driver.presentation.SingleLiveEvent;
@@ -21,6 +22,7 @@ import io.reactivex.internal.disposables.EmptyDisposable;
 import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
+import retrofit2.HttpException;
 
 public class VehicleOptionsViewModelImpl extends ViewModel implements
     VehicleOptionsViewModel {
@@ -30,6 +32,8 @@ public class VehicleOptionsViewModelImpl extends ViewModel implements
   @NonNull
   private final VehicleOptionsUseCase vehicleOptionsUseCase;
   @NonNull
+  private final ServicesUseCase servicesUseCase;
+  @NonNull
   private final MutableLiveData<ViewState<VehicleOptionsViewActions>> viewStateLiveData;
   @NonNull
   private final SingleLiveEvent<String> navigateLiveData;
@@ -37,16 +41,20 @@ public class VehicleOptionsViewModelImpl extends ViewModel implements
   private Disposable optionsDisposable = EmptyDisposable.INSTANCE;
   @NonNull
   private Disposable occupyDisposable = EmptyDisposable.INSTANCE;
+  @NonNull
+  private ViewState<VehicleOptionsViewActions> lastViewState = new VehicleOptionsViewStateInitial();
 
   @Inject
   public VehicleOptionsViewModelImpl(
       @NonNull ErrorReporter errorReporter,
-      @NonNull VehicleOptionsUseCase vehicleOptionsUseCase) {
+      @NonNull VehicleOptionsUseCase vehicleOptionsUseCase,
+      @NonNull ServicesUseCase servicesUseCase) {
     this.errorReporter = errorReporter;
     this.vehicleOptionsUseCase = vehicleOptionsUseCase;
+    this.servicesUseCase = servicesUseCase;
     viewStateLiveData = new MutableLiveData<>();
     navigateLiveData = new SingleLiveEvent<>();
-    viewStateLiveData.postValue(new VehicleOptionsViewStateInitial());
+    viewStateLiveData.postValue(lastViewState);
     loadOptions();
   }
 
@@ -98,7 +106,9 @@ public class VehicleOptionsViewModelImpl extends ViewModel implements
             .toObservable(),
         VehicleOptionsListItems::new
     ).subscribe(
-        items -> viewStateLiveData.postValue(new VehicleOptionsViewStateReady(items)),
+        items -> viewStateLiveData.postValue(
+            lastViewState = new VehicleOptionsViewStateReady(items)
+        ),
         throwable -> {
           if (throwable instanceof DataMappingException) {
             errorReporter.reportError(throwable);
@@ -118,16 +128,27 @@ public class VehicleOptionsViewModelImpl extends ViewModel implements
     viewStateLiveData.postValue(new VehicleOptionsViewStatePending());
     occupyDisposable = vehicleOptionsUseCase
         .setSelectedVehicleAndOptions(vehicleOptions, driverOptions)
+        .concatWith(servicesUseCase.autoAssignServices())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(
-            () -> navigateLiveData.postValue(VehicleOptionsNavigate.SERVICES),
+            () -> {
+            },
             throwable -> {
-              if (throwable instanceof IllegalStateException
-                  || throwable instanceof IllegalArgumentException) {
+              if (throwable instanceof HttpException) {
+                int code = ((HttpException) throwable).code();
+                if (code >= 500 && code < 600) {
+                  errorReporter.reportError(throwable);
+                }
+              } else {
                 errorReporter.reportError(throwable);
               }
-              viewStateLiveData
-                  .postValue(new VehicleOptionsViewStateError(R.string.no_network_connection));
+              viewStateLiveData.postValue(
+                  new VehicleOptionsViewStateResolvableError(
+                      R.string.sms_network_error,
+                      lastViewState,
+                      () -> viewStateLiveData.postValue(lastViewState)
+                  )
+              );
             }
         );
   }

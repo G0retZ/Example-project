@@ -5,11 +5,6 @@ import static org.junit.Assert.assertNotEquals;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
-import com.cargopull.executor_driver.entity.OptionBoolean;
-import com.cargopull.executor_driver.entity.OptionNumeric;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,16 +18,14 @@ public class VehicleOptionsViewStateReadyTest {
 
   @Mock
   private VehicleOptionsViewActions viewActions;
+  @Mock
+  private VehicleOptionsListItems vehicleOptionsListItems;
+  @Mock
+  private VehicleOptionsListItems vehicleOptionsListItems1;
 
   @Before
   public void setUp() {
-    viewState = new VehicleOptionsViewStateReady(new VehicleOptionsListItems(Arrays.asList(
-        new VehicleOptionsListItem<>(new OptionBoolean(1, "name", "description", false)),
-        new VehicleOptionsListItem<>(new OptionBoolean(2, "emacs", "description", true))
-    ), Arrays.asList(
-        new VehicleOptionsListItem<>(new OptionNumeric(3, "names", "description", 5, 0, 10)),
-        new VehicleOptionsListItem<>(new OptionNumeric(4, "nam", "description", 1, -1, 2))
-    )));
+    viewState = new VehicleOptionsViewStateReady(vehicleOptionsListItems);
   }
 
   @Test
@@ -45,53 +38,16 @@ public class VehicleOptionsViewStateReadyTest {
     verify(viewActions).showVehicleOptionsList(true);
     verify(viewActions).showVehicleOptionsPending(false);
     verify(viewActions).showVehicleOptionsListErrorMessage(false);
-    verify(viewActions).setVehicleOptionsListItems(new VehicleOptionsListItems(Arrays.asList(
-        new VehicleOptionsListItem<>(new OptionBoolean(1, "name", "description", false)),
-        new VehicleOptionsListItem<>(new OptionBoolean(2, "emacs", "description", true))
-    ), Arrays.asList(
-        new VehicleOptionsListItem<>(new OptionNumeric(3, "names", "description", 5, 0, 10)),
-        new VehicleOptionsListItem<>(new OptionNumeric(4, "nam", "description", 1, -1, 2))
-    )));
+    verify(viewActions).setVehicleOptionsListItems(vehicleOptionsListItems);
+    verify(viewActions).dismissDialog();
     verifyNoMoreInteractions(viewActions);
   }
 
   @Test
   public void testEquals() {
-    assertEquals(viewState,
-        new VehicleOptionsViewStateReady(new VehicleOptionsListItems(Arrays.asList(
-            new VehicleOptionsListItem<>(new OptionBoolean(1, "name", "description", false)),
-            new VehicleOptionsListItem<>(new OptionBoolean(2, "emacs", "description", true))
-        ), Arrays.asList(
-            new VehicleOptionsListItem<>(new OptionNumeric(3, "names", "description", 5, 0, 10)),
-            new VehicleOptionsListItem<>(new OptionNumeric(4, "nam", "description", 1, -1, 2))
-        ))));
-    assertNotEquals(viewState, new VehicleOptionsViewStateReady(new VehicleOptionsListItems(
-        Collections.singletonList(
-            new VehicleOptionsListItem<>(new OptionBoolean(2, "emacs", "description", true))
-        ), Arrays.asList(
-        new VehicleOptionsListItem<>(new OptionNumeric(3, "names", "description", 5, 0, 10)),
-        new VehicleOptionsListItem<>(new OptionNumeric(4, "nam", "description", 1, -1, 2))
-    ))));
-    assertNotEquals(viewState,
-        new VehicleOptionsViewStateReady(new VehicleOptionsListItems(Arrays.asList(
-            new VehicleOptionsListItem<>(new OptionBoolean(1, "name", "description", false)),
-            new VehicleOptionsListItem<>(new OptionBoolean(2, "emacs", "description", true))
-        ), Arrays.asList(
-            new VehicleOptionsListItem<>(new OptionNumeric(3, "names", "description", 5, 0, 10)),
-            new VehicleOptionsListItem<>(new OptionNumeric(4, "humus", "description", 1, -1, 2))
-        ))));
-    assertNotEquals(viewState, new VehicleOptionsViewStateReady(
-        new VehicleOptionsListItems(new ArrayList<>(), new ArrayList<>())));
-    assertNotEquals(viewState, new VehicleOptionsViewStateReady(new VehicleOptionsListItems(
-        new ArrayList<>(), Arrays.asList(
-        new VehicleOptionsListItem<>(new OptionNumeric(3, "names", "description", 5, 0, 10)),
-        new VehicleOptionsListItem<>(new OptionNumeric(4, "nam", "description", 1, -1, 2))
-    ))));
-    assertNotEquals(viewState, new VehicleOptionsViewStateReady(new VehicleOptionsListItems(
-        Arrays.asList(
-            new VehicleOptionsListItem<>(new OptionBoolean(1, "name", "description", false)),
-            new VehicleOptionsListItem<>(new OptionBoolean(2, "emacs", "description", true))
-        ), new ArrayList<>()
-    )));
+    assertEquals(viewState, new VehicleOptionsViewStateReady(vehicleOptionsListItems));
+    assertNotEquals(viewState, new VehicleOptionsViewStateReady(vehicleOptionsListItems1));
+    assertNotEquals(viewState, null);
+    assertNotEquals(viewState, "");
   }
 }

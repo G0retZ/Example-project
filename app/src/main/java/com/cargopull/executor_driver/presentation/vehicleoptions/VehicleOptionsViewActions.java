@@ -2,11 +2,12 @@ package com.cargopull.executor_driver.presentation.vehicleoptions;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.StringRes;
+import com.cargopull.executor_driver.presentation.FragmentViewActions;
 
 /**
  * Действия для смены состояния вида окна списка опций ТС исполнителя.
  */
-public interface VehicleOptionsViewActions {
+public interface VehicleOptionsViewActions extends FragmentViewActions {
 
   /**
    * Активировать кнопку готовности.

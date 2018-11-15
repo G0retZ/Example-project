@@ -63,9 +63,6 @@
       android:name=".application.ChooseVehicleActivity"/>
     <activity
       android:launchMode="singleTop"
-      android:name=".application.ServicesActivity"/>
-    <activity
-      android:launchMode="singleTop"
       android:name=".application.GeolocationPermissionActivity"/>
     <activity
       android:launchMode="singleTop"

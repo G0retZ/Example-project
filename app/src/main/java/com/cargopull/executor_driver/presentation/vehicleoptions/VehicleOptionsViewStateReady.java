@@ -22,6 +22,8 @@ public final class VehicleOptionsViewStateReady implements ViewState<VehicleOpti
     stateActions.showVehicleOptionsPending(false);
     stateActions.showVehicleOptionsListErrorMessage(false);
     stateActions.setVehicleOptionsListItems(vehicleOptionsListItems);
+    // Убираем диалог
+    stateActions.dismissDialog();
   }
 
   @Override

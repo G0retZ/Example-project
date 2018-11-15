@@ -78,11 +78,6 @@ import com.cargopull.executor_driver.presentation.serverconnection.ServerConnect
 import com.cargopull.executor_driver.presentation.serverconnection.ServerConnectionViewModelImpl;
 import com.cargopull.executor_driver.presentation.servertime.ServerTimeViewModel;
 import com.cargopull.executor_driver.presentation.servertime.ServerTimeViewModelImpl;
-import com.cargopull.executor_driver.presentation.services.ServicesListItems;
-import com.cargopull.executor_driver.presentation.services.ServicesSliderViewModel;
-import com.cargopull.executor_driver.presentation.services.ServicesSliderViewModelImpl;
-import com.cargopull.executor_driver.presentation.services.ServicesViewModel;
-import com.cargopull.executor_driver.presentation.services.ServicesViewModelImpl;
 import com.cargopull.executor_driver.presentation.smsbutton.SmsButtonViewModel;
 import com.cargopull.executor_driver.presentation.smsbutton.SmsButtonViewModelImpl;
 import com.cargopull.executor_driver.presentation.upcomingpreorder.UpcomingPreOrderViewModel;
@@ -107,8 +102,6 @@ class PresentationComponentImpl implements PresentationComponent {
   private InteractorComponent interactorComponent;
   @Nullable
   private RepositoryComponent repositoryComponent;
-  @Nullable
-  private ServicesListItems servicesListItems;
   @Nullable
   private AnnouncementViewModel announcementViewModel;
   @Nullable
@@ -137,8 +130,6 @@ class PresentationComponentImpl implements PresentationComponent {
   private ServerConnectionViewModel serverConnectionViewModel;
   @Nullable
   private ServerTimeViewModel serverTimeViewModel;
-  @Nullable
-  private ServicesSliderViewModel servicesSliderViewModel;
   @Nullable
   private UpcomingPreOrderMessageViewModel upcomingPreOrderMessagesViewModel;
   @Nullable
@@ -698,35 +689,6 @@ class PresentationComponentImpl implements PresentationComponent {
 
   @NonNull
   @Override
-  public ServicesSliderViewModel getServicesSliderViewModel() {
-    if (servicesSliderViewModel == null) {
-      servicesSliderViewModel = new ServicesSliderViewModelImpl(
-          getServicesListItems()
-      );
-    }
-    return servicesSliderViewModel;
-  }
-
-  @NonNull
-  @Override
-  public ServicesViewModel getServicesViewModel(@Nullable Fragment fragment) {
-    if (fragment == null) {
-      throw new NullPointerException("Фрагмент не должен быть null");
-    }
-    return getViewModelInstance(
-        fragment,
-        ServicesViewModelImpl.class,
-        new ServicesViewModelImpl(
-            backendComponent.getErrorReporter(),
-            getInteractorComponent().getServicesUseCase(),
-            getServicesSliderViewModel(),
-            getServicesListItems()
-        )
-    );
-  }
-
-  @NonNull
-  @Override
   public SmsButtonViewModel getSmsButtonViewModel(@Nullable Fragment fragment) {
     if (fragment == null) {
       throw new NullPointerException("Фрагмент не должен быть null");
@@ -775,8 +737,8 @@ class PresentationComponentImpl implements PresentationComponent {
         VehicleOptionsViewModelImpl.class,
         new VehicleOptionsViewModelImpl(
             backendComponent.getErrorReporter(),
-            getInteractorComponent().getVehicleOptionsUseCase()
-        )
+            getInteractorComponent().getVehicleOptionsUseCase(),
+            getInteractorComponent().getServicesUseCase())
     );
   }
 
@@ -791,8 +753,8 @@ class PresentationComponentImpl implements PresentationComponent {
         VehicleOptionsViewModelImpl.class,
         new VehicleOptionsViewModelImpl(
             backendComponent.getErrorReporter(),
-            getInteractorComponent().getCurrentVehicleOptionsUseCase()
-        )
+            getInteractorComponent().getCurrentVehicleOptionsUseCase(),
+            getInteractorComponent().getServicesUseCase())
     );
   }
 
@@ -946,14 +908,6 @@ class PresentationComponentImpl implements PresentationComponent {
             timeUtils
         )
     );
-  }
-
-  @NonNull
-  private ServicesListItems getServicesListItems() {
-    if (servicesListItems == null) {
-      servicesListItems = new ServicesListItems();
-    }
-    return servicesListItems;
   }
 
   @NonNull

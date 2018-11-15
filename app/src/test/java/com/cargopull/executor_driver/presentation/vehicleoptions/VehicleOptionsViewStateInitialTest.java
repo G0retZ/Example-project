@@ -36,6 +36,7 @@ public class VehicleOptionsViewStateInitialTest {
     verify(viewActions).setVehicleOptionsListItems(
         new VehicleOptionsListItems(new ArrayList<>(), new ArrayList<>())
     );
+    verify(viewActions).dismissDialog();
     verifyNoMoreInteractions(viewActions);
   }
 }

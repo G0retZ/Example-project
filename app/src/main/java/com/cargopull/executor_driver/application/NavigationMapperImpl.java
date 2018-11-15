@@ -39,14 +39,11 @@ public class NavigationMapperImpl implements NavigationMapper {
         BalanceActivity.class
     ));
     statusGroups.put(ExecutorStateNavigate.MAP_SHIFT_OPENED, Arrays.asList(
-        OnlineActivity.class, VehicleOptionsActivity.class, ServicesActivity.class,
-        GeolocationPermissionActivity.class, BalanceActivity.class,
-        SelectedVehicleOptionsActivity.class
+        OnlineActivity.class, VehicleOptionsActivity.class, GeolocationPermissionActivity.class,
+        BalanceActivity.class, SelectedVehicleOptionsActivity.class
     ));
     statusGroups.put(ExecutorStateNavigate.MAP_ONLINE, Arrays.asList(
-        OnlineActivity.class, VehicleOptionsActivity.class,
-        GeolocationPermissionActivity.class, BalanceActivity.class,
-        SelectedVehicleOptionsActivity.class
+        OnlineActivity.class, GeolocationPermissionActivity.class, BalanceActivity.class
     ));
     statusGroups.put(ExecutorStateNavigate.DRIVER_ORDER_CONFIRMATION, Arrays.asList(
         DriverOrderConfirmationActivity.class, GeolocationPermissionActivity.class

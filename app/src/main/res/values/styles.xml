@@ -180,16 +180,6 @@
     <item name="tickMark">@drawable/ic_tick_mark</item>
   </style>
 
-  <style name="AppTheme.SeekBar.Green" parent="Widget.AppCompat.SeekBar">
-    <item name="android:thumb">@drawable/ic_thumb</item>
-    <item name="android:theme">@style/AppTheme.Accent.Green</item>
-  </style>
-
-  <style name="AppTheme.SeekBar.Green.Inverse">
-    <item name="android:progressDrawable">@drawable/mirrored_progress</item>
-    <item name="android:scaleX">-1</item>
-  </style>
-
   <style name="AppTheme.AppBar" parent="Widget.AppCompat.Toolbar">
     <item name="android:height">?android:attr/actionBarSize</item>
     <item name="android:background">@color/colorPrimary</item>
