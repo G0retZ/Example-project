@@ -30,12 +30,12 @@ public class VehicleApiMapperTest {
   @Before
   public void setUp() throws Exception {
     when(apiOptionMapper.map(any(ApiOptionItem.class)))
-        .thenReturn(new OptionBoolean(0, "n", "d", false, false));
+        .thenReturn(new OptionBoolean(0, "n", "d", false));
     mapper = new VehicleApiMapper(apiOptionMapper);
   }
 
   /**
-   * Должен успешно преобразовать входной объект.
+   * Должен успешно преобразовать входной объект только с динамическими опциями.
    *
    * @throws Exception ошибка
    */
@@ -69,11 +69,8 @@ public class VehicleApiMapperTest {
     assertEquals(vehicle.getColor(), "color");
     assertFalse(vehicle.isBusy());
     assertEquals(vehicle.getOptions(), Arrays.<Option>asList(
-        new OptionBoolean(0, "n", "d", false, false),
-        new OptionBoolean(0, "n", "d", false, false),
-        new OptionBoolean(0, "n", "d", false, false),
-        new OptionBoolean(0, "n", "d", false, false),
-        new OptionBoolean(0, "n", "d", false, false)
+        new OptionBoolean(0, "n", "d", false),
+        new OptionBoolean(0, "n", "d", false)
     ));
   }
 

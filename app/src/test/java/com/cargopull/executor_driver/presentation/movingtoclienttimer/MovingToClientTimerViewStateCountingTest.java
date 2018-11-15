@@ -6,7 +6,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 import com.cargopull.executor_driver.R;
-import com.cargopull.executor_driver.presentation.ViewActions;
+import com.cargopull.executor_driver.presentation.FragmentViewActions;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -18,7 +18,7 @@ public class MovingToClientTimerViewStateCountingTest {
   private MovingToClientTimerViewStateCounting viewState;
 
   @Mock
-  private ViewActions viewActions;
+  private FragmentViewActions viewActions;
 
   @Test
   public void testPositive() {

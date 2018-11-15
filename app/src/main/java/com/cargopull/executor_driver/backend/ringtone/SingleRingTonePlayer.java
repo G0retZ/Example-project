@@ -44,9 +44,7 @@ public class SingleRingTonePlayer implements RingTonePlayer {
   public void stopRingTone(@NonNull @RawRes Integer soundRes) {
     if (soundRes.equals(this.soundRes) && ringtone != null && ringtone.isPlaying()) {
       this.soundRes = null;
-      new Handler(context.getMainLooper()).postDelayed(() -> {
-        ringtone.stop();
-      }, 2000);
+      new Handler(context.getMainLooper()).postDelayed(() -> ringtone.stop(), 2000);
     }
   }
 }

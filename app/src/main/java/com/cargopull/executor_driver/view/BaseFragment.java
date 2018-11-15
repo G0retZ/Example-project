@@ -21,7 +21,7 @@ import androidx.fragment.app.Fragment;
 import com.cargopull.executor_driver.application.BaseActivity;
 import com.cargopull.executor_driver.application.OnBackPressedInterceptor;
 import com.cargopull.executor_driver.di.AppComponent;
-import com.cargopull.executor_driver.presentation.ViewActions;
+import com.cargopull.executor_driver.presentation.FragmentViewActions;
 import com.squareup.picasso.Picasso;
 import java.util.HashMap;
 import java.util.Map;
@@ -35,7 +35,8 @@ import java.util.Map;
  * </ul>
  */
 
-public class BaseFragment extends Fragment implements OnBackPressedInterceptor, ViewActions {
+public class BaseFragment extends Fragment implements OnBackPressedInterceptor,
+    FragmentViewActions {
 
   @SuppressLint("UseSparseArrays")
   @NonNull

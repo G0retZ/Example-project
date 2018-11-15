@@ -106,7 +106,7 @@ public class MapFragment extends SupportMapFragment implements OnMapReadyCallbac
     googleMap.getUiSettings().setZoomControlsEnabled(true);
     googleMap.getUiSettings().setZoomGesturesEnabled(true);
     googleMap.setPadding(0, 0, 0, 128);
-    googleMap.setMinZoomPreference(10.0f);
+    googleMap.setMinZoomPreference(8.0f);
     googleMap.setMaxZoomPreference(18.0f);
     googleMap.setOnMyLocationButtonClickListener(this);
     mapViewModel.getViewStateLiveData().observe(this, viewState -> {

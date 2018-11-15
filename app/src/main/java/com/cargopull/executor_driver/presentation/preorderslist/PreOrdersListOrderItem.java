@@ -11,7 +11,8 @@ import java.text.DecimalFormat;
 import org.joda.time.format.DateTimeFormat;
 
 /**
- * Модель для отображения карточки предзаказа в списке предзаказов исполнителя. Тестируемое форматирование.
+ * Модель для отображения карточки предзаказа в списке предзаказов исполнителя. Тестируемое
+ * форматирование.
  */
 public class PreOrdersListOrderItem implements PreOrdersListItem {
 

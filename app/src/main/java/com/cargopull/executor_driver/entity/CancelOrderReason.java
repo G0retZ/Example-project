@@ -4,8 +4,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 /**
- * Бизнес сущность причины отказа от заказа. Immutable.
- * Создается через конструктор с не нулевыми полями.
+ * Бизнес сущность причины отказа от заказа. Immutable. Создается через конструктор с не нулевыми
+ * полями.
  */
 public class CancelOrderReason {
 

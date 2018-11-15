@@ -36,21 +36,18 @@ import org.mockito.junit.MockitoRule;
 @RunWith(Parameterized.class)
 public class ExecutorStateNotOnlineUseCaseTest {
 
-  @Rule
-  public MockitoRule rule = MockitoJUnit.rule();
   @ClassRule
   public static final UseCaseThreadTestRule classRule = new UseCaseThreadTestRule();
-
+  private final boolean expectedArgumentException;
+  private final ExecutorState conditionExecutorState;
+  private final boolean expectedGatewayInvocation;
+  @Rule
+  public MockitoRule rule = MockitoJUnit.rule();
   private ExecutorStateNotOnlineUseCase useCase;
-
   @Mock
   private ExecutorStateSwitchGateway gateway;
   @Mock
   private ExecutorStateUseCase executorStateUseCase;
-
-  private final boolean expectedArgumentException;
-  private final ExecutorState conditionExecutorState;
-  private final boolean expectedGatewayInvocation;
 
   // Each parameter should be placed as an argument here
   // Every time runner triggers, it will pass the arguments

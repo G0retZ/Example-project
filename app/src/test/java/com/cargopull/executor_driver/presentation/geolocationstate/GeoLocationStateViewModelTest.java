@@ -14,7 +14,7 @@ import androidx.lifecycle.Observer;
 import com.cargopull.executor_driver.ViewModelThreadTestRule;
 import com.cargopull.executor_driver.backend.analytics.EventLogger;
 import com.cargopull.executor_driver.interactor.CommonGateway;
-import com.cargopull.executor_driver.presentation.ViewActions;
+import com.cargopull.executor_driver.presentation.ImageTextViewActions;
 import com.cargopull.executor_driver.presentation.ViewState;
 import com.cargopull.executor_driver.utils.Pair;
 import com.cargopull.executor_driver.utils.TimeUtils;
@@ -43,10 +43,10 @@ public class GeoLocationStateViewModelTest {
 
   public static class CommonTests {
 
-    @Rule
-    public MockitoRule mockRule = MockitoJUnit.rule();
     @ClassRule
     public static final ViewModelThreadTestRule classRule = new ViewModelThreadTestRule();
+    @Rule
+    public MockitoRule mockRule = MockitoJUnit.rule();
     @Rule
     public TestRule rule = new InstantTaskExecutorRule();
 
@@ -60,7 +60,7 @@ public class GeoLocationStateViewModelTest {
     @Mock
     private TimeUtils timeUtils;
     @Mock
-    private Observer<ViewState<ViewActions>> viewStateObserver;
+    private Observer<ViewState<ImageTextViewActions>> viewStateObserver;
 
     private PublishSubject<Boolean> publishSubject;
 
@@ -310,10 +310,10 @@ public class GeoLocationStateViewModelTest {
   @RunWith(Parameterized.class)
   public static class LogEventsTests {
 
-    @Rule
-    public MockitoRule mockRule = MockitoJUnit.rule();
     @ClassRule
     public static final ViewModelThreadTestRule classRule = new ViewModelThreadTestRule();
+    @Rule
+    public MockitoRule mockRule = MockitoJUnit.rule();
     @Rule
     public TestRule rule = new InstantTaskExecutorRule();
 
@@ -328,17 +328,17 @@ public class GeoLocationStateViewModelTest {
     private TimeUtils timeUtils;
 
     private PublishSubject<Boolean> publishSubject;
-    private boolean fromAvailability;
-    private boolean toAvailability;
-    private boolean toAvailability1;
-    private boolean fromGps;
-    private boolean toGps;
-    private boolean toGps1;
-    private boolean fromNetwork;
-    private boolean toNetwork;
-    private boolean toNetwork1;
-    private int sendReport;
-    private int tuInvocations;
+    private final boolean fromAvailability;
+    private final boolean toAvailability;
+    private final boolean toAvailability1;
+    private final boolean fromGps;
+    private final boolean toGps;
+    private final boolean toGps1;
+    private final boolean fromNetwork;
+    private final boolean toNetwork;
+    private final boolean toNetwork1;
+    private final int sendReport;
+    private final int tuInvocations;
 
     public LogEventsTests(Pair<List<Boolean>, Pair<Integer, Integer>> conditions) {
       fromAvailability = conditions.first.get(0);
@@ -357,21 +357,6 @@ public class GeoLocationStateViewModelTest {
       System.out.println("" + toAvailability1 + ", " + toGps1 + ", " + toNetwork1);
       System.out.println("---");
       System.out.println("" + sendReport + ", " + tuInvocations);
-    }
-
-    @Before
-    public void setUp() {
-      publishSubject = PublishSubject.create();
-      if (tuInvocations > 0) {
-        when(timeUtils.currentTimeMillis()).thenReturn(10L, 300L);
-      }
-      when(gateway.getData()).thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
-      when(locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER))
-          .thenReturn(fromGps, toGps, toGps1);
-      when(locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER))
-          .thenReturn(fromNetwork, toNetwork, toNetwork1);
-      viewModel = new GeoLocationStateViewModelImpl(eventLogger, locationManager, timeUtils,
-          gateway);
     }
 
     @Parameterized.Parameters
@@ -445,6 +430,21 @@ public class GeoLocationStateViewModelTest {
       }
 
       return pairs;
+    }
+
+    @Before
+    public void setUp() {
+      publishSubject = PublishSubject.create();
+      if (tuInvocations > 0) {
+        when(timeUtils.currentTimeMillis()).thenReturn(10L, 300L);
+      }
+      when(gateway.getData()).thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
+      when(locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER))
+          .thenReturn(fromGps, toGps, toGps1);
+      when(locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER))
+          .thenReturn(fromNetwork, toNetwork, toNetwork1);
+      viewModel = new GeoLocationStateViewModelImpl(eventLogger, locationManager, timeUtils,
+          gateway);
     }
 
     /**

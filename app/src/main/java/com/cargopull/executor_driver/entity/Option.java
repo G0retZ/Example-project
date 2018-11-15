@@ -34,13 +34,6 @@ public interface Option<V> {
   String getDescription();
 
   /**
-   * Возвращает изменяемость опции.
-   *
-   * @return true если опция доступна для изменения, false в иных случаях.
-   */
-  boolean isVariable();
-
-  /**
    * Возвращает значение опции.
    *
    * @return значение опции.

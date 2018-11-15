@@ -9,7 +9,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -18,6 +17,8 @@ import com.cargopull.executor_driver.R;
 import com.cargopull.executor_driver.backend.settings.AppSettingsService;
 import com.cargopull.executor_driver.di.AppComponent;
 import com.cargopull.executor_driver.presentation.CommonNavigate;
+import com.cargopull.executor_driver.presentation.DialogViewActions;
+import com.cargopull.executor_driver.presentation.ImageTextViewActions;
 import com.cargopull.executor_driver.presentation.NoViewActions;
 import com.cargopull.executor_driver.presentation.announcement.AnnouncementViewModel;
 import com.cargopull.executor_driver.presentation.executorstate.ExecutorStateViewActions;
@@ -31,10 +32,8 @@ import com.cargopull.executor_driver.presentation.updatemessage.UpdateMessageVie
 import com.cargopull.executor_driver.view.GeoEngagementDialogFragment;
 import com.cargopull.executor_driver.view.PendingDialogFragment;
 import com.cargopull.executor_driver.view.ServerConnectionFragment;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
-import java.util.Map;
 import java.util.Set;
 import javax.inject.Inject;
 
@@ -51,11 +50,9 @@ import javax.inject.Inject;
  */
 
 @SuppressLint("Registered")
-public class BaseActivity extends AppCompatActivity implements ExecutorStateViewActions, UpdateMessageViewActions {
+public class BaseActivity extends AppCompatActivity implements ExecutorStateViewActions,
+    UpdateMessageViewActions {
 
-  @SuppressLint("UseSparseArrays")
-  @NonNull
-  private final Map<Integer, View> foundViews = new HashMap<>();
   @NonNull
   private final PendingDialogFragment pendingDialogFragment = new PendingDialogFragment();
   @NonNull
@@ -63,6 +60,14 @@ public class BaseActivity extends AppCompatActivity implements ExecutorStateView
   @NonNull
   private final LinkedList<OnBackPressedInterceptor> onBackPressedInterceptors = new LinkedList<>();
   private final Set<String> blockers = new HashSet<>();
+  private final ImageTextViewActions geoEngagementViewActions = new NoViewActions() {
+    @Override
+    public void setVisible(int id, boolean visible) {
+      if (visible && showGeolocationStateAllowed()) {
+        geoEngagementDialogFragment.show(getSupportFragmentManager(), "geoEngagement");
+      }
+    }
+  };
   private AppSettingsService appSettingsService;
   private GeoLocationStateViewModel geoLocationStateViewModel;
   private ExecutorStateViewModel executorStateViewModel;
@@ -79,15 +84,15 @@ public class BaseActivity extends AppCompatActivity implements ExecutorStateView
   @Nullable
   private Dialog errorDialog;
   private boolean resumed;
-  private final NoViewActions geoEngagementViewActions = new NoViewActions() {
+  private final DialogViewActions announcementViewActions = new DialogViewActions() {
     @Override
-    public void setVisible(int id, boolean visible) {
-      if (visible && showGeolocationStateAllowed()) {
-        geoEngagementDialogFragment.show(getSupportFragmentManager(), "geoEngagement");
-      }
+    public void dismissDialog() {
     }
-  };
-  private final NoViewActions announcementViewActions = new NoViewActions() {
+
+    @Override
+    public void showPersistentDialog(int stringId, @Nullable Runnable okAction) {
+    }
+
     @Override
     public void showPersistentDialog(@NonNull String message, @Nullable Runnable okAction) {
       if (announcementDialog != null) {
@@ -99,10 +104,10 @@ public class BaseActivity extends AppCompatActivity implements ExecutorStateView
           .setCancelable(false)
           .setPositiveButton(getString(android.R.string.ok),
               okAction == null ? null :
-              ((dialog, which) -> {
-                announcementDialog = null;
-                okAction.run();
-              }))
+                  ((dialog, which) -> {
+                    announcementDialog = null;
+                    okAction.run();
+                  }))
           .create();
       if (resumed) {
         announcementDialog.show();
@@ -435,7 +440,7 @@ public class BaseActivity extends AppCompatActivity implements ExecutorStateView
     }
   }
 
-  protected boolean showGeolocationStateAllowed() {
+  boolean showGeolocationStateAllowed() {
     return false;
   }
 

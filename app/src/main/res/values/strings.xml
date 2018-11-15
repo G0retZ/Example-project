@@ -27,9 +27,6 @@
   <string name="choose_vehicle">Гараж</string>
   <string name="check_list">Чек лист</string>
   <string name="change">Сменить</string>
-  <string name="select_services">Выберите услуги</string>
-  <string name="no_services_available">Нет доступных услуг</string>
-  <string name="no_services_selected">Не выбрано ни одной услуги</string>
   <string name="working">В работе</string>
   <string name="online">На линии</string>
   <string name="resume_work">Возобновить работу</string>
@@ -46,8 +43,6 @@
   <string name="menu">Меню</string>
   <string name="balance">Баланс</string>
   <string name="exit_app">Выйти из приложения</string>
-  <string name="tariff_range">Тарифы, по которым вы готовы работать</string>
-  <string name="deselect_unwanted_services">Выключите услуги, которые вам не подходят</string>
   <string name="km">%1$.2f км</string>
   <string name="eta">≈ %1$d мин.</string>
   <string name="cargo_description">Описание груза</string>
@@ -55,7 +50,6 @@
   <string name="accept">Принять</string>
   <string name="offer">Предложение</string>
   <string name="new_order">Новый заказ доступен для принятия!</string>
-  <string name="proceed">Продолжить</string>
   <string name="done">Готово</string>
   <string name="client_confirmation">Идет подтверждение у клиента.\nБудьте готовы начать движение</string>
   <string name="client_confirmation_problem">Не удается дозвониться клиенту.\nОператор занимается вашим заказом.</string>
@@ -83,7 +77,6 @@
   <string name="route_distance">Маршрут %1$.2f км</string>
   <string name="order_details">Информация о заказе</string>
   <string name="report_a_problem">Сообщить о проблеме</string>
-  <string name="minus_sign">–</string>
   <string name="cancel_reason">Причина отмены</string>
   <string name="do_not_cancel">Не отменять</string>
   <string name="calling_operator">Дистпечер скоро свяжется.\nБудьте готовы взять трубку!</string>
@@ -153,4 +146,5 @@
   <string name="_1">1</string>
   <string name="server_connection_desc">Необходимые для нормальной работы оповещения</string>
   <string name="important_info_desc">Важные информационные оповещения общего характера</string>
+  <string name="default_notification_channel_id" templateMergeStrategy="preserve" translatable="false">state_channel</string>
 </resources>

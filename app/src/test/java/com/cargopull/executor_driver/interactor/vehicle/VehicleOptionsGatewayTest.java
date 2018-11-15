@@ -52,18 +52,18 @@ public class VehicleOptionsGatewayTest {
     // Дано:
     Vehicle vehicle = new Vehicle(11, "manufacturer2", "models", "colors", "lic", true);
     vehicle.addVehicleOptions(
-        new OptionNumeric(0, "name0", "desc0", true, 10, 0, 20),
-        new OptionNumeric(1, "name1", "desc1", true, -5, -18, 0),
-        new OptionBoolean(2, "name2", "desc2", true, false),
-        new OptionBoolean(3, "name3", "desc3", true, true)
+        new OptionNumeric(0, "name0", "desc0", 10, 0, 20),
+        new OptionNumeric(1, "name1", "desc1", -5, -18, 0),
+        new OptionBoolean(2, "name2", "desc2", false),
+        new OptionBoolean(3, "name3", "desc3", true)
     );
 
     // Действие:
     gateway.sendVehicleOptions(vehicle, Arrays.asList(
-        new OptionNumeric(5, "name0", "desc0", true, -1, -5, 20),
-        new OptionNumeric(6, "name1", "desc1", true, 2, -18, 5),
-        new OptionBoolean(7, "name2", "desc2", true, true),
-        new OptionBoolean(8, "name3", "desc3", true, false)
+        new OptionNumeric(5, "name0", "desc0", -1, -5, 20),
+        new OptionNumeric(6, "name1", "desc1", 2, -18, 5),
+        new OptionBoolean(7, "name2", "desc2", true),
+        new OptionBoolean(8, "name3", "desc3", false)
     ));
 
     // Результат:
@@ -93,10 +93,10 @@ public class VehicleOptionsGatewayTest {
     // Дано:
     Vehicle vehicle = new Vehicle(11, "manufacturer2", "models", "colors", "lic", true);
     vehicle.addVehicleOptions(
-        new OptionNumeric(0, "name0", "desc0", true, 10, 0, 20),
-        new OptionNumeric(1, "name1", "desc1", true, -5, -18, 0),
-        new OptionBoolean(2, "name2", "desc2", true, false),
-        new OptionBoolean(3, "name3", "desc3", true, true)
+        new OptionNumeric(0, "name0", "desc0", 10, 0, 20),
+        new OptionNumeric(1, "name1", "desc1", -5, -18, 0),
+        new OptionBoolean(2, "name2", "desc2", false),
+        new OptionBoolean(3, "name3", "desc3", true)
     );
     when(api.occupyCarWithOptions(anyLong(), eq(new ApiOptionItems(
         Arrays.asList(
@@ -116,10 +116,10 @@ public class VehicleOptionsGatewayTest {
 
     // Действие и Результат:
     gateway.sendVehicleOptions(vehicle, Arrays.asList(
-        new OptionNumeric(5, "name0", "desc0", true, -1, -5, 20),
-        new OptionNumeric(6, "name1", "desc1", true, 2, -18, 5),
-        new OptionBoolean(7, "name2", "desc2", true, true),
-        new OptionBoolean(8, "name3", "desc3", true, false)
+        new OptionNumeric(5, "name0", "desc0", -1, -5, 20),
+        new OptionNumeric(6, "name1", "desc1", 2, -18, 5),
+        new OptionBoolean(7, "name2", "desc2", true),
+        new OptionBoolean(8, "name3", "desc3", false)
     )).test()
         .assertError(NoNetworkException.class);
   }
@@ -132,10 +132,10 @@ public class VehicleOptionsGatewayTest {
     // Дано:
     Vehicle vehicle = new Vehicle(11, "manufacturer2", "models", "colors", "lic", true);
     vehicle.addVehicleOptions(
-        new OptionNumeric(0, "name0", "desc0", true, 10, 0, 20),
-        new OptionNumeric(1, "name1", "desc1", true, -5, -18, 0),
-        new OptionBoolean(2, "name2", "desc2", true, false),
-        new OptionBoolean(3, "name3", "desc3", true, true)
+        new OptionNumeric(0, "name0", "desc0", 10, 0, 20),
+        new OptionNumeric(1, "name1", "desc1", -5, -18, 0),
+        new OptionBoolean(2, "name2", "desc2", false),
+        new OptionBoolean(3, "name3", "desc3", true)
     );
     when(api.occupyCarWithOptions(anyLong(), eq(new ApiOptionItems(
         Arrays.asList(
@@ -154,10 +154,10 @@ public class VehicleOptionsGatewayTest {
 
     // Действие и Результат:
     gateway.sendVehicleOptions(vehicle, Arrays.asList(
-        new OptionNumeric(5, "name0", "desc0", true, -1, -5, 20),
-        new OptionNumeric(6, "name1", "desc1", true, 2, -18, 5),
-        new OptionBoolean(7, "name2", "desc2", true, true),
-        new OptionBoolean(8, "name3", "desc3", true, false)
+        new OptionNumeric(5, "name0", "desc0", -1, -5, 20),
+        new OptionNumeric(6, "name1", "desc1", 2, -18, 5),
+        new OptionBoolean(7, "name2", "desc2", true),
+        new OptionBoolean(8, "name3", "desc3", false)
     )).test().assertComplete();
   }
 }

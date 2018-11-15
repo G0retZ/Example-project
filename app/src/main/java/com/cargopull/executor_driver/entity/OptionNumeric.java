@@ -13,21 +13,15 @@ public class OptionNumeric implements Option<Integer> {
   private final String name;
   @Nullable
   private final String description;
-  private final boolean variable;
-  @NonNull
-  private final Integer value;
-  @NonNull
-  private final Integer minValue;
-  @NonNull
-  private final Integer maxValue;
+  private final int value;
+  private final int minValue;
+  private final int maxValue;
 
-  public OptionNumeric(long id, @NonNull String name, @Nullable String description,
-      boolean variable, @NonNull Integer value,
+  public OptionNumeric(long id, @NonNull String name, @Nullable String description, int value,
       int minValue, int maxValue) {
     this.id = id;
     this.name = name;
     this.description = description;
-    this.variable = variable;
     this.value = value;
     this.minValue = minValue;
     this.maxValue = maxValue;
@@ -50,11 +44,6 @@ public class OptionNumeric implements Option<Integer> {
     return description;
   }
 
-  @Override
-  public boolean isVariable() {
-    return variable;
-  }
-
   @NonNull
   @Override
   public Integer getValue() {
@@ -64,7 +53,7 @@ public class OptionNumeric implements Option<Integer> {
   @Override
   @NonNull
   public OptionNumeric setValue(@NonNull Integer value) {
-    return new OptionNumeric(id, name, description, variable, value, minValue, maxValue);
+    return new OptionNumeric(id, name, description, value, minValue, maxValue);
   }
 
   @NonNull
@@ -85,14 +74,12 @@ public class OptionNumeric implements Option<Integer> {
         "id=" + id +
         ", name='" + name + '\'' +
         ", description='" + description + '\'' +
-        ", variable=" + variable +
         ", value=" + value +
         ", minValue=" + minValue +
         ", maxValue=" + maxValue +
         '}';
   }
 
-  @SuppressWarnings("SimplifiableIfStatement")
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -107,19 +94,19 @@ public class OptionNumeric implements Option<Integer> {
     if (id != that.id) {
       return false;
     }
-    if (variable != that.variable) {
+    if (value != that.value) {
+      return false;
+    }
+    if (minValue != that.minValue) {
+      return false;
+    }
+    if (maxValue != that.maxValue) {
       return false;
     }
     if (!name.equals(that.name)) {
       return false;
     }
-    if (description != null ? !description.equals(that.description) : that.description != null) {
-      return false;
-    }
-    if (!value.equals(that.value)) {
-      return false;
-    }
-    return minValue.equals(that.minValue) && maxValue.equals(that.maxValue);
+    return description != null ? description.equals(that.description) : that.description == null;
   }
 
   @Override
@@ -127,10 +114,9 @@ public class OptionNumeric implements Option<Integer> {
     int result = (int) (id ^ (id >>> 32));
     result = 31 * result + name.hashCode();
     result = 31 * result + (description != null ? description.hashCode() : 0);
-    result = 31 * result + (variable ? 1 : 0);
-    result = 31 * result + value.hashCode();
-    result = 31 * result + minValue.hashCode();
-    result = 31 * result + maxValue.hashCode();
+    result = 31 * result + value;
+    result = 31 * result + minValue;
+    result = 31 * result + maxValue;
     return result;
   }
 }

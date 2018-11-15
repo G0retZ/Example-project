@@ -106,7 +106,8 @@ public class OrderRouteViewModelTest {
   }
 
   /**
-   * Не должен трогать юзкейс, если предыдущий запрос выбора следующей точки маршрута еще не завершился.
+   * Не должен трогать юзкейс, если предыдущий запрос выбора следующей точки маршрута еще не
+   * завершился.
    */
   @Test
   public void DoNotTouchUseCaseDuringSelectNextRoutePoint() {

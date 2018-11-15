@@ -13,7 +13,7 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
 import androidx.lifecycle.Observer;
 import com.cargopull.executor_driver.ViewModelThreadTestRule;
 import com.cargopull.executor_driver.interactor.CommonGateway;
-import com.cargopull.executor_driver.presentation.ViewActions;
+import com.cargopull.executor_driver.presentation.DialogViewActions;
 import com.cargopull.executor_driver.presentation.ViewState;
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.subjects.PublishSubject;
@@ -41,11 +41,11 @@ public class AnnouncementViewModelTest {
   @Mock
   private CommonGateway<String> gateway;
   @Mock
-  private Observer<ViewState<ViewActions>> viewStateObserver;
+  private Observer<ViewState<DialogViewActions>> viewStateObserver;
   @Captor
-  private ArgumentCaptor<ViewState<ViewActions>> viewStateCaptor;
+  private ArgumentCaptor<ViewState<DialogViewActions>> viewStateCaptor;
   @Mock
-  private ViewActions viewActions;
+  private DialogViewActions viewActions;
   @Captor
   private ArgumentCaptor<Runnable> runnableCaptor;
   private PublishSubject<String> publishSubject;

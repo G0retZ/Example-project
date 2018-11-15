@@ -10,8 +10,8 @@ import okhttp3.Response;
 import okhttp3.ResponseBody;
 
 /**
- * Перехватчик для 4xx - 5xx HTTP кодов, чтобы распарсить их тело в эксепшн с кодом ошибки
- * для дальнейшего использования.
+ * Перехватчик для 4xx - 5xx HTTP кодов, чтобы распарсить их тело в эксепшн с кодом ошибки для
+ * дальнейшего использования.
  */
 public class ServerResponseInterceptor implements Interceptor {
 

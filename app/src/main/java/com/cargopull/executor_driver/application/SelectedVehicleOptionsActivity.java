@@ -7,7 +7,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import com.cargopull.executor_driver.R;
 import com.cargopull.executor_driver.presentation.selectedvehicle.SelectedVehicleNavigate;
-import com.cargopull.executor_driver.presentation.vehicleoptions.VehicleOptionsNavigate;
 
 public class SelectedVehicleOptionsActivity extends BaseActivity {
 
@@ -24,10 +23,6 @@ public class SelectedVehicleOptionsActivity extends BaseActivity {
   @Override
   public void navigate(@NonNull String destination) {
     switch (destination) {
-      case VehicleOptionsNavigate.SERVICES:
-        startActivity(new Intent(this, ServicesActivity.class));
-        finish();
-        break;
       case SelectedVehicleNavigate.VEHICLES:
         startActivity(new Intent(this, ChooseVehicleActivity.class));
         break;

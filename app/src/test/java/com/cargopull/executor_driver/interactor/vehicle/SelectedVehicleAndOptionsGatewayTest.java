@@ -68,10 +68,10 @@ public class SelectedVehicleAndOptionsGatewayTest {
         new Vehicle(3, "man", "mod", "col", "lic", false)
     );
     when(apiOptionMapper.map(any(ApiOptionItem.class))).thenReturn(
-        new OptionBoolean(1, "n", "d", false, true),
-        new OptionNumeric(2, "na", "de", false, 100, 0, 200),
-        new OptionBoolean(3, "nam", "des", true, false),
-        new OptionNumeric(4, "name", "desc", true, 2, 1, 3)
+        new OptionBoolean(1, "n", "d", true),
+        new OptionNumeric(2, "na", "de", 100, 0, 200),
+        new OptionBoolean(3, "nam", "des", false),
+        new OptionNumeric(4, "name", "desc", 2, 1, 3)
     );
   }
 
@@ -422,10 +422,10 @@ public class SelectedVehicleAndOptionsGatewayTest {
     // Результат:
     testObserver.assertComplete();
     testObserver.assertValue(Arrays.asList(
-        new OptionBoolean(1, "n", "d", false, true),
-        new OptionNumeric(2, "na", "de", false, 100, 0, 200),
-        new OptionBoolean(3, "nam", "des", true, false),
-        new OptionNumeric(4, "name", "desc", true, 2, 1, 3)
+        new OptionBoolean(1, "n", "d", true),
+        new OptionNumeric(2, "na", "de", 100, 0, 200),
+        new OptionBoolean(3, "nam", "des", false),
+        new OptionNumeric(4, "name", "desc", 2, 1, 3)
     ));
   }
 }

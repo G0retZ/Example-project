@@ -39,8 +39,6 @@ import com.cargopull.executor_driver.presentation.preorderslist.PreOrdersListVie
 import com.cargopull.executor_driver.presentation.selectedvehicle.SelectedVehicleViewModel;
 import com.cargopull.executor_driver.presentation.serverconnection.ServerConnectionViewModel;
 import com.cargopull.executor_driver.presentation.servertime.ServerTimeViewModel;
-import com.cargopull.executor_driver.presentation.services.ServicesSliderViewModel;
-import com.cargopull.executor_driver.presentation.services.ServicesViewModel;
 import com.cargopull.executor_driver.presentation.smsbutton.SmsButtonViewModel;
 import com.cargopull.executor_driver.presentation.upcomingpreorder.UpcomingPreOrderViewModel;
 import com.cargopull.executor_driver.presentation.upcomingpreordermessage.UpcomingPreOrderMessageViewModel;
@@ -164,12 +162,6 @@ interface PresentationComponent {
 
   @NonNull
   ServerTimeViewModel getServerTimeViewModel();
-
-  @NonNull
-  ServicesSliderViewModel getServicesSliderViewModel();
-
-  @NonNull
-  ServicesViewModel getServicesViewModel(@Nullable Fragment fragment);
 
   @NonNull
   SmsButtonViewModel getSmsButtonViewModel(@Nullable Fragment fragment);

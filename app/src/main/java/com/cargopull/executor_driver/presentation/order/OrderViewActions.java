@@ -1,12 +1,12 @@
 package com.cargopull.executor_driver.presentation.order;
 
 import androidx.annotation.NonNull;
-import com.cargopull.executor_driver.presentation.ViewActions;
+import com.cargopull.executor_driver.presentation.FragmentViewActions;
 
 /**
  * Действия для смены состояния вида окна заказа.
  */
-public interface OrderViewActions extends ViewActions {
+public interface OrderViewActions extends FragmentViewActions {
 
   /**
    * Вернуть необходимость отображения копеек/центов.
