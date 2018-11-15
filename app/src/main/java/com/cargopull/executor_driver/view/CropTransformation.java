@@ -19,8 +19,8 @@ public class CropTransformation implements Transformation {
   private final int mGravity;
 
   /**
-   * Crops to the largest image that will fit the given aspectRatio.
-   * This will effectively chop off either the top/bottom or left/right of the source image.
+   * Crops to the largest image that will fit the given aspectRatio. This will effectively chop off
+   * either the top/bottom or left/right of the source image.
    */
   CropTransformation() {
     mAspectRatio = 1;
@@ -28,8 +28,8 @@ public class CropTransformation implements Transformation {
   }
 
   /**
-   * Crops to the largest image that will fit the given aspectRatio.
-   * This will effectively chop off either the top/bottom or left/right of the source image.
+   * Crops to the largest image that will fit the given aspectRatio. This will effectively chop off
+   * either the top/bottom or left/right of the source image.
    *
    * @param aspectRatio width/height: greater than 1 is landscape, less than 1 is portrait, 1 is
    * square
@@ -41,8 +41,8 @@ public class CropTransformation implements Transformation {
   }
 
   /**
-   * Crops to the largest image that will fit the given aspectRatio.
-   * This will effectively chop off either the top/bottom or left/right of the source image.
+   * Crops to the largest image that will fit the given aspectRatio. This will effectively chop off
+   * either the top/bottom or left/right of the source image.
    *
    * @param aspectRatio width/height: greater than 1 is landscape, less than 1 is portrait, 1 is
    * square

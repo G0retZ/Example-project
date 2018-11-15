@@ -54,7 +54,7 @@ public class OrderCostDetailsViewStateIdleTest {
     when(orderCostDetailsItem.getEstimatedPackage()).thenReturn(estimatedPackageCostDetailsItem);
     when(estimatedPackageCostDetailsItem.getCost()).thenReturn(432L);
     when(estimatedPackageCostDetailsItem.getTime()).thenReturn(543L);
-    when(estimatedPackageCostDetailsItem.getDistance()).thenReturn("12.3");
+    when(estimatedPackageCostDetailsItem.getDistance()).thenReturn(12.3d);
     when(estimatedPackageCostDetailsItem.getServiceCost()).thenReturn(654L);
     when(estimatedPackageCostDetailsItem.getOptionsCosts()).thenReturn(estimatedOptionsCosts);
 
@@ -67,7 +67,7 @@ public class OrderCostDetailsViewStateIdleTest {
     verify(viewActions).showEstimatedOrderPackage(true);
     verify(viewActions).showEstimatedOrderCost(432L);
     verify(viewActions).showEstimatedOrderTime(543L);
-    verify(viewActions).showEstimatedOrderDistance("12.3");
+    verify(viewActions).showEstimatedOrderDistance(12.3d);
     verify(viewActions).showEstimatedOrderServiceCost(654L);
     verify(viewActions).showEstimatedOrderOptionsCosts(estimatedOptionsCosts);
     verify(viewActions).showOverPackage(false);
@@ -142,7 +142,7 @@ public class OrderCostDetailsViewStateIdleTest {
     when(orderCostDetailsItem.getEstimatedPackage()).thenReturn(estimatedPackageCostDetailsItem);
     when(estimatedPackageCostDetailsItem.getCost()).thenReturn(432L);
     when(estimatedPackageCostDetailsItem.getTime()).thenReturn(543L);
-    when(estimatedPackageCostDetailsItem.getDistance()).thenReturn("12.3");
+    when(estimatedPackageCostDetailsItem.getDistance()).thenReturn(12.3d);
     when(estimatedPackageCostDetailsItem.getServiceCost()).thenReturn(654L);
     when(estimatedPackageCostDetailsItem.getOptionsCosts()).thenReturn(estimatedOptionsCosts);
     when(orderCostDetailsItem.getOverPackage()).thenReturn(overPackageCostDetailsItem);
@@ -160,7 +160,7 @@ public class OrderCostDetailsViewStateIdleTest {
     verify(viewActions).showEstimatedOrderPackage(true);
     verify(viewActions).showEstimatedOrderCost(432L);
     verify(viewActions).showEstimatedOrderTime(543L);
-    verify(viewActions).showEstimatedOrderDistance("12.3");
+    verify(viewActions).showEstimatedOrderDistance(12.3d);
     verify(viewActions).showEstimatedOrderServiceCost(654L);
     verify(viewActions).showEstimatedOrderOptionsCosts(estimatedOptionsCosts);
     verify(viewActions).showOverPackage(true);
@@ -218,7 +218,7 @@ public class OrderCostDetailsViewStateIdleTest {
     when(orderCostDetailsItem.getEstimatedPackage()).thenReturn(estimatedPackageCostDetailsItem);
     when(estimatedPackageCostDetailsItem.getCost()).thenReturn(432L);
     when(estimatedPackageCostDetailsItem.getTime()).thenReturn(543L);
-    when(estimatedPackageCostDetailsItem.getDistance()).thenReturn("12.3");
+    when(estimatedPackageCostDetailsItem.getDistance()).thenReturn(12.3d);
     when(estimatedPackageCostDetailsItem.getServiceCost()).thenReturn(654L);
     when(estimatedPackageCostDetailsItem.getOptionsCosts()).thenReturn(estimatedOptionsCosts);
     when(orderCostDetailsItem.getOverPackage()).thenReturn(overPackageCostDetailsItem);
@@ -240,7 +240,7 @@ public class OrderCostDetailsViewStateIdleTest {
     verify(viewActions).showEstimatedOrderPackage(true);
     verify(viewActions).showEstimatedOrderCost(432L);
     verify(viewActions).showEstimatedOrderTime(543L);
-    verify(viewActions).showEstimatedOrderDistance("12.3");
+    verify(viewActions).showEstimatedOrderDistance(12.3d);
     verify(viewActions).showEstimatedOrderServiceCost(654L);
     verify(viewActions).showEstimatedOrderOptionsCosts(estimatedOptionsCosts);
     verify(viewActions).showOverPackage(true);

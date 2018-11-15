@@ -9,22 +9,20 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import androidx.annotation.DrawableRes;
-import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.StringRes;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import com.cargopull.executor_driver.R;
 import com.cargopull.executor_driver.backend.settings.AppSettingsService;
 import com.cargopull.executor_driver.di.AppComponent;
 import com.cargopull.executor_driver.presentation.CommonNavigate;
-import com.cargopull.executor_driver.presentation.announcement.AnnouncementStateViewActions;
+import com.cargopull.executor_driver.presentation.DialogViewActions;
+import com.cargopull.executor_driver.presentation.ImageTextViewActions;
+import com.cargopull.executor_driver.presentation.NoViewActions;
 import com.cargopull.executor_driver.presentation.announcement.AnnouncementViewModel;
 import com.cargopull.executor_driver.presentation.executorstate.ExecutorStateViewActions;
 import com.cargopull.executor_driver.presentation.executorstate.ExecutorStateViewModel;
-import com.cargopull.executor_driver.presentation.geolocationstate.GeoLocationStateViewActions;
 import com.cargopull.executor_driver.presentation.geolocationstate.GeoLocationStateViewModel;
 import com.cargopull.executor_driver.presentation.serverconnection.ServerConnectionNavigate;
 import com.cargopull.executor_driver.presentation.serverconnection.ServerConnectionViewModel;
@@ -52,8 +50,8 @@ import javax.inject.Inject;
  */
 
 @SuppressLint("Registered")
-public class BaseActivity extends AppCompatActivity implements GeoLocationStateViewActions,
-    ExecutorStateViewActions, AnnouncementStateViewActions, UpdateMessageViewActions {
+public class BaseActivity extends AppCompatActivity implements ExecutorStateViewActions,
+    UpdateMessageViewActions {
 
   @NonNull
   private final PendingDialogFragment pendingDialogFragment = new PendingDialogFragment();
@@ -62,6 +60,14 @@ public class BaseActivity extends AppCompatActivity implements GeoLocationStateV
   @NonNull
   private final LinkedList<OnBackPressedInterceptor> onBackPressedInterceptors = new LinkedList<>();
   private final Set<String> blockers = new HashSet<>();
+  private final ImageTextViewActions geoEngagementViewActions = new NoViewActions() {
+    @Override
+    public void setVisible(int id, boolean visible) {
+      if (visible && showGeolocationStateAllowed()) {
+        geoEngagementDialogFragment.show(getSupportFragmentManager(), "geoEngagement");
+      }
+    }
+  };
   private AppSettingsService appSettingsService;
   private GeoLocationStateViewModel geoLocationStateViewModel;
   private ExecutorStateViewModel executorStateViewModel;
@@ -78,6 +84,37 @@ public class BaseActivity extends AppCompatActivity implements GeoLocationStateV
   @Nullable
   private Dialog errorDialog;
   private boolean resumed;
+  private final DialogViewActions announcementViewActions = new DialogViewActions() {
+    @Override
+    public void dismissDialog() {
+    }
+
+    @Override
+    public void showPersistentDialog(int stringId, @Nullable Runnable okAction) {
+    }
+
+    @Override
+    public void showPersistentDialog(@NonNull String message, @Nullable Runnable okAction) {
+      if (announcementDialog != null) {
+        announcementDialog.dismiss();
+      }
+      announcementDialog = new Builder(BaseActivity.this)
+          .setTitle(R.string.information)
+          .setMessage(message)
+          .setCancelable(false)
+          .setPositiveButton(getString(android.R.string.ok),
+              okAction == null ? null :
+                  ((dialog, which) -> {
+                    announcementDialog = null;
+                    okAction.run();
+                  }))
+          .create();
+      if (resumed) {
+        announcementDialog.show();
+      }
+    }
+  };
+
   // FIXME: https://jira.capsrv.xyz/browse/RUCAP-2244
   private int nightMode = -1;
 
@@ -130,7 +167,7 @@ public class BaseActivity extends AppCompatActivity implements GeoLocationStateV
     }
     geoLocationStateViewModel.getViewStateLiveData().observe(this, viewState -> {
       if (viewState != null) {
-        viewState.apply(this);
+        viewState.apply(geoEngagementViewActions);
       }
     });
     executorStateViewModel.getViewStateLiveData().observe(this, viewState -> {
@@ -145,7 +182,7 @@ public class BaseActivity extends AppCompatActivity implements GeoLocationStateV
     });
     announcementViewModel.getViewStateLiveData().observe(this, viewState -> {
       if (viewState != null) {
-        viewState.apply(this);
+        viewState.apply(announcementViewActions);
       }
     });
     serverConnectionViewModel.getNavigationLiveData().observe(this, destination -> {
@@ -329,20 +366,27 @@ public class BaseActivity extends AppCompatActivity implements GeoLocationStateV
     }
   }
 
-  @Override
-  public void showAnnouncementMessage(@NonNull String message) {
-    announcementDialog = new Builder(this)
-        .setTitle(R.string.information)
-        .setMessage(message)
-        .setCancelable(false)
-        .setPositiveButton(getString(android.R.string.ok),
-            ((dialog, which) -> {
-              announcementDialog = null;
-              announcementViewModel.announcementConsumed();
-            }))
-        .create();
-    if (resumed) {
-      announcementDialog.show();
+  /**
+   * Заблокировать ЮИ экраном процесса. блокирует экран диалого процесса. Ведет учет запросов
+   * блкоировки.
+   *
+   * @param blockerId - Уникальный ИД блокирующего.
+   */
+  public void blockWithPending(@NonNull String blockerId) {
+    blockers.add(blockerId);
+    pendingDialogFragment.show(getSupportFragmentManager(), "pending");
+  }
+
+  /**
+   * Разблокировать ЮИ экраном процесса. блокирует экран диалого процесса. Ведет учет запросов
+   * разблокировки. Если число запросов блокировки меньше запросов разблокировки, то не отображаем.
+   *
+   * @param blockerId - Уникальный ИД блокирующего.
+   */
+  public void unblockWithPending(@NonNull String blockerId) {
+    blockers.remove(blockerId);
+    if (blockers.isEmpty()) {
+      pendingDialogFragment.dismiss();
     }
   }
 
@@ -396,24 +440,7 @@ public class BaseActivity extends AppCompatActivity implements GeoLocationStateV
     }
   }
 
-  @Override
-  public void setVisible(@IdRes int id, boolean visible) {
-    if (visible && showGeolocationStateAllowed()) {
-      geoEngagementDialogFragment.show(getSupportFragmentManager(), "geoEngagement");
-    }
-  }
-
-  @Override
-  public void setText(@IdRes int id, @StringRes int stringId) {
-
-  }
-
-  @Override
-  public void setImage(@IdRes int id, @DrawableRes int drawableId) {
-
-  }
-
-  protected boolean showGeolocationStateAllowed() {
+  boolean showGeolocationStateAllowed() {
     return false;
   }
 

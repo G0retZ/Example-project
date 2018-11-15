@@ -45,6 +45,8 @@ import com.cargopull.executor_driver.presentation.missedorder.MissedOrderViewMod
 import com.cargopull.executor_driver.presentation.missedorder.MissedOrderViewModelImpl;
 import com.cargopull.executor_driver.presentation.movingtoclient.MovingToClientViewModel;
 import com.cargopull.executor_driver.presentation.movingtoclient.MovingToClientViewModelImpl;
+import com.cargopull.executor_driver.presentation.movingtoclienttimer.MovingToClientTimerViewModel;
+import com.cargopull.executor_driver.presentation.movingtoclienttimer.MovingToClientTimerViewModelImpl;
 import com.cargopull.executor_driver.presentation.nextroutepoint.NextRoutePointViewModel;
 import com.cargopull.executor_driver.presentation.nextroutepoint.NextRoutePointViewModelImpl;
 import com.cargopull.executor_driver.presentation.onlinebutton.OnlineButtonViewModel;
@@ -76,11 +78,6 @@ import com.cargopull.executor_driver.presentation.serverconnection.ServerConnect
 import com.cargopull.executor_driver.presentation.serverconnection.ServerConnectionViewModelImpl;
 import com.cargopull.executor_driver.presentation.servertime.ServerTimeViewModel;
 import com.cargopull.executor_driver.presentation.servertime.ServerTimeViewModelImpl;
-import com.cargopull.executor_driver.presentation.services.ServicesListItems;
-import com.cargopull.executor_driver.presentation.services.ServicesSliderViewModel;
-import com.cargopull.executor_driver.presentation.services.ServicesSliderViewModelImpl;
-import com.cargopull.executor_driver.presentation.services.ServicesViewModel;
-import com.cargopull.executor_driver.presentation.services.ServicesViewModelImpl;
 import com.cargopull.executor_driver.presentation.smsbutton.SmsButtonViewModel;
 import com.cargopull.executor_driver.presentation.smsbutton.SmsButtonViewModelImpl;
 import com.cargopull.executor_driver.presentation.upcomingpreorder.UpcomingPreOrderViewModel;
@@ -105,8 +102,6 @@ class PresentationComponentImpl implements PresentationComponent {
   private InteractorComponent interactorComponent;
   @Nullable
   private RepositoryComponent repositoryComponent;
-  @Nullable
-  private ServicesListItems servicesListItems;
   @Nullable
   private AnnouncementViewModel announcementViewModel;
   @Nullable
@@ -136,8 +131,6 @@ class PresentationComponentImpl implements PresentationComponent {
   @Nullable
   private ServerTimeViewModel serverTimeViewModel;
   @Nullable
-  private ServicesSliderViewModel servicesSliderViewModel;
-  @Nullable
   private UpcomingPreOrderMessageViewModel upcomingPreOrderMessagesViewModel;
   @Nullable
   private UpdateMessageViewModel updateMessageViewModel;
@@ -155,7 +148,9 @@ class PresentationComponentImpl implements PresentationComponent {
   @Override
   public AnnouncementViewModel getAnnouncementViewModel() {
     if (announcementViewModel == null) {
-      announcementViewModel = new AnnouncementViewModelImpl();
+      announcementViewModel = new AnnouncementViewModelImpl(
+          getRepositoryComponent().getAnnouncementsGateway()
+      );
     }
     return announcementViewModel;
   }
@@ -510,8 +505,7 @@ class PresentationComponentImpl implements PresentationComponent {
     if (orderViewModel == null) {
       orderViewModel = new OrderViewModelImpl(
           backendComponent.getErrorReporter(),
-          getInteractorComponent().getOrderUseCase(),
-          timeUtils
+          getInteractorComponent().getOrderUseCase()
       );
     }
     return orderViewModel;
@@ -526,8 +520,10 @@ class PresentationComponentImpl implements PresentationComponent {
     return getViewModelInstance(
         fragment,
         OrderViewModelImpl.class,
-        new OrderViewModelImpl(backendComponent.getErrorReporter(),
-            getInteractorComponent().getPreOrderUseCase(), timeUtils)
+        new OrderViewModelImpl(
+            backendComponent.getErrorReporter(),
+            getInteractorComponent().getPreOrderUseCase()
+        )
     );
   }
 
@@ -693,35 +689,6 @@ class PresentationComponentImpl implements PresentationComponent {
 
   @NonNull
   @Override
-  public ServicesSliderViewModel getServicesSliderViewModel() {
-    if (servicesSliderViewModel == null) {
-      servicesSliderViewModel = new ServicesSliderViewModelImpl(
-          getServicesListItems()
-      );
-    }
-    return servicesSliderViewModel;
-  }
-
-  @NonNull
-  @Override
-  public ServicesViewModel getServicesViewModel(@Nullable Fragment fragment) {
-    if (fragment == null) {
-      throw new NullPointerException("Фрагмент не должен быть null");
-    }
-    return getViewModelInstance(
-        fragment,
-        ServicesViewModelImpl.class,
-        new ServicesViewModelImpl(
-            backendComponent.getErrorReporter(),
-            getInteractorComponent().getServicesUseCase(),
-            getServicesSliderViewModel(),
-            getServicesListItems()
-        )
-    );
-  }
-
-  @NonNull
-  @Override
   public SmsButtonViewModel getSmsButtonViewModel(@Nullable Fragment fragment) {
     if (fragment == null) {
       throw new NullPointerException("Фрагмент не должен быть null");
@@ -770,8 +737,8 @@ class PresentationComponentImpl implements PresentationComponent {
         VehicleOptionsViewModelImpl.class,
         new VehicleOptionsViewModelImpl(
             backendComponent.getErrorReporter(),
-            getInteractorComponent().getVehicleOptionsUseCase()
-        )
+            getInteractorComponent().getVehicleOptionsUseCase(),
+            getInteractorComponent().getServicesUseCase())
     );
   }
 
@@ -786,8 +753,8 @@ class PresentationComponentImpl implements PresentationComponent {
         VehicleOptionsViewModelImpl.class,
         new VehicleOptionsViewModelImpl(
             backendComponent.getErrorReporter(),
-            getInteractorComponent().getCurrentVehicleOptionsUseCase()
-        )
+            getInteractorComponent().getCurrentVehicleOptionsUseCase(),
+            getInteractorComponent().getServicesUseCase())
     );
   }
 
@@ -817,8 +784,7 @@ class PresentationComponentImpl implements PresentationComponent {
         OrderViewModelImpl.class,
         new OrderViewModelImpl(
             backendComponent.getErrorReporter(),
-            getInteractorComponent().getSelectedPreOrderUseCase(),
-            timeUtils
+            getInteractorComponent().getSelectedPreOrderUseCase()
         )
     );
   }
@@ -853,8 +819,7 @@ class PresentationComponentImpl implements PresentationComponent {
         OrderViewModelImpl.class,
         new OrderViewModelImpl(
             backendComponent.getErrorReporter(),
-            getInteractorComponent().getUpcomingPreOrderUseCase(),
-            timeUtils
+            getInteractorComponent().getUpcomingPreOrderUseCase()
         )
     );
   }
@@ -878,6 +843,7 @@ class PresentationComponentImpl implements PresentationComponent {
     );
   }
 
+  @NonNull
   @Override
   public UpcomingPreOrderViewModel getUpcomingPreOrderAvailabilityViewModel() {
     if (upcomingPreOrderAvailabilityViewModel == null) {
@@ -889,6 +855,7 @@ class PresentationComponentImpl implements PresentationComponent {
     return upcomingPreOrderAvailabilityViewModel;
   }
 
+  @NonNull
   @Override
   public GeoLocationStateViewModel getGeoLocationStateViewModel(
       @Nullable AppCompatActivity appCompatActivity) {
@@ -927,11 +894,20 @@ class PresentationComponentImpl implements PresentationComponent {
   }
 
   @NonNull
-  private ServicesListItems getServicesListItems() {
-    if (servicesListItems == null) {
-      servicesListItems = new ServicesListItems();
+  @Override
+  public MovingToClientTimerViewModel getMovingToClientTimerViewModel(Fragment fragment) {
+    if (fragment == null) {
+      throw new NullPointerException("Фрагмент не должен быть null");
     }
-    return servicesListItems;
+    return getViewModelInstance(
+        fragment,
+        MovingToClientTimerViewModelImpl.class,
+        new MovingToClientTimerViewModelImpl(
+            backendComponent.getErrorReporter(),
+            getInteractorComponent().getOrderUseCase(),
+            timeUtils
+        )
+    );
   }
 
   @NonNull

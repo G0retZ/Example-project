@@ -253,7 +253,7 @@ public class OrderCostDetailsFragment extends BaseFragment implements OrderCostD
   }
 
   @Override
-  public void showEstimatedOrderDistance(@Nullable String distance) {
+  public void showEstimatedOrderDistance(double distance) {
     estimatedPackageDistance.setText(getString(R.string.km, distance));
   }
 

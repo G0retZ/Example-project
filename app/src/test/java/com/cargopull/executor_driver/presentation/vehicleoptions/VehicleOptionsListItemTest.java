@@ -16,7 +16,7 @@ public class VehicleOptionsListItemTest {
   @Before
   public void setUp() {
     vehicleOptionsListItem = new VehicleOptionsListItem<>(
-        new OptionBoolean(11, "name", "description", false, false)
+        new OptionBoolean(11, "name", "description", false)
     );
   }
 
@@ -30,7 +30,7 @@ public class VehicleOptionsListItemTest {
     assertEquals(vehicleOptionsListItem.getMinValue(), false);
     assertEquals(vehicleOptionsListItem.getMaxValue(), true);
     vehicleOptionsListItem = new VehicleOptionsListItem<>(
-        new OptionNumeric(11, "emacs", "desc", true, 5, 0, 10)
+        new OptionNumeric(11, "emacs", "desc", 5, 0, 10)
     );
     assertEquals(vehicleOptionsListItem.getName(), "emacs");
     assertEquals(vehicleOptionsListItem.getDescription(), "desc");
@@ -52,7 +52,7 @@ public class VehicleOptionsListItemTest {
     assertEquals(vehicleOptionsListItem.getMinValue(), false);
     assertEquals(vehicleOptionsListItem.getMaxValue(), true);
     vehicleOptionsListItem = new VehicleOptionsListItem<>(
-        new OptionNumeric(11, "emacs", "desc", true, 5, 0, 10)
+        new OptionNumeric(11, "emacs", "desc", 5, 0, 10)
     );
     vehicleOptionsListItem.setValue(7);
     assertEquals(vehicleOptionsListItem.getName(), "emacs");
@@ -67,82 +67,46 @@ public class VehicleOptionsListItemTest {
   @Test
   public void testEquals() {
     assertEquals(vehicleOptionsListItem,
-        new VehicleOptionsListItem<>(
-            new OptionBoolean(11, "name", "description", false, false)
-        )
+        new VehicleOptionsListItem<>(new OptionBoolean(11, "name", "description", false))
     );
     assertNotEquals(vehicleOptionsListItem,
-        new VehicleOptionsListItem<>(
-            new OptionBoolean(12, "name", "description", false, false)
-        )
+        new VehicleOptionsListItem<>(new OptionBoolean(12, "name", "description", false))
     );
     assertNotEquals(vehicleOptionsListItem,
-        new VehicleOptionsListItem<>(
-            new OptionBoolean(11, "names", "description", false, false)
-        )
+        new VehicleOptionsListItem<>(new OptionBoolean(11, "names", "description", false))
     );
     assertNotEquals(vehicleOptionsListItem,
-        new VehicleOptionsListItem<>(
-            new OptionBoolean(11, "name", "descriptions", false, false)
-        )
+        new VehicleOptionsListItem<>(new OptionBoolean(11, "name", "descriptions", false))
     );
     assertNotEquals(vehicleOptionsListItem,
-        new VehicleOptionsListItem<>(
-            new OptionBoolean(11, "name", "description", true, false)
-        )
+        new VehicleOptionsListItem<>(new OptionBoolean(11, "name", "description", true))
     );
     assertNotEquals(vehicleOptionsListItem,
-        new VehicleOptionsListItem<>(
-            new OptionBoolean(11, "name", "description", false, true)
-        )
-    );
-    assertNotEquals(vehicleOptionsListItem,
-        new VehicleOptionsListItem<>(
-            new OptionNumeric(11, "emacs", "description", true, 5, 0, 10)
-        )
+        new VehicleOptionsListItem<>(new OptionNumeric(11, "emacs", "description", 5, 0, 10))
     );
     vehicleOptionsListItem = new VehicleOptionsListItem<>(
-        new OptionNumeric(11, "emacs", "description", true, 5, 0, 10)
+        new OptionNumeric(11, "emacs", "description", 5, 0, 10)
     );
     assertEquals(vehicleOptionsListItem,
-        new VehicleOptionsListItem<>(
-            new OptionNumeric(11, "emacs", "description", true, 5, 0, 10)
-        )
+        new VehicleOptionsListItem<>(new OptionNumeric(11, "emacs", "description", 5, 0, 10))
     );
     assertNotEquals(vehicleOptionsListItem,
-        new VehicleOptionsListItem<>(
-            new OptionNumeric(12, "emacs", "description", true, 5, 0, 10)
-        )
+        new VehicleOptionsListItem<>(new OptionNumeric(12, "emacs", "description", 5, 0, 10))
     );
     assertNotEquals(vehicleOptionsListItem,
-        new VehicleOptionsListItem<>(
-            new OptionNumeric(11, "name", "description", true, 5, 0, 10)
-        )
+        new VehicleOptionsListItem<>(new OptionNumeric(11, "name", "description", 5, 0, 10))
     );
     assertNotEquals(vehicleOptionsListItem,
-        new VehicleOptionsListItem<>(
-            new OptionNumeric(11, "emacs", "descriptions", true, 5, 0, 10)
-        )
+        new VehicleOptionsListItem<>(new OptionNumeric(11, "emacs", "descriptions", 5, 0, 10))
     );
     assertNotEquals(vehicleOptionsListItem,
-        new VehicleOptionsListItem<>(
-            new OptionNumeric(11, "emacs", "description", false, 5, 0, 10)
-        )
+        new VehicleOptionsListItem<>(new OptionNumeric(11, "emacs", "description", 0, 0, 10))
     );
     assertNotEquals(vehicleOptionsListItem,
-        new VehicleOptionsListItem<>(
-            new OptionNumeric(11, "emacs", "description", true, 0, 0, 10)
-        )
+        new VehicleOptionsListItem<>(new OptionNumeric(11, "emacs", "description", 5, 5, 10))
     );
     assertNotEquals(vehicleOptionsListItem,
-        new VehicleOptionsListItem<>(
-            new OptionNumeric(11, "emacs", "description", true, 5, 5, 10)
-        )
-    );
-    assertNotEquals(vehicleOptionsListItem,
-        new VehicleOptionsListItem<>(
-            new OptionNumeric(11, "emacs", "description", true, 5, 0, 5)
-        )
+        new VehicleOptionsListItem<>(new OptionNumeric(11, "emacs", "description", 5, 0, 5))
     );
   }
 }

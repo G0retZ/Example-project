@@ -27,6 +27,10 @@ import com.cargopull.executor_driver.backend.websocket.PersonalQueueListener;
 import com.cargopull.executor_driver.backend.websocket.TopicListener;
 import com.cargopull.executor_driver.gateway.TokenKeeperImpl;
 import com.cargopull.executor_driver.interactor.DataReceiver;
+import io.reactivex.Observable;
+import io.reactivex.Observer;
+import io.reactivex.subjects.PublishSubject;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
@@ -60,6 +64,8 @@ class BackendComponentImpl implements BackendComponent {
   private StompClient stompClient;
   @Nullable
   private PersonalQueueListener personalQueueListener;
+  @Nullable
+  private PublishSubject<Map<String, String>> fcmSubject;
   @Nullable
   private OkHttpClient okHttpClient;
 
@@ -153,6 +159,24 @@ class BackendComponentImpl implements BackendComponent {
       locationManager = (LocationManager) appContext.getSystemService(Context.LOCATION_SERVICE);
     }
     return locationManager;
+  }
+
+  @NonNull
+  @Override
+  public Observer<Map<String, String>> getFcmReceiver() {
+    if (fcmSubject == null) {
+      fcmSubject = PublishSubject.create();
+    }
+    return fcmSubject;
+  }
+
+  @NonNull
+  @Override
+  public Observable<Map<String, String>> getFcmSender() {
+    if (fcmSubject == null) {
+      fcmSubject = PublishSubject.create();
+    }
+    return fcmSubject;
   }
 
   @NonNull

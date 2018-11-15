@@ -1,7 +1,6 @@
 package com.cargopull.executor_driver.interactor.map;
 
 import static org.mockito.Mockito.only;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
@@ -10,11 +9,8 @@ import com.cargopull.executor_driver.UseCaseThreadTestRule;
 import com.cargopull.executor_driver.backend.web.NoNetworkException;
 import io.reactivex.Single;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.plugins.RxJavaPlugins;
-import io.reactivex.schedulers.TestScheduler;
 import io.reactivex.subscribers.TestSubscriber;
 import java.util.concurrent.Callable;
-import java.util.concurrent.TimeUnit;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
@@ -28,11 +24,7 @@ public class HeatMapUseCaseTest {
   @ClassRule
   public static final UseCaseThreadTestRule classRule = new UseCaseThreadTestRule();
 
-  private final static int REQUIRED_INTERVAL = 5;
-
   private HeatMapUseCase useCase;
-
-  private TestScheduler testScheduler;
 
   @Mock
   private HeatMapGateway gateway;
@@ -42,8 +34,6 @@ public class HeatMapUseCaseTest {
 
   @Before
   public void setUp() {
-    testScheduler = new TestScheduler();
-    RxJavaPlugins.setComputationSchedulerHandler(scheduler -> testScheduler);
     when(gateway.getHeatMap()).thenReturn(Single.never());
     useCase = new HeatMapUseCaseImpl(gateway);
   }
@@ -87,15 +77,11 @@ public class HeatMapUseCaseTest {
 
     // Действие:
     TestSubscriber<String> testObserver = useCase.loadHeatMap().test();
-    testScheduler.advanceTimeBy(REQUIRED_INTERVAL, TimeUnit.MINUTES);
-    testScheduler.advanceTimeBy(REQUIRED_INTERVAL, TimeUnit.MINUTES);
-    testScheduler.advanceTimeBy(REQUIRED_INTERVAL, TimeUnit.MINUTES);
 
     // Результат:
-    testObserver.assertNoErrors();
+    testObserver.assertError(NoNetworkException.class);
     testObserver.assertNotComplete();
     testObserver.assertNoValues();
-    testObserver.assertNotTerminated();
   }
 
   /**
@@ -125,13 +111,12 @@ public class HeatMapUseCaseTest {
 
     // Действие:
     TestSubscriber<String> testObserver = useCase.loadHeatMap().test();
-    testScheduler.advanceTimeBy(REQUIRED_INTERVAL * 9, TimeUnit.MINUTES);
 
     // Результат:
     testObserver.assertNoErrors();
     testObserver.assertNotComplete();
     testObserver.assertNotTerminated();
-    testObserver.assertValues("12", "12", "12", "123", "123", "123");
+    testObserver.assertValue("12");
   }
 
   /**
@@ -152,19 +137,12 @@ public class HeatMapUseCaseTest {
         .subscribe(System.out::println); // +1 вызов
     Disposable disposable3 = useCase.loadHeatMap()
         .subscribe(System.out::println); // +1 вызов
-    testScheduler
-        .advanceTimeBy(REQUIRED_INTERVAL, TimeUnit.MINUTES); // +3 вызова на всех подписчиков
     disposable1.dispose();
-    testScheduler
-        .advanceTimeBy(REQUIRED_INTERVAL, TimeUnit.MINUTES); // +2 вызова на оставшихся подписчиков
     disposable2.dispose();
-    testScheduler
-        .advanceTimeBy(REQUIRED_INTERVAL, TimeUnit.MINUTES); // +1 вызов на последнего подписчика
     disposable3.dispose();
 
     // Результат:
-    verify(testCallable, times(4)).call();
-    testScheduler.advanceTimeBy(REQUIRED_INTERVAL * 10, TimeUnit.MINUTES);
+    verify(testCallable).call();
     verifyNoMoreInteractions(testCallable);
   }
 }

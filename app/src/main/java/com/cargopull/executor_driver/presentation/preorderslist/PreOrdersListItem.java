@@ -33,8 +33,7 @@ public interface PreOrdersListItem {
   @NonNull
   String getNextAddress();
 
-  @NonNull
-  String getRouteLength();
+  float getRouteLength();
 
   @NonNull
   String getEstimatedPrice(@NonNull Resources resources);

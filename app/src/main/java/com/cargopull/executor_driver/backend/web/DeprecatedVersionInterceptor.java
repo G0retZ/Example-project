@@ -7,7 +7,8 @@ import okhttp3.Interceptor;
 import okhttp3.Response;
 
 /**
- * Перехватчик для проверки допустимости версии приложения. Если сервер ответил 403 (Forbidden) с, то кидает соответствующее исключение.
+ * Перехватчик для проверки допустимости версии приложения. Если сервер ответил 403 (Forbidden), то
+ * кидает соответствующее исключение.
  */
 public class DeprecatedVersionInterceptor implements Interceptor {
 

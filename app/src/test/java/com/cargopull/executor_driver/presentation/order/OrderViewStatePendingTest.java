@@ -38,7 +38,7 @@ public class OrderViewStatePendingTest {
     viewState.apply(viewActions);
 
     // Результат:
-    verify(viewActions).showOrderPending(true);
+    verify(viewActions).blockWithPending("OrderViewState");
     verifyNoMoreInteractions(viewActions);
     verify(parentViewState, only()).apply(viewActions);
   }
@@ -52,7 +52,7 @@ public class OrderViewStatePendingTest {
     viewState.apply(viewActions);
 
     // Результат:
-    verify(viewActions).showOrderPending(true);
+    verify(viewActions).blockWithPending("OrderViewState");
     verifyNoMoreInteractions(viewActions);
     verifyZeroInteractions(parentViewState);
   }

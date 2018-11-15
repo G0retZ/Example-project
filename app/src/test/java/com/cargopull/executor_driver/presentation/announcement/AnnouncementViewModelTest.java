@@ -2,41 +2,59 @@ package com.cargopull.executor_driver.presentation.announcement;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.only;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.when;
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
 import androidx.lifecycle.Observer;
+import com.cargopull.executor_driver.ViewModelThreadTestRule;
+import com.cargopull.executor_driver.interactor.CommonGateway;
+import com.cargopull.executor_driver.presentation.DialogViewActions;
 import com.cargopull.executor_driver.presentation.ViewState;
+import io.reactivex.BackpressureStrategy;
+import io.reactivex.subjects.PublishSubject;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestRule;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
+import org.mockito.InOrder;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AnnouncementViewModelTest {
 
+  @ClassRule
+  public static final ViewModelThreadTestRule classRule = new ViewModelThreadTestRule();
   @Rule
   public TestRule rule = new InstantTaskExecutorRule();
   private AnnouncementViewModel viewModel;
   @Mock
-  private Observer<ViewState<AnnouncementStateViewActions>> viewStateObserver;
-  @Captor
-  private ArgumentCaptor<ViewState<AnnouncementStateViewActions>> viewStateCaptor;
+  private CommonGateway<String> gateway;
   @Mock
-  private AnnouncementStateViewActions viewActions;
+  private Observer<ViewState<DialogViewActions>> viewStateObserver;
+  @Captor
+  private ArgumentCaptor<ViewState<DialogViewActions>> viewStateCaptor;
+  @Mock
+  private DialogViewActions viewActions;
+  @Captor
+  private ArgumentCaptor<Runnable> runnableCaptor;
+  private PublishSubject<String> publishSubject;
 
   @Before
   public void setUp() {
-    viewModel = new AnnouncementViewModelImpl();
+    publishSubject = PublishSubject.create();
+    when(gateway.getData()).thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
+    viewModel = new AnnouncementViewModelImpl(gateway);
   }
 
   /* Тетсируем объявление. */
@@ -46,14 +64,16 @@ public class AnnouncementViewModelTest {
    */
   @Test
   public void showUpdateMessageMessage() {
-    // Действие:
+    // Дано:
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
-    viewModel.postMessage("Message");
+
+    // Действие:
+    publishSubject.onNext("Message");
 
     // Результат:
     verify(viewStateObserver, only()).onChanged(viewStateCaptor.capture());
     viewStateCaptor.getValue().apply(viewActions);
-    verify(viewActions, only()).showAnnouncementMessage("Message");
+    verify(viewActions, only()).showPersistentDialog(eq("Message"), runnableCaptor.capture());
   }
 
   /**
@@ -61,17 +81,22 @@ public class AnnouncementViewModelTest {
    */
   @Test
   public void showOnlineMessageThenNull() {
-    // Действие:
+    // Дано:
+    InOrder inOrder = Mockito.inOrder(viewStateObserver);
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
-    viewModel.postMessage("Message");
-    viewModel.announcementConsumed();
+    publishSubject.onNext("Message");
+    inOrder.verify(viewStateObserver).onChanged(viewStateCaptor.capture());
+    assertEquals(1, viewStateCaptor.getAllValues().size());
+    viewStateCaptor.getAllValues().get(0).apply(viewActions);
+    verify(viewActions, only()).showPersistentDialog(eq("Message"), runnableCaptor.capture());
+
+    // Действие:
+    runnableCaptor.getValue().run();
 
     // Результат:
-    verify(viewStateObserver, times(2)).onChanged(viewStateCaptor.capture());
+    inOrder.verify(viewStateObserver).onChanged(viewStateCaptor.capture());
     assertEquals(2, viewStateCaptor.getAllValues().size());
     assertNull(viewStateCaptor.getAllValues().get(1));
-    viewStateCaptor.getAllValues().get(0).apply(viewActions);
-    verify(viewActions, only()).showAnnouncementMessage("Message");
     verifyNoMoreInteractions(viewStateObserver);
   }
 
@@ -80,9 +105,11 @@ public class AnnouncementViewModelTest {
    */
   @Test
   public void doNotShowEmptyMessage() {
-    // Действие:
+    // Дано:
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
-    viewModel.postMessage("");
+
+    // Действие:
+    publishSubject.onNext("");
 
     // Результат:
     verifyZeroInteractions(viewStateObserver);
@@ -93,9 +120,11 @@ public class AnnouncementViewModelTest {
    */
   @Test
   public void doNotShowSpaceMessage() {
-    // Действие:
+    // Дано:
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
-    viewModel.postMessage("  ");
+
+    // Действие:
+    publishSubject.onNext("  ");
 
     // Результат:
     verifyZeroInteractions(viewStateObserver);

@@ -32,6 +32,7 @@ public class VehicleOptionsViewStatePendingTest {
     verify(viewActions).showVehicleOptionsList(true);
     verify(viewActions).showVehicleOptionsPending(true);
     verify(viewActions).showVehicleOptionsListErrorMessage(false);
+    verify(viewActions).dismissDialog();
     verifyNoMoreInteractions(viewActions);
   }
 }

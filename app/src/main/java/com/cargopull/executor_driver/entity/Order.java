@@ -7,9 +7,9 @@ import java.util.List;
 
 /**
  * Неизменная бизнес сущность заказа. Содержит в себе ID, комментарий, расстояние до клиента,
- * предполагаемую цену, список опций и таймуат предложения.
- * Список опций неизменен, но его содержимое может изменяться - дополняться или заменяться.
- * Список точек маршрута неизменен, но его содержимое может изменяться - дополняться или заменяться.
+ * предполагаемую цену, список опций и таймуат предложения. Список опций неизменен, но его
+ * содержимое может изменяться - дополняться или заменяться. Список точек маршрута неизменен, но его
+ * содержимое может изменяться - дополняться или заменяться.
  */
 public class Order {
 
@@ -123,6 +123,16 @@ public class Order {
   }
 
   @NonNull
+  public RoutePoint getNextActiveRoutePoint() {
+    for (RoutePoint routePoint : routePath) {
+      if (routePoint.getRoutePointState() == RoutePointState.ACTIVE) {
+        return routePoint;
+      }
+    }
+    return routePath.get(0);
+  }
+
+  @NonNull
   public List<Option> getOptions() {
     return options;
   }
@@ -130,6 +140,12 @@ public class Order {
   public void setOptions(@NonNull Option... options) {
     this.options.clear();
     addOptions(options);
+  }
+
+  private Order setOptions(@NonNull List<Option> options) {
+    this.options.clear();
+    this.options.addAll(options);
+    return this;
   }
 
   public void addOptions(@NonNull Option... options) {
@@ -141,19 +157,13 @@ public class Order {
     return routePath;
   }
 
-  public void setRoutePoints(@NonNull RoutePoint... routePoints) {
+  void setRoutePoints(@NonNull RoutePoint... routePoints) {
     routePath.clear();
     addRoutePoints(routePoints);
   }
 
   public void addRoutePoints(@NonNull RoutePoint... routePoints) {
     routePath.addAll(Arrays.asList(routePoints));
-  }
-
-  private Order setOptions(@NonNull List<Option> options) {
-    this.options.clear();
-    this.options.addAll(options);
-    return this;
   }
 
   private Order setRoutePoints(@NonNull List<RoutePoint> routePoints) {

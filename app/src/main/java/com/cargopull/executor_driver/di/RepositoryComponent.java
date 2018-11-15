@@ -152,4 +152,7 @@ interface RepositoryComponent {
 
   @NonNull
   CommonGateway<Boolean> getGeoLocationStateGateway();
+
+  @NonNull
+  CommonGateway<String> getAnnouncementsGateway();
 }

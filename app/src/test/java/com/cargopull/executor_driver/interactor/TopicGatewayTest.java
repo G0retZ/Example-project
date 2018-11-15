@@ -10,7 +10,7 @@ import com.cargopull.executor_driver.GatewayThreadTestRule;
 import com.cargopull.executor_driver.backend.websocket.TopicListener;
 import com.cargopull.executor_driver.gateway.DataMappingException;
 import com.cargopull.executor_driver.gateway.Mapper;
-import com.cargopull.executor_driver.gateway.TopicGatewayImpl;
+import com.cargopull.executor_driver.gateway.TopicGateway;
 import io.reactivex.Flowable;
 import io.reactivex.functions.Predicate;
 import io.reactivex.subscribers.TestSubscriber;
@@ -29,13 +29,11 @@ import ua.naiksoftware.stomp.client.StompMessage;
 @RunWith(Parameterized.class)
 public class TopicGatewayTest {
 
-  @Rule
-  public MockitoRule rule = MockitoJUnit.rule();
   @ClassRule
   public static final GatewayThreadTestRule classRule = new GatewayThreadTestRule();
-
   private final boolean withDefault;
-
+  @Rule
+  public MockitoRule rule = MockitoJUnit.rule();
   private CommonGateway<String> gateway;
   @Mock
   private TopicListener topicListener;
@@ -62,9 +60,9 @@ public class TopicGatewayTest {
   @Before
   public void setUp() {
     if (withDefault) {
-      gateway = new TopicGatewayImpl<>(topicListener, filter, mapper, "defaultValue");
+      gateway = new TopicGateway<>(topicListener, filter, mapper, "defaultValue");
     } else {
-      gateway = new TopicGatewayImpl<>(topicListener, filter, mapper);
+      gateway = new TopicGateway<>(topicListener, filter, mapper);
     }
     when(topicListener.getAcknowledgedMessages()).thenReturn(Flowable.never());
   }

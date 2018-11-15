@@ -7,7 +7,6 @@ import static org.mockito.Mockito.when;
 import com.cargopull.executor_driver.entity.PackageCostDetails;
 import com.cargopull.executor_driver.utils.Pair;
 import java.util.Arrays;
-import java.util.Locale;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -52,8 +51,7 @@ public class PackageCostDetailsItemTest {
     when(packageCostDetails.getPackageDistance()).thenReturn(123456);
 
     // Результат:
-    assertEquals(packageCostDetailsItem.getDistance(),
-        String.format(Locale.getDefault(), "%.2f", 123456 / 1000d));
+    assertEquals(packageCostDetailsItem.getDistance(), 123.456d, 0);
   }
 
   @Test

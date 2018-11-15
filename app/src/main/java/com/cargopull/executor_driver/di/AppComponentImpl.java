@@ -31,6 +31,7 @@ import com.cargopull.executor_driver.gateway.SmsCodeMapper;
 import com.cargopull.executor_driver.utils.Consumer;
 import com.cargopull.executor_driver.utils.TimeUtils;
 import com.cargopull.executor_driver.utils.TimeUtilsImpl;
+import com.cargopull.executor_driver.view.ActionOrderDetailsFragment;
 import com.cargopull.executor_driver.view.BalanceFragment;
 import com.cargopull.executor_driver.view.BalanceSummaryFragment;
 import com.cargopull.executor_driver.view.CallToClientFragment;
@@ -47,7 +48,6 @@ import com.cargopull.executor_driver.view.GoOnlineFragment;
 import com.cargopull.executor_driver.view.MapFragment;
 import com.cargopull.executor_driver.view.MenuFragment;
 import com.cargopull.executor_driver.view.MovingToClientActionsDialogFragment;
-import com.cargopull.executor_driver.view.MovingToClientDetailsFragment;
 import com.cargopull.executor_driver.view.MovingToClientFragment;
 import com.cargopull.executor_driver.view.MovingToClientRouteFragment;
 import com.cargopull.executor_driver.view.NewPreOrderButtonFragment;
@@ -55,10 +55,8 @@ import com.cargopull.executor_driver.view.NewPreOrderFragment;
 import com.cargopull.executor_driver.view.OnlineFragment;
 import com.cargopull.executor_driver.view.OrderCostDetailsActionsDialogFragment;
 import com.cargopull.executor_driver.view.OrderCostDetailsFragment;
-import com.cargopull.executor_driver.view.OrderCostDetailsOrderDetailsFragment;
 import com.cargopull.executor_driver.view.OrderCostDetailsRouteFragment;
 import com.cargopull.executor_driver.view.OrderFulfillmentActionsDialogFragment;
-import com.cargopull.executor_driver.view.OrderFulfillmentDetailsFragment;
 import com.cargopull.executor_driver.view.OrderFulfillmentFragment;
 import com.cargopull.executor_driver.view.OrderRouteFragment;
 import com.cargopull.executor_driver.view.PreOrderConfirmationFragment;
@@ -70,7 +68,6 @@ import com.cargopull.executor_driver.view.SelectedPreOrderFragment;
 import com.cargopull.executor_driver.view.SelectedVehicleFragment;
 import com.cargopull.executor_driver.view.SelectedVehicleOptionsFragment;
 import com.cargopull.executor_driver.view.ServerConnectionFragment;
-import com.cargopull.executor_driver.view.ServicesFragment;
 import com.cargopull.executor_driver.view.UpcomingPreOrderConfirmationFragment;
 import com.cargopull.executor_driver.view.UpcomingPreOrderFragment;
 import com.cargopull.executor_driver.view.UpcomingPreOrderNotificationFragment;
@@ -268,8 +265,8 @@ public class AppComponentImpl implements AppComponent {
 
   @Override
   public void inject(FcmService fcmService) {
-    fcmService.setAnnouncementViewModel(
-        getPresentationComponent().getAnnouncementViewModel()
+    fcmService.setFcmObserver(
+        getBackendComponent().getFcmReceiver()
     );
     fcmService.setApiService(
         getBackendComponent().getApiService()
@@ -363,16 +360,6 @@ public class AppComponentImpl implements AppComponent {
   }
 
   @Override
-  public void inject(ServicesFragment servicesFragment) {
-    servicesFragment.setServicesSliderViewModel(
-        getPresentationComponent().getServicesSliderViewModel()
-    );
-    servicesFragment.setServicesViewModel(
-        getPresentationComponent().getServicesViewModel(servicesFragment)
-    );
-  }
-
-  @Override
   public void inject(DriverOrderConfirmationFragment driverOrderConfirmationFragment) {
     driverOrderConfirmationFragment.setOrderConfirmationViewModel(
         getPresentationComponent().getOrderConfirmationViewModel(driverOrderConfirmationFragment)
@@ -400,11 +387,14 @@ public class AppComponentImpl implements AppComponent {
 
   @Override
   public void inject(MovingToClientFragment movingToClientFragment) {
-    movingToClientFragment.setMovingToClientViewModel(
-        getPresentationComponent().getMovingToClientViewModel(movingToClientFragment)
-    );
     movingToClientFragment.setOrderViewModel(
         getPresentationComponent().getOrderViewModel()
+    );
+    movingToClientFragment.setMovingToClientTimerViewModel(
+        getPresentationComponent().getMovingToClientTimerViewModel(movingToClientFragment)
+    );
+    movingToClientFragment.setMovingToClientViewModel(
+        getPresentationComponent().getMovingToClientViewModel(movingToClientFragment)
     );
     movingToClientFragment.setShakeItPlayer(
         getShakeItPlayer()
@@ -419,8 +409,8 @@ public class AppComponentImpl implements AppComponent {
   }
 
   @Override
-  public void inject(MovingToClientDetailsFragment movingToClientDetailsFragment) {
-    movingToClientDetailsFragment.setOrderViewModel(
+  public void inject(ActionOrderDetailsFragment actionOrderDetailsFragment) {
+    actionOrderDetailsFragment.setOrderViewModel(
         getPresentationComponent().getOrderViewModel()
     );
   }
@@ -475,13 +465,6 @@ public class AppComponentImpl implements AppComponent {
     );
     orderFulfillmentFragment.setShakeItPlayer(
         getShakeItPlayer()
-    );
-  }
-
-  @Override
-  public void inject(OrderFulfillmentDetailsFragment orderFulfillmentDetailsFragment) {
-    orderFulfillmentDetailsFragment.setOrderViewModel(
-        getPresentationComponent().getOrderViewModel()
     );
   }
 
@@ -573,13 +556,6 @@ public class AppComponentImpl implements AppComponent {
     );
     orderCostDetailsFragment.setShakeItPlayer(
         getShakeItPlayer()
-    );
-  }
-
-  @Override
-  public void inject(OrderCostDetailsOrderDetailsFragment orderCostDetailsOrderDetailsFragment) {
-    orderCostDetailsOrderDetailsFragment.setOrderViewModel(
-        getPresentationComponent().getOrderViewModel()
     );
   }
 

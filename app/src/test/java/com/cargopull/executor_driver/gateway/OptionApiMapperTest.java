@@ -1,7 +1,6 @@
 package com.cargopull.executor_driver.gateway;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
@@ -22,8 +21,8 @@ public class OptionApiMapperTest {
   }
 
   /**
-   * Должен успешно преобразовать неизменяемый двоичный входной объект с пределами в неизменяемый
-   * двоичный параметр.
+   * Должен успешно преобразовать неизменяемый двоичный входной объект с пределами в двоичный
+   * параметр.
    *
    * @throws Exception ошибка
    */
@@ -41,15 +40,14 @@ public class OptionApiMapperTest {
     assertEquals(option.getId(), 324);
     assertEquals(option.getName(), "name");
     assertEquals(option.getDescription(), "description");
-    assertFalse(option.isVariable());
     assertEquals(option.getValue(), true);
     assertEquals(option.getMinValue(), false);
     assertEquals(option.getMaxValue(), true);
   }
 
   /**
-   * Должен успешно преобразовать неизменяемый двоичный входной объект без опсания в неизменяемый
-   * двоичный параметр.
+   * Должен успешно преобразовать неизменяемый двоичный входной объект без описания в двоичный
+   * параметр.
    *
    * @throws Exception ошибка
    */
@@ -67,15 +65,14 @@ public class OptionApiMapperTest {
     assertEquals(option.getId(), 324);
     assertEquals(option.getName(), "name");
     assertNull(option.getDescription());
-    assertFalse(option.isVariable());
     assertEquals(option.getValue(), true);
     assertEquals(option.getMinValue(), false);
     assertEquals(option.getMaxValue(), true);
   }
 
   /**
-   * Должен успешно преобразовать неизменяемый двоичный входной объект без пределов в неизменяемый
-   * двоичный параметр.
+   * Должен успешно преобразовать неизменяемый двоичный входной объект без пределов в двоичный
+   * параметр.
    *
    * @throws Exception ошибка
    */
@@ -93,15 +90,14 @@ public class OptionApiMapperTest {
     assertEquals(option.getId(), 454);
     assertEquals(option.getName(), "name");
     assertEquals(option.getDescription(), "description");
-    assertFalse(option.isVariable());
     assertEquals(option.getValue(), false);
     assertEquals(option.getMinValue(), false);
     assertEquals(option.getMaxValue(), true);
   }
 
   /**
-   * Должен успешно преобразовать изменяемый двоичный входной объект с пределами в изменяемый
-   * двоичный параметр.
+   * Должен успешно преобразовать изменяемый двоичный входной объект с пределами в двоичный
+   * параметр.
    *
    * @throws Exception ошибка
    */
@@ -119,15 +115,14 @@ public class OptionApiMapperTest {
     assertEquals(option.getId(), 1);
     assertEquals(option.getName(), "name");
     assertEquals(option.getDescription(), "description");
-    assertTrue(option.isVariable());
     assertEquals(option.getValue(), false);
     assertEquals(option.getMinValue(), false);
     assertEquals(option.getMaxValue(), true);
   }
 
   /**
-   * Должен успешно преобразовать изменяемый двоичный входной объект без описания в изменяемый
-   * двоичный параметр.
+   * Должен успешно преобразовать изменяемый двоичный входной объект без описания в двоичный
+   * параметр.
    *
    * @throws Exception ошибка
    */
@@ -145,15 +140,14 @@ public class OptionApiMapperTest {
     assertEquals(option.getId(), 1);
     assertEquals(option.getName(), "name");
     assertNull(option.getDescription());
-    assertTrue(option.isVariable());
     assertEquals(option.getValue(), false);
     assertEquals(option.getMinValue(), false);
     assertEquals(option.getMaxValue(), true);
   }
 
   /**
-   * Должен успешно преобразовать изменяемый двоичный входной объект без пределов в изменяемый
-   * двоичный параметр.
+   * Должен успешно преобразовать изменяемый двоичный входной объект без пределов в двоичный
+   * параметр.
    *
    * @throws Exception ошибка
    */
@@ -171,15 +165,14 @@ public class OptionApiMapperTest {
     assertEquals(option.getId(), 1);
     assertEquals(option.getName(), "name");
     assertEquals(option.getDescription(), "description");
-    assertTrue(option.isVariable());
     assertEquals(option.getValue(), true);
     assertEquals(option.getMinValue(), false);
     assertEquals(option.getMaxValue(), true);
   }
 
   /**
-   * Должен успешно преобразовать неизменяемый числовой входной объект с пределами в неизменяемый
-   * числовой параметр.
+   * Должен успешно преобразовать неизменяемый числовой входной объект с пределами в числовой
+   * параметр.
    *
    * @throws Exception ошибка
    */
@@ -197,15 +190,14 @@ public class OptionApiMapperTest {
     assertEquals(option.getId(), 324);
     assertEquals(option.getName(), "name");
     assertEquals(option.getDescription(), "description");
-    assertFalse(option.isVariable());
     assertEquals(option.getValue(), 34);
     assertEquals(option.getMinValue(), -5);
     assertEquals(option.getMaxValue(), 123);
   }
 
   /**
-   * Должен успешно преобразовать неизменяемый числовой входной объект без описания в неизменяемый
-   * числовой параметр.
+   * Должен успешно преобразовать неизменяемый числовой входной объект без описания в числовой
+   * параметр.
    *
    * @throws Exception ошибка
    */
@@ -223,15 +215,14 @@ public class OptionApiMapperTest {
     assertEquals(option.getId(), 324);
     assertEquals(option.getName(), "name");
     assertNull(option.getDescription());
-    assertFalse(option.isVariable());
     assertEquals(option.getValue(), 34);
     assertEquals(option.getMinValue(), -5);
     assertEquals(option.getMaxValue(), 123);
   }
 
   /**
-   * Должен успешно преобразовать изменяемый числовой входной объект с пределами в изменяемый
-   * числовой параметр.
+   * Должен успешно преобразовать изменяемый числовой входной объект с пределами в числовой
+   * параметр.
    *
    * @throws Exception ошибка
    */
@@ -249,15 +240,14 @@ public class OptionApiMapperTest {
     assertEquals(option.getId(), 1);
     assertEquals(option.getName(), "name");
     assertEquals(option.getDescription(), "description");
-    assertTrue(option.isVariable());
     assertEquals(option.getValue(), 54);
     assertEquals(option.getMinValue(), 50);
     assertEquals(option.getMaxValue(), 300);
   }
 
   /**
-   * Должен успешно преобразовать изменяемый числовой входной объект без описания в изменяемый
-   * числовой параметр.
+   * Должен успешно преобразовать изменяемый числовой входной объект без описания в числовой
+   * параметр.
    *
    * @throws Exception ошибка
    */
@@ -275,15 +265,14 @@ public class OptionApiMapperTest {
     assertEquals(option.getId(), 1);
     assertEquals(option.getName(), "name");
     assertNull(option.getDescription());
-    assertTrue(option.isVariable());
     assertEquals(option.getValue(), 54);
     assertEquals(option.getMinValue(), 50);
     assertEquals(option.getMaxValue(), 300);
   }
 
   /**
-   * Должен успешно преобразовать неизменяемый числовой входной объект без пределов в неизменяемый
-   * числовой параметр.
+   * Должен успешно преобразовать неизменяемый числовой входной объект без пределов в числовой
+   * параметр.
    *
    * @throws Exception ошибка
    */
@@ -301,7 +290,6 @@ public class OptionApiMapperTest {
     assertEquals(option.getId(), 454);
     assertEquals(option.getName(), "name");
     assertEquals(option.getDescription(), "description");
-    assertFalse(option.isVariable());
     assertEquals(option.getValue(), -345);
     assertEquals(option.getMaxValue(), 0);
     assertEquals(option.getMinValue(), 0);

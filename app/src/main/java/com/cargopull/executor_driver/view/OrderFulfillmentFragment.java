@@ -115,8 +115,8 @@ public class OrderFulfillmentFragment extends BaseFragment implements OrderCostV
     freeRideText = view.findViewById(R.id.freeRideText);
     addressTitleText = view.findViewById(R.id.addressTitleText);
     addressText = view.findViewById(R.id.addressText);
-    commentTitleText = view.findViewById(R.id.commentTitleText);
-    commentText = view.findViewById(R.id.commentText);
+    commentTitleText = view.findViewById(R.id.nextAddressCommentTitleText);
+    commentText = view.findViewById(R.id.nextAddressCommentText);
     getDirectionsAction = view.findViewById(R.id.openNavigator);
     closeRoutePointAction = view.findViewById(R.id.closeRoutePoint);
     closeRoutePointText = view.findViewById(R.id.closeRoutePointText);
@@ -319,7 +319,7 @@ public class OrderFulfillmentFragment extends BaseFragment implements OrderCostV
       getDirectionsAction.setOnClickListener(v -> {
         Intent navigationIntent = new Intent(Intent.ACTION_VIEW);
         navigationIntent.setData(Uri.parse("geo:" + coordinates + "?q=" + coordinates
-            + "(" + getString(R.string.client) + ")"));
+            + "(" + getString(R.string.destination_location) + ")"));
         if (navigationIntent.resolveActivity(context.getPackageManager()) != null) {
           startActivity(navigationIntent);
         } else {

@@ -8,11 +8,11 @@ import com.cargopull.executor_driver.entity.Order;
 import com.cargopull.executor_driver.entity.RoutePoint;
 import com.cargopull.executor_driver.entity.RoutePointState;
 import java.text.DecimalFormat;
-import java.util.Locale;
 import org.joda.time.format.DateTimeFormat;
 
 /**
- * Модель для отображения карточки предзаказа в списке предзаказов исполнителя. Тестируемое форматирование.
+ * Модель для отображения карточки предзаказа в списке предзаказов исполнителя. Тестируемое
+ * форматирование.
  */
 public class PreOrdersListOrderItem implements PreOrdersListItem {
 
@@ -70,9 +70,8 @@ public class PreOrdersListOrderItem implements PreOrdersListItem {
   }
 
   @Override
-  @NonNull
-  public String getRouteLength() {
-    return String.format(Locale.getDefault(), "%.2f", order.getEstimatedRouteLength() / 1000d);
+  public float getRouteLength() {
+    return order.getEstimatedRouteLength() / 1000f;
   }
 
   @Override

@@ -23,6 +23,8 @@ public final class VehicleOptionsViewStateError implements ViewState<VehicleOpti
     stateActions.showVehicleOptionsPending(false);
     stateActions.showVehicleOptionsListErrorMessage(true);
     stateActions.setVehicleOptionsListErrorMessage(errorMessage);
+    // Убираем диалог
+    stateActions.dismissDialog();
   }
 
   @Override

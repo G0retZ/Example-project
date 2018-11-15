@@ -5,8 +5,8 @@ import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 
 /**
- * Тестовое правило, которое имплементирует {@link TestRule#apply(Statement, Description)} метод
- * to evaluate the base statement.
+ * Тестовое правило, которое имплементирует {@link TestRule#apply(Statement, Description)} метод to
+ * evaluate the base statement.
  */
 
 public class CommonTestRule implements TestRule {

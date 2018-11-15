@@ -3,7 +3,7 @@ package com.cargopull.executor_driver.interactor.services;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import com.cargopull.executor_driver.UseCaseThreadTestRule;
@@ -47,7 +47,7 @@ public class ServicesUseCaseTest {
   @Test
   public void askGatewayForServices() {
     // Действие:
-    useCase.loadServices().test().isDisposed();
+    useCase.autoAssignServices().test().isDisposed();
 
     // Результат:
     verify(gateway, only()).getServices();
@@ -58,52 +58,49 @@ public class ServicesUseCaseTest {
    */
   @Test
   public void doNotTouchGatewayIfNoServices() {
+    // Дано:
+    when(gateway.getServices()).thenReturn(Single.just(new ArrayList<>()));
+
     // Действие:
-    useCase.setSelectedServices(new ArrayList<>()).test().isDisposed();
+    useCase.autoAssignServices().test().isDisposed();
 
     // Результат:
-    verifyZeroInteractions(gateway);
+    verify(gateway, only()).getServices();
   }
 
   /**
-   * Не должен просить у гейтвея сохранять услуги, если нет выбранных услуг.
-   */
-  @Test
-  public void doNotTouchGatewayIfNoSelectedServices() {
-    // Действие:
-    useCase.setSelectedServices(
-        Arrays.asList(
-            new Service(0, "n1", 100, false),
-            new Service(1, "n2", 10, false),
-            new Service(2, "n3", 130, false)
-        )
-    ).test().isDisposed();
-
-    // Результат:
-    verifyZeroInteractions(gateway);
-  }
-
-  /**
-   * Должен запросить у гейтвея сохранение выбранных услуг.
+   * Не должен просить у гейтвея сохранять все услуги как выбранные.
    */
   @Test
   public void askGatewaySetSelectedServices() {
-    // Действие:
-    useCase.setSelectedServices(
+    // Дано:
+    when(gateway.getServices()).thenReturn(Single.just(
         Arrays.asList(
             new Service(0, "n1", 100, true),
             new Service(1, "n2", 10, false),
-            new Service(2, "n3", 130, true)
+            new Service(2, "n3", 20, true),
+            new Service(3, "n4", 40, false),
+            new Service(4, "n5", 70, false),
+            new Service(5, "n6", 130, true)
         )
-    ).test().isDisposed();
+    ));
+
+    // Действие:
+    useCase.autoAssignServices().test().isDisposed();
 
     // Результат:
-    verify(gateway, only()).sendSelectedServices(
+    verify(gateway).getServices();
+    verify(gateway).sendSelectedServices(
         Arrays.asList(
             new Service(0, "n1", 100, true),
-            new Service(2, "n3", 130, true)
+            new Service(1, "n2", 10, true),
+            new Service(2, "n3", 20, true),
+            new Service(3, "n4", 40, true),
+            new Service(4, "n5", 70, true),
+            new Service(5, "n6", 130, true)
         )
     );
+    verifyNoMoreInteractions(gateway);
   }
 
   /* Проверяем ответы на запрос загрузки списка услуг */
@@ -117,7 +114,7 @@ public class ServicesUseCaseTest {
     when(gateway.getServices()).thenReturn(Single.error(new NoNetworkException()));
 
     // Действие и Результат:
-    useCase.loadServices().test().assertError(NoNetworkException.class);
+    useCase.autoAssignServices().test().assertError(NoNetworkException.class);
   }
 
   /**
@@ -129,57 +126,7 @@ public class ServicesUseCaseTest {
     when(gateway.getServices()).thenReturn(Single.just(new ArrayList<>()));
 
     // Действие и Результат:
-    useCase.loadServices().test().assertError(EmptyListException.class);
-  }
-
-  /**
-   * Должен ответить списком услуг.
-   */
-  @Test
-  public void answerWithServicesList() {
-    // Дано:
-    when(gateway.getServices()).thenReturn(Single.just(
-        Arrays.asList(
-            new Service(0, "n1", 100, true),
-            new Service(1, "n2", 10, false),
-            new Service(2, "n3", 130, true)
-        )
-    ));
-
-    // Действие и Результат:
-    useCase.loadServices().test().assertComplete();
-    useCase.loadServices().test().assertValue(
-        Arrays.asList(
-            new Service(0, "n1", 100, true),
-            new Service(1, "n2", 10, false),
-            new Service(2, "n3", 130, true)
-        )
-    );
-  }
-
-  /**
-   * Должен ответить ошибкой отсуствствия выбранных услуг.
-   */
-  @Test
-  public void answerNoVehiclesAvailableErrorForEmptyList() {
-    // Действие и Результат:
-    useCase.setSelectedServices(new ArrayList<>()).test()
-        .assertError(EmptyListException.class);
-  }
-
-  /**
-   * Должен ответить ошибкой отсуствствия выбранных услуг.
-   */
-  @Test
-  public void answerNoVehiclesAvailableErrorForNoSelectedServices() {
-    // Действие и Результат:
-    useCase.setSelectedServices(
-        Arrays.asList(
-            new Service(0, "n1", 100, false),
-            new Service(1, "n2", 10, false),
-            new Service(2, "n3", 130, false)
-        )
-    ).test().assertError(EmptyListException.class);
+    useCase.autoAssignServices().test().assertError(EmptyListException.class);
   }
 
   /**
@@ -188,17 +135,21 @@ public class ServicesUseCaseTest {
   @Test
   public void answerNoNetworkErrorForSetServices() {
     // Дано:
+    when(gateway.getServices()).thenReturn(Single.just(
+        Arrays.asList(
+            new Service(0, "n1", 100, true),
+            new Service(1, "n2", 10, false),
+            new Service(2, "n3", 20, true),
+            new Service(3, "n4", 40, false),
+            new Service(4, "n5", 70, false),
+            new Service(5, "n6", 130, true)
+        )
+    ));
     when(gateway.sendSelectedServices(anyList()))
         .thenReturn(Completable.error(new NoNetworkException()));
 
     // Действие и Результат:
-    useCase.setSelectedServices(
-        Arrays.asList(
-            new Service(0, "n1", 100, true),
-            new Service(1, "n2", 10, false),
-            new Service(2, "n3", 130, true)
-        )
-    ).test().assertError(NoNetworkException.class);
+    useCase.autoAssignServices().test().assertError(NoNetworkException.class);
   }
 
   /**
@@ -207,15 +158,19 @@ public class ServicesUseCaseTest {
   @Test
   public void answerSuccessToSetServices() {
     // Дано:
-    when(gateway.sendSelectedServices(anyList())).thenReturn(Completable.complete());
-
-    // Действие и Результат:
-    useCase.setSelectedServices(
+    when(gateway.getServices()).thenReturn(Single.just(
         Arrays.asList(
             new Service(0, "n1", 100, true),
             new Service(1, "n2", 10, false),
-            new Service(2, "n3", 130, true)
+            new Service(2, "n3", 20, true),
+            new Service(3, "n4", 40, false),
+            new Service(4, "n5", 70, false),
+            new Service(5, "n6", 130, true)
         )
-    ).test().assertComplete();
+    ));
+    when(gateway.sendSelectedServices(anyList())).thenReturn(Completable.complete());
+
+    // Действие и Результат:
+    useCase.autoAssignServices().test().assertComplete();
   }
 }

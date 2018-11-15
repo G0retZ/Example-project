@@ -23,6 +23,7 @@ import com.cargopull.executor_driver.presentation.geolocationstate.GeoLocationSt
 import com.cargopull.executor_driver.presentation.map.MapViewModel;
 import com.cargopull.executor_driver.presentation.missedorder.MissedOrderViewModel;
 import com.cargopull.executor_driver.presentation.movingtoclient.MovingToClientViewModel;
+import com.cargopull.executor_driver.presentation.movingtoclienttimer.MovingToClientTimerViewModel;
 import com.cargopull.executor_driver.presentation.nextroutepoint.NextRoutePointViewModel;
 import com.cargopull.executor_driver.presentation.onlinebutton.OnlineButtonViewModel;
 import com.cargopull.executor_driver.presentation.onlineswitch.OnlineSwitchViewModel;
@@ -38,8 +39,6 @@ import com.cargopull.executor_driver.presentation.preorderslist.PreOrdersListVie
 import com.cargopull.executor_driver.presentation.selectedvehicle.SelectedVehicleViewModel;
 import com.cargopull.executor_driver.presentation.serverconnection.ServerConnectionViewModel;
 import com.cargopull.executor_driver.presentation.servertime.ServerTimeViewModel;
-import com.cargopull.executor_driver.presentation.services.ServicesSliderViewModel;
-import com.cargopull.executor_driver.presentation.services.ServicesViewModel;
 import com.cargopull.executor_driver.presentation.smsbutton.SmsButtonViewModel;
 import com.cargopull.executor_driver.presentation.upcomingpreorder.UpcomingPreOrderViewModel;
 import com.cargopull.executor_driver.presentation.upcomingpreordermessage.UpcomingPreOrderMessageViewModel;
@@ -165,12 +164,6 @@ interface PresentationComponent {
   ServerTimeViewModel getServerTimeViewModel();
 
   @NonNull
-  ServicesSliderViewModel getServicesSliderViewModel();
-
-  @NonNull
-  ServicesViewModel getServicesViewModel(@Nullable Fragment fragment);
-
-  @NonNull
   SmsButtonViewModel getSmsButtonViewModel(@Nullable Fragment fragment);
 
   @NonNull
@@ -200,10 +193,15 @@ interface PresentationComponent {
   @NonNull
   OrderConfirmationViewModel getUpcomingPreOrderConfirmationViewModel(@Nullable Fragment fragment);
 
+  @NonNull
   UpcomingPreOrderViewModel getUpcomingPreOrderAvailabilityViewModel();
 
+  @NonNull
   GeoLocationStateViewModel getGeoLocationStateViewModel(AppCompatActivity appCompatActivity);
 
   @NonNull
   GeoLocationStateViewModel getGeoLocationStateViewModel(Fragment fragment);
+
+  @NonNull
+  MovingToClientTimerViewModel getMovingToClientTimerViewModel(Fragment fragment);
 }

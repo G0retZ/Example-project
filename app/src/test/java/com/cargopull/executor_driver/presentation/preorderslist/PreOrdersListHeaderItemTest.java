@@ -66,7 +66,7 @@ public class PreOrdersListHeaderItemTest {
   @Test
   public void testGetRouteLength() {
     // Результат:
-    assertEquals(preOrdersListItem.getRouteLength(), "");
+    assertEquals(preOrdersListItem.getRouteLength(), 0, 0);
   }
 
   @Test

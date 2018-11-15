@@ -35,6 +35,7 @@ public class VehicleOptionsViewStateErrorTest {
     verify(viewActions).showVehicleOptionsPending(false);
     verify(viewActions).showVehicleOptionsListErrorMessage(true);
     verify(viewActions).setVehicleOptionsListErrorMessage(123);
+    verify(viewActions).dismissDialog();
     verifyNoMoreInteractions(viewActions);
   }
 
@@ -42,5 +43,7 @@ public class VehicleOptionsViewStateErrorTest {
   public void testEquals() {
     assertEquals(viewState, new VehicleOptionsViewStateError(123));
     assertNotEquals(viewState, new VehicleOptionsViewStateError(0));
+    assertNotEquals(viewState, null);
+    assertNotEquals(viewState, "");
   }
 }

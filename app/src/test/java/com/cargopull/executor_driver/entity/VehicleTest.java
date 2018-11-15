@@ -17,10 +17,10 @@ public class VehicleTest {
   public void setUp() {
     vehicle = new Vehicle(12, "manufacturer", "model", "color", "license", false);
     vehicle.addVehicleOptions(
-        new OptionNumeric(0, "name0", "description0", false, 10, 0, 20),
-        new OptionNumeric(1, "name1", "description1", true, -5, -18, 0),
-        new OptionBoolean(2, "name2", "description2", true, false),
-        new OptionBoolean(3, "name3", "description3", false, true)
+        new OptionNumeric(0, "name0", "description0", 10, 0, 20),
+        new OptionNumeric(1, "name1", "description1", -5, -18, 0),
+        new OptionBoolean(2, "name2", "description2", false),
+        new OptionBoolean(3, "name3", "description3", true)
     );
   }
 
@@ -34,10 +34,10 @@ public class VehicleTest {
     assertFalse(vehicle.isBusy());
     assertEquals(vehicle.getOptions(), new ArrayList<Option>(
         Arrays.asList(
-            new OptionNumeric(0, "name0", "description0", false, 10, 0, 20),
-            new OptionNumeric(1, "name1", "description1", true, -5, -18, 0),
-            new OptionBoolean(2, "name2", "description2", true, false),
-            new OptionBoolean(3, "name3", "description3", false, true)
+            new OptionNumeric(0, "name0", "description0", 10, 0, 20),
+            new OptionNumeric(1, "name1", "description1", -5, -18, 0),
+            new OptionBoolean(2, "name2", "description2", false),
+            new OptionBoolean(3, "name3", "description3", true)
         )
     ));
   }
@@ -46,75 +46,77 @@ public class VehicleTest {
   public void testEquals() {
     Vehicle vehicle1 = new Vehicle(12, "manufacturer", "model", "color", "license", false);
     vehicle1.setOptions(
-        new OptionNumeric(0, "name0", "description0", false, 10, 0, 20),
-        new OptionNumeric(1, "name1", "description1", true, -5, -18, 0),
-        new OptionBoolean(2, "name2", "description2", true, false),
-        new OptionBoolean(3, "name3", "description3", false, true)
+        Arrays.asList(
+            new OptionNumeric(0, "name0", "description0", 10, 0, 20),
+            new OptionNumeric(1, "name1", "description1", -5, -18, 0),
+            new OptionBoolean(2, "name2", "description2", false),
+            new OptionBoolean(3, "name3", "description3", true)
+        )
     );
     assertEquals(vehicle, vehicle1);
     vehicle1 = new Vehicle(12, "manufacturer", "model", "color", "license", false);
     vehicle1.addVehicleOptions(
-        new OptionNumeric(0, "name0", "description0", false, 10, 0, 20),
-        new OptionNumeric(1, "name1", "description1", true, -5, -18, 0),
-        new OptionBoolean(2, "name2", "description2", true, false),
-        new OptionBoolean(3, "name3", "description3", false, true)
+        new OptionNumeric(0, "name0", "description0", 10, 0, 20),
+        new OptionNumeric(1, "name1", "description1", -5, -18, 0),
+        new OptionBoolean(2, "name2", "description2", false),
+        new OptionBoolean(3, "name3", "description3", true)
     );
     assertEquals(vehicle, vehicle1);
     vehicle1 = new Vehicle(11, "manufacturer", "model", "color", "license", false);
     vehicle1.addVehicleOptions(
-        new OptionNumeric(0, "name0", "description0", false, 10, 0, 20),
-        new OptionNumeric(1, "name1", "description1", true, -5, -18, 0),
-        new OptionBoolean(2, "name2", "description2", true, false),
-        new OptionBoolean(3, "name3", "description3", false, true)
+        new OptionNumeric(0, "name0", "description0", 10, 0, 20),
+        new OptionNumeric(1, "name1", "description1", -5, -18, 0),
+        new OptionBoolean(2, "name2", "description2", false),
+        new OptionBoolean(3, "name3", "description3", true)
     );
     assertNotEquals(vehicle, vehicle1);
     vehicle1 = new Vehicle(12, "manufacturers", "model", "color", "license", false);
     vehicle1.addVehicleOptions(
-        new OptionNumeric(0, "name0", "description0", false, 10, 0, 20),
-        new OptionNumeric(1, "name1", "description1", true, -5, -18, 0),
-        new OptionBoolean(2, "name2", "description2", true, false),
-        new OptionBoolean(3, "name3", "description3", false, true)
+        new OptionNumeric(0, "name0", "description0", 10, 0, 20),
+        new OptionNumeric(1, "name1", "description1", -5, -18, 0),
+        new OptionBoolean(2, "name2", "description2", false),
+        new OptionBoolean(3, "name3", "description3", true)
     );
     assertNotEquals(vehicle, vehicle1);
     vehicle1 = new Vehicle(12, "manufacturer", "models", "colors", "license", false);
     vehicle1.addVehicleOptions(
-        new OptionNumeric(0, "name0", "description0", false, 10, 0, 20),
-        new OptionNumeric(1, "name1", "description1", true, -5, -18, 0),
-        new OptionBoolean(2, "name2", "description2", true, false),
-        new OptionBoolean(3, "name3", "description3", false, true)
+        new OptionNumeric(0, "name0", "description0", 10, 0, 20),
+        new OptionNumeric(1, "name1", "description1", -5, -18, 0),
+        new OptionBoolean(2, "name2", "description2", false),
+        new OptionBoolean(3, "name3", "description3", true)
     );
     assertNotEquals(vehicle, vehicle1);
     vehicle1 = new Vehicle(12, "manufacturer", "model", "color", "licenses", false);
     vehicle1.addVehicleOptions(
-        new OptionNumeric(0, "name0", "description0", false, 10, 0, 20),
-        new OptionNumeric(1, "name1", "description1", true, -5, -18, 0),
-        new OptionBoolean(2, "name2", "description2", true, false),
-        new OptionBoolean(3, "name3", "description3", false, true)
+        new OptionNumeric(0, "name0", "description0", 10, 0, 20),
+        new OptionNumeric(1, "name1", "description1", -5, -18, 0),
+        new OptionBoolean(2, "name2", "description2", false),
+        new OptionBoolean(3, "name3", "description3", true)
     );
     assertNotEquals(vehicle, vehicle1);
     vehicle1 = new Vehicle(12, "manufacturer", "model", "color", "license", true);
     vehicle1.addVehicleOptions(
-        new OptionNumeric(0, "name0", "description0", false, 10, 0, 20),
-        new OptionNumeric(1, "name1", "description1", true, -5, -18, 0),
-        new OptionBoolean(2, "name2", "description2", true, false),
-        new OptionBoolean(3, "name3", "description3", false, true)
+        new OptionNumeric(0, "name0", "description0", 10, 0, 20),
+        new OptionNumeric(1, "name1", "description1", -5, -18, 0),
+        new OptionBoolean(2, "name2", "description2", false),
+        new OptionBoolean(3, "name3", "description3", true)
     );
     assertNotEquals(vehicle, vehicle1);
     vehicle1 = new Vehicle(12, "manufacturer", "model", "color", "license", false);
     assertNotEquals(vehicle, vehicle1);
     vehicle1 = new Vehicle(12, "manufacturer", "model", "color", "license", false);
     vehicle1.addVehicleOptions(
-        new OptionNumeric(1, "name1", "description0", true, -5, -18, 0),
-        new OptionBoolean(2, "name2", "description1", true, false),
-        new OptionBoolean(3, "name3", "description2", false, true)
+        new OptionNumeric(1, "name1", "description0", -5, -18, 0),
+        new OptionBoolean(2, "name2", "description1", false),
+        new OptionBoolean(3, "name3", "description2", true)
     );
     assertNotEquals(vehicle, vehicle1);
     vehicle1 = new Vehicle(12, "manufacturer", "model", "color", "license", false);
     vehicle1.addVehicleOptions(
-        new OptionNumeric(0, "name0", "description0", false, 10, 0, 19),
-        new OptionNumeric(1, "name1", "description1", true, -5, -18, 0),
-        new OptionBoolean(2, "name2", "description2", true, false),
-        new OptionBoolean(3, "name3", "description3", false, true)
+        new OptionNumeric(0, "name0", "description0", 10, 0, 19),
+        new OptionNumeric(1, "name1", "description1", -5, -18, 0),
+        new OptionBoolean(2, "name2", "description2", false),
+        new OptionBoolean(3, "name3", "description3", true)
     );
     assertNotEquals(vehicle, vehicle1);
   }

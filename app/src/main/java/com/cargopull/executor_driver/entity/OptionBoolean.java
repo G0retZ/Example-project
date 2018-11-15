@@ -13,16 +13,12 @@ public class OptionBoolean implements Option<Boolean> {
   private final String name;
   @Nullable
   private final String description;
-  private final boolean variable;
-  @NonNull
-  private final Boolean value;
+  private final boolean value;
 
-  public OptionBoolean(long id, @NonNull String name, @Nullable String description,
-      boolean variable, @NonNull Boolean value) {
+  public OptionBoolean(long id, @NonNull String name, @Nullable String description, boolean value) {
     this.id = id;
     this.name = name;
     this.description = description;
-    this.variable = variable;
     this.value = value;
   }
 
@@ -43,11 +39,6 @@ public class OptionBoolean implements Option<Boolean> {
     return description;
   }
 
-  @Override
-  public boolean isVariable() {
-    return variable;
-  }
-
   @NonNull
   @Override
   public Boolean getValue() {
@@ -57,7 +48,7 @@ public class OptionBoolean implements Option<Boolean> {
   @Override
   @NonNull
   public OptionBoolean setValue(@NonNull Boolean value) {
-    return new OptionBoolean(id, name, description, variable, value);
+    return new OptionBoolean(id, name, description, value);
   }
 
   @NonNull
@@ -78,12 +69,10 @@ public class OptionBoolean implements Option<Boolean> {
         "id=" + id +
         ", name='" + name + '\'' +
         ", description='" + description + '\'' +
-        ", variable=" + variable +
         ", value=" + value +
         '}';
   }
 
-  @SuppressWarnings("SimplifiableIfStatement")
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -98,16 +87,13 @@ public class OptionBoolean implements Option<Boolean> {
     if (id != that.id) {
       return false;
     }
-    if (variable != that.variable) {
+    if (value != that.value) {
       return false;
     }
     if (!name.equals(that.name)) {
       return false;
     }
-    if (description != null ? !description.equals(that.description) : that.description != null) {
-      return false;
-    }
-    return value.equals(that.value);
+    return description != null ? description.equals(that.description) : that.description == null;
   }
 
   @Override
@@ -115,8 +101,7 @@ public class OptionBoolean implements Option<Boolean> {
     int result = (int) (id ^ (id >>> 32));
     result = 31 * result + name.hashCode();
     result = 31 * result + (description != null ? description.hashCode() : 0);
-    result = 31 * result + (variable ? 1 : 0);
-    result = 31 * result + value.hashCode();
+    result = 31 * result + (value ? 1 : 0);
     return result;
   }
 }

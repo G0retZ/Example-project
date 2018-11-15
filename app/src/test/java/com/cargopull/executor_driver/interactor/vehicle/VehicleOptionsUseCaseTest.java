@@ -77,8 +77,8 @@ public class VehicleOptionsUseCaseTest {
     // Действие:
     useCase.setSelectedVehicleAndOptions(
         new ArrayList<>(Arrays.asList(
-            new OptionNumeric(1, "name1", "desc1", true, -5, -18, 0),
-            new OptionBoolean(2, "name2", "desc2", true, false)
+            new OptionNumeric(1, "name1", "desc1", -5, -18, 0),
+            new OptionBoolean(2, "name2", "desc2", false)
         )), new ArrayList<>()
     ).test().isDisposed();
 
@@ -108,8 +108,8 @@ public class VehicleOptionsUseCaseTest {
     // Действие:
     useCase.setSelectedVehicleAndOptions(
         new ArrayList<>(Arrays.asList(
-            new OptionNumeric(1, "name1", "desc1", true, -5, -18, 0),
-            new OptionBoolean(2, "name2", "desc2", true, false)
+            new OptionNumeric(1, "name1", "desc1", -5, -18, 0),
+            new OptionBoolean(2, "name2", "desc2", false)
         )), new ArrayList<>()
     ).test().isDisposed();
 
@@ -120,7 +120,7 @@ public class VehicleOptionsUseCaseTest {
   /* Проверяем ответы на запрос выбранного ТС */
 
   /**
-   * Должен ответить успехом и только динамическими опциями по первому варианту сначала.
+   * Должен ответить успехом и опциями по первому варианту сначала.
    */
   @SuppressWarnings({"unchecked"})
   @Test
@@ -129,42 +129,38 @@ public class VehicleOptionsUseCaseTest {
     ArrayList<Vehicle> vehicles = new ArrayList<>();
     vehicles.add(0, new Vehicle(13, "manufacturers", "model4", "carrots", "licensee", false));
     vehicles.get(0).addVehicleOptions(
-        new OptionNumeric(0, "name0", "desc0", true, 10, 0, 20),
-        new OptionNumeric(1, "name1", "desc1", false, -5, -18, 0),
-        new OptionBoolean(2, "name2", "desc2", false, false),
-        new OptionBoolean(3, "name3", "desc3", true, true)
+        new OptionNumeric(1, "name1", "desc1", -5, -18, 0),
+        new OptionBoolean(2, "name2", "desc2", false)
     );
     vehicles.add(0, new Vehicle(11, "manufacturer2", "models", "colors", "lic", true));
     vehicles.get(0).addVehicleOptions(
-        new OptionNumeric(0, "name0", "desc0", true, 10, 0, 20),
-        new OptionNumeric(1, "name1", "desc1", true, -5, -18, 0),
-        new OptionBoolean(2, "name2", "desc2", true, false),
-        new OptionBoolean(3, "name3", "desc3", true, true)
+        new OptionNumeric(0, "name0", "desc0", 10, 0, 20),
+        new OptionNumeric(1, "name1", "desc1", -5, -18, 0),
+        new OptionBoolean(2, "name2", "desc2", false),
+        new OptionBoolean(3, "name3", "desc3", true)
     );
     vehicles.add(0, new Vehicle(12, "manufacturer", "model", "color", "license", false));
     vehicles.get(0).addVehicleOptions(
-        new OptionNumeric(0, "name0", "desc0", false, 10, 0, 20),
-        new OptionNumeric(1, "name1", "desc1", true, -5, -18, 0),
-        new OptionBoolean(2, "name2", "desc2", true, false),
-        new OptionBoolean(3, "name3", "desc3", false, true)
+        new OptionNumeric(0, "name0", "desc0", 10, 0, 20),
+        new OptionBoolean(3, "name3", "desc3", true)
     );
     when(vehicleChoiceReceiver.get()).thenReturn(Observable.fromIterable(vehicles));
 
     // Действие и Результат:
     useCase.getVehicleOptions().test().assertValues(
         new ArrayList<>(Arrays.asList(
-            new OptionNumeric(1, "name1", "desc1", true, -5, -18, 0),
-            new OptionBoolean(2, "name2", "desc2", true, false)
+            new OptionNumeric(0, "name0", "desc0", 10, 0, 20),
+            new OptionBoolean(3, "name3", "desc3", true)
         )),
         new ArrayList<>(Arrays.asList(
-            new OptionNumeric(0, "name0", "desc0", true, 10, 0, 20),
-            new OptionNumeric(1, "name1", "desc1", true, -5, -18, 0),
-            new OptionBoolean(2, "name2", "desc2", true, false),
-            new OptionBoolean(3, "name3", "desc3", true, true)
+            new OptionNumeric(0, "name0", "desc0", 10, 0, 20),
+            new OptionNumeric(1, "name1", "desc1", -5, -18, 0),
+            new OptionBoolean(2, "name2", "desc2", false),
+            new OptionBoolean(3, "name3", "desc3", true)
         )),
         new ArrayList<>(Arrays.asList(
-            new OptionNumeric(0, "name0", "desc0", true, 10, 0, 20),
-            new OptionBoolean(3, "name3", "desc3", true, true)
+            new OptionNumeric(1, "name1", "desc1", -5, -18, 0),
+            new OptionBoolean(2, "name2", "desc2", false)
         ))
     );
   }
@@ -179,25 +175,17 @@ public class VehicleOptionsUseCaseTest {
     ArrayList<Vehicle> vehicles = new ArrayList<>();
     vehicles.add(0, new Vehicle(11, "manufacturer2", "models", "colors", "lic", true));
     vehicles.get(0).addVehicleOptions(
-        new OptionNumeric(0, "name0", "desc0", true, 10, 0, 20),
-        new OptionNumeric(1, "name1", "desc1", true, -5, -18, 0),
-        new OptionBoolean(2, "name2", "desc2", true, false),
-        new OptionBoolean(3, "name3", "desc3", true, true)
+        new OptionNumeric(0, "name0", "desc0", 10, 0, 20),
+        new OptionNumeric(1, "name1", "desc1", -5, -18, 0),
+        new OptionBoolean(2, "name2", "desc2", false),
+        new OptionBoolean(3, "name3", "desc3", true)
     );
     vehicles.add(0, new Vehicle(12, "manufacturer", "model", "color", "license", false));
     vehicles.get(0).addVehicleOptions(
-        new OptionNumeric(0, "name0", "desc0", false, 10, 0, 20),
-        new OptionNumeric(1, "name1", "desc1", true, -5, -18, 0),
-        new OptionBoolean(2, "name2", "desc2", true, false),
-        new OptionBoolean(3, "name3", "desc3", false, true)
+        new OptionNumeric(1, "name1", "desc1", -5, -18, 0),
+        new OptionBoolean(2, "name2", "desc2", false)
     );
     vehicles.add(0, new Vehicle(13, "manufacturers", "model4", "carrots", "licensee", false));
-    vehicles.get(0).addVehicleOptions(
-        new OptionNumeric(0, "name0", "desc0", false, 10, 0, 20),
-        new OptionNumeric(1, "name1", "desc1", false, -5, -18, 0),
-        new OptionBoolean(2, "name2", "desc2", false, false),
-        new OptionBoolean(3, "name3", "desc3", false, true)
-    );
     when(vehicleChoiceReceiver.get()).thenReturn(Observable.fromIterable(vehicles));
 
     // Действие
@@ -207,14 +195,14 @@ public class VehicleOptionsUseCaseTest {
     testObserver.assertValues(
         new ArrayList<>(),
         new ArrayList<>(Arrays.asList(
-            new OptionNumeric(1, "name1", "desc1", true, -5, -18, 0),
-            new OptionBoolean(2, "name2", "desc2", true, false)
+            new OptionNumeric(1, "name1", "desc1", -5, -18, 0),
+            new OptionBoolean(2, "name2", "desc2", false)
         )),
         new ArrayList<>(Arrays.asList(
-            new OptionNumeric(0, "name0", "desc0", true, 10, 0, 20),
-            new OptionNumeric(1, "name1", "desc1", true, -5, -18, 0),
-            new OptionBoolean(2, "name2", "desc2", true, false),
-            new OptionBoolean(3, "name3", "desc3", true, true)
+            new OptionNumeric(0, "name0", "desc0", 10, 0, 20),
+            new OptionNumeric(1, "name1", "desc1", -5, -18, 0),
+            new OptionBoolean(2, "name2", "desc2", false),
+            new OptionBoolean(3, "name3", "desc3", true)
         ))
     );
   }
@@ -222,7 +210,7 @@ public class VehicleOptionsUseCaseTest {
   /* Проверяем ответы на запрос опций исполнителя */
 
   /**
-   * Должен ответить успехом и только динамическими опциями.
+   * Должен ответить успехом и опциями.
    */
   @SuppressWarnings({"unchecked"})
   @Test
@@ -230,18 +218,20 @@ public class VehicleOptionsUseCaseTest {
     // Дано:
     when(vehiclesAndOptionsGateway.getExecutorOptions()).thenReturn(Single.just(
         Arrays.asList(
-            new OptionNumeric(0, "name0", "desc0", false, 10, 0, 20),
-            new OptionNumeric(1, "name1", "desc1", true, -5, -18, 0),
-            new OptionBoolean(2, "name2", "desc2", true, false),
-            new OptionBoolean(3, "name3", "desc3", false, true)
+            new OptionNumeric(0, "name0", "desc0", 10, 0, 20),
+            new OptionNumeric(1, "name1", "desc1", -5, -18, 0),
+            new OptionBoolean(2, "name2", "desc2", false),
+            new OptionBoolean(3, "name3", "desc3", true)
         )
     ));
 
     // Действие и Результат:
     useCase.getDriverOptions().test().assertValues(
         new ArrayList<>(Arrays.asList(
-            new OptionNumeric(1, "name1", "desc1", true, -5, -18, 0),
-            new OptionBoolean(2, "name2", "desc2", true, false)
+            new OptionNumeric(0, "name0", "desc0", 10, 0, 20),
+            new OptionNumeric(1, "name1", "desc1", -5, -18, 0),
+            new OptionBoolean(2, "name2", "desc2", false),
+            new OptionBoolean(3, "name3", "desc3", true)
         ))
     );
   }
@@ -253,22 +243,13 @@ public class VehicleOptionsUseCaseTest {
   @Test
   public void answerNoExecutorOptionsAvailableError() {
     // Дано:
-    when(vehiclesAndOptionsGateway.getExecutorOptions()).thenReturn(Single.just(
-        Arrays.asList(
-            new OptionNumeric(0, "name0", "desc0", false, 10, 0, 20),
-            new OptionNumeric(1, "name1", "desc1", false, -5, -18, 0),
-            new OptionBoolean(2, "name2", "desc2", false, false),
-            new OptionBoolean(3, "name3", "desc3", false, true)
-        )
-    ));
+    when(vehiclesAndOptionsGateway.getExecutorOptions()).thenReturn(Single.just(new ArrayList<>()));
 
     // Действие
     TestObserver<List<Option>> testObserver = useCase.getDriverOptions().test();
 
     // Результат:
-    testObserver.assertValues(
-        new ArrayList<>()
-    );
+    testObserver.assertValues(new ArrayList<>());
   }
 
   /* Проверяем работу с гейтвеем */
@@ -281,8 +262,8 @@ public class VehicleOptionsUseCaseTest {
     // Действие:
     useCase.setSelectedVehicleAndOptions(
         new ArrayList<>(Arrays.asList(
-            new OptionNumeric(1, "name1", "desc1", true, -5, -18, 0),
-            new OptionBoolean(2, "name2", "desc2", true, false)
+            new OptionNumeric(1, "name1", "desc1", -5, -18, 0),
+            new OptionBoolean(2, "name2", "desc2", false)
         )), new ArrayList<>()
     ).test().isDisposed();
 
@@ -298,10 +279,10 @@ public class VehicleOptionsUseCaseTest {
     // Дано:
     Vehicle vehicle = new Vehicle(12, "manufacturer", "model", "color", "license", false);
     vehicle.addVehicleOptions(
-        new OptionNumeric(0, "name0", "desc0", false, 10, 0, 20),
-        new OptionNumeric(1, "name1", "desc1", true, -5, -18, 0),
-        new OptionBoolean(2, "name2", "desc2", true, false),
-        new OptionBoolean(3, "name3", "desc3", false, true)
+        new OptionNumeric(0, "name0", "desc0", 10, 0, 20),
+        new OptionNumeric(1, "name1", "desc1", -5, -18, 0),
+        new OptionBoolean(2, "name2", "desc2", false),
+        new OptionBoolean(3, "name3", "desc3", true)
     );
     when(vehicleChoiceReceiver.get()).thenReturn(Observable.just(vehicle));
 
@@ -309,25 +290,27 @@ public class VehicleOptionsUseCaseTest {
     useCase.getVehicleOptions().test().isDisposed();
     useCase.setSelectedVehicleAndOptions(
         new ArrayList<>(Arrays.asList(
-            new OptionNumeric(0, "name0", "desc0", true, 40, 0, 120),
-            new OptionNumeric(1, "name1", "desc1", true, -50, 20, 30),
-            new OptionBoolean(2, "name2", "desc2", true, false)
+            new OptionNumeric(0, "name0", "desc0", 40, 0, 120),
+            new OptionNumeric(1, "name1", "desc1", -50, 20, 30),
+            new OptionBoolean(2, "name2", "desc2", false)
         )), Arrays.asList(
-            new OptionNumeric(1, "name1", "desc1", true, -5, -18, 0),
-            new OptionBoolean(2, "name2", "desc2", true, false)
+            new OptionNumeric(1, "name1", "desc1", -5, -18, 0),
+            new OptionBoolean(2, "name2", "desc2", false)
         )
     ).test().isDisposed();
 
     // Результат:
     vehicle = new Vehicle(12, "manufacturer", "model", "color", "license", false);
     vehicle.setOptions(
-        new OptionNumeric(0, "name0", "desc0", true, 40, 0, 120),
-        new OptionNumeric(1, "name1", "desc1", true, -50, 20, 30),
-        new OptionBoolean(2, "name2", "desc2", true, false)
+        Arrays.asList(
+            new OptionNumeric(0, "name0", "desc0", 40, 0, 120),
+            new OptionNumeric(1, "name1", "desc1", -50, 20, 30),
+            new OptionBoolean(2, "name2", "desc2", false)
+        )
     );
     verify(gateway, only()).sendVehicleOptions(vehicle, Arrays.asList(
-        new OptionNumeric(1, "name1", "desc1", true, -5, -18, 0),
-        new OptionBoolean(2, "name2", "desc2", true, false)
+        new OptionNumeric(1, "name1", "desc1", -5, -18, 0),
+        new OptionBoolean(2, "name2", "desc2", false)
     ));
   }
 
@@ -341,10 +324,10 @@ public class VehicleOptionsUseCaseTest {
     // Дано:
     Vehicle vehicle = new Vehicle(12, "manufacturer", "model", "color", "license", false);
     vehicle.addVehicleOptions(
-        new OptionNumeric(0, "name0", "desc0", false, 10, 0, 20),
-        new OptionNumeric(1, "name1", "desc1", true, -5, -18, 0),
-        new OptionBoolean(2, "name2", "desc2", true, false),
-        new OptionBoolean(3, "name3", "desc3", false, true)
+        new OptionNumeric(0, "name0", "desc0", 10, 0, 20),
+        new OptionNumeric(1, "name1", "desc1", -5, -18, 0),
+        new OptionBoolean(2, "name2", "desc2", false),
+        new OptionBoolean(3, "name3", "desc3", true)
     );
     when(vehicleChoiceReceiver.get()).thenReturn(Observable.just(vehicle));
 
@@ -352,12 +335,12 @@ public class VehicleOptionsUseCaseTest {
     useCase.getVehicleOptions().test().isDisposed();
     useCase.setSelectedVehicleAndOptions(
         new ArrayList<>(Arrays.asList(
-            new OptionNumeric(0, "name0", "desc0", true, 40, 0, 120),
-            new OptionNumeric(1, "name1", "desc1", true, -50, 20, 30),
-            new OptionBoolean(2, "name2", "desc2", true, false)
+            new OptionNumeric(0, "name0", "desc0", 40, 0, 120),
+            new OptionNumeric(1, "name1", "desc1", -50, 20, 30),
+            new OptionBoolean(2, "name2", "desc2", false)
         )), Arrays.asList(
-            new OptionNumeric(1, "name1", "desc1", true, -5, -18, 0),
-            new OptionBoolean(2, "name2", "desc2", true, false)
+            new OptionNumeric(1, "name1", "desc1", -5, -18, 0),
+            new OptionBoolean(2, "name2", "desc2", false)
         )
     ).test().isDisposed();
 
@@ -375,8 +358,8 @@ public class VehicleOptionsUseCaseTest {
     // Действие и Результат:
     useCase.setSelectedVehicleAndOptions(
         new ArrayList<>(Arrays.asList(
-            new OptionNumeric(1, "name1", "desc1", true, -5, -18, 0),
-            new OptionBoolean(2, "name2", "desc2", true, false)
+            new OptionNumeric(1, "name1", "desc1", -5, -18, 0),
+            new OptionBoolean(2, "name2", "desc2", false)
         )), new ArrayList<>()
     ).test().assertError(IllegalStateException.class);
   }
@@ -389,10 +372,10 @@ public class VehicleOptionsUseCaseTest {
     // Дано:
     Vehicle vehicle = new Vehicle(12, "manufacturer", "model", "color", "license", false);
     vehicle.addVehicleOptions(
-        new OptionNumeric(0, "name0", "desc0", false, 10, 0, 20),
-        new OptionNumeric(1, "name1", "desc1", true, -5, -18, 0),
-        new OptionBoolean(2, "name2", "desc2", true, false),
-        new OptionBoolean(3, "name3", "desc3", false, true)
+        new OptionNumeric(0, "name0", "desc0", 10, 0, 20),
+        new OptionNumeric(1, "name1", "desc1", -5, -18, 0),
+        new OptionBoolean(2, "name2", "desc2", false),
+        new OptionBoolean(3, "name3", "desc3", true)
     );
     when(vehicleChoiceReceiver.get()).thenReturn(Observable.just(vehicle));
     when(gateway.sendVehicleOptions(any(Vehicle.class), anyList()))
@@ -404,9 +387,9 @@ public class VehicleOptionsUseCaseTest {
     // Результат:
     useCase.setSelectedVehicleAndOptions(
         Arrays.asList(
-            new OptionNumeric(0, "name0", "desc0", true, 40, 0, 120),
-            new OptionNumeric(1, "name1", "desc1", true, -50, 20, 30),
-            new OptionBoolean(2, "name2", "desc2", true, false)
+            new OptionNumeric(0, "name0", "desc0", 40, 0, 120),
+            new OptionNumeric(1, "name1", "desc1", -50, 20, 30),
+            new OptionBoolean(2, "name2", "desc2", false)
         ), new ArrayList<>()
     ).test().assertError(NoNetworkException.class);
   }
@@ -419,10 +402,10 @@ public class VehicleOptionsUseCaseTest {
     // Дано:
     Vehicle vehicle = new Vehicle(12, "manufacturer", "model", "color", "license", false);
     vehicle.addVehicleOptions(
-        new OptionNumeric(0, "name0", "desc0", false, 10, 0, 20),
-        new OptionNumeric(1, "name1", "desc1", true, -5, -18, 0),
-        new OptionBoolean(2, "name2", "desc2", true, false),
-        new OptionBoolean(3, "name3", "desc3", false, true)
+        new OptionNumeric(0, "name0", "desc0", 10, 0, 20),
+        new OptionNumeric(1, "name1", "desc1", -5, -18, 0),
+        new OptionBoolean(2, "name2", "desc2", false),
+        new OptionBoolean(3, "name3", "desc3", true)
     );
     when(vehicleChoiceReceiver.get()).thenReturn(Observable.just(vehicle));
     when(gateway.sendVehicleOptions(any(Vehicle.class), anyList()))
@@ -436,9 +419,9 @@ public class VehicleOptionsUseCaseTest {
     // Результат:
     useCase.setSelectedVehicleAndOptions(
         Arrays.asList(
-            new OptionNumeric(0, "name0", "desc0", true, 40, 0, 120),
-            new OptionNumeric(1, "name1", "desc1", true, -50, 20, 30),
-            new OptionBoolean(2, "name2", "desc2", true, false)
+            new OptionNumeric(0, "name0", "desc0", 40, 0, 120),
+            new OptionNumeric(1, "name1", "desc1", -50, 20, 30),
+            new OptionBoolean(2, "name2", "desc2", false)
         ), new ArrayList<>()
     ).test().assertError(IllegalArgumentException.class);
   }
@@ -451,10 +434,10 @@ public class VehicleOptionsUseCaseTest {
     // Дано:
     Vehicle vehicle = new Vehicle(12, "manufacturer", "model", "color", "license", false);
     vehicle.addVehicleOptions(
-        new OptionNumeric(0, "name0", "desc0", false, 10, 0, 20),
-        new OptionNumeric(1, "name1", "desc1", true, -5, -18, 0),
-        new OptionBoolean(2, "name2", "desc2", true, false),
-        new OptionBoolean(3, "name3", "desc3", false, true)
+        new OptionNumeric(0, "name0", "desc0", 10, 0, 20),
+        new OptionNumeric(1, "name1", "desc1", -5, -18, 0),
+        new OptionBoolean(2, "name2", "desc2", false),
+        new OptionBoolean(3, "name3", "desc3", true)
     );
     when(vehicleChoiceReceiver.get()).thenReturn(Observable.just(vehicle));
     when(gateway.sendVehicleOptions(any(Vehicle.class), anyList()))
@@ -467,9 +450,9 @@ public class VehicleOptionsUseCaseTest {
     // Результат:
     useCase.setSelectedVehicleAndOptions(
         Arrays.asList(
-            new OptionNumeric(0, "name0", "desc0", true, 40, 0, 120),
-            new OptionNumeric(1, "name1", "desc1", true, -50, 20, 30),
-            new OptionBoolean(2, "name2", "desc2", true, false)
+            new OptionNumeric(0, "name0", "desc0", 40, 0, 120),
+            new OptionNumeric(1, "name1", "desc1", -50, 20, 30),
+            new OptionBoolean(2, "name2", "desc2", false)
         ), new ArrayList<>()
     ).test().assertComplete();
   }

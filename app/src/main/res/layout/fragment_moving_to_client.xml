@@ -6,7 +6,7 @@
   android:layout_width="match_parent"
   android:layout_height="match_parent">
   <TextView
-    android:id="@+id/addressTitleText"
+    android:id="@+id/nextAddressTitleText"
     style="@style/TextAppearance.AppTheme.Subhead"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
@@ -17,7 +17,7 @@
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toTopOf="parent"/>
   <TextView
-    android:id="@+id/addressText"
+    android:id="@+id/nextAddressText"
     style="@style/TextAppearance.AppTheme.Title"
     android:layout_width="0dp"
     android:layout_height="wrap_content"
@@ -25,10 +25,10 @@
     android:layout_marginEnd="16dp"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toBottomOf="@id/addressTitleText"
+    app:layout_constraintTop_toBottomOf="@id/nextAddressTitleText"
     tools:text="Москва, ул. Академика Пилюгина, 14 корпус 4, кв. 1122"/>
   <TextView
-    android:id="@+id/commentTitleText"
+    android:id="@+id/nextAddressCommentTitleText"
     style="@style/TextAppearance.AppTheme.Subhead"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
@@ -37,9 +37,9 @@
     android:layout_marginEnd="16dp"
     android:text="@string/comment"
     app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toBottomOf="@id/addressText"/>
+    app:layout_constraintTop_toBottomOf="@id/nextAddressText"/>
   <TextView
-    android:id="@+id/commentText"
+    android:id="@+id/nextAddressCommentText"
     style="@style/TextAppearance.AppTheme.Title"
     android:layout_width="0dp"
     android:layout_height="wrap_content"
@@ -47,7 +47,7 @@
     android:layout_marginEnd="16dp"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toBottomOf="@id/commentTitleText"
+    app:layout_constraintTop_toBottomOf="@id/nextAddressCommentTitleText"
     tools:text="Заезд со стороны двора\nВзять пропуск"/>
   <TextView
     android:id="@+id/timerTitleText"
@@ -60,7 +60,7 @@
     app:layout_constraintBottom_toTopOf="@id/timerText"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toBottomOf="@+id/commentText"
+    app:layout_constraintTop_toBottomOf="@+id/nextAddressCommentText"
     app:layout_constraintVertical_chainStyle="packed"/>
   <TextView
     android:id="@+id/timerText"
