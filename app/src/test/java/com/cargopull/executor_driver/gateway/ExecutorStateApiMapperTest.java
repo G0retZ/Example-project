@@ -28,17 +28,17 @@ import ua.naiksoftware.stomp.client.StompMessage;
 public class ExecutorStateApiMapperTest {
 
   @Rule
-  public MockitoRule rule = MockitoJUnit.rule();
-  @Rule
   public final ExpectedException thrown = ExpectedException.none();
-  private Mapper<StompMessage, ExecutorState> mapper;
-  @Mock
-  private Mapper<StompMessage, String> payloadMapper;
   private final StompMessage conditionStompMessage;
   private final Class<? extends Exception> expectedException;
   private final ExecutorState expectedExecutorState;
   private final String expectedMessage;
   private final long expectedTimer;
+  @Rule
+  public MockitoRule rule = MockitoJUnit.rule();
+  private Mapper<StompMessage, ExecutorState> mapper;
+  @Mock
+  private Mapper<StompMessage, String> payloadMapper;
 
   // Each parameter should be placed as an argument here
   // Every time runner triggers, it will pass the arguments
@@ -153,7 +153,8 @@ public class ExecutorStateApiMapperTest {
   }
 
   /**
-   * Должен запросить у маппера сообщения из пейлоада STOMP фрейма извлечь текст сообщения, если не было ошибок маппинга.
+   * Должен запросить у маппера сообщения из пейлоада STOMP фрейма извлечь текст сообщения, если не
+   * было ошибок маппинга.
    *
    * @throws Exception ошибка
    */

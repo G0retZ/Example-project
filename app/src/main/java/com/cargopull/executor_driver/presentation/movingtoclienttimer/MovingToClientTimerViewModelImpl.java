@@ -13,8 +13,8 @@ import com.cargopull.executor_driver.entity.OrderOfferExpiredException;
 import com.cargopull.executor_driver.gateway.DataMappingException;
 import com.cargopull.executor_driver.interactor.OrderUseCase;
 import com.cargopull.executor_driver.presentation.CommonNavigate;
+import com.cargopull.executor_driver.presentation.FragmentViewActions;
 import com.cargopull.executor_driver.presentation.SingleLiveEvent;
-import com.cargopull.executor_driver.presentation.ViewActions;
 import com.cargopull.executor_driver.presentation.ViewState;
 import com.cargopull.executor_driver.utils.TimeUtils;
 import io.reactivex.Observable;
@@ -32,7 +32,7 @@ public class MovingToClientTimerViewModelImpl extends ViewModel implements
   @NonNull
   private final OrderUseCase orderUseCase;
   @NonNull
-  private final MutableLiveData<ViewState<ViewActions>> viewStateLiveData;
+  private final MutableLiveData<ViewState<FragmentViewActions>> viewStateLiveData;
   @NonNull
   private final SingleLiveEvent<String> navigateLiveData;
   @NonNull
@@ -42,7 +42,7 @@ public class MovingToClientTimerViewModelImpl extends ViewModel implements
   @NonNull
   private Disposable timerDisposable = EmptyDisposable.INSTANCE;
   @Nullable
-  private ViewState<ViewActions> lastViewState;
+  private ViewState<FragmentViewActions> lastViewState;
 
   @Inject
   public MovingToClientTimerViewModelImpl(@NonNull ErrorReporter errorReporter,
@@ -58,7 +58,7 @@ public class MovingToClientTimerViewModelImpl extends ViewModel implements
 
   @NonNull
   @Override
-  public LiveData<ViewState<ViewActions>> getViewStateLiveData() {
+  public LiveData<ViewState<FragmentViewActions>> getViewStateLiveData() {
     return viewStateLiveData;
   }
 

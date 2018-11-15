@@ -68,7 +68,6 @@ import com.cargopull.executor_driver.view.SelectedPreOrderFragment;
 import com.cargopull.executor_driver.view.SelectedVehicleFragment;
 import com.cargopull.executor_driver.view.SelectedVehicleOptionsFragment;
 import com.cargopull.executor_driver.view.ServerConnectionFragment;
-import com.cargopull.executor_driver.view.ServicesFragment;
 import com.cargopull.executor_driver.view.UpcomingPreOrderConfirmationFragment;
 import com.cargopull.executor_driver.view.UpcomingPreOrderFragment;
 import com.cargopull.executor_driver.view.UpcomingPreOrderNotificationFragment;
@@ -266,8 +265,8 @@ public class AppComponentImpl implements AppComponent {
 
   @Override
   public void inject(FcmService fcmService) {
-    fcmService.setAnnouncementViewModel(
-        getPresentationComponent().getAnnouncementViewModel()
+    fcmService.setFcmObserver(
+        getBackendComponent().getFcmReceiver()
     );
     fcmService.setApiService(
         getBackendComponent().getApiService()
@@ -357,16 +356,6 @@ public class AppComponentImpl implements AppComponent {
     );
     selectedVehicleFragment.setChooseVehicleViewModel(
         getPresentationComponent().getCurrentChooseVehicleViewModel(selectedVehicleFragment)
-    );
-  }
-
-  @Override
-  public void inject(ServicesFragment servicesFragment) {
-    servicesFragment.setServicesSliderViewModel(
-        getPresentationComponent().getServicesSliderViewModel()
-    );
-    servicesFragment.setServicesViewModel(
-        getPresentationComponent().getServicesViewModel(servicesFragment)
     );
   }
 

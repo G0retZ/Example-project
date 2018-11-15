@@ -72,7 +72,8 @@ public class ConfirmOrderPaymentViewModelTest {
   }
 
   /**
-   * Не должен трогать юзкейс, если предыдущий запрос подтверждения оплаты заказа еще не завершился.
+   * Не должен трогать юзкейс, если предыдущий запрос подтверждения оплаты заказа еще не
+   * завершился.
    */
   @Test
   public void DoNotTouchUseCaseDuringOrderSetting() {

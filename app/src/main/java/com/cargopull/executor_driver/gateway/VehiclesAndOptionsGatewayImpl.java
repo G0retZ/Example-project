@@ -65,6 +65,7 @@ public class VehiclesAndOptionsGatewayImpl implements VehiclesAndOptionsGateway 
     }
     return apiOptionsForOnlineSingle
         .flattenAsObservable(ApiOptionsForOnline::getDriverOptions)
+        .filter(ApiOptionItem::isDynamic)
         .map(optionMapper::map)
         .toList()
         .onErrorResumeNext(e -> Single.error(errorMapper.map(e)));

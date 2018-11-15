@@ -14,14 +14,13 @@ public class OptionBooleanTest {
 
   @Before
   public void setUp() {
-    vehicleOptionBoolean = new OptionBoolean(12, "name", "description", true, false);
+    vehicleOptionBoolean = new OptionBoolean(12, "name", "description", false);
   }
 
   @Test
   public void testConstructor() {
     assertEquals(vehicleOptionBoolean.getId(), 12);
     assertEquals(vehicleOptionBoolean.getName(), "name");
-    assertTrue(vehicleOptionBoolean.isVariable());
     assertFalse(vehicleOptionBoolean.getValue());
   }
 
@@ -33,16 +32,14 @@ public class OptionBooleanTest {
 
   @Test
   public void testEquals() {
-    assertEquals(vehicleOptionBoolean, new OptionBoolean(12, "name", "description", true, false));
+    assertEquals(vehicleOptionBoolean, new OptionBoolean(12, "name", "description", false));
     assertNotEquals(vehicleOptionBoolean,
-        new OptionBoolean(11, "name", "description", true, false));
+        new OptionBoolean(11, "name", "description", false));
     assertNotEquals(vehicleOptionBoolean,
-        new OptionBoolean(12, "names", "description", true, false));
+        new OptionBoolean(12, "names", "description", false));
     assertNotEquals(vehicleOptionBoolean,
-        new OptionBoolean(12, "name", "descriptions", true, false));
-    assertNotEquals(vehicleOptionBoolean,
-        new OptionBoolean(12, "name", "description", false, false));
-    assertNotEquals(vehicleOptionBoolean, new OptionBoolean(12, "name", "description", true, true));
+        new OptionBoolean(12, "name", "descriptions", false));
+    assertNotEquals(vehicleOptionBoolean, new OptionBoolean(12, "name", "description", true));
     assertNotEquals(vehicleOptionBoolean, vehicleOptionBoolean.setValue(true));
   }
 }

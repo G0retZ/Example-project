@@ -2,23 +2,23 @@ package com.cargopull.executor_driver.presentation.movingtoclienttimer;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import com.cargopull.executor_driver.presentation.ViewActions;
+import com.cargopull.executor_driver.presentation.FragmentViewActions;
 import com.cargopull.executor_driver.presentation.ViewState;
 
 /**
  * Состояние ожидания при подтверждении или отказе от заказа.
  */
-final class MovingToClientTimerViewStatePending implements ViewState<ViewActions> {
+final class MovingToClientTimerViewStatePending implements ViewState<FragmentViewActions> {
 
   @Nullable
-  private final ViewState<ViewActions> parentViewState;
+  private final ViewState<FragmentViewActions> parentViewState;
 
-  MovingToClientTimerViewStatePending(@Nullable ViewState<ViewActions> parentViewState) {
+  MovingToClientTimerViewStatePending(@Nullable ViewState<FragmentViewActions> parentViewState) {
     this.parentViewState = parentViewState;
   }
 
   @Override
-  public void apply(@NonNull ViewActions stateActions) {
+  public void apply(@NonNull FragmentViewActions stateActions) {
     if (parentViewState != null) {
       parentViewState.apply(stateActions);
     }

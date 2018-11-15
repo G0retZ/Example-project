@@ -2,7 +2,7 @@ package com.cargopull.executor_driver.presentation.movingtoclienttimer;
 
 import androidx.annotation.NonNull;
 import com.cargopull.executor_driver.R;
-import com.cargopull.executor_driver.presentation.ViewActions;
+import com.cargopull.executor_driver.presentation.FragmentViewActions;
 import com.cargopull.executor_driver.presentation.ViewState;
 import org.joda.time.LocalTime;
 import org.joda.time.format.DateTimeFormat;
@@ -10,7 +10,7 @@ import org.joda.time.format.DateTimeFormat;
 /**
  * Состояние счетчика таймера движения к клиенту.
  */
-final class MovingToClientTimerViewStateCounting implements ViewState<ViewActions> {
+final class MovingToClientTimerViewStateCounting implements ViewState<FragmentViewActions> {
 
   private final long timeStamp;
 
@@ -19,7 +19,7 @@ final class MovingToClientTimerViewStateCounting implements ViewState<ViewAction
   }
 
   @Override
-  public void apply(@NonNull ViewActions stateActions) {
+  public void apply(@NonNull FragmentViewActions stateActions) {
     stateActions.setText(R.id.timerText,
         DateTimeFormat.forPattern((timeStamp < 0 ? "-" : "") + "HH:mm:ss")
             .print(LocalTime.fromMillisOfDay(Math.abs(timeStamp)))

@@ -35,7 +35,8 @@ public class PreOrderFilterTest {
   }
 
   /**
-   * Должен выдать ошибку потери актуальности предложения, если сообщение с заголовком PreliminaryExpired.
+   * Должен выдать ошибку потери актуальности предложения, если сообщение с заголовком
+   * PreliminaryExpired.
    */
   @Test(expected = OrderOfferExpiredException.class)
   public void errorForHeaderWithPreliminaryExpiredTrue() throws Exception {
@@ -47,7 +48,8 @@ public class PreOrderFilterTest {
   }
 
   /**
-   * Должен выдать ошибку потери актуальности предложения, если сообщение с заголовком PreliminaryExpired и пайлоадом.
+   * Должен выдать ошибку потери актуальности предложения, если сообщение с заголовком
+   * PreliminaryExpired и пайлоадом.
    */
   @Test(expected = OrderOfferExpiredException.class)
   public void errorForHeaderWithPreliminaryExpiredTrueAndPayload() throws Exception {
@@ -72,7 +74,8 @@ public class PreOrderFilterTest {
   }
 
   /**
-   * Должен выдать ошибку отмены заказа клиентом, если сообщение с заголовком PreliminaryCancelled и пайлоадом.
+   * Должен выдать ошибку отмены заказа клиентом, если сообщение с заголовком PreliminaryCancelled и
+   * пайлоадом.
    */
   @Test(expected = OrderCancelledException.class)
   public void errorForHeaderWithPreliminaryCancelledTrueAndPayload() throws Exception {

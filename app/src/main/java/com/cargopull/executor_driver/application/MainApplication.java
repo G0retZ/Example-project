@@ -2,6 +2,7 @@ package com.cargopull.executor_driver.application;
 
 import android.app.Activity;
 import android.app.Application;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -16,6 +17,7 @@ import androidx.annotation.StringRes;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.app.NotificationCompat.BigTextStyle;
 import androidx.core.app.NotificationCompat.Builder;
+import com.cargopull.executor_driver.BuildConfig;
 import com.cargopull.executor_driver.R;
 import com.cargopull.executor_driver.backend.ringtone.RingTonePlayer;
 import com.cargopull.executor_driver.backend.vibro.ShakeItPlayer;
@@ -80,7 +82,6 @@ public class MainApplication extends Application implements ServerConnectionView
   private ServerTimeViewModel serverTimeViewModel;
   private NavigationMapper navigationMapper;
   private int missedOrdersCount;
-  @Nullable
   private NotificationManager notificationManager;
 
   @Inject
@@ -231,6 +232,7 @@ public class MainApplication extends Application implements ServerConnectionView
 
   private void initApplication() {
     notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+    initNotificationChannels(notificationManager);
     appComponent.inject(this);
     serverConnectionViewModel.getViewStateLiveData().observeForever(viewState -> {
       if (viewState != null) {
@@ -273,6 +275,29 @@ public class MainApplication extends Application implements ServerConnectionView
     currentCostPollingViewModel.getNavigationLiveData().observeForever(this::navigate);
     serverTimeViewModel.getNavigationLiveData().observeForever(this::navigate);
     initServerConnection();
+  }
+
+  private void initNotificationChannels(@NonNull NotificationManager notificationManager) {
+    // Android O требует Notification Channel.
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+      // Бесшумный важный канал для сообщений со своим звуком и вибрацией
+      NotificationChannel mChannel =
+          new NotificationChannel(BuildConfig.QUIET_CHANNEL_ID,
+              getString(R.string.server_connection),
+              NotificationManager.IMPORTANCE_HIGH);
+      mChannel.setDescription(getString(R.string.server_connection_desc));
+      mChannel.setSound(null, null);
+      mChannel.enableVibration(false);
+      notificationManager.createNotificationChannel(mChannel);
+
+      // Обычный канал для информационных сообщений общего характера
+      mChannel =
+          new NotificationChannel(BuildConfig.ANNOUNCEMENT_CHANNEL_ID,
+              getString(R.string.important_info),
+              NotificationManager.IMPORTANCE_DEFAULT);
+      mChannel.setDescription(getString(R.string.important_info_desc));
+      notificationManager.createNotificationChannel(mChannel);
+    }
   }
 
   public void initServerConnection() {
@@ -383,22 +408,20 @@ public class MainApplication extends Application implements ServerConnectionView
   public void showMissedOrderMessage(@NonNull String message) {
     playSound(R.raw.missed_offer);
     shakeIt(R.raw.missed_order_vibro);
-    if (notificationManager != null) {
-      Builder builder = new Builder(this, "state_channel")
-          .setContentTitle(getString(R.string.missed_order))
-          .setContentText(message)
-          .setStyle(new BigTextStyle().bigText(message))
-          .setSound(null)
-          .setVibrate(new long[0])
-          .setAutoCancel(true)
-          .setContentIntent(
-              PendingIntent.getActivity(this, 0, new Intent(this, BalanceActivity.class), 0)
-          )
-          .setSmallIcon(R.mipmap.ic_launcher)
-          .setTicker(getString(R.string.missed_order))
-          .setWhen(System.currentTimeMillis());
-      notificationManager.notify(missedOrdersCount++ % 5, builder.build());
-    }
+    Builder builder = new Builder(this, BuildConfig.QUIET_CHANNEL_ID)
+        .setContentTitle(getString(R.string.missed_order))
+        .setContentText(message)
+        .setStyle(new BigTextStyle().bigText(message))
+        .setSound(null)
+        .setVibrate(new long[0])
+        .setAutoCancel(true)
+        .setContentIntent(
+            PendingIntent.getActivity(this, 0, new Intent(this, BalanceActivity.class), 0)
+        )
+        .setSmallIcon(R.mipmap.ic_launcher)
+        .setTicker(getString(R.string.missed_order))
+        .setWhen(System.currentTimeMillis());
+    notificationManager.notify(missedOrdersCount++ % 5, builder.build());
   }
 
   private void startService(@StringRes int title, @StringRes int text,
@@ -432,26 +455,24 @@ public class MainApplication extends Application implements ServerConnectionView
 
   @Override
   public void showPreOrderAvailable(boolean show) {
-    if (notificationManager != null) {
-      if (show) {
-        navigate(PreOrderNavigate.ORDER_APPROVAL);
-        Builder builder = new Builder(this, "state_channel")
-            .setContentTitle(getString(R.string.new_pre_order))
-            .setContentText(getString(R.string.new_pre_order_message))
-            .setStyle(new BigTextStyle().bigText(getString(R.string.new_pre_order_message)))
-            .setSound(null)
-            .setVibrate(new long[0])
-            .setContentIntent(
-                PendingIntent.getActivity(this, 0,
-                    new Intent(this, DriverPreOrderBookingActivity.class), 0)
-            )
-            .setSmallIcon(R.mipmap.ic_launcher)
-            .setTicker(getString(R.string.new_pre_order))
-            .setWhen(System.currentTimeMillis());
-        notificationManager.notify(7, builder.build());
-      } else {
-        notificationManager.cancel(7);
-      }
+    if (show) {
+      navigate(PreOrderNavigate.ORDER_APPROVAL);
+      Builder builder = new Builder(this, "state_channel")
+          .setContentTitle(getString(R.string.new_pre_order))
+          .setContentText(getString(R.string.new_pre_order_message))
+          .setStyle(new BigTextStyle().bigText(getString(R.string.new_pre_order_message)))
+          .setSound(null)
+          .setVibrate(new long[0])
+          .setContentIntent(
+              PendingIntent.getActivity(this, 0,
+                  new Intent(this, DriverPreOrderBookingActivity.class), 0)
+          )
+          .setSmallIcon(R.mipmap.ic_launcher)
+          .setTicker(getString(R.string.new_pre_order))
+          .setWhen(System.currentTimeMillis());
+      notificationManager.notify(7, builder.build());
+    } else {
+      notificationManager.cancel(7);
     }
   }
 
@@ -459,50 +480,44 @@ public class MainApplication extends Application implements ServerConnectionView
   public void showUpcomingPreOrderMessage(@NonNull String message) {
     shakeIt(R.raw.new_pre_order_vibro);
     playSound(R.raw.pre_order_reminder);
-    if (notificationManager != null) {
-      Builder builder = new Builder(this, "state_channel")
-          .setContentText(message)
-          .setStyle(new BigTextStyle().bigText(message))
-          .setContentTitle(getString(R.string.upcoming_pre_order))
-          .setSound(null)
-          .setVibrate(new long[0])
-          .setAutoCancel(true)
-          .setContentIntent(
-              PendingIntent.getActivity(this, 0,
-                  new Intent(this, UpcomingPreOrderActivity.class), 0)
-          )
-          .setSmallIcon(R.mipmap.ic_launcher)
-          .setTicker(getString(R.string.upcoming_pre_order))
-          .setWhen(System.currentTimeMillis());
-      notificationManager.notify(8, builder.build());
-    }
+    Builder builder = new Builder(this, BuildConfig.QUIET_CHANNEL_ID)
+        .setContentText(message)
+        .setStyle(new BigTextStyle().bigText(message))
+        .setContentTitle(getString(R.string.upcoming_pre_order))
+        .setSound(null)
+        .setVibrate(new long[0])
+        .setAutoCancel(true)
+        .setContentIntent(
+            PendingIntent.getActivity(this, 0,
+                new Intent(this, UpcomingPreOrderActivity.class), 0)
+        )
+        .setSmallIcon(R.mipmap.ic_launcher)
+        .setTicker(getString(R.string.upcoming_pre_order))
+        .setWhen(System.currentTimeMillis());
+    notificationManager.notify(8, builder.build());
   }
 
   @Override
   public void showUpcomingPreOrderAvailable(boolean show) {
-    if (notificationManager != null) {
-      if (!show) {
-        notificationManager.cancel(8);
-      }
+    if (!show) {
+      notificationManager.cancel(8);
     }
   }
 
   @Override
   public void showCancelledOrderMessage(@NonNull String message) {
     playSound(R.raw.missed_offer);
-    if (notificationManager != null) {
-      Builder builder = new Builder(this, "state_channel")
-          .setContentTitle(getString(R.string.order_cancelled))
-          .setContentText(message)
-          .setStyle(new BigTextStyle().bigText(message))
-          .setSound(null)
-          .setVibrate(new long[0])
-          .setAutoCancel(true)
-          .setContentIntent(PendingIntent.getActivity(getApplicationContext(), 0, new Intent(), 0))
-          .setSmallIcon(R.mipmap.ic_launcher)
-          .setTicker(getString(R.string.order_cancelled))
-          .setWhen(System.currentTimeMillis());
-      notificationManager.notify(11, builder.build());
-    }
+    Builder builder = new Builder(this, "state_channel")
+        .setContentTitle(getString(R.string.order_cancelled))
+        .setContentText(message)
+        .setStyle(new BigTextStyle().bigText(message))
+        .setSound(null)
+        .setVibrate(new long[0])
+        .setAutoCancel(true)
+        .setContentIntent(PendingIntent.getActivity(getApplicationContext(), 0, new Intent(), 0))
+        .setSmallIcon(R.mipmap.ic_launcher)
+        .setTicker(getString(R.string.order_cancelled))
+        .setWhen(System.currentTimeMillis());
+    notificationManager.notify(11, builder.build());
   }
 }

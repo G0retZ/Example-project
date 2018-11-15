@@ -9,7 +9,6 @@ import ua.naiksoftware.stomp.client.StompMessage;
 
 public class MessagePayloadApiMapperTest {
 
-
   private Mapper<StompMessage, String> mapper;
 
   @Before
@@ -177,7 +176,8 @@ public class MessagePayloadApiMapperTest {
   }
 
   /**
-   * Должен успешно извлечь строку из сообщения, сохранив кавычки в тексте, но удалив крайние, пробелы и переносы строк.
+   * Должен успешно извлечь строку из сообщения, сохранив кавычки в тексте, но удалив крайние,
+   * пробелы и переносы строк.
    *
    * @throws Exception ошибка
    */

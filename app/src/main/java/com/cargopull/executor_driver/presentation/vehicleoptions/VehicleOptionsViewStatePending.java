@@ -14,5 +14,7 @@ public final class VehicleOptionsViewStatePending implements ViewState<VehicleOp
     stateActions.showVehicleOptionsList(true);
     stateActions.showVehicleOptionsPending(true);
     stateActions.showVehicleOptionsListErrorMessage(false);
+    // Убираем диалог
+    stateActions.dismissDialog();
   }
 }

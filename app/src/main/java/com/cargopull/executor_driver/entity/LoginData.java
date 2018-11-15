@@ -3,8 +3,7 @@ package com.cargopull.executor_driver.entity;
 import androidx.annotation.NonNull;
 
 /**
- * Бизнес сущность входа в систему. Immutable.
- * Создается через конструктор с не нулевыми полями.
+ * Бизнес сущность входа в систему. Immutable. Создается через конструктор с не нулевыми полями.
  * Любой сеттер возвращает новую сущность с заданными полями.
  */
 public class LoginData {

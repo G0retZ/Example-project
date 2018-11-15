@@ -1,8 +1,8 @@
 package com.cargopull.executor_driver.entity;
 
 /**
- * Бизнес сущность баланса исполнителя. Immutable.
- * Создается через конструктор с не нулевыми полями.
+ * Бизнес сущность баланса исполнителя. Immutable. Создается через конструктор с не нулевыми
+ * полями.
  */
 public class ExecutorBalance {
 

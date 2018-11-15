@@ -9,7 +9,6 @@ import io.reactivex.Completable;
 import io.reactivex.Observable;
 import io.reactivex.Single;
 import io.reactivex.schedulers.Schedulers;
-import java.util.Iterator;
 import java.util.List;
 import javax.inject.Inject;
 
@@ -44,14 +43,7 @@ public class VehicleOptionsUseCaseImpl implements VehicleOptionsUseCase {
     return vehicleChoiceReceiver.get()
         .map(vehicle -> {
           this.vehicle = vehicle;
-          List<Option> result = vehicle.getOptions();
-          Iterator<Option> iterator = result.iterator();
-          while (iterator.hasNext()) {
-            if (!iterator.next().isVariable()) {
-              iterator.remove();
-            }
-          }
-          return result;
+          return vehicle.getOptions();
         });
   }
 
@@ -59,10 +51,7 @@ public class VehicleOptionsUseCaseImpl implements VehicleOptionsUseCase {
   @Override
   public Single<List<Option>> getDriverOptions() {
     return vehiclesAndOptionsGateway.getExecutorOptions()
-        .observeOn(Schedulers.single())
-        .flattenAsObservable(options -> options)
-        .filter(Option::isVariable)
-        .toList();
+        .observeOn(Schedulers.single());
   }
 
   @Override
@@ -72,7 +61,7 @@ public class VehicleOptionsUseCaseImpl implements VehicleOptionsUseCase {
       if (vehicle == null) {
         throw new IllegalStateException("Не было выбрано ни одного ТС.");
       }
-      vehicle.setOptions(options.toArray(new Option[0]));
+      vehicle.setOptions(options);
       return vehicle;
     }).flatMapCompletable(
         vehicle -> gateway.sendVehicleOptions(vehicle, driverOptions)

@@ -4,6 +4,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 import com.cargopull.executor_driver.R;
+import com.cargopull.executor_driver.presentation.ImageTextViewActions;
 import com.cargopull.executor_driver.presentation.ViewState;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -14,12 +15,12 @@ import org.mockito.junit.MockitoJUnitRunner;
 public class GeoLocationStateNoLocationViewStateTest {
 
   @Mock
-  private GeoLocationStateViewActions viewActions;
+  private ImageTextViewActions viewActions;
 
   @Test
   public void testActions() {
     // Дано:
-    ViewState<GeoLocationStateViewActions> viewState = new GeoLocationStateNoLocationViewState();
+    ViewState<ImageTextViewActions> viewState = new GeoLocationStateNoLocationViewState();
 
     // Действие:
     viewState.apply(viewActions);

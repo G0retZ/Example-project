@@ -28,18 +28,15 @@ import org.mockito.junit.MockitoRule;
 @RunWith(Parameterized.class)
 public class ServerResponseInterceptorTest {
 
-  @Rule
-  public MockitoRule rule = MockitoJUnit.rule();
-
-  private ServerResponseInterceptor serverResponseInterceptor;
-
-  @Mock
-  private Interceptor.Chain chain;
-
   private final int code;
   private final String body;
   private final boolean isMyException;
   private final String resultCode;
+  @Rule
+  public MockitoRule rule = MockitoJUnit.rule();
+  private ServerResponseInterceptor serverResponseInterceptor;
+  @Mock
+  private Interceptor.Chain chain;
 
   // Each parameter should be placed as an argument here
   // Every time runner triggers, it will pass the arguments

@@ -16,7 +16,7 @@ import com.cargopull.executor_driver.entity.OrderOfferDecisionException;
 import com.cargopull.executor_driver.entity.OrderOfferExpiredException;
 import com.cargopull.executor_driver.gateway.DataMappingException;
 import com.cargopull.executor_driver.interactor.OrderUseCase;
-import com.cargopull.executor_driver.presentation.ViewActions;
+import com.cargopull.executor_driver.presentation.FragmentViewActions;
 import com.cargopull.executor_driver.presentation.ViewState;
 import com.cargopull.executor_driver.utils.TimeUtils;
 import io.reactivex.BackpressureStrategy;
@@ -48,7 +48,7 @@ public class MovingToClientTimerViewModelTest {
   private MovingToClientTimerViewModel viewModel;
   private TestScheduler testScheduler;
   @Mock
-  private Observer<ViewState<ViewActions>> viewStateObserver;
+  private Observer<ViewState<FragmentViewActions>> viewStateObserver;
   @Mock
   private ErrorReporter errorReporter;
   @Mock
