@@ -1,12 +1,17 @@
 package com.cargopull.executor_driver.entity;
 
-class OrdersHistorySummary {
+/**
+ * Неизменная бизнес сущность сводки истории заказов. Содержит в себе общие суммы заработка на
+ * выполненных заказах и убытков от отказанных, отмененных и пропущенных заказов.
+ */
+public class OrdersHistorySummary {
+
   private final long completedOrders;
   private final long rejectedOrders;
   private final long cancelledOrders;
   private final long missedOrders;
 
-  OrdersHistorySummary(long completedOrders, long rejectedOrders, long cancelledOrders,
+  public OrdersHistorySummary(long completedOrders, long rejectedOrders, long cancelledOrders,
       long missedOrders) {
     this.completedOrders = completedOrders;
     this.rejectedOrders = rejectedOrders;
@@ -14,19 +19,19 @@ class OrdersHistorySummary {
     this.missedOrders = missedOrders;
   }
 
-  long getCompletedOrders() {
+  public long getCompletedOrders() {
     return completedOrders;
   }
 
-  long getRejectedOrders() {
+  public long getRejectedOrders() {
     return rejectedOrders;
   }
 
-  long getCancelledOrders() {
+  public long getCancelledOrders() {
     return cancelledOrders;
   }
 
-  long getMissedOrders() {
+  public long getMissedOrders() {
     return missedOrders;
   }
 }
