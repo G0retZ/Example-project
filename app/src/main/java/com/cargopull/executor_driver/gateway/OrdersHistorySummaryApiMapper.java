@@ -12,7 +12,7 @@ public class OrdersHistorySummaryApiMapper implements
     Mapper<ApiOrdersHistorySummary, OrdersHistorySummary> {
 
   @Inject
-  OrdersHistorySummaryApiMapper() {
+  public OrdersHistorySummaryApiMapper() {
   }
 
   @NonNull
