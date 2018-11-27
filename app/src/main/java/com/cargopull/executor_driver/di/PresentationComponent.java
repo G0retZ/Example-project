@@ -32,6 +32,7 @@ import com.cargopull.executor_driver.presentation.order.OrderViewModel;
 import com.cargopull.executor_driver.presentation.orderconfirmation.OrderConfirmationViewModel;
 import com.cargopull.executor_driver.presentation.ordercost.OrderCostViewModel;
 import com.cargopull.executor_driver.presentation.orderroute.OrderRouteViewModel;
+import com.cargopull.executor_driver.presentation.ordershistoryheader.OrdersHistoryHeaderViewModel;
 import com.cargopull.executor_driver.presentation.ordertime.OrderTimeViewModel;
 import com.cargopull.executor_driver.presentation.phone.PhoneViewModel;
 import com.cargopull.executor_driver.presentation.preorder.PreOrderViewModel;
@@ -197,11 +198,14 @@ interface PresentationComponent {
   UpcomingPreOrderViewModel getUpcomingPreOrderAvailabilityViewModel();
 
   @NonNull
-  GeoLocationStateViewModel getGeoLocationStateViewModel(AppCompatActivity appCompatActivity);
+  GeoLocationStateViewModel getGeoLocationStateViewModel(@Nullable AppCompatActivity appCompatActivity);
 
   @NonNull
-  GeoLocationStateViewModel getGeoLocationStateViewModel(Fragment fragment);
+  GeoLocationStateViewModel getGeoLocationStateViewModel(@Nullable Fragment fragment);
 
   @NonNull
-  MovingToClientTimerViewModel getMovingToClientTimerViewModel(Fragment fragment);
+  MovingToClientTimerViewModel getMovingToClientTimerViewModel(@Nullable Fragment fragment);
+
+  @NonNull
+  OrdersHistoryHeaderViewModel getOrdersHistoryHeaderViewModel(@Nullable Fragment fragment, int offset);
 }
