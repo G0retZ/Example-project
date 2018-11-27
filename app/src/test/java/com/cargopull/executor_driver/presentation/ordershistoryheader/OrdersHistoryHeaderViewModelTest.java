@@ -22,6 +22,7 @@ import com.cargopull.executor_driver.presentation.ViewState;
 import com.cargopull.executor_driver.utils.TimeUtils;
 import io.reactivex.Single;
 import io.reactivex.SingleEmitter;
+import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
@@ -69,7 +70,9 @@ public class OrdersHistoryHeaderViewModelTest {
     when(ordersHistoryHeaderViewActions.getCurrencyFormat()).thenReturn("");
     when(gateway.getOrdersHistorySummary(anyLong(), anyLong()))
         .thenReturn(Single.create(emitter -> singleEmitter = emitter));
-    when(timeUtils.currentTimeMillis()).thenReturn(145353202000L);
+    when(timeUtils.currentTimeMillis()).thenReturn(
+        DateTime.now().withDate(1974, 8, 10).withTime(7, 53, 22, 0).getMillis()
+    );
     viewModel = new OrdersHistoryHeaderViewModelImpl(0, errorReporter, timeUtils, gateway);
   }
 
@@ -139,7 +142,10 @@ public class OrdersHistoryHeaderViewModelTest {
   @Test
   public void askUseCaseForOrdersInitially() {
     // Результат:
-    verify(gateway, only()).getOrdersHistorySummary(144536400000L, 145353202000L);
+    verify(gateway, only()).getOrdersHistorySummary(
+        DateTime.now().withDate(1974, 8, 1).withMillisOfDay(0).getMillis(),
+        DateTime.now().withDate(1974, 8, 10).withTime(7, 53, 22, 0).getMillis()
+    );
   }
 
   /**
@@ -154,7 +160,10 @@ public class OrdersHistoryHeaderViewModelTest {
     viewModel.getNavigationLiveData();
 
     // Результат:
-    verify(gateway, only()).getOrdersHistorySummary(144536400000L, 145353202000L);
+    verify(gateway, only()).getOrdersHistorySummary(
+        DateTime.now().withDate(1974, 8, 1).withMillisOfDay(0).getMillis(),
+        DateTime.now().withDate(1974, 8, 10).withTime(7, 53, 22, 0).getMillis()
+    );
   }
 
   /**
@@ -171,10 +180,22 @@ public class OrdersHistoryHeaderViewModelTest {
     new OrdersHistoryHeaderViewModelImpl(5, errorReporter, timeUtils, gateway);
 
     // Результат:
-    inOrder.verify(gateway).getOrdersHistorySummary(144536400000L, 145353202000L);
-    inOrder.verify(gateway).getOrdersHistorySummary(141858000000L, 144536399999L);
-    inOrder.verify(gateway).getOrdersHistorySummary(136587600000L, 139265999999L);
-    inOrder.verify(gateway).getOrdersHistorySummary(131317200000L, 133995599999L);
+    inOrder.verify(gateway).getOrdersHistorySummary(
+        DateTime.now().withDate(1974, 8, 1).withMillisOfDay(0).getMillis(),
+        DateTime.now().withDate(1974, 8, 10).withTime(7, 53, 22, 0).getMillis()
+    );
+    inOrder.verify(gateway).getOrdersHistorySummary(
+        DateTime.now().withDate(1974, 7, 1).withMillisOfDay(0).getMillis(),
+        DateTime.now().withDate(1974, 7, 31).withTime(23, 59, 59, 999).getMillis()
+    );
+    inOrder.verify(gateway).getOrdersHistorySummary(
+        DateTime.now().withDate(1974, 5, 1).withMillisOfDay(0).getMillis(),
+        DateTime.now().withDate(1974, 5, 31).withTime(23, 59, 59, 999).getMillis()
+    );
+    inOrder.verify(gateway).getOrdersHistorySummary(
+        DateTime.now().withDate(1974, 3, 1).withMillisOfDay(0).getMillis(),
+        DateTime.now().withDate(1974, 3, 31).withTime(23, 59, 59, 999).getMillis()
+    );
     verifyNoMoreInteractions(gateway);
   }
 
@@ -197,7 +218,10 @@ public class OrdersHistoryHeaderViewModelTest {
     viewModel.retry();
 
     // Результат:
-    verify(gateway, times(4)).getOrdersHistorySummary(144536400000L, 145353202000L);
+    verify(gateway, times(4)).getOrdersHistorySummary(
+        DateTime.now().withDate(1974, 8, 1).withMillisOfDay(0).getMillis(),
+        DateTime.now().withDate(1974, 8, 10).withTime(7, 53, 22, 0).getMillis()
+    );
     verifyNoMoreInteractions(gateway);
   }
 
@@ -274,7 +298,8 @@ public class OrdersHistoryHeaderViewModelTest {
         })
     );
     viewStateCaptor.getValue().apply(ordersHistoryHeaderViewActions);
-    inOrder.verify(ordersHistoryHeaderViewActions).setClickAction(anyInt(), runnableCaptor.capture());
+    inOrder.verify(ordersHistoryHeaderViewActions)
+        .setClickAction(anyInt(), runnableCaptor.capture());
     runnableCaptor.getValue().run();
     inOrder.verify(viewStateObserver).onChanged(viewStateCaptor.capture());
     assertEquals(viewStateCaptor.getValue(),
@@ -282,7 +307,8 @@ public class OrdersHistoryHeaderViewModelTest {
         })
     );
     viewStateCaptor.getValue().apply(ordersHistoryHeaderViewActions);
-    inOrder.verify(ordersHistoryHeaderViewActions).setClickAction(anyInt(), runnableCaptor.capture());
+    inOrder.verify(ordersHistoryHeaderViewActions)
+        .setClickAction(anyInt(), runnableCaptor.capture());
     runnableCaptor.getValue().run();
     inOrder.verify(viewStateObserver).onChanged(viewStateCaptor.capture());
     assertEquals(viewStateCaptor.getValue(),
@@ -290,7 +316,8 @@ public class OrdersHistoryHeaderViewModelTest {
         })
     );
     viewStateCaptor.getValue().apply(ordersHistoryHeaderViewActions);
-    inOrder.verify(ordersHistoryHeaderViewActions).setClickAction(anyInt(), runnableCaptor.capture());
+    inOrder.verify(ordersHistoryHeaderViewActions)
+        .setClickAction(anyInt(), runnableCaptor.capture());
     runnableCaptor.getValue().run();
     inOrder.verify(viewStateObserver).onChanged(viewStateCaptor.capture());
     assertEquals(viewStateCaptor.getValue(),
@@ -298,7 +325,8 @@ public class OrdersHistoryHeaderViewModelTest {
         })
     );
     viewStateCaptor.getValue().apply(ordersHistoryHeaderViewActions);
-    inOrder.verify(ordersHistoryHeaderViewActions).setClickAction(anyInt(), runnableCaptor.capture());
+    inOrder.verify(ordersHistoryHeaderViewActions)
+        .setClickAction(anyInt(), runnableCaptor.capture());
     runnableCaptor.getValue().run();
     inOrder.verify(viewStateObserver).onChanged(viewStateCaptor.capture());
     assertEquals(viewStateCaptor.getValue(),
@@ -306,7 +334,8 @@ public class OrdersHistoryHeaderViewModelTest {
         })
     );
     viewStateCaptor.getValue().apply(ordersHistoryHeaderViewActions);
-    inOrder.verify(ordersHistoryHeaderViewActions).setClickAction(anyInt(), runnableCaptor.capture());
+    inOrder.verify(ordersHistoryHeaderViewActions)
+        .setClickAction(anyInt(), runnableCaptor.capture());
     runnableCaptor.getValue().run();
     inOrder.verify(viewStateObserver).onChanged(viewStateCaptor.capture());
     assertEquals(viewStateCaptor.getValue(),
