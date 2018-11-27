@@ -147,4 +147,11 @@
   <string name="server_connection_desc">Необходимые для нормальной работы оповещения</string>
   <string name="important_info_desc">Важные информационные оповещения общего характера</string>
   <string name="default_notification_channel_id" templateMergeStrategy="preserve" translatable="false">state_channel</string>
+  <string name="total">Итого</string>
+  <string name="slash">/</string>
+  <string name="completed">Выполнено</string>
+  <string name="service_comission">Комиссия сервиса</string>
+  <string name="refused">Отказался</string>
+  <string name="order_missed">Пропустил</string>
+  <string name="retry">Повторить</string>
 </resources>
