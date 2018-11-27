@@ -1,6 +1,5 @@
 package com.cargopull.executor_driver.interactor;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.times;
@@ -11,13 +10,14 @@ import static org.mockito.Mockito.when;
 
 import com.cargopull.executor_driver.GatewayThreadTestRule;
 import com.cargopull.executor_driver.backend.web.ApiService;
-import com.cargopull.executor_driver.backend.web.incoming.ApiOrdersHistorySummary;
+import com.cargopull.executor_driver.backend.web.incoming.ApiOrdersSummary;
 import com.cargopull.executor_driver.entity.OrdersHistorySummary;
 import com.cargopull.executor_driver.gateway.DataMappingException;
 import com.cargopull.executor_driver.gateway.Mapper;
 import com.cargopull.executor_driver.gateway.OrdersHistorySummaryGatewayImpl;
 import io.reactivex.Single;
 import io.reactivex.observers.TestObserver;
+import java.util.Map;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
@@ -37,10 +37,10 @@ public class OrdersHistorySummaryGatewayTest {
   private ApiService api;
 
   @Mock
-  private Mapper<ApiOrdersHistorySummary, OrdersHistorySummary> mapper;
+  private Mapper<Map<String, ApiOrdersSummary>, OrdersHistorySummary> mapper;
 
   @Mock
-  private ApiOrdersHistorySummary apiOrdersHistorySummary;
+  private Map<String, ApiOrdersSummary> apiOrdersHistorySummary;
 
   @Mock
   private OrdersHistorySummary ordersHistorySummary;
@@ -48,7 +48,7 @@ public class OrdersHistorySummaryGatewayTest {
   @Before
   public void setUp() throws Exception {
     when(api.getOrdersHistory(anyLong(), anyLong())).thenReturn(Single.never());
-    when(mapper.map(any(ApiOrdersHistorySummary.class))).thenReturn(ordersHistorySummary);
+    when(mapper.map(apiOrdersHistorySummary)).thenReturn(ordersHistorySummary);
     gateway = new OrdersHistorySummaryGatewayImpl(api, mapper);
   }
 
@@ -70,7 +70,6 @@ public class OrdersHistorySummaryGatewayTest {
 
   /**
    * Не должен трогать маппер при ошибках получения данных.
-   *
    */
   @Test
   public void doNotTouchMapperOnApiErrors() {
@@ -114,7 +113,7 @@ public class OrdersHistorySummaryGatewayTest {
   @Test
   public void askMapperMappingAfterMappingErrors() throws Exception {
     // Дано:
-    when(mapper.map(any(ApiOrdersHistorySummary.class))).thenThrow(new DataMappingException());
+    when(mapper.map(apiOrdersHistorySummary)).thenThrow(new DataMappingException());
     when(api.getOrdersHistory(11, 100)).thenReturn(Single.just(apiOrdersHistorySummary));
 
     // Действие:
@@ -151,7 +150,7 @@ public class OrdersHistorySummaryGatewayTest {
   public void answerDataMappingError() throws Exception {
     // Дано:
     when(api.getOrdersHistory(11, 100)).thenReturn(Single.just(apiOrdersHistorySummary));
-    when(mapper.map(any(ApiOrdersHistorySummary.class))).thenThrow(new DataMappingException());
+    when(mapper.map(apiOrdersHistorySummary)).thenThrow(new DataMappingException());
 
     // Действие и Результат:
     gateway.getOrdersHistorySummary(11, 100).test().assertError(DataMappingException.class);
@@ -159,7 +158,6 @@ public class OrdersHistorySummaryGatewayTest {
 
   /**
    * Должен вернуть историю заказов.
-   *
    */
   @Test
   public void answerWithOrdersHistorySummary() {

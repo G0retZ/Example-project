@@ -2,11 +2,12 @@ package com.cargopull.executor_driver.gateway;
 
 import androidx.annotation.NonNull;
 import com.cargopull.executor_driver.backend.web.ApiService;
-import com.cargopull.executor_driver.backend.web.incoming.ApiOrdersHistorySummary;
+import com.cargopull.executor_driver.backend.web.incoming.ApiOrdersSummary;
 import com.cargopull.executor_driver.entity.OrdersHistorySummary;
 import com.cargopull.executor_driver.interactor.OrdersHistorySummaryGateway;
 import io.reactivex.Single;
 import io.reactivex.schedulers.Schedulers;
+import java.util.Map;
 import javax.inject.Inject;
 
 public class OrdersHistorySummaryGatewayImpl implements OrdersHistorySummaryGateway {
@@ -14,13 +15,13 @@ public class OrdersHistorySummaryGatewayImpl implements OrdersHistorySummaryGate
   @NonNull
   private final ApiService api;
   @NonNull
-  private final Mapper<ApiOrdersHistorySummary, OrdersHistorySummary> apiOrdersHistorySummaryServiceMapper;
+  private final Mapper<Map<String, ApiOrdersSummary>, OrdersHistorySummary> mapper;
 
   @Inject
   public OrdersHistorySummaryGatewayImpl(@NonNull ApiService api,
-      @NonNull Mapper<ApiOrdersHistorySummary, OrdersHistorySummary> apiOrdersHistorySummaryServiceMapper) {
+      @NonNull Mapper<Map<String, ApiOrdersSummary>, OrdersHistorySummary> mapper) {
     this.api = api;
-    this.apiOrdersHistorySummaryServiceMapper = apiOrdersHistorySummaryServiceMapper;
+    this.mapper = mapper;
   }
 
   @NonNull
@@ -28,6 +29,6 @@ public class OrdersHistorySummaryGatewayImpl implements OrdersHistorySummaryGate
   public Single<OrdersHistorySummary> getOrdersHistorySummary(long fromDate, long toDate) {
     return api.getOrdersHistory(fromDate, toDate)
         .subscribeOn(Schedulers.io())
-        .map(apiOrdersHistorySummaryServiceMapper::map);
+        .map(mapper::map);
   }
 }
