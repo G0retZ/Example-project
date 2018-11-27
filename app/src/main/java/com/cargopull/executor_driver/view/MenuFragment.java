@@ -88,9 +88,11 @@ public class MenuFragment extends BaseFragment implements BalanceViewActions,
     rootView.findViewById(R.id.preOrders)
         .setOnClickListener(v -> navigate(MenuNavigate.PRE_ORDERS));
     preOrdersAmount = rootView.findViewById(R.id.preOrdersAmount);
-    rootView.findViewById(R.id.about).setOnClickListener(v -> navigate(MenuNavigate.ABOUT));
+    rootView.findViewById(R.id.history)
+        .setOnClickListener(v -> navigate(MenuNavigate.ORDERS_HISTORY));
     rootView.findViewById(R.id.nightMode)
         .setOnClickListener(v -> navigate(MenuNavigate.NIGHT_MODE));
+    rootView.findViewById(R.id.about).setOnClickListener(v -> navigate(MenuNavigate.ABOUT));
     nightModeValue = rootView.findViewById(R.id.nightModeValue);
     return rootView;
   }

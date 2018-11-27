@@ -18,6 +18,7 @@ public interface DialogViewActions {
    * Показать диалог.
    *
    * @param stringId - ИД текстового ресурса для сообщения
+   * @param okAction - действие при нажатии кнопки "ОК" на диалоге
    */
   void showPersistentDialog(@StringRes int stringId, @Nullable Runnable okAction);
 
@@ -25,6 +26,7 @@ public interface DialogViewActions {
    * Показать диалог.
    *
    * @param message - текст для сообщения
+   * @param okAction - действие при нажатии кнопки "ОК" на диалоге
    */
   void showPersistentDialog(@NonNull String message, @Nullable Runnable okAction);
 }

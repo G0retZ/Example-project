@@ -69,6 +69,26 @@
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toBottomOf="@id/preOrders"/>
   <TextView
+    android:id="@+id/history"
+    style="@style/TextAppearance.AppTheme.SubTitle.Touchable"
+    android:layout_width="0dp"
+    android:layout_height="56dp"
+    android:paddingStart="16dp"
+    android:paddingEnd="16dp"
+    android:gravity="center_vertical"
+    android:text="@string/orders_history"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@id/preOrderLine"/>
+  <View
+    android:id="@+id/historyLine"
+    android:layout_width="0dp"
+    android:layout_height="1dp"
+    android:background="@color/colorDivider"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@id/history"/>
+  <TextView
     android:id="@+id/nightMode"
     style="@style/TextAppearance.AppTheme.SubTitle.Touchable"
     android:layout_width="0dp"
@@ -79,7 +99,7 @@
     android:text="@string/night_mode"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toBottomOf="@id/preOrderLine"/>
+    app:layout_constraintTop_toBottomOf="@id/historyLine"/>
   <TextView
     android:id="@+id/nightModeValue"
     style="@style/TextAppearance.AppTheme.Subhead"
@@ -89,7 +109,7 @@
     android:paddingEnd="16dp"
     android:gravity="center_vertical"
     app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintTop_toBottomOf="@id/preOrderLine"
+    app:layout_constraintTop_toBottomOf="@id/historyLine"
     tools:text="Авто"/>
   <View
     android:id="@+id/colorModeLine"

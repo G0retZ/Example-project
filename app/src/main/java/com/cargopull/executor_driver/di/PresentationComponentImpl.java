@@ -63,6 +63,8 @@ import com.cargopull.executor_driver.presentation.ordercost.OrderCostViewModel;
 import com.cargopull.executor_driver.presentation.ordercost.OrderCostViewModelImpl;
 import com.cargopull.executor_driver.presentation.orderroute.OrderRouteViewModel;
 import com.cargopull.executor_driver.presentation.orderroute.OrderRouteViewModelImpl;
+import com.cargopull.executor_driver.presentation.ordershistoryheader.OrdersHistoryHeaderViewModel;
+import com.cargopull.executor_driver.presentation.ordershistoryheader.OrdersHistoryHeaderViewModelImpl;
 import com.cargopull.executor_driver.presentation.ordertime.OrderTimeViewModel;
 import com.cargopull.executor_driver.presentation.ordertime.OrderTimeViewModelImpl;
 import com.cargopull.executor_driver.presentation.phone.PhoneViewModel;
@@ -895,7 +897,7 @@ class PresentationComponentImpl implements PresentationComponent {
 
   @NonNull
   @Override
-  public MovingToClientTimerViewModel getMovingToClientTimerViewModel(Fragment fragment) {
+  public MovingToClientTimerViewModel getMovingToClientTimerViewModel(@Nullable Fragment fragment) {
     if (fragment == null) {
       throw new NullPointerException("Фрагмент не должен быть null");
     }
@@ -906,6 +908,25 @@ class PresentationComponentImpl implements PresentationComponent {
             backendComponent.getErrorReporter(),
             getInteractorComponent().getOrderUseCase(),
             timeUtils
+        )
+    );
+  }
+
+  @NonNull
+  @Override
+  public OrdersHistoryHeaderViewModel getOrdersHistoryHeaderViewModel(@Nullable Fragment fragment,
+      int offset) {
+    if (fragment == null) {
+      throw new NullPointerException("Фрагмент не должен быть null");
+    }
+    return getViewModelInstance(
+        fragment,
+        OrdersHistoryHeaderViewModelImpl.class,
+        new OrdersHistoryHeaderViewModelImpl(
+            offset,
+            backendComponent.getErrorReporter(),
+            timeUtils,
+            getRepositoryComponent().getOrdersHistorySummaryGateway()
         )
     );
   }

@@ -130,6 +130,9 @@
     <activity
       android:launchMode="singleTop"
       android:name=".application.NightModeActivity"/>
+    <activity
+      android:launchMode="singleTop"
+      android:name=".application.OrdersHistoryActivity"/>
 
     <service
       android:enabled="true"

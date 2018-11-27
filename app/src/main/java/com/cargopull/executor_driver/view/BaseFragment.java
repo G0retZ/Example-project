@@ -252,4 +252,12 @@ public class BaseFragment extends Fragment implements OnBackPressedInterceptor,
         .create();
     alertDialog.show();
   }
+
+  @Override
+  public void setClickAction(int id, @Nullable Runnable okAction) {
+    View view = findViewById(id);
+    if (view != null) {
+      view.setOnClickListener(okAction == null ? null : v -> okAction.run());
+    }
+  }
 }
