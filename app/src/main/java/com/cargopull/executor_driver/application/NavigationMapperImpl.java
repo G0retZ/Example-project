@@ -32,18 +32,19 @@ public class NavigationMapperImpl implements NavigationMapper {
     ));
     statusGroups.put(ExecutorStateNavigate.BLOCKED, Arrays.asList(
         BlockedActivity.class, GeolocationPermissionActivity.class,
-        BalanceActivity.class
+        BalanceActivity.class, OrdersHistoryActivity.class
     ));
     statusGroups.put(ExecutorStateNavigate.MAP_SHIFT_CLOSED, Arrays.asList(
         MapActivity.class, GeolocationPermissionActivity.class,
-        BalanceActivity.class
+        BalanceActivity.class, OrdersHistoryActivity.class
     ));
     statusGroups.put(ExecutorStateNavigate.MAP_SHIFT_OPENED, Arrays.asList(
         OnlineActivity.class, VehicleOptionsActivity.class, GeolocationPermissionActivity.class,
-        BalanceActivity.class, SelectedVehicleOptionsActivity.class
+        BalanceActivity.class, SelectedVehicleOptionsActivity.class, OrdersHistoryActivity.class
     ));
     statusGroups.put(ExecutorStateNavigate.MAP_ONLINE, Arrays.asList(
-        OnlineActivity.class, GeolocationPermissionActivity.class, BalanceActivity.class
+        OnlineActivity.class, GeolocationPermissionActivity.class, BalanceActivity.class,
+        OrdersHistoryActivity.class
     ));
     statusGroups.put(ExecutorStateNavigate.DRIVER_ORDER_CONFIRMATION, Arrays.asList(
         DriverOrderConfirmationActivity.class, GeolocationPermissionActivity.class
