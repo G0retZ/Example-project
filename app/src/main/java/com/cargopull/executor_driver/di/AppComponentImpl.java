@@ -59,6 +59,7 @@ import com.cargopull.executor_driver.view.OrderCostDetailsRouteFragment;
 import com.cargopull.executor_driver.view.OrderFulfillmentActionsDialogFragment;
 import com.cargopull.executor_driver.view.OrderFulfillmentFragment;
 import com.cargopull.executor_driver.view.OrderRouteFragment;
+import com.cargopull.executor_driver.view.OrdersHistoryHeaderFragment;
 import com.cargopull.executor_driver.view.PreOrderConfirmationFragment;
 import com.cargopull.executor_driver.view.PreOrderFragment;
 import com.cargopull.executor_driver.view.PreOrdersFragment;
@@ -700,6 +701,14 @@ public class AppComponentImpl implements AppComponent {
         getPresentationComponent().getGeoLocationStateViewModel(
             geoEngagementDialogFragment
         )
+    );
+  }
+
+  @Override
+  public void inject(OrdersHistoryHeaderFragment ordersHistoryHeaderFragment, int offset) {
+    ordersHistoryHeaderFragment.setOrdersHistoryHeaderViewModel(
+        getPresentationComponent()
+            .getOrdersHistoryHeaderViewModel(ordersHistoryHeaderFragment, offset)
     );
   }
 
