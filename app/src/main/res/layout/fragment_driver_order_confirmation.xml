@@ -227,6 +227,28 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/serviceTitleText"
         tools:text="Грузоперевозка"/>
+      <TextView
+        android:id="@+id/optionsTitleText"
+        style="@style/TextAppearance.AppTheme.Subhead"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:text="@string/options"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/serviceText"/>
+      <TextView
+        android:id="@+id/optionsText"
+        style="@style/TextAppearance.AppTheme.Title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:lineSpacingExtra="6dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/optionsTitleText"
+        tools:text="Пропуск в центр Москвы\nОткрытый кузов\nРемни-крепления\nМобильный банк\nГрузчики: 2\nПассажиры: 3"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
   </ScrollView>
   <com.google.android.material.floatingactionbutton.FloatingActionButton
