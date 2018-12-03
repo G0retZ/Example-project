@@ -99,8 +99,8 @@ public class MapFragment extends SupportMapFragment implements OnMapReadyCallbac
       e.printStackTrace();
     }
     googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-    googleMap.getUiSettings().setCompassEnabled(true);
-    googleMap.getUiSettings().setRotateGesturesEnabled(true);
+    googleMap.getUiSettings().setCompassEnabled(false);
+    googleMap.getUiSettings().setRotateGesturesEnabled(false);
     googleMap.getUiSettings().setScrollGesturesEnabled(true);
     googleMap.getUiSettings().setTiltGesturesEnabled(false);
     googleMap.getUiSettings().setZoomControlsEnabled(true);
@@ -177,14 +177,14 @@ public class MapFragment extends SupportMapFragment implements OnMapReadyCallbac
     }
     if (!googleMap.isMyLocationEnabled()) {
       googleMap.setMyLocationEnabled(true);
-      googleMap.animateCamera(
-          CameraUpdateFactory.newCameraPosition(
-              new CameraPosition.Builder()
-                  .target(new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude()))
-                  .zoom(15.2f)
-                  .build()
-          )
-      );
     }
+    googleMap.animateCamera(
+        CameraUpdateFactory.newCameraPosition(
+            new CameraPosition.Builder()
+                .target(new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude()))
+                .zoom(15.2f)
+                .build()
+        )
+    );
   }
 }
