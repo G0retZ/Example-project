@@ -8,7 +8,7 @@ import com.google.gson.annotations.SerializedName;
 public class ApiOrdersSummary {
 
   @SerializedName("count")
-  private long count;
+  private int count;
   @SerializedName("totalAmount")
   private long totalAmount;
 
@@ -19,40 +19,16 @@ public class ApiOrdersSummary {
   public ApiOrdersSummary() {
   }
 
-  public ApiOrdersSummary(long count, long totalAmount) {
+  public ApiOrdersSummary(int count, long totalAmount) {
     this.count = count;
     this.totalAmount = totalAmount;
   }
 
-  long getCount() {
+  public int getCount() {
     return count;
   }
 
   public long getTotalAmount() {
     return totalAmount;
-  }
-
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
-    }
-
-    ApiOrdersSummary that = (ApiOrdersSummary) o;
-
-    if (count != that.count) {
-      return false;
-    }
-    return totalAmount == that.totalAmount;
-  }
-
-  @Override
-  public int hashCode() {
-    int result = (int) (count ^ (count >>> 32));
-    result = 31 * result + (int) (totalAmount ^ (totalAmount >>> 32));
-    return result;
   }
 }
