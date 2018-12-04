@@ -9,7 +9,8 @@ import java.text.DecimalFormat;
 /**
  * Состояние вида истории заказов.
  */
-final class OrdersHistoryHeaderViewStateMaximized implements ViewState<OrdersHistoryHeaderViewActions> {
+final class OrdersHistoryHeaderViewStateMaximized implements
+    ViewState<OrdersHistoryHeaderViewActions> {
 
   @NonNull
   private final OrdersHistorySummary ordersHistorySummary;
@@ -50,6 +51,8 @@ final class OrdersHistoryHeaderViewStateMaximized implements ViewState<OrdersHis
     float cost = ordersHistorySummary.getCompletedOrders() / 100f;
     cost = showCents ? cost : Math.round(cost);
     stateActions.setText(R.id.summaryProfit, decimalFormat.format(cost));
+    stateActions.setFormattedText(R.id.completedTitle, R.string.orders_completed,
+        ordersHistorySummary.getCompletedOrdersCount());
     stateActions.setText(R.id.completed, decimalFormat.format(cost));
     cost = (ordersHistorySummary.getRejectedOrders() + ordersHistorySummary.getCancelledOrders()
         + ordersHistorySummary.getMissedOrders()) / 100f;
@@ -58,12 +61,18 @@ final class OrdersHistoryHeaderViewStateMaximized implements ViewState<OrdersHis
     stateActions.setText(R.id.commission, decimalFormat.format(0));
     cost = ordersHistorySummary.getRejectedOrders() / 100f;
     cost = showCents ? cost : Math.round(cost);
+    stateActions.setFormattedText(R.id.rejectedTitle, R.string.orders_rejected,
+        ordersHistorySummary.getRejectedOrdersCount());
     stateActions.setText(R.id.rejected, decimalFormat.format(cost));
     cost = ordersHistorySummary.getCancelledOrders() / 100f;
     cost = showCents ? cost : Math.round(cost);
+    stateActions.setFormattedText(R.id.cancelledTitle, R.string.orders_cancelled,
+        ordersHistorySummary.getCancelledOrdersCount());
     stateActions.setText(R.id.cancelled, decimalFormat.format(cost));
     cost = ordersHistorySummary.getMissedOrders() / 100f;
     cost = showCents ? cost : Math.round(cost);
+    stateActions.setFormattedText(R.id.missedTitle, R.string.orders_missed,
+        ordersHistorySummary.getMissedOrdersCount());
     stateActions.setText(R.id.missed, decimalFormat.format(cost));
     stateActions.setClickAction(R.id.expandMore, minimizeAction);
   }

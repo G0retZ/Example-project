@@ -31,6 +31,10 @@ public class OrdersHistoryHeaderViewStateMaximizedTest {
     when(ordersHistorySummary.getRejectedOrders()).thenReturn(12_990_39L);
     when(ordersHistorySummary.getCancelledOrders()).thenReturn(3_830_20L);
     when(ordersHistorySummary.getMissedOrders()).thenReturn(5_747_28L);
+    when(ordersHistorySummary.getCompletedOrdersCount()).thenReturn(3);
+    when(ordersHistorySummary.getRejectedOrdersCount()).thenReturn(2);
+    when(ordersHistorySummary.getCancelledOrdersCount()).thenReturn(4);
+    when(ordersHistorySummary.getMissedOrdersCount()).thenReturn(1);
     when(viewActions.getCurrencyFormat()).thenReturn("##,###,### Ps");
     viewState = new OrdersHistoryHeaderViewStateMaximized(ordersHistorySummary, runnable);
   }
@@ -68,11 +72,15 @@ public class OrdersHistoryHeaderViewStateMaximizedTest {
     verify(viewActions).setVisible(R.id.missedTitle, true);
     verify(viewActions).setVisible(R.id.missed, true);
     verify(viewActions).setText(R.id.summaryProfit, decimalFormat.format(61383));
+    verify(viewActions).setFormattedText(R.id.completedTitle, R.string.orders_completed, 3);
     verify(viewActions).setText(R.id.completed, decimalFormat.format(61383));
     verify(viewActions).setText(R.id.summaryLoss, decimalFormat.format(22568));
     verify(viewActions).setText(R.id.commission, decimalFormat.format(0));
+    verify(viewActions).setFormattedText(R.id.rejectedTitle, R.string.orders_rejected, 2);
     verify(viewActions).setText(R.id.rejected, decimalFormat.format(12990));
+    verify(viewActions).setFormattedText(R.id.cancelledTitle, R.string.orders_cancelled, 4);
     verify(viewActions).setText(R.id.cancelled, decimalFormat.format(3830));
+    verify(viewActions).setFormattedText(R.id.missedTitle, R.string.orders_missed, 1);
     verify(viewActions).setText(R.id.missed, decimalFormat.format(5747));
     verify(viewActions).setClickAction(R.id.expandMore, runnable);
     verifyNoMoreInteractions(viewActions);
@@ -111,11 +119,15 @@ public class OrdersHistoryHeaderViewStateMaximizedTest {
     verify(viewActions).setVisible(R.id.missedTitle, true);
     verify(viewActions).setVisible(R.id.missed, true);
     verify(viewActions).setText(R.id.summaryProfit, decimalFormat.format(61382.92));
+    verify(viewActions).setFormattedText(R.id.completedTitle, R.string.orders_completed, 3);
     verify(viewActions).setText(R.id.completed, decimalFormat.format(61382.92));
     verify(viewActions).setText(R.id.summaryLoss, decimalFormat.format(22567.87));
     verify(viewActions).setText(R.id.commission, decimalFormat.format(0));
+    verify(viewActions).setFormattedText(R.id.rejectedTitle, R.string.orders_rejected, 2);
     verify(viewActions).setText(R.id.rejected, decimalFormat.format(12990.39));
+    verify(viewActions).setFormattedText(R.id.cancelledTitle, R.string.orders_cancelled, 4);
     verify(viewActions).setText(R.id.cancelled, decimalFormat.format(3830.20));
+    verify(viewActions).setFormattedText(R.id.missedTitle, R.string.orders_missed, 1);
     verify(viewActions).setText(R.id.missed, decimalFormat.format(5747.28));
     verify(viewActions).setClickAction(R.id.expandMore, runnable);
     verifyNoMoreInteractions(viewActions);
