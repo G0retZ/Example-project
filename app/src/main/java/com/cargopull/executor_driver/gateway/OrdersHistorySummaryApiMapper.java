@@ -3,6 +3,7 @@ package com.cargopull.executor_driver.gateway;
 import androidx.annotation.NonNull;
 import com.cargopull.executor_driver.backend.web.incoming.ApiOrdersSummary;
 import com.cargopull.executor_driver.entity.OrdersHistorySummary;
+import com.cargopull.executor_driver.utils.Pair;
 import java.util.Map;
 import javax.inject.Inject;
 
@@ -24,10 +25,14 @@ public class OrdersHistorySummaryApiMapper implements
     ApiOrdersSummary cancelledOrders = from.get("cancelledOrders");
     ApiOrdersSummary skippedOrders = from.get("skippedOrders");
     return new OrdersHistorySummary(
-        successOrders == null ? 0 : successOrders.getTotalAmount(),
-        refusedOrders == null ? 0 : refusedOrders.getTotalAmount(),
-        cancelledOrders == null ? 0 : cancelledOrders.getTotalAmount(),
-        skippedOrders == null ? 0 : skippedOrders.getTotalAmount()
+        successOrders == null ? new Pair<>(0, 0L) : new Pair<>(successOrders.getCount(),
+            successOrders.getTotalAmount()),
+        refusedOrders == null ? new Pair<>(0, 0L) : new Pair<>(refusedOrders.getCount(),
+            refusedOrders.getTotalAmount()),
+        cancelledOrders == null ? new Pair<>(0, 0L) : new Pair<>(cancelledOrders.getCount(),
+            cancelledOrders.getTotalAmount()),
+        skippedOrders == null ? new Pair<>(0, 0L) : new Pair<>(skippedOrders.getCount(),
+            skippedOrders.getTotalAmount())
     );
   }
 }
