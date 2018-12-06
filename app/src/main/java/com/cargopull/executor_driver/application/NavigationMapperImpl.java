@@ -40,7 +40,7 @@ public class NavigationMapperImpl implements NavigationMapper {
     ));
     statusGroups.put(ExecutorStateNavigate.MAP_SHIFT_OPENED, Arrays.asList(
         OnlineActivity.class, VehicleOptionsActivity.class, GeolocationPermissionActivity.class,
-        BalanceActivity.class, SelectedVehicleOptionsActivity.class, OrdersHistoryActivity.class
+        BalanceActivity.class, CurrentVehicleOptionsActivity.class, OrdersHistoryActivity.class
     ));
     statusGroups.put(ExecutorStateNavigate.MAP_ONLINE, Arrays.asList(
         OnlineActivity.class, GeolocationPermissionActivity.class, BalanceActivity.class,

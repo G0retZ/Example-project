@@ -69,7 +69,7 @@ public class OnlineActivity extends BaseActivity {
             .show();
         break;
       case OnlineButtonNavigate.VEHICLE_OPTIONS:
-        startActivity(new Intent(this, SelectedVehicleOptionsActivity.class));
+        startActivity(new Intent(this, CurrentVehicleOptionsActivity.class));
         break;
       case MenuNavigate.BALANCE:
         startActivity(new Intent(this, BalanceActivity.class));
