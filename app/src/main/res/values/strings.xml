@@ -149,11 +149,10 @@
   <string name="default_notification_channel_id" templateMergeStrategy="preserve" translatable="false">state_channel</string>
   <string name="total">Итого</string>
   <string name="slash">/</string>
-  <string name="orders_completed">%1$d выполнено</string>
-  <string name="service_comission">Комиссия сервиса</string>
-  <string name="orders_rejected">от %1$d отказался</string>
-  <string name="orders_cancelled">%1$d было отменено</string>
-  <string name="orders_missed">%1$d пропустил</string>
+  <string name="orders_count">%1$d/</string>
+  <string name="orders_earned">Заработано</string>
+  <string name="orders_rejected">Отказался сам</string>
+  <string name="orders_missed">Пропустил</string>
   <string name="retry">Повторить</string>
   <string name="orders_history">История заказов</string>
   <string-array name="month_names">

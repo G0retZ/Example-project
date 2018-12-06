@@ -1,8 +1,6 @@
 package com.cargopull.executor_driver.presentation.ordershistoryheader;
 
-import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.times;
@@ -29,8 +27,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestRule;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
 import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -56,10 +52,6 @@ public class OrdersHistoryHeaderViewModelTest {
   private OrdersHistorySummary ordersHistorySummary;
   @Mock
   private OrdersHistoryHeaderViewActions ordersHistoryHeaderViewActions;
-  @Captor
-  private ArgumentCaptor<ViewState<OrdersHistoryHeaderViewActions>> viewStateCaptor;
-  @Captor
-  private ArgumentCaptor<Runnable> runnableCaptor;
   private SingleEmitter<OrdersHistorySummary> singleEmitter;
 
   @Mock
@@ -67,7 +59,6 @@ public class OrdersHistoryHeaderViewModelTest {
 
   @Before
   public void setUp() {
-    when(ordersHistoryHeaderViewActions.getCurrencyFormat()).thenReturn("");
     when(gateway.getOrdersHistorySummary(anyLong(), anyLong()))
         .thenReturn(Single.create(emitter -> singleEmitter = emitter));
     when(timeUtils.currentTimeMillis()).thenReturn(
@@ -240,7 +231,7 @@ public class OrdersHistoryHeaderViewModelTest {
   }
 
   /**
-   * Должен вернуть состояния вида "Минимальный" с полученной сводкой истории заказов.
+   * Должен вернуть состояния вида "Загружено" с полученной сводкой истории заказов.
    */
   @Test
   public void setIdleViewStateToLiveData() {
@@ -254,8 +245,7 @@ public class OrdersHistoryHeaderViewModelTest {
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(any(OrdersHistoryHeaderViewStatePending.class));
     inOrder.verify(viewStateObserver).onChanged(
-        new OrdersHistoryHeaderViewStateMinimized(ordersHistorySummary, () -> {
-        })
+        new OrdersHistoryHeaderViewStateLoaded(ordersHistorySummary)
     );
     verifyNoMoreInteractions(viewStateObserver);
   }
@@ -275,73 +265,6 @@ public class OrdersHistoryHeaderViewModelTest {
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(any(OrdersHistoryHeaderViewStatePending.class));
     inOrder.verify(viewStateObserver).onChanged(any(OrdersHistoryHeaderViewStateError.class));
-    verifyNoMoreInteractions(viewStateObserver);
-  }
-
-  /**
-   * Должен переключать состояния вида между "Минимальный" и "Максимальный".
-   */
-  @Test
-  public void switchViewStatesBetweenMaximizedAndMinimized() {
-    // Дано:
-    InOrder inOrder = Mockito.inOrder(viewStateObserver, ordersHistoryHeaderViewActions);
-    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
-
-    // Действие:
-    singleEmitter.onSuccess(ordersHistorySummary);
-
-    // Результат:
-    inOrder.verify(viewStateObserver).onChanged(any(OrdersHistoryHeaderViewStatePending.class));
-    inOrder.verify(viewStateObserver).onChanged(viewStateCaptor.capture());
-    assertEquals(viewStateCaptor.getValue(),
-        new OrdersHistoryHeaderViewStateMinimized(ordersHistorySummary, () -> {
-        })
-    );
-    viewStateCaptor.getValue().apply(ordersHistoryHeaderViewActions);
-    inOrder.verify(ordersHistoryHeaderViewActions)
-        .setClickAction(anyInt(), runnableCaptor.capture());
-    runnableCaptor.getValue().run();
-    inOrder.verify(viewStateObserver).onChanged(viewStateCaptor.capture());
-    assertEquals(viewStateCaptor.getValue(),
-        new OrdersHistoryHeaderViewStateMaximized(ordersHistorySummary, () -> {
-        })
-    );
-    viewStateCaptor.getValue().apply(ordersHistoryHeaderViewActions);
-    inOrder.verify(ordersHistoryHeaderViewActions)
-        .setClickAction(anyInt(), runnableCaptor.capture());
-    runnableCaptor.getValue().run();
-    inOrder.verify(viewStateObserver).onChanged(viewStateCaptor.capture());
-    assertEquals(viewStateCaptor.getValue(),
-        new OrdersHistoryHeaderViewStateMinimized(ordersHistorySummary, () -> {
-        })
-    );
-    viewStateCaptor.getValue().apply(ordersHistoryHeaderViewActions);
-    inOrder.verify(ordersHistoryHeaderViewActions)
-        .setClickAction(anyInt(), runnableCaptor.capture());
-    runnableCaptor.getValue().run();
-    inOrder.verify(viewStateObserver).onChanged(viewStateCaptor.capture());
-    assertEquals(viewStateCaptor.getValue(),
-        new OrdersHistoryHeaderViewStateMaximized(ordersHistorySummary, () -> {
-        })
-    );
-    viewStateCaptor.getValue().apply(ordersHistoryHeaderViewActions);
-    inOrder.verify(ordersHistoryHeaderViewActions)
-        .setClickAction(anyInt(), runnableCaptor.capture());
-    runnableCaptor.getValue().run();
-    inOrder.verify(viewStateObserver).onChanged(viewStateCaptor.capture());
-    assertEquals(viewStateCaptor.getValue(),
-        new OrdersHistoryHeaderViewStateMinimized(ordersHistorySummary, () -> {
-        })
-    );
-    viewStateCaptor.getValue().apply(ordersHistoryHeaderViewActions);
-    inOrder.verify(ordersHistoryHeaderViewActions)
-        .setClickAction(anyInt(), runnableCaptor.capture());
-    runnableCaptor.getValue().run();
-    inOrder.verify(viewStateObserver).onChanged(viewStateCaptor.capture());
-    assertEquals(viewStateCaptor.getValue(),
-        new OrdersHistoryHeaderViewStateMaximized(ordersHistorySummary, () -> {
-        })
-    );
     verifyNoMoreInteractions(viewStateObserver);
   }
 }

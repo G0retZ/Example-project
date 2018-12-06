@@ -24,22 +24,15 @@ public class OrdersHistoryHeaderViewStateErrorTest {
     verify(viewActions).setVisible(R.id.pendingIndicator, false);
     verify(viewActions).setVisible(R.id.networkErrorText, true);
     verify(viewActions).setVisible(R.id.retryButton, true);
-    verify(viewActions).setVisible(R.id.summaryTitle, false);
-    verify(viewActions).setVisible(R.id.summaryProfit, false);
-    verify(viewActions).setVisible(R.id.slash, false);
-    verify(viewActions).setVisible(R.id.summaryLoss, false);
-    verify(viewActions).setVisible(R.id.expandMore, false);
-    verify(viewActions).setVisible(R.id.completedTitle, false);
-    verify(viewActions).setVisible(R.id.completed, false);
-    verify(viewActions).setVisible(R.id.commissionTitle, false);
-    verify(viewActions).setVisible(R.id.commission, false);
+    verify(viewActions).setVisible(R.id.earnedTitle, false);
+    verify(viewActions).setVisible(R.id.earned, false);
+    verify(viewActions).setVisible(R.id.earnedCount, false);
     verify(viewActions).setVisible(R.id.rejectedTitle, false);
     verify(viewActions).setVisible(R.id.rejected, false);
-    verify(viewActions).setVisible(R.id.cancelledTitle, false);
-    verify(viewActions).setVisible(R.id.cancelled, false);
+    verify(viewActions).setVisible(R.id.rejectedCount, false);
     verify(viewActions).setVisible(R.id.missedTitle, false);
     verify(viewActions).setVisible(R.id.missed, false);
-    verify(viewActions).setClickAction(R.id.expandMore, null);
+    verify(viewActions).setVisible(R.id.missedCount, false);
     verifyNoMoreInteractions(viewActions);
   }
 }
