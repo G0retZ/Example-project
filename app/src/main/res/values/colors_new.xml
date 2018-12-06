@@ -3,6 +3,8 @@
   <color name="colorPrimaryNew">#fff</color>
   <color name="colorPrimaryDarkNew">#171e26</color>
   <color name="colorAccentNew">#1a61ff</color>
+  <color name="colorAccentGreenNew">#39d83f</color>
+  <color name="colorAccentRedNew">#f2144c</color>
   <color name="colorWindowBackgroundNew">#fff</color>
   <color name="textColorPrimaryNew">#131a22</color>
   <color name="textColorButton">#fff</color>
