@@ -47,6 +47,12 @@
     <item name="android:textSize">@dimen/regular_text_size</item>
   </style>
 
+  <style name="TextAppearance.AppThemeNew.TabText" parent="TextAppearance.AppCompat">
+    <item name="android:textColor">@color/textColorPrimaryNew</item>
+    <item name="android:textSize">@dimen/regular_text_size</item>
+    <item name="android:textStyle">bold</item>
+  </style>
+
   <style name="TextAppearance.AppThemeNew.Regular.Green">
     <item name="android:textColor">@color/colorAccentGreenNew</item>
   </style>

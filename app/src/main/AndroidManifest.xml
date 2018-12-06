@@ -132,6 +132,7 @@
       android:name=".application.NightModeActivity"/>
     <activity
       android:label="@string/orders_history"
+      android:theme="@style/AppThemeNew"
       android:launchMode="singleTop"
       android:name=".application.OrdersHistoryActivity"/>
 

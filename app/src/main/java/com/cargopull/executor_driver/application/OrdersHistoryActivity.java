@@ -16,11 +16,11 @@ public class OrdersHistoryActivity extends BaseActivity {
   public void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_orders_history);
-    ViewPager mPager = findViewById(R.id.pager);
-    mPager.setAdapter(new OrdersHistoryPagerAdapter(getSupportFragmentManager()));
-    mPager.setOffscreenPageLimit(2);
+    ViewPager viewPager = findViewById(R.id.pager);
+    viewPager.setAdapter(new OrdersHistoryPagerAdapter(getSupportFragmentManager()));
+    viewPager.setOffscreenPageLimit(2);
     if (savedInstanceState == null) {
-      mPager.setCurrentItem(2);
+      viewPager.setCurrentItem(2);
     }
   }
 
