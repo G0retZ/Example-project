@@ -14,7 +14,7 @@ final class GeoLocationStateNoNetworkDetectionViewState implements ViewState<Ima
   public void apply(@NonNull ImageTextViewActions stateActions) {
     stateActions.setVisible(-1, true);
     stateActions.setImage(R.id.geoIcon, R.drawable.ic_network_detection_icon);
-    stateActions.setText(R.id.titleText, R.string.turn_on_geo_detection);
+    stateActions.setText(R.id.geoTitleText, R.string.turn_on_geo_detection);
     stateActions.setText(R.id.explainText, R.string.network_detection_required);
   }
 }

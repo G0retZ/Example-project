@@ -28,7 +28,7 @@ public class GeoLocationStateNoNetworkDetectionViewStateTest {
     // Результат:
     verify(viewActions).setVisible(-1, true);
     verify(viewActions).setImage(R.id.geoIcon, R.drawable.ic_network_detection_icon);
-    verify(viewActions).setText(R.id.titleText, R.string.turn_on_geo_detection);
+    verify(viewActions).setText(R.id.geoTitleText, R.string.turn_on_geo_detection);
     verify(viewActions).setText(R.id.explainText, R.string.network_detection_required);
     verifyNoMoreInteractions(viewActions);
   }

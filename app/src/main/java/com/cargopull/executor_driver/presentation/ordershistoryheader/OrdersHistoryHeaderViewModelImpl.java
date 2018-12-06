@@ -70,31 +70,16 @@ public class OrdersHistoryHeaderViewModelImpl extends ViewModel implements
           .flatMap(this::convertOffsetToRequest)
           .observeOn(AndroidSchedulers.mainThread())
           .subscribe(
-              this::minimize,
+              ohs -> {
+                loaded = true;
+                viewStateLiveData.postValue(new OrdersHistoryHeaderViewStateLoaded(ohs));
+              },
               throwable -> {
                 errorReporter.reportError(throwable);
                 viewStateLiveData.postValue(new OrdersHistoryHeaderViewStateError());
               }
           );
     }
-  }
-
-  private void maximize(@NonNull OrdersHistorySummary ordersHistorySummary) {
-    loaded = true;
-    viewStateLiveData.postValue(
-        new OrdersHistoryHeaderViewStateMaximized(
-            ordersHistorySummary, () -> minimize(ordersHistorySummary)
-        )
-    );
-  }
-
-  private void minimize(@NonNull OrdersHistorySummary ordersHistorySummary) {
-    loaded = true;
-    viewStateLiveData.postValue(
-        new OrdersHistoryHeaderViewStateMinimized(
-            ordersHistorySummary, () -> maximize(ordersHistorySummary)
-        )
-    );
   }
 
   private Single<OrdersHistorySummary> convertOffsetToRequest(int offset) {

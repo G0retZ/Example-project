@@ -14,21 +14,14 @@ final class OrdersHistoryHeaderViewStateError implements ViewState<OrdersHistory
     stateActions.setVisible(R.id.pendingIndicator, false);
     stateActions.setVisible(R.id.networkErrorText, true);
     stateActions.setVisible(R.id.retryButton, true);
-    stateActions.setVisible(R.id.summaryTitle, false);
-    stateActions.setVisible(R.id.summaryProfit, false);
-    stateActions.setVisible(R.id.slash, false);
-    stateActions.setVisible(R.id.summaryLoss, false);
-    stateActions.setVisible(R.id.expandMore, false);
-    stateActions.setVisible(R.id.completedTitle, false);
-    stateActions.setVisible(R.id.completed, false);
-    stateActions.setVisible(R.id.commissionTitle, false);
-    stateActions.setVisible(R.id.commission, false);
+    stateActions.setVisible(R.id.earnedTitle, false);
+    stateActions.setVisible(R.id.earned, false);
+    stateActions.setVisible(R.id.earnedCount, false);
     stateActions.setVisible(R.id.rejectedTitle, false);
     stateActions.setVisible(R.id.rejected, false);
-    stateActions.setVisible(R.id.cancelledTitle, false);
-    stateActions.setVisible(R.id.cancelled, false);
+    stateActions.setVisible(R.id.rejectedCount, false);
     stateActions.setVisible(R.id.missedTitle, false);
     stateActions.setVisible(R.id.missed, false);
-    stateActions.setClickAction(R.id.expandMore, null);
+    stateActions.setVisible(R.id.missedCount, false);
   }
 }

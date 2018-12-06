@@ -13,14 +13,14 @@
     android:layout_marginStart="16dp"
     android:layout_marginEnd="16dp"
     android:contentDescription="@null"
-    app:layout_constraintBottom_toTopOf="@+id/titleText"
+    app:layout_constraintBottom_toTopOf="@+id/geoTitleText"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toTopOf="parent"
     app:layout_constraintVertical_chainStyle="packed"
     app:srcCompat="@drawable/ic_geo_icon"/>
   <TextView
-    android:id="@+id/titleText"
+    android:id="@+id/geoTitleText"
     style="@style/TextAppearance.AppTheme.Title"
     android:layout_width="320dp"
     android:layout_height="wrap_content"
@@ -41,7 +41,7 @@
     app:layout_constraintBottom_toTopOf="@id/resolve"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toBottomOf="@id/titleText"/>
+    app:layout_constraintTop_toBottomOf="@id/geoTitleText"/>
   <Button
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/resolve"

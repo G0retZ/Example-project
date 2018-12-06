@@ -9,17 +9,14 @@ import java.text.DecimalFormat;
 /**
  * Состояние вида истории заказов.
  */
-final class OrdersHistoryHeaderViewStateMaximized implements ViewState<OrdersHistoryHeaderViewActions> {
+final class OrdersHistoryHeaderViewStateLoaded implements
+    ViewState<OrdersHistoryHeaderViewActions> {
 
   @NonNull
   private final OrdersHistorySummary ordersHistorySummary;
-  @NonNull
-  private final Runnable minimizeAction;
 
-  OrdersHistoryHeaderViewStateMaximized(@NonNull OrdersHistorySummary ordersHistorySummary,
-      @NonNull Runnable minimizeAction) {
+  OrdersHistoryHeaderViewStateLoaded(@NonNull OrdersHistorySummary ordersHistorySummary) {
     this.ordersHistorySummary = ordersHistorySummary;
-    this.minimizeAction = minimizeAction;
   }
 
   @Override
@@ -27,21 +24,15 @@ final class OrdersHistoryHeaderViewStateMaximized implements ViewState<OrdersHis
     stateActions.setVisible(R.id.pendingIndicator, false);
     stateActions.setVisible(R.id.networkErrorText, false);
     stateActions.setVisible(R.id.retryButton, false);
-    stateActions.setVisible(R.id.summaryTitle, true);
-    stateActions.setVisible(R.id.summaryProfit, true);
-    stateActions.setVisible(R.id.slash, true);
-    stateActions.setVisible(R.id.summaryLoss, true);
-    stateActions.setVisible(R.id.expandMore, true);
-    stateActions.setVisible(R.id.completedTitle, true);
-    stateActions.setVisible(R.id.completed, true);
-    stateActions.setVisible(R.id.commissionTitle, true);
-    stateActions.setVisible(R.id.commission, true);
+    stateActions.setVisible(R.id.earnedTitle, true);
+    stateActions.setVisible(R.id.earned, true);
+    stateActions.setVisible(R.id.earnedCount, true);
     stateActions.setVisible(R.id.rejectedTitle, true);
     stateActions.setVisible(R.id.rejected, true);
-    stateActions.setVisible(R.id.cancelledTitle, true);
-    stateActions.setVisible(R.id.cancelled, true);
+    stateActions.setVisible(R.id.rejectedCount, true);
     stateActions.setVisible(R.id.missedTitle, true);
     stateActions.setVisible(R.id.missed, true);
+    stateActions.setVisible(R.id.missedCount, true);
     boolean showCents = stateActions.isShowCents();
     int fractionDigits = showCents ? 2 : 0;
     DecimalFormat decimalFormat = new DecimalFormat(stateActions.getCurrencyFormat());
@@ -49,23 +40,19 @@ final class OrdersHistoryHeaderViewStateMaximized implements ViewState<OrdersHis
     decimalFormat.setMinimumFractionDigits(fractionDigits);
     float cost = ordersHistorySummary.getCompletedOrders() / 100f;
     cost = showCents ? cost : Math.round(cost);
-    stateActions.setText(R.id.summaryProfit, decimalFormat.format(cost));
-    stateActions.setText(R.id.completed, decimalFormat.format(cost));
-    cost = (ordersHistorySummary.getRejectedOrders() + ordersHistorySummary.getCancelledOrders()
-        + ordersHistorySummary.getMissedOrders()) / 100f;
-    cost = showCents ? cost : Math.round(cost);
-    stateActions.setText(R.id.summaryLoss, decimalFormat.format(cost));
-    stateActions.setText(R.id.commission, decimalFormat.format(0));
+    stateActions.setText(R.id.earned, decimalFormat.format(cost));
+    stateActions.setFormattedText(R.id.earnedCount, R.string.orders_count,
+        ordersHistorySummary.getCompletedOrdersCount());
     cost = ordersHistorySummary.getRejectedOrders() / 100f;
     cost = showCents ? cost : Math.round(cost);
     stateActions.setText(R.id.rejected, decimalFormat.format(cost));
-    cost = ordersHistorySummary.getCancelledOrders() / 100f;
-    cost = showCents ? cost : Math.round(cost);
-    stateActions.setText(R.id.cancelled, decimalFormat.format(cost));
+    stateActions.setFormattedText(R.id.rejectedCount, R.string.orders_count,
+        ordersHistorySummary.getRejectedOrdersCount());
     cost = ordersHistorySummary.getMissedOrders() / 100f;
     cost = showCents ? cost : Math.round(cost);
     stateActions.setText(R.id.missed, decimalFormat.format(cost));
-    stateActions.setClickAction(R.id.expandMore, minimizeAction);
+    stateActions.setFormattedText(R.id.missedCount, R.string.orders_count,
+        ordersHistorySummary.getMissedOrdersCount());
   }
 
   @Override
@@ -77,7 +64,7 @@ final class OrdersHistoryHeaderViewStateMaximized implements ViewState<OrdersHis
       return false;
     }
 
-    OrdersHistoryHeaderViewStateMaximized that = (OrdersHistoryHeaderViewStateMaximized) o;
+    OrdersHistoryHeaderViewStateLoaded that = (OrdersHistoryHeaderViewStateLoaded) o;
 
     return ordersHistorySummary.equals(that.ordersHistorySummary);
   }

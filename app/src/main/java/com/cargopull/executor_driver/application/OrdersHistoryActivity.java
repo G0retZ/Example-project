@@ -2,7 +2,6 @@ package com.cargopull.executor_driver.application;
 
 import android.os.Bundle;
 import androidx.annotation.Nullable;
-import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
@@ -17,15 +16,11 @@ public class OrdersHistoryActivity extends BaseActivity {
   public void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_orders_history);
-    Toolbar toolbar = findViewById(R.id.appBar);
-    if (toolbar != null) {
-      toolbar.setNavigationOnClickListener(v -> onBackPressed());
-    }
-    ViewPager mPager = findViewById(R.id.pager);
-    mPager.setAdapter(new OrdersHistoryPagerAdapter(getSupportFragmentManager()));
-    mPager.setOffscreenPageLimit(2);
+    ViewPager viewPager = findViewById(R.id.pager);
+    viewPager.setAdapter(new OrdersHistoryPagerAdapter(getSupportFragmentManager()));
+    viewPager.setOffscreenPageLimit(2);
     if (savedInstanceState == null) {
-      mPager.setCurrentItem(2);
+      viewPager.setCurrentItem(2);
     }
   }
 

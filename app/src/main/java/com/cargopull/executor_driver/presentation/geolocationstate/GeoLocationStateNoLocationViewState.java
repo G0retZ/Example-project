@@ -14,7 +14,7 @@ final class GeoLocationStateNoLocationViewState implements ViewState<ImageTextVi
   public void apply(@NonNull ImageTextViewActions stateActions) {
     stateActions.setVisible(-1, true);
     stateActions.setImage(R.id.geoIcon, R.drawable.ic_geolocation_icon);
-    stateActions.setText(R.id.titleText, R.string.turn_on_geolocation);
+    stateActions.setText(R.id.geoTitleText, R.string.turn_on_geolocation);
     stateActions.setText(R.id.explainText, R.string.geolocation_required);
   }
 }
