@@ -74,6 +74,9 @@ interface PresentationComponent {
   ChooseVehicleViewModel getChooseVehicleViewModel(@Nullable Fragment fragment);
 
   @NonNull
+  ChooseVehicleViewModel getSelectedChooseVehicleViewModel(@Nullable Fragment fragment);
+
+  @NonNull
   ChooseVehicleViewModel getCurrentChooseVehicleViewModel(@Nullable Fragment fragment);
 
   @NonNull

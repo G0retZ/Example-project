@@ -312,22 +312,6 @@ public class GeoLocationStateViewModelTest {
 
     @ClassRule
     public static final ViewModelThreadTestRule classRule = new ViewModelThreadTestRule();
-    @Rule
-    public MockitoRule mockRule = MockitoJUnit.rule();
-    @Rule
-    public TestRule rule = new InstantTaskExecutorRule();
-
-    private GeoLocationStateViewModel viewModel;
-    @Mock
-    private CommonGateway<Boolean> gateway;
-    @Mock
-    private EventLogger eventLogger;
-    @Mock
-    private LocationManager locationManager;
-    @Mock
-    private TimeUtils timeUtils;
-
-    private PublishSubject<Boolean> publishSubject;
     private final boolean fromAvailability;
     private final boolean toAvailability;
     private final boolean toAvailability1;
@@ -339,6 +323,20 @@ public class GeoLocationStateViewModelTest {
     private final boolean toNetwork1;
     private final int sendReport;
     private final int tuInvocations;
+    @Rule
+    public MockitoRule mockRule = MockitoJUnit.rule();
+    @Rule
+    public TestRule rule = new InstantTaskExecutorRule();
+    private GeoLocationStateViewModel viewModel;
+    @Mock
+    private CommonGateway<Boolean> gateway;
+    @Mock
+    private EventLogger eventLogger;
+    @Mock
+    private LocationManager locationManager;
+    @Mock
+    private TimeUtils timeUtils;
+    private PublishSubject<Boolean> publishSubject;
 
     public LogEventsTests(Pair<List<Boolean>, Pair<Integer, Integer>> conditions) {
       fromAvailability = conditions.first.get(0);

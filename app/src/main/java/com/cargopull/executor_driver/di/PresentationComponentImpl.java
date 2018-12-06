@@ -253,6 +253,21 @@ class PresentationComponentImpl implements PresentationComponent {
 
   @NonNull
   @Override
+  public ChooseVehicleViewModel getSelectedChooseVehicleViewModel(@Nullable Fragment fragment) {
+    if (fragment == null) {
+      throw new NullPointerException("Фрагмент не должен быть null");
+    }
+    return getViewModelInstance(
+        fragment,
+        ChooseVehicleViewModelImpl.class,
+        new ChooseVehicleViewModelImpl(backendComponent.getErrorReporter(),
+            getInteractorComponent().getVehicleChoiceUseCase()
+        )
+    );
+  }
+
+  @NonNull
+  @Override
   public ChooseVehicleViewModel getCurrentChooseVehicleViewModel(@Nullable Fragment fragment) {
     if (fragment == null) {
       throw new NullPointerException("Фрагмент не должен быть null");

@@ -8,12 +8,12 @@ import androidx.appcompat.widget.Toolbar;
 import com.cargopull.executor_driver.R;
 import com.cargopull.executor_driver.presentation.selectedvehicle.SelectedVehicleNavigate;
 
-public class SelectedVehicleOptionsActivity extends BaseActivity {
+public class CurrentVehicleOptionsActivity extends BaseActivity {
 
   @Override
   public void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_selected_vehicle_options);
+    setContentView(R.layout.activity_current_vehicle_options);
     Toolbar toolbar = findViewById(R.id.appBar);
     if (toolbar != null) {
       toolbar.setNavigationOnClickListener(v -> onBackPressed());
