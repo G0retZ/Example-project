@@ -40,6 +40,7 @@ import com.cargopull.executor_driver.view.CancelOrderDialogFragment;
 import com.cargopull.executor_driver.view.ChooseVehicleFragment;
 import com.cargopull.executor_driver.view.ClientOrderConfirmationFragment;
 import com.cargopull.executor_driver.view.ClientOrderConfirmationTimeFragment;
+import com.cargopull.executor_driver.view.CurrentVehicleFragment;
 import com.cargopull.executor_driver.view.DriverOrderConfirmationFragment;
 import com.cargopull.executor_driver.view.DriverPreOrderBookingFragment;
 import com.cargopull.executor_driver.view.DriverPreOrderConfirmationFragment;
@@ -59,6 +60,7 @@ import com.cargopull.executor_driver.view.OrderCostDetailsRouteFragment;
 import com.cargopull.executor_driver.view.OrderFulfillmentActionsDialogFragment;
 import com.cargopull.executor_driver.view.OrderFulfillmentFragment;
 import com.cargopull.executor_driver.view.OrderRouteFragment;
+import com.cargopull.executor_driver.view.OrdersHistoryHeaderFragment;
 import com.cargopull.executor_driver.view.PreOrderConfirmationFragment;
 import com.cargopull.executor_driver.view.PreOrderFragment;
 import com.cargopull.executor_driver.view.PreOrdersFragment;
@@ -355,7 +357,17 @@ public class AppComponentImpl implements AppComponent {
         getPresentationComponent().getSelectedVehicleViewModel(selectedVehicleFragment)
     );
     selectedVehicleFragment.setChooseVehicleViewModel(
-        getPresentationComponent().getCurrentChooseVehicleViewModel(selectedVehicleFragment)
+        getPresentationComponent().getSelectedChooseVehicleViewModel(selectedVehicleFragment)
+    );
+  }
+
+  @Override
+  public void inject(CurrentVehicleFragment currentVehicleFragment) {
+    currentVehicleFragment.setSelectedVehicleViewModel(
+        getPresentationComponent().getSelectedVehicleViewModel(currentVehicleFragment)
+    );
+    currentVehicleFragment.setChooseVehicleViewModel(
+        getPresentationComponent().getCurrentChooseVehicleViewModel(currentVehicleFragment)
     );
   }
 
@@ -700,6 +712,14 @@ public class AppComponentImpl implements AppComponent {
         getPresentationComponent().getGeoLocationStateViewModel(
             geoEngagementDialogFragment
         )
+    );
+  }
+
+  @Override
+  public void inject(OrdersHistoryHeaderFragment ordersHistoryHeaderFragment, int offset) {
+    ordersHistoryHeaderFragment.setOrdersHistoryHeaderViewModel(
+        getPresentationComponent()
+            .getOrdersHistoryHeaderViewModel(ordersHistoryHeaderFragment, offset)
     );
   }
 

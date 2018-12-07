@@ -54,6 +54,9 @@ public class MenuActivity extends BaseActivity {
         startActivity(new Intent(this, PreOrdersActivity.class));
         finish();
         break;
+      case MenuNavigate.ORDERS_HISTORY:
+        startActivity(new Intent(this, OrdersHistoryActivity.class));
+        break;
       case MenuNavigate.NIGHT_MODE:
         startActivity(new Intent(this, NightModeActivity.class));
         break;

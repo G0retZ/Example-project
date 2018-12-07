@@ -28,7 +28,7 @@ public class GeoLocationStateNoLocationViewStateTest {
     // Результат:
     verify(viewActions).setVisible(-1, true);
     verify(viewActions).setImage(R.id.geoIcon, R.drawable.ic_geolocation_icon);
-    verify(viewActions).setText(R.id.titleText, R.string.turn_on_geolocation);
+    verify(viewActions).setText(R.id.geoTitleText, R.string.turn_on_geolocation);
     verify(viewActions).setText(R.id.explainText, R.string.geolocation_required);
     verifyNoMoreInteractions(viewActions);
   }

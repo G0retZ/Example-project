@@ -70,7 +70,7 @@ public class OnlineMenuActivity extends BaseActivity {
             .show();
         break;
       case OnlineButtonNavigate.VEHICLE_OPTIONS:
-        startActivity(new Intent(this, SelectedVehicleOptionsActivity.class));
+        startActivity(new Intent(this, CurrentVehicleOptionsActivity.class));
         finish();
         break;
       case MenuNavigate.BALANCE:
@@ -81,6 +81,9 @@ public class OnlineMenuActivity extends BaseActivity {
         eventLogger.reportEvent("pre_orders_list_open", new HashMap<>());
         startActivity(new Intent(this, PreOrdersActivity.class));
         finish();
+        break;
+      case MenuNavigate.ORDERS_HISTORY:
+        startActivity(new Intent(this, OrdersHistoryActivity.class));
         break;
       case MenuNavigate.NIGHT_MODE:
         startActivity(new Intent(this, NightModeActivity.class));

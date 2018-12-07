@@ -16,6 +16,10 @@
     <item name="android:textColorPrimaryInverse">@color/textColorPrimary</item>
   </style>
 
+  <style name="AppTheme.Accent.Primary" parent="AppTheme">
+    <item name="colorAccent">@color/colorPrimaryNew</item>
+  </style>
+
   <!-- Text styles -->
 
   <style name="TextAppearance.AppThemeNew.Headline" parent="TextAppearance.AppCompat.Medium">
@@ -36,6 +40,25 @@
     <item name="android:textStyle">bold</item>
     <item name="android:textAllCaps">false</item>
     <item name="android:theme">@style/AppThemeNew.Button.Theme.Regular</item>
+  </style>
+
+  <style name="TextAppearance.AppThemeNew.Regular" parent="TextAppearance.AppCompat">
+    <item name="android:textColor">@color/textColorPrimary</item>
+    <item name="android:textSize">@dimen/regular_text_size</item>
+  </style>
+
+  <style name="TextAppearance.AppThemeNew.TabText" parent="TextAppearance.AppCompat">
+    <item name="android:textColor">@color/textColorPrimaryNew</item>
+    <item name="android:textSize">@dimen/regular_text_size</item>
+    <item name="android:textStyle">bold</item>
+  </style>
+
+  <style name="TextAppearance.AppThemeNew.Regular.Green">
+    <item name="android:textColor">@color/colorAccentGreenNew</item>
+  </style>
+
+  <style name="TextAppearance.AppThemeNew.Regular.Red">
+    <item name="android:textColor">@color/colorAccentRedNew</item>
   </style>
 
   <!-- Button styles -->

@@ -9,6 +9,8 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.View;
+import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -195,6 +197,19 @@ public class BaseActivity extends AppCompatActivity implements ExecutorStateView
         navigate(destination);
       }
     });
+  }
+
+  @Override
+  protected void onStart() {
+    super.onStart();
+    View view = findViewById(R.id.backButton);
+    if (view != null) {
+      view.setOnClickListener(v -> onBackPressed());
+    }
+    TextView textView = findViewById(R.id.titleText);
+    if (textView != null) {
+      textView.setText(getTitle());
+    }
   }
 
   /**

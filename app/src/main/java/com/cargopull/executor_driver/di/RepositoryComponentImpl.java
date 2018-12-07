@@ -42,6 +42,8 @@ import com.cargopull.executor_driver.gateway.OrderCurrentCostApiMapper;
 import com.cargopull.executor_driver.gateway.OrderCurrentCostFilter;
 import com.cargopull.executor_driver.gateway.OrderFilter;
 import com.cargopull.executor_driver.gateway.OrderRouteGatewayImpl;
+import com.cargopull.executor_driver.gateway.OrdersHistorySummaryApiMapper;
+import com.cargopull.executor_driver.gateway.OrdersHistorySummaryGatewayImpl;
 import com.cargopull.executor_driver.gateway.PasswordGatewayImpl;
 import com.cargopull.executor_driver.gateway.PreOrderConfirmationGatewayImpl;
 import com.cargopull.executor_driver.gateway.PreOrderFilter;
@@ -77,6 +79,7 @@ import com.cargopull.executor_driver.interactor.GeoTrackingGateway;
 import com.cargopull.executor_driver.interactor.MovingToClientGateway;
 import com.cargopull.executor_driver.interactor.OrderConfirmationGateway;
 import com.cargopull.executor_driver.interactor.OrderRouteGateway;
+import com.cargopull.executor_driver.interactor.OrdersHistorySummaryGateway;
 import com.cargopull.executor_driver.interactor.ServerConnectionGateway;
 import com.cargopull.executor_driver.interactor.WaitingForClientGateway;
 import com.cargopull.executor_driver.interactor.auth.PasswordGateway;
@@ -173,6 +176,8 @@ class RepositoryComponentImpl implements RepositoryComponent {
   private CommonGateway<Order> upcomingPreOrderGateway;
   @Nullable
   private CommonGateway<String> announcementsOrderGateway;
+  @Nullable
+  private OrdersHistorySummaryGateway ordersHistorySummaryGateway;
 
   RepositoryComponentImpl(@NonNull BackendComponent backendComponent) {
     this.backendComponent = backendComponent;
@@ -675,5 +680,17 @@ class RepositoryComponentImpl implements RepositoryComponent {
       );
     }
     return announcementsOrderGateway;
+  }
+
+  @NonNull
+  @Override
+  public OrdersHistorySummaryGateway getOrdersHistorySummaryGateway() {
+    if (ordersHistorySummaryGateway == null) {
+      ordersHistorySummaryGateway = new OrdersHistorySummaryGatewayImpl(
+        backendComponent.getApiService(),
+        new OrdersHistorySummaryApiMapper()
+      );
+    }
+    return ordersHistorySummaryGateway;
   }
 }

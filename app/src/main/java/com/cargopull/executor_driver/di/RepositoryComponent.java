@@ -18,6 +18,7 @@ import com.cargopull.executor_driver.interactor.GeoTrackingGateway;
 import com.cargopull.executor_driver.interactor.MovingToClientGateway;
 import com.cargopull.executor_driver.interactor.OrderConfirmationGateway;
 import com.cargopull.executor_driver.interactor.OrderRouteGateway;
+import com.cargopull.executor_driver.interactor.OrdersHistorySummaryGateway;
 import com.cargopull.executor_driver.interactor.ServerConnectionGateway;
 import com.cargopull.executor_driver.interactor.WaitingForClientGateway;
 import com.cargopull.executor_driver.interactor.auth.PasswordGateway;
@@ -155,4 +156,7 @@ interface RepositoryComponent {
 
   @NonNull
   CommonGateway<String> getAnnouncementsGateway();
+
+  @NonNull
+  OrdersHistorySummaryGateway getOrdersHistorySummaryGateway();
 }
