@@ -19,7 +19,7 @@ public class ServerConnectionGatewayImpl implements ServerConnectionGateway {
   @Inject
   public ServerConnectionGatewayImpl(@NonNull StompClient stompClient) {
     this.stompClient = stompClient;
-    stompClient.setHeartbeat(25_000, 1.2F);
+    stompClient.setHeartbeat(2_000, 2F);
   }
 
   @Override
