@@ -201,7 +201,8 @@ interface PresentationComponent {
   UpcomingPreOrderViewModel getUpcomingPreOrderAvailabilityViewModel();
 
   @NonNull
-  GeoLocationStateViewModel getGeoLocationStateViewModel(@Nullable AppCompatActivity appCompatActivity);
+  GeoLocationStateViewModel getGeoLocationStateViewModel(
+      @Nullable AppCompatActivity appCompatActivity);
 
   @NonNull
   GeoLocationStateViewModel getGeoLocationStateViewModel(@Nullable Fragment fragment);
@@ -210,5 +211,6 @@ interface PresentationComponent {
   MovingToClientTimerViewModel getMovingToClientTimerViewModel(@Nullable Fragment fragment);
 
   @NonNull
-  OrdersHistoryHeaderViewModel getOrdersHistoryHeaderViewModel(@Nullable Fragment fragment, int offset);
+  OrdersHistoryHeaderViewModel getOrdersHistoryHeaderViewModel(@Nullable Fragment fragment,
+      int offset);
 }

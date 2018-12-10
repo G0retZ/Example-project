@@ -72,6 +72,7 @@ public class PreOrderConfirmationGatewayTest {
     assertFalse(orderDecisionCaptor.getAllValues().get(0).isApproved());
     assertEquals(orderDecisionCaptor.getAllValues().get(1).getId(), 7);
     assertTrue(orderDecisionCaptor.getAllValues().get(1).isApproved());
+    verifyNoMoreInteractions(apiService);
   }
 
   /* Проверяем результаты обработки сообщений от сервера */

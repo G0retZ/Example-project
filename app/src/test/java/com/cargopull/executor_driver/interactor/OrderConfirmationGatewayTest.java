@@ -1,11 +1,18 @@
 package com.cargopull.executor_driver.interactor;
 
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import com.cargopull.executor_driver.GatewayThreadTestRule;
+import com.cargopull.executor_driver.backend.web.ApiService;
+import com.cargopull.executor_driver.backend.web.outgoing.ApiOrderDecision;
 import com.cargopull.executor_driver.entity.Order;
+import com.cargopull.executor_driver.gateway.Mapper;
 import com.cargopull.executor_driver.gateway.OrderConfirmationGatewayImpl;
 import io.reactivex.Completable;
 import io.reactivex.observers.TestObserver;
@@ -13,11 +20,12 @@ import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
-import ua.naiksoftware.stomp.client.StompClient;
 
 @RunWith(MockitoJUnitRunner.class)
 public class OrderConfirmationGatewayTest {
@@ -27,14 +35,18 @@ public class OrderConfirmationGatewayTest {
 
   private OrderConfirmationGateway gateway;
   @Mock
-  private StompClient stompClient;
+  private ApiService apiService;
+  @Mock
+  private Mapper<Throwable, Throwable> errorMapper;
   @Mock
   private Order order;
+  @Captor
+  private ArgumentCaptor<ApiOrderDecision> orderDecisionCaptor;
 
   @Before
   public void setUp() {
-    when(stompClient.send(anyString(), anyString())).thenReturn(Completable.never());
-    gateway = new OrderConfirmationGatewayImpl(stompClient);
+    when(apiService.acceptOrderOffer(any())).thenReturn(Completable.never());
+    gateway = new OrderConfirmationGatewayImpl(apiService, errorMapper);
   }
 
   /* Проверяем работу с клиентом STOMP */
@@ -45,7 +57,7 @@ public class OrderConfirmationGatewayTest {
   @Test
   public void askStompClientToSendMessage() {
     // Дано:
-    InOrder inOrder = Mockito.inOrder(stompClient);
+    InOrder inOrder = Mockito.inOrder(apiService);
     when(order.getId()).thenReturn(7L);
 
     // Действие:
@@ -53,14 +65,16 @@ public class OrderConfirmationGatewayTest {
     gateway.sendDecision(order, true).test().isDisposed();
 
     // Результат:
-    inOrder.verify(stompClient)
-        .send("/mobile/order", "{\"id\":\"7\", \"approved\":\"false\"}");
-    inOrder.verify(stompClient)
-        .send("/mobile/order", "{\"id\":\"7\", \"approved\":\"true\"}");
-    verifyNoMoreInteractions(stompClient);
+    inOrder.verify(apiService, times(2)).acceptOrderOffer(orderDecisionCaptor.capture());
+    verifyNoMoreInteractions(apiService);
+    assertEquals(orderDecisionCaptor.getAllValues().get(0).getId(), 7);
+    assertFalse(orderDecisionCaptor.getAllValues().get(0).isApproved());
+    assertEquals(orderDecisionCaptor.getAllValues().get(1).getId(), 7);
+    assertTrue(orderDecisionCaptor.getAllValues().get(1).isApproved());
+    verifyNoMoreInteractions(apiService);
   }
 
-  /* Проверяем результаты обработки сообщений от сервера по статусам */
+  /* Проверяем результаты обработки сообщений от сервера */
 
   /**
    * Должен ответить успехом.
@@ -68,7 +82,7 @@ public class OrderConfirmationGatewayTest {
   @Test
   public void answerSendDecisionSuccess() {
     // Дано:
-    when(stompClient.send(anyString(), anyString())).thenReturn(Completable.complete());
+    when(apiService.acceptOrderOffer(any())).thenReturn(Completable.complete());
 
     // Действие:
     TestObserver<String> testObserver = gateway.sendDecision(order, false).test();
@@ -80,20 +94,21 @@ public class OrderConfirmationGatewayTest {
   }
 
   /**
-   * Должен ответить ошибкой.
+   * Должен ответить спамленной ошибкой.
    */
   @Test
-  public void answerSendDecisionError() {
+  public void answerSendDecisionError() throws Exception {
     // Дано:
-    when(stompClient.send(anyString(), anyString()))
+    when(apiService.acceptOrderOffer(any()))
         .thenReturn(Completable.error(new IllegalArgumentException()));
+    when(errorMapper.map(any())).thenReturn(new IllegalStateException());
 
     // Действие:
     TestObserver<String> testObserver = gateway.sendDecision(order, false).test();
 
     // Результат:
     testObserver.assertNotComplete();
-    testObserver.assertError(IllegalArgumentException.class);
+    testObserver.assertError(IllegalStateException.class);
     testObserver.assertNoValues();
   }
 }

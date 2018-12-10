@@ -35,6 +35,7 @@ import com.cargopull.executor_driver.gateway.MessagePayloadApiMapper;
 import com.cargopull.executor_driver.gateway.MissedOrderFilter;
 import com.cargopull.executor_driver.gateway.MovingToClientGatewayImpl;
 import com.cargopull.executor_driver.gateway.OrderApiMapper;
+import com.cargopull.executor_driver.gateway.OrderConfirmationErrorMapper;
 import com.cargopull.executor_driver.gateway.OrderConfirmationGatewayImpl;
 import com.cargopull.executor_driver.gateway.OrderCostDetailsApiMapper;
 import com.cargopull.executor_driver.gateway.OrderCostDetailsFilter;
@@ -374,8 +375,8 @@ class RepositoryComponentImpl implements RepositoryComponent {
   public OrderConfirmationGateway getOrderConfirmationGateway() {
     if (orderConfirmationGateway == null) {
       orderConfirmationGateway = new OrderConfirmationGatewayImpl(
-          backendComponent.getStompClient()
-      );
+          backendComponent.getApiService(),
+          new OrderConfirmationErrorMapper());
     }
     return orderConfirmationGateway;
   }
@@ -687,8 +688,8 @@ class RepositoryComponentImpl implements RepositoryComponent {
   public OrdersHistorySummaryGateway getOrdersHistorySummaryGateway() {
     if (ordersHistorySummaryGateway == null) {
       ordersHistorySummaryGateway = new OrdersHistorySummaryGatewayImpl(
-        backendComponent.getApiService(),
-        new OrdersHistorySummaryApiMapper()
+          backendComponent.getApiService(),
+          new OrdersHistorySummaryApiMapper()
       );
     }
     return ordersHistorySummaryGateway;

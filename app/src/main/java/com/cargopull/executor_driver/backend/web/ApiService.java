@@ -115,4 +115,12 @@ public interface ApiService {
       @Query("dateFrom") long fromDate,
       @Query("dateTo") long toDate
   );
+
+  /*
+   *  Запрос принятия или отказа от срочного заказа.
+   */
+  @POST("api/public/v1/mobile/order/accept")
+  Completable acceptOrderOffer(
+      @NonNull @Body ApiOrderDecision decision
+  );
 }
