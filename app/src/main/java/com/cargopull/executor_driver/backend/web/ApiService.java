@@ -131,4 +131,10 @@ public interface ApiService {
   Completable setOrderStatus(
       @NonNull @Body String status
   );
+
+  /*
+   *  Запрос звонка клиенту.
+   */
+  @GET("api/public/v1/mobile/order/callToClient")
+  Completable callToClient();
 }

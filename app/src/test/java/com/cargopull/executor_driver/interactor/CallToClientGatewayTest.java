@@ -1,11 +1,11 @@
 package com.cargopull.executor_driver.interactor;
 
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.cargopull.executor_driver.GatewayThreadTestRule;
+import com.cargopull.executor_driver.backend.web.ApiService;
 import com.cargopull.executor_driver.entity.ExecutorState;
 import com.cargopull.executor_driver.gateway.CallToClientGatewayImpl;
 import io.reactivex.Completable;
@@ -16,7 +16,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import ua.naiksoftware.stomp.client.StompClient;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CallToClientGatewayTest {
@@ -26,13 +25,13 @@ public class CallToClientGatewayTest {
 
   private CallToClientGateway gateway;
   @Mock
-  private StompClient stompClient;
+  private ApiService apiService;
 
   @Before
   public void setUp() {
     ExecutorState.MOVING_TO_CLIENT.setData(null);
-    when(stompClient.send(anyString(), anyString())).thenReturn(Completable.never());
-    gateway = new CallToClientGatewayImpl(stompClient);
+    when(apiService.callToClient()).thenReturn(Completable.never());
+    gateway = new CallToClientGatewayImpl(apiService);
   }
 
   /* Проверяем работу с клиентом STOMP */
@@ -46,7 +45,7 @@ public class CallToClientGatewayTest {
     gateway.callToClient().test().isDisposed();
 
     // Результат:
-    verify(stompClient, only()).send("/mobile/trip", "\"CALL_TO_CLIENT\"");
+    verify(apiService, only()).callToClient();
   }
 
   /* Проверяем результаты обработки сообщений от сервера по статусам */
@@ -57,7 +56,7 @@ public class CallToClientGatewayTest {
   @Test
   public void answerCallToClientSuccess() {
     // Дано:
-    when(stompClient.send(anyString(), anyString())).thenReturn(Completable.complete());
+    when(apiService.callToClient()).thenReturn(Completable.complete());
 
     // Действие:
     TestObserver<Void> testObserver = gateway.callToClient().test();
@@ -73,7 +72,7 @@ public class CallToClientGatewayTest {
   @Test
   public void answerCallToClientError() {
     // Дано:
-    when(stompClient.send(anyString(), anyString()))
+    when(apiService.callToClient())
         .thenReturn(Completable.error(new IllegalArgumentException()));
 
     // Действие:

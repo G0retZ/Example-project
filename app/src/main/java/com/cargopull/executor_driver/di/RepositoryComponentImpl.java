@@ -207,7 +207,7 @@ class RepositoryComponentImpl implements RepositoryComponent {
   public CallToClientGateway getCallToClientGateway() {
     if (callToClientGateway == null) {
       callToClientGateway = new CallToClientGatewayImpl(
-          backendComponent.getStompClient()
+          backendComponent.getApiService()
       );
     }
     return callToClientGateway;
