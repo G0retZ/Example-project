@@ -1,6 +1,5 @@
 package com.cargopull.executor_driver.interactor;
 
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -31,7 +30,7 @@ public class ConfirmOrderPaymentGatewayTest {
   @Before
   public void setUp() {
     ExecutorState.MOVING_TO_CLIENT.setData(null);
-    when(apiService.setOrderStatus(anyString())).thenReturn(Completable.never());
+    when(apiService.confirmPayment()).thenReturn(Completable.never());
     gateway = new ConfirmOrderPaymentGatewayImpl(apiService);
   }
 
@@ -46,7 +45,7 @@ public class ConfirmOrderPaymentGatewayTest {
     gateway.confirmOrderPayment().test().isDisposed();
 
     // Результат:
-    verify(apiService, only()).setOrderStatus("\"COMPLETE_PAYMENT_CONFIRMATION\"");
+    verify(apiService, only()).confirmPayment();
   }
 
   /* Проверяем результаты обработки сообщений от сервера */
@@ -57,7 +56,7 @@ public class ConfirmOrderPaymentGatewayTest {
   @Test
   public void answerConfirmOrderPaymentSuccess() {
     // Дано:
-    when(apiService.setOrderStatus(anyString())).thenReturn(Completable.complete());
+    when(apiService.confirmPayment()).thenReturn(Completable.complete());
 
     // Действие:
     TestObserver<Void> testObserver = gateway.confirmOrderPayment().test();
@@ -73,7 +72,7 @@ public class ConfirmOrderPaymentGatewayTest {
   @Test
   public void answerConfirmOrderPaymentError() {
     // Дано:
-    when(apiService.setOrderStatus(anyString()))
+    when(apiService.confirmPayment())
         .thenReturn(Completable.error(new IllegalArgumentException()));
 
     // Действие:

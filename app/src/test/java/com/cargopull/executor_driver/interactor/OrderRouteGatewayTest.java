@@ -32,7 +32,7 @@ public class OrderRouteGatewayTest {
 
   @Before
   public void setUp() {
-    when(apiService.setOrderStatus(anyString())).thenReturn(Completable.never());
+    when(apiService.completeOrder()).thenReturn(Completable.never());
     when(apiService.changeRoutePoint(anyString())).thenReturn(Completable.never());
     gateway = new OrderRouteGatewayImpl(apiService);
   }
@@ -63,7 +63,7 @@ public class OrderRouteGatewayTest {
     gateway.completeTheOrder().test().isDisposed();
 
     // Результат:
-    verify(apiService, only()).setOrderStatus("\"COMPLETE_ORDER\"");
+    verify(apiService, only()).completeOrder();
   }
 
   /**
@@ -105,7 +105,7 @@ public class OrderRouteGatewayTest {
   @Test
   public void answerSendCompleteTheOrderSuccess() {
     // Дано:
-    when(apiService.setOrderStatus(anyString())).thenReturn(Completable.complete());
+    when(apiService.completeOrder()).thenReturn(Completable.complete());
 
     // Действие:
     TestObserver<Void> testObserver = gateway.completeTheOrder().test();
@@ -154,8 +154,7 @@ public class OrderRouteGatewayTest {
   @Test
   public void answerSendCompleteTheOrderError() {
     // Дано:
-    when(apiService.setOrderStatus(anyString()))
-        .thenReturn(Completable.error(new IllegalArgumentException()));
+    when(apiService.completeOrder()).thenReturn(Completable.error(new IllegalArgumentException()));
 
     // Действие:
     TestObserver<Void> testObserver = gateway.completeTheOrder().test();

@@ -125,12 +125,28 @@ public interface ApiService {
   );
 
   /*
-   *  Запрос смены статуса заказа.
+   *  Сообщение о прибытии к клиенту.
    */
-  @POST("api/public/v1/mobile/order/status")
-  Completable setOrderStatus(
-      @NonNull @Body String status
-  );
+  @POST("api/public/v1/mobile/order/action/arrived")
+  Completable reportArrived();
+
+  /*
+   *  Запрос начала заказа.
+   */
+  @POST("api/public/v1/mobile/order/action/start")
+  Completable startOrder();
+
+  /*
+   *  Запрос завершения заказа.
+   */
+  @POST("api/public/v1/mobile/order/action/complete")
+  Completable completeOrder();
+
+  /*
+   *  Подтвердить расчет с клиентом.
+   */
+  @POST("api/public/v1/mobile/order/action/confirmPayment")
+  Completable confirmPayment();
 
   /*
    *  Запрос смены статуса заказа.

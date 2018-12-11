@@ -1,6 +1,5 @@
 package com.cargopull.executor_driver.interactor;
 
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -31,7 +30,7 @@ public class WaitingForClientGatewayTest {
   @Before
   public void setUp() {
     ExecutorState.MOVING_TO_CLIENT.setData(null);
-    when(apiService.setOrderStatus(anyString())).thenReturn(Completable.never());
+    when(apiService.startOrder()).thenReturn(Completable.never());
     gateway = new WaitingForClientGatewayImpl(apiService);
   }
 
@@ -46,7 +45,7 @@ public class WaitingForClientGatewayTest {
     gateway.startTheOrder().test().isDisposed();
 
     // Результат:
-    verify(apiService, only()).setOrderStatus("\"START_ORDER\"");
+    verify(apiService, only()).startOrder();
   }
 
   /* Проверяем результаты обработки сообщений от сервера по статусам */
@@ -57,7 +56,7 @@ public class WaitingForClientGatewayTest {
   @Test
   public void answerStartOrderSuccess() {
     // Дано:
-    when(apiService.setOrderStatus(anyString())).thenReturn(Completable.complete());
+    when(apiService.startOrder()).thenReturn(Completable.complete());
 
     // Действие:
     TestObserver<Void> testObserver = gateway.startTheOrder().test();
@@ -73,7 +72,7 @@ public class WaitingForClientGatewayTest {
   @Test
   public void answerStartOrderError() {
     // Дано:
-    when(apiService.setOrderStatus(anyString()))
+    when(apiService.startOrder())
         .thenReturn(Completable.error(new IllegalArgumentException()));
 
     // Действие:

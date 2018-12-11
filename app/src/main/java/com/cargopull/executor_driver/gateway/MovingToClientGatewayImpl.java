@@ -20,6 +20,6 @@ public class MovingToClientGatewayImpl implements MovingToClientGateway {
   @NonNull
   @Override
   public Completable reportArrival() {
-    return apiService.setOrderStatus("\"DRIVER_ARRIVED\"").subscribeOn(Schedulers.io());
+    return apiService.reportArrived().subscribeOn(Schedulers.io());
   }
 }
