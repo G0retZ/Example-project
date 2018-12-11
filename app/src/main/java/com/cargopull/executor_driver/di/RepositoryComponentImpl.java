@@ -455,7 +455,7 @@ class RepositoryComponentImpl implements RepositoryComponent {
   public OrderRouteGateway getOrderRouteGateway() {
     if (orderRouteGateway == null) {
       orderRouteGateway = new OrderRouteGatewayImpl(
-          backendComponent.getStompClient()
+          backendComponent.getApiService()
       );
     }
     return orderRouteGateway;
