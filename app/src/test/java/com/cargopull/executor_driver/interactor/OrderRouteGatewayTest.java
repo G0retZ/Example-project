@@ -1,6 +1,6 @@
 package com.cargopull.executor_driver.interactor;
 
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -33,7 +33,8 @@ public class OrderRouteGatewayTest {
   @Before
   public void setUp() {
     when(apiService.completeOrder()).thenReturn(Completable.never());
-    when(apiService.changeRoutePoint(anyString())).thenReturn(Completable.never());
+    when(apiService.completeRoutePoint(anyLong())).thenReturn(Completable.never());
+    when(apiService.makeRoutePointNext(anyLong())).thenReturn(Completable.never());
     gateway = new OrderRouteGatewayImpl(apiService);
   }
 
@@ -51,7 +52,7 @@ public class OrderRouteGatewayTest {
     gateway.closeRoutePoint(routePoint).test().isDisposed();
 
     // Результат:
-    verify(apiService, only()).changeRoutePoint("{\"complete\":\"7\"}");
+    verify(apiService, only()).completeRoutePoint(7);
   }
 
   /**
@@ -78,7 +79,7 @@ public class OrderRouteGatewayTest {
     gateway.nextRoutePoint(routePoint).test().isDisposed();
 
     // Результат:
-    verify(apiService, only()).changeRoutePoint("{\"next\":\"7\"}");
+    verify(apiService, only()).makeRoutePointNext(7);
   }
 
   /* Проверяем результаты отправки сообщений */
@@ -89,7 +90,7 @@ public class OrderRouteGatewayTest {
   @Test
   public void answerSendCloseRoutePointSuccess() {
     // Дано:
-    when(apiService.changeRoutePoint(anyString())).thenReturn(Completable.complete());
+    when(apiService.completeRoutePoint(anyLong())).thenReturn(Completable.complete());
 
     // Действие:
     TestObserver<Void> testObserver = gateway.closeRoutePoint(routePoint).test();
@@ -121,7 +122,7 @@ public class OrderRouteGatewayTest {
   @Test
   public void answerSendNextRoutePointSuccess() {
     // Дано:
-    when(apiService.changeRoutePoint(anyString())).thenReturn(Completable.complete());
+    when(apiService.makeRoutePointNext(anyLong())).thenReturn(Completable.complete());
 
     // Действие:
     TestObserver<Void> testObserver = gateway.nextRoutePoint(routePoint).test();
@@ -137,7 +138,7 @@ public class OrderRouteGatewayTest {
   @Test
   public void answerSendCloseRoutePointError() {
     // Дано:
-    when(apiService.changeRoutePoint(anyString()))
+    when(apiService.completeRoutePoint(anyLong()))
         .thenReturn(Completable.error(new IllegalArgumentException()));
 
     // Действие:
@@ -170,7 +171,7 @@ public class OrderRouteGatewayTest {
   @Test
   public void answerSendNextRoutePointError() {
     // Дано:
-    when(apiService.changeRoutePoint(anyString()))
+    when(apiService.makeRoutePointNext(anyLong()))
         .thenReturn(Completable.error(new IllegalArgumentException()));
 
     // Действие:

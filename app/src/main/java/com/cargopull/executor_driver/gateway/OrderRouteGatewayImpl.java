@@ -21,8 +21,7 @@ public class OrderRouteGatewayImpl implements OrderRouteGateway {
   @NonNull
   @Override
   public Completable closeRoutePoint(@NonNull RoutePoint routePoint) {
-    return apiService.changeRoutePoint("{\"complete\":\"" + routePoint.getId() + "\"}")
-        .subscribeOn(Schedulers.io());
+    return apiService.completeRoutePoint(routePoint.getId()).subscribeOn(Schedulers.io());
   }
 
   @NonNull
@@ -34,7 +33,6 @@ public class OrderRouteGatewayImpl implements OrderRouteGateway {
   @NonNull
   @Override
   public Completable nextRoutePoint(@NonNull RoutePoint routePoint) {
-    return apiService.changeRoutePoint("{\"next\":\"" + routePoint.getId() + "\"}")
-        .subscribeOn(Schedulers.io());
+    return apiService.makeRoutePointNext(routePoint.getId()).subscribeOn(Schedulers.io());
   }
 }

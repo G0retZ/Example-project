@@ -151,9 +151,17 @@ public interface ApiService {
   /*
    *  Запрос смены статуса заказа.
    */
-  @POST("api/public/v1/mobile/order/changeRoutePoint")
-  Completable changeRoutePoint(
-      @NonNull @Body String data
+  @POST("api/public/v1/mobile/order/routePoint/{rpid}/next")
+  Completable makeRoutePointNext(
+      @Path("rpid") long routePointId
+  );
+
+  /*
+   *  Запрос смены статуса заказа.
+   */
+  @POST("api/public/v1/mobile/order/routePoint/{rpid}/complete")
+  Completable completeRoutePoint(
+      @Path("rpid") long routePointId
   );
 
   /*
