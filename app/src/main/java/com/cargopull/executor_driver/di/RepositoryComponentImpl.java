@@ -268,7 +268,7 @@ class RepositoryComponentImpl implements RepositoryComponent {
   public ConfirmOrderPaymentGateway getConfirmOrderPaymentGateway() {
     if (confirmOrderPaymentGateway == null) {
       confirmOrderPaymentGateway = new ConfirmOrderPaymentGatewayImpl(
-          backendComponent.getStompClient()
+          backendComponent.getApiService()
       );
     }
     return confirmOrderPaymentGateway;
