@@ -20,6 +20,6 @@ public class WaitingForClientGatewayImpl implements WaitingForClientGateway {
   @NonNull
   @Override
   public Completable startTheOrder() {
-    return apiService.setOrderStatus("START_ORDER").subscribeOn(Schedulers.io());
+    return apiService.setOrderStatus("\"START_ORDER\"").subscribeOn(Schedulers.io());
   }
 }

@@ -46,7 +46,7 @@ public class WaitingForClientGatewayTest {
     gateway.startTheOrder().test().isDisposed();
 
     // Результат:
-    verify(apiService, only()).setOrderStatus("START_ORDER");
+    verify(apiService, only()).setOrderStatus("\"START_ORDER\"");
   }
 
   /* Проверяем результаты обработки сообщений от сервера по статусам */

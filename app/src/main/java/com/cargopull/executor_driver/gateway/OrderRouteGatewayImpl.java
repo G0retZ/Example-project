@@ -28,7 +28,7 @@ public class OrderRouteGatewayImpl implements OrderRouteGateway {
   @NonNull
   @Override
   public Completable completeTheOrder() {
-    return apiService.setOrderStatus("COMPLETE_ORDER").subscribeOn(Schedulers.io());
+    return apiService.setOrderStatus("\"COMPLETE_ORDER\"").subscribeOn(Schedulers.io());
   }
 
   @NonNull

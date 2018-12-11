@@ -46,7 +46,7 @@ public class MovingToClientGatewayTest {
     gateway.reportArrival().test().isDisposed();
 
     // Результат:
-    verify(apiService, only()).setOrderStatus("DRIVER_ARRIVED");
+    verify(apiService, only()).setOrderStatus("\"DRIVER_ARRIVED\"");
   }
 
   /* Проверяем результаты обработки сообщений от сервера по статусам */

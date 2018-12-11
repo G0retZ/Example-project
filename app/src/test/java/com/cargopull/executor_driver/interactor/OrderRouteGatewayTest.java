@@ -63,7 +63,7 @@ public class OrderRouteGatewayTest {
     gateway.completeTheOrder().test().isDisposed();
 
     // Результат:
-    verify(apiService, only()).setOrderStatus("COMPLETE_ORDER");
+    verify(apiService, only()).setOrderStatus("\"COMPLETE_ORDER\"");
   }
 
   /**

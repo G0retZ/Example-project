@@ -46,7 +46,7 @@ public class ConfirmOrderPaymentGatewayTest {
     gateway.confirmOrderPayment().test().isDisposed();
 
     // Результат:
-    verify(apiService, only()).setOrderStatus("COMPLETE_PAYMENT_CONFIRMATION");
+    verify(apiService, only()).setOrderStatus("\"COMPLETE_PAYMENT_CONFIRMATION\"");
   }
 
   /* Проверяем результаты обработки сообщений от сервера */

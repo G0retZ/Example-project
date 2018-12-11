@@ -20,6 +20,6 @@ public class ConfirmOrderPaymentGatewayImpl implements ConfirmOrderPaymentGatewa
   @NonNull
   @Override
   public Completable confirmOrderPayment() {
-    return apiService.setOrderStatus("COMPLETE_PAYMENT_CONFIRMATION").subscribeOn(Schedulers.io());
+    return apiService.setOrderStatus("\"COMPLETE_PAYMENT_CONFIRMATION\"").subscribeOn(Schedulers.io());
   }
 }
