@@ -503,7 +503,7 @@ class RepositoryComponentImpl implements RepositoryComponent {
   public WaitingForClientGateway getWaitingForClientGateway() {
     if (waitingForClientGateway == null) {
       waitingForClientGateway = new WaitingForClientGatewayImpl(
-          backendComponent.getStompClient()
+          backendComponent.getApiService()
       );
     }
     return waitingForClientGateway;
