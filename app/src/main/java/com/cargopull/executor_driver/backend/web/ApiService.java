@@ -123,4 +123,12 @@ public interface ApiService {
   Completable acceptOrderOffer(
       @NonNull @Body ApiOrderDecision decision
   );
+
+  /*
+   *  Запрос смены статуса заказа.
+   */
+  @POST("api/public/v1/mobile/order/status")
+  Completable setOrderStatus(
+      @NonNull @Body String status
+  );
 }

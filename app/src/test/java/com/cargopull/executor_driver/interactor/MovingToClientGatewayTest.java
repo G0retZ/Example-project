@@ -6,6 +6,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.cargopull.executor_driver.GatewayThreadTestRule;
+import com.cargopull.executor_driver.backend.web.ApiService;
 import com.cargopull.executor_driver.entity.ExecutorState;
 import com.cargopull.executor_driver.gateway.MovingToClientGatewayImpl;
 import io.reactivex.Completable;
@@ -16,7 +17,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import ua.naiksoftware.stomp.client.StompClient;
 
 @RunWith(MockitoJUnitRunner.class)
 public class MovingToClientGatewayTest {
@@ -26,13 +26,13 @@ public class MovingToClientGatewayTest {
 
   private MovingToClientGateway gateway;
   @Mock
-  private StompClient stompClient;
+  private ApiService apiService;
 
   @Before
   public void setUp() {
     ExecutorState.MOVING_TO_CLIENT.setData(null);
-    when(stompClient.send(anyString(), anyString())).thenReturn(Completable.never());
-    gateway = new MovingToClientGatewayImpl(stompClient);
+    when(apiService.setOrderStatus(anyString())).thenReturn(Completable.never());
+    gateway = new MovingToClientGatewayImpl(apiService);
   }
 
   /* Проверяем работу с клиентом STOMP */
@@ -46,7 +46,7 @@ public class MovingToClientGatewayTest {
     gateway.reportArrival().test().isDisposed();
 
     // Результат:
-    verify(stompClient, only()).send("/mobile/trip", "\"DRIVER_ARRIVED\"");
+    verify(apiService, only()).setOrderStatus("DRIVER_ARRIVED");
   }
 
   /* Проверяем результаты обработки сообщений от сервера по статусам */
@@ -57,7 +57,7 @@ public class MovingToClientGatewayTest {
   @Test
   public void answerReportArrivalSuccessIfConnected() {
     // Дано:
-    when(stompClient.send(anyString(), anyString())).thenReturn(Completable.complete());
+    when(apiService.setOrderStatus(anyString())).thenReturn(Completable.complete());
 
     // Действие:
     TestObserver<Void> testObserver = gateway.reportArrival().test();
@@ -73,7 +73,7 @@ public class MovingToClientGatewayTest {
   @Test
   public void answerReportArrivalErrorIfConnected() {
     // Дано:
-    when(stompClient.send(anyString(), anyString()))
+    when(apiService.setOrderStatus(anyString()))
         .thenReturn(Completable.error(new IllegalArgumentException()));
 
     // Действие:

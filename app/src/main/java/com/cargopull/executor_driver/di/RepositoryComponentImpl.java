@@ -364,7 +364,7 @@ class RepositoryComponentImpl implements RepositoryComponent {
   public MovingToClientGateway getMovingToClientGateway() {
     if (movingToClientGateway == null) {
       movingToClientGateway = new MovingToClientGatewayImpl(
-          backendComponent.getStompClient()
+          backendComponent.getApiService()
       );
     }
     return movingToClientGateway;
