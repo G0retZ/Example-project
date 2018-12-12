@@ -9,8 +9,6 @@ import com.cargopull.executor_driver.presentation.balance.BalanceViewModel;
 import com.cargopull.executor_driver.presentation.calltoclient.CallToClientViewModel;
 import com.cargopull.executor_driver.presentation.calltooperator.CallToOperatorViewModel;
 import com.cargopull.executor_driver.presentation.cancelledorder.CancelledOrderViewModel;
-import com.cargopull.executor_driver.presentation.cancelorder.CancelOrderViewModel;
-import com.cargopull.executor_driver.presentation.cancelorderreasons.CancelOrderReasonsViewModel;
 import com.cargopull.executor_driver.presentation.choosevehicle.ChooseVehicleViewModel;
 import com.cargopull.executor_driver.presentation.clientorderconfirmationtime.ClientOrderConfirmationTimeViewModel;
 import com.cargopull.executor_driver.presentation.code.CodeViewModel;
@@ -37,6 +35,7 @@ import com.cargopull.executor_driver.presentation.ordertime.OrderTimeViewModel;
 import com.cargopull.executor_driver.presentation.phone.PhoneViewModel;
 import com.cargopull.executor_driver.presentation.preorder.PreOrderViewModel;
 import com.cargopull.executor_driver.presentation.preorderslist.PreOrdersListViewModel;
+import com.cargopull.executor_driver.presentation.reportproblem.ReportProblemViewModel;
 import com.cargopull.executor_driver.presentation.selectedvehicle.SelectedVehicleViewModel;
 import com.cargopull.executor_driver.presentation.serverconnection.ServerConnectionViewModel;
 import com.cargopull.executor_driver.presentation.servertime.ServerTimeViewModel;
@@ -65,10 +64,7 @@ interface PresentationComponent {
   CancelledOrderViewModel getCancelledOrderViewModel();
 
   @NonNull
-  CancelOrderViewModel getCancelOrderViewModel(@Nullable Fragment fragment);
-
-  @NonNull
-  CancelOrderReasonsViewModel getCancelOrderReasonsViewModel();
+  ReportProblemViewModel getCancelOrderViewModel(@Nullable Fragment fragment);
 
   @NonNull
   ChooseVehicleViewModel getChooseVehicleViewModel(@Nullable Fragment fragment);

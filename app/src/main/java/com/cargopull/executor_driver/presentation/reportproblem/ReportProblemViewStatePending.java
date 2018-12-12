@@ -1,4 +1,4 @@
-package com.cargopull.executor_driver.presentation.cancelorderreasons;
+package com.cargopull.executor_driver.presentation.reportproblem;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -7,23 +7,22 @@ import com.cargopull.executor_driver.presentation.ViewState;
 /**
  * Состояние ожидания загрузки списка ТС.
  */
-final class CancelOrderReasonsViewStatePending implements ViewState<CancelOrderReasonsViewActions> {
+final class ReportProblemViewStatePending implements ViewState<ReportProblemViewActions> {
 
   @Nullable
-  private final ViewState<CancelOrderReasonsViewActions> parentViewState;
+  private final ViewState<ReportProblemViewActions> parentViewState;
 
-  CancelOrderReasonsViewStatePending(
-      @Nullable ViewState<CancelOrderReasonsViewActions> parentViewState) {
+  ReportProblemViewStatePending(@Nullable ViewState<ReportProblemViewActions> parentViewState) {
     this.parentViewState = parentViewState;
   }
 
   @Override
-  public void apply(@NonNull CancelOrderReasonsViewActions stateActions) {
+  public void apply(@NonNull ReportProblemViewActions stateActions) {
     if (parentViewState != null) {
       parentViewState.apply(stateActions);
     }
-    stateActions.showCancelOrderReasons(parentViewState != null);
-    stateActions.showCancelOrderReasonsPending(true);
+    stateActions.showAvailableProblems(parentViewState != null);
+    stateActions.showReportProblemPending(true);
   }
 
   @Override
@@ -35,7 +34,7 @@ final class CancelOrderReasonsViewStatePending implements ViewState<CancelOrderR
       return false;
     }
 
-    CancelOrderReasonsViewStatePending that = (CancelOrderReasonsViewStatePending) o;
+    ReportProblemViewStatePending that = (ReportProblemViewStatePending) o;
 
     return parentViewState != null ? parentViewState.equals(that.parentViewState)
         : that.parentViewState == null;

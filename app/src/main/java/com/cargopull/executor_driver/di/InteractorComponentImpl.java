@@ -9,10 +9,6 @@ import com.cargopull.executor_driver.entity.PhoneNumberValidator;
 import com.cargopull.executor_driver.entity.Vehicle;
 import com.cargopull.executor_driver.interactor.CallToClientUseCase;
 import com.cargopull.executor_driver.interactor.CallToClientUseCaseImpl;
-import com.cargopull.executor_driver.interactor.CancelOrderReasonsUseCase;
-import com.cargopull.executor_driver.interactor.CancelOrderReasonsUseCaseImpl;
-import com.cargopull.executor_driver.interactor.CancelOrderUseCase;
-import com.cargopull.executor_driver.interactor.CancelOrderUseCaseImpl;
 import com.cargopull.executor_driver.interactor.CancelledOrderUseCaseImpl;
 import com.cargopull.executor_driver.interactor.ConfirmOrderPaymentUseCase;
 import com.cargopull.executor_driver.interactor.ConfirmOrderPaymentUseCaseImpl;
@@ -47,6 +43,8 @@ import com.cargopull.executor_driver.interactor.OrderUseCaseImpl;
 import com.cargopull.executor_driver.interactor.OrdersUseCase;
 import com.cargopull.executor_driver.interactor.OrdersUseCaseImpl;
 import com.cargopull.executor_driver.interactor.RemoveOrdersUseCaseImpl;
+import com.cargopull.executor_driver.interactor.ReportProblemUseCase;
+import com.cargopull.executor_driver.interactor.ReportProblemUseCaseImpl;
 import com.cargopull.executor_driver.interactor.SelectedOrderUseCase;
 import com.cargopull.executor_driver.interactor.SelectedOrderUseCaseImpl;
 import com.cargopull.executor_driver.interactor.ServerConnectionUseCase;
@@ -94,9 +92,7 @@ class InteractorComponentImpl implements InteractorComponent {
   @Nullable
   private OrderUseCase cancelledOrderUseCase;
   @Nullable
-  private CancelOrderReasonsUseCase cancelOrderReasonsUseCase;
-  @Nullable
-  private CancelOrderUseCase cancelOrderUseCase;
+  private ReportProblemUseCase reportProblemUseCase;
   @Nullable
   private ConfirmOrderPaymentUseCase confirmOrderPaymentUseCase;
   @Nullable
@@ -208,25 +204,13 @@ class InteractorComponentImpl implements InteractorComponent {
 
   @NonNull
   @Override
-  public CancelOrderReasonsUseCase getCancelOrderReasonsUseCase() {
-    if (cancelOrderReasonsUseCase == null) {
-      cancelOrderReasonsUseCase = new CancelOrderReasonsUseCaseImpl(
-          repositoryComponent.getCancelOrderReasonsGateway()
+  public ReportProblemUseCase getReportProblemUseCase() {
+    if (reportProblemUseCase == null) {
+      reportProblemUseCase = new ReportProblemUseCaseImpl(
+          repositoryComponent.getReportProblemGateway()
       );
     }
-    return cancelOrderReasonsUseCase;
-  }
-
-  @NonNull
-  @Override
-  public CancelOrderUseCase getCancelOrderUseCase() {
-    if (cancelOrderUseCase == null) {
-      cancelOrderUseCase = new CancelOrderUseCaseImpl(
-          getCancelOrderReasonsUseCase(),
-          repositoryComponent.getCancelOrderGateway()
-      );
-    }
-    return cancelOrderUseCase;
+    return reportProblemUseCase;
   }
 
   @NonNull

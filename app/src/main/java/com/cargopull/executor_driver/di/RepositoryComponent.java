@@ -1,13 +1,11 @@
 package com.cargopull.executor_driver.di;
 
 import androidx.annotation.NonNull;
-import com.cargopull.executor_driver.entity.CancelOrderReason;
 import com.cargopull.executor_driver.entity.ExecutorBalance;
 import com.cargopull.executor_driver.entity.ExecutorState;
 import com.cargopull.executor_driver.entity.Order;
 import com.cargopull.executor_driver.entity.OrderCostDetails;
 import com.cargopull.executor_driver.interactor.CallToClientGateway;
-import com.cargopull.executor_driver.interactor.CancelOrderGateway;
 import com.cargopull.executor_driver.interactor.CommonGateway;
 import com.cargopull.executor_driver.interactor.ConfirmOrderPaymentGateway;
 import com.cargopull.executor_driver.interactor.CurrentCostPollingGateway;
@@ -19,6 +17,7 @@ import com.cargopull.executor_driver.interactor.MovingToClientGateway;
 import com.cargopull.executor_driver.interactor.OrderConfirmationGateway;
 import com.cargopull.executor_driver.interactor.OrderRouteGateway;
 import com.cargopull.executor_driver.interactor.OrdersHistorySummaryGateway;
+import com.cargopull.executor_driver.interactor.ReportProblemGateway;
 import com.cargopull.executor_driver.interactor.ServerConnectionGateway;
 import com.cargopull.executor_driver.interactor.WaitingForClientGateway;
 import com.cargopull.executor_driver.interactor.auth.PasswordGateway;
@@ -29,7 +28,6 @@ import com.cargopull.executor_driver.interactor.vehicle.LastUsedVehicleGateway;
 import com.cargopull.executor_driver.interactor.vehicle.VehicleOptionsGateway;
 import com.cargopull.executor_driver.interactor.vehicle.VehiclesAndOptionsGateway;
 import io.reactivex.Observer;
-import java.util.List;
 import java.util.Set;
 
 interface RepositoryComponent {
@@ -50,10 +48,7 @@ interface RepositoryComponent {
   CommonGateway<String> getCancelledOrderMessageGateway();
 
   @NonNull
-  CancelOrderGateway getCancelOrderGateway();
-
-  @NonNull
-  CommonGateway<List<CancelOrderReason>> getCancelOrderReasonsGateway();
+  ReportProblemGateway getReportProblemGateway();
 
   @NonNull
   ConfirmOrderPaymentGateway getConfirmOrderPaymentGateway();

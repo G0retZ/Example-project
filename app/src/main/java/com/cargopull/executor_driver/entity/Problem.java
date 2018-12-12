@@ -7,7 +7,7 @@ import androidx.annotation.Nullable;
  * Бизнес сущность причины отказа от заказа. Immutable. Создается через конструктор с не нулевыми
  * полями.
  */
-public class CancelOrderReason {
+public class Problem {
 
   private final int id;
   @NonNull
@@ -15,7 +15,7 @@ public class CancelOrderReason {
   @Nullable
   private final String unusedName;
 
-  public CancelOrderReason(int id, @NonNull String name, @Nullable String unusedName) {
+  public Problem(int id, @NonNull String name, @Nullable String unusedName) {
     this.id = id;
     this.name = name;
     this.unusedName = unusedName;
@@ -37,7 +37,7 @@ public class CancelOrderReason {
 
   @Override
   public String toString() {
-    return "CancelOrderReason{" +
+    return "Problem{" +
         "id=" + id +
         ", name='" + name + '\'' +
         ", unusedName='" + unusedName + '\'' +

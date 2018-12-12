@@ -8,27 +8,27 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 import com.cargopull.executor_driver.R;
-import com.cargopull.executor_driver.entity.CancelOrderReason;
-import com.cargopull.executor_driver.view.CancelOrderAdapter.CancelOrderReasonViewHolder;
+import com.cargopull.executor_driver.entity.Problem;
+import com.cargopull.executor_driver.view.ReportProblemAdapter.CancelOrderReasonViewHolder;
 import io.reactivex.functions.Consumer;
 import java.util.List;
 
-class CancelOrderAdapter extends RecyclerView.Adapter<CancelOrderReasonViewHolder> {
+class ReportProblemAdapter extends RecyclerView.Adapter<CancelOrderReasonViewHolder> {
 
   @NonNull
-  private final List<CancelOrderReason> cancelOrderReasons;
+  private final List<Problem> problems;
   @NonNull
-  private final Consumer<CancelOrderReason> selectListener;
+  private final Consumer<Problem> selectListener;
 
-  CancelOrderAdapter(@NonNull List<CancelOrderReason> cancelOrderReasons,
-      @NonNull Consumer<CancelOrderReason> selectListener) {
-    this.cancelOrderReasons = cancelOrderReasons;
+  ReportProblemAdapter(@NonNull List<Problem> problems,
+      @NonNull Consumer<Problem> selectListener) {
+    this.problems = problems;
     this.selectListener = selectListener;
   }
 
   @Override
   public int getItemCount() {
-    return cancelOrderReasons.size();
+    return problems.size();
   }
 
   @NonNull
@@ -42,13 +42,13 @@ class CancelOrderAdapter extends RecyclerView.Adapter<CancelOrderReasonViewHolde
 
   @Override
   public void onBindViewHolder(@NonNull CancelOrderReasonViewHolder holder, int position) {
-    CancelOrderReason cancelOrderReason = cancelOrderReasons.get(position);
+    Problem problem = problems.get(position);
     if (holder.reasonNameText != null) {
-      holder.reasonNameText.setText(cancelOrderReason.getName());
+      holder.reasonNameText.setText(problem.getName());
     }
     holder.itemView.setOnClickListener(v -> {
           try {
-            selectListener.accept(cancelOrderReason);
+            selectListener.accept(problem);
           } catch (Exception e) {
             e.printStackTrace();
           }

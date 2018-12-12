@@ -3,6 +3,7 @@ package com.cargopull.executor_driver.backend.web;
 import androidx.annotation.NonNull;
 import com.cargopull.executor_driver.backend.web.incoming.ApiOptionsForOnline;
 import com.cargopull.executor_driver.backend.web.incoming.ApiOrdersSummary;
+import com.cargopull.executor_driver.backend.web.incoming.ApiProblem;
 import com.cargopull.executor_driver.backend.web.incoming.ApiServiceItem;
 import com.cargopull.executor_driver.backend.web.incoming.ApiSimpleResult;
 import com.cargopull.executor_driver.backend.web.outgoing.ApiLogin;
@@ -169,4 +170,18 @@ public interface ApiService {
    */
   @GET("api/public/v1/mobile/order/callToClient")
   Completable callToClient();
+
+  /*
+   *  Запрос списка проблем для сообщения.
+   */
+  @GET("api/public/v1/mobile/order/reportProblem/reasons")
+  Single<List<ApiProblem>> getReportProblems();
+
+  /*
+   *  Сообщите о выбранной проблеме.
+   */
+  @POST("api/public/v1/mobile/order/reportProblem")
+  Completable reportProblem(
+      @NonNull @Body ApiProblem apiProblem
+  );
 }

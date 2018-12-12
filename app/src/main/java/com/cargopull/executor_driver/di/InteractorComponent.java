@@ -2,8 +2,6 @@ package com.cargopull.executor_driver.di;
 
 import androidx.annotation.NonNull;
 import com.cargopull.executor_driver.interactor.CallToClientUseCase;
-import com.cargopull.executor_driver.interactor.CancelOrderReasonsUseCase;
-import com.cargopull.executor_driver.interactor.CancelOrderUseCase;
 import com.cargopull.executor_driver.interactor.ConfirmOrderPaymentUseCase;
 import com.cargopull.executor_driver.interactor.CurrentCostPollingUseCase;
 import com.cargopull.executor_driver.interactor.ExecutorBalanceUseCase;
@@ -19,6 +17,7 @@ import com.cargopull.executor_driver.interactor.OrderFulfillmentTimeUseCase;
 import com.cargopull.executor_driver.interactor.OrderRouteUseCase;
 import com.cargopull.executor_driver.interactor.OrderUseCase;
 import com.cargopull.executor_driver.interactor.OrdersUseCase;
+import com.cargopull.executor_driver.interactor.ReportProblemUseCase;
 import com.cargopull.executor_driver.interactor.SelectedOrderUseCase;
 import com.cargopull.executor_driver.interactor.ServerConnectionUseCase;
 import com.cargopull.executor_driver.interactor.ServerTimeUseCase;
@@ -43,10 +42,7 @@ interface InteractorComponent {
   NotificationMessageUseCase getCancelledOrderMessageUseCase();
 
   @NonNull
-  CancelOrderReasonsUseCase getCancelOrderReasonsUseCase();
-
-  @NonNull
-  CancelOrderUseCase getCancelOrderUseCase();
+  ReportProblemUseCase getReportProblemUseCase();
 
   @NonNull
   ConfirmOrderPaymentUseCase getConfirmOrderPaymentUseCase();
