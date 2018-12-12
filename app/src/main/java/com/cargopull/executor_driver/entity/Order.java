@@ -137,15 +137,15 @@ public class Order {
     return options;
   }
 
-  public void setOptions(@NonNull Option... options) {
-    this.options.clear();
-    addOptions(options);
-  }
-
   private Order setOptions(@NonNull List<Option> options) {
     this.options.clear();
     this.options.addAll(options);
     return this;
+  }
+
+  public void setOptions(@NonNull Option... options) {
+    this.options.clear();
+    addOptions(options);
   }
 
   public void addOptions(@NonNull Option... options) {

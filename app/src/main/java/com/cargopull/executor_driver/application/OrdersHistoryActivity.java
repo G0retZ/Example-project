@@ -26,7 +26,7 @@ public class OrdersHistoryActivity extends BaseActivity {
 
   private class OrdersHistoryPagerAdapter extends FragmentStatePagerAdapter {
 
-    private String[] monthNames;
+    private final String[] monthNames;
 
     OrdersHistoryPagerAdapter(FragmentManager fm) {
       super(fm);

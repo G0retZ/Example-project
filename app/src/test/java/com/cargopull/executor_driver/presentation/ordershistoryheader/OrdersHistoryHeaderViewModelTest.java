@@ -50,8 +50,6 @@ public class OrdersHistoryHeaderViewModelTest {
   private OrdersHistorySummaryGateway gateway;
   @Mock
   private OrdersHistorySummary ordersHistorySummary;
-  @Mock
-  private OrdersHistoryHeaderViewActions ordersHistoryHeaderViewActions;
   private SingleEmitter<OrdersHistorySummary> singleEmitter;
 
   @Mock
