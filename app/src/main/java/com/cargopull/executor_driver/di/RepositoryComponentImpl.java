@@ -300,7 +300,7 @@ class RepositoryComponentImpl implements RepositoryComponent {
   public ExecutorStateSwitchGateway getExecutorStateSwitchGateway() {
     if (executorStateSwitchGateway == null) {
       executorStateSwitchGateway = new ExecutorStateSwitchGatewayImpl(
-          backendComponent.getStompClient()
+          backendComponent.getApiService()
       );
     }
     return executorStateSwitchGateway;

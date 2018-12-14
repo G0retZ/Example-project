@@ -9,6 +9,7 @@ import com.cargopull.executor_driver.backend.web.incoming.ApiSimpleResult;
 import com.cargopull.executor_driver.backend.web.outgoing.ApiLogin;
 import com.cargopull.executor_driver.backend.web.outgoing.ApiOptionItems;
 import com.cargopull.executor_driver.backend.web.outgoing.ApiOrderDecision;
+import com.cargopull.executor_driver.entity.ExecutorState;
 import io.reactivex.Completable;
 import io.reactivex.Single;
 import java.util.List;
@@ -183,5 +184,13 @@ public interface ApiService {
   @POST("api/public/v1/mobile/order/reportProblem")
   Completable reportProblem(
       @NonNull @Body ApiProblem apiProblem
+  );
+
+  /*
+   *  Переключить свой статус.
+   */
+  @POST("api/public/v1/mobile/driver/status")
+  Completable switchStatus(
+      @NonNull @Body ExecutorState executorState
   );
 }
