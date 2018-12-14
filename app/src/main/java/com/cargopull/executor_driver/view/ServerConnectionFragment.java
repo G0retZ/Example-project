@@ -60,11 +60,14 @@ public class ServerConnectionFragment extends BaseFragment implements ServerConn
   }
 
   public void blink() {
+    int currentVisibility = rootView.getVisibility();
+    rootView.setVisibility(View.VISIBLE);
     Animation anim = new AlphaAnimation(1.0f, 0.8f);
     anim.setDuration(50); //You can manage the blinking time with this parameter
     anim.setStartOffset(20);
     anim.setRepeatMode(Animation.REVERSE);
-    anim.setRepeatCount(3);
+    anim.setRepeatCount(4);
     rootView.startAnimation(anim);
+    rootView.setVisibility(currentVisibility);
   }
 }
