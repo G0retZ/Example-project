@@ -6,6 +6,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
+import android.view.animation.Animation.AnimationListener;
+import android.view.animation.DecelerateInterpolator;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.cargopull.executor_driver.R;
@@ -22,6 +24,7 @@ public class ServerConnectionFragment extends BaseFragment implements ServerConn
 
   private ServerConnectionViewModel serverConnectionViewModel;
   private View rootView;
+  private int currentVisibility;
 
   @Inject
   public void setServerConnectionViewModel(
@@ -56,18 +59,30 @@ public class ServerConnectionFragment extends BaseFragment implements ServerConn
 
   @Override
   public void showConnectionReady(boolean connected) {
-    rootView.setVisibility(connected ? View.GONE : View.VISIBLE);
+    rootView.setVisibility(currentVisibility = connected ? View.GONE : View.VISIBLE);
   }
 
   public void blink() {
-    int currentVisibility = rootView.getVisibility();
     rootView.setVisibility(View.VISIBLE);
-    Animation anim = new AlphaAnimation(1.0f, 0.8f);
-    anim.setDuration(50); //You can manage the blinking time with this parameter
-    anim.setStartOffset(20);
+    Animation anim = new AlphaAnimation(0.5f, 1f);
+    anim.setInterpolator(new DecelerateInterpolator());
+    anim.setDuration(300); //You can manage the blinking time with this parameter
     anim.setRepeatMode(Animation.REVERSE);
     anim.setRepeatCount(4);
+    anim.setAnimationListener(new AnimationListener() {
+      @Override
+      public void onAnimationStart(Animation animation) {
+      }
+
+      @Override
+      public void onAnimationEnd(Animation animation) {
+        rootView.setVisibility(currentVisibility);
+      }
+
+      @Override
+      public void onAnimationRepeat(Animation animation) {
+      }
+    });
     rootView.startAnimation(anim);
-    rootView.setVisibility(currentVisibility);
   }
 }

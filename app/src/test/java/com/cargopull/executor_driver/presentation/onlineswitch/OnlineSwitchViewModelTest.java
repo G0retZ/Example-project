@@ -498,6 +498,7 @@ public class OnlineSwitchViewModelTest {
     inOrder.verify(viewStateObserver).onChanged(new OnlineSwitchViewState(true));
     inOrder.verify(viewStateObserver)
         .onChanged(new OnlineSwitchViewStatePending(new OnlineSwitchViewState(false)));
+    inOrder.verify(viewStateObserver).onChanged(new OnlineSwitchViewState(true));
     verifyNoMoreInteractions(viewStateObserver);
   }
 
@@ -532,7 +533,7 @@ public class OnlineSwitchViewModelTest {
     viewModel.setNewState(false);
 
     // Результат:
-    verify(navigateObserver, only()).onChanged(CommonNavigate.SERVER_DATA_ERROR);
+    verify(navigateObserver, only()).onChanged(CommonNavigate.NO_CONNECTION);
   }
 
   /**
