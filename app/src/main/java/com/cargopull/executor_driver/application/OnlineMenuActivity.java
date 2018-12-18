@@ -3,6 +3,7 @@ package com.cargopull.executor_driver.application;
 import android.app.AlertDialog.Builder;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
@@ -34,6 +35,10 @@ public class OnlineMenuActivity extends BaseActivity {
     Toolbar toolbar = findViewById(R.id.appBar);
     if (toolbar != null) {
       toolbar.setNavigationOnClickListener(v -> onBackPressed());
+      View view = toolbar.findViewById(R.id.serverSettings);
+      if (view != null) {
+        view.setOnClickListener(v -> startActivity(new Intent(this, ServerSettingsActivity.class)));
+      }
     }
     aboutFragment = new AboutDialogFragment();
   }
