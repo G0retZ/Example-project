@@ -97,7 +97,7 @@ class BackendComponentImpl implements BackendComponent {
     if (apiService == null) {
       // build OkHttpClient builder
       apiService = new Retrofit.Builder()
-          .baseUrl(BuildConfig.BASE_URL)
+          .baseUrl(getApiUrl())
           .client(getOkHttpClient(getInterceptors()))
           .addConverterFactory(ScalarsConverterFactory.create())
           .addConverterFactory(GsonConverterFactory.create())
@@ -114,7 +114,7 @@ class BackendComponentImpl implements BackendComponent {
     if (stompClient == null) {
       stompClient = Stomp.over(
           Stomp.ConnectionProvider.OKHTTP,
-          BuildConfig.SOCKET_URL,
+          getSocketUrl(),
           null,
           getOkHttpClient(getInterceptors())
       );
@@ -215,5 +215,27 @@ class BackendComponentImpl implements BackendComponent {
       okHttpClient = builder.build();
     }
     return okHttpClient;
+  }
+
+  private String getApiUrl() {
+    if (BuildConfig.DEBUG) {
+      String address = getAppSettingsService().getData("address");
+      String port = getAppSettingsService().getData("port");
+      if (address != null && port != null) {
+        return "http://" + address + ".xip.io:" + port + "/executor/";
+      }
+    }
+    return BuildConfig.BASE_URL;
+  }
+
+  private String getSocketUrl() {
+    if (BuildConfig.DEBUG) {
+      String address = getAppSettingsService().getData("address");
+      String port = getAppSettingsService().getData("port");
+      if (address != null && port != null) {
+        return "ws://" + address + ".xip.io:" + port + "/executor/ws";
+      }
+    }
+    return BuildConfig.SOCKET_URL;
   }
 }

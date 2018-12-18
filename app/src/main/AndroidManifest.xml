@@ -27,6 +27,7 @@
     <uses-library
       android:name="org.apache.http.legacy"
       android:required="false"/>
+
     <activity
       android:launchMode="singleTop"
       android:name=".application.SplashScreenActivity">
@@ -132,9 +133,13 @@
       android:name=".application.NightModeActivity"/>
     <activity
       android:label="@string/orders_history"
-      android:theme="@style/AppThemeNew"
       android:launchMode="singleTop"
-      android:name=".application.OrdersHistoryActivity"/>
+      android:name=".application.OrdersHistoryActivity"
+      android:theme="@style/AppThemeNew"/>
+    <activity
+      android:label="@string/server_settings"
+      android:launchMode="singleTop"
+      android:name=".application.ServerSettingsActivity"/>
 
     <service
       android:enabled="true"
@@ -147,9 +152,10 @@
         <action android:name="com.google.firebase.MESSAGING_EVENT"/>
       </intent-filter>
     </service>
+
     <meta-data
       android:name="com.google.firebase.messaging.default_notification_channel_id"
-      android:value="@string/default_notification_channel_id" />
+      android:value="@string/default_notification_channel_id"/>
     <meta-data
       android:name="com.google.android.geo.API_KEY"
       android:value="@string/google_maps_key"/>
