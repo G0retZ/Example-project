@@ -10,6 +10,7 @@ import com.cargopull.executor_driver.entity.ExecutorState;
 import com.cargopull.executor_driver.gateway.ConfirmOrderPaymentGatewayImpl;
 import io.reactivex.Completable;
 import io.reactivex.observers.TestObserver;
+import java.util.Collections;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
@@ -30,7 +31,9 @@ public class ConfirmOrderPaymentGatewayTest {
   @Before
   public void setUp() {
     ExecutorState.MOVING_TO_CLIENT.setData(null);
-    when(apiService.confirmPayment()).thenReturn(Completable.never());
+    when(apiService.changeOrderStatus(
+        Collections.singletonMap("status", "COMPLETE_PAYMENT_CONFIRMATION")
+    )).thenReturn(Completable.never());
     gateway = new ConfirmOrderPaymentGatewayImpl(apiService);
   }
 
@@ -45,7 +48,8 @@ public class ConfirmOrderPaymentGatewayTest {
     gateway.confirmOrderPayment().test().isDisposed();
 
     // Результат:
-    verify(apiService, only()).confirmPayment();
+    verify(apiService, only())
+        .changeOrderStatus(Collections.singletonMap("status", "COMPLETE_PAYMENT_CONFIRMATION"));
   }
 
   /* Проверяем результаты обработки сообщений от сервера */
@@ -56,7 +60,9 @@ public class ConfirmOrderPaymentGatewayTest {
   @Test
   public void answerConfirmOrderPaymentSuccess() {
     // Дано:
-    when(apiService.confirmPayment()).thenReturn(Completable.complete());
+    when(apiService.changeOrderStatus(
+        Collections.singletonMap("status", "COMPLETE_PAYMENT_CONFIRMATION")
+    )).thenReturn(Completable.complete());
 
     // Действие:
     TestObserver<Void> testObserver = gateway.confirmOrderPayment().test();
@@ -72,8 +78,9 @@ public class ConfirmOrderPaymentGatewayTest {
   @Test
   public void answerConfirmOrderPaymentError() {
     // Дано:
-    when(apiService.confirmPayment())
-        .thenReturn(Completable.error(new IllegalArgumentException()));
+    when(apiService.changeOrderStatus(
+        Collections.singletonMap("status", "COMPLETE_PAYMENT_CONFIRMATION"))
+    ).thenReturn(Completable.error(new IllegalArgumentException()));
 
     // Действие:
     TestObserver<Void> testObserver = gateway.confirmOrderPayment().test();

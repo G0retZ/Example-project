@@ -127,61 +127,45 @@ public interface ApiService {
   );
 
   /*
-   *  Сообщение о прибытии к клиенту.
+   *  Действия над заказом.
+   *  ключ: status
+   *  Значения: DRIVER_ARRIVED
+   *            CALL_TO_CLIENT
+   *            START_ORDER
+   *            COMPLETE_ORDER
+   *            COMPLETE_PAYMENT_CONFIRMATION
    */
-  @POST("api/public/v1/mobile/order/action/arrived")
-  Completable reportArrived();
-
-  /*
-   *  Запрос начала заказа.
-   */
-  @POST("api/public/v1/mobile/order/action/start")
-  Completable startOrder();
-
-  /*
-   *  Запрос завершения заказа.
-   */
-  @POST("api/public/v1/mobile/order/action/complete")
-  Completable completeOrder();
-
-  /*
-   *  Подтвердить расчет с клиентом.
-   */
-  @POST("api/public/v1/mobile/order/action/confirmPayment")
-  Completable confirmPayment();
+  @POST("api/public/v1/mobile/order/current")
+  Completable changeOrderStatus(
+      @NonNull @Body Map<String, String> params
+  );
 
   /*
    *  Запрос смены статуса заказа.
    */
-  @POST("api/public/v1/mobile/order/routePoint/{rpid}/next")
+  @POST("api/public/v1/mobile/order/current/routePoint/{id}/next")
   Completable makeRoutePointNext(
-      @Path("rpid") long routePointId
+      @Path("id") long routePointId
   );
 
   /*
    *  Запрос смены статуса заказа.
    */
-  @POST("api/public/v1/mobile/order/routePoint/{rpid}/complete")
+  @POST("api/public/v1/mobile/order/current/routePoint/{id}/complete")
   Completable completeRoutePoint(
-      @Path("rpid") long routePointId
+      @Path("id") long routePointId
   );
-
-  /*
-   *  Запрос звонка клиенту.
-   */
-  @GET("api/public/v1/mobile/order/callToClient")
-  Completable callToClient();
 
   /*
    *  Запрос списка проблем для сообщения.
    */
-  @GET("api/public/v1/mobile/order/reportProblem/reasons")
+  @GET("api/public/v1/mobile/order/current/reportProblem/reasons")
   Single<List<ApiProblem>> getReportProblems();
 
   /*
    *  Сообщите о выбранной проблеме.
    */
-  @POST("api/public/v1/mobile/order/reportProblem")
+  @POST("api/public/v1/mobile/order/current/reportProblem")
   Completable reportProblem(
       @NonNull @Body ApiProblem apiProblem
   );

@@ -5,6 +5,7 @@ import com.cargopull.executor_driver.backend.web.ApiService;
 import com.cargopull.executor_driver.interactor.ConfirmOrderPaymentGateway;
 import io.reactivex.Completable;
 import io.reactivex.schedulers.Schedulers;
+import java.util.Collections;
 import javax.inject.Inject;
 
 public class ConfirmOrderPaymentGatewayImpl implements ConfirmOrderPaymentGateway {
@@ -20,6 +21,8 @@ public class ConfirmOrderPaymentGatewayImpl implements ConfirmOrderPaymentGatewa
   @NonNull
   @Override
   public Completable confirmOrderPayment() {
-    return apiService.confirmPayment().subscribeOn(Schedulers.io());
+    return apiService.changeOrderStatus(
+        Collections.singletonMap("status", "COMPLETE_PAYMENT_CONFIRMATION")
+    ).subscribeOn(Schedulers.io());
   }
 }

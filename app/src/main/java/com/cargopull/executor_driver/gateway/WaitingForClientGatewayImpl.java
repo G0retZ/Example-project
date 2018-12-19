@@ -5,6 +5,7 @@ import com.cargopull.executor_driver.backend.web.ApiService;
 import com.cargopull.executor_driver.interactor.WaitingForClientGateway;
 import io.reactivex.Completable;
 import io.reactivex.schedulers.Schedulers;
+import java.util.Collections;
 import javax.inject.Inject;
 
 public class WaitingForClientGatewayImpl implements WaitingForClientGateway {
@@ -20,6 +21,8 @@ public class WaitingForClientGatewayImpl implements WaitingForClientGateway {
   @NonNull
   @Override
   public Completable startTheOrder() {
-    return apiService.startOrder().subscribeOn(Schedulers.io());
+    return apiService.changeOrderStatus(
+        Collections.singletonMap("status", "START_ORDER")
+    ).subscribeOn(Schedulers.io());
   }
 }

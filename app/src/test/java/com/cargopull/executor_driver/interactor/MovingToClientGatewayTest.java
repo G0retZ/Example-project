@@ -10,6 +10,7 @@ import com.cargopull.executor_driver.entity.ExecutorState;
 import com.cargopull.executor_driver.gateway.MovingToClientGatewayImpl;
 import io.reactivex.Completable;
 import io.reactivex.observers.TestObserver;
+import java.util.Collections;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
@@ -30,7 +31,8 @@ public class MovingToClientGatewayTest {
   @Before
   public void setUp() {
     ExecutorState.MOVING_TO_CLIENT.setData(null);
-    when(apiService.reportArrived()).thenReturn(Completable.never());
+    when(apiService.changeOrderStatus(Collections.singletonMap("status", "DRIVER_ARRIVED")))
+        .thenReturn(Completable.never());
     gateway = new MovingToClientGatewayImpl(apiService);
   }
 
@@ -45,7 +47,8 @@ public class MovingToClientGatewayTest {
     gateway.reportArrival().test().isDisposed();
 
     // Результат:
-    verify(apiService, only()).reportArrived();
+    verify(apiService, only())
+        .changeOrderStatus(Collections.singletonMap("status", "DRIVER_ARRIVED"));
   }
 
   /* Проверяем результаты обработки сообщений от сервера по статусам */
@@ -56,7 +59,8 @@ public class MovingToClientGatewayTest {
   @Test
   public void answerReportArrivalSuccessIfConnected() {
     // Дано:
-    when(apiService.reportArrived()).thenReturn(Completable.complete());
+    when(apiService.changeOrderStatus(Collections.singletonMap("status", "DRIVER_ARRIVED")))
+        .thenReturn(Completable.complete());
 
     // Действие:
     TestObserver<Void> testObserver = gateway.reportArrival().test();
@@ -72,7 +76,8 @@ public class MovingToClientGatewayTest {
   @Test
   public void answerReportArrivalErrorIfConnected() {
     // Дано:
-    when(apiService.reportArrived()).thenReturn(Completable.error(new IllegalArgumentException()));
+    when(apiService.changeOrderStatus(Collections.singletonMap("status", "DRIVER_ARRIVED")))
+        .thenReturn(Completable.error(new IllegalArgumentException()));
 
     // Действие:
     TestObserver<Void> testObserver = gateway.reportArrival().test();

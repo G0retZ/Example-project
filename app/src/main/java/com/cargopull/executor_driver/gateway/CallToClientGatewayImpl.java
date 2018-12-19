@@ -5,6 +5,7 @@ import com.cargopull.executor_driver.backend.web.ApiService;
 import com.cargopull.executor_driver.interactor.CallToClientGateway;
 import io.reactivex.Completable;
 import io.reactivex.schedulers.Schedulers;
+import java.util.Collections;
 import javax.inject.Inject;
 
 public class CallToClientGatewayImpl implements CallToClientGateway {
@@ -20,6 +21,8 @@ public class CallToClientGatewayImpl implements CallToClientGateway {
   @NonNull
   @Override
   public Completable callToClient() {
-    return apiService.callToClient().subscribeOn(Schedulers.io());
+    return apiService.changeOrderStatus(
+        Collections.singletonMap("status", "CALL_TO_CLIENT")
+    ).subscribeOn(Schedulers.io());
   }
 }

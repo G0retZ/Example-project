@@ -10,6 +10,7 @@ import com.cargopull.executor_driver.entity.ExecutorState;
 import com.cargopull.executor_driver.gateway.WaitingForClientGatewayImpl;
 import io.reactivex.Completable;
 import io.reactivex.observers.TestObserver;
+import java.util.Collections;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
@@ -30,7 +31,8 @@ public class WaitingForClientGatewayTest {
   @Before
   public void setUp() {
     ExecutorState.MOVING_TO_CLIENT.setData(null);
-    when(apiService.startOrder()).thenReturn(Completable.never());
+    when(apiService.changeOrderStatus(Collections.singletonMap("status", "START_ORDER")))
+        .thenReturn(Completable.never());
     gateway = new WaitingForClientGatewayImpl(apiService);
   }
 
@@ -45,7 +47,8 @@ public class WaitingForClientGatewayTest {
     gateway.startTheOrder().test().isDisposed();
 
     // Результат:
-    verify(apiService, only()).startOrder();
+    verify(apiService, only())
+        .changeOrderStatus(Collections.singletonMap("status", "START_ORDER"));
   }
 
   /* Проверяем результаты обработки сообщений от сервера по статусам */
@@ -56,7 +59,8 @@ public class WaitingForClientGatewayTest {
   @Test
   public void answerStartOrderSuccess() {
     // Дано:
-    when(apiService.startOrder()).thenReturn(Completable.complete());
+    when(apiService.changeOrderStatus(Collections.singletonMap("status", "START_ORDER")))
+        .thenReturn(Completable.complete());
 
     // Действие:
     TestObserver<Void> testObserver = gateway.startTheOrder().test();
@@ -72,7 +76,7 @@ public class WaitingForClientGatewayTest {
   @Test
   public void answerStartOrderError() {
     // Дано:
-    when(apiService.startOrder())
+    when(apiService.changeOrderStatus(Collections.singletonMap("status", "START_ORDER")))
         .thenReturn(Completable.error(new IllegalArgumentException()));
 
     // Действие:
