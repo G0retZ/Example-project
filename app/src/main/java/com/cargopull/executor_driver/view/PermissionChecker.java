@@ -12,7 +12,7 @@ import io.reactivex.subjects.CompletableSubject;
 /**
  * DRY класс проверки разрешений.
  */
-public class PermissionChecker {
+class PermissionChecker {
 
   private final int uuid;
   @NonNull
@@ -23,7 +23,7 @@ public class PermissionChecker {
    *
    * @param uuid - ИД запроса разрешений
    */
-  public PermissionChecker(int uuid) {
+  PermissionChecker(int uuid) {
     this.uuid = uuid;
   }
 
@@ -64,7 +64,7 @@ public class PermissionChecker {
    * @param permissions - список разрешений
    * @return {@link Completable} результат запроса
    */
-  public Completable check(@Nullable Fragment fragment, @Nullable Context context,
+  Completable check(@Nullable Fragment fragment, @Nullable Context context,
       @NonNull String... permissions) {
     if (context == null || fragment == null) {
       return Completable.error(new SecurityException("Access denied."));
@@ -100,7 +100,7 @@ public class PermissionChecker {
    * android.content.pm.PackageManager#PERMISSION_GRANTED} или {@link
    * android.content.pm.PackageManager#PERMISSION_DENIED}.
    */
-  public void onResult(int requestCode, @NonNull String[] permissions,
+  void onResult(int requestCode, @NonNull String[] permissions,
       @NonNull int[] grantResults) {
     if (requestCode != uuid || permissions.length == 0 || grantResults.length == 0) {
       return;
