@@ -1,8 +1,5 @@
 package com.cargopull.executor_driver.view.auth;
 
-import android.Manifest;
-import android.content.Context;
-import android.content.IntentFilter;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -27,9 +24,6 @@ import com.cargopull.executor_driver.presentation.codeheader.CodeHeaderViewModel
 import com.cargopull.executor_driver.presentation.smsbutton.SmsButtonViewActions;
 import com.cargopull.executor_driver.presentation.smsbutton.SmsButtonViewModel;
 import com.cargopull.executor_driver.view.BaseFragment;
-import com.cargopull.executor_driver.view.PermissionChecker;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.internal.disposables.EmptyDisposable;
 import javax.inject.Inject;
 
 /**
@@ -38,13 +32,6 @@ import javax.inject.Inject;
 
 public class PasswordFragment extends BaseFragment implements CodeViewActions,
     CodeHeaderViewActions, SmsButtonViewActions {
-
-  private static final String[] PERMISSIONS = new String[]{Manifest.permission.RECEIVE_SMS};
-
-  @Nullable
-  private PermissionChecker permissionChecker;
-  @NonNull
-  private Disposable permissionDisposable = EmptyDisposable.INSTANCE;
 
   private CodeViewModel codeViewModel;
   private CodeHeaderViewModel codeHeaderViewModel;
@@ -56,12 +43,6 @@ public class PasswordFragment extends BaseFragment implements CodeViewActions,
   private ImageView codeInputUnderline;
   private EditText codeInput;
   private Button sendSmsRequest;
-  private Context context;
-
-  private SmsReceiver smsReceiver;
-  @NonNull
-  private Disposable smsCodeDisposable = EmptyDisposable.INSTANCE;
-  private boolean smsSent;
 
   @Inject
   public void setCodeViewModel(@NonNull CodeViewModel codeViewModel) {
@@ -76,17 +57,6 @@ public class PasswordFragment extends BaseFragment implements CodeViewActions,
   @Inject
   public void setSmsButtonViewModel(@NonNull SmsButtonViewModel smsButtonViewModel) {
     this.smsButtonViewModel = smsButtonViewModel;
-  }
-
-  @Inject
-  public void setSmsReceiver(@NonNull SmsReceiver smsReceiver) {
-    this.smsReceiver = smsReceiver;
-  }
-
-  @Override
-  public void onAttach(Context context) {
-    super.onAttach(context);
-    this.context = context;
   }
 
   @Nullable
@@ -116,10 +86,6 @@ public class PasswordFragment extends BaseFragment implements CodeViewActions,
   @Override
   public void onActivityCreated(@Nullable Bundle savedInstanceState) {
     super.onActivityCreated(savedInstanceState);
-    IntentFilter intentFilter = new IntentFilter();
-    intentFilter.addAction(SmsReceiver.ACTION);
-    intentFilter.setPriority(999);
-    context.registerReceiver(smsReceiver, intentFilter);
     codeViewModel.getNavigationLiveData().observe(this, destination -> {
       if (destination != null) {
         navigate(destination);
@@ -145,46 +111,9 @@ public class PasswordFragment extends BaseFragment implements CodeViewActions,
   @Override
   public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
     super.onViewStateRestored(savedInstanceState);
-    if (savedInstanceState != null) {
-      smsSent = savedInstanceState.getBoolean("smsSent", false);
-    }
     if (savedInstanceState == null) {
-      checkPermissions();
+      sendSmsRequest();
     }
-  }
-
-  @Override
-  public void onResume() {
-    super.onResume();
-    smsCodeDisposable = smsReceiver.getCodeFromSms().subscribe(text -> {
-      codeInput.setText(text);
-      codeInput.setSelection(text.length());
-    });
-  }
-
-  @Override
-  public void onPause() {
-    super.onPause();
-    smsCodeDisposable.dispose();
-  }
-
-  @Override
-  public void onSaveInstanceState(@NonNull Bundle outState) {
-    super.onSaveInstanceState(outState);
-    outState.putBoolean("smsSent", smsSent);
-  }
-
-  @Override
-  public void onDestroy() {
-    super.onDestroy();
-    context.unregisterReceiver(smsReceiver);
-    permissionDisposable.dispose();
-  }
-
-  @Override
-  public void onDetach() {
-    super.onDetach();
-    context = null;
   }
 
   @Override
@@ -243,31 +172,9 @@ public class PasswordFragment extends BaseFragment implements CodeViewActions,
     showPending(pending, toString() + "1");
   }
 
-  @Override
-  public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-      @NonNull int[] grantResults) {
-    if (permissionChecker != null) {
-      permissionChecker.onResult(requestCode, permissions, grantResults);
-    }
-  }
-
   private void sendSmsRequest() {
-    smsSent = true;
     codeInput.setText("");
     smsButtonViewModel.sendMeSms();
-  }
-
-  private void autoSendSmsRequest() {
-    if (!smsSent) {
-      sendSmsRequest();
-    }
-  }
-
-  private void checkPermissions() {
-    permissionChecker = new PermissionChecker(1337);
-    permissionDisposable = permissionChecker.check(this, context, PERMISSIONS)
-        .doFinally(() -> permissionChecker = null)
-        .subscribe(this::autoSendSmsRequest, t -> autoSendSmsRequest());
   }
 
   @Override
