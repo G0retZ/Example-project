@@ -75,22 +75,23 @@ public class ApiProblemTest {
     ApiProblem apiProblem = new ApiProblem(problem);
 
     // Результат:
+    assertEquals(apiProblem, apiProblem);
     assertEquals(new ApiProblem(7, "seven", "unused"), new ApiProblem(7, "seven", "unused"));
-    assertEquals(new ApiProblem(problem), new ApiProblem(7, "seven", "unused"));
-    assertEquals(new ApiProblem(problem), new ApiProblem(problem));
+    assertEquals(apiProblem, new ApiProblem(7, "seven", "unused"));
+    assertEquals(apiProblem, new ApiProblem(problem));
     assertNotEquals(new ApiProblem(7, "seven", "unused"), new ApiProblem(6, "seven", "unused"));
     assertNotEquals(new ApiProblem(7, "seven", "unused"), new ApiProblem(7, "six", "unused"));
     assertNotEquals(new ApiProblem(7, "seven", "unused"), new ApiProblem(7, "seven", "nom"));
-    assertNotEquals(new ApiProblem(problem), new ApiProblem(problem1));
-    assertNotEquals(new ApiProblem(problem), new ApiProblem(problem2));
-    assertNotEquals(new ApiProblem(problem), new ApiProblem(problem3));
+    assertNotEquals(apiProblem, new ApiProblem(problem1));
+    assertNotEquals(apiProblem, new ApiProblem(problem2));
+    assertNotEquals(apiProblem, new ApiProblem(problem3));
     assertNotEquals(new ApiProblem(7, "seven", "unused"), new ApiProblem(problem1));
     assertNotEquals(new ApiProblem(7, "seven", "unused"), new ApiProblem(problem2));
     assertNotEquals(new ApiProblem(7, "seven", "unused"), new ApiProblem(problem3));
-    assertNotEquals(new ApiProblem(problem), new ApiProblem(6, "seven", "unused"));
-    assertNotEquals(new ApiProblem(problem), new ApiProblem(7, "six", "unused"));
-    assertNotEquals(new ApiProblem(problem), new ApiProblem(7, "seven", "nom"));
-    assertNotEquals(new ApiProblem(problem), "");
-    assertNotEquals(new ApiProblem(problem), null);
+    assertNotEquals(apiProblem, new ApiProblem(6, "seven", "unused"));
+    assertNotEquals(apiProblem, new ApiProblem(7, "six", "unused"));
+    assertNotEquals(apiProblem, new ApiProblem(7, "seven", "nom"));
+    assertNotEquals(apiProblem, "");
+    assertNotEquals(apiProblem, null);
   }
 }
