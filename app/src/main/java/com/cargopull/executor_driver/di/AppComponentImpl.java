@@ -27,7 +27,6 @@ import com.cargopull.executor_driver.backend.vibro.OldPatternMapper;
 import com.cargopull.executor_driver.backend.vibro.OldSingleShakePlayer;
 import com.cargopull.executor_driver.backend.vibro.ShakeItPlayer;
 import com.cargopull.executor_driver.backend.vibro.SingleShakePlayer;
-import com.cargopull.executor_driver.gateway.SmsCodeMapper;
 import com.cargopull.executor_driver.utils.Consumer;
 import com.cargopull.executor_driver.utils.TimeUtils;
 import com.cargopull.executor_driver.utils.TimeUtilsImpl;
@@ -79,7 +78,6 @@ import com.cargopull.executor_driver.view.WaitingForClientFragment;
 import com.cargopull.executor_driver.view.WaitingForClientRouteFragment;
 import com.cargopull.executor_driver.view.auth.LoginFragment;
 import com.cargopull.executor_driver.view.auth.PasswordFragment;
-import com.cargopull.executor_driver.view.auth.SmsReceiver;
 
 public class AppComponentImpl implements AppComponent {
 
@@ -295,11 +293,6 @@ public class AppComponentImpl implements AppComponent {
     );
     passwordFragment.setCodeViewModel(
         getPresentationComponent().getCodeViewModel(passwordFragment)
-    );
-    passwordFragment.setSmsReceiver(
-        new SmsReceiver(
-            new SmsCodeMapper()
-        )
     );
   }
 
