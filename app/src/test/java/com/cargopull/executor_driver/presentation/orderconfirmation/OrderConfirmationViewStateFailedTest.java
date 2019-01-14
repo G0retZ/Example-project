@@ -24,7 +24,7 @@ public class OrderConfirmationViewStateFailedTest {
     new OrderConfirmationViewStateFailed("message").apply(viewActions);
 
     // Результат:
-    inOrder.verify(viewActions).showDriverOrderConfirmationPending(false);
+    inOrder.verify(viewActions).showDriverOrderConfirmationPending(true);
     inOrder.verify(viewActions).enableAcceptButton(false);
     inOrder.verify(viewActions).enableDeclineButton(false);
     inOrder.verify(viewActions).showAcceptedMessage(null);

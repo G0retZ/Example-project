@@ -78,12 +78,8 @@ public class OnlineSwitchViewModelImpl extends ViewModel implements OnlineSwitch
                 },
                 throwable -> {
                   errorReporter.reportError(throwable);
-                  if (throwable instanceof IllegalStateException) {
-                    viewStateLiveData.postValue(new OnlineSwitchViewState(true));
-                    navigateLiveData.postValue(CommonNavigate.NO_CONNECTION);
-                  } else {
-                    navigateLiveData.postValue(CommonNavigate.SERVER_DATA_ERROR);
-                  }
+                  viewStateLiveData.postValue(new OnlineSwitchViewState(true));
+                  navigateLiveData.postValue(CommonNavigate.NO_CONNECTION);
                 });
       }
     }

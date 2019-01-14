@@ -9,14 +9,14 @@ import androidx.fragment.app.Fragment;
 import com.cargopull.executor_driver.R;
 import com.cargopull.executor_driver.backend.analytics.EventLogger;
 import com.cargopull.executor_driver.di.AppComponent;
-import com.cargopull.executor_driver.presentation.cancelorder.CancelOrderNavigate;
 import com.cargopull.executor_driver.presentation.movingtoclient.MovingToClientNavigate;
 import com.cargopull.executor_driver.presentation.movingtoclientactions.MovingToClientActionsNavigate;
 import com.cargopull.executor_driver.presentation.preorder.PreOrderNavigate;
+import com.cargopull.executor_driver.presentation.reportproblem.ReportProblemNavigate;
 import com.cargopull.executor_driver.view.CallToClientFragment;
 import com.cargopull.executor_driver.view.CallToOperatorFragment;
-import com.cargopull.executor_driver.view.CancelOrderDialogFragment;
 import com.cargopull.executor_driver.view.MovingToClientActionsDialogFragment;
+import com.cargopull.executor_driver.view.ReportProblemDialogFragment;
 import java.util.HashMap;
 import javax.inject.Inject;
 
@@ -65,7 +65,7 @@ public class MovingToClientActivity extends BaseActivity {
         break;
       case MovingToClientActionsNavigate.REPORT_A_PROBLEM:
         if (getSupportFragmentManager().findFragmentByTag("reportAProblem") == null) {
-          new CancelOrderDialogFragment().show(getSupportFragmentManager(), "reportAProblem");
+          new ReportProblemDialogFragment().show(getSupportFragmentManager(), "reportAProblem");
         }
         break;
       case MovingToClientNavigate.CALL_TO_CLIENT:
@@ -74,7 +74,7 @@ public class MovingToClientActivity extends BaseActivity {
           ((CallToClientFragment) fragment).callToClient();
         }
         break;
-      case CancelOrderNavigate.ORDER_CANCELED:
+      case ReportProblemNavigate.ORDER_CANCELED:
         fragment = getSupportFragmentManager().findFragmentById(R.id.fragment_call_to_operator);
         if (fragment instanceof CallToOperatorFragment) {
           ((CallToOperatorFragment) fragment).callToOperator();

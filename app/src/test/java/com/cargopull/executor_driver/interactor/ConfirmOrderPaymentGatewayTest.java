@@ -1,22 +1,22 @@
 package com.cargopull.executor_driver.interactor;
 
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.cargopull.executor_driver.GatewayThreadTestRule;
+import com.cargopull.executor_driver.backend.web.ApiService;
 import com.cargopull.executor_driver.entity.ExecutorState;
 import com.cargopull.executor_driver.gateway.ConfirmOrderPaymentGatewayImpl;
 import io.reactivex.Completable;
 import io.reactivex.observers.TestObserver;
+import java.util.Collections;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import ua.naiksoftware.stomp.client.StompClient;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ConfirmOrderPaymentGatewayTest {
@@ -26,13 +26,15 @@ public class ConfirmOrderPaymentGatewayTest {
 
   private ConfirmOrderPaymentGateway gateway;
   @Mock
-  private StompClient stompClient;
+  private ApiService apiService;
 
   @Before
   public void setUp() {
     ExecutorState.MOVING_TO_CLIENT.setData(null);
-    when(stompClient.send(anyString(), anyString())).thenReturn(Completable.never());
-    gateway = new ConfirmOrderPaymentGatewayImpl(stompClient);
+    when(apiService.changeOrderStatus(
+        Collections.singletonMap("status", "COMPLETE_PAYMENT_CONFIRMATION")
+    )).thenReturn(Completable.never());
+    gateway = new ConfirmOrderPaymentGatewayImpl(apiService);
   }
 
   /* Проверяем работу с клиентом STOMP */
@@ -46,7 +48,8 @@ public class ConfirmOrderPaymentGatewayTest {
     gateway.confirmOrderPayment().test().isDisposed();
 
     // Результат:
-    verify(stompClient, only()).send("/mobile/trip", "\"COMPLETE_PAYMENT_CONFIRMATION\"");
+    verify(apiService, only())
+        .changeOrderStatus(Collections.singletonMap("status", "COMPLETE_PAYMENT_CONFIRMATION"));
   }
 
   /* Проверяем результаты обработки сообщений от сервера */
@@ -57,7 +60,9 @@ public class ConfirmOrderPaymentGatewayTest {
   @Test
   public void answerConfirmOrderPaymentSuccess() {
     // Дано:
-    when(stompClient.send(anyString(), anyString())).thenReturn(Completable.complete());
+    when(apiService.changeOrderStatus(
+        Collections.singletonMap("status", "COMPLETE_PAYMENT_CONFIRMATION")
+    )).thenReturn(Completable.complete());
 
     // Действие:
     TestObserver<Void> testObserver = gateway.confirmOrderPayment().test();
@@ -73,8 +78,9 @@ public class ConfirmOrderPaymentGatewayTest {
   @Test
   public void answerConfirmOrderPaymentError() {
     // Дано:
-    when(stompClient.send(anyString(), anyString()))
-        .thenReturn(Completable.error(new IllegalArgumentException()));
+    when(apiService.changeOrderStatus(
+        Collections.singletonMap("status", "COMPLETE_PAYMENT_CONFIRMATION"))
+    ).thenReturn(Completable.error(new IllegalArgumentException()));
 
     // Действие:
     TestObserver<Void> testObserver = gateway.confirmOrderPayment().test();

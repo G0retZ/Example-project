@@ -28,9 +28,9 @@ public class OrdersHistoryHeaderViewModelImpl extends ViewModel implements
   private final OrdersHistorySummaryGateway gateway;
   @NonNull
   private final MutableLiveData<ViewState<OrdersHistoryHeaderViewActions>> viewStateLiveData;
+  private final int currentOffset;
   @NonNull
   private Disposable disposable = EmptyDisposable.INSTANCE;
-  private final int currentOffset;
   private boolean loaded;
 
   @Inject

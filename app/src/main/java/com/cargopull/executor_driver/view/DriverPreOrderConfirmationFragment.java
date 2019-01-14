@@ -150,6 +150,11 @@ public class DriverPreOrderConfirmationFragment extends BaseFragment implements
         viewState.apply(this);
       }
     });
+    orderConfirmationViewModel.getNavigationLiveData().observe(this, destination -> {
+      if (destination != null) {
+        navigate(destination);
+      }
+    });
   }
 
   @Override

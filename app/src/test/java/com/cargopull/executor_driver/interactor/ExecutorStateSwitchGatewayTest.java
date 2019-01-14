@@ -1,11 +1,12 @@
 package com.cargopull.executor_driver.interactor;
 
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.cargopull.executor_driver.GatewayThreadTestRule;
+import com.cargopull.executor_driver.backend.web.ApiService;
 import com.cargopull.executor_driver.entity.ExecutorState;
 import com.cargopull.executor_driver.gateway.ExecutorStateSwitchGatewayImpl;
 import io.reactivex.Completable;
@@ -16,7 +17,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import ua.naiksoftware.stomp.client.StompClient;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ExecutorStateSwitchGatewayTest {
@@ -27,26 +27,26 @@ public class ExecutorStateSwitchGatewayTest {
   private ExecutorStateSwitchGateway gateway;
 
   @Mock
-  private StompClient stompClient;
+  private ApiService apiService;
 
   @Before
   public void setUp() {
-    gateway = new ExecutorStateSwitchGatewayImpl(stompClient);
-    when(stompClient.send(anyString(), anyString())).thenReturn(Completable.never());
+    gateway = new ExecutorStateSwitchGatewayImpl(apiService);
+    when(apiService.switchStatus(any(ExecutorState.class))).thenReturn(Completable.never());
   }
 
-  /* Проверяем работу с клиентом STOMP */
+  /* Проверяем работу с АПИ */
 
   /**
-   * Должен запросить у клиента STOMP отправку сообщения.
+   * Должен запросить у АПИ переключить статус.
    */
   @Test
-  public void askStompClientToSendMessage() {
+  public void askApiToSwitchStatus() {
     // Действие:
     gateway.sendNewExecutorState(ExecutorState.ONLINE).test().isDisposed();
 
     // Результат:
-    verify(stompClient, only()).send("/mobile/status", "\"ONLINE\"");
+    verify(apiService, only()).switchStatus(ExecutorState.ONLINE);
   }
 
   /* Проверяем ответы на попытку отправки сообщения */
@@ -57,7 +57,7 @@ public class ExecutorStateSwitchGatewayTest {
   @Test
   public void answerSuccessIfConnected() {
     // Дано:
-    when(stompClient.send(anyString(), anyString())).thenReturn(Completable.complete());
+    when(apiService.switchStatus(any(ExecutorState.class))).thenReturn(Completable.complete());
 
     // Действие:
     TestObserver<Void> testObserver = gateway.sendNewExecutorState(ExecutorState.ONLINE).test();
@@ -72,7 +72,7 @@ public class ExecutorStateSwitchGatewayTest {
   @Test
   public void answerErrorIfConnected() {
     // Дано:
-    when(stompClient.send(anyString(), anyString()))
+    when(apiService.switchStatus(any(ExecutorState.class)))
         .thenReturn(Completable.error(new IllegalArgumentException()));
 
     // Действие:
