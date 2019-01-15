@@ -89,11 +89,11 @@ public class PreOrdersListOrderItemTest {
   @Test
   public void testGetEstimatedPrice() {
     // Дано:
-    when(resources.getString(R.string.currency_format)).thenReturn("##,###,### ¤");
+    when(resources.getString(R.string.currency_format)).thenReturn("##,###,### ₽");
     when(order.getEstimatedPrice()).thenReturn(700000L);
 
     // Результат:
-    DecimalFormat decimalFormat = new DecimalFormat("##,###,### ¤");
+    DecimalFormat decimalFormat = new DecimalFormat("##,###,### ₽");
     decimalFormat.setMaximumFractionDigits(0);
     assertEquals(preOrdersListItem.getEstimatedPrice(resources), decimalFormat.format(7000));
   }

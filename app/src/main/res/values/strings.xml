@@ -80,8 +80,8 @@
   <string name="cancel_reason">Причина отмены</string>
   <string name="do_not_cancel">Не отменять</string>
   <string name="calling_operator">Дистпечер скоро свяжется.\nБудьте готовы взять трубку!</string>
-  <string name="currency_format">##,###,### ¤</string>
-  <string name="currency_per_min_format">##,###,###.00 ¤/мин</string>
+  <string name="currency_format">##,###,### ₽</string>
+  <string name="currency_per_min_format">##,###,###.00 ₽/мин</string>
   <string name="bonus_explained">Бонусные рубли не подлежат обмену на наличные денежные средства.</string>
   <string name="bonus_amount">Бонусных рублей</string>
   <string name="missed_order">Упущен заказ</string>
