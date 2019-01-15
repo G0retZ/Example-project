@@ -51,7 +51,7 @@ public class OrderViewStateIdleTest {
   public void testActionsWithComment() {
     // Дано:
     when(viewActions.isShowCents()).thenReturn(false);
-    when(viewActions.getCurrencyFormat()).thenReturn("##,###,### ¤");
+    when(viewActions.getCurrencyFormat()).thenReturn("##,###,### ₽");
     when(routePoint.getAddress()).thenReturn("address");
     when(routePoint.getLatitude()).thenReturn(5.421);
     when(routePoint.getLongitude()).thenReturn(10.2341);
@@ -92,7 +92,7 @@ public class OrderViewStateIdleTest {
     verify(viewActions).setText(R.id.lastAddressText, "address 2");
     verify(viewActions).isShowCents();
     verify(viewActions).getCurrencyFormat();
-    DecimalFormat decimalFormat = new DecimalFormat("##,###,### ¤");
+    DecimalFormat decimalFormat = new DecimalFormat("##,###,### ₽");
     decimalFormat.setMaximumFractionDigits(0);
     decimalFormat.setMinimumFractionDigits(0);
     verify(viewActions).setFormattedText(R.id.estimationText, R.string.km_h_m_p, 31.278d, 2, 12,
@@ -124,7 +124,7 @@ public class OrderViewStateIdleTest {
   public void testActionsWithoutComment() {
     // Дано:
     when(viewActions.isShowCents()).thenReturn(true);
-    when(viewActions.getCurrencyFormat()).thenReturn("##,###,### ¤");
+    when(viewActions.getCurrencyFormat()).thenReturn("##,###,### ₽");
     when(routePoint.getAddress()).thenReturn("address");
     when(routePoint.getLatitude()).thenReturn(5.421);
     when(routePoint.getLongitude()).thenReturn(10.2341);
@@ -172,7 +172,7 @@ public class OrderViewStateIdleTest {
     verify(viewActions).setText(R.id.lastAddressText, "address 2");
     verify(viewActions).isShowCents();
     verify(viewActions).getCurrencyFormat();
-    DecimalFormat decimalFormat = new DecimalFormat("##,###,### ¤");
+    DecimalFormat decimalFormat = new DecimalFormat("##,###,### ₽");
     decimalFormat.setMaximumFractionDigits(2);
     decimalFormat.setMinimumFractionDigits(2);
     verify(viewActions).setFormattedText(R.id.estimationText, R.string.km_h_m_p, 31.278d, 2, 12,
@@ -204,7 +204,7 @@ public class OrderViewStateIdleTest {
   public void testActionsWithCommentFreeRide() {
     // Дано:
     when(viewActions.isShowCents()).thenReturn(false);
-    when(viewActions.getCurrencyFormat()).thenReturn("##,###,### ¤");
+    when(viewActions.getCurrencyFormat()).thenReturn("##,###,### ₽");
     when(routePoint.getAddress()).thenReturn("address");
     when(routePoint.getLatitude()).thenReturn(5.421);
     when(routePoint.getLongitude()).thenReturn(10.2341);
@@ -251,7 +251,7 @@ public class OrderViewStateIdleTest {
     verify(viewActions).setText(R.id.lastAddressText, R.string.free_ride);
     verify(viewActions).isShowCents();
     verify(viewActions).getCurrencyFormat();
-    DecimalFormat decimalFormat = new DecimalFormat("##,###,### ¤");
+    DecimalFormat decimalFormat = new DecimalFormat("##,###,### ₽");
     decimalFormat.setMaximumFractionDigits(0);
     decimalFormat.setMinimumFractionDigits(0);
     verify(viewActions).setFormattedText(R.id.estimationText, R.string.km_h_m_p, 31.278d, 2, 12,
@@ -283,7 +283,7 @@ public class OrderViewStateIdleTest {
   public void testActionsWithoutCommentFreeRide() {
     // Дано:
     when(viewActions.isShowCents()).thenReturn(true);
-    when(viewActions.getCurrencyFormat()).thenReturn("##,###,### ¤");
+    when(viewActions.getCurrencyFormat()).thenReturn("##,###,### ₽");
     when(routePoint.getAddress()).thenReturn("address");
     when(routePoint.getLatitude()).thenReturn(5.421);
     when(routePoint.getLongitude()).thenReturn(10.2341);
@@ -330,7 +330,7 @@ public class OrderViewStateIdleTest {
     verify(viewActions).setText(R.id.lastAddressText, R.string.free_ride);
     verify(viewActions).isShowCents();
     verify(viewActions).getCurrencyFormat();
-    DecimalFormat decimalFormat = new DecimalFormat("##,###,### ¤");
+    DecimalFormat decimalFormat = new DecimalFormat("##,###,### ₽");
     decimalFormat.setMaximumFractionDigits(2);
     decimalFormat.setMinimumFractionDigits(2);
     verify(viewActions).setFormattedText(R.id.estimationText, R.string.km_h_m_p, 31.278d, 2, 12,
