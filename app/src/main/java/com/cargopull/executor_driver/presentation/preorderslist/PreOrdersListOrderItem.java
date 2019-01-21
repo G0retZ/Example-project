@@ -8,6 +8,7 @@ import com.cargopull.executor_driver.entity.Order;
 import com.cargopull.executor_driver.entity.RoutePoint;
 import com.cargopull.executor_driver.entity.RoutePointState;
 import java.text.DecimalFormat;
+import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormat;
 
 /**
@@ -57,9 +58,13 @@ public class PreOrdersListOrderItem implements PreOrdersListItem {
   public String getOccupationTime() {
     long scheduledDate = order.getScheduledStartTime();
     return
-        DateTimeFormat.forPattern("HH:mm").print(scheduledDate)
+        DateTimeFormat.forPattern("HH:mm")
+            .withZone(DateTimeZone.forOffsetHours(3))
+            .print(scheduledDate)
             + "–"
-            + DateTimeFormat.forPattern("HH:mm").print(scheduledDate + order.getEstimatedTime());
+            + DateTimeFormat.forPattern("HH:mm")
+            .withZone(DateTimeZone.forOffsetHours(3))
+            .print(scheduledDate + order.getEstimatedTime());
   }
 
   @Override
