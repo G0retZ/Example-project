@@ -10,6 +10,8 @@ import com.cargopull.executor_driver.entity.RoutePoint;
 import com.cargopull.executor_driver.entity.RoutePointState;
 import java.text.DecimalFormat;
 import java.util.Arrays;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormat;
 import org.junit.Before;
 import org.junit.Test;
@@ -114,13 +116,13 @@ public class PreOrdersListOrderItemTest {
     when(order.getEstimatedTime()).thenReturn(3324339L);
 
     // Результат:
-    System.out.println(DateTimeFormat.forPattern("HH:mm").print(22792192L)
-        + "–"
-        + DateTimeFormat.forPattern("HH:mm").print(26116531L));
     assertEquals(preOrdersListItem.getOccupationTime(),
-        DateTimeFormat.forPattern("HH:mm").print(22792192L)
+        DateTimeFormat.forPattern("HH:mm").print(
+            DateTime.now().withMillis(22792192L).withZone(DateTimeZone.forOffsetHours(3)))
             + "–"
-            + DateTimeFormat.forPattern("HH:mm").print(26116531L));
+            + DateTimeFormat.forPattern("HH:mm").print(
+            DateTime.now().withMillis(26116531L).withZone(DateTimeZone.forOffsetHours(3)))
+    );
   }
 
   @Test

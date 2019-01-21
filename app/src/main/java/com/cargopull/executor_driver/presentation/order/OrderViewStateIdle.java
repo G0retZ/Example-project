@@ -11,6 +11,7 @@ import com.cargopull.executor_driver.entity.RoutePoint;
 import com.cargopull.executor_driver.presentation.ViewState;
 import java.text.DecimalFormat;
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.joda.time.LocalTime;
 import org.joda.time.format.DateTimeFormat;
 
@@ -113,16 +114,22 @@ final class OrderViewStateIdle implements ViewState<OrderViewActions> {
     // Дата начала предзаказа
     DateTime scheduledDate = DateTime.now().withMillis(order.getScheduledStartTime());
     stateActions.setText(R.id.startDateText,
-        DateTimeFormat.forPattern("d MMMM, EEEE").print(scheduledDate));
+        DateTimeFormat.forPattern("d MMMM, EEEE")
+            .withZone(DateTimeZone.forOffsetHours(3))
+            .print(scheduledDate));
     // Время начала предзаказа
     stateActions.setText(R.id.startTimeText,
-        DateTimeFormat.forPattern("HH:mm").print(scheduledDate));
+        DateTimeFormat.forPattern("HH:mm")
+            .withZone(DateTimeZone.forOffsetHours(3))
+            .print(scheduledDate));
     // Время занятости на предзаказе
     scheduledDate = scheduledDate.plus(estimatedTime);
     stateActions.setFormattedText(R.id.occupationTimeText, R.string.h_m_d,
         localTime.getHourOfDay(),
         localTime.getMinuteOfHour(),
-        DateTimeFormat.forPattern("HH:mm").print(scheduledDate));
+        DateTimeFormat.forPattern("HH:mm")
+            .withZone(DateTimeZone.forOffsetHours(3))
+            .print(scheduledDate));
     // Разблокируем экран
     stateActions.unblockWithPending("OrderViewState");
     // Убираем диалог
