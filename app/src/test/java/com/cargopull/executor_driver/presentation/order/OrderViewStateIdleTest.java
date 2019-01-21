@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormat;
 import org.junit.Before;
 import org.junit.Test;
@@ -102,10 +103,15 @@ public class OrderViewStateIdleTest {
         decimalFormat.format(6813)
     );
     verify(viewActions).setText(R.id.startDateText,
-        DateTimeFormat.forPattern("d MMMM, EEEE").print(DateTime.now().withMillis(1238403200L)));
+        DateTimeFormat.forPattern("d MMMM, EEEE").print(
+            DateTime.now().withMillis(1238403200L).withZone(DateTimeZone.forOffsetHours(3))
+        ));
     verify(viewActions).setText(R.id.startTimeText,
-        DateTimeFormat.forPattern("HH:mm").print(DateTime.now().withMillis(1238403200L)));
-    DateTime dateTime = DateTime.now().withMillis(1238403200L + 7929000L);
+        DateTimeFormat.forPattern("HH:mm").print(
+            DateTime.now().withMillis(1238403200L).withZone(DateTimeZone.forOffsetHours(3))
+        ));
+    DateTime dateTime = DateTime.now().withMillis(1238403200L + 7929000L)
+        .withZone(DateTimeZone.forOffsetHours(3));
     verify(viewActions).setFormattedText(R.id.occupationTimeText, R.string.h_m_d, 2, 12,
         DateTimeFormat.forPattern("HH:mm").print(dateTime));
     verify(viewActions).setVisible(R.id.cargoDescTitleText, true);
@@ -182,10 +188,15 @@ public class OrderViewStateIdleTest {
         decimalFormat.format(6812.50)
     );
     verify(viewActions).setText(R.id.startDateText,
-        DateTimeFormat.forPattern("d MMMM, EEEE").print(DateTime.now().withMillis(1238403200L)));
+        DateTimeFormat.forPattern("d MMMM, EEEE").print(
+            DateTime.now().withMillis(1238403200L).withZone(DateTimeZone.forOffsetHours(3))
+        ));
     verify(viewActions).setText(R.id.startTimeText,
-        DateTimeFormat.forPattern("HH:mm").print(DateTime.now().withMillis(1238403200L)));
-    DateTime dateTime = DateTime.now().withMillis(1238403200L + 7929000L);
+        DateTimeFormat.forPattern("HH:mm").print(
+            DateTime.now().withMillis(1238403200L).withZone(DateTimeZone.forOffsetHours(3))
+        ));
+    DateTime dateTime = DateTime.now().withMillis(1238403200L + 7929000L)
+        .withZone(DateTimeZone.forOffsetHours(3));
     verify(viewActions).setFormattedText(R.id.occupationTimeText, R.string.h_m_d, 2, 12,
         DateTimeFormat.forPattern("HH:mm").print(dateTime));
     verify(viewActions).setVisible(R.id.cargoDescTitleText, false);
@@ -261,10 +272,15 @@ public class OrderViewStateIdleTest {
         decimalFormat.format(6813)
     );
     verify(viewActions).setText(R.id.startDateText,
-        DateTimeFormat.forPattern("d MMMM, EEEE").print(DateTime.now().withMillis(1238403200L)));
+        DateTimeFormat.forPattern("d MMMM, EEEE").print(
+            DateTime.now().withMillis(1238403200L).withZone(DateTimeZone.forOffsetHours(3))
+        ));
     verify(viewActions).setText(R.id.startTimeText,
-        DateTimeFormat.forPattern("HH:mm").print(DateTime.now().withMillis(1238403200L)));
-    DateTime dateTime = DateTime.now().withMillis(1238403200L + 7929000L);
+        DateTimeFormat.forPattern("HH:mm").print(
+            DateTime.now().withMillis(1238403200L).withZone(DateTimeZone.forOffsetHours(3))
+        ));
+    DateTime dateTime = DateTime.now().withMillis(1238403200L + 7929000L)
+        .withZone(DateTimeZone.forOffsetHours(3));
     verify(viewActions).setFormattedText(R.id.occupationTimeText, R.string.h_m_d, 2, 12,
         DateTimeFormat.forPattern("HH:mm").print(dateTime));
     verify(viewActions).setVisible(R.id.cargoDescTitleText, true);
@@ -340,10 +356,15 @@ public class OrderViewStateIdleTest {
         decimalFormat.format(6812.54)
     );
     verify(viewActions).setText(R.id.startDateText,
-        DateTimeFormat.forPattern("d MMMM, EEEE").print(DateTime.now().withMillis(1238403200L)));
+        DateTimeFormat.forPattern("d MMMM, EEEE").print(
+            DateTime.now().withMillis(1238403200L).withZone(DateTimeZone.forOffsetHours(3))
+        ));
     verify(viewActions).setText(R.id.startTimeText,
-        DateTimeFormat.forPattern("HH:mm").print(DateTime.now().withMillis(1238403200L)));
-    DateTime dateTime = DateTime.now().withMillis(1238403200L + 7929000L);
+        DateTimeFormat.forPattern("HH:mm").print(
+            DateTime.now().withMillis(1238403200L).withZone(DateTimeZone.forOffsetHours(3))
+        ));
+    DateTime dateTime = DateTime.now().withMillis(1238403200L + 7929000L)
+        .withZone(DateTimeZone.forOffsetHours(3));
     verify(viewActions).setFormattedText(R.id.occupationTimeText, R.string.h_m_d, 2, 12,
         DateTimeFormat.forPattern("HH:mm").print(dateTime));
     verify(viewActions).setVisible(R.id.cargoDescTitleText, false);
