@@ -364,7 +364,7 @@ public class AppComponentImpl implements AppComponent {
   @Override
   public void inject(DriverOrderConfirmationFragment driverOrderConfirmationFragment) {
     driverOrderConfirmationFragment.setOrderConfirmationViewModel(
-        getPresentationComponent().getOrderConfirmationViewModel(driverOrderConfirmationFragment)
+        getPresentationComponent().getRushOrderConfirmationViewModel(driverOrderConfirmationFragment)
     );
     driverOrderConfirmationFragment.setOrderViewModel(
         getPresentationComponent().getOrderViewModel()
@@ -647,7 +647,7 @@ public class AppComponentImpl implements AppComponent {
         getShakeItPlayer()
     );
     driverPreOrderConfirmationFragment.setOrderConfirmationViewModel(
-        getPresentationComponent().getOrderConfirmationViewModel(driverPreOrderConfirmationFragment)
+        getPresentationComponent().getPreOrderConfirmationViewModel(driverPreOrderConfirmationFragment)
     );
     driverPreOrderConfirmationFragment.setOrderViewModel(
         getPresentationComponent().getOrderViewModel()

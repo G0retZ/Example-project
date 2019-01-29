@@ -131,7 +131,10 @@ interface PresentationComponent {
   OrderViewModel getPOrderViewModel(@Nullable Fragment fragment);
 
   @NonNull
-  OrderConfirmationViewModel getOrderConfirmationViewModel(@Nullable Fragment fragment);
+  OrderConfirmationViewModel getRushOrderConfirmationViewModel(@Nullable Fragment fragment);
+
+  @NonNull
+  OrderConfirmationViewModel getPreOrderConfirmationViewModel(@Nullable Fragment fragment);
 
   @NonNull
   OrderConfirmationViewModel getPreOrderBookingViewModel(@Nullable Fragment fragment);
