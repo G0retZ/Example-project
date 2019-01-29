@@ -17,6 +17,7 @@ import com.cargopull.executor_driver.presentation.CommonNavigate;
 import com.cargopull.executor_driver.presentation.balance.BalanceViewActions;
 import com.cargopull.executor_driver.presentation.balance.BalanceViewModel;
 import com.cargopull.executor_driver.presentation.menu.MenuNavigate;
+import com.cargopull.executor_driver.presentation.menu.MenuViewModel;
 import com.cargopull.executor_driver.presentation.onlineswitch.OnlineSwitchViewActions;
 import com.cargopull.executor_driver.presentation.onlineswitch.OnlineSwitchViewModel;
 import com.cargopull.executor_driver.presentation.preorderslist.PreOrdersListItem;
@@ -37,6 +38,7 @@ public class MenuFragment extends BaseFragment implements BalanceViewActions,
   private BalanceViewModel balanceViewModel;
   private OnlineSwitchViewModel onlineSwitchViewModel;
   private PreOrdersListViewModel preOrdersListViewModel;
+  private MenuViewModel menuViewModel;
   private TextView balanceAmount;
   private TextView preOrdersAmount;
   private TextView nightModeValue;
@@ -60,6 +62,10 @@ public class MenuFragment extends BaseFragment implements BalanceViewActions,
   @Inject
   public void setPreOrdersListViewModel(PreOrdersListViewModel preOrdersListViewModel) {
     this.preOrdersListViewModel = preOrdersListViewModel;
+  }
+
+  public void setMenuViewModel(MenuViewModel menuViewModel) {
+    this.menuViewModel = menuViewModel;
   }
 
   @Nullable
@@ -142,6 +148,16 @@ public class MenuFragment extends BaseFragment implements BalanceViewActions,
       }
     });
     preOrdersListViewModel.getNavigationLiveData().observe(this, destination -> {
+      if (destination != null) {
+        navigate(destination);
+      }
+    });
+    menuViewModel.getViewStateLiveData().observe(this, viewState -> {
+      if (viewState != null) {
+        viewState.apply(this);
+      }
+    });
+    menuViewModel.getNavigationLiveData().observe(this, destination -> {
       if (destination != null) {
         navigate(destination);
       }
