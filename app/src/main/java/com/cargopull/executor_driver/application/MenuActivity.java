@@ -59,6 +59,9 @@ public class MenuActivity extends BaseActivity {
         startActivity(new Intent(this, PreOrdersActivity.class));
         finish();
         break;
+      case MenuNavigate.ORDERS_FILTER:
+        startActivity(new Intent(this, VehicleOptionsActivity.class));
+        break;
       case MenuNavigate.ORDERS_HISTORY:
         startActivity(new Intent(this, OrdersHistoryActivity.class));
         break;
