@@ -60,8 +60,7 @@ public class MenuViewModelImpl extends ViewModel implements
           .observeOn(AndroidSchedulers.mainThread())
           .subscribe(
               state -> {
-                if (state == ExecutorState.SHIFT_OPENED || state == ExecutorState.SHIFT_CLOSED
-                    || state == ExecutorState.ONLINE) {
+                if (state == ExecutorState.SHIFT_OPENED || state == ExecutorState.ONLINE) {
                   viewStateLiveData.postValue(new MenuViewStateFilterAvailable(
                       () -> navigateLiveData.postValue(MenuNavigate.ORDERS_FILTER)
                   ));

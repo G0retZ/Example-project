@@ -1,5 +1,6 @@
 package com.cargopull.executor_driver.application;
 
+import android.app.AlertDialog.Builder;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -10,7 +11,9 @@ import androidx.fragment.app.DialogFragment;
 import com.cargopull.executor_driver.R;
 import com.cargopull.executor_driver.backend.analytics.EventLogger;
 import com.cargopull.executor_driver.di.AppComponent;
+import com.cargopull.executor_driver.presentation.CommonNavigate;
 import com.cargopull.executor_driver.presentation.menu.MenuNavigate;
+import com.cargopull.executor_driver.presentation.onlinebutton.OnlineButtonNavigate;
 import com.cargopull.executor_driver.presentation.preorder.PreOrderNavigate;
 import com.cargopull.executor_driver.view.AboutDialogFragment;
 import java.util.HashMap;
@@ -50,6 +53,40 @@ public class MenuActivity extends BaseActivity {
   @Override
   public void navigate(@NonNull String destination) {
     switch (destination) {
+      case OnlineButtonNavigate.DRIVER_BLOCKED:
+        new Builder(this)
+            .setMessage(R.string.driver_blocked_message)
+            .setPositiveButton(getString(android.R.string.ok), null)
+            .create()
+            .show();
+        break;
+      case OnlineButtonNavigate.NO_FREE_VEHICLES:
+        new Builder(this)
+            .setMessage(R.string.no_free_vehicle_message)
+            .setPositiveButton(getString(android.R.string.ok), null)
+            .create()
+            .show();
+        break;
+      case OnlineButtonNavigate.NO_VEHICLES:
+        new Builder(this)
+            .setTitle(R.string.error)
+            .setMessage(R.string.no_vehicles_message)
+            .setPositiveButton(getString(android.R.string.ok), null)
+            .create()
+            .show();
+        break;
+      case CommonNavigate.NO_CONNECTION:
+        new Builder(this)
+            .setTitle(R.string.error)
+            .setMessage(R.string.no_network_connection)
+            .setPositiveButton(getString(android.R.string.ok), null)
+            .setNegativeButton(getString(android.R.string.cancel), null)
+            .create()
+            .show();
+        break;
+      case OnlineButtonNavigate.VEHICLE_OPTIONS:
+        startActivity(new Intent(this, VehicleOptionsActivity.class));
+        break;
       case MenuNavigate.BALANCE:
         startActivity(new Intent(this, BalanceActivity.class));
         finish();
@@ -58,9 +95,6 @@ public class MenuActivity extends BaseActivity {
         eventLogger.reportEvent("pre_orders_list_open", new HashMap<>());
         startActivity(new Intent(this, PreOrdersActivity.class));
         finish();
-        break;
-      case MenuNavigate.ORDERS_FILTER:
-        startActivity(new Intent(this, VehicleOptionsActivity.class));
         break;
       case MenuNavigate.ORDERS_HISTORY:
         startActivity(new Intent(this, OrdersHistoryActivity.class));

@@ -138,10 +138,10 @@ public class MenuViewModelTest {
   }
 
   /**
-   * Должен вернуть состояние с активной кнопкой фильтра для "смена закрыта".
+   * Должен вернуть состояние с неактивной кнопкой фильтра для "смена закрыта".
    */
   @Test
-  public void setAvailableViewStateForShiftClosed() {
+  public void setUnAvailableViewStateForShiftClosed() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
@@ -150,9 +150,7 @@ public class MenuViewModelTest {
     publishSubject.onNext(ExecutorState.SHIFT_CLOSED);
 
     // Результат:
-    inOrder.verify(viewStateObserver).onChanged(any(MenuViewStateFilterUnAvailable.class));
-    inOrder.verify(viewStateObserver)
-        .onChanged(new MenuViewStateFilterAvailable(runnableCaptor.capture()));
+    inOrder.verify(viewStateObserver, times(2)).onChanged(any(MenuViewStateFilterUnAvailable.class));
     verifyNoMoreInteractions(viewStateObserver);
   }
 
@@ -346,26 +344,6 @@ public class MenuViewModelTest {
 
     // Результат:
     verifyZeroInteractions(navigateObserver);
-  }
-
-  /**
-   * Должен вернуть перейти к настройке фильтра заказов для закрытой смены.
-   */
-  @Test
-  public void navigateToOrdersFilterForShiftClosed() {
-    // Дано:
-    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
-    viewModel.getNavigationLiveData().observeForever(navigateObserver);
-
-    // Действие:
-    publishSubject.onNext(ExecutorState.SHIFT_CLOSED);
-    verify(viewStateObserver, times(2)).onChanged(viewStateCaptor.capture());
-    viewStateCaptor.getValue().apply(fragmentViewActions);
-    verify(fragmentViewActions).setClickAction(anyInt(), runnableCaptor.capture());
-    runnableCaptor.getValue().run();
-
-    // Результат:
-    verify(navigateObserver, only()).onChanged(MenuNavigate.ORDERS_FILTER);
   }
 
   /**

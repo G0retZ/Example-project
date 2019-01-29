@@ -18,6 +18,8 @@ import com.cargopull.executor_driver.presentation.balance.BalanceViewActions;
 import com.cargopull.executor_driver.presentation.balance.BalanceViewModel;
 import com.cargopull.executor_driver.presentation.menu.MenuNavigate;
 import com.cargopull.executor_driver.presentation.menu.MenuViewModel;
+import com.cargopull.executor_driver.presentation.onlinebutton.OnlineButtonViewActions;
+import com.cargopull.executor_driver.presentation.onlinebutton.OnlineButtonViewModel;
 import com.cargopull.executor_driver.presentation.onlineswitch.OnlineSwitchViewActions;
 import com.cargopull.executor_driver.presentation.onlineswitch.OnlineSwitchViewModel;
 import com.cargopull.executor_driver.presentation.preorderslist.PreOrdersListItem;
@@ -32,13 +34,14 @@ import javax.inject.Inject;
  */
 
 public class MenuFragment extends BaseFragment implements BalanceViewActions,
-    OnlineSwitchViewActions, PreOrdersListViewActions {
+    OnlineSwitchViewActions, PreOrdersListViewActions, OnlineButtonViewActions {
 
   private AppSettingsService appSettingsService;
   private BalanceViewModel balanceViewModel;
   private OnlineSwitchViewModel onlineSwitchViewModel;
   private PreOrdersListViewModel preOrdersListViewModel;
   private MenuViewModel menuViewModel;
+  private OnlineButtonViewModel onlineButtonViewModel;
   private TextView balanceAmount;
   private TextView preOrdersAmount;
   private TextView nightModeValue;
@@ -66,6 +69,11 @@ public class MenuFragment extends BaseFragment implements BalanceViewActions,
 
   public void setMenuViewModel(MenuViewModel menuViewModel) {
     this.menuViewModel = menuViewModel;
+  }
+
+  @Inject
+  public void setOnlineButtonViewModel(@NonNull OnlineButtonViewModel onlineButtonViewModel) {
+    this.onlineButtonViewModel = onlineButtonViewModel;
   }
 
   @Nullable
@@ -162,6 +170,25 @@ public class MenuFragment extends BaseFragment implements BalanceViewActions,
         navigate(destination);
       }
     });
+    onlineButtonViewModel.getViewStateLiveData().observe(this, viewState -> {
+      if (viewState != null) {
+        viewState.apply(this);
+      }
+    });
+    onlineButtonViewModel.getNavigationLiveData().observe(this, destination -> {
+      if (destination != null) {
+        navigate(destination);
+      }
+    });
+  }
+
+  @Override
+  protected void navigate(@NonNull String destination) {
+    if (destination.equals(MenuNavigate.ORDERS_FILTER)) {
+      onlineButtonViewModel.goOnline();
+    } else {
+      super.navigate(destination);
+    }
   }
 
   @Override
@@ -225,5 +252,16 @@ public class MenuFragment extends BaseFragment implements BalanceViewActions,
 
   @Override
   public void showEmptyPreOrdersList(boolean show) {
+  }
+
+  @Override
+  public void enableGoOnlineButton(boolean enable) {
+    //TODO: костыль для получения данных для фильтра
+    setEnabled(R.id.filter, enable);
+  }
+
+  @Override
+  public void showGoOnlinePending(boolean pending) {
+    showPending(pending, toString() + "1");
   }
 }
