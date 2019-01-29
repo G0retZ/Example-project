@@ -205,7 +205,7 @@ public class SelectedPreOrderConfirmationFragment extends BaseFragment implement
 
   @Override
   public void enableAcceptButton(boolean enable) {
-    setOutAction.setEnabled(false);
+    setOutAction.setEnabled(enable);
   }
 
   @Override
