@@ -37,6 +37,8 @@ import com.cargopull.executor_driver.presentation.geolocationstate.GeoLocationSt
 import com.cargopull.executor_driver.presentation.geolocationstate.GeoLocationStateViewModelImpl;
 import com.cargopull.executor_driver.presentation.map.MapViewModel;
 import com.cargopull.executor_driver.presentation.map.MapViewModelImpl;
+import com.cargopull.executor_driver.presentation.menu.MenuViewModel;
+import com.cargopull.executor_driver.presentation.menu.MenuViewModelImpl;
 import com.cargopull.executor_driver.presentation.missedorder.MissedOrderViewModel;
 import com.cargopull.executor_driver.presentation.missedorder.MissedOrderViewModelImpl;
 import com.cargopull.executor_driver.presentation.movingtoclient.MovingToClientViewModel;
@@ -926,6 +928,21 @@ class PresentationComponentImpl implements PresentationComponent {
             backendComponent.getErrorReporter(),
             timeUtils,
             getRepositoryComponent().getOrdersHistorySummaryGateway()
+        )
+    );
+  }
+
+  @Override
+  public MenuViewModel getMenuViewModel(@Nullable Fragment fragment) {
+    if (fragment == null) {
+      throw new NullPointerException("Фрагмент не должен быть null");
+    }
+    return getViewModelInstance(
+        fragment,
+        MenuViewModelImpl.class,
+        new MenuViewModelImpl(
+            backendComponent.getErrorReporter(),
+            getInteractorComponent().getExecutorStateUseCase()
         )
     );
   }
