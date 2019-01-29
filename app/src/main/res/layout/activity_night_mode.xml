@@ -17,9 +17,9 @@
     app:layout_constraintTop_toTopOf="parent"
     app:navigationIcon="@drawable/ic_back_24dp"
     app:title="@string/night_mode"/>
-  <TextView
+  <Button
     android:id="@+id/nightModeAuto"
-    style="@style/TextAppearance.AppTheme.SubTitle.Touchable"
+    style="@style/AppTheme.Button.Borderless.Menu"
     android:layout_width="0dp"
     android:layout_height="wrap_content"
     android:padding="16dp"
