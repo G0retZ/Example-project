@@ -92,7 +92,8 @@ public class OrderConfirmationViewModelTest {
         eventLogger);
   }
 
-  OrderConfirmationViewModelTest(ExecutorState condition) {
+  @SuppressWarnings("WeakerAccess")
+  public OrderConfirmationViewModelTest(ExecutorState condition) {
     executorState = condition;
     acceptEnabled = getPrimeCondition(condition);
   }
