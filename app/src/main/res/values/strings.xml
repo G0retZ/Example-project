@@ -25,7 +25,7 @@
   <string name="busy">Занята</string>
   <string name="no_vehicles_message">У вас отсутствуют транспортные средства.\nОбратитесь в офис обслуживания.</string>
   <string name="choose_vehicle">Гараж</string>
-  <string name="check_list">Чек лист</string>
+  <string name="orders_filter">Фильтр заказов</string>
   <string name="change">Сменить</string>
   <string name="working">В работе</string>
   <string name="online">На линии</string>
