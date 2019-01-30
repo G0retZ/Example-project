@@ -536,6 +536,12 @@ public class AppComponentImpl implements AppComponent {
     menuFragment.setPreOrdersListViewModel(
         getPresentationComponent().getPreOrdersListViewModel()
     );
+    menuFragment.setMenuViewModel(
+        getPresentationComponent().getMenuViewModel(menuFragment)
+    );
+    menuFragment.setOnlineButtonViewModel(
+        getPresentationComponent().getSelectedOnlineButtonViewModel(menuFragment)
+    );
   }
 
   @Override

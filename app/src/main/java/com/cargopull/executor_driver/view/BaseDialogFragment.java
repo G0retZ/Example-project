@@ -260,4 +260,12 @@ public class BaseDialogFragment extends DialogFragment implements OnBackPressedI
       view.setOnClickListener(okAction == null ? null : v -> okAction.run());
     }
   }
+
+  @Override
+  public void setEnabled(int id, boolean enable) {
+    View view = findViewById(id);
+    if (view != null) {
+      view.setEnabled(enable);
+    }
+  }
 }

@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TextView
+<Button
   xmlns:android="http://schemas.android.com/apk/res/android"
   android:id="@+id/reasonText"
+  style="@style/AppTheme.Button.Borderless.Menu"
   android:layout_width="match_parent"
   android:layout_height="56dp"
   android:paddingStart="24dp"
   android:paddingEnd="24dp"
   android:gravity="center_vertical"
-  android:text="@string/cancel_reason"
-  android:textAppearance="@style/TextAppearance.AppTheme.SubTitle.Touchable"/>
+  android:text="@string/cancel_reason"/>
