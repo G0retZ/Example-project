@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormat;
 import org.junit.Before;
 import org.junit.Test;
@@ -51,7 +52,7 @@ public class OrderViewStateIdleTest {
   public void testActionsWithComment() {
     // Дано:
     when(viewActions.isShowCents()).thenReturn(false);
-    when(viewActions.getCurrencyFormat()).thenReturn("##,###,### ¤");
+    when(viewActions.getCurrencyFormat()).thenReturn("##,###,### ₽");
     when(routePoint.getAddress()).thenReturn("address");
     when(routePoint.getLatitude()).thenReturn(5.421);
     when(routePoint.getLongitude()).thenReturn(10.2341);
@@ -92,7 +93,7 @@ public class OrderViewStateIdleTest {
     verify(viewActions).setText(R.id.lastAddressText, "address 2");
     verify(viewActions).isShowCents();
     verify(viewActions).getCurrencyFormat();
-    DecimalFormat decimalFormat = new DecimalFormat("##,###,### ¤");
+    DecimalFormat decimalFormat = new DecimalFormat("##,###,### ₽");
     decimalFormat.setMaximumFractionDigits(0);
     decimalFormat.setMinimumFractionDigits(0);
     verify(viewActions).setFormattedText(R.id.estimationText, R.string.km_h_m_p, 31.278d, 2, 12,
@@ -102,10 +103,15 @@ public class OrderViewStateIdleTest {
         decimalFormat.format(6813)
     );
     verify(viewActions).setText(R.id.startDateText,
-        DateTimeFormat.forPattern("d MMMM, EEEE").print(DateTime.now().withMillis(1238403200L)));
+        DateTimeFormat.forPattern("d MMMM, EEEE").print(
+            DateTime.now().withMillis(1238403200L).withZone(DateTimeZone.forOffsetHours(3))
+        ));
     verify(viewActions).setText(R.id.startTimeText,
-        DateTimeFormat.forPattern("HH:mm").print(DateTime.now().withMillis(1238403200L)));
-    DateTime dateTime = DateTime.now().withMillis(1238403200L + 7929000L);
+        DateTimeFormat.forPattern("HH:mm").print(
+            DateTime.now().withMillis(1238403200L).withZone(DateTimeZone.forOffsetHours(3))
+        ));
+    DateTime dateTime = DateTime.now().withMillis(1238403200L + 7929000L)
+        .withZone(DateTimeZone.forOffsetHours(3));
     verify(viewActions).setFormattedText(R.id.occupationTimeText, R.string.h_m_d, 2, 12,
         DateTimeFormat.forPattern("HH:mm").print(dateTime));
     verify(viewActions).setVisible(R.id.cargoDescTitleText, true);
@@ -124,7 +130,7 @@ public class OrderViewStateIdleTest {
   public void testActionsWithoutComment() {
     // Дано:
     when(viewActions.isShowCents()).thenReturn(true);
-    when(viewActions.getCurrencyFormat()).thenReturn("##,###,### ¤");
+    when(viewActions.getCurrencyFormat()).thenReturn("##,###,### ₽");
     when(routePoint.getAddress()).thenReturn("address");
     when(routePoint.getLatitude()).thenReturn(5.421);
     when(routePoint.getLongitude()).thenReturn(10.2341);
@@ -172,7 +178,7 @@ public class OrderViewStateIdleTest {
     verify(viewActions).setText(R.id.lastAddressText, "address 2");
     verify(viewActions).isShowCents();
     verify(viewActions).getCurrencyFormat();
-    DecimalFormat decimalFormat = new DecimalFormat("##,###,### ¤");
+    DecimalFormat decimalFormat = new DecimalFormat("##,###,### ₽");
     decimalFormat.setMaximumFractionDigits(2);
     decimalFormat.setMinimumFractionDigits(2);
     verify(viewActions).setFormattedText(R.id.estimationText, R.string.km_h_m_p, 31.278d, 2, 12,
@@ -182,10 +188,15 @@ public class OrderViewStateIdleTest {
         decimalFormat.format(6812.50)
     );
     verify(viewActions).setText(R.id.startDateText,
-        DateTimeFormat.forPattern("d MMMM, EEEE").print(DateTime.now().withMillis(1238403200L)));
+        DateTimeFormat.forPattern("d MMMM, EEEE").print(
+            DateTime.now().withMillis(1238403200L).withZone(DateTimeZone.forOffsetHours(3))
+        ));
     verify(viewActions).setText(R.id.startTimeText,
-        DateTimeFormat.forPattern("HH:mm").print(DateTime.now().withMillis(1238403200L)));
-    DateTime dateTime = DateTime.now().withMillis(1238403200L + 7929000L);
+        DateTimeFormat.forPattern("HH:mm").print(
+            DateTime.now().withMillis(1238403200L).withZone(DateTimeZone.forOffsetHours(3))
+        ));
+    DateTime dateTime = DateTime.now().withMillis(1238403200L + 7929000L)
+        .withZone(DateTimeZone.forOffsetHours(3));
     verify(viewActions).setFormattedText(R.id.occupationTimeText, R.string.h_m_d, 2, 12,
         DateTimeFormat.forPattern("HH:mm").print(dateTime));
     verify(viewActions).setVisible(R.id.cargoDescTitleText, false);
@@ -204,7 +215,7 @@ public class OrderViewStateIdleTest {
   public void testActionsWithCommentFreeRide() {
     // Дано:
     when(viewActions.isShowCents()).thenReturn(false);
-    when(viewActions.getCurrencyFormat()).thenReturn("##,###,### ¤");
+    when(viewActions.getCurrencyFormat()).thenReturn("##,###,### ₽");
     when(routePoint.getAddress()).thenReturn("address");
     when(routePoint.getLatitude()).thenReturn(5.421);
     when(routePoint.getLongitude()).thenReturn(10.2341);
@@ -251,7 +262,7 @@ public class OrderViewStateIdleTest {
     verify(viewActions).setText(R.id.lastAddressText, R.string.free_ride);
     verify(viewActions).isShowCents();
     verify(viewActions).getCurrencyFormat();
-    DecimalFormat decimalFormat = new DecimalFormat("##,###,### ¤");
+    DecimalFormat decimalFormat = new DecimalFormat("##,###,### ₽");
     decimalFormat.setMaximumFractionDigits(0);
     decimalFormat.setMinimumFractionDigits(0);
     verify(viewActions).setFormattedText(R.id.estimationText, R.string.km_h_m_p, 31.278d, 2, 12,
@@ -261,10 +272,15 @@ public class OrderViewStateIdleTest {
         decimalFormat.format(6813)
     );
     verify(viewActions).setText(R.id.startDateText,
-        DateTimeFormat.forPattern("d MMMM, EEEE").print(DateTime.now().withMillis(1238403200L)));
+        DateTimeFormat.forPattern("d MMMM, EEEE").print(
+            DateTime.now().withMillis(1238403200L).withZone(DateTimeZone.forOffsetHours(3))
+        ));
     verify(viewActions).setText(R.id.startTimeText,
-        DateTimeFormat.forPattern("HH:mm").print(DateTime.now().withMillis(1238403200L)));
-    DateTime dateTime = DateTime.now().withMillis(1238403200L + 7929000L);
+        DateTimeFormat.forPattern("HH:mm").print(
+            DateTime.now().withMillis(1238403200L).withZone(DateTimeZone.forOffsetHours(3))
+        ));
+    DateTime dateTime = DateTime.now().withMillis(1238403200L + 7929000L)
+        .withZone(DateTimeZone.forOffsetHours(3));
     verify(viewActions).setFormattedText(R.id.occupationTimeText, R.string.h_m_d, 2, 12,
         DateTimeFormat.forPattern("HH:mm").print(dateTime));
     verify(viewActions).setVisible(R.id.cargoDescTitleText, true);
@@ -283,7 +299,7 @@ public class OrderViewStateIdleTest {
   public void testActionsWithoutCommentFreeRide() {
     // Дано:
     when(viewActions.isShowCents()).thenReturn(true);
-    when(viewActions.getCurrencyFormat()).thenReturn("##,###,### ¤");
+    when(viewActions.getCurrencyFormat()).thenReturn("##,###,### ₽");
     when(routePoint.getAddress()).thenReturn("address");
     when(routePoint.getLatitude()).thenReturn(5.421);
     when(routePoint.getLongitude()).thenReturn(10.2341);
@@ -330,7 +346,7 @@ public class OrderViewStateIdleTest {
     verify(viewActions).setText(R.id.lastAddressText, R.string.free_ride);
     verify(viewActions).isShowCents();
     verify(viewActions).getCurrencyFormat();
-    DecimalFormat decimalFormat = new DecimalFormat("##,###,### ¤");
+    DecimalFormat decimalFormat = new DecimalFormat("##,###,### ₽");
     decimalFormat.setMaximumFractionDigits(2);
     decimalFormat.setMinimumFractionDigits(2);
     verify(viewActions).setFormattedText(R.id.estimationText, R.string.km_h_m_p, 31.278d, 2, 12,
@@ -340,10 +356,15 @@ public class OrderViewStateIdleTest {
         decimalFormat.format(6812.54)
     );
     verify(viewActions).setText(R.id.startDateText,
-        DateTimeFormat.forPattern("d MMMM, EEEE").print(DateTime.now().withMillis(1238403200L)));
+        DateTimeFormat.forPattern("d MMMM, EEEE").print(
+            DateTime.now().withMillis(1238403200L).withZone(DateTimeZone.forOffsetHours(3))
+        ));
     verify(viewActions).setText(R.id.startTimeText,
-        DateTimeFormat.forPattern("HH:mm").print(DateTime.now().withMillis(1238403200L)));
-    DateTime dateTime = DateTime.now().withMillis(1238403200L + 7929000L);
+        DateTimeFormat.forPattern("HH:mm").print(
+            DateTime.now().withMillis(1238403200L).withZone(DateTimeZone.forOffsetHours(3))
+        ));
+    DateTime dateTime = DateTime.now().withMillis(1238403200L + 7929000L)
+        .withZone(DateTimeZone.forOffsetHours(3));
     verify(viewActions).setFormattedText(R.id.occupationTimeText, R.string.h_m_d, 2, 12,
         DateTimeFormat.forPattern("HH:mm").print(dateTime));
     verify(viewActions).setVisible(R.id.cargoDescTitleText, false);

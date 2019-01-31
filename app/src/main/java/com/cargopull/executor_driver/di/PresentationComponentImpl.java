@@ -17,10 +17,6 @@ import com.cargopull.executor_driver.presentation.calltooperator.CallToOperatorV
 import com.cargopull.executor_driver.presentation.calltooperator.CallToOperatorViewModelImpl;
 import com.cargopull.executor_driver.presentation.cancelledorder.CancelledOrderViewModel;
 import com.cargopull.executor_driver.presentation.cancelledorder.CancelledOrderViewModelImpl;
-import com.cargopull.executor_driver.presentation.cancelorder.CancelOrderViewModel;
-import com.cargopull.executor_driver.presentation.cancelorder.CancelOrderViewModelImpl;
-import com.cargopull.executor_driver.presentation.cancelorderreasons.CancelOrderReasonsViewModel;
-import com.cargopull.executor_driver.presentation.cancelorderreasons.CancelOrderReasonsViewModelImpl;
 import com.cargopull.executor_driver.presentation.choosevehicle.ChooseVehicleViewModel;
 import com.cargopull.executor_driver.presentation.choosevehicle.ChooseVehicleViewModelImpl;
 import com.cargopull.executor_driver.presentation.clientorderconfirmationtime.ClientOrderConfirmationTimeViewModel;
@@ -74,6 +70,8 @@ import com.cargopull.executor_driver.presentation.preorder.PreOrderViewModelImpl
 import com.cargopull.executor_driver.presentation.preorderslist.PreOrdersListItemsMapper;
 import com.cargopull.executor_driver.presentation.preorderslist.PreOrdersListViewModel;
 import com.cargopull.executor_driver.presentation.preorderslist.PreOrdersListViewModelImpl;
+import com.cargopull.executor_driver.presentation.reportproblem.ReportProblemViewModel;
+import com.cargopull.executor_driver.presentation.reportproblem.ReportProblemViewModelImpl;
 import com.cargopull.executor_driver.presentation.selectedvehicle.SelectedVehicleViewModel;
 import com.cargopull.executor_driver.presentation.selectedvehicle.SelectedVehicleViewModelImpl;
 import com.cargopull.executor_driver.presentation.serverconnection.ServerConnectionViewModel;
@@ -108,8 +106,6 @@ class PresentationComponentImpl implements PresentationComponent {
   private AnnouncementViewModel announcementViewModel;
   @Nullable
   private BalanceViewModel balanceViewModel;
-  @Nullable
-  private CancelOrderReasonsViewModel cancelOrderReasonsViewModel;
   @Nullable
   private CurrentCostPollingViewModel currentCostPollingViewModel;
   @Nullable
@@ -211,29 +207,17 @@ class PresentationComponentImpl implements PresentationComponent {
 
   @NonNull
   @Override
-  public CancelOrderViewModel getCancelOrderViewModel(@Nullable Fragment fragment) {
+  public ReportProblemViewModel getCancelOrderViewModel(@Nullable Fragment fragment) {
     if (fragment == null) {
       throw new NullPointerException("Фрагмент не должен быть null");
     }
     return getViewModelInstance(
         fragment,
-        CancelOrderViewModelImpl.class,
-        new CancelOrderViewModelImpl(backendComponent.getErrorReporter(),
-            getInteractorComponent().getCancelOrderUseCase()
+        ReportProblemViewModelImpl.class,
+        new ReportProblemViewModelImpl(backendComponent.getErrorReporter(),
+            getInteractorComponent().getReportProblemUseCase()
         )
     );
-  }
-
-  @NonNull
-  @Override
-  public CancelOrderReasonsViewModel getCancelOrderReasonsViewModel() {
-    if (cancelOrderReasonsViewModel == null) {
-      cancelOrderReasonsViewModel = new CancelOrderReasonsViewModelImpl(
-          backendComponent.getErrorReporter(),
-          getInteractorComponent().getCancelOrderReasonsUseCase()
-      );
-    }
-    return cancelOrderReasonsViewModel;
   }
 
   @NonNull

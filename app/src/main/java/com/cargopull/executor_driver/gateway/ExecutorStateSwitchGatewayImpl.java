@@ -1,27 +1,25 @@
 package com.cargopull.executor_driver.gateway;
 
 import androidx.annotation.NonNull;
-import com.cargopull.executor_driver.BuildConfig;
+import com.cargopull.executor_driver.backend.web.ApiService;
 import com.cargopull.executor_driver.entity.ExecutorState;
 import com.cargopull.executor_driver.interactor.ExecutorStateSwitchGateway;
 import io.reactivex.Completable;
 import io.reactivex.schedulers.Schedulers;
-import ua.naiksoftware.stomp.client.StompClient;
 
 public class ExecutorStateSwitchGatewayImpl implements ExecutorStateSwitchGateway {
 
   @NonNull
-  private final StompClient stompClient;
+  private final ApiService apiService;
 
-  public ExecutorStateSwitchGatewayImpl(@NonNull StompClient stompClient) {
-    this.stompClient = stompClient;
+  public ExecutorStateSwitchGatewayImpl(@NonNull ApiService apiService) {
+    this.apiService = apiService;
   }
 
   @NonNull
   @Override
   public Completable sendNewExecutorState(ExecutorState executorState) {
-    return stompClient
-        .send(BuildConfig.SET_STATUS_DESTINATION, "\"" + executorState.toString() + "\"")
+    return apiService.switchStatus(executorState)
         .subscribeOn(Schedulers.io());
   }
 }

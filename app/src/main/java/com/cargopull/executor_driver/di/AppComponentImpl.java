@@ -35,7 +35,6 @@ import com.cargopull.executor_driver.view.BalanceFragment;
 import com.cargopull.executor_driver.view.BalanceSummaryFragment;
 import com.cargopull.executor_driver.view.CallToClientFragment;
 import com.cargopull.executor_driver.view.CallToOperatorFragment;
-import com.cargopull.executor_driver.view.CancelOrderDialogFragment;
 import com.cargopull.executor_driver.view.ChooseVehicleFragment;
 import com.cargopull.executor_driver.view.ClientOrderConfirmationFragment;
 import com.cargopull.executor_driver.view.ClientOrderConfirmationTimeFragment;
@@ -64,6 +63,7 @@ import com.cargopull.executor_driver.view.PreOrderConfirmationFragment;
 import com.cargopull.executor_driver.view.PreOrderFragment;
 import com.cargopull.executor_driver.view.PreOrdersFragment;
 import com.cargopull.executor_driver.view.ProfileFragment;
+import com.cargopull.executor_driver.view.ReportProblemDialogFragment;
 import com.cargopull.executor_driver.view.SelectedPreOrderConfirmationFragment;
 import com.cargopull.executor_driver.view.SelectedPreOrderFragment;
 import com.cargopull.executor_driver.view.SelectedVehicleFragment;
@@ -117,9 +117,6 @@ public class AppComponentImpl implements AppComponent {
     );
     mainApplication.setServerConnectionViewModel(
         getPresentationComponent().getServerConnectionViewModel()
-    );
-    mainApplication.setCancelOrderReasonsViewModel(
-        getPresentationComponent().getCancelOrderReasonsViewModel()
     );
     mainApplication.setBalanceViewModel(
         getPresentationComponent().getBalanceViewModel()
@@ -505,12 +502,9 @@ public class AppComponentImpl implements AppComponent {
   }
 
   @Override
-  public void inject(CancelOrderDialogFragment cancelOrderDialogFragment) {
-    cancelOrderDialogFragment.setCancelOrderViewModel(
+  public void inject(ReportProblemDialogFragment cancelOrderDialogFragment) {
+    cancelOrderDialogFragment.setReportProblemViewModel(
         getPresentationComponent().getCancelOrderViewModel(cancelOrderDialogFragment)
-    );
-    cancelOrderDialogFragment.setCancelOrderReasonsViewModel(
-        getPresentationComponent().getCancelOrderReasonsViewModel()
     );
   }
 

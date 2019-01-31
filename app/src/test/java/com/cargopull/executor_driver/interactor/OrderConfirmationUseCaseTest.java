@@ -171,6 +171,28 @@ public class OrderConfirmationUseCaseTest {
   }
 
   /**
+   * Должен игнорировать если пришел тот же заказ.
+   */
+  @Test
+  public void ignoreForSameNextOrder() {
+    // Дано:
+    InOrder inOrder = Mockito.inOrder(orderConfirmationGateway);
+    when(orderUseCase.getOrders())
+        .thenReturn(Flowable.just(order, order).concatWith(Flowable.never()));
+    when(orderConfirmationGateway.sendDecision(any(), anyBoolean()))
+        .thenReturn(Single.<String>never().doOnDispose(action));
+
+    // Действие:
+    useCase.sendDecision(true).test().isDisposed();
+    useCase.sendDecision(false).test().isDisposed();
+
+    // Результат:
+    inOrder.verify(orderConfirmationGateway).sendDecision(order, true);
+    inOrder.verify(orderConfirmationGateway).sendDecision(order, false);
+    verifyNoMoreInteractions(orderConfirmationGateway, action);
+  }
+
+  /**
    * Должен отменить запрос у гейтвея на передачу решений если пришел новый заказ.
    */
   @Test
@@ -382,6 +404,24 @@ public class OrderConfirmationUseCaseTest {
 
     // Результат:
     test.assertError(DataMappingException.class);
+    test.assertNoValues();
+    test.assertNotComplete();
+  }
+
+  /**
+   * Должен ответить ошибкой не актуальности заказа на подтверждение.
+   */
+  @Test
+  public void ingonreSameSecondSecondValue() {
+    // Дано:
+    when(orderUseCase.getOrders())
+        .thenReturn(Flowable.just(order, order).concatWith(Flowable.never()));
+
+    // Действие:
+    TestObserver<String> test = useCase.sendDecision(true).test();
+
+    // Результат:
+    test.assertNoErrors();
     test.assertNoValues();
     test.assertNotComplete();
   }

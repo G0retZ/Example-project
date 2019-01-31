@@ -1,22 +1,23 @@
 package com.cargopull.executor_driver.interactor;
 
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.cargopull.executor_driver.GatewayThreadTestRule;
+import com.cargopull.executor_driver.backend.web.ApiService;
 import com.cargopull.executor_driver.entity.RoutePoint;
 import com.cargopull.executor_driver.gateway.OrderRouteGatewayImpl;
 import io.reactivex.Completable;
 import io.reactivex.observers.TestObserver;
+import java.util.Collections;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import ua.naiksoftware.stomp.client.StompClient;
 
 @RunWith(MockitoJUnitRunner.class)
 public class OrderRouteGatewayTest {
@@ -26,14 +27,17 @@ public class OrderRouteGatewayTest {
 
   private OrderRouteGateway gateway;
   @Mock
-  private StompClient stompClient;
+  private ApiService apiService;
   @Mock
   private RoutePoint routePoint;
 
   @Before
   public void setUp() {
-    when(stompClient.send(anyString(), anyString())).thenReturn(Completable.never());
-    gateway = new OrderRouteGatewayImpl(stompClient);
+    when(apiService.changeOrderStatus(Collections.singletonMap("status", "COMPLETE_ORDER")))
+        .thenReturn(Completable.never());
+    when(apiService.completeRoutePoint(anyLong())).thenReturn(Completable.never());
+    when(apiService.makeRoutePointNext(anyLong())).thenReturn(Completable.never());
+    gateway = new OrderRouteGatewayImpl(apiService);
   }
 
   /* Проверяем работу с клиентом STOMP */
@@ -50,7 +54,7 @@ public class OrderRouteGatewayTest {
     gateway.closeRoutePoint(routePoint).test().isDisposed();
 
     // Результат:
-    verify(stompClient, only()).send("/mobile/changeRoutePoint", "{\"complete\":\"7\"}");
+    verify(apiService, only()).completeRoutePoint(7);
   }
 
   /**
@@ -62,7 +66,8 @@ public class OrderRouteGatewayTest {
     gateway.completeTheOrder().test().isDisposed();
 
     // Результат:
-    verify(stompClient, only()).send("/mobile/trip", "\"COMPLETE_ORDER\"");
+    verify(apiService, only())
+        .changeOrderStatus(Collections.singletonMap("status", "COMPLETE_ORDER"));
   }
 
   /**
@@ -77,7 +82,7 @@ public class OrderRouteGatewayTest {
     gateway.nextRoutePoint(routePoint).test().isDisposed();
 
     // Результат:
-    verify(stompClient, only()).send("/mobile/changeRoutePoint", "{\"next\":\"7\"}");
+    verify(apiService, only()).makeRoutePointNext(7);
   }
 
   /* Проверяем результаты отправки сообщений */
@@ -88,7 +93,7 @@ public class OrderRouteGatewayTest {
   @Test
   public void answerSendCloseRoutePointSuccess() {
     // Дано:
-    when(stompClient.send(anyString(), anyString())).thenReturn(Completable.complete());
+    when(apiService.completeRoutePoint(anyLong())).thenReturn(Completable.complete());
 
     // Действие:
     TestObserver<Void> testObserver = gateway.closeRoutePoint(routePoint).test();
@@ -104,7 +109,8 @@ public class OrderRouteGatewayTest {
   @Test
   public void answerSendCompleteTheOrderSuccess() {
     // Дано:
-    when(stompClient.send(anyString(), anyString())).thenReturn(Completable.complete());
+    when(apiService.changeOrderStatus(Collections.singletonMap("status", "COMPLETE_ORDER")))
+        .thenReturn(Completable.complete());
 
     // Действие:
     TestObserver<Void> testObserver = gateway.completeTheOrder().test();
@@ -120,7 +126,7 @@ public class OrderRouteGatewayTest {
   @Test
   public void answerSendNextRoutePointSuccess() {
     // Дано:
-    when(stompClient.send(anyString(), anyString())).thenReturn(Completable.complete());
+    when(apiService.makeRoutePointNext(anyLong())).thenReturn(Completable.complete());
 
     // Действие:
     TestObserver<Void> testObserver = gateway.nextRoutePoint(routePoint).test();
@@ -136,7 +142,7 @@ public class OrderRouteGatewayTest {
   @Test
   public void answerSendCloseRoutePointError() {
     // Дано:
-    when(stompClient.send(anyString(), anyString()))
+    when(apiService.completeRoutePoint(anyLong()))
         .thenReturn(Completable.error(new IllegalArgumentException()));
 
     // Действие:
@@ -153,7 +159,7 @@ public class OrderRouteGatewayTest {
   @Test
   public void answerSendCompleteTheOrderError() {
     // Дано:
-    when(stompClient.send(anyString(), anyString()))
+    when(apiService.changeOrderStatus(Collections.singletonMap("status", "COMPLETE_ORDER")))
         .thenReturn(Completable.error(new IllegalArgumentException()));
 
     // Действие:
@@ -170,7 +176,7 @@ public class OrderRouteGatewayTest {
   @Test
   public void answerSendNextRoutePointError() {
     // Дано:
-    when(stompClient.send(anyString(), anyString()))
+    when(apiService.makeRoutePointNext(anyLong()))
         .thenReturn(Completable.error(new IllegalArgumentException()));
 
     // Действие:

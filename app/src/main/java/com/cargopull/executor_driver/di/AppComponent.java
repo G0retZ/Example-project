@@ -20,7 +20,6 @@ import com.cargopull.executor_driver.view.BalanceFragment;
 import com.cargopull.executor_driver.view.BalanceSummaryFragment;
 import com.cargopull.executor_driver.view.CallToClientFragment;
 import com.cargopull.executor_driver.view.CallToOperatorFragment;
-import com.cargopull.executor_driver.view.CancelOrderDialogFragment;
 import com.cargopull.executor_driver.view.ChooseVehicleFragment;
 import com.cargopull.executor_driver.view.ClientOrderConfirmationFragment;
 import com.cargopull.executor_driver.view.ClientOrderConfirmationTimeFragment;
@@ -49,6 +48,7 @@ import com.cargopull.executor_driver.view.PreOrderConfirmationFragment;
 import com.cargopull.executor_driver.view.PreOrderFragment;
 import com.cargopull.executor_driver.view.PreOrdersFragment;
 import com.cargopull.executor_driver.view.ProfileFragment;
+import com.cargopull.executor_driver.view.ReportProblemDialogFragment;
 import com.cargopull.executor_driver.view.SelectedPreOrderConfirmationFragment;
 import com.cargopull.executor_driver.view.SelectedPreOrderFragment;
 import com.cargopull.executor_driver.view.SelectedVehicleFragment;
@@ -144,7 +144,7 @@ public interface AppComponent {
 
   void inject(CallToOperatorFragment callToOperatorFragment);
 
-  void inject(CancelOrderDialogFragment cancelOrderDialogFragment);
+  void inject(ReportProblemDialogFragment cancelOrderDialogFragment);
 
   void inject(BalanceFragment balanceFragment);
 

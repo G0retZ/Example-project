@@ -46,6 +46,7 @@ public class OrderConfirmationUseCaseImpl implements OrderConfirmationUseCase {
   @Override
   public Single<String> sendDecision(boolean confirmed) {
     return orderUseCase.getOrders()
+        .distinct()
         .flatMapSingle(new Function<Order, SingleSource<? extends String>>() {
           boolean orderDecisionMade;
 

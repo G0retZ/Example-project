@@ -27,7 +27,6 @@ import com.cargopull.executor_driver.presentation.CommonNavigate;
 import com.cargopull.executor_driver.presentation.balance.BalanceViewModel;
 import com.cargopull.executor_driver.presentation.cancelledorder.CancelledOrderViewActions;
 import com.cargopull.executor_driver.presentation.cancelledorder.CancelledOrderViewModel;
-import com.cargopull.executor_driver.presentation.cancelorderreasons.CancelOrderReasonsViewModel;
 import com.cargopull.executor_driver.presentation.currentcostpolling.CurrentCostPollingViewModel;
 import com.cargopull.executor_driver.presentation.executorstate.ExecutorStateNavigate;
 import com.cargopull.executor_driver.presentation.executorstate.ExecutorStateViewModel;
@@ -66,7 +65,6 @@ public class MainApplication extends Application implements ServerConnectionView
   private RingTonePlayer ringTonePlayer;
   private ShakeItPlayer shakeItPlayer;
   private ServerConnectionViewModel serverConnectionViewModel;
-  private CancelOrderReasonsViewModel cancelOrderReasonsViewModel;
   private BalanceViewModel balanceViewModel;
   private ExecutorStateViewModel executorStateViewModel;
   private OrderViewModel orderViewModel;
@@ -140,12 +138,6 @@ public class MainApplication extends Application implements ServerConnectionView
   @Inject
   public void setNavigationMapper(@NonNull NavigationMapper navigationMapper) {
     this.navigationMapper = navigationMapper;
-  }
-
-  @Inject
-  public void setCancelOrderReasonsViewModel(
-      @NonNull CancelOrderReasonsViewModel cancelOrderReasonsViewModel) {
-    this.cancelOrderReasonsViewModel = cancelOrderReasonsViewModel;
   }
 
   @Inject
@@ -265,7 +257,6 @@ public class MainApplication extends Application implements ServerConnectionView
       }
     });
     serverConnectionViewModel.getNavigationLiveData().observeForever(this::navigate);
-    cancelOrderReasonsViewModel.getNavigationLiveData().observeForever(this::navigate);
     balanceViewModel.getNavigationLiveData().observeForever(this::navigate);
     executorStateViewModel.getNavigationLiveData().observeForever(this::navigate);
     orderViewModel.getNavigationLiveData().observeForever(this::navigate);

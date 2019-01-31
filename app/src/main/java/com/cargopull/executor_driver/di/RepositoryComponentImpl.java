@@ -2,15 +2,11 @@ package com.cargopull.executor_driver.di;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import com.cargopull.executor_driver.entity.CancelOrderReason;
 import com.cargopull.executor_driver.entity.ExecutorBalance;
 import com.cargopull.executor_driver.entity.ExecutorState;
 import com.cargopull.executor_driver.entity.Order;
 import com.cargopull.executor_driver.entity.OrderCostDetails;
 import com.cargopull.executor_driver.gateway.CallToClientGatewayImpl;
-import com.cargopull.executor_driver.gateway.CancelOrderGatewayImpl;
-import com.cargopull.executor_driver.gateway.CancelOrderReasonApiMapper;
-import com.cargopull.executor_driver.gateway.CancelOrderReasonsFilter;
 import com.cargopull.executor_driver.gateway.CancelledOrderApiMapper;
 import com.cargopull.executor_driver.gateway.CancelledOrderFilter;
 import com.cargopull.executor_driver.gateway.ConfirmOrderPaymentGatewayImpl;
@@ -35,6 +31,7 @@ import com.cargopull.executor_driver.gateway.MessagePayloadApiMapper;
 import com.cargopull.executor_driver.gateway.MissedOrderFilter;
 import com.cargopull.executor_driver.gateway.MovingToClientGatewayImpl;
 import com.cargopull.executor_driver.gateway.OrderApiMapper;
+import com.cargopull.executor_driver.gateway.OrderConfirmationErrorMapper;
 import com.cargopull.executor_driver.gateway.OrderConfirmationGatewayImpl;
 import com.cargopull.executor_driver.gateway.OrderCostDetailsApiMapper;
 import com.cargopull.executor_driver.gateway.OrderCostDetailsFilter;
@@ -49,6 +46,8 @@ import com.cargopull.executor_driver.gateway.PreOrderConfirmationGatewayImpl;
 import com.cargopull.executor_driver.gateway.PreOrderFilter;
 import com.cargopull.executor_driver.gateway.PreOrdersListApiMapper;
 import com.cargopull.executor_driver.gateway.PreOrdersListFilter;
+import com.cargopull.executor_driver.gateway.ProblemApiMapper;
+import com.cargopull.executor_driver.gateway.ReportProblemGatewayImpl;
 import com.cargopull.executor_driver.gateway.RoutePointApiMapper;
 import com.cargopull.executor_driver.gateway.SelectedVehicleAndOptionsGatewayImpl;
 import com.cargopull.executor_driver.gateway.ServerConnectionGatewayImpl;
@@ -68,7 +67,6 @@ import com.cargopull.executor_driver.gateway.VehiclesAndOptionsErrorMapper;
 import com.cargopull.executor_driver.gateway.VehiclesAndOptionsGatewayImpl;
 import com.cargopull.executor_driver.gateway.WaitingForClientGatewayImpl;
 import com.cargopull.executor_driver.interactor.CallToClientGateway;
-import com.cargopull.executor_driver.interactor.CancelOrderGateway;
 import com.cargopull.executor_driver.interactor.CommonGateway;
 import com.cargopull.executor_driver.interactor.ConfirmOrderPaymentGateway;
 import com.cargopull.executor_driver.interactor.CurrentCostPollingGateway;
@@ -80,6 +78,7 @@ import com.cargopull.executor_driver.interactor.MovingToClientGateway;
 import com.cargopull.executor_driver.interactor.OrderConfirmationGateway;
 import com.cargopull.executor_driver.interactor.OrderRouteGateway;
 import com.cargopull.executor_driver.interactor.OrdersHistorySummaryGateway;
+import com.cargopull.executor_driver.interactor.ReportProblemGateway;
 import com.cargopull.executor_driver.interactor.ServerConnectionGateway;
 import com.cargopull.executor_driver.interactor.WaitingForClientGateway;
 import com.cargopull.executor_driver.interactor.auth.PasswordGateway;
@@ -91,7 +90,6 @@ import com.cargopull.executor_driver.interactor.vehicle.VehicleOptionsGateway;
 import com.cargopull.executor_driver.interactor.vehicle.VehiclesAndOptionsGateway;
 import io.reactivex.Observer;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 class RepositoryComponentImpl implements RepositoryComponent {
@@ -107,9 +105,7 @@ class RepositoryComponentImpl implements RepositoryComponent {
   @Nullable
   private CommonGateway<Order> cancelledOrderGateway;
   @Nullable
-  private CancelOrderGateway cancelOrderGateway;
-  @Nullable
-  private CommonGateway<List<CancelOrderReason>> cancelOrderReasonsGateway;
+  private ReportProblemGateway reportProblemGateway;
   @Nullable
   private ConfirmOrderPaymentGateway confirmOrderPaymentGateway;
   @Nullable
@@ -206,7 +202,7 @@ class RepositoryComponentImpl implements RepositoryComponent {
   public CallToClientGateway getCallToClientGateway() {
     if (callToClientGateway == null) {
       callToClientGateway = new CallToClientGatewayImpl(
-          backendComponent.getStompClient()
+          backendComponent.getApiService()
       );
     }
     return callToClientGateway;
@@ -240,26 +236,13 @@ class RepositoryComponentImpl implements RepositoryComponent {
 
   @NonNull
   @Override
-  public CancelOrderGateway getCancelOrderGateway() {
-    if (cancelOrderGateway == null) {
-      cancelOrderGateway = new CancelOrderGatewayImpl(
-          backendComponent.getStompClient()
-      );
+  public ReportProblemGateway getReportProblemGateway() {
+    if (reportProblemGateway == null) {
+      reportProblemGateway = new ReportProblemGatewayImpl(
+          backendComponent.getApiService(),
+          new ProblemApiMapper());
     }
-    return cancelOrderGateway;
-  }
-
-  @NonNull
-  @Override
-  public CommonGateway<List<CancelOrderReason>> getCancelOrderReasonsGateway() {
-    if (cancelOrderReasonsGateway == null) {
-      cancelOrderReasonsGateway = new TopicGateway<>(
-          backendComponent.getPersonalTopicListener(getLoginGateway()),
-          new CancelOrderReasonsFilter(),
-          new CancelOrderReasonApiMapper()
-      );
-    }
-    return cancelOrderReasonsGateway;
+    return reportProblemGateway;
   }
 
   @NonNull
@@ -267,7 +250,7 @@ class RepositoryComponentImpl implements RepositoryComponent {
   public ConfirmOrderPaymentGateway getConfirmOrderPaymentGateway() {
     if (confirmOrderPaymentGateway == null) {
       confirmOrderPaymentGateway = new ConfirmOrderPaymentGatewayImpl(
-          backendComponent.getStompClient()
+          backendComponent.getApiService()
       );
     }
     return confirmOrderPaymentGateway;
@@ -317,7 +300,7 @@ class RepositoryComponentImpl implements RepositoryComponent {
   public ExecutorStateSwitchGateway getExecutorStateSwitchGateway() {
     if (executorStateSwitchGateway == null) {
       executorStateSwitchGateway = new ExecutorStateSwitchGatewayImpl(
-          backendComponent.getStompClient()
+          backendComponent.getApiService()
       );
     }
     return executorStateSwitchGateway;
@@ -363,7 +346,7 @@ class RepositoryComponentImpl implements RepositoryComponent {
   public MovingToClientGateway getMovingToClientGateway() {
     if (movingToClientGateway == null) {
       movingToClientGateway = new MovingToClientGatewayImpl(
-          backendComponent.getStompClient()
+          backendComponent.getApiService()
       );
     }
     return movingToClientGateway;
@@ -374,8 +357,8 @@ class RepositoryComponentImpl implements RepositoryComponent {
   public OrderConfirmationGateway getOrderConfirmationGateway() {
     if (orderConfirmationGateway == null) {
       orderConfirmationGateway = new OrderConfirmationGatewayImpl(
-          backendComponent.getStompClient()
-      );
+          backendComponent.getApiService(),
+          new OrderConfirmationErrorMapper());
     }
     return orderConfirmationGateway;
   }
@@ -454,7 +437,7 @@ class RepositoryComponentImpl implements RepositoryComponent {
   public OrderRouteGateway getOrderRouteGateway() {
     if (orderRouteGateway == null) {
       orderRouteGateway = new OrderRouteGatewayImpl(
-          backendComponent.getStompClient()
+          backendComponent.getApiService()
       );
     }
     return orderRouteGateway;
@@ -502,7 +485,7 @@ class RepositoryComponentImpl implements RepositoryComponent {
   public WaitingForClientGateway getWaitingForClientGateway() {
     if (waitingForClientGateway == null) {
       waitingForClientGateway = new WaitingForClientGatewayImpl(
-          backendComponent.getStompClient()
+          backendComponent.getApiService()
       );
     }
     return waitingForClientGateway;
@@ -687,8 +670,8 @@ class RepositoryComponentImpl implements RepositoryComponent {
   public OrdersHistorySummaryGateway getOrdersHistorySummaryGateway() {
     if (ordersHistorySummaryGateway == null) {
       ordersHistorySummaryGateway = new OrdersHistorySummaryGatewayImpl(
-        backendComponent.getApiService(),
-        new OrdersHistorySummaryApiMapper()
+          backendComponent.getApiService(),
+          new OrdersHistorySummaryApiMapper()
       );
     }
     return ordersHistorySummaryGateway;
