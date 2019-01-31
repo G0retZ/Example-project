@@ -10,4 +10,6 @@
   <color name="textColorPrimaryNew">#131a22</color>
   <color name="textColorSecondaryNew">#aab7b8</color>
   <color name="textColorButton">#fff</color>
+  <color name="textColorButtonDisabled">#d9dfe5</color>
+  <color name="colorButtonDisabled">#f5f7f9</color>
 </resources>

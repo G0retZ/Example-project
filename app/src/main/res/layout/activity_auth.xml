@@ -1,17 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
   xmlns:android="http://schemas.android.com/apk/res/android"
-  xmlns:app="http://schemas.android.com/apk/res-auto"
   xmlns:tools="http://schemas.android.com/tools"
   android:layout_width="match_parent"
   android:layout_height="match_parent"
   android:orientation="vertical">
-  <androidx.appcompat.widget.Toolbar
-    android:id="@+id/appBar"
-    style="@style/AppTheme.AppBar"
+  <TextView
+    style="@style/TextAppearance.AppThemeNew.Headline"
     android:layout_width="match_parent"
-    android:layout_height="?android:attr/actionBarSize"
-    app:title="@string/authorization"/>
+    android:layout_height="wrap_content"
+    android:layout_margin="16dp"
+    android:text="@string/authorization"/>
   <fragment
     android:id="@+id/fragment_auth_login"
     android:layout_width="match_parent"
