@@ -46,7 +46,7 @@
   </style>
 
   <style name="TextAppearance.AppThemeNew.Regular" parent="TextAppearance.AppCompat">
-    <item name="android:textColor">@color/textColorPrimary</item>
+    <item name="android:textColor">@color/textColorPrimaryNew</item>
     <item name="android:textSize">@dimen/regular_text_size</item>
   </style>
 
