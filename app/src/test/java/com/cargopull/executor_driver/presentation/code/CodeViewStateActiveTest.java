@@ -12,17 +12,16 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
-public class CodeViewStateNetworkErrorTest {
+public class CodeViewStateActiveTest {
 
-
-  private CodeViewStateNetworkError viewState;
+  private CodeViewStateActive viewState;
 
   @Mock
   private FragmentViewActions viewActions;
 
   @Before
   public void setUp() {
-    viewState = new CodeViewStateNetworkError();
+    viewState = new CodeViewStateActive();
   }
 
   @Test
@@ -34,7 +33,6 @@ public class CodeViewStateNetworkErrorTest {
     verify(viewActions).setEnabled(R.id.codeInput, true);
     verify(viewActions).unblockWithPending("password");
     verify(viewActions).setBackground(R.id.codeInput, R.drawable.ic_code_input_activated);
-    verify(viewActions).showPersistentDialog(R.string.code_network_error, null);
     verifyNoMoreInteractions(viewActions);
   }
 }

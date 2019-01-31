@@ -4,6 +4,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 import com.cargopull.executor_driver.R;
+import com.cargopull.executor_driver.presentation.FragmentViewActions;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -11,16 +12,16 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
-public class CodeViewStateInitialTest {
+public class CodeViewStateEmptyTest {
 
-  private CodeViewStateInitial viewState;
+  private CodeViewStateEmpty viewState;
 
   @Mock
-  private CodeViewActions viewActions;
+  private FragmentViewActions viewActions;
 
   @Before
   public void setUp() {
-    viewState = new CodeViewStateInitial();
+    viewState = new CodeViewStateEmpty();
   }
 
   @Test
@@ -29,11 +30,9 @@ public class CodeViewStateInitialTest {
     viewState.apply(viewActions);
 
     // Результат:
-    verify(viewActions).enableInputField(true);
-    verify(viewActions).showCodeCheckPending(false);
-    verify(viewActions).showCodeCheckError(false);
-    verify(viewActions).showCodeCheckNetworkErrorMessage(false);
-    verify(viewActions).setUnderlineImage(R.drawable.ic_code_input_activated);
+    verify(viewActions).setEnabled(R.id.codeInput, true);
+    verify(viewActions).unblockWithPending("password");
+    verify(viewActions).setBackground(R.id.codeInput, R.drawable.ic_code_input_default);
     verifyNoMoreInteractions(viewActions);
   }
 }

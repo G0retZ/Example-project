@@ -8,6 +8,7 @@ import com.cargopull.executor_driver.backend.analytics.EventLogger;
 import com.cargopull.executor_driver.backend.web.NoNetworkException;
 import com.cargopull.executor_driver.entity.ValidationException;
 import com.cargopull.executor_driver.interactor.auth.PasswordUseCase;
+import com.cargopull.executor_driver.presentation.FragmentViewActions;
 import com.cargopull.executor_driver.presentation.SingleLiveEvent;
 import com.cargopull.executor_driver.presentation.ViewState;
 import com.cargopull.executor_driver.utils.TimeUtils;
@@ -23,7 +24,7 @@ public class CodeViewModelImpl extends ViewModel implements CodeViewModel {
   @NonNull
   private final PasswordUseCase passwordUseCase;
   @NonNull
-  private final MutableLiveData<ViewState<CodeViewActions>> viewStateLiveData;
+  private final MutableLiveData<ViewState<FragmentViewActions>> viewStateLiveData;
   @NonNull
   private final SingleLiveEvent<String> navigateLiveData;
   @NonNull
@@ -33,6 +34,7 @@ public class CodeViewModelImpl extends ViewModel implements CodeViewModel {
   private final long timeStamp;
   @NonNull
   private Disposable disposable = EmptyDisposable.INSTANCE;
+  private ViewState<FragmentViewActions> lastViewState;
 
   @Inject
   public CodeViewModelImpl(@NonNull PasswordUseCase passwordUseCase,
@@ -43,12 +45,12 @@ public class CodeViewModelImpl extends ViewModel implements CodeViewModel {
     timeStamp = timeUtils.currentTimeMillis();
     viewStateLiveData = new MutableLiveData<>();
     navigateLiveData = new SingleLiveEvent<>();
-    viewStateLiveData.postValue(new CodeViewStateInitial());
+    viewStateLiveData.postValue(new CodeViewStateEmpty());
   }
 
   @NonNull
   @Override
-  public LiveData<ViewState<CodeViewActions>> getViewStateLiveData() {
+  public LiveData<ViewState<FragmentViewActions>> getViewStateLiveData() {
     return viewStateLiveData;
   }
 
@@ -63,9 +65,11 @@ public class CodeViewModelImpl extends ViewModel implements CodeViewModel {
     if (!disposable.isDisposed()) {
       return;
     }
-    disposable = passwordUseCase.authorize(
-        code.replaceAll("[^\\d]", ""),
-        Completable.fromAction(() -> viewStateLiveData.postValue(new CodeViewStatePending())
+    String password = code.replaceAll("[^\\d]", "");
+    lastViewState = code.length() == 0 ? new CodeViewStateEmpty() : new CodeViewStateActive();
+    disposable = passwordUseCase.authorize(password,
+        Completable.fromAction(
+            () -> viewStateLiveData.postValue(new CodeViewStatePending())
         ).subscribeOn(AndroidSchedulers.mainThread())
     ).observeOn(AndroidSchedulers.mainThread())
         .subscribe(
@@ -79,9 +83,7 @@ public class CodeViewModelImpl extends ViewModel implements CodeViewModel {
               if (throwable instanceof NoNetworkException) {
                 viewStateLiveData.postValue(new CodeViewStateNetworkError());
               } else if (throwable instanceof ValidationException) {
-                if (!(viewStateLiveData.getValue() instanceof CodeViewStateInitial)) {
-                  viewStateLiveData.postValue(new CodeViewStateInitial());
-                }
+                viewStateLiveData.postValue(lastViewState);
               } else {
                 viewStateLiveData.postValue(new CodeViewStateError());
               }

@@ -12,6 +12,7 @@ import androidx.lifecycle.Observer;
 import com.cargopull.executor_driver.ViewModelThreadTestRule;
 import com.cargopull.executor_driver.backend.web.NoNetworkException;
 import com.cargopull.executor_driver.interactor.auth.SmsUseCase;
+import com.cargopull.executor_driver.presentation.FragmentViewActions;
 import com.cargopull.executor_driver.presentation.ViewState;
 import io.reactivex.Completable;
 import io.reactivex.plugins.RxJavaPlugins;
@@ -39,7 +40,7 @@ public class SmsButtonViewModelTest {
   private SmsButtonViewModel viewModel;
   private TestScheduler testScheduler;
   @Mock
-  private Observer<ViewState<SmsButtonViewActions>> viewStateObserver;
+  private Observer<ViewState<FragmentViewActions>> viewStateObserver;
 
   @Mock
   private SmsUseCase smsUseCase;

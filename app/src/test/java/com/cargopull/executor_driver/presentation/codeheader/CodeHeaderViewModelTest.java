@@ -10,6 +10,7 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
 import androidx.lifecycle.Observer;
 import com.cargopull.executor_driver.ViewModelThreadTestRule;
 import com.cargopull.executor_driver.interactor.DataReceiver;
+import com.cargopull.executor_driver.presentation.TextViewActions;
 import com.cargopull.executor_driver.presentation.ViewState;
 import io.reactivex.subjects.PublishSubject;
 import org.junit.Before;
@@ -35,7 +36,7 @@ public class CodeHeaderViewModelTest {
   private DataReceiver<String> loginReceiver;
 
   @Mock
-  private Observer<ViewState<CodeHeaderViewActions>> viewStateObserver;
+  private Observer<ViewState<TextViewActions>> viewStateObserver;
 
   @Before
   public void setUp() {

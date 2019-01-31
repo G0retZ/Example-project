@@ -6,6 +6,7 @@ import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
 
 import com.cargopull.executor_driver.R;
+import com.cargopull.executor_driver.presentation.TextViewActions;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -18,7 +19,7 @@ public class CodeHeaderViewStateTest {
   private CodeHeaderViewState viewState;
 
   @Mock
-  private CodeHeaderViewActions viewActions;
+  private TextViewActions viewActions;
 
   @Before
   public void setUp() {
@@ -32,7 +33,7 @@ public class CodeHeaderViewStateTest {
 
     // Результат:
     verify(viewActions, only())
-        .setDescriptiveHeaderText(R.string.sms_code_message, "+7 (999) 700-44-50");
+        .setText(R.id.codeHeaderPhone, "+7 (999) 700-44-50");
   }
 
   @Test

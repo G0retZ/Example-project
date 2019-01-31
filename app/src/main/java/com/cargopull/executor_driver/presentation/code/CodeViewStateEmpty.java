@@ -6,14 +6,14 @@ import com.cargopull.executor_driver.presentation.FragmentViewActions;
 import com.cargopull.executor_driver.presentation.ViewState;
 
 /**
- * Состояние ожидание при проверке введенного кода.
+ * Начальное состояние ввода кода.
  */
-final class CodeViewStatePending implements ViewState<FragmentViewActions> {
+final class CodeViewStateEmpty implements ViewState<FragmentViewActions> {
 
   @Override
   public void apply(@NonNull FragmentViewActions stateActions) {
-    stateActions.setEnabled(R.id.codeInput, false);
-    stateActions.blockWithPending("password");
+    stateActions.setEnabled(R.id.codeInput, true);
+    stateActions.unblockWithPending("password");
     stateActions.setBackground(R.id.codeInput, R.drawable.ic_code_input_default);
   }
 }
