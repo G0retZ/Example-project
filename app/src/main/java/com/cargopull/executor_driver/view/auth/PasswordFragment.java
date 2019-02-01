@@ -111,7 +111,7 @@ public class PasswordFragment extends BaseFragment implements CodeViewActions {
   public void animateError() {
     shakeItPlayer.shakeIt(R.raw.single_shot_vibro);
     float density = getResources().getDisplayMetrics().density;
-    ObjectAnimator animator = ObjectAnimator.ofFloat(codeInput, "translationX", 100 * density, 0);
+    ObjectAnimator animator = ObjectAnimator.ofFloat(codeInput, "translationX", 0, 10 * density, -10 * density, 0);
     animator.setDuration(200);
     animator.setInterpolator(new ShakeInterpolator());
     animator.start();
