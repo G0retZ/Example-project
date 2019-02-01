@@ -1,5 +1,6 @@
 package com.cargopull.executor_driver.view.auth;
 
+import android.animation.ObjectAnimator;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
@@ -11,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.cargopull.executor_driver.R;
 import com.cargopull.executor_driver.di.AppComponent;
+import com.cargopull.executor_driver.presentation.code.CodeViewActions;
 import com.cargopull.executor_driver.presentation.code.CodeViewModel;
 import com.cargopull.executor_driver.presentation.codeheader.CodeHeaderViewModel;
 import com.cargopull.executor_driver.presentation.smsbutton.SmsButtonViewModel;
@@ -24,7 +26,7 @@ import javax.inject.Inject;
  * Отображает поле для ввода логина.
  */
 
-public class PasswordFragment extends BaseFragment {
+public class PasswordFragment extends BaseFragment implements CodeViewActions {
 
   private CodeViewModel codeViewModel;
   private CodeHeaderViewModel codeHeaderViewModel;
@@ -97,6 +99,15 @@ public class PasswordFragment extends BaseFragment {
         .filter(val -> val != null)
         .map(CharSequence::toString)
         .subscribe(codeViewModel::setCode);
+  }
+
+  @Override
+  public void animateError() {
+    float density = getResources().getDisplayMetrics().density;
+    ObjectAnimator animator = ObjectAnimator.ofFloat(codeInput, "translationX", 100 * density, 0);
+    animator.setDuration(200);
+    animator.setInterpolator(new ShakeInterpolator());
+    animator.start();
   }
 
   @Override

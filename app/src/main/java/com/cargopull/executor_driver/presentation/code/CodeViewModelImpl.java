@@ -8,7 +8,6 @@ import com.cargopull.executor_driver.backend.analytics.EventLogger;
 import com.cargopull.executor_driver.backend.web.NoNetworkException;
 import com.cargopull.executor_driver.entity.ValidationException;
 import com.cargopull.executor_driver.interactor.auth.PasswordUseCase;
-import com.cargopull.executor_driver.presentation.FragmentViewActions;
 import com.cargopull.executor_driver.presentation.SingleLiveEvent;
 import com.cargopull.executor_driver.presentation.ViewState;
 import com.cargopull.executor_driver.utils.TimeUtils;
@@ -24,7 +23,7 @@ public class CodeViewModelImpl extends ViewModel implements CodeViewModel {
   @NonNull
   private final PasswordUseCase passwordUseCase;
   @NonNull
-  private final MutableLiveData<ViewState<FragmentViewActions>> viewStateLiveData;
+  private final MutableLiveData<ViewState<CodeViewActions>> viewStateLiveData;
   @NonNull
   private final SingleLiveEvent<String> navigateLiveData;
   @NonNull
@@ -34,7 +33,7 @@ public class CodeViewModelImpl extends ViewModel implements CodeViewModel {
   private final long timeStamp;
   @NonNull
   private Disposable disposable = EmptyDisposable.INSTANCE;
-  private ViewState<FragmentViewActions> lastViewState;
+  private ViewState<CodeViewActions> lastViewState;
 
   @Inject
   public CodeViewModelImpl(@NonNull PasswordUseCase passwordUseCase,
@@ -50,7 +49,7 @@ public class CodeViewModelImpl extends ViewModel implements CodeViewModel {
 
   @NonNull
   @Override
-  public LiveData<ViewState<FragmentViewActions>> getViewStateLiveData() {
+  public LiveData<ViewState<CodeViewActions>> getViewStateLiveData() {
     return viewStateLiveData;
   }
 

@@ -4,7 +4,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 import com.cargopull.executor_driver.R;
-import com.cargopull.executor_driver.presentation.FragmentViewActions;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,7 +16,7 @@ public class CodeViewStatePendingTest {
   private CodeViewStatePending viewState;
 
   @Mock
-  private FragmentViewActions viewActions;
+  private CodeViewActions viewActions;
 
   @Before
   public void setUp() {

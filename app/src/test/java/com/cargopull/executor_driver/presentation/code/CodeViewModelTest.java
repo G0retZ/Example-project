@@ -17,7 +17,6 @@ import com.cargopull.executor_driver.backend.analytics.EventLogger;
 import com.cargopull.executor_driver.backend.web.NoNetworkException;
 import com.cargopull.executor_driver.entity.ValidationException;
 import com.cargopull.executor_driver.interactor.auth.PasswordUseCase;
-import com.cargopull.executor_driver.presentation.FragmentViewActions;
 import com.cargopull.executor_driver.presentation.ViewState;
 import com.cargopull.executor_driver.utils.TimeUtils;
 import io.reactivex.Completable;
@@ -52,7 +51,7 @@ public class CodeViewModelTest {
   private EventLogger eventLogger;
 
   @Mock
-  private Observer<ViewState<FragmentViewActions>> viewStateObserver;
+  private Observer<ViewState<CodeViewActions>> viewStateObserver;
 
   @Mock
   private Observer<String> navigateObserver;
