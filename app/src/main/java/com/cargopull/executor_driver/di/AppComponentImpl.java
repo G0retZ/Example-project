@@ -291,6 +291,9 @@ public class AppComponentImpl implements AppComponent {
     passwordFragment.setCodeViewModel(
         getPresentationComponent().getCodeViewModel(passwordFragment)
     );
+    passwordFragment.setShakeItPlayer(
+        getShakeItPlayer()
+    );
   }
 
   @Override

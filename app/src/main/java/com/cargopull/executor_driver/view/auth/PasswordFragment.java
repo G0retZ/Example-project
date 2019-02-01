@@ -11,6 +11,7 @@ import android.widget.EditText;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.cargopull.executor_driver.R;
+import com.cargopull.executor_driver.backend.vibro.ShakeItPlayer;
 import com.cargopull.executor_driver.di.AppComponent;
 import com.cargopull.executor_driver.presentation.code.CodeViewActions;
 import com.cargopull.executor_driver.presentation.code.CodeViewModel;
@@ -31,9 +32,9 @@ public class PasswordFragment extends BaseFragment implements CodeViewActions {
   private CodeViewModel codeViewModel;
   private CodeHeaderViewModel codeHeaderViewModel;
   private SmsButtonViewModel smsButtonViewModel;
+  private ShakeItPlayer shakeItPlayer;
   private EditText codeInput;
   private Disposable textDisposable;
-
 
   @Inject
   public void setCodeViewModel(@NonNull CodeViewModel codeViewModel) {
@@ -48,6 +49,11 @@ public class PasswordFragment extends BaseFragment implements CodeViewActions {
   @Inject
   public void setSmsButtonViewModel(@NonNull SmsButtonViewModel smsButtonViewModel) {
     this.smsButtonViewModel = smsButtonViewModel;
+  }
+
+  @Inject
+  public void setShakeItPlayer(@NonNull ShakeItPlayer shakeItPlayer) {
+    this.shakeItPlayer = shakeItPlayer;
   }
 
   @Nullable
@@ -103,6 +109,7 @@ public class PasswordFragment extends BaseFragment implements CodeViewActions {
 
   @Override
   public void animateError() {
+    shakeItPlayer.shakeIt(R.raw.single_shot_vibro);
     float density = getResources().getDisplayMetrics().density;
     ObjectAnimator animator = ObjectAnimator.ofFloat(codeInput, "translationX", 100 * density, 0);
     animator.setDuration(200);
