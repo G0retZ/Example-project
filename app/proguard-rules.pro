@@ -26,6 +26,9 @@
 -repackageclasses
 -optimizations !code/simplification/arithmetic
 
+# не трогаем энумку
+-keepclassmembers enum com.cargopull.executor_driver.entity.** { *; }
+
 # не трогаем наташек, сигнатуры и выбрасываемые исключения
 -keepattributes *Annotation*, Signature, Exception
 # добавляем номера строк в трасировку
