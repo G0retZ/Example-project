@@ -105,26 +105,26 @@ public class SelectedVehicleAndOptionsGatewayTest {
    * Не должен запрашивать у АПИ список ТС исполнителя дважды.
    */
   @Test
-  public void doNotAskApiForOptionsForOnlineTwiceAfterVehiclesRequested() {
+  public void askApiForOptionsForOnlineTwiceAfterVehiclesRequested() {
     // Действие:
     gateway.getExecutorVehicles();
     gateway.getExecutorOptions();
 
     // Результат:
-    verify(api, only()).getSelectedOptionsForOnline();
+    verify(api, times(2)).getSelectedOptionsForOnline();
   }
 
   /**
    * Не должен запрашивать у АПИ список ТС исполнителя дважды.
    */
   @Test
-  public void doNotAskApiForOptionsForOnlineTwiceAfterOptionsRequested() {
+  public void askApiForOptionsForOnlineTwiceAfterOptionsRequested() {
     // Действие:
     gateway.getExecutorOptions();
     gateway.getExecutorVehicles();
 
     // Результат:
-    verify(api, only()).getSelectedOptionsForOnline();
+    verify(api, times(2)).getSelectedOptionsForOnline();
   }
 
   /* Проверяем работу с преобразователем данных ТС */
