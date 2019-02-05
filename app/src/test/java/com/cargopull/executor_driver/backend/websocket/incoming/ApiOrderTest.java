@@ -31,6 +31,7 @@ public class ApiOrderTest {
     // Дано:
     ApiOrder apiOrder = new ApiOrder(
         432,
+        "CASH",
         "More than $3000",
         3000,
         219078901,
@@ -50,6 +51,7 @@ public class ApiOrderTest {
 
     // Результат
     assertEquals(apiOrder.getId(), 432);
+    assertEquals(apiOrder.getPaymentType(), "CASH");
     assertEquals(apiOrder.getEstimatedAmountText(), "More than $3000");
     assertEquals(apiOrder.getEstimatedAmount(), 3000);
     assertEquals(apiOrder.getEstimatedTime(), 219078901);

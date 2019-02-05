@@ -7,6 +7,7 @@ import com.cargopull.executor_driver.entity.Option;
 import com.cargopull.executor_driver.entity.OptionBoolean;
 import com.cargopull.executor_driver.entity.OptionNumeric;
 import com.cargopull.executor_driver.entity.Order;
+import com.cargopull.executor_driver.entity.PaymentType;
 import com.cargopull.executor_driver.entity.RoutePoint;
 import com.cargopull.executor_driver.presentation.ViewState;
 import java.text.DecimalFormat;
@@ -40,6 +41,8 @@ final class OrderViewStateIdle implements ViewState<OrderViewActions> {
         + "&size=360x200"
         + "&maptype=roadmap"
         + "&key=" + BuildConfig.STATIC_MAP_KEY);
+    // Показать способ оплаты
+    stateActions.setVisible(R.id.paymentTypeSign, order.getPaymentType() == PaymentType.CONTRACT);
     // Расстояние в км
     stateActions.setFormattedText(R.id.distanceText, R.string.km, order.getDistance() / 1000d);
     // ETA

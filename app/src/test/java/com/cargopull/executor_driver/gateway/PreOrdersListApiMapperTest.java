@@ -126,6 +126,111 @@ public class PreOrdersListApiMapperTest {
   }
 
   /**
+   * Должен дать ошибку, если пришел JSON без типа оплаты.
+   *
+   * @throws Exception ошибка
+   */
+  @Test(expected = DataMappingException.class)
+  public void mappingJsonStringWithoutPaymentTypeToOrderFail() throws Exception {
+    // Дано:
+    when(stompMessage.getPayload()).thenReturn("[" + rule.getOrderWithoutPaymentType() + "]");
+
+    // Действие:
+    List<Order> preOrders = new ArrayList<>(mapper.map(stompMessage));
+
+    // Результат:
+    assertEquals(preOrders.size(), 1);
+    assertEquals(preOrders.get(0).getId(), 7);
+    assertEquals(preOrders.get(0).getComment(), "some comment");
+    assertEquals(preOrders.get(0).getEstimatedPriceText(), "over 9999 BTC");
+    assertEquals(preOrders.get(0).getEstimatedPrice(), 9999);
+    assertEquals(preOrders.get(0).getEstimatedTime(), 234_532_000);
+    assertEquals(preOrders.get(0).getEstimatedRouteLength(), 35_213);
+    assertEquals(preOrders.get(0).getTotalCost(), 10_352);
+    assertEquals(preOrders.get(0).getTimeout(), 25);
+    assertEquals(preOrders.get(0).getEtaToStartPoint(), 1234567890);
+    assertEquals(preOrders.get(0).getConfirmationTime(), 9876543210L);
+    assertEquals(preOrders.get(0).getStartTime(), 9876598760L);
+    assertEquals(preOrders.get(0).getScheduledStartTime(), 128937981273L);
+    assertEquals(preOrders.get(0).getServiceName(), "service");
+    assertEquals(preOrders.get(0).getDistance(), 546);
+    assertEquals(preOrders.get(0).getRoutePath(), Arrays.asList(rPoint, rPoint2, rPoint2));
+    assertEquals(preOrders.get(0).getOptions(),
+        Arrays.asList(optionNumeric, optionBoolean, optionBoolean, optionNumeric)
+    );
+  }
+
+  /**
+   * Должен дать ошибку, если пришел JSON с пустым типом оплаты.
+   *
+   * @throws Exception ошибка
+   */
+  @Test(expected = DataMappingException.class)
+  public void mappingJsonStringWithEmptyPaymentTypeToOrderFail() throws Exception {
+    // Дано:
+    when(stompMessage.getPayload()).thenReturn("[" + rule.getOrderWithEmptyPaymentType() + "]");
+
+    // Действие:
+    List<Order> preOrders = new ArrayList<>(mapper.map(stompMessage));
+
+    // Результат:
+    assertEquals(preOrders.size(), 1);
+    assertEquals(preOrders.get(0).getId(), 7);
+    assertEquals(preOrders.get(0).getComment(), "some comment");
+    assertEquals(preOrders.get(0).getEstimatedPriceText(), "over 9999 BTC");
+    assertEquals(preOrders.get(0).getEstimatedPrice(), 9999);
+    assertEquals(preOrders.get(0).getEstimatedTime(), 234_532_000);
+    assertEquals(preOrders.get(0).getEstimatedRouteLength(), 35_213);
+    assertEquals(preOrders.get(0).getTotalCost(), 10_352);
+    assertEquals(preOrders.get(0).getTimeout(), 25);
+    assertEquals(preOrders.get(0).getEtaToStartPoint(), 1234567890);
+    assertEquals(preOrders.get(0).getConfirmationTime(), 9876543210L);
+    assertEquals(preOrders.get(0).getStartTime(), 9876598760L);
+    assertEquals(preOrders.get(0).getScheduledStartTime(), 128937981273L);
+    assertEquals(preOrders.get(0).getServiceName(), "service");
+    assertEquals(preOrders.get(0).getDistance(), 546);
+    assertEquals(preOrders.get(0).getRoutePath(), Arrays.asList(rPoint, rPoint2, rPoint2));
+    assertEquals(preOrders.get(0).getOptions(),
+        Arrays.asList(optionNumeric, optionBoolean, optionBoolean, optionNumeric)
+    );
+  }
+
+  /**
+   * Должен дать ошибку, если пришел JSON с неверным типом оплаты.
+   *
+   * @throws Exception ошибка
+   */
+  @Test(expected = DataMappingException.class)
+  public void mappingJsonStringWithWrongPaymentTypeToOrderFail() throws Exception {
+    // Дано:
+    when(stompMessage.getPayload()).thenReturn("[" + rule.getOrderWithWrongPaymentType() + "]");
+
+    // Действие:
+    List<Order> preOrders = new ArrayList<>(mapper.map(stompMessage));
+
+    // Результат:
+    assertEquals(preOrders.size(), 1);
+    assertEquals(preOrders.get(0).getId(), 7);
+    assertEquals(preOrders.get(0).getComment(), "some comment");
+    assertEquals(preOrders.get(0).getEstimatedPriceText(), "over 9999 BTC");
+    assertEquals(preOrders.get(0).getEstimatedPrice(), 9999);
+    assertEquals(preOrders.get(0).getEstimatedTime(), 234_532_000);
+    assertEquals(preOrders.get(0).getEstimatedRouteLength(), 35_213);
+    assertEquals(preOrders.get(0).getTotalCost(), 10_352);
+    assertEquals(preOrders.get(0).getTimeout(), 25);
+    assertEquals(preOrders.get(0).getEtaToStartPoint(), 1234567890);
+    assertEquals(preOrders.get(0).getConfirmationTime(), 9876543210L);
+    assertEquals(preOrders.get(0).getStartTime(), 9876598760L);
+    assertEquals(preOrders.get(0).getScheduledStartTime(), 128937981273L);
+    assertEquals(preOrders.get(0).getServiceName(), "service");
+    assertEquals(preOrders.get(0).getDistance(), 546);
+    assertEquals(preOrders.get(0).getRoutePath(), Arrays.asList(rPoint, rPoint2, rPoint2));
+    assertEquals(preOrders.get(0).getOptions(),
+        Arrays.asList(optionNumeric, optionBoolean, optionBoolean, optionNumeric)
+    );
+  }
+
+  /**
    * Должен успешно преобразовать JSON без комментария в список предзаказов.
    *
    * @throws Exception ошибка

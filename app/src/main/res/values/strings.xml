@@ -156,6 +156,7 @@
   <string name="retry">Повторить</string>
   <string name="orders_history">История заказов</string>
   <string name="server_settings">Настройки сервера</string>
+  <string name="cashless">Безнал</string>
   <string-array name="month_names">
     <item>Январь</item>
     <item>Февраль</item>

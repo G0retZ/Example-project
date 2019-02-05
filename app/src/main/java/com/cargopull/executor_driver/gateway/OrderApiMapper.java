@@ -6,6 +6,7 @@ import com.cargopull.executor_driver.backend.websocket.incoming.ApiOrder;
 import com.cargopull.executor_driver.backend.websocket.incoming.ApiRoutePoint;
 import com.cargopull.executor_driver.entity.Option;
 import com.cargopull.executor_driver.entity.Order;
+import com.cargopull.executor_driver.entity.PaymentType;
 import com.cargopull.executor_driver.entity.RoutePoint;
 import com.google.gson.Gson;
 import javax.inject.Inject;
@@ -44,6 +45,16 @@ public class OrderApiMapper implements Mapper<StompMessage, Order> {
     } catch (Exception e) {
       throw new DataMappingException("Ошибка маппинга: не удалось распарсить JSON: " + from, e);
     }
+    if (apiOrder.getPaymentType() == null) {
+      throw new DataMappingException("Ошибка маппинга: Тип оплаты не должен быть null!");
+    }
+    PaymentType paymentType;
+    try {
+      paymentType = PaymentType.valueOf(apiOrder.getPaymentType());
+    }     catch (Exception e) {
+      throw new DataMappingException(
+          "Ошибка маппинга: неизвестный способ оплаты \"" + apiOrder.getPaymentType() + "\" !");
+    }
     if (apiOrder.getApiOrderService() == null) {
       throw new DataMappingException("Ошибка маппинга: Услуга не должна быть null!");
     }
@@ -60,6 +71,7 @@ public class OrderApiMapper implements Mapper<StompMessage, Order> {
     }
     Order order = new Order(
         apiOrder.getId(),
+        paymentType,
         apiOrder.getComment() == null ? "" : apiOrder.getComment(),
         apiOrder.getApiOrderService().getName(),
         apiOrder.getExecutorDistance() == null ? 0 : apiOrder.getExecutorDistance().getDistance(),

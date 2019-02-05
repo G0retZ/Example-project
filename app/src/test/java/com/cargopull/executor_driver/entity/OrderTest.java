@@ -36,8 +36,8 @@ public class OrderTest {
 
   @Before
   public void setUp() {
-    order = new Order(7, "com", "service", 1200239, "7000", 7000, 7728_192_819L, 28_020,
-        9400, 20, 600, 1234567890, 9876543210L, 123812983712L);
+    order = new Order(7, PaymentType.CASH, "com", "service", 1200239, "7000", 7000, 7728_192_819L,
+        28_020, 9400, 20, 600, 1234567890, 9876543210L, 123812983712L);
     order.addOptions(option);
     order.addRoutePoints(routePoint);
   }
@@ -45,6 +45,7 @@ public class OrderTest {
   @Test
   public void testConstructor() {
     assertEquals(order.getId(), 7);
+    assertEquals(order.getPaymentType(), PaymentType.CASH);
     assertEquals(order.getComment(), "com");
     assertEquals(order.getServiceName(), "service");
     assertEquals(order.getDistance(), 1200239);
@@ -114,6 +115,7 @@ public class OrderTest {
 
     // Результат:
     assertEquals(order1.getId(), 7);
+    assertEquals(order.getPaymentType(), PaymentType.CASH);
     assertEquals(order1.getComment(), "com");
     assertEquals(order1.getServiceName(), "service");
     assertEquals(order1.getDistance(), 1200239);
@@ -137,23 +139,26 @@ public class OrderTest {
 
   @Test
   public void testEquals() {
-    Order order1 = new Order(7, "com", "service", 1200239, "7000", 7000, 7728_192_819L, 28_020,
-        9400, 20, 600, 1234567890, 9876543210L, 123812983712L);
+    Order order1 = new Order(7, PaymentType.CASH, "com", "service", 1200239, "7000", 7000, 7728_192_819L,
+        28_020, 9400, 20, 600, 1234567890, 9876543210L, 123812983712L);
     assertEquals(order, order);
     assertEquals(order, order1);
-    order1 = new Order(7, "", "", 0, "", 0, 0, 0, 0, 0, 0, 0, 0, 0);
+    order1 = new Order(7, PaymentType.CASH, "", "", 0, "", 0, 0, 0, 0, 0, 0, 0, 0, 0);
     assertEquals(order, order1);
-    order1 = new Order(7, "", "", 0, "", 0, 0, 0, 0, 0, 0, 0, 0, 0);
+    order1 = new Order(7, PaymentType.CONTRACT, "", "", 0, "", 0, 0, 0, 0, 0, 0, 0, 0, 0);
+    assertEquals(order, order1);
+    order1 = new Order(7, PaymentType.CASH, "", "", 0, "", 0, 0, 0, 0, 0, 0, 0, 0, 0);
     order1.setOptions(option1, option2, option3);
     assertEquals(order, order1);
-    order1 = new Order(7, "", "", 0, "", 0, 0, 0, 0, 0, 0, 0, 0, 0);
+    order1 = new Order(7, PaymentType.CASH, "", "", 0, "", 0, 0, 0, 0, 0, 0, 0, 0, 0);
     order1.setRoutePoints(routePoint1, routePoint2, routePoint3);
     assertEquals(order, order1);
     order1.addRoutePoints(routePoint1, routePoint2, routePoint3);
     assertEquals(order, order1);
     order1.setOptions(option1, option2, option3);
     assertEquals(order, order1);
-    order1 = new Order(6, "com", "service", 1200239, "7000", 7000, 7728_192_819L, 28_020,
+    order1 = new Order(6, PaymentType.CONTRACT, "com", "service", 1200239, "7000", 7000, 7728_192_819L,
+        28_020,
         9400, 20, 600, 1234567890, 9876543210L, 123812983712L);
     assertNotEquals(order, order1);
     assertNotEquals(order, "");
