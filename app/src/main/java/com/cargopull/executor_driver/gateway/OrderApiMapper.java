@@ -6,6 +6,7 @@ import com.cargopull.executor_driver.backend.websocket.incoming.ApiOrder;
 import com.cargopull.executor_driver.backend.websocket.incoming.ApiRoutePoint;
 import com.cargopull.executor_driver.entity.Option;
 import com.cargopull.executor_driver.entity.Order;
+import com.cargopull.executor_driver.entity.PaymentType;
 import com.cargopull.executor_driver.entity.RoutePoint;
 import com.google.gson.Gson;
 import javax.inject.Inject;
@@ -60,6 +61,7 @@ public class OrderApiMapper implements Mapper<StompMessage, Order> {
     }
     Order order = new Order(
         apiOrder.getId(),
+        PaymentType.CASH,
         apiOrder.getComment() == null ? "" : apiOrder.getComment(),
         apiOrder.getApiOrderService().getName(),
         apiOrder.getExecutorDistance() == null ? 0 : apiOrder.getExecutorDistance().getDistance(),
