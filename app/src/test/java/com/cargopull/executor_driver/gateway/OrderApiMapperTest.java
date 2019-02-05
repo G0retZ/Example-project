@@ -122,6 +122,108 @@ public class OrderApiMapperTest {
   }
 
   /**
+   * Должен дать ошибку, если пришел JSON без типа оплаты.
+   *
+   * @throws Exception ошибка
+   */
+  @Test(expected = DataMappingException.class)
+  public void mappingJsonStringWithoutPaymentTypeToOrderFail() throws Exception {
+    // Дано:
+    when(stompMessage.getPayload()).thenReturn(rule.getOrderWithoutPaymentType());
+
+    // Действие:
+    Order order = mapper.map(stompMessage);
+
+    // Результат:
+    assertEquals(order.getId(), 7);
+    assertEquals(order.getComment(), "some comment");
+    assertEquals(order.getEstimatedPriceText(), "over 9999 BTC");
+    assertEquals(order.getEstimatedPrice(), 9999);
+    assertEquals(order.getEstimatedTime(), 234_532_000);
+    assertEquals(order.getEstimatedRouteLength(), 35_213);
+    assertEquals(order.getTotalCost(), 10_352);
+    assertEquals(order.getTimeout(), 25);
+    assertEquals(order.getEtaToStartPoint(), 1234567890);
+    assertEquals(order.getConfirmationTime(), 9876543210L);
+    assertEquals(order.getStartTime(), 9876598760L);
+    assertEquals(order.getScheduledStartTime(), 128937981273L);
+    assertEquals(order.getServiceName(), "service");
+    assertEquals(order.getDistance(), 546);
+    assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
+    assertEquals(order.getOptions(),
+        Arrays.asList(optionNumeric, optionBoolean, optionBoolean, optionNumeric)
+    );
+  }
+
+  /**
+   * Должен дать ошибку, если пришел JSON с пустым типом оплаты.
+   *
+   * @throws Exception ошибка
+   */
+  @Test(expected = DataMappingException.class)
+  public void mappingJsonStringWithEmptyPaymentTypeToOrderFail() throws Exception {
+    // Дано:
+    when(stompMessage.getPayload()).thenReturn(rule.getOrderWithEmptyPaymentType());
+
+    // Действие:
+    Order order = mapper.map(stompMessage);
+
+    // Результат:
+    assertEquals(order.getId(), 7);
+    assertEquals(order.getComment(), "some comment");
+    assertEquals(order.getEstimatedPriceText(), "over 9999 BTC");
+    assertEquals(order.getEstimatedPrice(), 9999);
+    assertEquals(order.getEstimatedTime(), 234_532_000);
+    assertEquals(order.getEstimatedRouteLength(), 35_213);
+    assertEquals(order.getTotalCost(), 10_352);
+    assertEquals(order.getTimeout(), 25);
+    assertEquals(order.getEtaToStartPoint(), 1234567890);
+    assertEquals(order.getConfirmationTime(), 9876543210L);
+    assertEquals(order.getStartTime(), 9876598760L);
+    assertEquals(order.getScheduledStartTime(), 128937981273L);
+    assertEquals(order.getServiceName(), "service");
+    assertEquals(order.getDistance(), 546);
+    assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
+    assertEquals(order.getOptions(),
+        Arrays.asList(optionNumeric, optionBoolean, optionBoolean, optionNumeric)
+    );
+  }
+
+  /**
+   * Должен дать ошибку, если пришел JSON с неверным типом оплаты.
+   *
+   * @throws Exception ошибка
+   */
+  @Test(expected = DataMappingException.class)
+  public void mappingJsonStringWithWrongPaymentTypeToOrderFail() throws Exception {
+    // Дано:
+    when(stompMessage.getPayload()).thenReturn(rule.getOrderWithWrongPaymentType());
+
+    // Действие:
+    Order order = mapper.map(stompMessage);
+
+    // Результат:
+    assertEquals(order.getId(), 7);
+    assertEquals(order.getComment(), "some comment");
+    assertEquals(order.getEstimatedPriceText(), "over 9999 BTC");
+    assertEquals(order.getEstimatedPrice(), 9999);
+    assertEquals(order.getEstimatedTime(), 234_532_000);
+    assertEquals(order.getEstimatedRouteLength(), 35_213);
+    assertEquals(order.getTotalCost(), 10_352);
+    assertEquals(order.getTimeout(), 25);
+    assertEquals(order.getEtaToStartPoint(), 1234567890);
+    assertEquals(order.getConfirmationTime(), 9876543210L);
+    assertEquals(order.getStartTime(), 9876598760L);
+    assertEquals(order.getScheduledStartTime(), 128937981273L);
+    assertEquals(order.getServiceName(), "service");
+    assertEquals(order.getDistance(), 546);
+    assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
+    assertEquals(order.getOptions(),
+        Arrays.asList(optionNumeric, optionBoolean, optionBoolean, optionNumeric)
+    );
+  }
+
+  /**
    * Должен успешно преобразовать JSON без комментария в заказ.
    *
    * @throws Exception ошибка

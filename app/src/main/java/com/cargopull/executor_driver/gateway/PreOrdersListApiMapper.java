@@ -59,6 +59,16 @@ public class PreOrdersListApiMapper implements Mapper<StompMessage, Set<Order>> 
   }
 
   private Order map(ApiOrder apiOrder) throws Exception {
+    if (apiOrder.getPaymentType() == null) {
+      throw new DataMappingException("Ошибка маппинга: Тип оплаты не должен быть null!");
+    }
+    PaymentType paymentType;
+    try {
+      paymentType = PaymentType.valueOf(apiOrder.getPaymentType());
+    }     catch (Exception e) {
+      throw new DataMappingException(
+          "Ошибка маппинга: неизвестный способ оплаты \"" + apiOrder.getPaymentType() + "\" !");
+    }
     if (apiOrder.getApiOrderService() == null) {
       throw new DataMappingException("Ошибка маппинга: Услуга не должна быть null!");
     }
@@ -75,7 +85,7 @@ public class PreOrdersListApiMapper implements Mapper<StompMessage, Set<Order>> 
     }
     Order order = new Order(
         apiOrder.getId(),
-        PaymentType.CASH,
+        paymentType,
         apiOrder.getComment() == null ? "" : apiOrder.getComment(),
         apiOrder.getApiOrderService().getName(),
         apiOrder.getExecutorDistance() == null ? 0 : apiOrder.getExecutorDistance().getDistance(),
