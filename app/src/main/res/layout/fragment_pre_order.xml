@@ -86,9 +86,10 @@
       tools:text="@string/price"/>
     <TextView
       android:id="@+id/paymentTypeSign"
-      style="@style/TextAppearance.AppCompat.Title.Inverse"
+      style="@style/TextAppearance.AppCompat.Title"
       android:layout_width="wrap_content"
       android:layout_height="32dp"
+      android:layout_margin="8dp"
       android:paddingStart="16dp"
       android:paddingEnd="16dp"
       android:background="@drawable/ic_payment_card"

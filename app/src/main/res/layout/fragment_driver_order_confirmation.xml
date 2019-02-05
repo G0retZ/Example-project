@@ -39,7 +39,7 @@
         app:layout_constraintStart_toStartOf="@+id/mapImage"/>
       <TextView
         android:id="@+id/paymentTypeSign"
-        style="@style/TextAppearance.AppCompat.Title.Inverse"
+        style="@style/TextAppearance.AppCompat.Title"
         android:layout_width="wrap_content"
         android:layout_height="32dp"
         android:layout_margin="32dp"
