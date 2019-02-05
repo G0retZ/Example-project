@@ -81,10 +81,21 @@
       android:layout_height="wrap_content"
       android:layout_marginStart="16dp"
       android:layout_marginEnd="16dp"
-      app:layout_constraintEnd_toEndOf="parent"
       app:layout_constraintStart_toStartOf="parent"
       app:layout_constraintTop_toBottomOf="@+id/estimatedPriceTitleText"
       tools:text="@string/price"/>
+    <TextView
+      android:id="@+id/paymentTypeSign"
+      style="@style/TextAppearance.AppCompat.Title.Inverse"
+      android:layout_width="wrap_content"
+      android:layout_height="32dp"
+      android:paddingStart="16dp"
+      android:paddingEnd="16dp"
+      android:background="@drawable/ic_payment_card"
+      android:gravity="center"
+      android:text="@string/cashless"
+      app:layout_constraintBaseline_toBaselineOf="@id/estimatedPriceText"
+      app:layout_constraintStart_toEndOf="@id/estimatedPriceText"/>
     <TextView
       android:id="@+id/etaTitleText"
       style="@style/TextAppearance.AppTheme.Subhead"

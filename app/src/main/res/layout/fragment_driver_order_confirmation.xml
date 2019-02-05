@@ -37,6 +37,19 @@
         app:layout_constraintDimensionRatio="H,10:3"
         app:layout_constraintEnd_toEndOf="@+id/mapImage"
         app:layout_constraintStart_toStartOf="@+id/mapImage"/>
+      <TextView
+        android:id="@+id/paymentTypeSign"
+        style="@style/TextAppearance.AppCompat.Title.Inverse"
+        android:layout_width="wrap_content"
+        android:layout_height="32dp"
+        android:layout_margin="32dp"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:background="@drawable/ic_payment_card"
+        android:gravity="center"
+        android:text="@string/cashless"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
       <ImageView
         android:id="@+id/circles"
         android:layout_width="wrap_content"
