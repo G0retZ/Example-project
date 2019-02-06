@@ -33,6 +33,7 @@ public class CodeViewModelImpl extends ViewModel implements CodeViewModel {
   private final long timeStamp;
   @NonNull
   private Disposable disposable = EmptyDisposable.INSTANCE;
+  private ViewState<CodeViewActions> lastViewState;
 
   @Inject
   public CodeViewModelImpl(@NonNull PasswordUseCase passwordUseCase,
@@ -43,7 +44,7 @@ public class CodeViewModelImpl extends ViewModel implements CodeViewModel {
     timeStamp = timeUtils.currentTimeMillis();
     viewStateLiveData = new MutableLiveData<>();
     navigateLiveData = new SingleLiveEvent<>();
-    viewStateLiveData.postValue(new CodeViewStateInitial());
+    viewStateLiveData.postValue(new CodeViewStateEmpty());
   }
 
   @NonNull
@@ -63,9 +64,11 @@ public class CodeViewModelImpl extends ViewModel implements CodeViewModel {
     if (!disposable.isDisposed()) {
       return;
     }
-    disposable = passwordUseCase.authorize(
-        code.replaceAll("[^\\d]", ""),
-        Completable.fromAction(() -> viewStateLiveData.postValue(new CodeViewStatePending())
+    String password = code.replaceAll("[^\\d]", "");
+    lastViewState = code.length() == 0 ? new CodeViewStateEmpty() : new CodeViewStateActive();
+    disposable = passwordUseCase.authorize(password,
+        Completable.fromAction(
+            () -> viewStateLiveData.postValue(new CodeViewStatePending())
         ).subscribeOn(AndroidSchedulers.mainThread())
     ).observeOn(AndroidSchedulers.mainThread())
         .subscribe(
@@ -79,9 +82,7 @@ public class CodeViewModelImpl extends ViewModel implements CodeViewModel {
               if (throwable instanceof NoNetworkException) {
                 viewStateLiveData.postValue(new CodeViewStateNetworkError());
               } else if (throwable instanceof ValidationException) {
-                if (!(viewStateLiveData.getValue() instanceof CodeViewStateInitial)) {
-                  viewStateLiveData.postValue(new CodeViewStateInitial());
-                }
+                viewStateLiveData.postValue(lastViewState);
               } else {
                 viewStateLiveData.postValue(new CodeViewStateError());
               }

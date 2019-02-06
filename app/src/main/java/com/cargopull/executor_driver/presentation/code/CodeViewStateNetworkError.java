@@ -11,10 +11,9 @@ final class CodeViewStateNetworkError implements ViewState<CodeViewActions> {
 
   @Override
   public void apply(@NonNull CodeViewActions stateActions) {
-    stateActions.enableInputField(true);
-    stateActions.showCodeCheckPending(false);
-    stateActions.showCodeCheckError(false);
-    stateActions.showCodeCheckNetworkErrorMessage(true);
-    stateActions.setUnderlineImage(R.drawable.ic_code_input_activated);
+    stateActions.setEnabled(R.id.codeInput, true);
+    stateActions.unblockWithPending("password");
+    stateActions.setBackground(R.id.codeInput, R.drawable.ic_code_input_activated);
+    stateActions.showPersistentDialog(R.string.code_network_error, null);
   }
 }

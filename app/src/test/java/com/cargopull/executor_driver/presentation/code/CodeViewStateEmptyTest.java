@@ -11,16 +11,16 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
-public class CodeViewStatePendingTest {
+public class CodeViewStateEmptyTest {
 
-  private CodeViewStatePending viewState;
+  private CodeViewStateEmpty viewState;
 
   @Mock
   private CodeViewActions viewActions;
 
   @Before
   public void setUp() {
-    viewState = new CodeViewStatePending();
+    viewState = new CodeViewStateEmpty();
   }
 
   @Test
@@ -29,8 +29,8 @@ public class CodeViewStatePendingTest {
     viewState.apply(viewActions);
 
     // Результат:
-    verify(viewActions).setEnabled(R.id.codeInput, false);
-    verify(viewActions).blockWithPending("password");
+    verify(viewActions).setEnabled(R.id.codeInput, true);
+    verify(viewActions).unblockWithPending("password");
     verify(viewActions).setBackground(R.id.codeInput, R.drawable.ic_code_input_default);
     verifyNoMoreInteractions(viewActions);
   }
