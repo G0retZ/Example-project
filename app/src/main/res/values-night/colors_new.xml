@@ -1,15 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-  <color name="colorPrimaryNew">#374554</color>
-  <color name="colorPrimaryDarkNew">#171e26</color>
-  <color name="colorAccentNew">#1a61ff</color>
-  <color name="colorAccentGreenNew">#39d83f</color>
-  <color name="colorAccentRedNew">#f2144c</color>
-  <color name="colorWindowBackgroundNew">#131a22</color>
-  <color name="colorWindowBackgroundSecondNew">#212d3a</color>
-  <color name="textColorPrimaryNew">#fff</color>
-  <color name="textColorSecondaryNew">#577699</color>
+  <color name="colorPrimaryNew">@color/dark2</color>
+  <color name="colorPrimaryDarkNew">#101012</color>
+  <color name="colorAccentNew">@color/aBlue</color>
+  <color name="colorWindowBackgroundNew">@color/dark0</color>
+  <color name="colorWindowBackgroundSecondNew">@color/dark1</color>
+  <color name="textColorPrimaryNew">@color/light0</color>
+  <color name="textColorSecondaryNew">@color/dark3</color>
   <color name="textColorButton">#fff</color>
-  <color name="textColorButtonDisabled">#374554</color>
-  <color name="colorButtonDisabled">#212d3a</color>
+  <color name="textColorButtonDisabled">@color/dark2</color>
+  <color name="colorButtonDisabled">@color/dark1</color>
 </resources>

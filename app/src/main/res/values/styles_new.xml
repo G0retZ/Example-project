@@ -57,15 +57,15 @@
   </style>
 
   <style name="TextAppearance.AppThemeNew.Regular.Red">
-    <item name="android:textColor">@color/colorAccentRedNew</item>
+    <item name="android:textColor">@color/aRed</item>
   </style>
 
   <style name="TextAppearance.AppThemeNew.Regular.Green">
-    <item name="android:textColor">@color/colorAccentGreenNew</item>
+    <item name="android:textColor">@color/aGreen</item>
   </style>
 
   <style name="TextAppearance.AppThemeNew.Regular.Blue">
-    <item name="android:textColor">@color/colorAccentNew</item>
+    <item name="android:textColor">@color/aBlue</item>
   </style>
 
   <!-- Button styles -->
