@@ -658,7 +658,10 @@ class InteractorComponentImpl implements InteractorComponent {
           getSelectedPreOrderUseCase(),
           repositoryComponent.getPreOrderProcessGateway(),
           null,
-          getPreOrdersSetUseCase());
+          new RemoveOrdersUseCaseImpl(
+              getPreOrdersSetUseCase()
+          )
+      );
     }
     return selectedPreOrderConfirmationUseCase;
   }
@@ -677,7 +680,10 @@ class InteractorComponentImpl implements InteractorComponent {
           getUpcomingPreOrderUseCase(),
           repositoryComponent.getPreOrderProcessGateway(),
           null,
-          getPreOrdersSetUseCase());
+          new RemoveOrdersUseCaseImpl(
+              getPreOrdersSetUseCase()
+          )
+      );
     }
     return upcomingPreOrderConfirmationUseCase;
   }
