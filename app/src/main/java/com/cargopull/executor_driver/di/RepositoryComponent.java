@@ -84,6 +84,9 @@ interface RepositoryComponent {
   OrderConfirmationGateway getPreOrderConfirmationGateway();
 
   @NonNull
+  OrderConfirmationGateway getPreOrderProcessGateway();
+
+  @NonNull
   CommonGateway<OrderCostDetails> getOrderCostDetailsGateway();
 
   @NonNull
