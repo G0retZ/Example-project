@@ -42,7 +42,7 @@ import com.cargopull.executor_driver.gateway.OrderRouteGatewayImpl;
 import com.cargopull.executor_driver.gateway.OrdersHistorySummaryApiMapper;
 import com.cargopull.executor_driver.gateway.OrdersHistorySummaryGatewayImpl;
 import com.cargopull.executor_driver.gateway.PasswordGatewayImpl;
-import com.cargopull.executor_driver.gateway.PreOrderConfirmationGatewayImpl;
+import com.cargopull.executor_driver.gateway.PreOrderConfirmationGateway;
 import com.cargopull.executor_driver.gateway.PreOrderFilter;
 import com.cargopull.executor_driver.gateway.PreOrdersListApiMapper;
 import com.cargopull.executor_driver.gateway.PreOrdersListFilter;
@@ -367,7 +367,7 @@ class RepositoryComponentImpl implements RepositoryComponent {
   @Override
   public OrderConfirmationGateway getPreOrderConfirmationGateway() {
     if (preOrderConfirmationGateway == null) {
-      preOrderConfirmationGateway = new PreOrderConfirmationGatewayImpl(
+      preOrderConfirmationGateway = new PreOrderConfirmationGateway(
           backendComponent.getApiService()
       );
     }

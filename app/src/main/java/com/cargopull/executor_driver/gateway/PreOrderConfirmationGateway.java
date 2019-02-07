@@ -10,13 +10,13 @@ import io.reactivex.Single;
 import io.reactivex.schedulers.Schedulers;
 import javax.inject.Inject;
 
-public class PreOrderConfirmationGatewayImpl implements OrderConfirmationGateway {
+public class PreOrderConfirmationGateway implements OrderConfirmationGateway {
 
   @NonNull
   private final ApiService apiService;
 
   @Inject
-  public PreOrderConfirmationGatewayImpl(@NonNull ApiService apiService) {
+  public PreOrderConfirmationGateway(@NonNull ApiService apiService) {
     this.apiService = apiService;
   }
 
