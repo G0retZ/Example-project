@@ -1,4 +1,4 @@
-package com.cargopull.executor_driver.gateway;
+package com.cargopull.executor_driver.interactor;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -14,7 +14,7 @@ import com.cargopull.executor_driver.backend.web.incoming.ApiSimpleResult;
 import com.cargopull.executor_driver.backend.web.outgoing.ApiOrderDecision;
 import com.cargopull.executor_driver.entity.Order;
 import com.cargopull.executor_driver.entity.OrderConfirmationFailedException;
-import com.cargopull.executor_driver.interactor.OrderConfirmationGateway;
+import com.cargopull.executor_driver.gateway.PreOrderProcessGateway;
 import io.reactivex.Single;
 import io.reactivex.observers.TestObserver;
 import org.junit.Before;
