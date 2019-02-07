@@ -131,6 +131,7 @@ public class SelectedPreOrderConfirmationFragment extends BaseFragment implement
       }
       return false;
     });
+    setOutAction.setOnClickListener(v ->  orderConfirmationViewModel.acceptOrder());
     return view;
   }
 
