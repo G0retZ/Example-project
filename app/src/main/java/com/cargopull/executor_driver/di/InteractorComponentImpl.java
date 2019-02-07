@@ -656,7 +656,7 @@ class InteractorComponentImpl implements InteractorComponent {
     if (selectedPreOrderConfirmationUseCase == null) {
       selectedPreOrderConfirmationUseCase = new OrderConfirmationUseCaseImpl(
           getSelectedPreOrderUseCase(),
-          repositoryComponent.getPreOrderConfirmationGateway(),
+          repositoryComponent.getPreOrderProcessGateway(),
           null,
           getPreOrdersSetUseCase());
     }
@@ -675,7 +675,7 @@ class InteractorComponentImpl implements InteractorComponent {
     if (upcomingPreOrderConfirmationUseCase == null) {
       upcomingPreOrderConfirmationUseCase = new OrderConfirmationUseCaseImpl(
           getUpcomingPreOrderUseCase(),
-          repositoryComponent.getPreOrderConfirmationGateway(),
+          repositoryComponent.getPreOrderProcessGateway(),
           null,
           getPreOrdersSetUseCase());
     }
