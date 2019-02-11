@@ -2,6 +2,7 @@ package com.cargopull.executor_driver.gateway;
 
 import androidx.annotation.NonNull;
 import com.cargopull.executor_driver.entity.Order;
+import com.cargopull.executor_driver.entity.PaymentType;
 import ua.naiksoftware.stomp.client.StompMessage;
 
 /**
@@ -24,6 +25,6 @@ public class UpcomingPreOrderApiMapper implements Mapper<StompMessage, Order> {
     } catch (Exception e) {
       throw new DataMappingException("Ошибка маппинга: неверный формат ETA!", e);
     }
-    return new Order(orderId, "", "", 0, "", 0, 0, 0, 0, 0, etaToStartPoint, 0, 0, 0);
+    return new Order(orderId, PaymentType.CASH, "", "", 0, "", 0, 0, 0, 0, 0, etaToStartPoint, 0, 0, 0);
   }
 }

@@ -16,7 +16,7 @@
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toTopOf="parent"
     app:navigationIcon="@drawable/ic_back_24dp"
-    app:title="@string/check_list"/>
+    app:title="@string/orders_filter"/>
   <fragment
     android:id="@+id/fragment_server_connection"
     android:layout_width="0dp"

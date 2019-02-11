@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 import com.cargopull.executor_driver.backend.web.NoNetworkException;
 import com.cargopull.executor_driver.interactor.auth.SmsUseCase;
+import com.cargopull.executor_driver.presentation.FragmentViewActions;
 import com.cargopull.executor_driver.presentation.ViewState;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -20,7 +21,7 @@ public class SmsButtonViewModelImpl extends ViewModel implements SmsButtonViewMo
   @NonNull
   private final SmsUseCase smsUseCase;
   @NonNull
-  private final MutableLiveData<ViewState<SmsButtonViewActions>> viewStateLiveData;
+  private final MutableLiveData<ViewState<FragmentViewActions>> viewStateLiveData;
   @NonNull
   private Disposable sendDisposable = EmptyDisposable.INSTANCE;
   @NonNull
@@ -35,7 +36,8 @@ public class SmsButtonViewModelImpl extends ViewModel implements SmsButtonViewMo
 
   @NonNull
   @Override
-  public LiveData<ViewState<SmsButtonViewActions>> getViewStateLiveData() {
+  public LiveData<ViewState<FragmentViewActions
+      >> getViewStateLiveData() {
     return viewStateLiveData;
   }
 

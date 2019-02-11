@@ -23,6 +23,9 @@ public @interface MenuNavigate {
   // Переход к балансу.
   String PRE_ORDERS = "Menu.to.PreOrders";
 
+  // Переход к фильтру заказов.
+  String ORDERS_FILTER = "Menu.to.OrdersFilter";
+
   // Переход к истории заказов.
   String ORDERS_HISTORY = "Menu.to.OrdersHistory";
 

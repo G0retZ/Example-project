@@ -291,6 +291,9 @@ public class AppComponentImpl implements AppComponent {
     passwordFragment.setCodeViewModel(
         getPresentationComponent().getCodeViewModel(passwordFragment)
     );
+    passwordFragment.setShakeItPlayer(
+        getShakeItPlayer()
+    );
   }
 
   @Override
@@ -535,6 +538,12 @@ public class AppComponentImpl implements AppComponent {
     );
     menuFragment.setPreOrdersListViewModel(
         getPresentationComponent().getPreOrdersListViewModel()
+    );
+    menuFragment.setMenuViewModel(
+        getPresentationComponent().getMenuViewModel(menuFragment)
+    );
+    menuFragment.setOnlineButtonViewModel(
+        getPresentationComponent().getSelectedOnlineButtonViewModel(menuFragment)
     );
   }
 

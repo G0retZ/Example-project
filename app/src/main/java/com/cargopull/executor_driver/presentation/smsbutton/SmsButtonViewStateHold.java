@@ -2,12 +2,13 @@ package com.cargopull.executor_driver.presentation.smsbutton;
 
 import androidx.annotation.NonNull;
 import com.cargopull.executor_driver.R;
+import com.cargopull.executor_driver.presentation.FragmentViewActions;
 import com.cargopull.executor_driver.presentation.ViewState;
 
 /**
  * Состояние ожидания таймаута после отправки СМС.
  */
-public final class SmsButtonViewStateHold implements ViewState<SmsButtonViewActions> {
+public final class SmsButtonViewStateHold implements ViewState<FragmentViewActions> {
 
   private final long secondsLeft;
 
@@ -16,11 +17,10 @@ public final class SmsButtonViewStateHold implements ViewState<SmsButtonViewActi
   }
 
   @Override
-  public void apply(@NonNull SmsButtonViewActions stateActions) {
-    stateActions.enableSmsButton(false);
-    stateActions.setSmsButtonText(R.string.repeat_code_from_sms_delayed, secondsLeft);
-    stateActions.showSmsSendNetworkErrorMessage(false);
-    stateActions.showSmsSendPending(false);
+  public void apply(@NonNull FragmentViewActions stateActions) {
+    stateActions.setEnabled(R.id.sendSms, false);
+    stateActions.setFormattedText(R.id.sendSms, R.string.repeat_code_from_sms_delayed, secondsLeft);
+    stateActions.unblockWithPending("sms");
   }
 
   @Override

@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 import com.cargopull.executor_driver.interactor.DataReceiver;
+import com.cargopull.executor_driver.presentation.TextViewActions;
 import com.cargopull.executor_driver.presentation.ViewState;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
@@ -16,7 +17,7 @@ public class CodeHeaderViewModelImpl extends ViewModel implements CodeHeaderView
   @NonNull
   private final DataReceiver<String> loginReceiver;
   @NonNull
-  private final MutableLiveData<ViewState<CodeHeaderViewActions>> viewStateLiveData;
+  private final MutableLiveData<ViewState<TextViewActions>> viewStateLiveData;
   @NonNull
   private Disposable disposable = EmptyDisposable.INSTANCE;
 
@@ -28,7 +29,7 @@ public class CodeHeaderViewModelImpl extends ViewModel implements CodeHeaderView
 
   @NonNull
   @Override
-  public LiveData<ViewState<CodeHeaderViewActions>> getViewStateLiveData() {
+  public LiveData<ViewState<TextViewActions>> getViewStateLiveData() {
     loadLogin();
     return viewStateLiveData;
   }

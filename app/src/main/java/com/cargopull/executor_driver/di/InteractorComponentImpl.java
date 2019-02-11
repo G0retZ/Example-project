@@ -92,8 +92,6 @@ class InteractorComponentImpl implements InteractorComponent {
   @Nullable
   private OrderUseCase cancelledOrderUseCase;
   @Nullable
-  private ReportProblemUseCase reportProblemUseCase;
-  @Nullable
   private ConfirmOrderPaymentUseCase confirmOrderPaymentUseCase;
   @Nullable
   private CurrentCostPollingUseCase currentCostPollingUseCase;
@@ -205,12 +203,7 @@ class InteractorComponentImpl implements InteractorComponent {
   @NonNull
   @Override
   public ReportProblemUseCase getReportProblemUseCase() {
-    if (reportProblemUseCase == null) {
-      reportProblemUseCase = new ReportProblemUseCaseImpl(
-          repositoryComponent.getReportProblemGateway()
-      );
-    }
-    return reportProblemUseCase;
+    return new ReportProblemUseCaseImpl(repositoryComponent.getReportProblemGateway());
   }
 
   @NonNull

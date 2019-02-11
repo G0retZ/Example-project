@@ -11,8 +11,7 @@
   <string name="become_driver">Стать водителем</string>
   <string name="enter">Войти</string>
   <string name="code">Код</string>
-  <string name="sms_code_message">Мы отправили СМС с кодом на\n%1$s</string>
-  <string name="invalid_code">Введен неверный код</string>
+  <string name="sms_code_message">Мы отправили СМС с кодом на</string>
   <string name="repeat_code_from_sms_delayed">Отправить повтороно %1$d сек</string>
   <string name="repeat_code_from_sms">Отправить повтороно</string>
   <string name="geo_permissions_required">Нам нужно определять ваше местоположение с максимальной точностью, чтобы наилучшим образом подбирать вам заказы.</string>
@@ -25,7 +24,7 @@
   <string name="busy">Занята</string>
   <string name="no_vehicles_message">У вас отсутствуют транспортные средства.\nОбратитесь в офис обслуживания.</string>
   <string name="choose_vehicle">Гараж</string>
-  <string name="check_list">Чек лист</string>
+  <string name="orders_filter">Фильтр заказов</string>
   <string name="change">Сменить</string>
   <string name="working">В работе</string>
   <string name="online">На линии</string>
@@ -156,6 +155,7 @@
   <string name="retry">Повторить</string>
   <string name="orders_history">История заказов</string>
   <string name="server_settings">Настройки сервера</string>
+  <string name="cashless">Безнал</string>
   <string-array name="month_names">
     <item>Январь</item>
     <item>Февраль</item>

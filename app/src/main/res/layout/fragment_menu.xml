@@ -13,9 +13,9 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical">
-    <TextView
+    <Button
       android:id="@+id/balance"
-      style="@style/TextAppearance.AppTheme.SubTitle.Touchable"
+      style="@style/AppTheme.Button.Borderless.Menu"
       android:layout_width="0dp"
       android:layout_height="56dp"
       android:paddingStart="16dp"
@@ -44,9 +44,9 @@
       app:layout_constraintEnd_toEndOf="parent"
       app:layout_constraintStart_toStartOf="parent"
       app:layout_constraintTop_toBottomOf="@id/balance"/>
-    <TextView
+    <Button
       android:id="@+id/preOrders"
-      style="@style/TextAppearance.AppTheme.SubTitle.Touchable"
+      style="@style/AppTheme.Button.Borderless.Menu"
       android:layout_width="0dp"
       android:layout_height="56dp"
       android:paddingStart="16dp"
@@ -75,9 +75,29 @@
       app:layout_constraintEnd_toEndOf="parent"
       app:layout_constraintStart_toStartOf="parent"
       app:layout_constraintTop_toBottomOf="@id/preOrders"/>
-    <TextView
+    <Button
+      android:id="@+id/filter"
+      style="@style/AppTheme.Button.Borderless.Menu"
+      android:layout_width="0dp"
+      android:layout_height="56dp"
+      android:paddingStart="16dp"
+      android:paddingEnd="16dp"
+      android:gravity="center_vertical"
+      android:text="@string/orders_filter"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toBottomOf="@id/preOrderLine"/>
+    <View
+      android:id="@+id/filterLine"
+      android:layout_width="0dp"
+      android:layout_height="1dp"
+      android:background="@color/colorDivider"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toBottomOf="@id/filter"/>
+    <Button
       android:id="@+id/history"
-      style="@style/TextAppearance.AppTheme.SubTitle.Touchable"
+      style="@style/AppTheme.Button.Borderless.Menu"
       android:layout_width="0dp"
       android:layout_height="56dp"
       android:paddingStart="16dp"
@@ -86,7 +106,7 @@
       android:text="@string/orders_history"
       app:layout_constraintEnd_toEndOf="parent"
       app:layout_constraintStart_toStartOf="parent"
-      app:layout_constraintTop_toBottomOf="@id/preOrderLine"/>
+      app:layout_constraintTop_toBottomOf="@id/filterLine"/>
     <View
       android:id="@+id/historyLine"
       android:layout_width="0dp"
@@ -95,9 +115,9 @@
       app:layout_constraintEnd_toEndOf="parent"
       app:layout_constraintStart_toStartOf="parent"
       app:layout_constraintTop_toBottomOf="@id/history"/>
-    <TextView
+    <Button
       android:id="@+id/nightMode"
-      style="@style/TextAppearance.AppTheme.SubTitle.Touchable"
+      style="@style/AppTheme.Button.Borderless.Menu"
       android:layout_width="0dp"
       android:layout_height="56dp"
       android:paddingStart="16dp"
@@ -126,9 +146,9 @@
       app:layout_constraintEnd_toEndOf="parent"
       app:layout_constraintStart_toStartOf="parent"
       app:layout_constraintTop_toBottomOf="@id/nightMode"/>
-    <TextView
+    <Button
       android:id="@+id/about"
-      style="@style/TextAppearance.AppTheme.SubTitle.Touchable"
+      style="@style/AppTheme.Button.Borderless.Menu"
       android:layout_width="0dp"
       android:layout_height="56dp"
       android:paddingStart="16dp"
@@ -146,9 +166,9 @@
       app:layout_constraintEnd_toEndOf="parent"
       app:layout_constraintStart_toStartOf="parent"
       app:layout_constraintTop_toBottomOf="@id/about"/>
-    <TextView
+    <Button
       android:id="@+id/exit"
-      style="@style/TextAppearance.AppTheme.SubTitle.Touchable"
+      style="@style/AppTheme.Button.Borderless.Menu"
       android:layout_width="0dp"
       android:layout_height="56dp"
       android:paddingStart="16dp"

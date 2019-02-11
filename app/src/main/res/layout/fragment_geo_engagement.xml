@@ -44,7 +44,7 @@
     app:layout_constraintTop_toBottomOf="@id/geoIcon"/>
   <Button
     android:id="@+id/settings"
-    style="@style/AppThemeNew.Button"
+    style="@style/AppThemeNew.Button.FullWidth"
     android:layout_width="0dp"
     android:layout_height="64dp"
     android:text="@string/settings"

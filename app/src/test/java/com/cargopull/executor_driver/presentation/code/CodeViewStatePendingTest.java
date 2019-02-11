@@ -29,11 +29,9 @@ public class CodeViewStatePendingTest {
     viewState.apply(viewActions);
 
     // Результат:
-    verify(viewActions).enableInputField(false);
-    verify(viewActions).showCodeCheckPending(true);
-    verify(viewActions).showCodeCheckError(false);
-    verify(viewActions).showCodeCheckNetworkErrorMessage(false);
-    verify(viewActions).setUnderlineImage(R.drawable.ic_code_input_default);
+    verify(viewActions).setEnabled(R.id.codeInput, false);
+    verify(viewActions).blockWithPending("password");
+    verify(viewActions).setBackground(R.id.codeInput, R.drawable.ic_code_input_default);
     verifyNoMoreInteractions(viewActions);
   }
 }
