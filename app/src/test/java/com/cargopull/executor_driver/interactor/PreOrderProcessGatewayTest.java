@@ -14,7 +14,7 @@ import com.cargopull.executor_driver.backend.web.incoming.ApiSimpleResult;
 import com.cargopull.executor_driver.backend.web.outgoing.ApiOrderDecision;
 import com.cargopull.executor_driver.entity.Order;
 import com.cargopull.executor_driver.entity.OrderConfirmationFailedException;
-import com.cargopull.executor_driver.gateway.PreOrderConfirmationGateway;
+import com.cargopull.executor_driver.gateway.PreOrderProcessGateway;
 import io.reactivex.Single;
 import io.reactivex.observers.TestObserver;
 import org.junit.Before;
@@ -29,7 +29,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
-public class PreOrderConfirmationGatewayTest {
+public class PreOrderProcessGatewayTest {
 
   @ClassRule
   public static final GatewayThreadTestRule classRule = new GatewayThreadTestRule();
@@ -46,8 +46,8 @@ public class PreOrderConfirmationGatewayTest {
 
   @Before
   public void setUp() {
-    when(apiService.sendPreOrderDecision(any())).thenReturn(Single.never());
-    gateway = new PreOrderConfirmationGateway(apiService);
+    when(apiService.sendPreOrderProcess(any())).thenReturn(Single.never());
+    gateway = new PreOrderProcessGateway(apiService);
   }
 
   /* Проверяем работу с клиентом STOMP */
@@ -66,7 +66,7 @@ public class PreOrderConfirmationGatewayTest {
     gateway.sendDecision(order, true).test().isDisposed();
 
     // Результат:
-    inOrder.verify(apiService, times(2)).sendPreOrderDecision(orderDecisionCaptor.capture());
+    inOrder.verify(apiService, times(2)).sendPreOrderProcess(orderDecisionCaptor.capture());
     verifyNoMoreInteractions(apiService);
     assertEquals(orderDecisionCaptor.getAllValues().get(0).getId(), 7);
     assertFalse(orderDecisionCaptor.getAllValues().get(0).isApproved());
@@ -83,7 +83,7 @@ public class PreOrderConfirmationGatewayTest {
   @Test
   public void answerSendDecisionServerSuccess() {
     // Дано:
-    when(apiService.sendPreOrderDecision(any())).thenReturn(Single.just(apiSimpleResult));
+    when(apiService.sendPreOrderProcess(any())).thenReturn(Single.just(apiSimpleResult));
     when(apiSimpleResult.getCode()).thenReturn("200");
     when(apiSimpleResult.getMessage()).thenReturn("message");
 
@@ -102,7 +102,7 @@ public class PreOrderConfirmationGatewayTest {
   @Test
   public void answerSendDecisionServerError() {
     // Дано:
-    when(apiService.sendPreOrderDecision(any())).thenReturn(Single.just(apiSimpleResult));
+    when(apiService.sendPreOrderProcess(any())).thenReturn(Single.just(apiSimpleResult));
     when(apiSimpleResult.getCode()).thenReturn("409");
     when(apiSimpleResult.getMessage()).thenReturn("error");
 
@@ -123,7 +123,7 @@ public class PreOrderConfirmationGatewayTest {
   @Test
   public void answerSendDecisionError() {
     // Дано:
-    when(apiService.sendPreOrderDecision(any()))
+    when(apiService.sendPreOrderProcess(any()))
         .thenReturn(Single.error(new IllegalArgumentException()));
 
     // Действие:

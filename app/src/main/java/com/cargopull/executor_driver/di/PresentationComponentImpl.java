@@ -56,7 +56,11 @@ import com.cargopull.executor_driver.presentation.ordecostdetails.OrderCostDetai
 import com.cargopull.executor_driver.presentation.order.OrderViewModel;
 import com.cargopull.executor_driver.presentation.order.OrderViewModelImpl;
 import com.cargopull.executor_driver.presentation.orderconfirmation.OrderConfirmationViewModel;
-import com.cargopull.executor_driver.presentation.orderconfirmation.OrderConfirmationViewModelImpl;
+import com.cargopull.executor_driver.presentation.orderconfirmation.PreOrderBookingViewModel;
+import com.cargopull.executor_driver.presentation.orderconfirmation.PreOrderConfirmationViewModel;
+import com.cargopull.executor_driver.presentation.orderconfirmation.RushOrderConfirmationViewModel;
+import com.cargopull.executor_driver.presentation.orderconfirmation.SelectedPreOrderConfirmationViewModel;
+import com.cargopull.executor_driver.presentation.orderconfirmation.UpcomingPreOrderConfirmationViewModel;
 import com.cargopull.executor_driver.presentation.ordercost.OrderCostViewModel;
 import com.cargopull.executor_driver.presentation.ordercost.OrderCostViewModelImpl;
 import com.cargopull.executor_driver.presentation.orderroute.OrderRouteViewModel;
@@ -478,12 +482,29 @@ class PresentationComponentImpl implements PresentationComponent {
 
   @NonNull
   @Override
-  public OrderConfirmationViewModel getOrderConfirmationViewModel(@Nullable Fragment fragment) {
+  public OrderConfirmationViewModel getRushOrderConfirmationViewModel(@Nullable Fragment fragment) {
     return getViewModelInstance(
         fragment,
-        OrderConfirmationViewModelImpl.class,
-        new OrderConfirmationViewModelImpl(
+        RushOrderConfirmationViewModel.class,
+        new RushOrderConfirmationViewModel(
             backendComponent.getErrorReporter(),
+            getInteractorComponent().getExecutorStateUseCase(),
+            getInteractorComponent().getOrderConfirmationUseCase(),
+            timeUtils,
+            backendComponent.getEventLogger()
+        )
+    );
+  }
+
+  @NonNull
+  @Override
+  public OrderConfirmationViewModel getPreOrderConfirmationViewModel(@Nullable Fragment fragment) {
+    return getViewModelInstance(
+        fragment,
+        PreOrderConfirmationViewModel.class,
+        new PreOrderConfirmationViewModel(
+            backendComponent.getErrorReporter(),
+            getInteractorComponent().getExecutorStateUseCase(),
             getInteractorComponent().getOrderConfirmationUseCase(),
             timeUtils,
             backendComponent.getEventLogger()
@@ -496,9 +517,10 @@ class PresentationComponentImpl implements PresentationComponent {
   public OrderConfirmationViewModel getPreOrderBookingViewModel(@Nullable Fragment fragment) {
     return getViewModelInstance(
         fragment,
-        OrderConfirmationViewModelImpl.class,
-        new OrderConfirmationViewModelImpl(
+        PreOrderBookingViewModel.class,
+        new PreOrderBookingViewModel(
             backendComponent.getErrorReporter(),
+            getInteractorComponent().getExecutorStateUseCase(),
             getInteractorComponent().getPreOrderBookingUseCase(),
             timeUtils,
             null
@@ -708,9 +730,10 @@ class PresentationComponentImpl implements PresentationComponent {
       @Nullable Fragment fragment) {
     return getViewModelInstance(
         fragment,
-        OrderConfirmationViewModelImpl.class,
-        new OrderConfirmationViewModelImpl(
+        SelectedPreOrderConfirmationViewModel.class,
+        new SelectedPreOrderConfirmationViewModel(
             backendComponent.getErrorReporter(),
+            getInteractorComponent().getExecutorStateUseCase(),
             getInteractorComponent().getSelectedPreOrderConfirmationUseCase(),
             timeUtils,
             null
@@ -737,9 +760,10 @@ class PresentationComponentImpl implements PresentationComponent {
       @Nullable Fragment fragment) {
     return getViewModelInstance(
         fragment,
-        OrderConfirmationViewModelImpl.class,
-        new OrderConfirmationViewModelImpl(
+        UpcomingPreOrderConfirmationViewModel.class,
+        new UpcomingPreOrderConfirmationViewModel(
             backendComponent.getErrorReporter(),
+            getInteractorComponent().getExecutorStateUseCase(),
             getInteractorComponent().getUpcomingPreOrderConfirmationUseCase(),
             timeUtils,
             null

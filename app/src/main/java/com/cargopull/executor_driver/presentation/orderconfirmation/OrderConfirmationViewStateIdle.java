@@ -10,16 +10,18 @@ final class OrderConfirmationViewStateIdle implements ViewState<OrderConfirmatio
 
   @NonNull
   private final OrderConfirmationTimeoutItem orderConfirmationTimeoutItem;
+  private final boolean acceptEnabled;
 
   OrderConfirmationViewStateIdle(
-      @NonNull OrderConfirmationTimeoutItem orderConfirmationTimeoutItem) {
+      @NonNull OrderConfirmationTimeoutItem orderConfirmationTimeoutItem, boolean acceptEnabled) {
     this.orderConfirmationTimeoutItem = orderConfirmationTimeoutItem;
+    this.acceptEnabled = acceptEnabled;
   }
 
   @Override
   public void apply(@NonNull OrderConfirmationViewActions stateActions) {
     stateActions.showDriverOrderConfirmationPending(false);
-    stateActions.enableAcceptButton(true);
+    stateActions.enableAcceptButton(acceptEnabled);
     stateActions.enableDeclineButton(true);
     stateActions.showAcceptedMessage(null);
     stateActions.showDeclinedMessage(null);
@@ -41,11 +43,16 @@ final class OrderConfirmationViewStateIdle implements ViewState<OrderConfirmatio
 
     OrderConfirmationViewStateIdle that = (OrderConfirmationViewStateIdle) o;
 
+    if (acceptEnabled != that.acceptEnabled) {
+      return false;
+    }
     return orderConfirmationTimeoutItem.equals(that.orderConfirmationTimeoutItem);
   }
 
   @Override
   public int hashCode() {
-    return orderConfirmationTimeoutItem.hashCode();
+    int result = orderConfirmationTimeoutItem.hashCode();
+    result = 31 * result + (acceptEnabled ? 1 : 0);
+    return result;
   }
 }

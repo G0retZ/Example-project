@@ -131,6 +131,7 @@ public class SelectedPreOrderConfirmationFragment extends BaseFragment implement
       }
       return false;
     });
+    setOutAction.setOnClickListener(v ->  orderConfirmationViewModel.acceptOrder());
     return view;
   }
 
@@ -205,7 +206,7 @@ public class SelectedPreOrderConfirmationFragment extends BaseFragment implement
 
   @Override
   public void enableAcceptButton(boolean enable) {
-    setOutAction.setEnabled(false);
+    setOutAction.setEnabled(enable);
   }
 
   @Override
