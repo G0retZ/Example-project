@@ -14,7 +14,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.LinearInterpolator;
-import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
@@ -38,13 +37,18 @@ public class SelectedPreOrderConfirmationFragment extends BaseFragment implement
   private OrderConfirmationViewModel orderConfirmationViewModel;
   private ShakeItPlayer shakeItPlayer;
   private RingTonePlayer ringTonePlayer;
-  private Button setOutAction;
+  private ProgressBar setOutAction;
+  private TextView setOutActionText;
   private ProgressBar declineAction;
   private TextView declineActionText;
   @Nullable
   private ObjectAnimator declineDelayAnimator;
   @Nullable
   private ObjectAnimator declineResetAnimator;
+  @Nullable
+  private ObjectAnimator setOutDelayAnimator;
+  @Nullable
+  private ObjectAnimator setOutResetAnimator;
   @Nullable
   private AlertDialog alertDialog;
   private Context context;
@@ -78,7 +82,8 @@ public class SelectedPreOrderConfirmationFragment extends BaseFragment implement
       @Nullable Bundle savedInstanceState) {
     View view = inflater
         .inflate(R.layout.fragment_selected_pre_order_confirmation, container, false);
-    setOutAction = view.findViewById(R.id.setOutButton);
+    setOutAction = view.findViewById(R.id.setOutChart);
+    setOutActionText = view.findViewById(R.id.setOutText);
     declineAction = view.findViewById(R.id.declineChart);
     declineActionText = view.findViewById(R.id.declineText);
 
@@ -131,7 +136,56 @@ public class SelectedPreOrderConfirmationFragment extends BaseFragment implement
       }
       return false;
     });
-    setOutAction.setOnClickListener(v ->  orderConfirmationViewModel.acceptOrder());
+
+    setOutDelayAnimator = ObjectAnimator.ofInt(setOutAction, "progress", 0, 100);
+    setOutDelayAnimator.setDuration(1500);
+    setOutDelayAnimator.setInterpolator(new DecelerateInterpolator());
+    setOutDelayAnimator.addListener(new AnimatorListener() {
+      private boolean canceled;
+
+      @Override
+      public void onAnimationStart(Animator animation) {
+        canceled = false;
+      }
+
+      @Override
+      public void onAnimationEnd(Animator animation) {
+        if (!canceled) {
+          orderConfirmationViewModel.acceptOrder();
+          shakeItPlayer.shakeIt(R.raw.single_shot_vibro);
+        }
+      }
+
+      @Override
+      public void onAnimationCancel(Animator animation) {
+        canceled = true;
+      }
+
+      @Override
+      public void onAnimationRepeat(Animator animation) {
+
+      }
+    });
+
+    setOutAction.setOnTouchListener((v, event) -> {
+      int i = event.getAction();
+      if (i == MotionEvent.ACTION_DOWN) {
+        setOutDelayAnimator.start();
+        if (setOutResetAnimator != null) {
+          setOutResetAnimator.cancel();
+        }
+        return true;
+      } else if (i == MotionEvent.ACTION_UP) {
+        setOutDelayAnimator.cancel();
+        setOutResetAnimator = ObjectAnimator
+            .ofInt(setOutAction, "progress", setOutAction.getProgress(), 0);
+        setOutResetAnimator.setDuration(150);
+        setOutResetAnimator.setInterpolator(new LinearInterpolator());
+        setOutResetAnimator.start();
+        return true;
+      }
+      return false;
+    });
     return view;
   }
 
@@ -166,6 +220,12 @@ public class SelectedPreOrderConfirmationFragment extends BaseFragment implement
     }
     if (declineDelayAnimator != null) {
       declineDelayAnimator.cancel();
+    }
+    if (setOutDelayAnimator != null) {
+      setOutDelayAnimator.cancel();
+    }
+    if (setOutResetAnimator != null) {
+      setOutResetAnimator.cancel();
     }
     super.onDetach();
     context = null;
@@ -206,7 +266,11 @@ public class SelectedPreOrderConfirmationFragment extends BaseFragment implement
 
   @Override
   public void enableAcceptButton(boolean enable) {
+    if (!enable && setOutDelayAnimator != null) {
+      setOutDelayAnimator.cancel();
+    }
     setOutAction.setEnabled(enable);
+    setOutActionText.setEnabled(enable);
   }
 
   @Override
