@@ -1,6 +1,6 @@
 <resources>
   <string name="app_name">Cargopull Исполнитель</string>
-  <string name="authorization">Авторизация</string>
+  <string name="login">Вход</string>
   <string name="phone_number">Номер телефона</string>
   <string name="server_data_format_error">Ошибка формата данных от сервера</string>
   <string name="no_network_connection">Отсуствует подключение к сети</string>
@@ -10,7 +10,7 @@
   <string name="status_unknown">Неизвестный статус!</string>
   <string name="become_driver">Стать водителем</string>
   <string name="enter">Войти</string>
-  <string name="code">Код</string>
+  <string name="code">Введите код</string>
   <string name="sms_code_message">Мы отправили СМС с кодом на</string>
   <string name="repeat_code_from_sms_delayed">Отправить повтороно %1$d сек</string>
   <string name="repeat_code_from_sms">Отправить повтороно</string>
