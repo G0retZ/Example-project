@@ -37,6 +37,8 @@ import com.cargopull.executor_driver.presentation.geolocationstate.GeoLocationSt
 import com.cargopull.executor_driver.presentation.geolocationstate.GeoLocationStateViewModelImpl;
 import com.cargopull.executor_driver.presentation.map.MapViewModel;
 import com.cargopull.executor_driver.presentation.map.MapViewModelImpl;
+import com.cargopull.executor_driver.presentation.menu.MenuViewModel;
+import com.cargopull.executor_driver.presentation.menu.MenuViewModelImpl;
 import com.cargopull.executor_driver.presentation.missedorder.MissedOrderViewModel;
 import com.cargopull.executor_driver.presentation.missedorder.MissedOrderViewModelImpl;
 import com.cargopull.executor_driver.presentation.movingtoclient.MovingToClientViewModel;
@@ -54,7 +56,11 @@ import com.cargopull.executor_driver.presentation.ordecostdetails.OrderCostDetai
 import com.cargopull.executor_driver.presentation.order.OrderViewModel;
 import com.cargopull.executor_driver.presentation.order.OrderViewModelImpl;
 import com.cargopull.executor_driver.presentation.orderconfirmation.OrderConfirmationViewModel;
-import com.cargopull.executor_driver.presentation.orderconfirmation.OrderConfirmationViewModelImpl;
+import com.cargopull.executor_driver.presentation.orderconfirmation.PreOrderBookingViewModel;
+import com.cargopull.executor_driver.presentation.orderconfirmation.PreOrderConfirmationViewModel;
+import com.cargopull.executor_driver.presentation.orderconfirmation.RushOrderConfirmationViewModel;
+import com.cargopull.executor_driver.presentation.orderconfirmation.SelectedPreOrderConfirmationViewModel;
+import com.cargopull.executor_driver.presentation.orderconfirmation.UpcomingPreOrderConfirmationViewModel;
 import com.cargopull.executor_driver.presentation.ordercost.OrderCostViewModel;
 import com.cargopull.executor_driver.presentation.ordercost.OrderCostViewModelImpl;
 import com.cargopull.executor_driver.presentation.orderroute.OrderRouteViewModel;
@@ -168,9 +174,6 @@ class PresentationComponentImpl implements PresentationComponent {
   @NonNull
   @Override
   public CallToClientViewModel getCallToClientViewModel(@Nullable Fragment fragment) {
-    if (fragment == null) {
-      throw new NullPointerException("Фрагмент не должен быть null");
-    }
     return getViewModelInstance(
         fragment,
         CallToClientViewModelImpl.class,
@@ -183,9 +186,6 @@ class PresentationComponentImpl implements PresentationComponent {
   @NonNull
   @Override
   public CallToOperatorViewModel getCallToOperatorViewModel(@Nullable Fragment fragment) {
-    if (fragment == null) {
-      throw new NullPointerException("Фрагмент не должен быть null");
-    }
     return getViewModelInstance(
         fragment,
         CallToOperatorViewModelImpl.class,
@@ -208,9 +208,6 @@ class PresentationComponentImpl implements PresentationComponent {
   @NonNull
   @Override
   public ReportProblemViewModel getCancelOrderViewModel(@Nullable Fragment fragment) {
-    if (fragment == null) {
-      throw new NullPointerException("Фрагмент не должен быть null");
-    }
     return getViewModelInstance(
         fragment,
         ReportProblemViewModelImpl.class,
@@ -223,9 +220,6 @@ class PresentationComponentImpl implements PresentationComponent {
   @NonNull
   @Override
   public ChooseVehicleViewModel getChooseVehicleViewModel(@Nullable Fragment fragment) {
-    if (fragment == null) {
-      throw new NullPointerException("Фрагмент не должен быть null");
-    }
     return getViewModelInstance(
         fragment,
         ChooseVehicleViewModelImpl.class,
@@ -238,9 +232,6 @@ class PresentationComponentImpl implements PresentationComponent {
   @NonNull
   @Override
   public ChooseVehicleViewModel getSelectedChooseVehicleViewModel(@Nullable Fragment fragment) {
-    if (fragment == null) {
-      throw new NullPointerException("Фрагмент не должен быть null");
-    }
     return getViewModelInstance(
         fragment,
         ChooseVehicleViewModelImpl.class,
@@ -253,9 +244,6 @@ class PresentationComponentImpl implements PresentationComponent {
   @NonNull
   @Override
   public ChooseVehicleViewModel getCurrentChooseVehicleViewModel(@Nullable Fragment fragment) {
-    if (fragment == null) {
-      throw new NullPointerException("Фрагмент не должен быть null");
-    }
     return getViewModelInstance(
         fragment,
         ChooseVehicleViewModelImpl.class,
@@ -269,9 +257,6 @@ class PresentationComponentImpl implements PresentationComponent {
   @Override
   public ClientOrderConfirmationTimeViewModel getClientOrderConfirmationTimeViewModel(
       @Nullable Fragment fragment) {
-    if (fragment == null) {
-      throw new NullPointerException("Фрагмент не должен быть null");
-    }
     return getViewModelInstance(
         fragment,
         ClientOrderConfirmationTimeViewModelImpl.class,
@@ -285,9 +270,6 @@ class PresentationComponentImpl implements PresentationComponent {
   @NonNull
   @Override
   public CodeViewModel getCodeViewModel(@Nullable Fragment fragment) {
-    if (fragment == null) {
-      throw new NullPointerException("Фрагмент не должен быть null");
-    }
     return getViewModelInstance(
         fragment,
         CodeViewModelImpl.class,
@@ -302,9 +284,6 @@ class PresentationComponentImpl implements PresentationComponent {
   @NonNull
   @Override
   public CodeHeaderViewModel getCodeHeaderViewModel(@Nullable Fragment fragment) {
-    if (fragment == null) {
-      throw new NullPointerException("Фрагмент не должен быть null");
-    }
     return getViewModelInstance(
         fragment,
         CodeHeaderViewModelImpl.class,
@@ -317,9 +296,6 @@ class PresentationComponentImpl implements PresentationComponent {
   @NonNull
   @Override
   public ConfirmOrderPaymentViewModel getConfirmOrderPaymentViewModel(@Nullable Fragment fragment) {
-    if (fragment == null) {
-      throw new NullPointerException("Фрагмент не должен быть null");
-    }
     return getViewModelInstance(
         fragment,
         ConfirmOrderPaymentViewModelImpl.class,
@@ -368,9 +344,6 @@ class PresentationComponentImpl implements PresentationComponent {
   @NonNull
   @Override
   public MapViewModel getMapViewModel(@Nullable Fragment fragment) {
-    if (fragment == null) {
-      throw new NullPointerException("Фрагмент не должен быть null");
-    }
     return getViewModelInstance(
         fragment,
         MapViewModelImpl.class,
@@ -395,9 +368,6 @@ class PresentationComponentImpl implements PresentationComponent {
   @NonNull
   @Override
   public MovingToClientViewModel getMovingToClientViewModel(@Nullable Fragment fragment) {
-    if (fragment == null) {
-      throw new NullPointerException("Фрагмент не должен быть null");
-    }
     return getViewModelInstance(
         fragment,
         MovingToClientViewModelImpl.class,
@@ -410,9 +380,6 @@ class PresentationComponentImpl implements PresentationComponent {
   @NonNull
   @Override
   public NextRoutePointViewModel getNextRoutePointViewModel(@Nullable Fragment fragment) {
-    if (fragment == null) {
-      throw new NullPointerException("Фрагмент не должен быть null");
-    }
     return getViewModelInstance(
         fragment,
         NextRoutePointViewModelImpl.class,
@@ -425,9 +392,6 @@ class PresentationComponentImpl implements PresentationComponent {
   @NonNull
   @Override
   public OnlineButtonViewModel getOnlineButtonViewModel(@Nullable Fragment fragment) {
-    if (fragment == null) {
-      throw new NullPointerException("Фрагмент не должен быть null");
-    }
     return getViewModelInstance(
         fragment,
         OnlineButtonViewModelImpl.class,
@@ -441,9 +405,6 @@ class PresentationComponentImpl implements PresentationComponent {
   @NonNull
   @Override
   public OnlineButtonViewModel getSelectedOnlineButtonViewModel(@Nullable Fragment fragment) {
-    if (fragment == null) {
-      throw new NullPointerException("Фрагмент не должен быть null");
-    }
     return getViewModelInstance(
         fragment,
         OnlineButtonViewModelImpl.class,
@@ -457,9 +418,6 @@ class PresentationComponentImpl implements PresentationComponent {
   @NonNull
   @Override
   public OnlineSwitchViewModel getOnlineSwitchViewModel(@Nullable Fragment fragment) {
-    if (fragment == null) {
-      throw new NullPointerException("Фрагмент не должен быть null");
-    }
     return getViewModelInstance(
         fragment,
         OnlineSwitchViewModelImpl.class,
@@ -474,9 +432,6 @@ class PresentationComponentImpl implements PresentationComponent {
   @NonNull
   @Override
   public OnlineSwitchViewModel getExitOnlineSwitchViewModel(@Nullable Fragment fragment) {
-    if (fragment == null) {
-      throw new NullPointerException("Фрагмент не должен быть null");
-    }
     return getViewModelInstance(
         fragment,
         OnlineSwitchViewModelImpl.class,
@@ -515,9 +470,6 @@ class PresentationComponentImpl implements PresentationComponent {
   @NonNull
   @Override
   public OrderViewModel getPOrderViewModel(@Nullable Fragment fragment) {
-    if (fragment == null) {
-      throw new NullPointerException("Фрагмент не должен быть null");
-    }
     return getViewModelInstance(
         fragment,
         OrderViewModelImpl.class,
@@ -530,15 +482,29 @@ class PresentationComponentImpl implements PresentationComponent {
 
   @NonNull
   @Override
-  public OrderConfirmationViewModel getOrderConfirmationViewModel(@Nullable Fragment fragment) {
-    if (fragment == null) {
-      throw new NullPointerException("Фрагмент не должен быть null");
-    }
+  public OrderConfirmationViewModel getRushOrderConfirmationViewModel(@Nullable Fragment fragment) {
     return getViewModelInstance(
         fragment,
-        OrderConfirmationViewModelImpl.class,
-        new OrderConfirmationViewModelImpl(
+        RushOrderConfirmationViewModel.class,
+        new RushOrderConfirmationViewModel(
             backendComponent.getErrorReporter(),
+            getInteractorComponent().getExecutorStateUseCase(),
+            getInteractorComponent().getOrderConfirmationUseCase(),
+            timeUtils,
+            backendComponent.getEventLogger()
+        )
+    );
+  }
+
+  @NonNull
+  @Override
+  public OrderConfirmationViewModel getPreOrderConfirmationViewModel(@Nullable Fragment fragment) {
+    return getViewModelInstance(
+        fragment,
+        PreOrderConfirmationViewModel.class,
+        new PreOrderConfirmationViewModel(
+            backendComponent.getErrorReporter(),
+            getInteractorComponent().getExecutorStateUseCase(),
             getInteractorComponent().getOrderConfirmationUseCase(),
             timeUtils,
             backendComponent.getEventLogger()
@@ -549,14 +515,12 @@ class PresentationComponentImpl implements PresentationComponent {
   @NonNull
   @Override
   public OrderConfirmationViewModel getPreOrderBookingViewModel(@Nullable Fragment fragment) {
-    if (fragment == null) {
-      throw new NullPointerException("Фрагмент не должен быть null");
-    }
     return getViewModelInstance(
         fragment,
-        OrderConfirmationViewModelImpl.class,
-        new OrderConfirmationViewModelImpl(
+        PreOrderBookingViewModel.class,
+        new PreOrderBookingViewModel(
             backendComponent.getErrorReporter(),
+            getInteractorComponent().getExecutorStateUseCase(),
             getInteractorComponent().getPreOrderBookingUseCase(),
             timeUtils,
             null
@@ -567,9 +531,6 @@ class PresentationComponentImpl implements PresentationComponent {
   @NonNull
   @Override
   public OrderCostViewModel getOrderCostViewModel(@Nullable Fragment fragment) {
-    if (fragment == null) {
-      throw new NullPointerException("Фрагмент не должен быть null");
-    }
     return getViewModelInstance(
         fragment,
         OrderCostViewModelImpl.class,
@@ -582,9 +543,6 @@ class PresentationComponentImpl implements PresentationComponent {
   @NonNull
   @Override
   public OrderRouteViewModel getOrderRouteViewModel(@Nullable Fragment fragment) {
-    if (fragment == null) {
-      throw new NullPointerException("Фрагмент не должен быть null");
-    }
     return getViewModelInstance(
         fragment,
         OrderRouteViewModelImpl.class,
@@ -597,9 +555,6 @@ class PresentationComponentImpl implements PresentationComponent {
   @NonNull
   @Override
   public OrderTimeViewModel getOrderTimeViewModel(@Nullable Fragment fragment) {
-    if (fragment == null) {
-      throw new NullPointerException("Фрагмент не должен быть null");
-    }
     return getViewModelInstance(
         fragment,
         OrderTimeViewModelImpl.class,
@@ -612,9 +567,6 @@ class PresentationComponentImpl implements PresentationComponent {
   @NonNull
   @Override
   public PhoneViewModel getPhoneViewModel(@Nullable Fragment fragment) {
-    if (fragment == null) {
-      throw new NullPointerException("Фрагмент не должен быть null");
-    }
     return getViewModelInstance(
         fragment,
         PhoneViewModelImpl.class,
@@ -653,9 +605,6 @@ class PresentationComponentImpl implements PresentationComponent {
   @NonNull
   @Override
   public SelectedVehicleViewModel getSelectedVehicleViewModel(@Nullable Fragment fragment) {
-    if (fragment == null) {
-      throw new NullPointerException("Фрагмент не должен быть null");
-    }
     return getViewModelInstance(
         fragment,
         SelectedVehicleViewModelImpl.class,
@@ -691,9 +640,6 @@ class PresentationComponentImpl implements PresentationComponent {
   @NonNull
   @Override
   public SmsButtonViewModel getSmsButtonViewModel(@Nullable Fragment fragment) {
-    if (fragment == null) {
-      throw new NullPointerException("Фрагмент не должен быть null");
-    }
     return getViewModelInstance(
         fragment,
         SmsButtonViewModelImpl.class,
@@ -730,9 +676,6 @@ class PresentationComponentImpl implements PresentationComponent {
   @NonNull
   @Override
   public VehicleOptionsViewModel getVehicleOptionsViewModel(@Nullable Fragment fragment) {
-    if (fragment == null) {
-      throw new NullPointerException("Фрагмент не должен быть null");
-    }
     return getViewModelInstance(
         fragment,
         VehicleOptionsViewModelImpl.class,
@@ -746,9 +689,6 @@ class PresentationComponentImpl implements PresentationComponent {
   @NonNull
   @Override
   public VehicleOptionsViewModel getSelectedVehicleOptionsViewModel(@Nullable Fragment fragment) {
-    if (fragment == null) {
-      throw new NullPointerException("Фрагмент не должен быть null");
-    }
     return getViewModelInstance(
         fragment,
         VehicleOptionsViewModelImpl.class,
@@ -762,9 +702,6 @@ class PresentationComponentImpl implements PresentationComponent {
   @NonNull
   @Override
   public WaitingForClientViewModel getWaitingForClientViewModel(@Nullable Fragment fragment) {
-    if (fragment == null) {
-      throw new NullPointerException("Фрагмент не должен быть null");
-    }
     return getViewModelInstance(
         fragment,
         WaitingForClientViewModelImpl.class,
@@ -777,9 +714,6 @@ class PresentationComponentImpl implements PresentationComponent {
   @NonNull
   @Override
   public OrderViewModel getSelectedPreOrderViewModel(@Nullable Fragment fragment) {
-    if (fragment == null) {
-      throw new NullPointerException("Фрагмент не должен быть null");
-    }
     return getViewModelInstance(
         fragment,
         OrderViewModelImpl.class,
@@ -794,14 +728,12 @@ class PresentationComponentImpl implements PresentationComponent {
   @Override
   public OrderConfirmationViewModel getSelectedPreOrderConfirmationViewModel(
       @Nullable Fragment fragment) {
-    if (fragment == null) {
-      throw new NullPointerException("Фрагмент не должен быть null");
-    }
     return getViewModelInstance(
         fragment,
-        OrderConfirmationViewModelImpl.class,
-        new OrderConfirmationViewModelImpl(
+        SelectedPreOrderConfirmationViewModel.class,
+        new SelectedPreOrderConfirmationViewModel(
             backendComponent.getErrorReporter(),
+            getInteractorComponent().getExecutorStateUseCase(),
             getInteractorComponent().getSelectedPreOrderConfirmationUseCase(),
             timeUtils,
             null
@@ -812,9 +744,6 @@ class PresentationComponentImpl implements PresentationComponent {
   @NonNull
   @Override
   public OrderViewModel getUpcomingPreOrderViewModel(@Nullable Fragment fragment) {
-    if (fragment == null) {
-      throw new NullPointerException("Фрагмент не должен быть null");
-    }
     return getViewModelInstance(
         fragment,
         OrderViewModelImpl.class,
@@ -829,14 +758,12 @@ class PresentationComponentImpl implements PresentationComponent {
   @Override
   public OrderConfirmationViewModel getUpcomingPreOrderConfirmationViewModel(
       @Nullable Fragment fragment) {
-    if (fragment == null) {
-      throw new NullPointerException("Фрагмент не должен быть null");
-    }
     return getViewModelInstance(
         fragment,
-        OrderConfirmationViewModelImpl.class,
-        new OrderConfirmationViewModelImpl(
+        UpcomingPreOrderConfirmationViewModel.class,
+        new UpcomingPreOrderConfirmationViewModel(
             backendComponent.getErrorReporter(),
+            getInteractorComponent().getExecutorStateUseCase(),
             getInteractorComponent().getUpcomingPreOrderConfirmationUseCase(),
             timeUtils,
             null
@@ -860,9 +787,6 @@ class PresentationComponentImpl implements PresentationComponent {
   @Override
   public GeoLocationStateViewModel getGeoLocationStateViewModel(
       @Nullable AppCompatActivity appCompatActivity) {
-    if (appCompatActivity == null) {
-      throw new NullPointerException("Активити не должно быть null");
-    }
     return getViewModelInstance(
         appCompatActivity,
         GeoLocationStateViewModelImpl.class,
@@ -879,9 +803,6 @@ class PresentationComponentImpl implements PresentationComponent {
   @Override
   public GeoLocationStateViewModel getGeoLocationStateViewModel(
       @Nullable Fragment fragment) {
-    if (fragment == null) {
-      throw new NullPointerException("Фрагмент не должен быть null");
-    }
     return getViewModelInstance(
         fragment,
         GeoLocationStateViewModelImpl.class,
@@ -897,9 +818,6 @@ class PresentationComponentImpl implements PresentationComponent {
   @NonNull
   @Override
   public MovingToClientTimerViewModel getMovingToClientTimerViewModel(@Nullable Fragment fragment) {
-    if (fragment == null) {
-      throw new NullPointerException("Фрагмент не должен быть null");
-    }
     return getViewModelInstance(
         fragment,
         MovingToClientTimerViewModelImpl.class,
@@ -915,9 +833,6 @@ class PresentationComponentImpl implements PresentationComponent {
   @Override
   public OrdersHistoryHeaderViewModel getOrdersHistoryHeaderViewModel(@Nullable Fragment fragment,
       int offset) {
-    if (fragment == null) {
-      throw new NullPointerException("Фрагмент не должен быть null");
-    }
     return getViewModelInstance(
         fragment,
         OrdersHistoryHeaderViewModelImpl.class,
@@ -926,6 +841,18 @@ class PresentationComponentImpl implements PresentationComponent {
             backendComponent.getErrorReporter(),
             timeUtils,
             getRepositoryComponent().getOrdersHistorySummaryGateway()
+        )
+    );
+  }
+
+  @Override
+  public MenuViewModel getMenuViewModel(@Nullable Fragment fragment) {
+    return getViewModelInstance(
+        fragment,
+        MenuViewModelImpl.class,
+        new MenuViewModelImpl(
+            backendComponent.getErrorReporter(),
+            getInteractorComponent().getExecutorStateUseCase()
         )
     );
   }
@@ -947,9 +874,12 @@ class PresentationComponentImpl implements PresentationComponent {
   }
 
   private <V extends ViewModel> V getViewModelInstance(
-      @NonNull Fragment fragment,
+      @Nullable Fragment fragment,
       @NonNull Class<V> vClass,
       @NonNull V viewModel) {
+    if (fragment == null) {
+      throw new NullPointerException("Фрагмент не должен быть null");
+    }
     return ViewModelProviders.of(
         fragment,
         new ViewModelFactory<>(viewModel)
@@ -958,9 +888,12 @@ class PresentationComponentImpl implements PresentationComponent {
 
   @SuppressWarnings("SameParameterValue")
   private <V extends ViewModel> V getViewModelInstance(
-      @NonNull AppCompatActivity appCompatActivity,
+      @Nullable AppCompatActivity appCompatActivity,
       @NonNull Class<V> vClass,
       @NonNull V viewModel) {
+    if (appCompatActivity == null) {
+      throw new NullPointerException("Активити не должно быть null");
+    }
     return ViewModelProviders.of(
         appCompatActivity,
         new ViewModelFactory<>(viewModel)

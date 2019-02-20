@@ -223,15 +223,15 @@ public class CodeViewModelTest {
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Результат:
-    inOrder.verify(viewStateObserver).onChanged(any(CodeViewStateInitial.class));
+    inOrder.verify(viewStateObserver).onChanged(any(CodeViewStateEmpty.class));
     verifyNoMoreInteractions(viewStateObserver);
   }
 
   /**
-   * Не должен менять состояние вида, если код не валидируется.
+   * Должен менять состояние вида, если код не валидируется.
    */
   @Test
-  public void setNoNewViewStateToLiveData() {
+  public void setNewViewStateToLiveData() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
@@ -243,9 +243,12 @@ public class CodeViewModelTest {
     viewModel.setCode("1   2   ");
     viewModel.setCode("1   2   3   ");
     viewModel.setCode("1   2   3   4");
+    viewModel.setCode("");
 
     // Результат:
-    inOrder.verify(viewStateObserver).onChanged(any(CodeViewStateInitial.class));
+    inOrder.verify(viewStateObserver, times(2)).onChanged(any(CodeViewStateEmpty.class));
+    inOrder.verify(viewStateObserver, times(3)).onChanged(any(CodeViewStateActive.class));
+    inOrder.verify(viewStateObserver).onChanged(any(CodeViewStateEmpty.class));
     verifyNoMoreInteractions(viewStateObserver);
   }
 
@@ -271,7 +274,8 @@ public class CodeViewModelTest {
     // Результат:
     verify(passwordUseCase).authorize(eq("12457"), afterValidationCaptor.capture());
     afterValidationCaptor.getValue().test().isDisposed();
-    inOrder.verify(viewStateObserver).onChanged(any(CodeViewStateInitial.class));
+    inOrder.verify(viewStateObserver, times(2)).onChanged(any(CodeViewStateEmpty.class));
+    inOrder.verify(viewStateObserver, times(2)).onChanged(any(CodeViewStateActive.class));
     inOrder.verify(viewStateObserver).onChanged(any(CodeViewStatePending.class));
     verifyNoMoreInteractions(viewStateObserver);
   }
@@ -297,7 +301,7 @@ public class CodeViewModelTest {
         () -> completableSubject.onError(new IllegalArgumentException()),
         e -> completableSubject.onComplete()
     ).isDisposed();
-    inOrder.verify(viewStateObserver).onChanged(any(CodeViewStateInitial.class));
+    inOrder.verify(viewStateObserver).onChanged(any(CodeViewStateEmpty.class));
     inOrder.verify(viewStateObserver).onChanged(any(CodeViewStatePending.class));
     inOrder.verify(viewStateObserver).onChanged(any(CodeViewStateError.class));
     verifyNoMoreInteractions(viewStateObserver);
@@ -327,10 +331,10 @@ public class CodeViewModelTest {
     viewModel.setCode("1   2   4   ");
 
     // Результат:
-    inOrder.verify(viewStateObserver).onChanged(any(CodeViewStateInitial.class));
+    inOrder.verify(viewStateObserver).onChanged(any(CodeViewStateEmpty.class));
     inOrder.verify(viewStateObserver).onChanged(any(CodeViewStatePending.class));
     inOrder.verify(viewStateObserver).onChanged(any(CodeViewStateError.class));
-    inOrder.verify(viewStateObserver).onChanged(any(CodeViewStateInitial.class));
+    inOrder.verify(viewStateObserver).onChanged(any(CodeViewStateActive.class));
     verifyNoMoreInteractions(viewStateObserver);
   }
 
@@ -355,7 +359,7 @@ public class CodeViewModelTest {
         () -> completableSubject.onError(new NoNetworkException()),
         e -> completableSubject.onComplete()
     ).isDisposed();
-    inOrder.verify(viewStateObserver).onChanged(any(CodeViewStateInitial.class));
+    inOrder.verify(viewStateObserver).onChanged(any(CodeViewStateEmpty.class));
     inOrder.verify(viewStateObserver).onChanged(any(CodeViewStatePending.class));
     inOrder.verify(viewStateObserver).onChanged(any(CodeViewStateNetworkError.class));
     verifyNoMoreInteractions(viewStateObserver);

@@ -102,6 +102,14 @@ public interface ApiService {
   );
 
   /*
+   *  Запрос отказа от бронирования или выезда на забронированный предварительный заказ.
+   */
+  @POST("api/public/v1/mobile/order/preliminary/process")
+  Single<ApiSimpleResult> sendPreOrderProcess(
+      @NonNull @Body ApiOrderDecision decision
+  );
+
+  /*
    *  Запрос отправки FCM токена.
    */
   @PUT("api/public/v1/mobile/fireBase/registrationToken")

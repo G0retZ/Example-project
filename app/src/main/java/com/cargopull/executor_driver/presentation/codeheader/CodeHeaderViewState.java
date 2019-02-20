@@ -3,12 +3,13 @@ package com.cargopull.executor_driver.presentation.codeheader;
 import androidx.annotation.CallSuper;
 import androidx.annotation.NonNull;
 import com.cargopull.executor_driver.R;
+import com.cargopull.executor_driver.presentation.TextViewActions;
 import com.cargopull.executor_driver.presentation.ViewState;
 
 /**
  * Общее состояние ввода кода.
  */
-final class CodeHeaderViewState implements ViewState<CodeHeaderViewActions> {
+final class CodeHeaderViewState implements ViewState<TextViewActions> {
 
   @NonNull
   private final String phoneNumber;
@@ -19,8 +20,8 @@ final class CodeHeaderViewState implements ViewState<CodeHeaderViewActions> {
 
   @Override
   @CallSuper
-  public void apply(@NonNull CodeHeaderViewActions stateActions) {
-    stateActions.setDescriptiveHeaderText(R.string.sms_code_message, phoneNumber);
+  public void apply(@NonNull TextViewActions stateActions) {
+    stateActions.setText(R.id.codeHeaderPhone, phoneNumber);
   }
 
   @Override

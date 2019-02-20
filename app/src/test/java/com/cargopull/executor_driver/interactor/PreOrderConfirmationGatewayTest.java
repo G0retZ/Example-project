@@ -14,7 +14,7 @@ import com.cargopull.executor_driver.backend.web.incoming.ApiSimpleResult;
 import com.cargopull.executor_driver.backend.web.outgoing.ApiOrderDecision;
 import com.cargopull.executor_driver.entity.Order;
 import com.cargopull.executor_driver.entity.OrderConfirmationFailedException;
-import com.cargopull.executor_driver.gateway.PreOrderConfirmationGatewayImpl;
+import com.cargopull.executor_driver.gateway.PreOrderConfirmationGateway;
 import io.reactivex.Single;
 import io.reactivex.observers.TestObserver;
 import org.junit.Before;
@@ -47,7 +47,7 @@ public class PreOrderConfirmationGatewayTest {
   @Before
   public void setUp() {
     when(apiService.sendPreOrderDecision(any())).thenReturn(Single.never());
-    gateway = new PreOrderConfirmationGatewayImpl(apiService);
+    gateway = new PreOrderConfirmationGateway(apiService);
   }
 
   /* Проверяем работу с клиентом STOMP */

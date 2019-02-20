@@ -260,4 +260,24 @@ public class BaseFragment extends Fragment implements OnBackPressedInterceptor,
       view.setOnClickListener(okAction == null ? null : v -> okAction.run());
     }
   }
+
+  @Override
+  public void setEnabled(int id, boolean enable) {
+    View view = findViewById(id);
+    if (view != null) {
+      view.setEnabled(enable);
+    }
+  }
+
+  @Override
+  public void setBackground(int id, int drawableId) {
+    View view = findViewById(id);
+    if (view != null) {
+      if (VERSION.SDK_INT >= VERSION_CODES.M) {
+        view.setBackground(getResources().getDrawable(drawableId, null));
+      } else {
+        view.setBackground(getResources().getDrawable(drawableId));
+      }
+    }
+  }
 }

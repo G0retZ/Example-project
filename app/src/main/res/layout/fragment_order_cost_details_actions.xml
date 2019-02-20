@@ -20,9 +20,9 @@
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:orientation="vertical">
-      <TextView
+      <Button
         android:id="@+id/orderRoute"
-        style="@style/TextAppearance.AppTheme.SubTitle.Touchable"
+        style="@style/AppTheme.Button.Borderless.Menu"
         android:layout_width="match_parent"
         android:layout_height="56dp"
         android:paddingStart="16dp"
@@ -33,9 +33,9 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="@color/colorDivider"/>
-      <TextView
+      <Button
         android:id="@+id/orderDetails"
-        style="@style/TextAppearance.AppTheme.SubTitle.Touchable"
+        style="@style/AppTheme.Button.Borderless.Menu"
         android:layout_width="match_parent"
         android:layout_height="56dp"
         android:paddingStart="16dp"
@@ -46,9 +46,9 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="@color/colorDivider"/>
-      <TextView
+      <Button
         android:id="@+id/reportAProblem"
-        style="@style/TextAppearance.AppTheme.SubTitle.Touchable"
+        style="@style/AppTheme.Button.Borderless.Menu"
         android:layout_width="match_parent"
         android:layout_height="56dp"
         android:paddingStart="16dp"

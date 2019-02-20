@@ -1,7 +1,8 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
   <item android:state_enabled="false">
     <shape xmlns:android="http://schemas.android.com/apk/res/android">
-      <solid android:color="@color/colorDisabled"/>
+      <solid android:color="@color/colorButtonDisabled"/>
+      <corners android:radius="5dp"/>
     </shape>
   </item>
   <item
@@ -9,6 +10,7 @@
     android:state_pressed="true">
     <shape xmlns:android="http://schemas.android.com/apk/res/android">
       <solid android:color="@color/colorAccentNew"/>
+      <corners android:radius="5dp"/>
     </shape>
   </item>
   <item
@@ -16,11 +18,13 @@
     android:state_focused="true">
     <shape xmlns:android="http://schemas.android.com/apk/res/android">
       <solid android:color="@color/colorAccentNew"/>
+      <corners android:radius="5dp"/>
     </shape>
   </item>
   <item android:state_enabled="true">
     <shape xmlns:android="http://schemas.android.com/apk/res/android">
       <solid android:color="@color/colorAccentNew"/>
+      <corners android:radius="5dp"/>
     </shape>
   </item>
 </selector>

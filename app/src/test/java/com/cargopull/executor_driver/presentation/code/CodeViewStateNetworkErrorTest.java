@@ -30,11 +30,10 @@ public class CodeViewStateNetworkErrorTest {
     viewState.apply(viewActions);
 
     // Результат:
-    verify(viewActions).enableInputField(true);
-    verify(viewActions).showCodeCheckPending(false);
-    verify(viewActions).showCodeCheckError(false);
-    verify(viewActions).showCodeCheckNetworkErrorMessage(true);
-    verify(viewActions).setUnderlineImage(R.drawable.ic_code_input_activated);
+    verify(viewActions).setEnabled(R.id.codeInput, true);
+    verify(viewActions).unblockWithPending("password");
+    verify(viewActions).setBackground(R.id.codeInput, R.drawable.ic_code_input_activated);
+    verify(viewActions).showPersistentDialog(R.string.code_network_error, null);
     verifyNoMoreInteractions(viewActions);
   }
 }

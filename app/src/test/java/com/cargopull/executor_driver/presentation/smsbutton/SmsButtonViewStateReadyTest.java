@@ -4,6 +4,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 import com.cargopull.executor_driver.R;
+import com.cargopull.executor_driver.presentation.FragmentViewActions;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -16,7 +17,7 @@ public class SmsButtonViewStateReadyTest {
   private SmsButtonViewStateReady viewState;
 
   @Mock
-  private SmsButtonViewActions viewActions;
+  private FragmentViewActions viewActions;
 
   @Before
   public void setUp() {
@@ -29,10 +30,9 @@ public class SmsButtonViewStateReadyTest {
     viewState.apply(viewActions);
 
     // Результат:
-    verify(viewActions).setSmsButtonText(R.string.repeat_code_from_sms, null);
-    verify(viewActions).enableSmsButton(true);
-    verify(viewActions).showSmsSendNetworkErrorMessage(false);
-    verify(viewActions).showSmsSendPending(false);
+    verify(viewActions).setEnabled(R.id.sendSms, true);
+    verify(viewActions).setText(R.id.sendSms, R.string.repeat_code_from_sms);
+    verify(viewActions).unblockWithPending("sms");
     verifyNoMoreInteractions(viewActions);
   }
 }

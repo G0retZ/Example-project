@@ -1,7 +1,6 @@
 package com.cargopull.executor_driver.gateway;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import com.cargopull.executor_driver.backend.web.ApiService;
 import com.cargopull.executor_driver.backend.web.incoming.ApiOptionItem;
 import com.cargopull.executor_driver.backend.web.incoming.ApiOptionsForOnline;
@@ -24,8 +23,6 @@ public class SelectedVehicleAndOptionsGatewayImpl implements VehiclesAndOptionsG
   private final Mapper<ApiVehicle, Vehicle> vehicleMapper;
   @NonNull
   private final Mapper<Throwable, Throwable> errorMapper;
-  @Nullable
-  private Single<ApiOptionsForOnline> apiOptionsForOnlineSingle;
 
   @Inject
   public SelectedVehicleAndOptionsGatewayImpl(@NonNull ApiService api,
@@ -41,13 +38,8 @@ public class SelectedVehicleAndOptionsGatewayImpl implements VehiclesAndOptionsG
   @NonNull
   @Override
   public Single<List<Vehicle>> getExecutorVehicles() {
-    if (apiOptionsForOnlineSingle == null) {
-      apiOptionsForOnlineSingle = api.getSelectedOptionsForOnline()
-          .subscribeOn(Schedulers.io())
-          .doOnError(throwable -> apiOptionsForOnlineSingle = null)
-          .cache();
-    }
-    return apiOptionsForOnlineSingle
+    return api.getSelectedOptionsForOnline()
+        .subscribeOn(Schedulers.io())
         .flattenAsObservable(ApiOptionsForOnline::getCars)
         .map(vehicleMapper::map)
         .toList()
@@ -57,13 +49,8 @@ public class SelectedVehicleAndOptionsGatewayImpl implements VehiclesAndOptionsG
   @NonNull
   @Override
   public Single<List<Option>> getExecutorOptions() {
-    if (apiOptionsForOnlineSingle == null) {
-      apiOptionsForOnlineSingle = api.getSelectedOptionsForOnline()
-          .subscribeOn(Schedulers.io())
-          .doOnError(throwable -> apiOptionsForOnlineSingle = null)
-          .cache();
-    }
-    return apiOptionsForOnlineSingle
+    return api.getSelectedOptionsForOnline()
+        .subscribeOn(Schedulers.io())
         .flattenAsObservable(ApiOptionsForOnline::getDriverOptions)
         .map(optionMapper::map)
         .toList()

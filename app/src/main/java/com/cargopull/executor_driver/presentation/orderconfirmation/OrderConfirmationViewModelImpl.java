@@ -7,15 +7,19 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 import com.cargopull.executor_driver.backend.analytics.ErrorReporter;
 import com.cargopull.executor_driver.backend.analytics.EventLogger;
+import com.cargopull.executor_driver.entity.ExecutorState;
 import com.cargopull.executor_driver.entity.OrderConfirmationFailedException;
 import com.cargopull.executor_driver.entity.OrderOfferDecisionException;
 import com.cargopull.executor_driver.entity.OrderOfferExpiredException;
 import com.cargopull.executor_driver.gateway.DataMappingException;
+import com.cargopull.executor_driver.interactor.ExecutorStateUseCase;
 import com.cargopull.executor_driver.interactor.OrderConfirmationUseCase;
 import com.cargopull.executor_driver.presentation.CommonNavigate;
 import com.cargopull.executor_driver.presentation.SingleLiveEvent;
 import com.cargopull.executor_driver.presentation.ViewState;
+import com.cargopull.executor_driver.utils.Pair;
 import com.cargopull.executor_driver.utils.TimeUtils;
+import io.reactivex.Flowable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.internal.disposables.EmptyDisposable;
@@ -28,6 +32,8 @@ public class OrderConfirmationViewModelImpl extends ViewModel implements
 
   @NonNull
   private final ErrorReporter errorReporter;
+  @NonNull
+  private final ExecutorStateUseCase executorStateUseCase;
   @NonNull
   private final OrderConfirmationUseCase orderConfirmationUseCase;
   @NonNull
@@ -48,12 +54,14 @@ public class OrderConfirmationViewModelImpl extends ViewModel implements
   private long orderId;
 
   @Inject
-  public OrderConfirmationViewModelImpl(
+  OrderConfirmationViewModelImpl(
       @NonNull ErrorReporter errorReporter,
+      @NonNull ExecutorStateUseCase executorStateUseCase,
       @NonNull OrderConfirmationUseCase orderConfirmationUseCase,
       @NonNull TimeUtils timeUtils,
       @Nullable EventLogger eventLogger) {
     this.errorReporter = errorReporter;
+    this.executorStateUseCase = executorStateUseCase;
     this.orderConfirmationUseCase = orderConfirmationUseCase;
     this.timeUtils = timeUtils;
     this.eventLogger = eventLogger;
@@ -169,36 +177,44 @@ public class OrderConfirmationViewModelImpl extends ViewModel implements
   private void loadOrderTimeout() {
     if (timeoutDisposable.isDisposed()) {
       viewStateLiveData.postValue(new OrderConfirmationViewStatePending());
-      timeoutDisposable = orderConfirmationUseCase.getOrderDecisionTimeout()
-          .observeOn(AndroidSchedulers.mainThread())
-          .doOnError(throwable -> {
-            if (throwable instanceof OrderOfferExpiredException) {
-              viewStateLiveData.postValue(
-                  new OrderConfirmationViewStateExpired()
-              );
+      timeoutDisposable = Flowable.combineLatest(
+          executorStateUseCase.getExecutorStates(),
+          orderConfirmationUseCase.getOrderDecisionTimeout()
+              .observeOn(AndroidSchedulers.mainThread())
+              .doOnError(throwable -> {
+                if (throwable instanceof OrderOfferExpiredException) {
+                  viewStateLiveData.postValue(
+                      new OrderConfirmationViewStateExpired()
+                  );
+                }
+              })
+              .retry(throwable -> throwable instanceof OrderOfferExpiredException
+                  || throwable instanceof OrderOfferDecisionException),
+          (s, p) -> new Pair<>(isExecutorStateAllowed(s), p)
+      ).subscribe(pair -> {
+            OrderConfirmationTimeoutItem orderConfirmationTimeoutItem =
+                new OrderConfirmationTimeoutItem(pair.second.second, timeUtils);
+            orderId = pair.second.first;
+            timeStamp = orderConfirmationTimeoutItem.getItemTimestamp();
+            viewStateLiveData.postValue(
+                lastViewState = new OrderConfirmationViewStateIdle(orderConfirmationTimeoutItem,
+                    pair.first)
+            );
+          },
+          throwable -> {
+            if (!(throwable instanceof HttpException)) {
+              errorReporter.reportError(throwable);
             }
-          })
-          .retry(throwable -> throwable instanceof OrderOfferExpiredException
-              || throwable instanceof OrderOfferDecisionException)
-          .subscribe(pair -> {
-                OrderConfirmationTimeoutItem orderConfirmationTimeoutItem =
-                    new OrderConfirmationTimeoutItem(pair.second, timeUtils);
-                orderId = pair.first;
-                timeStamp = orderConfirmationTimeoutItem.getItemTimestamp();
-                viewStateLiveData.postValue(
-                    lastViewState = new OrderConfirmationViewStateIdle(orderConfirmationTimeoutItem)
-                );
-              },
-              throwable -> {
-                if (!(throwable instanceof HttpException)) {
-                  errorReporter.reportError(throwable);
-                }
-                if (throwable instanceof DataMappingException) {
-                  navigateLiveData.postValue(CommonNavigate.SERVER_DATA_ERROR);
-                }
-              }
-          );
+            if (throwable instanceof DataMappingException) {
+              navigateLiveData.postValue(CommonNavigate.SERVER_DATA_ERROR);
+            }
+          }
+      );
     }
+  }
+
+  protected boolean isExecutorStateAllowed(ExecutorState executorState) {
+    return false;
   }
 
   @Override

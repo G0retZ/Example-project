@@ -92,8 +92,6 @@ class InteractorComponentImpl implements InteractorComponent {
   @Nullable
   private OrderUseCase cancelledOrderUseCase;
   @Nullable
-  private ReportProblemUseCase reportProblemUseCase;
-  @Nullable
   private ConfirmOrderPaymentUseCase confirmOrderPaymentUseCase;
   @Nullable
   private CurrentCostPollingUseCase currentCostPollingUseCase;
@@ -205,12 +203,7 @@ class InteractorComponentImpl implements InteractorComponent {
   @NonNull
   @Override
   public ReportProblemUseCase getReportProblemUseCase() {
-    if (reportProblemUseCase == null) {
-      reportProblemUseCase = new ReportProblemUseCaseImpl(
-          repositoryComponent.getReportProblemGateway()
-      );
-    }
-    return reportProblemUseCase;
+    return new ReportProblemUseCaseImpl(repositoryComponent.getReportProblemGateway());
   }
 
   @NonNull
@@ -656,9 +649,12 @@ class InteractorComponentImpl implements InteractorComponent {
     if (selectedPreOrderConfirmationUseCase == null) {
       selectedPreOrderConfirmationUseCase = new OrderConfirmationUseCaseImpl(
           getSelectedPreOrderUseCase(),
-          repositoryComponent.getPreOrderConfirmationGateway(),
+          repositoryComponent.getPreOrderProcessGateway(),
           null,
-          getPreOrdersSetUseCase());
+          new RemoveOrdersUseCaseImpl(
+              getPreOrdersSetUseCase()
+          )
+      );
     }
     return selectedPreOrderConfirmationUseCase;
   }
@@ -675,9 +671,12 @@ class InteractorComponentImpl implements InteractorComponent {
     if (upcomingPreOrderConfirmationUseCase == null) {
       upcomingPreOrderConfirmationUseCase = new OrderConfirmationUseCaseImpl(
           getUpcomingPreOrderUseCase(),
-          repositoryComponent.getPreOrderConfirmationGateway(),
+          repositoryComponent.getPreOrderProcessGateway(),
           null,
-          getPreOrdersSetUseCase());
+          new RemoveOrdersUseCaseImpl(
+              getPreOrdersSetUseCase()
+          )
+      );
     }
     return upcomingPreOrderConfirmationUseCase;
   }

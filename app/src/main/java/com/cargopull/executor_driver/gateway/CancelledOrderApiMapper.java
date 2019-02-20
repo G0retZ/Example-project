@@ -2,6 +2,7 @@ package com.cargopull.executor_driver.gateway;
 
 import androidx.annotation.NonNull;
 import com.cargopull.executor_driver.entity.Order;
+import com.cargopull.executor_driver.entity.PaymentType;
 import ua.naiksoftware.stomp.client.StompMessage;
 
 /**
@@ -15,7 +16,7 @@ public class CancelledOrderApiMapper implements Mapper<StompMessage, Order> {
     try {
       return new Order(
           Long.valueOf(from.findHeader("PreliminaryCancelled")),
-          "", "", 0, "", 0, 0, 0, 0, 0, 0, 0, 0, 0
+          PaymentType.CASH, "", "", 0, "", 0, 0, 0, 0, 0, 0, 0, 0, 0
       );
     } catch (Throwable t) {
       throw new DataMappingException(t);

@@ -19,6 +19,7 @@ import com.cargopull.executor_driver.presentation.executorstate.ExecutorStateVie
 import com.cargopull.executor_driver.presentation.geolocation.GeoLocationViewModel;
 import com.cargopull.executor_driver.presentation.geolocationstate.GeoLocationStateViewModel;
 import com.cargopull.executor_driver.presentation.map.MapViewModel;
+import com.cargopull.executor_driver.presentation.menu.MenuViewModel;
 import com.cargopull.executor_driver.presentation.missedorder.MissedOrderViewModel;
 import com.cargopull.executor_driver.presentation.movingtoclient.MovingToClientViewModel;
 import com.cargopull.executor_driver.presentation.movingtoclienttimer.MovingToClientTimerViewModel;
@@ -131,7 +132,10 @@ interface PresentationComponent {
   OrderViewModel getPOrderViewModel(@Nullable Fragment fragment);
 
   @NonNull
-  OrderConfirmationViewModel getOrderConfirmationViewModel(@Nullable Fragment fragment);
+  OrderConfirmationViewModel getRushOrderConfirmationViewModel(@Nullable Fragment fragment);
+
+  @NonNull
+  OrderConfirmationViewModel getPreOrderConfirmationViewModel(@Nullable Fragment fragment);
 
   @NonNull
   OrderConfirmationViewModel getPreOrderBookingViewModel(@Nullable Fragment fragment);
@@ -209,4 +213,6 @@ interface PresentationComponent {
   @NonNull
   OrdersHistoryHeaderViewModel getOrdersHistoryHeaderViewModel(@Nullable Fragment fragment,
       int offset);
+
+  MenuViewModel getMenuViewModel(@Nullable Fragment fragment);
 }
