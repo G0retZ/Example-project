@@ -288,4 +288,17 @@ class RepositoryComponent(private val backendComponent: BackendComponent) {
                 OrdersHistorySummaryApiMapper()
         )
     }
+    val changedOrderGateway: CommonGateway<Order> by lazy {
+        TopicGateway(
+                personalTopicListener,
+                ChangedOrderFilter(),
+                StompMapper(
+                        OrderApiMapper(
+                                VehicleOptionApiMapper(),
+                                RoutePointApiMapper()
+                        ),
+                        ApiOrder::class.java
+                )
+        )
+    }
 }

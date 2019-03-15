@@ -159,6 +159,7 @@ class InteractorComponent(
     val preOrdersSetUseCase: OrdersUseCase by lazy {
         OrdersUseCaseImpl(
                 repositoryComponent.preOrdersSetGateway,
+                changedOrderUseCase,
                 CancelledOrderUseCaseImpl(repositoryComponent.cancelledOrderGateway)
         )
     }
@@ -290,5 +291,10 @@ class InteractorComponent(
     }
     private val orderUseCaseImpl: OrderUseCaseImpl by lazy {
         OrderUseCaseImpl(repositoryComponent.orderGateway)
+    }
+    private val changedOrderUseCase: OrderUseCase by lazy {
+        ChangedOrderUseCaseImpl(
+                repositoryComponent.changedOrderGateway
+        )
     }
 }
