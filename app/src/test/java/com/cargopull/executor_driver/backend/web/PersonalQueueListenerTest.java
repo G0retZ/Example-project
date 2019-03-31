@@ -1,4 +1,4 @@
-package com.cargopull.executor_driver.backend.websocket;
+package com.cargopull.executor_driver.backend.web;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
@@ -12,7 +12,6 @@ import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 import com.cargopull.executor_driver.GatewayThreadTestRule;
-import com.cargopull.executor_driver.backend.web.NoNetworkException;
 import com.cargopull.executor_driver.interactor.DataReceiver;
 import io.reactivex.Completable;
 import io.reactivex.Flowable;

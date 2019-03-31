@@ -1,4 +1,4 @@
-package com.cargopull.executor_driver.backend.websocket.outgoing;
+package com.cargopull.executor_driver.backend.web.outgoing;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;

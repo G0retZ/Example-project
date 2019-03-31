@@ -1,8 +1,8 @@
 package com.cargopull.executor_driver.gateway;
 
 import androidx.annotation.NonNull;
-import com.cargopull.executor_driver.backend.websocket.incoming.ApiOrderCostDetails;
-import com.cargopull.executor_driver.backend.websocket.incoming.ApiOrderOptionCost;
+import com.cargopull.executor_driver.backend.web.incoming.ApiOrderCostDetails;
+import com.cargopull.executor_driver.backend.web.incoming.ApiOrderOptionCost;
 import com.cargopull.executor_driver.entity.OrderCostDetails;
 import com.cargopull.executor_driver.entity.PackageCostDetails;
 import com.cargopull.executor_driver.utils.Pair;

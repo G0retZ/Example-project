@@ -2,8 +2,8 @@ package com.cargopull.executor_driver.gateway;
 
 import androidx.annotation.NonNull;
 import com.cargopull.executor_driver.backend.web.incoming.ApiOptionItem;
-import com.cargopull.executor_driver.backend.websocket.incoming.ApiOrder;
-import com.cargopull.executor_driver.backend.websocket.incoming.ApiRoutePoint;
+import com.cargopull.executor_driver.backend.web.incoming.ApiOrder;
+import com.cargopull.executor_driver.backend.web.incoming.ApiRoutePoint;
 import com.cargopull.executor_driver.entity.Option;
 import com.cargopull.executor_driver.entity.Order;
 import com.cargopull.executor_driver.entity.PaymentType;

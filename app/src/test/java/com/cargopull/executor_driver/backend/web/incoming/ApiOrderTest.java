@@ -1,9 +1,8 @@
-package com.cargopull.executor_driver.backend.websocket.incoming;
+package com.cargopull.executor_driver.backend.web.incoming;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-import com.cargopull.executor_driver.backend.web.incoming.ApiOptionItem;
 import java.util.Arrays;
 import org.junit.Test;
 import org.junit.runner.RunWith;

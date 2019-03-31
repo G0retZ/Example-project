@@ -7,7 +7,7 @@ import com.cargopull.executor_driver.backend.analytics.EventLogger;
 import com.cargopull.executor_driver.backend.geolocation.GeolocationCenter;
 import com.cargopull.executor_driver.backend.settings.AppSettingsService;
 import com.cargopull.executor_driver.backend.web.ApiService;
-import com.cargopull.executor_driver.backend.websocket.TopicListener;
+import com.cargopull.executor_driver.backend.web.TopicListener;
 import com.cargopull.executor_driver.interactor.DataReceiver;
 import io.reactivex.Observable;
 import io.reactivex.Observer;

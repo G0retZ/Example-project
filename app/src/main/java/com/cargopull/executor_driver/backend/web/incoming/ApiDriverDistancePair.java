@@ -1,4 +1,4 @@
-package com.cargopull.executor_driver.backend.websocket.incoming;
+package com.cargopull.executor_driver.backend.web.incoming;
 
 import com.google.gson.annotations.SerializedName;
 

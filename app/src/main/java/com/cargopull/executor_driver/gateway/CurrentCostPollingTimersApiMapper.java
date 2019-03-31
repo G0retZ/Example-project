@@ -1,7 +1,7 @@
 package com.cargopull.executor_driver.gateway;
 
 import androidx.annotation.NonNull;
-import com.cargopull.executor_driver.backend.websocket.incoming.ApiOrderTimers;
+import com.cargopull.executor_driver.backend.web.incoming.ApiOrderTimers;
 import com.cargopull.executor_driver.utils.Pair;
 import com.google.gson.Gson;
 import javax.inject.Inject;

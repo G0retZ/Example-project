@@ -2,7 +2,7 @@ package com.cargopull.executor_driver.gateway;
 
 import androidx.annotation.NonNull;
 import com.cargopull.executor_driver.BuildConfig;
-import com.cargopull.executor_driver.backend.websocket.TopicListener;
+import com.cargopull.executor_driver.backend.web.TopicListener;
 import com.cargopull.executor_driver.interactor.CurrentCostPollingGateway;
 import com.cargopull.executor_driver.utils.Pair;
 import io.reactivex.Completable;

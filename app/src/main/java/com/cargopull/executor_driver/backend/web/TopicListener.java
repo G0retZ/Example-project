@@ -1,4 +1,4 @@
-package com.cargopull.executor_driver.backend.websocket;
+package com.cargopull.executor_driver.backend.web;
 
 import androidx.annotation.NonNull;
 import io.reactivex.Flowable;

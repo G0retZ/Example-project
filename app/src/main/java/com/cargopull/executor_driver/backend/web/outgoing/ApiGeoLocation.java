@@ -1,4 +1,4 @@
-package com.cargopull.executor_driver.backend.websocket.outgoing;
+package com.cargopull.executor_driver.backend.web.outgoing;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
@@ -36,6 +36,7 @@ public class ApiGeoLocation {
     return regDate;
   }
 
+  @SuppressWarnings("NullableProblems")
   @Override
   public String toString() {
     return "ApiGeoLocation{" +
