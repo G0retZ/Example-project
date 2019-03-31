@@ -149,6 +149,16 @@ public interface ApiService {
   );
 
   /*
+   *  Действия над заказом.
+   *  ключ: status
+   *  Значения: CALL_TO_CLIENT
+   */
+  @POST("api/public/v1/mobile/order/current")
+  Completable callToClient(
+      @NonNull @Body Map<String, String> params
+  );
+
+  /*
    *  Запрос смены статуса заказа.
    */
   @POST("api/public/v1/mobile/order/current/routePoint/{id}/next")
