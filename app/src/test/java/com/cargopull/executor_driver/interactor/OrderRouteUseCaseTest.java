@@ -2,9 +2,8 @@ package com.cargopull.executor_driver.interactor;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.only;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 import com.cargopull.executor_driver.UseCaseThreadTestRule;
@@ -31,7 +30,7 @@ public class OrderRouteUseCaseTest {
   @ClassRule
   public static final UseCaseThreadTestRule classRule = new UseCaseThreadTestRule();
 
-  private OrderRouteUseCase useCase;
+  private OrderRouteUseCaseImpl useCase;
 
   @Mock
   private OrderUseCase orderUseCase;
@@ -64,7 +63,7 @@ public class OrderRouteUseCaseTest {
   /* Проверяем работу с юзкейсом заказа */
 
   /**
-   * Должен запросить у юзкейсом получение выполняемого заказа.
+   * Должен запросить у юзкейсом получение выполняемого заказа только 1 раз.
    */
   @Test
   public void askGatewayForOrders() {
@@ -75,11 +74,22 @@ public class OrderRouteUseCaseTest {
     useCase.getOrderRoutePoints().test().isDisposed();
 
     // Результат:
-    verify(orderUseCase, times(4)).getOrders();
-    verifyNoMoreInteractions(orderUseCase);
+    verify(orderUseCase, only()).getOrders();
   }
 
   /* Проверяем работу с гейтвеем маршрута заказа */
+
+  /**
+   * Не должен трогать гейтвей.
+   */
+  @Test
+  public void doNotTouchGateway() {
+    // Действие:
+    useCase.updateRouteWith(Arrays.asList(routePoint, routePoint1, routePoint2, routePoint4));
+
+    // Результат:
+    verifyZeroInteractions(orderRouteGateway);
+  }
 
   /**
    * Должен запросить у гейтвея отметить точку.
@@ -137,10 +147,10 @@ public class OrderRouteUseCaseTest {
   }
 
   /**
-   * Должен ответить маршрутами.
+   * Должен ответить маршрутами до завершения.
    */
   @Test
-  public void answerWithOrders() {
+  public void answerWithOrdersBeforeComplete() {
     // Дано:
     when(orderUseCase.getOrders()).thenReturn(Flowable.just(order, order2));
     when(order.getRoutePath()).thenReturn(Arrays.asList(routePoint1, routePoint2, routePoint3));
@@ -148,12 +158,40 @@ public class OrderRouteUseCaseTest {
 
     // Действие:
     TestSubscriber<List<RoutePoint>> test = useCase.getOrderRoutePoints().test();
+    useCase.updateRouteWith(Arrays.asList(routePoint4, routePoint3));
+    useCase.updateRouteWith(Arrays.asList(routePoint, routePoint2));
 
     // Результат:
     test.assertValueCount(2);
     test.assertValueAt(0, Arrays.asList(routePoint1, routePoint2, routePoint3));
     test.assertValueAt(1, Arrays.asList(routePoint4, routePoint, routePoint3));
     test.assertComplete();
+    test.assertNoErrors();
+  }
+
+  /**
+   * Должен ответить маршрутами.
+   */
+  @Test
+  public void answerWithAllOrders() {
+    // Дано:
+    when(orderUseCase.getOrders())
+        .thenReturn(Flowable.just(order, order2).concatWith(Flowable.never()));
+    when(order.getRoutePath()).thenReturn(Arrays.asList(routePoint1, routePoint2, routePoint3));
+    when(order2.getRoutePath()).thenReturn(Arrays.asList(routePoint4, routePoint, routePoint3));
+
+    // Действие:
+    TestSubscriber<List<RoutePoint>> test = useCase.getOrderRoutePoints().test();
+    useCase.updateRouteWith(Arrays.asList(routePoint4, routePoint3));
+    useCase.updateRouteWith(Arrays.asList(routePoint, routePoint2));
+
+    // Результат:
+    test.assertValueCount(4);
+    test.assertValueAt(0, Arrays.asList(routePoint1, routePoint2, routePoint3));
+    test.assertValueAt(1, Arrays.asList(routePoint4, routePoint, routePoint3));
+    test.assertValueAt(2, Arrays.asList(routePoint4, routePoint3));
+    test.assertValueAt(3, Arrays.asList(routePoint, routePoint2));
+    test.assertNotComplete();
     test.assertNoErrors();
   }
 
