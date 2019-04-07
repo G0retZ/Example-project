@@ -85,7 +85,7 @@ public class OrderRouteUseCaseTest {
   @Test
   public void doNotTouchGateway() {
     // Действие:
-    useCase.updateRouteWith(Arrays.asList(routePoint, routePoint1, routePoint2, routePoint4));
+    useCase.updateWith(Arrays.asList(routePoint, routePoint1, routePoint2, routePoint4));
 
     // Результат:
     verifyZeroInteractions(orderRouteGateway);
@@ -158,8 +158,8 @@ public class OrderRouteUseCaseTest {
 
     // Действие:
     TestSubscriber<List<RoutePoint>> test = useCase.getOrderRoutePoints().test();
-    useCase.updateRouteWith(Arrays.asList(routePoint4, routePoint3));
-    useCase.updateRouteWith(Arrays.asList(routePoint, routePoint2));
+    useCase.updateWith(Arrays.asList(routePoint4, routePoint3));
+    useCase.updateWith(Arrays.asList(routePoint, routePoint2));
 
     // Результат:
     test.assertValueCount(2);
@@ -182,8 +182,8 @@ public class OrderRouteUseCaseTest {
 
     // Действие:
     TestSubscriber<List<RoutePoint>> test = useCase.getOrderRoutePoints().test();
-    useCase.updateRouteWith(Arrays.asList(routePoint4, routePoint3));
-    useCase.updateRouteWith(Arrays.asList(routePoint, routePoint2));
+    useCase.updateWith(Arrays.asList(routePoint4, routePoint3));
+    useCase.updateWith(Arrays.asList(routePoint, routePoint2));
 
     // Результат:
     test.assertValueCount(4);

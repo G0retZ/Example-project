@@ -12,7 +12,8 @@ import io.reactivex.schedulers.Schedulers;
 import java.util.List;
 import javax.inject.Inject;
 
-public class OrderRouteUseCaseImpl implements OrderRouteUseCase, OrderRouteUpdateUseCase {
+public class OrderRouteUseCaseImpl implements OrderRouteUseCase,
+    DataUpdateUseCase<List<RoutePoint>> {
 
   @NonNull
   private final OrderUseCase orderUseCase;
@@ -76,7 +77,7 @@ public class OrderRouteUseCaseImpl implements OrderRouteUseCase, OrderRouteUpdat
   }
 
   @Override
-  public void updateRouteWith(@NonNull List<RoutePoint> routePoints) {
+  public void updateWith(@NonNull List<RoutePoint> routePoints) {
     emitter.onNext(routePoints);
   }
 }

@@ -10,7 +10,8 @@ import io.reactivex.Flowable;
 import io.reactivex.schedulers.Schedulers;
 import javax.inject.Inject;
 
-public class OrderUseCaseImpl implements OrderUseCase, OrderDecisionUseCase, OrderUpdateUseCase {
+public class OrderUseCaseImpl implements OrderUseCase, OrderDecisionUseCase,
+    DataUpdateUseCase<Order> {
 
   @NonNull
   private final CommonGateway<Order> gateway;
@@ -57,7 +58,7 @@ public class OrderUseCaseImpl implements OrderUseCase, OrderDecisionUseCase, Ord
   }
 
   @Override
-  public void updateOrderWith(@NonNull Order order) {
+  public void updateWith(@NonNull Order order) {
     emitter.onNext(order);
   }
 }

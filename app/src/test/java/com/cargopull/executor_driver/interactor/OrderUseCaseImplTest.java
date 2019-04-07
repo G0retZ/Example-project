@@ -96,7 +96,7 @@ public class OrderUseCaseImplTest {
 
     // Действие:
     TestSubscriber<Order> testSubscriber = useCase.getOrders().test();
-    useCase.updateOrderWith(order3);
+    useCase.updateWith(order3);
 
     // Результат:
     testSubscriber.assertValues(order, order1, order2, order3);
@@ -132,7 +132,7 @@ public class OrderUseCaseImplTest {
 
     // Действие:
     TestSubscriber<Order> testSubscriber = useCase.getOrders().test();
-    useCase.updateOrderWith(order3);
+    useCase.updateWith(order3);
     useCase.setOrderOfferDecisionMade();
 
     // Результат:
@@ -152,7 +152,7 @@ public class OrderUseCaseImplTest {
 
     // Действие:
     TestSubscriber<Order> testSubscriber = useCase.getOrders().test();
-    useCase.updateOrderWith(order3);
+    useCase.updateWith(order3);
     useCase.setOrderOfferDecisionMade();
 
     // Результат:
@@ -171,7 +171,7 @@ public class OrderUseCaseImplTest {
 
     // Действие:
     TestSubscriber<Order> testSubscriber = useCase.getOrders().test();
-    useCase.updateOrderWith(order3);
+    useCase.updateWith(order3);
 
     // Результат:
     testSubscriber.assertComplete();
@@ -195,7 +195,7 @@ public class OrderUseCaseImplTest {
     emitter.onNext(order);
     emitter.onNext(order1);
     emitter.onNext(order2);
-    useCase.updateOrderWith(order3);
+    useCase.updateWith(order3);
     TestSubscriber<Order> testSubscriber0 = orders.test();
     emitter.onError(new Exception());
     TestSubscriber<Order> testSubscriber1 = orders.test();
@@ -228,7 +228,7 @@ public class OrderUseCaseImplTest {
     emitter.onNext(order);
     emitter.onNext(order1);
     emitter.onNext(order2);
-    useCase.updateOrderWith(order3);
+    useCase.updateWith(order3);
     TestSubscriber<Order> testSubscriber0 = orders.test();
     useCase.setOrderOfferDecisionMade();
     TestSubscriber<Order> testSubscriber1 = orders.test();
