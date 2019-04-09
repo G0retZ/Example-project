@@ -13,6 +13,7 @@ import androidx.fragment.app.DialogFragment;
 import com.cargopull.executor_driver.R;
 import com.cargopull.executor_driver.backend.analytics.EventLogger;
 import com.cargopull.executor_driver.di.AppComponent;
+import com.cargopull.executor_driver.presentation.NextExecutorStateViewModel;
 import com.cargopull.executor_driver.presentation.nextroutepoint.NextRoutePointViewActions;
 import com.cargopull.executor_driver.presentation.nextroutepoint.NextRoutePointViewModel;
 import com.cargopull.executor_driver.presentation.oderfulfillmentactions.OrderFulfillmentActionsNavigate;
@@ -28,12 +29,19 @@ public class OrderFulfillmentActionsDialogFragment extends BaseDialogFragment im
 
   private EventLogger eventLogger;
   private NextRoutePointViewModel nextRoutePointViewModel;
+  private NextExecutorStateViewModel nextExecutorStateViewModel;
   private View completeTheOrderAction;
   private Context context;
 
   @Inject
   public void setNextRoutePointViewModel(@NonNull NextRoutePointViewModel nextRoutePointViewModel) {
     this.nextRoutePointViewModel = nextRoutePointViewModel;
+  }
+
+  @Inject
+  public void setNextExecutorStateViewModel(
+      @NonNull NextExecutorStateViewModel nextExecutorStateViewModel) {
+    this.nextExecutorStateViewModel = nextExecutorStateViewModel;
   }
 
   @Inject
@@ -99,7 +107,7 @@ public class OrderFulfillmentActionsDialogFragment extends BaseDialogFragment im
                   ((dialog, which) -> {
                     eventLogger.reportEvent("order_fulfillment_action_incomplete_completed",
                         new HashMap<>());
-                    nextRoutePointViewModel.completeTheOrder();
+                    nextExecutorStateViewModel.routeToNextState();
                   })
               ).setNegativeButton(getString(android.R.string.cancel), null)
               .create()

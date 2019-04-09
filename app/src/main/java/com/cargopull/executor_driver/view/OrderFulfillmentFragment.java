@@ -23,6 +23,7 @@ import androidx.annotation.Nullable;
 import com.cargopull.executor_driver.R;
 import com.cargopull.executor_driver.backend.vibro.ShakeItPlayer;
 import com.cargopull.executor_driver.di.AppComponent;
+import com.cargopull.executor_driver.presentation.NextExecutorStateViewModel;
 import com.cargopull.executor_driver.presentation.nextroutepoint.NextRoutePointViewActions;
 import com.cargopull.executor_driver.presentation.nextroutepoint.NextRoutePointViewModel;
 import com.cargopull.executor_driver.presentation.ordercost.OrderCostViewActions;
@@ -48,6 +49,7 @@ public class OrderFulfillmentFragment extends BaseFragment implements OrderCostV
   private OrderCostViewModel orderCostViewModel;
   private OrderTimeViewModel orderTimeViewModel;
   private NextRoutePointViewModel nextRoutePointViewModel;
+  private NextExecutorStateViewModel nextExecutorStateViewModel;
   private OrderRouteViewModel orderRouteViewModel;
   private ShakeItPlayer shakeItPlayer;
   private TextView totalTimeText;
@@ -85,6 +87,12 @@ public class OrderFulfillmentFragment extends BaseFragment implements OrderCostV
   @Inject
   public void setNextRoutePointViewModel(@NonNull NextRoutePointViewModel nextRoutePointViewModel) {
     this.nextRoutePointViewModel = nextRoutePointViewModel;
+  }
+
+  @Inject
+  public void setNextExecutorStateViewModel(
+      @NonNull NextExecutorStateViewModel nextExecutorStateViewModel) {
+    this.nextExecutorStateViewModel = nextExecutorStateViewModel;
   }
 
   @Inject
@@ -188,7 +196,7 @@ public class OrderFulfillmentFragment extends BaseFragment implements OrderCostV
       @Override
       public void onAnimationEnd(Animator animation) {
         if (!canceled) {
-          nextRoutePointViewModel.completeTheOrder();
+          nextExecutorStateViewModel.routeToNextState();
           shakeItPlayer.shakeIt(R.raw.single_shot_vibro);
         }
       }
