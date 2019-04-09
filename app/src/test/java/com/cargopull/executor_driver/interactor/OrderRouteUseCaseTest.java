@@ -55,7 +55,6 @@ public class OrderRouteUseCaseTest {
   public void setUp() {
     when(orderUseCase.getOrders()).thenReturn(Flowable.never());
     when(orderRouteGateway.closeRoutePoint(any())).thenReturn(Completable.never());
-    when(orderRouteGateway.completeTheOrder()).thenReturn(Completable.never());
     when(orderRouteGateway.nextRoutePoint(any())).thenReturn(Completable.never());
     useCase = new OrderRouteUseCaseImpl(orderUseCase, orderRouteGateway);
   }
@@ -101,18 +100,6 @@ public class OrderRouteUseCaseTest {
 
     // Результат:
     verify(orderRouteGateway, only()).closeRoutePoint(routePoint);
-  }
-
-  /**
-   * Должен запросить у гейтвея завершить заказ.
-   */
-  @Test
-  public void askGatewayToCompleteTheOrder() {
-    // Действие:
-    useCase.completeTheOrder().test().isDisposed();
-
-    // Результат:
-    verify(orderRouteGateway, only()).completeTheOrder();
   }
 
   /**
@@ -216,24 +203,6 @@ public class OrderRouteUseCaseTest {
   }
 
   /**
-   * Должен ответить ошибкой сети на запрос завершения заказа.
-   */
-  @Test
-  public void answerNoNetworkErrorForCompleteTheOrder() {
-    // Дано:
-    when(orderRouteGateway.completeTheOrder())
-        .thenReturn(Completable.error(new NoNetworkException()));
-
-    // Действие:
-    TestObserver<Void> test = useCase.completeTheOrder().test();
-
-    // Результат:
-    test.assertError(NoNetworkException.class);
-    test.assertNoValues();
-    test.assertNotComplete();
-  }
-
-  /**
    * Должен ответить ошибкой сети на на запрос выбора другой точки.
    */
   @Test
@@ -261,22 +230,6 @@ public class OrderRouteUseCaseTest {
 
     // Действие:
     TestObserver<Void> test = useCase.closeRoutePoint(routePoint).test();
-
-    // Результат:
-    test.assertComplete();
-    test.assertNoErrors();
-  }
-
-  /**
-   * Должен ответить успехом запроса завершения заказа.
-   */
-  @Test
-  public void answerSendCompleteTheOrderSuccessful() {
-    // Дано:
-    when(orderRouteGateway.completeTheOrder()).thenReturn(Completable.complete());
-
-    // Действие:
-    TestObserver<Void> test = useCase.completeTheOrder().test();
 
     // Результат:
     test.assertComplete();

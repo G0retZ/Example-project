@@ -66,12 +66,6 @@ public class OrderRouteUseCaseImpl implements OrderRouteUseCase,
 
   @NonNull
   @Override
-  public Completable completeTheOrder() {
-    return orderRouteGateway.completeTheOrder().observeOn(Schedulers.single());
-  }
-
-  @NonNull
-  @Override
   public Completable nextRoutePoint(@NonNull RoutePoint routePoint) {
     return orderRouteGateway.nextRoutePoint(routePoint).observeOn(Schedulers.single());
   }
