@@ -4,7 +4,6 @@ import androidx.annotation.NonNull;
 import com.cargopull.executor_driver.entity.ExecutorBalance;
 import com.cargopull.executor_driver.entity.ExecutorState;
 import com.cargopull.executor_driver.entity.Order;
-import com.cargopull.executor_driver.entity.OrderCostDetails;
 import com.cargopull.executor_driver.interactor.CallToClientGateway;
 import com.cargopull.executor_driver.interactor.CommonGateway;
 import com.cargopull.executor_driver.interactor.ConfirmOrderPaymentGateway;
@@ -85,9 +84,6 @@ interface RepositoryComponent {
 
   @NonNull
   OrderConfirmationGateway getPreOrderProcessGateway();
-
-  @NonNull
-  CommonGateway<OrderCostDetails> getOrderCostDetailsGateway();
 
   @NonNull
   CommonGateway<Long> getOrderCurrentCostGateway();

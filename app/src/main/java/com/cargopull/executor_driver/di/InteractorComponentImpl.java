@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.cargopull.executor_driver.entity.ExecutorState;
 import com.cargopull.executor_driver.entity.LoginValidator;
+import com.cargopull.executor_driver.entity.OrderCostDetails;
 import com.cargopull.executor_driver.entity.PasswordValidator;
 import com.cargopull.executor_driver.entity.PhoneNumberValidator;
 import com.cargopull.executor_driver.entity.Vehicle;
@@ -14,6 +15,7 @@ import com.cargopull.executor_driver.interactor.ConfirmOrderPaymentUseCase;
 import com.cargopull.executor_driver.interactor.ConfirmOrderPaymentUseCaseImpl;
 import com.cargopull.executor_driver.interactor.CurrentCostPollingUseCase;
 import com.cargopull.executor_driver.interactor.CurrentCostPollingUseCaseImpl;
+import com.cargopull.executor_driver.interactor.DataReceiver;
 import com.cargopull.executor_driver.interactor.ExecutorBalanceUseCase;
 import com.cargopull.executor_driver.interactor.ExecutorBalanceUseCaseImpl;
 import com.cargopull.executor_driver.interactor.ExecutorStateNotOnlineUseCase;
@@ -30,7 +32,6 @@ import com.cargopull.executor_driver.interactor.NotificationMessageUseCaseImpl;
 import com.cargopull.executor_driver.interactor.OrderConfirmationUseCase;
 import com.cargopull.executor_driver.interactor.OrderConfirmationUseCaseImpl;
 import com.cargopull.executor_driver.interactor.OrderCostDetailsUseCase;
-import com.cargopull.executor_driver.interactor.OrderCostDetailsUseCaseImpl;
 import com.cargopull.executor_driver.interactor.OrderCurrentCostUseCase;
 import com.cargopull.executor_driver.interactor.OrderCurrentCostUseCaseImpl;
 import com.cargopull.executor_driver.interactor.OrderDecisionUseCase;
@@ -116,7 +117,7 @@ class InteractorComponentImpl implements InteractorComponent {
   @Nullable
   private OrderConfirmationUseCase selectedPreOrderConfirmationUseCase;
   @Nullable
-  private OrderCostDetailsUseCase orderCostDetailsUseCase;
+  private MemoryDataSharer<OrderCostDetails> orderCostDetailsUseCase;
   @Nullable
   private OrderCurrentCostUseCase orderCurrentCostUseCase;
   @Nullable
@@ -352,11 +353,9 @@ class InteractorComponentImpl implements InteractorComponent {
 
   @NonNull
   @Override
-  public OrderCostDetailsUseCase getOrderCostDetailsUseCase() {
+  public DataReceiver<OrderCostDetails> getOrderCostDetailsUseCase() {
     if (orderCostDetailsUseCase == null) {
-      orderCostDetailsUseCase = new OrderCostDetailsUseCaseImpl(
-          repositoryComponent.getOrderCostDetailsGateway()
-      );
+      orderCostDetailsUseCase = new OrderCostDetailsUseCase();
     }
     return orderCostDetailsUseCase;
   }

@@ -8,7 +8,7 @@ import androidx.lifecycle.ViewModel;
 import com.cargopull.executor_driver.backend.analytics.ErrorReporter;
 import com.cargopull.executor_driver.entity.OrderCostDetails;
 import com.cargopull.executor_driver.gateway.DataMappingException;
-import com.cargopull.executor_driver.interactor.OrderCostDetailsUseCase;
+import com.cargopull.executor_driver.interactor.DataReceiver;
 import com.cargopull.executor_driver.presentation.CommonNavigate;
 import com.cargopull.executor_driver.presentation.SingleLiveEvent;
 import com.cargopull.executor_driver.presentation.ViewState;
@@ -23,7 +23,7 @@ public class OrderCostDetailsViewModelImpl extends ViewModel implements
   @NonNull
   private final ErrorReporter errorReporter;
   @NonNull
-  private final OrderCostDetailsUseCase orderCostDetailsUseCase;
+  private final DataReceiver<OrderCostDetails> orderCostDetailsUseCase;
   @NonNull
   private final MutableLiveData<ViewState<OrderCostDetailsViewActions>> viewStateLiveData;
   @NonNull
@@ -35,7 +35,7 @@ public class OrderCostDetailsViewModelImpl extends ViewModel implements
 
   @Inject
   public OrderCostDetailsViewModelImpl(@NonNull ErrorReporter errorReporter,
-      @NonNull OrderCostDetailsUseCase orderCostDetailsUseCase) {
+      @NonNull DataReceiver<OrderCostDetails> orderCostDetailsUseCase) {
     this.errorReporter = errorReporter;
     this.orderCostDetailsUseCase = orderCostDetailsUseCase;
     viewStateLiveData = new MutableLiveData<>();
@@ -60,7 +60,7 @@ public class OrderCostDetailsViewModelImpl extends ViewModel implements
   private void loadOrders() {
     if (disposable.isDisposed()) {
       viewStateLiveData.postValue(new OrderCostDetailsViewStatePending(lastViewState));
-      disposable = orderCostDetailsUseCase.getOrderCostDetails()
+      disposable = orderCostDetailsUseCase.get()
           .observeOn(AndroidSchedulers.mainThread())
           .subscribe(this::consumeOrder,
               throwable -> {

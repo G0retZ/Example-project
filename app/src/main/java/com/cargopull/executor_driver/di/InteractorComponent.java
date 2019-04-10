@@ -1,9 +1,11 @@
 package com.cargopull.executor_driver.di;
 
 import androidx.annotation.NonNull;
+import com.cargopull.executor_driver.entity.OrderCostDetails;
 import com.cargopull.executor_driver.interactor.CallToClientUseCase;
 import com.cargopull.executor_driver.interactor.ConfirmOrderPaymentUseCase;
 import com.cargopull.executor_driver.interactor.CurrentCostPollingUseCase;
+import com.cargopull.executor_driver.interactor.DataReceiver;
 import com.cargopull.executor_driver.interactor.ExecutorBalanceUseCase;
 import com.cargopull.executor_driver.interactor.ExecutorStateNotOnlineUseCase;
 import com.cargopull.executor_driver.interactor.ExecutorStateUseCase;
@@ -11,7 +13,6 @@ import com.cargopull.executor_driver.interactor.GeoLocationUseCase;
 import com.cargopull.executor_driver.interactor.MovingToClientUseCase;
 import com.cargopull.executor_driver.interactor.NotificationMessageUseCase;
 import com.cargopull.executor_driver.interactor.OrderConfirmationUseCase;
-import com.cargopull.executor_driver.interactor.OrderCostDetailsUseCase;
 import com.cargopull.executor_driver.interactor.OrderCurrentCostUseCase;
 import com.cargopull.executor_driver.interactor.OrderFulfillmentTimeUseCase;
 import com.cargopull.executor_driver.interactor.OrderRouteUseCase;
@@ -78,7 +79,7 @@ interface InteractorComponent {
   OrderConfirmationUseCase getPreOrderBookingUseCase();
 
   @NonNull
-  OrderCostDetailsUseCase getOrderCostDetailsUseCase();
+  DataReceiver<OrderCostDetails> getOrderCostDetailsUseCase();
 
   @NonNull
   OrderCurrentCostUseCase getOrderCurrentCostUseCase();

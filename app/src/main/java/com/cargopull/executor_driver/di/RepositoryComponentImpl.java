@@ -5,7 +5,6 @@ import androidx.annotation.Nullable;
 import com.cargopull.executor_driver.entity.ExecutorBalance;
 import com.cargopull.executor_driver.entity.ExecutorState;
 import com.cargopull.executor_driver.entity.Order;
-import com.cargopull.executor_driver.entity.OrderCostDetails;
 import com.cargopull.executor_driver.gateway.CallToClientGatewayImpl;
 import com.cargopull.executor_driver.gateway.CancelledOrderApiMapper;
 import com.cargopull.executor_driver.gateway.CancelledOrderFilter;
@@ -33,8 +32,6 @@ import com.cargopull.executor_driver.gateway.MovingToClientGatewayImpl;
 import com.cargopull.executor_driver.gateway.OrderApiMapper;
 import com.cargopull.executor_driver.gateway.OrderConfirmationErrorMapper;
 import com.cargopull.executor_driver.gateway.OrderConfirmationGatewayImpl;
-import com.cargopull.executor_driver.gateway.OrderCostDetailsApiMapper;
-import com.cargopull.executor_driver.gateway.OrderCostDetailsFilter;
 import com.cargopull.executor_driver.gateway.OrderCurrentCostApiMapper;
 import com.cargopull.executor_driver.gateway.OrderCurrentCostFilter;
 import com.cargopull.executor_driver.gateway.OrderFilter;
@@ -131,8 +128,6 @@ class RepositoryComponentImpl implements RepositoryComponent {
   private OrderConfirmationGateway preOrderConfirmationGateway;
   @Nullable
   private OrderConfirmationGateway preOrderProcessGateway;
-  @Nullable
-  private CommonGateway<OrderCostDetails> orderCostDetailsGateway;
   @Nullable
   private CommonGateway<Long> orderCurrentCostGateway;
   @Nullable
@@ -386,19 +381,6 @@ class RepositoryComponentImpl implements RepositoryComponent {
       );
     }
     return preOrderProcessGateway;
-  }
-
-  @NonNull
-  @Override
-  public CommonGateway<OrderCostDetails> getOrderCostDetailsGateway() {
-    if (orderCostDetailsGateway == null) {
-      orderCostDetailsGateway = new TopicGateway<>(
-          backendComponent.getPersonalTopicListener(getLoginGateway()),
-          new OrderCostDetailsFilter(),
-          new OrderCostDetailsApiMapper()
-      );
-    }
-    return orderCostDetailsGateway;
   }
 
   @NonNull

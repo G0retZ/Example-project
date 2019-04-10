@@ -3,10 +3,7 @@ package com.cargopull.executor_driver.interactor.vehicle;
 import com.cargopull.executor_driver.entity.Vehicle;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner;
 
-@RunWith(MockitoJUnitRunner.class)
 public class VehicleChoiceSharerTest {
 
   private VehicleChoiceSharer vehicleChoiceSharer;
