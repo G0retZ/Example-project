@@ -11,7 +11,6 @@ import com.cargopull.executor_driver.entity.RoutePoint;
 import com.cargopull.executor_driver.gateway.OrderRouteGatewayImpl;
 import io.reactivex.Completable;
 import io.reactivex.observers.TestObserver;
-import java.util.Collections;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
@@ -33,8 +32,6 @@ public class OrderRouteGatewayTest {
 
   @Before
   public void setUp() {
-    when(apiService.changeOrderStatus(Collections.singletonMap("status", "COMPLETE_ORDER")))
-        .thenReturn(Completable.never());
     when(apiService.completeRoutePoint(anyLong())).thenReturn(Completable.never());
     when(apiService.makeRoutePointNext(anyLong())).thenReturn(Completable.never());
     gateway = new OrderRouteGatewayImpl(apiService);
@@ -55,19 +52,6 @@ public class OrderRouteGatewayTest {
 
     // Результат:
     verify(apiService, only()).completeRoutePoint(7);
-  }
-
-  /**
-   * Должен запросить у клиента STOMP отправку сообщения.
-   */
-  @Test
-  public void askStompClientToSendCompleteTheOrderMessage() {
-    // Действие:
-    gateway.completeTheOrder().test().isDisposed();
-
-    // Результат:
-    verify(apiService, only())
-        .changeOrderStatus(Collections.singletonMap("status", "COMPLETE_ORDER"));
   }
 
   /**
@@ -107,23 +91,6 @@ public class OrderRouteGatewayTest {
    * Должен ответить успехом.
    */
   @Test
-  public void answerSendCompleteTheOrderSuccess() {
-    // Дано:
-    when(apiService.changeOrderStatus(Collections.singletonMap("status", "COMPLETE_ORDER")))
-        .thenReturn(Completable.complete());
-
-    // Действие:
-    TestObserver<Void> testObserver = gateway.completeTheOrder().test();
-
-    // Результат:
-    testObserver.assertNoErrors();
-    testObserver.assertComplete();
-  }
-
-  /**
-   * Должен ответить успехом.
-   */
-  @Test
   public void answerSendNextRoutePointSuccess() {
     // Дано:
     when(apiService.makeRoutePointNext(anyLong())).thenReturn(Completable.complete());
@@ -147,23 +114,6 @@ public class OrderRouteGatewayTest {
 
     // Действие:
     TestObserver<Void> testObserver = gateway.closeRoutePoint(routePoint).test();
-
-    // Результат:
-    testObserver.assertNotComplete();
-    testObserver.assertError(IllegalArgumentException.class);
-  }
-
-  /**
-   * Должен ответить ошибкой.
-   */
-  @Test
-  public void answerSendCompleteTheOrderError() {
-    // Дано:
-    when(apiService.changeOrderStatus(Collections.singletonMap("status", "COMPLETE_ORDER")))
-        .thenReturn(Completable.error(new IllegalArgumentException()));
-
-    // Действие:
-    TestObserver<Void> testObserver = gateway.completeTheOrder().test();
 
     // Результат:
     testObserver.assertNotComplete();
