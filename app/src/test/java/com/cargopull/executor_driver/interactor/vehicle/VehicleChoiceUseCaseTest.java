@@ -10,7 +10,7 @@ import com.cargopull.executor_driver.backend.web.NoNetworkException;
 import com.cargopull.executor_driver.entity.DriverBlockedException;
 import com.cargopull.executor_driver.entity.EmptyListException;
 import com.cargopull.executor_driver.entity.Vehicle;
-import io.reactivex.Observer;
+import com.cargopull.executor_driver.interactor.DataUpdateUseCase;
 import io.reactivex.Single;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -33,7 +33,7 @@ public class VehicleChoiceUseCaseTest {
   @Mock
   private VehiclesAndOptionsGateway gateway;
   @Mock
-  private Observer<Vehicle> vehicleChoiceObserver;
+  private DataUpdateUseCase<Vehicle> vehicleChoiceObserver;
 
   @Before
   public void setUp() {
@@ -164,7 +164,7 @@ public class VehicleChoiceUseCaseTest {
 
     // Результат:
     verify(vehicleChoiceObserver, only())
-        .onNext(new Vehicle(14, "manufacturers", "modeler", "color", "licensees", false));
+        .updateWith(new Vehicle(14, "manufacturers", "modeler", "color", "licensees", false));
   }
 
   /**

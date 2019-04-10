@@ -22,7 +22,7 @@ public class VehicleChoiceSharerTest {
   @Test
   public void valueUnchangedForRead() {
     // Дано:
-    vehicleChoiceSharer.onNext(new Vehicle(1, "man", "mod", "col", "pla", false));
+    vehicleChoiceSharer.updateWith(new Vehicle(1, "man", "mod", "col", "pla", false));
 
     // Действие и Результат:
     vehicleChoiceSharer.get().test().assertValue(new Vehicle(1, "man", "mod", "col", "pla", false));

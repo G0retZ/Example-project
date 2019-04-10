@@ -72,6 +72,7 @@ import com.cargopull.executor_driver.interactor.CommonGateway;
 import com.cargopull.executor_driver.interactor.ConfirmOrderPaymentGateway;
 import com.cargopull.executor_driver.interactor.CurrentCostPollingGateway;
 import com.cargopull.executor_driver.interactor.DataReceiver;
+import com.cargopull.executor_driver.interactor.DataUpdateAndResetUseCase;
 import com.cargopull.executor_driver.interactor.ExecutorStateSwitchGateway;
 import com.cargopull.executor_driver.interactor.GeoLocationGateway;
 import com.cargopull.executor_driver.interactor.GeoTrackingGateway;
@@ -89,7 +90,6 @@ import com.cargopull.executor_driver.interactor.services.ServicesGateway;
 import com.cargopull.executor_driver.interactor.vehicle.LastUsedVehicleGateway;
 import com.cargopull.executor_driver.interactor.vehicle.VehicleOptionsGateway;
 import com.cargopull.executor_driver.interactor.vehicle.VehiclesAndOptionsGateway;
-import io.reactivex.Observer;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -193,7 +193,7 @@ class RepositoryComponentImpl implements RepositoryComponent {
 
   @NonNull
   @Override
-  public Observer<String> getLoginStorage() {
+  public DataUpdateAndResetUseCase<String> getLoginStorage() {
     if (loginGateway == null) {
       loginGateway = new LoginGateway(backendComponent.getAppSettingsService());
     }

@@ -2,8 +2,6 @@ package com.cargopull.executor_driver.interactor;
 
 import androidx.annotation.NonNull;
 import io.reactivex.Observable;
-import io.reactivex.Observer;
-import io.reactivex.disposables.Disposable;
 import io.reactivex.subjects.BehaviorSubject;
 import io.reactivex.subjects.Subject;
 import javax.inject.Inject;
@@ -13,7 +11,7 @@ import javax.inject.Inject;
  *
  * @param <D> - тип данных
  */
-public abstract class MemoryDataSharer<D> implements DataReceiver<D>, Observer<D> {
+public abstract class MemoryDataSharer<D> implements DataReceiver<D>, DataUpdateAndResetUseCase<D> {
 
   @NonNull
   private BehaviorSubject<D> subject;
@@ -30,24 +28,12 @@ public abstract class MemoryDataSharer<D> implements DataReceiver<D>, Observer<D
   }
 
   @Override
-  public void onSubscribe(Disposable d) {
-    subject.onSubscribe(d);
+  public void updateWith(@NonNull D data) {
+    subject.onNext(data);
   }
 
   @Override
-  public void onNext(@NonNull D d) {
-    subject.onNext(d);
-  }
-
-  @Override
-  public void onError(@NonNull Throwable e) {
-    Subject<D> tmp = subject;
-    subject = BehaviorSubject.create();
-    tmp.onError(e);
-  }
-
-  @Override
-  public void onComplete() {
+  public void reset() {
     Subject<D> tmp = subject;
     subject = BehaviorSubject.create();
     tmp.onComplete();
