@@ -2,6 +2,7 @@ package com.cargopull.executor_driver.backend.web;
 
 import androidx.annotation.NonNull;
 import com.cargopull.executor_driver.backend.web.incoming.ApiOptionsForOnline;
+import com.cargopull.executor_driver.backend.web.incoming.ApiOrderCostDetails;
 import com.cargopull.executor_driver.backend.web.incoming.ApiOrdersSummary;
 import com.cargopull.executor_driver.backend.web.incoming.ApiProblem;
 import com.cargopull.executor_driver.backend.web.incoming.ApiServiceItem;
@@ -140,7 +141,6 @@ public interface ApiService {
    *  Значения: DRIVER_ARRIVED
    *            CALL_TO_CLIENT
    *            START_ORDER
-   *            COMPLETE_ORDER
    *            COMPLETE_PAYMENT_CONFIRMATION
    */
   @POST("api/public/v1/mobile/order/current")
@@ -155,6 +155,16 @@ public interface ApiService {
    */
   @POST("api/public/v1/mobile/order/current")
   Completable callToClient(
+      @NonNull @Body Map<String, String> params
+  );
+
+  /*
+   *  Действия над заказом.
+   *  ключ: status
+   *  Значения: COMPLETE_ORDER
+   */
+  @POST("api/public/v1/mobile/order/current")
+  Single<ApiSimpleResult<ApiOrderCostDetails>> completeOrder(
       @NonNull @Body Map<String, String> params
   );
 
