@@ -10,9 +10,8 @@ import com.google.gson.JsonParseException
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import java.util.*
-import javax.inject.Inject
 
-class CompleteOrderGateway @Inject
+class CompleteOrderGateway
 constructor(private val apiService: ApiService,
             private val dataMapper: Mapper<ApiSimpleResult<ApiOrderCostDetails>, Pair<ExecutorState, OrderCostDetails?>>) : CommonGatewaySingle<Pair<ExecutorState, OrderCostDetails?>> {
 

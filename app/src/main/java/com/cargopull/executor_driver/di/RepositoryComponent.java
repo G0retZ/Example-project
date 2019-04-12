@@ -4,8 +4,10 @@ import androidx.annotation.NonNull;
 import com.cargopull.executor_driver.entity.ExecutorBalance;
 import com.cargopull.executor_driver.entity.ExecutorState;
 import com.cargopull.executor_driver.entity.Order;
+import com.cargopull.executor_driver.entity.OrderCostDetails;
 import com.cargopull.executor_driver.interactor.CallToClientGateway;
 import com.cargopull.executor_driver.interactor.CommonGateway;
+import com.cargopull.executor_driver.interactor.CommonGatewaySingle;
 import com.cargopull.executor_driver.interactor.ConfirmOrderPaymentGateway;
 import com.cargopull.executor_driver.interactor.CurrentCostPollingGateway;
 import com.cargopull.executor_driver.interactor.DataReceiver;
@@ -28,6 +30,7 @@ import com.cargopull.executor_driver.interactor.vehicle.LastUsedVehicleGateway;
 import com.cargopull.executor_driver.interactor.vehicle.VehicleOptionsGateway;
 import com.cargopull.executor_driver.interactor.vehicle.VehiclesAndOptionsGateway;
 import java.util.Set;
+import kotlin.Pair;
 
 interface RepositoryComponent {
 
@@ -96,6 +99,9 @@ interface RepositoryComponent {
 
   @NonNull
   OrderRouteGateway getOrderRouteGateway();
+
+  @NonNull
+  CommonGatewaySingle<Pair<ExecutorState, OrderCostDetails>> getCompleteOrderGateway();
 
   @NonNull
   ServerConnectionGateway getServerConnectionGateway();

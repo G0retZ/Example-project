@@ -6,6 +6,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProviders;
+import com.cargopull.executor_driver.presentation.NextExecutorStateViewModel;
+import com.cargopull.executor_driver.presentation.NextExecutorStateViewModelImpl;
 import com.cargopull.executor_driver.presentation.ViewModelFactory;
 import com.cargopull.executor_driver.presentation.announcement.AnnouncementViewModel;
 import com.cargopull.executor_driver.presentation.announcement.AnnouncementViewModelImpl;
@@ -385,6 +387,19 @@ class PresentationComponentImpl implements PresentationComponent {
         NextRoutePointViewModelImpl.class,
         new NextRoutePointViewModelImpl(
             getInteractorComponent().getOrderRouteUseCase()
+        )
+    );
+  }
+
+  @NonNull
+  @Override
+  public NextExecutorStateViewModel getCompleteOrderViewModel(@Nullable Fragment fragment) {
+    return getViewModelInstance(
+        fragment,
+        NextExecutorStateViewModelImpl.class,
+        new NextExecutorStateViewModelImpl(
+            backendComponent.getErrorReporter(),
+            getInteractorComponent().getCompleteOrderUseCase()
         )
     );
   }

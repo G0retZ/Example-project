@@ -29,7 +29,7 @@ public class OrderFulfillmentActionsDialogFragment extends BaseDialogFragment im
 
   private EventLogger eventLogger;
   private NextRoutePointViewModel nextRoutePointViewModel;
-  private NextExecutorStateViewModel nextExecutorStateViewModel;
+  private NextExecutorStateViewModel completeOrderViewModel;
   private View completeTheOrderAction;
   private Context context;
 
@@ -39,9 +39,9 @@ public class OrderFulfillmentActionsDialogFragment extends BaseDialogFragment im
   }
 
   @Inject
-  public void setNextExecutorStateViewModel(
+  public void setCompleteOrderViewModel(
       @NonNull NextExecutorStateViewModel nextExecutorStateViewModel) {
-    this.nextExecutorStateViewModel = nextExecutorStateViewModel;
+    this.completeOrderViewModel = nextExecutorStateViewModel;
   }
 
   @Inject
@@ -107,7 +107,7 @@ public class OrderFulfillmentActionsDialogFragment extends BaseDialogFragment im
                   ((dialog, which) -> {
                     eventLogger.reportEvent("order_fulfillment_action_incomplete_completed",
                         new HashMap<>());
-                    nextExecutorStateViewModel.routeToNextState();
+                    completeOrderViewModel.routeToNextState();
                   })
               ).setNegativeButton(getString(android.R.string.cancel), null)
               .create()

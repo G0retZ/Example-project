@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import com.cargopull.executor_driver.presentation.NextExecutorStateViewModel;
 import com.cargopull.executor_driver.presentation.announcement.AnnouncementViewModel;
 import com.cargopull.executor_driver.presentation.balance.BalanceViewModel;
 import com.cargopull.executor_driver.presentation.calltoclient.CallToClientViewModel;
@@ -109,6 +110,9 @@ interface PresentationComponent {
 
   @NonNull
   NextRoutePointViewModel getNextRoutePointViewModel(@Nullable Fragment fragment);
+
+  @NonNull
+  NextExecutorStateViewModel getCompleteOrderViewModel(@Nullable Fragment fragment);
 
   @NonNull
   OnlineButtonViewModel getOnlineButtonViewModel(@Nullable Fragment fragment);

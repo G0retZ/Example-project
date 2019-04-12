@@ -27,6 +27,8 @@ import com.cargopull.executor_driver.interactor.GeoLocationUseCaseImpl;
 import com.cargopull.executor_driver.interactor.MemoryDataSharer;
 import com.cargopull.executor_driver.interactor.MovingToClientUseCase;
 import com.cargopull.executor_driver.interactor.MovingToClientUseCaseImpl;
+import com.cargopull.executor_driver.interactor.NextExecutorStateUseCase;
+import com.cargopull.executor_driver.interactor.NextExecutorStateUseCaseImpl;
 import com.cargopull.executor_driver.interactor.NotificationMessageUseCase;
 import com.cargopull.executor_driver.interactor.NotificationMessageUseCaseImpl;
 import com.cargopull.executor_driver.interactor.OrderConfirmationUseCase;
@@ -103,7 +105,7 @@ class InteractorComponentImpl implements InteractorComponent {
   @Nullable
   private ExecutorStateNotOnlineUseCase executorStateExitUseCase;
   @Nullable
-  private ExecutorStateUseCase executorStateUseCase;
+  private ExecutorStateUseCaseImpl executorStateUseCase;
   @Nullable
   private GeoLocationUseCase geoLocationUseCase;
   @Nullable
@@ -124,6 +126,8 @@ class InteractorComponentImpl implements InteractorComponent {
   private OrderFulfillmentTimeUseCase orderFulfillmentTimeUseCase;
   @Nullable
   private OrderRouteUseCase orderRouteUseCase;
+  @Nullable
+  private NextExecutorStateUseCase completeOrderUseCase;
   @Nullable
   private OrderUseCase orderUseCase;
   @Nullable
@@ -279,12 +283,7 @@ class InteractorComponentImpl implements InteractorComponent {
   @NonNull
   @Override
   public ExecutorStateUseCase getExecutorStateUseCase() {
-    if (executorStateUseCase == null) {
-      executorStateUseCase = new ExecutorStateUseCaseImpl(
-          repositoryComponent.getExecutorStateGateway()
-      );
-    }
-    return executorStateUseCase;
+    return getExecutorStateUseCaseImpl();
   }
 
   @NonNull
@@ -354,10 +353,7 @@ class InteractorComponentImpl implements InteractorComponent {
   @NonNull
   @Override
   public DataReceiver<OrderCostDetails> getOrderCostDetailsUseCase() {
-    if (orderCostDetailsUseCase == null) {
-      orderCostDetailsUseCase = new OrderCostDetailsUseCase();
-    }
-    return orderCostDetailsUseCase;
+    return getOrderCostDetailsSharerUseCase();
   }
 
   @NonNull
@@ -394,6 +390,19 @@ class InteractorComponentImpl implements InteractorComponent {
       );
     }
     return orderRouteUseCase;
+  }
+
+  @NonNull
+  @Override
+  public NextExecutorStateUseCase getCompleteOrderUseCase() {
+    if (completeOrderUseCase == null) {
+      completeOrderUseCase = new NextExecutorStateUseCaseImpl<>(
+          repositoryComponent.getCompleteOrderGateway(),
+          getExecutorStateUseCaseImpl(),
+          getOrderCostDetailsSharerUseCase()
+      );
+    }
+    return completeOrderUseCase;
   }
 
   @NonNull
@@ -724,5 +733,23 @@ class InteractorComponentImpl implements InteractorComponent {
       );
     }
     return upcomingPreOrderUseCase;
+  }
+
+  @NonNull
+  private ExecutorStateUseCaseImpl getExecutorStateUseCaseImpl() {
+    if (executorStateUseCase == null) {
+      executorStateUseCase = new ExecutorStateUseCaseImpl(
+          repositoryComponent.getExecutorStateGateway()
+      );
+    }
+    return executorStateUseCase;
+  }
+
+  @NonNull
+  private MemoryDataSharer<OrderCostDetails> getOrderCostDetailsSharerUseCase() {
+    if (orderCostDetailsUseCase == null) {
+      orderCostDetailsUseCase = new OrderCostDetailsUseCase();
+    }
+    return orderCostDetailsUseCase;
   }
 }

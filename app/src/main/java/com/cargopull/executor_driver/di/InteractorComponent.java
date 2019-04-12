@@ -11,6 +11,7 @@ import com.cargopull.executor_driver.interactor.ExecutorStateNotOnlineUseCase;
 import com.cargopull.executor_driver.interactor.ExecutorStateUseCase;
 import com.cargopull.executor_driver.interactor.GeoLocationUseCase;
 import com.cargopull.executor_driver.interactor.MovingToClientUseCase;
+import com.cargopull.executor_driver.interactor.NextExecutorStateUseCase;
 import com.cargopull.executor_driver.interactor.NotificationMessageUseCase;
 import com.cargopull.executor_driver.interactor.OrderConfirmationUseCase;
 import com.cargopull.executor_driver.interactor.OrderCurrentCostUseCase;
@@ -89,6 +90,9 @@ interface InteractorComponent {
 
   @NonNull
   OrderRouteUseCase getOrderRouteUseCase();
+
+  @NonNull
+  NextExecutorStateUseCase getCompleteOrderUseCase();
 
   @NonNull
   OrderUseCase getOrderUseCase();

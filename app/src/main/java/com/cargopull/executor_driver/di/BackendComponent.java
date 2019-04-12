@@ -14,7 +14,7 @@ import io.reactivex.Observer;
 import java.util.Map;
 import ua.naiksoftware.stomp.client.StompClient;
 
-interface BackendComponent {
+public interface BackendComponent {
 
   @NonNull
   EventLogger getEventLogger();

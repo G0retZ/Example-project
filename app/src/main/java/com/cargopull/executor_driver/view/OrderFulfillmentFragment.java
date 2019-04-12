@@ -49,7 +49,7 @@ public class OrderFulfillmentFragment extends BaseFragment implements OrderCostV
   private OrderCostViewModel orderCostViewModel;
   private OrderTimeViewModel orderTimeViewModel;
   private NextRoutePointViewModel nextRoutePointViewModel;
-  private NextExecutorStateViewModel nextExecutorStateViewModel;
+  private NextExecutorStateViewModel completeOrderViewModel;
   private OrderRouteViewModel orderRouteViewModel;
   private ShakeItPlayer shakeItPlayer;
   private TextView totalTimeText;
@@ -90,9 +90,9 @@ public class OrderFulfillmentFragment extends BaseFragment implements OrderCostV
   }
 
   @Inject
-  public void setNextExecutorStateViewModel(
+  public void setCompleteOrderViewModel(
       @NonNull NextExecutorStateViewModel nextExecutorStateViewModel) {
-    this.nextExecutorStateViewModel = nextExecutorStateViewModel;
+    this.completeOrderViewModel = nextExecutorStateViewModel;
   }
 
   @Inject
@@ -196,7 +196,7 @@ public class OrderFulfillmentFragment extends BaseFragment implements OrderCostV
       @Override
       public void onAnimationEnd(Animator animation) {
         if (!canceled) {
-          nextExecutorStateViewModel.routeToNextState();
+          completeOrderViewModel.routeToNextState();
           shakeItPlayer.shakeIt(R.raw.single_shot_vibro);
         }
       }

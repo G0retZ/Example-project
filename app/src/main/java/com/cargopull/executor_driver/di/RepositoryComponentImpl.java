@@ -2,12 +2,15 @@ package com.cargopull.executor_driver.di;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import com.cargopull.executor_driver.backend.web.incoming.ApiOrderCostDetails;
 import com.cargopull.executor_driver.entity.ExecutorBalance;
 import com.cargopull.executor_driver.entity.ExecutorState;
 import com.cargopull.executor_driver.entity.Order;
+import com.cargopull.executor_driver.entity.OrderCostDetails;
 import com.cargopull.executor_driver.gateway.CallToClientGatewayImpl;
 import com.cargopull.executor_driver.gateway.CancelledOrderApiMapper;
 import com.cargopull.executor_driver.gateway.CancelledOrderFilter;
+import com.cargopull.executor_driver.gateway.CompleteOrderGateway;
 import com.cargopull.executor_driver.gateway.ConfirmOrderPaymentGatewayImpl;
 import com.cargopull.executor_driver.gateway.CurrentCostPollingGatewayImpl;
 import com.cargopull.executor_driver.gateway.CurrentCostPollingTimersApiMapper;
@@ -32,6 +35,7 @@ import com.cargopull.executor_driver.gateway.MovingToClientGatewayImpl;
 import com.cargopull.executor_driver.gateway.OrderApiMapper;
 import com.cargopull.executor_driver.gateway.OrderConfirmationErrorMapper;
 import com.cargopull.executor_driver.gateway.OrderConfirmationGatewayImpl;
+import com.cargopull.executor_driver.gateway.OrderCostDetailsApiMapper;
 import com.cargopull.executor_driver.gateway.OrderCurrentCostApiMapper;
 import com.cargopull.executor_driver.gateway.OrderCurrentCostFilter;
 import com.cargopull.executor_driver.gateway.OrderFilter;
@@ -54,6 +58,7 @@ import com.cargopull.executor_driver.gateway.ServerTimeFilter;
 import com.cargopull.executor_driver.gateway.ServiceApiMapper;
 import com.cargopull.executor_driver.gateway.ServicesGatewayImpl;
 import com.cargopull.executor_driver.gateway.SmsGatewayImpl;
+import com.cargopull.executor_driver.gateway.StateAndDataApiMapper;
 import com.cargopull.executor_driver.gateway.TopicGateway;
 import com.cargopull.executor_driver.gateway.UpcomingPreOrderApiMapper;
 import com.cargopull.executor_driver.gateway.UpcomingPreOrderFilter;
@@ -66,6 +71,7 @@ import com.cargopull.executor_driver.gateway.VehiclesAndOptionsGatewayImpl;
 import com.cargopull.executor_driver.gateway.WaitingForClientGatewayImpl;
 import com.cargopull.executor_driver.interactor.CallToClientGateway;
 import com.cargopull.executor_driver.interactor.CommonGateway;
+import com.cargopull.executor_driver.interactor.CommonGatewaySingle;
 import com.cargopull.executor_driver.interactor.ConfirmOrderPaymentGateway;
 import com.cargopull.executor_driver.interactor.CurrentCostPollingGateway;
 import com.cargopull.executor_driver.interactor.DataReceiver;
@@ -89,6 +95,7 @@ import com.cargopull.executor_driver.interactor.vehicle.VehicleOptionsGateway;
 import com.cargopull.executor_driver.interactor.vehicle.VehiclesAndOptionsGateway;
 import java.util.HashSet;
 import java.util.Set;
+import kotlin.Pair;
 
 class RepositoryComponentImpl implements RepositoryComponent {
 
@@ -437,6 +444,17 @@ class RepositoryComponentImpl implements RepositoryComponent {
       );
     }
     return orderRouteGateway;
+  }
+
+  @NonNull
+  @Override
+  public CommonGatewaySingle<Pair<ExecutorState, OrderCostDetails>> getCompleteOrderGateway() {
+    return new CompleteOrderGateway(
+        backendComponent.getApiService(),
+        new StateAndDataApiMapper<ApiOrderCostDetails, OrderCostDetails>(
+            new OrderCostDetailsApiMapper()
+        )
+    );
   }
 
   @NonNull

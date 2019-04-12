@@ -465,6 +465,9 @@ public class AppComponentImpl implements AppComponent {
     orderFulfillmentFragment.setNextRoutePointViewModel(
         getPresentationComponent().getNextRoutePointViewModel(orderFulfillmentFragment)
     );
+    orderFulfillmentFragment.setCompleteOrderViewModel(
+        getPresentationComponent().getCompleteOrderViewModel(orderFulfillmentFragment)
+    );
     orderFulfillmentFragment.setOrderRouteViewModel(
         getPresentationComponent().getOrderRouteViewModel(orderFulfillmentFragment)
     );
@@ -480,6 +483,9 @@ public class AppComponentImpl implements AppComponent {
     );
     orderFulfillmentActionsDialogFragment.setNextRoutePointViewModel(
         getPresentationComponent().getNextRoutePointViewModel(orderFulfillmentActionsDialogFragment)
+    );
+    orderFulfillmentActionsDialogFragment.setCompleteOrderViewModel(
+        getPresentationComponent().getCompleteOrderViewModel(orderFulfillmentActionsDialogFragment)
     );
   }
 
