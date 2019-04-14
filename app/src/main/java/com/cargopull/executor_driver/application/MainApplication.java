@@ -22,7 +22,7 @@ import com.cargopull.executor_driver.R;
 import com.cargopull.executor_driver.backend.ringtone.RingTonePlayer;
 import com.cargopull.executor_driver.backend.vibro.ShakeItPlayer;
 import com.cargopull.executor_driver.di.AppComponent;
-import com.cargopull.executor_driver.di.AppComponentImpl;
+import com.cargopull.executor_driver.di.BackendComponent;
 import com.cargopull.executor_driver.presentation.CommonNavigate;
 import com.cargopull.executor_driver.presentation.balance.BalanceViewModel;
 import com.cargopull.executor_driver.presentation.cancelledorder.CancelledOrderViewActions;
@@ -175,7 +175,7 @@ public class MainApplication extends Application implements ServerConnectionView
   @Override
   public void onCreate() {
     super.onCreate();
-    appComponent = new AppComponentImpl(this.getApplicationContext());
+    appComponent = new AppComponent(this, new BackendComponent(this));
     appComponent.inject(
         appSettingsService -> AppCompatDelegate.setDefaultNightMode(
             appSettingsService.getNumber("mode")
