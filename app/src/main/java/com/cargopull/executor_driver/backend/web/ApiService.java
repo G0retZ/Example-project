@@ -169,6 +169,16 @@ public interface ApiService {
   );
 
   /*
+   *  Действия над заказом.
+   *  ключ: status
+   *  Значения: COMPLETE_PAYMENT_CONFIRMATION
+   */
+  @POST("api/public/v1/mobile/order/current")
+  Single<ApiSimpleResult<Void>> completeOrderPayment(
+      @NonNull @Body Map<String, String> params
+  );
+
+  /*
    *  Запрос смены статуса заказа.
    */
   @POST("api/public/v1/mobile/order/current/routePoint/{id}/next")
