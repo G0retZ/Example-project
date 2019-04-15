@@ -19,8 +19,8 @@ import androidx.annotation.Nullable;
 import com.cargopull.executor_driver.R;
 import com.cargopull.executor_driver.backend.vibro.ShakeItPlayer;
 import com.cargopull.executor_driver.di.AppComponent;
+import com.cargopull.executor_driver.presentation.NextExecutorStateViewModel;
 import com.cargopull.executor_driver.presentation.confirmorderpayment.ConfirmOrderPaymentViewActions;
-import com.cargopull.executor_driver.presentation.confirmorderpayment.ConfirmOrderPaymentViewModel;
 import com.cargopull.executor_driver.presentation.ordecostdetails.OrderCostDetailsViewActions;
 import com.cargopull.executor_driver.presentation.ordecostdetails.OrderCostDetailsViewModel;
 import com.cargopull.executor_driver.utils.Pair;
@@ -37,7 +37,7 @@ public class OrderCostDetailsFragment extends BaseFragment implements OrderCostD
     ConfirmOrderPaymentViewActions {
 
   private OrderCostDetailsViewModel orderCostDetailsViewModel;
-  private ConfirmOrderPaymentViewModel confirmOrderPaymentViewModel;
+  private NextExecutorStateViewModel confirmOrderPaymentViewModel;
   private ShakeItPlayer shakeItPlayer;
   private TextView totalPaymentText;
   private TextView estimatedPackageTitle;
@@ -75,7 +75,7 @@ public class OrderCostDetailsFragment extends BaseFragment implements OrderCostD
 
   @Inject
   public void setConfirmOrderPaymentViewModel(
-      @NonNull ConfirmOrderPaymentViewModel confirmOrderPaymentViewModel) {
+      @NonNull NextExecutorStateViewModel confirmOrderPaymentViewModel) {
     this.confirmOrderPaymentViewModel = confirmOrderPaymentViewModel;
   }
 
@@ -128,7 +128,7 @@ public class OrderCostDetailsFragment extends BaseFragment implements OrderCostD
       @Override
       public void onAnimationEnd(Animator animation) {
         if (!canceled) {
-          confirmOrderPaymentViewModel.confirmPayment();
+          confirmOrderPaymentViewModel.routeToNextState();
           shakeItPlayer.shakeIt(R.raw.single_shot_vibro);
         }
       }

@@ -15,7 +15,6 @@ class CompleteOrderGateway
 constructor(private val apiService: ApiService,
             private val dataMapper: Mapper<ApiSimpleResult<ApiOrderCostDetails>, Pair<ExecutorState, OrderCostDetails?>>) : CommonGatewaySingle<Pair<ExecutorState, OrderCostDetails?>> {
 
-
     /**
      * Запрашивает сервер завершить заказ.
      *

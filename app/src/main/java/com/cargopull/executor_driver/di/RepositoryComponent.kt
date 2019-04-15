@@ -6,8 +6,8 @@ import com.cargopull.executor_driver.entity.ExecutorState
 import com.cargopull.executor_driver.entity.Order
 import com.cargopull.executor_driver.entity.OrderCostDetails
 import com.cargopull.executor_driver.gateway.*
+import com.cargopull.executor_driver.gateway.ConfirmOrderPaymentGateway
 import com.cargopull.executor_driver.interactor.*
-import com.cargopull.executor_driver.interactor.ConfirmOrderPaymentGateway
 import com.cargopull.executor_driver.interactor.auth.PasswordGateway
 import com.cargopull.executor_driver.interactor.auth.SmsGateway
 import com.cargopull.executor_driver.interactor.map.HeatMapGateway
@@ -61,8 +61,13 @@ class RepositoryComponent(private val backendComponent: BackendComponent) {
     val reportProblemGateway: ReportProblemGateway by lazy {
         ReportProblemGatewayImpl(backendComponent.apiService, ProblemApiMapper())
     }
-    val confirmOrderPaymentGateway: ConfirmOrderPaymentGateway by lazy {
-        ConfirmOrderPaymentGatewayImpl(backendComponent.apiService)
+    val confirmOrderPaymentGateway: CommonGatewaySingle<Pair<ExecutorState, Void?>> by lazy {
+        ConfirmOrderPaymentGateway(
+                backendComponent.apiService,
+                StateAndDataApiMapper(
+                        MirrorMapper()
+                )
+        )
     }
     val currentCostPollingGateway: CurrentCostPollingGateway by lazy {
         CurrentCostPollingGatewayImpl(

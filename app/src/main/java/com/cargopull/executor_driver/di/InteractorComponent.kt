@@ -24,8 +24,12 @@ class InteractorComponent(
         get() {
             return ReportProblemUseCaseImpl(repositoryComponent.reportProblemGateway)
         }
-    val confirmOrderPaymentUseCase: ConfirmOrderPaymentUseCase by lazy {
-        ConfirmOrderPaymentUseCaseImpl(repositoryComponent.confirmOrderPaymentGateway)
+    val confirmOrderPaymentUseCase: NextExecutorStateUseCase by lazy {
+        NextExecutorStateUseCaseImpl(
+                repositoryComponent.confirmOrderPaymentGateway,
+                executorStateUseCaseImpl,
+                null
+        )
     }
     val currentCostPollingUseCase: CurrentCostPollingUseCase by lazy {
         CurrentCostPollingUseCaseImpl(repositoryComponent.currentCostPollingGateway)

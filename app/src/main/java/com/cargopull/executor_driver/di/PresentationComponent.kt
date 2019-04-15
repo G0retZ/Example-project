@@ -25,8 +25,6 @@ import com.cargopull.executor_driver.presentation.code.CodeViewModel
 import com.cargopull.executor_driver.presentation.code.CodeViewModelImpl
 import com.cargopull.executor_driver.presentation.codeheader.CodeHeaderViewModel
 import com.cargopull.executor_driver.presentation.codeheader.CodeHeaderViewModelImpl
-import com.cargopull.executor_driver.presentation.confirmorderpayment.ConfirmOrderPaymentViewModel
-import com.cargopull.executor_driver.presentation.confirmorderpayment.ConfirmOrderPaymentViewModelImpl
 import com.cargopull.executor_driver.presentation.currentcostpolling.CurrentCostPollingViewModel
 import com.cargopull.executor_driver.presentation.currentcostpolling.CurrentCostPollingViewModelImpl
 import com.cargopull.executor_driver.presentation.executorstate.ExecutorStateViewModel
@@ -291,11 +289,12 @@ class PresentationComponent(
         )
     }
 
-    fun getConfirmOrderPaymentViewModel(fragment: Fragment?): ConfirmOrderPaymentViewModel {
+    fun getConfirmOrderPaymentViewModel(fragment: Fragment?): NextExecutorStateViewModel {
         return getViewModelInstance(
                 fragment,
-                ConfirmOrderPaymentViewModelImpl::class.java,
-                ConfirmOrderPaymentViewModelImpl(
+                NextExecutorStateViewModelImpl::class.java,
+                NextExecutorStateViewModelImpl(
+                        backendComponent.errorReporter,
                         interactorComponent.confirmOrderPaymentUseCase
                 )
         )
