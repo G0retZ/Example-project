@@ -7,6 +7,7 @@ import com.cargopull.executor_driver.entity.Order
 import com.cargopull.executor_driver.entity.OrderCostDetails
 import com.cargopull.executor_driver.gateway.*
 import com.cargopull.executor_driver.interactor.*
+import com.cargopull.executor_driver.interactor.ConfirmOrderPaymentGateway
 import com.cargopull.executor_driver.interactor.auth.PasswordGateway
 import com.cargopull.executor_driver.interactor.auth.SmsGateway
 import com.cargopull.executor_driver.interactor.map.HeatMapGateway
