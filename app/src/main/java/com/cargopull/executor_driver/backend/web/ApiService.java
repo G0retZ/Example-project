@@ -5,6 +5,7 @@ import com.cargopull.executor_driver.backend.web.incoming.ApiOptionsForOnline;
 import com.cargopull.executor_driver.backend.web.incoming.ApiOrderCostDetails;
 import com.cargopull.executor_driver.backend.web.incoming.ApiOrdersSummary;
 import com.cargopull.executor_driver.backend.web.incoming.ApiProblem;
+import com.cargopull.executor_driver.backend.web.incoming.ApiRoutePoint;
 import com.cargopull.executor_driver.backend.web.incoming.ApiServiceItem;
 import com.cargopull.executor_driver.backend.web.incoming.ApiSimpleResult;
 import com.cargopull.executor_driver.backend.web.outgoing.ApiLogin;
@@ -155,6 +156,16 @@ public interface ApiService {
    */
   @POST("api/public/v1/mobile/order/current")
   Completable callToClient(
+      @NonNull @Body Map<String, String> params
+  );
+
+  /*
+   *  Действия над заказом.
+   *  ключ: status
+   *  Значения: DRIVER_ARRIVED
+   */
+  @POST("api/public/v1/mobile/order/current")
+  Single<ApiSimpleResult<List<ApiRoutePoint>>> reportArrived(
       @NonNull @Body Map<String, String> params
   );
 
