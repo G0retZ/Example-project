@@ -20,7 +20,6 @@ import com.cargopull.executor_driver.R;
 import com.cargopull.executor_driver.backend.vibro.ShakeItPlayer;
 import com.cargopull.executor_driver.di.AppComponent;
 import com.cargopull.executor_driver.presentation.NextExecutorStateViewModel;
-import com.cargopull.executor_driver.presentation.confirmorderpayment.ConfirmOrderPaymentViewActions;
 import com.cargopull.executor_driver.presentation.ordecostdetails.OrderCostDetailsViewActions;
 import com.cargopull.executor_driver.presentation.ordecostdetails.OrderCostDetailsViewModel;
 import com.cargopull.executor_driver.utils.Pair;
@@ -33,8 +32,7 @@ import org.joda.time.LocalTime;
  * Отображает детализацию расчета стоимости заказа.
  */
 
-public class OrderCostDetailsFragment extends BaseFragment implements OrderCostDetailsViewActions,
-    ConfirmOrderPaymentViewActions {
+public class OrderCostDetailsFragment extends BaseFragment implements OrderCostDetailsViewActions {
 
   private OrderCostDetailsViewModel orderCostDetailsViewModel;
   private NextExecutorStateViewModel confirmOrderPaymentViewModel;
@@ -377,10 +375,5 @@ public class OrderCostDetailsFragment extends BaseFragment implements OrderCostD
       );
       overPackageTariffOptionsCosts.addView(view);
     }
-  }
-
-  @Override
-  public void ConfirmOrderPaymentPending(boolean pending) {
-    showPending(pending, toString() + "1");
   }
 }
