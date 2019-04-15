@@ -20,7 +20,7 @@ interface NextExecutorStateUseCase {
 class NextExecutorStateUseCaseImpl<D>(
         private val gateway: CommonGatewaySingle<Pair<ExecutorState, D?>>,
         private val updateExecutorStateUseCase: DataUpdateUseCase<ExecutorState>,
-        private val updateDataUseCase: DataUpdateUseCase<D>
+        private val updateDataUseCase: DataUpdateUseCase<D>?
 ) : NextExecutorStateUseCase {
 
     override val proceedToNextState: Completable
@@ -29,7 +29,8 @@ class NextExecutorStateUseCaseImpl<D>(
                     .observeOn(Schedulers.single())
                     .map { pair ->
                         updateExecutorStateUseCase.updateWith(pair.first)
-                        pair.second?.let { updateDataUseCase.updateWith(it) }
+                        // TODO: покрыть тестами работу с нулевым юзкейсом обновления данных
+                        pair.second?.let { updateDataUseCase?.updateWith(it) }
                     }.toCompletable()
 
         }
