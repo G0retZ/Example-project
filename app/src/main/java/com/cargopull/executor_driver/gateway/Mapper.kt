@@ -18,3 +18,13 @@ interface Mapper<F, T> {
     @Throws(Exception::class)
     fun map(from: F): T
 }
+
+class MirrorMapper<T> : Mapper<T, T> {
+    override fun map(from: T): T = from
+
+}
+
+class ConstantMapper<T, D>(private val value: D) : Mapper<T, D> {
+    override fun map(from: T): D = value
+
+}
