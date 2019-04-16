@@ -74,8 +74,12 @@ class InteractorComponent(
     val missedOrderUseCase: NotificationMessageUseCase by lazy {
         NotificationMessageUseCaseImpl(repositoryComponent.missedOrderGateway)
     }
-    val movingToClientUseCase: MovingToClientUseCase by lazy {
-        MovingToClientUseCaseImpl(repositoryComponent.movingToClientGateway)
+    val reportArrivedUseCase: NextExecutorStateUseCase by lazy {
+        NextExecutorStateUseCaseImpl(
+                repositoryComponent.reportArrivedGateway,
+                executorStateUseCaseImpl,
+                orderRouteUseCaseImpl
+        )
     }
     val orderConfirmationUseCase: OrderConfirmationUseCase by lazy {
         OrderConfirmationUseCaseImpl(
@@ -108,10 +112,7 @@ class InteractorComponent(
         OrderFulfillmentTimeUseCaseImpl(orderUseCase, timeUtils)
     }
     val orderRouteUseCase: OrderRouteUseCase by lazy {
-        OrderRouteUseCaseImpl(
-                orderUseCase,
-                repositoryComponent.orderRouteGateway
-        )
+        orderRouteUseCaseImpl
     }
     val completeOrderUseCase: NextExecutorStateUseCase by lazy {
         NextExecutorStateUseCaseImpl(
@@ -264,6 +265,12 @@ class InteractorComponent(
     }
     private val selectedOrderUseCaseImpl: SelectedOrderUseCaseImpl by lazy {
         SelectedOrderUseCaseImpl(preOrdersSetUseCase)
+    }
+    private val orderRouteUseCaseImpl: OrderRouteUseCaseImpl by lazy {
+        OrderRouteUseCaseImpl(
+                orderUseCase,
+                repositoryComponent.orderRouteGateway
+        )
     }
     private val orderCostDetailsSharer: MemoryDataSharer<OrderCostDetails> by lazy {
         OrderCostDetailsUseCase()

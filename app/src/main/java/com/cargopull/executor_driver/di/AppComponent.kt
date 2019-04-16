@@ -305,8 +305,8 @@ class AppComponent(private val appContext: Context, private val backendComponent
         movingToClientFragment.setMovingToClientTimerViewModel(
                 presentationComponent.getMovingToClientTimerViewModel(movingToClientFragment)
         )
-        movingToClientFragment.setMovingToClientViewModel(
-                presentationComponent.getMovingToClientViewModel(movingToClientFragment)
+        movingToClientFragment.setReportArrivedViewModel(
+                presentationComponent.getReportArrivedViewModel(movingToClientFragment)
         )
         movingToClientFragment.setShakeItPlayer(
                 shakeItPlayer

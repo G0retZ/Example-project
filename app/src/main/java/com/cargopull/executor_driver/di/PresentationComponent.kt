@@ -39,8 +39,6 @@ import com.cargopull.executor_driver.presentation.menu.MenuViewModel
 import com.cargopull.executor_driver.presentation.menu.MenuViewModelImpl
 import com.cargopull.executor_driver.presentation.missedorder.MissedOrderViewModel
 import com.cargopull.executor_driver.presentation.missedorder.MissedOrderViewModelImpl
-import com.cargopull.executor_driver.presentation.movingtoclient.MovingToClientViewModel
-import com.cargopull.executor_driver.presentation.movingtoclient.MovingToClientViewModelImpl
 import com.cargopull.executor_driver.presentation.movingtoclienttimer.MovingToClientTimerViewModel
 import com.cargopull.executor_driver.presentation.movingtoclienttimer.MovingToClientTimerViewModelImpl
 import com.cargopull.executor_driver.presentation.nextroutepoint.NextRoutePointViewModel
@@ -310,12 +308,13 @@ class PresentationComponent(
         )
     }
 
-    fun getMovingToClientViewModel(fragment: Fragment?): MovingToClientViewModel {
+    fun getReportArrivedViewModel(fragment: Fragment?): NextExecutorStateViewModel {
         return getViewModelInstance(
                 fragment,
-                MovingToClientViewModelImpl::class.java,
-                MovingToClientViewModelImpl(
-                        interactorComponent.movingToClientUseCase
+                NextExecutorStateViewModelImpl::class.java,
+                NextExecutorStateViewModelImpl(
+                        backendComponent.errorReporter,
+                        interactorComponent.reportArrivedUseCase
                 )
         )
     }

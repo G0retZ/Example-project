@@ -1,12 +1,9 @@
 package com.cargopull.executor_driver.di
 
 import com.cargopull.executor_driver.backend.web.TopicListener
-import com.cargopull.executor_driver.entity.ExecutorBalance
-import com.cargopull.executor_driver.entity.ExecutorState
-import com.cargopull.executor_driver.entity.Order
-import com.cargopull.executor_driver.entity.OrderCostDetails
+import com.cargopull.executor_driver.backend.web.incoming.ApiRoutePoint
+import com.cargopull.executor_driver.entity.*
 import com.cargopull.executor_driver.gateway.*
-import com.cargopull.executor_driver.gateway.ConfirmOrderPaymentGateway
 import com.cargopull.executor_driver.interactor.*
 import com.cargopull.executor_driver.interactor.auth.PasswordGateway
 import com.cargopull.executor_driver.interactor.auth.SmsGateway
@@ -106,8 +103,16 @@ class RepositoryComponent(private val backendComponent: BackendComponent) {
                 MessagePayloadApiMapper()
         )
     }
-    val movingToClientGateway: MovingToClientGateway by lazy {
-        MovingToClientGatewayImpl(backendComponent.apiService)
+    val reportArrivedGateway: CommonGatewaySingle<Pair<ExecutorState, List<RoutePoint>?>> by lazy {
+        val mapper = RoutePointApiMapper()
+        ReportArrivedGateway(
+                backendComponent.apiService,
+                StateAndDataApiMapper(
+                        object : Mapper<List<ApiRoutePoint>, List<RoutePoint>> {
+                            override fun map(from: List<ApiRoutePoint>) = from.map(mapper::map)
+                        }
+                )
+        )
     }
     val orderConfirmationGateway: OrderConfirmationGateway by lazy {
         OrderConfirmationGatewayImpl(backendComponent.apiService, OrderConfirmationErrorMapper())
