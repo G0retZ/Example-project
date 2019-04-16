@@ -172,6 +172,16 @@ public interface ApiService {
   /*
    *  Действия над заказом.
    *  ключ: status
+   *  Значения: START_ORDER
+   */
+  @POST("api/public/v1/mobile/order/current")
+  Single<ApiSimpleResult<List<ApiRoutePoint>>> startOrder(
+      @NonNull @Body Map<String, String> params
+  );
+
+  /*
+   *  Действия над заказом.
+   *  ключ: status
    *  Значения: COMPLETE_ORDER
    */
   @POST("api/public/v1/mobile/order/current")
