@@ -68,7 +68,7 @@ class ConfirmOrderPaymentGatewayTest {
         gateway.data.test().isDisposed
 
         // Результат:
-        Mockito.verifyZeroInteractions(mapper)
+        verifyZeroInteractions(mapper)
     }
 
     /**

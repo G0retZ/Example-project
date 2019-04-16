@@ -18,7 +18,6 @@ import org.junit.rules.TestRule
 import org.junit.runner.RunWith
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mock
-import org.mockito.Mockito
 import org.mockito.Mockito.*
 import org.mockito.junit.MockitoJUnitRunner
 import retrofit2.HttpException
@@ -162,7 +161,7 @@ class NextExecutorStateViewModelTest {
      * еще не завершился.
      */
     @Test
-    fun DoNotTouchUseCaseDuringRoutingToNextExecutorState() {
+    fun doNotTouchUseCaseDuringRoutingToNextExecutorState() {
         // Действие:
         viewModel.routeToNextState()
         viewModel.routeToNextState()
@@ -181,7 +180,7 @@ class NextExecutorStateViewModelTest {
     @Test
     fun setPendingViewStateToLiveDataInitially() {
         // Дано:
-        val inOrder = Mockito.inOrder(viewStateObserver)
+        val inOrder = inOrder(viewStateObserver)
 
         // Действие:
         viewModel.viewStateLiveData.observeForever(viewStateObserver)
@@ -197,7 +196,7 @@ class NextExecutorStateViewModelTest {
     @Test
     fun setPendingViewStateWithEnRouteViewStateToLiveDataForCompleteTheOrder() {
         // Дано:
-        val inOrder = Mockito.inOrder(viewStateObserver)
+        val inOrder = inOrder(viewStateObserver)
         viewModel.viewStateLiveData.observeForever(viewStateObserver)
 
         // Действие:
@@ -215,7 +214,7 @@ class NextExecutorStateViewModelTest {
     @Test
     fun setPendingViewStateWithNoRouteTrueViewStateToLiveDataForCompleteTheOrder() {
         // Дано:
-        val inOrder = Mockito.inOrder(viewStateObserver)
+        val inOrder = inOrder(viewStateObserver)
         viewModel.viewStateLiveData.observeForever(viewStateObserver)
         `when`(nextExecutorStateUseCase.proceedToNextState)
                 .thenReturn(Completable.error(Exception()))
@@ -236,7 +235,7 @@ class NextExecutorStateViewModelTest {
     @Test
     fun setPendingViewStateWithNoRouteFalseViewStateToLiveDataForCompleteTheOrder() {
         // Дано:
-        val inOrder = Mockito.inOrder(viewStateObserver)
+        val inOrder = inOrder(viewStateObserver)
         viewModel.viewStateLiveData.observeForever(viewStateObserver)
         `when`(nextExecutorStateUseCase.proceedToNextState).thenReturn(Completable.complete())
 

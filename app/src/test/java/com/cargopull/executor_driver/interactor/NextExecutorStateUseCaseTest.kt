@@ -9,7 +9,6 @@ import org.junit.ClassRule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mock
-import org.mockito.Mockito
 import org.mockito.Mockito.*
 import org.mockito.junit.MockitoJUnitRunner
 import java.io.IOException
@@ -97,7 +96,7 @@ class NextExecutorStateUseCaseTest {
     @Test
     fun passUpdateExecutorStateToUpdateUseCase() {
         // Дано:
-        val inOrder = Mockito.inOrder(updateExecutorStateUseCase)
+        val inOrder = inOrder(updateExecutorStateUseCase)
         `when`(gateway.data).thenReturn(
                 Single.just(Pair(ExecutorState.ONLINE, "lalala")),
                 Single.just(Pair(ExecutorState.WAITING_FOR_CLIENT, "lelele")),
@@ -163,7 +162,7 @@ class NextExecutorStateUseCaseTest {
     @Test
     fun passUpdatedDataToUpdateUseCase() {
         // Дано:
-        val inOrder = Mockito.inOrder(updateUseCase)
+        val inOrder = inOrder(updateUseCase)
         `when`(gateway.data).thenReturn(
                 Single.just(Pair(ExecutorState.ONLINE, "lalala")),
                 Single.just(Pair(ExecutorState.WAITING_FOR_CLIENT, "lelele")),
