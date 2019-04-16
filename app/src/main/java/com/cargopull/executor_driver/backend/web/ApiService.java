@@ -139,19 +139,6 @@ public interface ApiService {
   /*
    *  Действия над заказом.
    *  ключ: status
-   *  Значения: DRIVER_ARRIVED
-   *            CALL_TO_CLIENT
-   *            START_ORDER
-   *            COMPLETE_PAYMENT_CONFIRMATION
-   */
-  @POST("api/public/v1/mobile/order/current")
-  Completable changeOrderStatus(
-      @NonNull @Body Map<String, String> params
-  );
-
-  /*
-   *  Действия над заказом.
-   *  ключ: status
    *  Значения: CALL_TO_CLIENT
    */
   @POST("api/public/v1/mobile/order/current")
