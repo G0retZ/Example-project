@@ -139,8 +139,12 @@ class InteractorComponent(
     val updateMessageUseCase: UpdateMessageUseCase by lazy {
         UpdateMessageUseCaseImpl(repositoryComponent.updateMessageGateway)
     }
-    val waitingForClientUseCase: WaitingForClientUseCase by lazy {
-        WaitingForClientUseCaseImpl(repositoryComponent.waitingForClientGateway)
+    val startOrderUseCase: NextExecutorStateUseCase by lazy {
+        NextExecutorStateUseCaseImpl(
+                repositoryComponent.startOrderGateway,
+                executorStateUseCaseImpl,
+                orderRouteUseCaseImpl
+        )
     }
     val loginUseCase: LoginUseCase by lazy {
         LoginUseCaseImpl(

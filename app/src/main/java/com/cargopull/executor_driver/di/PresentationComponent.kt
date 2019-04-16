@@ -85,8 +85,6 @@ import com.cargopull.executor_driver.presentation.updatemessage.UpdateMessageVie
 import com.cargopull.executor_driver.presentation.updatemessage.UpdateMessageViewModelImpl
 import com.cargopull.executor_driver.presentation.vehicleoptions.VehicleOptionsViewModel
 import com.cargopull.executor_driver.presentation.vehicleoptions.VehicleOptionsViewModelImpl
-import com.cargopull.executor_driver.presentation.waitingforclient.WaitingForClientViewModel
-import com.cargopull.executor_driver.presentation.waitingforclient.WaitingForClientViewModelImpl
 import com.cargopull.executor_driver.utils.TimeUtils
 
 class PresentationComponent(
@@ -520,12 +518,13 @@ class PresentationComponent(
         )
     }
 
-    fun getWaitingForClientViewModel(fragment: Fragment?): WaitingForClientViewModel {
+    fun getStartOrderViewModel(fragment: Fragment?): NextExecutorStateViewModel {
         return getViewModelInstance(
                 fragment,
-                WaitingForClientViewModelImpl::class.java,
-                WaitingForClientViewModelImpl(
-                        interactorComponent.waitingForClientUseCase
+                NextExecutorStateViewModelImpl::class.java,
+                NextExecutorStateViewModelImpl(
+                        backendComponent.errorReporter,
+                        interactorComponent.startOrderUseCase
                 )
         )
     }

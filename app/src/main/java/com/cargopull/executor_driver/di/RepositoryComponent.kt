@@ -178,8 +178,16 @@ class RepositoryComponent(private val backendComponent: BackendComponent) {
                 MessagePayloadApiMapper()
         )
     }
-    val waitingForClientGateway: WaitingForClientGateway by lazy {
-        WaitingForClientGatewayImpl(backendComponent.apiService)
+    val startOrderGateway: CommonGatewaySingle<Pair<ExecutorState, List<RoutePoint>?>> by lazy {
+        val mapper = RoutePointApiMapper()
+        StartOrderGateway(
+                backendComponent.apiService,
+                StateAndDataApiMapper(
+                        object : Mapper<List<ApiRoutePoint>, List<RoutePoint>> {
+                            override fun map(from: List<ApiRoutePoint>) = from.map(mapper::map)
+                        }
+                )
+        )
     }
     val passwordGateway: PasswordGateway by lazy {
         PasswordGatewayImpl(backendComponent.apiService)

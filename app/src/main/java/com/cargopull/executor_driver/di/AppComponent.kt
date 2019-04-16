@@ -332,8 +332,8 @@ class AppComponent(private val appContext: Context, private val backendComponent
     }
 
     fun inject(waitingForClientFragment: WaitingForClientFragment) {
-        waitingForClientFragment.setWaitingForClientViewModel(
-                presentationComponent.getWaitingForClientViewModel(waitingForClientFragment)
+        waitingForClientFragment.setStartOrderViewModel(
+                presentationComponent.getStartOrderViewModel(waitingForClientFragment)
         )
         waitingForClientFragment.setOrderViewModel(
                 presentationComponent.orderViewModel
