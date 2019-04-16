@@ -22,7 +22,7 @@ constructor(private val apiService: ApiService,
      * @return [Single] результат - данные либо ошибка на сервере.
      */
     override val data: Single<Pair<ExecutorState, List<RoutePoint>?>>
-        get() = apiService.reportArrived(
+        get() = apiService.startOrder(
                 Collections.singletonMap("status", "START_ORDER")
         ).subscribeOn(Schedulers.io())
                 .map(dataMapper::map)

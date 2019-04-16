@@ -38,7 +38,7 @@ class StartOrderGatewayTest {
 
     @Before
     fun setUp() {
-        `when`(apiService.reportArrived(Collections.singletonMap("status", "START_ORDER")))
+        `when`(apiService.startOrder(Collections.singletonMap("status", "START_ORDER")))
                 .thenReturn(Single.never())
         gateway = StartOrderGateway(apiService, mapper)
     }
@@ -54,7 +54,7 @@ class StartOrderGatewayTest {
         gateway.data.test().isDisposed
 
         // Результат:
-        verify(apiService, only()).reportArrived(Collections.singletonMap("status", "START_ORDER"))
+        verify(apiService, only()).startOrder(Collections.singletonMap("status", "START_ORDER"))
     }
 
     /* Проверяем работу с маппером */
@@ -65,7 +65,7 @@ class StartOrderGatewayTest {
     @Test
     fun doNotTouchMapperOnError() {
         // Дано:
-        `when`(apiService.reportArrived(Collections.singletonMap("status", "START_ORDER")))
+        `when`(apiService.startOrder(Collections.singletonMap("status", "START_ORDER")))
                 .thenReturn(Single.error(Exception()))
 
         // Действие:
@@ -82,7 +82,7 @@ class StartOrderGatewayTest {
     @Throws(Exception::class)
     fun askMapperToMapData() {
         // Дано:
-        `when`(apiService.reportArrived(Collections.singletonMap("status", "START_ORDER")))
+        `when`(apiService.startOrder(Collections.singletonMap("status", "START_ORDER")))
                 .thenReturn(Single.just(ApiSimpleResult()))
 
         // Действие:
@@ -101,7 +101,7 @@ class StartOrderGatewayTest {
     @Throws(Exception::class)
     fun answerCompleteTheOrderSuccess() {
         // Дано:
-        `when`(apiService.reportArrived(Collections.singletonMap("status", "START_ORDER")))
+        `when`(apiService.startOrder(Collections.singletonMap("status", "START_ORDER")))
                 .thenReturn(Single.just(ApiSimpleResult()))
         `when`(mapper.map(any())).thenReturn(Pair(ExecutorState.ONLINE, route))
 
@@ -123,7 +123,7 @@ class StartOrderGatewayTest {
     @Test
     fun answerCompleteTheOrderError() {
         // Дано:
-        `when`(apiService.reportArrived(Collections.singletonMap("status", "START_ORDER")))
+        `when`(apiService.startOrder(Collections.singletonMap("status", "START_ORDER")))
                 .thenReturn(Single.error(IllegalArgumentException()))
 
         // Действие:
@@ -140,7 +140,7 @@ class StartOrderGatewayTest {
     @Test
     fun answerCompleteTheOrderDataErrorForWrongModel() {
         // Дано:
-        `when`(apiService.reportArrived(Collections.singletonMap("status", "START_ORDER")))
+        `when`(apiService.startOrder(Collections.singletonMap("status", "START_ORDER")))
                 .thenReturn(Single.error(JsonParseException("")))
 
         // Действие:
@@ -161,7 +161,7 @@ class StartOrderGatewayTest {
     @Throws(Exception::class)
     fun answerCompleteTheOrderDataErrorForMapperError() {
         // Дано:
-        `when`(apiService.reportArrived(Collections.singletonMap("status", "START_ORDER")))
+        `when`(apiService.startOrder(Collections.singletonMap("status", "START_ORDER")))
                 .thenReturn(Single.just(ApiSimpleResult()))
         doThrow(DataMappingException()).`when`(mapper).map(any())
 
