@@ -655,11 +655,11 @@ public class PreOrdersListApiMapperTest {
   }
 
   /**
-   * Должен дать ошибку, если пришел JSON без значения дистанции.
+   * Должен успешно преобразовать JSON без значения дистанции.
    *
    * @throws Exception ошибка
    */
-  @Test(expected = DataMappingException.class)
+  @Test
   public void mappingJsonStringWithoutDistanceValueToPreOrdersListFail() throws Exception {
     // Дано:
     when(stompMessage.getPayload()).thenReturn("[" + rule.getOrderWithoutDistanceValue() + "]");
