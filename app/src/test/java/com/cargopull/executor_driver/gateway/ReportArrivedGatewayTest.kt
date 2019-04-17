@@ -51,7 +51,7 @@ class ReportArrivedGatewayTest {
     @Test
     fun askApiToCompleteTheOrder() {
         // Действие:
-        gateway.data.test().isDisposed
+        >        gateway.data.test()
 
         // Результат:
         verify(apiService, only()).reportArrived(Collections.singletonMap("status", "DRIVER_ARRIVED"))
@@ -69,7 +69,7 @@ class ReportArrivedGatewayTest {
                 .thenReturn(Single.error(Exception()))
 
         // Действие:
-        gateway.data.test().isDisposed
+        gateway.data.test()
 
         // Результат:
         verifyZeroInteractions(mapper)
@@ -86,7 +86,7 @@ class ReportArrivedGatewayTest {
                 .thenReturn(Single.just(ApiSimpleResult()))
 
         // Действие:
-        gateway.data.test().isDisposed
+        gateway.data.test()
 
         // Результат:
         verify(mapper, only()).map(any())
@@ -106,7 +106,7 @@ class ReportArrivedGatewayTest {
         `when`(mapper.map(any())).thenReturn(Pair(ExecutorState.ONLINE, route))
 
         // Действие:
-        gateway.data.test().isDisposed
+        gateway.data.test()
 
         // Действие:
         val testObserver = gateway.data.test()
@@ -144,7 +144,7 @@ class ReportArrivedGatewayTest {
                 .thenReturn(Single.error(JsonParseException("")))
 
         // Действие:
-        gateway.data.test().isDisposed
+        gateway.data.test()
 
         // Действие:
         val testObserver = gateway.data.test()
@@ -166,7 +166,7 @@ class ReportArrivedGatewayTest {
         doThrow(DataMappingException()).`when`(mapper).map(any())
 
         // Действие:
-        gateway.data.test().isDisposed
+        gateway.data.test()
 
         // Действие:
         val testObserver = gateway.data.test()

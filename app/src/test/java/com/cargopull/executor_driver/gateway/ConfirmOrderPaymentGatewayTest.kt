@@ -47,7 +47,7 @@ class ConfirmOrderPaymentGatewayTest {
     @Test
     fun askApiToCompleteTheOrder() {
         // Действие:
-        gateway.data.test().isDisposed
+        gateway.data.test()
 
         // Результат:
         verify(apiService, only()).completeOrderPayment(Collections.singletonMap("status", "COMPLETE_PAYMENT_CONFIRMATION"))
@@ -65,7 +65,7 @@ class ConfirmOrderPaymentGatewayTest {
                 .thenReturn(Single.error(Exception()))
 
         // Действие:
-        gateway.data.test().isDisposed
+        gateway.data.test()
 
         // Результат:
         verifyZeroInteractions(mapper)
@@ -82,7 +82,7 @@ class ConfirmOrderPaymentGatewayTest {
                 .thenReturn(Single.just(ApiSimpleResult()))
 
         // Действие:
-        gateway.data.test().isDisposed
+        gateway.data.test()
 
         // Результат:
         verify(mapper, only()).map(any())
@@ -102,7 +102,7 @@ class ConfirmOrderPaymentGatewayTest {
         `when`(mapper.map(any())).thenReturn(Pair(ExecutorState.ONLINE, null))
 
         // Действие:
-        gateway.data.test().isDisposed
+        gateway.data.test()
 
         // Действие:
         val testObserver = gateway.data.test()
@@ -140,7 +140,7 @@ class ConfirmOrderPaymentGatewayTest {
                 .thenReturn(Single.error(JsonParseException("")))
 
         // Действие:
-        gateway.data.test().isDisposed
+        gateway.data.test()
 
         // Действие:
         val testObserver = gateway.data.test()
@@ -162,7 +162,7 @@ class ConfirmOrderPaymentGatewayTest {
         Mockito.doThrow(DataMappingException()).`when`(mapper).map(any())
 
         // Действие:
-        gateway.data.test().isDisposed
+        gateway.data.test()
 
         // Действие:
         val testObserver = gateway.data.test()
