@@ -88,15 +88,19 @@ class InteractorComponent(
                 null,
                 RemoveOrdersUseCaseImpl(
                         preOrdersSetUseCase
-                )
+                ),
+                executorStateUseCaseImpl,
+                null
         )
     }
     val preOrderBookingUseCase: OrderConfirmationUseCase by lazy {
         OrderConfirmationUseCaseImpl(
                 preOrderUseCase,
-                repositoryComponent.preOrderConfirmationGateway,
+                repositoryComponent.preOrderBookingGateway,
                 preOrderUseCaseImpl,
-                preOrdersSetUseCase
+                preOrdersSetUseCase,
+                null,
+                null
         )
     }
     val orderCostDetailsUseCase: DataReceiver<OrderCostDetails> by lazy {
@@ -122,7 +126,7 @@ class InteractorComponent(
         )
     }
     val orderUseCase: OrderUseCase by lazy {
-        OrderUseCaseImpl(repositoryComponent.orderGateway)
+        orderUseCaseImpl
     }
     val preOrderUseCase: OrderUseCase by lazy {
         preOrderUseCaseImpl
@@ -240,7 +244,9 @@ class InteractorComponent(
                 null,
                 RemoveOrdersUseCaseImpl(
                         preOrdersSetUseCase
-                )
+                ),
+                executorStateUseCaseImpl,
+                orderUseCaseImpl
         )
     }
     val upcomingPreOrderUseCase: UpcomingPreOrderUseCaseImpl by lazy {
@@ -256,7 +262,9 @@ class InteractorComponent(
                 null,
                 RemoveOrdersUseCaseImpl(
                         preOrdersSetUseCase
-                )
+                ),
+                executorStateUseCaseImpl,
+                orderUseCaseImpl
         )
     }
 
@@ -278,5 +286,8 @@ class InteractorComponent(
     }
     private val orderCostDetailsSharer: MemoryDataSharer<OrderCostDetails> by lazy {
         OrderCostDetailsUseCase()
+    }
+    private val orderUseCaseImpl: OrderUseCaseImpl by lazy {
+        OrderUseCaseImpl(repositoryComponent.orderGateway)
     }
 }

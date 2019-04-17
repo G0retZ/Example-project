@@ -35,9 +35,11 @@ class RepositoryComponent(private val backendComponent: BackendComponent) {
         TopicGateway(
                 personalTopicListener,
                 ChangedOrderFilter(),
-                OrderApiMapper(
-                        VehicleOptionApiMapper(),
-                        RoutePointApiMapper()
+                OrderStompMapper(
+                        OrderApiMapper(
+                                VehicleOptionApiMapper(),
+                                RoutePointApiMapper()
+                        )
                 )
         )
     }
@@ -114,14 +116,22 @@ class RepositoryComponent(private val backendComponent: BackendComponent) {
                 )
         )
     }
-    val orderConfirmationGateway: OrderConfirmationGateway by lazy {
+    val orderConfirmationGateway: OrderConfirmationGateway<Void?> by lazy {
         OrderConfirmationGatewayImpl(backendComponent.apiService, OrderConfirmationErrorMapper())
     }
-    val preOrderConfirmationGateway: OrderConfirmationGateway by lazy {
-        PreOrderConfirmationGateway(backendComponent.apiService)
+    val preOrderBookingGateway: OrderConfirmationGateway<String?> by lazy {
+        PreOrderBookingGateway(backendComponent.apiService)
     }
-    val preOrderProcessGateway: OrderConfirmationGateway by lazy {
-        PreOrderProcessGateway(backendComponent.apiService)
+    val preOrderProcessGateway: OrderConfirmationGateway<Order?> by lazy {
+        PreOrderProcessGateway(
+                backendComponent.apiService,
+                StateAndDataApiMapper(
+                        OrderApiMapper(
+                                VehicleOptionApiMapper(),
+                                RoutePointApiMapper()
+                        )
+                )
+        )
     }
     val orderCurrentCostGateway: CommonGateway<Long> by lazy {
         TopicGateway(
@@ -134,9 +144,11 @@ class RepositoryComponent(private val backendComponent: BackendComponent) {
         TopicGateway(
                 personalTopicListener,
                 OrderFilter(),
-                OrderApiMapper(
-                        VehicleOptionApiMapper(),
-                        RoutePointApiMapper()
+                OrderStompMapper(
+                        OrderApiMapper(
+                                VehicleOptionApiMapper(),
+                                RoutePointApiMapper()
+                        )
                 )
         )
     }
@@ -144,9 +156,11 @@ class RepositoryComponent(private val backendComponent: BackendComponent) {
         TopicGateway(
                 personalTopicListener,
                 PreOrderFilter(),
-                OrderApiMapper(
-                        VehicleOptionApiMapper(),
-                        RoutePointApiMapper()
+                OrderStompMapper(
+                        OrderApiMapper(
+                                VehicleOptionApiMapper(),
+                                RoutePointApiMapper()
+                        )
                 )
         )
     }
