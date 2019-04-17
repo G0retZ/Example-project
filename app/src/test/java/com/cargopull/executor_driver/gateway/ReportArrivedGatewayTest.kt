@@ -51,7 +51,7 @@ class ReportArrivedGatewayTest {
     @Test
     fun askApiToCompleteTheOrder() {
         // Действие:
-        >        gateway.data.test()
+        gateway.data.test()
 
         // Результат:
         verify(apiService, only()).reportArrived(Collections.singletonMap("status", "DRIVER_ARRIVED"))
