@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.cargopull.executor_driver.entity.Order;
 import com.cargopull.executor_driver.entity.OrderOfferDecisionException;
+import com.cargopull.executor_driver.utils.EmptyEmitter;
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Emitter;
 import io.reactivex.Flowable;
@@ -18,19 +19,7 @@ public class OrderUseCaseImpl implements OrderUseCase, OrderDecisionUseCase,
   @Nullable
   private Flowable<Order> orderFlowable;
   @NonNull
-  private Emitter<Order> emitter = new Emitter<Order>() {
-    @Override
-    public void onNext(Order value) {
-    }
-
-    @Override
-    public void onError(Throwable error) {
-    }
-
-    @Override
-    public void onComplete() {
-    }
-  };
+  private Emitter<Order> emitter = new EmptyEmitter<>();
 
   @Inject
   public OrderUseCaseImpl(@NonNull CommonGateway<Order> gateway) {

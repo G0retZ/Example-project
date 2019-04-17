@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.cargopull.executor_driver.entity.Order;
 import com.cargopull.executor_driver.entity.RoutePoint;
+import com.cargopull.executor_driver.utils.EmptyEmitter;
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Completable;
 import io.reactivex.Emitter;
@@ -22,19 +23,7 @@ public class OrderRouteUseCaseImpl implements OrderRouteUseCase,
   @Nullable
   private Flowable<List<RoutePoint>> routeFlowable;
   @NonNull
-  private Emitter<List<RoutePoint>> emitter = new Emitter<List<RoutePoint>>() {
-    @Override
-    public void onNext(List<RoutePoint> value) {
-    }
-
-    @Override
-    public void onError(Throwable error) {
-    }
-
-    @Override
-    public void onComplete() {
-    }
-  };
+  private Emitter<List<RoutePoint>> emitter = new EmptyEmitter<>();
 
   @Inject
   public OrderRouteUseCaseImpl(@NonNull OrderUseCase orderUseCase,

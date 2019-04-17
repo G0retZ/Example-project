@@ -3,6 +3,7 @@ package com.cargopull.executor_driver.interactor;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.cargopull.executor_driver.entity.ExecutorState;
+import com.cargopull.executor_driver.utils.EmptyEmitter;
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Emitter;
 import io.reactivex.Flowable;
@@ -17,19 +18,7 @@ public class ExecutorStateUseCaseImpl implements ExecutorStateUseCase,
   @Nullable
   private Flowable<ExecutorState> executorStateFlowable;
   @NonNull
-  private Emitter<ExecutorState> emitter = new Emitter<ExecutorState>() {
-    @Override
-    public void onNext(ExecutorState value) {
-    }
-
-    @Override
-    public void onError(Throwable error) {
-    }
-
-    @Override
-    public void onComplete() {
-    }
-  };
+  private Emitter<ExecutorState> emitter = new EmptyEmitter<>();
 
   @Inject
   public ExecutorStateUseCaseImpl(@NonNull CommonGateway<ExecutorState> gateway) {
