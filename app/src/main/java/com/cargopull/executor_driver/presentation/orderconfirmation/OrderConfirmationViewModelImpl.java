@@ -193,8 +193,8 @@ public class OrderConfirmationViewModelImpl extends ViewModel implements
           (s, p) -> new Pair<>(isExecutorStateAllowed(s), p)
       ).subscribe(pair -> {
             OrderConfirmationTimeoutItem orderConfirmationTimeoutItem =
-                new OrderConfirmationTimeoutItem(pair.second.second, timeUtils);
-            orderId = pair.second.first;
+                new OrderConfirmationTimeoutItem(pair.second.getSecond(), timeUtils);
+            orderId = pair.second.getFirst();
             timeStamp = orderConfirmationTimeoutItem.getItemTimestamp();
             viewStateLiveData.postValue(
                 lastViewState = new OrderConfirmationViewStateIdle(orderConfirmationTimeoutItem,
