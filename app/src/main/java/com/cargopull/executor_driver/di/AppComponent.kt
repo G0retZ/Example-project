@@ -60,6 +60,9 @@ class AppComponent(private val appContext: Context, private val backendComponent
         mainApplication.setOrderViewModel(
                 presentationComponent.orderViewModel
         )
+        mainApplication.setOrderRouteViewModel(
+                presentationComponent.orderRouteViewModel
+        )
         mainApplication.setPreOrderViewModel(
                 presentationComponent.preOrderViewModel
         )
@@ -327,7 +330,7 @@ class AppComponent(private val appContext: Context, private val backendComponent
 
     fun inject(movingToClientRouteFragment: MovingToClientRouteFragment) {
         movingToClientRouteFragment.setOrderRouteViewModel(
-                presentationComponent.getOrderRouteViewModel(movingToClientRouteFragment)
+                presentationComponent.orderRouteViewModel
         )
     }
 
@@ -351,7 +354,7 @@ class AppComponent(private val appContext: Context, private val backendComponent
 
     fun inject(waitingForClientRouteFragment: WaitingForClientRouteFragment) {
         waitingForClientRouteFragment.setOrderRouteViewModel(
-                presentationComponent.getOrderRouteViewModel(waitingForClientRouteFragment)
+                presentationComponent.orderRouteViewModel
         )
     }
 
@@ -369,7 +372,7 @@ class AppComponent(private val appContext: Context, private val backendComponent
                 presentationComponent.getCompleteOrderViewModel(orderFulfillmentFragment)
         )
         orderFulfillmentFragment.setOrderRouteViewModel(
-                presentationComponent.getOrderRouteViewModel(orderFulfillmentFragment)
+                presentationComponent.orderRouteViewModel
         )
         orderFulfillmentFragment.setShakeItPlayer(
                 shakeItPlayer
@@ -390,7 +393,7 @@ class AppComponent(private val appContext: Context, private val backendComponent
 
     fun inject(orderRouteFragment: OrderRouteFragment) {
         orderRouteFragment.setOrderRouteViewModel(
-                presentationComponent.getOrderRouteViewModel(orderRouteFragment)
+                presentationComponent.orderRouteViewModel
         )
     }
 
@@ -465,7 +468,7 @@ class AppComponent(private val appContext: Context, private val backendComponent
 
     fun inject(orderCostDetailsRouteFragment: OrderCostDetailsRouteFragment) {
         orderCostDetailsRouteFragment.setOrderRouteViewModel(
-                presentationComponent.getOrderRouteViewModel(orderCostDetailsRouteFragment)
+                presentationComponent.orderRouteViewModel
         )
     }
 

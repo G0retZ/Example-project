@@ -35,6 +35,7 @@ import com.cargopull.executor_driver.presentation.missedorder.MissedOrderViewAct
 import com.cargopull.executor_driver.presentation.missedorder.MissedOrderViewModel;
 import com.cargopull.executor_driver.presentation.ordecostdetails.OrderCostDetailsViewModel;
 import com.cargopull.executor_driver.presentation.order.OrderViewModel;
+import com.cargopull.executor_driver.presentation.orderroute.OrderRouteViewModel;
 import com.cargopull.executor_driver.presentation.preorder.PreOrderNavigate;
 import com.cargopull.executor_driver.presentation.preorder.PreOrderViewActions;
 import com.cargopull.executor_driver.presentation.preorder.PreOrderViewModel;
@@ -68,6 +69,7 @@ public class MainApplication extends Application implements ServerConnectionView
   private BalanceViewModel balanceViewModel;
   private ExecutorStateViewModel executorStateViewModel;
   private OrderViewModel orderViewModel;
+  private OrderRouteViewModel orderRouteViewModel;
   private PreOrderViewModel preOrderViewModel;
   private UpcomingPreOrderViewModel upcomingPreOrderViewModel;
   private PreOrdersListViewModel preOrdersListViewModel;
@@ -106,6 +108,11 @@ public class MainApplication extends Application implements ServerConnectionView
   @Inject
   public void setOrderViewModel(@NonNull OrderViewModel orderViewModel) {
     this.orderViewModel = orderViewModel;
+  }
+
+  @Inject
+  public void setOrderRouteViewModel(@NonNull OrderRouteViewModel orderRouteViewModel) {
+    this.orderRouteViewModel = orderRouteViewModel;
   }
 
   @Inject

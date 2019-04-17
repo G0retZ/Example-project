@@ -149,6 +149,11 @@ class PresentationComponent(
                 interactorComponent.orderUseCase
         )
     }
+    val orderRouteViewModel: OrderRouteViewModel by lazy {
+        OrderRouteViewModelImpl(
+                interactorComponent.orderRouteUseCase
+        )
+    }
     val preOrderViewModel: PreOrderViewModel by lazy {
         PreOrderViewModelImpl(
                 backendComponent.errorReporter,
@@ -442,16 +447,6 @@ class PresentationComponent(
                 OrderCostViewModelImpl::class.java,
                 OrderCostViewModelImpl(backendComponent.errorReporter,
                         interactorComponent.orderCurrentCostUseCase
-                )
-        )
-    }
-
-    fun getOrderRouteViewModel(fragment: Fragment?): OrderRouteViewModel {
-        return getViewModelInstance(
-                fragment,
-                OrderRouteViewModelImpl::class.java,
-                OrderRouteViewModelImpl(
-                        interactorComponent.orderRouteUseCase
                 )
         )
     }
