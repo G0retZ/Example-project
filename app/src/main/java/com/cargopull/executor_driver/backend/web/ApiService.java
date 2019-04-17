@@ -2,6 +2,7 @@ package com.cargopull.executor_driver.backend.web;
 
 import androidx.annotation.NonNull;
 import com.cargopull.executor_driver.backend.web.incoming.ApiOptionsForOnline;
+import com.cargopull.executor_driver.backend.web.incoming.ApiOrder;
 import com.cargopull.executor_driver.backend.web.incoming.ApiOrderCostDetails;
 import com.cargopull.executor_driver.backend.web.incoming.ApiOrdersSummary;
 import com.cargopull.executor_driver.backend.web.incoming.ApiProblem;
@@ -96,10 +97,18 @@ public interface ApiService {
   );
 
   /*
+   *  Запрос принятия или отказа от срочного заказа.
+   */
+  @POST("api/public/v1/mobile/order/accept")
+  Single<ApiSimpleResult<Void>> acceptOrderOffer(
+      @NonNull @Body ApiOrderDecision decision
+  );
+
+  /*
    *  Запрос бронирования или отказа от предварительного заказа.
    */
   @POST("api/public/v1/mobile/order/assign")
-  Single<ApiSimpleResult> sendPreOrderDecision(
+  Single<ApiSimpleResult<String>> sendPreOrderDecision(
       @NonNull @Body ApiOrderDecision decision
   );
 
@@ -107,7 +116,7 @@ public interface ApiService {
    *  Запрос отказа от бронирования или выезда на забронированный предварительный заказ.
    */
   @POST("api/public/v1/mobile/order/preliminary/process")
-  Single<ApiSimpleResult> sendPreOrderProcess(
+  Single<ApiSimpleResult<ApiOrder>> sendPreOrderProcess(
       @NonNull @Body ApiOrderDecision decision
   );
 
@@ -126,14 +135,6 @@ public interface ApiService {
   Single<Map<String, ApiOrdersSummary>> getOrdersHistory(
       @Query("dateFrom") long fromDate,
       @Query("dateTo") long toDate
-  );
-
-  /*
-   *  Запрос принятия или отказа от срочного заказа.
-   */
-  @POST("api/public/v1/mobile/order/accept")
-  Completable acceptOrderOffer(
-      @NonNull @Body ApiOrderDecision decision
   );
 
   /*
