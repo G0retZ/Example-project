@@ -16,7 +16,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import ua.naiksoftware.stomp.client.StompMessage;
 
 @RunWith(MockitoJUnitRunner.class)
-public class OrderStompMapperTest {
+public class StompMapperTest {
 
   @Rule
   public final ApiOrderRule rule = new ApiOrderRule();
@@ -33,7 +33,7 @@ public class OrderStompMapperTest {
   @Before
   public void setUp() throws Exception {
     when(apiOrderMapper.map(any(ApiOrder.class))).thenReturn(order);
-    mapper = new OrderStompMapper(apiOrderMapper);
+    mapper = new StompMapper<>(apiOrderMapper, ApiOrder.class);
   }
 
   /**

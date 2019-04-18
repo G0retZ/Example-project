@@ -1,6 +1,7 @@
 package com.cargopull.executor_driver.di
 
 import com.cargopull.executor_driver.backend.web.TopicListener
+import com.cargopull.executor_driver.backend.web.incoming.ApiOrder
 import com.cargopull.executor_driver.backend.web.incoming.ApiRoutePoint
 import com.cargopull.executor_driver.entity.*
 import com.cargopull.executor_driver.gateway.*
@@ -35,11 +36,12 @@ class RepositoryComponent(private val backendComponent: BackendComponent) {
         TopicGateway(
                 personalTopicListener,
                 ChangedOrderFilter(),
-                OrderStompMapper(
+                StompMapper(
                         OrderApiMapper(
                                 VehicleOptionApiMapper(),
                                 RoutePointApiMapper()
-                        )
+                        ),
+                        ApiOrder::class.java
                 )
         )
     }
@@ -144,11 +146,12 @@ class RepositoryComponent(private val backendComponent: BackendComponent) {
         TopicGateway(
                 personalTopicListener,
                 OrderFilter(),
-                OrderStompMapper(
+                StompMapper(
                         OrderApiMapper(
                                 VehicleOptionApiMapper(),
                                 RoutePointApiMapper()
-                        )
+                        ),
+                        ApiOrder::class.java
                 )
         )
     }
@@ -156,11 +159,12 @@ class RepositoryComponent(private val backendComponent: BackendComponent) {
         TopicGateway(
                 personalTopicListener,
                 PreOrderFilter(),
-                OrderStompMapper(
+                StompMapper(
                         OrderApiMapper(
                                 VehicleOptionApiMapper(),
                                 RoutePointApiMapper()
-                        )
+                        ),
+                        ApiOrder::class.java
                 )
         )
     }
