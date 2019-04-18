@@ -12,7 +12,9 @@ class StateAndDataApiMapper<T, D>(private val mapper: Mapper<T, D>) : Mapper<Api
     override fun map(from: ApiSimpleResult<T>): Pair<ExecutorState, D?> {
         val data = from.data?.let { mapper.map(it) }
         try {
-            return Pair(ExecutorState.valueOf(from.status!!), data)
+            val pair = Pair(ExecutorState.valueOf(from.status!!), data)
+            pair.first.data = from.message
+            return pair
         } catch (e: Exception) {
             throw DataMappingException("Ошибка маппинга: неверный формат статуса!", e)
         }

@@ -51,6 +51,7 @@ class StateAndDataApiMapperTest {
         // Результат:
         verify(dataMapper, only()).map("lololo")
         assertEquals(pair.first, ExecutorState.ONLINE)
+        assertEquals(pair.first.data, "lalala")
         assertNotNull(pair.second)
         assertEquals(pair.second, 12345)
     }
@@ -78,6 +79,7 @@ class StateAndDataApiMapperTest {
         // Результат:
         verifyZeroInteractions(dataMapper)
         assertEquals(pair.first, ExecutorState.ONLINE)
+        assertEquals(pair.first.data, "lalala")
         assertNull(pair.second)
     }
 
