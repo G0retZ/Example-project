@@ -165,7 +165,7 @@ class RepositoryComponent(private val backendComponent: BackendComponent) {
         )
     }
     val orderRouteGateway: OrderRouteGateway by lazy {
-        OrderRouteGatewayImpl(backendComponent.apiService)
+        OrderRouteGatewayImpl(backendComponent.apiService, RoutePointApiMapper())
     }
     val completeOrderGateway: CommonGatewaySingle<Pair<ExecutorState, OrderCostDetails?>> by lazy {
         CompleteOrderGateway(

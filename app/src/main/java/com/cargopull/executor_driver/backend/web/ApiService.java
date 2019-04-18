@@ -191,7 +191,7 @@ public interface ApiService {
    *  Запрос смены статуса заказа.
    */
   @POST("api/public/v1/mobile/order/current/routePoint/{id}/next")
-  Completable makeRoutePointNext(
+  Single<ApiSimpleResult<List<ApiRoutePoint>>> makeRoutePointNext(
       @Path("id") long routePointId
   );
 
@@ -199,7 +199,7 @@ public interface ApiService {
    *  Запрос смены статуса заказа.
    */
   @POST("api/public/v1/mobile/order/current/routePoint/{id}/complete")
-  Completable completeRoutePoint(
+  Single<ApiSimpleResult<List<ApiRoutePoint>>> completeRoutePoint(
       @Path("id") long routePointId
   );
 
