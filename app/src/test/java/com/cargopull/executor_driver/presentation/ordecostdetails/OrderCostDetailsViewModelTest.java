@@ -12,9 +12,10 @@ import com.cargopull.executor_driver.ViewModelThreadTestRule;
 import com.cargopull.executor_driver.backend.analytics.ErrorReporter;
 import com.cargopull.executor_driver.entity.OrderCostDetails;
 import com.cargopull.executor_driver.gateway.DataMappingException;
-import com.cargopull.executor_driver.interactor.DataReceiver;
+import com.cargopull.executor_driver.interactor.OrderCostDetailsUseCase;
 import com.cargopull.executor_driver.presentation.CommonNavigate;
 import com.cargopull.executor_driver.presentation.ViewState;
+import io.reactivex.BackpressureStrategy;
 import io.reactivex.subjects.PublishSubject;
 import org.junit.Before;
 import org.junit.ClassRule;
@@ -38,7 +39,7 @@ public class OrderCostDetailsViewModelTest {
   @Mock
   private ErrorReporter errorReporter;
   @Mock
-  private DataReceiver<OrderCostDetails> orderCostDetailsUseCase;
+  private OrderCostDetailsUseCase orderCostDetailsUseCase;
   @Mock
   private OrderCostDetails orderCostDetails;
   @Mock
@@ -55,7 +56,8 @@ public class OrderCostDetailsViewModelTest {
   @Before
   public void setUp() {
     publishSubject = PublishSubject.create();
-    when(orderCostDetailsUseCase.get()).thenReturn(publishSubject);
+    when(orderCostDetailsUseCase.getOrderCostDetails())
+        .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
     viewModel = new OrderCostDetailsViewModelImpl(errorReporter, orderCostDetailsUseCase);
   }
 
@@ -81,7 +83,7 @@ public class OrderCostDetailsViewModelTest {
   @Test
   public void askUseCaseForOrderCostDetailsInitially() {
     // Результат:
-    verify(orderCostDetailsUseCase, only()).get();
+    verify(orderCostDetailsUseCase, only()).getOrderCostDetails();
   }
 
   /**
@@ -96,7 +98,7 @@ public class OrderCostDetailsViewModelTest {
     viewModel.getNavigationLiveData();
 
     // Результат:
-    verify(orderCostDetailsUseCase, only()).get();
+    verify(orderCostDetailsUseCase, only()).getOrderCostDetails();
   }
 
   /* Тетсируем переключение состояний. */

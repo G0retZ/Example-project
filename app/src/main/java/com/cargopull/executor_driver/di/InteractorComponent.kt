@@ -103,8 +103,8 @@ class InteractorComponent(
                 null
         )
     }
-    val orderCostDetailsUseCase: DataReceiver<OrderCostDetails> by lazy {
-        orderCostDetailsSharer
+    val orderCostDetailsUseCase: OrderCostDetailsUseCase by lazy {
+        orderCostDetailsUseCaseImpl
     }
     val orderCurrentCostUseCase: OrderCurrentCostUseCase by lazy {
         OrderCurrentCostUseCaseImpl(
@@ -122,7 +122,7 @@ class InteractorComponent(
         NextExecutorStateUseCaseImpl(
                 repositoryComponent.completeOrderGateway,
                 executorStateUseCaseImpl,
-                orderCostDetailsSharer
+                orderCostDetailsUseCaseImpl
         )
     }
     val orderUseCase: OrderUseCase by lazy {
@@ -159,7 +159,6 @@ class InteractorComponent(
     val preOrdersSetUseCase: OrdersUseCase by lazy {
         OrdersUseCaseImpl(
                 repositoryComponent.preOrdersSetGateway,
-                ChangedOrderUseCaseImpl(repositoryComponent.changedOrderGateway),
                 CancelledOrderUseCaseImpl(repositoryComponent.cancelledOrderGateway)
         )
     }
@@ -284,8 +283,10 @@ class InteractorComponent(
                 repositoryComponent.orderRouteGateway
         )
     }
-    private val orderCostDetailsSharer: MemoryDataSharer<OrderCostDetails> by lazy {
-        OrderCostDetailsUseCase()
+    private val orderCostDetailsUseCaseImpl: OrderCostDetailsUseCaseImpl by lazy {
+        OrderCostDetailsUseCaseImpl(
+                repositoryComponent.orderCostDetailsGateway
+        )
     }
     private val orderUseCaseImpl: OrderUseCaseImpl by lazy {
         OrderUseCaseImpl(repositoryComponent.orderGateway)

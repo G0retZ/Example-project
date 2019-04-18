@@ -2,6 +2,7 @@ package com.cargopull.executor_driver.di
 
 import com.cargopull.executor_driver.backend.web.TopicListener
 import com.cargopull.executor_driver.backend.web.incoming.ApiOrder
+import com.cargopull.executor_driver.backend.web.incoming.ApiOrderCostDetails
 import com.cargopull.executor_driver.backend.web.incoming.ApiRoutePoint
 import com.cargopull.executor_driver.entity.*
 import com.cargopull.executor_driver.gateway.*
@@ -31,19 +32,6 @@ class RepositoryComponent(private val backendComponent: BackendComponent) {
     }
     val callToClientGateway: CallToClientGateway by lazy {
         CallToClientGatewayImpl(backendComponent.apiService)
-    }
-    val changedOrderGateway: CommonGateway<Order> by lazy {
-        TopicGateway(
-                personalTopicListener,
-                ChangedOrderFilter(),
-                StompMapper(
-                        OrderApiMapper(
-                                VehicleOptionApiMapper(),
-                                RoutePointApiMapper()
-                        ),
-                        ApiOrder::class.java
-                )
-        )
     }
     val cancelledOrderGateway: CommonGateway<Order> by lazy {
         TopicGateway(
@@ -152,6 +140,16 @@ class RepositoryComponent(private val backendComponent: BackendComponent) {
                                 RoutePointApiMapper()
                         ),
                         ApiOrder::class.java
+                )
+        )
+    }
+    val orderCostDetailsGateway: CommonGateway<OrderCostDetails> by lazy {
+        TopicGateway<OrderCostDetails>(
+                personalTopicListener,
+                OrderCostDetailsFilter(),
+                StompMapper(
+                        OrderCostDetailsApiMapper(),
+                        ApiOrderCostDetails::class.java
                 )
         )
     }
