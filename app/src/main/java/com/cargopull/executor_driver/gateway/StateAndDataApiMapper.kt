@@ -14,6 +14,9 @@ class StateAndDataApiMapper<T, D>(private val mapper: Mapper<T, D>) : Mapper<Api
         try {
             val pair = Pair(ExecutorState.valueOf(from.status!!), data)
             pair.first.data = from.message
+            if (pair.first == ExecutorState.CLIENT_ORDER_CONFIRMATION) {
+                pair.first.customerTimer = 600_000
+            }
             return pair
         } catch (e: Exception) {
             throw DataMappingException("Ошибка маппинга: неверный формат статуса!", e)
