@@ -30,6 +30,8 @@
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:contentDescription="@null"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toTopOf="parent"
       app:srcCompat="@drawable/ic_route_point"/>
     <TextView
       android:id="@+id/positionText"

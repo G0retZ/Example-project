@@ -31,7 +31,6 @@
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toBottomOf="@id/breakText"/>
   <Button
-    xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/resumeWork"
     style="@style/AppTheme.Button.Colored.Compact"
     android:layout_width="240dp"
