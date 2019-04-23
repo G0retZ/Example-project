@@ -29,14 +29,6 @@ public interface OrderRouteUseCase {
   Completable closeRoutePoint(@NonNull RoutePoint routePoint);
 
   /**
-   * Завершить заказ.
-   *
-   * @return {@link Completable} результат - успех либо ошибка на сервере.
-   */
-  @NonNull
-  Completable completeTheOrder();
-
-  /**
    * Задать следующую маршрутную точку.
    *
    * @param routePoint - точка маршрута

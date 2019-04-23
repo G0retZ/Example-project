@@ -10,7 +10,7 @@ import static org.mockito.Mockito.verifyZeroInteractions;
 
 import com.cargopull.executor_driver.entity.ValidationException;
 import com.cargopull.executor_driver.entity.Validator;
-import io.reactivex.Observer;
+import com.cargopull.executor_driver.interactor.DataUpdateAndResetUseCase;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,7 +26,7 @@ public class LoginUseCaseTest {
   private Validator<String> loginValidator;
 
   @Mock
-  private Observer<String> loginObserver;
+  private DataUpdateAndResetUseCase<String> loginObserver;
 
   @Before
   public void setUp() throws Exception {
@@ -109,8 +109,8 @@ public class LoginUseCaseTest {
     useCase.rememberLogin().test().assertComplete();
 
     // Результат:
-    verify(loginObserver).onComplete();
-    verify(loginObserver).onNext("checkLogin");
+    verify(loginObserver).reset();
+    verify(loginObserver).updateWith("checkLogin");
     verifyNoMoreInteractions(loginObserver);
   }
 }

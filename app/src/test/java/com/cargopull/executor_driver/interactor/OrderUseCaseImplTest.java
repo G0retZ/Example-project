@@ -36,6 +36,8 @@ public class OrderUseCaseImplTest {
   private Order order1;
   @Mock
   private Order order2;
+  @Mock
+  private Order order3;
   private FlowableEmitter<Order> emitter;
 
   @Before
@@ -84,6 +86,25 @@ public class OrderUseCaseImplTest {
   }
 
   /**
+   * Должен ответить обновленным заказом.
+   */
+  @Test
+  public void answerWithUpdatedOrder() {
+    // Дано:
+    when(gateway.getData())
+        .thenReturn(Flowable.just(order, order1, order2).concatWith(Flowable.never()));
+
+    // Действие:
+    TestSubscriber<Order> testSubscriber = useCase.getOrders().test();
+    useCase.updateWith(order3);
+
+    // Результат:
+    testSubscriber.assertValues(order, order1, order2, order3);
+    testSubscriber.assertNoErrors();
+    testSubscriber.assertNotComplete();
+  }
+
+  /**
    * Должен вернуть ошибку.
    */
   @Test
@@ -111,6 +132,7 @@ public class OrderUseCaseImplTest {
 
     // Действие:
     TestSubscriber<Order> testSubscriber = useCase.getOrders().test();
+    useCase.updateWith(order3);
     useCase.setOrderOfferDecisionMade();
 
     // Результат:
@@ -130,10 +152,11 @@ public class OrderUseCaseImplTest {
 
     // Действие:
     TestSubscriber<Order> testSubscriber = useCase.getOrders().test();
+    useCase.updateWith(order3);
     useCase.setOrderOfferDecisionMade();
 
     // Результат:
-    testSubscriber.assertValues(order, order1, order2);
+    testSubscriber.assertValues(order, order1, order2, order3);
     testSubscriber.assertError(OrderOfferDecisionException.class);
     testSubscriber.assertNotComplete();
   }
@@ -148,6 +171,7 @@ public class OrderUseCaseImplTest {
 
     // Действие:
     TestSubscriber<Order> testSubscriber = useCase.getOrders().test();
+    useCase.updateWith(order3);
 
     // Результат:
     testSubscriber.assertComplete();
@@ -171,15 +195,16 @@ public class OrderUseCaseImplTest {
     emitter.onNext(order);
     emitter.onNext(order1);
     emitter.onNext(order2);
+    useCase.updateWith(order3);
     TestSubscriber<Order> testSubscriber0 = orders.test();
     emitter.onError(new Exception());
     TestSubscriber<Order> testSubscriber1 = orders.test();
 
     // Результат:
-    testSubscriber.assertValues(order, order1, order2);
+    testSubscriber.assertValues(order, order1, order2, order3);
     testSubscriber.assertError(Exception.class);
     testSubscriber.assertNotComplete();
-    testSubscriber0.assertValues(order2);
+    testSubscriber0.assertValues(order3);
     testSubscriber0.assertError(Exception.class);
     testSubscriber0.assertNotComplete();
     testSubscriber1.assertNoValues();
@@ -203,15 +228,16 @@ public class OrderUseCaseImplTest {
     emitter.onNext(order);
     emitter.onNext(order1);
     emitter.onNext(order2);
+    useCase.updateWith(order3);
     TestSubscriber<Order> testSubscriber0 = orders.test();
     useCase.setOrderOfferDecisionMade();
     TestSubscriber<Order> testSubscriber1 = orders.test();
 
     // Результат:
-    testSubscriber.assertValues(order, order1, order2);
+    testSubscriber.assertValues(order, order1, order2, order3);
     testSubscriber.assertError(OrderOfferDecisionException.class);
     testSubscriber.assertNotComplete();
-    testSubscriber0.assertValues(order2);
+    testSubscriber0.assertValues(order3);
     testSubscriber0.assertError(OrderOfferDecisionException.class);
     testSubscriber0.assertNotComplete();
     testSubscriber1.assertNoValues();

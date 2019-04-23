@@ -58,7 +58,7 @@ public class LoginGatewayTest {
   @Test
   public void askSettingsForSaveLogin() {
     // Действие:
-    loginGateway.onNext("123456");
+    loginGateway.updateWith("123456");
 
     // Результат:
     verify(appSettings).getData("authorizationLogin");

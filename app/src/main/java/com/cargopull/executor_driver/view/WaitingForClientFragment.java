@@ -18,21 +18,19 @@ import androidx.annotation.Nullable;
 import com.cargopull.executor_driver.R;
 import com.cargopull.executor_driver.backend.vibro.ShakeItPlayer;
 import com.cargopull.executor_driver.di.AppComponent;
+import com.cargopull.executor_driver.presentation.NextExecutorStateViewModel;
 import com.cargopull.executor_driver.presentation.order.OrderViewActions;
 import com.cargopull.executor_driver.presentation.order.OrderViewModel;
 import com.cargopull.executor_driver.presentation.waitingforclient.WaitingForClientNavigate;
-import com.cargopull.executor_driver.presentation.waitingforclient.WaitingForClientViewActions;
-import com.cargopull.executor_driver.presentation.waitingforclient.WaitingForClientViewModel;
 import javax.inject.Inject;
 
 /**
  * Отображает ожидание клиента.
  */
 
-public class WaitingForClientFragment extends BaseFragment implements
-    WaitingForClientViewActions, OrderViewActions {
+public class WaitingForClientFragment extends BaseFragment implements OrderViewActions {
 
-  private WaitingForClientViewModel waitingForClientViewModel;
+  private NextExecutorStateViewModel startOrderViewModel;
   private OrderViewModel orderViewModel;
   private ShakeItPlayer shakeItPlayer;
   @Nullable
@@ -41,9 +39,9 @@ public class WaitingForClientFragment extends BaseFragment implements
   private ObjectAnimator resetAnimator;
 
   @Inject
-  public void setWaitingForClientViewModel(
-      @NonNull WaitingForClientViewModel waitingForClientViewModel) {
-    this.waitingForClientViewModel = waitingForClientViewModel;
+  public void setStartOrderViewModel(
+      @NonNull NextExecutorStateViewModel startOrderViewModel) {
+    this.startOrderViewModel = startOrderViewModel;
   }
 
   @Inject
@@ -84,7 +82,7 @@ public class WaitingForClientFragment extends BaseFragment implements
       @Override
       public void onAnimationEnd(Animator animation) {
         if (!canceled) {
-          waitingForClientViewModel.startLoading();
+          startOrderViewModel.routeToNextState();
           shakeItPlayer.shakeIt(R.raw.single_shot_vibro);
         }
       }
@@ -141,12 +139,12 @@ public class WaitingForClientFragment extends BaseFragment implements
         navigate(destination);
       }
     });
-    waitingForClientViewModel.getViewStateLiveData().observe(this, viewState -> {
+    startOrderViewModel.getViewStateLiveData().observe(this, viewState -> {
       if (viewState != null) {
         viewState.apply(this);
       }
     });
-    waitingForClientViewModel.getNavigationLiveData().observe(this, destination -> {
+    startOrderViewModel.getNavigationLiveData().observe(this, destination -> {
       if (destination != null) {
         navigate(destination);
       }
@@ -162,11 +160,6 @@ public class WaitingForClientFragment extends BaseFragment implements
       delayAnimator.cancel();
     }
     super.onDetach();
-  }
-
-  @Override
-  public void showWaitingForClientPending(boolean pending) {
-    showPending(pending, toString() + "0");
   }
 
   @Override

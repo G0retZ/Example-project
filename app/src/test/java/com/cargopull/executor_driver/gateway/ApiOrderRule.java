@@ -1557,7 +1557,7 @@ class ApiOrderRule extends CommonTestRule {
         + String.format(ORDER_START_TIME, 9876598760L) + FIELD_DIVIDER
         + String.format(ORDER_SCHEDULED_START_TIME, 128937981273L) + FIELD_DIVIDER
         + ORDER_DISTANCE_START
-        + String.format(ORDER_DISTANCE_EXECUTOR_ID, 5) + FIELD_DIVIDER
+        + String.format(ORDER_DISTANCE_EXECUTOR_ID, 5)
         + ORDER_DISTANCE_END + FIELD_DIVIDER
         + ORDER_SERVICE_START
         + String.format(ORDER_SERVICE_ID, 4) + FIELD_DIVIDER

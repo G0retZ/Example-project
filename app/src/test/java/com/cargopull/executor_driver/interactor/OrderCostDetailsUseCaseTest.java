@@ -7,7 +7,9 @@ import static org.mockito.Mockito.when;
 import com.cargopull.executor_driver.UseCaseThreadTestRule;
 import com.cargopull.executor_driver.entity.OrderCostDetails;
 import com.cargopull.executor_driver.gateway.DataMappingException;
+import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
+import io.reactivex.FlowableEmitter;
 import io.reactivex.subscribers.TestSubscriber;
 import org.junit.Before;
 import org.junit.ClassRule;
@@ -22,7 +24,7 @@ public class OrderCostDetailsUseCaseTest {
   @ClassRule
   public static final UseCaseThreadTestRule classRule = new UseCaseThreadTestRule();
 
-  private OrderCostDetailsUseCase useCase;
+  private OrderCostDetailsUseCaseImpl useCase;
 
   @Mock
   private CommonGateway<OrderCostDetails> gateway;
@@ -30,6 +32,7 @@ public class OrderCostDetailsUseCaseTest {
   private OrderCostDetails orderCostDetails;
   @Mock
   private OrderCostDetails orderCostDetails1;
+  private FlowableEmitter<OrderCostDetails> emitter;
 
   @Before
   public void setUp() {
@@ -46,12 +49,52 @@ public class OrderCostDetailsUseCaseTest {
   public void askGatewayForOrders() {
     // Действие:
     useCase.getOrderCostDetails().test().isDisposed();
+    useCase.getOrderCostDetails().test().isDisposed();
+    useCase.getOrderCostDetails().test().isDisposed();
+    useCase.getOrderCostDetails().test().isDisposed();
 
     // Результат:
     verify(gateway, only()).getData();
   }
 
   /* Проверяем ответы на запрос заказов */
+
+  /**
+   * Должен ответить детальными расчетами заказа.
+   */
+  @Test
+  public void answerWithOrderCostDetails() {
+    // Дано:
+    when(gateway.getData()).thenReturn(Flowable.just(orderCostDetails,
+        orderCostDetails1));
+
+    // Действие:
+    TestSubscriber<OrderCostDetails> test = useCase.getOrderCostDetails().test();
+
+    // Результат:
+    test.assertValues(orderCostDetails, orderCostDetails1);
+    test.assertComplete();
+    test.assertNoErrors();
+  }
+
+  /**
+   * Должен ответить детальными расчетами заказа и из обновлений в том числе.
+   */
+  @Test
+  public void valueUnchangedForRead() {
+    // Дано:
+    when(gateway.getData()).thenReturn(
+        Flowable.just(orderCostDetails, orderCostDetails1).concatWith(Flowable.never())
+    );
+    TestSubscriber<OrderCostDetails> testObserver = useCase.getOrderCostDetails().test();
+
+    // Действие:
+    useCase.updateWith(orderCostDetails1);
+    useCase.updateWith(orderCostDetails);
+
+    // Результат:
+    testObserver.assertValues(orderCostDetails, orderCostDetails1, orderCostDetails1, orderCostDetails);
+  }
 
   /**
    * Должен ответить ошибкой маппинга.
@@ -71,20 +114,52 @@ public class OrderCostDetailsUseCaseTest {
   }
 
   /**
-   * Должен ответить детальными расчетами заказа.
+   * Должен завершить получение заказов.
    */
   @Test
-  public void answerWithOrders() {
+  public void answerComplete() {
     // Дано:
-    when(gateway.getData()).thenReturn(Flowable.just(orderCostDetails,
-        orderCostDetails1));
+    when(gateway.getData()).thenReturn(Flowable.empty());
 
     // Действие:
-    TestSubscriber<OrderCostDetails> test = useCase.getOrderCostDetails().test();
+    TestSubscriber<OrderCostDetails> testSubscriber = useCase.getOrderCostDetails().test();
+    useCase.updateWith(orderCostDetails);
 
     // Результат:
-    test.assertValues(orderCostDetails, orderCostDetails1);
-    test.assertComplete();
-    test.assertNoErrors();
+    testSubscriber.assertComplete();
+    testSubscriber.assertNoValues();
+    testSubscriber.assertNoErrors();
+  }
+
+  /**
+   * Не должен возвращать полученые ранее заказы после ошибки.
+   */
+  @Test
+  public void answerNothingAfterError() {
+    // Дано:
+    when(gateway.getData()).thenReturn(
+        Flowable.create(emitter -> this.emitter = emitter, BackpressureStrategy.BUFFER)
+    );
+
+    // Действие:
+    Flowable<OrderCostDetails> orders = useCase.getOrderCostDetails();
+    TestSubscriber<OrderCostDetails> testSubscriber = orders.test();
+    emitter.onNext(orderCostDetails);
+    emitter.onNext(orderCostDetails1);
+    useCase.updateWith(orderCostDetails);
+    TestSubscriber<OrderCostDetails> testSubscriber0 = orders.test();
+    emitter.onError(new Exception());
+    TestSubscriber<OrderCostDetails> testSubscriber1 = orders.test();
+
+    // Результат:
+    testSubscriber.assertValues(orderCostDetails, orderCostDetails1, orderCostDetails);
+    testSubscriber.assertError(Exception.class);
+    testSubscriber.assertNotComplete();
+    testSubscriber0.assertValues(orderCostDetails);
+    testSubscriber0.assertError(Exception.class);
+    testSubscriber0.assertNotComplete();
+    testSubscriber1.assertNoValues();
+    testSubscriber1.assertNoErrors();
+    testSubscriber1.assertNotComplete();
   }
 }

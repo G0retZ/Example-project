@@ -4,7 +4,7 @@ import androidx.annotation.NonNull;
 import io.reactivex.Flowable;
 
 /**
- * Общий гейтвей получения любых данных.
+ * Общий гейтвей получения любых данных потоком.
  */
 public interface CommonGateway<D> {
 

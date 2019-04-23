@@ -4,8 +4,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.cargopull.executor_driver.entity.EmptyListException;
 import com.cargopull.executor_driver.entity.Vehicle;
+import com.cargopull.executor_driver.interactor.DataUpdateUseCase;
 import io.reactivex.Completable;
-import io.reactivex.Observer;
 import io.reactivex.Single;
 import io.reactivex.schedulers.Schedulers;
 import java.util.List;
@@ -16,14 +16,14 @@ public class VehicleChoiceUseCaseImpl implements VehicleChoiceUseCase {
   @NonNull
   private final VehiclesAndOptionsGateway vehiclesAndOptionsGateway;
   @NonNull
-  private final Observer<Vehicle> vehicleChoiceObserver;
+  private final DataUpdateUseCase<Vehicle> vehicleChoiceObserver;
   @Nullable
   private List<Vehicle> vehicles;
 
   @Inject
   public VehicleChoiceUseCaseImpl(
       @NonNull VehiclesAndOptionsGateway vehiclesAndOptionsGateway,
-      @NonNull Observer<Vehicle> vehicleChoiceObserver) {
+      @NonNull DataUpdateUseCase<Vehicle> vehicleChoiceObserver) {
     this.vehiclesAndOptionsGateway = vehiclesAndOptionsGateway;
     this.vehicleChoiceObserver = vehicleChoiceObserver;
   }
@@ -52,7 +52,7 @@ public class VehicleChoiceUseCaseImpl implements VehicleChoiceUseCase {
       if (vehicle.isBusy()) {
         throw new IllegalArgumentException("Это ТС занято: " + vehicle);
       }
-      vehicleChoiceObserver.onNext(vehicle);
+      vehicleChoiceObserver.updateWith(vehicle);
       return null;
     });
   }

@@ -2,20 +2,18 @@ package com.cargopull.executor_driver.gateway;
 
 import androidx.annotation.NonNull;
 import com.cargopull.executor_driver.backend.web.incoming.ApiOptionItem;
-import com.cargopull.executor_driver.backend.websocket.incoming.ApiOrder;
-import com.cargopull.executor_driver.backend.websocket.incoming.ApiRoutePoint;
+import com.cargopull.executor_driver.backend.web.incoming.ApiOrder;
+import com.cargopull.executor_driver.backend.web.incoming.ApiRoutePoint;
 import com.cargopull.executor_driver.entity.Option;
 import com.cargopull.executor_driver.entity.Order;
 import com.cargopull.executor_driver.entity.PaymentType;
 import com.cargopull.executor_driver.entity.RoutePoint;
-import com.google.gson.Gson;
 import javax.inject.Inject;
-import ua.naiksoftware.stomp.client.StompMessage;
 
 /**
  * Преобразуем статус из ответа сервера в бизнес объект статуса исполнителя.
  */
-public class OrderApiMapper implements Mapper<StompMessage, Order> {
+public class OrderApiMapper implements Mapper<ApiOrder, Order> {
 
   @NonNull
   private final Mapper<ApiOptionItem, Option> apiOptionMapper;
@@ -31,66 +29,53 @@ public class OrderApiMapper implements Mapper<StompMessage, Order> {
 
   @NonNull
   @Override
-  public Order map(@NonNull StompMessage from) throws Exception {
-    if (from.getPayload() == null) {
-      throw new DataMappingException("Ошибка маппинга: данные не должны быть null!");
-    }
-    if (from.getPayload().trim().isEmpty()) {
-      throw new DataMappingException("Ошибка маппинга: данные не должны быть пустыми!");
-    }
-    Gson gson = new Gson();
-    ApiOrder apiOrder;
-    try {
-      apiOrder = gson.fromJson(from.getPayload(), ApiOrder.class);
-    } catch (Exception e) {
-      throw new DataMappingException("Ошибка маппинга: не удалось распарсить JSON: " + from, e);
-    }
-    if (apiOrder.getPaymentType() == null) {
+  public Order map(@NonNull ApiOrder from) throws Exception {
+    if (from.getPaymentType() == null) {
       throw new DataMappingException("Ошибка маппинга: Тип оплаты не должен быть null!");
     }
     PaymentType paymentType;
     try {
-      paymentType = PaymentType.valueOf(apiOrder.getPaymentType());
+      paymentType = PaymentType.valueOf(from.getPaymentType());
     }     catch (Exception e) {
       throw new DataMappingException(
-          "Ошибка маппинга: неизвестный способ оплаты \"" + apiOrder.getPaymentType() + "\" !");
+          "Ошибка маппинга: неизвестный способ оплаты \"" + from.getPaymentType() + "\" !");
     }
-    if (apiOrder.getApiOrderService() == null) {
+    if (from.getApiOrderService() == null) {
       throw new DataMappingException("Ошибка маппинга: Услуга не должна быть null!");
     }
-    if (apiOrder.getApiOrderService().getName() == null) {
+    if (from.getApiOrderService().getName() == null) {
       throw new DataMappingException("Ошибка маппинга: Имя услуги не должно быть null!");
     }
-    if (apiOrder.getRoute() == null) {
+    if (from.getRoute() == null) {
       throw new DataMappingException("Ошибка маппинга: маршрут не должен быть null!");
     }
-    if (apiOrder.getRoute().isEmpty()) {
+    if (from.getRoute().isEmpty()) {
       throw new DataMappingException(
           "Ошибка маппинга: маршрут должен содержать хотя бы одну точку!"
       );
     }
     Order order = new Order(
-        apiOrder.getId(),
+        from.getId(),
         paymentType,
-        apiOrder.getComment() == null ? "" : apiOrder.getComment(),
-        apiOrder.getApiOrderService().getName(),
-        apiOrder.getExecutorDistance() == null ? 0 : apiOrder.getExecutorDistance().getDistance(),
-        apiOrder.getEstimatedAmountText() == null ? "" : apiOrder.getEstimatedAmountText(),
-        apiOrder.getEstimatedAmount(),
-        apiOrder.getEstimatedTime(),
-        apiOrder.getEstimatedRouteDistance(),
-        apiOrder.getTotalAmount(),
-        apiOrder.getTimeout(),
-        apiOrder.getEtaToStartPoint(),
-        apiOrder.getConfirmationTime(),
-        apiOrder.getStartTime(),
-        apiOrder.getScheduledStartTime());
-    if (apiOrder.getOptions() != null) {
-      for (ApiOptionItem vehicleOptionItem : apiOrder.getOptions()) {
+        from.getComment() == null ? "" : from.getComment(),
+        from.getApiOrderService().getName(),
+        from.getExecutorDistance() == null ? 0 : from.getExecutorDistance().getDistance(),
+        from.getEstimatedAmountText() == null ? "" : from.getEstimatedAmountText(),
+        from.getEstimatedAmount(),
+        from.getEstimatedTime(),
+        from.getEstimatedRouteDistance(),
+        from.getTotalAmount(),
+        from.getTimeout(),
+        from.getEtaToStartPoint(),
+        from.getConfirmationTime(),
+        from.getStartTime(),
+        from.getScheduledStartTime());
+    if (from.getOptions() != null) {
+      for (ApiOptionItem vehicleOptionItem : from.getOptions()) {
         order.addOptions(apiOptionMapper.map(vehicleOptionItem));
       }
     }
-    for (ApiRoutePoint routePoint : apiOrder.getRoute()) {
+    for (ApiRoutePoint routePoint : from.getRoute()) {
       order.addRoutePoints(routePointMapper.map(routePoint));
     }
     return order;

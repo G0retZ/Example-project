@@ -6,7 +6,7 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
 import com.cargopull.executor_driver.backend.web.incoming.ApiOptionItem;
-import com.cargopull.executor_driver.backend.websocket.incoming.ApiRoutePoint;
+import com.cargopull.executor_driver.backend.web.incoming.ApiRoutePoint;
 import com.cargopull.executor_driver.entity.Option;
 import com.cargopull.executor_driver.entity.OptionBoolean;
 import com.cargopull.executor_driver.entity.OptionNumeric;
@@ -655,11 +655,11 @@ public class PreOrdersListApiMapperTest {
   }
 
   /**
-   * Должен дать ошибку, если пришел JSON без значения дистанции.
+   * Должен успешно преобразовать JSON без значения дистанции.
    *
    * @throws Exception ошибка
    */
-  @Test(expected = DataMappingException.class)
+  @Test
   public void mappingJsonStringWithoutDistanceValueToPreOrdersListFail() throws Exception {
     // Дано:
     when(stompMessage.getPayload()).thenReturn("[" + rule.getOrderWithoutDistanceValue() + "]");

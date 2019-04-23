@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.LinearInterpolator;
@@ -22,8 +23,8 @@ import androidx.annotation.Nullable;
 import com.cargopull.executor_driver.R;
 import com.cargopull.executor_driver.backend.vibro.ShakeItPlayer;
 import com.cargopull.executor_driver.di.AppComponent;
-import com.cargopull.executor_driver.presentation.movingtoclient.MovingToClientViewActions;
-import com.cargopull.executor_driver.presentation.movingtoclient.MovingToClientViewModel;
+import com.cargopull.executor_driver.presentation.NextExecutorStateViewModel;
+import com.cargopull.executor_driver.presentation.movingtoclient.MovingToClientNavigate;
 import com.cargopull.executor_driver.presentation.movingtoclienttimer.MovingToClientTimerViewModel;
 import com.cargopull.executor_driver.presentation.order.OrderViewActions;
 import com.cargopull.executor_driver.presentation.order.OrderViewModel;
@@ -33,12 +34,10 @@ import javax.inject.Inject;
  * Отображает движение к клиенту.
  */
 
-public class MovingToClientFragment extends BaseFragment implements MovingToClientViewActions,
-    OrderViewActions {
+public class MovingToClientFragment extends BaseFragment implements OrderViewActions {
 
   private OrderViewModel orderViewModel;
   private MovingToClientTimerViewModel movingToClientTimerViewModel;
-  private MovingToClientViewModel movingToClientViewModel;
   private ShakeItPlayer shakeItPlayer;
   private Button callAction;
   private Context context;
@@ -46,6 +45,12 @@ public class MovingToClientFragment extends BaseFragment implements MovingToClie
   private ObjectAnimator delayAnimator;
   @Nullable
   private ObjectAnimator resetAnimator;
+  private final OnClickListener callToClientListener = v -> {
+    callAction.setEnabled(false);
+    navigate(MovingToClientNavigate.CALL_TO_CLIENT);
+    callAction.postDelayed(() -> callAction.setEnabled(true), 10_000);
+  };
+  private NextExecutorStateViewModel reportArrivedViewModel;
 
 
   @Override
@@ -66,8 +71,9 @@ public class MovingToClientFragment extends BaseFragment implements MovingToClie
   }
 
   @Inject
-  public void setMovingToClientViewModel(@NonNull MovingToClientViewModel movingToClientViewModel) {
-    this.movingToClientViewModel = movingToClientViewModel;
+  public void setReportArrivedViewModel(
+      @NonNull NextExecutorStateViewModel reportArrivedViewModel) {
+    this.reportArrivedViewModel = reportArrivedViewModel;
   }
 
   @Inject
@@ -84,7 +90,7 @@ public class MovingToClientFragment extends BaseFragment implements MovingToClie
     View view = inflater.inflate(R.layout.fragment_moving_to_client, container, false);
     callAction = view.findViewById(R.id.callToClient);
     ProgressBar arrivedAction = view.findViewById(R.id.reportArrived);
-    callAction.setOnClickListener(v -> movingToClientViewModel.callToClient());
+    callAction.setOnClickListener(callToClientListener);
     delayAnimator = ObjectAnimator.ofInt(arrivedAction, "progress", 0, 100);
     delayAnimator.setDuration(1500);
     delayAnimator.setInterpolator(new DecelerateInterpolator());
@@ -99,7 +105,7 @@ public class MovingToClientFragment extends BaseFragment implements MovingToClie
       @Override
       public void onAnimationEnd(Animator animation) {
         if (!canceled) {
-          movingToClientViewModel.reportArrival();
+          reportArrivedViewModel.routeToNextState();
           shakeItPlayer.shakeIt(R.raw.single_shot_vibro);
         }
       }
@@ -186,12 +192,12 @@ public class MovingToClientFragment extends BaseFragment implements MovingToClie
         viewState.apply(this);
       }
     });
-    movingToClientViewModel.getViewStateLiveData().observe(this, viewState -> {
+    reportArrivedViewModel.getViewStateLiveData().observe(this, viewState -> {
       if (viewState != null) {
         viewState.apply(this);
       }
     });
-    movingToClientViewModel.getNavigationLiveData().observe(this, destination -> {
+    reportArrivedViewModel.getNavigationLiveData().observe(this, destination -> {
       if (destination != null) {
         navigate(destination);
       }
@@ -208,16 +214,6 @@ public class MovingToClientFragment extends BaseFragment implements MovingToClie
     }
     super.onDetach();
     context = null;
-  }
-
-  @Override
-  public void showMovingToClientPending(boolean pending) {
-    showPending(pending, toString() + "0");
-  }
-
-  @Override
-  public void enableMovingToClientCallButton(boolean enable) {
-    callAction.setEnabled(enable);
   }
 
   @Override
