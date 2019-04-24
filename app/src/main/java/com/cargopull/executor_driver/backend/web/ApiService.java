@@ -2,8 +2,11 @@ package com.cargopull.executor_driver.backend.web;
 
 import androidx.annotation.NonNull;
 import com.cargopull.executor_driver.backend.web.incoming.ApiOptionsForOnline;
+import com.cargopull.executor_driver.backend.web.incoming.ApiOrder;
+import com.cargopull.executor_driver.backend.web.incoming.ApiOrderCostDetails;
 import com.cargopull.executor_driver.backend.web.incoming.ApiOrdersSummary;
 import com.cargopull.executor_driver.backend.web.incoming.ApiProblem;
+import com.cargopull.executor_driver.backend.web.incoming.ApiRoutePoint;
 import com.cargopull.executor_driver.backend.web.incoming.ApiServiceItem;
 import com.cargopull.executor_driver.backend.web.incoming.ApiSimpleResult;
 import com.cargopull.executor_driver.backend.web.outgoing.ApiLogin;
@@ -94,10 +97,18 @@ public interface ApiService {
   );
 
   /*
+   *  Запрос принятия или отказа от срочного заказа.
+   */
+  @POST("api/public/v1/mobile/order/accept")
+  Single<ApiSimpleResult<Void>> acceptOrderOffer(
+      @NonNull @Body ApiOrderDecision decision
+  );
+
+  /*
    *  Запрос бронирования или отказа от предварительного заказа.
    */
   @POST("api/public/v1/mobile/order/assign")
-  Single<ApiSimpleResult> sendPreOrderDecision(
+  Single<ApiSimpleResult<String>> sendPreOrderDecision(
       @NonNull @Body ApiOrderDecision decision
   );
 
@@ -105,7 +116,7 @@ public interface ApiService {
    *  Запрос отказа от бронирования или выезда на забронированный предварительный заказ.
    */
   @POST("api/public/v1/mobile/order/preliminary/process")
-  Single<ApiSimpleResult> sendPreOrderProcess(
+  Single<ApiSimpleResult<ApiOrder>> sendPreOrderProcess(
       @NonNull @Body ApiOrderDecision decision
   );
 
@@ -127,24 +138,52 @@ public interface ApiService {
   );
 
   /*
-   *  Запрос принятия или отказа от срочного заказа.
+   *  Действия над заказом.
+   *  ключ: status
+   *  Значения: CALL_TO_CLIENT
    */
-  @POST("api/public/v1/mobile/order/accept")
-  Completable acceptOrderOffer(
-      @NonNull @Body ApiOrderDecision decision
+  @POST("api/public/v1/mobile/order/current")
+  Completable callToClient(
+      @NonNull @Body Map<String, String> params
   );
 
   /*
    *  Действия над заказом.
    *  ключ: status
    *  Значения: DRIVER_ARRIVED
-   *            CALL_TO_CLIENT
-   *            START_ORDER
-   *            COMPLETE_ORDER
-   *            COMPLETE_PAYMENT_CONFIRMATION
    */
   @POST("api/public/v1/mobile/order/current")
-  Completable changeOrderStatus(
+  Single<ApiSimpleResult<List<ApiRoutePoint>>> reportArrived(
+      @NonNull @Body Map<String, String> params
+  );
+
+  /*
+   *  Действия над заказом.
+   *  ключ: status
+   *  Значения: START_ORDER
+   */
+  @POST("api/public/v1/mobile/order/current")
+  Single<ApiSimpleResult<List<ApiRoutePoint>>> startOrder(
+      @NonNull @Body Map<String, String> params
+  );
+
+  /*
+   *  Действия над заказом.
+   *  ключ: status
+   *  Значения: COMPLETE_ORDER
+   */
+  @POST("api/public/v1/mobile/order/current")
+  Single<ApiSimpleResult<ApiOrderCostDetails>> completeOrder(
+      @NonNull @Body Map<String, String> params
+  );
+
+  /*
+   *  Действия над заказом.
+   *  ключ: status
+   *  Значения: COMPLETE_PAYMENT_CONFIRMATION
+   */
+  @POST("api/public/v1/mobile/order/current")
+  Single<ApiSimpleResult<Void>> completeOrderPayment(
       @NonNull @Body Map<String, String> params
   );
 
@@ -152,7 +191,7 @@ public interface ApiService {
    *  Запрос смены статуса заказа.
    */
   @POST("api/public/v1/mobile/order/current/routePoint/{id}/next")
-  Completable makeRoutePointNext(
+  Single<ApiSimpleResult<List<ApiRoutePoint>>> makeRoutePointNext(
       @Path("id") long routePointId
   );
 
@@ -160,7 +199,7 @@ public interface ApiService {
    *  Запрос смены статуса заказа.
    */
   @POST("api/public/v1/mobile/order/current/routePoint/{id}/complete")
-  Completable completeRoutePoint(
+  Single<ApiSimpleResult<List<ApiRoutePoint>>> completeRoutePoint(
       @Path("id") long routePointId
   );
 

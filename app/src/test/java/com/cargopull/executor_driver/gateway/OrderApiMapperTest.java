@@ -6,12 +6,14 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
 import com.cargopull.executor_driver.backend.web.incoming.ApiOptionItem;
-import com.cargopull.executor_driver.backend.websocket.incoming.ApiRoutePoint;
+import com.cargopull.executor_driver.backend.web.incoming.ApiOrder;
+import com.cargopull.executor_driver.backend.web.incoming.ApiRoutePoint;
 import com.cargopull.executor_driver.entity.Option;
 import com.cargopull.executor_driver.entity.OptionBoolean;
 import com.cargopull.executor_driver.entity.OptionNumeric;
 import com.cargopull.executor_driver.entity.Order;
 import com.cargopull.executor_driver.entity.RoutePoint;
+import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.Arrays;
 import org.junit.Before;
@@ -20,7 +22,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import ua.naiksoftware.stomp.client.StompMessage;
 
 @RunWith(MockitoJUnitRunner.class)
 public class OrderApiMapperTest {
@@ -28,14 +29,12 @@ public class OrderApiMapperTest {
   @Rule
   public final ApiOrderRule rule = new ApiOrderRule();
 
-  private Mapper<StompMessage, Order> mapper;
+  private Mapper<ApiOrder, Order> mapper;
 
   @Mock
   private Mapper<ApiOptionItem, Option> apiOptionMapper;
   @Mock
   private Mapper<ApiRoutePoint, RoutePoint> routePointMapper;
-  @Mock
-  private StompMessage stompMessage;
   @Mock
   private OptionBoolean optionBoolean;
   @Mock
@@ -61,10 +60,10 @@ public class OrderApiMapperTest {
   @Test
   public void mappingJsonStringToOrderSuccess() throws Exception {
     // Дано:
-    when(stompMessage.getPayload()).thenReturn(rule.getFullOrder());
+    ApiOrder apiOrder = new Gson().fromJson(rule.getFullOrder(), ApiOrder.class);
 
     // Действие:
-    Order order = mapper.map(stompMessage);
+    Order order = mapper.map(apiOrder);
 
     // Результат:
     assertEquals(order.getId(), 7);
@@ -95,10 +94,10 @@ public class OrderApiMapperTest {
   @Test
   public void mappingJsonStringWithoutIdToOrderSuccess() throws Exception {
     // Дано:
-    when(stompMessage.getPayload()).thenReturn(rule.getOrderWithoutId());
+    ApiOrder apiOrder = new Gson().fromJson(rule.getOrderWithoutId(), ApiOrder.class);
 
     // Действие:
-    Order order = mapper.map(stompMessage);
+    Order order = mapper.map(apiOrder);
 
     // Результат:
     assertEquals(order.getId(), 0);
@@ -129,10 +128,10 @@ public class OrderApiMapperTest {
   @Test(expected = DataMappingException.class)
   public void mappingJsonStringWithoutPaymentTypeToOrderFail() throws Exception {
     // Дано:
-    when(stompMessage.getPayload()).thenReturn(rule.getOrderWithoutPaymentType());
+    ApiOrder apiOrder = new Gson().fromJson(rule.getOrderWithoutPaymentType(), ApiOrder.class);
 
     // Действие:
-    Order order = mapper.map(stompMessage);
+    Order order = mapper.map(apiOrder);
 
     // Результат:
     assertEquals(order.getId(), 7);
@@ -163,10 +162,10 @@ public class OrderApiMapperTest {
   @Test(expected = DataMappingException.class)
   public void mappingJsonStringWithEmptyPaymentTypeToOrderFail() throws Exception {
     // Дано:
-    when(stompMessage.getPayload()).thenReturn(rule.getOrderWithEmptyPaymentType());
+    ApiOrder apiOrder = new Gson().fromJson(rule.getOrderWithEmptyPaymentType(), ApiOrder.class);
 
     // Действие:
-    Order order = mapper.map(stompMessage);
+    Order order = mapper.map(apiOrder);
 
     // Результат:
     assertEquals(order.getId(), 7);
@@ -197,10 +196,10 @@ public class OrderApiMapperTest {
   @Test(expected = DataMappingException.class)
   public void mappingJsonStringWithWrongPaymentTypeToOrderFail() throws Exception {
     // Дано:
-    when(stompMessage.getPayload()).thenReturn(rule.getOrderWithWrongPaymentType());
+    ApiOrder apiOrder = new Gson().fromJson(rule.getOrderWithWrongPaymentType(), ApiOrder.class);
 
     // Действие:
-    Order order = mapper.map(stompMessage);
+    Order order = mapper.map(apiOrder);
 
     // Результат:
     assertEquals(order.getId(), 7);
@@ -231,10 +230,10 @@ public class OrderApiMapperTest {
   @Test
   public void mappingJsonStringWithoutCommentToOrderSuccess() throws Exception {
     // Дано:
-    when(stompMessage.getPayload()).thenReturn(rule.getOrderWithoutComment());
+    ApiOrder apiOrder = new Gson().fromJson(rule.getOrderWithoutComment(), ApiOrder.class);
 
     // Действие:
-    Order order = mapper.map(stompMessage);
+    Order order = mapper.map(apiOrder);
 
     // Результат:
     assertEquals(order.getId(), 7);
@@ -265,10 +264,11 @@ public class OrderApiMapperTest {
   @Test
   public void mappingJsonStringWithoutEstimatedAmountTextToOrderSuccess() throws Exception {
     // Дано:
-    when(stompMessage.getPayload()).thenReturn(rule.getOrderWithoutEstimatedAmountText());
+    ApiOrder apiOrder = new Gson()
+        .fromJson(rule.getOrderWithoutEstimatedAmountText(), ApiOrder.class);
 
     // Действие:
-    Order order = mapper.map(stompMessage);
+    Order order = mapper.map(apiOrder);
 
     // Результат:
     assertEquals(order.getId(), 7);
@@ -299,10 +299,10 @@ public class OrderApiMapperTest {
   @Test
   public void mappingJsonStringWithoutEstimatedAmountToOrderSuccess() throws Exception {
     // Дано:
-    when(stompMessage.getPayload()).thenReturn(rule.getOrderWithoutEstimatedAmount());
+    ApiOrder apiOrder = new Gson().fromJson(rule.getOrderWithoutEstimatedAmount(), ApiOrder.class);
 
     // Действие:
-    Order order = mapper.map(stompMessage);
+    Order order = mapper.map(apiOrder);
 
     // Результат:
     assertEquals(order.getId(), 7);
@@ -333,10 +333,10 @@ public class OrderApiMapperTest {
   @Test
   public void mappingJsonStringWithoutEstimatedTimeToOrderSuccess() throws Exception {
     // Дано:
-    when(stompMessage.getPayload()).thenReturn(rule.getOrderWithoutEstimatedTime());
+    ApiOrder apiOrder = new Gson().fromJson(rule.getOrderWithoutEstimatedTime(), ApiOrder.class);
 
     // Действие:
-    Order order = mapper.map(stompMessage);
+    Order order = mapper.map(apiOrder);
 
     // Результат:
     assertEquals(order.getId(), 7);
@@ -367,10 +367,11 @@ public class OrderApiMapperTest {
   @Test
   public void mappingJsonStringWithoutEstimatedRouteLengthToOrderSuccess() throws Exception {
     // Дано:
-    when(stompMessage.getPayload()).thenReturn(rule.getOrderWithoutEstimatedRouteDistance());
+    ApiOrder apiOrder = new Gson()
+        .fromJson(rule.getOrderWithoutEstimatedRouteDistance(), ApiOrder.class);
 
     // Действие:
-    Order order = mapper.map(stompMessage);
+    Order order = mapper.map(apiOrder);
 
     // Результат:
     assertEquals(order.getId(), 7);
@@ -401,10 +402,10 @@ public class OrderApiMapperTest {
   @Test
   public void mappingJsonStringWithoutCostToOrderSuccess() throws Exception {
     // Дано:
-    when(stompMessage.getPayload()).thenReturn(rule.getOrderWithoutCost());
+    ApiOrder apiOrder = new Gson().fromJson(rule.getOrderWithoutCost(), ApiOrder.class);
 
     // Действие:
-    Order order = mapper.map(stompMessage);
+    Order order = mapper.map(apiOrder);
 
     // Результат:
     assertEquals(order.getId(), 7);
@@ -435,10 +436,10 @@ public class OrderApiMapperTest {
   @Test
   public void mappingJsonStringWithoutTimeoutToOrderSuccess() throws Exception {
     // Дано:
-    when(stompMessage.getPayload()).thenReturn(rule.getOrderWithoutTimeout());
+    ApiOrder apiOrder = new Gson().fromJson(rule.getOrderWithoutTimeout(), ApiOrder.class);
 
     // Действие:
-    Order order = mapper.map(stompMessage);
+    Order order = mapper.map(apiOrder);
 
     // Результат:
     assertEquals(order.getId(), 7);
@@ -469,10 +470,10 @@ public class OrderApiMapperTest {
   @Test
   public void mappingJsonStringWithoutEtaToOrderSuccess() throws Exception {
     // Дано:
-    when(stompMessage.getPayload()).thenReturn(rule.getOrderWithoutEta());
+    ApiOrder apiOrder = new Gson().fromJson(rule.getOrderWithoutEta(), ApiOrder.class);
 
     // Действие:
-    Order order = mapper.map(stompMessage);
+    Order order = mapper.map(apiOrder);
 
     // Результат:
     assertEquals(order.getId(), 7);
@@ -503,10 +504,10 @@ public class OrderApiMapperTest {
   @Test
   public void mappingJsonStringWithoutConfirmationTimeToOrderSuccess() throws Exception {
     // Дано:
-    when(stompMessage.getPayload()).thenReturn(rule.getOrderWithoutConfirmationTime());
+    ApiOrder apiOrder = new Gson().fromJson(rule.getOrderWithoutConfirmationTime(), ApiOrder.class);
 
     // Действие:
-    Order order = mapper.map(stompMessage);
+    Order order = mapper.map(apiOrder);
 
     // Результат:
     assertEquals(order.getId(), 7);
@@ -537,10 +538,10 @@ public class OrderApiMapperTest {
   @Test
   public void mappingJsonStringWithoutStartTimeToOrderSuccess() throws Exception {
     // Дано:
-    when(stompMessage.getPayload()).thenReturn(rule.getOrderWithoutStartTime());
+    ApiOrder apiOrder = new Gson().fromJson(rule.getOrderWithoutStartTime(), ApiOrder.class);
 
     // Действие:
-    Order order = mapper.map(stompMessage);
+    Order order = mapper.map(apiOrder);
 
     // Результат:
     assertEquals(order.getId(), 7);
@@ -571,10 +572,11 @@ public class OrderApiMapperTest {
   @Test
   public void mappingJsonStringWithoutScheduledStartTimeToOrderSuccess() throws Exception {
     // Дано:
-    when(stompMessage.getPayload()).thenReturn(rule.getOrderWithoutScheduledStartTime());
+    ApiOrder apiOrder = new Gson()
+        .fromJson(rule.getOrderWithoutScheduledStartTime(), ApiOrder.class);
 
     // Действие:
-    Order order = mapper.map(stompMessage);
+    Order order = mapper.map(apiOrder);
 
     // Результат:
     assertEquals(order.getId(), 7);
@@ -605,10 +607,10 @@ public class OrderApiMapperTest {
   @Test
   public void mappingJsonStringWithoutDistanceIdToOrderSuccess() throws Exception {
     // Дано:
-    when(stompMessage.getPayload()).thenReturn(rule.getOrderWithoutDistanceId());
+    ApiOrder apiOrder = new Gson().fromJson(rule.getOrderWithoutDistanceId(), ApiOrder.class);
 
     // Действие:
-    Order order = mapper.map(stompMessage);
+    Order order = mapper.map(apiOrder);
 
     // Результат:
     assertEquals(order.getId(), 7);
@@ -632,17 +634,17 @@ public class OrderApiMapperTest {
   }
 
   /**
-   * Должен дать ошибку, если пришел JSON без значения дистанции.
+   * Должен успешно преобразовать JSON без значения дистанции.
    *
    * @throws Exception ошибка
    */
-  @Test(expected = DataMappingException.class)
-  public void mappingJsonStringWithoutDistanceValueToOrderFail() throws Exception {
+  @Test
+  public void mappingJsonStringWithoutDistanceValueToOrderSuccess() throws Exception {
     // Дано:
-    when(stompMessage.getPayload()).thenReturn(rule.getOrderWithoutDistanceValue());
+    ApiOrder apiOrder = new Gson().fromJson(rule.getOrderWithoutDistanceValue(), ApiOrder.class);
 
     // Действие:
-    Order order = mapper.map(stompMessage);
+    Order order = mapper.map(apiOrder);
 
     // Результат:
     assertEquals(order.getId(), 7);
@@ -673,10 +675,10 @@ public class OrderApiMapperTest {
   @Test
   public void mappingJsonStringWithoutDistanceToOrderSuccess() throws Exception {
     // Дано:
-    when(stompMessage.getPayload()).thenReturn(rule.getOrderWithoutDistance());
+    ApiOrder apiOrder = new Gson().fromJson(rule.getOrderWithoutDistance(), ApiOrder.class);
 
     // Действие:
-    Order order = mapper.map(stompMessage);
+    Order order = mapper.map(apiOrder);
 
     // Результат:
     assertEquals(order.getId(), 7);
@@ -707,10 +709,10 @@ public class OrderApiMapperTest {
   @Test
   public void mappingJsonStringWithoutServiceIdToOrderSuccess() throws Exception {
     // Дано:
-    when(stompMessage.getPayload()).thenReturn(rule.getOrderWithoutServiceId());
+    ApiOrder apiOrder = new Gson().fromJson(rule.getOrderWithoutServiceId(), ApiOrder.class);
 
     // Действие:
-    Order order = mapper.map(stompMessage);
+    Order order = mapper.map(apiOrder);
 
     // Результат:
     assertEquals(order.getId(), 7);
@@ -741,10 +743,10 @@ public class OrderApiMapperTest {
   @Test(expected = DataMappingException.class)
   public void mappingJsonStringWithoutServiceNameToOrderFail() throws Exception {
     // Дано:
-    when(stompMessage.getPayload()).thenReturn(rule.getOrderWithoutServiceName());
+    ApiOrder apiOrder = new Gson().fromJson(rule.getOrderWithoutServiceName(), ApiOrder.class);
 
     // Действие:
-    Order order = mapper.map(stompMessage);
+    Order order = mapper.map(apiOrder);
 
     // Результат:
     assertEquals(order.getId(), 7);
@@ -775,10 +777,10 @@ public class OrderApiMapperTest {
   @Test
   public void mappingJsonStringWithoutServicePriceToOrderSuccess() throws Exception {
     // Дано:
-    when(stompMessage.getPayload()).thenReturn(rule.getOrderWithoutServicePrice());
+    ApiOrder apiOrder = new Gson().fromJson(rule.getOrderWithoutServicePrice(), ApiOrder.class);
 
     // Действие:
-    Order order = mapper.map(stompMessage);
+    Order order = mapper.map(apiOrder);
 
     // Результат:
     assertEquals(order.getId(), 7);
@@ -809,10 +811,10 @@ public class OrderApiMapperTest {
   @Test(expected = DataMappingException.class)
   public void mappingJsonStringWithoutServiceToOrderFail() throws Exception {
     // Дано:
-    when(stompMessage.getPayload()).thenReturn(rule.getOrderWithoutService());
+    ApiOrder apiOrder = new Gson().fromJson(rule.getOrderWithoutService(), ApiOrder.class);
 
     // Действие:
-    Order order = mapper.map(stompMessage);
+    Order order = mapper.map(apiOrder);
 
     // Результат:
     assertEquals(order.getId(), 7);
@@ -843,10 +845,10 @@ public class OrderApiMapperTest {
   @Test(expected = DataMappingException.class)
   public void mappingJsonStringWithEmptyRouteToOrderFail() throws Exception {
     // Дано:
-    when(stompMessage.getPayload()).thenReturn(rule.getOrderWithEmptyRoute());
+    ApiOrder apiOrder = new Gson().fromJson(rule.getOrderWithEmptyRoute(), ApiOrder.class);
 
     // Действие:
-    Order order = mapper.map(stompMessage);
+    Order order = mapper.map(apiOrder);
 
     // Результат:
     assertEquals(order.getId(), 7);
@@ -877,10 +879,10 @@ public class OrderApiMapperTest {
   @Test(expected = DataMappingException.class)
   public void mappingJsonStringWithoutRouteToOrderFail() throws Exception {
     // Дано:
-    when(stompMessage.getPayload()).thenReturn(rule.getOrderWithoutRoute());
+    ApiOrder apiOrder = new Gson().fromJson(rule.getOrderWithoutRoute(), ApiOrder.class);
 
     // Действие:
-    Order order = mapper.map(stompMessage);
+    Order order = mapper.map(apiOrder);
 
     // Результат:
     assertEquals(order.getId(), 7);
@@ -911,10 +913,10 @@ public class OrderApiMapperTest {
   @Test
   public void mappingJsonStringWithEmptyOptionsToOrderSuccess() throws Exception {
     // Дано:
-    when(stompMessage.getPayload()).thenReturn(rule.getOrderWithEmptyOptions());
+    ApiOrder apiOrder = new Gson().fromJson(rule.getOrderWithEmptyOptions(), ApiOrder.class);
 
     // Действие:
-    Order order = mapper.map(stompMessage);
+    Order order = mapper.map(apiOrder);
 
     // Результат:
     assertEquals(order.getId(), 7);
@@ -943,10 +945,10 @@ public class OrderApiMapperTest {
   @Test
   public void mappingJsonStringWithoutOptionsToOrderSuccess() throws Exception {
     // Дано:
-    when(stompMessage.getPayload()).thenReturn(rule.getOrderWithoutOptions());
+    ApiOrder apiOrder = new Gson().fromJson(rule.getOrderWithoutOptions(), ApiOrder.class);
 
     // Действие:
-    Order order = mapper.map(stompMessage);
+    Order order = mapper.map(apiOrder);
 
     // Результат:
     assertEquals(order.getId(), 7);
@@ -975,11 +977,11 @@ public class OrderApiMapperTest {
   @Test(expected = DataMappingException.class)
   public void mappingFailForRoutePointMappingError() throws Exception {
     // Дано:
-    when(stompMessage.getPayload()).thenReturn(rule.getFullOrder());
+    ApiOrder apiOrder = new Gson().fromJson(rule.getFullOrder(), ApiOrder.class);
     doThrow(new DataMappingException()).when(routePointMapper).map(any(ApiRoutePoint.class));
 
     // Действие:
-    mapper.map(stompMessage);
+    mapper.map(apiOrder);
   }
 
   /**
@@ -990,77 +992,10 @@ public class OrderApiMapperTest {
   @Test(expected = DataMappingException.class)
   public void mappingFailForOptionMappingError() throws Exception {
     // Дано:
-    when(stompMessage.getPayload()).thenReturn(rule.getFullOrder());
+    ApiOrder apiOrder = new Gson().fromJson(rule.getFullOrder(), ApiOrder.class);
     doThrow(new DataMappingException()).when(apiOptionMapper).map(any(ApiOptionItem.class));
 
     // Действие:
-    mapper.map(stompMessage);
-  }
-
-  /**
-   * Должен дать ошибку, если строка пустая.
-   *
-   * @throws Exception ошибка
-   */
-  @Test(expected = DataMappingException.class)
-  public void mappingEmptyFail() throws Exception {
-    // Дано:
-    when(stompMessage.getPayload()).thenReturn("\n");
-
-    // Действие:
-    mapper.map(stompMessage);
-  }
-
-  /**
-   * Должен дать ошибку, если пришла просто строка.
-   *
-   * @throws Exception ошибка
-   */
-  @Test(expected = DataMappingException.class)
-  public void mappingStringFail() throws Exception {
-    // Дано:
-    when(stompMessage.getPayload()).thenReturn("dasie");
-
-    // Действие:
-    mapper.map(stompMessage);
-  }
-
-  /**
-   * Должен дать ошибку, если пришло просто число.
-   *
-   * @throws Exception ошибка
-   */
-  @Test(expected = DataMappingException.class)
-  public void mappingNumberFail() throws Exception {
-    // Дано:
-    when(stompMessage.getPayload()).thenReturn("12");
-
-    // Действие:
-    mapper.map(stompMessage);
-  }
-
-  /**
-   * Должен дать ошибку, если пришел массив.
-   *
-   * @throws Exception ошибка
-   */
-  @Test(expected = DataMappingException.class)
-  public void mappingArrayFail() throws Exception {
-    // Дано:
-    when(stompMessage.getPayload()).thenReturn("[]");
-
-    // Действие:
-    mapper.map(stompMessage);
-  }
-
-  /**
-   * Должен дать ошибку, если пришел null.
-   *
-   * @throws Exception ошибка
-   */
-  @Test(expected = DataMappingException.class)
-  public void mappingNullFail() throws Exception {
-    // Действие:
-    mapper.map(stompMessage);
+    mapper.map(apiOrder);
   }
 }

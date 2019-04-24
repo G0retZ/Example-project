@@ -43,7 +43,6 @@
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toBottomOf="@id/geoTitleText"/>
   <Button
-    xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/resolve"
     style="@style/AppTheme.Button.Borderless.Filled"
     android:layout_width="0dp"

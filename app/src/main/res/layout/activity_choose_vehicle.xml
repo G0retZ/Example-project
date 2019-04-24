@@ -12,6 +12,9 @@
     style="@style/AppTheme.AppBar"
     android:layout_width="match_parent"
     android:layout_height="?android:attr/actionBarSize"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent"
     app:navigationIcon="@drawable/ic_back_24dp"
     app:title="@string/choose_vehicle"/>
   <fragment

@@ -22,7 +22,7 @@ import com.cargopull.executor_driver.R;
 import com.cargopull.executor_driver.backend.ringtone.RingTonePlayer;
 import com.cargopull.executor_driver.backend.vibro.ShakeItPlayer;
 import com.cargopull.executor_driver.di.AppComponent;
-import com.cargopull.executor_driver.di.AppComponentImpl;
+import com.cargopull.executor_driver.di.BackendComponent;
 import com.cargopull.executor_driver.presentation.CommonNavigate;
 import com.cargopull.executor_driver.presentation.balance.BalanceViewModel;
 import com.cargopull.executor_driver.presentation.cancelledorder.CancelledOrderViewActions;
@@ -35,6 +35,7 @@ import com.cargopull.executor_driver.presentation.missedorder.MissedOrderViewAct
 import com.cargopull.executor_driver.presentation.missedorder.MissedOrderViewModel;
 import com.cargopull.executor_driver.presentation.ordecostdetails.OrderCostDetailsViewModel;
 import com.cargopull.executor_driver.presentation.order.OrderViewModel;
+import com.cargopull.executor_driver.presentation.orderroute.OrderRouteViewModel;
 import com.cargopull.executor_driver.presentation.preorder.PreOrderNavigate;
 import com.cargopull.executor_driver.presentation.preorder.PreOrderViewActions;
 import com.cargopull.executor_driver.presentation.preorder.PreOrderViewModel;
@@ -68,6 +69,7 @@ public class MainApplication extends Application implements ServerConnectionView
   private BalanceViewModel balanceViewModel;
   private ExecutorStateViewModel executorStateViewModel;
   private OrderViewModel orderViewModel;
+  private OrderRouteViewModel orderRouteViewModel;
   private PreOrderViewModel preOrderViewModel;
   private UpcomingPreOrderViewModel upcomingPreOrderViewModel;
   private PreOrdersListViewModel preOrdersListViewModel;
@@ -106,6 +108,11 @@ public class MainApplication extends Application implements ServerConnectionView
   @Inject
   public void setOrderViewModel(@NonNull OrderViewModel orderViewModel) {
     this.orderViewModel = orderViewModel;
+  }
+
+  @Inject
+  public void setOrderRouteViewModel(@NonNull OrderRouteViewModel orderRouteViewModel) {
+    this.orderRouteViewModel = orderRouteViewModel;
   }
 
   @Inject
@@ -175,7 +182,7 @@ public class MainApplication extends Application implements ServerConnectionView
   @Override
   public void onCreate() {
     super.onCreate();
-    appComponent = new AppComponentImpl(this.getApplicationContext());
+    appComponent = new AppComponent(this, new BackendComponent(this));
     appComponent.inject(
         appSettingsService -> AppCompatDelegate.setDefaultNightMode(
             appSettingsService.getNumber("mode")

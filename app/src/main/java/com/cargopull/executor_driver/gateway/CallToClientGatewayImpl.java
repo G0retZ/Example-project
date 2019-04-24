@@ -21,7 +21,7 @@ public class CallToClientGatewayImpl implements CallToClientGateway {
   @NonNull
   @Override
   public Completable callToClient() {
-    return apiService.changeOrderStatus(
+    return apiService.callToClient(
         Collections.singletonMap("status", "CALL_TO_CLIENT")
     ).subscribeOn(Schedulers.io());
   }

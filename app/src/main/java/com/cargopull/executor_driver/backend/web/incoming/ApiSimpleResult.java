@@ -8,7 +8,7 @@ import com.google.gson.annotations.SerializedName;
  * Объект простого ответа из АПИ об успешной или неуспешной операции с текстом сообщения.
  */
 @SuppressWarnings("unused")
-public class ApiSimpleResult {
+public class ApiSimpleResult<T> {
 
   @SerializedName("code")
   @Expose
@@ -18,6 +18,14 @@ public class ApiSimpleResult {
   @Expose
   @Nullable
   private String message;
+  @SerializedName("status")
+  @Expose
+  @Nullable
+  private String status;
+  @SerializedName("data")
+  @Expose
+  @Nullable
+  private T data;
 
   @Nullable
   public String getCode() {
@@ -27,5 +35,15 @@ public class ApiSimpleResult {
   @Nullable
   public String getMessage() {
     return message;
+  }
+
+  @Nullable
+  public String getStatus() {
+    return status;
+  }
+
+  @Nullable
+  public T getData() {
+    return data;
   }
 }

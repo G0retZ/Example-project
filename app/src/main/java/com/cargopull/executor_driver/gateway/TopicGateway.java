@@ -2,7 +2,7 @@ package com.cargopull.executor_driver.gateway;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import com.cargopull.executor_driver.backend.websocket.TopicListener;
+import com.cargopull.executor_driver.backend.web.TopicListener;
 import com.cargopull.executor_driver.interactor.CommonGateway;
 import io.reactivex.Flowable;
 import io.reactivex.functions.Predicate;

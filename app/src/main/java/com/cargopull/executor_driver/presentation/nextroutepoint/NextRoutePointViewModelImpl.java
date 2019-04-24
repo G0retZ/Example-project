@@ -73,24 +73,6 @@ public class NextRoutePointViewModelImpl extends ViewModel implements NextRouteP
         );
   }
 
-  @Override
-  public void completeTheOrder() {
-    if (!completeDisposable.isDisposed()) {
-      return;
-    }
-    viewStateLiveData.postValue(new NextRoutePointViewStatePending(lastViewState));
-    completeDisposable = orderRouteUseCase
-        .completeTheOrder()
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribe(
-            () -> {
-            }, throwable -> {
-              viewStateLiveData.postValue(lastViewState);
-              navigateLiveData.postValue(CommonNavigate.NO_CONNECTION);
-            }
-        );
-  }
-
   private void loadRoutePoints() {
     if (!disposable.isDisposed()) {
       return;

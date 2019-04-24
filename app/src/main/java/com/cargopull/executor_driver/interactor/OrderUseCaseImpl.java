@@ -4,32 +4,22 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.cargopull.executor_driver.entity.Order;
 import com.cargopull.executor_driver.entity.OrderOfferDecisionException;
+import com.cargopull.executor_driver.utils.EmptyEmitter;
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Emitter;
 import io.reactivex.Flowable;
 import io.reactivex.schedulers.Schedulers;
 import javax.inject.Inject;
 
-public class OrderUseCaseImpl implements OrderUseCase, OrderDecisionUseCase {
+public class OrderUseCaseImpl implements OrderUseCase, OrderDecisionUseCase,
+    DataUpdateUseCase<Order> {
 
   @NonNull
   private final CommonGateway<Order> gateway;
   @Nullable
   private Flowable<Order> orderFlowable;
   @NonNull
-  private Emitter<Order> emitter = new Emitter<Order>() {
-    @Override
-    public void onNext(Order value) {
-    }
-
-    @Override
-    public void onError(Throwable error) {
-    }
-
-    @Override
-    public void onComplete() {
-    }
-  };
+  private Emitter<Order> emitter = new EmptyEmitter<>();
 
   @Inject
   public OrderUseCaseImpl(@NonNull CommonGateway<Order> gateway) {
@@ -54,5 +44,10 @@ public class OrderUseCaseImpl implements OrderUseCase, OrderDecisionUseCase {
   @Override
   public void setOrderOfferDecisionMade() {
     emitter.onError(new OrderOfferDecisionException());
+  }
+
+  @Override
+  public void updateWith(@NonNull Order order) {
+    emitter.onNext(order);
   }
 }

@@ -31,7 +31,7 @@ public class CallToClientGatewayTest {
   @Before
   public void setUp() {
     ExecutorState.MOVING_TO_CLIENT.setData(null);
-    when(apiService.changeOrderStatus(Collections.singletonMap("status", "CALL_TO_CLIENT")))
+    when(apiService.callToClient(Collections.singletonMap("status", "CALL_TO_CLIENT")))
         .thenReturn(Completable.never());
     gateway = new CallToClientGatewayImpl(apiService);
   }
@@ -48,7 +48,7 @@ public class CallToClientGatewayTest {
 
     // Результат:
     verify(apiService, only())
-        .changeOrderStatus(Collections.singletonMap("status", "CALL_TO_CLIENT"));
+        .callToClient(Collections.singletonMap("status", "CALL_TO_CLIENT"));
   }
 
   /* Проверяем результаты обработки сообщений от сервера по статусам */
@@ -59,7 +59,7 @@ public class CallToClientGatewayTest {
   @Test
   public void answerCallToClientSuccess() {
     // Дано:
-    when(apiService.changeOrderStatus(Collections.singletonMap("status", "CALL_TO_CLIENT")))
+    when(apiService.callToClient(Collections.singletonMap("status", "CALL_TO_CLIENT")))
         .thenReturn(Completable.complete());
 
     // Действие:
@@ -76,7 +76,7 @@ public class CallToClientGatewayTest {
   @Test
   public void answerCallToClientError() {
     // Дано:
-    when(apiService.changeOrderStatus(Collections.singletonMap("status", "CALL_TO_CLIENT")))
+    when(apiService.callToClient(Collections.singletonMap("status", "CALL_TO_CLIENT")))
         .thenReturn(Completable.error(new IllegalArgumentException()));
 
     // Действие:
