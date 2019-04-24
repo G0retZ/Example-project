@@ -19,7 +19,12 @@ constructor(private val apiService: ApiService,
                 .map {
                     try {
                         val state = it.status?.let(ExecutorState::valueOf)
-                        state?.data = it.message
+                        state?.let{ it1 ->
+                            it1.data = it.message
+                            if (it1 == ExecutorState.CLIENT_ORDER_CONFIRMATION) {
+                                it1.customerTimer = 600_000
+                            }
+                        }
                         Pair(state, null)
                     } catch (e: Exception) {
                         throw DataMappingException("Ошибка маппинга: неверный формат статуса!", e)

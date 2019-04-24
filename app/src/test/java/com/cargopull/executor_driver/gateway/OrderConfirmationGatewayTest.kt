@@ -94,6 +94,31 @@ class OrderConfirmationGatewayTest {
         testObserver.assertValueCount(1)
         val pair = testObserver.values()[0]
         assertEquals(pair.first, ExecutorState.ONLINE)
+        assertEquals(pair.first!!.customerTimer, 0)
+        assertEquals(pair.first!!.data, "he-he-he")
+        assertNull(pair.second)
+    }
+
+    /**
+     * Должен ответить успехом со значением тамера.
+     */
+    @Test
+    fun answerSendDecisionSuccessWithTimerValue() {
+        // Дано:
+        `when`(apiSimpleResult.message).thenReturn("he-he-he")
+        `when`(apiSimpleResult.status).thenReturn("CLIENT_ORDER_CONFIRMATION")
+        `when`(apiService.acceptOrderOffer(any())).thenReturn(Single.just(apiSimpleResult))
+
+        // Действие:
+        val testObserver = gateway.sendDecision(order, false).test()
+
+        // Результат:
+        testObserver.assertNoErrors()
+        testObserver.assertComplete()
+        testObserver.assertValueCount(1)
+        val pair = testObserver.values()[0]
+        assertEquals(pair.first, ExecutorState.CLIENT_ORDER_CONFIRMATION)
+        assertEquals(pair.first!!.customerTimer, 600_000)
         assertEquals(pair.first!!.data, "he-he-he")
         assertNull(pair.second)
     }
@@ -116,6 +141,7 @@ class OrderConfirmationGatewayTest {
         testObserver.assertValueCount(1)
         val pair = testObserver.values()[0]
         assertEquals(pair.first, ExecutorState.ONLINE)
+        assertEquals(pair.first!!.customerTimer, 0)
         assertNull(pair.first!!.data)
         assertNull(pair.second)
     }
