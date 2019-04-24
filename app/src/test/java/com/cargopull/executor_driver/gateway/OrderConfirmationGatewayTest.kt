@@ -44,6 +44,7 @@ class OrderConfirmationGatewayTest {
 
     @Before
     fun setUp() {
+        ExecutorState.ONLINE.customerTimer = 0
         `when`(apiService.acceptOrderOffer(any())).thenReturn(Single.never<ApiSimpleResult<Void?>>())
         gateway = OrderConfirmationGatewayImpl(apiService, errorMapper)
     }
