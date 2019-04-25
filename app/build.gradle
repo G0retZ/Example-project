@@ -1,6 +1,6 @@
 apply plugin: 'com.android.application'
-apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
 apply plugin: 'io.fabric'
 apply plugin: 'com.getkeepsafe.dexcount'
 
@@ -24,8 +24,8 @@ android {
         applicationId "com.cargopull.executor_driver"
         minSdkVersion 16
         targetSdkVersion 28
-        versionCode 19
-        versionName "1.8.0"
+        versionCode 20
+        versionName "1.8.1"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField 'String', 'QUIET_CHANNEL_ID', '"state_channel"'
         buildConfigField 'String', 'ANNOUNCEMENT_CHANNEL_ID', '"announcement_channel"'
@@ -88,14 +88,14 @@ dependencies {
     // Picasso
     implementation 'com.squareup.picasso:picasso:2.71828'
     // Reactive Extensions
-    implementation 'io.reactivex.rxjava2:rxjava:2.1.7'
+    implementation 'io.reactivex.rxjava2:rxjava:2.2.6'
     implementation 'com.jakewharton.rxbinding2:rxbinding:2.0.0'
     // Network
     implementation 'com.squareup.retrofit2:retrofit:2.5.0'
     implementation 'com.squareup.retrofit2:converter-scalars:2.5.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.5.0'
-    implementation 'com.squareup.retrofit2:adapter-rxjava2:2.4.0'
-    implementation 'com.squareup.okhttp3:logging-interceptor:3.13.1'
+    implementation 'com.squareup.retrofit2:adapter-rxjava2:2.5.0'
+    implementation 'com.squareup.okhttp3:logging-interceptor:3.12.2'
     // WebSocket STOMP
     implementation 'com.github.G0retZ:StompProtocolAndroid:18.0.17'
     implementation 'net.sourceforge.streamsupport:streamsupport:1.5.5'
