@@ -23,7 +23,7 @@
       app:layout_constraintStart_toStartOf="parent"
       app:layout_constraintTop_toTopOf="parent"/>
     <TextView
-      android:id="@+id/balanceAmount"
+      android:id="@+id/balanceSummary"
       style="@style/TextAppearance.AppTheme.Title"
       android:layout_width="wrap_content"
       android:layout_height="56dp"

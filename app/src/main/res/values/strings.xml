@@ -41,6 +41,7 @@
   <string name="settings">Настройка</string>
   <string name="menu">Меню</string>
   <string name="balance">Баланс</string>
+  <string name="balance_summary">Общий баланс</string>
   <string name="exit_app">Выйти из приложения</string>
   <string name="km">%1$.2f км</string>
   <string name="eta">≈ %1$d мин.</string>
@@ -81,8 +82,8 @@
   <string name="calling_operator">Дистпечер скоро свяжется.\nБудьте готовы взять трубку!</string>
   <string name="currency_format">##,###,### ₽</string>
   <string name="currency_per_min_format">##,###,###.00 ₽/мин</string>
-  <string name="bonus_explained">Бонусные рубли не подлежат обмену на наличные денежные средства.</string>
-  <string name="bonus_amount">Бонусных рублей</string>
+  <string name="bonus_comment">Бонусные рубли не подлежат обмену на наличные денежные средства.</string>
+  <string name="bonus_amount">Бонусный счёт</string>
   <string name="missed_order">Упущен заказ</string>
   <string name="server_connection">Связь с сервером</string>
   <string name="important_info">Важная информация</string>
@@ -156,6 +157,10 @@
   <string name="orders_history">История заказов</string>
   <string name="server_settings">Настройки сервера</string>
   <string name="cashless">Безнал</string>
+  <string name="cashless_amount">Безналичный счёт</string>
+  <string name="purse">Кошелёк</string>
+  <string name="purse_comment">Можно пополнить через Сбербанк Онлайн и терминалы Элекснет</string>
+  <string name="cashless_comment">Получить безналичные средства можно в офисе компании</string>
   <string-array name="month_names">
     <item>Январь</item>
     <item>Февраль</item>

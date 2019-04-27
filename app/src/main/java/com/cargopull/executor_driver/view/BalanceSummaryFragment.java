@@ -32,7 +32,7 @@ public class BalanceSummaryFragment extends BaseFragment implements BalanceViewA
       @Nullable ViewGroup container,
       @Nullable Bundle savedInstanceState) {
     View view = inflater.inflate(R.layout.fragment_balance_summary, container, false);
-    view.findViewById(R.id.balanceAmount).setOnClickListener(v -> navigate(MenuNavigate.BALANCE));
+    view.findViewById(R.id.balanceSummary).setOnClickListener(v -> navigate(MenuNavigate.BALANCE));
     return view;
   }
 
