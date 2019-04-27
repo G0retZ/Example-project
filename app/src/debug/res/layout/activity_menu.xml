@@ -15,18 +15,14 @@
     android:layout_height="?android:attr/actionBarSize"
     app:navigationIcon="@drawable/ic_back_24dp"
     app:title="@string/menu">
-    <LinearLayout
-      android:layout_width="match_parent"
+    <ImageButton
+      android:id="@+id/serverSettings"
+      style="@style/Widget.AppCompat.ActionButton"
+      android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:gravity="end">
-      <ImageButton
-        android:id="@+id/serverSettings"
-        style="@style/Widget.AppCompat.ActionButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:contentDescription="@null"
-        app:srcCompat="@drawable/ic_settings"/>
-    </LinearLayout>
+      android:layout_gravity="end"
+      android:contentDescription="@null"
+      app:srcCompat="@drawable/ic_settings"/>
   </androidx.appcompat.widget.Toolbar>
   <fragment
     android:id="@+id/fragment_new_pre_order"
