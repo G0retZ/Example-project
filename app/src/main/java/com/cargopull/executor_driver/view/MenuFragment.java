@@ -25,7 +25,6 @@ import com.cargopull.executor_driver.presentation.onlineswitch.OnlineSwitchViewM
 import com.cargopull.executor_driver.presentation.preorderslist.PreOrdersListItem;
 import com.cargopull.executor_driver.presentation.preorderslist.PreOrdersListViewActions;
 import com.cargopull.executor_driver.presentation.preorderslist.PreOrdersListViewModel;
-import java.text.DecimalFormat;
 import java.util.List;
 import javax.inject.Inject;
 
@@ -42,7 +41,6 @@ public class MenuFragment extends BaseFragment implements BalanceViewActions,
   private PreOrdersListViewModel preOrdersListViewModel;
   private MenuViewModel menuViewModel;
   private OnlineButtonViewModel onlineButtonViewModel;
-  private TextView balanceAmount;
   private TextView preOrdersAmount;
   private TextView nightModeValue;
   private boolean nowOnline;
@@ -98,7 +96,6 @@ public class MenuFragment extends BaseFragment implements BalanceViewActions,
             .create()
             .show()
     );
-    balanceAmount = rootView.findViewById(R.id.balanceAmount);
     rootView.findViewById(R.id.preOrders)
         .setOnClickListener(v -> navigate(MenuNavigate.PRE_ORDERS));
     preOrdersAmount = rootView.findViewById(R.id.preOrdersAmount);
@@ -192,30 +189,6 @@ public class MenuFragment extends BaseFragment implements BalanceViewActions,
   }
 
   @Override
-  public void showMainAccountAmount(long amount) {
-    if (!getResources().getBoolean(R.bool.show_cents)) {
-      amount = Math.round(amount / 100f);
-    }
-    DecimalFormat decimalFormat = new DecimalFormat(getString(R.string.currency_format));
-    decimalFormat.setMaximumFractionDigits(0);
-    balanceAmount.setText(decimalFormat.format(amount));
-    if (amount < 0) {
-      balanceAmount.setTextColor(getResources().getColor(R.color.colorError));
-    } else {
-      balanceAmount.setTextColor(getResources().getColor(R.color.textColorPrimary));
-    }
-  }
-
-  @Override
-  public void showBonusAccountAmount(long amount) {
-  }
-
-  @Override
-  public void showBalancePending(boolean pending) {
-    showPending(pending, toString() + "0");
-  }
-
-  @Override
   public void showBreakText(boolean show) {
   }
 
@@ -263,5 +236,16 @@ public class MenuFragment extends BaseFragment implements BalanceViewActions,
   @Override
   public void showGoOnlinePending(boolean pending) {
     showPending(pending, toString() + "1");
+  }
+
+  @Override
+  public boolean isShowCents() {
+    return getResources().getBoolean(R.bool.show_cents);
+  }
+
+  @NonNull
+  @Override
+  public String getCurrencyFormat() {
+    return getString(R.string.currency_format);
   }
 }
