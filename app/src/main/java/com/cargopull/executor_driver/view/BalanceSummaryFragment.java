@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.cargopull.executor_driver.R;
@@ -12,7 +11,6 @@ import com.cargopull.executor_driver.di.AppComponent;
 import com.cargopull.executor_driver.presentation.balance.BalanceViewActions;
 import com.cargopull.executor_driver.presentation.balance.BalanceViewModel;
 import com.cargopull.executor_driver.presentation.menu.MenuNavigate;
-import java.text.DecimalFormat;
 import javax.inject.Inject;
 
 /**
@@ -22,7 +20,6 @@ import javax.inject.Inject;
 public class BalanceSummaryFragment extends BaseFragment implements BalanceViewActions {
 
   private BalanceViewModel balanceViewModel;
-  private TextView balanceAmount;
 
   @Inject
   public void setBalanceViewModel(@NonNull BalanceViewModel balanceViewModel) {
@@ -35,8 +32,7 @@ public class BalanceSummaryFragment extends BaseFragment implements BalanceViewA
       @Nullable ViewGroup container,
       @Nullable Bundle savedInstanceState) {
     View view = inflater.inflate(R.layout.fragment_balance_summary, container, false);
-    balanceAmount = view.findViewById(R.id.balanceAmount);
-    balanceAmount.setOnClickListener(v -> navigate(MenuNavigate.BALANCE));
+    view.findViewById(R.id.balanceAmount).setOnClickListener(v -> navigate(MenuNavigate.BALANCE));
     return view;
   }
 
@@ -62,26 +58,13 @@ public class BalanceSummaryFragment extends BaseFragment implements BalanceViewA
   }
 
   @Override
-  public void showMainAccountAmount(long amount) {
-    if (!getResources().getBoolean(R.bool.show_cents)) {
-      amount = Math.round(amount / 100f);
-    }
-    DecimalFormat decimalFormat = new DecimalFormat(getString(R.string.currency_format));
-    decimalFormat.setMaximumFractionDigits(0);
-    balanceAmount.setText(decimalFormat.format(amount));
-    if (amount < 0) {
-      balanceAmount.setTextColor(getResources().getColor(R.color.colorError));
-    } else {
-      balanceAmount.setTextColor(getResources().getColor(R.color.textColorPrimary));
-    }
+  public boolean isShowCents() {
+    return getResources().getBoolean(R.bool.show_cents);
   }
 
+  @NonNull
   @Override
-  public void showBonusAccountAmount(long amount) {
-  }
-
-  @Override
-  public void showBalancePending(boolean pending) {
-    showPending(pending, toString());
+  public String getCurrencyFormat() {
+    return getString(R.string.currency_format);
   }
 }
