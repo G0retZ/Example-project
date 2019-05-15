@@ -57,7 +57,7 @@ public class VehiclesAndOptionsUseCaseImpl implements VehiclesAndOptionsUseCase 
                   } else {
                     vehicleChoiceObserver.updateWith(freeVehicle);
                   }
-                }).toCompletable()
+                }).ignoreElement()
         );
   }
 }
