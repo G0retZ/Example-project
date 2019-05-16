@@ -27,15 +27,6 @@ android {
         versionCode 21
         versionName "1.8.2"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        buildConfigField 'String', 'QUIET_CHANNEL_ID', '"state_channel"'
-        buildConfigField 'String', 'ANNOUNCEMENT_CHANNEL_ID', '"announcement_channel"'
-        buildConfigField 'String', 'BASE_URL', '"http://tst.capsrv.xyz:9080/executor/"'
-        buildConfigField 'String', 'SOCKET_URL', '"ws://tst.capsrv.xyz:9080/executor/ws"'
-        buildConfigField 'String', 'GOLOCATION_DESTINATION', '"/mobile/online"'
-        buildConfigField 'String', 'CANCEL_ORDER_DESTINATION', '"/mobile/takeOffOrder"'
-        buildConfigField 'String', 'STATUS_DESTINATION', '"/queue/%s"'
-        buildConfigField 'String', 'POLLING_DESTINATION', '"/mobile/retrieveOverPackage"'
-        buildConfigField 'String', 'STATIC_MAP_KEY', '"AIzaSyBwlubLyqI6z_ivfAWcTCfyTXkoRHTagMk"'
         vectorDrawables.useSupportLibrary = true
     }
     buildTypes {
@@ -43,14 +34,10 @@ android {
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            buildConfigField 'String', 'BASE_URL', '"https://gate.cargopull.host:8443/executor/"'
-            buildConfigField 'String', 'SOCKET_URL', '"wss://gate.cargopull.host:8443/executor/ws"'
             signingConfig signingConfigs.upload
         }
         staging {
             initWith(release)
-            buildConfigField 'String', 'BASE_URL', '"http://stg.capsrv.xyz:8080/executor/"'
-            buildConfigField 'String', 'SOCKET_URL', '"ws://stg.capsrv.xyz:8080/executor/ws"'
             applicationIdSuffix ".staging"
         }
         debug {

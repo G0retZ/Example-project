@@ -1,7 +1,7 @@
 package com.cargopull.executor_driver.presentation.nextroutepoint;
 
 import androidx.annotation.NonNull;
-import com.cargopull.executor_driver.BuildConfig;
+import com.cargopull.executor_driver.AppConfigKt;
 import com.cargopull.executor_driver.entity.RoutePoint;
 
 /**
@@ -18,9 +18,9 @@ class RoutePointItem {
 
   @SuppressWarnings("SpellCheckingInspection")
   @NonNull
-  public String getMapUrl() {
+  String getMapUrl() {
     return "https://maps.googleapis.com/maps/api/staticmap?"
-        + "key=" + BuildConfig.STATIC_MAP_KEY
+        + "key=" + AppConfigKt.STATIC_MAP_KEY
         + "&center=" + routePoint.getLatitude() + "," + routePoint.getLongitude()
         + "&maptype=roadmap"
         + "&zoom=16"
@@ -28,7 +28,7 @@ class RoutePointItem {
   }
 
   @NonNull
-  public String getCoordinatesString() {
+  String getCoordinatesString() {
     return routePoint.getLatitude() + "," + routePoint.getLongitude();
   }
 
