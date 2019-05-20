@@ -194,14 +194,14 @@ class RepositoryComponent(private val backendComponent: BackendComponent) {
                 MessagePayloadApiMapper()
         )
     }
-    val startOrderGateway: CommonGatewaySingle<Pair<ExecutorState, List<RoutePoint>?>> by lazy {
-        val mapper = RoutePointApiMapper()
+    val startOrderGateway: CommonGatewaySingle<Pair<ExecutorState, Order?>> by lazy {
         StartOrderGateway(
                 backendComponent.apiService,
                 StateAndDataApiMapper(
-                        object : Mapper<List<ApiRoutePoint>, List<RoutePoint>> {
-                            override fun map(from: List<ApiRoutePoint>) = from.map(mapper::map)
-                        }
+                        OrderApiMapper(
+                                VehicleOptionApiMapper(),
+                                RoutePointApiMapper()
+                        )
                 )
         )
     }

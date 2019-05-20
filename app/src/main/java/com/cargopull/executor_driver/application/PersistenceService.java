@@ -11,7 +11,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationCompat.BigTextStyle;
-import com.cargopull.executor_driver.BuildConfig;
+import com.cargopull.executor_driver.AppConfigKt;
 import com.cargopull.executor_driver.R;
 
 /**
@@ -65,7 +65,7 @@ public class PersistenceService extends Service {
   private Notification getNotification(@StringRes int title, @StringRes int text,
       @Nullable PendingIntent activityPendingIntent) {
     NotificationCompat.Builder builder =
-        new NotificationCompat.Builder(this, BuildConfig.QUIET_CHANNEL_ID);
+        new NotificationCompat.Builder(this, AppConfigKt.QUIET_CHANNEL_ID);
     if (activityPendingIntent != null) {
       builder.setContentIntent(activityPendingIntent);
     }

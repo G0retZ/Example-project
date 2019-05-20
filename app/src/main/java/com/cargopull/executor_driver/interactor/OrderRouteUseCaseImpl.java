@@ -52,7 +52,7 @@ public class OrderRouteUseCaseImpl implements OrderRouteUseCase,
   public Completable closeRoutePoint(@NonNull RoutePoint routePoint) {
     return orderRouteGateway.closeRoutePoint(routePoint).observeOn(Schedulers.single())
         .doOnSuccess(emitter::onNext)
-        .toCompletable();
+        .ignoreElement();
   }
 
   @NonNull
@@ -60,7 +60,7 @@ public class OrderRouteUseCaseImpl implements OrderRouteUseCase,
   public Completable nextRoutePoint(@NonNull RoutePoint routePoint) {
     return orderRouteGateway.nextRoutePoint(routePoint).observeOn(Schedulers.single())
         .doOnSuccess(emitter::onNext)
-        .toCompletable();
+        .ignoreElement();
   }
 
   @Override

@@ -2,10 +2,10 @@ package com.cargopull.executor_driver.gateway
 
 import com.cargopull.executor_driver.GatewayThreadTestRule
 import com.cargopull.executor_driver.backend.web.ApiService
-import com.cargopull.executor_driver.backend.web.incoming.ApiRoutePoint
+import com.cargopull.executor_driver.backend.web.incoming.ApiOrder
 import com.cargopull.executor_driver.backend.web.incoming.ApiSimpleResult
 import com.cargopull.executor_driver.entity.ExecutorState
-import com.cargopull.executor_driver.entity.RoutePoint
+import com.cargopull.executor_driver.entity.Order
 import com.google.gson.JsonParseException
 import io.reactivex.Single
 import org.junit.Before
@@ -32,9 +32,9 @@ class StartOrderGatewayTest {
     @Mock
     private lateinit var apiService: ApiService
     @Mock
-    private lateinit var mapper: Mapper<ApiSimpleResult<List<ApiRoutePoint>>, Pair<ExecutorState, List<RoutePoint>?>>
+    private lateinit var mapper: Mapper<ApiSimpleResult<ApiOrder>, Pair<ExecutorState, Order?>>
     @Mock
-    private lateinit var route: List<RoutePoint>
+    private lateinit var order: Order
 
     @Before
     fun setUp() {
@@ -103,7 +103,7 @@ class StartOrderGatewayTest {
         // Дано:
         `when`(apiService.startOrder(Collections.singletonMap("status", "START_ORDER")))
                 .thenReturn(Single.just(ApiSimpleResult()))
-        `when`(mapper.map(any())).thenReturn(Pair(ExecutorState.ONLINE, route))
+        `when`(mapper.map(any())).thenReturn(Pair(ExecutorState.ONLINE, order))
 
         // Действие:
         gateway.data.test()
@@ -114,7 +114,7 @@ class StartOrderGatewayTest {
         // Результат:
         testObserver.assertNoErrors()
         testObserver.assertComplete()
-        testObserver.assertValue(Pair(ExecutorState.ONLINE, route))
+        testObserver.assertValue(Pair(ExecutorState.ONLINE, order))
     }
 
     /**

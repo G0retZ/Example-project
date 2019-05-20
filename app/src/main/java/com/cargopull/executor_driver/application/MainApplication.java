@@ -17,7 +17,7 @@ import androidx.annotation.StringRes;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.app.NotificationCompat.BigTextStyle;
 import androidx.core.app.NotificationCompat.Builder;
-import com.cargopull.executor_driver.BuildConfig;
+import com.cargopull.executor_driver.AppConfigKt;
 import com.cargopull.executor_driver.R;
 import com.cargopull.executor_driver.backend.ringtone.RingTonePlayer;
 import com.cargopull.executor_driver.backend.vibro.ShakeItPlayer;
@@ -280,7 +280,7 @@ public class MainApplication extends Application implements ServerConnectionView
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
       // Бесшумный важный канал для сообщений со своим звуком и вибрацией
       NotificationChannel mChannel =
-          new NotificationChannel(BuildConfig.QUIET_CHANNEL_ID,
+          new NotificationChannel(AppConfigKt.QUIET_CHANNEL_ID,
               getString(R.string.server_connection),
               NotificationManager.IMPORTANCE_HIGH);
       mChannel.setDescription(getString(R.string.server_connection_desc));
@@ -290,7 +290,7 @@ public class MainApplication extends Application implements ServerConnectionView
 
       // Обычный канал для информационных сообщений общего характера
       mChannel =
-          new NotificationChannel(BuildConfig.ANNOUNCEMENT_CHANNEL_ID,
+          new NotificationChannel(AppConfigKt.ANNOUNCEMENT_CHANNEL_ID,
               getString(R.string.important_info),
               NotificationManager.IMPORTANCE_DEFAULT);
       mChannel.setDescription(getString(R.string.important_info_desc));
@@ -406,7 +406,7 @@ public class MainApplication extends Application implements ServerConnectionView
   public void showMissedOrderMessage(@NonNull String message) {
     playSound(R.raw.missed_offer);
     shakeIt(R.raw.missed_order_vibro);
-    Builder builder = new Builder(this, BuildConfig.QUIET_CHANNEL_ID)
+    Builder builder = new Builder(this, AppConfigKt.QUIET_CHANNEL_ID)
         .setContentTitle(getString(R.string.missed_order))
         .setContentText(message)
         .setStyle(new BigTextStyle().bigText(message))
@@ -478,7 +478,7 @@ public class MainApplication extends Application implements ServerConnectionView
   public void showUpcomingPreOrderMessage(@NonNull String message) {
     shakeIt(R.raw.new_pre_order_vibro);
     playSound(R.raw.pre_order_reminder);
-    Builder builder = new Builder(this, BuildConfig.QUIET_CHANNEL_ID)
+    Builder builder = new Builder(this, AppConfigKt.QUIET_CHANNEL_ID)
         .setContentText(message)
         .setStyle(new BigTextStyle().bigText(message))
         .setContentTitle(getString(R.string.upcoming_pre_order))

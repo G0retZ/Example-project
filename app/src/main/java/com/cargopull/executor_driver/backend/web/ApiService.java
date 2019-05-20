@@ -163,7 +163,7 @@ public interface ApiService {
    *  Значения: START_ORDER
    */
   @POST("api/public/v1/mobile/order/current")
-  Single<ApiSimpleResult<List<ApiRoutePoint>>> startOrder(
+  Single<ApiSimpleResult<ApiOrder>> startOrder(
       @NonNull @Body Map<String, String> params
   );
 
