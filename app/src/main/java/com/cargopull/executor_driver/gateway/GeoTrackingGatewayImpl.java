@@ -1,7 +1,7 @@
 package com.cargopull.executor_driver.gateway;
 
 import androidx.annotation.NonNull;
-import com.cargopull.executor_driver.BuildConfig;
+import com.cargopull.executor_driver.AppConfigKt;
 import com.cargopull.executor_driver.backend.web.outgoing.ApiGeoLocation;
 import com.cargopull.executor_driver.entity.GeoLocation;
 import com.cargopull.executor_driver.interactor.GeoTrackingGateway;
@@ -27,7 +27,7 @@ public class GeoTrackingGatewayImpl implements GeoTrackingGateway {
   @NonNull
   @Override
   public Completable sendGeoLocation(GeoLocation geoLocation) {
-    return stompClient.send(BuildConfig.GOLOCATION_DESTINATION, gson.toJson(
+    return stompClient.send(AppConfigKt.GEOLOCATION_DESTINATION, gson.toJson(
         new ApiGeoLocation(
             geoLocation.getLatitude(), geoLocation.getLongitude(), geoLocation.getTimestamp()
         )

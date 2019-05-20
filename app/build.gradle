@@ -27,15 +27,6 @@ android {
         versionCode 21
         versionName "1.8.2"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        buildConfigField 'String', 'QUIET_CHANNEL_ID', '"state_channel"'
-        buildConfigField 'String', 'ANNOUNCEMENT_CHANNEL_ID', '"announcement_channel"'
-        buildConfigField 'String', 'BASE_URL', '"http://tst.capsrv.xyz:9080/executor/"'
-        buildConfigField 'String', 'SOCKET_URL', '"ws://tst.capsrv.xyz:9080/executor/ws"'
-        buildConfigField 'String', 'GOLOCATION_DESTINATION', '"/mobile/online"'
-        buildConfigField 'String', 'CANCEL_ORDER_DESTINATION', '"/mobile/takeOffOrder"'
-        buildConfigField 'String', 'STATUS_DESTINATION', '"/queue/%s"'
-        buildConfigField 'String', 'POLLING_DESTINATION', '"/mobile/retrieveOverPackage"'
-        buildConfigField 'String', 'STATIC_MAP_KEY', '"AIzaSyBwlubLyqI6z_ivfAWcTCfyTXkoRHTagMk"'
         vectorDrawables.useSupportLibrary = true
     }
     buildTypes {
@@ -43,14 +34,10 @@ android {
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            buildConfigField 'String', 'BASE_URL', '"https://gate.cargopull.host:8443/executor/"'
-            buildConfigField 'String', 'SOCKET_URL', '"wss://gate.cargopull.host:8443/executor/ws"'
             signingConfig signingConfigs.upload
         }
         staging {
             initWith(release)
-            buildConfigField 'String', 'BASE_URL', '"http://stg.capsrv.xyz:8080/executor/"'
-            buildConfigField 'String', 'SOCKET_URL', '"ws://stg.capsrv.xyz:8080/executor/ws"'
             applicationIdSuffix ".staging"
         }
         debug {
@@ -95,7 +82,7 @@ dependencies {
     implementation 'com.squareup.retrofit2:converter-scalars:2.5.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.5.0'
     implementation 'com.squareup.retrofit2:adapter-rxjava2:2.5.0'
-    implementation 'com.squareup.okhttp3:logging-interceptor:3.12.2'
+    implementation 'com.squareup.okhttp3:logging-interceptor:3.13.1'
     // WebSocket STOMP
     implementation 'com.github.G0retZ:StompProtocolAndroid:18.0.17'
     implementation 'net.sourceforge.streamsupport:streamsupport:1.5.5'
@@ -107,10 +94,10 @@ dependencies {
     implementation 'com.google.android.gms:play-services-maps:16.1.0'
     implementation 'com.google.maps.android:android-maps-utils:0.5'
     // FCM
-    implementation 'com.google.firebase:firebase-messaging:17.6.0'
-    implementation 'com.google.firebase:firebase-core:16.0.8'
+    implementation 'com.google.firebase:firebase-messaging:18.0.0'
+    implementation 'com.google.firebase:firebase-core:16.0.9'
     // Analytics
-    implementation 'com.crashlytics.sdk.android:crashlytics:2.9.9'
+    implementation 'com.crashlytics.sdk.android:crashlytics:2.10.0'
     // Kotlin
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     // Testing

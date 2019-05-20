@@ -2,7 +2,7 @@ package com.cargopull.executor_driver.backend.web;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import com.cargopull.executor_driver.BuildConfig;
+import com.cargopull.executor_driver.AppConfigKt;
 import com.cargopull.executor_driver.interactor.DataReceiver;
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
@@ -35,7 +35,7 @@ public class PersonalQueueListener implements TopicListener {
           .toFlowable(BackpressureStrategy.BUFFER)
           .switchMap(
               login -> stompClient.topic(
-                  String.format(BuildConfig.STATUS_DESTINATION, login),
+                  AppConfigKt.STATUS_DESTINATION(login),
                   StompClient.ACK_CLIENT_INDIVIDUAL
               ).subscribeOn(Schedulers.io())
                   .doOnComplete(() -> {

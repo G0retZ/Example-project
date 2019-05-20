@@ -3,7 +3,9 @@ package com.cargopull.executor_driver.di
 import android.content.Context
 import android.location.LocationManager
 import android.net.ConnectivityManager
+import com.cargopull.executor_driver.BASE_URL
 import com.cargopull.executor_driver.BuildConfig
+import com.cargopull.executor_driver.SOCKET_URL
 import com.cargopull.executor_driver.backend.analytics.ErrorReporter
 import com.cargopull.executor_driver.backend.analytics.ErrorReporterImpl
 import com.cargopull.executor_driver.backend.analytics.EventLogger
@@ -83,11 +85,11 @@ class BackendComponent(private val appContext: Context) {
             builder.addInterceptor(interceptor)
         }
         // Add logging interceptor for debug build only
-        if (BuildConfig.DEBUG) {
+//        if (BuildConfig.DEBUG) {
             val logging = HttpLoggingInterceptor()
             logging.level = HttpLoggingInterceptor.Level.BODY
             builder.addInterceptor(logging)
-        }
+//        }
         builder.build()
     }
     private val interceptors: Array<Interceptor> by lazy {
@@ -108,13 +110,13 @@ class BackendComponent(private val appContext: Context) {
         val address = if (BuildConfig.DEBUG) appSettingsService.getData("address") else null
         val port = if (BuildConfig.DEBUG) appSettingsService.getData("port") else null
         address?.let { port?.let { "http://$address.xip.io:$port/executor/" } }
-                ?: BuildConfig.BASE_URL
+                ?: BASE_URL
     }
 
     private val socketUrl: String by lazy {
         val address = if (BuildConfig.DEBUG) appSettingsService.getData("address") else null
         val port = if (BuildConfig.DEBUG) appSettingsService.getData("port") else null
         address?.let { port?.let { "http://$address.xip.io:$port/executor/ws" } }
-                ?: BuildConfig.SOCKET_URL
+                ?: SOCKET_URL
     }
 }

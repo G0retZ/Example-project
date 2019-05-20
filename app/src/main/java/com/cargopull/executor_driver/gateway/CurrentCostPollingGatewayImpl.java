@@ -1,7 +1,7 @@
 package com.cargopull.executor_driver.gateway;
 
 import androidx.annotation.NonNull;
-import com.cargopull.executor_driver.BuildConfig;
+import com.cargopull.executor_driver.AppConfigKt;
 import com.cargopull.executor_driver.backend.web.TopicListener;
 import com.cargopull.executor_driver.interactor.CurrentCostPollingGateway;
 import com.cargopull.executor_driver.utils.Pair;
@@ -39,7 +39,7 @@ public class CurrentCostPollingGatewayImpl implements CurrentCostPollingGateway 
         .filter(stompMessage -> stompMessage.findHeader("OverPackage") != null)
         .switchMap(this::pollingChooser)
         .flatMapCompletable(
-            b -> stompClient.send(BuildConfig.POLLING_DESTINATION, "\"\"").onErrorComplete()
+            b -> stompClient.send(AppConfigKt.POLLING_DESTINATION, "\"\"").onErrorComplete()
         );
   }
 

@@ -57,7 +57,7 @@ public class PreOrdersListItemsMapperTest {
   @Before
   public void setUp() {
     preOrdersListItemsMapper = new PreOrdersListItemsMapper();
-    today = DateTime.now().withTimeAtStartOfDay();
+    today = DateTime.now(DateTimeZone.forOffsetHours(3)).withTimeAtStartOfDay();
   }
 
   @Test

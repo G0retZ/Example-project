@@ -1,7 +1,7 @@
 package com.cargopull.executor_driver.presentation.order;
 
 import androidx.annotation.NonNull;
-import com.cargopull.executor_driver.BuildConfig;
+import com.cargopull.executor_driver.AppConfigKt;
 import com.cargopull.executor_driver.R;
 import com.cargopull.executor_driver.entity.Option;
 import com.cargopull.executor_driver.entity.OptionBoolean;
@@ -40,7 +40,7 @@ final class OrderViewStateIdle implements ViewState<OrderViewActions> {
         + "&zoom=16"
         + "&size=360x200"
         + "&maptype=roadmap"
-        + "&key=" + BuildConfig.STATIC_MAP_KEY);
+        + "&key=" + AppConfigKt.STATIC_MAP_KEY);
     // Показать способ оплаты
     stateActions.setVisible(R.id.paymentTypeSign, order.getPaymentType() == PaymentType.CONTRACT);
     // Расстояние в км
