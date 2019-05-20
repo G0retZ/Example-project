@@ -147,7 +147,7 @@ class InteractorComponent(
         NextExecutorStateUseCaseImpl(
                 repositoryComponent.startOrderGateway,
                 executorStateUseCaseImpl,
-                orderRouteUseCaseImpl
+                orderUseCaseImpl
         )
     }
     val loginUseCase: LoginUseCase by lazy {

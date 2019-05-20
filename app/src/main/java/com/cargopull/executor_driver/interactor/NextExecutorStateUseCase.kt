@@ -31,7 +31,7 @@ class NextExecutorStateUseCaseImpl<D>(
                         updateExecutorStateUseCase.updateWith(pair.first)
                         // TODO: покрыть тестами работу с нулевым юзкейсом обновления данных
                         pair.second?.let { updateDataUseCase?.updateWith(it) }
-                    }.toCompletable()
+                    }.ignoreElement()
 
         }
 }
