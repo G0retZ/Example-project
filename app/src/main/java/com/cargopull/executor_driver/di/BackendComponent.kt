@@ -40,7 +40,7 @@ class BackendComponent(private val appContext: Context) {
         EventLoggerImpl(appSettingsService, appContext)
     }
     val errorReporter: ErrorReporter by lazy {
-        ErrorReporterImpl(appSettingsService)
+        ErrorReporterImpl()
     }
     val appSettingsService: AppSettingsService by lazy { AppPreferences(appContext) }
     val geolocationCenter: GeolocationCenter by lazy { GeolocationCenterImpl(appContext) }
