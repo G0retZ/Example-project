@@ -9,6 +9,9 @@ import android.os.Handler;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RawRes;
+
+import com.crashlytics.android.Crashlytics;
+
 import javax.inject.Inject;
 
 /**
@@ -33,11 +36,19 @@ public class SingleRingTonePlayer implements RingTonePlayer {
     this.soundRes = soundRes;
     Uri uri = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://"
         + context.getPackageName() + "/" + soundRes);
-    if (ringtone != null && ringtone.isPlaying()) {
-      ringtone.stop();
+    try {
+      if (ringtone != null && ringtone.isPlaying()) {
+        ringtone.stop();
+      }
+    } catch (IllegalStateException e) {
+      Crashlytics.logException(e);
     }
     ringtone = RingtoneManager.getRingtone(context, uri);
-    ringtone.play();
+    try {
+      ringtone.play();
+    } catch (NullPointerException e) {
+      Crashlytics.logException(e);
+    }
   }
 
   @Override
