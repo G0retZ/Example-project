@@ -157,7 +157,7 @@ public class MapFragment extends SupportMapFragment implements OnMapReadyCallbac
       }
       layer = new GeoJsonLayer(googleMap, jsonObject);
       GeoJsonPolygonStyle polygonStyle = new GeoJsonPolygonStyle();
-      polygonStyle.setFillColor(0x2000FF00);
+      polygonStyle.setFillColor(0x00000000);
       polygonStyle.setStrokeColor(0x80FF8080);
       for (GeoJsonFeature feature : layer.getFeatures()) {
         feature.setPolygonStyle(polygonStyle);
