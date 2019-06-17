@@ -1,11 +1,11 @@
 package com.cargopull.executor_driver.presentation.geolocationstate;
 
-import android.location.LocationManager;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 import com.cargopull.executor_driver.backend.analytics.EventLogger;
+import com.cargopull.executor_driver.backend.geolocation.GeolocationState;
 import com.cargopull.executor_driver.interactor.CommonGateway;
 import com.cargopull.executor_driver.presentation.ImageTextViewActions;
 import com.cargopull.executor_driver.presentation.ViewState;
@@ -20,7 +20,7 @@ public class GeoLocationStateViewModelImpl extends ViewModel implements GeoLocat
   @NonNull
   private final EventLogger eventLogger;
   @NonNull
-  private final LocationManager locationManager;
+  private final GeolocationState geolocationState;
   @NonNull
   private final TimeUtils timeUtils;
   @NonNull
@@ -35,11 +35,11 @@ public class GeoLocationStateViewModelImpl extends ViewModel implements GeoLocat
   @Inject
   public GeoLocationStateViewModelImpl(
       @NonNull EventLogger eventLogger,
-      @NonNull LocationManager locationManager,
+      @NonNull GeolocationState geolocationState,
       @NonNull TimeUtils timeUtils,
       @NonNull CommonGateway<Boolean> geoLocationGateway) {
     this.eventLogger = eventLogger;
-    this.locationManager = locationManager;
+    this.geolocationState = geolocationState;
     this.timeUtils = timeUtils;
     viewStateLiveData = new MutableLiveData<>();
     disposable = geoLocationGateway.getData()
@@ -68,8 +68,8 @@ public class GeoLocationStateViewModelImpl extends ViewModel implements GeoLocat
   }
 
   private void consumeState(boolean available) {
-    boolean gpsOn = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-    boolean networkOn = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+    boolean gpsOn = geolocationState.isGpsEnabled();
+    boolean networkOn = geolocationState.isNetworkEnabled();
     if (wasAvailable && (wasGpsOn || wasNetworkOn) && !available && (gpsOn || networkOn)) {
       timeStamp = timeUtils.currentTimeMillis();
     } else if (timeStamp > 0) {

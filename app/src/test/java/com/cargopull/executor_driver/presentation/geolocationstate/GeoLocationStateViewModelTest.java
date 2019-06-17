@@ -8,11 +8,11 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
-import android.location.LocationManager;
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
 import androidx.lifecycle.Observer;
 import com.cargopull.executor_driver.ViewModelThreadTestRule;
 import com.cargopull.executor_driver.backend.analytics.EventLogger;
+import com.cargopull.executor_driver.backend.geolocation.GeolocationState;
 import com.cargopull.executor_driver.interactor.CommonGateway;
 import com.cargopull.executor_driver.presentation.ImageTextViewActions;
 import com.cargopull.executor_driver.presentation.ViewState;
@@ -56,7 +56,7 @@ public class GeoLocationStateViewModelTest {
     @Mock
     private EventLogger eventLogger;
     @Mock
-    private LocationManager locationManager;
+    private GeolocationState geolocationState;
     @Mock
     private TimeUtils timeUtils;
     @Mock
@@ -68,7 +68,7 @@ public class GeoLocationStateViewModelTest {
     public void setUp() {
       publishSubject = PublishSubject.create();
       when(gateway.getData()).thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
-      viewModel = new GeoLocationStateViewModelImpl(eventLogger, locationManager, timeUtils,
+      viewModel = new GeoLocationStateViewModelImpl(eventLogger, geolocationState, timeUtils,
           gateway);
     }
 
@@ -112,7 +112,7 @@ public class GeoLocationStateViewModelTest {
       viewModel.getNavigationLiveData();
 
       // Результат:
-      verifyZeroInteractions(locationManager);
+      verifyZeroInteractions(geolocationState);
     }
 
     /**
@@ -126,9 +126,9 @@ public class GeoLocationStateViewModelTest {
       viewModel.checkSettings();
 
       // Результат:
-      verify(locationManager, times(3)).isProviderEnabled(LocationManager.GPS_PROVIDER);
-      verify(locationManager, times(3)).isProviderEnabled(LocationManager.NETWORK_PROVIDER);
-      verifyNoMoreInteractions(locationManager);
+      verify(geolocationState, times(3)).isGpsEnabled();
+      verify(geolocationState, times(3)).isNetworkEnabled();
+      verifyNoMoreInteractions(geolocationState);
     }
 
     /* Тетсируем работу с логгером. */
@@ -145,7 +145,7 @@ public class GeoLocationStateViewModelTest {
       viewModel.getNavigationLiveData();
 
       // Результат:
-      verifyZeroInteractions(locationManager);
+      verifyZeroInteractions(geolocationState);
     }
 
     /* Тетсируем смену состояний. */
@@ -158,8 +158,8 @@ public class GeoLocationStateViewModelTest {
       // Дано:
       InOrder inOrder = Mockito.inOrder(viewStateObserver);
       viewModel.getViewStateLiveData().observeForever(viewStateObserver);
-      when(locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)).thenReturn(true);
-      when(locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)).thenReturn(true);
+      when(geolocationState.isGpsEnabled()).thenReturn(true);
+      when(geolocationState.isNetworkEnabled()).thenReturn(true);
 
       // Действие:
       publishSubject.onNext(true);
@@ -177,8 +177,8 @@ public class GeoLocationStateViewModelTest {
       // Дано:
       InOrder inOrder = Mockito.inOrder(viewStateObserver);
       viewModel.getViewStateLiveData().observeForever(viewStateObserver);
-      when(locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)).thenReturn(true);
-      when(locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)).thenReturn(true);
+      when(geolocationState.isGpsEnabled()).thenReturn(true);
+      when(geolocationState.isNetworkEnabled()).thenReturn(true);
 
       // Действие:
       publishSubject.onNext(false);
@@ -196,8 +196,8 @@ public class GeoLocationStateViewModelTest {
       // Дано:
       InOrder inOrder = Mockito.inOrder(viewStateObserver);
       viewModel.getViewStateLiveData().observeForever(viewStateObserver);
-      when(locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)).thenReturn(false);
-      when(locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)).thenReturn(false);
+      when(geolocationState.isGpsEnabled()).thenReturn(false);
+      when(geolocationState.isNetworkEnabled()).thenReturn(false);
 
       // Действие:
       publishSubject.onNext(true);
@@ -215,8 +215,8 @@ public class GeoLocationStateViewModelTest {
       // Дано:
       InOrder inOrder = Mockito.inOrder(viewStateObserver);
       viewModel.getViewStateLiveData().observeForever(viewStateObserver);
-      when(locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)).thenReturn(false);
-      when(locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)).thenReturn(false);
+      when(geolocationState.isGpsEnabled()).thenReturn(false);
+      when(geolocationState.isNetworkEnabled()).thenReturn(false);
 
       // Действие:
       publishSubject.onNext(false);
@@ -234,8 +234,8 @@ public class GeoLocationStateViewModelTest {
       // Дано:
       InOrder inOrder = Mockito.inOrder(viewStateObserver);
       viewModel.getViewStateLiveData().observeForever(viewStateObserver);
-      when(locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)).thenReturn(false);
-      when(locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)).thenReturn(true);
+      when(geolocationState.isGpsEnabled()).thenReturn(false);
+      when(geolocationState.isNetworkEnabled()).thenReturn(true);
 
       // Действие:
       publishSubject.onNext(true);
@@ -254,8 +254,8 @@ public class GeoLocationStateViewModelTest {
       // Дано:
       InOrder inOrder = Mockito.inOrder(viewStateObserver);
       viewModel.getViewStateLiveData().observeForever(viewStateObserver);
-      when(locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)).thenReturn(false);
-      when(locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)).thenReturn(true);
+      when(geolocationState.isGpsEnabled()).thenReturn(false);
+      when(geolocationState.isNetworkEnabled()).thenReturn(true);
 
       // Действие:
       publishSubject.onNext(false);
@@ -274,8 +274,8 @@ public class GeoLocationStateViewModelTest {
       // Дано:
       InOrder inOrder = Mockito.inOrder(viewStateObserver);
       viewModel.getViewStateLiveData().observeForever(viewStateObserver);
-      when(locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)).thenReturn(true);
-      when(locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)).thenReturn(false);
+      when(geolocationState.isGpsEnabled()).thenReturn(true);
+      when(geolocationState.isNetworkEnabled()).thenReturn(false);
 
       // Действие:
       publishSubject.onNext(true);
@@ -294,8 +294,8 @@ public class GeoLocationStateViewModelTest {
       // Дано:
       InOrder inOrder = Mockito.inOrder(viewStateObserver);
       viewModel.getViewStateLiveData().observeForever(viewStateObserver);
-      when(locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)).thenReturn(true);
-      when(locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)).thenReturn(false);
+      when(geolocationState.isGpsEnabled()).thenReturn(true);
+      when(geolocationState.isNetworkEnabled()).thenReturn(false);
 
       // Действие:
       publishSubject.onNext(false);
@@ -333,7 +333,7 @@ public class GeoLocationStateViewModelTest {
     @Mock
     private EventLogger eventLogger;
     @Mock
-    private LocationManager locationManager;
+    private GeolocationState geolocationState;
     @Mock
     private TimeUtils timeUtils;
     private PublishSubject<Boolean> publishSubject;
@@ -437,11 +437,11 @@ public class GeoLocationStateViewModelTest {
         when(timeUtils.currentTimeMillis()).thenReturn(10L, 300L);
       }
       when(gateway.getData()).thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
-      when(locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER))
+      when(geolocationState.isGpsEnabled())
           .thenReturn(fromGps, toGps, toGps1);
-      when(locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER))
+      when(geolocationState.isNetworkEnabled())
           .thenReturn(fromNetwork, toNetwork, toNetwork1);
-      viewModel = new GeoLocationStateViewModelImpl(eventLogger, locationManager, timeUtils,
+      viewModel = new GeoLocationStateViewModelImpl(eventLogger, geolocationState, timeUtils,
           gateway);
     }
 

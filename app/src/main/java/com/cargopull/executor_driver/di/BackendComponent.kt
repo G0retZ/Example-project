@@ -16,6 +16,8 @@ import com.cargopull.executor_driver.backend.analytics.EventLogger
 import com.cargopull.executor_driver.backend.analytics.EventLoggerImpl
 import com.cargopull.executor_driver.backend.geolocation.GeolocationCenter
 import com.cargopull.executor_driver.backend.geolocation.GeolocationCenterImpl
+import com.cargopull.executor_driver.backend.geolocation.GeolocationState
+import com.cargopull.executor_driver.backend.geolocation.GeolocationStateImpl
 import com.cargopull.executor_driver.backend.ringtone.RingTonePlayer
 import com.cargopull.executor_driver.backend.ringtone.SingleRingTonePlayer
 import com.cargopull.executor_driver.backend.settings.AppPreferences
@@ -41,7 +43,7 @@ import java.util.concurrent.TimeUnit
 interface BackendComponent : Releasable {
     val ringTonePlayer: RingTonePlayer
     val shakeItPlayer: ShakeItPlayer
-    val locationManager: LocationManager
+    val geolocationState: GeolocationState
     val eventLogger: EventLogger
     val errorReporter: ErrorReporter
     val appSettingsService: AppSettingsService
@@ -71,8 +73,8 @@ class ActualBackendComponent(private val appContext: Context) : BackendComponent
             OldSingleShakePlayer(appContext, OldPatternMapper())
         }
     }
-    override val locationManager: LocationManager by lazy {
-        appContext.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+    override val geolocationState: GeolocationState by lazy {
+        GeolocationStateImpl(appContext.getSystemService(Context.LOCATION_SERVICE) as LocationManager)
     }
     override val eventLogger: EventLogger by lazy {
         EventLoggerImpl(appSettingsService, appContext)
