@@ -467,7 +467,7 @@ public class MainApplication extends Application implements ServerConnectionView
 
   @Override
   public void showUpcomingPreOrderMessage(@NonNull String message) {
-    shakeItPlayer.shakeIt(R.raw.preliminary_order_notify_vibro);
+    shakeItPlayer.shakeIt(R.raw.pre_order_reminder_vibro);
     ringTonePlayer.playRingTone(R.raw.pre_order_reminder);
     Builder builder = new Builder(this, AppConfigKt.QUIET_CHANNEL_ID)
         .setContentText(message)
