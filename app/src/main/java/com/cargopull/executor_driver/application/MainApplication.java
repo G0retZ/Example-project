@@ -12,7 +12,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.RawRes;
 import androidx.annotation.StringRes;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.app.NotificationCompat.BigTextStyle;
@@ -382,8 +381,8 @@ public class MainApplication extends Application implements ServerConnectionView
             .getActivity(this, 0, new Intent(this, OrderCostDetailsActivity.class), 0));
         break;
       case PreOrderNavigate.ORDER_APPROVAL:
-        ringTonePlayer.playRingTone(R.raw.new_pre_order);
-        shakeItPlayer.shakeIt(R.raw.new_pre_order_vibro);
+        ringTonePlayer.playRingTone(R.raw.preliminary_order_notify);
+        shakeItPlayer.shakeIt(R.raw.preliminary_order_notify_vibro);
         break;
       case PreOrdersListNavigate.PRE_ORDER:
         return;
@@ -468,7 +467,7 @@ public class MainApplication extends Application implements ServerConnectionView
 
   @Override
   public void showUpcomingPreOrderMessage(@NonNull String message) {
-    shakeItPlayer.shakeIt(R.raw.new_pre_order_vibro);
+    shakeItPlayer.shakeIt(R.raw.preliminary_order_notify_vibro);
     ringTonePlayer.playRingTone(R.raw.pre_order_reminder);
     Builder builder = new Builder(this, AppConfigKt.QUIET_CHANNEL_ID)
         .setContentText(message)

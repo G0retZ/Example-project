@@ -145,7 +145,7 @@ public class DriverPreOrderBookingFragment extends BaseFragment implements
     super.onActivityCreated(savedInstanceState);
     orderConfirmationViewModel.getViewStateLiveData().observe(this, viewState -> {
       if (viewState != null) {
-        ringTonePlayer.stopRingTone(R.raw.new_pre_order);
+        ringTonePlayer.stopRingTone(R.raw.preliminary_order_notify);
         viewState.apply(this);
       }
     });
