@@ -403,8 +403,8 @@ public class MainApplication extends Application implements ServerConnectionView
 
   @Override
   public void showMissedOrderMessage(@NonNull String message) {
-    ringTonePlayer.playRingTone(R.raw.missed_offer);
-    shakeItPlayer.shakeIt(R.raw.missed_order_vibro);
+    shakeItPlayer.shakeIt(R.raw.skip_order_vibro);
+    ringTonePlayer.playRingTone(R.raw.skip_order);
     Builder builder = new Builder(this, AppConfigKt.QUIET_CHANNEL_ID)
         .setContentTitle(getString(R.string.missed_order))
         .setContentText(message)
@@ -495,7 +495,8 @@ public class MainApplication extends Application implements ServerConnectionView
 
   @Override
   public void showCancelledOrderMessage(@NonNull String message) {
-    ringTonePlayer.playRingTone(R.raw.missed_offer);
+    shakeItPlayer.shakeIt(R.raw.skip_order_vibro);
+    ringTonePlayer.playRingTone(R.raw.skip_order);
     Builder builder = new Builder(this, "state_channel")
         .setContentTitle(getString(R.string.order_cancelled))
         .setContentText(message)
