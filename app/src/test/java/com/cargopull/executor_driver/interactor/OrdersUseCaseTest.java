@@ -35,6 +35,8 @@ public class OrdersUseCaseTest {
   @Mock
   private CommonGateway<Set<Order>> gateway;
   @Mock
+  private OrderUseCase changedOrdersUseCase;
+  @Mock
   private OrderUseCase cancelledOrdersUseCase;
   @Mock
   private Order order;
@@ -45,6 +47,7 @@ public class OrdersUseCaseTest {
   @Mock
   private Order order3;
   private FlowableEmitter<Set<Order>> emitter;
+  private FlowableEmitter<Order> changedEmitter;
   private FlowableEmitter<Order> cancelledEmitter;
 
   @Before
@@ -52,10 +55,13 @@ public class OrdersUseCaseTest {
     when(gateway.getData()).thenReturn(
         Flowable.create(e -> emitter = e, BackpressureStrategy.BUFFER)
     );
+    when(changedOrdersUseCase.getOrders()).thenReturn(
+        Flowable.create(e -> changedEmitter = e, BackpressureStrategy.BUFFER)
+    );
     when(cancelledOrdersUseCase.getOrders()).thenReturn(
         Flowable.create(e -> cancelledEmitter = e, BackpressureStrategy.BUFFER)
     );
-    useCase = new OrdersUseCaseImpl(gateway, cancelledOrdersUseCase);
+    useCase = new OrdersUseCaseImpl(gateway, changedOrdersUseCase, cancelledOrdersUseCase);
   }
 
   /* Проверяем работу с гейтвеем */
@@ -75,6 +81,44 @@ public class OrdersUseCaseTest {
 
     // Результат:
     verify(gateway, only()).getData();
+  }
+
+  /* Проверяем работу с юзкейсом измененного предзаказа */
+
+  /**
+   * Не должен запрашивать у юзкейса получение измененных предзаказов если еще не было списков
+   * заказов.
+   */
+  @Test
+  public void doNotAskUseCaseForChangedOrders() {
+    // Действие:
+    useCase.getOrdersSet().test().isDisposed();
+    useCase.getOrdersSet().test().isDisposed();
+    useCase.addOrder(order1);
+    useCase.getOrdersSet().test().isDisposed();
+    useCase.getOrdersSet().test().isDisposed();
+    useCase.removeOrder(order3);
+
+    // Результат:
+    verifyZeroInteractions(changedOrdersUseCase);
+  }
+
+  /**
+   * Должен запросить у юзкейса получение измененных предзаказов только раз.
+   */
+  @Test
+  public void askUseCaseForChangedOrdersForEveryAdd() {
+    // Действие:
+    useCase.getOrdersSet().test().isDisposed();
+    emitter.onNext(new HashSet<>(Arrays.asList(order, order1, order2, order3)));
+    useCase.getOrdersSet().test().isDisposed();
+    useCase.addOrder(order1);
+    useCase.getOrdersSet().test().isDisposed();
+    useCase.getOrdersSet().test().isDisposed();
+    useCase.removeOrder(order3);
+
+    // Результат:
+    verify(changedOrdersUseCase, only()).getOrders();
   }
 
   /* Проверяем работу с юзкейсом отмененного предзаказа */
@@ -165,10 +209,25 @@ public class OrdersUseCaseTest {
     testSubscriber.assertValueAt(0, new HashSet<>(Arrays.asList(order, order1, order2, order3)));
     testSubscriber.assertValueAt(1, new HashSet<>(Arrays.asList(order, order1, order3)));
     testSubscriber.assertValueAt(2, new HashSet<>(Arrays.asList(order1, order3)));
+    testSubscriber.assertNotComplete();
+  }
+
+  /**
+   * Должен вернуть список, затем его обновление с измененным заказом.
+   */
+  @Test
+  public void answerWithUpdatedListOnChangedOrder() {
+    // Действие:
+    TestSubscriber<Set<Order>> testSubscriber = useCase.getOrdersSet().test();
+    emitter.onNext(new HashSet<>(Arrays.asList(order, order1, order2, order3)));
+    changedEmitter.onNext(order2);
+    changedEmitter.onNext(order);
+
+    // Результат:
     testSubscriber.assertValueCount(3);
     testSubscriber.assertValueAt(0, new HashSet<>(Arrays.asList(order, order1, order2, order3)));
-    testSubscriber.assertValueAt(1, new HashSet<>(Arrays.asList(order, order1, order3)));
-    testSubscriber.assertValueAt(2, new HashSet<>(Arrays.asList(order1, order3)));
+    testSubscriber.assertValueAt(1, new HashSet<>(Arrays.asList(order, order1, order2, order3)));
+    testSubscriber.assertValueAt(2, new HashSet<>(Arrays.asList(order, order1, order2, order3)));
     testSubscriber.assertNotComplete();
   }
 
@@ -188,6 +247,25 @@ public class OrdersUseCaseTest {
     testSubscriber.assertValueAt(0, new HashSet<>(Arrays.asList(order, order1, order2, order3)));
     testSubscriber.assertValueAt(1, new HashSet<>(Arrays.asList(order, order1, order3)));
     testSubscriber.assertValueAt(2, new HashSet<>(Arrays.asList(order1, order3)));
+    testSubscriber.assertNotComplete();
+  }
+
+  /**
+   * Должен вернуть список, затем его обновление с измененным заказом и без удаленного элемента.
+   */
+  @Test
+  public void answerWithUpdatedListOnUnScheduleAndChangedOrder() {
+    // Действие:
+    TestSubscriber<Set<Order>> testSubscriber = useCase.getOrdersSet().test();
+    emitter.onNext(new HashSet<>(Arrays.asList(order, order1, order2, order3)));
+    changedEmitter.onNext(order2);
+    useCase.removeOrder(order);
+
+    // Результат:
+    testSubscriber.assertValueCount(3);
+    testSubscriber.assertValueAt(0, new HashSet<>(Arrays.asList(order, order1, order2, order3)));
+    testSubscriber.assertValueAt(1, new HashSet<>(Arrays.asList(order, order1, order2, order3)));
+    testSubscriber.assertValueAt(2, new HashSet<>(Arrays.asList(order1, order2, order3)));
     testSubscriber.assertNotComplete();
   }
 
@@ -270,7 +348,7 @@ public class OrdersUseCaseTest {
   }
 
   /**
-   * Должен вернуть новый список, после добавлений, удалений и отмен заказов.
+   * Должен вернуть новый список, после добавлений, удалений, отмен и изменений заказов.
    */
   @Test
   public void answerWithNewListAfterSchedulesAndUnSchedules() {
@@ -281,26 +359,30 @@ public class OrdersUseCaseTest {
     useCase.removeOrder(order2);
     useCase.addOrder(order1);
     useCase.addOrder(order2);
+    changedEmitter.onNext(order2);
     cancelledEmitter.onNext(order1);
     useCase.removeOrder(order3);
     useCase.addOrder(order1);
     useCase.addOrder(order3);
+    changedEmitter.onNext(order3);
     cancelledEmitter.onNext(order1);
     emitter.onNext(new HashSet<>(Arrays.asList(order1, order2)));
 
     // Результат:
-    testSubscriber.assertValueCount(11);
+    testSubscriber.assertValueCount(13);
     testSubscriber.assertValueAt(0, new HashSet<>(Arrays.asList(order, order3)));
     testSubscriber.assertValueAt(1, new HashSet<>(Arrays.asList(order, order3, order2)));
     testSubscriber.assertValueAt(2, new HashSet<>(Arrays.asList(order, order3)));
     testSubscriber.assertValueAt(3, new HashSet<>(Arrays.asList(order, order1, order3)));
     testSubscriber.assertValueAt(4, new HashSet<>(Arrays.asList(order, order1, order2, order3)));
-    testSubscriber.assertValueAt(5, new HashSet<>(Arrays.asList(order, order2, order3)));
-    testSubscriber.assertValueAt(6, new HashSet<>(Arrays.asList(order, order2)));
-    testSubscriber.assertValueAt(7, new HashSet<>(Arrays.asList(order, order1, order2)));
-    testSubscriber.assertValueAt(8, new HashSet<>(Arrays.asList(order, order1, order2, order3)));
-    testSubscriber.assertValueAt(9, new HashSet<>(Arrays.asList(order, order2, order3)));
-    testSubscriber.assertValueAt(10, new HashSet<>(Arrays.asList(order1, order2)));
+    testSubscriber.assertValueAt(5, new HashSet<>(Arrays.asList(order, order1, order2, order3)));
+    testSubscriber.assertValueAt(6, new HashSet<>(Arrays.asList(order, order2, order3)));
+    testSubscriber.assertValueAt(7, new HashSet<>(Arrays.asList(order, order2)));
+    testSubscriber.assertValueAt(8, new HashSet<>(Arrays.asList(order, order1, order2)));
+    testSubscriber.assertValueAt(9, new HashSet<>(Arrays.asList(order, order1, order2, order3)));
+    testSubscriber.assertValueAt(10, new HashSet<>(Arrays.asList(order, order1, order2, order3)));
+    testSubscriber.assertValueAt(11, new HashSet<>(Arrays.asList(order, order2, order3)));
+    testSubscriber.assertValueAt(12, new HashSet<>(Arrays.asList(order1, order2)));
     testSubscriber.assertNotComplete();
   }
 
@@ -368,15 +450,53 @@ public class OrdersUseCaseTest {
   public void answerWithSameListOnSchedule() {
     // Действие:
     TestSubscriber<Set<Order>> testSubscriber = useCase.getOrdersSet().test();
-    emitter.onNext(new HashSet<>(Arrays.asList(order, order1, order2, order3)));
-    useCase.addOrder(order2);
-    useCase.addOrder(order3);
+    emitter.onNext(new HashSet<>(Arrays.asList(order, order1)));
+    useCase.addOrder(order);
+    useCase.addOrder(order1);
 
     // Результат:
     testSubscriber.assertValueCount(3);
-    testSubscriber.assertValueAt(0, new HashSet<>(Arrays.asList(order, order1, order2, order3)));
-    testSubscriber.assertValueAt(1, new HashSet<>(Arrays.asList(order, order1, order2, order3)));
+    testSubscriber.assertValueAt(0, new HashSet<>(Arrays.asList(order, order1)));
+    testSubscriber.assertValueAt(1, new HashSet<>(Arrays.asList(order, order1)));
+    testSubscriber.assertValueAt(2, new HashSet<>(Arrays.asList(order, order1)));
+    testSubscriber.assertNotComplete();
+  }
+
+  /**
+   * Должен дополнить список, если изменен отсутствующий заказ .
+   */
+  @Test
+  public void answerWithAddedListOnChangedOrder() {
+    // Действие:
+    TestSubscriber<Set<Order>> testSubscriber = useCase.getOrdersSet().test();
+    emitter.onNext(new HashSet<>(Arrays.asList(order, order1)));
+    changedEmitter.onNext(order2);
+    changedEmitter.onNext(order3);
+
+    // Результат:
+    testSubscriber.assertValueCount(3);
+    testSubscriber.assertValueAt(0, new HashSet<>(Arrays.asList(order, order1)));
+    testSubscriber.assertValueAt(1, new HashSet<>(Arrays.asList(order, order1, order2)));
     testSubscriber.assertValueAt(2, new HashSet<>(Arrays.asList(order, order1, order2, order3)));
+    testSubscriber.assertNotComplete();
+  }
+
+  /**
+   * Должен дополнить список только измененным заказом, если запрошены добавление и изменение отсутствующего заказа.
+   */
+  @Test
+  public void answerWithAddedListOnScheduleAndChangedOrder() {
+    // Действие:
+    TestSubscriber<Set<Order>> testSubscriber = useCase.getOrdersSet().test();
+    emitter.onNext(new HashSet<>(Arrays.asList(order, order1)));
+    changedEmitter.onNext(order2);
+    useCase.addOrder(order1);
+
+    // Результат:
+    testSubscriber.assertValueCount(3);
+    testSubscriber.assertValueAt(0, new HashSet<>(Arrays.asList(order, order1)));
+    testSubscriber.assertValueAt(1, new HashSet<>(Arrays.asList(order, order1, order2)));
+    testSubscriber.assertValueAt(2, new HashSet<>(Arrays.asList(order, order1, order2)));
     testSubscriber.assertNotComplete();
   }
 
