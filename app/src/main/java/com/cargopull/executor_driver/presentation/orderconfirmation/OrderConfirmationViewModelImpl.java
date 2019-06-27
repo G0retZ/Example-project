@@ -111,8 +111,8 @@ public class OrderConfirmationViewModelImpl extends ViewModel implements
                     String.valueOf(timeUtils.currentTimeMillis() - timeStamp));
                 eventLogger.reportEvent("order_offer_accepted", params);
               }
-              shakeItPlayer.shakeIt(R.raw.accept_offer_vibro);
-              ringTonePlayer.playRingTone(R.raw.accept_offer);
+              shakeItPlayer.shakeIt(R.raw.confirmation_notify_vibro);
+              ringTonePlayer.playRingTone(R.raw.confirmation_notify);
               viewStateLiveData.postValue(new OrderConfirmationViewStateAccepted(message));
             },
             t -> {

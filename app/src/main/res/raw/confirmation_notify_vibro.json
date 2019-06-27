@@ -1,10 +1,6 @@
 [
   {
-    "duration": 100,
-    "volume": 255
-  },
-  {
-    "duration": 50,
+    "duration": 30,
     "volume": 0
   },
   {
@@ -12,7 +8,7 @@
     "volume": 255
   },
   {
-    "duration": 50,
+    "duration": 80,
     "volume": 0
   },
   {
@@ -20,15 +16,7 @@
     "volume": 255
   },
   {
-    "duration": 50,
-    "volume": 0
-  },
-  {
-    "duration": 100,
-    "volume": 255
-  },
-  {
-    "duration": 50,
+    "duration": 80,
     "volume": 0
   },
   {
@@ -36,7 +24,7 @@
     "volume": 255
   },
   {
-    "duration": 50,
+    "duration": 80,
     "volume": 0
   },
   {
