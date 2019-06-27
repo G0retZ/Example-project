@@ -101,26 +101,6 @@
         app:layout_constraintBottom_toBottomOf="@id/gradient"
         app:layout_constraintStart_toEndOf="@id/navigationArrow"/>
       <ImageView
-        android:id="@+id/navigationTimer"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
-        android:contentDescription="@null"
-        app:layout_constraintBottom_toBottomOf="@id/gradient"
-        app:layout_constraintStart_toEndOf="@id/distanceText"
-        app:srcCompat="@drawable/ic_navigation_timer"/>
-      <TextView
-        android:id="@+id/etaText"
-        style="@style/TextAppearance.AppTheme.Subhead"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="4dp"
-        android:text="@string/eta"
-        app:layout_constraintBottom_toBottomOf="@+id/gradient"
-        app:layout_constraintStart_toEndOf="@id/navigationTimer"/>
-      <ImageView
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="13dp"

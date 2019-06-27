@@ -45,10 +45,6 @@ final class OrderViewStateIdle implements ViewState<OrderViewActions> {
     stateActions.setVisible(R.id.paymentTypeSign, order.getPaymentType() == PaymentType.CONTRACT);
     // Расстояние в км
     stateActions.setFormattedText(R.id.distanceText, R.string.km, order.getDistance() / 1000d);
-    // ETA
-    stateActions.setFormattedText(
-        R.id.etaText, R.string.eta, Math.round(order.getEtaToStartPoint() / 60_000f)
-    );
     // Длинна маршрута
     stateActions.setFormattedText(R.id.routeTitleText, R.string.route_distance,
         order.getEstimatedRouteLength() / 1000d);

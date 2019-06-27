@@ -44,7 +44,6 @@
   <string name="balance_summary">Общий баланс</string>
   <string name="exit_app">Выйти из приложения</string>
   <string name="km">%1$.2f км</string>
-  <string name="eta">≈ %1$d мин.</string>
   <string name="cargo_description">Описание груза</string>
   <string name="comment">Коментарий</string>
   <string name="accept">Принять</string>
