@@ -896,8 +896,8 @@ public class OrderConfirmationViewModelTest {
 
     // Результат:
     verify(shakeItPlayer).shakeIt(R.raw.single_shot_vibro);
-    verify(shakeItPlayer).shakeIt(R.raw.decline_offer_vibro);
-    verify(ringTonePlayer, only()).playRingTone(R.raw.decline_offer);
+    verify(shakeItPlayer).shakeIt(R.raw.skip_order_vibro);
+    verify(ringTonePlayer, only()).playRingTone(R.raw.skip_order);
     verifyNoMoreInteractions(shakeItPlayer);
   }
 
