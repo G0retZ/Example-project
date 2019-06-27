@@ -124,15 +124,6 @@ public class NavigationMapperImpl implements NavigationMapper {
         break;
       default:
         if (lastRouteAction == null || !lastRouteAction.equals(CommonNavigate.SERVER_DATA_ERROR)) {
-          if (splashRouteAction != null && (destination.equals(ExecutorStateNavigate.MAP_ONLINE)
-              || destination.equals(ExecutorStateNavigate.MAP_SHIFT_OPENED))) {
-            if (ExecutorStateNavigate.DRIVER_ORDER_CONFIRMATION.equals(splashRouteAction)
-                || ExecutorStateNavigate.DRIVER_PRELIMINARY_ORDER_CONFIRMATION
-                .equals(splashRouteAction)) {
-              ringTonePlayer.playRingTone(R.raw.decline_offer);
-              shakeItPlayer.shakeIt(R.raw.decline_offer_vibro);
-            }
-          }
           splashRouteAction = lastRouteAction = destination;
         }
         return this::tryToNavigate;

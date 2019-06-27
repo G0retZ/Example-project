@@ -358,8 +358,6 @@ public class MainApplication extends Application implements ServerConnectionView
             .getActivity(this, 0, new Intent(this, DriverPreOrderConfirmationActivity.class), 0));
         break;
       case ExecutorStateNavigate.CLIENT_ORDER_CONFIRMATION:
-        ringTonePlayer.playRingTone(R.raw.accept_offer);
-        shakeItPlayer.shakeIt(R.raw.accept_offer_vibro);
         startService(R.string.working, R.string.client_confirm, PendingIntent
             .getActivity(this, 0, new Intent(this, ClientOrderConfirmationActivity.class), 0));
         break;

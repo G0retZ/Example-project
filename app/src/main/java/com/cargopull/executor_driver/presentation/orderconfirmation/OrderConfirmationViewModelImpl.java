@@ -5,8 +5,11 @@ import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
+import com.cargopull.executor_driver.R;
 import com.cargopull.executor_driver.backend.analytics.ErrorReporter;
 import com.cargopull.executor_driver.backend.analytics.EventLogger;
+import com.cargopull.executor_driver.backend.ringtone.RingTonePlayer;
+import com.cargopull.executor_driver.backend.vibro.ShakeItPlayer;
 import com.cargopull.executor_driver.entity.ExecutorState;
 import com.cargopull.executor_driver.entity.OrderConfirmationFailedException;
 import com.cargopull.executor_driver.entity.OrderOfferDecisionException;
@@ -37,6 +40,10 @@ public class OrderConfirmationViewModelImpl extends ViewModel implements
   @NonNull
   private final OrderConfirmationUseCase orderConfirmationUseCase;
   @NonNull
+  private final ShakeItPlayer shakeItPlayer;
+  @NonNull
+  private final RingTonePlayer ringTonePlayer;
+  @NonNull
   private final MutableLiveData<ViewState<OrderConfirmationViewActions>> viewStateLiveData;
   @NonNull
   private final SingleLiveEvent<String> navigateLiveData;
@@ -58,11 +65,15 @@ public class OrderConfirmationViewModelImpl extends ViewModel implements
       @NonNull ErrorReporter errorReporter,
       @NonNull ExecutorStateUseCase executorStateUseCase,
       @NonNull OrderConfirmationUseCase orderConfirmationUseCase,
+      @NonNull ShakeItPlayer shakeItPlayer,
+      @NonNull RingTonePlayer ringTonePlayer,
       @NonNull TimeUtils timeUtils,
       @Nullable EventLogger eventLogger) {
     this.errorReporter = errorReporter;
     this.executorStateUseCase = executorStateUseCase;
     this.orderConfirmationUseCase = orderConfirmationUseCase;
+    this.shakeItPlayer = shakeItPlayer;
+    this.ringTonePlayer = ringTonePlayer;
     this.timeUtils = timeUtils;
     this.eventLogger = eventLogger;
     viewStateLiveData = new MutableLiveData<>();
@@ -87,6 +98,7 @@ public class OrderConfirmationViewModelImpl extends ViewModel implements
     if (!decisionDisposable.isDisposed()) {
       return;
     }
+    shakeItPlayer.shakeIt(R.raw.single_shot_vibro);
     viewStateLiveData.postValue(new OrderConfirmationViewStatePending());
     decisionDisposable = orderConfirmationUseCase.sendDecision(true)
         .observeOn(AndroidSchedulers.mainThread())
@@ -99,6 +111,8 @@ public class OrderConfirmationViewModelImpl extends ViewModel implements
                     String.valueOf(timeUtils.currentTimeMillis() - timeStamp));
                 eventLogger.reportEvent("order_offer_accepted", params);
               }
+              shakeItPlayer.shakeIt(R.raw.accept_offer_vibro);
+              ringTonePlayer.playRingTone(R.raw.accept_offer);
               viewStateLiveData.postValue(new OrderConfirmationViewStateAccepted(message));
             },
             t -> {
@@ -128,6 +142,7 @@ public class OrderConfirmationViewModelImpl extends ViewModel implements
     if (!decisionDisposable.isDisposed()) {
       return;
     }
+    shakeItPlayer.shakeIt(R.raw.single_shot_vibro);
     viewStateLiveData.postValue(new OrderConfirmationViewStatePending());
     decisionDisposable = orderConfirmationUseCase.sendDecision(false)
         .observeOn(AndroidSchedulers.mainThread())
@@ -140,6 +155,8 @@ public class OrderConfirmationViewModelImpl extends ViewModel implements
                     String.valueOf(timeUtils.currentTimeMillis() - timeStamp));
                 eventLogger.reportEvent("order_offer_declined", params);
               }
+              shakeItPlayer.shakeIt(R.raw.decline_offer_vibro);
+              ringTonePlayer.playRingTone(R.raw.decline_offer);
               viewStateLiveData.postValue(new OrderConfirmationViewStateDeclined(message));
             },
             t -> {
@@ -166,6 +183,8 @@ public class OrderConfirmationViewModelImpl extends ViewModel implements
 
   @Override
   public void counterTimeOut() {
+    shakeItPlayer.shakeIt(R.raw.skip_order_vibro);
+    ringTonePlayer.playRingTone(R.raw.skip_order);
     viewStateLiveData.postValue(new OrderConfirmationViewStatePending());
   }
 
@@ -183,6 +202,8 @@ public class OrderConfirmationViewModelImpl extends ViewModel implements
               .observeOn(AndroidSchedulers.mainThread())
               .doOnError(throwable -> {
                 if (throwable instanceof OrderOfferExpiredException) {
+                  shakeItPlayer.shakeIt(R.raw.skip_order_vibro);
+                  ringTonePlayer.playRingTone(R.raw.skip_order);
                   viewStateLiveData.postValue(
                       new OrderConfirmationViewStateExpired()
                   );

@@ -408,6 +408,8 @@ class PresentationComponent(
                         backendComponent.errorReporter,
                         interactorComponent.executorStateUseCase,
                         interactorComponent.orderConfirmationUseCase,
+                        backendComponent.shakeItPlayer,
+                        backendComponent.singleRingTonePlayer,
                         timeUtils,
                         backendComponent.eventLogger
                 )
@@ -422,6 +424,8 @@ class PresentationComponent(
                         backendComponent.errorReporter,
                         interactorComponent.executorStateUseCase,
                         interactorComponent.orderConfirmationUseCase,
+                        backendComponent.shakeItPlayer,
+                        backendComponent.singleRingTonePlayer,
                         timeUtils,
                         backendComponent.eventLogger
                 )
@@ -436,6 +440,8 @@ class PresentationComponent(
                         backendComponent.errorReporter,
                         interactorComponent.executorStateUseCase,
                         interactorComponent.preOrderBookingUseCase,
+                        backendComponent.shakeItPlayer,
+                        backendComponent.singleRingTonePlayer,
                         timeUtils, null
                 )
         )
@@ -544,6 +550,8 @@ class PresentationComponent(
                         backendComponent.errorReporter,
                         interactorComponent.executorStateUseCase,
                         interactorComponent.selectedPreOrderConfirmationUseCase,
+                        backendComponent.shakeItPlayer,
+                        backendComponent.singleRingTonePlayer,
                         timeUtils, null
                 )
         )
@@ -569,6 +577,8 @@ class PresentationComponent(
                         backendComponent.errorReporter,
                         interactorComponent.executorStateUseCase,
                         interactorComponent.upcomingPreOrderConfirmationUseCase,
+                        backendComponent.shakeItPlayer,
+                        backendComponent.singleRingTonePlayer,
                         timeUtils, null
                 )
         )
