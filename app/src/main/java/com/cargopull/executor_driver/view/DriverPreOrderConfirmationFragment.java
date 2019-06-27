@@ -16,7 +16,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.cargopull.executor_driver.R;
-import com.cargopull.executor_driver.backend.vibro.ShakeItPlayer;
 import com.cargopull.executor_driver.di.AppComponent;
 import com.cargopull.executor_driver.presentation.order.OrderViewActions;
 import com.cargopull.executor_driver.presentation.order.OrderViewModel;
@@ -33,7 +32,6 @@ public class DriverPreOrderConfirmationFragment extends BaseFragment implements
 
   private OrderConfirmationViewModel orderConfirmationViewModel;
   private OrderViewModel orderViewModel;
-  private ShakeItPlayer shakeItPlayer;
   private ProgressBar declineAction;
   private TextView declineActionText;
   private ProgressBar setOutAction;
@@ -44,11 +42,6 @@ public class DriverPreOrderConfirmationFragment extends BaseFragment implements
   private ObjectAnimator declineResetAnimator;
   @Nullable
   private ObjectAnimator timeoutAnimation;
-
-  @Inject
-  public void setShakeItPlayer(@NonNull ShakeItPlayer shakeItPlayer) {
-    this.shakeItPlayer = shakeItPlayer;
-  }
 
   @Inject
   public void setOrderConfirmationViewModel(
@@ -94,7 +87,6 @@ public class DriverPreOrderConfirmationFragment extends BaseFragment implements
         declineResetAnimator.start();
         if (!canceled) {
           orderConfirmationViewModel.declineOrder();
-          shakeItPlayer.shakeIt(R.raw.single_shot_vibro);
         }
       }
 

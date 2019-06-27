@@ -1,11 +1,8 @@
 package com.cargopull.executor_driver.di
 
 import android.content.Context
-import android.os.Build
 import com.cargopull.executor_driver.application.*
-import com.cargopull.executor_driver.backend.ringtone.SingleRingTonePlayer
 import com.cargopull.executor_driver.backend.settings.AppSettingsService
-import com.cargopull.executor_driver.backend.vibro.*
 import com.cargopull.executor_driver.utils.Consumer
 import com.cargopull.executor_driver.utils.TimeUtils
 import com.cargopull.executor_driver.utils.TimeUtilsImpl
@@ -22,17 +19,7 @@ class AppComponent(private val appContext: Context, private val backendComponent
         PresentationComponent(backendComponent, timeUtils)
     }
     private val navigationMapper: NavigationMapper by lazy {
-        NavigationMapperImpl(singleRingTonePlayer, shakeItPlayer)
-    }
-    private val singleRingTonePlayer: SingleRingTonePlayer by lazy {
-        SingleRingTonePlayer(appContext)
-    }
-    private val shakeItPlayer: ShakeItPlayer by lazy {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            SingleShakePlayer(appContext, NewPatternMapper())
-        } else {
-            OldSingleShakePlayer(appContext, OldPatternMapper())
-        }
+        NavigationMapperImpl(backendComponent.singleRingTonePlayer, backendComponent.shakeItPlayer)
     }
 
     fun inject(appSettingsServiceConsumer: Consumer<AppSettingsService>) {
@@ -43,10 +30,10 @@ class AppComponent(private val appContext: Context, private val backendComponent
 
     fun inject(mainApplication: MainApplication) {
         mainApplication.setRingTonePlayer(
-                singleRingTonePlayer
+                backendComponent.singleRingTonePlayer
         )
         mainApplication.setShakeItPlayer(
-                shakeItPlayer
+                backendComponent.shakeItPlayer
         )
         mainApplication.setServerConnectionViewModel(
                 presentationComponent.serverConnectionViewModel
@@ -214,7 +201,7 @@ class AppComponent(private val appContext: Context, private val backendComponent
                 presentationComponent.getCodeViewModel(passwordFragment)
         )
         passwordFragment.setShakeItPlayer(
-                shakeItPlayer
+                backendComponent.shakeItPlayer
         )
     }
 
@@ -312,7 +299,7 @@ class AppComponent(private val appContext: Context, private val backendComponent
                 presentationComponent.getReportArrivedViewModel(movingToClientFragment)
         )
         movingToClientFragment.setShakeItPlayer(
-                shakeItPlayer
+                backendComponent.shakeItPlayer
         )
     }
 
@@ -342,7 +329,7 @@ class AppComponent(private val appContext: Context, private val backendComponent
                 presentationComponent.orderViewModel
         )
         waitingForClientFragment.setShakeItPlayer(
-                shakeItPlayer
+                backendComponent.shakeItPlayer
         )
     }
 
@@ -375,7 +362,7 @@ class AppComponent(private val appContext: Context, private val backendComponent
                 presentationComponent.orderRouteViewModel
         )
         orderFulfillmentFragment.setShakeItPlayer(
-                shakeItPlayer
+                backendComponent.shakeItPlayer
         )
     }
 
@@ -462,7 +449,7 @@ class AppComponent(private val appContext: Context, private val backendComponent
                 presentationComponent.getConfirmOrderPaymentViewModel(orderCostDetailsFragment)
         )
         orderCostDetailsFragment.setShakeItPlayer(
-                shakeItPlayer
+                backendComponent.shakeItPlayer
         )
     }
 
@@ -485,12 +472,6 @@ class AppComponent(private val appContext: Context, private val backendComponent
     }
 
     fun inject(driverPreOrderBookingFragment: DriverPreOrderBookingFragment) {
-        driverPreOrderBookingFragment.setShakeItPlayer(
-                shakeItPlayer
-        )
-        driverPreOrderBookingFragment.setRingTonePlayer(
-                singleRingTonePlayer
-        )
         driverPreOrderBookingFragment.setOrderConfirmationViewModel(
                 presentationComponent.getPreOrderBookingViewModel(driverPreOrderBookingFragment)
         )
@@ -515,12 +496,6 @@ class AppComponent(private val appContext: Context, private val backendComponent
     }
 
     fun inject(selectedPreOrderConfirmationFragment: SelectedPreOrderConfirmationFragment) {
-        selectedPreOrderConfirmationFragment.setShakeItPlayer(
-                shakeItPlayer
-        )
-        selectedPreOrderConfirmationFragment.setRingTonePlayer(
-                singleRingTonePlayer
-        )
         selectedPreOrderConfirmationFragment.setOrderConfirmationViewModel(
                 presentationComponent
                         .getSelectedPreOrderConfirmationViewModel(selectedPreOrderConfirmationFragment)
@@ -540,9 +515,6 @@ class AppComponent(private val appContext: Context, private val backendComponent
     }
 
     fun inject(driverPreOrderConfirmationFragment: DriverPreOrderConfirmationFragment) {
-        driverPreOrderConfirmationFragment.setShakeItPlayer(
-                shakeItPlayer
-        )
         driverPreOrderConfirmationFragment.setOrderConfirmationViewModel(
                 presentationComponent.getPreOrderConfirmationViewModel(driverPreOrderConfirmationFragment)
         )
@@ -564,12 +536,6 @@ class AppComponent(private val appContext: Context, private val backendComponent
     }
 
     fun inject(upcomingPreOrderConfirmationFragment: UpcomingPreOrderConfirmationFragment) {
-        upcomingPreOrderConfirmationFragment.setShakeItPlayer(
-                shakeItPlayer
-        )
-        upcomingPreOrderConfirmationFragment.setRingTonePlayer(
-                singleRingTonePlayer
-        )
         upcomingPreOrderConfirmationFragment.setOrderConfirmationViewModel(
                 presentationComponent
                         .getUpcomingPreOrderConfirmationViewModel(upcomingPreOrderConfirmationFragment)
