@@ -293,6 +293,8 @@ public class MainApplication extends Application implements ServerConnectionView
               getString(R.string.important_info),
               NotificationManager.IMPORTANCE_DEFAULT);
       mChannel.setDescription(getString(R.string.important_info_desc));
+      mChannel.setSound(null, null);
+      mChannel.enableVibration(false);
       notificationManager.createNotificationChannel(mChannel);
     }
   }

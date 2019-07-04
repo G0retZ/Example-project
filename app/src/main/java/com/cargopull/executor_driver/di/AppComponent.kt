@@ -173,12 +173,10 @@ class AppComponent(private val appContext: Context, private val backendComponent
     }
 
     fun inject(fcmService: FcmService) {
-        fcmService.setFcmObserver(
-                backendComponent.fcmReceiver
-        )
-        fcmService.setApiService(
-                backendComponent.apiService
-        )
+        fcmService.fcmObserver = backendComponent.fcmReceiver
+        fcmService.apiService = backendComponent.apiService
+        fcmService.shakeItPlayer = backendComponent.shakeItPlayer
+        fcmService.ringTonePlayer = backendComponent.singleRingTonePlayer
     }
 
     fun inject(loginFragment: LoginFragment) {
