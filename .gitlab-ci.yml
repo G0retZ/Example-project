@@ -1,4 +1,4 @@
-image: gitlab.capsrv.xyz:5000/android-ci:latest
+image: registry.cargopull.host:5000/android-ci:latest
 
 stages:
   - build
