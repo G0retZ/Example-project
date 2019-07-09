@@ -85,11 +85,11 @@ class BackendComponent(private val appContext: Context) {
             builder.addInterceptor(interceptor)
         }
         // Add logging interceptor for debug build only
-//        if (BuildConfig.DEBUG) {
+        if (BuildConfig.DEBUG) {
             val logging = HttpLoggingInterceptor()
             logging.level = HttpLoggingInterceptor.Level.BODY
             builder.addInterceptor(logging)
-//        }
+        }
         builder.build()
     }
     private val interceptors: Array<Interceptor> by lazy {
