@@ -62,7 +62,6 @@ public class OrderViewStateIdleTest {
     when(order.getPaymentType()).thenReturn(PaymentType.CASH);
     when(order.getNextActiveRoutePoint()).thenReturn(routePoint);
     when(order.getDistance()).thenReturn(12239);
-    when(order.getEtaToStartPoint()).thenReturn(3264132L);
     when(order.getEstimatedRouteLength()).thenReturn(31278L);
     when(order.getScheduledStartTime()).thenReturn(1238403200L);
     when(order.getRoutePath()).thenReturn(Arrays.asList(routePoint, routePoint1, routePoint2));
@@ -84,7 +83,6 @@ public class OrderViewStateIdleTest {
         + "&key=AIzaSyBwlubLyqI6z_ivfAWcTCfyTXkoRHTagMk");
     verify(viewActions).setVisible(R.id.paymentTypeSign, false);
     verify(viewActions).setFormattedText(R.id.distanceText, R.string.km, 12.239d);
-    verify(viewActions).setFormattedText(R.id.etaText, R.string.eta, 54);
     verify(viewActions).setFormattedText(R.id.routeTitleText, R.string.route_distance, 31.278d);
     verify(viewActions).setText(R.id.nextAddressText, "address");
     verify(viewActions)
@@ -142,7 +140,6 @@ public class OrderViewStateIdleTest {
     when(order.getPaymentType()).thenReturn(PaymentType.CASH);
     when(order.getNextActiveRoutePoint()).thenReturn(routePoint);
     when(order.getDistance()).thenReturn(12239);
-    when(order.getEtaToStartPoint()).thenReturn(3264132L);
     when(order.getEstimatedRouteLength()).thenReturn(31278L);
     when(order.getScheduledStartTime()).thenReturn(1238403200L);
     when(order.getRoutePath()).thenReturn(Arrays.asList(routePoint, routePoint1, routePoint2));
@@ -171,7 +168,6 @@ public class OrderViewStateIdleTest {
         + "&key=AIzaSyBwlubLyqI6z_ivfAWcTCfyTXkoRHTagMk");
     verify(viewActions).setVisible(R.id.paymentTypeSign, false);
     verify(viewActions).setFormattedText(R.id.distanceText, R.string.km, 12.239d);
-    verify(viewActions).setFormattedText(R.id.etaText, R.string.eta, 54);
     verify(viewActions).setFormattedText(R.id.routeTitleText, R.string.route_distance, 31.278d);
     verify(viewActions).setText(R.id.nextAddressText, "address");
     verify(viewActions)
@@ -228,7 +224,6 @@ public class OrderViewStateIdleTest {
     when(order.getPaymentType()).thenReturn(PaymentType.CASH);
     when(order.getNextActiveRoutePoint()).thenReturn(routePoint);
     when(order.getDistance()).thenReturn(12239);
-    when(order.getEtaToStartPoint()).thenReturn(3264132L);
     when(order.getEstimatedRouteLength()).thenReturn(31278L);
     when(order.getScheduledStartTime()).thenReturn(1238403200L);
     when(order.getRoutePath()).thenReturn(Collections.singletonList(routePoint));
@@ -257,7 +252,6 @@ public class OrderViewStateIdleTest {
         + "&key=AIzaSyBwlubLyqI6z_ivfAWcTCfyTXkoRHTagMk");
     verify(viewActions).setVisible(R.id.paymentTypeSign, false);
     verify(viewActions).setFormattedText(R.id.distanceText, R.string.km, 12.239d);
-    verify(viewActions).setFormattedText(R.id.etaText, R.string.eta, 54);
     verify(viewActions).setFormattedText(R.id.routeTitleText, R.string.route_distance, 31.278d);
     verify(viewActions).setText(R.id.nextAddressText, "address");
     verify(viewActions)
@@ -315,7 +309,6 @@ public class OrderViewStateIdleTest {
     when(order.getRoutePath()).thenReturn(Collections.singletonList(routePoint));
     when(order.getNextActiveRoutePoint()).thenReturn(routePoint);
     when(order.getDistance()).thenReturn(12239);
-    when(order.getEtaToStartPoint()).thenReturn(3264132L);
     when(order.getEstimatedRouteLength()).thenReturn(31278L);
     when(order.getScheduledStartTime()).thenReturn(1238403200L);
     when(order.getEstimatedTime()).thenReturn(7929000L);
@@ -343,7 +336,6 @@ public class OrderViewStateIdleTest {
         + "&key=AIzaSyBwlubLyqI6z_ivfAWcTCfyTXkoRHTagMk");
     verify(viewActions).setVisible(R.id.paymentTypeSign, false);
     verify(viewActions).setFormattedText(R.id.distanceText, R.string.km, 12.239d);
-    verify(viewActions).setFormattedText(R.id.etaText, R.string.eta, 54);
     verify(viewActions).setFormattedText(R.id.routeTitleText, R.string.route_distance, 31.278d);
     verify(viewActions).setText(R.id.nextAddressText, "address");
     verify(viewActions)
@@ -401,7 +393,6 @@ public class OrderViewStateIdleTest {
     when(order.getPaymentType()).thenReturn(PaymentType.CONTRACT);
     when(order.getNextActiveRoutePoint()).thenReturn(routePoint);
     when(order.getDistance()).thenReturn(12239);
-    when(order.getEtaToStartPoint()).thenReturn(3264132L);
     when(order.getEstimatedRouteLength()).thenReturn(31278L);
     when(order.getScheduledStartTime()).thenReturn(1238403200L);
     when(order.getRoutePath()).thenReturn(Arrays.asList(routePoint, routePoint1, routePoint2));
@@ -423,7 +414,6 @@ public class OrderViewStateIdleTest {
         + "&key=AIzaSyBwlubLyqI6z_ivfAWcTCfyTXkoRHTagMk");
     verify(viewActions).setVisible(R.id.paymentTypeSign, true);
     verify(viewActions).setFormattedText(R.id.distanceText, R.string.km, 12.239d);
-    verify(viewActions).setFormattedText(R.id.etaText, R.string.eta, 54);
     verify(viewActions).setFormattedText(R.id.routeTitleText, R.string.route_distance, 31.278d);
     verify(viewActions).setText(R.id.nextAddressText, "address");
     verify(viewActions)
@@ -481,7 +471,6 @@ public class OrderViewStateIdleTest {
     when(order.getPaymentType()).thenReturn(PaymentType.CONTRACT);
     when(order.getNextActiveRoutePoint()).thenReturn(routePoint);
     when(order.getDistance()).thenReturn(12239);
-    when(order.getEtaToStartPoint()).thenReturn(3264132L);
     when(order.getEstimatedRouteLength()).thenReturn(31278L);
     when(order.getScheduledStartTime()).thenReturn(1238403200L);
     when(order.getRoutePath()).thenReturn(Arrays.asList(routePoint, routePoint1, routePoint2));
@@ -510,7 +499,6 @@ public class OrderViewStateIdleTest {
         + "&key=AIzaSyBwlubLyqI6z_ivfAWcTCfyTXkoRHTagMk");
     verify(viewActions).setVisible(R.id.paymentTypeSign, true);
     verify(viewActions).setFormattedText(R.id.distanceText, R.string.km, 12.239d);
-    verify(viewActions).setFormattedText(R.id.etaText, R.string.eta, 54);
     verify(viewActions).setFormattedText(R.id.routeTitleText, R.string.route_distance, 31.278d);
     verify(viewActions).setText(R.id.nextAddressText, "address");
     verify(viewActions)
@@ -567,7 +555,6 @@ public class OrderViewStateIdleTest {
     when(order.getPaymentType()).thenReturn(PaymentType.CONTRACT);
     when(order.getNextActiveRoutePoint()).thenReturn(routePoint);
     when(order.getDistance()).thenReturn(12239);
-    when(order.getEtaToStartPoint()).thenReturn(3264132L);
     when(order.getEstimatedRouteLength()).thenReturn(31278L);
     when(order.getScheduledStartTime()).thenReturn(1238403200L);
     when(order.getRoutePath()).thenReturn(Collections.singletonList(routePoint));
@@ -596,7 +583,6 @@ public class OrderViewStateIdleTest {
         + "&key=AIzaSyBwlubLyqI6z_ivfAWcTCfyTXkoRHTagMk");
     verify(viewActions).setVisible(R.id.paymentTypeSign, true);
     verify(viewActions).setFormattedText(R.id.distanceText, R.string.km, 12.239d);
-    verify(viewActions).setFormattedText(R.id.etaText, R.string.eta, 54);
     verify(viewActions).setFormattedText(R.id.routeTitleText, R.string.route_distance, 31.278d);
     verify(viewActions).setText(R.id.nextAddressText, "address");
     verify(viewActions)
@@ -654,7 +640,6 @@ public class OrderViewStateIdleTest {
     when(order.getRoutePath()).thenReturn(Collections.singletonList(routePoint));
     when(order.getNextActiveRoutePoint()).thenReturn(routePoint);
     when(order.getDistance()).thenReturn(12239);
-    when(order.getEtaToStartPoint()).thenReturn(3264132L);
     when(order.getEstimatedRouteLength()).thenReturn(31278L);
     when(order.getScheduledStartTime()).thenReturn(1238403200L);
     when(order.getEstimatedTime()).thenReturn(7929000L);
@@ -682,7 +667,6 @@ public class OrderViewStateIdleTest {
         + "&key=AIzaSyBwlubLyqI6z_ivfAWcTCfyTXkoRHTagMk");
     verify(viewActions).setVisible(R.id.paymentTypeSign, true);
     verify(viewActions).setFormattedText(R.id.distanceText, R.string.km, 12.239d);
-    verify(viewActions).setFormattedText(R.id.etaText, R.string.eta, 54);
     verify(viewActions).setFormattedText(R.id.routeTitleText, R.string.route_distance, 31.278d);
     verify(viewActions).setText(R.id.nextAddressText, "address");
     verify(viewActions)

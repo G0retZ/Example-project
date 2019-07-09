@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.AlertDialog.Builder;
 import android.app.Dialog;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -160,6 +161,7 @@ public class BaseActivity extends AppCompatActivity implements ExecutorStateView
   @Override
   protected void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
     pendingDialogFragment.setCancelable(false);
     geoEngagementDialogFragment.setCancelable(false);
     onDependencyInject(getDiComponent());
