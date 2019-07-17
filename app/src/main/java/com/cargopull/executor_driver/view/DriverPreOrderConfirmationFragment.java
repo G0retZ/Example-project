@@ -157,6 +157,9 @@ public class DriverPreOrderConfirmationFragment extends BaseFragment implements
     if (declineDelayAnimator != null) {
       declineDelayAnimator.cancel();
     }
+    if (timeoutAnimation != null) {
+      timeoutAnimation.cancel();
+    }
     super.onDetach();
   }
 
