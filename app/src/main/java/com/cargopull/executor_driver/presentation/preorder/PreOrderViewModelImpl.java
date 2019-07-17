@@ -4,7 +4,10 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
+import com.cargopull.executor_driver.R;
 import com.cargopull.executor_driver.backend.analytics.ErrorReporter;
+import com.cargopull.executor_driver.backend.ringtone.RingTonePlayer;
+import com.cargopull.executor_driver.backend.vibro.ShakeItPlayer;
 import com.cargopull.executor_driver.entity.OrderCancelledException;
 import com.cargopull.executor_driver.entity.OrderOfferDecisionException;
 import com.cargopull.executor_driver.entity.OrderOfferExpiredException;
@@ -26,6 +29,10 @@ public class PreOrderViewModelImpl extends ViewModel implements
   @NonNull
   private final OrderUseCase orderUseCase;
   @NonNull
+  private final ShakeItPlayer shakeItPlayer;
+  @NonNull
+  private final RingTonePlayer ringTonePlayer;
+  @NonNull
   private final MutableLiveData<ViewState<PreOrderViewActions>> viewStateLiveData;
   @NonNull
   private final SingleLiveEvent<String> navigateLiveData;
@@ -34,9 +41,13 @@ public class PreOrderViewModelImpl extends ViewModel implements
 
   @Inject
   public PreOrderViewModelImpl(@NonNull ErrorReporter errorReporter,
-      @NonNull OrderUseCase orderUseCase) {
+      @NonNull OrderUseCase orderUseCase,
+      @NonNull ShakeItPlayer shakeItPlayer,
+      @NonNull RingTonePlayer ringTonePlayer) {
     this.errorReporter = errorReporter;
     this.orderUseCase = orderUseCase;
+    this.shakeItPlayer = shakeItPlayer;
+    this.ringTonePlayer = ringTonePlayer;
     viewStateLiveData = new MutableLiveData<>();
     navigateLiveData = new SingleLiveEvent<>();
     loadOrders();
@@ -70,7 +81,11 @@ public class PreOrderViewModelImpl extends ViewModel implements
           .retry(throwable -> throwable instanceof OrderOfferExpiredException
               || throwable instanceof OrderCancelledException
               || throwable instanceof OrderOfferDecisionException)
-          .subscribe(order -> viewStateLiveData.postValue(new PreOrderViewStateAvailable()),
+          .subscribe(order -> {
+                ringTonePlayer.playRingTone(R.raw.preliminary_order_notify);
+                shakeItPlayer.shakeIt(R.raw.preliminary_order_notify_vibro);
+                viewStateLiveData.postValue(new PreOrderViewStateAvailable());
+              },
               throwable -> {
                 errorReporter.reportError(throwable);
                 if (throwable instanceof DataMappingException) {
