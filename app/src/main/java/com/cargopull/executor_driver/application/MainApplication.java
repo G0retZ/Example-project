@@ -18,8 +18,6 @@ import androidx.core.app.NotificationCompat.BigTextStyle;
 import androidx.core.app.NotificationCompat.Builder;
 import com.cargopull.executor_driver.AppConfigKt;
 import com.cargopull.executor_driver.R;
-import com.cargopull.executor_driver.backend.ringtone.RingTonePlayer;
-import com.cargopull.executor_driver.backend.vibro.ShakeItPlayer;
 import com.cargopull.executor_driver.di.AppComponent;
 import com.cargopull.executor_driver.di.BackendComponent;
 import com.cargopull.executor_driver.presentation.CommonNavigate;
@@ -62,8 +60,6 @@ public class MainApplication extends Application implements ServerConnectionView
   @Nullable
   private Activity currentActivity;
   private AppComponent appComponent;
-  private RingTonePlayer ringTonePlayer;
-  private ShakeItPlayer shakeItPlayer;
   private ServerConnectionViewModel serverConnectionViewModel;
   private BalanceViewModel balanceViewModel;
   private ExecutorStateViewModel executorStateViewModel;
@@ -82,16 +78,6 @@ public class MainApplication extends Application implements ServerConnectionView
   private NavigationMapper navigationMapper;
   private int missedOrdersCount;
   private NotificationManager notificationManager;
-
-  @Inject
-  public void setRingTonePlayer(@NonNull RingTonePlayer ringTonePlayer) {
-    this.ringTonePlayer = ringTonePlayer;
-  }
-
-  @Inject
-  public void setShakeItPlayer(@NonNull ShakeItPlayer shakeItPlayer) {
-    this.shakeItPlayer = shakeItPlayer;
-  }
 
   @Inject
   public void setServerConnectionViewModel(
@@ -347,15 +333,11 @@ public class MainApplication extends Application implements ServerConnectionView
             .getActivity(this, 0, new Intent(this, OnlineActivity.class), 0));
         break;
       case ExecutorStateNavigate.DRIVER_ORDER_CONFIRMATION:
-        ringTonePlayer.playRingTone(R.raw.regular_order_notify);
-        shakeItPlayer.shakeIt(R.raw.regular_order_notify_vibro);
         startService(R.string.offer, R.string.new_order, PendingIntent
             .getActivity(this, 0, new Intent(this, DriverOrderConfirmationActivity.class), 0));
         navigationMapper.navigateTo(destination).accept(this);
         return;
       case ExecutorStateNavigate.DRIVER_PRELIMINARY_ORDER_CONFIRMATION:
-        ringTonePlayer.playRingTone(R.raw.regular_order_notify);
-        shakeItPlayer.shakeIt(R.raw.regular_order_notify_vibro);
         startService(R.string.preliminary_order, R.string.time_to_set_out, PendingIntent
             .getActivity(this, 0, new Intent(this, DriverPreOrderConfirmationActivity.class), 0));
         break;
@@ -381,8 +363,6 @@ public class MainApplication extends Application implements ServerConnectionView
             .getActivity(this, 0, new Intent(this, OrderCostDetailsActivity.class), 0));
         break;
       case PreOrderNavigate.ORDER_APPROVAL:
-        ringTonePlayer.playRingTone(R.raw.preliminary_order_notify);
-        shakeItPlayer.shakeIt(R.raw.preliminary_order_notify_vibro);
         break;
       case PreOrdersListNavigate.PRE_ORDER:
         return;
@@ -403,8 +383,6 @@ public class MainApplication extends Application implements ServerConnectionView
 
   @Override
   public void showMissedOrderMessage(@NonNull String message) {
-    shakeItPlayer.shakeIt(R.raw.skip_order_vibro);
-    ringTonePlayer.playRingTone(R.raw.skip_order);
     Builder builder = new Builder(this, AppConfigKt.QUIET_CHANNEL_ID)
         .setContentTitle(getString(R.string.missed_order))
         .setContentText(message)
@@ -467,8 +445,6 @@ public class MainApplication extends Application implements ServerConnectionView
 
   @Override
   public void showUpcomingPreOrderMessage(@NonNull String message) {
-    shakeItPlayer.shakeIt(R.raw.pre_order_reminder_vibro);
-    ringTonePlayer.playRingTone(R.raw.pre_order_reminder);
     Builder builder = new Builder(this, AppConfigKt.QUIET_CHANNEL_ID)
         .setContentText(message)
         .setStyle(new BigTextStyle().bigText(message))
@@ -495,8 +471,6 @@ public class MainApplication extends Application implements ServerConnectionView
 
   @Override
   public void showCancelledOrderMessage(@NonNull String message) {
-    shakeItPlayer.shakeIt(R.raw.skip_order_vibro);
-    ringTonePlayer.playRingTone(R.raw.skip_order);
     Builder builder = new Builder(this, "state_channel")
         .setContentTitle(getString(R.string.order_cancelled))
         .setContentText(message)
