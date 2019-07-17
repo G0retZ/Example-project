@@ -19,7 +19,7 @@ class AppComponent(private val appContext: Context, private val backendComponent
         PresentationComponent(backendComponent, timeUtils)
     }
     private val navigationMapper: NavigationMapper by lazy {
-        NavigationMapperImpl(backendComponent.singleRingTonePlayer, backendComponent.shakeItPlayer)
+        NavigationMapperImpl(backendComponent.ringTonePlayer, backendComponent.shakeItPlayer)
     }
 
     fun inject(appSettingsServiceConsumer: Consumer<AppSettingsService>) {
@@ -29,12 +29,6 @@ class AppComponent(private val appContext: Context, private val backendComponent
     }
 
     fun inject(mainApplication: MainApplication) {
-        mainApplication.setRingTonePlayer(
-                backendComponent.singleRingTonePlayer
-        )
-        mainApplication.setShakeItPlayer(
-                backendComponent.shakeItPlayer
-        )
         mainApplication.setServerConnectionViewModel(
                 presentationComponent.serverConnectionViewModel
         )
@@ -176,7 +170,7 @@ class AppComponent(private val appContext: Context, private val backendComponent
         fcmService.fcmObserver = backendComponent.fcmReceiver
         fcmService.apiService = backendComponent.apiService
         fcmService.shakeItPlayer = backendComponent.shakeItPlayer
-        fcmService.ringTonePlayer = backendComponent.singleRingTonePlayer
+        fcmService.ringTonePlayer = backendComponent.ringTonePlayer
     }
 
     fun inject(loginFragment: LoginFragment) {

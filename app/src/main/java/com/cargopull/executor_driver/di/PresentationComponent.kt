@@ -116,7 +116,9 @@ class PresentationComponent(
     val executorStateViewModel: ExecutorStateViewModel by lazy {
         ExecutorStateViewModelImpl(
                 backendComponent.errorReporter,
-                interactorComponent.executorStateUseCase
+                interactorComponent.executorStateUseCase,
+                backendComponent.shakeItPlayer,
+                backendComponent.ringTonePlayer
         )
     }
     val geoLocationViewModel: GeoLocationViewModel by lazy {
@@ -128,7 +130,9 @@ class PresentationComponent(
     val missedOrderViewModel: MissedOrderViewModel by lazy {
         MissedOrderViewModelImpl(
                 backendComponent.errorReporter,
-                interactorComponent.missedOrderUseCase
+                interactorComponent.missedOrderUseCase,
+                backendComponent.shakeItPlayer,
+                backendComponent.ringTonePlayer
         )
     }
     val orderCostDetailsViewModel: OrderCostDetailsViewModel by lazy {
@@ -140,7 +144,9 @@ class PresentationComponent(
     val cancelledOrderViewModel: CancelledOrderViewModel by lazy {
         CancelledOrderViewModelImpl(
                 backendComponent.errorReporter,
-                interactorComponent.cancelledOrderMessageUseCase
+                interactorComponent.cancelledOrderMessageUseCase,
+                backendComponent.shakeItPlayer,
+                backendComponent.ringTonePlayer
         )
     }
     val orderViewModel: OrderViewModel by lazy {
@@ -157,7 +163,9 @@ class PresentationComponent(
     val preOrderViewModel: PreOrderViewModel by lazy {
         PreOrderViewModelImpl(
                 backendComponent.errorReporter,
-                interactorComponent.preOrderUseCase
+                interactorComponent.preOrderUseCase,
+                backendComponent.shakeItPlayer,
+                backendComponent.ringTonePlayer
         )
     }
     val preOrdersListViewModel: PreOrdersListViewModel by lazy {
@@ -182,7 +190,9 @@ class PresentationComponent(
     val upcomingPreOrderMessagesViewModel: UpcomingPreOrderMessageViewModel by lazy {
         UpcomingPreOrderMessageViewModelImpl(
                 backendComponent.errorReporter,
-                interactorComponent.upcomingPreOrderMessagesUseCase
+                interactorComponent.upcomingPreOrderMessagesUseCase,
+                backendComponent.shakeItPlayer,
+                backendComponent.ringTonePlayer
         )
     }
     val updateMessageViewModel: UpdateMessageViewModel by lazy {
@@ -409,7 +419,7 @@ class PresentationComponent(
                         interactorComponent.executorStateUseCase,
                         interactorComponent.orderConfirmationUseCase,
                         backendComponent.shakeItPlayer,
-                        backendComponent.singleRingTonePlayer,
+                        backendComponent.ringTonePlayer,
                         timeUtils,
                         backendComponent.eventLogger
                 )
@@ -425,7 +435,7 @@ class PresentationComponent(
                         interactorComponent.executorStateUseCase,
                         interactorComponent.orderConfirmationUseCase,
                         backendComponent.shakeItPlayer,
-                        backendComponent.singleRingTonePlayer,
+                        backendComponent.ringTonePlayer,
                         timeUtils,
                         backendComponent.eventLogger
                 )
@@ -441,7 +451,7 @@ class PresentationComponent(
                         interactorComponent.executorStateUseCase,
                         interactorComponent.preOrderBookingUseCase,
                         backendComponent.shakeItPlayer,
-                        backendComponent.singleRingTonePlayer,
+                        backendComponent.ringTonePlayer,
                         timeUtils, null
                 )
         )
@@ -551,7 +561,7 @@ class PresentationComponent(
                         interactorComponent.executorStateUseCase,
                         interactorComponent.selectedPreOrderConfirmationUseCase,
                         backendComponent.shakeItPlayer,
-                        backendComponent.singleRingTonePlayer,
+                        backendComponent.ringTonePlayer,
                         timeUtils, null
                 )
         )
@@ -578,7 +588,7 @@ class PresentationComponent(
                         interactorComponent.executorStateUseCase,
                         interactorComponent.upcomingPreOrderConfirmationUseCase,
                         backendComponent.shakeItPlayer,
-                        backendComponent.singleRingTonePlayer,
+                        backendComponent.ringTonePlayer,
                         timeUtils, null
                 )
         )

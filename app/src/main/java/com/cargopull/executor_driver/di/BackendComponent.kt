@@ -13,6 +13,7 @@ import com.cargopull.executor_driver.backend.analytics.EventLogger
 import com.cargopull.executor_driver.backend.analytics.EventLoggerImpl
 import com.cargopull.executor_driver.backend.geolocation.GeolocationCenter
 import com.cargopull.executor_driver.backend.geolocation.GeolocationCenterImpl
+import com.cargopull.executor_driver.backend.ringtone.RingTonePlayer
 import com.cargopull.executor_driver.backend.ringtone.SingleRingTonePlayer
 import com.cargopull.executor_driver.backend.settings.AppPreferences
 import com.cargopull.executor_driver.backend.settings.AppSettingsService
@@ -36,7 +37,7 @@ import java.util.concurrent.TimeUnit
 
 class BackendComponent(private val appContext: Context) {
 
-    val singleRingTonePlayer: SingleRingTonePlayer by lazy {
+    val ringTonePlayer: RingTonePlayer by lazy {
         SingleRingTonePlayer(appContext)
     }
     val shakeItPlayer: ShakeItPlayer by lazy {
