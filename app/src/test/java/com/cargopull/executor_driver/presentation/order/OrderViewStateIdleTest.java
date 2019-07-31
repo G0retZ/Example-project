@@ -12,6 +12,7 @@ import com.cargopull.executor_driver.entity.OptionNumeric;
 import com.cargopull.executor_driver.entity.Order;
 import com.cargopull.executor_driver.entity.PaymentType;
 import com.cargopull.executor_driver.entity.RoutePoint;
+import com.cargopull.executor_driver.entity.RouteType;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -50,7 +51,7 @@ public class OrderViewStateIdleTest {
   }
 
   @Test
-  public void testActionsWithCommentForCash() {
+  public void testActionsWithCommentForCashInCity() {
     // Дано:
     when(viewActions.isShowCents()).thenReturn(false);
     when(viewActions.getCurrencyFormat()).thenReturn("##,###,### ₽");
@@ -60,6 +61,7 @@ public class OrderViewStateIdleTest {
     when(routePoint.getComment()).thenReturn("a comment");
     when(routePoint2.getAddress()).thenReturn("address 2");
     when(order.getPaymentType()).thenReturn(PaymentType.CASH);
+    when(order.getRouteType()).thenReturn(RouteType.POLYGON);
     when(order.getNextActiveRoutePoint()).thenReturn(routePoint);
     when(order.getDistance()).thenReturn(12239);
     when(order.getEstimatedRouteLength()).thenReturn(31278L);
@@ -82,6 +84,7 @@ public class OrderViewStateIdleTest {
         + "&maptype=roadmap"
         + "&key=AIzaSyBwlubLyqI6z_ivfAWcTCfyTXkoRHTagMk");
     verify(viewActions).setVisible(R.id.paymentTypeSign, false);
+    verify(viewActions).setText(R.id.routeType, R.string.city);
     verify(viewActions).setFormattedText(R.id.distanceText, R.string.km, 12.239d);
     verify(viewActions).setFormattedText(R.id.routeTitleText, R.string.route_distance, 31.278d);
     verify(viewActions).setText(R.id.nextAddressText, "address");
@@ -128,7 +131,7 @@ public class OrderViewStateIdleTest {
   }
 
   @Test
-  public void testActionsWithoutCommentForCash() {
+  public void testActionsWithoutCommentForCashInCity() {
     // Дано:
     when(viewActions.isShowCents()).thenReturn(true);
     when(viewActions.getCurrencyFormat()).thenReturn("##,###,###.## ₽");
@@ -138,6 +141,7 @@ public class OrderViewStateIdleTest {
     when(routePoint.getComment()).thenReturn("");
     when(routePoint2.getAddress()).thenReturn("address 2");
     when(order.getPaymentType()).thenReturn(PaymentType.CASH);
+    when(order.getRouteType()).thenReturn(RouteType.POLYGON);
     when(order.getNextActiveRoutePoint()).thenReturn(routePoint);
     when(order.getDistance()).thenReturn(12239);
     when(order.getEstimatedRouteLength()).thenReturn(31278L);
@@ -167,6 +171,7 @@ public class OrderViewStateIdleTest {
         + "&maptype=roadmap"
         + "&key=AIzaSyBwlubLyqI6z_ivfAWcTCfyTXkoRHTagMk");
     verify(viewActions).setVisible(R.id.paymentTypeSign, false);
+    verify(viewActions).setText(R.id.routeType, R.string.city);
     verify(viewActions).setFormattedText(R.id.distanceText, R.string.km, 12.239d);
     verify(viewActions).setFormattedText(R.id.routeTitleText, R.string.route_distance, 31.278d);
     verify(viewActions).setText(R.id.nextAddressText, "address");
@@ -213,7 +218,7 @@ public class OrderViewStateIdleTest {
   }
 
   @Test
-  public void testActionsWithCommentFreeRideForCash() {
+  public void testActionsWithCommentFreeRideForCashInCity() {
     // Дано:
     when(viewActions.isShowCents()).thenReturn(false);
     when(viewActions.getCurrencyFormat()).thenReturn("##,###,### ₽");
@@ -222,6 +227,7 @@ public class OrderViewStateIdleTest {
     when(routePoint.getLongitude()).thenReturn(10.2341);
     when(routePoint.getComment()).thenReturn("a comment");
     when(order.getPaymentType()).thenReturn(PaymentType.CASH);
+    when(order.getRouteType()).thenReturn(RouteType.POLYGON);
     when(order.getNextActiveRoutePoint()).thenReturn(routePoint);
     when(order.getDistance()).thenReturn(12239);
     when(order.getEstimatedRouteLength()).thenReturn(31278L);
@@ -251,6 +257,7 @@ public class OrderViewStateIdleTest {
         + "&maptype=roadmap"
         + "&key=AIzaSyBwlubLyqI6z_ivfAWcTCfyTXkoRHTagMk");
     verify(viewActions).setVisible(R.id.paymentTypeSign, false);
+    verify(viewActions).setText(R.id.routeType, R.string.city);
     verify(viewActions).setFormattedText(R.id.distanceText, R.string.km, 12.239d);
     verify(viewActions).setFormattedText(R.id.routeTitleText, R.string.route_distance, 31.278d);
     verify(viewActions).setText(R.id.nextAddressText, "address");
@@ -297,7 +304,7 @@ public class OrderViewStateIdleTest {
   }
 
   @Test
-  public void testActionsWithoutCommentFreeRideForCash() {
+  public void testActionsWithoutCommentFreeRideForCashInCity() {
     // Дано:
     when(viewActions.isShowCents()).thenReturn(true);
     when(viewActions.getCurrencyFormat()).thenReturn("##,###,###.## ₽");
@@ -306,6 +313,7 @@ public class OrderViewStateIdleTest {
     when(routePoint.getLongitude()).thenReturn(10.2341);
     when(routePoint.getComment()).thenReturn("");
     when(order.getPaymentType()).thenReturn(PaymentType.CASH);
+    when(order.getRouteType()).thenReturn(RouteType.POLYGON);
     when(order.getRoutePath()).thenReturn(Collections.singletonList(routePoint));
     when(order.getNextActiveRoutePoint()).thenReturn(routePoint);
     when(order.getDistance()).thenReturn(12239);
@@ -335,6 +343,7 @@ public class OrderViewStateIdleTest {
         + "&maptype=roadmap"
         + "&key=AIzaSyBwlubLyqI6z_ivfAWcTCfyTXkoRHTagMk");
     verify(viewActions).setVisible(R.id.paymentTypeSign, false);
+    verify(viewActions).setText(R.id.routeType, R.string.city);
     verify(viewActions).setFormattedText(R.id.distanceText, R.string.km, 12.239d);
     verify(viewActions).setFormattedText(R.id.routeTitleText, R.string.route_distance, 31.278d);
     verify(viewActions).setText(R.id.nextAddressText, "address");
@@ -381,7 +390,7 @@ public class OrderViewStateIdleTest {
   }
 
   @Test
-  public void testActionsWithCommentForCashless() {
+  public void testActionsWithCommentForCashlessInCity() {
     // Дано:
     when(viewActions.isShowCents()).thenReturn(false);
     when(viewActions.getCurrencyFormat()).thenReturn("##,###,### ₽");
@@ -391,6 +400,7 @@ public class OrderViewStateIdleTest {
     when(routePoint.getComment()).thenReturn("a comment");
     when(routePoint2.getAddress()).thenReturn("address 2");
     when(order.getPaymentType()).thenReturn(PaymentType.CONTRACT);
+    when(order.getRouteType()).thenReturn(RouteType.POLYGON);
     when(order.getNextActiveRoutePoint()).thenReturn(routePoint);
     when(order.getDistance()).thenReturn(12239);
     when(order.getEstimatedRouteLength()).thenReturn(31278L);
@@ -413,6 +423,7 @@ public class OrderViewStateIdleTest {
         + "&maptype=roadmap"
         + "&key=AIzaSyBwlubLyqI6z_ivfAWcTCfyTXkoRHTagMk");
     verify(viewActions).setVisible(R.id.paymentTypeSign, true);
+    verify(viewActions).setText(R.id.routeType, R.string.city);
     verify(viewActions).setFormattedText(R.id.distanceText, R.string.km, 12.239d);
     verify(viewActions).setFormattedText(R.id.routeTitleText, R.string.route_distance, 31.278d);
     verify(viewActions).setText(R.id.nextAddressText, "address");
@@ -459,7 +470,7 @@ public class OrderViewStateIdleTest {
   }
 
   @Test
-  public void testActionsWithoutCommentForCashless() {
+  public void testActionsWithoutCommentForCashlessInCity() {
     // Дано:
     when(viewActions.isShowCents()).thenReturn(true);
     when(viewActions.getCurrencyFormat()).thenReturn("##,###,###.## ₽");
@@ -469,6 +480,7 @@ public class OrderViewStateIdleTest {
     when(routePoint.getComment()).thenReturn("");
     when(routePoint2.getAddress()).thenReturn("address 2");
     when(order.getPaymentType()).thenReturn(PaymentType.CONTRACT);
+    when(order.getRouteType()).thenReturn(RouteType.POLYGON);
     when(order.getNextActiveRoutePoint()).thenReturn(routePoint);
     when(order.getDistance()).thenReturn(12239);
     when(order.getEstimatedRouteLength()).thenReturn(31278L);
@@ -498,6 +510,7 @@ public class OrderViewStateIdleTest {
         + "&maptype=roadmap"
         + "&key=AIzaSyBwlubLyqI6z_ivfAWcTCfyTXkoRHTagMk");
     verify(viewActions).setVisible(R.id.paymentTypeSign, true);
+    verify(viewActions).setText(R.id.routeType, R.string.city);
     verify(viewActions).setFormattedText(R.id.distanceText, R.string.km, 12.239d);
     verify(viewActions).setFormattedText(R.id.routeTitleText, R.string.route_distance, 31.278d);
     verify(viewActions).setText(R.id.nextAddressText, "address");
@@ -544,7 +557,7 @@ public class OrderViewStateIdleTest {
   }
 
   @Test
-  public void testActionsWithCommentFreeRideForCashless() {
+  public void testActionsWithCommentFreeRideForCashlessInCity() {
     // Дано:
     when(viewActions.isShowCents()).thenReturn(false);
     when(viewActions.getCurrencyFormat()).thenReturn("##,###,### ₽");
@@ -553,6 +566,7 @@ public class OrderViewStateIdleTest {
     when(routePoint.getLongitude()).thenReturn(10.2341);
     when(routePoint.getComment()).thenReturn("a comment");
     when(order.getPaymentType()).thenReturn(PaymentType.CONTRACT);
+    when(order.getRouteType()).thenReturn(RouteType.POLYGON);
     when(order.getNextActiveRoutePoint()).thenReturn(routePoint);
     when(order.getDistance()).thenReturn(12239);
     when(order.getEstimatedRouteLength()).thenReturn(31278L);
@@ -582,6 +596,7 @@ public class OrderViewStateIdleTest {
         + "&maptype=roadmap"
         + "&key=AIzaSyBwlubLyqI6z_ivfAWcTCfyTXkoRHTagMk");
     verify(viewActions).setVisible(R.id.paymentTypeSign, true);
+    verify(viewActions).setText(R.id.routeType, R.string.city);
     verify(viewActions).setFormattedText(R.id.distanceText, R.string.km, 12.239d);
     verify(viewActions).setFormattedText(R.id.routeTitleText, R.string.route_distance, 31.278d);
     verify(viewActions).setText(R.id.nextAddressText, "address");
@@ -628,7 +643,7 @@ public class OrderViewStateIdleTest {
   }
 
   @Test
-  public void testActionsWithoutCommentFreeRideForCashless() {
+  public void testActionsWithoutCommentFreeRideForCashlessInCity() {
     // Дано:
     when(viewActions.isShowCents()).thenReturn(true);
     when(viewActions.getCurrencyFormat()).thenReturn("##,###,###.## ₽");
@@ -637,6 +652,7 @@ public class OrderViewStateIdleTest {
     when(routePoint.getLongitude()).thenReturn(10.2341);
     when(routePoint.getComment()).thenReturn("");
     when(order.getPaymentType()).thenReturn(PaymentType.CONTRACT);
+    when(order.getRouteType()).thenReturn(RouteType.POLYGON);
     when(order.getRoutePath()).thenReturn(Collections.singletonList(routePoint));
     when(order.getNextActiveRoutePoint()).thenReturn(routePoint);
     when(order.getDistance()).thenReturn(12239);
@@ -666,6 +682,1363 @@ public class OrderViewStateIdleTest {
         + "&maptype=roadmap"
         + "&key=AIzaSyBwlubLyqI6z_ivfAWcTCfyTXkoRHTagMk");
     verify(viewActions).setVisible(R.id.paymentTypeSign, true);
+    verify(viewActions).setText(R.id.routeType, R.string.city);
+    verify(viewActions).setFormattedText(R.id.distanceText, R.string.km, 12.239d);
+    verify(viewActions).setFormattedText(R.id.routeTitleText, R.string.route_distance, 31.278d);
+    verify(viewActions).setText(R.id.nextAddressText, "address");
+    verify(viewActions)
+        .setFormattedText(R.id.openNavigator, R.string.client_location, 5.421, 10.2341);
+    verify(viewActions).setVisible(R.id.nextAddressCommentTitleText, false);
+    verify(viewActions).setVisible(R.id.nextAddressCommentText, false);
+    verify(viewActions).setText(R.id.nextAddressCommentText, "");
+    verify(viewActions).setText(R.id.routePointsCount, "2");
+    verify(viewActions).setText(R.id.lastAddressText, R.string.free_ride);
+    verify(viewActions).isShowCents();
+    verify(viewActions).getCurrencyFormat();
+    DecimalFormat decimalFormat = new DecimalFormat("##,###,###.## ₽");
+    decimalFormat.setMaximumFractionDigits(2);
+    decimalFormat.setMinimumFractionDigits(2);
+    verify(viewActions).setFormattedText(R.id.estimationText, R.string.km_h_m_p, 31.278d, 2, 12,
+        decimalFormat.format(6812.54)
+    );
+    verify(viewActions).setFormattedText(R.id.estimatedPriceText, R.string.price,
+        decimalFormat.format(6812.54)
+    );
+    verify(viewActions).setText(R.id.startDateText,
+        DateTimeFormat.forPattern("d MMMM, EEEE").print(
+            DateTime.now().withMillis(1238403200L).withZone(DateTimeZone.forOffsetHours(3))
+        ));
+    verify(viewActions).setText(R.id.startTimeText,
+        DateTimeFormat.forPattern("HH:mm").print(
+            DateTime.now().withMillis(1238403200L).withZone(DateTimeZone.forOffsetHours(3))
+        ));
+    DateTime dateTime = DateTime.now().withMillis(1238403200L + 7929000L)
+        .withZone(DateTimeZone.forOffsetHours(3));
+    verify(viewActions).setFormattedText(R.id.occupationTimeText, R.string.h_m_d, 2, 12,
+        DateTimeFormat.forPattern("HH:mm").print(dateTime));
+    verify(viewActions).setVisible(R.id.cargoDescTitleText, false);
+    verify(viewActions).setVisible(R.id.cargoDescText, false);
+    verify(viewActions).setText(R.id.cargoDescText, "");
+    verify(viewActions).setVisible(R.id.optionsTitleText, true);
+    verify(viewActions).setVisible(R.id.optionsText, true);
+    verify(viewActions).setText(R.id.optionsText, "bool2\nbool4\nnum1: 3\nnum2: 7");
+    verify(viewActions).setText(R.id.serviceText, "service");
+    verify(viewActions).unblockWithPending("OrderViewState");
+    verify(viewActions).dismissDialog();
+    verifyNoMoreInteractions(viewActions);
+  }
+
+  @Test
+  public void testActionsWithCommentForCashInCountry() {
+    // Дано:
+    when(viewActions.isShowCents()).thenReturn(false);
+    when(viewActions.getCurrencyFormat()).thenReturn("##,###,### ₽");
+    when(routePoint.getAddress()).thenReturn("address");
+    when(routePoint.getLatitude()).thenReturn(5.421);
+    when(routePoint.getLongitude()).thenReturn(10.2341);
+    when(routePoint.getComment()).thenReturn("a comment");
+    when(routePoint2.getAddress()).thenReturn("address 2");
+    when(order.getPaymentType()).thenReturn(PaymentType.CASH);
+    when(order.getRouteType()).thenReturn(RouteType.ORDER_ZONE);
+    when(order.getNextActiveRoutePoint()).thenReturn(routePoint);
+    when(order.getDistance()).thenReturn(12239);
+    when(order.getEstimatedRouteLength()).thenReturn(31278L);
+    when(order.getScheduledStartTime()).thenReturn(1238403200L);
+    when(order.getRoutePath()).thenReturn(Arrays.asList(routePoint, routePoint1, routePoint2));
+    when(order.getEstimatedTime()).thenReturn(7929000L);
+    when(order.getEstimatedPrice()).thenReturn(681250L);
+    when(order.getServiceName()).thenReturn("service");
+    when(order.getComment()).thenReturn("comm");
+    when(order.getOptions()).thenReturn(new ArrayList<>());
+
+    // Действие:
+    viewState.apply(viewActions);
+
+    // Результат:
+    verify(viewActions).setImage(R.id.mapImage, "https://maps.googleapis.com/maps/api/staticmap?"
+        + "center=5.421,10.2341"
+        + "&zoom=16"
+        + "&size=360x200"
+        + "&maptype=roadmap"
+        + "&key=AIzaSyBwlubLyqI6z_ivfAWcTCfyTXkoRHTagMk");
+    verify(viewActions).setVisible(R.id.paymentTypeSign, false);
+    verify(viewActions).setText(R.id.routeType, R.string.country);
+    verify(viewActions).setFormattedText(R.id.distanceText, R.string.km, 12.239d);
+    verify(viewActions).setFormattedText(R.id.routeTitleText, R.string.route_distance, 31.278d);
+    verify(viewActions).setText(R.id.nextAddressText, "address");
+    verify(viewActions)
+        .setFormattedText(R.id.openNavigator, R.string.client_location, 5.421, 10.2341);
+    verify(viewActions).setVisible(R.id.nextAddressCommentTitleText, true);
+    verify(viewActions).setVisible(R.id.nextAddressCommentText, true);
+    verify(viewActions).setText(R.id.nextAddressCommentText, "a comment");
+    verify(viewActions).setText(R.id.routePointsCount, "3");
+    verify(viewActions).setText(R.id.lastAddressText, "address 2");
+    verify(viewActions).isShowCents();
+    verify(viewActions).getCurrencyFormat();
+    DecimalFormat decimalFormat = new DecimalFormat("##,###,### ₽");
+    decimalFormat.setMaximumFractionDigits(0);
+    decimalFormat.setMinimumFractionDigits(0);
+    verify(viewActions).setFormattedText(R.id.estimationText, R.string.km_h_m_p, 31.278d, 2, 12,
+        decimalFormat.format(6813)
+    );
+    verify(viewActions).setFormattedText(R.id.estimatedPriceText, R.string.price,
+        decimalFormat.format(6813)
+    );
+    verify(viewActions).setText(R.id.startDateText,
+        DateTimeFormat.forPattern("d MMMM, EEEE").print(
+            DateTime.now().withMillis(1238403200L).withZone(DateTimeZone.forOffsetHours(3))
+        ));
+    verify(viewActions).setText(R.id.startTimeText,
+        DateTimeFormat.forPattern("HH:mm").print(
+            DateTime.now().withMillis(1238403200L).withZone(DateTimeZone.forOffsetHours(3))
+        ));
+    DateTime dateTime = DateTime.now().withMillis(1238403200L + 7929000L)
+        .withZone(DateTimeZone.forOffsetHours(3));
+    verify(viewActions).setFormattedText(R.id.occupationTimeText, R.string.h_m_d, 2, 12,
+        DateTimeFormat.forPattern("HH:mm").print(dateTime));
+    verify(viewActions).setVisible(R.id.cargoDescTitleText, true);
+    verify(viewActions).setVisible(R.id.cargoDescText, true);
+    verify(viewActions).setText(R.id.cargoDescText, "comm");
+    verify(viewActions).setVisible(R.id.optionsTitleText, false);
+    verify(viewActions).setVisible(R.id.optionsText, false);
+    verify(viewActions).setText(R.id.optionsText, "");
+    verify(viewActions).setText(R.id.serviceText, "service");
+    verify(viewActions).unblockWithPending("OrderViewState");
+    verify(viewActions).dismissDialog();
+    verifyNoMoreInteractions(viewActions);
+  }
+
+  @Test
+  public void testActionsWithoutCommentForCashInCountry() {
+    // Дано:
+    when(viewActions.isShowCents()).thenReturn(true);
+    when(viewActions.getCurrencyFormat()).thenReturn("##,###,###.## ₽");
+    when(routePoint.getAddress()).thenReturn("address");
+    when(routePoint.getLatitude()).thenReturn(5.421);
+    when(routePoint.getLongitude()).thenReturn(10.2341);
+    when(routePoint.getComment()).thenReturn("");
+    when(routePoint2.getAddress()).thenReturn("address 2");
+    when(order.getPaymentType()).thenReturn(PaymentType.CASH);
+    when(order.getRouteType()).thenReturn(RouteType.ORDER_ZONE);
+    when(order.getNextActiveRoutePoint()).thenReturn(routePoint);
+    when(order.getDistance()).thenReturn(12239);
+    when(order.getEstimatedRouteLength()).thenReturn(31278L);
+    when(order.getScheduledStartTime()).thenReturn(1238403200L);
+    when(order.getRoutePath()).thenReturn(Arrays.asList(routePoint, routePoint1, routePoint2));
+    when(order.getEstimatedTime()).thenReturn(7929000L);
+    when(order.getEstimatedPrice()).thenReturn(681250L);
+    when(order.getServiceName()).thenReturn("service");
+    when(order.getComment()).thenReturn("");
+    when(order.getOptions()).thenReturn(new ArrayList<>(Arrays.asList(
+        new OptionBoolean(0, "bool1", "bd", false),
+        new OptionBoolean(1, "bool2", "bd", true),
+        new OptionBoolean(2, "bool3", "bd", false),
+        new OptionBoolean(3, "bool4", "bd", true),
+        new OptionNumeric(4, "num1", "nd", 3, 0, 5),
+        new OptionNumeric(5, "num2", "nd", 7, 0, 5)
+    )));
+
+    // Действие:
+    viewState.apply(viewActions);
+
+    // Результат:
+    verify(viewActions).setImage(R.id.mapImage, "https://maps.googleapis.com/maps/api/staticmap?"
+        + "center=5.421,10.2341"
+        + "&zoom=16"
+        + "&size=360x200"
+        + "&maptype=roadmap"
+        + "&key=AIzaSyBwlubLyqI6z_ivfAWcTCfyTXkoRHTagMk");
+    verify(viewActions).setVisible(R.id.paymentTypeSign, false);
+    verify(viewActions).setText(R.id.routeType, R.string.country);
+    verify(viewActions).setFormattedText(R.id.distanceText, R.string.km, 12.239d);
+    verify(viewActions).setFormattedText(R.id.routeTitleText, R.string.route_distance, 31.278d);
+    verify(viewActions).setText(R.id.nextAddressText, "address");
+    verify(viewActions)
+        .setFormattedText(R.id.openNavigator, R.string.client_location, 5.421, 10.2341);
+    verify(viewActions).setVisible(R.id.nextAddressCommentTitleText, false);
+    verify(viewActions).setVisible(R.id.nextAddressCommentText, false);
+    verify(viewActions).setText(R.id.nextAddressCommentText, "");
+    verify(viewActions).setText(R.id.routePointsCount, "3");
+    verify(viewActions).setText(R.id.lastAddressText, "address 2");
+    verify(viewActions).isShowCents();
+    verify(viewActions).getCurrencyFormat();
+    DecimalFormat decimalFormat = new DecimalFormat("##,###,###.## ₽");
+    decimalFormat.setMaximumFractionDigits(2);
+    decimalFormat.setMinimumFractionDigits(2);
+    verify(viewActions).setFormattedText(R.id.estimationText, R.string.km_h_m_p, 31.278d, 2, 12,
+        decimalFormat.format(6812.50)
+    );
+    verify(viewActions).setFormattedText(R.id.estimatedPriceText, R.string.price,
+        decimalFormat.format(6812.50)
+    );
+    verify(viewActions).setText(R.id.startDateText,
+        DateTimeFormat.forPattern("d MMMM, EEEE").print(
+            DateTime.now().withMillis(1238403200L).withZone(DateTimeZone.forOffsetHours(3))
+        ));
+    verify(viewActions).setText(R.id.startTimeText,
+        DateTimeFormat.forPattern("HH:mm").print(
+            DateTime.now().withMillis(1238403200L).withZone(DateTimeZone.forOffsetHours(3))
+        ));
+    DateTime dateTime = DateTime.now().withMillis(1238403200L + 7929000L)
+        .withZone(DateTimeZone.forOffsetHours(3));
+    verify(viewActions).setFormattedText(R.id.occupationTimeText, R.string.h_m_d, 2, 12,
+        DateTimeFormat.forPattern("HH:mm").print(dateTime));
+    verify(viewActions).setVisible(R.id.cargoDescTitleText, false);
+    verify(viewActions).setVisible(R.id.cargoDescText, false);
+    verify(viewActions).setText(R.id.cargoDescText, "");
+    verify(viewActions).setVisible(R.id.optionsTitleText, true);
+    verify(viewActions).setVisible(R.id.optionsText, true);
+    verify(viewActions).setText(R.id.optionsText, "bool2\nbool4\nnum1: 3\nnum2: 7");
+    verify(viewActions).setText(R.id.serviceText, "service");
+    verify(viewActions).unblockWithPending("OrderViewState");
+    verify(viewActions).dismissDialog();
+    verifyNoMoreInteractions(viewActions);
+  }
+
+  @Test
+  public void testActionsWithCommentFreeRideForCashInCountry() {
+    // Дано:
+    when(viewActions.isShowCents()).thenReturn(false);
+    when(viewActions.getCurrencyFormat()).thenReturn("##,###,### ₽");
+    when(routePoint.getAddress()).thenReturn("address");
+    when(routePoint.getLatitude()).thenReturn(5.421);
+    when(routePoint.getLongitude()).thenReturn(10.2341);
+    when(routePoint.getComment()).thenReturn("a comment");
+    when(order.getPaymentType()).thenReturn(PaymentType.CASH);
+    when(order.getRouteType()).thenReturn(RouteType.ORDER_ZONE);
+    when(order.getNextActiveRoutePoint()).thenReturn(routePoint);
+    when(order.getDistance()).thenReturn(12239);
+    when(order.getEstimatedRouteLength()).thenReturn(31278L);
+    when(order.getScheduledStartTime()).thenReturn(1238403200L);
+    when(order.getRoutePath()).thenReturn(Collections.singletonList(routePoint));
+    when(order.getEstimatedTime()).thenReturn(7929000L);
+    when(order.getEstimatedPrice()).thenReturn(681254L);
+    when(order.getServiceName()).thenReturn("service");
+    when(order.getComment()).thenReturn("comm");
+    when(order.getOptions()).thenReturn(new ArrayList<>(Arrays.asList(
+        new OptionBoolean(0, "bool1", "bd", false),
+        new OptionBoolean(1, "bool2", "bd", true),
+        new OptionBoolean(2, "bool3", "bd", false),
+        new OptionBoolean(3, "bool4", "bd", true),
+        new OptionNumeric(4, "num1", "nd", 3, 0, 5),
+        new OptionNumeric(5, "num2", "nd", 7, 0, 5)
+    )));
+
+    // Действие:
+    viewState.apply(viewActions);
+
+    // Результат:
+    verify(viewActions).setImage(R.id.mapImage, "https://maps.googleapis.com/maps/api/staticmap?"
+        + "center=5.421,10.2341"
+        + "&zoom=16"
+        + "&size=360x200"
+        + "&maptype=roadmap"
+        + "&key=AIzaSyBwlubLyqI6z_ivfAWcTCfyTXkoRHTagMk");
+    verify(viewActions).setVisible(R.id.paymentTypeSign, false);
+    verify(viewActions).setText(R.id.routeType, R.string.country);
+    verify(viewActions).setFormattedText(R.id.distanceText, R.string.km, 12.239d);
+    verify(viewActions).setFormattedText(R.id.routeTitleText, R.string.route_distance, 31.278d);
+    verify(viewActions).setText(R.id.nextAddressText, "address");
+    verify(viewActions)
+        .setFormattedText(R.id.openNavigator, R.string.client_location, 5.421, 10.2341);
+    verify(viewActions).setVisible(R.id.nextAddressCommentTitleText, true);
+    verify(viewActions).setVisible(R.id.nextAddressCommentText, true);
+    verify(viewActions).setText(R.id.nextAddressCommentText, "a comment");
+    verify(viewActions).setText(R.id.routePointsCount, "2");
+    verify(viewActions).setText(R.id.lastAddressText, R.string.free_ride);
+    verify(viewActions).isShowCents();
+    verify(viewActions).getCurrencyFormat();
+    DecimalFormat decimalFormat = new DecimalFormat("##,###,### ₽");
+    decimalFormat.setMaximumFractionDigits(0);
+    decimalFormat.setMinimumFractionDigits(0);
+    verify(viewActions).setFormattedText(R.id.estimationText, R.string.km_h_m_p, 31.278d, 2, 12,
+        decimalFormat.format(6813)
+    );
+    verify(viewActions).setFormattedText(R.id.estimatedPriceText, R.string.price,
+        decimalFormat.format(6813)
+    );
+    verify(viewActions).setText(R.id.startDateText,
+        DateTimeFormat.forPattern("d MMMM, EEEE").print(
+            DateTime.now().withMillis(1238403200L).withZone(DateTimeZone.forOffsetHours(3))
+        ));
+    verify(viewActions).setText(R.id.startTimeText,
+        DateTimeFormat.forPattern("HH:mm").print(
+            DateTime.now().withMillis(1238403200L).withZone(DateTimeZone.forOffsetHours(3))
+        ));
+    DateTime dateTime = DateTime.now().withMillis(1238403200L + 7929000L)
+        .withZone(DateTimeZone.forOffsetHours(3));
+    verify(viewActions).setFormattedText(R.id.occupationTimeText, R.string.h_m_d, 2, 12,
+        DateTimeFormat.forPattern("HH:mm").print(dateTime));
+    verify(viewActions).setVisible(R.id.cargoDescTitleText, true);
+    verify(viewActions).setVisible(R.id.cargoDescText, true);
+    verify(viewActions).setText(R.id.cargoDescText, "comm");
+    verify(viewActions).setVisible(R.id.optionsTitleText, true);
+    verify(viewActions).setVisible(R.id.optionsText, true);
+    verify(viewActions).setText(R.id.optionsText, "bool2\nbool4\nnum1: 3\nnum2: 7");
+    verify(viewActions).setText(R.id.serviceText, "service");
+    verify(viewActions).unblockWithPending("OrderViewState");
+    verify(viewActions).dismissDialog();
+    verifyNoMoreInteractions(viewActions);
+  }
+
+  @Test
+  public void testActionsWithoutCommentFreeRideForCashInCountry() {
+    // Дано:
+    when(viewActions.isShowCents()).thenReturn(true);
+    when(viewActions.getCurrencyFormat()).thenReturn("##,###,###.## ₽");
+    when(routePoint.getAddress()).thenReturn("address");
+    when(routePoint.getLatitude()).thenReturn(5.421);
+    when(routePoint.getLongitude()).thenReturn(10.2341);
+    when(routePoint.getComment()).thenReturn("");
+    when(order.getPaymentType()).thenReturn(PaymentType.CASH);
+    when(order.getRouteType()).thenReturn(RouteType.ORDER_ZONE);
+    when(order.getRoutePath()).thenReturn(Collections.singletonList(routePoint));
+    when(order.getNextActiveRoutePoint()).thenReturn(routePoint);
+    when(order.getDistance()).thenReturn(12239);
+    when(order.getEstimatedRouteLength()).thenReturn(31278L);
+    when(order.getScheduledStartTime()).thenReturn(1238403200L);
+    when(order.getEstimatedTime()).thenReturn(7929000L);
+    when(order.getEstimatedPrice()).thenReturn(681254L);
+    when(order.getServiceName()).thenReturn("service");
+    when(order.getComment()).thenReturn("");
+    when(order.getOptions()).thenReturn(new ArrayList<>(Arrays.asList(
+        new OptionBoolean(0, "bool1", "bd", false),
+        new OptionBoolean(1, "bool2", "bd", true),
+        new OptionBoolean(2, "bool3", "bd", false),
+        new OptionBoolean(3, "bool4", "bd", true),
+        new OptionNumeric(4, "num1", "nd", 3, 0, 5),
+        new OptionNumeric(5, "num2", "nd", 7, 0, 5)
+    )));
+
+    // Действие:
+    viewState.apply(viewActions);
+
+    // Результат:
+    verify(viewActions).setImage(R.id.mapImage, "https://maps.googleapis.com/maps/api/staticmap?"
+        + "center=5.421,10.2341"
+        + "&zoom=16"
+        + "&size=360x200"
+        + "&maptype=roadmap"
+        + "&key=AIzaSyBwlubLyqI6z_ivfAWcTCfyTXkoRHTagMk");
+    verify(viewActions).setVisible(R.id.paymentTypeSign, false);
+    verify(viewActions).setText(R.id.routeType, R.string.country);
+    verify(viewActions).setFormattedText(R.id.distanceText, R.string.km, 12.239d);
+    verify(viewActions).setFormattedText(R.id.routeTitleText, R.string.route_distance, 31.278d);
+    verify(viewActions).setText(R.id.nextAddressText, "address");
+    verify(viewActions)
+        .setFormattedText(R.id.openNavigator, R.string.client_location, 5.421, 10.2341);
+    verify(viewActions).setVisible(R.id.nextAddressCommentTitleText, false);
+    verify(viewActions).setVisible(R.id.nextAddressCommentText, false);
+    verify(viewActions).setText(R.id.nextAddressCommentText, "");
+    verify(viewActions).setText(R.id.routePointsCount, "2");
+    verify(viewActions).setText(R.id.lastAddressText, R.string.free_ride);
+    verify(viewActions).isShowCents();
+    verify(viewActions).getCurrencyFormat();
+    DecimalFormat decimalFormat = new DecimalFormat("##,###,###.## ₽");
+    decimalFormat.setMaximumFractionDigits(2);
+    decimalFormat.setMinimumFractionDigits(2);
+    verify(viewActions).setFormattedText(R.id.estimationText, R.string.km_h_m_p, 31.278d, 2, 12,
+        decimalFormat.format(6812.54)
+    );
+    verify(viewActions).setFormattedText(R.id.estimatedPriceText, R.string.price,
+        decimalFormat.format(6812.54)
+    );
+    verify(viewActions).setText(R.id.startDateText,
+        DateTimeFormat.forPattern("d MMMM, EEEE").print(
+            DateTime.now().withMillis(1238403200L).withZone(DateTimeZone.forOffsetHours(3))
+        ));
+    verify(viewActions).setText(R.id.startTimeText,
+        DateTimeFormat.forPattern("HH:mm").print(
+            DateTime.now().withMillis(1238403200L).withZone(DateTimeZone.forOffsetHours(3))
+        ));
+    DateTime dateTime = DateTime.now().withMillis(1238403200L + 7929000L)
+        .withZone(DateTimeZone.forOffsetHours(3));
+    verify(viewActions).setFormattedText(R.id.occupationTimeText, R.string.h_m_d, 2, 12,
+        DateTimeFormat.forPattern("HH:mm").print(dateTime));
+    verify(viewActions).setVisible(R.id.cargoDescTitleText, false);
+    verify(viewActions).setVisible(R.id.cargoDescText, false);
+    verify(viewActions).setText(R.id.cargoDescText, "");
+    verify(viewActions).setVisible(R.id.optionsTitleText, true);
+    verify(viewActions).setVisible(R.id.optionsText, true);
+    verify(viewActions).setText(R.id.optionsText, "bool2\nbool4\nnum1: 3\nnum2: 7");
+    verify(viewActions).setText(R.id.serviceText, "service");
+    verify(viewActions).unblockWithPending("OrderViewState");
+    verify(viewActions).dismissDialog();
+    verifyNoMoreInteractions(viewActions);
+  }
+
+  @Test
+  public void testActionsWithCommentForCashlessInCountry() {
+    // Дано:
+    when(viewActions.isShowCents()).thenReturn(false);
+    when(viewActions.getCurrencyFormat()).thenReturn("##,###,### ₽");
+    when(routePoint.getAddress()).thenReturn("address");
+    when(routePoint.getLatitude()).thenReturn(5.421);
+    when(routePoint.getLongitude()).thenReturn(10.2341);
+    when(routePoint.getComment()).thenReturn("a comment");
+    when(routePoint2.getAddress()).thenReturn("address 2");
+    when(order.getPaymentType()).thenReturn(PaymentType.CONTRACT);
+    when(order.getRouteType()).thenReturn(RouteType.ORDER_ZONE);
+    when(order.getNextActiveRoutePoint()).thenReturn(routePoint);
+    when(order.getDistance()).thenReturn(12239);
+    when(order.getEstimatedRouteLength()).thenReturn(31278L);
+    when(order.getScheduledStartTime()).thenReturn(1238403200L);
+    when(order.getRoutePath()).thenReturn(Arrays.asList(routePoint, routePoint1, routePoint2));
+    when(order.getEstimatedTime()).thenReturn(7929000L);
+    when(order.getEstimatedPrice()).thenReturn(681250L);
+    when(order.getServiceName()).thenReturn("service");
+    when(order.getComment()).thenReturn("comm");
+    when(order.getOptions()).thenReturn(new ArrayList<>());
+
+    // Действие:
+    viewState.apply(viewActions);
+
+    // Результат:
+    verify(viewActions).setImage(R.id.mapImage, "https://maps.googleapis.com/maps/api/staticmap?"
+        + "center=5.421,10.2341"
+        + "&zoom=16"
+        + "&size=360x200"
+        + "&maptype=roadmap"
+        + "&key=AIzaSyBwlubLyqI6z_ivfAWcTCfyTXkoRHTagMk");
+    verify(viewActions).setVisible(R.id.paymentTypeSign, true);
+    verify(viewActions).setText(R.id.routeType, R.string.country);
+    verify(viewActions).setFormattedText(R.id.distanceText, R.string.km, 12.239d);
+    verify(viewActions).setFormattedText(R.id.routeTitleText, R.string.route_distance, 31.278d);
+    verify(viewActions).setText(R.id.nextAddressText, "address");
+    verify(viewActions)
+        .setFormattedText(R.id.openNavigator, R.string.client_location, 5.421, 10.2341);
+    verify(viewActions).setVisible(R.id.nextAddressCommentTitleText, true);
+    verify(viewActions).setVisible(R.id.nextAddressCommentText, true);
+    verify(viewActions).setText(R.id.nextAddressCommentText, "a comment");
+    verify(viewActions).setText(R.id.routePointsCount, "3");
+    verify(viewActions).setText(R.id.lastAddressText, "address 2");
+    verify(viewActions).isShowCents();
+    verify(viewActions).getCurrencyFormat();
+    DecimalFormat decimalFormat = new DecimalFormat("##,###,### ₽");
+    decimalFormat.setMaximumFractionDigits(0);
+    decimalFormat.setMinimumFractionDigits(0);
+    verify(viewActions).setFormattedText(R.id.estimationText, R.string.km_h_m_p, 31.278d, 2, 12,
+        decimalFormat.format(6813)
+    );
+    verify(viewActions).setFormattedText(R.id.estimatedPriceText, R.string.price,
+        decimalFormat.format(6813)
+    );
+    verify(viewActions).setText(R.id.startDateText,
+        DateTimeFormat.forPattern("d MMMM, EEEE").print(
+            DateTime.now().withMillis(1238403200L).withZone(DateTimeZone.forOffsetHours(3))
+        ));
+    verify(viewActions).setText(R.id.startTimeText,
+        DateTimeFormat.forPattern("HH:mm").print(
+            DateTime.now().withMillis(1238403200L).withZone(DateTimeZone.forOffsetHours(3))
+        ));
+    DateTime dateTime = DateTime.now().withMillis(1238403200L + 7929000L)
+        .withZone(DateTimeZone.forOffsetHours(3));
+    verify(viewActions).setFormattedText(R.id.occupationTimeText, R.string.h_m_d, 2, 12,
+        DateTimeFormat.forPattern("HH:mm").print(dateTime));
+    verify(viewActions).setVisible(R.id.cargoDescTitleText, true);
+    verify(viewActions).setVisible(R.id.cargoDescText, true);
+    verify(viewActions).setText(R.id.cargoDescText, "comm");
+    verify(viewActions).setVisible(R.id.optionsTitleText, false);
+    verify(viewActions).setVisible(R.id.optionsText, false);
+    verify(viewActions).setText(R.id.optionsText, "");
+    verify(viewActions).setText(R.id.serviceText, "service");
+    verify(viewActions).unblockWithPending("OrderViewState");
+    verify(viewActions).dismissDialog();
+    verifyNoMoreInteractions(viewActions);
+  }
+
+  @Test
+  public void testActionsWithoutCommentForCashlessInCountry() {
+    // Дано:
+    when(viewActions.isShowCents()).thenReturn(true);
+    when(viewActions.getCurrencyFormat()).thenReturn("##,###,###.## ₽");
+    when(routePoint.getAddress()).thenReturn("address");
+    when(routePoint.getLatitude()).thenReturn(5.421);
+    when(routePoint.getLongitude()).thenReturn(10.2341);
+    when(routePoint.getComment()).thenReturn("");
+    when(routePoint2.getAddress()).thenReturn("address 2");
+    when(order.getPaymentType()).thenReturn(PaymentType.CONTRACT);
+    when(order.getRouteType()).thenReturn(RouteType.ORDER_ZONE);
+    when(order.getNextActiveRoutePoint()).thenReturn(routePoint);
+    when(order.getDistance()).thenReturn(12239);
+    when(order.getEstimatedRouteLength()).thenReturn(31278L);
+    when(order.getScheduledStartTime()).thenReturn(1238403200L);
+    when(order.getRoutePath()).thenReturn(Arrays.asList(routePoint, routePoint1, routePoint2));
+    when(order.getEstimatedTime()).thenReturn(7929000L);
+    when(order.getEstimatedPrice()).thenReturn(681250L);
+    when(order.getServiceName()).thenReturn("service");
+    when(order.getComment()).thenReturn("");
+    when(order.getOptions()).thenReturn(new ArrayList<>(Arrays.asList(
+        new OptionBoolean(0, "bool1", "bd", false),
+        new OptionBoolean(1, "bool2", "bd", true),
+        new OptionBoolean(2, "bool3", "bd", false),
+        new OptionBoolean(3, "bool4", "bd", true),
+        new OptionNumeric(4, "num1", "nd", 3, 0, 5),
+        new OptionNumeric(5, "num2", "nd", 7, 0, 5)
+    )));
+
+    // Действие:
+    viewState.apply(viewActions);
+
+    // Результат:
+    verify(viewActions).setImage(R.id.mapImage, "https://maps.googleapis.com/maps/api/staticmap?"
+        + "center=5.421,10.2341"
+        + "&zoom=16"
+        + "&size=360x200"
+        + "&maptype=roadmap"
+        + "&key=AIzaSyBwlubLyqI6z_ivfAWcTCfyTXkoRHTagMk");
+    verify(viewActions).setVisible(R.id.paymentTypeSign, true);
+    verify(viewActions).setText(R.id.routeType, R.string.country);
+    verify(viewActions).setFormattedText(R.id.distanceText, R.string.km, 12.239d);
+    verify(viewActions).setFormattedText(R.id.routeTitleText, R.string.route_distance, 31.278d);
+    verify(viewActions).setText(R.id.nextAddressText, "address");
+    verify(viewActions)
+        .setFormattedText(R.id.openNavigator, R.string.client_location, 5.421, 10.2341);
+    verify(viewActions).setVisible(R.id.nextAddressCommentTitleText, false);
+    verify(viewActions).setVisible(R.id.nextAddressCommentText, false);
+    verify(viewActions).setText(R.id.nextAddressCommentText, "");
+    verify(viewActions).setText(R.id.routePointsCount, "3");
+    verify(viewActions).setText(R.id.lastAddressText, "address 2");
+    verify(viewActions).isShowCents();
+    verify(viewActions).getCurrencyFormat();
+    DecimalFormat decimalFormat = new DecimalFormat("##,###,###.## ₽");
+    decimalFormat.setMaximumFractionDigits(2);
+    decimalFormat.setMinimumFractionDigits(2);
+    verify(viewActions).setFormattedText(R.id.estimationText, R.string.km_h_m_p, 31.278d, 2, 12,
+        decimalFormat.format(6812.50)
+    );
+    verify(viewActions).setFormattedText(R.id.estimatedPriceText, R.string.price,
+        decimalFormat.format(6812.50)
+    );
+    verify(viewActions).setText(R.id.startDateText,
+        DateTimeFormat.forPattern("d MMMM, EEEE").print(
+            DateTime.now().withMillis(1238403200L).withZone(DateTimeZone.forOffsetHours(3))
+        ));
+    verify(viewActions).setText(R.id.startTimeText,
+        DateTimeFormat.forPattern("HH:mm").print(
+            DateTime.now().withMillis(1238403200L).withZone(DateTimeZone.forOffsetHours(3))
+        ));
+    DateTime dateTime = DateTime.now().withMillis(1238403200L + 7929000L)
+        .withZone(DateTimeZone.forOffsetHours(3));
+    verify(viewActions).setFormattedText(R.id.occupationTimeText, R.string.h_m_d, 2, 12,
+        DateTimeFormat.forPattern("HH:mm").print(dateTime));
+    verify(viewActions).setVisible(R.id.cargoDescTitleText, false);
+    verify(viewActions).setVisible(R.id.cargoDescText, false);
+    verify(viewActions).setText(R.id.cargoDescText, "");
+    verify(viewActions).setVisible(R.id.optionsTitleText, true);
+    verify(viewActions).setVisible(R.id.optionsText, true);
+    verify(viewActions).setText(R.id.optionsText, "bool2\nbool4\nnum1: 3\nnum2: 7");
+    verify(viewActions).setText(R.id.serviceText, "service");
+    verify(viewActions).unblockWithPending("OrderViewState");
+    verify(viewActions).dismissDialog();
+    verifyNoMoreInteractions(viewActions);
+  }
+
+  @Test
+  public void testActionsWithCommentFreeRideForCashlessInCountry() {
+    // Дано:
+    when(viewActions.isShowCents()).thenReturn(false);
+    when(viewActions.getCurrencyFormat()).thenReturn("##,###,### ₽");
+    when(routePoint.getAddress()).thenReturn("address");
+    when(routePoint.getLatitude()).thenReturn(5.421);
+    when(routePoint.getLongitude()).thenReturn(10.2341);
+    when(routePoint.getComment()).thenReturn("a comment");
+    when(order.getPaymentType()).thenReturn(PaymentType.CONTRACT);
+    when(order.getRouteType()).thenReturn(RouteType.ORDER_ZONE);
+    when(order.getNextActiveRoutePoint()).thenReturn(routePoint);
+    when(order.getDistance()).thenReturn(12239);
+    when(order.getEstimatedRouteLength()).thenReturn(31278L);
+    when(order.getScheduledStartTime()).thenReturn(1238403200L);
+    when(order.getRoutePath()).thenReturn(Collections.singletonList(routePoint));
+    when(order.getEstimatedTime()).thenReturn(7929000L);
+    when(order.getEstimatedPrice()).thenReturn(681254L);
+    when(order.getServiceName()).thenReturn("service");
+    when(order.getComment()).thenReturn("comm");
+    when(order.getOptions()).thenReturn(new ArrayList<>(Arrays.asList(
+        new OptionBoolean(0, "bool1", "bd", false),
+        new OptionBoolean(1, "bool2", "bd", true),
+        new OptionBoolean(2, "bool3", "bd", false),
+        new OptionBoolean(3, "bool4", "bd", true),
+        new OptionNumeric(4, "num1", "nd", 3, 0, 5),
+        new OptionNumeric(5, "num2", "nd", 7, 0, 5)
+    )));
+
+    // Действие:
+    viewState.apply(viewActions);
+
+    // Результат:
+    verify(viewActions).setImage(R.id.mapImage, "https://maps.googleapis.com/maps/api/staticmap?"
+        + "center=5.421,10.2341"
+        + "&zoom=16"
+        + "&size=360x200"
+        + "&maptype=roadmap"
+        + "&key=AIzaSyBwlubLyqI6z_ivfAWcTCfyTXkoRHTagMk");
+    verify(viewActions).setVisible(R.id.paymentTypeSign, true);
+    verify(viewActions).setText(R.id.routeType, R.string.country);
+    verify(viewActions).setFormattedText(R.id.distanceText, R.string.km, 12.239d);
+    verify(viewActions).setFormattedText(R.id.routeTitleText, R.string.route_distance, 31.278d);
+    verify(viewActions).setText(R.id.nextAddressText, "address");
+    verify(viewActions)
+        .setFormattedText(R.id.openNavigator, R.string.client_location, 5.421, 10.2341);
+    verify(viewActions).setVisible(R.id.nextAddressCommentTitleText, true);
+    verify(viewActions).setVisible(R.id.nextAddressCommentText, true);
+    verify(viewActions).setText(R.id.nextAddressCommentText, "a comment");
+    verify(viewActions).setText(R.id.routePointsCount, "2");
+    verify(viewActions).setText(R.id.lastAddressText, R.string.free_ride);
+    verify(viewActions).isShowCents();
+    verify(viewActions).getCurrencyFormat();
+    DecimalFormat decimalFormat = new DecimalFormat("##,###,### ₽");
+    decimalFormat.setMaximumFractionDigits(0);
+    decimalFormat.setMinimumFractionDigits(0);
+    verify(viewActions).setFormattedText(R.id.estimationText, R.string.km_h_m_p, 31.278d, 2, 12,
+        decimalFormat.format(6813)
+    );
+    verify(viewActions).setFormattedText(R.id.estimatedPriceText, R.string.price,
+        decimalFormat.format(6813)
+    );
+    verify(viewActions).setText(R.id.startDateText,
+        DateTimeFormat.forPattern("d MMMM, EEEE").print(
+            DateTime.now().withMillis(1238403200L).withZone(DateTimeZone.forOffsetHours(3))
+        ));
+    verify(viewActions).setText(R.id.startTimeText,
+        DateTimeFormat.forPattern("HH:mm").print(
+            DateTime.now().withMillis(1238403200L).withZone(DateTimeZone.forOffsetHours(3))
+        ));
+    DateTime dateTime = DateTime.now().withMillis(1238403200L + 7929000L)
+        .withZone(DateTimeZone.forOffsetHours(3));
+    verify(viewActions).setFormattedText(R.id.occupationTimeText, R.string.h_m_d, 2, 12,
+        DateTimeFormat.forPattern("HH:mm").print(dateTime));
+    verify(viewActions).setVisible(R.id.cargoDescTitleText, true);
+    verify(viewActions).setVisible(R.id.cargoDescText, true);
+    verify(viewActions).setText(R.id.cargoDescText, "comm");
+    verify(viewActions).setVisible(R.id.optionsTitleText, true);
+    verify(viewActions).setVisible(R.id.optionsText, true);
+    verify(viewActions).setText(R.id.optionsText, "bool2\nbool4\nnum1: 3\nnum2: 7");
+    verify(viewActions).setText(R.id.serviceText, "service");
+    verify(viewActions).unblockWithPending("OrderViewState");
+    verify(viewActions).dismissDialog();
+    verifyNoMoreInteractions(viewActions);
+  }
+
+  @Test
+  public void testActionsWithoutCommentFreeRideForCashlessInCountry() {
+    // Дано:
+    when(viewActions.isShowCents()).thenReturn(true);
+    when(viewActions.getCurrencyFormat()).thenReturn("##,###,###.## ₽");
+    when(routePoint.getAddress()).thenReturn("address");
+    when(routePoint.getLatitude()).thenReturn(5.421);
+    when(routePoint.getLongitude()).thenReturn(10.2341);
+    when(routePoint.getComment()).thenReturn("");
+    when(order.getPaymentType()).thenReturn(PaymentType.CONTRACT);
+    when(order.getRouteType()).thenReturn(RouteType.ORDER_ZONE);
+    when(order.getRoutePath()).thenReturn(Collections.singletonList(routePoint));
+    when(order.getNextActiveRoutePoint()).thenReturn(routePoint);
+    when(order.getDistance()).thenReturn(12239);
+    when(order.getEstimatedRouteLength()).thenReturn(31278L);
+    when(order.getScheduledStartTime()).thenReturn(1238403200L);
+    when(order.getEstimatedTime()).thenReturn(7929000L);
+    when(order.getEstimatedPrice()).thenReturn(681254L);
+    when(order.getServiceName()).thenReturn("service");
+    when(order.getComment()).thenReturn("");
+    when(order.getOptions()).thenReturn(new ArrayList<>(Arrays.asList(
+        new OptionBoolean(0, "bool1", "bd", false),
+        new OptionBoolean(1, "bool2", "bd", true),
+        new OptionBoolean(2, "bool3", "bd", false),
+        new OptionBoolean(3, "bool4", "bd", true),
+        new OptionNumeric(4, "num1", "nd", 3, 0, 5),
+        new OptionNumeric(5, "num2", "nd", 7, 0, 5)
+    )));
+
+    // Действие:
+    viewState.apply(viewActions);
+
+    // Результат:
+    verify(viewActions).setImage(R.id.mapImage, "https://maps.googleapis.com/maps/api/staticmap?"
+        + "center=5.421,10.2341"
+        + "&zoom=16"
+        + "&size=360x200"
+        + "&maptype=roadmap"
+        + "&key=AIzaSyBwlubLyqI6z_ivfAWcTCfyTXkoRHTagMk");
+    verify(viewActions).setVisible(R.id.paymentTypeSign, true);
+    verify(viewActions).setText(R.id.routeType, R.string.country);
+    verify(viewActions).setFormattedText(R.id.distanceText, R.string.km, 12.239d);
+    verify(viewActions).setFormattedText(R.id.routeTitleText, R.string.route_distance, 31.278d);
+    verify(viewActions).setText(R.id.nextAddressText, "address");
+    verify(viewActions)
+        .setFormattedText(R.id.openNavigator, R.string.client_location, 5.421, 10.2341);
+    verify(viewActions).setVisible(R.id.nextAddressCommentTitleText, false);
+    verify(viewActions).setVisible(R.id.nextAddressCommentText, false);
+    verify(viewActions).setText(R.id.nextAddressCommentText, "");
+    verify(viewActions).setText(R.id.routePointsCount, "2");
+    verify(viewActions).setText(R.id.lastAddressText, R.string.free_ride);
+    verify(viewActions).isShowCents();
+    verify(viewActions).getCurrencyFormat();
+    DecimalFormat decimalFormat = new DecimalFormat("##,###,###.## ₽");
+    decimalFormat.setMaximumFractionDigits(2);
+    decimalFormat.setMinimumFractionDigits(2);
+    verify(viewActions).setFormattedText(R.id.estimationText, R.string.km_h_m_p, 31.278d, 2, 12,
+        decimalFormat.format(6812.54)
+    );
+    verify(viewActions).setFormattedText(R.id.estimatedPriceText, R.string.price,
+        decimalFormat.format(6812.54)
+    );
+    verify(viewActions).setText(R.id.startDateText,
+        DateTimeFormat.forPattern("d MMMM, EEEE").print(
+            DateTime.now().withMillis(1238403200L).withZone(DateTimeZone.forOffsetHours(3))
+        ));
+    verify(viewActions).setText(R.id.startTimeText,
+        DateTimeFormat.forPattern("HH:mm").print(
+            DateTime.now().withMillis(1238403200L).withZone(DateTimeZone.forOffsetHours(3))
+        ));
+    DateTime dateTime = DateTime.now().withMillis(1238403200L + 7929000L)
+        .withZone(DateTimeZone.forOffsetHours(3));
+    verify(viewActions).setFormattedText(R.id.occupationTimeText, R.string.h_m_d, 2, 12,
+        DateTimeFormat.forPattern("HH:mm").print(dateTime));
+    verify(viewActions).setVisible(R.id.cargoDescTitleText, false);
+    verify(viewActions).setVisible(R.id.cargoDescText, false);
+    verify(viewActions).setText(R.id.cargoDescText, "");
+    verify(viewActions).setVisible(R.id.optionsTitleText, true);
+    verify(viewActions).setVisible(R.id.optionsText, true);
+    verify(viewActions).setText(R.id.optionsText, "bool2\nbool4\nnum1: 3\nnum2: 7");
+    verify(viewActions).setText(R.id.serviceText, "service");
+    verify(viewActions).unblockWithPending("OrderViewState");
+    verify(viewActions).dismissDialog();
+    verifyNoMoreInteractions(viewActions);
+  }
+
+  @Test
+  public void testActionsWithCommentForCashIntercity() {
+    // Дано:
+    when(viewActions.isShowCents()).thenReturn(false);
+    when(viewActions.getCurrencyFormat()).thenReturn("##,###,### ₽");
+    when(routePoint.getAddress()).thenReturn("address");
+    when(routePoint.getLatitude()).thenReturn(5.421);
+    when(routePoint.getLongitude()).thenReturn(10.2341);
+    when(routePoint.getComment()).thenReturn("a comment");
+    when(routePoint2.getAddress()).thenReturn("address 2");
+    when(order.getPaymentType()).thenReturn(PaymentType.CASH);
+    when(order.getRouteType()).thenReturn(RouteType.INTER_CITY);
+    when(order.getNextActiveRoutePoint()).thenReturn(routePoint);
+    when(order.getDistance()).thenReturn(12239);
+    when(order.getEstimatedRouteLength()).thenReturn(31278L);
+    when(order.getScheduledStartTime()).thenReturn(1238403200L);
+    when(order.getRoutePath()).thenReturn(Arrays.asList(routePoint, routePoint1, routePoint2));
+    when(order.getEstimatedTime()).thenReturn(7929000L);
+    when(order.getEstimatedPrice()).thenReturn(681250L);
+    when(order.getServiceName()).thenReturn("service");
+    when(order.getComment()).thenReturn("comm");
+    when(order.getOptions()).thenReturn(new ArrayList<>());
+
+    // Действие:
+    viewState.apply(viewActions);
+
+    // Результат:
+    verify(viewActions).setImage(R.id.mapImage, "https://maps.googleapis.com/maps/api/staticmap?"
+        + "center=5.421,10.2341"
+        + "&zoom=16"
+        + "&size=360x200"
+        + "&maptype=roadmap"
+        + "&key=AIzaSyBwlubLyqI6z_ivfAWcTCfyTXkoRHTagMk");
+    verify(viewActions).setVisible(R.id.paymentTypeSign, false);
+    verify(viewActions).setText(R.id.routeType, R.string.intercity);
+    verify(viewActions).setFormattedText(R.id.distanceText, R.string.km, 12.239d);
+    verify(viewActions).setFormattedText(R.id.routeTitleText, R.string.route_distance, 31.278d);
+    verify(viewActions).setText(R.id.nextAddressText, "address");
+    verify(viewActions)
+        .setFormattedText(R.id.openNavigator, R.string.client_location, 5.421, 10.2341);
+    verify(viewActions).setVisible(R.id.nextAddressCommentTitleText, true);
+    verify(viewActions).setVisible(R.id.nextAddressCommentText, true);
+    verify(viewActions).setText(R.id.nextAddressCommentText, "a comment");
+    verify(viewActions).setText(R.id.routePointsCount, "3");
+    verify(viewActions).setText(R.id.lastAddressText, "address 2");
+    verify(viewActions).isShowCents();
+    verify(viewActions).getCurrencyFormat();
+    DecimalFormat decimalFormat = new DecimalFormat("##,###,### ₽");
+    decimalFormat.setMaximumFractionDigits(0);
+    decimalFormat.setMinimumFractionDigits(0);
+    verify(viewActions).setFormattedText(R.id.estimationText, R.string.km_h_m_p, 31.278d, 2, 12,
+        decimalFormat.format(6813)
+    );
+    verify(viewActions).setFormattedText(R.id.estimatedPriceText, R.string.price,
+        decimalFormat.format(6813)
+    );
+    verify(viewActions).setText(R.id.startDateText,
+        DateTimeFormat.forPattern("d MMMM, EEEE").print(
+            DateTime.now().withMillis(1238403200L).withZone(DateTimeZone.forOffsetHours(3))
+        ));
+    verify(viewActions).setText(R.id.startTimeText,
+        DateTimeFormat.forPattern("HH:mm").print(
+            DateTime.now().withMillis(1238403200L).withZone(DateTimeZone.forOffsetHours(3))
+        ));
+    DateTime dateTime = DateTime.now().withMillis(1238403200L + 7929000L)
+        .withZone(DateTimeZone.forOffsetHours(3));
+    verify(viewActions).setFormattedText(R.id.occupationTimeText, R.string.h_m_d, 2, 12,
+        DateTimeFormat.forPattern("HH:mm").print(dateTime));
+    verify(viewActions).setVisible(R.id.cargoDescTitleText, true);
+    verify(viewActions).setVisible(R.id.cargoDescText, true);
+    verify(viewActions).setText(R.id.cargoDescText, "comm");
+    verify(viewActions).setVisible(R.id.optionsTitleText, false);
+    verify(viewActions).setVisible(R.id.optionsText, false);
+    verify(viewActions).setText(R.id.optionsText, "");
+    verify(viewActions).setText(R.id.serviceText, "service");
+    verify(viewActions).unblockWithPending("OrderViewState");
+    verify(viewActions).dismissDialog();
+    verifyNoMoreInteractions(viewActions);
+  }
+
+  @Test
+  public void testActionsWithoutCommentForCashIntercity() {
+    // Дано:
+    when(viewActions.isShowCents()).thenReturn(true);
+    when(viewActions.getCurrencyFormat()).thenReturn("##,###,###.## ₽");
+    when(routePoint.getAddress()).thenReturn("address");
+    when(routePoint.getLatitude()).thenReturn(5.421);
+    when(routePoint.getLongitude()).thenReturn(10.2341);
+    when(routePoint.getComment()).thenReturn("");
+    when(routePoint2.getAddress()).thenReturn("address 2");
+    when(order.getPaymentType()).thenReturn(PaymentType.CASH);
+    when(order.getRouteType()).thenReturn(RouteType.INTER_CITY);
+    when(order.getNextActiveRoutePoint()).thenReturn(routePoint);
+    when(order.getDistance()).thenReturn(12239);
+    when(order.getEstimatedRouteLength()).thenReturn(31278L);
+    when(order.getScheduledStartTime()).thenReturn(1238403200L);
+    when(order.getRoutePath()).thenReturn(Arrays.asList(routePoint, routePoint1, routePoint2));
+    when(order.getEstimatedTime()).thenReturn(7929000L);
+    when(order.getEstimatedPrice()).thenReturn(681250L);
+    when(order.getServiceName()).thenReturn("service");
+    when(order.getComment()).thenReturn("");
+    when(order.getOptions()).thenReturn(new ArrayList<>(Arrays.asList(
+        new OptionBoolean(0, "bool1", "bd", false),
+        new OptionBoolean(1, "bool2", "bd", true),
+        new OptionBoolean(2, "bool3", "bd", false),
+        new OptionBoolean(3, "bool4", "bd", true),
+        new OptionNumeric(4, "num1", "nd", 3, 0, 5),
+        new OptionNumeric(5, "num2", "nd", 7, 0, 5)
+    )));
+
+    // Действие:
+    viewState.apply(viewActions);
+
+    // Результат:
+    verify(viewActions).setImage(R.id.mapImage, "https://maps.googleapis.com/maps/api/staticmap?"
+        + "center=5.421,10.2341"
+        + "&zoom=16"
+        + "&size=360x200"
+        + "&maptype=roadmap"
+        + "&key=AIzaSyBwlubLyqI6z_ivfAWcTCfyTXkoRHTagMk");
+    verify(viewActions).setVisible(R.id.paymentTypeSign, false);
+    verify(viewActions).setText(R.id.routeType, R.string.intercity);
+    verify(viewActions).setFormattedText(R.id.distanceText, R.string.km, 12.239d);
+    verify(viewActions).setFormattedText(R.id.routeTitleText, R.string.route_distance, 31.278d);
+    verify(viewActions).setText(R.id.nextAddressText, "address");
+    verify(viewActions)
+        .setFormattedText(R.id.openNavigator, R.string.client_location, 5.421, 10.2341);
+    verify(viewActions).setVisible(R.id.nextAddressCommentTitleText, false);
+    verify(viewActions).setVisible(R.id.nextAddressCommentText, false);
+    verify(viewActions).setText(R.id.nextAddressCommentText, "");
+    verify(viewActions).setText(R.id.routePointsCount, "3");
+    verify(viewActions).setText(R.id.lastAddressText, "address 2");
+    verify(viewActions).isShowCents();
+    verify(viewActions).getCurrencyFormat();
+    DecimalFormat decimalFormat = new DecimalFormat("##,###,###.## ₽");
+    decimalFormat.setMaximumFractionDigits(2);
+    decimalFormat.setMinimumFractionDigits(2);
+    verify(viewActions).setFormattedText(R.id.estimationText, R.string.km_h_m_p, 31.278d, 2, 12,
+        decimalFormat.format(6812.50)
+    );
+    verify(viewActions).setFormattedText(R.id.estimatedPriceText, R.string.price,
+        decimalFormat.format(6812.50)
+    );
+    verify(viewActions).setText(R.id.startDateText,
+        DateTimeFormat.forPattern("d MMMM, EEEE").print(
+            DateTime.now().withMillis(1238403200L).withZone(DateTimeZone.forOffsetHours(3))
+        ));
+    verify(viewActions).setText(R.id.startTimeText,
+        DateTimeFormat.forPattern("HH:mm").print(
+            DateTime.now().withMillis(1238403200L).withZone(DateTimeZone.forOffsetHours(3))
+        ));
+    DateTime dateTime = DateTime.now().withMillis(1238403200L + 7929000L)
+        .withZone(DateTimeZone.forOffsetHours(3));
+    verify(viewActions).setFormattedText(R.id.occupationTimeText, R.string.h_m_d, 2, 12,
+        DateTimeFormat.forPattern("HH:mm").print(dateTime));
+    verify(viewActions).setVisible(R.id.cargoDescTitleText, false);
+    verify(viewActions).setVisible(R.id.cargoDescText, false);
+    verify(viewActions).setText(R.id.cargoDescText, "");
+    verify(viewActions).setVisible(R.id.optionsTitleText, true);
+    verify(viewActions).setVisible(R.id.optionsText, true);
+    verify(viewActions).setText(R.id.optionsText, "bool2\nbool4\nnum1: 3\nnum2: 7");
+    verify(viewActions).setText(R.id.serviceText, "service");
+    verify(viewActions).unblockWithPending("OrderViewState");
+    verify(viewActions).dismissDialog();
+    verifyNoMoreInteractions(viewActions);
+  }
+
+  @Test
+  public void testActionsWithCommentFreeRideForCashIntercity() {
+    // Дано:
+    when(viewActions.isShowCents()).thenReturn(false);
+    when(viewActions.getCurrencyFormat()).thenReturn("##,###,### ₽");
+    when(routePoint.getAddress()).thenReturn("address");
+    when(routePoint.getLatitude()).thenReturn(5.421);
+    when(routePoint.getLongitude()).thenReturn(10.2341);
+    when(routePoint.getComment()).thenReturn("a comment");
+    when(order.getPaymentType()).thenReturn(PaymentType.CASH);
+    when(order.getRouteType()).thenReturn(RouteType.INTER_CITY);
+    when(order.getNextActiveRoutePoint()).thenReturn(routePoint);
+    when(order.getDistance()).thenReturn(12239);
+    when(order.getEstimatedRouteLength()).thenReturn(31278L);
+    when(order.getScheduledStartTime()).thenReturn(1238403200L);
+    when(order.getRoutePath()).thenReturn(Collections.singletonList(routePoint));
+    when(order.getEstimatedTime()).thenReturn(7929000L);
+    when(order.getEstimatedPrice()).thenReturn(681254L);
+    when(order.getServiceName()).thenReturn("service");
+    when(order.getComment()).thenReturn("comm");
+    when(order.getOptions()).thenReturn(new ArrayList<>(Arrays.asList(
+        new OptionBoolean(0, "bool1", "bd", false),
+        new OptionBoolean(1, "bool2", "bd", true),
+        new OptionBoolean(2, "bool3", "bd", false),
+        new OptionBoolean(3, "bool4", "bd", true),
+        new OptionNumeric(4, "num1", "nd", 3, 0, 5),
+        new OptionNumeric(5, "num2", "nd", 7, 0, 5)
+    )));
+
+    // Действие:
+    viewState.apply(viewActions);
+
+    // Результат:
+    verify(viewActions).setImage(R.id.mapImage, "https://maps.googleapis.com/maps/api/staticmap?"
+        + "center=5.421,10.2341"
+        + "&zoom=16"
+        + "&size=360x200"
+        + "&maptype=roadmap"
+        + "&key=AIzaSyBwlubLyqI6z_ivfAWcTCfyTXkoRHTagMk");
+    verify(viewActions).setVisible(R.id.paymentTypeSign, false);
+    verify(viewActions).setText(R.id.routeType, R.string.intercity);
+    verify(viewActions).setFormattedText(R.id.distanceText, R.string.km, 12.239d);
+    verify(viewActions).setFormattedText(R.id.routeTitleText, R.string.route_distance, 31.278d);
+    verify(viewActions).setText(R.id.nextAddressText, "address");
+    verify(viewActions)
+        .setFormattedText(R.id.openNavigator, R.string.client_location, 5.421, 10.2341);
+    verify(viewActions).setVisible(R.id.nextAddressCommentTitleText, true);
+    verify(viewActions).setVisible(R.id.nextAddressCommentText, true);
+    verify(viewActions).setText(R.id.nextAddressCommentText, "a comment");
+    verify(viewActions).setText(R.id.routePointsCount, "2");
+    verify(viewActions).setText(R.id.lastAddressText, R.string.free_ride);
+    verify(viewActions).isShowCents();
+    verify(viewActions).getCurrencyFormat();
+    DecimalFormat decimalFormat = new DecimalFormat("##,###,### ₽");
+    decimalFormat.setMaximumFractionDigits(0);
+    decimalFormat.setMinimumFractionDigits(0);
+    verify(viewActions).setFormattedText(R.id.estimationText, R.string.km_h_m_p, 31.278d, 2, 12,
+        decimalFormat.format(6813)
+    );
+    verify(viewActions).setFormattedText(R.id.estimatedPriceText, R.string.price,
+        decimalFormat.format(6813)
+    );
+    verify(viewActions).setText(R.id.startDateText,
+        DateTimeFormat.forPattern("d MMMM, EEEE").print(
+            DateTime.now().withMillis(1238403200L).withZone(DateTimeZone.forOffsetHours(3))
+        ));
+    verify(viewActions).setText(R.id.startTimeText,
+        DateTimeFormat.forPattern("HH:mm").print(
+            DateTime.now().withMillis(1238403200L).withZone(DateTimeZone.forOffsetHours(3))
+        ));
+    DateTime dateTime = DateTime.now().withMillis(1238403200L + 7929000L)
+        .withZone(DateTimeZone.forOffsetHours(3));
+    verify(viewActions).setFormattedText(R.id.occupationTimeText, R.string.h_m_d, 2, 12,
+        DateTimeFormat.forPattern("HH:mm").print(dateTime));
+    verify(viewActions).setVisible(R.id.cargoDescTitleText, true);
+    verify(viewActions).setVisible(R.id.cargoDescText, true);
+    verify(viewActions).setText(R.id.cargoDescText, "comm");
+    verify(viewActions).setVisible(R.id.optionsTitleText, true);
+    verify(viewActions).setVisible(R.id.optionsText, true);
+    verify(viewActions).setText(R.id.optionsText, "bool2\nbool4\nnum1: 3\nnum2: 7");
+    verify(viewActions).setText(R.id.serviceText, "service");
+    verify(viewActions).unblockWithPending("OrderViewState");
+    verify(viewActions).dismissDialog();
+    verifyNoMoreInteractions(viewActions);
+  }
+
+  @Test
+  public void testActionsWithoutCommentFreeRideForCashIntercity() {
+    // Дано:
+    when(viewActions.isShowCents()).thenReturn(true);
+    when(viewActions.getCurrencyFormat()).thenReturn("##,###,###.## ₽");
+    when(routePoint.getAddress()).thenReturn("address");
+    when(routePoint.getLatitude()).thenReturn(5.421);
+    when(routePoint.getLongitude()).thenReturn(10.2341);
+    when(routePoint.getComment()).thenReturn("");
+    when(order.getPaymentType()).thenReturn(PaymentType.CASH);
+    when(order.getRouteType()).thenReturn(RouteType.INTER_CITY);
+    when(order.getRoutePath()).thenReturn(Collections.singletonList(routePoint));
+    when(order.getNextActiveRoutePoint()).thenReturn(routePoint);
+    when(order.getDistance()).thenReturn(12239);
+    when(order.getEstimatedRouteLength()).thenReturn(31278L);
+    when(order.getScheduledStartTime()).thenReturn(1238403200L);
+    when(order.getEstimatedTime()).thenReturn(7929000L);
+    when(order.getEstimatedPrice()).thenReturn(681254L);
+    when(order.getServiceName()).thenReturn("service");
+    when(order.getComment()).thenReturn("");
+    when(order.getOptions()).thenReturn(new ArrayList<>(Arrays.asList(
+        new OptionBoolean(0, "bool1", "bd", false),
+        new OptionBoolean(1, "bool2", "bd", true),
+        new OptionBoolean(2, "bool3", "bd", false),
+        new OptionBoolean(3, "bool4", "bd", true),
+        new OptionNumeric(4, "num1", "nd", 3, 0, 5),
+        new OptionNumeric(5, "num2", "nd", 7, 0, 5)
+    )));
+
+    // Действие:
+    viewState.apply(viewActions);
+
+    // Результат:
+    verify(viewActions).setImage(R.id.mapImage, "https://maps.googleapis.com/maps/api/staticmap?"
+        + "center=5.421,10.2341"
+        + "&zoom=16"
+        + "&size=360x200"
+        + "&maptype=roadmap"
+        + "&key=AIzaSyBwlubLyqI6z_ivfAWcTCfyTXkoRHTagMk");
+    verify(viewActions).setVisible(R.id.paymentTypeSign, false);
+    verify(viewActions).setText(R.id.routeType, R.string.intercity);
+    verify(viewActions).setFormattedText(R.id.distanceText, R.string.km, 12.239d);
+    verify(viewActions).setFormattedText(R.id.routeTitleText, R.string.route_distance, 31.278d);
+    verify(viewActions).setText(R.id.nextAddressText, "address");
+    verify(viewActions)
+        .setFormattedText(R.id.openNavigator, R.string.client_location, 5.421, 10.2341);
+    verify(viewActions).setVisible(R.id.nextAddressCommentTitleText, false);
+    verify(viewActions).setVisible(R.id.nextAddressCommentText, false);
+    verify(viewActions).setText(R.id.nextAddressCommentText, "");
+    verify(viewActions).setText(R.id.routePointsCount, "2");
+    verify(viewActions).setText(R.id.lastAddressText, R.string.free_ride);
+    verify(viewActions).isShowCents();
+    verify(viewActions).getCurrencyFormat();
+    DecimalFormat decimalFormat = new DecimalFormat("##,###,###.## ₽");
+    decimalFormat.setMaximumFractionDigits(2);
+    decimalFormat.setMinimumFractionDigits(2);
+    verify(viewActions).setFormattedText(R.id.estimationText, R.string.km_h_m_p, 31.278d, 2, 12,
+        decimalFormat.format(6812.54)
+    );
+    verify(viewActions).setFormattedText(R.id.estimatedPriceText, R.string.price,
+        decimalFormat.format(6812.54)
+    );
+    verify(viewActions).setText(R.id.startDateText,
+        DateTimeFormat.forPattern("d MMMM, EEEE").print(
+            DateTime.now().withMillis(1238403200L).withZone(DateTimeZone.forOffsetHours(3))
+        ));
+    verify(viewActions).setText(R.id.startTimeText,
+        DateTimeFormat.forPattern("HH:mm").print(
+            DateTime.now().withMillis(1238403200L).withZone(DateTimeZone.forOffsetHours(3))
+        ));
+    DateTime dateTime = DateTime.now().withMillis(1238403200L + 7929000L)
+        .withZone(DateTimeZone.forOffsetHours(3));
+    verify(viewActions).setFormattedText(R.id.occupationTimeText, R.string.h_m_d, 2, 12,
+        DateTimeFormat.forPattern("HH:mm").print(dateTime));
+    verify(viewActions).setVisible(R.id.cargoDescTitleText, false);
+    verify(viewActions).setVisible(R.id.cargoDescText, false);
+    verify(viewActions).setText(R.id.cargoDescText, "");
+    verify(viewActions).setVisible(R.id.optionsTitleText, true);
+    verify(viewActions).setVisible(R.id.optionsText, true);
+    verify(viewActions).setText(R.id.optionsText, "bool2\nbool4\nnum1: 3\nnum2: 7");
+    verify(viewActions).setText(R.id.serviceText, "service");
+    verify(viewActions).unblockWithPending("OrderViewState");
+    verify(viewActions).dismissDialog();
+    verifyNoMoreInteractions(viewActions);
+  }
+
+  @Test
+  public void testActionsWithCommentForCashlessIntercity() {
+    // Дано:
+    when(viewActions.isShowCents()).thenReturn(false);
+    when(viewActions.getCurrencyFormat()).thenReturn("##,###,### ₽");
+    when(routePoint.getAddress()).thenReturn("address");
+    when(routePoint.getLatitude()).thenReturn(5.421);
+    when(routePoint.getLongitude()).thenReturn(10.2341);
+    when(routePoint.getComment()).thenReturn("a comment");
+    when(routePoint2.getAddress()).thenReturn("address 2");
+    when(order.getPaymentType()).thenReturn(PaymentType.CONTRACT);
+    when(order.getRouteType()).thenReturn(RouteType.INTER_CITY);
+    when(order.getNextActiveRoutePoint()).thenReturn(routePoint);
+    when(order.getDistance()).thenReturn(12239);
+    when(order.getEstimatedRouteLength()).thenReturn(31278L);
+    when(order.getScheduledStartTime()).thenReturn(1238403200L);
+    when(order.getRoutePath()).thenReturn(Arrays.asList(routePoint, routePoint1, routePoint2));
+    when(order.getEstimatedTime()).thenReturn(7929000L);
+    when(order.getEstimatedPrice()).thenReturn(681250L);
+    when(order.getServiceName()).thenReturn("service");
+    when(order.getComment()).thenReturn("comm");
+    when(order.getOptions()).thenReturn(new ArrayList<>());
+
+    // Действие:
+    viewState.apply(viewActions);
+
+    // Результат:
+    verify(viewActions).setImage(R.id.mapImage, "https://maps.googleapis.com/maps/api/staticmap?"
+        + "center=5.421,10.2341"
+        + "&zoom=16"
+        + "&size=360x200"
+        + "&maptype=roadmap"
+        + "&key=AIzaSyBwlubLyqI6z_ivfAWcTCfyTXkoRHTagMk");
+    verify(viewActions).setVisible(R.id.paymentTypeSign, true);
+    verify(viewActions).setText(R.id.routeType, R.string.intercity);
+    verify(viewActions).setFormattedText(R.id.distanceText, R.string.km, 12.239d);
+    verify(viewActions).setFormattedText(R.id.routeTitleText, R.string.route_distance, 31.278d);
+    verify(viewActions).setText(R.id.nextAddressText, "address");
+    verify(viewActions)
+        .setFormattedText(R.id.openNavigator, R.string.client_location, 5.421, 10.2341);
+    verify(viewActions).setVisible(R.id.nextAddressCommentTitleText, true);
+    verify(viewActions).setVisible(R.id.nextAddressCommentText, true);
+    verify(viewActions).setText(R.id.nextAddressCommentText, "a comment");
+    verify(viewActions).setText(R.id.routePointsCount, "3");
+    verify(viewActions).setText(R.id.lastAddressText, "address 2");
+    verify(viewActions).isShowCents();
+    verify(viewActions).getCurrencyFormat();
+    DecimalFormat decimalFormat = new DecimalFormat("##,###,### ₽");
+    decimalFormat.setMaximumFractionDigits(0);
+    decimalFormat.setMinimumFractionDigits(0);
+    verify(viewActions).setFormattedText(R.id.estimationText, R.string.km_h_m_p, 31.278d, 2, 12,
+        decimalFormat.format(6813)
+    );
+    verify(viewActions).setFormattedText(R.id.estimatedPriceText, R.string.price,
+        decimalFormat.format(6813)
+    );
+    verify(viewActions).setText(R.id.startDateText,
+        DateTimeFormat.forPattern("d MMMM, EEEE").print(
+            DateTime.now().withMillis(1238403200L).withZone(DateTimeZone.forOffsetHours(3))
+        ));
+    verify(viewActions).setText(R.id.startTimeText,
+        DateTimeFormat.forPattern("HH:mm").print(
+            DateTime.now().withMillis(1238403200L).withZone(DateTimeZone.forOffsetHours(3))
+        ));
+    DateTime dateTime = DateTime.now().withMillis(1238403200L + 7929000L)
+        .withZone(DateTimeZone.forOffsetHours(3));
+    verify(viewActions).setFormattedText(R.id.occupationTimeText, R.string.h_m_d, 2, 12,
+        DateTimeFormat.forPattern("HH:mm").print(dateTime));
+    verify(viewActions).setVisible(R.id.cargoDescTitleText, true);
+    verify(viewActions).setVisible(R.id.cargoDescText, true);
+    verify(viewActions).setText(R.id.cargoDescText, "comm");
+    verify(viewActions).setVisible(R.id.optionsTitleText, false);
+    verify(viewActions).setVisible(R.id.optionsText, false);
+    verify(viewActions).setText(R.id.optionsText, "");
+    verify(viewActions).setText(R.id.serviceText, "service");
+    verify(viewActions).unblockWithPending("OrderViewState");
+    verify(viewActions).dismissDialog();
+    verifyNoMoreInteractions(viewActions);
+  }
+
+  @Test
+  public void testActionsWithoutCommentForCashlessIntercity() {
+    // Дано:
+    when(viewActions.isShowCents()).thenReturn(true);
+    when(viewActions.getCurrencyFormat()).thenReturn("##,###,###.## ₽");
+    when(routePoint.getAddress()).thenReturn("address");
+    when(routePoint.getLatitude()).thenReturn(5.421);
+    when(routePoint.getLongitude()).thenReturn(10.2341);
+    when(routePoint.getComment()).thenReturn("");
+    when(routePoint2.getAddress()).thenReturn("address 2");
+    when(order.getPaymentType()).thenReturn(PaymentType.CONTRACT);
+    when(order.getRouteType()).thenReturn(RouteType.INTER_CITY);
+    when(order.getNextActiveRoutePoint()).thenReturn(routePoint);
+    when(order.getDistance()).thenReturn(12239);
+    when(order.getEstimatedRouteLength()).thenReturn(31278L);
+    when(order.getScheduledStartTime()).thenReturn(1238403200L);
+    when(order.getRoutePath()).thenReturn(Arrays.asList(routePoint, routePoint1, routePoint2));
+    when(order.getEstimatedTime()).thenReturn(7929000L);
+    when(order.getEstimatedPrice()).thenReturn(681250L);
+    when(order.getServiceName()).thenReturn("service");
+    when(order.getComment()).thenReturn("");
+    when(order.getOptions()).thenReturn(new ArrayList<>(Arrays.asList(
+        new OptionBoolean(0, "bool1", "bd", false),
+        new OptionBoolean(1, "bool2", "bd", true),
+        new OptionBoolean(2, "bool3", "bd", false),
+        new OptionBoolean(3, "bool4", "bd", true),
+        new OptionNumeric(4, "num1", "nd", 3, 0, 5),
+        new OptionNumeric(5, "num2", "nd", 7, 0, 5)
+    )));
+
+    // Действие:
+    viewState.apply(viewActions);
+
+    // Результат:
+    verify(viewActions).setImage(R.id.mapImage, "https://maps.googleapis.com/maps/api/staticmap?"
+        + "center=5.421,10.2341"
+        + "&zoom=16"
+        + "&size=360x200"
+        + "&maptype=roadmap"
+        + "&key=AIzaSyBwlubLyqI6z_ivfAWcTCfyTXkoRHTagMk");
+    verify(viewActions).setVisible(R.id.paymentTypeSign, true);
+    verify(viewActions).setText(R.id.routeType, R.string.intercity);
+    verify(viewActions).setFormattedText(R.id.distanceText, R.string.km, 12.239d);
+    verify(viewActions).setFormattedText(R.id.routeTitleText, R.string.route_distance, 31.278d);
+    verify(viewActions).setText(R.id.nextAddressText, "address");
+    verify(viewActions)
+        .setFormattedText(R.id.openNavigator, R.string.client_location, 5.421, 10.2341);
+    verify(viewActions).setVisible(R.id.nextAddressCommentTitleText, false);
+    verify(viewActions).setVisible(R.id.nextAddressCommentText, false);
+    verify(viewActions).setText(R.id.nextAddressCommentText, "");
+    verify(viewActions).setText(R.id.routePointsCount, "3");
+    verify(viewActions).setText(R.id.lastAddressText, "address 2");
+    verify(viewActions).isShowCents();
+    verify(viewActions).getCurrencyFormat();
+    DecimalFormat decimalFormat = new DecimalFormat("##,###,###.## ₽");
+    decimalFormat.setMaximumFractionDigits(2);
+    decimalFormat.setMinimumFractionDigits(2);
+    verify(viewActions).setFormattedText(R.id.estimationText, R.string.km_h_m_p, 31.278d, 2, 12,
+        decimalFormat.format(6812.50)
+    );
+    verify(viewActions).setFormattedText(R.id.estimatedPriceText, R.string.price,
+        decimalFormat.format(6812.50)
+    );
+    verify(viewActions).setText(R.id.startDateText,
+        DateTimeFormat.forPattern("d MMMM, EEEE").print(
+            DateTime.now().withMillis(1238403200L).withZone(DateTimeZone.forOffsetHours(3))
+        ));
+    verify(viewActions).setText(R.id.startTimeText,
+        DateTimeFormat.forPattern("HH:mm").print(
+            DateTime.now().withMillis(1238403200L).withZone(DateTimeZone.forOffsetHours(3))
+        ));
+    DateTime dateTime = DateTime.now().withMillis(1238403200L + 7929000L)
+        .withZone(DateTimeZone.forOffsetHours(3));
+    verify(viewActions).setFormattedText(R.id.occupationTimeText, R.string.h_m_d, 2, 12,
+        DateTimeFormat.forPattern("HH:mm").print(dateTime));
+    verify(viewActions).setVisible(R.id.cargoDescTitleText, false);
+    verify(viewActions).setVisible(R.id.cargoDescText, false);
+    verify(viewActions).setText(R.id.cargoDescText, "");
+    verify(viewActions).setVisible(R.id.optionsTitleText, true);
+    verify(viewActions).setVisible(R.id.optionsText, true);
+    verify(viewActions).setText(R.id.optionsText, "bool2\nbool4\nnum1: 3\nnum2: 7");
+    verify(viewActions).setText(R.id.serviceText, "service");
+    verify(viewActions).unblockWithPending("OrderViewState");
+    verify(viewActions).dismissDialog();
+    verifyNoMoreInteractions(viewActions);
+  }
+
+  @Test
+  public void testActionsWithCommentFreeRideForCashlessIntercity() {
+    // Дано:
+    when(viewActions.isShowCents()).thenReturn(false);
+    when(viewActions.getCurrencyFormat()).thenReturn("##,###,### ₽");
+    when(routePoint.getAddress()).thenReturn("address");
+    when(routePoint.getLatitude()).thenReturn(5.421);
+    when(routePoint.getLongitude()).thenReturn(10.2341);
+    when(routePoint.getComment()).thenReturn("a comment");
+    when(order.getPaymentType()).thenReturn(PaymentType.CONTRACT);
+    when(order.getRouteType()).thenReturn(RouteType.INTER_CITY);
+    when(order.getNextActiveRoutePoint()).thenReturn(routePoint);
+    when(order.getDistance()).thenReturn(12239);
+    when(order.getEstimatedRouteLength()).thenReturn(31278L);
+    when(order.getScheduledStartTime()).thenReturn(1238403200L);
+    when(order.getRoutePath()).thenReturn(Collections.singletonList(routePoint));
+    when(order.getEstimatedTime()).thenReturn(7929000L);
+    when(order.getEstimatedPrice()).thenReturn(681254L);
+    when(order.getServiceName()).thenReturn("service");
+    when(order.getComment()).thenReturn("comm");
+    when(order.getOptions()).thenReturn(new ArrayList<>(Arrays.asList(
+        new OptionBoolean(0, "bool1", "bd", false),
+        new OptionBoolean(1, "bool2", "bd", true),
+        new OptionBoolean(2, "bool3", "bd", false),
+        new OptionBoolean(3, "bool4", "bd", true),
+        new OptionNumeric(4, "num1", "nd", 3, 0, 5),
+        new OptionNumeric(5, "num2", "nd", 7, 0, 5)
+    )));
+
+    // Действие:
+    viewState.apply(viewActions);
+
+    // Результат:
+    verify(viewActions).setImage(R.id.mapImage, "https://maps.googleapis.com/maps/api/staticmap?"
+        + "center=5.421,10.2341"
+        + "&zoom=16"
+        + "&size=360x200"
+        + "&maptype=roadmap"
+        + "&key=AIzaSyBwlubLyqI6z_ivfAWcTCfyTXkoRHTagMk");
+    verify(viewActions).setVisible(R.id.paymentTypeSign, true);
+    verify(viewActions).setText(R.id.routeType, R.string.intercity);
+    verify(viewActions).setFormattedText(R.id.distanceText, R.string.km, 12.239d);
+    verify(viewActions).setFormattedText(R.id.routeTitleText, R.string.route_distance, 31.278d);
+    verify(viewActions).setText(R.id.nextAddressText, "address");
+    verify(viewActions)
+        .setFormattedText(R.id.openNavigator, R.string.client_location, 5.421, 10.2341);
+    verify(viewActions).setVisible(R.id.nextAddressCommentTitleText, true);
+    verify(viewActions).setVisible(R.id.nextAddressCommentText, true);
+    verify(viewActions).setText(R.id.nextAddressCommentText, "a comment");
+    verify(viewActions).setText(R.id.routePointsCount, "2");
+    verify(viewActions).setText(R.id.lastAddressText, R.string.free_ride);
+    verify(viewActions).isShowCents();
+    verify(viewActions).getCurrencyFormat();
+    DecimalFormat decimalFormat = new DecimalFormat("##,###,### ₽");
+    decimalFormat.setMaximumFractionDigits(0);
+    decimalFormat.setMinimumFractionDigits(0);
+    verify(viewActions).setFormattedText(R.id.estimationText, R.string.km_h_m_p, 31.278d, 2, 12,
+        decimalFormat.format(6813)
+    );
+    verify(viewActions).setFormattedText(R.id.estimatedPriceText, R.string.price,
+        decimalFormat.format(6813)
+    );
+    verify(viewActions).setText(R.id.startDateText,
+        DateTimeFormat.forPattern("d MMMM, EEEE").print(
+            DateTime.now().withMillis(1238403200L).withZone(DateTimeZone.forOffsetHours(3))
+        ));
+    verify(viewActions).setText(R.id.startTimeText,
+        DateTimeFormat.forPattern("HH:mm").print(
+            DateTime.now().withMillis(1238403200L).withZone(DateTimeZone.forOffsetHours(3))
+        ));
+    DateTime dateTime = DateTime.now().withMillis(1238403200L + 7929000L)
+        .withZone(DateTimeZone.forOffsetHours(3));
+    verify(viewActions).setFormattedText(R.id.occupationTimeText, R.string.h_m_d, 2, 12,
+        DateTimeFormat.forPattern("HH:mm").print(dateTime));
+    verify(viewActions).setVisible(R.id.cargoDescTitleText, true);
+    verify(viewActions).setVisible(R.id.cargoDescText, true);
+    verify(viewActions).setText(R.id.cargoDescText, "comm");
+    verify(viewActions).setVisible(R.id.optionsTitleText, true);
+    verify(viewActions).setVisible(R.id.optionsText, true);
+    verify(viewActions).setText(R.id.optionsText, "bool2\nbool4\nnum1: 3\nnum2: 7");
+    verify(viewActions).setText(R.id.serviceText, "service");
+    verify(viewActions).unblockWithPending("OrderViewState");
+    verify(viewActions).dismissDialog();
+    verifyNoMoreInteractions(viewActions);
+  }
+
+  @Test
+  public void testActionsWithoutCommentFreeRideForCashlessIntercity() {
+    // Дано:
+    when(viewActions.isShowCents()).thenReturn(true);
+    when(viewActions.getCurrencyFormat()).thenReturn("##,###,###.## ₽");
+    when(routePoint.getAddress()).thenReturn("address");
+    when(routePoint.getLatitude()).thenReturn(5.421);
+    when(routePoint.getLongitude()).thenReturn(10.2341);
+    when(routePoint.getComment()).thenReturn("");
+    when(order.getPaymentType()).thenReturn(PaymentType.CONTRACT);
+    when(order.getRouteType()).thenReturn(RouteType.INTER_CITY);
+    when(order.getRoutePath()).thenReturn(Collections.singletonList(routePoint));
+    when(order.getNextActiveRoutePoint()).thenReturn(routePoint);
+    when(order.getDistance()).thenReturn(12239);
+    when(order.getEstimatedRouteLength()).thenReturn(31278L);
+    when(order.getScheduledStartTime()).thenReturn(1238403200L);
+    when(order.getEstimatedTime()).thenReturn(7929000L);
+    when(order.getEstimatedPrice()).thenReturn(681254L);
+    when(order.getServiceName()).thenReturn("service");
+    when(order.getComment()).thenReturn("");
+    when(order.getOptions()).thenReturn(new ArrayList<>(Arrays.asList(
+        new OptionBoolean(0, "bool1", "bd", false),
+        new OptionBoolean(1, "bool2", "bd", true),
+        new OptionBoolean(2, "bool3", "bd", false),
+        new OptionBoolean(3, "bool4", "bd", true),
+        new OptionNumeric(4, "num1", "nd", 3, 0, 5),
+        new OptionNumeric(5, "num2", "nd", 7, 0, 5)
+    )));
+
+    // Действие:
+    viewState.apply(viewActions);
+
+    // Результат:
+    verify(viewActions).setImage(R.id.mapImage, "https://maps.googleapis.com/maps/api/staticmap?"
+        + "center=5.421,10.2341"
+        + "&zoom=16"
+        + "&size=360x200"
+        + "&maptype=roadmap"
+        + "&key=AIzaSyBwlubLyqI6z_ivfAWcTCfyTXkoRHTagMk");
+    verify(viewActions).setVisible(R.id.paymentTypeSign, true);
+    verify(viewActions).setText(R.id.routeType, R.string.intercity);
     verify(viewActions).setFormattedText(R.id.distanceText, R.string.km, 12.239d);
     verify(viewActions).setFormattedText(R.id.routeTitleText, R.string.route_distance, 31.278d);
     verify(viewActions).setText(R.id.nextAddressText, "address");

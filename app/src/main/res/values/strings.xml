@@ -160,6 +160,9 @@
   <string name="purse">Кошелёк</string>
   <string name="purse_comment">Можно пополнить через Сбербанк Онлайн и терминалы Элекснет</string>
   <string name="cashless_comment">Получить безналичные средства можно в офисе компании</string>
+  <string name="city">Город</string>
+  <string name="country">За город</string>
+  <string name="intercity">Межгород</string>
   <string-array name="month_names">
     <item>Январь</item>
     <item>Февраль</item>
