@@ -12,7 +12,9 @@ import com.cargopull.executor_driver.entity.Option;
 import com.cargopull.executor_driver.entity.OptionBoolean;
 import com.cargopull.executor_driver.entity.OptionNumeric;
 import com.cargopull.executor_driver.entity.Order;
+import com.cargopull.executor_driver.entity.PaymentType;
 import com.cargopull.executor_driver.entity.RoutePoint;
+import com.cargopull.executor_driver.entity.RouteType;
 import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -67,6 +69,7 @@ public class OrderApiMapperTest {
 
     // Результат:
     assertEquals(order.getId(), 7);
+    assertEquals(order.getPaymentType(), PaymentType.CASH);
     assertEquals(order.getComment(), "some comment");
     assertEquals(order.getEstimatedPriceText(), "over 9999 BTC");
     assertEquals(order.getEstimatedPrice(), 9999);
@@ -78,6 +81,7 @@ public class OrderApiMapperTest {
     assertEquals(order.getConfirmationTime(), 9876543210L);
     assertEquals(order.getStartTime(), 9876598760L);
     assertEquals(order.getScheduledStartTime(), 128937981273L);
+    assertEquals(order.getRouteType(), RouteType.POLYGON);
     assertEquals(order.getServiceName(), "service");
     assertEquals(order.getDistance(), 546);
     assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
@@ -101,6 +105,7 @@ public class OrderApiMapperTest {
 
     // Результат:
     assertEquals(order.getId(), 0);
+    assertEquals(order.getPaymentType(), PaymentType.CASH);
     assertEquals(order.getComment(), "some comment");
     assertEquals(order.getEstimatedPriceText(), "over 9999 BTC");
     assertEquals(order.getEstimatedPrice(), 9999);
@@ -112,6 +117,7 @@ public class OrderApiMapperTest {
     assertEquals(order.getConfirmationTime(), 9876543210L);
     assertEquals(order.getStartTime(), 9876598760L);
     assertEquals(order.getScheduledStartTime(), 128937981273L);
+    assertEquals(order.getRouteType(), RouteType.POLYGON);
     assertEquals(order.getServiceName(), "service");
     assertEquals(order.getDistance(), 546);
     assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
@@ -135,6 +141,7 @@ public class OrderApiMapperTest {
 
     // Результат:
     assertEquals(order.getId(), 7);
+    assertEquals(order.getPaymentType(), PaymentType.CASH);
     assertEquals(order.getComment(), "some comment");
     assertEquals(order.getEstimatedPriceText(), "over 9999 BTC");
     assertEquals(order.getEstimatedPrice(), 9999);
@@ -146,6 +153,7 @@ public class OrderApiMapperTest {
     assertEquals(order.getConfirmationTime(), 9876543210L);
     assertEquals(order.getStartTime(), 9876598760L);
     assertEquals(order.getScheduledStartTime(), 128937981273L);
+    assertEquals(order.getRouteType(), RouteType.POLYGON);
     assertEquals(order.getServiceName(), "service");
     assertEquals(order.getDistance(), 546);
     assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
@@ -169,6 +177,7 @@ public class OrderApiMapperTest {
 
     // Результат:
     assertEquals(order.getId(), 7);
+    assertEquals(order.getPaymentType(), PaymentType.CASH);
     assertEquals(order.getComment(), "some comment");
     assertEquals(order.getEstimatedPriceText(), "over 9999 BTC");
     assertEquals(order.getEstimatedPrice(), 9999);
@@ -180,6 +189,7 @@ public class OrderApiMapperTest {
     assertEquals(order.getConfirmationTime(), 9876543210L);
     assertEquals(order.getStartTime(), 9876598760L);
     assertEquals(order.getScheduledStartTime(), 128937981273L);
+    assertEquals(order.getRouteType(), RouteType.POLYGON);
     assertEquals(order.getServiceName(), "service");
     assertEquals(order.getDistance(), 546);
     assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
@@ -203,6 +213,7 @@ public class OrderApiMapperTest {
 
     // Результат:
     assertEquals(order.getId(), 7);
+    assertEquals(order.getPaymentType(), PaymentType.CASH);
     assertEquals(order.getComment(), "some comment");
     assertEquals(order.getEstimatedPriceText(), "over 9999 BTC");
     assertEquals(order.getEstimatedPrice(), 9999);
@@ -214,6 +225,7 @@ public class OrderApiMapperTest {
     assertEquals(order.getConfirmationTime(), 9876543210L);
     assertEquals(order.getStartTime(), 9876598760L);
     assertEquals(order.getScheduledStartTime(), 128937981273L);
+    assertEquals(order.getRouteType(), RouteType.POLYGON);
     assertEquals(order.getServiceName(), "service");
     assertEquals(order.getDistance(), 546);
     assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
@@ -237,6 +249,7 @@ public class OrderApiMapperTest {
 
     // Результат:
     assertEquals(order.getId(), 7);
+    assertEquals(order.getPaymentType(), PaymentType.CASH);
     assertEquals(order.getComment(), "");
     assertEquals(order.getEstimatedPriceText(), "over 9999 BTC");
     assertEquals(order.getEstimatedPrice(), 9999);
@@ -248,6 +261,7 @@ public class OrderApiMapperTest {
     assertEquals(order.getConfirmationTime(), 9876543210L);
     assertEquals(order.getStartTime(), 9876598760L);
     assertEquals(order.getScheduledStartTime(), 128937981273L);
+    assertEquals(order.getRouteType(), RouteType.POLYGON);
     assertEquals(order.getServiceName(), "service");
     assertEquals(order.getDistance(), 546);
     assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
@@ -272,6 +286,7 @@ public class OrderApiMapperTest {
 
     // Результат:
     assertEquals(order.getId(), 7);
+    assertEquals(order.getPaymentType(), PaymentType.CASH);
     assertEquals(order.getComment(), "some comment");
     assertEquals(order.getEstimatedPriceText(), "");
     assertEquals(order.getEstimatedPrice(), 9999);
@@ -283,6 +298,7 @@ public class OrderApiMapperTest {
     assertEquals(order.getConfirmationTime(), 9876543210L);
     assertEquals(order.getStartTime(), 9876598760L);
     assertEquals(order.getScheduledStartTime(), 128937981273L);
+    assertEquals(order.getRouteType(), RouteType.POLYGON);
     assertEquals(order.getServiceName(), "service");
     assertEquals(order.getDistance(), 546);
     assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
@@ -306,6 +322,7 @@ public class OrderApiMapperTest {
 
     // Результат:
     assertEquals(order.getId(), 7);
+    assertEquals(order.getPaymentType(), PaymentType.CASH);
     assertEquals(order.getComment(), "some comment");
     assertEquals(order.getEstimatedPriceText(), "over 9999 BTC");
     assertEquals(order.getEstimatedPrice(), 0);
@@ -317,6 +334,7 @@ public class OrderApiMapperTest {
     assertEquals(order.getConfirmationTime(), 9876543210L);
     assertEquals(order.getStartTime(), 9876598760L);
     assertEquals(order.getScheduledStartTime(), 128937981273L);
+    assertEquals(order.getRouteType(), RouteType.POLYGON);
     assertEquals(order.getServiceName(), "service");
     assertEquals(order.getDistance(), 546);
     assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
@@ -340,6 +358,7 @@ public class OrderApiMapperTest {
 
     // Результат:
     assertEquals(order.getId(), 7);
+    assertEquals(order.getPaymentType(), PaymentType.CASH);
     assertEquals(order.getComment(), "some comment");
     assertEquals(order.getEstimatedPriceText(), "over 9999 BTC");
     assertEquals(order.getEstimatedPrice(), 9999);
@@ -351,6 +370,7 @@ public class OrderApiMapperTest {
     assertEquals(order.getConfirmationTime(), 9876543210L);
     assertEquals(order.getStartTime(), 9876598760L);
     assertEquals(order.getScheduledStartTime(), 128937981273L);
+    assertEquals(order.getRouteType(), RouteType.POLYGON);
     assertEquals(order.getServiceName(), "service");
     assertEquals(order.getDistance(), 546);
     assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
@@ -375,6 +395,7 @@ public class OrderApiMapperTest {
 
     // Результат:
     assertEquals(order.getId(), 7);
+    assertEquals(order.getPaymentType(), PaymentType.CASH);
     assertEquals(order.getComment(), "some comment");
     assertEquals(order.getEstimatedPriceText(), "over 9999 BTC");
     assertEquals(order.getEstimatedPrice(), 9999);
@@ -386,6 +407,7 @@ public class OrderApiMapperTest {
     assertEquals(order.getConfirmationTime(), 9876543210L);
     assertEquals(order.getStartTime(), 9876598760L);
     assertEquals(order.getScheduledStartTime(), 128937981273L);
+    assertEquals(order.getRouteType(), RouteType.POLYGON);
     assertEquals(order.getServiceName(), "service");
     assertEquals(order.getDistance(), 546);
     assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
@@ -409,6 +431,7 @@ public class OrderApiMapperTest {
 
     // Результат:
     assertEquals(order.getId(), 7);
+    assertEquals(order.getPaymentType(), PaymentType.CASH);
     assertEquals(order.getComment(), "some comment");
     assertEquals(order.getEstimatedPriceText(), "over 9999 BTC");
     assertEquals(order.getEstimatedPrice(), 9999);
@@ -420,6 +443,7 @@ public class OrderApiMapperTest {
     assertEquals(order.getConfirmationTime(), 9876543210L);
     assertEquals(order.getStartTime(), 9876598760L);
     assertEquals(order.getScheduledStartTime(), 128937981273L);
+    assertEquals(order.getRouteType(), RouteType.POLYGON);
     assertEquals(order.getServiceName(), "service");
     assertEquals(order.getDistance(), 546);
     assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
@@ -443,6 +467,7 @@ public class OrderApiMapperTest {
 
     // Результат:
     assertEquals(order.getId(), 7);
+    assertEquals(order.getPaymentType(), PaymentType.CASH);
     assertEquals(order.getComment(), "some comment");
     assertEquals(order.getEstimatedPriceText(), "over 9999 BTC");
     assertEquals(order.getEstimatedPrice(), 9999);
@@ -454,6 +479,7 @@ public class OrderApiMapperTest {
     assertEquals(order.getConfirmationTime(), 9876543210L);
     assertEquals(order.getStartTime(), 9876598760L);
     assertEquals(order.getScheduledStartTime(), 128937981273L);
+    assertEquals(order.getRouteType(), RouteType.POLYGON);
     assertEquals(order.getServiceName(), "service");
     assertEquals(order.getDistance(), 546);
     assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
@@ -477,6 +503,7 @@ public class OrderApiMapperTest {
 
     // Результат:
     assertEquals(order.getId(), 7);
+    assertEquals(order.getPaymentType(), PaymentType.CASH);
     assertEquals(order.getComment(), "some comment");
     assertEquals(order.getEstimatedPriceText(), "over 9999 BTC");
     assertEquals(order.getEstimatedPrice(), 9999);
@@ -488,6 +515,7 @@ public class OrderApiMapperTest {
     assertEquals(order.getConfirmationTime(), 9876543210L);
     assertEquals(order.getStartTime(), 9876598760L);
     assertEquals(order.getScheduledStartTime(), 128937981273L);
+    assertEquals(order.getRouteType(), RouteType.POLYGON);
     assertEquals(order.getServiceName(), "service");
     assertEquals(order.getDistance(), 546);
     assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
@@ -511,6 +539,7 @@ public class OrderApiMapperTest {
 
     // Результат:
     assertEquals(order.getId(), 7);
+    assertEquals(order.getPaymentType(), PaymentType.CASH);
     assertEquals(order.getComment(), "some comment");
     assertEquals(order.getEstimatedPriceText(), "over 9999 BTC");
     assertEquals(order.getEstimatedPrice(), 9999);
@@ -522,6 +551,7 @@ public class OrderApiMapperTest {
     assertEquals(order.getConfirmationTime(), 0);
     assertEquals(order.getStartTime(), 9876598760L);
     assertEquals(order.getScheduledStartTime(), 128937981273L);
+    assertEquals(order.getRouteType(), RouteType.POLYGON);
     assertEquals(order.getServiceName(), "service");
     assertEquals(order.getDistance(), 546);
     assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
@@ -545,6 +575,7 @@ public class OrderApiMapperTest {
 
     // Результат:
     assertEquals(order.getId(), 7);
+    assertEquals(order.getPaymentType(), PaymentType.CASH);
     assertEquals(order.getComment(), "some comment");
     assertEquals(order.getEstimatedPriceText(), "over 9999 BTC");
     assertEquals(order.getEstimatedPrice(), 9999);
@@ -556,6 +587,7 @@ public class OrderApiMapperTest {
     assertEquals(order.getConfirmationTime(), 9876543210L);
     assertEquals(order.getStartTime(), 0);
     assertEquals(order.getScheduledStartTime(), 128937981273L);
+    assertEquals(order.getRouteType(), RouteType.POLYGON);
     assertEquals(order.getServiceName(), "service");
     assertEquals(order.getDistance(), 546);
     assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
@@ -580,6 +612,7 @@ public class OrderApiMapperTest {
 
     // Результат:
     assertEquals(order.getId(), 7);
+    assertEquals(order.getPaymentType(), PaymentType.CASH);
     assertEquals(order.getComment(), "some comment");
     assertEquals(order.getEstimatedPriceText(), "over 9999 BTC");
     assertEquals(order.getEstimatedPrice(), 9999);
@@ -591,6 +624,115 @@ public class OrderApiMapperTest {
     assertEquals(order.getConfirmationTime(), 9876543210L);
     assertEquals(order.getStartTime(), 9876598760L);
     assertEquals(order.getScheduledStartTime(), 0);
+    assertEquals(order.getRouteType(), RouteType.POLYGON);
+    assertEquals(order.getServiceName(), "service");
+    assertEquals(order.getDistance(), 546);
+    assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
+    assertEquals(order.getOptions(),
+        Arrays.asList(optionNumeric, optionBoolean, optionBoolean, optionNumeric)
+    );
+  }
+
+  /**
+   * Должен дать ошибку, если пришел JSON без типа маршрута.
+   *
+   * @throws Exception ошибка
+   */
+  @Test(expected = DataMappingException.class)
+  public void mappingJsonStringWithoutRouteTypeToOrderFail() throws Exception {
+    // Дано:
+    ApiOrder apiOrder = new Gson().fromJson(rule.getOrderWithoutRouteType(), ApiOrder.class);
+
+    // Действие:
+    Order order = mapper.map(apiOrder);
+
+    // Результат:
+    assertEquals(order.getId(), 7);
+    assertEquals(order.getPaymentType(), PaymentType.CASH);
+    assertEquals(order.getComment(), "some comment");
+    assertEquals(order.getEstimatedPriceText(), "over 9999 BTC");
+    assertEquals(order.getEstimatedPrice(), 9999);
+    assertEquals(order.getEstimatedTime(), 234_532_000);
+    assertEquals(order.getEstimatedRouteLength(), 35_213);
+    assertEquals(order.getTotalCost(), 10_352);
+    assertEquals(order.getTimeout(), 25);
+    assertEquals(order.getEtaToStartPoint(), 1234567890);
+    assertEquals(order.getConfirmationTime(), 9876543210L);
+    assertEquals(order.getStartTime(), 9876598760L);
+    assertEquals(order.getScheduledStartTime(), 128937981273L);
+    assertEquals(order.getRouteType(), RouteType.POLYGON);
+    assertEquals(order.getServiceName(), "service");
+    assertEquals(order.getDistance(), 546);
+    assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
+    assertEquals(order.getOptions(),
+        Arrays.asList(optionNumeric, optionBoolean, optionBoolean, optionNumeric)
+    );
+  }
+
+  /**
+   * Должен дать ошибку, если пришел JSON с пустым типом маршрута.
+   *
+   * @throws Exception ошибка
+   */
+  @Test(expected = DataMappingException.class)
+  public void mappingJsonStringWithEmptyRouteTypeToOrderFail() throws Exception {
+    // Дано:
+    ApiOrder apiOrder = new Gson().fromJson(rule.getOrderWithEmptyRouteType(), ApiOrder.class);
+
+    // Действие:
+    Order order = mapper.map(apiOrder);
+
+    // Результат:
+    assertEquals(order.getId(), 7);
+    assertEquals(order.getPaymentType(), PaymentType.CASH);
+    assertEquals(order.getComment(), "some comment");
+    assertEquals(order.getEstimatedPriceText(), "over 9999 BTC");
+    assertEquals(order.getEstimatedPrice(), 9999);
+    assertEquals(order.getEstimatedTime(), 234_532_000);
+    assertEquals(order.getEstimatedRouteLength(), 35_213);
+    assertEquals(order.getTotalCost(), 10_352);
+    assertEquals(order.getTimeout(), 25);
+    assertEquals(order.getEtaToStartPoint(), 1234567890);
+    assertEquals(order.getConfirmationTime(), 9876543210L);
+    assertEquals(order.getStartTime(), 9876598760L);
+    assertEquals(order.getScheduledStartTime(), 128937981273L);
+    assertEquals(order.getRouteType(), RouteType.POLYGON);
+    assertEquals(order.getServiceName(), "service");
+    assertEquals(order.getDistance(), 546);
+    assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
+    assertEquals(order.getOptions(),
+        Arrays.asList(optionNumeric, optionBoolean, optionBoolean, optionNumeric)
+    );
+  }
+
+  /**
+   * Должен дать ошибку, если пришел JSON с неверным типом маршрута.
+   *
+   * @throws Exception ошибка
+   */
+  @Test(expected = DataMappingException.class)
+  public void mappingJsonStringWithWrongRouteTypeToOrderFail() throws Exception {
+    // Дано:
+    ApiOrder apiOrder = new Gson().fromJson(rule.getOrderWithWrongRouteType(), ApiOrder.class);
+
+    // Действие:
+    Order order = mapper.map(apiOrder);
+
+    // Результат:
+    assertEquals(order.getId(), 7);
+    assertEquals(order.getPaymentType(), PaymentType.CASH);
+    assertEquals(order.getComment(), "some comment");
+    assertEquals(order.getEstimatedPriceText(), "over 9999 BTC");
+    assertEquals(order.getEstimatedPrice(), 9999);
+    assertEquals(order.getEstimatedTime(), 234_532_000);
+    assertEquals(order.getEstimatedRouteLength(), 35_213);
+    assertEquals(order.getTotalCost(), 10_352);
+    assertEquals(order.getTimeout(), 25);
+    assertEquals(order.getEtaToStartPoint(), 1234567890);
+    assertEquals(order.getConfirmationTime(), 9876543210L);
+    assertEquals(order.getStartTime(), 9876598760L);
+    assertEquals(order.getScheduledStartTime(), 128937981273L);
+    assertEquals(order.getRouteType(), RouteType.POLYGON);
     assertEquals(order.getServiceName(), "service");
     assertEquals(order.getDistance(), 546);
     assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
@@ -614,6 +756,7 @@ public class OrderApiMapperTest {
 
     // Результат:
     assertEquals(order.getId(), 7);
+    assertEquals(order.getPaymentType(), PaymentType.CASH);
     assertEquals(order.getComment(), "some comment");
     assertEquals(order.getEstimatedPriceText(), "over 9999 BTC");
     assertEquals(order.getEstimatedPrice(), 9999);
@@ -625,6 +768,7 @@ public class OrderApiMapperTest {
     assertEquals(order.getConfirmationTime(), 9876543210L);
     assertEquals(order.getStartTime(), 9876598760L);
     assertEquals(order.getScheduledStartTime(), 128937981273L);
+    assertEquals(order.getRouteType(), RouteType.POLYGON);
     assertEquals(order.getServiceName(), "service");
     assertEquals(order.getDistance(), 546);
     assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
@@ -648,6 +792,7 @@ public class OrderApiMapperTest {
 
     // Результат:
     assertEquals(order.getId(), 7);
+    assertEquals(order.getPaymentType(), PaymentType.CASH);
     assertEquals(order.getComment(), "some comment");
     assertEquals(order.getEstimatedPriceText(), "over 9999 BTC");
     assertEquals(order.getEstimatedPrice(), 9999);
@@ -659,6 +804,7 @@ public class OrderApiMapperTest {
     assertEquals(order.getConfirmationTime(), 9876543210L);
     assertEquals(order.getStartTime(), 9876598760L);
     assertEquals(order.getScheduledStartTime(), 128937981273L);
+    assertEquals(order.getRouteType(), RouteType.POLYGON);
     assertEquals(order.getServiceName(), "service");
     assertEquals(order.getDistance(), 0);
     assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
@@ -682,6 +828,7 @@ public class OrderApiMapperTest {
 
     // Результат:
     assertEquals(order.getId(), 7);
+    assertEquals(order.getPaymentType(), PaymentType.CASH);
     assertEquals(order.getComment(), "some comment");
     assertEquals(order.getEstimatedPriceText(), "over 9999 BTC");
     assertEquals(order.getEstimatedPrice(), 9999);
@@ -693,6 +840,7 @@ public class OrderApiMapperTest {
     assertEquals(order.getConfirmationTime(), 9876543210L);
     assertEquals(order.getStartTime(), 9876598760L);
     assertEquals(order.getScheduledStartTime(), 128937981273L);
+    assertEquals(order.getRouteType(), RouteType.POLYGON);
     assertEquals(order.getServiceName(), "service");
     assertEquals(order.getDistance(), 0);
     assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
@@ -716,6 +864,7 @@ public class OrderApiMapperTest {
 
     // Результат:
     assertEquals(order.getId(), 7);
+    assertEquals(order.getPaymentType(), PaymentType.CASH);
     assertEquals(order.getComment(), "some comment");
     assertEquals(order.getEstimatedPriceText(), "over 9999 BTC");
     assertEquals(order.getEstimatedPrice(), 9999);
@@ -727,6 +876,7 @@ public class OrderApiMapperTest {
     assertEquals(order.getConfirmationTime(), 9876543210L);
     assertEquals(order.getStartTime(), 9876598760L);
     assertEquals(order.getScheduledStartTime(), 128937981273L);
+    assertEquals(order.getRouteType(), RouteType.POLYGON);
     assertEquals(order.getServiceName(), "service");
     assertEquals(order.getDistance(), 546);
     assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
@@ -750,6 +900,7 @@ public class OrderApiMapperTest {
 
     // Результат:
     assertEquals(order.getId(), 7);
+    assertEquals(order.getPaymentType(), PaymentType.CASH);
     assertEquals(order.getComment(), "some comment");
     assertEquals(order.getEstimatedPriceText(), "over 9999 BTC");
     assertEquals(order.getEstimatedPrice(), 9999);
@@ -761,6 +912,7 @@ public class OrderApiMapperTest {
     assertEquals(order.getConfirmationTime(), 9876543210L);
     assertEquals(order.getStartTime(), 9876598760L);
     assertEquals(order.getScheduledStartTime(), 128937981273L);
+    assertEquals(order.getRouteType(), RouteType.POLYGON);
     assertEquals(order.getServiceName(), "");
     assertEquals(order.getDistance(), 546);
     assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
@@ -784,6 +936,7 @@ public class OrderApiMapperTest {
 
     // Результат:
     assertEquals(order.getId(), 7);
+    assertEquals(order.getPaymentType(), PaymentType.CASH);
     assertEquals(order.getComment(), "some comment");
     assertEquals(order.getEstimatedPriceText(), "over 9999 BTC");
     assertEquals(order.getEstimatedPrice(), 9999);
@@ -795,6 +948,7 @@ public class OrderApiMapperTest {
     assertEquals(order.getConfirmationTime(), 9876543210L);
     assertEquals(order.getStartTime(), 9876598760L);
     assertEquals(order.getScheduledStartTime(), 128937981273L);
+    assertEquals(order.getRouteType(), RouteType.POLYGON);
     assertEquals(order.getServiceName(), "service");
     assertEquals(order.getDistance(), 546);
     assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
@@ -818,6 +972,7 @@ public class OrderApiMapperTest {
 
     // Результат:
     assertEquals(order.getId(), 7);
+    assertEquals(order.getPaymentType(), PaymentType.CASH);
     assertEquals(order.getComment(), "some comment");
     assertEquals(order.getEstimatedPriceText(), "over 9999 BTC");
     assertEquals(order.getEstimatedPrice(), 9999);
@@ -829,6 +984,7 @@ public class OrderApiMapperTest {
     assertEquals(order.getConfirmationTime(), 9876543210L);
     assertEquals(order.getStartTime(), 9876598760L);
     assertEquals(order.getScheduledStartTime(), 128937981273L);
+    assertEquals(order.getRouteType(), RouteType.POLYGON);
     assertEquals(order.getServiceName(), "");
     assertEquals(order.getDistance(), 546);
     assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
@@ -852,6 +1008,7 @@ public class OrderApiMapperTest {
 
     // Результат:
     assertEquals(order.getId(), 7);
+    assertEquals(order.getPaymentType(), PaymentType.CASH);
     assertEquals(order.getComment(), "some comment");
     assertEquals(order.getEstimatedPriceText(), "over 9999 BTC");
     assertEquals(order.getEstimatedPrice(), 9999);
@@ -863,6 +1020,7 @@ public class OrderApiMapperTest {
     assertEquals(order.getConfirmationTime(), 9876543210L);
     assertEquals(order.getStartTime(), 9876598760L);
     assertEquals(order.getScheduledStartTime(), 128937981273L);
+    assertEquals(order.getRouteType(), RouteType.POLYGON);
     assertEquals(order.getServiceName(), "service");
     assertEquals(order.getDistance(), 546);
     assertEquals(order.getRoutePath(), new ArrayList<>());
@@ -886,6 +1044,7 @@ public class OrderApiMapperTest {
 
     // Результат:
     assertEquals(order.getId(), 7);
+    assertEquals(order.getPaymentType(), PaymentType.CASH);
     assertEquals(order.getComment(), "some comment");
     assertEquals(order.getEstimatedPriceText(), "over 9999 BTC");
     assertEquals(order.getEstimatedPrice(), 9999);
@@ -897,6 +1056,7 @@ public class OrderApiMapperTest {
     assertEquals(order.getConfirmationTime(), 9876543210L);
     assertEquals(order.getStartTime(), 9876598760L);
     assertEquals(order.getScheduledStartTime(), 128937981273L);
+    assertEquals(order.getRouteType(), RouteType.POLYGON);
     assertEquals(order.getServiceName(), "service");
     assertEquals(order.getDistance(), 546);
     assertEquals(order.getRoutePath(), new ArrayList<>());
@@ -920,6 +1080,7 @@ public class OrderApiMapperTest {
 
     // Результат:
     assertEquals(order.getId(), 7);
+    assertEquals(order.getPaymentType(), PaymentType.CASH);
     assertEquals(order.getComment(), "some comment");
     assertEquals(order.getEstimatedPriceText(), "over 9999 BTC");
     assertEquals(order.getEstimatedPrice(), 9999);
@@ -931,6 +1092,7 @@ public class OrderApiMapperTest {
     assertEquals(order.getConfirmationTime(), 9876543210L);
     assertEquals(order.getStartTime(), 9876598760L);
     assertEquals(order.getScheduledStartTime(), 128937981273L);
+    assertEquals(order.getRouteType(), RouteType.POLYGON);
     assertEquals(order.getServiceName(), "service");
     assertEquals(order.getDistance(), 546);
     assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
@@ -952,6 +1114,7 @@ public class OrderApiMapperTest {
 
     // Результат:
     assertEquals(order.getId(), 7);
+    assertEquals(order.getPaymentType(), PaymentType.CASH);
     assertEquals(order.getComment(), "some comment");
     assertEquals(order.getEstimatedPriceText(), "over 9999 BTC");
     assertEquals(order.getEstimatedPrice(), 9999);
@@ -963,6 +1126,7 @@ public class OrderApiMapperTest {
     assertEquals(order.getConfirmationTime(), 9876543210L);
     assertEquals(order.getStartTime(), 9876598760L);
     assertEquals(order.getScheduledStartTime(), 128937981273L);
+    assertEquals(order.getRouteType(), RouteType.POLYGON);
     assertEquals(order.getServiceName(), "service");
     assertEquals(order.getDistance(), 546);
     assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));

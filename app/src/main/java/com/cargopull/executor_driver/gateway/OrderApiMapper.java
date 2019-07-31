@@ -8,6 +8,7 @@ import com.cargopull.executor_driver.entity.Option;
 import com.cargopull.executor_driver.entity.Order;
 import com.cargopull.executor_driver.entity.PaymentType;
 import com.cargopull.executor_driver.entity.RoutePoint;
+import com.cargopull.executor_driver.entity.RouteType;
 import javax.inject.Inject;
 
 /**
@@ -36,9 +37,16 @@ public class OrderApiMapper implements Mapper<ApiOrder, Order> {
     PaymentType paymentType;
     try {
       paymentType = PaymentType.valueOf(from.getPaymentType());
-    }     catch (Exception e) {
+    } catch (Exception e) {
       throw new DataMappingException(
           "Ошибка маппинга: неизвестный способ оплаты \"" + from.getPaymentType() + "\" !");
+    }
+    RouteType routeType;
+    try {
+      routeType = RouteType.valueOf(from.getRouteType());
+    } catch (Exception e) {
+      throw new DataMappingException(
+          "Ошибка маппинга: неизвестный тип маршрута \"" + from.getRouteType() + "\" !");
     }
     if (from.getApiOrderService() == null) {
       throw new DataMappingException("Ошибка маппинга: Услуга не должна быть null!");
@@ -69,7 +77,8 @@ public class OrderApiMapper implements Mapper<ApiOrder, Order> {
         from.getEtaToStartPoint(),
         from.getConfirmationTime(),
         from.getStartTime(),
-        from.getScheduledStartTime());
+        from.getScheduledStartTime(),
+        routeType);
     if (from.getOptions() != null) {
       for (ApiOptionItem vehicleOptionItem : from.getOptions()) {
         order.addOptions(apiOptionMapper.map(vehicleOptionItem));
