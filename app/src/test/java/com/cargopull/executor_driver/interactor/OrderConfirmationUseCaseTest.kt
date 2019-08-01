@@ -37,9 +37,9 @@ class OrderConfirmationUseCaseTest {
     @Mock
     private lateinit var orderDecisionUseCase: OrderDecisionUseCase
     @Mock
-    private lateinit var orderConfirmationGateway: OrderConfirmationGateway<String?>
+    private lateinit var orderConfirmationGateway: OrderConfirmationGateway<String>
     @Mock
-    private lateinit var orderConfirmationGateway2: OrderConfirmationGateway<Int?>
+    private lateinit var orderConfirmationGateway2: OrderConfirmationGateway<Int>
     @Mock
     private lateinit var order: Order
     @Mock

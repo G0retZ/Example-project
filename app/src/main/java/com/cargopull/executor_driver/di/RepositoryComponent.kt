@@ -106,13 +106,13 @@ class RepositoryComponent(private val backendComponent: BackendComponent) {
                 )
         )
     }
-    val orderConfirmationGateway: OrderConfirmationGateway<Void?> by lazy {
+    val orderConfirmationGateway: OrderConfirmationGateway<Void> by lazy {
         OrderConfirmationGatewayImpl(backendComponent.apiService, OrderConfirmationErrorMapper())
     }
-    val preOrderBookingGateway: OrderConfirmationGateway<String?> by lazy {
+    val preOrderBookingGateway: OrderConfirmationGateway<String> by lazy {
         PreOrderBookingGateway(backendComponent.apiService)
     }
-    val preOrderProcessGateway: OrderConfirmationGateway<Order?> by lazy {
+    val preOrderProcessGateway: OrderConfirmationGateway<Order> by lazy {
         PreOrderProcessGateway(
                 backendComponent.apiService,
                 StateAndDataApiMapper(

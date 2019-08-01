@@ -10,7 +10,7 @@ import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 
 class PreOrderBookingGateway
-constructor(private val apiService: ApiService) : OrderConfirmationGateway<String?> {
+constructor(private val apiService: ApiService) : OrderConfirmationGateway<String> {
 
     override fun sendDecision(order: Order, accepted: Boolean): Single<Pair<ExecutorState?, String?>> {
         return apiService.sendPreOrderDecision(ApiOrderDecision(order.id, accepted))

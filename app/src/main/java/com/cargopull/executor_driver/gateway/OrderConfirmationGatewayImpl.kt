@@ -10,7 +10,7 @@ import io.reactivex.schedulers.Schedulers
 
 class OrderConfirmationGatewayImpl
 constructor(private val apiService: ApiService,
-            private val errorMapper: Mapper<Throwable, Throwable>) : OrderConfirmationGateway<Void?> {
+            private val errorMapper: Mapper<Throwable, Throwable>) : OrderConfirmationGateway<Void> {
 
     override fun sendDecision(order: Order, accepted: Boolean): Single<Pair<ExecutorState?, Void?>> {
         return apiService.acceptOrderOffer(ApiOrderDecision(order.id, accepted))
