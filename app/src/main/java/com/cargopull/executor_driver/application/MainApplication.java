@@ -319,6 +319,7 @@ public class MainApplication extends Application implements ServerConnectionView
       case CommonNavigate.EXIT:
         serverConnectionViewModel.disconnectServer();
         stopService();
+        appComponent.release();
         break;
       case ExecutorStateNavigate.BLOCKED:
         stopService();

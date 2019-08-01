@@ -21,6 +21,7 @@ import com.cargopull.executor_driver.backend.vibro.*
 import com.cargopull.executor_driver.backend.web.*
 import com.cargopull.executor_driver.gateway.TokenKeeperImpl
 import com.cargopull.executor_driver.interactor.DataReceiver
+import com.cargopull.executor_driver.utils.Releasable
 import io.reactivex.Observable
 import io.reactivex.Observer
 import io.reactivex.subjects.PublishSubject
@@ -35,7 +36,7 @@ import ua.naiksoftware.stomp.Stomp
 import ua.naiksoftware.stomp.client.StompClient
 import java.util.concurrent.TimeUnit
 
-class BackendComponent(private val appContext: Context) {
+class BackendComponent(private val appContext: Context) : Releasable {
 
     val ringTonePlayer: RingTonePlayer by lazy {
         SingleRingTonePlayer(appContext)
@@ -89,6 +90,8 @@ class BackendComponent(private val appContext: Context) {
         fcmSubject
     }
 
+    private val connectivityManager = appContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+
     private val fcmSubject: PublishSubject<Map<String, String>> by lazy {
         PublishSubject.create<Map<String, String>>()
     }
@@ -109,9 +112,7 @@ class BackendComponent(private val appContext: Context) {
     private val interceptors: Array<Interceptor> by lazy {
         val tokenKeeper = TokenKeeperImpl(appSettingsService)
         arrayOf(
-                ConnectivityInterceptor(
-                        appContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-                ),
+                ConnectivityInterceptor(connectivityManager),
                 SendVersionInterceptor(),
                 DeprecatedVersionInterceptor(),
                 AuthorizationInterceptor(),
@@ -126,11 +127,13 @@ class BackendComponent(private val appContext: Context) {
         address?.let { port?.let { "http://$address.xip.io:$port/executor/" } }
                 ?: BASE_URL
     }
-
     private val socketUrl: String by lazy {
         val address = if (BuildConfig.DEBUG) appSettingsService.getData("address") else null
         val port = if (BuildConfig.DEBUG) appSettingsService.getData("port") else null
         address?.let { port?.let { "http://$address.xip.io:$port/executor/ws" } }
                 ?: SOCKET_URL
+    }
+
+    override fun release() {
     }
 }
