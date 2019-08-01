@@ -180,6 +180,9 @@ class RepositoryComponent(private val backendComponent: BackendComponent) {
     val serverConnectionGateway: ServerConnectionGateway by lazy {
         ServerConnectionGatewayImpl(backendComponent.stompClient)
     }
+    val networkConnectionGateway: CommonGateway<Boolean> by lazy {
+        backendComponent.networkStateReceiver
+    }
     val serverTimeGateway: CommonGateway<Long> by lazy {
         TopicGateway(
                 personalTopicListener,

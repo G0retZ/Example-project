@@ -1,12 +1,15 @@
 package com.cargopull.executor_driver.di
 
 import android.content.Context
+import android.content.IntentFilter
 import android.location.LocationManager
 import android.net.ConnectivityManager
+import android.net.ConnectivityManager.CONNECTIVITY_ACTION
 import android.os.Build
 import com.cargopull.executor_driver.BASE_URL
 import com.cargopull.executor_driver.BuildConfig
 import com.cargopull.executor_driver.SOCKET_URL
+import com.cargopull.executor_driver.application.NetworkStateReceiver
 import com.cargopull.executor_driver.backend.analytics.ErrorReporter
 import com.cargopull.executor_driver.backend.analytics.ErrorReporterImpl
 import com.cargopull.executor_driver.backend.analytics.EventLogger
@@ -37,6 +40,8 @@ import ua.naiksoftware.stomp.client.StompClient
 import java.util.concurrent.TimeUnit
 
 class BackendComponent(private val appContext: Context) : Releasable {
+    private val WIFI_STATE_CHANGE_ACTION = "android.net.wifi.WIFI_STATE_CHANGE"
+    private val WIFI_STATE_CHANGED_ACTION = "android.net.wifi.WIFI_STATE_CHANGED"
 
     val ringTonePlayer: RingTonePlayer by lazy {
         SingleRingTonePlayer(appContext)
@@ -59,6 +64,14 @@ class BackendComponent(private val appContext: Context) : Releasable {
     }
     val appSettingsService: AppSettingsService by lazy { AppPreferences(appContext) }
     val geolocationCenter: GeolocationCenter by lazy { GeolocationCenterImpl(appContext) }
+    @Suppress("DEPRECATION")
+    val networkStateReceiver: NetworkStateReceiver by lazy {
+        val receiver = NetworkStateReceiver(connectivityManager, errorReporter)
+        appContext.registerReceiver(receiver, IntentFilter(CONNECTIVITY_ACTION))
+        appContext.registerReceiver(receiver, IntentFilter(WIFI_STATE_CHANGE_ACTION))
+        appContext.registerReceiver(receiver, IntentFilter(WIFI_STATE_CHANGED_ACTION))
+        receiver
+    }
     val apiService: ApiService by lazy {
         Retrofit.Builder()
                 .baseUrl(apiUrl)
@@ -97,7 +110,7 @@ class BackendComponent(private val appContext: Context) : Releasable {
     }
     private val okHttpClient: OkHttpClient by lazy {
         val builder = OkHttpClient.Builder()
-                .pingInterval(30, TimeUnit.SECONDS)
+                .pingInterval(5, TimeUnit.SECONDS)
         for (interceptor in interceptors) {
             builder.addInterceptor(interceptor)
         }
@@ -135,5 +148,6 @@ class BackendComponent(private val appContext: Context) : Releasable {
     }
 
     override fun release() {
+        appContext.unregisterReceiver(networkStateReceiver)
     }
 }
