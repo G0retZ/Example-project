@@ -66,21 +66,27 @@ class BackendComponent(private val appContext: Context) : Releasable {
     val geolocationCenter: GeolocationCenter by lazy { GeolocationCenterImpl(appContext) }
     @Suppress("DEPRECATION")
     val networkStateReceiver: NetworkStateReceiver by lazy {
-        val receiver = NetworkStateReceiver(connectivityManager, errorReporter)
+        val receiver = NetworkStateReceiver(
+                appContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager,
+                errorReporter
+        )
         appContext.registerReceiver(receiver, IntentFilter(CONNECTIVITY_ACTION))
         appContext.registerReceiver(receiver, IntentFilter(WIFI_STATE_CHANGE_ACTION))
         appContext.registerReceiver(receiver, IntentFilter(WIFI_STATE_CHANGED_ACTION))
         receiver
     }
     val apiService: ApiService by lazy {
-        Retrofit.Builder()
-                .baseUrl(apiUrl)
-                .client(okHttpClient)
-                .addConverterFactory(ScalarsConverterFactory.create())
-                .addConverterFactory(GsonConverterFactory.create())
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .build()
-                .create(ApiService::class.java)
+        ApiConnectionWrapper(
+                Retrofit.Builder()
+                        .baseUrl(apiUrl)
+                        .client(okHttpClient)
+                        .addConverterFactory(ScalarsConverterFactory.create())
+                        .addConverterFactory(GsonConverterFactory.create())
+                        .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                        .build()
+                        .create(ApiService::class.java),
+                networkStateReceiver
+        )
     }
     val stompClient: StompClient by lazy {
         Stomp.over(
@@ -103,8 +109,6 @@ class BackendComponent(private val appContext: Context) : Releasable {
         fcmSubject
     }
 
-    private val connectivityManager = appContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-
     private val fcmSubject: PublishSubject<Map<String, String>> by lazy {
         PublishSubject.create<Map<String, String>>()
     }
@@ -125,7 +129,6 @@ class BackendComponent(private val appContext: Context) : Releasable {
     private val interceptors: Array<Interceptor> by lazy {
         val tokenKeeper = TokenKeeperImpl(appSettingsService)
         arrayOf(
-                ConnectivityInterceptor(connectivityManager),
                 SendVersionInterceptor(),
                 DeprecatedVersionInterceptor(),
                 AuthorizationInterceptor(),
