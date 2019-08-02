@@ -5,6 +5,7 @@ import com.cargopull.executor_driver.backend.web.outgoing.ApiLogin
 import com.cargopull.executor_driver.backend.web.outgoing.ApiOptionItems
 import com.cargopull.executor_driver.backend.web.outgoing.ApiOrderDecision
 import com.cargopull.executor_driver.entity.ExecutorState
+import com.cargopull.executor_driver.interactor.CommonGateway
 import io.reactivex.Completable
 import io.reactivex.Single
 import retrofit2.http.*
@@ -159,4 +160,92 @@ interface ApiService {
     fun switchStatus(
             @Body executorState: ExecutorState
     ): Completable
+}
+
+class ApiConnectionWrapper(private val apiService: ApiService, private val gateway: CommonGateway<Boolean>) : ApiService {
+
+    override val heatMap: Single<String>
+        get() = wrapCall(apiService.heatMap)
+
+    override val optionsForOnline: Single<ApiOptionsForOnline>
+        get() = wrapCall(apiService.optionsForOnline)
+
+    override val myServices: Single<List<ApiServiceItem>>
+        get() = wrapCall(apiService.myServices)
+
+    override val mySelectedServices: Single<String>
+        get() = wrapCall(apiService.mySelectedServices)
+
+    override val selectedOptionsForOnline: Single<ApiOptionsForOnline>
+        get() = wrapCall(apiService.selectedOptionsForOnline)
+
+    override val reportProblems: Single<List<ApiProblem>>
+        get() = wrapCall(apiService.reportProblems)
+
+    override fun sendMeCode(phoneNumber: String): Completable =
+            wrapCall(apiService.sendMeCode(phoneNumber))
+
+    override fun authorize(apiLogin: ApiLogin): Completable =
+            wrapCall(apiService.authorize(apiLogin))
+
+    override fun occupyCarWithOptions(carId: Long, apiOptionItems: ApiOptionItems): Completable =
+            wrapCall(apiService.occupyCarWithOptions(carId, apiOptionItems))
+
+    override fun setMyServices(servicesIds: String): Completable =
+            wrapCall(apiService.setMyServices(servicesIds))
+
+    override fun setSelectedVehicleOptions(apiOptionItems: ApiOptionItems): Completable =
+            wrapCall(apiService.setSelectedVehicleOptions(apiOptionItems))
+
+    override fun acceptOrderOffer(decision: ApiOrderDecision): Single<ApiSimpleResult<Void>> =
+            wrapCall(apiService.acceptOrderOffer(decision))
+
+    override fun sendPreOrderDecision(decision: ApiOrderDecision): Single<ApiSimpleResult<String>> =
+            wrapCall(apiService.sendPreOrderDecision(decision))
+
+    override fun sendPreOrderProcess(decision: ApiOrderDecision): Single<ApiSimpleResult<ApiOrder>> =
+            wrapCall(apiService.sendPreOrderProcess(decision))
+
+    override fun sendFcmInstanceID(carId: String): Completable =
+            wrapCall(apiService.sendFcmInstanceID(carId))
+
+    override fun getOrdersHistory(fromDate: Long, toDate: Long): Single<Map<String, ApiOrdersSummary>> =
+            wrapCall(apiService.getOrdersHistory(fromDate, toDate))
+
+    override fun callToClient(params: Map<String, String>): Completable =
+            wrapCall(apiService.callToClient(params))
+
+    override fun reportArrived(params: Map<String, String>): Single<ApiSimpleResult<List<ApiRoutePoint>>> =
+            wrapCall(apiService.reportArrived(params))
+
+    override fun startOrder(params: Map<String, String>): Single<ApiSimpleResult<ApiOrder>> =
+            wrapCall(apiService.startOrder(params))
+
+    override fun completeOrder(params: Map<String, String>): Single<ApiSimpleResult<ApiOrderCostDetails>> =
+            wrapCall(apiService.completeOrder(params))
+
+    override fun completeOrderPayment(params: Map<String, String>): Single<ApiSimpleResult<Void>> =
+            wrapCall(apiService.completeOrderPayment(params))
+
+    override fun makeRoutePointNext(routePointId: Long): Single<ApiSimpleResult<List<ApiRoutePoint>>> =
+            wrapCall(apiService.makeRoutePointNext(routePointId))
+
+    override fun completeRoutePoint(routePointId: Long): Single<ApiSimpleResult<List<ApiRoutePoint>>> =
+            wrapCall(apiService.completeRoutePoint(routePointId))
+
+    override fun reportProblem(apiProblem: ApiProblem): Completable =
+            wrapCall(apiService.reportProblem(apiProblem))
+
+    override fun switchStatus(executorState: ExecutorState): Completable =
+            wrapCall(apiService.switchStatus(executorState))
+
+    private fun wrapCall(source: Completable): Completable = gateway.data
+            .firstOrError().flatMapCompletable {
+                if (it) source else Completable.error(NoNetworkException())
+            }
+
+    private fun <T> wrapCall(source: Single<T>): Single<T> = gateway.data
+            .firstOrError().flatMap {
+                if (it) source else Single.error<T>(NoNetworkException())
+            }
 }
