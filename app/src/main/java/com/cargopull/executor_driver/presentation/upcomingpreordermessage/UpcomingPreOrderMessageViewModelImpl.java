@@ -4,7 +4,10 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
+import com.cargopull.executor_driver.R;
 import com.cargopull.executor_driver.backend.analytics.ErrorReporter;
+import com.cargopull.executor_driver.backend.ringtone.RingTonePlayer;
+import com.cargopull.executor_driver.backend.vibro.ShakeItPlayer;
 import com.cargopull.executor_driver.interactor.NotificationMessageUseCase;
 import com.cargopull.executor_driver.presentation.SingleLiveEvent;
 import com.cargopull.executor_driver.presentation.ViewState;
@@ -21,15 +24,23 @@ public class UpcomingPreOrderMessageViewModelImpl extends ViewModel implements
   @NonNull
   private final NotificationMessageUseCase upcomingPreOrderMessagesUseCase;
   @NonNull
+  private final ShakeItPlayer shakeItPlayer;
+  @NonNull
+  private final RingTonePlayer ringTonePlayer;
+  @NonNull
   private final SingleLiveEvent<ViewState<UpcomingPreOrderMessageViewActions>> messageLiveData;
   @NonNull
   private Disposable disposable = EmptyDisposable.INSTANCE;
 
   @Inject
   public UpcomingPreOrderMessageViewModelImpl(@NonNull ErrorReporter errorReporter,
-      @NonNull NotificationMessageUseCase upcomingPreOrderMessagesUseCase) {
+      @NonNull NotificationMessageUseCase upcomingPreOrderMessagesUseCase,
+      @NonNull ShakeItPlayer shakeItPlayer,
+      @NonNull RingTonePlayer ringTonePlayer) {
     this.errorReporter = errorReporter;
     this.upcomingPreOrderMessagesUseCase = upcomingPreOrderMessagesUseCase;
+    this.shakeItPlayer = shakeItPlayer;
+    this.ringTonePlayer = ringTonePlayer;
     messageLiveData = new SingleLiveEvent<>();
     loadMissedOrderMessages();
   }
@@ -52,6 +63,8 @@ public class UpcomingPreOrderMessageViewModelImpl extends ViewModel implements
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(
             message -> {
+              shakeItPlayer.shakeIt(R.raw.pre_order_reminder_vibro);
+              ringTonePlayer.playRingTone(R.raw.pre_order_reminder);
               if (message != null && !message.trim().isEmpty()) {
                 messageLiveData.postValue(
                     upcomingPreOrderMessageViewActions -> upcomingPreOrderMessageViewActions

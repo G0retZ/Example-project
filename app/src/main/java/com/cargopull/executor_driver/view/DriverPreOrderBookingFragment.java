@@ -20,8 +20,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.cargopull.executor_driver.R;
-import com.cargopull.executor_driver.backend.ringtone.RingTonePlayer;
-import com.cargopull.executor_driver.backend.vibro.ShakeItPlayer;
 import com.cargopull.executor_driver.di.AppComponent;
 import com.cargopull.executor_driver.presentation.CommonNavigate;
 import com.cargopull.executor_driver.presentation.orderconfirmation.OrderConfirmationViewActions;
@@ -36,8 +34,6 @@ public class DriverPreOrderBookingFragment extends BaseFragment implements
     OrderConfirmationViewActions {
 
   private OrderConfirmationViewModel orderConfirmationViewModel;
-  private ShakeItPlayer shakeItPlayer;
-  private RingTonePlayer ringTonePlayer;
   private Button declineAction;
   private ProgressBar acceptAction;
   private TextView acceptActionText;
@@ -48,15 +44,6 @@ public class DriverPreOrderBookingFragment extends BaseFragment implements
   @Nullable
   private AlertDialog alertDialog;
   private Context context;
-
-  @Inject
-  public void setShakeItPlayer(@NonNull ShakeItPlayer shakeItPlayer) {
-    this.shakeItPlayer = shakeItPlayer;
-  }
-
-  public void setRingTonePlayer(@NonNull RingTonePlayer ringTonePlayer) {
-    this.ringTonePlayer = ringTonePlayer;
-  }
 
   @Inject
   public void setOrderConfirmationViewModel(
@@ -102,7 +89,6 @@ public class DriverPreOrderBookingFragment extends BaseFragment implements
         acceptResetAnimator.start();
         if (!canceled) {
           orderConfirmationViewModel.acceptOrder();
-          shakeItPlayer.shakeIt(R.raw.single_shot_vibro);
         }
       }
 
@@ -145,7 +131,6 @@ public class DriverPreOrderBookingFragment extends BaseFragment implements
     super.onActivityCreated(savedInstanceState);
     orderConfirmationViewModel.getViewStateLiveData().observe(this, viewState -> {
       if (viewState != null) {
-        ringTonePlayer.stopRingTone(R.raw.new_pre_order);
         viewState.apply(this);
       }
     });
@@ -228,7 +213,6 @@ public class DriverPreOrderBookingFragment extends BaseFragment implements
   @Override
   public void showDeclinedMessage(@Nullable String message) {
     if (message != null) {
-      ringTonePlayer.playRingTone(R.raw.decline_offer);
       orderConfirmationViewModel.messageConsumed();
     }
   }

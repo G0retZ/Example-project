@@ -1,0 +1,18 @@
+[
+  {
+    "duration": 10,
+    "volume": 0
+  },
+  {
+    "duration": 70,
+    "volume": 255
+  },
+  {
+    "duration": 60,
+    "volume": 0
+  },
+  {
+    "duration": 100,
+    "volume": 255
+  }
+]

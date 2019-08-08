@@ -93,6 +93,14 @@ public class DriverOrderConfirmationFragment extends BaseFragment implements
   }
 
   @Override
+  public void onDetach() {
+    if (timeoutAnimation != null) {
+      timeoutAnimation.cancel();
+    }
+    super.onDetach();
+  }
+
+  @Override
   public void showDriverOrderConfirmationPending(boolean pending) {
     showPending(pending, toString() + "0");
   }

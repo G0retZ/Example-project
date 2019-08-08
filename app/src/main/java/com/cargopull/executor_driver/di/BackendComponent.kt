@@ -3,6 +3,7 @@ package com.cargopull.executor_driver.di
 import android.content.Context
 import android.location.LocationManager
 import android.net.ConnectivityManager
+import android.os.Build
 import com.cargopull.executor_driver.BASE_URL
 import com.cargopull.executor_driver.BuildConfig
 import com.cargopull.executor_driver.SOCKET_URL
@@ -12,8 +13,11 @@ import com.cargopull.executor_driver.backend.analytics.EventLogger
 import com.cargopull.executor_driver.backend.analytics.EventLoggerImpl
 import com.cargopull.executor_driver.backend.geolocation.GeolocationCenter
 import com.cargopull.executor_driver.backend.geolocation.GeolocationCenterImpl
+import com.cargopull.executor_driver.backend.ringtone.RingTonePlayer
+import com.cargopull.executor_driver.backend.ringtone.SingleRingTonePlayer
 import com.cargopull.executor_driver.backend.settings.AppPreferences
 import com.cargopull.executor_driver.backend.settings.AppSettingsService
+import com.cargopull.executor_driver.backend.vibro.*
 import com.cargopull.executor_driver.backend.web.*
 import com.cargopull.executor_driver.gateway.TokenKeeperImpl
 import com.cargopull.executor_driver.interactor.DataReceiver
@@ -33,6 +37,16 @@ import java.util.concurrent.TimeUnit
 
 class BackendComponent(private val appContext: Context) {
 
+    val ringTonePlayer: RingTonePlayer by lazy {
+        SingleRingTonePlayer(appContext)
+    }
+    val shakeItPlayer: ShakeItPlayer by lazy {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            SingleShakePlayer(appContext, NewPatternMapper())
+        } else {
+            OldSingleShakePlayer(appContext, OldPatternMapper())
+        }
+    }
     val locationManager: LocationManager by lazy {
         appContext.getSystemService(Context.LOCATION_SERVICE) as LocationManager
     }

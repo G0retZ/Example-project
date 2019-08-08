@@ -4,7 +4,10 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
+import com.cargopull.executor_driver.R;
 import com.cargopull.executor_driver.backend.analytics.ErrorReporter;
+import com.cargopull.executor_driver.backend.ringtone.RingTonePlayer;
+import com.cargopull.executor_driver.backend.vibro.ShakeItPlayer;
 import com.cargopull.executor_driver.gateway.DataMappingException;
 import com.cargopull.executor_driver.interactor.ExecutorStateUseCase;
 import com.cargopull.executor_driver.presentation.CommonNavigate;
@@ -21,6 +24,10 @@ public class ExecutorStateViewModelImpl extends ViewModel implements ExecutorSta
   @NonNull
   private final ExecutorStateUseCase executorStateUseCase;
   @NonNull
+  private final ShakeItPlayer shakeItPlayer;
+  @NonNull
+  private final RingTonePlayer ringTonePlayer;
+  @NonNull
   private final MutableLiveData<ViewState<ExecutorStateViewActions>> messageLiveData;
   @NonNull
   private final MutableLiveData<String> navigateLiveData;
@@ -29,9 +36,13 @@ public class ExecutorStateViewModelImpl extends ViewModel implements ExecutorSta
 
   @Inject
   public ExecutorStateViewModelImpl(@NonNull ErrorReporter errorReporter,
-      @NonNull ExecutorStateUseCase executorStateUseCase) {
+      @NonNull ExecutorStateUseCase executorStateUseCase,
+      @NonNull ShakeItPlayer shakeItPlayer,
+      @NonNull RingTonePlayer ringTonePlayer) {
     this.errorReporter = errorReporter;
     this.executorStateUseCase = executorStateUseCase;
+    this.shakeItPlayer = shakeItPlayer;
+    this.ringTonePlayer = ringTonePlayer;
     messageLiveData = new MutableLiveData<>();
     navigateLiveData = new MutableLiveData<>();
     loadExecutorState();
@@ -91,13 +102,19 @@ public class ExecutorStateViewModelImpl extends ViewModel implements ExecutorSta
                         executorStateViewActions -> executorStateViewActions
                             .showExecutorStatusMessage(executorState.getData())
                     );
+                    ringTonePlayer.playRingTone(R.raw.skip_order);
+                    shakeItPlayer.shakeIt(R.raw.skip_order_vibro);
                   }
                   navigateLiveData.postValue(ExecutorStateNavigate.MAP_ONLINE);
                   break;
                 case DRIVER_ORDER_CONFIRMATION:
+                  ringTonePlayer.playRingTone(R.raw.regular_order_notify);
+                  shakeItPlayer.shakeIt(R.raw.regular_order_notify_vibro);
                   navigateLiveData.postValue(ExecutorStateNavigate.DRIVER_ORDER_CONFIRMATION);
                   break;
                 case DRIVER_PRELIMINARY_ORDER_CONFIRMATION:
+                  ringTonePlayer.playRingTone(R.raw.regular_order_notify);
+                  shakeItPlayer.shakeIt(R.raw.regular_order_notify_vibro);
                   navigateLiveData
                       .postValue(ExecutorStateNavigate.DRIVER_PRELIMINARY_ORDER_CONFIRMATION);
                   break;
