@@ -5,6 +5,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
+import com.cargopull.executor_driver.backend.stomp.StompFrame;
 import com.cargopull.executor_driver.backend.web.incoming.ApiOrder;
 import com.cargopull.executor_driver.entity.Order;
 import org.junit.Before;
@@ -13,7 +14,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import ua.naiksoftware.stomp.client.StompMessage;
 
 @RunWith(MockitoJUnitRunner.class)
 public class StompMapperTest {
@@ -21,12 +21,12 @@ public class StompMapperTest {
   @Rule
   public final ApiOrderRule rule = new ApiOrderRule();
 
-  private Mapper<StompMessage, Order> mapper;
+  private Mapper<StompFrame, Order> mapper;
 
   @Mock
   private Mapper<ApiOrder, Order> apiOrderMapper;
   @Mock
-  private StompMessage stompMessage;
+  private StompFrame stompFrame;
   @Mock
   private Order order;
 
@@ -44,10 +44,10 @@ public class StompMapperTest {
   @Test
   public void mappingJsonStringToOrderSuccess() throws Exception {
     // Дано:
-    when(stompMessage.getPayload()).thenReturn(rule.getFullOrder());
+    when(stompFrame.getBody()).thenReturn(rule.getFullOrder());
 
     // Действие:
-    Order order = mapper.map(stompMessage);
+    Order order = mapper.map(stompFrame);
 
     // Результат:
     assertEquals(this.order, order);
@@ -61,11 +61,11 @@ public class StompMapperTest {
   @Test(expected = DataMappingException.class)
   public void mappingFailForOrderMappingError() throws Exception {
     // Дано:
-    when(stompMessage.getPayload()).thenReturn(rule.getFullOrder());
+    when(stompFrame.getBody()).thenReturn(rule.getFullOrder());
     doThrow(new DataMappingException()).when(apiOrderMapper).map(any(ApiOrder.class));
 
     // Действие:
-    mapper.map(stompMessage);
+    mapper.map(stompFrame);
   }
 
   /**
@@ -76,10 +76,10 @@ public class StompMapperTest {
   @Test(expected = DataMappingException.class)
   public void mappingEmptyFail() throws Exception {
     // Дано:
-    when(stompMessage.getPayload()).thenReturn("\n");
+    when(stompFrame.getBody()).thenReturn("\n");
 
     // Действие:
-    mapper.map(stompMessage);
+    mapper.map(stompFrame);
   }
 
   /**
@@ -90,10 +90,10 @@ public class StompMapperTest {
   @Test(expected = DataMappingException.class)
   public void mappingStringFail() throws Exception {
     // Дано:
-    when(stompMessage.getPayload()).thenReturn("dasie");
+    when(stompFrame.getBody()).thenReturn("dasie");
 
     // Действие:
-    mapper.map(stompMessage);
+    mapper.map(stompFrame);
   }
 
   /**
@@ -104,10 +104,10 @@ public class StompMapperTest {
   @Test(expected = DataMappingException.class)
   public void mappingNumberFail() throws Exception {
     // Дано:
-    when(stompMessage.getPayload()).thenReturn("12");
+    when(stompFrame.getBody()).thenReturn("12");
 
     // Действие:
-    mapper.map(stompMessage);
+    mapper.map(stompFrame);
   }
 
   /**
@@ -118,10 +118,10 @@ public class StompMapperTest {
   @Test(expected = DataMappingException.class)
   public void mappingArrayFail() throws Exception {
     // Дано:
-    when(stompMessage.getPayload()).thenReturn("[]");
+    when(stompFrame.getBody()).thenReturn("[]");
 
     // Действие:
-    mapper.map(stompMessage);
+    mapper.map(stompFrame);
   }
 
   /**
@@ -132,6 +132,6 @@ public class StompMapperTest {
   @Test(expected = DataMappingException.class)
   public void mappingNullFail() throws Exception {
     // Действие:
-    mapper.map(stompMessage);
+    mapper.map(stompFrame);
   }
 }

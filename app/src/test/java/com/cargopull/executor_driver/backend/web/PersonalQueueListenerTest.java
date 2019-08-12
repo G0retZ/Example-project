@@ -1,7 +1,5 @@
 package com.cargopull.executor_driver.backend.web;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.only;
@@ -12,24 +10,25 @@ import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 import com.cargopull.executor_driver.GatewayThreadTestRule;
+import com.cargopull.executor_driver.backend.stomp.StompClient;
+import com.cargopull.executor_driver.backend.stomp.StompFrame;
+import com.cargopull.executor_driver.interactor.CommonGateway;
 import com.cargopull.executor_driver.interactor.DataReceiver;
-import io.reactivex.Completable;
 import io.reactivex.Flowable;
 import io.reactivex.Observable;
 import io.reactivex.functions.Action;
+import io.reactivex.plugins.RxJavaPlugins;
+import io.reactivex.schedulers.TestScheduler;
 import io.reactivex.subscribers.TestSubscriber;
+import java.util.concurrent.TimeUnit;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
 import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
-import ua.naiksoftware.stomp.client.StompClient;
-import ua.naiksoftware.stomp.client.StompMessage;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PersonalQueueListenerTest {
@@ -42,22 +41,57 @@ public class PersonalQueueListenerTest {
   @Mock
   private StompClient stompClient;
   @Mock
-  private StompMessage stompMessage;
+  private StompFrame stompFrame;
   @Mock
   private DataReceiver<String> loginReceiver;
-  @Captor
-  private ArgumentCaptor<StompMessage> stompMessageCaptor;
+  @Mock
+  private CommonGateway<Boolean> networkConnectionGateway;
   @Mock
   private Action action;
+  private TestScheduler testScheduler;
+
 
   @Before
   public void setUp() {
-    queueListener = new PersonalQueueListener(stompClient, loginReceiver);
+    testScheduler = new TestScheduler();
+    RxJavaPlugins.setComputationSchedulerHandler(scheduler -> testScheduler);
+    queueListener = new PersonalQueueListener(stompClient, networkConnectionGateway, loginReceiver);
+    when(networkConnectionGateway.getData()).thenReturn(Flowable.never());
     when(loginReceiver.get()).thenReturn(Observable.never());
-    when(stompClient.topic(anyString(), eq(StompClient.ACK_CLIENT_INDIVIDUAL)))
-        .thenReturn(Flowable.never());
-    when(stompClient.send(any(StompMessage.class)))
-        .thenReturn(Completable.complete());
+    when(stompClient.subscribe(anyString(), eq(2000), eq(2F))).thenReturn(Flowable.never());
+  }
+
+  /**
+   * Должен запросить у публикатора состояние сети только раз.
+   */
+  @Test
+  public void askPublisherForNetworkState() {
+    // Действие:
+    queueListener.getMessages().test().isDisposed();
+    queueListener.getMessages().test().isDisposed();
+    queueListener.getMessages().test().isDisposed();
+    queueListener.getMessages().test().isDisposed();
+
+    // Результат:
+    verify(networkConnectionGateway, only()).getData();
+  }
+
+  /**
+   * Не должен просить у публикатора логин исполнителя.
+   */
+  @Test
+  public void doNotAskLoginPublisherForLogin() {
+    // Дано:
+    when(networkConnectionGateway.getData()).thenReturn(Flowable.<Boolean>never().startWith(false));
+
+    // Действие:
+    queueListener.getMessages().test().isDisposed();
+    queueListener.getMessages().test().isDisposed();
+    queueListener.getMessages().test().isDisposed();
+    queueListener.getMessages().test().isDisposed();
+
+    // Результат:
+    verifyZeroInteractions(loginReceiver);
   }
 
   /**
@@ -65,11 +99,14 @@ public class PersonalQueueListenerTest {
    */
   @Test
   public void askLoginPublisherForLogin() {
+    // Дано:
+    when(networkConnectionGateway.getData()).thenReturn(Flowable.<Boolean>never().startWith(true));
+
     // Действие:
-    queueListener.getAcknowledgedMessages().test().isDisposed();
-    queueListener.getAcknowledgedMessages().test().isDisposed();
-    queueListener.getAcknowledgedMessages().test().isDisposed();
-    queueListener.getAcknowledgedMessages().test().isDisposed();
+    queueListener.getMessages().test().isDisposed();
+    queueListener.getMessages().test().isDisposed();
+    queueListener.getMessages().test().isDisposed();
+    queueListener.getMessages().test().isDisposed();
 
     // Результат:
     verify(loginReceiver, only()).get();
@@ -82,9 +119,10 @@ public class PersonalQueueListenerTest {
   @Test
   public void doNotAskLoginPublisherForLoginOnError() {
     // Дано:
+    when(networkConnectionGateway.getData()).thenReturn(Flowable.<Boolean>never().startWith(true));
     when(loginReceiver.get())
         .thenReturn(Observable.just("1234567890").concatWith(Observable.never()));
-    when(stompClient.topic("/queue/1234567890", StompClient.ACK_CLIENT_INDIVIDUAL)).thenReturn(
+    when(stompClient.subscribe("/queue/1234567890", 2000, 2F)).thenReturn(
         Flowable.error(Exception::new),
         Flowable.error(NoNetworkException::new),
         Flowable.error(ConnectionClosedException::new),
@@ -92,7 +130,7 @@ public class PersonalQueueListenerTest {
     );
 
     // Действие:
-    queueListener.getAcknowledgedMessages().test().isDisposed();
+    queueListener.getMessages().test().isDisposed();
 
     // Результат:
     verify(loginReceiver, only()).get();
@@ -105,9 +143,9 @@ public class PersonalQueueListenerTest {
   @Test
   public void doNotAskLoginPublisherForLoginOnComplete() {
     // Дано:
-    when(loginReceiver.get())
-        .thenReturn(Observable.just("1234567890").concatWith(Observable.never()));
-    when(stompClient.topic("/queue/1234567890", StompClient.ACK_CLIENT_INDIVIDUAL)).thenReturn(
+    when(networkConnectionGateway.getData()).thenReturn(Flowable.<Boolean>never().startWith(true));
+    when(loginReceiver.get()).thenReturn(Observable.<String>never().startWith("1234567890"));
+    when(stompClient.subscribe("/queue/1234567890", 2000, 2F)).thenReturn(
         Flowable.empty(),
         Flowable.empty(),
         Flowable.empty(),
@@ -115,7 +153,7 @@ public class PersonalQueueListenerTest {
     );
 
     // Действие:
-    queueListener.getAcknowledgedMessages().test().isDisposed();
+    queueListener.getMessages().test().isDisposed();
 
     // Результат:
     verify(loginReceiver, only()).get();
@@ -130,21 +168,27 @@ public class PersonalQueueListenerTest {
   public void askStompClientForTopicSubscription() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(stompClient);
+    when(networkConnectionGateway.getData())
+        .thenReturn(Flowable.just(true, false, true, false).concatWith(Flowable.never()));
     when(loginReceiver.get()).thenReturn(Observable.just(
         "1234567890", "0987654321", "123454321", "09876567890"
     ).concatWith(Observable.never()));
 
     // Действие:
-    queueListener.getAcknowledgedMessages().test().isDisposed();
-    queueListener.getAcknowledgedMessages().test().isDisposed();
-    queueListener.getAcknowledgedMessages().test().isDisposed();
-    queueListener.getAcknowledgedMessages().test().isDisposed();
+    queueListener.getMessages().test().isDisposed();
+    queueListener.getMessages().test().isDisposed();
+    queueListener.getMessages().test().isDisposed();
+    queueListener.getMessages().test().isDisposed();
 
     // Результат:
-    inOrder.verify(stompClient).topic("/queue/1234567890", StompClient.ACK_CLIENT_INDIVIDUAL);
-    inOrder.verify(stompClient).topic("/queue/0987654321", StompClient.ACK_CLIENT_INDIVIDUAL);
-    inOrder.verify(stompClient).topic("/queue/123454321", StompClient.ACK_CLIENT_INDIVIDUAL);
-    inOrder.verify(stompClient).topic("/queue/09876567890", StompClient.ACK_CLIENT_INDIVIDUAL);
+    inOrder.verify(stompClient).subscribe("/queue/1234567890", 2000, 2F);
+    inOrder.verify(stompClient).subscribe("/queue/0987654321", 2000, 2F);
+    inOrder.verify(stompClient).subscribe("/queue/123454321", 2000, 2F);
+    inOrder.verify(stompClient).subscribe("/queue/09876567890", 2000, 2F);
+    inOrder.verify(stompClient).subscribe("/queue/1234567890", 2000, 2F);
+    inOrder.verify(stompClient).subscribe("/queue/0987654321", 2000, 2F);
+    inOrder.verify(stompClient).subscribe("/queue/123454321", 2000, 2F);
+    inOrder.verify(stompClient).subscribe("/queue/09876567890", 2000, 2F);
     verifyNoMoreInteractions(stompClient);
   }
 
@@ -155,9 +199,9 @@ public class PersonalQueueListenerTest {
   @Test
   public void askStompClientForTopicMessagesOnError() {
     // Дано:
-    when(loginReceiver.get())
-        .thenReturn(Observable.just("1234567890").concatWith(Observable.never()));
-    when(stompClient.topic("/queue/1234567890", StompClient.ACK_CLIENT_INDIVIDUAL)).thenReturn(
+    when(networkConnectionGateway.getData()).thenReturn(Flowable.<Boolean>never().startWith(true));
+    when(loginReceiver.get()).thenReturn(Observable.<String>never().startWith("1234567890"));
+    when(stompClient.subscribe("/queue/1234567890", 2000, 2F)).thenReturn(
         Flowable.error(Exception::new),
         Flowable.error(NoNetworkException::new),
         Flowable.error(ConnectionClosedException::new),
@@ -165,10 +209,11 @@ public class PersonalQueueListenerTest {
     );
 
     // Действие:
-    queueListener.getAcknowledgedMessages().test().isDisposed();
+    queueListener.getMessages().test().isDisposed();
+    testScheduler.advanceTimeBy(5, TimeUnit.MINUTES);
 
     // Результат:
-    verify(stompClient, times(4)).topic("/queue/1234567890", StompClient.ACK_CLIENT_INDIVIDUAL);
+    verify(stompClient, times(4)).subscribe("/queue/1234567890", 2000, 2F);
     verifyNoMoreInteractions(stompClient);
   }
 
@@ -179,9 +224,9 @@ public class PersonalQueueListenerTest {
   @Test
   public void askStompClientForTopicMessagesOnComplete() {
     // Дано:
-    when(loginReceiver.get())
-        .thenReturn(Observable.just("1234567890").concatWith(Observable.never()));
-    when(stompClient.topic("/queue/1234567890", StompClient.ACK_CLIENT_INDIVIDUAL)).thenReturn(
+    when(networkConnectionGateway.getData()).thenReturn(Flowable.<Boolean>never().startWith(true));
+    when(loginReceiver.get()).thenReturn(Observable.<String>never().startWith("1234567890"));
+    when(stompClient.subscribe("/queue/1234567890", 2000, 2F)).thenReturn(
         Flowable.empty(),
         Flowable.empty(),
         Flowable.empty(),
@@ -189,30 +234,30 @@ public class PersonalQueueListenerTest {
     );
 
     // Действие:
-    queueListener.getAcknowledgedMessages().test().isDisposed();
+    queueListener.getMessages().test().isDisposed();
 
     // Результат:
-    verify(stompClient, times(4)).topic("/queue/1234567890", StompClient.ACK_CLIENT_INDIVIDUAL);
-    verifyNoMoreInteractions(stompClient);
+    verify(stompClient, only()).subscribe("/queue/1234567890", 2000, 2F);
   }
 
   /**
-   * Должен отписаться у клиента STOMP от подписок на старый топики.
+   * Должен отписаться у клиента STOMP от подписок на старые топики.
    */
   @Test
-  public void ubSubscribeFromPreviousRequestsToStompClient() throws Exception {
+  public void unSubscribeFromPreviousRequestsToStompClient() throws Exception {
     // Дано:
+    when(networkConnectionGateway.getData()).thenReturn(Flowable.<Boolean>never().startWith(true));
     when(loginReceiver.get()).thenReturn(Observable.just(
         "1234567890", "0987654321", "123454321", "09876567890"
     ).concatWith(Observable.never()));
-    when(stompClient.topic(anyString(), eq(StompClient.ACK_CLIENT_INDIVIDUAL)))
-        .thenReturn(Flowable.<StompMessage>never().doOnCancel(action));
+    when(stompClient.subscribe(anyString(), eq(2000), eq(2F)))
+        .thenReturn(Flowable.<StompFrame>never().doOnCancel(action));
 
     // Действие:
-    queueListener.getAcknowledgedMessages().test().isDisposed();
-    queueListener.getAcknowledgedMessages().test().isDisposed();
-    queueListener.getAcknowledgedMessages().test().isDisposed();
-    queueListener.getAcknowledgedMessages().test().isDisposed();
+    queueListener.getMessages().test().isDisposed();
+    queueListener.getMessages().test().isDisposed();
+    queueListener.getMessages().test().isDisposed();
+    queueListener.getMessages().test().isDisposed();
 
     // Результат:
     verify(action, times(3)).run();
@@ -222,18 +267,18 @@ public class PersonalQueueListenerTest {
    * Должен отписаться у клиента STOMP от топика, когда все подписчики ушли.
    */
   @Test
-  public void ubSubscribeFromTopicIfNoMoreSubscribers() throws Exception {
+  public void unSubscribeFromTopicIfNoMoreSubscribers() throws Exception {
     // Дано:
-    when(loginReceiver.get())
-        .thenReturn(Observable.just("1234567890").concatWith(Observable.never()));
-    when(stompClient.topic("/queue/1234567890", StompClient.ACK_CLIENT_INDIVIDUAL))
-        .thenReturn(Flowable.<StompMessage>never().doOnCancel(action));
+    when(networkConnectionGateway.getData()).thenReturn(Flowable.<Boolean>never().startWith(true));
+    when(loginReceiver.get()).thenReturn(Observable.<String>never().startWith("1234567890"));
+    when(stompClient.subscribe("/queue/1234567890", 2000, 2F))
+        .thenReturn(Flowable.<StompFrame>never().doOnCancel(action));
 
     // Действие:
-    TestSubscriber<StompMessage> testSubscriber = queueListener.getAcknowledgedMessages().test();
-    TestSubscriber<StompMessage> testSubscriber1 = queueListener.getAcknowledgedMessages().test();
-    TestSubscriber<StompMessage> testSubscriber2 = queueListener.getAcknowledgedMessages().test();
-    TestSubscriber<StompMessage> testSubscriber3 = queueListener.getAcknowledgedMessages().test();
+    TestSubscriber<StompFrame> testSubscriber = queueListener.getMessages().test();
+    TestSubscriber<StompFrame> testSubscriber1 = queueListener.getMessages().test();
+    TestSubscriber<StompFrame> testSubscriber2 = queueListener.getMessages().test();
+    TestSubscriber<StompFrame> testSubscriber3 = queueListener.getMessages().test();
 
     // Результат:
     testSubscriber.dispose();
@@ -244,62 +289,24 @@ public class PersonalQueueListenerTest {
     verify(action, only()).run();
   }
 
-  /**
-   * Должен запросить у клиента STOMP отправку ACK сразу после получения сообщения.
-   */
-  @Test
-  public void askStompClientToSendAckForMessageImmediately() {
-    // Дано:
-    InOrder inOrder = Mockito.inOrder(stompClient);
-    when(stompMessage.findHeader("subscription")).thenReturn("subs0", "subs1", "subs2");
-    when(stompMessage.findHeader("message-id")).thenReturn("mess0", "mess1", "mess2");
-    when(loginReceiver.get())
-        .thenReturn(Observable.just("1234567890").concatWith(Observable.never()));
-    when(stompClient.topic("/queue/1234567890", StompClient.ACK_CLIENT_INDIVIDUAL))
-        .thenReturn(
-            Flowable.just(stompMessage, stompMessage, stompMessage).concatWith(Flowable.never()));
-
-    // Действие:
-    queueListener.getAcknowledgedMessages().test().isDisposed();
-
-    // Результат:
-    inOrder.verify(stompClient).topic("/queue/1234567890", StompClient.ACK_CLIENT_INDIVIDUAL);
-    inOrder.verify(stompClient, times(3)).send(stompMessageCaptor.capture());
-    assertEquals(stompMessageCaptor.getAllValues().get(0).getStompCommand(), "ACK");
-    assertEquals(stompMessageCaptor.getAllValues().get(0).findHeader("subscription"), "subs0");
-    assertEquals(stompMessageCaptor.getAllValues().get(0).findHeader("message-id"), "mess0");
-    assertEquals(stompMessageCaptor.getAllValues().get(0).getPayload(), "");
-    assertEquals(stompMessageCaptor.getAllValues().get(1).getStompCommand(), "ACK");
-    assertEquals(stompMessageCaptor.getAllValues().get(1).findHeader("subscription"), "subs1");
-    assertEquals(stompMessageCaptor.getAllValues().get(1).findHeader("message-id"), "mess1");
-    assertEquals(stompMessageCaptor.getAllValues().get(1).getPayload(), "");
-    assertEquals(stompMessageCaptor.getAllValues().get(2).getStompCommand(), "ACK");
-    assertEquals(stompMessageCaptor.getAllValues().get(2).findHeader("subscription"), "subs2");
-    assertEquals(stompMessageCaptor.getAllValues().get(2).findHeader("message-id"), "mess2");
-    assertEquals(stompMessageCaptor.getAllValues().get(2).getPayload(), "");
-    verifyNoMoreInteractions(stompClient);
-  }
-
   /* Проверяем результаты обработки сообщений от сервера */
 
   /**
    * Должен вернуть сообщение.
    */
   @Test
-  public void answerWithStompMessage() {
+  public void answerWithStompFrame() {
     // Дано:
-    when(loginReceiver.get())
-        .thenReturn(Observable.just("1234567890").concatWith(Observable.never()));
-    when(stompMessage.findHeader("subscription")).thenReturn("subs");
-    when(stompMessage.findHeader("message-id")).thenReturn("mess");
-    when(stompClient.topic("/queue/1234567890", StompClient.ACK_CLIENT_INDIVIDUAL))
-        .thenReturn(Flowable.just(stompMessage).concatWith(Flowable.never()));
+    when(networkConnectionGateway.getData()).thenReturn(Flowable.<Boolean>never().startWith(true));
+    when(loginReceiver.get()).thenReturn(Observable.<String>never().startWith("1234567890"));
+    when(stompClient.subscribe("/queue/1234567890", 2000, 2F))
+        .thenReturn(Flowable.just(stompFrame).concatWith(Flowable.never()));
 
     // Действие:
-    TestSubscriber<StompMessage> testSubscriber = queueListener.getAcknowledgedMessages().test();
+    TestSubscriber<StompFrame> testSubscriber = queueListener.getMessages().test();
 
     // Результат:
-    testSubscriber.assertValue(stompMessage);
+    testSubscriber.assertValue(stompFrame);
     testSubscriber.assertNoErrors();
     testSubscriber.assertNotComplete();
   }
@@ -311,9 +318,9 @@ public class PersonalQueueListenerTest {
   @Test
   public void ignoreErrors() {
     // Дано:
-    when(loginReceiver.get())
-        .thenReturn(Observable.just("1234567890").concatWith(Observable.never()));
-    when(stompClient.topic("/queue/1234567890", StompClient.ACK_CLIENT_INDIVIDUAL)).thenReturn(
+    when(networkConnectionGateway.getData()).thenReturn(Flowable.<Boolean>never().startWith(true));
+    when(loginReceiver.get()).thenReturn(Observable.<String>never().startWith("1234567890"));
+    when(stompClient.subscribe("/queue/1234567890", 2000, 2F)).thenReturn(
         Flowable.error(Exception::new),
         Flowable.error(NoNetworkException::new),
         Flowable.error(ConnectionClosedException::new),
@@ -321,7 +328,7 @@ public class PersonalQueueListenerTest {
     );
 
     // Действие:
-    TestSubscriber<StompMessage> testSubscriber = queueListener.getAcknowledgedMessages().test();
+    TestSubscriber<StompFrame> testSubscriber = queueListener.getMessages().test();
 
     // Результат:
     testSubscriber.assertNoErrors();
@@ -334,24 +341,23 @@ public class PersonalQueueListenerTest {
    */
   @SuppressWarnings("unchecked")
   @Test
-  public void answerWithStompMessageAfterErrors() {
+  public void answerWithStompFrameAfterErrors() {
     // Дано:
-    when(loginReceiver.get())
-        .thenReturn(Observable.just("1234567890").concatWith(Observable.never()));
-    when(stompMessage.findHeader("subscription")).thenReturn("subs");
-    when(stompMessage.findHeader("message-id")).thenReturn("mess");
-    when(stompClient.topic("/queue/1234567890", StompClient.ACK_CLIENT_INDIVIDUAL)).thenReturn(
+    when(networkConnectionGateway.getData()).thenReturn(Flowable.<Boolean>never().startWith(true));
+    when(loginReceiver.get()).thenReturn(Observable.<String>never().startWith("1234567890"));
+    when(stompClient.subscribe("/queue/1234567890", 2000, 2F)).thenReturn(
         Flowable.error(Exception::new),
         Flowable.error(NoNetworkException::new),
         Flowable.error(ConnectionClosedException::new),
-        Flowable.just(stompMessage).concatWith(Flowable.never())
+        Flowable.just(stompFrame).concatWith(Flowable.never())
     );
 
     // Действие:
-    TestSubscriber<StompMessage> testSubscriber = queueListener.getAcknowledgedMessages().test();
+    TestSubscriber<StompFrame> testSubscriber = queueListener.getMessages().test();
+    testScheduler.advanceTimeBy(5, TimeUnit.MINUTES);
 
     // Результат:
-    testSubscriber.assertValue(stompMessage);
+    testSubscriber.assertValue(stompFrame);
     testSubscriber.assertNoErrors();
     testSubscriber.assertNotComplete();
   }
@@ -361,24 +367,23 @@ public class PersonalQueueListenerTest {
    */
   @SuppressWarnings("unchecked")
   @Test
-  public void answerWithStompMessageAfterCompletions() {
+  public void answerWithStompFrameAfterCompletions() {
     // Дано:
-    when(loginReceiver.get())
-        .thenReturn(Observable.just("1234567890").concatWith(Observable.never()));
-    when(stompMessage.findHeader("subscription")).thenReturn("subs");
-    when(stompMessage.findHeader("message-id")).thenReturn("mess");
-    when(stompClient.topic("/queue/1234567890", StompClient.ACK_CLIENT_INDIVIDUAL)).thenReturn(
+    when(networkConnectionGateway.getData()).thenReturn(Flowable.<Boolean>never().startWith(true));
+    when(loginReceiver.get()).thenReturn(Observable.<String>never().startWith("1234567890"));
+    when(stompClient.subscribe("/queue/1234567890", 2000, 2F)).thenReturn(
         Flowable.empty(),
         Flowable.empty(),
         Flowable.empty(),
-        Flowable.just(stompMessage).concatWith(Flowable.never())
+        Flowable.just(stompFrame).concatWith(Flowable.never())
     );
 
     // Действие:
-    TestSubscriber<StompMessage> testSubscriber = queueListener.getAcknowledgedMessages().test();
+    TestSubscriber<StompFrame> testSubscriber = queueListener.getMessages().test();
+    testScheduler.advanceTimeBy(6, TimeUnit.MINUTES);
 
     // Результат:
-    testSubscriber.assertValue(stompMessage);
+    testSubscriber.assertValue(stompFrame);
     testSubscriber.assertNoErrors();
     testSubscriber.assertNotComplete();
   }

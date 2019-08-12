@@ -93,7 +93,8 @@ public class OrderCostDetailsUseCaseTest {
     useCase.updateWith(orderCostDetails);
 
     // Результат:
-    testObserver.assertValues(orderCostDetails, orderCostDetails1, orderCostDetails1, orderCostDetails);
+    testObserver
+        .assertValues(orderCostDetails, orderCostDetails1, orderCostDetails1, orderCostDetails);
   }
 
   /**

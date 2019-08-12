@@ -1,12 +1,12 @@
 package com.cargopull.executor_driver.gateway;
 
+import com.cargopull.executor_driver.backend.stomp.StompFrame;
 import io.reactivex.functions.Predicate;
-import ua.naiksoftware.stomp.client.StompMessage;
 
-public class UpdateMessageFilter implements Predicate<StompMessage> {
+public class UpdateMessageFilter implements Predicate<StompFrame> {
 
   @Override
-  public boolean test(StompMessage stompMessage) {
-    return "UpdateVersion".equals(stompMessage.findHeader("message"));
+  public boolean test(StompFrame stompFrame) {
+    return "UpdateVersion".equals(stompFrame.getHeaders().get("message"));
   }
 }

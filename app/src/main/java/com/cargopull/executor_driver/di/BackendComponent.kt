@@ -20,6 +20,8 @@ import com.cargopull.executor_driver.backend.ringtone.RingTonePlayer
 import com.cargopull.executor_driver.backend.ringtone.SingleRingTonePlayer
 import com.cargopull.executor_driver.backend.settings.AppPreferences
 import com.cargopull.executor_driver.backend.settings.AppSettingsService
+import com.cargopull.executor_driver.backend.stomp.StompClient
+import com.cargopull.executor_driver.backend.stomp.WebSocketConnection
 import com.cargopull.executor_driver.backend.vibro.*
 import com.cargopull.executor_driver.backend.web.*
 import com.cargopull.executor_driver.gateway.TokenKeeperImpl
@@ -35,8 +37,6 @@ import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.converter.scalars.ScalarsConverterFactory
-import ua.naiksoftware.stomp.Stomp
-import ua.naiksoftware.stomp.client.StompClient
 import java.util.concurrent.TimeUnit
 
 class BackendComponent(private val appContext: Context) : Releasable {
@@ -89,16 +89,13 @@ class BackendComponent(private val appContext: Context) : Releasable {
         )
     }
     val stompClient: StompClient by lazy {
-        Stomp.over(
-                Stomp.ConnectionProvider.OKHTTP,
-                socketUrl, null,
-                okHttpClient
-        )
+        StompClient(socketUrl, WebSocketConnection(okHttpClient))
     }
 
     fun personalTopicListener(loginReceiver: DataReceiver<String>) =
             PersonalQueueListener(
                     stompClient,
+                    networkStateReceiver,
                     loginReceiver
             )
 

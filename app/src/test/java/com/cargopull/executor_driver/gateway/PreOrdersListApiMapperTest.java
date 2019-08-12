@@ -5,6 +5,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
+import com.cargopull.executor_driver.backend.stomp.StompFrame;
 import com.cargopull.executor_driver.backend.web.incoming.ApiOptionItem;
 import com.cargopull.executor_driver.backend.web.incoming.ApiRoutePoint;
 import com.cargopull.executor_driver.entity.Option;
@@ -22,7 +23,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import ua.naiksoftware.stomp.client.StompMessage;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PreOrdersListApiMapperTest {
@@ -30,14 +30,14 @@ public class PreOrdersListApiMapperTest {
   @Rule
   public final ApiOrderRule rule = new ApiOrderRule();
 
-  private Mapper<StompMessage, Set<Order>> mapper;
+  private Mapper<StompFrame, Set<Order>> mapper;
 
   @Mock
   private Mapper<ApiOptionItem, Option> apiOptionMapper;
   @Mock
   private Mapper<ApiRoutePoint, RoutePoint> routePointMapper;
   @Mock
-  private StompMessage stompMessage;
+  private StompFrame stompFrame;
   @Mock
   private OptionBoolean optionBoolean;
   @Mock
@@ -63,10 +63,10 @@ public class PreOrdersListApiMapperTest {
   @Test
   public void mappingJsonStringToPreOrdersListSuccess() throws Exception {
     // Дано:
-    when(stompMessage.getPayload()).thenReturn("[" + rule.getFullOrder() + "]");
+    when(stompFrame.getBody()).thenReturn("[" + rule.getFullOrder() + "]");
 
     // Действие:
-    List<Order> preOrders = new ArrayList<>(mapper.map(stompMessage));
+    List<Order> preOrders = new ArrayList<>(mapper.map(stompFrame));
 
     // Результат:
     assertEquals(preOrders.size(), 1);
@@ -98,10 +98,10 @@ public class PreOrdersListApiMapperTest {
   @Test
   public void mappingJsonStringWithoutIdToPreOrdersListSuccess() throws Exception {
     // Дано:
-    when(stompMessage.getPayload()).thenReturn("[" + rule.getOrderWithoutId() + "]");
+    when(stompFrame.getBody()).thenReturn("[" + rule.getOrderWithoutId() + "]");
 
     // Действие:
-    List<Order> preOrders = new ArrayList<>(mapper.map(stompMessage));
+    List<Order> preOrders = new ArrayList<>(mapper.map(stompFrame));
 
     // Результат:
     assertEquals(preOrders.size(), 1);
@@ -133,10 +133,10 @@ public class PreOrdersListApiMapperTest {
   @Test(expected = DataMappingException.class)
   public void mappingJsonStringWithoutPaymentTypeToOrderFail() throws Exception {
     // Дано:
-    when(stompMessage.getPayload()).thenReturn("[" + rule.getOrderWithoutPaymentType() + "]");
+    when(stompFrame.getBody()).thenReturn("[" + rule.getOrderWithoutPaymentType() + "]");
 
     // Действие:
-    List<Order> preOrders = new ArrayList<>(mapper.map(stompMessage));
+    List<Order> preOrders = new ArrayList<>(mapper.map(stompFrame));
 
     // Результат:
     assertEquals(preOrders.size(), 1);
@@ -168,10 +168,10 @@ public class PreOrdersListApiMapperTest {
   @Test(expected = DataMappingException.class)
   public void mappingJsonStringWithEmptyPaymentTypeToOrderFail() throws Exception {
     // Дано:
-    when(stompMessage.getPayload()).thenReturn("[" + rule.getOrderWithEmptyPaymentType() + "]");
+    when(stompFrame.getBody()).thenReturn("[" + rule.getOrderWithEmptyPaymentType() + "]");
 
     // Действие:
-    List<Order> preOrders = new ArrayList<>(mapper.map(stompMessage));
+    List<Order> preOrders = new ArrayList<>(mapper.map(stompFrame));
 
     // Результат:
     assertEquals(preOrders.size(), 1);
@@ -203,10 +203,10 @@ public class PreOrdersListApiMapperTest {
   @Test(expected = DataMappingException.class)
   public void mappingJsonStringWithWrongPaymentTypeToOrderFail() throws Exception {
     // Дано:
-    when(stompMessage.getPayload()).thenReturn("[" + rule.getOrderWithWrongPaymentType() + "]");
+    when(stompFrame.getBody()).thenReturn("[" + rule.getOrderWithWrongPaymentType() + "]");
 
     // Действие:
-    List<Order> preOrders = new ArrayList<>(mapper.map(stompMessage));
+    List<Order> preOrders = new ArrayList<>(mapper.map(stompFrame));
 
     // Результат:
     assertEquals(preOrders.size(), 1);
@@ -238,10 +238,10 @@ public class PreOrdersListApiMapperTest {
   @Test
   public void mappingJsonStringWithoutCommentToPreOrdersListSuccess() throws Exception {
     // Дано:
-    when(stompMessage.getPayload()).thenReturn("[" + rule.getOrderWithoutComment() + "]");
+    when(stompFrame.getBody()).thenReturn("[" + rule.getOrderWithoutComment() + "]");
 
     // Действие:
-    List<Order> preOrders = new ArrayList<>(mapper.map(stompMessage));
+    List<Order> preOrders = new ArrayList<>(mapper.map(stompFrame));
 
     // Результат:
     assertEquals(preOrders.size(), 1);
@@ -273,11 +273,11 @@ public class PreOrdersListApiMapperTest {
   @Test
   public void mappingJsonStringWithoutEstimatedAmountTextToPreOrdersListSuccess() throws Exception {
     // Дано:
-    when(stompMessage.getPayload())
+    when(stompFrame.getBody())
         .thenReturn("[" + rule.getOrderWithoutEstimatedAmountText() + "]");
 
     // Действие:
-    List<Order> preOrders = new ArrayList<>(mapper.map(stompMessage));
+    List<Order> preOrders = new ArrayList<>(mapper.map(stompFrame));
 
     // Результат:
     assertEquals(preOrders.size(), 1);
@@ -309,10 +309,10 @@ public class PreOrdersListApiMapperTest {
   @Test
   public void mappingJsonStringWithoutEstimatedAmountToPreOrdersListSuccess() throws Exception {
     // Дано:
-    when(stompMessage.getPayload()).thenReturn("[" + rule.getOrderWithoutEstimatedAmount() + "]");
+    when(stompFrame.getBody()).thenReturn("[" + rule.getOrderWithoutEstimatedAmount() + "]");
 
     // Действие:
-    List<Order> preOrders = new ArrayList<>(mapper.map(stompMessage));
+    List<Order> preOrders = new ArrayList<>(mapper.map(stompFrame));
 
     // Результат:
     assertEquals(preOrders.size(), 1);
@@ -344,10 +344,10 @@ public class PreOrdersListApiMapperTest {
   @Test
   public void mappingJsonStringWithoutEstimatedTimeToPreOrdersListSuccess() throws Exception {
     // Дано:
-    when(stompMessage.getPayload()).thenReturn("[" + rule.getOrderWithoutEstimatedTime() + "]");
+    when(stompFrame.getBody()).thenReturn("[" + rule.getOrderWithoutEstimatedTime() + "]");
 
     // Действие:
-    List<Order> preOrders = new ArrayList<>(mapper.map(stompMessage));
+    List<Order> preOrders = new ArrayList<>(mapper.map(stompFrame));
 
     // Результат:
     assertEquals(preOrders.size(), 1);
@@ -380,11 +380,11 @@ public class PreOrdersListApiMapperTest {
   public void mappingJsonStringWithoutEstimatedRouteLengthToPreOrdersListSuccess()
       throws Exception {
     // Дано:
-    when(stompMessage.getPayload())
+    when(stompFrame.getBody())
         .thenReturn("[" + rule.getOrderWithoutEstimatedRouteDistance() + "]");
 
     // Действие:
-    List<Order> preOrders = new ArrayList<>(mapper.map(stompMessage));
+    List<Order> preOrders = new ArrayList<>(mapper.map(stompFrame));
 
     // Результат:
     assertEquals(preOrders.size(), 1);
@@ -416,10 +416,10 @@ public class PreOrdersListApiMapperTest {
   @Test
   public void mappingJsonStringWithoutCostToPreOrdersListSuccess() throws Exception {
     // Дано:
-    when(stompMessage.getPayload()).thenReturn("[" + rule.getOrderWithoutCost() + "]");
+    when(stompFrame.getBody()).thenReturn("[" + rule.getOrderWithoutCost() + "]");
 
     // Действие:
-    List<Order> preOrders = new ArrayList<>(mapper.map(stompMessage));
+    List<Order> preOrders = new ArrayList<>(mapper.map(stompFrame));
 
     // Результат:
     assertEquals(preOrders.size(), 1);
@@ -451,10 +451,10 @@ public class PreOrdersListApiMapperTest {
   @Test
   public void mappingJsonStringWithoutTimeoutToPreOrdersListSuccess() throws Exception {
     // Дано:
-    when(stompMessage.getPayload()).thenReturn("[" + rule.getOrderWithoutTimeout() + "]");
+    when(stompFrame.getBody()).thenReturn("[" + rule.getOrderWithoutTimeout() + "]");
 
     // Действие:
-    List<Order> preOrders = new ArrayList<>(mapper.map(stompMessage));
+    List<Order> preOrders = new ArrayList<>(mapper.map(stompFrame));
 
     // Результат:
     assertEquals(preOrders.size(), 1);
@@ -486,10 +486,10 @@ public class PreOrdersListApiMapperTest {
   @Test
   public void mappingJsonStringWithoutEtaToPreOrdersListSuccess() throws Exception {
     // Дано:
-    when(stompMessage.getPayload()).thenReturn("[" + rule.getOrderWithoutEta() + "]");
+    when(stompFrame.getBody()).thenReturn("[" + rule.getOrderWithoutEta() + "]");
 
     // Действие:
-    List<Order> preOrders = new ArrayList<>(mapper.map(stompMessage));
+    List<Order> preOrders = new ArrayList<>(mapper.map(stompFrame));
 
     // Результат:
     assertEquals(preOrders.size(), 1);
@@ -521,10 +521,10 @@ public class PreOrdersListApiMapperTest {
   @Test
   public void mappingJsonStringWithoutConfirmationTimeToPreOrdersListSuccess() throws Exception {
     // Дано:
-    when(stompMessage.getPayload()).thenReturn("[" + rule.getOrderWithoutConfirmationTime() + "]");
+    when(stompFrame.getBody()).thenReturn("[" + rule.getOrderWithoutConfirmationTime() + "]");
 
     // Действие:
-    List<Order> preOrders = new ArrayList<>(mapper.map(stompMessage));
+    List<Order> preOrders = new ArrayList<>(mapper.map(stompFrame));
 
     // Результат:
     assertEquals(preOrders.size(), 1);
@@ -556,10 +556,10 @@ public class PreOrdersListApiMapperTest {
   @Test
   public void mappingJsonStringWithoutStartTimeToPreOrdersListSuccess() throws Exception {
     // Дано:
-    when(stompMessage.getPayload()).thenReturn("[" + rule.getOrderWithoutStartTime() + "]");
+    when(stompFrame.getBody()).thenReturn("[" + rule.getOrderWithoutStartTime() + "]");
 
     // Действие:
-    List<Order> preOrders = new ArrayList<>(mapper.map(stompMessage));
+    List<Order> preOrders = new ArrayList<>(mapper.map(stompFrame));
 
     // Результат:
     assertEquals(preOrders.size(), 1);
@@ -591,11 +591,11 @@ public class PreOrdersListApiMapperTest {
   @Test
   public void mappingJsonStringWithoutScheduledStartTimeToPreOrdersListSuccess() throws Exception {
     // Дано:
-    when(stompMessage.getPayload())
+    when(stompFrame.getBody())
         .thenReturn("[" + rule.getOrderWithoutScheduledStartTime() + "]");
 
     // Действие:
-    List<Order> preOrders = new ArrayList<>(mapper.map(stompMessage));
+    List<Order> preOrders = new ArrayList<>(mapper.map(stompFrame));
 
     // Результат:
     assertEquals(preOrders.size(), 1);
@@ -627,10 +627,10 @@ public class PreOrdersListApiMapperTest {
   @Test
   public void mappingJsonStringWithoutDistanceIdToPreOrdersListSuccess() throws Exception {
     // Дано:
-    when(stompMessage.getPayload()).thenReturn("[" + rule.getOrderWithoutDistanceId() + "]");
+    when(stompFrame.getBody()).thenReturn("[" + rule.getOrderWithoutDistanceId() + "]");
 
     // Действие:
-    List<Order> preOrders = new ArrayList<>(mapper.map(stompMessage));
+    List<Order> preOrders = new ArrayList<>(mapper.map(stompFrame));
 
     // Результат:
     assertEquals(preOrders.size(), 1);
@@ -662,10 +662,10 @@ public class PreOrdersListApiMapperTest {
   @Test
   public void mappingJsonStringWithoutDistanceValueToPreOrdersListFail() throws Exception {
     // Дано:
-    when(stompMessage.getPayload()).thenReturn("[" + rule.getOrderWithoutDistanceValue() + "]");
+    when(stompFrame.getBody()).thenReturn("[" + rule.getOrderWithoutDistanceValue() + "]");
 
     // Действие:
-    List<Order> preOrders = new ArrayList<>(mapper.map(stompMessage));
+    List<Order> preOrders = new ArrayList<>(mapper.map(stompFrame));
 
     // Результат:
     assertEquals(preOrders.size(), 1);
@@ -697,10 +697,10 @@ public class PreOrdersListApiMapperTest {
   @Test
   public void mappingJsonStringWithoutDistanceToPreOrdersListSuccess() throws Exception {
     // Дано:
-    when(stompMessage.getPayload()).thenReturn("[" + rule.getOrderWithoutDistance() + "]");
+    when(stompFrame.getBody()).thenReturn("[" + rule.getOrderWithoutDistance() + "]");
 
     // Действие:
-    List<Order> preOrders = new ArrayList<>(mapper.map(stompMessage));
+    List<Order> preOrders = new ArrayList<>(mapper.map(stompFrame));
 
     // Результат:
     assertEquals(preOrders.size(), 1);
@@ -732,10 +732,10 @@ public class PreOrdersListApiMapperTest {
   @Test
   public void mappingJsonStringWithoutServiceIdToPreOrdersListSuccess() throws Exception {
     // Дано:
-    when(stompMessage.getPayload()).thenReturn("[" + rule.getOrderWithoutServiceId() + "]");
+    when(stompFrame.getBody()).thenReturn("[" + rule.getOrderWithoutServiceId() + "]");
 
     // Действие:
-    List<Order> preOrders = new ArrayList<>(mapper.map(stompMessage));
+    List<Order> preOrders = new ArrayList<>(mapper.map(stompFrame));
 
     // Результат:
     assertEquals(preOrders.size(), 1);
@@ -767,10 +767,10 @@ public class PreOrdersListApiMapperTest {
   @Test(expected = DataMappingException.class)
   public void mappingJsonStringWithoutServiceNameToPreOrdersListFail() throws Exception {
     // Дано:
-    when(stompMessage.getPayload()).thenReturn("[" + rule.getOrderWithoutServiceName() + "]");
+    when(stompFrame.getBody()).thenReturn("[" + rule.getOrderWithoutServiceName() + "]");
 
     // Действие:
-    List<Order> preOrders = new ArrayList<>(mapper.map(stompMessage));
+    List<Order> preOrders = new ArrayList<>(mapper.map(stompFrame));
 
     // Результат:
     assertEquals(preOrders.size(), 1);
@@ -802,10 +802,10 @@ public class PreOrdersListApiMapperTest {
   @Test
   public void mappingJsonStringWithoutServicePriceToPreOrdersListSuccess() throws Exception {
     // Дано:
-    when(stompMessage.getPayload()).thenReturn("[" + rule.getOrderWithoutServicePrice() + "]");
+    when(stompFrame.getBody()).thenReturn("[" + rule.getOrderWithoutServicePrice() + "]");
 
     // Действие:
-    List<Order> preOrders = new ArrayList<>(mapper.map(stompMessage));
+    List<Order> preOrders = new ArrayList<>(mapper.map(stompFrame));
 
     // Результат:
     assertEquals(preOrders.size(), 1);
@@ -837,10 +837,10 @@ public class PreOrdersListApiMapperTest {
   @Test(expected = DataMappingException.class)
   public void mappingJsonStringWithoutServiceToPreOrdersListFail() throws Exception {
     // Дано:
-    when(stompMessage.getPayload()).thenReturn("[" + rule.getOrderWithoutService() + "]");
+    when(stompFrame.getBody()).thenReturn("[" + rule.getOrderWithoutService() + "]");
 
     // Действие:
-    List<Order> preOrders = new ArrayList<>(mapper.map(stompMessage));
+    List<Order> preOrders = new ArrayList<>(mapper.map(stompFrame));
 
     // Результат:
     assertEquals(preOrders.size(), 1);
@@ -872,10 +872,10 @@ public class PreOrdersListApiMapperTest {
   @Test(expected = DataMappingException.class)
   public void mappingJsonStringWithEmptyRouteToPreOrdersListFail() throws Exception {
     // Дано:
-    when(stompMessage.getPayload()).thenReturn("[" + rule.getOrderWithEmptyRoute() + "]");
+    when(stompFrame.getBody()).thenReturn("[" + rule.getOrderWithEmptyRoute() + "]");
 
     // Действие:
-    List<Order> preOrders = new ArrayList<>(mapper.map(stompMessage));
+    List<Order> preOrders = new ArrayList<>(mapper.map(stompFrame));
 
     // Результат:
     assertEquals(preOrders.size(), 1);
@@ -907,10 +907,10 @@ public class PreOrdersListApiMapperTest {
   @Test(expected = DataMappingException.class)
   public void mappingJsonStringWithoutRouteToPreOrdersListFail() throws Exception {
     // Дано:
-    when(stompMessage.getPayload()).thenReturn("[" + rule.getOrderWithoutRoute() + "]");
+    when(stompFrame.getBody()).thenReturn("[" + rule.getOrderWithoutRoute() + "]");
 
     // Действие:
-    List<Order> preOrders = new ArrayList<>(mapper.map(stompMessage));
+    List<Order> preOrders = new ArrayList<>(mapper.map(stompFrame));
 
     // Результат:
     assertEquals(preOrders.size(), 1);
@@ -942,10 +942,10 @@ public class PreOrdersListApiMapperTest {
   @Test
   public void mappingJsonStringWithEmptyOptionsToPreOrdersListSuccess() throws Exception {
     // Дано:
-    when(stompMessage.getPayload()).thenReturn("[" + rule.getOrderWithEmptyOptions() + "]");
+    when(stompFrame.getBody()).thenReturn("[" + rule.getOrderWithEmptyOptions() + "]");
 
     // Действие:
-    List<Order> preOrders = new ArrayList<>(mapper.map(stompMessage));
+    List<Order> preOrders = new ArrayList<>(mapper.map(stompFrame));
 
     // Результат:
     assertEquals(preOrders.size(), 1);
@@ -975,10 +975,10 @@ public class PreOrdersListApiMapperTest {
   @Test
   public void mappingJsonStringWithoutOptionsToPreOrdersListSuccess() throws Exception {
     // Дано:
-    when(stompMessage.getPayload()).thenReturn("[" + rule.getOrderWithoutOptions() + "]");
+    when(stompFrame.getBody()).thenReturn("[" + rule.getOrderWithoutOptions() + "]");
 
     // Действие:
-    List<Order> preOrders = new ArrayList<>(mapper.map(stompMessage));
+    List<Order> preOrders = new ArrayList<>(mapper.map(stompFrame));
 
     // Результат:
     assertEquals(preOrders.size(), 1);
@@ -1008,11 +1008,11 @@ public class PreOrdersListApiMapperTest {
   @Test(expected = DataMappingException.class)
   public void mappingFailForRoutePointMappingError() throws Exception {
     // Дано:
-    when(stompMessage.getPayload()).thenReturn("[" + rule.getFullOrder() + "]");
+    when(stompFrame.getBody()).thenReturn("[" + rule.getFullOrder() + "]");
     doThrow(new DataMappingException()).when(routePointMapper).map(any(ApiRoutePoint.class));
 
     // Действие:
-    mapper.map(stompMessage);
+    mapper.map(stompFrame);
   }
 
   /**
@@ -1023,11 +1023,11 @@ public class PreOrdersListApiMapperTest {
   @Test(expected = DataMappingException.class)
   public void mappingFailForOptionMappingError() throws Exception {
     // Дано:
-    when(stompMessage.getPayload()).thenReturn("[" + rule.getFullOrder() + "]");
+    when(stompFrame.getBody()).thenReturn("[" + rule.getFullOrder() + "]");
     doThrow(new DataMappingException()).when(apiOptionMapper).map(any(ApiOptionItem.class));
 
     // Действие:
-    mapper.map(stompMessage);
+    mapper.map(stompFrame);
   }
 
   /**
@@ -1038,10 +1038,10 @@ public class PreOrdersListApiMapperTest {
   @Test(expected = DataMappingException.class)
   public void mappingEmptyFail() throws Exception {
     // Дано:
-    when(stompMessage.getPayload()).thenReturn("\n");
+    when(stompFrame.getBody()).thenReturn("\n");
 
     // Действие:
-    mapper.map(stompMessage);
+    mapper.map(stompFrame);
   }
 
   /**
@@ -1052,10 +1052,10 @@ public class PreOrdersListApiMapperTest {
   @Test(expected = DataMappingException.class)
   public void mappingStringFail() throws Exception {
     // Дано:
-    when(stompMessage.getPayload()).thenReturn("dasie");
+    when(stompFrame.getBody()).thenReturn("dasie");
 
     // Действие:
-    mapper.map(stompMessage);
+    mapper.map(stompFrame);
   }
 
   /**
@@ -1066,10 +1066,10 @@ public class PreOrdersListApiMapperTest {
   @Test(expected = DataMappingException.class)
   public void mappingNumberFail() throws Exception {
     // Дано:
-    when(stompMessage.getPayload()).thenReturn("12");
+    when(stompFrame.getBody()).thenReturn("12");
 
     // Действие:
-    mapper.map(stompMessage);
+    mapper.map(stompFrame);
   }
 
   /**
@@ -1080,10 +1080,10 @@ public class PreOrdersListApiMapperTest {
   @Test(expected = DataMappingException.class)
   public void mappingArrayFail() throws Exception {
     // Дано:
-    when(stompMessage.getPayload()).thenReturn(rule.getFullOrder());
+    when(stompFrame.getBody()).thenReturn(rule.getFullOrder());
 
     // Действие:
-    mapper.map(stompMessage);
+    mapper.map(stompFrame);
   }
 
   /**
@@ -1094,6 +1094,6 @@ public class PreOrdersListApiMapperTest {
   @Test(expected = DataMappingException.class)
   public void mappingNullFail() throws Exception {
     // Действие:
-    mapper.map(stompMessage);
+    mapper.map(stompFrame);
   }
 }

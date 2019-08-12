@@ -3,8 +3,6 @@ package com.cargopull.executor_driver.interactor
 import com.cargopull.executor_driver.backend.web.AuthorizationException
 import com.cargopull.executor_driver.backend.web.DeprecatedVersionException
 import io.reactivex.Flowable
-import io.reactivex.schedulers.Schedulers
-import java.util.concurrent.TimeUnit
 
 /**
  * Юзкейс вебсокета.
@@ -23,15 +21,14 @@ class ServerConnectionUseCaseImpl(private val serverConnectionGateway: ServerCon
                                   private val networkConnectionGateway: CommonGateway<Boolean>) : ServerConnectionUseCase {
 
     private val connectionSource: Flowable<Boolean> by lazy {
-        val socketConnection = serverConnectionGateway.openSocket()
-                .observeOn(Schedulers.single())
+        val socketConnection = serverConnectionGateway.socketState
                 .retryWhen { failed ->
                     failed.concatMap<Long> {
                         if (it is AuthorizationException || it is DeprecatedVersionException) {
                             Flowable.error<Long>(it)
                         } else {
                             it.printStackTrace()
-                            Flowable.timer(1, TimeUnit.SECONDS)
+                            Flowable.just<Long>(0)
                         }
                     }
                 }

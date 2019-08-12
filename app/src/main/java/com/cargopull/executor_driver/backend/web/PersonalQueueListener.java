@@ -3,59 +3,65 @@ package com.cargopull.executor_driver.backend.web;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.cargopull.executor_driver.AppConfigKt;
+import com.cargopull.executor_driver.backend.stomp.StompClient;
+import com.cargopull.executor_driver.backend.stomp.StompFrame;
+import com.cargopull.executor_driver.interactor.CommonGateway;
 import com.cargopull.executor_driver.interactor.DataReceiver;
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
 import io.reactivex.schedulers.Schedulers;
-import java.util.Arrays;
-import ua.naiksoftware.stomp.StompHeader;
-import ua.naiksoftware.stomp.client.StompClient;
-import ua.naiksoftware.stomp.client.StompMessage;
+import java.util.concurrent.TimeUnit;
 
 public class PersonalQueueListener implements TopicListener {
 
   @NonNull
   private final StompClient stompClient;
   @NonNull
+  private final CommonGateway<Boolean> networkConnectionGateway;
+  @NonNull
   private final DataReceiver<String> loginReceiver;
   @Nullable
-  private Flowable<StompMessage> stompMessageFlowable;
+  private Flowable<StompFrame> stompFrameFlowable;
 
   public PersonalQueueListener(@NonNull StompClient stompClient,
+      @NonNull CommonGateway<Boolean> networkConnectionGateway,
       @NonNull DataReceiver<String> loginReceiver) {
     this.stompClient = stompClient;
+    this.networkConnectionGateway = networkConnectionGateway;
     this.loginReceiver = loginReceiver;
   }
 
   @NonNull
   @Override
-  public Flowable<StompMessage> getAcknowledgedMessages() {
-    if (stompMessageFlowable == null) {
-      stompMessageFlowable = loginReceiver.get()
-          .toFlowable(BackpressureStrategy.BUFFER)
-          .switchMap(
-              login -> stompClient.topic(
-                  AppConfigKt.STATUS_DESTINATION(login),
-                  StompClient.ACK_CLIENT_INDIVIDUAL
+  public Flowable<StompFrame> getMessages() {
+    if (stompFrameFlowable == null) {
+      stompFrameFlowable = networkConnectionGateway.getData()
+          .switchMap(state -> {
+                if (state) {
+                  return loginReceiver.get().toFlowable(BackpressureStrategy.BUFFER);
+                } else {
+                  return Flowable.never();
+                }
+              }
+          ).switchMap(
+              login -> stompClient.subscribe(
+                  AppConfigKt.STATUS_DESTINATION(login), 2_000, 2F
               ).subscribeOn(Schedulers.io())
                   .doOnComplete(() -> {
                     throw new ConnectionClosedException();
                   })
-          ).retry()
-          .switchMap(
-              stompMessage -> stompClient.send(
-                  new StompMessage("ACK",
-                      Arrays.asList(
-                          new StompHeader("subscription", stompMessage.findHeader("subscription")),
-                          new StompHeader("message-id", stompMessage.findHeader("message-id"))
-                      ),
-                      ""
-                  )
-              ).onErrorComplete()
-                  .toSingleDefault(stompMessage)
-                  .toFlowable()
+          ).retryWhen(failed ->
+              failed.concatMap(throwable -> {
+                if (throwable instanceof AuthorizationException
+                    || throwable instanceof DeprecatedVersionException) {
+                  return Flowable.<StompFrame>error(throwable);
+                } else {
+                  throwable.printStackTrace();
+                  return Flowable.timer(1, TimeUnit.SECONDS);
+                }
+              })
           ).share();
     }
-    return stompMessageFlowable;
+    return stompFrameFlowable;
   }
 }

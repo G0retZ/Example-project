@@ -14,12 +14,12 @@ public class StompFrame {
   private Command command;
   private String body;
 
-  StompFrame(Command command, String body) {
+  public StompFrame(Command command, String body) {
     this.command = command;
     this.body = body;
   }
 
-  StompFrame(Command command, Map<String, String> headers, String body) {
+  public StompFrame(Command command, Map<String, String> headers, String body) {
     this.command = command;
     this.headers.putAll(headers);
     this.body = body;
@@ -58,10 +58,11 @@ public class StompFrame {
     return command;
   }
 
-  void addHeader(String key, String value) {
+  public void addHeader(String key, String value) {
     headers.put(key, value);
   }
 
+  @NonNull
   public Map<String, String> getHeaders() {
     return Collections.unmodifiableMap(headers);
   }

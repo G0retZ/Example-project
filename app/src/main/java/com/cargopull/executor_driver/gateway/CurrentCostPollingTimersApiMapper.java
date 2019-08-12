@@ -1,16 +1,16 @@
 package com.cargopull.executor_driver.gateway;
 
 import androidx.annotation.NonNull;
+import com.cargopull.executor_driver.backend.stomp.StompFrame;
 import com.cargopull.executor_driver.backend.web.incoming.ApiOrderTimers;
 import com.cargopull.executor_driver.utils.Pair;
 import com.google.gson.Gson;
 import javax.inject.Inject;
-import ua.naiksoftware.stomp.client.StompMessage;
 
 /**
  * Преобразуем статус из ответа сервера в бизнес объект статуса исполнителя.
  */
-public class CurrentCostPollingTimersApiMapper implements Mapper<StompMessage, Pair<Long, Long>> {
+public class CurrentCostPollingTimersApiMapper implements Mapper<StompFrame, Pair<Long, Long>> {
 
   @Inject
   public CurrentCostPollingTimersApiMapper() {
@@ -18,17 +18,17 @@ public class CurrentCostPollingTimersApiMapper implements Mapper<StompMessage, P
 
   @NonNull
   @Override
-  public Pair<Long, Long> map(@NonNull StompMessage from) throws Exception {
-    if (from.getPayload() == null) {
+  public Pair<Long, Long> map(@NonNull StompFrame from) throws Exception {
+    if (from.getBody() == null) {
       throw new DataMappingException("Ошибка маппинга: данные не должны быть null!");
     }
-    if (from.getPayload().trim().isEmpty()) {
+    if (from.getBody().trim().isEmpty()) {
       throw new DataMappingException("Ошибка маппинга: данные не должны быть пустыми!");
     }
     Gson gson = new Gson();
     ApiOrderTimers apiOrderTimers;
     try {
-      apiOrderTimers = gson.fromJson(from.getPayload(), ApiOrderTimers.class);
+      apiOrderTimers = gson.fromJson(from.getBody(), ApiOrderTimers.class);
     } catch (Exception e) {
       throw new DataMappingException("Ошибка маппинга: не удалось распарсить JSON: " + from, e);
     }

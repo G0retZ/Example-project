@@ -2,17 +2,17 @@ package com.cargopull.executor_driver.gateway;
 
 import static org.junit.Assert.assertEquals;
 
+import com.cargopull.executor_driver.backend.stomp.Command;
+import com.cargopull.executor_driver.backend.stomp.StompFrame;
 import com.cargopull.executor_driver.entity.Order;
 import com.cargopull.executor_driver.entity.PaymentType;
 import java.util.Collections;
 import org.junit.Before;
 import org.junit.Test;
-import ua.naiksoftware.stomp.StompHeader;
-import ua.naiksoftware.stomp.client.StompMessage;
 
 public class CancelledOrderApiMapperTest {
 
-  private Mapper<StompMessage, Order> mapper;
+  private Mapper<StompFrame, Order> mapper;
 
   @Before
   public void setUp() {
@@ -27,8 +27,8 @@ public class CancelledOrderApiMapperTest {
   @Test
   public void mappingHeaderToOrder() throws Exception {
     // Действие:
-    Order cancelledOrder = mapper.map(new StompMessage("MESSAGE",
-        Collections.singletonList(new StompHeader("PreliminaryCancelled", "1234567890")), "\n"));
+    Order cancelledOrder = mapper.map(new StompFrame(Command.MESSAGE,
+        Collections.singletonMap("PreliminaryCancelled", "1234567890"), "\n"));
 
     // Результат:
     assertEquals(cancelledOrder,
@@ -44,8 +44,8 @@ public class CancelledOrderApiMapperTest {
   @Test(expected = DataMappingException.class)
   public void mappingNullHeaderFail() throws Exception {
     // Дано и Действие:
-    mapper.map(new StompMessage("MESSAGE",
-        Collections.singletonList(new StompHeader("PreliminaryCancelled", null)), "\n"));
+    mapper.map(new StompFrame(Command.MESSAGE,
+        Collections.singletonMap("PreliminaryCancelled", null), "\n"));
   }
 
   /**
@@ -56,8 +56,8 @@ public class CancelledOrderApiMapperTest {
   @Test(expected = DataMappingException.class)
   public void mappingEmptyHeaderFail() throws Exception {
     // Дано и Действие:
-    mapper.map(new StompMessage("MESSAGE",
-        Collections.singletonList(new StompHeader("PreliminaryCancelled", "\n")), "\n"));
+    mapper.map(new StompFrame(Command.MESSAGE,
+        Collections.singletonMap("PreliminaryCancelled", "\n"), "\n"));
   }
 
   /**
@@ -68,8 +68,8 @@ public class CancelledOrderApiMapperTest {
   @Test(expected = DataMappingException.class)
   public void mappingFloatHeaderFail() throws Exception {
     // Дано и Действие:
-    mapper.map(new StompMessage("MESSAGE",
-        Collections.singletonList(new StompHeader("PreliminaryCancelled", "123.345")), "\n"));
+    mapper.map(new StompFrame(Command.MESSAGE,
+        Collections.singletonMap("PreliminaryCancelled", "123.345"), "\n"));
   }
 
   /**
@@ -80,7 +80,7 @@ public class CancelledOrderApiMapperTest {
   @Test(expected = DataMappingException.class)
   public void mappingNotANumberHeaderFail() throws Exception {
     // Дано и Действие:
-    mapper.map(new StompMessage("MESSAGE",
-        Collections.singletonList(new StompHeader("PreliminaryCancelled", "a9876543210")), "\n"));
+    mapper.map(new StompFrame(Command.MESSAGE,
+        Collections.singletonMap("PreliminaryCancelled", "a9876543210"), "\n"));
   }
 }

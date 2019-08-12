@@ -2,14 +2,15 @@ package com.cargopull.executor_driver.gateway;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.ArrayList;
+import com.cargopull.executor_driver.backend.stomp.Command;
+import com.cargopull.executor_driver.backend.stomp.StompFrame;
+import java.util.Collections;
 import org.junit.Before;
 import org.junit.Test;
-import ua.naiksoftware.stomp.client.StompMessage;
 
 public class MessagePayloadApiMapperTest {
 
-  private Mapper<StompMessage, String> mapper;
+  private Mapper<StompFrame, String> mapper;
 
   @Before
   public void setUp() {
@@ -24,7 +25,7 @@ public class MessagePayloadApiMapperTest {
   @Test
   public void extractEmptyStringSuccess() throws Exception {
     // Действие:
-    String message = mapper.map(new StompMessage("", new ArrayList<>(), ""));
+    String message = mapper.map(new StompFrame(Command.MESSAGE, Collections.emptyMap(), ""));
 
     // Результат:
     assertEquals("", message);
@@ -38,7 +39,7 @@ public class MessagePayloadApiMapperTest {
   @Test
   public void extractOneCharStringSuccess() throws Exception {
     // Действие:
-    String message = mapper.map(new StompMessage("", new ArrayList<>(), "\""));
+    String message = mapper.map(new StompFrame(Command.MESSAGE, Collections.emptyMap(), "\""));
 
     // Результат:
     assertEquals("\"", message);
@@ -52,7 +53,7 @@ public class MessagePayloadApiMapperTest {
   @Test
   public void extractEmptyStringWithoutQuotesSuccess() throws Exception {
     // Действие:
-    String message = mapper.map(new StompMessage("", new ArrayList<>(), "\"\""));
+    String message = mapper.map(new StompFrame(Command.MESSAGE, Collections.emptyMap(), "\"\""));
 
     // Результат:
     assertEquals("", message);
@@ -66,7 +67,7 @@ public class MessagePayloadApiMapperTest {
   @Test
   public void extractEmptyStringWithoutSpaceSuccess() throws Exception {
     // Действие:
-    String message = mapper.map(new StompMessage("", new ArrayList<>(), " "));
+    String message = mapper.map(new StompFrame(Command.MESSAGE, Collections.emptyMap(), " "));
 
     // Результат:
     assertEquals("", message);
@@ -80,7 +81,7 @@ public class MessagePayloadApiMapperTest {
   @Test
   public void extractEmptyStringWithoutNewLineSuccess() throws Exception {
     // Действие:
-    String message = mapper.map(new StompMessage("", new ArrayList<>(), "\n"));
+    String message = mapper.map(new StompFrame(Command.MESSAGE, Collections.emptyMap(), "\n"));
 
     // Результат:
     assertEquals("", message);
@@ -94,7 +95,8 @@ public class MessagePayloadApiMapperTest {
   @Test
   public void extractStringSuccess() throws Exception {
     // Действие:
-    String message = mapper.map(new StompMessage("", new ArrayList<>(), "Message test super nova"));
+    String message = mapper
+        .map(new StompFrame(Command.MESSAGE, Collections.emptyMap(), "Message test super nova"));
 
     // Результат:
     assertEquals("Message test super nova", message);
@@ -109,7 +111,8 @@ public class MessagePayloadApiMapperTest {
   public void extractTrimmedStringSuccess() throws Exception {
     // Действие:
     String message = mapper
-        .map(new StompMessage("", new ArrayList<>(), "  \n Message test super nova  \n "));
+        .map(new StompFrame(Command.MESSAGE, Collections.emptyMap(),
+            "  \n Message test super nova  \n "));
 
     // Результат:
     assertEquals("Message test super nova", message);
@@ -124,7 +127,8 @@ public class MessagePayloadApiMapperTest {
   public void extractStringFromQuotesSuccess() throws Exception {
     // Действие:
     String message = mapper
-        .map(new StompMessage("", new ArrayList<>(), "\"Message test super nova\""));
+        .map(
+            new StompFrame(Command.MESSAGE, Collections.emptyMap(), "\"Message test super nova\""));
 
     // Результат:
     assertEquals("Message test super nova", message);
@@ -139,7 +143,8 @@ public class MessagePayloadApiMapperTest {
   public void extractTrimmedStringFromQuotesSuccess() throws Exception {
     // Действие:
     String message = mapper
-        .map(new StompMessage("", new ArrayList<>(), "\"  \n Message test super nova  \n \""));
+        .map(new StompFrame(Command.MESSAGE, Collections.emptyMap(),
+            "\"  \n Message test super nova  \n \""));
 
     // Результат:
     assertEquals("Message test super nova", message);
@@ -154,7 +159,8 @@ public class MessagePayloadApiMapperTest {
   public void extractStringWithQuotesSuccess() throws Exception {
     // Действие:
     String message = mapper
-        .map(new StompMessage("", new ArrayList<>(), "Message \"test super\" nova"));
+        .map(
+            new StompFrame(Command.MESSAGE, Collections.emptyMap(), "Message \"test super\" nova"));
 
     // Результат:
     assertEquals("Message \"test super\" nova", message);
@@ -169,7 +175,8 @@ public class MessagePayloadApiMapperTest {
   public void extractStringWithQuotesWithoutLeadingAndTrailingOnesSuccess() throws Exception {
     // Действие:
     String message = mapper
-        .map(new StompMessage("", new ArrayList<>(), "\"Message \"test super\" nova\""));
+        .map(new StompFrame(Command.MESSAGE, Collections.emptyMap(),
+            "\"Message \"test super\" nova\""));
 
     // Результат:
     assertEquals("Message \"test super\" nova", message);
@@ -186,7 +193,8 @@ public class MessagePayloadApiMapperTest {
       throws Exception {
     // Действие:
     String message = mapper
-        .map(new StompMessage("", new ArrayList<>(), "\"  \n Message \"test super\" nova  \n \""));
+        .map(new StompFrame(Command.MESSAGE, Collections.emptyMap(),
+            "\"  \n Message \"test super\" nova  \n \""));
 
     // Результат:
     assertEquals("Message \"test super\" nova", message);

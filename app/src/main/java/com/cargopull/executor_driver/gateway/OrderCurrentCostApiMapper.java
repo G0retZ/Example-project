@@ -1,13 +1,13 @@
 package com.cargopull.executor_driver.gateway;
 
 import androidx.annotation.NonNull;
+import com.cargopull.executor_driver.backend.stomp.StompFrame;
 import javax.inject.Inject;
-import ua.naiksoftware.stomp.client.StompMessage;
 
 /**
  * Извлекаем стоимость сверх пакета из ответа сервера.
  */
-public class OrderCurrentCostApiMapper implements Mapper<StompMessage, Long> {
+public class OrderCurrentCostApiMapper implements Mapper<StompFrame, Long> {
 
   @Inject
   public OrderCurrentCostApiMapper() {
@@ -15,9 +15,9 @@ public class OrderCurrentCostApiMapper implements Mapper<StompMessage, Long> {
 
   @NonNull
   @Override
-  public Long map(@NonNull StompMessage from) throws Exception {
+  public Long map(@NonNull StompFrame from) throws Exception {
     try {
-      return Long.valueOf(from.findHeader("TotalAmount"));
+      return Long.valueOf(from.getHeaders().get("TotalAmount"));
     } catch (Exception e) {
       throw new DataMappingException("Ошибка маппинга: неверный формат стоимости!", e);
     }
