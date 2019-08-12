@@ -33,6 +33,7 @@ class AppComponent(private val appContext: Context, private val backendComponent
         mainApplication.setServerConnectionViewModel(
                 presentationComponent.serverConnectionViewModel
         )
+        mainApplication.setTopicStarter(backendComponent.personalTopicListener)
         mainApplication.setBalanceViewModel(
                 presentationComponent.balanceViewModel
         )
