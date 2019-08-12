@@ -169,7 +169,8 @@ public class PersonalQueueListenerTest {
     // Дано:
     InOrder inOrder = Mockito.inOrder(stompClient);
     when(networkConnectionGateway.getData())
-        .thenReturn(Flowable.just(true, false, true, false).concatWith(Flowable.never()));
+        .thenReturn(
+            Flowable.just(true, false, false, true, true, false).concatWith(Flowable.never()));
     when(loginReceiver.get()).thenReturn(Observable.just(
         "1234567890", "0987654321", "123454321", "09876567890"
     ).concatWith(Observable.never()));

@@ -36,6 +36,7 @@ public class PersonalQueueListener implements TopicListener {
   public Flowable<StompFrame> getMessages() {
     if (stompFrameFlowable == null) {
       stompFrameFlowable = networkConnectionGateway.getData()
+          .distinctUntilChanged()
           .switchMap(state -> {
                 if (state) {
                   return loginReceiver.get().toFlowable(BackpressureStrategy.BUFFER);
