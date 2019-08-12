@@ -10,12 +10,11 @@ import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 import com.cargopull.executor_driver.GatewayThreadTestRule;
+import com.cargopull.executor_driver.backend.settings.AppSettingsService;
 import com.cargopull.executor_driver.backend.stomp.StompClient;
 import com.cargopull.executor_driver.backend.stomp.StompFrame;
 import com.cargopull.executor_driver.interactor.CommonGateway;
-import com.cargopull.executor_driver.interactor.DataReceiver;
 import io.reactivex.Flowable;
-import io.reactivex.Observable;
 import io.reactivex.functions.Action;
 import io.reactivex.plugins.RxJavaPlugins;
 import io.reactivex.schedulers.TestScheduler;
@@ -43,7 +42,7 @@ public class PersonalQueueListenerTest {
   @Mock
   private StompFrame stompFrame;
   @Mock
-  private DataReceiver<String> loginReceiver;
+  private AppSettingsService appSettingsService;
   @Mock
   private CommonGateway<Boolean> networkConnectionGateway;
   @Mock
@@ -55,9 +54,9 @@ public class PersonalQueueListenerTest {
   public void setUp() {
     testScheduler = new TestScheduler();
     RxJavaPlugins.setComputationSchedulerHandler(scheduler -> testScheduler);
-    queueListener = new PersonalQueueListener(stompClient, networkConnectionGateway, loginReceiver);
+    queueListener = new PersonalQueueListener(stompClient, networkConnectionGateway,
+        appSettingsService);
     when(networkConnectionGateway.getData()).thenReturn(Flowable.never());
-    when(loginReceiver.get()).thenReturn(Observable.never());
     when(stompClient.subscribe(anyString(), eq(2000), eq(2F))).thenReturn(Flowable.never());
   }
 
@@ -91,7 +90,7 @@ public class PersonalQueueListenerTest {
     queueListener.getMessages().test().isDisposed();
 
     // Результат:
-    verifyZeroInteractions(loginReceiver);
+    verifyZeroInteractions(appSettingsService);
   }
 
   /**
@@ -109,7 +108,7 @@ public class PersonalQueueListenerTest {
     queueListener.getMessages().test().isDisposed();
 
     // Результат:
-    verify(loginReceiver, only()).get();
+    verify(appSettingsService, only()).getData("authorizationLogin");
   }
 
   /**
@@ -120,8 +119,7 @@ public class PersonalQueueListenerTest {
   public void doNotAskLoginPublisherForLoginOnError() {
     // Дано:
     when(networkConnectionGateway.getData()).thenReturn(Flowable.<Boolean>never().startWith(true));
-    when(loginReceiver.get())
-        .thenReturn(Observable.just("1234567890").concatWith(Observable.never()));
+    when(appSettingsService.getData("authorizationLogin")).thenReturn("1234567890");
     when(stompClient.subscribe("/queue/1234567890", 2000, 2F)).thenReturn(
         Flowable.error(Exception::new),
         Flowable.error(NoNetworkException::new),
@@ -133,7 +131,7 @@ public class PersonalQueueListenerTest {
     queueListener.getMessages().test().isDisposed();
 
     // Результат:
-    verify(loginReceiver, only()).get();
+    verify(appSettingsService, only()).getData("authorizationLogin");
   }
 
   /**
@@ -144,7 +142,7 @@ public class PersonalQueueListenerTest {
   public void doNotAskLoginPublisherForLoginOnComplete() {
     // Дано:
     when(networkConnectionGateway.getData()).thenReturn(Flowable.<Boolean>never().startWith(true));
-    when(loginReceiver.get()).thenReturn(Observable.<String>never().startWith("1234567890"));
+    when(appSettingsService.getData("authorizationLogin")).thenReturn("1234567890");
     when(stompClient.subscribe("/queue/1234567890", 2000, 2F)).thenReturn(
         Flowable.empty(),
         Flowable.empty(),
@@ -156,7 +154,7 @@ public class PersonalQueueListenerTest {
     queueListener.getMessages().test().isDisposed();
 
     // Результат:
-    verify(loginReceiver, only()).get();
+    verify(appSettingsService, only()).getData("authorizationLogin");
   }
 
   /* Проверяем работу с клиентом STOMP */
@@ -168,12 +166,12 @@ public class PersonalQueueListenerTest {
   public void askStompClientForTopicSubscription() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(stompClient);
-    when(networkConnectionGateway.getData())
-        .thenReturn(
-            Flowable.just(true, false, false, true, true, false).concatWith(Flowable.never()));
-    when(loginReceiver.get()).thenReturn(Observable.just(
-        "1234567890", "0987654321", "123454321", "09876567890"
-    ).concatWith(Observable.never()));
+    when(networkConnectionGateway.getData()).thenReturn(
+        Flowable.fromArray(true, false, true, false, false, true, true, false, true, false, true)
+            .concatWith(Flowable.never())
+    );
+    when(appSettingsService.getData("authorizationLogin"))
+        .thenReturn("1234567890", "0987654321", null, "123454321", "09876567890");
 
     // Действие:
     queueListener.getMessages().test().isDisposed();
@@ -184,10 +182,7 @@ public class PersonalQueueListenerTest {
     // Результат:
     inOrder.verify(stompClient).subscribe("/queue/1234567890", 2000, 2F);
     inOrder.verify(stompClient).subscribe("/queue/0987654321", 2000, 2F);
-    inOrder.verify(stompClient).subscribe("/queue/123454321", 2000, 2F);
-    inOrder.verify(stompClient).subscribe("/queue/09876567890", 2000, 2F);
-    inOrder.verify(stompClient).subscribe("/queue/1234567890", 2000, 2F);
-    inOrder.verify(stompClient).subscribe("/queue/0987654321", 2000, 2F);
+    inOrder.verify(stompClient).subscribe("/queue/", 2000, 2F);
     inOrder.verify(stompClient).subscribe("/queue/123454321", 2000, 2F);
     inOrder.verify(stompClient).subscribe("/queue/09876567890", 2000, 2F);
     verifyNoMoreInteractions(stompClient);
@@ -201,7 +196,7 @@ public class PersonalQueueListenerTest {
   public void askStompClientForTopicMessagesOnError() {
     // Дано:
     when(networkConnectionGateway.getData()).thenReturn(Flowable.<Boolean>never().startWith(true));
-    when(loginReceiver.get()).thenReturn(Observable.<String>never().startWith("1234567890"));
+    when(appSettingsService.getData("authorizationLogin")).thenReturn("1234567890");
     when(stompClient.subscribe("/queue/1234567890", 2000, 2F)).thenReturn(
         Flowable.error(Exception::new),
         Flowable.error(NoNetworkException::new),
@@ -226,7 +221,7 @@ public class PersonalQueueListenerTest {
   public void askStompClientForTopicMessagesOnComplete() {
     // Дано:
     when(networkConnectionGateway.getData()).thenReturn(Flowable.<Boolean>never().startWith(true));
-    when(loginReceiver.get()).thenReturn(Observable.<String>never().startWith("1234567890"));
+    when(appSettingsService.getData("authorizationLogin")).thenReturn("1234567890");
     when(stompClient.subscribe("/queue/1234567890", 2000, 2F)).thenReturn(
         Flowable.empty(),
         Flowable.empty(),
@@ -247,10 +242,9 @@ public class PersonalQueueListenerTest {
   @Test
   public void unSubscribeFromPreviousRequestsToStompClient() throws Exception {
     // Дано:
-    when(networkConnectionGateway.getData()).thenReturn(Flowable.<Boolean>never().startWith(true));
-    when(loginReceiver.get()).thenReturn(Observable.just(
-        "1234567890", "0987654321", "123454321", "09876567890"
-    ).concatWith(Observable.never()));
+    when(networkConnectionGateway.getData()).thenReturn(
+        Flowable.fromArray(true, false, true, false, true, false, true).concatWith(Flowable.never())
+    );
     when(stompClient.subscribe(anyString(), eq(2000), eq(2F)))
         .thenReturn(Flowable.<StompFrame>never().doOnCancel(action));
 
@@ -271,7 +265,7 @@ public class PersonalQueueListenerTest {
   public void unSubscribeFromTopicIfNoMoreSubscribers() throws Exception {
     // Дано:
     when(networkConnectionGateway.getData()).thenReturn(Flowable.<Boolean>never().startWith(true));
-    when(loginReceiver.get()).thenReturn(Observable.<String>never().startWith("1234567890"));
+    when(appSettingsService.getData("authorizationLogin")).thenReturn("1234567890");
     when(stompClient.subscribe("/queue/1234567890", 2000, 2F))
         .thenReturn(Flowable.<StompFrame>never().doOnCancel(action));
 
@@ -299,7 +293,7 @@ public class PersonalQueueListenerTest {
   public void answerWithStompFrame() {
     // Дано:
     when(networkConnectionGateway.getData()).thenReturn(Flowable.<Boolean>never().startWith(true));
-    when(loginReceiver.get()).thenReturn(Observable.<String>never().startWith("1234567890"));
+    when(appSettingsService.getData("authorizationLogin")).thenReturn("1234567890");
     when(stompClient.subscribe("/queue/1234567890", 2000, 2F))
         .thenReturn(Flowable.just(stompFrame).concatWith(Flowable.never()));
 
@@ -320,7 +314,7 @@ public class PersonalQueueListenerTest {
   public void ignoreErrors() {
     // Дано:
     when(networkConnectionGateway.getData()).thenReturn(Flowable.<Boolean>never().startWith(true));
-    when(loginReceiver.get()).thenReturn(Observable.<String>never().startWith("1234567890"));
+    when(appSettingsService.getData("authorizationLogin")).thenReturn("1234567890");
     when(stompClient.subscribe("/queue/1234567890", 2000, 2F)).thenReturn(
         Flowable.error(Exception::new),
         Flowable.error(NoNetworkException::new),
@@ -345,7 +339,7 @@ public class PersonalQueueListenerTest {
   public void answerWithStompFrameAfterErrors() {
     // Дано:
     when(networkConnectionGateway.getData()).thenReturn(Flowable.<Boolean>never().startWith(true));
-    when(loginReceiver.get()).thenReturn(Observable.<String>never().startWith("1234567890"));
+    when(appSettingsService.getData("authorizationLogin")).thenReturn("1234567890");
     when(stompClient.subscribe("/queue/1234567890", 2000, 2F)).thenReturn(
         Flowable.error(Exception::new),
         Flowable.error(NoNetworkException::new),
@@ -371,7 +365,7 @@ public class PersonalQueueListenerTest {
   public void answerWithStompFrameAfterCompletions() {
     // Дано:
     when(networkConnectionGateway.getData()).thenReturn(Flowable.<Boolean>never().startWith(true));
-    when(loginReceiver.get()).thenReturn(Observable.<String>never().startWith("1234567890"));
+    when(appSettingsService.getData("authorizationLogin")).thenReturn("1234567890");
     when(stompClient.subscribe("/queue/1234567890", 2000, 2F)).thenReturn(
         Flowable.empty(),
         Flowable.empty(),

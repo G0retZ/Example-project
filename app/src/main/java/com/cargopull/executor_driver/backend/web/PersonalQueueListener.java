@@ -3,11 +3,10 @@ package com.cargopull.executor_driver.backend.web;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.cargopull.executor_driver.AppConfigKt;
+import com.cargopull.executor_driver.backend.settings.AppSettingsService;
 import com.cargopull.executor_driver.backend.stomp.StompClient;
 import com.cargopull.executor_driver.backend.stomp.StompFrame;
 import com.cargopull.executor_driver.interactor.CommonGateway;
-import com.cargopull.executor_driver.interactor.DataReceiver;
-import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
 import io.reactivex.schedulers.Schedulers;
 import java.util.concurrent.TimeUnit;
@@ -19,16 +18,16 @@ public class PersonalQueueListener implements TopicListener {
   @NonNull
   private final CommonGateway<Boolean> networkConnectionGateway;
   @NonNull
-  private final DataReceiver<String> loginReceiver;
+  private final AppSettingsService appSettingsService;
   @Nullable
   private Flowable<StompFrame> stompFrameFlowable;
 
   public PersonalQueueListener(@NonNull StompClient stompClient,
       @NonNull CommonGateway<Boolean> networkConnectionGateway,
-      @NonNull DataReceiver<String> loginReceiver) {
+      @NonNull AppSettingsService appSettingsService) {
     this.stompClient = stompClient;
     this.networkConnectionGateway = networkConnectionGateway;
-    this.loginReceiver = loginReceiver;
+    this.appSettingsService = appSettingsService;
   }
 
   @NonNull
@@ -39,18 +38,17 @@ public class PersonalQueueListener implements TopicListener {
           .distinctUntilChanged()
           .switchMap(state -> {
                 if (state) {
-                  return loginReceiver.get().toFlowable(BackpressureStrategy.BUFFER);
+                  String login = appSettingsService.getData("authorizationLogin");
+                  return stompClient.subscribe(
+                      AppConfigKt.STATUS_DESTINATION(login == null ? "" : login), 2_000, 2F
+                  ).subscribeOn(Schedulers.io())
+                      .doOnComplete(() -> {
+                        throw new ConnectionClosedException();
+                      });
                 } else {
                   return Flowable.never();
                 }
               }
-          ).switchMap(
-              login -> stompClient.subscribe(
-                  AppConfigKt.STATUS_DESTINATION(login), 2_000, 2F
-              ).subscribeOn(Schedulers.io())
-                  .doOnComplete(() -> {
-                    throw new ConnectionClosedException();
-                  })
           ).retryWhen(failed ->
               failed.concatMap(throwable -> {
                 if (throwable instanceof AuthorizationException

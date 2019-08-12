@@ -1,6 +1,5 @@
 package com.cargopull.executor_driver.di
 
-import com.cargopull.executor_driver.backend.web.TopicListener
 import com.cargopull.executor_driver.backend.web.incoming.ApiOrder
 import com.cargopull.executor_driver.backend.web.incoming.ApiOrderCostDetails
 import com.cargopull.executor_driver.backend.web.incoming.ApiRoutePoint
@@ -21,9 +20,6 @@ class RepositoryComponent(private val backendComponent: BackendComponent) {
     private val loginGateway: LoginGateway by lazy {
         LoginGateway(backendComponent.appSettingsService)
     }
-    private val personalTopicListener: TopicListener by lazy {
-        backendComponent.personalTopicListener(loginGateway)
-    }
     val loginReceiver: DataReceiver<String> by lazy {
         loginGateway
     }
@@ -35,14 +31,14 @@ class RepositoryComponent(private val backendComponent: BackendComponent) {
     }
     val cancelledOrderGateway: CommonGateway<Order> by lazy {
         TopicGateway(
-                personalTopicListener,
+                backendComponent.personalTopicListener,
                 CancelledOrderFilter(),
                 CancelledOrderApiMapper()
         )
     }
     val cancelledOrderMessageGateway: CommonGateway<String> by lazy {
         TopicGateway(
-                personalTopicListener,
+                backendComponent.personalTopicListener,
                 CancelledOrderFilter(),
                 MessagePayloadApiMapper()
         )
@@ -60,21 +56,21 @@ class RepositoryComponent(private val backendComponent: BackendComponent) {
     }
     val currentCostPollingGateway: CurrentCostPollingGateway by lazy {
         CurrentCostPollingGatewayImpl(
-                personalTopicListener,
+                backendComponent.personalTopicListener,
                 backendComponent.stompClient,
                 CurrentCostPollingTimersApiMapper()
         )
     }
     val executorBalanceGateway: CommonGateway<ExecutorBalance> by lazy {
         TopicGateway(
-                personalTopicListener,
+                backendComponent.personalTopicListener,
                 ExecutorBalanceFilter(),
                 ExecutorBalanceApiMapper()
         )
     }
     val executorStateGateway: CommonGateway<ExecutorState> by lazy {
         TopicGateway(
-                personalTopicListener,
+                backendComponent.personalTopicListener,
                 ExecutorStateFilter(),
                 ExecutorStateApiMapper(MessagePayloadApiMapper())
         )
@@ -90,7 +86,7 @@ class RepositoryComponent(private val backendComponent: BackendComponent) {
     }
     val missedOrderGateway: CommonGateway<String> by lazy {
         TopicGateway(
-                personalTopicListener,
+                backendComponent.personalTopicListener,
                 MissedOrderFilter(),
                 MessagePayloadApiMapper()
         )
@@ -125,14 +121,14 @@ class RepositoryComponent(private val backendComponent: BackendComponent) {
     }
     val orderCurrentCostGateway: CommonGateway<Long> by lazy {
         TopicGateway(
-                personalTopicListener,
+                backendComponent.personalTopicListener,
                 OrderCurrentCostFilter(),
                 OrderCurrentCostApiMapper()
         )
     }
     val orderGateway: CommonGateway<Order> by lazy {
         TopicGateway(
-                personalTopicListener,
+                backendComponent.personalTopicListener,
                 OrderFilter(),
                 StompMapper(
                         OrderApiMapper(
@@ -145,7 +141,7 @@ class RepositoryComponent(private val backendComponent: BackendComponent) {
     }
     val orderCostDetailsGateway: CommonGateway<OrderCostDetails> by lazy {
         TopicGateway<OrderCostDetails>(
-                personalTopicListener,
+                backendComponent.personalTopicListener,
                 OrderCostDetailsFilter(),
                 StompMapper(
                         OrderCostDetailsApiMapper(),
@@ -155,7 +151,7 @@ class RepositoryComponent(private val backendComponent: BackendComponent) {
     }
     val preOrderGateway: CommonGateway<Order> by lazy {
         TopicGateway(
-                personalTopicListener,
+                backendComponent.personalTopicListener,
                 PreOrderFilter(),
                 StompMapper(
                         OrderApiMapper(
@@ -185,14 +181,14 @@ class RepositoryComponent(private val backendComponent: BackendComponent) {
     }
     val serverTimeGateway: CommonGateway<Long> by lazy {
         TopicGateway(
-                personalTopicListener,
+                backendComponent.personalTopicListener,
                 ServerTimeFilter(),
                 ServerTimeApiMapper()
         )
     }
     val updateMessageGateway: CommonGateway<String> by lazy {
         TopicGateway(
-                personalTopicListener,
+                backendComponent.personalTopicListener,
                 UpdateMessageFilter(),
                 MessagePayloadApiMapper()
         )
@@ -225,7 +221,7 @@ class RepositoryComponent(private val backendComponent: BackendComponent) {
     }
     val upcomingPreOrderMessagesGateway: CommonGateway<String> by lazy {
         TopicGateway(
-                personalTopicListener,
+                backendComponent.personalTopicListener,
                 UpcomingPreOrderFilter(),
                 MessagePayloadApiMapper()
         )
@@ -258,7 +254,7 @@ class RepositoryComponent(private val backendComponent: BackendComponent) {
     }
     val preOrdersSetGateway: CommonGateway<Set<Order>> by lazy {
         TopicGateway(
-                personalTopicListener,
+                backendComponent.personalTopicListener,
                 PreOrdersListFilter(),
                 PreOrdersListApiMapper(
                         VehicleOptionApiMapper(),
@@ -269,7 +265,7 @@ class RepositoryComponent(private val backendComponent: BackendComponent) {
     }
     val upcomingPreOrderGateway: CommonGateway<Order> by lazy {
         TopicGateway(
-                personalTopicListener,
+                backendComponent.personalTopicListener,
                 UpcomingPreOrderFilter(),
                 UpcomingPreOrderApiMapper()
         )
@@ -293,7 +289,7 @@ class RepositoryComponent(private val backendComponent: BackendComponent) {
     }
     val changedOrderGateway: CommonGateway<Order> by lazy {
         TopicGateway(
-                personalTopicListener,
+                backendComponent.personalTopicListener,
                 ChangedOrderFilter(),
                 StompMapper(
                         OrderApiMapper(

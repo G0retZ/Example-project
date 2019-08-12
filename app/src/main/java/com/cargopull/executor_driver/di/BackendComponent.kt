@@ -25,7 +25,6 @@ import com.cargopull.executor_driver.backend.stomp.WebSocketConnection
 import com.cargopull.executor_driver.backend.vibro.*
 import com.cargopull.executor_driver.backend.web.*
 import com.cargopull.executor_driver.gateway.TokenKeeperImpl
-import com.cargopull.executor_driver.interactor.DataReceiver
 import com.cargopull.executor_driver.utils.Releasable
 import io.reactivex.Observable
 import io.reactivex.Observer
@@ -92,12 +91,13 @@ class BackendComponent(private val appContext: Context) : Releasable {
         StompClient(socketUrl, WebSocketConnection(okHttpClient))
     }
 
-    fun personalTopicListener(loginReceiver: DataReceiver<String>) =
-            PersonalQueueListener(
-                    stompClient,
-                    networkStateReceiver,
-                    loginReceiver
-            )
+    val personalTopicListener by lazy {
+        PersonalQueueListener(
+                stompClient,
+                networkStateReceiver,
+                appSettingsService
+        )
+    }
 
     val fcmSender: Observable<Map<String, String>> by lazy {
         fcmSubject
