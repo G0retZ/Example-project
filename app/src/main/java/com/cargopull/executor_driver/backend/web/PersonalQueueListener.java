@@ -9,9 +9,10 @@ import com.cargopull.executor_driver.backend.stomp.StompFrame;
 import com.cargopull.executor_driver.interactor.CommonGateway;
 import io.reactivex.Flowable;
 import io.reactivex.schedulers.Schedulers;
+import io.reactivex.subjects.SingleSubject;
 import java.util.concurrent.TimeUnit;
 
-public class PersonalQueueListener implements TopicListener {
+public class PersonalQueueListener implements TopicListener, TopicStarter {
 
   @NonNull
   private final StompClient stompClient;
@@ -21,6 +22,8 @@ public class PersonalQueueListener implements TopicListener {
   private final AppSettingsService appSettingsService;
   @Nullable
   private Flowable<StompFrame> stompFrameFlowable;
+  @Nullable
+  private SingleSubject<Long> resetSubject;
 
   public PersonalQueueListener(@NonNull StompClient stompClient,
       @NonNull CommonGateway<Boolean> networkConnectionGateway,
@@ -51,8 +54,9 @@ public class PersonalQueueListener implements TopicListener {
               }
           ).retryWhen(failed ->
               failed.concatMap(throwable -> {
-                if (throwable instanceof AuthorizationException
-                    || throwable instanceof DeprecatedVersionException) {
+                if (throwable instanceof AuthorizationException) {
+                  return (resetSubject = SingleSubject.create()).toFlowable();
+                } else if (throwable instanceof DeprecatedVersionException) {
                   return Flowable.<StompFrame>error(throwable);
                 } else {
                   throwable.printStackTrace();
@@ -62,5 +66,14 @@ public class PersonalQueueListener implements TopicListener {
           ).share();
     }
     return stompFrameFlowable;
+  }
+
+  @Override
+  public void restart() {
+    SingleSubject<Long> rs = resetSubject;
+    resetSubject = null;
+    if (rs != null) {
+      rs.onSuccess(0L);
+    }
   }
 }
