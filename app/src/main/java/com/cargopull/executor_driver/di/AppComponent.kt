@@ -4,13 +4,14 @@ import android.content.Context
 import com.cargopull.executor_driver.application.*
 import com.cargopull.executor_driver.backend.settings.AppSettingsService
 import com.cargopull.executor_driver.utils.Consumer
+import com.cargopull.executor_driver.utils.Releasable
 import com.cargopull.executor_driver.utils.TimeUtils
 import com.cargopull.executor_driver.utils.TimeUtilsImpl
 import com.cargopull.executor_driver.view.*
 import com.cargopull.executor_driver.view.auth.LoginFragment
 import com.cargopull.executor_driver.view.auth.PasswordFragment
 
-class AppComponent(private val appContext: Context, private val backendComponent: BackendComponent) {
+class AppComponent(private val appContext: Context, private val backendComponent: BackendComponent) : Releasable {
 
     private val timeUtils: TimeUtils by lazy {
         TimeUtilsImpl()
@@ -32,6 +33,7 @@ class AppComponent(private val appContext: Context, private val backendComponent
         mainApplication.setServerConnectionViewModel(
                 presentationComponent.serverConnectionViewModel
         )
+        mainApplication.setTopicStarter(backendComponent.personalTopicListener)
         mainApplication.setBalanceViewModel(
                 presentationComponent.balanceViewModel
         )
@@ -557,5 +559,9 @@ class AppComponent(private val appContext: Context, private val backendComponent
                 presentationComponent
                         .getOrdersHistoryHeaderViewModel(ordersHistoryHeaderFragment, offset)
         )
+    }
+
+    override fun release() {
+        backendComponent.release()
     }
 }

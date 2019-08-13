@@ -1,6 +1,7 @@
 package com.cargopull.executor_driver.gateway;
 
 import androidx.annotation.NonNull;
+import com.cargopull.executor_driver.backend.stomp.StompFrame;
 import com.cargopull.executor_driver.backend.web.incoming.ApiOptionItem;
 import com.cargopull.executor_driver.backend.web.incoming.ApiOrder;
 import com.cargopull.executor_driver.backend.web.incoming.ApiRoutePoint;
@@ -14,12 +15,11 @@ import java.lang.reflect.Type;
 import java.util.HashSet;
 import java.util.Set;
 import javax.inject.Inject;
-import ua.naiksoftware.stomp.client.StompMessage;
 
 /**
  * Преобразуем сообщение сервера в бизнес объект списка предзаказов.
  */
-public class PreOrdersListApiMapper implements Mapper<StompMessage, Set<Order>> {
+public class PreOrdersListApiMapper implements Mapper<StompFrame, Set<Order>> {
 
   @NonNull
   private final Mapper<ApiOptionItem, Option> apiOptionMapper;
@@ -35,11 +35,11 @@ public class PreOrdersListApiMapper implements Mapper<StompMessage, Set<Order>> 
 
   @NonNull
   @Override
-  public Set<Order> map(@NonNull StompMessage from) throws Exception {
-    if (from.getPayload() == null) {
+  public Set<Order> map(@NonNull StompFrame from) throws Exception {
+    if (from.getBody() == null) {
       throw new DataMappingException("Ошибка маппинга: данные не должны быть null!");
     }
-    if (from.getPayload().trim().isEmpty()) {
+    if (from.getBody().trim().isEmpty()) {
       throw new DataMappingException("Ошибка маппинга: данные не должны быть пустыми!");
     }
     Gson gson = new Gson();
@@ -47,7 +47,7 @@ public class PreOrdersListApiMapper implements Mapper<StompMessage, Set<Order>> 
     }.getType();
     Set<ApiOrder> apiOrders;
     try {
-      apiOrders = gson.fromJson(from.getPayload(), type);
+      apiOrders = gson.fromJson(from.getBody(), type);
     } catch (Exception e) {
       throw new DataMappingException("Ошибка маппинга: не удалось распарсить JSON: " + from, e);
     }

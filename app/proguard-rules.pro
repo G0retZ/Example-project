@@ -60,11 +60,6 @@
 -keep class org.joda.** { *; }
 -keep interface org.joda.time.** { *;}
 
-# STOMP
--dontwarn ua.naiksoftware.stomp.**
-#-keep class ua.naiksoftware.stomp.** { *; }
-#-keep interface ua.naiksoftware.stomp.** { *;}
-
 # ???
 -dontwarn java8.util.**
 

@@ -32,22 +32,21 @@ class PreOrderProcessGatewayTest {
         val classRule = GatewayThreadTestRule()
     }
 
-    private lateinit var gateway: OrderConfirmationGateway<*>
+    private lateinit var gateway: OrderConfirmationGateway<Order>
     @Mock
     private lateinit var apiService: ApiService
     @Mock
-    private lateinit var mapper: Mapper<ApiSimpleResult<ApiOrder?>, Pair<ExecutorState, Order?>>
+    private lateinit var mapper: Mapper<ApiSimpleResult<ApiOrder>, Pair<ExecutorState, Order?>>
     @Mock
     private lateinit var order: Order
     @Mock
-    private lateinit var apiSimpleResult: ApiSimpleResult<ApiOrder?>
+    private lateinit var apiSimpleResult: ApiSimpleResult<ApiOrder>
     @Captor
     private lateinit var orderDecisionCaptor: ArgumentCaptor<ApiOrderDecision>
 
     @Before
     fun setUp() {
-        `when`<Single<ApiSimpleResult<ApiOrder?>>>(apiService.sendPreOrderProcess(any()))
-                .thenReturn(Single.never<ApiSimpleResult<ApiOrder?>>())
+        `when`(apiService.sendPreOrderProcess(any())).thenReturn(Single.never())
         gateway = PreOrderProcessGateway(apiService, mapper)
     }
 
@@ -67,7 +66,7 @@ class PreOrderProcessGatewayTest {
         gateway.sendDecision(order, true).test()
 
         // Результат:
-        inOrder.verify<ApiService>(apiService, times(2)).sendPreOrderProcess(orderDecisionCaptor.capture())
+        inOrder.verify(apiService, times(2)).sendPreOrderProcess(orderDecisionCaptor.kCapture())
         verifyNoMoreInteractions(apiService)
         assertEquals(orderDecisionCaptor.allValues[0].id, 7)
         assertFalse(orderDecisionCaptor.allValues[0].isApproved)
@@ -137,8 +136,7 @@ class PreOrderProcessGatewayTest {
     @Test
     fun answerSendDecisionDataMappingError() {
         // Дано:
-        `when`(apiService.sendPreOrderProcess(any()))
-                .thenReturn(Single.just<ApiSimpleResult<ApiOrder?>>(apiSimpleResult))
+        `when`(apiService.sendPreOrderProcess(any())).thenReturn(Single.just(apiSimpleResult))
         `when`(apiSimpleResult.code).thenReturn("200")
         doThrow(DataMappingException()).`when`(mapper).map(any())
 
@@ -157,8 +155,7 @@ class PreOrderProcessGatewayTest {
     @Test
     fun answerSendDecisionServerSuccess() {
         // Дано:
-        `when`(apiService.sendPreOrderProcess(any()))
-                .thenReturn(Single.just<ApiSimpleResult<ApiOrder?>>(apiSimpleResult))
+        `when`(apiService.sendPreOrderProcess(any())).thenReturn(Single.just(apiSimpleResult))
         `when`(apiSimpleResult.code).thenReturn("200")
         `when`(mapper.map(any())).thenReturn(Pair(ExecutorState.ONLINE, order))
 
@@ -180,8 +177,7 @@ class PreOrderProcessGatewayTest {
     @Test
     fun answerSendDecisionServerError() {
         // Дано:
-        `when`(apiService.sendPreOrderProcess(any()))
-                .thenReturn(Single.just<ApiSimpleResult<ApiOrder?>>(apiSimpleResult))
+        `when`(apiService.sendPreOrderProcess(any())).thenReturn(Single.just(apiSimpleResult))
         `when`(apiSimpleResult.code).thenReturn("409")
         `when`(apiSimpleResult.message).thenReturn("error")
 
@@ -202,8 +198,7 @@ class PreOrderProcessGatewayTest {
     @Test
     fun answerSendDecisionError() {
         // Дано:
-        `when`(apiService.sendPreOrderProcess(any()))
-                .thenReturn(Single.error<ApiSimpleResult<ApiOrder?>>(IllegalArgumentException()))
+        `when`(apiService.sendPreOrderProcess(any())).thenReturn(Single.error(IllegalArgumentException()))
 
         // Действие:
         val testObserver = gateway.sendDecision(order, false).test()
@@ -212,6 +207,11 @@ class PreOrderProcessGatewayTest {
         testObserver.assertNotComplete()
         testObserver.assertError(IllegalArgumentException::class.java)
         testObserver.assertNoValues()
+    }
+
+    private fun <T> ArgumentCaptor<T>.kCapture(): T {
+        capture()
+        return uninitialized()
     }
 
     private fun <T> any(): T {

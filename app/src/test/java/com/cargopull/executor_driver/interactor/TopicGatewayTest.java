@@ -7,6 +7,7 @@ import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 import com.cargopull.executor_driver.GatewayThreadTestRule;
+import com.cargopull.executor_driver.backend.stomp.StompFrame;
 import com.cargopull.executor_driver.backend.web.TopicListener;
 import com.cargopull.executor_driver.gateway.DataMappingException;
 import com.cargopull.executor_driver.gateway.Mapper;
@@ -24,7 +25,6 @@ import org.junit.runners.Parameterized;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
-import ua.naiksoftware.stomp.client.StompMessage;
 
 @RunWith(Parameterized.class)
 public class TopicGatewayTest {
@@ -38,11 +38,11 @@ public class TopicGatewayTest {
   @Mock
   private TopicListener topicListener;
   @Mock
-  private Mapper<StompMessage, String> mapper;
+  private Mapper<StompFrame, String> mapper;
   @Mock
-  private Predicate<StompMessage> filter;
+  private Predicate<StompFrame> filter;
   @Mock
-  private StompMessage stompMessage;
+  private StompFrame stompFrame;
 
   // Each parameter should be placed as an argument here
   // Every time runner triggers, it will pass the arguments
@@ -64,7 +64,7 @@ public class TopicGatewayTest {
     } else {
       gateway = new TopicGateway<>(topicListener, filter, mapper);
     }
-    when(topicListener.getAcknowledgedMessages()).thenReturn(Flowable.never());
+    when(topicListener.getMessages()).thenReturn(Flowable.never());
   }
 
   /* Проверяем работу с слушателем сокета */
@@ -78,7 +78,7 @@ public class TopicGatewayTest {
     gateway.getData().test().isDisposed();
 
     // Результат:
-    verify(topicListener, only()).getAcknowledgedMessages();
+    verify(topicListener, only()).getMessages();
   }
 
   /* Проверяем работу с фильтром */
@@ -103,13 +103,13 @@ public class TopicGatewayTest {
   @Test
   public void askFilterForCheck() throws Exception {
     // Дано:
-    when(topicListener.getAcknowledgedMessages()).thenReturn(Flowable.just(stompMessage));
+    when(topicListener.getMessages()).thenReturn(Flowable.just(stompFrame));
 
     // Действие:
     gateway.getData().test().isDisposed();
 
     // Результат:
-    verify(filter, only()).test(stompMessage);
+    verify(filter, only()).test(stompFrame);
   }
 
   /* Проверяем работу с маппером */
@@ -120,7 +120,7 @@ public class TopicGatewayTest {
   @Test
   public void doNotTouchMapperIfFiltered() {
     // Дано:
-    when(topicListener.getAcknowledgedMessages()).thenReturn(Flowable.just(stompMessage));
+    when(topicListener.getMessages()).thenReturn(Flowable.just(stompFrame));
 
     // Действие:
     gateway.getData().test().isDisposed();
@@ -137,14 +137,14 @@ public class TopicGatewayTest {
   @Test
   public void askMapperForForDataMapping() throws Exception {
     // Дано:
-    when(filter.test(stompMessage)).thenReturn(true);
-    when(topicListener.getAcknowledgedMessages()).thenReturn(Flowable.just(stompMessage));
+    when(filter.test(stompFrame)).thenReturn(true);
+    when(topicListener.getMessages()).thenReturn(Flowable.just(stompFrame));
 
     // Действие:
     gateway.getData().test().isDisposed();
 
     // Результат:
-    verify(mapper, only()).map(stompMessage);
+    verify(mapper, only()).map(stompFrame);
   }
 
   /* Проверяем результаты обработки сообщений от сервера */
@@ -156,7 +156,7 @@ public class TopicGatewayTest {
   @Test
   public void ignoreFilteredMessages() {
     // Дано:
-    when(topicListener.getAcknowledgedMessages()).thenReturn(Flowable.just(stompMessage));
+    when(topicListener.getMessages()).thenReturn(Flowable.just(stompFrame));
 
     // Действие:
     TestSubscriber<String> testSubscriber = gateway.getData().test();
@@ -178,9 +178,9 @@ public class TopicGatewayTest {
   @Test
   public void answerNoStringAvailableForNoData() throws Exception {
     // Дано:
-    doThrow(new DataMappingException()).when(mapper).map(stompMessage);
-    when(filter.test(stompMessage)).thenReturn(true);
-    when(topicListener.getAcknowledgedMessages()).thenReturn(Flowable.just(stompMessage));
+    doThrow(new DataMappingException()).when(mapper).map(stompFrame);
+    when(filter.test(stompFrame)).thenReturn(true);
+    when(topicListener.getMessages()).thenReturn(Flowable.just(stompFrame));
 
     // Действие:
     TestSubscriber<String> testSubscriber = gateway.getData().test();
@@ -202,9 +202,9 @@ public class TopicGatewayTest {
   @Test
   public void answerWithData() throws Exception {
     // Дано:
-    when(mapper.map(stompMessage)).thenReturn("Data");
-    when(filter.test(stompMessage)).thenReturn(true);
-    when(topicListener.getAcknowledgedMessages()).thenReturn(Flowable.just(stompMessage));
+    when(mapper.map(stompFrame)).thenReturn("Data");
+    when(filter.test(stompFrame)).thenReturn(true);
+    when(topicListener.getMessages()).thenReturn(Flowable.just(stompFrame));
 
     // Действие:
     TestSubscriber<String> testSubscriber = gateway.getData().test();

@@ -1,22 +1,22 @@
 package com.cargopull.executor_driver.gateway;
 
+import com.cargopull.executor_driver.backend.stomp.StompFrame;
 import com.cargopull.executor_driver.entity.OrderCancelledException;
 import com.cargopull.executor_driver.entity.OrderOfferExpiredException;
 import io.reactivex.functions.Predicate;
-import ua.naiksoftware.stomp.client.StompMessage;
 
-public class PreOrderFilter implements Predicate<StompMessage> {
+public class PreOrderFilter implements Predicate<StompFrame> {
 
   @Override
-  public boolean test(StompMessage stompMessage) throws Exception {
-    if ("true".equals(stompMessage.findHeader("PreliminaryExpired"))) {
-      String payload = stompMessage.getPayload();
+  public boolean test(StompFrame stompFrame) throws Exception {
+    if ("true".equals(stompFrame.getHeaders().get("PreliminaryExpired"))) {
+      String payload = stompFrame.getBody();
       throw new OrderOfferExpiredException(payload != null ? payload.replace("\"", "").trim() : "");
     }
-    if ("true".equals(stompMessage.findHeader("PreliminaryCancelled"))) {
-      String payload = stompMessage.getPayload();
+    if ("true".equals(stompFrame.getHeaders().get("PreliminaryCancelled"))) {
+      String payload = stompFrame.getBody();
       throw new OrderCancelledException(payload != null ? payload.replace("\"", "").trim() : "");
     }
-    return stompMessage.findHeader("Preliminary") != null;
+    return stompFrame.getHeaders().get("Preliminary") != null;
   }
 }

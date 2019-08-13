@@ -57,6 +57,8 @@ public class OrderConfirmationViewModelTest {
 
   @ClassRule
   public static final ViewModelThreadTestRule classRule = new ViewModelThreadTestRule();
+  final private ExecutorState executorState;
+  final private boolean acceptEnabled;
   @Rule
   public MockitoRule mockitoRule = MockitoJUnit.rule();
   @Rule
@@ -83,8 +85,16 @@ public class OrderConfirmationViewModelTest {
   private FlowableEmitter<ExecutorState> sEmitter;
   private FlowableEmitter<Pair<Long, Long>> emitter;
 
-  final private ExecutorState executorState;
-  final private boolean acceptEnabled;
+  @SuppressWarnings("WeakerAccess")
+  public OrderConfirmationViewModelTest(ExecutorState condition) {
+    executorState = condition;
+    acceptEnabled = getPrimeCondition(condition);
+  }
+
+  @Parameterized.Parameters
+  public static Iterable<ExecutorState> primeConditions() {
+    return Arrays.asList(ExecutorState.values());
+  }
 
   protected boolean getPrimeCondition(ExecutorState executorState) {
     return false;
@@ -101,18 +111,6 @@ public class OrderConfirmationViewModelTest {
     return new OrderConfirmationViewModelImpl(errorReporter, sUseCase, useCase, shakeItPlayer,
         ringTonePlayer, timeUtils, eventLogger);
   }
-
-  @SuppressWarnings("WeakerAccess")
-  public OrderConfirmationViewModelTest(ExecutorState condition) {
-    executorState = condition;
-    acceptEnabled = getPrimeCondition(condition);
-  }
-
-  @Parameterized.Parameters
-  public static Iterable<ExecutorState> primeConditions() {
-    return Arrays.asList(ExecutorState.values());
-  }
-
 
   @Before
   public void setUp() {

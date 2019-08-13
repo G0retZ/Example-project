@@ -4,19 +4,20 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
+import com.cargopull.executor_driver.backend.stomp.StompFrame;
+import java.util.Collections;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import ua.naiksoftware.stomp.client.StompMessage;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ChangedOrderFilterTest {
 
   private ChangedOrderFilter filter;
   @Mock
-  private StompMessage stompMessage;
+  private StompFrame stompFrame;
 
   @Before
   public void setUp() {
@@ -29,7 +30,7 @@ public class ChangedOrderFilterTest {
   @Test
   public void FilterIfExecutorStateIncorrect() {
     // Действие и Результат:
-    assertFalse(filter.test(stompMessage));
+    assertFalse(filter.test(stompFrame));
   }
 
   /**
@@ -38,10 +39,10 @@ public class ChangedOrderFilterTest {
   @Test
   public void denyForHeaderWithWrongValue() {
     // Дано:
-    when(stompMessage.findHeader("PreliminaryChanged")).thenReturn("");
+    when(stompFrame.getHeaders()).thenReturn(Collections.singletonMap("PreliminaryChanged", ""));
 
     // Действие и Результат:
-    assertFalse(filter.test(stompMessage));
+    assertFalse(filter.test(stompFrame));
   }
 
   /**
@@ -50,9 +51,10 @@ public class ChangedOrderFilterTest {
   @Test
   public void allowForHeaderWithOtherValue() {
     // Дано:
-    when(stompMessage.findHeader("PreliminaryChanged")).thenReturn("true");
+    when(stompFrame.getHeaders())
+        .thenReturn(Collections.singletonMap("PreliminaryChanged", "true"));
 
     // Действие и Результат:
-    assertTrue(filter.test(stompMessage));
+    assertTrue(filter.test(stompFrame));
   }
 }

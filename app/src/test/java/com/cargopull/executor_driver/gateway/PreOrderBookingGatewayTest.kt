@@ -14,9 +14,9 @@ import org.junit.ClassRule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.ArgumentCaptor
-import org.mockito.ArgumentMatchers.any
 import org.mockito.Captor
 import org.mockito.Mock
+import org.mockito.Mockito
 import org.mockito.Mockito.*
 import org.mockito.junit.MockitoJUnitRunner
 
@@ -30,13 +30,13 @@ class PreOrderBookingGatewayTest {
         val classRule = GatewayThreadTestRule()
     }
 
-    private lateinit var gateway: OrderConfirmationGateway<String?>
+    private lateinit var gateway: OrderConfirmationGateway<String>
     @Mock
     private lateinit var apiService: ApiService
     @Mock
     private lateinit var order: Order
     @Mock
-    private lateinit var apiSimpleResult: ApiSimpleResult<String?>
+    private lateinit var apiSimpleResult: ApiSimpleResult<String>
     @Captor
     private lateinit var orderDecisionCaptor: ArgumentCaptor<ApiOrderDecision>
 
@@ -62,7 +62,7 @@ class PreOrderBookingGatewayTest {
         gateway.sendDecision(order, true).test()
 
         // Результат:
-        inOrder.verify<ApiService>(apiService, times(2)).sendPreOrderDecision(orderDecisionCaptor.capture())
+        inOrder.verify<ApiService>(apiService, times(2)).sendPreOrderDecision(orderDecisionCaptor.kCapture())
         verifyNoMoreInteractions(apiService)
         assertEquals(orderDecisionCaptor.allValues[0].id, 7)
         assertFalse(orderDecisionCaptor.allValues[0].isApproved)
@@ -79,7 +79,7 @@ class PreOrderBookingGatewayTest {
     @Test
     fun answerSendDecisionServerSuccess() {
         // Дано:
-        `when`(apiService.sendPreOrderDecision(any())).thenReturn(Single.just<ApiSimpleResult<String?>>(apiSimpleResult))
+        `when`(apiService.sendPreOrderDecision(any())).thenReturn(Single.just(apiSimpleResult))
         `when`(apiSimpleResult.code).thenReturn("200")
         `when`(apiSimpleResult.message).thenReturn("message")
 
@@ -101,7 +101,7 @@ class PreOrderBookingGatewayTest {
     @Test
     fun answerSendDecisionServerSuccessWithoutMessage() {
         // Дано:
-        `when`(apiService.sendPreOrderDecision(any())).thenReturn(Single.just<ApiSimpleResult<String?>>(apiSimpleResult))
+        `when`(apiService.sendPreOrderDecision(any())).thenReturn(Single.just(apiSimpleResult))
         `when`(apiSimpleResult.code).thenReturn("200")
 
         // Действие:
@@ -122,7 +122,7 @@ class PreOrderBookingGatewayTest {
     @Test
     fun answerSendDecisionServerError() {
         // Дано:
-        `when`(apiService.sendPreOrderDecision(any())).thenReturn(Single.just<ApiSimpleResult<String?>>(apiSimpleResult))
+        `when`(apiService.sendPreOrderDecision(any())).thenReturn(Single.just(apiSimpleResult))
         `when`(apiSimpleResult.code).thenReturn("409")
         `when`(apiSimpleResult.message).thenReturn("error")
 
@@ -154,4 +154,16 @@ class PreOrderBookingGatewayTest {
         testObserver.assertError(IllegalArgumentException::class.java)
         testObserver.assertNoValues()
     }
+
+    private fun <T> ArgumentCaptor<T>.kCapture(): T {
+        capture()
+        return uninitialized()
+    }
+
+    private fun <T> any(): T {
+        Mockito.any<T>()
+        return uninitialized()
+    }
+
+    private fun <T> uninitialized(): T = null as T
 }

@@ -18,6 +18,7 @@ import androidx.core.app.NotificationCompat.BigTextStyle;
 import androidx.core.app.NotificationCompat.Builder;
 import com.cargopull.executor_driver.AppConfigKt;
 import com.cargopull.executor_driver.R;
+import com.cargopull.executor_driver.backend.web.TopicStarter;
 import com.cargopull.executor_driver.di.AppComponent;
 import com.cargopull.executor_driver.di.BackendComponent;
 import com.cargopull.executor_driver.presentation.CommonNavigate;
@@ -61,6 +62,7 @@ public class MainApplication extends Application implements ServerConnectionView
   private Activity currentActivity;
   private AppComponent appComponent;
   private ServerConnectionViewModel serverConnectionViewModel;
+  private TopicStarter topicStarter;
   private BalanceViewModel balanceViewModel;
   private ExecutorStateViewModel executorStateViewModel;
   private OrderViewModel orderViewModel;
@@ -83,6 +85,11 @@ public class MainApplication extends Application implements ServerConnectionView
   public void setServerConnectionViewModel(
       @NonNull ServerConnectionViewModel serverConnectionViewModel) {
     this.serverConnectionViewModel = serverConnectionViewModel;
+  }
+
+  @Inject
+  public void setTopicStarter(@NonNull TopicStarter topicStarter) {
+    this.topicStarter = topicStarter;
   }
 
   @Inject
@@ -287,6 +294,7 @@ public class MainApplication extends Application implements ServerConnectionView
 
   public void initServerConnection() {
     serverConnectionViewModel.connectServer();
+    topicStarter.restart();
   }
 
   public void initGeoLocation() {
@@ -319,6 +327,7 @@ public class MainApplication extends Application implements ServerConnectionView
       case CommonNavigate.EXIT:
         serverConnectionViewModel.disconnectServer();
         stopService();
+        appComponent.release();
         break;
       case ExecutorStateNavigate.BLOCKED:
         stopService();

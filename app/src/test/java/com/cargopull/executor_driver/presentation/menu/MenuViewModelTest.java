@@ -133,7 +133,8 @@ public class MenuViewModelTest {
     publishSubject.onNext(ExecutorState.BLOCKED);
 
     // Результат:
-    inOrder.verify(viewStateObserver, times(2)).onChanged(any(MenuViewStateFilterUnAvailable.class));
+    inOrder.verify(viewStateObserver, times(2))
+        .onChanged(any(MenuViewStateFilterUnAvailable.class));
     verifyNoMoreInteractions(viewStateObserver);
   }
 
@@ -150,7 +151,8 @@ public class MenuViewModelTest {
     publishSubject.onNext(ExecutorState.SHIFT_CLOSED);
 
     // Результат:
-    inOrder.verify(viewStateObserver, times(2)).onChanged(any(MenuViewStateFilterUnAvailable.class));
+    inOrder.verify(viewStateObserver, times(2))
+        .onChanged(any(MenuViewStateFilterUnAvailable.class));
     verifyNoMoreInteractions(viewStateObserver);
   }
 
@@ -205,7 +207,8 @@ public class MenuViewModelTest {
     publishSubject.onNext(ExecutorState.DRIVER_ORDER_CONFIRMATION);
 
     // Результат:
-    inOrder.verify(viewStateObserver, times(2)).onChanged(any(MenuViewStateFilterUnAvailable.class));
+    inOrder.verify(viewStateObserver, times(2))
+        .onChanged(any(MenuViewStateFilterUnAvailable.class));
     verifyNoMoreInteractions(viewStateObserver);
   }
 
@@ -223,7 +226,8 @@ public class MenuViewModelTest {
     publishSubject.onNext(ExecutorState.DRIVER_PRELIMINARY_ORDER_CONFIRMATION);
 
     // Результат:
-    inOrder.verify(viewStateObserver, times(2)).onChanged(any(MenuViewStateFilterUnAvailable.class));
+    inOrder.verify(viewStateObserver, times(2))
+        .onChanged(any(MenuViewStateFilterUnAvailable.class));
     verifyNoMoreInteractions(viewStateObserver);
   }
 
@@ -240,7 +244,8 @@ public class MenuViewModelTest {
     publishSubject.onNext(ExecutorState.CLIENT_ORDER_CONFIRMATION);
 
     // Результат:
-    inOrder.verify(viewStateObserver, times(2)).onChanged(any(MenuViewStateFilterUnAvailable.class));
+    inOrder.verify(viewStateObserver, times(2))
+        .onChanged(any(MenuViewStateFilterUnAvailable.class));
     verifyNoMoreInteractions(viewStateObserver);
   }
 
@@ -257,7 +262,8 @@ public class MenuViewModelTest {
     publishSubject.onNext(ExecutorState.MOVING_TO_CLIENT);
 
     // Результат:
-    inOrder.verify(viewStateObserver, times(2)).onChanged(any(MenuViewStateFilterUnAvailable.class));
+    inOrder.verify(viewStateObserver, times(2))
+        .onChanged(any(MenuViewStateFilterUnAvailable.class));
     verifyNoMoreInteractions(viewStateObserver);
   }
 
@@ -274,7 +280,8 @@ public class MenuViewModelTest {
     publishSubject.onNext(ExecutorState.WAITING_FOR_CLIENT);
 
     // Результат:
-    inOrder.verify(viewStateObserver, times(2)).onChanged(any(MenuViewStateFilterUnAvailable.class));
+    inOrder.verify(viewStateObserver, times(2))
+        .onChanged(any(MenuViewStateFilterUnAvailable.class));
     verifyNoMoreInteractions(viewStateObserver);
   }
 
@@ -291,7 +298,8 @@ public class MenuViewModelTest {
     publishSubject.onNext(ExecutorState.ORDER_FULFILLMENT);
 
     // Результат:
-    inOrder.verify(viewStateObserver, times(2)).onChanged(any(MenuViewStateFilterUnAvailable.class));
+    inOrder.verify(viewStateObserver, times(2))
+        .onChanged(any(MenuViewStateFilterUnAvailable.class));
     verifyNoMoreInteractions(viewStateObserver);
   }
 
@@ -308,7 +316,8 @@ public class MenuViewModelTest {
     publishSubject.onNext(ExecutorState.PAYMENT_CONFIRMATION);
 
     // Результат:
-    inOrder.verify(viewStateObserver, times(2)).onChanged(any(MenuViewStateFilterUnAvailable.class));
+    inOrder.verify(viewStateObserver, times(2))
+        .onChanged(any(MenuViewStateFilterUnAvailable.class));
     verifyNoMoreInteractions(viewStateObserver);
   }
 

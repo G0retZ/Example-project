@@ -2,18 +2,16 @@ package com.cargopull.executor_driver.gateway;
 
 import static org.junit.Assert.assertEquals;
 
+import com.cargopull.executor_driver.backend.stomp.Command;
+import com.cargopull.executor_driver.backend.stomp.StompFrame;
 import com.cargopull.executor_driver.entity.Order;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import org.junit.Before;
 import org.junit.Test;
-import ua.naiksoftware.stomp.StompHeader;
-import ua.naiksoftware.stomp.client.StompMessage;
 
 public class UpcomingPreOrderApiMapperTest {
 
-  private Mapper<StompMessage, Order> mapper;
+  private Mapper<StompFrame, Order> mapper;
 
   @Before
   public void setUp() {
@@ -28,14 +26,10 @@ public class UpcomingPreOrderApiMapperTest {
   @Test
   public void mappingHeaderAndPayLoadToOrder() throws Exception {
     // Дано и Действие:
-    Order order = mapper.map(new StompMessage("MESSAGE",
-            Arrays.asList(
-                new StompHeader("OrderId", "1234567890"),
-                new StompHeader("ETA", "0987654321")
-            ),
-            "\n"
-        )
-    );
+    StompFrame stompFrame = new StompFrame(Command.MESSAGE, "\n");
+    stompFrame.addHeader("OrderId", "1234567890");
+    stompFrame.addHeader("ETA", "0987654321");
+    Order order = mapper.map(stompFrame);
 
     // Результат:
     assertEquals(order.getId(), 1234567890L);
@@ -50,7 +44,7 @@ public class UpcomingPreOrderApiMapperTest {
   @Test(expected = DataMappingException.class)
   public void mappingNullOrderIdHeaderFail() throws Exception {
     // Дано и Действие:
-    mapper.map(new StompMessage("MESSAGE", new ArrayList<>(), "\n"));
+    mapper.map(new StompFrame(Command.MESSAGE, Collections.emptyMap(), "\n"));
   }
 
   /**
@@ -61,8 +55,8 @@ public class UpcomingPreOrderApiMapperTest {
   @Test(expected = DataMappingException.class)
   public void mappingEmptyOrderIdHeaderFail() throws Exception {
     // Дано и Действие:
-    mapper.map(new StompMessage("MESSAGE",
-        Collections.singletonList(new StompHeader("OrderId", "")), "\n"));
+    mapper.map(new StompFrame(Command.MESSAGE,
+        Collections.singletonMap("OrderId", ""), "\n"));
   }
 
   /**
@@ -73,8 +67,8 @@ public class UpcomingPreOrderApiMapperTest {
   @Test(expected = DataMappingException.class)
   public void mappingFloatOrderIdHeaderFail() throws Exception {
     // Дано и Действие:
-    mapper.map(new StompMessage("MESSAGE",
-        Collections.singletonList(new StompHeader("OrderId", "123.345")), "\n"));
+    mapper.map(new StompFrame(Command.MESSAGE,
+        Collections.singletonMap("OrderId", "123.345"), "\n"));
   }
 
   /**
@@ -85,9 +79,8 @@ public class UpcomingPreOrderApiMapperTest {
   @Test(expected = DataMappingException.class)
   public void mappingLongNumberOrderIdHeaderFail() throws Exception {
     // Дано и Действие:
-    mapper.map(new StompMessage("MESSAGE",
-        Collections.singletonList(new StompHeader("OrderId", "9999999999999999999999")),
-        "\n"));
+    mapper.map(new StompFrame(Command.MESSAGE,
+        Collections.singletonMap("OrderId", "9999999999999999999999"), "\n"));
   }
 
   /**
@@ -98,9 +91,8 @@ public class UpcomingPreOrderApiMapperTest {
   @Test(expected = DataMappingException.class)
   public void mappingNotANumberOrderIdHeaderFail() throws Exception {
     // Дано и Действие:
-    mapper.map(new StompMessage("MESSAGE",
-        Collections.singletonList(new StompHeader("OrderId", "a9876543210")),
-        "\n"));
+    mapper.map(new StompFrame(Command.MESSAGE,
+        Collections.singletonMap("OrderId", "a9876543210"), "\n"));
   }
 
   /**
@@ -111,10 +103,8 @@ public class UpcomingPreOrderApiMapperTest {
   @Test(expected = DataMappingException.class)
   public void mappingNullEtaHeaderFail() throws Exception {
     // Дано и Действие:
-    mapper.map(new StompMessage("MESSAGE",
-            Collections.singletonList(new StompHeader("OrderId", "1234567890")),
-            "\n"
-        )
+    mapper.map(new StompFrame(Command.MESSAGE,
+        Collections.singletonMap("OrderId", "1234567890"), "\n")
     );
   }
 
@@ -126,13 +116,10 @@ public class UpcomingPreOrderApiMapperTest {
   @Test(expected = DataMappingException.class)
   public void mappingEmptyEtaHeaderFail() throws Exception {
     // Дано и Действие:
-    mapper.map(new StompMessage("MESSAGE",
-            Arrays.asList(
-                new StompHeader("OrderId", "1234567890"),
-                new StompHeader("ETA", "")
-            ),
-            "\n"
-        )
+    StompFrame stompFrame = new StompFrame(Command.MESSAGE, "\n");
+    stompFrame.addHeader("OrderId", "1234567890");
+    stompFrame.addHeader("ETA", "");
+    mapper.map(stompFrame
     );
   }
 
@@ -144,13 +131,10 @@ public class UpcomingPreOrderApiMapperTest {
   @Test(expected = DataMappingException.class)
   public void mappingFloatEtaHeaderFail() throws Exception {
     // Дано и Действие:
-    mapper.map(new StompMessage("MESSAGE",
-            Arrays.asList(
-                new StompHeader("OrderId", "1234567890"),
-                new StompHeader("ETA", "123.345")
-            ),
-            "\n"
-        )
+    StompFrame stompFrame = new StompFrame(Command.MESSAGE, "\n");
+    stompFrame.addHeader("OrderId", "1234567890");
+    stompFrame.addHeader("ETA", "123.345");
+    mapper.map(stompFrame
     );
   }
 
@@ -162,13 +146,10 @@ public class UpcomingPreOrderApiMapperTest {
   @Test(expected = DataMappingException.class)
   public void mappingLongNumberEtaHeaderFail() throws Exception {
     // Дано и Действие:
-    mapper.map(new StompMessage("MESSAGE",
-            Arrays.asList(
-                new StompHeader("OrderId", "1234567890"),
-                new StompHeader("ETA", "9999999999999999999999")
-            ),
-            "\n"
-        )
+    StompFrame stompFrame = new StompFrame(Command.MESSAGE, "\n");
+    stompFrame.addHeader("OrderId", "1234567890");
+    stompFrame.addHeader("ETA", "9999999999999999999999");
+    mapper.map(stompFrame
     );
   }
 
@@ -180,13 +161,10 @@ public class UpcomingPreOrderApiMapperTest {
   @Test(expected = DataMappingException.class)
   public void mappingNotANumberEtaHeaderFail() throws Exception {
     // Дано и Действие:
-    mapper.map(new StompMessage("MESSAGE",
-            Arrays.asList(
-                new StompHeader("OrderId", "1234567890"),
-                new StompHeader("ETA", "a9876543210")
-            ),
-            "\n"
-        )
+    StompFrame stompFrame = new StompFrame(Command.MESSAGE, "\n");
+    stompFrame.addHeader("OrderId", "1234567890");
+    stompFrame.addHeader("ETA", "a9876543210");
+    mapper.map(stompFrame
     );
   }
 }

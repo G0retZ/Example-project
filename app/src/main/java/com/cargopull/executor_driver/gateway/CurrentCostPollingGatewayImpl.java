@@ -2,6 +2,8 @@ package com.cargopull.executor_driver.gateway;
 
 import androidx.annotation.NonNull;
 import com.cargopull.executor_driver.AppConfigKt;
+import com.cargopull.executor_driver.backend.stomp.StompClient;
+import com.cargopull.executor_driver.backend.stomp.StompFrame;
 import com.cargopull.executor_driver.backend.web.TopicListener;
 import com.cargopull.executor_driver.interactor.CurrentCostPollingGateway;
 import com.cargopull.executor_driver.utils.Pair;
@@ -10,8 +12,6 @@ import io.reactivex.Flowable;
 import io.reactivex.schedulers.Schedulers;
 import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
-import ua.naiksoftware.stomp.client.StompClient;
-import ua.naiksoftware.stomp.client.StompMessage;
 
 public class CurrentCostPollingGatewayImpl implements CurrentCostPollingGateway {
 
@@ -20,12 +20,12 @@ public class CurrentCostPollingGatewayImpl implements CurrentCostPollingGateway 
   @NonNull
   private final StompClient stompClient;
   @NonNull
-  private final Mapper<StompMessage, Pair<Long, Long>> mapper;
+  private final Mapper<StompFrame, Pair<Long, Long>> mapper;
 
   @Inject
   public CurrentCostPollingGatewayImpl(@NonNull TopicListener topicListener,
       @NonNull StompClient stompClient,
-      @NonNull Mapper<StompMessage, Pair<Long, Long>> mapper) {
+      @NonNull Mapper<StompFrame, Pair<Long, Long>> mapper) {
     this.topicListener = topicListener;
     this.stompClient = stompClient;
     this.mapper = mapper;
@@ -34,18 +34,18 @@ public class CurrentCostPollingGatewayImpl implements CurrentCostPollingGateway 
   @NonNull
   @Override
   public Completable startPolling() {
-    return topicListener.getAcknowledgedMessages()
+    return topicListener.getMessages()
         .subscribeOn(Schedulers.io())
-        .filter(stompMessage -> stompMessage.findHeader("OverPackage") != null)
+        .filter(stompFrame -> stompFrame.getHeaders().get("OverPackage") != null)
         .switchMap(this::pollingChooser)
         .flatMapCompletable(
             b -> stompClient.send(AppConfigKt.POLLING_DESTINATION, "\"\"").onErrorComplete()
         );
   }
 
-  private Flowable<Long> pollingChooser(@NonNull StompMessage stompMessage) {
-    if (stompMessage.findHeader("OverPackage").equals("1")) {
-      return Flowable.just(stompMessage)
+  private Flowable<Long> pollingChooser(@NonNull StompFrame stompFrame) {
+    if (stompFrame.getHeaders().get("OverPackage").equals("1")) {
+      return Flowable.just(stompFrame)
           .map(mapper::map)
           .switchMap(pair -> Flowable.interval(pair.first, pair.second, TimeUnit.MILLISECONDS));
     } else {

@@ -2,6 +2,7 @@ package com.cargopull.executor_driver.gateway;
 
 import androidx.annotation.NonNull;
 import com.cargopull.executor_driver.AppConfigKt;
+import com.cargopull.executor_driver.backend.stomp.StompClient;
 import com.cargopull.executor_driver.backend.web.outgoing.ApiGeoLocation;
 import com.cargopull.executor_driver.entity.GeoLocation;
 import com.cargopull.executor_driver.interactor.GeoTrackingGateway;
@@ -9,7 +10,6 @@ import com.google.gson.Gson;
 import io.reactivex.Completable;
 import io.reactivex.schedulers.Schedulers;
 import javax.inject.Inject;
-import ua.naiksoftware.stomp.client.StompClient;
 
 public class GeoTrackingGatewayImpl implements GeoTrackingGateway {
 

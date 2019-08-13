@@ -30,7 +30,7 @@ class OrderConfirmationGatewayTest {
         val classRule = GatewayThreadTestRule()
     }
 
-    private lateinit var gateway: OrderConfirmationGateway<*>
+    private lateinit var gateway: OrderConfirmationGateway<Void>
     @Mock
     private lateinit var apiService: ApiService
     @Mock
@@ -38,14 +38,14 @@ class OrderConfirmationGatewayTest {
     @Mock
     private lateinit var order: Order
     @Mock
-    private lateinit var apiSimpleResult: ApiSimpleResult<Void?>
+    private lateinit var apiSimpleResult: ApiSimpleResult<Void>
     @Captor
     private lateinit var orderDecisionCaptor: ArgumentCaptor<ApiOrderDecision>
 
     @Before
     fun setUp() {
         ExecutorState.ONLINE.customerTimer = 0
-        `when`(apiService.acceptOrderOffer(any())).thenReturn(Single.never<ApiSimpleResult<Void?>>())
+        `when`(apiService.acceptOrderOffer(any())).thenReturn(Single.never())
         gateway = OrderConfirmationGatewayImpl(apiService, errorMapper)
     }
 
@@ -65,7 +65,7 @@ class OrderConfirmationGatewayTest {
         gateway.sendDecision(order, true).test()
 
         // Результат:
-        inOrder.verify<ApiService>(apiService, times(2)).acceptOrderOffer(orderDecisionCaptor.capture())
+        inOrder.verify<ApiService>(apiService, times(2)).acceptOrderOffer(orderDecisionCaptor.kCapture())
         verifyNoMoreInteractions(apiService)
         assertEquals(orderDecisionCaptor.allValues[0].id, 7)
         assertFalse(orderDecisionCaptor.allValues[0].isApproved)
@@ -154,8 +154,7 @@ class OrderConfirmationGatewayTest {
     @Throws(Exception::class)
     fun answerSendDecisionError() {
         // Дано:
-        `when`(apiService.acceptOrderOffer(any()))
-                .thenReturn(Single.error<ApiSimpleResult<Void>>(IllegalArgumentException()))
+        `when`(apiService.acceptOrderOffer(any())).thenReturn(Single.error(IllegalArgumentException()))
         `when`(errorMapper.map(any())).thenReturn(IllegalStateException())
 
         // Действие:
@@ -165,6 +164,11 @@ class OrderConfirmationGatewayTest {
         testObserver.assertNotComplete()
         testObserver.assertError(IllegalStateException::class.java)
         testObserver.assertNoValues()
+    }
+
+    private fun <T> ArgumentCaptor<T>.kCapture(): T {
+        capture()
+        return uninitialized()
     }
 
     private fun <T> any(): T {

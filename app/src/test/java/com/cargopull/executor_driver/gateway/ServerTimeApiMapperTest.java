@@ -2,16 +2,15 @@ package com.cargopull.executor_driver.gateway;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.ArrayList;
+import com.cargopull.executor_driver.backend.stomp.Command;
+import com.cargopull.executor_driver.backend.stomp.StompFrame;
 import java.util.Collections;
 import org.junit.Before;
 import org.junit.Test;
-import ua.naiksoftware.stomp.StompHeader;
-import ua.naiksoftware.stomp.client.StompMessage;
 
 public class ServerTimeApiMapperTest {
 
-  private Mapper<StompMessage, Long> mapper;
+  private Mapper<StompFrame, Long> mapper;
 
   @Before
   public void setUp() {
@@ -26,8 +25,8 @@ public class ServerTimeApiMapperTest {
   @Test
   public void mappingPayLoadToInteger() throws Exception {
     // Дано и Действие:
-    long excessiveCost = mapper.map(new StompMessage("MESSAGE",
-        Collections.singletonList(new StompHeader("ServerTimeStamp", "1234567890")), "\n"));
+    long excessiveCost = mapper.map(new StompFrame(Command.MESSAGE,
+        Collections.singletonMap("ServerTimeStamp", "1234567890"), "\n"));
 
     // Результат:
     assertEquals(excessiveCost, 1234567890L);
@@ -41,7 +40,7 @@ public class ServerTimeApiMapperTest {
   @Test(expected = DataMappingException.class)
   public void mappingNullPayloadFail() throws Exception {
     // Дано и Действие:
-    mapper.map(new StompMessage("MESSAGE", new ArrayList<>(), "\n"));
+    mapper.map(new StompFrame(Command.MESSAGE, Collections.emptyMap(), "\n"));
   }
 
   /**
@@ -52,8 +51,8 @@ public class ServerTimeApiMapperTest {
   @Test(expected = DataMappingException.class)
   public void mappingEmptyPayloadFail() throws Exception {
     // Дано и Действие:
-    mapper.map(new StompMessage("MESSAGE",
-        Collections.singletonList(new StompHeader("ServerTimeStamp", "")), "\n"));
+    mapper.map(new StompFrame(Command.MESSAGE,
+        Collections.singletonMap("ServerTimeStamp", ""), "\n"));
   }
 
   /**
@@ -64,8 +63,8 @@ public class ServerTimeApiMapperTest {
   @Test(expected = DataMappingException.class)
   public void mappingFloatPayloadFail() throws Exception {
     // Дано и Действие:
-    mapper.map(new StompMessage("MESSAGE",
-        Collections.singletonList(new StompHeader("ServerTimeStamp", "123.345")), "\n"));
+    mapper.map(new StompFrame(Command.MESSAGE,
+        Collections.singletonMap("ServerTimeStamp", "123.345"), "\n"));
   }
 
   /**
@@ -76,8 +75,8 @@ public class ServerTimeApiMapperTest {
   @Test(expected = DataMappingException.class)
   public void mappingLongNumberPayloadFail() throws Exception {
     // Дано и Действие:
-    mapper.map(new StompMessage("MESSAGE",
-        Collections.singletonList(new StompHeader("ServerTimeStamp", "9999999999999999999999")),
+    mapper.map(new StompFrame(Command.MESSAGE,
+        Collections.singletonMap("ServerTimeStamp", "9999999999999999999999"),
         "\n"));
   }
 
@@ -89,7 +88,7 @@ public class ServerTimeApiMapperTest {
   @Test(expected = DataMappingException.class)
   public void mappingNotANumberPayloadFail() throws Exception {
     // Дано и Действие:
-    mapper.map(new StompMessage("MESSAGE",
-        Collections.singletonList(new StompHeader("ServerTimeStamp", "a9876543210")), "\n"));
+    mapper.map(new StompFrame(Command.MESSAGE,
+        Collections.singletonMap("ServerTimeStamp", "a9876543210"), "\n"));
   }
 }

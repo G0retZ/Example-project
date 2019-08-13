@@ -4,21 +4,22 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
+import com.cargopull.executor_driver.backend.stomp.StompFrame;
 import com.cargopull.executor_driver.entity.OrderCancelledException;
 import com.cargopull.executor_driver.entity.OrderOfferExpiredException;
+import java.util.Collections;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import ua.naiksoftware.stomp.client.StompMessage;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PreOrderFilterTest {
 
   private PreOrderFilter filter;
   @Mock
-  private StompMessage stompMessage;
+  private StompFrame stompFrame;
 
   @Before
   public void setUp() {
@@ -31,7 +32,7 @@ public class PreOrderFilterTest {
   @Test
   public void FilterIfExecutorStateIncorrect() throws Exception {
     // Действие и Результат:
-    assertFalse(filter.test(stompMessage));
+    assertFalse(filter.test(stompFrame));
   }
 
   /**
@@ -41,10 +42,11 @@ public class PreOrderFilterTest {
   @Test(expected = OrderOfferExpiredException.class)
   public void errorForHeaderWithPreliminaryExpiredTrue() throws Exception {
     // Дано:
-    when(stompMessage.findHeader("PreliminaryExpired")).thenReturn("true");
+    when(stompFrame.getHeaders())
+        .thenReturn(Collections.singletonMap("PreliminaryExpired", "true"));
 
     // Действие и Результат:
-    filter.test(stompMessage);
+    filter.test(stompFrame);
   }
 
   /**
@@ -54,11 +56,12 @@ public class PreOrderFilterTest {
   @Test(expected = OrderOfferExpiredException.class)
   public void errorForHeaderWithPreliminaryExpiredTrueAndPayload() throws Exception {
     // Дано:
-    when(stompMessage.findHeader("PreliminaryExpired")).thenReturn("true");
-    when(stompMessage.getPayload()).thenReturn("\n");
+    when(stompFrame.getHeaders())
+        .thenReturn(Collections.singletonMap("PreliminaryExpired", "true"));
+    when(stompFrame.getBody()).thenReturn("\n");
 
     // Действие и Результат:
-    filter.test(stompMessage);
+    filter.test(stompFrame);
   }
 
   /**
@@ -67,10 +70,11 @@ public class PreOrderFilterTest {
   @Test(expected = OrderCancelledException.class)
   public void errorForHeaderWithPreliminaryCancelledTrue() throws Exception {
     // Дано:
-    when(stompMessage.findHeader("PreliminaryCancelled")).thenReturn("true");
+    when(stompFrame.getHeaders())
+        .thenReturn(Collections.singletonMap("PreliminaryCancelled", "true"));
 
     // Действие и Результат:
-    filter.test(stompMessage);
+    filter.test(stompFrame);
   }
 
   /**
@@ -80,11 +84,12 @@ public class PreOrderFilterTest {
   @Test(expected = OrderCancelledException.class)
   public void errorForHeaderWithPreliminaryCancelledTrueAndPayload() throws Exception {
     // Дано:
-    when(stompMessage.findHeader("PreliminaryCancelled")).thenReturn("true");
-    when(stompMessage.getPayload()).thenReturn("\n");
+    when(stompFrame.getHeaders())
+        .thenReturn(Collections.singletonMap("PreliminaryCancelled", "true"));
+    when(stompFrame.getBody()).thenReturn("\n");
 
     // Действие и Результат:
-    filter.test(stompMessage);
+    filter.test(stompFrame);
   }
 
   /**
@@ -93,9 +98,9 @@ public class PreOrderFilterTest {
   @Test
   public void allowForHeaderWithCorrectValue() throws Exception {
     // Дано:
-    when(stompMessage.findHeader("Preliminary")).thenReturn("");
+    when(stompFrame.getHeaders()).thenReturn(Collections.singletonMap("Preliminary", ""));
 
     // Действие и Результат:
-    assertTrue(filter.test(stompMessage));
+    assertTrue(filter.test(stompFrame));
   }
 }

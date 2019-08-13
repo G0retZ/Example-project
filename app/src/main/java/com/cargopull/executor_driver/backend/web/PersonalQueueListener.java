@@ -3,59 +3,77 @@ package com.cargopull.executor_driver.backend.web;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.cargopull.executor_driver.AppConfigKt;
-import com.cargopull.executor_driver.interactor.DataReceiver;
-import io.reactivex.BackpressureStrategy;
+import com.cargopull.executor_driver.backend.settings.AppSettingsService;
+import com.cargopull.executor_driver.backend.stomp.StompClient;
+import com.cargopull.executor_driver.backend.stomp.StompFrame;
+import com.cargopull.executor_driver.interactor.CommonGateway;
 import io.reactivex.Flowable;
 import io.reactivex.schedulers.Schedulers;
-import java.util.Arrays;
-import ua.naiksoftware.stomp.StompHeader;
-import ua.naiksoftware.stomp.client.StompClient;
-import ua.naiksoftware.stomp.client.StompMessage;
+import io.reactivex.subjects.SingleSubject;
+import java.util.concurrent.TimeUnit;
 
-public class PersonalQueueListener implements TopicListener {
+public class PersonalQueueListener implements TopicListener, TopicStarter {
 
   @NonNull
   private final StompClient stompClient;
   @NonNull
-  private final DataReceiver<String> loginReceiver;
+  private final CommonGateway<Boolean> networkConnectionGateway;
+  @NonNull
+  private final AppSettingsService appSettingsService;
   @Nullable
-  private Flowable<StompMessage> stompMessageFlowable;
+  private Flowable<StompFrame> stompFrameFlowable;
+  @Nullable
+  private SingleSubject<Long> resetSubject;
 
   public PersonalQueueListener(@NonNull StompClient stompClient,
-      @NonNull DataReceiver<String> loginReceiver) {
+      @NonNull CommonGateway<Boolean> networkConnectionGateway,
+      @NonNull AppSettingsService appSettingsService) {
     this.stompClient = stompClient;
-    this.loginReceiver = loginReceiver;
+    this.networkConnectionGateway = networkConnectionGateway;
+    this.appSettingsService = appSettingsService;
   }
 
   @NonNull
   @Override
-  public Flowable<StompMessage> getAcknowledgedMessages() {
-    if (stompMessageFlowable == null) {
-      stompMessageFlowable = loginReceiver.get()
-          .toFlowable(BackpressureStrategy.BUFFER)
-          .switchMap(
-              login -> stompClient.topic(
-                  AppConfigKt.STATUS_DESTINATION(login),
-                  StompClient.ACK_CLIENT_INDIVIDUAL
-              ).subscribeOn(Schedulers.io())
-                  .doOnComplete(() -> {
-                    throw new ConnectionClosedException();
-                  })
-          ).retry()
-          .switchMap(
-              stompMessage -> stompClient.send(
-                  new StompMessage("ACK",
-                      Arrays.asList(
-                          new StompHeader("subscription", stompMessage.findHeader("subscription")),
-                          new StompHeader("message-id", stompMessage.findHeader("message-id"))
-                      ),
-                      ""
-                  )
-              ).onErrorComplete()
-                  .toSingleDefault(stompMessage)
-                  .toFlowable()
+  public Flowable<StompFrame> getMessages() {
+    if (stompFrameFlowable == null) {
+      stompFrameFlowable = networkConnectionGateway.getData()
+          .distinctUntilChanged()
+          .switchMap(state -> {
+                if (state) {
+                  String login = appSettingsService.getData("authorizationLogin");
+                  return stompClient.subscribe(
+                      AppConfigKt.STATUS_DESTINATION(login == null ? "" : login), 2_000, 2F
+                  ).subscribeOn(Schedulers.io())
+                      .doOnComplete(() -> {
+                        throw new ConnectionClosedException();
+                      });
+                } else {
+                  return Flowable.never();
+                }
+              }
+          ).retryWhen(failed ->
+              failed.concatMap(throwable -> {
+                if (throwable instanceof AuthorizationException) {
+                  return (resetSubject = SingleSubject.create()).toFlowable();
+                } else if (throwable instanceof DeprecatedVersionException) {
+                  return Flowable.<StompFrame>error(throwable);
+                } else {
+                  throwable.printStackTrace();
+                  return Flowable.timer(1, TimeUnit.SECONDS);
+                }
+              })
           ).share();
     }
-    return stompMessageFlowable;
+    return stompFrameFlowable;
+  }
+
+  @Override
+  public void restart() {
+    SingleSubject<Long> rs = resetSubject;
+    resetSubject = null;
+    if (rs != null) {
+      rs.onSuccess(0L);
+    }
   }
 }

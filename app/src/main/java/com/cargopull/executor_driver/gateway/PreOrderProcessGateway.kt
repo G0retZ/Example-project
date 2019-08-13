@@ -13,8 +13,8 @@ import io.reactivex.schedulers.Schedulers
 
 class PreOrderProcessGateway
 constructor(private val apiService: ApiService,
-            private val dataMapper: Mapper<ApiSimpleResult<ApiOrder?>, Pair<ExecutorState, Order?>>
-) : OrderConfirmationGateway<Order?> {
+            private val dataMapper: Mapper<ApiSimpleResult<ApiOrder>, Pair<ExecutorState, Order?>>
+) : OrderConfirmationGateway<Order> {
 
     override fun sendDecision(order: Order, accepted: Boolean): Single<Pair<ExecutorState?, Order?>> {
         return apiService.sendPreOrderProcess(ApiOrderDecision(order.id, accepted))

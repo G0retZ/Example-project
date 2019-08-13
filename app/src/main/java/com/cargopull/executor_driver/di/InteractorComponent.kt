@@ -132,7 +132,10 @@ class InteractorComponent(
         preOrderUseCaseImpl
     }
     val serverConnectionUseCase: ServerConnectionUseCase by lazy {
-        ServerConnectionUseCaseImpl(repositoryComponent.serverConnectionGateway)
+        ServerConnectionUseCaseImpl(
+                repositoryComponent.serverConnectionGateway,
+                repositoryComponent.networkConnectionGateway
+        )
     }
     val serverTimeUseCase: ServerTimeUseCase by lazy {
         ServerTimeUseCaseImpl(

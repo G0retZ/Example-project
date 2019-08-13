@@ -18,7 +18,7 @@ class FcmService : FirebaseMessagingService() {
     lateinit var ringTonePlayer: RingTonePlayer
     lateinit var shakeItPlayer: ShakeItPlayer
 
-    override fun onNewToken(s: String?) {
+    override fun onNewToken(s: String) {
         super.onNewToken(s)
         disposable = apiService.sendFcmInstanceID(s)
                 .subscribeOn(Schedulers.io())
