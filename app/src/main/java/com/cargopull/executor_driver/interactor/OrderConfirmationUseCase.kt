@@ -34,7 +34,7 @@ interface OrderConfirmationUseCase {
 class OrderConfirmationUseCaseImpl<D>
 constructor(
         private val orderUseCase: OrderUseCase,
-        private val orderConfirmationGateway: OrderConfirmationGateway<D?>,
+        private val orderConfirmationGateway: OrderConfirmationGateway<D>,
         private val orderDecisionUseCase: OrderDecisionUseCase?,
         private val ordersUseCase: OrdersUseCase?,
         private val updateExecutorStateUseCase: DataUpdateUseCase<ExecutorState>?,

@@ -4,12 +4,13 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
+import com.cargopull.executor_driver.backend.stomp.StompFrame;
+import java.util.Collections;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import ua.naiksoftware.stomp.client.StompMessage;
 
 @RunWith(MockitoJUnitRunner.class)
 public class UpdateMessageFilterTest {
@@ -17,7 +18,7 @@ public class UpdateMessageFilterTest {
 
   private UpdateMessageFilter filter;
   @Mock
-  private StompMessage stompMessage;
+  private StompFrame stompFrame;
 
   @Before
   public void setUp() {
@@ -30,7 +31,7 @@ public class UpdateMessageFilterTest {
   @Test
   public void filterIfExecutorStateIncorrect() {
     // Действие и Результат:
-    assertFalse(filter.test(stompMessage));
+    assertFalse(filter.test(stompFrame));
   }
 
   /**
@@ -39,10 +40,10 @@ public class UpdateMessageFilterTest {
   @Test
   public void filterForHeaderWithWrongValue() {
     // Дано:
-    when(stompMessage.findHeader("message")).thenReturn("");
+    when(stompFrame.getHeaders()).thenReturn(Collections.singletonMap("message", ""));
 
     // Действие и Результат:
-    assertFalse(filter.test(stompMessage));
+    assertFalse(filter.test(stompFrame));
   }
 
   /**
@@ -51,9 +52,9 @@ public class UpdateMessageFilterTest {
   @Test
   public void allowForHeaderWithCorrectValue() {
     // Дано:
-    when(stompMessage.findHeader("message")).thenReturn("UpdateVersion");
+    when(stompFrame.getHeaders()).thenReturn(Collections.singletonMap("message", "UpdateVersion"));
 
     // Действие и Результат:
-    assertTrue(filter.test(stompMessage));
+    assertTrue(filter.test(stompFrame));
   }
 }

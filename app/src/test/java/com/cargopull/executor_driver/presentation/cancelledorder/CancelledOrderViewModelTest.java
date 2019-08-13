@@ -8,8 +8,11 @@ import static org.mockito.Mockito.when;
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
 import androidx.lifecycle.Observer;
+import com.cargopull.executor_driver.R;
 import com.cargopull.executor_driver.ViewModelThreadTestRule;
 import com.cargopull.executor_driver.backend.analytics.ErrorReporter;
+import com.cargopull.executor_driver.backend.ringtone.RingTonePlayer;
+import com.cargopull.executor_driver.backend.vibro.ShakeItPlayer;
 import com.cargopull.executor_driver.gateway.DataMappingException;
 import com.cargopull.executor_driver.interactor.NotificationMessageUseCase;
 import com.cargopull.executor_driver.presentation.ViewState;
@@ -29,7 +32,6 @@ import org.mockito.junit.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class CancelledOrderViewModelTest {
 
-
   @ClassRule
   public static final ViewModelThreadTestRule classRule = new ViewModelThreadTestRule();
   @Rule
@@ -39,6 +41,10 @@ public class CancelledOrderViewModelTest {
   private ErrorReporter errorReporter;
   @Mock
   private NotificationMessageUseCase useCase;
+  @Mock
+  private ShakeItPlayer shakeItPlayer;
+  @Mock
+  private RingTonePlayer ringTonePlayer;
   @Mock
   private Observer<ViewState<CancelledOrderViewActions>> viewStateObserver;
   @Captor
@@ -53,7 +59,8 @@ public class CancelledOrderViewModelTest {
     publishSubject = PublishSubject.create();
     when(useCase.getNotificationMessages())
         .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
-    viewModel = new CancelledOrderViewModelImpl(errorReporter, useCase);
+    viewModel = new CancelledOrderViewModelImpl(errorReporter, useCase, shakeItPlayer,
+        ringTonePlayer);
   }
 
   /* Проверяем отправку ошибок в репортер */
@@ -96,6 +103,76 @@ public class CancelledOrderViewModelTest {
     verify(useCase, only()).getNotificationMessages();
   }
 
+  /* Тетсируем работу с вибро и звуком. */
+
+  /**
+   * Не должен трогать вибро и звук изначально и на подписках.
+   */
+  @Test
+  public void doNotTouchVibrationAndSoundInitially() {
+    // Действие:
+    viewModel.getViewStateLiveData();
+    viewModel.getNavigationLiveData();
+    viewModel.getViewStateLiveData();
+    viewModel.getNavigationLiveData();
+
+    // Результат:
+    verifyZeroInteractions(shakeItPlayer);
+    verifyZeroInteractions(ringTonePlayer);
+  }
+
+  /**
+   * Не должен трогать вибро и звук при ошибке.
+   */
+  @Test
+  public void doNotTouchVibrationAndSoundOnError() {
+    // Действие:
+    publishSubject.onError(new DataMappingException());
+
+    // Результат:
+    verifyZeroInteractions(shakeItPlayer);
+    verifyZeroInteractions(ringTonePlayer);
+  }
+
+  /**
+   * Должен дать вибро и звук отказа при получении отказа.
+   */
+  @Test
+  public void useVibrationAndSoundOnOrderCanceledWithMessage() {
+    // Действие:
+    publishSubject.onNext("Message");
+
+    // Результат:
+    verify(shakeItPlayer, only()).shakeIt(R.raw.skip_order_vibro);
+    verify(ringTonePlayer, only()).playRingTone(R.raw.skip_order);
+  }
+
+  /**
+   * Должен дать вибро и звук отказа при получении отказа.
+   */
+  @Test
+  public void useVibrationAndSoundOnOrderCanceledWithEmptyMessage() {
+    // Действие:
+    publishSubject.onNext("");
+
+    // Результат:
+    verify(shakeItPlayer, only()).shakeIt(R.raw.skip_order_vibro);
+    verify(ringTonePlayer, only()).playRingTone(R.raw.skip_order);
+  }
+
+  /**
+   * Должен дать вибро и звук отказа при получении отказа.
+   */
+  @Test
+  public void useVibrationAndSoundOnOrderCanceledWithSpaceMessage() {
+    // Действие:
+    publishSubject.onNext("\n");
+
+    // Результат:
+    verify(shakeItPlayer, only()).shakeIt(R.raw.skip_order_vibro);
+    verify(ringTonePlayer, only()).playRingTone(R.raw.skip_order);
+  }
+
   /* Тетсируем сообщение. */
 
   /**
@@ -113,6 +190,21 @@ public class CancelledOrderViewModelTest {
     verify(viewStateObserver, only()).onChanged(viewStateCaptor.capture());
     viewStateCaptor.getValue().apply(viewActions);
     verify(viewActions, only()).showCancelledOrderMessage("Message");
+  }
+
+  /**
+   * Не должен показывать сообщение при ошибке.
+   */
+  @Test
+  public void doNotShowMessageOnError() {
+    // Дано:
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
+
+    // Действие:
+    publishSubject.onError(new DataMappingException());
+
+    // Результат:
+    verifyZeroInteractions(viewStateObserver);
   }
 
   /**

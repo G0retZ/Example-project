@@ -384,7 +384,7 @@ public class GeoLocationStateViewModelTest {
                 states.get(from).get(0) && (states.get(from).get(1) || states.get(from).get(2))
                     && !states.get(to).get(0) && (states.get(to).get(1) || states.get(to).get(2))
                     && states.get(to1).get(0) && (states.get(to1).get(1) || states.get(to1).get(2))
-                ) {
+            ) {
               // Отправляем отчет о восстановлении доступности геолокации
               send = 1;
             } else if (
@@ -392,7 +392,7 @@ public class GeoLocationStateViewModelTest {
                 states.get(from).get(0) && (states.get(from).get(1) || states.get(from).get(2))
                     && !states.get(to).get(0) && (states.get(to).get(1) || states.get(to).get(2))
                     && !states.get(to1).get(1) && !states.get(to1).get(2)
-                ) {
+            ) {
               // Отправляем отчет о потери доступности геолокации
               send = -1;
             }
@@ -401,14 +401,14 @@ public class GeoLocationStateViewModelTest {
               // Если переход по состояниям был: 5|6|7 -> 1|2|3
                 states.get(from).get(0) && (states.get(from).get(1) || states.get(from).get(2))
                     && !states.get(to).get(0) && (states.get(to).get(1) || states.get(to).get(2))
-                ) {
+            ) {
               // Добавляем взаимодействие с утилитой времени в первой смене
               invocations = 1;
             } else if (
               // Если переход по состояниям был: * -> 5|6|7 -> 1|2|3
                 states.get(to).get(0) && (states.get(to).get(1) || states.get(to).get(2))
                     && !states.get(to1).get(0) && (states.get(to1).get(1) || states.get(to1).get(2))
-                ) {
+            ) {
               // Добавляем взаимодействие с утилитой времени во второй смене
               invocations = 2;
             }
@@ -418,7 +418,7 @@ public class GeoLocationStateViewModelTest {
                     && !states.get(to).get(0) && (states.get(to).get(1) || states.get(to).get(2))
                     && (states.get(to1).get(0) || !states.get(to1).get(1) && !states.get(to1)
                     .get(2))
-                ) {
+            ) {
               // Добавляем взаимодействие с утилитой времени в обеих сменах
               invocations = 3;
             }

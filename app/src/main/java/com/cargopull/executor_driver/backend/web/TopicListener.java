@@ -1,8 +1,8 @@
 package com.cargopull.executor_driver.backend.web;
 
 import androidx.annotation.NonNull;
+import com.cargopull.executor_driver.backend.stomp.StompFrame;
 import io.reactivex.Flowable;
-import ua.naiksoftware.stomp.client.StompMessage;
 
 /**
  * Получение сообщений из WebSocket.
@@ -18,5 +18,5 @@ public interface TopicListener {
    * @return
    */
   @NonNull
-  Flowable<StompMessage> getAcknowledgedMessages();
+  Flowable<StompFrame> getMessages();
 }

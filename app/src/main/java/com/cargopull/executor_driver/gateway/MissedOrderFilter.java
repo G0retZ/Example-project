@@ -1,12 +1,12 @@
 package com.cargopull.executor_driver.gateway;
 
+import com.cargopull.executor_driver.backend.stomp.StompFrame;
 import io.reactivex.functions.Predicate;
-import ua.naiksoftware.stomp.client.StompMessage;
 
-public class MissedOrderFilter implements Predicate<StompMessage> {
+public class MissedOrderFilter implements Predicate<StompFrame> {
 
   @Override
-  public boolean test(StompMessage stompMessage) {
-    return stompMessage.findHeader("MissedOrder") != null;
+  public boolean test(StompFrame stompFrame) {
+    return stompFrame.getHeaders().get("MissedOrder") != null;
   }
 }

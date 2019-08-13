@@ -11,9 +11,12 @@ import static org.mockito.Mockito.when;
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
 import androidx.lifecycle.Observer;
+import com.cargopull.executor_driver.R;
 import com.cargopull.executor_driver.ViewModelThreadTestRule;
 import com.cargopull.executor_driver.backend.analytics.ErrorReporter;
 import com.cargopull.executor_driver.backend.analytics.EventLogger;
+import com.cargopull.executor_driver.backend.ringtone.RingTonePlayer;
+import com.cargopull.executor_driver.backend.vibro.ShakeItPlayer;
 import com.cargopull.executor_driver.backend.web.NoNetworkException;
 import com.cargopull.executor_driver.entity.ExecutorState;
 import com.cargopull.executor_driver.entity.OrderConfirmationFailedException;
@@ -54,6 +57,8 @@ public class OrderConfirmationViewModelTest {
 
   @ClassRule
   public static final ViewModelThreadTestRule classRule = new ViewModelThreadTestRule();
+  final private ExecutorState executorState;
+  final private boolean acceptEnabled;
   @Rule
   public MockitoRule mockitoRule = MockitoJUnit.rule();
   @Rule
@@ -66,6 +71,10 @@ public class OrderConfirmationViewModelTest {
   @Mock
   private OrderConfirmationUseCase useCase;
   @Mock
+  private ShakeItPlayer shakeItPlayer;
+  @Mock
+  private RingTonePlayer ringTonePlayer;
+  @Mock
   private TimeUtils timeUtils;
   @Mock
   private EventLogger eventLogger;
@@ -75,22 +84,6 @@ public class OrderConfirmationViewModelTest {
   private Observer<String> navigateObserver;
   private FlowableEmitter<ExecutorState> sEmitter;
   private FlowableEmitter<Pair<Long, Long>> emitter;
-
-  final private ExecutorState executorState;
-  final private boolean acceptEnabled;
-
-  protected boolean getPrimeCondition(ExecutorState executorState) {
-    return false;
-  }
-
-  public OrderConfirmationViewModel getViewModel(
-      ErrorReporter errorReporter,
-      ExecutorStateUseCase sUseCase,
-      OrderConfirmationUseCase useCase, TimeUtils timeUtils,
-      EventLogger eventLogger) {
-    return new OrderConfirmationViewModelImpl(errorReporter, sUseCase, useCase, timeUtils,
-        eventLogger);
-  }
 
   @SuppressWarnings("WeakerAccess")
   public OrderConfirmationViewModelTest(ExecutorState condition) {
@@ -103,6 +96,21 @@ public class OrderConfirmationViewModelTest {
     return Arrays.asList(ExecutorState.values());
   }
 
+  protected boolean getPrimeCondition(ExecutorState executorState) {
+    return false;
+  }
+
+  public OrderConfirmationViewModel getViewModel(
+      ErrorReporter errorReporter,
+      ExecutorStateUseCase sUseCase,
+      OrderConfirmationUseCase useCase,
+      ShakeItPlayer shakeItPlayer,
+      RingTonePlayer ringTonePlayer,
+      TimeUtils timeUtils,
+      EventLogger eventLogger) {
+    return new OrderConfirmationViewModelImpl(errorReporter, sUseCase, useCase, shakeItPlayer,
+        ringTonePlayer, timeUtils, eventLogger);
+  }
 
   @Before
   public void setUp() {
@@ -113,7 +121,7 @@ public class OrderConfirmationViewModelTest {
     when(useCase.getOrderDecisionTimeout()).thenReturn(
         Flowable.create(e -> emitter = e, BackpressureStrategy.BUFFER)
     );
-    viewModel = getViewModel(errorReporter, sUseCase, useCase, timeUtils, eventLogger);
+    viewModel = getViewModel(errorReporter, sUseCase, useCase, shakeItPlayer, ringTonePlayer, timeUtils, eventLogger);
   }
 
   /* Проверяем отправку ошибок в репортер */
@@ -767,6 +775,156 @@ public class OrderConfirmationViewModelTest {
     verifyZeroInteractions(eventLogger);
   }
 
+  /* Тетсируем работу с вибро и звуком. */
+
+  /**
+   * Не должен трогать вибро и звук изначально.
+   */
+  @Test
+  public void doNotTouchVibrationAndSoundInitially() {
+    // Результат:
+    verifyZeroInteractions(shakeItPlayer);
+    verifyZeroInteractions(ringTonePlayer);
+  }
+
+  /**
+   * Не должен трогать вибро и звук при получении таймаута заказа.
+   */
+  @Test
+  public void doNotTouchVibrationAndSoundOnTimeoutLoadSuccess() {
+    // Действие:
+    sEmitter.onNext(executorState);
+    emitter.onNext(new Pair<>(1L, 12_000L));
+    emitter.onNext(new Pair<>(3L, 10_000L));
+    emitter.onNext(new Pair<>(101L, 2_000L));
+
+    // Результат:
+    verifyZeroInteractions(shakeItPlayer);
+    verifyZeroInteractions(ringTonePlayer);
+  }
+
+  /**
+   * Не должен трогать вибро и звук при ошибке получения таймаута заказа.
+   */
+  @Test
+  public void doNotTouchVibrationAndSoundOnTimeoutLoadError() {
+    // Действие:
+    sEmitter.onNext(executorState);
+    emitter.onError(new Exception("message"));
+
+    // Результат:
+    verifyZeroInteractions(shakeItPlayer);
+    verifyZeroInteractions(ringTonePlayer);
+  }
+
+  /**
+   * Должен дать вибро и звук отказа при ошибке актуальности заказа.
+   */
+  @Test
+  public void useVibrationAndSoundOnOrderCanceled() {
+    // Действие:
+    sEmitter.onNext(executorState);
+    emitter.onError(new OrderOfferExpiredException("message"));
+
+    // Результат:
+    verify(shakeItPlayer, only()).shakeIt(R.raw.skip_order_vibro);
+    verify(ringTonePlayer, only()).playRingTone(R.raw.skip_order);
+  }
+
+  /**
+   * Не должен трогать звук при ошибке принятния заказа.
+   */
+  @Test
+  public void doNotTouchSoundOnAcceptanceError() {
+    // Дано:
+    when(useCase.sendDecision(true)).thenReturn(Single.error(IllegalStateException::new));
+
+    // Действие:
+    viewModel.acceptOrder();
+
+    // Результат:
+    verify(shakeItPlayer, only()).shakeIt(R.raw.single_shot_vibro);
+    verifyZeroInteractions(ringTonePlayer);
+  }
+
+  /**
+   * Должен дать вибро и звук принятия при принятнии заказа.
+   */
+  @Test
+  public void useVibrationAndSoundOnAcceptanceSuccess() {
+    // Дано:
+    when(useCase.sendDecision(true)).thenReturn(Single.just(""));
+
+    // Действие:
+    viewModel.acceptOrder();
+
+    // Результат:
+    verify(shakeItPlayer).shakeIt(R.raw.single_shot_vibro);
+    verify(shakeItPlayer).shakeIt(R.raw.confirmation_notify_vibro);
+    verify(ringTonePlayer, only()).playRingTone(R.raw.confirmation_notify);
+    verifyNoMoreInteractions(shakeItPlayer);
+  }
+
+  /**
+   * Не должен трогать звук при ошибке отказа от заказа.
+   */
+  @Test
+  public void doNotTouchSoundOnDeclineError() {
+    // Дано:
+    when(useCase.sendDecision(false)).thenReturn(Single.error(IllegalStateException::new));
+
+    // Действие:
+    viewModel.declineOrder();
+
+    // Результат:
+    verify(shakeItPlayer, only()).shakeIt(R.raw.single_shot_vibro);
+    verifyZeroInteractions(ringTonePlayer);
+  }
+
+  /**
+   * Должен дать вибро и звук отказа при отказе от заказа.
+   */
+  @Test
+  public void useVibrationAndSoundOnDeclineSuccess() {
+    // Дано:
+    when(useCase.sendDecision(false)).thenReturn(Single.just(""));
+
+    // Действие:
+    viewModel.declineOrder();
+
+    // Результат:
+    verify(shakeItPlayer).shakeIt(R.raw.single_shot_vibro);
+    verify(shakeItPlayer).shakeIt(R.raw.skip_order_vibro);
+    verify(ringTonePlayer, only()).playRingTone(R.raw.skip_order);
+    verifyNoMoreInteractions(shakeItPlayer);
+  }
+
+  /**
+   * Не должен трогать вибро и звук при потреблении сообщения.
+   */
+  @Test
+  public void doNotTouchVibrationAndSoundOnMessageConsumption() {
+    // Действие:
+    viewModel.messageConsumed();
+
+    // Результат:
+    verifyZeroInteractions(shakeItPlayer);
+    verifyZeroInteractions(ringTonePlayer);
+  }
+
+  /**
+   * Должен дать вибро и звук отказа при таймауте.
+   */
+  @Test
+  public void useVibrationAndSoundOnTimeout() {
+    // Действие:
+    viewModel.counterTimeOut();
+
+    // Результат:
+    verify(shakeItPlayer, only()).shakeIt(R.raw.skip_order_vibro);
+    verify(ringTonePlayer, only()).playRingTone(R.raw.skip_order);
+  }
+
   /* Тетсируем переключение состояний. */
 
   /**
@@ -824,8 +982,7 @@ public class OrderConfirmationViewModelTest {
   public void setNoViewStateToLiveDataForExpiredError() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    viewModel = getViewModel(errorReporter, sUseCase, useCase, timeUtils,
-        eventLogger);
+    viewModel = getViewModel(errorReporter, sUseCase, useCase, shakeItPlayer, ringTonePlayer, timeUtils, eventLogger);
     viewModel.getNavigationLiveData().observeForever(navigateObserver);
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
@@ -856,8 +1013,7 @@ public class OrderConfirmationViewModelTest {
   public void setNoViewStateToLiveDataForOfferDecisionErrorWithoutMessage() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    viewModel = getViewModel(errorReporter, sUseCase, useCase, timeUtils,
-        eventLogger);
+    viewModel = getViewModel(errorReporter, sUseCase, useCase, shakeItPlayer, ringTonePlayer, timeUtils, eventLogger);
     viewModel.getNavigationLiveData().observeForever(navigateObserver);
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 

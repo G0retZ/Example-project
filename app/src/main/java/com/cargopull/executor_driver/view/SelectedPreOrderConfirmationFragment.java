@@ -19,8 +19,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.cargopull.executor_driver.R;
-import com.cargopull.executor_driver.backend.ringtone.RingTonePlayer;
-import com.cargopull.executor_driver.backend.vibro.ShakeItPlayer;
 import com.cargopull.executor_driver.di.AppComponent;
 import com.cargopull.executor_driver.presentation.CommonNavigate;
 import com.cargopull.executor_driver.presentation.orderconfirmation.OrderConfirmationViewActions;
@@ -35,8 +33,6 @@ public class SelectedPreOrderConfirmationFragment extends BaseFragment implement
     OrderConfirmationViewActions {
 
   private OrderConfirmationViewModel orderConfirmationViewModel;
-  private ShakeItPlayer shakeItPlayer;
-  private RingTonePlayer ringTonePlayer;
   private ProgressBar setOutAction;
   private TextView setOutActionText;
   private ProgressBar declineAction;
@@ -52,15 +48,6 @@ public class SelectedPreOrderConfirmationFragment extends BaseFragment implement
   @Nullable
   private AlertDialog alertDialog;
   private Context context;
-
-  @Inject
-  public void setShakeItPlayer(@NonNull ShakeItPlayer shakeItPlayer) {
-    this.shakeItPlayer = shakeItPlayer;
-  }
-
-  public void setRingTonePlayer(@NonNull RingTonePlayer ringTonePlayer) {
-    this.ringTonePlayer = ringTonePlayer;
-  }
 
   @Inject
   public void setOrderConfirmationViewModel(
@@ -107,7 +94,6 @@ public class SelectedPreOrderConfirmationFragment extends BaseFragment implement
         declineResetAnimator.start();
         if (!canceled) {
           orderConfirmationViewModel.declineOrder();
-          shakeItPlayer.shakeIt(R.raw.single_shot_vibro);
         }
       }
 
@@ -152,7 +138,6 @@ public class SelectedPreOrderConfirmationFragment extends BaseFragment implement
       public void onAnimationEnd(Animator animation) {
         if (!canceled) {
           orderConfirmationViewModel.acceptOrder();
-          shakeItPlayer.shakeIt(R.raw.single_shot_vibro);
         }
       }
 
@@ -292,7 +277,6 @@ public class SelectedPreOrderConfirmationFragment extends BaseFragment implement
   @Override
   public void showDeclinedMessage(@Nullable String message) {
     if (message != null) {
-      ringTonePlayer.playRingTone(R.raw.decline_offer);
       orderConfirmationViewModel.messageConsumed();
     }
   }

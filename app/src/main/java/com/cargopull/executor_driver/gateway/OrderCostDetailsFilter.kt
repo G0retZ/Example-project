@@ -1,11 +1,11 @@
 package com.cargopull.executor_driver.gateway
 
+import com.cargopull.executor_driver.backend.stomp.StompFrame
 import io.reactivex.functions.Predicate
-import ua.naiksoftware.stomp.client.StompMessage
 
-class OrderCostDetailsFilter : Predicate<StompMessage> {
+class OrderCostDetailsFilter : Predicate<StompFrame> {
 
-    override fun test(stompMessage: StompMessage): Boolean {
-        return "PAYMENT_CONFIRMATION" == stompMessage.findHeader("Status")
+    override fun test(stompFrame: StompFrame): Boolean {
+        return "PAYMENT_CONFIRMATION" == stompFrame.headers.get("Status")
     }
 }

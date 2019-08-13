@@ -1,13 +1,13 @@
 package com.cargopull.executor_driver.gateway;
 
+import com.cargopull.executor_driver.backend.stomp.StompFrame;
 import io.reactivex.functions.Predicate;
-import ua.naiksoftware.stomp.client.StompMessage;
 
-public class CancelledOrderFilter implements Predicate<StompMessage> {
+public class CancelledOrderFilter implements Predicate<StompFrame> {
 
   @Override
-  public boolean test(StompMessage stompMessage) {
-    String header = stompMessage.findHeader("PreliminaryCancelled");
+  public boolean test(StompFrame stompFrame) {
+    String header = stompFrame.getHeaders().get("PreliminaryCancelled");
     return header != null && !header.equals("true");
   }
 }

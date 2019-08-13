@@ -139,7 +139,8 @@ public class OrderTest {
 
   @Test
   public void testEquals() {
-    Order order1 = new Order(7, PaymentType.CASH, "com", "service", 1200239, "7000", 7000, 7728_192_819L,
+    Order order1 = new Order(7, PaymentType.CASH, "com", "service", 1200239, "7000", 7000,
+        7728_192_819L,
         28_020, 9400, 20, 600, 1234567890, 9876543210L, 123812983712L);
     assertEquals(order, order);
     assertEquals(order, order1);
@@ -157,7 +158,8 @@ public class OrderTest {
     assertEquals(order, order1);
     order1.setOptions(option1, option2, option3);
     assertEquals(order, order1);
-    order1 = new Order(6, PaymentType.CONTRACT, "com", "service", 1200239, "7000", 7000, 7728_192_819L,
+    order1 = new Order(6, PaymentType.CONTRACT, "com", "service", 1200239, "7000", 7000,
+        7728_192_819L,
         28_020,
         9400, 20, 600, 1234567890, 9876543210L, 123812983712L);
     assertNotEquals(order, order1);

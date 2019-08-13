@@ -1,12 +1,12 @@
 package com.cargopull.executor_driver.gateway;
 
+import com.cargopull.executor_driver.backend.stomp.StompFrame;
 import io.reactivex.functions.Predicate;
-import ua.naiksoftware.stomp.client.StompMessage;
 
-public class UpcomingPreOrderFilter implements Predicate<StompMessage> {
+public class UpcomingPreOrderFilter implements Predicate<StompFrame> {
 
   @Override
-  public boolean test(StompMessage stompMessage) {
-    return stompMessage.findHeader("PreliminaryReminder") != null;
+  public boolean test(StompFrame stompFrame) {
+    return stompFrame.getHeaders().get("PreliminaryReminder") != null;
   }
 }

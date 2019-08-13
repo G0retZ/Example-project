@@ -3,20 +3,20 @@ package com.cargopull.executor_driver.gateway;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
 
+import com.cargopull.executor_driver.backend.stomp.StompFrame;
 import com.cargopull.executor_driver.entity.ExecutorBalance;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import ua.naiksoftware.stomp.client.StompMessage;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ExecutorBalanceApiMapperTest {
 
-  private Mapper<StompMessage, ExecutorBalance> mapper;
+  private Mapper<StompFrame, ExecutorBalance> mapper;
   @Mock
-  private StompMessage stompMessage;
+  private StompFrame stompFrame;
 
   @Before
   public void setUp() {
@@ -31,11 +31,11 @@ public class ExecutorBalanceApiMapperTest {
   @Test
   public void mappingJsonStringToBalanceSuccess() throws Exception {
     // Дано
-    when(stompMessage.getPayload())
+    when(stompFrame.getBody())
         .thenReturn("{\"mainAccount\":1,\"bonusAccount\":2,\"nonCashAccount\":3}");
 
     // Действие:
-    ExecutorBalance executorBalance = mapper.map(stompMessage);
+    ExecutorBalance executorBalance = mapper.map(stompFrame);
 
     // Результат:
     assertEquals(executorBalance.getMainAccount(), 1);
@@ -51,10 +51,10 @@ public class ExecutorBalanceApiMapperTest {
   @Test
   public void mappingJsonStringWithoutMainAccountToBalanceSuccess() throws Exception {
     // Дано
-    when(stompMessage.getPayload()).thenReturn("{\"bonusAccount\":2,\"nonCashAccount\":3}");
+    when(stompFrame.getBody()).thenReturn("{\"bonusAccount\":2,\"nonCashAccount\":3}");
 
     // Действие:
-    ExecutorBalance executorBalance = mapper.map(stompMessage);
+    ExecutorBalance executorBalance = mapper.map(stompFrame);
 
     // Результат:
     assertEquals(executorBalance.getMainAccount(), 0);
@@ -70,10 +70,10 @@ public class ExecutorBalanceApiMapperTest {
   @Test
   public void mappingJsonStringWithoutBonusAccountToBalanceSuccess() throws Exception {
     // Дано
-    when(stompMessage.getPayload()).thenReturn("{\"mainAccount\":1,\"nonCashAccount\":3}");
+    when(stompFrame.getBody()).thenReturn("{\"mainAccount\":1,\"nonCashAccount\":3}");
 
     // Действие:
-    ExecutorBalance executorBalance = mapper.map(stompMessage);
+    ExecutorBalance executorBalance = mapper.map(stompFrame);
 
     // Результат:
     assertEquals(executorBalance.getMainAccount(), 1);
@@ -89,10 +89,10 @@ public class ExecutorBalanceApiMapperTest {
   @Test
   public void mappingJsonStringWithoutCashlessAccountToBalanceSuccess() throws Exception {
     // Дано
-    when(stompMessage.getPayload()).thenReturn("{\"mainAccount\":1,\"bonusAccount\":2}");
+    when(stompFrame.getBody()).thenReturn("{\"mainAccount\":1,\"bonusAccount\":2}");
 
     // Действие:
-    ExecutorBalance executorBalance = mapper.map(stompMessage);
+    ExecutorBalance executorBalance = mapper.map(stompFrame);
 
     // Результат:
     assertEquals(executorBalance.getMainAccount(), 1);
@@ -108,11 +108,11 @@ public class ExecutorBalanceApiMapperTest {
   @Test(expected = DataMappingException.class)
   public void mappingJsonStringWithMainAccountStringToBalanceFail() throws Exception {
     // Дано
-    when(stompMessage.getPayload())
+    when(stompFrame.getBody())
         .thenReturn("{\"mainAccount\":\"a\",\"bonusAccount\":2,\"nonCashAccount\":3}");
 
     // Действие:
-    mapper.map(stompMessage);
+    mapper.map(stompFrame);
   }
 
   /**
@@ -123,11 +123,11 @@ public class ExecutorBalanceApiMapperTest {
   @Test(expected = DataMappingException.class)
   public void mappingJsonStringWithBonusAccountStringToBalanceFail() throws Exception {
     // Дано
-    when(stompMessage.getPayload())
+    when(stompFrame.getBody())
         .thenReturn("{\"mainAccount\":1,\"bonusAccount\":\"b\",\"nonCashAccount\":3}");
 
     // Действие:
-    mapper.map(stompMessage);
+    mapper.map(stompFrame);
   }
 
   /**
@@ -139,11 +139,11 @@ public class ExecutorBalanceApiMapperTest {
   @Test(expected = DataMappingException.class)
   public void mappingJsonStringWithCashlessAccountStringToBalanceFail() throws Exception {
     // Дано
-    when(stompMessage.getPayload())
+    when(stompFrame.getBody())
         .thenReturn("{\"mainAccount\":1,\"bonusAccount\":2,\"nonCashAccount\":\"c\"}");
 
     // Действие:
-    mapper.map(stompMessage);
+    mapper.map(stompFrame);
   }
 
   /**
@@ -154,7 +154,7 @@ public class ExecutorBalanceApiMapperTest {
   @Test(expected = DataMappingException.class)
   public void mappingNullFail() throws Exception {
     // Действие:
-    mapper.map(stompMessage);
+    mapper.map(stompFrame);
   }
 
   /**
@@ -165,10 +165,10 @@ public class ExecutorBalanceApiMapperTest {
   @Test(expected = DataMappingException.class)
   public void mappingEmptyFail() throws Exception {
     // Дано
-    when(stompMessage.getPayload()).thenReturn("\n");
+    when(stompFrame.getBody()).thenReturn("\n");
 
     // Действие:
-    mapper.map(stompMessage);
+    mapper.map(stompFrame);
   }
 
   /**
@@ -179,10 +179,10 @@ public class ExecutorBalanceApiMapperTest {
   @Test(expected = DataMappingException.class)
   public void mappingStringFail() throws Exception {
     // Дано
-    when(stompMessage.getPayload()).thenReturn("dasie");
+    when(stompFrame.getBody()).thenReturn("dasie");
 
     // Действие:
-    mapper.map(stompMessage);
+    mapper.map(stompFrame);
   }
 
   /**
@@ -193,10 +193,10 @@ public class ExecutorBalanceApiMapperTest {
   @Test(expected = DataMappingException.class)
   public void mappingNumberFail() throws Exception {
     // Дано
-    when(stompMessage.getPayload()).thenReturn("12");
+    when(stompFrame.getBody()).thenReturn("12");
 
     // Действие:
-    mapper.map(stompMessage);
+    mapper.map(stompFrame);
   }
 
   /**
@@ -207,9 +207,9 @@ public class ExecutorBalanceApiMapperTest {
   @Test(expected = DataMappingException.class)
   public void mappingArrayFail() throws Exception {
     // Дано
-    when(stompMessage.getPayload()).thenReturn("[]");
+    when(stompFrame.getBody()).thenReturn("[]");
 
     // Действие:
-    mapper.map(stompMessage);
+    mapper.map(stompFrame);
   }
 }

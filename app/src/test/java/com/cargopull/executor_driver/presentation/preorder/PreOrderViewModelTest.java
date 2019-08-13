@@ -5,12 +5,16 @@ import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
 import androidx.lifecycle.Observer;
+import com.cargopull.executor_driver.R;
 import com.cargopull.executor_driver.ViewModelThreadTestRule;
 import com.cargopull.executor_driver.backend.analytics.ErrorReporter;
+import com.cargopull.executor_driver.backend.ringtone.RingTonePlayer;
+import com.cargopull.executor_driver.backend.vibro.ShakeItPlayer;
 import com.cargopull.executor_driver.entity.Order;
 import com.cargopull.executor_driver.entity.OrderCancelledException;
 import com.cargopull.executor_driver.entity.OrderOfferDecisionException;
@@ -46,6 +50,10 @@ public class PreOrderViewModelTest {
   @Mock
   private OrderUseCase orderUseCase;
   @Mock
+  private ShakeItPlayer shakeItPlayer;
+  @Mock
+  private RingTonePlayer ringTonePlayer;
+  @Mock
   private Order order;
   @Mock
   private Order order1;
@@ -63,7 +71,8 @@ public class PreOrderViewModelTest {
     when(orderUseCase.getOrders()).thenReturn(
         Flowable.create(e -> emitter = e, BackpressureStrategy.BUFFER)
     );
-    viewModel = new PreOrderViewModelImpl(errorReporter, orderUseCase);
+    viewModel = new PreOrderViewModelImpl(errorReporter, orderUseCase, shakeItPlayer,
+        ringTonePlayer);
   }
 
   /* Проверяем отправку ошибок в репортер */
@@ -104,6 +113,106 @@ public class PreOrderViewModelTest {
 
     // Результат:
     verify(orderUseCase, only()).getOrders();
+  }
+
+  /* Тетсируем работу с вибро и звуком. */
+
+  /**
+   * Не должен трогать вибро и звук изначально и на подписках.
+   */
+  @Test
+  public void doNotTouchVibrationAndSoundInitially() {
+    // Действие:
+    viewModel.getViewStateLiveData();
+    viewModel.getNavigationLiveData();
+    viewModel.getViewStateLiveData();
+    viewModel.getNavigationLiveData();
+
+    // Результат:
+    verifyZeroInteractions(shakeItPlayer);
+    verifyZeroInteractions(ringTonePlayer);
+  }
+
+  /**
+   * Не должен трогать вибро и звук при ошибке.
+   */
+  @Test
+  public void doNotTouchVibrationAndSoundOnError() {
+    // Действие:
+    emitter.onError(new Exception());
+
+    // Результат:
+    verifyZeroInteractions(shakeItPlayer);
+    verifyZeroInteractions(ringTonePlayer);
+  }
+
+  /**
+   * Должен дать вибро и звук отказа при получении заказов.
+   */
+  @Test
+  public void useVibrationAndSound() {
+    // Действие:
+    emitter.onNext(order);
+    emitter.onNext(order1);
+    emitter.onNext(order2);
+
+    // Результат:
+    verify(shakeItPlayer, times(3)).shakeIt(R.raw.preliminary_order_notify_vibro);
+    verify(ringTonePlayer, times(3)).playRingTone(R.raw.preliminary_order_notify);
+    verifyNoMoreInteractions(shakeItPlayer);
+    verifyNoMoreInteractions(ringTonePlayer);
+  }
+
+  /**
+   * Не должен трогать вибро и звук при получении ошибки.
+   */
+  @Test
+  public void doNotTouchVibrationAndSoundOnDataMappingError() {
+    // Действие:
+    emitter.onError(new DataMappingException());
+
+    // Результат:
+    verifyZeroInteractions(shakeItPlayer);
+    verifyZeroInteractions(ringTonePlayer);
+  }
+
+  /**
+   * Не должен трогать вибро и звук при получении ошибки принятия решения по заказу.
+   */
+  @Test
+  public void doNotTouchVibrationAndSoundOnOrderOfferDecision() {
+    // Действие:
+    emitter.onError(new OrderOfferDecisionException());
+
+    // Результат:
+    verifyZeroInteractions(shakeItPlayer);
+    verifyZeroInteractions(ringTonePlayer);
+  }
+
+  /**
+   * Не должен трогать вибро и звук отказа при получении ошибки актуальности заказа.
+   */
+  @Test
+  public void doNotTouchVibrationAndSoundOnOrderOfferExpired() {
+    // Действие:
+    emitter.onError(new OrderOfferExpiredException(""));
+
+    // Результат:
+    verifyZeroInteractions(shakeItPlayer);
+    verifyZeroInteractions(ringTonePlayer);
+  }
+
+  /**
+   * Не должен трогать вибро и звук отказа при получении ошибки отмены заказа.
+   */
+  @Test
+  public void doNotTouchVibrationAndSoundOnOrderOfferCancelled() {
+    // Действие:
+    emitter.onError(new OrderCancelledException(""));
+
+    // Результат:
+    verifyZeroInteractions(shakeItPlayer);
+    verifyZeroInteractions(ringTonePlayer);
   }
 
   /* Тетсируем переключение состояний. */
@@ -166,7 +275,8 @@ public class PreOrderViewModelTest {
   public void setExpiredViewStateToLiveDataForOrderOfferDecision() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    viewModel = new PreOrderViewModelImpl(errorReporter, orderUseCase);
+    viewModel = new PreOrderViewModelImpl(errorReporter, orderUseCase, shakeItPlayer,
+        ringTonePlayer);
     viewModel.getNavigationLiveData().observeForever(navigateObserver);
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
@@ -190,7 +300,8 @@ public class PreOrderViewModelTest {
   public void setExpiredViewStateToLiveData() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    viewModel = new PreOrderViewModelImpl(errorReporter, orderUseCase);
+    viewModel = new PreOrderViewModelImpl(errorReporter, orderUseCase, shakeItPlayer,
+        ringTonePlayer);
     viewModel.getNavigationLiveData().observeForever(navigateObserver);
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
@@ -214,7 +325,8 @@ public class PreOrderViewModelTest {
   public void setCancelledViewStateToLiveData() {
     // Дано:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
-    viewModel = new PreOrderViewModelImpl(errorReporter, orderUseCase);
+    viewModel = new PreOrderViewModelImpl(errorReporter, orderUseCase, shakeItPlayer,
+        ringTonePlayer);
     viewModel.getNavigationLiveData().observeForever(navigateObserver);
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 

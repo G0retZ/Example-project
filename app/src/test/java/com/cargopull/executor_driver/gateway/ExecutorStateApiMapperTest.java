@@ -6,11 +6,12 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
+import com.cargopull.executor_driver.backend.stomp.Command;
+import com.cargopull.executor_driver.backend.stomp.StompFrame;
 import com.cargopull.executor_driver.entity.ExecutorState;
 import com.cargopull.executor_driver.utils.Pair;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map.Entry;
 import org.junit.Before;
 import org.junit.Rule;
@@ -21,31 +22,29 @@ import org.junit.runners.Parameterized;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
-import ua.naiksoftware.stomp.StompHeader;
-import ua.naiksoftware.stomp.client.StompMessage;
 
 @RunWith(Parameterized.class)
 public class ExecutorStateApiMapperTest {
 
   @Rule
   public final ExpectedException thrown = ExpectedException.none();
-  private final StompMessage conditionStompMessage;
+  private final StompFrame conditionStompFrame;
   private final Class<? extends Exception> expectedException;
   private final ExecutorState expectedExecutorState;
   private final String expectedMessage;
   private final long expectedTimer;
   @Rule
   public MockitoRule rule = MockitoJUnit.rule();
-  private Mapper<StompMessage, ExecutorState> mapper;
+  private Mapper<StompFrame, ExecutorState> mapper;
   @Mock
-  private Mapper<StompMessage, String> payloadMapper;
+  private Mapper<StompFrame, String> payloadMapper;
 
   // Each parameter should be placed as an argument here
   // Every time runner triggers, it will pass the arguments
   // from parameters we defined in primeNumbers() method
 
-  public ExecutorStateApiMapperTest(Pair<StompMessage, Expectations> conditions) {
-    conditionStompMessage = conditions.first;
+  public ExecutorStateApiMapperTest(Pair<StompFrame, Expectations> conditions) {
+    conditionStompFrame = conditions.first;
     expectedException = conditions.second.exception;
     expectedExecutorState = conditions.second.executorState;
     expectedMessage = conditions.second.message;
@@ -54,7 +53,7 @@ public class ExecutorStateApiMapperTest {
 
   @Parameterized.Parameters
   public static Iterable primeNumbers() {
-    ArrayList<Pair<StompMessage, Expectations>> conditions = new ArrayList<>();
+    ArrayList<Pair<StompFrame, Expectations>> conditions = new ArrayList<>();
     // Соответствия значений хедера статуса эксепшенам
     HashMap<String, Class<? extends Exception>> statusHeadersToExceptions = new HashMap<>();
     statusHeadersToExceptions.put(null, DataMappingException.class);
@@ -104,29 +103,29 @@ public class ExecutorStateApiMapperTest {
               // Берем ошибку соответствующую хедеру статуса
               exceptionClass = statusHeadersToExceptions.get(executorStateEntry.getKey());
             }
+            StompFrame stompFrame = new StompFrame(Command.MESSAGE, payloadEntry.getKey());
             // Если нет ошибки соответствующей хедеру статуса
             if (exceptionClass == null) {
               // Берем ошибку от соответствующую хедеру таймера
               exceptionClass = timeHeadersToExceptions.get(timerEntry.getKey());
             }
-            List<StompHeader> headers = new ArrayList<>();
             // Если есть статус соответствующий хедеру
             if (executorStateEntry.getKey() != null) {
               // Добавляем в хедер его ключ
-              headers.add(new StompHeader("Status", executorStateEntry.getKey()));
+              stompFrame.addHeader("Status", executorStateEntry.getKey());
             }
             // Если есть таймер соответствующий хедеру
             if (timerEntry.getKey() != null) {
               // Добавляем в хедер его ключ
-              headers.add(new StompHeader("CustomerConfirmationTimer", timerEntry.getKey()));
+              stompFrame.addHeader("CustomerConfirmationTimer", timerEntry.getKey());
             }
             // Если есть флаг соответствующий хедеру
             if (block.getKey() != null) {
               // Добавляем в хедер его ключ
-              headers.add(new StompHeader("Blocked", block.getKey()));
+              stompFrame.addHeader("Blocked", block.getKey());
             }
             conditions.add(new Pair<>(
-                    new StompMessage("MESSAGE", headers, payloadEntry.getKey()),
+                stompFrame,
                     new Expectations(
                         exceptionClass,
                         block.getValue() != null ? block.getValue() : executorStateEntry.getValue(),
@@ -145,7 +144,7 @@ public class ExecutorStateApiMapperTest {
   @Before
   public void setUp() throws Exception {
     // Дано:
-    when(payloadMapper.map(conditionStompMessage)).thenReturn(expectedMessage);
+    when(payloadMapper.map(conditionStompFrame)).thenReturn(expectedMessage);
     if (expectedException != null) {
       thrown.expect(expectedException);
     }
@@ -159,13 +158,13 @@ public class ExecutorStateApiMapperTest {
    * @throws Exception ошибка
    */
   @Test
-  public void shouldAskPayloadMapperToMapStompMessageToMessage() throws Exception {
+  public void shouldAskPayloadMapperToMapStompFrameToMessage() throws Exception {
     // Действие:
-    mapper.map(conditionStompMessage);
+    mapper.map(conditionStompFrame);
 
     // Результат:
     if (expectedException == null) {
-      verify(payloadMapper, only()).map(conditionStompMessage);
+      verify(payloadMapper, only()).map(conditionStompFrame);
     } else {
       verifyZeroInteractions(payloadMapper);
     }
@@ -177,9 +176,9 @@ public class ExecutorStateApiMapperTest {
    * @throws Exception ошибка
    */
   @Test
-  public void mappingConditionsStompMessageToExpectedState() throws Exception {
+  public void mappingConditionsStompFrameToExpectedState() throws Exception {
     // Действие:
-    ExecutorState executorState = mapper.map(conditionStompMessage);
+    ExecutorState executorState = mapper.map(conditionStompFrame);
 
     // Результат:
     assertEquals(expectedExecutorState, executorState);

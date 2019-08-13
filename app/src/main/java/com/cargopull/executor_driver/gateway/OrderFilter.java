@@ -1,13 +1,13 @@
 package com.cargopull.executor_driver.gateway;
 
 import androidx.annotation.NonNull;
+import com.cargopull.executor_driver.backend.stomp.StompFrame;
 import com.cargopull.executor_driver.entity.ExecutorState;
 import io.reactivex.functions.Predicate;
 import java.util.Arrays;
 import java.util.List;
-import ua.naiksoftware.stomp.client.StompMessage;
 
-public class OrderFilter implements Predicate<StompMessage> {
+public class OrderFilter implements Predicate<StompFrame> {
 
   @NonNull
   private final List<String> allowedStates = Arrays.asList(
@@ -21,7 +21,7 @@ public class OrderFilter implements Predicate<StompMessage> {
   );
 
   @Override
-  public boolean test(StompMessage stompMessage) {
-    return allowedStates.contains(stompMessage.findHeader("Status"));
+  public boolean test(StompFrame stompFrame) {
+    return allowedStates.contains(stompFrame.getHeaders().get("Status"));
   }
 }

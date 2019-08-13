@@ -12,15 +12,13 @@ import android.os.Bundle;
 import android.os.Handler;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.RawRes;
 import androidx.annotation.StringRes;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.app.NotificationCompat.BigTextStyle;
 import androidx.core.app.NotificationCompat.Builder;
 import com.cargopull.executor_driver.AppConfigKt;
 import com.cargopull.executor_driver.R;
-import com.cargopull.executor_driver.backend.ringtone.RingTonePlayer;
-import com.cargopull.executor_driver.backend.vibro.ShakeItPlayer;
+import com.cargopull.executor_driver.backend.web.TopicStarter;
 import com.cargopull.executor_driver.di.AppComponent;
 import com.cargopull.executor_driver.di.BackendComponent;
 import com.cargopull.executor_driver.presentation.CommonNavigate;
@@ -63,9 +61,8 @@ public class MainApplication extends Application implements ServerConnectionView
   @Nullable
   private Activity currentActivity;
   private AppComponent appComponent;
-  private RingTonePlayer ringTonePlayer;
-  private ShakeItPlayer shakeItPlayer;
   private ServerConnectionViewModel serverConnectionViewModel;
+  private TopicStarter topicStarter;
   private BalanceViewModel balanceViewModel;
   private ExecutorStateViewModel executorStateViewModel;
   private OrderViewModel orderViewModel;
@@ -85,19 +82,14 @@ public class MainApplication extends Application implements ServerConnectionView
   private NotificationManager notificationManager;
 
   @Inject
-  public void setRingTonePlayer(@NonNull RingTonePlayer ringTonePlayer) {
-    this.ringTonePlayer = ringTonePlayer;
-  }
-
-  @Inject
-  public void setShakeItPlayer(@NonNull ShakeItPlayer shakeItPlayer) {
-    this.shakeItPlayer = shakeItPlayer;
-  }
-
-  @Inject
   public void setServerConnectionViewModel(
       @NonNull ServerConnectionViewModel serverConnectionViewModel) {
     this.serverConnectionViewModel = serverConnectionViewModel;
+  }
+
+  @Inject
+  public void setTopicStarter(@NonNull TopicStarter topicStarter) {
+    this.topicStarter = topicStarter;
   }
 
   @Inject
@@ -294,12 +286,15 @@ public class MainApplication extends Application implements ServerConnectionView
               getString(R.string.important_info),
               NotificationManager.IMPORTANCE_DEFAULT);
       mChannel.setDescription(getString(R.string.important_info_desc));
+      mChannel.setSound(null, null);
+      mChannel.enableVibration(false);
       notificationManager.createNotificationChannel(mChannel);
     }
   }
 
   public void initServerConnection() {
     serverConnectionViewModel.connectServer();
+    topicStarter.restart();
   }
 
   public void initGeoLocation() {
@@ -332,6 +327,7 @@ public class MainApplication extends Application implements ServerConnectionView
       case CommonNavigate.EXIT:
         serverConnectionViewModel.disconnectServer();
         stopService();
+        appComponent.release();
         break;
       case ExecutorStateNavigate.BLOCKED:
         stopService();
@@ -346,21 +342,15 @@ public class MainApplication extends Application implements ServerConnectionView
             .getActivity(this, 0, new Intent(this, OnlineActivity.class), 0));
         break;
       case ExecutorStateNavigate.DRIVER_ORDER_CONFIRMATION:
-        playSound(R.raw.new_offer);
-        shakeIt(R.raw.new_offer_vibro);
         startService(R.string.offer, R.string.new_order, PendingIntent
             .getActivity(this, 0, new Intent(this, DriverOrderConfirmationActivity.class), 0));
         navigationMapper.navigateTo(destination).accept(this);
         return;
       case ExecutorStateNavigate.DRIVER_PRELIMINARY_ORDER_CONFIRMATION:
-        playSound(R.raw.new_offer);
-        shakeIt(R.raw.new_offer_vibro);
         startService(R.string.preliminary_order, R.string.time_to_set_out, PendingIntent
             .getActivity(this, 0, new Intent(this, DriverPreOrderConfirmationActivity.class), 0));
         break;
       case ExecutorStateNavigate.CLIENT_ORDER_CONFIRMATION:
-        playSound(R.raw.accept_offer);
-        shakeIt(R.raw.accept_offer_vibro);
         startService(R.string.working, R.string.client_confirm, PendingIntent
             .getActivity(this, 0, new Intent(this, ClientOrderConfirmationActivity.class), 0));
         break;
@@ -382,8 +372,6 @@ public class MainApplication extends Application implements ServerConnectionView
             .getActivity(this, 0, new Intent(this, OrderCostDetailsActivity.class), 0));
         break;
       case PreOrderNavigate.ORDER_APPROVAL:
-        playSound(R.raw.new_pre_order);
-        shakeIt(R.raw.new_pre_order_vibro);
         break;
       case PreOrdersListNavigate.PRE_ORDER:
         return;
@@ -404,8 +392,6 @@ public class MainApplication extends Application implements ServerConnectionView
 
   @Override
   public void showMissedOrderMessage(@NonNull String message) {
-    playSound(R.raw.missed_offer);
-    shakeIt(R.raw.missed_order_vibro);
     Builder builder = new Builder(this, AppConfigKt.QUIET_CHANNEL_ID)
         .setContentTitle(getString(R.string.missed_order))
         .setContentText(message)
@@ -443,14 +429,6 @@ public class MainApplication extends Application implements ServerConnectionView
     stopService(new Intent(this, PersistenceService.class));
   }
 
-  private void playSound(@RawRes int rawId) {
-    ringTonePlayer.playRingTone(rawId);
-  }
-
-  private void shakeIt(@RawRes int patternId) {
-    shakeItPlayer.shakeIt(patternId);
-  }
-
   @Override
   public void showPreOrderAvailable(boolean show) {
     if (show) {
@@ -476,8 +454,6 @@ public class MainApplication extends Application implements ServerConnectionView
 
   @Override
   public void showUpcomingPreOrderMessage(@NonNull String message) {
-    shakeIt(R.raw.new_pre_order_vibro);
-    playSound(R.raw.pre_order_reminder);
     Builder builder = new Builder(this, AppConfigKt.QUIET_CHANNEL_ID)
         .setContentText(message)
         .setStyle(new BigTextStyle().bigText(message))
@@ -504,7 +480,6 @@ public class MainApplication extends Application implements ServerConnectionView
 
   @Override
   public void showCancelledOrderMessage(@NonNull String message) {
-    playSound(R.raw.missed_offer);
     Builder builder = new Builder(this, "state_channel")
         .setContentTitle(getString(R.string.order_cancelled))
         .setContentText(message)

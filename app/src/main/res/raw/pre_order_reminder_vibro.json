@@ -1,0 +1,30 @@
+[
+  {
+    "duration": 5,
+    "volume": 0
+  },
+  {
+    "duration": 65,
+    "volume": 255
+  },
+  {
+    "duration": 65,
+    "volume": 255
+  },
+  {
+    "duration": 65,
+    "volume": 207
+  },
+  {
+    "duration": 65,
+    "volume": 159
+  },
+  {
+    "duration": 65,
+    "volume": 111
+  },
+  {
+    "duration": 65,
+    "volume": 63
+  }
+]

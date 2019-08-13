@@ -12,6 +12,7 @@ import static com.cargopull.executor_driver.entity.ExecutorState.SHIFT_CLOSED;
 import static com.cargopull.executor_driver.entity.ExecutorState.SHIFT_OPENED;
 import static com.cargopull.executor_driver.entity.ExecutorState.WAITING_FOR_CLIENT;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.only;
@@ -23,18 +24,19 @@ import static org.mockito.Mockito.when;
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
 import androidx.lifecycle.Observer;
+import com.cargopull.executor_driver.R;
 import com.cargopull.executor_driver.ViewModelThreadTestRule;
 import com.cargopull.executor_driver.backend.analytics.ErrorReporter;
+import com.cargopull.executor_driver.backend.ringtone.RingTonePlayer;
+import com.cargopull.executor_driver.backend.vibro.ShakeItPlayer;
 import com.cargopull.executor_driver.entity.ExecutorState;
 import com.cargopull.executor_driver.gateway.DataMappingException;
 import com.cargopull.executor_driver.interactor.ExecutorStateUseCase;
 import com.cargopull.executor_driver.presentation.CommonNavigate;
 import com.cargopull.executor_driver.presentation.ViewState;
-import com.cargopull.executor_driver.utils.Pair;
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.subjects.PublishSubject;
 import java.util.Arrays;
-import java.util.List;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
@@ -53,20 +55,20 @@ public class ExecutorStateViewModelTest {
 
   @ClassRule
   public static final ViewModelThreadTestRule classRule = new ViewModelThreadTestRule();
-  private final ExecutorState conditionExecutorState;
-  private final String conditionMessage;
-  private final String expectedNavigation;
-  private final String expectedInfo;
-  private final String expectedMessage;
+  private final TestDataSet conditionDataSet;
   @Rule
   public TestRule rule = new InstantTaskExecutorRule();
   @Rule
-  public MockitoRule mrule = MockitoJUnit.rule();
+  public MockitoRule mRule = MockitoJUnit.rule();
   private ExecutorStateViewModel viewModel;
   @Mock
   private ErrorReporter errorReporter;
   @Mock
   private ExecutorStateUseCase useCase;
+  @Mock
+  private ShakeItPlayer shakeItPlayer;
+  @Mock
+  private RingTonePlayer ringTonePlayer;
   @Mock
   private Observer<String> navigationObserver;
   @Mock
@@ -81,208 +83,117 @@ public class ExecutorStateViewModelTest {
   // Every time runner triggers, it will pass the arguments
   // from parameters we defined in primeNumbers() method
 
-  public ExecutorStateViewModelTest(Pair<Pair<ExecutorState, String>, List<String>> conditions) {
-    conditionExecutorState = conditions.first.first;
-    expectedNavigation = conditions.first.second;
-    conditionMessage = conditions.second.get(0);
-    expectedMessage = conditions.second.get(1);
-    expectedInfo = conditions.second.get(2);
+  public ExecutorStateViewModelTest(TestDataSet conditions) {
+    conditionDataSet = conditions;
   }
 
   @Parameterized.Parameters
   public static Iterable primeNumbers() {
     // Соответствия значений статуса направлениям навигации и сообщениям
-    return Arrays.<Pair<Pair<ExecutorState, String>, List<String>>>asList(
-        new Pair<>(
-            new Pair<>(BLOCKED, ExecutorStateNavigate.BLOCKED),
-            Arrays.asList(null, null, null)
-        ),
-        new Pair<>(
-            new Pair<>(BLOCKED, ExecutorStateNavigate.BLOCKED),
-            Arrays.asList("", null, null)
-        ),
-        new Pair<>(
-            new Pair<>(BLOCKED, ExecutorStateNavigate.BLOCKED),
-            Arrays.asList("\n", null, null)
-        ),
-        new Pair<>(
-            new Pair<>(BLOCKED, ExecutorStateNavigate.BLOCKED),
-            Arrays.asList("Message", null, "Message")
-        ),
-        new Pair<>(
-            new Pair<>(SHIFT_CLOSED, ExecutorStateNavigate.MAP_SHIFT_CLOSED),
-            Arrays.asList(null, null, null)
-        ),
-        new Pair<>(
-            new Pair<>(SHIFT_CLOSED, ExecutorStateNavigate.MAP_SHIFT_CLOSED),
-            Arrays.asList("", null, null)
-        ),
-        new Pair<>(
-            new Pair<>(SHIFT_CLOSED, ExecutorStateNavigate.MAP_SHIFT_CLOSED),
-            Arrays.asList("\n", null, null)
-        ),
-        new Pair<>(
-            new Pair<>(SHIFT_CLOSED, ExecutorStateNavigate.MAP_SHIFT_CLOSED),
-            Arrays.asList("Message", null, null)
-        ),
-        new Pair<>(
-            new Pair<>(SHIFT_OPENED, ExecutorStateNavigate.MAP_SHIFT_OPENED),
-            Arrays.asList(null, null, null)
-        ),
-        new Pair<>(
-            new Pair<>(SHIFT_OPENED, ExecutorStateNavigate.MAP_SHIFT_OPENED),
-            Arrays.asList("", null, null)
-        ),
-        new Pair<>(
-            new Pair<>(SHIFT_OPENED, ExecutorStateNavigate.MAP_SHIFT_OPENED),
-            Arrays.asList("\n", null, null)
-        ),
-        new Pair<>(
-            new Pair<>(SHIFT_OPENED, ExecutorStateNavigate.MAP_SHIFT_OPENED),
-            Arrays.asList("Message", "Message", null)
-        ),
-        new Pair<>(
-            new Pair<>(ONLINE, ExecutorStateNavigate.MAP_ONLINE),
-            Arrays.asList(null, null, null)
-        ),
-        new Pair<>(
-            new Pair<>(ONLINE, ExecutorStateNavigate.MAP_ONLINE),
-            Arrays.asList("", null, null)
-        ),
-        new Pair<>(
-            new Pair<>(ONLINE, ExecutorStateNavigate.MAP_ONLINE),
-            Arrays.asList("\n", null, null)
-        ),
-        new Pair<>(
-            new Pair<>(ONLINE, ExecutorStateNavigate.MAP_ONLINE),
-            Arrays.asList("Message", "Message", null)
-        ),
-        new Pair<>(
-            new Pair<>(DRIVER_ORDER_CONFIRMATION, ExecutorStateNavigate.DRIVER_ORDER_CONFIRMATION),
-            Arrays.asList(null, null, null)
-        ),
-        new Pair<>(
-            new Pair<>(DRIVER_ORDER_CONFIRMATION, ExecutorStateNavigate.DRIVER_ORDER_CONFIRMATION),
-            Arrays.asList("", null, null)
-        ),
-        new Pair<>(
-            new Pair<>(DRIVER_ORDER_CONFIRMATION, ExecutorStateNavigate.DRIVER_ORDER_CONFIRMATION),
-            Arrays.asList("\n", null, null)
-        ),
-        new Pair<>(
-            new Pair<>(DRIVER_ORDER_CONFIRMATION, ExecutorStateNavigate.DRIVER_ORDER_CONFIRMATION),
-            Arrays.asList("Message", null, null)
-        ),
-        new Pair<>(
-            new Pair<>(DRIVER_PRELIMINARY_ORDER_CONFIRMATION,
-                ExecutorStateNavigate.DRIVER_PRELIMINARY_ORDER_CONFIRMATION),
-            Arrays.asList(null, null, null)
-        ),
-        new Pair<>(
-            new Pair<>(DRIVER_PRELIMINARY_ORDER_CONFIRMATION,
-                ExecutorStateNavigate.DRIVER_PRELIMINARY_ORDER_CONFIRMATION),
-            Arrays.asList("", null, null)
-        ),
-        new Pair<>(
-            new Pair<>(DRIVER_PRELIMINARY_ORDER_CONFIRMATION,
-                ExecutorStateNavigate.DRIVER_PRELIMINARY_ORDER_CONFIRMATION),
-            Arrays.asList("\n", null, null)
-        ),
-        new Pair<>(
-            new Pair<>(DRIVER_PRELIMINARY_ORDER_CONFIRMATION,
-                ExecutorStateNavigate.DRIVER_PRELIMINARY_ORDER_CONFIRMATION),
-            Arrays.asList("Message", null, null)
-        ),
-        new Pair<>(
-            new Pair<>(CLIENT_ORDER_CONFIRMATION, ExecutorStateNavigate.CLIENT_ORDER_CONFIRMATION),
-            Arrays.asList(null, null, null)
-        ),
-        new Pair<>(
-            new Pair<>(CLIENT_ORDER_CONFIRMATION, ExecutorStateNavigate.CLIENT_ORDER_CONFIRMATION),
-            Arrays.asList("", null, null)
-        ),
-        new Pair<>(
-            new Pair<>(CLIENT_ORDER_CONFIRMATION, ExecutorStateNavigate.CLIENT_ORDER_CONFIRMATION),
-            Arrays.asList("\n", null, null)
-        ),
-        new Pair<>(
-            new Pair<>(CLIENT_ORDER_CONFIRMATION, ExecutorStateNavigate.CLIENT_ORDER_CONFIRMATION),
-            Arrays.asList("Message", null, null)
-        ),
-        new Pair<>(
-            new Pair<>(MOVING_TO_CLIENT, ExecutorStateNavigate.MOVING_TO_CLIENT),
-            Arrays.asList(null, null, null)
-        ),
-        new Pair<>(
-            new Pair<>(MOVING_TO_CLIENT, ExecutorStateNavigate.MOVING_TO_CLIENT),
-            Arrays.asList("", null, null)
-        ),
-        new Pair<>(
-            new Pair<>(MOVING_TO_CLIENT, ExecutorStateNavigate.MOVING_TO_CLIENT),
-            Arrays.asList("\n", null, null)
-        ),
-        new Pair<>(
-            new Pair<>(MOVING_TO_CLIENT, ExecutorStateNavigate.MOVING_TO_CLIENT),
-            Arrays.asList("Message", null, null)
-        ),
-        new Pair<>(
-            new Pair<>(WAITING_FOR_CLIENT, ExecutorStateNavigate.WAITING_FOR_CLIENT),
-            Arrays.asList(null, null, null)
-        ),
-        new Pair<>(
-            new Pair<>(WAITING_FOR_CLIENT, ExecutorStateNavigate.WAITING_FOR_CLIENT),
-            Arrays.asList("", null, null)
-        ),
-        new Pair<>(
-            new Pair<>(WAITING_FOR_CLIENT, ExecutorStateNavigate.WAITING_FOR_CLIENT),
-            Arrays.asList("\n", null, null)
-        ),
-        new Pair<>(
-            new Pair<>(WAITING_FOR_CLIENT, ExecutorStateNavigate.WAITING_FOR_CLIENT),
-            Arrays.asList("Message", null, null)
-        ),
-        new Pair<>(
-            new Pair<>(ORDER_FULFILLMENT, ExecutorStateNavigate.ORDER_FULFILLMENT),
-            Arrays.asList(null, null, null)
-        ),
-        new Pair<>(
-            new Pair<>(ORDER_FULFILLMENT, ExecutorStateNavigate.ORDER_FULFILLMENT),
-            Arrays.asList("", null, null)
-        ),
-        new Pair<>(
-            new Pair<>(ORDER_FULFILLMENT, ExecutorStateNavigate.ORDER_FULFILLMENT),
-            Arrays.asList("\n", null, null)
-        ),
-        new Pair<>(
-            new Pair<>(ORDER_FULFILLMENT, ExecutorStateNavigate.ORDER_FULFILLMENT),
-            Arrays.asList("Message", null, null)
-        ),
-        new Pair<>(
-            new Pair<>(PAYMENT_CONFIRMATION, ExecutorStateNavigate.PAYMENT_CONFIRMATION),
-            Arrays.asList(null, null, null)
-        ),
-        new Pair<>(
-            new Pair<>(PAYMENT_CONFIRMATION, ExecutorStateNavigate.PAYMENT_CONFIRMATION),
-            Arrays.asList("", null, null)
-        ),
-        new Pair<>(
-            new Pair<>(PAYMENT_CONFIRMATION, ExecutorStateNavigate.PAYMENT_CONFIRMATION),
-            Arrays.asList("\n", null, null)
-        ),
-        new Pair<>(
-            new Pair<>(PAYMENT_CONFIRMATION, ExecutorStateNavigate.PAYMENT_CONFIRMATION),
-            Arrays.asList("Message", null, null)
-        )
+    return Arrays.asList(
+        new TestDataSet(BLOCKED, ExecutorStateNavigate.BLOCKED,
+            null, null, null, false, false),
+        new TestDataSet(BLOCKED, ExecutorStateNavigate.BLOCKED,
+            "", null, null, false, false),
+        new TestDataSet(BLOCKED, ExecutorStateNavigate.BLOCKED,
+            "\n", null, null, false, false),
+        new TestDataSet(BLOCKED, ExecutorStateNavigate.BLOCKED,
+            "Message", null, "Message", false, false),
+        new TestDataSet(SHIFT_CLOSED, ExecutorStateNavigate.MAP_SHIFT_CLOSED,
+            null, null, null, false, false),
+        new TestDataSet(SHIFT_CLOSED, ExecutorStateNavigate.MAP_SHIFT_CLOSED,
+            "", null, null, false, false),
+        new TestDataSet(SHIFT_CLOSED, ExecutorStateNavigate.MAP_SHIFT_CLOSED,
+            "\n", null, null, false, false),
+        new TestDataSet(SHIFT_CLOSED, ExecutorStateNavigate.MAP_SHIFT_CLOSED,
+            "Message", null, null, false, false),
+        new TestDataSet(SHIFT_OPENED, ExecutorStateNavigate.MAP_SHIFT_OPENED,
+            null, null, null, false, false),
+        new TestDataSet(SHIFT_OPENED, ExecutorStateNavigate.MAP_SHIFT_OPENED,
+            "", null, null, false, false),
+        new TestDataSet(SHIFT_OPENED, ExecutorStateNavigate.MAP_SHIFT_OPENED,
+            "\n", null, null, false, false),
+        new TestDataSet(SHIFT_OPENED, ExecutorStateNavigate.MAP_SHIFT_OPENED,
+            "Message", "Message", null, false, false),
+        new TestDataSet(ONLINE, ExecutorStateNavigate.MAP_ONLINE,
+            null, null, null, false, false),
+        new TestDataSet(ONLINE, ExecutorStateNavigate.MAP_ONLINE,
+            "", null, null, false, false),
+        new TestDataSet(ONLINE, ExecutorStateNavigate.MAP_ONLINE,
+            "\n", null, null, false, false),
+        new TestDataSet(ONLINE, ExecutorStateNavigate.MAP_ONLINE,
+            "Message", "Message", null, true, false),
+        new TestDataSet(DRIVER_ORDER_CONFIRMATION, ExecutorStateNavigate.DRIVER_ORDER_CONFIRMATION,
+            null, null, null, false, true),
+        new TestDataSet(DRIVER_ORDER_CONFIRMATION, ExecutorStateNavigate.DRIVER_ORDER_CONFIRMATION,
+            "", null, null, false, true),
+        new TestDataSet(DRIVER_ORDER_CONFIRMATION, ExecutorStateNavigate.DRIVER_ORDER_CONFIRMATION,
+            "\n", null, null, false, true),
+        new TestDataSet(DRIVER_ORDER_CONFIRMATION, ExecutorStateNavigate.DRIVER_ORDER_CONFIRMATION,
+            "Message", null, null, false, true),
+        new TestDataSet(DRIVER_PRELIMINARY_ORDER_CONFIRMATION,
+            ExecutorStateNavigate.DRIVER_PRELIMINARY_ORDER_CONFIRMATION,
+            null, null, null, false, true),
+        new TestDataSet(DRIVER_PRELIMINARY_ORDER_CONFIRMATION,
+            ExecutorStateNavigate.DRIVER_PRELIMINARY_ORDER_CONFIRMATION,
+            "", null, null, false, true),
+        new TestDataSet(DRIVER_PRELIMINARY_ORDER_CONFIRMATION,
+            ExecutorStateNavigate.DRIVER_PRELIMINARY_ORDER_CONFIRMATION,
+            "\n", null, null, false, true),
+        new TestDataSet(DRIVER_PRELIMINARY_ORDER_CONFIRMATION,
+            ExecutorStateNavigate.DRIVER_PRELIMINARY_ORDER_CONFIRMATION,
+            "Message", null, null, false, true),
+        new TestDataSet(CLIENT_ORDER_CONFIRMATION, ExecutorStateNavigate.CLIENT_ORDER_CONFIRMATION,
+            null, null, null, false, false),
+        new TestDataSet(CLIENT_ORDER_CONFIRMATION, ExecutorStateNavigate.CLIENT_ORDER_CONFIRMATION,
+            "", null, null, false, false),
+        new TestDataSet(CLIENT_ORDER_CONFIRMATION, ExecutorStateNavigate.CLIENT_ORDER_CONFIRMATION,
+            "\n", null, null, false, false),
+        new TestDataSet(CLIENT_ORDER_CONFIRMATION, ExecutorStateNavigate.CLIENT_ORDER_CONFIRMATION,
+            "Message", null, null, false, false),
+        new TestDataSet(MOVING_TO_CLIENT, ExecutorStateNavigate.MOVING_TO_CLIENT,
+            null, null, null, false, false),
+        new TestDataSet(MOVING_TO_CLIENT, ExecutorStateNavigate.MOVING_TO_CLIENT,
+            "", null, null, false, false),
+        new TestDataSet(MOVING_TO_CLIENT, ExecutorStateNavigate.MOVING_TO_CLIENT,
+            "\n", null, null, false, false),
+        new TestDataSet(MOVING_TO_CLIENT, ExecutorStateNavigate.MOVING_TO_CLIENT,
+            "Message", null, null, false, false),
+        new TestDataSet(WAITING_FOR_CLIENT, ExecutorStateNavigate.WAITING_FOR_CLIENT,
+            null, null, null, false, false),
+        new TestDataSet(WAITING_FOR_CLIENT, ExecutorStateNavigate.WAITING_FOR_CLIENT,
+            "", null, null, false, false),
+        new TestDataSet(WAITING_FOR_CLIENT, ExecutorStateNavigate.WAITING_FOR_CLIENT,
+            "\n", null, null, false, false),
+        new TestDataSet(WAITING_FOR_CLIENT, ExecutorStateNavigate.WAITING_FOR_CLIENT,
+            "Message", null, null, false, false),
+        new TestDataSet(ORDER_FULFILLMENT, ExecutorStateNavigate.ORDER_FULFILLMENT,
+            null, null, null, false, false),
+        new TestDataSet(ORDER_FULFILLMENT, ExecutorStateNavigate.ORDER_FULFILLMENT,
+            "", null, null, false, false),
+        new TestDataSet(ORDER_FULFILLMENT, ExecutorStateNavigate.ORDER_FULFILLMENT,
+            "\n", null, null, false, false),
+        new TestDataSet(ORDER_FULFILLMENT, ExecutorStateNavigate.ORDER_FULFILLMENT,
+            "Message", null, null, false, false),
+        new TestDataSet(PAYMENT_CONFIRMATION, ExecutorStateNavigate.PAYMENT_CONFIRMATION,
+            null, null, null, false, false),
+        new TestDataSet(PAYMENT_CONFIRMATION, ExecutorStateNavigate.PAYMENT_CONFIRMATION,
+            "", null, null, false, false),
+        new TestDataSet(PAYMENT_CONFIRMATION, ExecutorStateNavigate.PAYMENT_CONFIRMATION,
+            "\n", null, null, false, false),
+        new TestDataSet(PAYMENT_CONFIRMATION, ExecutorStateNavigate.PAYMENT_CONFIRMATION,
+            "Message", null, null, false, false)
     );
   }
 
   @Before
   public void setUp() {
-    conditionExecutorState.setData(conditionMessage);
+    conditionDataSet.conditionExecutorState.setData(conditionDataSet.conditionMessage);
     publishSubject = PublishSubject.create();
     when(useCase.getExecutorStates())
         .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
-    viewModel = new ExecutorStateViewModelImpl(errorReporter, useCase);
+    viewModel = new ExecutorStateViewModelImpl(errorReporter, useCase, shakeItPlayer,
+        ringTonePlayer);
   }
 
   /* Проверяем отправку ошибок в репортер */
@@ -350,26 +261,51 @@ public class ExecutorStateViewModelTest {
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
     // Действие:
-    publishSubject.onNext(conditionExecutorState);
-    if (expectedMessage != null) {
+    publishSubject.onNext(conditionDataSet.conditionExecutorState);
+    if (conditionDataSet.expectedMessage != null) {
       viewModel.messageConsumed();
     }
 
     // Результат:
-    if (expectedMessage != null) {
+    assertFalse(conditionDataSet.expectedMessage != null && conditionDataSet.expectedInfo != null);
+    if (conditionDataSet.expectedMessage != null) {
       verify(viewStateObserver, times(2)).onChanged(viewStateCaptor.capture());
       assertEquals(2, viewStateCaptor.getAllValues().size());
       assertNull(viewStateCaptor.getAllValues().get(1));
       viewStateCaptor.getAllValues().get(0).apply(viewActions);
-      verify(viewActions, only()).showExecutorStatusMessage(expectedMessage);
+      verify(viewActions, only()).showExecutorStatusMessage(conditionDataSet.expectedMessage);
       verifyNoMoreInteractions(viewStateObserver);
-    } else if (expectedInfo != null) {
+    } else if (conditionDataSet.expectedInfo != null) {
       verify(viewStateObserver, only()).onChanged(viewStateCaptor.capture());
       viewStateCaptor.getValue().apply(viewActions);
-      verify(viewActions, only()).showExecutorStatusInfo(expectedInfo);
+      verify(viewActions, only()).showExecutorStatusInfo(conditionDataSet.expectedInfo);
       verifyNoMoreInteractions(viewStateObserver);
     } else {
       verifyZeroInteractions(viewStateObserver);
+    }
+  }
+
+  /* Тетсируем работу с вибро и звуком. */
+
+  /**
+   * Должен взаимодействовать с вибро и звуком.
+   */
+  @Test
+  public void interactWithSoundAndVibrations() {
+    // Действие:
+    publishSubject.onNext(conditionDataSet.conditionExecutorState);
+
+    // Результат:
+    assertFalse(conditionDataSet.expectedToRingAndVibrateSkip && conditionDataSet.expectedToRingAndVibrateOrder);
+    if (conditionDataSet.expectedToRingAndVibrateSkip) {
+      verify(ringTonePlayer, only()).playRingTone(R.raw.skip_order);
+      verify(shakeItPlayer, only()).shakeIt(R.raw.skip_order_vibro);
+    } else if (conditionDataSet.expectedToRingAndVibrateOrder) {
+      verify(shakeItPlayer, only()).shakeIt(R.raw.regular_order_notify_vibro);
+      verify(ringTonePlayer, only()).playRingTone(R.raw.regular_order_notify);
+    } else {
+      verifyZeroInteractions(ringTonePlayer);
+      verifyZeroInteractions(shakeItPlayer);
     }
   }
 
@@ -417,9 +353,33 @@ public class ExecutorStateViewModelTest {
     viewModel.getNavigationLiveData().observeForever(navigationObserver);
 
     // Действие:
-    publishSubject.onNext(conditionExecutorState);
+    publishSubject.onNext(conditionDataSet.conditionExecutorState);
 
     // Результат:
-    verify(navigationObserver, only()).onChanged(expectedNavigation);
+    verify(navigationObserver, only()).onChanged(conditionDataSet.expectedNavigation);
+  }
+
+  private static class TestDataSet {
+
+    private final ExecutorState conditionExecutorState;
+    private final String expectedNavigation;
+    private final String conditionMessage;
+    private final String expectedMessage;
+    private final String expectedInfo;
+    private final boolean expectedToRingAndVibrateSkip;
+    private final boolean expectedToRingAndVibrateOrder;
+
+    private TestDataSet(ExecutorState conditionExecutorState,
+        String expectedNavigation, String conditionMessage,
+        String expectedMessage, String expectedInfo, boolean expectedToRingAndVibrateSkip,
+        boolean expectedToRingAndVibrateOrder) {
+      this.conditionExecutorState = conditionExecutorState;
+      this.conditionMessage = conditionMessage;
+      this.expectedNavigation = expectedNavigation;
+      this.expectedMessage = expectedMessage;
+      this.expectedInfo = expectedInfo;
+      this.expectedToRingAndVibrateSkip = expectedToRingAndVibrateSkip;
+      this.expectedToRingAndVibrateOrder = expectedToRingAndVibrateOrder;
+    }
   }
 }
