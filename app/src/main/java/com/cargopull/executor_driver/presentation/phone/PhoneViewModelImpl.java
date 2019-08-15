@@ -66,8 +66,7 @@ public class PhoneViewModelImpl extends ViewModel implements PhoneViewModel {
               viewStateLiveData.postValue(new PhoneViewStateInitial());
               navigateLiveData.postValue(PhoneNavigate.PASSWORD);
             },
-            throwable -> {
-            }
+            Throwable::printStackTrace
         );
   }
 
