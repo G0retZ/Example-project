@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
+import com.cargopull.executor_driver.backend.analytics.ErrorReporter;
 import com.cargopull.executor_driver.interactor.map.HeatMapUseCase;
 import com.cargopull.executor_driver.presentation.ViewState;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -14,6 +15,8 @@ import javax.inject.Inject;
 public class MapViewModelImpl extends ViewModel implements MapViewModel {
 
   @NonNull
+  private final ErrorReporter errorReporter;
+  @NonNull
   private final HeatMapUseCase heatMapUseCase;
 
   @NonNull
@@ -22,8 +25,10 @@ public class MapViewModelImpl extends ViewModel implements MapViewModel {
   private Disposable disposable = EmptyDisposable.INSTANCE;
 
   @Inject
-  public MapViewModelImpl(@NonNull HeatMapUseCase heatMapUseCase) {
+  public MapViewModelImpl(@NonNull ErrorReporter errorReporter,
+      @NonNull HeatMapUseCase heatMapUseCase) {
     this.heatMapUseCase = heatMapUseCase;
+    this.errorReporter = errorReporter;
     viewStateLiveData = new MutableLiveData<>();
     viewStateLiveData.postValue(new MapViewState(null));
   }
@@ -49,8 +54,7 @@ public class MapViewModelImpl extends ViewModel implements MapViewModel {
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(
             geoJson -> viewStateLiveData.postValue(new MapViewState(geoJson)),
-            throwable -> {
-            }
+            errorReporter::reportError
         );
   }
 

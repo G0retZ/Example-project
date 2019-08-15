@@ -66,8 +66,6 @@ public class MenuViewModelTest {
     viewModel = new MenuViewModelImpl(errorReporter, executorStateUseCase);
   }
 
-  /* Тетсируем работу с юзкейсом. */
-
   /* Проверяем отправку ошибок в репортер */
 
   /**
@@ -81,6 +79,8 @@ public class MenuViewModelTest {
     // Результат:
     verify(errorReporter, only()).reportError(any(DataMappingException.class));
   }
+
+  /* Тетсируем работу с юзкейсом. */
 
   /**
    * Должен просить у юзкейса источник для подписки изначально.

@@ -316,6 +316,7 @@ class PresentationComponent(
                 fragment,
                 MapViewModelImpl::class.java,
                 MapViewModelImpl(
+                        backendComponent.errorReporter,
                         interactorComponent.heatMapUseCase
                 )
         )

@@ -1,13 +1,16 @@
 package com.cargopull.executor_driver.presentation.map;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
 import androidx.lifecycle.Observer;
 import com.cargopull.executor_driver.ViewModelThreadTestRule;
+import com.cargopull.executor_driver.backend.analytics.ErrorReporter;
 import com.cargopull.executor_driver.interactor.map.HeatMapUseCase;
 import com.cargopull.executor_driver.presentation.ViewState;
 import io.reactivex.BackpressureStrategy;
@@ -33,6 +36,8 @@ public class MapViewModelTest {
   public TestRule rule = new InstantTaskExecutorRule();
   private MapViewModel viewModel;
   @Mock
+  private ErrorReporter errorReporter;
+  @Mock
   private Observer<ViewState<MapViewActions>> viewStateObserver;
 
   @Mock
@@ -41,7 +46,33 @@ public class MapViewModelTest {
   @Before
   public void setUp() {
     when(heatMapUseCase.loadHeatMap()).thenReturn(Flowable.never());
-    viewModel = new MapViewModelImpl(heatMapUseCase);
+    viewModel = new MapViewModelImpl(errorReporter, heatMapUseCase);
+  }
+
+  /* Проверяем отправку ошибок в репортер */
+
+  /**
+   * Не должен отправлять ошибок без действий.
+   */
+  @Test
+  public void doNotTouchErrorReporter() {
+    // Результат:
+    verifyZeroInteractions(errorReporter);
+  }
+
+  /**
+   * Должен отправить ошибку.
+   */
+  @Test
+  public void reportError() {
+    // Действие:
+    when(heatMapUseCase.loadHeatMap()).thenReturn(Flowable.error(new Exception()));
+
+    // Действие:
+    viewModel.getViewStateLiveData().observeForever(viewStateObserver);
+
+    // Результат:
+    verify(errorReporter, only()).reportError(any(Exception.class));
   }
 
   /* Тетсируем работу с юзкейсом тепловой карты. */
