@@ -28,7 +28,7 @@ public class StompClient {
     ).startWith(lastState);
   }
 
-  public Flowable<StompFrame> subscribe(String destination, int ms, float fraction) {
+  public Flowable<StompFrame> listenToDestination(String destination, int ms, float fraction) {
     final String topicId = UUID.randomUUID().toString();
     return webSocketConnection.connect(socketUrl)
         .subscribeOn(Schedulers.io())

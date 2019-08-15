@@ -42,7 +42,7 @@ public class PersonalQueueListener implements TopicListener, TopicStarter {
           .switchMap(state -> {
                 if (state) {
                   String login = appSettingsService.getData("authorizationLogin");
-                  return stompClient.subscribe(
+                  return stompClient.listenToDestination(
                       AppConfigKt.STATUS_DESTINATION(login == null ? "" : login), 2_000, 2F
                   ).subscribeOn(Schedulers.io())
                       .doOnComplete(() -> {
