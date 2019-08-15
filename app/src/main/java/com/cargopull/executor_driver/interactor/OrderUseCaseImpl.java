@@ -6,8 +6,8 @@ import com.cargopull.executor_driver.entity.Order;
 import com.cargopull.executor_driver.entity.OrderOfferDecisionException;
 import com.cargopull.executor_driver.utils.EmptyEmitter;
 import io.reactivex.BackpressureStrategy;
-import io.reactivex.Emitter;
 import io.reactivex.Flowable;
+import io.reactivex.FlowableEmitter;
 import io.reactivex.schedulers.Schedulers;
 import javax.inject.Inject;
 
@@ -19,7 +19,7 @@ public class OrderUseCaseImpl implements OrderUseCase, OrderDecisionUseCase,
   @Nullable
   private Flowable<Order> orderFlowable;
   @NonNull
-  private Emitter<Order> emitter = new EmptyEmitter<>();
+  private FlowableEmitter<Order> emitter = new EmptyEmitter<>();
 
   @Inject
   public OrderUseCaseImpl(@NonNull CommonGateway<Order> gateway) {
@@ -43,7 +43,7 @@ public class OrderUseCaseImpl implements OrderUseCase, OrderDecisionUseCase,
 
   @Override
   public void setOrderOfferDecisionMade() {
-    emitter.onError(new OrderOfferDecisionException());
+    emitter.tryOnError(new OrderOfferDecisionException());
   }
 
   @Override
