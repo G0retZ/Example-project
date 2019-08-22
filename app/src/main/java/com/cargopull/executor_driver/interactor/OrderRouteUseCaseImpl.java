@@ -7,8 +7,8 @@ import com.cargopull.executor_driver.entity.RoutePoint;
 import com.cargopull.executor_driver.utils.EmptyEmitter;
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Completable;
-import io.reactivex.Emitter;
 import io.reactivex.Flowable;
+import io.reactivex.FlowableEmitter;
 import io.reactivex.schedulers.Schedulers;
 import java.util.List;
 import javax.inject.Inject;
@@ -23,7 +23,7 @@ public class OrderRouteUseCaseImpl implements OrderRouteUseCase,
   @Nullable
   private Flowable<List<RoutePoint>> routeFlowable;
   @NonNull
-  private Emitter<List<RoutePoint>> emitter = new EmptyEmitter<>();
+  private FlowableEmitter<List<RoutePoint>> emitter = new EmptyEmitter<>();
 
   @Inject
   public OrderRouteUseCaseImpl(@NonNull OrderUseCase orderUseCase,

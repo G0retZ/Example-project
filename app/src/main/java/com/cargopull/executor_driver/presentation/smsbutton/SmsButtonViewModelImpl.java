@@ -74,8 +74,7 @@ public class SmsButtonViewModelImpl extends ViewModel implements SmsButtonViewMo
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(
             count -> viewStateLiveData.postValue(new SmsButtonViewStateHold(count)),
-            throwable -> {
-            },
+            Throwable::printStackTrace,
             () -> viewStateLiveData.postValue(new SmsButtonViewStateReady())
         );
   }

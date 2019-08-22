@@ -41,8 +41,7 @@ public class CodeHeaderViewModelImpl extends ViewModel implements CodeHeaderView
           .doAfterTerminate(this::loadLogin)
           .subscribe(
               this::consumePhoneNumber,
-              throwable -> {
-              }
+              Throwable::printStackTrace
           );
     }
   }

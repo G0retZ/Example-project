@@ -5,8 +5,8 @@ import androidx.annotation.Nullable;
 import com.cargopull.executor_driver.entity.ExecutorState;
 import com.cargopull.executor_driver.utils.EmptyEmitter;
 import io.reactivex.BackpressureStrategy;
-import io.reactivex.Emitter;
 import io.reactivex.Flowable;
+import io.reactivex.FlowableEmitter;
 import io.reactivex.schedulers.Schedulers;
 import javax.inject.Inject;
 
@@ -18,7 +18,7 @@ public class ExecutorStateUseCaseImpl implements ExecutorStateUseCase,
   @Nullable
   private Flowable<ExecutorState> executorStateFlowable;
   @NonNull
-  private Emitter<ExecutorState> emitter = new EmptyEmitter<>();
+  private FlowableEmitter<ExecutorState> emitter = new EmptyEmitter<>();
 
   @Inject
   public ExecutorStateUseCaseImpl(@NonNull CommonGateway<ExecutorState> gateway) {

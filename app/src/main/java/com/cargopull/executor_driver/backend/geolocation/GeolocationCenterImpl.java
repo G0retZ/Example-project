@@ -59,7 +59,7 @@ public class GeolocationCenterImpl implements GeolocationCenter {
           ||
           ActivityCompat.checkSelfPermission(appContext, permission.ACCESS_COARSE_LOCATION)
               != PackageManager.PERMISSION_GRANTED) {
-        emitter.onError(new SecurityException("Access denied."));
+        emitter.tryOnError(new SecurityException("Access denied."));
         return;
       }
       mFusedLocationClient.requestLocationUpdates(mLocationRequest.setInterval(maxInterval),

@@ -104,7 +104,7 @@ public class PasswordFragment extends BaseFragment implements CodeViewActions {
         .map(TextViewAfterTextChangeEvent::editable)
         .filter(val -> val != null)
         .map(CharSequence::toString)
-        .subscribe(codeViewModel::setCode);
+        .subscribe(codeViewModel::setCode, Throwable::printStackTrace);
   }
 
   @Override

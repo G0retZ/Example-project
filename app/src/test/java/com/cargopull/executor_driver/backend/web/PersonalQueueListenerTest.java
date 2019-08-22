@@ -56,7 +56,8 @@ public class PersonalQueueListenerTest {
     RxJavaPlugins.setComputationSchedulerHandler(scheduler -> testScheduler);
     queueListener = new PersonalQueueListener(stompClient, networkConnectionGateway, appSettings);
     when(networkConnectionGateway.getData()).thenReturn(Flowable.never());
-    when(stompClient.subscribe(anyString(), eq(2000), eq(2F))).thenReturn(Flowable.never());
+    when(stompClient.listenToDestination(anyString(), eq(2000), eq(2F)))
+        .thenReturn(Flowable.never());
   }
 
   /**
@@ -119,7 +120,7 @@ public class PersonalQueueListenerTest {
     // Дано:
     when(networkConnectionGateway.getData()).thenReturn(Flowable.<Boolean>never().startWith(true));
     when(appSettings.getData("authorizationLogin")).thenReturn("1234567890");
-    when(stompClient.subscribe("/queue/1234567890", 2000, 2F)).thenReturn(
+    when(stompClient.listenToDestination("/queue/1234567890", 2000, 2F)).thenReturn(
         Flowable.error(Exception::new),
         Flowable.error(NoNetworkException::new),
         Flowable.error(ConnectionClosedException::new),
@@ -142,7 +143,7 @@ public class PersonalQueueListenerTest {
     // Дано:
     when(networkConnectionGateway.getData()).thenReturn(Flowable.<Boolean>never().startWith(true));
     when(appSettings.getData("authorizationLogin")).thenReturn("1234567890");
-    when(stompClient.subscribe("/queue/1234567890", 2000, 2F)).thenReturn(
+    when(stompClient.listenToDestination("/queue/1234567890", 2000, 2F)).thenReturn(
         Flowable.empty(),
         Flowable.empty(),
         Flowable.empty(),
@@ -179,11 +180,11 @@ public class PersonalQueueListenerTest {
     queueListener.getMessages().test().isDisposed();
 
     // Результат:
-    inOrder.verify(stompClient).subscribe("/queue/1234567890", 2000, 2F);
-    inOrder.verify(stompClient).subscribe("/queue/0987654321", 2000, 2F);
-    inOrder.verify(stompClient).subscribe("/queue/", 2000, 2F);
-    inOrder.verify(stompClient).subscribe("/queue/123454321", 2000, 2F);
-    inOrder.verify(stompClient).subscribe("/queue/09876567890", 2000, 2F);
+    inOrder.verify(stompClient).listenToDestination("/queue/1234567890", 2000, 2F);
+    inOrder.verify(stompClient).listenToDestination("/queue/0987654321", 2000, 2F);
+    inOrder.verify(stompClient).listenToDestination("/queue/", 2000, 2F);
+    inOrder.verify(stompClient).listenToDestination("/queue/123454321", 2000, 2F);
+    inOrder.verify(stompClient).listenToDestination("/queue/09876567890", 2000, 2F);
     verifyNoMoreInteractions(stompClient);
   }
 
@@ -196,7 +197,7 @@ public class PersonalQueueListenerTest {
     // Дано:
     when(networkConnectionGateway.getData()).thenReturn(Flowable.<Boolean>never().startWith(true));
     when(appSettings.getData("authorizationLogin")).thenReturn("1234567890");
-    when(stompClient.subscribe("/queue/1234567890", 2000, 2F)).thenReturn(
+    when(stompClient.listenToDestination("/queue/1234567890", 2000, 2F)).thenReturn(
         Flowable.error(Exception::new),
         Flowable.error(NoNetworkException::new),
         Flowable.error(ConnectionClosedException::new),
@@ -208,7 +209,7 @@ public class PersonalQueueListenerTest {
     testScheduler.advanceTimeBy(5, TimeUnit.MINUTES);
 
     // Результат:
-    verify(stompClient, times(4)).subscribe("/queue/1234567890", 2000, 2F);
+    verify(stompClient, times(4)).listenToDestination("/queue/1234567890", 2000, 2F);
     verifyNoMoreInteractions(stompClient);
   }
 
@@ -221,7 +222,7 @@ public class PersonalQueueListenerTest {
     // Дано:
     when(networkConnectionGateway.getData()).thenReturn(Flowable.<Boolean>never().startWith(true));
     when(appSettings.getData("authorizationLogin")).thenReturn("1234567890");
-    when(stompClient.subscribe("/queue/1234567890", 2000, 2F)).thenReturn(
+    when(stompClient.listenToDestination("/queue/1234567890", 2000, 2F)).thenReturn(
         Flowable.error(DeprecatedVersionException::new),
         Flowable.error(NoNetworkException::new),
         Flowable.error(ConnectionClosedException::new),
@@ -233,7 +234,7 @@ public class PersonalQueueListenerTest {
     testScheduler.advanceTimeBy(5, TimeUnit.MINUTES);
 
     // Результат:
-    verify(stompClient, only()).subscribe("/queue/1234567890", 2000, 2F);
+    verify(stompClient, only()).listenToDestination("/queue/1234567890", 2000, 2F);
   }
 
   /**
@@ -245,7 +246,7 @@ public class PersonalQueueListenerTest {
     // Дано:
     when(networkConnectionGateway.getData()).thenReturn(Flowable.<Boolean>never().startWith(true));
     when(appSettings.getData("authorizationLogin")).thenReturn("1234567890");
-    when(stompClient.subscribe("/queue/1234567890", 2000, 2F)).thenReturn(
+    when(stompClient.listenToDestination("/queue/1234567890", 2000, 2F)).thenReturn(
         Flowable.error(AuthorizationException::new),
         Flowable.error(NoNetworkException::new),
         Flowable.error(ConnectionClosedException::new),
@@ -257,7 +258,7 @@ public class PersonalQueueListenerTest {
     testScheduler.advanceTimeBy(5, TimeUnit.MINUTES);
 
     // Результат:
-    verify(stompClient, only()).subscribe("/queue/1234567890", 2000, 2F);
+    verify(stompClient, only()).listenToDestination("/queue/1234567890", 2000, 2F);
   }
 
   /**
@@ -269,7 +270,7 @@ public class PersonalQueueListenerTest {
     // Дано:
     when(networkConnectionGateway.getData()).thenReturn(Flowable.<Boolean>never().startWith(true));
     when(appSettings.getData("authorizationLogin")).thenReturn("1234567890");
-    when(stompClient.subscribe("/queue/1234567890", 2000, 2F)).thenReturn(
+    when(stompClient.listenToDestination("/queue/1234567890", 2000, 2F)).thenReturn(
         Flowable.error(AuthorizationException::new),
         Flowable.error(NoNetworkException::new),
         Flowable.error(ConnectionClosedException::new),
@@ -282,7 +283,7 @@ public class PersonalQueueListenerTest {
     testScheduler.advanceTimeBy(5, TimeUnit.MINUTES);
 
     // Результат:
-    verify(stompClient, times(4)).subscribe("/queue/1234567890", 2000, 2F);
+    verify(stompClient, times(4)).listenToDestination("/queue/1234567890", 2000, 2F);
     verifyNoMoreInteractions(stompClient);
   }
 
@@ -295,7 +296,7 @@ public class PersonalQueueListenerTest {
     // Дано:
     when(networkConnectionGateway.getData()).thenReturn(Flowable.<Boolean>never().startWith(true));
     when(appSettings.getData("authorizationLogin")).thenReturn("1234567890");
-    when(stompClient.subscribe("/queue/1234567890", 2000, 2F)).thenReturn(
+    when(stompClient.listenToDestination("/queue/1234567890", 2000, 2F)).thenReturn(
         Flowable.empty(),
         Flowable.empty(),
         Flowable.empty(),
@@ -306,7 +307,7 @@ public class PersonalQueueListenerTest {
     queueListener.getMessages().test().isDisposed();
 
     // Результат:
-    verify(stompClient, only()).subscribe("/queue/1234567890", 2000, 2F);
+    verify(stompClient, only()).listenToDestination("/queue/1234567890", 2000, 2F);
   }
 
   /**
@@ -318,7 +319,7 @@ public class PersonalQueueListenerTest {
     when(networkConnectionGateway.getData()).thenReturn(
         Flowable.fromArray(true, false, true, false, true, false, true).concatWith(Flowable.never())
     );
-    when(stompClient.subscribe(anyString(), eq(2000), eq(2F)))
+    when(stompClient.listenToDestination(anyString(), eq(2000), eq(2F)))
         .thenReturn(Flowable.<StompFrame>never().doOnCancel(action));
 
     // Действие:
@@ -339,7 +340,7 @@ public class PersonalQueueListenerTest {
     // Дано:
     when(networkConnectionGateway.getData()).thenReturn(Flowable.<Boolean>never().startWith(true));
     when(appSettings.getData("authorizationLogin")).thenReturn("1234567890");
-    when(stompClient.subscribe("/queue/1234567890", 2000, 2F))
+    when(stompClient.listenToDestination("/queue/1234567890", 2000, 2F))
         .thenReturn(Flowable.<StompFrame>never().doOnCancel(action));
 
     // Действие:
@@ -367,7 +368,7 @@ public class PersonalQueueListenerTest {
     // Дано:
     when(networkConnectionGateway.getData()).thenReturn(Flowable.<Boolean>never().startWith(true));
     when(appSettings.getData("authorizationLogin")).thenReturn("1234567890");
-    when(stompClient.subscribe("/queue/1234567890", 2000, 2F))
+    when(stompClient.listenToDestination("/queue/1234567890", 2000, 2F))
         .thenReturn(Flowable.just(stompFrame).concatWith(Flowable.never()));
 
     // Действие:
@@ -388,7 +389,7 @@ public class PersonalQueueListenerTest {
     // Дано:
     when(networkConnectionGateway.getData()).thenReturn(Flowable.<Boolean>never().startWith(true));
     when(appSettings.getData("authorizationLogin")).thenReturn("1234567890");
-    when(stompClient.subscribe("/queue/1234567890", 2000, 2F)).thenReturn(
+    when(stompClient.listenToDestination("/queue/1234567890", 2000, 2F)).thenReturn(
         Flowable.error(Exception::new),
         Flowable.error(NoNetworkException::new),
         Flowable.error(ConnectionClosedException::new),
@@ -413,7 +414,7 @@ public class PersonalQueueListenerTest {
     // Дано:
     when(networkConnectionGateway.getData()).thenReturn(Flowable.<Boolean>never().startWith(true));
     when(appSettings.getData("authorizationLogin")).thenReturn("1234567890");
-    when(stompClient.subscribe("/queue/1234567890", 2000, 2F)).thenReturn(
+    when(stompClient.listenToDestination("/queue/1234567890", 2000, 2F)).thenReturn(
         Flowable.error(DeprecatedVersionException::new),
         Flowable.never()
     );
@@ -436,7 +437,7 @@ public class PersonalQueueListenerTest {
     // Дано:
     when(networkConnectionGateway.getData()).thenReturn(Flowable.<Boolean>never().startWith(true));
     when(appSettings.getData("authorizationLogin")).thenReturn("1234567890");
-    when(stompClient.subscribe("/queue/1234567890", 2000, 2F)).thenReturn(
+    when(stompClient.listenToDestination("/queue/1234567890", 2000, 2F)).thenReturn(
         Flowable.error(AuthorizationException::new),
         Flowable.never()
     );
@@ -459,7 +460,7 @@ public class PersonalQueueListenerTest {
     // Дано:
     when(networkConnectionGateway.getData()).thenReturn(Flowable.<Boolean>never().startWith(true));
     when(appSettings.getData("authorizationLogin")).thenReturn("1234567890");
-    when(stompClient.subscribe("/queue/1234567890", 2000, 2F)).thenReturn(
+    when(stompClient.listenToDestination("/queue/1234567890", 2000, 2F)).thenReturn(
         Flowable.error(Exception::new),
         Flowable.error(NoNetworkException::new),
         Flowable.error(ConnectionClosedException::new),
@@ -485,7 +486,7 @@ public class PersonalQueueListenerTest {
     // Дано:
     when(networkConnectionGateway.getData()).thenReturn(Flowable.<Boolean>never().startWith(true));
     when(appSettings.getData("authorizationLogin")).thenReturn("1234567890");
-    when(stompClient.subscribe("/queue/1234567890", 2000, 2F)).thenReturn(
+    when(stompClient.listenToDestination("/queue/1234567890", 2000, 2F)).thenReturn(
         Flowable.empty(),
         Flowable.empty(),
         Flowable.empty(),
