@@ -42,7 +42,10 @@
         style="@style/TextAppearance.AppCompat.Title"
         android:layout_width="wrap_content"
         android:layout_height="32dp"
-        android:layout_margin="32dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginBottom="16dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginRight="32dp"
         android:paddingStart="16dp"
         android:paddingEnd="16dp"
         android:background="@drawable/ic_payment_card"
@@ -50,6 +53,21 @@
         android:text="@string/cashless"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>
+      <TextView
+        android:id="@+id/routeType"
+        style="@style/TextAppearance.AppCompat.Title"
+        android:layout_width="wrap_content"
+        android:layout_height="32dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginRight="32dp"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:background="@drawable/ic_payment_card"
+        android:gravity="center"
+        android:text="@string/city"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/paymentTypeSign"/>
       <ImageView
         android:id="@+id/circles"
         android:layout_width="wrap_content"

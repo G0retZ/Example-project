@@ -43,6 +43,18 @@ final class OrderViewStateIdle implements ViewState<OrderViewActions> {
         + "&key=" + AppConfigKt.STATIC_MAP_KEY);
     // Показать способ оплаты
     stateActions.setVisible(R.id.paymentTypeSign, order.getPaymentType() == PaymentType.CONTRACT);
+    // Задать тип маршрута
+    switch (order.getRouteType()) {
+      case POLYGON:
+        stateActions.setText(R.id.routeType, R.string.city);
+        break;
+      case ORDER_ZONE:
+        stateActions.setText(R.id.routeType, R.string.country);
+        break;
+      case INTER_CITY:
+        stateActions.setText(R.id.routeType, R.string.intercity);
+        break;
+    }
     // Расстояние в км
     stateActions.setFormattedText(R.id.distanceText, R.string.km, order.getDistance() / 1000d);
     // Длинна маршрута

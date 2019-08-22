@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import com.cargopull.executor_driver.backend.stomp.StompFrame;
 import com.cargopull.executor_driver.entity.Order;
 import com.cargopull.executor_driver.entity.PaymentType;
+import com.cargopull.executor_driver.entity.RouteType;
 
 /**
  * Преобразуем хедер и пэйлоад из ответа сервера в сокращенный бизнес объект заказа.
@@ -25,6 +26,7 @@ public class UpcomingPreOrderApiMapper implements Mapper<StompFrame, Order> {
     } catch (Exception e) {
       throw new DataMappingException("Ошибка маппинга: неверный формат ETA!", e);
     }
-    return new Order(orderId, PaymentType.CASH, "", "", 0, "", 0, 0, 0, 0, 0, etaToStartPoint, 0, 0, 0);
+    return new Order(orderId, PaymentType.CASH, "", "", 0, "", 0, 0, 0, 0, 0, etaToStartPoint, 0, 0,
+        0, RouteType.POLYGON);
   }
 }

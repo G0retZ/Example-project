@@ -42,6 +42,9 @@ public class ApiOrder {
   @SerializedName("carSearchRequest")
   private ApiOrderService apiOrderService;
   @Nullable
+  @SerializedName("routeType")
+  private String routeType;
+  @Nullable
   @SerializedName("route")
   private List<ApiRoutePoint> route;
   @Nullable
@@ -51,16 +54,17 @@ public class ApiOrder {
   /**
    * Конструктор без параметров желателен для безопасной работы Gson.
    */
-  @SuppressWarnings({"unused", "SpellCheckingInspection", "WeakerAccess"})
+  @SuppressWarnings({"unused", "SpellCheckingInspection"})
   public ApiOrder() {
   }
 
   @SuppressWarnings("SameParameterValue")
-  ApiOrder(long id, @Nullable String paymentType, @Nullable String estimatedAmountText, long estimatedAmount, long estimatedTime,
+  ApiOrder(long id, @Nullable String paymentType, @Nullable String estimatedAmountText,
+      long estimatedAmount, long estimatedTime,
       int estimatedRouteDistance, long totalAmount, @Nullable String comment, long timeout,
       long etaToStartPoint, long confirmationTime, long startTime, long scheduledStartTime,
       @Nullable ApiDriverDistancePair executorDistance,
-      @Nullable ApiOrderService apiOrderService,
+      @Nullable ApiOrderService apiOrderService, @Nullable String routeType,
       @Nullable List<ApiRoutePoint> route,
       @Nullable List<ApiOptionItem> options) {
     this.id = id;
@@ -78,6 +82,7 @@ public class ApiOrder {
     this.scheduledStartTime = scheduledStartTime;
     this.executorDistance = executorDistance;
     this.apiOrderService = apiOrderService;
+    this.routeType = routeType;
     this.route = route;
     this.options = options;
   }
@@ -145,6 +150,11 @@ public class ApiOrder {
   @Nullable
   public ApiOrderService getApiOrderService() {
     return apiOrderService;
+  }
+
+  @Nullable
+  public String getRouteType() {
+    return routeType;
   }
 
   @Nullable

@@ -6,6 +6,7 @@ import com.cargopull.executor_driver.backend.stomp.Command;
 import com.cargopull.executor_driver.backend.stomp.StompFrame;
 import com.cargopull.executor_driver.entity.Order;
 import com.cargopull.executor_driver.entity.PaymentType;
+import com.cargopull.executor_driver.entity.RouteType;
 import java.util.Collections;
 import org.junit.Before;
 import org.junit.Test;
@@ -32,7 +33,8 @@ public class CancelledOrderApiMapperTest {
 
     // Результат:
     assertEquals(cancelledOrder,
-        new Order(1234567890L, PaymentType.CASH, "a", "b", 1, "c", 2, 3, 4, 5, 6, 7, 8, 9, 10)
+        new Order(1234567890L, PaymentType.CASH, "a", "b", 1, "c", 2, 3, 4, 5, 6, 7, 8, 9, 10,
+            RouteType.POLYGON)
     );
   }
 

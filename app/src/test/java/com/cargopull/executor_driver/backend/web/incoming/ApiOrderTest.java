@@ -44,6 +44,7 @@ public class ApiOrderTest {
         8197239812739L,
         apiDriverDistancePair,
         apiOrderService,
+        "POLYGON",
         Arrays.asList(apiRoutePoint, apiRoutePoint1),
         Arrays.asList(apiOptionItem, apiOptionItem1)
     );
@@ -65,6 +66,7 @@ public class ApiOrderTest {
     assertNotNull(apiOrder.getExecutorDistance());
     assertEquals(apiOrder.getExecutorDistance(), apiDriverDistancePair);
     assertEquals(apiOrder.getApiOrderService(), apiOrderService);
+    assertEquals(apiOrder.getRouteType(), "POLYGON");
     assertNotNull(apiOrder.getRoute());
     assertEquals(apiOrder.getRoute().size(), 2);
     assertEquals(apiOrder.getRoute().get(0), apiRoutePoint);

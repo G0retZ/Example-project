@@ -37,7 +37,7 @@ public class OrderTest {
   @Before
   public void setUp() {
     order = new Order(7, PaymentType.CASH, "com", "service", 1200239, "7000", 7000, 7728_192_819L,
-        28_020, 9400, 20, 600, 1234567890, 9876543210L, 123812983712L);
+        28_020, 9400, 20, 600, 1234567890, 9876543210L, 123812983712L, RouteType.ORDER_ZONE);
     order.addOptions(option);
     order.addRoutePoints(routePoint);
   }
@@ -59,6 +59,7 @@ public class OrderTest {
     assertEquals(order.getConfirmationTime(), 1234567890);
     assertEquals(order.getStartTime(), 9876543210L);
     assertEquals(order.getScheduledStartTime(), 123812983712L);
+    assertEquals(order.getRouteType(), RouteType.ORDER_ZONE);
     assertEquals(order.getRoutePath(), Collections.singletonList(routePoint));
     assertEquals(order.getNextActiveRoutePoint(), routePoint);
     assertEquals(order.getOptions(), Collections.singletonList(option));
@@ -129,6 +130,7 @@ public class OrderTest {
     assertEquals(order1.getConfirmationTime(), 1234567890);
     assertEquals(order1.getStartTime(), 9876543210L);
     assertEquals(order1.getScheduledStartTime(), 123812983712L);
+    assertEquals(order1.getRouteType(), RouteType.ORDER_ZONE);
     assertEquals(order1.getRoutePath(), new ArrayList<>(
         Arrays.asList(routePoint1, routePoint2, routePoint3)
     ));
@@ -140,18 +142,33 @@ public class OrderTest {
   @Test
   public void testEquals() {
     Order order1 = new Order(7, PaymentType.CASH, "com", "service", 1200239, "7000", 7000,
-        7728_192_819L,
-        28_020, 9400, 20, 600, 1234567890, 9876543210L, 123812983712L);
+        7728_192_819L, 28_020, 9400, 20, 600, 1234567890, 9876543210L, 123812983712L, RouteType.POLYGON);
     assertEquals(order, order);
     assertEquals(order, order1);
-    order1 = new Order(7, PaymentType.CASH, "", "", 0, "", 0, 0, 0, 0, 0, 0, 0, 0, 0);
+    order1 = new Order(7, PaymentType.CASH, "", "", 0, "", 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        RouteType.POLYGON);
     assertEquals(order, order1);
-    order1 = new Order(7, PaymentType.CONTRACT, "", "", 0, "", 0, 0, 0, 0, 0, 0, 0, 0, 0);
+    order1 = new Order(7, PaymentType.CONTRACT, "", "", 0, "", 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        RouteType.POLYGON);
     assertEquals(order, order1);
-    order1 = new Order(7, PaymentType.CASH, "", "", 0, "", 0, 0, 0, 0, 0, 0, 0, 0, 0);
+    order1 = new Order(7, PaymentType.CASH, "", "", 0, "", 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        RouteType.ORDER_ZONE);
+    assertEquals(order, order1);
+    order1 = new Order(7, PaymentType.CONTRACT, "", "", 0, "", 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        RouteType.ORDER_ZONE);
+    assertEquals(order, order1);
+    order1 = new Order(7, PaymentType.CASH, "", "", 0, "", 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        RouteType.INTER_CITY);
+    assertEquals(order, order1);
+    order1 = new Order(7, PaymentType.CONTRACT, "", "", 0, "", 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        RouteType.INTER_CITY);
+    assertEquals(order, order1);
+    order1 = new Order(7, PaymentType.CASH, "", "", 0, "", 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        RouteType.ORDER_ZONE);
     order1.setOptions(option1, option2, option3);
     assertEquals(order, order1);
-    order1 = new Order(7, PaymentType.CASH, "", "", 0, "", 0, 0, 0, 0, 0, 0, 0, 0, 0);
+    order1 = new Order(7, PaymentType.CASH, "", "", 0, "", 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        RouteType.ORDER_ZONE);
     order1.setRoutePoints(routePoint1, routePoint2, routePoint3);
     assertEquals(order, order1);
     order1.addRoutePoints(routePoint1, routePoint2, routePoint3);
@@ -159,9 +176,7 @@ public class OrderTest {
     order1.setOptions(option1, option2, option3);
     assertEquals(order, order1);
     order1 = new Order(6, PaymentType.CONTRACT, "com", "service", 1200239, "7000", 7000,
-        7728_192_819L,
-        28_020,
-        9400, 20, 600, 1234567890, 9876543210L, 123812983712L);
+        7728_192_819L, 28_020, 9400, 20, 600, 1234567890, 9876543210L, 123812983712L, RouteType.POLYGON);
     assertNotEquals(order, order1);
     assertNotEquals(order, "");
     assertNotEquals(order, null);
