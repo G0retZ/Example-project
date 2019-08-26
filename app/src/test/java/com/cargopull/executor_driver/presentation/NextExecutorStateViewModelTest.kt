@@ -16,8 +16,8 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TestRule
 import org.junit.runner.RunWith
-import org.mockito.ArgumentMatchers.any
 import org.mockito.Mock
+import org.mockito.Mockito
 import org.mockito.Mockito.*
 import org.mockito.junit.MockitoJUnitRunner
 import retrofit2.HttpException
@@ -68,7 +68,7 @@ class NextExecutorStateViewModelTest {
         viewModel.routeToNextState()
 
         // Результат:
-        verify<ErrorReporter>(errorReporter, only()).reportError(any(DataMappingException::class.java))
+        verify(errorReporter, only()).reportError(any(DataMappingException::class.java))
     }
 
     /**
@@ -84,7 +84,7 @@ class NextExecutorStateViewModelTest {
         viewModel.routeToNextState()
 
         // Результат:
-        verify<ErrorReporter>(errorReporter, only()).reportError(any(ServerResponseException::class.java))
+        verify(errorReporter, only()).reportError(any(ServerResponseException::class.java))
     }
 
     /**
@@ -169,7 +169,7 @@ class NextExecutorStateViewModelTest {
         viewModel.routeToNextState()
 
         // Результат:
-        verify<NextExecutorStateUseCase>(nextExecutorStateUseCase, only()).proceedToNextState
+        verify(nextExecutorStateUseCase, only()).proceedToNextState
     }
 
     /* Тетсируем переключение состояний. */
@@ -317,6 +317,13 @@ class NextExecutorStateViewModelTest {
         // Результат:
         verifyZeroInteractions(navigateObserver)
     }
+
+    private fun <T> any(type: Class<T>): T {
+        Mockito.any<T>(type)
+        return uninitialized()
+    }
+
+    private fun <T> uninitialized(): T = null as T
 }
 
 @RunWith(MockitoJUnitRunner::class)
