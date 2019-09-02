@@ -23,6 +23,7 @@ import com.cargopull.executor_driver.backend.ringtone.SingleRingTonePlayer
 import com.cargopull.executor_driver.backend.settings.AppPreferences
 import com.cargopull.executor_driver.backend.settings.AppSettingsService
 import com.cargopull.executor_driver.backend.stomp.StompClient
+import com.cargopull.executor_driver.backend.stomp.StompClientImpl
 import com.cargopull.executor_driver.backend.stomp.WebSocketConnection
 import com.cargopull.executor_driver.backend.vibro.*
 import com.cargopull.executor_driver.backend.web.*
@@ -109,7 +110,7 @@ class ActualBackendComponent(private val appContext: Context) : BackendComponent
         )
     }
     override val stompClient: StompClient by lazy {
-        StompClient(socketUrl, WebSocketConnection(okHttpClient))
+        StompClientImpl(socketUrl, WebSocketConnection(okHttpClient))
     }
 
     override val personalTopicListener by lazy {
