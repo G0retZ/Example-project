@@ -263,13 +263,10 @@ class AppComponent(private val appContext: Context, private val backendComponent
         driverOrderConfirmationFragment.setOrderConfirmationViewModel(
                 presentationComponent.getRushOrderConfirmationViewModel(driverOrderConfirmationFragment)
         )
-        driverOrderConfirmationFragment.setOrderViewModel(
-                presentationComponent.orderViewModel
-        )
     }
 
-    fun inject(clientOrderConfirmationFragment: ClientOrderConfirmationFragment) {
-        clientOrderConfirmationFragment.setOrderViewModel(
+    fun inject(orderFragment: OrderFragment) {
+        orderFragment.setOrderViewModel(
                 presentationComponent.orderViewModel
         )
     }
@@ -511,9 +508,6 @@ class AppComponent(private val appContext: Context, private val backendComponent
     fun inject(driverPreOrderConfirmationFragment: DriverPreOrderConfirmationFragment) {
         driverPreOrderConfirmationFragment.setOrderConfirmationViewModel(
                 presentationComponent.getPreOrderConfirmationViewModel(driverPreOrderConfirmationFragment)
-        )
-        driverPreOrderConfirmationFragment.setOrderViewModel(
-                presentationComponent.orderViewModel
         )
     }
 
