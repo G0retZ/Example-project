@@ -29,6 +29,7 @@ import com.cargopull.executor_driver.backend.vibro.*
 import com.cargopull.executor_driver.backend.web.*
 import com.cargopull.executor_driver.gateway.TokenKeeperImpl
 import com.cargopull.executor_driver.utils.Releasable
+import com.cargopull.executor_driver.utils.TimeUtils
 import io.reactivex.Observable
 import io.reactivex.Observer
 import io.reactivex.subjects.PublishSubject
@@ -57,7 +58,7 @@ interface BackendComponent : Releasable {
     val fcmReceiver: Observer<Map<String, String>>
 }
 
-class ActualBackendComponent(private val appContext: Context) : BackendComponent {
+class ActualBackendComponent(private val appContext: Context, private val timeUtils: TimeUtils) : BackendComponent {
 
     companion object {
         private const val WIFI_STATE_CHANGED_ACTION = "android.net.wifi.WIFI_STATE_CHANGED"
