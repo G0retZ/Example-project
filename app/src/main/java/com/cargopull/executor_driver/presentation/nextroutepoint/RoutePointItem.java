@@ -1,7 +1,6 @@
 package com.cargopull.executor_driver.presentation.nextroutepoint;
 
 import androidx.annotation.NonNull;
-import com.cargopull.executor_driver.AppConfigKt;
 import com.cargopull.executor_driver.entity.RoutePoint;
 
 /**
@@ -14,17 +13,6 @@ class RoutePointItem {
 
   RoutePointItem(@NonNull RoutePoint routePoint) {
     this.routePoint = routePoint;
-  }
-
-  @SuppressWarnings("SpellCheckingInspection")
-  @NonNull
-  String getMapUrl() {
-    return "https://maps.googleapis.com/maps/api/staticmap?"
-        + "key=" + AppConfigKt.STATIC_MAP_KEY
-        + "&center=" + routePoint.getLatitude() + "," + routePoint.getLongitude()
-        + "&maptype=roadmap"
-        + "&zoom=16"
-        + "&size=360x200";
   }
 
   @NonNull
@@ -42,6 +30,7 @@ class RoutePointItem {
     return routePoint.getComment();
   }
 
+  @NonNull
   @Override
   public String toString() {
     return "RoutePointItem{" +

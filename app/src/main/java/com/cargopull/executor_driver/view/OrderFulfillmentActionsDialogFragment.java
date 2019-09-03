@@ -155,10 +155,6 @@ public class OrderFulfillmentActionsDialogFragment extends BaseDialogFragment im
   }
 
   @Override
-  public void showNextRoutePoint(@NonNull String url) {
-  }
-
-  @Override
   public void showNextRoutePointAddress(@NonNull String coordinates, @NonNull String address) {
   }
 

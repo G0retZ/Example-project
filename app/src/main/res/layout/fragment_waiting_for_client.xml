@@ -1,152 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-  xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
   xmlns:app="http://schemas.android.com/apk/res-auto"
   xmlns:tools="http://schemas.android.com/tools"
   android:layout_width="match_parent"
   android:layout_height="match_parent"
   android:orientation="vertical">
-  <ScrollView
-    android:scrollbarStyle="outsideOverlay"
-    android:layout_width="0dp"
-    android:layout_height="0dp"
-    app:layout_constraintBottom_toTopOf="@id/callToClient"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toTopOf="parent">
-    <androidx.constraintlayout.widget.ConstraintLayout
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:paddingBottom="24dp">
-      <TextView
-        android:id="@+id/nextAddressTitleText"
-        style="@style/TextAppearance.AppTheme.Subhead"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:text="@string/address"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
-      <TextView
-        android:id="@+id/nextAddressText"
-        style="@style/TextAppearance.AppTheme.Title"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/nextAddressTitleText"
-        tools:text="Москва, ул. Академика Пилюгина, 14 корпус 4"/>
-      <TextView
-        android:id="@+id/nextAddressCommentTitleText"
-        style="@style/TextAppearance.AppTheme.Subhead"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:text="@string/comment"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/nextAddressText"/>
-      <TextView
-        android:id="@+id/nextAddressCommentText"
-        style="@style/TextAppearance.AppTheme.Title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/nextAddressCommentTitleText"
-        tools:text="Заезд со стороны двора"/>
-      <TextView
-        android:id="@+id/estimationTitleText"
-        style="@style/TextAppearance.AppTheme.Subhead"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:text="@string/order_distance_and_duration"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/nextAddressCommentText"/>
-      <TextView
-        android:id="@+id/estimationText"
-        style="@style/TextAppearance.AppTheme.Title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/estimationTitleText"
-        tools:text="@string/km_h_m_p"/>
-      <TextView
-        android:id="@+id/serviceTitleText"
-        style="@style/TextAppearance.AppTheme.Subhead"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:text="@string/service"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/estimationText"/>
-      <TextView
-        android:id="@+id/serviceText"
-        style="@style/TextAppearance.AppTheme.Title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/serviceTitleText"
-        tools:text="Грузоперевозка"/>
-      <TextView
-        android:id="@+id/cargoDescTitleText"
-        style="@style/TextAppearance.AppTheme.Subhead"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:text="@string/cargo_description"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/serviceText"/>
-      <TextView
-        android:id="@+id/cargoDescText"
-        style="@style/TextAppearance.AppTheme.Title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/cargoDescTitleText"
-        tools:text="Заехать купить 10 коробок. Чистая машина. Не курить!"/>
-      <TextView
-        android:id="@+id/optionsTitleText"
-        style="@style/TextAppearance.AppTheme.Subhead"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:text="@string/options"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/cargoDescText"/>
-      <TextView
-        android:id="@+id/optionsText"
-        style="@style/TextAppearance.AppTheme.Title"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:lineSpacingExtra="6dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/optionsTitleText"
-        tools:text="Пропуск в центр Москвы\nОткрытый кузов\nРемни-крепления\nМобильный банк\nГрузчики: 2\nПассажиры: 3"/>
-    </androidx.constraintlayout.widget.ConstraintLayout>
-  </ScrollView>
   <Button
     android:id="@+id/callToClient"
     style="@style/AppTheme.Button.Colored.Darker"
@@ -157,7 +15,7 @@
     android:text="@string/call_client"
     app:layout_constraintBottom_toBottomOf="parent"
     app:layout_constraintEnd_toStartOf="@+id/startLoading"
-    app:layout_constraintStart_toStartOf="parent"/>
+    app:layout_constraintStart_toStartOf="parent" />
   <ProgressBar
     android:id="@+id/startLoading"
     style="@style/AppTheme.ProgressBar.Threshold"
@@ -170,7 +28,108 @@
     android:layout_marginRight="8dp"
     app:layout_constraintBottom_toBottomOf="parent"
     app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintStart_toEndOf="@+id/callToClient"/>
+    app:layout_constraintStart_toEndOf="@+id/callToClient" />
+  <ScrollView
+    android:scrollbarStyle="outsideOverlay"
+    android:layout_width="0dp"
+    android:layout_height="0dp"
+    app:layout_constraintBottom_toTopOf="@id/callToClient"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent">
+    <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:paddingBottom="24dp"
+      android:orientation="vertical">
+      <TextView
+        android:id="@+id/nextAddressTitleText"
+        style="@style/TextAppearance.AppTheme.Subhead"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:text="@string/address" />
+      <TextView
+        android:id="@+id/nextAddressText"
+        style="@style/TextAppearance.AppTheme.Title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        tools:text="Москва, ул. Академика Пилюгина, 14 корпус 4" />
+      <TextView
+        android:id="@+id/nextAddressCommentTitleText"
+        style="@style/TextAppearance.AppTheme.Subhead"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:text="@string/comment" />
+      <TextView
+        android:id="@+id/nextAddressCommentText"
+        style="@style/TextAppearance.AppTheme.Title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        tools:text="Заезд со стороны двора" />
+      <TextView
+        android:id="@+id/estimationTitleText"
+        style="@style/TextAppearance.AppTheme.Subhead"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:text="@string/order_duration_and_distance" />
+      <TextView
+        android:id="@+id/estimationText"
+        style="@style/TextAppearance.AppTheme.Title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        tools:text="@string/h_m_km" />
+      <TextView
+        android:id="@+id/cargoDescTitleText"
+        style="@style/TextAppearance.AppTheme.Subhead"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:text="@string/cargo_description" />
+      <TextView
+        android:id="@+id/cargoDescText"
+        style="@style/TextAppearance.AppTheme.Title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        tools:text="Заехать купить 10 коробок. Чистая машина. Не курить!" />
+      <TextView
+        android:id="@+id/optionsTitleText"
+        style="@style/TextAppearance.AppTheme.Subhead"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:text="@string/options" />
+      <TextView
+        android:id="@+id/optionsText"
+        style="@style/TextAppearance.AppTheme.Title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:lineSpacingExtra="6dp"
+        tools:text="Пропуск в центр Москвы\nОткрытый кузов\nРемни-крепления\nМобильный банк\nГрузчики: 2\nПассажиры: 3" />
+    </LinearLayout>
+  </ScrollView>
   <TextView
     style="@style/TextAppearance.AppTheme.Button.Colored"
     android:layout_width="0dp"
@@ -182,5 +141,5 @@
     app:layout_constraintBottom_toBottomOf="@id/startLoading"
     app:layout_constraintEnd_toEndOf="@id/startLoading"
     app:layout_constraintStart_toStartOf="@id/startLoading"
-    app:layout_constraintTop_toTopOf="@id/startLoading"/>
+    app:layout_constraintTop_toTopOf="@id/startLoading" />
 </androidx.constraintlayout.widget.ConstraintLayout>

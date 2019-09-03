@@ -1,21 +1,16 @@
 package com.cargopull.executor_driver.di
 
-import android.content.Context
 import com.cargopull.executor_driver.application.*
 import com.cargopull.executor_driver.backend.settings.AppSettingsService
 import com.cargopull.executor_driver.utils.Consumer
 import com.cargopull.executor_driver.utils.Releasable
 import com.cargopull.executor_driver.utils.TimeUtils
-import com.cargopull.executor_driver.utils.TimeUtilsImpl
 import com.cargopull.executor_driver.view.*
 import com.cargopull.executor_driver.view.auth.LoginFragment
 import com.cargopull.executor_driver.view.auth.PasswordFragment
 
-class AppComponent(private val appContext: Context, private val backendComponent: BackendComponent) : Releasable {
+class AppComponent(private val timeUtils: TimeUtils, private val backendComponent: BackendComponent) : Releasable {
 
-    private val timeUtils: TimeUtils by lazy {
-        TimeUtilsImpl()
-    }
     private val presentationComponent: PresentationComponent by lazy {
         PresentationComponent(backendComponent, timeUtils)
     }
@@ -263,13 +258,10 @@ class AppComponent(private val appContext: Context, private val backendComponent
         driverOrderConfirmationFragment.setOrderConfirmationViewModel(
                 presentationComponent.getRushOrderConfirmationViewModel(driverOrderConfirmationFragment)
         )
-        driverOrderConfirmationFragment.setOrderViewModel(
-                presentationComponent.orderViewModel
-        )
     }
 
-    fun inject(clientOrderConfirmationFragment: ClientOrderConfirmationFragment) {
-        clientOrderConfirmationFragment.setOrderViewModel(
+    fun inject(orderFragment: OrderFragment) {
+        orderFragment.setOrderViewModel(
                 presentationComponent.orderViewModel
         )
     }
@@ -511,9 +503,6 @@ class AppComponent(private val appContext: Context, private val backendComponent
     fun inject(driverPreOrderConfirmationFragment: DriverPreOrderConfirmationFragment) {
         driverPreOrderConfirmationFragment.setOrderConfirmationViewModel(
                 presentationComponent.getPreOrderConfirmationViewModel(driverPreOrderConfirmationFragment)
-        )
-        driverPreOrderConfirmationFragment.setOrderViewModel(
-                presentationComponent.orderViewModel
         )
     }
 

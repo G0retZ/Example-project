@@ -172,7 +172,7 @@ public class DriverPreOrderBookingFragment extends BaseFragment implements
   }
 
   @Override
-  public void showTimeout(int progress, long timeout) {
+  public void showTimeout(long timeout) {
   }
 
   @Override

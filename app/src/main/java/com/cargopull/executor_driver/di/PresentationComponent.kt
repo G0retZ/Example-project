@@ -602,7 +602,7 @@ class PresentationComponent(
                 GeoLocationStateViewModelImpl::class.java,
                 GeoLocationStateViewModelImpl(
                         backendComponent.eventLogger,
-                        backendComponent.locationManager,
+                        backendComponent.geolocationState,
                         timeUtils,
                         repositoryComponent.geoLocationStateGateway
                 )
@@ -616,7 +616,7 @@ class PresentationComponent(
                 GeoLocationStateViewModelImpl::class.java,
                 GeoLocationStateViewModelImpl(
                         backendComponent.eventLogger,
-                        backendComponent.locationManager,
+                        backendComponent.geolocationState,
                         timeUtils,
                         repositoryComponent.geoLocationStateGateway
                 )
