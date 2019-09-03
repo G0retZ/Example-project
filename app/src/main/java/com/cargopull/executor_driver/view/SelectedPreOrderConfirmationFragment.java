@@ -232,7 +232,7 @@ public class SelectedPreOrderConfirmationFragment extends BaseFragment implement
   }
 
   @Override
-  public void showTimeout(int progress, long timeout) {
+  public void showTimeout(long timeout) {
   }
 
   @Override
