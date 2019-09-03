@@ -1,7 +1,6 @@
 package com.cargopull.executor_driver.presentation.order;
 
 import androidx.annotation.NonNull;
-import com.cargopull.executor_driver.AppConfigKt;
 import com.cargopull.executor_driver.R;
 import com.cargopull.executor_driver.entity.Option;
 import com.cargopull.executor_driver.entity.OptionBoolean;
@@ -30,17 +29,6 @@ final class OrderViewStateIdle implements ViewState<OrderViewActions> {
 
   @Override
   public void apply(@NonNull OrderViewActions stateActions) {
-    // урл на карте
-    RoutePoint routePoint = order.getNextActiveRoutePoint();
-    stateActions.setImage(R.id.mapImage, "https://maps.googleapis.com/maps/api/staticmap?"
-        + "center="
-        + routePoint.getLatitude()
-        + ","
-        + routePoint.getLongitude()
-        + "&zoom=16"
-        + "&size=360x200"
-        + "&maptype=roadmap"
-        + "&key=" + AppConfigKt.STATIC_MAP_KEY);
     // Показать способ оплаты
     stateActions.setVisible(R.id.paymentTypeSign, order.getPaymentType() == PaymentType.CONTRACT);
     // Задать тип маршрута
@@ -61,6 +49,7 @@ final class OrderViewStateIdle implements ViewState<OrderViewActions> {
     stateActions.setFormattedText(R.id.routeTitleText, R.string.route_distance,
         order.getEstimatedRouteLength() / 1000d);
     // Следующий адрес
+    RoutePoint routePoint = order.getNextActiveRoutePoint();
     stateActions.setText(R.id.nextAddressText, routePoint.getAddress().trim());
     stateActions.setFormattedText(R.id.openNavigator, R.string.client_location,
         routePoint.getLatitude(), routePoint.getLongitude());
@@ -89,17 +78,14 @@ final class OrderViewStateIdle implements ViewState<OrderViewActions> {
     DecimalFormat decimalFormat = new DecimalFormat(stateActions.getCurrencyFormat());
     decimalFormat.setMaximumFractionDigits(fractionDigits);
     decimalFormat.setMinimumFractionDigits(fractionDigits);
-    stateActions.setFormattedText(R.id.estimationText, R.string.km_h_m_p,
-        order.getEstimatedRouteLength() / 1000d,
+    stateActions.setFormattedText(R.id.estimationText, R.string.h_m_km,
         localTime.getHourOfDay(),
         localTime.getMinuteOfHour(),
-        decimalFormat.format(cost)
+        order.getEstimatedRouteLength() / 1000d
     );
     stateActions.setFormattedText(R.id.estimatedPriceText, R.string.price,
         decimalFormat.format(cost)
     );
-    // Название услуги
-    stateActions.setText(R.id.serviceText, order.getServiceName());
     // Комментарий к заказу
     String orderComment = order.getComment().trim();
     stateActions.setVisible(R.id.cargoDescTitleText, !orderComment.isEmpty());
@@ -124,20 +110,12 @@ final class OrderViewStateIdle implements ViewState<OrderViewActions> {
     stateActions.setText(R.id.optionsText, options);
     // Дата начала предзаказа
     DateTime scheduledDate = DateTime.now().withMillis(order.getScheduledStartTime());
-    stateActions.setText(R.id.startDateText,
-        DateTimeFormat.forPattern("d MMMM, EEEE")
+    stateActions.setText(R.id.startDateAndTimeText,
+        DateTimeFormat.forPattern("d MMM, HH:mm")
             .withZone(DateTimeZone.forOffsetHours(3))
             .print(scheduledDate));
     // Время начала предзаказа
     stateActions.setText(R.id.startTimeText,
-        DateTimeFormat.forPattern("HH:mm")
-            .withZone(DateTimeZone.forOffsetHours(3))
-            .print(scheduledDate));
-    // Время занятости на предзаказе
-    scheduledDate = scheduledDate.plus(estimatedTime);
-    stateActions.setFormattedText(R.id.occupationTimeText, R.string.h_m_d,
-        localTime.getHourOfDay(),
-        localTime.getMinuteOfHour(),
         DateTimeFormat.forPattern("HH:mm")
             .withZone(DateTimeZone.forOffsetHours(3))
             .print(scheduledDate));

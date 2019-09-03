@@ -28,7 +28,6 @@ public class OrderConfirmationViewStateIdleTest {
     OrderConfirmationViewStateIdle orderConfirmationViewStateIdle = new OrderConfirmationViewStateIdle(
         orderConfirmationTimeoutItem, true);
     InOrder inOrder = Mockito.inOrder(viewActions);
-    when(orderConfirmationTimeoutItem.getProgressLeft()).thenReturn(73);
     when(orderConfirmationTimeoutItem.getTimeout()).thenReturn(13_000L);
 
     // Действие:
@@ -41,7 +40,7 @@ public class OrderConfirmationViewStateIdleTest {
     inOrder.verify(viewActions).showAcceptedMessage(null);
     inOrder.verify(viewActions).showDeclinedMessage(null);
     inOrder.verify(viewActions).showFailedMessage(null);
-    inOrder.verify(viewActions).showTimeout(73, 13_000);
+    inOrder.verify(viewActions).showTimeout(13_000);
     verifyNoMoreInteractions(viewActions);
   }
 
@@ -51,7 +50,6 @@ public class OrderConfirmationViewStateIdleTest {
     OrderConfirmationViewStateIdle orderConfirmationViewStateIdle = new OrderConfirmationViewStateIdle(
         orderConfirmationTimeoutItem, false);
     InOrder inOrder = Mockito.inOrder(viewActions);
-    when(orderConfirmationTimeoutItem.getProgressLeft()).thenReturn(73);
     when(orderConfirmationTimeoutItem.getTimeout()).thenReturn(13_000L);
 
     // Действие:
@@ -64,7 +62,7 @@ public class OrderConfirmationViewStateIdleTest {
     inOrder.verify(viewActions).showAcceptedMessage(null);
     inOrder.verify(viewActions).showDeclinedMessage(null);
     inOrder.verify(viewActions).showFailedMessage(null);
-    inOrder.verify(viewActions).showTimeout(73, 13_000);
+    inOrder.verify(viewActions).showTimeout(13_000);
     verifyNoMoreInteractions(viewActions);
   }
 

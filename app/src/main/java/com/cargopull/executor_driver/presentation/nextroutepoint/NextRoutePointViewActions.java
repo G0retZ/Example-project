@@ -15,14 +15,6 @@ public interface NextRoutePointViewActions {
   void showNextRoutePointPending(boolean pending);
 
   /**
-   * показать следующую точку погрузки на карте по урл.
-   *
-   * @param url - адрес картинки с точкой погрузки на карте. Если пусто, значит адреса нету.
-   */
-  @SuppressWarnings({"EmptyMethod", "unused"})
-  void showNextRoutePoint(@NonNull String url);
-
-  /**
    * Показать адрес следующей точки маршрута.
    *
    * @param coordinates - координаты

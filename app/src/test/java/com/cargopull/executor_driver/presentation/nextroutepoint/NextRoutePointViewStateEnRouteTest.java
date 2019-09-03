@@ -32,7 +32,6 @@ public class NextRoutePointViewStateEnRouteTest {
   @Test
   public void testActions() {
     // Дано:
-    when(routePointItem.getMapUrl()).thenReturn("url");
     when(routePointItem.getAddress()).thenReturn("add");
     when(routePointItem.getComment()).thenReturn("com");
     when(routePointItem.getCoordinatesString()).thenReturn("0,0");
@@ -41,7 +40,6 @@ public class NextRoutePointViewStateEnRouteTest {
     viewState.apply(viewActions);
 
     // Результат:
-    verify(viewActions).showNextRoutePoint("url");
     verify(viewActions).showNextRoutePointAddress("0,0", "add");
     verify(viewActions).showNextRoutePointComment("com");
     verify(viewActions).showNextRoutePointPending(false);

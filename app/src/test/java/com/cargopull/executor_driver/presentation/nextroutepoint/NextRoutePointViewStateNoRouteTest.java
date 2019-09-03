@@ -27,7 +27,6 @@ public class NextRoutePointViewStateNoRouteTest {
     viewState.apply(viewActions);
 
     // Результат:
-    verify(viewActions).showNextRoutePoint("");
     verify(viewActions).showNextRoutePointAddress("", "");
     verify(viewActions).showNextRoutePointComment("");
     verify(viewActions).showNextRoutePointPending(false);
@@ -46,7 +45,6 @@ public class NextRoutePointViewStateNoRouteTest {
     viewState.apply(viewActions);
 
     // Результат:
-    verify(viewActions).showNextRoutePoint("");
     verify(viewActions).showNextRoutePointAddress("", "");
     verify(viewActions).showNextRoutePointComment("");
     verify(viewActions).showNextRoutePointPending(false);

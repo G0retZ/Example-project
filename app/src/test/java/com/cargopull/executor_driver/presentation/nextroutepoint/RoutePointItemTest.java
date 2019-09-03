@@ -35,8 +35,6 @@ public class RoutePointItemTest {
     when(routePoint.getLongitude()).thenReturn(10.2341);
 
     // Результат:
-    assertEquals(routeItem.getMapUrl(),
-        "https://maps.googleapis.com/maps/api/staticmap?key=AIzaSyBwlubLyqI6z_ivfAWcTCfyTXkoRHTagMk&center=5.421,10.2341&maptype=roadmap&zoom=16&size=360x200");
     assertEquals(routeItem.getCoordinatesString(), "5.421,10.2341");
     assertEquals(routeItem.getAddress(), "add");
     assertEquals(routeItem.getComment(), "com");

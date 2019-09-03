@@ -69,7 +69,6 @@ public class OrderViewStateIdleTest {
     when(order.getRoutePath()).thenReturn(Arrays.asList(routePoint, routePoint1, routePoint2));
     when(order.getEstimatedTime()).thenReturn(7929000L);
     when(order.getEstimatedPrice()).thenReturn(681250L);
-    when(order.getServiceName()).thenReturn("service");
     when(order.getComment()).thenReturn("comm");
     when(order.getOptions()).thenReturn(new ArrayList<>());
 
@@ -77,12 +76,6 @@ public class OrderViewStateIdleTest {
     viewState.apply(viewActions);
 
     // Результат:
-    verify(viewActions).setImage(R.id.mapImage, "https://maps.googleapis.com/maps/api/staticmap?"
-        + "center=5.421,10.2341"
-        + "&zoom=16"
-        + "&size=360x200"
-        + "&maptype=roadmap"
-        + "&key=AIzaSyBwlubLyqI6z_ivfAWcTCfyTXkoRHTagMk");
     verify(viewActions).setVisible(R.id.paymentTypeSign, false);
     verify(viewActions).setText(R.id.routeType, R.string.city);
     verify(viewActions).setFormattedText(R.id.distanceText, R.string.km, 12.239d);
@@ -100,31 +93,24 @@ public class OrderViewStateIdleTest {
     DecimalFormat decimalFormat = new DecimalFormat("##,###,### ₽");
     decimalFormat.setMaximumFractionDigits(0);
     decimalFormat.setMinimumFractionDigits(0);
-    verify(viewActions).setFormattedText(R.id.estimationText, R.string.km_h_m_p, 31.278d, 2, 12,
-        decimalFormat.format(6813)
-    );
+    verify(viewActions).setFormattedText(R.id.estimationText, R.string.h_m_km, 2, 12, 31.278d);
     verify(viewActions).setFormattedText(R.id.estimatedPriceText, R.string.price,
         decimalFormat.format(6813)
     );
-    verify(viewActions).setText(R.id.startDateText,
-        DateTimeFormat.forPattern("d MMMM, EEEE").print(
+    verify(viewActions).setText(R.id.startDateAndTimeText,
+        DateTimeFormat.forPattern("d MMM, HH:mm").print(
             DateTime.now().withMillis(1238403200L).withZone(DateTimeZone.forOffsetHours(3))
         ));
     verify(viewActions).setText(R.id.startTimeText,
         DateTimeFormat.forPattern("HH:mm").print(
             DateTime.now().withMillis(1238403200L).withZone(DateTimeZone.forOffsetHours(3))
         ));
-    DateTime dateTime = DateTime.now().withMillis(1238403200L + 7929000L)
-        .withZone(DateTimeZone.forOffsetHours(3));
-    verify(viewActions).setFormattedText(R.id.occupationTimeText, R.string.h_m_d, 2, 12,
-        DateTimeFormat.forPattern("HH:mm").print(dateTime));
     verify(viewActions).setVisible(R.id.cargoDescTitleText, true);
     verify(viewActions).setVisible(R.id.cargoDescText, true);
     verify(viewActions).setText(R.id.cargoDescText, "comm");
     verify(viewActions).setVisible(R.id.optionsTitleText, false);
     verify(viewActions).setVisible(R.id.optionsText, false);
     verify(viewActions).setText(R.id.optionsText, "");
-    verify(viewActions).setText(R.id.serviceText, "service");
     verify(viewActions).unblockWithPending("OrderViewState");
     verify(viewActions).dismissDialog();
     verifyNoMoreInteractions(viewActions);
@@ -149,7 +135,6 @@ public class OrderViewStateIdleTest {
     when(order.getRoutePath()).thenReturn(Arrays.asList(routePoint, routePoint1, routePoint2));
     when(order.getEstimatedTime()).thenReturn(7929000L);
     when(order.getEstimatedPrice()).thenReturn(681250L);
-    when(order.getServiceName()).thenReturn("service");
     when(order.getComment()).thenReturn("");
     when(order.getOptions()).thenReturn(new ArrayList<>(Arrays.asList(
         new OptionBoolean(0, "bool1", "bd", false),
@@ -164,12 +149,6 @@ public class OrderViewStateIdleTest {
     viewState.apply(viewActions);
 
     // Результат:
-    verify(viewActions).setImage(R.id.mapImage, "https://maps.googleapis.com/maps/api/staticmap?"
-        + "center=5.421,10.2341"
-        + "&zoom=16"
-        + "&size=360x200"
-        + "&maptype=roadmap"
-        + "&key=AIzaSyBwlubLyqI6z_ivfAWcTCfyTXkoRHTagMk");
     verify(viewActions).setVisible(R.id.paymentTypeSign, false);
     verify(viewActions).setText(R.id.routeType, R.string.city);
     verify(viewActions).setFormattedText(R.id.distanceText, R.string.km, 12.239d);
@@ -187,31 +166,24 @@ public class OrderViewStateIdleTest {
     DecimalFormat decimalFormat = new DecimalFormat("##,###,###.## ₽");
     decimalFormat.setMaximumFractionDigits(2);
     decimalFormat.setMinimumFractionDigits(2);
-    verify(viewActions).setFormattedText(R.id.estimationText, R.string.km_h_m_p, 31.278d, 2, 12,
-        decimalFormat.format(6812.50)
-    );
+    verify(viewActions).setFormattedText(R.id.estimationText, R.string.h_m_km, 2, 12, 31.278d);
     verify(viewActions).setFormattedText(R.id.estimatedPriceText, R.string.price,
         decimalFormat.format(6812.50)
     );
-    verify(viewActions).setText(R.id.startDateText,
-        DateTimeFormat.forPattern("d MMMM, EEEE").print(
+    verify(viewActions).setText(R.id.startDateAndTimeText,
+        DateTimeFormat.forPattern("d MMM, HH:mm").print(
             DateTime.now().withMillis(1238403200L).withZone(DateTimeZone.forOffsetHours(3))
         ));
     verify(viewActions).setText(R.id.startTimeText,
         DateTimeFormat.forPattern("HH:mm").print(
             DateTime.now().withMillis(1238403200L).withZone(DateTimeZone.forOffsetHours(3))
         ));
-    DateTime dateTime = DateTime.now().withMillis(1238403200L + 7929000L)
-        .withZone(DateTimeZone.forOffsetHours(3));
-    verify(viewActions).setFormattedText(R.id.occupationTimeText, R.string.h_m_d, 2, 12,
-        DateTimeFormat.forPattern("HH:mm").print(dateTime));
     verify(viewActions).setVisible(R.id.cargoDescTitleText, false);
     verify(viewActions).setVisible(R.id.cargoDescText, false);
     verify(viewActions).setText(R.id.cargoDescText, "");
     verify(viewActions).setVisible(R.id.optionsTitleText, true);
     verify(viewActions).setVisible(R.id.optionsText, true);
     verify(viewActions).setText(R.id.optionsText, "bool2\nbool4\nnum1: 3\nnum2: 7");
-    verify(viewActions).setText(R.id.serviceText, "service");
     verify(viewActions).unblockWithPending("OrderViewState");
     verify(viewActions).dismissDialog();
     verifyNoMoreInteractions(viewActions);
@@ -235,7 +207,6 @@ public class OrderViewStateIdleTest {
     when(order.getRoutePath()).thenReturn(Collections.singletonList(routePoint));
     when(order.getEstimatedTime()).thenReturn(7929000L);
     when(order.getEstimatedPrice()).thenReturn(681254L);
-    when(order.getServiceName()).thenReturn("service");
     when(order.getComment()).thenReturn("comm");
     when(order.getOptions()).thenReturn(new ArrayList<>(Arrays.asList(
         new OptionBoolean(0, "bool1", "bd", false),
@@ -250,12 +221,6 @@ public class OrderViewStateIdleTest {
     viewState.apply(viewActions);
 
     // Результат:
-    verify(viewActions).setImage(R.id.mapImage, "https://maps.googleapis.com/maps/api/staticmap?"
-        + "center=5.421,10.2341"
-        + "&zoom=16"
-        + "&size=360x200"
-        + "&maptype=roadmap"
-        + "&key=AIzaSyBwlubLyqI6z_ivfAWcTCfyTXkoRHTagMk");
     verify(viewActions).setVisible(R.id.paymentTypeSign, false);
     verify(viewActions).setText(R.id.routeType, R.string.city);
     verify(viewActions).setFormattedText(R.id.distanceText, R.string.km, 12.239d);
@@ -273,31 +238,24 @@ public class OrderViewStateIdleTest {
     DecimalFormat decimalFormat = new DecimalFormat("##,###,### ₽");
     decimalFormat.setMaximumFractionDigits(0);
     decimalFormat.setMinimumFractionDigits(0);
-    verify(viewActions).setFormattedText(R.id.estimationText, R.string.km_h_m_p, 31.278d, 2, 12,
-        decimalFormat.format(6813)
-    );
+    verify(viewActions).setFormattedText(R.id.estimationText, R.string.h_m_km, 2, 12, 31.278d);
     verify(viewActions).setFormattedText(R.id.estimatedPriceText, R.string.price,
         decimalFormat.format(6813)
     );
-    verify(viewActions).setText(R.id.startDateText,
-        DateTimeFormat.forPattern("d MMMM, EEEE").print(
+    verify(viewActions).setText(R.id.startDateAndTimeText,
+        DateTimeFormat.forPattern("d MMM, HH:mm").print(
             DateTime.now().withMillis(1238403200L).withZone(DateTimeZone.forOffsetHours(3))
         ));
     verify(viewActions).setText(R.id.startTimeText,
         DateTimeFormat.forPattern("HH:mm").print(
             DateTime.now().withMillis(1238403200L).withZone(DateTimeZone.forOffsetHours(3))
         ));
-    DateTime dateTime = DateTime.now().withMillis(1238403200L + 7929000L)
-        .withZone(DateTimeZone.forOffsetHours(3));
-    verify(viewActions).setFormattedText(R.id.occupationTimeText, R.string.h_m_d, 2, 12,
-        DateTimeFormat.forPattern("HH:mm").print(dateTime));
     verify(viewActions).setVisible(R.id.cargoDescTitleText, true);
     verify(viewActions).setVisible(R.id.cargoDescText, true);
     verify(viewActions).setText(R.id.cargoDescText, "comm");
     verify(viewActions).setVisible(R.id.optionsTitleText, true);
     verify(viewActions).setVisible(R.id.optionsText, true);
     verify(viewActions).setText(R.id.optionsText, "bool2\nbool4\nnum1: 3\nnum2: 7");
-    verify(viewActions).setText(R.id.serviceText, "service");
     verify(viewActions).unblockWithPending("OrderViewState");
     verify(viewActions).dismissDialog();
     verifyNoMoreInteractions(viewActions);
@@ -321,7 +279,6 @@ public class OrderViewStateIdleTest {
     when(order.getScheduledStartTime()).thenReturn(1238403200L);
     when(order.getEstimatedTime()).thenReturn(7929000L);
     when(order.getEstimatedPrice()).thenReturn(681254L);
-    when(order.getServiceName()).thenReturn("service");
     when(order.getComment()).thenReturn("");
     when(order.getOptions()).thenReturn(new ArrayList<>(Arrays.asList(
         new OptionBoolean(0, "bool1", "bd", false),
@@ -336,12 +293,6 @@ public class OrderViewStateIdleTest {
     viewState.apply(viewActions);
 
     // Результат:
-    verify(viewActions).setImage(R.id.mapImage, "https://maps.googleapis.com/maps/api/staticmap?"
-        + "center=5.421,10.2341"
-        + "&zoom=16"
-        + "&size=360x200"
-        + "&maptype=roadmap"
-        + "&key=AIzaSyBwlubLyqI6z_ivfAWcTCfyTXkoRHTagMk");
     verify(viewActions).setVisible(R.id.paymentTypeSign, false);
     verify(viewActions).setText(R.id.routeType, R.string.city);
     verify(viewActions).setFormattedText(R.id.distanceText, R.string.km, 12.239d);
@@ -359,31 +310,24 @@ public class OrderViewStateIdleTest {
     DecimalFormat decimalFormat = new DecimalFormat("##,###,###.## ₽");
     decimalFormat.setMaximumFractionDigits(2);
     decimalFormat.setMinimumFractionDigits(2);
-    verify(viewActions).setFormattedText(R.id.estimationText, R.string.km_h_m_p, 31.278d, 2, 12,
-        decimalFormat.format(6812.54)
-    );
+    verify(viewActions).setFormattedText(R.id.estimationText, R.string.h_m_km, 2, 12, 31.278d);
     verify(viewActions).setFormattedText(R.id.estimatedPriceText, R.string.price,
         decimalFormat.format(6812.54)
     );
-    verify(viewActions).setText(R.id.startDateText,
-        DateTimeFormat.forPattern("d MMMM, EEEE").print(
+    verify(viewActions).setText(R.id.startDateAndTimeText,
+        DateTimeFormat.forPattern("d MMM, HH:mm").print(
             DateTime.now().withMillis(1238403200L).withZone(DateTimeZone.forOffsetHours(3))
         ));
     verify(viewActions).setText(R.id.startTimeText,
         DateTimeFormat.forPattern("HH:mm").print(
             DateTime.now().withMillis(1238403200L).withZone(DateTimeZone.forOffsetHours(3))
         ));
-    DateTime dateTime = DateTime.now().withMillis(1238403200L + 7929000L)
-        .withZone(DateTimeZone.forOffsetHours(3));
-    verify(viewActions).setFormattedText(R.id.occupationTimeText, R.string.h_m_d, 2, 12,
-        DateTimeFormat.forPattern("HH:mm").print(dateTime));
     verify(viewActions).setVisible(R.id.cargoDescTitleText, false);
     verify(viewActions).setVisible(R.id.cargoDescText, false);
     verify(viewActions).setText(R.id.cargoDescText, "");
     verify(viewActions).setVisible(R.id.optionsTitleText, true);
     verify(viewActions).setVisible(R.id.optionsText, true);
     verify(viewActions).setText(R.id.optionsText, "bool2\nbool4\nnum1: 3\nnum2: 7");
-    verify(viewActions).setText(R.id.serviceText, "service");
     verify(viewActions).unblockWithPending("OrderViewState");
     verify(viewActions).dismissDialog();
     verifyNoMoreInteractions(viewActions);
@@ -408,7 +352,6 @@ public class OrderViewStateIdleTest {
     when(order.getRoutePath()).thenReturn(Arrays.asList(routePoint, routePoint1, routePoint2));
     when(order.getEstimatedTime()).thenReturn(7929000L);
     when(order.getEstimatedPrice()).thenReturn(681250L);
-    when(order.getServiceName()).thenReturn("service");
     when(order.getComment()).thenReturn("comm");
     when(order.getOptions()).thenReturn(new ArrayList<>());
 
@@ -416,12 +359,6 @@ public class OrderViewStateIdleTest {
     viewState.apply(viewActions);
 
     // Результат:
-    verify(viewActions).setImage(R.id.mapImage, "https://maps.googleapis.com/maps/api/staticmap?"
-        + "center=5.421,10.2341"
-        + "&zoom=16"
-        + "&size=360x200"
-        + "&maptype=roadmap"
-        + "&key=AIzaSyBwlubLyqI6z_ivfAWcTCfyTXkoRHTagMk");
     verify(viewActions).setVisible(R.id.paymentTypeSign, true);
     verify(viewActions).setText(R.id.routeType, R.string.city);
     verify(viewActions).setFormattedText(R.id.distanceText, R.string.km, 12.239d);
@@ -439,31 +376,24 @@ public class OrderViewStateIdleTest {
     DecimalFormat decimalFormat = new DecimalFormat("##,###,### ₽");
     decimalFormat.setMaximumFractionDigits(0);
     decimalFormat.setMinimumFractionDigits(0);
-    verify(viewActions).setFormattedText(R.id.estimationText, R.string.km_h_m_p, 31.278d, 2, 12,
-        decimalFormat.format(6813)
-    );
+    verify(viewActions).setFormattedText(R.id.estimationText, R.string.h_m_km, 2, 12, 31.278d);
     verify(viewActions).setFormattedText(R.id.estimatedPriceText, R.string.price,
         decimalFormat.format(6813)
     );
-    verify(viewActions).setText(R.id.startDateText,
-        DateTimeFormat.forPattern("d MMMM, EEEE").print(
+    verify(viewActions).setText(R.id.startDateAndTimeText,
+        DateTimeFormat.forPattern("d MMM, HH:mm").print(
             DateTime.now().withMillis(1238403200L).withZone(DateTimeZone.forOffsetHours(3))
         ));
     verify(viewActions).setText(R.id.startTimeText,
         DateTimeFormat.forPattern("HH:mm").print(
             DateTime.now().withMillis(1238403200L).withZone(DateTimeZone.forOffsetHours(3))
         ));
-    DateTime dateTime = DateTime.now().withMillis(1238403200L + 7929000L)
-        .withZone(DateTimeZone.forOffsetHours(3));
-    verify(viewActions).setFormattedText(R.id.occupationTimeText, R.string.h_m_d, 2, 12,
-        DateTimeFormat.forPattern("HH:mm").print(dateTime));
     verify(viewActions).setVisible(R.id.cargoDescTitleText, true);
     verify(viewActions).setVisible(R.id.cargoDescText, true);
     verify(viewActions).setText(R.id.cargoDescText, "comm");
     verify(viewActions).setVisible(R.id.optionsTitleText, false);
     verify(viewActions).setVisible(R.id.optionsText, false);
     verify(viewActions).setText(R.id.optionsText, "");
-    verify(viewActions).setText(R.id.serviceText, "service");
     verify(viewActions).unblockWithPending("OrderViewState");
     verify(viewActions).dismissDialog();
     verifyNoMoreInteractions(viewActions);
@@ -488,7 +418,6 @@ public class OrderViewStateIdleTest {
     when(order.getRoutePath()).thenReturn(Arrays.asList(routePoint, routePoint1, routePoint2));
     when(order.getEstimatedTime()).thenReturn(7929000L);
     when(order.getEstimatedPrice()).thenReturn(681250L);
-    when(order.getServiceName()).thenReturn("service");
     when(order.getComment()).thenReturn("");
     when(order.getOptions()).thenReturn(new ArrayList<>(Arrays.asList(
         new OptionBoolean(0, "bool1", "bd", false),
@@ -503,12 +432,6 @@ public class OrderViewStateIdleTest {
     viewState.apply(viewActions);
 
     // Результат:
-    verify(viewActions).setImage(R.id.mapImage, "https://maps.googleapis.com/maps/api/staticmap?"
-        + "center=5.421,10.2341"
-        + "&zoom=16"
-        + "&size=360x200"
-        + "&maptype=roadmap"
-        + "&key=AIzaSyBwlubLyqI6z_ivfAWcTCfyTXkoRHTagMk");
     verify(viewActions).setVisible(R.id.paymentTypeSign, true);
     verify(viewActions).setText(R.id.routeType, R.string.city);
     verify(viewActions).setFormattedText(R.id.distanceText, R.string.km, 12.239d);
@@ -526,31 +449,24 @@ public class OrderViewStateIdleTest {
     DecimalFormat decimalFormat = new DecimalFormat("##,###,###.## ₽");
     decimalFormat.setMaximumFractionDigits(2);
     decimalFormat.setMinimumFractionDigits(2);
-    verify(viewActions).setFormattedText(R.id.estimationText, R.string.km_h_m_p, 31.278d, 2, 12,
-        decimalFormat.format(6812.50)
-    );
+    verify(viewActions).setFormattedText(R.id.estimationText, R.string.h_m_km, 2, 12, 31.278d);
     verify(viewActions).setFormattedText(R.id.estimatedPriceText, R.string.price,
         decimalFormat.format(6812.50)
     );
-    verify(viewActions).setText(R.id.startDateText,
-        DateTimeFormat.forPattern("d MMMM, EEEE").print(
+    verify(viewActions).setText(R.id.startDateAndTimeText,
+        DateTimeFormat.forPattern("d MMM, HH:mm").print(
             DateTime.now().withMillis(1238403200L).withZone(DateTimeZone.forOffsetHours(3))
         ));
     verify(viewActions).setText(R.id.startTimeText,
         DateTimeFormat.forPattern("HH:mm").print(
             DateTime.now().withMillis(1238403200L).withZone(DateTimeZone.forOffsetHours(3))
         ));
-    DateTime dateTime = DateTime.now().withMillis(1238403200L + 7929000L)
-        .withZone(DateTimeZone.forOffsetHours(3));
-    verify(viewActions).setFormattedText(R.id.occupationTimeText, R.string.h_m_d, 2, 12,
-        DateTimeFormat.forPattern("HH:mm").print(dateTime));
     verify(viewActions).setVisible(R.id.cargoDescTitleText, false);
     verify(viewActions).setVisible(R.id.cargoDescText, false);
     verify(viewActions).setText(R.id.cargoDescText, "");
     verify(viewActions).setVisible(R.id.optionsTitleText, true);
     verify(viewActions).setVisible(R.id.optionsText, true);
     verify(viewActions).setText(R.id.optionsText, "bool2\nbool4\nnum1: 3\nnum2: 7");
-    verify(viewActions).setText(R.id.serviceText, "service");
     verify(viewActions).unblockWithPending("OrderViewState");
     verify(viewActions).dismissDialog();
     verifyNoMoreInteractions(viewActions);
@@ -574,7 +490,6 @@ public class OrderViewStateIdleTest {
     when(order.getRoutePath()).thenReturn(Collections.singletonList(routePoint));
     when(order.getEstimatedTime()).thenReturn(7929000L);
     when(order.getEstimatedPrice()).thenReturn(681254L);
-    when(order.getServiceName()).thenReturn("service");
     when(order.getComment()).thenReturn("comm");
     when(order.getOptions()).thenReturn(new ArrayList<>(Arrays.asList(
         new OptionBoolean(0, "bool1", "bd", false),
@@ -589,12 +504,6 @@ public class OrderViewStateIdleTest {
     viewState.apply(viewActions);
 
     // Результат:
-    verify(viewActions).setImage(R.id.mapImage, "https://maps.googleapis.com/maps/api/staticmap?"
-        + "center=5.421,10.2341"
-        + "&zoom=16"
-        + "&size=360x200"
-        + "&maptype=roadmap"
-        + "&key=AIzaSyBwlubLyqI6z_ivfAWcTCfyTXkoRHTagMk");
     verify(viewActions).setVisible(R.id.paymentTypeSign, true);
     verify(viewActions).setText(R.id.routeType, R.string.city);
     verify(viewActions).setFormattedText(R.id.distanceText, R.string.km, 12.239d);
@@ -612,31 +521,24 @@ public class OrderViewStateIdleTest {
     DecimalFormat decimalFormat = new DecimalFormat("##,###,### ₽");
     decimalFormat.setMaximumFractionDigits(0);
     decimalFormat.setMinimumFractionDigits(0);
-    verify(viewActions).setFormattedText(R.id.estimationText, R.string.km_h_m_p, 31.278d, 2, 12,
-        decimalFormat.format(6813)
-    );
+    verify(viewActions).setFormattedText(R.id.estimationText, R.string.h_m_km, 2, 12, 31.278d);
     verify(viewActions).setFormattedText(R.id.estimatedPriceText, R.string.price,
         decimalFormat.format(6813)
     );
-    verify(viewActions).setText(R.id.startDateText,
-        DateTimeFormat.forPattern("d MMMM, EEEE").print(
+    verify(viewActions).setText(R.id.startDateAndTimeText,
+        DateTimeFormat.forPattern("d MMM, HH:mm").print(
             DateTime.now().withMillis(1238403200L).withZone(DateTimeZone.forOffsetHours(3))
         ));
     verify(viewActions).setText(R.id.startTimeText,
         DateTimeFormat.forPattern("HH:mm").print(
             DateTime.now().withMillis(1238403200L).withZone(DateTimeZone.forOffsetHours(3))
         ));
-    DateTime dateTime = DateTime.now().withMillis(1238403200L + 7929000L)
-        .withZone(DateTimeZone.forOffsetHours(3));
-    verify(viewActions).setFormattedText(R.id.occupationTimeText, R.string.h_m_d, 2, 12,
-        DateTimeFormat.forPattern("HH:mm").print(dateTime));
     verify(viewActions).setVisible(R.id.cargoDescTitleText, true);
     verify(viewActions).setVisible(R.id.cargoDescText, true);
     verify(viewActions).setText(R.id.cargoDescText, "comm");
     verify(viewActions).setVisible(R.id.optionsTitleText, true);
     verify(viewActions).setVisible(R.id.optionsText, true);
     verify(viewActions).setText(R.id.optionsText, "bool2\nbool4\nnum1: 3\nnum2: 7");
-    verify(viewActions).setText(R.id.serviceText, "service");
     verify(viewActions).unblockWithPending("OrderViewState");
     verify(viewActions).dismissDialog();
     verifyNoMoreInteractions(viewActions);
@@ -660,7 +562,6 @@ public class OrderViewStateIdleTest {
     when(order.getScheduledStartTime()).thenReturn(1238403200L);
     when(order.getEstimatedTime()).thenReturn(7929000L);
     when(order.getEstimatedPrice()).thenReturn(681254L);
-    when(order.getServiceName()).thenReturn("service");
     when(order.getComment()).thenReturn("");
     when(order.getOptions()).thenReturn(new ArrayList<>(Arrays.asList(
         new OptionBoolean(0, "bool1", "bd", false),
@@ -675,12 +576,6 @@ public class OrderViewStateIdleTest {
     viewState.apply(viewActions);
 
     // Результат:
-    verify(viewActions).setImage(R.id.mapImage, "https://maps.googleapis.com/maps/api/staticmap?"
-        + "center=5.421,10.2341"
-        + "&zoom=16"
-        + "&size=360x200"
-        + "&maptype=roadmap"
-        + "&key=AIzaSyBwlubLyqI6z_ivfAWcTCfyTXkoRHTagMk");
     verify(viewActions).setVisible(R.id.paymentTypeSign, true);
     verify(viewActions).setText(R.id.routeType, R.string.city);
     verify(viewActions).setFormattedText(R.id.distanceText, R.string.km, 12.239d);
@@ -698,31 +593,24 @@ public class OrderViewStateIdleTest {
     DecimalFormat decimalFormat = new DecimalFormat("##,###,###.## ₽");
     decimalFormat.setMaximumFractionDigits(2);
     decimalFormat.setMinimumFractionDigits(2);
-    verify(viewActions).setFormattedText(R.id.estimationText, R.string.km_h_m_p, 31.278d, 2, 12,
-        decimalFormat.format(6812.54)
-    );
+    verify(viewActions).setFormattedText(R.id.estimationText, R.string.h_m_km, 2, 12, 31.278d);
     verify(viewActions).setFormattedText(R.id.estimatedPriceText, R.string.price,
         decimalFormat.format(6812.54)
     );
-    verify(viewActions).setText(R.id.startDateText,
-        DateTimeFormat.forPattern("d MMMM, EEEE").print(
+    verify(viewActions).setText(R.id.startDateAndTimeText,
+        DateTimeFormat.forPattern("d MMM, HH:mm").print(
             DateTime.now().withMillis(1238403200L).withZone(DateTimeZone.forOffsetHours(3))
         ));
     verify(viewActions).setText(R.id.startTimeText,
         DateTimeFormat.forPattern("HH:mm").print(
             DateTime.now().withMillis(1238403200L).withZone(DateTimeZone.forOffsetHours(3))
         ));
-    DateTime dateTime = DateTime.now().withMillis(1238403200L + 7929000L)
-        .withZone(DateTimeZone.forOffsetHours(3));
-    verify(viewActions).setFormattedText(R.id.occupationTimeText, R.string.h_m_d, 2, 12,
-        DateTimeFormat.forPattern("HH:mm").print(dateTime));
     verify(viewActions).setVisible(R.id.cargoDescTitleText, false);
     verify(viewActions).setVisible(R.id.cargoDescText, false);
     verify(viewActions).setText(R.id.cargoDescText, "");
     verify(viewActions).setVisible(R.id.optionsTitleText, true);
     verify(viewActions).setVisible(R.id.optionsText, true);
     verify(viewActions).setText(R.id.optionsText, "bool2\nbool4\nnum1: 3\nnum2: 7");
-    verify(viewActions).setText(R.id.serviceText, "service");
     verify(viewActions).unblockWithPending("OrderViewState");
     verify(viewActions).dismissDialog();
     verifyNoMoreInteractions(viewActions);
@@ -747,7 +635,6 @@ public class OrderViewStateIdleTest {
     when(order.getRoutePath()).thenReturn(Arrays.asList(routePoint, routePoint1, routePoint2));
     when(order.getEstimatedTime()).thenReturn(7929000L);
     when(order.getEstimatedPrice()).thenReturn(681250L);
-    when(order.getServiceName()).thenReturn("service");
     when(order.getComment()).thenReturn("comm");
     when(order.getOptions()).thenReturn(new ArrayList<>());
 
@@ -755,12 +642,6 @@ public class OrderViewStateIdleTest {
     viewState.apply(viewActions);
 
     // Результат:
-    verify(viewActions).setImage(R.id.mapImage, "https://maps.googleapis.com/maps/api/staticmap?"
-        + "center=5.421,10.2341"
-        + "&zoom=16"
-        + "&size=360x200"
-        + "&maptype=roadmap"
-        + "&key=AIzaSyBwlubLyqI6z_ivfAWcTCfyTXkoRHTagMk");
     verify(viewActions).setVisible(R.id.paymentTypeSign, false);
     verify(viewActions).setText(R.id.routeType, R.string.country);
     verify(viewActions).setFormattedText(R.id.distanceText, R.string.km, 12.239d);
@@ -778,31 +659,24 @@ public class OrderViewStateIdleTest {
     DecimalFormat decimalFormat = new DecimalFormat("##,###,### ₽");
     decimalFormat.setMaximumFractionDigits(0);
     decimalFormat.setMinimumFractionDigits(0);
-    verify(viewActions).setFormattedText(R.id.estimationText, R.string.km_h_m_p, 31.278d, 2, 12,
-        decimalFormat.format(6813)
-    );
+    verify(viewActions).setFormattedText(R.id.estimationText, R.string.h_m_km, 2, 12, 31.278d);
     verify(viewActions).setFormattedText(R.id.estimatedPriceText, R.string.price,
         decimalFormat.format(6813)
     );
-    verify(viewActions).setText(R.id.startDateText,
-        DateTimeFormat.forPattern("d MMMM, EEEE").print(
+    verify(viewActions).setText(R.id.startDateAndTimeText,
+        DateTimeFormat.forPattern("d MMM, HH:mm").print(
             DateTime.now().withMillis(1238403200L).withZone(DateTimeZone.forOffsetHours(3))
         ));
     verify(viewActions).setText(R.id.startTimeText,
         DateTimeFormat.forPattern("HH:mm").print(
             DateTime.now().withMillis(1238403200L).withZone(DateTimeZone.forOffsetHours(3))
         ));
-    DateTime dateTime = DateTime.now().withMillis(1238403200L + 7929000L)
-        .withZone(DateTimeZone.forOffsetHours(3));
-    verify(viewActions).setFormattedText(R.id.occupationTimeText, R.string.h_m_d, 2, 12,
-        DateTimeFormat.forPattern("HH:mm").print(dateTime));
     verify(viewActions).setVisible(R.id.cargoDescTitleText, true);
     verify(viewActions).setVisible(R.id.cargoDescText, true);
     verify(viewActions).setText(R.id.cargoDescText, "comm");
     verify(viewActions).setVisible(R.id.optionsTitleText, false);
     verify(viewActions).setVisible(R.id.optionsText, false);
     verify(viewActions).setText(R.id.optionsText, "");
-    verify(viewActions).setText(R.id.serviceText, "service");
     verify(viewActions).unblockWithPending("OrderViewState");
     verify(viewActions).dismissDialog();
     verifyNoMoreInteractions(viewActions);
@@ -827,7 +701,6 @@ public class OrderViewStateIdleTest {
     when(order.getRoutePath()).thenReturn(Arrays.asList(routePoint, routePoint1, routePoint2));
     when(order.getEstimatedTime()).thenReturn(7929000L);
     when(order.getEstimatedPrice()).thenReturn(681250L);
-    when(order.getServiceName()).thenReturn("service");
     when(order.getComment()).thenReturn("");
     when(order.getOptions()).thenReturn(new ArrayList<>(Arrays.asList(
         new OptionBoolean(0, "bool1", "bd", false),
@@ -842,12 +715,6 @@ public class OrderViewStateIdleTest {
     viewState.apply(viewActions);
 
     // Результат:
-    verify(viewActions).setImage(R.id.mapImage, "https://maps.googleapis.com/maps/api/staticmap?"
-        + "center=5.421,10.2341"
-        + "&zoom=16"
-        + "&size=360x200"
-        + "&maptype=roadmap"
-        + "&key=AIzaSyBwlubLyqI6z_ivfAWcTCfyTXkoRHTagMk");
     verify(viewActions).setVisible(R.id.paymentTypeSign, false);
     verify(viewActions).setText(R.id.routeType, R.string.country);
     verify(viewActions).setFormattedText(R.id.distanceText, R.string.km, 12.239d);
@@ -865,31 +732,24 @@ public class OrderViewStateIdleTest {
     DecimalFormat decimalFormat = new DecimalFormat("##,###,###.## ₽");
     decimalFormat.setMaximumFractionDigits(2);
     decimalFormat.setMinimumFractionDigits(2);
-    verify(viewActions).setFormattedText(R.id.estimationText, R.string.km_h_m_p, 31.278d, 2, 12,
-        decimalFormat.format(6812.50)
-    );
+    verify(viewActions).setFormattedText(R.id.estimationText, R.string.h_m_km, 2, 12, 31.278d);
     verify(viewActions).setFormattedText(R.id.estimatedPriceText, R.string.price,
         decimalFormat.format(6812.50)
     );
-    verify(viewActions).setText(R.id.startDateText,
-        DateTimeFormat.forPattern("d MMMM, EEEE").print(
+    verify(viewActions).setText(R.id.startDateAndTimeText,
+        DateTimeFormat.forPattern("d MMM, HH:mm").print(
             DateTime.now().withMillis(1238403200L).withZone(DateTimeZone.forOffsetHours(3))
         ));
     verify(viewActions).setText(R.id.startTimeText,
         DateTimeFormat.forPattern("HH:mm").print(
             DateTime.now().withMillis(1238403200L).withZone(DateTimeZone.forOffsetHours(3))
         ));
-    DateTime dateTime = DateTime.now().withMillis(1238403200L + 7929000L)
-        .withZone(DateTimeZone.forOffsetHours(3));
-    verify(viewActions).setFormattedText(R.id.occupationTimeText, R.string.h_m_d, 2, 12,
-        DateTimeFormat.forPattern("HH:mm").print(dateTime));
     verify(viewActions).setVisible(R.id.cargoDescTitleText, false);
     verify(viewActions).setVisible(R.id.cargoDescText, false);
     verify(viewActions).setText(R.id.cargoDescText, "");
     verify(viewActions).setVisible(R.id.optionsTitleText, true);
     verify(viewActions).setVisible(R.id.optionsText, true);
     verify(viewActions).setText(R.id.optionsText, "bool2\nbool4\nnum1: 3\nnum2: 7");
-    verify(viewActions).setText(R.id.serviceText, "service");
     verify(viewActions).unblockWithPending("OrderViewState");
     verify(viewActions).dismissDialog();
     verifyNoMoreInteractions(viewActions);
@@ -913,7 +773,6 @@ public class OrderViewStateIdleTest {
     when(order.getRoutePath()).thenReturn(Collections.singletonList(routePoint));
     when(order.getEstimatedTime()).thenReturn(7929000L);
     when(order.getEstimatedPrice()).thenReturn(681254L);
-    when(order.getServiceName()).thenReturn("service");
     when(order.getComment()).thenReturn("comm");
     when(order.getOptions()).thenReturn(new ArrayList<>(Arrays.asList(
         new OptionBoolean(0, "bool1", "bd", false),
@@ -928,12 +787,6 @@ public class OrderViewStateIdleTest {
     viewState.apply(viewActions);
 
     // Результат:
-    verify(viewActions).setImage(R.id.mapImage, "https://maps.googleapis.com/maps/api/staticmap?"
-        + "center=5.421,10.2341"
-        + "&zoom=16"
-        + "&size=360x200"
-        + "&maptype=roadmap"
-        + "&key=AIzaSyBwlubLyqI6z_ivfAWcTCfyTXkoRHTagMk");
     verify(viewActions).setVisible(R.id.paymentTypeSign, false);
     verify(viewActions).setText(R.id.routeType, R.string.country);
     verify(viewActions).setFormattedText(R.id.distanceText, R.string.km, 12.239d);
@@ -951,31 +804,24 @@ public class OrderViewStateIdleTest {
     DecimalFormat decimalFormat = new DecimalFormat("##,###,### ₽");
     decimalFormat.setMaximumFractionDigits(0);
     decimalFormat.setMinimumFractionDigits(0);
-    verify(viewActions).setFormattedText(R.id.estimationText, R.string.km_h_m_p, 31.278d, 2, 12,
-        decimalFormat.format(6813)
-    );
+    verify(viewActions).setFormattedText(R.id.estimationText, R.string.h_m_km, 2, 12, 31.278d);
     verify(viewActions).setFormattedText(R.id.estimatedPriceText, R.string.price,
         decimalFormat.format(6813)
     );
-    verify(viewActions).setText(R.id.startDateText,
-        DateTimeFormat.forPattern("d MMMM, EEEE").print(
+    verify(viewActions).setText(R.id.startDateAndTimeText,
+        DateTimeFormat.forPattern("d MMM, HH:mm").print(
             DateTime.now().withMillis(1238403200L).withZone(DateTimeZone.forOffsetHours(3))
         ));
     verify(viewActions).setText(R.id.startTimeText,
         DateTimeFormat.forPattern("HH:mm").print(
             DateTime.now().withMillis(1238403200L).withZone(DateTimeZone.forOffsetHours(3))
         ));
-    DateTime dateTime = DateTime.now().withMillis(1238403200L + 7929000L)
-        .withZone(DateTimeZone.forOffsetHours(3));
-    verify(viewActions).setFormattedText(R.id.occupationTimeText, R.string.h_m_d, 2, 12,
-        DateTimeFormat.forPattern("HH:mm").print(dateTime));
     verify(viewActions).setVisible(R.id.cargoDescTitleText, true);
     verify(viewActions).setVisible(R.id.cargoDescText, true);
     verify(viewActions).setText(R.id.cargoDescText, "comm");
     verify(viewActions).setVisible(R.id.optionsTitleText, true);
     verify(viewActions).setVisible(R.id.optionsText, true);
     verify(viewActions).setText(R.id.optionsText, "bool2\nbool4\nnum1: 3\nnum2: 7");
-    verify(viewActions).setText(R.id.serviceText, "service");
     verify(viewActions).unblockWithPending("OrderViewState");
     verify(viewActions).dismissDialog();
     verifyNoMoreInteractions(viewActions);
@@ -999,7 +845,6 @@ public class OrderViewStateIdleTest {
     when(order.getScheduledStartTime()).thenReturn(1238403200L);
     when(order.getEstimatedTime()).thenReturn(7929000L);
     when(order.getEstimatedPrice()).thenReturn(681254L);
-    when(order.getServiceName()).thenReturn("service");
     when(order.getComment()).thenReturn("");
     when(order.getOptions()).thenReturn(new ArrayList<>(Arrays.asList(
         new OptionBoolean(0, "bool1", "bd", false),
@@ -1014,12 +859,6 @@ public class OrderViewStateIdleTest {
     viewState.apply(viewActions);
 
     // Результат:
-    verify(viewActions).setImage(R.id.mapImage, "https://maps.googleapis.com/maps/api/staticmap?"
-        + "center=5.421,10.2341"
-        + "&zoom=16"
-        + "&size=360x200"
-        + "&maptype=roadmap"
-        + "&key=AIzaSyBwlubLyqI6z_ivfAWcTCfyTXkoRHTagMk");
     verify(viewActions).setVisible(R.id.paymentTypeSign, false);
     verify(viewActions).setText(R.id.routeType, R.string.country);
     verify(viewActions).setFormattedText(R.id.distanceText, R.string.km, 12.239d);
@@ -1037,31 +876,24 @@ public class OrderViewStateIdleTest {
     DecimalFormat decimalFormat = new DecimalFormat("##,###,###.## ₽");
     decimalFormat.setMaximumFractionDigits(2);
     decimalFormat.setMinimumFractionDigits(2);
-    verify(viewActions).setFormattedText(R.id.estimationText, R.string.km_h_m_p, 31.278d, 2, 12,
-        decimalFormat.format(6812.54)
-    );
+    verify(viewActions).setFormattedText(R.id.estimationText, R.string.h_m_km, 2, 12, 31.278d);
     verify(viewActions).setFormattedText(R.id.estimatedPriceText, R.string.price,
         decimalFormat.format(6812.54)
     );
-    verify(viewActions).setText(R.id.startDateText,
-        DateTimeFormat.forPattern("d MMMM, EEEE").print(
+    verify(viewActions).setText(R.id.startDateAndTimeText,
+        DateTimeFormat.forPattern("d MMM, HH:mm").print(
             DateTime.now().withMillis(1238403200L).withZone(DateTimeZone.forOffsetHours(3))
         ));
     verify(viewActions).setText(R.id.startTimeText,
         DateTimeFormat.forPattern("HH:mm").print(
             DateTime.now().withMillis(1238403200L).withZone(DateTimeZone.forOffsetHours(3))
         ));
-    DateTime dateTime = DateTime.now().withMillis(1238403200L + 7929000L)
-        .withZone(DateTimeZone.forOffsetHours(3));
-    verify(viewActions).setFormattedText(R.id.occupationTimeText, R.string.h_m_d, 2, 12,
-        DateTimeFormat.forPattern("HH:mm").print(dateTime));
     verify(viewActions).setVisible(R.id.cargoDescTitleText, false);
     verify(viewActions).setVisible(R.id.cargoDescText, false);
     verify(viewActions).setText(R.id.cargoDescText, "");
     verify(viewActions).setVisible(R.id.optionsTitleText, true);
     verify(viewActions).setVisible(R.id.optionsText, true);
     verify(viewActions).setText(R.id.optionsText, "bool2\nbool4\nnum1: 3\nnum2: 7");
-    verify(viewActions).setText(R.id.serviceText, "service");
     verify(viewActions).unblockWithPending("OrderViewState");
     verify(viewActions).dismissDialog();
     verifyNoMoreInteractions(viewActions);
@@ -1086,7 +918,6 @@ public class OrderViewStateIdleTest {
     when(order.getRoutePath()).thenReturn(Arrays.asList(routePoint, routePoint1, routePoint2));
     when(order.getEstimatedTime()).thenReturn(7929000L);
     when(order.getEstimatedPrice()).thenReturn(681250L);
-    when(order.getServiceName()).thenReturn("service");
     when(order.getComment()).thenReturn("comm");
     when(order.getOptions()).thenReturn(new ArrayList<>());
 
@@ -1094,12 +925,6 @@ public class OrderViewStateIdleTest {
     viewState.apply(viewActions);
 
     // Результат:
-    verify(viewActions).setImage(R.id.mapImage, "https://maps.googleapis.com/maps/api/staticmap?"
-        + "center=5.421,10.2341"
-        + "&zoom=16"
-        + "&size=360x200"
-        + "&maptype=roadmap"
-        + "&key=AIzaSyBwlubLyqI6z_ivfAWcTCfyTXkoRHTagMk");
     verify(viewActions).setVisible(R.id.paymentTypeSign, true);
     verify(viewActions).setText(R.id.routeType, R.string.country);
     verify(viewActions).setFormattedText(R.id.distanceText, R.string.km, 12.239d);
@@ -1117,31 +942,24 @@ public class OrderViewStateIdleTest {
     DecimalFormat decimalFormat = new DecimalFormat("##,###,### ₽");
     decimalFormat.setMaximumFractionDigits(0);
     decimalFormat.setMinimumFractionDigits(0);
-    verify(viewActions).setFormattedText(R.id.estimationText, R.string.km_h_m_p, 31.278d, 2, 12,
-        decimalFormat.format(6813)
-    );
+    verify(viewActions).setFormattedText(R.id.estimationText, R.string.h_m_km, 2, 12, 31.278d);
     verify(viewActions).setFormattedText(R.id.estimatedPriceText, R.string.price,
         decimalFormat.format(6813)
     );
-    verify(viewActions).setText(R.id.startDateText,
-        DateTimeFormat.forPattern("d MMMM, EEEE").print(
+    verify(viewActions).setText(R.id.startDateAndTimeText,
+        DateTimeFormat.forPattern("d MMM, HH:mm").print(
             DateTime.now().withMillis(1238403200L).withZone(DateTimeZone.forOffsetHours(3))
         ));
     verify(viewActions).setText(R.id.startTimeText,
         DateTimeFormat.forPattern("HH:mm").print(
             DateTime.now().withMillis(1238403200L).withZone(DateTimeZone.forOffsetHours(3))
         ));
-    DateTime dateTime = DateTime.now().withMillis(1238403200L + 7929000L)
-        .withZone(DateTimeZone.forOffsetHours(3));
-    verify(viewActions).setFormattedText(R.id.occupationTimeText, R.string.h_m_d, 2, 12,
-        DateTimeFormat.forPattern("HH:mm").print(dateTime));
     verify(viewActions).setVisible(R.id.cargoDescTitleText, true);
     verify(viewActions).setVisible(R.id.cargoDescText, true);
     verify(viewActions).setText(R.id.cargoDescText, "comm");
     verify(viewActions).setVisible(R.id.optionsTitleText, false);
     verify(viewActions).setVisible(R.id.optionsText, false);
     verify(viewActions).setText(R.id.optionsText, "");
-    verify(viewActions).setText(R.id.serviceText, "service");
     verify(viewActions).unblockWithPending("OrderViewState");
     verify(viewActions).dismissDialog();
     verifyNoMoreInteractions(viewActions);
@@ -1166,7 +984,6 @@ public class OrderViewStateIdleTest {
     when(order.getRoutePath()).thenReturn(Arrays.asList(routePoint, routePoint1, routePoint2));
     when(order.getEstimatedTime()).thenReturn(7929000L);
     when(order.getEstimatedPrice()).thenReturn(681250L);
-    when(order.getServiceName()).thenReturn("service");
     when(order.getComment()).thenReturn("");
     when(order.getOptions()).thenReturn(new ArrayList<>(Arrays.asList(
         new OptionBoolean(0, "bool1", "bd", false),
@@ -1181,12 +998,6 @@ public class OrderViewStateIdleTest {
     viewState.apply(viewActions);
 
     // Результат:
-    verify(viewActions).setImage(R.id.mapImage, "https://maps.googleapis.com/maps/api/staticmap?"
-        + "center=5.421,10.2341"
-        + "&zoom=16"
-        + "&size=360x200"
-        + "&maptype=roadmap"
-        + "&key=AIzaSyBwlubLyqI6z_ivfAWcTCfyTXkoRHTagMk");
     verify(viewActions).setVisible(R.id.paymentTypeSign, true);
     verify(viewActions).setText(R.id.routeType, R.string.country);
     verify(viewActions).setFormattedText(R.id.distanceText, R.string.km, 12.239d);
@@ -1204,31 +1015,24 @@ public class OrderViewStateIdleTest {
     DecimalFormat decimalFormat = new DecimalFormat("##,###,###.## ₽");
     decimalFormat.setMaximumFractionDigits(2);
     decimalFormat.setMinimumFractionDigits(2);
-    verify(viewActions).setFormattedText(R.id.estimationText, R.string.km_h_m_p, 31.278d, 2, 12,
-        decimalFormat.format(6812.50)
-    );
+    verify(viewActions).setFormattedText(R.id.estimationText, R.string.h_m_km, 2, 12, 31.278d);
     verify(viewActions).setFormattedText(R.id.estimatedPriceText, R.string.price,
         decimalFormat.format(6812.50)
     );
-    verify(viewActions).setText(R.id.startDateText,
-        DateTimeFormat.forPattern("d MMMM, EEEE").print(
+    verify(viewActions).setText(R.id.startDateAndTimeText,
+        DateTimeFormat.forPattern("d MMM, HH:mm").print(
             DateTime.now().withMillis(1238403200L).withZone(DateTimeZone.forOffsetHours(3))
         ));
     verify(viewActions).setText(R.id.startTimeText,
         DateTimeFormat.forPattern("HH:mm").print(
             DateTime.now().withMillis(1238403200L).withZone(DateTimeZone.forOffsetHours(3))
         ));
-    DateTime dateTime = DateTime.now().withMillis(1238403200L + 7929000L)
-        .withZone(DateTimeZone.forOffsetHours(3));
-    verify(viewActions).setFormattedText(R.id.occupationTimeText, R.string.h_m_d, 2, 12,
-        DateTimeFormat.forPattern("HH:mm").print(dateTime));
     verify(viewActions).setVisible(R.id.cargoDescTitleText, false);
     verify(viewActions).setVisible(R.id.cargoDescText, false);
     verify(viewActions).setText(R.id.cargoDescText, "");
     verify(viewActions).setVisible(R.id.optionsTitleText, true);
     verify(viewActions).setVisible(R.id.optionsText, true);
     verify(viewActions).setText(R.id.optionsText, "bool2\nbool4\nnum1: 3\nnum2: 7");
-    verify(viewActions).setText(R.id.serviceText, "service");
     verify(viewActions).unblockWithPending("OrderViewState");
     verify(viewActions).dismissDialog();
     verifyNoMoreInteractions(viewActions);
@@ -1252,7 +1056,6 @@ public class OrderViewStateIdleTest {
     when(order.getRoutePath()).thenReturn(Collections.singletonList(routePoint));
     when(order.getEstimatedTime()).thenReturn(7929000L);
     when(order.getEstimatedPrice()).thenReturn(681254L);
-    when(order.getServiceName()).thenReturn("service");
     when(order.getComment()).thenReturn("comm");
     when(order.getOptions()).thenReturn(new ArrayList<>(Arrays.asList(
         new OptionBoolean(0, "bool1", "bd", false),
@@ -1267,12 +1070,6 @@ public class OrderViewStateIdleTest {
     viewState.apply(viewActions);
 
     // Результат:
-    verify(viewActions).setImage(R.id.mapImage, "https://maps.googleapis.com/maps/api/staticmap?"
-        + "center=5.421,10.2341"
-        + "&zoom=16"
-        + "&size=360x200"
-        + "&maptype=roadmap"
-        + "&key=AIzaSyBwlubLyqI6z_ivfAWcTCfyTXkoRHTagMk");
     verify(viewActions).setVisible(R.id.paymentTypeSign, true);
     verify(viewActions).setText(R.id.routeType, R.string.country);
     verify(viewActions).setFormattedText(R.id.distanceText, R.string.km, 12.239d);
@@ -1290,31 +1087,24 @@ public class OrderViewStateIdleTest {
     DecimalFormat decimalFormat = new DecimalFormat("##,###,### ₽");
     decimalFormat.setMaximumFractionDigits(0);
     decimalFormat.setMinimumFractionDigits(0);
-    verify(viewActions).setFormattedText(R.id.estimationText, R.string.km_h_m_p, 31.278d, 2, 12,
-        decimalFormat.format(6813)
-    );
+    verify(viewActions).setFormattedText(R.id.estimationText, R.string.h_m_km, 2, 12, 31.278d);
     verify(viewActions).setFormattedText(R.id.estimatedPriceText, R.string.price,
         decimalFormat.format(6813)
     );
-    verify(viewActions).setText(R.id.startDateText,
-        DateTimeFormat.forPattern("d MMMM, EEEE").print(
+    verify(viewActions).setText(R.id.startDateAndTimeText,
+        DateTimeFormat.forPattern("d MMM, HH:mm").print(
             DateTime.now().withMillis(1238403200L).withZone(DateTimeZone.forOffsetHours(3))
         ));
     verify(viewActions).setText(R.id.startTimeText,
         DateTimeFormat.forPattern("HH:mm").print(
             DateTime.now().withMillis(1238403200L).withZone(DateTimeZone.forOffsetHours(3))
         ));
-    DateTime dateTime = DateTime.now().withMillis(1238403200L + 7929000L)
-        .withZone(DateTimeZone.forOffsetHours(3));
-    verify(viewActions).setFormattedText(R.id.occupationTimeText, R.string.h_m_d, 2, 12,
-        DateTimeFormat.forPattern("HH:mm").print(dateTime));
     verify(viewActions).setVisible(R.id.cargoDescTitleText, true);
     verify(viewActions).setVisible(R.id.cargoDescText, true);
     verify(viewActions).setText(R.id.cargoDescText, "comm");
     verify(viewActions).setVisible(R.id.optionsTitleText, true);
     verify(viewActions).setVisible(R.id.optionsText, true);
     verify(viewActions).setText(R.id.optionsText, "bool2\nbool4\nnum1: 3\nnum2: 7");
-    verify(viewActions).setText(R.id.serviceText, "service");
     verify(viewActions).unblockWithPending("OrderViewState");
     verify(viewActions).dismissDialog();
     verifyNoMoreInteractions(viewActions);
@@ -1338,7 +1128,6 @@ public class OrderViewStateIdleTest {
     when(order.getScheduledStartTime()).thenReturn(1238403200L);
     when(order.getEstimatedTime()).thenReturn(7929000L);
     when(order.getEstimatedPrice()).thenReturn(681254L);
-    when(order.getServiceName()).thenReturn("service");
     when(order.getComment()).thenReturn("");
     when(order.getOptions()).thenReturn(new ArrayList<>(Arrays.asList(
         new OptionBoolean(0, "bool1", "bd", false),
@@ -1353,12 +1142,6 @@ public class OrderViewStateIdleTest {
     viewState.apply(viewActions);
 
     // Результат:
-    verify(viewActions).setImage(R.id.mapImage, "https://maps.googleapis.com/maps/api/staticmap?"
-        + "center=5.421,10.2341"
-        + "&zoom=16"
-        + "&size=360x200"
-        + "&maptype=roadmap"
-        + "&key=AIzaSyBwlubLyqI6z_ivfAWcTCfyTXkoRHTagMk");
     verify(viewActions).setVisible(R.id.paymentTypeSign, true);
     verify(viewActions).setText(R.id.routeType, R.string.country);
     verify(viewActions).setFormattedText(R.id.distanceText, R.string.km, 12.239d);
@@ -1376,31 +1159,24 @@ public class OrderViewStateIdleTest {
     DecimalFormat decimalFormat = new DecimalFormat("##,###,###.## ₽");
     decimalFormat.setMaximumFractionDigits(2);
     decimalFormat.setMinimumFractionDigits(2);
-    verify(viewActions).setFormattedText(R.id.estimationText, R.string.km_h_m_p, 31.278d, 2, 12,
-        decimalFormat.format(6812.54)
-    );
+    verify(viewActions).setFormattedText(R.id.estimationText, R.string.h_m_km, 2, 12, 31.278d);
     verify(viewActions).setFormattedText(R.id.estimatedPriceText, R.string.price,
         decimalFormat.format(6812.54)
     );
-    verify(viewActions).setText(R.id.startDateText,
-        DateTimeFormat.forPattern("d MMMM, EEEE").print(
+    verify(viewActions).setText(R.id.startDateAndTimeText,
+        DateTimeFormat.forPattern("d MMM, HH:mm").print(
             DateTime.now().withMillis(1238403200L).withZone(DateTimeZone.forOffsetHours(3))
         ));
     verify(viewActions).setText(R.id.startTimeText,
         DateTimeFormat.forPattern("HH:mm").print(
             DateTime.now().withMillis(1238403200L).withZone(DateTimeZone.forOffsetHours(3))
         ));
-    DateTime dateTime = DateTime.now().withMillis(1238403200L + 7929000L)
-        .withZone(DateTimeZone.forOffsetHours(3));
-    verify(viewActions).setFormattedText(R.id.occupationTimeText, R.string.h_m_d, 2, 12,
-        DateTimeFormat.forPattern("HH:mm").print(dateTime));
     verify(viewActions).setVisible(R.id.cargoDescTitleText, false);
     verify(viewActions).setVisible(R.id.cargoDescText, false);
     verify(viewActions).setText(R.id.cargoDescText, "");
     verify(viewActions).setVisible(R.id.optionsTitleText, true);
     verify(viewActions).setVisible(R.id.optionsText, true);
     verify(viewActions).setText(R.id.optionsText, "bool2\nbool4\nnum1: 3\nnum2: 7");
-    verify(viewActions).setText(R.id.serviceText, "service");
     verify(viewActions).unblockWithPending("OrderViewState");
     verify(viewActions).dismissDialog();
     verifyNoMoreInteractions(viewActions);
@@ -1425,7 +1201,6 @@ public class OrderViewStateIdleTest {
     when(order.getRoutePath()).thenReturn(Arrays.asList(routePoint, routePoint1, routePoint2));
     when(order.getEstimatedTime()).thenReturn(7929000L);
     when(order.getEstimatedPrice()).thenReturn(681250L);
-    when(order.getServiceName()).thenReturn("service");
     when(order.getComment()).thenReturn("comm");
     when(order.getOptions()).thenReturn(new ArrayList<>());
 
@@ -1433,12 +1208,6 @@ public class OrderViewStateIdleTest {
     viewState.apply(viewActions);
 
     // Результат:
-    verify(viewActions).setImage(R.id.mapImage, "https://maps.googleapis.com/maps/api/staticmap?"
-        + "center=5.421,10.2341"
-        + "&zoom=16"
-        + "&size=360x200"
-        + "&maptype=roadmap"
-        + "&key=AIzaSyBwlubLyqI6z_ivfAWcTCfyTXkoRHTagMk");
     verify(viewActions).setVisible(R.id.paymentTypeSign, false);
     verify(viewActions).setText(R.id.routeType, R.string.intercity);
     verify(viewActions).setFormattedText(R.id.distanceText, R.string.km, 12.239d);
@@ -1456,31 +1225,24 @@ public class OrderViewStateIdleTest {
     DecimalFormat decimalFormat = new DecimalFormat("##,###,### ₽");
     decimalFormat.setMaximumFractionDigits(0);
     decimalFormat.setMinimumFractionDigits(0);
-    verify(viewActions).setFormattedText(R.id.estimationText, R.string.km_h_m_p, 31.278d, 2, 12,
-        decimalFormat.format(6813)
-    );
+    verify(viewActions).setFormattedText(R.id.estimationText, R.string.h_m_km, 2, 12, 31.278d);
     verify(viewActions).setFormattedText(R.id.estimatedPriceText, R.string.price,
         decimalFormat.format(6813)
     );
-    verify(viewActions).setText(R.id.startDateText,
-        DateTimeFormat.forPattern("d MMMM, EEEE").print(
+    verify(viewActions).setText(R.id.startDateAndTimeText,
+        DateTimeFormat.forPattern("d MMM, HH:mm").print(
             DateTime.now().withMillis(1238403200L).withZone(DateTimeZone.forOffsetHours(3))
         ));
     verify(viewActions).setText(R.id.startTimeText,
         DateTimeFormat.forPattern("HH:mm").print(
             DateTime.now().withMillis(1238403200L).withZone(DateTimeZone.forOffsetHours(3))
         ));
-    DateTime dateTime = DateTime.now().withMillis(1238403200L + 7929000L)
-        .withZone(DateTimeZone.forOffsetHours(3));
-    verify(viewActions).setFormattedText(R.id.occupationTimeText, R.string.h_m_d, 2, 12,
-        DateTimeFormat.forPattern("HH:mm").print(dateTime));
     verify(viewActions).setVisible(R.id.cargoDescTitleText, true);
     verify(viewActions).setVisible(R.id.cargoDescText, true);
     verify(viewActions).setText(R.id.cargoDescText, "comm");
     verify(viewActions).setVisible(R.id.optionsTitleText, false);
     verify(viewActions).setVisible(R.id.optionsText, false);
     verify(viewActions).setText(R.id.optionsText, "");
-    verify(viewActions).setText(R.id.serviceText, "service");
     verify(viewActions).unblockWithPending("OrderViewState");
     verify(viewActions).dismissDialog();
     verifyNoMoreInteractions(viewActions);
@@ -1505,7 +1267,6 @@ public class OrderViewStateIdleTest {
     when(order.getRoutePath()).thenReturn(Arrays.asList(routePoint, routePoint1, routePoint2));
     when(order.getEstimatedTime()).thenReturn(7929000L);
     when(order.getEstimatedPrice()).thenReturn(681250L);
-    when(order.getServiceName()).thenReturn("service");
     when(order.getComment()).thenReturn("");
     when(order.getOptions()).thenReturn(new ArrayList<>(Arrays.asList(
         new OptionBoolean(0, "bool1", "bd", false),
@@ -1520,12 +1281,6 @@ public class OrderViewStateIdleTest {
     viewState.apply(viewActions);
 
     // Результат:
-    verify(viewActions).setImage(R.id.mapImage, "https://maps.googleapis.com/maps/api/staticmap?"
-        + "center=5.421,10.2341"
-        + "&zoom=16"
-        + "&size=360x200"
-        + "&maptype=roadmap"
-        + "&key=AIzaSyBwlubLyqI6z_ivfAWcTCfyTXkoRHTagMk");
     verify(viewActions).setVisible(R.id.paymentTypeSign, false);
     verify(viewActions).setText(R.id.routeType, R.string.intercity);
     verify(viewActions).setFormattedText(R.id.distanceText, R.string.km, 12.239d);
@@ -1543,31 +1298,24 @@ public class OrderViewStateIdleTest {
     DecimalFormat decimalFormat = new DecimalFormat("##,###,###.## ₽");
     decimalFormat.setMaximumFractionDigits(2);
     decimalFormat.setMinimumFractionDigits(2);
-    verify(viewActions).setFormattedText(R.id.estimationText, R.string.km_h_m_p, 31.278d, 2, 12,
-        decimalFormat.format(6812.50)
-    );
+    verify(viewActions).setFormattedText(R.id.estimationText, R.string.h_m_km, 2, 12, 31.278d);
     verify(viewActions).setFormattedText(R.id.estimatedPriceText, R.string.price,
         decimalFormat.format(6812.50)
     );
-    verify(viewActions).setText(R.id.startDateText,
-        DateTimeFormat.forPattern("d MMMM, EEEE").print(
+    verify(viewActions).setText(R.id.startDateAndTimeText,
+        DateTimeFormat.forPattern("d MMM, HH:mm").print(
             DateTime.now().withMillis(1238403200L).withZone(DateTimeZone.forOffsetHours(3))
         ));
     verify(viewActions).setText(R.id.startTimeText,
         DateTimeFormat.forPattern("HH:mm").print(
             DateTime.now().withMillis(1238403200L).withZone(DateTimeZone.forOffsetHours(3))
         ));
-    DateTime dateTime = DateTime.now().withMillis(1238403200L + 7929000L)
-        .withZone(DateTimeZone.forOffsetHours(3));
-    verify(viewActions).setFormattedText(R.id.occupationTimeText, R.string.h_m_d, 2, 12,
-        DateTimeFormat.forPattern("HH:mm").print(dateTime));
     verify(viewActions).setVisible(R.id.cargoDescTitleText, false);
     verify(viewActions).setVisible(R.id.cargoDescText, false);
     verify(viewActions).setText(R.id.cargoDescText, "");
     verify(viewActions).setVisible(R.id.optionsTitleText, true);
     verify(viewActions).setVisible(R.id.optionsText, true);
     verify(viewActions).setText(R.id.optionsText, "bool2\nbool4\nnum1: 3\nnum2: 7");
-    verify(viewActions).setText(R.id.serviceText, "service");
     verify(viewActions).unblockWithPending("OrderViewState");
     verify(viewActions).dismissDialog();
     verifyNoMoreInteractions(viewActions);
@@ -1591,7 +1339,6 @@ public class OrderViewStateIdleTest {
     when(order.getRoutePath()).thenReturn(Collections.singletonList(routePoint));
     when(order.getEstimatedTime()).thenReturn(7929000L);
     when(order.getEstimatedPrice()).thenReturn(681254L);
-    when(order.getServiceName()).thenReturn("service");
     when(order.getComment()).thenReturn("comm");
     when(order.getOptions()).thenReturn(new ArrayList<>(Arrays.asList(
         new OptionBoolean(0, "bool1", "bd", false),
@@ -1606,12 +1353,6 @@ public class OrderViewStateIdleTest {
     viewState.apply(viewActions);
 
     // Результат:
-    verify(viewActions).setImage(R.id.mapImage, "https://maps.googleapis.com/maps/api/staticmap?"
-        + "center=5.421,10.2341"
-        + "&zoom=16"
-        + "&size=360x200"
-        + "&maptype=roadmap"
-        + "&key=AIzaSyBwlubLyqI6z_ivfAWcTCfyTXkoRHTagMk");
     verify(viewActions).setVisible(R.id.paymentTypeSign, false);
     verify(viewActions).setText(R.id.routeType, R.string.intercity);
     verify(viewActions).setFormattedText(R.id.distanceText, R.string.km, 12.239d);
@@ -1629,31 +1370,24 @@ public class OrderViewStateIdleTest {
     DecimalFormat decimalFormat = new DecimalFormat("##,###,### ₽");
     decimalFormat.setMaximumFractionDigits(0);
     decimalFormat.setMinimumFractionDigits(0);
-    verify(viewActions).setFormattedText(R.id.estimationText, R.string.km_h_m_p, 31.278d, 2, 12,
-        decimalFormat.format(6813)
-    );
+    verify(viewActions).setFormattedText(R.id.estimationText, R.string.h_m_km, 2, 12, 31.278d);
     verify(viewActions).setFormattedText(R.id.estimatedPriceText, R.string.price,
         decimalFormat.format(6813)
     );
-    verify(viewActions).setText(R.id.startDateText,
-        DateTimeFormat.forPattern("d MMMM, EEEE").print(
+    verify(viewActions).setText(R.id.startDateAndTimeText,
+        DateTimeFormat.forPattern("d MMM, HH:mm").print(
             DateTime.now().withMillis(1238403200L).withZone(DateTimeZone.forOffsetHours(3))
         ));
     verify(viewActions).setText(R.id.startTimeText,
         DateTimeFormat.forPattern("HH:mm").print(
             DateTime.now().withMillis(1238403200L).withZone(DateTimeZone.forOffsetHours(3))
         ));
-    DateTime dateTime = DateTime.now().withMillis(1238403200L + 7929000L)
-        .withZone(DateTimeZone.forOffsetHours(3));
-    verify(viewActions).setFormattedText(R.id.occupationTimeText, R.string.h_m_d, 2, 12,
-        DateTimeFormat.forPattern("HH:mm").print(dateTime));
     verify(viewActions).setVisible(R.id.cargoDescTitleText, true);
     verify(viewActions).setVisible(R.id.cargoDescText, true);
     verify(viewActions).setText(R.id.cargoDescText, "comm");
     verify(viewActions).setVisible(R.id.optionsTitleText, true);
     verify(viewActions).setVisible(R.id.optionsText, true);
     verify(viewActions).setText(R.id.optionsText, "bool2\nbool4\nnum1: 3\nnum2: 7");
-    verify(viewActions).setText(R.id.serviceText, "service");
     verify(viewActions).unblockWithPending("OrderViewState");
     verify(viewActions).dismissDialog();
     verifyNoMoreInteractions(viewActions);
@@ -1677,7 +1411,6 @@ public class OrderViewStateIdleTest {
     when(order.getScheduledStartTime()).thenReturn(1238403200L);
     when(order.getEstimatedTime()).thenReturn(7929000L);
     when(order.getEstimatedPrice()).thenReturn(681254L);
-    when(order.getServiceName()).thenReturn("service");
     when(order.getComment()).thenReturn("");
     when(order.getOptions()).thenReturn(new ArrayList<>(Arrays.asList(
         new OptionBoolean(0, "bool1", "bd", false),
@@ -1692,12 +1425,6 @@ public class OrderViewStateIdleTest {
     viewState.apply(viewActions);
 
     // Результат:
-    verify(viewActions).setImage(R.id.mapImage, "https://maps.googleapis.com/maps/api/staticmap?"
-        + "center=5.421,10.2341"
-        + "&zoom=16"
-        + "&size=360x200"
-        + "&maptype=roadmap"
-        + "&key=AIzaSyBwlubLyqI6z_ivfAWcTCfyTXkoRHTagMk");
     verify(viewActions).setVisible(R.id.paymentTypeSign, false);
     verify(viewActions).setText(R.id.routeType, R.string.intercity);
     verify(viewActions).setFormattedText(R.id.distanceText, R.string.km, 12.239d);
@@ -1715,31 +1442,24 @@ public class OrderViewStateIdleTest {
     DecimalFormat decimalFormat = new DecimalFormat("##,###,###.## ₽");
     decimalFormat.setMaximumFractionDigits(2);
     decimalFormat.setMinimumFractionDigits(2);
-    verify(viewActions).setFormattedText(R.id.estimationText, R.string.km_h_m_p, 31.278d, 2, 12,
-        decimalFormat.format(6812.54)
-    );
+    verify(viewActions).setFormattedText(R.id.estimationText, R.string.h_m_km, 2, 12, 31.278d);
     verify(viewActions).setFormattedText(R.id.estimatedPriceText, R.string.price,
         decimalFormat.format(6812.54)
     );
-    verify(viewActions).setText(R.id.startDateText,
-        DateTimeFormat.forPattern("d MMMM, EEEE").print(
+    verify(viewActions).setText(R.id.startDateAndTimeText,
+        DateTimeFormat.forPattern("d MMM, HH:mm").print(
             DateTime.now().withMillis(1238403200L).withZone(DateTimeZone.forOffsetHours(3))
         ));
     verify(viewActions).setText(R.id.startTimeText,
         DateTimeFormat.forPattern("HH:mm").print(
             DateTime.now().withMillis(1238403200L).withZone(DateTimeZone.forOffsetHours(3))
         ));
-    DateTime dateTime = DateTime.now().withMillis(1238403200L + 7929000L)
-        .withZone(DateTimeZone.forOffsetHours(3));
-    verify(viewActions).setFormattedText(R.id.occupationTimeText, R.string.h_m_d, 2, 12,
-        DateTimeFormat.forPattern("HH:mm").print(dateTime));
     verify(viewActions).setVisible(R.id.cargoDescTitleText, false);
     verify(viewActions).setVisible(R.id.cargoDescText, false);
     verify(viewActions).setText(R.id.cargoDescText, "");
     verify(viewActions).setVisible(R.id.optionsTitleText, true);
     verify(viewActions).setVisible(R.id.optionsText, true);
     verify(viewActions).setText(R.id.optionsText, "bool2\nbool4\nnum1: 3\nnum2: 7");
-    verify(viewActions).setText(R.id.serviceText, "service");
     verify(viewActions).unblockWithPending("OrderViewState");
     verify(viewActions).dismissDialog();
     verifyNoMoreInteractions(viewActions);
@@ -1764,7 +1484,6 @@ public class OrderViewStateIdleTest {
     when(order.getRoutePath()).thenReturn(Arrays.asList(routePoint, routePoint1, routePoint2));
     when(order.getEstimatedTime()).thenReturn(7929000L);
     when(order.getEstimatedPrice()).thenReturn(681250L);
-    when(order.getServiceName()).thenReturn("service");
     when(order.getComment()).thenReturn("comm");
     when(order.getOptions()).thenReturn(new ArrayList<>());
 
@@ -1772,12 +1491,6 @@ public class OrderViewStateIdleTest {
     viewState.apply(viewActions);
 
     // Результат:
-    verify(viewActions).setImage(R.id.mapImage, "https://maps.googleapis.com/maps/api/staticmap?"
-        + "center=5.421,10.2341"
-        + "&zoom=16"
-        + "&size=360x200"
-        + "&maptype=roadmap"
-        + "&key=AIzaSyBwlubLyqI6z_ivfAWcTCfyTXkoRHTagMk");
     verify(viewActions).setVisible(R.id.paymentTypeSign, true);
     verify(viewActions).setText(R.id.routeType, R.string.intercity);
     verify(viewActions).setFormattedText(R.id.distanceText, R.string.km, 12.239d);
@@ -1795,31 +1508,24 @@ public class OrderViewStateIdleTest {
     DecimalFormat decimalFormat = new DecimalFormat("##,###,### ₽");
     decimalFormat.setMaximumFractionDigits(0);
     decimalFormat.setMinimumFractionDigits(0);
-    verify(viewActions).setFormattedText(R.id.estimationText, R.string.km_h_m_p, 31.278d, 2, 12,
-        decimalFormat.format(6813)
-    );
+    verify(viewActions).setFormattedText(R.id.estimationText, R.string.h_m_km, 2, 12, 31.278d);
     verify(viewActions).setFormattedText(R.id.estimatedPriceText, R.string.price,
         decimalFormat.format(6813)
     );
-    verify(viewActions).setText(R.id.startDateText,
-        DateTimeFormat.forPattern("d MMMM, EEEE").print(
+    verify(viewActions).setText(R.id.startDateAndTimeText,
+        DateTimeFormat.forPattern("d MMM, HH:mm").print(
             DateTime.now().withMillis(1238403200L).withZone(DateTimeZone.forOffsetHours(3))
         ));
     verify(viewActions).setText(R.id.startTimeText,
         DateTimeFormat.forPattern("HH:mm").print(
             DateTime.now().withMillis(1238403200L).withZone(DateTimeZone.forOffsetHours(3))
         ));
-    DateTime dateTime = DateTime.now().withMillis(1238403200L + 7929000L)
-        .withZone(DateTimeZone.forOffsetHours(3));
-    verify(viewActions).setFormattedText(R.id.occupationTimeText, R.string.h_m_d, 2, 12,
-        DateTimeFormat.forPattern("HH:mm").print(dateTime));
     verify(viewActions).setVisible(R.id.cargoDescTitleText, true);
     verify(viewActions).setVisible(R.id.cargoDescText, true);
     verify(viewActions).setText(R.id.cargoDescText, "comm");
     verify(viewActions).setVisible(R.id.optionsTitleText, false);
     verify(viewActions).setVisible(R.id.optionsText, false);
     verify(viewActions).setText(R.id.optionsText, "");
-    verify(viewActions).setText(R.id.serviceText, "service");
     verify(viewActions).unblockWithPending("OrderViewState");
     verify(viewActions).dismissDialog();
     verifyNoMoreInteractions(viewActions);
@@ -1844,7 +1550,6 @@ public class OrderViewStateIdleTest {
     when(order.getRoutePath()).thenReturn(Arrays.asList(routePoint, routePoint1, routePoint2));
     when(order.getEstimatedTime()).thenReturn(7929000L);
     when(order.getEstimatedPrice()).thenReturn(681250L);
-    when(order.getServiceName()).thenReturn("service");
     when(order.getComment()).thenReturn("");
     when(order.getOptions()).thenReturn(new ArrayList<>(Arrays.asList(
         new OptionBoolean(0, "bool1", "bd", false),
@@ -1859,12 +1564,6 @@ public class OrderViewStateIdleTest {
     viewState.apply(viewActions);
 
     // Результат:
-    verify(viewActions).setImage(R.id.mapImage, "https://maps.googleapis.com/maps/api/staticmap?"
-        + "center=5.421,10.2341"
-        + "&zoom=16"
-        + "&size=360x200"
-        + "&maptype=roadmap"
-        + "&key=AIzaSyBwlubLyqI6z_ivfAWcTCfyTXkoRHTagMk");
     verify(viewActions).setVisible(R.id.paymentTypeSign, true);
     verify(viewActions).setText(R.id.routeType, R.string.intercity);
     verify(viewActions).setFormattedText(R.id.distanceText, R.string.km, 12.239d);
@@ -1882,31 +1581,24 @@ public class OrderViewStateIdleTest {
     DecimalFormat decimalFormat = new DecimalFormat("##,###,###.## ₽");
     decimalFormat.setMaximumFractionDigits(2);
     decimalFormat.setMinimumFractionDigits(2);
-    verify(viewActions).setFormattedText(R.id.estimationText, R.string.km_h_m_p, 31.278d, 2, 12,
-        decimalFormat.format(6812.50)
-    );
+    verify(viewActions).setFormattedText(R.id.estimationText, R.string.h_m_km, 2, 12, 31.278d);
     verify(viewActions).setFormattedText(R.id.estimatedPriceText, R.string.price,
         decimalFormat.format(6812.50)
     );
-    verify(viewActions).setText(R.id.startDateText,
-        DateTimeFormat.forPattern("d MMMM, EEEE").print(
+    verify(viewActions).setText(R.id.startDateAndTimeText,
+        DateTimeFormat.forPattern("d MMM, HH:mm").print(
             DateTime.now().withMillis(1238403200L).withZone(DateTimeZone.forOffsetHours(3))
         ));
     verify(viewActions).setText(R.id.startTimeText,
         DateTimeFormat.forPattern("HH:mm").print(
             DateTime.now().withMillis(1238403200L).withZone(DateTimeZone.forOffsetHours(3))
         ));
-    DateTime dateTime = DateTime.now().withMillis(1238403200L + 7929000L)
-        .withZone(DateTimeZone.forOffsetHours(3));
-    verify(viewActions).setFormattedText(R.id.occupationTimeText, R.string.h_m_d, 2, 12,
-        DateTimeFormat.forPattern("HH:mm").print(dateTime));
     verify(viewActions).setVisible(R.id.cargoDescTitleText, false);
     verify(viewActions).setVisible(R.id.cargoDescText, false);
     verify(viewActions).setText(R.id.cargoDescText, "");
     verify(viewActions).setVisible(R.id.optionsTitleText, true);
     verify(viewActions).setVisible(R.id.optionsText, true);
     verify(viewActions).setText(R.id.optionsText, "bool2\nbool4\nnum1: 3\nnum2: 7");
-    verify(viewActions).setText(R.id.serviceText, "service");
     verify(viewActions).unblockWithPending("OrderViewState");
     verify(viewActions).dismissDialog();
     verifyNoMoreInteractions(viewActions);
@@ -1930,7 +1622,6 @@ public class OrderViewStateIdleTest {
     when(order.getRoutePath()).thenReturn(Collections.singletonList(routePoint));
     when(order.getEstimatedTime()).thenReturn(7929000L);
     when(order.getEstimatedPrice()).thenReturn(681254L);
-    when(order.getServiceName()).thenReturn("service");
     when(order.getComment()).thenReturn("comm");
     when(order.getOptions()).thenReturn(new ArrayList<>(Arrays.asList(
         new OptionBoolean(0, "bool1", "bd", false),
@@ -1945,12 +1636,6 @@ public class OrderViewStateIdleTest {
     viewState.apply(viewActions);
 
     // Результат:
-    verify(viewActions).setImage(R.id.mapImage, "https://maps.googleapis.com/maps/api/staticmap?"
-        + "center=5.421,10.2341"
-        + "&zoom=16"
-        + "&size=360x200"
-        + "&maptype=roadmap"
-        + "&key=AIzaSyBwlubLyqI6z_ivfAWcTCfyTXkoRHTagMk");
     verify(viewActions).setVisible(R.id.paymentTypeSign, true);
     verify(viewActions).setText(R.id.routeType, R.string.intercity);
     verify(viewActions).setFormattedText(R.id.distanceText, R.string.km, 12.239d);
@@ -1968,31 +1653,24 @@ public class OrderViewStateIdleTest {
     DecimalFormat decimalFormat = new DecimalFormat("##,###,### ₽");
     decimalFormat.setMaximumFractionDigits(0);
     decimalFormat.setMinimumFractionDigits(0);
-    verify(viewActions).setFormattedText(R.id.estimationText, R.string.km_h_m_p, 31.278d, 2, 12,
-        decimalFormat.format(6813)
-    );
+    verify(viewActions).setFormattedText(R.id.estimationText, R.string.h_m_km, 2, 12, 31.278d);
     verify(viewActions).setFormattedText(R.id.estimatedPriceText, R.string.price,
         decimalFormat.format(6813)
     );
-    verify(viewActions).setText(R.id.startDateText,
-        DateTimeFormat.forPattern("d MMMM, EEEE").print(
+    verify(viewActions).setText(R.id.startDateAndTimeText,
+        DateTimeFormat.forPattern("d MMM, HH:mm").print(
             DateTime.now().withMillis(1238403200L).withZone(DateTimeZone.forOffsetHours(3))
         ));
     verify(viewActions).setText(R.id.startTimeText,
         DateTimeFormat.forPattern("HH:mm").print(
             DateTime.now().withMillis(1238403200L).withZone(DateTimeZone.forOffsetHours(3))
         ));
-    DateTime dateTime = DateTime.now().withMillis(1238403200L + 7929000L)
-        .withZone(DateTimeZone.forOffsetHours(3));
-    verify(viewActions).setFormattedText(R.id.occupationTimeText, R.string.h_m_d, 2, 12,
-        DateTimeFormat.forPattern("HH:mm").print(dateTime));
     verify(viewActions).setVisible(R.id.cargoDescTitleText, true);
     verify(viewActions).setVisible(R.id.cargoDescText, true);
     verify(viewActions).setText(R.id.cargoDescText, "comm");
     verify(viewActions).setVisible(R.id.optionsTitleText, true);
     verify(viewActions).setVisible(R.id.optionsText, true);
     verify(viewActions).setText(R.id.optionsText, "bool2\nbool4\nnum1: 3\nnum2: 7");
-    verify(viewActions).setText(R.id.serviceText, "service");
     verify(viewActions).unblockWithPending("OrderViewState");
     verify(viewActions).dismissDialog();
     verifyNoMoreInteractions(viewActions);
@@ -2016,7 +1694,6 @@ public class OrderViewStateIdleTest {
     when(order.getScheduledStartTime()).thenReturn(1238403200L);
     when(order.getEstimatedTime()).thenReturn(7929000L);
     when(order.getEstimatedPrice()).thenReturn(681254L);
-    when(order.getServiceName()).thenReturn("service");
     when(order.getComment()).thenReturn("");
     when(order.getOptions()).thenReturn(new ArrayList<>(Arrays.asList(
         new OptionBoolean(0, "bool1", "bd", false),
@@ -2031,12 +1708,6 @@ public class OrderViewStateIdleTest {
     viewState.apply(viewActions);
 
     // Результат:
-    verify(viewActions).setImage(R.id.mapImage, "https://maps.googleapis.com/maps/api/staticmap?"
-        + "center=5.421,10.2341"
-        + "&zoom=16"
-        + "&size=360x200"
-        + "&maptype=roadmap"
-        + "&key=AIzaSyBwlubLyqI6z_ivfAWcTCfyTXkoRHTagMk");
     verify(viewActions).setVisible(R.id.paymentTypeSign, true);
     verify(viewActions).setText(R.id.routeType, R.string.intercity);
     verify(viewActions).setFormattedText(R.id.distanceText, R.string.km, 12.239d);
@@ -2054,31 +1725,24 @@ public class OrderViewStateIdleTest {
     DecimalFormat decimalFormat = new DecimalFormat("##,###,###.## ₽");
     decimalFormat.setMaximumFractionDigits(2);
     decimalFormat.setMinimumFractionDigits(2);
-    verify(viewActions).setFormattedText(R.id.estimationText, R.string.km_h_m_p, 31.278d, 2, 12,
-        decimalFormat.format(6812.54)
-    );
+    verify(viewActions).setFormattedText(R.id.estimationText, R.string.h_m_km, 2, 12, 31.278d);
     verify(viewActions).setFormattedText(R.id.estimatedPriceText, R.string.price,
         decimalFormat.format(6812.54)
     );
-    verify(viewActions).setText(R.id.startDateText,
-        DateTimeFormat.forPattern("d MMMM, EEEE").print(
+    verify(viewActions).setText(R.id.startDateAndTimeText,
+        DateTimeFormat.forPattern("d MMM, HH:mm").print(
             DateTime.now().withMillis(1238403200L).withZone(DateTimeZone.forOffsetHours(3))
         ));
     verify(viewActions).setText(R.id.startTimeText,
         DateTimeFormat.forPattern("HH:mm").print(
             DateTime.now().withMillis(1238403200L).withZone(DateTimeZone.forOffsetHours(3))
         ));
-    DateTime dateTime = DateTime.now().withMillis(1238403200L + 7929000L)
-        .withZone(DateTimeZone.forOffsetHours(3));
-    verify(viewActions).setFormattedText(R.id.occupationTimeText, R.string.h_m_d, 2, 12,
-        DateTimeFormat.forPattern("HH:mm").print(dateTime));
     verify(viewActions).setVisible(R.id.cargoDescTitleText, false);
     verify(viewActions).setVisible(R.id.cargoDescText, false);
     verify(viewActions).setText(R.id.cargoDescText, "");
     verify(viewActions).setVisible(R.id.optionsTitleText, true);
     verify(viewActions).setVisible(R.id.optionsText, true);
     verify(viewActions).setText(R.id.optionsText, "bool2\nbool4\nnum1: 3\nnum2: 7");
-    verify(viewActions).setText(R.id.serviceText, "service");
     verify(viewActions).unblockWithPending("OrderViewState");
     verify(viewActions).dismissDialog();
     verifyNoMoreInteractions(viewActions);
