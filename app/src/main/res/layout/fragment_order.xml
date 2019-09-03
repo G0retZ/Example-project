@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
-  xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
   xmlns:app="http://schemas.android.com/apk/res-auto"
   xmlns:tools="http://schemas.android.com/tools"
   android:scrollbarStyle="outsideOverlay"
@@ -14,12 +13,13 @@
       android:id="@+id/routePointMark1"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
+      android:layout_marginTop="16dp"
       android:layout_marginStart="16dp"
       android:layout_marginLeft="16dp"
       android:contentDescription="@null"
       app:layout_constraintStart_toStartOf="parent"
-      app:layout_constraintTop_toBottomOf="@id/routeTitleText"
-      app:srcCompat="@drawable/ic_route_point"/>
+      app:layout_constraintTop_toBottomOf="@id/optionsText"
+      app:srcCompat="@drawable/ic_route_point" />
     <ImageView
       android:layout_width="0dp"
       android:layout_height="0dp"
@@ -136,7 +136,7 @@
       android:layout_marginEnd="16dp"
       app:layout_constraintStart_toStartOf="parent"
       app:layout_constraintTop_toBottomOf="@id/cargoDescTitleText"
-      tools:text="Заехать купить 10 коробок. Чистая машина. Не курить!"/>
+      tools:text="Заехать купить 10 коробок. Чистая машина. Не курить!" />
     <TextView
       android:id="@+id/optionsTitleText"
       style="@style/TextAppearance.AppTheme.Subhead"
@@ -147,7 +147,7 @@
       android:layout_marginEnd="16dp"
       android:text="@string/options"
       app:layout_constraintStart_toStartOf="parent"
-      app:layout_constraintTop_toBottomOf="@id/cargoDescText"/>
+      app:layout_constraintTop_toBottomOf="@id/cargoDescText" />
     <TextView
       android:id="@+id/optionsText"
       style="@style/TextAppearance.AppTheme.Title"
@@ -158,7 +158,7 @@
       android:lineSpacingExtra="6dp"
       app:layout_constraintStart_toStartOf="parent"
       app:layout_constraintTop_toBottomOf="@id/optionsTitleText"
-      tools:text="Пропуск в центр Москвы\nОткрытый кузов\nРемни-крепления\nМобильный банк\nГрузчики: 2\nПассажиры: 3"/>
+      tools:text="Пропуск в центр Москвы\nОткрытый кузов\nРемни-крепления\nМобильный банк\nГрузчики: 2\nПассажиры: 3" />
     <TextView
       android:id="@+id/distanceText"
       style="@style/TextAppearance.AppTheme.Title"
@@ -181,18 +181,6 @@
       app:layout_constraintStart_toStartOf="parent"
       app:layout_constraintTop_toBottomOf="@id/distanceText" />
     <TextView
-      android:id="@+id/routeTitleText"
-      style="@style/TextAppearance.AppTheme.Subhead"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_marginTop="16dp"
-      android:layout_marginStart="16dp"
-      android:layout_marginEnd="16dp"
-      android:paddingBottom="8dp"
-      android:text="@string/route"
-      app:layout_constraintStart_toStartOf="parent"
-      app:layout_constraintTop_toBottomOf="@id/optionsText" />
-    <TextView
       style="@style/TextAppearance.AppTheme.SubTitle"
       android:textStyle="bold"
       android:layout_width="0dp"
@@ -208,11 +196,12 @@
       style="@style/TextAppearance.AppTheme.SubTitle"
       android:layout_width="0dp"
       android:layout_height="wrap_content"
+      android:layout_marginTop="16dp"
       android:layout_marginStart="16dp"
       android:layout_marginEnd="16dp"
       app:layout_constraintEnd_toEndOf="parent"
       app:layout_constraintStart_toEndOf="@id/routePointMark1"
-      app:layout_constraintTop_toBottomOf="@id/routeTitleText"
+      app:layout_constraintTop_toBottomOf="@id/optionsText"
       tools:text="Москва, ул. Академика Пилюгина, 14 корпус 4, кв. 1122, П2, Э8" />
     <TextView
       android:id="@+id/routePointsCount"

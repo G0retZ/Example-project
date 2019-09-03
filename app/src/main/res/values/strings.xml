@@ -75,7 +75,6 @@
   <string name="select">Выбрать</string>
   <string name="in_progress">В работе</string>
   <string name="route">Маршрут</string>
-  <string name="route_distance">Маршрут %1$.2f км</string>
   <string name="order_details">Информация о заказе</string>
   <string name="report_a_problem">Сообщить о проблеме</string>
   <string name="cancel_reason">Причина отмены</string>
@@ -90,7 +89,7 @@
   <string name="important_info">Важная информация</string>
   <string name="service">Услуга</string>
   <string name="order_duration_and_distance">Длительность и пробег</string>
-  <string name="h_m_km">%1$d ч. %2$d мин., %3$.2f км</string>
+  <string name="h_m_km">%1$d ч. %2$d мин., %3$d км</string>
   <string name="price">≈ %1$s</string>
   <string name="h_m">%1$d ч. %2$d мин.</string>
   <string name="address">Адрес</string>

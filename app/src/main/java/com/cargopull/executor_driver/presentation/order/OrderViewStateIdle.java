@@ -45,9 +45,6 @@ final class OrderViewStateIdle implements ViewState<OrderViewActions> {
     }
     // Расстояние в км
     stateActions.setFormattedText(R.id.distanceText, R.string.km, order.getDistance() / 1000d);
-    // Длинна маршрута
-    stateActions.setFormattedText(R.id.routeTitleText, R.string.route_distance,
-        order.getEstimatedRouteLength() / 1000d);
     // Следующий адрес
     RoutePoint routePoint = order.getNextActiveRoutePoint();
     stateActions.setText(R.id.nextAddressText, routePoint.getAddress().trim());
@@ -81,7 +78,7 @@ final class OrderViewStateIdle implements ViewState<OrderViewActions> {
     stateActions.setFormattedText(R.id.estimationText, R.string.h_m_km,
         localTime.getHourOfDay(),
         localTime.getMinuteOfHour(),
-        order.getEstimatedRouteLength() / 1000d
+        Math.round(order.getEstimatedRouteLength() / 1000f)
     );
     stateActions.setFormattedText(R.id.estimatedPriceText, R.string.price,
         decimalFormat.format(cost)

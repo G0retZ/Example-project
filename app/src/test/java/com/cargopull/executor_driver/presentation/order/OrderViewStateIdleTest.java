@@ -79,7 +79,6 @@ public class OrderViewStateIdleTest {
     verify(viewActions).setVisible(R.id.paymentTypeSign, false);
     verify(viewActions).setText(R.id.routeType, R.string.city);
     verify(viewActions).setFormattedText(R.id.distanceText, R.string.km, 12.239d);
-    verify(viewActions).setFormattedText(R.id.routeTitleText, R.string.route_distance, 31.278d);
     verify(viewActions).setText(R.id.nextAddressText, "address");
     verify(viewActions)
         .setFormattedText(R.id.openNavigator, R.string.client_location, 5.421, 10.2341);
@@ -93,7 +92,7 @@ public class OrderViewStateIdleTest {
     DecimalFormat decimalFormat = new DecimalFormat("##,###,### ₽");
     decimalFormat.setMaximumFractionDigits(0);
     decimalFormat.setMinimumFractionDigits(0);
-    verify(viewActions).setFormattedText(R.id.estimationText, R.string.h_m_km, 2, 12, 31.278d);
+    verify(viewActions).setFormattedText(R.id.estimationText, R.string.h_m_km, 2, 12, 31);
     verify(viewActions).setFormattedText(R.id.estimatedPriceText, R.string.price,
         decimalFormat.format(6813)
     );
@@ -152,7 +151,6 @@ public class OrderViewStateIdleTest {
     verify(viewActions).setVisible(R.id.paymentTypeSign, false);
     verify(viewActions).setText(R.id.routeType, R.string.city);
     verify(viewActions).setFormattedText(R.id.distanceText, R.string.km, 12.239d);
-    verify(viewActions).setFormattedText(R.id.routeTitleText, R.string.route_distance, 31.278d);
     verify(viewActions).setText(R.id.nextAddressText, "address");
     verify(viewActions)
         .setFormattedText(R.id.openNavigator, R.string.client_location, 5.421, 10.2341);
@@ -166,7 +164,7 @@ public class OrderViewStateIdleTest {
     DecimalFormat decimalFormat = new DecimalFormat("##,###,###.## ₽");
     decimalFormat.setMaximumFractionDigits(2);
     decimalFormat.setMinimumFractionDigits(2);
-    verify(viewActions).setFormattedText(R.id.estimationText, R.string.h_m_km, 2, 12, 31.278d);
+    verify(viewActions).setFormattedText(R.id.estimationText, R.string.h_m_km, 2, 12, 31);
     verify(viewActions).setFormattedText(R.id.estimatedPriceText, R.string.price,
         decimalFormat.format(6812.50)
     );
@@ -224,7 +222,6 @@ public class OrderViewStateIdleTest {
     verify(viewActions).setVisible(R.id.paymentTypeSign, false);
     verify(viewActions).setText(R.id.routeType, R.string.city);
     verify(viewActions).setFormattedText(R.id.distanceText, R.string.km, 12.239d);
-    verify(viewActions).setFormattedText(R.id.routeTitleText, R.string.route_distance, 31.278d);
     verify(viewActions).setText(R.id.nextAddressText, "address");
     verify(viewActions)
         .setFormattedText(R.id.openNavigator, R.string.client_location, 5.421, 10.2341);
@@ -238,7 +235,7 @@ public class OrderViewStateIdleTest {
     DecimalFormat decimalFormat = new DecimalFormat("##,###,### ₽");
     decimalFormat.setMaximumFractionDigits(0);
     decimalFormat.setMinimumFractionDigits(0);
-    verify(viewActions).setFormattedText(R.id.estimationText, R.string.h_m_km, 2, 12, 31.278d);
+    verify(viewActions).setFormattedText(R.id.estimationText, R.string.h_m_km, 2, 12, 31);
     verify(viewActions).setFormattedText(R.id.estimatedPriceText, R.string.price,
         decimalFormat.format(6813)
     );
@@ -296,7 +293,6 @@ public class OrderViewStateIdleTest {
     verify(viewActions).setVisible(R.id.paymentTypeSign, false);
     verify(viewActions).setText(R.id.routeType, R.string.city);
     verify(viewActions).setFormattedText(R.id.distanceText, R.string.km, 12.239d);
-    verify(viewActions).setFormattedText(R.id.routeTitleText, R.string.route_distance, 31.278d);
     verify(viewActions).setText(R.id.nextAddressText, "address");
     verify(viewActions)
         .setFormattedText(R.id.openNavigator, R.string.client_location, 5.421, 10.2341);
@@ -310,7 +306,7 @@ public class OrderViewStateIdleTest {
     DecimalFormat decimalFormat = new DecimalFormat("##,###,###.## ₽");
     decimalFormat.setMaximumFractionDigits(2);
     decimalFormat.setMinimumFractionDigits(2);
-    verify(viewActions).setFormattedText(R.id.estimationText, R.string.h_m_km, 2, 12, 31.278d);
+    verify(viewActions).setFormattedText(R.id.estimationText, R.string.h_m_km, 2, 12, 31);
     verify(viewActions).setFormattedText(R.id.estimatedPriceText, R.string.price,
         decimalFormat.format(6812.54)
     );
@@ -362,7 +358,6 @@ public class OrderViewStateIdleTest {
     verify(viewActions).setVisible(R.id.paymentTypeSign, true);
     verify(viewActions).setText(R.id.routeType, R.string.city);
     verify(viewActions).setFormattedText(R.id.distanceText, R.string.km, 12.239d);
-    verify(viewActions).setFormattedText(R.id.routeTitleText, R.string.route_distance, 31.278d);
     verify(viewActions).setText(R.id.nextAddressText, "address");
     verify(viewActions)
         .setFormattedText(R.id.openNavigator, R.string.client_location, 5.421, 10.2341);
@@ -376,7 +371,7 @@ public class OrderViewStateIdleTest {
     DecimalFormat decimalFormat = new DecimalFormat("##,###,### ₽");
     decimalFormat.setMaximumFractionDigits(0);
     decimalFormat.setMinimumFractionDigits(0);
-    verify(viewActions).setFormattedText(R.id.estimationText, R.string.h_m_km, 2, 12, 31.278d);
+    verify(viewActions).setFormattedText(R.id.estimationText, R.string.h_m_km, 2, 12, 31);
     verify(viewActions).setFormattedText(R.id.estimatedPriceText, R.string.price,
         decimalFormat.format(6813)
     );
@@ -435,7 +430,6 @@ public class OrderViewStateIdleTest {
     verify(viewActions).setVisible(R.id.paymentTypeSign, true);
     verify(viewActions).setText(R.id.routeType, R.string.city);
     verify(viewActions).setFormattedText(R.id.distanceText, R.string.km, 12.239d);
-    verify(viewActions).setFormattedText(R.id.routeTitleText, R.string.route_distance, 31.278d);
     verify(viewActions).setText(R.id.nextAddressText, "address");
     verify(viewActions)
         .setFormattedText(R.id.openNavigator, R.string.client_location, 5.421, 10.2341);
@@ -449,7 +443,7 @@ public class OrderViewStateIdleTest {
     DecimalFormat decimalFormat = new DecimalFormat("##,###,###.## ₽");
     decimalFormat.setMaximumFractionDigits(2);
     decimalFormat.setMinimumFractionDigits(2);
-    verify(viewActions).setFormattedText(R.id.estimationText, R.string.h_m_km, 2, 12, 31.278d);
+    verify(viewActions).setFormattedText(R.id.estimationText, R.string.h_m_km, 2, 12, 31);
     verify(viewActions).setFormattedText(R.id.estimatedPriceText, R.string.price,
         decimalFormat.format(6812.50)
     );
@@ -507,7 +501,6 @@ public class OrderViewStateIdleTest {
     verify(viewActions).setVisible(R.id.paymentTypeSign, true);
     verify(viewActions).setText(R.id.routeType, R.string.city);
     verify(viewActions).setFormattedText(R.id.distanceText, R.string.km, 12.239d);
-    verify(viewActions).setFormattedText(R.id.routeTitleText, R.string.route_distance, 31.278d);
     verify(viewActions).setText(R.id.nextAddressText, "address");
     verify(viewActions)
         .setFormattedText(R.id.openNavigator, R.string.client_location, 5.421, 10.2341);
@@ -521,7 +514,7 @@ public class OrderViewStateIdleTest {
     DecimalFormat decimalFormat = new DecimalFormat("##,###,### ₽");
     decimalFormat.setMaximumFractionDigits(0);
     decimalFormat.setMinimumFractionDigits(0);
-    verify(viewActions).setFormattedText(R.id.estimationText, R.string.h_m_km, 2, 12, 31.278d);
+    verify(viewActions).setFormattedText(R.id.estimationText, R.string.h_m_km, 2, 12, 31);
     verify(viewActions).setFormattedText(R.id.estimatedPriceText, R.string.price,
         decimalFormat.format(6813)
     );
@@ -579,7 +572,6 @@ public class OrderViewStateIdleTest {
     verify(viewActions).setVisible(R.id.paymentTypeSign, true);
     verify(viewActions).setText(R.id.routeType, R.string.city);
     verify(viewActions).setFormattedText(R.id.distanceText, R.string.km, 12.239d);
-    verify(viewActions).setFormattedText(R.id.routeTitleText, R.string.route_distance, 31.278d);
     verify(viewActions).setText(R.id.nextAddressText, "address");
     verify(viewActions)
         .setFormattedText(R.id.openNavigator, R.string.client_location, 5.421, 10.2341);
@@ -593,7 +585,7 @@ public class OrderViewStateIdleTest {
     DecimalFormat decimalFormat = new DecimalFormat("##,###,###.## ₽");
     decimalFormat.setMaximumFractionDigits(2);
     decimalFormat.setMinimumFractionDigits(2);
-    verify(viewActions).setFormattedText(R.id.estimationText, R.string.h_m_km, 2, 12, 31.278d);
+    verify(viewActions).setFormattedText(R.id.estimationText, R.string.h_m_km, 2, 12, 31);
     verify(viewActions).setFormattedText(R.id.estimatedPriceText, R.string.price,
         decimalFormat.format(6812.54)
     );
@@ -645,7 +637,6 @@ public class OrderViewStateIdleTest {
     verify(viewActions).setVisible(R.id.paymentTypeSign, false);
     verify(viewActions).setText(R.id.routeType, R.string.country);
     verify(viewActions).setFormattedText(R.id.distanceText, R.string.km, 12.239d);
-    verify(viewActions).setFormattedText(R.id.routeTitleText, R.string.route_distance, 31.278d);
     verify(viewActions).setText(R.id.nextAddressText, "address");
     verify(viewActions)
         .setFormattedText(R.id.openNavigator, R.string.client_location, 5.421, 10.2341);
@@ -659,7 +650,7 @@ public class OrderViewStateIdleTest {
     DecimalFormat decimalFormat = new DecimalFormat("##,###,### ₽");
     decimalFormat.setMaximumFractionDigits(0);
     decimalFormat.setMinimumFractionDigits(0);
-    verify(viewActions).setFormattedText(R.id.estimationText, R.string.h_m_km, 2, 12, 31.278d);
+    verify(viewActions).setFormattedText(R.id.estimationText, R.string.h_m_km, 2, 12, 31);
     verify(viewActions).setFormattedText(R.id.estimatedPriceText, R.string.price,
         decimalFormat.format(6813)
     );
@@ -718,7 +709,6 @@ public class OrderViewStateIdleTest {
     verify(viewActions).setVisible(R.id.paymentTypeSign, false);
     verify(viewActions).setText(R.id.routeType, R.string.country);
     verify(viewActions).setFormattedText(R.id.distanceText, R.string.km, 12.239d);
-    verify(viewActions).setFormattedText(R.id.routeTitleText, R.string.route_distance, 31.278d);
     verify(viewActions).setText(R.id.nextAddressText, "address");
     verify(viewActions)
         .setFormattedText(R.id.openNavigator, R.string.client_location, 5.421, 10.2341);
@@ -732,7 +722,7 @@ public class OrderViewStateIdleTest {
     DecimalFormat decimalFormat = new DecimalFormat("##,###,###.## ₽");
     decimalFormat.setMaximumFractionDigits(2);
     decimalFormat.setMinimumFractionDigits(2);
-    verify(viewActions).setFormattedText(R.id.estimationText, R.string.h_m_km, 2, 12, 31.278d);
+    verify(viewActions).setFormattedText(R.id.estimationText, R.string.h_m_km, 2, 12, 31);
     verify(viewActions).setFormattedText(R.id.estimatedPriceText, R.string.price,
         decimalFormat.format(6812.50)
     );
@@ -790,7 +780,6 @@ public class OrderViewStateIdleTest {
     verify(viewActions).setVisible(R.id.paymentTypeSign, false);
     verify(viewActions).setText(R.id.routeType, R.string.country);
     verify(viewActions).setFormattedText(R.id.distanceText, R.string.km, 12.239d);
-    verify(viewActions).setFormattedText(R.id.routeTitleText, R.string.route_distance, 31.278d);
     verify(viewActions).setText(R.id.nextAddressText, "address");
     verify(viewActions)
         .setFormattedText(R.id.openNavigator, R.string.client_location, 5.421, 10.2341);
@@ -804,7 +793,7 @@ public class OrderViewStateIdleTest {
     DecimalFormat decimalFormat = new DecimalFormat("##,###,### ₽");
     decimalFormat.setMaximumFractionDigits(0);
     decimalFormat.setMinimumFractionDigits(0);
-    verify(viewActions).setFormattedText(R.id.estimationText, R.string.h_m_km, 2, 12, 31.278d);
+    verify(viewActions).setFormattedText(R.id.estimationText, R.string.h_m_km, 2, 12, 31);
     verify(viewActions).setFormattedText(R.id.estimatedPriceText, R.string.price,
         decimalFormat.format(6813)
     );
@@ -862,7 +851,6 @@ public class OrderViewStateIdleTest {
     verify(viewActions).setVisible(R.id.paymentTypeSign, false);
     verify(viewActions).setText(R.id.routeType, R.string.country);
     verify(viewActions).setFormattedText(R.id.distanceText, R.string.km, 12.239d);
-    verify(viewActions).setFormattedText(R.id.routeTitleText, R.string.route_distance, 31.278d);
     verify(viewActions).setText(R.id.nextAddressText, "address");
     verify(viewActions)
         .setFormattedText(R.id.openNavigator, R.string.client_location, 5.421, 10.2341);
@@ -876,7 +864,7 @@ public class OrderViewStateIdleTest {
     DecimalFormat decimalFormat = new DecimalFormat("##,###,###.## ₽");
     decimalFormat.setMaximumFractionDigits(2);
     decimalFormat.setMinimumFractionDigits(2);
-    verify(viewActions).setFormattedText(R.id.estimationText, R.string.h_m_km, 2, 12, 31.278d);
+    verify(viewActions).setFormattedText(R.id.estimationText, R.string.h_m_km, 2, 12, 31);
     verify(viewActions).setFormattedText(R.id.estimatedPriceText, R.string.price,
         decimalFormat.format(6812.54)
     );
@@ -928,7 +916,6 @@ public class OrderViewStateIdleTest {
     verify(viewActions).setVisible(R.id.paymentTypeSign, true);
     verify(viewActions).setText(R.id.routeType, R.string.country);
     verify(viewActions).setFormattedText(R.id.distanceText, R.string.km, 12.239d);
-    verify(viewActions).setFormattedText(R.id.routeTitleText, R.string.route_distance, 31.278d);
     verify(viewActions).setText(R.id.nextAddressText, "address");
     verify(viewActions)
         .setFormattedText(R.id.openNavigator, R.string.client_location, 5.421, 10.2341);
@@ -942,7 +929,7 @@ public class OrderViewStateIdleTest {
     DecimalFormat decimalFormat = new DecimalFormat("##,###,### ₽");
     decimalFormat.setMaximumFractionDigits(0);
     decimalFormat.setMinimumFractionDigits(0);
-    verify(viewActions).setFormattedText(R.id.estimationText, R.string.h_m_km, 2, 12, 31.278d);
+    verify(viewActions).setFormattedText(R.id.estimationText, R.string.h_m_km, 2, 12, 31);
     verify(viewActions).setFormattedText(R.id.estimatedPriceText, R.string.price,
         decimalFormat.format(6813)
     );
@@ -1001,7 +988,6 @@ public class OrderViewStateIdleTest {
     verify(viewActions).setVisible(R.id.paymentTypeSign, true);
     verify(viewActions).setText(R.id.routeType, R.string.country);
     verify(viewActions).setFormattedText(R.id.distanceText, R.string.km, 12.239d);
-    verify(viewActions).setFormattedText(R.id.routeTitleText, R.string.route_distance, 31.278d);
     verify(viewActions).setText(R.id.nextAddressText, "address");
     verify(viewActions)
         .setFormattedText(R.id.openNavigator, R.string.client_location, 5.421, 10.2341);
@@ -1015,7 +1001,7 @@ public class OrderViewStateIdleTest {
     DecimalFormat decimalFormat = new DecimalFormat("##,###,###.## ₽");
     decimalFormat.setMaximumFractionDigits(2);
     decimalFormat.setMinimumFractionDigits(2);
-    verify(viewActions).setFormattedText(R.id.estimationText, R.string.h_m_km, 2, 12, 31.278d);
+    verify(viewActions).setFormattedText(R.id.estimationText, R.string.h_m_km, 2, 12, 31);
     verify(viewActions).setFormattedText(R.id.estimatedPriceText, R.string.price,
         decimalFormat.format(6812.50)
     );
@@ -1073,7 +1059,6 @@ public class OrderViewStateIdleTest {
     verify(viewActions).setVisible(R.id.paymentTypeSign, true);
     verify(viewActions).setText(R.id.routeType, R.string.country);
     verify(viewActions).setFormattedText(R.id.distanceText, R.string.km, 12.239d);
-    verify(viewActions).setFormattedText(R.id.routeTitleText, R.string.route_distance, 31.278d);
     verify(viewActions).setText(R.id.nextAddressText, "address");
     verify(viewActions)
         .setFormattedText(R.id.openNavigator, R.string.client_location, 5.421, 10.2341);
@@ -1087,7 +1072,7 @@ public class OrderViewStateIdleTest {
     DecimalFormat decimalFormat = new DecimalFormat("##,###,### ₽");
     decimalFormat.setMaximumFractionDigits(0);
     decimalFormat.setMinimumFractionDigits(0);
-    verify(viewActions).setFormattedText(R.id.estimationText, R.string.h_m_km, 2, 12, 31.278d);
+    verify(viewActions).setFormattedText(R.id.estimationText, R.string.h_m_km, 2, 12, 31);
     verify(viewActions).setFormattedText(R.id.estimatedPriceText, R.string.price,
         decimalFormat.format(6813)
     );
@@ -1145,7 +1130,6 @@ public class OrderViewStateIdleTest {
     verify(viewActions).setVisible(R.id.paymentTypeSign, true);
     verify(viewActions).setText(R.id.routeType, R.string.country);
     verify(viewActions).setFormattedText(R.id.distanceText, R.string.km, 12.239d);
-    verify(viewActions).setFormattedText(R.id.routeTitleText, R.string.route_distance, 31.278d);
     verify(viewActions).setText(R.id.nextAddressText, "address");
     verify(viewActions)
         .setFormattedText(R.id.openNavigator, R.string.client_location, 5.421, 10.2341);
@@ -1159,7 +1143,7 @@ public class OrderViewStateIdleTest {
     DecimalFormat decimalFormat = new DecimalFormat("##,###,###.## ₽");
     decimalFormat.setMaximumFractionDigits(2);
     decimalFormat.setMinimumFractionDigits(2);
-    verify(viewActions).setFormattedText(R.id.estimationText, R.string.h_m_km, 2, 12, 31.278d);
+    verify(viewActions).setFormattedText(R.id.estimationText, R.string.h_m_km, 2, 12, 31);
     verify(viewActions).setFormattedText(R.id.estimatedPriceText, R.string.price,
         decimalFormat.format(6812.54)
     );
@@ -1211,7 +1195,6 @@ public class OrderViewStateIdleTest {
     verify(viewActions).setVisible(R.id.paymentTypeSign, false);
     verify(viewActions).setText(R.id.routeType, R.string.intercity);
     verify(viewActions).setFormattedText(R.id.distanceText, R.string.km, 12.239d);
-    verify(viewActions).setFormattedText(R.id.routeTitleText, R.string.route_distance, 31.278d);
     verify(viewActions).setText(R.id.nextAddressText, "address");
     verify(viewActions)
         .setFormattedText(R.id.openNavigator, R.string.client_location, 5.421, 10.2341);
@@ -1225,7 +1208,7 @@ public class OrderViewStateIdleTest {
     DecimalFormat decimalFormat = new DecimalFormat("##,###,### ₽");
     decimalFormat.setMaximumFractionDigits(0);
     decimalFormat.setMinimumFractionDigits(0);
-    verify(viewActions).setFormattedText(R.id.estimationText, R.string.h_m_km, 2, 12, 31.278d);
+    verify(viewActions).setFormattedText(R.id.estimationText, R.string.h_m_km, 2, 12, 31);
     verify(viewActions).setFormattedText(R.id.estimatedPriceText, R.string.price,
         decimalFormat.format(6813)
     );
@@ -1284,7 +1267,6 @@ public class OrderViewStateIdleTest {
     verify(viewActions).setVisible(R.id.paymentTypeSign, false);
     verify(viewActions).setText(R.id.routeType, R.string.intercity);
     verify(viewActions).setFormattedText(R.id.distanceText, R.string.km, 12.239d);
-    verify(viewActions).setFormattedText(R.id.routeTitleText, R.string.route_distance, 31.278d);
     verify(viewActions).setText(R.id.nextAddressText, "address");
     verify(viewActions)
         .setFormattedText(R.id.openNavigator, R.string.client_location, 5.421, 10.2341);
@@ -1298,7 +1280,7 @@ public class OrderViewStateIdleTest {
     DecimalFormat decimalFormat = new DecimalFormat("##,###,###.## ₽");
     decimalFormat.setMaximumFractionDigits(2);
     decimalFormat.setMinimumFractionDigits(2);
-    verify(viewActions).setFormattedText(R.id.estimationText, R.string.h_m_km, 2, 12, 31.278d);
+    verify(viewActions).setFormattedText(R.id.estimationText, R.string.h_m_km, 2, 12, 31);
     verify(viewActions).setFormattedText(R.id.estimatedPriceText, R.string.price,
         decimalFormat.format(6812.50)
     );
@@ -1356,7 +1338,6 @@ public class OrderViewStateIdleTest {
     verify(viewActions).setVisible(R.id.paymentTypeSign, false);
     verify(viewActions).setText(R.id.routeType, R.string.intercity);
     verify(viewActions).setFormattedText(R.id.distanceText, R.string.km, 12.239d);
-    verify(viewActions).setFormattedText(R.id.routeTitleText, R.string.route_distance, 31.278d);
     verify(viewActions).setText(R.id.nextAddressText, "address");
     verify(viewActions)
         .setFormattedText(R.id.openNavigator, R.string.client_location, 5.421, 10.2341);
@@ -1370,7 +1351,7 @@ public class OrderViewStateIdleTest {
     DecimalFormat decimalFormat = new DecimalFormat("##,###,### ₽");
     decimalFormat.setMaximumFractionDigits(0);
     decimalFormat.setMinimumFractionDigits(0);
-    verify(viewActions).setFormattedText(R.id.estimationText, R.string.h_m_km, 2, 12, 31.278d);
+    verify(viewActions).setFormattedText(R.id.estimationText, R.string.h_m_km, 2, 12, 31);
     verify(viewActions).setFormattedText(R.id.estimatedPriceText, R.string.price,
         decimalFormat.format(6813)
     );
@@ -1428,7 +1409,6 @@ public class OrderViewStateIdleTest {
     verify(viewActions).setVisible(R.id.paymentTypeSign, false);
     verify(viewActions).setText(R.id.routeType, R.string.intercity);
     verify(viewActions).setFormattedText(R.id.distanceText, R.string.km, 12.239d);
-    verify(viewActions).setFormattedText(R.id.routeTitleText, R.string.route_distance, 31.278d);
     verify(viewActions).setText(R.id.nextAddressText, "address");
     verify(viewActions)
         .setFormattedText(R.id.openNavigator, R.string.client_location, 5.421, 10.2341);
@@ -1442,7 +1422,7 @@ public class OrderViewStateIdleTest {
     DecimalFormat decimalFormat = new DecimalFormat("##,###,###.## ₽");
     decimalFormat.setMaximumFractionDigits(2);
     decimalFormat.setMinimumFractionDigits(2);
-    verify(viewActions).setFormattedText(R.id.estimationText, R.string.h_m_km, 2, 12, 31.278d);
+    verify(viewActions).setFormattedText(R.id.estimationText, R.string.h_m_km, 2, 12, 31);
     verify(viewActions).setFormattedText(R.id.estimatedPriceText, R.string.price,
         decimalFormat.format(6812.54)
     );
@@ -1494,7 +1474,6 @@ public class OrderViewStateIdleTest {
     verify(viewActions).setVisible(R.id.paymentTypeSign, true);
     verify(viewActions).setText(R.id.routeType, R.string.intercity);
     verify(viewActions).setFormattedText(R.id.distanceText, R.string.km, 12.239d);
-    verify(viewActions).setFormattedText(R.id.routeTitleText, R.string.route_distance, 31.278d);
     verify(viewActions).setText(R.id.nextAddressText, "address");
     verify(viewActions)
         .setFormattedText(R.id.openNavigator, R.string.client_location, 5.421, 10.2341);
@@ -1508,7 +1487,7 @@ public class OrderViewStateIdleTest {
     DecimalFormat decimalFormat = new DecimalFormat("##,###,### ₽");
     decimalFormat.setMaximumFractionDigits(0);
     decimalFormat.setMinimumFractionDigits(0);
-    verify(viewActions).setFormattedText(R.id.estimationText, R.string.h_m_km, 2, 12, 31.278d);
+    verify(viewActions).setFormattedText(R.id.estimationText, R.string.h_m_km, 2, 12, 31);
     verify(viewActions).setFormattedText(R.id.estimatedPriceText, R.string.price,
         decimalFormat.format(6813)
     );
@@ -1567,7 +1546,6 @@ public class OrderViewStateIdleTest {
     verify(viewActions).setVisible(R.id.paymentTypeSign, true);
     verify(viewActions).setText(R.id.routeType, R.string.intercity);
     verify(viewActions).setFormattedText(R.id.distanceText, R.string.km, 12.239d);
-    verify(viewActions).setFormattedText(R.id.routeTitleText, R.string.route_distance, 31.278d);
     verify(viewActions).setText(R.id.nextAddressText, "address");
     verify(viewActions)
         .setFormattedText(R.id.openNavigator, R.string.client_location, 5.421, 10.2341);
@@ -1581,7 +1559,7 @@ public class OrderViewStateIdleTest {
     DecimalFormat decimalFormat = new DecimalFormat("##,###,###.## ₽");
     decimalFormat.setMaximumFractionDigits(2);
     decimalFormat.setMinimumFractionDigits(2);
-    verify(viewActions).setFormattedText(R.id.estimationText, R.string.h_m_km, 2, 12, 31.278d);
+    verify(viewActions).setFormattedText(R.id.estimationText, R.string.h_m_km, 2, 12, 31);
     verify(viewActions).setFormattedText(R.id.estimatedPriceText, R.string.price,
         decimalFormat.format(6812.50)
     );
@@ -1639,7 +1617,6 @@ public class OrderViewStateIdleTest {
     verify(viewActions).setVisible(R.id.paymentTypeSign, true);
     verify(viewActions).setText(R.id.routeType, R.string.intercity);
     verify(viewActions).setFormattedText(R.id.distanceText, R.string.km, 12.239d);
-    verify(viewActions).setFormattedText(R.id.routeTitleText, R.string.route_distance, 31.278d);
     verify(viewActions).setText(R.id.nextAddressText, "address");
     verify(viewActions)
         .setFormattedText(R.id.openNavigator, R.string.client_location, 5.421, 10.2341);
@@ -1653,7 +1630,7 @@ public class OrderViewStateIdleTest {
     DecimalFormat decimalFormat = new DecimalFormat("##,###,### ₽");
     decimalFormat.setMaximumFractionDigits(0);
     decimalFormat.setMinimumFractionDigits(0);
-    verify(viewActions).setFormattedText(R.id.estimationText, R.string.h_m_km, 2, 12, 31.278d);
+    verify(viewActions).setFormattedText(R.id.estimationText, R.string.h_m_km, 2, 12, 31);
     verify(viewActions).setFormattedText(R.id.estimatedPriceText, R.string.price,
         decimalFormat.format(6813)
     );
@@ -1711,7 +1688,6 @@ public class OrderViewStateIdleTest {
     verify(viewActions).setVisible(R.id.paymentTypeSign, true);
     verify(viewActions).setText(R.id.routeType, R.string.intercity);
     verify(viewActions).setFormattedText(R.id.distanceText, R.string.km, 12.239d);
-    verify(viewActions).setFormattedText(R.id.routeTitleText, R.string.route_distance, 31.278d);
     verify(viewActions).setText(R.id.nextAddressText, "address");
     verify(viewActions)
         .setFormattedText(R.id.openNavigator, R.string.client_location, 5.421, 10.2341);
@@ -1725,7 +1701,7 @@ public class OrderViewStateIdleTest {
     DecimalFormat decimalFormat = new DecimalFormat("##,###,###.## ₽");
     decimalFormat.setMaximumFractionDigits(2);
     decimalFormat.setMinimumFractionDigits(2);
-    verify(viewActions).setFormattedText(R.id.estimationText, R.string.h_m_km, 2, 12, 31.278d);
+    verify(viewActions).setFormattedText(R.id.estimationText, R.string.h_m_km, 2, 12, 31);
     verify(viewActions).setFormattedText(R.id.estimatedPriceText, R.string.price,
         decimalFormat.format(6812.54)
     );
