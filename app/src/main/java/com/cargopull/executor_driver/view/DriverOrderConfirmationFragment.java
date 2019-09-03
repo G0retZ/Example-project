@@ -88,8 +88,8 @@ public class DriverOrderConfirmationFragment extends BaseFragment implements
     timeoutAnimation.dispose();
     if (timeout > 0) {
       long period = TimeUnit.MILLISECONDS.toSeconds(timeout);
-      timeoutAnimation = Observable.interval(period, TimeUnit.SECONDS)
-          .subscribeOn(AndroidSchedulers.mainThread())
+      timeoutAnimation = Observable.intervalRange(0, period, 0, 1, TimeUnit.SECONDS)
+          .observeOn(AndroidSchedulers.mainThread())
           .subscribe(tick -> acceptAction.setText(
               getString(R.string.accept_timed, period - tick)),
               Throwable::printStackTrace,

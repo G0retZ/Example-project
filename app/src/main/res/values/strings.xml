@@ -47,6 +47,7 @@
   <string name="cargo_description">Описание груза</string>
   <string name="comment">Коментарий</string>
   <string name="accept_timed">Принять (%1$d сек)</string>
+  <string name="set_out_timed">Выехать (%1$d сек)</string>
   <string name="timeout">Время вышло</string>
   <string name="offer">Предложение</string>
   <string name="new_order">Новый заказ доступен для принятия!</string>
