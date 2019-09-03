@@ -10,6 +10,38 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:paddingBottom="24dp">
+    <ImageView
+      android:id="@+id/routePointMark1"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginStart="16dp"
+      android:layout_marginLeft="16dp"
+      android:contentDescription="@null"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toBottomOf="@id/routeTitleText"
+      app:srcCompat="@drawable/ic_route_point"/>
+    <ImageView
+      android:layout_width="0dp"
+      android:layout_height="0dp"
+      android:layout_marginTop="13dp"
+      android:alpha="0.6"
+      android:contentDescription="@null"
+      app:layout_constraintBottom_toBottomOf="@id/routePointMark2"
+      app:layout_constraintEnd_toEndOf="@id/routePointMark1"
+      app:layout_constraintStart_toStartOf="@id/routePointMark1"
+      app:layout_constraintTop_toTopOf="@id/routePointMark1"
+      app:srcCompat="@drawable/ic_gradient_accent" />
+    <ImageView
+      android:id="@+id/routePointMark2"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="32dp"
+      android:layout_marginStart="16dp"
+      android:layout_marginLeft="16dp"
+      android:contentDescription="@null"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toBottomOf="@id/nextAddressText"
+      app:srcCompat="@drawable/ic_route_point" />
     <TextView
       android:id="@+id/estimatedPriceTitleText"
       style="@style/TextAppearance.AppTheme.Subhead"
@@ -20,7 +52,7 @@
       android:layout_marginEnd="16dp"
       android:text="@string/cost"
       app:layout_constraintStart_toStartOf="parent"
-      app:layout_constraintTop_toTopOf="parent"/>
+      app:layout_constraintTop_toTopOf="parent" />
     <TextView
       android:id="@+id/estimatedPriceText"
       style="@style/TextAppearance.AppTheme.Balance"
@@ -48,27 +80,6 @@
       app:layout_constraintEnd_toEndOf="parent"
       app:layout_constraintTop_toTopOf="@id/estimatedPriceText" />
     <TextView
-      android:id="@+id/startDateTitleText"
-      style="@style/TextAppearance.AppTheme.Subhead"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_marginTop="16dp"
-      android:layout_marginStart="16dp"
-      android:layout_marginEnd="16dp"
-      android:text="@string/arrival_date"
-      app:layout_constraintStart_toStartOf="parent"
-      app:layout_constraintTop_toBottomOf="@id/estimatedPriceText" />
-    <TextView
-      android:id="@+id/startDateAndTimeText"
-      style="@style/TextAppearance.AppTheme.Balance"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_marginStart="16dp"
-      android:layout_marginEnd="16dp"
-      app:layout_constraintStart_toStartOf="parent"
-      app:layout_constraintTop_toBottomOf="@+id/startDateTitleText"
-      tools:text="16 авг, 16:30" />
-    <TextView
       android:id="@+id/estimationTitleText"
       style="@style/TextAppearance.AppTheme.Subhead"
       android:layout_width="wrap_content"
@@ -78,7 +89,7 @@
       android:layout_marginEnd="16dp"
       android:text="@string/order_duration_and_distance"
       app:layout_constraintStart_toStartOf="parent"
-      app:layout_constraintTop_toBottomOf="@+id/startDateAndTimeText" />
+      app:layout_constraintTop_toBottomOf="@+id/estimatedPriceText" />
     <TextView
       android:id="@+id/estimationText"
       style="@style/TextAppearance.AppTheme.Title"
@@ -117,27 +128,6 @@
       app:layout_constraintStart_toStartOf="parent"
       app:layout_constraintTop_toBottomOf="@id/estimationText" />
     <TextView
-      android:id="@+id/distanceText"
-      style="@style/TextAppearance.AppTheme.Title"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_marginStart="16dp"
-      android:layout_marginEnd="16dp"
-      app:layout_constraintStart_toStartOf="parent"
-      app:layout_constraintTop_toBottomOf="@+id/distanceTitleText"
-      tools:text="@string/km"/>
-    <TextView
-      android:id="@+id/cargoDescTitleText"
-      style="@style/TextAppearance.AppTheme.Subhead"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_marginTop="16dp"
-      android:layout_marginStart="16dp"
-      android:layout_marginEnd="16dp"
-      android:text="@string/cargo_description"
-      app:layout_constraintStart_toStartOf="parent"
-      app:layout_constraintTop_toBottomOf="@id/distanceText"/>
-    <TextView
       android:id="@+id/cargoDescText"
       style="@style/TextAppearance.AppTheme.Title"
       android:layout_width="wrap_content"
@@ -146,7 +136,7 @@
       android:layout_marginEnd="16dp"
       app:layout_constraintStart_toStartOf="parent"
       app:layout_constraintTop_toBottomOf="@id/cargoDescTitleText"
-      tools:text="Заехать купить 10 коробок. Чистая машина. Не курить!" />
+      tools:text="Заехать купить 10 коробок. Чистая машина. Не курить!"/>
     <TextView
       android:id="@+id/optionsTitleText"
       style="@style/TextAppearance.AppTheme.Subhead"
@@ -157,7 +147,7 @@
       android:layout_marginEnd="16dp"
       android:text="@string/options"
       app:layout_constraintStart_toStartOf="parent"
-      app:layout_constraintTop_toBottomOf="@id/cargoDescText" />
+      app:layout_constraintTop_toBottomOf="@id/cargoDescText"/>
     <TextView
       android:id="@+id/optionsText"
       style="@style/TextAppearance.AppTheme.Title"
@@ -168,7 +158,28 @@
       android:lineSpacingExtra="6dp"
       app:layout_constraintStart_toStartOf="parent"
       app:layout_constraintTop_toBottomOf="@id/optionsTitleText"
-      tools:text="Пропуск в центр Москвы\nОткрытый кузов\nРемни-крепления\nМобильный банк\nГрузчики: 2\nПассажиры: 3" />
+      tools:text="Пропуск в центр Москвы\nОткрытый кузов\nРемни-крепления\nМобильный банк\nГрузчики: 2\nПассажиры: 3"/>
+    <TextView
+      android:id="@+id/distanceText"
+      style="@style/TextAppearance.AppTheme.Title"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginStart="16dp"
+      android:layout_marginEnd="16dp"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toBottomOf="@+id/distanceTitleText"
+      tools:text="@string/km" />
+    <TextView
+      android:id="@+id/cargoDescTitleText"
+      style="@style/TextAppearance.AppTheme.Subhead"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="16dp"
+      android:layout_marginStart="16dp"
+      android:layout_marginEnd="16dp"
+      android:text="@string/cargo_description"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toBottomOf="@id/distanceText" />
     <TextView
       android:id="@+id/routeTitleText"
       style="@style/TextAppearance.AppTheme.Subhead"
@@ -181,27 +192,6 @@
       android:text="@string/route"
       app:layout_constraintStart_toStartOf="parent"
       app:layout_constraintTop_toBottomOf="@id/optionsText" />
-    <ImageView
-      android:layout_width="0dp"
-      android:layout_height="0dp"
-      android:layout_marginTop="13dp"
-      android:alpha="0.6"
-      android:contentDescription="@null"
-      app:layout_constraintBottom_toBottomOf="@id/routePointMark2"
-      app:layout_constraintEnd_toEndOf="@id/routePointMark1"
-      app:layout_constraintStart_toStartOf="@id/routePointMark1"
-      app:layout_constraintTop_toTopOf="@id/routePointMark1"
-      app:srcCompat="@drawable/ic_gradient_accent"/>
-    <ImageView
-      android:id="@+id/routePointMark1"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_marginStart="16dp"
-      android:layout_marginLeft="16dp"
-      android:contentDescription="@null"
-      app:layout_constraintStart_toStartOf="parent"
-      app:layout_constraintTop_toBottomOf="@id/routeTitleText"
-      app:srcCompat="@drawable/ic_route_point"/>
     <TextView
       style="@style/TextAppearance.AppTheme.SubTitle"
       android:textStyle="bold"
@@ -212,7 +202,7 @@
       android:text="@string/_1"
       app:layout_constraintEnd_toEndOf="@id/routePointMark1"
       app:layout_constraintStart_toStartOf="@id/routePointMark1"
-      app:layout_constraintTop_toTopOf="@id/routePointMark1"/>
+      app:layout_constraintTop_toTopOf="@id/routePointMark1" />
     <TextView
       android:id="@+id/nextAddressText"
       style="@style/TextAppearance.AppTheme.SubTitle"
@@ -223,18 +213,7 @@
       app:layout_constraintEnd_toEndOf="parent"
       app:layout_constraintStart_toEndOf="@id/routePointMark1"
       app:layout_constraintTop_toBottomOf="@id/routeTitleText"
-      tools:text="Москва, ул. Академика Пилюгина, 14 корпус 4, кв. 1122, П2, Э8"/>
-    <ImageView
-      android:id="@+id/routePointMark2"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_marginTop="32dp"
-      android:layout_marginStart="16dp"
-      android:layout_marginLeft="16dp"
-      android:contentDescription="@null"
-      app:layout_constraintStart_toStartOf="parent"
-      app:layout_constraintTop_toBottomOf="@id/nextAddressText"
-      app:srcCompat="@drawable/ic_route_point"/>
+      tools:text="Москва, ул. Академика Пилюгина, 14 корпус 4, кв. 1122, П2, Э8" />
     <TextView
       android:id="@+id/routePointsCount"
       style="@style/TextAppearance.AppTheme.SubTitle"
@@ -246,7 +225,7 @@
       app:layout_constraintEnd_toEndOf="@id/routePointMark2"
       app:layout_constraintStart_toStartOf="@id/routePointMark2"
       app:layout_constraintTop_toTopOf="@id/routePointMark2"
-      tools:text="2"/>
+      tools:text="2" />
     <TextView
       android:id="@+id/lastAddressText"
       style="@style/TextAppearance.AppTheme.SubTitle"
@@ -258,6 +237,6 @@
       app:layout_constraintEnd_toEndOf="parent"
       app:layout_constraintStart_toEndOf="@id/routePointMark1"
       app:layout_constraintTop_toBottomOf="@id/nextAddressText"
-      tools:text="Москва, ул. Академика Пилюгина, 14 корпус 4, кв. 1122, П2, Э8"/>
+      tools:text="Москва, ул. Академика Пилюгина, 14 корпус 4, кв. 1122, П2, Э8" />
   </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

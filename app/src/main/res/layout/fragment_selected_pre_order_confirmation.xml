@@ -20,7 +20,7 @@
     app:layout_constraintStart_toStartOf="parent"/>
   <TextView
     android:id="@+id/declineText"
-    style="@style/TextAppearance.AppTheme.Button.Colored"
+    style="@style/TextAppearance.AppTheme.Button"
     android:layout_width="0dp"
     android:layout_height="0dp"
     android:paddingStart="8dp"

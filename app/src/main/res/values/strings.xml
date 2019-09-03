@@ -46,7 +46,8 @@
   <string name="km">%1$.2f км</string>
   <string name="cargo_description">Описание груза</string>
   <string name="comment">Коментарий</string>
-  <string name="accept">Принять</string>
+  <string name="accept_timed">Принять (%1$d сек)</string>
+  <string name="timeout">Время вышло</string>
   <string name="offer">Предложение</string>
   <string name="new_order">Новый заказ доступен для принятия!</string>
   <string name="done">Готово</string>
@@ -87,9 +88,8 @@
   <string name="server_connection">Связь с сервером</string>
   <string name="important_info">Важная информация</string>
   <string name="service">Услуга</string>
-  <string name="order_distance_and_duration">Пробег, длительность, стоимость</string>
-  <string name="km_h_m_p">%1$.2f км, %2$d ч. %3$d мин. ≈ %4$s</string>
-  <string name="h_m_d">%1$d ч. %2$d мин. (до %3$s)</string>
+  <string name="order_duration_and_distance">Длительность и пробег</string>
+  <string name="h_m_km">%1$d ч. %2$d мин., %3$.2f км</string>
   <string name="price">≈ %1$s</string>
   <string name="h_m">%1$d ч. %2$d мин.</string>
   <string name="address">Адрес</string>

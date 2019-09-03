@@ -118,6 +118,11 @@
     <item name="android:maxLength">18</item>
   </style>
 
+  <style name="TextAppearance.AppTheme.Button" parent="TextAppearance.AppCompat.Widget.Button">
+    <item name="android:textSize">16sp</item>
+    <item name="android:theme">@style/AppTheme.Button.Theme.Regular</item>
+  </style>
+
   <style name="TextAppearance.AppTheme.Button.Colored" parent="TextAppearance.AppCompat.Widget.Button.Colored">
     <item name="android:textSize">16sp</item>
     <item name="android:theme">@style/AppTheme.Button.Theme.Regular</item>

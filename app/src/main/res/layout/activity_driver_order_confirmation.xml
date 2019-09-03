@@ -7,6 +7,14 @@
   android:animateLayoutChanges="true"
   android:keepScreenOn="true">
   <fragment
+    android:id="@+id/fragment_order"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginTop="72dp"
+    android:layout_marginBottom="56dp"
+    android:name="com.cargopull.executor_driver.view.PreOrderConfirmationFragment"
+    tools:layout="@layout/fragment_order" />
+  <fragment
     android:id="@+id/fragment_driver_order_confirmation"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
