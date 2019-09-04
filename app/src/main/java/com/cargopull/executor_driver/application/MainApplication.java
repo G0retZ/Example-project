@@ -19,8 +19,8 @@ import androidx.core.app.NotificationCompat.Builder;
 import com.cargopull.executor_driver.AppConfigKt;
 import com.cargopull.executor_driver.R;
 import com.cargopull.executor_driver.backend.web.TopicStarter;
+import com.cargopull.executor_driver.di.ActualBackendComponent;
 import com.cargopull.executor_driver.di.AppComponent;
-import com.cargopull.executor_driver.di.BackendComponent;
 import com.cargopull.executor_driver.presentation.CommonNavigate;
 import com.cargopull.executor_driver.presentation.balance.BalanceViewModel;
 import com.cargopull.executor_driver.presentation.cancelledorder.CancelledOrderViewActions;
@@ -48,6 +48,8 @@ import com.cargopull.executor_driver.presentation.upcomingpreorder.UpcomingPreOr
 import com.cargopull.executor_driver.presentation.upcomingpreordermessage.UpcomingPreOrderMessageViewActions;
 import com.cargopull.executor_driver.presentation.upcomingpreordermessage.UpcomingPreOrderMessageViewModel;
 import com.cargopull.executor_driver.utils.Consumer;
+import com.cargopull.executor_driver.utils.TimeUtils;
+import com.cargopull.executor_driver.utils.TimeUtilsImpl;
 import javax.inject.Inject;
 
 /**
@@ -174,7 +176,8 @@ public class MainApplication extends Application implements ServerConnectionView
   @Override
   public void onCreate() {
     super.onCreate();
-    appComponent = new AppComponent(this, new BackendComponent(this));
+    TimeUtils timeUtils = new TimeUtilsImpl();
+    appComponent = new AppComponent(timeUtils, new ActualBackendComponent(this, timeUtils));
     appComponent.inject(
         appSettingsService -> AppCompatDelegate.setDefaultNightMode(
             appSettingsService.getNumber("mode")

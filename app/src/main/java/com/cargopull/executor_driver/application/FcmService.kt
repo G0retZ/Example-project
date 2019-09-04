@@ -35,17 +35,15 @@ class FcmService : FirebaseMessagingService() {
         disposable.dispose()
     }
 
-    override fun onMessageReceived(remoteMessage: RemoteMessage?) {
+    override fun onMessageReceived(remoteMessage: RemoteMessage) {
         super.onMessageReceived(remoteMessage)
         ringTonePlayer.playRingTone(R.raw.general_notify)
         shakeItPlayer.shakeIt(R.raw.general_notify_vibro)
-        remoteMessage?.let {
-            val dataMap = it.data
-            it.notification?.let { not ->
-                not.title?.let { title -> dataMap["title"] = title }
-                not.body?.let { body -> dataMap["body"] = body }
-            }
-            fcmObserver.onNext(dataMap)
+        val dataMap = remoteMessage.data
+        remoteMessage.notification?.let { not ->
+            not.title?.let { title -> dataMap["title"] = title }
+            not.body?.let { body -> dataMap["body"] = body }
         }
+        fcmObserver.onNext(dataMap)
     }
 }

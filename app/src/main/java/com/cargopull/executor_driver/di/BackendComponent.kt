@@ -16,16 +16,20 @@ import com.cargopull.executor_driver.backend.analytics.EventLogger
 import com.cargopull.executor_driver.backend.analytics.EventLoggerImpl
 import com.cargopull.executor_driver.backend.geolocation.GeolocationCenter
 import com.cargopull.executor_driver.backend.geolocation.GeolocationCenterImpl
+import com.cargopull.executor_driver.backend.geolocation.GeolocationState
+import com.cargopull.executor_driver.backend.geolocation.GeolocationStateImpl
 import com.cargopull.executor_driver.backend.ringtone.RingTonePlayer
 import com.cargopull.executor_driver.backend.ringtone.SingleRingTonePlayer
 import com.cargopull.executor_driver.backend.settings.AppPreferences
 import com.cargopull.executor_driver.backend.settings.AppSettingsService
 import com.cargopull.executor_driver.backend.stomp.StompClient
+import com.cargopull.executor_driver.backend.stomp.StompClientImpl
 import com.cargopull.executor_driver.backend.stomp.WebSocketConnection
 import com.cargopull.executor_driver.backend.vibro.*
 import com.cargopull.executor_driver.backend.web.*
 import com.cargopull.executor_driver.gateway.TokenKeeperImpl
 import com.cargopull.executor_driver.utils.Releasable
+import com.cargopull.executor_driver.utils.TimeUtils
 import io.reactivex.Observable
 import io.reactivex.Observer
 import io.reactivex.subjects.PublishSubject
@@ -38,33 +42,52 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.converter.scalars.ScalarsConverterFactory
 import java.util.concurrent.TimeUnit
 
-class BackendComponent(private val appContext: Context) : Releasable {
-    private val WIFI_STATE_CHANGE_ACTION = "android.net.wifi.WIFI_STATE_CHANGE"
-    private val WIFI_STATE_CHANGED_ACTION = "android.net.wifi.WIFI_STATE_CHANGED"
+interface BackendComponent : Releasable {
+    val ringTonePlayer: RingTonePlayer
+    val shakeItPlayer: ShakeItPlayer
+    val geolocationState: GeolocationState
+    val eventLogger: EventLogger
+    val errorReporter: ErrorReporter
+    val appSettingsService: AppSettingsService
+    val geolocationCenter: GeolocationCenter
+    val networkStateReceiver: NetworkStateReceiver
+    val apiService: ApiService
+    val stompClient: StompClient
+    val personalTopicListener: PersonalQueueListener
+    val fcmSender: Observable<Map<String, String>>
+    val fcmReceiver: Observer<Map<String, String>>
+}
 
-    val ringTonePlayer: RingTonePlayer by lazy {
+class ActualBackendComponent(private val appContext: Context, private val timeUtils: TimeUtils) : BackendComponent {
+
+    companion object {
+        private const val WIFI_STATE_CHANGED_ACTION = "android.net.wifi.WIFI_STATE_CHANGED"
+        private const val WIFI_STATE_CHANGE_ACTION = "android.net.wifi.WIFI_STATE_CHANGE"
+    }
+
+    override val ringTonePlayer: RingTonePlayer by lazy {
         SingleRingTonePlayer(appContext)
     }
-    val shakeItPlayer: ShakeItPlayer by lazy {
+    override val shakeItPlayer: ShakeItPlayer by lazy {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             SingleShakePlayer(appContext, NewPatternMapper())
         } else {
             OldSingleShakePlayer(appContext, OldPatternMapper())
         }
     }
-    val locationManager: LocationManager by lazy {
-        appContext.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+    override val geolocationState: GeolocationState by lazy {
+        GeolocationStateImpl(appContext.getSystemService(Context.LOCATION_SERVICE) as LocationManager)
     }
-    val eventLogger: EventLogger by lazy {
+    override val eventLogger: EventLogger by lazy {
         EventLoggerImpl(appSettingsService, appContext)
     }
-    val errorReporter: ErrorReporter by lazy {
+    override val errorReporter: ErrorReporter by lazy {
         ErrorReporterImpl()
     }
-    val appSettingsService: AppSettingsService by lazy { AppPreferences(appContext) }
-    val geolocationCenter: GeolocationCenter by lazy { GeolocationCenterImpl(appContext) }
+    override val appSettingsService: AppSettingsService by lazy { AppPreferences(appContext) }
+    override val geolocationCenter: GeolocationCenter by lazy { GeolocationCenterImpl(appContext) }
     @Suppress("DEPRECATION")
-    val networkStateReceiver: NetworkStateReceiver by lazy {
+    override val networkStateReceiver: NetworkStateReceiver by lazy {
         val receiver = NetworkStateReceiver(
                 appContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager,
                 errorReporter
@@ -74,7 +97,7 @@ class BackendComponent(private val appContext: Context) : Releasable {
         appContext.registerReceiver(receiver, IntentFilter(WIFI_STATE_CHANGED_ACTION))
         receiver
     }
-    val apiService: ApiService by lazy {
+    override val apiService: ApiService by lazy {
         ApiConnectionWrapper(
                 Retrofit.Builder()
                         .baseUrl(apiUrl)
@@ -87,11 +110,11 @@ class BackendComponent(private val appContext: Context) : Releasable {
                 networkStateReceiver
         )
     }
-    val stompClient: StompClient by lazy {
-        StompClient(socketUrl, WebSocketConnection(okHttpClient))
+    override val stompClient: StompClient by lazy {
+        StompClientImpl(socketUrl, WebSocketConnection(okHttpClient))
     }
 
-    val personalTopicListener by lazy {
+    override val personalTopicListener by lazy {
         PersonalQueueListener(
                 stompClient,
                 networkStateReceiver,
@@ -99,10 +122,10 @@ class BackendComponent(private val appContext: Context) : Releasable {
         )
     }
 
-    val fcmSender: Observable<Map<String, String>> by lazy {
+    override val fcmSender: Observable<Map<String, String>> by lazy {
         fcmSubject
     }
-    val fcmReceiver: Observer<Map<String, String>> by lazy {
+    override val fcmReceiver: Observer<Map<String, String>> by lazy {
         fcmSubject
     }
 

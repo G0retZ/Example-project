@@ -309,10 +309,6 @@ public class OrderFulfillmentFragment extends BaseFragment implements OrderCostV
   }
 
   @Override
-  public void showNextRoutePoint(@NonNull String url) {
-  }
-
-  @Override
   public void showNextRoutePointAddress(@NonNull String coordinates, @NonNull String address) {
     if (address.trim().isEmpty()) {
       addressTitleText.setVisibility(View.GONE);

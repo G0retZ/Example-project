@@ -257,8 +257,10 @@ class RepositoryComponent(private val backendComponent: BackendComponent) {
                 backendComponent.personalTopicListener,
                 PreOrdersListFilter(),
                 PreOrdersListApiMapper(
-                        VehicleOptionApiMapper(),
-                        RoutePointApiMapper()
+                        OrderApiMapper(
+                                VehicleOptionApiMapper(),
+                                RoutePointApiMapper()
+                        )
                 ),
                 HashSet()
         )

@@ -10,10 +10,9 @@ public interface OrderConfirmationViewActions {
   /**
    * Показать индикатор таймаута приниятия решения по заказу. (-1;-1) для заморозки таймера
    *
-   * @param progress - сколько процентов осталось до окончания
    * @param timeout - время оставшееся до таймаута
    */
-  void showTimeout(int progress, long timeout);
+  void showTimeout(long timeout);
 
   /**
    * Показать индикатор процесса.

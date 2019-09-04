@@ -1,66 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<FrameLayout
   xmlns:android="http://schemas.android.com/apk/res/android"
   xmlns:app="http://schemas.android.com/apk/res-auto"
   android:layout_width="match_parent"
-  android:layout_height="wrap_content">
-  <ProgressBar
-    android:id="@+id/declineChart"
-    style="@style/AppTheme.ProgressBar.Error"
-    android:layout_width="0dp"
-    android:layout_height="52dp"
-    android:layout_marginTop="4dp"
-    android:layout_marginBottom="18dp"
+  android:layout_height="match_parent">
+  <Button
+    android:id="@+id/setOutButton"
+    style="@style/AppTheme.Button.Borderless.Filled"
+    android:layout_width="match_parent"
+    android:layout_height="56dp"
+    android:layout_gravity="bottom"
+    android:text="@string/timeout" />
+  <TextView
+    style="@style/TextAppearance.AppTheme.Title"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="26dp"
     android:layout_marginStart="16dp"
-    android:layout_marginEnd="8dp"
     android:layout_marginLeft="16dp"
-    android:layout_marginRight="8dp"
-    app:layout_constraintBottom_toBottomOf="parent"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintEnd_toStartOf="@+id/setOutChart"
-    app:layout_constraintHorizontal_bias="0.5"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toTopOf="parent"/>
-  <TextView
-    android:id="@+id/declineText"
-    style="@style/TextAppearance.AppTheme.Button.Colored"
-    android:layout_width="0dp"
-    android:layout_height="0dp"
-    android:paddingStart="8dp"
-    android:paddingEnd="8dp"
-    android:gravity="center"
-    android:text="@string/reject"
-    app:layout_constraintBottom_toBottomOf="@id/declineChart"
-    app:layout_constraintEnd_toEndOf="@id/declineChart"
-    app:layout_constraintStart_toStartOf="@id/declineChart"
-    app:layout_constraintTop_toTopOf="@id/declineChart"/>
-  <ProgressBar
-    android:id="@+id/setOutChart"
-    style="@style/AppTheme.ProgressBar.Timeout.Rounded"
-    android:layout_width="0dp"
-    android:layout_height="52dp"
-    android:layout_marginTop="4dp"
-    android:layout_marginBottom="18dp"
-    android:layout_marginStart="8dp"
-    android:layout_marginEnd="16dp"
-    android:layout_marginLeft="8dp"
-    android:layout_marginRight="16dp"
-    android:progress="100"
-    app:layout_constraintBottom_toBottomOf="parent"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintStart_toEndOf="@+id/declineChart"
-    app:layout_constraintTop_toTopOf="parent"/>
-  <TextView
-    android:id="@+id/setOutText"
-    style="@style/TextAppearance.AppTheme.Button.Colored"
-    android:layout_width="0dp"
-    android:layout_height="0dp"
-    android:paddingStart="8dp"
-    android:paddingEnd="8dp"
-    android:gravity="center"
-    android:text="@string/set_out"
-    app:layout_constraintBottom_toBottomOf="@id/setOutChart"
-    app:layout_constraintEnd_toEndOf="@id/setOutChart"
-    app:layout_constraintStart_toStartOf="@id/setOutChart"
-    app:layout_constraintTop_toTopOf="@id/setOutChart"/>
-</androidx.constraintlayout.widget.ConstraintLayout>
+    android:paddingTop="4dp"
+    android:paddingBottom="4dp"
+    android:paddingStart="64dp"
+    android:paddingEnd="16dp"
+    android:paddingLeft="64dp"
+    android:paddingRight="16dp"
+    android:background="@drawable/ic_gray_chip"
+    android:elevation="4dp"
+    android:text="@string/reject" />
+  <com.google.android.material.floatingactionbutton.FloatingActionButton
+    android:id="@+id/declineButton"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="16dp"
+    android:layout_marginStart="16dp"
+    android:layout_marginLeft="16dp"
+    android:theme="@style/AppTheme.Button.Theme.Darker"
+    app:srcCompat="@drawable/ic_reject_24dp" />
+</FrameLayout>

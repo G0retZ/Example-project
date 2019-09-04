@@ -36,16 +36,6 @@ public class OrderConfirmationTimeoutItemTest {
   }
 
   @Test
-  public void testGetProgressLeft() {
-    // Дано:
-    when(timeUtils.currentTimeMillis()).thenReturn(12395182L, 12400182L);
-
-    // Результат:
-    assertEquals(ocTimeoutItem.getProgressLeft(), 75);
-    assertEquals(ocTimeoutItem.getProgressLeft(), 50);
-  }
-
-  @Test
   public void testGetTimeout() {
     // Дано:
     when(timeUtils.currentTimeMillis()).thenReturn(12395182L, 12400182L);

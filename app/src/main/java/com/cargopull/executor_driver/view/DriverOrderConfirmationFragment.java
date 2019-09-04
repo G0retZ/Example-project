@@ -1,24 +1,22 @@
 package com.cargopull.executor_driver.view;
 
-import android.animation.Animator;
-import android.animation.Animator.AnimatorListener;
-import android.animation.ObjectAnimator;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.LinearInterpolator;
 import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.ProgressBar;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.cargopull.executor_driver.R;
 import com.cargopull.executor_driver.di.AppComponent;
-import com.cargopull.executor_driver.presentation.order.OrderViewActions;
-import com.cargopull.executor_driver.presentation.order.OrderViewModel;
 import com.cargopull.executor_driver.presentation.orderconfirmation.OrderConfirmationViewActions;
 import com.cargopull.executor_driver.presentation.orderconfirmation.OrderConfirmationViewModel;
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.disposables.Disposables;
+import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
 
 /**
@@ -26,25 +24,18 @@ import javax.inject.Inject;
  */
 
 public class DriverOrderConfirmationFragment extends BaseFragment implements
-    OrderConfirmationViewActions, OrderViewActions {
+    OrderConfirmationViewActions {
 
   private OrderConfirmationViewModel orderConfirmationViewModel;
-  private OrderViewModel orderViewModel;
   private ImageButton declineAction;
-  private ProgressBar timeoutChart;
   private Button acceptAction;
-  @Nullable
-  private ObjectAnimator timeoutAnimation;
+  @NonNull
+  private Disposable timeoutAnimation = Disposables.disposed();
 
   @Inject
   public void setOrderConfirmationViewModel(
       @NonNull OrderConfirmationViewModel orderConfirmationViewModel) {
     this.orderConfirmationViewModel = orderConfirmationViewModel;
-  }
-
-  @Inject
-  public void setOrderViewModel(@NonNull OrderViewModel orderViewModel) {
-    this.orderViewModel = orderViewModel;
   }
 
   @Nullable
@@ -54,7 +45,6 @@ public class DriverOrderConfirmationFragment extends BaseFragment implements
       @Nullable Bundle savedInstanceState) {
     View view = inflater.inflate(R.layout.fragment_driver_order_confirmation, container, false);
     declineAction = view.findViewById(R.id.declineButton);
-    timeoutChart = view.findViewById(R.id.timeoutChart);
     acceptAction = view.findViewById(R.id.acceptButton);
     acceptAction.setOnClickListener(v -> orderConfirmationViewModel.acceptOrder());
     declineAction.setOnClickListener(v -> orderConfirmationViewModel.declineOrder());
@@ -70,16 +60,6 @@ public class DriverOrderConfirmationFragment extends BaseFragment implements
   @Override
   public void onActivityCreated(@Nullable Bundle savedInstanceState) {
     super.onActivityCreated(savedInstanceState);
-    orderViewModel.getViewStateLiveData().observe(this, viewState -> {
-      if (viewState != null) {
-        viewState.apply(this);
-      }
-    });
-    orderViewModel.getNavigationLiveData().observe(this, destination -> {
-      if (destination != null) {
-        navigate(destination);
-      }
-    });
     orderConfirmationViewModel.getViewStateLiveData().observe(this, viewState -> {
       if (viewState != null) {
         viewState.apply(this);
@@ -94,64 +74,30 @@ public class DriverOrderConfirmationFragment extends BaseFragment implements
 
   @Override
   public void onDetach() {
-    if (timeoutAnimation != null) {
-      timeoutAnimation.cancel();
-    }
+    timeoutAnimation.dispose();
     super.onDetach();
   }
 
   @Override
   public void showDriverOrderConfirmationPending(boolean pending) {
-    showPending(pending, toString() + "0");
+    showPending(pending, toString());
   }
 
   @Override
-  public void showTimeout(int progress, long timeout) {
-    if (timeoutAnimation != null) {
-      timeoutAnimation.cancel();
-    }
+  public void showTimeout(long timeout) {
+    timeoutAnimation.dispose();
     if (timeout > 0) {
-      timeoutAnimation = ObjectAnimator.ofInt(timeoutChart, "progress", progress, 0);
-      timeoutAnimation.setDuration(timeout);
-      timeoutAnimation.setInterpolator(new LinearInterpolator());
-      timeoutAnimation.addListener(new AnimatorListener() {
-        private boolean canceled;
-
-        @Override
-        public void onAnimationStart(Animator animation) {
-        }
-
-        @Override
-        public void onAnimationEnd(Animator animation) {
-          if (!canceled) {
-            orderConfirmationViewModel.counterTimeOut();
-          }
-        }
-
-        @Override
-        public void onAnimationCancel(Animator animation) {
-          canceled = true;
-        }
-
-        @Override
-        public void onAnimationRepeat(Animator animation) {
-        }
-      });
-      timeoutAnimation.start();
+      long period = TimeUnit.MILLISECONDS.toSeconds(timeout);
+      timeoutAnimation = Observable.intervalRange(0, period, 0, 1, TimeUnit.SECONDS)
+          .observeOn(AndroidSchedulers.mainThread())
+          .subscribe(tick -> acceptAction.setText(
+              getString(R.string.accept_timed, period - tick)),
+              Throwable::printStackTrace,
+              orderConfirmationViewModel::counterTimeOut
+          );
     } else if (timeout == 0) {
       orderConfirmationViewModel.counterTimeOut();
     }
-  }
-
-  @Override
-  public boolean isShowCents() {
-    return getResources().getBoolean(R.bool.show_cents);
-  }
-
-  @Override
-  @NonNull
-  public String getCurrencyFormat() {
-    return getString(R.string.currency_format);
   }
 
   @Override

@@ -33,6 +33,8 @@ public class Order {
   private final long startTime;
   private final long scheduledStartTime;
   @NonNull
+  private final RouteType routeType;
+  @NonNull
   private final List<Option> options = new ArrayList<>();
   @NonNull
   private final List<RoutePoint> routePath = new ArrayList<>();
@@ -41,7 +43,8 @@ public class Order {
       @NonNull String comment, @NonNull String serviceName, int distance,
       @NonNull String estimatedPriceText, long estimatedPrice, long estimatedTime,
       long estimatedRouteLength, long totalCost, long timeout, long etaToStartPoint,
-      long confirmationTime, long startTime, long scheduledStartTime) {
+      long confirmationTime, long startTime, long scheduledStartTime,
+      @NonNull RouteType routeType) {
     this.id = id;
     this.paymentType = paymentType;
     this.comment = comment;
@@ -57,6 +60,7 @@ public class Order {
     this.confirmationTime = confirmationTime;
     this.startTime = startTime;
     this.scheduledStartTime = scheduledStartTime;
+    this.routeType = routeType;
   }
 
   // Возвращаем копию заказа с измененным ETA до первой точки.
@@ -64,7 +68,7 @@ public class Order {
   public Order withEtaToStartPoint(long etaToStartPoint) {
     return new Order(id, paymentType, comment, serviceName, distance, estimatedPriceText, estimatedPrice,
         estimatedTime, estimatedRouteLength, totalCost, timeout, etaToStartPoint, confirmationTime,
-        startTime, scheduledStartTime).setOptions(options).setRoutePoints(routePath);
+        startTime, scheduledStartTime, routeType).setOptions(options).setRoutePoints(routePath);
   }
 
   public long getId() {
@@ -159,6 +163,11 @@ public class Order {
 
   public void addOptions(@NonNull Option... options) {
     this.options.addAll(Arrays.asList(options));
+  }
+
+  @NonNull
+  public RouteType getRouteType() {
+    return routeType;
   }
 
   @NonNull

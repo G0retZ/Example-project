@@ -48,7 +48,7 @@ class NextExecutorStateUseCaseTest {
         useCase.proceedToNextState.test()
 
         // Результат:
-        verify<CommonGatewaySingle<Pair<ExecutorState, String?>>>(gateway, only()).data
+        verify(gateway, only()).data
     }
 
     /* Проверяем работу с юзкейсом обновления состояния водителя */
@@ -100,7 +100,7 @@ class NextExecutorStateUseCaseTest {
         `when`(gateway.data).thenReturn(
                 Single.just(Pair(ExecutorState.ONLINE, "lalala")),
                 Single.just(Pair(ExecutorState.WAITING_FOR_CLIENT, "lelele")),
-                Single.just(Pair<ExecutorState, String?>(ExecutorState.PAYMENT_CONFIRMATION, null)),
+                Single.just(Pair(ExecutorState.PAYMENT_CONFIRMATION, null)),
                 Single.just(Pair(ExecutorState.ORDER_FULFILLMENT, "lilili"))
         )
 
@@ -111,10 +111,10 @@ class NextExecutorStateUseCaseTest {
         useCase.proceedToNextState.test()
 
         // Результат:
-        inOrder.verify<DataUpdateUseCase<ExecutorState>>(updateExecutorStateUseCase).updateWith(ExecutorState.ONLINE)
-        inOrder.verify<DataUpdateUseCase<ExecutorState>>(updateExecutorStateUseCase).updateWith(ExecutorState.WAITING_FOR_CLIENT)
-        inOrder.verify<DataUpdateUseCase<ExecutorState>>(updateExecutorStateUseCase).updateWith(ExecutorState.PAYMENT_CONFIRMATION)
-        inOrder.verify<DataUpdateUseCase<ExecutorState>>(updateExecutorStateUseCase).updateWith(ExecutorState.ORDER_FULFILLMENT)
+        inOrder.verify(updateExecutorStateUseCase).updateWith(ExecutorState.ONLINE)
+        inOrder.verify(updateExecutorStateUseCase).updateWith(ExecutorState.WAITING_FOR_CLIENT)
+        inOrder.verify(updateExecutorStateUseCase).updateWith(ExecutorState.PAYMENT_CONFIRMATION)
+        inOrder.verify(updateExecutorStateUseCase).updateWith(ExecutorState.ORDER_FULFILLMENT)
     }
 
     /* Проверяем работу с юзкейсом обновления данных */
@@ -166,7 +166,7 @@ class NextExecutorStateUseCaseTest {
         `when`(gateway.data).thenReturn(
                 Single.just(Pair(ExecutorState.ONLINE, "lalala")),
                 Single.just(Pair(ExecutorState.WAITING_FOR_CLIENT, "lelele")),
-                Single.just(Pair<ExecutorState, String?>(ExecutorState.PAYMENT_CONFIRMATION, null)),
+                Single.just(Pair(ExecutorState.PAYMENT_CONFIRMATION, null)),
                 Single.just(Pair(ExecutorState.ORDER_FULFILLMENT, "lilili"))
         )
 
@@ -177,9 +177,9 @@ class NextExecutorStateUseCaseTest {
         useCase.proceedToNextState.test()
 
         // Результат:
-        inOrder.verify<DataUpdateUseCase<String>>(updateUseCase).updateWith("lalala")
-        inOrder.verify<DataUpdateUseCase<String>>(updateUseCase).updateWith("lelele")
-        inOrder.verify<DataUpdateUseCase<String>>(updateUseCase).updateWith("lilili")
+        inOrder.verify(updateUseCase).updateWith("lalala")
+        inOrder.verify(updateUseCase).updateWith("lelele")
+        inOrder.verify(updateUseCase).updateWith("lilili")
     }
 
     /* Проверяем ответы на запрос следующего статуса */
