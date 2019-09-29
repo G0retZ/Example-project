@@ -47,6 +47,10 @@ interface ApiService {
     @GET("api/public/v1/login/password/sms")
     fun sendMeCode(@Query("login") phoneNumber: String): Completable
 
+    //  Запрос звонка с кодом.
+    @GET("api/public/v1/login/password/call")
+    fun callMeCode(@Query("login") phoneNumber: String): Completable
+
     //  Авторизация.
     @POST("api/public/v1/login")
     fun authorize(@Body apiLogin: ApiLogin): Completable
@@ -191,6 +195,9 @@ class ApiConnectionWrapper(private val apiService: ApiService, private val gatew
 
     override fun sendMeCode(phoneNumber: String): Completable =
             wrapCall(apiService.sendMeCode(phoneNumber))
+
+    override fun callMeCode(phoneNumber: String): Completable =
+            wrapCall(apiService.callMeCode(phoneNumber))
 
     override fun authorize(apiLogin: ApiLogin): Completable =
             wrapCall(apiService.authorize(apiLogin))
