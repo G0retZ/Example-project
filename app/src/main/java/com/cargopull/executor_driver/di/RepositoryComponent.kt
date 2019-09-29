@@ -210,6 +210,9 @@ class RepositoryComponent(private val backendComponent: BackendComponent) {
     val smsCodeGateway: CodeGateway by lazy {
         SmsCodeGatewayImpl(backendComponent.apiService)
     }
+    val callCodeGateway: CodeGateway by lazy {
+        CallCodeGatewayImpl(backendComponent.apiService)
+    }
     val heatMapGateway: HeatMapGateway by lazy {
         HeatMapGatewayImpl(backendComponent.apiService)
     }

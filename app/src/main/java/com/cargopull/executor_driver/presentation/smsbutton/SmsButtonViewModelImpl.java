@@ -4,7 +4,6 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
-import com.cargopull.executor_driver.backend.web.NoNetworkException;
 import com.cargopull.executor_driver.interactor.auth.CodeUseCase;
 import com.cargopull.executor_driver.presentation.FragmentViewActions;
 import com.cargopull.executor_driver.presentation.ViewState;
@@ -17,7 +16,6 @@ import javax.inject.Inject;
 
 public class SmsButtonViewModelImpl extends ViewModel implements SmsButtonViewModel {
 
-  private static final int DURATION_AFTER_SUCCESS = 30;
   @NonNull
   private final CodeUseCase codeUseCase;
   @NonNull
@@ -57,20 +55,14 @@ public class SmsButtonViewModelImpl extends ViewModel implements SmsButtonViewMo
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(
             this::holdButton,
-            throwable -> {
-              if (throwable instanceof NoNetworkException) {
-                viewStateLiveData.postValue(new SmsButtonViewStateError());
-              } else {
-                holdButton();
-              }
-            }
+            throwable -> viewStateLiveData.postValue(new SmsButtonViewStateError())
         );
   }
 
-  private void holdButton() {
+  private void holdButton(int duration) {
     timerDisposable = Observable.interval(0, 1, TimeUnit.SECONDS)
-        .take(DURATION_AFTER_SUCCESS)
-        .map(count -> DURATION_AFTER_SUCCESS - count)
+        .take(duration)
+        .map(count -> duration - count)
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(
             count -> viewStateLiveData.postValue(new SmsButtonViewStateHold(count)),

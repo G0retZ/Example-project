@@ -173,13 +173,16 @@ class InteractorComponent(
                 PasswordValidator()
         )
     }
-    val codeUseCase: CodeUseCase by lazy {
-        CodeUseCaseImpl(
-                repositoryComponent.smsCodeGateway,
-                repositoryComponent.loginReceiver,
-                PhoneNumberValidator()
-        )
-    }
+    val codeUseCase: CodeUseCase
+        get() {
+            return CodeUseCaseImpl(
+                    repositoryComponent.smsCodeGateway,
+                    repositoryComponent.callCodeGateway,
+                    repositoryComponent.loginReceiver,
+                    PhoneNumberValidator()
+            )
+        }
+
     val heatMapUseCase: HeatMapUseCase by lazy {
         HeatMapUseCaseImpl(repositoryComponent.heatMapGateway)
     }

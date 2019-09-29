@@ -2,7 +2,7 @@ package com.cargopull.executor_driver.interactor.auth
 
 import com.cargopull.executor_driver.entity.Validator
 import com.cargopull.executor_driver.interactor.DataReceiver
-import io.reactivex.Completable
+import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 
 /**
@@ -11,26 +11,28 @@ import io.reactivex.schedulers.Schedulers
 interface CodeUseCase {
 
     /**
-     * Валидирует номер телефона, и запрашивает на него СМС с кодом.
+     * Валидирует номер телефона, и запрашивает на него СМС или звонок с кодом.
      *
-     * @return [Completable] результат валидации или запроса
+     * @return [Single] результат валидации или запроса с таймаутом до следующей попытки.
      */
-    fun sendMeCode(): Completable
+    fun sendMeCode(): Single<Int>
 }
 
-class CodeUseCaseImpl(private val gateway: CodeGateway,
+class CodeUseCaseImpl(private val smsGateway: CodeGateway,
+                      @Suppress("unused") private val callGateway: CodeGateway,
                       private val phoneNumberReceiver: DataReceiver<String>,
                       private val phoneNumberValidator: Validator<String>) : CodeUseCase {
 
-    override fun sendMeCode(): Completable {
+    override fun sendMeCode(): Single<Int> {
         return phoneNumberReceiver.get()
                 .firstOrError()
                 .map { phoneNumber ->
                     phoneNumberValidator.validate(phoneNumber)
                     phoneNumber
-                }.flatMapCompletable { phoneNumber ->
-                    gateway.sendMeCode(phoneNumber)
+                }.flatMap { phoneNumber ->
+                    smsGateway.sendMeCode(phoneNumber)
                             .observeOn(Schedulers.single())
+                            .toSingle { 30 }
                 }
     }
 }

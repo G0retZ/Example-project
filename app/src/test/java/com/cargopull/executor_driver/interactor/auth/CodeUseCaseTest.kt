@@ -29,7 +29,10 @@ class CodeUseCaseTest {
     private lateinit var useCase: CodeUseCase
 
     @Mock
-    private lateinit var gateway: CodeGateway
+    private lateinit var smsGateway: CodeGateway
+
+    @Mock
+    private lateinit var callGateway: CodeGateway
 
     @Mock
     private lateinit var phoneNumberValidator: Validator<String>
@@ -40,11 +43,11 @@ class CodeUseCaseTest {
     @Before
     @Throws(Exception::class)
     fun setUp() {
-        `when`(gateway.sendMeCode(anyString())).thenReturn(Completable.never())
+        `when`(smsGateway.sendMeCode(anyString())).thenReturn(Completable.never())
         doThrow(ValidationException()).`when`<Validator<String>>(phoneNumberValidator).validate(anyString())
         doNothing().`when`<Validator<String>>(phoneNumberValidator).validate("0123456")
         `when`(phoneNumberReceiver.get()).thenReturn(Observable.never())
-        useCase = CodeUseCaseImpl(gateway, phoneNumberReceiver, phoneNumberValidator)
+        useCase = CodeUseCaseImpl(smsGateway, callGateway, phoneNumberReceiver, phoneNumberValidator)
     }
 
     /* Проверяем работу с публикатором номера телефона */
@@ -135,7 +138,7 @@ class CodeUseCaseTest {
         useCase.sendMeCode().test().isDisposed
 
         // Результат:
-        verifyZeroInteractions(gateway)
+        verifyZeroInteractions(smsGateway)
     }
 
     /**
@@ -150,7 +153,7 @@ class CodeUseCaseTest {
         useCase.sendMeCode().test().isDisposed
 
         // Результат:
-        verify<CodeGateway>(gateway, only()).sendMeCode("0123456")
+        verify<CodeGateway>(smsGateway, only()).sendMeCode("0123456")
     }
 
     /* Проверяем ответы на запрос СМС */
@@ -162,7 +165,7 @@ class CodeUseCaseTest {
     fun answerNoNetworkError() {
         // Дано:
         `when`(phoneNumberReceiver.get()).thenReturn(Observable.just("0123456", "2", "3"))
-        `when`(gateway.sendMeCode(anyString())).thenReturn(Completable.error(NoNetworkException()))
+        `when`(smsGateway.sendMeCode(anyString())).thenReturn(Completable.error(NoNetworkException()))
 
         // Действие:
         val testObserver = useCase.sendMeCode().test()
@@ -180,7 +183,7 @@ class CodeUseCaseTest {
     fun answerSmsSendSuccessful() {
         // Дано:
         `when`(phoneNumberReceiver.get()).thenReturn(Observable.just("0123456", "2", "3"))
-        `when`(gateway.sendMeCode(anyString())).thenReturn(Completable.complete())
+        `when`(smsGateway.sendMeCode(anyString())).thenReturn(Completable.complete())
 
         // Действие:
         val testObserver = useCase.sendMeCode().test()
