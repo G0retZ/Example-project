@@ -173,9 +173,9 @@ class InteractorComponent(
                 PasswordValidator()
         )
     }
-    val smsUseCase: SmsUseCase by lazy {
-        SmsUseCaseImpl(
-                repositoryComponent.smsGateway,
+    val codeUseCase: CodeUseCase by lazy {
+        CodeUseCaseImpl(
+                repositoryComponent.smsCodeGateway,
                 repositoryComponent.loginReceiver,
                 PhoneNumberValidator()
         )

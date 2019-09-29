@@ -503,7 +503,7 @@ class PresentationComponent(
                 fragment,
                 SmsButtonViewModelImpl::class.java,
                 SmsButtonViewModelImpl(
-                        interactorComponent.smsUseCase
+                        interactorComponent.codeUseCase
                 )
         )
     }
