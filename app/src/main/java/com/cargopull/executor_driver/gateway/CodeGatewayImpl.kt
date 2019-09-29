@@ -12,3 +12,11 @@ class SmsCodeGatewayImpl(private val api: ApiService) : CodeGateway {
                 .subscribeOn(Schedulers.io())
     }
 }
+
+class CallCodeGatewayImpl(private val api: ApiService) : CodeGateway {
+
+    override fun sendMeCode(phoneNumber: String): Completable {
+        return api.callMeCode(phoneNumber)
+                .subscribeOn(Schedulers.io())
+    }
+}
