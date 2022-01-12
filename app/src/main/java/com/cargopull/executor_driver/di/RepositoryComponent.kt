@@ -6,8 +6,8 @@ import com.cargopull.executor_driver.backend.web.incoming.ApiRoutePoint
 import com.cargopull.executor_driver.entity.*
 import com.cargopull.executor_driver.gateway.*
 import com.cargopull.executor_driver.interactor.*
+import com.cargopull.executor_driver.interactor.auth.CodeGateway
 import com.cargopull.executor_driver.interactor.auth.PasswordGateway
-import com.cargopull.executor_driver.interactor.auth.SmsGateway
 import com.cargopull.executor_driver.interactor.map.HeatMapGateway
 import com.cargopull.executor_driver.interactor.services.ServicesGateway
 import com.cargopull.executor_driver.interactor.vehicle.LastUsedVehicleGateway
@@ -207,8 +207,11 @@ class RepositoryComponent(private val backendComponent: BackendComponent) {
     val passwordGateway: PasswordGateway by lazy {
         PasswordGatewayImpl(backendComponent.apiService)
     }
-    val smsGateway: SmsGateway by lazy {
-        SmsGatewayImpl(backendComponent.apiService)
+    val smsCodeGateway: CodeGateway by lazy {
+        SmsCodeGatewayImpl(backendComponent.apiService)
+    }
+    val callCodeGateway: CodeGateway by lazy {
+        CallCodeGatewayImpl(backendComponent.apiService)
     }
     val heatMapGateway: HeatMapGateway by lazy {
         HeatMapGatewayImpl(backendComponent.apiService)

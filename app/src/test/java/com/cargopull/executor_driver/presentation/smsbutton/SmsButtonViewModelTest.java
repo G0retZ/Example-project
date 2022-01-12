@@ -11,7 +11,7 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
 import androidx.lifecycle.Observer;
 import com.cargopull.executor_driver.ViewModelThreadTestRule;
 import com.cargopull.executor_driver.backend.web.NoNetworkException;
-import com.cargopull.executor_driver.interactor.auth.SmsUseCase;
+import com.cargopull.executor_driver.interactor.auth.CodeUseCase;
 import com.cargopull.executor_driver.presentation.FragmentViewActions;
 import com.cargopull.executor_driver.presentation.ViewState;
 import io.reactivex.Completable;
@@ -43,14 +43,14 @@ public class SmsButtonViewModelTest {
   private Observer<ViewState<FragmentViewActions>> viewStateObserver;
 
   @Mock
-  private SmsUseCase smsUseCase;
+  private CodeUseCase codeUseCase;
 
   @Before
   public void setUp() {
     testScheduler = new TestScheduler();
     RxJavaPlugins.setComputationSchedulerHandler(scheduler -> testScheduler);
-    when(smsUseCase.sendMeCode()).thenReturn(Completable.never());
-    viewModel = new SmsButtonViewModelImpl(smsUseCase);
+    when(codeUseCase.sendMeCode()).thenReturn(Completable.never());
+    viewModel = new SmsButtonViewModelImpl(codeUseCase);
   }
 
   /* Тетсируем работу с юзкейсом СМС. */
@@ -67,7 +67,7 @@ public class SmsButtonViewModelTest {
     viewModel.sendMeSms();
 
     // Результат:
-    verify(smsUseCase, only()).sendMeCode();
+    verify(codeUseCase, only()).sendMeCode();
   }
 
   /**
@@ -76,8 +76,8 @@ public class SmsButtonViewModelTest {
   @Test
   public void DoNotTouchSmsUseCaseToSendMeCodeUntilTimeout() {
     // Дано:
-    when(smsUseCase.sendMeCode()).thenReturn(Completable.complete());
-    InOrder inOrder = Mockito.inOrder(smsUseCase);
+    when(codeUseCase.sendMeCode()).thenReturn(Completable.complete());
+    InOrder inOrder = Mockito.inOrder(codeUseCase);
 
     // Действие:
     viewModel.sendMeSms();
@@ -87,12 +87,12 @@ public class SmsButtonViewModelTest {
     viewModel.sendMeSms();
 
     // Результат:
-    inOrder.verify(smsUseCase).sendMeCode();
+    inOrder.verify(codeUseCase).sendMeCode();
     inOrder.verifyNoMoreInteractions();
     testScheduler.advanceTimeBy(30, TimeUnit.SECONDS);
     viewModel.sendMeSms();
-    inOrder.verify(smsUseCase).sendMeCode();
-    verifyNoMoreInteractions(smsUseCase);
+    inOrder.verify(codeUseCase).sendMeCode();
+    verifyNoMoreInteractions(codeUseCase);
 
   }
 
@@ -102,7 +102,7 @@ public class SmsButtonViewModelTest {
   @Test
   public void askSmsUseCaseToSendMeCode() {
     // Дано:
-    when(smsUseCase.sendMeCode()).thenReturn(Completable.error(new NoNetworkException()));
+    when(codeUseCase.sendMeCode()).thenReturn(Completable.error(new NoNetworkException()));
 
     // Действие:
     viewModel.sendMeSms();
@@ -113,8 +113,8 @@ public class SmsButtonViewModelTest {
     testScheduler.advanceTimeBy(5, TimeUnit.SECONDS);
 
     // Результат:
-    verify(smsUseCase, times(3)).sendMeCode();
-    verifyNoMoreInteractions(smsUseCase);
+    verify(codeUseCase, times(3)).sendMeCode();
+    verifyNoMoreInteractions(codeUseCase);
   }
 
   /* Тетсируем переключение состояний */
@@ -157,7 +157,7 @@ public class SmsButtonViewModelTest {
   public void setErrorViewStateToLiveDataAfterFail() {
     // Дано:
     CompletableSubject completableSubject = CompletableSubject.create();
-    when(smsUseCase.sendMeCode()).thenReturn(completableSubject);
+    when(codeUseCase.sendMeCode()).thenReturn(completableSubject);
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
@@ -181,7 +181,7 @@ public class SmsButtonViewModelTest {
   public void setHoldViewStateToLiveDataAfterOtherError() {
     // Дано:
     CompletableSubject completableSubject = CompletableSubject.create();
-    when(smsUseCase.sendMeCode()).thenReturn(completableSubject);
+    when(codeUseCase.sendMeCode()).thenReturn(completableSubject);
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
@@ -236,7 +236,7 @@ public class SmsButtonViewModelTest {
   public void setHoldViewStateToLiveData() {
     // Дано:
     CompletableSubject completableSubject = CompletableSubject.create();
-    when(smsUseCase.sendMeCode()).thenReturn(completableSubject);
+    when(codeUseCase.sendMeCode()).thenReturn(completableSubject);
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
