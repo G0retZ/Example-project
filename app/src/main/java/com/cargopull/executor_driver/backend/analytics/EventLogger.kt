@@ -5,8 +5,8 @@ import android.os.Bundle
 import android.util.Log
 import com.cargopull.executor_driver.BuildConfig
 import com.cargopull.executor_driver.backend.settings.AppSettingsService
-import com.crashlytics.android.Crashlytics
 import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 
 /**
  * Отправитель отчетов о событиях
@@ -27,8 +27,9 @@ class EventLoggerImpl(private val appSettings: AppSettingsService, context: Cont
 
     override fun reportEvent(event: String, params: MutableMap<String, String>) {
         appSettings.getData("authorizationLogin")
-                ?.let { params[FirebaseAnalytics.Param.CHARACTER] = it }
-                ?: Crashlytics.logException(RuntimeException("Не удалось выснить номер телефона водителя"))
+            ?.let { params[FirebaseAnalytics.Param.CHARACTER] = it }
+            ?: FirebaseCrashlytics.getInstance()
+                .recordException(RuntimeException("Не удалось выснить номер телефона водителя"))
         val bundle = Bundle()
         params.forEach { (key, value) ->
             bundle.putString(key, value)
