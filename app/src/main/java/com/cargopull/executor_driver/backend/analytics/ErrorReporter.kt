@@ -8,7 +8,7 @@ import com.cargopull.executor_driver.backend.web.NoNetworkException
 import com.cargopull.executor_driver.backend.web.ServerResponseException
 import com.cargopull.executor_driver.entity.OrderOfferDecisionException
 import com.cargopull.executor_driver.entity.OrderOfferExpiredException
-import com.crashlytics.android.Crashlytics
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 
 /**
  * Отправитель отчетов об ошибках
@@ -38,7 +38,7 @@ class ErrorReporterImpl : ErrorReporter {
             is ConnectionClosedException -> Unit
             is OrderOfferExpiredException -> Unit
             is OrderOfferDecisionException -> Unit
-            else -> Crashlytics.logException(throwable)
+            else -> FirebaseCrashlytics.getInstance().recordException(throwable)
         }
     }
 }

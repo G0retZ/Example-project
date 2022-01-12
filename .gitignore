@@ -2,6 +2,9 @@
 .gradle
 /build
 /local.properties
+/.idea/assetWizardSettings.xml
+/.idea/dictionaries
+/.idea/shelf
 /.idea/workspace.xml
 /.idea/runConfigurations.xml
 /.idea/misc.xml

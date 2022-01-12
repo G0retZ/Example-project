@@ -28,11 +28,12 @@
       android:required="false"/>
 
     <activity
-      android:launchMode="singleTop"
-      android:name=".application.SplashScreenActivity">
+        android:exported="true"
+        android:launchMode="singleTop"
+        android:name=".application.SplashScreenActivity">
       <intent-filter>
-        <action android:name="android.intent.action.MAIN"/>
-        <category android:name="android.intent.category.LAUNCHER"/>
+        <action android:name="android.intent.action.MAIN" />
+        <category android:name="android.intent.category.LAUNCHER" />
       </intent-filter>
     </activity>
     <activity
@@ -146,10 +147,11 @@
       android:exported="false"
       android:name=".application.PersistenceService"/>
     <service
-      android:name=".application.FcmService"
-      tools:ignore="ExportedService">
+        android:name=".application.FcmService"
+        android:exported="true"
+        tools:ignore="ExportedService">
       <intent-filter>
-        <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+        <action android:name="com.google.firebase.MESSAGING_EVENT" />
       </intent-filter>
     </service>
 

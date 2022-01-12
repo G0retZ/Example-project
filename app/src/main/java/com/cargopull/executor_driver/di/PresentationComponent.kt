@@ -3,7 +3,7 @@ package com.cargopull.executor_driver.di
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import com.cargopull.executor_driver.presentation.NextExecutorStateViewModel
 import com.cargopull.executor_driver.presentation.NextExecutorStateViewModelImpl
 import com.cargopull.executor_driver.presentation.ViewModelFactory
@@ -667,9 +667,9 @@ class PresentationComponent(
         if (fragment == null) {
             throw NullPointerException("Фрагмент не должен быть null")
         }
-        return ViewModelProviders.of(
-                fragment,
-                ViewModelFactory(viewModel)
+        return ViewModelProvider(
+            fragment,
+            ViewModelFactory(viewModel)
         ).get(vClass)
     }
 
@@ -680,9 +680,9 @@ class PresentationComponent(
         if (appCompatActivity == null) {
             throw NullPointerException("Активити не должно быть null")
         }
-        return ViewModelProviders.of(
-                appCompatActivity,
-                ViewModelFactory(viewModel)
+        return ViewModelProvider(
+            appCompatActivity,
+            ViewModelFactory(viewModel)
         ).get(vClass)
     }
 }
