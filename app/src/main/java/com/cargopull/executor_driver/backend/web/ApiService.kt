@@ -16,6 +16,10 @@ import retrofit2.http.*
 interface ApiService {
 
     //  Запрос тепловой карты.
+    @get:GET("api/public/v1/init")
+    val initialState: Single<ApiInitialState>
+
+    //  Запрос тепловой карты.
     @get:GET("api/public/v1/geoMap")
     val heatMap: Single<String>
 
@@ -163,6 +167,9 @@ interface ApiService {
 }
 
 class ApiConnectionWrapper(private val apiService: ApiService, private val gateway: CommonGateway<Boolean>) : ApiService {
+
+    override val initialState: Single<ApiInitialState>
+        get() = wrapCall(apiService.initialState)
 
     override val heatMap: Single<String>
         get() = wrapCall(apiService.heatMap)
